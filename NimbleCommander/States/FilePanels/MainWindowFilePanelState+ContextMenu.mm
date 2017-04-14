@@ -16,6 +16,7 @@
 #include <NimbleCommander/Operations/Compress/FileCompressOperation.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include "Actions/CopyToPasteboard.h"
 
 struct OpenWithHandler
 {
@@ -158,6 +159,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     NSMutableArray                     *m_ShareItemsURLs;
     int                                 m_DirsCount;
     int                                 m_FilesCount;
+    unique_ptr<panel::actions::PanelAction> m_CopyAction;
 }
 
 - (id) initWithData:(vector<VFSListingItem>) _items
@@ -182,6 +184,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         self.delegate = self;
         self.minimumWidth = 200; // hardcoding is bad!
     
+        m_CopyAction.reset( new panel::actions::context::CopyToPasteboard{m_Items} );
 
         [self doStuffing];
     }
@@ -446,20 +449,19 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     // Copy element for native FS. simply copies selected items' paths
     {
         NSMenuItem *item = [NSMenuItem new];
-        if(m_Items.size() > 1)
-            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy %lu Items", @"FilePanelsContextMenu", "Copy many items"),
-                          m_Items.size()];
-        else
-            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Copy \u201c%@\u201d", @"FilePanelsContextMenu", "Copy one item"),
-                          [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
-        if( m_CommonHost && m_CommonHost->IsNativeFS() ) {  // such thing works only on native file systems
-            item.target = self;
-            item.action = @selector(OnCopyPaths:);
-        }
+        item.target = self;
+        item.action = @selector(OnCopyPaths:);
         [self addItem:item];
     }
 
     [self addItem:NSMenuItem.separatorItem];
+}
+
+- (BOOL) validateMenuItem:(NSMenuItem *)item
+{
+    if( item.action == @selector(OnCopyPaths:) )
+        return m_CopyAction->ValidateMenuItem(m_CurrentController, item);
+    return true;
 }
 
 - (void)OnRegularOpen:(id)sender
@@ -579,16 +581,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void)OnCopyPaths:(id)sender
 {
-    NSMutableArray *filenames = [[NSMutableArray alloc] initWithCapacity:m_Items.size()];
-    
-    for(auto &i: m_Items)
-        if(i.Host()->IsNativeFS())
-            [filenames addObject:[NSString stringWithUTF8StdString:i.Path()]];
-    
-    NSPasteboard *pasteBoard = NSPasteboard.generalPasteboard;
-    [pasteBoard clearContents];
-    [pasteBoard declareTypes:@[NSFilenamesPboardType] owner:nil];
-    [pasteBoard setPropertyList:filenames forType:NSFilenamesPboardType];
+    m_CopyAction->Perform(m_CurrentController, sender);
 }
 
 - (void)OnCompressToOppositePanel:(id)sender

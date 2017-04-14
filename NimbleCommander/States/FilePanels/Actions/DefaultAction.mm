@@ -2,6 +2,10 @@
 
 namespace panel::actions {
 
+PanelAction::~PanelAction()
+{
+}
+
 bool PanelAction::Predicate( PanelController *_target ) const
 {
     return true;

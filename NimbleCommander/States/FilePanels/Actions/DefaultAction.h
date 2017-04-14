@@ -7,6 +7,7 @@ namespace panel::actions {
 
 struct PanelAction
 {
+    virtual ~PanelAction();
     virtual bool Predicate( PanelController *_target ) const;
     virtual bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const;
     virtual void Perform( PanelController *_target, id _sender ) const;

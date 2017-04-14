@@ -459,7 +459,8 @@
 		CF818B6C1EA0615300BC28E6 /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */; };
 		CF818B6D1EA0615300BC28E6 /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */; };
 		CF818B6E1EA0615400BC28E6 /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */; };
-		CF818B711EA07A5B00BC28E6 /* Clipboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Clipboard.mm */; };
+		CF818B711EA07A5B00BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
+		CF818B741EA0830400BC28E6 /* CopyToPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B731EA0830400BC28E6 /* CopyToPasteboard.mm */; };
 		CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
@@ -1704,8 +1705,10 @@
 		CF811A911D8262BE001F9E7F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_Party/OpenSSL/built/libssl.a; sourceTree = SOURCE_ROOT; };
 		CF818B3B1EA05AC600BC28E6 /* PanelDataSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataSelection.h; path = NimbleCommander/States/FilePanels/PanelDataSelection.h; sourceTree = SOURCE_ROOT; };
 		CF818B3C1EA05AC600BC28E6 /* PanelDataSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataSelection.mm; path = NimbleCommander/States/FilePanels/PanelDataSelection.mm; sourceTree = SOURCE_ROOT; };
-		CF818B6F1EA07A5B00BC28E6 /* Clipboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Clipboard.h; path = NimbleCommander/States/FilePanels/Helpers/Clipboard.h; sourceTree = SOURCE_ROOT; };
-		CF818B701EA07A5B00BC28E6 /* Clipboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Clipboard.mm; path = NimbleCommander/States/FilePanels/Helpers/Clipboard.mm; sourceTree = SOURCE_ROOT; };
+		CF818B6F1EA07A5B00BC28E6 /* Pasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pasteboard.h; path = NimbleCommander/States/FilePanels/Helpers/Pasteboard.h; sourceTree = SOURCE_ROOT; };
+		CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pasteboard.mm; path = NimbleCommander/States/FilePanels/Helpers/Pasteboard.mm; sourceTree = SOURCE_ROOT; };
+		CF818B721EA0830400BC28E6 /* CopyToPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyToPasteboard.h; path = NimbleCommander/States/FilePanels/Actions/CopyToPasteboard.h; sourceTree = SOURCE_ROOT; };
+		CF818B731EA0830400BC28E6 /* CopyToPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyToPasteboard.mm; path = NimbleCommander/States/FilePanels/Actions/CopyToPasteboard.mm; sourceTree = SOURCE_ROOT; };
 		CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobSourceItems.cpp; path = NimbleCommander/Operations/Copy/JobSourceItems.cpp; sourceTree = SOURCE_ROOT; };
 		CF84C8DD1DB74B3A00B4E888 /* PanelViewHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeader.h; path = NimbleCommander/States/FilePanels/PanelViewHeader.h; sourceTree = SOURCE_ROOT; };
 		CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeader.mm; path = NimbleCommander/States/FilePanels/PanelViewHeader.mm; sourceTree = SOURCE_ROOT; };
@@ -2623,6 +2626,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CF818B721EA0830400BC28E6 /* CopyToPasteboard.h */,
+				CF818B731EA0830400BC28E6 /* CopyToPasteboard.mm */,
 				CF6ECDB41E9F7353008FA79E /* Select.h */,
 				CF6ECDB51E9F7353008FA79E /* Select.mm */,
 				CF6ECDB11E9F4AF3008FA79E /* RenameInPlace.h */,
@@ -2812,8 +2817,8 @@
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				CF818B6F1EA07A5B00BC28E6 /* Clipboard.h */,
-				CF818B701EA07A5B00BC28E6 /* Clipboard.mm */,
+				CF818B6F1EA07A5B00BC28E6 /* Pasteboard.h */,
+				CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */,
 				CFD8CD591E7A80D600E4DC53 /* FavoritesMenuDelegate.h */,
 				CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */,
 				CFD8CD4F1E7A31A100E4DC53 /* FavoriteComposing.h */,
@@ -4367,6 +4372,7 @@
 				CFDAC2301DFBDBCB0039A104 /* Config.cpp in Sources */,
 				CFDAC2491DFBEE340039A104 /* MainWindowController.mm in Sources */,
 				CFD8CD5B1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm in Sources */,
+				CF818B741EA0830400BC28E6 /* CopyToPasteboard.mm in Sources */,
 				CFDAC2951DFBF9260039A104 /* TermScrollView.mm in Sources */,
 				CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFDAC2EE1DFD152C0039A104 /* FilePanelOverlappedTerminal.mm in Sources */,
@@ -4511,7 +4517,7 @@
 				CFDAC2971DFBF9260039A104 /* TermShellTask.cpp in Sources */,
 				CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */,
 				CFDAC2AE1DFD096E0039A104 /* ConnectionsMenuDelegate.mm in Sources */,
-				CF818B711EA07A5B00BC28E6 /* Clipboard.mm in Sources */,
+				CF818B711EA07A5B00BC28E6 /* Pasteboard.mm in Sources */,
 				CF5FE7CB1E0CDEA600CD83B4 /* FilesDraggingSource.mm in Sources */,
 				CFDAC2D81DFD11970039A104 /* LSUrls.mm in Sources */,
 				CF7D138B1BF5E38B001F53FD /* OperationDialogAlert.mm in Sources */,

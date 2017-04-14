@@ -39,10 +39,7 @@
 #include "Actions/ChangeAttributes.h"
 #include "Actions/RenameInPlace.h"
 #include "Actions/Select.h"
-
-
-// TEMP!!
-#include "Helpers/Clipboard.h"
+#include "Actions/CopyToPasteboard.h"
 
 
 static const panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
@@ -518,12 +515,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self.state AddOperation:op];
 }
 
-- (IBAction)copy:(id)sender
-{
-//    [self writeFilesnamesPBoard:NSPasteboard.generalPasteboard];
-    panel::ClipboardSupport::WriteFilesnamesPBoard(self, NSPasteboard.generalPasteboard);
-}
-
+- (IBAction)copy:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnSelectByMask:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnDeselectByMask:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnQuickSelectByExtension:(id)sender { Perform(_cmd, self, sender); }
@@ -587,7 +579,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 - (IBAction)OnGoToQuickListsVolumes:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToQuickListsFavorites:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToQuickListsConnections:(id)sender { Perform(_cmd, self, sender); }
-
 @end
 
 using namespace panel::actions;
@@ -601,6 +592,7 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.file.new_file",                  @selector(OnQuickNewFile:),                 new MakeNewFile},
 {"menu.file.new_folder",                @selector(OnQuickNewFolder:),               new MakeNewFolder},
 {"menu.file.new_folder_with_selection", @selector(OnQuickNewFolderWithSelection:),  new MakeNewFolderWithSelection},
+{"menu.edit.copy",                      @selector(copy:),                   new CopyToPasteboard},
 {"menu.edit.paste",                     @selector(paste:),                  new PasteFromPasteboard},
 {"menu.edit.move_here",                 @selector(moveItemHere:),           new MoveFromPasteboard},
 {"menu.edit.select_all",                @selector(selectAll:),              new SelectAll},

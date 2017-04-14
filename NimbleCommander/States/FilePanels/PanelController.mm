@@ -19,7 +19,7 @@
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelViewLayoutSupport.h"
-#include "Helpers/Clipboard.h"
+#include "Helpers/Pasteboard.h"
 
 #include <VFS/NetDropbox.h>
 
@@ -922,9 +922,11 @@ static bool RouteKeyboardInputIntoTerminal()
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard types:(NSArray *)types
 {
     if( [types containsObject:(__bridge NSString *)kUTTypeFileURL] )
-        return panel::ClipboardSupport::WriteURLSPBoard(self, pboard);
+        return panel::PasteboardSupport::WriteURLSPBoard(self.selectedEntriesOrFocusedEntry,
+                                                         pboard);
     if( [types containsObject:NSFilenamesPboardType] )
-        return panel::ClipboardSupport::WriteFilesnamesPBoard(self, pboard);
+        return panel::PasteboardSupport::WriteFilesnamesPBoard(self.selectedEntriesOrFocusedEntry,
+                                                               pboard);
     return false;
 }
 

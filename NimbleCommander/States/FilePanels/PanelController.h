@@ -175,13 +175,18 @@ namespace panel
  */
 - (panel::ActivityTicket) registerExtActivity;
 
+
+// panel sorting settings
 - (void) changeSortingModeTo:(PanelData::PanelSortMode)_mode;
 - (void) changeHardFilteringTo:(PanelData::HardFilter)_filter;
 
 // PanelView callback hooks
 - (void) panelViewDidBecomeFirstResponder;
 
+// managing entries selection
 - (void) selectEntriesWithFilenames:(const vector<string>&)_filenames;
+- (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select;
+- (void) setEntriesSelection:(const vector<bool>&)_selection;
 
 
 - (void) calculateSizesOfItems:(const vector<VFSListingItem>&)_items;
@@ -198,11 +203,7 @@ namespace panel
 - (bool) HandleGoToUpperDirectory;
 - (bool) handleGoIntoDirOrArchiveSync:(bool)_whitelist_archive_only;
 - (void) handleGoIntoDirOrOpenInSystemSync;
-- (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select;
-- (void) SelectAllEntries:(bool) _select;
-- (void) invertSelection;
 - (void) UpdateBriefSystemOverview;
-
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path;
 - (bool) ensureCanGoToNativeFolderSync:(const string&)_path; // checks only stuff related to sandbox model, not posix perms/acls.
 - (bool) writeFilesnamesPBoard:(NSPasteboard *)pboard;

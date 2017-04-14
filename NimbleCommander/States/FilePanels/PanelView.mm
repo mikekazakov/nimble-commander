@@ -609,11 +609,6 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     }
 }
 
-/*- (void)modifierFlagsChanged:(unsigned long)_flags
-{
-    [self checkKeyboardModifierFlags:_flags];
-}*/
-
 - (void)flagsChanged:(NSEvent *)event
 {
     [self checkKeyboardModifierFlags:event.modifierFlags];

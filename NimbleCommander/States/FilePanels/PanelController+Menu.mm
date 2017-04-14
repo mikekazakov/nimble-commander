@@ -40,6 +40,7 @@
 #include "Actions/ToggleLayout.h"
 #include "Actions/ChangeAttributes.h"
 #include "Actions/RenameInPlace.h"
+#include "Actions/Select.h"
 
 static const panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
@@ -408,22 +409,8 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self DoSelectByMask:false];
 }
 
-- (void)DoQuickSelectByExtension:(bool)_select
-{
-    if( auto item = self.view.item )
-        if( m_Data.CustomFlagsSelectAllSortedByExtension(item.HasExtension() ? item.Extension() : "", _select, self.ignoreDirectoriesOnSelectionByMask) )
-           [m_View volatileDataChanged];
-}
-
-- (IBAction)OnQuickSelectByExtension:(id)sender
-{
-    [self DoQuickSelectByExtension:true];
-}
-
-- (IBAction)OnQuickDeselectByExtension:(id)sender
-{
-    [self DoQuickSelectByExtension:false];
-}
+- (IBAction)OnQuickSelectByExtension:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnQuickDeselectByExtension:(id)sender { Perform(_cmd, self, sender); }
 
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender
 {
@@ -450,21 +437,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     m_QuickLook = [self.state RequestQuickLookView:self];
     if( m_QuickLook )
         [self OnCursorChanged];
-}
-
-- (void)selectAll:(id)sender
-{
-    [self SelectAllEntries:true];
-}
-
-- (void)deselectAll:(id)sender
-{
-    [self SelectAllEntries:false];
-}
-
-- (IBAction)OnMenuInvertSelection:(id)sender
-{
-    [self invertSelection];
 }
 
 - (IBAction)OnRefreshPanel:(id)sender
@@ -572,6 +544,9 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self writeFilesnamesPBoard:NSPasteboard.generalPasteboard];
 }
 
+- (IBAction)selectAll:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)deselectAll:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnMenuInvertSelection:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnRenameFileInPlace:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)paste:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)moveItemHere:(id)sender { Perform(_cmd, self, sender); }
@@ -642,8 +617,11 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.file.new_file",                  @selector(OnQuickNewFile:),                 new MakeNewFile},
 {"menu.file.new_folder",                @selector(OnQuickNewFolder:),               new MakeNewFolder},
 {"menu.file.new_folder_with_selection", @selector(OnQuickNewFolderWithSelection:),  new MakeNewFolderWithSelection},
-{"menu.edit.paste",                     @selector(paste:),                          new PasteFromPasteboard},
-{"menu.edit.move_here",                 @selector(moveItemHere:),                   new MoveFromPasteboard},
+{"menu.edit.paste",                     @selector(paste:),                  new PasteFromPasteboard},
+{"menu.edit.move_here",                 @selector(moveItemHere:),           new MoveFromPasteboard},
+{"menu.edit.select_all",                @selector(selectAll:),              new SelectAll},
+{"menu.edit.deselect_all",              @selector(deselectAll:),            new DeselectAll},
+{"menu.edit.invert_selection",          @selector(OnMenuInvertSelection:),  new InvertSelection},
 {"menu.view.sorting_by_name",           @selector(ToggleSortByName:),               new ToggleSortingByName},
 {"menu.view.sorting_by_extension",      @selector(ToggleSortByExt:),                new ToggleSortingByExtension},
 {"menu.view.sorting_by_size",           @selector(ToggleSortBySize:),               new ToggleSortingBySize},
@@ -679,16 +657,18 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.go.quick_lists.favorites",       @selector(OnGoToQuickListsFavorites:),  new ShowFavoritesQuickList},
 {"menu.go.quick_lists.volumes",         @selector(OnGoToQuickListsVolumes:),    new ShowVolumesQuickList},
 {"menu.go.quick_lists.connections",     @selector(OnGoToQuickListsConnections:),new ShowConnectionsQuickList},
-{"menu.command.volume_information", @selector(OnDetailedVolumeInformation:),new ShowVolumeInformation},
-{"menu.command.file_attributes",    @selector(OnFileAttributes:),           new ChangeAttributes},
-{"menu.command.external_editor",    @selector(OnOpenWithExternalEditor:),   new OpenWithExternalEditor},
-{"menu.command.eject_volume",       @selector(OnEjectVolume:),              new EjectVolume},
-{"menu.command.copy_file_name",     @selector(OnCopyCurrentFileName:),      new CopyFileName},
-{"menu.command.copy_file_path",     @selector(OnCopyCurrentFilePath:),      new CopyFilePath},
-{"menu.command.create_directory",   @selector(OnCreateDirectoryCommand:),   new MakeNewNamedFolder},
-{"menu.command.batch_rename",       @selector(OnBatchRename:),              new BatchRename},
-{"menu.command.rename_in_place",    @selector(OnRenameFileInPlace:),        new RenameInPlace},
-{"menu.command.open_xattr",         @selector(OnOpenExtendedAttributes:),   new OpenXAttr},
+{"menu.command.select_with_extension",  @selector(OnQuickSelectByExtension:),   new SelectAllByExtension{true}},
+{"menu.command.deselect_with_extension",@selector(OnQuickDeselectByExtension:), new SelectAllByExtension{false}},
+{"menu.command.volume_information",     @selector(OnDetailedVolumeInformation:),new ShowVolumeInformation},
+{"menu.command.file_attributes",        @selector(OnFileAttributes:),           new ChangeAttributes},
+{"menu.command.external_editor",        @selector(OnOpenWithExternalEditor:),   new OpenWithExternalEditor},
+{"menu.command.eject_volume",           @selector(OnEjectVolume:),              new EjectVolume},
+{"menu.command.copy_file_name",         @selector(OnCopyCurrentFileName:),      new CopyFileName},
+{"menu.command.copy_file_path",         @selector(OnCopyCurrentFilePath:),      new CopyFilePath},
+{"menu.command.create_directory",       @selector(OnCreateDirectoryCommand:),   new MakeNewNamedFolder},
+{"menu.command.batch_rename",           @selector(OnBatchRename:),              new BatchRename},
+{"menu.command.rename_in_place",        @selector(OnRenameFileInPlace:),        new RenameInPlace},
+{"menu.command.open_xattr",             @selector(OnOpenExtendedAttributes:),   new OpenXAttr},
 };
 
 static const PanelAction *ActionByTag(int _tag) noexcept

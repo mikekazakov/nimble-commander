@@ -899,7 +899,7 @@ void PanelData::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
         return;
     
     auto sz = vd.is_size_calculated() ? vd.size : 0;
-    if(_is_selected) {
+    if( _is_selected ) {
         m_Stats.bytes_in_selected_entries += sz;
         m_Stats.selected_entries_amount++;
         if( m_Listing->IsDir(_at_raw_pos) )
@@ -930,6 +930,18 @@ void PanelData::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
         return;
     
     CustomFlagsSelectRaw(m_EntriesByCustomSort[_at_pos], _is_selected);
+}
+
+void PanelData::CustomFlagsSelectSorted(const vector<bool>& _is_selected)
+{
+    for( int i = 0, e = (int)min(_is_selected.size(), m_EntriesByCustomSort.size());
+        i != e; ++i ) {
+        const auto raw_pos = m_EntriesByCustomSort[i];
+        if( !m_Listing->IsDotDot(raw_pos) ) {
+            m_VolatileData[raw_pos].toggle_selected( _is_selected[i] );
+        }
+    }
+    UpdateStatictics();
 }
 
 void PanelData::CustomFlagsSelectAllSorted(bool _select)
@@ -1059,35 +1071,6 @@ unsigned PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _sele
             continue;
         
         if( mask.MatchName(m_Listing->DisplayFilename(i)) ) {
-            CustomFlagsSelectRaw(i, _select);
-            counter++;
-        }
-    }
-    
-    return counter;
-}
-
-unsigned PanelData::CustomFlagsSelectAllSortedByExtension(const string &_extension, bool _select, bool _ignore_dirs)
-{
-    const auto extension = ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_extension);
-    const bool empty = extension.empty();
-    unsigned counter = 0;
-    for(auto i: m_EntriesByCustomSort) {
-        if( _ignore_dirs && m_Listing->IsDir(i) )
-            continue;
-        
-        if( m_Listing->IsDotDot(i) )
-            continue;
-
-        bool legit = false;
-        if( m_Listing->HasExtension(i) ) {
-            if(ExtensionLowercaseComparison::Instance().Equal(m_Listing->Extension(i), extension))
-                legit = true;
-        }
-        else if( empty )
-            legit = true;
-
-        if( legit ) {
             CustomFlagsSelectRaw(i, _select);
             counter++;
         }

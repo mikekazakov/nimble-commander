@@ -1,5 +1,6 @@
-//#include <Utility/ExtensionLowercaseComparison.h>
 #include "Select.h"
+#include <NimbleCommander/Core/FileMask.h>
+#include "../Views/SelectionWithMaskPopupViewController.h"
 #include "../PanelDataSelection.h"
 #include "../PanelController.h"
 
@@ -17,11 +18,6 @@ void DeselectAll::Perform( PanelController *_target, id _sender ) const
 
 void InvertSelection::Perform( PanelController *_target, id _sender ) const
 {
-//    const auto &data = _target.data;
-//    const auto count = data.SortedEntriesCount();
-//    vector<bool> target(count);
-//    for( int i = 0; i < count; ++i )
-//        target[i] = !data.VolatileDataAtSortPosition(i).is_selected();
     auto selector = PanelDataSelection(_target.data);
     [_target setEntriesSelection:selector.InvertSelection()];
 }
@@ -49,41 +45,27 @@ void SelectAllByExtension::Perform( PanelController *_target, id _sender ) const
     [_target setEntriesSelection:selection];
 }
 
+SelectAllByMask::SelectAllByMask( bool _result_selection ):
+    m_ResultSelection(_result_selection)
+{
 }
 
+void SelectAllByMask::Perform( PanelController *_target, id _sender ) const
+{
+    SelectionWithMaskPopupViewController *view = [[SelectionWithMaskPopupViewController alloc]
+        initForWindow:_target.window doesSelect:m_ResultSelection];
+    view.handler = [=](NSString *_mask) {
+        string mask = _mask.fileSystemRepresentationSafe;
+        if( !FileMask::IsWildCard(mask) )
+            mask = FileMask::ToExtensionWildCard(mask);
+        
+        auto selector = PanelDataSelection(_target.data,
+                                           _target.ignoreDirectoriesOnSelectionByMask);
+        auto selection = selector.SelectionByMask(mask, m_ResultSelection);
+        [_target setEntriesSelection:selection];
+    };
+    
+    [_target.view showPopoverUnderPathBarWithView:view andDelegate:view];
+}
 
-//- (void)DoQuickSelectByExtension:(bool)_select
-//{
-//    if( auto item = self.view.item )
-//        if( m_Data.CustomFlagsSelectAllSortedByExtension(item.HasExtension() ? item.Extension() : "", _select, self.ignoreDirectoriesOnSelectionByMask) )
-//           [m_View volatileDataChanged];
-//}
-//
-//unsigned PanelData::CustomFlagsSelectAllSortedByExtension(const string &_extension, bool _select, bool _ignore_dirs)
-//{
-//    const auto extension = ExtensionLowercaseComparison::Instance().ExtensionToLowercase(_extension);
-//    const bool empty = extension.empty();
-//    unsigned counter = 0;
-//    for(auto i: m_EntriesByCustomSort) {
-//        if( _ignore_dirs && m_Listing->IsDir(i) )
-//            continue;
-//        
-//        if( m_Listing->IsDotDot(i) )
-//            continue;
-//
-//        bool legit = false;
-//        if( m_Listing->HasExtension(i) ) {
-//            if(ExtensionLowercaseComparison::Instance().Equal(m_Listing->Extension(i), extension))
-//                legit = true;
-//        }
-//        else if( empty )
-//            legit = true;
-//
-//        if( legit ) {
-//            CustomFlagsSelectRaw(i, _select);
-//            counter++;
-//        }
-//    }
-//    
-//    return counter;
-//}
+}

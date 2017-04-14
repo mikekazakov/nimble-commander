@@ -1,4 +1,5 @@
 #include <Utility/ExtensionLowercaseComparison.h>
+#include <NimbleCommander/Core/FileMask.h>
 #include "PanelDataSelection.h"
 #include "PanelData.h"
 
@@ -20,7 +21,7 @@ vector<bool> PanelDataSelection::SelectionByExtension(const string &_extension,
     const auto &listing = m_Data.Listing();
     for( int i = 0, e = count; i != e; ++i  ) {
         const auto raw_index = m_Data.RawIndexForSortIndex(i);
-        selection[i] = m_Data.VolatileDataAtSortPosition(i).is_selected();
+        selection[i] = m_Data.VolatileDataAtRawPosition(raw_index).is_selected();
     
         if( m_IgnoreDirectoriesOnMaskSelection && listing.IsDir(raw_index) )
             continue;
@@ -36,6 +37,27 @@ vector<bool> PanelDataSelection::SelectionByExtension(const string &_extension,
         if( legit )
             selection[i] = _result_selection;
     }
+    return selection;
+}
+
+vector<bool> PanelDataSelection::SelectionByMask(const string &_mask,
+                                                 bool _result_selection ) const
+{
+    FileMask mask(_mask);
+    const auto count = m_Data.SortedEntriesCount();
+    vector<bool> selection(count);
+    const auto &listing = m_Data.Listing();
+    for( int i = 0, e = count; i != e; ++i  ) {
+        const auto raw_index = m_Data.RawIndexForSortIndex(i);
+        selection[i] = m_Data.VolatileDataAtRawPosition(raw_index).is_selected();
+    
+        if( m_IgnoreDirectoriesOnMaskSelection && listing.IsDir(raw_index) )
+            continue;
+
+        if( mask.MatchName(listing.DisplayFilename(raw_index)) )
+            selection[i] = _result_selection;
+    }
+    
     return selection;
 }
 

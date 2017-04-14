@@ -836,13 +836,6 @@ static bool RouteKeyboardInputIntoTerminal()
 //    [self ModifierFlagsChanged:[NSEvent modifierFlags]];
 }
 
-- (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select
-{
-    const auto ignore_dirs = self.ignoreDirectoriesOnSelectionByMask;
-    if( m_Data.CustomFlagsSelectAllSortedByMask(_mask, _select, ignore_dirs) )
-        [m_View volatileDataChanged];
-}
-
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path
 {
     return SandboxManager::EnsurePathAccess(_path);

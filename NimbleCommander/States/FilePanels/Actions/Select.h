@@ -28,4 +28,12 @@ private:
     bool m_ResultSelection;
 };
 
+struct SelectAllByMask : PanelAction
+{
+    SelectAllByMask( bool _result_selection );
+    void Perform( PanelController *_target, id _sender ) const override;
+private:
+    bool m_ResultSelection;
+};
+
 };

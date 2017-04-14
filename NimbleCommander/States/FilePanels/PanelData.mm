@@ -1,6 +1,4 @@
 #include <Habanero/algo.h>
-#include <Utility/ExtensionLowercaseComparison.h>
-#include "../../Core/FileMask.h"
 #include "PanelData.h"
 
 static_assert( sizeof(PanelData::TextualFilter) == 10 );
@@ -60,11 +58,6 @@ bool PanelData::EntrySortKeys::is_valid() const noexcept
 {
     return !name.empty() && display_name != nil;
 }
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-// PanelVolatileData
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 // TextualFilter
@@ -953,14 +946,6 @@ void PanelData::CustomFlagsSelectAllSorted(bool _select)
     UpdateStatictics();
 }
 
-void PanelData::CustomFlagsSelectInvert()
-{
-    for(auto i: m_EntriesByCustomSort)
-        if( !m_Listing->IsDotDot(i) )
-            m_VolatileData[i].toggle_selected( !m_VolatileData[i].is_selected() );
-    UpdateStatictics();
-}
-
 vector<string> PanelData::SelectedEntriesFilenames() const
 {
     vector<string> list;
@@ -1053,30 +1038,6 @@ void PanelData::CustomFlagsClearHighlights()
 int PanelData::SortedIndexForName(const char *_filename) const
 {
     return SortedIndexForRawIndex(RawIndexForName(_filename));
-}
-
-unsigned PanelData::CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs)
-{
-    if( !_mask )
-        return 0;
-    
-    FileMask mask(_mask.UTF8String);
-    unsigned counter = 0;
-    
-    for(auto i: m_EntriesByCustomSort) {
-        if( _ignore_dirs && m_Listing->IsDir(i) )
-            continue;
-        
-        if( m_Listing->IsDotDot(i) )
-            continue;
-        
-        if( mask.MatchName(m_Listing->DisplayFilename(i)) ) {
-            CustomFlagsSelectRaw(i, _select);
-            counter++;
-        }
-    }
-    
-    return counter;
 }
 
 bool PanelData::ClearTextFiltering()

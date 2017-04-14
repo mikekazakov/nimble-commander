@@ -185,7 +185,6 @@ namespace panel
 
 // managing entries selection
 - (void) selectEntriesWithFilenames:(const vector<string>&)_filenames;
-- (void) SelectEntriesByMask:(NSString*)_mask select:(bool)_select;
 - (void) setEntriesSelection:(const vector<bool>&)_selection;
 
 

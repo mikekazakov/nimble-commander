@@ -16,8 +16,6 @@
 #include "Views/FTPConnectionSheetController.h"
 #include "Views/SFTPConnectionSheetController.h"
 #include "Views/NetworkShareSheetController.h"
-#include <NimbleCommander/Core/FileMask.h>
-#include "Views/SelectionWithMaskPopupViewController.h"
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "PanelAux.h"
@@ -388,30 +386,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     }
 }
 
-- (void)DoSelectByMask:(bool)_select
-{
-    SelectionWithMaskPopupViewController *view = [[SelectionWithMaskPopupViewController alloc] initForWindow:self.state.window doesSelect:_select];
-    view.handler = [=](NSString *mask) {
-        if( !FileMask::IsWildCard(mask.UTF8String) )
-            mask = [NSString stringWithUTF8StdString:FileMask::ToExtensionWildCard(mask.UTF8String)];
-        
-        [self SelectEntriesByMask:mask select:_select];
-    };
-    
-    [self.view showPopoverUnderPathBarWithView:view andDelegate:view];
-}
-
-- (IBAction)OnSelectByMask:(id)sender {
-    [self DoSelectByMask:true];
-}
-
-- (IBAction)OnDeselectByMask:(id)sender {
-    [self DoSelectByMask:false];
-}
-
-- (IBAction)OnQuickSelectByExtension:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnQuickDeselectByExtension:(id)sender { Perform(_cmd, self, sender); }
-
 - (IBAction)OnBriefSystemOverviewCommand:(id)sender
 {
     if( m_BriefSystemOverview ) {
@@ -544,6 +518,10 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self writeFilesnamesPBoard:NSPasteboard.generalPasteboard];
 }
 
+- (IBAction)OnSelectByMask:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnDeselectByMask:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnQuickSelectByExtension:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnQuickDeselectByExtension:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)selectAll:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)deselectAll:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnMenuInvertSelection:(id)sender { Perform(_cmd, self, sender); }
@@ -657,7 +635,9 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.go.quick_lists.favorites",       @selector(OnGoToQuickListsFavorites:),  new ShowFavoritesQuickList},
 {"menu.go.quick_lists.volumes",         @selector(OnGoToQuickListsVolumes:),    new ShowVolumesQuickList},
 {"menu.go.quick_lists.connections",     @selector(OnGoToQuickListsConnections:),new ShowConnectionsQuickList},
+{"menu.command.select_with_mask",       @selector(OnSelectByMask:),             new SelectAllByMask{true}},
 {"menu.command.select_with_extension",  @selector(OnQuickSelectByExtension:),   new SelectAllByExtension{true}},
+{"menu.command.deselect_with_mask",     @selector(OnDeselectByMask:),           new SelectAllByMask{false}},
 {"menu.command.deselect_with_extension",@selector(OnQuickDeselectByExtension:), new SelectAllByExtension{false}},
 {"menu.command.volume_information",     @selector(OnDetailedVolumeInformation:),new ShowVolumeInformation},
 {"menu.command.file_attributes",        @selector(OnFileAttributes:),           new ChangeAttributes},

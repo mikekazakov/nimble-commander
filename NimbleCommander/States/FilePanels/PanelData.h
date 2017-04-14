@@ -214,11 +214,12 @@ public:
     const Statistics &Stats() const;
     
     // manupulation with user flags for directory entries
+    
+    // TODO: bool results?????
+    
     void CustomFlagsSelectSorted(int _at_sorted_pos, bool _is_selected);
     void CustomFlagsSelectSorted(const vector<bool>& _is_selected);
     void CustomFlagsSelectAllSorted(bool _select);
-    void CustomFlagsSelectInvert();
-    unsigned CustomFlagsSelectAllSortedByMask(NSString* _mask, bool _select, bool _ignore_dirs);
     
     void CustomIconClearAll();
     void CustomFlagsClearHighlights();

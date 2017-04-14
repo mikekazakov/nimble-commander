@@ -19,6 +19,7 @@
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelViewLayoutSupport.h"
+#include "Helpers/Clipboard.h"
 
 #include <VFS/NetDropbox.h>
 
@@ -908,47 +909,11 @@ static bool RouteKeyboardInputIntoTerminal()
     return false;
 }
 
-- (bool)writeFilesnamesPBoard:(NSPasteboard *)pboard
-{
-    NSMutableArray *filenames = [NSMutableArray new];
-    for( auto &i: self.selectedEntriesOrFocusedEntry )
-        if( i.Host()->IsNativeFS() )
-            if( auto path = [NSString stringWithUTF8StdString:i.Path()] )
-                [filenames addObject:path];
-    
-    if( filenames.count == 0 )
-        return false;
-    
-    [pboard clearContents];
-    [pboard declareTypes:@[NSFilenamesPboardType] owner:nil];
-    return [pboard setPropertyList:filenames forType:NSFilenamesPboardType] == TRUE;
-}
-
-- (bool)writeURLSPBoard:(NSPasteboard *)pboard
-{
-    NSMutableArray *fileurls = [NSMutableArray new];
-    for( auto &i: self.selectedEntriesOrFocusedEntry )
-        if( i.Host()->IsNativeFS() )
-            if( auto path = [NSString stringWithUTF8StdString:i.Path()] )
-                if( auto url = [NSURL fileURLWithPath:path])
-                    [fileurls addObject:url];
-    
-    if( fileurls.count == 0 )
-        return false;
-    
-    [pboard clearContents]; // clear pasteboard to take ownership
-    [pboard declareTypes:@[(__bridge NSString *)kUTTypeFileURL] owner:nil];
-    return [pboard writeObjects:fileurls]; // write the URLs
-}
-
 - (id)validRequestorForSendType:(NSString *)sendType
                      returnType:(NSString *)returnType
 {
     if(([sendType isEqualToString:NSFilenamesPboardType] ||
-        [sendType isEqualToString:(__bridge NSString *)kUTTypeFileURL]) /*&&
-        self.isPanelActive &&
-        self.activePanelData->Listing().HasCommonHost() &&
-        self.activePanelData->Listing().Host()->IsNativeFS() */ )
+        [sendType isEqualToString:(__bridge NSString *)kUTTypeFileURL]))
         return self;
     
     return [super validRequestorForSendType:sendType returnType:returnType];
@@ -956,12 +921,11 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard types:(NSArray *)types
 {
-    if( [types containsObject:NSFilenamesPboardType] )
-        return [self writeFilesnamesPBoard:pboard];
     if( [types containsObject:(__bridge NSString *)kUTTypeFileURL] )
-        return [self writeURLSPBoard:pboard];
-    
-    return NO;
+        return panel::ClipboardSupport::WriteURLSPBoard(self, pboard);
+    if( [types containsObject:NSFilenamesPboardType] )
+        return panel::ClipboardSupport::WriteFilesnamesPBoard(self, pboard);
+    return false;
 }
 
 - (panel::ActivityTicket) registerExtActivity
@@ -1019,7 +983,6 @@ static bool RouteKeyboardInputIntoTerminal()
 - (void) commitCancelableLoadingTask:(function<void(const function<bool()> &_is_cancelled)>) _task
 {
     auto sq = &m_DirectoryLoadingQ;
-//    function<bool()> ccb = ;
     m_DirectoryLoadingQ.Run([=]{
         _task( [sq]{ return sq->IsStopped(); } );
     });

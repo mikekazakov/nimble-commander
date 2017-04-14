@@ -40,6 +40,11 @@
 #include "Actions/RenameInPlace.h"
 #include "Actions/Select.h"
 
+
+// TEMP!!
+#include "Helpers/Clipboard.h"
+
+
 static const panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
 
@@ -515,7 +520,8 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 
 - (IBAction)copy:(id)sender
 {
-    [self writeFilesnamesPBoard:NSPasteboard.generalPasteboard];
+//    [self writeFilesnamesPBoard:NSPasteboard.generalPasteboard];
+    panel::ClipboardSupport::WriteFilesnamesPBoard(self, NSPasteboard.generalPasteboard);
 }
 
 - (IBAction)OnSelectByMask:(id)sender { Perform(_cmd, self, sender); }

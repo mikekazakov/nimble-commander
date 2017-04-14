@@ -166,7 +166,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         m_ItemsLabel.bordered = false;
         m_ItemsLabel.editable = false;
         m_ItemsLabel.drawsBackground = false;
-        m_ItemsLabel.lineBreakMode = NSLineBreakByTruncatingHead;
+        m_ItemsLabel.lineBreakMode = NSLineBreakByClipping;
         m_ItemsLabel.usesSingleLineMode = true;
         m_ItemsLabel.alignment = NSTextAlignmentCenter;
         [m_ItemsLabel setContentCompressionResistancePriority:40

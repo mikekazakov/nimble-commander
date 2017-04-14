@@ -459,6 +459,7 @@
 		CF818B6C1EA0615300BC28E6 /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */; };
 		CF818B6D1EA0615300BC28E6 /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */; };
 		CF818B6E1EA0615400BC28E6 /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */; };
+		CF818B711EA07A5B00BC28E6 /* Clipboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Clipboard.mm */; };
 		CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
@@ -1408,12 +1409,6 @@
 
 /* Begin PBXFileReference section */
 		B50976A31729BA150080412E /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
-		B52D9A7B1736D7DE00EC7154 /* PanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanelViewPresentation.mm; sourceTree = "<group>"; };
-		B52D9A7C1736D7DE00EC7154 /* PanelViewPresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanelViewPresentation.h; sourceTree = "<group>"; };
-		B52D9A7E1736DDF200EC7154 /* ClassicPanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ClassicPanelViewPresentation.mm; sourceTree = "<group>"; };
-		B52D9A7F1736DDF200EC7154 /* ClassicPanelViewPresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassicPanelViewPresentation.h; sourceTree = "<group>"; };
-		B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentation.h; sourceTree = "<group>"; };
-		B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentation.mm; sourceTree = "<group>"; };
 		CF0139A31E98BA6700E44F2D /* FilterPopUpMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilterPopUpMenu.h; path = NimbleCommander/GeneralUI/FilterPopUpMenu.h; sourceTree = SOURCE_ROOT; };
 		CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilterPopUpMenu.mm; path = NimbleCommander/GeneralUI/FilterPopUpMenu.mm; sourceTree = SOURCE_ROOT; };
 		CF0139AD1E99DAC100E44F2D /* ToggleSort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToggleSort.h; path = NimbleCommander/States/FilePanels/Actions/ToggleSort.h; sourceTree = SOURCE_ROOT; };
@@ -1487,8 +1482,6 @@
 		CF27F9381E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTabModel.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTabModel.mm; sourceTree = SOURCE_ROOT; };
 		CF282AC81E0A2D6300EC7F33 /* PanelBriefViewCollectionView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewCollectionView.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewCollectionView.h; sourceTree = SOURCE_ROOT; };
 		CF282AC91E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewCollectionView.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewCollectionView.mm; sourceTree = SOURCE_ROOT; };
-		CF29312E17D79BA100648A90 /* IconsGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = IconsGenerator.mm; sourceTree = "<group>"; };
-		CF29312F17D79BA100648A90 /* IconsGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconsGenerator.h; sourceTree = "<group>"; };
 		CF2A3CDF1E667F5E00E6C6F0 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = 3rd_Party/libssh2/built/libssh2.a; sourceTree = SOURCE_ROOT; };
 		CF2B2B3B1D825BEC00E4E8CB /* libcorecrypto.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcorecrypto.tbd; path = usr/lib/system/libcorecrypto.tbd; sourceTree = SDKROOT; };
 		CF2B2B3D1D825C0A00E4E8CB /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
@@ -1711,6 +1704,8 @@
 		CF811A911D8262BE001F9E7F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_Party/OpenSSL/built/libssl.a; sourceTree = SOURCE_ROOT; };
 		CF818B3B1EA05AC600BC28E6 /* PanelDataSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataSelection.h; path = NimbleCommander/States/FilePanels/PanelDataSelection.h; sourceTree = SOURCE_ROOT; };
 		CF818B3C1EA05AC600BC28E6 /* PanelDataSelection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataSelection.mm; path = NimbleCommander/States/FilePanels/PanelDataSelection.mm; sourceTree = SOURCE_ROOT; };
+		CF818B6F1EA07A5B00BC28E6 /* Clipboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Clipboard.h; path = NimbleCommander/States/FilePanels/Helpers/Clipboard.h; sourceTree = SOURCE_ROOT; };
+		CF818B701EA07A5B00BC28E6 /* Clipboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Clipboard.mm; path = NimbleCommander/States/FilePanels/Helpers/Clipboard.mm; sourceTree = SOURCE_ROOT; };
 		CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobSourceItems.cpp; path = NimbleCommander/Operations/Copy/JobSourceItems.cpp; sourceTree = SOURCE_ROOT; };
 		CF84C8DD1DB74B3A00B4E888 /* PanelViewHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeader.h; path = NimbleCommander/States/FilePanels/PanelViewHeader.h; sourceTree = SOURCE_ROOT; };
 		CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeader.mm; path = NimbleCommander/States/FilePanels/PanelViewHeader.mm; sourceTree = SOURCE_ROOT; };
@@ -2058,16 +2053,10 @@
 		CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFTPConnectionSheetController.h; path = ../NimbleCommander/States/FilePanels/Views/SFTPConnectionSheetController.h; sourceTree = "<group>"; };
 		CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SFTPConnectionSheetController.mm; path = ../NimbleCommander/States/FilePanels/Views/SFTPConnectionSheetController.mm; sourceTree = "<group>"; };
 		CFDF449F1D2B990A0062F7AD /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = NimbleCommander/Resources/Media.xcassets; sourceTree = SOURCE_ROOT; };
-		CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationHeader.mm; sourceTree = "<group>"; };
-		CFE38BA418FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationHeader.h; sourceTree = "<group>"; };
-		CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationItemsFooter.mm; sourceTree = "<group>"; };
-		CFE38BA918FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationItemsFooter.h; sourceTree = "<group>"; };
 		CFE9DDF81BE1C2CE007BBCD3 /* DisclosureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisclosureViewController.h; path = 3rd_party/DisclosureViewController/DisclosureViewController.h; sourceTree = "<group>"; };
 		CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DisclosureViewController.m; path = 3rd_party/DisclosureViewController/DisclosureViewController.m; sourceTree = "<group>"; };
 		CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MassCopySheetDisclosureViewController.xib; path = NimbleCommander/Operations/Copy/MassCopySheetDisclosureViewController.xib; sourceTree = SOURCE_ROOT; };
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
-		CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ModernPanelViewPresentationVolumeFooter.mm; sourceTree = "<group>"; };
-		CFF0C83718FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModernPanelViewPresentationVolumeFooter.h; sourceTree = "<group>"; };
 		CFF695701E20C6CF0069EEA4 /* TabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TabBarStyle.h; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.h; sourceTree = SOURCE_ROOT; };
 		CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TabBarStyle.mm; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.mm; sourceTree = SOURCE_ROOT; };
 		CFF6F3A11A13567C00011177 /* Nimble Commander Pro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander Pro.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2309,7 +2298,6 @@
 				CF7C7CC21E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib */,
 				CF24376E1DEDF9B300245C14 /* PanelViewFooter.h */,
 				CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */,
-				CF5D25EA1DB6040C0073156F /* Old */,
 				CF5D25E31DB604060073156F /* Brief */,
 				CF84C8EF1DBB2AA900B4E888 /* List */,
 			);
@@ -2632,27 +2620,6 @@
 			name = Brief;
 			sourceTree = "<group>";
 		};
-		CF5D25EA1DB6040C0073156F /* Old */ = {
-			isa = PBXGroup;
-			children = (
-				CF29312F17D79BA100648A90 /* IconsGenerator.h */,
-				CF29312E17D79BA100648A90 /* IconsGenerator.mm */,
-				B52D9A7B1736D7DE00EC7154 /* PanelViewPresentation.mm */,
-				B52D9A7C1736D7DE00EC7154 /* PanelViewPresentation.h */,
-				B52D9A7E1736DDF200EC7154 /* ClassicPanelViewPresentation.mm */,
-				B52D9A7F1736DDF200EC7154 /* ClassicPanelViewPresentation.h */,
-				B52D9A84173E2EF200EC7154 /* ModernPanelViewPresentation.mm */,
-				B52D9A83173E2EE700EC7154 /* ModernPanelViewPresentation.h */,
-				CFE38BA818FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.mm */,
-				CFE38BA918FA834B00F9B3EB /* ModernPanelViewPresentationItemsFooter.h */,
-				CFF0C83618FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.mm */,
-				CFF0C83718FBB98500885B40 /* ModernPanelViewPresentationVolumeFooter.h */,
-				CFE38BA318FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.mm */,
-				CFE38BA418FA63CE00F9B3EB /* ModernPanelViewPresentationHeader.h */,
-			);
-			name = Old;
-			sourceTree = "<group>";
-		};
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
@@ -2845,6 +2812,8 @@
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				CF818B6F1EA07A5B00BC28E6 /* Clipboard.h */,
+				CF818B701EA07A5B00BC28E6 /* Clipboard.mm */,
 				CFD8CD591E7A80D600E4DC53 /* FavoritesMenuDelegate.h */,
 				CFD8CD5A1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm */,
 				CFD8CD4F1E7A31A100E4DC53 /* FavoriteComposing.h */,
@@ -4542,6 +4511,7 @@
 				CFDAC2971DFBF9260039A104 /* TermShellTask.cpp in Sources */,
 				CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */,
 				CFDAC2AE1DFD096E0039A104 /* ConnectionsMenuDelegate.mm in Sources */,
+				CF818B711EA07A5B00BC28E6 /* Clipboard.mm in Sources */,
 				CF5FE7CB1E0CDEA600CD83B4 /* FilesDraggingSource.mm in Sources */,
 				CFDAC2D81DFD11970039A104 /* LSUrls.mm in Sources */,
 				CF7D138B1BF5E38B001F53FD /* OperationDialogAlert.mm in Sources */,

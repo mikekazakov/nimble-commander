@@ -55,7 +55,6 @@
         if( sortpos >= 0 )
         {
             m_View.curpos = sortpos;
-            m_Data.CustomFlagsSelectAllSorted(false);
             if(!self.isActive)
                 [(MainWindowFilePanelState*)self.state ActivatePanelByController:self];
             if(done)

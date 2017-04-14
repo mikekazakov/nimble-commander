@@ -925,25 +925,26 @@ void PanelData::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
     CustomFlagsSelectRaw(m_EntriesByCustomSort[_at_pos], _is_selected);
 }
 
-void PanelData::CustomFlagsSelectSorted(const vector<bool>& _is_selected)
+bool PanelData::CustomFlagsSelectSorted(const vector<bool>& _is_selected)
 {
-    for( int i = 0, e = (int)min(_is_selected.size(), m_EntriesByCustomSort.size());
-        i != e; ++i ) {
+    bool changed = false;
+    for( int i = 0, e = (int)min(_is_selected.size(), m_EntriesByCustomSort.size()); i != e; ++i ) {
         const auto raw_pos = m_EntriesByCustomSort[i];
         if( !m_Listing->IsDotDot(raw_pos) ) {
-            m_VolatileData[raw_pos].toggle_selected( _is_selected[i] );
+            if( !changed ) {
+                if( m_VolatileData[raw_pos].is_selected() != _is_selected[i] ) {
+                    m_VolatileData[raw_pos].toggle_selected( _is_selected[i] );
+                    changed = true;
+                }
+            }
+            else {
+                m_VolatileData[raw_pos].toggle_selected( _is_selected[i] );
+            }
         }
     }
-    UpdateStatictics();
-}
-
-void PanelData::CustomFlagsSelectAllSorted(bool _select)
-{
-    for(auto i: m_EntriesByCustomSort)
-        if( !m_Listing->IsDotDot(i) )
-            m_VolatileData[i].toggle_selected(_select);
-
-    UpdateStatictics();
+    if( changed )
+        UpdateStatictics();
+    return changed;
 }
 
 vector<string> PanelData::SelectedEntriesFilenames() const

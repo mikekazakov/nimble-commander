@@ -218,8 +218,7 @@ public:
     // TODO: bool results?????
     
     void CustomFlagsSelectSorted(int _at_sorted_pos, bool _is_selected);
-    void CustomFlagsSelectSorted(const vector<bool>& _is_selected);
-    void CustomFlagsSelectAllSorted(bool _select);
+    bool CustomFlagsSelectSorted(const vector<bool>& _is_selected);
     
     void CustomIconClearAll();
     void CustomFlagsClearHighlights();

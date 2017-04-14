@@ -686,8 +686,8 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (void) setEntriesSelection:(const vector<bool>&)_selection
 {
-    m_Data.CustomFlagsSelectSorted(_selection);
-    [m_View volatileDataChanged];
+    if( m_Data.CustomFlagsSelectSorted(_selection) )
+        [m_View volatileDataChanged];
 }
 
 - (void) OnPathChanged

@@ -11,6 +11,7 @@
 #include <VFS/Native.h>
 #include <VFS/VFSListingInput.h>
 #include <NimbleCommander/States/FilePanels/PanelData.h>
+#include <NimbleCommander/States/FilePanels/PanelDataSelection.h>
 
 static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filenames )
 {
@@ -224,25 +225,48 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     XCTAssert(data.SortedDirectoryEntries().size() == count);
 }
 
+//  unsigned CustomFlagsSelectAllSortedByExtension(const string &_extension, bool _select, bool _ignore_dirs);
+
+
 - (void)testSelectionWithExtension
 {
+    VFSHostPtr host = VFSNativeHost::SharedHost();
     VFSListingPtr listing;
-    VFSNativeHost::SharedHost()->FetchFlexibleListing("/bin/", listing, 0, nullptr);
     PanelData data;
-    data.Load(listing, PanelData::PanelType::Directory);
-    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("", true, true) >= 30 );
+    PanelDataSelection selector{data, true};
+    PanelDataSelection selector_w_dirs{data, false};
     
-    VFSNativeHost::SharedHost()->FetchFlexibleListing("/usr/share/man/man1", listing, 0, nullptr);
+    host->FetchDirectoryListing("/bin/", listing, 0);
     data.Load(listing, PanelData::PanelType::Directory);
-    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("1", true, true) >= 1000 );
+    data.CustomFlagsSelectSorted( selector.SelectionByExtension("", true) );
+    XCTAssert( data.Stats().selected_entries_amount >= 30 );
+    
+    host->FetchDirectoryListing("/usr/share/man/man1", listing, 0);
+    data.Load(listing, PanelData::PanelType::Directory);
+    data.CustomFlagsSelectSorted( selector.SelectionByExtension("1", true) );
+    XCTAssert( data.Stats().selected_entries_amount >= 1000 );
+    
+    host->FetchDirectoryListing("/System/Library/CoreServices", listing, 0);
 
-    VFSNativeHost::SharedHost()->FetchFlexibleListing("/System/Library/CoreServices", listing, 0, nullptr);
     data.Load(listing, PanelData::PanelType::Directory);
-    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("app", true, true) == 0 );
-    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("app", true, false) >= 30 );
-    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("App", true, false) >= 30 );
-    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("ApP", true, false) >= 30 );
-    XCTAssert( data.CustomFlagsSelectAllSortedByExtension("APP", true, false) >= 30 );            
+    data.CustomFlagsSelectSorted( selector.SelectionByExtension("app", true) );
+    XCTAssert( data.Stats().selected_entries_amount == 0 );
+
+    data.Load(listing, PanelData::PanelType::Directory);
+    data.CustomFlagsSelectSorted( selector_w_dirs.SelectionByExtension("app", true) );
+    XCTAssert( data.Stats().selected_entries_amount >= 30 );
+
+    data.Load(listing, PanelData::PanelType::Directory);
+    data.CustomFlagsSelectSorted( selector_w_dirs.SelectionByExtension("App", true) );
+    XCTAssert( data.Stats().selected_entries_amount >= 30 );
+    
+    data.Load(listing, PanelData::PanelType::Directory);
+    data.CustomFlagsSelectSorted( selector_w_dirs.SelectionByExtension("ApP", true) );
+    XCTAssert( data.Stats().selected_entries_amount >= 30 );
+
+    data.Load(listing, PanelData::PanelType::Directory);
+    data.CustomFlagsSelectSorted( selector_w_dirs.SelectionByExtension("APP", true) );
+    XCTAssert( data.Stats().selected_entries_amount >= 30 );
 }
 
 @end

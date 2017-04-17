@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include <sys/dirent.h>
 #include "tests_common.h"
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
@@ -29,6 +30,29 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filena
         l.unix_types.emplace_back(0);
     }
     
+    return VFSListing::Build(move(l));
+}
+
+// filename, is_directory
+static shared_ptr<VFSListing> ProduceDummyListing( const vector<tuple<string,bool>> &_entries )
+{
+    VFSListingInput l;
+    
+    l.directories.reset( variable_container<>::type::common );
+    l.directories[0] = "/";
+
+    l.hosts.reset( variable_container<>::type::common );
+    l.hosts[0] = VFSHost::DummyHost();
+    
+    for(auto &i: _entries) {
+        const auto &filename = get<0>(i);
+        const auto is_directory = get<1>(i);
+        l.filenames.emplace_back(filename);
+        l.unix_modes.emplace_back(is_directory ?
+                                  (S_IRUSR | S_IWUSR | S_IFDIR) :
+                                  (S_IRUSR | S_IWUSR | S_IFREG));
+        l.unix_types.emplace_back(is_directory ? DT_DIR : DT_REG);
+    }
     return VFSListing::Build(move(l));
 }
 
@@ -267,6 +291,45 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     data.Load(listing, PanelData::PanelType::Directory);
     data.CustomFlagsSelectSorted( selector_w_dirs.SelectionByExtension("APP", true) );
     XCTAssert( data.Stats().selected_entries_amount >= 30 );
+}
+
+- (void) testDirectorySorting
+{
+    const vector<tuple<string,bool>> entries = {{
+        {"Alpha.2", true},
+        {"Bravo.1", true},
+        {"Charlie.3", true}
+    }};
+    auto listing = ProduceDummyListing(entries);
+
+    PanelData data;
+    data.Load(listing, PanelData::PanelType::Directory);
+    
+    PanelData::PanelSortMode sorting;
+    sorting.sort = PanelData::PanelSortMode::SortByExt;
+    data.SetSortMode(sorting);
+    XCTAssert( data.EntryAtSortPosition(0).Filename() == "Bravo.1" );
+    XCTAssert( data.EntryAtSortPosition(1).Filename() == "Alpha.2" );
+    XCTAssert( data.EntryAtSortPosition(2).Filename() == "Charlie.3" );
+    
+    sorting.extensionless_dirs = true;
+    data.SetSortMode(sorting);
+    XCTAssert( data.EntryAtSortPosition(0).Filename() == "Alpha.2" );
+    XCTAssert( data.EntryAtSortPosition(1).Filename() == "Bravo.1" );
+    XCTAssert( data.EntryAtSortPosition(2).Filename() == "Charlie.3" );
+    
+    sorting = PanelData::PanelSortMode{};
+    sorting.sort = PanelData::PanelSortMode::SortByExtRev;
+    data.SetSortMode(sorting);
+    XCTAssert( data.EntryAtSortPosition(0).Filename() == "Charlie.3" );
+    XCTAssert( data.EntryAtSortPosition(1).Filename() == "Alpha.2" );
+    XCTAssert( data.EntryAtSortPosition(2).Filename() == "Bravo.1" );
+
+    sorting.extensionless_dirs = true;
+    data.SetSortMode(sorting);
+    XCTAssert( data.EntryAtSortPosition(0).Filename() == "Charlie.3" );
+    XCTAssert( data.EntryAtSortPosition(1).Filename() == "Bravo.1" );
+    XCTAssert( data.EntryAtSortPosition(2).Filename() == "Alpha.2" );
 }
 
 @end

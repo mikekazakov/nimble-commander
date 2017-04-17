@@ -461,6 +461,12 @@
 		CF818B6E1EA0615400BC28E6 /* FilterPopUpMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0139A41E98BA6700E44F2D /* FilterPopUpMenu.mm */; };
 		CF818B711EA07A5B00BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
 		CF818B741EA0830400BC28E6 /* CopyToPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B731EA0830400BC28E6 /* CopyToPasteboard.mm */; };
+		CF818B751EA4572C00BC28E6 /* CopyToPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B731EA0830400BC28E6 /* CopyToPasteboard.mm */; };
+		CF818B771EA4572E00BC28E6 /* CopyToPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B731EA0830400BC28E6 /* CopyToPasteboard.mm */; };
+		CF818B781EA4572F00BC28E6 /* CopyToPasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B731EA0830400BC28E6 /* CopyToPasteboard.mm */; };
+		CF818B7A1EA4573400BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
+		CF818B7B1EA4573400BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
+		CF818B7C1EA4573500BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
 		CF826B4E1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B4F1BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
 		CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */; };
@@ -3915,6 +3921,7 @@
 				CFD726621E42E1DC00603077 /* ExternalEditorInfo.mm in Sources */,
 				CFD726081E42E07000603077 /* AppDelegateCPP.mm in Sources */,
 				CF9069771BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
+				CF818B781EA4572F00BC28E6 /* CopyToPasteboard.mm in Sources */,
 				CF50C3F91C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFD726981E42E23000603077 /* PanelDataPersistency.cpp in Sources */,
 				CFD7262D1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */,
@@ -3942,6 +3949,7 @@
 				CFD727301E42E34B00603077 /* TermSingleTask.mm in Sources */,
 				CF4E56AB1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFD7261D1E42E0A600603077 /* ThemesManager.mm in Sources */,
+				CF818B7A1EA4573400BC28E6 /* Pasteboard.mm in Sources */,
 				CFD726551E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFD726DE1E42E2C200603077 /* PanelListView.mm in Sources */,
 				CF818B551EA0610D00BC28E6 /* CalculateSizes.mm in Sources */,
@@ -4114,6 +4122,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF818B771EA4572E00BC28E6 /* CopyToPasteboard.mm in Sources */,
 				CFA5395D1D433E2A00C562A7 /* FileDeletionOperation.mm in Sources */,
 				CFA5395E1D433E2A00C562A7 /* FileAlreadyExistSheetController.mm in Sources */,
 				CFD726E21E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
@@ -4332,6 +4341,7 @@
 				CFD7270D1E42E30900603077 /* QuickPreview.mm in Sources */,
 				CF1FBF241E8F57CD00D3569C /* FavoritesMenuDelegate.mm in Sources */,
 				CFD727011E42E2F900603077 /* MainWndGoToButton.mm in Sources */,
+				CF818B7C1EA4573500BC28E6 /* Pasteboard.mm in Sources */,
 				CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 				CF818B6B1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
 				CFD726271E42E0BA00603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
@@ -4661,6 +4671,7 @@
 				CF826B501BC4D7BA0031C5D0 /* JobSourceItems.cpp in Sources */,
 				CFD727021E42E2FC00603077 /* FilePanelMainSplitView.mm in Sources */,
 				CFD726761E42E1FE00603077 /* PanelAux.mm in Sources */,
+				CF818B751EA4572C00BC28E6 /* CopyToPasteboard.mm in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
 				CFD726C21E42E29100603077 /* PanelViewFooter.mm in Sources */,
 				CFD6DD1A1D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
@@ -4669,6 +4680,7 @@
 				CFD7268E1E42E22200603077 /* PanelController+QuickSearch.mm in Sources */,
 				CF50C4101C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
 				CF876D391D51E0AF009C0CCE /* BigFileViewDataBackend.mm in Sources */,
+				CF818B7B1EA4573400BC28E6 /* Pasteboard.mm in Sources */,
 				CF4E56EE1D5072E500452912 /* FileMask.cpp in Sources */,
 				CFD726F31E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CF876D3B1D51E0AF009C0CCE /* BigFileViewHistory.mm in Sources */,

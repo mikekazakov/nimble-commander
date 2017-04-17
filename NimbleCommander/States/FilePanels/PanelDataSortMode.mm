@@ -6,7 +6,8 @@ PanelDataSortMode::PanelDataSortMode() noexcept:
     sort(SortByRawCName),
     sep_dirs(false),
     case_sens(false),
-    numeric_sort(false)
+    numeric_sort(false),
+    extensionless_dirs(false)
 {}
 
 bool PanelDataSortMode::isdirect() const noexcept
@@ -49,7 +50,8 @@ bool PanelDataSortMode::operator ==(const PanelDataSortMode& _r) const noexcept
     return sort == _r.sort &&
            sep_dirs == _r.sep_dirs &&
            case_sens == _r.case_sens &&
-           numeric_sort == _r.numeric_sort;
+           numeric_sort == _r.numeric_sort &&
+           extensionless_dirs == _r.extensionless_dirs;
 }
 
 bool PanelDataSortMode::operator !=(const PanelDataSortMode& _r) const noexcept

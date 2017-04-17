@@ -22,9 +22,26 @@ struct PanelDataSortMode
     };
     
     Mode sort;
-    bool sep_dirs : 1;      // separate directories from files, like win-like
-    bool case_sens : 1;     // case sensitivity when comparing filenames, ignored on Raw Sorting (SortByRawCName)
-    bool numeric_sort : 1;  // try to treat filenames as numbers and use them as compare basis
+
+    /**
+     * separate directories from files, like win-like
+     */
+    bool sep_dirs : 1;
+
+    /**
+     * treat directories like they don't have any extension at all
+     */
+    bool extensionless_dirs : 1;
+    
+    /**
+     * case sensitivity when comparing filenames, ignored on Raw Sorting (SortByRawCName)
+     */
+    bool case_sens : 1;
+    
+    /**
+     * try to treat filenames as numbers and use them as compare basis
+     */
+    bool numeric_sort : 1;
     
     PanelDataSortMode() noexcept;
     bool isdirect() const noexcept;

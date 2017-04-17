@@ -171,6 +171,19 @@ void ToggleSortingFoldersSeparation::Perform( PanelController *_target, id _send
     [_target changeSortingModeTo:mode];
 }
 
+bool ToggleSortingExtensionlessFolders::ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const
+{
+    _item.state = _target.data.SortMode().extensionless_dirs;
+    return Predicate( _target );
+}
+
+void ToggleSortingExtensionlessFolders::Perform( PanelController *_target, id _sender ) const
+{
+    auto mode = _target.data.SortMode();
+    mode.extensionless_dirs = !mode.extensionless_dirs;
+    [_target changeSortingModeTo:mode];
+}
+
 bool ToggleSortingNumerical::ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const
 {
     _item.state = _target.data.SortMode().numeric_sort;

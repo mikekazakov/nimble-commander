@@ -552,6 +552,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 - (IBAction)OnCalculateAllSizes:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)ToggleViewHiddenFiles:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)ToggleSeparateFoldersFromFiles:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)ToggleExtensionlessFolders:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)ToggleCaseSensitiveComparison:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)ToggleNumericComparison:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)ToggleSortByName:(id)sender { Perform(_cmd, self, sender); }
@@ -598,16 +599,17 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.edit.select_all",                @selector(selectAll:),              new SelectAll},
 {"menu.edit.deselect_all",              @selector(deselectAll:),            new DeselectAll},
 {"menu.edit.invert_selection",          @selector(OnMenuInvertSelection:),  new InvertSelection},
-{"menu.view.sorting_by_name",           @selector(ToggleSortByName:),               new ToggleSortingByName},
-{"menu.view.sorting_by_extension",      @selector(ToggleSortByExt:),                new ToggleSortingByExtension},
-{"menu.view.sorting_by_size",           @selector(ToggleSortBySize:),               new ToggleSortingBySize},
-{"menu.view.sorting_by_modify_time",    @selector(ToggleSortByMTime:),              new ToggleSortingByModifiedTime},
-{"menu.view.sorting_by_creation_time",  @selector(ToggleSortByBTime:),              new ToggleSortingByCreatedTime},
-{"menu.view.sorting_by_added_time",     @selector(ToggleSortByATime:),              new ToggleSortingByAddedTime},
-{"menu.view.sorting_case_sensitive",    @selector(ToggleCaseSensitiveComparison:),  new ToggleSortingCaseSensitivity},
-{"menu.view.sorting_separate_folders",  @selector(ToggleSeparateFoldersFromFiles:), new ToggleSortingFoldersSeparation},
-{"menu.view.sorting_numeric_comparison",@selector(ToggleNumericComparison:),        new ToggleSortingNumerical},
-{"menu.view.sorting_view_hidden",       @selector(ToggleViewHiddenFiles:),          new ToggleSortingShowHidden},
+{"menu.view.sorting_by_name",               @selector(ToggleSortByName:),               new ToggleSortingByName},
+{"menu.view.sorting_by_extension",          @selector(ToggleSortByExt:),                new ToggleSortingByExtension},
+{"menu.view.sorting_by_size",               @selector(ToggleSortBySize:),               new ToggleSortingBySize},
+{"menu.view.sorting_by_modify_time",        @selector(ToggleSortByMTime:),              new ToggleSortingByModifiedTime},
+{"menu.view.sorting_by_creation_time",      @selector(ToggleSortByBTime:),              new ToggleSortingByCreatedTime},
+{"menu.view.sorting_by_added_time",         @selector(ToggleSortByATime:),              new ToggleSortingByAddedTime},
+{"menu.view.sorting_case_sensitive",        @selector(ToggleCaseSensitiveComparison:),  new ToggleSortingCaseSensitivity},
+{"menu.view.sorting_separate_folders",      @selector(ToggleSeparateFoldersFromFiles:), new ToggleSortingFoldersSeparation},
+{"menu.view.sorting_extensionless_folders", @selector(ToggleExtensionlessFolders:),     new ToggleSortingExtensionlessFolders},
+{"menu.view.sorting_numeric_comparison",    @selector(ToggleNumericComparison:),        new ToggleSortingNumerical},
+{"menu.view.sorting_view_hidden",           @selector(ToggleViewHiddenFiles:),          new ToggleSortingShowHidden},
 {"menu.view.toggle_layout_1",  @selector(onToggleViewLayout1:),  new ToggleLayout{0}},
 {"menu.view.toggle_layout_2",  @selector(onToggleViewLayout2:),  new ToggleLayout{1}},
 {"menu.view.toggle_layout_3",  @selector(onToggleViewLayout3:),  new ToggleLayout{2}},

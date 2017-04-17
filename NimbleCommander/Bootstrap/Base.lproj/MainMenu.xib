@@ -477,6 +477,12 @@ DQ
                                                 <action selector="ToggleSeparateFoldersFromFiles:" target="-1" id="874"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Extensionless Folders" tag="13270" id="rIg-1l-nNU">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="ToggleExtensionlessFolders:" target="-1" id="b3R-nn-XVz"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Case-Sensitive Comparison" tag="13160" id="902">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

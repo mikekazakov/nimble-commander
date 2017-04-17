@@ -54,6 +54,12 @@ struct ToggleSortingFoldersSeparation : PanelAction
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
+struct ToggleSortingExtensionlessFolders : PanelAction
+{
+    bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
+    void Perform( PanelController *_target, id _sender ) const override;
+};
+
 struct ToggleSortingNumerical : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;

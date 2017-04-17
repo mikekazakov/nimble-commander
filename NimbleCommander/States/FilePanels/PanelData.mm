@@ -1256,6 +1256,7 @@ int PanelData::SortLowerBoundForEntrySortKeys(const EntrySortKeys& _keys) const
 }
 
 static const auto g_RestorationSepDirsKey = "separateDirectories";
+static const auto g_RestorationExtlessDirsKey = "extensionlessDirectories";
 static const auto g_RestorationShowHiddenKey = "showHidden";
 static const auto g_RestorationCaseSensKey = "caseSensitive";
 static const auto g_RestorationNumericSortKey = "numericSort";
@@ -1265,10 +1266,13 @@ rapidjson::StandaloneValue PanelData::EncodeSortingOptions() const
 {
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
     auto add_bool = [&](const char*_name, bool _v) {
-        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator), rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
+        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator),
+                       rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
     auto add_int = [&](const char*_name, int _v) {
-        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator), rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
+        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator),
+                       rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
     add_bool(g_RestorationSepDirsKey, SortMode().sep_dirs);
+    add_bool(g_RestorationExtlessDirsKey, SortMode().extensionless_dirs);
     add_bool(g_RestorationShowHiddenKey, HardFiltering().show_hidden);
     add_bool(g_RestorationCaseSensKey, SortMode().case_sens);
     add_bool(g_RestorationNumericSortKey, SortMode().numeric_sort);
@@ -1278,24 +1282,27 @@ rapidjson::StandaloneValue PanelData::EncodeSortingOptions() const
 
 void PanelData::DecodeSortingOptions(const rapidjson::StandaloneValue& _options)
 {
+    using namespace rapidjson;
     if( !_options.IsObject() )
         return;
     
     auto sort_mode = SortMode();
-    if( _options.HasMember(g_RestorationSepDirsKey) && _options[g_RestorationSepDirsKey].IsBool() )
-        sort_mode.sep_dirs = _options[g_RestorationSepDirsKey].GetBool();
-    if( _options.HasMember(g_RestorationCaseSensKey) && _options[g_RestorationCaseSensKey].IsBool() )
-        sort_mode.case_sens = _options[g_RestorationCaseSensKey].GetBool();
-    if( _options.HasMember(g_RestorationNumericSortKey) && _options[g_RestorationNumericSortKey].IsBool() )
-        sort_mode.numeric_sort = _options[g_RestorationNumericSortKey].GetBool();
-    if( _options.HasMember(g_RestorationSortModeKey) && _options[g_RestorationSortModeKey].IsInt() )
-        if( PanelSortMode::validate( (PanelSortMode::Mode)_options[g_RestorationSortModeKey].GetInt()) )
-            sort_mode.sort = (PanelSortMode::Mode)_options[g_RestorationSortModeKey].GetInt();
+    if( auto v = GetOptionalBoolFromObject(_options, g_RestorationSepDirsKey) )
+        sort_mode.sep_dirs = *v;
+    if( auto v = GetOptionalBoolFromObject(_options, g_RestorationExtlessDirsKey) )
+        sort_mode.extensionless_dirs = *v;
+    if( auto v = GetOptionalBoolFromObject(_options, g_RestorationCaseSensKey) )
+        sort_mode.case_sens = *v;
+    if( auto v = GetOptionalBoolFromObject(_options, g_RestorationNumericSortKey) )
+        sort_mode.numeric_sort = *v;
+    if( auto v = GetOptionalIntFromObject(_options, g_RestorationSortModeKey)  )
+        if( auto mode = (PanelSortMode::Mode)*v; PanelSortMode::validate(mode) )
+            sort_mode.sort = mode;
     SetSortMode(sort_mode);
     
     auto hard_filtering = HardFiltering();
-    if( _options.HasMember(g_RestorationShowHiddenKey) && _options[g_RestorationShowHiddenKey].IsBool() )
-        hard_filtering.show_hidden = _options[g_RestorationShowHiddenKey].GetBool();
+    if( auto v = GetOptionalBoolFromObject(_options, g_RestorationShowHiddenKey) )
+        hard_filtering.show_hidden = *v;
     SetHardFiltering(hard_filtering);
 }
 

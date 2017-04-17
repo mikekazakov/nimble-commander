@@ -98,13 +98,19 @@
                         <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="bBL-wY-YUM"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Case-Sensitive Comparison" tag="2" indentationLevel="1" id="fpg-oA-HmO">
+                <menuItem title="Extensionless Folders" tag="2" indentationLevel="1" id="Zk6-zX-sSG">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="LFw-mT-T55"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Case-Sensitive Comparison" tag="3" indentationLevel="1" id="fpg-oA-HmO">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="hLW-AQ-HMM"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Numeric Comparison" tag="3" indentationLevel="1" id="mJ3-ls-nKo">
+                <menuItem title="Numeric Comparison" tag="4" indentationLevel="1" id="mJ3-ls-nKo">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onSortPopupMenuOptionsClicked:" target="-2" id="9aY-hJ-6GI"/>

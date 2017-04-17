@@ -85,6 +85,7 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.view.sorting_by_added_time",                 13131},
     {"menu.view.sorting_view_hidden",                   13140},
     {"menu.view.sorting_separate_folders",              13150},
+    {"menu.view.sorting_extensionless_folders",         13270},
     {"menu.view.sorting_case_sensitive",                13160},
     {"menu.view.sorting_numeric_comparison",            13170},
     {"menu.view.show_tabs",                             13179},
@@ -256,6 +257,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
         {"menu.view.sorting_by_added_time",                     u8"^⌘6"     }, // ctrl+cmd+6
         {"menu.view.sorting_view_hidden",                       u8"⇧⌥⌘i"    }, // shift+alt+cmd+i
         {"menu.view.sorting_separate_folders",                  u8""        },
+        {"menu.view.sorting_extensionless_folders",             u8""        },
         {"menu.view.sorting_case_sensitive",                    u8""        },
         {"menu.view.sorting_numeric_comparison",                u8""        },
         {"menu.view.panels_position.move_up",                   u8"^⌥\uF700"}, // ctrl+alt+↑

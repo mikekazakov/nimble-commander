@@ -352,8 +352,9 @@ static const auto g_LightenFilter = []{
         else if( i.action == @selector(onSortPopupMenuOptionsClicked:) )
             switch ( i.tag ) {
                 case 1: i.state = m_SortMode.sep_dirs ? NSOnState : NSOffState; break;
-                case 2: i.state = m_SortMode.case_sens ? NSOnState : NSOffState; break;
-                case 3: i.state = m_SortMode.numeric_sort ? NSOnState : NSOffState; break;
+                case 2: i.state = m_SortMode.extensionless_dirs ? NSOnState : NSOffState; break;
+                case 3: i.state = m_SortMode.case_sens ? NSOnState : NSOffState; break;
+                case 4: i.state = m_SortMode.numeric_sort ? NSOnState : NSOffState; break;
             }
     }
 
@@ -387,8 +388,9 @@ static const auto g_LightenFilter = []{
         PanelDataSortMode proposed = m_SortMode;
         switch ( item.tag ) {
             case 1: proposed.sep_dirs = !proposed.sep_dirs; break;
-            case 2: proposed.case_sens = !proposed.case_sens; break;
-            case 3: proposed.numeric_sort = !proposed.numeric_sort; break;
+            case 2: proposed.extensionless_dirs = !proposed.extensionless_dirs; break;
+            case 3: proposed.case_sens = !proposed.case_sens; break;
+            case 4: proposed.numeric_sort = !proposed.numeric_sort; break;
         }
         
         if( proposed != m_SortMode && m_SortModeChangeCallback )

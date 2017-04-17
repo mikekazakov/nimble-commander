@@ -37,7 +37,10 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         if( t.gridStyleMask & NSTableViewSolidVerticalGridLineMask ) {
             if( t.gridColor && t.gridColor != NSColor.clearColor ) {
                 const auto bounds = v.bounds;
-                const auto rc = NSMakeRect(bounds.size.width-1, 0, 1, bounds.size.height);
+                const auto rc = NSMakeRect(ceil(bounds.size.width)-1,
+                                           0,
+                                           1,
+                                           bounds.size.height);
                 
                 // don't draw vertical line near table view's edge
                 const auto trc = [t convertRect:rc fromView:v];
@@ -152,6 +155,11 @@ void DrawTableVerticalSeparatorForView(NSView *v)
             }
         });
         
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(frameDidChange)
+                                                   name:NSViewFrameDidChangeNotification
+                                                 object:self];
+        
     }
     return self;
 }
@@ -166,6 +174,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         col.maxWidth = 1000;
         [m_TableView addTableColumn:col];
         m_NameColumn = col;
+        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"B"] ) {
         col.headerCell = [[PanelListViewTableHeaderCell alloc] init];
@@ -177,6 +186,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         col.resizingMask = NSTableColumnUserResizingMask;
         [m_TableView addTableColumn:col];
         m_SizeColumn = col;
+        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
     }
     if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"C"] ) {
         col.headerCell = [[PanelListViewTableHeaderCell alloc] init];
@@ -218,7 +228,10 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 
 -(void) dealloc
 {
+    [NSNotificationCenter.defaultCenter removeObserver:self];
     [m_PanelView removeObserver:self forKeyPath:@"active"];
+    [m_NameColumn removeObserver:self forKeyPath:@"width"];
+    [m_SizeColumn removeObserver:self forKeyPath:@"width"];
     [m_DateCreatedColumn removeObserver:self forKeyPath:@"width"];
     [m_DateAddedColumn removeObserver:self forKeyPath:@"width"];
     [m_DateModifiedColumn removeObserver:self forKeyPath:@"width"];
@@ -253,6 +266,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
             self.dateAddedFormattingStyle = df::SuitableStyleForWidth( m_DateAddedColumn.width, self.font );
         if( object == m_DateModifiedColumn )
             self.dateModifiedFormattingStyle = df::SuitableStyleForWidth( m_DateModifiedColumn.width, self.font );
+        [self notifyLastColumnToRedraw];
     }
 }
 
@@ -665,6 +679,16 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         m_SortModeChangeCallback(proposed);
 }
 
+- (void) notifyLastColumnToRedraw
+{
+    auto cn = m_TableView.numberOfColumns;
+    if( !cn )
+        return;
+    
+    for( int i = 0, e = (int)m_TableView.numberOfRows; i != e; ++i )
+        [m_TableView viewAtColumn:cn-1 row:i makeIfNecessary:false].needsDisplay = true;
+}
+
 - (bool) isItemVisible:(int)_sorted_item_index
 {
     CGRect visibleRect = m_ScrollView.contentView.visibleRect;
@@ -732,6 +756,11 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         return rv.itemIndex;
 
     return -1;
+}
+
+- (void) frameDidChange
+{
+    [self notifyLastColumnToRedraw];
 }
 
 @end

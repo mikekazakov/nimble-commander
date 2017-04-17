@@ -387,3 +387,13 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 }
 
 @end
+
+@interface FavoritesWindow : SheetWithHotkeys
+@end
+
+@implementation FavoritesWindow
+- (void)cancelOperation:(id)sender
+{
+    [self performClose:sender];
+}
+@end

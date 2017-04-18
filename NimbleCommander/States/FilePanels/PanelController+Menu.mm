@@ -4,7 +4,6 @@
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "PanelController+Menu.h"
@@ -18,7 +17,6 @@
 #include "Views/NetworkShareSheetController.h"
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include "PanelAux.h"
 #include "Actions/CopyFilePaths.h"
 #include "Actions/AddToFavorites.h"
 #include "Actions/GoToFolder.h"

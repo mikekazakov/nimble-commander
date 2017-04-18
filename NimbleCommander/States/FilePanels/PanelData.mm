@@ -563,7 +563,6 @@ struct SortPredLessIndToInd : public SortPredLessBase
 
 };
 
-
 bool SortPredLessIndToInd::operator()(unsigned _1, unsigned _2) const
 {
     using _ = PanelData::PanelSortMode::Mode;

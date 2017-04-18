@@ -35,6 +35,9 @@ namespace VFSNetDropbox
         static NSURL* const Move;
         static NSURL* const Download;
         static NSURL* const Upload;
+        static NSURL* const UploadSessionStart;
+        static NSURL* const UploadSessionAppend;
+        static NSURL* const UploadSessionFinish;
     };
 
     void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const string &_path);

@@ -5,9 +5,10 @@
 
 @implementation VFSNetDropboxFileUploadDelegate
 {
-    VFSNetDropboxFileUploadStream *m_Stream;
-    mutex m_CallbacksLock;
-    function<void(int _vfs_error)> m_HandleFinished;
+    VFSNetDropboxFileUploadStream  *m_Stream;
+    mutex                           m_CallbacksLock;
+    function<void(int _vfs_error)>  m_HandleFinished;
+    function<void(NSData *_data)>   m_HandleReceivedData;
 }
 
 - (instancetype)initWithStream:(VFSNetDropboxFileUploadStream*)_stream
@@ -16,6 +17,18 @@
         m_Stream = _stream;
     }
     return self;
+}
+
+- (void)setHandleReceivedData:(function<void (NSData *)>)handleReceivedData
+{
+    lock_guard<mutex> lock{m_CallbacksLock};
+    m_HandleReceivedData = handleReceivedData;
+}
+
+- (function<void (NSData *)>)handleReceivedData
+{
+   lock_guard<mutex> lock{m_CallbacksLock};
+   return m_HandleReceivedData;
 }
 
 - (void) setHandleFinished:(function<void(int)>)handleFinished
@@ -74,9 +87,10 @@
 {
     if( auto s = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] )
         NSLog(@"%@", s);
-//    cout << "didReceiveData" << endl;
-//    if( auto file = m_File.lock() )
-//        file->AppendDownloadedData(data);
+
+   lock_guard<mutex> lock{m_CallbacksLock};
+   if( m_HandleReceivedData )
+        m_HandleReceivedData(data);
 }
 
 - (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask

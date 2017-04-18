@@ -20,6 +20,12 @@ NSURL* const api::Download =
     [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/download"];
 NSURL* const api::Upload =
     [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload"];
+NSURL* const api::UploadSessionStart =
+    [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload_session/start"];
+NSURL* const api::UploadSessionAppend =
+    [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload_session/append_v2"];
+NSURL* const api::UploadSessionFinish =
+    [NSURL URLWithString:@"https://content.dropboxapi.com/2/files/upload_session/finish"];
 NSURL* const api::Move =
     [NSURL URLWithString:@"https://api.dropboxapi.com/2/files/move"];
 

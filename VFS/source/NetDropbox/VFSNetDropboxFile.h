@@ -23,7 +23,7 @@ public:
     virtual ssize_t Size() const override;
     virtual bool Eof() const override;
     virtual int SetUploadSize(size_t _size) override;
-
+    void SetChunkSize( size_t _size );
 
     // download hooks
     bool ProcessDownloadResponse( NSURLResponse *_response );
@@ -32,6 +32,10 @@ public:
 private:
     ssize_t FeedUploadTask( uint8_t *_buffer, size_t _sz ); // called from a background thread
     bool HasDataToFeedUploadTask(); // called from a background thread
+    int StartSmallUpload();
+    int StartBigUpload();
+//    int StartBigAppend();
+    void StartBigFinish();
 
     /**
      * Download flow: Cold -> Initiated -> Downloading -> (Canceled|Completed)
@@ -54,16 +58,20 @@ private:
     };
     struct Upload {
         deque<uint8_t>                  fifo;
-        long                            fifo_offset = 0;
+        atomic_long                     fifo_offset {0};
         long                            upload_size = -1;
-        NSMutableURLRequest            *request;
-        NSURLSessionUploadTask         *task;
-        VFSNetDropboxFileUploadDelegate*delegate;
-        VFSNetDropboxFileUploadStream  *stream;
+        bool                            partitioned = false;
+        int                             part_no = 0;
+        NSMutableURLRequest            *request = nil;
+        NSURLSessionUploadTask         *task = nil;
+        VFSNetDropboxFileUploadDelegate*delegate = nil;
+        VFSNetDropboxFileUploadStream  *stream = nil;
+        string                          session_id;
     };
 
     long                m_FilePos = 0;
     long                m_FileSize = -1;
+    long                m_ChunkSize = 150 * 1000 * 1000; // 150Mb according to dropbox docs
 
     atomic<State>       m_State { Cold };
 

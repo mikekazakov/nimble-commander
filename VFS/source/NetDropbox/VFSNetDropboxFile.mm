@@ -83,7 +83,7 @@ int VFSNetDropboxFile::Close()
     int rc = VFSError::Ok;
     if( m_Upload ) {
         if( m_State == Uploading ) {
-            if( m_Upload->upload_size == m_Upload->fifo_offset )
+            if( m_Upload->upload_size == m_FilePos )
                 [m_Upload->stream notifyAboutDataEnd];
             else {
                 // client hasn't provided enough data and is closing a file.
@@ -153,57 +153,9 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
-        auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
-        stream.hasDataToFeed = [this]() -> bool {
-            return HasDataToFeedUploadTask();
-        };
-        stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
-            return FeedUploadTask(_buffer, _sz);
-        };
-    
-        auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
-        delegate.handleFinished = [this](int _vfs_error){
-            if( m_State == Initiated || m_State == Uploading ) {
-                m_State = _vfs_error == VFSError::Ok ?
-                    Completed :
-                    Canceled;
-                LOCK_GUARD(m_SignalLock) {
-                    m_Signal.notify_all();
-                }
-            }
-        };
-        
-        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
-        req.HTTPMethod = @"POST";
-        auto &host = *((VFSNetDropboxHost*)Host().get());
-        host.FillAuth(req);
-        [req setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-        InsetHTTPHeaderPathspec(req, RelativePath());
-        
-
-//{
-//    "path": "/Homework/math/Matrices.txt",
-//    "mode": "add",
-//    "autorename": true,
-//    "mute": false
-//}
-
-//{
-//    "path": "/Homework/math/Matrices.txt",
-//    "mode": {
-//        ".tag": "update",
-//        "update": "a1c10ce0dd78"
-//    },
-//    "autorename": false,
-//    "mute": false
-//}
         m_State = Initiated;
         m_Upload = make_unique<Upload>();
-        m_Upload->request = req;
-        m_Upload->delegate = delegate;
-        m_Upload->stream = stream;
-        
-        // at this point we need to wait for SetUploadSize() call to finish building of request
+        // at this point we need to wait for SetUploadSize() call to build of a request
         // and to actually start it
         return VFSError::Ok;
     }
@@ -336,35 +288,244 @@ int VFSNetDropboxFile::PreferredIOSize() const
     return 32768; // packets are usually 16384 bytes long, use IO twice as long
 }
 
+int VFSNetDropboxFile::StartSmallUpload()
+{
+    assert( m_Upload != nullptr );
+    assert( m_Upload->upload_size >= 0 && m_Upload->upload_size <= m_ChunkSize );
+    assert( m_Upload->request == nil );
+    assert( m_Upload->delegate == nil );
+    assert( m_Upload->stream == nil );
+    assert( m_Upload->task == nil );
+
+    auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
+    stream.hasDataToFeed = [this]() -> bool {
+        return HasDataToFeedUploadTask();
+    };
+    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
+        return FeedUploadTask(_buffer, _sz);
+    };
+    
+    auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
+    delegate.handleFinished = [this](int _vfs_error){
+        if( m_State == Initiated || m_State == Uploading ) {
+            m_State = _vfs_error == VFSError::Ok ?
+            Completed :
+            Canceled;
+            LOCK_GUARD(m_SignalLock) {
+                m_Signal.notify_all();
+            }
+        }
+    };
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
+    request.HTTPMethod = @"POST";
+    auto &host = *((VFSNetDropboxHost*)Host().get());
+    host.FillAuth(request);
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    InsetHTTPHeaderPathspec(request, RelativePath());
+    [request setValue:[NSString stringWithUTF8String:to_string(m_Upload->upload_size).c_str()]
+             forHTTPHeaderField:@"Content-Length"];
+    
+    auto configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
+    auto session = [NSURLSession sessionWithConfiguration:configuration
+                                                 delegate:delegate
+                                            delegateQueue:nil];
+    auto task = [session uploadTaskWithStreamedRequest:request];
+
+    m_Upload->request = request;
+    m_Upload->delegate = delegate;
+    m_Upload->stream = stream;
+    m_Upload->task = task;
+    m_State = Uploading;
+
+    [task resume];
+
+//{
+//    "path": "/Homework/math/Matrices.txt",
+//    "mode": "add",
+//    "autorename": true,
+//    "mute": false
+//}
+
+//{
+//    "path": "/Homework/math/Matrices.txt",
+//    "mode": {
+//        ".tag": "update",
+//        "update": "a1c10ce0dd78"
+//    },
+//    "autorename": false,
+//    "mute": false
+//}
+
+    return VFSError::Ok;
+}
+
+int VFSNetDropboxFile::StartBigUpload()
+{
+    assert( m_Upload != nullptr );
+    assert( m_Upload->upload_size > m_ChunkSize );
+    assert( m_Upload->request == nil );
+    assert( m_Upload->delegate == nil );
+    assert( m_Upload->stream == nil );
+    assert( m_Upload->task == nil );
+
+    auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
+    stream.hasDataToFeed = [this]() -> bool {
+        return HasDataToFeedUploadTask();
+    };
+    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
+        return FeedUploadTask(_buffer, _sz);
+    };
+    
+    auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
+    delegate.handleFinished = [this](int _vfs_error){
+        if( /*m_State == Initiated ||*/ m_State == Uploading )
+            if( _vfs_error != VFSError::Ok ) {
+                m_State = Canceled;
+                LOCK_GUARD(m_SignalLock) {
+                    m_Signal.notify_all();
+                }
+            }
+    };
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionStart];
+    request.HTTPMethod = @"POST";
+    auto &host = *((VFSNetDropboxHost*)Host().get());
+    host.FillAuth(request);
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"{ }" forHTTPHeaderField:@"Dropbox-API-Arg"];
+    [request setValue:[NSString stringWithUTF8String:to_string(m_ChunkSize).c_str()]
+             forHTTPHeaderField:@"Content-Length"];
+    
+    auto configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
+    auto session = [NSURLSession sessionWithConfiguration:configuration
+                                                 delegate:delegate
+                                            delegateQueue:nil];
+    auto task = [session uploadTaskWithStreamedRequest:request];
+
+    m_Upload->request = request;
+    m_Upload->delegate = delegate;
+    m_Upload->stream = stream;
+    m_Upload->task = task;
+    m_Upload->partitioned = true;
+    m_State = Uploading;
+    
+    [task resume];
+    
+    return VFSError::Ok;
+}
+
+void VFSNetDropboxFile::StartBigFinish()
+{
+    assert( m_Upload != nullptr );
+    assert( m_FilePos >= m_ChunkSize );
+    assert( m_Upload->upload_size > m_ChunkSize );
+    assert( m_Upload->request != nil );
+    assert( m_Upload->delegate != nil );
+    assert( m_Upload->stream != nil );
+    assert( m_Upload->task != nil );
+    assert( !m_Upload->session_id.empty() );
+
+    m_Upload->part_no++;
+
+    auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
+    stream.hasDataToFeed = [this]() -> bool {
+        return HasDataToFeedUploadTask();
+    };
+    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
+        return FeedUploadTask(_buffer, _sz);
+    };
+    
+    auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
+    delegate.handleFinished = [this](int _vfs_error){
+        if( m_State == Uploading ) {
+            m_State = _vfs_error == VFSError::Ok ? Completed : Canceled;
+            LOCK_GUARD(m_SignalLock) {
+                m_Signal.notify_all();
+            }
+        }
+    };
+    
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionFinish];
+    request.HTTPMethod = @"POST";
+    auto &host = *((VFSNetDropboxHost*)Host().get());
+    host.FillAuth(request);
+    
+    
+    
+    const string header =
+        "{\"cursor\": {"s +
+            "\"session_id\": \"" + m_Upload->session_id + "\", " +
+            "\"offset\": " + to_string(m_FilePos) +
+        "}, " +
+        "\"commit\": {" +
+            "\"path\": \"" + EscapeStringForJSONInHTTPHeader(RelativePath()) + "\""
+        "}}";
+    
+    cout << header << endl;
+    [request setValue:[NSString stringWithUTF8String:header.c_str()]
+             forHTTPHeaderField:@"Dropbox-API-Arg"];
+    
+//void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const string &_path)
+//{
+//    const string path_spec = "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(_path) + "\" }";
+//    [_request setValue:[NSString stringWithUTF8String:path_spec.c_str()]
+//        forHTTPHeaderField:@"Dropbox-API-Arg"];
+//}
+    
+    
+    
+//    {
+//    "cursor": {
+//        "session_id": "1234faaf0678bcde",
+//        "offset": 0
+//    },
+//    "commit": {
+//        "path": "/Homework/math/Matrices.txt",
+//        "mode": "add",
+//        "autorename": true,
+//        "mute": false
+//    }
+//}
+    
+
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+//    const long content_length = m_Upload->upload_size - m_Upload->part_no*g_ChunkSize;
+    const long content_length = m_Upload->upload_size - m_FilePos;
+    cout << "content_length: " << content_length << endl;
+    [request setValue:[NSString stringWithUTF8String:to_string(content_length).c_str()]
+             forHTTPHeaderField:@"Content-Length"];
+    
+    auto configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
+    auto session = [NSURLSession sessionWithConfiguration:configuration
+                                                 delegate:delegate
+                                            delegateQueue:nil];
+    auto task = [session uploadTaskWithStreamedRequest:request];
+
+    m_Upload->request = request;
+    m_Upload->delegate = delegate;
+    m_Upload->stream = stream;
+    m_Upload->task = task;
+//    m_Upload->partitioned = true;
+//    m_State = Uploading;
+    
+    [task resume];
+}
+
 int VFSNetDropboxFile::SetUploadSize(size_t _size)
 {
-    if( !m_Upload )
-        return VFSError::InvalidCall;
-    if( m_State != Initiated )
+    if( !m_Upload ||
+        m_State != Initiated )
         return VFSError::InvalidCall;
     if( m_Upload->upload_size >= 0 )
         return VFSError::InvalidCall;
     
-    assert( m_Upload->request != nil );
-    assert( m_Upload->delegate != nil );
-    assert( m_Upload->stream != nil );
-    assert( m_Upload->task == nil );
-    
-    
     m_Upload->upload_size = _size;
-    [m_Upload->request setValue:[NSString stringWithUTF8String:to_string(_size).c_str()]
-             forHTTPHeaderField:@"Content-Length"];
-    auto configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
-    auto session = [NSURLSession sessionWithConfiguration:configuration
-                                                 delegate:m_Upload->delegate
-                                            delegateQueue:nil];
     
-    m_Upload->task = [session uploadTaskWithStreamedRequest:m_Upload->request];
-    [m_Upload->task resume];
-    
-    m_State = Uploading;
-    
-    return VFSError::Ok;
+    if( _size <= m_ChunkSize )
+        return StartSmallUpload();
+    else
+        return StartBigUpload();
 }
 
 ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
@@ -375,45 +536,120 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
         return VFSError::InvalidCall;
     if( m_Upload->upload_size < 0 )
         return VFSError::InvalidCall;
-    if( m_Upload->fifo_offset + _size > m_Upload->upload_size )
+    if( m_FilePos + _size > m_Upload->upload_size )
         return VFSError::InvalidCall;
     
-    LOCK_GUARD(m_DataLock) {
-        m_Upload->fifo.insert(end(m_Upload->fifo),
-                            (const uint8_t*)_buf,
-                            (const uint8_t*)_buf + _size);
-        cout << "received " << _size << " bytes from caller" << endl;
-        [m_Upload->stream notifyAboutNewData];
+    if( !m_Upload->partitioned ) {
+    
+        LOCK_GUARD(m_DataLock) {
+            m_Upload->fifo.insert(end(m_Upload->fifo),
+                                  (const uint8_t*)_buf,
+                                  (const uint8_t*)_buf + _size);
+            cout << "received " << _size << " bytes from caller" << endl;
+            [m_Upload->stream notifyAboutNewData];
+        }
+        
+        // need to wait until either upload task ate all provided data, or any network error occured
+//        ssize_t eaten = _size - m_Upload->fifo.size();
+        ssize_t eaten = 0;
+        while( eaten < _size && m_State != Canceled ) {
+           {unique_lock<mutex> lk(m_SignalLock);
+            m_Signal.wait(lk);}
+            
+            lock_guard<mutex> lock{m_DataLock};
+            eaten = _size - m_Upload->fifo.size();
+        }
+        m_FilePos += eaten;
+        
+        // TODO: process an error if any
+        if( m_FilePos == m_Upload->upload_size ) {
+            [m_Upload->stream notifyAboutDataEnd];
+        }
+        
+        LOCK_GUARD(m_DataLock) {
+            // at this moment FIFO must be either emptied via normal execution, or an error has occured.
+            // in that case - be sure that there're no remains of this data block.
+            m_Upload->fifo.clear();
+        }
+        
+        return eaten;
     }
-    
-    
-    // need to wait until either upload task will eat all provided data, or any network error 
-    
-    ssize_t eaten = _size - m_Upload->fifo.size();
-    while( eaten < _size && m_State != Canceled ) {
-        {
-            unique_lock<mutex> lk(m_SignalLock);
-            m_Signal.wait(lk);
+    else {
+        // figure out amount of information we can consume this call
+        size_t this_chunk_left = m_ChunkSize - m_Upload->fifo_offset;
+        _size = min(_size, this_chunk_left);
+        
+         LOCK_GUARD(m_DataLock) {
+            m_Upload->fifo.insert(end(m_Upload->fifo),
+                                  (const uint8_t*)_buf,
+                                  (const uint8_t*)_buf + _size);
+            cout << "received " << _size << " bytes from caller" << endl;
+            [m_Upload->stream notifyAboutNewData];
         }
 
-    
-        lock_guard<mutex> lock{m_DataLock};
-        eaten = _size - m_Upload->fifo.size();
-    }
+        // need to wait until either upload task ate all provided data, or any network error occured
+        ssize_t eaten = 0;
+        while( eaten < _size && m_State != Canceled ) {
+           {unique_lock<mutex> lk(m_SignalLock);
+            m_Signal.wait(lk);}
+            
+            lock_guard<mutex> lock{m_DataLock};
+            eaten = _size - m_Upload->fifo.size();
+        }
+        m_FilePos += eaten;
+        
+        if( m_Upload->fifo_offset == m_ChunkSize ) {
+            // get session id
+            // switch upload session
+            if( m_Upload->part_no == 0 ) {
+                [m_Upload->stream notifyAboutDataEnd];
+                m_Upload->stream.feedData = nullptr;
+                m_Upload->stream.hasDataToFeed = nullptr;
+                m_Upload->delegate.handleReceivedData = [this](NSData *_data){
+                    if( auto doc = ParseJSON(_data) )
+                        if( auto session_id = GetString(*doc, "session_id") ) {
+                            m_Upload->session_id = session_id;
+                            lock_guard<mutex> lock{m_SignalLock};
+                            m_Signal.notify_all();
+                            return;
+                        }
+                    m_State = State::Canceled;
+                    lock_guard<mutex> lock{m_SignalLock};
+                    m_Signal.notify_all();
+                };
+                
+                {
+                    unique_lock<mutex> lk(m_SignalLock);
+                    m_Signal.wait(lk, [this]{
+                        if( m_State != Uploading )
+                            return true;
+                        lock_guard<mutex> lock{m_DataLock};
+                        return !m_Upload->session_id.empty();
+                    });
+                }
+                cout << "got session_id: " << m_Upload->session_id << endl;
+                m_Upload->delegate.handleReceivedData = nullptr;
+                m_Upload->delegate.handleFinished = nullptr;
+                
+                StartBigFinish();
+                
+            }
+            else {
+                [m_Upload->stream notifyAboutDataEnd];
+                m_Upload->stream.feedData = nullptr;
+                m_Upload->stream.hasDataToFeed = nullptr;
+            }
+            m_Upload->fifo_offset = 0;
+        }
 
-// process an error
+        if( m_FilePos == m_Upload->upload_size ) {
+            [m_Upload->stream notifyAboutDataEnd];
+        }
+        
     
-    if( m_Upload->fifo_offset == m_Upload->upload_size ) {
-        [m_Upload->stream notifyAboutDataEnd];
+    
+        return eaten;
     }
-    
-    LOCK_GUARD(m_DataLock) {
-        // at this moment FIFO must be either emptied via normal execution, or an error has occured.
-        // in that case - be sure that there're no remains of this data block.
-        m_Upload->fifo.clear();
-    }
-    
-    return eaten;
 }
 
 ssize_t VFSNetDropboxFile::FeedUploadTask( uint8_t *_buffer, size_t _sz )
@@ -447,4 +683,10 @@ bool VFSNetDropboxFile::HasDataToFeedUploadTask()
     }
     cout << "has data for stream: " << has_data << endl;
     return has_data;
+}
+
+void VFSNetDropboxFile::SetChunkSize( size_t _size )
+{
+    if( _size >= 1 * 1000 * 1000 && _size <= 150 * 1000 * 1000 )
+        m_ChunkSize = _size;
 }

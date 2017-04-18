@@ -50,6 +50,38 @@
 {
 }
 
+static NSEvent *SwapScrollAxis( NSEvent *_event )
+{
+    const auto cg_event = CGEventCreateCopy(_event.CGEvent);
+    if( !cg_event )
+        return nil;
+    
+    CGEventSetDoubleValueField(cg_event, kCGScrollWheelEventFixedPtDeltaAxis2, _event.deltaY);
+    CGEventSetDoubleValueField(cg_event, kCGScrollWheelEventFixedPtDeltaAxis1, 0.0);
+    
+    const auto new_event = [NSEvent eventWithCGEvent:cg_event];
+    CFRelease(cg_event);
+
+    return new_event;
+}
+
+- (void)scrollWheel:(NSEvent *)event
+{
+    if(event.phase == NSEventPhaseNone &&
+       event.momentumPhase == NSEventPhaseNone &&
+       event.hasPreciseScrollingDeltas == false &&
+       event.deltaX == 0.0 &&
+       event.deltaY != 0.0 ) {
+       // for vertical scroll coming from USB PC mice we swap the scroll asix, so user
+       // can use mouse wheel without holding a Shift button
+       if( auto new_event = SwapScrollAxis(event) )
+           [super scrollWheel:new_event];
+        return;
+    }
+
+    [super scrollWheel:event];
+}
+
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
     auto op = [self.panelView panelItem:-1 operationForDragging:sender];

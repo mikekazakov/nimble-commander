@@ -23,7 +23,7 @@ public:
     virtual ssize_t Size() const override;
     virtual bool Eof() const override;
     virtual int SetUploadSize(size_t _size) override;
-    void SetChunkSize( size_t _size );
+    int SetChunkSize( size_t _size );
 
     // download hooks
     bool ProcessDownloadResponse( NSURLResponse *_response );
@@ -32,10 +32,10 @@ public:
 private:
     ssize_t FeedUploadTask( uint8_t *_buffer, size_t _sz ); // called from a background thread
     bool HasDataToFeedUploadTask(); // called from a background thread
-    int StartSmallUpload();
-    int StartBigUpload();
-//    int StartBigAppend();
-    void StartBigFinish();
+    void StartSmallUpload();
+    void StartSession();
+    void StartSessionAppend();
+    void StartSessionFinish();
 
     /**
      * Download flow: Cold -> Initiated -> Downloading -> (Canceled|Completed)
@@ -62,6 +62,7 @@ private:
         long                            upload_size = -1;
         bool                            partitioned = false;
         int                             part_no = 0;
+        int                             parts_count = 0;
         NSMutableURLRequest            *request = nil;
         NSURLSessionUploadTask         *task = nil;
         VFSNetDropboxFileUploadDelegate*delegate = nil;

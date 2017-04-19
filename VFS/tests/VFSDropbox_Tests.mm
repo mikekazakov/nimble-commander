@@ -243,9 +243,9 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     host->Unlink(filepath);    
 }
 
-- (void)testBigSizedUpload
+- (void)testTwoChunkUpload
 {
-    const auto length = 17*1024*1024; // 17Mb upload / download
+    const auto length = 17*1024*1024; // 17MB upload / download
 
     auto filepath = "/FolderToModify/SomeBigRubbish.bin";
     shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
@@ -254,6 +254,38 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     shared_ptr<VFSFile> file;
     XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
     dynamic_pointer_cast<VFSNetDropboxFile>(file)->SetChunkSize(10000000); // 10 Mb chunks
+    
+    vector<uint8_t> to_upload(length);
+    srand((int)time(0));
+    for( int i = 0; i < length; ++i )
+        to_upload[i] = rand() % 256; // yes, I know that rand() is harmful!
+
+    XCTAssert( file->Open( VFSFlags::OF_Write ) == VFSError::Ok );
+    XCTAssert( file->SetUploadSize( to_upload.size() ) == VFSError::Ok );
+    XCTAssert( file->WriteFile( data(to_upload), (int)size(to_upload) ) == VFSError::Ok );
+    XCTAssert( file->Close() == VFSError::Ok );
+
+    XCTAssert( file->Open( VFSFlags::OF_Read ) == VFSError::Ok );
+    auto uploaded = file->ReadFile();
+    XCTAssert( uploaded );
+    XCTAssert( uploaded->size() == size(to_upload) );
+    XCTAssert( equal( uploaded->begin(), uploaded->end(), to_upload.begin() ) );
+    XCTAssert( file->Close() == VFSError::Ok );
+
+    host->Unlink(filepath);    
+}
+
+- (void)testMultiChunksUpload
+{
+    const auto length = 17*1024*1024; // 17MB upload / download
+
+    auto filepath = "/FolderToModify/SomeBigRubbish.bin";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    host->Unlink(filepath);
+    
+    shared_ptr<VFSFile> file;
+    XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
+    dynamic_pointer_cast<VFSNetDropboxFile>(file)->SetChunkSize(5000000); // 5Mb chunks
     
     vector<uint8_t> to_upload(length);
     srand((int)time(0));

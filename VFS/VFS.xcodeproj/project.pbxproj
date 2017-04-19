@@ -110,6 +110,8 @@
 		CF69D0781DA2353000992B84 /* VFSPSInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69D0731DA2353000992B84 /* VFSPSInternal.h */; };
 		CF69D07A1DA238D400992B84 /* VFSListingInput.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69D0791DA238D400992B84 /* VFSListingInput.h */; };
 		CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D8E1E659D33002DB0E2 /* libssh2.a */; };
+		CF818B7F1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */; };
+		CF818B801EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */; };
 		CFD725F61E42DC3200603077 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F51E42DC3200603077 /* libbz2.a */; };
 		CFD725F81E42DC3600603077 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F71E42DC3600603077 /* liblzma.a */; };
 		CFD725FA1E42DC4B00603077 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F91E42DC4B00603077 /* libz.a */; };
@@ -243,6 +245,8 @@
 		CF69D0731DA2353000992B84 /* VFSPSInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSInternal.h; path = source/PS/VFSPSInternal.h; sourceTree = "<group>"; };
 		CF69D0791DA238D400992B84 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = include/VFS/VFSListingInput.h; sourceTree = "<group>"; };
 		CF7C7D8E1E659D33002DB0E2 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = ../3rd_Party/libssh2/built/libssh2.a; sourceTree = "<group>"; };
+		CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFileDownloadDelegate.h; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.h; sourceTree = "<group>"; };
+		CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileDownloadDelegate.mm; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.mm; sourceTree = "<group>"; };
 		CFD725F51E42DC3200603077 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = ../Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CFD725F71E42DC3600603077 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CFD725F91E42DC4B00603077 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../Files/Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
@@ -301,6 +305,8 @@
 				CF1168821E91FB4A00CC515A /* Aux.mm */,
 				CF22A10C1E9290FB00149C44 /* VFSNetDropboxFile.h */,
 				CF22A10D1E9290FB00149C44 /* VFSNetDropboxFile.mm */,
+				CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */,
+				CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */,
 				CF22A1141E97755000149C44 /* VFSNetDropboxFileUploadDelegate.h */,
 				CF22A1151E97755000149C44 /* VFSNetDropboxFileUploadDelegate.mm */,
 				CF22A1101E9751A800149C44 /* VFSNetDropboxFileUploadStream.h */,
@@ -545,6 +551,7 @@
 				CF69D0461DA2324100992B84 /* VFSNetFTPInternalsForward.h in Headers */,
 				CF69D0691DA2344A00992B84 /* VFSArchiveUnRARFile.h in Headers */,
 				CF69D0051DA227E400992B84 /* VFSListing.h in Headers */,
+				CF818B7F1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h in Headers */,
 				CF69D0021DA227E400992B84 /* VFSFile.h in Headers */,
 				CF69D04F1DA232F000992B84 /* VFSNetSFTPHost.h in Headers */,
 				CF69D0011DA227E400992B84 /* VFSFactory.h in Headers */,
@@ -718,6 +725,7 @@
 				CF69D0741DA2353000992B84 /* VFSPSFile.cpp in Sources */,
 				CF69D01A1DA22BE800992B84 /* VFSError.mm in Sources */,
 				CF69D01D1DA22BE800992B84 /* VFSGenericMemReadOnlyFile.cpp in Sources */,
+				CF818B801EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm in Sources */,
 				CF22A1131E9751A800149C44 /* VFSNetDropboxFileUploadStream.mm in Sources */,
 				CF69D06C1DA2344A00992B84 /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CF69D0411DA2324100992B84 /* VFSNetFTPFile.mm in Sources */,

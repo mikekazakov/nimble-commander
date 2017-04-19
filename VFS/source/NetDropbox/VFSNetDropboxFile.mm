@@ -2,71 +2,10 @@
 #include "Aux.h"
 #include "VFSNetDropboxFileUploadStream.h"
 #include "VFSNetDropboxFileUploadDelegate.h"
+#include "VFSNetDropboxFileDownloadDelegate.h"
 
 using namespace VFSNetDropbox;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//                  ****** VFSNetDropboxFileDownloadDelegate ******
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////
-@interface VFSNetDropboxFileDownloadDelegate : NSObject<NSURLSessionDelegate>
-
-- (instancetype)initWithFile:(shared_ptr<VFSNetDropboxFile>)_file;
-
-@end
-
-@implementation VFSNetDropboxFileDownloadDelegate
-{
-    weak_ptr<VFSNetDropboxFile> m_File;
-}
-
-- (instancetype)initWithFile:(shared_ptr<VFSNetDropboxFile>)_file
-{
-    if( self = [super init] ) {
-        m_File = _file;
-    }
-    return self;
-}
-
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error
-{
-    cout << "didBecomeInvalidWithError" << endl;
-}
-
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-                           didCompleteWithError:(nullable NSError *)error
-{
-    cout << "didCompleteWithError" << endl;
-}
-
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
-                                     didReceiveData:(NSData *)data
-{
-//    cout << "didReceiveData" << endl;
-    if( auto file = m_File.lock() )
-        file->AppendDownloadedData(data);
-}
-
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
-                                 didReceiveResponse:(NSURLResponse *)response
-                                  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
-{
-    cout << "didReceiveResponse" << endl;
-    bool permit = false;
-    if( auto file = m_File.lock() )
-        permit = file->ProcessDownloadResponse(response);
-
-    completionHandler( permit ?  NSURLSessionResponseAllow : NSURLSessionResponseCancel );
-}
-                                
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-//
-//                  ****** VFSNetDropboxFile ******
-//
-////////////////////////////////////////////////////////////////////////////////////////////////////
 VFSNetDropboxFile::VFSNetDropboxFile(const char* _relative_path,
                                      const shared_ptr<VFSNetDropboxHost> &_host):
     VFSFile(_relative_path, _host)
@@ -102,6 +41,8 @@ int VFSNetDropboxFile::Close()
     LOCK_GUARD(m_DataLock) {
         if( m_Download ) {
             [m_Download->task cancel];
+            m_Download->delegate.handleResponse = nullptr;
+            m_Download->delegate.handleData = nullptr;
             m_Download.reset();
         }
         
@@ -127,8 +68,24 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 
     auto &host = *((VFSNetDropboxHost*)Host().get());
     if( (_open_flags & VFSFlags::OF_Read) == VFSFlags::OF_Read ) {
-        auto delegate = [[VFSNetDropboxFileDownloadDelegate alloc] initWithFile:
-                         static_pointer_cast<VFSNetDropboxFile>(shared_from_this())];
+        auto delegate = [[VFSNetDropboxFileDownloadDelegate alloc] init];
+        delegate.handleResponse = [this](ssize_t _size_or_error)->bool {
+            if( m_State != Initiated )
+                return false;
+            if( _size_or_error >= 0 ) {
+                m_FileSize = _size_or_error;
+                m_State = Downloading;
+                m_Signal.notify_all();
+                return true;
+            }
+            else {
+                m_State = Canceled;
+                m_Signal.notify_all();
+                return false;
+            }
+        };
+        delegate.handleData = [this](NSData *_data) { AppendDownloadedData(_data); };
+    
         auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration
                                                      delegate:delegate
                                                 delegateQueue:nil];
@@ -142,6 +99,7 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         
         m_Download = make_unique<Download>();
         
+        m_Download->delegate = delegate;
         m_Download->task = [session dataTaskWithRequest:req];
         [m_Download->task resume];
         
@@ -193,40 +151,7 @@ void VFSNetDropboxFile::AppendDownloadedData( NSData *_data )
         if( m_Download->fifo_offset + m_Download->fifo.size() == m_FileSize )
             m_State = Completed;
     }
-    
-    LOCK_GUARD(m_SignalLock) {
-        m_Signal.notify_all();
-    }
-}
-
-bool VFSNetDropboxFile::ProcessDownloadResponse( NSURLResponse *_response )
-{
-    if( m_State != Initiated )
-        return false;
-
-    if( auto http_resp = objc_cast<NSHTTPURLResponse>(_response) ) {
-        if( http_resp.statusCode == 200 ) {
-            if( auto cl = objc_cast<NSString>(http_resp.allHeaderFields[@"Content-Length"]) ) {
-                auto file_size = atol( cl.UTF8String );
-                m_FileSize = file_size;
-                
-                m_State = Downloading;
-                LOCK_GUARD(m_SignalLock) {
-                    m_Signal.notify_all();
-                }
-                return true;
-            }
-        }
-        else {
-            NSLog(@"%@", _response);
-        }
-    }
-    
-    m_State = Canceled;
-    LOCK_GUARD(m_SignalLock) {
-        m_Signal.notify_all();
-    }
-    return false;
+    m_Signal.notify_all();
 }
 
 ssize_t VFSNetDropboxFile::Pos() const
@@ -308,12 +233,8 @@ void VFSNetDropboxFile::StartSmallUpload()
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
         if( m_State == Initiated || m_State == Uploading ) {
-            m_State = _vfs_error == VFSError::Ok ?
-            Completed :
-            Canceled;
-            LOCK_GUARD(m_SignalLock) {
-                m_Signal.notify_all();
-            }
+            m_State = _vfs_error == VFSError::Ok ? Completed : Canceled;
+            m_Signal.notify_all();
         }
     };
     
@@ -382,9 +303,7 @@ void VFSNetDropboxFile::StartSession()
         if( m_State == Uploading )
             if( _vfs_error != VFSError::Ok ) {
                 m_State = Canceled;
-                LOCK_GUARD(m_SignalLock) {
-                    m_Signal.notify_all();
-                }
+                m_Signal.notify_all();
             }
     };
     
@@ -443,9 +362,7 @@ void VFSNetDropboxFile::StartSessionAppend()
         if( m_State == Uploading )
             if( _vfs_error != VFSError::Ok ) {
                 m_State = Canceled;
-                LOCK_GUARD(m_SignalLock) {
-                    m_Signal.notify_all();
-                }
+                m_Signal.notify_all();
             }
     };
     
@@ -477,8 +394,6 @@ void VFSNetDropboxFile::StartSessionAppend()
     m_Upload->delegate = delegate;
     m_Upload->stream = stream;
     m_Upload->task = task;
-//    m_Upload->partitioned = true;
-//    m_State = Uploading;
     
     [task resume];
 }
@@ -509,9 +424,7 @@ void VFSNetDropboxFile::StartSessionFinish()
     delegate.handleFinished = [this](int _vfs_error){
         if( m_State == Uploading ) {
             m_State = _vfs_error == VFSError::Ok ? Completed : Canceled;
-            LOCK_GUARD(m_SignalLock) {
-                m_Signal.notify_all();
-            }
+            m_Signal.notify_all();
         }
     };
     
@@ -654,13 +567,13 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
                 m_Upload->delegate.handleReceivedData = [this](NSData *_data){
                     if( auto doc = ParseJSON(_data) )
                         if( auto session_id = GetString(*doc, "session_id") ) {
-                            m_Upload->session_id = session_id;
-                            lock_guard<mutex> lock{m_SignalLock};
+                            LOCK_GUARD(m_DataLock) {
+                                m_Upload->session_id = session_id;
+                            }
                             m_Signal.notify_all();
                             return;
                         }
                     m_State = State::Canceled;
-                    lock_guard<mutex> lock{m_SignalLock};
                     m_Signal.notify_all();
                 };
                 
@@ -704,22 +617,18 @@ ssize_t VFSNetDropboxFile::FeedUploadTask( uint8_t *_buffer, size_t _sz )
         cout << "fed " << sz << " bytes into stream" << endl;
     }
     
-    if( sz != 0 ) {    
-        LOCK_GUARD(m_SignalLock) {
-            m_Signal.notify_all();
-        }
-    }
+    if( sz != 0 )
+        m_Signal.notify_all();
     return sz;
 }
 
 bool VFSNetDropboxFile::HasDataToFeedUploadTask()
 {
-    bool has_data = false;
-    LOCK_GUARD(m_DataLock) {
-        has_data = !m_Upload->fifo.empty();
-    }
-    cout << "has data for stream: " << has_data << endl;
-    return has_data;
+    if( m_State != Uploading )
+        return false;
+    lock_guard<mutex> lock{m_DataLock};
+//    cout << "has data for stream: " << has_data << endl;
+    return !m_Upload->fifo.empty();
 }
 
 int VFSNetDropboxFile::SetChunkSize( size_t _size )

@@ -19,7 +19,8 @@ layout:
 0                        : OK code
 [-1..              -1000]: Files             vfs err = vfs err
 [-1'001..         -2'000]: POSIX             vfs err = posix - 1'500
-[-1'000'000.. -2'000'000]: Cocoa             vfs err = cocoa - 1'500'000
+[-1'000'000.. -2'000'000): Cocoa             vfs err = cocoa - 1'500'000
+[-2'000'000.. -3'000'000): NSURLError        vfs err = nsurlerror - 2'500'000
  */
 
 VFSErrorException::VFSErrorException( int _err ) :
@@ -130,10 +131,17 @@ NSError* ToNSError(int _code)
 {
     if(_code >= -2000 && _code <= -1001)
         // unix error codes section
-        return [NSError errorWithDomain:NSPOSIXErrorDomain code:(_code + 1500) userInfo:nil];
+        return [NSError errorWithDomain:NSPOSIXErrorDomain
+                                   code:(_code + 1500) userInfo:nil];
     
-    if(_code >= -2000000 && _code <= -1000000 )
-        return [NSError errorWithDomain:NSCocoaErrorDomain code:(_code + 1500000) userInfo:nil];
+    if(_code > -2000000 && _code <= -1000000 )
+        return [NSError errorWithDomain:NSCocoaErrorDomain
+                                   code:(_code + 1500000) userInfo:nil];
+
+    if(_code > -3000000 && _code <= -2000000 )
+        return [NSError errorWithDomain:NSURLErrorDomain
+                                   code:(_code + 2500000) userInfo:nil];
+
     
     // general codes section
     return [NSError errorWithDomain:g_Domain
@@ -141,15 +149,17 @@ NSError* ToNSError(int _code)
                            userInfo:@{ NSLocalizedDescriptionKey : TextForCode(_code) }
             ];
 }
-    
+
 int FromNSError(NSError* _err)
 {
     if( [_err.domain isEqualToString:NSCocoaErrorDomain] )
         return int(_err.code - 1500000);
     if( [_err.domain isEqualToString:NSPOSIXErrorDomain] )
         return int(_err.code - 1500);
+    if( [_err.domain isEqualToString:NSURLErrorDomain] )
+        return int(_err.code - 2500000);
     
-    return -1; // stub
+    return VFSError::GenericError;
 }
 
 }

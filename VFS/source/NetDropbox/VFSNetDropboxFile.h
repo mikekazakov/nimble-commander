@@ -6,7 +6,7 @@
 @class VFSNetDropboxFileUploadStream;
 @class VFSNetDropboxFileUploadDelegate;
 
-class VFSNetDropboxFile : public VFSFile
+class VFSNetDropboxFile final : public VFSFile
 {
 public:
     VFSNetDropboxFile(const char* _relative_path, const shared_ptr<VFSNetDropboxHost> &_host);
@@ -56,6 +56,7 @@ private:
     NSURLRequest *BuildRequestForUploadSessionInit() const;
     NSURLRequest *BuildRequestForUploadSessionAppend() const;
     NSURLRequest *BuildRequestForUploadSessionFinish() const;
+    string BuildUploadPathspec() const;
     const VFSNetDropboxHost &DropboxHost() const;
 
     struct Download {
@@ -77,6 +78,7 @@ private:
         string                          session_id;
     };
 
+    int                 m_OpenFlags = 0;
     long                m_FilePos = 0;
     long                m_FileSize = -1;
     long                m_ChunkSize = 150 * 1000 * 1000; // 150Mb according to dropbox docs

@@ -176,6 +176,38 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     host->Unlink(filepath);
 }
 
+- (void)testSimpleUploadWithOverwrite
+{
+    const auto to_upload = "Hello, world!"s;
+    auto filepath = "/FolderToModify/test.txt";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    host->Unlink(filepath);
+    
+    shared_ptr<VFSFile> file;
+    XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
+
+    XCTAssert( file->Open( VFSFlags::OF_Write ) == VFSError::Ok );
+    XCTAssert( file->SetUploadSize( to_upload.size() ) == VFSError::Ok );
+    XCTAssert( file->WriteFile( data(to_upload), (int)size(to_upload) ) == VFSError::Ok );
+    XCTAssert( file->Close() == VFSError::Ok );
+    
+    
+    const auto to_upload_new = "Hello, world, again!"s;
+    XCTAssert( file->Open( VFSFlags::OF_Write | VFSFlags::OF_Truncate ) == VFSError::Ok );
+    XCTAssert( file->SetUploadSize( to_upload_new.size() ) == VFSError::Ok );
+    XCTAssert( file->WriteFile( data(to_upload_new), (int)size(to_upload_new) ) == VFSError::Ok );
+    XCTAssert( file->Close() == VFSError::Ok );
+    
+    XCTAssert( file->Open( VFSFlags::OF_Read ) == VFSError::Ok );
+    auto uploaded = file->ReadFile();
+    XCTAssert( uploaded );
+    XCTAssert( uploaded->size() == size(to_upload_new) );
+    XCTAssert( equal( uploaded->begin(), uploaded->end(), to_upload_new.begin() ) );
+    XCTAssert( file->Close() == VFSError::Ok );
+    
+    host->Unlink(filepath);
+}
+
 - (void)testUnfinishedUpload
 {
     const auto to_upload = "Hello, world!"s;

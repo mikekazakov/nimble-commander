@@ -54,6 +54,7 @@ int VFSNetDropboxFile::Close()
         }       
     }
     
+    m_OpenFlags = 0;
     m_FilePos   = 0;
     m_FileSize  = -1;
     m_State     = Cold;
@@ -95,6 +96,7 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         m_Download = make_unique<Download>();
         m_Download->delegate = delegate;
         m_Download->task = task;
+        m_OpenFlags = _open_flags;
         SwitchToState(Initiated);
         
         [task resume];
@@ -106,6 +108,7 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         return m_State == Downloading ? VFSError::Ok : VFSError::GenericError;
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
+        m_OpenFlags = _open_flags;
         SwitchToState(Initiated);
         m_Upload = make_unique<Upload>();
         // at this point we need to wait for SetUploadSize() call to build of a request
@@ -146,17 +149,13 @@ void VFSNetDropboxFile::AppendDownloadedDataAsync( NSData *_data )
 {
     if( !_data || _data.length == 0 || m_State != Downloading || !m_Download || m_FileSize < 0 )
         return;
-    
-    LOCK_GUARD(m_DataLock) {
-        [_data enumerateByteRangesUsingBlock:[=](const void *bytes, NSRange byteRange, BOOL *stop){
-            m_Download->fifo.insert(end(m_Download->fifo),
-                                  (const uint8_t*)bytes,
-                                  (const uint8_t*)bytes + byteRange.length);
-        }];
-        
-        if( m_Download->fifo_offset + m_Download->fifo.size() == m_FileSize )
-            SwitchToState(Completed);
-    }
+
+    lock_guard<mutex> lock{m_DataLock};
+    [_data enumerateByteRangesUsingBlock:[this](const void *bytes, NSRange byteRange, BOOL *stop){
+        m_Download->fifo.insert(end(m_Download->fifo),
+                                (const uint8_t*)bytes,
+                                (const uint8_t*)bytes + byteRange.length);
+    }];
     m_Signal.notify_all();
 }
 
@@ -181,28 +180,26 @@ ssize_t VFSNetDropboxFile::Read(void *_buf, size_t _size)
         return VFSError::InvalidCall;
     if( !m_Download )
         return VFSError::InvalidCall;
-
-    if( _size == 0 )
-        return 0;
-    
-    if( Eof() )
+    if( _size == 0 || Eof() )
         return 0;
     
     do {
         LOCK_GUARD(m_DataLock) {
             if( !m_Download->fifo.empty() ) {
-                ssize_t sz = min( _size, m_Download->fifo.size() );
+                const ssize_t sz = min( _size, m_Download->fifo.size() );
                 copy_n( begin(m_Download->fifo), sz, (uint8_t*)_buf );
                 m_Download->fifo.erase( begin(m_Download->fifo), begin(m_Download->fifo) + sz );
                 m_Download->fifo_offset += sz;
                 m_FilePos += sz;
+                if( m_FilePos == m_FileSize )
+                    SwitchToState(Completed);
                 return sz;
             }
         }
     
         unique_lock<mutex> lk(m_SignalLock);
         m_Signal.wait(lk);
-    } while( m_State == Downloading || m_State == Completed );
+    } while( m_State == Downloading );
     return VFSError::GenericError;
 }
 
@@ -219,13 +216,24 @@ int VFSNetDropboxFile::PreferredIOSize() const
     return 32768; // packets are usually 16384 bytes long, use IO twice as long
 }
 
+string VFSNetDropboxFile::BuildUploadPathspec() const
+{
+    string spec =
+        "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(RelativePath()) + "\" ";
+    if( m_OpenFlags & VFSFlags::OF_Truncate )
+        spec += ", \"mode\": { \".tag\": \"overwrite\" } ";
+    spec += "}";
+    return spec;
+}
+
 NSURLRequest *VFSNetDropboxFile::BuildRequestForSinglePartUpload() const
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    InsetHTTPHeaderPathspec(request, RelativePath());
+    [request setValue:[NSString stringWithUTF8String:BuildUploadPathspec().c_str()]
+             forHTTPHeaderField:@"Dropbox-API-Arg"];
     [request setValue:[NSString stringWithUTF8String:to_string(m_Upload->upload_size).c_str()]
              forHTTPHeaderField:@"Content-Length"];
     return request;
@@ -265,25 +273,6 @@ void VFSNetDropboxFile::StartSmallUpload()
     SwitchToState(Uploading);
 
     [task resume];
-
-//{
-//    "path": "/Homework/math/Matrices.txt",
-//    "mode": "add",
-//    "autorename": true,
-//    "mute": false
-//}
-
-//{
-//    "path": "/Homework/math/Matrices.txt",
-//    "mode": {
-//        ".tag": "update",
-//        "update": "a1c10ce0dd78"
-//    },
-//    "autorename": false,
-//    "mute": false
-//}
-
-//    return VFSError::Ok;
 }
 
 NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionInit() const
@@ -410,13 +399,11 @@ NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionFinish() const
             "\"session_id\": \"" + m_Upload->session_id + "\", " +
             "\"offset\": " + to_string(m_FilePos) +
         "}, " +
-        "\"commit\": {" +
-            "\"path\": \"" + EscapeStringForJSONInHTTPHeader(RelativePath()) + "\""
-        "}}";
+        "\"commit\": " + BuildUploadPathspec() +
+        " }";
     
     [request setValue:[NSString stringWithUTF8String:header.c_str()]
              forHTTPHeaderField:@"Dropbox-API-Arg"];
-    
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     const long content_length = m_Upload->upload_size - m_FilePos;
     [request setValue:[NSString stringWithUTF8String:to_string(content_length).c_str()]

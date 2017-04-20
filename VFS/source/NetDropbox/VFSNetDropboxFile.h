@@ -41,14 +41,22 @@ private:
         StatesAmount
     };
 
+    void CheckStateTransition( State _new_state ) const;
     void SwitchToState( State _new_state );
-    ssize_t FeedUploadTask( uint8_t *_buffer, size_t _sz ); // called from a background thread
-    bool HasDataToFeedUploadTask(); // called from a background thread
-    void AppendDownloadedData( NSData *_data ); // called from a background thread
+    ssize_t FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz );
+    bool HasDataToFeedUploadTaskAsync();
+    void AppendDownloadedDataAsync( NSData *_data );
+    bool HandleDownloadResponseAsync( ssize_t _size_or_error );
     void StartSmallUpload();
     void StartSession();
     void StartSessionAppend();
     void StartSessionFinish();
+    NSURLRequest *BuildDownloadRequest() const;
+    NSURLRequest *BuildRequestForSinglePartUpload() const;
+    NSURLRequest *BuildRequestForUploadSessionInit() const;
+    NSURLRequest *BuildRequestForUploadSessionAppend() const;
+    NSURLRequest *BuildRequestForUploadSessionFinish() const;
+    const VFSNetDropboxHost &DropboxHost() const;
 
     struct Download {
         deque<uint8_t>          fifo;
@@ -63,7 +71,6 @@ private:
         bool                            partitioned = false;
         int                             part_no = 0;
         int                             parts_count = 0;
-        NSMutableURLRequest            *request = nil;
         NSURLSessionUploadTask         *task = nil;
         VFSNetDropboxFileUploadDelegate*delegate = nil;
         VFSNetDropboxFileUploadStream  *stream = nil;

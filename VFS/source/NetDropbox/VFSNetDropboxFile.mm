@@ -61,52 +61,49 @@ int VFSNetDropboxFile::Close()
     return rc;
 }
 
+NSURLRequest *VFSNetDropboxFile::BuildDownloadRequest() const
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Download];
+    request.HTTPMethod = @"POST";
+    DropboxHost().FillAuth(request);
+    InsetHTTPHeaderPathspec(request, RelativePath());
+    return request;
+}
+
 int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
-    if( m_Upload || m_Download )
+    if( m_State != Cold )
         return VFSError::InvalidCall;
+        
+    assert( !m_Upload && !m_Download );
 
-    auto &host = *((VFSNetDropboxHost*)Host().get());
     if( (_open_flags & VFSFlags::OF_Read) == VFSFlags::OF_Read ) {
         auto delegate = [[VFSNetDropboxFileDownloadDelegate alloc] init];
-        delegate.handleResponse = [this](ssize_t _size_or_error)->bool {
-            if( m_State != Initiated )
-                return false;
-            if( _size_or_error >= 0 ) {
-                m_FileSize = _size_or_error;
-                SwitchToState(Downloading);
-                return true;
-            }
-            else {
-                SwitchToState(Canceled);
-                return false;
-            }
+        delegate.handleResponse = [this](ssize_t _size_or_error) {
+            return HandleDownloadResponseAsync(_size_or_error);
         };
-        delegate.handleData = [this](NSData *_data) { AppendDownloadedData(_data); };
+        delegate.handleData = [this](NSData *_data) {
+            AppendDownloadedDataAsync(_data);
+        };
     
-        auto session = [NSURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration
+        auto request = BuildDownloadRequest();
+        auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
                                                      delegate:delegate
                                                 delegateQueue:nil];
-        
-        NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Download];
-        req.HTTPMethod = @"POST";
-        host.FillAuth(req);
-        InsetHTTPHeaderPathspec(req, RelativePath());
-        
-        SwitchToState(Initiated);
+        auto task = [session dataTaskWithRequest:request];
         
         m_Download = make_unique<Download>();
-        
         m_Download->delegate = delegate;
-        m_Download->task = [session dataTaskWithRequest:req];
-        [m_Download->task resume];
+        m_Download->task = task;
+        SwitchToState(Initiated);
         
-        // wait for initial responce from dropbox
+        [task resume];
+        
+        // wait for initial response from dropbox
         unique_lock<mutex> lk(m_SignalLock);
         m_Signal.wait(lk, [=]{ return m_State != Initiated; } );
         
         return m_State == Downloading ? VFSError::Ok : VFSError::GenericError;
-        
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
         SwitchToState(Initiated);
@@ -119,6 +116,22 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     return VFSError::InvalidCall;
 }
 
+bool VFSNetDropboxFile::HandleDownloadResponseAsync( ssize_t _size_or_error )
+{
+    if( m_State != Initiated )
+        return false;
+    
+    if( _size_or_error >= 0 ) {
+        m_FileSize = _size_or_error; // <- this write is not well-synchronized
+        SwitchToState(Downloading);
+        return true;
+    }
+    else {
+        SwitchToState(Canceled);
+        return false;
+    }
+}
+
 VFSNetDropboxFile::ReadParadigm VFSNetDropboxFile::GetReadParadigm() const
 {
     return ReadParadigm::Sequential;
@@ -129,18 +142,13 @@ VFSNetDropboxFile::WriteParadigm VFSNetDropboxFile::GetWriteParadigm() const
     return WriteParadigm::Upload;
 }
 
-void VFSNetDropboxFile::AppendDownloadedData( NSData *_data )
+void VFSNetDropboxFile::AppendDownloadedDataAsync( NSData *_data )
 {
-    if(!_data ||
-        _data.length == 0 ||
-        m_State != Downloading ||
-        !m_Download ||
-        m_FileSize < 0)
+    if( !_data || _data.length == 0 || m_State != Downloading || !m_Download || m_FileSize < 0 )
         return;
     
     LOCK_GUARD(m_DataLock) {
         [_data enumerateByteRangesUsingBlock:[=](const void *bytes, NSRange byteRange, BOOL *stop){
-//            cout << "accepted bytes: " << byteRange.length << endl;
             m_Download->fifo.insert(end(m_Download->fifo),
                                   (const uint8_t*)bytes,
                                   (const uint8_t*)bytes + byteRange.length);
@@ -211,21 +219,32 @@ int VFSNetDropboxFile::PreferredIOSize() const
     return 32768; // packets are usually 16384 bytes long, use IO twice as long
 }
 
+NSURLRequest *VFSNetDropboxFile::BuildRequestForSinglePartUpload() const
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
+    request.HTTPMethod = @"POST";
+    DropboxHost().FillAuth(request);
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    InsetHTTPHeaderPathspec(request, RelativePath());
+    [request setValue:[NSString stringWithUTF8String:to_string(m_Upload->upload_size).c_str()]
+             forHTTPHeaderField:@"Content-Length"];
+    return request;
+}
+
 void VFSNetDropboxFile::StartSmallUpload()
 {
     assert( m_Upload != nullptr );
     assert( m_Upload->upload_size >= 0 && m_Upload->upload_size <= m_ChunkSize );
-    assert( m_Upload->request == nil );
     assert( m_Upload->delegate == nil );
     assert( m_Upload->stream == nil );
     assert( m_Upload->task == nil );
 
     auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool {
-        return HasDataToFeedUploadTask();
+        return HasDataToFeedUploadTaskAsync();
     };
     stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
-        return FeedUploadTask(_buffer, _sz);
+        return FeedUploadTaskAsync(_buffer, _sz);
     };
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
@@ -234,22 +253,12 @@ void VFSNetDropboxFile::StartSmallUpload()
             SwitchToState(_vfs_error == VFSError::Ok ? Completed : Canceled);
     };
     
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
-    request.HTTPMethod = @"POST";
-    auto &host = *((VFSNetDropboxHost*)Host().get());
-    host.FillAuth(request);
-    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    InsetHTTPHeaderPathspec(request, RelativePath());
-    [request setValue:[NSString stringWithUTF8String:to_string(m_Upload->upload_size).c_str()]
-             forHTTPHeaderField:@"Content-Length"];
-    
-    auto configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
-    auto session = [NSURLSession sessionWithConfiguration:configuration
+    auto request = BuildRequestForSinglePartUpload();
+    auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
                                                  delegate:delegate
                                             delegateQueue:nil];
     auto task = [session uploadTaskWithStreamedRequest:request];
 
-    m_Upload->request = request;
     m_Upload->delegate = delegate;
     m_Upload->stream = stream;
     m_Upload->task = task;
@@ -277,21 +286,32 @@ void VFSNetDropboxFile::StartSmallUpload()
 //    return VFSError::Ok;
 }
 
+NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionInit() const
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionStart];
+    request.HTTPMethod = @"POST";
+    DropboxHost().FillAuth(request);
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"{}" forHTTPHeaderField:@"Dropbox-API-Arg"];
+    [request setValue:[NSString stringWithUTF8String:to_string(m_ChunkSize).c_str()]
+             forHTTPHeaderField:@"Content-Length"];
+    return request;
+}
+
 void VFSNetDropboxFile::StartSession()
 {
     assert( m_Upload != nullptr );
     assert( m_Upload->upload_size > m_ChunkSize );
-    assert( m_Upload->request == nil );
     assert( m_Upload->delegate == nil );
     assert( m_Upload->stream == nil );
     assert( m_Upload->task == nil );
 
     auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool {
-        return HasDataToFeedUploadTask();
+        return HasDataToFeedUploadTaskAsync();
     };
     stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
-        return FeedUploadTask(_buffer, _sz);
+        return FeedUploadTaskAsync(_buffer, _sz);
     };
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
@@ -300,22 +320,12 @@ void VFSNetDropboxFile::StartSession()
             SwitchToState(Canceled);
     };
     
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionStart];
-    request.HTTPMethod = @"POST";
-    auto &host = *((VFSNetDropboxHost*)Host().get());
-    host.FillAuth(request);
-    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:@"{ }" forHTTPHeaderField:@"Dropbox-API-Arg"];
-    [request setValue:[NSString stringWithUTF8String:to_string(m_ChunkSize).c_str()]
-             forHTTPHeaderField:@"Content-Length"];
-    
-    auto configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
-    auto session = [NSURLSession sessionWithConfiguration:configuration
+    auto request = BuildRequestForUploadSessionInit();
+    auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
                                                  delegate:delegate
                                             delegateQueue:nil];
     auto task = [session uploadTaskWithStreamedRequest:request];
 
-    m_Upload->request = request;
     m_Upload->delegate = delegate;
     m_Upload->stream = stream;
     m_Upload->task = task;
@@ -328,13 +338,33 @@ void VFSNetDropboxFile::StartSession()
     [task resume];
 }
 
+NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionAppend() const
+{
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionAppend];
+    request.HTTPMethod = @"POST";
+    DropboxHost().FillAuth(request);
+    
+    const string header =
+        "{\"cursor\": {"s +
+            "\"session_id\": \"" + m_Upload->session_id + "\", " +
+            "\"offset\": " + to_string(m_FilePos) +
+        "}}";
+    [request setValue:[NSString stringWithUTF8String:header.c_str()]
+             forHTTPHeaderField:@"Dropbox-API-Arg"];
+    
+    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:[NSString stringWithUTF8String:to_string(m_ChunkSize).c_str()]
+             forHTTPHeaderField:@"Content-Length"];
+
+    return request;
+}
+
 void VFSNetDropboxFile::StartSessionAppend()
 {
     assert( m_State == Uploading );
     assert( m_Upload != nullptr );
     assert( m_FilePos >= m_ChunkSize );
     assert( m_Upload->upload_size > m_ChunkSize );
-    assert( m_Upload->request != nil );
     assert( m_Upload->delegate != nil );
     assert( m_Upload->stream != nil );
     assert( m_Upload->task != nil );
@@ -344,10 +374,10 @@ void VFSNetDropboxFile::StartSessionAppend()
 
    auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool {
-        return HasDataToFeedUploadTask();
+        return HasDataToFeedUploadTaskAsync();
     };
     stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
-        return FeedUploadTask(_buffer, _sz);
+        return FeedUploadTaskAsync(_buffer, _sz);
     };
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
@@ -356,31 +386,12 @@ void VFSNetDropboxFile::StartSessionAppend()
             SwitchToState(Canceled);
     };
     
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionAppend];
-    request.HTTPMethod = @"POST";
-    auto &host = *((VFSNetDropboxHost*)Host().get());
-    host.FillAuth(request);
-    
-    const string header =
-        "{\"cursor\": {"s +
-            "\"session_id\": \"" + m_Upload->session_id + "\", " +
-            "\"offset\": " + to_string(m_FilePos) +
-        "}}";
-    cout << header << endl;
-    [request setValue:[NSString stringWithUTF8String:header.c_str()]
-             forHTTPHeaderField:@"Dropbox-API-Arg"];
-    
-    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithUTF8String:to_string(m_ChunkSize).c_str()]
-             forHTTPHeaderField:@"Content-Length"];
-    
-    auto configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
-    auto session = [NSURLSession sessionWithConfiguration:configuration
+    auto request = BuildRequestForUploadSessionAppend();
+    auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
                                                  delegate:delegate
                                             delegateQueue:nil];
     auto task = [session uploadTaskWithStreamedRequest:request];
 
-    m_Upload->request = request;
     m_Upload->delegate = delegate;
     m_Upload->stream = stream;
     m_Upload->task = task;
@@ -388,38 +399,11 @@ void VFSNetDropboxFile::StartSessionAppend()
     [task resume];
 }
 
-void VFSNetDropboxFile::StartSessionFinish()
+NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionFinish() const
 {
-    assert( m_State == Uploading );
-    assert( m_Upload != nullptr );
-    assert( m_FilePos >= m_ChunkSize );
-    assert( m_Upload->upload_size > m_ChunkSize );
-    assert( m_Upload->request != nil );
-    assert( m_Upload->delegate != nil );
-    assert( m_Upload->stream != nil );
-    assert( m_Upload->task != nil );
-    assert( m_Upload->part_no <= m_Upload->parts_count - 1 );
-    assert( !m_Upload->session_id.empty() );
-    m_Upload->part_no++;
-
-    auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
-    stream.hasDataToFeed = [this]() -> bool {
-        return HasDataToFeedUploadTask();
-    };
-    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
-        return FeedUploadTask(_buffer, _sz);
-    };
-    
-    auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
-    delegate.handleFinished = [this](int _vfs_error){
-        if( m_State == Uploading )
-            SwitchToState(_vfs_error == VFSError::Ok ? Completed : Canceled);
-    };
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionFinish];
+    NSMutableURLRequest *request =[[NSMutableURLRequest alloc]initWithURL:api::UploadSessionFinish];
     request.HTTPMethod = @"POST";
-    auto &host = *((VFSNetDropboxHost*)Host().get());
-    host.FillAuth(request);
+    DropboxHost().FillAuth(request);
     
     const string header =
         "{\"cursor\": {"s +
@@ -430,23 +414,50 @@ void VFSNetDropboxFile::StartSessionFinish()
             "\"path\": \"" + EscapeStringForJSONInHTTPHeader(RelativePath()) + "\""
         "}}";
     
-    cout << header << endl;
     [request setValue:[NSString stringWithUTF8String:header.c_str()]
              forHTTPHeaderField:@"Dropbox-API-Arg"];
     
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     const long content_length = m_Upload->upload_size - m_FilePos;
-    cout << "content_length: " << content_length << endl;
     [request setValue:[NSString stringWithUTF8String:to_string(content_length).c_str()]
              forHTTPHeaderField:@"Content-Length"];
+
+    return request;
+}
+
+void VFSNetDropboxFile::StartSessionFinish()
+{
+    assert( m_State == Uploading );
+    assert( m_Upload != nullptr );
+    assert( m_FilePos >= m_ChunkSize );
+    assert( m_Upload->upload_size > m_ChunkSize );
+    assert( m_Upload->delegate != nil );
+    assert( m_Upload->stream != nil );
+    assert( m_Upload->task != nil );
+    assert( m_Upload->part_no <= m_Upload->parts_count - 1 );
+    assert( !m_Upload->session_id.empty() );
+    m_Upload->part_no++;
+
+    auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
+    stream.hasDataToFeed = [this]() -> bool {
+        return HasDataToFeedUploadTaskAsync();
+    };
+    stream.feedData = [this](uint8_t *_buffer, size_t _sz) -> ssize_t {
+        return FeedUploadTaskAsync(_buffer, _sz);
+    };
     
-    auto configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
-    auto session = [NSURLSession sessionWithConfiguration:configuration
+    auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
+    delegate.handleFinished = [this](int _vfs_error){
+        if( m_State == Uploading )
+            SwitchToState(_vfs_error == VFSError::Ok ? Completed : Canceled);
+    };
+    
+    auto request = BuildRequestForUploadSessionFinish();
+    auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
                                                  delegate:delegate
                                             delegateQueue:nil];
     auto task = [session uploadTaskWithStreamedRequest:request];
 
-    m_Upload->request = request;
     m_Upload->delegate = delegate;
     m_Upload->stream = stream;
     m_Upload->task = task;
@@ -589,7 +600,7 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
     }
 }
 
-ssize_t VFSNetDropboxFile::FeedUploadTask( uint8_t *_buffer, size_t _sz )
+ssize_t VFSNetDropboxFile::FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz )
 {
     if( _sz == 0 )
         return 0;
@@ -609,12 +620,11 @@ ssize_t VFSNetDropboxFile::FeedUploadTask( uint8_t *_buffer, size_t _sz )
     return sz;
 }
 
-bool VFSNetDropboxFile::HasDataToFeedUploadTask()
+bool VFSNetDropboxFile::HasDataToFeedUploadTaskAsync()
 {
     if( m_State != Uploading )
         return false;
     lock_guard<mutex> lock{m_DataLock};
-//    cout << "has data for stream: " << has_data << endl;
     return !m_Upload->fifo.empty();
 }
 
@@ -629,7 +639,7 @@ int VFSNetDropboxFile::SetChunkSize( size_t _size )
     return VFSError::FromErrno(EINVAL);
 }
 
-void VFSNetDropboxFile::SwitchToState( State _new_state )
+void VFSNetDropboxFile::CheckStateTransition( State _new_state ) const
 {
     static const bool valid_flow[StatesAmount][StatesAmount] = {
 /* Valid transitions from index1 to index2                              */
@@ -642,7 +652,16 @@ void VFSNetDropboxFile::SwitchToState( State _new_state )
 /*Completed*/   { 1,      0,         0,        0,         0,       0   }};
     if( !valid_flow[m_State][_new_state] )
         cerr << "suspicious state change: " << m_State << " to " << _new_state << endl;
+}
 
+void VFSNetDropboxFile::SwitchToState( State _new_state )
+{
+    CheckStateTransition( _new_state );
     m_State = _new_state;
     m_Signal.notify_all();
+}
+
+const VFSNetDropboxHost &VFSNetDropboxFile::DropboxHost() const
+{
+    return *((VFSNetDropboxHost*)Host().get());
 }

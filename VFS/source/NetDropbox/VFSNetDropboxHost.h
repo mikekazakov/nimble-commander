@@ -61,8 +61,9 @@ public:
     const string &Token() const;
 
 #ifdef __OBJC__
-    void FillAuth( NSMutableURLRequest *_request );
-    NSURLSession *GenericSession();
+    void FillAuth( NSMutableURLRequest *_request ) const;
+    NSURLSession *GenericSession() const;
+    NSURLSessionConfiguration *GenericConfiguration() const;
 #endif
 
 private:

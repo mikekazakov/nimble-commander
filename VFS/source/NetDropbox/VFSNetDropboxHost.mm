@@ -59,12 +59,17 @@ bool VFSNetDropboxHost::ShouldProduceThumbnails() const
     return false;
 }
 
-NSURLSession *VFSNetDropboxHost::GenericSession()
+NSURLSession *VFSNetDropboxHost::GenericSession() const
 {
     return I->m_GenericSession;
 }
 
-void VFSNetDropboxHost::FillAuth( NSMutableURLRequest *_request )
+NSURLSessionConfiguration *VFSNetDropboxHost::GenericConfiguration() const
+{
+    return NSURLSessionConfiguration.defaultSessionConfiguration;
+}
+
+void VFSNetDropboxHost::FillAuth( NSMutableURLRequest *_request ) const
 {
     [_request setValue:I->m_AuthString forHTTPHeaderField:@"Authorization"];
 }

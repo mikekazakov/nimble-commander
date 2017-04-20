@@ -151,7 +151,7 @@ void VFSNetDropboxFile::AppendDownloadedDataAsync( NSData *_data )
         return;
 
     lock_guard<mutex> lock{m_DataLock};
-    [_data enumerateByteRangesUsingBlock:[this](const void *bytes, NSRange byteRange, BOOL *stop){
+    [_data enumerateByteRangesUsingBlock:[this](const void *bytes, NSRange byteRange, BOOL *stop) {
         m_Download->fifo.insert(end(m_Download->fifo),
                                 (const uint8_t*)bytes,
                                 (const uint8_t*)bytes + byteRange.length);
@@ -329,7 +329,7 @@ void VFSNetDropboxFile::StartSession()
 
 NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionAppend() const
 {
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionAppend];
+    NSMutableURLRequest *request =[[NSMutableURLRequest alloc]initWithURL:api::UploadSessionAppend];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     
@@ -469,122 +469,102 @@ int VFSNetDropboxFile::SetUploadSize(size_t _size)
     return VFSError::Ok;
 }
 
+ssize_t VFSNetDropboxFile::WaitForUploadBufferConsumption() const
+{
+    const ssize_t to_eat = m_Upload->fifo.size();
+    ssize_t eaten = 0;
+    while ( eaten < to_eat && m_State != Canceled ) {
+        unique_lock<mutex> signal_lock(m_SignalLock);
+        m_Signal.wait(signal_lock);
+        
+        lock_guard<mutex> lock{m_DataLock};
+        eaten = to_eat - m_Upload->fifo.size();
+    }
+    return eaten;
+}
+
+void VFSNetDropboxFile::PushUploadDataIntoFIFOAndNotifyStream( const void *_buf, size_t _size )
+{
+    lock_guard<mutex> lock{m_DataLock};
+    m_Upload->fifo.insert(end(m_Upload->fifo),
+                          (const uint8_t*)_buf,
+                          (const uint8_t*)_buf + _size);
+    [m_Upload->stream notifyAboutNewData];
+}
+
+void VFSNetDropboxFile::ExtractSessionIdOrCancelUploadAsync( NSData *_data )
+{
+    if( auto doc = ParseJSON(_data) )
+        if( auto session_id = GetString(*doc, "session_id") ) {
+            LOCK_GUARD(m_DataLock) {
+                m_Upload->session_id = session_id;
+            }
+            m_Signal.notify_all();
+            return;
+        }
+    SwitchToState(Canceled);
+}
+
+void VFSNetDropboxFile::WaitForSessionIdOrError() const
+{
+    unique_lock<mutex> lock(m_SignalLock);
+    m_Signal.wait(lock, [this]{
+        if( m_State != Uploading )
+            return true;
+        lock_guard<mutex> lock{m_DataLock};
+        return !m_Upload->session_id.empty();
+    });
+}
+
 ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
 {
-    if( !m_Upload )
-        return VFSError::InvalidCall;
-    if( m_State != Uploading )
-        return VFSError::InvalidCall;
-    if( m_Upload->upload_size < 0 )
-        return VFSError::InvalidCall;
-    if( m_FilePos + _size > m_Upload->upload_size )
+    if( !m_Upload ||
+        m_State != Uploading ||
+        m_Upload->upload_size < 0 ||
+        m_FilePos + _size > m_Upload->upload_size )
         return VFSError::InvalidCall;
     
-    if( !m_Upload->partitioned ) {
+    assert( m_Upload->fifo.empty() );
     
-        LOCK_GUARD(m_DataLock) {
-            m_Upload->fifo.insert(end(m_Upload->fifo),
-                                  (const uint8_t*)_buf,
-                                  (const uint8_t*)_buf + _size);
-            cout << "received " << _size << " bytes from caller" << endl;
-            [m_Upload->stream notifyAboutNewData];
-        }
-        
-        // need to wait until either upload task ate all provided data, or any network error occured
-//        ssize_t eaten = _size - m_Upload->fifo.size();
-        ssize_t eaten = 0;
-        while( eaten < _size && m_State != Canceled ) {
-           {unique_lock<mutex> lk(m_SignalLock);
-            m_Signal.wait(lk);}
-            
-            lock_guard<mutex> lock{m_DataLock};
-            eaten = _size - m_Upload->fifo.size();
-        }
-        m_FilePos += eaten;
-        
-        // TODO: process an error if any
-        if( m_FilePos == m_Upload->upload_size ) {
-            [m_Upload->stream notifyAboutDataEnd];
-        }
-        
-        LOCK_GUARD(m_DataLock) {
-            // at this moment FIFO must be either emptied via normal execution, or an error has occured.
-            // in that case - be sure that there're no remains of this data block.
-            m_Upload->fifo.clear();
-        }
-        
-        return eaten;
-    }
-    else {
-        // figure out amount of information we can consume this call
-        size_t this_chunk_left = m_ChunkSize - m_Upload->fifo_offset;
-        _size = min(_size, this_chunk_left);
-        
-         LOCK_GUARD(m_DataLock) {
-            m_Upload->fifo.insert(end(m_Upload->fifo),
-                                  (const uint8_t*)_buf,
-                                  (const uint8_t*)_buf + _size);
-            cout << "received " << _size << " bytes from caller" << endl;
-            [m_Upload->stream notifyAboutNewData];
-        }
+    // figure out amount of information we can consume this call
+    const size_t left_of_this_chunk = m_ChunkSize - m_Upload->fifo_offset;
+    const size_t to_write = min(_size, left_of_this_chunk);
+    
+    PushUploadDataIntoFIFOAndNotifyStream(_buf, to_write);
+    const auto eaten = WaitForUploadBufferConsumption();
 
-        // need to wait until either upload task ate all provided data, or any network error occured
-        ssize_t eaten = 0;
-        while( eaten < _size && m_State != Canceled ) {
-           {unique_lock<mutex> lk(m_SignalLock);
-            m_Signal.wait(lk);}
-            
-            lock_guard<mutex> lock{m_DataLock};
-            eaten = _size - m_Upload->fifo.size();
-        }
-        m_FilePos += eaten;
-        
-        if( m_FilePos == m_Upload->upload_size ) {
-            [m_Upload->stream notifyAboutDataEnd];
-        }
-        else if( m_Upload->fifo_offset == m_ChunkSize ) {
-            // finish current upload request
-            [m_Upload->stream notifyAboutDataEnd];
-            m_Upload->stream.feedData = nullptr;
-            m_Upload->stream.hasDataToFeed = nullptr;
-            
-            if( m_Upload->part_no == 0 ) {
-                // get a session id
-                m_Upload->delegate.handleReceivedData = [this](NSData *_data){
-                    if( auto doc = ParseJSON(_data) )
-                        if( auto session_id = GetString(*doc, "session_id") ) {
-                            LOCK_GUARD(m_DataLock) {
-                                m_Upload->session_id = session_id;
-                            }
-                            m_Signal.notify_all();
-                            return;
-                        }
-                    SwitchToState(Canceled);
-                };
-                
-                unique_lock<mutex> lock(m_SignalLock);
-                m_Signal.wait(lock, [this]{
-                    if( m_State != Uploading )
-                        return true;
-                    lock_guard<mutex> lock{m_DataLock};
-                    return !m_Upload->session_id.empty();
-                });
-                cout << "got session_id: " << m_Upload->session_id << endl;
-                m_Upload->delegate.handleReceivedData = nullptr;
-                m_Upload->delegate.handleFinished = nullptr;
-            }
-            
-            m_Upload->fifo_offset = 0;
-            
-            // switch an upload request
-            if( m_Upload->part_no + 1 < m_Upload->parts_count - 1  )
-                StartSessionAppend();
-            else if( m_Upload->part_no + 1 == m_Upload->parts_count - 1  )
-                StartSessionFinish();
-        }
+    // TODO: process an error if any
 
-        return eaten;
+    m_FilePos += eaten;
+    
+    if( m_FilePos == m_Upload->upload_size ) {
+        [m_Upload->stream notifyAboutDataEnd];
     }
+    else if( m_Upload->partitioned && m_Upload->fifo_offset == m_ChunkSize ) {
+        // finish current upload request
+        [m_Upload->stream notifyAboutDataEnd];
+        m_Upload->stream.feedData = nullptr;
+        m_Upload->stream.hasDataToFeed = nullptr;
+        m_Upload->fifo_offset = 0;
+        
+        if( m_Upload->part_no == 0 ) {
+            m_Upload->delegate.handleReceivedData = [this](NSData *_data){
+                ExtractSessionIdOrCancelUploadAsync(_data);
+            };
+            WaitForSessionIdOrError();
+            
+            // TODO: error processing
+            
+            m_Upload->delegate.handleReceivedData = nullptr;
+            m_Upload->delegate.handleFinished = nullptr;
+        }
+        
+        if( m_Upload->part_no + 1 < m_Upload->parts_count - 1  )
+            StartSessionAppend();
+        else if( m_Upload->part_no + 1 == m_Upload->parts_count - 1  )
+            StartSessionFinish();
+    }
+    return eaten;
 }
 
 ssize_t VFSNetDropboxFile::FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz )
@@ -599,7 +579,6 @@ ssize_t VFSNetDropboxFile::FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz )
         copy_n( begin(m_Upload->fifo), sz, _buffer );
         m_Upload->fifo.erase( begin(m_Upload->fifo), begin(m_Upload->fifo) + sz );
         m_Upload->fifo_offset += sz;
-        cout << "fed " << sz << " bytes into stream" << endl;
     }
     
     if( sz != 0 )
@@ -607,7 +586,7 @@ ssize_t VFSNetDropboxFile::FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz )
     return sz;
 }
 
-bool VFSNetDropboxFile::HasDataToFeedUploadTaskAsync()
+bool VFSNetDropboxFile::HasDataToFeedUploadTaskAsync() const
 {
     if( m_State != Uploading )
         return false;

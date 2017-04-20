@@ -44,7 +44,7 @@ private:
     void CheckStateTransition( State _new_state ) const;
     void SwitchToState( State _new_state );
     ssize_t FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz );
-    bool HasDataToFeedUploadTaskAsync();
+    bool HasDataToFeedUploadTaskAsync() const;
     void AppendDownloadedDataAsync( NSData *_data );
     bool HandleDownloadResponseAsync( ssize_t _size_or_error );
     void StartSmallUpload();
@@ -58,6 +58,10 @@ private:
     NSURLRequest *BuildRequestForUploadSessionFinish() const;
     string BuildUploadPathspec() const;
     const VFSNetDropboxHost &DropboxHost() const;
+    ssize_t WaitForUploadBufferConsumption() const;
+    void PushUploadDataIntoFIFOAndNotifyStream( const void *_buf, size_t _size );
+    void ExtractSessionIdOrCancelUploadAsync( NSData *_data );
+    void WaitForSessionIdOrError() const;
 
     struct Download {
         deque<uint8_t>          fifo;
@@ -85,10 +89,10 @@ private:
 
     atomic<State>       m_State { Cold };
 
-    mutex               m_SignalLock;
-    condition_variable  m_Signal;
+    mutable mutex               m_SignalLock;
+    mutable condition_variable  m_Signal;
     
-    mutex               m_DataLock; // any access to m_Download/m_Upload must be guarded
+    mutable mutex       m_DataLock; // any access to m_Download/m_Upload must be guarded
     unique_ptr<Download>m_Download; // exists only on reading
     unique_ptr<Upload>  m_Upload;   // exists only on writing    
 };

@@ -27,14 +27,6 @@ public:
     int SetChunkSize( size_t _size );
 
 private:
-    ssize_t FeedUploadTask( uint8_t *_buffer, size_t _sz ); // called from a background thread
-    bool HasDataToFeedUploadTask(); // called from a background thread
-    void AppendDownloadedData( NSData *_data ); // called from a background thread
-    void StartSmallUpload();
-    void StartSession();
-    void StartSessionAppend();
-    void StartSessionFinish();
-
     /**
      * Download flow: Cold -> Initiated -> Downloading -> (Canceled|Completed)
      * Upload flow:   Cold -> Initiated -> Uploading ->   (Canceled|Completed)
@@ -45,9 +37,18 @@ private:
         Downloading = 2,
         Uploading   = 3, // Initiated upload switches to Uploading in SetUploadSize()
         Canceled    = 4,
-        Completed   = 5
+        Completed   = 5,
+        StatesAmount
     };
 
+    void SwitchToState( State _new_state );
+    ssize_t FeedUploadTask( uint8_t *_buffer, size_t _sz ); // called from a background thread
+    bool HasDataToFeedUploadTask(); // called from a background thread
+    void AppendDownloadedData( NSData *_data ); // called from a background thread
+    void StartSmallUpload();
+    void StartSession();
+    void StartSessionAppend();
+    void StartSessionFinish();
 
     struct Download {
         deque<uint8_t>          fifo;

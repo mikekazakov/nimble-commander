@@ -28,7 +28,7 @@ int VFSNetDropboxFile::Close()
                 // client hasn't provided enough data and is closing a file.
                 // this is an invalid behaviour, need to cancel a transfer task
                 [m_Upload->task cancel];
-                m_State = Canceled;
+                SwitchToState(Canceled);
                 rc = VFSError::FromErrno(EIO);
             }
             
@@ -74,13 +74,11 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
                 return false;
             if( _size_or_error >= 0 ) {
                 m_FileSize = _size_or_error;
-                m_State = Downloading;
-                m_Signal.notify_all();
+                SwitchToState(Downloading);
                 return true;
             }
             else {
-                m_State = Canceled;
-                m_Signal.notify_all();
+                SwitchToState(Canceled);
                 return false;
             }
         };
@@ -95,7 +93,7 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         host.FillAuth(req);
         InsetHTTPHeaderPathspec(req, RelativePath());
         
-        m_State = Initiated;
+        SwitchToState(Initiated);
         
         m_Download = make_unique<Download>();
         
@@ -111,7 +109,7 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
-        m_State = Initiated;
+        SwitchToState(Initiated);
         m_Upload = make_unique<Upload>();
         // at this point we need to wait for SetUploadSize() call to build of a request
         // and to actually start it
@@ -149,7 +147,7 @@ void VFSNetDropboxFile::AppendDownloadedData( NSData *_data )
         }];
         
         if( m_Download->fifo_offset + m_Download->fifo.size() == m_FileSize )
-            m_State = Completed;
+            SwitchToState(Completed);
     }
     m_Signal.notify_all();
 }
@@ -232,10 +230,8 @@ void VFSNetDropboxFile::StartSmallUpload()
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
-        if( m_State == Initiated || m_State == Uploading ) {
-            m_State = _vfs_error == VFSError::Ok ? Completed : Canceled;
-            m_Signal.notify_all();
-        }
+        if( m_State == Initiated || m_State == Uploading )
+            SwitchToState(_vfs_error == VFSError::Ok ? Completed : Canceled);
     };
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
@@ -257,7 +253,7 @@ void VFSNetDropboxFile::StartSmallUpload()
     m_Upload->delegate = delegate;
     m_Upload->stream = stream;
     m_Upload->task = task;
-    m_State = Uploading;
+    SwitchToState(Uploading);
 
     [task resume];
 
@@ -300,11 +296,8 @@ void VFSNetDropboxFile::StartSession()
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
-        if( m_State == Uploading )
-            if( _vfs_error != VFSError::Ok ) {
-                m_State = Canceled;
-                m_Signal.notify_all();
-            }
+        if( m_State == Uploading && _vfs_error != VFSError::Ok )
+            SwitchToState(Canceled);
     };
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionStart];
@@ -330,7 +323,7 @@ void VFSNetDropboxFile::StartSession()
     m_Upload->part_no = 0;
     m_Upload->parts_count = (int)(m_Upload->upload_size / m_ChunkSize) +
                                  (m_Upload->upload_size % m_ChunkSize ? 1 : 0);
-    m_State = Uploading;
+    SwitchToState(Uploading);
     
     [task resume];
 }
@@ -359,11 +352,8 @@ void VFSNetDropboxFile::StartSessionAppend()
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
-        if( m_State == Uploading )
-            if( _vfs_error != VFSError::Ok ) {
-                m_State = Canceled;
-                m_Signal.notify_all();
-            }
+        if( m_State == Uploading && _vfs_error != VFSError::Ok )
+            SwitchToState(Canceled);
     };
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionAppend];
@@ -422,10 +412,8 @@ void VFSNetDropboxFile::StartSessionFinish()
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
-        if( m_State == Uploading ) {
-            m_State = _vfs_error == VFSError::Ok ? Completed : Canceled;
-            m_Signal.notify_all();
-        }
+        if( m_State == Uploading )
+            SwitchToState(_vfs_error == VFSError::Ok ? Completed : Canceled);
     };
     
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionFinish];
@@ -573,8 +561,7 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
                             m_Signal.notify_all();
                             return;
                         }
-                    m_State = State::Canceled;
-                    m_Signal.notify_all();
+                    SwitchToState(Canceled);
                 };
                 
                 unique_lock<mutex> lock(m_SignalLock);
@@ -640,4 +627,22 @@ int VFSNetDropboxFile::SetChunkSize( size_t _size )
         return VFSError::Ok;
     }
     return VFSError::FromErrno(EINVAL);
+}
+
+void VFSNetDropboxFile::SwitchToState( State _new_state )
+{
+    static const bool valid_flow[StatesAmount][StatesAmount] = {
+/* Valid transitions from index1 to index2                              */
+/*               Cold Initiated Downloading Uploading Canceled Completed*/
+/*Cold*/        { 0,      1,         0,        0,         0,       0    },
+/*Initiated*/   { 0,      0,         1,        1,         1,       0    },
+/*Downloading*/ { 0,      0,         0,        0,         1,       1    },
+/*Uploading*/   { 0,      0,         0,        0,         1,       1    },
+/*Canceled*/    { 1,      0,         0,        0,         0,       0    },
+/*Completed*/   { 1,      0,         0,        0,         0,       0   }};
+    if( !valid_flow[m_State][_new_state] )
+        cerr << "suspicious state change: " << m_State << " to " << _new_state << endl;
+
+    m_State = _new_state;
+    m_Signal.notify_all();
 }

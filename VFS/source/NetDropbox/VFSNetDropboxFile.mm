@@ -43,6 +43,7 @@ int VFSNetDropboxFile::Close()
             [m_Download->task cancel];
             m_Download->delegate.handleResponse = nullptr;
             m_Download->delegate.handleData = nullptr;
+            m_Download->delegate.handleError = nullptr;
             m_Download.reset();
         }
         
@@ -54,6 +55,7 @@ int VFSNetDropboxFile::Close()
         }       
     }
     
+    SetLastError(VFSError::Ok);
     m_OpenFlags = 0;
     m_FilePos   = 0;
     m_FileSize  = -1;
@@ -80,13 +82,10 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 
     if( (_open_flags & VFSFlags::OF_Read) == VFSFlags::OF_Read ) {
         auto delegate = [[VFSNetDropboxFileDownloadDelegate alloc] init];
-        delegate.handleResponse = [this](ssize_t _size_or_error) {
-            return HandleDownloadResponseAsync(_size_or_error);
-        };
-        delegate.handleData = [this](NSData *_data) {
-            AppendDownloadedDataAsync(_data);
-        };
-    
+        delegate.handleResponse = [this](ssize_t _size) { HandleDownloadResponseAsync(_size); };
+        delegate.handleData = [this](NSData *_data) { AppendDownloadedDataAsync(_data); };
+        delegate.handleError = [this](int _error) { HandleDownloadError(_error); };
+        
         auto request = BuildDownloadRequest();
         auto session = [NSURLSession sessionWithConfiguration:DropboxHost().GenericConfiguration()
                                                      delegate:delegate
@@ -101,11 +100,9 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         
         [task resume];
         
-        // wait for initial response from dropbox
-        unique_lock<mutex> lk(m_SignalLock);
-        m_Signal.wait(lk, [=]{ return m_State != Initiated; } );
-        
-        return m_State == Downloading ? VFSError::Ok : VFSError::GenericError;
+        WaitForDownloadResponse();
+    
+        return m_State == Downloading ? VFSError::Ok : LastError();
     }
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
         m_OpenFlags = _open_flags;
@@ -119,19 +116,28 @@ int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     return VFSError::InvalidCall;
 }
 
-bool VFSNetDropboxFile::HandleDownloadResponseAsync( ssize_t _size_or_error )
+void VFSNetDropboxFile::WaitForDownloadResponse() const
+{
+    unique_lock<mutex> lk(m_SignalLock);
+    m_Signal.wait(lk, [=]{
+        return m_State != Initiated;
+    } );
+}
+
+void VFSNetDropboxFile::HandleDownloadResponseAsync( ssize_t _download_size )
 {
     if( m_State != Initiated )
-        return false;
+        return;
     
-    if( _size_or_error >= 0 ) {
-        m_FileSize = _size_or_error; // <- this write is not well-synchronized
-        SwitchToState(Downloading);
-        return true;
-    }
-    else {
+    m_FileSize = _download_size; // <- this write is not formally-synchronized
+    SwitchToState(Downloading);
+}
+
+void VFSNetDropboxFile::HandleDownloadError( int _error )
+{
+    if( m_State == Initiated  || m_State == Downloading ) {
+        SetLastError(_error);
         SwitchToState(Canceled);
-        return false;
     }
 }
 
@@ -200,7 +206,7 @@ ssize_t VFSNetDropboxFile::Read(void *_buf, size_t _size)
         unique_lock<mutex> lk(m_SignalLock);
         m_Signal.wait(lk);
     } while( m_State == Downloading );
-    return VFSError::GenericError;
+    return LastError();
 }
 
 bool VFSNetDropboxFile::IsOpened() const

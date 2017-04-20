@@ -46,7 +46,8 @@ private:
     ssize_t FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz );
     bool HasDataToFeedUploadTaskAsync() const;
     void AppendDownloadedDataAsync( NSData *_data );
-    bool HandleDownloadResponseAsync( ssize_t _size_or_error );
+    void HandleDownloadResponseAsync( ssize_t _download_size );
+    void HandleDownloadError( int _error );
     void StartSmallUpload();
     void StartSession();
     void StartSessionAppend();
@@ -62,6 +63,7 @@ private:
     void PushUploadDataIntoFIFOAndNotifyStream( const void *_buf, size_t _size );
     void ExtractSessionIdOrCancelUploadAsync( NSData *_data );
     void WaitForSessionIdOrError() const;
+    void WaitForDownloadResponse() const;
 
     struct Download {
         deque<uint8_t>          fifo;

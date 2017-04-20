@@ -13,7 +13,7 @@
 VFSFile::VFSFile(const char* _relative_path, const VFSHostPtr &_host):
     m_RelativePath(_relative_path ? _relative_path : ""),
     m_Host(_host),
-    m_LastError(0)
+    m_LastError(VFSError::Ok)
 {
 }
 

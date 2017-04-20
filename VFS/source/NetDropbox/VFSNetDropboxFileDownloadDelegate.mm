@@ -1,20 +1,36 @@
 #include "VFSNetDropboxFileDownloadDelegate.h"
 #include <VFS/VFSError.h>
+#include "Aux.h"
+
+using namespace VFSNetDropbox;
 
 @implementation VFSNetDropboxFileDownloadDelegate
 {
     mutex                                   m_CallbacksLock;
-    function<bool(ssize_t _size_or_error)>  m_ResponseHandler;
+    function<void(ssize_t _size_or_error)>  m_ResponseHandler;
     function<void(NSData*)>                 m_DataHandler;
+    function<void(int)>                     m_ErrorHandler;
 }
 
-- (void)setHandleResponse:(function<bool (ssize_t)>)handleResponse
+- (void)setHandleError:(function<void (int)>)handleError
+{
+    lock_guard<mutex> lock{m_CallbacksLock};
+    m_ErrorHandler = handleError;
+}
+
+- (function<void (int)>)handleError
+{
+    lock_guard<mutex> lock{m_CallbacksLock};
+    return m_ErrorHandler;
+}
+
+- (void)setHandleResponse:(function<void(ssize_t)>)handleResponse
 {
     lock_guard<mutex> lock{m_CallbacksLock};
     m_ResponseHandler = handleResponse;
 }
 
-- (function<bool (ssize_t)>)handleResponse
+- (function<void(ssize_t)>)handleResponse
 {
     lock_guard<mutex> lock{m_CallbacksLock};
     return m_ResponseHandler;
@@ -32,51 +48,70 @@
     return m_DataHandler;
 }
 
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)error
+- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)_error
 {
-    cout << "didBecomeInvalidWithError" << endl;
+    auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
+    lock_guard<mutex> lock{m_CallbacksLock};
+    if( m_ErrorHandler )
+        m_ErrorHandler(error);
 }
 
 - (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-                           didCompleteWithError:(nullable NSError *)error
+                           didCompleteWithError:(nullable NSError *)_error
 {
-    cout << "didCompleteWithError" << endl;
+    if( _error ) {
+        auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
+        lock_guard<mutex> lock{m_CallbacksLock};
+        if( m_ErrorHandler )
+            m_ErrorHandler(error);
+    }
 }
 
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task
                                      didReceiveData:(NSData *)data
 {
-//    cout << "didReceiveData" << endl;
-//    if( auto file = m_File.lock() )
-//        file->AppendDownloadedData(data);
-    LOCK_GUARD(m_CallbacksLock) {
-        if( m_DataHandler )
-            m_DataHandler(data);
-    }
+    if( auto response = objc_cast<NSHTTPURLResponse>(task.response) )
+        if( response.statusCode == 200 ) {
+            lock_guard<mutex> lock{m_CallbacksLock};
+            if( m_DataHandler )
+                m_DataHandler(data);
+            return;
+        }
+    
+    auto error = VFSErrorFromErrorAndReponseAndData(nil, task.response, data);
+    lock_guard<mutex> lock{m_CallbacksLock};
+    if( m_ErrorHandler )
+        m_ErrorHandler(error);
 }
 
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask
-                                 didReceiveResponse:(NSURLResponse *)response
-                                  completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
+static long ExtractContentLengthFromResponse(NSURLResponse *_response)
 {
-    ssize_t size = VFSError::FromErrno(EIO);
-    if( auto http_resp = objc_cast<NSHTTPURLResponse>(response) )
-        if( http_resp.statusCode == 200 )
-            if( auto length_string = objc_cast<NSString>(http_resp.allHeaderFields[@"Content-Length"]) )
-                if( auto length = atol( length_string.UTF8String ); length >= 0 )
-                    size = length;
+    auto response = objc_cast<NSHTTPURLResponse>(_response);
+    if( !response )
+        return -1;
+    
+    if( response.statusCode != 200 )
+        return -1;
+    
+    auto length_string = objc_cast<NSString>(response.allHeaderFields[@"Content-Length"]);
+    if( !length_string )
+        return -1;
+    
+    auto length = atol( length_string.UTF8String );
+    return length >= 0 ? length : -1;
+}
 
-    // TODO: proper errors handling
-    
-    cout << "didReceiveResponse" << endl;
-    
-    bool permit = false;
-    LOCK_GUARD(m_CallbacksLock) {
+- (void)URLSession:(NSURLSession *)session
+    dataTask:(NSURLSessionDataTask *)task
+    didReceiveResponse:(NSURLResponse *)response
+    completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
+{
+    if( auto l = ExtractContentLengthFromResponse(response); l >= 0 ) {
+        lock_guard<mutex> lock{m_CallbacksLock};
         if( m_ResponseHandler )
-            permit = m_ResponseHandler(size);
+            m_ResponseHandler(l);
     }
-    
-    completionHandler( permit ?  NSURLSessionResponseAllow : NSURLSessionResponseCancel );
+    completionHandler( NSURLSessionResponseAllow );
 }
                                 
 @end

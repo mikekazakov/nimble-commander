@@ -116,7 +116,9 @@ public:
     virtual bool Eof() const;
     
     /**
-     * LastError() return last VFSError occured for this VFSFile. Overwritten only on error occurs, normal workflow won't overwrite last error code.
+     * LastError() return last VFSError occured for this VFSFile.
+     * Should be overwritten only when error occurs,
+     * normal workflow won't overwrite the last error code.
      */
     int LastError() const;
     
@@ -190,9 +192,10 @@ private:
     shared_ptr<VFSHost> m_Host;
 
     /**
-     * m_LastError should be set when any error occurs. This storage is not thread-safe - concurrent accesses may overwrite it.
+     * m_LastError should be set when any error occurs.
+     * This storage is not per-thread - concurrent accesses may overwrite it.
      */
-    mutable volatile int m_LastError;
+    mutable atomic_int m_LastError;
     
     // forbid copying
     VFSFile(const VFSFile&) = delete;

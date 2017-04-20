@@ -43,6 +43,9 @@ namespace VFSNetDropbox
     void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const string &_path);
     void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const string &_path);
     
+    int ExtractVFSErrorFromJSON( NSData *_response_data );
+    int VFSErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response, NSData*_data);
+    
     // returns VFSError and NSData, if VFSError is Ok
     pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
                                                NSURLRequest *_request,

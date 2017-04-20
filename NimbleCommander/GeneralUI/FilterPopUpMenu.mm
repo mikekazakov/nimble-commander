@@ -199,8 +199,7 @@ static OSStatus CarbonCallback(EventHandlerCallRef _handler,
 }
 
 static const vector<bool> g_PassthruTable = []{
-    // mac keycodes are unsigned shorts, so this table contains 65536 bits(elements)
-    vector<bool> table(65536, false);
+    vector<bool> table(256, false);
     table[115] = true; // Home
     table[117] = true; // Delete
     table[116] = true; // PgUp
@@ -253,7 +252,7 @@ static const vector<bool> g_PassthruTable = []{
         return false;
 
     const auto kc = ev.keyCode;
-    if( g_PassthruTable[kc] )
+    if( kc >= g_PassthruTable.size() || g_PassthruTable[kc] )
         return false;
     
     const auto mod_flags = ev.modifierFlags;

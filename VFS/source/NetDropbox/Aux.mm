@@ -49,6 +49,72 @@ optional<long> GetLong( const rapidjson::Value &_doc, const char *_key )
     return i->value.GetInt64();
 }
 
+static int ExtractVFSErrorFromObject( const rapidjson::Value &_object )
+{
+    auto tag = GetString(_object, ".tag" );
+    if( !tag )
+        return VFSError::GenericError;
+    
+    auto error_node = _object.FindMember(tag);
+    if( error_node == _object.MemberEnd() || !error_node->value.IsObject() )
+        return VFSError::GenericError;
+    
+    auto error_tag = GetString(error_node->value, ".tag");
+    if( !error_tag  )
+        return VFSError::GenericError;
+
+    if( "not_found"s == error_tag )             return VFSError::FromErrno(ENOENT);
+    if( "not_file"s == error_tag )              return VFSError::FromErrno(EISDIR);
+    if( "not_folder"s == error_tag )            return VFSError::FromErrno(ENOTDIR);
+    if( "restricted_content"s == error_tag )    return VFSError::FromErrno(EACCES);
+    if( "invalid_path_root"s == error_tag )     return VFSError::FromErrno(ENOENT);
+    if( "malformed_path"s == error_tag )        return VFSError::FromErrno(EINVAL);
+    if( "conflict"s == error_tag )              return VFSError::FromErrno(EBUSY);
+    if( "no_write_permission"s == error_tag )   return VFSError::FromErrno(EPERM);
+    if( "insufficient_space"s == error_tag )    return VFSError::FromErrno(ENOSPC);
+    if( "disallowed_name"s == error_tag )       return VFSError::FromErrno(EINVAL);
+    if( "team_folder"s == error_tag )           return VFSError::FromErrno(EACCES);
+
+    return VFSError::GenericError;
+}
+
+int ExtractVFSErrorFromJSON( NSData *_response_data )
+{
+    auto optional_json = ParseJSON(_response_data);
+    if( !optional_json )
+        return VFSError::GenericError;
+    auto &json = *optional_json;
+    
+    if( !json.IsObject() )
+        return VFSError::GenericError;
+    
+    auto error_node = json.FindMember("error");
+    if( error_node == json.MemberEnd() )
+        return VFSError::GenericError;
+    
+    if( !error_node->value.IsObject() )
+        return VFSError::GenericError;
+    
+    return ExtractVFSErrorFromObject(error_node->value);
+}
+
+int VFSErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response, NSData *_data )
+{
+    int vfs_error = VFSError::FromErrno(EIO);
+    if( _error )
+        vfs_error = VFSError::FromNSError(_error);
+    else if( auto http_response = objc_cast<NSHTTPURLResponse>(_response) ) {
+        const auto sc = http_response.statusCode;
+        if( sc == 400 )                     vfs_error = VFSError::FromErrno(EINVAL);
+        else if( sc == 401 )                vfs_error = VFSError::FromErrno(EAUTH);
+        else if( sc == 409 && _data )       vfs_error = ExtractVFSErrorFromJSON(_data);
+        else if( sc == 429 )                vfs_error = VFSError::FromErrno(EBUSY);
+        else if( sc >= 500 && sc < 600 )    vfs_error = VFSError::FromErrno(EIO);
+    }
+
+    return vfs_error;
+}
+
 static pair<int, NSData *> SendInifiniteSynchronousRequest(NSURLSession *_session,
                                                            NSURLRequest *_request)
 {
@@ -76,8 +142,7 @@ static pair<int, NSData *> SendInifiniteSynchronousRequest(NSURLSession *_sessio
             if( http_resp.statusCode == 200 )
                 return { VFSError::Ok, data };
 
-    // TODO: proper errors handling
-    return { VFSError::FromErrno(EIO), nil };
+    return { VFSErrorFromErrorAndReponseAndData(error, response, data), nil };
 }
 
 pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
@@ -115,8 +180,7 @@ pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
             if( http_resp.statusCode == 200 )
                 return { VFSError::Ok, data };
 
-    // TODO: proper errors handling
-    return { VFSError::FromErrno(EIO), nil };
+    return { VFSErrorFromErrorAndReponseAndData(error, response, data), nil };
 }
 
 Metadata ParseMetadata( const rapidjson::Value &_value )

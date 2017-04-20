@@ -49,6 +49,16 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert(date.year == 2017 && date.month == 4 && date.day == 3);
 }
 
+- (void)testStatOnNonExistingFile
+{
+    auto filepath = "/TestSet01/this_file_does_not_exist!!!.jpg";
+
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    
+    VFSStat stat;
+    XCTAssert( host->Stat( filepath, stat, 0 ) != 0 );
+}
+
 - (void)testStatOnExistingFolder
 {
     auto filepath = "/TestSet01/";

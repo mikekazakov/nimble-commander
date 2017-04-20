@@ -19,7 +19,6 @@ VFSNetDropboxFile::~VFSNetDropboxFile()
 
 int VFSNetDropboxFile::Close()
 {
-    int rc = VFSError::Ok;
     if( m_Upload ) {
         if( m_State == Uploading ) {
             if( m_Upload->upload_size == m_FilePos )
@@ -28,8 +27,8 @@ int VFSNetDropboxFile::Close()
                 // client hasn't provided enough data and is closing a file.
                 // this is an invalid behaviour, need to cancel a transfer task
                 [m_Upload->task cancel];
+                SetLastError(VFSError::FromErrno(EIO));
                 SwitchToState(Canceled);
-                rc = VFSError::FromErrno(EIO);
             }
             
             // need to wait for response from server before returning from Close();
@@ -54,6 +53,8 @@ int VFSNetDropboxFile::Close()
             m_Upload.reset();
         }       
     }
+    
+    const int rc = LastError();
     
     SetLastError(VFSError::Ok);
     m_OpenFlags = 0;
@@ -263,8 +264,15 @@ void VFSNetDropboxFile::StartSmallUpload()
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
-        if( m_State == Initiated || m_State == Uploading )
-            SwitchToState(_vfs_error == VFSError::Ok ? Completed : Canceled);
+        if( m_State == Initiated || m_State == Uploading ) {
+            if( _vfs_error == VFSError::Ok ) {
+                SwitchToState(Completed);
+            }
+            else {
+                SetLastError(_vfs_error);
+                SwitchToState(Canceled);
+            }
+        }
     };
     
     auto request = BuildRequestForSinglePartUpload();
@@ -311,8 +319,10 @@ void VFSNetDropboxFile::StartSession()
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
-        if( m_State == Uploading && _vfs_error != VFSError::Ok )
+        if( m_State == Uploading && _vfs_error != VFSError::Ok ) {
+            SetLastError(_vfs_error);
             SwitchToState(Canceled);
+        }
     };
     
     auto request = BuildRequestForUploadSessionInit();
@@ -377,8 +387,10 @@ void VFSNetDropboxFile::StartSessionAppend()
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
-        if( m_State == Uploading && _vfs_error != VFSError::Ok )
+        if( m_State == Uploading && _vfs_error != VFSError::Ok ) {
+            SetLastError(_vfs_error);
             SwitchToState(Canceled);
+        }
     };
     
     auto request = BuildRequestForUploadSessionAppend();
@@ -441,8 +453,15 @@ void VFSNetDropboxFile::StartSessionFinish()
     
     auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
-        if( m_State == Uploading )
-            SwitchToState(_vfs_error == VFSError::Ok ? Completed : Canceled);
+        if( m_State == Uploading ) {
+            if( _vfs_error == VFSError::Ok ) {
+                SwitchToState(Completed);
+            }
+            else {
+                SetLastError(_vfs_error);
+                SwitchToState(Canceled);
+            }
+        }
     };
     
     auto request = BuildRequestForUploadSessionFinish();
@@ -500,6 +519,9 @@ void VFSNetDropboxFile::PushUploadDataIntoFIFOAndNotifyStream( const void *_buf,
 
 void VFSNetDropboxFile::ExtractSessionIdOrCancelUploadAsync( NSData *_data )
 {
+    if( m_State != Uploading )
+        return;
+    
     if( auto doc = ParseJSON(_data) )
         if( auto session_id = GetString(*doc, "session_id") ) {
             LOCK_GUARD(m_DataLock) {
@@ -508,6 +530,8 @@ void VFSNetDropboxFile::ExtractSessionIdOrCancelUploadAsync( NSData *_data )
             m_Signal.notify_all();
             return;
         }
+    
+    SetLastError( VFSError::FromErrno(EIO) );
     SwitchToState(Canceled);
 }
 
@@ -539,7 +563,8 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
     PushUploadDataIntoFIFOAndNotifyStream(_buf, to_write);
     const auto eaten = WaitForUploadBufferConsumption();
 
-    // TODO: process an error if any
+    if( m_State != Uploading )
+        return LastError();
 
     m_FilePos += eaten;
     
@@ -558,11 +583,12 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
                 ExtractSessionIdOrCancelUploadAsync(_data);
             };
             WaitForSessionIdOrError();
-            
-            // TODO: error processing
-            
+
             m_Upload->delegate.handleReceivedData = nullptr;
             m_Upload->delegate.handleFinished = nullptr;
+            
+            if( m_State != Uploading )
+                return LastError();
         }
         
         if( m_Upload->part_no + 1 < m_Upload->parts_count - 1  )

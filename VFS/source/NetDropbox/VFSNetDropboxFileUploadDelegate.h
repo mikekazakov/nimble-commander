@@ -1,10 +1,8 @@
 #pragma once
 
-@class VFSNetDropboxFileUploadStream;
-
 @interface VFSNetDropboxFileUploadDelegate : NSObject<NSURLSessionDelegate>
 
-- (instancetype)initWithStream:(VFSNetDropboxFileUploadStream*)_stream;
+- (instancetype)initWithStream:(NSInputStream*)_stream;
 
 // non-reentrant callbacks, don't change them when upon execution
 @property (nonatomic) function<void(int _vfs_error)> handleFinished;

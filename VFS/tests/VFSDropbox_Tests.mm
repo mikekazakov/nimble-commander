@@ -23,7 +23,8 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 - (void)testInvalidCredentials
 {
     try {
-        shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>("invalid access token");
+        shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(
+            "-SupposingThisWillNeverBecameAValidAccessTokeForDropboxOAuth2AAA");
         XCTAssert( false );
     }
     catch(...) {
@@ -184,6 +185,22 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( file->Close() == VFSError::Ok );
     
     host->Unlink(filepath);
+}
+
+- (void)testUploadWithInvalidName
+{
+    const auto to_upload = "Hello, world!"s;
+    auto filepath = "/FolderToModify/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/test.txt";
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    
+    shared_ptr<VFSFile> file;
+    XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
+
+    bool op1 = file->Open( VFSFlags::OF_Write ) == VFSError::Ok;
+    bool op2 = file->SetUploadSize( to_upload.size() ) == VFSError::Ok;
+    bool op3 = file->WriteFile( data(to_upload), (int)size(to_upload) ) == VFSError::Ok;
+    bool op4 = file->Close() == VFSError::Ok;
+    XCTAssert( !op1 || !op2 || !op3 || !op4 );
 }
 
 - (void)testSimpleUploadWithOverwrite

@@ -6,8 +6,9 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#import <Habanero/CommonPaths.h>
-#import "PanelController+DataAccess.h"
+#include <Habanero/CommonPaths.h>
+#include "PanelController+DataAccess.h"
+#include "PanelDataItemVolatileData.h"
 
 @implementation PanelController (DataAccess)
 

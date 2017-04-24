@@ -110,6 +110,8 @@
 		CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2C4DEF1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
+		CF2F42DA1EAD9E3D00AA031A /* PanelDataEntriesComparator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42D91EAD9E3D00AA031A /* PanelDataEntriesComparator.mm */; };
+		CF2F42E41EADA55000AA031A /* PanelDataExternalEntryKey.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E31EADA55000AA031A /* PanelDataExternalEntryKey.mm */; };
 		CF306F931CE9E54C002326FA /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
 		CF3120C41A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CF3120C51A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
@@ -1494,6 +1496,10 @@
 		CF2B2B3D1D825C0A00E4E8CB /* libSystem.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libSystem.tbd; path = usr/lib/libSystem.tbd; sourceTree = SDKROOT; };
 		CF2C4DEB1C57A00400DEC75A /* AskForPasswordWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AskForPasswordWindowController.h; path = ../NimbleCommander/GeneralUI/AskForPasswordWindowController.h; sourceTree = "<group>"; };
 		CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AskForPasswordWindowController.mm; path = ../NimbleCommander/GeneralUI/AskForPasswordWindowController.mm; sourceTree = "<group>"; };
+		CF2F42D81EAD9E3D00AA031A /* PanelDataEntriesComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataEntriesComparator.h; path = NimbleCommander/States/FilePanels/PanelDataEntriesComparator.h; sourceTree = SOURCE_ROOT; };
+		CF2F42D91EAD9E3D00AA031A /* PanelDataEntriesComparator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataEntriesComparator.mm; path = NimbleCommander/States/FilePanels/PanelDataEntriesComparator.mm; sourceTree = SOURCE_ROOT; };
+		CF2F42E21EADA55000AA031A /* PanelDataExternalEntryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataExternalEntryKey.h; path = NimbleCommander/States/FilePanels/PanelDataExternalEntryKey.h; sourceTree = SOURCE_ROOT; };
+		CF2F42E31EADA55000AA031A /* PanelDataExternalEntryKey.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataExternalEntryKey.mm; path = NimbleCommander/States/FilePanels/PanelDataExternalEntryKey.mm; sourceTree = SOURCE_ROOT; };
 		CF306F921CE9E54C002326FA /* main_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = main_icon.icns; path = Resource/main_icon.icns; sourceTree = "<group>"; };
 		CF3120B21A507BB70062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CF3120B31A507BFC0062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Base; path = Base.lproj/Credits.rtf; sourceTree = "<group>"; };
@@ -2415,6 +2421,10 @@
 				CFDAC2591DFBF0B30039A104 /* PanelController+QuickSearch.mm */,
 				CFDAC2251DFBD6910039A104 /* PanelData.h */,
 				CFDAC2261DFBD6910039A104 /* PanelData.mm */,
+				CF2F42D81EAD9E3D00AA031A /* PanelDataEntriesComparator.h */,
+				CF2F42D91EAD9E3D00AA031A /* PanelDataEntriesComparator.mm */,
+				CF2F42E21EADA55000AA031A /* PanelDataExternalEntryKey.h */,
+				CF2F42E31EADA55000AA031A /* PanelDataExternalEntryKey.mm */,
 				CFDAC20C1DF921E10039A104 /* PanelDataItemVolatileData.cpp */,
 				CFDAC20D1DF921E10039A104 /* PanelDataItemVolatileData.h */,
 				CFDAC21F1DFBCA290039A104 /* PanelDataPersistency.cpp */,
@@ -4441,6 +4451,7 @@
 				CF0939551D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CF9A7FF91DE1914100DEDF0B /* PanelDataSortMode.mm in Sources */,
 				CFDAC21E1DFBC9080039A104 /* SandboxManager.mm in Sources */,
+				CF2F42E41EADA55000AA031A /* PanelDataExternalEntryKey.mm in Sources */,
 				CFD6DD171D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CFDAC2981DFBF9260039A104 /* TermSingleTask.mm in Sources */,
 				CF1E3D0F1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
@@ -4513,6 +4524,7 @@
 				CF7D138F1BF5E38B001F53FD /* OperationStats.mm in Sources */,
 				CF7D13421BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF7D137C1BF5E0FE001F53FD /* FileCompressOperationJob.cpp in Sources */,
+				CF2F42DA1EAD9E3D00AA031A /* PanelDataEntriesComparator.mm in Sources */,
 				CF0139AF1E99DAC100E44F2D /* ToggleSort.mm in Sources */,
 				CF04DDFB1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CF0260BD1E9DC9000025B50F /* MakeNew.mm in Sources */,

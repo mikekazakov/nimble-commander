@@ -20,6 +20,7 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelViewLayoutSupport.h"
 #include "Helpers/Pasteboard.h"
+#include "PanelDataItemVolatileData.h"
 
 #include <VFS/NetDropbox.h>
 

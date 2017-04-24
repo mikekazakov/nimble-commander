@@ -17,6 +17,7 @@
 #include <NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelData.h"
+#include "PanelDataItemVolatileData.h"
 #include "IconsGenerator2.h"
 
 static const auto g_DummyImage = [[NSImage alloc] initWithSize:NSMakeSize(0,0)];

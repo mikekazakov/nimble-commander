@@ -44,7 +44,7 @@ namespace panel
         PanelView                  *m_View;
         const PanelData            &m_Data;
         string                      m_OldCursorName;
-        PanelData::EntrySortKeys    m_OldEntrySortKeys;
+        PanelData::ExternalEntryKey m_OldEntrySortKeys;
     };
     
     class ActivityTicket

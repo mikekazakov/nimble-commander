@@ -1,12 +1,12 @@
 #pragma once
 
-#include <Habanero/SerialQueue.h>
-#include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
 #include "../../Core/rapidjson.h"
 #include "PanelDataSortMode.h"
 #include "PanelDataStatistics.h"
-#include "PanelDataItemVolatileData.h"
+#include "PanelDataExternalEntryKey.h"
+
+struct PanelDataItemVolatileData;
 
 /**
  * PanelData actually does the following things:
@@ -28,19 +28,7 @@ public:
         Temporary = 1
     };
     
-    struct EntrySortKeys
-    {
-        string      name;
-        NSString   *display_name;
-        string      extension;
-        uint64_t    size;
-        time_t      mtime;
-        time_t      btime;
-        time_t      add_time; // -1 means absent
-        bool        is_dir;
-        bool        is_valid() const noexcept;
-    };
-    
+    using ExternalEntryKey = panel::ExternalEntryKey;
     using PanelSortMode = PanelDataSortMode;
     using Statistics = PanelDataStatistics;
     using VolatileData = PanelDataItemVolatileData;
@@ -127,7 +115,7 @@ public:
     /**
      * Will throw an invalid_argument on invalid _pos.
      */
-    EntrySortKeys           EntrySortKeysAtSortPosition(int _pos) const;
+    ExternalEntryKey        EntrySortKeysAtSortPosition(int _pos) const;
     
     /**
      * will redirect ".." upwards
@@ -156,7 +144,7 @@ public:
      * Return a lower bound entry - first entry with is not less than a key from _keys.
      * Returns -1 if such entry wasn't found.
      */
-    int SortLowerBoundForEntrySortKeys(const EntrySortKeys& _keys) const;
+    int SortLowerBoundForEntrySortKeys(const ExternalEntryKey& _key) const;
     
     /**
      * return -1 if didn't found.
@@ -244,12 +232,11 @@ private:
     void ClearSelectedFlagsFromHiddenElements();
     void UpdateStatictics();
     void BuildSoftFilteringIndeces();
-    static EntrySortKeys ExtractSortKeysFromEntry(const VFSListingItem& _item, const VolatileData &_item_vd);
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
     shared_ptr<VFSListing>      m_Listing;
-    vector<VolatileData>   m_VolatileData;
+    vector<VolatileData>        m_VolatileData;
     DirSortIndT                 m_EntriesByRawName;    // sorted with raw strcmp comparison
     DirSortIndT                 m_EntriesByCustomSort; // custom defined sort
     DirSortIndT                 m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
@@ -257,7 +244,6 @@ private:
     PanelSortMode               m_CustomSortMode;
     HardFilter                  m_HardFiltering;
     TextualFilter               m_SoftFiltering;
-    DispatchGroup               m_SortExecGroup;
     Statistics                  m_Stats;
     PanelType                   m_Type;
 };

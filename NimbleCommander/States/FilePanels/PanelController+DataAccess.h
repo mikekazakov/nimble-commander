@@ -5,7 +5,7 @@
 //  Created by Michael G. Kazakov on 22.09.13.
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
-
+#pragma once
 #import "PanelController.h"
 
 @interface PanelController (DataAccess)

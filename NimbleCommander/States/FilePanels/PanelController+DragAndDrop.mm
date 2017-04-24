@@ -17,6 +17,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelAux.h"
+#include "PanelDataItemVolatileData.h"
 #include "FilesDraggingSource.h"
 
 /*//////////////////////////////////////////////////////////////////////////////////////////////////

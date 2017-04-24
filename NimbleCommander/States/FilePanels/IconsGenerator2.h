@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <Habanero/SerialQueue.h>
+#include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
 
 struct PanelDataItemVolatileData;

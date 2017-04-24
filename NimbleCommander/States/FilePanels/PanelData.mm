@@ -1,5 +1,8 @@
 #include <Habanero/algo.h>
 #include "PanelData.h"
+#include "PanelDataItemVolatileData.h"
+#include "PanelDataEntriesComparator.h"
+#include <Habanero/DispatchGroup.h>
 
 static_assert( sizeof(PanelData::TextualFilter) == 10 );
 static_assert( sizeof(PanelData::HardFilter) == 11 );
@@ -52,11 +55,6 @@ static vector<unsigned> ProduceSortedIndirectIndecesForLongKeys(const vector<str
     generate( begin(src_keys_ind), end(src_keys_ind), linear_generator(0, 1) );
     sort( begin(src_keys_ind), end(src_keys_ind), [&_keys](auto _1, auto _2) { return _keys[_1] < _keys[_2]; } );
     return src_keys_ind;
-}
-
-bool PanelData::EntrySortKeys::is_valid() const noexcept
-{
-    return !name.empty() && display_name != nil;
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -242,7 +240,6 @@ bool PanelData::HardFilter::operator!=(const HardFilter& _r) const noexcept
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 PanelData::PanelData():
-    m_SortExecGroup(DispatchGroup::High),
     m_Listing(VFSListing::EmptyListing()),
     m_CustomSortMode(DefaultSortMode())
 {
@@ -272,9 +269,10 @@ void PanelData::Load(const shared_ptr<VFSListing> &_listing, PanelType _type)
     m_SoftFiltering.OnPanelDataLoad();
     
     // now sort our new data
-    m_SortExecGroup.Run([=]{ DoRawSort(*m_Listing, m_EntriesByRawName); });
-    m_SortExecGroup.Run([=]{ DoSortWithHardFiltering(); });
-    m_SortExecGroup.Wait();
+    DispatchGroup exec_group{DispatchGroup::High};
+    exec_group.Run([=]{ DoRawSort(*m_Listing, m_EntriesByRawName); });
+    exec_group.Run([=]{ DoSortWithHardFiltering(); });
+    exec_group.Wait();
     BuildSoftFilteringIndeces();
     // update stats
     UpdateStatictics();
@@ -515,306 +513,6 @@ string PanelData::VerboseDirectoryFullPath() const
     if(s.back() != '/') s += '/';
     return s;
 }
-
-struct SortPredLessBase
-{
-private:
-    const CFStringCompareFlags              str_comp_flags;
-    typedef int (*comparison)(const char *, const char *);
-    const comparison                        plain_compare;
-protected:
-    const VFSListing&                       l;
-    const vector<PanelData::VolatileData>&  vd;
-    const PanelData::PanelSortMode          sort_mode;
-public:
-    SortPredLessBase(const VFSListing &_items,
-                     const vector<PanelData::VolatileData>& _vd,
-                     PanelData::PanelSortMode _sort_mode):
-        l{ _items },
-        vd{ _vd },
-        sort_mode{ _sort_mode },
-        plain_compare{ _sort_mode.case_sens ? strcmp : strcasecmp},
-        str_comp_flags{ (_sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
-                        (_sort_mode.numeric_sort ? kCFCompareNumerically : 0) }
-    {
-    }
-    
-protected:
-    int Compare( CFStringRef _1st, CFStringRef _2nd ) const noexcept
-    {
-        return CFStringCompare( _1st, _2nd, str_comp_flags );
-    }
-    int Compare( const char *_1st, const char *_2nd ) const noexcept
-    {
-        return plain_compare( _1st, _2nd );
-    }
-};
-
-struct SortPredLessIndToInd : public SortPredLessBase
-{
-    SortPredLessIndToInd(const VFSListing &_items,
-                         const vector<PanelData::VolatileData>& _vd,
-                         PanelData::PanelSortMode sort_mode):
-    SortPredLessBase(_items, _vd, sort_mode)
-    {
-    }
-    
-    bool operator()(unsigned _1, unsigned _2) const;
-
-};
-
-bool SortPredLessIndToInd::operator()(unsigned _1, unsigned _2) const
-{
-    using _ = PanelData::PanelSortMode::Mode;
-    const auto invalid_size = PanelData::VolatileData::invalid_size;
-    
-    if( sort_mode.sep_dirs ) {
-        if( l.IsDir(_1) && !l.IsDir(_2) ) return true;
-        if(!l.IsDir(_1) &&  l.IsDir(_2) ) return false;
-    }
-    
-    const auto by_name = [&] { return Compare(l.DisplayFilenameCF(_1), l.DisplayFilenameCF(_2)); };
-    
-    switch( sort_mode.sort ) {
-        case _::SortByName:
-            return by_name() < 0;
-        case _::SortByNameRev:
-            return by_name() > 0;
-        case _::SortByExt: {
-            const bool first_has_extension = l.HasExtension(_1) &&
-                (!sort_mode.extensionless_dirs || !l.IsDir(_1));
-            const bool second_has_extension = l.HasExtension(_2) &&
-                (!sort_mode.extensionless_dirs || !l.IsDir(_2));
-            if( first_has_extension && second_has_extension ) {
-                int r = Compare(l.Extension(_1), l.Extension(_2));
-                if(r < 0) return true;
-                if(r > 0) return false;
-                return by_name() < 0;
-            }
-            if(  first_has_extension && !second_has_extension ) return false;
-            if( !first_has_extension &&  second_has_extension ) return true;
-            return by_name() < 0;
-        }
-        case _::SortByExtRev: {
-            const bool first_has_extension = l.HasExtension(_1) &&
-                (!sort_mode.extensionless_dirs || !l.IsDir(_1));
-            const bool second_has_extension = l.HasExtension(_2) &&
-                (!sort_mode.extensionless_dirs || !l.IsDir(_2));
-            if( first_has_extension && second_has_extension ) {
-                int r = Compare(l.Extension(_1), l.Extension(_2));
-                if(r < 0) return false;
-                if(r > 0) return true;
-                return by_name() > 0;
-            }
-            if(  first_has_extension && !second_has_extension ) return true;
-            if( !first_has_extension &&  second_has_extension ) return false;
-            return by_name() > 0;
-        }
-        case _::SortByModTime: {
-            const auto v1 = l.MTime(_1), v2 = l.MTime(_2);
-            if( v1 != v2 )
-                return v1 > v2;
-            return by_name() < 0;
-        }
-        case _::SortByModTimeRev: {
-            const auto v1 = l.MTime(_1), v2 = l.MTime(_2);
-            if( v1 != v2 )
-                return v1 < v2;
-            return by_name() > 0;
-        }
-        case _::SortByBirthTime: {
-            const auto v1 = l.BTime(_1), v2 = l.BTime(_2);
-            if( v1 != v2 )
-                return v1 > v2;
-            return by_name() < 0;
-        }
-        case _::SortByBirthTimeRev: {
-            const auto v1 = l.BTime(_1), v2 = l.BTime(_2);
-            if( v1 != v2 )
-                return v1 < v2;
-            return by_name() > 0;
-        }
-        case _::SortByAddTime: {
-            const auto h1 = l.HasAddTime(_1), h2 = l.HasAddTime(_2);
-            if( h1 && h2 ) {
-                const auto v1 = l.AddTime(_1), v2 = l.AddTime(_2);
-                if( v1 != v2 )
-                    return v1 > v2;
-            }
-            if( h1 && !h2 ) return true;
-            if( h2 && !h1 ) return false;
-            return by_name() < 0; // fallback case
-        }
-        case _::SortByAddTimeRev: {
-            const auto h1 = l.HasAddTime(_1), h2 = l.HasAddTime(_2);
-            if( h1 && h2 ) {
-                const auto v1 = l.AddTime(_1), v2 = l.AddTime(_2);
-                if( v1 != v2 )
-                    return v1 < v2;
-            }
-            if( h1 && !h2 ) return false;
-            if( h2 && !h1 ) return true;
-            return by_name() > 0; // fallback case
-        }
-        case _::SortBySize: {
-            auto s1 = vd[_1].size, s2 = vd[_2].size;
-            if(s1 != invalid_size && s2 != invalid_size)
-                if(s1 != s2)
-                    return s1 > s2;
-            if(s1 != invalid_size && s2 == invalid_size) return false;
-            if(s1 == invalid_size && s2 != invalid_size) return true;
-            return by_name() < 0; // fallback case
-        }
-        case _::SortBySizeRev: {
-            auto s1 = vd[_1].size, s2 = vd[_2].size;
-            if(s1 != invalid_size && s2 != invalid_size)
-                if(s1 != s2)
-                    return s1 < s2;
-            if(s1 != invalid_size && s2 == invalid_size) return true;
-            if(s1 == invalid_size && s2 != invalid_size) return false;
-            return by_name() > 0; // fallback case
-        }
-        case _::SortByRawCName:
-            return l.Filename(_1) < l.Filename(_2);
-        case _::SortNoSort:
-            assert(0); // meaningless sort call
-            break;
-            
-        default:;
-    };
-    
-    return false;
-}
-
-struct SortPredLessIndToKeys : public SortPredLessBase
-{
-    SortPredLessIndToKeys(const VFSListing &_items,
-                          const vector<PanelData::VolatileData>& _vd,
-                          PanelData::PanelSortMode sort_mode):
-    SortPredLessBase(_items, _vd, sort_mode)
-    {}
-    bool operator()(unsigned _1, const PanelData::EntrySortKeys &_val2) const;
-};
-
-bool SortPredLessIndToKeys::operator()(unsigned _1, const PanelData::EntrySortKeys &_val2) const
-{
-    using _ = PanelData::PanelSortMode::Mode;
-    const auto invalid_size = PanelData::VolatileData::invalid_size;
-    
-    if( sort_mode.sep_dirs ) {
-        if( l.IsDir(_1) && !_val2.is_dir) return true;
-        if(!l.IsDir(_1) &&  _val2.is_dir) return false;
-    }
-    
-    const auto by_name = [&] { return Compare(l.DisplayFilenameCF(_1),
-                                              (__bridge CFStringRef)_val2.display_name); };
-    
-    switch(sort_mode.sort)
-    {
-        case _::SortByName: return by_name() < 0;
-        case _::SortByNameRev: return by_name() > 0;
-        case _::SortByExt: {
-            const bool first_has_extension = l.HasExtension(_1) &&
-                (!sort_mode.extensionless_dirs || !l.IsDir(_1));
-            const bool second_has_extension = !_val2.extension.empty() &&
-                (!sort_mode.extensionless_dirs || !_val2.is_dir);
-            if( first_has_extension && second_has_extension ) {
-                int r = Compare(l.Extension(_1), _val2.extension.c_str());
-                if(r < 0) return true;
-                if(r > 0) return false;
-                return by_name() < 0;
-            }
-            if(  first_has_extension && !second_has_extension ) return false;
-            if( !first_has_extension &&  second_has_extension ) return true;
-            return by_name() < 0; // fallback case
-        }
-        case _::SortByExtRev: {
-            const bool first_has_extension = l.HasExtension(_1) &&
-                (!sort_mode.extensionless_dirs || !l.IsDir(_1));
-            const bool second_has_extension = !_val2.extension.empty() &&
-                (!sort_mode.extensionless_dirs || !_val2.is_dir);
-            if( first_has_extension && second_has_extension ) {
-                int r = Compare(l.Extension(_1), _val2.extension.c_str());
-                if(r < 0) return false;
-                if(r > 0) return true;
-                return by_name() > 0;
-            }
-            if(  first_has_extension && !second_has_extension ) return true;
-            if( !first_has_extension &&  second_has_extension ) return false;
-            return by_name() > 0; // fallback case
-        }
-        case _::SortByModTime: {
-            if( l.MTime(_1) != _val2.mtime  )
-                return l.MTime(_1) > _val2.mtime;
-            return by_name() < 0;
-        }
-        case _::SortByModTimeRev: {
-            if( l.MTime(_1) != _val2.mtime  )
-                return l.MTime(_1) < _val2.mtime;
-            return by_name() > 0;
-        }
-        case _::SortByBirthTime: {
-            if( l.BTime(_1) != _val2.btime )
-                return l.BTime(_1) > _val2.btime;
-            return by_name() < 0;
-        }
-        case _::SortByBirthTimeRev: {
-            if( l.BTime(_1) != _val2.btime )
-                return l.BTime(_1) < _val2.btime;
-            return by_name() > 0;
-        }
-        case _::SortByAddTime: {
-            const auto h1 = l.HasAddTime(_1), h2 = _val2.add_time >= 0;
-            if( h1 && h2 )
-                if( l.AddTime(_1) != _val2.add_time )
-                    return l.AddTime(_1) > _val2.add_time;
-            if( h1 && !h2 ) return true;
-            if( h2 && !h1 ) return false;
-            return by_name() < 0; // fallback case
-        }
-        case _::SortByAddTimeRev: {
-            const auto h1 = l.HasAddTime(_1), h2 = _val2.add_time >= 0;
-            if( h1 && h2 )
-                if( l.AddTime(_1) != _val2.add_time )
-                    return l.AddTime(_1) < _val2.add_time;
-            if( h1 && !h2 ) return false;
-            if( h2 && !h1 ) return true;
-            return by_name() > 0; // fallback case
-        }
-        case _::SortBySize: {
-            auto s1 = vd[_1].size;
-            if( s1 != invalid_size && _val2.size != invalid_size )
-                if( s1 != _val2.size )
-                    return s1 > _val2.size;
-            if( s1 != invalid_size && _val2.size == invalid_size )
-                return false;
-            if( s1 == invalid_size && _val2.size != invalid_size )
-                return true;
-            return by_name() < 0; // fallback case
-        }
-        case _::SortBySizeRev: {
-            auto s1 = vd[_1].size;
-            if( s1 != invalid_size && _val2.size != invalid_size )
-                if( s1 != _val2.size )
-                    return s1 < _val2.size;
-            if( s1 != invalid_size && _val2.size == invalid_size )
-                return true;
-            if( s1 == invalid_size && _val2.size != invalid_size )
-                return false;
-            return by_name() > 0; // fallback case
-        }
-        case _::SortByRawCName:
-            return l.Filename(_1) < _val2.name;
-            break;
-        case _::SortNoSort:
-            assert(0); // meaningless sort call
-            break;
-        default:;
-    };
-    
-    return false;
-}
-
 
 // this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to raw sort mode
 static void DoRawSort(const VFSListing &_from, PanelData::DirSortIndT &_to)
@@ -1163,7 +861,7 @@ void PanelData::DoSortWithHardFiltering()
        m_CustomSortMode.sort == PanelSortMode::SortNoSort)
         return; // we're already done
     
-    SortPredLessIndToInd pred(*m_Listing, m_VolatileData, m_CustomSortMode);
+    panel::SortPredLessIndToInd pred(*m_Listing, m_VolatileData, m_CustomSortMode);
     DirSortIndT::iterator start = begin(m_EntriesByCustomSort);
     
     // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir
@@ -1215,29 +913,15 @@ void PanelData::BuildSoftFilteringIndeces()
     }
 }
 
-PanelData::EntrySortKeys PanelData::ExtractSortKeysFromEntry(const VFSListingItem& _item, const VolatileData &_item_vd)
-{
-    EntrySortKeys keys;
-    keys.name = _item.Name();
-    keys.display_name = _item.NSDisplayName();
-    keys.extension = _item.HasExtension() ? _item.Extension() : "";
-    keys.size = _item_vd.size;
-    keys.mtime = _item.MTime();
-    keys.btime = _item.BTime();
-    keys.add_time = _item.HasAddTime() ? _item.AddTime() : -1;
-    keys.is_dir = _item.IsDir();
-    return keys;
-}
-
-PanelData::EntrySortKeys PanelData::EntrySortKeysAtSortPosition(int _pos) const
+PanelData::ExternalEntryKey PanelData::EntrySortKeysAtSortPosition(int _pos) const
 {
     auto item = EntryAtSortPosition(_pos);
     if( !item )
         throw invalid_argument("PanelData::EntrySortKeysAtSortPosition: invalid item position");
-    return ExtractSortKeysFromEntry(item, VolatileDataAtSortPosition(_pos));
+    return ExternalEntryKey{item, VolatileDataAtSortPosition(_pos)};
 }
 
-int PanelData::SortLowerBoundForEntrySortKeys(const EntrySortKeys& _keys) const
+int PanelData::SortLowerBoundForEntrySortKeys(const ExternalEntryKey& _keys) const
 {
     if( !_keys.is_valid() )
         return -1;
@@ -1245,9 +929,9 @@ int PanelData::SortLowerBoundForEntrySortKeys(const EntrySortKeys& _keys) const
     auto it = lower_bound(begin(m_EntriesByCustomSort),
                           end(m_EntriesByCustomSort),
                           _keys,
-                          SortPredLessIndToKeys(*m_Listing,
-                                                m_VolatileData,
-                                                m_CustomSortMode)
+                          panel::SortPredLessIndToKeys(*m_Listing,
+                                                       m_VolatileData,
+                                                       m_CustomSortMode)
                           );
     if( it != end(m_EntriesByCustomSort) )
         return (int)distance( begin(m_EntriesByCustomSort), it );

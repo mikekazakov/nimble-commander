@@ -21,6 +21,7 @@
 #include "PanelViewLayoutSupport.h"
 #include "Helpers/Pasteboard.h"
 #include "PanelDataItemVolatileData.h"
+#include "PanelDataOptionsPersistence.h"
 
 #include <VFS/NetDropbox.h>
 
@@ -278,7 +279,7 @@ static void HeatUpConfigValues()
     if( !_pc )
         return;
     
-    m_Data.DecodeSortingOptions( _pc.data.EncodeSortingOptions() );
+    panel::DataOptionsImporter{m_Data}.Import( panel::DataOptionsExporter{_pc.data}.Export() );
     [self.view dataUpdated];
     [self.view dataSortingHasChanged];
     self.layoutIndex = _pc.layoutIndex;
@@ -860,9 +861,7 @@ static bool RouteKeyboardInputIntoTerminal()
         return nullopt;
   
     json.AddMember(rapidjson::StandaloneValue(g_RestorationSortingKey, rapidjson::g_CrtAllocator),
-                   m_Data.EncodeSortingOptions(), rapidjson::g_CrtAllocator );
-//    json.AddMember(rapidjson::StandaloneValue(g_RestorationViewKey, rapidjson::g_CrtAllocator),
-//                   [m_View encodeRestorableState], rapidjson::g_CrtAllocator );
+                   panel::DataOptionsExporter{m_Data}.Export(), rapidjson::g_CrtAllocator );
     json.AddMember(rapidjson::StandaloneValue(g_RestorationLayoutKey, rapidjson::g_CrtAllocator),
                    rapidjson::StandaloneValue(m_ViewLayoutIndex), rapidjson::g_CrtAllocator );
     
@@ -875,14 +874,11 @@ static bool RouteKeyboardInputIntoTerminal()
     if( _state.IsObject() ) {
         if( _state.HasMember(g_RestorationSortingKey) ) {
             panel::GenericCursorPersistance pers(m_View, m_Data);
-            m_Data.DecodeSortingOptions( _state[g_RestorationSortingKey] );
+            panel::DataOptionsImporter{m_Data}.Import( _state[g_RestorationSortingKey] );
             [m_View dataUpdated];
             [m_View dataSortingHasChanged];
             pers.Restore();
         }
-        
-//        if( _state.HasMember(g_RestorationViewKey) )
-//            [m_View loadRestorableState:_state[g_RestorationViewKey]];
         
         if( _state.HasMember(g_RestorationLayoutKey) )
             if( _state[g_RestorationLayoutKey].IsNumber() )

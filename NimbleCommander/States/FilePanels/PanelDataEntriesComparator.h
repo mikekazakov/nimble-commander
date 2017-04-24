@@ -9,12 +9,12 @@ namespace panel {
 
 struct ExternalEntryKey;
 
-class SortPredLessBase
+class ListingComparatorBase
 {
 public:
-    SortPredLessBase(const VFSListing &_items,
-                     const vector<PanelDataItemVolatileData>& _vd,
-                     PanelDataSortMode _sort_mode);
+    ListingComparatorBase(const VFSListing &_items,
+                          const vector<PanelDataItemVolatileData>& _vd,
+                          PanelDataSortMode _sort_mode);
     
 protected:
     int Compare( CFStringRef _1st, CFStringRef _2nd ) const noexcept;
@@ -29,12 +29,12 @@ private:
     const comparison                        plain_compare;
 };
 
-class SortPredLessIndToInd : public SortPredLessBase
+class IndirectListingComparator : public ListingComparatorBase
 {
 public:
-    SortPredLessIndToInd(const VFSListing &_items,
-                         const vector<PanelDataItemVolatileData>& _vd,
-                         PanelDataSortMode sort_mode);
+    IndirectListingComparator(const VFSListing &_items,
+                              const vector<PanelDataItemVolatileData>& _vd,
+                              PanelDataSortMode sort_mode);
     bool operator()(unsigned _1, unsigned _2) const;
 private:
     int CompareNames(unsigned _1, unsigned _2) const;
@@ -53,11 +53,11 @@ private:
     bool IsLessByFilesystemRepresentation(unsigned _1, unsigned _2) const;
 };
 
-struct SortPredLessIndToKeys : public panel::SortPredLessBase
+struct ExternalListingComparator : public ListingComparatorBase
 {
-    SortPredLessIndToKeys(const VFSListing &_items,
-                          const vector<PanelDataItemVolatileData>& _vd,
-                          PanelDataSortMode sort_mode);
+    ExternalListingComparator(const VFSListing &_items,
+                              const vector<PanelDataItemVolatileData>& _vd,
+                              PanelDataSortMode sort_mode);
     bool operator()(unsigned _1, const ExternalEntryKey &_val2) const;
 };
 

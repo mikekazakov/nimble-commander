@@ -1,13 +1,13 @@
-#include <Habanero/algo.h>
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataEntriesComparator.h"
 #include <Habanero/DispatchGroup.h>
+#include <VFS/VFS.h>
 
 static_assert( sizeof(PanelData::TextualFilter) == 10 );
 static_assert( sizeof(PanelData::HardFilter) == 11 );
 
-static void DoRawSort(const VFSListing &_from, PanelData::DirSortIndT &_to);
+static void DoRawSort(const VFSListing &_from, vector<unsigned> &_to);
 
 static inline PanelData::PanelSortMode DefaultSortMode()
 {
@@ -52,8 +52,10 @@ static vector<string> ProduceLongKeysForListing( const VFSListing& _l )
 static vector<unsigned> ProduceSortedIndirectIndecesForLongKeys(const vector<string>& _keys)
 {
     vector<unsigned> src_keys_ind( _keys.size() );
-    generate( begin(src_keys_ind), end(src_keys_ind), linear_generator(0, 1) );
-    sort( begin(src_keys_ind), end(src_keys_ind), [&_keys](auto _1, auto _2) { return _keys[_1] < _keys[_2]; } );
+    iota( begin(src_keys_ind), end(src_keys_ind), 0 );
+    sort( begin(src_keys_ind),
+          end(src_keys_ind),
+          [&_keys](auto _1, auto _2) { return _keys[_1] < _keys[_2]; } );
     return src_keys_ind;
 }
 
@@ -283,7 +285,7 @@ void PanelData::ReLoad(const shared_ptr<VFSListing> &_listing)
     assert(dispatch_is_main_queue()); // STA api design
     
     // sort new entries by raw c name for sync-swapping needs
-    DirSortIndT dirbyrawcname;
+    vector<unsigned> dirbyrawcname;
     DoRawSort(*_listing, dirbyrawcname);
     
     vector<VolatileData> new_vd;
@@ -372,7 +374,7 @@ PanelData::PanelType PanelData::Type() const noexcept
     return m_Type;
 }
 
-const PanelData::DirSortIndT& PanelData::SortedDirectoryEntries() const
+const vector<unsigned>& PanelData::SortedDirectoryEntries() const noexcept
 {
     return m_EntriesByCustomSort;
 }
@@ -514,12 +516,10 @@ string PanelData::VerboseDirectoryFullPath() const
     return s;
 }
 
-// this function will erase data from _to, make it size of _form->size(), and fill it with indeces according to raw sort mode
-static void DoRawSort(const VFSListing &_from, PanelData::DirSortIndT &_to)
+static void DoRawSort(const VFSListing &_from, vector<unsigned> &_to)
 {
     _to.resize(_from.Count());
-    generate( begin(_to), end(_to), linear_generator(0, 1) );
-    
+    iota(begin(_to), end(_to), 0);
     sort(begin(_to),
          end(_to),
          [&_from](unsigned _1, unsigned _2) { return _from.Filename(_1) < _from.Filename(_2); }
@@ -854,22 +854,18 @@ void PanelData::DoSortWithHardFiltering()
     }
     else {
         m_EntriesByCustomSort.resize( m_Listing->Count() );
-        generate( begin(m_EntriesByCustomSort), end(m_EntriesByCustomSort), linear_generator(0, 1) );
+        iota(begin(m_EntriesByCustomSort), end(m_EntriesByCustomSort), 0);
     }
 
     if(m_EntriesByCustomSort.empty() ||
        m_CustomSortMode.sort == PanelSortMode::SortNoSort)
         return; // we're already done
     
-    panel::SortPredLessIndToInd pred(*m_Listing, m_VolatileData, m_CustomSortMode);
-    DirSortIndT::iterator start = begin(m_EntriesByCustomSort);
-    
-    // do not touch dotdot directory. however, in some cases (root dir for example) there will be no dotdot dir
-    // also assume that no filtering will exclude dotdot dir
-    if( m_Listing->IsDotDot(0) )
-        start++;
-    
-    sort(start, end(m_EntriesByCustomSort), pred);
+    // do not touch dotdot directory. however, in some cases (root dir for example) there will be
+    // no dotdot dir. also assumes that no filtering will exclude dotdot dir
+    sort(next( begin(m_EntriesByCustomSort), m_Listing->IsDotDot(0) ?  1 : 0 ),
+         end( m_EntriesByCustomSort ),
+         panel::IndirectListingComparator{ *m_Listing, m_VolatileData, m_CustomSortMode });
 }
 
 void PanelData::SetSoftFiltering(const TextualFilter &_filter)
@@ -883,7 +879,7 @@ PanelData::TextualFilter PanelData::SoftFiltering() const
     return m_SoftFiltering;
 }
 
-const PanelData::DirSortIndT& PanelData::EntriesBySoftFiltering() const
+const vector<unsigned>& PanelData::EntriesBySoftFiltering() const noexcept
 {
     return m_EntriesBySoftFiltering;
 }
@@ -909,7 +905,7 @@ void PanelData::BuildSoftFilteringIndeces()
     }
     else {
         m_EntriesBySoftFiltering.resize(m_EntriesByCustomSort.size());
-        generate( begin(m_EntriesBySoftFiltering), end(m_EntriesBySoftFiltering), linear_generator(0, 1) );
+        iota(begin(m_EntriesBySoftFiltering), end(m_EntriesBySoftFiltering), 0);
     }
 }
 
@@ -929,67 +925,16 @@ int PanelData::SortLowerBoundForEntrySortKeys(const ExternalEntryKey& _keys) con
     auto it = lower_bound(begin(m_EntriesByCustomSort),
                           end(m_EntriesByCustomSort),
                           _keys,
-                          panel::SortPredLessIndToKeys(*m_Listing,
-                                                       m_VolatileData,
-                                                       m_CustomSortMode)
+                          panel::ExternalListingComparator(*m_Listing,
+                                                           m_VolatileData,
+                                                           m_CustomSortMode)
                           );
     if( it != end(m_EntriesByCustomSort) )
         return (int)distance( begin(m_EntriesByCustomSort), it );
     return -1;
 }
 
-static const auto g_RestorationSepDirsKey = "separateDirectories";
-static const auto g_RestorationExtlessDirsKey = "extensionlessDirectories";
-static const auto g_RestorationShowHiddenKey = "showHidden";
-static const auto g_RestorationCaseSensKey = "caseSensitive";
-static const auto g_RestorationNumericSortKey = "numericSort";
-static const auto g_RestorationSortModeKey = "sortMode";
-
-rapidjson::StandaloneValue PanelData::EncodeSortingOptions() const
-{
-    rapidjson::StandaloneValue json(rapidjson::kObjectType);
-    auto add_bool = [&](const char*_name, bool _v) {
-        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator),
-                       rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
-    auto add_int = [&](const char*_name, int _v) {
-        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator),
-                       rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
-    add_bool(g_RestorationSepDirsKey, SortMode().sep_dirs);
-    add_bool(g_RestorationExtlessDirsKey, SortMode().extensionless_dirs);
-    add_bool(g_RestorationShowHiddenKey, HardFiltering().show_hidden);
-    add_bool(g_RestorationCaseSensKey, SortMode().case_sens);
-    add_bool(g_RestorationNumericSortKey, SortMode().numeric_sort);
-    add_int(g_RestorationSortModeKey, (int)SortMode().sort);
-    return json;
-}
-
-void PanelData::DecodeSortingOptions(const rapidjson::StandaloneValue& _options)
-{
-    using namespace rapidjson;
-    if( !_options.IsObject() )
-        return;
-    
-    auto sort_mode = SortMode();
-    if( auto v = GetOptionalBoolFromObject(_options, g_RestorationSepDirsKey) )
-        sort_mode.sep_dirs = *v;
-    if( auto v = GetOptionalBoolFromObject(_options, g_RestorationExtlessDirsKey) )
-        sort_mode.extensionless_dirs = *v;
-    if( auto v = GetOptionalBoolFromObject(_options, g_RestorationCaseSensKey) )
-        sort_mode.case_sens = *v;
-    if( auto v = GetOptionalBoolFromObject(_options, g_RestorationNumericSortKey) )
-        sort_mode.numeric_sort = *v;
-    if( auto v = GetOptionalIntFromObject(_options, g_RestorationSortModeKey)  )
-        if( auto mode = (PanelSortMode::Mode)*v; PanelSortMode::validate(mode) )
-            sort_mode.sort = mode;
-    SetSortMode(sort_mode);
-    
-    auto hard_filtering = HardFiltering();
-    if( auto v = GetOptionalBoolFromObject(_options, g_RestorationShowHiddenKey) )
-        hard_filtering.show_hidden = *v;
-    SetHardFiltering(hard_filtering);
-}
-
-const PanelData::Statistics &PanelData::Stats() const
+const PanelData::Statistics &PanelData::Stats() const noexcept
 {
     return m_Stats;
 }

@@ -1,11 +1,12 @@
 #pragma once
 
-#include <VFS/VFS.h>
-#include "../../Core/rapidjson.h"
 #include "PanelDataSortMode.h"
 #include "PanelDataStatistics.h"
 #include "PanelDataExternalEntryKey.h"
 
+class VFSHost;
+class VFSListing;
+class VFSListingItem;
 struct PanelDataItemVolatileData;
 
 /**
@@ -20,8 +21,6 @@ struct PanelDataItemVolatileData;
 class PanelData
 {
 public:
-    typedef vector<unsigned> DirSortIndT; // value in this array is an index for VFSListing
-
     enum class PanelType : int8_t
     {
         Directory = 0,
@@ -84,21 +83,21 @@ public:
     /**
      * Will throw logic_error if called on listing with no common host.
      */
-    const shared_ptr<VFSHost>&  Host() const;
-    const VFSListing&       Listing() const;
-    const VFSListingPtr&    ListingPtr() const;
-    PanelType                        Type() const noexcept;
+    const shared_ptr<VFSHost>&      Host() const;
+    const VFSListing&               Listing() const;
+    const shared_ptr<VFSListing>&   ListingPtr() const;
+    PanelType                       Type() const noexcept;
     
     int RawEntriesCount() const noexcept;
     int SortedEntriesCount() const noexcept;
     
-    const DirSortIndT&      SortedDirectoryEntries() const;
+    const vector<unsigned>& SortedDirectoryEntries() const noexcept;
     
     
     /**
      * EntriesBySoftFiltering return a vector of filtered indeces of sorted entries (not raw ones)
      */
-    const DirSortIndT&      EntriesBySoftFiltering() const;
+    const vector<unsigned>& EntriesBySoftFiltering() const noexcept;
     
     VFSListingItem   EntryAtRawPosition(int _pos) const noexcept; // will return an "empty" item upon invalid index
     VolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
@@ -182,9 +181,6 @@ public:
     void SetSortMode(PanelSortMode _mode);
     PanelSortMode SortMode() const;
     
-    rapidjson::StandaloneValue EncodeSortingOptions() const;
-    void DecodeSortingOptions(const rapidjson::StandaloneValue& _options);
-    
     // hard filtering filtering
     void SetHardFiltering(const HardFilter &_filter);
     HardFilter HardFiltering() const;
@@ -199,7 +195,7 @@ public:
      */
     bool ClearTextFiltering();
     
-    const Statistics &Stats() const;
+    const Statistics &Stats() const noexcept;
     
     // manupulation with user flags for directory entries
     
@@ -237,10 +233,9 @@ private:
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
     shared_ptr<VFSListing>      m_Listing;
     vector<VolatileData>        m_VolatileData;
-    DirSortIndT                 m_EntriesByRawName;    // sorted with raw strcmp comparison
-    DirSortIndT                 m_EntriesByCustomSort; // custom defined sort
-    DirSortIndT                 m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
-    
+    vector<unsigned>            m_EntriesByRawName;    // sorted with raw strcmp comparison
+    vector<unsigned>            m_EntriesByCustomSort; // custom defined sort
+    vector<unsigned>            m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
     PanelSortMode               m_CustomSortMode;
     HardFilter                  m_HardFiltering;
     TextualFilter               m_SoftFiltering;

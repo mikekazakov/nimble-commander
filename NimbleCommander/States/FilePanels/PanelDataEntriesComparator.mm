@@ -5,9 +5,9 @@
 
 namespace panel {
 
-SortPredLessBase::SortPredLessBase(const VFSListing &_items,
-                                   const vector<PanelDataItemVolatileData>& _vd,
-                                   PanelDataSortMode _sort_mode):
+ListingComparatorBase::ListingComparatorBase(const VFSListing &_items,
+                                             const vector<PanelDataItemVolatileData>& _vd,
+                                             PanelDataSortMode _sort_mode):
     l{ _items },
     vd{ _vd },
     sort_mode{ _sort_mode },
@@ -17,24 +17,25 @@ SortPredLessBase::SortPredLessBase(const VFSListing &_items,
 {
 }
     
-int SortPredLessBase::Compare( CFStringRef _1st, CFStringRef _2nd ) const noexcept
+int ListingComparatorBase::Compare( CFStringRef _1st, CFStringRef _2nd ) const noexcept
 {
     return CFStringCompare( _1st, _2nd, str_comp_flags );
 }
 
-int SortPredLessBase::Compare( const char *_1st, const char *_2nd ) const noexcept
+int ListingComparatorBase::Compare( const char *_1st, const char *_2nd ) const noexcept
 {
     return plain_compare( _1st, _2nd );
 }
 
-SortPredLessIndToInd::SortPredLessIndToInd(const VFSListing &_items,
-                                           const vector<PanelDataItemVolatileData>& _vd,
-                                           PanelDataSortMode sort_mode):
-    SortPredLessBase(_items, _vd, sort_mode)
+IndirectListingComparator::IndirectListingComparator(
+    const VFSListing &_items,
+    const vector<PanelDataItemVolatileData>& _vd,
+    PanelDataSortMode sort_mode):
+        ListingComparatorBase(_items, _vd, sort_mode)
 {
 }
 
-bool SortPredLessIndToInd::operator()(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::operator()(unsigned _1, unsigned _2) const
 {
     using _ = PanelDataSortMode::Mode;
     
@@ -61,12 +62,12 @@ bool SortPredLessIndToInd::operator()(unsigned _1, unsigned _2) const
     };
 }
 
-bool SortPredLessIndToInd::IsLessByFilesystemRepresentation(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByFilesystemRepresentation(unsigned _1, unsigned _2) const
 {
     return l.Filename(_1) < l.Filename(_2);
 }
 
-bool SortPredLessIndToInd::IsLessBySizeReversed(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessBySizeReversed(unsigned _1, unsigned _2) const
 {
     constexpr auto invalid_size = PanelDataItemVolatileData::invalid_size;
     const auto s1 = vd[_1].size, s2 = vd[_2].size;
@@ -80,7 +81,7 @@ bool SortPredLessIndToInd::IsLessBySizeReversed(unsigned _1, unsigned _2) const
     return CompareNames(_1, _2) > 0; // fallback case
 }
 
-bool SortPredLessIndToInd::IsLessBySize(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessBySize(unsigned _1, unsigned _2) const
 {
     constexpr auto invalid_size = PanelDataItemVolatileData::invalid_size;
     const auto s1 = vd[_1].size, s2 = vd[_2].size;
@@ -94,7 +95,7 @@ bool SortPredLessIndToInd::IsLessBySize(unsigned _1, unsigned _2) const
     return CompareNames(_1, _2) < 0; // fallback case
 }
 
-bool SortPredLessIndToInd::IsLessByAddedTimeReversed(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByAddedTimeReversed(unsigned _1, unsigned _2) const
 {
     const auto h1 = l.HasAddTime(_1), h2 = l.HasAddTime(_2);
     if( h1 && h2 ) {
@@ -107,7 +108,7 @@ bool SortPredLessIndToInd::IsLessByAddedTimeReversed(unsigned _1, unsigned _2) c
     return CompareNames(_1, _2) > 0; // fallback case
 }
 
-bool SortPredLessIndToInd::IsLessByAddedTime(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByAddedTime(unsigned _1, unsigned _2) const
 {
     const auto h1 = l.HasAddTime(_1), h2 = l.HasAddTime(_2);
     if( h1 && h2 ) {
@@ -120,7 +121,7 @@ bool SortPredLessIndToInd::IsLessByAddedTime(unsigned _1, unsigned _2) const
     return CompareNames(_1, _2) < 0; // fallback case
 }
 
-bool SortPredLessIndToInd::IsLessByBirthTimeReversed(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByBirthTimeReversed(unsigned _1, unsigned _2) const
 {
     const auto v1 = l.BTime(_1), v2 = l.BTime(_2);
     if( v1 != v2 )
@@ -128,7 +129,7 @@ bool SortPredLessIndToInd::IsLessByBirthTimeReversed(unsigned _1, unsigned _2) c
     return CompareNames(_1, _2) > 0;
 }
 
-bool SortPredLessIndToInd::IsLessByBirthTime(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByBirthTime(unsigned _1, unsigned _2) const
 {
     const auto v1 = l.BTime(_1), v2 = l.BTime(_2);
     if( v1 != v2 )
@@ -136,7 +137,7 @@ bool SortPredLessIndToInd::IsLessByBirthTime(unsigned _1, unsigned _2) const
     return CompareNames(_1, _2) < 0;
 }
 
-bool SortPredLessIndToInd::IsLessByModificationTimeReversed(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByModificationTimeReversed(unsigned _1, unsigned _2) const
 {
     const auto v1 = l.MTime(_1), v2 = l.MTime(_2);
     if( v1 != v2 )
@@ -144,7 +145,7 @@ bool SortPredLessIndToInd::IsLessByModificationTimeReversed(unsigned _1, unsigne
     return CompareNames(_1, _2) > 0;
 }
 
-bool SortPredLessIndToInd::IsLessByModificationTime(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByModificationTime(unsigned _1, unsigned _2) const
 {
     const auto v1 = l.MTime(_1), v2 = l.MTime(_2);
     if( v1 != v2 )
@@ -152,7 +153,7 @@ bool SortPredLessIndToInd::IsLessByModificationTime(unsigned _1, unsigned _2) co
     return CompareNames(_1, _2) < 0;
 }
 
-bool SortPredLessIndToInd::IsLessByExensionReversed(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByExensionReversed(unsigned _1, unsigned _2) const
 {
     const auto first_has_extension = l.HasExtension(_1) &&
         (!sort_mode.extensionless_dirs || !l.IsDir(_1));
@@ -173,7 +174,7 @@ bool SortPredLessIndToInd::IsLessByExensionReversed(unsigned _1, unsigned _2) co
     return CompareNames(_1, _2) > 0;
 }
 
-bool SortPredLessIndToInd::IsLessByExension(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByExension(unsigned _1, unsigned _2) const
 {
     const auto first_has_extension = l.HasExtension(_1) &&
         (!sort_mode.extensionless_dirs || !l.IsDir(_1));
@@ -194,29 +195,29 @@ bool SortPredLessIndToInd::IsLessByExension(unsigned _1, unsigned _2) const
     return CompareNames(_1, _2) < 0;
 }
 
-bool SortPredLessIndToInd::IsLessByName(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByName(unsigned _1, unsigned _2) const
 {
     return CompareNames(_1, _2) < 0;
 }
 
-bool SortPredLessIndToInd::IsLessByNameReversed(unsigned _1, unsigned _2) const
+bool IndirectListingComparator::IsLessByNameReversed(unsigned _1, unsigned _2) const
 {
     return CompareNames(_1, _2) > 0;
 }
 
-int SortPredLessIndToInd::CompareNames(unsigned _1, unsigned _2) const
+int IndirectListingComparator::CompareNames(unsigned _1, unsigned _2) const
 {
     return Compare(l.DisplayFilenameCF(_1), l.DisplayFilenameCF(_2));
 }
 
 
-SortPredLessIndToKeys::SortPredLessIndToKeys(const VFSListing &_items,
-                                             const vector<PanelDataItemVolatileData>& _vd,
-                                             PanelDataSortMode sort_mode):
-    SortPredLessBase(_items, _vd, sort_mode)
+ExternalListingComparator::ExternalListingComparator(const VFSListing &_items,
+                                                     const vector<PanelDataItemVolatileData>& _vd,
+                                                     PanelDataSortMode sort_mode):
+    ListingComparatorBase(_items, _vd, sort_mode)
 {}
 
-bool SortPredLessIndToKeys::operator()(unsigned _1, const ExternalEntryKey &_val2) const
+bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &_val2) const
 {
     using _ = PanelDataSortMode::Mode;
     const auto invalid_size = PanelDataItemVolatileData::invalid_size;

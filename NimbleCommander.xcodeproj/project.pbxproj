@@ -112,6 +112,7 @@
 		CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CF2F42DA1EAD9E3D00AA031A /* PanelDataEntriesComparator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42D91EAD9E3D00AA031A /* PanelDataEntriesComparator.mm */; };
 		CF2F42E41EADA55000AA031A /* PanelDataExternalEntryKey.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E31EADA55000AA031A /* PanelDataExternalEntryKey.mm */; };
+		CF2F42E71EADB8D000AA031A /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF306F931CE9E54C002326FA /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
 		CF3120C41A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CF3120C51A510F640062185A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
@@ -1500,6 +1501,8 @@
 		CF2F42D91EAD9E3D00AA031A /* PanelDataEntriesComparator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataEntriesComparator.mm; path = NimbleCommander/States/FilePanels/PanelDataEntriesComparator.mm; sourceTree = SOURCE_ROOT; };
 		CF2F42E21EADA55000AA031A /* PanelDataExternalEntryKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataExternalEntryKey.h; path = NimbleCommander/States/FilePanels/PanelDataExternalEntryKey.h; sourceTree = SOURCE_ROOT; };
 		CF2F42E31EADA55000AA031A /* PanelDataExternalEntryKey.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataExternalEntryKey.mm; path = NimbleCommander/States/FilePanels/PanelDataExternalEntryKey.mm; sourceTree = SOURCE_ROOT; };
+		CF2F42E51EADB8D000AA031A /* PanelDataOptionsPersistence.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataOptionsPersistence.h; path = NimbleCommander/States/FilePanels/PanelDataOptionsPersistence.h; sourceTree = SOURCE_ROOT; };
+		CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataOptionsPersistence.mm; path = NimbleCommander/States/FilePanels/PanelDataOptionsPersistence.mm; sourceTree = SOURCE_ROOT; };
 		CF306F921CE9E54C002326FA /* main_icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = main_icon.icns; path = Resource/main_icon.icns; sourceTree = "<group>"; };
 		CF3120B21A507BB70062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		CF3120B31A507BFC0062185A /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Base; path = Base.lproj/Credits.rtf; sourceTree = "<group>"; };
@@ -2427,6 +2430,8 @@
 				CF2F42E31EADA55000AA031A /* PanelDataExternalEntryKey.mm */,
 				CFDAC20C1DF921E10039A104 /* PanelDataItemVolatileData.cpp */,
 				CFDAC20D1DF921E10039A104 /* PanelDataItemVolatileData.h */,
+				CF2F42E51EADB8D000AA031A /* PanelDataOptionsPersistence.h */,
+				CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */,
 				CFDAC21F1DFBCA290039A104 /* PanelDataPersistency.cpp */,
 				CFDAC2201DFBCA290039A104 /* PanelDataPersistency.h */,
 				CF818B3B1EA05AC600BC28E6 /* PanelDataSelection.h */,
@@ -4411,6 +4416,7 @@
 				CFD6DD251D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CFD8CDD01E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,
 				CFDAC2ED1DFD152C0039A104 /* FilePanelMainSplitView.mm in Sources */,
+				CF2F42E71EADB8D000AA031A /* PanelDataOptionsPersistence.mm in Sources */,
 				CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */,
 				CFDAC25C1DFBF0B30039A104 /* PanelController+DelayedSelection.mm in Sources */,
 				CF0139B81E9B156500E44F2D /* ShowGoToPopup.mm in Sources */,

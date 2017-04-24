@@ -3,6 +3,7 @@
 #include "PanelDataSelection.h"
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
+#include <VFS/VFS.h>
 
 PanelDataSelection::PanelDataSelection(const PanelData &_pd, bool _ignore_dirs_on_mask):
     m_Data(_pd),

@@ -21,6 +21,7 @@ static const auto g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
 static const auto g_LZMA = g_Preffix + "lzma-4.32.7.tar.xz";
 static const auto g_WarningArchive = g_Preffix + "maverix-master.zip";
 static const auto g_ChineseArchive = g_Preffix + "GB18030.zip";
+static const auto g_HeadingSlash = g_Preffix + "the.expanse.calibans.war.(2017).tv.s02.e13.eng.1cd.zip";
 
 static int VFSCompareEntries(const path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
@@ -331,7 +332,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testChineseArchive
 {
-  shared_ptr<VFSArchiveHost> host;
+    shared_ptr<VFSArchiveHost> host;
     try {
         host = make_shared<VFSArchiveHost>(g_ChineseArchive.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
@@ -349,6 +350,20 @@ static int VFSCompareEntries(const path& _file1_full_path,
     auto ref = "#include <stdio.h>";
     XCTAssert( memcmp(d->data(), ref, strlen(ref) ) == 0 );
     file.reset();
+}
+
+- (void)testArchiveWithHeadingSlash
+{
+    shared_ptr<VFSArchiveHost> host;
+    try {
+        host = make_shared<VFSArchiveHost>(g_HeadingSlash.c_str(), VFSNativeHost::SharedHost());
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+    shared_ptr<VFSListing> listing;
+    XCTAssert( host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok );
 }
 
 - (path)makeTmpDir

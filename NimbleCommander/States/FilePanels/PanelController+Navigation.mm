@@ -9,6 +9,24 @@
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
 #include "PanelController.h"
+#include <NimbleCommander/Core/Alert.h>
+
+static void ShowExceptionAlert( const string &_message = "" )
+{
+    if( dispatch_is_main_queue() ) {
+        auto alert = [[Alert alloc] init];
+        alert.messageText = @"Unexpected exception was caught:";
+        alert.informativeText = !_message.empty() ?
+            [NSString stringWithUTF8StdString:_message] :
+            @"Unknown exception";
+        [alert runModal];
+    }
+    else {
+        dispatch_to_main_queue([_message]{
+            ShowExceptionAlert(_message);
+        });
+    }
+}
 
 @implementation PanelController (Navigation)
 
@@ -100,36 +118,43 @@ loadPreviousState:(bool)_load_state
     }
     
     auto workblock = [=]() {
-        if(!c->VFS->IsDirectory(c->RequestedDirectory.c_str(), 0, 0)) {
-            c->LoadingResultCode = VFSError::FromErrno(ENOTDIR);
-            if( c->LoadingResultCallback )
-                c->LoadingResultCallback( c->LoadingResultCode );            
-            return;
-        }
-        
-        shared_ptr<VFSListing> listing;
-        c->LoadingResultCode = c->VFS->FetchDirectoryListing(c->RequestedDirectory.c_str(),
-                                                             listing,
-                                                             m_VFSFetchingFlags,
-                                                             [&] {
-                                                                 return m_DirectoryLoadingQ.IsStopped();
-                                                             });
-        if( c->LoadingResultCallback )
-            c->LoadingResultCallback( c->LoadingResultCode );
+        try {
+            if(!c->VFS->IsDirectory(c->RequestedDirectory.c_str(), 0, 0)) {
+                c->LoadingResultCode = VFSError::FromErrno(ENOTDIR);
+                if( c->LoadingResultCallback )
+                    c->LoadingResultCallback( c->LoadingResultCode );
+                return;
+            }
             
-        if( c->LoadingResultCode < 0 )
-            return;
-        // TODO: need an ability to show errors at least        
-        
-        [self CancelBackgroundOperations]; // clean running operations if any
-        dispatch_or_run_in_main_queue([=]{
-            [m_View SavePathState];
-            m_Data.Load(listing, PanelData::PanelType::Directory);
-            [m_View dataUpdated];
-            [m_View panelChangedWithFocusedFilename:c->RequestFocusedEntry
-                                  loadPreviousState:c->LoadPreviousViewState];
-            [self OnPathChanged];
-        });
+            shared_ptr<VFSListing> listing;
+            c->LoadingResultCode = c->VFS->FetchDirectoryListing(
+                c->RequestedDirectory.c_str(),
+                listing,
+                m_VFSFetchingFlags,
+                [&] { return m_DirectoryLoadingQ.IsStopped(); });
+            if( c->LoadingResultCallback )
+                c->LoadingResultCallback( c->LoadingResultCode );
+            
+            if( c->LoadingResultCode < 0 )
+                return;
+            // TODO: need an ability to show errors at least
+            
+            [self CancelBackgroundOperations]; // clean running operations if any
+            dispatch_or_run_in_main_queue([=]{
+                [m_View SavePathState];
+                m_Data.Load(listing, PanelData::PanelType::Directory);
+                [m_View dataUpdated];
+                [m_View panelChangedWithFocusedFilename:c->RequestFocusedEntry
+                                      loadPreviousState:c->LoadPreviousViewState];
+                [self OnPathChanged];
+            });
+        }
+        catch(exception &e) {
+            ShowExceptionAlert(e.what());
+        }
+        catch(...){
+            ShowExceptionAlert();
+        }
     };
     
     if( c->PerformAsynchronous == false ) {

@@ -19,8 +19,7 @@ VFSNetSFTPFile::VFSNetSFTPFile(const char* _relative_path,
 
 VFSNetSFTPFile::~VFSNetSFTPFile()
 {
-    if(IsOpened())
-        Close();
+    Close();
 }
 
 int VFSNetSFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
@@ -77,12 +76,12 @@ bool VFSNetSFTPFile::IsOpened() const
 
 int VFSNetSFTPFile::Close()
 {
-    if(m_Handle) {
+    if( m_Handle ) {
         libssh2_sftp_close(m_Handle);
         m_Handle = nullptr;
     }
     
-    if(m_Connection)
+    if( m_Connection )
         dynamic_pointer_cast<VFSNetSFTPHost>(Host())->ReturnConnection(move(m_Connection));
 
     m_Position = 0;

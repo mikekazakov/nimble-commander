@@ -245,6 +245,9 @@ int VFSArchiveHost::ReadArchiveListing()
 
         const auto entry_pathname = archive_entry_pathname(aentry);
         const auto entry_pathname_len = strlen(entry_pathname);
+        if( entry_pathname_len == 0 )
+            continue;
+        const bool entry_has_heading_slash = entry_pathname[0] == '/';
   
         // pathname can be represented in ANY encoding.
         // if we already have figured out it - convert from it to UTF8 immediately
@@ -252,7 +255,7 @@ int VFSArchiveHost::ReadArchiveListing()
             DecodeStringToUTF8(entry_pathname,
                                entry_pathname_len,
                                *detected_encoding,
-                               path+1,
+                               path + (entry_has_heading_slash ? 0 : 1),
                                sizeof(path) - 2);
         }
         else {
@@ -260,7 +263,7 @@ int VFSArchiveHost::ReadArchiveListing()
             // this checking is supposed to be very fast, for most archives it will return true
             if( IsValidUTF8String(entry_pathname, entry_pathname_len) ) {
                 // we can path straightaway
-                strcpy(path + 1, entry_pathname);
+                strcpy(path + (entry_has_heading_slash ? 0 : 1), entry_pathname);
             }
             else {
                 // if this archive doesn't use a valid UTF8 encoding -
@@ -271,7 +274,7 @@ int VFSArchiveHost::ReadArchiveListing()
                 DecodeStringToUTF8(entry_pathname,
                                    entry_pathname_len,
                                    *detected_encoding,
-                                   path+1,
+                                   path + (entry_has_heading_slash ? 0 : 1),
                                    sizeof(path) - 2);
             }
         }

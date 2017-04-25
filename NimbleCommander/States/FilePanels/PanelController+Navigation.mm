@@ -119,13 +119,6 @@ loadPreviousState:(bool)_load_state
     
     auto workblock = [=]() {
         try {
-            if(!c->VFS->IsDirectory(c->RequestedDirectory.c_str(), 0, 0)) {
-                c->LoadingResultCode = VFSError::FromErrno(ENOTDIR);
-                if( c->LoadingResultCallback )
-                    c->LoadingResultCallback( c->LoadingResultCode );
-                return;
-            }
-            
             shared_ptr<VFSListing> listing;
             c->LoadingResultCode = c->VFS->FetchDirectoryListing(
                 c->RequestedDirectory.c_str(),
@@ -158,7 +151,6 @@ loadPreviousState:(bool)_load_state
     };
     
     if( c->PerformAsynchronous == false ) {
-        //m_DirectoryLoadingQ->RunSyncHere(workblock);
         workblock();
         return c->LoadingResultCode;
     }

@@ -15,6 +15,14 @@
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include "PanelDataPersistency.h"
 
+
+#include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
+static NetworkConnectionsManager &ConnectionsManager()
+{
+    return ConfigBackedNetworkConnectionsManager::Instance();
+}
+
+
 //type: "type", // VFSNativeHost::Tag, VFSPSHost::Tag, VFSArchiveHost::Tag, VFSArchiveUnRARHost::Tag, VFSXAttrHost::Tag, "network"
 // perhaps "archive" in the future, when more of them will come and some dedicated "ArchiveManager" will appear
 //junction: "path"
@@ -92,7 +100,7 @@ static any EncodeState( const VFSHost& _host )
     }
     else if( tag == VFSNetFTPHost::Tag ||
              tag == VFSNetSFTPHost::Tag ) {
-        if( auto conn = NetworkConnectionsManager::Instance().ConnectionForVFS(_host) )  {
+        if( auto conn = ConnectionsManager().ConnectionForVFS(_host) )  {
             return Network{ conn->Uuid() };
         }
     }
@@ -317,7 +325,7 @@ string PanelDataPersisency::MakeFootprintString( const Location &_loc )
             footprint += xattr->junction;
         }
         else if( auto network = any_cast<Network>(&h) ) {
-            const auto &mgr = NetworkConnectionsManager::Instance();
+            const auto &mgr = ConnectionsManager();
             if( auto conn = mgr.ConnectionByUUID(network->connection) ) {
                 if( auto ftp = conn->Cast<NetworkConnectionsManager::FTPConnection>() ) {
                     footprint += VFSNetFTPHost::Tag;
@@ -364,7 +372,7 @@ string PanelDataPersisency::MakeVerbosePathString( const Location &_loc )
         else if( auto xattr = any_cast<XAttr>(&h) )
             verbose += xattr->junction;
         else if( auto network = any_cast<Network>(&h) ) {
-            const auto &mgr = NetworkConnectionsManager::Instance();
+            const auto &mgr = ConnectionsManager();
             if( auto conn = mgr.ConnectionByUUID(network->connection) ) {
                 if( auto ftp = conn->Cast<NetworkConnectionsManager::FTPConnection>() ) {
                     verbose += "ftp://"s +
@@ -425,7 +433,7 @@ optional<rapidjson::StandaloneValue> PanelDataPersisency::EncodeVFSHostInfo( con
     }
     else if( tag == VFSNetFTPHost::Tag ||
              tag == VFSNetSFTPHost::Tag ) {
-        if( auto conn = NetworkConnectionsManager::Instance().ConnectionForVFS(_host) )  {
+        if( auto conn = ConnectionsManager().ConnectionForVFS(_host) )  {
             json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(g_HostInfoTypeNetworkValue), g_CrtAllocator );
             json.AddMember( MakeStandaloneString(g_HostInfoUuidKey), MakeStandaloneString(to_string(conn->Uuid()).c_str()), g_CrtAllocator );
             return move(json);
@@ -537,8 +545,8 @@ int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_
 
                     static const boost::uuids::string_generator uuid_gen{};
                     const auto uuid = uuid_gen( h[g_HostInfoUuidKey].GetString() );
-                    if( auto connection = NetworkConnectionsManager::Instance().ConnectionByUUID( uuid ) ) {
-                        if ( auto host = NetworkConnectionsManager::Instance().SpawnHostFromConnection(*connection) )
+                    if( auto connection = ConnectionsManager().ConnectionByUUID( uuid ) ) {
+                        if ( auto host = ConnectionsManager().SpawnHostFromConnection(*connection) )
                             vfs.emplace_back( host );
                         else
                             return VFSError::GenericError; // failed to spawn connection
@@ -598,7 +606,7 @@ static bool Fits( VFSHost& _alive, const any &_encoded )
     else if( tag == VFSNetFTPHost::Tag ||
              tag == VFSNetSFTPHost::Tag ) {
         if( auto network = any_cast<Network>(encoded) )
-            if( auto conn = NetworkConnectionsManager::Instance().ConnectionForVFS( _alive ) )
+            if( auto conn = ConnectionsManager().ConnectionForVFS( _alive ) )
                 return network->connection == conn->Uuid();
     }
     else if( tag == VFSArchiveHost::Tag ) {
@@ -659,7 +667,7 @@ int PanelDataPersisency::CreateVFSFromLocation( const Location &_state, VFSHostP
                 vfs.emplace_back( xattr_vfs );
             }
             else if( auto network = any_cast<Network>(&h) ) {
-                auto &mgr = NetworkConnectionsManager::Instance();
+                auto &mgr = ConnectionsManager();
                 if( auto conn = mgr.ConnectionByUUID(network->connection) ) {
                     if ( auto host = mgr.SpawnHostFromConnection(*conn) )
                         vfs.emplace_back( host );

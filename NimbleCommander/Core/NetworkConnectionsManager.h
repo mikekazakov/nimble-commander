@@ -1,55 +1,46 @@
 #pragma once
 
 #include <boost/uuid/uuid.hpp>
-#include <boost/functional/hash.hpp>
-#include <VFS/VFS.h>
-#include <NimbleCommander/Bootstrap/Config.h>
+
+class VFSHost;
 
 class NetworkConnectionsManager
 {
-    NetworkConnectionsManager();
 public:
+    virtual ~NetworkConnectionsManager() = 0;
+
     class Connection;
     class BaseConnection;
-    class FTPConnection;
-    class SFTPConnection;
-    class LANShare;
+        class FTPConnection;
+        class SFTPConnection;
+        class LANShare;
+        /*class Dropbox*/
+    class ConnectionVisitor;
     
-    static NetworkConnectionsManager& Instance();
     
     static boost::uuids::uuid MakeUUID();
-
-    optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const;
-    optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const;    
-    
-    void InsertConnection( const Connection &_connection );
-    void RemoveConnection( const Connection &_connection );
-    
-    void ReportUsage( const Connection &_connection );
-    
-    vector<Connection> AllConnectionsByMRU() const;
-    vector<Connection> FTPConnectionsByMRU() const;
-    vector<Connection> SFTPConnectionsByMRU() const;
-    vector<Connection> LANShareConnectionsByMRU() const;
-    
-    bool SetPassword(const Connection &_conn, const string& _password);
-    
-    /**
-     * Retrieves password stored in Keychain and returns it.
-     */
-    bool GetPassword(const Connection &_conn, string& _password);
-    
-    /**
-     * Runs modal UI Dialog and asks user to enter an appropriate password
-     */
-    bool AskForPassword(const Connection &_conn, string& _password);
-//#ifdef __OBJC__
-//    bool GetPassword(const Connection &_conn, string& _password, NSWindow *_window_for_passwd_sheet);
-//#endif
-    
     static string TitleForConnection(const Connection &_conn);
+
+    virtual optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const = 0;
+    virtual optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const = 0 ;
     
-    VFSHostPtr SpawnHostFromConnection(const Connection &_conn, bool _allow_password_ui = true);
+    virtual void InsertConnection( const Connection &_connection ) = 0;
+    virtual void RemoveConnection( const Connection &_connection ) = 0;
+    
+    virtual void ReportUsage( const Connection &_connection ) = 0;
+    
+    virtual vector<Connection> AllConnectionsByMRU() const = 0;
+    virtual vector<Connection> FTPConnectionsByMRU() const = 0;
+    virtual vector<Connection> SFTPConnectionsByMRU() const = 0;
+    virtual vector<Connection> LANShareConnectionsByMRU() const = 0;
+    
+    virtual bool SetPassword(const Connection &_conn, const string& _password) = 0;
+    virtual bool GetPassword(const Connection &_conn, string& _password) = 0;
+    
+    virtual bool AskForPassword(const Connection &_conn, string& _password) = 0;
+    
+    virtual shared_ptr<VFSHost> SpawnHostFromConnection(const Connection &_conn,
+                                                        bool _allow_password_ui = true) = 0;
 
     using MountShareCallback = function<void(const string&_mounted_path, const string&_error)>;
     /**
@@ -57,37 +48,23 @@ public:
      * _callback will be called in the future, either with a string containing a mount path, or
      * with reason of failure.
      */
-//    bool MountShareAsync(const Connection &_conn,
-//                         MountShareCallback _callback,
-//                         bool _allow_password_ui = true);
-    bool MountShareAsync(const Connection &_conn,
-                         const string &_password,
-                         MountShareCallback _callback);
-    
-private:
-    void Save();
-    void Load();
-    void NetFSCallback(int _status, void *_requestID, CFArrayRef _mountpoints);
-    
-    vector<Connection>                              m_Connections;
-    vector<boost::uuids::uuid>                      m_MRU;
-    mutable mutex                                   m_Lock;
-    GenericConfig                                   m_Config;
-    vector<GenericConfig::ObservationTicket>        m_ConfigObservations;
-    bool                                            m_IsWritingConfig;
-    
-    mutable mutex                                   m_PendingMountRequestsLock;
-    vector< pair<void*, MountShareCallback> >       m_PendingMountRequests;
+    virtual bool MountShareAsync(const Connection &_conn,
+                                 const string &_password,
+                                 MountShareCallback _callback) = 0;
+};
+
+class NetworkConnectionsManager::ConnectionVisitor
+{
+public:
+    virtual void Visit( const NetworkConnectionsManager::FTPConnection &_ftp );
+    virtual void Visit( const NetworkConnectionsManager::SFTPConnection &_sftp );
+    virtual void Visit( const NetworkConnectionsManager::LANShare &_share );
 };
 
 class NetworkConnectionsManager::Connection
 {
 public:
-    Connection() :
-        m_Object{nullptr}
-    {
-        throw domain_error("invalid connection construction");
-    }
+    Connection();
     
     template <class T>
     explicit Connection(T _t):
@@ -117,32 +94,17 @@ public:
             return &p->obj;
         return nullptr;
     }
+    
+    void Accept( NetworkConnectionsManager::ConnectionVisitor &_visitor ) const;
 
-    const string&               Title() const noexcept { return m_Object->Title(); }
-    const boost::uuids::uuid&   Uuid()  const noexcept { return m_Object->Uuid(); }
+    const string& Title() const noexcept;
+    const boost::uuids::uuid& Uuid() const noexcept;
 
-    // shallow comparison only
-    inline bool operator==(const Connection&_rhs)const noexcept {return m_Object == _rhs.m_Object;}
-    inline bool operator!=(const Connection&_rhs)const noexcept {return m_Object != _rhs.m_Object;}
+    bool operator==(const Connection&_rhs) const noexcept;
+    bool operator!=(const Connection&_rhs) const noexcept;
 private:
-
-    struct Concept
-    {
-        virtual ~Concept() = default;
-        virtual const string& Title() const noexcept = 0;
-        virtual const boost::uuids::uuid& Uuid() const noexcept = 0;
-    };
-    
-    template <class T>
-    struct Model final : Concept
-    {
-        T obj;
-        
-        Model(T _t): obj( move(_t) ) {};
-        virtual const string& Title() const noexcept override { return obj.title; }
-        virtual const boost::uuids::uuid& Uuid() const noexcept override { return obj.uuid; };
-    };
-    
+    struct Concept;
+    template <class T> struct Model;
     shared_ptr<const Concept> m_Object;
 };
 
@@ -151,6 +113,7 @@ class NetworkConnectionsManager::BaseConnection
 public:
     string              title; // arbitrary user-defined title
     boost::uuids::uuid  uuid;
+    bool operator==(const BaseConnection&_rhs) const noexcept;
 };
 
 class NetworkConnectionsManager::FTPConnection : public NetworkConnectionsManager::BaseConnection
@@ -160,6 +123,7 @@ public:
     string host;
     string path;
     long   port;
+    bool operator==(const FTPConnection&_rhs) const noexcept;
 };
 
 class NetworkConnectionsManager::SFTPConnection : public NetworkConnectionsManager::BaseConnection
@@ -169,6 +133,7 @@ public:
     string host;
     string keypath;
     long   port;
+    bool operator==(const SFTPConnection&_rhs) const noexcept;
 };
 
 class NetworkConnectionsManager::LANShare : public NetworkConnectionsManager::BaseConnection
@@ -184,4 +149,51 @@ public:
     string share; // must be not empty at the time, to eliminate a need for UI upon connection
     string mountpoint; // empty mountpoint means that system will decide it itself
     Protocol proto;
+    bool operator==(const LANShare&_rhs) const noexcept;
+};
+
+struct NetworkConnectionsManager::Connection::Concept
+{
+    virtual ~Concept() = default;
+    virtual const string& Title() const noexcept = 0;
+    virtual const boost::uuids::uuid& Uuid() const noexcept = 0;
+    virtual void Accept( NetworkConnectionsManager::ConnectionVisitor &_visitor ) const = 0;
+    virtual const type_info &TypeID() const noexcept = 0;
+    virtual bool Equal( const Concept &_rhs ) const noexcept = 0;
+};
+
+template <class T>
+struct NetworkConnectionsManager::Connection::Model final :
+    NetworkConnectionsManager::Connection::Concept
+{
+    T obj;
+    
+    Model(T _t): obj( move(_t) )
+    {
+    }
+    
+    virtual const string& Title() const noexcept override
+    {
+        return obj.title;
+    }
+    
+    virtual const boost::uuids::uuid& Uuid() const noexcept override
+    {
+        return obj.uuid;
+    }
+    
+    virtual void Accept( NetworkConnectionsManager::ConnectionVisitor &_visitor ) const override
+    {
+        _visitor.Visit(obj);
+    }
+    
+    virtual const type_info &TypeID() const noexcept override
+    {
+        return typeid( T );
+    }
+    
+    virtual bool Equal( const Concept &_rhs ) const noexcept override
+    {
+        return TypeID() == _rhs.TypeID() && obj == static_cast<const Model<T>&>(_rhs).obj;
+    }
 };

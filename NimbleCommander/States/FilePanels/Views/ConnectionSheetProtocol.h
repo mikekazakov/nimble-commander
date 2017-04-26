@@ -1,11 +1,10 @@
 #pragma once
 
-#include <Utility/SheetController.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
-#include "ConnectionSheetProtocol.h"
 
-@interface FTPConnectionSheetController : SheetController<ConnectionSheetProtocol>
+@protocol ConnectionSheetProtocol<NSObject>
 
+@required
 @property (nonatomic) NetworkConnectionsManager::Connection connection;
 @property (nonatomic) string password;
 

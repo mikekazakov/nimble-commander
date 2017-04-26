@@ -1,11 +1,3 @@
-//
-//  NetworkShareSheetController.m
-//  NimbleCommander
-//
-//  Created by Michael G. Kazakov on 3/24/17.
-//  Copyright © 2017 Michael G. Kazakov. All rights reserved.
-//
-
 #include <NimbleCommander/Core/Alert.h>
 #include "NetworkShareSheetController.h"
 
@@ -15,7 +7,7 @@
 @property (strong) NSString *server;
 @property (strong) NSString *share;
 @property (strong) NSString *username;
-@property (strong) NSString *password;
+@property (strong) NSString *passwordEntered;
 @property (strong) NSString *mountpath;
 @property (strong) IBOutlet NSPopUpButton *protocol;
 @property (strong) IBOutlet NSPopUpButton *saved;
@@ -26,7 +18,7 @@
 
 @implementation NetworkShareSheetController
 {
-    vector<NetworkConnectionsManager::Connection> m_Connections;
+//    vector<NetworkConnectionsManager::Connection> m_Connections;
     optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::LANShare m_Connection;    
 }
@@ -57,44 +49,44 @@
     
     [self validate];
     
-    m_Connections = NetworkConnectionsManager::Instance().LANShareConnectionsByMRU();
+//    m_Connections = Manager().LANShareConnectionsByMRU();
     
-    if(!m_Connections.empty()) {
-        self.saved.autoenablesItems = false;
-        
-        NSMenuItem *pref = [[NSMenuItem alloc] init];
-        pref.title = NSLocalizedString(@"Recent Servers", "Menu item title, disabled - only as separator");
-        pref.enabled = false;
-        [self.saved.menu addItem:pref];
-        
-        for(auto &i: m_Connections) {
-            NSMenuItem *it = [NSMenuItem new];
-            auto title = NetworkConnectionsManager::Instance().TitleForConnection(i);
-            it.title = [NSString stringWithUTF8StdString:title];
-            [self.saved.menu addItem:it];
-        }
-        
-        [self.saved.menu addItem:NSMenuItem.separatorItem];
-        [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];
-    }
+//    if(!m_Connections.empty()) {
+//        self.saved.autoenablesItems = false;
+//        
+//        NSMenuItem *pref = [[NSMenuItem alloc] init];
+//        pref.title = NSLocalizedString(@"Recent Servers", "Menu item title, disabled - only as separator");
+//        pref.enabled = false;
+//        [self.saved.menu addItem:pref];
+//        
+//        for(auto &i: m_Connections) {
+//            NSMenuItem *it = [NSMenuItem new];
+//            auto title = Manager().TitleForConnection(i);
+//            it.title = [NSString stringWithUTF8StdString:title];
+//            [self.saved.menu addItem:it];
+//        }
+//        
+//        [self.saved.menu addItem:NSMenuItem.separatorItem];
+//        [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];
+//    }
     
 }
 
 - (IBAction)OnSaved:(id)sender
 {
-    long ind = self.saved.indexOfSelectedItem;
-    if(ind == self.saved.numberOfItems - 1) {
-        [self ClearRecentServers];
-        return;
-    }
-    
-    ind = ind - 2;
-    if(ind < 0 || ind >= m_Connections.size())
-        return;
-    
-    m_Original = m_Connections[ind];
-    [self fillInfoFromConnection:*m_Original];
-    [self validate];
+//    long ind = self.saved.indexOfSelectedItem;
+//    if(ind == self.saved.numberOfItems - 1) {
+//        [self ClearRecentServers];
+//        return;
+//    }
+//    
+//    ind = ind - 2;
+//    if(ind < 0 || ind >= m_Connections.size())
+//        return;
+//    
+//    m_Original = m_Connections[ind];
+//    [self fillInfoFromConnection:*m_Original];
+//    [self validate];
 }
 
 - (void)fillInfoFromConnection:(NetworkConnectionsManager::Connection)_conn
@@ -108,28 +100,28 @@
     self.mountpath = [NSString stringWithUTF8StdString:c.mountpoint];
     [self.protocol selectItemWithTag:(int)c.proto];
     
-    string password;
-    if( NetworkConnectionsManager::Instance().GetPassword(_conn, password) )
-        self.password = [NSString stringWithUTF8StdString:password];
-    else
-        self.password = @"";
+//    string password;
+//    if( Manager().GetPassword(_conn, password) )
+//        self.passwordEntered = [NSString stringWithUTF8StdString:password];
+//    else
+//        self.passwordEntered = @"";
 }
 
 - (void) ClearRecentServers
 {
-    Alert *alert = [[Alert alloc] init];
-    alert.messageText = NSLocalizedString(@"Are you sure you want to clear the list of recent servers?", "Asking user if he want to clear recent connections");
-    alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "Informating user that action can't be reverted");
-    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    if(alert.runModal == NSAlertFirstButtonReturn) {
-        for( auto &i: m_Connections )
-            NetworkConnectionsManager::Instance().RemoveConnection(i);
-        m_Connections.clear();
-        [self.saved selectItemAtIndex:0];
-        while( self.saved.numberOfItems > 1 )
-            [self.saved removeItemAtIndex:self.saved.numberOfItems - 1];
-    }
+//    Alert *alert = [[Alert alloc] init];
+//    alert.messageText = NSLocalizedString(@"Are you sure you want to clear the list of recent servers?", "Asking user if he want to clear recent connections");
+//    alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "Informating user that action can't be reverted");
+//    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+//    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+//    if(alert.runModal == NSAlertFirstButtonReturn) {
+//        for( auto &i: m_Connections )
+//            Manager().RemoveConnection(i);
+//        m_Connections.clear();
+//        [self.saved selectItemAtIndex:0];
+//        while( self.saved.numberOfItems > 1 )
+//            [self.saved removeItemAtIndex:self.saved.numberOfItems - 1];
+//    }
 }
 
 - (IBAction)onClose:(id)sender
@@ -142,7 +134,7 @@
     if( m_Original)
         m_Connection.uuid = m_Original->Uuid();
     else
-        m_Connection.uuid = NetworkConnectionsManager::Instance().MakeUUID();
+        m_Connection.uuid = NetworkConnectionsManager::MakeUUID();
     
     auto extract_string = [](NSString *s){ return s.UTF8String ? s.UTF8String : ""; };
     
@@ -161,9 +153,29 @@
     return NetworkConnectionsManager::Connection( m_Connection );
 }
 
+- (void)setConnection:(NetworkConnectionsManager::Connection)connection
+{
+    m_Original = connection;
+    [self fillInfoFromConnection:*m_Original];
+}
+
+//@property (readonly) NetworkConnectionsManager::Connection connection;
+
 - (NSString*) providedPassword
 {
-    return self.password ? self.password : @"";
+    return self.passwordEntered ? self.passwordEntered : @"";
+}
+
+//@property (nonatomic) string password;
+
+- (string)password
+{
+    return self.passwordEntered ? self.passwordEntered.UTF8String : "";
+}
+
+- (void)setPassword:(string)password
+{
+    self.passwordEntered = [NSString stringWithUTF8StdString:password];
 }
 
 - (IBAction)onChooseMountPath:(id)sender

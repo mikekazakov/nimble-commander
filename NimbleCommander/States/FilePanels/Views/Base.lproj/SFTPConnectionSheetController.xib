@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -32,7 +32,7 @@
                         </textFieldCell>
                     </textField>
                     <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="IuW-Vd-F18">
-                        <rect key="frame" x="351" y="195" width="46" height="27"/>
+                        <rect key="frame" x="351" y="194" width="46" height="27"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="22" id="KW4-al-1Gl"/>
                             <constraint firstAttribute="width" constant="42" id="miZ-8N-h5S"/>
@@ -208,7 +208,7 @@ DQ
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="self.password" id="NpK-Wh-VzO">
+                            <binding destination="-2" name="value" keyPath="self.passwordEntered" id="Hn6-Gv-dcT">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                     <string key="NSNullPlaceholder">passwd</string>

@@ -11,6 +11,13 @@
 #include "../PanelController.h"
 #include "ShowGoToPopup.h"
 
+
+#include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
+static NetworkConnectionsManager &ConnectionsManager()
+{
+    return ConfigBackedNetworkConnectionsManager::Instance();
+}
+
 static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
 static const auto g_ConfigMaxNetworkConnections = "filePanel.general.maximumNetworkConnectionsInGoToMenu";
 static const auto g_ConfigShowOthersKey = "filePanel.general.appendOtherWindowsPathsToGoToMenu";
@@ -89,7 +96,7 @@ static vector<shared_ptr<NativeFileSystemInfo>> VolumesToShow()
 
 static vector<NetworkConnectionsManager::Connection> LimitedRecentConnections()
 {
-    auto connections = NetworkConnectionsManager::Instance().AllConnectionsByMRU();
+    auto connections = ConnectionsManager().AllConnectionsByMRU();
     
     auto limit = max( GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
     if( connections.size() > limit )
@@ -268,7 +275,7 @@ static auto MenuItemForConnection( const NetworkConnectionsManager::Connection &
     auto menu_item = [[NSMenuItem alloc] init];
     
     menu_item.title = [NSString stringWithUTF8StdString:
-        NetworkConnectionsManager::Instance().TitleForConnection(_c)];
+        ConnectionsManager().TitleForConnection(_c)];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_c}];
     menu_item.image = network_image;
     menu_item.target = _target;
@@ -393,7 +400,7 @@ static NSMenu *BuildConnectionsQuickList( PanelController *_panel )
     const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
         NSLocalizedString(@"Connections", "Connections popup menu title in file panels"));
     
-    for( auto &c: NetworkConnectionsManager::Instance().AllConnectionsByMRU() )
+    for( auto &c: ConnectionsManager().AllConnectionsByMRU() )
         [menu addItem:MenuItemForConnection(c, action_target)];
 
     SetupHotkeys(menu);

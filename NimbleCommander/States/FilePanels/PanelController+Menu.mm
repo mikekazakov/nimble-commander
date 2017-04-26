@@ -15,6 +15,7 @@
 #include "Views/FTPConnectionSheetController.h"
 #include "Views/SFTPConnectionSheetController.h"
 #include "Views/NetworkShareSheetController.h"
+#include "Views/ConnectToServer.h"
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "Actions/CopyFilePaths.h"
@@ -38,6 +39,16 @@
 #include "Actions/RenameInPlace.h"
 #include "Actions/Select.h"
 #include "Actions/CopyToPasteboard.h"
+
+
+
+// TEMPORARY HERE, REMOVE IT:
+#include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
+static NetworkConnectionsManager &ConnectionsManager()
+{
+    return ConfigBackedNetworkConnectionsManager::Instance();
+}
+
 
 
 static const panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
@@ -126,7 +137,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         });
         
         // save successful connection usage to history
-        NetworkConnectionsManager::Instance().ReportUsage(_connection);
+        ConnectionsManager().ReportUsage(_connection);
         
         return true;
     } catch (VFSErrorException &e) {
@@ -141,29 +152,21 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     return false;
 }
 
-- (void) showGoToFTPSheet:(optional<NetworkConnectionsManager::Connection>)_current
+- (IBAction) OnGoToFTP:(id)sender
 {
-    FTPConnectionSheetController *sheet = [FTPConnectionSheetController new];
-    if(_current)
-        [sheet fillInfoFromStoredConnection:*_current];
+    FTPConnectionSheetController *sheet = [[FTPConnectionSheetController alloc] init];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if(returnCode != NSModalResponseOK || sheet.server == nil)
+        if( returnCode != NSModalResponseOK )
             return;
         
-        auto connection = sheet.result;
-        string password = sheet.password ? sheet.password.UTF8String : "";
-        NetworkConnectionsManager::Instance().InsertConnection(connection);
-        NetworkConnectionsManager::Instance().SetPassword(connection, password);
+        auto connection = sheet.connection;
+        string password = sheet.password;
+        ConnectionsManager().InsertConnection(connection);
+        ConnectionsManager().SetPassword(connection, password);
         m_DirectoryLoadingQ.Run([=]{
             [self GoToFTPWithConnection:connection password:password];
         });
     }];
-    
-}
-
-- (IBAction) OnGoToFTP:(id)sender
-{
-    [self showGoToFTPSheet:nullopt];
 }
 
 - (bool) GoToSFTPWithConnection:(NetworkConnectionsManager::Connection)_connection
@@ -184,7 +187,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         });
         
         // save successful connection to history
-        NetworkConnectionsManager::Instance().ReportUsage(_connection);
+        ConnectionsManager().ReportUsage(_connection);
 
         return true;
     } catch (const VFSErrorException &e) {
@@ -199,29 +202,21 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     return false;
 }
 
-- (void) showGoToSFTPSheet:(optional<NetworkConnectionsManager::Connection>)_current
+- (IBAction) OnGoToSFTP:(id)sender
 {
-    SFTPConnectionSheetController *sheet = [SFTPConnectionSheetController new];
-    if(_current)
-        [sheet fillInfoFromStoredConnection:*_current];
+    SFTPConnectionSheetController *sheet = [[SFTPConnectionSheetController alloc] init];
+    
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(returnCode != NSModalResponseOK)
             return;
-        
-        auto connection = sheet.result;
-        string password = sheet.password ? sheet.password.UTF8String : "";
-        NetworkConnectionsManager::Instance().InsertConnection(connection);
-        NetworkConnectionsManager::Instance().SetPassword(connection, password);
+        auto connection = sheet.connection;
+        string password = sheet.password;
+        ConnectionsManager().InsertConnection(connection);
+        ConnectionsManager().SetPassword(connection, password);
         m_DirectoryLoadingQ.Run([=]{
             [self GoToSFTPWithConnection:connection password:password];
         });
     }];
-    
-}
-
-- (IBAction) OnGoToSFTP:(id)sender
-{
-    [self showGoToSFTPSheet:nullopt];
 }
 
 - (void) GoToLANShareWithConnection:(NetworkConnectionsManager::Connection)_connection
@@ -240,9 +235,9 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
                          async:true];
                 
                 // save successful connection to history
-                NetworkConnectionsManager::Instance().ReportUsage(_connection);
+                ConnectionsManager().ReportUsage(_connection);
                 if( _save_password_on_success )
-                    NetworkConnectionsManager::Instance().SetPassword(_connection, _passwd);
+                    ConnectionsManager().SetPassword(_connection, _passwd);
             }
             else {
                 dispatch_to_main_queue([=]{
@@ -257,37 +252,29 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         }
     };
     
-    auto &ncm = NetworkConnectionsManager::Instance();
+    auto &ncm = ConnectionsManager();
     if( ncm.MountShareAsync(_connection, _passwd, cb) )
         *activity = [self registerExtActivity];
 }
 
-- (void) showGoToNetworkShareSheet:(optional<NetworkConnectionsManager::Connection>)_current
+- (IBAction) OnGoToNetworkShare:(id)sender
 {
-    NetworkShareSheetController *sheet = _current ?
-        [[NetworkShareSheetController alloc] initWithConnection:*_current] :
-        [[NetworkShareSheetController alloc] init];
-
+    NetworkShareSheetController *sheet = [[NetworkShareSheetController alloc] init];
     [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if(returnCode != NSModalResponseOK)
             return;
         
         auto connection = sheet.connection;
-        auto password = string(sheet.providedPassword.UTF8String);
-        NetworkConnectionsManager::Instance().InsertConnection(connection);
-        NetworkConnectionsManager::Instance().SetPassword(connection, password);
+        auto password = sheet.password;
+        ConnectionsManager().InsertConnection(connection);
+        ConnectionsManager().SetPassword(connection, password);
         [self GoToLANShareWithConnection:connection password:password savePassword:false];
     }];
 }
 
-- (IBAction) OnGoToNetworkShare:(id)sender
-{
-    [self showGoToNetworkShareSheet:nullopt];
-}
-
 - (void)GoToSavedConnection:(NetworkConnectionsManager::Connection)connection
 {
-    auto &ncm = NetworkConnectionsManager::Instance();
+    auto &ncm = ConnectionsManager();
     string passwd;
     bool should_save_passwd = false;
     if( !ncm.GetPassword(connection, passwd) ) {
@@ -300,13 +287,13 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         m_DirectoryLoadingQ.Run([=]{
             bool success = [self GoToFTPWithConnection:connection password:passwd];
             if( success && should_save_passwd )
-                 NetworkConnectionsManager::Instance().SetPassword(connection, passwd);
+                 ConnectionsManager().SetPassword(connection, passwd);
         });
     else if( connection.IsType<NetworkConnectionsManager::SFTPConnection>() )
         m_DirectoryLoadingQ.Run([=]{
             bool success = [self GoToSFTPWithConnection:connection password:passwd];
             if( success && should_save_passwd )
-                 NetworkConnectionsManager::Instance().SetPassword(connection, passwd);
+                 ConnectionsManager().SetPassword(connection, passwd);
         });
     else if( connection.IsType<NetworkConnectionsManager::LANShare>() ) {
         [self GoToLANShareWithConnection:connection
@@ -326,36 +313,9 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 - (IBAction) OnGoToSavedConnectionItem:(id)sender
 {
     if( auto menuitem = objc_cast<NSMenuItem>(sender) )
-        if( auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject) )
-            [self GoToSavedConnection:rep.object];
-}
-
-- (IBAction) OnDeleteSavedConnectionItem:(id)sender
-{
-    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
-        if( auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject) ) {
-            Alert *alert = [[Alert alloc] init];
-            alert.messageText = NSLocalizedString(@"Are you sure you want to delete this connection?", "Asking user if he really wants to delete information about a stored connection");
-            alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "");
-            [alert addButtonWithTitle:NSLocalizedString(@"Yes", "")];
-            [alert addButtonWithTitle:NSLocalizedString(@"No", "")];
-            if([alert runModal] == NSAlertFirstButtonReturn)
-                NetworkConnectionsManager::Instance().RemoveConnection(rep.object);
-        }
-}
-
-- (IBAction)OnEditSavedConnectionItem:(id)sender
-{
-    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
-        if( auto rep = objc_cast<ConnectionsMenuDelegateInfoWrapper>(menuitem.representedObject) )  {
-            auto conn = rep.object;
-            if( conn.IsType<NetworkConnectionsManager::FTPConnection>() )
-                [self showGoToFTPSheet:conn];
-            else if( conn.IsType<NetworkConnectionsManager::SFTPConnection>() )
-                [self showGoToSFTPSheet:conn];
-            else if( conn.IsType<NetworkConnectionsManager::LANShare>() )
-                [self showGoToNetworkShareSheet:conn];
-        }
+        if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
+            if( auto conn = any_cast<NetworkConnectionsManager::Connection>(&holder.any) )
+                [self GoToSavedConnection:*conn];
 }
 
 - (IBAction)OnOpen:(id)sender { // enter
@@ -511,6 +471,18 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         [op AddOnFinishHandler:self.refreshCurrentControllerLambda];
     
     [self.state AddOperation:op];
+}
+
+- (IBAction)OnConnectToNetworkServer:(id)sender
+{
+    auto w = [[ConnectToServer alloc] initWithNetworkConnectionsManager:ConnectionsManager()];
+    [w beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+        if( returnCode != NSModalResponseOK )
+            return;
+        if( !w.connection )
+            return;
+        [self GoToSavedConnection:*w.connection];
+    }];
 }
 
 - (IBAction)copy:(id)sender { Perform(_cmd, self, sender); }

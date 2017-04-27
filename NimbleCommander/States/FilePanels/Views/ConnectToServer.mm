@@ -39,6 +39,11 @@ private:
         m_Sheet = [[NetworkShareSheetController alloc] init];
     }
 
+    virtual void Visit( const NetworkConnectionsManager::Dropbox &_share )
+    {
+        m_Sheet = [[DropboxAccountSheetController alloc] init];
+    }
+
     NetworkConnectionsManager::Connection m_Connection;
     SheetController<ConnectionSheetProtocol> *m_Sheet;
 };
@@ -230,11 +235,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 
 - (IBAction)onAddDropboxAccount:(id)sender
 {
-    auto s = [[DropboxAccountSheetController alloc] init];
-    [s beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-//        if( returnCode == NSModalResponseOK )
-//            [self insertCreatedConnection:_sheet.connection withPassword:_sheet.password];
-    }];
+    [self runNewConnectionSheet:[[DropboxAccountSheetController alloc] init]];
 }
 
 - (IBAction)onControlButtonClicked:(id)sender

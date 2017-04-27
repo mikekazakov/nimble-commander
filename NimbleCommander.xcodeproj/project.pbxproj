@@ -382,6 +382,7 @@
 		CF75E8DB1EB181A30028C108 /* libAppAuth-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF75E8C31EB181800028C108 /* libAppAuth-macOS.a */; };
 		CF75E8DC1EB181A60028C108 /* libAppAuth-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF75E8C31EB181800028C108 /* libAppAuth-macOS.a */; };
 		CF75E8DD1EB181A90028C108 /* libAppAuth-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF75E8C31EB181800028C108 /* libAppAuth-macOS.a */; };
+		CF75E8E01EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
 		CF7C7CAA1E5ACDBC002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
 		CF7C7CB21E5ACDBD002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
@@ -1777,6 +1778,8 @@
 		CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DropboxAccountSheetController.mm; path = NimbleCommander/States/FilePanels/Views/DropboxAccountSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF75E8891EB0EFDC0028C108 /* DropboxAccountSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = DropboxAccountSheetController.xib; path = NimbleCommander/States/FilePanels/Views/DropboxAccountSheetController.xib; sourceTree = SOURCE_ROOT; };
 		CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AppAuth.xcodeproj; path = "3rd_Party/AppAuth/AppAuth-iOS/AppAuth.xcodeproj"; sourceTree = SOURCE_ROOT; };
+		CF75E8DE1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "OIDRedirectHTTPHandler+FixedPort.h"; path = "NimbleCommander/States/FilePanels/Views/OIDRedirectHTTPHandler+FixedPort.h"; sourceTree = SOURCE_ROOT; };
+		CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "OIDRedirectHTTPHandler+FixedPort.mm"; path = "NimbleCommander/States/FilePanels/Views/OIDRedirectHTTPHandler+FixedPort.mm"; sourceTree = SOURCE_ROOT; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CF7C7CC11E5C3D84002DB0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PanelViewHeaderSortPopup.xib; sourceTree = "<group>"; };
 		CF7C7CC71E5C3EB9002DB0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowThemesTab.xib; sourceTree = "<group>"; };
@@ -2610,14 +2613,19 @@
 		CF27414D1803E60D006D6687 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				CF75E87F1EAF7DC70028C108 /* ConnectionSheetProtocol.h */,
+				CF75E8DE1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.h */,
+				CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */,
 				CFF877451D83C5700006DF7F /* AskingForRatingOverlayView.h */,
 				CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */,
 				CFDAC2D91DFD12EF0039A104 /* BriefSystemOverview.h */,
 				CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */,
+				CF75E87F1EAF7DC70028C108 /* ConnectionSheetProtocol.h */,
 				CF2F43441EAF345400AA031A /* ConnectToServer.h */,
 				CF2F43451EAF345400AA031A /* ConnectToServer.mm */,
 				CF2F43461EAF345400AA031A /* ConnectToServer.xib */,
+				CF75E8871EB0EFDC0028C108 /* DropboxAccountSheetController.h */,
+				CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */,
+				CF75E8891EB0EFDC0028C108 /* DropboxAccountSheetController.xib */,
 				CF09394B1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.h */,
 				CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */,
 				CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */,
@@ -2654,9 +2662,6 @@
 				CF8D0CFD1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib */,
 				CFF695701E20C6CF0069EEA4 /* TabBarStyle.h */,
 				CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */,
-				CF75E8871EB0EFDC0028C108 /* DropboxAccountSheetController.h */,
-				CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */,
-				CF75E8891EB0EFDC0028C108 /* DropboxAccountSheetController.xib */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -4764,6 +4769,7 @@
 				CFDAC20E1DF921E10039A104 /* PanelDataItemVolatileData.cpp in Sources */,
 				CFD8CDD61E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CFF695721E20C6CF0069EEA4 /* TabBarStyle.mm in Sources */,
+				CF75E8E01EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */,
 				CFDAC23C1DFBDEBA0039A104 /* AppDelegateCPP.mm in Sources */,
 				CF04DDF51E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
 				CF6ECDB31E9F4AF3008FA79E /* RenameInPlace.mm in Sources */,
@@ -5783,6 +5789,7 @@
 					3rd_Party/unrar/include/,
 					3rd_Party/AquaticPrime/include/,
 					3rd_Party/rapidjson/include/,
+					"3rd_Party/AppAuth/AppAuth-iOS/Source/**",
 					3rd_Party/MMTabBarView/,
 					Habanero/include/,
 					Utility/include/,
@@ -5858,6 +5865,7 @@
 					3rd_Party/unrar/include/,
 					3rd_Party/AquaticPrime/include/,
 					3rd_Party/rapidjson/include/,
+					"3rd_Party/AppAuth/AppAuth-iOS/Source/**",
 					3rd_Party/MMTabBarView/,
 					Habanero/include/,
 					Utility/include/,

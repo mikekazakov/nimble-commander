@@ -171,6 +171,8 @@ static string KeychainWhereFromConnection( const NetworkConnectionsManager::Conn
         return PrefixForShareProtocol(c->proto) + "://" +
             (c->user.empty() ? c->user + "@" : "") +
             c->host + "/" + c->share;
+    if( auto c = _c.Cast<NetworkConnectionsManager::Dropbox>() )
+        return "dropbox:"s + c->account;
     return "";
 }
 
@@ -182,6 +184,8 @@ static string KeychainAccountFromConnection( const NetworkConnectionsManager::Co
         return c->user;
     if( auto c = _c.Cast<NetworkConnectionsManager::LANShare>() )
         return c->user;
+    if( auto c = _c.Cast<NetworkConnectionsManager::Dropbox>() )
+        return c->account;
     return "";
 }
 

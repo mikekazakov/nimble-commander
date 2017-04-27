@@ -14,7 +14,7 @@ public:
         class FTPConnection;
         class SFTPConnection;
         class LANShare;
-        /*class Dropbox*/
+        class Dropbox;
     class ConnectionVisitor;
     
     
@@ -59,6 +59,7 @@ public:
     virtual void Visit( const NetworkConnectionsManager::FTPConnection &_ftp );
     virtual void Visit( const NetworkConnectionsManager::SFTPConnection &_sftp );
     virtual void Visit( const NetworkConnectionsManager::LANShare &_share );
+    virtual void Visit( const NetworkConnectionsManager::Dropbox &_account );
 };
 
 class NetworkConnectionsManager::Connection
@@ -150,6 +151,13 @@ public:
     string mountpoint; // empty mountpoint means that system will decide it itself
     Protocol proto;
     bool operator==(const LANShare&_rhs) const noexcept;
+};
+
+class NetworkConnectionsManager::Dropbox : public NetworkConnectionsManager::BaseConnection
+{
+public:
+    string account;
+    bool operator==(const Dropbox&_rhs) const noexcept;
 };
 
 struct NetworkConnectionsManager::Connection::Concept

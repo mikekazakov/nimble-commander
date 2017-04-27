@@ -37,13 +37,16 @@ string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)
     if( auto sftp = _conn.Cast<SFTPConnection>() ) {
         return title_prefix + "sftp://" + sftp->user + "@" + sftp->host;
     }
-    if( auto share = _conn.Cast<NetworkConnectionsManager::LANShare>() ) {
+    if( auto share = _conn.Cast<LANShare>() ) {
         if( share->user.empty() )
             return title_prefix + PrefixForShareProtocol(share->proto) + "://" +
                 share->host + "/" + share->share;
         else
             return title_prefix + PrefixForShareProtocol(share->proto) + "://" +
                 share->user + "@" + share->host + "/" + share->share;
+    }
+    if( auto dropbox = _conn.Cast<Dropbox>() ) {
+        return title_prefix + "dropbox:"s + dropbox->account;
     }
     return title_prefix;
 }
@@ -100,6 +103,11 @@ void NetworkConnectionsManager::ConnectionVisitor::Visit(
 {
 }
 
+void NetworkConnectionsManager::ConnectionVisitor::Visit(
+    const NetworkConnectionsManager::Dropbox &_account )
+{
+}
+
 bool NetworkConnectionsManager::BaseConnection::operator==(const BaseConnection&_rhs) const noexcept
 {
     return uuid == _rhs.uuid && title == _rhs.title;
@@ -131,4 +139,10 @@ bool NetworkConnectionsManager::LANShare::operator==(const LANShare&_rhs) const 
         share == _rhs.share &&
         mountpoint == _rhs.mountpoint &&
         proto == _rhs.proto;
+}
+
+bool NetworkConnectionsManager::Dropbox::operator==(const Dropbox&_rhs) const noexcept
+{
+    return BaseConnection::operator==(_rhs) &&
+        account == _rhs.account;
 }

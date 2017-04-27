@@ -70,6 +70,7 @@ public:
     NSURLSessionConfiguration *GenericConfiguration() const;
 #endif
 
+    static pair<int, string> CheckTokenAndRetrieveAccountEmail( const string &_token );
 private:
     void Construct(const string &_account, const string &_access_token);
     void InitialAccountLookup(); // will throw on invalid account / connectivity issues

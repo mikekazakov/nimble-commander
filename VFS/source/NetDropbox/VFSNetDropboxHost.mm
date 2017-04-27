@@ -76,7 +76,7 @@ void VFSNetDropboxHost::Construct(const string &_account, const string &_access_
     I->m_Account = _account;
     I->m_Token = _access_token;
     if( I->m_Token.empty() )
-        throw invalid_argument("bad token");
+        throw VFSErrorException{VFSError::FromErrno(EINVAL)};
     
     I->m_GenericSession = [NSURLSession sessionWithConfiguration:
                            NSURLSessionConfiguration.defaultSessionConfiguration];
@@ -107,6 +107,26 @@ void VFSNetDropboxHost::InitialAccountLookup()
     }
     else
         throw VFSErrorException( rc );
+}
+
+pair<int, string> VFSNetDropboxHost::CheckTokenAndRetrieveAccountEmail( const string &_token )
+{
+    const auto config = NSURLSessionConfiguration.defaultSessionConfiguration;
+    const auto session = [NSURLSession sessionWithConfiguration:config];
+    const auto auth_string = [NSString stringWithFormat:@"Bearer %s", _token.c_str()];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::GetCurrentAccount];
+    request.HTTPMethod = @"POST";
+    [request setValue:auth_string forHTTPHeaderField:@"Authorization"];
+    auto [rc, data] = SendSynchronousRequest(session, request);
+    if( rc == VFSError::Ok  ) {
+        const auto json = ParseJSON(data);
+        if( !json )
+            return {VFSError::FromErrno(EBADMSG), ""};
+        const auto account_info = ParseAccountInfo(*json);
+        return {VFSError::Ok, account_info.email};
+    }
+    else
+        return {rc, ""};
 }
 
 VFSMeta VFSNetDropboxHost::Meta()

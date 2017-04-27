@@ -3,6 +3,7 @@
 #include <VFS/Native.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
+#include <VFS/NetDropbox.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/AnyHolder.h>
@@ -272,6 +273,31 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     }];
 }
 
+- (void) goToDropboxStorage:(NetworkConnectionsManager::Connection)_connection
+                   password:(const string&)_passwd
+{
+    dispatch_assert_background_queue();
+    auto &info = _connection.Get<NetworkConnectionsManager::Dropbox>();
+    try {
+        auto host = make_shared<VFSNetDropboxHost>(info.account, _passwd);
+        dispatch_to_main_queue([=]{
+            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
+            [self GoToDir:"/" vfs:host select_entry:"" async:true];
+        });
+        
+        // save successful connection to history
+        ConnectionsManager().ReportUsage(_connection);
+    } catch (const VFSErrorException &e) {
+        dispatch_to_main_queue([=]{
+            Alert *alert = [[Alert alloc] init];
+            alert.messageText = NSLocalizedString(@"Dropbox connection error:", "Showing error when connecting to Dropbox service");
+            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
+            [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+            [alert runModal];
+        });
+    }
+}
+
 - (void)GoToSavedConnection:(NetworkConnectionsManager::Connection)connection
 {
     auto &ncm = ConnectionsManager();
@@ -299,6 +325,11 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         [self GoToLANShareWithConnection:connection
                                 password:passwd
                             savePassword:should_save_passwd];
+    }
+    else if( connection.IsType<NetworkConnectionsManager::Dropbox>() ) {
+        m_DirectoryLoadingQ.Run([=]{
+            [self goToDropboxStorage:connection password:passwd];
+        });
     }
 }
 

@@ -27,14 +27,16 @@ enum class State
 
 @interface DropboxAccountSheetController ()
 
-
 @property (nonatomic) State state;
+@property (nonatomic) bool isValid;
 @property (nonatomic) bool isValidating;
 @property (nonatomic) bool isSuccess;
 @property (nonatomic) bool isFailure;
 
+@property (strong) IBOutlet NSTextField *titleField;
 @property (strong) IBOutlet NSTextField *accountField;
 @property (strong) IBOutlet NSTextField *failureReasonField;
+@property (strong) IBOutlet NSButton *connectButton;
 
 @end
 
@@ -42,17 +44,44 @@ enum class State
 {
     OIDRedirectHTTPHandler *m_RedirectHTTPHandler;
     string m_Token;
+    optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::Dropbox m_Connection;
     State m_State;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if( self ) {
+        self.isValid = true;
+        m_Connection.uuid = NetworkConnectionsManager::MakeUUID();
+    }
+    return self;
 }
 
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    
+    if( m_Original ) {
+        auto &original = m_Original->Get<NetworkConnectionsManager::Dropbox>();
+        m_Connection = original;
+    }
+
+    self.titleField.stringValue = [NSString stringWithUTF8StdString:m_Connection.title];
+    self.accountField.stringValue = [NSString stringWithUTF8StdString:m_Connection.account];
+
+    self.setupMode = true;
+    if( self.setupMode )
+        self.connectButton.title = self.connectButton.alternateTitle;
+    
+    [self validate];
 }
 
 - (IBAction)onConnect:(id)sender
 {
+    m_Connection.title = self.titleField.stringValue.UTF8String;
+
     [self endSheet:NSModalResponseOK];
 }
 
@@ -117,22 +146,19 @@ enum class State
         auto res = VFSNetDropboxHost::CheckTokenAndRetrieveAccountEmail(_token.UTF8String);
         auto rc = res.first;
         auto email = res.second;
-        if( rc == VFSError::Ok ) {
-            dispatch_to_main_queue([=]{
+        dispatch_to_main_queue([=]{
+            if( rc == VFSError::Ok ) {
                 self.accountField.stringValue = [NSString stringWithUTF8StdString:email];
                 m_Connection.account = email;
-                
                 self.state = State::Success;
-            });
-        }
-        else {
-            dispatch_to_main_queue([=]{
+            }
+            else {
                 self.accountField.stringValue = @"";
-                self.failureReasonField.stringValue = VFSError::ToNSError(rc).localizedDescription;
                 m_Connection.account = "";
+                self.failureReasonField.stringValue = VFSError::ToNSError(rc).localizedDescription;
                 self.state = State::Failure;
-            });
-        }
+            }
+        });
     });
 }
 
@@ -153,7 +179,7 @@ enum class State
 
 - (void)setConnection:(NetworkConnectionsManager::Connection)connection
 {
-    // TODO:
+    m_Original = connection;
 }
 
 - (void) setState:(State)_state
@@ -164,6 +190,14 @@ enum class State
     self.isValidating = m_State == State::Validating;
     self.isSuccess = m_State == State::Success;
     self.isFailure = m_State == State::Failure;
+    [self validate];
+}
+
+- (void) validate
+{
+    self.isValid = (m_State == State::Default || m_State == State::Success) &&
+        !m_Token.empty() &&
+        !m_Connection.account.empty();
 }
 
 - (State)state

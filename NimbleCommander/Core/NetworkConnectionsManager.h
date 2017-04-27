@@ -19,6 +19,7 @@ public:
     
     
     static boost::uuids::uuid MakeUUID();
+    static string MakeConnectionPath(const Connection &_conn);
     static string TitleForConnection(const Connection &_conn);
 
     virtual optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const = 0;

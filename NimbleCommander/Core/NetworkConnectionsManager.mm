@@ -24,31 +24,36 @@ static const string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare
     return unknown;
 }
 
-string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)
+string NetworkConnectionsManager::MakeConnectionPath(const Connection &_conn)
 {
-    string title_prefix = _conn.Title().empty() ? "" : _conn.Title() + " - ";
-    
     if( auto ftp = _conn.Cast<FTPConnection>() ) {
         if(!ftp->user.empty())
-            return title_prefix + "ftp://" + ftp->user + "@" + ftp->host;
+            return "ftp://" + ftp->user + "@" + ftp->host;
         else
-            return title_prefix + "ftp://" + ftp->host;
+            return "ftp://" + ftp->host;
     }
     if( auto sftp = _conn.Cast<SFTPConnection>() ) {
-        return title_prefix + "sftp://" + sftp->user + "@" + sftp->host;
+        return "sftp://" + sftp->user + "@" + sftp->host;
     }
     if( auto share = _conn.Cast<LANShare>() ) {
         if( share->user.empty() )
-            return title_prefix + PrefixForShareProtocol(share->proto) + "://" +
+            return PrefixForShareProtocol(share->proto) + "://" +
                 share->host + "/" + share->share;
         else
-            return title_prefix + PrefixForShareProtocol(share->proto) + "://" +
+            return PrefixForShareProtocol(share->proto) + "://" +
                 share->user + "@" + share->host + "/" + share->share;
     }
     if( auto dropbox = _conn.Cast<Dropbox>() ) {
-        return title_prefix + "dropbox:"s + dropbox->account;
+        return "dropbox:" + dropbox->account;
     }
-    return title_prefix;
+    return "";
+}
+
+string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)
+{
+    return _conn.Title().empty() ?
+        MakeConnectionPath(_conn) :
+        _conn.Title() + " - " + MakeConnectionPath(_conn);
 }
 
 NetworkConnectionsManager::~NetworkConnectionsManager()

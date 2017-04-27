@@ -128,7 +128,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 - (NSView *) makePathTableViewForConnection:(const NetworkConnectionsManager::Connection &)_c
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-    if( auto l = [NSString stringWithUTF8StdString:m_Manager->TitleForConnection(_c) ] )
+    if( auto l = [NSString stringWithUTF8StdString:m_Manager->MakeConnectionPath(_c) ] )
         tf.stringValue = l;
     tf.bordered = false;
     tf.editable = false;

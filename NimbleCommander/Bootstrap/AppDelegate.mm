@@ -23,6 +23,7 @@
 #include <VFS/XAttr.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
+#include <VFS/NetDropbox.h>
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
@@ -231,6 +232,7 @@ static AppDelegate *g_Me = nil;
     VFSFactory::Instance().RegisterVFS(           VFSPSHost::Meta() );
     VFSFactory::Instance().RegisterVFS(      VFSNetSFTPHost::Meta() );
     VFSFactory::Instance().RegisterVFS(       VFSNetFTPHost::Meta() );
+    VFSFactory::Instance().RegisterVFS(   VFSNetDropboxHost::Meta() );
     VFSFactory::Instance().RegisterVFS(      VFSArchiveHost::Meta() );
     VFSFactory::Instance().RegisterVFS( VFSArchiveUnRARHost::Meta() );
     VFSFactory::Instance().RegisterVFS(        VFSXAttrHost::Meta() );

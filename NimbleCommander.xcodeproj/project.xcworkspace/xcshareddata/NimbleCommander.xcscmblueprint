@@ -4,20 +4,27 @@
 
   },
   "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "253A0260149FFB10A9F408256390D868B098820F" : 9223372036854775807,
+    "A2052F3732EC5031AAEE7DE75E773F81F5ACC749" : 9223372036854775807,
     "B28F34E93FF7C34A6E2F490D54CBCF67304F4394" : 9223372036854775807,
-    "D9B72DAB1AA0930032F6C2C08DD30B548B4CCB23" : 9223372036854775807,
-    "A2052F3732EC5031AAEE7DE75E773F81F5ACC749" : 9223372036854775807
+    "D9B72DAB1AA0930032F6C2C08DD30B548B4CCB23" : 9223372036854775807
   },
   "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "6BDEAD39-1FC1-45A9-88D2-99A9CF7F2F8D",
   "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "253A0260149FFB10A9F408256390D868B098820F" : "source\/3rd_Party\/AppAuth\/AppAuth-iOS\/",
+    "A2052F3732EC5031AAEE7DE75E773F81F5ACC749" : "source\/",
     "B28F34E93FF7C34A6E2F490D54CBCF67304F4394" : "source\/3rd_Party\/MMTabBarView\/",
-    "D9B72DAB1AA0930032F6C2C08DD30B548B4CCB23" : "source.new_favorites\/habanero\/",
-    "A2052F3732EC5031AAEE7DE75E773F81F5ACC749" : "source.new_favorites\/"
+    "D9B72DAB1AA0930032F6C2C08DD30B548B4CCB23" : "source\/habanero\/"
   },
   "DVTSourceControlWorkspaceBlueprintNameKey" : "NimbleCommander",
   "DVTSourceControlWorkspaceBlueprintVersion" : 204,
   "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "NimbleCommander.xcodeproj",
   "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/openid\/AppAuth-iOS.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "253A0260149FFB10A9F408256390D868B098820F"
+    },
     {
       "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/mikekazakov\/nimblecommander.git",
       "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",

@@ -12,8 +12,12 @@ class VFSNetDropboxHost final : public VFSHost
 public:
     static const char *Tag;
 
-    VFSNetDropboxHost( const string &_access_token );
+    VFSNetDropboxHost( const string &_account, const string &_access_token );
+    VFSNetDropboxHost( const VFSConfiguration &_config );
     ~VFSNetDropboxHost();
+
+    virtual VFSConfiguration Configuration() const override;
+    static VFSMeta Meta();
 
     bool ShouldProduceThumbnails() const override;
     
@@ -67,8 +71,11 @@ public:
 #endif
 
 private:
+    void Construct(const string &_account, const string &_access_token);
     void InitialAccountLookup(); // will throw on invalid account / connectivity issues
+    const class VFSNetDropboxHostConfiguration &Config() const;
 
     struct State;
     unique_ptr<State> I;
+    VFSConfiguration m_Config;    
 };

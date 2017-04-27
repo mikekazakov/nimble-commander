@@ -2,6 +2,7 @@
 #include <VFS/NetDropbox.h>
 #include <VFS/../../source/NetDropbox/VFSNetDropboxFile.h>
 
+static const auto g_Account = "mike.kazakov+ncdropboxtest@gmail.com";
 static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yWYustS3CdlqYkN";
 
 @interface VFSDropbox_Tests : XCTestCase
@@ -11,7 +12,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 
 - (void)testStatfs
 {
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
 
     VFSStatFS statfs;
     XCTAssert( host->StatFS( "/", statfs ) == 0 );
@@ -23,7 +24,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 - (void)testInvalidCredentials
 {
     try {
-        shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(
+        shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account,
             "-SupposingThisWillNeverBecameAValidAccessTokeForDropboxOAuth2AAA");
         XCTAssert( false );
     }
@@ -36,7 +37,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 {
     auto filepath = "/TestSet01/11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg";
 
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     
     VFSStat stat;
     XCTAssert( host->Stat( filepath, stat, 0 ) == 0 );
@@ -54,7 +55,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 {
     auto filepath = "/TestSet01/this_file_does_not_exist!!!.jpg";
 
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     
     VFSStat stat;
     XCTAssert( host->Stat( filepath, stat, 0 ) != 0 );
@@ -64,7 +65,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 {
     auto filepath = "/TestSet01/";
 
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     
     VFSStat stat;
     XCTAssert( host->Stat( filepath, stat, 0 ) == 0 );
@@ -79,7 +80,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     "11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg", "11779310-R3L8T8D-650-funny-jumping-cats-91__880.jpg",
     "BsQMH1kCUAALgMC.jpg", "f447bd6f4f6a47e6a355b7b44f2a326f.jpg", "kvxnws0o3i3g.jpg", "vw1yzox23csh.jpg"
     }  };
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     
     set<string> filenames;
     int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e){
@@ -93,7 +94,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 - (void)testLargeDirectoryIterating
 {
     auto filepath = "/TestSet02/";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     set<string> filenames;
     int rc = host->IterateDirectoryListing(filepath, [&](const VFSDirEnt &_e){
         filenames.emplace( _e.name );
@@ -107,7 +108,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 
 - (void)testDirectoryListing
 {
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     VFSListingPtr listing;
     XCTAssert( host->FetchDirectoryListing("/", listing, 0) == VFSError::Ok );
 }
@@ -115,7 +116,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 - (void)testBasicFileRead
 {
     auto filepath = "/TestSet01/11778860-R3L8T8D-650-funny-jumping-cats-51__880.jpg";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     shared_ptr<VFSFile> file;
     int rc = host->CreateFile(filepath, file);
     XCTAssert( rc == VFSError::Ok );
@@ -133,7 +134,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 - (void)testReadingFileWithNonASCIISymbols
 {
     auto filepath = @"/TestSet03/Это фотка котега $о ВСЯкими #\"символами\"!!!.jpg";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     shared_ptr<VFSFile> file;
     int rc = host->CreateFile(filepath.UTF8String, file);
     XCTAssert( rc == VFSError::Ok );
@@ -152,7 +153,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 - (void)testReadingNonExistingFile
 {
     auto filepath = "/TestSet01/jggweofgewufygweufguwefg.jpg";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     shared_ptr<VFSFile> file;
     int rc = host->CreateFile(filepath, file);
     XCTAssert( rc == VFSError::Ok );
@@ -166,7 +167,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 {
     const auto to_upload = "Hello, world!"s;
     auto filepath = "/FolderToModify/test.txt";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     host->Unlink(filepath);
     
     shared_ptr<VFSFile> file;
@@ -191,7 +192,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 {
     const auto to_upload = "Hello, world!"s;
     auto filepath = "/FolderToModify/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/\\/test.txt";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     
     shared_ptr<VFSFile> file;
     XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
@@ -207,7 +208,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 {
     const auto to_upload = "Hello, world!"s;
     auto filepath = "/FolderToModify/test.txt";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     host->Unlink(filepath);
     
     shared_ptr<VFSFile> file;
@@ -239,7 +240,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 {
     const auto to_upload = "Hello, world!"s;
     auto filepath = "/FolderToModify/test.txt";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     host->Unlink(filepath);
     
     shared_ptr<VFSFile> file;
@@ -256,7 +257,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 - (void)testZeroSizedUpload
 {
     auto filepath = "/FolderToModify/zero.txt";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     host->Unlink(filepath);
     
     shared_ptr<VFSFile> file;
@@ -276,7 +277,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 {
     const auto length = 5*1024*1024; // 5Mb upload / download
     auto filepath = "/FolderToModify/SomeRubbish.bin";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     host->Unlink(filepath);
     
     shared_ptr<VFSFile> file;
@@ -307,7 +308,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     const auto length = 17*1024*1024; // 17MB upload / download
 
     auto filepath = "/FolderToModify/SomeBigRubbish.bin";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     host->Unlink(filepath);
     
     shared_ptr<VFSFile> file;
@@ -339,7 +340,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     const auto length = 17*1024*1024; // 17MB upload / download
 
     auto filepath = "/FolderToModify/SomeBigRubbish.bin";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     host->Unlink(filepath);
     
     shared_ptr<VFSFile> file;
@@ -369,7 +370,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 - (void)testFolderCreationAndRemoval
 {
     auto filepath = "/FolderToModify/NewDirectory/";
-    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Token);
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
     host->RemoveDirectory(filepath);
 
     XCTAssert( host->CreateDirectory(filepath, 0) == VFSError::Ok );

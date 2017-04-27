@@ -2,6 +2,7 @@
 #include "FTPConnectionSheetController.h"
 #include "SFTPConnectionSheetController.h"
 #include "NetworkShareSheetController.h"
+#include "DropboxAccountSheetController.h"
 #include <Utility/SheetWithHotkeys.h>
 #include <NimbleCommander/Core/Alert.h>
 
@@ -17,6 +18,8 @@ public:
     SheetController<ConnectionSheetProtocol> *CreateSheet()
     {
         m_Connection.Accept(*this);
+        if( m_Sheet  )
+            m_Sheet.connection = m_Connection;
         return m_Sheet;
     }
 
@@ -24,19 +27,16 @@ private:
     virtual void Visit( const NetworkConnectionsManager::FTPConnection &_ftp )
     {
         m_Sheet = [[FTPConnectionSheetController alloc] init];
-        m_Sheet.connection = m_Connection;
     }
     
     virtual void Visit( const NetworkConnectionsManager::SFTPConnection &_sftp )
     {
         m_Sheet = [[SFTPConnectionSheetController alloc] init];
-        m_Sheet.connection = m_Connection;
     }
 
     virtual void Visit( const NetworkConnectionsManager::LANShare &_share )
     {
         m_Sheet = [[NetworkShareSheetController alloc] init];
-        m_Sheet.connection = m_Connection;
     }
 
     NetworkConnectionsManager::Connection m_Connection;
@@ -52,7 +52,6 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
         [_control performClick:nil];
     }
 }
-
 
 @interface ConnectToServer ()
 @property (strong) IBOutlet NSTableView *connectionsTable;
@@ -191,7 +190,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
                 m_Manager->InsertConnection(new_connection);
                 [self reloadConnections];
             }
-            if( new_password != password )
+            if( new_password != password || new_connection != connection )
                 m_Manager->SetPassword(new_connection, new_password);
         }
     }];
@@ -231,7 +230,11 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 
 - (IBAction)onAddDropboxAccount:(id)sender
 {
-    // TODO: wire me
+    auto s = [[DropboxAccountSheetController alloc] init];
+    [s beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+//        if( returnCode == NSModalResponseOK )
+//            [self insertCreatedConnection:_sheet.connection withPassword:_sheet.password];
+    }];
 }
 
 - (IBAction)onControlButtonClicked:(id)sender

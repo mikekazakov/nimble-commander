@@ -1,14 +1,8 @@
-//
-//  DropboxAccountSheetController.m
-//  NimbleCommander
-//
-//  Created by Michael G. Kazakov on 4/26/17.
-//  Copyright © 2017 Michael G. Kazakov. All rights reserved.
-//
-
-#import "DropboxAccountSheetController.h"
+#include "DropboxAccountSheetController.h"
 
 @interface DropboxAccountSheetController ()
+@property (strong) IBOutlet NSTextField *accountField;
+@property (strong) IBOutlet NSTextField *tokenField;
 
 @end
 
@@ -18,6 +12,21 @@
     [super windowDidLoad];
     
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+}
+
+- (IBAction)onConnect:(id)sender
+{
+    [self endSheet:NSModalResponseOK];
+}
+
+- (IBAction)onClose:(id)sender
+{
+    [self endSheet:NSModalResponseCancel];
+}
+
+- (IBAction)onRequestAccess:(id)sender
+{
+
 }
 
 @end

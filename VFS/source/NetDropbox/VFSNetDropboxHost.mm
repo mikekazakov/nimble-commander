@@ -8,33 +8,88 @@ using namespace VFSNetDropbox;
 
 const char *VFSNetDropboxHost::Tag = "net_dropbox";
 
+class VFSNetDropboxHostConfiguration
+{
+public:
+    string account;
+    string token;
+    string verbose;
+    
+    const char *Tag() const
+    {
+        return VFSNetDropboxHost::Tag;
+    }
+    
+    const char *Junction() const
+    {
+        return account.c_str();
+    }
+    
+    bool operator==(const VFSNetDropboxHostConfiguration&_rhs) const
+    {
+        return account == _rhs.token && token == _rhs.token;
+    }
+    
+    const char *VerboseJunction() const
+    {
+        return verbose.c_str();
+    }
+};
+
+static VFSNetDropboxHostConfiguration Compose(const string &_account, const string &_token)
+{
+    VFSNetDropboxHostConfiguration config;
+    config.account = _account;
+    config.token = _token;
+    config.verbose = "dropbox:"s + _account;
+    return config;
+}
 
 struct VFSNetDropboxHost::State
 {
+    string          m_Account;
     string          m_Token;
     NSString       *m_AuthString;
     NSURLSession   *m_GenericSession;
     AccountInfo     m_AccountInfo;
 };
 
-VFSNetDropboxHost::VFSNetDropboxHost( const string &_access_token ):
+VFSNetDropboxHost::VFSNetDropboxHost( const string &_account, const string &_access_token ):
     VFSHost("", nullptr, VFSNetDropboxHost::Tag),
-    I(make_unique<State>())
+    I(make_unique<State>()),
+    m_Config{Compose(_account, _access_token)}
 {
+    Construct(_account, _access_token);
+    InitialAccountLookup();
+}
+
+VFSNetDropboxHost::VFSNetDropboxHost( const VFSConfiguration &_config ):
+    VFSHost("", nullptr, VFSNetDropboxHost::Tag),
+    m_Config(_config)
+{
+    Construct(Config().account, Config().token);
+    InitialAccountLookup();
+}
+
+void VFSNetDropboxHost::Construct(const string &_account, const string &_access_token)
+{
+    I->m_Account = _account;
     I->m_Token = _access_token;
     if( I->m_Token.empty() )
         throw invalid_argument("bad token");
     
-    
     I->m_GenericSession = [NSURLSession sessionWithConfiguration:
-        NSURLSessionConfiguration.defaultSessionConfiguration];
+                           NSURLSessionConfiguration.defaultSessionConfiguration];
     I->m_AuthString = [NSString stringWithFormat:@"Bearer %s", I->m_Token.c_str()];
-    
-    InitialAccountLookup();
 }
 
 VFSNetDropboxHost::~VFSNetDropboxHost()
 {
+}
+
+const VFSNetDropboxHostConfiguration &VFSNetDropboxHost::Config() const
+{
+    return m_Config.Get<VFSNetDropboxHostConfiguration>();
 }
 
 void VFSNetDropboxHost::InitialAccountLookup()
@@ -52,6 +107,23 @@ void VFSNetDropboxHost::InitialAccountLookup()
     }
     else
         throw VFSErrorException( rc );
+}
+
+VFSMeta VFSNetDropboxHost::Meta()
+{
+    VFSMeta m;
+    m.Tag = Tag;
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent,
+                           const VFSConfiguration& _config,
+                           VFSCancelChecker _cancel_checker) {
+        return make_shared<VFSNetDropboxHost>(_config);
+    };
+    return m;
+}
+
+VFSConfiguration VFSNetDropboxHost::Configuration() const
+{
+    return m_Config;
 }
 
 bool VFSNetDropboxHost::ShouldProduceThumbnails() const

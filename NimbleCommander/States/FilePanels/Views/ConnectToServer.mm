@@ -63,7 +63,6 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 @property (strong) IBOutlet NSSegmentedControl *controlButtons;
 @property (strong) IBOutlet NSMenu *addNewConnectionMenu;
 
-
 @end
 
 @implementation ConnectToServer
@@ -95,7 +94,6 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     sheet.onCtrlX = ^{ PeformClickIfEnabled(self.controlButtons, 1); };
     sheet.onCtrlE = ^{ PeformClickIfEnabled(self.controlButtons, 2); };
     [self.controlButtons setMenu:self.addNewConnectionMenu forSegment:0];
-
 
     
     m_Connections = m_Manager->AllConnectionsByMRU();

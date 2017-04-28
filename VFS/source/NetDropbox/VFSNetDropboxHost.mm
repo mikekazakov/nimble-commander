@@ -41,7 +41,7 @@ static VFSNetDropboxHostConfiguration Compose(const string &_account, const stri
     VFSNetDropboxHostConfiguration config;
     config.account = _account;
     config.token = _token;
-    config.verbose = "dropbox:"s + _account;
+    config.verbose = "dropbox://"s + _account;
     return config;
 }
 
@@ -476,4 +476,9 @@ int VFSNetDropboxHost::Rename(const char *_old_path,
     
     auto [rc, data] = SendSynchronousRequest(GenericSession(), req, _cancel_checker);
     return rc;
+}
+
+const string &VFSNetDropboxHost::Account() const
+{
+    return I->m_Account;
 }

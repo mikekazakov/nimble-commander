@@ -24,29 +24,44 @@ static const string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare
     return unknown;
 }
 
-string NetworkConnectionsManager::MakeConnectionPath(const Connection &_conn)
+struct ConnectionPathBuilder : public NetworkConnectionsManager::ConnectionVisitor
 {
-    if( auto ftp = _conn.Cast<FTPConnection>() ) {
-        if(!ftp->user.empty())
-            return "ftp://" + ftp->user + "@" + ftp->host;
-        else
-            return "ftp://" + ftp->host;
+    ConnectionPathBuilder(const NetworkConnectionsManager::Connection &_connection):
+        connection(_connection)
+    {
+        connection.Accept(*this);
     }
-    if( auto sftp = _conn.Cast<SFTPConnection>() ) {
-        return "sftp://" + sftp->user + "@" + sftp->host;
+    string Path() const
+    {
+        return move(path);
     }
-    if( auto share = _conn.Cast<LANShare>() ) {
-        if( share->user.empty() )
-            return PrefixForShareProtocol(share->proto) + "://" +
-                share->host + "/" + share->share;
-        else
-            return PrefixForShareProtocol(share->proto) + "://" +
-                share->user + "@" + share->host + "/" + share->share;
+private:
+    void Visit( const NetworkConnectionsManager::FTPConnection &ftp )
+    {
+        path = "ftp://" + (ftp.user.empty() ? ftp.host : ftp.user + "@" + ftp.host);
     }
-    if( auto dropbox = _conn.Cast<Dropbox>() ) {
-        return "dropbox:" + dropbox->account;
+    void Visit( const NetworkConnectionsManager::SFTPConnection &sftp )
+    {
+        path = "sftp://" + sftp.user + "@" + sftp.host;
     }
-    return "";
+    void Visit( const NetworkConnectionsManager::LANShare &share )
+    {
+        path = PrefixForShareProtocol(share.proto) + "://" +
+            (share.user.empty() ?
+                share.host + "/" + share.share :
+                share.user + "@" + share.host + "/" + share.share);
+    }
+    void Visit( const NetworkConnectionsManager::Dropbox &dropbox )
+    {
+        path = "dropbox://" + dropbox.account;
+    }
+    string path;
+    const NetworkConnectionsManager::Connection &connection;
+};
+
+string NetworkConnectionsManager::MakeConnectionPath(const Connection &_connection)
+{
+    return ConnectionPathBuilder{_connection}.Path();
 }
 
 string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)

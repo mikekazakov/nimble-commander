@@ -12,6 +12,7 @@
 #include <Utility/NativeFSManager.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
+#include <VFS/NetDropbox.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
@@ -82,7 +83,12 @@ static GenericConfig::ConfigValue ConnectionToJSONObject( NetworkConnectionsMana
         o.AddMember("proto", value((int)c.proto), alloc);
         return o;
     }
-    
+    if( _c.IsType<NetworkConnectionsManager::Dropbox>() ) {
+        auto &c = _c.Get<NetworkConnectionsManager::Dropbox>();
+        auto o = FillBasicConnectionInfoInJSONObject("dropbox", c);
+        o.AddMember("account", value(c.account.c_str(), alloc), alloc);
+        return o;
+    }
     return GenericConfig::ConfigValue(rapidjson::kNullType);
 }
 
@@ -149,6 +155,18 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
 
         return NetworkConnectionsManager::Connection( move(c) );
     }
+    else if( type == "dropbox" ) {
+        if( !has_string("account") )
+            return nullopt;
+
+        NetworkConnectionsManager::Dropbox c;
+        c.uuid = uuid_gen( _object["uuid"].GetString() );
+        c.title = _object["title"].GetString();
+        c.account = _object["account"].GetString();
+        
+        return NetworkConnectionsManager::Connection( move(c) );
+    }
+
     return nullopt;
 }
 
@@ -172,7 +190,7 @@ static string KeychainWhereFromConnection( const NetworkConnectionsManager::Conn
             (c->user.empty() ? c->user + "@" : "") +
             c->host + "/" + c->share;
     if( auto c = _c.Cast<NetworkConnectionsManager::Dropbox>() )
-        return "dropbox:"s + c->account;
+        return "dropbox://"s + c->account;
     return "";
 }
 
@@ -219,8 +237,6 @@ ConfigBackedNetworkConnectionsManager& ConfigBackedNetworkConnectionsManager::In
     static auto inst = new ConfigBackedNetworkConnectionsManager;
     return *inst;
 }
-
-
 
 void ConfigBackedNetworkConnectionsManager::InsertConnection( const NetworkConnectionsManager::Connection &_conn )
 {
@@ -349,7 +365,8 @@ vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMana
     return c;
 }
 
-vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::AllConnectionsByMRU() const
+vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::
+    AllConnectionsByMRU() const
 {
     vector<Connection> c;
     LOCK_GUARD(m_Lock) {
@@ -359,33 +376,38 @@ vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMana
     return c;
 }
 
-bool ConfigBackedNetworkConnectionsManager::SetPassword(const Connection &_conn, const string& _password)
+bool ConfigBackedNetworkConnectionsManager::SetPassword(const Connection &_conn,
+                                                        const string& _password)
 {
     return KeychainServices::Instance().SetPassword(KeychainWhereFromConnection(_conn),
                                                     KeychainAccountFromConnection(_conn),
                                                     _password);
 }
 
-bool ConfigBackedNetworkConnectionsManager::GetPassword(const Connection &_conn, string& _password)
+bool ConfigBackedNetworkConnectionsManager::GetPassword(const Connection &_conn,
+                                                        string& _password)
 {
     return KeychainServices::Instance().GetPassword(KeychainWhereFromConnection(_conn),
                                                     KeychainAccountFromConnection(_conn),
                                                     _password);
 }
 
-bool ConfigBackedNetworkConnectionsManager::AskForPassword(const Connection &_conn, string& _password)
+bool ConfigBackedNetworkConnectionsManager::AskForPassword(const Connection &_conn,
+                                                           string& _password)
 {
-//    return RunAskForPasswordModalWindow( ResourceNameForUIFromConnection(_conn), _password);
-    return RunAskForPasswordModalWindow( TitleForConnection(_conn), _password);
+    return RunAskForPasswordModalWindow( TitleForConnection(_conn), _password );
 }
 
-optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::ConnectionForVFS(const VFSHost& _vfs) const
+optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::
+    ConnectionForVFS(const VFSHost& _vfs) const
 {
     if( auto ftp = dynamic_cast<const VFSNetFTPHost*>(&_vfs) ) {
         LOCK_GUARD(m_Lock) {
             auto it = find_if( begin(m_Connections), end(m_Connections), [&](const Connection &i){
                 if( auto p = i.Cast<FTPConnection>() )
-                    return p->host == ftp->ServerUrl() && p->user == ftp->User() && p->port == ftp->Port();
+                    return p->host == ftp->ServerUrl() &&
+                           p->user == ftp->User() &&
+                           p->port == ftp->Port();
                 return false;
             } );
             if( it != end(m_Connections) )
@@ -396,17 +418,33 @@ optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMa
         LOCK_GUARD(m_Lock) {
             auto it = find_if( begin(m_Connections), end(m_Connections), [&](const Connection &i){
                 if( auto p = i.Cast<SFTPConnection>() )
-                    return p->host == sftp->ServerUrl() && p->user == sftp->User() && p->keypath == sftp->Keypath() && p->port == sftp->Port();
+                    return p->host == sftp->ServerUrl() &&
+                           p->user == sftp->User() &&
+                           p->keypath == sftp->Keypath() &&
+                           p->port == sftp->Port();
                 return false;
             });
             if( it != end(m_Connections) )
                 return *it;
         }
     }
+    else if( auto dropbox = dynamic_cast<const VFSNetDropboxHost*>(&_vfs) ) {
+        LOCK_GUARD(m_Lock) {
+            auto it = find_if( begin(m_Connections), end(m_Connections), [&](const Connection &i){
+                if( auto p = i.Cast<Dropbox>() )
+                    return p->account == dropbox->Account();
+                return false;
+            });
+            if( it != end(m_Connections) )
+                return *it;
+        }
+    }
+    
     return nullopt;
 }
 
-VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection(const Connection &_connection, bool _allow_password_ui)
+VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection
+    (const Connection &_connection, bool _allow_password_ui)
 {
     string passwd;
     bool shoud_save_passwd = false;
@@ -416,21 +454,19 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection(const 
         shoud_save_passwd = true;
     }
     
-    try {
-        VFSHostPtr host;
-        if( auto *ftp = _connection.Cast<FTPConnection>() )
-            host = make_shared<VFSNetFTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port );
-        if( auto *sftp = _connection.Cast<SFTPConnection>() )
-            host = make_shared<VFSNetSFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
-        
-        if( host ) {
-            ReportUsage(_connection);
-            if( shoud_save_passwd )
-                SetPassword(_connection, passwd);
-            return host;
-        }
-    }
-    catch (VFSErrorException &ee) {
+    VFSHostPtr host;
+    if( auto ftp = _connection.Cast<FTPConnection>() )
+        host = make_shared<VFSNetFTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port );
+    else if( auto sftp = _connection.Cast<SFTPConnection>() )
+        host = make_shared<VFSNetSFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
+    else if( auto dropbox = _connection.Cast<Dropbox>() )
+        host = make_shared<VFSNetDropboxHost>( dropbox->account, passwd );
+    
+    if( host ) {
+        ReportUsage(_connection);
+        if( shoud_save_passwd )
+            SetPassword(_connection, passwd);
+        return host;
     }
     return nullptr;
 }
@@ -677,29 +713,3 @@ bool ConfigBackedNetworkConnectionsManager::MountShareAsync(
     
     return true;
 }
-
-//bool NetworkConnectionsManager::MountShareAsync(
-//    const Connection &_conn,
-//    function<void(const string&_mounted_path, const string&_error)> _callback,
-//    bool _allow_password_ui)
-//{
-//    if( !_conn.IsType<LANShare>() )
-//        return false;
-//    
-//    auto conn = _conn;
-//    auto &share = conn.Get<LANShare>();
-//    
-//    
-//    string passwd;
-//    bool shoud_save_passwd = false;
-//    if( !GetPassword(conn, passwd) ) {
-//        if( !_allow_password_ui || !AskForPassword(conn, passwd) )
-//            return false;
-//        shoud_save_passwd = true;
-//    }
-//    
-//    /// ....
-//    
-//    return false;
-//    
-//}

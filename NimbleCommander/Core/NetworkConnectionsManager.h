@@ -40,6 +40,9 @@ public:
     
     virtual bool AskForPassword(const Connection &_conn, string& _password) = 0;
     
+    /**
+     * May throw VFSErrorException on error.
+     */
     virtual shared_ptr<VFSHost> SpawnHostFromConnection(const Connection &_conn,
                                                         bool _allow_password_ui = true) = 0;
 

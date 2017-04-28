@@ -62,6 +62,7 @@ public:
     shared_ptr<const VFSNetDropboxHost> SharedPtr() const {return static_pointer_cast<const VFSNetDropboxHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSNetDropboxHost> SharedPtr() {return static_pointer_cast<VFSNetDropboxHost>(VFSHost::SharedPtr());}
 
+    const string &Account() const;
     const string &Token() const;
 
 #ifdef __OBJC__

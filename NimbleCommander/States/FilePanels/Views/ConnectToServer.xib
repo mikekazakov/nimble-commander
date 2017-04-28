@@ -216,16 +216,18 @@ Gw
                         <action selector="onAddSFTPServer:" target="-2" id="cZg-Us-9Vl"/>
                     </connections>
                 </menuItem>
-                <menuItem title="Network Share" id="K8I-rQ-jcd">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="onAddNetworkShare:" target="-2" id="ez2-HQ-7aI"/>
-                    </connections>
-                </menuItem>
+                <menuItem isSeparatorItem="YES" id="eMj-bl-OqF"/>
                 <menuItem title="Dropbox Account" id="ltj-qY-kNR">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="onAddDropboxAccount:" target="-2" id="z4e-8s-BtG"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="Py8-48-kZf"/>
+                <menuItem title="Network Share" id="K8I-rQ-jcd">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="onAddNetworkShare:" target="-2" id="ez2-HQ-7aI"/>
                     </connections>
                 </menuItem>
             </items>

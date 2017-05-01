@@ -1,11 +1,3 @@
-//
-//  QLThumbnailsCache.h
-//  Files
-//
-//  Created by Michael G. Kazakov on 24.04.14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
 #pragma once
 
 class QLThumbnailsCache
@@ -27,18 +19,13 @@ public:
     NSImage *ProduceThumbnail(const string &_filename, int _px_size);
     
 private:
-    
     enum { m_CacheSize = 4096 };
     
     struct Key
     {
-        Key(const string& _p, int _s) noexcept : path(_p), px_size(_s){};
-        bool operator<(const Key& _rhs) const noexcept {
-            return path < _rhs.path ? true : (px_size < _rhs.px_size);
-        }
-        bool operator==(const Key& _rhs) const noexcept {
-            return path == _rhs.path && px_size == _rhs.px_size;
-        }
+        Key(const string& _p, int _s);
+        bool operator<(const Key& _rhs) const noexcept;
+        bool operator==(const Key& _rhs) const noexcept;
         string path;
         int    px_size;
     };
@@ -50,7 +37,16 @@ private:
         uint64_t    mtime;
         atomic_flag is_in_work = {false}; // item is currenly updating it's image
     };
+    
     using Container = map<Key, shared_ptr<Info>>;
+
+    NSImage *ProduceNewAndInsertUnlocked(const string &_filename, int _px_size);
+    void InsertNewCacheNodeUnlocked(
+        const string &_filename, int _px_size, const shared_ptr<Info> &_node );
+    pair<NSImage *, bool> CheckCacheAndUpdateIfNeededSharedLocked(
+        const string &_filename, int _px_size, Container::iterator _it);
+    void UpdateAsMRUUnlocked( Container::iterator _it );
+    
     Container                           m_Items;
     shared_timed_mutex                  m_ItemsLock;
     deque<Container::iterator>          m_MRU;

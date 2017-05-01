@@ -27,11 +27,7 @@ NSImage *WorkspaceIconsCache::IconIfHas(const string &_filename)
 
 static NSImage *BuildRep(const string &_filename)
 {
-    NSImage *result = nil;
-    CFStringRef item_path = CFStringCreateWithUTF8StdStringNoCopy(_filename);
-    result = [NSWorkspace.sharedWorkspace iconForFile: (__bridge NSString*)item_path];
-    CFRelease(item_path);
-    return result;
+    return [NSWorkspace.sharedWorkspace iconForFile:[NSString stringWithUTF8StdString:_filename]];
 }
 
 NSImage *WorkspaceIconsCache::ProduceIcon(const string &_filename)

@@ -247,6 +247,10 @@ PanelData::PanelData():
 {
 }
 
+PanelData::~PanelData()
+{
+}
+
 static void InitVolatileDataWithListing( vector<PanelData::VolatileData> &_vd, const VFSListing &_listing)
 {
     _vd.clear();

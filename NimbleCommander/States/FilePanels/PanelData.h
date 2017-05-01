@@ -72,6 +72,7 @@ public:
     };
     
     PanelData();
+    ~PanelData();
     
     // these methods should be called by a controller, since some view's props have to be updated
     // PanelData is solely sync class - it does not give a fuck about concurrency,

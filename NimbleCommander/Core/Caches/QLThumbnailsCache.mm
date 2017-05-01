@@ -1,16 +1,23 @@
-//
-//  QLThumbnailsCache.cpp
-//  Files
-//
-//  Created by Michael G. Kazakov on 24.04.14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Quartz/Quartz.h>
 #include <sys/stat.h>
 #include <Habanero/algo.h>
-#include <Habanero/CFStackAllocator.h>
 #include "QLThumbnailsCache.h"
+
+QLThumbnailsCache::Key::Key(const string& _p, int _s) :
+    path(_p),
+    px_size(_s)
+{
+}
+
+bool QLThumbnailsCache::Key::operator<(const Key& _rhs) const noexcept
+{
+    return path < _rhs.path ? true : (px_size < _rhs.px_size);
+}
+    
+bool QLThumbnailsCache::Key::operator==(const Key& _rhs) const noexcept
+{
+    return path == _rhs.path && px_size == _rhs.px_size;
+}
 
 QLThumbnailsCache &QLThumbnailsCache::Instance()
 {
@@ -20,8 +27,7 @@ QLThumbnailsCache &QLThumbnailsCache::Instance()
 
 static NSImage *BuildRep( const string &_filename, int _px_size )
 {
-    CFStackAllocator allocator;
-    CFURLRef url = CFURLCreateFromFileSystemRepresentation(allocator.Alloc(),
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(nullptr,
                                                            (const UInt8 *)_filename.c_str(),
                                                            _filename.length(),
                                                            false);
@@ -32,11 +38,12 @@ static NSImage *BuildRep( const string &_filename, int _px_size )
                                               (const void**)keys,
                                               (const void**)values,
                                               1,
+                                              
                                               0,
                                               0);
         NSImage *result = nil;
         const auto sz = NSMakeSize(_px_size, _px_size);
-        if( auto thumbnail = QLThumbnailImageCreate(allocator.Alloc(),
+        if( auto thumbnail = QLThumbnailImageCreate(nullptr,
                                                     url,
                                                     sz,
                                                     dict) ) {
@@ -53,90 +60,104 @@ static NSImage *BuildRep( const string &_filename, int _px_size )
 NSImage *QLThumbnailsCache::ProduceThumbnail(const string &_filename, int _px_size)
 {
     m_ItemsLock.lock_shared();
+    if( auto i = m_Items.find( {_filename, _px_size} );  i != end(m_Items) ) {
     
-    NSImage *result = nil;
-    
-    auto i = m_Items.find( {_filename, _px_size} );
-    if(i != end(m_Items)) {
-        // check what do we have in a cache
-        Info &info = *i->second;
-
-        // check if cache is up-to-date
-        bool is_uptodate = false;
-        struct stat st;
-        if(stat(_filename.c_str(), &st) == 0) {
-            if( info.file_size == st.st_size &&
-                info.mtime == st.st_mtime ) {
-                is_uptodate = true;
-            }
-            else {
-                if( !info.is_in_work.test_and_set() ) { // we're first to take control of this item
-                    auto clear_lock = at_scope_end([&]{ info.is_in_work.clear(); });
-                    if( auto img = BuildRep(_filename, _px_size) ) {
-                        info.image = img;
-                        info.file_size = st.st_size;
-                        info.mtime = st.st_mtime;
-                        is_uptodate = true;
-                    }
-                }
-                else { // item is currently in updating state, let's use current image
-                    result = info.image;
-                }
-            }
-        }
+        auto [image, mark_as_mru] = CheckCacheAndUpdateIfNeededSharedLocked(_filename, _px_size, i);
         
-        if(is_uptodate) {
-            result = info.image;
-            m_ItemsLock.unlock_shared();
-            
-            // make this item MRU
-            LOCK_GUARD( m_MRULock ) {
-                auto mru_it = find(begin(m_MRU), end(m_MRU), i);
-                assert( mru_it != end(m_MRU) ); // <-- is this happens we're deep in shit, since cache is not well-synchronized and we gonna fuck up soon anyway
-                m_MRU.erase(mru_it);
-                m_MRU.emplace_back(i);
-            }
-        }
-        else {
-            m_ItemsLock.unlock_shared();
-        }
-    }
-    else {
-        // build from scratch
         m_ItemsLock.unlock_shared();
         
-        // file should exist and be accessible
-        struct stat st;
-        if( stat(_filename.c_str(), &st) == 0) {
-            // insert dummy info into struct, so no one else can try to produce it concurrently - prohibit wasting of resources
-            auto info = make_shared<Info>();
-            info->file_size = st.st_size;
-            info->mtime = st.st_mtime;
-            info->image = nil;
-            info->is_in_work.test_and_set();
-            auto clear_lock = at_scope_end([&]{ info->is_in_work.clear(); });
-            
-            {
-                // put in a cache
-                lock_guard<shared_timed_mutex> items_lock(m_ItemsLock); // make sure no one else access items for writing
-                auto it = m_Items.emplace( Key{_filename, _px_size}, info ).first;
-                // make sure no one else access MRU for writing
-                LOCK_GUARD( m_MRULock ) {
-                    while( m_MRU.size() >= m_CacheSize ) {
-                        // wipe out old ones if cache is too fat
-                        m_Items.erase(m_MRU.front());
-                        m_MRU.pop_front();
-                    }
-                    m_MRU.emplace_back( it );
+        if( mark_as_mru )
+            UpdateAsMRUUnlocked(i);
+        
+        return image;
+    }
+    else {
+        m_ItemsLock.unlock_shared();
+        return ProduceNewAndInsertUnlocked(_filename, _px_size);
+    }
+}
+
+void QLThumbnailsCache::UpdateAsMRUUnlocked( Container::iterator _it )
+{
+    lock_guard<spinlock> mru_lock{m_MRULock};
+    auto mru_it = find(begin(m_MRU), end(m_MRU), _it);
+    assert( mru_it != end(m_MRU) );
+    m_MRU.erase(mru_it);
+    m_MRU.emplace_back(_it);
+}
+
+pair<NSImage *, bool> QLThumbnailsCache::CheckCacheAndUpdateIfNeededSharedLocked(
+    const string &_filename, int _px_size, Container::iterator _it)
+{
+    Info &info = *_it->second;
+    bool is_uptodate = false;
+    struct stat st;
+    if( stat(_filename.c_str(), &st) == 0 ) {
+        // check if cache is up-to-date
+        if( info.file_size == st.st_size && info.mtime == st.st_mtime ) {
+            is_uptodate = true;
+        }
+        else {
+            if( !info.is_in_work.test_and_set() ) {
+                // we're first to take control of this item
+                auto clear_lock = at_scope_end([&]{ info.is_in_work.clear(); });
+                if( auto img = BuildRep(_filename, _px_size) ) {
+                    info.image = img;
+                    info.file_size = st.st_size;
+                    info.mtime = st.st_mtime;
+                    is_uptodate = true;
                 }
             }
-            
-            // this operation may be long, not blocking anything for it
-            result = BuildRep(_filename, _px_size); // img may be nil - it's ok
-            info->image = result;
+            else {
+                // item is currently in updating state, let's use current image
+            }
         }
     }
-    return result;
+    return {info.image, is_uptodate};
+}
+
+NSImage *QLThumbnailsCache::ProduceNewAndInsertUnlocked(const string &_filename, int _px_size)
+{
+    // file must exist and be accessible
+    struct stat st;
+    if( stat(_filename.c_str(), &st) != 0 )
+        return nil;
+    
+    // insert dummy info into struct, so no one else can try to produce it
+    // concurrently - prohibit wasting of resources
+    auto info = make_shared<Info>();
+    info->file_size = st.st_size;
+    info->mtime = st.st_mtime;
+    info->image = nil;
+    info->is_in_work.test_and_set();
+    auto clear_lock = at_scope_end([&]{ info->is_in_work.clear(); });
+    
+    InsertNewCacheNodeUnlocked(_filename, _px_size, info);
+    
+    // this operation may be long, not blocking anything for it
+    info->image = BuildRep(_filename, _px_size); // img may be nil - it's ok
+    
+    return info->image;
+}
+
+void QLThumbnailsCache::InsertNewCacheNodeUnlocked(
+    const string &_filename, int _px_size, const shared_ptr<Info> &_node )
+{
+    // make sure no one else can access items for writing
+    lock_guard<shared_timed_mutex> items_lock{m_ItemsLock};
+    
+    auto it = m_Items.emplace( Key{_filename, _px_size}, _node ).first;
+    
+    // make sure no one else access MRU for writing
+    lock_guard<spinlock> mru_lock{m_MRULock};
+    
+    while( m_MRU.size() >= m_CacheSize ) {
+        // wipe out old ones if cache is too fat
+        m_Items.erase(m_MRU.front());
+        m_MRU.pop_front();
+    }
+    
+    m_MRU.emplace_back( it );
 }
 
 NSImage *QLThumbnailsCache::ThumbnailIfHas(const string &_filename, int _px_size)

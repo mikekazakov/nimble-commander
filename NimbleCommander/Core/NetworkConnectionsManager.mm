@@ -40,7 +40,7 @@ private:
     {
         path = "ftp://" + (ftp.user.empty() ? ftp.host : ftp.user + "@" + ftp.host);
     }
-    void Visit( const NetworkConnectionsManager::SFTPConnection &sftp )
+    void Visit( const NetworkConnectionsManager::SFTP &sftp )
     {
         path = "sftp://" + sftp.user + "@" + sftp.host;
     }
@@ -114,7 +114,7 @@ void NetworkConnectionsManager::ConnectionVisitor::Visit(
 }
 
 void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::SFTPConnection &_sftp )
+    const NetworkConnectionsManager::SFTP &_sftp )
 {
 }
 
@@ -142,7 +142,7 @@ bool NetworkConnectionsManager::FTP::operator==(const FTP&_rhs) const noexcept
         port == _rhs.port;
 }
 
-bool NetworkConnectionsManager::SFTPConnection::operator==(const SFTPConnection&_rhs) const noexcept
+bool NetworkConnectionsManager::SFTP::operator==(const SFTP&_rhs) const noexcept
 {
     return BaseConnection::operator==(_rhs) &&
         user == _rhs.user &&

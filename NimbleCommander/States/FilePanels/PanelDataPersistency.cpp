@@ -283,7 +283,7 @@ static const char *VFSTagForNetworkConnection( const NetworkConnectionsManager::
 {
     if( auto ftp = _conn.Cast<NetworkConnectionsManager::FTP>() )
         return VFSNetFTPHost::Tag;
-    else if( auto sftp =_conn.Cast<NetworkConnectionsManager::SFTPConnection>() )
+    else if( auto sftp =_conn.Cast<NetworkConnectionsManager::SFTP>() )
         return VFSNetSFTPHost::Tag;
     else if( auto dropbox = _conn.Cast<NetworkConnectionsManager::Dropbox>() )
         return VFSNetDropboxHost::Tag;

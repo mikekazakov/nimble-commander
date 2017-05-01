@@ -63,8 +63,8 @@ static GenericConfig::ConfigValue ConnectionToJSONObject( NetworkConnectionsMana
         o.AddMember("port", value((int)c.port), alloc);
         return o;
     }
-    if( _c.IsType<NetworkConnectionsManager::SFTPConnection>() ) {
-        auto &c = _c.Get<NetworkConnectionsManager::SFTPConnection>();
+    if( _c.IsType<NetworkConnectionsManager::SFTP>() ) {
+        auto &c = _c.Get<NetworkConnectionsManager::SFTP>();
 
         auto o = FillBasicConnectionInfoInJSONObject("sftp", c);
         o.AddMember("user", value(c.user.c_str(), alloc), alloc);
@@ -129,7 +129,7 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
             !has_string("keypath") || !has_number("port") )
             return nullopt;
         
-        NetworkConnectionsManager::SFTPConnection c;
+        NetworkConnectionsManager::SFTP c;
         c.uuid = uuid_gen( _object["uuid"].GetString() );
         c.title = _object["title"].GetString();
         c.user = _object["user"].GetString();
@@ -183,7 +183,7 @@ static string KeychainWhereFromConnection( const NetworkConnectionsManager::Conn
 {
     if( auto c = _c.Cast<NetworkConnectionsManager::FTP>() )
         return "ftp://" + c->host;
-    if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
+    if( auto c = _c.Cast<NetworkConnectionsManager::SFTP>() )
         return "sftp://" + c->host;
     if( auto c = _c.Cast<NetworkConnectionsManager::LANShare>() )
         return PrefixForShareProtocol(c->proto) + "://" +
@@ -198,7 +198,7 @@ static string KeychainAccountFromConnection( const NetworkConnectionsManager::Co
 {
     if( auto c = _c.Cast<NetworkConnectionsManager::FTP>() )
         return c->user;
-    if( auto c = _c.Cast<NetworkConnectionsManager::SFTPConnection>() )
+    if( auto c = _c.Cast<NetworkConnectionsManager::SFTP>() )
         return c->user;
     if( auto c = _c.Cast<NetworkConnectionsManager::LANShare>() )
         return c->user;
@@ -345,7 +345,7 @@ vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMana
     vector<Connection> c;
     LOCK_GUARD(m_Lock) {
         for(auto &i: m_Connections)
-            if( i.IsType<SFTPConnection>() )
+            if( i.IsType<SFTP>() )
                 c.emplace_back( i );
         SortByMRU(c, m_MRU);
     }
@@ -417,7 +417,7 @@ optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMa
     else if( auto sftp = dynamic_cast<const VFSNetSFTPHost*>(&_vfs) ) {
         LOCK_GUARD(m_Lock) {
             auto it = find_if( begin(m_Connections), end(m_Connections), [&](const Connection &i){
-                if( auto p = i.Cast<SFTPConnection>() )
+                if( auto p = i.Cast<SFTP>() )
                     return p->host == sftp->ServerUrl() &&
                            p->user == sftp->User() &&
                            p->keypath == sftp->Keypath() &&
@@ -457,7 +457,7 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection
     VFSHostPtr host;
     if( auto ftp = _connection.Cast<FTP>() )
         host = make_shared<VFSNetFTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port );
-    else if( auto sftp = _connection.Cast<SFTPConnection>() )
+    else if( auto sftp = _connection.Cast<SFTP>() )
         host = make_shared<VFSNetSFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
     else if( auto dropbox = _connection.Cast<Dropbox>() )
         host = make_shared<VFSNetDropboxHost>( dropbox->account, passwd );

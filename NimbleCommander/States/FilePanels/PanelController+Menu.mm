@@ -174,7 +174,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
                        password:(const string&)_passwd
 {
     dispatch_assert_background_queue();
-    auto &info = _connection.Get<NetworkConnectionsManager::SFTPConnection>();
+    auto &info = _connection.Get<NetworkConnectionsManager::SFTP>();
     try {
         auto host = make_shared<VFSNetSFTPHost>(info.host,
                                                 info.user,
@@ -315,7 +315,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
             if( success && should_save_passwd )
                  ConnectionsManager().SetPassword(connection, passwd);
         });
-    else if( connection.IsType<NetworkConnectionsManager::SFTPConnection>() )
+    else if( connection.IsType<NetworkConnectionsManager::SFTP>() )
         m_DirectoryLoadingQ.Run([=]{
             bool success = [self GoToSFTPWithConnection:connection password:passwd];
             if( success && should_save_passwd )

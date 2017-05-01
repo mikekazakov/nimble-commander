@@ -42,7 +42,7 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 {
 //    vector<NetworkConnectionsManager::Connection> m_Connections;
     optional<NetworkConnectionsManager::Connection> m_Original;
-    NetworkConnectionsManager::SFTPConnection m_Connection;
+    NetworkConnectionsManager::SFTP m_Connection;
 }
 
 - (id) init
@@ -110,7 +110,7 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
     [self window];
 
     m_Original = _conn;
-    auto &c = m_Original->Get<NetworkConnectionsManager::SFTPConnection>();
+    auto &c = m_Original->Get<NetworkConnectionsManager::SFTP>();
     
     self.title = [NSString stringWithUTF8StdString:c.title];
     self.server = [NSString stringWithUTF8StdString:c.host];

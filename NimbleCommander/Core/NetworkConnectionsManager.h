@@ -12,7 +12,7 @@ public:
     class Connection;
     class BaseConnection;
         class FTP;
-        class SFTPConnection;
+        class SFTP;
         class LANShare;
         class Dropbox;
     class ConnectionVisitor;
@@ -67,7 +67,7 @@ class NetworkConnectionsManager::ConnectionVisitor
 {
 public:
     virtual void Visit( const NetworkConnectionsManager::FTP &_ftp );
-    virtual void Visit( const NetworkConnectionsManager::SFTPConnection &_sftp );
+    virtual void Visit( const NetworkConnectionsManager::SFTP &_sftp );
     virtual void Visit( const NetworkConnectionsManager::LANShare &_share );
     virtual void Visit( const NetworkConnectionsManager::Dropbox &_account );
 };
@@ -137,14 +137,14 @@ public:
     bool operator==(const FTP&_rhs) const noexcept;
 };
 
-class NetworkConnectionsManager::SFTPConnection : public NetworkConnectionsManager::BaseConnection
+class NetworkConnectionsManager::SFTP : public NetworkConnectionsManager::BaseConnection
 {
 public:
     string user;
     string host;
     string keypath;
     long   port;
-    bool operator==(const SFTPConnection&_rhs) const noexcept;
+    bool operator==(const SFTP&_rhs) const noexcept;
 };
 
 class NetworkConnectionsManager::LANShare : public NetworkConnectionsManager::BaseConnection

@@ -29,7 +29,7 @@ private:
         m_Sheet = [[FTPConnectionSheetController alloc] init];
     }
     
-    virtual void Visit( const NetworkConnectionsManager::SFTPConnection &_sftp )
+    virtual void Visit( const NetworkConnectionsManager::SFTP &_sftp )
     {
         m_Sheet = [[SFTPConnectionSheetController alloc] init];
     }

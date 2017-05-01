@@ -19,6 +19,12 @@ public:
     
     
     static boost::uuids::uuid MakeUUID();
+    
+    /**
+     * Returns connections path is the following format: protocol://[user@]domain[/resource]
+     * e.g. sftp://migun@192.168.2.1, dropbox://mike.kazakov@gmail.com,
+     * sftp://migun@magnumbytes.com.
+     */
     static string MakeConnectionPath(const Connection &_conn);
     static string TitleForConnection(const Connection &_conn);
 
@@ -178,7 +184,7 @@ template <class T>
 struct NetworkConnectionsManager::Connection::Model final :
     NetworkConnectionsManager::Connection::Concept
 {
-    T obj;
+    const T obj;
     
     Model(T _t): obj( move(_t) )
     {

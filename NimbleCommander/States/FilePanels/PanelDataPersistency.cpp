@@ -11,6 +11,7 @@
 #include <VFS/XAttr.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
+#include <VFS/NetDropbox.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include "PanelDataPersistency.h"
@@ -86,6 +87,14 @@ bool PanelDataPersisency::Location::is_network() const noexcept
 
 static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host );
 
+static bool IsNetworkVFS( const VFSHost& _host )
+{
+    const auto tag = _host.FSTag();
+    return tag == VFSNetFTPHost::Tag ||
+           tag == VFSNetSFTPHost::Tag ||
+           tag == VFSNetDropboxHost::Tag;
+}
+
 static any EncodeState( const VFSHost& _host )
 {
     auto tag = _host.FSTag();
@@ -98,11 +107,9 @@ static any EncodeState( const VFSHost& _host )
     else if( tag == VFSXAttrHost::Tag ) {
         return XAttr{ _host.JunctionPath() };
     }
-    else if( tag == VFSNetFTPHost::Tag ||
-             tag == VFSNetSFTPHost::Tag ) {
-        if( auto conn = ConnectionsManager().ConnectionForVFS(_host) )  {
+    else if( IsNetworkVFS(_host) ) {
+        if( auto conn = ConnectionsManager().ConnectionForVFS(_host) )
             return Network{ conn->Uuid() };
-        }
     }
     else if( tag == VFSArchiveHost::Tag ) {
         return ArcLA{ _host.JunctionPath() };
@@ -272,36 +279,17 @@ optional<PanelDataPersisency::Location> PanelDataPersisency::JSONToLocation( con
     return move(result);
 }
 
-//static size_t HashForPath( const VFSHost &_at_vfs, const string &_path )
-//{
-//    constexpr auto max_depth = 32;
-//    array<const VFSHost*, max_depth> hosts;
-//    int hosts_n = 0;
-//
-//    auto cur = &_at_vfs;
-//    while( cur && hosts_n < max_depth ) {
-//        hosts[hosts_n++] = cur;
-//        cur = cur->Parent().get();
-//    }
-//    
-//    char buf[4096] = "";
-//    while( hosts_n > 0 ) {
-//        auto &host = *hosts[--hosts_n];
-//        strcat( buf, host.FSTag() );
-//        strcat( buf, "|" );
-//        strcat( buf, host.Configuration().VerboseJunction() );
-//        strcat( buf, "|" );
-//    }
-//    strcat( buf, _path.c_str() );
-//
-//    return hash<string_view>()(buf);
-//}
-
-//static string MakeFootprintString( const VFSHost &_at_vfs, const string &_path )
-//{
-//
-//
-//};
+static const char *VFSTagForNetworkConnection( const NetworkConnectionsManager::Connection &_conn )
+{
+    if( auto ftp = _conn.Cast<NetworkConnectionsManager::FTPConnection>() )
+        return VFSNetFTPHost::Tag;
+    else if( auto sftp =_conn.Cast<NetworkConnectionsManager::SFTPConnection>() )
+        return VFSNetSFTPHost::Tag;
+    else if( auto dropbox = _conn.Cast<NetworkConnectionsManager::Dropbox>() )
+        return VFSNetDropboxHost::Tag;
+    else
+        return "<unknown_vfs>";
+}
 
 string PanelDataPersisency::MakeFootprintString( const Location &_loc )
 {
@@ -327,18 +315,9 @@ string PanelDataPersisency::MakeFootprintString( const Location &_loc )
         else if( auto network = any_cast<Network>(&h) ) {
             const auto &mgr = ConnectionsManager();
             if( auto conn = mgr.ConnectionByUUID(network->connection) ) {
-                if( auto ftp = conn->Cast<NetworkConnectionsManager::FTPConnection>() ) {
-                    footprint += VFSNetFTPHost::Tag;
-                    footprint += "|";
-                    footprint += "ftp://"s +
-                                (ftp->user.empty() ? "" : ftp->user + "@" ) +
-                                ftp->host;
-                }
-                else if( auto sftp = conn->Cast<NetworkConnectionsManager::SFTPConnection>() ) {
-                    footprint += VFSNetSFTPHost::Tag;
-                    footprint += "|";
-                    footprint += "sftp://"s + sftp->user + "@" + sftp->host;
-                }
+                footprint += VFSTagForNetworkConnection(*conn);
+                footprint += "|";
+                footprint += NetworkConnectionsManager::MakeConnectionPath(*conn);
             }
         }
         else if( auto la = any_cast<ArcLA>(&h) ) {
@@ -373,16 +352,8 @@ string PanelDataPersisency::MakeVerbosePathString( const Location &_loc )
             verbose += xattr->junction;
         else if( auto network = any_cast<Network>(&h) ) {
             const auto &mgr = ConnectionsManager();
-            if( auto conn = mgr.ConnectionByUUID(network->connection) ) {
-                if( auto ftp = conn->Cast<NetworkConnectionsManager::FTPConnection>() ) {
-                    verbose += "ftp://"s +
-                                (ftp->user.empty() ? "" : ftp->user + "@" ) +
-                                ftp->host;
-                }
-                else if( auto sftp = conn->Cast<NetworkConnectionsManager::SFTPConnection>() ) {
-                    verbose += "sftp://"s + sftp->user + "@" + sftp->host;
-                }
-            }
+            if( auto conn = mgr.ConnectionByUUID(network->connection) )
+                verbose += NetworkConnectionsManager::MakeConnectionPath(*conn);
         }
         else if( auto la = any_cast<ArcLA>(&h) )
             verbose += la->junction;
@@ -431,8 +402,7 @@ optional<rapidjson::StandaloneValue> PanelDataPersisency::EncodeVFSHostInfo( con
         json.AddMember( MakeStandaloneString(g_HostInfoJunctionKey), MakeStandaloneString(_host.JunctionPath()), g_CrtAllocator );
         return move(json);
     }
-    else if( tag == VFSNetFTPHost::Tag ||
-             tag == VFSNetSFTPHost::Tag ) {
+    else if( IsNetworkVFS(_host) ) {
         if( auto conn = ConnectionsManager().ConnectionForVFS(_host) )  {
             json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(g_HostInfoTypeNetworkValue), g_CrtAllocator );
             json.AddMember( MakeStandaloneString(g_HostInfoUuidKey), MakeStandaloneString(to_string(conn->Uuid()).c_str()), g_CrtAllocator );
@@ -603,8 +573,7 @@ static bool Fits( VFSHost& _alive, const any &_encoded )
         if( auto xattr = any_cast<XAttr>(encoded) )
             return xattr->junction == _alive.JunctionPath();
     }
-    else if( tag == VFSNetFTPHost::Tag ||
-             tag == VFSNetSFTPHost::Tag ) {
+    else if( IsNetworkVFS(_alive) ) {
         if( auto network = any_cast<Network>(encoded) )
             if( auto conn = ConnectionsManager().ConnectionForVFS( _alive ) )
                 return network->connection == conn->Uuid();

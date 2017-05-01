@@ -42,17 +42,19 @@ static NSImage *ProduceThumbnailForVFS(const string &_path,
 {
     NSImage *result = 0;
     VFSFilePtr vfs_file;
-    string filename_ext;
+    string filename_final;
     if(_host->CreateFile(_path.c_str(), vfs_file, 0) < 0)
         return 0;
         
     if(vfs_file->Open(VFSFlags::OF_Read) < 0)
         return 0;
     
-    char pattern_buf[MAXPATHLEN];
-    sprintf(pattern_buf, ("%s" + ActivationManager::BundleID() + ".ico.XXXXXX").c_str(), CommonPaths::AppTemporaryDirectory().c_str());
+    char filename_temp[MAXPATHLEN];
+    sprintf(filename_temp,
+        ("%s" + ActivationManager::BundleID() + ".ico.XXXXXX").c_str(),
+        CommonPaths::AppTemporaryDirectory().c_str());
     
-    int fd = mkstemp(pattern_buf);
+    int fd = mkstemp(filename_temp);
     if(fd < 0)
         return 0;
     
@@ -77,10 +79,13 @@ static NSImage *ProduceThumbnailForVFS(const string &_path,
     close(fd);
     fd = -1;
 
-    filename_ext = string(pattern_buf) + "." + _ext;
-    if( rename(pattern_buf, filename_ext.c_str()) == 0 ) {
-        CFStringRef item_path = (CFStringRef) CFBridgingRetain([NSString stringWithUTF8StdStringNoCopy:filename_ext]);
-        CFURLRef url = CFURLCreateWithFileSystemPath(0, item_path, kCFURLPOSIXPathStyle, false);
+    filename_final = string(filename_temp) + "." + _ext;
+    if( rename(filename_temp, filename_final.c_str()) == 0 ) {
+        CFURLRef url = CFURLCreateFromFileSystemRepresentation(
+            nullptr,
+            (const UInt8 *)filename_final.c_str(),
+            filename_final.length(),
+            false);
         static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
         static void *values[] = {(void*)kCFBooleanTrue};
         static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
@@ -90,17 +95,16 @@ static NSImage *ProduceThumbnailForVFS(const string &_path,
         }
 
         CFRelease(url);
-        CFRelease(item_path);
-        unlink(filename_ext.c_str());
+        unlink(filename_final.c_str());
     }
     else {
-        unlink(pattern_buf);
+        unlink(filename_temp);
     }
     
 cleanup:
     if( fd >= 0 ) {
         close(fd);
-        unlink(pattern_buf);
+        unlink(filename_temp);
     }
 
     return result;

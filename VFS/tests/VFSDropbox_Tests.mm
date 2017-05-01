@@ -5,6 +5,8 @@
 static const auto g_Account = "mike.kazakov+ncdropboxtest@gmail.com";
 static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yWYustS3CdlqYkN";
 
+static vector<uint8_t> MakeNoise(size_t size);
+
 @interface VFSDropbox_Tests : XCTestCase
 @end
 
@@ -283,10 +285,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     shared_ptr<VFSFile> file;
     XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
 
-    vector<uint8_t> to_upload(length);
-    srand((int)time(0));
-    for( int i = 0; i < length; ++i )
-        to_upload[i] = rand() % 256; // yes, I know that rand() is harmful!
+    vector<uint8_t> to_upload = MakeNoise(length);
 
     XCTAssert( file->Open( VFSFlags::OF_Write ) == VFSError::Ok );
     XCTAssert( file->SetUploadSize( to_upload.size() ) == VFSError::Ok );
@@ -315,10 +314,7 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
     dynamic_pointer_cast<VFSNetDropboxFile>(file)->SetChunkSize(10000000); // 10 Mb chunks
     
-    vector<uint8_t> to_upload(length);
-    srand((int)time(0));
-    for( int i = 0; i < length; ++i )
-        to_upload[i] = rand() % 256; // yes, I know that rand() is harmful!
+    vector<uint8_t> to_upload = MakeNoise(length);
 
     XCTAssert( file->Open( VFSFlags::OF_Write ) == VFSError::Ok );
     XCTAssert( file->SetUploadSize( to_upload.size() ) == VFSError::Ok );
@@ -346,11 +342,8 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     shared_ptr<VFSFile> file;
     XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
     dynamic_pointer_cast<VFSNetDropboxFile>(file)->SetChunkSize(5000000); // 5Mb chunks
-    
-    vector<uint8_t> to_upload(length);
-    srand((int)time(0));
-    for( int i = 0; i < length; ++i )
-        to_upload[i] = rand() % 256; // yes, I know that rand() is harmful!
+
+    vector<uint8_t> to_upload = MakeNoise(length);
 
     XCTAssert( file->Open( VFSFlags::OF_Write ) == VFSError::Ok );
     XCTAssert( file->SetUploadSize( to_upload.size() ) == VFSError::Ok );
@@ -367,6 +360,43 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
     host->Unlink(filepath);    
 }
 
+- (void)testUploadEdgeCases
+{
+    const int chunk_size = 1'000'000;
+    const int lengths[] = {
+        999'999,1'000'000, 1'000'001,
+        1'999'999, 2'000'000, 2'000'001,
+        2'999'999, 3'000'000, 3'000'001
+    };
+    const auto filepath = "/FolderToModify/SomeBigRubbish.bin";
+    
+    shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(g_Account, g_Token);
+    host->Unlink(filepath);
+    
+    for( auto length: lengths  ) {
+    
+        shared_ptr<VFSFile> file;
+        XCTAssert( host->CreateFile(filepath, file) == VFSError::Ok );
+        dynamic_pointer_cast<VFSNetDropboxFile>(file)->SetChunkSize(chunk_size);
+        
+        vector<uint8_t> to_upload = MakeNoise(length);
+        
+        XCTAssert( file->Open( VFSFlags::OF_Write ) == VFSError::Ok );
+        XCTAssert( file->SetUploadSize( to_upload.size() ) == VFSError::Ok );
+        XCTAssert( file->WriteFile( data(to_upload), (int)size(to_upload) ) == VFSError::Ok );
+        XCTAssert( file->Close() == VFSError::Ok );
+        
+        XCTAssert( file->Open( VFSFlags::OF_Read ) == VFSError::Ok );
+        auto uploaded = file->ReadFile();
+        XCTAssert( uploaded );
+        XCTAssert( uploaded->size() == size(to_upload) );
+        XCTAssert( equal( uploaded->begin(), uploaded->end(), to_upload.begin() ) );
+        XCTAssert( file->Close() == VFSError::Ok );
+        
+        host->Unlink(filepath);
+    }
+}
+
 - (void)testFolderCreationAndRemoval
 {
     auto filepath = "/FolderToModify/NewDirectory/";
@@ -381,3 +411,12 @@ static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yW
 }
 
 @end
+
+static vector<uint8_t> MakeNoise(size_t size)
+{
+    vector<uint8_t> noise(size);
+    srand((int)time(0));
+    for( int i = 0; i < size; ++i )
+        noise[i] = rand() % 256; // yes, I know that rand() is harmful!
+    return noise;
+}

@@ -402,6 +402,7 @@ void VFSNetDropboxFile::StartSessionAppend()
     m_Upload->delegate = delegate;
     m_Upload->stream = stream;
     m_Upload->task = task;
+    m_Upload->append_accepted = false;
     
     [task resume];
 }
@@ -546,6 +547,17 @@ void VFSNetDropboxFile::WaitForSessionIdOrError() const
     });
 }
 
+void VFSNetDropboxFile::WaitForAppendToComplete() const
+{
+    unique_lock<mutex> lock(m_SignalLock);
+    m_Signal.wait(lock, [this]{
+        if( m_State != Uploading )
+            return true;
+        lock_guard<mutex> lock{m_DataLock};
+        return bool(m_Upload->append_accepted);
+    });
+}
+
 ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
 {
     if( !m_Upload ||
@@ -586,6 +598,19 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
 
             m_Upload->delegate.handleReceivedData = nullptr;
             m_Upload->delegate.handleFinished = nullptr;
+            
+            if( m_State != Uploading )
+                return LastError();
+        }
+        
+        if( m_Upload->part_no >= 1 && m_Upload->part_no < m_Upload->parts_count - 1 ) {
+            m_Upload->delegate.handleReceivedData = [this](NSData *_data){
+                if( m_State != Uploading )
+                    return;
+                m_Upload->append_accepted = true;
+                m_Signal.notify_all();
+            };
+            WaitForAppendToComplete();
             
             if( m_State != Uploading )
                 return LastError();

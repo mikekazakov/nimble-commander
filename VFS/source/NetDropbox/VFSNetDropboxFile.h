@@ -64,6 +64,7 @@ private:
     void ExtractSessionIdOrCancelUploadAsync( NSData *_data );
     void WaitForSessionIdOrError() const;
     void WaitForDownloadResponse() const;
+    void WaitForAppendToComplete() const;
 
     struct Download {
         deque<uint8_t>          fifo;
@@ -82,6 +83,7 @@ private:
         VFSNetDropboxFileUploadDelegate*delegate = nil;
         VFSNetDropboxFileUploadStream  *stream = nil;
         string                          session_id;
+        atomic_bool                     append_accepted{false};
     };
 
     int                 m_OpenFlags = 0;

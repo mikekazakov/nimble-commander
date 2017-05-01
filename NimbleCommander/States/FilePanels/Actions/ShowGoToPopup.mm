@@ -10,13 +10,7 @@
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
 #include "ShowGoToPopup.h"
-
-
-#include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
-static NetworkConnectionsManager &ConnectionsManager()
-{
-    return ConfigBackedNetworkConnectionsManager::Instance();
-}
+#include "OpenNetworkConnection.h"
 
 static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
 static const auto g_ConfigMaxNetworkConnections = "filePanel.general.maximumNetworkConnectionsInGoToMenu";
@@ -64,17 +58,17 @@ static const auto g_MaxTextWidth = 600;
             [m_State ActivatePanelByController:m_Panel];
     }
     
-    [self performGoTo:any_holder.any];
+    [self performGoTo:any_holder.any sender:sender];
 }
 
-- (void) performGoTo:(const any&)_context
+- (void) performGoTo:(const any&)_context sender:(id)sender
 {
     if( auto favorite = any_cast<shared_ptr<const FavoriteLocationsStorage::Location>>(&_context) )
         [m_Panel goToPersistentLocation:(*favorite)->hosts_stack];
     else if( auto plain_path = any_cast<string>(&_context) )
         [m_Panel GoToDir:*plain_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
     else if( auto connection = any_cast<NetworkConnectionsManager::Connection>(&_context) )
-        [m_Panel GoToSavedConnection:*connection];
+        panel::actions::OpenExistingNetworkConnection().Perform(m_Panel, sender);
     else if( auto vfs_path = any_cast<VFSPath>(&_context) )
         [m_Panel GoToDir:vfs_path->Path() vfs:vfs_path->Host() select_entry:"" async:true];
     else if( auto promise = any_cast<pair<VFSInstanceManager::Promise, string>>(&_context) )
@@ -94,9 +88,10 @@ static vector<shared_ptr<NativeFileSystemInfo>> VolumesToShow()
     return volumes;
 }
 
-static vector<NetworkConnectionsManager::Connection> LimitedRecentConnections()
+static vector<NetworkConnectionsManager::Connection> LimitedRecentConnections(
+    NetworkConnectionsManager& _manager)
 {
-    auto connections = ConnectionsManager().AllConnectionsByMRU();
+    auto connections = _manager.AllConnectionsByMRU();
     
     auto limit = max( GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
     if( connections.size() > limit )
@@ -275,7 +270,7 @@ static auto MenuItemForConnection( const NetworkConnectionsManager::Connection &
     auto menu_item = [[NSMenuItem alloc] init];
     
     menu_item.title = [NSString stringWithUTF8StdString:
-        ConnectionsManager().TitleForConnection(_c)];
+        NetworkConnectionsManager::TitleForConnection(_c)];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_c}];
     menu_item.image = network_image;
     menu_item.target = _target;
@@ -377,7 +372,8 @@ static NSMenu *BuildGoToMenu( MainWindowFilePanelState *_state, PanelController 
         [menu addItem:MenuItemForVolume(*i, action_target)];
 
     if( GlobalConfig().GetBool(g_ConfigShowNetworkConnections) )
-        if( auto connections = LimitedRecentConnections(); !connections.empty() ) {
+        if(auto connections = LimitedRecentConnections(_panel.networkConnectionsManager);
+           !connections.empty() ) {
             [menu addItem:NSMenuItem.separatorItem];
             for( auto &c: connections )
                 [menu addItem:MenuItemForConnection(c, action_target)];
@@ -400,7 +396,7 @@ static NSMenu *BuildConnectionsQuickList( PanelController *_panel )
     const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
         NSLocalizedString(@"Connections", "Connections popup menu title in file panels"));
     
-    for( auto &c: ConnectionsManager().AllConnectionsByMRU() )
+    for( auto &c: _panel.networkConnectionsManager.AllConnectionsByMRU() )
         [menu addItem:MenuItemForConnection(c, action_target)];
 
     SetupHotkeys(menu);

@@ -1,9 +1,6 @@
 #include <Habanero/algo.h>
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
-#include <VFS/NetFTP.h>
-#include <VFS/NetSFTP.h>
-#include <VFS/NetDropbox.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/AnyHolder.h>
@@ -13,11 +10,6 @@
 #include <NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Operations/Delete/FileDeletionSheetController.h>
-#include "Views/FTPConnectionSheetController.h"
-#include "Views/SFTPConnectionSheetController.h"
-#include "Views/NetworkShareSheetController.h"
-#include "Views/ConnectToServer.h"
-#include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "Actions/CopyFilePaths.h"
 #include "Actions/AddToFavorites.h"
@@ -40,17 +32,7 @@
 #include "Actions/RenameInPlace.h"
 #include "Actions/Select.h"
 #include "Actions/CopyToPasteboard.h"
-
-
-
-// TEMPORARY HERE, REMOVE IT:
-#include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
-static NetworkConnectionsManager &ConnectionsManager()
-{
-    return ConfigBackedNetworkConnectionsManager::Instance();
-}
-
-
+#include "Actions/OpenNetworkConnection.h"
 
 static const panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
@@ -120,219 +102,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         [self handleGoIntoDirOrArchiveSync:false];
 }
 
-- (bool) GoToFTPWithConnection:(NetworkConnectionsManager::Connection)_connection
-                      password:(const string&)_passwd
-{
-    dispatch_assert_background_queue();    
-    auto &info = _connection.Get<NetworkConnectionsManager::FTP>();
-    try {
-        auto host = make_shared<VFSNetFTPHost>(info.host,
-                                               info.user,
-                                               _passwd,
-                                               info.path,
-                                               info.port
-                                               );
-        dispatch_to_main_queue([=]{
-            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-            [self GoToDir:info.path vfs:host select_entry:"" async:true];
-        });
-        
-        // save successful connection usage to history
-        ConnectionsManager().ReportUsage(_connection);
-        
-        return true;
-    } catch (VFSErrorException &e) {
-        dispatch_to_main_queue([=]{
-            Alert *alert = [[Alert alloc] init];
-            alert.messageText = NSLocalizedString(@"FTP connection error:", "Showing error when connecting to FTP server");
-            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
-            [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-            [alert runModal];
-        });
-    }
-    return false;
-}
-
-- (IBAction) OnGoToFTP:(id)sender
-{
-    FTPConnectionSheetController *sheet = [[FTPConnectionSheetController alloc] init];
-    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if( returnCode != NSModalResponseOK )
-            return;
-        
-        auto connection = sheet.connection;
-        string password = sheet.password;
-        ConnectionsManager().InsertConnection(connection);
-        ConnectionsManager().SetPassword(connection, password);
-        m_DirectoryLoadingQ.Run([=]{
-            [self GoToFTPWithConnection:connection password:password];
-        });
-    }];
-}
-
-- (bool) GoToSFTPWithConnection:(NetworkConnectionsManager::Connection)_connection
-                       password:(const string&)_passwd
-{
-    dispatch_assert_background_queue();
-    auto &info = _connection.Get<NetworkConnectionsManager::SFTP>();
-    try {
-        auto host = make_shared<VFSNetSFTPHost>(info.host,
-                                                info.user,
-                                                _passwd,
-                                                info.keypath,
-                                                info.port
-                                                );
-        dispatch_to_main_queue([=]{
-            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-            [self GoToDir:host->HomeDir() vfs:host select_entry:"" async:true];
-        });
-        
-        // save successful connection to history
-        ConnectionsManager().ReportUsage(_connection);
-
-        return true;
-    } catch (const VFSErrorException &e) {
-        dispatch_to_main_queue([=]{
-            Alert *alert = [[Alert alloc] init];
-            alert.messageText = NSLocalizedString(@"SFTP connection error:", "Showing error when connecting to SFTP server");
-            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
-            [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-            [alert runModal];
-        });
-    }
-    return false;
-}
-
-- (IBAction) OnGoToSFTP:(id)sender
-{
-    SFTPConnectionSheetController *sheet = [[SFTPConnectionSheetController alloc] init];
-    
-    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if(returnCode != NSModalResponseOK)
-            return;
-        auto connection = sheet.connection;
-        string password = sheet.password;
-        ConnectionsManager().InsertConnection(connection);
-        ConnectionsManager().SetPassword(connection, password);
-        m_DirectoryLoadingQ.Run([=]{
-            [self GoToSFTPWithConnection:connection password:password];
-        });
-    }];
-}
-
-- (void) GoToLANShareWithConnection:(NetworkConnectionsManager::Connection)_connection
-                           password:(const string&)_passwd
-                       savePassword:(bool)_save_password_on_success
-{
-    auto activity = make_shared<panel::ActivityTicket>();
-    __weak PanelController *weak_self = self;
-    auto cb = [weak_self, activity, _connection, _passwd, _save_password_on_success]
-        (const string &_path, const string &_err) {
-        if( PanelController *panel = weak_self ) {
-            if( !_path.empty() ) {
-                [panel GoToDir:_path
-                           vfs:VFSNativeHost::SharedHost()
-                  select_entry:""
-                         async:true];
-                
-                // save successful connection to history
-                ConnectionsManager().ReportUsage(_connection);
-                if( _save_password_on_success )
-                    ConnectionsManager().SetPassword(_connection, _passwd);
-            }
-            else {
-                dispatch_to_main_queue([=]{
-                    Alert *alert = [[Alert alloc] init];
-                    alert.messageText = NSLocalizedString(@"Unable to connect to a network share",
-                                                          "Informing a user that NC can't connect to network share");
-                    alert.informativeText = [NSString stringWithUTF8StdString:_err];
-                    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-                    [alert runModal];
-                });
-            }
-        }
-    };
-    
-    auto &ncm = ConnectionsManager();
-    if( ncm.MountShareAsync(_connection, _passwd, cb) )
-        *activity = [self registerExtActivity];
-}
-
-- (IBAction) OnGoToNetworkShare:(id)sender
-{
-    NetworkShareSheetController *sheet = [[NetworkShareSheetController alloc] init];
-    [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if(returnCode != NSModalResponseOK)
-            return;
-        
-        auto connection = sheet.connection;
-        auto password = sheet.password;
-        ConnectionsManager().InsertConnection(connection);
-        ConnectionsManager().SetPassword(connection, password);
-        [self GoToLANShareWithConnection:connection password:password savePassword:false];
-    }];
-}
-
-- (void) goToDropboxStorage:(NetworkConnectionsManager::Connection)_connection
-                   password:(const string&)_passwd
-{
-    dispatch_assert_background_queue();
-    auto &info = _connection.Get<NetworkConnectionsManager::Dropbox>();
-    try {
-        auto host = make_shared<VFSNetDropboxHost>(info.account, _passwd);
-        dispatch_to_main_queue([=]{
-            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-            [self GoToDir:"/" vfs:host select_entry:"" async:true];
-        });
-        
-        // save successful connection to history
-        ConnectionsManager().ReportUsage(_connection);
-    } catch (const VFSErrorException &e) {
-        dispatch_to_main_queue([=]{
-            Alert *alert = [[Alert alloc] init];
-            alert.messageText = NSLocalizedString(@"Dropbox connection error:", "Showing error when connecting to Dropbox service");
-            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
-            [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-            [alert runModal];
-        });
-    }
-}
-
-- (void)GoToSavedConnection:(NetworkConnectionsManager::Connection)connection
-{
-    auto &ncm = ConnectionsManager();
-    string passwd;
-    bool should_save_passwd = false;
-    if( !ncm.GetPassword(connection, passwd) ) {
-        if( !ncm.AskForPassword(connection, passwd) )
-            return;
-        should_save_passwd = true;
-    }
-    
-    if( connection.IsType<NetworkConnectionsManager::FTP>() )
-        m_DirectoryLoadingQ.Run([=]{
-            bool success = [self GoToFTPWithConnection:connection password:passwd];
-            if( success && should_save_passwd )
-                 ConnectionsManager().SetPassword(connection, passwd);
-        });
-    else if( connection.IsType<NetworkConnectionsManager::SFTP>() )
-        m_DirectoryLoadingQ.Run([=]{
-            bool success = [self GoToSFTPWithConnection:connection password:passwd];
-            if( success && should_save_passwd )
-                 ConnectionsManager().SetPassword(connection, passwd);
-        });
-    else if( connection.IsType<NetworkConnectionsManager::LANShare>() ) {
-        [self GoToLANShareWithConnection:connection
-                                password:passwd
-                            savePassword:should_save_passwd];
-    }
-    else if( connection.IsType<NetworkConnectionsManager::Dropbox>() ) {
-        m_DirectoryLoadingQ.Run([=]{
-            [self goToDropboxStorage:connection password:passwd];
-        });
-    }
-}
-
 - (IBAction)OnGoToFavoriteLocation:(id)sender
 {
     if( auto menuitem = objc_cast<NSMenuItem>(sender) )
@@ -343,10 +112,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 
 - (IBAction) OnGoToSavedConnectionItem:(id)sender
 {
-    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
-        if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
-            if( auto conn = any_cast<NetworkConnectionsManager::Connection>(&holder.any) )
-                [self GoToSavedConnection:*conn];
+    Perform(_cmd, self, sender);
 }
 
 - (IBAction)OnOpen:(id)sender { // enter
@@ -504,18 +270,10 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self.state AddOperation:op];
 }
 
-- (IBAction)OnConnectToNetworkServer:(id)sender
-{
-    auto w = [[ConnectToServer alloc] initWithNetworkConnectionsManager:ConnectionsManager()];
-    [w beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-        if( returnCode != NSModalResponseOK )
-            return;
-        if( !w.connection )
-            return;
-        [self GoToSavedConnection:*w.connection];
-    }];
-}
-
+- (IBAction)OnGoToFTP:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToSFTP:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoToNetworkShare:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnConnectToNetworkServer:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)copy:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnSelectByMask:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnDeselectByMask:(id)sender { Perform(_cmd, self, sender); }
@@ -631,6 +389,11 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.go.root",            @selector(OnGoToRoot:),         new GoToRootFolder},
 {"menu.go.processes_list",  @selector(OnGoToProcessesList:),new GoToProcessesList},
 {"menu.go.to_folder",       @selector(OnGoToFolder:),       new GoToFolder},
+{"menu.go.connect.ftp",             @selector(OnGoToFTP:),                  new OpenNewFTPConnection},
+{"menu.go.connect.sftp",            @selector(OnGoToSFTP:),                 new OpenNewSFTPConnection},
+{"menu.go.connect.lanshare",        @selector(OnGoToNetworkShare:),         new OpenNewLANShare},
+{"menu.go.connect.network_server",  @selector(OnConnectToNetworkServer:),   new OpenNetworkConnections},
+{"",                                @selector(OnGoToSavedConnectionItem:),  new OpenExistingNetworkConnection},
 {"menu.go.quick_lists.parent_folders",  @selector(OnGoToQuickListsParents:),    new ShowParentFoldersQuickList},
 {"menu.go.quick_lists.history",         @selector(OnGoToQuickListsHistory:),    new ShowHistoryQuickList},
 {"menu.go.quick_lists.favorites",       @selector(OnGoToQuickListsFavorites:),  new ShowFavoritesQuickList},
@@ -658,10 +421,12 @@ static const PanelAction *ActionByTag(int _tag) noexcept
         unordered_map<int, const PanelAction*> m;
         auto &am = ActionsShortcutsManager::Instance();
         for( auto &a: g_Wiring )
-            if( auto tag = am.TagFromAction(get<0>(a)); tag >= 0 )
-                m.emplace( tag, get<2>(a) );
-            else
-                cout << "warning - unrecognized action: " << get<0>(a) << endl;
+            if( get<0>(a)[0] != 0 ) {
+                if( auto tag = am.TagFromAction(get<0>(a)); tag >= 0 )
+                    m.emplace( tag, get<2>(a) );
+                else
+                    cout << "warning - unrecognized action: " << get<0>(a) << endl;
+            }
         return m;
     }();
     const auto v = actions.find(_tag);

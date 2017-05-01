@@ -7,6 +7,7 @@
 #include "PanelViewLayoutSupport.h"
 #include "PanelHistory.h"
 
+class NetworkConnectionsManager;
 @class PanelController;
 @class QuickLookView;
 @class BriefSystemOverview;
@@ -153,6 +154,7 @@ namespace panel
 @property (nonatomic, readonly) bool ignoreDirectoriesOnSelectionByMask;
 @property (nonatomic, readonly) int vfsFetchingFlags;
 @property (nonatomic) int layoutIndex;
+@property (nonatomic, readonly) NetworkConnectionsManager& networkConnectionsManager;
 
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState;
 - (bool) loadRestorableState:(const rapidjson::StandaloneValue&)_state;

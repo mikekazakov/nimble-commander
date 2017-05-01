@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma once
-
 #include "NetworkConnectionsManager.h"
 #include <boost/uuid/uuid.hpp>
 #include <boost/functional/hash.hpp>

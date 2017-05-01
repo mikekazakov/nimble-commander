@@ -737,6 +737,7 @@
 		CFA53A631D433E2A00C562A7 /* MassCopySheetDisclosureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */; };
 		CFA53A641D433E2A00C562A7 /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
 		CFA53A691D433E2A00C562A7 /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF6FAA201B82E1DD006E0742 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CFA7DFF81EB6FD82001FE66C /* OpenNetworkConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */; };
 		CFA7FA741C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA7FA751C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA82C8D1BEC7AA50070A152 /* JobTrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */; };
@@ -1950,6 +1951,8 @@
 		CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GTMHotKeyTextField.mm; path = 3rd_party/gtm/GTMHotKeyTextField.mm; sourceTree = "<group>"; };
 		CFA3D7C81962613B006A30A1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CFA53A6D1D433E2A00C562A7 /* NimbleCommander NonMAS CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NimbleCommander NonMAS CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFA7DFF61EB6FD82001FE66C /* OpenNetworkConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenNetworkConnection.h; path = NimbleCommander/States/FilePanels/Actions/OpenNetworkConnection.h; sourceTree = SOURCE_ROOT; };
+		CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenNetworkConnection.mm; path = NimbleCommander/States/FilePanels/Actions/OpenNetworkConnection.mm; sourceTree = SOURCE_ROOT; };
 		CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JobTrash.mm; path = NimbleCommander/Operations/Delete/JobTrash.mm; sourceTree = SOURCE_ROOT; };
 		CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeCopy_Tests.mm; sourceTree = "<group>"; };
 		CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.h; sourceTree = SOURCE_ROOT; };
@@ -2829,6 +2832,8 @@
 				CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */,
 				CF0260BB1E9DC9000025B50F /* MakeNew.h */,
 				CF0260BC1E9DC9000025B50F /* MakeNew.mm */,
+				CFA7DFF61EB6FD82001FE66C /* OpenNetworkConnection.h */,
+				CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */,
 				CF15D0811E8E1E7A00FEAA04 /* OpenWithExternalEditor.h */,
 				CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */,
 				CFD8CDC81E8CE65600E4DC53 /* OpenXAttr.h */,
@@ -4812,6 +4817,7 @@
 				CF876D501D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */,
 				CF7D137B1BF5E0FE001F53FD /* FileCompressOperation.mm in Sources */,
+				CFA7DFF81EB6FD82001FE66C /* OpenNetworkConnection.mm in Sources */,
 				CFDAC2EF1DFD152C0039A104 /* FilePanelsTabbedHolder.mm in Sources */,
 				CF7D134E1BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm in Sources */,
 				CFDAC2F81DFD17520039A104 /* Common.mm in Sources */,

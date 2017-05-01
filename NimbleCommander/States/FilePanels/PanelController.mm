@@ -23,7 +23,8 @@
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataOptionsPersistence.h"
 
-#include <VFS/NetDropbox.h>
+// TEMPORARY DEPENDENCY HERE, REMOVE IT:
+#include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
 
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
@@ -526,23 +527,23 @@ static bool RouteKeyboardInputIntoTerminal()
         unichar const unicode        = [character characterAtIndex:0];
         unsigned short const keycode = event.keyCode;
         
-        if(keycode == 3 ) { // 'F' button
-            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
-                
-                static const auto account = "mike.kazakov@gmail.com";
-                static const auto g_Token = "4LRIcv92dSgAAAAAAAAMENZLSUeRl53EU1iwuuw4FecM1Y27FEjEXch4HDd3oK3N";
-//                static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yWYustS3CdlqYkN";
-                shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(account, g_Token);
-                
-                [self GoToDir:"/"
-                          vfs:host
-                 select_entry:""
-                        async:true];
-                
-                
-                return true;
-            }
-        }
+//        if(keycode == 3 ) { // 'F' button
+//            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
+//                
+//                static const auto account = "mike.kazakov@gmail.com";
+//                static const auto g_Token = "4LRIcv92dSgAAAAAAAAMENZLSUeRl53EU1iwuuw4FecM1Y27FEjEXch4HDd3oK3N";
+////                static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yWYustS3CdlqYkN";
+//                shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(account, g_Token);
+//                
+//                [self GoToDir:"/"
+//                          vfs:host
+//                 select_entry:""
+//                        async:true];
+//                
+//                
+//                return true;
+//            }
+//        }
         
         if( unicode == NSTabCharacter ) { // Tab button
             [self.state changeFocusedSide];
@@ -985,6 +986,11 @@ static bool RouteKeyboardInputIntoTerminal()
     m_DirectoryLoadingQ.Run([=]{
         _task( [sq]{ return sq->IsStopped(); } );
     });
+}
+
+- (NetworkConnectionsManager&)networkConnectionsManager
+{
+    return ConfigBackedNetworkConnectionsManager::Instance();
 }
 
 @end

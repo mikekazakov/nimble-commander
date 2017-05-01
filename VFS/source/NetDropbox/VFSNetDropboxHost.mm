@@ -211,7 +211,7 @@ int VFSNetDropboxHost::Stat(const char *_path,
     
     if( strcmp( _path, "/") == 0 ) {
         // special treatment for root dir
-        _st.mode = S_IRUSR | S_IWUSR | S_IFDIR;
+        _st.mode = DirectoryAccessMode;
         _st.meaning.mode = true;
         return 0;
     }
@@ -237,14 +237,8 @@ int VFSNetDropboxHost::Stat(const char *_path,
         if( md.name.empty() )
             return VFSError::GenericError;
         
-        if( md.is_directory  ) {
-            _st.mode = S_IRUSR | S_IWUSR | S_IFDIR;
-            _st.meaning.mode = true;
-        }
-        else {
-            _st.mode = S_IRUSR | S_IWUSR | S_IFREG;
-            _st.meaning.mode = true;
-        }
+        _st.mode = md.is_directory ? DirectoryAccessMode : RegularFileAccessMode;
+        _st.meaning.mode = true;
 
         if( md.size >= 0 ) {
             _st.size = md.size;
@@ -347,7 +341,7 @@ int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
         int index = 0;
         if( !(_flags & VFSFlags::F_NoDotDot) && path != "" ) {
             listing_source.filenames.emplace_back( ".." );
-            listing_source.unix_modes.emplace_back( S_IRUSR | S_IWUSR | S_IFDIR );
+            listing_source.unix_modes.emplace_back( DirectoryAccessMode );
             listing_source.unix_types.emplace_back( DT_DIR );
             index++;
         }
@@ -355,8 +349,8 @@ int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
         for( auto &e: entries ) {
             listing_source.filenames.emplace_back( e.name );
             listing_source.unix_modes.emplace_back( e.is_directory ?
-                (S_IRUSR | S_IWUSR | S_IFDIR) :
-                (S_IRUSR | S_IWUSR | S_IFREG) );
+                DirectoryAccessMode :
+                RegularFileAccessMode );
             listing_source.unix_types.emplace_back( e.is_directory ? DT_DIR : DT_REG );
             if( e.size >= 0  )
                 listing_source.sizes.insert( index, e.size );

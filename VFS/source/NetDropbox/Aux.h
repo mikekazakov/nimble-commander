@@ -39,6 +39,9 @@ namespace VFSNetDropbox
         static NSURL* const UploadSessionAppend;
         static NSURL* const UploadSessionFinish;
     };
+    
+    constexpr uint16_t DirectoryAccessMode = S_IRUSR | S_IWUSR | S_IFDIR | S_IXUSR;
+    constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
 
     void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const string &_path);
     void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const string &_path);

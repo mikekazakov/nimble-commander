@@ -36,7 +36,7 @@ struct ConnectionPathBuilder : public NetworkConnectionsManager::ConnectionVisit
         return move(path);
     }
 private:
-    void Visit( const NetworkConnectionsManager::FTPConnection &ftp )
+    void Visit( const NetworkConnectionsManager::FTP &ftp )
     {
         path = "ftp://" + (ftp.user.empty() ? ftp.host : ftp.user + "@" + ftp.host);
     }
@@ -109,7 +109,7 @@ void NetworkConnectionsManager::Connection::Accept(
 }
 
 void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::FTPConnection &_ftp )
+    const NetworkConnectionsManager::FTP &_ftp )
 {
 }
 
@@ -133,7 +133,7 @@ bool NetworkConnectionsManager::BaseConnection::operator==(const BaseConnection&
     return uuid == _rhs.uuid && title == _rhs.title;
 }
 
-bool NetworkConnectionsManager::FTPConnection::operator==(const FTPConnection&_rhs) const noexcept
+bool NetworkConnectionsManager::FTP::operator==(const FTP&_rhs) const noexcept
 {
     return BaseConnection::operator==(_rhs) &&
         user == _rhs.user &&

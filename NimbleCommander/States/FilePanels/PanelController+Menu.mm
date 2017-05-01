@@ -124,7 +124,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
                       password:(const string&)_passwd
 {
     dispatch_assert_background_queue();    
-    auto &info = _connection.Get<NetworkConnectionsManager::FTPConnection>();
+    auto &info = _connection.Get<NetworkConnectionsManager::FTP>();
     try {
         auto host = make_shared<VFSNetFTPHost>(info.host,
                                                info.user,
@@ -309,7 +309,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         should_save_passwd = true;
     }
     
-    if( connection.IsType<NetworkConnectionsManager::FTPConnection>() )
+    if( connection.IsType<NetworkConnectionsManager::FTP>() )
         m_DirectoryLoadingQ.Run([=]{
             bool success = [self GoToFTPWithConnection:connection password:passwd];
             if( success && should_save_passwd )

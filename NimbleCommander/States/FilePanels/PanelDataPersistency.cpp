@@ -281,7 +281,7 @@ optional<PanelDataPersisency::Location> PanelDataPersisency::JSONToLocation( con
 
 static const char *VFSTagForNetworkConnection( const NetworkConnectionsManager::Connection &_conn )
 {
-    if( auto ftp = _conn.Cast<NetworkConnectionsManager::FTPConnection>() )
+    if( auto ftp = _conn.Cast<NetworkConnectionsManager::FTP>() )
         return VFSNetFTPHost::Tag;
     else if( auto sftp =_conn.Cast<NetworkConnectionsManager::SFTPConnection>() )
         return VFSNetSFTPHost::Tag;

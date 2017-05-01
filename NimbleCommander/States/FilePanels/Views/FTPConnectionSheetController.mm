@@ -16,7 +16,7 @@
 @implementation FTPConnectionSheetController
 {
     optional<NetworkConnectionsManager::Connection> m_Original;
-    NetworkConnectionsManager::FTPConnection m_Connection;
+    NetworkConnectionsManager::FTP m_Connection;
 }
 
 - (void) windowDidLoad
@@ -72,7 +72,7 @@
     [self window];
     
     m_Original = _conn;
-    auto &c = m_Original->Get<NetworkConnectionsManager::FTPConnection>();
+    auto &c = m_Original->Get<NetworkConnectionsManager::FTP>();
 
     self.title = [NSString stringWithUTF8StdString:c.title];
     self.server = [NSString stringWithUTF8StdString:c.host];

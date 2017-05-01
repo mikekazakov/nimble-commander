@@ -24,7 +24,7 @@ public:
     }
 
 private:
-    virtual void Visit( const NetworkConnectionsManager::FTPConnection &_ftp )
+    virtual void Visit( const NetworkConnectionsManager::FTP &_ftp )
     {
         m_Sheet = [[FTPConnectionSheetController alloc] init];
     }

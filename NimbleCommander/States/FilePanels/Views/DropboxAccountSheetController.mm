@@ -5,9 +5,9 @@
 
 static const auto kClientID = @"ics7strw94rj93l";
 static const auto kClientSecret = @"jz0dp0x27yw1cg3";
-static const uint16_t g_LoopbackPort = 56789;
+static const auto g_LoopbackPort = (uint16_t)56789;
 static const auto g_SuccessURL =
-    [NSURL URLWithString:@"http://openid.github.io/AppAuth-iOS/redirect/"];
+    [NSURL URLWithString:@"http://magnumbytes.com/static/dropbox_oauth_redirect.html"];
 static const auto g_AuthorizationEndpoint =
     [NSURL URLWithString:@"https://www.dropbox.com/oauth2/authorize"];
 static const auto g_TokenEndpoint =

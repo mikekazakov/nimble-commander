@@ -100,12 +100,28 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 
     
     m_Connections = m_Manager->AllConnectionsByMRU();
+    
+    [self reloadConnections];
+    if( !m_Connections.empty() )
+        [self focusConnection:m_Connections.front()];
 }
 
 - (void) reloadConnections
 {
    m_Connections = m_Manager->AllConnectionsByMRU();
+   
+   int current = (int)self.connectionsTable.selectedRow;
    [self.connectionsTable reloadData];
+   if( current >= 0 ) {
+        const auto rows = self.connectionsTable.numberOfRows;
+       if( rows > current )
+           [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:current]
+                              byExtendingSelection:false];
+       else if( rows > 0  )
+           [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:rows-1]
+                              byExtendingSelection:false];
+   }
+   
    [self validateButtons];
 }
 
@@ -219,6 +235,17 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     }];
 }
 
+- (void) focusConnection:(const NetworkConnectionsManager::Connection&)_connection
+{
+   const auto new_it = find( begin(m_Connections), end(m_Connections), _connection );
+    if( new_it != end(m_Connections) ) {
+        const auto new_ind = distance( begin(m_Connections), new_it );
+        [self.connectionsTable selectRowIndexes:[NSIndexSet indexSetWithIndex:new_ind]
+                           byExtendingSelection:false];
+        [self.connectionsTable scrollRowToVisible:new_ind];
+    }
+}
+
 - (void)insertCreatedConnection:(NetworkConnectionsManager::Connection)_connection
                    withPassword:(const string&)_password
 {
@@ -226,6 +253,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     m_Manager->SetPassword(_connection, _password);
     
     [self reloadConnections];
+    [self focusConnection:_connection];
 }
 
 - (void) runNewConnectionSheet:(SheetController<ConnectionSheetProtocol>*)_sheet

@@ -32,7 +32,7 @@
                             <rect key="frame" x="1" y="0.0" width="569" height="381"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView toolTip="^I" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="K0P-Bb-xhr" viewBased="YES" id="NUn-bn-bEY">
+                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="K0P-Bb-xhr" viewBased="YES" id="NUn-bn-bEY">
                                     <rect key="frame" x="0.0" y="0.0" width="569" height="358"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>

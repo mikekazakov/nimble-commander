@@ -107,6 +107,7 @@
                                         </tableColumn>
                                     </tableColumns>
                                     <connections>
+                                        <action trigger="doubleAction" selector="onEdit:" target="-2" id="BQE-WC-BdH"/>
                                         <outlet property="dataSource" destination="-2" id="pGH-0S-dF7"/>
                                         <outlet property="delegate" destination="-2" id="fn4-5S-xj1"/>
                                     </connections>

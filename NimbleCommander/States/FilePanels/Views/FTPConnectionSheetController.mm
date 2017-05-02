@@ -31,20 +31,15 @@
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     GA().PostScreenView("FTP Connection");
-}
-
-- (void)fillInfoFromStoredConnection:(NetworkConnectionsManager::Connection)_conn
-{
-    [self window];
     
-    m_Original = _conn;
-    auto &c = m_Original->Get<NetworkConnectionsManager::FTP>();
-
-    self.title = [NSString stringWithUTF8StdString:c.title];
-    self.server = [NSString stringWithUTF8StdString:c.host];
-    self.username = [NSString stringWithUTF8StdString:c.user];
-    self.path = [NSString stringWithUTF8StdString:c.path];
-    self.port = [NSString stringWithFormat:@"%li", c.port];
+    if( m_Original  ) {
+        auto &c = m_Original->Get<NetworkConnectionsManager::FTP>();
+        self.title = [NSString stringWithUTF8StdString:c.title];
+        self.server = [NSString stringWithUTF8StdString:c.host];
+        self.username = [NSString stringWithUTF8StdString:c.user];
+        self.path = [NSString stringWithUTF8StdString:c.path];
+        self.port = [NSString stringWithFormat:@"%li", c.port];
+    }
 }
 
 - (IBAction)OnConnect:(id)sender
@@ -79,7 +74,7 @@
 
 - (void) setConnection:(NetworkConnectionsManager::Connection)connection
 {
-    [self fillInfoFromStoredConnection:connection];
+    m_Original = connection;
 }
 
 - (NetworkConnectionsManager::Connection)connection

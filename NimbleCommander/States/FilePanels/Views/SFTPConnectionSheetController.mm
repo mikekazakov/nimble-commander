@@ -13,14 +13,7 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 @property (strong) NSString *port;
 @property (strong) NSString *keypath;
 @property (strong) IBOutlet NSButton *connectButton;
-
-- (IBAction)OnConnect:(id)sender;
-- (IBAction)OnClose:(id)sender;
-- (IBAction)OnChooseKey:(id)sender;
-- (void)fillInfoFromStoredConnection:(NetworkConnectionsManager::Connection)_conn;
-@property (readonly, nonatomic) NetworkConnectionsManager::Connection result;
 @end
-
 
 @implementation SFTPConnectionSheetController
 {
@@ -53,20 +46,16 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
         self.connectButton.title = self.connectButton.alternateTitle;
 
     GA().PostScreenView("SFTP Connection");
-}
-
-- (void)fillInfoFromStoredConnection:(NetworkConnectionsManager::Connection)_conn
-{
-    [self window];
-
-    m_Original = _conn;
-    auto &c = m_Original->Get<NetworkConnectionsManager::SFTP>();
     
-    self.title = [NSString stringWithUTF8StdString:c.title];
-    self.server = [NSString stringWithUTF8StdString:c.host];
-    self.username = [NSString stringWithUTF8StdString:c.user];
-    self.keypath = [NSString stringWithUTF8StdString:c.keypath];
-    self.port = [NSString stringWithFormat:@"%li", c.port];
+    
+    if( m_Original ) {
+        auto &c = m_Original->Get<NetworkConnectionsManager::SFTP>();
+        self.title = [NSString stringWithUTF8StdString:c.title];
+        self.server = [NSString stringWithUTF8StdString:c.host];
+        self.username = [NSString stringWithUTF8StdString:c.user];
+        self.keypath = [NSString stringWithUTF8StdString:c.keypath];
+        self.port = [NSString stringWithFormat:@"%li", c.port];
+    }
 }
 
 - (IBAction)OnConnect:(id)sender
@@ -108,14 +97,10 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
                   }];
 }
 
-- (NetworkConnectionsManager::Connection) result
-{
-    return NetworkConnectionsManager::Connection( m_Connection );
-}
-
 - (void)setConnection:(NetworkConnectionsManager::Connection)connection
 {
-    [self fillInfoFromStoredConnection:connection];
+//    [self fillInfoFromStoredConnection:connection];
+    m_Original = connection;
 }
 
 - (NetworkConnectionsManager::Connection)connection

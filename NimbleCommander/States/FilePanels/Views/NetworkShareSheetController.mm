@@ -1,4 +1,6 @@
 #include "NetworkShareSheetController.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 
 @interface NetworkShareSheetController ()
 
@@ -42,25 +44,24 @@
 {
     [super windowDidLoad];
     
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    
+    GA().PostScreenView("LANShare Connection");
+    
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;
     
-    if( m_Original )
-        [self fillInfoFromConnection:*m_Original];
+    if( m_Original ) {
+        auto &c = m_Original->Get<NetworkConnectionsManager::LANShare>();
+        self.title = [NSString stringWithUTF8StdString:c.title];
+        self.server = [NSString stringWithUTF8StdString:c.host];
+        self.username = [NSString stringWithUTF8StdString:c.user];
+        self.share = [NSString stringWithUTF8StdString:c.share];
+        self.mountpath = [NSString stringWithUTF8StdString:c.mountpoint];
+        [self.protocol selectItemWithTag:(int)c.proto];
+    }
     
     [self validate];
-}
-
-- (void)fillInfoFromConnection:(NetworkConnectionsManager::Connection)_conn
-{
-    auto &c = _conn.Get<NetworkConnectionsManager::LANShare>();
-    
-    self.title = [NSString stringWithUTF8StdString:c.title];
-    self.server = [NSString stringWithUTF8StdString:c.host];
-    self.username = [NSString stringWithUTF8StdString:c.user];
-    self.share = [NSString stringWithUTF8StdString:c.share];
-    self.mountpath = [NSString stringWithUTF8StdString:c.mountpoint];
-    [self.protocol selectItemWithTag:(int)c.proto];
 }
 
 - (IBAction)onClose:(id)sender
@@ -95,7 +96,6 @@
 - (void)setConnection:(NetworkConnectionsManager::Connection)connection
 {
     m_Original = connection;
-    [self fillInfoFromConnection:*m_Original];
 }
 
 - (NSString*) providedPassword

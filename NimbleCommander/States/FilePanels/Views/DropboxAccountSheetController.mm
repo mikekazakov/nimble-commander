@@ -2,6 +2,8 @@
 #import <AppAuth.h>
 #include "OIDRedirectHTTPHandler+FixedPort.h"
 #include <VFS/NetDropbox.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 
 static const auto kClientID = @"ics7strw94rj93l";
 static const auto kClientSecret = @"jz0dp0x27yw1cg3";
@@ -62,6 +64,10 @@ enum class State
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    GA().PostScreenView("Dropbox Connection");
+
     
     if( m_Original ) {
         auto &original = m_Original->Get<NetworkConnectionsManager::Dropbox>();

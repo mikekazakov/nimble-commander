@@ -5,6 +5,8 @@
 #include "DropboxAccountSheetController.h"
 #include <Utility/SheetWithHotkeys.h>
 #include <NimbleCommander/Core/Alert.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include <Carbon/Carbon.h>
 
 namespace {
@@ -90,6 +92,10 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    
+    GA().PostScreenView("Network Connections Management");
  
     auto sheet = objc_cast<SheetWithHotkeys>(self.window);
     sheet.onCtrlA = ^{ PeformClickIfEnabled(self.controlButtons, 0); };
@@ -258,6 +264,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 
 - (void) runNewConnectionSheet:(SheetController<ConnectionSheetProtocol>*)_sheet
 {
+    _sheet.setupMode = true;
     [_sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode == NSModalResponseOK )
             [self insertCreatedConnection:_sheet.connection withPassword:_sheet.password];

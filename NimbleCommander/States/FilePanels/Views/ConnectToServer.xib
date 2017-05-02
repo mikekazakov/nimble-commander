@@ -9,6 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="ConnectToServer">
             <connections>
                 <outlet property="addNewConnectionMenu" destination="1sH-Ps-T3X" id="Gi4-u5-GE9"/>
+                <outlet property="connectButton" destination="d4n-Aj-vJt" id="d1c-xP-7yw"/>
                 <outlet property="connectionsTable" destination="NUn-bn-bEY" id="QHu-yi-rz8"/>
                 <outlet property="controlButtons" destination="7X3-e3-N7L" id="wtJ-7u-vVY"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
@@ -26,13 +27,13 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="bxy-cT-TgS">
-                        <rect key="frame" x="20" y="81" width="571" height="374"/>
+                        <rect key="frame" x="20" y="81" width="571" height="382"/>
                         <clipView key="contentView" id="iJR-Ty-nbg">
-                            <rect key="frame" x="1" y="0.0" width="569" height="373"/>
+                            <rect key="frame" x="1" y="0.0" width="569" height="381"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="K0P-Bb-xhr" viewBased="YES" id="NUn-bn-bEY">
-                                    <rect key="frame" x="0.0" y="0.0" width="569" height="350"/>
+                                <tableView toolTip="^I" verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" headerView="K0P-Bb-xhr" viewBased="YES" id="NUn-bn-bEY">
+                                    <rect key="frame" x="0.0" y="0.0" width="569" height="358"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -127,7 +128,10 @@
                     </scrollView>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d4n-Aj-vJt">
                         <rect key="frame" x="505" y="13" width="92" height="32"/>
-                        <buttonCell key="cell" type="push" title="Connect" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5DS-YM-ifY">
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="fwG-hu-PU6"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Connect" bezelStyle="rounded" alignment="center" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5DS-YM-ifY">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
@@ -139,7 +143,10 @@ DQ
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="vN1-7z-qe6">
-                        <rect key="frame" x="430" y="13" width="75" height="32"/>
+                        <rect key="frame" x="413" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="15H-lq-SZs"/>
+                        </constraints>
                         <buttonCell key="cell" type="push" title="Close" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wk0-oi-k9z">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -160,8 +167,8 @@ Gw
                             <font key="font" metaFont="system"/>
                             <segments>
                                 <segment toolTip="^A" image="NSAddTemplate" imageScaling="none" width="23"/>
-                                <segment toolTip="^X" image="NSRemoveTemplate" imageScaling="none" width="23" tag="1"/>
-                                <segment toolTip="^E" image="NSActionTemplate" imageScaling="none" width="23">
+                                <segment toolTip="^X, ⌫" image="NSRemoveTemplate" imageScaling="none" width="23" enabled="NO" tag="1"/>
+                                <segment toolTip="^E" image="NSActionTemplate" imageScaling="none" width="23" enabled="NO">
                                     <nil key="label"/>
                                 </segment>
                             </segments>
@@ -186,9 +193,9 @@ Gw
                     <constraint firstItem="7X3-e3-N7L" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="IzD-Ar-150"/>
                     <constraint firstItem="4lo-R2-W5i" firstAttribute="centerY" secondItem="7X3-e3-N7L" secondAttribute="centerY" id="KWx-Hm-WGY"/>
                     <constraint firstItem="4lo-R2-W5i" firstAttribute="leading" secondItem="7X3-e3-N7L" secondAttribute="trailing" constant="-1" id="Ruk-aq-HOO"/>
-                    <constraint firstItem="bxy-cT-TgS" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="28" id="SPt-o3-45c"/>
-                    <constraint firstItem="vN1-7z-qe6" firstAttribute="top" secondItem="4lo-R2-W5i" secondAttribute="bottom" constant="20" symbolic="YES" id="VR6-QF-PbU"/>
+                    <constraint firstItem="bxy-cT-TgS" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="SZb-MX-JxL"/>
                     <constraint firstItem="d4n-Aj-vJt" firstAttribute="leading" secondItem="vN1-7z-qe6" secondAttribute="trailing" constant="12" symbolic="YES" id="WFN-F8-Pcf"/>
+                    <constraint firstItem="vN1-7z-qe6" firstAttribute="top" secondItem="4lo-R2-W5i" secondAttribute="bottom" constant="20" symbolic="YES" id="XXr-SC-JDU"/>
                     <constraint firstItem="d4n-Aj-vJt" firstAttribute="centerY" secondItem="vN1-7z-qe6" secondAttribute="centerY" id="Z6i-Kq-v3N"/>
                     <constraint firstItem="bxy-cT-TgS" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" id="ZJ8-YD-VH1"/>
                     <constraint firstAttribute="trailing" secondItem="4lo-R2-W5i" secondAttribute="trailing" constant="20" symbolic="YES" id="avE-Dh-kvv"/>
@@ -231,7 +238,7 @@ Gw
                     </connections>
                 </menuItem>
             </items>
-            <point key="canvasLocation" x="99" y="670"/>
+            <point key="canvasLocation" x="-265" y="39"/>
         </menu>
     </objects>
     <resources>

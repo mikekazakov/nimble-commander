@@ -5,6 +5,7 @@
 #include "DropboxAccountSheetController.h"
 #include <Utility/SheetWithHotkeys.h>
 #include <NimbleCommander/Core/Alert.h>
+#include <Carbon/Carbon.h>
 
 namespace {
 class SheetsDispatcher : public NetworkConnectionsManager::ConnectionVisitor
@@ -62,6 +63,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 @property (strong) IBOutlet NSTableView *connectionsTable;
 @property (strong) IBOutlet NSSegmentedControl *controlButtons;
 @property (strong) IBOutlet NSMenu *addNewConnectionMenu;
+@property (strong) IBOutlet NSButton *connectButton;
 
 @end
 
@@ -91,6 +93,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
  
     auto sheet = objc_cast<SheetWithHotkeys>(self.window);
     sheet.onCtrlA = ^{ PeformClickIfEnabled(self.controlButtons, 0); };
+    sheet.onCtrlI = [sheet makeFocusHotkey:self.connectionsTable];
     sheet.onCtrlX = ^{ PeformClickIfEnabled(self.controlButtons, 1); };
     sheet.onCtrlE = ^{ PeformClickIfEnabled(self.controlButtons, 2); };
     [self.controlButtons setMenu:self.addNewConnectionMenu forSegment:0];
@@ -103,6 +106,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 {
    m_Connections = m_Manager->AllConnectionsByMRU();
    [self.connectionsTable reloadData];
+   [self validateButtons];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
@@ -167,6 +171,20 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
         m_OutputConnection = m_Connections.at(row);
 
     [self endSheet:NSModalResponseOK];
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+    [self validateButtons];
+}
+
+- (void) validateButtons
+{
+    const auto row = self.connectionsTable.selectedRow;
+    const auto has_selection = row>=0;
+    [self.controlButtons setEnabled:has_selection forSegment:1];
+    [self.controlButtons setEnabled:has_selection forSegment:2];
+    self.connectButton.enabled = has_selection;
 }
 
 - (IBAction)onEdit:(id)sender
@@ -274,6 +292,18 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
         m_Manager->RemoveConnection(connection);
         [self reloadConnections];
     }
+}
+
+- (void) keyDown:(NSEvent *)event
+{
+    if( event.type == NSEventTypeKeyDown &&
+        event.keyCode == kVK_Delete &&
+        self.window.firstResponder == self.connectionsTable) {
+        PeformClickIfEnabled(self.controlButtons, 1);
+        return;
+    }
+
+    return [super keyDown:event];
 }
 
 @end

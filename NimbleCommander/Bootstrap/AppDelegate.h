@@ -1,11 +1,3 @@
-//
-//  AppDelegate.h
-//  Directories
-//
-//  Created by Michael G. Kazakov on 08.02.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #pragma once
 
 @class MainWindowController;
@@ -18,6 +10,7 @@ class ThemesManager;
 class ExternalEditorsStorage;
 class VFSHost;
 class FavoriteLocationsStorage;
+class NetworkConnectionsManager;
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
@@ -83,6 +76,8 @@ class FavoriteLocationsStorage;
 @property (nonatomic, readonly) ExternalEditorsStorage& externalEditorsStorage;
 
 @property (nonatomic, readonly) FavoriteLocationsStorage& favoriteLocationsStorage;
+
+@property (nonatomic, readonly) NetworkConnectionsManager &networkConnectionsManager;
 
 @property (nonatomic, readonly) AppStoreHelper *appStoreHelper;
 

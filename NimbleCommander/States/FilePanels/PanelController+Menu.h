@@ -1,4 +1,3 @@
-#include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include "PanelController.h"
 
 @interface PanelController (Menu)
@@ -7,6 +6,5 @@
 - (IBAction)OnGoToSavedConnectionItem:(id)sender;
 - (IBAction)OnGoToFavoriteLocation:(id)sender;
 - (IBAction)OnFileViewCommand:(id)sender;
-- (IBAction)OnBatchRename:(id)sender;
 
 @end

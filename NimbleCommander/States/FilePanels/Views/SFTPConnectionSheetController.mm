@@ -1,23 +1,8 @@
-//
-//  SFTPConnectionSheetController.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 31/08/14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "SFTPConnectionSheetController.h"
-
-//#include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
-//static NetworkConnectionsManager &ConnectionsManager()
-//{
-//    return ConfigBackedNetworkConnectionsManager::Instance();
-//}
-
 
 static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 

@@ -23,9 +23,6 @@
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataOptionsPersistence.h"
 
-// TEMPORARY DEPENDENCY HERE, REMOVE IT:
-#include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
-
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
@@ -990,7 +987,7 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (NetworkConnectionsManager&)networkConnectionsManager
 {
-    return ConfigBackedNetworkConnectionsManager::Instance();
+    return AppDelegate.me.networkConnectionsManager;
 }
 
 @end

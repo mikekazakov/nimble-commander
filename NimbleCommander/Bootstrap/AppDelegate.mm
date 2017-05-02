@@ -1,11 +1,3 @@
-//
-//  AppDelegate.m
-//  Directories
-//
-//  Created by Michael G. Kazakov on 08.02.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Sparkle/Sparkle.h>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/CFDefaultsCPP.h>
@@ -32,6 +24,8 @@
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>
 #include <NimbleCommander/Core/Alert.h>
+#include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
+#include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/States/Terminal/MainWindowTerminalState.h>
 #include <NimbleCommander/States/MainWindowController.h>
@@ -296,6 +290,13 @@ static AppDelegate *g_Me = nil;
     static auto frequent_delegate = [[FrequentlyVisitedLocationsMenuDelegate alloc]
         initWithStorage:self.favoriteLocationsStorage andClearMenuItem:clear_freq_item];
     clear_freq_item.menu.delegate = frequent_delegate;
+    
+    const auto connections_menu_item = item_for_action("menu.go.connect.network_server");
+    static const auto conn_delegate = [[ConnectionsMenuDelegate alloc] initWithManager:
+        []()->NetworkConnectionsManager &{
+        return g_Me.networkConnectionsManager;
+    }];
+    connections_menu_item.menu.delegate = conn_delegate;
 }
 
 - (void)updateMainMenuFeaturesByVersionAndState
@@ -840,6 +841,11 @@ static AppDelegate *g_Me = nil;
         [window show];
         existing_window = window;
     }
+}
+
+- (NetworkConnectionsManager&)networkConnectionsManager
+{
+    return ConfigBackedNetworkConnectionsManager::Instance();
 }
 
 @end

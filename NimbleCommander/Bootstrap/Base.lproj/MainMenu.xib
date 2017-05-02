@@ -745,9 +745,6 @@ DQ
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
                                     </items>
-                                    <connections>
-                                        <outlet property="delegate" destination="hP9-vf-Pxw" id="hbl-cc-BBU"/>
-                                    </connections>
                                 </menu>
                             </menuItem>
                         </items>
@@ -1032,11 +1029,6 @@ CQ
         </menu>
         <customObject id="494" customClass="AppDelegate"/>
         <customObject id="420" customClass="NSFontManager"/>
-        <customObject id="hP9-vf-Pxw" customClass="ConnectionsMenuDelegate">
-            <connections>
-                <outlet property="recentConnectionsMenuItem" destination="PPi-Oe-OXM" id="wTe-WN-JcS"/>
-            </connections>
-        </customObject>
         <customObject id="7FF-1A-0Ge" customClass="ToolsMenuDelegate"/>
     </objects>
 </document>

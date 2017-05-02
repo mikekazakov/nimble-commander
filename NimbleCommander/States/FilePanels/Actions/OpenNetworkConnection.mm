@@ -4,6 +4,7 @@
 #include "../Views/SFTPConnectionSheetController.h"
 #include "../Views/NetworkShareSheetController.h"
 #include "../Views/ConnectToServer.h"
+#include "../Views/DropboxAccountSheetController.h"
 #include <VFS/Native.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
@@ -189,6 +190,22 @@ void OpenNewSFTPConnection::Perform(PanelController *_target, id _sender) const
 
 void OpenNewDropboxStorage::Perform(PanelController *_target, id _sender) const
 {
+    const auto sheet = [[DropboxAccountSheetController alloc] init];
+    const auto window = _target.window;
+    [sheet beginSheetForWindow:window completionHandler:^(NSModalResponse returnCode) {
+        if(returnCode != NSModalResponseOK)
+            return;
+            
+        auto connection = sheet.connection;
+        string password = sheet.password;
+        
+        _target.networkConnectionsManager.InsertConnection(connection);
+        _target.networkConnectionsManager.SetPassword(connection, password);
+        dispatch_to_background([=]{
+            auto activity = [_target registerExtActivity];
+            GoToDropboxStorage(_target, connection, password);
+        });
+    }];
 }
 
 void OpenNewLANShare::Perform(PanelController *_target, id _sender) const

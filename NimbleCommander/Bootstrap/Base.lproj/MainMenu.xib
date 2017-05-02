@@ -712,29 +712,36 @@ DQ
                                     <action selector="OnGoToFolder:" target="-1" id="O9K-29-SEO"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Connect To..." id="R1g-do-NyV">
+                            <menuItem title="Connect To" id="R1g-do-NyV">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Connect To..." id="vG4-7z-hXO">
+                                <menu key="submenu" title="Connect To" id="vG4-7z-hXO">
                                     <items>
-                                        <menuItem title="FTP Server" tag="14130" id="gZ9-Jg-sEd">
+                                        <menuItem title="FTP Server..." tag="14130" id="gZ9-Jg-sEd">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="OnGoToFTP:" target="-1" id="Vp7-5m-44g"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="SFTP Server" tag="14140" id="bip-nL-0se">
+                                        <menuItem title="SFTP Server..." tag="14140" id="bip-nL-0se">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="OnGoToSFTP:" target="-1" id="j70-jL-OKb"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Network Share" tag="14230" id="AD2-1f-bf0">
+                                        <menuItem title="Dropbox Storage..." tag="14250" id="IiL-lV-Phd">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="OnGoToDropboxStorage:" target="-1" id="D4v-kB-tGa"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Network Share..." tag="14230" id="AD2-1f-bf0">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="OnGoToNetworkShare:" target="-1" id="BbY-bf-FXI"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Network Server" tag="14240" id="IgS-8x-fsy">
+                                        <menuItem isSeparatorItem="YES" id="P4S-jJ-ggd"/>
+                                        <menuItem title="Manage Connections..." tag="14240" id="IgS-8x-fsy">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="OnConnectToNetworkServer:" target="-1" id="oI3-GU-llE"/>

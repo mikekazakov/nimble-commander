@@ -2627,19 +2627,11 @@
 		CF27414D1803E60D006D6687 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				CF75E8DE1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.h */,
-				CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */,
+				CFA7E0141EB83B8D001FE66C /* Network */,
 				CFF877451D83C5700006DF7F /* AskingForRatingOverlayView.h */,
 				CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */,
 				CFDAC2D91DFD12EF0039A104 /* BriefSystemOverview.h */,
 				CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */,
-				CF75E87F1EAF7DC70028C108 /* ConnectionSheetProtocol.h */,
-				CF2F43441EAF345400AA031A /* ConnectToServer.h */,
-				CF2F43451EAF345400AA031A /* ConnectToServer.mm */,
-				CF2F43461EAF345400AA031A /* ConnectToServer.xib */,
-				CF75E8871EB0EFDC0028C108 /* DropboxAccountSheetController.h */,
-				CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */,
-				CF75E8891EB0EFDC0028C108 /* DropboxAccountSheetController.xib */,
 				CF09394B1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.h */,
 				CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */,
 				CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */,
@@ -2652,25 +2644,16 @@
 				CF4E56CF1D506B9200452912 /* FindFilesSheetController.h */,
 				CF4E56D01D506B9200452912 /* FindFilesSheetController.mm */,
 				CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */,
-				CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */,
-				CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */,
-				CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */,
 				CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */,
 				CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */,
 				CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */,
 				CFDAC2F41DFD16DF0039A104 /* MainWndGoToButton.h */,
 				CFDAC2F51DFD16DF0039A104 /* MainWndGoToButton.mm */,
-				CFD8CDA51E84CC3B00E4DC53 /* NetworkShareSheetController.h */,
-				CFD8CDA61E84CC3B00E4DC53 /* NetworkShareSheetController.mm */,
-				CFD8CDA71E84CC3B00E4DC53 /* NetworkShareSheetController.xib */,
 				CFDAC2DC1DFD137F0039A104 /* QuickPreview.h */,
 				CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */,
 				CFA3743D19A8D9C50012D088 /* SelectionWithMaskPopupViewController.h */,
 				CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */,
 				CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */,
-				CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */,
-				CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */,
-				CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */,
 				CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */,
 				CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */,
 				CF8D0CFD1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib */,
@@ -3086,6 +3069,31 @@
 				CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */,
 			);
 			name = Delete;
+			sourceTree = "<group>";
+		};
+		CFA7E0141EB83B8D001FE66C /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				CF75E87F1EAF7DC70028C108 /* ConnectionSheetProtocol.h */,
+				CF2F43441EAF345400AA031A /* ConnectToServer.h */,
+				CF2F43451EAF345400AA031A /* ConnectToServer.mm */,
+				CF2F43461EAF345400AA031A /* ConnectToServer.xib */,
+				CF75E8871EB0EFDC0028C108 /* DropboxAccountSheetController.h */,
+				CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */,
+				CF75E8891EB0EFDC0028C108 /* DropboxAccountSheetController.xib */,
+				CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */,
+				CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */,
+				CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */,
+				CFD8CDA51E84CC3B00E4DC53 /* NetworkShareSheetController.h */,
+				CFD8CDA61E84CC3B00E4DC53 /* NetworkShareSheetController.mm */,
+				CFD8CDA71E84CC3B00E4DC53 /* NetworkShareSheetController.xib */,
+				CF75E8DE1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.h */,
+				CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */,
+				CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */,
+				CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */,
+				CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */,
+			);
+			name = Network;
 			sourceTree = "<group>";
 		};
 		CFAC50CD1714016800A3E5C5 /* Copy */ = {

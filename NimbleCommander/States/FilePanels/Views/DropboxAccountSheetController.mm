@@ -71,7 +71,6 @@ enum class State
     self.titleField.stringValue = [NSString stringWithUTF8StdString:m_Connection.title];
     self.accountField.stringValue = [NSString stringWithUTF8StdString:m_Connection.account];
 
-    self.setupMode = true;
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;
     

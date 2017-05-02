@@ -11,6 +11,7 @@
 @property (strong) NSString *passwordEntered;
 @property (strong) NSString *path;
 @property (strong) NSString *port;
+@property (strong) IBOutlet NSButton *connectButton;
 @end
 
 @implementation FTPConnectionSheetController
@@ -23,6 +24,9 @@
 {
     [super windowDidLoad];
     self.passwordEntered = @"";
+    
+    if( self.setupMode )
+        self.connectButton.title = self.connectButton.alternateTitle;
     
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     

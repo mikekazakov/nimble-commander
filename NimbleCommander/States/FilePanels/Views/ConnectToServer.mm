@@ -181,6 +181,8 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     if( !sheet )
         return;
 
+    sheet.setupMode = true;
+
     string password;
     if( m_Manager->GetPassword(connection, password) )
         sheet.password = password;

@@ -11,6 +11,7 @@
 @property (strong) NSString *mountpath;
 @property (strong) IBOutlet NSPopUpButton *protocol;
 @property (strong) IBOutlet NSPopUpButton *saved;
+@property (strong) IBOutlet NSButton *connectButton;
 
 @property bool valid;
 @property bool nfsSelected;
@@ -43,6 +44,9 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    
+    if( self.setupMode )
+        self.connectButton.title = self.connectButton.alternateTitle;
     
     if( m_Original )
         [self fillInfoFromConnection:*m_Original];

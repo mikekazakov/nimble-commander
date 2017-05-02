@@ -8,5 +8,6 @@
 
 @property (nonatomic) NetworkConnectionsManager::Connection connection;
 @property (nonatomic) string password;
+@property (nonatomic) bool setupMode;
 
 @end

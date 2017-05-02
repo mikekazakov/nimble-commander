@@ -14,6 +14,8 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 @property (strong) NSString *port;
 @property (strong) NSString *keypath;
 @property (strong) IBOutlet NSPopUpButton *saved;
+@property (strong) IBOutlet NSButton *connectButton;
+
 - (IBAction)OnSaved:(id)sender;
 - (IBAction)OnConnect:(id)sender;
 - (IBAction)OnClose:(id)sender;
@@ -51,6 +53,10 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 {
     [super windowDidLoad];
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+
+    if( self.setupMode )
+        self.connectButton.title = self.connectButton.alternateTitle;
+
 
 //    if(!m_Connections.empty()) {
 //        self.saved.autoenablesItems = false;

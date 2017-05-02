@@ -1,5 +1,4 @@
 #include <Habanero/CommonPaths.h>
-#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "SFTPConnectionSheetController.h"
@@ -13,10 +12,8 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 @property (strong) NSString *passwordEntered;
 @property (strong) NSString *port;
 @property (strong) NSString *keypath;
-@property (strong) IBOutlet NSPopUpButton *saved;
 @property (strong) IBOutlet NSButton *connectButton;
 
-- (IBAction)OnSaved:(id)sender;
 - (IBAction)OnConnect:(id)sender;
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnChooseKey:(id)sender;
@@ -27,7 +24,6 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 
 @implementation SFTPConnectionSheetController
 {
-//    vector<NetworkConnectionsManager::Connection> m_Connections;
     optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::SFTP m_Connection;
 }
@@ -36,7 +32,6 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 {
     self = [super init];
     if(self) {
-//        m_Connections = ConnectionsManager().SFTPConnectionsByMRU();
         
         string rsa_path = g_SSHdir + "id_rsa";
         string dsa_path = g_SSHdir + "id_dsa";
@@ -57,43 +52,7 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;
 
-
-//    if(!m_Connections.empty()) {
-//        self.saved.autoenablesItems = false;
-//        
-//        NSMenuItem *pref = [[NSMenuItem alloc] init];
-//        pref.title = NSLocalizedString(@"Recent Servers", "Menu item title, disabled - only as separator");
-//        pref.enabled = false;
-//        [self.saved.menu addItem:pref];
-//        
-//        for(auto &i: m_Connections) {
-//            NSMenuItem *it = [NSMenuItem new];
-//            auto title = ConnectionsManager().TitleForConnection(i);
-//            it.title = [NSString stringWithUTF8StdString:title];
-//            [self.saved.menu addItem:it];
-//        }
-//        
-//        [self.saved.menu addItem:NSMenuItem.separatorItem];
-//        [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];
-//    }
-    
     GA().PostScreenView("SFTP Connection");
-}
-
-- (IBAction)OnSaved:(id)sender
-{
-//    long ind = self.saved.indexOfSelectedItem;
-//    if(ind == self.saved.numberOfItems - 1) {
-//        [self ClearRecentServers];
-//        return;
-//    }
-//    
-//    ind = ind - 2;
-//    if(ind < 0 || ind >= m_Connections.size())
-//        return;
-//    
-//    auto conn = m_Connections[ind];
-//    [self fillInfoFromStoredConnection:conn];
 }
 
 - (void)fillInfoFromStoredConnection:(NetworkConnectionsManager::Connection)_conn
@@ -108,29 +67,6 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
     self.username = [NSString stringWithUTF8StdString:c.user];
     self.keypath = [NSString stringWithUTF8StdString:c.keypath];
     self.port = [NSString stringWithFormat:@"%li", c.port];
-    
-//    string password;
-//    if( ConnectionsManager().GetPassword(_conn, password) )
-//        self.passwordEntered = [NSString stringWithUTF8StdString:password];
-//    else
-//        self.passwordEntered = @"";
-}
-
-- (void) ClearRecentServers
-{
-//    Alert *alert = [[Alert alloc] init];
-//    alert.messageText = NSLocalizedString(@"Are you sure you want to clear the list of recent servers?", "Asking user if he want to clear recent connections");
-//    alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "Informating user that action can't be reverted");
-//    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-//    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-//    if(alert.runModal == NSAlertFirstButtonReturn) {
-//        for( auto &i: m_Connections )
-//            ConnectionsManager().RemoveConnection(i);
-//        m_Connections.clear();
-//        [self.saved selectItemAtIndex:0];
-//        while( self.saved.numberOfItems > 1 )
-//            [self.saved removeItemAtIndex:self.saved.numberOfItems - 1];
-//    }
 }
 
 - (IBAction)OnConnect:(id)sender
@@ -172,13 +108,10 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
                   }];
 }
 
-//@property (readonly, nonatomic) NetworkConnectionsManager::Connection result;
 - (NetworkConnectionsManager::Connection) result
 {
     return NetworkConnectionsManager::Connection( m_Connection );
 }
-
-//@property (nonatomic) NetworkConnectionsManager::Connection connection;
 
 - (void)setConnection:(NetworkConnectionsManager::Connection)connection
 {

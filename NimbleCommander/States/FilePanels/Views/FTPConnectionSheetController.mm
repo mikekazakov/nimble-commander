@@ -30,46 +30,8 @@
     
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
-    
-//    m_Connections = ConnectionsManager().FTPConnectionsByMRU();
-    
-//    if( !m_Connections.empty() ) {
-//        self.saved.autoenablesItems = false;
-        
-//        NSMenuItem *pref = [[NSMenuItem alloc] init];
-//        pref.title = NSLocalizedString(@"Recent Servers", "Menu item title, disabled - only as separator");
-//        pref.enabled = false;
-//        [self.saved.menu addItem:pref];
-//        
-//        for( auto &i: m_Connections ) {
-//            NSMenuItem *it = [NSMenuItem new];
-//            auto title = ConnectionsManager().TitleForConnection(i);
-//            it.title = [NSString stringWithUTF8StdString:title];
-//            [self.saved.menu addItem:it];
-//        }
-//        
-//        [self.saved.menu addItem:NSMenuItem.separatorItem];
-//        [self.saved addItemWithTitle:NSLocalizedString(@"Clear Recent Servers...", "Menu item titile for recents clearing action")];
-//    }
-    
     GA().PostScreenView("FTP Connection");
 }
-
-//- (IBAction)OnSaved:(id)sender
-//{
-//    long ind = self.saved.indexOfSelectedItem;
-//    if(ind == self.saved.numberOfItems - 1) {
-//        [self ClearRecentServers];
-//        return;
-//    }
-//        
-//    ind = ind - 2;
-//    if(ind < 0 || ind >= m_Connections.size())
-//        return;
-//    
-//    auto conn = m_Connections[ind];
-//    [self fillInfoFromStoredConnection:conn];
-//}
 
 - (void)fillInfoFromStoredConnection:(NetworkConnectionsManager::Connection)_conn
 {
@@ -83,32 +45,7 @@
     self.username = [NSString stringWithUTF8StdString:c.user];
     self.path = [NSString stringWithUTF8StdString:c.path];
     self.port = [NSString stringWithFormat:@"%li", c.port];
-    
-//    string password;
-//    if( ConnectionsManager().GetPassword(_conn, password) )
-//        self.passwordEntered = [NSString stringWithUTF8StdString:password];
-//    else
-//        self.passwordEntered = @"";
 }
-
-//- (void) ClearRecentServers
-//{
-//    Alert *alert = [[Alert alloc] init];
-//    alert.messageText = NSLocalizedString(@"Are you sure you want to clear the list of recent servers?", "Asking user for confirmation for clearing recent connections");
-//    alert.informativeText = NSLocalizedString(@"You can’t undo this action.", "Informing user that action can't be reverted");
-//    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-//    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-//    if(alert.runModal == NSAlertFirstButtonReturn) {
-//        
-//        for( auto &i: m_Connections )
-//            ConnectionsManager().RemoveConnection(i);
-//        m_Connections.clear();
-//        
-//        [self.saved selectItemAtIndex:0];
-//        while( self.saved.numberOfItems > 1 )
-//            [self.saved removeItemAtIndex:self.saved.numberOfItems - 1];
-//    }
-//}
 
 - (IBAction)OnConnect:(id)sender
 {
@@ -152,7 +89,6 @@
 
 - (void) setPassword:(string)password
 {
-//    m_Password = password;
     self.passwordEntered = [NSString stringWithUTF8StdString:password];
 }
 
@@ -160,9 +96,5 @@
 {
     return self.passwordEntered ? self.passwordEntered.UTF8String : "";
 }
-
-//@property (nonatomic) NetworkConnectionsManager::Connection connection;
-//@property (nonatomic) string password;
-
 
 @end

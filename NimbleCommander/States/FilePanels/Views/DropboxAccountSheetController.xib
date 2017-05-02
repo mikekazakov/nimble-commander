@@ -23,7 +23,7 @@
             <rect key="contentRect" x="196" y="240" width="415" height="213"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="415" height="213"/>
+                <rect key="frame" x="0.0" y="0.0" width="415" height="197"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nxj-Ka-L2B">
@@ -60,7 +60,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sFi-e5-EbE">
-                        <rect key="frame" x="128" y="110" width="267" height="22"/>
+                        <rect key="frame" x="128" y="94" width="267" height="22"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" enabled="NO" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Press 'Grant access' to setup" drawsBackground="YES" id="iwg-Rw-1Y9">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -68,7 +68,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Cyw-Ao-meX">
-                        <rect key="frame" x="18" y="113" width="104" height="17"/>
+                        <rect key="frame" x="18" y="97" width="104" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Account:" id="fpO-ZD-wds">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -76,7 +76,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="REx-kq-3Eh">
-                        <rect key="frame" x="122" y="66" width="132" height="32"/>
+                        <rect key="frame" x="122" y="50" width="132" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="120" id="hxa-27-aDD"/>
                         </constraints>
@@ -89,7 +89,7 @@ Gw
                         </connections>
                     </button>
                     <progressIndicator wantsLayer="YES" horizontalHuggingPriority="750" verticalHuggingPriority="750" maxValue="100" bezeled="NO" indeterminate="YES" controlSize="small" style="spinning" translatesAutoresizingMaskIntoConstraints="NO" id="RIl-sm-M8e">
-                        <rect key="frame" x="256" y="76" width="16" height="16"/>
+                        <rect key="frame" x="256" y="60" width="16" height="16"/>
                         <connections>
                             <binding destination="-2" name="animate" keyPath="self.isValidating" id="kTR-68-Ozd"/>
                             <binding destination="-2" name="hidden" keyPath="self.isValidating" id="oAg-FI-LBV">
@@ -100,7 +100,7 @@ Gw
                         </connections>
                     </progressIndicator>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="NWy-ms-8l4">
-                        <rect key="frame" x="256" y="72" width="24" height="24"/>
+                        <rect key="frame" x="256" y="56" width="24" height="24"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="24" id="S54-rY-ypV"/>
                             <constraint firstAttribute="width" constant="24" id="jnn-mz-cPr"/>
@@ -115,7 +115,7 @@ Gw
                         </connections>
                     </imageView>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pWt-vt-ecj">
-                        <rect key="frame" x="18" y="141" width="104" height="17"/>
+                        <rect key="frame" x="18" y="125" width="104" height="17"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="fum-Q8-rZD"/>
                         </constraints>
@@ -126,7 +126,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aMa-NE-UfT">
-                        <rect key="frame" x="128" y="138" width="267" height="22"/>
+                        <rect key="frame" x="128" y="122" width="267" height="22"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="arbitrary title" drawsBackground="YES" id="tVZ-rv-nah">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
@@ -134,7 +134,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lTd-md-hPE">
-                        <rect key="frame" x="18" y="176" width="379" height="17"/>
+                        <rect key="frame" x="18" y="160" width="379" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Connect to Dropbox storage:" id="fvv-oA-3o2">
                             <font key="font" metaFont="systemBold"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -142,9 +142,9 @@ Gw
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="45e-Fz-qNi">
-                        <rect key="frame" x="126" y="50" width="271" height="17"/>
+                        <rect key="frame" x="126" y="41" width="271" height="16"/>
                         <textFieldCell key="cell" selectable="YES" sendsActionOnEndEditing="YES" usesSingleLineMode="YES" id="QkD-80-ycg">
-                            <font key="font" metaFont="system"/>
+                            <font key="font" metaFont="system" size="12"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
@@ -157,7 +157,7 @@ Gw
                         </connections>
                     </textField>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cc4-ep-1xV">
-                        <rect key="frame" x="256" y="72" width="24" height="24"/>
+                        <rect key="frame" x="256" y="56" width="24" height="24"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="24" id="Nj9-42-52B"/>
                             <constraint firstAttribute="height" constant="24" id="S22-po-Tdy"/>
@@ -190,10 +190,10 @@ Gw
                     <constraint firstAttribute="trailing" secondItem="nxj-Ka-L2B" secondAttribute="trailing" constant="20" symbolic="YES" id="T5z-V8-JY2"/>
                     <constraint firstItem="NWy-ms-8l4" firstAttribute="leading" secondItem="REx-kq-3Eh" secondAttribute="trailing" constant="8" symbolic="YES" id="U2d-yY-aoR"/>
                     <constraint firstItem="pWt-vt-ecj" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="YhG-o5-RX0"/>
-                    <constraint firstItem="45e-Fz-qNi" firstAttribute="top" secondItem="REx-kq-3Eh" secondAttribute="bottom" constant="6" id="YmE-8g-xWI"/>
+                    <constraint firstItem="45e-Fz-qNi" firstAttribute="top" secondItem="REx-kq-3Eh" secondAttribute="bottom" id="YmE-8g-xWI"/>
                     <constraint firstItem="lTd-md-hPE" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="dDk-p0-MBS"/>
                     <constraint firstItem="aMa-NE-UfT" firstAttribute="leading" secondItem="sFi-e5-EbE" secondAttribute="leading" id="eOd-Er-lPg"/>
-                    <constraint firstItem="5ge-Wd-yfl" firstAttribute="top" secondItem="REx-kq-3Eh" secondAttribute="bottom" constant="32" id="fH5-sL-vee"/>
+                    <constraint firstItem="5ge-Wd-yfl" firstAttribute="top" secondItem="REx-kq-3Eh" secondAttribute="bottom" constant="16" id="fH5-sL-vee"/>
                     <constraint firstItem="cc4-ep-1xV" firstAttribute="centerY" secondItem="REx-kq-3Eh" secondAttribute="centerY" id="h5d-rO-hgj"/>
                     <constraint firstItem="sFi-e5-EbE" firstAttribute="baseline" secondItem="Cyw-Ao-meX" secondAttribute="baseline" id="k3g-gd-cxd"/>
                     <constraint firstItem="NWy-ms-8l4" firstAttribute="centerY" secondItem="REx-kq-3Eh" secondAttribute="centerY" id="nHQ-b9-Bzc"/>

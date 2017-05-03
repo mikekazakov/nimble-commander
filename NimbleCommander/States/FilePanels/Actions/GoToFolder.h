@@ -58,4 +58,9 @@ struct GoToProcessesList : PanelAction
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
+struct GoToFavoriteLocation : PanelAction
+{
+    void Perform( PanelController *_target, id _sender ) const override;
+};
+
 };

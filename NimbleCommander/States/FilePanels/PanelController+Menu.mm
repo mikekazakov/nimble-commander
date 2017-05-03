@@ -1,8 +1,6 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
-#include <NimbleCommander/Core/AnyHolder.h>
 #include "PanelController+Menu.h"
 #include "MainWindowFilePanelState.h"
-#include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include "Actions/CopyFilePaths.h"
 #include "Actions/AddToFavorites.h"
@@ -93,14 +91,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         [self handleGoIntoDirOrArchiveSync:false];
 }
 
-- (IBAction)OnGoToFavoriteLocation:(id)sender
-{
-    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
-        if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
-            if( auto location = any_cast<PanelDataPersisency::Location>(&holder.any) )
-                [self goToPersistentLocation:*location];
-}
-
 - (IBAction)OnOpen:(id)sender { // enter
     [self handleGoIntoDirOrOpenInSystemSync];
 }
@@ -149,6 +139,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self forceRefreshPanel];
 }
 
+- (IBAction)OnGoToFavoriteLocation:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnDeleteCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnDeletePermanentlyCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnMoveToTrash:(id)sender { Perform(_cmd, self, sender); }
@@ -284,6 +275,7 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.go.quick_lists.favorites",       @selector(OnGoToQuickListsFavorites:),  new ShowFavoritesQuickList},
 {"menu.go.quick_lists.volumes",         @selector(OnGoToQuickListsVolumes:),    new ShowVolumesQuickList},
 {"menu.go.quick_lists.connections",     @selector(OnGoToQuickListsConnections:),new ShowConnectionsQuickList},
+{"",                                    @selector(OnGoToFavoriteLocation:),     new GoToFavoriteLocation},
 {"menu.command.select_with_mask",       @selector(OnSelectByMask:),             new SelectAllByMask{true}},
 {"menu.command.select_with_extension",  @selector(OnQuickSelectByExtension:),   new SelectAllByExtension{true}},
 {"menu.command.deselect_with_mask",     @selector(OnDeselectByMask:),           new SelectAllByMask{false}},

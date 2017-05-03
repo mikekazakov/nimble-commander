@@ -1,10 +1,12 @@
+#include "GoToFolder.h"
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
 #include <VFS/PS.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include "../Views/GoToFolderSheetController.h"
 #include "../PanelController.h"
-#include "GoToFolder.h"
+#include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
+#include <NimbleCommander/Core/AnyHolder.h>
 
 namespace panel::actions {
 
@@ -82,6 +84,14 @@ void GoToRootFolder::Perform( PanelController *_target, id _sender ) const
 void GoToProcessesList::Perform( PanelController *_target, id _sender ) const
 {
     [_target GoToDir:"/" vfs:VFSPSHost::GetSharedOrNew() select_entry:"" async:true];
+}
+
+void GoToFavoriteLocation::Perform( PanelController *_target, id _sender ) const
+{
+    if( auto menuitem = objc_cast<NSMenuItem>(_sender) )
+        if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
+            if( auto location = any_cast<PanelDataPersisency::Location>(&holder.any) )
+                [_target goToPersistentLocation:*location];
 }
 
 };

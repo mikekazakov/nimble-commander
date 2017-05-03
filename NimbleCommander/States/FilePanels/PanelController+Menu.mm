@@ -1,16 +1,9 @@
-#include <Habanero/algo.h>
-#include <Utility/NativeFSManager.h>
-#include <VFS/Native.h>
-#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "PanelController+Menu.h"
 #include "MainWindowFilePanelState.h"
 #include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
-#include <NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h>
 #include <NimbleCommander/States/MainWindowController.h>
-#include <NimbleCommander/Operations/Delete/FileDeletionSheetController.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "Actions/CopyFilePaths.h"
 #include "Actions/AddToFavorites.h"
 #include "Actions/GoToFolder.h"
@@ -33,6 +26,7 @@
 #include "Actions/Select.h"
 #include "Actions/CopyToPasteboard.h"
 #include "Actions/OpenNetworkConnection.h"
+#include "Actions/Delete.h"
 
 static const panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
@@ -52,9 +46,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
         IF_MENU_TAG("menu.command.quick_look")              return m_View.item && !self.state.anyPanelCollapsed;
         IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
-        IF_MENU_TAG("menu.command.move_to_trash")           return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-        IF_MENU_TAG("menu.command.delete")                  return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
-        IF_MENU_TAG("menu.command.delete_permanently")      return m_View.item && (!m_View.item.IsDotDot() || m_Data.Stats().selected_entries_amount > 0);
         return true;
     }
     catch(exception &e) {
@@ -118,18 +109,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self handleOpenInSystem];
 }
 
-// when Operation.AddOnFinishHandler will use C++ lambdas - change return type here:
-- (void (^)()) refreshCurrentControllerLambda
-{
-    __weak auto cur = self;
-    auto update_this_panel = [=] {
-        dispatch_to_main_queue( [=]{
-            [(PanelController*)cur refreshPanel];
-        });
-    };
-    return update_this_panel;
-}
-
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {
     if( auto i = self.view.item ) {
         if( i.IsDir() )
@@ -170,101 +149,9 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self forceRefreshPanel];
 }
 
-- (void)DeleteFiles:(bool)_delete_permanently
-{
-    auto items = to_shared_ptr(self.selectedEntriesOrFocusedEntry);
-    if( items->empty() )
-        return;
-
-    unordered_set<string> dirs;
-    bool all_native = all_of(begin(*items), end(*items), [&](auto &i){
-        if( !i.Host()->IsNativeFS() )
-            return false;
-        dirs.emplace( i.Directory() );
-        return true;
-    });
-    
-    FileDeletionSheetController *sheet = [[FileDeletionSheetController alloc] initWithItems:items];
-    if( all_native ) {
-        bool all_have_trash = all_of(begin(dirs), end(dirs), [](auto &i){
-            if( auto vol = NativeFSManager::Instance().VolumeFromPath(i) )
-                if( vol->interfaces.has_trash )
-                    return true;
-            return false;
-        });
-        
-        sheet.allowMoveToTrash = all_have_trash;
-        sheet.defaultType = _delete_permanently ?
-            FileDeletionOperationType::Delete :
-            (sheet.allowMoveToTrash ? FileDeletionOperationType::MoveToTrash : FileDeletionOperationType::Delete);
-    }
-    else {
-        sheet.allowMoveToTrash = false;
-        sheet.defaultType = FileDeletionOperationType::Delete;
-    }
-
-    [sheet beginSheetForWindow:self.window
-             completionHandler:^(NSModalResponse returnCode) {
-                 if(returnCode == NSModalResponseOK){
-                     FileDeletionOperation *op = [[FileDeletionOperation alloc] initWithFiles:move(*items)
-                                                                                         type:sheet.resultType];
-                     if( !self.receivesUpdateNotifications )
-                         [op AddOnFinishHandler:self.refreshCurrentControllerLambda];
-                     [self.state AddOperation:op];
-                 }
-             }];
-}
-
-- (IBAction)OnDeleteCommand:(id)sender
-{
-    [self DeleteFiles:false];
-}
-
-- (IBAction)OnDeletePermanentlyCommand:(id)sender
-{
-    [self DeleteFiles:true];
-}
-
-- (IBAction)OnMoveToTrash:(id)sender
-{
-    auto items = self.selectedEntriesOrFocusedEntry;
-    unordered_set<string> dirs;
-    bool all_native = all_of(begin(items), end(items), [&](auto &i){
-        if( !i.Host()->IsNativeFS() )
-            return false;
-        dirs.emplace( i.Directory() );
-        return true;
-    });
-    
-    if( !all_native ) {
-        // instead of trying to silently reap files on VFS like FTP (that means we'll erase it, not move to trash) -
-        // forward request as a regular F8 delete
-        [self OnDeleteCommand:self];
-        return;
-    }
-
-    bool all_have_trash = all_of(begin(dirs), end(dirs), [](auto &i){
-        if( auto vol = NativeFSManager::Instance().VolumeFromPath(i) )
-            if( vol->interfaces.has_trash )
-                return true;
-        return false;
-    });
-    
-    if( !all_have_trash ) {
-        // if user called MoveToTrash by cmd+backspace but there's no trash on this volume:
-        // show a dialog and ask him to delete a file permanently
-        [self OnDeleteCommand:self];
-        return;
-    }
-    
-    FileDeletionOperation *op = [[FileDeletionOperation alloc] initWithFiles:move(items)
-                                                                        type:FileDeletionOperationType::MoveToTrash];
-    if( !self.receivesUpdateNotifications )
-        [op AddOnFinishHandler:self.refreshCurrentControllerLambda];
-    
-    [self.state AddOperation:op];
-}
-
+- (IBAction)OnDeleteCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnDeletePermanentlyCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnMoveToTrash:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToSavedConnectionItem:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToFTP:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToSFTP:(id)sender { Perform(_cmd, self, sender); }
@@ -411,6 +298,9 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.command.batch_rename",           @selector(OnBatchRename:),              new BatchRename},
 {"menu.command.rename_in_place",        @selector(OnRenameFileInPlace:),        new RenameInPlace},
 {"menu.command.open_xattr",             @selector(OnOpenExtendedAttributes:),   new OpenXAttr},
+{"menu.command.move_to_trash",          @selector(OnMoveToTrash:),              new MoveToTrash},
+{"menu.command.delete",                 @selector(OnDeleteCommand:),            new Delete},
+{"menu.command.delete_permanently",     @selector(OnDeletePermanentlyCommand:), new Delete{true}},
 };
 
 static const PanelAction *ActionByTag(int _tag) noexcept

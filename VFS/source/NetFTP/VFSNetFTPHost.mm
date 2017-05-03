@@ -604,11 +604,6 @@ bool VFSNetFTPHost::IsWritable() const
     return true;
 }
 
-bool VFSNetFTPHost::IsWritableAtPath(const char *_dir) const
-{
-    return true;
-}
-
 int VFSNetFTPHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     shared_ptr<VFSNetFTP::Directory> dir;

@@ -40,7 +40,6 @@ public:
 
     // core VFSHost methods
     virtual bool IsWritable() const override;
-    virtual bool IsWritableAtPath(const char *_dir) const override;
     
     virtual int Stat(const char *_path,
                      VFSStat &_st,

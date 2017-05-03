@@ -1,22 +1,14 @@
-//
-//  MainWindowFilePanelState+ContextMenu.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 07.11.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <sys/stat.h>
 #include <Sparkle/Sparkle.h>
 #include "MainWindowFilePanelState+ContextMenu.h"
 #include "PanelAux.h"
 #include <NimbleCommander/Core/LSUrls.h>
-#include <NimbleCommander/Operations/Delete/FileDeletionOperation.h>
 #include "PanelController.h"
 #include <NimbleCommander/Operations/Compress/FileCompressOperation.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "Actions/CopyToPasteboard.h"
+#include "Actions/Delete.h"
 
 struct OpenWithHandler
 {
@@ -160,6 +152,8 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     int                                 m_DirsCount;
     int                                 m_FilesCount;
     unique_ptr<panel::actions::PanelAction> m_CopyAction;
+    unique_ptr<panel::actions::PanelAction> m_MoveToTrashAction;
+    unique_ptr<panel::actions::PanelAction> m_DeletePermanentlyAction;
 }
 
 - (id) initWithData:(vector<VFSListingItem>) _items
@@ -185,6 +179,8 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         self.minimumWidth = 200; // hardcoding is bad!
     
         m_CopyAction.reset( new panel::actions::context::CopyToPasteboard{m_Items} );
+        m_MoveToTrashAction.reset( new panel::actions::context::MoveToTrash{m_Items} );
+        m_DeletePermanentlyAction.reset( new panel::actions::context::DeletePermanently{m_Items} );
 
         [self doStuffing];
     }
@@ -198,7 +194,6 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void) doStuffing
 {
-    bool cur_pnl_native = m_CommonHost && m_CommonHost->IsNativeFS();
     bool cur_pnl_writable = true;
     if( m_CurrentController.isUniform  )
         cur_pnl_writable = m_CurrentController.vfs->IsWritableAtPath( m_CurrentController.currentDirectoryPath.c_str() );
@@ -336,30 +331,23 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
     //////////////////////////////////////////////////////////////////////
     // Move to Trash / Delete Permanently stuff
-    {
-        NSMenuItem *item;
-        if(cur_pnl_native) {
-            item = [NSMenuItem new];
-            item.title = NSLocalizedStringFromTable(@"Move to Trash", @"FilePanelsContextMenu", "Menu item title to move to trash, for English is 'Move to Trash'");
-            if(cur_pnl_writable) { // gray out this thing on read-only fs
-                item.target = self;
-                item.action = @selector(OnMoveToTrash:);
-            }
-            item.keyEquivalent = @"";
-            [self addItem:item];
-        }
-        
-        item = [NSMenuItem new];
-        item.title = NSLocalizedStringFromTable(@"Delete Permanently", @"FilePanelsContextMenu", "Menu item title to delete file, for English is 'Delete Permanently'");
-        if(cur_pnl_writable) { // gray out this thing on read-only fs
-            item.target = self;
-            item.action = @selector(OnDeletePermanently:);
-        }
-        item.alternate = cur_pnl_native ? true : false;
-        item.keyEquivalent = @"";
-        item.keyEquivalentModifierMask = cur_pnl_native ? NSAlternateKeyMask : 0;
-        [self addItem:item];
-    }
+    const auto trash_item = [NSMenuItem new];
+    trash_item.title = NSLocalizedStringFromTable(@"Move to Trash", @"FilePanelsContextMenu", "Menu item title to move to trash, for English is 'Move to Trash'");
+    trash_item.target = self;
+    trash_item.action = @selector(OnMoveToTrash:);
+    trash_item.hidden = !m_MoveToTrashAction->Predicate(m_CurrentController);
+    trash_item.keyEquivalent = @"";
+    [self addItem:trash_item];
+    
+    const auto delete_item = [NSMenuItem new];
+    delete_item.title = NSLocalizedStringFromTable(@"Delete Permanently", @"FilePanelsContextMenu", "Menu item title to delete file, for English is 'Delete Permanently'");
+    delete_item.target = self;
+    delete_item.action = @selector(OnDeletePermanently:);
+    delete_item.alternate = trash_item.hidden ? false : true;
+    delete_item.keyEquivalent = @"";
+    delete_item.keyEquivalentModifierMask = trash_item.hidden ? 0 : NSAlternateKeyMask;
+    [self addItem:delete_item];
+
     [self addItem:NSMenuItem.separatorItem];
     
     
@@ -461,6 +449,11 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 {
     if( item.action == @selector(OnCopyPaths:) )
         return m_CopyAction->ValidateMenuItem(m_CurrentController, item);
+    if( item.action == @selector(OnMoveToTrash:) )
+        return m_MoveToTrashAction->ValidateMenuItem(m_CurrentController, item);
+    if( item.action == @selector(OnDeletePermanently:) )
+        return m_DeletePermanentlyAction->ValidateMenuItem(m_CurrentController, item);
+
     return true;
 }
 
@@ -521,62 +514,14 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     });
 }
 
-- (void)doDeleteWithType:(FileDeletionOperationType)_type
-{
-    FileDeletionOperation *op = [[FileDeletionOperation alloc] initWithFiles:m_Items
-                                                                        type:_type];
-    __weak PanelController *ws = m_CurrentController;
-    if( !m_CurrentController.receivesUpdateNotifications )
-        [op AddOnFinishHandler:^{
-            dispatch_to_main_queue([=]{
-                if(auto ss = ws)
-                    [ss refreshPanel];
-            });
-        }];
-    
-    [m_MainWnd AddOperation:op];
-}
-
 - (void)OnMoveToTrash:(id)sender
 {
-    // TODO: rewrite
-//    if( m_CommonHost && !m_CommonDir.empty() ) {
-//        vector<string> filenames;
-//        for(auto &i: m_Items)
-//            filenames.emplace_back( i.Filename() );
-//        
-//        FileDeletionOperation *op = [[FileDeletionOperation alloc]
-//                                     initWithFiles:move(filenames)
-//                                     type:FileDeletionOperationType::MoveToTrash
-//                                     dir:m_CommonDir];
-//        [m_MainWnd AddOperation:op];
-//    }
-    
-    [self doDeleteWithType:FileDeletionOperationType::MoveToTrash];
+    m_MoveToTrashAction->Perform(m_CurrentController, sender);
 }
 
 - (void)OnDeletePermanently:(id)sender
 {
-    [self doDeleteWithType:FileDeletionOperationType::Delete];
-    
-    // TODO: rewrite
-//    if( m_CommonHost && !m_CommonDir.empty() ) {
-//        vector<string> filenames;
-//        for(auto &i: m_Items)
-//            filenames.emplace_back( i.Filename() );
-//        
-//        FileDeletionOperation *op = [FileDeletionOperation alloc];
-//        if(m_CommonHost->IsNativeFS())
-//            op = [op initWithFiles:move(filenames)
-//                              type:FileDeletionOperationType::Delete
-//                               dir:m_CommonDir];
-//        else
-//            op = [op initWithFiles:move(filenames)
-//                               dir:m_CommonDir
-//                                at:m_CommonHost];
-//        
-//        [m_MainWnd AddOperation:op];
-//    }
+    m_DeletePermanentlyAction->Perform(m_CurrentController, sender);
 }
 
 - (void)OnCopyPaths:(id)sender

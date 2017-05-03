@@ -600,11 +600,6 @@ bool VFSNetSFTPHost::IsWritable() const
     return true; // dummy now
 }
 
-bool VFSNetSFTPHost::IsWritableAtPath(const char *_dir) const
-{
-    return true; // dummy now
-}
-
 int VFSNetSFTPHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     unique_ptr<Connection> conn;

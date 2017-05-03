@@ -532,11 +532,6 @@ bool VFSNativeHost::IsWritable() const
     return true; // dummy now
 }
 
-bool VFSNativeHost::IsWritableAtPath(const char *_dir) const
-{
-    return true; // dummy now
-}
-
 int VFSNativeHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;

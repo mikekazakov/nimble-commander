@@ -11,6 +11,7 @@ static bool CommonDeletePredicate( PanelController *_target );
 static bool AllAreNative(const vector<VFSListingItem>& _c);
 static unordered_set<string> ExtractDirectories(const vector<VFSListingItem>& _c);
 static bool AllHaveTrash(const vector<VFSListingItem>& _c);
+static void AddPanelRefreshEpilogIfNeeded( PanelController *_target, Operation* _operation );
 
 Delete::Delete( bool _permanently ):
     m_Permanently(_permanently)
@@ -47,14 +48,7 @@ void Delete::Perform( PanelController *_target, id _sender ) const
         if( returnCode == NSModalResponseOK ){
             const auto operation = [[FileDeletionOperation alloc] initWithFiles:move(*items)
                                                                            type:sheet.resultType];
-            if( !_target.receivesUpdateNotifications ) {
-                __weak PanelController *weak_panel = _target;
-                [operation AddOnFinishHandler:[=]{
-                    dispatch_to_main_queue( [=]{
-                        [(PanelController*)weak_panel refreshPanel];
-                    });
-                }];
-            }
+            AddPanelRefreshEpilogIfNeeded(_target, operation);
             [_target.state AddOperation:operation];
         }
     };
@@ -89,14 +83,49 @@ void MoveToTrash::Perform( PanelController *_target, id _sender ) const
     const auto operation = [[FileDeletionOperation alloc]
         initWithFiles:move(items)
                  type:FileDeletionOperationType::MoveToTrash];
-    if( !_target.receivesUpdateNotifications ) {
-        __weak PanelController *weak_panel = _target;
-        [operation AddOnFinishHandler:[=]{
-            dispatch_to_main_queue( [=]{
-                [(PanelController*)weak_panel refreshPanel];
-            });
-        }];
-    }
+    AddPanelRefreshEpilogIfNeeded(_target, operation);
+    [_target.state AddOperation:operation];
+}
+
+context::MoveToTrash::MoveToTrash(const vector<VFSListingItem> &_items):
+    m_Items(_items)
+{
+    m_AllAreNative = AllAreNative(m_Items);
+}
+
+bool context::MoveToTrash::Predicate( PanelController *_target ) const
+{
+    return m_AllAreNative;
+}
+
+void context::MoveToTrash::Perform( PanelController *_target, id _sender ) const
+{
+    const auto operation = [[FileDeletionOperation alloc]
+                            initWithFiles:m_Items
+                            type:FileDeletionOperationType::MoveToTrash];
+    AddPanelRefreshEpilogIfNeeded(_target, operation);
+    [_target.state AddOperation:operation];
+}
+
+context::DeletePermanently::DeletePermanently(const vector<VFSListingItem> &_items):
+    m_Items(_items)
+{
+    m_AllWriteable = all_of(begin(m_Items), end(m_Items), [](const auto &i){
+        return i.Host()->IsWritable();
+    });
+}
+
+bool context::DeletePermanently::Predicate( PanelController *_target ) const
+{
+    return m_AllWriteable;
+}
+
+void context::DeletePermanently::Perform( PanelController *_target, id _sender ) const
+{
+    const auto operation = [[FileDeletionOperation alloc]
+                            initWithFiles:m_Items
+                            type:FileDeletionOperationType::Delete];
+    AddPanelRefreshEpilogIfNeeded(_target, operation);
     [_target.state AddOperation:operation];
 }
 
@@ -132,6 +161,18 @@ static bool AllHaveTrash(const vector<VFSListingItem>& _c)
                 return true;
         return false;
     });
+}
+
+static void AddPanelRefreshEpilogIfNeeded( PanelController *_target, Operation* _operation )
+{
+    if( !_target.receivesUpdateNotifications ) {
+        __weak PanelController *weak_panel = _target;
+        [_operation AddOnFinishHandler:[=]{
+            dispatch_to_main_queue( [=]{
+                [(PanelController*)weak_panel refreshPanel];
+            });
+        }];
+    }
 }
 
 }

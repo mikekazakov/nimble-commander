@@ -267,7 +267,10 @@ static const auto g_LightenFilter = []{
     }
 }
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+- (void)observeValueForKeyPath:(NSString *)keyPath
+                      ofObject:(id)object
+                        change:(NSDictionary *)change
+                       context:(void *)context
 {
     if( !m_PanelView )
         return;
@@ -283,8 +286,8 @@ static const auto g_LightenFilter = []{
             CurrentTheme().FilePanelsHeaderTextColor();
         m_PathTextField.textColor = text_color;
         
-        NSMutableAttributedString *sort_title =
-          [[NSMutableAttributedString alloc] initWithAttributedString:m_SortButton.attributedTitle];
+        const auto sort_title = [[NSMutableAttributedString alloc]
+            initWithAttributedString:m_SortButton.attributedTitle];
         [sort_title addAttribute:NSForegroundColorAttributeName
                            value:text_color
                            range:NSMakeRange(0, sort_title.length)];
@@ -367,7 +370,12 @@ static const auto g_LightenFilter = []{
 {
     if( m_SortMode != _mode ) {
         m_SortMode = _mode;
-        m_SortButton.title = SortLetter(_mode);
+    
+        auto title = [[NSMutableAttributedString alloc]
+            initWithAttributedString:m_SortButton.attributedTitle];
+        [title replaceCharactersInRange:NSMakeRange(0, title.length)
+                             withString:SortLetter(_mode)];
+        m_SortButton.attributedTitle = title;
     }
 }
 

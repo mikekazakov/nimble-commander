@@ -1,11 +1,3 @@
-//
-//  TermParser.h
-//  TermPlays
-//
-//  Created by Michael G. Kazakov on 17.11.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #pragma once
 
 class TermScreen;
@@ -13,6 +5,7 @@ class TermScreen;
 // http://ascii-table.com/ansi-escape-sequences.php
 // http://en.wikipedia.org/wiki/ANSI_escape_code
 // http://graphcomp.com/info/specs/ansi_col.html
+// http://vt100.net/docs/vt100-ug/chapter3.html
 
 class TermParser
 {
@@ -114,6 +107,7 @@ private:
     void CSI_S();
     void CSI_T();
     void CSI_c();
+    void CSI_n();
     void CSI_DEC_PMS(bool _on);
     void EscSave();
     void EscRestore();
@@ -125,4 +119,5 @@ private:
     void UpdateAttrs();
     void DoGoTo(int _x, int _y); // translates _y when m_LineAbs is false.
                                  // on cases when _y stay unchanged it's not necessary to call it
+    void WriteTaskInput( const char *_buffer );
 };

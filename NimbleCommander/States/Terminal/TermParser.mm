@@ -1,11 +1,3 @@
-//
-//  TermParser.cpp
-//  TermPlays
-//
-//  Created by Michael G. Kazakov on 17.11.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Carbon/Carbon.h>
 #include <Utility/FontCache.h>
 #include <NimbleCommander/Core/OrthodoxMonospace.h>
@@ -299,11 +291,9 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
     
     if(c < 32) Flush();
     
-    switch (c)
-    {
+    switch (c) {
         case  0: return;
-        case  7: if(m_EscState == EState::TitleBuf)
-                 {
+        case  7: if(m_EscState == EState::TitleBuf) {
                      m_Scr.SetTitle(m_Title.c_str());
                      m_EscState = EState::Normal;
                      _result_flags |= TermParser::Result_ChangedTitle;
@@ -323,12 +313,10 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
         default: break;
     }
     
-    switch (m_EscState)
-    {
+    switch (m_EscState) {
         case EState::Esc:
             m_EscState = EState::Normal;
-            switch (c)
-            {
+            switch (c) {
                 case '[': m_EscState = EState::LeftBr;    return;
                 case ']': m_EscState = EState::RightBr;   return;
                 case '(': m_EscState = EState::SetG0;     return;
@@ -436,6 +424,7 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
                 case 'r': CSI_r(); return;
                 case '@': CSI_At(); return;
                 case 'c': CSI_c(); return;
+                case 'n': CSI_n(); return;
                 default: printf("unhandled: CSI %c\n", c);
             }
             return;
@@ -588,10 +577,26 @@ void TermParser::CSI_M()
 void TermParser::CSI_c()
 {
     // reporting our id as VT102
-    const char *myid = "\033[?6c";
+    const auto myid = "\033[?6c";
+    if( !m_Params[0] )
+        WriteTaskInput(myid);
+}
 
-    if(!m_Params[0])
-        m_TaskInput(myid, (int)strlen(myid));
+void TermParser::CSI_n()
+{
+    if( m_Params[0] == 3 ) {
+        const auto valid_status = "\033[?0n";
+        WriteTaskInput(valid_status);
+    }
+    else if( m_Params[0] == 6 ) {
+        char buf[64];
+        sprintf(buf,
+                "\033[?%d;%dR",
+                (m_LineAbs ? m_Scr.CursorY() : m_Scr.CursorY() - m_Top) + 1,
+                m_Scr.CursorX() + 1
+                );
+        WriteTaskInput(buf);
+    }
 }
 
 void TermParser::SetDefaultAttrs()
@@ -1163,4 +1168,9 @@ void TermParser::CSI_S()
 {
     int p = m_Params[0] ? m_Params[0] : 1;
     while(p--) m_Scr.DoScrollUp(m_Top, m_Bottom, 1);
+}
+
+void TermParser::WriteTaskInput( const char *_buffer )
+{
+    m_TaskInput( _buffer, (int)strlen(_buffer) );
 }

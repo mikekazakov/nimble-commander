@@ -1,4 +1,5 @@
 #include <Sparkle/Sparkle.h>
+#include <LetsMove/PFMoveApplication.h>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <Habanero/algo.h>
@@ -415,6 +416,9 @@ static AppDelegate *g_Me = nil;
         GlobalConfig().GetBool(g_ConfigForceFn) ) {
         FunctionalKeysPass::Instance().Enable();
     }
+    
+    if( !ActivationManager::ForAppStore() && !self.isRunningTests )
+        PFMoveToApplicationsFolderIfNecessary();
 }
 
 - (void) setupConfigs

@@ -604,6 +604,10 @@
 		CF9069951BB54081000C3CBB /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
 		CF9069961BB54081000C3CBB /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
 		CF90C00A1EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */; };
+		CF90C0291EBB02850056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF90C02A1EBB03280056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF90C02B1EBB04910056E3B8 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; };
+		CF90C02C1EBB04960056E3B8 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; };
 		CF94CF941DD4418000EEA420 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF931DD4418000EEA420 /* Layout.mm */; };
 		CF94CF9D1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF9C1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm */; };
 		CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
@@ -1457,6 +1461,20 @@
 			remoteGlobalIDString = CF960E0C1C97FA73001D8B02;
 			remoteInfo = Utility;
 		};
+		CF90C0251EBB02240056E3B8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 8D1107320486CEB800E47090;
+			remoteInfo = "LetsMove Test";
+		};
+		CF90C0271EBB02240056E3B8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F146F8271CE7094400233A9B;
+			remoteInfo = LetsMove;
+		};
 		CFA53A721D433F8A00C562A7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFC5120916C4BD3D00D247EE /* Project object */;
@@ -1495,6 +1513,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				CF6FAA261B82E22A006E0742 /* Sparkle.framework in Copy Files */,
+				CF90C0291EBB02850056E3B8 /* LetsMove.framework in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1533,6 +1552,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				CFA53A691D433E2A00C562A7 /* Sparkle.framework in Copy Files */,
+				CF90C02A1EBB03280056E3B8 /* LetsMove.framework in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1935,6 +1955,7 @@
 		CF9069991BB55A22000C3CBB /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = NimbleCommander/Operations/Copy/Options.h; sourceTree = SOURCE_ROOT; };
 		CF90C0081EBAE3190056E3B8 /* NetworkConnectionIconProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionIconProvider.h; path = NimbleCommander/Core/NetworkConnectionIconProvider.h; sourceTree = SOURCE_ROOT; };
 		CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkConnectionIconProvider.mm; path = NimbleCommander/Core/NetworkConnectionIconProvider.mm; sourceTree = SOURCE_ROOT; };
+		CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LetsMove.xcodeproj; path = 3rd_Party/LetsMove/LetsMove/LetsMove.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CF94CF921DD4418000EEA420 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/List/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF94CF931DD4418000EEA420 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = NimbleCommander/States/FilePanels/List/Layout.mm; sourceTree = SOURCE_ROOT; };
 		CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewImplementationProtocol.h; path = NimbleCommander/States/FilePanels/PanelViewImplementationProtocol.h; sourceTree = SOURCE_ROOT; };
@@ -2297,6 +2318,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF75E8DB1EB181A30028C108 /* libAppAuth-macOS.a in Frameworks */,
+				CF90C02C1EBB04960056E3B8 /* LetsMove.framework in Frameworks */,
 				CF1FBF3C1E90ABC000D3569C /* NetFS.framework in Frameworks */,
 				CF2A3CE81E667F7600E6C6F0 /* libssh2.a in Frameworks */,
 				CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */,
@@ -2334,6 +2356,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF75E8DA1EB181980028C108 /* libAppAuth-macOS.a in Frameworks */,
+				CF90C02B1EBB04910056E3B8 /* LetsMove.framework in Frameworks */,
 				CFD8CD9D1E823CAC00E4DC53 /* NetFS.framework in Frameworks */,
 				CF2A3CE01E667F5E00E6C6F0 /* libssh2.a in Frameworks */,
 				CF811A921D8262BE001F9E7F /* libcrypto.a in Frameworks */,
@@ -3005,6 +3028,15 @@
 			name = States;
 			sourceTree = "<group>";
 		};
+		CF90C0211EBB02240056E3B8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF90C0261EBB02240056E3B8 /* LetsMove Test.app */,
+				CF90C0281EBB02240056E3B8 /* LetsMove.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -3447,6 +3479,7 @@
 		CFDA1110177E8A15009E29F7 /* 3rd_party */ = {
 			isa = PBXGroup;
 			children = (
+				CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */,
 				CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */,
 				CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */,
 				CFE9DDF21BE1C2BE007BBCD3 /* DisclosureViewController */,
@@ -3673,6 +3706,10 @@
 					ProjectRef = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
 				},
 				{
+					ProductGroup = CF90C0211EBB02240056E3B8 /* Products */;
+					ProjectRef = CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */;
+				},
+				{
 					ProductGroup = CFACF9CD1E24AAD800FD6AB6 /* Products */;
 					ProjectRef = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
 				},
@@ -3825,6 +3862,20 @@
 			fileType = archive.ar;
 			path = libUtility.a;
 			remoteRef = CF768DF41C99C0F4002748BC /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF90C0261EBB02240056E3B8 /* LetsMove Test.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "LetsMove Test.app";
+			remoteRef = CF90C0251EBB02240056E3B8 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF90C0281EBB02240056E3B8 /* LetsMove.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = LetsMove.framework;
+			remoteRef = CF90C0271EBB02240056E3B8 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */ = {
@@ -5846,6 +5897,7 @@
 					3rd_Party/AquaticPrime/include/,
 					3rd_Party/rapidjson/include/,
 					"3rd_Party/AppAuth/AppAuth-iOS/Source/**",
+					3rd_Party/LetsMove/,
 					3rd_Party/MMTabBarView/,
 					Habanero/include/,
 					Utility/include/,
@@ -5922,6 +5974,7 @@
 					3rd_Party/AquaticPrime/include/,
 					3rd_Party/rapidjson/include/,
 					"3rd_Party/AppAuth/AppAuth-iOS/Source/**",
+					3rd_Party/LetsMove/,
 					3rd_Party/MMTabBarView/,
 					Habanero/include/,
 					Utility/include/,

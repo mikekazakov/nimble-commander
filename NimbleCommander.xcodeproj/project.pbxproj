@@ -603,6 +603,7 @@
 		CF9069941BB54081000C3CBB /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
 		CF9069951BB54081000C3CBB /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
 		CF9069961BB54081000C3CBB /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
+		CF90C00A1EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */; };
 		CF94CF941DD4418000EEA420 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF931DD4418000EEA420 /* Layout.mm */; };
 		CF94CF9D1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF9C1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm */; };
 		CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
@@ -1932,6 +1933,8 @@
 		CF9069931BB54081000C3CBB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MassCopySheetController.xib; sourceTree = "<group>"; };
 		CF9069981BB542A5000C3CBB /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = NimbleCommander/Operations/Copy/DialogResults.h; sourceTree = SOURCE_ROOT; };
 		CF9069991BB55A22000C3CBB /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = NimbleCommander/Operations/Copy/Options.h; sourceTree = SOURCE_ROOT; };
+		CF90C0081EBAE3190056E3B8 /* NetworkConnectionIconProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionIconProvider.h; path = NimbleCommander/Core/NetworkConnectionIconProvider.h; sourceTree = SOURCE_ROOT; };
+		CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkConnectionIconProvider.mm; path = NimbleCommander/Core/NetworkConnectionIconProvider.mm; sourceTree = SOURCE_ROOT; };
 		CF94CF921DD4418000EEA420 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/List/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF94CF931DD4418000EEA420 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = NimbleCommander/States/FilePanels/List/Layout.mm; sourceTree = SOURCE_ROOT; };
 		CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewImplementationProtocol.h; path = NimbleCommander/States/FilePanels/PanelViewImplementationProtocol.h; sourceTree = SOURCE_ROOT; };
@@ -3005,6 +3008,8 @@
 		CF9DBE171A48836A00FF735B /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				CF90C0081EBAE3190056E3B8 /* NetworkConnectionIconProvider.h */,
+				CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */,
 				CF2C4DEB1C57A00400DEC75A /* AskForPasswordWindowController.h */,
 				CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */,
 				CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */,
@@ -4842,6 +4847,7 @@
 				CFA7DFF81EB6FD82001FE66C /* OpenNetworkConnection.mm in Sources */,
 				CFDAC2EF1DFD152C0039A104 /* FilePanelsTabbedHolder.mm in Sources */,
 				CF7D134E1BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm in Sources */,
+				CF90C00A1EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm in Sources */,
 				CFDAC2F81DFD17520039A104 /* Common.mm in Sources */,
 				CFDAC25B1DFBF0B30039A104 /* PanelController+DataAccess.mm in Sources */,
 				CFDAC23B1DFBDEBA0039A104 /* AppDelegate.mm in Sources */,

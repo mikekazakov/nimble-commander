@@ -26,6 +26,13 @@ public:
      * sftp://migun@magnumbytes.com.
      */
     static string MakeConnectionPath(const Connection &_conn);
+    
+    /**
+     * Returns a verbose title for connections with the following format:
+     * title - path
+     * or when there's no title:
+     * path
+     */
     static string TitleForConnection(const Connection &_conn);
 
     virtual optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const = 0;

@@ -75,6 +75,11 @@ struct ArcUnRAR
 
 };
 
+PanelDataPersisency::PanelDataPersisency( NetworkConnectionsManager &_conn_manager ):
+    m_ConnectionsManager(_conn_manager)
+{
+}
+
 bool PanelDataPersisency::Location::is_native() const noexcept
 {
     return hosts.empty();
@@ -680,4 +685,17 @@ string PanelDataPersisency::GetPathFromState( const rapidjson::StandaloneValue &
         return _state[g_StackPathKey].GetString();
     
     return "";
+}
+
+optional<NetworkConnectionsManager::Connection> PanelDataPersisency::
+    ExtractConnectionFromLocation( const Location &_location )
+{
+    if( _location.hosts.empty() )
+        return nullopt;
+    
+    if( auto network = any_cast<Network>(&_location.hosts.front()) )
+        if( auto conn = m_ConnectionsManager.ConnectionByUUID(network->connection) )
+            return conn;
+    
+    return nullopt;
 }

@@ -3,6 +3,8 @@
 #include <VFS/VFS.h>
 #include "../../Core/rapidjson.h"
 
+#include <NimbleCommander/Core/NetworkConnectionsManager.h>
+
 // these routines implicitly use the following components:
 // 1. NetworkConnectionsManager
 // 2. VFSInstanceManager
@@ -10,6 +12,8 @@
 class PanelDataPersisency
 {
 public:
+    PanelDataPersisency( NetworkConnectionsManager &_conn_manager );
+
     struct Location
     {
         bool is_native() const noexcept;
@@ -28,8 +32,10 @@ public:
     static string MakeVerbosePathString( const VFSHost &_host, const string &_directory );
 
     static optional<Location> EncodeLocation( const VFSHost &_vfs, const string &_path );
-    
  
+    optional<NetworkConnectionsManager::Connection>
+     ExtractConnectionFromLocation( const Location &_location );
+    
     using json = rapidjson::StandaloneValue;
     static optional<json> EncodeVFSPath( const VFSHost &_vfs, const string &_path );
     static optional<json> EncodeVFSPath( const VFSListing &_listing );
@@ -71,4 +77,7 @@ uuid: "uuid"
 }
  
  */
+
+private:
+    NetworkConnectionsManager &m_ConnectionsManager;
 };

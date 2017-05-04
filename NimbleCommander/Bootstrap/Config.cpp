@@ -2,6 +2,7 @@
 #include <fstream>
 #include <Habanero/algo.h>
 #include <Utility/FSEventsDirUpdate.h>
+#include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/rapidjson.h>
 #include <rapidjson/error/en.h>
 #include <rapidjson/memorystream.h>
@@ -35,6 +36,8 @@ static time_t ModificationTime( const string &_filepath )
         return st.st_mtime;
     return 0;
 }
+
+static bool AtomicallyWriteToFile( const string &_filename, const char *_data );
 
 rapidjson::CrtAllocator GenericConfig::g_CrtAllocator;
 
@@ -577,10 +580,7 @@ void GenericConfig::WriteOverwrites(const rapidjson::Document &_overwrites_diff,
     rapidjson::StringBuffer buffer;
     rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
     _overwrites_diff.Accept(writer);
-    
-    ofstream out(_path, ios::out | ios::binary);
-    if( out )
-        out << buffer.GetString();
+    AtomicallyWriteToFile(_path, buffer.GetString());
 }
 
 void GenericConfig::RunOverwritesDumping()
@@ -695,4 +695,31 @@ void GenericConfig::MergeChangedOverwrites(const rapidjson::Document &_new_overw
     
     for(auto &path: changes)
         FireObservers( path );
+}
+
+static bool AtomicallyWriteToFile( const string &_filename, const char *_data )
+{
+    if( !_data || _filename.empty() )
+        return false;
+
+    char filename_temp[1024];
+    sprintf(filename_temp, "%sXXXXXX", CommonPaths::AppTemporaryDirectory().c_str());
+    
+    const auto fd = mkstemp(filename_temp);
+    if( fd < 0 )
+        return false;
+    
+    const auto file = fdopen(fd, "wb");
+    const auto length = strlen(_data);
+    const auto successful = fwrite(_data, 1, length, file) == length;
+    fclose(file);
+
+    if( !successful )
+        return false;
+    
+    if( rename(filename_temp, _filename.c_str()) == 0 )
+        return true;
+    
+    unlink(filename_temp);
+    return false;
 }

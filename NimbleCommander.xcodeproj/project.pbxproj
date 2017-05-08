@@ -608,6 +608,10 @@
 		CF90C02A1EBB03280056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF90C02B1EBB04910056E3B8 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; };
 		CF90C02C1EBB04960056E3B8 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; };
+		CF90C0991EC07F790056E3B8 /* PanelListViewColumnsMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF90C0981EC07F790056E3B8 /* PanelListViewColumnsMenu.xib */; };
+		CF90C09A1EC07F790056E3B8 /* PanelListViewColumnsMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF90C0981EC07F790056E3B8 /* PanelListViewColumnsMenu.xib */; };
+		CF90C09B1EC07F790056E3B8 /* PanelListViewColumnsMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF90C0981EC07F790056E3B8 /* PanelListViewColumnsMenu.xib */; };
+		CF90C09C1EC07F790056E3B8 /* PanelListViewColumnsMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF90C0981EC07F790056E3B8 /* PanelListViewColumnsMenu.xib */; };
 		CF94CF941DD4418000EEA420 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF931DD4418000EEA420 /* Layout.mm */; };
 		CF94CF9D1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF94CF9C1DD4A09A00EEA420 /* PanelViewImplementationProtocol.mm */; };
 		CF955F031B8DC6CB004A25AF /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF955F021B8DC6CB004A25AF /* libz.dylib */; };
@@ -1956,6 +1960,7 @@
 		CF90C0081EBAE3190056E3B8 /* NetworkConnectionIconProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionIconProvider.h; path = NimbleCommander/Core/NetworkConnectionIconProvider.h; sourceTree = SOURCE_ROOT; };
 		CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkConnectionIconProvider.mm; path = NimbleCommander/Core/NetworkConnectionIconProvider.mm; sourceTree = SOURCE_ROOT; };
 		CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LetsMove.xcodeproj; path = 3rd_Party/LetsMove/LetsMove/LetsMove.xcodeproj; sourceTree = SOURCE_ROOT; };
+		CF90C0981EC07F790056E3B8 /* PanelListViewColumnsMenu.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PanelListViewColumnsMenu.xib; path = NimbleCommander/States/FilePanels/List/PanelListViewColumnsMenu.xib; sourceTree = SOURCE_ROOT; };
 		CF94CF921DD4418000EEA420 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/List/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF94CF931DD4418000EEA420 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = NimbleCommander/States/FilePanels/List/Layout.mm; sourceTree = SOURCE_ROOT; };
 		CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewImplementationProtocol.h; path = NimbleCommander/States/FilePanels/PanelViewImplementationProtocol.h; sourceTree = SOURCE_ROOT; };
@@ -2973,6 +2978,7 @@
 				CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */,
 				CF56C2B61DC1934D00F0DF0F /* PanelListViewTableView.h */,
 				CF56C2B71DC1934D00F0DF0F /* PanelListViewTableView.mm */,
+				CF90C0981EC07F790056E3B8 /* PanelListViewColumnsMenu.xib */,
 			);
 			name = List;
 			sourceTree = "<group>";
@@ -3971,6 +3977,7 @@
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CF4E56AE1D5068E100452912 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CF8D0CEF1D96244900ADFF14 /* ProFeaturesWindowController.xib in Resources */,
+				CF90C09B1EC07F790056E3B8 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF4E56A81D5068D700452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
 				CF876D321D51E089009C0CCE /* BigFileViewSheet.xib in Resources */,
@@ -4027,6 +4034,7 @@
 				CF4E56CE1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
 				CFA53A521D433E2A00C562A7 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF2F434C1EAF345400AA031A /* ConnectToServer.xib in Resources */,
+				CF90C09A1EC07F790056E3B8 /* PanelListViewColumnsMenu.xib in Resources */,
 				CFA53A551D433E2A00C562A7 /* OperationsSummaryViewController.xib in Resources */,
 				CF8D0CE41D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
 				CFA53A561D433E2A00C562A7 /* FileAlreadyExistSheetController.xib in Resources */,
@@ -4112,6 +4120,7 @@
 				CFCCFBC71A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFC044E21B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
+				CF90C0991EC07F790056E3B8 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF8D0CE91D9623E000ADFF14 /* RegistrationInfoWindow.xib in Resources */,
 				CFDAC2FD1DFD1C120039A104 /* TrialWindowController.xib in Resources */,
 				CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
@@ -4168,6 +4177,7 @@
 				CF754D4F1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF50C42C1C0ADE8C009DF611 /* OperationsSummaryViewController.xib in Resources */,
 				CF2F434E1EAF345400AA031A /* ConnectToServer.xib in Resources */,
+				CF90C09C1EC07F790056E3B8 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF876D571D53296C009C0CCE /* InternalViewerWindowController.xib in Resources */,
 				CF45CA2A1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */,

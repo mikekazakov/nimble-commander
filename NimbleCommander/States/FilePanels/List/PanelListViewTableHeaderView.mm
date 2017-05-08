@@ -1,31 +1,17 @@
 #include "PanelListViewTableHeaderView.h"
+#include "PanelListView.h"
 
 @implementation PanelListViewTableHeaderView
 
-/*
-- (void) drawRect:(NSRect)dirtyRect
+- (NSMenu*)menu
 {
-    
-
-    const auto n = self.tableView.numberOfColumns;
-    for( int i = 0; i < n; ++i ) {
-        const auto rc = [self headerRectOfColumn:i];
-        
-        [self.tableView.tableColumns[i].headerCell drawWithFrame:rc
-                                                          inView:self];
-    }
-
+    if( auto v = objc_cast<PanelListView>(self.tableView.enclosingScrollView.superview) )
+        if( auto menu = v.columnsSelectionMenu ) {
+            menu.allowsContextMenuPlugIns = false;
+            menu.font = [NSFont menuFontOfSize:11];
+            return menu;
+        }
+    return nil;
 }
-*/
-/*
-    override func drawRect(dirtyRect: NSRect) {
-
-        guard let columns = tableView?.numberOfColumns
-            else { return }
-
-        (0...columns)
-            .map { headerRectOfColumn($0) }
-            .forEach { super.drawRect($0) }
-    }*/
 
 @end

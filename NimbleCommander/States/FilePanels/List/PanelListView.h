@@ -28,6 +28,7 @@ struct PanelListViewColumnsLayout;
 
 - (NSFont*) font;
 
+- (NSMenu*) columnsSelectionMenu;
 
 @property (nonatomic) PanelListViewColumnsLayout columnsLayout;
 

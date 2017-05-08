@@ -29,6 +29,8 @@ static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndica
 // D - Date added
 // E - Date modified
 
+static PanelListViewColumns IdentifierToKind( unsigned char _letter );
+
 void DrawTableVerticalSeparatorForView(NSView *v)
 {
     if( auto t = objc_cast<NSTableView>(v.superview.superview) ) {
@@ -191,7 +193,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_DateCreatedColumn.maxWidth = 300;
         m_DateCreatedColumn.resizingMask = NSTableColumnUserResizingMask;
         [m_DateCreatedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        [self observeValueForKeyPath:@"width" ofObject:m_DateCreatedColumn change:nil context:nil];
+        [self widthDidChangeForColumn:m_DateCreatedColumn];
     }
     if( (m_DateAddedColumn = [[NSTableColumn alloc] initWithIdentifier:@"D"]) ) {
         m_DateAddedColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
@@ -201,7 +203,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_DateAddedColumn.maxWidth = 300;
         m_DateAddedColumn.resizingMask = NSTableColumnUserResizingMask;
         [m_DateAddedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        [self observeValueForKeyPath:@"width" ofObject:m_DateAddedColumn change:nil context:nil];
+        [self widthDidChangeForColumn:m_DateAddedColumn];
     }
     if( (m_DateModifiedColumn = [[NSTableColumn alloc] initWithIdentifier:@"E"]) ) {
         m_DateModifiedColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
@@ -211,7 +213,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_DateModifiedColumn.maxWidth = 300;
         m_DateModifiedColumn.resizingMask = NSTableColumnUserResizingMask;
         [m_DateModifiedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        [self observeValueForKeyPath:@"width" ofObject:m_DateModifiedColumn change:nil context:nil];
+        [self widthDidChangeForColumn:m_DateModifiedColumn];
     }
 }
 
@@ -311,12 +313,12 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     if( !m_Data )
         return nil;
     
-    if( auto w = objc_cast<PanelListViewRowView>([tableView rowViewAtRow:row makeIfNecessary:false]) ) {
-        if( auto vfs_item = w.item ) {
-            NSString *identifier = tableColumn.identifier;
-            
-            const auto col_id = [identifier characterAtIndex:0];
-            if( col_id == 'A' ) {
+    const auto abstract_row_view = [m_TableView rowViewAtRow:row makeIfNecessary:false];
+    if( const auto row_view = objc_cast<PanelListViewRowView>(abstract_row_view) ) {
+        if( const auto vfs_item = row_view.item ) {
+            const auto identifier = tableColumn.identifier;
+            const auto kind = IdentifierToKind( [identifier characterAtIndex:0] );
+            if( kind == PanelListViewColumns::Filename ) {
                 auto nv = RetrieveOrSpawnView<PanelListViewNameView>(tableView, identifier);
                 if( m_Data->IsValidSortPosition((int)row) ) {
                     auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
@@ -324,7 +326,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                 }
                 return nv;
             }
-            if( col_id == 'B' ) {
+            if( kind == PanelListViewColumns::Size ) {
                 auto sv = RetrieveOrSpawnView<PanelListViewSizeView>(tableView, identifier);
                 if( m_Data->IsValidSortPosition((int)row) ) {
                     auto &vd = m_Data->VolatileDataAtSortPosition((int)row);
@@ -332,17 +334,17 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                 }
                 return sv;
             }
-            if( col_id == 'C' ) {
+            if( kind == PanelListViewColumns::DateCreated ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
                 [self fillDataForDateCreatedView:dv withItem:vfs_item];
                 return dv;
             }
-            if( col_id == 'D' ) {
+            if( kind == PanelListViewColumns::DateAdded ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
                 [self fillDataForDateAddedView:dv withItem:vfs_item];
                 return dv;
             }
-            if( col_id == 'E' ) {
+            if( kind == PanelListViewColumns::DateModified ) {
                 auto dv = RetrieveOrSpawnView<PanelListViewDateTimeView>(tableView, identifier);
                 [self fillDataForDateModifiedView:dv withItem:vfs_item];
                 return dv;
@@ -487,7 +489,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 - (int)itemsInColumn
 {
     return m_ScrollView.contentView.bounds.size.height / m_Geometry.LineHeight();
-//    return 0;
 }
 
 - (int) maxNumberOfVisibleItems
@@ -786,6 +787,68 @@ shouldReorderColumn:(NSInteger)columnIndex
          toColumn:(NSInteger)newColumnIndex
 {
     return !(columnIndex == 0 || newColumnIndex == 0);
+}
+
+- (NSMenu*) columnsSelectionMenu
+{
+    if( auto nib = [[NSNib alloc] initWithNibNamed:@"PanelListViewColumnsMenu" bundle:nil] ) {
+        NSArray *objects;
+        if( [nib instantiateWithOwner:nil topLevelObjects:&objects] )
+            for( id i in objects )
+                if( auto menu = objc_cast<NSMenu>(i) )
+                    return menu;
+    }
+    return nil;
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    if( menuItem.action == @selector(onToggleColumnVisibilty:) ) {
+        const auto kind = IdentifierToKind( [menuItem.identifier characterAtIndex:0] );
+        const auto column = [self columnByType:kind];
+        menuItem.state = column && [m_TableView.tableColumns containsObject:column];
+    }
+    return true;
+}
+
+- (IBAction)onToggleColumnVisibilty:(id)sender
+{
+    if( auto menu_item = objc_cast<NSMenuItem>(sender) ) {
+        const auto kind = IdentifierToKind( [menu_item.identifier characterAtIndex:0] );
+        
+        if( kind == PanelListViewColumns::Empty )
+            return;
+        
+        auto layout = self.columnsLayout;
+        
+        const auto t = find_if(begin(layout.columns),
+                               end(layout.columns),
+                               [&](const auto &_i){ return _i.kind == kind;});
+
+        if( t != end(layout.columns) ) {
+            layout.columns.erase(t);
+        }
+        else {
+            PanelListViewColumnsLayout::Column c;
+            c.kind = kind;
+            layout.columns.emplace_back(c);
+        }
+        
+        self.columnsLayout = layout;
+        [self.panelView notifyAboutPresentationLayoutChange];
+    }
+}
+
+static PanelListViewColumns IdentifierToKind( unsigned char _letter )
+{
+    switch (_letter) {
+        case 'A':   return PanelListViewColumns::Filename;
+        case 'B':   return PanelListViewColumns::Size;
+        case 'C':   return PanelListViewColumns::DateCreated;
+        case 'D':   return PanelListViewColumns::DateAdded;
+        case 'E':   return PanelListViewColumns::DateModified;
+        default:    return PanelListViewColumns::Empty;
+    }
 }
 
 @end

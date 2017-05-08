@@ -957,7 +957,7 @@ static bool RouteKeyboardInputIntoTerminal()
             if( !l->is_disabled() ) {
                 m_ViewLayoutIndex = layoutIndex;
                 m_AssignedViewLayout = l;
-                [m_View setLayout:*l];
+                [m_View setPresentationLayout:*l];
                 [self markRestorableStateAsInvalid];                
             }
     }
@@ -966,15 +966,28 @@ static bool RouteKeyboardInputIntoTerminal()
 - (void) panelLayoutsChanged
 {
     if( auto l = AppDelegate.me.panelLayouts.GetLayout(m_ViewLayoutIndex) ) {
+        if( m_AssignedViewLayout && *m_AssignedViewLayout == *l )
+            return;
+        
         if( !l->is_disabled() ) {
             m_AssignedViewLayout = l;
-            [m_View setLayout:*l];
+            [m_View setPresentationLayout:*l];
         }
         else {
             m_AssignedViewLayout = AppDelegate.me.panelLayouts.LastResortLayout();
-            [m_View setLayout:*m_AssignedViewLayout]; // ???
+            [m_View setPresentationLayout:*m_AssignedViewLayout];
         }
     }
+}
+
+- (void) panelViewDidChangePresentationLayout
+{
+    PanelViewLayout layout;
+    layout.name = m_AssignedViewLayout->name;
+    layout.layout = [m_View presentationLayout];
+
+    if( layout != *m_AssignedViewLayout )
+        AppDelegate.me.panelLayouts.ReplaceLayout( move(layout), m_ViewLayoutIndex );
 }
 
 - (void) commitCancelableLoadingTask:(function<void(const function<bool()> &_is_cancelled)>) _task

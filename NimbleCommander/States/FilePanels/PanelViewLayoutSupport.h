@@ -59,6 +59,12 @@ public:
     void ReplaceLayout(PanelViewLayout _layout, int _at_index);
     
     /**
+     * Will ignore requests on invalid index.
+     * Will fire observers on layouts change.
+     */
+    void ReplaceLayoutWithMandatoryNotification(PanelViewLayout _layout, int _at_index);
+    
+    /**
      * Should be used when panel is forced to use a disabled layout.
      */
     const shared_ptr<const PanelViewLayout> LastResortLayout() const;
@@ -73,9 +79,10 @@ public:
     ObservationTicket ObserveChanges( function<void()> _callback );
     
 private:
+    void ReplaceLayout(PanelViewLayout _layout, int _at_index, bool _mandatory);
     void LoadLayoutsFromConfig();
     void WriteLayoutsToConfig() const;
-    void CommitChanges();
+    void CommitChanges( bool _fire_observers );
         
     mutable spinlock                            m_LayoutsLock;
     vector<shared_ptr<const PanelViewLayout>>   m_Layouts;

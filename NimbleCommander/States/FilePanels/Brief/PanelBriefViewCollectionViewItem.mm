@@ -18,7 +18,7 @@
 {
     [super prepareForReuse];
     m_Item = VFSListingItem{};
-    m_VD = PanelData::VolatileData{};
+    m_VD = PanelDataItemVolatileData{};
     m_PanelActive = false;
     [super setSelected:false];
     self.carrier.background = nil;

@@ -1,8 +1,7 @@
+#include <Habanero/algo.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
-//#include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelData.h"
 #include "../PanelDataSortMode.h"
 #include "../PanelView.h"
@@ -19,7 +18,6 @@
 #include "PanelListViewDateFormatting.h"
 #include "PanelListView.h"
 
-//static const auto g_ConfigColoring              = "filePanel.modern.coloringRules_v1";
 static const auto g_MaxStashedRows              = 50;
 static const auto g_SortAscImage = [NSImage imageNamed:@"NSAscendingSortIndicator"];
 static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndicator"];
@@ -85,8 +83,8 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     PanelDataSortMode                   m_SortMode;
     function<void(PanelDataSortMode)>   m_SortModeChangeCallback;
     
-    PanelListViewColumnsLayout          m_Layout;
-    ThemesManager::ObservationTicket    m_ThemeObservation;    
+    PanelListViewColumnsLayout          m_AssignedLayout;
+    ThemesManager::ObservationTicket    m_ThemeObservation;
 }
 
 @synthesize dateCreatedFormattingStyle = m_DateCreatedFormattingStyle;
@@ -166,63 +164,54 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 
 - (void) setupColumns
 {
-    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"A"] ) {
-        col.headerCell = [[PanelListViewTableHeaderCell alloc] init];    
-        col.title = @"Name";
-        col.width = 200;
-        col.minWidth = 100;
-        col.maxWidth = 1000;
-        [m_TableView addTableColumn:col];
-        m_NameColumn = col;
-        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    if( (m_NameColumn = [[NSTableColumn alloc] initWithIdentifier:@"A"]) ) {
+        m_NameColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
+        m_NameColumn.title = @"Name";
+        m_NameColumn.width = 200;
+        m_NameColumn.minWidth = 100;
+        m_NameColumn.maxWidth = 1000;
+        m_NameColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
+        [m_NameColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
     }
-    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"B"] ) {
-        col.headerCell = [[PanelListViewTableHeaderCell alloc] init];
-        col.title = @"Size";
-        col.width = 90;
-        col.minWidth = 75;
-        col.maxWidth = 110;
-        col.headerCell.alignment = NSTextAlignmentRight;
-        col.resizingMask = NSTableColumnUserResizingMask;
-        [m_TableView addTableColumn:col];
-        m_SizeColumn = col;
-        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
+    if( (m_SizeColumn = [[NSTableColumn alloc] initWithIdentifier:@"B"]) ) {
+        m_SizeColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
+        m_SizeColumn.title = @"Size";
+        m_SizeColumn.width = 90;
+        m_SizeColumn.minWidth = 75;
+        m_SizeColumn.maxWidth = 110;
+        m_SizeColumn.headerCell.alignment = NSTextAlignmentRight;
+        m_SizeColumn.resizingMask = NSTableColumnUserResizingMask;
+        [m_SizeColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
     }
-    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"C"] ) {
-        col.headerCell = [[PanelListViewTableHeaderCell alloc] init];
-        col.title = @"Date Created";
-        col.width = 90;
-        col.minWidth = 75;
-        col.maxWidth = 300;
-        col.resizingMask = NSTableColumnUserResizingMask;
-        [m_TableView addTableColumn:col];
-        m_DateCreatedColumn = col;
-        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
+    if( (m_DateCreatedColumn = [[NSTableColumn alloc] initWithIdentifier:@"C"]) ) {
+        m_DateCreatedColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
+        m_DateCreatedColumn.title = @"Date Created";
+        m_DateCreatedColumn.width = 90;
+        m_DateCreatedColumn.minWidth = 75;
+        m_DateCreatedColumn.maxWidth = 300;
+        m_DateCreatedColumn.resizingMask = NSTableColumnUserResizingMask;
+        [m_DateCreatedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+        [self observeValueForKeyPath:@"width" ofObject:m_DateCreatedColumn change:nil context:nil];
     }
-    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"D"] ) {
-        col.headerCell = [[PanelListViewTableHeaderCell alloc] init];
-        col.title = @"Date Added";
-        col.width = 90;
-        col.minWidth = 75;
-        col.maxWidth = 300;
-        col.resizingMask = NSTableColumnUserResizingMask;
-        [m_TableView addTableColumn:col];
-        m_DateAddedColumn = col;
-        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
+    if( (m_DateAddedColumn = [[NSTableColumn alloc] initWithIdentifier:@"D"]) ) {
+        m_DateAddedColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
+        m_DateAddedColumn.title = @"Date Added";
+        m_DateAddedColumn.width = 90;
+        m_DateAddedColumn.minWidth = 75;
+        m_DateAddedColumn.maxWidth = 300;
+        m_DateAddedColumn.resizingMask = NSTableColumnUserResizingMask;
+        [m_DateAddedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+        [self observeValueForKeyPath:@"width" ofObject:m_DateAddedColumn change:nil context:nil];
     }
-    if( auto col = [[NSTableColumn alloc] initWithIdentifier:@"E"] ) {
-        col.headerCell = [[PanelListViewTableHeaderCell alloc] init];
-        col.title = @"Date Modified";
-        col.width = 90;
-        col.minWidth = 75;
-        col.maxWidth = 300;
-        col.resizingMask = NSTableColumnUserResizingMask;
-        [m_TableView addTableColumn:col];
-        m_DateModifiedColumn = col;
-        [col addObserver:self forKeyPath:@"width" options:0 context:NULL];
-        [self observeValueForKeyPath:@"width" ofObject:col change:nil context:nil];
+    if( (m_DateModifiedColumn = [[NSTableColumn alloc] initWithIdentifier:@"E"]) ) {
+        m_DateModifiedColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
+        m_DateModifiedColumn.title = @"Date Modified";
+        m_DateModifiedColumn.width = 90;
+        m_DateModifiedColumn.minWidth = 75;
+        m_DateModifiedColumn.maxWidth = 300;
+        m_DateModifiedColumn.resizingMask = NSTableColumnUserResizingMask;
+        [m_DateModifiedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
+        [self observeValueForKeyPath:@"width" ofObject:m_DateModifiedColumn change:nil context:nil];
     }
 }
 
@@ -259,15 +248,29 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         }];
     }
     if( [keyPath isEqualToString:@"width"] ) {
-        using df = PanelListViewDateFormatting;
-        if( object == m_DateCreatedColumn )
-            self.dateCreatedFormattingStyle = df::SuitableStyleForWidth( m_DateCreatedColumn.width, self.font );
-        if( object == m_DateAddedColumn )
-            self.dateAddedFormattingStyle = df::SuitableStyleForWidth( m_DateAddedColumn.width, self.font );
-        if( object == m_DateModifiedColumn )
-            self.dateModifiedFormattingStyle = df::SuitableStyleForWidth( m_DateModifiedColumn.width, self.font );
-        [self notifyLastColumnToRedraw];
+        if( auto c = objc_cast<NSTableColumn>(object) )
+            [self widthDidChangeForColumn:c];
     }
+}
+
+- (void)widthDidChangeForColumn:(NSTableColumn*)_column
+{
+    using df = PanelListViewDateFormatting;
+    if( _column == m_DateCreatedColumn )
+        self.dateCreatedFormattingStyle = df::SuitableStyleForWidth( m_DateCreatedColumn.width, self.font );
+    if( _column == m_DateAddedColumn )
+        self.dateAddedFormattingStyle = df::SuitableStyleForWidth( m_DateAddedColumn.width, self.font );
+    if( _column == m_DateModifiedColumn )
+        self.dateModifiedFormattingStyle = df::SuitableStyleForWidth( m_DateModifiedColumn.width, self.font );
+    [self notifyLastColumnToRedraw];
+}
+
+- (void)tableViewColumnDidResize:(NSNotification *)notification
+{
+    if( m_TableView.headerView.resizedColumn < 0 )
+        return;
+
+    [self.panelView notifyAboutPresentationLayoutChange];
 }
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
@@ -278,7 +281,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 - (void) calculateItemLayout
 {
     m_Geometry = PanelListViewGeometry( CurrentTheme().FilePanelsListFont(),
-                                        m_Layout.icon_scale );
+                                        m_AssignedLayout.icon_scale );
 
     m_IconsGenerator->SetIconSize( m_Geometry.IconSize() );
     
@@ -598,9 +601,13 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 - (PanelListViewColumnsLayout)columnsLayout
 {
     PanelListViewColumnsLayout l;
+    l.icon_scale = m_AssignedLayout.icon_scale;
     for( NSTableColumn *tc in m_TableView.tableColumns) {
         PanelListViewColumnsLayout::Column c;
         c.kind = [self typeByColumn:tc];
+        c.width = tc.width;
+        c.min_width = tc.minWidth;
+        c.max_width = tc.maxWidth;
         l.columns.emplace_back( c );
     }
     return l;
@@ -608,7 +615,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (void) setColumnsLayout:(PanelListViewColumnsLayout)columnsLayout
 {
-    // TODO: check if we already have the same layout
+    if( columnsLayout == m_AssignedLayout )
+        return;
     
     for( NSTableColumn *c in [m_TableView.tableColumns copy] )
         [m_TableView removeTableColumn:c];
@@ -622,10 +630,11 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             [m_TableView addTableColumn:tc];
         }
     }
-    [m_TableView sizeToFit];
     
-    m_Layout = columnsLayout;
+    m_AssignedLayout = columnsLayout;
+    [m_TableView sizeToFit];
     [self calculateItemLayout];
+    [self placeSortIndicator];
 }
 
 - (void) setSortMode:(PanelDataSortMode)_mode
@@ -634,21 +643,27 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         return;
     m_SortMode = _mode;
     
-    for( auto c: {m_NameColumn, m_SizeColumn, m_DateCreatedColumn, m_DateModifiedColumn, m_DateAddedColumn} )
+    [self placeSortIndicator];
+}
+
+- (void)placeSortIndicator
+{
+    for( NSTableColumn *c in m_TableView.tableColumns )
         [m_TableView setIndicatorImage:nil inTableColumn:c];
     
     auto set = [&]()->pair<NSImage*,NSTableColumn*>{
-        switch( _mode.sort ) {
-            case PanelDataSortMode::SortByName:         return {g_SortAscImage,     m_NameColumn};
-            case PanelDataSortMode::SortByNameRev:      return {g_SortDescImage,    m_NameColumn};
-            case PanelDataSortMode::SortBySize:         return {g_SortDescImage,    m_SizeColumn};
-            case PanelDataSortMode::SortBySizeRev:      return {g_SortAscImage,     m_SizeColumn};
-            case PanelDataSortMode::SortByBirthTime:    return {g_SortDescImage,    m_DateCreatedColumn};
-            case PanelDataSortMode::SortByBirthTimeRev: return {g_SortAscImage,     m_DateCreatedColumn};
-            case PanelDataSortMode::SortByModTime:      return {g_SortDescImage,    m_DateModifiedColumn};
-            case PanelDataSortMode::SortByModTimeRev:   return {g_SortAscImage,     m_DateModifiedColumn};
-            case PanelDataSortMode::SortByAddTime:      return {g_SortDescImage,    m_DateAddedColumn};
-            case PanelDataSortMode::SortByAddTimeRev:   return {g_SortAscImage,     m_DateAddedColumn};
+        using _ = PanelDataSortMode;
+        switch( m_SortMode.sort ) {
+            case _::SortByName:         return {g_SortAscImage,     m_NameColumn};
+            case _::SortByNameRev:      return {g_SortDescImage,    m_NameColumn};
+            case _::SortBySize:         return {g_SortDescImage,    m_SizeColumn};
+            case _::SortBySizeRev:      return {g_SortAscImage,     m_SizeColumn};
+            case _::SortByBirthTime:    return {g_SortDescImage,    m_DateCreatedColumn};
+            case _::SortByBirthTimeRev: return {g_SortAscImage,     m_DateCreatedColumn};
+            case _::SortByModTime:      return {g_SortDescImage,    m_DateModifiedColumn};
+            case _::SortByModTimeRev:   return {g_SortAscImage,     m_DateModifiedColumn};
+            case _::SortByAddTime:      return {g_SortDescImage,    m_DateAddedColumn};
+            case _::SortByAddTimeRev:   return {g_SortAscImage,     m_DateAddedColumn};
             default: return make_pair(nil, nil);
         }
     }();

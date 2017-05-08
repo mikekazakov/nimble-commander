@@ -1,12 +1,12 @@
 #pragma once
 
-#include <VFS/VFS.h>
-#include "../../Core/rapidjson.h"
-#include "PanelData.h"
 #include "PanelViewTypes.h"
 
 @class PanelView;
+class VFSListingItem;
 struct PanelViewLayout;
+class PanelData;
+struct PanelDataItemVolatileData;
 
 @protocol PanelViewDelegate<NSObject>
 @optional
@@ -24,7 +24,7 @@ struct PanelViewLayout;
 @property (nonatomic, readonly) bool active; // means that window is key and view is the first responder. KVO-compatible
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
 @property (nonatomic, readonly) VFSListingItem item; // return an item at current cursor position if any or nullptr
-@property (nonatomic, readonly) const PanelData::VolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
+@property (nonatomic, readonly) const PanelDataItemVolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
 @property (nonatomic, readonly) int headerBarHeight;
@@ -78,7 +78,8 @@ struct PanelViewLayout;
 - (void) startFieldEditorRenaming;
 
 //PanelViewLayout
-- (void) setLayout:(const PanelViewLayout&)_layout;
+- (any) presentationLayout;
+- (void) setPresentationLayout:(const PanelViewLayout&)_layout;
 
 /*
  * PanelView implementation hooks.
@@ -91,6 +92,7 @@ struct PanelViewLayout;
 - (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)_event;
 - (NSDragOperation)panelItem:(int)_sorted_index operationForDragging:(id<NSDraggingInfo>)_dragging;
 - (bool)panelItem:(int)_sorted_index performDragOperation:(id<NSDraggingInfo>)_dragging;
+- (void)notifyAboutPresentationLayoutChange;
 
 - (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)_event;
 

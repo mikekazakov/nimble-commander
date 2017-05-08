@@ -328,7 +328,7 @@ static NSString* PanelListColumnTypeToString( PanelListViewColumns _c )
 
         if( new_layout != *l ) {
             const auto row = (int)self.layoutsTable.selectedRow;
-            m_LayoutsStorage->ReplaceLayout( move(new_layout), row );
+            m_LayoutsStorage->ReplaceLayoutWithMandatoryNotification( move(new_layout), row );
             [self fillLayoutFields];
         }
     }
@@ -493,7 +493,7 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
         
         if( new_layout != *l ) {
             const auto row = (int)self.layoutsTable.selectedRow;
-            m_LayoutsStorage->ReplaceLayout( move(new_layout), row );
+            m_LayoutsStorage->ReplaceLayoutWithMandatoryNotification( move(new_layout), row );
         }
     }
 }

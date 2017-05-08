@@ -96,7 +96,7 @@
     }
 }
 
-- (PanelData::VolatileData) vd
+- (PanelDataItemVolatileData) vd
 {
     return m_VD;
 }

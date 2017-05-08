@@ -10,7 +10,7 @@
 #include "PanelViewFooterVolumeInfoFetcher.h"
 #include "PanelViewFooter.h"
 
-static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelData::VolatileData &_vd, ByteCountFormatter::Type _format)
+static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelDataItemVolatileData &_vd, ByteCountFormatter::Type _format)
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() ) {

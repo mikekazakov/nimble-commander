@@ -736,8 +736,16 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     }
 }
 
+- (any) presentationLayout
+{
+    if( auto v = objc_cast<PanelBriefView>(m_ItemsView) )
+        return any{[v columnsLayout]};
+    if( auto v = objc_cast<PanelListView>(m_ItemsView) )
+        return any{[v columnsLayout]};
+    return any{PanelViewDisabledLayout{}};
+}
 
-- (void) setLayout:(const PanelViewLayout&)_layout
+- (void) setPresentationLayout:(const PanelViewLayout&)_layout
 {
     if( auto ll = any_cast<PanelListViewColumnsLayout>(&_layout.layout) ) {
         [self setupListPresentationWithLayout:*ll];
@@ -1161,6 +1169,11 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 - (NSProgressIndicator *)busyIndicator
 {
     return m_HeaderView.busyIndicator;
+}
+
+- (void)notifyAboutPresentationLayoutChange
+{
+    [self.controller panelViewDidChangePresentationLayout];
 }
 
 @end

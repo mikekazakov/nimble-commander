@@ -36,10 +36,14 @@ bool PanelViewLayout::operator==(const PanelViewLayout& _rhs) const
     if( this == &_rhs )
         return true;
     
-    if( name != _rhs.name || type() != _rhs.type() )
+    if( name != _rhs.name)
         return false;
     
-    switch( type() ) {
+    const auto mytype = type();
+    if( mytype != _rhs.type() )
+        return false;
+    
+    switch( mytype ) {
         case Type::Brief:   return *brief() == *_rhs.brief();
         case Type::List:    return *list() == *_rhs.list();
         default:            return true;
@@ -280,6 +284,17 @@ int PanelViewLayoutsStorage::DefaultLayoutIndex() const
 
 void PanelViewLayoutsStorage::ReplaceLayout( PanelViewLayout _layout, int _at_index )
 {
+    ReplaceLayout( move(_layout), _at_index, false );
+}
+
+void PanelViewLayoutsStorage::ReplaceLayoutWithMandatoryNotification
+    (PanelViewLayout _layout, int _at_index)
+{
+    ReplaceLayout( move(_layout), _at_index, true );
+}
+
+void PanelViewLayoutsStorage::ReplaceLayout(PanelViewLayout _layout, int _at_index, bool _mandatory)
+{
     LOCK_GUARD(m_LayoutsLock) {
         if( _at_index < 0 || _at_index >= m_Layouts.size() )
             return;
@@ -288,7 +303,7 @@ void PanelViewLayoutsStorage::ReplaceLayout( PanelViewLayout _layout, int _at_in
         m_Layouts[_at_index] = make_shared<PanelViewLayout>( move(_layout) );
     }
     
-    CommitChanges();
+    CommitChanges(_mandatory);
 }
 
 PanelViewLayoutsStorage::ObservationTicket PanelViewLayoutsStorage::ObserveChanges( function<void()> _callback )
@@ -324,9 +339,10 @@ void PanelViewLayoutsStorage::WriteLayoutsToConfig() const
     GlobalConfig().Set( m_ConfigPath, json_layouts );
 }
 
-void PanelViewLayoutsStorage::CommitChanges()
+void PanelViewLayoutsStorage::CommitChanges(bool _fire_observers)
 {
-    FireObservers();
+    if(_fire_observers)
+        FireObservers();
     dispatch_to_background([=]{ WriteLayoutsToConfig(); });
 }
 

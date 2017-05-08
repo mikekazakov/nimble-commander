@@ -184,6 +184,7 @@ namespace panel
 
 // PanelView callback hooks
 - (void) panelViewDidBecomeFirstResponder;
+- (void) panelViewDidChangePresentationLayout;
 
 // managing entries selection
 - (void) selectEntriesWithFilenames:(const vector<string>&)_filenames;

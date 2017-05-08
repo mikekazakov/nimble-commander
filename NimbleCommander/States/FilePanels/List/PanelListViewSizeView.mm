@@ -41,6 +41,7 @@ static NSString *SizeStringFromEncodedSize( uint64_t _sz )
     NSString        *m_String;
     NSDictionary    *m_TextAttributes;
     uint64_t         m_Size;
+    __weak PanelListViewRowView *m_RowView;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -75,24 +76,33 @@ static NSString *SizeStringFromEncodedSize( uint64_t _sz )
     return false;
 }
 
+- (void) viewDidMoveToWindow
+{
+    [super viewDidMoveToWindow];
+    if( auto rv = objc_cast<PanelListViewRowView>(self.superview) )
+        m_RowView = rv;
+}
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    m_RowView = nil;
+    m_Size = g_InvalidSize;
+    m_String = @"";
+    m_TextAttributes = nil;
+}
+
 - (void) drawRect:(NSRect)dirtyRect
-{    
-    if( auto rv = objc_cast<PanelListViewRowView>(self.superview) ) {
+{
+    if( auto rv = m_RowView ) {
         if( auto lv = rv.listView ) {
-        
-        
-        
-        
-        
+
             const auto bounds = self.bounds;
             const auto geometry = lv.geometry;
             
             [rv.rowBackgroundColor set];
             NSRectFill(self.bounds);
             DrawTableVerticalSeparatorForView(self);            
-            
-            
-            
             
             const auto text_rect = NSMakeRect(geometry.LeftInset(),
                                               geometry.TextBaseLine(),
@@ -106,12 +116,16 @@ static NSString *SizeStringFromEncodedSize( uint64_t _sz )
     }
 }
 
-static const auto g_ParagraphStyle = []{
-    NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
-    p.alignment = NSTextAlignmentRight;
-    p.lineBreakMode = NSLineBreakByClipping;
-    return p;
-}();
+static NSParagraphStyle *PStyle()
+{
+    static const auto style = []{
+        NSMutableParagraphStyle *p = [NSMutableParagraphStyle new];
+        p.alignment = NSTextAlignmentRight;
+        p.lineBreakMode = NSLineBreakByClipping;
+        return p;
+    }();
+    return style;
+}
 
 - (void) setSizeWithItem:(const VFSListingItem &)_dirent
                    andVD:(const PanelDataItemVolatileData &)_vd
@@ -129,10 +143,10 @@ static const auto g_ParagraphStyle = []{
 
 - (void) buildPresentation
 {
-    if( auto row_view = (PanelListViewRowView*)self.superview ) {
+    if( auto row_view = objc_cast<PanelListViewRowView>(self.superview) ) {
         m_TextAttributes = @{NSFontAttributeName: row_view.listView.font,
                              NSForegroundColorAttributeName: row_view.rowTextColor,
-                             NSParagraphStyleAttributeName: g_ParagraphStyle};
+                             NSParagraphStyleAttributeName: PStyle()};
         [self setNeedsDisplay:true];
     }
 }

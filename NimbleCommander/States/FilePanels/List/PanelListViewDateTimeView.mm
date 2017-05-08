@@ -18,6 +18,7 @@
     NSFont         *m_Font;
     CTLineRef       m_Line;
     PanelListViewDateFormatting::Style m_Style;
+    __weak PanelListViewRowView *m_RowView;    
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -59,6 +60,24 @@
 - (BOOL) wantsDefaultClipping
 {
     return false;
+}
+
+- (void) viewDidMoveToWindow
+{
+    [super viewDidMoveToWindow];
+    if( auto rv = objc_cast<PanelListViewRowView>(self.superview) )
+        m_RowView = rv;
+}
+
+- (void)prepareForReuse
+{
+    [super prepareForReuse];
+    m_RowView = nil;
+    m_Time = 0;
+    m_Line = nullptr;
+    m_String = @"";
+    m_Style = PanelListViewDateFormatting::Style::Orthodox;
+    m_Font = CurrentTheme().FilePanelsListFont();
 }
 
 - (void) setTime:(time_t)time
@@ -133,7 +152,7 @@
 
 - (void) drawRect:(NSRect)dirtyRect
 {
-    if( auto rv = objc_cast<PanelListViewRowView>(self.superview) ) {
+    if( auto rv = m_RowView ) {
         if( auto lv = rv.listView ) {
             const auto geometry = lv.geometry;
             const auto context = NSGraphicsContext.currentContext.CGContext;

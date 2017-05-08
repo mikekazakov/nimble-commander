@@ -122,7 +122,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_TableView.allowsMultipleSelection = false;
         m_TableView.allowsEmptySelection = false;
         m_TableView.allowsColumnSelection = false;
-        m_TableView.allowsColumnReordering = false;
+        m_TableView.allowsColumnReordering = true;
         m_TableView.usesAlternatingRowBackgroundColors = true;
         m_TableView.rowSizeStyle = NSTableViewRowSizeStyleCustom;
         m_TableView.rowHeight = m_Geometry.LineHeight();
@@ -168,7 +168,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_NameColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
         m_NameColumn.title = @"Name";
         m_NameColumn.width = 200;
-        m_NameColumn.minWidth = 100;
+        m_NameColumn.minWidth = 180;
         m_NameColumn.maxWidth = 1000;
         m_NameColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
         [m_NameColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
@@ -270,6 +270,11 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     if( m_TableView.headerView.resizedColumn < 0 )
         return;
 
+    [self.panelView notifyAboutPresentationLayoutChange];
+}
+
+- (void)tableViewColumnDidMove:(NSNotification *)notification
+{
     [self.panelView notifyAboutPresentationLayoutChange];
 }
 
@@ -606,8 +611,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         PanelListViewColumnsLayout::Column c;
         c.kind = [self typeByColumn:tc];
         c.width = tc.width;
-        c.min_width = tc.minWidth;
-        c.max_width = tc.maxWidth;
         l.columns.emplace_back( c );
     }
     return l;
@@ -623,9 +626,9 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
     for( auto &c: columnsLayout.columns ) {
         if( NSTableColumn *tc = [self columnByType:c.kind] ) {
-            if( c.width >= 0 )      tc.width = c.width;
             if( c.min_width >= 0 )  tc.minWidth = c.min_width;
             if( c.max_width >= 0 )  tc.maxWidth = c.max_width;
+            if( c.width >= 0 )      tc.width = c.width;
 
             [m_TableView addTableColumn:tc];
         }
@@ -776,6 +779,13 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 - (void) frameDidChange
 {
     [self notifyLastColumnToRedraw];
+}
+
+- (BOOL)tableView:(NSTableView *)tableView
+shouldReorderColumn:(NSInteger)columnIndex
+         toColumn:(NSInteger)newColumnIndex
+{
+    return !(columnIndex == 0 || newColumnIndex == 0);
 }
 
 @end

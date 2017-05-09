@@ -25,6 +25,7 @@
 #include "Actions/CopyToPasteboard.h"
 #include "Actions/OpenNetworkConnection.h"
 #include "Actions/Delete.h"
+#include "Actions/NavigateHistory.h"
 
 static const panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
@@ -37,8 +38,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         const auto tag = (int)item.tag;
         if( auto a = ActionByTag(tag) )
             return a->ValidateMenuItem(self, item);
-        IF_MENU_TAG("menu.go.back")                         return m_History.CanMoveBack() || (!self.isUniform && !m_History.Empty());
-        IF_MENU_TAG("menu.go.forward")                      return m_History.CanMoveForth();
         IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
         IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
         IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
@@ -53,30 +52,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         cout << "validateMenuItem has caught an unknown exception!" << endl;
     }
     return false;
-}
-
-- (IBAction)OnGoBack:(id)sender {
-    if( self.isUniform ) {
-        if(!m_History.CanMoveBack())
-            return;
-        m_History.MoveBack();
-    }
-    else {
-        // a different logic here, since non-uniform listings like search results (and temporary panels later) are not written into history
-        if( m_History.Empty() )
-            return;
-        m_History.RewindAt( m_History.Length()-1 );
-    }
-    [self GoToVFSPromise:m_History.Current()->vfs
-                  onPath:m_History.Current()->path];
-}
-
-- (IBAction)OnGoForward:(id)sender {
-    if(!m_History.CanMoveForth())
-        return;
-    m_History.MoveForth();
-    [self GoToVFSPromise:m_History.Current()->vfs
-                  onPath:m_History.Current()->path];
 }
 
 - (IBAction)OnGoToUpperDirectory:(id)sender
@@ -139,6 +114,8 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self forceRefreshPanel];
 }
 
+- (IBAction)OnGoBack:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnGoForward:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToFavoriteLocation:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnDeleteCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnDeletePermanentlyCommand:(id)sender { Perform(_cmd, self, sender); }
@@ -254,6 +231,8 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.view.toggle_layout_8",  @selector(onToggleViewLayout8:),  new ToggleLayout{7}},
 {"menu.view.toggle_layout_9",  @selector(onToggleViewLayout9:),  new ToggleLayout{8}},
 {"menu.view.toggle_layout_10", @selector(onToggleViewLayout10:), new ToggleLayout{9}},
+{"menu.go.back",            @selector(OnGoBack:),           new GoBack},
+{"menu.go.forward",         @selector(OnGoForward:),        new GoForward},
 {"menu.go.home",            @selector(OnGoToHome:),         new GoToHomeFolder},
 {"menu.go.documents",       @selector(OnGoToDocuments:),    new GoToDocumentsFolder},
 {"menu.go.desktop",         @selector(OnGoToDesktop:),      new GoToDesktopFolder},

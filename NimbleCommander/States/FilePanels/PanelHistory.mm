@@ -1,11 +1,3 @@
-//
-//  PanelHistory.mm
-//  Files
-//
-//  Created by Michael G. Kazakov on 20.12.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include "PanelHistory.h"
 
 bool PanelHistory::Path::operator==(const Path&_rhs) const noexcept

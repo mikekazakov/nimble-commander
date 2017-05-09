@@ -111,7 +111,7 @@ namespace panel
     // BriefSystemOverview support
     __weak BriefSystemOverview* m_BriefSystemOverview;
     
-    string              m_LastNativeDirectory;
+    string              m_LastNativeDirectory; // TODO: remove, can be extracted from history
     
     // delayed entry selection support
     struct
@@ -145,7 +145,7 @@ namespace panel
 @property (nonatomic, readonly) MainWindowController* mainWindowController;
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) const PanelData& data;
-@property (nonatomic, readonly) const PanelHistory& history;
+@property (nonatomic, readonly) PanelHistory& history;
 @property (nonatomic, readonly) bool isActive;
 @property (nonatomic, readonly) bool isUniform; // return true if panel's listing has common vfs host and directory for it's items
 @property (nonatomic, readonly) NSWindow* window;

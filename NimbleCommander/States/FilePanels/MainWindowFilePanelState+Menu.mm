@@ -438,7 +438,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         [op AddOnFinishHandler:^{
             dispatch_to_main_queue( [=]{
                 string single_fn_rename = ::path(path).filename().native();
-                nc::panel::PanelControllerDelayedSelection req;
+                nc::panel::DelayedSelection req;
                 req.filename = single_fn_rename;
                 [(PanelController*)cur ScheduleDelayedSelectionChangeFor:req];
             });

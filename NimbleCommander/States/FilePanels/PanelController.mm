@@ -209,6 +209,8 @@ static void HeatUpConfigValues()
     ConfigShowLocalizedFilenames();
 }
 
+using namespace ::nc::panel;
+
 @implementation PanelController
 {
     // Main controller's possessions
@@ -235,7 +237,7 @@ static void HeatUpConfigValues()
     SerialQueue m_DirectoryReLoadingQ;
     
     // navigation support
-    nc::panel::History m_History;
+    History m_History;
     
     // spinning indicator support
     bool                m_IsAnythingWorksInBackground;
@@ -948,7 +950,7 @@ static bool RouteKeyboardInputIntoTerminal()
         [op AddOnFinishHandler:^{
             if(self.currentDirectoryPath == curr_path && self.vfs == curr_vfs)
                 dispatch_to_main_queue( [=]{
-                    nc::panel::PanelControllerDelayedSelection req;
+                    DelayedSelection req;
                     req.filename = target_fn;
                     [self ScheduleDelayedSelectionChangeFor:req];
                     [self refreshPanel];
@@ -1018,7 +1020,7 @@ static bool RouteKeyboardInputIntoTerminal()
                 if( PanelDataPersisency::CreateVFSFromState(*data, host) == VFSError::Ok ) {
                     string path = PanelDataPersisency::GetPathFromState(*data);
                     dispatch_to_main_queue([=]{
-                        auto context = make_shared<PanelControllerGoToDirContext>();
+                        auto context = make_shared<DirectoryChangeRequest>();
                         context->VFS = host;
                         context->PerformAsynchronous = true;
                         context->RequestedDirectory = path;
@@ -1045,19 +1047,19 @@ static bool RouteKeyboardInputIntoTerminal()
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard types:(NSArray *)types
 {
     if( [types containsObject:(__bridge NSString *)kUTTypeFileURL] )
-        return nc::panel::PasteboardSupport::WriteURLSPBoard(self.selectedEntriesOrFocusedEntry,
+        return PasteboardSupport::WriteURLSPBoard(self.selectedEntriesOrFocusedEntry,
                                                          pboard);
     if( [types containsObject:NSFilenamesPboardType] )
-        return nc::panel::PasteboardSupport::WriteFilesnamesPBoard(self.selectedEntriesOrFocusedEntry,
+        return PasteboardSupport::WriteFilesnamesPBoard(self.selectedEntriesOrFocusedEntry,
                                                                pboard);
     return false;
 }
 
-- (nc::panel::ActivityTicket) registerExtActivity
+- (ActivityTicket) registerExtActivity
 {
     auto ticket = call_locked(m_ActivitiesTicketsLock, [&]{
         m_ActivitiesTickets.emplace_back( m_NextActivityTicket );
-        return nc::panel::ActivityTicket(self, m_NextActivityTicket++);
+        return ActivityTicket(self, m_NextActivityTicket++);
     });
     dispatch_to_main_queue([=]{
         [self updateSpinningIndicator];
@@ -1162,7 +1164,7 @@ static bool RouteKeyboardInputIntoTerminal()
         if( PanelDataPersisency::CreateVFSFromLocation(_location, host) == VFSError::Ok ) {
             string path = _location.path;
             dispatch_to_main_queue([=]{
-                auto context = make_shared<PanelControllerGoToDirContext>();
+                auto context = make_shared<DirectoryChangeRequest>();
                 context->VFS = host;
                 context->PerformAsynchronous = true;
                 context->RequestedDirectory = path;
@@ -1190,7 +1192,7 @@ static bool RouteKeyboardInputIntoTerminal()
 loadPreviousState:(bool)_load_state
           async:(bool)_asynchronous
 {
-    auto c = make_shared<PanelControllerGoToDirContext>();
+    auto c = make_shared<DirectoryChangeRequest>();
     c->RequestedDirectory = _dir;
     c->VFS = _vfs;
     c->RequestFocusedEntry = _filename;
@@ -1200,7 +1202,7 @@ loadPreviousState:(bool)_load_state
     return [self GoToDirWithContext:c];
 }
 
-- (int) GoToDirWithContext:(shared_ptr<PanelControllerGoToDirContext>)_context
+- (int) GoToDirWithContext:(shared_ptr<DirectoryChangeRequest>)_context
 {
     auto &c = _context;
     if(c->RequestedDirectory.empty() ||
@@ -1314,7 +1316,7 @@ loadPreviousState:(bool)_load_state
     });
 }
 
-- (void) ScheduleDelayedSelectionChangeFor:(nc::panel::PanelControllerDelayedSelection)request;
+- (void) ScheduleDelayedSelectionChangeFor:(DelayedSelection)request;
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     // we assume that _item_name will not contain any forward slashes

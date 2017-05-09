@@ -36,7 +36,7 @@ private:
     __weak PanelController *panel;
 };
 
-struct PanelControllerDelayedSelection
+struct DelayedSelection
 {
     string          filename;
     milliseconds    timeout = 500ms;
@@ -48,9 +48,7 @@ struct PanelControllerDelayedSelection
     function<void()> done;
 };
 
-}
-
-class PanelControllerGoToDirContext
+class DirectoryChangeRequest
 {
 public:
     /* required */
@@ -76,7 +74,7 @@ public:
     int                 LoadingResultCode        = 0;
 };
 
-
+}
 
 /**
  * PanelController is reponder to enable menu events processing
@@ -135,7 +133,7 @@ public:
 - (void) calculateSizesOfItems:(const vector<VFSListingItem>&)_items;
 
 
-- (int) GoToDirWithContext:(shared_ptr<PanelControllerGoToDirContext>)_context;
+- (int) GoToDirWithContext:(shared_ptr<nc::panel::DirectoryChangeRequest>)_context;
 
 
 // will not load previous view state if any
@@ -172,7 +170,7 @@ loadPreviousState:(bool)_load_state
  * If on any checking it will be found that time for request has went out - it will be removed (500ms is just ok for _time_out_in_ms).
  * Will also deselect any currenly selected items.
  */
-- (void) ScheduleDelayedSelectionChangeFor:(nc::panel::PanelControllerDelayedSelection)request;
+- (void) ScheduleDelayedSelectionChangeFor:(nc::panel::DelayedSelection)request;
 
 /**
  * Private PanelController method.

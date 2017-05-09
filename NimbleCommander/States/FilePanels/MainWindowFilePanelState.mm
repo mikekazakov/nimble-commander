@@ -698,7 +698,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     
     if( [panel GoToDir:_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok ) {
         if( !_filenames.empty() ) {
-            nc::panel::PanelControllerDelayedSelection req;
+            nc::panel::DelayedSelection req;
             req.filename = _filenames.front();
             [panel ScheduleDelayedSelectionChangeFor:req];
         }

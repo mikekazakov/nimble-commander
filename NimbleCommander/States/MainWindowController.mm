@@ -352,7 +352,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         if( auto pc = m_PanelState.activePanelController ){
             auto cwd = m_Terminal.CWD;
             if( pc.isUniform && (!pc.vfs->IsNativeFS() || pc.currentDirectoryPath != cwd) ) {
-                auto cnt = make_shared<PanelControllerGoToDirContext>();
+                auto cnt = make_shared<nc::panel::DirectoryChangeRequest>();
                 cnt->VFS = VFSNativeHost::SharedHost();
                 cnt->RequestedDirectory = cwd;
                 [pc GoToDirWithContext:cnt];

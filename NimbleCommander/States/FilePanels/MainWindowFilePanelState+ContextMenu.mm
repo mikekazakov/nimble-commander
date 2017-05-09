@@ -575,7 +575,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     auto filename = target.substr( target.find_last_of('/') + 1 );
     [op AddOnFinishHandler:^{
         dispatch_to_main_queue( [=]{
-            nc::panel::PanelControllerDelayedSelection req;
+            nc::panel::DelayedSelection req;
             req.filename = filename;
             [m_CurrentController ScheduleDelayedSelectionChangeFor:req];
             if( force_refresh  )

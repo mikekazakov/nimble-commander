@@ -78,7 +78,7 @@ static string FindSuitableName( const string& _initial, const VFSListing &_listi
 static void ScheduleRenaming( const string& _filename, PanelController *_panel )
 {
     __weak PanelController *weak_panel = _panel;
-    nc::panel::PanelControllerDelayedSelection req;
+    DelayedSelection req;
     req.filename = _filename;
     req.timeout = 2s;
     req.done = [=]{

@@ -16,7 +16,7 @@ void GoToFolder::Perform( PanelController *_target, id _sender ) const
     sheet.panel = _target;
     [sheet showSheetWithParentWindow:_target.window handler:[=]{
         
-        auto c = make_shared<PanelControllerGoToDirContext>();
+        auto c = make_shared<DirectoryChangeRequest>();
         c->RequestedDirectory = [_target expandPath:sheet.requestedPath];
         c->VFS = _target.isUniform ?
             _target.vfs :

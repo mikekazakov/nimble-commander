@@ -92,7 +92,7 @@ static NSString *OperationTitleFromPath(const char *_path)
             
             dispatch_to_main_queue( [=]{
                 [target refreshPanel];
-                nc::panel::PanelControllerDelayedSelection req;
+                nc::panel::DelayedSelection req;
                 req.filename = m_OriginalPathRequest;
                 [target ScheduleDelayedSelectionChangeFor:req];
                 });

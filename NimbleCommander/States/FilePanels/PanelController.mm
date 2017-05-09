@@ -149,7 +149,6 @@ static void HeatUpConfigValues()
 @implementation PanelController
 @synthesize view = m_View;
 @synthesize data = m_Data;
-@synthesize lastNativeDirectoryPath = m_LastNativeDirectory;
 @synthesize history = m_History;
 @synthesize layoutIndex = m_ViewLayoutIndex;
 @synthesize vfsFetchingFlags = m_VFSFetchingFlags;
@@ -709,11 +708,8 @@ static bool RouteKeyboardInputIntoTerminal()
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
 
-    if( self.isUniform  ) {
-        m_History.Put( VFSInstanceManager::Instance().TameVFS(self.vfs), self.currentDirectoryPath );
-        if( self.vfs->IsNativeFS() )
-            m_LastNativeDirectory = self.currentDirectoryPath;
-    }
+    if( self.isUniform )
+        m_History.Put( self.vfs, self.currentDirectoryPath );
     
     [self markRestorableStateAsInvalid];
 }

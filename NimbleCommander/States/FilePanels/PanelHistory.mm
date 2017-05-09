@@ -1,21 +1,23 @@
 #include "PanelHistory.h"
 
-bool PanelHistory::Path::operator==(const Path&_rhs) const noexcept
+namespace nc::panel {
+
+bool History::Path::operator==(const Path&_rhs) const noexcept
 {
     return vfs == _rhs.vfs && path == _rhs.path;
 }
 
-bool PanelHistory::Path::operator!=(const Path&_rhs) const noexcept
+bool History::Path::operator!=(const Path&_rhs) const noexcept
 {
     return !(*this == _rhs);
 }
 
-bool PanelHistory::IsRecording() const noexcept
+bool History::IsRecording() const noexcept
 {
     return m_IsRecording;
 }
 
-bool PanelHistory::CanMoveForth() const noexcept
+bool History::CanMoveForth() const noexcept
 {
     if(m_IsRecording)
         return false;
@@ -24,7 +26,7 @@ bool PanelHistory::CanMoveForth() const noexcept
     return m_PlayingPosition < m_History.size() - 1;
 }
 
-bool PanelHistory::CanMoveBack() const noexcept
+bool History::CanMoveBack() const noexcept
 {
     if(m_History.size() < 2)
         return false;
@@ -33,7 +35,7 @@ bool PanelHistory::CanMoveBack() const noexcept
     return m_PlayingPosition > 0;
 }
 
-void PanelHistory::MoveForth()
+void History::MoveForth()
 {
     if( !CanMoveForth() )
         throw logic_error("PanelHistory::MoveForth called when CanMoveForth()==false");
@@ -44,7 +46,7 @@ void PanelHistory::MoveForth()
         m_PlayingPosition++;
 }
 
-void PanelHistory::MoveBack()
+void History::MoveBack()
 {
     if( !CanMoveBack() )
         throw logic_error("PanelHistory::MoveBack called when CanMoveBack()==false");
@@ -58,17 +60,21 @@ void PanelHistory::MoveBack()
     }
 }
 
-const PanelHistory::Path* PanelHistory::Current() const
+const History::Path* History::Current() const
 {
     if( m_IsRecording )
         return nullptr;
     return &*next(begin(m_History), m_PlayingPosition);
 }
 
-void PanelHistory::Put(VFSInstanceManager::Promise _vfs_promise, string _directory_path)
+
+void History::Put(const VFSHostPtr &_vfs, string _directory_path)
 {
+    if( _vfs->IsNativeFS() )
+        m_LastNativeDirectory = _directory_path;
+    
     Path new_path;
-    new_path.vfs = move(_vfs_promise);
+    new_path.vfs = VFSInstanceManager::Instance().TameVFS(_vfs);
     new_path.path = move(_directory_path);
     
     if( m_IsRecording ) {
@@ -90,17 +96,17 @@ void PanelHistory::Put(VFSInstanceManager::Promise _vfs_promise, string _directo
     }
 }
 
-unsigned PanelHistory::Length() const noexcept
+unsigned History::Length() const noexcept
 {
     return (unsigned)m_History.size();
 }
 
-bool PanelHistory::Empty() const noexcept
+bool History::Empty() const noexcept
 {
     return m_History.empty();
 }
     
-vector<reference_wrapper<const PanelHistory::Path>> PanelHistory::All() const
+vector<reference_wrapper<const History::Path>> History::All() const
 {
     vector<reference_wrapper<const Path>> res;
     for( auto &i:m_History )
@@ -108,7 +114,7 @@ vector<reference_wrapper<const PanelHistory::Path>> PanelHistory::All() const
     return res;
 }
 
-const PanelHistory::Path* PanelHistory::RewindAt(size_t _indx)
+const History::Path* History::RewindAt(size_t _indx)
 {
     if(_indx >= m_History.size())
         return nullptr;
@@ -117,4 +123,11 @@ const PanelHistory::Path* PanelHistory::RewindAt(size_t _indx)
     m_PlayingPosition = (unsigned)_indx;
     
     return Current();
+}
+
+const string &History::LastNativeDirectoryVisited() const noexcept
+{
+    return m_LastNativeDirectory;
+}
+
 }

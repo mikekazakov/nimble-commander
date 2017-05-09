@@ -95,7 +95,7 @@ namespace panel
     SerialQueue m_DirectoryReLoadingQ;
     
     // navigation support
-    PanelHistory m_History;
+    nc::panel::History m_History;
     
     // spinning indicator support
     bool                m_IsAnythingWorksInBackground;
@@ -110,8 +110,6 @@ namespace panel
     
     // BriefSystemOverview support
     __weak BriefSystemOverview* m_BriefSystemOverview;
-    
-    string              m_LastNativeDirectory; // TODO: remove, can be extracted from history
     
     // delayed entry selection support
     struct
@@ -145,11 +143,10 @@ namespace panel
 @property (nonatomic, readonly) MainWindowController* mainWindowController;
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) const PanelData& data;
-@property (nonatomic, readonly) PanelHistory& history;
+@property (nonatomic, readonly) nc::panel::History& history;
 @property (nonatomic, readonly) bool isActive;
 @property (nonatomic, readonly) bool isUniform; // return true if panel's listing has common vfs host and directory for it's items
 @property (nonatomic, readonly) NSWindow* window;
-@property (nonatomic, readonly) const string& lastNativeDirectoryPath;
 @property (nonatomic, readonly) bool receivesUpdateNotifications; // returns true if underlying vfs will notify controller that content has changed
 @property (nonatomic, readonly) bool ignoreDirectoriesOnSelectionByMask;
 @property (nonatomic, readonly) int vfsFetchingFlags;

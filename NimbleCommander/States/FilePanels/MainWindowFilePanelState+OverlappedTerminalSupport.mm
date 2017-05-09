@@ -78,7 +78,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     if( s == TermShellTask::TaskState::Inactive || s == TermShellTask::TaskState::Dead ) {
         string wd;
         if( auto p = self.activePanelController )
-            wd = p.lastNativeDirectoryPath;
+            wd = p.history.LastNativeDirectoryVisited();
         
         [m_OverlappedTerminal->terminal runShell:wd];
         

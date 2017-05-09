@@ -5,6 +5,7 @@
 #include <VFS/Native.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/Core/rapidjson.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/LSUrls.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>

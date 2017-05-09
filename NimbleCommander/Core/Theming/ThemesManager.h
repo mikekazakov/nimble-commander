@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Habanero/Observable.h>
-#include <NimbleCommander/Core/rapidjson.h>
+#include <NimbleCommander/Core/rapidjson_fwd.h>
 
 /**
  * This class is not thread-safe yet!

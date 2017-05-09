@@ -5,6 +5,7 @@
 #include <Utility/ByteCountFormatter.h>
 #include "InternalViewerHistory.h"
 #include "InternalViewerController.h"
+#include <Habanero/SerialQueue.h>
 
 static const auto g_ConfigRespectComAppleTextEncoding   = "viewer.respectComAppleTextEncoding";
 static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSensitive";

@@ -14,6 +14,7 @@
 #include <VFS/NetDropbox.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
+#include <NimbleCommander/Core/rapidjson.h>
 #include "PanelDataPersistency.h"
 
 

@@ -1,5 +1,6 @@
 #include "ExternalToolsSupport.h"
-#include "../../Bootstrap/Config.h"
+#include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Core/rapidjson.h>
 
 ExternalToolsParameters::Step::Step(ActionType t, uint16_t i):
     type(t),

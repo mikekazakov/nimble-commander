@@ -1,14 +1,7 @@
-//
-//  PanelViewPresentationItemsColoringFilter.mm
-//  Files
-//
-//  Created by Michael G. Kazakov on 04/08/14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
 #include <sys/stat.h>
 #include "Utility/HexadecimalColor.h"
 #include "PanelViewPresentationItemsColoringFilter.h"
+#include <NimbleCommander/Core/rapidjson.h>
 
 static tribool to_tribool(const GenericConfig::ConfigValue &_val)
 {

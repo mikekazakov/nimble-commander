@@ -9,6 +9,7 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
 #include "Config.h"
+#include <Habanero/SerialQueue.h>
 
 static const int g_MaxNamePartLen = 128;
 static const auto g_WriteDelay = 30s;
@@ -169,12 +170,37 @@ static vector<string> ListDifferencesPaths( const rapidjson::Document &_defaults
     return list;
 }
 
-GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites):
-    m_OverwritesPath(_overwrites),
-    m_DefaultsPath(_defaults)
+struct GenericConfig::Observer
 {
-    if( !m_DefaultsPath.empty() ) {
-        string def = Load(m_DefaultsPath);
+    function<void()> callback;
+    unsigned long ticket;
+};
+
+struct GenericConfig::State
+{
+    mutable spinlock                                                    m_DocumentLock;
+    rapidjson::Document                                                 m_Current;
+    rapidjson::Document                                                 m_Defaults;
+    unordered_map<string, shared_ptr<vector<shared_ptr<Observer>>>>     m_Observers;
+    mutable spinlock                                                    m_ObserversLock;
+    
+    string                                                              m_DefaultsPath;
+    string                                                              m_OverwritesPath;
+    atomic_ullong                                                       m_ObservationTicket{ 1 };
+    SerialQueue                                                         m_IOQueue{"GenericConfig input/output queue"};
+    atomic_flag                                                         m_WriteScheduled{ false };
+    atomic_flag                                                         m_ReadScheduled{ false };
+    time_t                                                              m_OverwritesTime = 0;
+};
+
+GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites):
+    I(new State)
+{
+    I->m_OverwritesPath = _overwrites;
+    I->m_DefaultsPath = _defaults;
+
+    if( !I->m_DefaultsPath.empty() ) {
+        string def = Load(I->m_DefaultsPath);
         rapidjson::Document defaults;
         rapidjson::ParseResult ok = defaults.Parse<rapidjson::kParseCommentsFlag>( def.c_str() );
         
@@ -183,37 +209,41 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
             exit(EXIT_FAILURE);
         }
         
-        m_Defaults.CopyFrom(defaults, m_Defaults.GetAllocator());
-        m_Current.CopyFrom(defaults, m_Current.GetAllocator());
+        I->m_Defaults.CopyFrom(defaults, I->m_Defaults.GetAllocator());
+        I->m_Current.CopyFrom(defaults, I->m_Current.GetAllocator());
     }
     else {
-        m_Defaults = rapidjson::Document(rapidjson::kObjectType);
-        m_Current = rapidjson::Document(rapidjson::kObjectType);
+        I->m_Defaults = rapidjson::Document(rapidjson::kObjectType);
+        I->m_Current = rapidjson::Document(rapidjson::kObjectType);
     }
 
-    string over = Load(m_OverwritesPath);
+    string over = Load(I->m_OverwritesPath);
     if( !over.empty() ) {
         rapidjson::Document overwrites;
         rapidjson::ParseResult ok = overwrites.Parse<rapidjson::kParseCommentsFlag>( over.c_str() );
         if ( !ok )
             fprintf(stderr, "Overwrites JSON parse error: %s (%zu)", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
         else {
-            m_OverwritesTime = ModificationTime(m_OverwritesPath);
-            MergeDocument(m_Current, overwrites);
+            I->m_OverwritesTime = ModificationTime(I->m_OverwritesPath);
+            MergeDocument(I->m_Current, overwrites);
         }
     }
     
-    FSEventsDirUpdate::Instance().AddWatchPath(path(m_OverwritesPath).parent_path().c_str(), [=]{
+    FSEventsDirUpdate::Instance().AddWatchPath(path(I->m_OverwritesPath).parent_path().c_str(), [=]{
         OnOverwritesFileDirChanged();
     });
+}
+
+GenericConfig::~GenericConfig()
+{
 }
 
 void GenericConfig::ResetToDefaults()
 {
     vector<string> diff;
-    LOCK_GUARD(m_DocumentLock) {
-        diff = ListDifferencesPaths( m_Defaults, m_Current );
-        m_Current.CopyFrom( m_Defaults, m_Current.GetAllocator() );
+    LOCK_GUARD(I->m_DocumentLock) {
+        diff = ListDifferencesPaths( I->m_Defaults, I->m_Current );
+        I->m_Current.CopyFrom( I->m_Defaults, I->m_Current.GetAllocator() );
     }
 
     MarkDirty();
@@ -282,7 +312,7 @@ int GenericConfig::GetIntOr(const char *_path, int _default) const
 
 bool GenericConfig::Has(const char *_path) const
 {
-    lock_guard<spinlock> lock(m_DocumentLock);
+    lock_guard<spinlock> lock(I->m_DocumentLock);
     return FindUnlocked(_path) != nullptr;
 }
 
@@ -321,17 +351,17 @@ static const rapidjson::Value *FindNode(string_view _path,
 
 const rapidjson::Value *GenericConfig::FindUnlocked(string_view _path) const
 {
-    return FindNode(_path, &m_Current);
+    return FindNode(_path, &I->m_Current);
 }
 
 const rapidjson::Value *GenericConfig::FindDefaultUnlocked(string_view _path) const
 {
-    return FindNode(_path, &m_Defaults);
+    return FindNode(_path, &I->m_Defaults);
 }
 
 GenericConfig::ConfigValue GenericConfig::GetInternal( string_view _path ) const
 {
-    lock_guard<spinlock> lock(m_DocumentLock);
+    lock_guard<spinlock> lock(I->m_DocumentLock);
     auto v = FindUnlocked(_path);
     if( !v )
         return ConfigValue( rapidjson::kNullType );
@@ -340,7 +370,7 @@ GenericConfig::ConfigValue GenericConfig::GetInternal( string_view _path ) const
 
 bool GenericConfig::GetBoolInternal(string_view _path) const
 {
-    lock_guard<spinlock> lock(m_DocumentLock);
+    lock_guard<spinlock> lock(I->m_DocumentLock);
     if( const auto v = FindUnlocked(_path) )
         return v->GetType() == rapidjson::kTrueType;
     return false;
@@ -403,9 +433,9 @@ bool GenericConfig::Set(const char *_path, const ConfigValue &_value)
 bool GenericConfig::SetInternal(const char *_path, const ConfigValue &_value)
 {
     {
-        lock_guard<spinlock> lock(m_DocumentLock);
+        lock_guard<spinlock> lock(I->m_DocumentLock);
         
-        rapidjson::Value *st = &m_Current;
+        rapidjson::Value *st = &I->m_Current;
         string_view path = _path;
         size_t p;
         
@@ -434,12 +464,12 @@ bool GenericConfig::SetInternal(const char *_path, const ConfigValue &_value)
             if( it->value == _value )
                 return true;
             
-            it->value.CopyFrom( _value, m_Current.GetAllocator() );
+            it->value.CopyFrom( _value, I->m_Current.GetAllocator() );
         }
         else {
-            rapidjson::Value key( sub, m_Current.GetAllocator() );
-            rapidjson::Value value( _value, m_Current.GetAllocator() );
-            st->AddMember( key, value, m_Current.GetAllocator() );
+            rapidjson::Value key( sub, I->m_Current.GetAllocator() );
+            rapidjson::Value value( _value, I->m_Current.GetAllocator() );
+            st->AddMember( key, value, I->m_Current.GetAllocator() );
         }
     }
 
@@ -492,16 +522,16 @@ GenericConfig::ObservationTicket GenericConfig::Observe(const char *_path,
         return ObservationTicket(nullptr, 0);
     
     string path = _path;
-    auto t = m_ObservationTicket++;
+    auto t = I->m_ObservationTicket++;
     {
         Observer o;
         o.callback = move(_change_callback);
         o.ticket = t;
         
-        LOCK_GUARD( m_ObserversLock ) {
-            auto current_observers_it = m_Observers.find(path);
+        LOCK_GUARD( I->m_ObserversLock ) {
+            auto current_observers_it = I->m_Observers.find(path);
             
-            if( current_observers_it != end(m_Observers)  ) {
+            if( current_observers_it != end(I->m_Observers)  ) {
                 // somebody is already watching this path
                 auto new_observers = make_shared<vector<shared_ptr<Observer>>>();
                 new_observers->reserve( current_observers_it->second->size() + 1 );
@@ -513,7 +543,7 @@ GenericConfig::ObservationTicket GenericConfig::Observe(const char *_path,
                 // it's the first request to observe this path
                 auto new_observers = make_shared<vector<shared_ptr<Observer>>>
                     (1, to_shared_ptr(move(o)) );
-                m_Observers.emplace( move(path), move(new_observers) );
+                I->m_Observers.emplace( move(path), move(new_observers) );
             }
         }
     }
@@ -526,8 +556,8 @@ void GenericConfig::StopObserving(unsigned long _ticket)
     if( !_ticket )
         return;
     
-    lock_guard<spinlock> lock(m_ObserversLock);
-    for( auto &path: m_Observers ) {
+    lock_guard<spinlock> lock(I->m_ObserversLock);
+    for( auto &path: I->m_Observers ) {
         auto &observers = path.second;
         for( size_t i = 0, e = observers->size(); i != e; ++i ) {
             auto &o = (*observers)[i];
@@ -545,18 +575,18 @@ void GenericConfig::StopObserving(unsigned long _ticket)
 shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObserversLocked(const char *_path) const
 {
     string path = _path;
-    lock_guard<spinlock> lock(m_ObserversLock);
-    auto observers_it = m_Observers.find(path);
-    if( observers_it != end(m_Observers) )
+    lock_guard<spinlock> lock(I->m_ObserversLock);
+    auto observers_it = I->m_Observers.find(path);
+    if( observers_it != end(I->m_Observers) )
         return  observers_it->second;
     return nullptr;
 }
 
 shared_ptr<vector<shared_ptr<GenericConfig::Observer>>> GenericConfig::FindObserversLocked(const string &_path) const
 {
-    lock_guard<spinlock> lock(m_ObserversLock);
-    auto observers_it = m_Observers.find(_path);
-    if( observers_it != end(m_Observers) )
+    lock_guard<spinlock> lock(I->m_ObserversLock);
+    auto observers_it = I->m_Observers.find(_path);
+    if( observers_it != end(I->m_Observers) )
         return  observers_it->second;
     return nullptr;
 }
@@ -588,43 +618,43 @@ void GenericConfig::RunOverwritesDumping()
     auto d = make_shared<rapidjson::Document>(rapidjson::kObjectType);
     
     {
-        lock_guard<spinlock> lock(m_DocumentLock);
-        BuildOverwrites(m_Defaults, m_Current, *d);
+        lock_guard<spinlock> lock(I->m_DocumentLock);
+        BuildOverwrites(I->m_Defaults, I->m_Current, *d);
     }
     
-    string path = m_OverwritesPath;
-    m_IOQueue.Run([=]{
+    string path = I->m_OverwritesPath;
+    I->m_IOQueue.Run([=]{
         WriteOverwrites(*d, path);
-        m_OverwritesTime = ModificationTime(path);
+        I->m_OverwritesTime = ModificationTime(path);
     });
 }
 
 void GenericConfig::MarkDirty()
 {
-    if( !m_WriteScheduled.test_and_set() )
+    if( !I->m_WriteScheduled.test_and_set() )
         dispatch_to_main_queue_after(g_WriteDelay, [=]{
             RunOverwritesDumping();
-            m_WriteScheduled.clear();
+            I->m_WriteScheduled.clear();
         });
 }
 
 void GenericConfig::Commit()
 {
-    if( m_WriteScheduled.test_and_set() ) {
+    if( I->m_WriteScheduled.test_and_set() ) {
         RunOverwritesDumping();
-        m_IOQueue.Wait();
+        I->m_IOQueue.Wait();
     }
-    m_WriteScheduled.clear();
+    I->m_WriteScheduled.clear();
 }
 
 void GenericConfig::OnOverwritesFileDirChanged()
 {
-    if( !m_ReadScheduled.test_and_set() )
+    if( !I->m_ReadScheduled.test_and_set() )
         dispatch_to_main_queue_after(g_ReadDelay, [=]{
-            string path = m_OverwritesPath;
-            m_IOQueue.Run([=]{
+            string path = I->m_OverwritesPath;
+            I->m_IOQueue.Run([=]{
                 auto ov_tm = ModificationTime(path);
-                if( ov_tm == m_OverwritesTime)
+                if( ov_tm == I->m_OverwritesTime)
                     return;
                 
                 string over = Load(path);
@@ -635,14 +665,14 @@ void GenericConfig::OnOverwritesFileDirChanged()
                         fprintf(stderr, "Overwrites JSON parse error: %s (%zu)\n", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
                     else {
                         fprintf(stdout, "Loaded on-the-fly config overwrites: %s.\n", path.c_str());
-                        m_OverwritesTime = ov_tm;
+                        I->m_OverwritesTime = ov_tm;
                         dispatch_to_main_queue([=]{
                             MergeChangedOverwrites(*d);
                         });
                     }
                 }
             });
-            m_ReadScheduled.clear();
+            I->m_ReadScheduled.clear();
         });
 }
 
@@ -652,16 +682,16 @@ void GenericConfig::MergeChangedOverwrites(const rapidjson::Document &_new_overw
         return;
     
     rapidjson::Document new_staging_doc;
-    new_staging_doc.CopyFrom(m_Defaults, m_Defaults.GetAllocator());
+    new_staging_doc.CopyFrom(I->m_Defaults, I->m_Defaults.GetAllocator());
     MergeDocument(new_staging_doc, _new_overwrites_diff);
     // BUG!!! this crashes with v1.2.1 running and opening/closing v1.1.5!!!!!
     // .AddMember may rearrange underlying memory, so existing references are no longer valid
     
     vector<string> changes;
     {
-        lock_guard<spinlock> lock(m_DocumentLock);
+        lock_guard<spinlock> lock(I->m_DocumentLock);
         stack< tuple<const rapidjson::Value*,const rapidjson::Value*, string> > travel;
-        travel.emplace( make_tuple(&m_Current, &new_staging_doc, "") );
+        travel.emplace( make_tuple(&I->m_Current, &new_staging_doc, "") );
         
         while( !travel.empty() ) {
             auto current_staging = get<0>(travel.top());
@@ -690,7 +720,7 @@ void GenericConfig::MergeChangedOverwrites(const rapidjson::Document &_new_overw
         }
         
         if( !changes.empty() )
-            swap( m_Current, new_staging_doc );
+            swap( I->m_Current, new_staging_doc );
     }
     
     for(auto &path: changes)

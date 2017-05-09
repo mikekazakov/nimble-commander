@@ -1,15 +1,8 @@
-//
-//  ExternalEditorInfo.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 31.03.14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
 #include "../../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/States/Terminal/TermSingleTask.h>
 #include <NimbleCommander/Core/FileMask.h>
+#include <NimbleCommander/Core/rapidjson.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "ExternalEditorInfo.h"

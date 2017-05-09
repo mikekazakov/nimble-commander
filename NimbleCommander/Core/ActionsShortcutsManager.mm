@@ -1,13 +1,6 @@
-//
-//  ActionsShortcutsManager.cpp
-//  Files
-//
-//  Created by Michael G. Kazakov on 26.02.14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Core/rapidjson.h>
 #include "ActionsShortcutsManager.h"
 
 static const auto g_OverridesConfigFile = "HotkeysOverrides.plist";

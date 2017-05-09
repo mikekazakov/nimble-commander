@@ -7,7 +7,9 @@
 //
 
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Core/rapidjson.h>
 #include "SimpleComboBoxPersistentDataSource.h"
+
 
 @implementation SimpleComboBoxPersistentDataSource
 {

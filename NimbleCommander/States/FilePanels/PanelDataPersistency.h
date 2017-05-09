@@ -1,7 +1,7 @@
 #pragma once
 
 #include <VFS/VFS.h>
-#include "../../Core/rapidjson.h"
+#include "../../Core/rapidjson_fwd.h"
 
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 

@@ -2,7 +2,8 @@
 
 #include "PanelViewDelegate.h"
 #include "../../Core/VFSInstanceManager.h"
-#include "../../Core/rapidjson.h"
+//#include "../../Core/rapidjson.h"
+#include "../../Core/rapidjson_fwd.h"
 
 class VFSHost;
 class VFSListing;

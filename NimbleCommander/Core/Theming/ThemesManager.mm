@@ -1,4 +1,5 @@
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Core/rapidjson.h>
 #include "Theme.h"
 #include "CocoaAppearanceManager.h"
 #include "ThemesManager.h"

@@ -1,7 +1,6 @@
 #pragma once
 
-#include <Habanero/SerialQueue.h>
-#include "../Core/rapidjson.h"
+#include "../Core/rapidjson_fwd.h"
 
 class GenericConfig;
 
@@ -20,6 +19,7 @@ public:
     static rapidjson::CrtAllocator g_CrtAllocator;
     
     GenericConfig(const string &_defaults, const string &_overwrites);
+    ~GenericConfig();
     
     /**
      * This will erase all custom-defined config settings and fire all observers for values that have changed.
@@ -31,7 +31,7 @@ public:
      */
     void Commit();
     
-    typedef rapidjson::GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> ConfigValue;
+    using ConfigValue = rapidjson::StandaloneValue;
     
     bool Has(const char *_path) const;
     ConfigValue Get(const string &_path) const;
@@ -76,11 +76,8 @@ public:
     }
     
 private:
-    struct Observer
-    {
-        function<void()> callback;
-        unsigned long ticket;
-    };
+    struct Observer;
+    struct State;
     
     shared_ptr<vector<shared_ptr<Observer>>>        FindObserversLocked(const char *_path) const;
     shared_ptr<vector<shared_ptr<Observer>>>        FindObserversLocked(const string &_path) const;
@@ -99,19 +96,8 @@ private:
     void        OnOverwritesFileDirChanged();
     void        MergeChangedOverwrites(const rapidjson::Document &_new_overwrites_diff);
     
-    mutable spinlock                                                    m_DocumentLock;
-    rapidjson::Document                                                 m_Current;
-    rapidjson::Document                                                 m_Defaults;
-    unordered_map<string, shared_ptr<vector<shared_ptr<Observer>>>>     m_Observers;
-    mutable spinlock                                                    m_ObserversLock;
-    
-    string                                                              m_DefaultsPath;
-    string                                                              m_OverwritesPath;
-    atomic_ullong                                                       m_ObservationTicket{ 1 };
-    SerialQueue                                                         m_IOQueue{"GenericConfig input/output queue"};
-    atomic_flag                                                         m_WriteScheduled{ false };
-    atomic_flag                                                         m_ReadScheduled{ false };
-    time_t                                                              m_OverwritesTime = 0;
+    unique_ptr<State> I;
+
     friend struct ObservationTicket;
 };
 

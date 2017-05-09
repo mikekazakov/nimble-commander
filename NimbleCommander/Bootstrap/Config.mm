@@ -1,4 +1,5 @@
 #include "Config.h"
+#include <NimbleCommander/Core/rapidjson.h>
 
 @implementation GenericConfigObjC
 {

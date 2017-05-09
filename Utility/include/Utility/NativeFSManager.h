@@ -12,6 +12,7 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include <mach/mach.h>
 
 #ifndef __OBJC__
 typedef void *NSString;

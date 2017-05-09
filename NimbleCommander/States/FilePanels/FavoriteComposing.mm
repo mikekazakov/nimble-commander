@@ -2,6 +2,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include "FavoriteComposing.h"
+#include "PanelDataPersistency.h"
 
 static vector<pair<string, string>> GetFindersFavorites();
 static vector<pair<string, string>> GetDefaultFavorites();

@@ -4,6 +4,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Core/rapidjson.h>
 #include "Favorites.h"
 #include "FavoriteComposing.h"
 

@@ -4,6 +4,7 @@
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include "AddToFavorites.h"
+#include "../PanelDataPersistency.h"
 
 namespace nc::panel::actions {
 

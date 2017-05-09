@@ -1962,6 +1962,7 @@
 		CF90C0BA1EC171FD0056E3B8 /* PanelDataFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataFilter.h; path = NimbleCommander/States/FilePanels/PanelDataFilter.h; sourceTree = SOURCE_ROOT; };
 		CF90C0BB1EC171FD0056E3B8 /* PanelDataFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataFilter.mm; path = NimbleCommander/States/FilePanels/PanelDataFilter.mm; sourceTree = SOURCE_ROOT; };
 		CF90C0C01EC174470056E3B8 /* PanelViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewDelegate.h; path = NimbleCommander/States/FilePanels/PanelViewDelegate.h; sourceTree = SOURCE_ROOT; };
+		CF90C0C31EC1B6E70056E3B8 /* rapidjson_fwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rapidjson_fwd.h; path = NimbleCommander/Core/rapidjson_fwd.h; sourceTree = SOURCE_ROOT; };
 		CF94CF921DD4418000EEA420 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/List/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF94CF931DD4418000EEA420 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = NimbleCommander/States/FilePanels/List/Layout.mm; sourceTree = SOURCE_ROOT; };
 		CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewImplementationProtocol.h; path = NimbleCommander/States/FilePanels/PanelViewImplementationProtocol.h; sourceTree = SOURCE_ROOT; };
@@ -3167,15 +3168,14 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CF0139B91E9B1B8E00E44F2D /* AnyHolder.h */,
-				CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */,
-				CF2740821E57F5DD000D4365 /* Alert.h */,
-				CF2740831E57F5DD000D4365 /* Alert.mm */,
-				CF5FE7FE1E149FF700CD83B4 /* Theming */,
 				CFDAC23D1DFBE18C0039A104 /* ActionShortcut.h */,
 				CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */,
 				CFDAC23F1DFBE18C0039A104 /* ActionsShortcutsManager.h */,
 				CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */,
+				CF2740821E57F5DD000D4365 /* Alert.h */,
+				CF2740831E57F5DD000D4365 /* Alert.mm */,
+				CF0139B91E9B1B8E00E44F2D /* AnyHolder.h */,
+				CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */,
 				CFDAC2C51DFD0F370039A104 /* Caches */,
 				CFDAC2F71DFD17520039A104 /* Common.mm */,
 				CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */,
@@ -3188,6 +3188,7 @@
 				CFB66F9D1D863E5B0017D2A0 /* Marketing */,
 				CFDAC2A41DFBFD000039A104 /* OrthodoxMonospace.h */,
 				CFDAC2A51DFBFD000039A104 /* OrthodoxMonospace.mm */,
+				CF90C0C31EC1B6E70056E3B8 /* rapidjson_fwd.h */,
 				CFDAC2161DFBC2430039A104 /* rapidjson.cpp */,
 				CFDAC2171DFBC2430039A104 /* rapidjson.h */,
 				CFDAC21C1DFBC9080039A104 /* SandboxManager.h */,
@@ -3202,6 +3203,7 @@
 				CFDAC29F1DFBFBA10039A104 /* TemporaryNativeFileChangesSentinel.h */,
 				CFDAC2A01DFBFBA10039A104 /* TemporaryNativeFileStorage.cpp */,
 				CFDAC2A11DFBFBA10039A104 /* TemporaryNativeFileStorage.h */,
+				CF5FE7FE1E149FF700CD83B4 /* Theming */,
 				CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */,
 				CF56BF521D68061600A08D2B /* VFSInstanceManager.h */,
 				CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */,

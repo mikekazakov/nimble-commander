@@ -14,6 +14,7 @@
 #include <VFS/NetSFTP.h>
 #include <VFS/NetDropbox.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/rapidjson.h>
 
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 

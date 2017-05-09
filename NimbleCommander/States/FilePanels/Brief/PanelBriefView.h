@@ -33,7 +33,7 @@ struct PanelBriefViewItemLayoutConstants
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;
-@property (nonatomic) PanelDataSortMode sortMode;
+@property (nonatomic) nc::panel::data::SortMode sortMode;
 
 @property (nonatomic) PanelBriefViewColumnsLayout columnsLayout;
 

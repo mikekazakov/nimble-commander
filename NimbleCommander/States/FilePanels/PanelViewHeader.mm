@@ -9,22 +9,24 @@
 #include "PanelController.h"
 #include "PanelViewHeader.h"
 
-static NSString *SortLetter(PanelDataSortMode _mode)
+using namespace nc::panel;
+
+static NSString *SortLetter(data::SortMode _mode)
 {
     switch( _mode.sort ) {
-        case PanelDataSortMode::SortByName:         return @"n";
-        case PanelDataSortMode::SortByNameRev:      return @"N";
-        case PanelDataSortMode::SortByExt:          return @"e";
-        case PanelDataSortMode::SortByExtRev:       return @"E";
-        case PanelDataSortMode::SortBySize:         return @"s";
-        case PanelDataSortMode::SortBySizeRev:      return @"S";
-        case PanelDataSortMode::SortByModTime:      return @"m";
-        case PanelDataSortMode::SortByModTimeRev:   return @"M";
-        case PanelDataSortMode::SortByBirthTime:    return @"b";
-        case PanelDataSortMode::SortByBirthTimeRev: return @"B";
-        case PanelDataSortMode::SortByAddTime:      return @"a";
-        case PanelDataSortMode::SortByAddTimeRev:   return @"A";
-        default:                                    return @"?";
+        case data::SortMode::SortByName:         return @"n";
+        case data::SortMode::SortByNameRev:      return @"N";
+        case data::SortMode::SortByExt:          return @"e";
+        case data::SortMode::SortByExtRev:       return @"E";
+        case data::SortMode::SortBySize:         return @"s";
+        case data::SortMode::SortBySizeRev:      return @"S";
+        case data::SortMode::SortByModTime:      return @"m";
+        case data::SortMode::SortByModTimeRev:   return @"M";
+        case data::SortMode::SortByBirthTime:    return @"b";
+        case data::SortMode::SortByBirthTimeRev: return @"B";
+        case data::SortMode::SortByAddTime:      return @"a";
+        case data::SortMode::SortByAddTimeRev:   return @"A";
+        default:                                 return @"?";
     }
 }
 
@@ -60,8 +62,8 @@ static const auto g_LightenFilter = []{
     NSButton            *m_SortButton;
     NSProgressIndicator *m_BusyIndicator;
     __weak PanelView    *m_PanelView;
-    PanelDataSortMode    m_SortMode;
-    function<void(PanelDataSortMode)> m_SortModeChangeCallback;
+    data::SortMode      m_SortMode;
+    function<void(data::SortMode)> m_SortModeChangeCallback;
     ThemesManager::ObservationTicket    m_ThemeObservation;    
 }
 
@@ -366,7 +368,7 @@ static const auto g_LightenFilter = []{
                                           inView:m_SortButton];
 }
 
-- (void) setSortMode:(PanelDataSortMode)_mode
+- (void) setSortMode:(data::SortMode)_mode
 {
     if( m_SortMode != _mode ) {
         m_SortMode = _mode;
@@ -382,8 +384,8 @@ static const auto g_LightenFilter = []{
 - (IBAction)onSortPopupMenuSortByClicked:(id)sender
 {
     if( auto item = objc_cast<NSMenuItem>(sender) ) {
-        PanelDataSortMode proposed = m_SortMode;
-        proposed.sort = (PanelDataSortMode::Mode)item.tag;
+        auto proposed = m_SortMode;
+        proposed.sort = (data::SortMode::Mode)item.tag;
         
         if( proposed != m_SortMode && m_SortModeChangeCallback )
             m_SortModeChangeCallback(proposed);
@@ -393,7 +395,7 @@ static const auto g_LightenFilter = []{
 - (IBAction)onSortPopupMenuOptionsClicked:(id)sender
 {
     if( auto item = objc_cast<NSMenuItem>(sender) ) {
-        PanelDataSortMode proposed = m_SortMode;
+        auto proposed = m_SortMode;
         switch ( item.tag ) {
             case 1: proposed.sep_dirs = !proposed.sep_dirs; break;
             case 2: proposed.extensionless_dirs = !proposed.extensionless_dirs; break;

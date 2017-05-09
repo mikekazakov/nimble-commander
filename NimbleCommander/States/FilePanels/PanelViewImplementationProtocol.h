@@ -3,7 +3,10 @@
 #include "PanelViewTypes.h"
 
 class PanelData;
-struct PanelDataSortMode;
+
+namespace nc::panel::data {
+    struct SortMode;
+}
 
 @protocol PanelViewImplementationProtocol <NSObject>
 @required
@@ -11,7 +14,7 @@ struct PanelDataSortMode;
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic, readonly) int maxNumberOfVisibleItems;
 @property (nonatomic) int cursorPosition;
-@property (nonatomic) PanelDataSortMode sortMode;
+@property (nonatomic) nc::panel::data::SortMode sortMode;
 
 - (void) dataChanged;
 - (void) syncVolatileData;

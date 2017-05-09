@@ -16,6 +16,8 @@
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewCollectionViewBackground.h"
 
+using namespace ::nc::panel;
+
 // font_size, double_icon, icon_size, line_height, text_baseline
 static const array< tuple<int8_t, int8_t, int8_t, int8_t, int8_t>, 21> g_FixedLayoutData = {{
     make_tuple(10, 0,  0, 17, 5),
@@ -123,7 +125,7 @@ const noexcept
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
     PanelBriefViewColumnsLayout         m_ColumnsLayout;
     __weak PanelView                   *m_PanelView;
-    PanelDataSortMode                   m_SortMode;
+    data::SortMode                      m_SortMode;
     ThemesManager::ObservationTicket    m_ThemeObservation;
 }
 

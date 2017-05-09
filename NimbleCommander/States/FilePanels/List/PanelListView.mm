@@ -18,6 +18,8 @@
 #include "PanelListViewDateFormatting.h"
 #include "PanelListView.h"
 
+using namespace nc::panel;
+
 static const auto g_MaxStashedRows              = 50;
 static const auto g_SortAscImage = [NSImage imageNamed:@"NSAscendingSortIndicator"];
 static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndicator"];
@@ -82,8 +84,8 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     
     stack<PanelListViewRowView*>        m_RowsStash;
     
-    PanelDataSortMode                   m_SortMode;
-    function<void(PanelDataSortMode)>   m_SortModeChangeCallback;
+    data::SortMode                      m_SortMode;
+    function<void(data::SortMode)>      m_SortModeChangeCallback;
     
     PanelListViewColumnsLayout          m_AssignedLayout;
     ThemesManager::ObservationTicket    m_ThemeObservation;
@@ -641,7 +643,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     [self placeSortIndicator];
 }
 
-- (void) setSortMode:(PanelDataSortMode)_mode
+- (void) setSortMode:(data::SortMode)_mode
 {
     if( m_SortMode == _mode )
         return;
@@ -656,7 +658,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         [m_TableView setIndicatorImage:nil inTableColumn:c];
     
     auto set = [&]()->pair<NSImage*,NSTableColumn*>{
-        using _ = PanelDataSortMode;
+        using _ = data::SortMode;
         switch( m_SortMode.sort ) {
             case _::SortByName:         return {g_SortAscImage,     m_NameColumn};
             case _::SortByNameRev:      return {g_SortDescImage,    m_NameColumn};
@@ -678,21 +680,21 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn
 {
-    PanelDataSortMode proposed = m_SortMode;
-    auto swp = [&]( PanelDataSortMode::Mode _1st, PanelDataSortMode::Mode _2nd ){
+    auto proposed = m_SortMode;
+    auto swp = [&]( data::SortMode::Mode _1st, data::SortMode::Mode _2nd ){
         proposed.sort = (proposed.sort == _1st ? _2nd : _1st );
     };
 
     if( tableColumn == m_NameColumn )
-        swp(PanelDataSortMode::SortByName, PanelDataSortMode::SortByNameRev);
+        swp(data::SortMode::SortByName, data::SortMode::SortByNameRev);
     if( tableColumn == m_SizeColumn )
-        swp(PanelDataSortMode::SortBySize, PanelDataSortMode::SortBySizeRev);
+        swp(data::SortMode::SortBySize, data::SortMode::SortBySizeRev);
     if( tableColumn == m_DateCreatedColumn )
-        swp(PanelDataSortMode::SortByBirthTime, PanelDataSortMode::SortByBirthTimeRev);
+        swp(data::SortMode::SortByBirthTime, data::SortMode::SortByBirthTimeRev);
     if( tableColumn == m_DateModifiedColumn )
-        swp(PanelDataSortMode::SortByModTime, PanelDataSortMode::SortByModTimeRev);
+        swp(data::SortMode::SortByModTime, data::SortMode::SortByModTimeRev);
     if( tableColumn == m_DateAddedColumn )
-        swp(PanelDataSortMode::SortByAddTime, PanelDataSortMode::SortByAddTimeRev);
+        swp(data::SortMode::SortByAddTime, data::SortMode::SortByAddTimeRev);
     
     if( proposed != m_SortMode && m_SortModeChangeCallback )
         m_SortModeChangeCallback(proposed);

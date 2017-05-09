@@ -7,21 +7,21 @@ namespace nc::panel::actions {
 static const auto g_SortAscImage = [NSImage imageNamed:@"NSAscendingSortIndicator"];
 static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndicator"];
 
-static NSImage *ImageFromSortMode( PanelData::PanelSortMode::Mode _mode )
+static NSImage *ImageFromSortMode( data::SortMode::Mode _mode )
 {
     switch( _mode ) {
-        case PanelDataSortMode::SortByName:         return g_SortAscImage;
-        case PanelDataSortMode::SortByNameRev:      return g_SortDescImage;
-        case PanelDataSortMode::SortByExt:          return g_SortAscImage;
-        case PanelDataSortMode::SortByExtRev:       return g_SortDescImage;
-        case PanelDataSortMode::SortBySize:         return g_SortDescImage;
-        case PanelDataSortMode::SortBySizeRev:      return g_SortAscImage;
-        case PanelDataSortMode::SortByBirthTime:    return g_SortDescImage;
-        case PanelDataSortMode::SortByBirthTimeRev: return g_SortAscImage;
-        case PanelDataSortMode::SortByModTime:      return g_SortDescImage;
-        case PanelDataSortMode::SortByModTimeRev:   return g_SortAscImage;
-        case PanelDataSortMode::SortByAddTime:      return g_SortDescImage;
-        case PanelDataSortMode::SortByAddTimeRev:   return g_SortAscImage;
+        case data::SortMode::SortByName:         return g_SortAscImage;
+        case data::SortMode::SortByNameRev:      return g_SortDescImage;
+        case data::SortMode::SortByExt:          return g_SortAscImage;
+        case data::SortMode::SortByExtRev:       return g_SortDescImage;
+        case data::SortMode::SortBySize:         return g_SortDescImage;
+        case data::SortMode::SortBySizeRev:      return g_SortAscImage;
+        case data::SortMode::SortByBirthTime:    return g_SortDescImage;
+        case data::SortMode::SortByBirthTimeRev: return g_SortAscImage;
+        case data::SortMode::SortByModTime:      return g_SortDescImage;
+        case data::SortMode::SortByModTimeRev:   return g_SortAscImage;
+        case data::SortMode::SortByAddTime:      return g_SortDescImage;
+        case data::SortMode::SortByAddTimeRev:   return g_SortAscImage;
         default: return nil;
     }
 }
@@ -41,9 +41,9 @@ static void UpdateItemState(NSMenuItem *_item,
     }
 }
 
-static PanelData::PanelSortMode EnforceAndSwitch(PanelData::PanelSortMode _mode,
-                                                 PanelData::PanelSortMode::Mode _direct,
-                                                 PanelData::PanelSortMode::Mode _reversed)
+static PanelData::PanelSortMode EnforceAndSwitch(data::SortMode _mode,
+                                                 data::SortMode::Mode _direct,
+                                                 data::SortMode::Mode _reversed)
 {
     _mode.sort = (_mode.sort != _direct ? _direct : _reversed);
     return _mode;

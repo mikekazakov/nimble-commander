@@ -687,7 +687,7 @@ void PanelData::DoSortWithHardFiltering()
     // no dotdot dir. also assumes that no filtering will exclude dotdot dir
     sort(next( begin(m_EntriesByCustomSort), m_Listing->IsDotDot(0) ?  1 : 0 ),
          end( m_EntriesByCustomSort ),
-         panel::IndirectListingComparator{ *m_Listing, m_VolatileData, m_CustomSortMode });
+         nc::panel::data::IndirectListingComparator{ *m_Listing, m_VolatileData, m_CustomSortMode });
 }
 
 void PanelData::SetSoftFiltering(const TextualFilter &_filter)
@@ -747,7 +747,7 @@ int PanelData::SortLowerBoundForEntrySortKeys(const ExternalEntryKey& _keys) con
     auto it = lower_bound(begin(m_EntriesByCustomSort),
                           end(m_EntriesByCustomSort),
                           _keys,
-                          panel::ExternalListingComparator(*m_Listing,
+                          nc::panel::data::ExternalListingComparator(*m_Listing,
                                                            m_VolatileData,
                                                            m_CustomSortMode)
                           );

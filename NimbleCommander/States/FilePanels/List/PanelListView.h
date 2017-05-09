@@ -3,7 +3,6 @@
 #include "../PanelViewImplementationProtocol.h"
 
 class PanelData;
-struct PanelDataSortMode;
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 class PanelListViewGeometry;
@@ -16,8 +15,8 @@ struct PanelListViewColumnsLayout;
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;
-@property (nonatomic) PanelDataSortMode sortMode;
-@property (nonatomic) function<void(PanelDataSortMode)> sortModeChangeCallback;
+@property (nonatomic) nc::panel::data::SortMode sortMode;
+@property (nonatomic) function<void(nc::panel::data::SortMode)> sortModeChangeCallback;
 @property (nonatomic) PanelView *panelView;
 
 - (void) dataChanged;

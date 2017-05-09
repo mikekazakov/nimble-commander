@@ -1,8 +1,10 @@
 #include "PanelDataSortMode.h"
 
-static_assert( sizeof(PanelDataSortMode) == 2 );
+namespace nc::panel::data {
 
-PanelDataSortMode::PanelDataSortMode() noexcept:
+static_assert( sizeof(SortMode) == 2 );
+
+SortMode::SortMode() noexcept:
     sort(SortByRawCName),
     sep_dirs(false),
     case_sens(false),
@@ -10,7 +12,7 @@ PanelDataSortMode::PanelDataSortMode() noexcept:
     extensionless_dirs(false)
 {}
 
-bool PanelDataSortMode::isdirect() const noexcept
+bool SortMode::isdirect() const noexcept
 {
     return sort == SortByName ||
            sort == SortByExt ||
@@ -19,7 +21,7 @@ bool PanelDataSortMode::isdirect() const noexcept
            sort == SortByBirthTime;
 }
 
-bool PanelDataSortMode::isrevert() const noexcept
+bool SortMode::isrevert() const noexcept
 {
     return sort == SortByNameRev ||
            sort == SortByExtRev ||
@@ -28,7 +30,7 @@ bool PanelDataSortMode::isrevert() const noexcept
            sort == SortByBirthTimeRev;
 }
 
-bool PanelDataSortMode::validate(Mode _mode) noexcept
+bool SortMode::validate(Mode _mode) noexcept
 {
     return _mode == SortNoSort ||
     _mode == SortByName ||
@@ -45,7 +47,7 @@ bool PanelDataSortMode::validate(Mode _mode) noexcept
     _mode == SortByAddTimeRev ;
 }
 
-bool PanelDataSortMode::operator ==(const PanelDataSortMode& _r) const noexcept
+bool SortMode::operator ==(const SortMode& _r) const noexcept
 {
     return sort == _r.sort &&
            sep_dirs == _r.sep_dirs &&
@@ -54,7 +56,9 @@ bool PanelDataSortMode::operator ==(const PanelDataSortMode& _r) const noexcept
            extensionless_dirs == _r.extensionless_dirs;
 }
 
-bool PanelDataSortMode::operator !=(const PanelDataSortMode& _r) const noexcept
+bool SortMode::operator !=(const SortMode& _r) const noexcept
 {
     return !(*this == _r);
+}
+
 }

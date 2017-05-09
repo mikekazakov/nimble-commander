@@ -38,6 +38,8 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
     return hash<string>()(full);
 }
 
+using namespace nc::panel;
+
 ////////////////////////////////////////////////////////////////////////////////
 
 @interface PanelView()
@@ -81,7 +83,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
         m_HeaderView = [[PanelViewHeader alloc] initWithFrame:frame];
         m_HeaderView.translatesAutoresizingMaskIntoConstraints = false;
         __weak PanelView *weak_self = self;
-        m_HeaderView.sortModeChangeCallback = [weak_self](PanelDataSortMode _sm){
+        m_HeaderView.sortModeChangeCallback = [weak_self](data::SortMode _sm){
             if( PanelView *strong_self = weak_self )
                 [strong_self.controller changeSortingModeTo:_sm];
         };
@@ -148,7 +150,7 @@ static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
    PanelListView *v = [[PanelListView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
     v.translatesAutoresizingMaskIntoConstraints = false;
     __weak PanelView *weak_self = self;
-    v.sortModeChangeCallback = [=](PanelDataSortMode _sm){
+    v.sortModeChangeCallback = [=](data::SortMode _sm){
         if( PanelView *strong_self = weak_self )
             [strong_self.controller changeSortingModeTo:_sm];
     };

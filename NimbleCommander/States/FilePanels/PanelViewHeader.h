@@ -9,7 +9,7 @@
 @property (nonatomic, readonly) NSProgressIndicator *busyIndicator;
 @property (nonatomic) NSString *searchPrompt;
 @property (nonatomic) int       searchMatches;
-@property (nonatomic) PanelDataSortMode sortMode;
-@property (nonatomic) function<void(PanelDataSortMode)> sortModeChangeCallback;
+@property (nonatomic) nc::panel::data::SortMode sortMode;
+@property (nonatomic) function<void(nc::panel::data::SortMode)> sortModeChangeCallback;
 
 @end

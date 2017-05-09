@@ -29,7 +29,7 @@ public:
     };
     
     using ExternalEntryKey = panel::ExternalEntryKey;
-    using PanelSortMode = PanelDataSortMode;
+    using PanelSortMode = ::nc::panel::data::SortMode;
     using Statistics = PanelDataStatistics;
     using VolatileData = PanelDataItemVolatileData;
     using TextualFilter = PanelDataTextualFilter;

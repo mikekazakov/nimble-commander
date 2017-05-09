@@ -3,11 +3,11 @@
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataExternalEntryKey.h"
 
-namespace panel {
+namespace nc::panel::data {
 
 ListingComparatorBase::ListingComparatorBase(const VFSListing &_items,
                                              const vector<PanelDataItemVolatileData>& _vd,
-                                             PanelDataSortMode _sort_mode):
+                                             SortMode _sort_mode):
     l{ _items },
     vd{ _vd },
     sort_mode{ _sort_mode },
@@ -30,14 +30,14 @@ int ListingComparatorBase::Compare( const char *_1st, const char *_2nd ) const n
 IndirectListingComparator::IndirectListingComparator(
     const VFSListing &_items,
     const vector<PanelDataItemVolatileData>& _vd,
-    PanelDataSortMode sort_mode):
+    SortMode sort_mode):
         ListingComparatorBase(_items, _vd, sort_mode)
 {
 }
 
 bool IndirectListingComparator::operator()(unsigned _1, unsigned _2) const
 {
-    using _ = PanelDataSortMode::Mode;
+    using _ = SortMode::Mode;
     
     if( sort_mode.sep_dirs ) {
         if( l.IsDir(_1) && !l.IsDir(_2) ) return true;
@@ -213,13 +213,13 @@ int IndirectListingComparator::CompareNames(unsigned _1, unsigned _2) const
 
 ExternalListingComparator::ExternalListingComparator(const VFSListing &_items,
                                                      const vector<PanelDataItemVolatileData>& _vd,
-                                                     PanelDataSortMode sort_mode):
+                                                     SortMode sort_mode):
     ListingComparatorBase(_items, _vd, sort_mode)
 {}
 
-bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &_val2) const
+bool ExternalListingComparator::operator()(unsigned _1, const ::panel::ExternalEntryKey &_val2) const
 {
-    using _ = PanelDataSortMode::Mode;
+    using _ = SortMode::Mode;
     const auto invalid_size = PanelDataItemVolatileData::invalid_size;
     
     if( sort_mode.sep_dirs ) {

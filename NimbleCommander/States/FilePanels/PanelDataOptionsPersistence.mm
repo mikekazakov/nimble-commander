@@ -56,7 +56,7 @@ void DataOptionsImporter::Import(const rapidjson::StandaloneValue& _options)
     if( auto v = GetOptionalBoolFromObject(_options, g_RestorationNumericSortKey) )
         sort_mode.numeric_sort = *v;
     if( auto v = GetOptionalIntFromObject(_options, g_RestorationSortModeKey)  )
-        if( auto mode = (PanelDataSortMode::Mode)*v; PanelDataSortMode::validate(mode) )
+        if( auto mode = (nc::panel::data::SortMode::Mode)*v; nc::panel::data::SortMode::validate(mode) )
             sort_mode.sort = mode;
     m_Data.SetSortMode(sort_mode);
     

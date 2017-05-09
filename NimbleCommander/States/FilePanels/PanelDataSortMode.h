@@ -1,7 +1,10 @@
 #pragma once
 
 // 2 bytes long, OK to pass by value everywhere
-struct PanelDataSortMode
+
+namespace nc::panel::data {
+
+struct SortMode
 {
     enum Mode : signed char
     {
@@ -43,10 +46,12 @@ struct PanelDataSortMode
      */
     bool numeric_sort : 1;
     
-    PanelDataSortMode() noexcept;
+    SortMode() noexcept;
     bool isdirect() const noexcept;
     bool isrevert() const noexcept;
     static bool validate(Mode _mode) noexcept;
-    bool operator ==(const PanelDataSortMode& _r) const noexcept;
-    bool operator !=(const PanelDataSortMode& _r) const noexcept;
+    bool operator ==(const SortMode& _r) const noexcept;
+    bool operator !=(const SortMode& _r) const noexcept;
 };
+
+}

@@ -3,6 +3,7 @@
 #include "../Helpers/Pasteboard.h"
 #include "../PanelData.h"
 #include "../PanelView.h"
+#include <VFS/VFS.h>
 
 // TODO: move localizable string to a new file. FilePanelsContextMenu.string was a bad idea!
 

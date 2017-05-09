@@ -109,7 +109,7 @@ void Model::ReLoad(const shared_ptr<VFSListing> &_listing)
     vector<unsigned> dirbyrawcname;
     DoRawSort(*_listing, dirbyrawcname);
     
-    vector<VolatileData> new_vd;
+    vector<ItemVolatileData> new_vd;
     InitVolatileDataWithListing(new_vd, *_listing);
     
     if( _listing->IsUniform() && m_Listing->IsUniform() ) {
@@ -200,7 +200,7 @@ const vector<unsigned>& Model::SortedDirectoryEntries() const noexcept
     return m_EntriesByCustomSort;
 }
 
-Model::VolatileData& Model::VolatileDataAtRawPosition( int _pos )
+ItemVolatileData& Model::VolatileDataAtRawPosition( int _pos )
 {
     if( _pos < 0 || _pos >= m_VolatileData.size() )
         throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
@@ -208,7 +208,7 @@ Model::VolatileData& Model::VolatileDataAtRawPosition( int _pos )
     return m_VolatileData[_pos];
 }
 
-const Model::VolatileData& Model::VolatileDataAtRawPosition( int _pos ) const
+const ItemVolatileData& Model::VolatileDataAtRawPosition( int _pos ) const
 {
     if( _pos < 0 || _pos >= m_VolatileData.size() )
         throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
@@ -216,12 +216,12 @@ const Model::VolatileData& Model::VolatileDataAtRawPosition( int _pos ) const
     return m_VolatileData[_pos];
 }
 
-Model::VolatileData& Model::VolatileDataAtSortPosition( int _pos )
+ItemVolatileData& Model::VolatileDataAtSortPosition( int _pos )
 {
     return VolatileDataAtRawPosition( RawIndexForSortIndex(_pos) );
 }
 
-const Model::VolatileData& Model::VolatileDataAtSortPosition( int _pos ) const
+const ItemVolatileData& Model::VolatileDataAtSortPosition( int _pos ) const
 {
     return VolatileDataAtRawPosition( RawIndexForSortIndex(_pos) );
 }
@@ -346,7 +346,7 @@ static void DoRawSort(const VFSListing &_from, vector<unsigned> &_to)
          );
 }
 
-void Model::SetSortMode(PanelSortMode _mode)
+void Model::SetSortMode(struct SortMode _mode)
 {
     if(m_CustomSortMode == _mode)
         return;
@@ -365,7 +365,7 @@ void Model::ClearSelectedFlagsFromHiddenElements()
             vd.toggle_selected(false);
 }
 
-Model::PanelSortMode Model::SortMode() const
+SortMode Model::SortMode() const
 {
     return m_CustomSortMode;
 }
@@ -531,7 +531,7 @@ bool Model::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size)
 {
     if(_entry    == nullptr ||
        _entry[0] == 0       ||
-       _size == VolatileData::invalid_size )
+       _size == ItemVolatileData::invalid_size )
         return false;
     
     int n = RawIndexForName(_entry);
@@ -561,7 +561,7 @@ bool Model::SetCalculatedSizeForDirectory(const char *_filename, const char *_di
        _filename[0] == 0       ||
        _directory == nullptr   ||
        _directory[0] == 0      ||
-       _size == VolatileData::invalid_size )
+       _size == ItemVolatileData::invalid_size )
         return false;
     
     // dumb linear search here
@@ -637,7 +637,7 @@ void Model::SetHardFiltering(const HardFilter &_filter)
     UpdateStatictics();
 }
 
-Model::HardFilter Model::HardFiltering() const
+HardFilter Model::HardFiltering() const
 {
     return m_HardFiltering;
 }
@@ -678,7 +678,7 @@ void Model::DoSortWithHardFiltering()
     }
 
     if(m_EntriesByCustomSort.empty() ||
-       m_CustomSortMode.sort == PanelSortMode::SortNoSort)
+       m_CustomSortMode.sort == SortMode::SortNoSort)
         return; // we're already done
     
     // do not touch dotdot directory. however, in some cases (root dir for example) there will be
@@ -694,7 +694,7 @@ void Model::SetSoftFiltering(const TextualFilter &_filter)
     BuildSoftFilteringIndeces();
 }
 
-Model::TextualFilter Model::SoftFiltering() const
+TextualFilter Model::SoftFiltering() const
 {
     return m_SoftFiltering;
 }
@@ -729,7 +729,7 @@ void Model::BuildSoftFilteringIndeces()
     }
 }
 
-Model::ExternalEntryKey Model::EntrySortKeysAtSortPosition(int _pos) const
+ExternalEntryKey Model::EntrySortKeysAtSortPosition(int _pos) const
 {
     auto item = EntryAtSortPosition(_pos);
     if( !item )
@@ -754,7 +754,7 @@ int Model::SortLowerBoundForEntrySortKeys(const ExternalEntryKey& _keys) const
     return -1;
 }
 
-const Model::Statistics &Model::Stats() const noexcept
+const Statistics &Model::Stats() const noexcept
 {
     return m_Stats;
 }

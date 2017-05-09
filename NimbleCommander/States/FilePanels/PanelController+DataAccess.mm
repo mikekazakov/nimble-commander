@@ -3,6 +3,7 @@
 #include "PanelDataItemVolatileData.h"
 #include "PanelData.h"
 #include "PanelView.h"
+#include <VFS/VFS.h>
 
 @implementation PanelController (DataAccess)
 

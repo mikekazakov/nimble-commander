@@ -188,7 +188,7 @@ public:
                                           const string &_path);
 
 private:
-    NSImage *ImageForLocation( const PanelDataPersisency::Location &_location );
+    NSImage *ImageForLocation( const PersistentLocation &_location );
     NSImage *ImageForPromiseAndPath(const VFSInstanceManager::Promise &_promise,
                                     const string& _path );
     NetworkConnectionsManager &m_ConnectionManager;
@@ -555,7 +555,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForPromiseAndPath(const VFSInstanceManager:
     return menu_item;
 }
 
-NSImage* MenuItemBuilder::ImageForLocation(const PanelDataPersisency::Location &_location)
+NSImage* MenuItemBuilder::ImageForLocation(const PersistentLocation &_location)
 {
     if( _location.is_native() ) {
         auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_location.path.c_str()

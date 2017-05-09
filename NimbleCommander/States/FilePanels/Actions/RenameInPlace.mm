@@ -1,6 +1,7 @@
 #include "../PanelController.h"
 #include "RenameInPlace.h"
 #include "../PanelView.h"
+#include <VFS/VFS.h>
 
 namespace nc::panel::actions {
 

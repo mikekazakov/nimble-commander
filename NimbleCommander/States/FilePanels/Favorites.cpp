@@ -7,6 +7,8 @@
 #include "Favorites.h"
 #include "FavoriteComposing.h"
 
+using namespace nc::panel;
+
 static const auto g_MaxTimeRange = 60 * 60 * 24 * 14; // 14 days range for bothering with visits
 
 static size_t HashForPath( const VFSHost &_at_vfs, const string &_path )

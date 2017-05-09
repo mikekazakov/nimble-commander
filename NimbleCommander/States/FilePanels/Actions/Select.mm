@@ -5,6 +5,7 @@
 #include "../PanelController.h"
 #include "../PanelData.h"
 #include "../PanelView.h"
+#include <VFS/VFS.h>
 
 namespace nc::panel::actions {
 

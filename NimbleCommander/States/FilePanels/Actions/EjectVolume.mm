@@ -1,4 +1,5 @@
 #include <Utility/NativeFSManager.h>
+#include <VFS/VFS.h>
 #include "../PanelController.h"
 #include "EjectVolume.h"
 

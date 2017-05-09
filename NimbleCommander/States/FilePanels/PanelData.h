@@ -31,13 +31,6 @@ public:
         Temporary = 1
     };
     
-    using ExternalEntryKey = ExternalEntryKey;
-    using PanelSortMode = SortMode;
-    using Statistics = Statistics;
-    using VolatileData = ItemVolatileData;
-    using TextualFilter = TextualFilter;
-    using HardFilter = HardFilter;
-        
     Model();
     ~Model();
     
@@ -68,13 +61,13 @@ public:
     const vector<unsigned>& EntriesBySoftFiltering() const noexcept;
     
     VFSListingItem   EntryAtRawPosition(int _pos) const noexcept; // will return an "empty" item upon invalid index
-    VolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
-    const VolatileData& VolatileDataAtRawPosition( int _pos ) const; // will throw an exception upon invalid index
+    ItemVolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
+    const ItemVolatileData& VolatileDataAtRawPosition( int _pos ) const; // will throw an exception upon invalid index
     
     bool IsValidSortPosition(int _pos) const noexcept;
     VFSListingItem   EntryAtSortPosition(int _pos) const noexcept; // will return an "empty" item upon invalid index
-    VolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
-    const VolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
+    ItemVolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
+    const ItemVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
     
     vector<string>          SelectedEntriesFilenames() const;
     vector<VFSListingItem> SelectedEntries() const;
@@ -146,8 +139,8 @@ public:
     string VerboseDirectoryFullPath() const;
     
     // sorting
-    void SetSortMode(PanelSortMode _mode);
-    PanelSortMode SortMode() const;
+    void SetSortMode(SortMode _mode);
+    SortMode SortMode() const;
     
     // hard filtering filtering
     void SetHardFiltering(const HardFilter &_filter);
@@ -200,11 +193,11 @@ private:
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
     shared_ptr<VFSListing>      m_Listing;
-    vector<VolatileData>        m_VolatileData;
+    vector<ItemVolatileData>    m_VolatileData;
     vector<unsigned>            m_EntriesByRawName;    // sorted with raw strcmp comparison
     vector<unsigned>            m_EntriesByCustomSort; // custom defined sort
     vector<unsigned>            m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
-    PanelSortMode               m_CustomSortMode;
+    struct SortMode             m_CustomSortMode;
     HardFilter                  m_HardFiltering;
     TextualFilter               m_SoftFiltering;
     Statistics                  m_Stats;

@@ -90,7 +90,7 @@ void GoToFavoriteLocation::Perform( PanelController *_target, id _sender ) const
 {
     if( auto menuitem = objc_cast<NSMenuItem>(_sender) )
         if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
-            if( auto location = any_cast<PanelDataPersisency::Location>(&holder.any) )
+            if( auto location = any_cast<PersistentLocation>(&holder.any) )
                 [_target goToPersistentLocation:*location];
 }
 

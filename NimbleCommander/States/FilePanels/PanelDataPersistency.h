@@ -9,39 +9,41 @@
 // 1. NetworkConnectionsManager
 // 2. VFSInstanceManager
 
+namespace nc::panel {
+
+struct PersistentLocation
+{
+    bool is_native() const noexcept;
+    bool is_network() const noexcept;
+    vector<any> hosts;  // .front() is a deepest host, .back() is topmost
+                        // empty hosts means using native vfs
+    string path;
+};
+
 class PanelDataPersisency
 {
 public:
     PanelDataPersisency( NetworkConnectionsManager &_conn_manager );
 
-    struct Location
-    {
-        bool is_native() const noexcept;
-        bool is_network() const noexcept;
-        vector<any> hosts; // .front() is a deepest host, .back() is topmost
-                           // empty hosts means using native vfs
-        string path;
-    };
-
-    static string MakeFootprintString( const Location &_loc );
-    static size_t MakeFootprintStringHash( const Location &_loc );
+    static string MakeFootprintString( const PersistentLocation &_loc );
+    static size_t MakeFootprintStringHash( const PersistentLocation &PersistentLocation );
     
     // NB! these functions theat paths as a directory regardless, and resulting path will
     // containt a trailing slash.
-    static string MakeVerbosePathString( const Location &_loc );
+    static string MakeVerbosePathString( const PersistentLocation &_loc );
     static string MakeVerbosePathString( const VFSHost &_host, const string &_directory );
 
-    static optional<Location> EncodeLocation( const VFSHost &_vfs, const string &_path );
+    static optional<PersistentLocation> EncodeLocation( const VFSHost &_vfs, const string &_path );
  
     optional<NetworkConnectionsManager::Connection>
-     ExtractConnectionFromLocation( const Location &_location );
+     ExtractConnectionFromLocation( const PersistentLocation &_location );
     
     using json = rapidjson::StandaloneValue;
     static optional<json> EncodeVFSPath( const VFSHost &_vfs, const string &_path );
     static optional<json> EncodeVFSPath( const VFSListing &_listing );
     
-    static optional<Location> JSONToLocation( const json &_json );
-    static optional<json> LocationToJSON( const Location &_location );
+    static optional<PersistentLocation> JSONToLocation( const json &_json );
+    static optional<json> LocationToJSON( const PersistentLocation &_location );
     
     // LocationToJSON( *EncodeLocation(host, path) ) == EncodeVFSPath(host, path)
     
@@ -49,7 +51,7 @@ public:
     static int CreateVFSFromState( const json &_state, VFSHostPtr &_host );
     
     // uses current state to retrieve existing vfs if possible
-    static int CreateVFSFromLocation( const Location &_state, VFSHostPtr &_host );
+    static int CreateVFSFromLocation( const PersistentLocation &_state, VFSHostPtr &_host );
     
     static string GetPathFromState( const json &_state );
     
@@ -81,3 +83,5 @@ uuid: "uuid"
 private:
     NetworkConnectionsManager &m_ConnectionsManager;
 };
+
+}

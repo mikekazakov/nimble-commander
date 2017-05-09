@@ -23,6 +23,7 @@ static NetworkConnectionsManager &ConnectionsManager()
     return ConfigBackedNetworkConnectionsManager::Instance();
 }
 
+namespace nc::panel {
 
 //type: "type", // VFSNativeHost::Tag, VFSPSHost::Tag, VFSArchiveHost::Tag, VFSArchiveUnRARHost::Tag, VFSXAttrHost::Tag, "network"
 // perhaps "archive" in the future, when more of them will come and some dedicated "ArchiveManager" will appear
@@ -80,12 +81,12 @@ PanelDataPersisency::PanelDataPersisency( NetworkConnectionsManager &_conn_manag
 {
 }
 
-bool PanelDataPersisency::Location::is_native() const noexcept
+bool PersistentLocation::is_native() const noexcept
 {
     return hosts.empty();
 }
 
-bool PanelDataPersisency::Location::is_network() const noexcept
+bool PersistentLocation::is_network() const noexcept
 {
     return !hosts.empty() && any_cast<Network>(&hosts.front());
 }
@@ -125,10 +126,10 @@ static any EncodeState( const VFSHost& _host )
     return {};
 }
 
-optional<PanelDataPersisency::Location> PanelDataPersisency::
-EncodeLocation( const VFSHost &_vfs, const string &_path )
+optional<PersistentLocation> PanelDataPersisency::
+    EncodeLocation( const VFSHost &_vfs, const string &_path )
 {
-    Location location;
+    PersistentLocation location;
 
     // in case of native vfs we simply omit mentioning is - simply path is enough
     if( !_vfs.IsNativeFS() ) {
@@ -197,7 +198,7 @@ EncodeVFSPath( const VFSHost &_vfs, const string &_path )
 }
 
 optional<rapidjson::StandaloneValue> PanelDataPersisency::
-LocationToJSON( const Location &_location )
+LocationToJSON( const PersistentLocation &_location )
 {
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
     rapidjson::StandaloneValue json_hosts(rapidjson::kArrayType);
@@ -218,12 +219,12 @@ LocationToJSON( const Location &_location )
     return move(json);
 }
 
-optional<PanelDataPersisency::Location> PanelDataPersisency::JSONToLocation( const json &_json )
+optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_json )
 {
     if( !_json.IsObject() || !_json.HasMember(g_StackPathKey) || !_json[g_StackPathKey].IsString() )
         return nullopt;
 
-    Location result;
+    PersistentLocation result;
     result.path = _json[g_StackPathKey].GetString();
     
     if( !_json.HasMember(g_StackHostsKey) )
@@ -296,7 +297,7 @@ static const char *VFSTagForNetworkConnection( const NetworkConnectionsManager::
         return "<unknown_vfs>";
 }
 
-string PanelDataPersisency::MakeFootprintString( const Location &_loc )
+string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc )
 {
     string footprint;
     if( _loc.hosts.empty() ) {
@@ -342,12 +343,12 @@ string PanelDataPersisency::MakeFootprintString( const Location &_loc )
     return footprint;
 }
 
-size_t PanelDataPersisency::MakeFootprintStringHash( const Location &_loc )
+size_t PanelDataPersisency::MakeFootprintStringHash( const PersistentLocation &_loc )
 {
     return hash<string>()( MakeFootprintString(_loc) );
 }
 
-string PanelDataPersisency::MakeVerbosePathString( const Location &_loc )
+string PanelDataPersisency::MakeVerbosePathString( const PersistentLocation &_loc )
 {
     string verbose;
     for( auto &h: _loc.hosts ) {
@@ -607,7 +608,7 @@ static VFSHostPtr FindFitting(
     return nullptr;
 }
 
-int PanelDataPersisency::CreateVFSFromLocation( const Location &_state, VFSHostPtr &_host )
+int PanelDataPersisency::CreateVFSFromLocation( const PersistentLocation &_state, VFSHostPtr &_host )
 {
     if( _state.hosts.empty() ) {
         // short path for most common case - native vfs
@@ -688,7 +689,7 @@ string PanelDataPersisency::GetPathFromState( const rapidjson::StandaloneValue &
 }
 
 optional<NetworkConnectionsManager::Connection> PanelDataPersisency::
-    ExtractConnectionFromLocation( const Location &_location )
+    ExtractConnectionFromLocation( const PersistentLocation &_location )
 {
     if( _location.hosts.empty() )
         return nullopt;
@@ -698,4 +699,6 @@ optional<NetworkConnectionsManager::Connection> PanelDataPersisency::
             return conn;
     
     return nullopt;
+}
+
 }

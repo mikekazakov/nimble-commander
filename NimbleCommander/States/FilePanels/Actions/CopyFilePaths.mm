@@ -2,6 +2,7 @@
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include "CopyFilePaths.h"
+#include <VFS/VFS.h>
 
 namespace nc::panel::actions {
 

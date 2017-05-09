@@ -1,7 +1,9 @@
 #pragma once
 
 #include <Habanero/Observable.h>
-#include <VFS/VFS.h>
+
+class VFSHost;
+class VFSConfiguration;
 
 /**
  * Keeps track of alive VFS in the system.
@@ -20,7 +22,7 @@ public:
      * Will register information about the instance if not yet.
      * Returned promise may be used for later vfs restoration.
      */
-    Promise TameVFS( const VFSHostPtr& _instance );
+    Promise TameVFS( const shared_ptr<VFSHost>& _instance );
     
     Promise PreserveVFS( const weak_ptr<VFSHost>& _instance );
     
@@ -29,7 +31,7 @@ public:
      * May throw vfs exceptions on vfs rebuilding.
      * May return nullptr on failure.
      */
-    VFSHostPtr RetrieveVFS( const Promise &_promise, function<bool()> _cancel_checker = nullptr );
+    shared_ptr<VFSHost> RetrieveVFS( const Promise &_promise, function<bool()> _cancel_checker = nullptr );
     
     /**
      * Will find an info for promise and return a corresponding vfs tag.
@@ -60,20 +62,7 @@ private:
         KnownVFSListObservation = 0x0002,
     };
    
-    struct Info
-    {
-        Info(const VFSHostPtr& _host,
-             uint64_t _id,
-             uint64_t _parent_id,
-             VFSConfiguration _config
-             );
-        uint64_t            m_ID;
-        uint64_t            m_PromisesCount; // combined from Promise instances and links via .m_ParentVFSID
-        uint64_t            m_ParentVFSID; // zero means no parent vfs info
-        weak_ptr<VFSHost>   m_WeakHost; // need to think about clearing this weak_ptr, so host's memory can be freed        
-        VFSConfiguration    m_Configuration;
-    };
-    
+    struct Info;
     
     /**
      * Thread-safe.
@@ -88,7 +77,7 @@ private:
     /**
      * Thread-safe.
      */
-    void EnrollAliveHost( const VFSHostPtr& _inst );
+    void EnrollAliveHost( const shared_ptr<VFSHost>& _inst );
     
     /**
      * Thread-safe.
@@ -102,10 +91,10 @@ private:
     
     Promise SpawnPromiseFromInfo_Unlocked( Info &_info );
     Info *InfoFromVFSWeakPtr_Unlocked(const weak_ptr<VFSHost> &_ptr);
-    Info *InfoFromVFSPtr_Unlocked(const VFSHostPtr &_ptr);
+    Info *InfoFromVFSPtr_Unlocked(const shared_ptr<VFSHost> &_ptr);
     Info *InfoFromID_Unlocked(uint64_t _inst_id);
     
-    VFSHostPtr GetOrRestoreVFS_Unlocked( Info *_info, const function<bool()> &_cancel_checker );
+    shared_ptr<VFSHost> GetOrRestoreVFS_Unlocked( Info *_info, const function<bool()> &_cancel_checker );
     
     
     vector<Info>                m_Memory;

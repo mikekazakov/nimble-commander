@@ -1,9 +1,12 @@
 #pragma once
 
 #include "PanelViewDelegate.h"
-#include "PanelDataPersistency.h"
 #include "../../Core/VFSInstanceManager.h"
+#include "../../Core/rapidjson.h"
 
+class VFSHost;
+class VFSListing;
+class VFSListingItem;
 class NetworkConnectionsManager;
 @class PanelController;
 @class PanelView;
@@ -12,10 +15,9 @@ class NetworkConnectionsManager;
 @class MainWindowFilePanelState;
 @class MainWindowController;
 
-//class PanelData;
-
 namespace nc::panel {
 class History;
+struct PersistentLocation;
 
 namespace data {
     struct SortMode;
@@ -57,7 +59,7 @@ class DirectoryChangeRequest
 public:
     /* required */
     string              RequestedDirectory      = "";
-    VFSHostPtr          VFS                     = nullptr;
+    shared_ptr<VFSHost> VFS                     = nullptr;
     
     /* optional */
     string              RequestFocusedEntry     = "";
@@ -143,12 +145,12 @@ public:
 // will not load previous view state if any
 // don't use the following methds. use GoToDirWithContext instead.
 - (int) GoToDir:(const string&)_dir
-            vfs:(VFSHostPtr)_vfs
+            vfs:(shared_ptr<VFSHost>)_vfs
    select_entry:(const string&)_filename
           async:(bool)_asynchronous;
 
 - (int) GoToDir:(const string&)_dir
-            vfs:(VFSHostPtr)_vfs
+            vfs:(shared_ptr<VFSHost>)_vfs
    select_entry:(const string&)_filename
 loadPreviousState:(bool)_load_state
           async:(bool)_asynchronous;
@@ -160,7 +162,7 @@ loadPreviousState:(bool)_load_state
 - (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory;
 // some params later
 
-- (void) goToPersistentLocation:(const PanelDataPersisency::Location &)_location;
+- (void) goToPersistentLocation:(const nc::panel::PersistentLocation &)_location;
 
 - (void) RecoverFromInvalidDirectory;
 

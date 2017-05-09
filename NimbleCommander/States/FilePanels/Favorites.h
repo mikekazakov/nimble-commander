@@ -12,7 +12,7 @@ class FavoriteLocationsStorage : ObservableBase
 public:
     struct Location
     {
-        PanelDataPersisency::Location   hosts_stack;
+        nc::panel::PersistentLocation   hosts_stack;
         string                          verbose_path;
     };
     

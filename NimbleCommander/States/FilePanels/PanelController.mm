@@ -29,6 +29,7 @@
 #include "PanelData.h"
 #include "PanelView.h"
 #include "PanelDataExternalEntryKey.h"
+#include "PanelDataPersistency.h"
 
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
@@ -1155,7 +1156,7 @@ static bool RouteKeyboardInputIntoTerminal()
     });
 }
 
-- (void) goToPersistentLocation:(const PanelDataPersisency::Location &)_location
+- (void) goToPersistentLocation:(const PersistentLocation &)_location
 {
     m_DirectoryLoadingQ.Run([=]{
         VFSHostPtr host;

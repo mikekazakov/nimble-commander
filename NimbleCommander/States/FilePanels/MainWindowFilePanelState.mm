@@ -30,6 +30,8 @@
 #include "PanelData.h"
 #include "PanelView.h"
 
+using namespace nc::panel;
+
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
 static const auto g_ConfigInitialRightPath  = "filePanel.general.initialRightPanelPath";
@@ -362,7 +364,7 @@ static bool GoToForcesPanelActivation()
     return pc ? pc.view : nil;
 }
 
-- (const PanelData*) activePanelData
+- (const data::Model*) activePanelData
 {
     PanelController *pc = self.activePanelController;
     return pc ? &pc.data : nullptr;
@@ -387,7 +389,7 @@ static bool GoToForcesPanelActivation()
     return self.leftPanelController;
 }
 
-- (const PanelData*) oppositePanelData
+- (const data::Model*) oppositePanelData
 {
     PanelController* pc = self.oppositePanelController;
     return pc ? &pc.data : nullptr;

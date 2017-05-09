@@ -3,19 +3,18 @@
 #include "PanelDataEntriesComparator.h"
 #include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
+#include "PanelDataExternalEntryKey.h"
 
-static_assert( sizeof(PanelData::TextualFilter) == 10 );
-static_assert( sizeof(PanelData::HardFilter) == 11 );
+namespace nc::panel::data {
 
 static void DoRawSort(const VFSListing &_from, vector<unsigned> &_to);
 
-static inline PanelData::PanelSortMode DefaultSortMode()
+static inline SortMode DefaultSortMode()
 {
-    PanelData::PanelSortMode mode;
+    SortMode mode;
     mode.sep_dirs = true;
-    mode.sort = PanelData::PanelSortMode::SortByName;
+    mode.sort = SortMode::SortByName;
     return mode;
-    
 }
 
 // returned string IS NOT NULL TERMINATED and MAY CONTAIN ZEROES INSIDE
@@ -59,17 +58,17 @@ static vector<unsigned> ProduceSortedIndirectIndecesForLongKeys(const vector<str
     return src_keys_ind;
 }
 
-PanelData::PanelData():
+Model::Model():
     m_Listing(VFSListing::EmptyListing()),
     m_CustomSortMode(DefaultSortMode())
 {
 }
 
-PanelData::~PanelData()
+Model::~Model()
 {
 }
 
-static void InitVolatileDataWithListing( vector<PanelData::VolatileData> &_vd, const VFSListing &_listing)
+static void InitVolatileDataWithListing( vector<ItemVolatileData> &_vd, const VFSListing &_listing)
 {
     _vd.clear();
     _vd.resize(_listing.Count());
@@ -78,7 +77,7 @@ static void InitVolatileDataWithListing( vector<PanelData::VolatileData> &_vd, c
             _vd[i].size = _listing.Size(i);
 }
 
-void PanelData::Load(const shared_ptr<VFSListing> &_listing, PanelType _type)
+void Model::Load(const shared_ptr<VFSListing> &_listing, PanelType _type)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
@@ -102,7 +101,7 @@ void PanelData::Load(const shared_ptr<VFSListing> &_listing, PanelType _type)
     UpdateStatictics();
 }
 
-void PanelData::ReLoad(const shared_ptr<VFSListing> &_listing)
+void Model::ReLoad(const shared_ptr<VFSListing> &_listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
@@ -174,34 +173,34 @@ void PanelData::ReLoad(const shared_ptr<VFSListing> &_listing)
     UpdateStatictics();
 }
 
-const shared_ptr<VFSHost> &PanelData::Host() const
+const shared_ptr<VFSHost> &Model::Host() const
 {
     if( !m_Listing->HasCommonHost() )
         throw logic_error("PanelData::Host was called with no common host in listing");
     return m_Listing->Host(0);
 }
 
-const VFSListing &PanelData::Listing() const
+const VFSListing &Model::Listing() const
 {
     return *m_Listing;
 }
 
-const VFSListingPtr& PanelData::ListingPtr() const
+const VFSListingPtr& Model::ListingPtr() const
 {
     return m_Listing;
 }
 
-PanelData::PanelType PanelData::Type() const noexcept
+Model::PanelType Model::Type() const noexcept
 {
     return m_Type;
 }
 
-const vector<unsigned>& PanelData::SortedDirectoryEntries() const noexcept
+const vector<unsigned>& Model::SortedDirectoryEntries() const noexcept
 {
     return m_EntriesByCustomSort;
 }
 
-PanelData::VolatileData& PanelData::VolatileDataAtRawPosition( int _pos )
+Model::VolatileData& Model::VolatileDataAtRawPosition( int _pos )
 {
     if( _pos < 0 || _pos >= m_VolatileData.size() )
         throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
@@ -209,7 +208,7 @@ PanelData::VolatileData& PanelData::VolatileDataAtRawPosition( int _pos )
     return m_VolatileData[_pos];
 }
 
-const PanelData::VolatileData& PanelData::VolatileDataAtRawPosition( int _pos ) const
+const Model::VolatileData& Model::VolatileDataAtRawPosition( int _pos ) const
 {
     if( _pos < 0 || _pos >= m_VolatileData.size() )
         throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
@@ -217,18 +216,17 @@ const PanelData::VolatileData& PanelData::VolatileDataAtRawPosition( int _pos ) 
     return m_VolatileData[_pos];
 }
 
-PanelData::VolatileData& PanelData::VolatileDataAtSortPosition( int _pos )
+Model::VolatileData& Model::VolatileDataAtSortPosition( int _pos )
 {
     return VolatileDataAtRawPosition( RawIndexForSortIndex(_pos) );
 }
 
-const PanelData::VolatileData& PanelData::VolatileDataAtSortPosition( int _pos ) const
+const Model::VolatileData& Model::VolatileDataAtSortPosition( int _pos ) const
 {
     return VolatileDataAtRawPosition( RawIndexForSortIndex(_pos) );
 }
 
-
-string PanelData::FullPathForEntry(int _raw_index) const
+string Model::FullPathForEntry(int _raw_index) const
 {
     if(_raw_index < 0 || _raw_index >= m_Listing->Count())
         return "";
@@ -247,7 +245,7 @@ string PanelData::FullPathForEntry(int _raw_index) const
     }
 }
 
-int PanelData::RawIndexForName(const char *_filename) const
+int Model::RawIndexForName(const char *_filename) const
 {
     assert(m_EntriesByRawName.size() == m_Listing->Count()); // consistency check
 
@@ -273,7 +271,7 @@ int PanelData::RawIndexForName(const char *_filename) const
     return -1;
 }
 
-int PanelData::SortedIndexForRawIndex(int _desired_raw_index) const
+int Model::SortedIndexForRawIndex(int _desired_raw_index) const
 {
     if(_desired_raw_index < 0 ||
        _desired_raw_index >= m_Listing->Count())
@@ -288,7 +286,7 @@ int PanelData::SortedIndexForRawIndex(int _desired_raw_index) const
     return -1;
 }
 
-string PanelData::DirectoryPathWithoutTrailingSlash() const
+string Model::DirectoryPathWithoutTrailingSlash() const
 {
     if( !m_Listing->HasCommonDirectory() )
         return "";
@@ -300,14 +298,14 @@ string PanelData::DirectoryPathWithoutTrailingSlash() const
     return path;
 }
 
-string PanelData::DirectoryPathWithTrailingSlash() const
+string Model::DirectoryPathWithTrailingSlash() const
 {
     if(!m_Listing->HasCommonDirectory())
         return "";
     return m_Listing->Directory();
 }
 
-string PanelData::DirectoryPathShort() const
+string Model::DirectoryPathShort() const
 {    
     string tmp = DirectoryPathWithoutTrailingSlash();
     auto i = tmp.rfind('/');
@@ -316,7 +314,7 @@ string PanelData::DirectoryPathShort() const
     return "";
 }
 
-string PanelData::VerboseDirectoryFullPath() const
+string Model::VerboseDirectoryFullPath() const
 {
     if( !m_Listing || !m_Listing->IsUniform())
         return "";
@@ -348,7 +346,7 @@ static void DoRawSort(const VFSListing &_from, vector<unsigned> &_to)
          );
 }
 
-void PanelData::SetSortMode(PanelSortMode _mode)
+void Model::SetSortMode(PanelSortMode _mode)
 {
     if(m_CustomSortMode == _mode)
         return;
@@ -360,19 +358,19 @@ void PanelData::SetSortMode(PanelSortMode _mode)
 }
 
 // need to call UpdateStatictics() after this method since we alter selected set
-void PanelData::ClearSelectedFlagsFromHiddenElements()
+void Model::ClearSelectedFlagsFromHiddenElements()
 {
     for(auto &vd: m_VolatileData)
         if( !vd.is_shown() && vd.is_selected() )
             vd.toggle_selected(false);
 }
 
-PanelData::PanelSortMode PanelData::SortMode() const
+Model::PanelSortMode Model::SortMode() const
 {
     return m_CustomSortMode;
 }
 
-void PanelData::UpdateStatictics()
+void Model::UpdateStatictics()
 {
     m_Stats = Statistics{};
     if(m_Listing.get() == nullptr)
@@ -405,7 +403,7 @@ void PanelData::UpdateStatictics()
     }
 }
 
-int PanelData::SortIndexForEntry(const VFSListingItem& _item) const noexcept
+int Model::SortIndexForEntry(const VFSListingItem& _item) const noexcept
 {
     if( _item.Listing() != m_Listing )
         return -1;
@@ -417,14 +415,14 @@ int PanelData::SortIndexForEntry(const VFSListingItem& _item) const noexcept
         return -1;
 }
 
-int PanelData::RawIndexForSortIndex(int _index) const noexcept
+int Model::RawIndexForSortIndex(int _index) const noexcept
 {
     if(_index < 0 || _index >= m_EntriesByCustomSort.size())
         return -1;
     return m_EntriesByCustomSort[_index];
 }
 
-VFSListingItem PanelData::EntryAtRawPosition(int _pos) const noexcept
+VFSListingItem Model::EntryAtRawPosition(int _pos) const noexcept
 {
     if( _pos >= 0 &&
         _pos < m_Listing->Count() )
@@ -432,17 +430,17 @@ VFSListingItem PanelData::EntryAtRawPosition(int _pos) const noexcept
     return {};
 }
 
-bool PanelData::IsValidSortPosition(int _pos) const noexcept
+bool Model::IsValidSortPosition(int _pos) const noexcept
 {
     return RawIndexForSortIndex(_pos) >= 0;
 }
 
-VFSListingItem PanelData::EntryAtSortPosition(int _pos) const noexcept
+VFSListingItem Model::EntryAtSortPosition(int _pos) const noexcept
 {
     return EntryAtRawPosition(RawIndexForSortIndex(_pos));
 }
 
-void PanelData::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
+void Model::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
 {
     if( _at_raw_pos < 0 || _at_raw_pos >= m_Listing->Count() )
         return;
@@ -481,7 +479,7 @@ void PanelData::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
     vd.toggle_selected(_is_selected);
 }
 
-void PanelData::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
+void Model::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
 {
     if(_at_pos < 0 || _at_pos >= m_EntriesByCustomSort.size())
         return;
@@ -489,7 +487,7 @@ void PanelData::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
     CustomFlagsSelectRaw(m_EntriesByCustomSort[_at_pos], _is_selected);
 }
 
-bool PanelData::CustomFlagsSelectSorted(const vector<bool>& _is_selected)
+bool Model::CustomFlagsSelectSorted(const vector<bool>& _is_selected)
 {
     bool changed = false;
     for( int i = 0, e = (int)min(_is_selected.size(), m_EntriesByCustomSort.size()); i != e; ++i ) {
@@ -511,7 +509,7 @@ bool PanelData::CustomFlagsSelectSorted(const vector<bool>& _is_selected)
     return changed;
 }
 
-vector<string> PanelData::SelectedEntriesFilenames() const
+vector<string> Model::SelectedEntriesFilenames() const
 {
     vector<string> list;
     for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
@@ -520,7 +518,7 @@ vector<string> PanelData::SelectedEntriesFilenames() const
     return list;
 }
 
-vector<VFSListingItem> PanelData::SelectedEntries() const
+vector<VFSListingItem> Model::SelectedEntries() const
 {
     vector<VFSListingItem> list;
     for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
@@ -529,7 +527,7 @@ vector<VFSListingItem> PanelData::SelectedEntries() const
     return list;
 }
 
-bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size)
+bool Model::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size)
 {
     if(_entry    == nullptr ||
        _entry[0] == 0       ||
@@ -557,7 +555,7 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size
     return false;
 }
 
-bool PanelData::SetCalculatedSizeForDirectory(const char *_filename, const char *_directory, uint64_t _size)
+bool Model::SetCalculatedSizeForDirectory(const char *_filename, const char *_directory, uint64_t _size)
 {
     if(_filename    == nullptr ||
        _filename[0] == 0       ||
@@ -588,24 +586,24 @@ bool PanelData::SetCalculatedSizeForDirectory(const char *_filename, const char 
     return false;
 }
 
-void PanelData::CustomIconClearAll()
+void Model::CustomIconClearAll()
 {
     for(auto &vd: m_VolatileData)
         vd.icon = 0;
 }
 
-void PanelData::CustomFlagsClearHighlights()
+void Model::CustomFlagsClearHighlights()
 {
     for( auto &vd: m_VolatileData )
         vd.toggle_highlight(false);
 }
 
-int PanelData::SortedIndexForName(const char *_filename) const
+int Model::SortedIndexForName(const char *_filename) const
 {
     return SortedIndexForRawIndex(RawIndexForName(_filename));
 }
 
-bool PanelData::ClearTextFiltering()
+bool Model::ClearTextFiltering()
 {
     if(m_SoftFiltering.text == nil &&
        m_HardFiltering.text.text == nil)
@@ -626,7 +624,7 @@ bool PanelData::ClearTextFiltering()
     return true;
 }
 
-void PanelData::SetHardFiltering(const HardFilter &_filter)
+void Model::SetHardFiltering(const HardFilter &_filter)
 {
     if(m_HardFiltering == _filter)
         return;
@@ -639,12 +637,12 @@ void PanelData::SetHardFiltering(const HardFilter &_filter)
     UpdateStatictics();
 }
 
-PanelData::HardFilter PanelData::HardFiltering() const
+Model::HardFilter Model::HardFiltering() const
 {
     return m_HardFiltering;
 }
 
-void PanelData::DoSortWithHardFiltering()
+void Model::DoSortWithHardFiltering()
 {
     m_EntriesByCustomSort.clear();
     
@@ -687,26 +685,26 @@ void PanelData::DoSortWithHardFiltering()
     // no dotdot dir. also assumes that no filtering will exclude dotdot dir
     sort(next( begin(m_EntriesByCustomSort), m_Listing->IsDotDot(0) ?  1 : 0 ),
          end( m_EntriesByCustomSort ),
-         nc::panel::data::IndirectListingComparator{ *m_Listing, m_VolatileData, m_CustomSortMode });
+         IndirectListingComparator{ *m_Listing, m_VolatileData, m_CustomSortMode });
 }
 
-void PanelData::SetSoftFiltering(const TextualFilter &_filter)
+void Model::SetSoftFiltering(const TextualFilter &_filter)
 {
     m_SoftFiltering = _filter;
     BuildSoftFilteringIndeces();
 }
 
-PanelData::TextualFilter PanelData::SoftFiltering() const
+Model::TextualFilter Model::SoftFiltering() const
 {
     return m_SoftFiltering;
 }
 
-const vector<unsigned>& PanelData::EntriesBySoftFiltering() const noexcept
+const vector<unsigned>& Model::EntriesBySoftFiltering() const noexcept
 {
     return m_EntriesBySoftFiltering;
 }
 
-void PanelData::BuildSoftFilteringIndeces()
+void Model::BuildSoftFilteringIndeces()
 {
     if( m_SoftFiltering.IsFiltering() ) {
         m_EntriesBySoftFiltering.clear();
@@ -731,7 +729,7 @@ void PanelData::BuildSoftFilteringIndeces()
     }
 }
 
-PanelData::ExternalEntryKey PanelData::EntrySortKeysAtSortPosition(int _pos) const
+Model::ExternalEntryKey Model::EntrySortKeysAtSortPosition(int _pos) const
 {
     auto item = EntryAtSortPosition(_pos);
     if( !item )
@@ -739,7 +737,7 @@ PanelData::ExternalEntryKey PanelData::EntrySortKeysAtSortPosition(int _pos) con
     return ExternalEntryKey{item, VolatileDataAtSortPosition(_pos)};
 }
 
-int PanelData::SortLowerBoundForEntrySortKeys(const ExternalEntryKey& _keys) const
+int Model::SortLowerBoundForEntrySortKeys(const ExternalEntryKey& _keys) const
 {
     if( !_keys.is_valid() )
         return -1;
@@ -747,21 +745,21 @@ int PanelData::SortLowerBoundForEntrySortKeys(const ExternalEntryKey& _keys) con
     auto it = lower_bound(begin(m_EntriesByCustomSort),
                           end(m_EntriesByCustomSort),
                           _keys,
-                          nc::panel::data::ExternalListingComparator(*m_Listing,
-                                                           m_VolatileData,
-                                                           m_CustomSortMode)
+                          ExternalListingComparator(*m_Listing,
+                                                    m_VolatileData,
+                                                    m_CustomSortMode)
                           );
     if( it != end(m_EntriesByCustomSort) )
         return (int)distance( begin(m_EntriesByCustomSort), it );
     return -1;
 }
 
-const PanelData::Statistics &PanelData::Stats() const noexcept
+const Model::Statistics &Model::Stats() const noexcept
 {
     return m_Stats;
 }
 
-void PanelData::__InvariantCheck() const
+void Model::__InvariantCheck() const
 {
     assert( m_Listing != nullptr );
     assert( m_VolatileData.size() == m_Listing->Count() );
@@ -770,12 +768,14 @@ void PanelData::__InvariantCheck() const
     assert( m_EntriesBySoftFiltering.size() <= m_EntriesByCustomSort.size() );    
 }
 
-int PanelData::RawEntriesCount() const noexcept
+int Model::RawEntriesCount() const noexcept
 {
     return m_Listing ? (int)m_Listing->Count() : 0;
 }
 
-int PanelData::SortedEntriesCount() const noexcept
+int Model::SortedEntriesCount() const noexcept
 {
     return (int)m_EntriesByCustomSort.size();
+}
+
 }

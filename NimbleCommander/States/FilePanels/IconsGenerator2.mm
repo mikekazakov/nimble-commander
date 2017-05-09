@@ -487,7 +487,7 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
     return result;
 }
 
-void IconsGenerator2::SyncDiscardedAndOutdated( PanelData &_pd )
+void IconsGenerator2::SyncDiscardedAndOutdated( nc::panel::data::Model &_pd )
 {
     assert(dispatch_is_main_queue()); // STA api design    
    

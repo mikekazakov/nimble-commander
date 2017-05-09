@@ -2,26 +2,26 @@
 
 #include <NimbleCommander/Core/rapidjson.h>
 
-class PanelData;
+namespace nc::panel::data {
 
-namespace panel {
+class Model;
 
-class DataOptionsExporter
+class OptionsExporter
 {
 public:
-    DataOptionsExporter(const PanelData &_data);
+    OptionsExporter(const Model &_data);
     rapidjson::StandaloneValue Export() const;
 private:
-    const PanelData &m_Data;
+    const Model &m_Data;
 };
 
-class DataOptionsImporter
+class OptionsImporter
 {
 public:
-    DataOptionsImporter(PanelData &_data);
+    OptionsImporter(Model &_data);
     void Import(const rapidjson::StandaloneValue& _options);
 private:
-    PanelData &m_Data;
+    Model &m_Data;
 };
 
 }

@@ -118,7 +118,7 @@ const noexcept
     PanelBriefViewCollectionView       *m_CollectionView;
     PanelBriefViewCollectionViewLayout *m_Layout;
     PanelBriefViewCollectionViewBackground *m_Background;
-    PanelData                          *m_Data;
+    data::Model                        *m_Data;
     vector<short>                       m_FilenamesPxWidths;
     short                               m_MaxFilenamePxWidth;
     IconsGenerator2                    *m_IconsGenerator;
@@ -132,7 +132,7 @@ const noexcept
 @synthesize columnsLayout = m_ColumnsLayout;
 @synthesize sortMode = m_SortMode;
 
-- (void) setData:(PanelData*)_data
+- (void) setData:(data::Model*)_data
 {
     m_Data = _data;
     [self dataChanged];

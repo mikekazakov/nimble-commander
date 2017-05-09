@@ -2,10 +2,9 @@
 
 #include "PanelViewTypes.h"
 
-class PanelData;
-
 namespace nc::panel::data {
     struct SortMode;
+    class Model;
 }
 
 @protocol PanelViewImplementationProtocol <NSObject>
@@ -18,7 +17,7 @@ namespace nc::panel::data {
 
 - (void) dataChanged;
 - (void) syncVolatileData;
-- (void) setData:(PanelData*)_data;
+- (void) setData:(nc::panel::data::Model*)_data;
 - (bool) isItemVisible:(int)_sorted_item_index;
 
 - (void) setupFieldEditor:(NSScrollView*)_editor forItemAtIndex:(int)_sorted_item_index;

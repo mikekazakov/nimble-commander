@@ -5,10 +5,14 @@
 
 #include "Layout.h"
 
-class PanelData;
+//class PanelData;
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 class IconsGenerator2;
+
+namespace nc::panel::data {
+    class Model;
+}
 
 struct PanelBriefViewItemLayoutConstants
 {
@@ -29,7 +33,7 @@ struct PanelBriefViewItemLayoutConstants
 
 - (void) dataChanged;
 - (void) syncVolatileData;
-- (void) setData:(PanelData*)_data;
+- (void) setData:(nc::panel::data::Model*)_data;
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;

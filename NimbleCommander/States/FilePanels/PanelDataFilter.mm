@@ -3,6 +3,9 @@
 
 namespace nc::panel::data {
 
+static_assert( sizeof(TextualFilter) == 10 );
+static_assert( sizeof(HardFilter) == 11 );
+
 TextualFilter::TextualFilter() noexcept :
     text{nil},
     type{Anywhere},

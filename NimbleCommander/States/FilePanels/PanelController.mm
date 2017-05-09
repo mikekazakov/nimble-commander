@@ -28,6 +28,7 @@
 #include <Habanero/SerialQueue.h>
 #include "PanelData.h"
 #include "PanelView.h"
+#include "PanelDataExternalEntryKey.h"
 
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
@@ -59,55 +60,6 @@ struct PanelQuickSearchMode
         return WithAlt;
     }
 };
-
-namespace panel
-{
-    class GenericCursorPersistance
-    {
-    public:
-        GenericCursorPersistance(PanelView* _view, const PanelData &_data);
-        void Restore() const;
-        
-    private:
-        PanelView                  *m_View;
-        const PanelData            &m_Data;
-        string                      m_OldCursorName;
-        PanelData::ExternalEntryKey m_OldEntrySortKeys;
-    };
-
-}
-
-panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
-    m_View(_view),
-    m_Data(_data)
-{
-    auto cur_pos = _view.curpos;
-    if(cur_pos >= 0 && m_View.item ) {
-        m_OldCursorName = m_View.item.Name();
-        m_OldEntrySortKeys = _data.EntrySortKeysAtSortPosition(cur_pos);
-    }
-}
-
-void panel::GenericCursorPersistance::Restore() const
-{
-    int newcursorrawpos = m_Data.RawIndexForName(m_OldCursorName.c_str());
-    if( newcursorrawpos >= 0 ) {
-        int newcursorsortpos = m_Data.SortedIndexForRawIndex(newcursorrawpos);
-        if(newcursorsortpos >= 0)
-            m_View.curpos = newcursorsortpos;
-        else
-            m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : 0;
-    }
-    else {
-        int lower_bound = m_Data.SortLowerBoundForEntrySortKeys(m_OldEntrySortKeys);
-        if( lower_bound >= 0) {
-            m_View.curpos = lower_bound;
-        }
-        else {
-            m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : int(m_Data.SortedDirectoryEntries().size()) - 1;
-        }
-    }
-}
 
 namespace nc::panel {
 
@@ -152,6 +104,52 @@ void ActivityTicket::Reset()
             [pc finishExtActivityWithTicket:ticket];
     panel = nil;
     ticket = 0;
+}
+
+
+class GenericCursorPersistance
+{
+public:
+    GenericCursorPersistance(PanelView* _view, const data::Model &_data);
+    void Restore() const;
+    
+private:
+    PanelView                  *m_View;
+    const data::Model          &m_Data;
+    string                      m_OldCursorName;
+    data::ExternalEntryKey      m_OldEntrySortKeys;
+};
+    
+GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const data::Model &_data):
+    m_View(_view),
+    m_Data(_data)
+{
+    auto cur_pos = _view.curpos;
+    if(cur_pos >= 0 && m_View.item ) {
+        m_OldCursorName = m_View.item.Name();
+        m_OldEntrySortKeys = _data.EntrySortKeysAtSortPosition(cur_pos);
+    }
+}
+
+void GenericCursorPersistance::Restore() const
+{
+    int newcursorrawpos = m_Data.RawIndexForName(m_OldCursorName.c_str());
+    if( newcursorrawpos >= 0 ) {
+        int newcursorsortpos = m_Data.SortedIndexForRawIndex(newcursorrawpos);
+        if(newcursorsortpos >= 0)
+            m_View.curpos = newcursorsortpos;
+        else
+            m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : 0;
+    }
+    else {
+        int lower_bound = m_Data.SortLowerBoundForEntrySortKeys(m_OldEntrySortKeys);
+        if( lower_bound >= 0) {
+            m_View.curpos = lower_bound;
+        }
+        else {
+            m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : int(m_Data.SortedDirectoryEntries().size()) - 1;
+        }
+    }
 }
 
 }
@@ -214,7 +212,7 @@ using namespace ::nc::panel;
 @implementation PanelController
 {
     // Main controller's possessions
-    PanelData                   m_Data;   // owns
+    data::Model                  m_Data;   // owns
     PanelView                   *m_View;  // create and owns
     
     // VFS changes observation
@@ -227,7 +225,7 @@ using namespace ::nc::panel;
     bool                                m_QuickSearchIsSoftFiltering;
     bool                                m_QuickSearchTypingView;
     PanelQuickSearchMode::KeyModif      m_QuickSearchMode;
-    PanelData::TextualFilter::Where     m_QuickSearchWhere;
+    data::TextualFilter::Where          m_QuickSearchWhere;
     nanoseconds                         m_QuickSearchLastType;
     unsigned                            m_QuickSearchOffset;
     
@@ -363,7 +361,7 @@ using namespace ::nc::panel;
 
 - (void)configQuickSearchSettingsChanged
 {
-    m_QuickSearchWhere = PanelData::TextualFilter::WhereFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchWhereToFind) );
+    m_QuickSearchWhere = data::TextualFilter::WhereFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchWhereToFind) );
     m_QuickSearchIsSoftFiltering = GlobalConfig().GetBool( g_ConfigQuickSearchSoftFiltering );
     m_QuickSearchTypingView = GlobalConfig().GetBool( g_ConfigQuickSearchTypingView );
     m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchKeyOption) );
@@ -410,7 +408,7 @@ using namespace ::nc::panel;
     if( !_pc )
         return;
     
-    panel::DataOptionsImporter{m_Data}.Import( panel::DataOptionsExporter{_pc.data}.Export() );
+    data::OptionsImporter{m_Data}.Import( data::OptionsExporter{_pc.data}.Export() );
     [self.view dataUpdated];
     [self.view dataSortingHasChanged];
     self.layoutIndex = _pc.layoutIndex;
@@ -431,10 +429,10 @@ using namespace ::nc::panel;
                                           self);
 }
 
-- (void) changeSortingModeTo:(PanelData::PanelSortMode)_mode
+- (void) changeSortingModeTo:(data::SortMode)_mode
 {
     if( _mode != m_Data.SortMode() ) {
-        panel::GenericCursorPersistance pers(m_View, m_Data);
+        GenericCursorPersistance pers(m_View, m_Data);
         
         m_Data.SetSortMode(_mode);
         
@@ -446,10 +444,10 @@ using namespace ::nc::panel;
     }
 }
 
-- (void) changeHardFilteringTo:(PanelData::HardFilter)_filter
+- (void) changeHardFilteringTo:(data::HardFilter)_filter
 {
     if( _filter != m_Data.HardFiltering() ) {
-        panel::GenericCursorPersistance pers(m_View, m_Data);
+        GenericCursorPersistance pers(m_View, m_Data);
         
         m_Data.SetHardFiltering(_filter);
         
@@ -563,7 +561,7 @@ using namespace ::nc::panel;
 {
     assert(dispatch_is_main_queue());
     
-    panel::GenericCursorPersistance pers(m_View, m_Data);
+    GenericCursorPersistance pers(m_View, m_Data);
     
     m_Data.ReLoad(_ptr);
     [m_View dataUpdated];
@@ -764,7 +762,7 @@ static bool RouteKeyboardInputIntoTerminal()
                 );
             if( result >= 0 )
                 dispatch_to_main_queue([=]{
-                    panel::GenericCursorPersistance pers(m_View, m_Data);
+                    GenericCursorPersistance pers(m_View, m_Data);
                     // may cause re-sorting if current sorting is by size
                     if( m_Data.SetCalculatedSizeForDirectory(i.Name(), i.Directory().c_str(), result) ) {
                         [m_View dataUpdated];
@@ -989,7 +987,7 @@ static bool RouteKeyboardInputIntoTerminal()
         return nullopt;
   
     json.AddMember(rapidjson::StandaloneValue(g_RestorationSortingKey, rapidjson::g_CrtAllocator),
-                   panel::DataOptionsExporter{m_Data}.Export(), rapidjson::g_CrtAllocator );
+                   data::OptionsExporter{m_Data}.Export(), rapidjson::g_CrtAllocator );
     json.AddMember(rapidjson::StandaloneValue(g_RestorationLayoutKey, rapidjson::g_CrtAllocator),
                    rapidjson::StandaloneValue(m_ViewLayoutIndex), rapidjson::g_CrtAllocator );
     
@@ -1001,8 +999,8 @@ static bool RouteKeyboardInputIntoTerminal()
     assert(dispatch_is_main_queue());
     if( _state.IsObject() ) {
         if( _state.HasMember(g_RestorationSortingKey) ) {
-            panel::GenericCursorPersistance pers(m_View, m_Data);
-            panel::DataOptionsImporter{m_Data}.Import( _state[g_RestorationSortingKey] );
+            GenericCursorPersistance pers(m_View, m_Data);
+            data::OptionsImporter{m_Data}.Import( _state[g_RestorationSortingKey] );
             [m_View dataUpdated];
             [m_View dataSortingHasChanged];
             pers.Restore();
@@ -1238,7 +1236,7 @@ loadPreviousState:(bool)_load_state
             [self CancelBackgroundOperations]; // clean running operations if any
             dispatch_or_run_in_main_queue([=]{
                 [m_View SavePathState];
-                m_Data.Load(listing, PanelData::PanelType::Directory);
+                m_Data.Load(listing, data::Model::PanelType::Directory);
                 [m_View dataUpdated];
                 [m_View panelChangedWithFocusedFilename:c->RequestFocusedEntry
                                       loadPreviousState:c->LoadPreviousViewState];
@@ -1268,7 +1266,7 @@ loadPreviousState:(bool)_load_state
     [self CancelBackgroundOperations]; // clean running operations if any
     dispatch_or_run_in_main_queue([=]{
         [m_View SavePathState];
-        m_Data.Load(_listing, PanelData::PanelType::Temporary);
+        m_Data.Load(_listing, data::Model::PanelType::Temporary);
         [m_View dataUpdated];
         [m_View panelChangedWithFocusedFilename:"" loadPreviousState:false];
         [self OnPathChanged];
@@ -1510,7 +1508,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     if(m_View == nil)
         return;
     
-    panel::GenericCursorPersistance pers(m_View, m_Data);
+    GenericCursorPersistance pers(m_View, m_Data);
     
     bool any_changed = m_Data.ClearTextFiltering();
     
@@ -1632,7 +1630,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     if( filtering.text.text == nil )
         return;
     
-    panel::GenericCursorPersistance pers(m_View, m_Data);
+    GenericCursorPersistance pers(m_View, m_Data);
     
     filtering.text.type = m_QuickSearchWhere;
     filtering.text.clear_on_new_listing = true;

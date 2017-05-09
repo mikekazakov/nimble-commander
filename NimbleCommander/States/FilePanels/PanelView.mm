@@ -50,7 +50,7 @@ using namespace nc::panel;
 
 @implementation PanelView
 {
-    PanelData                  *m_Data;
+    data::Model                *m_Data;
     
     unordered_map<size_t, PanelViewStateStorage> m_States; // TODO: change no something simplier
     NSString                   *m_HeaderTitle;
@@ -252,12 +252,12 @@ using namespace nc::panel;
     return false;
 }
 
-- (PanelData*) data
+- (data::Model*) data
 {
     return m_Data;
 }
 
-- (void) setData:(PanelData *)data
+- (void) setData:(data::Model *)data
 {
 //    self.needsDisplay = true;
     m_Data = data;
@@ -631,10 +631,10 @@ using namespace nc::panel;
     return m_Data->EntryAtSortPosition(m_CursorPos);
 }
 
-- (const PanelData::VolatileData &)item_vd
+- (const data::ItemVolatileData&)item_vd
 {
     assert( dispatch_is_main_queue() );
-    static const PanelData::VolatileData stub{};
+    static const data::ItemVolatileData stub{};
     int indx = m_Data->RawIndexForSortIndex( m_CursorPos );
     if( indx < 0 )
         return stub;
@@ -1063,9 +1063,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 {
     auto title = [&]{
         switch( m_Data->Type() ) {
-            case PanelData::PanelType::Directory:
+            case data::Model::PanelType::Directory:
                 return [NSString stringWithUTF8StdString:m_Data->VerboseDirectoryFullPath()];
-            case PanelData::PanelType::Temporary:
+            case data::Model::PanelType::Temporary:
                 return @"Temporary Panel"; // TODO: localize
             default:
                 return @"";

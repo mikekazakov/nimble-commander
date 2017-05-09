@@ -2,7 +2,6 @@
 
 #include "PanelDataSortMode.h"
 #include "PanelDataStatistics.h"
-#include "PanelDataExternalEntryKey.h"
 #include "PanelDataFilter.h"
 
 class VFSHost;
@@ -10,8 +9,9 @@ class VFSListing;
 class VFSListingItem;
 
 namespace nc::panel::data {
-    struct ItemVolatileData;
-}
+
+struct ItemVolatileData;
+struct ExternalEntryKey;
 
 /**
  * PanelData actually does the following things:
@@ -22,7 +22,7 @@ namespace nc::panel::data {
  * - custom information setting/getting
  * - statistics
  */
-class PanelData
+class Model
 {
 public:
     enum class PanelType : int8_t
@@ -31,15 +31,15 @@ public:
         Temporary = 1
     };
     
-    using ExternalEntryKey = ::nc::panel::data::ExternalEntryKey;
-    using PanelSortMode = ::nc::panel::data::SortMode;
-    using Statistics = ::nc::panel::data::Statistics;
-    using VolatileData = ::nc::panel::data::ItemVolatileData;
-    using TextualFilter = ::nc::panel::data::TextualFilter;
-    using HardFilter = ::nc::panel::data::HardFilter;
+    using ExternalEntryKey = ExternalEntryKey;
+    using PanelSortMode = SortMode;
+    using Statistics = Statistics;
+    using VolatileData = ItemVolatileData;
+    using TextualFilter = TextualFilter;
+    using HardFilter = HardFilter;
         
-    PanelData();
-    ~PanelData();
+    Model();
+    ~Model();
     
     // these methods should be called by a controller, since some view's props have to be updated
     // PanelData is solely sync class - it does not give a fuck about concurrency,
@@ -188,8 +188,8 @@ public:
      */
     void __InvariantCheck() const;
 private:    
-    PanelData(const PanelData&) = delete;
-    void operator=(const PanelData&) = delete;
+    Model(const Model&) = delete;
+    void operator=(const Model&) = delete;
     
     void DoSortWithHardFiltering();
     void CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected);
@@ -210,3 +210,5 @@ private:
     Statistics                  m_Stats;
     PanelType                   m_Type;
 };
+
+}

@@ -13,6 +13,8 @@
 #include "FilesDraggingSource.h"
 #include "PanelData.h"
 
+using namespace nc::panel;
+
 /*//////////////////////////////////////////////////////////////////////////////////////////////////
 This is the most obscure Cocoa usage in NC.
  
@@ -189,7 +191,7 @@ static NSDragOperation BuildOperationMaskForLocal( FilesDraggingSource *_source,
 //                              Drag Source Section
 //
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const PanelData &_data )
+static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const data::Model &_data )
 {
     const auto dragged_item = _data.EntryAtSortPosition(_sorted_pos);
     if( !dragged_item || dragged_item.IsDotDot() )

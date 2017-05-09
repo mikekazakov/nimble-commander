@@ -69,7 +69,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 {
     NSScrollView                       *m_ScrollView;
     PanelListViewTableView             *m_TableView;
-    PanelData                          *m_Data;
+    data::Model                        *m_Data;
     __weak PanelView                   *m_PanelView;
     PanelListViewGeometry               m_Geometry;
     IconsGenerator2                    *m_IconsGenerator;
@@ -393,7 +393,9 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         }
 }
 
-- (void) fillDataForNameView:(PanelListViewNameView*)_view withItem:(const VFSListingItem&)_item andVD:(PanelData::VolatileData&)_vd
+- (void) fillDataForNameView:(PanelListViewNameView*)_view
+                    withItem:(const VFSListingItem&)_item
+                       andVD:(data::ItemVolatileData&)_vd
 {
     NSImage* icon = m_IconsGenerator->ImageFor(_item, _vd);
     [_view setFilename:_item.NSDisplayName()];
@@ -402,24 +404,27 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (void) fillDataForSizeView:(PanelListViewSizeView*)_view
                     withItem:(const VFSListingItem&)_item
-                       andVD:(PanelData::VolatileData&)_vd
+                       andVD:(data::ItemVolatileData&)_vd
 {
     [_view setSizeWithItem:_item andVD:_vd];
 }
 
-- (void) fillDataForDateCreatedView:(PanelListViewDateTimeView*)_view withItem:(const VFSListingItem&)_item
+- (void) fillDataForDateCreatedView:(PanelListViewDateTimeView*)_view
+                           withItem:(const VFSListingItem&)_item
 {
     _view.time = _item.BTime();
     _view.style = m_DateCreatedFormattingStyle;
 }
 
-- (void) fillDataForDateAddedView:(PanelListViewDateTimeView*)_view  withItem:(const VFSListingItem&)_item
+- (void) fillDataForDateAddedView:(PanelListViewDateTimeView*)_view
+                         withItem:(const VFSListingItem&)_item
 {
     _view.time = _item.HasAddTime() ? _item.AddTime() : -1;
     _view.style = m_DateAddedFormattingStyle;
 }
 
-- (void) fillDataForDateModifiedView:(PanelListViewDateTimeView*)_view  withItem:(const VFSListingItem&)_item
+- (void) fillDataForDateModifiedView:(PanelListViewDateTimeView*)_view
+                            withItem:(const VFSListingItem&)_item
 {
     _view.time = _item.MTime();
     _view.style = m_DateModifiedFormattingStyle;
@@ -482,7 +487,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     }];
 }
 
-- (void) setData:(PanelData*)_data
+- (void) setData:(data::Model*)_data
 {
     m_Data = _data;
     [self dataChanged];    

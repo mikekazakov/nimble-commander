@@ -5,8 +5,8 @@
 
 namespace nc::panel::data {
     struct ItemVolatileData;
+    class Model;
 }
-class PanelData;
 
 class IconsGenerator2
 {
@@ -26,7 +26,7 @@ public:
     // do not rely on .size of this image, it may not respect scale factor.
     NSImage *ImageFor( const VFSListingItem &_item, nc::panel::data::ItemVolatileData &_item_vd );
 
-    void SyncDiscardedAndOutdated( PanelData &_pd );
+    void SyncDiscardedAndOutdated( nc::panel::data::Model &_pd );
     
 private:
     enum {MaxIcons = 65535,

@@ -9,14 +9,14 @@ static const auto g_RestorationCaseSensKey = "caseSensitive";
 static const auto g_RestorationNumericSortKey = "numericSort";
 static const auto g_RestorationSortModeKey = "sortMode";
 
-namespace panel {
+namespace nc::panel::data {
 
-DataOptionsExporter::DataOptionsExporter(const PanelData &_data):
+OptionsExporter::OptionsExporter(const Model &_data):
     m_Data(_data)
 {
 }
 
-rapidjson::StandaloneValue DataOptionsExporter::Export() const
+rapidjson::StandaloneValue OptionsExporter::Export() const
 {
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
     auto add_bool = [&](const char*_name, bool _v) {
@@ -35,12 +35,12 @@ rapidjson::StandaloneValue DataOptionsExporter::Export() const
     return json;
 }
 
-DataOptionsImporter::DataOptionsImporter(PanelData &_data):
+OptionsImporter::OptionsImporter(Model &_data):
     m_Data(_data)
 {
 }
     
-void DataOptionsImporter::Import(const rapidjson::StandaloneValue& _options)
+void OptionsImporter::Import(const rapidjson::StandaloneValue& _options)
 {
   using namespace rapidjson;
     if( !_options.IsObject() )

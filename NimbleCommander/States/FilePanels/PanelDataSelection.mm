@@ -5,7 +5,7 @@
 #include "PanelDataItemVolatileData.h"
 #include <VFS/VFS.h>
 
-PanelDataSelection::PanelDataSelection(const PanelData &_pd, bool _ignore_dirs_on_mask):
+PanelDataSelection::PanelDataSelection(const nc::panel::data::Model &_pd, bool _ignore_dirs_on_mask):
     m_Data(_pd),
     m_IgnoreDirectoriesOnMaskSelection(_ignore_dirs_on_mask)
 {

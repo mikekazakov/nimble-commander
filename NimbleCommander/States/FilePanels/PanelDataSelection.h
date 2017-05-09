@@ -1,11 +1,13 @@
 #pragma once
 
-class PanelData;
+namespace nc::panel::data {
+    class Model;
+}
 
 class PanelDataSelection
 {
 public:
-    PanelDataSelection(const PanelData &_pd, bool _ignore_dirs_on_mask = true);
+    PanelDataSelection(const nc::panel::data::Model &_pd, bool _ignore_dirs_on_mask = true);
 
     // it would be good to transform these methods into something like this:
     // pair<vector<unsigned>,vector<bool>> to reduce redundant operations.
@@ -18,6 +20,6 @@ public:
     vector<bool> InvertSelection() const;
 
 private:
-    const PanelData &m_Data;
+    const nc::panel::data::Model &m_Data;
     bool m_IgnoreDirectoriesOnMaskSelection;
 };

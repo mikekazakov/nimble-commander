@@ -2,7 +2,10 @@
 
 #include "../PanelViewImplementationProtocol.h"
 
-class PanelData;
+namespace nc::panel::data {
+    class Model;
+}
+
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 class PanelListViewGeometry;
@@ -21,7 +24,7 @@ struct PanelListViewColumnsLayout;
 
 - (void) dataChanged;
 - (void) syncVolatileData;
-- (void) setData:(PanelData*)_data;
+- (void) setData:(nc::panel::data::Model*)_data;
 
 - (const PanelListViewGeometry&) geometry;
 

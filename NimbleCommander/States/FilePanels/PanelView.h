@@ -6,9 +6,10 @@
 @class PanelView;
 class VFSListingItem;
 struct PanelViewLayout;
-class PanelData;
+
 namespace nc::panel::data {
     struct ItemVolatileData;
+    struct Model;
 }
 
 @interface PanelView : NSView<NSDraggingDestination, NSTextViewDelegate>
@@ -17,7 +18,7 @@ namespace nc::panel::data {
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
 @property (nonatomic, readonly) VFSListingItem item; // return an item at current cursor position if any or nullptr
 @property (nonatomic, readonly) const nc::panel::data::ItemVolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
-@property (nonatomic) PanelData* data;
+@property (nonatomic) nc::panel::data::Model* data;
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
 @property (nonatomic, readonly) int headerBarHeight;
 @property (nonatomic, readonly) NSProgressIndicator *busyIndicator;

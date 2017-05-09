@@ -12,7 +12,7 @@ class NetworkConnectionsManager;
 @class MainWindowFilePanelState;
 @class MainWindowController;
 
-class PanelData;
+//class PanelData;
 
 namespace nc::panel {
 class History;
@@ -20,6 +20,7 @@ class History;
 namespace data {
     struct SortMode;
     struct HardFilter;
+    struct Model;
 }
 
 class ActivityTicket
@@ -87,7 +88,7 @@ public:
 @property (nonatomic) MainWindowFilePanelState* state;
 @property (nonatomic, readonly) MainWindowController* mainWindowController;
 @property (nonatomic, readonly) PanelView* view;
-@property (nonatomic, readonly) const PanelData& data;
+@property (nonatomic, readonly) const nc::panel::data::Model& data;
 @property (nonatomic, readonly) nc::panel::History& history;
 @property (nonatomic, readonly) bool isActive;
 @property (nonatomic, readonly) bool isUniform; // return true if panel's listing has common vfs host and directory for it's items

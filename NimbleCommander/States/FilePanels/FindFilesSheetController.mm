@@ -528,7 +528,7 @@ private:
     if( !GetExtensionFromPath(_path, extension) )
         return nullptr;
     
-    if( !panel::IsExtensionInArchivesWhitelist(extension) )
+    if( !nc::panel::IsExtensionInArchivesWhitelist(extension) )
         return nullptr;
     
     auto host = VFSArchiveProxy::OpenFileAsArchive(_path,

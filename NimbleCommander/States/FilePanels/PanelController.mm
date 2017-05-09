@@ -31,6 +31,8 @@
 #include "PanelDataExternalEntryKey.h"
 #include "PanelDataPersistency.h"
 
+using namespace ::nc::panel;
+
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
@@ -163,7 +165,7 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     if( !_item.HasExtension() )
         return false;
     
-    return panel::IsExtensionInArchivesWhitelist(_item.Extension());
+    return IsExtensionInArchivesWhitelist(_item.Extension());
 }
 
 static void ShowExceptionAlert( const string &_message = "" )
@@ -207,8 +209,6 @@ static void HeatUpConfigValues()
     ConfigShowDotDotEntry();
     ConfigShowLocalizedFilenames();
 }
-
-using namespace ::nc::panel;
 
 @implementation PanelController
 {
@@ -548,7 +548,7 @@ using namespace ::nc::panel;
     if( ActivationManager::Instance().HasTerminal() &&
         !entry.IsDotDot() &&
         entry.Host()->IsNativeFS() &&
-        panel::IsEligbleToTryToExecuteInConsole(entry) ) {
+        IsEligbleToTryToExecuteInConsole(entry) ) {
         [self.state requestTerminalExecution:entry.Name() at:entry.Directory()];
         return;
     }

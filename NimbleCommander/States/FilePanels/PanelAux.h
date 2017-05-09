@@ -1,17 +1,10 @@
-//
-//  PanelAux.h
-//  Files
-//
-//  Created by Michael G. Kazakov on 18.09.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <VFS/VFS.h>
 #include <NimbleCommander/Operations/Copy/Options.h>
 
 @class PanelController;
-@class ExternalEditorInfo;
 class ExternalEditorStartupInfo;
+
+namespace nc::panel {
 
 // this class allows opening file in VFS with regular [NSWorkspace open]
 // after refactoring the need to keep this class at all is in doubts
@@ -44,10 +37,8 @@ public:
                                              PanelController *_panel);
 };
 
-namespace panel
-{
-    bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item);
-    FileCopyOperationOptions MakeDefaultFileCopyOptions();
-    FileCopyOperationOptions MakeDefaultFileMoveOptions();
-    bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept;
+bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item);
+FileCopyOperationOptions MakeDefaultFileCopyOptions();
+FileCopyOperationOptions MakeDefaultFileMoveOptions();
+bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept;
 }

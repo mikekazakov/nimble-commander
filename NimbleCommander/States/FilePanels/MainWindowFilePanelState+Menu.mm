@@ -22,6 +22,8 @@
 #include "PanelData.h"
 #include "PanelView.h"
 
+using namespace nc::panel;
+
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
 @implementation MainWindowFilePanelState (Menu)
@@ -318,7 +320,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
                                              sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
                                           initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
                                               destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:panel::MakeDefaultFileCopyOptions()];
+                                            operationOptions:MakeDefaultFileCopyOptions()];
     [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;
@@ -353,7 +355,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
                                              sourceDirectory:item.Directory()
                                           initialDestination:item.Filename()
                                               destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:panel::MakeDefaultFileCopyOptions()];
+                                            operationOptions:MakeDefaultFileCopyOptions()];
     [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;
@@ -388,7 +390,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
                                              sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
                                           initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
                                               destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:panel::MakeDefaultFileMoveOptions()];
+                                            operationOptions:MakeDefaultFileMoveOptions()];
     [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;
@@ -422,7 +424,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
                                              sourceDirectory:item.Directory()
                                           initialDestination:item.Filename()
                                               destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:panel::MakeDefaultFileMoveOptions()];
+                                            operationOptions:MakeDefaultFileMoveOptions()];
     [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;

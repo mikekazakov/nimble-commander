@@ -193,7 +193,7 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
     
     const path destination = dir / name / "/";
     
-    const auto options = ::panel::MakeDefaultFileMoveOptions();
+    const auto options = MakeDefaultFileMoveOptions();
     auto op = [[FileCopyOperation alloc] initWithItems:files
                                        destinationPath:destination.native()
                                        destinationHost:vfs

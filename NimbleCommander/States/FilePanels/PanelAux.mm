@@ -1,11 +1,3 @@
-//
-//  PanelAux.mm
-//  Files
-//
-//  Created by Michael G. Kazakov on 18.09.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -21,6 +13,8 @@
 #include "PanelAux.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "ExternalEditorInfo.h"
+
+namespace nc::panel {
 
 static const auto g_ConfigArchivesExtensionsWhieList    = "filePanel.general.archivesExtensionsWhitelist";
 static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.executableExtensionsWhitelist";
@@ -290,7 +284,7 @@ void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
         });
 }
 
-bool panel::IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
+bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     static const vector<string> extensions = []{
         vector<string> v;
@@ -344,7 +338,7 @@ static FileCopyOperationOptions::ChecksumVerification DefaultChecksumVerificatio
         return FileCopyOperationOptions::ChecksumVerification::Never;
 }
 
-FileCopyOperationOptions panel::MakeDefaultFileCopyOptions()
+FileCopyOperationOptions MakeDefaultFileCopyOptions()
 {
     FileCopyOperationOptions options;
     options.docopy = true;
@@ -353,7 +347,7 @@ FileCopyOperationOptions panel::MakeDefaultFileCopyOptions()
     return options;
 }
 
-FileCopyOperationOptions panel::MakeDefaultFileMoveOptions()
+FileCopyOperationOptions MakeDefaultFileMoveOptions()
 {
     FileCopyOperationOptions options;
     options.docopy = false;
@@ -362,7 +356,7 @@ FileCopyOperationOptions panel::MakeDefaultFileMoveOptions()
     return options;
 }
 
-bool panel::IsExtensionInArchivesWhitelist( const char *_ext ) noexcept
+bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept
 {
     if( !_ext )
         return false;
@@ -384,4 +378,6 @@ bool panel::IsExtensionInArchivesWhitelist( const char *_ext ) noexcept
     
     const auto extension = ExtensionLowercaseComparison::Instance().ExtensionToLowercase( _ext );
     return any_of(begin(archive_extensions), end(archive_extensions), [&](auto &_) { return extension == _; } );
+}
+
 }

@@ -57,7 +57,7 @@ static void PasteOrMove( PanelController *_target, bool _paste)
     if( source_items.empty() )
         return; // errors on fetching listings?
     
-    FileCopyOperationOptions opts = ::panel::MakeDefaultFileCopyOptions();
+    FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
     opts.docopy = _paste;
     auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
                                        destinationPath:_target.currentDirectoryPath

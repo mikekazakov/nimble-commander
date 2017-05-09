@@ -10,6 +10,8 @@
 #include "Actions/CopyToPasteboard.h"
 #include "Actions/Delete.h"
 
+using namespace nc::panel;
+
 struct OpenWithHandler
 {
     string path;
@@ -568,7 +570,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     if( target.empty() )
         return;
 
-    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
+    FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
     
     auto op = [[FileCopyOperation alloc] initWithItems:{item} destinationPath:target destinationHost:item.Host() options:opts];
     const bool force_refresh = item.Host()->IsDirChangeObservingAvailable(item.Directory().c_str()) == false;

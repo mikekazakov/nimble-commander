@@ -8,6 +8,8 @@
 #include "PanelAux.h"
 #include "PanelHistory.h"
 
+using namespace nc::panel;
+
 static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTerminal";
 
 @implementation MainWindowFilePanelState (OverlappedTerminalSupport)
@@ -174,7 +176,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
         pc = m_LastFocusedPanelController;
     if( pc && pc.vfs->IsNativeFS() )
         if( auto entry = pc.view.item ) {
-            if( panel::IsEligbleToTryToExecuteInConsole(entry) &&
+            if( IsEligbleToTryToExecuteInConsole(entry) &&
                 m_OverlappedTerminal->terminal.isShellVirgin )
                 [m_OverlappedTerminal->terminal feedShellWithInput:"./"s + entry.Name()];
             else

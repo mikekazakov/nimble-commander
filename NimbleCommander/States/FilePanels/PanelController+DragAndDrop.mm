@@ -453,7 +453,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
         const auto operation = BuildOperationMaskForLocal(source, destination);
         
         if( operation == NSDragOperationCopy ) {
-            FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
+            FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
             auto op = [[FileCopyOperation alloc] initWithItems:move(files)
                                                destinationPath:destination.Path()
                                                destinationHost:destination.Host()
@@ -468,7 +468,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
             return true;
         }
         else if( operation == NSDragOperationMove ) {
-            FileCopyOperationOptions opts = panel::MakeDefaultFileMoveOptions();
+            FileCopyOperationOptions opts = MakeDefaultFileMoveOptions();
             auto op = [[FileCopyOperation alloc] initWithItems:move(files)
                                                destinationPath:destination.Path()
                                                destinationHost:destination.Host()
@@ -510,7 +510,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
             return false; // errors on fetching listings?
         
         // TODO: support move from other apps someday?
-        FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
+        FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
         auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
                                            destinationPath:destination.Path()
                                            destinationHost:destination.Host()

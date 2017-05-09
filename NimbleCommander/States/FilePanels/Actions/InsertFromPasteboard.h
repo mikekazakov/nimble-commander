@@ -2,7 +2,7 @@
 
 #include "DefaultAction.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 // extract additional state from NSPasteboard.generalPasteboard
 

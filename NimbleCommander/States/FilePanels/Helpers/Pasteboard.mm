@@ -1,7 +1,7 @@
 #include "Pasteboard.h"
 #include <VFS/VFS.h>
 
-namespace panel {
+namespace nc::panel {
 
 bool PasteboardSupport::WriteFilesnamesPBoard(const vector<VFSListingItem> &_items,
                                              NSPasteboard *_pasteboard )

@@ -72,7 +72,7 @@ static const auto g_MaxTextWidth = 600;
     else if( auto plain_path = any_cast<string>(&_context) )
         [m_Panel GoToDir:*plain_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
     else if( auto connection = any_cast<NetworkConnectionsManager::Connection>(&_context) )
-        panel::actions::OpenExistingNetworkConnection().Perform(m_Panel, sender);
+        nc::panel::actions::OpenExistingNetworkConnection().Perform(m_Panel, sender);
     else if( auto vfs_path = any_cast<VFSPath>(&_context) )
         [m_Panel GoToDir:vfs_path->Path() vfs:vfs_path->Host() select_entry:"" async:true];
     else if( auto promise = any_cast<pair<VFSInstanceManager::Promise, string>>(&_context) )
@@ -81,7 +81,7 @@ static const auto g_MaxTextWidth = 600;
 
 @end
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 static vector<shared_ptr<NativeFileSystemInfo>> VolumesToShow()
 {

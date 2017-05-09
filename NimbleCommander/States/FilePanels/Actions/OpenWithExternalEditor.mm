@@ -5,7 +5,7 @@
 #include "../PanelAux.h"
 #include "OpenWithExternalEditor.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 bool OpenWithExternalEditor::Predicate( PanelController *_target ) const
 {

@@ -151,9 +151,9 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     NSMutableArray                     *m_ShareItemsURLs;
     int                                 m_DirsCount;
     int                                 m_FilesCount;
-    unique_ptr<panel::actions::PanelAction> m_CopyAction;
-    unique_ptr<panel::actions::PanelAction> m_MoveToTrashAction;
-    unique_ptr<panel::actions::PanelAction> m_DeletePermanentlyAction;
+    unique_ptr<nc::panel::actions::PanelAction> m_CopyAction;
+    unique_ptr<nc::panel::actions::PanelAction> m_MoveToTrashAction;
+    unique_ptr<nc::panel::actions::PanelAction> m_DeletePermanentlyAction;
 }
 
 - (id) initWithData:(vector<VFSListingItem>) _items
@@ -178,9 +178,9 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         self.delegate = self;
         self.minimumWidth = 200; // hardcoding is bad!
     
-        m_CopyAction.reset( new panel::actions::context::CopyToPasteboard{m_Items} );
-        m_MoveToTrashAction.reset( new panel::actions::context::MoveToTrash{m_Items} );
-        m_DeletePermanentlyAction.reset( new panel::actions::context::DeletePermanently{m_Items} );
+        m_CopyAction.reset( new nc::panel::actions::context::CopyToPasteboard{m_Items} );
+        m_MoveToTrashAction.reset( new nc::panel::actions::context::MoveToTrash{m_Items} );
+        m_DeletePermanentlyAction.reset( new nc::panel::actions::context::DeletePermanently{m_Items} );
 
         [self doStuffing];
     }

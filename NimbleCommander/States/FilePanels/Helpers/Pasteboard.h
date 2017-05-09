@@ -2,7 +2,7 @@
 
 class VFSListingItem;
 
-namespace panel {
+namespace nc::panel {
 
 struct PasteboardSupport {
 

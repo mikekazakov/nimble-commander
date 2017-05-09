@@ -6,7 +6,7 @@
 
 // TODO: move localizable string to a new file. FilePanelsContextMenu.string was a bad idea!
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 bool CopyToPasteboard::Predicate( PanelController *_target ) const
 {
@@ -42,7 +42,7 @@ bool CopyToPasteboard::ValidateMenuItem( PanelController *_target, NSMenuItem *_
 
 void CopyToPasteboard::PerformWithItems( const vector<VFSListingItem> &_items ) const
 {
-    if( !panel::PasteboardSupport::WriteFilesnamesPBoard(_items, NSPasteboard.generalPasteboard) )
+    if( !PasteboardSupport::WriteFilesnamesPBoard(_items, NSPasteboard.generalPasteboard) )
         NSBeep();
 }
 

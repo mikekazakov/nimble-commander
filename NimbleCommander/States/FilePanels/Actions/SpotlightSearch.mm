@@ -9,7 +9,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "../PanelView.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 static const auto g_ConfigSpotlightFormat = "filePanel.spotlight.format";
 static const auto g_ConfigSpotlightMaxCount = "filePanel.spotlight.maxCount";

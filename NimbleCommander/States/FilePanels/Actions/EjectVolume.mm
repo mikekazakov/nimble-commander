@@ -2,7 +2,7 @@
 #include "../PanelController.h"
 #include "EjectVolume.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 bool EjectVolume::Predicate( PanelController *_target ) const
 {

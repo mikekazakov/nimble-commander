@@ -80,9 +80,9 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         return true;
     }
     IF_MENU_TAG("menu.window.show_previous_tab")
-        return panel::actions::ShowPreviousTab::ValidateMenuItem(self, item);
+        return nc::panel::actions::ShowPreviousTab::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.window.show_next_tab")
-        return panel::actions::ShowNextTab::ValidateMenuItem(self, item);
+        return nc::panel::actions::ShowNextTab::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.view.show_tabs") {
         item.title = GlobalConfig().GetBool(g_ConfigGeneralShowTabs) ?
             NSLocalizedString(@"Hide Tab Bar", "Menu item title for hiding tab bar") :
@@ -479,12 +479,12 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
 - (IBAction)OnWindowShowPreviousTab:(id)sender
 {
-    panel::actions::ShowPreviousTab::Perform(self, sender);
+    nc::panel::actions::ShowPreviousTab::Perform(self, sender);
 }
 
 - (IBAction)OnWindowShowNextTab:(id)sender
 {
-    panel::actions::ShowNextTab::Perform(self, sender);
+    nc::panel::actions::ShowNextTab::Perform(self, sender);
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
@@ -502,12 +502,12 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     
     // workaround for (shift)+ctrl+tab when it's menu item is disabled. mysterious stuff...
     if( unicode == NSTabCharacter && mod == NSControlKeyMask ) {
-        if( panel::actions::ShowNextTab::Predicate(self) )
+        if( nc::panel::actions::ShowNextTab::Predicate(self) )
             return [super performKeyEquivalent:theEvent];
         return true;
     }
     if( unicode == NSTabCharacter && mod == (NSControlKeyMask|NSShiftKeyMask) ) {
-        if( panel::actions::ShowPreviousTab::Predicate(self) )
+        if( nc::panel::actions::ShowPreviousTab::Predicate(self) )
             return [super performKeyEquivalent:theEvent];
         return true;
     }

@@ -2,7 +2,7 @@
 #include "../PanelController.h"
 #include "../PanelData.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 static const auto g_SortAscImage = [NSImage imageNamed:@"NSAscendingSortIndicator"];
 static const auto g_SortDescImage = [NSImage imageNamed:@"NSDescendingSortIndicator"];

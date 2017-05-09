@@ -6,7 +6,7 @@
 #include "../MainWindowFilePanelState.h"
 #include "InsertFromPasteboard.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 // currently supports only info from NSFilenamesPboardType.
 // perhaps it would be good to add support of URLS at least.
@@ -57,7 +57,7 @@ static void PasteOrMove( PanelController *_target, bool _paste)
     if( source_items.empty() )
         return; // errors on fetching listings?
     
-    FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
+    FileCopyOperationOptions opts = ::panel::MakeDefaultFileCopyOptions();
     opts.docopy = _paste;
     auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
                                        destinationPath:_target.currentDirectoryPath

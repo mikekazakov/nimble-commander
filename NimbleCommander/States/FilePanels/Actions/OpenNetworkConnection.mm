@@ -12,7 +12,7 @@
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 static bool GoToFTP(PanelController *_target,
                     const NetworkConnectionsManager::Connection &_connection,

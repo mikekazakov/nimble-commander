@@ -3,7 +3,7 @@
 #include "../PanelData.h"
 #include "../PanelView.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 bool CalculateSizes::Predicate( PanelController *_target ) const
 {

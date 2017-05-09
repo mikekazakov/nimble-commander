@@ -4,7 +4,7 @@
 
 class VFSListingItem;
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 // dependency: NativeFSManager::Instance()
 

@@ -7,7 +7,7 @@
 #include "../PanelData.h"
 #include "../PanelView.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 static bool CommonDeletePredicate( PanelController *_target );
 static bool AllAreNative(const vector<VFSListingItem>& _c);

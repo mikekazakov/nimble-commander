@@ -2,7 +2,7 @@
 #include "../PanelController.h"
 #include "../PanelHistory.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 bool GoBack::Predicate( PanelController *_target ) const
 {

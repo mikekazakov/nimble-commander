@@ -4,7 +4,7 @@
 
 @class PanelController;
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 // external dependency - SanboxManager
 

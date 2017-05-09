@@ -2,7 +2,7 @@
 #include "RenameInPlace.h"
 #include "../PanelView.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 bool RenameInPlace::Predicate( PanelController *_target ) const
 {

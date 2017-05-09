@@ -4,7 +4,7 @@
 #include "../PanelData.h"
 #include "../PanelView.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 bool CalculateChecksum::Predicate( PanelController *_target ) const
 {
@@ -39,7 +39,7 @@ void CalculateChecksum::Perform( PanelController *_target, id _sender ) const
     [sheet beginSheetForWindow:_target.window
              completionHandler:^(NSModalResponse returnCode) {
                  if(sheet.didSaved) {
-                     nc::panel::PanelControllerDelayedSelection req;
+                     PanelControllerDelayedSelection req;
                      req.filename = sheet.savedFilename;
                      [_target ScheduleDelayedSelectionChangeFor:req];
                  }

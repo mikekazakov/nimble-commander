@@ -4,7 +4,7 @@
 #include "FindFiles.h"
 #include "../PanelView.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 bool FindFiles::Predicate( PanelController *_target ) const
 {

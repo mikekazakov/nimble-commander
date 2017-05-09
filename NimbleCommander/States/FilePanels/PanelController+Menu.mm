@@ -28,7 +28,7 @@
 #include "Actions/NavigateHistory.h"
 #include "PanelView.h"
 
-static const panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
+static const nc::panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
 
 @implementation PanelController (Menu)
@@ -167,7 +167,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 - (IBAction)OnGoToQuickListsConnections:(id)sender { Perform(_cmd, self, sender); }
 @end
 
-using namespace panel::actions;
+using namespace nc::panel::actions;
 static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.file.find",                      @selector(onMainMenuPerformFindAction:),    new FindFiles},
 {"menu.file.find_with_spotlight",       @selector(OnSpotlightSearch:),              new SpotlightSearch},

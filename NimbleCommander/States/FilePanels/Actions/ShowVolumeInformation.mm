@@ -3,7 +3,7 @@
 #include "ShowVolumeInformation.h"
 #include "../PanelView.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 bool ShowVolumeInformation::Predicate( PanelController *_target ) const
 {

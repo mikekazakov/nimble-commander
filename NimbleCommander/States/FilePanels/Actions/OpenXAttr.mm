@@ -4,7 +4,7 @@
 #include "OpenXAttr.h"
 #include "../PanelView.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 bool OpenXAttr::Predicate( PanelController *_target ) const
 {

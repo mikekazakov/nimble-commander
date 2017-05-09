@@ -9,7 +9,7 @@
 #include "../PanelData.h"
 #include "../PanelView.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 static const auto g_InitialFileName = []() -> string {
     NSString *stub = NSLocalizedString(@"untitled.txt",
@@ -193,7 +193,7 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
     
     const path destination = dir / name / "/";
     
-    const auto options = panel::MakeDefaultFileMoveOptions();
+    const auto options = ::panel::MakeDefaultFileMoveOptions();
     auto op = [[FileCopyOperation alloc] initWithItems:files
                                        destinationPath:destination.native()
                                        destinationHost:vfs

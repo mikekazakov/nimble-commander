@@ -1,6 +1,6 @@
 #include "DefaultAction.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 PanelAction::~PanelAction()
 {

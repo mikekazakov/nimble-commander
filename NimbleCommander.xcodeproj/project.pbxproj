@@ -2559,7 +2559,6 @@
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CF90C0C01EC174470056E3B8 /* PanelViewDelegate.h */,
 				CFDAC2FE1DFD1D7C0039A104 /* ExternalEditorInfo.h */,
 				CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */,
 				CF1846F91E419B53008B7C9F /* ExternalEditorInfoPrivate.h */,
@@ -2616,6 +2615,7 @@
 				CFDAC21A1DFBC6CB0039A104 /* PanelHistory.mm */,
 				CFDAC2121DFBBD110039A104 /* PanelView.h */,
 				CFDAC2131DFBBD110039A104 /* PanelView.mm */,
+				CF90C0C01EC174470056E3B8 /* PanelViewDelegate.h */,
 				CF31F66B1DFE6268005A1A40 /* PanelViewLayoutSupport.h */,
 				CF31F66C1DFE6268005A1A40 /* PanelViewLayoutSupport.mm */,
 				CF3E6DF61E3870AB002B4AAD /* PanelViewPresentationSettings.h */,

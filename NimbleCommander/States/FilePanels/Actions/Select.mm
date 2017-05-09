@@ -6,7 +6,7 @@
 #include "../PanelData.h"
 #include "../PanelView.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 void SelectAll::Perform( PanelController *_target, id _sender ) const
 {

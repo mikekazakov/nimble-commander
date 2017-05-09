@@ -338,7 +338,7 @@ static bool GoToForcesPanelActivation()
        m_ToolbarDelegate.leftPanelGoToButton.window )
         [m_ToolbarDelegate.leftPanelGoToButton performClick:self];
     else
-        panel::actions::ShowLeftGoToPopup::Perform(self, sender);
+        nc::panel::actions::ShowLeftGoToPopup::Perform(self, sender);
 }
 
 - (IBAction)onRightPanelGoToButtonAction:(id)sender
@@ -348,7 +348,7 @@ static bool GoToForcesPanelActivation()
        m_ToolbarDelegate.rightPanelGoToButton.window )
         [m_ToolbarDelegate.rightPanelGoToButton performClick:self];
     else
-        panel::actions::ShowRightGoToPopup::Perform(self, sender);
+        nc::panel::actions::ShowRightGoToPopup::Perform(self, sender);
 }
 
 - (bool) isPanelActive

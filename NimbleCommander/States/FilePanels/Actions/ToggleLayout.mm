@@ -3,7 +3,7 @@
 #include "../PanelViewLayoutSupport.h"
 #include "ToggleLayout.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 ToggleLayout::ToggleLayout( int _layout_index ):
     m_Index(_layout_index)

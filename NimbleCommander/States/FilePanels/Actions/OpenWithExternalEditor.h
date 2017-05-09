@@ -2,7 +2,7 @@
 
 #include "DefaultAction.h"
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 // has en external dependency: AppDelegate.me.externalEditorsStorage
 struct OpenWithExternalEditor : PanelAction

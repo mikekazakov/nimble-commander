@@ -3,7 +3,7 @@
 @class PanelController;
 @class MainWindowFilePanelState;
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 struct PanelAction
 {

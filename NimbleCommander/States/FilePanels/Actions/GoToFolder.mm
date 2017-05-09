@@ -8,7 +8,7 @@
 #include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 
-namespace panel::actions {
+namespace nc::panel::actions {
 
 void GoToFolder::Perform( PanelController *_target, id _sender ) const
 {

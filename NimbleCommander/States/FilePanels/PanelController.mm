@@ -1045,10 +1045,10 @@ static bool RouteKeyboardInputIntoTerminal()
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard types:(NSArray *)types
 {
     if( [types containsObject:(__bridge NSString *)kUTTypeFileURL] )
-        return panel::PasteboardSupport::WriteURLSPBoard(self.selectedEntriesOrFocusedEntry,
+        return nc::panel::PasteboardSupport::WriteURLSPBoard(self.selectedEntriesOrFocusedEntry,
                                                          pboard);
     if( [types containsObject:NSFilenamesPboardType] )
-        return panel::PasteboardSupport::WriteFilesnamesPBoard(self.selectedEntriesOrFocusedEntry,
+        return nc::panel::PasteboardSupport::WriteFilesnamesPBoard(self.selectedEntriesOrFocusedEntry,
                                                                pboard);
     return false;
 }

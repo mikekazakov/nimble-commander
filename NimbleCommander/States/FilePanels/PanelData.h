@@ -8,7 +8,10 @@
 class VFSHost;
 class VFSListing;
 class VFSListingItem;
-struct PanelDataItemVolatileData;
+
+namespace nc::panel::data {
+    struct ItemVolatileData;
+}
 
 /**
  * PanelData actually does the following things:
@@ -28,12 +31,12 @@ public:
         Temporary = 1
     };
     
-    using ExternalEntryKey = panel::ExternalEntryKey;
+    using ExternalEntryKey = ::nc::panel::data::ExternalEntryKey;
     using PanelSortMode = ::nc::panel::data::SortMode;
-    using Statistics = PanelDataStatistics;
-    using VolatileData = PanelDataItemVolatileData;
-    using TextualFilter = PanelDataTextualFilter;
-    using HardFilter = PanelDataHardFilter;
+    using Statistics = ::nc::panel::data::Statistics;
+    using VolatileData = ::nc::panel::data::ItemVolatileData;
+    using TextualFilter = ::nc::panel::data::TextualFilter;
+    using HardFilter = ::nc::panel::data::HardFilter;
         
     PanelData();
     ~PanelData();

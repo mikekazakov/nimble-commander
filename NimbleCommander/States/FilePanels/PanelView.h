@@ -7,14 +7,16 @@
 class VFSListingItem;
 struct PanelViewLayout;
 class PanelData;
-struct PanelDataItemVolatileData;
+namespace nc::panel::data {
+    struct ItemVolatileData;
+}
 
 @interface PanelView : NSView<NSDraggingDestination, NSTextViewDelegate>
 @property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active; // means that window is key and view is the first responder. KVO-compatible
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set
 @property (nonatomic, readonly) VFSListingItem item; // return an item at current cursor position if any or nullptr
-@property (nonatomic, readonly) const PanelDataItemVolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
+@property (nonatomic, readonly) const nc::panel::data::ItemVolatileData& item_vd; // will return default-initialized default shared stub if there's no current item
 @property (nonatomic) PanelData* data;
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
 @property (nonatomic, readonly) int headerBarHeight;

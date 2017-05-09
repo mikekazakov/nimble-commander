@@ -10,7 +10,9 @@
 #include "PanelViewFooterVolumeInfoFetcher.h"
 #include "PanelViewFooter.h"
 
-static NSString* FileSizeToString(const VFSListingItem &_dirent, const PanelDataItemVolatileData &_vd, ByteCountFormatter::Type _format)
+using namespace nc::panel;
+
+static NSString* FileSizeToString(const VFSListingItem &_dirent, const data::ItemVolatileData &_vd, ByteCountFormatter::Type _format)
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() ) {
@@ -91,7 +93,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
     
     __weak PanelView    *m_PanelView;
     
-    PanelDataStatistics m_Stats;
+    data::Statistics m_Stats;
     PanelViewFooterVolumeInfoFetcher m_VolumeInfoFetcher;
     ThemesManager::ObservationTicket    m_ThemeObservation;
 }
@@ -292,7 +294,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     return @""; // fallback case
 }
 
-- (void) updateFocusedItem:(VFSListingItem)_item VD:(PanelDataItemVolatileData)_vd // may be empty
+- (void) updateFocusedItem:(VFSListingItem)_item VD:(data::ItemVolatileData)_vd // may be empty
 {
     if( _item ) {
         m_FilenameLabel.stringValue = ComposeFooterFileNameForEntry(_item);
@@ -387,7 +389,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     }
 }
 
-- (void) updateStatistics:(const PanelDataStatistics&)_stats
+- (void) updateStatistics:(const data::Statistics&)_stats
 {
     if( m_Stats != _stats ) {
         m_Stats = _stats;

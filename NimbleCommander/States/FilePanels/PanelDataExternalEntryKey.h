@@ -1,14 +1,15 @@
 #pragma once
 
 class VFSListingItem;
-struct PanelDataItemVolatileData;
 
-namespace panel {
+namespace nc::panel::data {
+
+struct ItemVolatileData;
 
 struct ExternalEntryKey
 {
     ExternalEntryKey();
-    ExternalEntryKey(const VFSListingItem& _item, const PanelDataItemVolatileData &_item_vd);
+    ExternalEntryKey(const VFSListingItem& _item, const ItemVolatileData &_item_vd);
     
     string      name;
     NSString   *display_name;

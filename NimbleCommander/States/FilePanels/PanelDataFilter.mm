@@ -1,7 +1,9 @@
 #include "PanelDataFilter.h"
 #include <VFS/VFS.h>
 
-PanelDataTextualFilter::PanelDataTextualFilter() noexcept :
+namespace nc::panel::data {
+
+TextualFilter::TextualFilter() noexcept :
     text{nil},
     type{Anywhere},
     ignore_dot_dot{true},
@@ -10,7 +12,7 @@ PanelDataTextualFilter::PanelDataTextualFilter() noexcept :
 {
 }
 
-bool PanelDataTextualFilter::operator==(const PanelDataTextualFilter& _r) const noexcept
+bool TextualFilter::operator==(const TextualFilter& _r) const noexcept
 {
     if(type != _r.type)
         return false;
@@ -27,35 +29,35 @@ bool PanelDataTextualFilter::operator==(const PanelDataTextualFilter& _r) const 
     return [text isEqualToString:_r.text]; // no decomposion here
 }
 
-bool PanelDataTextualFilter::operator!=(const PanelDataTextualFilter& _r) const noexcept
+bool TextualFilter::operator!=(const TextualFilter& _r) const noexcept
 {
     return !(*this == _r);
 }
 
-PanelDataTextualFilter::Where PanelDataTextualFilter::WhereFromInt(int _v) noexcept
+TextualFilter::Where TextualFilter::WhereFromInt(int _v) noexcept
 {
     if(_v >= 0 && _v <= BeginningOrEnding)
         return Where(_v);
     return Anywhere;
 }
 
-PanelDataTextualFilter PanelDataTextualFilter::NoFilter() noexcept
+TextualFilter TextualFilter::NoFilter() noexcept
 {
-    PanelDataTextualFilter filter;
+    TextualFilter filter;
     filter.type = Anywhere;
     filter.text = nil;
     filter.ignore_dot_dot = true;
     return filter;
 }
 
-static PanelDataTextualFilter::FoundRange g_DummyFoundRange;
+static TextualFilter::FoundRange g_DummyFoundRange;
 
-bool PanelDataTextualFilter::IsValidItem(const VFSListingItem& _item) const
+bool TextualFilter::IsValidItem(const VFSListingItem& _item) const
 {
     return IsValidItem( _item, g_DummyFoundRange );
 }
 
-bool PanelDataTextualFilter::IsValidItem(const VFSListingItem& _item,
+bool TextualFilter::IsValidItem(const VFSListingItem& _item,
                                            FoundRange &_found_range) const
 {
     _found_range = {0, 0};
@@ -136,13 +138,13 @@ bool PanelDataTextualFilter::IsValidItem(const VFSListingItem& _item,
     return false;
 }
 
-void PanelDataTextualFilter::OnPanelDataLoad()
+void TextualFilter::OnPanelDataLoad()
 {
     if( clear_on_new_listing )
         text = nil;
 }
 
-bool PanelDataTextualFilter::IsFiltering() const noexcept
+bool TextualFilter::IsFiltering() const noexcept
 {
     return text != nil && text.length > 0;
 }
@@ -151,8 +153,8 @@ bool PanelDataTextualFilter::IsFiltering() const noexcept
 // HardFilter
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-bool PanelDataHardFilter::IsValidItem(const VFSListingItem& _item,
-                                        PanelDataTextualFilter::FoundRange &_found_range) const
+bool HardFilter::IsValidItem(const VFSListingItem& _item,
+                                        TextualFilter::FoundRange &_found_range) const
 {
     if( show_hidden == false && _item.IsHidden() )
         return false;
@@ -160,17 +162,19 @@ bool PanelDataHardFilter::IsValidItem(const VFSListingItem& _item,
     return text.IsValidItem(_item, _found_range);
 }
     
-bool PanelDataHardFilter::IsFiltering() const noexcept
+bool HardFilter::IsFiltering() const noexcept
 {
     return !show_hidden || text.IsFiltering();
 }
 
-bool PanelDataHardFilter::operator==(const PanelDataHardFilter& _r) const noexcept
+bool HardFilter::operator==(const HardFilter& _r) const noexcept
 {
     return show_hidden == _r.show_hidden && text == _r.text;
 }
 
-bool PanelDataHardFilter::operator!=(const PanelDataHardFilter& _r) const noexcept
+bool HardFilter::operator!=(const HardFilter& _r) const noexcept
 {
     return show_hidden != _r.show_hidden || text != _r.text;
+}
+
 }

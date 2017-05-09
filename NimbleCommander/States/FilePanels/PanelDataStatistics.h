@@ -1,6 +1,8 @@
 #pragma once
 
-struct PanelDataStatistics
+namespace nc::panel::data {
+
+struct Statistics
 {
     /**
      * Total entries count in listing, not including dot-dot entry.
@@ -30,6 +32,8 @@ struct PanelDataStatistics
     int32_t selected_reg_amount = 0;
     int32_t selected_dirs_amount = 0;
     
-    bool operator ==(const PanelDataStatistics& _r) const noexcept;
-    bool operator !=(const PanelDataStatistics& _r) const noexcept;
+    bool operator ==(const Statistics& _r) const noexcept;
+    bool operator !=(const Statistics& _r) const noexcept;
 };
+
+}

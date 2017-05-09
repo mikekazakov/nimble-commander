@@ -1,6 +1,8 @@
 #include "PanelDataStatistics.h"
 
-bool PanelDataStatistics::operator ==(const PanelDataStatistics& _r) const noexcept
+namespace nc::panel::data {
+
+bool Statistics::operator ==(const Statistics& _r) const noexcept
 {
     return
     total_entries_amount      == _r.total_entries_amount      &&
@@ -12,7 +14,9 @@ bool PanelDataStatistics::operator ==(const PanelDataStatistics& _r) const noexc
     selected_dirs_amount      == _r.selected_dirs_amount;
 }
 
-bool PanelDataStatistics::operator !=(const PanelDataStatistics& _r) const noexcept
+bool Statistics::operator !=(const Statistics& _r) const noexcept
 {
     return !(*this == _r);
+}
+
 }

@@ -13,7 +13,7 @@
 - (id) initWithItem:(VFSListingItem)_item;
 
 @property (nonatomic) VFSListingItem item; // may be empty!
-@property (nonatomic) PanelDataItemVolatileData vd;
+@property (nonatomic) nc::panel::data::ItemVolatileData vd;
 @property (nonatomic, weak) PanelListView *listView;
 @property (nonatomic, readonly) NSColor *rowBackgroundColor;
 @property (nonatomic, readonly) NSColor *rowTextColor;

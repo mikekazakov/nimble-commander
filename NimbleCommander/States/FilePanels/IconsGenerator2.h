@@ -1,17 +1,11 @@
-//
-//  IconsGenerator.h
-//  Files
-//
-//  Created by Michael G. Kazakov on 04.09.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #pragma once
 
 #include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
 
-struct PanelDataItemVolatileData;
+namespace nc::panel::data {
+    struct ItemVolatileData;
+}
 class PanelData;
 
 class IconsGenerator2
@@ -30,7 +24,7 @@ public:
     void SetHiDPI( bool _is_hi_dpi );
     
     // do not rely on .size of this image, it may not respect scale factor.
-    NSImage *ImageFor( const VFSListingItem &_item, PanelDataItemVolatileData &_item_vd );
+    NSImage *ImageFor( const VFSListingItem &_item, nc::panel::data::ItemVolatileData &_item_vd );
 
     void SyncDiscardedAndOutdated( PanelData &_pd );
     

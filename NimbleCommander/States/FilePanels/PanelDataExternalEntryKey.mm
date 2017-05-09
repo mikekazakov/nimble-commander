@@ -2,7 +2,7 @@
 #include <VFS/VFSListing.h>
 #include "PanelDataItemVolatileData.h"
 
-namespace panel {
+namespace nc::panel::data {
 
 ExternalEntryKey::ExternalEntryKey():
     name{""},
@@ -17,7 +17,7 @@ ExternalEntryKey::ExternalEntryKey():
 }
 
 ExternalEntryKey::ExternalEntryKey(const VFSListingItem& _item,
-                                   const PanelDataItemVolatileData &_item_vd):
+                                   const ItemVolatileData &_item_vd):
     ExternalEntryKey()
 {
     name = _item.Name();
@@ -34,6 +34,5 @@ bool ExternalEntryKey::is_valid() const noexcept
 {
     return !name.empty() && display_name != nil;
 }
-
 
 }

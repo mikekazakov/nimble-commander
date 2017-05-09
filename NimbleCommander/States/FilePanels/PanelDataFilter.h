@@ -2,7 +2,9 @@
 
 class VFSListingItem;
 
-struct PanelDataTextualFilter
+namespace nc::panel::data {
+
+struct TextualFilter
 {
     enum Where : int8_t // persistancy-bound values, don't change it
     {
@@ -20,23 +22,25 @@ struct PanelDataTextualFilter
     bool clear_on_new_listing:1; // if true then PanelData will automatically set text to nil on Load method call
     bool hightlight_results:1; // option for PanelData to mark QS hightlight
     
-    PanelDataTextualFilter() noexcept;
-    bool operator==(const PanelDataTextualFilter& _r) const noexcept;
-    bool operator!=(const PanelDataTextualFilter& _r) const noexcept;
+    TextualFilter() noexcept;
+    bool operator==(const TextualFilter& _r) const noexcept;
+    bool operator!=(const TextualFilter& _r) const noexcept;
     static Where WhereFromInt(int _v) noexcept;
-    static PanelDataTextualFilter NoFilter() noexcept;
+    static TextualFilter NoFilter() noexcept;
     bool IsValidItem(const VFSListingItem& _item, FoundRange &_found_range) const;
     bool IsValidItem(const VFSListingItem& _item) const;
     void OnPanelDataLoad();
     bool IsFiltering() const noexcept;
 } __attribute__((packed));
 
-struct PanelDataHardFilter
+struct HardFilter
 {
-    PanelDataTextualFilter text = PanelDataTextualFilter::NoFilter();
+    TextualFilter text = TextualFilter::NoFilter();
     bool show_hidden = true;
-    bool IsValidItem(const VFSListingItem& _item, PanelDataTextualFilter::FoundRange &_found_range) const;
+    bool IsValidItem(const VFSListingItem& _item, TextualFilter::FoundRange &_found_range) const;
     bool IsFiltering() const noexcept;
-    bool operator==(const PanelDataHardFilter& _r) const noexcept;
-    bool operator!=(const PanelDataHardFilter& _r) const noexcept;
+    bool operator==(const HardFilter& _r) const noexcept;
+    bool operator!=(const HardFilter& _r) const noexcept;
 };
+
+}

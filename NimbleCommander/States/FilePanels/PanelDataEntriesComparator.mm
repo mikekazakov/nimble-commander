@@ -6,7 +6,7 @@
 namespace nc::panel::data {
 
 ListingComparatorBase::ListingComparatorBase(const VFSListing &_items,
-                                             const vector<PanelDataItemVolatileData>& _vd,
+                                             const vector<ItemVolatileData>& _vd,
                                              SortMode _sort_mode):
     l{ _items },
     vd{ _vd },
@@ -29,7 +29,7 @@ int ListingComparatorBase::Compare( const char *_1st, const char *_2nd ) const n
 
 IndirectListingComparator::IndirectListingComparator(
     const VFSListing &_items,
-    const vector<PanelDataItemVolatileData>& _vd,
+    const vector<ItemVolatileData>& _vd,
     SortMode sort_mode):
         ListingComparatorBase(_items, _vd, sort_mode)
 {
@@ -69,7 +69,7 @@ bool IndirectListingComparator::IsLessByFilesystemRepresentation(unsigned _1, un
 
 bool IndirectListingComparator::IsLessBySizeReversed(unsigned _1, unsigned _2) const
 {
-    constexpr auto invalid_size = PanelDataItemVolatileData::invalid_size;
+    constexpr auto invalid_size = ItemVolatileData::invalid_size;
     const auto s1 = vd[_1].size, s2 = vd[_2].size;
     if( s1 != invalid_size && s2 != invalid_size )
         if( s1 != s2 )
@@ -83,7 +83,7 @@ bool IndirectListingComparator::IsLessBySizeReversed(unsigned _1, unsigned _2) c
 
 bool IndirectListingComparator::IsLessBySize(unsigned _1, unsigned _2) const
 {
-    constexpr auto invalid_size = PanelDataItemVolatileData::invalid_size;
+    constexpr auto invalid_size = ItemVolatileData::invalid_size;
     const auto s1 = vd[_1].size, s2 = vd[_2].size;
     if( s1 != invalid_size && s2 != invalid_size )
         if( s1 != s2 )
@@ -212,15 +212,15 @@ int IndirectListingComparator::CompareNames(unsigned _1, unsigned _2) const
 
 
 ExternalListingComparator::ExternalListingComparator(const VFSListing &_items,
-                                                     const vector<PanelDataItemVolatileData>& _vd,
+                                                     const vector<ItemVolatileData>& _vd,
                                                      SortMode sort_mode):
     ListingComparatorBase(_items, _vd, sort_mode)
 {}
 
-bool ExternalListingComparator::operator()(unsigned _1, const ::panel::ExternalEntryKey &_val2) const
+bool ExternalListingComparator::operator()(unsigned _1, const ExternalEntryKey &_val2) const
 {
     using _ = SortMode::Mode;
-    const auto invalid_size = PanelDataItemVolatileData::invalid_size;
+    const auto invalid_size = ItemVolatileData::invalid_size;
     
     if( sort_mode.sep_dirs ) {
         if( l.IsDir(_1) && !_val2.is_dir) return true;

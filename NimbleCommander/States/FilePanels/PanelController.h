@@ -13,13 +13,13 @@ class NetworkConnectionsManager;
 @class MainWindowController;
 
 class PanelData;
-struct PanelDataHardFilter;
 
 namespace nc::panel {
 class History;
 
 namespace data {
     struct SortMode;
+    struct HardFilter;
 }
 
 class ActivityTicket
@@ -122,7 +122,7 @@ public:
 
 // panel sorting settings
 - (void) changeSortingModeTo:(nc::panel::data::SortMode)_mode;
-- (void) changeHardFilteringTo:(PanelDataHardFilter)_filter;
+- (void) changeHardFilteringTo:(nc::panel::data::HardFilter)_filter;
 
 // PanelView callback hooks
 - (void) panelViewDidBecomeFirstResponder;

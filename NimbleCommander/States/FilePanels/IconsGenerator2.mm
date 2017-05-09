@@ -1,11 +1,3 @@
-//
-//  IconsGenerator.cpp
-//  Files
-//
-//  Created by Michael G. Kazakov on 04.09.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Quartz/Quartz.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -288,7 +280,7 @@ bool IconsGenerator2::IsRequestsStashFull() const
     return amount >= MaxStashedRequests;
 }
 
-NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, PanelDataItemVolatileData &_item_vd)
+NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, nc::panel::data::ItemVolatileData &_item_vd)
 {
     dispatch_assert_main_queue(); // STA api design
     assert( m_UpdateCallback );

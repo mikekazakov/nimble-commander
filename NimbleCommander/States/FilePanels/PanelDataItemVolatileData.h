@@ -1,6 +1,8 @@
 #pragma once
 
-struct PanelDataItemVolatileData
+namespace nc::panel::data {
+
+struct ItemVolatileData
 {
     enum {
         invalid_size = (0xFFFFFFFFFFFFFFFFu),
@@ -22,6 +24,8 @@ struct PanelDataItemVolatileData
     void toggle_selected( bool _v ) noexcept;
     void toggle_shown( bool _v ) noexcept;
     void toggle_highlight( bool _v ) noexcept;
-    bool operator==(PanelDataItemVolatileData&_rhs) const noexcept;
-    bool operator!=(PanelDataItemVolatileData&_rhs) const noexcept;
+    bool operator==(ItemVolatileData&_rhs) const noexcept;
+    bool operator!=(ItemVolatileData&_rhs) const noexcept;
 };
+
+}

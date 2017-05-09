@@ -3,26 +3,24 @@
 #include "PanelDataSortMode.h"
 
 class VFSListing;
-class PanelDataItemVolatileData;
-
-namespace panel {
-struct ExternalEntryKey;
-}
 
 namespace nc::panel::data {
+
+struct ExternalEntryKey;
+class ItemVolatileData;
 
 class ListingComparatorBase
 {
 public:
     ListingComparatorBase(const VFSListing &_items,
-                          const vector<PanelDataItemVolatileData>& _vd,
+                          const vector<ItemVolatileData>& _vd,
                           SortMode _sort_mode);
     
 protected:
     int Compare( CFStringRef _1st, CFStringRef _2nd ) const noexcept;
     int Compare( const char *_1st, const char *_2nd ) const noexcept;
     const VFSListing&                       l;
-    const vector<PanelDataItemVolatileData>&vd;
+    const vector<ItemVolatileData>&vd;
     const SortMode                 sort_mode;
 
 private:
@@ -35,7 +33,7 @@ class IndirectListingComparator : public ListingComparatorBase
 {
 public:
     IndirectListingComparator(const VFSListing &_items,
-                              const vector<PanelDataItemVolatileData>& _vd,
+                              const vector<ItemVolatileData>& _vd,
                               SortMode sort_mode);
     bool operator()(unsigned _1, unsigned _2) const;
 private:
@@ -58,9 +56,9 @@ private:
 struct ExternalListingComparator : public ListingComparatorBase
 {
     ExternalListingComparator(const VFSListing &_items,
-                              const vector<PanelDataItemVolatileData>& _vd,
+                              const vector<ItemVolatileData>& _vd,
                               SortMode sort_mode);
-    bool operator()(unsigned _1, const ::panel::ExternalEntryKey &_val2) const;
+    bool operator()(unsigned _1, const ExternalEntryKey &_val2) const;
 };
 
 }

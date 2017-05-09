@@ -46,7 +46,7 @@ bool PanelViewPresentationItemsColoringFilter::IsEmpty() const
         indeterminate(selected);
 }
 
-bool PanelViewPresentationItemsColoringFilter::Filter(const VFSListingItem& _item, const PanelDataItemVolatileData &_item_vd) const
+bool PanelViewPresentationItemsColoringFilter::Filter(const VFSListingItem& _item, const nc::panel::data::ItemVolatileData &_item_vd) const
 {
     if( !mask.IsEmpty() &&
         !mask.MatchName(_item.DisplayName()) )

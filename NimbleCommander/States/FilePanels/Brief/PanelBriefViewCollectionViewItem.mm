@@ -5,10 +5,12 @@
 #include "PanelBriefViewItemCarrier.h"
 #include "PanelBriefViewCollectionViewItem.h"
 
+using namespace nc::panel;
+
 @implementation PanelBriefViewItem
 {
     VFSListingItem                  m_Item;
-    PanelDataItemVolatileData       m_VD;
+    data::ItemVolatileData          m_VD;
     bool                            m_PanelActive;
 }
 
@@ -18,7 +20,7 @@
 {
     [super prepareForReuse];
     m_Item = VFSListingItem{};
-    m_VD = PanelDataItemVolatileData{};
+    m_VD = data::ItemVolatileData{};
     m_PanelActive = false;
     [super setSelected:false];
     self.carrier.background = nil;
@@ -119,7 +121,7 @@
     }
 }
 
-- (void) setVD:(PanelDataItemVolatileData)_vd
+- (void) setVD:(data::ItemVolatileData)_vd
 {
     if( m_VD == _vd )
         return;

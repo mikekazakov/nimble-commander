@@ -7,8 +7,8 @@
 
 @interface PanelViewFooter : NSView
 
-- (void) updateFocusedItem:(VFSListingItem)_item VD:(PanelDataItemVolatileData)_vd; // may be empty
-- (void) updateStatistics:(const PanelDataStatistics&)_stats;
+- (void) updateFocusedItem:(VFSListingItem)_item VD:(nc::panel::data::ItemVolatileData)_vd; // may be empty
+- (void) updateStatistics:(const nc::panel::data::Statistics&)_stats;
 - (void) updateListing:(const VFSListingPtr&)_listing;
 
 @end

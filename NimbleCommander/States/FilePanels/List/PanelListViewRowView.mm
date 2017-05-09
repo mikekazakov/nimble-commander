@@ -6,6 +6,8 @@
 #include "PanelListViewSizeView.h"
 #include "PanelListViewRowView.h"
 
+using namespace nc::panel;
+
 @interface PanelListViewRowView()
 
 @property (nonatomic) bool dropTarget;
@@ -16,7 +18,7 @@
 @implementation PanelListViewRowView
 {
     VFSListingItem                  m_Item;
-    PanelDataItemVolatileData         m_VD;
+    data::ItemVolatileData          m_VD;
     NSColor*                        m_RowColor;
     NSColor*                        m_TextColor;
     int                             m_ItemIndex;
@@ -86,7 +88,7 @@
     return m_PanelActive;
 }
 
-- (void) setVd:(PanelDataItemVolatileData)vd
+- (void) setVd:(data::ItemVolatileData)vd
 {
     if( m_VD != vd ) {
         m_VD = vd;
@@ -96,7 +98,7 @@
     }
 }
 
-- (PanelDataItemVolatileData) vd
+- (data::ItemVolatileData) vd
 {
     return m_VD;
 }

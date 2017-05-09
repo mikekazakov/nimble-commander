@@ -5,13 +5,15 @@
 #include "PanelListViewRowView.h"
 #include "PanelListViewSizeView.h"
 
+using namespace nc::panel;
+
 // use values from 0xFFFFFFFFFFFFFFFDu to encode additional states
 static const auto g_InvalidSize                 = 0xFFFFFFFFFFFFFFFFu;
 static const auto g_NonCalculatedSizeForDotDot  = g_InvalidSize - 1;
 static const auto g_NonCalculatedSizeForDir     = g_InvalidSize - 2;
 
 static uint64_t ExtractSizeFromInfos(const VFSListingItem &_dirent,
-                                     const PanelDataItemVolatileData &_vd)
+                                     const data::ItemVolatileData &_vd)
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() )
@@ -128,7 +130,7 @@ static NSParagraphStyle *PStyle()
 }
 
 - (void) setSizeWithItem:(const VFSListingItem &)_dirent
-                   andVD:(const PanelDataItemVolatileData &)_vd
+                   andVD:(const data::ItemVolatileData &)_vd
 {
     if( !_dirent )
         return;

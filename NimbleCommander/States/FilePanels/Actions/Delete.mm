@@ -4,6 +4,8 @@
 #include <NimbleCommander/Operations/Delete/FileDeletionSheetController.h>
 #include <Utility/NativeFSManager.h>
 #include <Habanero/algo.h>
+#include "../PanelData.h"
+#include "../PanelView.h"
 
 namespace panel::actions {
 

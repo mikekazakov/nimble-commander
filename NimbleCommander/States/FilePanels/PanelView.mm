@@ -3,12 +3,14 @@
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
+#include "PanelData.h"
 #include "PanelController.h"
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
 #include "PanelViewHeader.h"
 #include "PanelViewFooter.h"
 #include "IconsGenerator2.h"
+#include "PanelViewDelegate.h"
 
 enum class CursorSelectionType : int8_t
 {

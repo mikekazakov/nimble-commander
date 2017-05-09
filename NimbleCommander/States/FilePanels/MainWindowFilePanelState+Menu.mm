@@ -1,11 +1,3 @@
-//
-//  MainWindowFilePanelState+Menu.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 19.12.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include <NimbleCommander/Operations/Link/FileLinkNewSymlinkSheetController.h>
@@ -27,6 +19,8 @@
 #include <NimbleCommander/States/FilePanels/ToolsMenuDelegate.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h>
 #include "Actions/TabSelection.h"
+#include "PanelData.h"
+#include "PanelView.h"
 
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
@@ -444,7 +438,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         [op AddOnFinishHandler:^{
             dispatch_to_main_queue( [=]{
                 string single_fn_rename = ::path(path).filename().native();
-                PanelControllerDelayedSelection req;
+                nc::panel::PanelControllerDelayedSelection req;
                 req.filename = single_fn_rename;
                 [(PanelController*)cur ScheduleDelayedSelectionChangeFor:req];
             });

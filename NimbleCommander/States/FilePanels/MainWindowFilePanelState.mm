@@ -27,6 +27,8 @@
 #include "Views/BriefSystemOverview.h"
 #include "Views/FilePanelOverlappedTerminal.h"
 #include "Actions/ShowGoToPopup.h"
+#include "PanelData.h"
+#include "PanelView.h"
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
@@ -696,7 +698,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     
     if( [panel GoToDir:_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok ) {
         if( !_filenames.empty() ) {
-            PanelControllerDelayedSelection req;
+            nc::panel::PanelControllerDelayedSelection req;
             req.filename = _filenames.front();
             [panel ScheduleDelayedSelectionChangeFor:req];
         }

@@ -1,143 +1,87 @@
 #pragma once
 
-#include <Habanero/SerialQueue.h>
-#include "../../Bootstrap/Config.h"
-#include "PanelData.h"
-#include "PanelView.h"
-#include "PanelViewLayoutSupport.h"
-#include "PanelHistory.h"
+#include "PanelViewDelegate.h"
+#include "PanelDataPersistency.h"
+#include "../../Core/VFSInstanceManager.h"
 
 class NetworkConnectionsManager;
 @class PanelController;
+@class PanelView;
 @class QuickLookView;
 @class BriefSystemOverview;
 @class MainWindowFilePanelState;
 @class MainWindowController;
 
-struct PanelQuickSearchMode
+class PanelData;
+struct PanelDataSortMode;
+struct PanelDataHardFilter;
+
+namespace nc::panel {
+class History;
+
+class ActivityTicket
 {
-    enum KeyModif { // persistancy-bound values, don't change it
-        WithAlt         = 0,
-        WithCtrlAlt     = 1,
-        WithShiftAlt    = 2,
-        WithoutModif    = 3,
-        Disabled        = 4
-    };
+public:
+    ActivityTicket();
+    ActivityTicket(PanelController *_panel, uint64_t _ticket);
+    ActivityTicket(const ActivityTicket&) = delete;
+    ActivityTicket(ActivityTicket&&);
+    ~ActivityTicket();
+    void operator=(const ActivityTicket&) = delete;
+    void operator=(ActivityTicket&&);
     
-    static KeyModif KeyModifFromInt(int _k)
-    {
-        if(_k >= 0 && _k <= Disabled)
-            return (KeyModif)_k;
-        return WithAlt;
-    }
-    
+private:
+    void Reset();
+    uint64_t                ticket;
+    __weak PanelController *panel;
 };
 
-namespace panel
+struct PanelControllerDelayedSelection
 {
-    class GenericCursorPersistance
-    {
-    public:
-        GenericCursorPersistance(PanelView* _view, const PanelData &_data);
-        void Restore() const;
-        
-    private:
-        PanelView                  *m_View;
-        const PanelData            &m_Data;
-        string                      m_OldCursorName;
-        PanelData::ExternalEntryKey m_OldEntrySortKeys;
-    };
-    
-    class ActivityTicket
-    {
-    public:
-        ActivityTicket();
-        ActivityTicket(PanelController *_panel, uint64_t _ticket);
-        ActivityTicket(const ActivityTicket&) = delete;
-        ActivityTicket(ActivityTicket&&);
-        ~ActivityTicket();
-        void operator=(const ActivityTicket&) = delete;
-        void operator=(ActivityTicket&&);
-        
-    private:
-        void Reset();
-        uint64_t                ticket;
-        __weak PanelController *panel;
-    };
+    string          filename;
+    milliseconds    timeout = 500ms;
+    bool            check_now = true;
+
+    /**
+     * called by PanelController when succesfully changed the cursor position regarding this request.
+     */
+    function<void()> done;
+};
+
 }
+
+class PanelControllerGoToDirContext
+{
+public:
+    /* required */
+    string              RequestedDirectory      = "";
+    VFSHostPtr          VFS                     = nullptr;
+    
+    /* optional */
+    string              RequestFocusedEntry     = "";
+    bool                PerformAsynchronous     = true;
+    bool                LoadPreviousViewState   = false;
+    
+    /**
+     * This will be called from a thread which is loading a vfs listing with
+     * vfs result code.
+     * This thread may be main or background depending on PerformAsynchronous.
+     * Will be called on any error canceling process or with 0 on successful loading.
+     */
+    function<void(int)> LoadingResultCallback    = nullptr;
+    
+    /**
+     * Return code of a VFS->FetchDirectoryListing will be placed here.
+     */
+    int                 LoadingResultCode        = 0;
+};
+
+
 
 /**
  * PanelController is reponder to enable menu events processing
  */
 @interface PanelController : NSResponder<PanelViewDelegate>
-{
-    // Main controller's possessions
-    PanelData                   m_Data;   // owns
-    PanelView                   *m_View;  // create and owns
-    
-    // VFS changes observation
-    VFSHostDirObservationTicket  m_UpdatesObservationTicket;
-    
-    // VFS listing fetch flags
-    int                         m_VFSFetchingFlags;
-    
-    // Quick searching section
-    bool                                m_QuickSearchIsSoftFiltering;
-    bool                                m_QuickSearchTypingView;
-    PanelQuickSearchMode::KeyModif      m_QuickSearchMode;
-    PanelData::TextualFilter::Where     m_QuickSearchWhere;
-    nanoseconds                         m_QuickSearchLastType;
-    unsigned                            m_QuickSearchOffset;
-    
-    // background operations' queues
-    SerialQueue m_DirectorySizeCountingQ;
-    SerialQueue m_DirectoryLoadingQ;
-    SerialQueue m_DirectoryReLoadingQ;
-    
-    // navigation support
-    nc::panel::History m_History;
-    
-    // spinning indicator support
-    bool                m_IsAnythingWorksInBackground;
-    
-    // Tickets to show some external activities on this panel
-    uint64_t            m_NextActivityTicket;
-    vector<uint64_t>    m_ActivitiesTickets;
-    spinlock            m_ActivitiesTicketsLock;
-    
-    // QuickLook support
-    __weak QuickLookView *m_QuickLook;
-    
-    // BriefSystemOverview support
-    __weak BriefSystemOverview* m_BriefSystemOverview;
-    
-    // delayed entry selection support
-    struct
-    {
-        /**
-         * Requested item name to select. Empty filename means that request is invalid.
-         */
-        string      filename;
-        
-        /**
-         * Time after which request is meaningless and should be removed
-         */
-        nanoseconds    request_end;
-
-        /**
-         * Called when changed a cursor position
-         */
-        function<void()> done;
-    } m_DelayedSelection;
-    
-    __weak MainWindowFilePanelState* m_FilePanelState;
-    
-    vector<GenericConfig::ObservationTicket> m_ConfigObservers;
-
-    int                                 m_ViewLayoutIndex;
-    shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
-    PanelViewLayoutsStorage::ObservationTicket m_LayoutsObservation;
-}
 
 @property (nonatomic) MainWindowFilePanelState* state;
 @property (nonatomic, readonly) MainWindowController* mainWindowController;
@@ -172,12 +116,12 @@ namespace panel
  * RAII principle - when ActivityTicket dies - it will clear activity flag.
  * Thread-safe.
  */
-- (panel::ActivityTicket) registerExtActivity;
+- (nc::panel::ActivityTicket) registerExtActivity;
 
 
 // panel sorting settings
-- (void) changeSortingModeTo:(PanelData::PanelSortMode)_mode;
-- (void) changeHardFilteringTo:(PanelData::HardFilter)_filter;
+- (void) changeSortingModeTo:(PanelDataSortMode)_mode;
+- (void) changeHardFilteringTo:(PanelDataHardFilter)_filter;
 
 // PanelView callback hooks
 - (void) panelViewDidBecomeFirstResponder;
@@ -190,10 +134,67 @@ namespace panel
 
 - (void) calculateSizesOfItems:(const vector<VFSListingItem>&)_items;
 
+
+- (int) GoToDirWithContext:(shared_ptr<PanelControllerGoToDirContext>)_context;
+
+
+// will not load previous view state if any
+// don't use the following methds. use GoToDirWithContext instead.
+- (int) GoToDir:(const string&)_dir
+            vfs:(VFSHostPtr)_vfs
+   select_entry:(const string&)_filename
+          async:(bool)_asynchronous;
+
+- (int) GoToDir:(const string&)_dir
+            vfs:(VFSHostPtr)_vfs
+   select_entry:(const string&)_filename
+loadPreviousState:(bool)_load_state
+          async:(bool)_asynchronous;
+
+// sync operation
+- (void) loadNonUniformListing:(const shared_ptr<VFSListing>&)_listing;
+
+// will load previous view state if any
+- (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory;
+// some params later
+
+- (void) goToPersistentLocation:(const PanelDataPersisency::Location &)_location;
+
+- (void) RecoverFromInvalidDirectory;
+
+/** 
+ * Delayed entry selection change - panel controller will memorize such request.
+ * If _check_now flag is on then controller will look for requested element and if it was found - select it.
+ * If there was another pending selection request - it will be overwrited by the new one.
+ * Controller will check for entry appearance on every directory update.
+ * Request will be removed upon directory change.
+ * Once request is accomplished it will be removed.
+ * If on any checking it will be found that time for request has went out - it will be removed (500ms is just ok for _time_out_in_ms).
+ * Will also deselect any currenly selected items.
+ */
+- (void) ScheduleDelayedSelectionChangeFor:(nc::panel::PanelControllerDelayedSelection)request;
+
+/**
+ * Private PanelController method.
+ * Return true if it moved or just set the cursor position.
+ */
+- (bool) CheckAgainstRequestedSelection;
+
+/**
+ * Private PanelController method.
+ */
+- (void) ClearSelectionRequest;
+
+
+- (void) QuickSearchClearFiltering;
+- (void) QuickSearchSetCriteria:(NSString *)_text;
+
 @end
 
 // internal stuff, move it somewehere else
 @interface PanelController ()
+- (IBAction)OnBriefSystemOverviewCommand:(id)sender;
+- (IBAction)OnFileViewCommand:(id)sender;
 - (void) finishExtActivityWithTicket:(uint64_t)_ticket;
 - (void) CancelBackgroundOperations;
 - (void) OnPathChanged;
@@ -209,8 +210,5 @@ namespace panel
 @end
 
 #import "PanelController+DataAccess.h"
-#import "PanelController+DelayedSelection.h"
-#import "PanelController+Navigation.h"
-#import "PanelController+QuickSearch.h"
 #import "PanelController+DragAndDrop.h"
 #import "PanelController+Menu.h"

@@ -1,6 +1,8 @@
 #include "CopyToPasteboard.h"
 #include "../PanelController.h"
 #include "../Helpers/Pasteboard.h"
+#include "../PanelData.h"
+#include "../PanelView.h"
 
 // TODO: move localizable string to a new file. FilePanelsContextMenu.string was a bad idea!
 

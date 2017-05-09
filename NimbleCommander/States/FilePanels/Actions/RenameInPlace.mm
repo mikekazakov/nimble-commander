@@ -1,5 +1,6 @@
 #include "../PanelController.h"
 #include "RenameInPlace.h"
+#include "../PanelView.h"
 
 namespace panel::actions {
 

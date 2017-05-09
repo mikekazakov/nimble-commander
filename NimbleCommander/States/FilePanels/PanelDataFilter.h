@@ -1,0 +1,42 @@
+#pragma once
+
+class VFSListingItem;
+
+struct PanelDataTextualFilter
+{
+    enum Where : int8_t // persistancy-bound values, don't change it
+    {
+        Anywhere            = 0,
+        Beginning           = 1,
+        Ending              = 2, // handling extensions somehow
+        BeginningOrEnding   = 3
+    };
+    
+    using FoundRange = pair<int16_t, int16_t>; // begin-end indeces range in DispayName string, {0,0} mean empty
+    
+    NSString *text;
+    Where     type;
+    bool ignore_dot_dot:1; // will not apply filter on dot-dot entries
+    bool clear_on_new_listing:1; // if true then PanelData will automatically set text to nil on Load method call
+    bool hightlight_results:1; // option for PanelData to mark QS hightlight
+    
+    PanelDataTextualFilter() noexcept;
+    bool operator==(const PanelDataTextualFilter& _r) const noexcept;
+    bool operator!=(const PanelDataTextualFilter& _r) const noexcept;
+    static Where WhereFromInt(int _v) noexcept;
+    static PanelDataTextualFilter NoFilter() noexcept;
+    bool IsValidItem(const VFSListingItem& _item, FoundRange &_found_range) const;
+    bool IsValidItem(const VFSListingItem& _item) const;
+    void OnPanelDataLoad();
+    bool IsFiltering() const noexcept;
+} __attribute__((packed));
+
+struct PanelDataHardFilter
+{
+    PanelDataTextualFilter text = PanelDataTextualFilter::NoFilter();
+    bool show_hidden = true;
+    bool IsValidItem(const VFSListingItem& _item, PanelDataTextualFilter::FoundRange &_found_range) const;
+    bool IsFiltering() const noexcept;
+    bool operator==(const PanelDataHardFilter& _r) const noexcept;
+    bool operator!=(const PanelDataHardFilter& _r) const noexcept;
+};

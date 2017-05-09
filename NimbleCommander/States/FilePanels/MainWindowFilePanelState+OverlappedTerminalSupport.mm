@@ -1,11 +1,3 @@
-//
-//  MainWindowFilePanelState+OverlappedTerminalSupport.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 17/07/15.
-//  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
@@ -14,6 +6,7 @@
 #include "PanelView.h"
 #include "PanelController.h"
 #include "PanelAux.h"
+#include "PanelHistory.h"
 
 static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTerminal";
 

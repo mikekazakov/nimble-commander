@@ -1,11 +1,3 @@
-//
-//  PanelController+DragAndDrop.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 27.01.14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Utility/FontExtras.h>
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
@@ -19,6 +11,7 @@
 #include "PanelAux.h"
 #include "PanelDataItemVolatileData.h"
 #include "FilesDraggingSource.h"
+#include "PanelData.h"
 
 /*//////////////////////////////////////////////////////////////////////////////////////////////////
 This is the most obscure Cocoa usage in NC.
@@ -216,7 +209,7 @@ static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const Pa
 
 - (void) initiateDragFromView:(NSView*)_view itemNo:(int)_sort_pos byEvent:(NSEvent *)_event
 {
-    const auto vfs_items = ComposeItemsForDragging(_sort_pos, m_Data);
+    const auto vfs_items = ComposeItemsForDragging(_sort_pos, self.data);
     if( vfs_items.empty() )
         return;
     
@@ -350,7 +343,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
     static const auto url_promise_uti = FilesDraggingSource.fileURLsPromiseDragUTI;
     static const auto url_uti = FilesDraggingSource.fileURLsDragUTI;
     
-    const auto dragging_over_item = m_Data.EntryAtSortPosition(_sorted_index);
+    const auto dragging_over_item = self.data.EntryAtSortPosition(_sorted_index);
     const auto dragging_over_dir = dragging_over_item && dragging_over_item.IsDir();
     if( dragging_over_item ) {
         if( dragging_over_dir && !DraggingIntoFoldersAllowed() ) // <-- optimize this !!
@@ -433,7 +426,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
     static const auto url_promise_uti = FilesDraggingSource.fileURLsPromiseDragUTI;
     static const auto url_uti = FilesDraggingSource.fileURLsDragUTI;
 
-    const auto dragging_over_item = m_Data.EntryAtSortPosition(_sorted_index);
+    const auto dragging_over_item = self.data.EntryAtSortPosition(_sorted_index);
     const auto destination = [self composeDestinationForDrag:_dragging
                                                overPanelItem:dragging_over_item];
     if( !destination )

@@ -6,6 +6,8 @@
 #include "../PanelController.h"
 #include "../Views/SpotlightSearchPopupViewController.h"
 #include "SpotlightSearch.h"
+#include <NimbleCommander/Bootstrap/Config.h>
+#include "../PanelView.h"
 
 namespace panel::actions {
 

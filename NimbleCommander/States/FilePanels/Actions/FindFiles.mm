@@ -2,6 +2,7 @@
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
 #include "../PanelController.h"
 #include "FindFiles.h"
+#include "../PanelView.h"
 
 namespace panel::actions {
 

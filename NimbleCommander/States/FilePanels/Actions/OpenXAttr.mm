@@ -2,6 +2,7 @@
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"
 #include "OpenXAttr.h"
+#include "../PanelView.h"
 
 namespace panel::actions {
 

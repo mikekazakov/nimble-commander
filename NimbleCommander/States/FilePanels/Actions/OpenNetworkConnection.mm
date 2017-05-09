@@ -114,7 +114,7 @@ static void GoToLANShare(PanelController *_target,
                          const string& _passwd,
                          bool _save_password_on_success)
 {
-    auto activity = make_shared<panel::ActivityTicket>();
+    auto activity = make_shared<nc::panel::ActivityTicket>();
     __weak PanelController *weak_panel = _target;
     auto cb = [weak_panel, activity, _connection, _passwd, _save_password_on_success]
         (const string &_path, const string &_err) {

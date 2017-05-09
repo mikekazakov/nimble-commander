@@ -6,6 +6,8 @@
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelAux.h"
+#include "../PanelData.h"
+#include "../PanelView.h"
 
 namespace panel::actions {
 
@@ -76,7 +78,7 @@ static string FindSuitableName( const string& _initial, const VFSListing &_listi
 static void ScheduleRenaming( const string& _filename, PanelController *_panel )
 {
     __weak PanelController *weak_panel = _panel;
-    PanelControllerDelayedSelection req;
+    nc::panel::PanelControllerDelayedSelection req;
     req.filename = _filename;
     req.timeout = 2s;
     req.done = [=]{

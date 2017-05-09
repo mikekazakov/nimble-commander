@@ -5,6 +5,8 @@
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
 #include "ChangeAttributes.h"
+#include "../PanelData.h"
+#include "../PanelView.h"
 
 namespace panel::actions {
 

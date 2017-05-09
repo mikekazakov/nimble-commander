@@ -3,6 +3,8 @@
 #include "../Views/SelectionWithMaskPopupViewController.h"
 #include "../PanelDataSelection.h"
 #include "../PanelController.h"
+#include "../PanelData.h"
+#include "../PanelView.h"
 
 namespace panel::actions {
 

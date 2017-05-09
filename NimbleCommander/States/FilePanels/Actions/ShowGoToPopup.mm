@@ -12,6 +12,9 @@
 #include "../PanelController.h"
 #include "ShowGoToPopup.h"
 #include "OpenNetworkConnection.h"
+#include "../PanelHistory.h"
+#include "../PanelData.h"
+#include "../PanelView.h"
 
 static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
 static const auto g_ConfigMaxNetworkConnections = "filePanel.general.maximumNetworkConnectionsInGoToMenu";

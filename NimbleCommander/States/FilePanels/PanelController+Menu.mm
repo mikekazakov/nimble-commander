@@ -26,6 +26,7 @@
 #include "Actions/OpenNetworkConnection.h"
 #include "Actions/Delete.h"
 #include "Actions/NavigateHistory.h"
+#include "PanelView.h"
 
 static const panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
@@ -39,9 +40,9 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         if( auto a = ActionByTag(tag) )
             return a->ValidateMenuItem(self, item);
         IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
-        IF_MENU_TAG("menu.go.into_folder")                  return m_View.item && !m_View.item.IsDotDot();
-        IF_MENU_TAG("menu.command.internal_viewer")         return m_View.item && !m_View.item.IsDir();
-        IF_MENU_TAG("menu.command.quick_look")              return m_View.item && !self.state.anyPanelCollapsed;
+        IF_MENU_TAG("menu.go.into_folder")                  return self.view.item && !self.view.item.IsDotDot();
+        IF_MENU_TAG("menu.command.internal_viewer")         return self.view.item && !self.view.item.IsDir();
+        IF_MENU_TAG("menu.command.quick_look")              return self.view.item && !self.state.anyPanelCollapsed;
         IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
         return true;
     }
@@ -61,7 +62,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 
 - (IBAction)OnGoIntoDirectory:(id)sender
 { // cmd+down
-    auto item = m_View.item;
+    auto item = self.view.item;
     if( item && !item.IsDotDot() )
         [self handleGoIntoDirOrArchiveSync:false];
 }
@@ -80,33 +81,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
             return;
         [self.mainWindowController RequestBigFileView:i.Path() with_fs:i.Host()];
     }
-}
-
-- (IBAction)OnBriefSystemOverviewCommand:(id)sender
-{
-    if( m_BriefSystemOverview ) {
-        [self.state CloseOverlay:self];
-        m_BriefSystemOverview = nil;
-        return;
-    }
-    
-    m_BriefSystemOverview = [self.state RequestBriefSystemOverview:self];
-    if( m_BriefSystemOverview )
-        [self UpdateBriefSystemOverview];
-}
-
-- (IBAction)OnFileViewCommand:(id)sender
-{
-    // Close quick preview, if it is open.
-    if( m_QuickLook ) {
-        [self.state CloseOverlay:self];
-        m_QuickLook = nil;
-        return;
-    }
-    
-    m_QuickLook = [self.state RequestQuickLookView:self];
-    if( m_QuickLook )
-        [self OnCursorChanged];
 }
 
 - (IBAction)OnRefreshPanel:(id)sender

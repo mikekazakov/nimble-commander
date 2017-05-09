@@ -4,6 +4,8 @@
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
 #include "BatchRename.h"
+#include "../PanelData.h"
+#include "../PanelView.h"
 
 namespace panel::actions {
 

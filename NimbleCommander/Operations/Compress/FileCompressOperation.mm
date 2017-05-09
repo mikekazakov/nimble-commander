@@ -247,7 +247,7 @@ static NSString *OpTitle(unsigned _amount, NSString *_target)
     
     dispatch_to_main_queue( [=]{
         [target refreshPanel];
-        PanelControllerDelayedSelection req;
+        nc::panel::PanelControllerDelayedSelection req;
         req.filename = arc_name;
         [target ScheduleDelayedSelectionChangeFor:req];
     });

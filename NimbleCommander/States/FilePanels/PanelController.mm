@@ -1,8 +1,8 @@
+#include "PanelController.h"
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
-#include "PanelController.h"
 #include "../MainWindowController.h"
 #include "Views/QuickPreview.h"
 #include "MainWindowFilePanelState.h"
@@ -22,6 +22,12 @@
 #include "Helpers/Pasteboard.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataOptionsPersistence.h"
+#include <Habanero/CommonPaths.h>
+#include <VFS/Native.h>
+#include "PanelHistory.h"
+#include <Habanero/SerialQueue.h>
+#include "PanelData.h"
+#include "PanelView.h"
 
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
@@ -35,6 +41,41 @@ static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.qui
 static const auto g_RestorationDataKey = "data";
 static const auto g_RestorationSortingKey = "sorting";
 static const auto g_RestorationLayoutKey = "layout";
+
+struct PanelQuickSearchMode
+{
+    enum KeyModif { // persistancy-bound values, don't change it
+        WithAlt         = 0,
+        WithCtrlAlt     = 1,
+        WithShiftAlt    = 2,
+        WithoutModif    = 3,
+        Disabled        = 4
+    };
+    
+    static KeyModif KeyModifFromInt(int _k)
+    {
+        if(_k >= 0 && _k <= Disabled)
+            return (KeyModif)_k;
+        return WithAlt;
+    }
+};
+
+namespace panel
+{
+    class GenericCursorPersistance
+    {
+    public:
+        GenericCursorPersistance(PanelView* _view, const PanelData &_data);
+        void Restore() const;
+        
+    private:
+        PanelView                  *m_View;
+        const PanelData            &m_Data;
+        string                      m_OldCursorName;
+        PanelData::ExternalEntryKey m_OldEntrySortKeys;
+    };
+
+}
 
 panel::GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const PanelData &_data):
     m_View(_view),
@@ -68,19 +109,21 @@ void panel::GenericCursorPersistance::Restore() const
     }
 }
 
-panel::ActivityTicket::ActivityTicket():
+namespace nc::panel {
+
+ActivityTicket::ActivityTicket():
     panel(nil),
     ticket(0)
 {
 }
 
-panel::ActivityTicket::ActivityTicket(PanelController *_panel, uint64_t _ticket):
+ActivityTicket::ActivityTicket(PanelController *_panel, uint64_t _ticket):
     panel(_panel),
     ticket(_ticket)
 {
 }
 
-panel::ActivityTicket::ActivityTicket( ActivityTicket&& _rhs):
+ActivityTicket::ActivityTicket( ActivityTicket&& _rhs):
     panel(_rhs.panel),
     ticket(_rhs.ticket)
 {
@@ -88,12 +131,12 @@ panel::ActivityTicket::ActivityTicket( ActivityTicket&& _rhs):
     _rhs.ticket = 0;
 }
 
-panel::ActivityTicket::~ActivityTicket()
+ActivityTicket::~ActivityTicket()
 {
     Reset();
 }
 
-void panel::ActivityTicket::operator=(ActivityTicket&&_rhs)
+void ActivityTicket::operator=(ActivityTicket&&_rhs)
 {
     Reset();
     panel = _rhs.panel;
@@ -102,13 +145,15 @@ void panel::ActivityTicket::operator=(ActivityTicket&&_rhs)
     _rhs.ticket = 0;
 }
 
-void panel::ActivityTicket::Reset()
+void ActivityTicket::Reset()
 {
     if( ticket )
         if( PanelController *pc = panel )
             [pc finishExtActivityWithTicket:ticket];
     panel = nil;
     ticket = 0;
+}
+
 }
 
 static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
@@ -121,6 +166,24 @@ static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
     
     return panel::IsExtensionInArchivesWhitelist(_item.Extension());
 }
+
+static void ShowExceptionAlert( const string &_message = "" )
+{
+    if( dispatch_is_main_queue() ) {
+        auto alert = [[Alert alloc] init];
+        alert.messageText = @"Unexpected exception was caught:";
+        alert.informativeText = !_message.empty() ?
+            [NSString stringWithUTF8StdString:_message] :
+            @"Unknown exception";
+        [alert runModal];
+    }
+    else {
+        dispatch_to_main_queue([_message]{
+            ShowExceptionAlert(_message);
+        });
+    }
+}
+
 
 #define MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE( _name, _path )\
 static bool _name()\
@@ -147,6 +210,75 @@ static void HeatUpConfigValues()
 }
 
 @implementation PanelController
+{
+    // Main controller's possessions
+    PanelData                   m_Data;   // owns
+    PanelView                   *m_View;  // create and owns
+    
+    // VFS changes observation
+    VFSHostDirObservationTicket  m_UpdatesObservationTicket;
+    
+    // VFS listing fetch flags
+    int                         m_VFSFetchingFlags;
+    
+    // Quick searching section
+    bool                                m_QuickSearchIsSoftFiltering;
+    bool                                m_QuickSearchTypingView;
+    PanelQuickSearchMode::KeyModif      m_QuickSearchMode;
+    PanelData::TextualFilter::Where     m_QuickSearchWhere;
+    nanoseconds                         m_QuickSearchLastType;
+    unsigned                            m_QuickSearchOffset;
+    
+    // background operations' queues
+    SerialQueue m_DirectorySizeCountingQ;
+    SerialQueue m_DirectoryLoadingQ;
+    SerialQueue m_DirectoryReLoadingQ;
+    
+    // navigation support
+    nc::panel::History m_History;
+    
+    // spinning indicator support
+    bool                m_IsAnythingWorksInBackground;
+    
+    // Tickets to show some external activities on this panel
+    uint64_t            m_NextActivityTicket;
+    vector<uint64_t>    m_ActivitiesTickets;
+    spinlock            m_ActivitiesTicketsLock;
+    
+    // QuickLook support
+    __weak QuickLookView *m_QuickLook;
+    
+    // BriefSystemOverview support
+    __weak BriefSystemOverview* m_BriefSystemOverview;
+    
+    // delayed entry selection support
+    struct
+    {
+        /**
+         * Requested item name to select. Empty filename means that request is invalid.
+         */
+        string      filename;
+        
+        /**
+         * Time after which request is meaningless and should be removed
+         */
+        nanoseconds    request_end;
+
+        /**
+         * Called when changed a cursor position
+         */
+        function<void()> done;
+    } m_DelayedSelection;
+    
+    __weak MainWindowFilePanelState* m_FilePanelState;
+    
+    vector<GenericConfig::ObservationTicket> m_ConfigObservers;
+
+    int                                 m_ViewLayoutIndex;
+    shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
+    PanelViewLayoutsStorage::ObservationTicket m_LayoutsObservation;
+}
+
 @synthesize view = m_View;
 @synthesize data = m_Data;
 @synthesize history = m_History;
@@ -816,7 +948,7 @@ static bool RouteKeyboardInputIntoTerminal()
         [op AddOnFinishHandler:^{
             if(self.currentDirectoryPath == curr_path && self.vfs == curr_vfs)
                 dispatch_to_main_queue( [=]{
-                    PanelControllerDelayedSelection req;
+                    nc::panel::PanelControllerDelayedSelection req;
                     req.filename = target_fn;
                     [self ScheduleDelayedSelectionChangeFor:req];
                     [self refreshPanel];
@@ -921,11 +1053,11 @@ static bool RouteKeyboardInputIntoTerminal()
     return false;
 }
 
-- (panel::ActivityTicket) registerExtActivity
+- (nc::panel::ActivityTicket) registerExtActivity
 {
     auto ticket = call_locked(m_ActivitiesTicketsLock, [&]{
         m_ActivitiesTickets.emplace_back( m_NextActivityTicket );
-        return panel::ActivityTicket(self, m_NextActivityTicket++);
+        return nc::panel::ActivityTicket(self, m_NextActivityTicket++);
     });
     dispatch_to_main_queue([=]{
         [self updateSpinningIndicator];
@@ -998,5 +1130,590 @@ static bool RouteKeyboardInputIntoTerminal()
 {
     return AppDelegate.me.networkConnectionsManager;
 }
+
+- (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory
+{
+//    m_DirectoryLoadingQ->Run([=](const SerialQueue &_q){
+    m_DirectoryLoadingQ.Run([=](){
+        VFSHostPtr host;
+        try {
+            host = VFSInstanceManager::Instance().RetrieveVFS(_promise,
+                                                              [&]{ return m_DirectoryLoadingQ.IsStopped(); }
+                                                              );
+        } catch (VFSErrorException &e) {
+            return; // TODO: something
+        }
+        
+        // TODO: need an ability to show errors at least
+        dispatch_to_main_queue([=]{
+            [self GoToDir:_directory
+                      vfs:host
+             select_entry:""
+        loadPreviousState:true
+                    async:true];
+        });
+    });
+}
+
+- (void) goToPersistentLocation:(const PanelDataPersisency::Location &)_location
+{
+    m_DirectoryLoadingQ.Run([=]{
+        VFSHostPtr host;
+        if( PanelDataPersisency::CreateVFSFromLocation(_location, host) == VFSError::Ok ) {
+            string path = _location.path;
+            dispatch_to_main_queue([=]{
+                auto context = make_shared<PanelControllerGoToDirContext>();
+                context->VFS = host;
+                context->PerformAsynchronous = true;
+                context->RequestedDirectory = path;
+                [self GoToDirWithContext:context];
+            });
+        }
+    });
+}
+
+- (int) GoToDir:(const string&)_dir
+            vfs:(VFSHostPtr)_vfs
+   select_entry:(const string&)_filename
+          async:(bool)_asynchronous
+{
+    return [self GoToDir:_dir
+                     vfs:_vfs
+            select_entry:_filename
+       loadPreviousState:false
+                   async:_asynchronous];
+}
+
+- (int) GoToDir:(const string&)_dir
+            vfs:(VFSHostPtr)_vfs
+   select_entry:(const string&)_filename
+loadPreviousState:(bool)_load_state
+          async:(bool)_asynchronous
+{
+    auto c = make_shared<PanelControllerGoToDirContext>();
+    c->RequestedDirectory = _dir;
+    c->VFS = _vfs;
+    c->RequestFocusedEntry = _filename;
+    c->LoadPreviousViewState = _load_state;
+    c->PerformAsynchronous = _asynchronous;
+    
+    return [self GoToDirWithContext:c];
+}
+
+- (int) GoToDirWithContext:(shared_ptr<PanelControllerGoToDirContext>)_context
+{
+    auto &c = _context;
+    if(c->RequestedDirectory.empty() ||
+       c->RequestedDirectory.front() != '/' ||
+       !c->VFS)
+        return VFSError::InvalidCall;
+    
+    if(c->PerformAsynchronous == false) {
+        assert(dispatch_is_main_queue());
+        m_DirectoryLoadingQ.Stop();
+        m_DirectoryLoadingQ.Wait();
+    }
+    else {
+        if(!m_DirectoryLoadingQ.Empty())
+            return 0;
+    }
+    
+    auto workblock = [=]() {
+        try {
+            shared_ptr<VFSListing> listing;
+            c->LoadingResultCode = c->VFS->FetchDirectoryListing(
+                c->RequestedDirectory.c_str(),
+                listing,
+                m_VFSFetchingFlags,
+                [&] { return m_DirectoryLoadingQ.IsStopped(); });
+            if( c->LoadingResultCallback )
+                c->LoadingResultCallback( c->LoadingResultCode );
+            
+            if( c->LoadingResultCode < 0 )
+                return;
+            // TODO: need an ability to show errors at least
+            
+            [self CancelBackgroundOperations]; // clean running operations if any
+            dispatch_or_run_in_main_queue([=]{
+                [m_View SavePathState];
+                m_Data.Load(listing, PanelData::PanelType::Directory);
+                [m_View dataUpdated];
+                [m_View panelChangedWithFocusedFilename:c->RequestFocusedEntry
+                                      loadPreviousState:c->LoadPreviousViewState];
+                [self OnPathChanged];
+            });
+        }
+        catch(exception &e) {
+            ShowExceptionAlert(e.what());
+        }
+        catch(...){
+            ShowExceptionAlert();
+        }
+    };
+    
+    if( c->PerformAsynchronous == false ) {
+        workblock();
+        return c->LoadingResultCode;
+    }
+    else {
+        m_DirectoryLoadingQ.Run(workblock);
+        return 0;
+    }
+}
+
+- (void) loadNonUniformListing:(const shared_ptr<VFSListing>&)_listing
+{
+    [self CancelBackgroundOperations]; // clean running operations if any
+    dispatch_or_run_in_main_queue([=]{
+        [m_View SavePathState];
+        m_Data.Load(_listing, PanelData::PanelType::Temporary);
+        [m_View dataUpdated];
+        [m_View panelChangedWithFocusedFilename:"" loadPreviousState:false];
+        [self OnPathChanged];
+    });
+}
+
+- (void) RecoverFromInvalidDirectory
+{
+    path initial_path = self.currentDirectoryPath;
+    auto initial_vfs = self.vfs;
+//    m_DirectoryLoadingQ->Run([=](const SerialQueue &_que) {
+    m_DirectoryLoadingQ.Run([=]{
+        // 1st - try to locate a valid dir in current host
+        path path = initial_path;
+        auto vfs = initial_vfs;
+        
+        while(true)
+        {
+            if(vfs->IterateDirectoryListing(path.c_str(), [](const VFSDirEnt &_dirent) {
+                    return false;
+                }) >= 0) {
+                dispatch_to_main_queue([=]{
+                    [self GoToDir:path.native()
+                              vfs:vfs
+                     select_entry:""
+                            async:true];
+                });
+                break;
+            }
+            
+            if(path == "/")
+                break;
+            
+            if(path.filename() == ".") path.remove_filename();
+            path = path.parent_path();
+        }
+        
+        // we can't work on this vfs. currently for simplicity - just go home
+        dispatch_to_main_queue([=]{
+            [self GoToDir:CommonPaths::Home()
+                      vfs:VFSNativeHost::SharedHost()
+             select_entry:""
+                    async:true];
+        });
+    });
+}
+
+- (void) ScheduleDelayedSelectionChangeFor:(nc::panel::PanelControllerDelayedSelection)request;
+{
+    assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
+    // we assume that _item_name will not contain any forward slashes
+    
+    if(request.filename.empty())
+        return;
+    
+    m_DelayedSelection.request_end = machtime() + request.timeout;
+    m_DelayedSelection.filename = request.filename;
+    m_DelayedSelection.done = request.done;
+    
+    if(request.check_now)
+        [self CheckAgainstRequestedSelection];
+}
+
+- (bool) CheckAgainstRequestedSelection
+{
+    assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
+    if(m_DelayedSelection.filename.empty())
+        return false;
+    
+    if(machtime() > m_DelayedSelection.request_end) {
+        m_DelayedSelection.filename.clear();
+        m_DelayedSelection.done = nullptr;
+        return false;
+    }
+    
+    // now try to find it
+    int entryindex = m_Data.RawIndexForName(m_DelayedSelection.filename.c_str());
+    if( entryindex >= 0 )
+    {
+        // we found this entry. regardless of appearance of this entry in current directory presentation
+        // there's no reason to search for it again
+        auto done = m_DelayedSelection.done;
+        m_DelayedSelection.done = nullptr;
+        
+        int sortpos = m_Data.SortedIndexForRawIndex(entryindex);
+        if( sortpos >= 0 )
+        {
+            m_View.curpos = sortpos;
+            if(!self.isActive)
+                [(MainWindowFilePanelState*)self.state ActivatePanelByController:self];
+            if(done)
+                done();
+            return true;
+        }
+    }
+    return false;
+}
+
+- (void) ClearSelectionRequest
+{
+    m_DelayedSelection.filename.clear();
+    m_DelayedSelection.done = nullptr;
+}
+
+- (IBAction)OnBriefSystemOverviewCommand:(id)sender
+{
+    if( m_BriefSystemOverview ) {
+        [self.state CloseOverlay:self];
+        m_BriefSystemOverview = nil;
+        return;
+    }
+    
+    m_BriefSystemOverview = [self.state RequestBriefSystemOverview:self];
+    if( m_BriefSystemOverview )
+        [self UpdateBriefSystemOverview];
+}
+
+- (IBAction)OnFileViewCommand:(id)sender
+{
+    // Close quick preview, if it is open.
+    if( m_QuickLook ) {
+        [self.state CloseOverlay:self];
+        m_QuickLook = nil;
+        return;
+    }
+    
+    m_QuickLook = [self.state RequestQuickLookView:self];
+    if( m_QuickLook )
+        [self OnCursorChanged];
+}
+
+static const nanoseconds g_FastSeachDelayTresh = 4s;
+
+static bool IsQuickSearchModifier(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
+{
+    // exclude CapsLock from our decision process
+    _modif &= ~NSAlphaShiftKeyMask;
+    
+    switch (_mode) {
+        case PanelQuickSearchMode::WithAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == NSAlternateKeyMask ||
+            (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
+        case PanelQuickSearchMode::WithCtrlAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask) ||
+            (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask);
+        case PanelQuickSearchMode::WithShiftAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
+        case PanelQuickSearchMode::WithoutModif:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == 0 ||
+            (_modif&NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask ;
+        default:
+            break;
+    }
+    return false;
+}
+
+static bool IsQuickSearchModifierForArrows(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
+{
+    // exclude CapsLock from our decision process
+    _modif &= ~NSAlphaShiftKeyMask;
+    
+    // arrow keydowns have NSNumericPadKeyMask and NSFunctionKeyMask flag raised
+    if((_modif & NSNumericPadKeyMask) == 0) return false;
+    if((_modif & NSFunctionKeyMask) == 0) return false;
+    _modif &= ~NSNumericPadKeyMask;
+    _modif &= ~NSFunctionKeyMask;
+    
+    switch (_mode) {
+        case PanelQuickSearchMode::WithAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == NSAlternateKeyMask ||
+            (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
+        case PanelQuickSearchMode::WithCtrlAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask) ||
+            (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask);
+        case PanelQuickSearchMode::WithShiftAlt:
+            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
+        default:
+            break;
+    }
+    return false;
+}
+
+static bool IsQuickSearchStringCharacter(NSString *_s)
+{
+    static NSCharacterSet *chars;
+    static once_flag once;
+    call_once(once, []{
+        NSMutableCharacterSet *un = [NSMutableCharacterSet new];
+        [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
+        [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
+        [un formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
+        [un removeCharactersInString:@"/"]; // such character simply can't appear in filename under unix
+        chars = un;
+    });
+    
+    if(_s.length == 0)
+        return false;
+    
+    unichar u = [_s characterAtIndex:0]; // consider uing UTF-32 here
+    return [chars characterIsMember:u];
+}
+
+static inline bool IsBackspace(NSString *_s)
+{
+    return _s.length == 1 && [_s characterAtIndex:0] == 0x7F;
+}
+
+static inline bool IsSpace(NSString *_s)
+{
+    return _s.length == 1 && [_s characterAtIndex:0] == 0x20;
+}
+
+static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
+{
+    // remove last symbol. since strings are decomposed (as for file system interaction),
+    // it should be composed first and decomposed back after altering
+    assert(_s != nil);
+    assert(_s.length > 0);
+    NSString *s = _s.precomposedStringWithCanonicalMapping;
+    s = [s substringToIndex:s.length-1];
+    return s.decomposedStringWithCanonicalMapping;
+}
+
+static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
+{
+    if( !_key )
+        return _str;
+    
+    if( !IsBackspace(_key) )
+        _str = _str ? [_str stringByAppendingString:_key] : _key;
+    else
+        _str = _str.length > 0 ? RemoveLastCharacterWithNormalization(_str) : nil;
+    
+    return _str;
+}
+
+- (void) QuickSearchClearFiltering
+{
+    if(m_View == nil)
+        return;
+    
+    panel::GenericCursorPersistance pers(m_View, m_Data);
+    
+    bool any_changed = m_Data.ClearTextFiltering();
+    
+    [m_View setQuickSearchPrompt:nil withMatchesCount:0];
+    
+    if( any_changed ) {
+        [m_View dataUpdated];
+        pers.Restore();
+    }
+}
+
+- (bool)HandleQuickSearchSoft: (NSString*) _key
+{
+    nanoseconds currenttime = machtime();
+
+    // update soft filtering
+    NSString *text = m_Data.SoftFiltering().text;
+    if( m_QuickSearchLastType + g_FastSeachDelayTresh < currenttime )
+        text = nil;
+    
+    text = ModifyStringByKeyDownString(text, _key);
+    if( !text  )
+        return false;
+    
+    if( text.length == 0 ) {
+        [self QuickSearchClearFiltering];
+        return true;
+    }
+    
+    [self SetQuickSearchSoft:text];
+
+    return true;
+}
+
+- (void)SetQuickSearchSoft:(NSString*) _text
+{
+    if( !_text )
+        return;
+    
+    nanoseconds currenttime = machtime();
+    
+    // update soft filtering
+    auto filtering = m_Data.SoftFiltering();
+    if( m_QuickSearchLastType + g_FastSeachDelayTresh < currenttime )
+        m_QuickSearchOffset = 0;
+    
+    filtering.text = _text;
+    filtering.type = m_QuickSearchWhere;
+    filtering.ignore_dot_dot = false;
+    filtering.hightlight_results = m_QuickSearchTypingView;
+    m_Data.SetSoftFiltering(filtering);
+    
+    m_QuickSearchLastType = currenttime;
+    
+    if( !m_Data.EntriesBySoftFiltering().empty() ) {
+        if(m_QuickSearchOffset >= m_Data.EntriesBySoftFiltering().size())
+            m_QuickSearchOffset = (unsigned)m_Data.EntriesBySoftFiltering().size() - 1;
+        m_View.curpos = m_Data.EntriesBySoftFiltering()[m_QuickSearchOffset];
+    }
+    
+    if( m_QuickSearchTypingView ) {
+        int total = (int)m_Data.EntriesBySoftFiltering().size();
+        [m_View setQuickSearchPrompt:m_Data.SoftFiltering().text withMatchesCount:total];
+        //        m_View.quickSearchPrompt = PromptForMatchesAndString(total, m_Data.SoftFiltering().text);
+        
+        // automatically remove prompt after g_FastSeachDelayTresh
+        __weak PanelController *wself = self;
+        dispatch_to_main_queue_after(g_FastSeachDelayTresh + 1000ns, [=]{
+            if(PanelController *sself = wself)
+                if( sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime() )
+                    [sself QuickSearchClearFiltering];
+        });
+        
+        [m_View volatileDataChanged];
+    }
+}
+
+- (void)QuickSearchHardUpdateTypingUI
+{
+    if(!m_QuickSearchTypingView)
+        return;
+    
+    auto filtering = m_Data.HardFiltering();
+    if(!filtering.text.text) {
+        [m_View setQuickSearchPrompt:nil withMatchesCount:0];
+//        m_View.quickSearchPrompt = nil;
+    }
+    else {
+        int total = (int)m_Data.SortedDirectoryEntries().size();
+        if(total > 0 && m_Data.Listing().IsDotDot(0))
+            total--;
+//        m_View.quickSearchPrompt = PromptForMatchesAndString(total, filtering.text.text);
+        [m_View setQuickSearchPrompt:filtering.text.text withMatchesCount:total];
+    }
+}
+
+- (bool)HandleQuickSearchHard:(NSString*) _key
+{
+    NSString *text = m_Data.HardFiltering().text.text;
+    
+    text = ModifyStringByKeyDownString(text, _key);
+    if( text == nil )
+        return false;
+
+    if( text.length == 0 ) {
+        [self QuickSearchClearFiltering];
+        return true;
+    }
+
+    [self SetQuickSearchHard:text];
+    
+    return true;
+}
+
+- (void)SetQuickSearchHard:(NSString*)_text
+{
+    auto filtering = m_Data.HardFiltering();
+    filtering.text.text = _text;
+    if( filtering.text.text == nil )
+        return;
+    
+    panel::GenericCursorPersistance pers(m_View, m_Data);
+    
+    filtering.text.type = m_QuickSearchWhere;
+    filtering.text.clear_on_new_listing = true;
+    filtering.text.hightlight_results = m_QuickSearchTypingView;
+    m_Data.SetHardFiltering(filtering);
+    
+    pers.Restore();
+    
+    [m_View dataUpdated];
+    [self QuickSearchHardUpdateTypingUI];
+    
+    // for convinience - if we have ".." and cursor is on it - move it to first element (if any)
+    if((m_VFSFetchingFlags & VFSFlags::F_NoDotDot) == 0 &&
+       m_View.curpos == 0 &&
+       m_Data.SortedDirectoryEntries().size() >= 2 &&
+       m_Data.EntryAtRawPosition(m_Data.SortedDirectoryEntries()[0]).IsDotDot() )
+        m_View.curpos = 1;
+    
+}
+
+- (void) QuickSearchSetCriteria:(NSString *)_text
+{
+    if( m_QuickSearchIsSoftFiltering )
+        [self SetQuickSearchSoft:_text];
+    else
+        [self SetQuickSearchHard:_text];
+}
+
+- (void)QuickSearchPrevious
+{
+    if(m_QuickSearchOffset > 0)
+        m_QuickSearchOffset--;
+    [self HandleQuickSearchSoft:nil];
+}
+
+- (void)QuickSearchNext
+{
+    m_QuickSearchOffset++;
+    [self HandleQuickSearchSoft:nil];
+}
+
+- (bool) QuickSearchProcessKeyDown:(NSEvent *)event
+{
+    NSString*  const character   = [event charactersIgnoringModifiers];
+    NSUInteger const modif       = [event modifierFlags];
+    
+    bool empty_text = m_QuickSearchIsSoftFiltering ?
+        m_Data.SoftFiltering().text.length == 0 :
+        m_Data.HardFiltering().text.text.length == 0;
+    
+    if( IsQuickSearchModifier(modif, m_QuickSearchMode) &&
+        ( IsQuickSearchStringCharacter(character) ||
+            ( !empty_text && IsSpace(character) ) ||
+            IsBackspace(character)
+         )
+       ) {
+        if(m_QuickSearchIsSoftFiltering)
+            return [self HandleQuickSearchSoft:character.decomposedStringWithCanonicalMapping];
+        else
+            return [self HandleQuickSearchHard:character.decomposedStringWithCanonicalMapping];
+    }
+    else if( character.length == 1 )
+        switch([character characterAtIndex:0]) {
+            case NSUpArrowFunctionKey:
+                if( IsQuickSearchModifierForArrows(modif, m_QuickSearchMode) ) {
+                    [self QuickSearchPrevious];
+                    return true;
+                }
+            case NSDownArrowFunctionKey:
+                if( IsQuickSearchModifierForArrows(modif, m_QuickSearchMode) ) {
+                    [self QuickSearchNext];
+                    return true;
+                }
+        }
+    
+    return false;
+}
+
+- (void) QuickSearchUpdate
+{
+    if(!m_QuickSearchIsSoftFiltering)
+        [self QuickSearchHardUpdateTypingUI];
+}
+
 
 @end

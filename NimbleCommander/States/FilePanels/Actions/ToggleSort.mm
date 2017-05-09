@@ -1,5 +1,6 @@
 #include "ToggleSort.h"
 #include "../PanelController.h"
+#include "../PanelData.h"
 
 namespace panel::actions {
 

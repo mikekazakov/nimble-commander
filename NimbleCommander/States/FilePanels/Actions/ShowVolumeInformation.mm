@@ -1,6 +1,7 @@
 #include <NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.h>
 #include "../PanelController.h"
 #include "ShowVolumeInformation.h"
+#include "../PanelView.h"
 
 namespace panel::actions {
 

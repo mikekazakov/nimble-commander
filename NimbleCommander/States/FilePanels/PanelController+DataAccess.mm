@@ -1,23 +1,17 @@
-//
-//  PanelController+DataAccess.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 22.09.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Habanero/CommonPaths.h>
 #include "PanelController+DataAccess.h"
 #include "PanelDataItemVolatileData.h"
+#include "PanelData.h"
+#include "PanelView.h"
 
 @implementation PanelController (DataAccess)
 
 - (string) currentFocusedEntryFilename
 {
-    if(!m_View)
+    if(!self.view)
         return "";
     
-    if(auto item = m_View.item)
+    if(auto item = self.view.item)
         return item.Name();
     
     return "";
@@ -25,21 +19,21 @@
 
 - (string) currentFocusedEntryPath
 {
-    if(!m_View)
+    if(!self.view)
         return "";
     
-    return m_Data.FullPathForEntry(m_Data.RawIndexForSortIndex(m_View.curpos));
+    return self.data.FullPathForEntry(self.data.RawIndexForSortIndex(self.view.curpos));
 }
 
 - (vector<string>) selectedEntriesOrFocusedEntryFilenames
 {
-    if(!m_View)
+    if(!self.view)
         return {};
     
-    if(m_Data.Stats().selected_entries_amount)
-        return m_Data.SelectedEntriesFilenames();
+    if(self.data.Stats().selected_entries_amount)
+        return self.data.SelectedEntriesFilenames();
     
-    auto item = m_View.item;
+    auto item = self.view.item;
     if(item && !item.IsDotDot())
         return vector<string>{ item.Name() };
     
@@ -105,13 +99,13 @@
 
 - (vector<string>) selectedEntriesOrFocusedEntryFilenamesWithDotDot
 {
-    if(!m_View)
+    if(!self.view)
         return {};
     
-    if(m_Data.Stats().selected_entries_amount)
-        return m_Data.SelectedEntriesFilenames();
+    if(self.data.Stats().selected_entries_amount)
+        return self.data.SelectedEntriesFilenames();
     
-    if(auto item = m_View.item)
+    if(auto item = self.view.item)
         return vector<string>{ item.Name() };
     
     return {};
@@ -119,12 +113,12 @@
 
 - (string) currentDirectoryPath
 {
-    return m_Data.DirectoryPathWithTrailingSlash();
+    return self.data.DirectoryPathWithTrailingSlash();
 }
 
 - (const VFSHostPtr&) vfs
 {
-    return m_Data.Host();
+    return self.data.Host();
 }
 
 - (string) expandPath:(const string&)_ref

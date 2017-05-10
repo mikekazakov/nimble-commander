@@ -23,6 +23,9 @@ bool Duplicate::Predicate( PanelController *_target ) const
     if( !_target.isUniform )
         return false;
     
+    if( !_target.vfs->IsWritable() )
+        return false;
+    
     const auto i = _target.view.item;
     if( !i )
         return false;

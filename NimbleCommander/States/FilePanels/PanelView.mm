@@ -5,6 +5,7 @@
 #include "PanelView.h"
 #include "PanelData.h"
 #include "PanelController.h"
+#include "PanelController+DragAndDrop.h"
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
 #include "PanelViewHeader.h"

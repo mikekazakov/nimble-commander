@@ -1,5 +1,6 @@
 #include "ConnectionsMenuDelegate.h"
 #include <NimbleCommander/States/FilePanels/PanelController.h>
+#include <NimbleCommander/States/FilePanels/PanelController+Menu.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "NetworkConnectionsManager.h"
 

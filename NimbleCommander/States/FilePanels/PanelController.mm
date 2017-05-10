@@ -30,6 +30,8 @@
 #include "PanelView.h"
 #include "PanelDataExternalEntryKey.h"
 #include "PanelDataPersistency.h"
+#include <NimbleCommander/Core/VFSInstanceManager.h>
+#import "PanelController+Menu.h"
 
 using namespace ::nc::panel;
 

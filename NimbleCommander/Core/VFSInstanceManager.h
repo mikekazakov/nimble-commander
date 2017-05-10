@@ -4,6 +4,28 @@
 
 class VFSHost;
 class VFSConfiguration;
+class VFSInstanceManager;
+
+struct VFSInstancePromise
+{
+    VFSInstancePromise();
+    VFSInstancePromise(VFSInstancePromise &&_rhs);
+    VFSInstancePromise(const VFSInstancePromise &_rhs);
+    ~VFSInstancePromise();
+    const VFSInstancePromise& operator=(const VFSInstancePromise &_rhs);
+    const VFSInstancePromise& operator=(VFSInstancePromise &&_rhs);
+    operator bool() const noexcept;
+    bool operator ==(const VFSInstancePromise &_rhs) const noexcept;
+    bool operator !=(const VFSInstancePromise &_rhs) const noexcept;
+    const char *tag() const; // may return ""
+    string verbose_title() const; // may return ""
+    uint64_t id() const;
+private:
+    VFSInstancePromise(uint64_t _inst_id, VFSInstanceManager &_manager);
+    uint64_t            inst_id;
+    VFSInstanceManager *manager;
+    friend class VFSInstanceManager;
+};
 
 /**
  * Keeps track of alive VFS in the system.
@@ -14,7 +36,7 @@ class VFSInstanceManager : public ObservableBase
 {
 public:
     using ObservationTicket = ObservableBase::ObservationTicket;
-    struct Promise;
+    using Promise = VFSInstancePromise;
 
     static VFSInstanceManager& Instance();
     
@@ -105,26 +127,5 @@ private:
     spinlock                    m_AliveHostsLock;
     
     
-    friend struct Promise;
-};
-
-struct VFSInstanceManager::Promise
-{
-    Promise();
-    Promise(Promise &&_rhs);
-    Promise(const Promise &_rhs);
-    ~Promise();
-    const Promise& operator=(const Promise &_rhs);
-    const Promise& operator=(Promise &&_rhs);
-    operator bool() const noexcept;
-    bool operator ==(const Promise &_rhs) const noexcept;
-    bool operator !=(const Promise &_rhs) const noexcept;
-    const char *tag() const; // may return ""
-    string verbose_title() const; // may return ""
-    uint64_t id() const;
-private:
-    Promise(uint64_t _inst_id, VFSInstanceManager &_manager);
-    uint64_t            inst_id;
-    VFSInstanceManager *manager;
-    friend class VFSInstanceManager;
+    friend struct VFSInstancePromise;
 };

@@ -6,7 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#import "PanelController.h"
+#pragma once
+#include "PanelController.h"
 
 @interface PanelController (DragAndDrop)
 

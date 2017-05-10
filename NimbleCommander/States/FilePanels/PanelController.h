@@ -1,13 +1,12 @@
 #pragma once
 
 #include "PanelViewDelegate.h"
-#include "../../Core/VFSInstanceManager.h"
-//#include "../../Core/rapidjson.h"
-#include "../../Core/rapidjson_fwd.h"
+#include <NimbleCommander/Core/rapidjson_fwd.h>
 
 class VFSHost;
 class VFSListing;
 class VFSListingItem;
+struct VFSInstancePromise;
 class NetworkConnectionsManager;
 @class PanelController;
 @class PanelView;
@@ -160,7 +159,7 @@ loadPreviousState:(bool)_load_state
 - (void) loadNonUniformListing:(const shared_ptr<VFSListing>&)_listing;
 
 // will load previous view state if any
-- (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory;
+- (void) GoToVFSPromise:(const VFSInstancePromise&)_promise onPath:(const string&)_directory;
 // some params later
 
 - (void) goToPersistentLocation:(const nc::panel::PersistentLocation &)_location;
@@ -202,18 +201,12 @@ loadPreviousState:(bool)_load_state
 - (IBAction)OnFileViewCommand:(id)sender;
 - (void) finishExtActivityWithTicket:(uint64_t)_ticket;
 - (void) CancelBackgroundOperations;
-- (void) OnPathChanged;
-- (void) OnCursorChanged;
 - (void) handleOpenInSystem;
 - (bool) HandleGoToUpperDirectory;
 - (bool) handleGoIntoDirOrArchiveSync:(bool)_whitelist_archive_only;
 - (void) handleGoIntoDirOrOpenInSystemSync;
 - (void) UpdateBriefSystemOverview;
-+ (bool) ensureCanGoToNativeFolderSync:(const string&)_path;
-- (bool) ensureCanGoToNativeFolderSync:(const string&)_path; // checks only stuff related to sandbox model, not posix perms/acls.
 - (void) contextMenuDidClose:(NSMenu*)_menu;
 @end
 
 #import "PanelController+DataAccess.h"
-#import "PanelController+DragAndDrop.h"
-#import "PanelController+Menu.h"

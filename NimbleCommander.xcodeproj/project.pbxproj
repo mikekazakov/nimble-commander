@@ -395,6 +395,12 @@
 		CF75E8E01EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
 		CF7A09961EC2B37000533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
+		CF7A09AE1EC2DF5C00533B07 /* Delete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7E02C1EB97B60001FE66C /* Delete.mm */; };
+		CF7A09AF1EC2DF5C00533B07 /* Delete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7E02C1EB97B60001FE66C /* Delete.mm */; };
+		CF7A09B01EC2DF5D00533B07 /* Delete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7E02C1EB97B60001FE66C /* Delete.mm */; };
+		CF7A09B11EC2DF6200533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
+		CF7A09B21EC2DF6300533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
+		CF7A09B31EC2DF6300533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
 		CF7C7CAA1E5ACDBC002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
 		CF7C7CB21E5ACDBD002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
 		CF7C7CB31E5ACDBE002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
@@ -4351,6 +4357,7 @@
 				CF4E56AB1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFD7261D1E42E0A600603077 /* ThemesManager.mm in Sources */,
 				CF818B7A1EA4573400BC28E6 /* Pasteboard.mm in Sources */,
+				CF7A09B21EC2DF6300533B07 /* Duplicate.mm in Sources */,
 				CFD726551E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFD726DE1E42E2C200603077 /* PanelListView.mm in Sources */,
 				CF818B551EA0610D00BC28E6 /* CalculateSizes.mm in Sources */,
@@ -4398,6 +4405,7 @@
 				CFB66FCC1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF6A428A1CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
 				CF1863FB1D8B9224008628E4 /* ProFeaturesWindowController.mm in Sources */,
+				CF7A09AF1EC2DF5C00533B07 /* Delete.mm in Sources */,
 				CF50C4111C0ADE3C009DF611 /* FileCompressOperationJob.cpp in Sources */,
 				CFD7272A1E42E34300603077 /* TermScrollView.mm in Sources */,
 				CF1E3D141D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
@@ -4577,6 +4585,7 @@
 				CFA539891D433E2A00C562A7 /* BatchRename.mm in Sources */,
 				CFD727251E42E33800603077 /* TermScreen.cpp in Sources */,
 				CFA5398C1D433E2A00C562A7 /* FileSysAttrChangeOperationJob.mm in Sources */,
+				CF7A09B31EC2DF6300533B07 /* Duplicate.mm in Sources */,
 				CF4E56AC1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFD726DF1E42E2C300603077 /* PanelListView.mm in Sources */,
 				CF04DE071E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
@@ -4749,6 +4758,7 @@
 				CF1FBF241E8F57CD00D3569C /* FavoritesMenuDelegate.mm in Sources */,
 				CF818B7C1EA4573500BC28E6 /* Pasteboard.mm in Sources */,
 				CF75E88B1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
+				CF7A09B01EC2DF5D00533B07 /* Delete.mm in Sources */,
 				CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 				CF818B6B1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
 				CFD726271E42E0BA00603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
@@ -5060,6 +5070,7 @@
 				CFD726221E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */,
 				CF818B5D1EA0610E00BC28E6 /* ChangeAttributes.mm in Sources */,
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,
+				CF7A09AE1EC2DF5C00533B07 /* Delete.mm in Sources */,
 				CF818B6C1EA0615300BC28E6 /* FilterPopUpMenu.mm in Sources */,
 				CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CFB66F991D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
@@ -5200,6 +5211,7 @@
 				CFD726D71E42E2B600603077 /* PanelBriefViewItemCarrier.mm in Sources */,
 				CFD727291E42E34200603077 /* TermScrollView.mm in Sources */,
 				CF50C4591C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
+				CF7A09B11EC2DF6200533B07 /* Duplicate.mm in Sources */,
 				CFD7270E1E42E30C00603077 /* BriefSystemOverview.mm in Sources */,
 				CF1E3D1E1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
 				CFD7272C1E42E34600603077 /* TermShellTask.cpp in Sources */,

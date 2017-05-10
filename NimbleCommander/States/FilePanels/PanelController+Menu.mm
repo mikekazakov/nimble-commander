@@ -26,6 +26,7 @@
 #include "Actions/OpenNetworkConnection.h"
 #include "Actions/Delete.h"
 #include "Actions/NavigateHistory.h"
+#include "Actions/Duplicate.h"
 #include "PanelView.h"
 
 static const nc::panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
@@ -88,6 +89,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self forceRefreshPanel];
 }
 
+- (IBAction)OnDuplicate:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoBack:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoForward:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToFavoriteLocation:(id)sender { Perform(_cmd, self, sender); }
@@ -171,6 +173,7 @@ using namespace nc::panel::actions;
 static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.file.find",                      @selector(onMainMenuPerformFindAction:),    new FindFiles},
 {"menu.file.find_with_spotlight",       @selector(OnSpotlightSearch:),              new SpotlightSearch},
+{"menu.file.duplicate",                 @selector(OnDuplicate:),                    new Duplicate},
 {"menu.file.add_to_favorites",          @selector(OnAddToFavorites:),               new AddToFavorites},
 {"menu.file.calculate_sizes",           @selector(OnCalculateSizes:),               new CalculateSizes},
 {"menu.file.calculate_all_sizes",       @selector(OnCalculateAllSizes:),            new CalculateAllSizes},

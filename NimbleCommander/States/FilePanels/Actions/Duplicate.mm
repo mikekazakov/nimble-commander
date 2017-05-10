@@ -3,6 +3,7 @@
 #include <VFS/VFS.h>
 #include <Habanero/CFStackAllocator.h>
 #include "../PanelData.h"
+#include "../PanelView.h"
 #include "../PanelAux.h"
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include "../MainWindowFilePanelState.h"
@@ -13,25 +14,25 @@ static unordered_set<string> ExtractFilenames( const VFSListing &_listing );
 static string ProduceFormCLowercase(string_view _string);
 static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
                                             const unordered_set<string> &_filenames);
+static void CommonPerform(PanelController *_target, const vector<VFSListingItem> &_items);
 
-context::Duplicate::Duplicate(const vector<VFSListingItem> &_items):
-    m_Items(_items)
-{
-}
-
-bool context::Duplicate::Predicate( PanelController *_target ) const
+bool Duplicate::Predicate( PanelController *_target ) const
 {
     if( !_target.isUniform )
         return false;
     
-    return _target.vfs->IsWritable();
+    const auto i = _target.view.item;
+    if( !i )
+        return false;
+    
+    return !i.IsDotDot() || _target.data.Stats().selected_entries_amount > 0;
 }
 
-void context::Duplicate::Perform( PanelController *_target, id _sender ) const
+static void CommonPerform(PanelController *_target, const vector<VFSListingItem> &_items)
 {
     auto directory_filenames = ExtractFilenames(_target.data.Listing());
 
-    for( const auto &item: m_Items) {
+    for( const auto &item: _items) {
         auto duplicate = FindFreeFilenameToDuplicateIn(item, directory_filenames);
         if( duplicate.empty() )
             return;
@@ -43,7 +44,7 @@ void context::Duplicate::Perform( PanelController *_target, id _sender ) const
                                            destinationPath:item.Directory() + duplicate
                                            destinationHost:item.Host()
                                                    options:options];
-        if( &item == &m_Items.front() ) {
+        if( &item == &_items.front() ) {
             const bool force_refresh = !_target.receivesUpdateNotifications;
             __weak PanelController *weak_panel = _target;
             auto finish_handler = ^{
@@ -61,6 +62,29 @@ void context::Duplicate::Perform( PanelController *_target, id _sender ) const
          }
         [_target.state AddOperation:op];
     }
+}
+
+void Duplicate::Perform( PanelController *_target, id _sender ) const
+{
+    CommonPerform(_target, _target.selectedEntriesOrFocusedEntry);
+}
+
+context::Duplicate::Duplicate(const vector<VFSListingItem> &_items):
+    m_Items(_items)
+{
+}
+
+bool context::Duplicate::Predicate( PanelController *_target ) const
+{
+    if( !_target.isUniform )
+        return false;
+    
+    return _target.vfs->IsWritable();
+}
+
+void context::Duplicate::Perform( PanelController *_target, id _sender ) const
+{
+    CommonPerform(_target, m_Items);
 }
 
 static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,

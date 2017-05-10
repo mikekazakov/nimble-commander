@@ -214,6 +214,12 @@ DQ
                             <menuItem isSeparatorItem="YES" id="eqE-pe-FZi">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
+                            <menuItem title="Duplicate" tag="11150" id="Geu-4j-RaR">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnDuplicate:" target="-1" id="m5b-gD-hbW"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Add to Favorites" tag="11140" id="6pn-dC-yNU">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>

@@ -10,6 +10,8 @@
 
 namespace nc::panel::actions {
 
+static const auto g_Suffix = "copy"s; // TODO: localize
+
 static unordered_set<string> ExtractFilenames( const VFSListing &_listing );
 static string ProduceFormCLowercase(string_view _string);
 static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
@@ -87,22 +89,44 @@ void context::Duplicate::Perform( PanelController *_target, id _sender ) const
     CommonPerform(_target, m_Items);
 }
 
+static pair<int, string> ExtractExistingDuplicateInfo( const string &_filename )
+{
+    const auto suffix_pos = _filename.rfind(g_Suffix);
+    if( suffix_pos == string::npos )
+        return {-1, {}};
+    
+    if( suffix_pos + g_Suffix.length() >= _filename.length() - 1 )
+        return {1, _filename.substr(0, suffix_pos + g_Suffix.length())};
+    
+    try {
+        auto index = stoi( _filename.substr(suffix_pos + g_Suffix.length()) );
+        return {index, _filename.substr(0, suffix_pos + g_Suffix.length())};
+    }
+    catch (...) {
+        return {-1, {}};
+    }
+}
+
 static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
                                             const unordered_set<string> &_filenames)
 {
-    string filename = _item.FilenameWithoutExt();
-    string ext = _item.HasExtension() ? "."s + _item.Extension() : ""s;
-    string target = filename + " copy" + ext;
+    const auto max_duplicates = 100;
+    const auto filename = _item.FilenameWithoutExt();
+    const auto extension = _item.HasExtension() ? "."s + _item.Extension() : ""s;
+    const auto [duplicate_index, filename_wo_index] = ExtractExistingDuplicateInfo(filename);
     
-    if( _filenames.count(target) == 0 )
-        return target;
-    
-    for(int i = 2; i < 100; ++i) {
-        target = filename + " copy " + to_string(i) + ext;
-        
-        if( _filenames.count(target) == 0 )
-            return target;
-    }
+    if( duplicate_index < 0 )
+        for(int i = 1; i < max_duplicates; ++i) {
+            auto target = filename + " " + g_Suffix + (i == 1 ? "" : " "+to_string(i)) + extension;
+            if( _filenames.count(ProduceFormCLowercase(target)) == 0 )
+                return target;
+        }
+    else
+        for(int i = duplicate_index + 1; i < max_duplicates; ++i) {
+            auto target = filename_wo_index + " " + to_string(i) + extension;
+            if( _filenames.count(ProduceFormCLowercase(target)) == 0 )
+                return target;
+        }
     
     return "";
 }

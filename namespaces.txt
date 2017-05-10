@@ -1,0 +1,8 @@
+::nc
+   ::panel
+      ::actions
+         ::context
+      ::data
+
+future:
+   ::vfs

@@ -5,10 +5,10 @@
 #include <NimbleCommander/Core/LSUrls.h>
 #include "PanelController.h"
 #include <NimbleCommander/Operations/Compress/FileCompressOperation.h>
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "Actions/CopyToPasteboard.h"
 #include "Actions/Delete.h"
+#include "Actions/Duplicate.h"
 
 using namespace nc::panel;
 
@@ -92,26 +92,6 @@ static NSOpenPanel* BuildAppChoose()
     return panel;
 }
 
-static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item)
-{
-    string filename = _item.FilenameWithoutExt();
-    string ext = _item.HasExtension() ? "."s + _item.Extension() : ""s;
-    string target = _item.Directory() + filename + " copy" + ext;
-    
-    VFSStat st;
-    if( _item.Host()->Stat(target.c_str(), st, VFSFlags::F_NoFollow, 0) == 0 ) {
-        // this file already exists, will try another ones
-        for(int i = 2; i < 100; ++i) {
-            target = _item.Directory() + filename + " copy " + to_string(i) + ext;
-            if( _item.Host()->Stat(target.c_str(), st, VFSFlags::F_NoFollow, 0) != 0 )
-                return target;
-    
-        }
-        return ""; // we're full of such filenames, no reason to go on
-    }
-    return target;
-}
-
 static void ShowOpenPanel( NSOpenPanel *_panel, NSWindow *_window, function<void(const string&_path)> _on_ok )
 {
     [_panel beginSheetModalForWindow:_window
@@ -144,7 +124,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 {
     string                              m_CommonDir;  // may be "" in case of non-uniform listing
     VFSHostPtr                          m_CommonHost; // may be nullptr in case of non-uniform listing
-    vector<VFSListingItem>      m_Items;
+    vector<VFSListingItem>              m_Items;
     vector<OpenWithHandler>             m_OpenWithHandlers;
     string                              m_ItemsUTI;
     MainWindowFilePanelState           *m_MainWnd;
@@ -153,9 +133,10 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     NSMutableArray                     *m_ShareItemsURLs;
     int                                 m_DirsCount;
     int                                 m_FilesCount;
-    unique_ptr<nc::panel::actions::PanelAction> m_CopyAction;
-    unique_ptr<nc::panel::actions::PanelAction> m_MoveToTrashAction;
-    unique_ptr<nc::panel::actions::PanelAction> m_DeletePermanentlyAction;
+    unique_ptr<actions::PanelAction>    m_CopyAction;
+    unique_ptr<actions::PanelAction>    m_MoveToTrashAction;
+    unique_ptr<actions::PanelAction>    m_DeletePermanentlyAction;
+    unique_ptr<actions::PanelAction>    m_DuplicateAction;
 }
 
 - (id) initWithData:(vector<VFSListingItem>) _items
@@ -180,10 +161,10 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         self.delegate = self;
         self.minimumWidth = 200; // hardcoding is bad!
     
-        m_CopyAction.reset( new nc::panel::actions::context::CopyToPasteboard{m_Items} );
-        m_MoveToTrashAction.reset( new nc::panel::actions::context::MoveToTrash{m_Items} );
-        m_DeletePermanentlyAction.reset( new nc::panel::actions::context::DeletePermanently{m_Items} );
-
+        m_CopyAction.reset( new actions::context::CopyToPasteboard{m_Items} );
+        m_MoveToTrashAction.reset( new actions::context::MoveToTrash{m_Items} );
+        m_DeletePermanentlyAction.reset( new actions::context::DeletePermanently{m_Items} );
+        m_DuplicateAction.reset( new actions::context::Duplicate{m_Items} );
         [self doStuffing];
     }
     return self;
@@ -389,15 +370,11 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
     //////////////////////////////////////////////////////////////////////
     // Duplicate stuff
-    {
-        NSMenuItem *item = [NSMenuItem new];
-        item.title = NSLocalizedStringFromTable(@"Duplicate", @"FilePanelsContextMenu", "Duplicate an item");
-        if( m_Items.size() == 1 && cur_pnl_writable ) {
-            item.target = self;
-            item.action = @selector(OnDuplicateItem:);
-        }
-        [self addItem:item];
-    }
+    const auto duplicate_item = [NSMenuItem new];
+    duplicate_item.title = NSLocalizedStringFromTable(@"Duplicate", @"FilePanelsContextMenu", "Duplicate an item");
+    duplicate_item.target = self;
+    duplicate_item.action = @selector(OnDuplicateItem:);
+    [self addItem:duplicate_item];
     
     //////////////////////////////////////////////////////////////////////
     // Share stuff
@@ -455,6 +432,8 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         return m_MoveToTrashAction->ValidateMenuItem(m_CurrentController, item);
     if( item.action == @selector(OnDeletePermanently:) )
         return m_DeletePermanentlyAction->ValidateMenuItem(m_CurrentController, item);
+    if( item.action == @selector(OnDuplicateItem:) )
+        return m_DuplicateAction->ValidateMenuItem(m_CurrentController, item);
 
     return true;
 }
@@ -561,31 +540,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void)OnDuplicateItem:(id)sender
 {
-    // currently duplicating only first file in a selected set
-    auto &item = m_Items.front();
-    if( !item.Host()->IsWritable() )
-        return;
-    
-    auto target = FindFreeFilenameToDuplicateIn(item);
-    if( target.empty() )
-        return;
-
-    FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
-    
-    auto op = [[FileCopyOperation alloc] initWithItems:{item} destinationPath:target destinationHost:item.Host() options:opts];
-    const bool force_refresh = item.Host()->IsDirChangeObservingAvailable(item.Directory().c_str()) == false;
-    auto filename = target.substr( target.find_last_of('/') + 1 );
-    [op AddOnFinishHandler:^{
-        dispatch_to_main_queue( [=]{
-            nc::panel::DelayedSelection req;
-            req.filename = filename;
-            [m_CurrentController ScheduleDelayedSelectionChangeFor:req];
-            if( force_refresh  )
-                [m_CurrentController refreshPanel];
-        });
-      }
-     ];
-    [m_MainWnd AddOperation:op];
+    m_DuplicateAction->Perform(m_CurrentController, sender);
 }
 
 @end

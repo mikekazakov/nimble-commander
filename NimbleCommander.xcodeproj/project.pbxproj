@@ -394,6 +394,7 @@
 		CF75E8DD1EB181A90028C108 /* libAppAuth-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF75E8C31EB181800028C108 /* libAppAuth-macOS.a */; };
 		CF75E8E01EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
+		CF7A09961EC2B37000533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
 		CF7C7CAA1E5ACDBC002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
 		CF7C7CB21E5ACDBD002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
 		CF7C7CB31E5ACDBE002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
@@ -1815,6 +1816,8 @@
 		CF75E8DE1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "OIDRedirectHTTPHandler+FixedPort.h"; path = "NimbleCommander/States/FilePanels/Views/OIDRedirectHTTPHandler+FixedPort.h"; sourceTree = SOURCE_ROOT; };
 		CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "OIDRedirectHTTPHandler+FixedPort.mm"; path = "NimbleCommander/States/FilePanels/Views/OIDRedirectHTTPHandler+FixedPort.mm"; sourceTree = SOURCE_ROOT; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
+		CF7A09941EC2B37000533B07 /* Duplicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Duplicate.h; path = NimbleCommander/States/FilePanels/Actions/Duplicate.h; sourceTree = SOURCE_ROOT; };
+		CF7A09951EC2B37000533B07 /* Duplicate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Duplicate.mm; path = NimbleCommander/States/FilePanels/Actions/Duplicate.mm; sourceTree = SOURCE_ROOT; };
 		CF7C7CC11E5C3D84002DB0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PanelViewHeaderSortPopup.xib; sourceTree = "<group>"; };
 		CF7C7CC71E5C3EB9002DB0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowThemesTab.xib; sourceTree = "<group>"; };
 		CF7C7CCD1E5C3ED5002DB0E2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowThemesTabColoringRulesControl.xib; sourceTree = "<group>"; };
@@ -2813,6 +2816,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CF7A09941EC2B37000533B07 /* Duplicate.h */,
+				CF7A09951EC2B37000533B07 /* Duplicate.mm */,
 				CF90C0B41EC161E70056E3B8 /* NavigateHistory.h */,
 				CF90C0B51EC161E70056E3B8 /* NavigateHistory.mm */,
 				CFA7E02B1EB97B60001FE66C /* Delete.h */,
@@ -4793,6 +4798,7 @@
 				CFD3CB1D1DA4C888006DA143 /* PanelBriefView.mm in Sources */,
 				CF2F43561EAF395900AA031A /* NetworkConnectionsManager.mm in Sources */,
 				CFD8CD3B1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
+				CF7A09961EC2B37000533B07 /* Duplicate.mm in Sources */,
 				CF7D135C1BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CFDAC29A1DFBF9260039A104 /* TermView.mm in Sources */,
 				CF9069761BB54035000C3CBB /* FileCopyOperation.mm in Sources */,

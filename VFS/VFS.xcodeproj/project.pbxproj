@@ -109,6 +109,8 @@
 		CF69D0771DA2353000992B84 /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0721DA2353000992B84 /* VFSPSHost.mm */; };
 		CF69D0781DA2353000992B84 /* VFSPSInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69D0731DA2353000992B84 /* VFSPSInternal.h */; };
 		CF69D07A1DA238D400992B84 /* VFSListingInput.h in Headers */ = {isa = PBXBuildFile; fileRef = CF69D0791DA238D400992B84 /* VFSListingInput.h */; };
+		CF7A09BD1EC4382700533B07 /* VFSNetSFTPKeyValidator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09BB1EC4382700533B07 /* VFSNetSFTPKeyValidator.cpp */; };
+		CF7A09BE1EC4382700533B07 /* VFSNetSFTPKeyValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7A09BC1EC4382700533B07 /* VFSNetSFTPKeyValidator.h */; };
 		CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D8E1E659D33002DB0E2 /* libssh2.a */; };
 		CF818B7F1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */; };
 		CF818B801EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */; };
@@ -244,6 +246,8 @@
 		CF69D0721DA2353000992B84 /* VFSPSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSPSHost.mm; path = source/PS/VFSPSHost.mm; sourceTree = "<group>"; };
 		CF69D0731DA2353000992B84 /* VFSPSInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSInternal.h; path = source/PS/VFSPSInternal.h; sourceTree = "<group>"; };
 		CF69D0791DA238D400992B84 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = include/VFS/VFSListingInput.h; sourceTree = "<group>"; };
+		CF7A09BB1EC4382700533B07 /* VFSNetSFTPKeyValidator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPKeyValidator.cpp; path = source/NetSFTP/VFSNetSFTPKeyValidator.cpp; sourceTree = "<group>"; };
+		CF7A09BC1EC4382700533B07 /* VFSNetSFTPKeyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPKeyValidator.h; path = source/NetSFTP/VFSNetSFTPKeyValidator.h; sourceTree = "<group>"; };
 		CF7C7D8E1E659D33002DB0E2 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = ../3rd_Party/libssh2/built/libssh2.a; sourceTree = "<group>"; };
 		CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFileDownloadDelegate.h; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.h; sourceTree = "<group>"; };
 		CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileDownloadDelegate.mm; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.mm; sourceTree = "<group>"; };
@@ -481,6 +485,8 @@
 		CF69D0471DA232E300992B84 /* NetSFTP */ = {
 			isa = PBXGroup;
 			children = (
+				CF7A09BB1EC4382700533B07 /* VFSNetSFTPKeyValidator.cpp */,
+				CF7A09BC1EC4382700533B07 /* VFSNetSFTPKeyValidator.h */,
 				CF69D0481DA232EF00992B84 /* VFSNetSFTPFile.cpp */,
 				CF69D0491DA232EF00992B84 /* VFSNetSFTPFile.h */,
 				CF69D04A1DA232EF00992B84 /* VFSNetSFTPHost.cpp */,
@@ -544,6 +550,7 @@
 				CF69D06B1DA2344A00992B84 /* VFSArchiveUnRARHost.h in Headers */,
 				CF69D0591DA2336500992B84 /* VFSArchiveHost.h in Headers */,
 				CF69D0061DA227E400992B84 /* VFSPath.h in Headers */,
+				CF7A09BE1EC4382700533B07 /* VFSNetSFTPKeyValidator.h in Headers */,
 				CF1168831E91FB4A00CC515A /* Aux.h in Headers */,
 				CF69D07A1DA238D400992B84 /* VFSListingInput.h in Headers */,
 				CF69D0581DA2336500992B84 /* VFSArchiveFile.h in Headers */,
@@ -715,6 +722,7 @@
 				CF69D01C1DA22BE800992B84 /* VFSFile.cpp in Sources */,
 				CF69D02E1DA2305A00992B84 /* VFSNativeHost.mm in Sources */,
 				CF69D0211DA22BE800992B84 /* VFSSeqToRandomWrapper.cpp in Sources */,
+				CF7A09BD1EC4382700533B07 /* VFSNetSFTPKeyValidator.cpp in Sources */,
 				CF69D0681DA2344A00992B84 /* VFSArchiveUnRARFile.cpp in Sources */,
 				CF69D03F1DA2324100992B84 /* VFSNetFTPCache.mm in Sources */,
 				CF69D06A1DA2344A00992B84 /* VFSArchiveUnRARHost.cpp in Sources */,
@@ -821,6 +829,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
+					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/include/",
 					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
 					"$(PROJECT_DIR)/include",
 				);
@@ -889,6 +898,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
+					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/include/",
 					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
 					"$(PROJECT_DIR)/include",
 				);

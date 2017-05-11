@@ -67,6 +67,7 @@
                                     <string key="NSNullPlaceholder">root</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="delegate" destination="-2" id="A4n-co-UhQ"/>
                             <outlet property="nextKeyView" destination="Mab-yq-YbO" id="Ov2-q7-UXw"/>
                         </connections>
                     </textField>
@@ -112,6 +113,7 @@ DQ
                         </buttonCell>
                         <connections>
                             <action selector="OnConnect:" target="-2" id="htS-8d-ITt"/>
+                            <binding destination="-2" name="enabled" keyPath="self.isValid" id="jXI-h8-UnV"/>
                             <outlet property="nextKeyView" destination="3Er-QW-l2B" id="QsZ-Rh-E8G"/>
                         </connections>
                     </button>
@@ -140,6 +142,7 @@ DQ
                                     <string key="NSNullPlaceholder">path</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="delegate" destination="-2" id="o4t-GN-lNX"/>
                             <outlet property="nextKeyView" destination="DI3-z6-lAe" id="4Lt-jc-yDh"/>
                         </connections>
                     </textField>
@@ -160,6 +163,7 @@ DQ
                                     <string key="NSNullPlaceholder">example.com</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="delegate" destination="-2" id="FuA-cQ-b0H"/>
                             <outlet property="nextKeyView" destination="Sa0-iT-u8K" id="4Jj-ye-AWY"/>
                         </connections>
                     </textField>
@@ -171,12 +175,13 @@ DQ
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="self.passwordEntered" id="Hn6-Gv-dcT">
+                            <binding destination="-2" name="value" keyPath="self.passwordEntered" id="P7H-rR-G03">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                    <string key="NSNullPlaceholder">passwd</string>
+                                    <string key="NSNullPlaceholder">password or passphrase</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="delegate" destination="-2" id="Hr5-m3-xxb"/>
                             <outlet property="nextKeyView" destination="Qra-SE-Lqs" id="QS9-EY-hza"/>
                         </connections>
                     </textField>
@@ -198,6 +203,7 @@ DQ
                                     <string key="NSNullPlaceholder">22</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="delegate" destination="-2" id="wvN-gW-BKd"/>
                             <outlet property="nextKeyView" destination="MMc-NS-R8I" id="mfc-rW-cLu"/>
                         </connections>
                     </textField>
@@ -229,6 +235,7 @@ DQ
                                     <string key="NSNullPlaceholder">arbitrary title</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="delegate" destination="-2" id="SDj-Eh-62w"/>
                             <outlet property="nextKeyView" destination="zZD-vm-Gxs" id="cef-CN-dz4"/>
                         </connections>
                     </textField>
@@ -258,10 +265,41 @@ DQ
                             <outlet property="nextKeyView" destination="PQd-d9-Ay3" id="70j-nl-sjo"/>
                         </connections>
                     </button>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Hh0-N7-1SZ">
+                        <rect key="frame" x="397" y="116" width="16" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="16" id="VL7-2I-Wj2"/>
+                            <constraint firstAttribute="height" constant="16" id="qI4-lR-1Q9"/>
+                        </constraints>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="AlertStop" id="JoK-Ut-gpZ"/>
+                        <connections>
+                            <binding destination="-2" name="hidden" keyPath="self.invalidPassword" id="pdP-uP-HW8">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </imageView>
+                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UK4-Rh-Yvg">
+                        <rect key="frame" x="397" y="88" width="16" height="16"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="16" id="Ska-5k-wI2"/>
+                            <constraint firstAttribute="height" constant="16" id="VZr-ZG-eKr"/>
+                        </constraints>
+                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="AlertStop" id="amv-ZN-D8D"/>
+                        <connections>
+                            <binding destination="-2" name="hidden" keyPath="self.invalidKeypath" id="xiE-la-Qib">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                </dictionary>
+                            </binding>
+                        </connections>
+                    </imageView>
                 </subviews>
                 <constraints>
                     <constraint firstItem="PQd-d9-Ay3" firstAttribute="top" secondItem="Qra-SE-Lqs" secondAttribute="bottom" constant="6" id="0Ey-TM-GhZ"/>
                     <constraint firstItem="Mab-yq-YbO" firstAttribute="leading" secondItem="hPo-uX-6GI" secondAttribute="trailing" constant="8" symbolic="YES" id="1MR-o6-pxO"/>
+                    <constraint firstItem="Hh0-N7-1SZ" firstAttribute="leading" secondItem="Mab-yq-YbO" secondAttribute="trailing" constant="2" id="2GB-mX-KZ0"/>
                     <constraint firstItem="PQd-d9-Ay3" firstAttribute="leading" secondItem="Qra-SE-Lqs" secondAttribute="leading" id="4a3-BT-2eK"/>
                     <constraint firstItem="Qra-SE-Lqs" firstAttribute="leading" secondItem="Mab-yq-YbO" secondAttribute="leading" id="5KU-S1-GYW"/>
                     <constraint firstItem="zZD-vm-Gxs" firstAttribute="leading" secondItem="3Er-QW-l2B" secondAttribute="leading" id="86K-6K-hrc"/>
@@ -276,6 +314,7 @@ DQ
                     <constraint firstItem="Sa0-iT-u8K" firstAttribute="top" secondItem="zZD-vm-Gxs" secondAttribute="bottom" constant="6" id="O7Y-dV-Hfi"/>
                     <constraint firstItem="CzC-r1-7am" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Pqn-fR-9HQ"/>
                     <constraint firstItem="4EZ-Tn-asl" firstAttribute="leading" secondItem="MMc-NS-R8I" secondAttribute="trailing" constant="12" symbolic="YES" id="RHH-Q5-MVd"/>
+                    <constraint firstItem="Hh0-N7-1SZ" firstAttribute="centerY" secondItem="Mab-yq-YbO" secondAttribute="centerY" id="RQH-es-Y4k"/>
                     <constraint firstAttribute="trailing" secondItem="DI3-z6-lAe" secondAttribute="trailing" constant="20" symbolic="YES" id="SiA-FN-dtO"/>
                     <constraint firstItem="3Er-QW-l2B" firstAttribute="baseline" secondItem="W5O-sW-shM" secondAttribute="baseline" id="Smf-AL-tCX"/>
                     <constraint firstItem="zZD-vm-Gxs" firstAttribute="baseline" secondItem="gve-zu-Wdw" secondAttribute="baseline" id="TqB-B8-wFo"/>
@@ -296,6 +335,7 @@ DQ
                     <constraint firstItem="Sa0-iT-u8K" firstAttribute="leading" secondItem="Ode-Ap-fuH" secondAttribute="trailing" constant="8" symbolic="YES" id="nK8-Sd-tca"/>
                     <constraint firstItem="PQd-d9-Ay3" firstAttribute="leading" secondItem="zZD-vm-Gxs" secondAttribute="leading" id="oHP-kc-APH"/>
                     <constraint firstItem="Mab-yq-YbO" firstAttribute="trailing" secondItem="Sa0-iT-u8K" secondAttribute="trailing" id="oLD-IO-mTv"/>
+                    <constraint firstItem="UK4-Rh-Yvg" firstAttribute="leading" secondItem="DI3-z6-lAe" secondAttribute="trailing" constant="2" id="oTs-LX-vmd"/>
                     <constraint firstItem="Sa0-iT-u8K" firstAttribute="trailing" secondItem="zZD-vm-Gxs" secondAttribute="trailing" id="orh-6r-Qah"/>
                     <constraint firstItem="W5O-sW-shM" firstAttribute="top" secondItem="CzC-r1-7am" secondAttribute="bottom" constant="16" id="pWh-Ep-JVr"/>
                     <constraint firstItem="Qra-SE-Lqs" firstAttribute="leading" secondItem="46d-tn-9xt" secondAttribute="trailing" constant="8" symbolic="YES" id="qSn-Ub-EHU"/>
@@ -306,6 +346,7 @@ DQ
                     <constraint firstAttribute="trailing" secondItem="4EZ-Tn-asl" secondAttribute="trailing" constant="20" symbolic="YES" id="tgO-lL-Hzg"/>
                     <constraint firstItem="4EZ-Tn-asl" firstAttribute="centerY" secondItem="MMc-NS-R8I" secondAttribute="centerY" id="tim-lI-R9y"/>
                     <constraint firstItem="3Er-QW-l2B" firstAttribute="leading" secondItem="W5O-sW-shM" secondAttribute="trailing" constant="8" symbolic="YES" id="uUt-bI-r1d"/>
+                    <constraint firstItem="UK4-Rh-Yvg" firstAttribute="centerY" secondItem="DI3-z6-lAe" secondAttribute="centerY" id="w8c-la-3VR"/>
                     <constraint firstItem="PQd-d9-Ay3" firstAttribute="leading" secondItem="9Cs-2f-MgP" secondAttribute="trailing" constant="8" symbolic="YES" id="x33-qH-FP9"/>
                     <constraint firstItem="Qra-SE-Lqs" firstAttribute="leading" secondItem="zZD-vm-Gxs" secondAttribute="leading" id="xcM-Hr-MHr"/>
                     <constraint firstItem="hPo-uX-6GI" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="ybl-5k-WjE"/>
@@ -319,4 +360,7 @@ DQ
         </window>
         <userDefaultsController representsSharedInstance="YES" id="fIO-4J-P0b"/>
     </objects>
+    <resources>
+        <image name="AlertStop" width="32" height="32"/>
+    </resources>
 </document>

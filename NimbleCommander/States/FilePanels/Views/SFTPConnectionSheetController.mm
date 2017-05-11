@@ -1,6 +1,7 @@
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <VFS/NetSFTP.h>
 #include "SFTPConnectionSheetController.h"
 
 static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
@@ -13,7 +14,16 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 @property (strong) NSString *port;
 @property (strong) NSString *keypath;
 @property (strong) IBOutlet NSButton *connectButton;
+@property bool isValid;
+@property bool invalidPassword;
+@property bool invalidKeypath;
+
 @end
+
+static bool ValidateFileExistence( const string &_filepath )
+{
+    return access(_filepath.c_str(), R_OK) == 0;
+}
 
 @implementation SFTPConnectionSheetController
 {
@@ -29,10 +39,14 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
         string rsa_path = g_SSHdir + "id_rsa";
         string dsa_path = g_SSHdir + "id_dsa";
         
-        if( access(rsa_path.c_str(), R_OK) == 0 )
+        if( ValidateFileExistence(rsa_path) )
             self.keypath = [NSString stringWithUTF8StdString:rsa_path];
-        else if( access(dsa_path.c_str(), R_OK) == 0 )
+        else if( ValidateFileExistence(dsa_path) )
             self.keypath = [NSString stringWithUTF8StdString:dsa_path];
+        
+        self.isValid = false;
+        self.invalidPassword = false;
+        self.invalidKeypath = false;
     }
     return self;
 }
@@ -56,6 +70,8 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
         self.keypath = [NSString stringWithUTF8StdString:c.keypath];
         self.port = [NSString stringWithFormat:@"%li", c.port];
     }
+    
+    [self validate];    
 }
 
 - (IBAction)OnConnect:(id)sender
@@ -92,14 +108,15 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
                                                 isDirectory:true];
     [panel beginSheetModalForWindow:self.window
                   completionHandler:^(NSInteger result){
-                      if(result == NSFileHandlingPanelOKButton)
+                      if(result == NSFileHandlingPanelOKButton) {
                           self.keypath = panel.URL.path;
+                          [self validate];
+                      }
                   }];
 }
 
 - (void)setConnection:(NetworkConnectionsManager::Connection)connection
 {
-//    [self fillInfoFromStoredConnection:connection];
     m_Original = connection;
 }
 
@@ -116,6 +133,74 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 - (string)password
 {
     return self.passwordEntered ? self.passwordEntered.UTF8String : "";
+}
+
+- (bool)validateServer
+{
+    return self.server && self.server.length > 0;
+}
+
+- (bool)validateUsername
+{
+    return self.username && self.username.length > 0;
+}
+
+- (bool)validatePort
+{
+    return !self.port ||
+            (self.port.length == 0) ||
+            (self.port.intValue > 0 && self.port.intValue < 65'536);
+}
+
+- (bool)validateKeypath
+{
+    const auto entered_keypath = self.keypath && self.keypath.length != 0;
+    if( !entered_keypath ) {
+        self.invalidPassword = false;
+        self.invalidKeypath = false;
+        return true;
+    }
+
+    if( !ValidateFileExistence(self.keypath.fileSystemRepresentationSafe) ) {
+        self.invalidKeypath = true;
+        self.invalidPassword = false;
+        return false;
+    }
+    
+    self.invalidKeypath = false;
+
+    VFSNetSFTPKeyValidator validator(self.keypath.fileSystemRepresentation,
+                                     self.passwordEntered.UTF8String);
+    if( validator.Validate() ) {
+        self.invalidPassword = false;
+        return true;
+    }
+    else {
+        self.invalidPassword = true;
+        return false;
+    }
+}
+
+- (bool)validatePassword
+{
+    const auto entered_keypath = self.keypath && self.keypath.length != 0;
+    const auto entered_password = self.passwordEntered && self.passwordEntered.length != 0;
+    return entered_keypath || entered_password;
+}
+
+- (void)validate
+{
+    const auto valid_server = [self validateServer];
+    const auto valid_username = [self validateUsername];
+    const auto valid_port = [self validatePort];
+    const auto valid_password = [self validatePassword];
+    const auto valid_keypath = [self validateKeypath];
+    self.isValid = valid_server && valid_username && valid_port && valid_password && valid_keypath;
+}
+
+- (void)controlTextDidChange:(NSNotification *)obj
+{
+    [self validate];
 }
 
 @end

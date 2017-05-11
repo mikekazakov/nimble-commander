@@ -4,7 +4,8 @@
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include "ConnectionSheetProtocol.h"
 
-@interface SFTPConnectionSheetController : SheetController <ConnectionSheetProtocol>
+@interface SFTPConnectionSheetController : SheetController <ConnectionSheetProtocol,
+                                                            NSTextFieldDelegate>
 
 @property (nonatomic) NetworkConnectionsManager::Connection connection;
 @property (nonatomic) string password;

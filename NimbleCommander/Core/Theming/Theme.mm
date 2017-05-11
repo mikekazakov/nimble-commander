@@ -45,6 +45,7 @@ struct Theme::Internals
     NSColor *m_FilePanelsListRegularEvenRowBackgroundColor;
     NSColor *m_FilePanelsListRegularOddRowBackgroundColor;
     NSFont  *m_FilePanelsBriefFont;
+    NSColor *m_FilePanelsBriefGridColor;
     NSColor *m_FilePanelsBriefRegularEvenRowBackgroundColor;
     NSColor *m_FilePanelsBriefRegularOddRowBackgroundColor;
     NSColor *m_FilePanelsBriefSelectedActiveItemBackgroundColor;
@@ -209,6 +210,8 @@ Theme::Theme( const void *_theme_data, const void *_backup_theme_data ):
     
     I->m_FilePanelsBriefFont =
         ExtractFont("filePanelsBriefFont");
+    I->m_FilePanelsBriefGridColor =
+        ExtractColor("filePanelsBriefGridColor");
     I->m_FilePanelsBriefRegularEvenRowBackgroundColor =
         ExtractColor("filePanelsBriefRegularEvenRowBackgroundColor");
     I->m_FilePanelsBriefRegularOddRowBackgroundColor =
@@ -639,4 +642,9 @@ NSColor *Theme::FilePanelsGeneralSplitterColor() const noexcept
 NSColor *Theme::FilePanelsGeneralTopSeparatorColor() const noexcept
 {
     return I->m_FilePanelsGeneralTopSeparatorColor;
+}
+
+NSColor *Theme::FilePanelsBriefGridColor() const noexcept
+{
+    return I->m_FilePanelsBriefGridColor;
 }

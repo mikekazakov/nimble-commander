@@ -12,6 +12,10 @@
     self = [super initWithFrame:frameRect];
     if( self ) {
         self.selectable = true;
+        
+        if( [self respondsToSelector:@selector(setBackgroundViewScrollsWithContent:)] ) {
+            self.backgroundViewScrollsWithContent = true;
+        }
        [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
     }
     return self;

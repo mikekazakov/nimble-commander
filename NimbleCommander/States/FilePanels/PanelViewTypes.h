@@ -1,11 +1,3 @@
-//
-//  PanelViewTypes.h
-//  Files
-//
-//  Created by Pavel Dogurevich on 10.05.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #pragma once
 
 enum class PanelViewFilenameTrimming : int8_t

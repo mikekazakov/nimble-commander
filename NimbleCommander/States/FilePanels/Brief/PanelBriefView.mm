@@ -1,8 +1,8 @@
 #include <VFS/VFS.h>
-#include <Habanero/CFStackAllocator.h>
 #include <Habanero/algo.h>
 #include <Utility/FontExtras.h>
 #include "../PanelData.h"
+#include "../PanelDataSortMode.h"
 #include "../PanelView.h"
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -141,61 +141,56 @@ const noexcept
 - (id)initWithFrame:(NSRect)frameRect andIC:(IconsGenerator2&)_ic
 {
     self = [super initWithFrame:frameRect];
-    if( self ) {
-        m_IconsGenerator = &_ic;
-        
-        [self calculateItemLayout];
-        
-        m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
-        m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
-        m_ScrollView.wantsLayer = true;
-        m_ScrollView.contentView.copiesOnScroll = true;
-        m_ScrollView.backgroundColor = NSColor.clearColor;
-        [self addSubview:m_ScrollView];
-        
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];
-        
-        m_CollectionView = [[PanelBriefViewCollectionView alloc] initWithFrame:frameRect];
-        m_CollectionView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-        m_CollectionView.dataSource = self;
-        m_CollectionView.delegate = self;
-
-        m_Background = [[PanelBriefViewCollectionViewBackground alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-        m_Background.rowHeight = m_ItemLayout.item_height;
-        m_CollectionView.backgroundView = m_Background;
-        m_CollectionView.backgroundColors = @[NSColor.clearColor];
-        
-        m_Layout = [[PanelBriefViewCollectionViewLayout alloc] init];
-        m_Layout.itemSize = NSMakeSize(100, m_ItemLayout.item_height);
-        m_CollectionView.collectionViewLayout = m_Layout;
-        [m_CollectionView registerClass:PanelBriefViewItem.class forItemWithIdentifier:@"A"];
-        
-        m_ScrollView.documentView = m_CollectionView;
-        
-        __weak PanelBriefView* weak_self = self;
-        m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImage* _icon){
-            if( auto strong_self = weak_self )
-                [strong_self onIconUpdated:_icon_no image:_icon];
-        });
-        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
-            ThemesManager::Notifications::FilePanelsBrief|
-            ThemesManager::Notifications::FilePanelsGeneral, [weak_self]{
-            if( auto strong_self = weak_self ) {
-                auto cp = strong_self.cursorPosition;
-                [strong_self calculateItemLayout];
-                [strong_self->m_CollectionView reloadData];
-                strong_self.cursorPosition = cp;
-                strong_self->m_Background.needsDisplay = true;
-            }
-        });
-        
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(frameDidChange)
-                                                   name:NSViewFrameDidChangeNotification
-                                                 object:self];
-    }
+    if( !self )
+        return nil;
+    
+    m_IconsGenerator = &_ic;
+    
+    [self calculateItemLayout];
+    
+    m_ScrollView = [[NSScrollView alloc] initWithFrame:frameRect];
+    m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
+    m_ScrollView.wantsLayer = true;
+    m_ScrollView.contentView.copiesOnScroll = true;
+    m_ScrollView.drawsBackground = true;
+    m_ScrollView.backgroundColor = CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
+    [self addSubview:m_ScrollView];
+    
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(0)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ScrollView]-(0)-|" options:0 metrics:nil views:views]];
+    
+    m_CollectionView = [[PanelBriefViewCollectionView alloc] initWithFrame:frameRect];
+    m_CollectionView.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+    m_CollectionView.dataSource = self;
+    m_CollectionView.delegate = self;
+    
+    m_Background = [[PanelBriefViewCollectionViewBackground alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    m_Background.rowHeight = m_ItemLayout.item_height;
+    m_CollectionView.backgroundView = m_Background;
+    m_CollectionView.backgroundColors = @[NSColor.clearColor];
+    
+    m_Layout = [[PanelBriefViewCollectionViewLayout alloc] init];
+    m_Layout.itemSize = NSMakeSize(100, m_ItemLayout.item_height);
+    m_CollectionView.collectionViewLayout = m_Layout;
+    [m_CollectionView registerClass:PanelBriefViewItem.class forItemWithIdentifier:@"A"];
+    
+    m_ScrollView.documentView = m_CollectionView;
+    
+    __weak PanelBriefView* weak_self = self;
+    m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImage* _icon){
+        if( auto strong_self = weak_self )
+            [strong_self onIconUpdated:_icon_no image:_icon];
+    });
+    m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+        ThemesManager::Notifications::FilePanelsBrief|
+        ThemesManager::Notifications::FilePanelsGeneral,
+        objc_callback(self, @selector(themeDidChange)));
+    
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(frameDidChange)
+                                               name:NSViewFrameDidChangeNotification
+                                             object:self];
     return self;
 }
 
@@ -308,7 +303,15 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
         }
         case PanelBriefViewColumnsLayout::Mode::FixedAmount: {
             assert( m_ColumnsLayout.fixed_amount_value != 0);
-            return NSMakeSize( self.bounds.size.width / m_ColumnsLayout.fixed_amount_value, layout.item_height );
+            const int rows_count = m_Layout.rowsCount;
+            const int colums_per_screen = m_ColumnsLayout.fixed_amount_value;
+            const int screen_width = (int)self.bounds.size.width;
+            const int column = index / rows_count;
+            const int column_in_chunk = column % colums_per_screen;
+            const int width_per_col = screen_width / colums_per_screen;
+            const int remainer = screen_width % colums_per_screen;
+            return NSMakeSize(width_per_col + (column_in_chunk >= remainer ? 0 : 1),
+                              layout.item_height );
         }
         default:
             break;
@@ -342,6 +345,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     m_IconsGenerator->SyncDiscardedAndOutdated( *m_Data );
     [m_CollectionView reloadData];
     [self syncVolatileData];
+    [m_Background setNeedsDisplay:true];
 }
 
 - (int) cursorPosition
@@ -408,10 +412,20 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
         
 }
 
-//@property (nonatomic, readonly) itemsInColumn
 - (int) itemsInColumn
 {
     return m_Layout.rowsCount;
+}
+
+- (int) columns
+{
+    if( !m_Data )
+        return 1;
+    
+    const auto items_total = m_Data->SortedDirectoryEntries().size();
+    const auto items_in_column = self.itemsInColumn;
+    
+    return (int)(items_total/items_in_column) + (items_total % items_in_column ? 1 : 0);
 }
 
 - (void) syncVolatileData
@@ -587,6 +601,16 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
         const auto delta = *mm.second - *mm.first;
         return (delta + 1) * items_per_column;
      }
+}
+
+- (void)themeDidChange
+{
+    const auto cp = self.cursorPosition;
+    [self calculateItemLayout];
+    [m_CollectionView reloadData];
+    self.cursorPosition = cp;
+    m_Background.needsDisplay = true;
+    m_ScrollView.backgroundColor = CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
 }
 
 @end

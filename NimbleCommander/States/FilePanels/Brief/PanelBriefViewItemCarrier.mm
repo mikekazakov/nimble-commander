@@ -119,7 +119,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     
     if( m_Background  ) {
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
-        CGContextFillRect(context, NSRectToCGRect(bounds));
+        CGContextFillRect(context, bounds);
     }
     else {
         const bool is_odd = int(self.frame.origin.y / bounds.size.height) % 2;
@@ -127,7 +127,19 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
             CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor() :
             CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
         CGContextSetFillColorWithColor(context, c.CGColor);
-        CGContextFillRect(context, NSRectToCGRect(bounds));
+        CGContextFillRect(context, bounds);
+    }
+    
+    if( m_Controller ) {
+        const auto column = m_Controller.columnIndex;
+        if( column >= 0 && column != m_Controller.briefView.columns - 1 ) {
+            const auto grid_color = CurrentTheme().FilePanelsBriefGridColor();
+                CGContextSetFillColorWithColor(context, grid_color.CGColor);
+                CGContextFillRect(context, NSMakeRect(bounds.size.width-1,
+                                                      0,
+                                                      1,
+                                                      bounds.size.height));
+        }
     }
     
     const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds];

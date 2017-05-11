@@ -82,6 +82,7 @@ public:
     
     // File Panels --> Brief presentation settings /////////////////////////////////////////////////
     NSFont  *FilePanelsBriefFont() const noexcept;
+    NSColor *FilePanelsBriefGridColor() const noexcept;
     NSColor *FilePanelsBriefRegularEvenRowBackgroundColor() const noexcept;
     NSColor *FilePanelsBriefRegularOddRowBackgroundColor() const noexcept;
     NSColor *FilePanelsBriefSelectedActiveItemBackgroundColor() const noexcept;

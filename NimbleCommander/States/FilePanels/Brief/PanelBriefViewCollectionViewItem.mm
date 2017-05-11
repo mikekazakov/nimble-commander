@@ -107,6 +107,19 @@ using namespace nc::panel;
     return -1;
 }
 
+- (int) columnIndex
+{
+    const auto index = self.itemIndex;
+    if( index < 0 )
+        return -1;
+    
+    const auto items_per_column = self.briefView.itemsInColumn;
+    if( items_per_column == 0 )
+        return -1;
+    
+    return index / items_per_column;
+}
+
 - (void) updateColoring
 {
     assert( m_Item );

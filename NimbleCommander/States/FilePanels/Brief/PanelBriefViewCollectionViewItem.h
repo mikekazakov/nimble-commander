@@ -12,6 +12,11 @@
  */
 - (int) itemIndex;
 
+/**
+ * returns -1 on failure.
+ */
+- (int) columnIndex;
+
 - (VFSListingItem)item;
 - (void) setItem:(VFSListingItem)_item;
 - (void) setVD:(nc::panel::data::ItemVolatileData)_vd;

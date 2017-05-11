@@ -515,6 +515,7 @@
                       
                       /* File Panels -> Brief settings */
                       "filePanelsBriefFont": "@systemFont, 13",
+                      "filePanelsBriefGridColor": "#E6E6E6",
                       "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
                       "filePanelsBriefSelectedActiveItemBackgroundColor": "@blueColor",
@@ -642,6 +643,7 @@
                       
                       /* File Panels -> Brief settings */
                       "filePanelsBriefFont": "Menlo-Regular, 13",
+                      "filePanelsBriefGridColor": "#00FFFF",
                       "filePanelsBriefRegularEvenRowBackgroundColor": "#000080",
                       "filePanelsBriefRegularOddRowBackgroundColor": "#000080",
                       "filePanelsBriefSelectedActiveItemBackgroundColor": "#008080",
@@ -753,6 +755,7 @@
                       
                       /* File Panels -> Brief settings */
                       "filePanelsBriefFont": "@systemFont, 13",
+                      "filePanelsBriefGridColor": "#141414",
                       "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
                       "filePanelsBriefSelectedActiveItemBackgroundColor": "@blueColor",

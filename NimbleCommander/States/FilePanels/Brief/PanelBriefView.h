@@ -1,17 +1,16 @@
 #pragma once
 
-#include "../PanelDataSortMode.h"
 #include "../PanelViewImplementationProtocol.h"
 
 #include "Layout.h"
 
-//class PanelData;
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 class IconsGenerator2;
 
 namespace nc::panel::data {
     class Model;
+    struct SortMode;
 }
 
 struct PanelBriefViewItemLayoutConstants
@@ -36,6 +35,7 @@ struct PanelBriefViewItemLayoutConstants
 - (void) setData:(nc::panel::data::Model*)_data;
 
 @property (nonatomic, readonly) int itemsInColumn;
+@property (nonatomic, readonly) int columns;
 @property (nonatomic) int cursorPosition;
 @property (nonatomic) nc::panel::data::SortMode sortMode;
 

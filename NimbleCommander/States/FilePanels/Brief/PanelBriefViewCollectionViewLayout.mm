@@ -18,7 +18,7 @@
 
 - (int) rowsCount
 {
-    const double view_height = self.collectionViewContentSize.height;
+    const double view_height = self.collectionView.bounds.size.height;
     const double item_height = self.itemSize.height;
     const double n = floor(view_height / item_height);
     return int(n);
@@ -67,10 +67,21 @@
         i.frame = new_frame;
     }
     
-    m_ColumnPositions.clear();
-    m_ColumnPositions.reserve( columns.size() );
-    for( auto &v: columns )
-        m_ColumnPositions.emplace_back( v.origin );
+    if( m_ColumnPositions.size() < columns.size() )
+        m_ColumnPositions.resize( columns.size(), numeric_limits<int>::max() );
+    
+    bool any_changes = false;
+    for( int i = 0, e = (int)columns.size(); i != e; ++i )
+        if( columns[i].origin != numeric_limits<int>::max() )
+            if(columns[i].origin != m_ColumnPositions[i]) {
+                m_ColumnPositions[i] = columns[i].origin;
+                any_changes = true;
+            }
+
+    static const bool draws_grid =
+        [self.collectionView respondsToSelector:@selector(setBackgroundViewScrollsWithContent:)];
+    if( draws_grid && any_changes)
+        [self.collectionView.backgroundView setNeedsDisplay:true];
 
     return attrs;
 }

@@ -132,6 +132,9 @@ const noexcept
 @synthesize columnsLayout = m_ColumnsLayout;
 @synthesize sortMode = m_SortMode;
 
+static const auto g_ScrollingBackground =
+    [NSCollectionView instancesRespondToSelector:@selector(setBackgroundViewScrollsWithContent:)];
+
 - (void) setData:(data::Model*)_data
 {
     m_Data = _data;
@@ -152,8 +155,10 @@ const noexcept
     m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
     m_ScrollView.wantsLayer = true;
     m_ScrollView.contentView.copiesOnScroll = true;
-    m_ScrollView.drawsBackground = true;
-    m_ScrollView.backgroundColor = CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
+    m_ScrollView.drawsBackground = g_ScrollingBackground;
+    m_ScrollView.backgroundColor = g_ScrollingBackground ?
+        CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor() :
+        NSColor.clearColor;
     [self addSubview:m_ScrollView];
     
     NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);
@@ -615,7 +620,8 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     [m_CollectionView reloadData];
     self.cursorPosition = cp;
     m_Background.needsDisplay = true;
-    m_ScrollView.backgroundColor = CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
+    if( g_ScrollingBackground )
+        m_ScrollView.backgroundColor = CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
 }
 
 @end

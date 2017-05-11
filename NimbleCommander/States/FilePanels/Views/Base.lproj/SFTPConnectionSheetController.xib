@@ -175,10 +175,10 @@ DQ
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="value" keyPath="self.passwordEntered" id="P7H-rR-G03">
+                            <binding destination="-2" name="value" keyPath="self.passwordEntered" id="Qde-ZN-Cm2">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                    <string key="NSNullPlaceholder">password or passphrase</string>
+                                    <string key="NSNullPlaceholder">server password or key passphrase</string>
                                 </dictionary>
                             </binding>
                             <outlet property="delegate" destination="-2" id="Hr5-m3-xxb"/>

@@ -17,7 +17,7 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="415" height="276"/>
+            <rect key="contentRect" x="196" y="240" width="415" height="270"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="415" height="270"/>
@@ -175,6 +175,7 @@ Gw
                                     <string key="NSNullPlaceholder">ftp.example.com</string>
                                 </dictionary>
                             </binding>
+                            <outlet property="delegate" destination="-2" id="4h8-ea-Ujh"/>
                             <outlet property="nextKeyView" destination="UEI-a2-bDe" id="wSt-NZ-Vee"/>
                         </connections>
                     </textField>
@@ -192,6 +193,7 @@ DQ
                         </buttonCell>
                         <connections>
                             <action selector="OnConnect:" target="-2" id="2ZX-cU-TOQ"/>
+                            <binding destination="-2" name="enabled" keyPath="self.isValid" id="cnk-5d-KNA"/>
                             <outlet property="nextKeyView" destination="Keo-vb-KpK" id="nhh-qF-8UO"/>
                         </connections>
                     </button>

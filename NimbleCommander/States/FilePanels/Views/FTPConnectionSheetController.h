@@ -4,7 +4,8 @@
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include "ConnectionSheetProtocol.h"
 
-@interface FTPConnectionSheetController : SheetController<ConnectionSheetProtocol>
+@interface FTPConnectionSheetController : SheetController<ConnectionSheetProtocol,
+                                                          NSTextFieldDelegate>
 
 @property (nonatomic) NetworkConnectionsManager::Connection connection;
 @property (nonatomic) string password;

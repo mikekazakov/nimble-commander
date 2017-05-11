@@ -12,12 +12,22 @@
 @property (strong) NSString *path;
 @property (strong) NSString *port;
 @property (strong) IBOutlet NSButton *connectButton;
+@property bool isValid;
 @end
 
 @implementation FTPConnectionSheetController
 {
     optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::FTP m_Connection;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if( self ) {
+        self.isValid = false;
+    }
+    return self;
 }
 
 - (void) windowDidLoad
@@ -40,6 +50,7 @@
         self.path = [NSString stringWithUTF8StdString:c.path];
         self.port = [NSString stringWithFormat:@"%li", c.port];
     }
+    [self validate];
 }
 
 - (IBAction)OnConnect:(id)sender
@@ -90,6 +101,22 @@
 - (string)password
 {
     return self.passwordEntered ? self.passwordEntered.UTF8String : "";
+}
+
+- (bool)validateServer
+{
+    return self.server && self.server.length > 0;
+}
+
+- (void)validate
+{
+    const auto valid_server = [self validateServer];
+    self.isValid = valid_server;
+}
+
+- (void)controlTextDidChange:(NSNotification *)obj
+{
+    [self validate];
 }
 
 @end

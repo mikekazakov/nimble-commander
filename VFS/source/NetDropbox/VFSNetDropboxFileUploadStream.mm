@@ -9,7 +9,6 @@
     function<ssize_t(uint8_t *_buffer, size_t _sz)> m_FeedData;
     function<bool()> m_HasDataToFeed;
     
-//    NSMutableDictionary    *m_Properties;
     __weak id<NSStreamDelegate> m_Delegate;
     NSRunLoop              *m_RunLoop;
     NSRunLoopMode           m_RunLoopMode;
@@ -20,13 +19,11 @@
 
 - (NSStreamStatus) streamStatus
 {
-    cout << "told stream status: " << m_Status << endl;
     return m_Status;
 }
 
 - (void)open
 {
-    cout << "open" << endl;
     m_Status = NSStreamStatusOpen;
     
     [self enqueueStreamEvent:NSStreamEventOpenCompleted];
@@ -38,19 +35,16 @@
 
 - (void)close
 {
-    cout << "close" << endl;
     m_Status = NSStreamStatusClosed;
 }
 
 - (nullable id)propertyForKey:(NSStreamPropertyKey)key
 {
-    NSLog(@"property for key %@", key);
     return nil;
 }
 
 - (BOOL)setProperty:(nullable id)property forKey:(NSStreamPropertyKey)key
 {
-    NSLog(@"set property %@=%@", key, property);
     return true;
 }
 
@@ -66,7 +60,6 @@
 
 - (BOOL) hasBytesAvailable
 {
-    cout << "hasBytesAvailable called from " << this_thread::get_id() << endl;
     LOCK_GUARD(m_CallbacksLock) {
         if( m_HasDataToFeed )
             return m_HasDataToFeed();
@@ -118,8 +111,6 @@
 
 - (void)drainPendingEvent
 {
-    cout << "drainPendingEvent called from " << this_thread::get_id() << endl;
-
     if( m_PendingEvents.empty() )
         return;
     
@@ -127,37 +118,18 @@
     m_PendingEvents.pop_front();
     
     if( ev == NSStreamEventEndEncountered ) {
-    
-//    NSStreamStatusNotOpen = 0,
-//    NSStreamStatusOpening = 1,
-    
-//    NSStreamStatusReading = 3,
-//    NSStreamStatusWriting = 4,
-//    NSStreamStatusAtEnd = 5,
-//    NSStreamStatusClosed = 6,
-//    NSStreamStatusError = 7
-    
-    
         if( m_Status == NSStreamStatusNotOpen || m_Status == NSStreamStatusOpening ) {
             m_EOF = true;
         }
         else if( m_Status == NSStreamStatusOpen || NSStreamStatusReading ) {
             m_Status = NSStreamStatusAtEnd;
         
-            cout << "told connection about NSStreamEventEndEncountered" << endl;
             if( [m_Delegate respondsToSelector:@selector(stream:handleEvent:)] )
                 [m_Delegate stream:self handleEvent:ev];
         }
-    
-//    NSStreamStatusOpen = 2,
-//    NSStreamStatusReading = 3,
-//        m_Status =  NSStreamStatusAtEnd;
-        
-
     }
     
     if( ev == NSStreamEventHasBytesAvailable  ) {
-        cout << "told connection about NSStreamEventHasBytesAvailable" << endl;
         if( [m_Delegate respondsToSelector:@selector(stream:handleEvent:)] )
             [m_Delegate stream:self handleEvent:ev];
     }

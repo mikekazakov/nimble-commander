@@ -26,7 +26,7 @@
 
 - (NSArray<__kindof NSCollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(NSRect)rect
 {
-    NSArray<__kindof NSCollectionViewLayoutAttributes *> *attrs = [super layoutAttributesForElementsInRect:rect];
+    const auto attrs = [super layoutAttributesForElementsInRect:rect];
     
     const int items_per_column = self.rowsCount;
     if( !items_per_column )
@@ -80,7 +80,7 @@
 
     static const bool draws_grid =
         [self.collectionView respondsToSelector:@selector(setBackgroundViewScrollsWithContent:)];
-    if( draws_grid && any_changes)
+    if( draws_grid && any_changes )
         [self.collectionView.backgroundView setNeedsDisplay:true];
 
     return attrs;

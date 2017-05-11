@@ -200,6 +200,11 @@ const noexcept
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
+- (BOOL)isOpaque
+{
+    return true;
+}
+
 - (void)viewDidMoveToSuperview
 {
     if( auto pv = objc_cast<PanelView>(self.superview) ) {

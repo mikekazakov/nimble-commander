@@ -26,6 +26,11 @@
     return false;
 }
 
+- (BOOL)isOpaque
+{
+    return true;
+}
+
 - (PanelView*)panelView
 {
     NSView *sv = self.superview;

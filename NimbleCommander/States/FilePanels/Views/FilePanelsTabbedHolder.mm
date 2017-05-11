@@ -107,6 +107,11 @@
     return self;
 }
 
+- (BOOL)isOpaque
+{
+    return true;
+}
+
 - (void) doLayoutTabless
 {
     [self removeConstraints:self.constraints];

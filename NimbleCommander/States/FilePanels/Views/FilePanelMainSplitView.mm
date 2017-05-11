@@ -54,6 +54,11 @@ static const auto g_ResizingGran = 14.;
     return 1;
 }
 
+- (BOOL)isOpaque
+{
+    return true;
+}
+
 - (CGFloat)splitView:(NSSplitView *)splitView constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)dividerIndex
 {
     auto mid = floor(self.frame.size.width / 2.);

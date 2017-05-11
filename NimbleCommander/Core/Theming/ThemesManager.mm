@@ -49,6 +49,7 @@ static const fixed_eytzinger_map<string, uint64_t> g_EntryToNotificationMapping 
 {"filePanelsListRegularEvenRowBackgroundColor",         TMN::FilePanelsList },
 {"filePanelsListRegularOddRowBackgroundColor",          TMN::FilePanelsList },
 {"filePanelsBriefFont",                                 TMN::FilePanelsBrief },
+{"filePanelsBriefGridColor",                            TMN::FilePanelsBrief },
 {"filePanelsBriefRegularEvenRowBackgroundColor",        TMN::FilePanelsBrief },
 {"filePanelsBriefRegularOddRowBackgroundColor",         TMN::FilePanelsBrief },
 {"filePanelsBriefSelectedActiveItemBackgroundColor",    TMN::FilePanelsBrief },

@@ -120,6 +120,7 @@ NSArray* BuildThemeSettingsNodesTree()
     
     auto fp_brief_nodes = @[
     SpawnFontNode(@"Text font", "filePanelsBriefFont"),
+    SpawnColorNode(@"Grid color", "filePanelsBriefGridColor"),
     SpawnColorNode(@"Even row background", "filePanelsBriefRegularEvenRowBackgroundColor"),
     SpawnColorNode(@"Odd row background", "filePanelsBriefRegularOddRowBackgroundColor"),
     SpawnColorNode(@"Selected & active item background", "filePanelsBriefSelectedActiveItemBackgroundColor"),

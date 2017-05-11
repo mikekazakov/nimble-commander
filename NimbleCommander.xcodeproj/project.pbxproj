@@ -401,6 +401,13 @@
 		CF7A09B11EC2DF6200533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
 		CF7A09B21EC2DF6300533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
 		CF7A09B31EC2DF6300533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
+		CF7A09BF1EC44A1F00533B07 /* NetworkConnectionIconProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */; };
+		CF7A09D71EC44A2000533B07 /* NetworkConnectionIconProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */; };
+		CF7A09D81EC44A2100533B07 /* NetworkConnectionIconProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */; };
+		CF7A09D91EC44A2200533B07 /* NetworkConnectionIconProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */; };
+		CF7A09DA1EC44A3F00533B07 /* OpenNetworkConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */; };
+		CF7A09DB1EC44A4000533B07 /* OpenNetworkConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */; };
+		CF7A09DC1EC44A4000533B07 /* OpenNetworkConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */; };
 		CF7C7CAA1E5ACDBC002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
 		CF7C7CB21E5ACDBD002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
 		CF7C7CB31E5ACDBE002DB0E2 /* TabSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27408D1E594C46000D4365 /* TabSelection.mm */; };
@@ -610,7 +617,6 @@
 		CF9069941BB54081000C3CBB /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
 		CF9069951BB54081000C3CBB /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
 		CF9069961BB54081000C3CBB /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
-		CF90C00A1EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */; };
 		CF90C0291EBB02850056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF90C02A1EBB03280056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF90C02B1EBB04910056E3B8 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; };
@@ -4299,6 +4305,7 @@
 				CFD726361E42E0D500603077 /* FileWindow.cpp in Sources */,
 				CFD726831E42E21000603077 /* PanelController+DragAndDrop.mm in Sources */,
 				CF9069741BB54035000C3CBB /* FileAlreadyExistSheetController.mm in Sources */,
+				CF7A09D71EC44A2000533B07 /* NetworkConnectionIconProvider.mm in Sources */,
 				CF818B531EA0610D00BC28E6 /* ToggleLayout.mm in Sources */,
 				CFD7270C1E42E30800603077 /* QuickPreview.mm in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
@@ -4459,6 +4466,7 @@
 				CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFD727271E42E33C00603077 /* TermScreenBuffer.cpp in Sources */,
 				CF7C7CB21E5ACDBD002DB0E2 /* TabSelection.mm in Sources */,
+				CF7A09DB1EC44A4000533B07 /* OpenNetworkConnection.mm in Sources */,
 				CF876D521D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CF4E56C41D50691F00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF2F43491EAF345400AA031A /* ConnectToServer.mm in Sources */,
@@ -4584,6 +4592,7 @@
 				CFD726DB1E42E2BE00603077 /* Layout.mm in Sources */,
 				CFA539891D433E2A00C562A7 /* BatchRename.mm in Sources */,
 				CFD727251E42E33800603077 /* TermScreen.cpp in Sources */,
+				CF7A09DC1EC44A4000533B07 /* OpenNetworkConnection.mm in Sources */,
 				CFA5398C1D433E2A00C562A7 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CF7A09B31EC2DF6300533B07 /* Duplicate.mm in Sources */,
 				CF4E56AC1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
@@ -4689,6 +4698,7 @@
 				CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CFD7263A1E42E0D900603077 /* LSUrls.mm in Sources */,
 				CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */,
+				CF7A09D81EC44A2100533B07 /* NetworkConnectionIconProvider.mm in Sources */,
 				CFD726011E42E06300603077 /* AppDelegate+Migration.mm in Sources */,
 				CFA539EE1D433E2A00C562A7 /* OperationDialogAlert.mm in Sources */,
 				CFA539F11D433E2A00C562A7 /* NSFileManager+DirectoryLocations.m in Sources */,
@@ -4917,8 +4927,8 @@
 				CF7D137B1BF5E0FE001F53FD /* FileCompressOperation.mm in Sources */,
 				CFA7DFF81EB6FD82001FE66C /* OpenNetworkConnection.mm in Sources */,
 				CFDAC2EF1DFD152C0039A104 /* FilePanelsTabbedHolder.mm in Sources */,
+				CF7A09D91EC44A2200533B07 /* NetworkConnectionIconProvider.mm in Sources */,
 				CF7D134E1BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm in Sources */,
-				CF90C00A1EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm in Sources */,
 				CFDAC2F81DFD17520039A104 /* Common.mm in Sources */,
 				CFDAC25B1DFBF0B30039A104 /* PanelController+DataAccess.mm in Sources */,
 				CFDAC23B1DFBDEBA0039A104 /* AppDelegate.mm in Sources */,
@@ -5152,6 +5162,7 @@
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,
 				CFD726E01E42E2C600603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CF2F43591EAF395900AA031A /* NetworkConnectionsManager.mm in Sources */,
+				CF7A09DA1EC44A3F00533B07 /* OpenNetworkConnection.mm in Sources */,
 				CFD7264F1E42E12400603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CFD7271A1E42E32C00603077 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFD726431E42E10600603077 /* rapidjson.cpp in Sources */,
@@ -5178,6 +5189,7 @@
 				CF50C4061C0ADE20009DF611 /* CreateDirectoryOperationVFSJob.mm in Sources */,
 				CFD726D41E42E2B100603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */,
 				CFD726F01E42E2DD00603077 /* PanelListViewSizeView.mm in Sources */,
+				CF7A09BF1EC44A1F00533B07 /* NetworkConnectionIconProvider.mm in Sources */,
 				CF56BF551D68129700A08D2B /* VFSInstanceManager.cpp in Sources */,
 				CF2C4DF01C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CFB66F961D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,

@@ -1,8 +1,11 @@
 #include "VFSNetSFTPKeyValidator.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
 #include <openssl/bio.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
+#pragma clang diagnostic pop
 
 VFSNetSFTPKeyValidator::VFSNetSFTPKeyValidator
     ( const char *_private_key_path, const char *_passphrase ):

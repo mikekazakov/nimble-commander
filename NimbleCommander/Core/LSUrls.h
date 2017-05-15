@@ -1,14 +1,8 @@
-//
-//  LSUrls.h
-//  Files
-//
-//  Created by Michael G. Kazakov on 06.11.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #pragma once
 
 #include <VFS/VFS.h>
+
+namespace nc::core {
 
 struct LauchServicesHandlers
 {
@@ -31,3 +25,6 @@ struct LauchServicesHandlers
     static void DoMerge(const list<LauchServicesHandlers>& _input, LauchServicesHandlers& _result);
     static bool SetDefaultHandler(const string &_uti, const string &_path);
 };
+
+
+}

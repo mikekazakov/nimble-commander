@@ -10,6 +10,7 @@
 #include "Actions/Duplicate.h"
 #include "Actions/Compress.h"
 
+using namespace nc::core;
 using namespace nc::panel;
 
 struct OpenWithHandler

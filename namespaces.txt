@@ -1,4 +1,5 @@
 ::nc
+   ::core
    ::panel
       ::actions
          ::context

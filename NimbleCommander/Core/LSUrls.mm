@@ -1,12 +1,6 @@
-//
-//  LSUrls.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 06.11.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include "LSUrls.h"
+
+namespace nc::core {
 
 /**
  * If container is not empty and has only the equal elements - return it.
@@ -164,4 +158,6 @@ bool LauchServicesHandlers::SetDefaultHandler(const string &_uti, const string &
                                                          (__bridge CFStringRef)bundle_id);
 
     return ret == 0;
+}
+
 }

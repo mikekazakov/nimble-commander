@@ -2,7 +2,7 @@
 #include <Sparkle/Sparkle.h>
 #include "NCPanelContextMenu.h"
 #include "PanelAux.h"
-#include <NimbleCommander/Core/LSUrls.h>
+#include <NimbleCommander/Core/LaunchServices.h>
 #include "PanelController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "Actions/CopyToPasteboard.h"

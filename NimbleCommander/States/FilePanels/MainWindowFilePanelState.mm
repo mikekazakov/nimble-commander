@@ -7,7 +7,6 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Core/rapidjson.h>
 #include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/Core/LSUrls.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>

@@ -14,6 +14,8 @@
 #include <NimbleCommander/States/FilePanels/PanelData.h>
 #include <NimbleCommander/States/FilePanels/PanelDataSelection.h>
 
+using namespace nc::panel;
+
 static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filenames )
 {
     VFSListingInput l;
@@ -81,8 +83,8 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
                             @"even written with какие-то буквы" };
     auto listing = ProduceDummyListing(vector<NSString*>(begin(strings), end(strings)));
     
-    PanelData data;
-    data.Load(listing, PanelData::PanelType::Directory);
+    data::Model data;
+    data.Load(listing, data::Model::PanelType::Directory);
     
     // testing raw C sorting facility
     for(int i = 0; i < listing->Count(); ++i)
@@ -90,7 +92,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     
     // testing basic sorting (direct by filename)
     auto sorting = data.SortMode();
-    sorting.sort = PanelData::PanelSortMode::SortByName;
+    sorting.sort = data::SortMode::SortByName;
     data.SetSortMode(sorting);
     
     XCTAssert(data.SortedIndexForName(listing->Filename(0).c_str()) == 0);
@@ -107,12 +109,12 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
                             @"ББББ" };
     auto listing = ProduceDummyListing(vector<NSString*>(begin(strings), end(strings)));
 
-    PanelData data;
+    data::Model data;
     auto sorting = data.SortMode();
-    sorting.sort = PanelData::PanelSortMode::SortByName;
+    sorting.sort = data::SortMode::SortByName;
     sorting.case_sens = false;
     data.SetSortMode(sorting);
-    data.Load(move(listing), PanelData::PanelType::Directory);
+    data.Load(move(listing), data::Model::PanelType::Directory);
     
     XCTAssert(data.SortedIndexForName(listing->Item(0).Name()) == 0);
     XCTAssert(data.SortedIndexForName(listing->Item(2).Name()) == 1);
@@ -166,9 +168,9 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     
     auto almost_empty_listing = ProduceDummyListing(vector<NSString*>(1, @"какой-то файл"));
     
-    PanelData data;
-    PanelData::PanelSortMode sorting = data.SortMode();
-    sorting.sort = PanelData::PanelSortMode::SortByName;
+    data::Model data;
+    auto sorting = data.SortMode();
+    sorting.sort = data::SortMode::SortByName;
     data.SetSortMode(sorting);
     
     
@@ -176,7 +178,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     filtering.show_hidden = true;
     data.SetHardFiltering(filtering);
     
-    data.Load(listing, PanelData::PanelType::Directory);
+    data.Load(listing, data::Model::PanelType::Directory);
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedIndexForName(".Trash") >= 0);
     XCTAssert(data.SortedIndexForName("Games") >= 0);
@@ -187,7 +189,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     XCTAssert(data.SortedIndexForName(".Trash") < 0);
     XCTAssert(data.SortedIndexForName("Games") >= 0);
 
-    filtering.text.type = PanelData::TextualFilter::Anywhere;
+    filtering.text.type = data::TextualFilter::Anywhere;
     filtering.text.text = @"D";
     data.SetHardFiltering(filtering);
     
@@ -203,18 +205,18 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     XCTAssert(data.SortedDirectoryEntries().size() == 1);
     
     // now test what will happen on empty listing
-    data.Load(empty_listing, PanelData::PanelType::Directory);
+    data.Load(empty_listing, data::Model::PanelType::Directory);
     XCTAssert(data.SortedIndexForName("..") < 0);
 
     // now test what will happen on almost empty listing (will became empty after filtering)
-    data.Load(almost_empty_listing, PanelData::PanelType::Directory);
+    data.Load(almost_empty_listing, data::Model::PanelType::Directory);
     XCTAssert(data.SortedIndexForName("..") < 0);
     
     // now more comples situations
     filtering.text.text = @"IC";
     data.SetHardFiltering(filtering);
     auto count = listing->Count();
-    data.Load(listing, PanelData::PanelType::Directory);
+    data.Load(listing, data::Model::PanelType::Directory);
     XCTAssert(data.SortedIndexForName("..") == 0);
     XCTAssert(data.SortedIndexForName("Music") >= 0);
     XCTAssert(data.SortedIndexForName("Pictures") >= 0);
@@ -229,7 +231,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     XCTAssert(data.SortedIndexForName(@"что-то на русском языке".fileSystemRepresentation) >= 0);
     XCTAssert(data.SortedIndexForName(@"ЕЩЕ РУССКИЙ ЯЗЫК".fileSystemRepresentation) >= 0);
     
-    filtering.text.type = PanelData::TextualFilter::Beginning;
+    filtering.text.type = data::TextualFilter::Beginning;
     filtering.text.text = @"APP";
     data.SetHardFiltering(filtering);
     XCTAssert(data.SortedIndexForName("..") == 0);
@@ -241,7 +243,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     XCTAssert(data.SortedIndexForName("Another app number two") < 0);
 
     // test buggy filtering with @"" string
-    filtering.text.type = PanelData::TextualFilter::Beginning;
+    filtering.text.type = data::TextualFilter::Beginning;
     filtering.text.text = @"";
     filtering.show_hidden = true;
     data.SetHardFiltering(filtering);
@@ -256,39 +258,39 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
 {
     VFSHostPtr host = VFSNativeHost::SharedHost();
     VFSListingPtr listing;
-    PanelData data;
+    data::Model data;
     PanelDataSelection selector{data, true};
     PanelDataSelection selector_w_dirs{data, false};
     
     host->FetchDirectoryListing("/bin/", listing, 0);
-    data.Load(listing, PanelData::PanelType::Directory);
+    data.Load(listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted( selector.SelectionByExtension("", true) );
     XCTAssert( data.Stats().selected_entries_amount >= 30 );
     
     host->FetchDirectoryListing("/usr/share/man/man1", listing, 0);
-    data.Load(listing, PanelData::PanelType::Directory);
+    data.Load(listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted( selector.SelectionByExtension("1", true) );
     XCTAssert( data.Stats().selected_entries_amount >= 1000 );
     
     host->FetchDirectoryListing("/System/Library/CoreServices", listing, 0);
 
-    data.Load(listing, PanelData::PanelType::Directory);
+    data.Load(listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted( selector.SelectionByExtension("app", true) );
     XCTAssert( data.Stats().selected_entries_amount == 0 );
 
-    data.Load(listing, PanelData::PanelType::Directory);
+    data.Load(listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted( selector_w_dirs.SelectionByExtension("app", true) );
     XCTAssert( data.Stats().selected_entries_amount >= 30 );
 
-    data.Load(listing, PanelData::PanelType::Directory);
+    data.Load(listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted( selector_w_dirs.SelectionByExtension("App", true) );
     XCTAssert( data.Stats().selected_entries_amount >= 30 );
     
-    data.Load(listing, PanelData::PanelType::Directory);
+    data.Load(listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted( selector_w_dirs.SelectionByExtension("ApP", true) );
     XCTAssert( data.Stats().selected_entries_amount >= 30 );
 
-    data.Load(listing, PanelData::PanelType::Directory);
+    data.Load(listing, data::Model::PanelType::Directory);
     data.CustomFlagsSelectSorted( selector_w_dirs.SelectionByExtension("APP", true) );
     XCTAssert( data.Stats().selected_entries_amount >= 30 );
 }
@@ -302,11 +304,11 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     }};
     auto listing = ProduceDummyListing(entries);
 
-    PanelData data;
-    data.Load(listing, PanelData::PanelType::Directory);
+    data::Model data;
+    data.Load(listing, data::Model::PanelType::Directory);
     
-    PanelData::PanelSortMode sorting;
-    sorting.sort = PanelData::PanelSortMode::SortByExt;
+    data::SortMode sorting;
+    sorting.sort = data::SortMode::SortByExt;
     data.SetSortMode(sorting);
     XCTAssert( data.EntryAtSortPosition(0).Filename() == "Bravo.1" );
     XCTAssert( data.EntryAtSortPosition(1).Filename() == "Alpha.2" );
@@ -318,8 +320,8 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     XCTAssert( data.EntryAtSortPosition(1).Filename() == "Bravo.1" );
     XCTAssert( data.EntryAtSortPosition(2).Filename() == "Charlie.3" );
     
-    sorting = PanelData::PanelSortMode{};
-    sorting.sort = PanelData::PanelSortMode::SortByExtRev;
+    sorting = data::SortMode{};
+    sorting.sort = data::SortMode::SortByExtRev;
     data.SetSortMode(sorting);
     XCTAssert( data.EntryAtSortPosition(0).Filename() == "Charlie.3" );
     XCTAssert( data.EntryAtSortPosition(1).Filename() == "Alpha.2" );

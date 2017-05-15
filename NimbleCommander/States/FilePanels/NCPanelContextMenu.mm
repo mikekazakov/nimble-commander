@@ -13,61 +13,18 @@
 using namespace nc::core;
 using namespace nc::panel;
 
-struct OpenWithHandler
+static void SortAndPurgeDuplicateHandlers(vector<LaunchServiceHandler> &_handlers)
 {
-    string path;
-    NSString *app_name;
-    NSImage  *app_icon;
-    NSString *app_version;
-    NSString *app_id;
-    
-    bool is_default;
-    
-    inline bool operator<(const OpenWithHandler& _r) const
-    {
-        return [app_name localizedCompare:_r.app_name] < 0;
-    }
-};
+    sort(begin(_handlers), end(_handlers), [](const auto &_1st, const auto &_2nd){
+        return [_1st.Name() localizedCompare:_2nd.Name()] < 0;
+    });
 
-static bool ExposeOpenWithHandler(const string &_path, OpenWithHandler &_hndl)
-{
-//    static const double icon_size = [NSFont systemFontSize];
-    static const double icon_size = 14; // hard-coding is bad, but line above gives 13., which looks worse
-    
-    NSString *path = [NSString stringWithUTF8String:_path.c_str()];
-    NSBundle *handler_bundle = [NSBundle bundleWithPath:path];
-    if(handler_bundle == nil)
-        return false;
-    
-    NSString *bundle_id = [handler_bundle bundleIdentifier];
-    NSString* version = [[handler_bundle infoDictionary] objectForKey:@"CFBundleVersion"];
-    
-    NSString *appName = [[NSFileManager defaultManager] displayNameAtPath: path];
-    NSImage *appicon = [[NSWorkspace sharedWorkspace] iconForFile:path];
-    [appicon setSize:NSMakeSize(icon_size, icon_size)];
-    
-    _hndl.is_default = false;
-    _hndl.path = _path;
-    _hndl.app_name = appName;
-    _hndl.app_icon = appicon;
-    _hndl.app_version = version;
-    _hndl.app_id = bundle_id;
-    
-    return true;
-}
-
-static void PurgeDuplicateHandlers(vector<OpenWithHandler> &_handlers)
-{
-    // _handlers should be already sorted here
-    for(int i = 0; i < (int)_handlers.size() - 1;)
-    {
-        if([_handlers[i].app_name isEqualToString:_handlers[i+1].app_name] &&
-           [_handlers[i].app_id isEqualToString:_handlers[i+1].app_id]
-           )
-        {
+    for(int i = 0; i < (int)_handlers.size() - 1;) {
+        if([_handlers[i].Name() isEqualToString:_handlers[i+1].Name()] &&
+           [_handlers[i].Identifier() isEqualToString:_handlers[i+1].Identifier()]){
             // choose the latest version
-            if([[SUStandardVersionComparator defaultComparator] compareVersion:_handlers[i].app_version
-                toVersion:_handlers[i+1].app_version] >= NSOrderedSame)
+            if([[SUStandardVersionComparator defaultComparator] compareVersion:_handlers[i].Version()
+                toVersion:_handlers[i+1].Version()] >= NSOrderedSame)
             { // _handlers[i] has later version or they are the same
                 _handlers.erase(_handlers.begin() + i + 1);
                 
@@ -124,7 +81,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     string                              m_CommonDir;  // may be "" in case of non-uniform listing
     VFSHostPtr                          m_CommonHost; // may be nullptr in case of non-uniform listing
     vector<VFSListingItem>              m_Items;
-    vector<OpenWithHandler>             m_OpenWithHandlers;
+    vector<LaunchServiceHandler>        m_OpenWithHandlers;
     string                              m_ItemsUTI;
     MainWindowFilePanelState           *m_MainWnd;
     PanelController                    *m_Panel;
@@ -188,7 +145,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     //////////////////////////////////////////////////////////////////////
     // Open With... stuff
     {
-        list<LauchServicesHandlers> per_item_handlers;
+        vector<LauchServicesHandlers> per_item_handlers;
         for(auto &i: m_Items)
             per_item_handlers.emplace_back( LauchServicesHandlers::GetForItem(i) );
         
@@ -200,34 +157,27 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         NSMenu *openwith_submenu = [NSMenu new];
         NSMenu *always_openwith_submenu = [NSMenu new];
         
-        // prepare open with handlers information
-        for(int i = 0; i < items_handlers.paths.size(); ++i)
-        {
-            OpenWithHandler h;
-            if(ExposeOpenWithHandler(items_handlers.paths[i], h))
-            {
-                if(items_handlers.default_path == i)
-                    h.is_default = true;
-                m_OpenWithHandlers.push_back(h);
+        for( const auto &path: items_handlers.paths )
+            try {
+                m_OpenWithHandlers.emplace_back( LaunchServiceHandler(path) );
             }
-        }
-        
-        // sort them using it's user-friendly name
-        sort(m_OpenWithHandlers.begin(), m_OpenWithHandlers.end());
+            catch(...){
+            }
         
         // get rid of duplicates in handlers list
-        PurgeDuplicateHandlers(m_OpenWithHandlers);
+        SortAndPurgeDuplicateHandlers(m_OpenWithHandlers);
         
         // show default handler if any
         bool any_handlers_added = false;
         bool any_non_default_handlers_added = false;
         for(int i = 0; i < m_OpenWithHandlers.size(); ++i)
-            if(m_OpenWithHandlers[i].is_default) {
+            if( m_OpenWithHandlers[i].Path() == items_handlers.default_handler_path ) {
                 NSMenuItem *item = [NSMenuItem new];
                 item.title = [NSString stringWithFormat:@"%@ (%@)",
-                              m_OpenWithHandlers[i].app_name,
+                              m_OpenWithHandlers[i].Name(),
                               NSLocalizedStringFromTable(@"default", @"FilePanelsContextMenu",  "Menu item postfix marker for default apps to open with, for English is 'default'")];
-                item.image = m_OpenWithHandlers[i].app_icon;
+                item.image = [m_OpenWithHandlers[i].Icon() copy];
+                item.image.size = NSMakeSize(14, 14);
                 item.tag = i;
                 item.target = self;
                 item.action = @selector(OnOpenWith:);
@@ -245,10 +195,11 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
         // show other handlers
         for( int i = 0; i < m_OpenWithHandlers.size(); ++i )
-            if( !m_OpenWithHandlers[i].is_default ) {
+            if( m_OpenWithHandlers[i].Path() != items_handlers.default_handler_path ) {
                 NSMenuItem *item = [NSMenuItem new];
-                item.title = m_OpenWithHandlers[i].app_name;
-                item.image = m_OpenWithHandlers[i].app_icon;
+                item.title = m_OpenWithHandlers[i].Name();
+                item.image = [m_OpenWithHandlers[i].Icon() copy];
+                item.image.size = NSMakeSize(14, 14);
                 item.tag = i;
                 item.target = self;
                 item.action = @selector(OnOpenWith:);
@@ -427,17 +378,19 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 {
     int app_no = (int)[sender tag];
     assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
-    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path bundle_id:m_OpenWithHandlers[app_no].app_id];
+    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].Path()
+                 bundle_id:m_OpenWithHandlers[app_no].Identifier()];
 }
 
 - (void)OnAlwaysOpenWith:(id)sender
 {
     int app_no = (int)[sender tag];
     assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
-    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].path bundle_id:m_OpenWithHandlers[app_no].app_id];
+    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].Path()
+                 bundle_id:m_OpenWithHandlers[app_no].Identifier()];
     
     if(!m_ItemsUTI.empty())
-        LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI, m_OpenWithHandlers[app_no].path);
+        LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI, m_OpenWithHandlers[app_no].Path());
 }
 
 - (void) OpenItemsWithApp:(string)_app_path bundle_id:(NSString*)_app_id
@@ -457,9 +410,13 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 - (void)OnOpenWithOther:(id)sender
 {
     ShowOpenPanel( BuildAppChoose(), m_Panel.window, [=](auto _path){
-        OpenWithHandler hndl;
-        if( ExposeOpenWithHandler(_path, hndl) )
-            [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
+        try {
+            LaunchServiceHandler handler{_path};
+            [self OpenItemsWithApp:handler.Path() bundle_id:handler.Identifier()];
+        }
+        catch(...){
+        }
+
     });
 }
 
@@ -469,9 +426,12 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         if( !m_ItemsUTI.empty() )
             LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI, _path);
         
-        OpenWithHandler hndl;
-        if(ExposeOpenWithHandler(_path, hndl))
-            [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
+        try {
+            LaunchServiceHandler handler{_path};
+            [self OpenItemsWithApp:handler.Path() bundle_id:handler.Identifier()];
+        }
+        catch(...){
+        }
     });
 }
 

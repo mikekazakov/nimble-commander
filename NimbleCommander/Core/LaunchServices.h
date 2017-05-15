@@ -16,15 +16,30 @@ struct LauchServicesHandlers
      */
     string          uti = "";
     
-    /**
-     * may be < 0, so there's no default handler fow those types
-     */
-    int             default_path = -1;
+    string          default_handler_path;
     
     static LauchServicesHandlers GetForItem(const VFSListingItem &_item);
-    static void DoMerge(const list<LauchServicesHandlers>& _input, LauchServicesHandlers& _result);
+    static void DoMerge(const vector<LauchServicesHandlers>& _input, LauchServicesHandlers& _result);
     static bool SetDefaultHandler(const string &_uti, const string &_path);
 };
 
+class LaunchServiceHandler
+{
+public:
+    LaunchServiceHandler( const string &_handler_path ); // may throw on fetch error
+    
+    const string &Path() const noexcept;
+    NSString     *Name() const noexcept;
+    NSImage      *Icon() const noexcept;
+    NSString     *Version() const noexcept;
+    NSString     *Identifier() const noexcept;
+    
+private:
+    string     m_Path;
+    NSString   *m_AppName;
+    NSImage    *m_AppIcon;
+    NSString   *m_AppVersion;
+    NSString   *m_AppID;
+};
 
 }

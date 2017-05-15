@@ -1,6 +1,6 @@
 #include <sys/stat.h>
 #include <Sparkle/Sparkle.h>
-#include "MainWindowFilePanelState+ContextMenu.h"
+#include "NCPanelContextMenu.h"
 #include "PanelAux.h"
 #include <NimbleCommander/Core/LSUrls.h>
 #include "PanelController.h"
@@ -117,10 +117,8 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     return _extract(first);
 }
 
-@interface MainWindowFilePanelContextMenu : NSMenu<NSMenuDelegate>
-@end
 
-@implementation MainWindowFilePanelContextMenu
+@implementation NCPanelContextMenu
 {
     string                              m_CommonDir;  // may be "" in case of non-uniform listing
     VFSHostPtr                          m_CommonHost; // may be nullptr in case of non-uniform listing
@@ -128,8 +126,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     vector<OpenWithHandler>             m_OpenWithHandlers;
     string                              m_ItemsUTI;
     MainWindowFilePanelState           *m_MainWnd;
-    PanelController                    *m_CurrentController;
-    PanelController                    *m_OppositeController;
+    PanelController                    *m_Panel;
     NSMutableArray                     *m_ShareItemsURLs;
     int                                 m_DirsCount;
     int                                 m_FilesCount;
@@ -141,18 +138,14 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     unique_ptr<actions::PanelAction>    m_CompressToOppositeAction;
 }
 
-- (id) initWithData:(vector<VFSListingItem>) _items
-            mainWnd:(MainWindowFilePanelState*)_wnd
-             myCont:(PanelController*)_my_cont
-            oppCont:(PanelController*)_opp_cont
+- (instancetype) initWithItems:(vector<VFSListingItem>)_items
+                       ofPanel:(PanelController*)_panel
 {
     if( _items.empty() )
-        throw invalid_argument("MainWindowFilePanelContextMenu.initWithData - there's no items");
+        throw invalid_argument("NCPanelContextMenu.initWithData - there's no items");
     self = [super init];
     if(self) {
-        m_MainWnd = _wnd;
-        m_CurrentController = _my_cont;
-        m_OppositeController = _opp_cont;
+        m_Panel = _panel;
         m_DirsCount = m_FilesCount = 0;
         m_Items = move(_items);
         m_DirsCount = (int)count_if(begin(m_Items), end(m_Items), [](auto &i) { return i.IsDir(); });
@@ -176,7 +169,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void)menuDidClose:(NSMenu *)menu
 {
-    [m_CurrentController contextMenuDidClose:menu];
+    [m_Panel contextMenuDidClose:menu];
 }
 
 - (void) doStuffing
@@ -315,7 +308,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     trash_item.title = NSLocalizedStringFromTable(@"Move to Trash", @"FilePanelsContextMenu", "Menu item title to move to trash, for English is 'Move to Trash'");
     trash_item.target = self;
     trash_item.action = @selector(OnMoveToTrash:);
-    trash_item.hidden = !m_MoveToTrashAction->Predicate(m_CurrentController);
+    trash_item.hidden = !m_MoveToTrashAction->Predicate(m_Panel);
     trash_item.keyEquivalent = @"";
     [self addItem:trash_item];
     
@@ -334,31 +327,33 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     //////////////////////////////////////////////////////////////////////
     // Compression stuff
     const auto compression_enabled = ActivationManager::Instance().HasCompressionOperation();
-    const auto compress_in_opposite_item = [NSMenuItem new];
-    if(m_Items.size() > 1)
-        compress_in_opposite_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items", @"FilePanelsContextMenu", "Compress some items"),
-                                           m_Items.size()];
-    else
-        compress_in_opposite_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d", @"FilePanelsContextMenu", "Compress one item"),
-                                           [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
-    compress_in_opposite_item.target = self;
-    compress_in_opposite_item.action = compression_enabled ? @selector(OnCompressToOppositePanel:) : nil;
-    compress_in_opposite_item.keyEquivalent = @"";
-    [self addItem:compress_in_opposite_item];
-    
+   
     const auto compress_here_item = [NSMenuItem new];
     if(m_Items.size() > 1)
-        compress_here_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items Here", @"FilePanelsContextMenu", "Compress some items here"),
+        compress_here_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items", @"FilePanelsContextMenu", "Compress some items here"),
                                     m_Items.size()];
     else
-        compress_here_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d Here", @"FilePanelsContextMenu", "Compress one item here"),
+        compress_here_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d", @"FilePanelsContextMenu", "Compress one item here"),
                                     [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
     compress_here_item.target = self;
     compress_here_item.action = compression_enabled ? @selector(OnCompressToCurrentPanel:) : nil;
     compress_here_item.keyEquivalent = @"";
-    compress_here_item.alternate = YES;
-    compress_here_item.keyEquivalentModifierMask = NSAlternateKeyMask;
     [self addItem:compress_here_item];
+    
+    const auto compress_in_opposite_item = [NSMenuItem new];
+    if(m_Items.size() > 1)
+        compress_in_opposite_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items in Opposite Panel", @"FilePanelsContextMenu", "Compress some items"),
+                                           m_Items.size()];
+    else
+        compress_in_opposite_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d in Opposite Panel", @"FilePanelsContextMenu", "Compress one item"),
+                                           [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
+    compress_in_opposite_item.target = self;
+    compress_in_opposite_item.action = compression_enabled ? @selector(OnCompressToOppositePanel:) : nil;
+    compress_in_opposite_item.keyEquivalent = @"";
+    compress_in_opposite_item.alternate = YES;
+    compress_in_opposite_item.keyEquivalentModifierMask = NSAlternateKeyMask;
+    [self addItem:compress_in_opposite_item];
+    
 
     //////////////////////////////////////////////////////////////////////
     // Duplicate stuff
@@ -419,17 +414,17 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
     if( item.action == @selector(OnCopyPaths:) )
-        return m_CopyAction->ValidateMenuItem(m_CurrentController, item);
+        return m_CopyAction->ValidateMenuItem(m_Panel, item);
     if( item.action == @selector(OnMoveToTrash:) )
-        return m_MoveToTrashAction->ValidateMenuItem(m_CurrentController, item);
+        return m_MoveToTrashAction->ValidateMenuItem(m_Panel, item);
     if( item.action == @selector(OnDeletePermanently:) )
-        return m_DeletePermanentlyAction->ValidateMenuItem(m_CurrentController, item);
+        return m_DeletePermanentlyAction->ValidateMenuItem(m_Panel, item);
     if( item.action == @selector(OnDuplicateItem:) )
-        return m_DuplicateAction->ValidateMenuItem(m_CurrentController, item);
+        return m_DuplicateAction->ValidateMenuItem(m_Panel, item);
     if( item.action == @selector(OnCompressToCurrentPanel:) )
-        return m_CompressHereAction->ValidateMenuItem(m_CurrentController, item);
+        return m_CompressHereAction->ValidateMenuItem(m_Panel, item);
     if( item.action == @selector(OnCompressToOppositePanel:) )
-        return m_CompressToOppositeAction->ValidateMenuItem(m_CurrentController, item);
+        return m_CompressToOppositeAction->ValidateMenuItem(m_Panel, item);
     return true;
 }
 
@@ -462,16 +457,16 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
             vector<string> items;
             for(auto &i: m_Items)
                 items.emplace_back( i.Path() );
-            PanelVFSFileWorkspaceOpener::Open(items, m_CommonHost, _app_id, m_CurrentController);
+            PanelVFSFileWorkspaceOpener::Open(items, m_CommonHost, _app_id, m_Panel);
         }
     }
     else if(m_Items.size() == 1)
-        PanelVFSFileWorkspaceOpener::Open(m_Items.front().Path(), m_Items.front().Host(), _app_path, m_CurrentController);
+        PanelVFSFileWorkspaceOpener::Open(m_Items.front().Path(), m_Items.front().Host(), _app_path, m_Panel);
 }
 
 - (void)OnOpenWithOther:(id)sender
 {
-    ShowOpenPanel( BuildAppChoose(), m_MainWnd.windowContentView.window, [=](auto _path){
+    ShowOpenPanel( BuildAppChoose(), m_Panel.window, [=](auto _path){
         OpenWithHandler hndl;
         if( ExposeOpenWithHandler(_path, hndl) )
             [self OpenItemsWithApp:hndl.path bundle_id:hndl.app_id];
@@ -480,7 +475,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void)OnAlwaysOpenWithOther:(id)sender
 {
-    ShowOpenPanel( BuildAppChoose(), m_MainWnd.windowContentView.window, [=](auto _path){
+    ShowOpenPanel( BuildAppChoose(), m_Panel.window, [=](auto _path){
         if( !m_ItemsUTI.empty() )
             LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI, _path);
         
@@ -492,27 +487,27 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void)OnMoveToTrash:(id)sender
 {
-    m_MoveToTrashAction->Perform(m_CurrentController, sender);
+    m_MoveToTrashAction->Perform(m_Panel, sender);
 }
 
 - (void)OnDeletePermanently:(id)sender
 {
-    m_DeletePermanentlyAction->Perform(m_CurrentController, sender);
+    m_DeletePermanentlyAction->Perform(m_Panel, sender);
 }
 
 - (void)OnCopyPaths:(id)sender
 {
-    m_CopyAction->Perform(m_CurrentController, sender);
+    m_CopyAction->Perform(m_Panel, sender);
 }
 
 - (void)OnCompressToOppositePanel:(id)sender
 {
-    m_CompressToOppositeAction->Perform(m_CurrentController, sender);
+    m_CompressToOppositeAction->Perform(m_Panel, sender);
 }
 
 - (void)OnCompressToCurrentPanel:(id)sender
 {
-    m_CompressHereAction->Perform(m_CurrentController, sender);
+    m_CompressHereAction->Perform(m_Panel, sender);
 }
 
 - (void)OnShareWithService:(id)sender
@@ -523,36 +518,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void)OnDuplicateItem:(id)sender
 {
-    m_DuplicateAction->Perform(m_CurrentController, sender);
-}
-
-@end
-
-
-@implementation MainWindowFilePanelState (ContextMenu)
-
-- (NSMenu*) RequestContextMenuOn:(vector<VFSListingItem>) _items
-                          caller:(PanelController*) _caller
-{
-    if( _items.empty() )
-        return nil;
-    
-    PanelController *current_cont = _caller;
-    PanelController *opp_cont;
-    if(current_cont == self.leftPanelController)
-        opp_cont = self.rightPanelController;
-    else if(current_cont == self.rightPanelController)
-        opp_cont = self.leftPanelController;
-    else
-        return nil;
-    
-    MainWindowFilePanelContextMenu *menu = [MainWindowFilePanelContextMenu alloc];
-    menu = [menu initWithData:move(_items)
-                      mainWnd:self
-                       myCont:current_cont
-                      oppCont:opp_cont];
-
-    return menu;
+    m_DuplicateAction->Perform(m_Panel, sender);
 }
 
 @end

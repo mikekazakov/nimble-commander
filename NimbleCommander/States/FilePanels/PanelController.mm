@@ -31,7 +31,8 @@
 #include "PanelDataExternalEntryKey.h"
 #include "PanelDataPersistency.h"
 #include <NimbleCommander/Core/VFSInstanceManager.h>
-#import "PanelController+Menu.h"
+#include "PanelController+Menu.h"
+#include "NCPanelContextMenu.h"
 
 using namespace ::nc::panel;
 
@@ -885,7 +886,7 @@ static bool RouteKeyboardInputIntoTerminal()
     if( !clicked_item || clicked_item.IsDotDot() )
         return nil;
     
-    const  auto clicked_item_vd = m_Data.VolatileDataAtSortPosition(_sort_pos);
+    const auto clicked_item_vd = m_Data.VolatileDataAtSortPosition(_sort_pos);
     
     vector<VFSListingItem> vfs_items;
     if( clicked_item_vd.is_selected() == false)
@@ -893,13 +894,12 @@ static bool RouteKeyboardInputIntoTerminal()
     else
         vfs_items = m_Data.SelectedEntries(); // all selected items
     
-    NSMenu *menu = [self.state RequestContextMenuOn:vfs_items caller:self];
-    if( menu ) {
-        for( auto &i: vfs_items )
-            m_Data.VolatileDataAtRawPosition(i.Index()).toggle_highlight(true);
-        [_view volatileDataChanged];
-    }
+    for( auto &i: vfs_items )
+        m_Data.VolatileDataAtRawPosition(i.Index()).toggle_highlight(true);
+    [_view volatileDataChanged];
     
+    const auto menu = [[NCPanelContextMenu alloc] initWithItems:move(vfs_items)
+                                                        ofPanel:self];
     return menu;
 }
 

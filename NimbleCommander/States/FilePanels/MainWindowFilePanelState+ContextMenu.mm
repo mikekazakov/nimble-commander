@@ -4,11 +4,11 @@
 #include "PanelAux.h"
 #include <NimbleCommander/Core/LSUrls.h>
 #include "PanelController.h"
-#include <NimbleCommander/Operations/Compress/FileCompressOperation.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "Actions/CopyToPasteboard.h"
 #include "Actions/Delete.h"
 #include "Actions/Duplicate.h"
+#include "Actions/Compress.h"
 
 using namespace nc::panel;
 
@@ -137,6 +137,8 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     unique_ptr<actions::PanelAction>    m_MoveToTrashAction;
     unique_ptr<actions::PanelAction>    m_DeletePermanentlyAction;
     unique_ptr<actions::PanelAction>    m_DuplicateAction;
+    unique_ptr<actions::PanelAction>    m_CompressHereAction;
+    unique_ptr<actions::PanelAction>    m_CompressToOppositeAction;
 }
 
 - (id) initWithData:(vector<VFSListingItem>) _items
@@ -165,6 +167,8 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         m_MoveToTrashAction.reset( new actions::context::MoveToTrash{m_Items} );
         m_DeletePermanentlyAction.reset( new actions::context::DeletePermanently{m_Items} );
         m_DuplicateAction.reset( new actions::context::Duplicate{m_Items} );
+        m_CompressHereAction.reset( new actions::context::CompressHere{m_Items} );
+        m_CompressToOppositeAction.reset( new actions::context::CompressToOpposite{m_Items} );
         [self doStuffing];
     }
     return self;
@@ -177,13 +181,6 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void) doStuffing
 {
-    bool cur_pnl_writable = true;
-    if( m_CurrentController.isUniform  )
-        cur_pnl_writable = m_CurrentController.vfs->IsWritableAtPath( m_CurrentController.currentDirectoryPath.c_str() );
-    bool opp_pnl_writable = true;
-    if( m_OppositeController.isUniform )
-        opp_pnl_writable = m_OppositeController.vfs->IsWritableAtPath( m_OppositeController.currentDirectoryPath.c_str() );
-    
     //////////////////////////////////////////////////////////////////////
     // regular Open item
     if(m_FilesCount > 0 || ( m_CommonHost && m_CommonHost->IsNativeFS() ) ) {
@@ -336,37 +333,32 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     
     //////////////////////////////////////////////////////////////////////
     // Compression stuff
-    if( ActivationManager::Instance().HasCompressionOperation() ) {
-        NSMenuItem *item = [NSMenuItem new];
-        if(m_Items.size() > 1)
-            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items", @"FilePanelsContextMenu", "Compress some items"),
-                          m_Items.size()];
-        else
-            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d", @"FilePanelsContextMenu", "Compress one item"),
-                          [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
-        if(opp_pnl_writable) { // gray out this thing if we can't compress on opposite panel
-            item.target = self;
-            item.action = @selector(OnCompressToOppositePanel:);
-        }
-        item.keyEquivalent = @"";
-        [self addItem:item];
-        
-        item = [NSMenuItem new];
-        if(m_Items.size() > 1)
-            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items Here", @"FilePanelsContextMenu", "Compress some items here"),
-                          m_Items.size()];
-        else
-            item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d Here", @"FilePanelsContextMenu", "Compress one item here"),
-                          [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
-        if(cur_pnl_writable) { // gray out this thing if we can't compress on this panel
-            item.target = self;
-            item.action = @selector(OnCompressToCurrentPanel:);
-        }
-        item.keyEquivalent = @"";
-        item.alternate = YES;
-        item.keyEquivalentModifierMask = NSAlternateKeyMask;
-        [self addItem:item];
-    }
+    const auto compression_enabled = ActivationManager::Instance().HasCompressionOperation();
+    const auto compress_in_opposite_item = [NSMenuItem new];
+    if(m_Items.size() > 1)
+        compress_in_opposite_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items", @"FilePanelsContextMenu", "Compress some items"),
+                                           m_Items.size()];
+    else
+        compress_in_opposite_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d", @"FilePanelsContextMenu", "Compress one item"),
+                                           [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
+    compress_in_opposite_item.target = self;
+    compress_in_opposite_item.action = compression_enabled ? @selector(OnCompressToOppositePanel:) : nil;
+    compress_in_opposite_item.keyEquivalent = @"";
+    [self addItem:compress_in_opposite_item];
+    
+    const auto compress_here_item = [NSMenuItem new];
+    if(m_Items.size() > 1)
+        compress_here_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items Here", @"FilePanelsContextMenu", "Compress some items here"),
+                                    m_Items.size()];
+    else
+        compress_here_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d Here", @"FilePanelsContextMenu", "Compress one item here"),
+                                    [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
+    compress_here_item.target = self;
+    compress_here_item.action = compression_enabled ? @selector(OnCompressToCurrentPanel:) : nil;
+    compress_here_item.keyEquivalent = @"";
+    compress_here_item.alternate = YES;
+    compress_here_item.keyEquivalentModifierMask = NSAlternateKeyMask;
+    [self addItem:compress_here_item];
 
     //////////////////////////////////////////////////////////////////////
     // Duplicate stuff
@@ -434,7 +426,10 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         return m_DeletePermanentlyAction->ValidateMenuItem(m_CurrentController, item);
     if( item.action == @selector(OnDuplicateItem:) )
         return m_DuplicateAction->ValidateMenuItem(m_CurrentController, item);
-
+    if( item.action == @selector(OnCompressToCurrentPanel:) )
+        return m_CompressHereAction->ValidateMenuItem(m_CurrentController, item);
+    if( item.action == @selector(OnCompressToOppositePanel:) )
+        return m_CompressToOppositeAction->ValidateMenuItem(m_CurrentController, item);
     return true;
 }
 
@@ -512,24 +507,12 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
 - (void)OnCompressToOppositePanel:(id)sender
 {
-    if( !m_OppositeController.isUniform )
-        return;
-    auto op = [[FileCompressOperation alloc] initWithFiles:m_Items
-                                                   dstroot:m_OppositeController.currentDirectoryPath
-                                                    dstvfs:m_OppositeController.vfs];
-    op.TargetPanel = m_OppositeController;
-    [m_MainWnd AddOperation:op];
+    m_CompressToOppositeAction->Perform(m_CurrentController, sender);
 }
 
 - (void)OnCompressToCurrentPanel:(id)sender
 {
-    if( !m_CommonHost || m_CommonDir.empty() )
-        return;
-    auto op = [[FileCompressOperation alloc] initWithFiles:m_Items
-                                                   dstroot:m_CommonDir
-                                                    dstvfs:m_CommonHost];
-    op.TargetPanel = m_CurrentController;
-    [m_MainWnd AddOperation:op];
+    m_CompressHereAction->Perform(m_CurrentController, sender);
 }
 
 - (void)OnShareWithService:(id)sender

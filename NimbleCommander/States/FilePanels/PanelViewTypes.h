@@ -1,5 +1,7 @@
 #pragma once
 
+namespace nc::panel {
+
 enum class PanelViewFilenameTrimming : int8_t
 {
     Heading     = 0,
@@ -14,3 +16,5 @@ namespace PanelViewHitTest {
         FilenameFact,
     };
 };
+
+}

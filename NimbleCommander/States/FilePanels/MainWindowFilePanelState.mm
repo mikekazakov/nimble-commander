@@ -796,6 +796,11 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return m_MainSplitView.anyCollapsed;
 }
 
+- (bool) bothPanelsAreVisible
+{
+    return !m_MainSplitView.hidden && !m_MainSplitView.anyCollapsedOrOverlayed;
+}
+
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd
 {
     if( ![self executeInOverlappedTerminalIfPossible:_filename at:_cwd] ) {

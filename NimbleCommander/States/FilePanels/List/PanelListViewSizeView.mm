@@ -35,7 +35,7 @@ static NSString *SizeStringFromEncodedSize( uint64_t _sz )
     if( _sz == g_NonCalculatedSizeForDotDot )
         return NSLocalizedString(@"__MODERNPRESENTATION_UP_WORD", "Upper-level in directory, for English is 'Up'");
 
-    return ByteCountFormatter::Instance().ToNSString( _sz, panel::GetFileSizeFormat() );
+    return ByteCountFormatter::Instance().ToNSString( _sz, GetFileSizeFormat() );
 }
 
 @implementation PanelListViewSizeView

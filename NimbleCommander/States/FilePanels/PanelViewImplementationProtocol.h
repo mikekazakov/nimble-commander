@@ -27,7 +27,7 @@ namespace nc::panel::data {
 - (void) onPageUp:(NSEvent*)_event;
 - (void) onPageDown:(NSEvent*)_event;
 
-- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options;
+- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(nc::panel::PanelViewHitTest::Options)_options;
 
 @end
 

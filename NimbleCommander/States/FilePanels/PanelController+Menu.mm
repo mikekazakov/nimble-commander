@@ -27,6 +27,7 @@
 #include "Actions/Delete.h"
 #include "Actions/NavigateHistory.h"
 #include "Actions/Duplicate.h"
+#include "Actions/Compress.h"
 #include "PanelView.h"
 
 static const nc::panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
@@ -89,6 +90,8 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self forceRefreshPanel];
 }
 
+- (IBAction)onCompressItems:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onCompressItemsHere:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnDuplicate:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoBack:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoForward:(id)sender { Perform(_cmd, self, sender); }
@@ -249,6 +252,8 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.command.move_to_trash",          @selector(OnMoveToTrash:),              new MoveToTrash},
 {"menu.command.delete",                 @selector(OnDeleteCommand:),            new Delete},
 {"menu.command.delete_permanently",     @selector(OnDeletePermanentlyCommand:), new Delete{true}},
+{"menu.command.compress_here",          @selector(onCompressItemsHere:),        new CompressHere},
+{"menu.command.compress_to_opposite",   @selector(onCompressItems:),            new CompressToOpposite},
 };
 
 static const PanelAction *ActionByTag(int _tag) noexcept

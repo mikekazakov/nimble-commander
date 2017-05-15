@@ -302,7 +302,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
         
         m_SizeLabel.stringValue = FileSizeToString(_item,
                                                    _vd,
-                                                   panel::GetFileSizeFormat());
+                                                   GetFileSizeFormat());
         
         m_ModTime.stringValue = PanelListViewDateFormatting::Format(
                                                                    PanelListViewDateFormatting::Style::Medium,
@@ -406,7 +406,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
         else {
             m_SelectionLabel.stringValue = FormHumanReadableBytesAndFiles(m_Stats.bytes_in_selected_entries,
                                                                           m_Stats.selected_entries_amount,
-                                                                          panel::GetSelectionSizeFormat());
+                                                                          GetSelectionSizeFormat());
             m_SelectionLabel.hidden = false;
             m_FilenameLabel.hidden = true;
             m_SizeLabel.hidden = true;

@@ -1,8 +1,10 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "PanelViewPresentationSettings.h"
 
+namespace nc::panel {
+
 static const auto g_ConfigTrimmingMode = "filePanel.presentation.filenamesTrimmingMode";
-PanelViewFilenameTrimming panel::GetCurrentFilenamesTrimmingMode() noexcept
+PanelViewFilenameTrimming GetCurrentFilenamesTrimmingMode() noexcept
 {
     static PanelViewFilenameTrimming mode = []{
         const auto v = (PanelViewFilenameTrimming)GlobalConfig().GetInt(g_ConfigTrimmingMode);
@@ -15,7 +17,7 @@ PanelViewFilenameTrimming panel::GetCurrentFilenamesTrimmingMode() noexcept
 }
 
 static const auto g_ConfigFileSizeFormat = "filePanel.general.fileSizeFormat";
-ByteCountFormatter::Type panel::GetFileSizeFormat() noexcept
+ByteCountFormatter::Type GetFileSizeFormat() noexcept
 {
     static ByteCountFormatter::Type format = []{
         const auto v = (ByteCountFormatter::Type) GlobalConfig().GetInt(g_ConfigFileSizeFormat);
@@ -28,7 +30,7 @@ ByteCountFormatter::Type panel::GetFileSizeFormat() noexcept
 }
 
 static const auto g_ConfigSelectionSizeFormat = "filePanel.general.selectionSizeFormat";
-ByteCountFormatter::Type panel::GetSelectionSizeFormat() noexcept
+ByteCountFormatter::Type GetSelectionSizeFormat() noexcept
 {
     static ByteCountFormatter::Type format = []{
         const auto v = (ByteCountFormatter::Type) GlobalConfig().GetInt(g_ConfigSelectionSizeFormat);
@@ -38,4 +40,6 @@ ByteCountFormatter::Type panel::GetSelectionSizeFormat() noexcept
         return v;
     }();
     return format;
+}
+
 }

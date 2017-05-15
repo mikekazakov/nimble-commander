@@ -143,6 +143,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 @property (nonatomic, readonly) bool anyPanelCollapsed;
 
+@property (nonatomic, readonly) bool bothPanelsAreVisible;
+
 /**
  * Process Tab button - change focus from left panel to right and vice versa.
  */

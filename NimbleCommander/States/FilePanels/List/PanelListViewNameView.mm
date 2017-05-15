@@ -6,6 +6,8 @@
 #include "PanelListViewRowView.h"
 #include "PanelListViewNameView.h"
 
+using namespace nc::panel;
+
 static const auto g_SymlinkArrowImage = [NSImage imageNamed:@"AliasBadgeIcon"];
 
 static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
@@ -156,7 +158,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     if( !row_view )
         return;
 
-    const auto tm = panel::GetCurrentFilenamesTrimmingMode();
+    const auto tm = GetCurrentFilenamesTrimmingMode();
     NSDictionary *attrs = @{NSFontAttributeName:row_view.listView.font,
                             NSForegroundColorAttributeName: row_view.rowTextColor,
                             NSParagraphStyleAttributeName: ParagraphStyle(tm)};

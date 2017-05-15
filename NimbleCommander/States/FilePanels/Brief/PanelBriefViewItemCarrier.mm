@@ -7,6 +7,8 @@
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewItemCarrier.h"
 
+using namespace nc::panel;
+
 static const auto g_SymlinkArrowImage = [NSImage imageNamed:@"AliasBadgeIcon"];
 
 static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
@@ -306,7 +308,7 @@ static NSPoint  g_LastMouseDownPos = {};
 
 - (void) buildTextAttributes
 {
-    const auto tm = panel::GetCurrentFilenamesTrimmingMode();
+    const auto tm = GetCurrentFilenamesTrimmingMode();
     NSDictionary *attrs = @{NSFontAttributeName: CurrentTheme().FilePanelsBriefFont(),
                             NSForegroundColorAttributeName: m_TextColor,
                             NSParagraphStyleAttributeName: ParagraphStyle(tm)};

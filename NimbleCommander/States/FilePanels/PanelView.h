@@ -66,7 +66,7 @@ namespace nc::panel::data {
  * return a number of item at specified point.
  * options currently unsupported.
  */
-- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options;
+- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(nc::panel::PanelViewHitTest::Options)_options;
 
 - (void) startFieldEditorRenaming;
 

@@ -7,7 +7,6 @@
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Operations/Copy/MassCopySheetController.h>
 #include <NimbleCommander/Operations/Delete/FileDeletionOperation.h>
-#include <NimbleCommander/Operations/Compress/FileCompressOperation.h>
 #include <NimbleCommander/Operations/OperationsController.h>
 #include "MainWindowFilePanelState+Menu.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
@@ -52,8 +51,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.file.open_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item;
-    IF_MENU_TAG("menu.command.compress_here")        return self.isPanelActive && self.activePanelView.item && !self.activePanelView.item.IsDotDot() && self.activePanelController.isUniform;
-    IF_MENU_TAG("menu.command.compress_to_opposite") return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item && !self.activePanelView.item.IsDotDot() && self.oppositePanelController.isUniform;
     IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed &&
         self.activePanelView.item && self.activePanelView.item.Host()->IsNativeFS() && self.oppositePanelController.isUniform && self.oppositePanelController.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && self.activePanelView.item && !self.activePanelView.item.IsDir() && self.activePanelView.item.Host()->IsNativeFS();
@@ -186,40 +183,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         return;
     
     [self.class performVFSItemOpenInPanel:opp item:item];
-}
-
-- (IBAction)onCompressItems:(id)sender
-{
-    if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed) return;
-    
-    auto entries = self.activePanelController.selectedEntriesOrFocusedEntry;
-    if(entries.empty())
-        return;
-    
-    if( !self.oppositePanelController.isUniform )
-        return;
-
-    FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(entries)
-                                                                     dstroot:self.oppositePanelController.currentDirectoryPath
-                                                                      dstvfs:self.oppositePanelController.vfs];
-    op.TargetPanel = self.oppositePanelController;
-    [m_OperationsController AddOperation:op];
-}
-
-- (IBAction)onCompressItemsHere:(id)sender
-{
-    if( !self.isPanelActive || !self.activePanelController.isUniform )
-        return;
-    
-    auto entries = self.activePanelController.selectedEntriesOrFocusedEntry;
-    if( entries.empty() )
-        return;
-    
-    FileCompressOperation *op = [[FileCompressOperation alloc] initWithFiles:move(entries)
-                                                                     dstroot:self.activePanelController.currentDirectoryPath
-                                                                      dstvfs:self.activePanelController.vfs];
-    op.TargetPanel = self.activePanelController;
-    [m_OperationsController AddOperation:op];
 }
 
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender

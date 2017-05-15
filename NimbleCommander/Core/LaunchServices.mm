@@ -187,7 +187,7 @@ bool LauchServicesHandlers::SetDefaultHandler(const string &_uti, const string &
                                                          kLSRolesAll,
                                                          (__bridge CFStringRef)bundle_id);
 
-    return ret == 0;
+    return ret == noErr;
 }
 
 

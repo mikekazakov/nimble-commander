@@ -225,16 +225,26 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
             [always_openwith_submenu addItem:NSMenuItem.separatorItem];
         }
         
-        // let user to select program manually
-        NSMenuItem *item = [NSMenuItem new];
-        item.title = NSLocalizedStringFromTable(@"Other...", @"FilePanelsContextMenu", "Menu item to choose other app to open with, for English is 'Other...'");
-        item.target = self;
-        item.action = @selector(OnOpenWithOther:);
-        [openwith_submenu addItem:item];
+        // search in MAS
+        if( !m_ItemsUTI.empty() ) {
+            auto mas = [NSMenuItem new];
+            mas.title = NSLocalizedStringFromTable(@"App Store...", @"FilePanelsContextMenu", "Menu item to choose an app from MAS");
+            mas.target = self;
+            mas.action = @selector(OnSearchInMAS:);
+            [openwith_submenu addItem:mas];
+            [always_openwith_submenu addItem:[mas copy]];
+        }
         
-        item = [item copy];
-        item.action = @selector(OnAlwaysOpenWithOther:);
-        [always_openwith_submenu addItem:item];
+        // let user to select program manually
+        auto open_with_other = [NSMenuItem new];
+        open_with_other.title = NSLocalizedStringFromTable(@"Other...", @"FilePanelsContextMenu", "Menu item to choose other app to open with, for English is 'Other...'");
+        open_with_other.target = self;
+        open_with_other.action = @selector(OnOpenWithOther:);
+        [openwith_submenu addItem:open_with_other];
+        
+        open_with_other = [open_with_other copy];
+        open_with_other.action = @selector(OnAlwaysOpenWithOther:);
+        [always_openwith_submenu addItem:open_with_other];
 
         // and put this stuff into root-level menu
         NSMenuItem *openwith = [NSMenuItem new];
@@ -469,6 +479,13 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 - (void)OnDuplicateItem:(id)sender
 {
     m_DuplicateAction->Perform(m_Panel, sender);
+}
+
+- (void)OnSearchInMAS:(id)sender
+{
+    auto format = @"macappstores://search.itunes.apple.com/WebObjects/MZSearch.woa/wa/docTypeLookup?uti=%s";
+    NSString *mas_url = [NSString stringWithFormat:format, m_ItemsUTI.c_str()];
+    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
 }
 
 @end

@@ -4,23 +4,21 @@
 
 namespace nc::core {
 
-struct LauchServicesHandlers
+class LauchServicesHandlers
 {
-    /**
-     * unsorted apps list
-     */
-    vector<string>  paths{};
-    
-    /**
-     * common UTI if any (if there was different UTI before merge - this field will be "")
-     */
-    string          uti = "";
-    
-    string          default_handler_path;
-    
-    static LauchServicesHandlers GetForItem(const VFSListingItem &_item);
-    static void DoMerge(const vector<LauchServicesHandlers>& _input, LauchServicesHandlers& _result);
-    static bool SetDefaultHandler(const string &_uti, const string &_path);
+public:
+    LauchServicesHandlers( );
+    LauchServicesHandlers( const VFSListingItem &_item );
+    LauchServicesHandlers( const vector<LauchServicesHandlers>& _handlers_to_merge );
+
+    const vector<string> &HandlersPaths() const noexcept;
+    const string &DefaultHandlerPath() const noexcept; // may be empty after merge
+    const string &CommonUTI() const noexcept; // may be empty after merge
+
+private:
+    vector<string>  m_Paths;
+    string          m_UTI;
+    string          m_DefaultHandlerPath;
 };
 
 class LaunchServiceHandler
@@ -33,6 +31,8 @@ public:
     NSImage      *Icon() const noexcept;
     NSString     *Version() const noexcept;
     NSString     *Identifier() const noexcept;
+    
+    bool SetAsDefaultHandlerForUTI(const string &_uti) const;
     
 private:
     string     m_Path;

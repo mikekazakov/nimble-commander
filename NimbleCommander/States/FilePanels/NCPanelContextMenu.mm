@@ -147,17 +147,16 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     {
         vector<LauchServicesHandlers> per_item_handlers;
         for(auto &i: m_Items)
-            per_item_handlers.emplace_back( LauchServicesHandlers::GetForItem(i) );
+            per_item_handlers.emplace_back( LauchServicesHandlers{i} );
         
-        LauchServicesHandlers items_handlers;
-        LauchServicesHandlers::DoMerge(per_item_handlers, items_handlers);
+        LauchServicesHandlers items_handlers{per_item_handlers};
         
-        m_ItemsUTI = items_handlers.uti;
+        m_ItemsUTI = items_handlers.CommonUTI();
 
         NSMenu *openwith_submenu = [NSMenu new];
         NSMenu *always_openwith_submenu = [NSMenu new];
         
-        for( const auto &path: items_handlers.paths )
+        for( const auto &path: items_handlers.HandlersPaths() )
             try {
                 m_OpenWithHandlers.emplace_back( LaunchServiceHandler(path) );
             }
@@ -171,7 +170,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         bool any_handlers_added = false;
         bool any_non_default_handlers_added = false;
         for(int i = 0; i < m_OpenWithHandlers.size(); ++i)
-            if( m_OpenWithHandlers[i].Path() == items_handlers.default_handler_path ) {
+            if( m_OpenWithHandlers[i].Path() == items_handlers.DefaultHandlerPath() ) {
                 NSMenuItem *item = [NSMenuItem new];
                 item.title = [NSString stringWithFormat:@"%@ (%@)",
                               m_OpenWithHandlers[i].Name(),
@@ -195,7 +194,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 
         // show other handlers
         for( int i = 0; i < m_OpenWithHandlers.size(); ++i )
-            if( m_OpenWithHandlers[i].Path() != items_handlers.default_handler_path ) {
+            if( m_OpenWithHandlers[i].Path() != items_handlers.DefaultHandlerPath() ) {
                 NSMenuItem *item = [NSMenuItem new];
                 item.title = m_OpenWithHandlers[i].Name();
                 item.image = [m_OpenWithHandlers[i].Icon() copy];
@@ -396,11 +395,12 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 {
     int app_no = (int)[sender tag];
     assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
-    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].Path()
-                 bundle_id:m_OpenWithHandlers[app_no].Identifier()];
+    const auto &handler = m_OpenWithHandlers[app_no];
+    [self OpenItemsWithApp:handler.Path()
+                 bundle_id:handler.Identifier()];
     
-    if(!m_ItemsUTI.empty())
-        LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI, m_OpenWithHandlers[app_no].Path());
+    if( !m_ItemsUTI.empty() )
+        handler.SetAsDefaultHandlerForUTI(m_ItemsUTI);
 }
 
 - (void) OpenItemsWithApp:(string)_app_path bundle_id:(NSString*)_app_id
@@ -433,12 +433,12 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 - (void)OnAlwaysOpenWithOther:(id)sender
 {
     ShowOpenPanel( BuildAppChoose(), m_Panel.window, [=](auto _path){
-        if( !m_ItemsUTI.empty() )
-            LauchServicesHandlers::SetDefaultHandler(m_ItemsUTI, _path);
-        
         try {
             LaunchServiceHandler handler{_path};
             [self OpenItemsWithApp:handler.Path() bundle_id:handler.Identifier()];
+            
+            if( !m_ItemsUTI.empty() )
+                handler.SetAsDefaultHandlerForUTI(m_ItemsUTI);
         }
         catch(...){
         }

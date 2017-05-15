@@ -80,6 +80,24 @@ bool context::CompressHere::Predicate( PanelController *_target ) const
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
+bool context::CompressHere::ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const
+{
+    if(m_Items.size() > 1)
+        _item.title = [NSString stringWithFormat:
+            NSLocalizedStringFromTable(@"Compress %lu Items",
+                                       @"FilePanelsContextMenu",
+                                       "Compress some items here"),
+            m_Items.size()];
+    else
+        _item.title = [NSString stringWithFormat:
+            NSLocalizedStringFromTable(@"Compress \u201c%@\u201d",
+                                       @"FilePanelsContextMenu",
+                                       "Compress one item here"),
+            m_Items.front().NSDisplayName()];
+
+    return Predicate(_target);
+}
+
 void context::CompressHere::Perform( PanelController *_target, id _sender ) const
 {
     auto entries = m_Items;
@@ -102,6 +120,25 @@ bool context::CompressToOpposite::Predicate( PanelController *_target ) const
         return false;
     
     return opposite.isUniform && opposite.vfs->IsWritable();
+}
+
+bool context::CompressToOpposite::ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const
+{
+    if(m_Items.size() > 1)
+        _item.title = [NSString stringWithFormat:
+            NSLocalizedStringFromTable(@"Compress %lu Items in Opposite Panel",
+                                       @"FilePanelsContextMenu",
+                                       "Compress some items"),
+            m_Items.size()];
+    else
+        _item.title = [NSString stringWithFormat:
+            NSLocalizedStringFromTable(@"Compress \u201c%@\u201d in Opposite Panel",
+                                       @"FilePanelsContextMenu",
+                                       "Compress one item"),
+            m_Items.front().NSDisplayName()];
+
+    
+    return Predicate(_target);
 }
 
 void context::CompressToOpposite::Perform( PanelController *_target, id _sender ) const

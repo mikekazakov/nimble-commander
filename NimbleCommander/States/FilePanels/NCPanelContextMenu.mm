@@ -329,24 +329,14 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     const auto compression_enabled = ActivationManager::Instance().HasCompressionOperation();
    
     const auto compress_here_item = [NSMenuItem new];
-    if(m_Items.size() > 1)
-        compress_here_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items", @"FilePanelsContextMenu", "Compress some items here"),
-                                    m_Items.size()];
-    else
-        compress_here_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d", @"FilePanelsContextMenu", "Compress one item here"),
-                                    [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
+    compress_here_item.title = NSLocalizedStringFromTable(@"Compress", @"FilePanelsContextMenu", "Compress some items here");
     compress_here_item.target = self;
     compress_here_item.action = compression_enabled ? @selector(OnCompressToCurrentPanel:) : nil;
     compress_here_item.keyEquivalent = @"";
     [self addItem:compress_here_item];
     
     const auto compress_in_opposite_item = [NSMenuItem new];
-    if(m_Items.size() > 1)
-        compress_in_opposite_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress %lu Items in Opposite Panel", @"FilePanelsContextMenu", "Compress some items"),
-                                           m_Items.size()];
-    else
-        compress_in_opposite_item.title = [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compress \u201c%@\u201d in Opposite Panel", @"FilePanelsContextMenu", "Compress one item"),
-                                           [NSString stringWithUTF8StdString:m_Items.front().Filename()]];
+    compress_in_opposite_item.title = NSLocalizedStringFromTable(@"Compress in Opposite Panel", @"FilePanelsContextMenu", "Compress some items");
     compress_in_opposite_item.target = self;
     compress_in_opposite_item.action = compression_enabled ? @selector(OnCompressToOppositePanel:) : nil;
     compress_in_opposite_item.keyEquivalent = @"";
@@ -354,7 +344,6 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     compress_in_opposite_item.keyEquivalentModifierMask = NSAlternateKeyMask;
     [self addItem:compress_in_opposite_item];
     
-
     //////////////////////////////////////////////////////////////////////
     // Duplicate stuff
     const auto duplicate_item = [NSMenuItem new];
@@ -397,7 +386,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         [self addItem:share_menuitem];
     }
     
-    [self addItem:[NSMenuItem separatorItem]];
+    [self addItem:NSMenuItem.separatorItem];
     
     //////////////////////////////////////////////////////////////////////
     // Copy element for native FS. simply copies selected items' paths

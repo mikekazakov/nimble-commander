@@ -69,10 +69,6 @@ private:
     ActionsShortcutsManager();
     ActionsShortcutsManager(const ActionsShortcutsManager&) = delete;
     
-    void ReadOverrides(NSArray *_dict);
-    void WriteOverrides(NSMutableArray *_dict) const;
-    bool WriteOverridesToConfigFile() const;
-    
     void ReadOverrideFromConfig();
     void WriteOverridesToConfig() const;
     

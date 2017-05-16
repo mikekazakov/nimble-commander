@@ -80,21 +80,11 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
 @implementation NCPanelOpenWithMenuDelegate
 {
     vector<VFSListingItem>          m_ContextItems;
-    bool                            m_HandlersAreBuilt;
     vector<LaunchServiceHandler>    m_OpenWithHandlers;
     string                          m_DefaultHandlerPath;
     string                          m_ItemsUTI;
     SerialQueue                     m_FetchQueue;
     set<NSMenu*>                    m_ManagedMenus;
-}
-
-- (instancetype) init
-{
-    self = [super init];
-    if( self ) {
-        m_HandlersAreBuilt = false;
-    }
-    return self;
 }
 
 + (NSString*) regularMenuIdentifier
@@ -125,7 +115,10 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
     if( !m_FetchQueue.Empty() )
         return;
 
-    auto source_items = make_shared<vector<VFSListingItem>>(m_ContextItems);
+    auto source_items = m_ContextItems.empty() && self.target != nil ?
+        make_shared<vector<VFSListingItem>>(self.target.selectedEntriesOrFocusedEntry) :
+        make_shared<vector<VFSListingItem>>(m_ContextItems);
+    
     m_FetchQueue.Run([source_items, self]{
         auto f = make_shared<FetchResult>(FetchHandlers(*source_items));
         dispatch_to_main_queue([f, self]{
@@ -139,7 +132,10 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
     m_OpenWithHandlers = move(_result->handlers);
     m_DefaultHandlerPath = move(_result->default_handler_path);
     m_ItemsUTI = move(_result->uti);
-    m_HandlersAreBuilt = true;
+    
+    const auto run_loop = NSRunLoop.currentRunLoop;
+    if( ![run_loop.currentMode isEqualToString:NSEventTrackingRunLoopMode] )
+        return;
     
     [NSRunLoop.currentRunLoop performSelector:@selector(updateAfterFetching)
                                        target:self
@@ -151,7 +147,7 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
 - (void)updateAfterFetching
 {
     for( auto menu: m_ManagedMenus )
-        [self menuNeedsUpdate:menu];
+        [self updateMenuWithBuiltHandlers:menu];
 }
 
 - (NSMenuItem*) makeDefaultHandlerItem:(const LaunchServiceHandler&)_handler
@@ -178,17 +174,9 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
     return item;
 }
 
-- (void)menuNeedsUpdate:(NSMenu*)menu
+- (void)updateMenuWithBuiltHandlers:(NSMenu*)menu
 {
-    m_ManagedMenus.emplace(menu);
     [menu removeAllItems];
-
-    if( !m_HandlersAreBuilt ) {
-        [self fetchHandlers];
-        [menu addItem:[self makeFetchingStubItem]];
-        return;
-    }
-    
     if( !m_OpenWithHandlers.empty() ) {
         int start = 0;
         if( m_OpenWithHandlers.front().Path() == m_DefaultHandlerPath ) {
@@ -217,6 +205,19 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
         [menu addItem:[self makeSearchInMASItem]];
     
     [menu addItem:[self makeOpenWithOtherItem]];
+}
+
+- (void)addManagedMenu:(NSMenu*)_menu
+{
+    m_ManagedMenus.emplace(_menu);
+}
+
+- (void)menuNeedsUpdate:(NSMenu*)menu
+{
+    [self fetchHandlers];
+
+    [menu removeAllItems];
+    [menu addItem:[self makeFetchingStubItem]];
 }
 
 - (NSMenuItem*) makeSearchInMASItem
@@ -316,8 +317,10 @@ static void ShowOpenPanel(NSOpenPanel *_panel,
 
 - (void) openItemsWithHandler:(const LaunchServiceHandler&)_handler
 {
-    const auto &source_items = m_ContextItems;
-    
+    const auto &source_items = m_ContextItems.empty() && self.target != nil ?
+        self.target.selectedEntriesOrFocusedEntry :
+        m_ContextItems;
+
     if( source_items.size() > 1 ) {
         const auto same_host = all_of( begin(source_items), end(source_items), [&](const auto &i){
             return i.Host() == source_items.front().Host();

@@ -28,6 +28,7 @@
 #include "Actions/NavigateHistory.h"
 #include "Actions/Duplicate.h"
 #include "Actions/Compress.h"
+#include "Actions/OpenFile.h"
 #include "PanelView.h"
 
 static const nc::panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
@@ -90,6 +91,8 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self forceRefreshPanel];
 }
 
+- (IBAction)onOpenFileWith:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onAlwaysOpenFileWith:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onCompressItems:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onCompressItemsHere:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnDuplicate:(id)sender { Perform(_cmd, self, sender); }
@@ -174,6 +177,8 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 
 using namespace nc::panel::actions;
 static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
+{"menu.file.open_with_submenu",         @selector(onOpenFileWith:),                 new OpenFileWithSubmenu},
+{"menu.file.always_open_with_submenu",  @selector(onAlwaysOpenFileWith:),           new AlwaysOpenFileWithSubmenu},
 {"menu.file.find",                      @selector(onMainMenuPerformFindAction:),    new FindFiles},
 {"menu.file.find_with_spotlight",       @selector(OnSpotlightSearch:),              new SpotlightSearch},
 {"menu.file.duplicate",                 @selector(OnDuplicate:),                    new Duplicate},

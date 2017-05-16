@@ -646,6 +646,7 @@
 		CF9B12C51D8A6B4700C4E0A5 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF811A911D8262BE001F9E7F /* libssl.a */; };
 		CF9F4A921EC9442C00E0AF82 /* Compress.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4A911EC9442C00E0AF82 /* Compress.mm */; };
 		CF9F4AD31ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AD21ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm */; };
+		CF9F4AED1ECADEDB00E0AF82 /* OpenFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEC1ECADEDB00E0AF82 /* OpenFile.mm */; };
 		CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
 		CFA183731CA0133600544633 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
 		CFA2D6041E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */; };
@@ -1992,6 +1993,8 @@
 		CF9F4A911EC9442C00E0AF82 /* Compress.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Compress.mm; path = NimbleCommander/States/FilePanels/Actions/Compress.mm; sourceTree = SOURCE_ROOT; };
 		CF9F4AD11ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCPanelOpenWithMenuDelegate.h; path = NimbleCommander/States/FilePanels/NCPanelOpenWithMenuDelegate.h; sourceTree = SOURCE_ROOT; };
 		CF9F4AD21ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NCPanelOpenWithMenuDelegate.mm; path = NimbleCommander/States/FilePanels/NCPanelOpenWithMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
+		CF9F4AEB1ECADEDB00E0AF82 /* OpenFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenFile.h; path = NimbleCommander/States/FilePanels/Actions/OpenFile.h; sourceTree = SOURCE_ROOT; };
+		CF9F4AEC1ECADEDB00E0AF82 /* OpenFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenFile.mm; path = NimbleCommander/States/FilePanels/Actions/OpenFile.mm; sourceTree = SOURCE_ROOT; };
 		CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoToFolderSheetController.h; path = ../NimbleCommander/States/FilePanels/Views/GoToFolderSheetController.h; sourceTree = "<group>"; };
 		CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = GoToFolderSheetController.mm; path = ../NimbleCommander/States/FilePanels/Views/GoToFolderSheetController.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CFA183721CA0133600544633 /* libAquaticPrime.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAquaticPrime.a; path = 3rd_Party/AquaticPrime/built/libAquaticPrime.a; sourceTree = SOURCE_ROOT; };
@@ -2836,6 +2839,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CF9F4AEB1ECADEDB00E0AF82 /* OpenFile.h */,
+				CF9F4AEC1ECADEDB00E0AF82 /* OpenFile.mm */,
 				CF9F4A901EC9442C00E0AF82 /* Compress.h */,
 				CF9F4A911EC9442C00E0AF82 /* Compress.mm */,
 				CF7A09941EC2B37000533B07 /* Duplicate.h */,
@@ -4819,6 +4824,7 @@
 				CF56C2C31DC1A33300F0DF0F /* PanelListViewGeometry.mm in Sources */,
 				CFDAC2301DFBDBCB0039A104 /* Config.cpp in Sources */,
 				CFDAC2491DFBEE340039A104 /* MainWindowController.mm in Sources */,
+				CF9F4AED1ECADEDB00E0AF82 /* OpenFile.mm in Sources */,
 				CFD8CD5B1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm in Sources */,
 				CF818B741EA0830400BC28E6 /* CopyToPasteboard.mm in Sources */,
 				CFDAC2951DFBF9260039A104 /* TermScrollView.mm in Sources */,

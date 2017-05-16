@@ -102,6 +102,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         NSMenu *openwith_submenu = [NSMenu new];
         openwith_submenu.identifier = NCPanelOpenWithMenuDelegate.regularMenuIdentifier;
         openwith_submenu.delegate = m_OpenWithDelegate;
+        [m_OpenWithDelegate addManagedMenu:openwith_submenu];
         
         NSMenuItem *openwith = [NSMenuItem new];
         openwith.title = NSLocalizedStringFromTable(@"Open With", @"FilePanelsContextMenu", "Submenu title to choose app to open with, for English is 'Open With'");
@@ -112,6 +113,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         NSMenu *always_openwith_submenu = [NSMenu new];
         always_openwith_submenu.identifier = NCPanelOpenWithMenuDelegate.alwaysOpenWithMenuIdentifier;
         always_openwith_submenu.delegate = m_OpenWithDelegate;
+        [m_OpenWithDelegate addManagedMenu:always_openwith_submenu];
 
         NSMenuItem *always_openwith = [NSMenuItem new];
         always_openwith.title = NSLocalizedStringFromTable(@"Always Open With", @"FilePanelsContextMenu", "Submenu title to choose app to always open with, for English is 'Always Open With'");

@@ -236,6 +236,7 @@ private:
         h.name = [NSFileManager.defaultManager displayNameAtPath:path];
         h.icon = CropHiResRepresentations([NSWorkspace.sharedWorkspace iconForFile:path]);
         h.version = [handler_bundle.infoDictionary objectForKey:@"CFBundleVersion"];
+        h.identifier = handler_bundle.bundleIdentifier;
         h.mtime = st.st_mtime;
         
         return h;

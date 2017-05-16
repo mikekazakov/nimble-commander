@@ -29,6 +29,8 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.file.new_file",                              11'120},
     {"menu.file.new_tab",                               11'110},
     {"menu.file.open",                                  11'010},
+    {"menu.file.open_with_submenu",                     11'160},
+    {"menu.file.always_open_with_submenu",              11'170},
     {"menu.file.open_native",                           11'020},
     {"menu.file.open_in_opposite_panel",                11'021},
     {"menu.file.open_in_opposite_panel_tab",            11'024},
@@ -205,6 +207,8 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.file.new_file",                                  u8"⌥⌘n"     }, // cmd+alt+n
     {"menu.file.new_tab",                                   u8"⌘t"      }, // cmd+t
     {"menu.file.open",                                      u8"\\r"     }, // ↵
+    {"menu.file.open_with_submenu",                         u8""        }, //
+    {"menu.file.always_open_with_submenu",                  u8"⌥"       }, // alt
     {"menu.file.open_native",                               u8"⇧\\r"    }, // shift+↵
     {"menu.file.open_in_opposite_panel",                    u8"⌥\\r"    }, // alt+↵
     {"menu.file.open_in_opposite_panel_tab",                u8"⌥⌘\\r"   }, // alt+cmd+↵
@@ -395,17 +399,8 @@ ActionsShortcutsManager::ActionsShortcutsManager()
         m_ShortCutsDefaults.assign( begin(default_shortcuts), end(default_shortcuts) );
     }
     
-    // TODO: remove this after 1.2.0 is out
-    const auto overrides_file = [NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile];
-    if( auto a = [NSArray arrayWithContentsOfFile:overrides_file] ) {
-        ReadOverrides(a);
-        [NSFileManager.defaultManager trashItemAtURL:[NSURL fileURLWithPath:overrides_file]
-                                    resultingItemURL:nil
-                                               error:nil];
-        WriteOverridesToConfig();
-    }
-    else
-        ReadOverrideFromConfig();
+
+    ReadOverrideFromConfig();
 }
 
 ActionsShortcutsManager &ActionsShortcutsManager::Instance()
@@ -468,29 +463,6 @@ void ActionsShortcutsManager::SetMenuShortCuts(NSMenu *_menu) const
     }
 }
 
-void ActionsShortcutsManager::ReadOverrides(NSArray *_dict)
-{
-    if(_dict.count % 2 != 0)
-        return;
-
-    vector< pair<int, const char*> > overrides;
-    for(int ind = 0; ind < _dict.count; ind += 2) {
-        NSString *key = [_dict objectAtIndex:ind];
-        NSString *obj = [_dict objectAtIndex:ind+1];
-
-        auto i = m_ActionToTag.find(key.UTF8String);
-        if(i == m_ActionToTag.end())
-            continue;
-        
-        if([obj isEqualToString:@"default"])
-            continue;
-        
-        overrides.emplace_back( i->second, obj.UTF8String );
-    }
-    
-    m_ShortCutsOverrides.assign( begin(overrides), end(overrides) );
-}
-
 void ActionsShortcutsManager::ReadOverrideFromConfig()
 {
     using namespace rapidjson;
@@ -507,18 +479,6 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
                 overrides.emplace_back( att->second, i->value.GetString() );
         }
     m_ShortCutsOverrides.assign( begin(overrides), end(overrides) );
-}
-
-void ActionsShortcutsManager::WriteOverrides(NSMutableArray *_dict) const
-{
-    for(auto &i: g_ActionsTags) {
-        int tag = i.second;
-        auto scover = m_ShortCutsOverrides.find(tag);
-        if(scover != end(m_ShortCutsOverrides)) {
-            [_dict addObject:[NSString stringWithUTF8StdString:i.first]];
-            [_dict addObject:[NSString stringWithUTF8StdString:scover->second.ToPersString()]];
-        }
-    }
 }
 
 ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction(const string &_action) const
@@ -605,14 +565,6 @@ void ActionsShortcutsManager::RevertToDefaults()
     FireObservers();
 }
 
-bool ActionsShortcutsManager::WriteOverridesToConfigFile() const
-{
-    NSMutableArray *overrides = [NSMutableArray new];
-    WriteOverrides(overrides);
-
-    return [overrides writeToFile:[NSString stringWithUTF8StdString:AppDelegate.me.configDirectory + g_OverridesConfigFile]
-                       atomically:true];
-}
 
 void ActionsShortcutsManager::WriteOverridesToConfig() const
 {

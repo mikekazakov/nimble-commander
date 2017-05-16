@@ -6,6 +6,7 @@ class VFSListingItem;
 @interface NCPanelOpenWithMenuDelegate : NSObject<NSMenuDelegate>
 
 - (void) setContextSource:(const vector<VFSListingItem>)_items;
+- (void) addManagedMenu:(NSMenu*)_menu;
 
 @property (weak, nonatomic) PanelController *target;
 

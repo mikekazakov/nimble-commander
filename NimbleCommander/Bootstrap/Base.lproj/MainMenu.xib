@@ -154,6 +154,18 @@ DQ
                                     <action selector="OnOpen:" target="-1" id="EXV-mf-ZyI"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Open With" tag="11160" id="db8-IO-kEa">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onOpenFileWith:" target="-1" id="w1w-hS-OIP"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Always Open With" tag="11170" alternate="YES" id="1jU-gS-pnI">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onAlwaysOpenFileWith:" target="-1" id="Nk0-Ry-daQ"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Open in Finder" tag="11020" id="NCx-aq-tJi">
                                 <string key="keyEquivalent" base64-UTF8="YES">
 DQ

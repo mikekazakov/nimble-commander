@@ -1,41 +1,21 @@
-#include <sys/stat.h>
 #include "NCPanelContextMenu.h"
-#include "PanelAux.h"
 #include "PanelController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "Actions/CopyToPasteboard.h"
 #include "Actions/Delete.h"
 #include "Actions/Duplicate.h"
 #include "Actions/Compress.h"
+#include "Actions/OpenFile.h"
 #include "NCPanelOpenWithMenuDelegate.h"
+#include <VFS/VFS.h>
 
 using namespace nc::panel;
 
-template <typename T, typename E, typename C>
-T common_or_default_element(const C& _container, const T& _default, E _extract)
-{
-    auto i = begin(_container), e = end(_container);
-    if( i == e )
-        return _default;
-    auto &first = *i;
-    ++i;
-    
-    for( ; i != e; ++i )
-        if( _extract(*i) != _extract(first) )
-            return _default;
-
-    return _extract(first);
-}
-
 @implementation NCPanelContextMenu
 {
-    string                              m_CommonDir;  // may be "" in case of non-uniform listing
-    VFSHostPtr                          m_CommonHost; // may be nullptr in case of non-uniform listing
     vector<VFSListingItem>              m_Items;
     PanelController                    *m_Panel;
     NSMutableArray                     *m_ShareItemsURLs;
-    int                                 m_DirsCount;
-    int                                 m_FilesCount;
     NCPanelOpenWithMenuDelegate        *m_OpenWithDelegate;
     unique_ptr<actions::PanelAction>    m_CopyAction;
     unique_ptr<actions::PanelAction>    m_MoveToTrashAction;
@@ -43,6 +23,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     unique_ptr<actions::PanelAction>    m_DuplicateAction;
     unique_ptr<actions::PanelAction>    m_CompressHereAction;
     unique_ptr<actions::PanelAction>    m_CompressToOppositeAction;
+    unique_ptr<actions::PanelAction>    m_OpenFileAction;
 }
 
 - (instancetype) initWithItems:(vector<VFSListingItem>)_items
@@ -53,12 +34,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     self = [super init];
     if(self) {
         m_Panel = _panel;
-        m_DirsCount = m_FilesCount = 0;
         m_Items = move(_items);
-        m_DirsCount = (int)count_if(begin(m_Items), end(m_Items), [](auto &i) { return i.IsDir(); });
-        m_FilesCount = (int)count_if(begin(m_Items), end(m_Items), [](auto &i) { return i.IsReg(); });
-        m_CommonHost = common_or_default_element( m_Items, VFSHostPtr{}, [](auto &_) -> const VFSHostPtr& { return _.Host(); } );
-        m_CommonDir = common_or_default_element( m_Items, ""s, [](auto &_) -> const string& { return _.Directory(); } );
 
         self.delegate = self;
         self.minimumWidth = 230; // hardcoding is bad!
@@ -69,6 +45,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         m_DuplicateAction.reset( new actions::context::Duplicate{m_Items} );
         m_CompressHereAction.reset( new actions::context::CompressHere{m_Items} );
         m_CompressToOppositeAction.reset( new actions::context::CompressToOpposite{m_Items} );
+        m_OpenFileAction.reset( new actions::context::OpenFileWithDefaultHandler{m_Items} );
         
         m_OpenWithDelegate = [[NCPanelOpenWithMenuDelegate alloc] init];
         [m_OpenWithDelegate setContextSource:m_Items];
@@ -88,13 +65,11 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 {
     //////////////////////////////////////////////////////////////////////
     // regular Open item
-    if(m_FilesCount > 0 || ( m_CommonHost && m_CommonHost->IsNativeFS() ) ) {
-        NSMenuItem *item = [NSMenuItem new];
-        item.title = NSLocalizedStringFromTable(@"Open", @"FilePanelsContextMenu", "Menu item title for opening a file by default, for English is 'Open'");
-        item.target = self;
-        item.action = @selector(OnRegularOpen:);
-        [self addItem:item];
-    }
+    const auto open_item = [NSMenuItem new];
+    open_item.title = NSLocalizedStringFromTable(@"Open", @"FilePanelsContextMenu", "Menu item title for opening a file by default, for English is 'Open'");
+    open_item.target = self;
+    open_item.action = @selector(OnRegularOpen:);
+    [self addItem:open_item];
 
     //////////////////////////////////////////////////////////////////////
     // Open With... stuff
@@ -179,34 +154,33 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     //////////////////////////////////////////////////////////////////////
     // Share stuff
     {
-        NSMenu *share_submenu = [NSMenu new];
-        bool eligible = m_CommonHost && m_CommonHost->IsNativeFS();
-        if(eligible) {
+        const auto share_submenu = [NSMenu new];
+        const auto eligible = all_of(begin(m_Items),
+                                     end(m_Items),
+                                     [](const auto &_i){return _i.Host()->IsNativeFS(); });
+        if( eligible ) {
             m_ShareItemsURLs = [NSMutableArray new];
             for( auto &i:m_Items )
                 if( NSString *s = [NSString stringWithUTF8StdString:i.Path()] )
                     if( NSURL *url = [[NSURL alloc] initFileURLWithPath:s] )
                         [m_ShareItemsURLs addObject:url];
             
-            NSArray *sharingServices = [NSSharingService sharingServicesForItems:m_ShareItemsURLs];
-            if (sharingServices.count > 0)
-                for (NSSharingService *currentService in sharingServices) {
-                    NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:currentService.title
-                                                                  action:@selector(OnShareWithService:)
-                                                           keyEquivalent:@""];
-                    item.image = currentService.image;
-                    item.representedObject = currentService;
-                    item.target = self;
-                    [share_submenu addItem:item];
-                }
-            else
-                eligible = false;
+            auto services = [NSSharingService sharingServicesForItems:m_ShareItemsURLs];
+            for( NSSharingService *service in services ) {
+                NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:service.title
+                                                              action:@selector(OnShareWithService:)
+                                                       keyEquivalent:@""];
+                item.image = service.image;
+                item.representedObject = service;
+                item.target = self;
+                [share_submenu addItem:item];
+            }
         }
         
-        NSMenuItem *share_menuitem = [NSMenuItem new];
+        const auto share_menuitem = [NSMenuItem new];
         share_menuitem.title = NSLocalizedStringFromTable(@"Share", @"FilePanelsContextMenu", "Share submenu title");
         share_menuitem.submenu = share_submenu;
-        share_menuitem.enabled = eligible;
+        share_menuitem.enabled = share_submenu.numberOfItems > 0;
         [self addItem:share_menuitem];
     }
     
@@ -238,26 +212,15 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         return m_CompressHereAction->ValidateMenuItem(m_Panel, item);
     if( item.action == @selector(OnCompressToOppositePanel:) )
         return m_CompressToOppositeAction->ValidateMenuItem(m_Panel, item);
+    if( item.action == @selector(OnRegularOpen:) )
+        return m_OpenFileAction->ValidateMenuItem(m_Panel, item);
+    
     return true;
 }
 
 - (void)OnRegularOpen:(id)sender
 {
-    [self OpenItemsWithApp:"" bundle_id:nil];
-}
-
-- (void) OpenItemsWithApp:(string)_app_path bundle_id:(NSString*)_app_id
-{
-    if(m_Items.size() > 1) {
-        if( m_CommonHost ) {
-            vector<string> items;
-            for(auto &i: m_Items)
-                items.emplace_back( i.Path() );
-            PanelVFSFileWorkspaceOpener::Open(items, m_CommonHost, _app_id, m_Panel);
-        }
-    }
-    else if(m_Items.size() == 1)
-        PanelVFSFileWorkspaceOpener::Open(m_Items.front().Path(), m_Items.front().Host(), _app_path, m_Panel);
+    m_OpenFileAction->Perform(m_Panel, sender);
 }
 
 - (void)OnMoveToTrash:(id)sender

@@ -248,7 +248,9 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
         @"<None>",
         @"FilePanelsContextMenu",
         "Menu item for case when no handlers are available, for English is '<None>'");
-    return [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
+    auto item = [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
+    item.enabled = false;
+    return item;
 }
 
 - (NSMenuItem*) makeFetchingStubItem

@@ -74,10 +74,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self handleGoIntoDirOrOpenInSystemSync];
 }
 
-- (IBAction)OnOpenNatively:(id)sender { // shift+enter
-    [self handleOpenInSystem];
-}
-
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {
     if( auto i = self.view.item ) {
         if( i.IsDir() )
@@ -91,6 +87,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self forceRefreshPanel];
 }
 
+- (IBAction)OnOpenNatively:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onOpenFileWith:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onAlwaysOpenFileWith:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onCompressItems:(id)sender { Perform(_cmd, self, sender); }
@@ -177,6 +174,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 
 using namespace nc::panel::actions;
 static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
+{"menu.file.open_native",               @selector(OnOpenNatively:),                 new OpenFileWithDefaultHandler},
 {"menu.file.open_with_submenu",         @selector(onOpenFileWith:),                 new OpenFileWithSubmenu},
 {"menu.file.always_open_with_submenu",  @selector(onAlwaysOpenFileWith:),           new AlwaysOpenFileWithSubmenu},
 {"menu.file.find",                      @selector(onMainMenuPerformFindAction:),    new FindFiles},

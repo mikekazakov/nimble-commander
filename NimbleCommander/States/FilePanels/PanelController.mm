@@ -33,6 +33,7 @@
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include "PanelController+Menu.h"
 #include "NCPanelContextMenu.h"
+#include "Actions/OpenFile.h"
 
 using namespace ::nc::panel;
 
@@ -423,16 +424,6 @@ static void HeatUpConfigValues()
     return m_View.active;
 }
 
-- (void) handleOpenInSystem
-{
-    // may go async here on non-native VFS
-    // non-default behaviour here: "/Abra/.." will produce "/Abra/" insted of default-way "/"    
-    if( auto item = m_View.item )
-        PanelVFSFileWorkspaceOpener::Open(item.IsDotDot() ? item.Directory() : item.Path(),
-                                          item.Host(),
-                                          self);
-}
-
 - (void) changeSortingModeTo:(data::SortMode)_mode
 {
     if( _mode != m_Data.SortMode() ) {
@@ -558,7 +549,7 @@ static void HeatUpConfigValues()
     
     // If previous code didn't handle current item,
     // open item with the default associated application.
-    [self handleOpenInSystem];
+    actions::OpenFileWithDefaultHandler{}.Perform(self, self);
 }
 
 - (void) ReLoadRefreshedListing:(const VFSListingPtr &)_ptr
@@ -726,7 +717,7 @@ static bool RouteKeyboardInputIntoTerminal()
             }
             if( hk_file_open_native.IsKeyDown(unicode, keycode, modif) ) {
                 // we keep it here to avoid blinking on menu item
-                [self handleOpenInSystem];
+                actions::OpenFileWithDefaultHandler{}.Perform(self, self);
                 return true;
             }
         }

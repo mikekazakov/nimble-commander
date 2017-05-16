@@ -1,5 +1,6 @@
 #include "LaunchServices.h"
 #include <sys/stat.h>
+#include <VFS/VFS.h>
 
 namespace nc::core {
 
@@ -233,7 +234,7 @@ private:
         CachedLaunchServiceHandler h;
         h.path = _handler_path;
         h.name = [NSFileManager.defaultManager displayNameAtPath:path];
-        h.icon = [NSWorkspace.sharedWorkspace iconForFile:path];
+        h.icon = CropHiResRepresentations([NSWorkspace.sharedWorkspace iconForFile:path]);
         h.version = [handler_bundle.infoDictionary objectForKey:@"CFBundleVersion"];
         h.mtime = st.st_mtime;
         
@@ -246,6 +247,18 @@ private:
         if( stat(_path.c_str(), &st) != 0 )
             return true;
         return _mtime != st.st_mtime;
+    }
+    
+    static NSImage *CropHiResRepresentations( NSImage *_image )
+    {
+        const auto representations = _image.representations;
+        vector<NSImageRep*> to_remove;
+        for( NSImageRep *representation in representations )
+            if( representation.pixelsHigh > 32 && representation.pixelsWide > 32 )
+                to_remove.emplace_back(representation);
+        for( NSImageRep *representation: to_remove )
+            [_image removeRepresentation:representation];
+        return _image;
     }
 
     static unordered_map<string, CachedLaunchServiceHandler> g_HandlersByPath;

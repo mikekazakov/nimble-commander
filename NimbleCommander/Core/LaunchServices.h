@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VFS/VFS.h>
+class VFSListingItem;
 
 namespace nc::core {
 

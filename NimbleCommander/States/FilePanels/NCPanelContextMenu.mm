@@ -1,63 +1,15 @@
 #include <sys/stat.h>
-#include <Sparkle/Sparkle.h>
 #include "NCPanelContextMenu.h"
 #include "PanelAux.h"
-#include <NimbleCommander/Core/LaunchServices.h>
 #include "PanelController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "Actions/CopyToPasteboard.h"
 #include "Actions/Delete.h"
 #include "Actions/Duplicate.h"
 #include "Actions/Compress.h"
+#include "NCPanelOpenWithMenuDelegate.h"
 
-using namespace nc::core;
 using namespace nc::panel;
-
-static void SortAndPurgeDuplicateHandlers(vector<LaunchServiceHandler> &_handlers)
-{
-    sort(begin(_handlers), end(_handlers), [](const auto &_1st, const auto &_2nd){
-        return [_1st.Name() localizedCompare:_2nd.Name()] < 0;
-    });
-
-    for(int i = 0; i < (int)_handlers.size() - 1;) {
-        if([_handlers[i].Name() isEqualToString:_handlers[i+1].Name()] &&
-           [_handlers[i].Identifier() isEqualToString:_handlers[i+1].Identifier()]){
-            // choose the latest version
-            if([[SUStandardVersionComparator defaultComparator] compareVersion:_handlers[i].Version()
-                toVersion:_handlers[i+1].Version()] >= NSOrderedSame)
-            { // _handlers[i] has later version or they are the same
-                _handlers.erase(_handlers.begin() + i + 1);
-                
-            }
-            else
-            { // _handlers[i+1] has later version
-                _handlers.erase(_handlers.begin() + i);
-                continue;
-            }
-        }
-        ++i;
-    }
-}
-
-static NSOpenPanel* BuildAppChoose()
-{
-    NSOpenPanel *panel = [NSOpenPanel openPanel];
-    panel.allowsMultipleSelection = NO;
-    panel.canChooseFiles = YES;
-    panel.canChooseDirectories = NO;
-    panel.allowedFileTypes = @[@"app"];
-    panel.directoryURL = [[NSURL alloc] initFileURLWithPath:@"/Applications" isDirectory:true];
-    return panel;
-}
-
-static void ShowOpenPanel( NSOpenPanel *_panel, NSWindow *_window, function<void(const string&_path)> _on_ok )
-{
-    [_panel beginSheetModalForWindow:_window
-                  completionHandler:^(NSInteger result) {
-                      if(result == NSFileHandlingPanelOKButton)
-                          _on_ok( _panel.URL.path.fileSystemRepresentation );
-                  }];
-}
 
 template <typename T, typename E, typename C>
 T common_or_default_element(const C& _container, const T& _default, E _extract)
@@ -75,19 +27,16 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     return _extract(first);
 }
 
-
 @implementation NCPanelContextMenu
 {
     string                              m_CommonDir;  // may be "" in case of non-uniform listing
     VFSHostPtr                          m_CommonHost; // may be nullptr in case of non-uniform listing
     vector<VFSListingItem>              m_Items;
-    vector<LaunchServiceHandler>        m_OpenWithHandlers;
-    string                              m_ItemsUTI;
-    MainWindowFilePanelState           *m_MainWnd;
     PanelController                    *m_Panel;
     NSMutableArray                     *m_ShareItemsURLs;
     int                                 m_DirsCount;
     int                                 m_FilesCount;
+    NCPanelOpenWithMenuDelegate        *m_OpenWithDelegate;
     unique_ptr<actions::PanelAction>    m_CopyAction;
     unique_ptr<actions::PanelAction>    m_MoveToTrashAction;
     unique_ptr<actions::PanelAction>    m_DeletePermanentlyAction;
@@ -112,7 +61,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         m_CommonDir = common_or_default_element( m_Items, ""s, [](auto &_) -> const string& { return _.Directory(); } );
 
         self.delegate = self;
-        self.minimumWidth = 200; // hardcoding is bad!
+        self.minimumWidth = 230; // hardcoding is bad!
     
         m_CopyAction.reset( new actions::context::CopyToPasteboard{m_Items} );
         m_MoveToTrashAction.reset( new actions::context::MoveToTrash{m_Items} );
@@ -120,6 +69,11 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         m_DuplicateAction.reset( new actions::context::Duplicate{m_Items} );
         m_CompressHereAction.reset( new actions::context::CompressHere{m_Items} );
         m_CompressToOppositeAction.reset( new actions::context::CompressToOpposite{m_Items} );
+        
+        m_OpenWithDelegate = [[NCPanelOpenWithMenuDelegate alloc] init];
+        [m_OpenWithDelegate setContextSource:m_Items];
+        m_OpenWithDelegate.target = m_Panel;
+        
         [self doStuffing];
     }
     return self;
@@ -145,113 +99,20 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     //////////////////////////////////////////////////////////////////////
     // Open With... stuff
     {
-        vector<LauchServicesHandlers> per_item_handlers;
-        for(auto &i: m_Items)
-            per_item_handlers.emplace_back( LauchServicesHandlers{i} );
-        
-        LauchServicesHandlers items_handlers{per_item_handlers};
-        
-        m_ItemsUTI = items_handlers.CommonUTI();
-
         NSMenu *openwith_submenu = [NSMenu new];
-        NSMenu *always_openwith_submenu = [NSMenu new];
+        openwith_submenu.identifier = NCPanelOpenWithMenuDelegate.regularMenuIdentifier;
+        openwith_submenu.delegate = m_OpenWithDelegate;
         
-        for( const auto &path: items_handlers.HandlersPaths() )
-            try {
-                m_OpenWithHandlers.emplace_back( LaunchServiceHandler(path) );
-            }
-            catch(...){
-            }
-        
-        // get rid of duplicates in handlers list
-        SortAndPurgeDuplicateHandlers(m_OpenWithHandlers);
-        
-        // show default handler if any
-        bool any_handlers_added = false;
-        bool any_non_default_handlers_added = false;
-        for(int i = 0; i < m_OpenWithHandlers.size(); ++i)
-            if( m_OpenWithHandlers[i].Path() == items_handlers.DefaultHandlerPath() ) {
-                NSMenuItem *item = [NSMenuItem new];
-                item.title = [NSString stringWithFormat:@"%@ (%@)",
-                              m_OpenWithHandlers[i].Name(),
-                              NSLocalizedStringFromTable(@"default", @"FilePanelsContextMenu",  "Menu item postfix marker for default apps to open with, for English is 'default'")];
-                item.image = [m_OpenWithHandlers[i].Icon() copy];
-                item.image.size = NSMakeSize(14, 14);
-                item.tag = i;
-                item.target = self;
-                item.action = @selector(OnOpenWith:);
-                [openwith_submenu addItem:item];
-                
-                item = [item copy];
-                item.action = @selector(OnAlwaysOpenWith:);
-                [always_openwith_submenu addItem:item];
-
-                [openwith_submenu addItem:NSMenuItem.separatorItem];
-                [always_openwith_submenu addItem:NSMenuItem.separatorItem];
-                any_handlers_added = true;
-                break;
-            }
-
-        // show other handlers
-        for( int i = 0; i < m_OpenWithHandlers.size(); ++i )
-            if( m_OpenWithHandlers[i].Path() != items_handlers.DefaultHandlerPath() ) {
-                NSMenuItem *item = [NSMenuItem new];
-                item.title = m_OpenWithHandlers[i].Name();
-                item.image = [m_OpenWithHandlers[i].Icon() copy];
-                item.image.size = NSMakeSize(14, 14);
-                item.tag = i;
-                item.target = self;
-                item.action = @selector(OnOpenWith:);
-                [openwith_submenu addItem:item];
-                
-                item = [item copy];
-                item.action = @selector(OnAlwaysOpenWith:);
-                [always_openwith_submenu addItem:item];
-                
-                any_handlers_added = true;
-                any_non_default_handlers_added = true;
-            }
-
-        // separate them
-        if(!any_handlers_added) {
-            NSString *title = NSLocalizedStringFromTable(@"<None>", @"FilePanelsContextMenu", "Menu item for case when no handlers are available, for English is '<None>'");
-            [openwith_submenu addItem:[[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""]];
-            [always_openwith_submenu addItem:[[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""]];
-        }
-        
-        if(any_non_default_handlers_added || !any_handlers_added) {
-            [openwith_submenu addItem:NSMenuItem.separatorItem];
-            [always_openwith_submenu addItem:NSMenuItem.separatorItem];
-        }
-        
-        // search in MAS
-        if( !m_ItemsUTI.empty() ) {
-            auto mas = [NSMenuItem new];
-            mas.title = NSLocalizedStringFromTable(@"App Store...", @"FilePanelsContextMenu", "Menu item to choose an app from MAS");
-            mas.target = self;
-            mas.action = @selector(OnSearchInMAS:);
-            [openwith_submenu addItem:mas];
-            [always_openwith_submenu addItem:[mas copy]];
-        }
-        
-        // let user to select program manually
-        auto open_with_other = [NSMenuItem new];
-        open_with_other.title = NSLocalizedStringFromTable(@"Other...", @"FilePanelsContextMenu", "Menu item to choose other app to open with, for English is 'Other...'");
-        open_with_other.target = self;
-        open_with_other.action = @selector(OnOpenWithOther:);
-        [openwith_submenu addItem:open_with_other];
-        
-        open_with_other = [open_with_other copy];
-        open_with_other.action = @selector(OnAlwaysOpenWithOther:);
-        [always_openwith_submenu addItem:open_with_other];
-
-        // and put this stuff into root-level menu
         NSMenuItem *openwith = [NSMenuItem new];
         openwith.title = NSLocalizedStringFromTable(@"Open With", @"FilePanelsContextMenu", "Submenu title to choose app to open with, for English is 'Open With'");
         openwith.submenu = openwith_submenu;
         openwith.keyEquivalent = @"";
         [self addItem:openwith];
-        
+
+        NSMenu *always_openwith_submenu = [NSMenu new];
+        always_openwith_submenu.identifier = NCPanelOpenWithMenuDelegate.alwaysOpenWithMenuIdentifier;
+        always_openwith_submenu.delegate = m_OpenWithDelegate;
+
         NSMenuItem *always_openwith = [NSMenuItem new];
         always_openwith.title = NSLocalizedStringFromTable(@"Always Open With", @"FilePanelsContextMenu", "Submenu title to choose app to always open with, for English is 'Always Open With'");
         always_openwith.submenu = always_openwith_submenu;
@@ -259,7 +120,7 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
         always_openwith.keyEquivalent = @"";
         always_openwith.keyEquivalentModifierMask = NSAlternateKeyMask;
         [self addItem:always_openwith];
-        
+
         [self addItem:NSMenuItem.separatorItem];
     }
 
@@ -383,26 +244,6 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     [self OpenItemsWithApp:"" bundle_id:nil];
 }
 
-- (void)OnOpenWith:(id)sender
-{
-    int app_no = (int)[sender tag];
-    assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
-    [self OpenItemsWithApp:m_OpenWithHandlers[app_no].Path()
-                 bundle_id:m_OpenWithHandlers[app_no].Identifier()];
-}
-
-- (void)OnAlwaysOpenWith:(id)sender
-{
-    int app_no = (int)[sender tag];
-    assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
-    const auto &handler = m_OpenWithHandlers[app_no];
-    [self OpenItemsWithApp:handler.Path()
-                 bundle_id:handler.Identifier()];
-    
-    if( !m_ItemsUTI.empty() )
-        handler.SetAsDefaultHandlerForUTI(m_ItemsUTI);
-}
-
 - (void) OpenItemsWithApp:(string)_app_path bundle_id:(NSString*)_app_id
 {
     if(m_Items.size() > 1) {
@@ -415,34 +256,6 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
     }
     else if(m_Items.size() == 1)
         PanelVFSFileWorkspaceOpener::Open(m_Items.front().Path(), m_Items.front().Host(), _app_path, m_Panel);
-}
-
-- (void)OnOpenWithOther:(id)sender
-{
-    ShowOpenPanel( BuildAppChoose(), m_Panel.window, [=](auto _path){
-        try {
-            LaunchServiceHandler handler{_path};
-            [self OpenItemsWithApp:handler.Path() bundle_id:handler.Identifier()];
-        }
-        catch(...){
-        }
-
-    });
-}
-
-- (void)OnAlwaysOpenWithOther:(id)sender
-{
-    ShowOpenPanel( BuildAppChoose(), m_Panel.window, [=](auto _path){
-        try {
-            LaunchServiceHandler handler{_path};
-            [self OpenItemsWithApp:handler.Path() bundle_id:handler.Identifier()];
-            
-            if( !m_ItemsUTI.empty() )
-                handler.SetAsDefaultHandlerForUTI(m_ItemsUTI);
-        }
-        catch(...){
-        }
-    });
 }
 
 - (void)OnMoveToTrash:(id)sender
@@ -479,13 +292,6 @@ T common_or_default_element(const C& _container, const T& _default, E _extract)
 - (void)OnDuplicateItem:(id)sender
 {
     m_DuplicateAction->Perform(m_Panel, sender);
-}
-
-- (void)OnSearchInMAS:(id)sender
-{
-    auto format = @"macappstores://search.itunes.apple.com/WebObjects/MZSearch.woa/wa/docTypeLookup?uti=%s";
-    NSString *mas_url = [NSString stringWithFormat:format, m_ItemsUTI.c_str()];
-    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
 }
 
 @end

@@ -4,51 +4,19 @@
 #include <VFS/VFS.h>
 #include "PanelAux.h"
 #include "PanelController.h"
+#include <Habanero/SerialQueue.h>
 
 using namespace nc::core;
 using namespace nc::panel;
 
-@implementation NCPanelOpenWithMenuDelegate
-{
-    vector<VFSListingItem>          m_ContextItems;
-    bool                            m_HandlersAreBuilt;
-    vector<LaunchServiceHandler>    m_OpenWithHandlers;
-    string                          m_DefaultHandlerPath;
-    string                          m_ItemsUTI;
-}
+namespace {
 
-- (instancetype) init
+struct FetchResult
 {
-    self = [super init];
-    if( self ) {
-        m_HandlersAreBuilt = false;
-    }
-    return self;
-}
-
-+ (NSString*) regularMenuIdentifier
-{
-    return @"regular";
-}
-
-+ (NSString*) alwaysOpenWithMenuIdentifier
-{
-    return @"always";
-}
-
-- (void) setContextSource:(const vector<VFSListingItem>)_items
-{
-    m_ContextItems = move(_items);
-}
-
-
-- (BOOL)menuHasKeyEquivalent:(NSMenu*)menu
-                    forEvent:(NSEvent*)event
-                      target:(__nullable id* __nullable)target
-                      action:(__nullable SEL* __nullable)action
-{
-    return false;
-}
+    vector<LaunchServiceHandler>    handlers;
+    string                          default_handler_path;
+    string                          uti;
+};
 
 static void SortAndPurgeDuplicateHandlers(vector<LaunchServiceHandler> &_handlers)
 {
@@ -77,29 +45,113 @@ static void SortAndPurgeDuplicateHandlers(vector<LaunchServiceHandler> &_handler
     }
 }
 
-- (void)fetchHandlers
+static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
 {
     vector<LauchServicesHandlers> per_item_handlers;
-    for(auto &i: m_ContextItems)
+    for( auto &i: _items )
         per_item_handlers.emplace_back( LauchServicesHandlers{i} );
     
     LauchServicesHandlers items_handlers{per_item_handlers};
-    m_DefaultHandlerPath = items_handlers.DefaultHandlerPath();
-    m_ItemsUTI = items_handlers.CommonUTI();
-
+    
+    vector<LaunchServiceHandler> handlers;
     for( const auto &path: items_handlers.HandlersPaths() )
         try {
-            m_OpenWithHandlers.emplace_back( LaunchServiceHandler(path) );
+            handlers.emplace_back( LaunchServiceHandler(path) );
         }
-    catch(...){
+        catch(...) {
+        }
+    
+    SortAndPurgeDuplicateHandlers(handlers);
+    
+    stable_partition(begin(handlers),
+                     end(handlers),
+                     [&](const auto &_i){ return _i.Path() == items_handlers.DefaultHandlerPath(); });
+
+
+    FetchResult result;
+    result.handlers = move(handlers);
+    result.default_handler_path = items_handlers.DefaultHandlerPath();
+    result.uti = items_handlers.CommonUTI();
+    return result;
+}
+
+}
+
+@implementation NCPanelOpenWithMenuDelegate
+{
+    vector<VFSListingItem>          m_ContextItems;
+    bool                            m_HandlersAreBuilt;
+    vector<LaunchServiceHandler>    m_OpenWithHandlers;
+    string                          m_DefaultHandlerPath;
+    string                          m_ItemsUTI;
+    SerialQueue                     m_FetchQueue;
+    set<NSMenu*>                    m_ManagedMenus;
+}
+
+- (instancetype) init
+{
+    self = [super init];
+    if( self ) {
+        m_HandlersAreBuilt = false;
     }
-    
-    SortAndPurgeDuplicateHandlers(m_OpenWithHandlers);
-    stable_partition(begin(m_OpenWithHandlers),
-                     end(m_OpenWithHandlers),
-                     [&](const auto &_i){ return _i.Path() == m_DefaultHandlerPath; });
-    
+    return self;
+}
+
++ (NSString*) regularMenuIdentifier
+{
+    return @"regular";
+}
+
++ (NSString*) alwaysOpenWithMenuIdentifier
+{
+    return @"always";
+}
+
+- (void) setContextSource:(const vector<VFSListingItem>)_items
+{
+    m_ContextItems = move(_items);
+}
+
+- (BOOL)menuHasKeyEquivalent:(NSMenu*)menu
+                    forEvent:(NSEvent*)event
+                      target:(__nullable id* __nullable)target
+                      action:(__nullable SEL* __nullable)action
+{
+    return false;
+}
+
+- (void)fetchHandlers
+{
+    if( !m_FetchQueue.Empty() )
+        return;
+
+    auto source_items = make_shared<vector<VFSListingItem>>(m_ContextItems);
+    m_FetchQueue.Run([source_items, self]{
+        auto f = make_shared<FetchResult>(FetchHandlers(*source_items));
+        dispatch_to_main_queue([f, self]{
+            [self acceptFetchResult:f];
+        });
+    });
+}
+
+- (void)acceptFetchResult:(shared_ptr<FetchResult>)_result
+{
+    m_OpenWithHandlers = move(_result->handlers);
+    m_DefaultHandlerPath = move(_result->default_handler_path);
+    m_ItemsUTI = move(_result->uti);
     m_HandlersAreBuilt = true;
+    
+    [NSRunLoop.currentRunLoop performSelector:@selector(updateAfterFetching)
+                                       target:self
+                                     argument:nil
+                                        order:0
+                                        modes:@[NSEventTrackingRunLoopMode]];
+}
+
+- (void)updateAfterFetching
+{
+    for( auto menu: m_ManagedMenus )
+        [self menuNeedsUpdate:menu];
 }
 
 - (NSMenuItem*) makeDefaultHandlerItem:(const LaunchServiceHandler&)_handler
@@ -128,10 +180,14 @@ static void SortAndPurgeDuplicateHandlers(vector<LaunchServiceHandler> &_handler
 
 - (void)menuNeedsUpdate:(NSMenu*)menu
 {
-    if( !m_HandlersAreBuilt )
-        [self fetchHandlers];
-    
+    m_ManagedMenus.emplace(menu);
     [menu removeAllItems];
+
+    if( !m_HandlersAreBuilt ) {
+        [self fetchHandlers];
+        [menu addItem:[self makeFetchingStubItem]];
+        return;
+    }
     
     if( !m_OpenWithHandlers.empty() ) {
         int start = 0;
@@ -191,6 +247,15 @@ static void SortAndPurgeDuplicateHandlers(vector<LaunchServiceHandler> &_handler
         @"<None>",
         @"FilePanelsContextMenu",
         "Menu item for case when no handlers are available, for English is '<None>'");
+    return [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
+}
+
+- (NSMenuItem*) makeFetchingStubItem
+{
+    auto title = NSLocalizedStringFromTable(
+        @"Fetching...",
+        @"FilePanelsContextMenu",
+        "Menu item for indicating that fetching process is in progress");
     return [[NSMenuItem alloc] initWithTitle:title action:nil keyEquivalent:@""];
 }
 

@@ -2581,8 +2581,6 @@
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CF9F4AD11ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.h */,
-				CF9F4AD21ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm */,
 				CFDAC2FE1DFD1D7C0039A104 /* ExternalEditorInfo.h */,
 				CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */,
 				CF1846F91E419B53008B7C9F /* ExternalEditorInfoPrivate.h */,
@@ -2605,6 +2603,8 @@
 				CFDAC26D1DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm */,
 				CFDAC2641DFBF20F0039A104 /* NCPanelContextMenu.h */,
 				CFDAC2651DFBF20F0039A104 /* NCPanelContextMenu.mm */,
+				CF9F4AD11ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.h */,
+				CF9F4AD21ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm */,
 				CFDAC2BF1DFD0DE40039A104 /* PanelAux.h */,
 				CFDAC2C01DFD0DE40039A104 /* PanelAux.mm */,
 				CFDAC24A1DFBF0B30039A104 /* PanelController.h */,

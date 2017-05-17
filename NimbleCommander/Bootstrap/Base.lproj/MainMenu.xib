@@ -175,7 +175,7 @@ DQ
                                     <action selector="onAlwaysOpenFileWith:" target="-1" id="Nk0-Ry-daQ"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Open In Opposite Panel" tag="11021" id="jt1-bG-SNx">
+                            <menuItem title="Reveal In Opposite Panel" tag="11021" id="jt1-bG-SNx">
                                 <string key="keyEquivalent" base64-UTF8="YES">
 DQ
 </string>
@@ -184,7 +184,7 @@ DQ
                                     <action selector="OnFileOpenInOppositePanel:" target="-1" id="DYJ-vB-ePl"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Open In Opposite Panel Tab" tag="11024" id="5B1-WV-20L">
+                            <menuItem title="Reveal In Opposite Panel Tab" tag="11024" id="5B1-WV-20L">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnFileOpenInNewOppositePanelTab:" target="-1" id="gpu-X2-2d8"/>

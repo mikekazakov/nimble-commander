@@ -574,7 +574,7 @@ static bool RouteKeyboardInputIntoTerminal()
         
         // handle some actions manually, to prevent annoying by menu highlighting by hotkey
         static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root, hk_go_home, hk_preview, hk_go_into, kh_go_outside;
-        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_file_open, &hk_file_open_native, &hk_go_root, &hk_go_home, &hk_preview, &hk_go_into, &kh_go_outside}, {"menu.file.open", "menu.file.open_native", "panel.go_root", "panel.go_home", "panel.show_preview", "panel.go_into_folder", "panel.go_into_enclosing_folder"});
+        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_file_open, &hk_file_open_native, &hk_go_root, &hk_go_home, &hk_preview, &hk_go_into, &kh_go_outside}, {"menu.file.enter", "menu.file.open", "panel.go_root", "panel.go_home", "panel.show_preview", "panel.go_into_folder", "panel.go_into_enclosing_folder"});
 
         if( !terminal_can_eat ) {
             if( hk_preview.IsKeyDown(unicode, keycode, modif) ) {

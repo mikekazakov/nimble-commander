@@ -26,12 +26,12 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.file.new_folder_with_selection",             11'100},
     {"menu.file.new_file",                              11'120},
     {"menu.file.new_tab",                               11'110},
-    {"menu.file.open",                                  11'010},
+    {"menu.file.enter",                                 11'010},
     {"menu.file.open_with_submenu",                     11'160},
     {"menu.file.always_open_with_submenu",              11'170},
-    {"menu.file.open_native",                           11'020},
-    {"menu.file.open_in_opposite_panel",                11'021},
-    {"menu.file.open_in_opposite_panel_tab",            11'024},
+    {"menu.file.open",                                  11'020},
+    {"menu.file.reveal_in_opposite_panel",              11'021},
+    {"menu.file.reveal_in_opposite_panel_tab",          11'024},
     {"menu.file.feed_filename_to_terminal",             11'022},
     {"menu.file.feed_filenames_to_terminal",            11'023},
     {"menu.file.calculate_sizes",                       11'030},
@@ -204,12 +204,12 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.file.new_folder_with_selection",                 u8"^⌘n"     }, // cmd+ctrl+n
     {"menu.file.new_file",                                  u8"⌥⌘n"     }, // cmd+alt+n
     {"menu.file.new_tab",                                   u8"⌘t"      }, // cmd+t
-    {"menu.file.open",                                      u8"\\r"     }, // ↵
+    {"menu.file.enter",                                     u8"\\r"     }, // ↵
     {"menu.file.open_with_submenu",                         u8""        }, //
     {"menu.file.always_open_with_submenu",                  u8"⌥"       }, // alt
-    {"menu.file.open_native",                               u8"⇧\\r"    }, // shift+↵
-    {"menu.file.open_in_opposite_panel",                    u8"⌥\\r"    }, // alt+↵
-    {"menu.file.open_in_opposite_panel_tab",                u8"⌥⌘\\r"   }, // alt+cmd+↵
+    {"menu.file.open",                                      u8"⇧\\r"    }, // shift+↵
+    {"menu.file.reveal_in_opposite_panel",                  u8"⌥\\r"    }, // alt+↵
+    {"menu.file.reveal_in_opposite_panel_tab",              u8"⌥⌘\\r"   }, // alt+cmd+↵
     {"menu.file.calculate_sizes",                           u8"⇧⌥\\r"   }, // shift+alt+↵
     {"menu.file.calculate_all_sizes",                       u8"⇧^\\r"   }, // shift+ctrl+↵
     {"menu.file.feed_filename_to_terminal",                 u8"^⌥\\r"   }, // ctrl+alt+↵

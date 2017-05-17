@@ -31,6 +31,10 @@
 #include "Actions/OpenFile.h"
 #include "Actions/Enter.h"
 #include "PanelView.h"
+#include <NimbleCommander/Core/Alert.h>
+
+using namespace nc::core;
+using namespace nc::panel;
 
 static const nc::panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
@@ -274,9 +278,21 @@ static void Perform(SEL _sel, PanelController *_target, id _sender)
             m.emplace( get<1>(a), get<2>(a) );
         return m;
     }();
-    if( const auto v = actions.find(_sel); v != end(actions) )
-        v->second->Perform(_target, _sender);
-    else
+
+    if( const auto action = actions.find(_sel); action != end(actions)  ) {
+        try {
+            action->second->Perform(_target, _sender);
+        }
+        catch( exception &e ) {
+            ShowExceptionAlert(e);
+        }
+        catch(...){
+            ShowExceptionAlert();
+        }
+
+    }
+    else {
         cout << "warning - unrecognized selector: " <<
             NSStringFromSelector(_sel).UTF8String << endl;
-}
+    }
+ }

@@ -33,7 +33,8 @@
 #include "Actions/GoToFolder.h"
 #include "Actions/Enter.h"
 
-using namespace ::nc::panel;
+using namespace nc::core;
+using namespace nc::panel;
 
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
@@ -158,24 +159,6 @@ void GenericCursorPersistance::Restore() const
 }
 
 }
-
-static void ShowExceptionAlert( const string &_message = "" )
-{
-    if( dispatch_is_main_queue() ) {
-        auto alert = [[Alert alloc] init];
-        alert.messageText = @"Unexpected exception was caught:";
-        alert.informativeText = !_message.empty() ?
-            [NSString stringWithUTF8StdString:_message] :
-            @"Unknown exception";
-        [alert runModal];
-    }
-    else {
-        dispatch_to_main_queue([_message]{
-            ShowExceptionAlert(_message);
-        });
-    }
-}
-
 
 #define MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE( _name, _path )\
 static bool _name()\
@@ -1125,7 +1108,7 @@ loadPreviousState:(bool)_load_state
             });
         }
         catch(exception &e) {
-            ShowExceptionAlert(e.what());
+            ShowExceptionAlert(e);
         }
         catch(...){
             ShowExceptionAlert();

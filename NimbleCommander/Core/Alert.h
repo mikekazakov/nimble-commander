@@ -28,3 +28,9 @@ NS_ASSUME_NONNULL_BEGIN
 NS_ASSUME_NONNULL_END
 @end
 
+namespace nc::core {
+
+void ShowExceptionAlert( const string &_message = "" );
+void ShowExceptionAlert( const std::exception &_exception );
+
+}

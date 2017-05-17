@@ -647,6 +647,8 @@
 		CF9F4A921EC9442C00E0AF82 /* Compress.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4A911EC9442C00E0AF82 /* Compress.mm */; };
 		CF9F4AD31ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AD21ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm */; };
 		CF9F4AED1ECADEDB00E0AF82 /* OpenFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEC1ECADEDB00E0AF82 /* OpenFile.mm */; };
+		CF9F4AF01ECC015700E0AF82 /* ExecuteInTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AEF1ECC015700E0AF82 /* ExecuteInTerminal.mm */; };
+		CF9F4AF31ECC114F00E0AF82 /* Enter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9F4AF21ECC114F00E0AF82 /* Enter.mm */; };
 		CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
 		CFA183731CA0133600544633 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
 		CFA2D6041E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */; };
@@ -1995,6 +1997,10 @@
 		CF9F4AD21ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NCPanelOpenWithMenuDelegate.mm; path = NimbleCommander/States/FilePanels/NCPanelOpenWithMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CF9F4AEB1ECADEDB00E0AF82 /* OpenFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenFile.h; path = NimbleCommander/States/FilePanels/Actions/OpenFile.h; sourceTree = SOURCE_ROOT; };
 		CF9F4AEC1ECADEDB00E0AF82 /* OpenFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenFile.mm; path = NimbleCommander/States/FilePanels/Actions/OpenFile.mm; sourceTree = SOURCE_ROOT; };
+		CF9F4AEE1ECC015700E0AF82 /* ExecuteInTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExecuteInTerminal.h; path = NimbleCommander/States/FilePanels/Actions/ExecuteInTerminal.h; sourceTree = SOURCE_ROOT; };
+		CF9F4AEF1ECC015700E0AF82 /* ExecuteInTerminal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExecuteInTerminal.mm; path = NimbleCommander/States/FilePanels/Actions/ExecuteInTerminal.mm; sourceTree = SOURCE_ROOT; };
+		CF9F4AF11ECC114F00E0AF82 /* Enter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Enter.h; path = NimbleCommander/States/FilePanels/Actions/Enter.h; sourceTree = SOURCE_ROOT; };
+		CF9F4AF21ECC114F00E0AF82 /* Enter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Enter.mm; path = NimbleCommander/States/FilePanels/Actions/Enter.mm; sourceTree = SOURCE_ROOT; };
 		CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoToFolderSheetController.h; path = ../NimbleCommander/States/FilePanels/Views/GoToFolderSheetController.h; sourceTree = "<group>"; };
 		CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = GoToFolderSheetController.mm; path = ../NimbleCommander/States/FilePanels/Views/GoToFolderSheetController.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CFA183721CA0133600544633 /* libAquaticPrime.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAquaticPrime.a; path = 3rd_Party/AquaticPrime/built/libAquaticPrime.a; sourceTree = SOURCE_ROOT; };
@@ -2839,16 +2845,6 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				CF9F4AEB1ECADEDB00E0AF82 /* OpenFile.h */,
-				CF9F4AEC1ECADEDB00E0AF82 /* OpenFile.mm */,
-				CF9F4A901EC9442C00E0AF82 /* Compress.h */,
-				CF9F4A911EC9442C00E0AF82 /* Compress.mm */,
-				CF7A09941EC2B37000533B07 /* Duplicate.h */,
-				CF7A09951EC2B37000533B07 /* Duplicate.mm */,
-				CF90C0B41EC161E70056E3B8 /* NavigateHistory.h */,
-				CF90C0B51EC161E70056E3B8 /* NavigateHistory.mm */,
-				CFA7E02B1EB97B60001FE66C /* Delete.h */,
-				CFA7E02C1EB97B60001FE66C /* Delete.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
 				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
 				CF0260C81E9DF45D0025B50F /* BatchRename.h */,
@@ -2859,14 +2855,24 @@
 				CF0260C61E9DEC380025B50F /* CalculateSizes.mm */,
 				CF6ECDA71E9F4776008FA79E /* ChangeAttributes.h */,
 				CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */,
+				CF9F4A901EC9442C00E0AF82 /* Compress.h */,
+				CF9F4A911EC9442C00E0AF82 /* Compress.mm */,
 				CF5FE7D31E120A4900CD83B4 /* CopyFilePaths.h */,
 				CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */,
 				CF818B721EA0830400BC28E6 /* CopyToPasteboard.h */,
 				CF818B731EA0830400BC28E6 /* CopyToPasteboard.mm */,
 				CF0139B01E99EC4A00E44F2D /* DefaultAction.h */,
 				CF0139B11E99EC4A00E44F2D /* DefaultAction.mm */,
+				CFA7E02B1EB97B60001FE66C /* Delete.h */,
+				CFA7E02C1EB97B60001FE66C /* Delete.mm */,
+				CF7A09941EC2B37000533B07 /* Duplicate.h */,
+				CF7A09951EC2B37000533B07 /* Duplicate.mm */,
 				CFD8CDB61E8CD37D00E4DC53 /* EjectVolume.h */,
 				CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */,
+				CF9F4AF11ECC114F00E0AF82 /* Enter.h */,
+				CF9F4AF21ECC114F00E0AF82 /* Enter.mm */,
+				CF9F4AEE1ECC015700E0AF82 /* ExecuteInTerminal.h */,
+				CF9F4AEF1ECC015700E0AF82 /* ExecuteInTerminal.mm */,
 				CF0139B31E99F7C200E44F2D /* FindFiles.h */,
 				CF0139B41E99F7C200E44F2D /* FindFiles.mm */,
 				CFD8CDB01E8CCD0A00E4DC53 /* GoToFolder.h */,
@@ -2875,6 +2881,10 @@
 				CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */,
 				CF0260BB1E9DC9000025B50F /* MakeNew.h */,
 				CF0260BC1E9DC9000025B50F /* MakeNew.mm */,
+				CF90C0B41EC161E70056E3B8 /* NavigateHistory.h */,
+				CF90C0B51EC161E70056E3B8 /* NavigateHistory.mm */,
+				CF9F4AEB1ECADEDB00E0AF82 /* OpenFile.h */,
+				CF9F4AEC1ECADEDB00E0AF82 /* OpenFile.mm */,
 				CFA7DFF61EB6FD82001FE66C /* OpenNetworkConnection.h */,
 				CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */,
 				CF15D0811E8E1E7A00FEAA04 /* OpenWithExternalEditor.h */,
@@ -4912,6 +4922,7 @@
 				CFD8CDBE1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
 				CFA7E02D1EB97B60001FE66C /* Delete.mm in Sources */,
 				CF7D135A1BF1B964001F53FD /* CreateDirectoryOperation.mm in Sources */,
+				CF9F4AF01ECC015700E0AF82 /* ExecuteInTerminal.mm in Sources */,
 				CFA2D6041E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
 				CF4E563F1D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF876D251D51E04A009C0CCE /* BigFileView.mm in Sources */,
@@ -4974,6 +4985,7 @@
 				CFDAC2AF1DFD096E0039A104 /* ConfigBackedNetworkConnectionsManager.mm in Sources */,
 				CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */,
 				CF8B24381E6FC68D008EB447 /* Favorites.cpp in Sources */,
+				CF9F4AF31ECC114F00E0AF82 /* Enter.mm in Sources */,
 				CF44AACC1DAF32A30064D754 /* IconsGenerator2.mm in Sources */,
 				CFDAC2901DFBF9260039A104 /* TermParser.mm in Sources */,
 				CF3E6DF81E3870AB002B4AAD /* PanelViewPresentationSettings.mm in Sources */,

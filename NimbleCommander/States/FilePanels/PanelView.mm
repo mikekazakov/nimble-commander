@@ -12,6 +12,7 @@
 #include "PanelViewFooter.h"
 #include "IconsGenerator2.h"
 #include "PanelViewDelegate.h"
+#include "Actions/Enter.h"
 
 enum class CursorSelectionType : int8_t
 {
@@ -1113,7 +1114,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 - (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)_event
 {
     if( _sorted_index >= 0 && _sorted_index == m_CursorPos )
-        [self.delegate PanelViewDoubleClick:self atElement:_sorted_index];
+        actions::Enter{}.Perform(self.controller, self);
 }
 
 - (void)panelItem:(int)_sorted_index mouseDragged:(NSEvent*)_event

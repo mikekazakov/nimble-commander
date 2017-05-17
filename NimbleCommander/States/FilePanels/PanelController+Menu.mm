@@ -29,6 +29,7 @@
 #include "Actions/Duplicate.h"
 #include "Actions/Compress.h"
 #include "Actions/OpenFile.h"
+#include "Actions/Enter.h"
 #include "PanelView.h"
 
 static const nc::panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
@@ -40,8 +41,8 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 {
     try {
         const auto tag = (int)item.tag;
-        if( auto a = ActionByTag(tag) )
-            return a->ValidateMenuItem(self, item);
+        if( const auto action = ActionByTag(tag) )
+            return action->ValidateMenuItem(self, item);
         IF_MENU_TAG("menu.command.internal_viewer")         return self.view.item && !self.view.item.IsDir();
         IF_MENU_TAG("menu.command.quick_look")              return self.view.item && !self.state.anyPanelCollapsed;
         IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
@@ -54,10 +55,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         cout << "validateMenuItem has caught an unknown exception!" << endl;
     }
     return false;
-}
-
-- (IBAction)OnOpen:(id)sender { // enter
-    [self handleGoIntoDirOrOpenInSystemSync];
 }
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender {
@@ -73,6 +70,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self forceRefreshPanel];
 }
 
+- (IBAction)OnOpen:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoIntoDirectory:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToUpperDirectory:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnOpenNatively:(id)sender { Perform(_cmd, self, sender); }
@@ -162,6 +160,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 
 using namespace nc::panel::actions;
 static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
+{"menu.file.open",                      @selector(OnOpen:),                         new Enter},
 {"menu.file.open_native",               @selector(OnOpenNatively:),                 new OpenFileWithDefaultHandler},
 {"menu.file.open_with_submenu",         @selector(onOpenFileWith:),                 new OpenFileWithSubmenu},
 {"menu.file.always_open_with_submenu",  @selector(onAlwaysOpenFileWith:),           new AlwaysOpenFileWithSubmenu},

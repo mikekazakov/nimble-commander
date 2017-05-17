@@ -6,8 +6,6 @@
 #include "../MainWindowController.h"
 #include "Views/QuickPreview.h"
 #include "MainWindowFilePanelState.h"
-#include "PanelAux.h"
-#include "SharingService.h"
 #include "Views/BriefSystemOverview.h"
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
@@ -33,6 +31,7 @@
 #include "NCPanelContextMenu.h"
 #include "Actions/OpenFile.h"
 #include "Actions/GoToFolder.h"
+#include "Actions/Enter.h"
 
 using namespace ::nc::panel;
 
@@ -440,34 +439,6 @@ static void HeatUpConfigValues()
     }
 }
 
-- (void) handleGoIntoDirOrOpenInSystemSync
-{
-    if( self.state && [self.state handleReturnKeyWithOverlappedTerminal] )
-        return;
-    
-    if( actions::GoIntoFolder{}.Predicate(self) ) {
-        actions::GoIntoFolder{}.Perform(self, self);
-        return;
-    }
-    
-    auto entry = m_View.item;
-    if( !entry )
-        return;
-    
-    // need more sophisticated executable handling here
-    if( ActivationManager::Instance().HasTerminal() &&
-        !entry.IsDotDot() &&
-        entry.Host()->IsNativeFS() &&
-        IsEligbleToTryToExecuteInConsole(entry) ) {
-        [self.state requestTerminalExecution:entry.Name() at:entry.Directory()];
-        return;
-    }
-    
-    // If previous code didn't handle current item,
-    // open item with the default associated application.
-    actions::OpenFileWithDefaultHandler{}.Perform(self, self);
-}
-
 - (void) ReLoadRefreshedListing:(const VFSListingPtr &)_ptr
 {
     assert(dispatch_is_main_queue());
@@ -596,6 +567,10 @@ static bool RouteKeyboardInputIntoTerminal()
             [self QuickSearchClearFiltering];
             return true;
         }
+        if( keycode == 36 ) { // Return button
+            if( self.state && [self.state handleReturnKeyWithOverlappedTerminal] )
+                return true;
+        }
         
         // handle some actions manually, to prevent annoying by menu highlighting by hotkey
         static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root, hk_go_home, hk_preview, hk_go_into, kh_go_outside;
@@ -628,7 +603,7 @@ static bool RouteKeyboardInputIntoTerminal()
             }
             if( hk_file_open.IsKeyDown(unicode, keycode, modif) ) {
                 // we keep it here to avoid blinking on menu item
-                [self handleGoIntoDirOrOpenInSystemSync];
+                actions::Enter{}.Perform(self, self);
                 return true;
             }
             if( hk_file_open_native.IsKeyDown(unicode, keycode, modif) ) {
@@ -815,11 +790,6 @@ static bool RouteKeyboardInputIntoTerminal()
 {
     m_Data.CustomFlagsClearHighlights();
     [m_View volatileDataChanged];
-}
-
-- (void) PanelViewDoubleClick:(PanelView*)_view atElement:(int)_sort_pos
-{
-    [self handleGoIntoDirOrOpenInSystemSync];
 }
 
 - (void) PanelViewRenamingFieldEditorFinished:(PanelView*)_view text:(NSString*)_filename

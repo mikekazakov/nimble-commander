@@ -608,7 +608,7 @@ static bool RouteKeyboardInputIntoTerminal()
             }
             if( hk_file_open_native.IsKeyDown(unicode, keycode, modif) ) {
                 // we keep it here to avoid blinking on menu item
-                actions::OpenFileWithDefaultHandler{}.Perform(self, self);
+                actions::OpenFilesWithDefaultHandler{}.Perform(self, self);
                 return true;
             }
         }

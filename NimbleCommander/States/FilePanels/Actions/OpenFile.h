@@ -18,7 +18,13 @@ struct AlwaysOpenFileWithSubmenu : PanelAction
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
 };
 
-struct OpenFileWithDefaultHandler : PanelAction
+struct OpenFocusedFileWithDefaultHandler : PanelAction
+{
+    bool Predicate( PanelController *_target ) const override;
+    void Perform( PanelController *_target, id _sender ) const override;
+};
+
+struct OpenFilesWithDefaultHandler : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;

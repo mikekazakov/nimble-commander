@@ -34,7 +34,7 @@ void Enter::Perform( PanelController *_target, id _sender ) const
         return;
     }
     
-    actions::OpenFileWithDefaultHandler{}.Perform(_target, _sender);
+    actions::OpenFilesWithDefaultHandler{}.Perform(_target, _sender);
 }
 
 }

@@ -14,8 +14,8 @@ static NCPanelOpenWithMenuDelegate *Delegate()
     return instance;
 }
 
-static void OpenFilesWithDefaultHandler(const vector<VFSListingItem>& _items,
-                                        PanelController* _target);
+static void PerformOpeningFilesWithDefaultHandler(const vector<VFSListingItem>& _items,
+                                                  PanelController* _target);
 
 static bool CommonPredicate( PanelController *_target )
 {
@@ -66,12 +66,12 @@ bool AlwaysOpenFileWithSubmenu::ValidateMenuItem( PanelController *_target, NSMe
     return Predicate(_target);
 }
 
-bool OpenFileWithDefaultHandler::Predicate( PanelController *_target ) const
+bool OpenFilesWithDefaultHandler::Predicate( PanelController *_target ) const
 {
     return (bool)_target.view.item;
 }
 
-void OpenFileWithDefaultHandler::Perform( PanelController *_target, id _sender ) const
+void OpenFilesWithDefaultHandler::Perform( PanelController *_target, id _sender ) const
 {
     if( !Predicate(_target) ) {
         NSBeep();
@@ -79,11 +79,27 @@ void OpenFileWithDefaultHandler::Perform( PanelController *_target, id _sender )
     }
 
     auto entries = _target.selectedEntriesOrFocusedEntryWithDotDot;
-    OpenFilesWithDefaultHandler(entries, _target);
+    PerformOpeningFilesWithDefaultHandler(entries, _target);
 }
 
-static void OpenFilesWithDefaultHandler(const vector<VFSListingItem>& _items,
-                                        PanelController* _target)
+bool OpenFocusedFileWithDefaultHandler::Predicate( PanelController *_target ) const
+{
+    return (bool)_target.view.item;
+}
+
+void OpenFocusedFileWithDefaultHandler::Perform( PanelController *_target, id _sender ) const
+{
+    if( !Predicate(_target) ) {
+        NSBeep();
+        return;
+    }
+
+    auto entries = vector<VFSListingItem>{1, _target.view.item};
+    PerformOpeningFilesWithDefaultHandler(entries, _target);
+}
+
+static void PerformOpeningFilesWithDefaultHandler(const vector<VFSListingItem>& _items,
+                                                  PanelController* _target)
 {
     if( _items.empty() )
         return;
@@ -131,7 +147,7 @@ bool context::OpenFileWithDefaultHandler::Predicate( PanelController *_target ) 
 
 void context::OpenFileWithDefaultHandler::Perform( PanelController *_target, id _sender ) const
 {
-    OpenFilesWithDefaultHandler(m_Items, _target);
+    PerformOpeningFilesWithDefaultHandler(m_Items, _target);
 }
 
 }

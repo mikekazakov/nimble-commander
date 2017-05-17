@@ -145,13 +145,22 @@
                             <menuItem isSeparatorItem="YES" id="vIX-94-J58">
                                 <modifierMask key="keyEquivalentModifierMask" command="YES"/>
                             </menuItem>
-                            <menuItem title="Open" tag="11010" id="72">
+                            <menuItem title="Enter" tag="11010" id="72">
                                 <string key="keyEquivalent" base64-UTF8="YES">
 DQ
 </string>
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="OnOpen:" target="-1" id="EXV-mf-ZyI"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Open" tag="11020" id="NCx-aq-tJi">
+                                <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                                <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
+                                <connections>
+                                    <action selector="OnOpenNatively:" target="-1" id="YXv-PR-7Uo"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open With" tag="11160" id="db8-IO-kEa">
@@ -164,15 +173,6 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="onAlwaysOpenFileWith:" target="-1" id="Nk0-Ry-daQ"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Open in Finder" tag="11020" id="NCx-aq-tJi">
-                                <string key="keyEquivalent" base64-UTF8="YES">
-DQ
-</string>
-                                <modifierMask key="keyEquivalentModifierMask" shift="YES"/>
-                                <connections>
-                                    <action selector="OnOpenNatively:" target="-1" id="YXv-PR-7Uo"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open In Opposite Panel" tag="11021" id="jt1-bG-SNx">

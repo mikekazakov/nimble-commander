@@ -161,7 +161,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 using namespace nc::panel::actions;
 static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.file.open",                      @selector(OnOpen:),                         new Enter},
-{"menu.file.open_native",               @selector(OnOpenNatively:),                 new OpenFileWithDefaultHandler},
+{"menu.file.open_native",               @selector(OnOpenNatively:),                 new OpenFilesWithDefaultHandler},
 {"menu.file.open_with_submenu",         @selector(onOpenFileWith:),                 new OpenFileWithSubmenu},
 {"menu.file.always_open_with_submenu",  @selector(onAlwaysOpenFileWith:),           new AlwaysOpenFileWithSubmenu},
 {"menu.file.find",                      @selector(onMainMenuPerformFindAction:),    new FindFiles},

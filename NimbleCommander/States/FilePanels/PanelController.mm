@@ -12,11 +12,9 @@
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
-#include <Utility/ExtensionLowercaseComparison.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "PanelDataPersistency.h"
-#include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelViewLayoutSupport.h"
 #include "Helpers/Pasteboard.h"
@@ -160,17 +158,6 @@ void GenericCursorPersistance::Restore() const
     }
 }
 
-}
-
-static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
-{
-    if( _item.IsDir() )
-        return false;
-
-    if( !_item.HasExtension() )
-        return false;
-    
-    return IsExtensionInArchivesWhitelist(_item.Extension());
 }
 
 static void ShowExceptionAlert( const string &_message = "" )
@@ -453,55 +440,15 @@ static void HeatUpConfigValues()
     }
 }
 
-- (bool) handleGoIntoDirOrArchiveSync:(bool)_whitelist_archive_only
-{
-    const auto entry = m_View.item;
-    if( !entry )
-        return false;
-    
-    // Handle directories.
-    if( entry.IsDir() ) {
-        if( entry.IsDotDot() )
-            actions::GoToEnclosingFolder{}.Perform(self, self);
-        
-        if(entry.Host()->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:entry.Path()])
-            return true; // silently reap this command, since user refuses to grant an access
-        
-        return [self GoToDir:entry.Path() vfs:entry.Host() select_entry:"" async:true] == 0;
-    }
-    // archive stuff here
-    // will actually go async for archives
-    else if( ActivationManager::Instance().HasArchivesBrowsing() ) {
-        if( !_whitelist_archive_only || IsItemInArchivesWhitelist(entry) ) {
-            m_DirectoryLoadingQ.Run([=]{
-                // background
-                auto pwd_ask = [=]{ string p; return RunAskForPasswordModalWindow(entry.Filename(), p) ? p : ""; };
-                
-                auto arhost = VFSArchiveProxy::OpenFileAsArchive(entry.Path(),
-                                                                 entry.Host(),
-                                                                 pwd_ask,
-                                                                 [=]{ return m_DirectoryLoadingQ.IsStopped(); }
-                                                                 );
-                
-                if( arhost )
-                    dispatch_to_main_queue([=]{
-                        [self GoToDir:"/" vfs:arhost select_entry:"" async:true];
-                    });
-            });
-            return true;
-        }
-    }
-    
-    return false;
-}
-
 - (void) handleGoIntoDirOrOpenInSystemSync
 {
     if( self.state && [self.state handleReturnKeyWithOverlappedTerminal] )
         return;
     
-    if([self handleGoIntoDirOrArchiveSync:true])
+    if( actions::GoIntoFolder{}.Predicate(self) ) {
+        actions::GoIntoFolder{}.Perform(self, self);
         return;
+    }
     
     auto entry = m_View.item;
     if( !entry )

@@ -9,6 +9,10 @@
 #include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "NavigateHistory.h"
+#include "../PanelView.h"
+#include "../PanelAux.h"
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 
 namespace nc::panel::actions {
 
@@ -146,7 +150,7 @@ void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
             string sel_fn = cur.parent_path().filename().native();
             
             if( SandboxAccessDenied(*vfs, dir) )
-                return; // silently reap this command, since user refuses to grant an access
+                return;
             
             [_target GoToDir:dir
                          vfs:vfs
@@ -157,6 +161,89 @@ void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
     }
     else if( GoBack{}.Predicate(_target) ) {
         GoBack{}.Perform(_target, _sender);
+    }
+}
+
+GoIntoFolder::GoIntoFolder( bool _force_checking_for_archive ) :
+    m_ForceArchivesChecking(_force_checking_for_archive)
+{
+}
+
+static bool IsItemInArchivesWhitelist( const VFSListingItem &_item ) noexcept
+{
+    if( _item.IsDir() )
+        return false;
+
+    if( !_item.HasExtension() )
+        return false;
+    
+    return IsExtensionInArchivesWhitelist(_item.Extension());
+}
+
+bool GoIntoFolder::Predicate( PanelController *_target ) const
+{
+    const auto item = _target.view.item;
+    if( !item )
+        return false;
+    
+    if( item.IsDir() )
+        return true;
+    
+    if( !ActivationManager::Instance().HasArchivesBrowsing() )
+        return false;
+    
+    if( m_ForceArchivesChecking )
+        return true;
+    else
+        return IsItemInArchivesWhitelist(item);
+}
+
+void GoIntoFolder::Perform( PanelController *_target, id _sender ) const
+{
+    const auto item = _target.view.item;
+    if( !item )
+        return;
+    
+    if( item.IsDir() ) {
+        if( item.IsDotDot() )
+            actions::GoToEnclosingFolder{}.Perform(_target, _target);
+        
+        if( SandboxAccessDenied(*item.Host(), item.Path()) )
+            return;
+        
+        [_target GoToDir:item.Path()
+                     vfs:item.Host()
+            select_entry:""
+                   async:true];
+    }
+    
+    if( ActivationManager::Instance().HasArchivesBrowsing() ) {
+        const auto eligible_to_check = m_ForceArchivesChecking || IsItemInArchivesWhitelist(item);
+        if( eligible_to_check ) {
+            
+            auto task = [item, _target]( const function<bool()> &_cancelled ) {
+                auto pwd_ask = [=]{
+                    string p;
+                    return RunAskForPasswordModalWindow(item.Filename(), p) ? p : "";
+                };
+                
+                auto arhost = VFSArchiveProxy::OpenFileAsArchive(item.Path(),
+                                                                 item.Host(),
+                                                                 pwd_ask,
+                                                                 _cancelled
+                                                                 );
+                
+                if( arhost )
+                    dispatch_to_main_queue([=]{
+                        [_target GoToDir:"/"
+                                     vfs:arhost
+                            select_entry:""
+                                   async:true];
+                    });
+            };
+            
+            [_target commitCancelableLoadingTask:move(task)];
+        }
     }
 }
 

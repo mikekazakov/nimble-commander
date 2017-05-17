@@ -201,7 +201,6 @@ loadPreviousState:(bool)_load_state
 - (IBAction)OnFileViewCommand:(id)sender;
 - (void) finishExtActivityWithTicket:(uint64_t)_ticket;
 - (void) CancelBackgroundOperations;
-- (bool) handleGoIntoDirOrArchiveSync:(bool)_whitelist_archive_only;
 - (void) handleGoIntoDirOrOpenInSystemSync;
 - (void) UpdateBriefSystemOverview;
 - (void) contextMenuDidClose:(NSMenu*)_menu;

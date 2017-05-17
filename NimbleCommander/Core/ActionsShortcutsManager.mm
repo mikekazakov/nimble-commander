@@ -3,8 +3,6 @@
 #include <NimbleCommander/Core/rapidjson.h>
 #include "ActionsShortcutsManager.h"
 
-static const auto g_OverridesConfigFile = "HotkeysOverrides.plist";
-
 // this ket should not exist in config defaults
 static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
 

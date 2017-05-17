@@ -34,6 +34,7 @@
 #include "PanelController+Menu.h"
 #include "NCPanelContextMenu.h"
 #include "Actions/OpenFile.h"
+#include "Actions/GoToFolder.h"
 
 using namespace ::nc::panel;
 
@@ -452,38 +453,6 @@ static void HeatUpConfigValues()
     }
 }
 
-- (bool) HandleGoToUpperDirectory
-{
-    if( self.isUniform  ) {
-        path cur = path(m_Data.DirectoryPathWithTrailingSlash());
-        if( cur.empty() )
-            return false;
-        if( cur == "/" ) {
-            if( self.vfs->Parent() != nullptr ) {
-                path junct = self.vfs->JunctionPath();
-                assert(!junct.empty());
-                string dir = junct.parent_path().native();
-                string sel_fn = junct.filename().native();
-                
-                if(self.vfs->Parent()->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir])
-                    return true; // silently reap this command, since user refuses to grant an access
-                return [self GoToDir:dir vfs:self.vfs->Parent() select_entry:sel_fn loadPreviousState:true async:true] == 0;
-            }
-        }
-        else {
-            string dir = cur.parent_path().remove_filename().native();
-            string sel_fn = cur.parent_path().filename().native();
-            
-            if( self.vfs->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:dir] )
-                return true; // silently reap this command, since user refuses to grant an access
-            return [self GoToDir:dir vfs:self.vfs select_entry:sel_fn loadPreviousState:true async:true] == 0;
-        }
-    }
-    else
-        [self OnGoBack:self];
-    return false;
-}
-
 - (bool) handleGoIntoDirOrArchiveSync:(bool)_whitelist_archive_only
 {
     const auto entry = m_View.item;
@@ -491,9 +460,9 @@ static void HeatUpConfigValues()
         return false;
     
     // Handle directories.
-    if(entry.IsDir()) {
-        if(entry.IsDotDot())
-            return [self HandleGoToUpperDirectory];
+    if( entry.IsDir() ) {
+        if( entry.IsDotDot() )
+            actions::GoToEnclosingFolder{}.Perform(self, self);
         
         if(entry.Host()->IsNativeFS() && ![self ensureCanGoToNativeFolderSync:entry.Path()])
             return true; // silently reap this command, since user refuses to grant an access
@@ -730,7 +699,8 @@ static bool RouteKeyboardInputIntoTerminal()
            (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 &&
            !terminal_can_eat
            ) { // treat not-processed by QuickSearch backspace as a GoToUpperLevel command
-            return [self HandleGoToUpperDirectory];
+            actions::GoToEnclosingFolder{}.Perform(self, self);
+            return true;
         }
         
         if( terminal_can_eat && [self.state feedOverlappedTerminalWithKeyDown:event] )

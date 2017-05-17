@@ -5,8 +5,10 @@
 #include <NimbleCommander/Core/SandboxManager.h>
 #include "../Views/GoToFolderSheetController.h"
 #include "../PanelController.h"
+#include "../PanelData.h"
 #include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
 #include <NimbleCommander/Core/AnyHolder.h>
+#include "NavigateHistory.h"
 
 namespace nc::panel::actions {
 
@@ -92,6 +94,70 @@ void GoToFavoriteLocation::Perform( PanelController *_target, id _sender ) const
         if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
             if( auto location = any_cast<PersistentLocation>(&holder.any) )
                 [_target goToPersistentLocation:*location];
+}
+
+bool GoToEnclosingFolder::Predicate( PanelController *_target ) const
+{
+    static const auto root = "/"s;
+
+    if( _target.isUniform ) {
+        if( _target.data.Listing().Directory() != root )
+            return true;
+        
+        return _target.vfs->Parent() != nullptr;
+    }
+    else
+        return GoBack{}.Predicate(_target);
+}
+
+static bool SandboxAccessDenied( const VFSHost &_host, const string &_path )
+{
+    return _host.IsNativeFS() && !SandboxManager::EnsurePathAccess(_path);
+}
+
+void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
+{
+    if( _target.isUniform  ) {
+        path cur = path(_target.data.DirectoryPathWithTrailingSlash());
+        if( cur.empty() )
+            return;
+        
+        const auto vfs = _target.vfs;
+        
+        if( cur == "/" ) {
+            if( const auto parent_vfs = vfs->Parent() ) {
+                path junct = vfs->JunctionPath();
+                assert(!junct.empty());
+                string dir = junct.parent_path().native();
+                string sel_fn = junct.filename().native();
+                
+                if( SandboxAccessDenied(*parent_vfs, dir) )
+                    return; // silently reap this command, since user refuses to grant an access
+                
+                [_target GoToDir:dir
+                             vfs:parent_vfs
+                    select_entry:sel_fn
+               loadPreviousState:true
+                           async:true];
+            }
+        }
+        else {
+            string dir = cur.parent_path().remove_filename().native();
+            string sel_fn = cur.parent_path().filename().native();
+            
+            if( SandboxAccessDenied(*vfs, dir) )
+                return; // silently reap this command, since user refuses to grant an access
+            
+            [_target GoToDir:dir
+                         vfs:vfs
+                select_entry:sel_fn
+           loadPreviousState:true
+                       async:true];
+        }
+    }
+    else if( GoBack{}.Predicate(_target) ) {
+        GoBack{}.Perform(_target, _sender);
+    }
 }
 
 };

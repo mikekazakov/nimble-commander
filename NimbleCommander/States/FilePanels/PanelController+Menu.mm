@@ -42,7 +42,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         const auto tag = (int)item.tag;
         if( auto a = ActionByTag(tag) )
             return a->ValidateMenuItem(self, item);
-        IF_MENU_TAG("menu.go.enclosing_folder")             return self.currentDirectoryPath != "/" || (self.isUniform && self.vfs->Parent() != nullptr);
         IF_MENU_TAG("menu.go.into_folder")                  return self.view.item && !self.view.item.IsDotDot();
         IF_MENU_TAG("menu.command.internal_viewer")         return self.view.item && !self.view.item.IsDir();
         IF_MENU_TAG("menu.command.quick_look")              return self.view.item && !self.state.anyPanelCollapsed;
@@ -56,11 +55,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         cout << "validateMenuItem has caught an unknown exception!" << endl;
     }
     return false;
-}
-
-- (IBAction)OnGoToUpperDirectory:(id)sender
-{ // cmd+up
-    [self HandleGoToUpperDirectory];
 }
 
 - (IBAction)OnGoIntoDirectory:(id)sender
@@ -87,6 +81,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     [self forceRefreshPanel];
 }
 
+- (IBAction)OnGoToUpperDirectory:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnOpenNatively:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onOpenFileWith:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onAlwaysOpenFileWith:(id)sender { Perform(_cmd, self, sender); }
@@ -214,6 +209,7 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.view.toggle_layout_8",  @selector(onToggleViewLayout8:),  new ToggleLayout{7}},
 {"menu.view.toggle_layout_9",  @selector(onToggleViewLayout9:),  new ToggleLayout{8}},
 {"menu.view.toggle_layout_10", @selector(onToggleViewLayout10:), new ToggleLayout{9}},
+{"menu.go.enclosing_folder",@selector(OnGoToUpperDirectory:),new GoToEnclosingFolder},
 {"menu.go.back",            @selector(OnGoBack:),           new GoBack},
 {"menu.go.forward",         @selector(OnGoForward:),        new GoForward},
 {"menu.go.home",            @selector(OnGoToHome:),         new GoToHomeFolder},

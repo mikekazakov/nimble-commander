@@ -6,8 +6,6 @@
 
 @interface ConnectionsMenuDelegate()
 
-@property (strong) IBOutlet NSMenuItem *recentConnectionsMenuItem;
-
 @end
 
 @implementation ConnectionsMenuDelegate
@@ -46,11 +44,8 @@
         while( menu.numberOfItems > m_InitialElementsCount )
             [menu removeItemAtIndex:menu.numberOfItems-1];
         
-        self.recentConnectionsMenuItem.hidden = m_Connections.empty();
-        
         for( auto &c: m_Connections ) {
             NSMenuItem *regular_item = [[NSMenuItem alloc] init];
-            regular_item.indentationLevel = 1;
             regular_item.title = [NSString stringWithUTF8StdString:ncm.TitleForConnection(c)];
             regular_item.representedObject = [[AnyHolder alloc] initWithAny:any{c}];
             regular_item.action = @selector(OnGoToSavedConnectionItem:);

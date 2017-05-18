@@ -35,9 +35,10 @@
 
 using namespace nc::core;
 using namespace nc::panel;
-
+namespace nc::panel {
 static const nc::panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
+}
 
 @implementation PanelController (Menu)
 
@@ -163,6 +164,8 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 @end
 
 using namespace nc::panel::actions;
+namespace nc::panel {
+
 static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.file.enter",                     @selector(OnOpen:),                         new Enter},
 {"menu.file.open",                      @selector(OnOpenNatively:),                 new OpenFilesWithDefaultHandler},
@@ -289,10 +292,11 @@ static void Perform(SEL _sel, PanelController *_target, id _sender)
         catch(...){
             ShowExceptionAlert();
         }
-
     }
     else {
         cout << "warning - unrecognized selector: " <<
             NSStringFromSelector(_sel).UTF8String << endl;
     }
- }
+}
+
+}

@@ -41,6 +41,7 @@ public:
     bool HasArchivesBrowsing() const noexcept;
     bool HasLinksManipulation() const noexcept;
     bool HasNetworkConnectivity() const noexcept;
+    bool HasLANSharesMounting() const noexcept;
     bool HasChecksumCalculation() const noexcept;
     bool HasBatchRename() const noexcept;
     bool HasCopyVerification() const noexcept;

@@ -277,6 +277,11 @@ bool ActivationManager::HasNetworkConnectivity() const noexcept
     return m_IsActivated;
 }
 
+bool ActivationManager::HasLANSharesMounting() const noexcept
+{
+    return !m_IsSandBoxed && m_IsActivated;
+}
+
 bool ActivationManager::HasChecksumCalculation() const noexcept
 {
     return m_IsActivated;

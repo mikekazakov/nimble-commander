@@ -4,17 +4,26 @@
 /* Submenu title to choose app to always open with, for English is 'Always Open With' */
 "Always Open With" = "Всегда открывать в программе";
 
-/* Compress some items */
-"Compress %lu Items" = "Сжать %lu объектов";
+/* Menu item to choose an app from MAS */
+"App Store..." = "App Store...";
 
 /* Compress some items here */
-"Compress %lu Items Here" = "Сжать %lu объектов здесь";
+"Compress" = "Сжать";
 
-/* Compress one item */
-"Compress “%@”" = "Сжать “%@”";
+/* Compress some items here */
+"Compress %lu Items" = "Сжать %lu объектов";
+
+/* Compress some items */
+"Compress %lu Items in Opposite Panel" = "Сжать %lu объектов в противоположной панели";
+
+/* Compress some items */
+"Compress in Opposite Panel" = "Сжать в противоположной панели";
 
 /* Compress one item here */
-"Compress “%@” Here" = "Сжать “%@” здесь";
+"Compress “%@”" = "Сжать “%@”";
+
+/* Compress one item */
+"Compress “%@” in Opposite Panel" = "Сжать “%@” в противоположной панели";
 
 /* Copy many items */
 "Copy %lu Items" = "Копировать %lu объектов";
@@ -27,6 +36,9 @@
 
 /* Duplicate an item */
 "Duplicate" = "Дублировать";
+
+/* Menu item for indicating that fetching process is in progress */
+"Fetching..." = "Загрузка...";
 
 /* Menu item title to move to trash, for English is 'Move to Trash' */
 "Move to Trash" = "Переместить в Корзину";

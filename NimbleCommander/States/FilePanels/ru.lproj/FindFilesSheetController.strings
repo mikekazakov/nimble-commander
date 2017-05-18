@@ -118,6 +118,9 @@
 /* Class = "NSTextFieldCell"; title = "Containing text:"; ObjectID = "sq9-fx-uq3"; */
 "sq9-fx-uq3.title" = "Содержащие текст:";
 
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Enter a text to search"; ObjectID = "uaK-ba-QWq"; */
+"uaK-ba-QWq.ibShadowedIsNilPlaceholder" = "Введите текст для поиска";
+
 /* Class = "NSMenuItem"; title = "≤"; ObjectID = "udS-8N-4fz"; */
 "udS-8N-4fz.title" = "≤";
 
@@ -129,4 +132,7 @@
 
 /* Class = "NSTextFieldCell"; title = "Items found:"; ObjectID = "z2i-rD-QXz"; */
 "z2i-rD-QXz.title" = "Найдено:";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "Mask like *, or *.txt, or *.txt, *.jpg"; ObjectID = "zlY-kZ-zvU"; */
+"zlY-kZ-zvU.ibShadowedIsNilPlaceholder" = "Маска, например *, или *.txt, или *.txt, *.jpg";
 

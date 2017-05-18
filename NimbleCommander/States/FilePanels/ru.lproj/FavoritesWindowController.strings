@@ -1,0 +1,24 @@
+/* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "2uR-Pd-sGh"; */
+"2uR-Pd-sGh.headerCell.title" = "Название";
+
+/* Class = "NSWindow"; title = "Favorites"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Избранное";
+
+/* Class = "NSSegmentedCell"; eBj-7o-4Xo.ibShadowedToolTips[0] = "^V"; ObjectID = "eBj-7o-4Xo"; */
+"eBj-7o-4Xo.ibShadowedToolTips[0]" = "^V";
+
+/* Class = "NSSegmentedCell"; eBj-7o-4Xo.ibShadowedToolTips[1] = "^X"; ObjectID = "eBj-7o-4Xo"; */
+"eBj-7o-4Xo.ibShadowedToolTips[1]" = "^X";
+
+/* Class = "NSSegmentedCell"; eBj-7o-4Xo.ibShadowedToolTips[2] = "^O"; ObjectID = "eBj-7o-4Xo"; */
+"eBj-7o-4Xo.ibShadowedToolTips[2]" = "^O";
+
+/* Class = "NSMenuItem"; title = "Reset to Default Favorites"; ObjectID = "iKG-r8-pYH"; */
+"iKG-r8-pYH.title" = "Сбросить к Избранному по-умолчанию";
+
+/* Class = "NSTableColumn"; headerCell.title = "Location"; ObjectID = "rhd-Vq-Aqz"; */
+"rhd-Vq-Aqz.headerCell.title" = "Расположение";
+
+/* Class = "NSMenuItem"; title = "Reset to Finder's Favorites"; ObjectID = "trX-D7-5NF"; */
+"trX-D7-5NF.title" = "Сбросить к Избранному Finder'а";
+

@@ -7,14 +7,14 @@
 /* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "EJR-gc-SwI"; */
 "EJR-gc-SwI.title" = "Удаленный порт:";
 
-/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
-"F0z-JX-Cv5.title" = "Окно";
-
 /* Class = "NSTextFieldCell"; placeholderString = "ftp.example.com"; ObjectID = "FdQ-zx-5B7"; */
 "FdQ-zx-5B7.placeholderString" = "ftp.example.com";
 
 /* Class = "NSTextFieldCell"; placeholderString = "/"; ObjectID = "KlY-P2-CgM"; */
 "KlY-P2-CgM.placeholderString" = "/";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "anonymous@domain.com"; ObjectID = "MG5-t4-OT6"; */
+"MG5-t4-OT6.ibShadowedIsNilPlaceholder" = "anonymous@domain.com";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "anonymous"; ObjectID = "O5E-rL-Xtf"; */
 "O5E-rL-Xtf.ibShadowedIsNilPlaceholder" = "anonymous";
@@ -40,16 +40,10 @@
 /* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "dA5-HK-3gm"; */
 "dA5-HK-3gm.title" = "Название:";
 
-/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "anonymous@domain.com"; ObjectID = "dWk-v8-gCF"; */
-"dWk-v8-gCF.ibShadowedIsNilPlaceholder" = "anonymous@domain.com";
-
 /* Class = "NSTextFieldCell"; title = "Remote path:"; ObjectID = "hUY-J5-Twm"; */
 "hUY-J5-Twm.title" = "Удаленный путь:";
 
-/* Class = "NSMenuItem"; title = "🕟"; ObjectID = "hut-K2-4Ca"; */
-"hut-K2-4Ca.title" = "🕟";
-
-/* Class = "NSButtonCell"; title = "Close"; ObjectID = "j8e-Wn-3Fa"; */
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "j8e-Wn-3Fa"; */
 "j8e-Wn-3Fa.title" = "Закрыть";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "/"; ObjectID = "mnE-WW-WZY"; */
@@ -57,6 +51,9 @@
 
 /* Class = "NSTextFieldCell"; placeholderString = "anonymous"; ObjectID = "p3m-p9-Z9X"; */
 "p3m-p9-Z9X.placeholderString" = "anonymous";
+
+/* Class = "NSButtonCell"; alternateTitle = "Save"; ObjectID = "xIA-lj-ojE"; */
+"xIA-lj-ojE.alternateTitle" = "Сохранить";
 
 /* Class = "NSButtonCell"; title = "Connect"; ObjectID = "xIA-lj-ojE"; */
 "xIA-lj-ojE.title" = "Подключиться";

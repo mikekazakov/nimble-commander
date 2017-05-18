@@ -13,7 +13,7 @@
 /* Class = "NSTextFieldCell"; title = "System information"; ObjectID = "Bds-RP-yAL"; */
 "Bds-RP-yAL.title" = "Информация о системе";
 
-/* Class = "NSTextFieldCell"; title = "Archive handling"; ObjectID = "CEU-rk-oDM"; */
+/* Class = "NSTextFieldCell"; title = "Archives handling"; ObjectID = "CEU-rk-oDM"; */
 "CEU-rk-oDM.title" = "Работа с архивами";
 
 /* Class = "NSWindow"; title = "Pro Features for Nimble Commander"; ObjectID = "F0z-JX-Cv5"; */
@@ -34,7 +34,7 @@
 /* Class = "NSTextFieldCell"; title = "Attributes editor"; ObjectID = "lwf-Ux-yiP"; */
 "lwf-Ux-yiP.title" = "Редактор атрибутов";
 
-/* Class = "NSTextFieldCell"; title = "FTP and SFTP connectivity"; ObjectID = "v7q-uc-sjB"; */
+/* Class = "NSTextFieldCell"; title = "FTP, SFTP and Dropbox connectivity"; ObjectID = "v7q-uc-sjB"; */
 "v7q-uc-sjB.title" = "Доступ к FTP, SFTP и Dropbox";
 
 /* Class = "NSTextFieldCell"; title = "External tools integration"; ObjectID = "y8W-w4-V0a"; */

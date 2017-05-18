@@ -2023,6 +2023,10 @@
 		CF9F4B391ECD813300E0AF82 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DropboxAccountSheetController.xib; sourceTree = "<group>"; };
 		CF9F4B3F1ECD814800E0AF82 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ConnectToServer.xib; sourceTree = "<group>"; };
 		CF9F4B451ECD81BC00E0AF82 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/NetworkShareSheetController.xib; sourceTree = "<group>"; };
+		CF9F4B471ECD8A9400E0AF82 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FavoritesWindowController.strings; sourceTree = "<group>"; };
+		CF9F4B481ECD8A9700E0AF82 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/NetworkShareSheetController.strings; sourceTree = "<group>"; };
+		CF9F4B491ECD8A9900E0AF82 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/DropboxAccountSheetController.strings; sourceTree = "<group>"; };
+		CF9F4B4A1ECD8A9900E0AF82 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ConnectToServer.strings; sourceTree = "<group>"; };
 		CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoToFolderSheetController.h; path = ../NimbleCommander/States/FilePanels/Views/GoToFolderSheetController.h; sourceTree = "<group>"; };
 		CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = GoToFolderSheetController.mm; path = ../NimbleCommander/States/FilePanels/Views/GoToFolderSheetController.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CFA183721CA0133600544633 /* libAquaticPrime.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAquaticPrime.a; path = 3rd_Party/AquaticPrime/built/libAquaticPrime.a; sourceTree = SOURCE_ROOT; };
@@ -5620,6 +5624,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF9F4B331ECD810C00E0AF82 /* Base */,
+				CF9F4B471ECD8A9400E0AF82 /* ru */,
 			);
 			name = FavoritesWindowController.xib;
 			path = NimbleCommander/States/FilePanels;
@@ -5629,6 +5634,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF9F4B391ECD813300E0AF82 /* Base */,
+				CF9F4B491ECD8A9900E0AF82 /* ru */,
 			);
 			name = DropboxAccountSheetController.xib;
 			path = NimbleCommander/States/FilePanels/Views;
@@ -5638,6 +5644,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF9F4B3F1ECD814800E0AF82 /* Base */,
+				CF9F4B4A1ECD8A9900E0AF82 /* ru */,
 			);
 			name = ConnectToServer.xib;
 			path = NimbleCommander/States/FilePanels/Views;
@@ -5647,6 +5654,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				CF9F4B451ECD81BC00E0AF82 /* Base */,
+				CF9F4B481ECD8A9700E0AF82 /* ru */,
 			);
 			name = NetworkShareSheetController.xib;
 			path = NimbleCommander/States/FilePanels/Views;

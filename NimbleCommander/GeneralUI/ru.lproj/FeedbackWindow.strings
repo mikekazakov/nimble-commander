@@ -10,17 +10,11 @@
 /* Class = "NSWindow"; title = "Feedback"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "Обратная связь";
 
-/* Class = "NSTextFieldCell"; title = "If you could take a moment to post a note about Nimble Commander on any social network, we'd really appreciate it."; ObjectID = "J7M-Hl-Cyp"; */
+/* Class = "NSTextFieldCell"; title = "If you could take a moment to post a note about Nimble Commander on any social network, we’d really appreciate it."; ObjectID = "J7M-Hl-Cyp"; */
 "J7M-Hl-Cyp.title" = "Развитие Nimble Commander и увеличение числа функций напрямую зависит от количества пользователей.";
 
-/* Class = "NSButtonCell"; title = "Email Feedback"; ObjectID = "Krl-RL-iK0"; */
-"Krl-RL-iK0.title" = "Написать пожелание";
-
-/* Class = "NSTextFieldCell"; title = "We'd like to hear from you."; ObjectID = "O76-JY-rBG"; */
+/* Class = "NSTextFieldCell"; title = "We’d like to hear from you."; ObjectID = "O76-JY-rBG"; */
 "O76-JY-rBG.title" = "Oops…";
-
-/* Class = "NSButtonCell"; title = "Email Feedback"; ObjectID = "Sqf-IX-N8l"; */
-"Sqf-IX-N8l.title" = "Написать пожелание";
 
 /* Class = "NSButtonCell"; title = "Rate on App Store"; ObjectID = "Wbr-8X-Iyc"; */
 "Wbr-8X-Iyc.title" = "Оценить в App Store";
@@ -40,16 +34,16 @@
 /* Class = "NSButtonCell"; title = "Email Feedback"; ObjectID = "b7R-xN-rjn"; */
 "b7R-xN-rjn.title" = "Написать пожелание";
 
-/* Class = "NSTextFieldCell"; title = "Use the \"Get Help\" button to describe issues you've encountered, or you can send us an email with any feedback you may want to share. Thanks, we're listening!"; ObjectID = "el2-0A-aKl"; */
+/* Class = "NSTextFieldCell"; title = "Click the “Get Help” button and describe the issues you’ve encountered, or send us an email with any feedback you want to share. Thanks, we’re listening!"; ObjectID = "el2-0A-aKl"; */
 "el2-0A-aKl.title" = "Мы можем стать лучше. Но только с Вашей помощью. Пожалуйста, напишите, какие функции Вам нужны, чтобы Вы поставили Nimble Commander 5 звёзд.";
 
-/* Class = "NSTextFieldCell"; title = "We strive to create best-in-class software. Please take this opportunity to let us know how we can assist you."; ObjectID = "kMv-Qv-KdY"; */
+/* Class = "NSTextFieldCell"; title = "We strive to create the best-in-class software. Please take this opportunity to let us know how we can assist you better."; ObjectID = "kMv-Qv-KdY"; */
 "kMv-Qv-KdY.title" = "Но Вы всё-таки с нами – и это многое значит для нас.";
 
-/* Class = "NSTextFieldCell"; title = "Please tell us more about your experience with Nimble Commander. Especially if you feel that a specific function is missing, could be improved, or doesn't work correctly, we want to know about it."; ObjectID = "nqC-L8-L0Y"; */
+/* Class = "NSTextFieldCell"; title = "Please tell us more about your experience with Nimble Commander, especially if you feel that a specific function is missing, could be improved, or doesn’t work correctly. We’d like to know about that."; ObjectID = "nqC-L8-L0Y"; */
 "nqC-L8-L0Y.title" = "Надеемся, Вы нажали 1 звезду для проверки.";
 
-/* Class = "NSTextFieldCell"; title = "We'd like to improve your experience with Nimble Commander!"; ObjectID = "sVB-UR-1so"; */
+/* Class = "NSTextFieldCell"; title = "We’d like to improve your experience with Nimble Commander!"; ObjectID = "sVB-UR-1so"; */
 "sVB-UR-1so.title" = "Вы правы – мы не идеальны.";
 
 /* Class = "NSButtonCell"; title = "Get Help"; ObjectID = "xzC-7m-M6s"; */

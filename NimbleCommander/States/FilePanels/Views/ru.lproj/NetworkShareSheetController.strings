@@ -1,0 +1,81 @@
+/* Class = "NSTextFieldCell"; placeholderString = "local-server"; ObjectID = "6Ut-41-SR3"; */
+"6Ut-41-SR3.placeholderString" = "local-server";
+
+/* Class = "NSTextFieldCell"; title = "Protocol:"; ObjectID = "Dor-Ue-2ew"; */
+"Dor-Ue-2ew.title" = "Протокол:";
+
+/* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "EaY-Ze-frw"; */
+"EaY-Ze-frw.title" = "Название:";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "passwd"; ObjectID = "Izt-u4-gi4"; */
+"Izt-u4-gi4.ibShadowedIsNilPlaceholder" = "пароль";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "local-server"; ObjectID = "MLd-9z-sgV"; */
+"MLd-9z-sgV.ibShadowedIsNilPlaceholder" = "local-server";
+
+/* Class = "NSMenuItem"; title = "SMB"; ObjectID = "OVk-M3-2t1"; */
+"OVk-M3-2t1.title" = "SMB";
+
+/* Class = "NSTextFieldCell"; title = "Username:"; ObjectID = "RFe-Xz-gak"; */
+"RFe-Xz-gak.title" = "Пользователь:";
+
+/* Class = "NSButtonCell"; alternateTitle = "Save"; ObjectID = "RqX-PC-FyQ"; */
+"RqX-PC-FyQ.alternateTitle" = "Сохранить";
+
+/* Class = "NSButtonCell"; title = "Connect"; ObjectID = "RqX-PC-FyQ"; */
+"RqX-PC-FyQ.title" = "Подключиться";
+
+/* Class = "NSTextFieldCell"; placeholderString = "guest"; ObjectID = "Tro-HY-QTI"; */
+"Tro-HY-QTI.placeholderString" = "гость";
+
+/* Class = "NSTextFieldCell"; placeholderString = "passwd"; ObjectID = "Tsd-vp-KRQ"; */
+"Tsd-vp-KRQ.placeholderString" = "пароль";
+
+/* Class = "NSTextFieldCell"; placeholderString = "automatic"; ObjectID = "ZaE-9v-6VN"; */
+"ZaE-9v-6VN.placeholderString" = "автоматически";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "arbitrary title"; ObjectID = "adA-9S-fzz"; */
+"adA-9S-fzz.ibShadowedIsNilPlaceholder" = "произвольное название";
+
+/* Class = "NSButtonCell"; title = "..."; ObjectID = "cfK-lo-Nk3"; */
+"cfK-lo-Nk3.title" = "...";
+
+/* Class = "NSMenuItem"; title = "NFS"; ObjectID = "dMq-w0-se6"; */
+"dMq-w0-se6.title" = "NFS";
+
+/* Class = "NSTextFieldCell"; placeholderString = "arbitrary title"; ObjectID = "eNX-4k-Qc0"; */
+"eNX-4k-Qc0.placeholderString" = "произвольное название";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "eqN-ad-Uzr"; */
+"eqN-ad-Uzr.title" = "Отменить";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "guest"; ObjectID = "kcl-tv-xdE"; */
+"kcl-tv-xdE.ibShadowedIsNilPlaceholder" = "гость";
+
+/* Class = "NSTextFieldCell"; title = "Share:"; ObjectID = "l17-Ab-1s6"; */
+"l17-Ab-1s6.title" = "Общая папка:";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "shared_folder"; ObjectID = "lIo-wK-hgx"; */
+"lIo-wK-hgx.ibShadowedIsNilPlaceholder" = "shared_folder";
+
+/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "nDX-9M-gNz"; */
+"nDX-9M-gNz.title" = "Пароль:";
+
+/* Class = "NSTextFieldCell"; title = "Connect to network share:"; ObjectID = "oWW-Bj-e42"; */
+"oWW-Bj-e42.title" = "Подключиться к сетевой папке:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "shared_folder"; ObjectID = "q1D-ze-8AW"; */
+"q1D-ze-8AW.placeholderString" = "shared_folder";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "automatic"; ObjectID = "sKw-Ij-oH9"; */
+"sKw-Ij-oH9.ibShadowedIsNilPlaceholder" = "автоматически";
+
+/* Class = "NSTextFieldCell"; title = "Mount path:"; ObjectID = "uLm-ua-SVw"; */
+"uLm-ua-SVw.title" = "Путь подключения:";
+
+/* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "x7f-Ty-6mx"; */
+"x7f-Ty-6mx.title" = "Сервер:";
+
+/* Class = "NSMenuItem"; title = "AFP"; ObjectID = "zVp-bR-LYG"; */
+"zVp-bR-LYG.title" = "AFP";
+

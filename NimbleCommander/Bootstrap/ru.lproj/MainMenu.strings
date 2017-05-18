@@ -10,17 +10,23 @@
 /* Class = "NSMenuItem"; title = "Move To Trash"; ObjectID = "1dC-SU-pRc"; */
 "1dC-SU-pRc.title" = "Переместить в Корзину";
 
+/* Class = "NSMenuItem"; title = "Always Open With"; ObjectID = "1jU-gS-pnI"; */
+"1jU-gS-pnI.title" = "Всегда открывать в программе";
+
 /* Class = "NSMenuItem"; title = "Bring All to Front"; ObjectID = "5"; */
 "5.title" = "Все окна - на передний план";
 
-/* Class = "NSMenuItem"; title = "Open In Opposite Panel Tab"; ObjectID = "5B1-WV-20L"; */
-"5B1-WV-20L.title" = "Открыть в противоположной вкладке";
+/* Class = "NSMenuItem"; title = "Reveal In Opposite Panel Tab"; ObjectID = "5B1-WV-20L"; */
+"5B1-WV-20L.title" = "Показать в противоположной вкладке";
 
 /* Class = "NSMenuItem"; title = "New Folder"; ObjectID = "6A9-YW-RMg"; */
 "6A9-YW-RMg.title" = "Новая папка";
 
 /* Class = "NSMenuItem"; title = "Back"; ObjectID = "6bU-dO-9Em"; */
 "6bU-dO-9Em.title" = "Назад";
+
+/* Class = "NSMenuItem"; title = "Add to Favorites"; ObjectID = "6pn-dC-yNU"; */
+"6pn-dC-yNU.title" = "Добавить в избранное";
 
 /* Class = "NSMenuItem"; title = "Brief System Overview"; ObjectID = "6qA-GV-cmZ"; */
 "6qA-GV-cmZ.title" = "Краткий обзор системы";
@@ -40,6 +46,9 @@
 /* Class = "NSMenuItem"; title = "Applications"; ObjectID = "9db-hP-IrI"; */
 "9db-hP-IrI.title" = "Программы";
 
+/* Class = "NSMenuItem"; title = "Manage Favorites..."; ObjectID = "9fi-sk-vzL"; */
+"9fi-sk-vzL.title" = "Управлять избранным...";
+
 /* Class = "NSMenuItem"; title = "Window"; ObjectID = "19"; */
 "19.title" = "Окно";
 
@@ -58,11 +67,11 @@
 /* Class = "NSMenu"; title = "Nimble Commander"; ObjectID = "57"; */
 "57.title" = "Nimble Commander";
 
-/* Class = "NSMenuItem"; title = "About Nimble Commander"; ObjectID = "58"; */
+/* Class = "NSMenuItem"; title = "About {AppName}"; ObjectID = "58"; */
 "58.title" = "О {AppName}";
 
-/* Class = "NSMenuItem"; title = "Open"; ObjectID = "72"; */
-"72.title" = "Открыть";
+/* Class = "NSMenuItem"; title = "Enter"; ObjectID = "72"; */
+"72.title" = "Войти";
 
 /* Class = "NSMenuItem"; title = "Close"; ObjectID = "73"; */
 "73.title" = "Закрыть";
@@ -85,10 +94,10 @@
 /* Class = "NSMenuItem"; title = "Services"; ObjectID = "131"; */
 "131.title" = "Службы";
 
-/* Class = "NSMenuItem"; title = "Hide Nimble Commander"; ObjectID = "134"; */
+/* Class = "NSMenuItem"; title = "Hide {AppName}"; ObjectID = "134"; */
 "134.title" = "Скрыть {AppName}";
 
-/* Class = "NSMenuItem"; title = "Quit Nimble Commander"; ObjectID = "136"; */
+/* Class = "NSMenuItem"; title = "Quit {AppName}"; ObjectID = "136"; */
 "136.title" = "Завершить {AppName}";
 
 /* Class = "NSMenuItem"; title = "Hide Others"; ObjectID = "145"; */
@@ -274,6 +283,9 @@
 /* Class = "NSMenuItem"; title = "Delete Permanently..."; ObjectID = "926"; */
 "926.title" = "Удалить необратимо...";
 
+/* Class = "NSMenuItem"; title = "Network Share..."; ObjectID = "AD2-1f-bf0"; */
+"AD2-1f-bf0.title" = "Сетевой папке...";
+
 /* Class = "NSMenuItem"; title = "10"; ObjectID = "ARz-X0-fAA"; */
 "ARz-X0-fAA.title" = "10";
 
@@ -292,6 +304,9 @@
 /* Class = "NSMenuItem"; title = "Calculate Folders Sizes"; ObjectID = "GcS-df-Z23"; */
 "GcS-df-Z23.title" = "Вычислить размер папок";
 
+/* Class = "NSMenuItem"; title = "Duplicate"; ObjectID = "Geu-4j-RaR"; */
+"Geu-4j-RaR.title" = "Дублировать";
+
 /* Class = "NSMenuItem"; title = "Visit Forum"; ObjectID = "HVZ-vW-Cgv"; */
 "HVZ-vW-Cgv.title" = "Посетить форум";
 
@@ -300,6 +315,15 @@
 
 /* Class = "NSMenuItem"; title = "External Editor"; ObjectID = "IBo-yJ-DeD"; */
 "IBo-yJ-DeD.title" = "Внешний редактор";
+
+/* Class = "NSMenuItem"; title = "Manage Connections..."; ObjectID = "IgS-8x-fsy"; */
+"IgS-8x-fsy.title" = "Управлять соединениями...";
+
+/* Class = "NSMenuItem"; title = "Dropbox Storage..."; ObjectID = "IiL-lV-Phd"; */
+"IiL-lV-Phd.title" = "Хранилищу Dropbox...";
+
+/* Class = "NSMenuItem"; title = "Frequenty Visited"; ObjectID = "IqU-xO-cHh"; */
+"IqU-xO-cHh.title" = "Часто посещаемые";
 
 /* Class = "NSMenuItem"; title = "Deselect by Extension"; ObjectID = "KwQ-7L-e5N"; */
 "KwQ-7L-e5N.title" = "Снять выделение по расширению";
@@ -316,11 +340,14 @@
 /* Class = "NSMenuItem"; title = "Move Item Here"; ObjectID = "Mkf-yJ-4e7"; */
 "Mkf-yJ-4e7.title" = "Переместить объект сюда";
 
+/* Class = "NSMenu"; title = "Favorites"; ObjectID = "Mxc-IY-UlD"; */
+"Mxc-IY-UlD.title" = "Избранные";
+
 /* Class = "NSMenu"; title = "Quick Lists"; ObjectID = "N85-H8-Cbx"; */
 "N85-H8-Cbx.title" = "Быстрые списки";
 
-/* Class = "NSMenuItem"; title = "Open in Finder"; ObjectID = "NCx-aq-tJi"; */
-"NCx-aq-tJi.title" = "Открыть в Finder";
+/* Class = "NSMenuItem"; title = "Open"; ObjectID = "NCx-aq-tJi"; */
+"NCx-aq-tJi.title" = "Открыть";
 
 /* Class = "NSMenuItem"; title = "Show/Hide Tab Bar"; ObjectID = "NK3-hW-YDx"; */
 "NK3-hW-YDx.title" = "Показать/скрыть панель вкладок";
@@ -352,8 +379,8 @@
 /* Class = "NSMenuItem"; title = "Volumes"; ObjectID = "QsY-av-veD"; */
 "QsY-av-veD.title" = "Тома";
 
-/* Class = "NSMenuItem"; title = "Connect To..."; ObjectID = "R1g-do-NyV"; */
-"R1g-do-NyV.title" = "Подключиться к...";
+/* Class = "NSMenuItem"; title = "Connect To"; ObjectID = "R1g-do-NyV"; */
+"R1g-do-NyV.title" = "Подключиться к";
 
 /* Class = "NSMenuItem"; title = "Select by Extension"; ObjectID = "SXp-Fg-ClM"; */
 "SXp-Fg-ClM.title" = "Выделить по расширению";
@@ -368,7 +395,7 @@
 "V50-xh-PQD.title" = "Инструменты";
 
 /* Class = "NSMenuItem"; title = "Favorites"; ObjectID = "VDF-r2-LBL"; */
-"VDF-r2-LBL.title" = "Избранное";
+"VDF-r2-LBL.title" = "Избранные";
 
 /* Class = "NSMenuItem"; title = "Show Previous Tab"; ObjectID = "ViK-AU-jLn"; */
 "ViK-AU-jLn.title" = "Показать предыдущую вкладку";
@@ -394,8 +421,8 @@
 /* Class = "NSMenuItem"; title = "Redo"; ObjectID = "agx-eP-0jI"; */
 "agx-eP-0jI.title" = "Повторить";
 
-/* Class = "NSMenuItem"; title = "SFTP Server"; ObjectID = "bip-nL-0se"; */
-"bip-nL-0se.title" = "SFTP серверу";
+/* Class = "NSMenuItem"; title = "SFTP Server..."; ObjectID = "bip-nL-0se"; */
+"bip-nL-0se.title" = "SFTP серверу...";
 
 /* Class = "NSMenuItem"; title = "Purchase Pro Features"; ObjectID = "chd-VR-dSN"; */
 "chd-VR-dSN.title" = "Купить расширенный функционал";
@@ -405,6 +432,9 @@
 
 /* Class = "NSMenuItem"; title = "Desktop"; ObjectID = "dJC-Rr-wZM"; */
 "dJC-Rr-wZM.title" = "Рабочий стол";
+
+/* Class = "NSMenuItem"; title = "Open With"; ObjectID = "db8-IO-kEa"; */
+"db8-IO-kEa.title" = "Открыть в программе";
 
 /* Class = "NSMenuItem"; title = "Move Down"; ObjectID = "eHg-pH-jwx"; */
 "eHg-pH-jwx.title" = "Сдвинуть вниз";
@@ -427,8 +457,8 @@
 /* Class = "NSMenuItem"; title = "8"; ObjectID = "gWB-Ja-0bF"; */
 "gWB-Ja-0bF.title" = "8";
 
-/* Class = "NSMenuItem"; title = "FTP Server"; ObjectID = "gZ9-Jg-sEd"; */
-"gZ9-Jg-sEd.title" = "FTP серверу";
+/* Class = "NSMenuItem"; title = "FTP Server..."; ObjectID = "gZ9-Jg-sEd"; */
+"gZ9-Jg-sEd.title" = "FTP серверу...";
 
 /* Class = "NSMenuItem"; title = "Downloads"; ObjectID = "gwr-gJ-MAM"; */
 "gwr-gJ-MAM.title" = "Загрузки";
@@ -436,7 +466,7 @@
 /* Class = "NSMenuItem"; title = "Find..."; ObjectID = "i2G-EV-iTc"; */
 "i2G-EV-iTc.title" = "Найти...";
 
-/* Class = "NSMenuItem"; title = "Nimble Commander Help"; ObjectID = "iBP-LD-aNS"; */
+/* Class = "NSMenuItem"; title = "{AppName} Help"; ObjectID = "iBP-LD-aNS"; */
 "iBP-LD-aNS.title" = "Справка {AppName}";
 
 /* Class = "NSMenuItem"; title = "Home"; ObjectID = "iGm-8g-qdX"; */
@@ -448,11 +478,17 @@
 /* Class = "NSMenuItem"; title = "Find with Spotlight..."; ObjectID = "jg2-rC-cAS"; */
 "jg2-rC-cAS.title" = "Найти с помощью Spotlight...";
 
-/* Class = "NSMenuItem"; title = "Open In Opposite Panel"; ObjectID = "jt1-bG-SNx"; */
-"jt1-bG-SNx.title" = "Открыть в противоположной панели";
+/* Class = "NSMenuItem"; title = "Reveal In Opposite Panel"; ObjectID = "jt1-bG-SNx"; */
+"jt1-bG-SNx.title" = "Показать в противоположной панели";
 
 /* Class = "NSMenuItem"; title = "Connections"; ObjectID = "kWp-fQ-T0l"; */
 "kWp-fQ-T0l.title" = "Соединения";
+
+/* Class = "NSMenuItem"; title = "Favorites"; ObjectID = "lo8-qp-RcL"; */
+"lo8-qp-RcL.title" = "Избранные";
+
+/* Class = "NSMenuItem"; title = "Clear Menu"; ObjectID = "loz-WF-lIp"; */
+"loz-WF-lIp.title" = "Очистить меню";
 
 /* Class = "NSMenuItem"; title = "Calculate Checksum"; ObjectID = "mz4-ml-xw1"; */
 "mz4-ml-xw1.title" = "Вычислить контрольную сумму";
@@ -475,8 +511,14 @@
 /* Class = "NSMenuItem"; title = "Show/Hide Panels"; ObjectID = "pGI-yr-mvL"; */
 "pGI-yr-mvL.title" = "Показать/скрыть панели";
 
+/* Class = "NSMenu"; title = "Frequenty Visited"; ObjectID = "qAf-7b-Sdi"; */
+"qAf-7b-Sdi.title" = "Часто посещаемые";
+
 /* Class = "NSMenuItem"; title = "Go To Folder..."; ObjectID = "r9P-3y-Fqa"; */
 "r9P-3y-Fqa.title" = "Переход к папке...";
+
+/* Class = "NSMenuItem"; title = "Extensionless Folders"; ObjectID = "rIg-1l-nNU"; */
+"rIg-1l-nNU.title" = "Папки без расширений";
 
 /* Class = "NSMenuItem"; title = "Into Folder"; ObjectID = "sQI-qY-v5c"; */
 "sQI-qY-v5c.title" = "В папку";
@@ -493,8 +535,8 @@
 /* Class = "NSMenuItem"; title = "Sort by Added Time"; ObjectID = "v7Z-Jf-aho"; */
 "v7Z-Jf-aho.title" = "Сортировать по времени добавления";
 
-/* Class = "NSMenu"; title = "Connect To..."; ObjectID = "vG4-7z-hXO"; */
-"vG4-7z-hXO.title" = "Подключиться к...";
+/* Class = "NSMenu"; title = "Connect To"; ObjectID = "vG4-7z-hXO"; */
+"vG4-7z-hXO.title" = "Подключиться к";
 
 /* Class = "NSMenuItem"; title = "Show/Hide Terminal"; ObjectID = "wOP-H6-qux"; */
 "wOP-H6-qux.title" = "Показать/скрыть терминал";

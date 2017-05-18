@@ -4,7 +4,7 @@
 /* Class = "NSMenuItem"; title = "Created Time ↑"; ObjectID = "1AJ-eC-Yem"; */
 "1AJ-eC-Yem.title" = "Времени создания ↑";
 
-/* Class = "NSMenuItem"; title = "Added Time ↓"; ObjectID = "9QW-2S-sOs"; */
+/* Class = "NSMenuItem"; title = "Added Time ↑"; ObjectID = "9QW-2S-sOs"; */
 "9QW-2S-sOs.title" = "Времени добавления ↓";
 
 /* Class = "NSMenuItem"; title = "Modified Time ↑"; ObjectID = "Nl7-FN-dds"; */
@@ -13,11 +13,14 @@
 /* Class = "NSMenuItem"; title = "Separate Folders from Files"; ObjectID = "RYi-mW-ybA"; */
 "RYi-mW-ybA.title" = "Отделять папки от файлов";
 
-/* Class = "NSMenuItem"; title = "Added Time ↑"; ObjectID = "UsI-k2-dKl"; */
+/* Class = "NSMenuItem"; title = "Added Time ↓"; ObjectID = "UsI-k2-dKl"; */
 "UsI-k2-dKl.title" = "Времени добавления ↑";
 
 /* Class = "NSMenuItem"; title = "Name ↓"; ObjectID = "VRa-0i-JUb"; */
 "VRa-0i-JUb.title" = "Имени ↓";
+
+/* Class = "NSMenuItem"; title = "Extensionless Folders"; ObjectID = "Zk6-zX-sSG"; */
+"Zk6-zX-sSG.title" = "Папки без расширения";
 
 /* Class = "NSMenuItem"; title = "Options"; ObjectID = "cz9-Bn-pwk"; */
 "cz9-Bn-pwk.title" = "Настройки";

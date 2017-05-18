@@ -4,10 +4,6 @@
 /* Asking user for granting file system access for NC - button title */
 "Allow Access" = "Разрешить доступ";
 
-/* Asking user for confirmation for clearing recent connections
-   Asking user if he want to clear recent connections */
-"Are you sure you want to clear the list of recent servers?" = "Вы действительно хотите очистить список последних подключений?";
-
 /* Asking user if he really wants to delete information about a stored connection */
 "Are you sure you want to delete this connection?" = "Вы действительно хотите удалить это соединение?";
 
@@ -43,9 +39,6 @@
 
 /* Menu item title for check if any Nimble Commander updates are available */
 "Check for Updates..." = "Проверить наличие обновлений...";
-
-/* Menu item titile for recents clearing action */
-"Clear Recent Servers..." = "Очистить последние серверы...";
 
 /* Menu item title in internal viewer search */
 "Clear Recents" = "Очистить недавние поиски";
@@ -99,6 +92,9 @@
 /* No comment provided by engineer. */
 "Don't send" = "Не отправлять";
 
+/* Showing error when connecting to Dropbox service */
+"Dropbox connection error:" = "Ошибка подключения к Dropbox:";
+
 /* Menu item title for enabling an admin mode */
 "Enable Admin Mode" = "Включить режим администратора";
 
@@ -114,7 +110,10 @@
 /* Alert message text when failed to open xattr vfs */
 "Failed to open extended attributes" = "Не удалось открыть расширенные атрибуты";
 
-/* Favorites popup menu title in file panels */
+/* Showing an error when NC isn't able to get Finder Favorites */
+"Failed to retreive Finder's Favorites" = "Не удалось получить Избранное Finder'а";
+
+/* Favorites popup menu subtitle in file panels */
 "Favorites" = "Избранное";
 
 /* Window title for internal file viewer */
@@ -126,8 +125,14 @@
 /* Brief System Information free bytes label title */
 "Free Bytes:" = "Свободно байт:";
 
+/* Frequently Visited popup menu subtitle in file panels */
+"Frequently Visited" = "Часто посещаемое";
+
 /* Brief System Information general box title */
 "General" = "Основное";
+
+/* Goto popup menu title */
+"Go to" = "Перейти к";
 
 /* Menu item title for hiding tab bar */
 "Hide Tab Bar" = "Скрыть панель вкладок";
@@ -185,9 +190,6 @@
 
 /* Menu item title in internal viewer search */
 "Recent Searches" = "Недавние поиски";
-
-/* Menu item title, disabled - only as separator */
-"Recent Servers" = "Последние серверы";
 
 /* Menu item title in internal viewer search */
 "Recents" = "Последние";
@@ -298,6 +300,9 @@
 /* Informative text when user is entering an invalid filename */
 "Try using a name with fewer characters or without punctuation marks." = "Попытайтесь использовать имя с меньшим количеством символов или без знаков пунктуации.";
 
+/* Informing a user that NC can't connect to network share */
+"Unable to connect to a network share" = "Не удалось подключиться к сетевой папке";
+
 /* Brief System Information used label title */
 "Used:" = "Используемая:";
 
@@ -319,9 +324,7 @@
 /* No comment provided by engineer. */
 "Yes" = "Да";
 
-/* Asking user for confirmation on erasing custom theme - informative text
-   Informating user that action can't be reverted
-   Informing user that action can't be reverted */
+/* Asking user for confirmation on erasing custom theme - informative text */
 "You can’t undo this action." = "Вы не сможете отменить эту операцию.";
 
 /* Combo box element available when multiple elements are selected with different values */

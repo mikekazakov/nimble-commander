@@ -1,0 +1,12 @@
+
+/* Class = "NSMenuItem"; title = "Date Added"; ObjectID = "3Gd-BR-hPY"; */
+"3Gd-BR-hPY.title" = "Дата добавления";
+
+/* Class = "NSMenuItem"; title = "Date Created"; ObjectID = "dlI-VF-x2j"; */
+"dlI-VF-x2j.title" = "Дата создания";
+
+/* Class = "NSMenuItem"; title = "Date Modified"; ObjectID = "fAK-5J-yak"; */
+"fAK-5J-yak.title" = "Дата изменения";
+
+/* Class = "NSMenuItem"; title = "Size"; ObjectID = "oMg-KM-AN0"; */
+"oMg-KM-AN0.title" = "Размер";

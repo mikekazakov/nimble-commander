@@ -136,24 +136,6 @@
 /* Class = "NSMenu"; title = "Help"; ObjectID = "491"; */
 "491.title" = "Справка";
 
-/* Class = "NSMenuItem"; title = "Left Panel"; ObjectID = "751"; */
-"751.title" = "Левая панель";
-
-/* Class = "NSMenu"; title = "Left Panel"; ObjectID = "752"; */
-"752.title" = "Левая панель";
-
-/* Class = "NSMenuItem"; title = "Change Folder..."; ObjectID = "753"; */
-"753.title" = "Сменить папку...";
-
-/* Class = "NSMenuItem"; title = "Right Panel"; ObjectID = "773"; */
-"773.title" = "Правая панель";
-
-/* Class = "NSMenu"; title = "Right Panel"; ObjectID = "774"; */
-"774.title" = "Правая панель";
-
-/* Class = "NSMenuItem"; title = "Change Folder..."; ObjectID = "775"; */
-"775.title" = "Сменить папку";
-
 /* Class = "NSMenuItem"; title = "Sync Panels"; ObjectID = "779"; */
 "779.title" = "Сделать панели одинаковыми";
 
@@ -316,6 +298,9 @@
 /* Class = "NSMenuItem"; title = "External Editor"; ObjectID = "IBo-yJ-DeD"; */
 "IBo-yJ-DeD.title" = "Внешний редактор";
 
+/* Class = "NSMenuItem"; title = "Right Panel..."; ObjectID = "IVa-S3-AXL"; */
+"IVa-S3-AXL.title" = "Правая панель...";
+
 /* Class = "NSMenuItem"; title = "Manage Connections..."; ObjectID = "IgS-8x-fsy"; */
 "IgS-8x-fsy.title" = "Управлять соединениями...";
 
@@ -414,6 +399,9 @@
 
 /* Class = "NSMenuItem"; title = "Find Next"; ObjectID = "ZYO-Aa-rPi"; */
 "ZYO-Aa-rPi.title" = "Найти далее";
+
+/* Class = "NSMenuItem"; title = "Left Panel..."; ObjectID = "Zbs-zW-mQV"; */
+"Zbs-zW-mQV.title" = "Левая панель...";
 
 /* Class = "NSMenuItem"; title = "Move Up"; ObjectID = "aYe-xJ-eDM"; */
 "aYe-xJ-eDM.title" = "Сдвинуть вверх";

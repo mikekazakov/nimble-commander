@@ -564,6 +564,19 @@ DQ
                 <menuItem title="Go" id="7Mz-pE-ca5">
                     <menu key="submenu" title="Go" id="01c-vh-In9">
                         <items>
+                            <menuItem title="Left Panel..." tag="14260" keyEquivalent="" id="Zbs-zW-mQV">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onLeftPanelGoToButtonAction:" target="-1" id="NUw-wI-RnS"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Right Panel..." tag="14270" keyEquivalent="" id="IVa-S3-AXL">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onRightPanelGoToButtonAction:" target="-1" id="FtG-e3-IMM"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="ahC-MV-eME"/>
                             <menuItem title="Back" tag="14000" keyEquivalent="[" id="6bU-dO-9Em">
                                 <connections>
                                     <action selector="OnGoBack:" target="-1" id="AHy-9T-PWY"/>
@@ -585,19 +598,6 @@ DQ
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="qMe-Z3-B2I"/>
-                            <menuItem title="Left Panel..." tag="14260" keyEquivalent="" id="Zbs-zW-mQV">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="onLeftPanelGoToButtonAction:" target="-1" id="NUw-wI-RnS"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Right Panel..." tag="14270" keyEquivalent="" id="IVa-S3-AXL">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="onRightPanelGoToButtonAction:" target="-1" id="FtG-e3-IMM"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem isSeparatorItem="YES" id="ahC-MV-eME"/>
                             <menuItem title="Documents" tag="14040" keyEquivalent="O" id="jYE-RA-K1O">
                                 <connections>
                                     <action selector="OnGoToDocuments:" target="-1" id="PSI-qR-ujI"/>

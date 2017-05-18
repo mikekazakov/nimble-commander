@@ -1,5 +1,5 @@
 /* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "2Qi-HI-MXU"; */
-"2Qi-HI-MXU.title" = "Название";
+"2Qi-HI-MXU.title" = "Название:";
 
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "9Dn-1I-JSI"; */
 "9Dn-1I-JSI.title" = "Отменить";

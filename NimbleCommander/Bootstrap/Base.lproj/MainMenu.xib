@@ -332,32 +332,6 @@ DQ
                 <menuItem title="View" id="295">
                     <menu key="submenu" title="View" id="296">
                         <items>
-                            <menuItem title="Left Panel" id="751">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Left Panel" id="752">
-                                    <items>
-                                        <menuItem title="Change Folder..." tag="13000" keyEquivalent="" id="753">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="onLeftPanelGoToButtonAction:" target="-1" id="STe-XP-pJT"/>
-                                            </connections>
-                                        </menuItem>
-                                    </items>
-                                </menu>
-                            </menuItem>
-                            <menuItem title="Right Panel" id="773">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Right Panel" id="774">
-                                    <items>
-                                        <menuItem title="Change Folder..." tag="13010" keyEquivalent="" id="775">
-                                            <modifierMask key="keyEquivalentModifierMask"/>
-                                            <connections>
-                                                <action selector="onRightPanelGoToButtonAction:" target="-1" id="EmN-pU-lto"/>
-                                            </connections>
-                                        </menuItem>
-                                    </items>
-                                </menu>
-                            </menuItem>
                             <menuItem title="Switch Dual/Single Pane" tag="13260" id="8SF-LE-kDv">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -611,6 +585,19 @@ DQ
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="qMe-Z3-B2I"/>
+                            <menuItem title="Left Panel..." tag="14260" keyEquivalent="" id="Zbs-zW-mQV">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onLeftPanelGoToButtonAction:" target="-1" id="NUw-wI-RnS"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Right Panel..." tag="14270" keyEquivalent="" id="IVa-S3-AXL">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="onRightPanelGoToButtonAction:" target="-1" id="FtG-e3-IMM"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="ahC-MV-eME"/>
                             <menuItem title="Documents" tag="14040" keyEquivalent="O" id="jYE-RA-K1O">
                                 <connections>
                                     <action selector="OnGoToDocuments:" target="-1" id="PSI-qR-ujI"/>

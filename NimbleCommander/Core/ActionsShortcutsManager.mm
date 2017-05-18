@@ -54,13 +54,10 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.edit.deselect_all",                          12'030},
     {"menu.edit.invert_selection",                      12'040},
 
-    {"menu.view.left_panel_change_folder",              13'000},
-    {"menu.view.right_panel_change_folder",             13'010},
     {"menu.view.switch_dual_single_mode",               13'260},
     {"menu.view.swap_panels",                           13'020},
     {"menu.view.sync_panels",                           13'030},
     {"menu.view.refresh",                               13'040},
-    
     {"menu.view.toggle_layout_1",                       13'050},
     {"menu.view.toggle_layout_2",                       13'051},
     {"menu.view.toggle_layout_3",                       13'052},
@@ -96,6 +93,8 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.go.forward",                                 14'010},
     {"menu.go.enclosing_folder",                        14'020},
     {"menu.go.into_folder",                             14'030},
+    {"menu.go.left_panel",                              14'260},
+    {"menu.go.right_panel",                             14'270},
     {"menu.go.documents",                               14'040},
     {"menu.go.desktop",                                 14'050},
     {"menu.go.downloads",                               14'060},
@@ -232,8 +231,6 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.edit.deselect_all",                              u8"⌥⌘a"     }, // alt+cmd+a
     {"menu.edit.invert_selection",                          u8"^⌘a"     }, // ctrl+cmd+a
 
-    {"menu.view.left_panel_change_folder",                  u8"\uF704"  }, // F1
-    {"menu.view.right_panel_change_folder",                 u8"\uF705"  }, // F2
     {"menu.view.switch_dual_single_mode",                   u8"⇧⌘p"     }, // shift+cmd+p
     {"menu.view.swap_panels",                               u8"⌘u"      }, // cmd+u
     {"menu.view.sync_panels",                               u8"⌥⌘u"     }, // alt+cmd+u
@@ -273,6 +270,8 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.go.forward",                                     u8"⌘]"      }, // cmd+]
     {"menu.go.enclosing_folder",                            u8"⌘\uF700" }, // cmd+↑
     {"menu.go.into_folder",                                 u8"⌘\uF701" }, // cmd+↓
+    {"menu.go.left_panel",                                  u8"\uF704"  }, // F1
+    {"menu.go.right_panel",                                 u8"\uF705"  }, // F2
     {"menu.go.documents",                                   u8"⇧⌘o"     }, // shift+cmd+o
     {"menu.go.desktop",                                     u8"⇧⌘d"     }, // shift+cmd+d
     {"menu.go.downloads",                                   u8"⌥⌘l"     }, // alt+cmd+l

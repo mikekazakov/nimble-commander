@@ -117,14 +117,14 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_LeftPanelGoToButton;
         item.paletteLabel = item.label = @"Left GoTo";
-        item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.view.left_panel_change_folder").PrettyString();
+        item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.go.left_panel").PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"filepanels_right_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_RightPanelGoToButton;
         item.paletteLabel = item.label = @"Right GoTo";
-        item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.view.right_panel_change_folder").PrettyString();
+        item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.go.right_panel").PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"filepanels_operations_box"] ) {

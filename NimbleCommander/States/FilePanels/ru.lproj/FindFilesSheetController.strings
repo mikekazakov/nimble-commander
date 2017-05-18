@@ -31,6 +31,9 @@
 /* Class = "NSComboBox"; ibShadowedToolTip = "^T"; ObjectID = "CJi-sh-esy"; */
 "CJi-sh-esy.ibShadowedToolTip" = "^T";
 
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "0"; ObjectID = "ERT-n5-ZFK"; */
+"ERT-n5-ZFK.ibShadowedIsNilPlaceholder" = "0";
+
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "EnK-Kt-A7e"; */
 "EnK-Kt-A7e.title" = "";
 

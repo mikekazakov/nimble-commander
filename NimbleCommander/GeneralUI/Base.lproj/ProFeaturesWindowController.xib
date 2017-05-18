@@ -26,7 +26,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="614" height="463"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <box boxType="custom" borderType="none" title="Box" translatesAutoresizingMaskIntoConstraints="NO" id="Teb-4c-PfV">
+                    <box boxType="custom" borderType="none" translatesAutoresizingMaskIntoConstraints="NO" id="Teb-4c-PfV">
                         <rect key="frame" x="0.0" y="55" width="614" height="408"/>
                         <view key="contentView" id="klv-oK-bbB">
                             <rect key="frame" x="0.0" y="0.0" width="614" height="408"/>

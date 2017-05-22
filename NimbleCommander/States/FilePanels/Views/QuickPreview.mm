@@ -193,12 +193,9 @@ static const nanoseconds g_Delay = 100ms;
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    if(self.window.isKeyWindow) {
-        CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;        
-        static CGColorRef c = CGColorCreateGenericGray(244.0 / 255.0, 1.0);
-        CGContextSetFillColorWithColor(context, c);
-        CGRect rc = NSRectToCGRect(dirtyRect);
-        CGContextFillRect(context, rc);
+    if( self.window.isKeyWindow ) {
+        [NSColor.windowBackgroundColor set];
+        NSRectFill(dirtyRect);
     }
     else {
         NSDrawWindowBackground(dirtyRect);

@@ -52,7 +52,6 @@ static NSTextField *CreateStockTF()
     bool m_IsRight;
     NSTimer                      *m_UpdateTimer;
     NSNumberFormatter            *m_BytesFormatter;
-    NSColor                      *m_BackgrounColor;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -61,7 +60,6 @@ static NSTextField *CreateStockTF()
     if (self) {
         m_BytesFormatter = [NSNumberFormatter new];
         [m_BytesFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
-        m_BackgrounColor = [NSColor colorWithCalibratedRed:0.97 green:0.97 blue:0.97 alpha:1.0];
         m_IsRight = true;
         memset(&m_MemoryInfo, 0, sizeof(m_MemoryInfo));
         memset(&m_CPULoad, 0, sizeof(m_CPULoad));
@@ -76,6 +74,7 @@ static NSTextField *CreateStockTF()
                                                        userInfo:nil
                                                         repeats:YES];
         [m_UpdateTimer setDefaultTolerance];
+        self.wantsLayer = true;
     }
     return self;
 }
@@ -85,14 +84,17 @@ static NSTextField *CreateStockTF()
     return YES;
 }
 
+- (BOOL) canDrawSubviewsIntoLayer
+{
+    return true;
+}
+
 - (void)drawRect:(NSRect)dirtyRect
 {
 	[super drawRect:dirtyRect];
-    NSGraphicsContext *contetx = [NSGraphicsContext currentContext];
-    [contetx saveGraphicsState];
-    [m_BackgrounColor set];
-    NSRectFill([self bounds]);
-    [contetx restoreGraphicsState];
+
+    [NSColor.windowBackgroundColor set];
+    NSRectFill(dirtyRect);
     
     [self UpdateAlignment];
 }
@@ -124,7 +126,6 @@ static NSTextField *CreateStockTF()
 
 - (void) CreateControls
 {
-    NSColor *box_sep_color = [NSColor colorWithCalibratedRed:0.85 green:0.85 blue:0.85 alpha:1.0];
     NSFont *text_font = [NSFont labelFontOfSize:11];
  
     // clear current layout
@@ -151,13 +152,13 @@ static NSTextField *CreateStockTF()
         NSBox *line1 = [[NSBox alloc] initWithFrame:NSRect()];
         line1.translatesAutoresizingMaskIntoConstraints = NO;
         line1.boxType = NSBoxCustom;
-        line1.borderColor = box_sep_color;
+        line1.borderColor = NSColor.gridColor;
         [cpu_box addSubview:line1];
 
         NSBox *line2 = [[NSBox alloc] initWithFrame:NSRect()];
         line2.translatesAutoresizingMaskIntoConstraints = NO;
         line2.boxType = NSBoxCustom;
-        line2.borderColor = box_sep_color;
+        line2.borderColor = NSColor.gridColor;
         [cpu_box addSubview:line2];
         
         auto cpu_sysload_title = CreateStockTF();
@@ -217,13 +218,13 @@ static NSTextField *CreateStockTF()
         NSBox *line1 = [[NSBox alloc] initWithFrame:NSRect()];
         line1.translatesAutoresizingMaskIntoConstraints = NO;
         line1.boxType = NSBoxCustom;
-        line1.borderColor = box_sep_color;
+        line1.borderColor = NSColor.gridColor;
         [ram_box addSubview:line1];
         
         NSBox *line2 = [[NSBox alloc] initWithFrame:NSRect()];
         line2.translatesAutoresizingMaskIntoConstraints = NO;
         line2.boxType = NSBoxCustom;
-        line2.borderColor = box_sep_color;
+        line2.borderColor = NSColor.gridColor;
         [ram_box addSubview:line2];
         
         auto ram_total_title = CreateStockTF();
@@ -281,13 +282,13 @@ static NSTextField *CreateStockTF()
         NSBox *line1 = [[NSBox alloc] initWithFrame:NSRect()];
         line1.translatesAutoresizingMaskIntoConstraints = NO;
         line1.boxType = NSBoxCustom;
-        line1.borderColor = box_sep_color;
+        line1.borderColor = NSColor.gridColor;
         [system_box addSubview:line1];
         
         NSBox *line2 = [[NSBox alloc] initWithFrame:NSRect()];
         line2.translatesAutoresizingMaskIntoConstraints = NO;
         line2.boxType = NSBoxCustom;
-        line2.borderColor = box_sep_color;
+        line2.borderColor = NSColor.gridColor;
         [system_box addSubview:line2];
         
         auto model_title = CreateStockTF();
@@ -346,13 +347,13 @@ static NSTextField *CreateStockTF()
         NSBox *line1 = [[NSBox alloc] initWithFrame:NSRect()];
         line1.translatesAutoresizingMaskIntoConstraints = NO;
         line1.boxType = NSBoxCustom;
-        line1.borderColor = box_sep_color;
+        line1.borderColor = NSColor.gridColor;
         [storage_box addSubview:line1];
         
         NSBox *line2 = [[NSBox alloc] initWithFrame:NSRect()];
         line2.translatesAutoresizingMaskIntoConstraints = NO;
         line2.boxType = NSBoxCustom;
-        line2.borderColor = box_sep_color;
+        line2.borderColor = NSColor.gridColor;
         [storage_box addSubview:line2];
         
         auto vol_title = CreateStockTF();

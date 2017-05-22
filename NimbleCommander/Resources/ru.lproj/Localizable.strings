@@ -351,3 +351,8 @@
 /* Name for freshly created file by hotkey */
 "untitled.txt" = "новый файл.txt";
 
+"__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Имя";
+"__PANELVIEW_LIST_COLUMN_TITLE_SIZE" = "Размер";
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED" = "Дата создания";
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED" = "Дата добавления";
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" = "Дата изменения";

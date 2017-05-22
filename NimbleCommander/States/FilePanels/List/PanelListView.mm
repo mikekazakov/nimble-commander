@@ -170,7 +170,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 {
     if( (m_NameColumn = [[NSTableColumn alloc] initWithIdentifier:@"A"]) ) {
         m_NameColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
-        m_NameColumn.title = @"Name";
+        m_NameColumn.title = NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_NAME", "");
         m_NameColumn.width = 200;
         m_NameColumn.minWidth = 180;
         m_NameColumn.maxWidth = 1000;
@@ -179,7 +179,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     }
     if( (m_SizeColumn = [[NSTableColumn alloc] initWithIdentifier:@"B"]) ) {
         m_SizeColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
-        m_SizeColumn.title = @"Size";
+        m_SizeColumn.title = NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_SIZE", "");
         m_SizeColumn.width = 90;
         m_SizeColumn.minWidth = 75;
         m_SizeColumn.maxWidth = 110;
@@ -189,7 +189,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     }
     if( (m_DateCreatedColumn = [[NSTableColumn alloc] initWithIdentifier:@"C"]) ) {
         m_DateCreatedColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
-        m_DateCreatedColumn.title = @"Date Created";
+        m_DateCreatedColumn.title = NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED", "");
         m_DateCreatedColumn.width = 90;
         m_DateCreatedColumn.minWidth = 75;
         m_DateCreatedColumn.maxWidth = 300;
@@ -199,7 +199,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     }
     if( (m_DateAddedColumn = [[NSTableColumn alloc] initWithIdentifier:@"D"]) ) {
         m_DateAddedColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
-        m_DateAddedColumn.title = @"Date Added";
+        m_DateAddedColumn.title = NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED", "");
         m_DateAddedColumn.width = 90;
         m_DateAddedColumn.minWidth = 75;
         m_DateAddedColumn.maxWidth = 300;
@@ -209,7 +209,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     }
     if( (m_DateModifiedColumn = [[NSTableColumn alloc] initWithIdentifier:@"E"]) ) {
         m_DateModifiedColumn.headerCell = [[PanelListViewTableHeaderCell alloc] init];
-        m_DateModifiedColumn.title = @"Date Modified";
+        m_DateModifiedColumn.title = NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED", "");
         m_DateModifiedColumn.width = 90;
         m_DateModifiedColumn.minWidth = 75;
         m_DateModifiedColumn.maxWidth = 300;

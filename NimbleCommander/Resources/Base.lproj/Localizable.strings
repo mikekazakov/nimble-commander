@@ -8,3 +8,8 @@
 "__TRIAL_WINDOW_NOTE" = "This is a trial version of Nimble Commander.<br>To continue using this software after the 30-day trial period, you have to either <a href=\"http://magnumbytes.com/redirectlinks/buy_license\">buy a license</a> or <a href=\"macappstore://itunes.apple.com/app/id942443942\">install the paid version</a> from Mac App Store.<br><br>This window appears only in the trial version.";
 "__THANKS_FOR_REGISTER_MESSAGE" = "Activated successfully";
 "__THANKS_FOR_REGISTER_INFORMATIVE" = "Thank you for using a registered copy of Nimble Commander! Please restart it for the changes to take effect.";
+"__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Name";
+"__PANELVIEW_LIST_COLUMN_TITLE_SIZE" = "Size";
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED" = "Date Created";
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED" = "Date Added";
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" = "Date Modified";

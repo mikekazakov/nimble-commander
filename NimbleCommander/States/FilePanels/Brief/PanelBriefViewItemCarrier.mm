@@ -354,7 +354,7 @@ static NSPoint  g_LastMouseDownPos = {};
     auto fi = FontGeometryInfo(CurrentTheme().FilePanelsBriefFont());
     
     text_segment_rect.size.height = fi.LineHeight();
-    text_segment_rect.origin.y += 1;
+    text_segment_rect.origin.y = m_LayoutConstants.font_baseline - fi.Descent();
     text_segment_rect.origin.x -= line_padding;
     
     _editor.frame = text_segment_rect;

@@ -218,7 +218,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     
     auto fi = FontGeometryInfo(font);
     rc.size.height = fi.LineHeight();
-    rc.origin.y += 1;
+    rc.origin.y = geometry.TextBaseLine() - fi.Descent();
     rc.origin.x -= line_padding;
     
     _editor.frame = rc;

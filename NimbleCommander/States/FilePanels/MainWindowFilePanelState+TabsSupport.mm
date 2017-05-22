@@ -154,12 +154,11 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 - (void)tabView:(NSTabView *)aTabView didCloseTabViewItem:(NSTabViewItem *)tabViewItem
 {
     // NB! at this moment a tab was already removed from NSTabView objects
-    assert( [tabViewItem.view isKindOfClass:PanelView.class] );
-    assert( [((PanelView*)tabViewItem.view).delegate isKindOfClass:PanelController.class] );
-    PanelController *pc = (PanelController*)((PanelView*)tabViewItem.view).delegate;
-    
-    erase_from(m_LeftPanelControllers, pc);
-    erase_from(m_RightPanelControllers, pc);
+    if( auto pv = objc_cast<PanelView>(tabViewItem.view) )
+        if( auto pc = objc_cast<PanelController>(pv.delegate) ) {
+            erase_from(m_LeftPanelControllers, pc);
+            erase_from(m_RightPanelControllers, pc);
+        }
 }
 
 - (void) closeCurrentTab

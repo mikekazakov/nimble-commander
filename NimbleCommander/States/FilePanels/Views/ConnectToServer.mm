@@ -7,6 +7,7 @@
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <Carbon/Carbon.h>
 
 namespace {
@@ -66,6 +67,8 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 @property (strong) IBOutlet NSSegmentedControl *controlButtons;
 @property (strong) IBOutlet NSMenu *addNewConnectionMenu;
 @property (strong) IBOutlet NSButton *connectButton;
+
+@property (readonly) bool LANSharesEnabled;
 
 @end
 
@@ -339,6 +342,11 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
     }
 
     return [super keyDown:event];
+}
+
+- (bool) LANSharesEnabled
+{
+    return ActivationManager::Instance().HasLANSharesMounting();
 }
 
 @end

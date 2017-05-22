@@ -220,6 +220,51 @@ int VFSArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
     return res;
 }
 
+static bool SplitIntoFilenameAndParentPath(const char *_path,
+                                            char *_filename,
+                                            int _filename_sz,
+                                            char *_parent_path,
+                                            int _parent_path_sz)
+{
+    if( !_path || !_filename || !_parent_path )
+        return false;
+
+    const auto path_sz = strlen(_path);
+    const auto slash = strrchr(_path, '/');
+    if( !slash )
+        return false;
+    
+    if( slash == _path + path_sz - 1 ) {
+        string_view path( _path, path_sz - 1 );
+        const auto second_slash_pos = path.rfind('/');
+        if( second_slash_pos == path.npos )
+            return false;
+        const auto filename_sz = path_sz - second_slash_pos - 2;
+        const auto parent_path_sz = second_slash_pos + 1;
+        
+        if( filename_sz >= _filename_sz || parent_path_sz >= _parent_path_sz )
+            return false;
+        
+        strncpy( _filename, _path + second_slash_pos + 1, filename_sz );
+        _filename[filename_sz] = 0;
+        strncpy( _parent_path, _path, parent_path_sz );
+        _parent_path[parent_path_sz] = 0;
+    }
+    else {
+        const auto filename_sz = path_sz - (slash + 1 - _path);
+        const auto parent_path_sz = slash - _path + 1;
+        
+        if( filename_sz >= _filename_sz || parent_path_sz >= _parent_path_sz )
+            return false;
+        
+        strcpy( _filename, slash + 1 );
+        strncpy( _parent_path, _path, parent_path_sz );
+        _parent_path[parent_path_sz] = 0;
+    }
+
+    return true;
+}
+
 int VFSArchiveHost::ReadArchiveListing()
 {
     assert(m_Arc != 0);
@@ -283,22 +328,16 @@ int VFSArchiveHost::ReadArchiveListing()
 
         int path_len = (int)strlen(path);
         
-        bool isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
-        bool isreg = (stat->st_mode & S_IFMT) == S_IFREG;
-        bool issymlink = (stat->st_mode & S_IFMT) == S_IFLNK;
+        const auto isdir = (stat->st_mode & S_IFMT) == S_IFDIR;
+        const auto isreg = (stat->st_mode & S_IFMT) == S_IFREG;
+        const auto issymlink = (stat->st_mode & S_IFMT) == S_IFLNK;
         
         char short_name[256];
         char parent_path[1024];
-        {
-            char tmp[1024];
-            strcpy(tmp, path);
-            if(tmp[path_len-1] == '/') // cut trailing slash if any
-                tmp[path_len-1] = 0;
-            char *last_slash = strrchr(tmp, '/');
-            strcpy(short_name, last_slash+1);
-            *(last_slash+1)=0;
-            strcpy(parent_path, tmp);
-        }
+        if( !SplitIntoFilenameAndParentPath(path,
+                                            short_name, sizeof(short_name),
+                                            parent_path, sizeof(parent_path)) )
+           continue;
         
         if(parent_dir->full_path != parent_path)
             parent_dir = FindOrBuildDir(parent_path);

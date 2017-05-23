@@ -430,37 +430,43 @@ bool GenericConfig::Set(const char *_path, const ConfigValue &_value)
     return SetInternal( _path, _value );
 }
 
+static rapidjson::Value *FindLastObjectLocked( rapidjson::Value *_root, string_view &_path )
+{
+    rapidjson::Value *st = _root;
+    size_t p;
+    while( (p = _path.find_first_of(".")) != string_view::npos ) {
+        char sub[g_MaxNamePartLen];
+        copy( begin(_path), begin(_path) + p, begin(sub) );
+        sub[p] = 0;
+        
+        auto submb = st->FindMember(sub);
+        if( submb == st->MemberEnd() )
+            return nullptr;
+        
+        st = &(*submb).value;
+        if( st->GetType() != rapidjson::kObjectType )
+            return nullptr;
+        
+        _path = p+1 < _path.length() ? _path.substr( p+1 ) : string_view();
+    }
+    return st;
+}
+
 bool GenericConfig::SetInternal(const char *_path, const ConfigValue &_value)
 {
     {
         lock_guard<spinlock> lock(I->m_DocumentLock);
-        
-        rapidjson::Value *st = &I->m_Current;
+
         string_view path = _path;
-        size_t p;
-        
-        while( (p = path.find_first_of(".")) != string_view::npos ) {
-            char sub[g_MaxNamePartLen];
-            copy( begin(path), begin(path) + p, begin(sub) );
-            sub[p] = 0;
-            
-            auto submb = st->FindMember(sub);
-            if( submb == st->MemberEnd() )
-                return false;
-            
-            st = &(*submb).value;
-            if( st->GetType() != rapidjson::kObjectType )
-                return false;
-            
-            path = p+1 < path.length() ? path.substr( p+1 ) : string_view();
-        }
+        const auto node = FindLastObjectLocked(&I->m_Current, path);
+        if( !node || path.empty() )
+            return false;
         
         char sub[g_MaxNamePartLen];
         copy( begin(path), end(path), begin(sub) );
         sub[path.length()] = 0;
         
-        auto it = st->FindMember(sub);
-        if( it != st->MemberEnd() ) {
+        if( const auto it = node->FindMember(sub); it != node->MemberEnd() ) {
             if( it->value == _value )
                 return true;
             
@@ -469,7 +475,7 @@ bool GenericConfig::SetInternal(const char *_path, const ConfigValue &_value)
         else {
             rapidjson::Value key( sub, I->m_Current.GetAllocator() );
             rapidjson::Value value( _value, I->m_Current.GetAllocator() );
-            st->AddMember( key, value, I->m_Current.GetAllocator() );
+            node->AddMember( key, value, I->m_Current.GetAllocator() );
         }
     }
 

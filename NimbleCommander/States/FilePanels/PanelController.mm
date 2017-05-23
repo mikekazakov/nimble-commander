@@ -841,19 +841,31 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState
 {
+    return [self encodeStateWithOptions:ControllerStateEncoding::EncodeEverything];
+}
+
+- (optional<rapidjson::StandaloneValue>) encodeStateWithOptions:(ControllerStateEncoding::Options)_options
+{
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
     
-    if( auto v = PanelDataPersisency::EncodeVFSPath(m_Data.Listing()) )
-        json.AddMember(rapidjson::StandaloneValue(g_RestorationDataKey, rapidjson::g_CrtAllocator),
-                       move(*v),
-                       rapidjson::g_CrtAllocator );
-    else
-        return nullopt;
-  
-    json.AddMember(rapidjson::StandaloneValue(g_RestorationSortingKey, rapidjson::g_CrtAllocator),
-                   data::OptionsExporter{m_Data}.Export(), rapidjson::g_CrtAllocator );
-    json.AddMember(rapidjson::StandaloneValue(g_RestorationLayoutKey, rapidjson::g_CrtAllocator),
-                   rapidjson::StandaloneValue(m_ViewLayoutIndex), rapidjson::g_CrtAllocator );
+    if( _options & ControllerStateEncoding::EncodeContentState ) {
+        if( auto v = PanelDataPersisency::EncodeVFSPath(m_Data.Listing()) )
+            json.AddMember(rapidjson::MakeStandaloneString(g_RestorationDataKey),
+                           move(*v),
+                           rapidjson::g_CrtAllocator );
+        else
+            return nullopt;
+    }
+    
+    if( _options & ControllerStateEncoding::EncodeDataOptions ) {
+        json.AddMember(rapidjson::MakeStandaloneString(g_RestorationSortingKey),
+                       data::OptionsExporter{m_Data}.Export(), rapidjson::g_CrtAllocator );
+    }
+    
+    if( _options & ControllerStateEncoding::EncodeViewOptions ) {
+        json.AddMember(rapidjson::MakeStandaloneString(g_RestorationLayoutKey),
+                       rapidjson::StandaloneValue(m_ViewLayoutIndex), rapidjson::g_CrtAllocator );
+    }
     
     return move(json);
 }

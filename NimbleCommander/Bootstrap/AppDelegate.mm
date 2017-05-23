@@ -489,10 +489,22 @@ static AppDelegate *g_Me = nil;
     return mwc;
 }
 
+- (MainWindowController*)allocateRestoredMainWindow
+{
+    MainWindowController *mwc;
+    if( MainWindowController.canRestoreDefaultWindowStateFromLastOpenedWindow )
+        mwc = [[MainWindowController alloc] initWithLastOpenedWindowOptions];
+    else if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) )
+        mwc = [[MainWindowController alloc] initRestoringLastWindowFromConfig];
+    else
+        mwc = [[MainWindowController alloc] initDefaultWindow];
+    [mwc showWindow:self];
+    return mwc;
+}
+
 - (IBAction)onMainMenuNewWindow:(id)sender
 {
-    MainWindowController *mwc = [[MainWindowController alloc] initWithLastOpenedWindowOptions];
-    [mwc showWindow:self];
+    [self allocateRestoredMainWindow];
 }
 
 - (void) addMainWindow:(MainWindowController*) _wnd
@@ -560,20 +572,14 @@ static AppDelegate *g_Me = nil;
     if( !m_MainWindows.empty() )
         return true;
   
-    MainWindowController *new_window;
-    if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) )
-        new_window = [[MainWindowController alloc] initRestoringLastWindowFromConfig];
-    else
-        new_window = [[MainWindowController alloc] initDefaultWindow];
-    
-    [new_window showWindow:self];
+    [self onMainMenuNewWindow:sender];
     
     return true;
 }
 
 - (BOOL)application:(NSApplication *)sender openFile:(NSString *)filename
 {
-    [self application:sender openFiles:@[filename]];;
+    [self application:sender openFiles:@[filename]];
     return true;
 }
 
@@ -663,22 +669,19 @@ static AppDelegate *g_Me = nil;
         return;
 
     // find window to ask
-    NSWindow *target_window = nil;
+    MainWindowController *target_window = nil;
     for( NSWindow *wnd in NSApplication.sharedApplication.orderedWindows )
-        if( objc_cast<MainWindowController>(wnd.windowController) ) {
-            target_window = wnd;
+        if( auto *wc =  objc_cast<MainWindowController>(wnd.windowController) ) {
+            target_window = wc;
             break;
         }
     
-    if( !target_window ) {
-        [self allocateDefaultMainWindow];
-        target_window = [m_MainWindows.back() window];
-    }
+    if( !target_window )
+        target_window = [self allocateDefaultMainWindow];
 
     if( target_window ) {
-        [target_window makeKeyAndOrderFront:self];
-        MainWindowController *contr = (MainWindowController*)[target_window windowController];
-        [contr.filePanelsState revealEntries:filenames inDirectory:directory];
+        [target_window.window makeKeyAndOrderFront:self];
+        [target_window.filePanelsState revealEntries:filenames inDirectory:directory];
     }
 }
 

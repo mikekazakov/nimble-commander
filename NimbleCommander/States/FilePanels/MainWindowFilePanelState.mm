@@ -41,6 +41,9 @@ static const auto g_ResorationUIKey         = "uiState";
 static const auto g_ResorationUISelectedLeftTab = "selectedLeftTab";
 static const auto g_ResorationUISelectedRightTab = "selectedRightTab";
 static const auto g_ResorationUIFocusedSide = "focusedSide";
+static const auto g_InitialStatePath = "filePanel.initialState";
+static const auto g_InitialStateLeftDefaults = "left";
+static const auto g_InitialStateRightDefaults = "right";
 
 static string ExpandPath(const string &_ref )
 {
@@ -147,9 +150,10 @@ static bool GoToForcesPanelActivation()
     return self;
 }
 
-- (instancetype) initWithFrame:(NSRect)frameRect
+- (instancetype) initDefaultFileStateWithFrame:(NSRect)frameRect
 {
     if( self = [self initBaseWithFrame:frameRect] ) {
+        [self restoreDefaultPanelOptions];
         [self loadDefaultPanelContent];
     }
     return self;
@@ -160,6 +164,21 @@ static bool GoToForcesPanelActivation()
     if( self = [self initBaseWithFrame:frameRect] ) {
     }
     return self;
+}
+
+- (void) restoreDefaultPanelOptions
+{
+    const auto defaults = StateConfig().Get(g_InitialStatePath);
+    if( defaults.GetType() != rapidjson::kObjectType )
+        return;
+    
+    const auto left_it = defaults.FindMember(g_InitialStateLeftDefaults);
+    if( left_it != defaults.MemberEnd() )
+        [m_LeftPanelControllers.front() loadRestorableState:left_it->value];
+    
+    const auto right_it = defaults.FindMember(g_InitialStateRightDefaults);
+    if( right_it != defaults.MemberEnd() )
+        [m_RightPanelControllers.front() loadRestorableState:right_it->value];
 }
 
 - (void) setupNotificationsCallbacks
@@ -628,6 +647,40 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 {
     if( auto wc = objc_cast<MainWindowController>(self.window.delegate) )
         [wc invalidateRestorableState];
+}
+
+- (void) saveDefaultInitialState
+{
+    const auto left_panel = self.leftPanelController;
+    if( !left_panel )
+        return;
+    
+    const auto right_panel = self.rightPanelController;
+    if( !right_panel )
+        return;
+    
+    const auto to_encode = (ControllerStateEncoding::Options)(
+                           ControllerStateEncoding::EncodeDataOptions |
+                           ControllerStateEncoding::EncodeViewOptions);
+    
+    auto left_panel_options = [left_panel encodeStateWithOptions:to_encode];
+    if( !left_panel_options )
+        return;
+    
+    auto right_panel_options = [right_panel encodeStateWithOptions:to_encode];
+    if( !right_panel_options )
+        return;
+    
+    using namespace rapidjson;
+    StandaloneValue json{kObjectType};
+    json.AddMember(MakeStandaloneString(g_InitialStateLeftDefaults),
+                   move(*left_panel_options),
+                   g_CrtAllocator);
+    json.AddMember(MakeStandaloneString(g_InitialStateRightDefaults),
+                   move(*right_panel_options),
+                   g_CrtAllocator);
+
+    StateConfig().Set(g_InitialStatePath, json);
 }
 
 - (void)PanelPathChanged:(PanelController*)_panel

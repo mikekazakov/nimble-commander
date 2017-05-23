@@ -41,6 +41,7 @@ class VFSHost;
 
 - (void)restoreDefaultWindowStateFromConfig;
 - (void)restoreDefaultWindowStateFromLastOpenedWindow;
++ (bool)canRestoreDefaultWindowStateFromLastOpenedWindow;
 
 // Access to states
 @property (nonatomic, readonly) MainWindowFilePanelState*   filePanelsState;  // one and only one per window

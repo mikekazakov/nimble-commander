@@ -95,7 +95,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 {
     if( self = [self initBase] ) {
        
-        m_PanelState = [[MainWindowFilePanelState alloc] initWithFrame:
+        m_PanelState = [[MainWindowFilePanelState alloc] initDefaultFileStateWithFrame:
             self.window.contentView.frame];
         
         [self pushState:m_PanelState];
@@ -223,6 +223,11 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     }
 }
 
++ (bool)canRestoreDefaultWindowStateFromLastOpenedWindow
+{
+    return g_LastFocusedMainWindowController != nil;
+}
+
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
     if( auto json = objc_cast<NSString>([coder decodeObjectForKey:g_CocoaRestorationFilePanelsStateKey]) ) {
@@ -272,9 +277,11 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (void)windowWillClose:(NSNotification *)notification
 {
     // the are the last main window - need to save current state as "default" in state config
-    if( AppDelegate.me.mainWindowControllers.size() == 1 )
+    if( AppDelegate.me.mainWindowControllers.size() == 1 ) {
         if( auto panels_state = [m_PanelState encodeRestorableState] )
             StateConfig().Set(g_JSONRestorationFilePanelsStateKey, *panels_state);
+        [m_PanelState saveDefaultInitialState];
+    }
     
     for(auto i: m_WindowState)
         if([i respondsToSelector:@selector(WindowWillClose)])

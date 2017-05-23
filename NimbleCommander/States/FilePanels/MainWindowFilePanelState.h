@@ -61,7 +61,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) bool isPanelActive;
 @property (nonatomic, readonly) bool goToForcesPanelActivation;
 
-- (instancetype) initWithFrame:(NSRect)frameRect;
+- (instancetype) initDefaultFileStateWithFrame:(NSRect)frameRect;
 - (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect;
 
 - (void) loadDefaultPanelContent;
@@ -96,6 +96,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState;
 - (void) decodeRestorableState:(const rapidjson::StandaloneValue&)_state;
 - (void) markRestorableStateAsInvalid;
+
+- (void) saveDefaultInitialState;
 
 /**
  * Return currently active file panel if any.

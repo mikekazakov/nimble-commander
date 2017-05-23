@@ -25,6 +25,18 @@ namespace data {
     struct Model;
 }
 
+struct ControllerStateEncoding
+{
+    enum Options {
+        EncodeDataOptions   =  1,
+        EncodeViewOptions   =  2,
+        EncodeContentState  =  4,
+        
+        EncodeNothing       =  0,
+        EncodeEverything    = -1
+    };
+};
+
 class ActivityTicket
 {
 public:
@@ -103,6 +115,7 @@ public:
 
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState;
 - (bool) loadRestorableState:(const rapidjson::StandaloneValue&)_state;
+- (optional<rapidjson::StandaloneValue>) encodeStateWithOptions:(nc::panel::ControllerStateEncoding::Options)_options;
 
 - (void) refreshPanel; // reload panel contents
 - (void) forceRefreshPanel; // user pressed cmd+r by default

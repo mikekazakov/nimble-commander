@@ -139,6 +139,9 @@ GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const data:
 
 void GenericCursorPersistance::Restore() const
 {
+    if( m_OldCursorName.empty() )
+        return;
+
     int newcursorrawpos = m_Data.RawIndexForName(m_OldCursorName.c_str());
     if( newcursorrawpos >= 0 ) {
         int newcursorsortpos = m_Data.SortedIndexForRawIndex(newcursorrawpos);

@@ -413,12 +413,9 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 
 - (void) setupFieldEditor:(NSScrollView*)_editor forItemAtIndex:(int)_sorted_item_index
 {
-    
-    if( auto i = objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:[NSIndexPath indexPathForItem:_sorted_item_index
-                                                                                                     inSection:0]]) ) {
+    const auto index = [NSIndexPath indexPathForItem:_sorted_item_index inSection:0];
+    if( auto i = objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:index]) )
         [i setupFieldEditor:_editor];
-    }
-        
 }
 
 - (int) itemsInColumn

@@ -10,6 +10,7 @@ struct PanelBriefViewItemLayoutConstants;
 @property (nonatomic)       NSString                           *filename;
 @property (nonatomic)       NSColor                            *filenameColor;
 @property (nonatomic)       NSImage                            *icon;
+@property (nonatomic)       bool                                isSymlink;
 @property (nonatomic)       PanelBriefViewItemLayoutConstants   layoutConstants;
 @property (nonatomic)       pair<int16_t, int16_t>              qsHighlight;
 @property (nonatomic)       bool                                highlighted;

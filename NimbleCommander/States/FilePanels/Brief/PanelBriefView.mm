@@ -373,30 +373,29 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     
     const auto entries_count = [m_CollectionView numberOfItemsInSection:0];
     
-//    if( cursorPosition >= 0 && cursorPosition >= m_Data->SortedDirectoryEntries().size() ) {
     if( cursorPosition >= 0 && cursorPosition >= entries_count ) {
-        // temporary solution
-        // currently data<->cursor invariant is broken
+        // currently data<->cursor invariant is temporary broken => skipping this request
         return;
     }
     
     if( cursorPosition < 0 )
         m_CollectionView.selectionIndexPaths = [NSSet set];
     else {
-        NSSet *ind = [NSSet setWithObject:[NSIndexPath indexPathForItem:cursorPosition inSection:0]];
+        const auto ind = [NSSet setWithObject:[NSIndexPath indexPathForItem:cursorPosition
+                                                                  inSection:0]];
         m_CollectionView.selectionIndexPaths = ind;
         
         const auto vis_rect = m_ScrollView.documentVisibleRect;
         const auto item_rect = [m_CollectionView frameForItemAtIndex:cursorPosition];
         if( !NSContainsRect(vis_rect, item_rect) ) {
-            auto scroll_mode = NSCollectionViewScrollPositionCenteredHorizontally;
-            if( item_rect.origin.x < vis_rect.origin.x )
-                scroll_mode = NSCollectionViewScrollPositionLeft;
-            if( item_rect.origin.x + item_rect.size.width > vis_rect.origin.x + vis_rect.size.width )
-                scroll_mode = NSCollectionViewScrollPositionRight;
-            dispatch_to_main_queue([=]{
-                [m_CollectionView scrollToItemsAtIndexPaths:ind scrollPosition:scroll_mode];
-            });
+            const auto scroll_mode = [&]{
+                if( item_rect.origin.x < vis_rect.origin.x )
+                    return NSCollectionViewScrollPositionLeft;
+                if( NSMaxX(item_rect) > NSMaxX(vis_rect) )
+                    return NSCollectionViewScrollPositionRight;
+                return NSCollectionViewScrollPositionCenteredHorizontally;
+            }();
+            [m_CollectionView scrollToItemsAtIndexPaths:ind scrollPosition:scroll_mode];
         }
     }
 }

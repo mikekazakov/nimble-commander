@@ -53,6 +53,7 @@ using namespace nc::panel;
 {
     m_Item = _item;
     self.carrier.filename = m_Item.NSDisplayName();
+    self.carrier.isSymlink = m_Item.IsSymlink();    
     [self updateItemLayout];
 }
 

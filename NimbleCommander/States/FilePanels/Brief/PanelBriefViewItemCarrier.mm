@@ -56,6 +56,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     bool                                m_Highlighted;
     bool                                m_PermitFieldRenaming;
     bool                                m_IsDropTarget;
+    bool                                m_IsSymlink;
 }
 
 @synthesize background = m_Background;
@@ -75,6 +76,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
         m_PermitFieldRenaming = false;
         m_Highlighted = false;
         m_IsDropTarget = false;
+        m_IsSymlink = false;
         m_AttrString = [[NSMutableAttributedString alloc] initWithString:@"" attributes:nil];
         [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];        
     }
@@ -166,8 +168,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
                  hints:nil];
     
     // Draw symlink arrow over an icon
-    const auto is_symlink = m_Controller && m_Controller.item.IsSymlink();
-    if( is_symlink )
+    if( m_IsSymlink )
         [g_SymlinkArrowImage drawInRect:icon_rect
                                fromRect:NSZeroRect
                               operation:NSCompositeSourceOver
@@ -469,6 +470,19 @@ static NSPoint  g_LastMouseDownPos = {};
 {
     if( m_LayoutConstants != layoutConstants ) {
         m_LayoutConstants = layoutConstants;
+        [self setNeedsDisplay:true];
+    }
+}
+
+- (bool) isSymlink
+{
+    return m_IsSymlink;
+}
+
+- (void) setIsSymlink:(bool)isSymlink
+{
+    if( m_IsSymlink != isSymlink ) {
+        m_IsSymlink = isSymlink;
         [self setNeedsDisplay:true];
     }
 }

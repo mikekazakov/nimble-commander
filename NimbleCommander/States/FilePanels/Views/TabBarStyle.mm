@@ -241,13 +241,6 @@ static nanoseconds g_LastImagesRebuildTime = 0ns;
     return NSMakeSize(14, [self heightOfTabBarButtonsForTabBarView:tabBarView]);
 }
 
-- (NSRect)addTabButtonRectForTabBarView:(MMTabBarView *)tabBarView {
-
-    NSRect rect = [tabBarView _addTabButtonRect];
-
-    return rect;
-}
-
 - (NSSize)addTabButtonSizeForTabBarView:(MMTabBarView *)tabBarView {
     return NSMakeSize(21, 23);
 }
@@ -277,6 +270,7 @@ static nanoseconds g_LastImagesRebuildTime = 0ns;
 - (void)updateAddButton:(MMRolloverButton *)aButton ofTabBarView:(MMTabBarView *)tabBarView {
     
     [aButton setImage:g_TabAddFreeImage];
+    [aButton setImagePosition:NSImageOnly];
     [aButton setAlternateImage:g_TabAddPressedImage];
     [aButton setRolloverImage:g_TabAddHoverImage];
 }

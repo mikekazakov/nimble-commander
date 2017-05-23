@@ -24,7 +24,7 @@ static NSMenuItem *ItemForTool( const shared_ptr<const ExternalTool> &_tool, int
 {
     NSMenuItem *item = [[NSMenuItem alloc] init];
     item.title = _tool->m_Title.empty() ?
-        [NSString stringWithFormat:@"Tool #%i", _ind] :
+        [NSString stringWithFormat:NSLocalizedString(@"Tool #%u", ""), _ind] :
         [NSString stringWithUTF8StdString:_tool->m_Title];
     item.representedObject = [[ToolsMenuDelegateInfoWrapper alloc] initWithTool:_tool];
 #pragma clang diagnostic push

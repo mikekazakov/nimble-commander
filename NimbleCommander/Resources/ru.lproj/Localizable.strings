@@ -116,6 +116,63 @@
 /* Favorites popup menu subtitle in file panels */
 "Favorites" = "Избранное";
 
+/* No comment provided by engineer. */
+"File Panels ▶ Go Into Folder" = "Файловые панели ▶ Перейти в папку";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Go to Enclosing Folder" = "Файловые панели ▶ Перейти на уровень выше";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Go to Home ~ Directory" = "Файловые панели ▶ Перейти в папку ~ Личное";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Go to Root / Directory" = "Файловые панели ▶ Перейти в папку / Корень";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Move Down" = "Файловые панели ▶ Переместиться вниз";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Move Left" = "Файловые панели ▶ Переместиться влево";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Move Right" = "Файловые панели ▶ Переместиться вправо";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Move Up" = "Файловые панели ▶ Переместиться вверх";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Move to the First Element" = "Файловые панели ▶ Переместиться к первому элементу";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Move to the Last Element" = "Файловые панели ▶ Переместиться к последнему элементу";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Move to the Next Page" = "Файловые панели ▶ Переместиться на следующую страницу";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Move to the Previous Page" = "Файловые панели ▶ Переместиться на предыдущую страницу";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Scroll to the First Element" = "Файловые панели ▶ Прокрутить к первому элементу";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Scroll to the Last Element" = "Файловые панели ▶ Прокрутить к последнему элементу";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Scroll to the Next Page" = "Файловые панели ▶ Прокрутить к следующуей странице";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Scroll to the Previous Page" = "Файловые панели ▶ Прокрутить к предыдущей странице";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Preview" = "Файловые панели ▶ Показать быстрый просмотр";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Toggle Selection" = "Файловые панели ▶ Изменить выделение";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Toggle Selection and Move Down" = "Файловые панели ▶ Изменить выделение и переместиться вниз";
+
 /* Window title for internal file viewer */
 "File View - %@" = "Просмотр файла - %@";
 
@@ -291,6 +348,12 @@
 /* Menu item title for switching to single-pane mode */
 "Toggle Single-Pane Mode" = "Включить однопанельный режим";
 
+/* No comment provided by engineer. */
+"Tool #%u" = "Инструмент #%u";
+
+/* No comment provided by engineer. */
+"Tools ▶ %@" = "Инструменты ▶ %@";
+
 /* Brief System Information total bytes label title */
 "Total Bytes:" = "Всего байт:";
 
@@ -336,6 +399,21 @@
 /* Upper-level in directory, for English is 'Up' */
 "__MODERNPRESENTATION_UP_WORD" = "Наверх";
 
+/* No comment provided by engineer. */
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED" = "Дата добавления";
+
+/* No comment provided by engineer. */
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED" = "Дата создания";
+
+/* No comment provided by engineer. */
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" = "Дата изменения";
+
+/* No comment provided by engineer. */
+"__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Имя";
+
+/* No comment provided by engineer. */
+"__PANELVIEW_LIST_COLUMN_TITLE_SIZE" = "Размер";
+
 /* Informative text to thank user for buying */
 "__THANKS_FOR_REGISTER_INFORMATIVE" = "Спасибо за использование зарегистрированной копии Nimble Commander!";
 
@@ -351,8 +429,3 @@
 /* Name for freshly created file by hotkey */
 "untitled.txt" = "новый файл.txt";
 
-"__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Имя";
-"__PANELVIEW_LIST_COLUMN_TITLE_SIZE" = "Размер";
-"__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED" = "Дата создания";
-"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED" = "Дата добавления";
-"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" = "Дата изменения";

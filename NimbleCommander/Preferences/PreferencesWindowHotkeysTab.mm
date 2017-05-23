@@ -33,25 +33,25 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 {
     static const vector< pair<const char *, NSString *> > titles = {
-        {"panel.move_up",                       @"File Panels ▶ Move Up"                        },
-        {"panel.move_down",                     @"File Panels ▶ Move Down"                      },
-        {"panel.move_left",                     @"File Panels ▶ Move Left"                      },
-        {"panel.move_right",                    @"File Panels ▶ Move Right"                     },
-        {"panel.move_first",                    @"File Panels ▶ Move to the First Element"      },
-        {"panel.scroll_first",                  @"File Panels ▶ Scroll to the First Element"    },
-        {"panel.move_last",                     @"File Panels ▶ Move to the Last Element"       },
-        {"panel.scroll_last",                   @"File Panels ▶ Scroll to the Last Element"     },
-        {"panel.move_next_page",                @"File Panels ▶ Move to the Next Page"          },
-        {"panel.scroll_next_page",              @"File Panels ▶ Scroll to the Next Page"        },
-        {"panel.move_prev_page",                @"File Panels ▶ Move to the Previous Page"      },
-        {"panel.scroll_prev_page",              @"File Panels ▶ Scroll to the Previous Page"    },
-        {"panel.move_next_and_invert_selection",@"File Panels ▶ Toggle Selection and Move Down" },
-        {"panel.invert_item_selection",         @"File Panels ▶ Toggle Selection"               },
-        {"panel.go_root",                       @"File Panels ▶ Go to Root / Directory"         },
-        {"panel.go_home",                       @"File Panels ▶ Go to Home ~ Directory"         },
-        {"panel.show_preview",                  @"File Panels ▶ Show Preview"                   },
-        {"panel.go_into_enclosing_folder",      @"File Panels ▶ Go to Enclosing Folder"         },
-        {"panel.go_into_folder",                @"File Panels ▶ Go Into Folder"                 },
+        {"panel.move_up",                       NSLocalizedString(@"File Panels ▶ Move Up", "")},
+        {"panel.move_down",                     NSLocalizedString(@"File Panels ▶ Move Down", "")},
+        {"panel.move_left",                     NSLocalizedString(@"File Panels ▶ Move Left", "")},
+        {"panel.move_right",                    NSLocalizedString(@"File Panels ▶ Move Right", "")},
+        {"panel.move_first",                    NSLocalizedString(@"File Panels ▶ Move to the First Element", "")},
+        {"panel.scroll_first",                  NSLocalizedString(@"File Panels ▶ Scroll to the First Element", "")},
+        {"panel.move_last",                     NSLocalizedString(@"File Panels ▶ Move to the Last Element", "")},
+        {"panel.scroll_last",                   NSLocalizedString(@"File Panels ▶ Scroll to the Last Element", "")},
+        {"panel.move_next_page",                NSLocalizedString(@"File Panels ▶ Move to the Next Page", "")},
+        {"panel.scroll_next_page",              NSLocalizedString(@"File Panels ▶ Scroll to the Next Page", "")},
+        {"panel.move_prev_page",                NSLocalizedString(@"File Panels ▶ Move to the Previous Page", "")},
+        {"panel.scroll_prev_page",              NSLocalizedString(@"File Panels ▶ Scroll to the Previous Page", "")},
+        {"panel.move_next_and_invert_selection",NSLocalizedString(@"File Panels ▶ Toggle Selection and Move Down", "")},
+        {"panel.invert_item_selection",         NSLocalizedString(@"File Panels ▶ Toggle Selection", "")},
+        {"panel.go_root",                       NSLocalizedString(@"File Panels ▶ Go to Root / Directory", "")},
+        {"panel.go_home",                       NSLocalizedString(@"File Panels ▶ Go to Home ~ Directory", "")},
+        {"panel.show_preview",                  NSLocalizedString(@"File Panels ▶ Show Preview", "")},
+        {"panel.go_into_enclosing_folder",      NSLocalizedString(@"File Panels ▶ Go to Enclosing Folder", "")},
+        {"panel.go_into_folder",                NSLocalizedString(@"File Panels ▶ Go Into Folder", "")},
     };
     
     for( auto &i: titles )
@@ -63,9 +63,9 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 
 static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _index)
 {
-    return [NSString stringWithFormat:@"Tools ▶ %@",
+    return [NSString stringWithFormat:NSLocalizedString(@"Tools ▶ %@", ""),
             (_et.m_Title.empty() ?
-             [NSString stringWithFormat:@"Tool #%u", _index] :
+             [NSString stringWithFormat:NSLocalizedString(@"Tool #%u", ""), _index] :
              [NSString stringWithUTF8StdString:_et.m_Title]) ];
 }
 

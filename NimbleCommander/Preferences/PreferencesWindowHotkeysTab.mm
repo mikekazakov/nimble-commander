@@ -113,16 +113,6 @@ static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _in
     [super loadView];
     m_Tools = m_ToolsStorage().GetAllTools();
     
-    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:@"action"];
-    column.width = 450;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Action";
-    [self.Table addTableColumn:column];
-    
-    column = [[NSTableColumn alloc] initWithIdentifier:@"hotkey"];
-    column.width = 90;
-    ((NSTableHeaderCell*)column.headerCell).stringValue = @"Hotkey";
-    [self.Table addTableColumn:column];
-    
     if( ActivationManager::Instance().Sandboxed() )
         self.forceFnButton.hidden = true;
     

@@ -141,7 +141,7 @@ static const auto g_LightenFilter = []{
         if( CurrentTheme().AppearanceType() == ThemeAppearance::Light &&
             IsDark(CurrentTheme().FilePanelsHeaderActiveBackgroundColor()) )
             m_BusyIndicator.contentFilters = @[g_LightenFilter];
-        [self addSubview:m_BusyIndicator];
+        [self addSubview:m_BusyIndicator positioned:NSWindowAbove relativeTo:m_PathTextField];
         
         [self setupAppearance];
         [self setupLayout];
@@ -181,7 +181,10 @@ static const auto g_LightenFilter = []{
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
         @"V:|-(==0)-[m_SortButton]-(==0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-        @"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathTextField]-[m_BusyIndicator]-(==2)-|"
+        @"|-(==0)-[m_SortButton(==20)]-(==0)-[m_PathTextField]-(==2)-|"
+        options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+        @"[m_BusyIndicator]-(==2)-|"
         options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
         @"V:[m_BusyIndicator]-(==2)-|" options:0 metrics:nil views:views]];

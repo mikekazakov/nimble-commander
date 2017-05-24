@@ -279,17 +279,17 @@ static string UUID()
     XCTAssert( host->RemoveDirectory("/DirectoryName2", 0) == 0);
 }
 
-- (void)testListing_Kernel_Org
+- (void)testListing_Debian_Org
 {
-    auto path = "/pub/dist/";
+    auto path = "/debian/pool";
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("ftp.kernel.org", "", "", path);
+        host = make_shared<VFSNetFTPHost>("ftp.debian.org", "", "", path);
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
     }
-    set<string> should_be = {"knoppix", "knoppix-dvd", "planb", "superrescue"};
+    set<string> should_be = {"contrib", "main", "non-free"};
     set<string> in_fact;
     
     XCTAssert( host->IterateDirectoryListing(path, [&](const VFSDirEnt &_dirent) {
@@ -299,20 +299,21 @@ static string UUID()
     XCTAssert(should_be == in_fact);
 }
 
-- (void)testSeekRead_Kernel_Org
+- (void)testSeekRead_Debian_Org
 {
     VFSHostPtr host;
     try {
-        auto host = make_shared<VFSNetFTPHost>("ftp.kernel.org", "", "", "/pub/dist/planb/");
+        auto host = make_shared<VFSNetFTPHost>("ftp.debian.org", "", "", "/debian/dists/wheezy/main/installer-amd64/20130430/images/hd-media/");
         
         // check seeking at big distance and reading an arbitrary selected known data block
         VFSFilePtr file;
         char buf[4096];
-        XCTAssert( host->CreateFile("/pub/dist/planb/custom-kit.tar.gz", file, 0) == 0 );
+        XCTAssert( host->CreateFile("/debian/dists/wheezy/main/installer-amd64/20130430/images/hd-media/boot.img.gz", file, 0) == 0 );
+        
         XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
-        XCTAssert( file->Seek(0x14F52440, VFSFile::Seek_Set) == 0x14F52440);
+        XCTAssert( file->Seek(0x1D79AC0, VFSFile::Seek_Set) == 0x1D79AC0);
         XCTAssert( file->Read(buf, 16) == 16 );
-        XCTAssert( memcmp(buf, "\x59\xc6\x88\x0c\x54\x5a\x54\xfe\xd3\x95\x96\x81\xf7\x50\xa5\x65", 16) == 0 );
+        XCTAssert( memcmp(buf, "\xf7\x7f\x03\x37\x5b\xe9\x5f\x3e\xab\xa2\x5d\x46\x0b\x13\x5a\xe2", 16) == 0 );
         
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
@@ -341,11 +342,11 @@ static string UUID()
 
 - (void)testBigFilesReadingCancellation
 {
-    path path = "/pub/dist/planb/custom-kit.tar.gz";
+    path path = "/debian/dists/wheezy/main/installer-amd64/20130430/images/hd-media/boot.img.gz";
     
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("ftp.kernel.org", "", "", path.parent_path().native());
+        host = make_shared<VFSNetFTPHost>("ftp.debian.org", "", "", path.parent_path().native());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;        

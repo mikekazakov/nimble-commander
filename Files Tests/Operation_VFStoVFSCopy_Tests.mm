@@ -11,7 +11,7 @@
 #include <VFS/Native.h>
 #include <VFS/NetFTP.h>
 #include <VFS/ArcUnRAR.h>
-#include <VFS/Xattr.h>
+#include <VFS/XAttr.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 
 static const string g_PhotosRAR   = "/.FilesTestingData/archives/"s + "photos.rar";

@@ -92,19 +92,24 @@ static NSImage *MakeTabClosePressedImage()
 }
 static auto g_TabClosePressedImage = MakeTabClosePressedImage();
 
+static NSBezierPath *MakePlusShape()
+{
+    NSBezierPath *bezier = [NSBezierPath bezierPath];
+    [bezier moveToPoint:NSMakePoint(11.5,6)];
+    [bezier lineToPoint:NSMakePoint(11.5,17)];
+    [bezier moveToPoint:NSMakePoint(6,11.5)];
+    [bezier lineToPoint:NSMakePoint(17,11.5)];
+    return bezier;
+}
+
 static NSImage *MakeTabAddFreeImage()
 {
     auto handler = [](NSRect rc)->BOOL {
         [CurrentTheme().FilePanelsTabsPictogramColor() set];
-        NSBezierPath *bezier = [NSBezierPath bezierPath];
-        [bezier moveToPoint:NSMakePoint(8.5,3)];
-        [bezier lineToPoint:NSMakePoint(8.5,14)];
-        [bezier moveToPoint:NSMakePoint(3,8.5)];
-        [bezier lineToPoint:NSMakePoint(14,8.5)];
-        [bezier stroke];
+        [MakePlusShape() stroke];
         return true;
     };
-    return [NSImage imageWithSize:NSMakeSize(17, 17)
+    return [NSImage imageWithSize:NSMakeSize(23, 23)
                           flipped:false
                    drawingHandler:handler];
 }
@@ -114,22 +119,15 @@ static NSImage *MakeTabAddHoverImage()
 {
     auto handler = [](NSRect rc)->BOOL {
         [[CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.1] set];
-        NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:rc
-                                                               xRadius:2
-                                                               yRadius:2];
+        NSBezierPath *bezier = [NSBezierPath bezierPathWithRect:rc];
         [bezier fill];
     
         [CurrentTheme().FilePanelsTabsPictogramColor() set];
-        bezier = [NSBezierPath bezierPath];
-        [bezier moveToPoint:NSMakePoint(8.5,3)];
-        [bezier lineToPoint:NSMakePoint(8.5,14)];
-        [bezier moveToPoint:NSMakePoint(3,8.5)];
-        [bezier lineToPoint:NSMakePoint(14,8.5)];
-        [bezier stroke];
+        [MakePlusShape() stroke];
         return true;
     };
 
-    return [NSImage imageWithSize:NSMakeSize(17, 17)
+    return [NSImage imageWithSize:NSMakeSize(23, 23)
                           flipped:false
                    drawingHandler:handler];
 }
@@ -139,22 +137,14 @@ static NSImage *MakeTabAddPressedImage()
 {
     auto handler = [](NSRect rc)->BOOL {
         [[CurrentTheme().FilePanelsTabsPictogramColor() colorWithAlphaComponent:0.2] set];
-        NSBezierPath *bezier = [NSBezierPath bezierPathWithRoundedRect:rc
-                                                               xRadius:2
-                                                               yRadius:2];
+        NSBezierPath *bezier = [NSBezierPath bezierPathWithRect:rc];
         [bezier fill];
     
-    
         [CurrentTheme().FilePanelsTabsPictogramColor() set];
-        bezier = [NSBezierPath bezierPath];
-        [bezier moveToPoint:NSMakePoint(8.5,3)];
-        [bezier lineToPoint:NSMakePoint(8.5,14)];
-        [bezier moveToPoint:NSMakePoint(3,8.5)];
-        [bezier lineToPoint:NSMakePoint(14,8.5)];
-        [bezier stroke];
+        [MakePlusShape() stroke];
         return true;
     };
-    return [NSImage imageWithSize:NSMakeSize(17, 17)
+    return [NSImage imageWithSize:NSMakeSize(23, 23)
                           flipped:false
                    drawingHandler:handler];
 }
@@ -242,7 +232,22 @@ static nanoseconds g_LastImagesRebuildTime = 0ns;
 }
 
 - (NSSize)addTabButtonSizeForTabBarView:(MMTabBarView *)tabBarView {
-    return NSMakeSize(21, 23);
+    return NSMakeSize(23, 23);
+}
+
+- (NSRect)addTabButtonRectForTabBarView:(MMTabBarView *)tabBarView {
+    NSRect theRect;
+    NSSize buttonSize = tabBarView.addTabButtonSize;
+    
+    CGFloat xOffset = 0;
+    MMAttachedTabBarButton *lastAttachedButton = tabBarView.lastAttachedButton;
+    if (lastAttachedButton) {
+        xOffset += NSMaxX([lastAttachedButton stackingFrame]);
+    }
+    
+    theRect = NSMakeRect(xOffset, NSMinY(tabBarView.bounds), buttonSize.width, buttonSize.height);
+    
+    return theRect;
 }
 
 - (BOOL)supportsOrientation:(MMTabBarOrientation)orientation forTabBarView:(MMTabBarView *)tabBarView {

@@ -165,24 +165,14 @@ static const auto g_LayoutColumnsDDType = @"PreferencesWindowPanelsTabPrivateTab
     return 0;
 }
 
-//enum class PanelListViewColumns : signed char
-//{
-//    Empty           = 0,
-//    Filename        = 1,
-//    Size            = 2,
-//    DateCreated     = 3,
-//    DateAdded       = 4,
-//    DateModified    = 5
-//};
-
 static NSString* PanelListColumnTypeToString( PanelListViewColumns _c )
 {
     switch( _c ) {
-        case PanelListViewColumns::Filename:    return @"Name";
-        case PanelListViewColumns::Size:        return @"Size";
-        case PanelListViewColumns::DateCreated: return @"Date Created";
-        case PanelListViewColumns::DateAdded:   return @"Date Added";
-        case PanelListViewColumns::DateModified:return @"Date Modified";
+        case PanelListViewColumns::Filename:    return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_NAME", "");
+        case PanelListViewColumns::Size:        return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_SIZE", "");
+        case PanelListViewColumns::DateCreated: return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED", "");
+        case PanelListViewColumns::DateAdded:   return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED", "");
+        case PanelListViewColumns::DateModified:return NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED", "");
         default:                                return @"";
     }
 }
@@ -283,8 +273,7 @@ static NSString* PanelListColumnTypeToString( PanelListViewColumns _c )
 
 - (shared_ptr<const PanelViewLayout>) selectedLayout
 {
-    NSInteger row = self.layoutsTable.selectedRow;
-//    return row < m_Tools.size() ? m_Tools[row] : nullptr;
+    const auto row = self.layoutsTable.selectedRow;
     return m_LayoutsStorage->GetLayout((int)row);
 }
 
@@ -397,12 +386,6 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
         self.layoutsListIcon2x.state = list->icon_scale == 2;
         
     }
-    
-//
-    
-//    self.toolPath.stringValue = [NSString stringWithUTF8StdString:t->m_ExecutablePath];
-//    self.toolParameters.stringValue = [NSString stringWithUTF8StdString:t->m_Parameters];
-//    [self.toolStartupMode selectItemWithTag:(int)t->m_StartupMode];
 }
 
 - (void) clearLayoutFields
@@ -411,9 +394,6 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
     [self.layoutType selectItemWithTag:(int)PanelViewLayout::Type::Disabled];
     [self.layoutDetailsTabView selectTabViewItemWithIdentifier:
      LayoutTypeToTabIdentifier(PanelViewLayout::Type::Disabled)];
-//    self.toolPath.stringValue = @"";
-//    self.toolParameters.stringValue = @"";
-//    [self.toolStartupMode selectItemWithTag:(int)ExternalTool::StartupMode::Automatic];
 }
 
 - (IBAction)onLayoutBriefModeClicked:(id)sender

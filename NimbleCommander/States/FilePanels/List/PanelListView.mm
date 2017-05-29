@@ -169,7 +169,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_NameColumn.title = NSLocalizedString(@"__PANELVIEW_LIST_COLUMN_TITLE_NAME", "");
         m_NameColumn.width = 200;
         m_NameColumn.minWidth = 180;
-        m_NameColumn.maxWidth = 1000;
+        m_NameColumn.maxWidth = 2000;
         m_NameColumn.headerCell.alignment = NSTextAlignmentLeft;
         m_NameColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
         [m_NameColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];

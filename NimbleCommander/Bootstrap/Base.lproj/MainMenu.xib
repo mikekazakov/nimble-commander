@@ -1025,7 +1025,7 @@ CQ
                                     <action selector="OnShowHelp:" target="-1" id="mbF-jF-ZMK"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Visit Forum" tag="17010" id="HVZ-vW-Cgv">
+                            <menuItem title="Visit the Forum" tag="17010" id="HVZ-vW-Cgv">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="onMainMenuPerformGoToProductForum:" target="-1" id="wNL-dn-2ck"/>

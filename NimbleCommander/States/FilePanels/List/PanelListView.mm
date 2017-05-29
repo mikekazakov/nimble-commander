@@ -113,7 +113,8 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_ScrollView.hasVerticalScroller = true;
         m_ScrollView.hasHorizontalScroller = true;
         m_ScrollView.borderType = NSNoBorder;
-        m_ScrollView.drawsBackground = false;
+        m_ScrollView.drawsBackground = true;
+        m_ScrollView.backgroundColor = CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
         [self addSubview:m_ScrollView];
     
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ScrollView);
@@ -148,13 +149,8 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::FilePanelsList |
             ThemesManager::Notifications::FilePanelsGeneral, [weak_self]{
-            if( auto strong_self = weak_self ) {
-                auto cp = strong_self.cursorPosition;
-                [strong_self calculateItemLayout];
-                [strong_self->m_TableView reloadData];
-                strong_self.cursorPosition = cp;
-                strong_self->m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
-            }
+            if( auto strong_self = weak_self )
+                [strong_self handleThemeChanges];
         });
         
         [NSNotificationCenter.defaultCenter addObserver:self
@@ -856,6 +852,16 @@ static PanelListViewColumns IdentifierToKind( unsigned char _letter )
         case 'E':   return PanelListViewColumns::DateModified;
         default:    return PanelListViewColumns::Empty;
     }
+}
+
+- (void) handleThemeChanges
+{
+    auto cp = self.cursorPosition;
+    [self calculateItemLayout];
+    [m_TableView reloadData];
+    self.cursorPosition = cp;
+    m_TableView.gridColor = CurrentTheme().FilePanelsListGridColor();
+    m_ScrollView.backgroundColor = CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
 }
 
 @end

@@ -380,10 +380,6 @@
 		CF75E88B1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
 		CF75E88C1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
 		CF75E88D1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */; };
-		CF75E8DA1EB181980028C108 /* libAppAuth-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF75E8C31EB181800028C108 /* libAppAuth-macOS.a */; };
-		CF75E8DB1EB181A30028C108 /* libAppAuth-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF75E8C31EB181800028C108 /* libAppAuth-macOS.a */; };
-		CF75E8DC1EB181A60028C108 /* libAppAuth-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF75E8C31EB181800028C108 /* libAppAuth-macOS.a */; };
-		CF75E8DD1EB181A90028C108 /* libAppAuth-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF75E8C31EB181800028C108 /* libAppAuth-macOS.a */; };
 		CF75E8E01EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */; };
 		CF76B3211701DEC80066A49F /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF76B3201701DEC70066A49F /* OpenDirectory.framework */; };
 		CF7A09961EC2B37000533B07 /* Duplicate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09951EC2B37000533B07 /* Duplicate.mm */; };
@@ -1393,104 +1389,6 @@
 			remoteGlobalIDString = CF69CFCF1DA224E200992B84;
 			remoteInfo = VFS;
 		};
-		CF75E8BE1EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 340E737C1C5D819B0076B1F6;
-			remoteInfo = "AppAuth-iOS";
-		};
-		CF75E8C01EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 341741F01C5D8283000EF209;
-			remoteInfo = "AppAuth-iOSTests";
-		};
-		CF75E8C21EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 340DAE4E1D58216A00EC285B;
-			remoteInfo = "AppAuth-macOS";
-		};
-		CF75E8C41EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 341AA4CE1E7F392C00FCA5C6;
-			remoteInfo = "AppAuth-macOSTests";
-		};
-		CF75E8C61EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 341E707E1DE18744004353C1;
-			remoteInfo = "AppAuth-tvOS";
-		};
-		CF75E8C81EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 341AA4ED1E7F39F100FCA5C6;
-			remoteInfo = "AppAuth-tvOSTests";
-		};
-		CF75E8CA1EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 347423F61E7F4B5600D3E6D6;
-			remoteInfo = "AppAuth-watchOS";
-		};
-		CF75E8CC1EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 343AAA541E83463400F9D36E;
-			remoteInfo = AppAuth_iOS;
-		};
-		CF75E8CE1EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 343AAA5C1E83463400F9D36E;
-			remoteInfo = AppAuth_iOSTests;
-		};
-		CF75E8D01EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 343AAA991E83487200F9D36E;
-			remoteInfo = AppAuth_watchOS;
-		};
-		CF75E8D21EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 343AAAA61E83489A00F9D36E;
-			remoteInfo = AppAuth_tvOS;
-		};
-		CF75E8D41EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 343AAAAE1E83489A00F9D36E;
-			remoteInfo = AppAuth_tvOSTests;
-		};
-		CF75E8D61EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 343AAAC21E8348A900F9D36E;
-			remoteInfo = AppAuth_macOS;
-		};
-		CF75E8D81EB181800028C108 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 343AAACA1E8348AA00F9D36E;
-			remoteInfo = AppAuth_macOSTests;
-		};
 		CF768DF41C99C0F4002748BC /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
@@ -1846,7 +1744,6 @@
 		CF75E87F1EAF7DC70028C108 /* ConnectionSheetProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConnectionSheetProtocol.h; path = NimbleCommander/States/FilePanels/Views/ConnectionSheetProtocol.h; sourceTree = SOURCE_ROOT; };
 		CF75E8871EB0EFDC0028C108 /* DropboxAccountSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DropboxAccountSheetController.h; path = NimbleCommander/States/FilePanels/Views/DropboxAccountSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF75E8881EB0EFDC0028C108 /* DropboxAccountSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DropboxAccountSheetController.mm; path = NimbleCommander/States/FilePanels/Views/DropboxAccountSheetController.mm; sourceTree = SOURCE_ROOT; };
-		CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = AppAuth.xcodeproj; path = "3rd_Party/AppAuth/AppAuth-iOS/AppAuth.xcodeproj"; sourceTree = SOURCE_ROOT; };
 		CF75E8DE1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "OIDRedirectHTTPHandler+FixedPort.h"; path = "NimbleCommander/States/FilePanels/Views/OIDRedirectHTTPHandler+FixedPort.h"; sourceTree = SOURCE_ROOT; };
 		CF75E8DF1EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "OIDRedirectHTTPHandler+FixedPort.mm"; path = "NimbleCommander/States/FilePanels/Views/OIDRedirectHTTPHandler+FixedPort.mm"; sourceTree = SOURCE_ROOT; };
 		CF76B3201701DEC70066A49F /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
@@ -2328,7 +2225,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF75E8DC1EB181A60028C108 /* libAppAuth-macOS.a in Frameworks */,
 				CF1FBF1A1E8F57B700D3569C /* NetFS.framework in Frameworks */,
 				CF2A3CE91E667F9A00E6C6F0 /* libssh2.a in Frameworks */,
 				CF844DBF1D43231600C735DB /* libz.a in Frameworks */,
@@ -2372,7 +2268,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF75E8DB1EB181A30028C108 /* libAppAuth-macOS.a in Frameworks */,
 				CF90C02C1EBB04960056E3B8 /* LetsMove.framework in Frameworks */,
 				CF1FBF3C1E90ABC000D3569C /* NetFS.framework in Frameworks */,
 				CF2A3CE81E667F7600E6C6F0 /* libssh2.a in Frameworks */,
@@ -2410,7 +2305,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF75E8DA1EB181980028C108 /* libAppAuth-macOS.a in Frameworks */,
 				CF90C02B1EBB04910056E3B8 /* LetsMove.framework in Frameworks */,
 				CFD8CD9D1E823CAC00E4DC53 /* NetFS.framework in Frameworks */,
 				CF2A3CE01E667F5E00E6C6F0 /* libssh2.a in Frameworks */,
@@ -2449,7 +2343,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF9F4AF61ECC8D9500E0AF82 /* NetFS.framework in Frameworks */,
-				CF75E8DD1EB181A90028C108 /* libAppAuth-macOS.a in Frameworks */,
 				CF2A3CEA1E667FAF00E6C6F0 /* libssh2.a in Frameworks */,
 				CF02B5A61D0A61FD00F2760D /* libarchive.a in Frameworks */,
 				CF02B5A21D0A61E200F2760D /* libunrar.a in Frameworks */,
@@ -2984,27 +2877,6 @@
 				CF6D9D2D1966A57B0077B146 /* NimbleCommander-MAS-Free-Info.plist */,
 			);
 			name = "NS Free MAS";
-			sourceTree = "<group>";
-		};
-		CF75E8AE1EB1817F0028C108 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CF75E8BF1EB181800028C108 /* libAppAuth-iOS.a */,
-				CF75E8C11EB181800028C108 /* AppAuth-iOSTests.xctest */,
-				CF75E8C31EB181800028C108 /* libAppAuth-macOS.a */,
-				CF75E8C51EB181800028C108 /* AppAuth-macOSTests.xctest */,
-				CF75E8C71EB181800028C108 /* libAppAuth-tvOS.a */,
-				CF75E8C91EB181800028C108 /* AppAuth-tvOSTests.xctest */,
-				CF75E8CB1EB181800028C108 /* libAppAuth-watchOS.a */,
-				CF75E8CD1EB181800028C108 /* AppAuth.framework */,
-				CF75E8CF1EB181800028C108 /* AppAuth_iOSTests.xctest */,
-				CF75E8D11EB181800028C108 /* AppAuth.framework */,
-				CF75E8D31EB181800028C108 /* AppAUth.framework */,
-				CF75E8D51EB181800028C108 /* AppAuth_tvOSTests.xctest */,
-				CF75E8D71EB181800028C108 /* AppAuth.framework */,
-				CF75E8D91EB181800028C108 /* AppAuth_macOSTests.xctest */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		CF768DEE1C99C0F4002748BC /* Products */ = {
@@ -3549,7 +3421,6 @@
 			isa = PBXGroup;
 			children = (
 				CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */,
-				CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */,
 				CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */,
 				CFE9DDF21BE1C2BE007BBCD3 /* DisclosureViewController */,
 				CFB517F91BDF53C1000AAE89 /* LLVM */,
@@ -3772,10 +3643,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = CF75E8AE1EB1817F0028C108 /* Products */;
-					ProjectRef = CF75E8AD1EB1817F0028C108 /* AppAuth.xcodeproj */;
-				},
-				{
 					ProductGroup = CFD62B7F1C99C1C90021EE7F /* Products */;
 					ProjectRef = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
 				},
@@ -3831,104 +3698,6 @@
 			fileType = archive.ar;
 			path = libVFS.a;
 			remoteRef = CF69CFDA1DA2250C00992B84 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8BF1EB181800028C108 /* libAppAuth-iOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libAppAuth-iOS.a";
-			remoteRef = CF75E8BE1EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8C11EB181800028C108 /* AppAuth-iOSTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "AppAuth-iOSTests.xctest";
-			remoteRef = CF75E8C01EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8C31EB181800028C108 /* libAppAuth-macOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libAppAuth-macOS.a";
-			remoteRef = CF75E8C21EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8C51EB181800028C108 /* AppAuth-macOSTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "AppAuth-macOSTests.xctest";
-			remoteRef = CF75E8C41EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8C71EB181800028C108 /* libAppAuth-tvOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libAppAuth-tvOS.a";
-			remoteRef = CF75E8C61EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8C91EB181800028C108 /* AppAuth-tvOSTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "AppAuth-tvOSTests.xctest";
-			remoteRef = CF75E8C81EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8CB1EB181800028C108 /* libAppAuth-watchOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libAppAuth-watchOS.a";
-			remoteRef = CF75E8CA1EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8CD1EB181800028C108 /* AppAuth.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AppAuth.framework;
-			remoteRef = CF75E8CC1EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8CF1EB181800028C108 /* AppAuth_iOSTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AppAuth_iOSTests.xctest;
-			remoteRef = CF75E8CE1EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8D11EB181800028C108 /* AppAuth.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AppAuth.framework;
-			remoteRef = CF75E8D01EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8D31EB181800028C108 /* AppAUth.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AppAUth.framework;
-			remoteRef = CF75E8D21EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8D51EB181800028C108 /* AppAuth_tvOSTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AppAuth_tvOSTests.xctest;
-			remoteRef = CF75E8D41EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8D71EB181800028C108 /* AppAuth.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = AppAuth.framework;
-			remoteRef = CF75E8D61EB181800028C108 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF75E8D91EB181800028C108 /* AppAuth_macOSTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = AppAuth_macOSTests.xctest;
-			remoteRef = CF75E8D81EB181800028C108 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CF768DF51C99C0F4002748BC /* libUtility.a */ = {
@@ -6072,6 +5841,7 @@
 					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
 					"$(PROJECT_DIR)/3rd_Party/OpenSSL/built",
 					"$(PROJECT_DIR)/3rd_Party/libssh2/built",
+					"$(PROJECT_DIR)/3rd_Party/AppAuth/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				ONLY_ACTIVE_ARCH = YES;
@@ -6082,6 +5852,7 @@
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
+					"-lAppAuth-macOS",
 				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;
@@ -6149,6 +5920,7 @@
 					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
 					"$(PROJECT_DIR)/3rd_Party/OpenSSL/built",
 					"$(PROJECT_DIR)/3rd_Party/libssh2/built",
+					"$(PROJECT_DIR)/3rd_Party/AppAuth/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -6158,6 +5930,7 @@
 				OTHER_LDFLAGS = (
 					"$(OTHER_LDFLAGS)",
 					"-ObjC",
+					"-lAppAuth-macOS",
 				);
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = macosx;

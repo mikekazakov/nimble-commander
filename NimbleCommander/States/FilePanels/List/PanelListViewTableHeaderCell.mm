@@ -1,76 +1,7 @@
-    #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/Theme.h>
 #include "PanelListViewTableHeaderCell.h"
 
 @implementation PanelListViewTableHeaderCell
-
-/*
-default attributes:
-    NSColor = "NSNamedColorSpace System headerTextColor";
- NSColor = "NSNamedColorSpace System headerTextColor";
-    NSFont = "\".AppleSystemUIFont 11.00 pt. P [] (0x600000046ea0) fobj=0x101710160, spc=3.17\"";
-    NSOriginalFont = "\".AppleSystemUIFont 11.00 pt. P [] (0x600000046ea0) fobj=0x101710160, spc=3.17\"";
-    NSParagraphStyle = "Alignment 0,
-                        LineSpacing 0,
-                        ParagraphSpacing 0,
-                        ParagraphSpacingBefore 0,
-                        HeadIndent 0,
-                        TailIndent 0,
-                        FirstLineHeadIndent 0,
-                        LineHeight 0/0,
-                        LineHeightMultiple 0,
-                        LineBreakMode 4,
-                        Tabs (\n    28L,\n    56L,\n    84L,\n    112L,\n    140L,\n    168L,\n    196L,\n    224L,\n    252L,\n    280L,\n    308L,\n    336L\n),
-                        DefaultTabInterval 0,
-                        Blocks (\n),
-                        Lists (\n),
-                        BaseWritingDirection -1,
-                        HyphenationFactor 0,
-                        TighteningForTruncation NO,
-                        HeaderLevel 0";
-*/
-
-/*- (void) setStringValue:(NSString *)stringValue
-{
-    [super setStringValue:stringValue];
-    
- self.attributedStringValue = [[NSAttributedString alloc] initWithString:self.stringValue
-    attributes:@{NSFontAttributeName: CurrentTheme().FilePanelsListHeaderFont(),
-    
-    NSForegroundColorAttributeName: CurrentTheme().FilePanelsListHeaderTextColor()
-    }];
-
-}*/
-/*
-- (void) setAttributedStringValue:(NSAttributedString *)attributedStringValue
-{
-    auto as = [[NSMutableAttributedString alloc]
-               initWithAttributedString:attributedStringValue
-               ];
-    [as setAttributes:@{NSFontAttributeName:
-                            CurrentTheme().FilePanelsListHeaderFont(),
-                        NSForegroundColorAttributeName:
-                            CurrentTheme().FilePanelsListHeaderTextColor()}
-                range:NSMakeRange(0, as.length)
-     ];
-
-    [super setAttributedStringValue:as];
-}*/
-
-/*- (NSAttributedString*)attributedStringValue
-{
-auto as = [[NSMutableAttributedString alloc]
-               initWithAttributedString:[super attributedStringValue]
-               ];
-    [as setAttributes:@{NSFontAttributeName:
-                            CurrentTheme().FilePanelsListHeaderFont(),
-                        NSForegroundColorAttributeName:
-                            CurrentTheme().FilePanelsListHeaderTextColor()}
-                range:NSMakeRange(0, as.length)
-     ];
-return as;
-
-}*/
-
 
 static void FillRect( NSRect rc, NSColor *c )
 {
@@ -81,20 +12,36 @@ static void FillRect( NSRect rc, NSColor *c )
         NSRectFillUsingOperation(rc, NSCompositingOperationSourceOver);
 }
 
-- (void) drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+- (void) drawBackgroundWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
 {
-//    [super drawWithFrame:cellFrame inView:controlView];
-//    return;
-
     [CurrentTheme().FilePanelsListHeaderBackgroundColor() set];
     NSRectFill(cellFrame);
+  
+    if( [self cellAttribute:NSCellState] ) {
+        const auto original = CurrentTheme().FilePanelsListHeaderBackgroundColor();
+        const auto colorspace = NSColorSpace.genericRGBColorSpace;
+        const auto brightness = [original colorUsingColorSpace:colorspace].brightnessComponent;
+        const auto new_color = [NSColor colorWithWhite:1.-brightness alpha:0.1];
+        FillRect(NSMakeRect(cellFrame.origin.x,
+                            cellFrame.origin.y,
+                            cellFrame.size.width-1,
+                            cellFrame.size.height),
+                 new_color);
+    }
+}
 
+- (void) drawHorizontalSeparatorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+{
     FillRect(NSMakeRect(cellFrame.origin.x,
                         NSMaxY(cellFrame)-1,
                         cellFrame.size.width,
                         1),
              CurrentTheme().FilePanelsListHeaderSeparatorColor()
              );
+}
+
+- (void) drawVerticalSeparatorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+{
     if( NSMaxX(cellFrame) < controlView.bounds.size.width )
         FillRect(NSMakeRect(NSMaxX(cellFrame)-1,
                             NSMinY(cellFrame)+3,
@@ -102,6 +49,13 @@ static void FillRect( NSRect rc, NSColor *c )
                             cellFrame.size.height-6),
                  CurrentTheme().FilePanelsListHeaderSeparatorColor()
                  );
+}
+
+- (void) drawWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+{
+    [self drawBackgroundWithFrame:cellFrame inView:controlView];
+    [self drawHorizontalSeparatorWithFrame:cellFrame inView:controlView];
+    [self drawVerticalSeparatorWithFrame:cellFrame inView:controlView];
 
     // this may be really bad - to set attributes on every call.
     // might need to figure out a better way to customize header cells
@@ -118,17 +72,29 @@ static void FillRect( NSRect rc, NSColor *c )
     self.attributedStringValue = [[NSAttributedString alloc] initWithString:self.stringValue
                                                                  attributes:attrs];
     
+    const auto left_padding = 4;
     auto trc = [self drawingRectForBounds:cellFrame];
-    if( self.alignment & NSTextAlignmentRight )
+
+    const auto font_height = CurrentTheme().FilePanelsListHeaderFont().pointSize;
+    const auto top = (trc.size.height - font_height) / 2;
+    const auto height = font_height + 4;
+    
+    if( self.alignment == NSTextAlignmentRight ) {
         trc = NSMakeRect(trc.origin.x,
-                         trc.origin.y + 4,
-                         trc.size.width - 4,
-                         trc.size.height - 8);
-    else
-        trc = NSMakeRect(trc.origin.x,
-                         trc.origin.y + 4,
+                         top,
                          trc.size.width,
-                         trc.size.height - 8);
+                         height);
+    }
+    else if( self.alignment == NSTextAlignmentLeft )
+        trc = NSMakeRect(trc.origin.x + left_padding,
+                         top,
+                         trc.size.width - left_padding,
+                         height);
+    else // center
+        trc = NSMakeRect(trc.origin.x,
+                         top,
+                         trc.size.width,
+                         height);
     [self drawInteriorWithFrame:trc inView:controlView];
 }
 

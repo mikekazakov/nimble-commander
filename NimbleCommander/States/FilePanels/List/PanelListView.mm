@@ -170,6 +170,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_NameColumn.width = 200;
         m_NameColumn.minWidth = 180;
         m_NameColumn.maxWidth = 1000;
+        m_NameColumn.headerCell.alignment = NSTextAlignmentLeft;
         m_NameColumn.resizingMask = NSTableColumnUserResizingMask | NSTableColumnAutoresizingMask;
         [m_NameColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
     }
@@ -189,6 +190,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_DateCreatedColumn.width = 90;
         m_DateCreatedColumn.minWidth = 75;
         m_DateCreatedColumn.maxWidth = 300;
+        m_DateCreatedColumn.headerCell.alignment = NSTextAlignmentLeft;
         m_DateCreatedColumn.resizingMask = NSTableColumnUserResizingMask;
         [m_DateCreatedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
         [self widthDidChangeForColumn:m_DateCreatedColumn];
@@ -199,6 +201,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_DateAddedColumn.width = 90;
         m_DateAddedColumn.minWidth = 75;
         m_DateAddedColumn.maxWidth = 300;
+        m_DateAddedColumn.headerCell.alignment = NSTextAlignmentLeft;
         m_DateAddedColumn.resizingMask = NSTableColumnUserResizingMask;
         [m_DateAddedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
         [self widthDidChangeForColumn:m_DateAddedColumn];
@@ -209,6 +212,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_DateModifiedColumn.width = 90;
         m_DateModifiedColumn.minWidth = 75;
         m_DateModifiedColumn.maxWidth = 300;
+        m_DateModifiedColumn.headerCell.alignment = NSTextAlignmentLeft;
         m_DateModifiedColumn.resizingMask = NSTableColumnUserResizingMask;
         [m_DateModifiedColumn addObserver:self forKeyPath:@"width" options:0 context:NULL];
         [self widthDidChangeForColumn:m_DateModifiedColumn];

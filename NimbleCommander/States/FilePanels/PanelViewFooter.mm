@@ -238,7 +238,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
                               constraintsWithVisualFormat:@"[m_ModTime]-(>=4@500)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint
                               constraintsWithVisualFormat:
-@"|-(4)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=140@500)]-(4@400)-\
+@"|-(7)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=140@500)]-(4@400)-\
 [m_VSeparatorLine1(<=1@300)]-(2@300)-[m_ItemsLabel(>=50@300)]-(4@300)-\
 [m_VSeparatorLine2(<=1@290)]-(2@300)-[m_VolumeLabel(>=120@290)]-(4@300)-|" options:0 metrics:metrics views:views]];
         [self addConstraints:[NSLayoutConstraint

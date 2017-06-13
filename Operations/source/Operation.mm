@@ -17,7 +17,19 @@ Job *Operation::GetJob()
     return nullptr;
 }
 
-OperationState Operation::State()
+const Job *Operation::GetJob() const
+{
+    return const_cast<Operation*>(this)->GetJob();
+}
+
+const class Statistics &Operation::Statistics() const
+{
+    if( auto job = GetJob() )
+        return job->Statistics();
+    throw logic_error("Operation::Statistics(): no valid Job object to access to");
+}
+
+OperationState Operation::State() const
 {
     if( auto j = GetJob() ) {
         if( j->IsRunning() )
@@ -50,7 +62,7 @@ void Operation::Stop()
         j->Stop();
 } 
 
-void Operation::Wait()
+void Operation::Wait() const
 {
     const auto pred = [this]{ return State() != OperationState::Running; };
     if( pred() )
@@ -61,7 +73,7 @@ void Operation::Wait()
     m_FinishCV.wait(lock, pred);
 }
 
-bool Operation::Wait( std::chrono::nanoseconds _wait_for_time )
+bool Operation::Wait( std::chrono::nanoseconds _wait_for_time ) const
 {
     const auto pred = [this]{ return State() != OperationState::Running; };
     if( pred() )

@@ -4,10 +4,25 @@
 #include <VFS/VFS.h>
 #include <Habanero/chained_strings.h>
 
+#include <boost/variant.hpp>
+
 struct archive;
 
 namespace nc::ops
 {
+
+struct CompressionJobCallbacks
+{
+    function<void()> m_TargetPathDefined =
+    []{};
+
+    enum class SourceScanErrorResolution { Stop, Skip };
+    function< SourceScanErrorResolution(int _err, const string &_path,VFSHost &_vfs) >
+    m_SourceScanErrorHandler =
+    [](int _err, const string &_path,VFSHost &_vfs){ return SourceScanErrorResolution::Stop; };
+    
+    
+};
 
 class CompressionJob : public Job
 {
@@ -21,9 +36,7 @@ public:
     const string &TargetArchivePath() const;
     
     
-    
-    
-    void SetOnTargetPathDefined( function<void()> _callback );
+    CompressionJobCallbacks &Callbacks();
     
 private:
     struct Source;
@@ -61,10 +74,7 @@ private:
     
     unique_ptr<const Source>m_Source;
     
-
-
-
-    function<void()> m_OnTargetPathDefined = []{};
+    CompressionJobCallbacks m_Callbacks;
 };
 
 }

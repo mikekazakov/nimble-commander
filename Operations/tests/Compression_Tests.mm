@@ -33,72 +33,130 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
                                          VFSHost &_host);
 
 @implementation CompressionTests
+{
+    path m_TmpDir;
+    shared_ptr<VFSHost> m_NativeHost;
+}
+
+- (void)setUp
+{
+    [super setUp];
+    m_NativeHost = VFSNativeHost::SharedHost();
+    m_TmpDir = self.makeTmpDir;
+}
+
+- (void)tearDown
+{
+    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    [super tearDown];
+}
 
 - (void)testEmptyArchiveBuilding
 {
-    auto dir = self.makeTmpDir;
-    const auto host = VFSNativeHost::SharedHost();
-    Compression operation{vector<VFSListingItem>{}, dir.native(), host };
+    Compression operation{vector<VFSListingItem>{}, m_TmpDir.native(), m_NativeHost };
     operation.Start();
     operation.Wait();
 
     XCTAssert( operation.State() == OperationState::Completed );
-    XCTAssert( host->Exists(operation.ArchivePath().c_str()) );
+    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     
     try {
-        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), host);
+        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         XCTAssert( arc_host->StatTotalFiles() == 0 );
-    } catch (VFSErrorException &e) {
+    }
+    catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
     }
-
-    XCTAssert( VFSEasyDelete(dir.c_str(), VFSNativeHost::SharedHost()) == 0);
 }
 
-- (void)testCompressingItemsWithBigXAttrs
+- (void)testCompressingMacKernel
 {
-    auto dir = self.makeTmpDir;
-
+    Compression operation{FetchItems("/System/Library/Kernels/", {"kernel"}, *m_NativeHost),
+                          m_TmpDir.native(),
+                          m_NativeHost};
     
-    auto item = FetchItems(g_Preffix, {g_FileWithXAttr}, *VFSNativeHost::SharedHost());
-    
-//    FileCompressOperation *op = [FileCompressOperation alloc];
-//    op = [op initWithFiles:item
-//                   dstroot:dir.native()
-//                    dstvfs:VFSNativeHost::SharedHost()];
-//
-//
-//    __block bool finished = false;
-//    [op AddOnFinishHandler:^{ finished = true; }];
-//    [op Start];
-//    [self waitUntilFinish:finished];
-//
-//    this_thread::sleep_for(100ms);
-
-
-    Compression operation{item, dir.native(), VFSNativeHost::SharedHost() };
     operation.Start();
     operation.Wait();
 
+    XCTAssert( operation.State() == OperationState::Completed );
+    XCTAssert( operation.Statistics().ElapsedTime() > 1ms &&
+               operation.Statistics().ElapsedTime() < 1s );
+    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
+    try {
+        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        XCTAssert( arc_host->StatTotalFiles() == 1 );
+        int cmp_result = 0;
+        const auto cmp_rc =  VFSEasyCompareFiles("/System/Library/Kernels/kernel", m_NativeHost,
+                                                 "/kernel", arc_host,
+                                                 cmp_result);
+        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
+    }
+    catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
 
+- (void)testCompressingBinUtilities
+{
+    const vector<string> filenames = { "[", "bash", "cat", "chmod", "cp", "csh", "date", "dd", "df",
+        "domainname", "echo", "ed", "expr", "hostname", "kill", "ksh", "launchctl", "link",
+        "ln", "ls", "mkdir", "mv", "pax", "ps", "pwd", "rm", "rmdir", "sh", "sleep", "stty",
+        "sync", "tcsh", "test", "unlink", "wait4path", "zsh" };
 
-//    shared_ptr<VFSArchiveHost> host;
-//    try {
-//        host = make_shared<VFSArchiveHost>(  (dir/op.resultArchiveFilename).c_str(), VFSNativeHost::SharedHost());
-//    } catch (VFSErrorException &e) {
-//        XCTAssert( e.code() == 0 );
-//        return;
-//    }
-//    
-//    int result = 0;
-//    XCTAssert( VFSCompareEntries( "/" + g_FileWithXAttr, host,
-//                                 g_Preffix + g_FileWithXAttr, VFSNativeHost::SharedHost(),
-//                                 result)
-//              == 0);
-//    XCTAssert( result == 0 );
-//
-//
-    XCTAssert( VFSEasyDelete(dir.c_str(), VFSNativeHost::SharedHost()) == 0);
+    Compression operation{FetchItems("/bin/", filenames, *m_NativeHost),
+        m_TmpDir.native(),
+        m_NativeHost};
+    
+    operation.Start();
+    operation.Wait();
+    
+    XCTAssert( operation.State() == OperationState::Completed );
+    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
+    
+    try {
+        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        XCTAssert( arc_host->StatTotalFiles() == filenames.size() );
+        
+        for( auto &fn: filenames) {
+            int cmp_result = 0;
+            const auto cmp_rc =  VFSEasyCompareFiles(("/bin/"s + fn).c_str(), m_NativeHost,
+                                                     ("/"s + fn).c_str(), arc_host,
+                                                     cmp_result);
+            XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
+        }
+    }
+    catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
+
+- (void)testCompressingBinDirectory
+{
+    Compression operation{FetchItems("/", {"bin"}, *m_NativeHost),
+        m_TmpDir.native(),
+        m_NativeHost};
+    
+    operation.Start();
+    operation.Wait();
+    
+    XCTAssert( operation.State() == OperationState::Completed );
+    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
+    
+//    cout << operation.ArchivePath() << endl;
+    
+    try {
+        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        int cmp_result = 0;
+        const auto cmp_rc = VFSCompareEntries("/bin/",
+                                              m_NativeHost,
+                                              "/bin/",
+                                              arc_host,
+                                              cmp_result);
+        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
+    }
+    catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
 }
 
 - (path)makeTmpDir
@@ -107,19 +165,6 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     sprintf(dir, "%s" "info.filesmanager.files" ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
     XCTAssert( mkdtemp(dir) != nullptr );
     return dir;
-}
-
-- (void) waitUntilFinish:(volatile bool&)_finished
-{
-    microseconds sleeped = 0us, sleep_tresh = 60s;
-    while (!_finished)
-    {
-        this_thread::sleep_for(100us);
-        sleeped += 100us;
-        XCTAssert( sleeped < sleep_tresh);
-        if(sleeped > sleep_tresh)
-            break;
-    }
 }
 
 @end

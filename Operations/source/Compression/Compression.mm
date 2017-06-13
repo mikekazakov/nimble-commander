@@ -17,6 +17,7 @@ Compression::Compression(vector<VFSListingItem> _src_files,
 
 Compression::~Compression()
 {
+    Wait();
 }
     
 Job *Compression::GetJob()

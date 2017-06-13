@@ -2,7 +2,8 @@
 #include <Habanero/algo.h>
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
-
+#include <Utility/PathManip.h>
+#include <VFS/AppleDoubleEA.h>
 
 namespace nc::ops
 {
@@ -45,6 +46,7 @@ struct CompressionJob::Source
 };
 
 static void WriteEmptyArchiveEntry(struct ::archive *_archive);
+static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source_fn);
 
 CompressionJob::CompressionJob(vector<VFSListingItem> _src_files,
                    string _dst_root,
@@ -73,7 +75,7 @@ void CompressionJob::Perform()
         // handle somehow
     }
     
-    m_OnTargetPathDefined();
+    m_Callbacks.m_TargetPathDefined();
     
     //m_Source
     if( auto source = ScanItems()  )
@@ -86,18 +88,17 @@ void CompressionJob::Perform()
     BuildArchive();
     
     
-
-    SetCompleted();
-    
-    
+    if( !IsStopped() )
+        SetCompleted();
  //   cout << arcname << endl;
 }
 
 bool CompressionJob::BuildArchive()
 {
+    const auto flags = VFSFlags::OF_Write | VFSFlags::OF_Create |
+        VFSFlags::OF_IRUsr | VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp;
     m_DstVFS->CreateFile(m_TargetArchivePath.c_str(), m_TargetFile, 0);
-    if(m_TargetFile->Open(VFSFlags::OF_Write | VFSFlags::OF_Create |
-                          VFSFlags::OF_IRUsr | VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp) == 0) {
+    if( m_TargetFile->Open(flags) == VFSError::Ok ) {
         m_Archive = archive_write_new();
         archive_write_set_format_zip(m_Archive);
         archive_write_open(m_Archive, this, 0, WriteCallback, 0);
@@ -149,10 +150,141 @@ void CompressionJob::ProcessItem(const chained_strings::node &_node, int _index)
 
 void CompressionJob::ProcessDirectoryItem(const chained_strings::node &_node, int _index)
 {
+    const auto itemname = _node.to_str_with_pref();
+    const auto meta = m_Source->metas[_index];
+    
+    // compose real src name
+    const auto source_path = m_Source->base_paths[meta.base_path_indx] + itemname;
+    const auto &vfs = m_Source->base_hosts[meta.base_vfs_indx];
+
+    VFSStat vfs_stat;
+    const auto stat_rc = vfs->Stat(source_path.c_str(), vfs_stat, 0, 0);
+    if( stat_rc != VFSError::Ok ) {
+        // TODO: handle somehow
+        return;
+    }
+
+//        assert(IsPathWithTrailingSlash(itemname));
+//        int stat_ret = 0;
+//        while( (stat_ret = vfs->Stat(sourcepath.c_str(), st, 0, 0)) != 0 ) {
+//            // failed to stat source directory
+//            if(m_SkipAll) return;
+//            switch ( m_OnCantAccessSourceItem(stat_ret, sourcepath) ) {
+//                case OperationDialogResult::Retry:      continue;
+//                case OperationDialogResult::Skip:       return;
+//                case OperationDialogResult::SkipAll:    m_SkipAll = true; return;
+//                case OperationDialogResult::Stop:       RequestStop(); return;
+//                default:                                return;
+//            }
+//        }
+//
+//        entry = archive_entry_new();
+//        archive_entry_set_pathname(entry, itemname);
+//        VFSStat::ToSysStat(st, sst);
+//        archive_entry_copy_stat(entry, &sst);
+//        archive_write_header(m_Archive, entry);
+//        // TODO: error handling??
+//        
+
+
+    auto entry = archive_entry_new();
+    auto entry_cleanup = at_scope_end([&]{ // on any errors make sure to clean up allocated libarchive entries
+        archive_entry_free(entry); // nullptr is ok here
+    });
+    archive_entry_set_pathname(entry, itemname.c_str());
+    struct stat sys_stat;
+    VFSStat::ToSysStat(vfs_stat, sys_stat);
+    archive_entry_copy_stat(entry, &sys_stat);
+    archive_write_header(m_Archive, entry);
+    // TODO: error handling
+    
+        // metadata
+    VFSFilePtr src_file;
+    vfs->CreateFile(source_path.c_str(), src_file, 0);
+    if( src_file->Open(VFSFlags::OF_Read) ==  VFSError::Ok ) {
+        string name_wo_slash = {begin(itemname), end(itemname)-1};
+        WriteEAsIfAny(*src_file, m_Archive, name_wo_slash.c_str());
+    }
 }
 
 void CompressionJob::ProcessRegularItem(const chained_strings::node &_node, int _index)
 {
+    const auto itemname = _node.to_str_with_pref();
+    const auto meta = m_Source->metas[_index];
+    
+    // compose real src name
+    const auto source_path = m_Source->base_paths[meta.base_path_indx] + itemname;
+    const auto &vfs = m_Source->base_hosts[meta.base_vfs_indx];
+
+    VFSStat vfs_stat;
+    const auto stat_rc = vfs->Stat(source_path.c_str(), vfs_stat, 0, 0);
+    if( stat_rc != VFSError::Ok ) {
+        // TODO: handle somehow
+        return;
+    }
+
+    VFSFilePtr src_file;
+    vfs->CreateFile(source_path.c_str(), src_file, 0);
+
+    const auto open_rc = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock);
+    if( open_rc != VFSError::Ok ) {
+        // TODO: handle somehow
+        return;
+    }
+
+    auto entry = archive_entry_new();
+    auto entry_cleanup = at_scope_end([&]{ // on any errors make sure to clean up allocated libarchive entries
+        archive_entry_free(entry); // nullptr is ok here
+    });
+    
+    archive_entry_set_pathname(entry, itemname.c_str());
+    struct stat sys_stat;
+    VFSStat::ToSysStat(vfs_stat, sys_stat);
+    archive_entry_copy_stat(entry, &sys_stat);
+    archive_write_header(m_Archive, entry);
+        
+    int buf_sz = 256*1024; // Why 256Kb?
+    char buf[buf_sz];
+    ssize_t vfs_read_ret;
+    while( (vfs_read_ret = src_file->Read(buf, buf_sz)) > 0 ) { // reading and compressing itself
+        if( IsStopped() )
+            return;
+        
+        ssize_t la_ret = archive_write_data(m_Archive, buf, vfs_read_ret);
+        assert(la_ret == vfs_read_ret || la_ret < 0); // currently no cycle here, may need it in future
+        
+        if( la_ret < 0 ) { // some error on write has occured
+            // TODO: handle somehow
+            Stop();
+            return;
+            
+            // assume that there's I/O problem with target VFS file - say about it
+            //                if(m_SkipAll) return;
+            //                int result = m_OnCantWriteArchive(m_TargetFile->LastError());
+            //                if(result == OperationDialogResult::Retry) goto retry_la_write;
+            //                if(result == OperationDialogResult::Skip) return;
+            //                if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
+            //                if(result == OperationDialogResult::Stop) { RequestStop(); return; }
+        }
+            
+            // update statistics
+//            m_TotalBytesProcessed += vfs_read_ret;
+//            m_Stats.SetValue(m_TotalBytesProcessed);
+    }
+    
+    if( vfs_read_ret < 0 ) { // error on reading source file
+        // TODO: handle somehow
+        Stop();
+        return;
+        //            if(m_SkipAll) return;
+        //            int result = m_OnCantReadSourceItem((int)vfs_read_ret, sourcepath);
+        //            if(result == OperationDialogResult::Retry) goto retry_read_src;
+        //            if(result == OperationDialogResult::Skip) return;
+        //            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
+        //            if(result == OperationDialogResult::Stop) { RequestStop(); return; }
+    }
+    
+    WriteEAsIfAny(*src_file, m_Archive, itemname.c_str());
 }
 
 string CompressionJob::FindSuitableFilename(const string& _proposed_arcname) const
@@ -170,11 +302,6 @@ string CompressionJob::FindSuitableFilename(const string& _proposed_arcname) con
             return fn;
     }
     return "";
-}
-
-void CompressionJob::SetOnTargetPathDefined( function<void()> _callback )
-{
-    m_OnTargetPathDefined = move(_callback);
 }
     
 const string &CompressionJob::TargetArchivePath() const
@@ -217,23 +344,32 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item,
         _ctx.filenames.push_back( _item.Filename()+"/", nullptr );
         
         vector<string> directory_entries;
-        int iter_ret = _item.Host()->IterateDirectoryListing(_item.Path().c_str(),
+        const auto iter_ret = _item.Host()->IterateDirectoryListing(_item.Path().c_str(),
                                                              [&](const VFSDirEnt &_dirent){
                 directory_entries.emplace_back(_dirent.name);
                 return true;
             });
-        if( iter_ret != VFSError::Ok ) {
+        if( iter_ret == VFSError::Ok ) {
+            const auto directory_node = &_ctx.filenames.back();
+            for( const string &filename: directory_entries )
+                if(!ScanItem(_item.Path() + "/" + filename,
+                             filename,
+                             meta.base_vfs_indx,
+                             meta.base_path_indx,
+                             directory_node,
+                             _ctx))
+                    return false;
             // process failure
         }
-        
-        const auto directory_node = &_ctx.filenames.back();
-        for( const string &filename: directory_entries )
-            ScanItem(_item.Path() + "/" + filename,
-                     filename,
-                     meta.base_vfs_indx,
-                     meta.base_path_indx,
-                     directory_node,
-                     _ctx);
+        else {
+            const auto resolution = m_Callbacks.m_SourceScanErrorHandler(iter_ret,
+                                                                         _item.Path(),
+                                                                         *_item.Host());
+            if( resolution == CompressionJobCallbacks::SourceScanErrorResolution::Stop ) {
+                Stop();
+                return false;
+            }
+        }
     }
     return true;
 }
@@ -247,17 +383,18 @@ bool CompressionJob::ScanItem(const string &_full_path,
 {
     VFSStat stat_buffer;
 
-//    SourceItemMeta meta;
-//    meta.base_path = _basepath_no;
-//    meta.vfs = _vfs_no;
     auto &vfs = _ctx.base_hosts[_vfs_no];
-//    auto longpath = m_BasePaths[_basepath_no] + _full_path;
     
-//retry_stat:
     int stat_ret = vfs->Stat(_full_path.c_str(), stat_buffer, VFSFlags::F_NoFollow, 0);
     if( stat_ret != VFSError::Ok ) {
-        // TODO: handle error
-        return false;
+        const auto resolution = m_Callbacks.m_SourceScanErrorHandler(stat_ret,
+                                                                     _full_path,
+                                                                     *vfs);
+        if( resolution == CompressionJobCallbacks::SourceScanErrorResolution::Stop ) {
+            Stop();
+            return false;
+        }
+        return true;
     }
 
     if( S_ISREG(stat_buffer.mode) ) {
@@ -290,18 +427,26 @@ bool CompressionJob::ScanItem(const string &_full_path,
                 directory_entries.emplace_back(_dirent.name);
                 return true;
             });
-        if( iter_ret != VFSError::Ok ) {
-            // TODO: process failure
+        if( iter_ret == VFSError::Ok ) {
+            const auto directory_node = &_ctx.filenames.back();
+            for( const string &filename: directory_entries )
+                if(!ScanItem(_full_path + "/" + filename,
+                             filename,
+                             meta.base_vfs_indx,
+                             meta.base_path_indx,
+                             directory_node,
+                             _ctx))
+                    return false;
         }
-
-        const auto directory_node = &_ctx.filenames.back();
-        for( const string &filename: directory_entries )
-            ScanItem(_full_path + "/" + filename,
-                     filename,
-                     meta.base_vfs_indx,
-                     meta.base_path_indx,
-                     directory_node,
-                     _ctx);
+        else {
+            const auto resolution = m_Callbacks.m_SourceScanErrorHandler(iter_ret,
+                                                                         _full_path,
+                                                                         *vfs);
+            if( resolution == CompressionJobCallbacks::SourceScanErrorResolution::Stop ) {
+                Stop();
+                return false;
+            }
+        }
     }
 
     return true;
@@ -319,6 +464,11 @@ ssize_t	CompressionJob::WriteCallback(struct archive *,
     return ARCHIVE_FATAL;
 }
 
+CompressionJobCallbacks &CompressionJob::Callbacks()
+{
+    return m_Callbacks;
+}
+
 static void WriteEmptyArchiveEntry(struct ::archive *_archive)
 {
     auto entry = archive_entry_new();
@@ -329,6 +479,45 @@ static void WriteEmptyArchiveEntry(struct ::archive *_archive)
     archive_entry_copy_stat(entry, &st);
     archive_write_header(_archive, entry);
     archive_entry_free(entry);
+}
+
+static bool WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char* _path, const char *_name)
+{
+    char metadata_path[MAXPATHLEN];
+    sprintf(metadata_path, "__MACOSX/%s._%s", _path, _name);
+    struct archive_entry *entry = archive_entry_new();
+    archive_entry_set_pathname(entry, metadata_path);
+    archive_entry_set_size(entry, _md_s);
+    archive_entry_set_filetype(entry, AE_IFREG);
+    archive_entry_set_perm(entry, 0644);
+    archive_write_header(_a, entry);
+    ssize_t ret = archive_write_data(_a, _md, _md_s); // we may need cycle here
+    archive_entry_free(entry);
+    
+    return ret == _md_s;
+}
+
+static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source_fn)
+{
+    assert(!IsPathWithTrailingSlash(_source_fn));
+    
+    size_t metadata_sz = 0;
+    // will quick almost immediately if there's no EAs
+    void *metadata = BuildAppleDoubleFromEA(_src, &metadata_sz);
+    if(metadata == 0)
+        return true;
+    
+    char item_path[MAXPATHLEN], item_name[MAXPATHLEN];
+    if(GetFilenameFromRelPath(_source_fn, item_name) &&
+        GetDirectoryContainingItemFromRelPath(_source_fn, item_path))
+    {
+        bool ret = WriteEAs(_a, metadata, metadata_sz, item_path, item_name);
+        free(metadata);
+        return ret;
+    }
+
+    free(metadata);
+    return true;
 }
     
 }

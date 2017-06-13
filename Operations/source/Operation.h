@@ -3,6 +3,8 @@
 #include <functional>
 #include <thread>
 
+#include "Statistics.h"
+
 namespace nc::ops
 {
 
@@ -27,7 +29,7 @@ public:
     void Stop();
     
     // general state enquiry:
-    OperationState State();
+    OperationState State() const;
 
     // current status enquiry:
     // Status Status;
@@ -40,21 +42,23 @@ public:
     // NotifyOnFinish()
     // NotifyOnStop()
 
+    const class Statistics &Statistics() const;
+
     void SetFinishCallback( std::function<void()> _callback );
 
-    void Wait();
-    bool Wait( std::chrono::nanoseconds _wait_for_time );
+    void Wait() const;
+    bool Wait( std::chrono::nanoseconds _wait_for_time ) const;
 
 protected:
     virtual Job *GetJob();
+    const Job *GetJob() const;
     virtual void OnJobFinished();
 
 private:
     void JobFinished();
 
-    std::condition_variable m_FinishCV;
+    mutable std::condition_variable m_FinishCV;
     std::function<void()> m_OnFinish;
-
 };
 
 

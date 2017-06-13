@@ -4,6 +4,9 @@
 #include <functional>
 #include <mutex>
 
+#include "Statistics.h"
+
+
 namespace nc::ops
 {
 
@@ -22,8 +25,12 @@ public:
 
     void SetFinishCallback( std::function<void()> _callback );
     
+    class Statistics &Statistics();
+    const  class Statistics &Statistics() const;
+    
 protected:
     void SetCompleted();
+    void Execute();
     virtual void Perform();
     virtual void OnStopped();
 
@@ -34,6 +41,8 @@ private:
     
     std::function<void()> m_OnFinish;
     std::mutex m_OnFinishLock;
+    
+    class Statistics      m_Stats;
 };
 
 }

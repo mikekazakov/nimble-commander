@@ -24,20 +24,23 @@ void Job::Run()
     if( m_IsRunning )
         return;
     
-    auto task = [this]{
-        Perform();
-        m_IsRunning = false;
-      
-        std::function<void()> callback;
-        m_OnFinishLock.lock();
-        callback = m_OnFinish;
-        m_OnFinishLock.unlock();
-        if( callback )
-            callback();
-    };
-    
     m_IsRunning = true;
-    std::thread{ std::move(task) }.detach();
+    std::thread{ [this]{ Execute(); } }.detach();
+}
+
+void Job::Execute()
+{
+    m_Stats.StartTiming();
+    Perform();
+    m_IsRunning = false;
+    m_Stats.StopTiming();
+    
+    std::function<void()> callback;
+    m_OnFinishLock.lock();
+    callback = m_OnFinish;
+    m_OnFinishLock.unlock();
+    if( callback )
+        callback();
 }
 
 bool Job::IsRunning() const noexcept
@@ -77,6 +80,16 @@ void Job::SetCompleted()
 {
     if( !m_IsCompleted )
         m_IsCompleted = true;
+}
+
+class Statistics &Job::Statistics()
+{
+    return m_Stats;
+}
+
+const class Statistics &Job::Statistics() const
+{
+    return m_Stats;
 }
 
 }

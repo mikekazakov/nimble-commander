@@ -14,8 +14,9 @@ enum class OperationState
 {
     Cold        = 0,
     Running     = 1,
-    Stopped     = 2,
-    Completed   = 3
+    Paused      = 2,
+    Stopped     = 3,
+    Completed   = 4
 };
 
 class Operation
@@ -24,23 +25,12 @@ public:
     Operation();
     ~Operation();
 
-    // control:
     void Start();
+    void Pause();
+    void Resume();
     void Stop();
     
-    // general state enquiry:
     OperationState State() const;
-
-    // current status enquiry:
-    // Status Status;
-
-    // progress details enquiry:
-    // Statistics Stats;
-
-    // notifications:
-    // NotifyOnStateChange()
-    // NotifyOnFinish()
-    // NotifyOnStop()
 
     const class Statistics &Statistics() const;
 

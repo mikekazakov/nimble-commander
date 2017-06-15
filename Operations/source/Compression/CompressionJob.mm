@@ -47,6 +47,7 @@ struct CompressionJob::Source
 
 static void WriteEmptyArchiveEntry(struct ::archive *_archive);
 static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source_fn);
+static void	archive_entry_copy_stat(struct archive_entry *_ae, const VFSStat &_vfs_stat);
 
 CompressionJob::CompressionJob(vector<VFSListingItem> _src_files,
                    string _dst_root,
@@ -75,7 +76,7 @@ void CompressionJob::Perform()
         // handle somehow
     }
     
-    m_Callbacks.m_TargetPathDefined();
+    m_TargetPathDefined();
     
     //m_Source
     if( auto source = ScanItems()  )
@@ -130,7 +131,8 @@ void CompressionJob::ProcessItems()
         
         ProcessItem( item, n++ );
         
-        if( IsStopped() )
+        
+        if( BlockIfPaused(); IsStopped() )
             return;
     }
 }
@@ -138,69 +140,99 @@ void CompressionJob::ProcessItems()
 void CompressionJob::ProcessItem(const chained_strings::node &_node, int _index)
 {
     const auto meta = m_Source->metas[_index];
-    if ( meta.flags & (int)Source::ItemFlags::is_dir) {
+    if ( meta.flags & (int)Source::ItemFlags::is_dir)
         ProcessDirectoryItem(_node, _index);
-    }
-    else if( meta.flags & (int)Source::ItemFlags::symlink ) {
-    }
-    else {
+    else if( meta.flags & (int)Source::ItemFlags::symlink )
+        ProcessSymlinkItem(_node, _index);
+    else
         ProcessRegularItem(_node, _index);
+}
+
+void CompressionJob::ProcessSymlinkItem(const chained_strings::node &_node, int _index)
+{
+    const auto itemname = _node.to_str_with_pref();
+    const auto meta = m_Source->metas[_index];
+    const auto source_path = m_Source->base_paths[meta.base_path_indx] + itemname;
+    auto &vfs = *m_Source->base_hosts[meta.base_vfs_indx];
+
+    VFSStat stat;
+    if( const auto stat_rc = vfs.Stat(source_path.c_str(), stat, VFSFlags::F_NoFollow, 0);
+        stat_rc != VFSError::Ok ) {
+        const auto res = m_SourceAccessError(stat_rc, source_path, vfs);
+        if( res == SourceAccessErrorResolution::Stop )
+            Stop();
+        return;
     }
+    
+    char symlink[MAXPATHLEN];
+    if( const auto readlink_rc = vfs.ReadSymlink(source_path.c_str(), symlink, MAXPATHLEN, 0);
+        readlink_rc != VFSError::Ok ) {
+        const auto res = m_SourceAccessError(readlink_rc, source_path, vfs);
+        if( res == SourceAccessErrorResolution::Stop )
+            Stop();
+        return;
+    }
+    
+    auto entry = archive_entry_new();
+    auto entry_cleanup = at_scope_end([&]{
+        archive_entry_free(entry);
+    });
+    archive_entry_set_pathname(entry, itemname.c_str());
+    archive_entry_copy_stat(entry, stat);
+    archive_entry_set_symlink(entry, symlink);
+    archive_write_header(m_Archive, entry);
+    
+
+//        int vfs_ret = 0;
+//        char symlink[MAXPATHLEN];
+//        retry_stat_symlink:;
+//        while( (vfs_ret = vfs->Stat(sourcepath.c_str(), st, VFSFlags::F_NoFollow, 0)) != 0 ||
+//               (vfs_ret = vfs->ReadSymlink(sourcepath.c_str(), symlink, MAXPATHLEN, 0)) != 0 ) {
+//            // failed to stat source file
+//            if(m_SkipAll) return;
+//            int result = m_OnCantAccessSourceItem(vfs_ret,  sourcepath);
+//            if(result == OperationDialogResult::Retry) continue;
+//            if(result == OperationDialogResult::Skip) return;
+//            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
+//            if(result == OperationDialogResult::Stop) { RequestStop(); return; }
+//        }
+//        
+//        entry = archive_entry_new();
+//        archive_entry_set_pathname(entry, itemname);
+//        VFSStat::ToSysStat(st, sst);
+//        archive_entry_copy_stat(entry, &sst);
+//        archive_entry_set_symlink(entry, symlink);
+//        archive_write_header(m_Archive, entry);
+//        // TODO: error handling??
 }
 
 void CompressionJob::ProcessDirectoryItem(const chained_strings::node &_node, int _index)
 {
     const auto itemname = _node.to_str_with_pref();
     const auto meta = m_Source->metas[_index];
-    
-    // compose real src name
     const auto source_path = m_Source->base_paths[meta.base_path_indx] + itemname;
-    const auto &vfs = m_Source->base_hosts[meta.base_vfs_indx];
+    auto &vfs = *m_Source->base_hosts[meta.base_vfs_indx];
 
     VFSStat vfs_stat;
-    const auto stat_rc = vfs->Stat(source_path.c_str(), vfs_stat, 0, 0);
-    if( stat_rc != VFSError::Ok ) {
-        // TODO: handle somehow
+    if( const auto stat_rc = vfs.Stat(source_path.c_str(), vfs_stat, 0, 0);
+        stat_rc != VFSError::Ok ) {
+        const auto res = m_SourceAccessError(stat_rc, source_path, vfs);
+        if( res == SourceAccessErrorResolution::Stop )
+            Stop();
         return;
     }
 
-//        assert(IsPathWithTrailingSlash(itemname));
-//        int stat_ret = 0;
-//        while( (stat_ret = vfs->Stat(sourcepath.c_str(), st, 0, 0)) != 0 ) {
-//            // failed to stat source directory
-//            if(m_SkipAll) return;
-//            switch ( m_OnCantAccessSourceItem(stat_ret, sourcepath) ) {
-//                case OperationDialogResult::Retry:      continue;
-//                case OperationDialogResult::Skip:       return;
-//                case OperationDialogResult::SkipAll:    m_SkipAll = true; return;
-//                case OperationDialogResult::Stop:       RequestStop(); return;
-//                default:                                return;
-//            }
-//        }
-//
-//        entry = archive_entry_new();
-//        archive_entry_set_pathname(entry, itemname);
-//        VFSStat::ToSysStat(st, sst);
-//        archive_entry_copy_stat(entry, &sst);
-//        archive_write_header(m_Archive, entry);
-//        // TODO: error handling??
-//        
-
-
     auto entry = archive_entry_new();
-    auto entry_cleanup = at_scope_end([&]{ // on any errors make sure to clean up allocated libarchive entries
-        archive_entry_free(entry); // nullptr is ok here
+    auto entry_cleanup = at_scope_end([&]{
+        archive_entry_free(entry);
     });
     archive_entry_set_pathname(entry, itemname.c_str());
-    struct stat sys_stat;
-    VFSStat::ToSysStat(vfs_stat, sys_stat);
-    archive_entry_copy_stat(entry, &sys_stat);
+    archive_entry_copy_stat(entry, vfs_stat);
     archive_write_header(m_Archive, entry);
     // TODO: error handling
     
-        // metadata
     VFSFilePtr src_file;
-    vfs->CreateFile(source_path.c_str(), src_file, 0);
+    vfs.CreateFile(source_path.c_str(), src_file, 0);
     if( src_file->Open(VFSFlags::OF_Read) ==  VFSError::Ok ) {
         string name_wo_slash = {begin(itemname), end(itemname)-1};
         WriteEAsIfAny(*src_file, m_Archive, name_wo_slash.c_str());
@@ -211,47 +243,48 @@ void CompressionJob::ProcessRegularItem(const chained_strings::node &_node, int 
 {
     const auto itemname = _node.to_str_with_pref();
     const auto meta = m_Source->metas[_index];
-    
-    // compose real src name
     const auto source_path = m_Source->base_paths[meta.base_path_indx] + itemname;
-    const auto &vfs = m_Source->base_hosts[meta.base_vfs_indx];
+    auto &vfs = *m_Source->base_hosts[meta.base_vfs_indx];
 
-    VFSStat vfs_stat;
-    const auto stat_rc = vfs->Stat(source_path.c_str(), vfs_stat, 0, 0);
-    if( stat_rc != VFSError::Ok ) {
-        // TODO: handle somehow
+    VFSStat stat;
+    if( const auto stat_rc = vfs.Stat(source_path.c_str(), stat, 0, 0);
+        stat_rc != VFSError::Ok ) {
+        const auto res = m_SourceAccessError(stat_rc, source_path, vfs);
+        if( res == SourceAccessErrorResolution::Stop )
+            Stop();
         return;
     }
 
     VFSFilePtr src_file;
-    vfs->CreateFile(source_path.c_str(), src_file, 0);
-
-    const auto open_rc = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock);
-    if( open_rc != VFSError::Ok ) {
-        // TODO: handle somehow
+    vfs.CreateFile(source_path.c_str(), src_file, 0);
+    if( const auto open_rc = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock);
+        open_rc != VFSError::Ok ) {
+        const auto res = m_SourceAccessError(open_rc, source_path, vfs);
+        if( res == SourceAccessErrorResolution::Stop )
+            Stop();
         return;
     }
 
-    auto entry = archive_entry_new();
-    auto entry_cleanup = at_scope_end([&]{ // on any errors make sure to clean up allocated libarchive entries
-        archive_entry_free(entry); // nullptr is ok here
+    const auto entry = archive_entry_new();
+    const auto entry_cleanup = at_scope_end([&]{
+        archive_entry_free(entry);
     });
     
     archive_entry_set_pathname(entry, itemname.c_str());
-    struct stat sys_stat;
-    VFSStat::ToSysStat(vfs_stat, sys_stat);
-    archive_entry_copy_stat(entry, &sys_stat);
+    archive_entry_copy_stat(entry, stat);
     archive_write_header(m_Archive, entry);
         
     int buf_sz = 256*1024; // Why 256Kb?
     char buf[buf_sz];
-    ssize_t vfs_read_ret;
-    while( (vfs_read_ret = src_file->Read(buf, buf_sz)) > 0 ) { // reading and compressing itself
-        if( IsStopped() )
+    ssize_t source_read_rc;
+    while( (source_read_rc = src_file->Read(buf, buf_sz)) > 0 ) { // reading and compressing itself
+        if( BlockIfPaused(); IsStopped() )
             return;
         
-        ssize_t la_ret = archive_write_data(m_Archive, buf, vfs_read_ret);
-        assert(la_ret == vfs_read_ret || la_ret < 0); // currently no cycle here, may need it in future
+        ssize_t la_ret = archive_write_data(m_Archive, buf, source_read_rc);
+        assert(la_ret == source_read_rc || la_ret < 0); // currently no cycle here, may need it in future
+        // TODO: remove this assert!!!
+        
         
         if( la_ret < 0 ) { // some error on write has occured
             // TODO: handle somehow
@@ -268,20 +301,16 @@ void CompressionJob::ProcessRegularItem(const chained_strings::node &_node, int 
         }
             
             // update statistics
+        
+        Statistics().CommitProcessedBytes(source_read_rc);
 //            m_TotalBytesProcessed += vfs_read_ret;
 //            m_Stats.SetValue(m_TotalBytesProcessed);
     }
     
-    if( vfs_read_ret < 0 ) { // error on reading source file
-        // TODO: handle somehow
+    if( source_read_rc < 0 ) {
+        m_SourceReadError((int)source_read_rc, source_path, vfs);
         Stop();
         return;
-        //            if(m_SkipAll) return;
-        //            int result = m_OnCantReadSourceItem((int)vfs_read_ret, sourcepath);
-        //            if(result == OperationDialogResult::Retry) goto retry_read_src;
-        //            if(result == OperationDialogResult::Skip) return;
-        //            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
-        //            if(result == OperationDialogResult::Stop) { RequestStop(); return; }
     }
     
     WriteEAsIfAny(*src_file, m_Archive, itemname.c_str());
@@ -342,10 +371,11 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item,
         meta.flags = (uint16_t)Source::ItemFlags::is_dir;
         _ctx.metas.emplace_back( meta );
         _ctx.filenames.push_back( _item.Filename()+"/", nullptr );
+        auto &host = *_item.Host();
         
         vector<string> directory_entries;
-        const auto iter_ret = _item.Host()->IterateDirectoryListing(_item.Path().c_str(),
-                                                             [&](const VFSDirEnt &_dirent){
+        const auto iter_ret = host.IterateDirectoryListing(_item.Path().c_str(),
+                                                           [&](const VFSDirEnt &_dirent){
                 directory_entries.emplace_back(_dirent.name);
                 return true;
             });
@@ -362,10 +392,8 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item,
             // process failure
         }
         else {
-            const auto resolution = m_Callbacks.m_SourceScanErrorHandler(iter_ret,
-                                                                         _item.Path(),
-                                                                         *_item.Host());
-            if( resolution == CompressionJobCallbacks::SourceScanErrorResolution::Stop ) {
+            const auto resolution = m_SourceScanError(iter_ret, _item.Path(), host);
+            if( resolution == SourceScanErrorResolution::Stop ) {
                 Stop();
                 return false;
             }
@@ -387,10 +415,8 @@ bool CompressionJob::ScanItem(const string &_full_path,
     
     int stat_ret = vfs->Stat(_full_path.c_str(), stat_buffer, VFSFlags::F_NoFollow, 0);
     if( stat_ret != VFSError::Ok ) {
-        const auto resolution = m_Callbacks.m_SourceScanErrorHandler(stat_ret,
-                                                                     _full_path,
-                                                                     *vfs);
-        if( resolution == CompressionJobCallbacks::SourceScanErrorResolution::Stop ) {
+        const auto resolution = m_SourceScanError(stat_ret, _full_path, *vfs);
+        if( resolution == SourceScanErrorResolution::Stop ) {
             Stop();
             return false;
         }
@@ -407,12 +433,14 @@ bool CompressionJob::ScanItem(const string &_full_path,
         _ctx.total_bytes += stat_buffer.size;
     }
     else if( S_ISLNK(stat_buffer.mode) ) {
-//        meta.flags = (uint8_t)ItemFlags::symlink;
-//        m_ScannedItemsMeta.emplace_back( meta );
-//        m_ScannedItems.push_back(_short_path, _prefix);
+        Source::ItemMeta meta;
+        meta.base_vfs_indx = _vfs_no;
+        meta.base_path_indx = _basepath_no;
+        meta.flags = (uint16_t)Source::ItemFlags::symlink;
+        _ctx.metas.emplace_back( meta );
+        _ctx.filenames.push_back(_filename, _prefix);
     }
     else if( S_ISDIR(stat_buffer.mode) ) {
-    
         Source::ItemMeta meta;
         meta.base_vfs_indx = _vfs_no;
         meta.base_path_indx = _basepath_no;
@@ -439,10 +467,8 @@ bool CompressionJob::ScanItem(const string &_full_path,
                     return false;
         }
         else {
-            const auto resolution = m_Callbacks.m_SourceScanErrorHandler(iter_ret,
-                                                                         _full_path,
-                                                                         *vfs);
-            if( resolution == CompressionJobCallbacks::SourceScanErrorResolution::Stop ) {
+            const auto resolution = m_SourceScanError(iter_ret, _full_path, *vfs);
+            if( resolution == SourceScanErrorResolution::Stop ) {
                 Stop();
                 return false;
             }
@@ -464,9 +490,11 @@ ssize_t	CompressionJob::WriteCallback(struct archive *,
     return ARCHIVE_FATAL;
 }
 
-CompressionJobCallbacks &CompressionJob::Callbacks()
+static void	archive_entry_copy_stat(struct archive_entry *_ae, const VFSStat &_vfs_stat)
 {
-    return m_Callbacks;
+    struct stat sys_stat;
+    VFSStat::ToSysStat(_vfs_stat, sys_stat);
+    archive_entry_copy_stat(_ae, &sys_stat);
 }
 
 static void WriteEmptyArchiveEntry(struct ::archive *_archive)

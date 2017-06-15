@@ -6,6 +6,7 @@ namespace nc::ops
 
 Job::Job():
     m_IsRunning{false},
+    m_IsPaused{false},
     m_IsCompleted{false},
     m_IsStopped{false}
 {
@@ -68,6 +69,7 @@ void Job::Stop()
 {
     if( m_IsStopped )
         return;
+    Resume();
     m_IsStopped = true;
     OnStopped();
 }
@@ -78,8 +80,11 @@ void Job::OnStopped()
 
 void Job::SetCompleted()
 {
-    if( !m_IsCompleted )
-        m_IsCompleted = true;
+    if( m_IsCompleted )
+        return;
+
+    Resume();
+    m_IsCompleted = true;
 }
 
 class Statistics &Job::Statistics()
@@ -90,6 +95,39 @@ class Statistics &Job::Statistics()
 const class Statistics &Job::Statistics() const
 {
     return m_Stats;
+}
+
+void Job::Pause()
+{
+    if( m_IsPaused || m_IsCompleted || m_IsStopped )
+        return;
+    m_IsPaused = true;
+}
+
+void Job::Resume()
+{
+    if( !m_IsPaused )
+        return;
+    m_IsPaused = false;
+    m_PauseCV.notify_all();
+}
+
+bool Job::IsPaused() const noexcept
+{
+    return m_IsPaused;
+}
+
+void Job::BlockIfPaused()
+{
+    if( m_IsPaused && !m_IsStopped ) {
+        static mutex mutex;
+        unique_lock<std::mutex> lock{mutex};
+        const auto predicate = [this]{ return !m_IsPaused; };
+        
+        m_Stats.PauseTiming();
+        m_PauseCV.wait(lock, predicate);
+        m_Stats.ResumeTiming();
+    }
 }
 
 }

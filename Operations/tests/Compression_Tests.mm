@@ -142,8 +142,6 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( operation.State() == OperationState::Completed );
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     
-//    cout << operation.ArchivePath() << endl;
-    
     try {
         auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         int cmp_result = 0;
@@ -158,6 +156,88 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
         XCTAssert( e.code() == 0 );
     }
 }
+
+- (void)testCompressingChessApp
+{
+    Compression operation{FetchItems("/Applications/", {"Chess.app"}, *m_NativeHost),
+        m_TmpDir.native(),
+        m_NativeHost};
+    
+    operation.Start();
+    operation.Wait();
+    
+    XCTAssert( operation.State() == OperationState::Completed );
+    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
+
+    try {
+        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        int cmp_result = 0;
+        const auto cmp_rc = VFSCompareEntries("/Applications/Chess.app",
+                                              m_NativeHost,
+                                              "/Chess.app",
+                                              arc_host,
+                                              cmp_result);
+        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
+    }
+    catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
+
+- (void)testLongCompressionStats
+{
+ Compression operation{FetchItems("/Applications/", {"iTunes.app"}, *m_NativeHost),
+        m_TmpDir.native(),
+        m_NativeHost};
+    
+    operation.Start();
+    operation.Wait( 500ms );
+    operation.Pause();
+    XCTAssert( operation.State() == OperationState::Paused );
+    operation.Wait( 5000ms );
+    XCTAssert( operation.State() == OperationState::Paused );
+    operation.Resume();
+    operation.Wait();
+    XCTAssert( operation.State() == OperationState::Completed );
+    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
+
+    try {
+        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        int cmp_result = 0;
+        const auto cmp_rc = VFSCompareEntries("/Applications/iTunes.app",
+                                              m_NativeHost,
+                                              "/iTunes.app",
+                                              arc_host,
+                                              cmp_result);
+        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
+    }
+    catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+    
+    
+    const auto &stats = operation.Statistics();
+    const auto bps = stats.BytesPerSecond();
+    for( auto &v: bps )
+        cout << "{" << (long)v.value << ", " << v.fraction << "}, ";
+    cout << endl;
+    for( auto &v: bps )
+        cout << "{" << long(v.value/v.fraction)/(1024*1024) << "}, ";
+    cout << endl;
+
+
+    cout << "time elapsed: " << double(stats.ElapsedTime().count()) / 1000000000. << endl;
+    cout << "bps direct : " << stats.BytesPerSecondSpeedDirect() / (1024*1024) << endl;
+    cout << "bps average: " << stats.BytesPerSecondSpeedAverage() / (1024*1024) << endl;
+}
+
+//{27726020, 1}, {31820014, 1}, {33399027, 1}, {3994672, 0.159363}, 
+//{26}, {30}, {31}, {23}, 
+//3.17316
+
+//{29697674, 1}, {33053740, 1}, {33092306, 1}, {1095977, 0.0501397}, 
+//{28}, {31}, {31}, {20}, 
+//3.06365
 
 - (path)makeTmpDir
 {

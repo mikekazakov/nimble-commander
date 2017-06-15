@@ -32,6 +32,8 @@ const class Statistics &Operation::Statistics() const
 OperationState Operation::State() const
 {
     if( auto j = GetJob() ) {
+        if( j->IsPaused() )
+            return OperationState::Paused;
         if( j->IsRunning() )
             return OperationState::Running;
         if( j->IsCompleted() )
@@ -56,6 +58,18 @@ void Operation::Start()
     }
 }
 
+void Operation::Pause()
+{
+    if( auto j = GetJob() )
+        j->Pause();
+}
+
+void Operation::Resume()
+{
+    if( auto j = GetJob() )
+        j->Resume();
+}
+
 void Operation::Stop()
 {
     if( auto j = GetJob() )
@@ -64,7 +78,10 @@ void Operation::Stop()
 
 void Operation::Wait() const
 {
-    const auto pred = [this]{ return State() != OperationState::Running; };
+    const auto pred = [this]{
+        const auto s = State();
+        return s == OperationState::Completed || s == OperationState::Stopped;
+    };
     if( pred() )
         return;
     
@@ -75,7 +92,10 @@ void Operation::Wait() const
 
 bool Operation::Wait( std::chrono::nanoseconds _wait_for_time ) const
 {
-    const auto pred = [this]{ return State() != OperationState::Running; };
+    const auto pred = [this]{
+        const auto s = State();
+        return s == OperationState::Completed || s == OperationState::Stopped;
+    };
     if( pred() )
         return true;
     

@@ -4,8 +4,6 @@
 #include <VFS/VFS.h>
 #include <Habanero/chained_strings.h>
 
-#include <boost/variant.hpp>
-
 struct archive;
 
 namespace nc::ops
@@ -13,18 +11,29 @@ namespace nc::ops
 
 struct CompressionJobCallbacks
 {
-    function<void()> m_TargetPathDefined =
+    function< void() >
+    m_TargetPathDefined =
     []{};
 
     enum class SourceScanErrorResolution { Stop, Skip };
-    function< SourceScanErrorResolution(int _err, const string &_path,VFSHost &_vfs) >
-    m_SourceScanErrorHandler =
+    function< SourceScanErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_SourceScanError =
     [](int _err, const string &_path,VFSHost &_vfs){ return SourceScanErrorResolution::Stop; };
+    
+    enum class SourceAccessErrorResolution { Stop, Skip };
+    function< SourceAccessErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_SourceAccessError =
+    [](int _err, const string &_path, VFSHost &_vfs){ return SourceAccessErrorResolution::Stop; };
+
+    function< void(int _err, const string &_path, VFSHost &_vfs) >
+    m_SourceReadError =
+    [](int _err, const string &_path, VFSHost &_vfs){};
+
     
     
 };
 
-class CompressionJob : public Job
+class CompressionJob : public Job, public CompressionJobCallbacks
 {
 public:
     CompressionJob(vector<VFSListingItem> _src_files,
@@ -32,11 +41,7 @@ public:
                    VFSHostPtr _dst_vfs);
     ~CompressionJob();
 
-
     const string &TargetArchivePath() const;
-    
-    
-    CompressionJobCallbacks &Callbacks();
     
 private:
     struct Source;
@@ -55,6 +60,7 @@ private:
     void ProcessItem(const chained_strings::node &_node, int _index);
     void ProcessDirectoryItem(const chained_strings::node &_node, int _index);
     void ProcessRegularItem(const chained_strings::node &_node, int _index);
+    void ProcessSymlinkItem(const chained_strings::node &_node, int _index);
 
     string FindSuitableFilename(const string& _proposed_arcname) const;
 
@@ -73,8 +79,6 @@ private:
     shared_ptr<VFSFile>     m_TargetFile;
     
     unique_ptr<const Source>m_Source;
-    
-    CompressionJobCallbacks m_Callbacks;
 };
 
 }

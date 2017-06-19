@@ -25,6 +25,8 @@
 		CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B951EE252F200F567C4 /* Compression_Tests.mm */; };
 		CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53BAC1EEA840600F567C4 /* Statistics.h */; };
 		CFF53BAF1EEA840600F567C4 /* Statistics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BAD1EEA840600F567C4 /* Statistics.mm */; };
+		CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BCC1EF3913B00F567C4 /* Progress.cpp */; };
+		CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53BCD1EF3913B00F567C4 /* Progress.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +67,8 @@
 		CFF53B951EE252F200F567C4 /* Compression_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Compression_Tests.mm; path = tests/Compression_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFF53BAC1EEA840600F567C4 /* Statistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Statistics.h; path = source/Statistics.h; sourceTree = "<group>"; };
 		CFF53BAD1EEA840600F567C4 /* Statistics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Statistics.mm; path = source/Statistics.mm; sourceTree = "<group>"; };
+		CFF53BCC1EF3913B00F567C4 /* Progress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Progress.cpp; path = source/Progress.cpp; sourceTree = "<group>"; };
+		CFF53BCD1EF3913B00F567C4 /* Progress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Progress.h; path = source/Progress.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +161,8 @@
 				CFF53B8E1EE24FC300F567C4 /* Compression */,
 				CFF53BAC1EEA840600F567C4 /* Statistics.h */,
 				CFF53BAD1EEA840600F567C4 /* Statistics.mm */,
+				CFF53BCD1EF3913B00F567C4 /* Progress.h */,
+				CFF53BCC1EF3913B00F567C4 /* Progress.cpp */,
 				CFF53B781EDEA83900F567C4 /* Job.h */,
 				CFF53B791EDEA83900F567C4 /* Job.mm */,
 				CFF53B741EDE53E800F567C4 /* Operation.h */,
@@ -188,6 +194,7 @@
 				CFF53B6E1EDD3F7F00F567C4 /* VeryTestWindow.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
 				CFF53B401EDD197300F567C4 /* Operations.h in Headers */,
+				CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -292,6 +299,7 @@
 			files = (
 				CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */,
 				CFF53B7B1EDEA83900F567C4 /* Job.mm in Sources */,
+				CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */,
 				CFF53B691EDD1F8900F567C4 /* Test.mm in Sources */,
 				CFF53BAF1EEA840600F567C4 /* Statistics.mm in Sources */,
 				CFF53B6F1EDD3F7F00F567C4 /* VeryTestWindow.m in Sources */,

@@ -1,38 +1,38 @@
 #pragma once
 
+#include "Progress.h"
+
 namespace nc::ops {
 
 class Statistics
 {
-
 public:
+    enum class SourceType {
+        Bytes,
+        Items
+    };
+ 
     Statistics();
     ~Statistics();
 
-    void StartTiming() noexcept;
-    void PauseTiming() noexcept;
+    void StartTiming()  noexcept;
+    void PauseTiming()  noexcept;
     void ResumeTiming() noexcept;
-    void StopTiming() noexcept;
+    void StopTiming()   noexcept;
     
-    nanoseconds ElapsedTime() const noexcept;
-    
-    void CommitProcessedBytes( uint64_t _bytes );
-    
-    
-
-    struct StatPoint
-    {
-        float value;
-        float fraction; // (0..1]
-    };
-
-
-    vector<StatPoint> BytesPerSecond() const;
-    
-    double BytesPerSecondSpeedDirect() const;
-    double BytesPerSecondSpeedAverage() const;
+    nanoseconds                 ElapsedTime() const noexcept;
+    double                      DoneFraction( SourceType _type ) const noexcept;
+    optional<nanoseconds>       ETA( SourceType _type ) const noexcept;
+    double                      SpeedPerSecondDirect( SourceType _type ) const;
+    double                      SpeedPerSecondAverage( SourceType _type ) const;
+    vector<Progress::TimePoint> BytesPerSecond() const;
+   
+    void CommitEstimated( SourceType _type, uint64_t _delta );
+    void CommitProcessed( SourceType _type, uint64_t _delta );
     
 private:
+    Progress &Timeline(SourceType _type) noexcept;
+    const Progress &Timeline(SourceType _type) const noexcept;
 
     atomic_bool m_IsTiming{false};
     atomic_int  m_PauseCount{0};
@@ -41,11 +41,8 @@ private:
     nanoseconds m_SleptTimeDuration{0};
     nanoseconds m_FinalTimeDuration{0};
     
-    uint64_t    m_BytesProcessed{0};
-    nanoseconds m_LastBytesCommitTimePoint{0};
-    vector<StatPoint> m_BytesPerSecond;
-
-    
+    Progress m_BytesTimeline;
+    Progress m_ItemsTimeline;
 };
 
 }

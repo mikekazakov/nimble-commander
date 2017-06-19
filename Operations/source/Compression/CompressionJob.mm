@@ -32,7 +32,7 @@ struct CompressionJob::Source
     vector<ItemMeta>    metas;
     vector<VFSHostPtr>  base_hosts;
     vector<string>      base_paths;
-    int64_t             total_bytes = 0;
+//    int64_t             total_bytes = 0;
     
     uint16_t FindOrInsertHost(const VFSHostPtr &_h)
     {
@@ -130,7 +130,7 @@ void CompressionJob::ProcessItems()
 //        m_CurrentlyProcessingItem = &i;
         
         ProcessItem( item, n++ );
-        
+        Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
         
         if( BlockIfPaused(); IsStopped() )
             return;
@@ -302,7 +302,7 @@ void CompressionJob::ProcessRegularItem(const chained_strings::node &_node, int 
             
             // update statistics
         
-        Statistics().CommitProcessedBytes(source_read_rc);
+        Statistics().CommitProcessed(Statistics::SourceType::Bytes, source_read_rc);
 //            m_TotalBytesProcessed += vfs_read_ret;
 //            m_Stats.SetValue(m_TotalBytesProcessed);
     }
@@ -351,6 +351,7 @@ optional<CompressionJob::Source> CompressionJob::ScanItems()
 bool CompressionJob::ScanItem(const VFSListingItem &_item,
                               Source &_ctx)
 {
+    Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
     if( _item.IsReg() ) {
         Source::ItemMeta meta;
         meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
@@ -358,11 +359,16 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item,
         meta.flags = (uint16_t)Source::ItemFlags::no_flags;
         _ctx.metas.emplace_back( meta );
         _ctx.filenames.push_back( _item.Filename(), nullptr );
-        _ctx.total_bytes += _item.Size();
+//        _ctx.total_bytes += _item.Size();
+        Statistics().CommitEstimated(Statistics::SourceType::Bytes, _item.Size());
     }
-    else if( _item.IsSymlink()  ) {
-    
-    
+    else if( _item.IsSymlink() ) {
+        Source::ItemMeta meta;
+        meta.base_path_indx = _ctx.FindOrInsertBasePath(_item.Directory());
+        meta.base_vfs_indx = _ctx.FindOrInsertHost(_item.Host());
+        meta.flags = (uint16_t)Source::ItemFlags::symlink;
+        _ctx.metas.emplace_back( meta );
+        _ctx.filenames.push_back( _item.Filename(), nullptr );
     }
     else if( _item.IsDir() ) {
         Source::ItemMeta meta;
@@ -423,6 +429,8 @@ bool CompressionJob::ScanItem(const string &_full_path,
         return true;
     }
 
+    Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
+
     if( S_ISREG(stat_buffer.mode) ) {
         Source::ItemMeta meta;
         meta.base_vfs_indx = _vfs_no;
@@ -430,7 +438,8 @@ bool CompressionJob::ScanItem(const string &_full_path,
         meta.flags = (uint16_t)Source::ItemFlags::no_flags;
         _ctx.metas.emplace_back( meta );
         _ctx.filenames.push_back(_filename, _prefix);
-        _ctx.total_bytes += stat_buffer.size;
+//        _ctx.total_bytes += stat_buffer.size;
+        Statistics().CommitEstimated(Statistics::SourceType::Bytes, stat_buffer.size);
     }
     else if( S_ISLNK(stat_buffer.mode) ) {
         Source::ItemMeta meta;

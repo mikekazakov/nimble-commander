@@ -14,7 +14,8 @@ void Statistics::StartTiming() noexcept
 {
     if( !m_IsTiming) {
         m_StartTimePoint = machtime();
-        m_LastBytesCommitTimePoint = m_StartTimePoint;
+        m_BytesTimeline.SetupTiming();
+        m_ItemsTimeline.SetupTiming();
         m_IsTiming = true;
     }
 }
@@ -32,7 +33,8 @@ void Statistics::ResumeTiming() noexcept
     if( !m_PauseCount ) {
         const auto dt = machtime() - m_PauseTimePoint;
         m_SleptTimeDuration += dt;
-        m_LastBytesCommitTimePoint += dt;
+        m_BytesTimeline.ReportSleptDelta(dt);
+        m_ItemsTimeline.ReportSleptDelta(dt);
     }
 }
     
@@ -60,59 +62,55 @@ nanoseconds Statistics::ElapsedTime() const noexcept
     }
 }
 
-void Statistics::CommitProcessedBytes( uint64_t _bytes )
+void Statistics::CommitEstimated( SourceType _type, uint64_t _delta )
 {
-    const auto current_time = machtime();
-    const auto delta_time = current_time - m_LastBytesCommitTimePoint;
-    m_BytesProcessed += _bytes;
-    m_LastBytesCommitTimePoint = current_time;
-    
-    const auto fp_bytes = double(_bytes);
-    const auto fp_delta_time = ((double)delta_time.count()) / 1000000000.;
-    auto fp_left_delta_time = fp_delta_time;
-    if( !m_BytesPerSecond.empty() && m_BytesPerSecond.back().fraction < 1. ) {
-        auto &last = m_BytesPerSecond.back();
-        const auto dt = min( 1. - last.fraction, fp_left_delta_time );
-        const auto db = fp_bytes * dt / fp_delta_time;
-        last.value += db;
-        last.fraction += dt;
-        fp_left_delta_time -= dt;
-    }
-    
-    while( fp_left_delta_time > 0. ) {
-        const auto dt = min( 1., fp_left_delta_time );
-        const auto db = fp_bytes * dt / fp_delta_time;
-        fp_left_delta_time -= dt;
-        StatPoint sp;
-        sp.value = db;
-        sp.fraction = dt;
-        m_BytesPerSecond.emplace_back( sp );
-    }
+    Timeline(_type).CommitEstimated(_delta);
 }
 
-vector<Statistics::StatPoint> Statistics::BytesPerSecond() const
+void Statistics::CommitProcessed( SourceType _type, uint64_t _delta_bytes )
 {
-    return m_BytesPerSecond;
+    Timeline(_type).CommitProcessed(_delta_bytes);
 }
 
-double Statistics::BytesPerSecondSpeedDirect() const
+vector<Progress::TimePoint> Statistics::BytesPerSecond() const
 {
-    return double(m_BytesProcessed) /
-           (double((m_LastBytesCommitTimePoint - m_StartTimePoint - m_SleptTimeDuration).count()) /
-            1000000000.);
+    return m_BytesTimeline.Data();
 }
 
-double Statistics::BytesPerSecondSpeedAverage() const
+double Statistics::SpeedPerSecondDirect(SourceType _type) const
 {
-    double bps = 0;
-    int n = 0;
-    for( auto &v: m_BytesPerSecond )
-        if( v.fraction >= 0.5 ) {
-            bps += (v.value / v.fraction);
-            n++;
-        }
-    bps /= n;
-    return bps;
+    return Timeline(_type).VolumePerSecondDirect();
+}
+
+double Statistics::SpeedPerSecondAverage(SourceType _type) const
+{
+    return Timeline(_type).VolumePerSecondAverage();
+}
+
+optional<nanoseconds> Statistics::ETA(SourceType _type) const noexcept
+{
+    return Timeline(_type).ETA();
+}
+
+double Statistics::DoneFraction(SourceType _type) const noexcept
+{
+    return Timeline(_type).DoneFraction();
+}
+
+Progress &Statistics::Timeline(SourceType _type) noexcept
+{
+    if( _type == SourceType::Bytes )
+        return m_BytesTimeline;
+    else
+        return m_ItemsTimeline;
+}
+
+const Progress &Statistics::Timeline(SourceType _type) const noexcept
+{
+    if( _type == SourceType::Bytes )
+        return m_BytesTimeline;
+    else
+        return m_ItemsTimeline;
 }
 
 }

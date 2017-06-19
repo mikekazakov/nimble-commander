@@ -80,7 +80,7 @@ void Operation::Wait() const
 {
     const auto pred = [this]{
         const auto s = State();
-        return s == OperationState::Completed || s == OperationState::Stopped;
+        return s != OperationState::Running && s != OperationState::Paused;
     };
     if( pred() )
         return;
@@ -94,7 +94,7 @@ bool Operation::Wait( std::chrono::nanoseconds _wait_for_time ) const
 {
     const auto pred = [this]{
         const auto s = State();
-        return s == OperationState::Completed || s == OperationState::Stopped;
+        return s != OperationState::Running && s != OperationState::Paused;
     };
     if( pred() )
         return true;

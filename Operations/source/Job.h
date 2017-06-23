@@ -27,6 +27,8 @@ public:
     bool IsCompleted() const noexcept;
 
     void SetFinishCallback( std::function<void()> _callback );
+    void SetPauseCallback( std::function<void()> _callback );
+    void SetResumeCallback( std::function<void()> _callback );
     
     class Statistics &Statistics();
     const class Statistics &Statistics() const;
@@ -45,8 +47,10 @@ private:
     std::atomic_bool        m_IsStopped;
     std::condition_variable m_PauseCV;
     
-    std::function<void()> m_OnFinish;
-    std::mutex m_OnFinishLock;
+    std::function<void()>   m_OnFinish;
+    std::function<void()>   m_OnPause;
+    std::function<void()>   m_OnResume;
+    std::mutex              m_CallbackLock;
     
     class Statistics      m_Stats;
 };

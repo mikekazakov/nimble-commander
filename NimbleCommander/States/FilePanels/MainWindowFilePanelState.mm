@@ -30,6 +30,8 @@
 #include "PanelData.h"
 #include "PanelView.h"
 
+#include <Operations/Pool.h>
+
 using namespace nc::panel;
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
@@ -120,9 +122,10 @@ static bool GoToForcesPanelActivation()
 @synthesize OperationsController = m_OperationsController;
 @synthesize operationsSummaryView = m_OpSummaryController;
 
-- (instancetype) initBaseWithFrame:(NSRect)frameRect
+- (instancetype) initBaseWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
 {
-    if( self = [super initWithFrame:frameRect] ) {        
+    if( self = [super initWithFrame:frameRect] ) {
+        m_OperationsPool = _pool.shared_from_this();
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
         
@@ -150,18 +153,18 @@ static bool GoToForcesPanelActivation()
     return self;
 }
 
-- (instancetype) initDefaultFileStateWithFrame:(NSRect)frameRect
+- (instancetype) initDefaultFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
 {
-    if( self = [self initBaseWithFrame:frameRect] ) {
+    if( self = [self initBaseWithFrame:frameRect andPool:_pool] ) {
         [self restoreDefaultPanelOptions];
         [self loadDefaultPanelContent];
     }
     return self;
 }
 
-- (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect
+- (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
 {
-    if( self = [self initBaseWithFrame:frameRect] ) {
+    if( self = [self initBaseWithFrame:frameRect andPool:_pool] ) {
     }
     return self;
 }
@@ -898,6 +901,11 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 - (bool)goToForcesPanelActivation
 {
     return GoToForcesPanelActivation();
+}
+
+- (nc::ops::Pool&) operationsPool
+{
+    return *m_OperationsPool;
 }
 
 @end

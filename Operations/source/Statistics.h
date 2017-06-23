@@ -23,12 +23,16 @@ public:
     nanoseconds                 ElapsedTime() const noexcept;
     double                      DoneFraction( SourceType _type ) const noexcept;
     optional<nanoseconds>       ETA( SourceType _type ) const noexcept;
+    uint64_t                    VolumeTotal( SourceType _type ) const noexcept;
+    uint64_t                    VolumeProcessed( SourceType _type ) const noexcept;
     double                      SpeedPerSecondDirect( SourceType _type ) const;
     double                      SpeedPerSecondAverage( SourceType _type ) const;
     vector<Progress::TimePoint> BytesPerSecond() const;
    
     void CommitEstimated( SourceType _type, uint64_t _delta );
     void CommitProcessed( SourceType _type, uint64_t _delta );
+    
+    // + CommitSkipped
     
 private:
     Progress &Timeline(SourceType _type) noexcept;
@@ -43,6 +47,7 @@ private:
     
     Progress m_BytesTimeline;
     Progress m_ItemsTimeline;
+//    spinlock m_BytesTimelineLock;
 };
 
 }

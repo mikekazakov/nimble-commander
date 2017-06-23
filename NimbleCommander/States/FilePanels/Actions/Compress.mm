@@ -3,12 +3,17 @@
 #include "../PanelView.h"
 #include "../PanelData.h"
 #include "../MainWindowFilePanelState.h"
+#include "../../MainWindowController.h"
 #include <VFS/VFS.h>
-#include <NimbleCommander/Operations/Compress/FileCompressOperation.h>
+//#include <NimbleCommander/Operations/Compress/FileCompressOperation.h>
+#include <Utility/PathManip.h>
+
+#include <Operations/Compression.h>
 
 namespace nc::panel::actions {
 
 static PanelController *FindVisibleOppositeController( PanelController *_source );
+static void FocusResult( PanelController *_target, const shared_ptr<nc::ops::Compression>& _op );
 
 bool CompressHere::Predicate( PanelController *_target ) const
 {
@@ -31,11 +36,44 @@ void CompressHere::Perform( PanelController *_target, id _sender ) const
     if( entries.empty() )
         return;
     
-    auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
-                                                   dstroot:_target.currentDirectoryPath
-                                                    dstvfs:_target.vfs];
-    op.TargetPanel = _target;
-    [_target.state AddOperation:op];
+//    nc::ops::Pool2 p{"abra"};
+
+
+
+  //      nc::ops::Compression comp;
+
+
+//        nc::ops::Compression comp (move(entries),
+//                                   _target.currentDirectoryPath,
+//                                   _target.vfs);
+    
+//    auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
+//                                                   dstroot:_target.currentDirectoryPath
+//                                                    dstvfs:_target.vfs];
+//    op.TargetPanel = _target;
+//    [_target.state AddOperation:op];
+    auto op = make_shared<nc::ops::Compression>(move(entries),
+                                                _target.currentDirectoryPath,
+                                                _target.vfs);
+//
+
+//    auto op = make_shared<nc::ops::Operation>();
+//
+    const auto weak_op = weak_ptr<nc::ops::Compression>{op};
+    __weak PanelController *weak_target = _target;
+    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
+        FocusResult((PanelController*)weak_target, weak_op.lock());
+    });
+
+    [_target.mainWindowController enqueueOperation:op];
+    
+//    
+//        Compression(vector<VFSListingItem> _src_files,
+//                string _dst_root,
+//                VFSHostPtr _dst_vfs);
+
+    
+    
 }
 
 bool CompressToOpposite::Predicate( PanelController *_target ) const
@@ -63,11 +101,23 @@ void CompressToOpposite::Perform( PanelController *_target, id _sender ) const
     if(entries.empty())
         return;
 
-    const auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
-                                                         dstroot:opposite_panel.currentDirectoryPath
-                                                          dstvfs:opposite_panel.vfs];
-    op.TargetPanel = opposite_panel;
-    [_target.state AddOperation:op];
+//    const auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
+//                                                         dstroot:opposite_panel.currentDirectoryPath
+//                                                          dstvfs:opposite_panel.vfs];
+//    op.TargetPanel = opposite_panel;
+//    [_target.state AddOperation:op];
+
+    auto op = make_shared<nc::ops::Compression>(move(entries),
+                                                opposite_panel.currentDirectoryPath,
+                                                opposite_panel.vfs);
+    const auto weak_op = weak_ptr<nc::ops::Compression>{op};
+    __weak PanelController *weak_target = opposite_panel;
+    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
+        FocusResult((PanelController*)weak_target, weak_op.lock());
+    });
+
+    [_target.mainWindowController enqueueOperation:op];
+
 }
 
 context::CompressHere::CompressHere(const vector<VFSListingItem>&_items):
@@ -101,11 +151,23 @@ bool context::CompressHere::ValidateMenuItem( PanelController *_target, NSMenuIt
 void context::CompressHere::Perform( PanelController *_target, id _sender ) const
 {
     auto entries = m_Items;
-    auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
-                                                   dstroot:_target.currentDirectoryPath
-                                                    dstvfs:_target.vfs];
-    op.TargetPanel = _target;
-    [_target.state AddOperation:op];
+//    auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
+//                                                   dstroot:_target.currentDirectoryPath
+//                                                    dstvfs:_target.vfs];
+//    op.TargetPanel = _target;
+//    [_target.state AddOperation:op];
+    auto op = make_shared<nc::ops::Compression>(move(entries),
+                                                _target.currentDirectoryPath,
+                                                _target.vfs);
+
+    const auto weak_op = weak_ptr<nc::ops::Compression>{op};
+    __weak PanelController *weak_target = _target;
+    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
+        FocusResult((PanelController*)weak_target, weak_op.lock());
+    });
+
+    [_target.mainWindowController enqueueOperation:op];
+
 }
 
 context::CompressToOpposite::CompressToOpposite(const vector<VFSListingItem>&_items):
@@ -148,11 +210,22 @@ void context::CompressToOpposite::Perform( PanelController *_target, id _sender 
         return;
     
     auto entries = m_Items;
-    const auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
-                                                         dstroot:opposite_panel.currentDirectoryPath
-                                                          dstvfs:opposite_panel.vfs];
-    op.TargetPanel = opposite_panel;
-    [_target.state AddOperation:op];
+//    const auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
+//                                                         dstroot:opposite_panel.currentDirectoryPath
+//                                                          dstvfs:opposite_panel.vfs];
+//    op.TargetPanel = opposite_panel;
+//    [_target.state AddOperation:op];
+
+ auto op = make_shared<nc::ops::Compression>(move(entries),
+                                                opposite_panel.currentDirectoryPath,
+                                                opposite_panel.vfs);
+    const auto weak_op = weak_ptr<nc::ops::Compression>{op};
+    __weak PanelController *weak_target = opposite_panel;
+    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
+        FocusResult((PanelController*)weak_target, weak_op.lock());
+    });
+
+    [_target.mainWindowController enqueueOperation:op];
 }
 
 static PanelController *FindVisibleOppositeController( PanelController *_source )
@@ -165,6 +238,28 @@ static PanelController *FindVisibleOppositeController( PanelController *_source 
     if( [state isRightController:_source] )
         return state.leftPanelController;
     return nil;
+}
+
+static void FocusResult( PanelController *_target, const shared_ptr<nc::ops::Compression>& _op )
+{
+    if( !_target || !_op )
+        return;
+    
+    if( dispatch_is_main_queue() ) {
+        const auto result_path = path(_op->ArchivePath());
+        const auto directory =  EnsureTrailingSlash(result_path.parent_path().native());
+        const auto filename = result_path.filename().native();
+        if( _target.isUniform && _target.currentDirectoryPath == directory ) {
+            [_target refreshPanel];
+            nc::panel::DelayedSelection req;
+            req.filename = filename;
+            [_target ScheduleDelayedSelectionChangeFor:req];
+        }
+    }
+    else
+        dispatch_to_main_queue([_target, _op]{
+            FocusResult(_target, _op);
+        });
 }
 
 }

@@ -13,6 +13,9 @@
 #include "../MainWindowStateProtocol.h"
 #include "../../Bootstrap/Config.h"
 
+namespace nc::ops {
+    class Pool;
+}
 namespace nc::panel::data {
     class Model;
 }
@@ -53,16 +56,18 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     bool                m_ShowTabs;
     
     vector<GenericConfig::ObservationTicket> m_ConfigTickets;
+    shared_ptr<nc::ops::Pool> m_OperationsPool;
 }
 
 @property (nonatomic, readonly) ExternalToolsStorage &externalToolsStorage;
 @property (nonatomic, readonly) OperationsController *OperationsController;
+@property (nonatomic, readonly) nc::ops::Pool& operationsPool;
 @property (nonatomic, readonly) OperationsSummaryViewController *operationsSummaryView;
 @property (nonatomic, readonly) bool isPanelActive;
 @property (nonatomic, readonly) bool goToForcesPanelActivation;
 
-- (instancetype) initDefaultFileStateWithFrame:(NSRect)frameRect;
-- (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect;
+- (instancetype) initDefaultFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool;
+- (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool;
 
 - (void) loadDefaultPanelContent;
 

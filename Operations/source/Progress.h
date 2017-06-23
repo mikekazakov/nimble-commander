@@ -31,10 +31,11 @@ public:
     const vector<TimePoint>& Data() const;
     
 public:
-    uint64_t            m_Estimated;
-    uint64_t            m_Processed;
+    atomic_ulong        m_Estimated;
+    atomic_ulong        m_Processed;
     nanoseconds         m_BaseTimePoint;
     nanoseconds         m_LastCommitTimePoint;
+    mutable spinlock    m_TimepointsLock;
     vector<TimePoint>   m_Timeline;
 };
 

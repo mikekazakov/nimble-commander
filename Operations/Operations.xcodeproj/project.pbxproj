@@ -7,6 +7,26 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084D61EF7CC770072F0F6 /* Pool.h */; };
+		CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7084D71EF7CC770072F0F6 /* Pool.mm */; };
+		CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DA1EF7CCB00072F0F6 /* Pool.h */; };
+		CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DC1EF7CF7E0072F0F6 /* Compression.h */; };
+		CFC4F8B31EF7E3830000B3EE /* Compression.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B901EE24FEC00F567C4 /* Compression.mm */; };
+		CFC4F8B41EF7E3860000B3EE /* CompressionJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B931EE2515400F567C4 /* CompressionJob.mm */; };
+		CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8C31EFA05B00000B3EE /* PoolView.h */; };
+		CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8C41EFA05B00000B3EE /* PoolView.mm */; };
+		CFC4F8C91EFA05B00000B3EE /* PoolViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8C51EFA05B00000B3EE /* PoolViewController.h */; };
+		CFC4F8CA1EFA05B00000B3EE /* PoolViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8C61EFA05B00000B3EE /* PoolViewController.mm */; };
+		CFC4F8CC1EFA05DA0000B3EE /* PoolViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8CB1EFA05DA0000B3EE /* PoolViewController.xib */; };
+		CFC4F8CF1EFA07F00000B3EE /* PoolView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8CD1EFA07F00000B3EE /* PoolView.h */; };
+		CFC4F8D01EFA07F00000B3EE /* PoolViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8CE1EFA07F00000B3EE /* PoolViewController.h */; };
+		CFC4F8D31EFA17070000B3EE /* Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8D11EFA17070000B3EE /* Internal.h */; };
+		CFC4F8D41EFA17070000B3EE /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8D21EFA17070000B3EE /* Internal.mm */; };
+		CFC4F8D71EFB5F780000B3EE /* BriefOperationViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8D51EFB5F780000B3EE /* BriefOperationViewController.h */; };
+		CFC4F8D81EFB5F780000B3EE /* BriefOperationViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8D61EFB5F780000B3EE /* BriefOperationViewController.mm */; };
+		CFC4F8DA1EFB5FAB0000B3EE /* BriefOperationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8D91EFB5FAB0000B3EE /* BriefOperationViewController.xib */; };
+		CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8DB1EFCC0040000B3EE /* StatisticsFormatter.h */; };
+		CFC4F8DE1EFCC0040000B3EE /* StatisticsFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8DC1EFCC0040000B3EE /* StatisticsFormatter.mm */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B3E1EDD197300F567C4 /* OperationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B3D1EDD197300F567C4 /* OperationsTests.m */; };
 		CFF53B401EDD197300F567C4 /* Operations.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B321EDD197300F567C4 /* Operations.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -20,8 +40,6 @@
 		CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B781EDEA83900F567C4 /* Job.h */; };
 		CFF53B7B1EDEA83900F567C4 /* Job.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B791EDEA83900F567C4 /* Job.mm */; };
 		CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */; };
-		CFF53B911EE24FEC00F567C4 /* Compression.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B901EE24FEC00F567C4 /* Compression.mm */; };
-		CFF53B941EE2515400F567C4 /* CompressionJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B931EE2515400F567C4 /* CompressionJob.mm */; };
 		CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B951EE252F200F567C4 /* Compression_Tests.mm */; };
 		CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53BAC1EEA840600F567C4 /* Statistics.h */; };
 		CFF53BAF1EEA840600F567C4 /* Statistics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BAD1EEA840600F567C4 /* Statistics.mm */; };
@@ -40,6 +58,24 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF7084D61EF7CC770072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = source/Pool.h; sourceTree = "<group>"; };
+		CF7084D71EF7CC770072F0F6 /* Pool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pool.mm; path = source/Pool.mm; sourceTree = "<group>"; };
+		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
+		CF7084DC1EF7CF7E0072F0F6 /* Compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Compression.h; path = include/Operations/Compression.h; sourceTree = "<group>"; };
+		CFC4F8C31EFA05B00000B3EE /* PoolView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoolView.h; path = source/PoolView.h; sourceTree = "<group>"; };
+		CFC4F8C41EFA05B00000B3EE /* PoolView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoolView.mm; path = source/PoolView.mm; sourceTree = "<group>"; };
+		CFC4F8C51EFA05B00000B3EE /* PoolViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoolViewController.h; path = source/PoolViewController.h; sourceTree = "<group>"; };
+		CFC4F8C61EFA05B00000B3EE /* PoolViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoolViewController.mm; path = source/PoolViewController.mm; sourceTree = "<group>"; };
+		CFC4F8CB1EFA05DA0000B3EE /* PoolViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PoolViewController.xib; path = source/PoolViewController.xib; sourceTree = "<group>"; };
+		CFC4F8CD1EFA07F00000B3EE /* PoolView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoolView.h; path = include/Operations/PoolView.h; sourceTree = "<group>"; };
+		CFC4F8CE1EFA07F00000B3EE /* PoolViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoolViewController.h; path = include/Operations/PoolViewController.h; sourceTree = "<group>"; };
+		CFC4F8D11EFA17070000B3EE /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/Internal.h; sourceTree = "<group>"; };
+		CFC4F8D21EFA17070000B3EE /* Internal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Internal.mm; path = source/Internal.mm; sourceTree = "<group>"; };
+		CFC4F8D51EFB5F780000B3EE /* BriefOperationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BriefOperationViewController.h; path = source/BriefOperationViewController.h; sourceTree = "<group>"; };
+		CFC4F8D61EFB5F780000B3EE /* BriefOperationViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BriefOperationViewController.mm; path = source/BriefOperationViewController.mm; sourceTree = "<group>"; };
+		CFC4F8D91EFB5FAB0000B3EE /* BriefOperationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BriefOperationViewController.xib; path = source/BriefOperationViewController.xib; sourceTree = "<group>"; };
+		CFC4F8DB1EFCC0040000B3EE /* StatisticsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StatisticsFormatter.h; path = source/StatisticsFormatter.h; sourceTree = "<group>"; };
+		CFC4F8DC1EFCC0040000B3EE /* StatisticsFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StatisticsFormatter.mm; path = source/StatisticsFormatter.mm; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B321EDD197300F567C4 /* Operations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Operations.h; sourceTree = "<group>"; };
 		CFF53B331EDD197300F567C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -149,8 +185,12 @@
 		CFF53B8A1EE24F1B00F567C4 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F8CD1EFA07F00000B3EE /* PoolView.h */,
+				CFC4F8CE1EFA07F00000B3EE /* PoolViewController.h */,
+				CF7084DC1EF7CF7E0072F0F6 /* Compression.h */,
 				CFF53B8C1EE24F9E00F567C4 /* Job.h */,
 				CFF53B8D1EE24F9E00F567C4 /* Operation.h */,
+				CF7084DA1EF7CCB00072F0F6 /* Pool.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -167,6 +207,20 @@
 				CFF53B791EDEA83900F567C4 /* Job.mm */,
 				CFF53B741EDE53E800F567C4 /* Operation.h */,
 				CFF53B751EDE53E800F567C4 /* Operation.mm */,
+				CF7084D61EF7CC770072F0F6 /* Pool.h */,
+				CF7084D71EF7CC770072F0F6 /* Pool.mm */,
+				CFC4F8C31EFA05B00000B3EE /* PoolView.h */,
+				CFC4F8C41EFA05B00000B3EE /* PoolView.mm */,
+				CFC4F8C51EFA05B00000B3EE /* PoolViewController.h */,
+				CFC4F8C61EFA05B00000B3EE /* PoolViewController.mm */,
+				CFC4F8CB1EFA05DA0000B3EE /* PoolViewController.xib */,
+				CFC4F8D11EFA17070000B3EE /* Internal.h */,
+				CFC4F8D21EFA17070000B3EE /* Internal.mm */,
+				CFC4F8D51EFB5F780000B3EE /* BriefOperationViewController.h */,
+				CFC4F8D61EFB5F780000B3EE /* BriefOperationViewController.mm */,
+				CFC4F8D91EFB5FAB0000B3EE /* BriefOperationViewController.xib */,
+				CFC4F8DB1EFCC0040000B3EE /* StatisticsFormatter.h */,
+				CFC4F8DC1EFCC0040000B3EE /* StatisticsFormatter.mm */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -189,12 +243,22 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */,
+				CFC4F8CF1EFA07F00000B3EE /* PoolView.h in Headers */,
 				CFF53B761EDE53E800F567C4 /* Operation.h in Headers */,
+				CFC4F8D31EFA17070000B3EE /* Internal.h in Headers */,
+				CFC4F8D01EFA07F00000B3EE /* PoolViewController.h in Headers */,
+				CFC4F8D71EFB5F780000B3EE /* BriefOperationViewController.h in Headers */,
 				CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */,
 				CFF53B6E1EDD3F7F00F567C4 /* VeryTestWindow.h in Headers */,
+				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
+				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
 				CFF53B401EDD197300F567C4 /* Operations.h in Headers */,
+				CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */,
+				CFC4F8C91EFA05B00000B3EE /* PoolViewController.h in Headers */,
 				CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */,
+				CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,6 +343,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFC4F8CC1EFA05DA0000B3EE /* PoolViewController.xib in Resources */,
+				CFC4F8DA1EFB5FAB0000B3EE /* BriefOperationViewController.xib in Resources */,
 				CFF53B701EDD3F7F00F567C4 /* VeryTestWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,12 +363,20 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFC4F8D41EFA17070000B3EE /* Internal.mm in Sources */,
+				CFC4F8B31EF7E3830000B3EE /* Compression.mm in Sources */,
+				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,
+				CFC4F8CA1EFA05B00000B3EE /* PoolViewController.mm in Sources */,
 				CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */,
+				CFC4F8DE1EFCC0040000B3EE /* StatisticsFormatter.mm in Sources */,
+				CFC4F8B41EF7E3860000B3EE /* CompressionJob.mm in Sources */,
 				CFF53B7B1EDEA83900F567C4 /* Job.mm in Sources */,
 				CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */,
+				CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */,
 				CFF53B691EDD1F8900F567C4 /* Test.mm in Sources */,
 				CFF53BAF1EEA840600F567C4 /* Statistics.mm in Sources */,
 				CFF53B6F1EDD3F7F00F567C4 /* VeryTestWindow.m in Sources */,
+				CFC4F8D81EFB5F780000B3EE /* BriefOperationViewController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -310,10 +384,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFF53B911EE24FEC00F567C4 /* Compression.mm in Sources */,
 				CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */,
 				CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */,
-				CFF53B941EE2515400F567C4 /* CompressionJob.mm in Sources */,
 				CFF53B3E1EDD197300F567C4 /* OperationsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -367,6 +439,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -385,7 +458,7 @@
 					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -419,6 +492,7 @@
 					Security,
 				);
 				SDKROOT = macosx;
+				STRIP_INSTALLED_PRODUCT = NO;
 				USE_HEADERMAP = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -457,6 +531,7 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "source/Operations-prefix.pch";
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -475,7 +550,7 @@
 					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -508,6 +583,7 @@
 					Security,
 				);
 				SDKROOT = macosx;
+				STRIP_INSTALLED_PRODUCT = NO;
 				USE_HEADERMAP = NO;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
@@ -528,7 +604,7 @@
 				INFOPLIST_FILE = Operations/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.Operations;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.Operations;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -548,7 +624,7 @@
 				INFOPLIST_FILE = Operations/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.Operations;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.Operations;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};

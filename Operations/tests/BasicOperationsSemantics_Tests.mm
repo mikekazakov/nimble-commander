@@ -33,7 +33,7 @@ struct MyOperation : public Operation
     {
         Wait();
     }
-    virtual Job *GetJob() { return &job; }
+    virtual Job *GetJob() noexcept { return &job; }
     MyJob job;
 };
 
@@ -53,7 +53,9 @@ struct MyOperation : public Operation
     std::mutex cv_lock;
     std::condition_variable cv;
     
-    myop.SetFinishCallback([&]{ cv.notify_all(); });
+//    myop.SetFinishCallback([&]{ cv.notify_all(); });
+    myop.ObserveUnticketed(Operation::NotifyAboutFinish, [&]{ cv.notify_all(); });    
+    
     myop.Start();
     XCTAssert( myop.State() == OperationState::Running );
 

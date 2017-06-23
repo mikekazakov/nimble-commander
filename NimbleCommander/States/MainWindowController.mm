@@ -1,12 +1,3 @@
-
-//
-//  MainWindowController.m
-//  Directories
-//
-//  Created by Michael G. Kazakov on 09.02.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Habanero/debug.h>
 #include <NimbleCommander/Core/rapidjson.h>
 #include <rapidjson/stringbuffer.h>
@@ -29,6 +20,10 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <Habanero/SerialQueue.h>
+
+
+#include <Operations/Pool.h>
+
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";
 static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
@@ -53,6 +48,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     SerialQueue                  m_BigFileViewLoadingQ;
     bool                         m_ToolbarVisible;
     vector<GenericConfig::ObservationTicket> m_ConfigTickets;
+    
+    shared_ptr<nc::ops::Pool>    m_OperationsPool;
 }
 
 @synthesize filePanelsState = m_PanelState;
@@ -69,8 +66,10 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     auto window = [[MainWindow alloc] init];
     if( !window )
         return nil;
-      
+    
     if( self = [super initWithWindow:window] ) {
+        m_OperationsPool = nc::ops::Pool::Make();
+    
         window.delegate = self;
         window.restorationClass = self.class;
 
@@ -95,8 +94,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 {
     if( self = [self initBase] ) {
        
-        m_PanelState = [[MainWindowFilePanelState alloc] initDefaultFileStateWithFrame:
-            self.window.contentView.frame];
+        m_PanelState = [[MainWindowFilePanelState alloc]
+            initDefaultFileStateWithFrame:self.window.contentView.frame
+            andPool:*m_OperationsPool];
         
         [self pushState:m_PanelState];
     }
@@ -109,8 +109,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     if( self = [self initBase] ) {
         
         // almost "free" state initially
-        m_PanelState = [[MainWindowFilePanelState alloc] initEmptyFileStateWithFrame:
-            self.window.contentView.frame];
+        m_PanelState = [[MainWindowFilePanelState alloc]
+            initEmptyFileStateWithFrame:self.window.contentView.frame
+            andPool:*m_OperationsPool];
 
         // copy options from previous window, if there's any
         [self restoreDefaultWindowStateFromLastOpenedWindow];
@@ -129,8 +130,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     if( self = [self initBase] ) {
         
         // almost "free" state initially
-        m_PanelState = [[MainWindowFilePanelState alloc] initEmptyFileStateWithFrame:
-            self.window.contentView.frame];
+        m_PanelState = [[MainWindowFilePanelState alloc]
+            initEmptyFileStateWithFrame:self.window.contentView.frame
+            andPool:*m_OperationsPool];
         
         [self restoreDefaultWindowStateFromConfig];
         
@@ -145,8 +147,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
    if( self = [self initBase] ) {
         
         // almost "free" state initially
-        m_PanelState = [[MainWindowFilePanelState alloc] initEmptyFileStateWithFrame:
-            self.window.contentView.frame];
+        m_PanelState = [[MainWindowFilePanelState alloc]
+            initEmptyFileStateWithFrame:self.window.contentView.frame
+            andPool:*m_OperationsPool];
        
         // run the state
         [self pushState:m_PanelState];
@@ -535,6 +538,16 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 {
     RegistrationInfoWindow *w = [[RegistrationInfoWindow alloc] init];
     [self.window beginSheet:w.window completionHandler:^(NSModalResponse){}];    
+}
+
+- (void)enqueueOperation:(const shared_ptr<nc::ops::Operation> &)_operation
+{
+    m_OperationsPool->Enqueue(_operation);
+}
+
+- (nc::ops::Pool&)operationsPool
+{
+    return *m_OperationsPool;
 }
 
 @end

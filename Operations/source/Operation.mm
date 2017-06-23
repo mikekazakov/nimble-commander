@@ -12,7 +12,7 @@ Operation::~Operation()
 {
 }
 
-Job *Operation::GetJob()
+Job *Operation::GetJob() noexcept
 {
     return nullptr;
 }
@@ -50,11 +50,13 @@ void Operation::Start()
         if( j->IsRunning() )
             return;
     
-        j->SetFinishCallback(
-            [this]{ JobFinished();
-        });
-    
+        j->SetFinishCallback(   [this]{ JobFinished();  });
+        j->SetPauseCallback(    [this]{ JobPaused();    });
+        j->SetResumeCallback(   [this]{ JobPaused();    });
+        
         j->Run();
+        
+        FireObservers( NotifyAboutStart );
     }
 }
 
@@ -108,19 +110,64 @@ void Operation::JobFinished()
 {
     OnJobFinished();
     
-    if( m_OnFinish )
-        m_OnFinish();
-    
+    const auto state = State();
+    if( state == OperationState::Completed )
+        FireObservers( NotifyAboutCompletion );
+    if( state == OperationState::Stopped )
+        FireObservers( NotifyAboutStop );
+
     m_FinishCV.notify_all();
 }
 
-void Operation::SetFinishCallback( std::function<void()> _callback )
+void Operation::JobPaused()
 {
-    m_OnFinish = _callback;
+    OnJobPaused();
+    FireObservers( NotifyAboutPause );
 }
+
+void Operation::JobResumed()
+{
+    OnJobResumed();
+    FireObservers( NotifyAboutResume );
+}
+
+//void Operation::SetFinishCallback( std::function<void()> _callback )
+//{
+//    m_OnFinish = _callback;
+//}
+
+//void Operation::FireObserversOnStateChange()
+//{
+//    switch( State() ) {
+//  cabreak;
+//
+//  default:
+//    break;
+//}
+
+//}
 
 void Operation::OnJobFinished()
 {
+}
+
+void Operation::OnJobPaused()
+{
+}
+
+void Operation::OnJobResumed()
+{
+}
+
+Operation::ObservationTicket Operation::Observe
+( uint64_t _notification_mask, function<void()> _callback )
+{
+    return AddTicketedObserver(move(_callback), _notification_mask);
+}
+
+void Operation::ObserveUnticketed( uint64_t _notification_mask, function<void()> _callback )
+{
+    return AddUnticketedObserver(move(_callback), _notification_mask);
 }
 
 }

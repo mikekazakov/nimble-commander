@@ -113,4 +113,14 @@ const Progress &Statistics::Timeline(SourceType _type) const noexcept
         return m_ItemsTimeline;
 }
 
+uint64_t Statistics::VolumeTotal( SourceType _type ) const noexcept
+{
+    return Timeline(_type).VolumeTotal();
+}
+
+uint64_t Statistics::VolumeProcessed( SourceType _type ) const noexcept
+{
+    return Timeline(_type).VolumeProcessed();
+}
+
 }

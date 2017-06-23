@@ -36,10 +36,9 @@ void Job::Execute()
     m_IsRunning = false;
     m_Stats.StopTiming();
     
-    std::function<void()> callback;
-    m_OnFinishLock.lock();
-    callback = m_OnFinish;
-    m_OnFinishLock.unlock();
+    m_CallbackLock.lock();
+    const auto callback = m_OnFinish;
+    m_CallbackLock.unlock();
     if( callback )
         callback();
 }
@@ -51,7 +50,7 @@ bool Job::IsRunning() const noexcept
 
 void Job::SetFinishCallback( std::function<void()> _callback )
 {
-    std::lock_guard<std::mutex> lock{m_OnFinishLock};
+    std::lock_guard<std::mutex> lock{m_CallbackLock};
     m_OnFinish = std::move(_callback);
 }
 
@@ -102,6 +101,12 @@ void Job::Pause()
     if( m_IsPaused || m_IsCompleted || m_IsStopped )
         return;
     m_IsPaused = true;
+    
+    m_CallbackLock.lock();
+    const auto callback = m_OnPause;
+    m_CallbackLock.unlock();
+    if( callback )
+        callback();
 }
 
 void Job::Resume()
@@ -110,6 +115,12 @@ void Job::Resume()
         return;
     m_IsPaused = false;
     m_PauseCV.notify_all();
+    
+    m_CallbackLock.lock();
+    const auto callback = m_OnResume;
+    m_CallbackLock.unlock();
+    if( callback )
+        callback();
 }
 
 bool Job::IsPaused() const noexcept
@@ -128,6 +139,18 @@ void Job::BlockIfPaused()
         m_PauseCV.wait(lock, predicate);
         m_Stats.ResumeTiming();
     }
+}
+
+void Job::SetPauseCallback( std::function<void()> _callback )
+{
+    LOCK_GUARD(m_CallbackLock)
+        m_OnPause = move(_callback);
+}
+
+void Job::SetResumeCallback( std::function<void()> _callback )
+{
+    LOCK_GUARD(m_CallbackLock)
+        m_OnResume = move(_callback);
 }
 
 }

@@ -3,6 +3,16 @@
 #include "../Operation.h"
 #include <VFS/VFS.h>
 
+
+
+/*
++TODO:
+- dialogs
+- adjusting stats on skips
+
+*/
+
+
 namespace nc::ops
 {
 
@@ -14,12 +24,12 @@ public:
     Compression(vector<VFSListingItem> _src_files,
                 string _dst_root,
                 VFSHostPtr _dst_vfs);
-    ~Compression();
+    virtual ~Compression();
 
     string ArchivePath() const;
 
 protected:
-    virtual Job *GetJob() override;
+    virtual Job *GetJob() noexcept override;
 
 private:
     unique_ptr<CompressionJob> m_Job;

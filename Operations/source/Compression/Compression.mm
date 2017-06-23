@@ -20,7 +20,7 @@ Compression::~Compression()
     Wait();
 }
     
-Job *Compression::GetJob()
+Job *Compression::GetJob() noexcept
 {
     return m_Job.get();
 }
@@ -29,9 +29,5 @@ string Compression::ArchivePath() const
 {
     return m_Job->TargetArchivePath();
 }
-
-
-
-
 
 }

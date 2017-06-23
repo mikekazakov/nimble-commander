@@ -29,7 +29,7 @@ public:
 #include "VeryTestWindow.h"
 
 
-
+#include "../include/Operations/Compression.h"
 
 // Operation
 // OperationBackend

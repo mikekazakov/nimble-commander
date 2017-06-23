@@ -22,9 +22,11 @@ void Progress::CommitEstimated( uint64_t _delta )
 void Progress::CommitProcessed( uint64_t _delta )
 {
     const auto current_time = machtime();
+    m_TimepointsLock.lock();
     const auto delta_time = current_time - m_LastCommitTimePoint;
-    m_Processed += _delta;
     m_LastCommitTimePoint = current_time;
+    m_Processed += _delta;
+    m_TimepointsLock.unlock();
     
     const auto fp_bytes = double(_delta);
     const auto fp_delta_time = ((double)delta_time.count()) / 1000000000.;
@@ -51,22 +53,30 @@ void Progress::CommitProcessed( uint64_t _delta )
 
 void Progress::ReportSleptDelta( nanoseconds _delta )
 {
-    m_LastCommitTimePoint += _delta;
-    m_BaseTimePoint += _delta;
+    LOCK_GUARD(m_TimepointsLock) {
+        m_LastCommitTimePoint += _delta;
+        m_BaseTimePoint += _delta;
+    }
 }
 
 void Progress::SetupTiming()
 {
-    m_BaseTimePoint = machtime();
-    m_LastCommitTimePoint = m_BaseTimePoint;
+    LOCK_GUARD(m_TimepointsLock) {
+        m_BaseTimePoint = machtime();
+        m_LastCommitTimePoint = m_BaseTimePoint;
+    }
 }
 
 double Progress::VolumePerSecondDirect() const noexcept
 {
-    const auto dt = m_LastCommitTimePoint - m_BaseTimePoint;
-    if( dt.count() == 0 )
-        return 0;
-    return double(m_Processed) / (double(dt.count()) / 1000000000.);
+    if( m_Processed == 0 )
+        return 0.;
+    LOCK_GUARD(m_TimepointsLock) {
+        const auto dt = m_LastCommitTimePoint - m_BaseTimePoint;
+        if( dt.count() == 0 )
+            return 0;
+        return double(m_Processed) / (double(dt.count()) / 1000000000.);
+    }
 }
 
 double Progress::VolumePerSecondAverage() const noexcept
@@ -87,7 +97,7 @@ double Progress::VolumePerSecondAverage() const noexcept
 
 double Progress::DoneFraction() const noexcept
 {
-    if( m_Estimated == 0 )
+    if( m_Estimated == 0 || m_Processed == 0 )
         return 0.;
     return double(m_Processed) / (double)m_Estimated;
 }

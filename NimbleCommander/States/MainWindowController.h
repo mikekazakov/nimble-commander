@@ -1,17 +1,14 @@
-//
-//  MainWindowController.h
-//  Directories
-//
-//  Created by Michael G. Kazakov on 09.02.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include "MainWindowStateProtocol.h"
 
 class VFSHost;
 @class OperationsController;
 @class MainWindowFilePanelState;
 @class MainWindowTerminalState;
+
+namespace nc::ops {
+    class Pool;
+    class Operation;
+}
 
 @interface MainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
 
@@ -47,10 +44,14 @@ class VFSHost;
 @property (nonatomic, readonly) MainWindowFilePanelState*   filePanelsState;  // one and only one per window
 @property (nonatomic, readonly) MainWindowTerminalState*    terminalState;    // zero or one per window
 @property (nonatomic, readonly) id<MainWindowStateProtocol> topmostState;
+@property (nonatomic, readonly) nc::ops::Pool&              operationsPool;
+
 
 // Toolbar support
 - (void)OnShowToolbar:(id)sender;
 
 + (MainWindowController*)lastFocused;
+
+- (void)enqueueOperation:(const shared_ptr<nc::ops::Operation> &)_operation;
 
 @end

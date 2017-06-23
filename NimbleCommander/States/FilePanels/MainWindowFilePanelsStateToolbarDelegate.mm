@@ -3,6 +3,13 @@
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 
+//#include <NimbleCommander/States/MainWindowController.h>
+
+
+#include <Operations/PoolViewController.h>
+
+
+
 // do not change these strings, they are used for persistency in NSUserDefaults
 static auto g_ToolbarIdentifier = @"FilePanelsToolbar";
 static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
@@ -19,6 +26,9 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
     NSToolbar                       *m_Toolbar;
     NSButton                        *m_LeftPanelGoToButton;
     NSButton                        *m_RightPanelGoToButton;
+
+    NCOpsPoolViewController         *m_PoolViewController;
+    
     NSArray                         *m_AllowedToolbarItemsIdentifiers;
     ExternalToolsStorage::ObservationTicket m_ToolsChangesTicket;
 }
@@ -133,6 +143,22 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         item.paletteLabel = item.label = @"Operations";
         return item;
     }
+    
+    if( [itemIdentifier isEqualToString:@"operations_pool"] ) {
+    
+        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
+        
+        if( !m_PoolViewController )
+            m_PoolViewController = [[NCOpsPoolViewController alloc] initWithPool:
+                self.state.operationsPool];
+    
+        item.view = m_PoolViewController.view;
+        item.paletteLabel = item.label = @"Operations Pool";
+        return item;
+    }
+    
+    
+    
     if( [itemIdentifier hasPrefix:g_ExternalToolsIdentifiersPrefix] ) {
         const int n = atoi( itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length );
         if( const auto tool = self.state.externalToolsStorage.GetTool(n) ) {
@@ -141,6 +167,8 @@ static NSImage *ImageForTool( const ExternalTool &_et)
             return item;
         }
     }
+    
+    
     
     return nil;
 }
@@ -157,6 +185,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     static NSArray *allowed_items =
     @[ @"filepanels_left_goto_button",
        NSToolbarFlexibleSpaceItemIdentifier,
+       @"operations_pool",
        @"filepanels_operations_box",
        NSToolbarFlexibleSpaceItemIdentifier,
        @"filepanels_right_goto_button"];
@@ -176,6 +205,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     [a addObject:@"filepanels_left_goto_button"];
     [a addObject:@"filepanels_right_goto_button"];
     [a addObject:@"filepanels_operations_box"];
+    [a addObject:@"operations_pool"];
     
     auto tools = m_State.externalToolsStorage.GetAllTools();
     for( int i = 0; i < tools.size(); ++i )

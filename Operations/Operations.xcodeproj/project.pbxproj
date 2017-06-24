@@ -27,6 +27,9 @@
 		CFC4F8DA1EFB5FAB0000B3EE /* BriefOperationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8D91EFB5FAB0000B3EE /* BriefOperationViewController.xib */; };
 		CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8DB1EFCC0040000B3EE /* StatisticsFormatter.h */; };
 		CFC4F8DE1EFCC0040000B3EE /* StatisticsFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8DC1EFCC0040000B3EE /* StatisticsFormatter.mm */; };
+		CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8DF1EFCD9A50000B3EE /* Media.xcassets */; };
+		CFC4F8E41EFCE0380000B3EE /* BriefOperationView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8E21EFCE0380000B3EE /* BriefOperationView.h */; };
+		CFC4F8E51EFCE0380000B3EE /* BriefOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8E31EFCE0380000B3EE /* BriefOperationView.mm */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B3E1EDD197300F567C4 /* OperationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B3D1EDD197300F567C4 /* OperationsTests.m */; };
 		CFF53B401EDD197300F567C4 /* Operations.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B321EDD197300F567C4 /* Operations.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -76,6 +79,9 @@
 		CFC4F8D91EFB5FAB0000B3EE /* BriefOperationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = BriefOperationViewController.xib; path = source/BriefOperationViewController.xib; sourceTree = "<group>"; };
 		CFC4F8DB1EFCC0040000B3EE /* StatisticsFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StatisticsFormatter.h; path = source/StatisticsFormatter.h; sourceTree = "<group>"; };
 		CFC4F8DC1EFCC0040000B3EE /* StatisticsFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StatisticsFormatter.mm; path = source/StatisticsFormatter.mm; sourceTree = "<group>"; };
+		CFC4F8DF1EFCD9A50000B3EE /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = resources/Media.xcassets; sourceTree = "<group>"; };
+		CFC4F8E21EFCE0380000B3EE /* BriefOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BriefOperationView.h; path = source/BriefOperationView.h; sourceTree = "<group>"; };
+		CFC4F8E31EFCE0380000B3EE /* BriefOperationView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BriefOperationView.mm; path = source/BriefOperationView.mm; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B321EDD197300F567C4 /* Operations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Operations.h; sourceTree = "<group>"; };
 		CFF53B331EDD197300F567C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -127,6 +133,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CFC4F8E11EFCD9B40000B3EE /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CFC4F8DF1EFCD9A50000B3EE /* Media.xcassets */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		CFF53B251EDD197300F567C4 = {
 			isa = PBXGroup;
 			children = (
@@ -138,6 +152,7 @@
 				CFF53B6D1EDD3F7F00F567C4 /* VeryTestWindow.xib */,
 				CFF53B311EDD197300F567C4 /* Operations */,
 				CFF53B3C1EDD197300F567C4 /* OperationsTests */,
+				CFC4F8E11EFCD9B40000B3EE /* Resources */,
 				CFF53B301EDD197300F567C4 /* Products */,
 				CFF53B711EDD401900F567C4 /* Frameworks */,
 			);
@@ -216,6 +231,8 @@
 				CFC4F8CB1EFA05DA0000B3EE /* PoolViewController.xib */,
 				CFC4F8D11EFA17070000B3EE /* Internal.h */,
 				CFC4F8D21EFA17070000B3EE /* Internal.mm */,
+				CFC4F8E21EFCE0380000B3EE /* BriefOperationView.h */,
+				CFC4F8E31EFCE0380000B3EE /* BriefOperationView.mm */,
 				CFC4F8D51EFB5F780000B3EE /* BriefOperationViewController.h */,
 				CFC4F8D61EFB5F780000B3EE /* BriefOperationViewController.mm */,
 				CFC4F8D91EFB5FAB0000B3EE /* BriefOperationViewController.xib */,
@@ -245,6 +262,7 @@
 			files = (
 				CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */,
 				CFC4F8CF1EFA07F00000B3EE /* PoolView.h in Headers */,
+				CFC4F8E41EFCE0380000B3EE /* BriefOperationView.h in Headers */,
 				CFF53B761EDE53E800F567C4 /* Operation.h in Headers */,
 				CFC4F8D31EFA17070000B3EE /* Internal.h in Headers */,
 				CFC4F8D01EFA07F00000B3EE /* PoolViewController.h in Headers */,
@@ -345,6 +363,7 @@
 			files = (
 				CFC4F8CC1EFA05DA0000B3EE /* PoolViewController.xib in Resources */,
 				CFC4F8DA1EFB5FAB0000B3EE /* BriefOperationViewController.xib in Resources */,
+				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
 				CFF53B701EDD3F7F00F567C4 /* VeryTestWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -374,6 +393,7 @@
 				CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */,
 				CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */,
 				CFF53B691EDD1F8900F567C4 /* Test.mm in Sources */,
+				CFC4F8E51EFCE0380000B3EE /* BriefOperationView.mm in Sources */,
 				CFF53BAF1EEA840600F567C4 /* Statistics.mm in Sources */,
 				CFF53B6F1EDD3F7F00F567C4 /* VeryTestWindow.m in Sources */,
 				CFC4F8D81EFB5F780000B3EE /* BriefOperationViewController.mm in Sources */,

@@ -8,42 +8,77 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NCOpsPoolViewController">
             <connections>
-                <outlet property="ETA" destination="0KC-jM-kBF" id="Up2-rJ-ua5"/>
                 <outlet property="briefViewHolder" destination="B4U-QC-TQx" id="sKv-wM-9xj"/>
-                <outlet property="label" destination="coS-2N-t6H" id="iXo-Q0-gxY"/>
+                <outlet property="downButton" destination="Amm-UI-EXl" id="Al5-C0-TRK"/>
+                <outlet property="upButton" destination="6qb-FW-bHe" id="EFa-aS-SK4"/>
                 <outlet property="view" destination="ATb-7c-oae" id="Qol-vk-7yk"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="ATb-7c-oae" customClass="NCOpsPoolView">
-            <rect key="frame" x="0.0" y="0.0" width="325" height="47"/>
+            <rect key="frame" x="0.0" y="0.0" width="325" height="36"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0KC-jM-kBF">
-                    <rect key="frame" x="-2" y="0.0" width="71" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="xgS-2g-IWe">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
-                <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="B4U-QC-TQx">
-                    <rect key="frame" x="75" y="0.0" width="250" height="47"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="B4U-QC-TQx">
+                    <rect key="frame" x="37" y="0.0" width="287" height="36"/>
                 </customView>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="coS-2N-t6H">
-                    <rect key="frame" x="-2" y="20" width="71" height="17"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Test!!!" id="2hd-WF-I7X">
+                <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="RvR-Jq-dpl">
+                    <rect key="frame" x="322" y="0.0" width="5" height="36"/>
+                </box>
+                <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="WYl-Hs-CbZ">
+                    <rect key="frame" x="-2" y="0.0" width="5" height="36"/>
+                </box>
+                <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="6qb-FW-bHe">
+                    <rect key="frame" x="0.0" y="18" width="24" height="18"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="24" id="BUh-Pc-D6e"/>
+                        <constraint firstAttribute="height" constant="18" id="DX7-Dh-xUc"/>
+                    </constraints>
+                    <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSAscendingSortIndicator" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="Md5-UL-FrE">
+                        <behavior key="behavior" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
+                    </buttonCell>
+                    <connections>
+                        <action selector="onUpButtonClicked:" target="-2" id="Xp2-7f-4wA"/>
+                    </connections>
+                </button>
+                <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Amm-UI-EXl">
+                    <rect key="frame" x="0.0" y="0.0" width="24" height="18"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="24" id="JUZ-4k-EaH"/>
+                        <constraint firstAttribute="height" constant="18" id="l7Y-uG-6tg"/>
+                    </constraints>
+                    <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSDescendingSortIndicator" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="ar8-0t-aqV">
+                        <behavior key="behavior" lightByContents="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="onDownButtonClicked:" target="-2" id="9kw-bf-SMg"/>
+                    </connections>
+                </button>
             </subviews>
-            <point key="canvasLocation" x="-169.5" y="-31.5"/>
+            <constraints>
+                <constraint firstItem="RvR-Jq-dpl" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="1jM-jP-pCD"/>
+                <constraint firstItem="WYl-Hs-CbZ" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="4HA-eV-RUI"/>
+                <constraint firstAttribute="bottom" secondItem="RvR-Jq-dpl" secondAttribute="bottom" id="H83-MA-9ah"/>
+                <constraint firstItem="B4U-QC-TQx" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="I30-FX-wB6"/>
+                <constraint firstItem="Amm-UI-EXl" firstAttribute="leading" secondItem="ATb-7c-oae" secondAttribute="leading" id="Jq4-9V-zFv"/>
+                <constraint firstItem="WYl-Hs-CbZ" firstAttribute="leading" secondItem="ATb-7c-oae" secondAttribute="leading" id="Nce-fK-yfe"/>
+                <constraint firstAttribute="trailing" secondItem="RvR-Jq-dpl" secondAttribute="trailing" id="T6z-bh-iJm"/>
+                <constraint firstItem="6qb-FW-bHe" firstAttribute="leading" secondItem="ATb-7c-oae" secondAttribute="leading" id="YO4-o6-aht"/>
+                <constraint firstAttribute="bottom" secondItem="WYl-Hs-CbZ" secondAttribute="bottom" id="g1i-2m-a0p"/>
+                <constraint firstItem="B4U-QC-TQx" firstAttribute="leading" secondItem="WYl-Hs-CbZ" secondAttribute="trailing" constant="36" id="imc-6a-stR"/>
+                <constraint firstAttribute="bottom" secondItem="Amm-UI-EXl" secondAttribute="bottom" id="jM3-mG-fva"/>
+                <constraint firstItem="RvR-Jq-dpl" firstAttribute="leading" secondItem="B4U-QC-TQx" secondAttribute="trailing" id="jem-t1-mBw"/>
+                <constraint firstItem="6qb-FW-bHe" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="ne5-6p-F88"/>
+                <constraint firstAttribute="bottom" secondItem="B4U-QC-TQx" secondAttribute="bottom" id="qVb-xj-nAo"/>
+            </constraints>
+            <point key="canvasLocation" x="-169.5" y="-32"/>
         </customView>
     </objects>
+    <resources>
+        <image name="NSAscendingSortIndicator" width="128" height="128"/>
+        <image name="NSDescendingSortIndicator" width="128" height="128"/>
+    </resources>
 </document>

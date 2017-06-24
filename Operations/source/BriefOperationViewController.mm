@@ -12,8 +12,6 @@ using namespace nc::ops;
 
 @end
 
-static NSString *FormatETAString( nanoseconds _eta );
-
 @implementation NCOpsBriefOperationViewController
 {
     shared_ptr<nc::ops::Operation> m_Operation;
@@ -121,6 +119,8 @@ static NSString *FormatETAString( nanoseconds _eta );
 - (IBAction)onStop:(id)sender
 {
     m_Operation->Stop();
+}
+- (IBAction)onPause:(id)sender {
 }
 
 @end

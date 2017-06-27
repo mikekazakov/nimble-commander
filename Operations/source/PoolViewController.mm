@@ -54,22 +54,6 @@ using namespace nc::ops;
 
 - (void)poolDidChange
 {
-    //        label.
-//    const auto op_num = m_Pool->TotalOperationsCount();
-    
-    
-    //self.label.integerValue = op_num;
-    //        if( op_num == 0 )
-    //            [self stopAnimating];
-    //        else if( ![self isAnimating] )
-    //            [self startAnimating];
-    
-//    if( op_num == 1 ) {
-//        if( const auto operation = m_Pool->Front() ) {
-//            const auto bvc = [[NCOpsBriefOperationViewController alloc] initWithOperation:operation];
-//            m_BriefViews.emplace_back(bvc);
-//            [self showBriefView:bvc];
-//        }
     [self syncWithOperations:m_Pool->Operations()];
     [self updateButtonsState];
 }
@@ -77,7 +61,6 @@ using namespace nc::ops;
 
 - (void)syncWithOperations:(const vector<shared_ptr<Operation>>&)_operations
 {
-//    const auto has =
     const auto find_existing = [=](const shared_ptr<Operation>&_op){
         const auto existing = find_if( begin(m_BriefViews), end(m_BriefViews), [_op](auto &v){
             return v.operation == _op;
@@ -88,13 +71,10 @@ using namespace nc::ops;
     vector<NCOpsBriefOperationViewController*> new_views;
     new_views.reserve(_operations.size());
     for( auto o: _operations )
-        if( const auto existing = find_existing(o) ) {
+        if( const auto existing = find_existing(o) )
             new_views.emplace_back(existing);
-        }
-        else {
-            const auto bvc = [[NCOpsBriefOperationViewController alloc] initWithOperation:o];
-            new_views.emplace_back(bvc);
-        }
+        else
+            new_views.emplace_back([[NCOpsBriefOperationViewController alloc] initWithOperation:o]);
  
     const auto index_of = [=](const shared_ptr<Operation>&_op)->int{
         const auto it = find_if( begin(m_BriefViews), end(m_BriefViews), [_op](auto &v){

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Operation.h"
+#include <Cocoa/Cocoa.h>
 
 namespace nc::ops {
-
 
 class Pool : public enable_shared_from_this<Pool>, private ScopedObservableBase
 {
@@ -31,16 +31,22 @@ public:
     shared_ptr<Operation> Front() const;
     vector<shared_ptr<Operation>> Operations() const;
 
+    bool IsInteractive() const;
+    void SetDialogCallback(function<void(NSWindow*, function<void(NSModalResponse)>)> _callback);
+
 private:
     Pool(const Pool&) = delete;
     void operator=(const Pool&) = delete;
     void OperationDidStart( const shared_ptr<Operation> &_operation );
     void OperationDidFinish( const shared_ptr<Operation> &_operation );
+    bool ShowDialog(NSWindow *_dialog, function<void (NSModalResponse)> _callback);
     
 
     vector<shared_ptr<Operation>>           m_Operations;
     mutable mutex                           m_Lock;
     atomic_int  m_RunningOperations;
+    
+    function<void(NSWindow *dialog, function<void(NSModalResponse response)>)> m_DialogPresentation;
 };
 
 }

@@ -42,18 +42,18 @@ void Pool::Enqueue( shared_ptr<Operation> _operation )
         if( pool && op )
             pool->OperationDidStart(op);
     });
+    _operation->SetDialogCallback([weak_this](NSWindow* _dlg, function<void(NSModalResponse)>_cb){
+        if( const auto pool = weak_this.lock() )
+            return pool->ShowDialog(_dlg, _cb);
+        return false;
+    });
 
     
     LOCK_GUARD(m_Lock) {
-//        m_OperationsObservations.emplace_back( move(ticket1) );
-//        m_OperationsObservations.emplace_back( move(ticket1) );
         m_Operations.emplace_back( _operation );
     }
     
     // + starting logic
-    // + callbacks wiring
-
-
     
     _operation->Start();
     FireObservers( NotifyAboutAddition );
@@ -115,6 +115,25 @@ vector<shared_ptr<Operation>> Pool::Operations() const
 {
     LOCK_GUARD(m_Lock)
         return m_Operations;
+}
+
+void Pool::SetDialogCallback(function<void(NSWindow*, function<void(NSModalResponse)>)> _callback)
+{
+    m_DialogPresentation = _callback;
+}
+
+bool Pool::IsInteractive() const
+{
+    return m_DialogPresentation != nullptr;
+}
+
+bool Pool::ShowDialog(NSWindow *_dialog, function<void (NSModalResponse)> _callback)
+{
+    dispatch_assert_main_queue();
+    if( !m_DialogPresentation  )
+        return false;
+    m_DialogPresentation(_dialog, move(_callback));
+    return true;
 }
 
 }

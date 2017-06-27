@@ -99,7 +99,8 @@ bool CompressionJob::BuildArchive()
     const auto flags = VFSFlags::OF_Write | VFSFlags::OF_Create |
         VFSFlags::OF_IRUsr | VFSFlags::OF_IWUsr | VFSFlags::OF_IRGrp;
     m_DstVFS->CreateFile(m_TargetArchivePath.c_str(), m_TargetFile, 0);
-    if( m_TargetFile->Open(flags) == VFSError::Ok ) {
+    const auto open_rc = m_TargetFile->Open(flags);
+    if( open_rc == VFSError::Ok ) {
         m_Archive = archive_write_new();
         archive_write_set_format_zip(m_Archive);
         archive_write_open(m_Archive, this, 0, WriteCallback, 0);
@@ -117,6 +118,11 @@ bool CompressionJob::BuildArchive()
         
         if( IsStopped() )
             m_DstVFS->Unlink(m_TargetArchivePath.c_str(), 0);
+    }
+    else {
+        m_TargetWriteError(open_rc, m_TargetArchivePath, *m_DstVFS);
+        Stop();
+        return false;
     }
 
     return true;

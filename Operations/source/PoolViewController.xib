@@ -21,7 +21,7 @@
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="B4U-QC-TQx">
-                    <rect key="frame" x="37" y="0.0" width="287" height="36"/>
+                    <rect key="frame" x="24" y="0.0" width="300" height="36"/>
                 </customView>
                 <box horizontalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="RvR-Jq-dpl">
                     <rect key="frame" x="322" y="0.0" width="5" height="36"/>
@@ -61,6 +61,7 @@
             <constraints>
                 <constraint firstItem="RvR-Jq-dpl" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="1jM-jP-pCD"/>
                 <constraint firstItem="WYl-Hs-CbZ" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="4HA-eV-RUI"/>
+                <constraint firstItem="B4U-QC-TQx" firstAttribute="leading" secondItem="Amm-UI-EXl" secondAttribute="trailing" id="GBA-Oy-ZnT"/>
                 <constraint firstAttribute="bottom" secondItem="RvR-Jq-dpl" secondAttribute="bottom" id="H83-MA-9ah"/>
                 <constraint firstItem="B4U-QC-TQx" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="I30-FX-wB6"/>
                 <constraint firstItem="Amm-UI-EXl" firstAttribute="leading" secondItem="ATb-7c-oae" secondAttribute="leading" id="Jq4-9V-zFv"/>
@@ -68,7 +69,6 @@
                 <constraint firstAttribute="trailing" secondItem="RvR-Jq-dpl" secondAttribute="trailing" id="T6z-bh-iJm"/>
                 <constraint firstItem="6qb-FW-bHe" firstAttribute="leading" secondItem="ATb-7c-oae" secondAttribute="leading" id="YO4-o6-aht"/>
                 <constraint firstAttribute="bottom" secondItem="WYl-Hs-CbZ" secondAttribute="bottom" id="g1i-2m-a0p"/>
-                <constraint firstItem="B4U-QC-TQx" firstAttribute="leading" secondItem="WYl-Hs-CbZ" secondAttribute="trailing" constant="36" id="imc-6a-stR"/>
                 <constraint firstAttribute="bottom" secondItem="Amm-UI-EXl" secondAttribute="bottom" id="jM3-mG-fva"/>
                 <constraint firstItem="RvR-Jq-dpl" firstAttribute="leading" secondItem="B4U-QC-TQx" secondAttribute="trailing" id="jem-t1-mBw"/>
                 <constraint firstItem="6qb-FW-bHe" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="ne5-6p-F88"/>

@@ -9,6 +9,8 @@ using namespace nc::ops;
 @interface NCOpsBriefOperationViewController()
 @property (strong) IBOutlet NSTextField *ETA;
 @property (strong) IBOutlet NSProgressIndicator *progressBar;
+@property (strong) IBOutlet NSButton *pauseButton;
+@property (strong) IBOutlet NSButton *stopButton;
 
 @end
 
@@ -29,6 +31,9 @@ using namespace nc::ops;
     self = [super initWithNibName:@"BriefOperationViewController" bundle:Bundle()];
     if( self ) {
         m_Operation = _operation;
+        _operation->ObserveUnticketed(
+            Operation::NotifyAboutStateChange,
+            objc_callback(self, @selector(onOperationStateChangedCallback)));
     }
     return self;
 }
@@ -120,7 +125,24 @@ using namespace nc::ops;
 {
     m_Operation->Stop();
 }
-- (IBAction)onPause:(id)sender {
+
+- (IBAction)onPause:(id)sender
+{
+    if( m_Operation->State() == OperationState::Paused )
+        m_Operation->Resume();
+    else
+        m_Operation->Pause();
+}
+
+- (void)onOperationStateChangedCallback
+{
+    dispatch_to_main_queue([self]{ [self onOperationStateChanged]; });
+}
+
+- (void)onOperationStateChanged
+{
+    const auto new_state = m_Operation->State();
+    self.pauseButton.state = new_state == OperationState::Paused;
 }
 
 @end

@@ -13,38 +13,45 @@ StatisticsFormatter::StatisticsFormatter(const Statistics&_stats) noexcept:
   
 NSString *StatisticsFormatter::ProgressCaption() const
 {
-    const auto volume_total = m_Stats.VolumeTotal(Statistics::SourceType::Bytes);
-    const auto volume_processed = m_Stats.VolumeProcessed(Statistics::SourceType::Bytes);
-    const auto speed = m_Stats.SpeedPerSecondDirect(Statistics::SourceType::Bytes);
-
     auto &fmt = ByteCountFormatter::Instance();
     const auto fmt_type = ByteCountFormatter::Adaptive8;
+
+    const auto volume_total = m_Stats.VolumeTotal(Statistics::SourceType::Bytes);
     const auto volume_total_str = fmt.ToNSString(volume_total, fmt_type);
+    
+    const auto volume_processed = m_Stats.VolumeProcessed(Statistics::SourceType::Bytes);
     const auto volume_processed_str = fmt.ToNSString(volume_processed, fmt_type);
 
-    const auto eta = m_Stats.ETA(Statistics::SourceType::Bytes);
-    const auto eta_str = eta ? FormatETAString(*eta) : nil;
-
-    if( speed != 0 ) {
-        const auto speed_str = fmt.ToNSString(speed, fmt_type);
-        if( eta_str ) {
-            return [NSString stringWithFormat:@"%@ of %@ - %@/s, %@",
-                    volume_processed_str,
-                    volume_total_str,
-                    speed_str,
-                    eta_str];
-        }
-        else {
-            return [NSString stringWithFormat:@"%@ of %@ - %@/s",
-                    volume_processed_str,
-                    volume_total_str,
-                    speed_str];
-        }
-    }
-    else {
-        return [NSString stringWithFormat:@"%@ of %@",
+    if( m_Stats.IsPaused() ) {
+        return [NSString stringWithFormat:@"%@ of %@ - Paused",
                 volume_processed_str,
                 volume_total_str];
+    }
+    else {
+        const auto speed = m_Stats.SpeedPerSecondDirect(Statistics::SourceType::Bytes);
+        if( speed != 0 ) {
+            const auto speed_str = fmt.ToNSString(speed, fmt_type);
+            const auto eta = m_Stats.ETA(Statistics::SourceType::Bytes);
+            const auto eta_str = eta ? FormatETAString(*eta) : nil;
+            if( eta_str ) {
+                return [NSString stringWithFormat:@"%@ of %@ - %@/s, %@",
+                        volume_processed_str,
+                        volume_total_str,
+                        speed_str,
+                        eta_str];
+            }
+            else {
+                return [NSString stringWithFormat:@"%@ of %@ - %@/s",
+                        volume_processed_str,
+                        volume_total_str,
+                        speed_str];
+            }
+        }
+        else {
+            return [NSString stringWithFormat:@"%@ of %@",
+                    volume_processed_str,
+                    volume_total_str];
+        }
     }
 }
 

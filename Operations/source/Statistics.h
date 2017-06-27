@@ -20,6 +20,8 @@ public:
     void ResumeTiming() noexcept;
     void StopTiming()   noexcept;
     
+    bool IsPaused() const noexcept;
+    
     nanoseconds                 ElapsedTime() const noexcept;
     double                      DoneFraction( SourceType _type ) const noexcept;
     optional<nanoseconds>       ETA( SourceType _type ) const noexcept;
@@ -47,7 +49,6 @@ private:
     
     Progress m_BytesTimeline;
     Progress m_ItemsTimeline;
-//    spinlock m_BytesTimelineLock;
 };
 
 }

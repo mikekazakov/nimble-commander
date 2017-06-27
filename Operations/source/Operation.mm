@@ -87,7 +87,7 @@ void Operation::Wait() const
     if( pred() )
         return;
     
-    std::mutex m;
+    static std::mutex m;
     std::unique_lock<std::mutex> lock{m};
     m_FinishCV.wait(lock, pred);
 }
@@ -101,7 +101,7 @@ bool Operation::Wait( std::chrono::nanoseconds _wait_for_time ) const
     if( pred() )
         return true;
     
-    std::mutex m;
+    static std::mutex m;
     std::unique_lock<std::mutex> lock{m};
     return m_FinishCV.wait_for(lock, _wait_for_time, pred);
 }
@@ -160,7 +160,7 @@ void Operation::OnJobResumed()
 }
 
 Operation::ObservationTicket Operation::Observe
-( uint64_t _notification_mask, function<void()> _callback )
+    ( uint64_t _notification_mask, function<void()> _callback )
 {
     return AddTicketedObserver(move(_callback), _notification_mask);
 }
@@ -168,6 +168,39 @@ Operation::ObservationTicket Operation::Observe
 void Operation::ObserveUnticketed( uint64_t _notification_mask, function<void()> _callback )
 {
     return AddUnticketedObserver(move(_callback), _notification_mask);
+}
+
+void Operation::SetDialogCallback
+    (function<bool(NSWindow *, function<void(NSModalResponse)>)> _callback)
+{
+    LOCK_GUARD(m_DialogCallbackLock)
+        m_DialogCallback = move(_callback);
+}
+
+bool Operation::IsInteractive() const noexcept
+{
+    LOCK_GUARD(m_DialogCallbackLock)
+        return m_DialogCallback != nullptr;
+}
+
+void Operation::Show( NSWindow *_dialog, shared_ptr<AsyncDialogResponse> _response )
+{
+    dispatch_assert_main_queue();
+    if( !_dialog || !_response )
+        return;
+    
+    LOCK_GUARD(m_DialogCallbackLock)
+        if( m_DialogCallback ) {
+            const auto controller = _dialog.windowController;
+            const auto dialog_callback = [_response, controller](NSModalResponse _dialog_response){
+                _response->Commit(_dialog_response);
+                dispatch_to_main_queue([controller]{});
+            };
+            const auto shown = m_DialogCallback(_dialog, dialog_callback);
+            if( shown )
+                return;
+        }
+    _response->Abort();
 }
 
 }

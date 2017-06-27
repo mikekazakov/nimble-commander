@@ -32,6 +32,9 @@ protected:
     virtual Job *GetJob() noexcept override;
 
 private:
+    void OnTargetWriteError(int _err, const string &_path, VFSHost &_vfs);
+    void OnTargetWriteErrorUI(int _err, const string &_path, VFSHostPtr _vfs, shared_ptr<AsyncDialogResponse> _ctx);
+
     unique_ptr<CompressionJob> m_Job;
 };
 

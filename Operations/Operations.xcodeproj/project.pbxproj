@@ -30,6 +30,9 @@
 		CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8DF1EFCD9A50000B3EE /* Media.xcassets */; };
 		CFC4F8E41EFCE0380000B3EE /* BriefOperationView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8E21EFCE0380000B3EE /* BriefOperationView.h */; };
 		CFC4F8E51EFCE0380000B3EE /* BriefOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8E31EFCE0380000B3EE /* BriefOperationView.mm */; };
+		CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8E61F00E5D30000B3EE /* HaltReasonDialog.h */; };
+		CFC4F8EA1F00E5D30000B3EE /* HaltReasonDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */; };
+		CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B3E1EDD197300F567C4 /* OperationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B3D1EDD197300F567C4 /* OperationsTests.m */; };
 		CFF53B401EDD197300F567C4 /* Operations.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B321EDD197300F567C4 /* Operations.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -41,7 +44,7 @@
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
 		CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B781EDEA83900F567C4 /* Job.h */; };
-		CFF53B7B1EDEA83900F567C4 /* Job.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B791EDEA83900F567C4 /* Job.mm */; };
+		CFF53B7B1EDEA83900F567C4 /* Job.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B791EDEA83900F567C4 /* Job.cpp */; };
 		CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */; };
 		CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B951EE252F200F567C4 /* Compression_Tests.mm */; };
 		CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53BAC1EEA840600F567C4 /* Statistics.h */; };
@@ -82,6 +85,9 @@
 		CFC4F8DF1EFCD9A50000B3EE /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = resources/Media.xcassets; sourceTree = "<group>"; };
 		CFC4F8E21EFCE0380000B3EE /* BriefOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BriefOperationView.h; path = source/BriefOperationView.h; sourceTree = "<group>"; };
 		CFC4F8E31EFCE0380000B3EE /* BriefOperationView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BriefOperationView.mm; path = source/BriefOperationView.mm; sourceTree = "<group>"; };
+		CFC4F8E61F00E5D30000B3EE /* HaltReasonDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HaltReasonDialog.h; path = source/HaltReasonDialog.h; sourceTree = "<group>"; };
+		CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HaltReasonDialog.mm; path = source/HaltReasonDialog.mm; sourceTree = "<group>"; };
+		CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = HaltReasonDialog.xib; path = source/HaltReasonDialog.xib; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B321EDD197300F567C4 /* Operations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Operations.h; sourceTree = "<group>"; };
 		CFF53B331EDD197300F567C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -96,7 +102,7 @@
 		CFF53B741EDE53E800F567C4 /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operation.h; path = source/Operation.h; sourceTree = SOURCE_ROOT; };
 		CFF53B751EDE53E800F567C4 /* Operation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Operation.mm; path = source/Operation.mm; sourceTree = SOURCE_ROOT; };
 		CFF53B781EDEA83900F567C4 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = source/Job.h; sourceTree = SOURCE_ROOT; };
-		CFF53B791EDEA83900F567C4 /* Job.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Job.mm; path = source/Job.mm; sourceTree = SOURCE_ROOT; };
+		CFF53B791EDEA83900F567C4 /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = source/Job.cpp; sourceTree = SOURCE_ROOT; };
 		CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BasicOperationsSemantics_Tests.mm; path = tests/BasicOperationsSemantics_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFF53B851EE1544B00F567C4 /* libVFS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libVFS.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libVFS.a"; sourceTree = "<group>"; };
 		CFF53B871EE1577100F567C4 /* Operations-prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Operations-prefix.pch"; path = "source/Operations-prefix.pch"; sourceTree = "<group>"; };
@@ -219,7 +225,7 @@
 				CFF53BCD1EF3913B00F567C4 /* Progress.h */,
 				CFF53BCC1EF3913B00F567C4 /* Progress.cpp */,
 				CFF53B781EDEA83900F567C4 /* Job.h */,
-				CFF53B791EDEA83900F567C4 /* Job.mm */,
+				CFF53B791EDEA83900F567C4 /* Job.cpp */,
 				CFF53B741EDE53E800F567C4 /* Operation.h */,
 				CFF53B751EDE53E800F567C4 /* Operation.mm */,
 				CF7084D61EF7CC770072F0F6 /* Pool.h */,
@@ -238,6 +244,9 @@
 				CFC4F8D91EFB5FAB0000B3EE /* BriefOperationViewController.xib */,
 				CFC4F8DB1EFCC0040000B3EE /* StatisticsFormatter.h */,
 				CFC4F8DC1EFCC0040000B3EE /* StatisticsFormatter.mm */,
+				CFC4F8E61F00E5D30000B3EE /* HaltReasonDialog.h */,
+				CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */,
+				CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -269,6 +278,7 @@
 				CFC4F8D71EFB5F780000B3EE /* BriefOperationViewController.h in Headers */,
 				CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */,
 				CFF53B6E1EDD3F7F00F567C4 /* VeryTestWindow.h in Headers */,
+				CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */,
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
 				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
@@ -364,6 +374,7 @@
 				CFC4F8CC1EFA05DA0000B3EE /* PoolViewController.xib in Resources */,
 				CFC4F8DA1EFB5FAB0000B3EE /* BriefOperationViewController.xib in Resources */,
 				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
+				CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */,
 				CFF53B701EDD3F7F00F567C4 /* VeryTestWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -388,8 +399,9 @@
 				CFC4F8CA1EFA05B00000B3EE /* PoolViewController.mm in Sources */,
 				CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */,
 				CFC4F8DE1EFCC0040000B3EE /* StatisticsFormatter.mm in Sources */,
+				CFC4F8EA1F00E5D30000B3EE /* HaltReasonDialog.mm in Sources */,
 				CFC4F8B41EF7E3860000B3EE /* CompressionJob.mm in Sources */,
-				CFF53B7B1EDEA83900F567C4 /* Job.mm in Sources */,
+				CFF53B7B1EDEA83900F567C4 /* Job.cpp in Sources */,
 				CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */,
 				CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */,
 				CFF53B691EDD1F8900F567C4 /* Test.mm in Sources */,

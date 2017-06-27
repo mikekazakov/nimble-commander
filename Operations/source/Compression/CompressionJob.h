@@ -29,6 +29,10 @@ struct CompressionJobCallbacks
     m_SourceReadError =
     [](int _err, const string &_path, VFSHost &_vfs){};
 
+    function< void(int _err, const string &_path, VFSHost &_vfs) >
+    m_TargetWriteError =
+    [](int _err, const string &_path, VFSHost &_vfs){};
+
     
     
 };

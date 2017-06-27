@@ -123,4 +123,9 @@ uint64_t Statistics::VolumeProcessed( SourceType _type ) const noexcept
     return Timeline(_type).VolumeProcessed();
 }
 
+bool Statistics::IsPaused() const noexcept
+{
+    return m_PauseCount > 0;
+}
+
 }

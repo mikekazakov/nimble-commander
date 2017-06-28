@@ -7,10 +7,13 @@
 #include <Habanero/ScopedObservable.h>
 #include "Statistics.h"
 
+class VFSHost;
+
 namespace nc::ops
 {
 
 class Job;
+struct AsyncDialogResponse;
 
 enum class OperationState
 {
@@ -19,34 +22,6 @@ enum class OperationState
     Paused      = 2,
     Stopped     = 3,
     Completed   = 4
-};
-
-struct AsyncDialogResponse
-{
-    optional<NSModalResponse>   response;
-    unordered_map<string, any>  messages;
-    mutex                       lock;
-    condition_variable          blocker;
-    
-    inline void Abort() {
-        LOCK_GUARD(lock)
-            response = NSModalResponseAbort;
-        blocker.notify_all();
-    }
-    inline void Commit(NSModalResponse _response) {
-        LOCK_GUARD(lock)
-            response = _response;
-        blocker.notify_all();
-    }
-    inline void Wait(){
-        const auto pred = [this]{
-            return (bool)response;
-        };
-        if( pred() )
-            return;
-        unique_lock<mutex> lck{lock};
-        blocker.wait(lck, pred);
-    }
 };
 
 class Operation : private ScopedObservableBase
@@ -61,7 +36,6 @@ public:
     void Stop();
     
     OperationState State() const;
-
     const class Statistics &Statistics() const;
 
     void Wait() const;
@@ -77,13 +51,14 @@ public:
         NotifyAboutStateChange  = NotifyAboutStart | NotifyAboutPause | NotifyAboutResume |
                                   NotifyAboutStop | NotifyAboutCompletion
     };
-
     using ObservationTicket = ScopedObservableBase::ObservationTicket;
     ObservationTicket Observe( uint64_t _notification_mask, function<void()> _callback );
     void ObserveUnticketed( uint64_t _notification_mask, function<void()> _callback );
 
     void SetDialogCallback(function<bool(NSWindow *, function<void(NSModalResponse)>)> _callback);
-
+    bool IsWaitingForUIResponse() const noexcept;
+    void AbortUIWaiting() noexcept;
+    
 protected:
     virtual Job *GetJob() noexcept;
     virtual void OnJobFinished();
@@ -91,6 +66,8 @@ protected:
     virtual void OnJobResumed();
     bool IsInteractive() const noexcept;
     void Show( NSWindow *_dialog, shared_ptr<AsyncDialogResponse> _response );
+    void WaitForDialogResponse( shared_ptr<AsyncDialogResponse> _response );
+    void ReportHaltReason( NSString *_message, int _error, const string &_path, VFSHost &_vfs );
 
 private:
     Operation(const Operation&) = delete;
@@ -104,7 +81,9 @@ private:
     
     function<bool(NSWindow *dialog, function<void(NSModalResponse response)>)> m_DialogCallback;
     mutable spinlock m_DialogCallbackLock;
+    
+    weak_ptr<AsyncDialogResponse> m_PendingResponse;
+    mutable spinlock m_PendingResponseLock;
 };
-
 
 }

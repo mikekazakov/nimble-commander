@@ -37,13 +37,13 @@
     self.pathLabel.stringValue = m_Path ? m_Path : @"";
     self.errorLabel.stringValue = m_Error ? m_Error : @"";
     self.messageLabel.stringValue = m_Message ? m_Message : @"";
-    self.appIcon.image =[NSApp applicationIconImage];
+    self.appIcon.image = [NSApp applicationIconImage];
     NSBeep();
 }
 
 - (IBAction)onClose:(id)sender
 {
-    [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
+    [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }
 
 - (void) setErrorNo:(int)errorNo
@@ -64,7 +64,7 @@
 @implementation NCOpsHaltReasonDialogWindow
 - (void)cancelOperation:(id)sender
 {
-    [self.sheetParent endSheet:self returnCode:NSModalResponseOK];
+    [self.sheetParent endSheet:self returnCode:NSModalResponseCancel];
 }
 @end
 

@@ -81,14 +81,11 @@ void CompressionJob::Perform()
     //m_Source
     if( auto source = ScanItems()  )
         m_Source = make_unique<Source>( move(*source) );
-    else {
-        // TODO: process error
-    
-    }
-    
+    else
+        return;
+
     BuildArchive();
-    
-    
+        
     if( !IsStopped() )
         SetCompleted();
  //   cout << arcname << endl;

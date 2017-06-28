@@ -33,9 +33,22 @@ protected:
 
 private:
     void OnTargetWriteError(int _err, const string &_path, VFSHost &_vfs);
-    void OnTargetWriteErrorUI(int _err, const string &_path, VFSHostPtr _vfs, shared_ptr<AsyncDialogResponse> _ctx);
+    void OnSourceReadError(int _err, const string &_path, VFSHost &_vfs);
+//    void OnTargetWriteErrorUI(int _err, const string &_path, VFSHostPtr _vfs,
+//                              shared_ptr<AsyncDialogResponse> _ctx);
+
+    int OnSourceScanError(int _err, const string &_path, VFSHost &_vfs);
+    void OnSourceScanErrorUI(int _err, const string &_path, VFSHostPtr _vfs,
+                             shared_ptr<AsyncDialogResponse> _ctx);
+
+    int OnSourceAccessError(int _err, const string &_path, VFSHost &_vfs);
+//    void OnSourceReadAccessErrorUI(int _err, const string &_path, VFSHostPtr _vfs,
+//                             shared_ptr<AsyncDialogResponse> _ctx);
+
+//function< SourceScanErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
 
     unique_ptr<CompressionJob> m_Job;
+    bool m_SkipAll = false;
 };
 
 }

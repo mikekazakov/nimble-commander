@@ -4,6 +4,7 @@
 @interface NCOpsHaltReasonDialog : NSWindowController
 
 - (instancetype)init;
+
 @property (nonatomic) NSString* message;
 @property (nonatomic) NSString* path;
 @property (nonatomic) NSString* error;

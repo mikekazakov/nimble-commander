@@ -51,4 +51,12 @@ private:
     Progress m_ItemsTimeline;
 };
 
+struct StatisticsTimingPauser
+{
+    StatisticsTimingPauser( Statistics &_s );
+    ~StatisticsTimingPauser();
+private:
+    Statistics &s;
+};
+
 }

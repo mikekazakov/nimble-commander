@@ -1,5 +1,8 @@
-#include "../include/Operations/Operation.h"
-#include "../include/Operations/Job.h"
+#include "Operation.h"
+#include "Job.h"
+#include "AsyncDialogResponse.h"
+#include <VFS/VFS.h>
+#include "HaltReasonDialog.h"
 
 namespace nc::ops
 {
@@ -10,6 +13,9 @@ Operation::Operation()
 
 Operation::~Operation()
 {
+    if( IsWaitingForUIResponse() )
+        cerr << "Warning: an operation at address " << (void*)this <<
+            " was destroyed while it was waiting for a UI response!" << endl;
 }
 
 Job *Operation::GetJob() noexcept
@@ -131,22 +137,6 @@ void Operation::JobResumed()
     FireObservers( NotifyAboutResume );
 }
 
-//void Operation::SetFinishCallback( std::function<void()> _callback )
-//{
-//    m_OnFinish = _callback;
-//}
-
-//void Operation::FireObserversOnStateChange()
-//{
-//    switch( State() ) {
-//  cabreak;
-//
-//  default:
-//    break;
-//}
-
-//}
-
 void Operation::OnJobFinished()
 {
 }
@@ -194,13 +184,60 @@ void Operation::Show( NSWindow *_dialog, shared_ptr<AsyncDialogResponse> _respon
             const auto controller = _dialog.windowController;
             const auto dialog_callback = [_response, controller](NSModalResponse _dialog_response){
                 _response->Commit(_dialog_response);
-                dispatch_to_main_queue([controller]{});
+                dispatch_to_main_queue([controller]{ /* solely to extend the lifetime */ });
             };
             const auto shown = m_DialogCallback(_dialog, dialog_callback);
             if( shown )
                 return;
         }
     _response->Abort();
+}
+
+void Operation::WaitForDialogResponse( shared_ptr<AsyncDialogResponse> _response )
+{
+    dispatch_assert_background_queue();
+    if( !_response )
+        return;
+    
+    StatisticsTimingPauser timing_pauser{GetJob()->Statistics()};
+    
+    LOCK_GUARD(m_PendingResponseLock)
+        m_PendingResponse = _response;
+    
+    _response->Wait();
+    assert( _response->response );
+    
+    LOCK_GUARD(m_PendingResponseLock)
+        m_PendingResponse.reset();
+}
+
+bool Operation::IsWaitingForUIResponse() const noexcept
+{
+    LOCK_GUARD(m_PendingResponseLock)
+        return !m_PendingResponse.expired();
+}
+
+void Operation::AbortUIWaiting() noexcept
+{
+    LOCK_GUARD(m_PendingResponseLock)
+        if( auto r = m_PendingResponse.lock() )
+            r->Abort();
+}
+
+void Operation::ReportHaltReason( NSString *_message, int _error, const string &_path, VFSHost &_vfs )
+{
+    dispatch_assert_background_queue();
+    if( !IsInteractive() )
+        return;
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    dispatch_to_main_queue([=]{
+        const auto sheet = [[NCOpsHaltReasonDialog alloc] init];
+        sheet.message = _message;
+        sheet.path = [NSString stringWithUTF8String:_path.c_str()];
+        sheet.errorNo = _error;
+        Show(sheet.window, ctx);
+    });
+    WaitForDialogResponse(ctx);
 }
 
 }

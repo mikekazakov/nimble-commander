@@ -33,6 +33,11 @@
 		CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8E61F00E5D30000B3EE /* HaltReasonDialog.h */; };
 		CFC4F8EA1F00E5D30000B3EE /* HaltReasonDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */; };
 		CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */; };
+		CFC4F8EE1F0224710000B3EE /* AsyncDialogResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8EC1F0224710000B3EE /* AsyncDialogResponse.h */; };
+		CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.mm */; };
+		CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */; };
+		CFC4F8F41F0243D30000B3EE /* GenericErrorDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */; };
+		CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B3E1EDD197300F567C4 /* OperationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B3D1EDD197300F567C4 /* OperationsTests.m */; };
 		CFF53B401EDD197300F567C4 /* Operations.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B321EDD197300F567C4 /* Operations.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -88,6 +93,11 @@
 		CFC4F8E61F00E5D30000B3EE /* HaltReasonDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HaltReasonDialog.h; path = source/HaltReasonDialog.h; sourceTree = "<group>"; };
 		CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HaltReasonDialog.mm; path = source/HaltReasonDialog.mm; sourceTree = "<group>"; };
 		CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = HaltReasonDialog.xib; path = source/HaltReasonDialog.xib; sourceTree = "<group>"; };
+		CFC4F8EC1F0224710000B3EE /* AsyncDialogResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncDialogResponse.h; path = source/AsyncDialogResponse.h; sourceTree = "<group>"; };
+		CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AsyncDialogResponse.mm; path = source/AsyncDialogResponse.mm; sourceTree = "<group>"; };
+		CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericErrorDialog.h; path = source/GenericErrorDialog.h; sourceTree = "<group>"; };
+		CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GenericErrorDialog.mm; path = source/GenericErrorDialog.mm; sourceTree = "<group>"; };
+		CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GenericErrorDialog.xib; path = source/GenericErrorDialog.xib; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B321EDD197300F567C4 /* Operations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Operations.h; sourceTree = "<group>"; };
 		CFF53B331EDD197300F567C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -228,6 +238,8 @@
 				CFF53B791EDEA83900F567C4 /* Job.cpp */,
 				CFF53B741EDE53E800F567C4 /* Operation.h */,
 				CFF53B751EDE53E800F567C4 /* Operation.mm */,
+				CFC4F8EC1F0224710000B3EE /* AsyncDialogResponse.h */,
+				CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.mm */,
 				CF7084D61EF7CC770072F0F6 /* Pool.h */,
 				CF7084D71EF7CC770072F0F6 /* Pool.mm */,
 				CFC4F8C31EFA05B00000B3EE /* PoolView.h */,
@@ -247,6 +259,9 @@
 				CFC4F8E61F00E5D30000B3EE /* HaltReasonDialog.h */,
 				CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */,
 				CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */,
+				CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */,
+				CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */,
+				CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -269,6 +284,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFC4F8EE1F0224710000B3EE /* AsyncDialogResponse.h in Headers */,
 				CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */,
 				CFC4F8CF1EFA07F00000B3EE /* PoolView.h in Headers */,
 				CFC4F8E41EFCE0380000B3EE /* BriefOperationView.h in Headers */,
@@ -277,6 +293,7 @@
 				CFC4F8D01EFA07F00000B3EE /* PoolViewController.h in Headers */,
 				CFC4F8D71EFB5F780000B3EE /* BriefOperationViewController.h in Headers */,
 				CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */,
+				CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */,
 				CFF53B6E1EDD3F7F00F567C4 /* VeryTestWindow.h in Headers */,
 				CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */,
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
@@ -373,6 +390,7 @@
 			files = (
 				CFC4F8CC1EFA05DA0000B3EE /* PoolViewController.xib in Resources */,
 				CFC4F8DA1EFB5FAB0000B3EE /* BriefOperationViewController.xib in Resources */,
+				CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */,
 				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
 				CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */,
 				CFF53B701EDD3F7F00F567C4 /* VeryTestWindow.xib in Resources */,
@@ -395,6 +413,8 @@
 			files = (
 				CFC4F8D41EFA17070000B3EE /* Internal.mm in Sources */,
 				CFC4F8B31EF7E3830000B3EE /* Compression.mm in Sources */,
+				CFC4F8F41F0243D30000B3EE /* GenericErrorDialog.mm in Sources */,
+				CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.mm in Sources */,
 				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,
 				CFC4F8CA1EFA05B00000B3EE /* PoolViewController.mm in Sources */,
 				CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */,

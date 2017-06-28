@@ -2,6 +2,17 @@
 
 namespace nc::ops {
 
+StatisticsTimingPauser::StatisticsTimingPauser( Statistics &_s ):
+    s(_s)
+{
+    s.PauseTiming();
+}
+
+StatisticsTimingPauser::~StatisticsTimingPauser()
+{
+    s.ResumeTiming();
+}
+
 Statistics::Statistics()
 {
 }

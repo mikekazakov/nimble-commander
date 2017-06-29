@@ -7,6 +7,7 @@
 //
 
 #pragma once
+
 #include "VFSError.h"
 #include "VFSDeclarations.h"
 

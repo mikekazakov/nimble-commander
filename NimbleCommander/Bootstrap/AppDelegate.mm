@@ -48,6 +48,8 @@
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
 
+#include "../../Operations/Operations/Operations.h"
+
 static SUUpdater *g_Sparkle = nil;
 
 static auto g_ConfigDirPostfix = @"/Config/";
@@ -188,6 +190,13 @@ static AppDelegate *g_Me = nil;
 
 - (id) init
 {
+//    VeryImportantFunction();
+//    cout << (void*)VFSNativeHost::Tag << endl;
+//
+//    cout << VeryImportantFunction() << endl;
+//    cout << AbraCadabra{}.Process(42) << endl;
+//    AbraCadabra{};
+
     self = [super init];
     if(self) {
         g_Me = self;

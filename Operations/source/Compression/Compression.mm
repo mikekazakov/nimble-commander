@@ -3,6 +3,7 @@
 #include "../HaltReasonDialog.h"
 #include "../GenericErrorDialog.h"
 #include "../AsyncDialogResponse.h"
+#include "../Internal.h"
 
 namespace nc::ops
 {
@@ -13,10 +14,15 @@ Compression::Compression(vector<VFSListingItem> _src_files,
                          string _dst_root,
                          VFSHostPtr _dst_vfs)
 {
-    m_Job.reset( new CompressionJob{_src_files,
+    m_InitialSourceItemsAmount = (int)_src_files.size();
+    m_InitialSingleItemFilename = m_InitialSourceItemsAmount == 1 ?
+        _src_files.front().DisplayName() : "";
+    m_Job.reset( new CompressionJob{move(_src_files),
                                     _dst_root,
                                     _dst_vfs} );
-    
+    m_Job->m_TargetPathDefined = [this]{
+        OnTargetPathDefined();
+    };
     m_Job->m_TargetWriteError = [this](int _err, const string &_path, VFSHost &_vfs) {
         OnTargetWriteError(_err, _path, _vfs);
     };
@@ -29,6 +35,8 @@ Compression::Compression(vector<VFSListingItem> _src_files,
     m_Job->m_SourceAccessError = [this](int _err, const string &_path, VFSHost &_vfs) {
         return (Callbacks::SourceAccessErrorResolution)OnSourceAccessError(_err, _path, _vfs);
     };
+    
+    SetTitle( BuildInitialTitle() );
 }
 
 Compression::~Compression()
@@ -114,6 +122,70 @@ int Compression::OnSourceAccessError(int _err, const string &_path, VFSHost &_vf
     }
     else
         return (int)Callbacks::SourceAccessErrorResolution::Stop;
+}
+
+void Compression::OnTargetPathDefined()
+{
+    SetTitle( BuildTitleWithArchiveFilename() );
+}
+
+NSString *Compression::BuildTitlePrefix() const
+{
+    if( m_InitialSingleItemFilename.empty() )
+        return [NSString localizedStringWithFormat:
+                NSLocalizedStringFromTableInBundle(@"Compressing %d items",
+                                                   @"Localizable.strings",
+                                                   Bundle(),
+                                                   "Compressing %d items"),
+                m_InitialSourceItemsAmount];
+    else
+        return [NSString localizedStringWithFormat:
+                NSLocalizedStringFromTableInBundle(@"Compressing \u201c%@\u201d",
+                                                   @"Localizable.strings",
+                                                   Bundle(),
+                                                   "Compressing \u201c%@\u201d"),
+                [NSString stringWithUTF8StdString:m_InitialSingleItemFilename]];
+}
+
+string Compression::BuildInitialTitle() const
+{
+
+//cell.tasksInfoLabel.text = [NSString localizedStringWithFormat:NSLocalizedString(@"%d tasks waiting for action", @"%d tasks waiting for action"), (long)taskCount];
+
+//    auto s = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Compressing %d items", @"Localizable.strings", Bundle(), "Compressing %d items"),
+//    m_InitialSourceItemsAmount];
+//
+////    return [NSString stringWithFormat:@"%i",m_InitialSourceItemsAmount].UTF8String;
+//    return s.UTF8String;
+
+    return BuildTitlePrefix().UTF8String;
+}
+
+string Compression::BuildTitleWithArchiveFilename() const
+{
+    auto p = path(m_Job->TargetArchivePath());
+    
+//    return [NSString stringWithFormat:@"%i - %s", m_InitialSourceItemsAmount, p.filename().c_str()]
+//        .UTF8String;
+
+//    auto s = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Compressing %d items", @"Localizable.strings", Bundle(), "Compressing %d items"),
+//    m_InitialSourceItemsAmount];
+
+    //return s.UTF8String;
+
+//    return [NSString stringWithFormat:@"%i",m_InitialSourceItemsAmount].UTF8String;
+
+//return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 1 item to \u201c%@\u201d",
+
+//    return [NSString stringWithFormat:@"%@ to \u201c%s\u201d", s, p.filename().c_str()].UTF8String;
+
+    return [NSString localizedStringWithFormat:
+                NSLocalizedStringFromTableInBundle(@"%@ to \u201c%@\u201d",
+                                                   @"Localizable.strings",
+                                                   Bundle(),
+                                                   "Compressing \u201c%@\u201d"),
+                BuildTitlePrefix(),
+                [NSString stringWithUTF8StdString:p.filename().native()]].UTF8String;
 }
 
 }

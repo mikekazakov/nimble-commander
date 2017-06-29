@@ -7,11 +7,13 @@
 using namespace nc::ops;
 
 @interface NCOpsBriefOperationViewController()
+@property (strong) IBOutlet NSTextField *titleLabel;
 @property (strong) IBOutlet NSTextField *ETA;
 @property (strong) IBOutlet NSProgressIndicator *progressBar;
 @property (strong) IBOutlet NSButton *pauseButton;
+@property (strong) IBOutlet NSButton *resumeButton;
 @property (strong) IBOutlet NSButton *stopButton;
-
+@property bool isPaused;
 @end
 
 @implementation NCOpsBriefOperationViewController
@@ -30,10 +32,14 @@ using namespace nc::ops;
     
     self = [super initWithNibName:@"BriefOperationViewController" bundle:Bundle()];
     if( self ) {
+        self.isPaused = false;
         m_Operation = _operation;
         _operation->ObserveUnticketed(
             Operation::NotifyAboutStateChange,
-            objc_callback(self, @selector(onOperationStateChangedCallback)));
+            objc_callback_to_main_queue(self, @selector(onOperationStateChanged)));
+        _operation->ObserveUnticketed(
+            Operation::NotifyAboutTitleChange,
+            objc_callback_to_main_queue(self, @selector(onOperationTitleChanged)));
     }
     return self;
 }
@@ -53,6 +59,7 @@ using namespace nc::ops;
     [super viewDidLoad];
     self.ETA.font = [NSFont monospacedDigitSystemFontOfSize:self.ETA.font.pointSize
                                                      weight:NSFontWeightRegular];
+    [self onOperationTitleChanged];
 }
 
 - (void)viewDidAppear
@@ -117,7 +124,6 @@ using namespace nc::ops;
 
 - (void)updateSlow
 {
-
     self.ETA.stringValue = StatisticsFormatter{m_Operation->Statistics()}.ProgressCaption();
 }
 
@@ -128,21 +134,23 @@ using namespace nc::ops;
 
 - (IBAction)onPause:(id)sender
 {
-    if( m_Operation->State() == OperationState::Paused )
-        m_Operation->Resume();
-    else
-        m_Operation->Pause();
+    m_Operation->Pause();
 }
 
-- (void)onOperationStateChangedCallback
+- (IBAction)onResume:(id)sender
 {
-    dispatch_to_main_queue([self]{ [self onOperationStateChanged]; });
+    m_Operation->Resume();
 }
 
 - (void)onOperationStateChanged
 {
     const auto new_state = m_Operation->State();
-    self.pauseButton.state = new_state == OperationState::Paused;
+    self.isPaused = new_state == OperationState::Paused;
+}
+
+- (void)onOperationTitleChanged
+{
+    self.titleLabel.stringValue = [NSString stringWithUTF8StdString:m_Operation->Title()];
 }
 
 @end

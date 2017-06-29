@@ -1326,6 +1326,9 @@
 		CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFEF4E391A6BB409009A1524 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
+		CFF53B641EDD1A6100F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; };
+		CFF53B651EDD1AC300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; };
+		CFF53B6A1EDD283E00F567C4 /* Operations.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CFF695721E20C6CF0069EEA4 /* TabBarStyle.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */; };
 		CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
 		CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
@@ -1438,6 +1441,20 @@
 			remoteGlobalIDString = CF1846FE1E41C86D008B7C9F;
 			remoteInfo = "VFS Tests";
 		};
+		CFF53B601EDD19A400F567C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CFF53B2F1EDD197300F567C4;
+			remoteInfo = Operations;
+		};
+		CFF53B621EDD19A400F567C4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CFF53B381EDD197300F567C4;
+			remoteInfo = OperationsTests;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1449,6 +1466,7 @@
 			files = (
 				CF6FAA261B82E22A006E0742 /* Sparkle.framework in Copy Files */,
 				CF90C0291EBB02850056E3B8 /* LetsMove.framework in Copy Files */,
+				CFF53B6A1EDD283E00F567C4 /* Operations.framework in Copy Files */,
 			);
 			name = "Copy Files";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2199,6 +2217,7 @@
 		CFE9DDF91BE1C2CE007BBCD3 /* DisclosureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DisclosureViewController.m; path = 3rd_party/DisclosureViewController/DisclosureViewController.m; sourceTree = "<group>"; };
 		CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MassCopySheetDisclosureViewController.xib; path = NimbleCommander/Operations/Copy/MassCopySheetDisclosureViewController.xib; sourceTree = SOURCE_ROOT; };
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
+		CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Operations.xcodeproj; path = Operations/Operations.xcodeproj; sourceTree = "<group>"; };
 		CFF695701E20C6CF0069EEA4 /* TabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TabBarStyle.h; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.h; sourceTree = SOURCE_ROOT; };
 		CFF695711E20C6CF0069EEA4 /* TabBarStyle.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TabBarStyle.mm; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.mm; sourceTree = SOURCE_ROOT; };
 		CFF6F3A11A13567C00011177 /* Nimble Commander Pro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander Pro.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2225,6 +2244,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFF53B641EDD1A6100F567C4 /* Operations.framework in Frameworks */,
 				CF1FBF1A1E8F57B700D3569C /* NetFS.framework in Frameworks */,
 				CF2A3CE91E667F9A00E6C6F0 /* libssh2.a in Frameworks */,
 				CF844DBF1D43231600C735DB /* libz.a in Frameworks */,
@@ -2305,6 +2325,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFF53B651EDD1AC300F567C4 /* Operations.framework in Frameworks */,
 				CF90C02B1EBB04910056E3B8 /* LetsMove.framework in Frameworks */,
 				CFD8CD9D1E823CAC00E4DC53 /* NetFS.framework in Frameworks */,
 				CF2A3CE01E667F5E00E6C6F0 /* libssh2.a in Frameworks */,
@@ -3275,6 +3296,7 @@
 				CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */,
 				CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */,
 				CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */,
+				CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */,
 				CFC5121A16C4BD3D00D247EE /* Source */,
 				CF47A983186C607C00745C4C /* Tests */,
 				B51014CF170721340023FF24 /* Resources */,
@@ -3476,6 +3498,15 @@
 			name = DisclosureViewController;
 			sourceTree = "<group>";
 		};
+		CFF53B5C1EDD19A400F567C4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFF53B611EDD19A400F567C4 /* Operations.framework */,
+				CFF53B631EDD19A400F567C4 /* OperationsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		CFF6F3A31A1356F700011177 /* NC Pro MAS */ = {
 			isa = PBXGroup;
 			children = (
@@ -3655,6 +3686,10 @@
 					ProjectRef = CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */;
 				},
 				{
+					ProductGroup = CFF53B5C1EDD19A400F567C4 /* Products */;
+					ProjectRef = CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */;
+				},
+				{
 					ProductGroup = CF69CF971DA2003C00992B84 /* Products */;
 					ProjectRef = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
 				},
@@ -3740,6 +3775,20 @@
 			fileType = wrapper.cfbundle;
 			path = "VFS Tests.xctest";
 			remoteRef = CFD725F21E42DBD900603077 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CFF53B611EDD19A400F567C4 /* Operations.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = Operations.framework;
+			remoteRef = CFF53B601EDD19A400F567C4 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CFF53B631EDD19A400F567C4 /* OperationsTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = OperationsTests.xctest;
+			remoteRef = CFF53B621EDD19A400F567C4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -5830,6 +5879,7 @@
 					Utility/include/,
 					RoutedIO/include/,
 					VFS/include/,
+					Operations/include/,
 					.,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
@@ -5909,6 +5959,7 @@
 					Utility/include/,
 					RoutedIO/include/,
 					VFS/include/,
+					Operations/include/,
 					.,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";

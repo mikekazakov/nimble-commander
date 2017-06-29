@@ -10,5 +10,7 @@
 @property (nonatomic, readonly) NSButton    *leftPanelGoToButton;
 @property (nonatomic, readonly) NSButton    *rightPanelGoToButton;
 
+- (void) notifyStateWasAssigned;
+
 @end
 

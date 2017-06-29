@@ -67,26 +67,36 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     if( !window )
         return nil;
     
-    if( self = [super initWithWindow:window] ) {
-        m_OperationsPool = nc::ops::Pool::Make();
+    self = [super initWithWindow:window];
+    if(!self)
+        return nil;
+
+    window.delegate = self;
+    window.restorationClass = self.class;
+    m_OperationsPool = nc::ops::Pool::Make();
+    __weak NSWindow *weak_wnd = window;
+    m_OperationsPool->SetDialogCallback([weak_wnd](NSWindow *_dlg, function<void (NSModalResponse)> _cb){
+        if( NSWindow *window = weak_wnd )
+            [window beginSheet:_dlg completionHandler:^(NSModalResponse returnCode) {
+                _cb(returnCode);
+            }];
+    });
     
-        window.delegate = self;
-        window.restorationClass = self.class;
-
-        m_ToolbarVisible = GlobalConfig().GetBool( g_ConfigShowToolbar );
-
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(didBecomeKeyWindow)
-                                                   name:NSWindowDidBecomeKeyNotification
-                                                 object:self.window];
-        
-        m_ConfigTickets.emplace_back( GlobalConfig().Observe(g_ConfigShowToolbar,
-            objc_callback(self, @selector(onConfigShowToolbarChanged))) );
-        
-        [AppDelegate.me addMainWindow:self];
-        
-        [self invalidateRestorableState];
-    }
+    
+    m_ToolbarVisible = GlobalConfig().GetBool( g_ConfigShowToolbar );
+    
+    [NSNotificationCenter.defaultCenter addObserver:self
+                                           selector:@selector(didBecomeKeyWindow)
+                                               name:NSWindowDidBecomeKeyNotification
+                                             object:self.window];
+    
+    m_ConfigTickets.emplace_back( GlobalConfig().Observe(g_ConfigShowToolbar,
+                                                         objc_callback(self, @selector(onConfigShowToolbarChanged))) );
+    
+    [AppDelegate.me addMainWindow:self];
+    
+    [self invalidateRestorableState];
+    
     return self;
 }
 

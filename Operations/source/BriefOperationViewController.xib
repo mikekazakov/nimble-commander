@@ -11,7 +11,9 @@
                 <outlet property="ETA" destination="XAR-0B-qc5" id="hgp-LW-X0b"/>
                 <outlet property="pauseButton" destination="rVN-yV-10b" id="OOf-li-hPP"/>
                 <outlet property="progressBar" destination="HVc-VI-uc1" id="B8m-Aa-NNy"/>
+                <outlet property="resumeButton" destination="ATK-3S-9FN" id="WGJ-LE-rKo"/>
                 <outlet property="stopButton" destination="u1r-Ni-BYr" id="mpJ-6p-vZ8"/>
+                <outlet property="titleLabel" destination="fbb-24-X5f" id="PBA-8V-o10"/>
                 <outlet property="view" destination="q3u-dT-qj9" id="Aso-Ms-JiO"/>
             </connections>
         </customObject>
@@ -19,13 +21,13 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="q3u-dT-qj9" customClass="NCOpsBriefOperationView">
             <rect key="frame" x="0.0" y="0.0" width="320" height="36"/>
-            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
             <subviews>
                 <progressIndicator wantsLayer="YES" maxValue="1" indeterminate="YES" controlSize="small" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="HVc-VI-uc1">
-                    <rect key="frame" x="9" y="12" width="279" height="12"/>
+                    <rect key="frame" x="9" y="11" width="279" height="12"/>
                 </progressIndicator>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="u1r-Ni-BYr">
-                    <rect key="frame" x="305" y="11" width="14" height="15"/>
+                    <rect key="frame" x="305" y="10" width="14" height="15"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="14" id="aaZ-ft-0zo"/>
                     </constraints>
@@ -42,33 +44,68 @@
                         </binding>
                     </connections>
                 </button>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XAR-0B-qc5">
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="XAR-0B-qc5">
                     <rect key="frame" x="-2" y="-1" width="301" height="13"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="CR9-6H-mVg">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="CR9-6H-mVg">
                         <font key="font" metaFont="system" size="10"/>
+                        <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbb-24-X5f">
+                    <rect key="frame" x="-2" y="22" width="300" height="14"/>
+                    <textFieldCell key="cell" lineBreakMode="truncatingMiddle" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="ezh-Od-Adz">
+                        <font key="font" metaFont="system" size="11"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbb-24-X5f">
-                    <rect key="frame" x="-2" y="19" width="300" height="17"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Label" id="ezh-Od-Adz">
+                <button hidden="YES" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ATK-3S-9FN">
+                    <rect key="frame" x="289" y="10" width="14" height="14"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="14" id="EAE-TQ-w4h"/>
+                    </constraints>
+                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="NSRefreshFreestandingTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="j88-me-U2Q">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
-                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
+                    </buttonCell>
+                    <connections>
+                        <action selector="onResume:" target="-2" id="G8w-iz-s1U"/>
+                        <binding destination="-2" name="hidden2" keyPath="self.isPaused" previousBinding="TDP-Ox-XzS" id="ERo-pf-zHM">
+                            <dictionary key="options">
+                                <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                <integer key="NSNullPlaceholder" value="-1"/>
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                        <binding destination="-2" name="hidden" keyPath="self.view.isMouseOver" id="TDP-Ox-XzS">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                    </connections>
+                </button>
                 <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rVN-yV-10b">
-                    <rect key="frame" x="289" y="11" width="14" height="14"/>
+                    <rect key="frame" x="289" y="10" width="14" height="14"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="14" id="Gyh-Fb-JZZ"/>
                     </constraints>
-                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="pause_icon" imagePosition="only" alignment="center" alternateImage="NSRefreshFreestandingTemplate" imageScaling="proportionallyDown" inset="2" id="DBA-Id-kzc">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                    <buttonCell key="cell" type="bevel" bezelStyle="regularSquare" image="PauseFreestandingTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="DBA-Id-kzc">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
                         <action selector="onPause:" target="-2" id="0VB-qA-cij"/>
+                        <binding destination="-2" name="hidden2" keyPath="self.isPaused" previousBinding="goF-4l-eWc" id="w0I-6O-t3e">
+                            <dictionary key="options">
+                                <integer key="NSMultipleValuesPlaceholder" value="-1"/>
+                                <integer key="NSNoSelectionPlaceholder" value="-1"/>
+                                <integer key="NSNotApplicablePlaceholder" value="-1"/>
+                                <integer key="NSNullPlaceholder" value="-1"/>
+                            </dictionary>
+                        </binding>
                         <binding destination="-2" name="hidden" keyPath="self.view.isMouseOver" id="goF-4l-eWc">
                             <dictionary key="options">
                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
@@ -81,15 +118,17 @@
                 <constraint firstItem="fbb-24-X5f" firstAttribute="top" secondItem="q3u-dT-qj9" secondAttribute="top" id="0uQ-g3-ojK"/>
                 <constraint firstItem="rVN-yV-10b" firstAttribute="leading" secondItem="fbb-24-X5f" secondAttribute="trailing" constant="-7" id="8od-1y-coZ"/>
                 <constraint firstItem="XAR-0B-qc5" firstAttribute="leading" secondItem="q3u-dT-qj9" secondAttribute="leading" id="Bol-sO-Oya"/>
+                <constraint firstItem="u1r-Ni-BYr" firstAttribute="centerY" secondItem="rVN-yV-10b" secondAttribute="centerY" id="CeB-nt-9in"/>
                 <constraint firstItem="rVN-yV-10b" firstAttribute="leading" secondItem="HVc-VI-uc1" secondAttribute="trailing" constant="1" id="Jvt-oi-vLB"/>
-                <constraint firstItem="XAR-0B-qc5" firstAttribute="top" secondItem="HVc-VI-uc1" secondAttribute="bottom" id="KAE-HE-56a"/>
+                <constraint firstItem="XAR-0B-qc5" firstAttribute="top" secondItem="HVc-VI-uc1" secondAttribute="bottom" constant="-1" id="KAE-HE-56a"/>
                 <constraint firstItem="u1r-Ni-BYr" firstAttribute="leading" secondItem="rVN-yV-10b" secondAttribute="trailing" constant="2" id="RCJ-1C-SOQ"/>
                 <constraint firstAttribute="trailing" secondItem="u1r-Ni-BYr" secondAttribute="trailing" constant="1" id="SwB-2y-5YN"/>
                 <constraint firstItem="fbb-24-X5f" firstAttribute="leading" secondItem="q3u-dT-qj9" secondAttribute="leading" id="XDO-TU-KuI"/>
+                <constraint firstItem="ATK-3S-9FN" firstAttribute="leading" secondItem="HVc-VI-uc1" secondAttribute="trailing" constant="1" id="YwH-5A-inl"/>
                 <constraint firstItem="HVc-VI-uc1" firstAttribute="leading" secondItem="q3u-dT-qj9" secondAttribute="leading" constant="9" id="bLZ-7G-aj4"/>
-                <constraint firstItem="rVN-yV-10b" firstAttribute="centerY" secondItem="q3u-dT-qj9" secondAttribute="centerY" id="f8e-aj-g2Y"/>
-                <constraint firstItem="u1r-Ni-BYr" firstAttribute="centerY" secondItem="q3u-dT-qj9" secondAttribute="centerY" id="hMm-Ae-hav"/>
+                <constraint firstItem="ATK-3S-9FN" firstAttribute="centerY" secondItem="HVc-VI-uc1" secondAttribute="centerY" id="clr-lo-H0W"/>
                 <constraint firstAttribute="bottom" secondItem="XAR-0B-qc5" secondAttribute="bottom" constant="-1" id="hVg-ok-pKJ"/>
+                <constraint firstItem="rVN-yV-10b" firstAttribute="centerY" secondItem="HVc-VI-uc1" secondAttribute="centerY" id="lRC-Xd-tE8"/>
                 <constraint firstItem="rVN-yV-10b" firstAttribute="leading" secondItem="XAR-0B-qc5" secondAttribute="trailing" constant="-8" id="tZB-tq-6CK"/>
             </constraints>
             <point key="canvasLocation" x="-169" y="-104"/>
@@ -99,6 +138,6 @@
     <resources>
         <image name="NSRefreshFreestandingTemplate" width="14" height="14"/>
         <image name="NSStopProgressFreestandingTemplate" width="14" height="14"/>
-        <image name="pause_icon" width="14" height="14"/>
+        <image name="PauseFreestandingTemplate" width="14" height="14"/>
     </resources>
 </document>

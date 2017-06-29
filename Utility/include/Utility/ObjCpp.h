@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <Habanero/dispatch_cpp.h>
 
 #ifdef __OBJC__
 #include <objc/runtime.h>
@@ -29,6 +30,22 @@ inline std::function<void()> objc_callback(T *_obj, SEL _sel) noexcept
             func_type func = (func_type)[T instanceMethodForSelector:_sel];
             func(strong_obj, _sel);
         }
+    };
+}
+
+template<typename T>
+inline std::function<void()> objc_callback_to_main_queue(T *_obj, SEL _sel) noexcept
+{
+    __weak id weak_obj = _obj;
+    return [weak_obj, _sel]{
+        if( __strong T *strong_obj_test = weak_obj )
+            dispatch_to_main_queue([weak_obj, _sel]{
+                if( __strong T *strong_obj = weak_obj ) {
+                    typedef void (*func_type)(id, SEL);
+                    func_type func = (func_type)[T instanceMethodForSelector:_sel];
+                    func(strong_obj, _sel);
+                }
+            });
     };
 }
 

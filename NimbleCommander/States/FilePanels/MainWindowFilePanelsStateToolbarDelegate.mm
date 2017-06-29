@@ -28,9 +28,12 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
     NSButton                        *m_RightPanelGoToButton;
 
     NCOpsPoolViewController         *m_PoolViewController;
+    NSToolbarItem                   *m_PoolViewToolbarItem;
     
     NSArray                         *m_AllowedToolbarItemsIdentifiers;
     ExternalToolsStorage::ObservationTicket m_ToolsChangesTicket;
+    
+    bool m_SetUpWindowSizeObservation;
 }
 
 @synthesize toolbar = m_Toolbar;
@@ -42,6 +45,7 @@ static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
     assert(_state != nil);
     self = [super init];
     if( self ) {
+        m_SetUpWindowSizeObservation = false;
         m_State = _state;
         
         [self buildBasicControls];
@@ -143,7 +147,6 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         item.paletteLabel = item.label = @"Operations";
         return item;
     }
-    
     if( [itemIdentifier isEqualToString:@"operations_pool"] ) {
     
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
@@ -153,12 +156,12 @@ static NSImage *ImageForTool( const ExternalTool &_et)
                 self.state.operationsPool];
     
         item.view = m_PoolViewController.view;
+        item.minSize = m_PoolViewController.view.bounds.size;
+        item.maxSize = NSMakeSize(600, item.minSize.height);
         item.paletteLabel = item.label = @"Operations Pool";
+        m_PoolViewToolbarItem = item;
         return item;
     }
-    
-    
-    
     if( [itemIdentifier hasPrefix:g_ExternalToolsIdentifiersPrefix] ) {
         const int n = atoi( itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length );
         if( const auto tool = self.state.externalToolsStorage.GetTool(n) ) {
@@ -171,6 +174,32 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     
     
     return nil;
+}
+
+- (void) notifyStateWasAssigned
+{
+    if( !m_SetUpWindowSizeObservation ) {
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(windowDidResize)
+                                                   name:NSWindowDidResizeNotification
+                                                 object:m_State.window];
+        m_SetUpWindowSizeObservation = true;
+        [self windowDidResize];
+    }
+}
+
+- (void)windowDidResize
+{
+    if( !m_PoolViewToolbarItem )
+        return;
+    
+    if( const auto wnd = m_PoolViewController.view.window ) {
+        const auto sz = m_PoolViewController.view.window.frame.size;
+        const auto max_width = min(sz.width / 2.4, 600.);
+        const auto clipped_max_wdith = max(m_PoolViewToolbarItem.minSize.width, max_width);
+        m_PoolViewToolbarItem.maxSize = NSMakeSize(clipped_max_wdith,
+                                                   m_PoolViewToolbarItem.maxSize.height );
+    }
 }
 
 - (IBAction)onExternalToolAction:(id)sender

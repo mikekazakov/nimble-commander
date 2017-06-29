@@ -331,6 +331,8 @@ static bool GoToForcesPanelActivation()
     
     [self UpdateTitle];
     
+    [m_ToolbarDelegate notifyStateWasAssigned];
+    
     // think it's a bad idea to post messages on every new window created
     GA().PostScreenView("File Panels State");
 }

@@ -240,4 +240,20 @@ void Operation::ReportHaltReason( NSString *_message, int _error, const string &
     WaitForDialogResponse(ctx);
 }
 
+string Operation::Title() const
+{
+    LOCK_GUARD(m_TitleLock)
+        return m_Title;
+}
+
+void Operation::SetTitle( const string &_title )
+{
+    LOCK_GUARD(m_TitleLock) {
+        if( m_Title == _title )
+            return;
+        m_Title = _title;
+    }
+    FireObservers(NotifyAboutTitleChange);
+}
+
 }

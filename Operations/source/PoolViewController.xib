@@ -18,7 +18,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="ATb-7c-oae" customClass="NCOpsPoolView">
             <rect key="frame" x="0.0" y="0.0" width="325" height="36"/>
-            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
             <subviews>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="B4U-QC-TQx">
                     <rect key="frame" x="24" y="0.0" width="300" height="36"/>
@@ -74,11 +74,11 @@
                 <constraint firstItem="6qb-FW-bHe" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="ne5-6p-F88"/>
                 <constraint firstAttribute="bottom" secondItem="B4U-QC-TQx" secondAttribute="bottom" id="qVb-xj-nAo"/>
             </constraints>
-            <point key="canvasLocation" x="-169.5" y="-32"/>
+            <point key="canvasLocation" x="29" y="52"/>
         </customView>
     </objects>
     <resources>
-        <image name="NSAscendingSortIndicator" width="128" height="128"/>
-        <image name="NSDescendingSortIndicator" width="128" height="128"/>
+        <image name="NSAscendingSortIndicator" width="9" height="9"/>
+        <image name="NSDescendingSortIndicator" width="9" height="9"/>
     </resources>
 </document>

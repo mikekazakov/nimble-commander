@@ -38,6 +38,8 @@
 		CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */; };
 		CFC4F8F41F0243D30000B3EE /* GenericErrorDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */; };
 		CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */; };
+		CFC4F8FE1F04AF2B0000B3EE /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8FD1F04AF2B0000B3EE /* Localizable.stringsdict */; };
+		CFC4F9001F04B0780000B3EE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8FF1F04B0780000B3EE /* Localizable.strings */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B3E1EDD197300F567C4 /* OperationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B3D1EDD197300F567C4 /* OperationsTests.m */; };
 		CFF53B401EDD197300F567C4 /* Operations.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B321EDD197300F567C4 /* Operations.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -98,6 +100,8 @@
 		CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericErrorDialog.h; path = source/GenericErrorDialog.h; sourceTree = "<group>"; };
 		CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GenericErrorDialog.mm; path = source/GenericErrorDialog.mm; sourceTree = "<group>"; };
 		CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GenericErrorDialog.xib; path = source/GenericErrorDialog.xib; sourceTree = "<group>"; };
+		CFC4F8FD1F04AF2B0000B3EE /* Localizable.stringsdict */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.stringsdict; name = Localizable.stringsdict; path = resources/Localizable.stringsdict; sourceTree = "<group>"; };
+		CFC4F8FF1F04B0780000B3EE /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = resources/Localizable.strings; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B321EDD197300F567C4 /* Operations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Operations.h; sourceTree = "<group>"; };
 		CFF53B331EDD197300F567C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -153,6 +157,8 @@
 			isa = PBXGroup;
 			children = (
 				CFC4F8DF1EFCD9A50000B3EE /* Media.xcassets */,
+				CFC4F8FD1F04AF2B0000B3EE /* Localizable.stringsdict */,
+				CFC4F8FF1F04B0780000B3EE /* Localizable.strings */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -393,7 +399,9 @@
 				CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */,
 				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
 				CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */,
+				CFC4F9001F04B0780000B3EE /* Localizable.strings in Resources */,
 				CFF53B701EDD3F7F00F567C4 /* VeryTestWindow.xib in Resources */,
+				CFC4F8FE1F04AF2B0000B3EE /* Localizable.stringsdict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

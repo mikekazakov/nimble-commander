@@ -71,14 +71,13 @@ void CompressionJob::Perform()
         "Archive"s;  // Localize!
     
     m_TargetArchivePath = FindSuitableFilename(proposed_arcname);
-    
     if( m_TargetArchivePath.empty() ) {
-        // handle somehow
+        Stop();
+        return;
     }
     
     m_TargetPathDefined();
     
-    //m_Source
     if( auto source = ScanItems()  )
         m_Source = make_unique<Source>( move(*source) );
     else
@@ -88,7 +87,6 @@ void CompressionJob::Perform()
         
     if( !IsStopped() )
         SetCompleted();
- //   cout << arcname << endl;
 }
 
 bool CompressionJob::BuildArchive()

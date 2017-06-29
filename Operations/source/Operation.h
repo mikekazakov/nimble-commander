@@ -35,6 +35,7 @@ public:
     void Resume();
     void Stop();
     
+    string Title() const;
     OperationState State() const;
     const class Statistics &Statistics() const;
 
@@ -42,11 +43,12 @@ public:
     bool Wait( std::chrono::nanoseconds _wait_for_time ) const;
 
     enum {
-        NotifyAboutStart        = 1<<0,
-        NotifyAboutPause        = 1<<1,
-        NotifyAboutResume       = 1<<2,
-        NotifyAboutStop         = 1<<3,
-        NotifyAboutCompletion   = 1<<4,
+        NotifyAboutStart        = 1 << 0,
+        NotifyAboutPause        = 1 << 1,
+        NotifyAboutResume       = 1 << 2,
+        NotifyAboutStop         = 1 << 3,
+        NotifyAboutCompletion   = 1 << 4,
+        NotifyAboutTitleChange  = 1 << 5,
         NotifyAboutFinish       = NotifyAboutStop | NotifyAboutCompletion,
         NotifyAboutStateChange  = NotifyAboutStart | NotifyAboutPause | NotifyAboutResume |
                                   NotifyAboutStop | NotifyAboutCompletion
@@ -55,7 +57,7 @@ public:
     ObservationTicket Observe( uint64_t _notification_mask, function<void()> _callback );
     void ObserveUnticketed( uint64_t _notification_mask, function<void()> _callback );
 
-    void SetDialogCallback(function<bool(NSWindow *, function<void(NSModalResponse)>)> _callback);
+    void SetDialogCallback( function<bool(NSWindow *, function<void(NSModalResponse)>)> _callback );
     bool IsWaitingForUIResponse() const noexcept;
     void AbortUIWaiting() noexcept;
     
@@ -68,6 +70,7 @@ protected:
     void Show( NSWindow *_dialog, shared_ptr<AsyncDialogResponse> _response );
     void WaitForDialogResponse( shared_ptr<AsyncDialogResponse> _response );
     void ReportHaltReason( NSString *_message, int _error, const string &_path, VFSHost &_vfs );
+    void SetTitle( const string &_title );
 
 private:
     Operation(const Operation&) = delete;
@@ -84,6 +87,9 @@ private:
     
     weak_ptr<AsyncDialogResponse> m_PendingResponse;
     mutable spinlock m_PendingResponseLock;
+    
+    string m_Title;
+    mutable spinlock m_TitleLock;
 };
 
 }

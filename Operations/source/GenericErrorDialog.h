@@ -8,19 +8,6 @@ enum class GenericErrorDialogStyle
     Stop    = 0,
     Caution = 1
 };
-//enum {
-//    NSModalResponseStop                 = (-1000), // Also used as the default response for sheets
-//    NSModalResponseAbort                = (-1001),
-//    NSModalResponseContinue             = (-1002),
-//} NS_ENUM_AVAILABLE_MAC(10_9);
-//    NSModalResponseOK = 1,
-//    NSModalResponseCancel	= 0
-
-
-//enum int{
-//    NSModalResponseSkip     = -10000,
-//    NSModalResponseSkipAll  = -10001,
-//};
 
 inline constexpr long NSModalResponseSkip       = -10'000;
 inline constexpr long NSModalResponseSkipAll    = -10'001;

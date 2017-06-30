@@ -6,6 +6,10 @@
 
 using namespace nc::ops;
 
+static const auto g_ViewAppearTimeout = 100ms;
+static const auto g_RapidUpdateFreq = 30.0;
+static const auto g_SlowUpdateFreq = 1.0;
+
 @interface NCOpsBriefOperationViewController()
 @property (strong) IBOutlet NSTextField *titleLabel;
 @property (strong) IBOutlet NSTextField *ETA;
@@ -57,9 +61,13 @@ using namespace nc::ops;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.view.hidden = true;
     self.ETA.font = [NSFont monospacedDigitSystemFontOfSize:self.ETA.font.pointSize
                                                      weight:NSFontWeightRegular];
     [self onOperationTitleChanged];
+    dispatch_to_main_queue_after(g_ViewAppearTimeout, [self]{
+        self.view.hidden = false;
+    });
 }
 
 - (void)viewDidAppear
@@ -80,7 +88,7 @@ using namespace nc::ops;
 {
     dispatch_assert_main_queue();
     if (!m_RapidTimer) {
-        m_RapidTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/30.0
+        m_RapidTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/g_RapidUpdateFreq
                                                          target:self
                                                        selector:@selector(updateRapid)
                                                        userInfo:nil
@@ -88,7 +96,7 @@ using namespace nc::ops;
         m_RapidTimer.tolerance = m_RapidTimer.timeInterval/10.;
     }
     if (!m_SlowTimer) {
-        m_SlowTimer = [NSTimer scheduledTimerWithTimeInterval:1.0
+        m_SlowTimer = [NSTimer scheduledTimerWithTimeInterval:1.0/g_SlowUpdateFreq
                                                          target:self
                                                        selector:@selector(updateSlow)
                                                        userInfo:nil

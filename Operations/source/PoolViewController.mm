@@ -6,8 +6,6 @@
 using namespace nc::ops;
 
 @interface NCOpsPoolViewController()
-//@property (strong) IBOutlet NSTextField *label;
-//@property (strong) IBOutlet NSTextField *ETA;
 @property (strong) IBOutlet NSView *briefViewHolder;
 @property (strong) IBOutlet NSButton *upButton;
 @property (strong) IBOutlet NSButton *downButton;
@@ -18,9 +16,6 @@ using namespace nc::ops;
 @implementation NCOpsPoolViewController
 {
     shared_ptr<Pool> m_Pool;
-//    NSTimer *m_RapidTimer;
-//    NSTimer *m_SlowTimer;
-
     vector<NCOpsBriefOperationViewController*> m_BriefViews;
     int m_IndexToShow;
     shared_ptr<Operation> m_ShownOperation;
@@ -37,12 +32,6 @@ using namespace nc::ops;
                                   objc_callback(self, @selector(poolDidChangeCallback)));
     }
     return self;
-}
-
-- (void) dealloc
-{
-//    dispatch_assert_main_queue();
-//    int a = 10;
 }
 
 - (void)poolDidChangeCallback

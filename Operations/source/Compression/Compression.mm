@@ -149,36 +149,12 @@ NSString *Compression::BuildTitlePrefix() const
 
 string Compression::BuildInitialTitle() const
 {
-
-//cell.tasksInfoLabel.text = [NSString localizedStringWithFormat:NSLocalizedString(@"%d tasks waiting for action", @"%d tasks waiting for action"), (long)taskCount];
-
-//    auto s = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Compressing %d items", @"Localizable.strings", Bundle(), "Compressing %d items"),
-//    m_InitialSourceItemsAmount];
-//
-////    return [NSString stringWithFormat:@"%i",m_InitialSourceItemsAmount].UTF8String;
-//    return s.UTF8String;
-
     return BuildTitlePrefix().UTF8String;
 }
 
 string Compression::BuildTitleWithArchiveFilename() const
 {
     auto p = path(m_Job->TargetArchivePath());
-    
-//    return [NSString stringWithFormat:@"%i - %s", m_InitialSourceItemsAmount, p.filename().c_str()]
-//        .UTF8String;
-
-//    auto s = [NSString localizedStringWithFormat:NSLocalizedStringFromTableInBundle(@"Compressing %d items", @"Localizable.strings", Bundle(), "Compressing %d items"),
-//    m_InitialSourceItemsAmount];
-
-    //return s.UTF8String;
-
-//    return [NSString stringWithFormat:@"%i",m_InitialSourceItemsAmount].UTF8String;
-
-//return [NSString stringWithFormat:NSLocalizedStringFromTable(@"Compressing 1 item to \u201c%@\u201d",
-
-//    return [NSString stringWithFormat:@"%@ to \u201c%s\u201d", s, p.filename().c_str()].UTF8String;
-
     return [NSString localizedStringWithFormat:
                 NSLocalizedStringFromTableInBundle(@"%@ to \u201c%@\u201d",
                                                    @"Localizable.strings",

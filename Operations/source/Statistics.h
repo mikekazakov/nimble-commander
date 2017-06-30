@@ -23,6 +23,9 @@ public:
     bool IsPaused() const noexcept;
     
     nanoseconds                 ElapsedTime() const noexcept;
+    SourceType                  PreferredSource() const noexcept;
+    void                        SetPreferredSource( SourceType _type );
+    
     double                      DoneFraction( SourceType _type ) const noexcept;
     optional<nanoseconds>       ETA( SourceType _type ) const noexcept;
     uint64_t                    VolumeTotal( SourceType _type ) const noexcept;
@@ -40,12 +43,13 @@ private:
     Progress &Timeline(SourceType _type) noexcept;
     const Progress &Timeline(SourceType _type) const noexcept;
 
-    atomic_bool m_IsTiming{false};
-    atomic_int  m_PauseCount{0};
-    nanoseconds m_StartTimePoint{0};
-    nanoseconds m_PauseTimePoint{0};
-    nanoseconds m_SleptTimeDuration{0};
-    nanoseconds m_FinalTimeDuration{0};
+    atomic_bool m_IsTiming;
+    atomic_int  m_PauseCount;
+    nanoseconds m_StartTimePoint;
+    nanoseconds m_PauseTimePoint;
+    nanoseconds m_SleptTimeDuration;
+    nanoseconds m_FinalTimeDuration;
+    SourceType m_PreferredSource;
     
     Progress m_BytesTimeline;
     Progress m_ItemsTimeline;

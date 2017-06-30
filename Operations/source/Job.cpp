@@ -32,8 +32,14 @@ void Job::Run()
 void Job::Execute()
 {
     m_Stats.StartTiming();
+    
     Perform();
+    
+    if( !IsStopped() )
+        SetCompleted();
+    
     m_IsRunning = false;
+    
     m_Stats.StopTiming();
     
     m_CallbackLock.lock();
@@ -68,8 +74,8 @@ void Job::Stop()
 {
     if( m_IsStopped )
         return;
-    Resume();
     m_IsStopped = true;
+    Resume();
     OnStopped();
 }
 

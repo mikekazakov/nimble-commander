@@ -84,9 +84,6 @@ void CompressionJob::Perform()
         return;
 
     BuildArchive();
-        
-    if( !IsStopped() )
-        SetCompleted();
 }
 
 bool CompressionJob::BuildArchive()

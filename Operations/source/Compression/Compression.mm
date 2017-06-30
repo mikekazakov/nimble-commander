@@ -4,6 +4,7 @@
 #include "../GenericErrorDialog.h"
 #include "../AsyncDialogResponse.h"
 #include "../Internal.h"
+#include "../ModalDialogResponses.h"
 
 namespace nc::ops
 {

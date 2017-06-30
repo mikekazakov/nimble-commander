@@ -11,6 +11,8 @@ public:
     NSString *ProgressCaption() const;
 
 private:
+    NSString *WithItems() const;
+    NSString *WithBytes() const;
     const Statistics& m_Stats;
 };
 

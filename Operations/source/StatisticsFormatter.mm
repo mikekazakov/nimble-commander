@@ -10,8 +10,46 @@ StatisticsFormatter::StatisticsFormatter(const Statistics&_stats) noexcept:
     m_Stats(_stats)
 {
 }
-  
+
 NSString *StatisticsFormatter::ProgressCaption() const
+{
+    if( m_Stats.PreferredSource() == Statistics::SourceType::Bytes )
+        return WithBytes();
+    else
+        return WithItems();
+}
+
+NSString *StatisticsFormatter::WithItems() const
+{
+    const auto volume_total = m_Stats.VolumeTotal(Statistics::SourceType::Items);
+    const auto volume_total_str = [NSString stringWithFormat:@"%llu", volume_total];
+    
+    const auto volume_processed = m_Stats.VolumeProcessed(Statistics::SourceType::Items);
+    const auto volume_processed_str = [NSString stringWithFormat:@"%llu", volume_processed];
+
+    if( m_Stats.IsPaused() ) {
+        return [NSString stringWithFormat:@"%@ of %@ - Paused",
+                volume_processed_str,
+                volume_total_str];
+    }
+    else {
+        const auto eta = m_Stats.ETA(Statistics::SourceType::Items);
+        const auto eta_str = eta ? FormatETAString(*eta) : nil;
+        if( eta_str ) {
+            return [NSString stringWithFormat:@"%@ of %@, %@",
+                    volume_processed_str,
+                    volume_total_str,
+                    eta_str];
+        }
+        else {
+            return [NSString stringWithFormat:@"%@ of %@",
+                    volume_processed_str,
+                    volume_total_str];
+        }
+    }
+}
+  
+NSString *StatisticsFormatter::WithBytes() const
 {
     auto &fmt = ByteCountFormatter::Instance();
     const auto fmt_type = ByteCountFormatter::Adaptive8;

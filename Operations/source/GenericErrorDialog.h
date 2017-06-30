@@ -9,9 +9,6 @@ enum class GenericErrorDialogStyle
     Caution = 1
 };
 
-inline constexpr long NSModalResponseSkip       = -10'000;
-inline constexpr long NSModalResponseSkipAll    = -10'001;
-
 }
 
 @interface NCOpsGenericErrorDialog : NSWindowController

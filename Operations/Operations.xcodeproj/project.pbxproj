@@ -40,6 +40,12 @@
 		CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */; };
 		CFC4F8FE1F04AF2B0000B3EE /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8FD1F04AF2B0000B3EE /* Localizable.stringsdict */; };
 		CFC4F9001F04B0780000B3EE /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8FF1F04B0780000B3EE /* Localizable.strings */; };
+		CFC4F9021F0617E20000B3EE /* ModalDialogResponses.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9011F0617E20000B3EE /* ModalDialogResponses.h */; };
+		CFC4F9081F06253D0000B3EE /* DirectoryCreation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9041F06253D0000B3EE /* DirectoryCreation.h */; };
+		CFC4F9091F06253D0000B3EE /* DirectoryCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */; };
+		CFC4F90A1F06253D0000B3EE /* DirectoryCreationJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9061F06253D0000B3EE /* DirectoryCreationJob.h */; };
+		CFC4F90B1F06253D0000B3EE /* DirectoryCreationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.mm */; };
+		CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B3E1EDD197300F567C4 /* OperationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B3D1EDD197300F567C4 /* OperationsTests.m */; };
 		CFF53B401EDD197300F567C4 /* Operations.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B321EDD197300F567C4 /* Operations.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -102,6 +108,12 @@
 		CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GenericErrorDialog.xib; path = source/GenericErrorDialog.xib; sourceTree = "<group>"; };
 		CFC4F8FD1F04AF2B0000B3EE /* Localizable.stringsdict */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.stringsdict; name = Localizable.stringsdict; path = resources/Localizable.stringsdict; sourceTree = "<group>"; };
 		CFC4F8FF1F04B0780000B3EE /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = resources/Localizable.strings; sourceTree = "<group>"; };
+		CFC4F9011F0617E20000B3EE /* ModalDialogResponses.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModalDialogResponses.h; path = source/ModalDialogResponses.h; sourceTree = "<group>"; };
+		CFC4F9041F06253D0000B3EE /* DirectoryCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreation.h; path = source/DirectoryCreation/DirectoryCreation.h; sourceTree = "<group>"; };
+		CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreation.mm; path = source/DirectoryCreation/DirectoryCreation.mm; sourceTree = "<group>"; };
+		CFC4F9061F06253D0000B3EE /* DirectoryCreationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreationJob.h; path = source/DirectoryCreation/DirectoryCreationJob.h; sourceTree = "<group>"; };
+		CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreationJob.mm; path = source/DirectoryCreation/DirectoryCreationJob.mm; sourceTree = "<group>"; };
+		CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreations_Tests.mm; path = tests/DirectoryCreations_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B321EDD197300F567C4 /* Operations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Operations.h; sourceTree = "<group>"; };
 		CFF53B331EDD197300F567C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -163,6 +175,17 @@
 			name = Resources;
 			sourceTree = "<group>";
 		};
+		CFC4F9031F0625090000B3EE /* DirectoryCreation */ = {
+			isa = PBXGroup;
+			children = (
+				CFC4F9041F06253D0000B3EE /* DirectoryCreation.h */,
+				CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */,
+				CFC4F9061F06253D0000B3EE /* DirectoryCreationJob.h */,
+				CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.mm */,
+			);
+			name = DirectoryCreation;
+			sourceTree = "<group>";
+		};
 		CFF53B251EDD197300F567C4 = {
 			isa = PBXGroup;
 			children = (
@@ -202,10 +225,11 @@
 		CFF53B3C1EDD197300F567C4 /* OperationsTests */ = {
 			isa = PBXGroup;
 			children = (
-				CFF53B951EE252F200F567C4 /* Compression_Tests.mm */,
 				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
-				CFF53B3D1EDD197300F567C4 /* OperationsTests.m */,
+				CFF53B951EE252F200F567C4 /* Compression_Tests.mm */,
+				CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */,
 				CFF53B3F1EDD197300F567C4 /* Info.plist */,
+				CFF53B3D1EDD197300F567C4 /* OperationsTests.m */,
 			);
 			path = OperationsTests;
 			sourceTree = "<group>";
@@ -235,6 +259,7 @@
 		CFF53B8B1EE24F2400F567C4 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F9031F0625090000B3EE /* DirectoryCreation */,
 				CFF53B8E1EE24FC300F567C4 /* Compression */,
 				CFF53BAC1EEA840600F567C4 /* Statistics.h */,
 				CFF53BAD1EEA840600F567C4 /* Statistics.mm */,
@@ -265,6 +290,7 @@
 				CFC4F8E61F00E5D30000B3EE /* HaltReasonDialog.h */,
 				CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */,
 				CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */,
+				CFC4F9011F0617E20000B3EE /* ModalDialogResponses.h */,
 				CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */,
 				CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */,
 				CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */,
@@ -305,11 +331,14 @@
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
 				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
+				CFC4F9081F06253D0000B3EE /* DirectoryCreation.h in Headers */,
 				CFF53B401EDD197300F567C4 /* Operations.h in Headers */,
 				CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */,
 				CFC4F8C91EFA05B00000B3EE /* PoolViewController.h in Headers */,
 				CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */,
+				CFC4F9021F0617E20000B3EE /* ModalDialogResponses.h in Headers */,
 				CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */,
+				CFC4F90A1F06253D0000B3EE /* DirectoryCreationJob.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,8 +448,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFC4F90B1F06253D0000B3EE /* DirectoryCreationJob.mm in Sources */,
 				CFC4F8D41EFA17070000B3EE /* Internal.mm in Sources */,
 				CFC4F8B31EF7E3830000B3EE /* Compression.mm in Sources */,
+				CFC4F9091F06253D0000B3EE /* DirectoryCreation.mm in Sources */,
 				CFC4F8F41F0243D30000B3EE /* GenericErrorDialog.mm in Sources */,
 				CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.mm in Sources */,
 				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,
@@ -446,6 +477,7 @@
 			files = (
 				CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */,
 				CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */,
+				CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */,
 				CFF53B3E1EDD197300F567C4 /* OperationsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -526,6 +558,7 @@
 					"-std=c++1z",
 				);
 				OTHER_LDFLAGS = (
+					"-ObjC",
 					"-lVFS",
 					"-lHabanero",
 					"-lUtility",
@@ -617,6 +650,7 @@
 					"-std=c++1z",
 				);
 				OTHER_LDFLAGS = (
+					"-ObjC",
 					"-lVFS",
 					"-lHabanero",
 					"-lUtility",

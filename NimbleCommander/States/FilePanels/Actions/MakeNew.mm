@@ -1,6 +1,5 @@
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperation.h>
 #include <NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include "../PanelController.h"
@@ -8,6 +7,8 @@
 #include "../PanelAux.h"
 #include "../PanelData.h"
 #include "../PanelView.h"
+#include "../../MainWindowController.h"
+#include <Operations/DirectoryCreation.h>
 
 namespace nc::panel::actions {
 
@@ -89,6 +90,14 @@ static void ScheduleRenaming( const string& _filename, PanelController *_panel )
     [_panel ScheduleDelayedSelectionChangeFor:req];
 }
 
+static void ScheduleFocus( const string& _filename, PanelController *_panel )
+{
+    DelayedSelection req;
+    req.filename = _filename;
+    req.timeout = 2s;
+    [_panel ScheduleDelayedSelectionChangeFor:req];
+}
+
 bool MakeNewFile::Predicate( PanelController *_target ) const
 {
     return _target.isUniform && _target.vfs->IsWritable();
@@ -143,27 +152,22 @@ void MakeNewFolder::Perform( PanelController *_target, id _sender ) const
     const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
     __weak PanelController *weak_panel = _target;
 
-    auto name = FindSuitableName(g_InitialFolderName, *listing);
+    const auto name = FindSuitableName(g_InitialFolderName, *listing);
     if( name.empty() )
         return;
 
-    CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
-    if( vfs->IsNativeFS() )
-        op = [op initWithPath:name.c_str() rootpath:dir.c_str()];
-    else
-        op = [op initWithPath:name.c_str() rootpath:dir.c_str() at:vfs];
-    
-    [op AddOnFinishHandler:^{
+    const auto op = make_shared<nc::ops::DirectoryCreation>(name, dir.native(), *vfs);
+    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
         dispatch_to_main_queue([=]{
             if( PanelController *panel = weak_panel ) {
                 if( force_reload )
                     [panel refreshPanel];
-                
                 ScheduleRenaming(name, panel);
             }
         });
-    }];
-    [_target.state AddOperation:op];
+    });
+
+    [_target.mainWindowController enqueueOperation:op];
 }
 
 bool MakeNewFolderWithSelection::Predicate( PanelController *_target ) const
@@ -223,15 +227,28 @@ void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
     CreateDirectorySheetController *cd = [CreateDirectorySheetController new];
     [cd beginSheetForWindow:_target.window completionHandler:^(NSModalResponse returnCode) {
         if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
-            string pdir = _target.data.DirectoryPathWithoutTrailingSlash();
+            const string name = cd.result;
+            const string dir = _target.currentDirectoryPath;
+            const auto vfs = _target.vfs;
+            const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
+            __weak PanelController *weak_panel = _target;
             
-            CreateDirectoryOperation *op = [CreateDirectoryOperation alloc];
-            if( _target.vfs->IsNativeFS() )
-                op = [op initWithPath:cd.result.c_str() rootpath:pdir.c_str()];
-            else
-                op = [op initWithPath:cd.result.c_str() rootpath:pdir.c_str() at:_target.vfs];
-            op.TargetPanel = _target;
-            [_target.state AddOperation:op];
+            const auto op = make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
+            const auto weak_op = weak_ptr<nc::ops::DirectoryCreation>{op};
+            op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
+                const auto &dir_names = weak_op.lock()->DirectoryNames();
+                const string to_focus = dir_names.empty() ? ""s : dir_names.front();
+                dispatch_to_main_queue([=]{
+                    if( PanelController *panel = weak_panel ) {
+                        if( force_reload )
+                            [panel refreshPanel];
+                        
+                        ScheduleFocus(to_focus, panel);
+                    }
+                });
+            });
+            
+            [_target.mainWindowController enqueueOperation:op];
         }
     }];
 }

@@ -65,6 +65,7 @@ VFSNetDropboxHost::VFSNetDropboxHost( const string &_account, const string &_acc
 
 VFSNetDropboxHost::VFSNetDropboxHost( const VFSConfiguration &_config ):
     VFSHost("", nullptr, VFSNetDropboxHost::Tag),
+    I(make_unique<State>()),
     m_Config(_config)
 {
     Construct(Config().account, Config().token);

@@ -3,6 +3,7 @@
 #include "AsyncDialogResponse.h"
 #include <VFS/VFS.h>
 #include "HaltReasonDialog.h"
+#include <cxxabi.h>
 
 namespace nc::ops
 {
@@ -20,6 +21,9 @@ Operation::~Operation()
 
 Job *Operation::GetJob() noexcept
 {
+    if( typeid(this) != typeid(Operation) )
+        cerr << "Warning: operation's implementation class " << typeid(this).name() <<
+            " has no GetJob() overload!" << endl;
     return nullptr;
 }
 
@@ -86,19 +90,10 @@ void Operation::Stop()
 
 void Operation::Wait() const
 {
-    const auto pred = [this]{
-        const auto s = State();
-        return s != OperationState::Running && s != OperationState::Paused;
-    };
-    if( pred() )
-        return;
-    
-    static std::mutex m;
-    std::unique_lock<std::mutex> lock{m};
-    m_FinishCV.wait(lock, pred);
+    Wait( nanoseconds::max() );
 }
 
-bool Operation::Wait( std::chrono::nanoseconds _wait_for_time ) const
+bool Operation::Wait( nanoseconds _wait_for_time ) const
 {
     const auto pred = [this]{
         const auto s = State();
@@ -109,7 +104,13 @@ bool Operation::Wait( std::chrono::nanoseconds _wait_for_time ) const
     
     static std::mutex m;
     std::unique_lock<std::mutex> lock{m};
-    return m_FinishCV.wait_for(lock, _wait_for_time, pred);
+    if( _wait_for_time == nanoseconds::max() ) {
+        m_FinishCV.wait(lock, pred);
+        return true;
+    }
+    else {
+        return m_FinishCV.wait_for(lock, _wait_for_time, pred);
+    }
 }
 
 void Operation::JobFinished()

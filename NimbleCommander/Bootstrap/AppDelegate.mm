@@ -48,8 +48,6 @@
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
 
-#include "../../Operations/Operations/Operations.h"
-
 static SUUpdater *g_Sparkle = nil;
 
 static auto g_ConfigDirPostfix = @"/Config/";

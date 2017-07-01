@@ -47,12 +47,6 @@
 		CFC4F90B1F06253D0000B3EE /* DirectoryCreationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.mm */; };
 		CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
-		CFF53B3E1EDD197300F567C4 /* OperationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B3D1EDD197300F567C4 /* OperationsTests.m */; };
-		CFF53B401EDD197300F567C4 /* Operations.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B321EDD197300F567C4 /* Operations.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CFF53B691EDD1F8900F567C4 /* Test.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B681EDD1F8900F567C4 /* Test.mm */; };
-		CFF53B6E1EDD3F7F00F567C4 /* VeryTestWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B6B1EDD3F7F00F567C4 /* VeryTestWindow.h */; };
-		CFF53B6F1EDD3F7F00F567C4 /* VeryTestWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B6C1EDD3F7F00F567C4 /* VeryTestWindow.m */; };
-		CFF53B701EDD3F7F00F567C4 /* VeryTestWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFF53B6D1EDD3F7F00F567C4 /* VeryTestWindow.xib */; };
 		CFF53B731EDD401900F567C4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B721EDD401900F567C4 /* Cocoa.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
@@ -115,15 +109,9 @@
 		CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreationJob.mm; path = source/DirectoryCreation/DirectoryCreationJob.mm; sourceTree = "<group>"; };
 		CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreations_Tests.mm; path = tests/DirectoryCreations_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFF53B321EDD197300F567C4 /* Operations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Operations.h; sourceTree = "<group>"; };
-		CFF53B331EDD197300F567C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CFF53B3D1EDD197300F567C4 /* OperationsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OperationsTests.m; sourceTree = "<group>"; };
-		CFF53B3F1EDD197300F567C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		CFF53B681EDD1F8900F567C4 /* Test.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Test.mm; sourceTree = "<group>"; };
-		CFF53B6B1EDD3F7F00F567C4 /* VeryTestWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VeryTestWindow.h; path = Operations/VeryTestWindow.h; sourceTree = "<group>"; };
-		CFF53B6C1EDD3F7F00F567C4 /* VeryTestWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VeryTestWindow.m; path = Operations/VeryTestWindow.m; sourceTree = "<group>"; };
-		CFF53B6D1EDD3F7F00F567C4 /* VeryTestWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = VeryTestWindow.xib; path = Operations/VeryTestWindow.xib; sourceTree = "<group>"; };
+		CFF53B3F1EDD197300F567C4 /* Info-Tests.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Tests.plist"; path = "resources/Info-Tests.plist"; sourceTree = "<group>"; };
 		CFF53B721EDD401900F567C4 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CFF53B741EDE53E800F567C4 /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operation.h; path = source/Operation.h; sourceTree = SOURCE_ROOT; };
 		CFF53B751EDE53E800F567C4 /* Operation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Operation.mm; path = source/Operation.mm; sourceTree = SOURCE_ROOT; };
@@ -168,6 +156,8 @@
 		CFC4F8E11EFCD9B40000B3EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CFF53B3F1EDD197300F567C4 /* Info-Tests.plist */,
+				CFF53B331EDD197300F567C4 /* Info-Framework.plist */,
 				CFC4F8DF1EFCD9A50000B3EE /* Media.xcassets */,
 				CFC4F8FD1F04AF2B0000B3EE /* Localizable.stringsdict */,
 				CFC4F8FF1F04B0780000B3EE /* Localizable.strings */,
@@ -186,81 +176,9 @@
 			name = DirectoryCreation;
 			sourceTree = "<group>";
 		};
-		CFF53B251EDD197300F567C4 = {
+		CFC4F90E1F0745170000B3EE /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				CFF53B8A1EE24F1B00F567C4 /* Headers */,
-				CFF53B8B1EE24F2400F567C4 /* Source */,
-				CFF53B871EE1577100F567C4 /* Operations-prefix.pch */,
-				CFF53B6B1EDD3F7F00F567C4 /* VeryTestWindow.h */,
-				CFF53B6C1EDD3F7F00F567C4 /* VeryTestWindow.m */,
-				CFF53B6D1EDD3F7F00F567C4 /* VeryTestWindow.xib */,
-				CFF53B311EDD197300F567C4 /* Operations */,
-				CFF53B3C1EDD197300F567C4 /* OperationsTests */,
-				CFC4F8E11EFCD9B40000B3EE /* Resources */,
-				CFF53B301EDD197300F567C4 /* Products */,
-				CFF53B711EDD401900F567C4 /* Frameworks */,
-			);
-			sourceTree = "<group>";
-		};
-		CFF53B301EDD197300F567C4 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				CFF53B2F1EDD197300F567C4 /* Operations.framework */,
-				CFF53B381EDD197300F567C4 /* OperationsTests.xctest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		CFF53B311EDD197300F567C4 /* Operations */ = {
-			isa = PBXGroup;
-			children = (
-				CFF53B681EDD1F8900F567C4 /* Test.mm */,
-				CFF53B321EDD197300F567C4 /* Operations.h */,
-				CFF53B331EDD197300F567C4 /* Info.plist */,
-			);
-			path = Operations;
-			sourceTree = "<group>";
-		};
-		CFF53B3C1EDD197300F567C4 /* OperationsTests */ = {
-			isa = PBXGroup;
-			children = (
-				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
-				CFF53B951EE252F200F567C4 /* Compression_Tests.mm */,
-				CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */,
-				CFF53B3F1EDD197300F567C4 /* Info.plist */,
-				CFF53B3D1EDD197300F567C4 /* OperationsTests.m */,
-			);
-			path = OperationsTests;
-			sourceTree = "<group>";
-		};
-		CFF53B711EDD401900F567C4 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				CFF53B851EE1544B00F567C4 /* libVFS.a */,
-				CFF53B721EDD401900F567C4 /* Cocoa.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		CFF53B8A1EE24F1B00F567C4 /* Headers */ = {
-			isa = PBXGroup;
-			children = (
-				CFC4F8CD1EFA07F00000B3EE /* PoolView.h */,
-				CFC4F8CE1EFA07F00000B3EE /* PoolViewController.h */,
-				CF7084DC1EF7CF7E0072F0F6 /* Compression.h */,
-				CFF53B8C1EE24F9E00F567C4 /* Job.h */,
-				CFF53B8D1EE24F9E00F567C4 /* Operation.h */,
-				CF7084DA1EF7CCB00072F0F6 /* Pool.h */,
-			);
-			name = Headers;
-			sourceTree = "<group>";
-		};
-		CFF53B8B1EE24F2400F567C4 /* Source */ = {
-			isa = PBXGroup;
-			children = (
-				CFC4F9031F0625090000B3EE /* DirectoryCreation */,
-				CFF53B8E1EE24FC300F567C4 /* Compression */,
 				CFF53BAC1EEA840600F567C4 /* Statistics.h */,
 				CFF53BAD1EEA840600F567C4 /* Statistics.mm */,
 				CFF53BCD1EF3913B00F567C4 /* Progress.h */,
@@ -294,6 +212,71 @@
 				CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */,
 				CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */,
 				CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */,
+				CFF53B871EE1577100F567C4 /* Operations-prefix.pch */,
+			);
+			name = Base;
+			sourceTree = "<group>";
+		};
+		CFF53B251EDD197300F567C4 = {
+			isa = PBXGroup;
+			children = (
+				CFF53B8A1EE24F1B00F567C4 /* Headers */,
+				CFF53B8B1EE24F2400F567C4 /* Source */,
+				CFF53B3C1EDD197300F567C4 /* Tests */,
+				CFC4F8E11EFCD9B40000B3EE /* Resources */,
+				CFF53B301EDD197300F567C4 /* Products */,
+				CFF53B711EDD401900F567C4 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CFF53B301EDD197300F567C4 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFF53B2F1EDD197300F567C4 /* Operations.framework */,
+				CFF53B381EDD197300F567C4 /* OperationsTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CFF53B3C1EDD197300F567C4 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
+				CFF53B951EE252F200F567C4 /* Compression_Tests.mm */,
+				CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */,
+			);
+			name = Tests;
+			path = OperationsTests;
+			sourceTree = "<group>";
+		};
+		CFF53B711EDD401900F567C4 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CFF53B851EE1544B00F567C4 /* libVFS.a */,
+				CFF53B721EDD401900F567C4 /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CFF53B8A1EE24F1B00F567C4 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				CFC4F8CD1EFA07F00000B3EE /* PoolView.h */,
+				CFC4F8CE1EFA07F00000B3EE /* PoolViewController.h */,
+				CF7084DC1EF7CF7E0072F0F6 /* Compression.h */,
+				CFF53B8C1EE24F9E00F567C4 /* Job.h */,
+				CFF53B8D1EE24F9E00F567C4 /* Operation.h */,
+				CF7084DA1EF7CCB00072F0F6 /* Pool.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		CFF53B8B1EE24F2400F567C4 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				CFC4F90E1F0745170000B3EE /* Base */,
+				CFC4F9031F0625090000B3EE /* DirectoryCreation */,
+				CFF53B8E1EE24FC300F567C4 /* Compression */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -326,13 +309,11 @@
 				CFC4F8D71EFB5F780000B3EE /* BriefOperationViewController.h in Headers */,
 				CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */,
 				CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */,
-				CFF53B6E1EDD3F7F00F567C4 /* VeryTestWindow.h in Headers */,
 				CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */,
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
 				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
 				CFC4F9081F06253D0000B3EE /* DirectoryCreation.h in Headers */,
-				CFF53B401EDD197300F567C4 /* Operations.h in Headers */,
 				CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */,
 				CFC4F8C91EFA05B00000B3EE /* PoolViewController.h in Headers */,
 				CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */,
@@ -429,7 +410,6 @@
 				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
 				CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */,
 				CFC4F9001F04B0780000B3EE /* Localizable.strings in Resources */,
-				CFF53B701EDD3F7F00F567C4 /* VeryTestWindow.xib in Resources */,
 				CFC4F8FE1F04AF2B0000B3EE /* Localizable.stringsdict in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -463,10 +443,8 @@
 				CFF53B7B1EDEA83900F567C4 /* Job.cpp in Sources */,
 				CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */,
 				CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */,
-				CFF53B691EDD1F8900F567C4 /* Test.mm in Sources */,
 				CFC4F8E51EFCE0380000B3EE /* BriefOperationView.mm in Sources */,
 				CFF53BAF1EEA840600F567C4 /* Statistics.mm in Sources */,
-				CFF53B6F1EDD3F7F00F567C4 /* VeryTestWindow.m in Sources */,
 				CFC4F8D81EFB5F780000B3EE /* BriefOperationViewController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -478,7 +456,6 @@
 				CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */,
 				CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */,
 				CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */,
-				CFF53B3E1EDD197300F567C4 /* OperationsTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -695,7 +672,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = Operations/Info.plist;
+				INFOPLIST_FILE = "resources/Info-Framework.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.Operations;
@@ -715,7 +692,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				FRAMEWORK_VERSION = A;
-				INFOPLIST_FILE = Operations/Info.plist;
+				INFOPLIST_FILE = "resources/Info-Framework.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.NimbleCommander.Operations;
@@ -728,7 +705,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = OperationsTests/Info.plist;
+				INFOPLIST_FILE = "resources/Info-Tests.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.OperationsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -739,7 +716,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = OperationsTests/Info.plist;
+				INFOPLIST_FILE = "resources/Info-Tests.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.OperationsTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";

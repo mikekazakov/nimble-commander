@@ -33,7 +33,19 @@ void Job::Execute()
 {
     m_Stats.StartTiming();
     
-    Perform();
+    try {
+        Perform();
+    }
+    catch( exception &e ) {
+        cerr << "Error: operation " << typeid(*this).name() <<
+            " has thrown an exeption: " << e.what() << "." << endl;
+        Stop();
+    }
+    catch(...){
+        cerr << "Error: operation " << typeid(*this).name() <<
+            " has thrown an unknown exeption."<< endl;
+        Stop();
+    }
     
     if( !IsStopped() )
         SetCompleted();

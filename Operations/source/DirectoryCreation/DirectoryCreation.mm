@@ -10,8 +10,12 @@ static vector<string> Split( const string &_directory );
 DirectoryCreation::DirectoryCreation( string _directory_name, string _root_folder, VFSHost &_vfs )
 {
     m_Directories = Split(_directory_name);
+
     m_Job.reset( new DirectoryCreationJob{m_Directories, _root_folder, _vfs.shared_from_this()} );
- 
+    m_Job->m_OnError = [this](int _err, const string &_path, VFSHost &_vfs) {
+        OnError(_err, _path, _vfs);
+    };
+
     const auto title = [NSString localizedStringWithFormat:
         NSLocalizedStringFromTableInBundle(@"Creating a directory \u201c%@\u201d",
                                            @"Localizable.strings",
@@ -36,14 +40,17 @@ const vector<string> &DirectoryCreation::DirectoryNames() const
     return m_Directories;
 }
 
+void DirectoryCreation::OnError(int _err, const string &_path, VFSHost &_vfs)
+{
+    ReportHaltReason(@"Failed to create a directory", _err, _path, _vfs);
+}
+
 static vector<string> Split( const string &_directory )
 {
     vector<string> parts;
     boost::split( parts, _directory, [](char _c){ return _c == '/';}, boost::token_compress_on );
-    parts.erase( remove( begin(parts), end(parts), ""s), end(parts));
+    parts.erase( remove( begin(parts), end(parts), ""s), end(parts) );
     return parts;
 }
-
-
 
 }

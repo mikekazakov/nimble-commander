@@ -21,8 +21,8 @@ Operation::~Operation()
 
 Job *Operation::GetJob() noexcept
 {
-    if( typeid(this) != typeid(Operation) )
-        cerr << "Warning: operation's implementation class " << typeid(this).name() <<
+    if( typeid(*this) != typeid(Operation) )
+        cerr << "Warning: operation's implementation class " << typeid(*this).name() <<
             " has no GetJob() overload!" << endl;
     return nullptr;
 }

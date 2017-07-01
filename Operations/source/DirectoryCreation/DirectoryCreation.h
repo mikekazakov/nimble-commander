@@ -17,6 +17,7 @@ public:
 
 private:
     virtual Job *GetJob() noexcept override;
+    void OnError(int _err, const string &_path, VFSHost &_vfs);
 
     vector<string> m_Directories;
     unique_ptr<DirectoryCreationJob> m_Job;

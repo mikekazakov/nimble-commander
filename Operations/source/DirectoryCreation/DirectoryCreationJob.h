@@ -5,7 +5,14 @@
 
 namespace nc::ops {
 
-class DirectoryCreationJob : public Job
+struct DirectoryCreationJobCallbacks
+{
+    function< void(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnError =
+    [](int _err, const string &_path, VFSHost &_vfs){};
+};
+
+class DirectoryCreationJob : public Job, public DirectoryCreationJobCallbacks
 {
 public:
     DirectoryCreationJob( const vector<string> &_directories_chain,
@@ -15,6 +22,7 @@ public:
     
 private:
     virtual void Perform() override;
+    bool MakeDir(const string &_path);
 
     const vector<string> &m_DirectoriesChain;
     string m_RootFolder;

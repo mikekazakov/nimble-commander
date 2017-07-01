@@ -28,27 +28,34 @@ void DirectoryCreationJob::Perform()
             return;
     
         p /= s;
-        
-        VFSStat st;
-        const auto stat_rc = m_VFS->Stat(p.c_str(), st, 0);
-        if( stat_rc == VFSError::Ok ){
-            if( !st.mode_bits.dir ) {
-                // show error
-                Stop();
-                return;
-            }
-        }
-        else {
-            const auto mkdir_rc = m_VFS->CreateDirectory(p.c_str(), g_CreateMode);
-            if( mkdir_rc != VFSError::Ok ) {
-                // show error
-                Stop();
-                return;
-            }
-        }
+        if( !MakeDir(p.native()) )
+            return;
     
         Statistics().CommitProcessed( Statistics::SourceType::Items, 1 );
     }
 }
+
+bool DirectoryCreationJob::MakeDir(const string &_path)
+{
+    VFSStat st;
+    const auto stat_rc = m_VFS->Stat(_path.c_str(), st, 0);
+    if( stat_rc == VFSError::Ok ){
+        if( !st.mode_bits.dir ) {
+            m_OnError( VFSError::FromErrno(EEXIST), _path, *m_VFS );
+            Stop();
+            return false;
+        }
+    }
+    else {
+        const auto mkdir_rc = m_VFS->CreateDirectory(_path.c_str(), g_CreateMode);
+        if( mkdir_rc != VFSError::Ok ) {
+            m_OnError( mkdir_rc, _path, *m_VFS );
+            Stop();
+            return false;
+        }
+    }
+    return true;
+}
+
 
 }

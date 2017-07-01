@@ -193,8 +193,8 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     operation.Start();
     operation.Wait( 5000ms );
     const auto eta = operation.Statistics().ETA( Statistics::SourceType::Bytes );
+    XCTAssert( double(eta->count()) / 1000000000. > 5. );
     
-    cout << "eta: " << double(eta->count()) / 1000000000. << endl;
     operation.Pause();
     XCTAssert( operation.State() == OperationState::Paused );
     operation.Wait( 5000ms );
@@ -217,21 +217,6 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
     }
-    
-    
-    const auto &stats = operation.Statistics();
-    const auto bps = stats.BytesPerSecond();
-    for( auto &v: bps )
-        cout << "{" << (long)v.value << ", " << v.fraction << "}, ";
-    cout << endl;
-    for( auto &v: bps )
-        cout << "{" << long(v.value/v.fraction)/(1024*1024) << "}, ";
-    cout << endl;
-
-
-    cout << "time elapsed: " << double(stats.ElapsedTime().count()) / 1000000000. << endl;
-    cout << "bps direct : " << stats.SpeedPerSecondDirect(Statistics::SourceType::Bytes) / (1024*1024) << endl;
-    cout << "bps average: " << stats.SpeedPerSecondAverage(Statistics::SourceType::Bytes) / (1024*1024) << endl;
 }
 
 - (path)makeTmpDir

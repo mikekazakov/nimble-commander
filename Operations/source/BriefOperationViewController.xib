@@ -55,7 +55,7 @@
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fbb-24-X5f">
                     <rect key="frame" x="-2" y="22" width="300" height="14"/>
                     <textFieldCell key="cell" lineBreakMode="truncatingMiddle" allowsUndo="NO" sendsActionOnEndEditing="YES" alignment="center" usesSingleLineMode="YES" id="ezh-Od-Adz">
-                        <font key="font" metaFont="system" size="11"/>
+                        <font key="font" metaFont="smallSystem"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
@@ -98,7 +98,12 @@
                     </buttonCell>
                     <connections>
                         <action selector="onPause:" target="-2" id="0VB-qA-cij"/>
-                        <binding destination="-2" name="hidden2" keyPath="self.isPaused" previousBinding="goF-4l-eWc" id="w0I-6O-t3e">
+                        <binding destination="-2" name="enabled" keyPath="self.isCold" id="e6N-vc-eLV">
+                            <dictionary key="options">
+                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                            </dictionary>
+                        </binding>
+                        <binding destination="-2" name="hidden2" keyPath="self.isPaused" previousBinding="SKN-9F-HBH" id="Th2-72-Hbe">
                             <dictionary key="options">
                                 <integer key="NSMultipleValuesPlaceholder" value="-1"/>
                                 <integer key="NSNoSelectionPlaceholder" value="-1"/>
@@ -106,7 +111,7 @@
                                 <integer key="NSNullPlaceholder" value="-1"/>
                             </dictionary>
                         </binding>
-                        <binding destination="-2" name="hidden" keyPath="self.view.isMouseOver" id="goF-4l-eWc">
+                        <binding destination="-2" name="hidden" keyPath="self.view.isMouseOver" previousBinding="e6N-vc-eLV" id="SKN-9F-HBH">
                             <dictionary key="options">
                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                             </dictionary>

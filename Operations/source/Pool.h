@@ -13,7 +13,8 @@ public:
     ~Pool();
     
     void Enqueue( shared_ptr<Operation> _operation );
-
+    static int ConcurrencyPerPool();
+    static void SetConcurrencyPerPool( int _maximum_current_operations );
 
     enum {
         NotifyAboutAddition = 1<<0,
@@ -27,8 +28,6 @@ public:
     
     int TotalOperationsCount() const;
     int RunningOperationsCount() const;
-
-    shared_ptr<Operation> Front() const;
     vector<shared_ptr<Operation>> Operations() const;
 
     bool IsInteractive() const;
@@ -40,13 +39,14 @@ private:
     void OperationDidStart( const shared_ptr<Operation> &_operation );
     void OperationDidFinish( const shared_ptr<Operation> &_operation );
     bool ShowDialog(NSWindow *_dialog, function<void (NSModalResponse)> _callback);
+    void StartPendingOperations();
     
-
-    vector<shared_ptr<Operation>>           m_Operations;
+    vector<shared_ptr<Operation>>           m_RunningOperations;
+    deque<shared_ptr<Operation>>            m_PendingOperataions;
     mutable mutex                           m_Lock;
-    atomic_int  m_RunningOperations;
     
     function<void(NSWindow *dialog, function<void(NSModalResponse response)>)> m_DialogPresentation;
+    static atomic_int m_ConcurrencyPerPool;
 };
 
 }

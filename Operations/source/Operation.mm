@@ -84,8 +84,12 @@ void Operation::Resume()
 
 void Operation::Stop()
 {
-    if( auto j = GetJob() )
+    if( auto j = GetJob() ) {
+        const auto is_running = j->IsRunning();
         j->Stop();
+        if( !is_running )
+            JobFinished();
+    }
 } 
 
 void Operation::Wait() const

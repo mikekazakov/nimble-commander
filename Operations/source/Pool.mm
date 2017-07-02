@@ -3,24 +3,25 @@
 
 namespace nc::ops {
 
+atomic_int Pool::m_ConcurrencyPerPool{5};
+
+template <class C, class T>
+void erase_from(C &_c, const T& _t)
+{
+    _c.erase( remove( begin(_c), end(_c), _t ), end(_c) );
+}
+
 shared_ptr<Pool> Pool::Make()
 {
     return shared_ptr<Pool>{new Pool};
 }
 
-Pool::Pool():
-//    m_ShuttingDown{false},
-    m_RunningOperations{0}
-//    m_LifetimeTracker{ make_shared<atomic_bool>(true) }
+Pool::Pool()
 {
 }
 
 Pool::~Pool()
 {
-//    *m_LifetimeTracker = false;
-//    LOCK_GUARD(m_Lock) {
-//        m_OperationsObservations.clear();
-//    }
 }
 
 void Pool::Enqueue( shared_ptr<Operation> _operation )
@@ -48,39 +49,44 @@ void Pool::Enqueue( shared_ptr<Operation> _operation )
         return false;
     });
 
+    LOCK_GUARD(m_Lock)
+        m_PendingOperataions.push_back( _operation );
     
-    LOCK_GUARD(m_Lock) {
-        m_Operations.emplace_back( _operation );
-    }
-    
-    // + starting logic
-    
-    _operation->Start();
     FireObservers( NotifyAboutAddition );
+    StartPendingOperations();
 }
 
 void Pool::OperationDidStart( const shared_ptr<Operation> &_operation )
 {
-    m_RunningOperations++;
-//    FireObservers( Notify )
-    
-    LOCK_GUARD(m_Lock) {
-
-    
-    }
-
-
 }
 
 void Pool::OperationDidFinish( const shared_ptr<Operation> &_operation )
 {
-    m_RunningOperations--;
-
     LOCK_GUARD(m_Lock) {
-        m_Operations.erase(remove( begin(m_Operations), end(m_Operations), _operation ),
-                           end(m_Operations));
+        erase_from(m_RunningOperations, _operation);
+        erase_from(m_PendingOperataions, _operation);
     }
     FireObservers( NotifyAboutRemoval );
+    StartPendingOperations();
+}
+
+void Pool::StartPendingOperations()
+{
+    vector<shared_ptr<Operation>> to_start;
+
+    LOCK_GUARD(m_Lock) {
+        const auto running_now = m_RunningOperations.size();
+        while( running_now + to_start.size() < m_ConcurrencyPerPool &&
+               !m_PendingOperataions.empty() ) {
+            const auto op = m_PendingOperataions.front();
+            m_PendingOperataions.pop_front();
+            to_start.emplace_back( op  );
+            m_RunningOperations.emplace_back( op );
+        }
+    }
+    
+    for( const auto &op: to_start )
+        op->Start();
 }
 
 Pool::ObservationTicket Pool::Observe( uint64_t _notification_mask, function<void()> _callback )
@@ -95,26 +101,23 @@ void Pool::ObserveUnticketed( uint64_t _notification_mask, function<void()> _cal
 
 int Pool::RunningOperationsCount() const
 {
-//    return m
-    return m_RunningOperations;
+    LOCK_GUARD(m_Lock)
+        return (int)m_RunningOperations.size();
 }
 
 int Pool::TotalOperationsCount() const
 {
     LOCK_GUARD(m_Lock)
-        return (int)m_Operations.size();
-}
-
-shared_ptr<Operation> Pool::Front() const
-{
-    LOCK_GUARD(m_Lock)
-        return m_Operations.empty() ? nullptr : m_Operations.front();
+        return (int)m_RunningOperations.size() + (int)m_PendingOperataions.size();
 }
 
 vector<shared_ptr<Operation>> Pool::Operations() const
 {
-    LOCK_GUARD(m_Lock)
-        return m_Operations;
+    LOCK_GUARD(m_Lock) {
+        auto v = m_RunningOperations;
+        v.insert( end(v), begin(m_PendingOperataions), end(m_PendingOperataions) );
+        return v;
+    }
 }
 
 void Pool::SetDialogCallback(function<void(NSWindow*, function<void(NSModalResponse)>)> _callback)
@@ -134,6 +137,16 @@ bool Pool::ShowDialog(NSWindow *_dialog, function<void (NSModalResponse)> _callb
         return false;
     m_DialogPresentation(_dialog, move(_callback));
     return true;
+}
+
+int Pool::ConcurrencyPerPool()
+{
+    return m_ConcurrencyPerPool;
+}
+
+void Pool::SetConcurrencyPerPool( int _maximum_current_operations )
+{
+    m_ConcurrencyPerPool = _maximum_current_operations;
 }
 
 }

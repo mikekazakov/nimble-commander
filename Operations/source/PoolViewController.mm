@@ -47,7 +47,6 @@ using namespace nc::ops;
     [self updateButtonsState];
 }
 
-
 - (void)syncWithOperations:(const vector<shared_ptr<Operation>>&)_operations
 {
     const auto find_existing = [=](const shared_ptr<Operation>&_op){
@@ -60,10 +59,13 @@ using namespace nc::ops;
     vector<NCOpsBriefOperationViewController*> new_views;
     new_views.reserve(_operations.size());
     for( auto o: _operations )
-        if( const auto existing = find_existing(o) )
+        if( const auto existing = find_existing(o) ) {
             new_views.emplace_back(existing);
-        else
+        }
+        else {
             new_views.emplace_back([[NCOpsBriefOperationViewController alloc] initWithOperation:o]);
+            new_views.back().shouldDelayAppearance = _operations.size() == 1;
+        }
  
     const auto index_of = [=](const shared_ptr<Operation>&_op)->int{
         const auto it = find_if( begin(m_BriefViews), end(m_BriefViews), [_op](auto &v){

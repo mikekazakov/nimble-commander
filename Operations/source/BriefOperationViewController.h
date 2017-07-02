@@ -12,4 +12,6 @@ namespace nc::ops {
 
 @property (nonatomic, readonly) const shared_ptr<nc::ops::Operation>& operation;
 
+@property bool shouldDelayAppearance;
+
 @end

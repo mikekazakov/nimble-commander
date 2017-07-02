@@ -18,6 +18,7 @@ static const auto g_SlowUpdateFreq = 1.0;
 @property (strong) IBOutlet NSButton *resumeButton;
 @property (strong) IBOutlet NSButton *stopButton;
 @property bool isPaused;
+@property bool isCold;
 @end
 
 @implementation NCOpsBriefOperationViewController
@@ -26,18 +27,23 @@ static const auto g_SlowUpdateFreq = 1.0;
     NSTimer *m_RapidTimer;
     NSTimer *m_SlowTimer;
     NSString *m_ETA;
+    bool m_ShouldDelayAppearance;
 }
+
+@synthesize shouldDelayAppearance = m_ShouldDelayAppearance;
 
 - (instancetype)initWithOperation:(const shared_ptr<nc::ops::Operation>&)_operation
 {
     dispatch_assert_main_queue();
-    if( !_operation )
-        return nil;
+    assert(_operation);
     
     self = [super initWithNibName:@"BriefOperationViewController" bundle:Bundle()];
     if( self ) {
-        self.isPaused = false;
+        m_ShouldDelayAppearance = false;
         m_Operation = _operation;
+        const auto current_state = _operation->State();
+        self.isPaused = current_state == OperationState::Paused;
+        self.isCold = current_state == OperationState::Cold;
         _operation->ObserveUnticketed(
             Operation::NotifyAboutStateChange,
             objc_callback_to_main_queue(self, @selector(onOperationStateChanged)));
@@ -61,13 +67,15 @@ static const auto g_SlowUpdateFreq = 1.0;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.hidden = true;
+    if( m_ShouldDelayAppearance ) {
+        self.view.hidden = true;
+        dispatch_to_main_queue_after(g_ViewAppearTimeout, [self]{
+            self.view.hidden = false;
+        });
+    }
     self.ETA.font = [NSFont monospacedDigitSystemFontOfSize:self.ETA.font.pointSize
                                                      weight:NSFontWeightRegular];
     [self onOperationTitleChanged];
-    dispatch_to_main_queue_after(g_ViewAppearTimeout, [self]{
-        self.view.hidden = false;
-    });
 }
 
 - (void)viewDidAppear
@@ -132,7 +140,10 @@ static const auto g_SlowUpdateFreq = 1.0;
 
 - (void)updateSlow
 {
-    self.ETA.stringValue = StatisticsFormatter{m_Operation->Statistics()}.ProgressCaption();
+    if(m_Operation->State() == OperationState::Cold)
+        self.ETA.stringValue = @"Waiting in the queue...";
+    else
+        self.ETA.stringValue = StatisticsFormatter{m_Operation->Statistics()}.ProgressCaption();
 }
 
 - (IBAction)onStop:(id)sender
@@ -154,6 +165,7 @@ static const auto g_SlowUpdateFreq = 1.0;
 {
     const auto new_state = m_Operation->State();
     self.isPaused = new_state == OperationState::Paused;
+    self.isCold = new_state == OperationState::Cold;
 }
 
 - (void)onOperationTitleChanged

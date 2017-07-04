@@ -36,8 +36,7 @@ public:
    
     void CommitEstimated( SourceType _type, uint64_t _delta );
     void CommitProcessed( SourceType _type, uint64_t _delta );
-    
-    // + CommitSkipped
+    void CommitSkipped( SourceType _type, uint64_t _delta );
     
 private:
     Progress &Timeline(SourceType _type) noexcept;

@@ -38,6 +38,7 @@ void DeletionJob::DoScan()
             SourceItem si;
             si.listing_item_index = i;
             si.filename = &m_Paths.back();
+            si.type = m_Type;
             m_Script.emplace(si);
             
             if( m_Type != DeletionType::Trash )
@@ -48,6 +49,7 @@ void DeletionJob::DoScan()
             SourceItem si;
             si.listing_item_index = i;
             si.filename = &m_Paths.back();
+            si.type = m_Type;
             m_Script.emplace(si);
         }
     }
@@ -60,10 +62,17 @@ void DeletionJob::ScanDirectory(const string &_path,
     const auto &vfs = m_SourceItems[_listing_item_index].Host();
 
     vector<VFSDirEnt> dir_entries;
-    vfs->IterateDirectoryListing(_path.c_str(), [&](const VFSDirEnt &_entry){
+    const auto rc = vfs->IterateDirectoryListing(_path.c_str(), [&](const VFSDirEnt &_entry){
         dir_entries.emplace_back(_entry);
         return true;
     });
+    
+    if( rc != VFSError::Ok ) {
+        const auto resolution = m_OnReadDirError(rc, _path, *vfs);
+        if( resolution == ReadDirErrorResolution::Stop )
+            Stop();
+        return;
+    }
     
     for( const auto &e: dir_entries ) {
         Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
@@ -72,15 +81,17 @@ void DeletionJob::ScanDirectory(const string &_path,
             SourceItem si;
             si.listing_item_index = _listing_item_index;
             si.filename = &m_Paths.back();
+            si.type = DeletionType::Permanent;
             m_Script.emplace(si);
             
-            ScanDirectory(_path + "/" + e.name, _listing_item_index, si.filename);
+            ScanDirectory( EnsureTrailingSlash(_path) + e.name, _listing_item_index, si.filename);
         }
         else {
             m_Paths.push_back( e.name, _prefix );
             SourceItem si;
             si.listing_item_index = _listing_item_index;
             si.filename = &m_Paths.back();
+            si.type = DeletionType::Permanent;
             m_Script.emplace(si);
         }
     }
@@ -92,28 +103,93 @@ void DeletionJob::DoDelete()
         if( BlockIfPaused(); IsStopped() )
             return;
         
-        auto entry = m_Script.top();
+        const auto entry = m_Script.top();
         m_Script.pop();
+        
         const auto path = m_SourceItems[entry.listing_item_index].Directory() +
                           entry.filename->to_str_with_pref();
         const auto &vfs = m_SourceItems[entry.listing_item_index].Host();
-        if( m_Type == DeletionType::Permanent ) {
+        const auto type = entry.type;
+        
+        if( type == DeletionType::Permanent ) {
             const auto is_dir = IsPathWithTrailingSlash(path);
-            if( is_dir ) {
-                const auto rc = vfs->RemoveDirectory( path.c_str() );
-                // TODO: process rc
-            }
-            else {
-                const auto rc = vfs->Unlink( path.c_str() );
-                // TODO: process rc
-            }
+            if( is_dir )
+                DoRmDir(path, *vfs);
+            else
+                DoUnlink(path, *vfs);
         }
         else {
-            const auto rc = vfs->Trash( path.c_str() );
-            // TODO: process rc
+            DoTrash(path, *vfs, entry);
         }
+
+    }
+}
+
+void DeletionJob::DoUnlink( const string &_path, VFSHost &_vfs )
+{
+    const auto rc = _vfs.Unlink( _path.c_str() );
+    if( rc == VFSError::Ok ) {
         Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
     }
+    else {
+        const auto resolution = m_OnUnlinkError(rc, _path, _vfs);
+        if( resolution == UnlinkErrorResolution::Skip ) {
+            Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+        }
+        else {
+            Stop();
+            return;
+        }
+    }
+}
+
+void DeletionJob::DoRmDir( const string &_path, VFSHost &_vfs )
+{
+    const auto rc = _vfs.RemoveDirectory( _path.c_str() );
+    if( rc == VFSError::Ok ) {
+        Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
+    }
+    else {
+        const auto resolution = m_OnRmdirError(rc, _path, _vfs);
+        if( resolution == RmdirErrorResolution::Skip ) {
+            Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+        }
+        else {
+            Stop();
+            return;
+        }
+    }
+}
+
+void DeletionJob::DoTrash( const string &_path, VFSHost &_vfs, SourceItem _src )
+{
+    const auto rc = _vfs.Trash( _path.c_str() );
+    if( rc == VFSError::Ok ) {
+        Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
+    }
+    else {
+        const auto resolution = m_OnTrashError(rc, _path, _vfs);
+        if( resolution == TrashErrorResolution::Skip ) {
+            Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+        }
+        else if( resolution == TrashErrorResolution::DeletePermanently) {
+            SourceItem si = _src;
+            si.type = DeletionType::Permanent;
+            m_Script.emplace(si);
+            const auto is_dir = IsPathWithTrailingSlash(_path);
+            if( is_dir )
+                ScanDirectory(_path, si.listing_item_index, si.filename);
+        }
+        else {
+            Stop();
+            return;
+        }
+    }
+}
+
+int DeletionJob::ItemsInScript() const
+{
+    return (int)m_Script.size();
 }
 
 }

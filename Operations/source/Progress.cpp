@@ -19,6 +19,18 @@ void Progress::CommitEstimated( uint64_t _delta )
     m_Estimated += _delta;
 }
 
+void Progress::CommitSkipped( uint64_t _delta )
+{
+    if( _delta + m_Processed > m_Estimated ) {
+        cerr << "Progress::CommitSkipped: supicious argument: "
+            "_delta + m_Processed > m_Estimated" << endl;
+        m_Estimated = m_Processed.load();
+    }
+    else {
+        m_Estimated -= _delta;
+    }
+}
+
 void Progress::CommitProcessed( uint64_t _delta )
 {
     const auto current_time = machtime();

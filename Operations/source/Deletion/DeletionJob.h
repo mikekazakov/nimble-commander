@@ -4,36 +4,62 @@
 #include "Options.h"
 #include <VFS/VFS.h>
 #include <Habanero/chained_strings.h>
-#include <stack>
 
 namespace nc::ops {
 
-class DeletionJob : public Job
+struct DeletionJobCallbacks
+{
+    enum class ReadDirErrorResolution { Stop, Skip };
+    function< ReadDirErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnReadDirError =
+    [](int _err, const string &_path, VFSHost &_vfs){ return ReadDirErrorResolution::Stop; };
+
+    enum class UnlinkErrorResolution { Stop, Skip };
+    function< UnlinkErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnUnlinkError =
+    [](int _err, const string &_path, VFSHost &_vfs){ return UnlinkErrorResolution::Stop; };
+
+    enum class RmdirErrorResolution { Stop, Skip };
+    function< RmdirErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnRmdirError =
+    [](int _err, const string &_path, VFSHost &_vfs){ return RmdirErrorResolution::Stop; };
+
+    enum class TrashErrorResolution { Stop, Skip, DeletePermanently };
+    function< TrashErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnTrashError =
+    [](int _err, const string &_path, VFSHost &_vfs){ return TrashErrorResolution::Stop; };
+};
+
+class DeletionJob : public Job, public DeletionJobCallbacks
 {
 public:
     DeletionJob( vector<VFSListingItem> _items, DeletionType _type );
     ~DeletionJob();
     
-private:
-    virtual void Perform() override;
-    void DoScan();
-    void DoDelete();
-    void ScanDirectory(const string &_path,
-                       int _listing_item_index,
-                       const chained_strings::node *_prefix);
-    vector<VFSListingItem> m_SourceItems;
-    DeletionType m_Type;
+    int ItemsInScript() const;
     
-    chained_strings m_Paths;
+private:
     struct SourceItem
     {
         int listing_item_index;
+        DeletionType type;
         const chained_strings::node *filename;
     };
-    stack<SourceItem> m_Script;
+
+    virtual void Perform() override;
+    void DoScan();
+    void DoDelete();
+    void DoRmDir( const string &_path, VFSHost &_vfs );
+    void DoUnlink( const string &_path, VFSHost &_vfs );
+    void DoTrash( const string &_path, VFSHost &_vfs, SourceItem _src );
+    void ScanDirectory(const string &_path,
+                       int _listing_item_index,
+                       const chained_strings::node *_prefix);
+    
+    vector<VFSListingItem>  m_SourceItems;
+    DeletionType            m_Type;
+    chained_strings         m_Paths;
+    stack<SourceItem>       m_Script;
 };
-
-
-
 
 }

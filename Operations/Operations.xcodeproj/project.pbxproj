@@ -34,7 +34,7 @@
 		CFC4F8EA1F00E5D30000B3EE /* HaltReasonDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */; };
 		CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */; };
 		CFC4F8EE1F0224710000B3EE /* AsyncDialogResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8EC1F0224710000B3EE /* AsyncDialogResponse.h */; };
-		CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.mm */; };
+		CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.cpp */; };
 		CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */; };
 		CFC4F8F41F0243D30000B3EE /* GenericErrorDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */; };
 		CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */; };
@@ -54,8 +54,11 @@
 		CFC4F9231F09DFF60000B3EE /* Deletion_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */; };
 		CFC4F92D1F0B49C00000B3EE /* Deletion.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F92B1F0B49C00000B3EE /* Deletion.h */; };
 		CFC4F92E1F0B49C00000B3EE /* DirectoryCreation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F92C1F0B49C00000B3EE /* DirectoryCreation.h */; };
+		CFC4F9431F0BB9320000B3EE /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B851EE1544B00F567C4 /* libVFS.a */; };
+		CFC4F9451F0BB93A0000B3EE /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4F9441F0BB93A0000B3EE /* libRoutedIO.a */; };
+		CFC4F9471F0BB9470000B3EE /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4F9461F0BB9470000B3EE /* libUtility.a */; };
+		CFC4F9491F0BB94C0000B3EE /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4F9481F0BB94C0000B3EE /* libHabanero.a */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
-		CFF53B731EDD401900F567C4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B721EDD401900F567C4 /* Cocoa.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
 		CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B781EDEA83900F567C4 /* Job.h */; };
@@ -63,7 +66,7 @@
 		CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */; };
 		CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B951EE252F200F567C4 /* Compression_Tests.mm */; };
 		CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53BAC1EEA840600F567C4 /* Statistics.h */; };
-		CFF53BAF1EEA840600F567C4 /* Statistics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BAD1EEA840600F567C4 /* Statistics.mm */; };
+		CFF53BAF1EEA840600F567C4 /* Statistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BAD1EEA840600F567C4 /* Statistics.cpp */; };
 		CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BCC1EF3913B00F567C4 /* Progress.cpp */; };
 		CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53BCD1EF3913B00F567C4 /* Progress.h */; };
 /* End PBXBuildFile section */
@@ -104,7 +107,7 @@
 		CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HaltReasonDialog.mm; path = source/HaltReasonDialog.mm; sourceTree = "<group>"; };
 		CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = HaltReasonDialog.xib; path = source/HaltReasonDialog.xib; sourceTree = "<group>"; };
 		CFC4F8EC1F0224710000B3EE /* AsyncDialogResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AsyncDialogResponse.h; path = source/AsyncDialogResponse.h; sourceTree = "<group>"; };
-		CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AsyncDialogResponse.mm; path = source/AsyncDialogResponse.mm; sourceTree = "<group>"; };
+		CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AsyncDialogResponse.cpp; path = source/AsyncDialogResponse.cpp; sourceTree = "<group>"; };
 		CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericErrorDialog.h; path = source/GenericErrorDialog.h; sourceTree = "<group>"; };
 		CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GenericErrorDialog.mm; path = source/GenericErrorDialog.mm; sourceTree = "<group>"; };
 		CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = GenericErrorDialog.xib; path = source/GenericErrorDialog.xib; sourceTree = "<group>"; };
@@ -124,6 +127,9 @@
 		CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Deletion_Tests.mm; path = tests/Deletion_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFC4F92B1F0B49C00000B3EE /* Deletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Deletion.h; path = include/Operations/Deletion.h; sourceTree = "<group>"; };
 		CFC4F92C1F0B49C00000B3EE /* DirectoryCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreation.h; path = include/Operations/DirectoryCreation.h; sourceTree = "<group>"; };
+		CFC4F9441F0BB93A0000B3EE /* libRoutedIO.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRoutedIO.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.a"; sourceTree = "<group>"; };
+		CFC4F9461F0BB9470000B3EE /* libUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtility.a; path = ../Utility/build/Debug/libUtility.a; sourceTree = "<group>"; };
+		CFC4F9481F0BB94C0000B3EE /* libHabanero.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHabanero.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.a"; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -144,7 +150,7 @@
 		CFF53B931EE2515400F567C4 /* CompressionJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompressionJob.cpp; path = source/Compression/CompressionJob.cpp; sourceTree = "<group>"; };
 		CFF53B951EE252F200F567C4 /* Compression_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Compression_Tests.mm; path = tests/Compression_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFF53BAC1EEA840600F567C4 /* Statistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Statistics.h; path = source/Statistics.h; sourceTree = "<group>"; };
-		CFF53BAD1EEA840600F567C4 /* Statistics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Statistics.mm; path = source/Statistics.mm; sourceTree = "<group>"; };
+		CFF53BAD1EEA840600F567C4 /* Statistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Statistics.cpp; path = source/Statistics.cpp; sourceTree = "<group>"; };
 		CFF53BCC1EF3913B00F567C4 /* Progress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Progress.cpp; path = source/Progress.cpp; sourceTree = "<group>"; };
 		CFF53BCD1EF3913B00F567C4 /* Progress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Progress.h; path = source/Progress.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -154,7 +160,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFF53B731EDD401900F567C4 /* Cocoa.framework in Frameworks */,
+				CFC4F9491F0BB94C0000B3EE /* libHabanero.a in Frameworks */,
+				CFC4F9471F0BB9470000B3EE /* libUtility.a in Frameworks */,
+				CFC4F9451F0BB93A0000B3EE /* libRoutedIO.a in Frameworks */,
+				CFC4F9431F0BB9320000B3EE /* libVFS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,7 +205,7 @@
 			isa = PBXGroup;
 			children = (
 				CFF53BAC1EEA840600F567C4 /* Statistics.h */,
-				CFF53BAD1EEA840600F567C4 /* Statistics.mm */,
+				CFF53BAD1EEA840600F567C4 /* Statistics.cpp */,
 				CFF53BCD1EF3913B00F567C4 /* Progress.h */,
 				CFF53BCC1EF3913B00F567C4 /* Progress.cpp */,
 				CFF53B781EDEA83900F567C4 /* Job.h */,
@@ -204,7 +213,7 @@
 				CFF53B741EDE53E800F567C4 /* Operation.h */,
 				CFF53B751EDE53E800F567C4 /* Operation.mm */,
 				CFC4F8EC1F0224710000B3EE /* AsyncDialogResponse.h */,
-				CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.mm */,
+				CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.cpp */,
 				CF7084D61EF7CC770072F0F6 /* Pool.h */,
 				CF7084D71EF7CC770072F0F6 /* Pool.mm */,
 				CFC4F8C31EFA05B00000B3EE /* PoolView.h */,
@@ -281,6 +290,9 @@
 		CFF53B711EDD401900F567C4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F9481F0BB94C0000B3EE /* libHabanero.a */,
+				CFC4F9461F0BB9470000B3EE /* libUtility.a */,
+				CFC4F9441F0BB93A0000B3EE /* libRoutedIO.a */,
 				CFF53B851EE1544B00F567C4 /* libVFS.a */,
 				CFF53B721EDD401900F567C4 /* Cocoa.framework */,
 			);
@@ -470,7 +482,7 @@
 				CFC4F8B31EF7E3830000B3EE /* Compression.mm in Sources */,
 				CFC4F9091F06253D0000B3EE /* DirectoryCreation.mm in Sources */,
 				CFC4F8F41F0243D30000B3EE /* GenericErrorDialog.mm in Sources */,
-				CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.mm in Sources */,
+				CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.cpp in Sources */,
 				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,
 				CFC4F8CA1EFA05B00000B3EE /* PoolViewController.mm in Sources */,
 				CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */,
@@ -483,7 +495,7 @@
 				CFC4F91D1F09D9740000B3EE /* DeletionJob.cpp in Sources */,
 				CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */,
 				CFC4F8E51EFCE0380000B3EE /* BriefOperationView.mm in Sources */,
-				CFF53BAF1EEA840600F567C4 /* Statistics.mm in Sources */,
+				CFF53BAF1EEA840600F567C4 /* Statistics.cpp in Sources */,
 				CFC4F8D81EFB5F780000B3EE /* BriefOperationViewController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -600,6 +612,8 @@
 					ServiceManagement,
 					"-framework",
 					Security,
+					"-framework",
+					Cocoa,
 				);
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -692,6 +706,8 @@
 					ServiceManagement,
 					"-framework",
 					Security,
+					"-framework",
+					Cocoa,
 				);
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;

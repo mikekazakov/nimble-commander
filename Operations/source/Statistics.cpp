@@ -85,9 +85,14 @@ void Statistics::CommitEstimated( SourceType _type, uint64_t _delta )
     Timeline(_type).CommitEstimated(_delta);
 }
 
-void Statistics::CommitProcessed( SourceType _type, uint64_t _delta_bytes )
+void Statistics::CommitProcessed( SourceType _type, uint64_t _delta )
 {
-    Timeline(_type).CommitProcessed(_delta_bytes);
+    Timeline(_type).CommitProcessed(_delta);
+}
+
+void Statistics::CommitSkipped( SourceType _type, uint64_t _delta )
+{
+    Timeline(_type).CommitSkipped(_delta);
 }
 
 vector<Progress::TimePoint> Statistics::BytesPerSecond() const

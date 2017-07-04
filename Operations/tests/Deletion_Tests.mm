@@ -100,6 +100,17 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( !m_NativeHost->Exists((m_TmpDir/"top").c_str()) );
 }
 
+- (void)testFailingRemoval
+{
+    Deletion operation{ FetchItems("/System/Library/Kernels",
+                                   {"kernel"},
+                                   *m_NativeHost),
+                        DeletionType::Permanent };
+    operation.Start();
+    operation.Wait();
+    XCTAssert( operation.State() != OperationState::Completed );
+}
+
 - (path)makeTmpDir
 {
     char dir[MAXPATHLEN];

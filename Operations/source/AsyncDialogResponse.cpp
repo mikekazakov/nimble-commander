@@ -1,18 +1,19 @@
 #include "AsyncDialogResponse.h"
+#include "ModalDialogResponses.h"
 
 namespace nc::ops {
 
 void AsyncDialogResponse::Abort() noexcept
 {
     LOCK_GUARD(lock)
-    response = NSModalResponseAbort;
+        response = NSModalResponseAbort;
     blocker.notify_all();
 }
 
-void AsyncDialogResponse::Commit(NSModalResponse _response) noexcept
+void AsyncDialogResponse::Commit(long _response) noexcept
 {
     LOCK_GUARD(lock)
-    response = _response;
+        response = _response;
     blocker.notify_all();
 }
 

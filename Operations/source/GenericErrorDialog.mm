@@ -10,6 +10,7 @@ using namespace nc::ops;
 @property (strong) IBOutlet NSTextField *messageLabel;
 @property (strong) IBOutlet NSImageView *appIcon;
 @property (strong) IBOutlet NSImageView *dialogIcon;
+@property (strong) IBOutlet NSButton *applyToAllCheckBox;
 
 @end
 
@@ -21,24 +22,35 @@ using namespace nc::ops;
     NSString* m_Path;
     NSString* m_Error;
     int m_ErrorNo;
+    bool m_ShowApplyToAll;
     vector<pair<NSString*,NSModalResponse>> m_Buttons;
+    shared_ptr<nc::ops::AsyncDialogResponse> m_Context;
 }
 
 @synthesize escapeButtonResponse = m_EscapeButtonResponse;
 @synthesize message = m_Message;
 @synthesize path = m_Path;
 @synthesize error = m_Error;
+@synthesize showApplyToAll = m_ShowApplyToAll;
 
-- (instancetype)init
+- (instancetype)initWithContext:(shared_ptr<nc::ops::AsyncDialogResponse>)_context
 {
+    dispatch_assert_main_queue();
     self = [super initWithWindowNibName:@"GenericErrorDialog"];
     if( self ) {
+        m_Context = _context;
+        m_ShowApplyToAll = false;
         m_Style = GenericErrorDialogStyle::Caution;
         m_EscapeButtonResponse = NSModalResponseCancel;
         m_ErrorNo = VFSError::Ok;
     
     }
     return self;
+}
+
+- (instancetype)init
+{
+    return [self initWithContext:nullptr];
 }
 
 - (void)windowDidLoad {
@@ -90,12 +102,12 @@ using namespace nc::ops;
                                          constant:0]];
         }
         else {
-            const auto error = self.errorLabel;
-            NSDictionary *views = NSDictionaryOfVariableBindings(button, error);
+            const auto bottom = m_ShowApplyToAll ? self.applyToAllCheckBox : self.errorLabel;
+            NSDictionary *views = NSDictionaryOfVariableBindings(button, bottom);
             [content_view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
                 @"[button(>=80)]-|" options:0 metrics:nil views:views]];
             [content_view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                @"V:[error]-(==16)-[button]-|" options:0 metrics:nil views:views]];
+                @"V:[bottom]-(==16)-[button]-|" options:0 metrics:nil views:views]];
             self.window.initialFirstResponder = button;
         }
         last = button;
@@ -107,8 +119,11 @@ using namespace nc::ops;
 
 - (void)onButtonClick:(id)sender
 {
-    if( auto b = objc_cast<NSButton>(sender) )
+    if( auto b = objc_cast<NSButton>(sender) ) {
+        if( m_ShowApplyToAll && m_Context )
+            m_Context->messages["apply_to_all"] = self.applyToAllCheckBox.state == NSOnState;
         [self.window.sheetParent endSheet:self.window returnCode:b.tag];
+    }
 }
 
 - (void) setStyle:(GenericErrorDialogStyle)style

@@ -24,6 +24,7 @@ public:
     
     void CommitEstimated( uint64_t _volume_delta );
     void CommitProcessed( uint64_t _volume_delta );
+    void CommitSkipped( uint64_t _volume_delta );
 
     void SetupTiming();
     void ReportSleptDelta( nanoseconds _time_delta );

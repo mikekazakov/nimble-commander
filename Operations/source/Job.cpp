@@ -1,5 +1,5 @@
 #include "../include/Operations/Job.h"
-#include <thread>
+#include <Habanero/IdleSleepPreventer.h>
 
 namespace nc::ops
 {
@@ -31,6 +31,7 @@ void Job::Run()
 
 void Job::Execute()
 {
+    const auto sleep_preventer = IdleSleepPreventer::Instance().GetPromise();
     m_Stats.StartTiming();
     
     try {

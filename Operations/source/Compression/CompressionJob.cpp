@@ -179,29 +179,6 @@ void CompressionJob::ProcessSymlinkItem(const chained_strings::node &_node, int 
     archive_entry_copy_stat(entry, stat);
     archive_entry_set_symlink(entry, symlink);
     archive_write_header(m_Archive, entry);
-    
-
-//        int vfs_ret = 0;
-//        char symlink[MAXPATHLEN];
-//        retry_stat_symlink:;
-//        while( (vfs_ret = vfs->Stat(sourcepath.c_str(), st, VFSFlags::F_NoFollow, 0)) != 0 ||
-//               (vfs_ret = vfs->ReadSymlink(sourcepath.c_str(), symlink, MAXPATHLEN, 0)) != 0 ) {
-//            // failed to stat source file
-//            if(m_SkipAll) return;
-//            int result = m_OnCantAccessSourceItem(vfs_ret,  sourcepath);
-//            if(result == OperationDialogResult::Retry) continue;
-//            if(result == OperationDialogResult::Skip) return;
-//            if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
-//            if(result == OperationDialogResult::Stop) { RequestStop(); return; }
-//        }
-//        
-//        entry = archive_entry_new();
-//        archive_entry_set_pathname(entry, itemname);
-//        VFSStat::ToSysStat(st, sst);
-//        archive_entry_copy_stat(entry, &sst);
-//        archive_entry_set_symlink(entry, symlink);
-//        archive_write_header(m_Archive, entry);
-//        // TODO: error handling??
 }
 
 void CompressionJob::ProcessDirectoryItem(const chained_strings::node &_node, int _index)

@@ -65,6 +65,8 @@ public:
     
     virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
     
+    virtual int Trash(const char *_path, const VFSCancelChecker &_cancel_checker) override;
+    
     virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
     
     virtual int SetTimes(const char *_path,

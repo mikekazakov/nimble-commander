@@ -248,6 +248,12 @@ public:
                                 const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
+     * Moves an item into trash bin.
+     */
+    virtual int Trash(const char *_path,
+                      const VFSCancelChecker &_cancel_checker = nullptr);
+    
+    /**
      * Change the name of a file.
      */
     virtual int Rename(const char *_old_path,

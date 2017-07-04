@@ -7,7 +7,7 @@ namespace nc::ops {
 
 class DirectoryCreationJob;
 
-class DirectoryCreation : public Operation
+class DirectoryCreation final : public Operation
 {
 public:
     DirectoryCreation( string _directory_name, string _root_folder, VFSHost &_vfs );

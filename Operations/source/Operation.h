@@ -1,11 +1,10 @@
 #pragma once
 
-#include <Cocoa/Cocoa.h>
-#include <functional>
-#include <thread>
-#include <condition_variable>
 #include <Habanero/ScopedObservable.h>
 #include "Statistics.h"
+
+@class NSWindow;
+@class NSString;
 
 class VFSHost;
 
@@ -57,7 +56,7 @@ public:
     ObservationTicket Observe( uint64_t _notification_mask, function<void()> _callback );
     void ObserveUnticketed( uint64_t _notification_mask, function<void()> _callback );
 
-    void SetDialogCallback( function<bool(NSWindow *, function<void(NSModalResponse)>)> _callback );
+    void SetDialogCallback( function<bool(NSWindow *, function<void(long)>)> _callback );
     bool IsWaitingForUIResponse() const noexcept;
     void AbortUIWaiting() noexcept;
     
@@ -82,7 +81,7 @@ private:
     
     mutable std::condition_variable m_FinishCV;
     
-    function<bool(NSWindow *dialog, function<void(NSModalResponse response)>)> m_DialogCallback;
+    function<bool(NSWindow *dialog, function<void(long response)>)> m_DialogCallback;
     mutable spinlock m_DialogCallbackLock;
     
     weak_ptr<AsyncDialogResponse> m_PendingResponse;

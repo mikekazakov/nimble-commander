@@ -5,11 +5,11 @@
 
 using namespace nc::ops;
 
-@interface DirectoCreationTests : XCTestCase
+@interface DirectoryCreationTests : XCTestCase
 @end
 
 
-@implementation DirectoCreationTests
+@implementation DirectoryCreationTests
 {
     path m_TmpDir;
     shared_ptr<VFSHost> m_NativeHost;
@@ -98,7 +98,7 @@ using namespace nc::ops;
 
 - (void)testAlredyExistingRegFile
 {
-    creat( (m_TmpDir/"Test1").c_str(), 0755 );
+    close( creat( (m_TmpDir/"Test1").c_str(), 0755 ) );
     DirectoryCreation operation{ "Test1/Test2/Test3", m_TmpDir.native(), *m_NativeHost };
     operation.Start();
     operation.Wait();

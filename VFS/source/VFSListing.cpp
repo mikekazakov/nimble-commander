@@ -327,6 +327,10 @@ VFSListing::VFSListing()
 {
 }
 
+VFSListing::~VFSListing()
+{
+}
+
 static CFString UTF8WithFallback(const string &_s)
 {
     CFString s( _s );

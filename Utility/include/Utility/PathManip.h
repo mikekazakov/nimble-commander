@@ -97,4 +97,10 @@ inline std::string EnsureNoTrailingSlash(std::string _s)
     return _s;
 }
 
+inline bool IsPathWithTrailingSlash(const string &_path)
+{
+    return !_path.empty() && _path.back() == '/';
+}
+
+
 #endif

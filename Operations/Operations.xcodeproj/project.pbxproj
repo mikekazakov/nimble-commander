@@ -12,7 +12,7 @@
 		CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DA1EF7CCB00072F0F6 /* Pool.h */; };
 		CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DC1EF7CF7E0072F0F6 /* Compression.h */; };
 		CFC4F8B31EF7E3830000B3EE /* Compression.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B901EE24FEC00F567C4 /* Compression.mm */; };
-		CFC4F8B41EF7E3860000B3EE /* CompressionJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B931EE2515400F567C4 /* CompressionJob.mm */; };
+		CFC4F8B41EF7E3860000B3EE /* CompressionJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B931EE2515400F567C4 /* CompressionJob.cpp */; };
 		CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8C31EFA05B00000B3EE /* PoolView.h */; };
 		CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F8C41EFA05B00000B3EE /* PoolView.mm */; };
 		CFC4F8C91EFA05B00000B3EE /* PoolViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8C51EFA05B00000B3EE /* PoolViewController.h */; };
@@ -44,8 +44,16 @@
 		CFC4F9081F06253D0000B3EE /* DirectoryCreation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9041F06253D0000B3EE /* DirectoryCreation.h */; };
 		CFC4F9091F06253D0000B3EE /* DirectoryCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */; };
 		CFC4F90A1F06253D0000B3EE /* DirectoryCreationJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9061F06253D0000B3EE /* DirectoryCreationJob.h */; };
-		CFC4F90B1F06253D0000B3EE /* DirectoryCreationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.mm */; };
+		CFC4F90B1F06253D0000B3EE /* DirectoryCreationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.cpp */; };
 		CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */; };
+		CFC4F91B1F09D9740000B3EE /* Deletion.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9171F09D9740000B3EE /* Deletion.h */; };
+		CFC4F91C1F09D9740000B3EE /* Deletion.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9181F09D9740000B3EE /* Deletion.mm */; };
+		CFC4F91D1F09D9740000B3EE /* DeletionJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9191F09D9740000B3EE /* DeletionJob.cpp */; };
+		CFC4F91E1F09D9740000B3EE /* DeletionJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F91A1F09D9740000B3EE /* DeletionJob.h */; };
+		CFC4F9201F09DCC80000B3EE /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F91F1F09DCC80000B3EE /* Options.h */; };
+		CFC4F9231F09DFF60000B3EE /* Deletion_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */; };
+		CFC4F92D1F0B49C00000B3EE /* Deletion.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F92B1F0B49C00000B3EE /* Deletion.h */; };
+		CFC4F92E1F0B49C00000B3EE /* DirectoryCreation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F92C1F0B49C00000B3EE /* DirectoryCreation.h */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B731EDD401900F567C4 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B721EDD401900F567C4 /* Cocoa.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
@@ -106,8 +114,16 @@
 		CFC4F9041F06253D0000B3EE /* DirectoryCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreation.h; path = source/DirectoryCreation/DirectoryCreation.h; sourceTree = "<group>"; };
 		CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreation.mm; path = source/DirectoryCreation/DirectoryCreation.mm; sourceTree = "<group>"; };
 		CFC4F9061F06253D0000B3EE /* DirectoryCreationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreationJob.h; path = source/DirectoryCreation/DirectoryCreationJob.h; sourceTree = "<group>"; };
-		CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreationJob.mm; path = source/DirectoryCreation/DirectoryCreationJob.mm; sourceTree = "<group>"; };
+		CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DirectoryCreationJob.cpp; path = source/DirectoryCreation/DirectoryCreationJob.cpp; sourceTree = "<group>"; };
 		CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreations_Tests.mm; path = tests/DirectoryCreations_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CFC4F9171F09D9740000B3EE /* Deletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Deletion.h; path = source/Deletion/Deletion.h; sourceTree = "<group>"; };
+		CFC4F9181F09D9740000B3EE /* Deletion.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Deletion.mm; path = source/Deletion/Deletion.mm; sourceTree = "<group>"; };
+		CFC4F9191F09D9740000B3EE /* DeletionJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeletionJob.cpp; path = source/Deletion/DeletionJob.cpp; sourceTree = "<group>"; };
+		CFC4F91A1F09D9740000B3EE /* DeletionJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeletionJob.h; path = source/Deletion/DeletionJob.h; sourceTree = "<group>"; };
+		CFC4F91F1F09DCC80000B3EE /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = source/Deletion/Options.h; sourceTree = "<group>"; };
+		CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Deletion_Tests.mm; path = tests/Deletion_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CFC4F92B1F0B49C00000B3EE /* Deletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Deletion.h; path = include/Operations/Deletion.h; sourceTree = "<group>"; };
+		CFC4F92C1F0B49C00000B3EE /* DirectoryCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreation.h; path = include/Operations/DirectoryCreation.h; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -125,7 +141,7 @@
 		CFF53B8F1EE24FEC00F567C4 /* Compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Compression.h; path = source/Compression/Compression.h; sourceTree = "<group>"; };
 		CFF53B901EE24FEC00F567C4 /* Compression.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Compression.mm; path = source/Compression/Compression.mm; sourceTree = "<group>"; };
 		CFF53B921EE2515400F567C4 /* CompressionJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompressionJob.h; path = source/Compression/CompressionJob.h; sourceTree = "<group>"; };
-		CFF53B931EE2515400F567C4 /* CompressionJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CompressionJob.mm; path = source/Compression/CompressionJob.mm; sourceTree = "<group>"; };
+		CFF53B931EE2515400F567C4 /* CompressionJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompressionJob.cpp; path = source/Compression/CompressionJob.cpp; sourceTree = "<group>"; };
 		CFF53B951EE252F200F567C4 /* Compression_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Compression_Tests.mm; path = tests/Compression_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFF53BAC1EEA840600F567C4 /* Statistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Statistics.h; path = source/Statistics.h; sourceTree = "<group>"; };
 		CFF53BAD1EEA840600F567C4 /* Statistics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Statistics.mm; path = source/Statistics.mm; sourceTree = "<group>"; };
@@ -171,7 +187,7 @@
 				CFC4F9041F06253D0000B3EE /* DirectoryCreation.h */,
 				CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */,
 				CFC4F9061F06253D0000B3EE /* DirectoryCreationJob.h */,
-				CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.mm */,
+				CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.cpp */,
 			);
 			name = DirectoryCreation;
 			sourceTree = "<group>";
@@ -217,6 +233,18 @@
 			name = Base;
 			sourceTree = "<group>";
 		};
+		CFC4F9161F09D9620000B3EE /* Deletion */ = {
+			isa = PBXGroup;
+			children = (
+				CFC4F91F1F09DCC80000B3EE /* Options.h */,
+				CFC4F9171F09D9740000B3EE /* Deletion.h */,
+				CFC4F9181F09D9740000B3EE /* Deletion.mm */,
+				CFC4F9191F09D9740000B3EE /* DeletionJob.cpp */,
+				CFC4F91A1F09D9740000B3EE /* DeletionJob.h */,
+			);
+			name = Deletion;
+			sourceTree = "<group>";
+		};
 		CFF53B251EDD197300F567C4 = {
 			isa = PBXGroup;
 			children = (
@@ -243,6 +271,7 @@
 			children = (
 				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
 				CFF53B951EE252F200F567C4 /* Compression_Tests.mm */,
+				CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */,
 				CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */,
 			);
 			name = Tests;
@@ -261,12 +290,14 @@
 		CFF53B8A1EE24F1B00F567C4 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CFC4F8CD1EFA07F00000B3EE /* PoolView.h */,
-				CFC4F8CE1EFA07F00000B3EE /* PoolViewController.h */,
 				CF7084DC1EF7CF7E0072F0F6 /* Compression.h */,
+				CFC4F92B1F0B49C00000B3EE /* Deletion.h */,
+				CFC4F92C1F0B49C00000B3EE /* DirectoryCreation.h */,
 				CFF53B8C1EE24F9E00F567C4 /* Job.h */,
 				CFF53B8D1EE24F9E00F567C4 /* Operation.h */,
 				CF7084DA1EF7CCB00072F0F6 /* Pool.h */,
+				CFC4F8CD1EFA07F00000B3EE /* PoolView.h */,
+				CFC4F8CE1EFA07F00000B3EE /* PoolViewController.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -275,6 +306,7 @@
 			isa = PBXGroup;
 			children = (
 				CFC4F90E1F0745170000B3EE /* Base */,
+				CFC4F9161F09D9620000B3EE /* Deletion */,
 				CFC4F9031F0625090000B3EE /* DirectoryCreation */,
 				CFF53B8E1EE24FC300F567C4 /* Compression */,
 			);
@@ -287,7 +319,7 @@
 				CFF53B8F1EE24FEC00F567C4 /* Compression.h */,
 				CFF53B901EE24FEC00F567C4 /* Compression.mm */,
 				CFF53B921EE2515400F567C4 /* CompressionJob.h */,
-				CFF53B931EE2515400F567C4 /* CompressionJob.mm */,
+				CFF53B931EE2515400F567C4 /* CompressionJob.cpp */,
 			);
 			name = Compression;
 			sourceTree = "<group>";
@@ -309,15 +341,20 @@
 				CFC4F8D71EFB5F780000B3EE /* BriefOperationViewController.h in Headers */,
 				CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */,
 				CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */,
+				CFC4F91B1F09D9740000B3EE /* Deletion.h in Headers */,
+				CFC4F9201F09DCC80000B3EE /* Options.h in Headers */,
 				CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */,
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
 				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
+				CFC4F92D1F0B49C00000B3EE /* Deletion.h in Headers */,
 				CFC4F9081F06253D0000B3EE /* DirectoryCreation.h in Headers */,
 				CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */,
+				CFC4F91E1F09D9740000B3EE /* DeletionJob.h in Headers */,
 				CFC4F8C91EFA05B00000B3EE /* PoolViewController.h in Headers */,
 				CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */,
 				CFC4F9021F0617E20000B3EE /* ModalDialogResponses.h in Headers */,
+				CFC4F92E1F0B49C00000B3EE /* DirectoryCreation.h in Headers */,
 				CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */,
 				CFC4F90A1F06253D0000B3EE /* DirectoryCreationJob.h in Headers */,
 			);
@@ -428,7 +465,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFC4F90B1F06253D0000B3EE /* DirectoryCreationJob.mm in Sources */,
+				CFC4F90B1F06253D0000B3EE /* DirectoryCreationJob.cpp in Sources */,
 				CFC4F8D41EFA17070000B3EE /* Internal.mm in Sources */,
 				CFC4F8B31EF7E3830000B3EE /* Compression.mm in Sources */,
 				CFC4F9091F06253D0000B3EE /* DirectoryCreation.mm in Sources */,
@@ -439,9 +476,11 @@
 				CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */,
 				CFC4F8DE1EFCC0040000B3EE /* StatisticsFormatter.mm in Sources */,
 				CFC4F8EA1F00E5D30000B3EE /* HaltReasonDialog.mm in Sources */,
-				CFC4F8B41EF7E3860000B3EE /* CompressionJob.mm in Sources */,
+				CFC4F8B41EF7E3860000B3EE /* CompressionJob.cpp in Sources */,
 				CFF53B7B1EDEA83900F567C4 /* Job.cpp in Sources */,
+				CFC4F91C1F09D9740000B3EE /* Deletion.mm in Sources */,
 				CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */,
+				CFC4F91D1F09D9740000B3EE /* DeletionJob.cpp in Sources */,
 				CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */,
 				CFC4F8E51EFCE0380000B3EE /* BriefOperationView.mm in Sources */,
 				CFF53BAF1EEA840600F567C4 /* Statistics.mm in Sources */,
@@ -456,6 +495,7 @@
 				CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */,
 				CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */,
 				CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */,
+				CFC4F9231F09DFF60000B3EE /* Deletion_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

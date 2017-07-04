@@ -6,7 +6,6 @@
 #include <NimbleCommander/Operations/Link/FileLinkOperation.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Operations/Copy/MassCopySheetController.h>
-#include <NimbleCommander/Operations/Delete/FileDeletionOperation.h>
 #include <NimbleCommander/Operations/OperationsController.h>
 #include "MainWindowFilePanelState+Menu.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>

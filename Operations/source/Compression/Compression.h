@@ -16,7 +16,7 @@ namespace nc::ops
 
 class CompressionJob;
 
-class Compression : public Operation
+class Compression final : public Operation
 {
 public:
     Compression(vector<VFSListingItem> _src_files,
@@ -26,10 +26,8 @@ public:
 
     string ArchivePath() const;
 
-protected:
-    virtual Job *GetJob() noexcept override;
-
 private:
+    virtual Job *GetJob() noexcept override;
     NSString *BuildTitlePrefix() const;
     string BuildInitialTitle() const;
     string BuildTitleWithArchiveFilename() const;

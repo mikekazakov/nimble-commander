@@ -6,6 +6,8 @@
 #include <Habanero/algo.h>
 #include "../PanelData.h"
 #include "../PanelView.h"
+#include <Operations/Deletion.h>
+#include "../../MainWindowController.h"
 
 namespace nc::panel::actions {
 
@@ -13,7 +15,8 @@ static bool CommonDeletePredicate( PanelController *_target );
 static bool AllAreNative(const vector<VFSListingItem>& _c);
 static unordered_set<string> ExtractDirectories(const vector<VFSListingItem>& _c);
 static bool AllHaveTrash(const vector<VFSListingItem>& _c);
-static void AddPanelRefreshEpilogIfNeeded( PanelController *_target, Operation* _operation );
+static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
+                                          const shared_ptr<nc::ops::Operation> &_operation );
 
 Delete::Delete( bool _permanently ):
     m_Permanently(_permanently)
@@ -48,10 +51,13 @@ void Delete::Perform( PanelController *_target, id _sender ) const
 
     auto sheet_handler = ^(NSModalResponse returnCode) {
         if( returnCode == NSModalResponseOK ){
-            const auto operation = [[FileDeletionOperation alloc] initWithFiles:move(*items)
-                                                                           type:sheet.resultType];
+            const auto operation = make_shared<nc::ops::Deletion>(
+                move(*items),
+                sheet.resultType == FileDeletionOperationType::MoveToTrash ?
+                    nc::ops::DeletionType::Trash :
+                    nc::ops::DeletionType::Permanent);
             AddPanelRefreshEpilogIfNeeded(_target, operation);
-            [_target.state AddOperation:operation];
+            [_target.mainWindowController enqueueOperation:operation];
         }
     };
     
@@ -81,12 +87,11 @@ void MoveToTrash::Perform( PanelController *_target, id _sender ) const
         Delete{true}.Perform(_target, _sender);
         return;
     }
-    
-    const auto operation = [[FileDeletionOperation alloc]
-        initWithFiles:move(items)
-                 type:FileDeletionOperationType::MoveToTrash];
+
+    const auto operation = make_shared<nc::ops::Deletion>(move(items),
+                                                          nc::ops::DeletionType::Trash);
     AddPanelRefreshEpilogIfNeeded(_target, operation);
-    [_target.state AddOperation:operation];
+    [_target.mainWindowController enqueueOperation:operation];
 }
 
 context::MoveToTrash::MoveToTrash(const vector<VFSListingItem> &_items):
@@ -102,11 +107,10 @@ bool context::MoveToTrash::Predicate( PanelController *_target ) const
 
 void context::MoveToTrash::Perform( PanelController *_target, id _sender ) const
 {
-    const auto operation = [[FileDeletionOperation alloc]
-                            initWithFiles:m_Items
-                            type:FileDeletionOperationType::MoveToTrash];
+    const auto operation = make_shared<nc::ops::Deletion>(m_Items,
+                                                          nc::ops::DeletionType::Trash);
     AddPanelRefreshEpilogIfNeeded(_target, operation);
-    [_target.state AddOperation:operation];
+    [_target.mainWindowController enqueueOperation:operation];
 }
 
 context::DeletePermanently::DeletePermanently(const vector<VFSListingItem> &_items):
@@ -124,11 +128,10 @@ bool context::DeletePermanently::Predicate( PanelController *_target ) const
 
 void context::DeletePermanently::Perform( PanelController *_target, id _sender ) const
 {
-    const auto operation = [[FileDeletionOperation alloc]
-                            initWithFiles:m_Items
-                            type:FileDeletionOperationType::Delete];
+    const auto operation = make_shared<nc::ops::Deletion>(m_Items,
+                                                          nc::ops::DeletionType::Permanent);
     AddPanelRefreshEpilogIfNeeded(_target, operation);
-    [_target.state AddOperation:operation];
+    [_target.mainWindowController enqueueOperation:operation];
 }
 
 static bool CommonDeletePredicate( PanelController *_target )
@@ -165,16 +168,19 @@ static bool AllHaveTrash(const vector<VFSListingItem>& _c)
     });
 }
 
-static void AddPanelRefreshEpilogIfNeeded( PanelController *_target, Operation* _operation )
+
+static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
+                                          const shared_ptr<nc::ops::Operation> &_operation )
 {
     if( !_target.receivesUpdateNotifications ) {
         __weak PanelController *weak_panel = _target;
-        [_operation AddOnFinishHandler:[=]{
+        _operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=]{
             dispatch_to_main_queue( [=]{
                 [(PanelController*)weak_panel refreshPanel];
             });
-        }];
+        });
     }
 }
+
 
 }

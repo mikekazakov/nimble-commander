@@ -649,3 +649,27 @@ VFSConfiguration VFSNativeHost::Configuration() const
     static const auto aa = VFSNativeHostConfiguration();
     return aa;
 }
+
+int VFSNativeHost::Trash(const char *_path, const VFSCancelChecker &_cancel_checker)
+{
+    if( _path == nullptr )
+        return VFSError::FromErrno(EINVAL);
+    
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(0,
+                                                           (const UInt8*)_path,
+                                                           strlen(_path),
+                                                           false);
+    if( !url )
+        return VFSError::FromErrno(EINVAL);
+    
+    NSError *error;
+    const auto result = [NSFileManager.defaultManager trashItemAtURL:(__bridge NSURL*)url
+                                                    resultingItemURL:nil
+                                                               error:&error];
+    CFRelease(url);
+    
+    if( result )
+        return VFSError::Ok;
+    else
+        return VFSError::FromNSError(error);
+}

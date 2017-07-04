@@ -69,7 +69,7 @@ public:
     const string&       Filename            (unsigned _ind) const;
     CFStringRef         FilenameCF          (unsigned _ind) const;
 #ifdef __OBJC__
-    NSString*           FilenameNS          (unsigned _ind) const { return (__bridge NSString*)FilenameCF(_ind); }
+    NSString*           FilenameNS          (unsigned _ind) const;
 #endif
 
     mode_t              UnixMode            (unsigned _ind) const;
@@ -118,7 +118,7 @@ public:
     const string&       DisplayFilename     (unsigned _ind) const;
     CFStringRef         DisplayFilenameCF   (unsigned _ind) const;
 #ifdef __OBJC__
-    inline NSString*    DisplayFilenameNS   (unsigned _ind) const { return (__bridge NSString*)DisplayFilenameCF(_ind); }
+    inline NSString*    DisplayFilenameNS   (unsigned _ind) const;
 #endif
     
     bool                IsDotDot            (unsigned _ind) const;
@@ -133,6 +133,7 @@ public:
     
 private:
     VFSListing();
+    ~VFSListing();
     static shared_ptr<VFSListing> Alloc(); // fighting against c++...
     void BuildFilenames();    
     
@@ -180,14 +181,14 @@ public:
     size_t          NameLen()           const;
     CFStringRef     CFName()            const;
 #ifdef __OBJC__
-    NSString*       NSName()            const { return L->FilenameNS(I);            }
+    NSString*       NSName()            const;
 #endif
 
     bool            HasDisplayName()    const;
     const string&   DisplayName()       const;
     CFStringRef     CFDisplayName()     const;
 #ifdef __OBJC__
-    NSString*       NSDisplayName()     const { return L->DisplayFilenameNS(I);     }
+    NSString*       NSDisplayName()     const;
 #endif
 
     bool            HasExtension()      const;

@@ -346,6 +346,11 @@ int VFSHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
     return VFSError::NotSupported;
 }
 
+int VFSHost::Trash(const char *_path, const VFSCancelChecker &_cancel_checker)
+{
+    return VFSError::NotSupported;
+}
+
 int VFSHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;

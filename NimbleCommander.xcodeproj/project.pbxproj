@@ -235,8 +235,6 @@
 		CF50C3FF1C0ADDFA009DF611 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */; };
 		CF50C4001C0ADDFE009DF611 /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */; };
 		CF50C4011C0ADDFF009DF611 /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */; };
-		CF50C4081C0ADE24009DF611 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */; };
-		CF50C4091C0ADE25009DF611 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */; };
 		CF50C4121C0ADE45009DF611 /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */; };
 		CF50C4131C0ADE46009DF611 /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */; };
 		CF50C4141C0ADE4A009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
@@ -420,7 +418,6 @@
 		CF7D134F1BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
 		CF7D13501BF1B6F0001F53FD /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */; };
 		CF7D13511BF1B6F0001F53FD /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */; };
-		CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */; };
 		CF7D13671BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */; };
 		CF7D13681BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CF7D13691BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */; };
@@ -669,7 +666,6 @@
 		CFA5396A1D433E2A00C562A7 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
 		CFA5396F1D433E2A00C562A7 /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069681BB54035000C3CBB /* FileCopyOperation.mm */; };
 		CFA539701D433E2A00C562A7 /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */; };
-		CFA5397D1D433E2A00C562A7 /* CreateDirectorySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */; };
 		CFA539801D433E2A00C562A7 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
 		CFA539851D433E2A00C562A7 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */; };
 		CFA539891D433E2A00C562A7 /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
@@ -737,7 +733,6 @@
 		CFA53A3B1D433E2A00C562A7 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFA53A3C1D433E2A00C562A7 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122916C4BD3D00D247EE /* MainMenu.xib */; };
 		CFA53A3D1D433E2A00C562A7 /* MassCopySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069921BB54081000C3CBB /* MassCopySheetController.xib */; };
-		CFA53A3E1D433E2A00C562A7 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */; };
 		CFA53A401D433E2A00C562A7 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
 		CFA53A421D433E2A00C562A7 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */; };
 		CFA53A431D433E2A00C562A7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
@@ -837,9 +832,6 @@
 		CFCCFBE51A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */; };
 		CFCCFBE61A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */; };
 		CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */; };
-		CFCCFBEA1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */; };
-		CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */; };
-		CFCCFBEC1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */; };
 		CFCCFBEF1A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
 		CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
 		CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
@@ -2405,9 +2397,9 @@
 				CF128875177FF6F0002816C2 /* FileLinkOperation */,
 				CFC058DD170B27D500A20CF2 /* UnixAttr */,
 				CFAC50CD1714016800A3E5C5 /* Copy */,
-				CF9DF215171320980008CBAE /* CreateDirectoryOperation */,
+				CF9DF215171320980008CBAE /* CreateDirectoryOperation [UNUSED] */,
 				CFA58396170EA35E00E508CF /* Delete */,
-				CFCD87FD1815377100D82455 /* FileCompressOperation */,
+				CFCD87FD1815377100D82455 /* FileCompressOperation [UNUSED] */,
 				CF55CDD81B29EF52001B4F91 /* Batch Rename */,
 			);
 			name = Operations;
@@ -2997,7 +2989,7 @@
 			name = Helpers;
 			sourceTree = "<group>";
 		};
-		CF9DF215171320980008CBAE /* CreateDirectoryOperation */ = {
+		CF9DF215171320980008CBAE /* CreateDirectoryOperation [UNUSED] */ = {
 			isa = PBXGroup;
 			children = (
 				CF7D13521BF1B964001F53FD /* CreateDirectoryOperation.h */,
@@ -3010,7 +3002,7 @@
 				CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */,
 				CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */,
 			);
-			name = CreateDirectoryOperation;
+			name = "CreateDirectoryOperation [UNUSED]";
 			sourceTree = "<group>";
 		};
 		CFA3D7C319625F63006A30A1 /* gtm */ = {
@@ -3366,7 +3358,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		CFCD87FD1815377100D82455 /* FileCompressOperation */ = {
+		CFCD87FD1815377100D82455 /* FileCompressOperation [UNUSED] */ = {
 			isa = PBXGroup;
 			children = (
 				CF7D13771BF5E0FE001F53FD /* FileCompressOperation.h */,
@@ -3374,7 +3366,7 @@
 				CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */,
 				CF7D137A1BF5E0FE001F53FD /* FileCompressOperationJob.h */,
 			);
-			name = FileCompressOperation;
+			name = "FileCompressOperation [UNUSED]";
 			sourceTree = "<group>";
 		};
 		CFD62B7F1C99C1C90021EE7F /* Products */ = {
@@ -3806,7 +3798,6 @@
 				CF02B5BC1D0A642500F2760D /* main_icon.icns in Resources */,
 				CF8D0CFA1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */,
 				CFA3744319A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
-				CFCCFBEB1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CF04DDD91E2775D70047B1F9 /* AliasBadgeIcon.icns in Resources */,
 				CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
@@ -3860,7 +3851,6 @@
 				CFA53A3B1D433E2A00C562A7 /* Help.pdf in Resources */,
 				CFA53A3C1D433E2A00C562A7 /* MainMenu.xib in Resources */,
 				CFA53A3D1D433E2A00C562A7 /* MassCopySheetController.xib in Resources */,
-				CFA53A3E1D433E2A00C562A7 /* CreateDirectorySheetController.xib in Resources */,
 				CF876D551D53296C009C0CCE /* InternalViewerWindowController.xib in Resources */,
 				CF4E56C81D50692400452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFA53A401D433E2A00C562A7 /* FilePanelsContextMenu.strings in Resources */,
@@ -3935,7 +3925,6 @@
 				CFC5122B16C4BD3D00D247EE /* MainMenu.xib in Resources */,
 				CF9069941BB54081000C3CBB /* MassCopySheetController.xib in Resources */,
 				CF4E56751D50668A00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
-				CFCCFBEA1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CF4E56DA1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
 				CF9F4B2F1ECD810C00E0AF82 /* FavoritesWindowController.xib in Resources */,
 				CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
@@ -4010,7 +3999,6 @@
 				CF90698C1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CF3120C61A510F640062185A /* Localizable.strings in Resources */,
 				CF4E56DD1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
-				CFCCFBEC1A5E6B7E00313845 /* CreateDirectorySheetController.xib in Resources */,
 				CFC044E41B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib in Resources */,
 				CFCCFC511A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
 				CFCCFBCE1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */,
@@ -4335,7 +4323,6 @@
 				CFD726FA1E42E2E800603077 /* PanelListViewTableView.mm in Sources */,
 				CFD7265F1E42E1D700603077 /* FilesDraggingSource.mm in Sources */,
 				CF50C4151C0ADE4B009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
-				CF50C4091C0ADE25009DF611 /* CreateDirectorySheetController.mm in Sources */,
 				CFD726111E42E07D00603077 /* Config.cpp in Sources */,
 				CFD726F41E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CFD727221E42E33300603077 /* TermParser.mm in Sources */,
@@ -4405,7 +4392,6 @@
 				CF4E56BF1D50691700452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFD6DD261D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CFD726A81E42E24A00603077 /* PanelViewPresentationSettings.mm in Sources */,
-				CFA5397D1D433E2A00C562A7 /* CreateDirectorySheetController.mm in Sources */,
 				CF876D461D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
 				CFD726F21E42E2DE00603077 /* PanelListViewSizeView.mm in Sources */,
 				CF2F43571EAF395900AA031A /* NetworkConnectionsManager.mm in Sources */,
@@ -4667,7 +4653,6 @@
 				CFD8CDD01E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,
 				CFDAC2ED1DFD152C0039A104 /* FilePanelMainSplitView.mm in Sources */,
 				CF2F42E71EADB8D000AA031A /* PanelDataOptionsPersistence.mm in Sources */,
-				CF7D135D1BF1B964001F53FD /* CreateDirectorySheetController.mm in Sources */,
 				CF0139B81E9B156500E44F2D /* ShowGoToPopup.mm in Sources */,
 				CFDAC26E1DFBF20F0039A104 /* MainWindowFilePanelState.mm in Sources */,
 				CF0260D21E9F10060025B50F /* ToggleLayout.mm in Sources */,
@@ -5037,7 +5022,6 @@
 				CF50C4141C0ADE4A009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */,
 				CF818B631EA0610E00BC28E6 /* MakeNew.mm in Sources */,
 				CFD726611E42E1DB00603077 /* ExternalEditorInfo.mm in Sources */,
-				CF50C4081C0ADE24009DF611 /* CreateDirectorySheetController.mm in Sources */,
 				CFD7263D1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
 				CF4E56B01D5068E600452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CFD726091E42E07100603077 /* AppDelegateCPP.mm in Sources */,

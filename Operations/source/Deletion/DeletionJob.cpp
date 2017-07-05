@@ -1,7 +1,13 @@
 #include "DeletionJob.h"
 #include <Utility/PathManip.h>
+#include <Utility/NativeFSManager.h>
 
 namespace nc::ops {
+
+static bool IsEAStorage(VFSHost &_host,
+                        const string &_directory,
+                        const char *_filename,
+                        uint8_t _unix_type);
 
 DeletionJob::DeletionJob( vector<VFSListingItem> _items, DeletionType _type )
 {
@@ -45,12 +51,18 @@ void DeletionJob::DoScan()
                 ScanDirectory(item.Path(), i, si.filename);
         }
         else {
-            m_Paths.push_back( item.Filename(), nullptr );
-            SourceItem si;
-            si.listing_item_index = i;
-            si.filename = &m_Paths.back();
-            si.type = m_Type;
-            m_Script.emplace(si);
+            const auto is_ea_storage = IsEAStorage(*item.Host(),
+                                                   item.Directory(),
+                                                   item.Name(),
+                                                   item.UnixType());
+            if( !is_ea_storage ) {
+                m_Paths.push_back( item.Filename(), nullptr );
+                SourceItem si;
+                si.listing_item_index = i;
+                si.filename = &m_Paths.back();
+                si.type = m_Type;
+                m_Script.emplace(si);
+            }
         }
     }
 }
@@ -59,16 +71,16 @@ void DeletionJob::ScanDirectory(const string &_path,
                                 int _listing_item_index,
                                 const chained_strings::node *_prefix)
 {
-    const auto &vfs = m_SourceItems[_listing_item_index].Host();
+    auto &vfs = *m_SourceItems[_listing_item_index].Host();
 
     vector<VFSDirEnt> dir_entries;
-    const auto rc = vfs->IterateDirectoryListing(_path.c_str(), [&](const VFSDirEnt &_entry){
+    const auto rc = vfs.IterateDirectoryListing(_path.c_str(), [&](const VFSDirEnt &_entry){
         dir_entries.emplace_back(_entry);
         return true;
     });
     
     if( rc != VFSError::Ok ) {
-        const auto resolution = m_OnReadDirError(rc, _path, *vfs);
+        const auto resolution = m_OnReadDirError(rc, _path, vfs);
         if( resolution == ReadDirErrorResolution::Stop )
             Stop();
         return;
@@ -87,12 +99,15 @@ void DeletionJob::ScanDirectory(const string &_path,
             ScanDirectory( EnsureTrailingSlash(_path) + e.name, _listing_item_index, si.filename);
         }
         else {
-            m_Paths.push_back( e.name, _prefix );
-            SourceItem si;
-            si.listing_item_index = _listing_item_index;
-            si.filename = &m_Paths.back();
-            si.type = DeletionType::Permanent;
-            m_Script.emplace(si);
+            const auto is_ea_storage = IsEAStorage(vfs, _path, e.name, e.type);
+            if( !is_ea_storage ) {
+                m_Paths.push_back( e.name, _prefix );
+                SourceItem si;
+                si.listing_item_index = _listing_item_index;
+                si.filename = &m_Paths.back();
+                si.type = DeletionType::Permanent;
+                m_Script.emplace(si);
+            }
         }
     }
 }
@@ -121,7 +136,6 @@ void DeletionJob::DoDelete()
         else {
             DoTrash(path, *vfs, entry);
         }
-
     }
 }
 
@@ -190,6 +204,22 @@ void DeletionJob::DoTrash( const string &_path, VFSHost &_vfs, SourceItem _src )
 int DeletionJob::ItemsInScript() const
 {
     return (int)m_Script.size();
+}
+
+static bool IsEAStorage(VFSHost &_host, const string &_directory, const char *_filename,
+                        uint8_t _unix_type )
+{
+    if( _unix_type != DT_REG ||
+        !_host.IsNativeFS() ||
+        _filename[0] != '.' || _filename[1] != '_' || _filename[2] == 0 )
+        return false;
+    
+    char origin_file_path[MAXPATHLEN];
+    strcpy(origin_file_path, _directory.c_str());
+    if( !IsPathWithTrailingSlash(origin_file_path) )
+        strcat( origin_file_path, "/" );
+    strcat( origin_file_path, _filename + 2 );
+    return _host.Exists( origin_file_path );
 }
 
 }

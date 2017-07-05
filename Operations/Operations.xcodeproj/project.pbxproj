@@ -58,6 +58,9 @@
 		CFC4F9451F0BB93A0000B3EE /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4F9441F0BB93A0000B3EE /* libRoutedIO.a */; };
 		CFC4F9471F0BB9470000B3EE /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4F9461F0BB9470000B3EE /* libUtility.a */; };
 		CFC4F9491F0BB94C0000B3EE /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4F9481F0BB94C0000B3EE /* libHabanero.a */; };
+		CFC4F9501F0CA84D0000B3EE /* DirectoryCreationDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F94A1F0CA84D0000B3EE /* DirectoryCreationDialog.xib */; };
+		CFC4F9511F0CA84D0000B3EE /* DirectoryCreationDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F94C1F0CA84D0000B3EE /* DirectoryCreationDialog.h */; };
+		CFC4F9521F0CA84D0000B3EE /* DirectoryCreationDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
@@ -130,6 +133,10 @@
 		CFC4F9441F0BB93A0000B3EE /* libRoutedIO.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRoutedIO.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.a"; sourceTree = "<group>"; };
 		CFC4F9461F0BB9470000B3EE /* libUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtility.a; path = ../Utility/build/Debug/libUtility.a; sourceTree = "<group>"; };
 		CFC4F9481F0BB94C0000B3EE /* libHabanero.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHabanero.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.a"; sourceTree = "<group>"; };
+		CFC4F94B1F0CA84D0000B3EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = source/DirectoryCreation/Base.lproj/DirectoryCreationDialog.xib; sourceTree = "<group>"; };
+		CFC4F94C1F0CA84D0000B3EE /* DirectoryCreationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreationDialog.h; path = source/DirectoryCreation/DirectoryCreationDialog.h; sourceTree = "<group>"; };
+		CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreationDialog.mm; path = source/DirectoryCreation/DirectoryCreationDialog.mm; sourceTree = "<group>"; };
+		CFC4F9541F0CA8630000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/DirectoryCreation/ru.lproj/DirectoryCreationDialog.strings; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -193,6 +200,9 @@
 		CFC4F9031F0625090000B3EE /* DirectoryCreation */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F94A1F0CA84D0000B3EE /* DirectoryCreationDialog.xib */,
+				CFC4F94C1F0CA84D0000B3EE /* DirectoryCreationDialog.h */,
+				CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */,
 				CFC4F9041F06253D0000B3EE /* DirectoryCreation.h */,
 				CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */,
 				CFC4F9061F06253D0000B3EE /* DirectoryCreationJob.h */,
@@ -350,6 +360,7 @@
 				CFF53B761EDE53E800F567C4 /* Operation.h in Headers */,
 				CFC4F8D31EFA17070000B3EE /* Internal.h in Headers */,
 				CFC4F8D01EFA07F00000B3EE /* PoolViewController.h in Headers */,
+				CFC4F9511F0CA84D0000B3EE /* DirectoryCreationDialog.h in Headers */,
 				CFC4F8D71EFB5F780000B3EE /* BriefOperationViewController.h in Headers */,
 				CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */,
 				CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */,
@@ -436,6 +447,8 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
+				ru,
 			);
 			mainGroup = CFF53B251EDD197300F567C4;
 			productRefGroup = CFF53B301EDD197300F567C4 /* Products */;
@@ -458,6 +471,7 @@
 				CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */,
 				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
 				CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */,
+				CFC4F9501F0CA84D0000B3EE /* DirectoryCreationDialog.xib in Resources */,
 				CFC4F9001F04B0780000B3EE /* Localizable.strings in Resources */,
 				CFC4F8FE1F04AF2B0000B3EE /* Localizable.stringsdict in Resources */,
 			);
@@ -482,6 +496,7 @@
 				CFC4F8B31EF7E3830000B3EE /* Compression.mm in Sources */,
 				CFC4F9091F06253D0000B3EE /* DirectoryCreation.mm in Sources */,
 				CFC4F8F41F0243D30000B3EE /* GenericErrorDialog.mm in Sources */,
+				CFC4F9521F0CA84D0000B3EE /* DirectoryCreationDialog.mm in Sources */,
 				CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.cpp in Sources */,
 				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,
 				CFC4F8CA1EFA05B00000B3EE /* PoolViewController.mm in Sources */,
@@ -520,6 +535,18 @@
 			targetProxy = CFF53B3A1EDD197300F567C4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		CFC4F94A1F0CA84D0000B3EE /* DirectoryCreationDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFC4F94B1F0CA84D0000B3EE /* Base */,
+				CFC4F9541F0CA8630000B3EE /* ru */,
+			);
+			name = DirectoryCreationDialog.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		CFF53B411EDD197300F567C4 /* Debug */ = {

@@ -53,5 +53,6 @@ namespace nc::ops {
 + (MainWindowController*)lastFocused;
 
 - (void)enqueueOperation:(const shared_ptr<nc::ops::Operation> &)_operation;
+- (void)beginSheet:(NSWindow *)sheetWindow completionHandler:(void (^)(NSModalResponse rc))handler;
 
 @end

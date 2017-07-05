@@ -1,6 +1,6 @@
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
-#include <NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.h>
+//#include <NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
@@ -9,6 +9,7 @@
 #include "../PanelView.h"
 #include "../../MainWindowController.h"
 #include <Operations/DirectoryCreation.h>
+#include <Operations/DirectoryCreationDialog.h>
 
 namespace nc::panel::actions {
 
@@ -224,8 +225,9 @@ bool MakeNewNamedFolder::Predicate( PanelController *_target ) const
 
 void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
 {
-    CreateDirectorySheetController *cd = [CreateDirectorySheetController new];
-    [cd beginSheetForWindow:_target.window completionHandler:^(NSModalResponse returnCode) {
+    auto cd = [[NCOpsDirectoryCreationDialog alloc] init];
+    [_target.mainWindowController beginSheet:cd.window
+                           completionHandler:^(NSModalResponse returnCode) {
         if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
             const string name = cd.result;
             const string dir = _target.currentDirectoryPath;

@@ -20,6 +20,8 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <Habanero/SerialQueue.h>
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 
 
 #include <Operations/Pool.h>
@@ -74,12 +76,20 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     window.delegate = self;
     window.restorationClass = self.class;
     m_OperationsPool = nc::ops::Pool::Make();
-    __weak NSWindow *weak_wnd = window;
-    m_OperationsPool->SetDialogCallback([weak_wnd](NSWindow *_dlg, function<void (NSModalResponse)> _cb){
-        if( NSWindow *window = weak_wnd )
-            [window beginSheet:_dlg completionHandler:^(NSModalResponse returnCode) {
-                _cb(returnCode);
+//    __weak NSWindow *weak_wnd = window;
+    __weak MainWindowController *weak_self = self;
+    m_OperationsPool->SetDialogCallback([weak_self](NSWindow *_dlg, function<void (NSModalResponse)> _cb){
+        if( MainWindowController *ctrl = weak_self)
+            [ctrl beginSheet:_dlg completionHandler:^(NSModalResponse rc) {
+                _cb(rc);
             }];
+//        if( NSWindow *window = weak_wnd ) {
+//            CocoaAppearanceManager::Instance().ManageWindowApperance(_dlg);
+//            GA().PostScreenView(_dlg.windowController.className.UTF8String);
+//            [window beginSheet:_dlg completionHandler:^(NSModalResponse returnCode) {
+//                _cb(returnCode);
+//            }];
+//        }
     });
     
     
@@ -558,6 +568,21 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (nc::ops::Pool&)operationsPool
 {
     return *m_OperationsPool;
+}
+
+- (void)beginSheet:(NSWindow *)sheetWindow completionHandler:(void (^)(NSModalResponse rc))handler
+{
+    CocoaAppearanceManager::Instance().ManageWindowApperance(sheetWindow);
+    __block NSWindow *wnd = sheetWindow;
+    __block NSWindowController *ctrl = wnd.windowController;
+    if( auto name = ctrl.className.UTF8String)
+        GA().PostScreenView(name);
+    [self.window beginSheet:sheetWindow completionHandler:^(NSModalResponse _r){
+        if( handler )
+            handler(_r);
+        wnd = nil;
+        ctrl = nil;
+    }];
 }
 
 @end

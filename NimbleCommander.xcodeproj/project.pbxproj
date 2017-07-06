@@ -96,7 +96,6 @@
 		CF23295A1BDCEB770092BCAD /* Operation_NativeDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */; };
 		CF23295B1BDCEB8F0092BCAD /* Operation_CreateDirectory_VFS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */; };
 		CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */; };
-		CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */; };
 		CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
 		CF2437701DEDF9B300245C14 /* PanelViewFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */; };
 		CF2740841E57F5DD000D4365 /* Alert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2740831E57F5DD000D4365 /* Alert.mm */; };
@@ -239,12 +238,6 @@
 		CF50C4131C0ADE46009DF611 /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */; };
 		CF50C4141C0ADE4A009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
 		CF50C4151C0ADE4B009DF611 /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
-		CF50C4161C0ADE4D009DF611 /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
-		CF50C4171C0ADE4E009DF611 /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
-		CF50C4181C0ADE51009DF611 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
-		CF50C4191C0ADE52009DF611 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
-		CF50C41A1C0ADE54009DF611 /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
-		CF50C41B1C0ADE55009DF611 /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
 		CF50C41C1C0ADE6E009DF611 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D137E1BF5E38B001F53FD /* Operation.mm */; };
 		CF50C41D1C0ADE6F009DF611 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D137E1BF5E38B001F53FD /* Operation.mm */; };
 		CF50C41E1C0ADE72009DF611 /* OperationDialogAlert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */; };
@@ -263,8 +256,6 @@
 		CF50C42D1C0ADE8D009DF611 /* OperationsSummaryViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */; };
 		CF50C42E1C0ADEAD009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */; };
 		CF50C42F1C0ADEAE009DF611 /* MassCopySheetDisclosureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */; };
-		CF50C4591C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
-		CF50C45A1C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
 		CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CF50C4611C0ADF79009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CF561B1617D6290F009D37A4 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
@@ -408,9 +399,6 @@
 		CF7C7CEA1E5D399A002DB0E2 /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.a */; };
 		CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CF7C7CEC1E5D39AD002DB0E2 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
-		CF7D133A1BF1AFE0001F53FD /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
-		CF7D133B1BF1AFE0001F53FD /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
-		CF7D133C1BF1AFE0001F53FD /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
 		CF7D13411BF1B091001F53FD /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */; };
 		CF7D13421BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */; };
 		CF7D134D1BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */; };
@@ -662,13 +650,10 @@
 		CFA3D7C91962613B006A30A1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA3D7C81962613B006A30A1 /* Carbon.framework */; };
 		CFA5395E1D433E2A00C562A7 /* FileAlreadyExistSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069661BB54035000C3CBB /* FileAlreadyExistSheetController.mm */; };
 		CFA5395F1D433E2A00C562A7 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */; };
-		CFA539621D433E2A00C562A7 /* BatchRenameOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */; };
 		CFA5396A1D433E2A00C562A7 /* SelectionWithMaskPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */; };
 		CFA5396F1D433E2A00C562A7 /* FileCopyOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9069681BB54035000C3CBB /* FileCopyOperation.mm */; };
 		CFA539701D433E2A00C562A7 /* GenericOperationView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */; };
-		CFA539801D433E2A00C562A7 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
 		CFA539851D433E2A00C562A7 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */; };
-		CFA539891D433E2A00C562A7 /* BatchRename.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13351BF1AFE0001F53FD /* BatchRename.mm */; };
 		CFA5398C1D433E2A00C562A7 /* FileSysAttrChangeOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */; };
 		CFA5398D1D433E2A00C562A7 /* GTMHotKeyTextField.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */; };
 		CFA539911D433E2A00C562A7 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
@@ -694,7 +679,6 @@
 		CFA539F51D433E2A00C562A7 /* RHPreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		CFA539F81D433E2A00C562A7 /* OperationsController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13871BF5E38B001F53FD /* OperationsController.mm */; };
 		CFA539FA1D433E2A00C562A7 /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
-		CFA539FC1D433E2A00C562A7 /* BatchRenameOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */; };
 		CFA539FF1D433E2A00C562A7 /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */; };
 		CFA53A011D433E2A00C562A7 /* BatchRenameSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */; };
 		CFA53A071D433E2A00C562A7 /* OperationJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13841BF5E38B001F53FD /* OperationJob.cpp */; };
@@ -738,7 +722,6 @@
 		CFA53A431D433E2A00C562A7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = CF3120C81A510F640062185A /* Localizable.strings */; };
 		CFA53A441D433E2A00C562A7 /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
 		CFA53A451D433E2A00C562A7 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */; };
-		CFA53A491D433E2A00C562A7 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
 		CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
 		CFA53A4B1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
 		CFA53A4C1D433E2A00C562A7 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
@@ -832,9 +815,6 @@
 		CFCCFBE51A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */; };
 		CFCCFBE61A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */; };
 		CFCCFBE71A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */; };
-		CFCCFBEF1A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
-		CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
-		CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */; };
 		CFCCFC441A5EB38B00313845 /* Files Tests-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */; };
 		CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
 		CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
@@ -857,7 +837,6 @@
 		CFD6DD261D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */; };
 		CFD6DD271D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */; };
 		CFD6DD281D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */; };
-		CFD6F9101BEBA96600A1B046 /* FileDeletionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */; };
 		CFD726011E42E06300603077 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */; };
 		CFD726021E42E06300603077 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */; };
 		CFD726031E42E06400603077 /* AppDelegate+Migration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */; };
@@ -1673,7 +1652,6 @@
 		CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewDateFormatting.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.mm; sourceTree = SOURCE_ROOT; };
 		CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_CreateDirectory_VFS_Tests.mm; sourceTree = "<group>"; };
 		CF5A0B291C9E7D76005839B7 /* libunrar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libunrar.a; path = 3rd_Party/unrar/built/libunrar.a; sourceTree = SOURCE_ROOT; };
-		CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BatchRename_Tests.mm; sourceTree = "<group>"; };
 		CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilesDraggingSource.h; path = NimbleCommander/States/FilePanels/FilesDraggingSource.h; sourceTree = SOURCE_ROOT; };
 		CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilesDraggingSource.mm; path = NimbleCommander/States/FilePanels/FilesDraggingSource.mm; sourceTree = SOURCE_ROOT; };
 		CF5FE7D31E120A4900CD83B4 /* CopyFilePaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyFilePaths.h; path = NimbleCommander/States/FilePanels/Actions/CopyFilePaths.h; sourceTree = SOURCE_ROOT; };
@@ -2397,10 +2375,10 @@
 				CF128875177FF6F0002816C2 /* FileLinkOperation */,
 				CFC058DD170B27D500A20CF2 /* UnixAttr */,
 				CFAC50CD1714016800A3E5C5 /* Copy */,
-				CF9DF215171320980008CBAE /* CreateDirectoryOperation [UNUSED] */,
-				CFA58396170EA35E00E508CF /* Delete */,
-				CFCD87FD1815377100D82455 /* FileCompressOperation [UNUSED] */,
 				CF55CDD81B29EF52001B4F91 /* Batch Rename */,
+				CF9DF215171320980008CBAE /* CreateDirectoryOperation [UNUSED] */,
+				CFA58396170EA35E00E508CF /* Delete [UNUSED] */,
+				CFCD87FD1815377100D82455 /* FileCompressOperation [UNUSED] */,
 			);
 			name = Operations;
 			sourceTree = "<group>";
@@ -2670,7 +2648,6 @@
 				CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */,
 				CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */,
 				CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */,
-				CF5C1E271B05B679005DE19F /* BatchRename_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
 			name = Tests;
@@ -3014,7 +2991,7 @@
 			name = gtm;
 			sourceTree = "<group>";
 		};
-		CFA58396170EA35E00E508CF /* Delete */ = {
+		CFA58396170EA35E00E508CF /* Delete [UNUSED] */ = {
 			isa = PBXGroup;
 			children = (
 				CF7D132A1BEF24C9001F53FD /* DialogResults.h */,
@@ -3028,7 +3005,7 @@
 				CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */,
 				CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */,
 			);
-			name = Delete;
+			name = "Delete [UNUSED]";
 			sourceTree = "<group>";
 		};
 		CFA7E0141EB83B8D001FE66C /* Network */ = {
@@ -3804,7 +3781,6 @@
 				CF4E56BB1D5068F700452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF8D0D001D963E3400ADFF14 /* InternalViewerController.xib in Resources */,
 				CF50C42D1C0ADE8D009DF611 /* OperationsSummaryViewController.xib in Resources */,
-				CFCCFBF01A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CF9F4B3D1ECD814800E0AF82 /* ConnectToServer.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFCCFBC31A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
@@ -3864,7 +3840,6 @@
 				CF876D311D51E089009C0CCE /* BigFileViewSheet.xib in Resources */,
 				CF9F4B301ECD810C00E0AF82 /* FavoritesWindowController.xib in Resources */,
 				CF4E56A91D5068D800452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
-				CFA53A491D433E2A00C562A7 /* FileDeletionSheetController.xib in Resources */,
 				CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */,
 				CFA53A4B1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFA53A4C1D433E2A00C562A7 /* Media.xcassets in Resources */,
@@ -3939,7 +3914,6 @@
 				CF306F931CE9E54C002326FA /* main_icon.icns in Resources */,
 				CFCCFBD61A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */,
 				CF4E56841D50669C00452912 /* PreferencesWindowTerminalTab.xib in Resources */,
-				CFCCFBEF1A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CF4E56701D50667300452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFCCFC5E1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CFCCFBDB1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
@@ -4006,7 +3980,6 @@
 				CF9F4B321ECD810C00E0AF82 /* FavoritesWindowController.xib in Resources */,
 				CF02B5BB1D0A642500F2760D /* main_icon.icns in Resources */,
 				CF8D0CFB1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */,
-				CFCCFBF11A5E6E3400313845 /* FileDeletionSheetController.xib in Resources */,
 				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF7C7CC01E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */,
 				CF7C7CCC1E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
@@ -4123,7 +4096,6 @@
 				CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */,
 				CF23295A1BDCEB770092BCAD /* Operation_NativeDelete_Tests.mm in Sources */,
 				CF62371D1EB4436B00152B2B /* QLThumbnailsCache_Tests.mm in Sources */,
-				CF2329611BDCEDCB0092BCAD /* BatchRename_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4225,7 +4197,6 @@
 				CFD727091E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */,
 				CFD726651E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */,
 				CF6237251EB4444C00152B2B /* PanelDataOptionsPersistence.mm in Sources */,
-				CF50C4191C0ADE52009DF611 /* BatchRenameOperation.mm in Sources */,
 				CFD7265C1E42E1B700603077 /* MainWindowController.mm in Sources */,
 				CFD7271B1E42E32C00603077 /* MainWindowExternalTerminalEditorState.mm in Sources */,
 				CFD7267B1E42E20400603077 /* PanelController.mm in Sources */,
@@ -4249,7 +4220,6 @@
 				CFA2D6061E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
 				CF818B521EA0610D00BC28E6 /* ChangeAttributes.mm in Sources */,
 				CFD7271E1E42E32F00603077 /* MainWindowTerminalState.mm in Sources */,
-				CF50C4171C0ADE4E009DF611 /* BatchRename.mm in Sources */,
 				CFD726D21E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CF50C4131C0ADE46009DF611 /* BatchRenameSheetController.mm in Sources */,
 				CF9069901BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
@@ -4336,7 +4306,6 @@
 				CFD6DD271D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CFD726501E42E12400603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CFD7263E1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
-				CF50C45A1C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
 				CFD726CC1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */,
 				CFD726391E42E0D900603077 /* LaunchServices.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
@@ -4344,7 +4313,6 @@
 				CFD7272D1E42E34600603077 /* TermShellTask.cpp in Sources */,
 				CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */,
 				CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
-				CF50C41B1C0ADE55009DF611 /* BatchRenameOperationJob.mm in Sources */,
 				CFDEB8291D2BB7F1009BCCBD /* ExternalToolsSupport.mm in Sources */,
 				CF4E569E1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF818B6A1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
@@ -4373,7 +4341,6 @@
 				CFA5395F1D433E2A00C562A7 /* FileLinkOperation.mm in Sources */,
 				CFD727061E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFD8CDB91E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
-				CFA539621D433E2A00C562A7 /* BatchRenameOperation.mm in Sources */,
 				CF9F4B021ECC8DD000E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
 				CF818B4F1EA0610C00BC28E6 /* ToggleSort.mm in Sources */,
 				CFD727371E42E35500603077 /* TermView.mm in Sources */,
@@ -4403,7 +4370,6 @@
 				CFD726511E42E12500603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CFD727281E42E33C00603077 /* TermScreenBuffer.cpp in Sources */,
 				CFD8CDD71E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
-				CFA539801D433E2A00C562A7 /* FileDeletionSheetController.mm in Sources */,
 				CF818B4B1EA0610C00BC28E6 /* DefaultAction.mm in Sources */,
 				CFA539851D433E2A00C562A7 /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CFD726181E42E09100603077 /* CocoaAppearanceManager.mm in Sources */,
@@ -4412,7 +4378,6 @@
 				CF4E569F1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFD8CDB31E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
 				CFD726DB1E42E2BE00603077 /* Layout.mm in Sources */,
-				CFA539891D433E2A00C562A7 /* BatchRename.mm in Sources */,
 				CFD727251E42E33800603077 /* TermScreen.cpp in Sources */,
 				CF7A09DC1EC44A4000533B07 /* OpenNetworkConnection.mm in Sources */,
 				CFA5398C1D433E2A00C562A7 /* FileSysAttrChangeOperationJob.mm in Sources */,
@@ -4542,7 +4507,6 @@
 				CFA539FA1D433E2A00C562A7 /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFD7272E1E42E34700603077 /* TermShellTask.cpp in Sources */,
 				CFD727161E42E32200603077 /* ConfigBackedNetworkConnectionsManager.mm in Sources */,
-				CFA539FC1D433E2A00C562A7 /* BatchRenameOperationJob.mm in Sources */,
 				CFD726A21E42E23F00603077 /* PanelHistory.mm in Sources */,
 				CFD726FB1E42E2E900603077 /* PanelListViewTableView.mm in Sources */,
 				CFD726B81E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
@@ -4611,7 +4575,6 @@
 				CFDAC25A1DFBF0B30039A104 /* PanelController.mm in Sources */,
 				CF90C0BC1EC171FD0056E3B8 /* PanelDataFilter.mm in Sources */,
 				CF7D13501BF1B6F0001F53FD /* FileLinkOperation.mm in Sources */,
-				CF7D133B1BF1AFE0001F53FD /* BatchRenameOperation.mm in Sources */,
 				CF56C2DE1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm in Sources */,
 				CF56C2CF1DC35E8B00F0DF0F /* PanelListViewSizeView.mm in Sources */,
 				CFDAC2731DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm in Sources */,
@@ -4660,14 +4623,12 @@
 				CFDAC2701DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF876D271D51E04A009C0CCE /* BigFileViewHex.mm in Sources */,
 				CFD8CDB21E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
-				CFD6F9101BEBA96600A1B046 /* FileDeletionSheetController.mm in Sources */,
 				CF56C2B91DC1934D00F0DF0F /* PanelListViewRowView.mm in Sources */,
 				CF1E3D1B1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
 				CF7D134D1BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm in Sources */,
 				CF15D0831E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm in Sources */,
 				CF5FE80B1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CF4E563E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
-				CF7D133A1BF1AFE0001F53FD /* BatchRename.mm in Sources */,
 				CFDAC2421DFBE18C0039A104 /* ActionsShortcutsManager.mm in Sources */,
 				CF7D13681BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CFDAC2C41DFD0DE40039A104 /* SharingService.mm in Sources */,
@@ -4796,7 +4757,6 @@
 				CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFDAC2D11DFD105A0039A104 /* MASAppInstalledChecker.cpp in Sources */,
 				CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */,
-				CF7D133C1BF1AFE0001F53FD /* BatchRenameOperationJob.mm in Sources */,
 				CF5FE8041E14A08500CD83B4 /* ThemesManager.mm in Sources */,
 				CF4E56451D5064FE00452912 /* PreferencesWindowViewerTab.mm in Sources */,
 				CFDAC2411DFBE18C0039A104 /* ActionShortcut.mm in Sources */,
@@ -4905,7 +4865,6 @@
 				CF50C4601C0ADF78009DF611 /* FileSysAttrChangeOperationJob.mm in Sources */,
 				CFB66F991D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
 				CF50C42A1C0ADE87009DF611 /* OperationsSummaryViewController.mm in Sources */,
-				CF50C4181C0ADE51009DF611 /* BatchRenameOperation.mm in Sources */,
 				CFD7269A1E42E23500603077 /* PanelDataSortMode.mm in Sources */,
 				CFD8CDBB1E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
 				CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */,
@@ -4948,7 +4907,6 @@
 				CFD7260D1E42E07900603077 /* main.cpp in Sources */,
 				CFD7261C1E42E0A500603077 /* ThemesManager.mm in Sources */,
 				CF9069911BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
-				CF50C4161C0ADE4D009DF611 /* BatchRename.mm in Sources */,
 				CFDEB8281D2BB7F0009BCCBD /* ExternalToolsSupport.mm in Sources */,
 				CFD726B31E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFD726A31E42E24400603077 /* PanelView.mm in Sources */,
@@ -5038,7 +4996,6 @@
 				CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */,
 				CFD726D71E42E2B600603077 /* PanelBriefViewItemCarrier.mm in Sources */,
 				CFD727291E42E34200603077 /* TermScrollView.mm in Sources */,
-				CF50C4591C0ADF41009DF611 /* FileDeletionSheetController.mm in Sources */,
 				CF7A09B11EC2DF6200533B07 /* Duplicate.mm in Sources */,
 				CFD7270E1E42E30C00603077 /* BriefSystemOverview.mm in Sources */,
 				CF1E3D1E1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
@@ -5047,7 +5004,6 @@
 				CF876D3D1D51E0AF009C0CCE /* BigFileViewText.mm in Sources */,
 				CF1FBF221E8F57CC00D3569C /* FavoritesMenuDelegate.mm in Sources */,
 				CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
-				CF50C41A1C0ADE54009DF611 /* BatchRenameOperationJob.mm in Sources */,
 				CFD727081E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */,
 				CFD726CB1E42E2A400603077 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF56BEF61D5C26AE00A08D2B /* InternalViewerController.mm in Sources */,

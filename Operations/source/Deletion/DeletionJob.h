@@ -30,7 +30,7 @@ struct DeletionJobCallbacks
     [](int _err, const string &_path, VFSHost &_vfs){ return TrashErrorResolution::Stop; };
 };
 
-class DeletionJob : public Job, public DeletionJobCallbacks
+class DeletionJob final : public Job, public DeletionJobCallbacks
 {
 public:
     DeletionJob( vector<VFSListingItem> _items, DeletionType _type );

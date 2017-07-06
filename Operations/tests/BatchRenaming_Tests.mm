@@ -1,19 +1,13 @@
-//
-//  BatchRename_Tests.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 15/05/15.
-//  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
-//
+#import <XCTest/XCTest.h>
+#include "../source/BatchRenaming/BatchRenamingScheme.h"
 
-#include "tests_common.h"
-#include <NimbleCommander//Operations/BatchRename/BatchRename.h>
+using namespace nc::ops;
 
-@interface BatchRename_Tests : XCTestCase
+@interface BatchRenaming_Tests : XCTestCase
 
 @end
 
-@implementation BatchRename_Tests
+@implementation BatchRenaming_Tests
 
 
 
@@ -31,18 +25,18 @@
 //[N-5-] Characters from the 5th-last character to the end of the name
 - (void)testNamePlaceholders
 { // [N.....
-    {   const auto v = BatchRename::ParsePlaceholder_TextExtraction(@"", 0); // [N
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"", 0); // [N
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 0 );
             auto a = v.value().first;
             XCTAssert(a.direct_range &&
                       a.direct_range.value().location == 0 &&
-                      a.direct_range.value().length == BatchRename::Range::max_length());
+                      a.direct_range.value().length == BatchRenamingScheme::Range::max_length());
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_TextExtraction(@"364", 0); //[N364]
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364", 0); //[N364]
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 3 );
@@ -53,7 +47,7 @@
         }
     }
 
-    {   const auto v = BatchRename::ParsePlaceholder_TextExtraction(@"364 ", 0); //[N364 ]
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364 ", 0); //[N364 ]
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 3 );
@@ -64,7 +58,7 @@
         }
     }
 
-    {   const auto v = BatchRename::ParsePlaceholder_TextExtraction(@"364-365 ", 0); //[N364-365  ]
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364-365 ", 0); //[N364-365  ]
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 7 );
@@ -75,7 +69,7 @@
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_TextExtraction(@"364,10 ", 0); //[364,10  ]
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364,10 ", 0); //[364,10  ]
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 6 );
@@ -86,7 +80,7 @@
         }
     }
 
-    {   const auto v = BatchRename::ParsePlaceholder_TextExtraction(@"-10-", 0); // [N-10-]
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"-10-", 0); // [N-10-]
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 4 );
@@ -94,11 +88,11 @@
             XCTAssert(!a.direct_range &&
                       a.reverse_range &&
                       a.reverse_range.value().location == 9 &&
-                      a.reverse_range.value().length == BatchRename::Range::max_length());
+                      a.reverse_range.value().length == BatchRenamingScheme::Range::max_length());
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_TextExtraction(@"-10-2", 0); // [N-10-1]
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"-10-2", 0); // [N-10-1]
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 5 );
@@ -110,7 +104,7 @@
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_TextExtraction(@"-10,3", 0); // [N-10-1]
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"-10,3", 0); // [N-10-1]
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 5 );
@@ -122,7 +116,7 @@
         }
     }
 
-    {   const auto v = BatchRename::ParsePlaceholder_TextExtraction(@"12--15", 0); // [N4--3]
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"12--15", 0); // [N4--3]
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 6 );
@@ -138,7 +132,7 @@
 - (void)testCounterPlaceholders
 { // [C.....
 
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"-763+3/99:7", 0, 1, 1, 1, 1);
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@"-763+3/99:7", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 11 );
@@ -150,7 +144,7 @@
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"-763", 0, 1, 1, 1, 1);
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@"-763", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 4 );
@@ -159,7 +153,7 @@
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"763", 0, 1, 1, 1, 1);
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@"763", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 3 );
@@ -168,7 +162,7 @@
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"+-13", 0, 1, 1, 1, 1);
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@"+-13", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 4 );
@@ -177,7 +171,7 @@
         }
     }
 
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@"/71", 0, 1, 1, 1, 1);
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@"/71", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 3 );
@@ -186,7 +180,7 @@
         }
     }
     
-    {   const auto v = BatchRename::ParsePlaceholder_Counter(@":12", 0, 1, 1, 1, 1);
+    {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@":12", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
             XCTAssert( v.value().second == 3 );
@@ -198,125 +192,125 @@
 
 - (void)testTextExtraction
 {
-    {   BatchRename::TextExtraction te;
-        auto r = BatchRename::ExtractText(@"1234567890", te);
+    {   BatchRenamingScheme::TextExtraction te;
+        auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         XCTAssert( [r isEqualToString:@"1234567890"] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range->location = 4;
         te.direct_range->length = 1;
-        auto r = BatchRename::ExtractText(@"1234567890", te);
+        auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         XCTAssert( [r isEqualToString:@"5"] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range->location = 4;
-        auto r = BatchRename::ExtractText(@"1234567890", te);
+        auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         XCTAssert( [r isEqualToString:@"567890"] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range->location = 10000;
-        auto r = BatchRename::ExtractText(@"1234567890", te);
+        auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         XCTAssert( [r isEqualToString:@""] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range->location = 0;
         te.direct_range->length = 0;
-        auto r = BatchRename::ExtractText(@"1234567890", te);
+        auto r = BatchRenamingScheme::ExtractText(@"1234567890", te);
         XCTAssert( [r isEqualToString:@""] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range->location = 1;
         te.direct_range->length = 8;
         te.zero_flag = true;
-        auto r = BatchRename::ExtractText(@"abc", te);
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"000000bc"] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range->location = 1;
         te.direct_range->length = 8;
         te.space_flag = true;
-        auto r = BatchRename::ExtractText(@"abc", te);
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"      bc"] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range = nullopt;
-        te.reverse_range = BatchRename::Range(0,1);
-        auto r = BatchRename::ExtractText(@"abc", te);
+        te.reverse_range = BatchRenamingScheme::Range(0,1);
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"c"] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range = nullopt;
-        te.reverse_range = BatchRename::Range(0, BatchRename::Range::max_length());
-        auto r = BatchRename::ExtractText(@"abc", te);
+        te.reverse_range = BatchRenamingScheme::Range(0, BatchRenamingScheme::Range::max_length());
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"c"] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range = nullopt;
-        te.reverse_range = BatchRename::Range(100, BatchRename::Range::max_length());
-        auto r = BatchRename::ExtractText(@"abc", te);
+        te.reverse_range = BatchRenamingScheme::Range(100, BatchRenamingScheme::Range::max_length());
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"abc"] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range = nullopt;
-        te.reverse_range = BatchRename::Range(2, 3);
-        auto r = BatchRename::ExtractText(@"abc", te);
+        te.reverse_range = BatchRenamingScheme::Range(2, 3);
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"abc"] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range = nullopt;
-        te.reverse_range = BatchRename::Range(2, 0);
-        auto r = BatchRename::ExtractText(@"abc", te);
+        te.reverse_range = BatchRenamingScheme::Range(2, 0);
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@""] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range = nullopt;
         te.from_first = 0;
         te.to_last = 0;
-        auto r = BatchRename::ExtractText(@"abc", te);
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"abc"] );
     }
     
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range = nullopt;
         te.from_first = 2;
         te.to_last = 0;
-        auto r = BatchRename::ExtractText(@"abc", te);
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"c"] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range = nullopt;
         te.from_first = 3;
         te.to_last = 0;
-        auto r = BatchRename::ExtractText(@"abc", te);
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@""] );
     }
 
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range = nullopt;
         te.from_first = 0;
         te.to_last = 5;
-        auto r = BatchRename::ExtractText(@"abc", te);
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@""] );
     }
     
-    {   BatchRename::TextExtraction te;
+    {   BatchRenamingScheme::TextExtraction te;
         te.direct_range = nullopt;
         te.from_first = 100;
         te.to_last = 100;
-        auto r = BatchRename::ExtractText(@"abc", te);
+        auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@""] );
     }
     

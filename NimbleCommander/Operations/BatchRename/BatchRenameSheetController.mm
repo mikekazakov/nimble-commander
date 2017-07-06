@@ -12,8 +12,11 @@
 #include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "BatchRenameSheetController.h"
-#include "BatchRename.h"
+//#include "BatchRename.h"
 #include "BatchRenameSheetRangeSelectionPopoverController.h"
+#include <Operations/BatchRenamingScheme.h>
+
+using namespace nc::ops;
 
 static const auto g_ConfigPatternsPath = "filePanel.batchRename.lastPatterns";
 static const auto g_ConfigSearchesPath = "filePanel.batchRename.lastSearches";
@@ -79,7 +82,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 
 @implementation BatchRenameSheetController
 {
-    vector<BatchRename::FileInfo>   m_FileInfos;
+    vector<BatchRenamingScheme::FileInfo>   m_FileInfos;
     
     vector<NSTextField*>            m_LabelsBefore;
     vector<NSTextField*>            m_LabelsAfter;
@@ -111,7 +114,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
         
         for( auto &e: _items ) {
             
-            BatchRename::FileInfo fi;
+            BatchRenamingScheme::FileInfo fi;
             fi.item = e;
             fi.mod_time = e.MTime();
             localtime_r(&fi.mod_time, &fi.mod_time_tm);
@@ -259,10 +262,10 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     bool search_once = self.SearchOnlyOnce.state == NSOnState;
     bool search_in_ext = self.SearchInExtension.state == NSOnState;
     bool search_regexp = self.SearchWithRegExp.state == NSOnState;
-    BatchRename::CaseTransform ct = (BatchRename::CaseTransform)self.CaseProcessing.selectedTag;
+    BatchRenamingScheme::CaseTransform ct = (BatchRenamingScheme::CaseTransform)self.CaseProcessing.selectedTag;
     bool ct_with_ext = self.CaseProcessingWithExtension.state == NSOnState;
     
-    BatchRename br;
+    BatchRenamingScheme br;
     br.SetReplacingOptions(search_for, replace_with, search_case_sens, search_once, search_in_ext, search_regexp);
     br.SetCaseTransform(ct, ct_with_ext);
     br.SetDefaultCounter(m_CounterStartsAt, m_CounterStepsBy, 1, (unsigned)self.CounterDigits.selectedTag);

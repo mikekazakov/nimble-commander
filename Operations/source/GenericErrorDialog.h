@@ -27,5 +27,8 @@ enum class GenericErrorDialogStyle
 @property (nonatomic) bool showApplyToAll;
 
 - (void) addButtonWithTitle:(NSString*)_title responseCode:(NSModalResponse)_response;
+- (void) addAbortButton;
+- (void) addSkipButton;
+- (void) addSkipAllButton;
 
 @end

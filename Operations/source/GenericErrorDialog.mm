@@ -1,6 +1,7 @@
 #include "GenericErrorDialog.h"
 #include <VFS/VFS.h>
 #include "Internal.h"
+#include "ModalDialogResponses.h"
 
 using namespace nc::ops;
 
@@ -41,7 +42,7 @@ using namespace nc::ops;
         m_Context = _context;
         m_ShowApplyToAll = false;
         m_Style = GenericErrorDialogStyle::Caution;
-        m_EscapeButtonResponse = NSModalResponseCancel;
+        m_EscapeButtonResponse = nc::ops::NSModalResponseCancel;
         m_ErrorNo = VFSError::Ok;
     
     }
@@ -159,6 +160,21 @@ using namespace nc::ops;
 - (void)moveLeft:(id)sender
 {
     [self.window selectPreviousKeyView:sender];
+}
+
+- (void) addAbortButton
+{
+    [self addButtonWithTitle:@"Abort" responseCode:nc::ops::NSModalResponseStop];
+}
+
+- (void) addSkipButton
+{
+    [self addButtonWithTitle:@"Skip" responseCode:nc::ops::NSModalResponseSkip];
+}
+
+- (void) addSkipAllButton
+{
+    [self addButtonWithTitle:@"Skip All" responseCode:nc::ops::NSModalResponseSkipAll];
 }
 
 @end

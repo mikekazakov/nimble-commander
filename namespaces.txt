@@ -4,6 +4,8 @@
       ::actions
          ::context
       ::data
+   ::ops    
 
 future:
    ::vfs
+   ::term

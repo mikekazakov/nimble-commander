@@ -61,6 +61,17 @@
 		CFC4F9501F0CA84D0000B3EE /* DirectoryCreationDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F94A1F0CA84D0000B3EE /* DirectoryCreationDialog.xib */; };
 		CFC4F9511F0CA84D0000B3EE /* DirectoryCreationDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F94C1F0CA84D0000B3EE /* DirectoryCreationDialog.h */; };
 		CFC4F9521F0CA84D0000B3EE /* DirectoryCreationDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */; };
+		CFC4F9571F0CB0260000B3EE /* DirectoryCreationDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9561F0CB0260000B3EE /* DirectoryCreationDialog.h */; };
+		CFC4F95C1F0CB07A0000B3EE /* DeletionDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9581F0CB07A0000B3EE /* DeletionDialog.xib */; };
+		CFC4F95D1F0CB07A0000B3EE /* DeletionDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F95A1F0CB07A0000B3EE /* DeletionDialog.h */; };
+		CFC4F95E1F0CB07A0000B3EE /* DeletionDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F95B1F0CB07A0000B3EE /* DeletionDialog.mm */; };
+		CFC4F9641F0CC66E0000B3EE /* BatchRenamingScheme.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9621F0CC66E0000B3EE /* BatchRenamingScheme.h */; };
+		CFC4F9651F0CC66E0000B3EE /* BatchRenamingScheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9631F0CC66E0000B3EE /* BatchRenamingScheme.mm */; };
+		CFC4F9681F0CEEBD0000B3EE /* BatchRenaming_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9661F0CEEB90000B3EE /* BatchRenaming_Tests.mm */; };
+		CFC4F96D1F0CEFB60000B3EE /* BatchRenaming.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9691F0CEFB60000B3EE /* BatchRenaming.h */; };
+		CFC4F96E1F0CEFB60000B3EE /* BatchRenaming.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F96A1F0CEFB60000B3EE /* BatchRenaming.mm */; };
+		CFC4F96F1F0CEFB60000B3EE /* BatchRenamingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F96B1F0CEFB60000B3EE /* BatchRenamingJob.cpp */; };
+		CFC4F9701F0CEFB60000B3EE /* BatchRenamingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F96C1F0CEFB60000B3EE /* BatchRenamingJob.h */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
@@ -137,6 +148,18 @@
 		CFC4F94C1F0CA84D0000B3EE /* DirectoryCreationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreationDialog.h; path = source/DirectoryCreation/DirectoryCreationDialog.h; sourceTree = "<group>"; };
 		CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreationDialog.mm; path = source/DirectoryCreation/DirectoryCreationDialog.mm; sourceTree = "<group>"; };
 		CFC4F9541F0CA8630000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/DirectoryCreation/ru.lproj/DirectoryCreationDialog.strings; sourceTree = "<group>"; };
+		CFC4F9561F0CB0260000B3EE /* DirectoryCreationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreationDialog.h; path = include/Operations/DirectoryCreationDialog.h; sourceTree = "<group>"; };
+		CFC4F9591F0CB07A0000B3EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = source/Deletion/Base.lproj/DeletionDialog.xib; sourceTree = "<group>"; };
+		CFC4F95A1F0CB07A0000B3EE /* DeletionDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeletionDialog.h; path = source/Deletion/DeletionDialog.h; sourceTree = "<group>"; };
+		CFC4F95B1F0CB07A0000B3EE /* DeletionDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DeletionDialog.mm; path = source/Deletion/DeletionDialog.mm; sourceTree = "<group>"; };
+		CFC4F95F1F0CB07E0000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Deletion/ru.lproj/DeletionDialog.strings; sourceTree = "<group>"; };
+		CFC4F9621F0CC66E0000B3EE /* BatchRenamingScheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenamingScheme.h; path = source/BatchRenaming/BatchRenamingScheme.h; sourceTree = "<group>"; };
+		CFC4F9631F0CC66E0000B3EE /* BatchRenamingScheme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenamingScheme.mm; path = source/BatchRenaming/BatchRenamingScheme.mm; sourceTree = "<group>"; };
+		CFC4F9661F0CEEB90000B3EE /* BatchRenaming_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenaming_Tests.mm; path = tests/BatchRenaming_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CFC4F9691F0CEFB60000B3EE /* BatchRenaming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenaming.h; path = source/BatchRenaming/BatchRenaming.h; sourceTree = "<group>"; };
+		CFC4F96A1F0CEFB60000B3EE /* BatchRenaming.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenaming.mm; path = source/BatchRenaming/BatchRenaming.mm; sourceTree = "<group>"; };
+		CFC4F96B1F0CEFB60000B3EE /* BatchRenamingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BatchRenamingJob.cpp; path = source/BatchRenaming/BatchRenamingJob.cpp; sourceTree = "<group>"; };
+		CFC4F96C1F0CEFB60000B3EE /* BatchRenamingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenamingJob.h; path = source/BatchRenaming/BatchRenamingJob.h; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -255,6 +278,9 @@
 		CFC4F9161F09D9620000B3EE /* Deletion */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F9581F0CB07A0000B3EE /* DeletionDialog.xib */,
+				CFC4F95A1F0CB07A0000B3EE /* DeletionDialog.h */,
+				CFC4F95B1F0CB07A0000B3EE /* DeletionDialog.mm */,
 				CFC4F91F1F09DCC80000B3EE /* Options.h */,
 				CFC4F9171F09D9740000B3EE /* Deletion.h */,
 				CFC4F9181F09D9740000B3EE /* Deletion.mm */,
@@ -262,6 +288,30 @@
 				CFC4F91A1F09D9740000B3EE /* DeletionJob.h */,
 			);
 			name = Deletion;
+			sourceTree = "<group>";
+		};
+		CFC4F9601F0CC6480000B3EE /* BatchRenaming */ = {
+			isa = PBXGroup;
+			children = (
+				CFC4F9691F0CEFB60000B3EE /* BatchRenaming.h */,
+				CFC4F96A1F0CEFB60000B3EE /* BatchRenaming.mm */,
+				CFC4F96B1F0CEFB60000B3EE /* BatchRenamingJob.cpp */,
+				CFC4F96C1F0CEFB60000B3EE /* BatchRenamingJob.h */,
+				CFC4F9621F0CC66E0000B3EE /* BatchRenamingScheme.h */,
+				CFC4F9631F0CC66E0000B3EE /* BatchRenamingScheme.mm */,
+			);
+			name = BatchRenaming;
+			sourceTree = "<group>";
+		};
+		CFC4F9611F0CC6550000B3EE /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				CFC4F9601F0CC6480000B3EE /* BatchRenaming */,
+				CFC4F9161F09D9620000B3EE /* Deletion */,
+				CFC4F9031F0625090000B3EE /* DirectoryCreation */,
+				CFF53B8E1EE24FC300F567C4 /* Compression */,
+			);
+			name = Operations;
 			sourceTree = "<group>";
 		};
 		CFF53B251EDD197300F567C4 = {
@@ -288,6 +338,7 @@
 		CFF53B3C1EDD197300F567C4 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F9661F0CEEB90000B3EE /* BatchRenaming_Tests.mm */,
 				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
 				CFF53B951EE252F200F567C4 /* Compression_Tests.mm */,
 				CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */,
@@ -315,6 +366,7 @@
 				CF7084DC1EF7CF7E0072F0F6 /* Compression.h */,
 				CFC4F92B1F0B49C00000B3EE /* Deletion.h */,
 				CFC4F92C1F0B49C00000B3EE /* DirectoryCreation.h */,
+				CFC4F9561F0CB0260000B3EE /* DirectoryCreationDialog.h */,
 				CFF53B8C1EE24F9E00F567C4 /* Job.h */,
 				CFF53B8D1EE24F9E00F567C4 /* Operation.h */,
 				CF7084DA1EF7CCB00072F0F6 /* Pool.h */,
@@ -328,9 +380,7 @@
 			isa = PBXGroup;
 			children = (
 				CFC4F90E1F0745170000B3EE /* Base */,
-				CFC4F9161F09D9620000B3EE /* Deletion */,
-				CFC4F9031F0625090000B3EE /* DirectoryCreation */,
-				CFF53B8E1EE24FC300F567C4 /* Compression */,
+				CFC4F9611F0CC6550000B3EE /* Operations */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -366,18 +416,23 @@
 				CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */,
 				CFC4F91B1F09D9740000B3EE /* Deletion.h in Headers */,
 				CFC4F9201F09DCC80000B3EE /* Options.h in Headers */,
+				CFC4F9571F0CB0260000B3EE /* DirectoryCreationDialog.h in Headers */,
 				CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */,
+				CFC4F95D1F0CB07A0000B3EE /* DeletionDialog.h in Headers */,
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
 				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
 				CFC4F92D1F0B49C00000B3EE /* Deletion.h in Headers */,
 				CFC4F9081F06253D0000B3EE /* DirectoryCreation.h in Headers */,
 				CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */,
+				CFC4F9701F0CEFB60000B3EE /* BatchRenamingJob.h in Headers */,
+				CFC4F96D1F0CEFB60000B3EE /* BatchRenaming.h in Headers */,
 				CFC4F91E1F09D9740000B3EE /* DeletionJob.h in Headers */,
 				CFC4F8C91EFA05B00000B3EE /* PoolViewController.h in Headers */,
 				CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */,
 				CFC4F9021F0617E20000B3EE /* ModalDialogResponses.h in Headers */,
 				CFC4F92E1F0B49C00000B3EE /* DirectoryCreation.h in Headers */,
+				CFC4F9641F0CC66E0000B3EE /* BatchRenamingScheme.h in Headers */,
 				CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */,
 				CFC4F90A1F06253D0000B3EE /* DirectoryCreationJob.h in Headers */,
 			);
@@ -470,6 +525,7 @@
 				CFC4F8DA1EFB5FAB0000B3EE /* BriefOperationViewController.xib in Resources */,
 				CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */,
 				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
+				CFC4F95C1F0CB07A0000B3EE /* DeletionDialog.xib in Resources */,
 				CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */,
 				CFC4F9501F0CA84D0000B3EE /* DirectoryCreationDialog.xib in Resources */,
 				CFC4F9001F04B0780000B3EE /* Localizable.strings in Resources */,
@@ -494,12 +550,16 @@
 				CFC4F90B1F06253D0000B3EE /* DirectoryCreationJob.cpp in Sources */,
 				CFC4F8D41EFA17070000B3EE /* Internal.mm in Sources */,
 				CFC4F8B31EF7E3830000B3EE /* Compression.mm in Sources */,
+				CFC4F96F1F0CEFB60000B3EE /* BatchRenamingJob.cpp in Sources */,
+				CFC4F96E1F0CEFB60000B3EE /* BatchRenaming.mm in Sources */,
 				CFC4F9091F06253D0000B3EE /* DirectoryCreation.mm in Sources */,
 				CFC4F8F41F0243D30000B3EE /* GenericErrorDialog.mm in Sources */,
 				CFC4F9521F0CA84D0000B3EE /* DirectoryCreationDialog.mm in Sources */,
 				CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.cpp in Sources */,
+				CFC4F95E1F0CB07A0000B3EE /* DeletionDialog.mm in Sources */,
 				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,
 				CFC4F8CA1EFA05B00000B3EE /* PoolViewController.mm in Sources */,
+				CFC4F9651F0CC66E0000B3EE /* BatchRenamingScheme.mm in Sources */,
 				CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */,
 				CFC4F8DE1EFCC0040000B3EE /* StatisticsFormatter.mm in Sources */,
 				CFC4F8EA1F00E5D30000B3EE /* HaltReasonDialog.mm in Sources */,
@@ -519,6 +579,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFC4F9681F0CEEBD0000B3EE /* BatchRenaming_Tests.mm in Sources */,
 				CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */,
 				CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */,
 				CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */,
@@ -544,6 +605,15 @@
 				CFC4F9541F0CA8630000B3EE /* ru */,
 			);
 			name = DirectoryCreationDialog.xib;
+			sourceTree = "<group>";
+		};
+		CFC4F9581F0CB07A0000B3EE /* DeletionDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFC4F9591F0CB07A0000B3EE /* Base */,
+				CFC4F95F1F0CB07E0000B3EE /* ru */,
+			);
+			name = DeletionDialog.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

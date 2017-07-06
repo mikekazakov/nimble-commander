@@ -12,7 +12,7 @@ struct DirectoryCreationJobCallbacks
     [](int _err, const string &_path, VFSHost &_vfs){};
 };
 
-class DirectoryCreationJob : public Job, public DirectoryCreationJobCallbacks
+class DirectoryCreationJob final : public Job, public DirectoryCreationJobCallbacks
 {
 public:
     DirectoryCreationJob( const vector<string> &_directories_chain,

@@ -32,12 +32,9 @@ struct CompressionJobCallbacks
     function< void(int _err, const string &_path, VFSHost &_vfs) >
     m_TargetWriteError =
     [](int _err, const string &_path, VFSHost &_vfs){};
-
-    
-    
 };
 
-class CompressionJob : public Job, public CompressionJobCallbacks
+class CompressionJob final: public Job, public CompressionJobCallbacks
 {
 public:
     CompressionJob(vector<VFSListingItem> _src_files,

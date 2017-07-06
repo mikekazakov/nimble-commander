@@ -1,12 +1,12 @@
 #include "Delete.h"
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
-#include <NimbleCommander/Operations/Delete/FileDeletionSheetController.h>
 #include <Utility/NativeFSManager.h>
 #include <Habanero/algo.h>
 #include "../PanelData.h"
 #include "../PanelView.h"
 #include <Operations/Deletion.h>
+#include <Operations/DeletionDialog.h>
 #include "../../MainWindowController.h"
 
 namespace nc::panel::actions {
@@ -34,34 +34,32 @@ void Delete::Perform( PanelController *_target, id _sender ) const
     if( items->empty() )
         return;
     
-    const auto sheet = [[FileDeletionSheetController alloc] initWithItems:items];
+    const auto sheet = [[NCOpsDeletionDialog alloc] initWithItems:items];
     if( AllAreNative(*items) ) {
         const auto all_have_trash = AllHaveTrash(*items);
         sheet.allowMoveToTrash = all_have_trash;
         sheet.defaultType = m_Permanently ?
-            FileDeletionOperationType::Delete :
+            nc::ops::DeletionType::Permanent :
             (all_have_trash ?
-                FileDeletionOperationType::MoveToTrash :
-                FileDeletionOperationType::Delete);
+                nc::ops::DeletionType::Trash :
+                nc::ops::DeletionType::Permanent);
     }
     else {
         sheet.allowMoveToTrash = false;
-        sheet.defaultType = FileDeletionOperationType::Delete;
+        sheet.defaultType = nc::ops::DeletionType::Permanent;
     }
 
     auto sheet_handler = ^(NSModalResponse returnCode) {
         if( returnCode == NSModalResponseOK ){
             const auto operation = make_shared<nc::ops::Deletion>(
                 move(*items),
-                sheet.resultType == FileDeletionOperationType::MoveToTrash ?
-                    nc::ops::DeletionType::Trash :
-                    nc::ops::DeletionType::Permanent);
+                sheet.resultType);
             AddPanelRefreshEpilogIfNeeded(_target, operation);
             [_target.mainWindowController enqueueOperation:operation];
         }
     };
     
-    [sheet beginSheetForWindow:_target.window completionHandler:sheet_handler];
+    [_target.mainWindowController beginSheet:sheet.window completionHandler:sheet_handler];
 }
 
 bool MoveToTrash::Predicate( PanelController *_target ) const

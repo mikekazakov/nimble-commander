@@ -1,11 +1,13 @@
-#include <NimbleCommander/Operations/BatchRename/BatchRename.h>
+//#include <NimbleCommander/Operations/BatchRename/BatchRename.h>
 #include <NimbleCommander/Operations/BatchRename/BatchRenameSheetController.h>
-#include <NimbleCommander/Operations/BatchRename/BatchRenameOperation.h>
+//#include <NimbleCommander/Operations/BatchRename/BatchRenameOperation.h>
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
 #include "BatchRename.h"
 #include "../PanelData.h"
 #include "../PanelView.h"
+#include "../../MainWindowController.h"
+#include <Operations/BatchRenaming.h>
 
 namespace nc::panel::actions {
 
@@ -35,20 +37,32 @@ void BatchRename::Perform( PanelController *_target, id _sender ) const
             auto src_paths = sheet.filenamesSource;
             auto dst_paths = sheet.filenamesDestination;
 
-            auto operation = [[BatchRenameOperation alloc]
-                              initWithOriginalFilepaths:move(src_paths)
-                              renamedFilepaths:move(dst_paths)
-                              vfs:host];
+
+            const auto operation = make_shared<nc::ops::BatchRenaming>(move(src_paths),
+                                                                       move(dst_paths),
+                                                                       host);
+
+//            auto operation = [[BatchRenameOperation alloc]
+//                              initWithOriginalFilepaths:move(src_paths)
+//                              renamedFilepaths:move(dst_paths)
+//                              vfs:host];
             if( !_target.receivesUpdateNotifications ) {
                 __weak PanelController *weak_panel = _target;
-                [operation AddOnFinishHandler:[=]{
+                operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish,[=]{
                     dispatch_to_main_queue( [=]{
                         [(PanelController*)weak_panel refreshPanel];
                     });
-                }];
+                });
+                
+//                [operation AddOnFinishHandler:[=]{
+//                    dispatch_to_main_queue( [=]{
+//                        [(PanelController*)weak_panel refreshPanel];
+//                    });
+//                }];
             }
             
-            [_target.state AddOperation:operation];
+//            [_target.state AddOperation:operation];
+            [_target.mainWindowController enqueueOperation:operation];
         }
     }];
 }

@@ -1,5 +1,6 @@
 #include <Cocoa/Cocoa.h>
 #include <Utility/StringExtras.h>
+#include <Habanero/CFStackAllocator.h>
 
 using namespace std;
 
@@ -170,3 +171,41 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 }
 
 @end
+
+bool LowercaseEqual(std::experimental::string_view _s1,
+                    std::experimental::string_view _s2 ) noexcept
+{
+    if( _s1.data() == nullptr && _s2.data() == nullptr )
+        return true;
+    if( _s1.data() == nullptr || _s2.data() == nullptr )
+        return false;
+
+    CFStackAllocator st_alloc;
+    
+    const auto s1 =  CFStringCreateWithBytesNoCopy(st_alloc.Alloc(),
+                                                   (const UInt8*)_s1.data(),
+                                                   _s1.length(),
+                                                   kCFStringEncodingUTF8,
+                                                   false,
+                                                   kCFAllocatorNull);
+    if( !s1 )
+        return false;
+
+    const auto s2 =  CFStringCreateWithBytesNoCopy(st_alloc.Alloc(),
+                                                   (const UInt8*)_s2.data(),
+                                                   _s2.length(),
+                                                   kCFStringEncodingUTF8,
+                                                   false,
+                                                   kCFAllocatorNull);
+    if( !s2 ) {
+        CFRelease(s1);
+        return false;
+    }
+    
+    const auto r = CFStringCompare(s1, s2, kCFCompareCaseInsensitive);
+    
+    CFRelease(s1);
+    CFRelease(s2);
+    
+    return r == kCFCompareEqualTo;
+}

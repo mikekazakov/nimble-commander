@@ -72,6 +72,12 @@
 		CFC4F96E1F0CEFB60000B3EE /* BatchRenaming.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F96A1F0CEFB60000B3EE /* BatchRenaming.mm */; };
 		CFC4F96F1F0CEFB60000B3EE /* BatchRenamingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F96B1F0CEFB60000B3EE /* BatchRenamingJob.cpp */; };
 		CFC4F9701F0CEFB60000B3EE /* BatchRenamingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F96C1F0CEFB60000B3EE /* BatchRenamingJob.h */; };
+		CFC4F97D1F0DEC280000B3EE /* BatchRenamingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9751F0DEC280000B3EE /* BatchRenamingDialog.xib */; };
+		CFC4F97E1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9771F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.xib */; };
+		CFC4F97F1F0DEC280000B3EE /* BatchRenamingDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9791F0DEC280000B3EE /* BatchRenamingDialog.h */; };
+		CFC4F9801F0DEC280000B3EE /* BatchRenamingDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F97A1F0DEC280000B3EE /* BatchRenamingDialog.mm */; };
+		CFC4F9811F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F97B1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.h */; };
+		CFC4F9821F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F97C1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.mm */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
@@ -160,6 +166,14 @@
 		CFC4F96A1F0CEFB60000B3EE /* BatchRenaming.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenaming.mm; path = source/BatchRenaming/BatchRenaming.mm; sourceTree = "<group>"; };
 		CFC4F96B1F0CEFB60000B3EE /* BatchRenamingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BatchRenamingJob.cpp; path = source/BatchRenaming/BatchRenamingJob.cpp; sourceTree = "<group>"; };
 		CFC4F96C1F0CEFB60000B3EE /* BatchRenamingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenamingJob.h; path = source/BatchRenaming/BatchRenamingJob.h; sourceTree = "<group>"; };
+		CFC4F9761F0DEC280000B3EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = source/BatchRenaming/Base.lproj/BatchRenamingDialog.xib; sourceTree = "<group>"; };
+		CFC4F9781F0DEC280000B3EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = source/BatchRenaming/Base.lproj/BatchRenamingRangeSelectionPopover.xib; sourceTree = "<group>"; };
+		CFC4F9791F0DEC280000B3EE /* BatchRenamingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenamingDialog.h; path = source/BatchRenaming/BatchRenamingDialog.h; sourceTree = "<group>"; };
+		CFC4F97A1F0DEC280000B3EE /* BatchRenamingDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenamingDialog.mm; path = source/BatchRenaming/BatchRenamingDialog.mm; sourceTree = "<group>"; };
+		CFC4F97B1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenamingRangeSelectionPopover.h; path = source/BatchRenaming/BatchRenamingRangeSelectionPopover.h; sourceTree = "<group>"; };
+		CFC4F97C1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenamingRangeSelectionPopover.mm; path = source/BatchRenaming/BatchRenamingRangeSelectionPopover.mm; sourceTree = "<group>"; };
+		CFC4F9831F0DEC2F0000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/BatchRenaming/ru.lproj/BatchRenamingDialog.strings; sourceTree = "<group>"; };
+		CFC4F9841F0DEC340000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/BatchRenaming/ru.lproj/BatchRenamingRangeSelectionPopover.strings; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -295,8 +309,14 @@
 			children = (
 				CFC4F9691F0CEFB60000B3EE /* BatchRenaming.h */,
 				CFC4F96A1F0CEFB60000B3EE /* BatchRenaming.mm */,
+				CFC4F9791F0DEC280000B3EE /* BatchRenamingDialog.h */,
+				CFC4F97A1F0DEC280000B3EE /* BatchRenamingDialog.mm */,
+				CFC4F9751F0DEC280000B3EE /* BatchRenamingDialog.xib */,
 				CFC4F96B1F0CEFB60000B3EE /* BatchRenamingJob.cpp */,
 				CFC4F96C1F0CEFB60000B3EE /* BatchRenamingJob.h */,
+				CFC4F97B1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.h */,
+				CFC4F97C1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.mm */,
+				CFC4F9771F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.xib */,
 				CFC4F9621F0CC66E0000B3EE /* BatchRenamingScheme.h */,
 				CFC4F9631F0CC66E0000B3EE /* BatchRenamingScheme.mm */,
 			);
@@ -409,6 +429,7 @@
 				CFC4F8E41EFCE0380000B3EE /* BriefOperationView.h in Headers */,
 				CFF53B761EDE53E800F567C4 /* Operation.h in Headers */,
 				CFC4F8D31EFA17070000B3EE /* Internal.h in Headers */,
+				CFC4F9811F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.h in Headers */,
 				CFC4F8D01EFA07F00000B3EE /* PoolViewController.h in Headers */,
 				CFC4F9511F0CA84D0000B3EE /* DirectoryCreationDialog.h in Headers */,
 				CFC4F8D71EFB5F780000B3EE /* BriefOperationViewController.h in Headers */,
@@ -420,6 +441,7 @@
 				CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */,
 				CFC4F95D1F0CB07A0000B3EE /* DeletionDialog.h in Headers */,
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
+				CFC4F97F1F0DEC280000B3EE /* BatchRenamingDialog.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
 				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
 				CFC4F92D1F0B49C00000B3EE /* Deletion.h in Headers */,
@@ -525,9 +547,11 @@
 				CFC4F8DA1EFB5FAB0000B3EE /* BriefOperationViewController.xib in Resources */,
 				CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */,
 				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
+				CFC4F97D1F0DEC280000B3EE /* BatchRenamingDialog.xib in Resources */,
 				CFC4F95C1F0CB07A0000B3EE /* DeletionDialog.xib in Resources */,
 				CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */,
 				CFC4F9501F0CA84D0000B3EE /* DirectoryCreationDialog.xib in Resources */,
+				CFC4F97E1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.xib in Resources */,
 				CFC4F9001F04B0780000B3EE /* Localizable.strings in Resources */,
 				CFC4F8FE1F04AF2B0000B3EE /* Localizable.stringsdict in Resources */,
 			);
@@ -557,6 +581,7 @@
 				CFC4F9521F0CA84D0000B3EE /* DirectoryCreationDialog.mm in Sources */,
 				CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.cpp in Sources */,
 				CFC4F95E1F0CB07A0000B3EE /* DeletionDialog.mm in Sources */,
+				CFC4F9801F0DEC280000B3EE /* BatchRenamingDialog.mm in Sources */,
 				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,
 				CFC4F8CA1EFA05B00000B3EE /* PoolViewController.mm in Sources */,
 				CFC4F9651F0CC66E0000B3EE /* BatchRenamingScheme.mm in Sources */,
@@ -572,6 +597,7 @@
 				CFC4F8E51EFCE0380000B3EE /* BriefOperationView.mm in Sources */,
 				CFF53BAF1EEA840600F567C4 /* Statistics.cpp in Sources */,
 				CFC4F8D81EFB5F780000B3EE /* BriefOperationViewController.mm in Sources */,
+				CFC4F9821F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -614,6 +640,24 @@
 				CFC4F95F1F0CB07E0000B3EE /* ru */,
 			);
 			name = DeletionDialog.xib;
+			sourceTree = "<group>";
+		};
+		CFC4F9751F0DEC280000B3EE /* BatchRenamingDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFC4F9761F0DEC280000B3EE /* Base */,
+				CFC4F9831F0DEC2F0000B3EE /* ru */,
+			);
+			name = BatchRenamingDialog.xib;
+			sourceTree = "<group>";
+		};
+		CFC4F9771F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFC4F9781F0DEC280000B3EE /* Base */,
+				CFC4F9841F0DEC340000B3EE /* ru */,
+			);
+			name = BatchRenamingRangeSelectionPopover.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

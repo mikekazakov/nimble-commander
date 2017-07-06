@@ -1,6 +1,3 @@
-//#include <NimbleCommander/Operations/BatchRename/BatchRename.h>
-#include <NimbleCommander/Operations/BatchRename/BatchRenameSheetController.h>
-//#include <NimbleCommander/Operations/BatchRename/BatchRenameOperation.h>
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
 #include "BatchRename.h"
@@ -8,8 +5,14 @@
 #include "../PanelView.h"
 #include "../../MainWindowController.h"
 #include <Operations/BatchRenaming.h>
+#include <Operations/BatchRenamingDialog.h>
+#include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
 
 namespace nc::panel::actions {
+
+static const auto g_ConfigPatternsPath = "filePanel.batchRename.lastPatterns";
+static const auto g_ConfigSearchesPath = "filePanel.batchRename.lastSearches";
+static const auto g_ConfigReplacesPath = "filePanel.batchRename.lastReplaces";
 
 bool BatchRename::Predicate( PanelController *_target ) const
 {
@@ -30,9 +33,16 @@ void BatchRename::Perform( PanelController *_target, id _sender ) const
     if( !all_of(begin(items), end(items), [=](auto &i){ return i.Host() == host;}) )
         return; // currently BatchRenameOperation supports only single host for items    
     
-    const auto sheet = [[BatchRenameSheetController alloc] initWithItems:move(items)];
-    [sheet beginSheetForWindow:_target.window
-             completionHandler:^(NSModalResponse returnCode) {
+    const auto sheet = [[NCOpsBatchRenamingDialog alloc] initWithItems:move(items)];
+    sheet.renamePatternDataSource = [[SimpleComboBoxPersistentDataSource alloc]
+                                     initWithStateConfigPath:g_ConfigPatternsPath];
+    sheet.searchForDataSource = [[SimpleComboBoxPersistentDataSource alloc]
+                                     initWithStateConfigPath:g_ConfigSearchesPath];
+    sheet.replaceWithDataSource = [[SimpleComboBoxPersistentDataSource alloc]
+                                     initWithStateConfigPath:g_ConfigReplacesPath];
+
+    [_target.mainWindowController beginSheet:sheet.window
+                           completionHandler:^(NSModalResponse returnCode) {
         if( returnCode == NSModalResponseOK ) {
             auto src_paths = sheet.filenamesSource;
             auto dst_paths = sheet.filenamesDestination;
@@ -41,11 +51,6 @@ void BatchRename::Perform( PanelController *_target, id _sender ) const
             const auto operation = make_shared<nc::ops::BatchRenaming>(move(src_paths),
                                                                        move(dst_paths),
                                                                        host);
-
-//            auto operation = [[BatchRenameOperation alloc]
-//                              initWithOriginalFilepaths:move(src_paths)
-//                              renamedFilepaths:move(dst_paths)
-//                              vfs:host];
             if( !_target.receivesUpdateNotifications ) {
                 __weak PanelController *weak_panel = _target;
                 operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish,[=]{
@@ -53,15 +58,8 @@ void BatchRename::Perform( PanelController *_target, id _sender ) const
                         [(PanelController*)weak_panel refreshPanel];
                     });
                 });
-                
-//                [operation AddOnFinishHandler:[=]{
-//                    dispatch_to_main_queue( [=]{
-//                        [(PanelController*)weak_panel refreshPanel];
-//                    });
-//                }];
             }
             
-//            [_target.state AddOperation:operation];
             [_target.mainWindowController enqueueOperation:operation];
         }
     }];

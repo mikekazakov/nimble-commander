@@ -32,6 +32,8 @@
 		CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF960E261C992F35001D8B02 /* PathManip.c */; };
 		CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E271C992F35001D8B02 /* SystemInformation.mm */; };
 		CF960E2E1C992F35001D8B02 /* VolumeInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF960E281C992F35001D8B02 /* VolumeInformation.cpp */; };
+		CFC4F9721F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */; };
+		CFC4F9741F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFD3CAF11DA4AD2A006DA143 /* KeychainServices.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */; };
 		CFD3CAF31DA4AD32006DA143 /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */; };
 		CFD62BD21C9A679F0021EE7F /* NSObject+MassObserving.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */; };
@@ -96,6 +98,8 @@
 		CF960E261C992F35001D8B02 /* PathManip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PathManip.c; path = source/PathManip.c; sourceTree = "<group>"; };
 		CF960E271C992F35001D8B02 /* SystemInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation.mm; path = source/SystemInformation.mm; sourceTree = "<group>"; };
 		CF960E281C992F35001D8B02 /* VolumeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeInformation.cpp; path = source/VolumeInformation.cpp; sourceTree = "<group>"; };
+		CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleComboBoxPersistentDataSource.h; path = include/Utility/SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
+		CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SimpleComboBoxPersistentDataSource.mm; path = source/SimpleComboBoxPersistentDataSource.mm; sourceTree = "<group>"; };
 		CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeychainServices.h; path = include/Utility/KeychainServices.h; sourceTree = "<group>"; };
 		CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeychainServices.cpp; path = source/KeychainServices.cpp; sourceTree = "<group>"; };
 		CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+MassObserving.h"; path = "include/Utility/NSObject+MassObserving.h"; sourceTree = "<group>"; };
@@ -164,6 +168,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
 				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
@@ -201,6 +206,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
 				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
@@ -260,6 +266,7 @@
 				CF1E3D0A1D57562800609ADB /* ButtonWithTextColor.h in Headers */,
 				CF3E6DF51E386F52002B4AAD /* NSEventModifierFlagsHolder.h in Headers */,
 				CFD3CAF11DA4AD2A006DA143 /* KeychainServices.h in Headers */,
+				CFC4F9721F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h in Headers */,
 				CF960E201C992F2C001D8B02 /* PathManip.h in Headers */,
 				CFD62C121C9AB47F0021EE7F /* FSEventsDirUpdate.h in Headers */,
 				CFDAC2B81DFD0BDC0039A104 /* DataBlockAnalysis.h in Headers */,
@@ -348,6 +355,7 @@
 				CF960E2A1C992F35001D8B02 /* EncodingsAdditions.mm in Sources */,
 				CFD62C101C9AB4770021EE7F /* FSEventsDirUpdate.cpp in Sources */,
 				CFD62C201C9B013A0021EE7F /* SheetWithHotkeys.mm in Sources */,
+				CFC4F9741F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
 				CF0939321D10214D00D67AC6 /* FunctionKeysPass.mm in Sources */,
 				CF34BEF11E225EB9006A6B72 /* ColoredSeparatorLine.mm in Sources */,

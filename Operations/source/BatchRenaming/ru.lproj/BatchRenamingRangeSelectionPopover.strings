@@ -1,0 +1,9 @@
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "MPB-mn-Cs4"; */
+"MPB-mn-Cs4.title" = "ОК";
+
+/* Class = "NSTextFieldCell"; title = "Select the characters to insert:"; ObjectID = "sxo-06-PzS"; */
+"sxo-06-PzS.title" = "Выберите символы для вставки:";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "xcd-cS-5lC"; */
+"xcd-cS-5lC.title" = "Отмена";
+

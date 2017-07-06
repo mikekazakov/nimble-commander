@@ -1,10 +1,11 @@
-::nc
+::nc (NC)
    ::core
    ::panel
       ::actions
          ::context
       ::data
-   ::ops    
+   ::ops
+   ::util
 
 future:
    ::vfs

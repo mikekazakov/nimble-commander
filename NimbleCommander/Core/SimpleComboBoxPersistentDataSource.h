@@ -8,7 +8,9 @@
 
 #pragma once
 
-@interface SimpleComboBoxPersistentDataSource : NSObject<NSComboBoxDataSource>
+#include <Utility/SimpleComboBoxPersistentDataSource.h>
+
+@interface SimpleComboBoxPersistentDataSource : NCUtilSimpleComboBoxPersistentDataSource
 
 - (instancetype)initWithStateConfigPath:(const string&)path;
 

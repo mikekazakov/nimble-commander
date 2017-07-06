@@ -770,3 +770,30 @@ long VFSNetSFTPHost::Port() const noexcept
 {
     return Config().port;
 }
+
+int VFSNetSFTPHost::ReadSymlink(const char *_symlink_path,
+                                char *_buffer,
+                                size_t _buffer_size,
+                                const VFSCancelChecker &_cancel_checker)
+{
+    unique_ptr<Connection> conn;
+    if( int rc = GetConnection(conn); rc < 0 )
+        return rc;
+    
+    AutoConnectionReturn acr(conn, this);
+    
+    const auto readlink_rc = libssh2_sftp_symlink_ex(conn->sftp,
+                                                     _symlink_path,
+                                                     (unsigned)strlen(_symlink_path),
+                                                     _buffer,
+                                                     int(_buffer_size-1),
+                                                     LIBSSH2_SFTP_READLINK);
+    if( readlink_rc >= 0 ) {
+        _buffer[readlink_rc] = 0;
+        return VFSError::Ok;
+    }
+    else {
+        return VFSErrorForConnection(*conn);
+    }
+}
+

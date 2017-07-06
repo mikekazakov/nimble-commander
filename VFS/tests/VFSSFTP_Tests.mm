@@ -21,6 +21,12 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 
 @implementation VFSSFTP_Tests
 
+- (void)setUp
+{
+    [super setUp];
+    this_thread::sleep_for(5ms);
+}
+
 - (VFSHostPtr) hostForVBoxDebian7x86
 {
     return make_shared<VFSNetSFTPHost>(g_VBoxDebian7x86,
@@ -244,6 +250,20 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
         XCTAssert( cont->size() == 4 );
         XCTAssert( memcmp(cont->data(), "8.4\n", 4) == 0);
         
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
+
+- (void) testReadLink
+{
+    try
+    {
+        const auto host = self.hostForVBoxDebian8x86;
+        char link[MAXPATHLEN];
+        const auto rc = host->ReadSymlink("/vmlinuz", link, sizeof(link));
+        XCTAssert( rc == VFSError::Ok );
+        XCTAssert( link == "boot/vmlinuz-3.16.0-4-586"s );
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
     }

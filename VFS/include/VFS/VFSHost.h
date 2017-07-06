@@ -232,7 +232,7 @@ public:
     /** Return zero upon succes, negative value on error. */
     virtual int CreateSymlink(const char *_symlink_path,
                               const char *_symlink_value,
-                              const VFSCancelChecker &_cancel_checker);
+                              const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
      * Unlinks(deletes) a file. Dont follow last symlink, in case of.

@@ -71,6 +71,9 @@ public:
                             char *_buffer,
                             size_t _buffer_size,
                             const VFSCancelChecker &_cancel_checker) override;
+    virtual int CreateSymlink(const char *_symlink_path,
+                              const char *_symlink_value,
+                              const VFSCancelChecker &_cancel_checker) override;
     
     virtual bool ShouldProduceThumbnails() const override;
     
@@ -109,4 +112,5 @@ private:
     VFSConfiguration                            m_Config;
     string                                      m_HomeDir;
     in_addr_t                                   m_HostAddr = 0;
+    bool                                        m_ReversedSymlinkParameters = false;
 };

@@ -21,12 +21,6 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 
 @implementation VFSSFTP_Tests
 
-- (void)setUp
-{
-    [super setUp];
-    this_thread::sleep_for(5ms);
-}
-
 - (VFSHostPtr) hostForVBoxDebian7x86
 {
     return make_shared<VFSNetSFTPHost>(g_VBoxDebian7x86,
@@ -264,6 +258,31 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
         const auto rc = host->ReadSymlink("/vmlinuz", link, sizeof(link));
         XCTAssert( rc == VFSError::Ok );
         XCTAssert( link == "boot/vmlinuz-3.16.0-4-586"s );
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
+
+- (void)testCreateLink
+{
+  try
+    {
+        const VFSHostPtr host = make_shared<VFSNetSFTPHost>(g_VBoxUbuntu1404x64,
+                                                            "r2d2",
+                                                            "r2d2",
+                                                            "");
+
+        const auto lnk_path = "/home/r2d2/smtest";
+        const auto createlink_rc = host->CreateSymlink(lnk_path,
+                                                       "/path/to/some/rubbish");
+        XCTAssert( createlink_rc == VFSError::Ok );
+        
+        char link[MAXPATHLEN];
+        const auto readlink_rc = host->ReadSymlink(lnk_path, link, sizeof(link));
+        XCTAssert( readlink_rc == VFSError::Ok );
+        XCTAssert( link == "/path/to/some/rubbish"s );
+        
+        XCTAssert( host->Unlink(lnk_path) == VFSError::Ok );
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
     }

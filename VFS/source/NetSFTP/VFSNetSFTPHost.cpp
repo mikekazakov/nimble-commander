@@ -14,6 +14,8 @@
 #include "VFSNetSFTPHost.h"
 #include "VFSNetSFTPFile.h"
 
+static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session);
+
 VFSNetSFTPHost::Connection::~Connection()
 {
     if(sftp) {
@@ -178,6 +180,8 @@ int VFSNetSFTPHost::DoInit()
     if(rc != 0)
         return rc;
     
+    m_ReversedSymlinkParameters = ServerHasReversedSymlinkParameters(conn->ssh);
+    
     rc = SpawnSFTP(conn);
     if(rc < 0)
         return rc;
@@ -260,13 +264,17 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     sin.sin_family = AF_INET;
     sin.sin_port = htons(Config().port > 0 ? Config().port : 22);
     sin.sin_addr.s_addr = hostaddr;
-    if (connect(connection->socket, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0)
+    if( connect(connection->socket, (struct sockaddr*)(&sin), sizeof(struct sockaddr_in)) != 0 )
         return VFSError::NetSFTPCouldntConnect;
     
     int optval = 1;
     setsockopt(connection->socket, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval));
 	setsockopt(connection->socket, SOL_SOCKET, SO_NOSIGPIPE, &optval, sizeof(optval));
-
+    
+    /** This is a horrable line of code, but for unknown reason libssh2_session_handshake()
+     * sporadically returns LIBSSH2_ERROR_TIMEOUT if it starts negotiation right after connect(). */
+    this_thread::sleep_for(1ms);
+    
     connection->ssh = libssh2_session_init_ex(NULL, NULL, NULL, this);
     if(!connection->ssh)
         return VFSError::GenericError;
@@ -797,3 +805,33 @@ int VFSNetSFTPHost::ReadSymlink(const char *_symlink_path,
     }
 }
 
+int VFSNetSFTPHost::CreateSymlink(const char *_symlink_path,
+                                  const char *_symlink_value,
+                                  const VFSCancelChecker &_cancel_checker)
+{
+    unique_ptr<Connection> conn;
+    if( int rc = GetConnection(conn); rc < 0 )
+        return rc;
+    
+    AutoConnectionReturn acr(conn, this);
+
+    const auto symlink_rc = m_ReversedSymlinkParameters ?
+        libssh2_sftp_symlink_ex(conn->sftp,
+                            _symlink_value, (unsigned)strlen(_symlink_value),
+                            (char*)_symlink_path, (unsigned)strlen(_symlink_path),
+                            LIBSSH2_SFTP_SYMLINK) :
+        libssh2_sftp_symlink_ex(conn->sftp,
+                            _symlink_path, (unsigned)strlen(_symlink_path),
+                            (char*)_symlink_value, (unsigned)strlen(_symlink_value),
+                            LIBSSH2_SFTP_SYMLINK);
+    if( symlink_rc == 0 )
+        return VFSError::Ok;
+    else
+        return VFSErrorForConnection(*conn);
+}
+
+static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session)
+{
+    const auto banner = libssh2_session_banner_get(_session);
+    return banner && (strstr(banner, "OpenSSH") || strstr(banner, "mod_sftp"));
+}

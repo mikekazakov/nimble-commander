@@ -36,29 +36,10 @@ void CompressHere::Perform( PanelController *_target, id _sender ) const
     if( entries.empty() )
         return;
     
-//    nc::ops::Pool2 p{"abra"};
 
-
-
-  //      nc::ops::Compression comp;
-
-
-//        nc::ops::Compression comp (move(entries),
-//                                   _target.currentDirectoryPath,
-//                                   _target.vfs);
-    
-//    auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
-//                                                   dstroot:_target.currentDirectoryPath
-//                                                    dstvfs:_target.vfs];
-//    op.TargetPanel = _target;
-//    [_target.state AddOperation:op];
     auto op = make_shared<nc::ops::Compression>(move(entries),
                                                 _target.currentDirectoryPath,
                                                 _target.vfs);
-//
-
-//    auto op = make_shared<nc::ops::Operation>();
-//
     const auto weak_op = weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = _target;
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
@@ -66,14 +47,6 @@ void CompressHere::Perform( PanelController *_target, id _sender ) const
     });
 
     [_target.mainWindowController enqueueOperation:op];
-    
-//    
-//        Compression(vector<VFSListingItem> _src_files,
-//                string _dst_root,
-//                VFSHostPtr _dst_vfs);
-
-    
-    
 }
 
 bool CompressToOpposite::Predicate( PanelController *_target ) const
@@ -101,12 +74,6 @@ void CompressToOpposite::Perform( PanelController *_target, id _sender ) const
     if(entries.empty())
         return;
 
-//    const auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
-//                                                         dstroot:opposite_panel.currentDirectoryPath
-//                                                          dstvfs:opposite_panel.vfs];
-//    op.TargetPanel = opposite_panel;
-//    [_target.state AddOperation:op];
-
     auto op = make_shared<nc::ops::Compression>(move(entries),
                                                 opposite_panel.currentDirectoryPath,
                                                 opposite_panel.vfs);
@@ -117,7 +84,6 @@ void CompressToOpposite::Perform( PanelController *_target, id _sender ) const
     });
 
     [_target.mainWindowController enqueueOperation:op];
-
 }
 
 context::CompressHere::CompressHere(const vector<VFSListingItem>&_items):
@@ -151,11 +117,6 @@ bool context::CompressHere::ValidateMenuItem( PanelController *_target, NSMenuIt
 void context::CompressHere::Perform( PanelController *_target, id _sender ) const
 {
     auto entries = m_Items;
-//    auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
-//                                                   dstroot:_target.currentDirectoryPath
-//                                                    dstvfs:_target.vfs];
-//    op.TargetPanel = _target;
-//    [_target.state AddOperation:op];
     auto op = make_shared<nc::ops::Compression>(move(entries),
                                                 _target.currentDirectoryPath,
                                                 _target.vfs);
@@ -210,13 +171,7 @@ void context::CompressToOpposite::Perform( PanelController *_target, id _sender 
         return;
     
     auto entries = m_Items;
-//    const auto op = [[FileCompressOperation alloc] initWithFiles:move(entries)
-//                                                         dstroot:opposite_panel.currentDirectoryPath
-//                                                          dstvfs:opposite_panel.vfs];
-//    op.TargetPanel = opposite_panel;
-//    [_target.state AddOperation:op];
-
- auto op = make_shared<nc::ops::Compression>(move(entries),
+    auto op = make_shared<nc::ops::Compression>(move(entries),
                                                 opposite_panel.currentDirectoryPath,
                                                 opposite_panel.vfs);
     const auto weak_op = weak_ptr<nc::ops::Compression>{op};

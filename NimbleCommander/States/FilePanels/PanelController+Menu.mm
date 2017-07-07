@@ -30,6 +30,7 @@
 #include "Actions/Compress.h"
 #include "Actions/OpenFile.h"
 #include "Actions/Enter.h"
+#include "Actions/Link.h"
 #include "PanelView.h"
 #include <NimbleCommander/Core/Alert.h>
 
@@ -161,6 +162,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 - (IBAction)OnGoToQuickListsVolumes:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToQuickListsFavorites:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToQuickListsConnections:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnCreateSymbolicLinkCommand:(id)sender { Perform(_cmd, self, sender); }
 @end
 
 using namespace nc::panel::actions;
@@ -253,6 +255,7 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.command.delete_permanently",     @selector(OnDeletePermanentlyCommand:), new Delete{true}},
 {"menu.command.compress_here",          @selector(onCompressItemsHere:),        new CompressHere},
 {"menu.command.compress_to_opposite",   @selector(onCompressItems:),            new CompressToOpposite},
+{"menu.command.link_create_soft",       @selector(OnCreateSymbolicLinkCommand:),new CreateSymlink},
 };
 
 static const PanelAction *ActionByTag(int _tag) noexcept

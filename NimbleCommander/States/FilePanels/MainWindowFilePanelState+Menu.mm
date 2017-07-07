@@ -1,6 +1,5 @@
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSMenu+Hierarchical.h>
-#include <NimbleCommander/Operations/Link/FileLinkNewSymlinkSheetController.h>
 #include <NimbleCommander/Operations/Link/FileLinkAlterSymlinkSheetController.h>
 #include <NimbleCommander/Operations/Link/FileLinkNewHardlinkSheetController.h>
 #include <NimbleCommander/Operations/Link/FileLinkOperation.h>
@@ -50,8 +49,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.file.reveal_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item;
-    IF_MENU_TAG("menu.command.link_create_soft")     return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed &&
-        self.activePanelView.item && self.activePanelView.item.Host()->IsNativeFS() && self.oppositePanelController.isUniform && self.oppositePanelController.vfs->IsNativeFS();
     IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && self.activePanelView.item && !self.activePanelView.item.IsDir() && self.activePanelView.item.Host()->IsNativeFS();
     IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && self.activePanelView.item && self.activePanelView.item.IsSymlink() && self.activePanelView.item.Host()->IsNativeFS();
     IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive;
@@ -181,30 +178,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         return;
     
     [self.class performVFSItemOpenInPanel:opp item:item];
-}
-
-- (IBAction)OnCreateSymbolicLinkCommand:(id)sender
-{
-    if( !self.activePanelController || !self.oppositePanelController || !self.oppositePanelController.isUniform )
-        return;
-    
-    auto item = self.activePanelView.item;
-    if( !item )
-        return;
-    
-    string source_path = item.Path();
-    string link_path = self.oppositePanelController.currentDirectoryPath + (!item.IsDotDot() ? item.Name() : [self activePanelData]->DirectoryPathShort());
-    
-    FileLinkNewSymlinkSheetController *sheet = [FileLinkNewSymlinkSheetController new];
-    [sheet showSheetFor:self.window
-             sourcePath:source_path
-               linkPath:link_path
-      completionHandler:^(NSModalResponse returnCode) {
-          if( returnCode == NSModalResponseOK && !sheet.linkPath.empty() ) {
-              [m_OperationsController AddOperation:
-               [[FileLinkOperation alloc] initWithNewSymbolinkLink:sheet.sourcePath.c_str()
-                                                          linkname:sheet.linkPath.c_str()]];
-          }}];
 }
 
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender

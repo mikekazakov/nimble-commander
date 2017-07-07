@@ -34,11 +34,12 @@ public:
     const class Statistics &Statistics() const;
     
 protected:
+    virtual void Perform();
+    virtual void OnStopped();
+
     void SetCompleted();
     void Execute();
     void BlockIfPaused();
-    virtual void Perform();
-    virtual void OnStopped();
 
 private:
     std::atomic_bool        m_IsRunning;

@@ -1,0 +1,12 @@
+/* Class = "NSTextFieldCell"; title = "Existing filename:"; ObjectID = "6"; */
+"6.title" = "Имя существующего файла:";
+
+/* Class = "NSTextFieldCell"; title = "Symbolic link filename:"; ObjectID = "22"; */
+"22.title" = "Имя символической ссылки:";
+
+/* Class = "NSButtonCell"; title = "Create"; ObjectID = "33"; */
+"33.title" = "Создать";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "37"; */
+"37.title" = "Отмена";
+

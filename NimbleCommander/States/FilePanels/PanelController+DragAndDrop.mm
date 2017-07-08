@@ -1,7 +1,8 @@
 #include <Utility/FontExtras.h>
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
-#include <NimbleCommander/Operations/Link/FileLinkOperation.h>
+#include <Operations/Linkage.h>
+#include "../MainWindowController.h"
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Operations/OperationsController.h>
 #include "PanelController+DragAndDrop.h"
@@ -490,9 +491,10 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
                 destination.Host()->IsNativeFS() ) {
             path source_path = files.front().Path();
             path dest_path = path(destination.Path()) / files.front().Filename();
-            auto op = [[FileLinkOperation alloc] initWithNewSymbolinkLink:source_path.c_str()
-                                                                 linkname:dest_path.c_str()];
-            [self.state.OperationsController AddOperation:op];
+            const auto op = make_shared<nc::ops::Linkage>(
+                dest_path.native(), source_path.native(),
+                destination.Host(), nc::ops::LinkageType::CreateSymlink);
+            [self.mainWindowController enqueueOperation:op];
             return true;
         }
     }

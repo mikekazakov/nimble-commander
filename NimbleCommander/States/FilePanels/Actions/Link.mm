@@ -4,10 +4,10 @@
 #include "../PanelData.h"
 #include "../MainWindowFilePanelState.h"
 #include "../../MainWindowController.h"
-#include <NimbleCommander/Operations/Link/FileLinkNewSymlinkSheetController.h>
-#include <NimbleCommander/Operations/Link/FileLinkAlterSymlinkSheetController.h>
-#include <NimbleCommander/Operations/Link/FileLinkNewHardlinkSheetController.h>
 #include <Operations/Linkage.h>
+#include <Operations/CreateSymlinkDialog.h>
+#include <Operations/AlterSymlinkDialog.h>
+#include <Operations/CreateHardlinkDialog.h>
 #include <Utility/PathManip.h>
 
 namespace nc::panel::actions {
@@ -56,7 +56,9 @@ void CreateSymlink::Perform( PanelController *_target, id _sender ) const
             _target.data.DirectoryPathShort() :
             item.Name() );
 
-    FileLinkNewSymlinkSheetController *sheet = [FileLinkNewSymlinkSheetController new];
+    const auto sheet = [[NCOpsCreateSymlinkDialog alloc] initWithSourcePath:source_path
+                                                                andDestPath:link_path];
+
     const auto handler = ^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK || sheet.linkPath.empty() )
             return;
@@ -72,11 +74,8 @@ void CreateSymlink::Perform( PanelController *_target, id _sender ) const
         });
         [_target.mainWindowController enqueueOperation:operation];
     };
-    
-    [sheet showSheetFor:_target.window
-             sourcePath:source_path
-               linkPath:link_path
-      completionHandler:handler];
+
+    [_target.mainWindowController beginSheet:sheet.window completionHandler:handler];
 }
 
 bool AlterSymlink::Predicate( PanelController *_target ) const
@@ -91,7 +90,8 @@ void AlterSymlink::Perform( PanelController *_target, id _sender ) const
     if( !item || !item.IsSymlink() )
         return;
     
-    FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];
+    const auto sheet = [[NCOpsAlterSymlinkDialog alloc] initWithSourcePath:item.Symlink()
+                                                               andLinkName:item.Name()];
     const auto handler = ^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;
@@ -108,10 +108,7 @@ void AlterSymlink::Perform( PanelController *_target, id _sender ) const
         }
         [_target.mainWindowController enqueueOperation:operation];
     };
-    [sheet showSheetFor:_target.window
-             sourcePath:item.Symlink()
-               linkPath:item.Name()
-      completionHandler:handler];
+    [_target.mainWindowController beginSheet:sheet.window completionHandler:handler];
 }
 
 bool CreateHardlink::Predicate( PanelController *_target ) const
@@ -126,7 +123,7 @@ void CreateHardlink::Perform( PanelController *_target, id _sender ) const
         return;
     
     const auto item = _target.view.item;
-    FileLinkNewHardlinkSheetController *sheet = [FileLinkNewHardlinkSheetController new];
+    const auto sheet = [[NCOpsCreateHardlinkDialog alloc] initWithSourceName:item.Name()];
     const auto handler = ^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;
@@ -151,10 +148,7 @@ void CreateHardlink::Perform( PanelController *_target, id _sender ) const
 
         [_target.mainWindowController enqueueOperation:operation];
     };
-    
-    [sheet showSheetFor:_target.window
-         withSourceName:item.Name()
-      completionHandler:handler];
+    [_target.mainWindowController beginSheet:sheet.window completionHandler:handler];
 }
 
 static PanelController *FindVisibleOppositeController( PanelController *_source )

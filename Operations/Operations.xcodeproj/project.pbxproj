@@ -89,6 +89,15 @@
 		CFC4F9971F0F22900000B3EE /* DeletionDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9931F0F22900000B3EE /* DeletionDialog.h */; };
 		CFC4F99A1F0F27230000B3EE /* Linkage_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9981F0F271E0000B3EE /* Linkage_Tests.mm */; };
 		CFC4F99C1F0F33C20000B3EE /* Linkage.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F99B1F0F33C20000B3EE /* Linkage.h */; };
+		CFC4F9B61F10890B0000B3EE /* CreateSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */; };
+		CFC4F9B71F10890B0000B3EE /* AlterSymlinkDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9AE1F10890B0000B3EE /* AlterSymlinkDialog.h */; };
+		CFC4F9B91F10890B0000B3EE /* CreateHardlinkDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9B01F10890B0000B3EE /* CreateHardlinkDialog.h */; };
+		CFC4F9BB1F10890B0000B3EE /* CreateSymlinkDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9B21F10890B0000B3EE /* CreateSymlinkDialog.h */; };
+		CFC4F9BC1F10890B0000B3EE /* CreateSymlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9B31F10890B0000B3EE /* CreateSymlinkDialog.mm */; };
+		CFC4F9C01F108CD20000B3EE /* AlterSymlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9AF1F10890B0000B3EE /* AlterSymlinkDialog.mm */; };
+		CFC4F9C11F108CD60000B3EE /* AlterSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */; };
+		CFC4F9C21F10B06C0000B3EE /* CreateHardlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9B11F10890B0000B3EE /* CreateHardlinkDialog.mm */; };
+		CFC4F9C31F10B06F0000B3EE /* CreateHardlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
@@ -196,6 +205,18 @@
 		CFC4F9931F0F22900000B3EE /* DeletionDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeletionDialog.h; path = include/Operations/DeletionDialog.h; sourceTree = "<group>"; };
 		CFC4F9981F0F271E0000B3EE /* Linkage_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Linkage_Tests.mm; path = tests/Linkage_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFC4F99B1F0F33C20000B3EE /* Linkage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Linkage.h; path = include/Operations/Linkage.h; sourceTree = "<group>"; };
+		CFC4F9A91F10890B0000B3EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = source/Linkage/Base.lproj/AlterSymlinkDialog.xib; sourceTree = "<group>"; };
+		CFC4F9AB1F10890B0000B3EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = source/Linkage/Base.lproj/CreateHardlinkDialog.xib; sourceTree = "<group>"; };
+		CFC4F9AD1F10890B0000B3EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = source/Linkage/Base.lproj/CreateSymlinkDialog.xib; sourceTree = "<group>"; };
+		CFC4F9AE1F10890B0000B3EE /* AlterSymlinkDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlterSymlinkDialog.h; path = source/Linkage/AlterSymlinkDialog.h; sourceTree = "<group>"; };
+		CFC4F9AF1F10890B0000B3EE /* AlterSymlinkDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AlterSymlinkDialog.mm; path = source/Linkage/AlterSymlinkDialog.mm; sourceTree = "<group>"; };
+		CFC4F9B01F10890B0000B3EE /* CreateHardlinkDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateHardlinkDialog.h; path = source/Linkage/CreateHardlinkDialog.h; sourceTree = "<group>"; };
+		CFC4F9B11F10890B0000B3EE /* CreateHardlinkDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateHardlinkDialog.mm; path = source/Linkage/CreateHardlinkDialog.mm; sourceTree = "<group>"; };
+		CFC4F9B21F10890B0000B3EE /* CreateSymlinkDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateSymlinkDialog.h; path = source/Linkage/CreateSymlinkDialog.h; sourceTree = "<group>"; };
+		CFC4F9B31F10890B0000B3EE /* CreateSymlinkDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateSymlinkDialog.mm; path = source/Linkage/CreateSymlinkDialog.mm; sourceTree = "<group>"; };
+		CFC4F9BD1F1089150000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Linkage/ru.lproj/AlterSymlinkDialog.strings; sourceTree = "<group>"; };
+		CFC4F9BE1F10891A0000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Linkage/ru.lproj/CreateHardlinkDialog.strings; sourceTree = "<group>"; };
+		CFC4F9BF1F10891E0000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Linkage/ru.lproj/CreateSymlinkDialog.strings; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -360,6 +381,15 @@
 		CFC4F9851F0F22700000B3EE /* Linkage */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F9B21F10890B0000B3EE /* CreateSymlinkDialog.h */,
+				CFC4F9B31F10890B0000B3EE /* CreateSymlinkDialog.mm */,
+				CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */,
+				CFC4F9AE1F10890B0000B3EE /* AlterSymlinkDialog.h */,
+				CFC4F9AF1F10890B0000B3EE /* AlterSymlinkDialog.mm */,
+				CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */,
+				CFC4F9B01F10890B0000B3EE /* CreateHardlinkDialog.h */,
+				CFC4F9B11F10890B0000B3EE /* CreateHardlinkDialog.mm */,
+				CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */,
 				CFC4F9861F0F22850000B3EE /* Linkage.h */,
 				CFC4F9871F0F22850000B3EE /* Linkage.mm */,
 				CFC4F9881F0F22850000B3EE /* LinkageJob.cpp */,
@@ -466,6 +496,7 @@
 			files = (
 				CFC4F99C1F0F33C20000B3EE /* Linkage.h in Headers */,
 				CFC4F98B1F0F22850000B3EE /* Linkage.h in Headers */,
+				CFC4F9B71F10890B0000B3EE /* AlterSymlinkDialog.h in Headers */,
 				CFC4F8EE1F0224710000B3EE /* AsyncDialogResponse.h in Headers */,
 				CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */,
 				CFC4F8CF1EFA07F00000B3EE /* PoolView.h in Headers */,
@@ -482,6 +513,7 @@
 				CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */,
 				CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */,
 				CFC4F9951F0F22900000B3EE /* BatchRenamingDialog.h in Headers */,
+				CFC4F9BB1F10890B0000B3EE /* CreateSymlinkDialog.h in Headers */,
 				CFC4F91B1F09D9740000B3EE /* Deletion.h in Headers */,
 				CFC4F9201F09DCC80000B3EE /* Options.h in Headers */,
 				CFC4F9571F0CB0260000B3EE /* DirectoryCreationDialog.h in Headers */,
@@ -503,6 +535,7 @@
 				CFC4F98F1F0F22850000B3EE /* Options.h in Headers */,
 				CFC4F9021F0617E20000B3EE /* ModalDialogResponses.h in Headers */,
 				CFC4F92E1F0B49C00000B3EE /* DirectoryCreation.h in Headers */,
+				CFC4F9B91F10890B0000B3EE /* CreateHardlinkDialog.h in Headers */,
 				CFC4F9641F0CC66E0000B3EE /* BatchRenamingScheme.h in Headers */,
 				CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */,
 				CFC4F90A1F06253D0000B3EE /* DirectoryCreationJob.h in Headers */,
@@ -592,10 +625,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFC4F9B61F10890B0000B3EE /* CreateSymlinkDialog.xib in Resources */,
+				CFC4F9C31F10B06F0000B3EE /* CreateHardlinkDialog.xib in Resources */,
 				CFC4F8CC1EFA05DA0000B3EE /* PoolViewController.xib in Resources */,
 				CFC4F8DA1EFB5FAB0000B3EE /* BriefOperationViewController.xib in Resources */,
 				CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */,
 				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
+				CFC4F9C11F108CD60000B3EE /* AlterSymlinkDialog.xib in Resources */,
 				CFC4F97D1F0DEC280000B3EE /* BatchRenamingDialog.xib in Resources */,
 				CFC4F95C1F0CB07A0000B3EE /* DeletionDialog.xib in Resources */,
 				CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */,
@@ -628,11 +664,14 @@
 				CFC4F9091F06253D0000B3EE /* DirectoryCreation.mm in Sources */,
 				CFC4F8F41F0243D30000B3EE /* GenericErrorDialog.mm in Sources */,
 				CFC4F9521F0CA84D0000B3EE /* DirectoryCreationDialog.mm in Sources */,
+				CFC4F9BC1F10890B0000B3EE /* CreateSymlinkDialog.mm in Sources */,
 				CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.cpp in Sources */,
 				CFC4F95E1F0CB07A0000B3EE /* DeletionDialog.mm in Sources */,
 				CFC4F9801F0DEC280000B3EE /* BatchRenamingDialog.mm in Sources */,
 				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,
+				CFC4F9C01F108CD20000B3EE /* AlterSymlinkDialog.mm in Sources */,
 				CFC4F8CA1EFA05B00000B3EE /* PoolViewController.mm in Sources */,
+				CFC4F9C21F10B06C0000B3EE /* CreateHardlinkDialog.mm in Sources */,
 				CFC4F9651F0CC66E0000B3EE /* BatchRenamingScheme.mm in Sources */,
 				CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */,
 				CFC4F8DE1EFCC0040000B3EE /* StatisticsFormatter.mm in Sources */,
@@ -710,6 +749,33 @@
 				CFC4F9841F0DEC340000B3EE /* ru */,
 			);
 			name = BatchRenamingRangeSelectionPopover.xib;
+			sourceTree = "<group>";
+		};
+		CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFC4F9A91F10890B0000B3EE /* Base */,
+				CFC4F9BD1F1089150000B3EE /* ru */,
+			);
+			name = AlterSymlinkDialog.xib;
+			sourceTree = "<group>";
+		};
+		CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFC4F9AB1F10890B0000B3EE /* Base */,
+				CFC4F9BE1F10891A0000B3EE /* ru */,
+			);
+			name = CreateHardlinkDialog.xib;
+			sourceTree = "<group>";
+		};
+		CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFC4F9AD1F10890B0000B3EE /* Base */,
+				CFC4F9BF1F10891E0000B3EE /* ru */,
+			);
+			name = CreateSymlinkDialog.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

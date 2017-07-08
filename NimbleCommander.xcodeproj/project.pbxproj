@@ -224,8 +224,6 @@
 		CF50C3F51C0ADDE1009DF611 /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */; };
 		CF50C3F61C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */; };
 		CF50C3F71C0ADDE5009DF611 /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */; };
-		CF50C3F81C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
-		CF50C3F91C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
 		CF50C3FA1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */; };
 		CF50C3FB1C0ADDEC009DF611 /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */; };
 		CF50C3FC1C0ADDF0009DF611 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */; };
@@ -397,7 +395,6 @@
 		CF7C7CEC1E5D39AD002DB0E2 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
 		CF7D134D1BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */; };
 		CF7D134E1BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */; };
-		CF7D134F1BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
 		CF7D13501BF1B6F0001F53FD /* FileLinkOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */; };
 		CF7D13511BF1B6F0001F53FD /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */; };
 		CF7D13671BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */; };
@@ -657,7 +654,6 @@
 		CFA539991D433E2A00C562A7 /* ExternalToolParameterValueSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */; };
 		CFA539A81D433E2A00C562A7 /* MassCopySheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90698E1BB54077000C3CBB /* MassCopySheetController.mm */; };
 		CFA539A91D433E2A00C562A7 /* FileLinkOperationJob.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */; };
-		CFA539AD1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
 		CFA539B91D433E2A00C562A7 /* AskForPasswordWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */; };
 		CFA539BB1D433E2A00C562A7 /* ExternalToolsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */; };
 		CFA539BF1D433E2A00C562A7 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
@@ -714,7 +710,6 @@
 		CFA53A441D433E2A00C562A7 /* main_icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF306F921CE9E54C002326FA /* main_icon.icns */; };
 		CFA53A451D433E2A00C562A7 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */; };
 		CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC621A5FBC9500313845 /* FilePanelsQuickSearch.strings */; };
-		CFA53A4B1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
 		CFA53A4C1D433E2A00C562A7 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
 		CFA53A4D1D433E2A00C562A7 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */; };
 		CFA53A4E1D433E2A00C562A7 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
@@ -764,6 +759,14 @@
 		CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFBE65AE17B66E9B00451AE7 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */; };
 		CFC4F99F1F0F40430000B3EE /* Link.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F99E1F0F40430000B3EE /* Link.mm */; };
+		CFC4F9A01F1074920000B3EE /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
+		CFC4F9A11F1074930000B3EE /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
+		CFC4F9A21F1074940000B3EE /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
+		CFC4F9A31F1074940000B3EE /* FileLinkNewSymlinkSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */; };
+		CFC4F9A41F1074970000B3EE /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
+		CFC4F9A51F1074980000B3EE /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
+		CFC4F9A61F1074980000B3EE /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
+		CFC4F9A71F1074990000B3EE /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
 		CFC5121516C4BD3D00D247EE /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121416C4BD3D00D247EE /* Cocoa.framework */; };
 		CFC5121F16C4BD3D00D247EE /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFC5122516C4BD3D00D247EE /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
@@ -791,9 +794,6 @@
 		CFCCFBD61A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */; };
 		CFCCFBD71A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */; };
 		CFCCFBD81A5E49FC00313845 /* FileSysEntryAttrSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */; };
-		CFCCFBDB1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
-		CFCCFBDC1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
-		CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */; };
 		CFCCFBE01A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */; };
 		CFCCFBE11A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */; };
 		CFCCFBE21A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */; };
@@ -3740,7 +3740,6 @@
 				CF8D0CEB1D9623E000ADFF14 /* RegistrationInfoWindow.xib in Resources */,
 				CF4E56C11D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF6D9CFE19667E390077B146 /* RHPreferencesWindow.xib in Resources */,
-				CFCCFBDC1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF8D0CF41D963E1000ADFF14 /* InternalViewerToolbar.xib in Resources */,
 				CF7C7CD11E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */,
 				CF4E56A21D5068CC00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
@@ -3783,6 +3782,7 @@
 				CF8D0CE51D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
 				CF1E3D211D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
 				CFD629641C2CE7040050EC68 /* State.json in Resources */,
+				CFC4F9A51F1074980000B3EE /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CF4E56AE1D5068E100452912 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CF8D0CEF1D96244900ADFF14 /* ProFeaturesWindowController.xib in Resources */,
@@ -3827,7 +3827,6 @@
 				CF9F4B301ECD810C00E0AF82 /* FavoritesWindowController.xib in Resources */,
 				CF4E56A91D5068D800452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */,
-				CFA53A4B1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFA53A4C1D433E2A00C562A7 /* Media.xcassets in Resources */,
 				CF7C7CCA1E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
 				CF9F4B421ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */,
@@ -3859,6 +3858,7 @@
 				CFA53A611D433E2A00C562A7 /* GoToFolderSheetController.xib in Resources */,
 				CFA53A621D433E2A00C562A7 /* Preferences.strings in Resources */,
 				CFA53A631D433E2A00C562A7 /* MassCopySheetDisclosureViewController.xib in Resources */,
+				CFC4F9A61F1074980000B3EE /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFA53A641D433E2A00C562A7 /* ExternalToolParameterValueSheetController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3900,7 +3900,6 @@
 				CF4E56841D50669C00452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CF4E56701D50667300452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFCCFC5E1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
-				CFCCFBDB1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CFCCFBE01A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib in Resources */,
 				CF7C7CC31E5C3EB9002DB0E2 /* PreferencesWindowThemesTab.xib in Resources */,
@@ -3918,6 +3917,7 @@
 				CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */,
 				CF754D4D1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
+				CFC4F9A71F1074990000B3EE /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFCCFBC71A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CF9F4B101ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
@@ -3962,7 +3962,6 @@
 				CF9F4B321ECD810C00E0AF82 /* FavoritesWindowController.xib in Resources */,
 				CF02B5BB1D0A642500F2760D /* main_icon.icns in Resources */,
 				CF8D0CFB1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */,
-				CFCCFBDD1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CF7C7CC01E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */,
 				CF7C7CCC1E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
 				CF9F4B441ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */,
@@ -3994,6 +3993,7 @@
 				CF876D331D51E089009C0CCE /* BigFileViewSheet.xib in Resources */,
 				CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFEF4E391A6BB409009A1524 /* Preferences.strings in Resources */,
+				CFC4F9A41F1074970000B3EE /* FileLinkNewSymlinkSheetController.xib in Resources */,
 				CFD9F94B1A623E4E001B3F33 /* Operations.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4118,7 +4118,6 @@
 				CFD726081E42E07000603077 /* AppDelegateCPP.mm in Sources */,
 				CF9069771BB54035000C3CBB /* FileCopyOperation.mm in Sources */,
 				CF818B781EA4572F00BC28E6 /* CopyToPasteboard.mm in Sources */,
-				CF50C3F91C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFD726981E42E23000603077 /* PanelDataPersistency.cpp in Sources */,
 				CFD7262D1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */,
 				CFD726D51E42E2B100603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */,
@@ -4297,6 +4296,7 @@
 				CF818B6A1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
 				CF1E3D2C1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 				CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
+				CFC4F9A11F1074930000B3EE /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFD726AE1E42E25600603077 /* SharingService.mm in Sources */,
 				CF90C0BE1EC171FD0056E3B8 /* PanelDataFilter.mm in Sources */,
 				CFD7264A1E42E11B00603077 /* SearchInFile.cpp in Sources */,
@@ -4396,7 +4396,6 @@
 				CFD8CDC51E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
 				CFD727311E42E34B00603077 /* TermSingleTask.mm in Sources */,
 				CFD726841E42E21100603077 /* PanelController+DragAndDrop.mm in Sources */,
-				CFA539AD1D433E2A00C562A7 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFD726371E42E0D500603077 /* FileWindow.cpp in Sources */,
 				CFD7260F1E42E07A00603077 /* main.cpp in Sources */,
 				CFD7263B1E42E0E100603077 /* TrialWindowController.mm in Sources */,
@@ -4513,6 +4512,7 @@
 				CF818B4C1EA0610C00BC28E6 /* FindFiles.mm in Sources */,
 				CFD727191E42E32500603077 /* ToolsMenuDelegate.mm in Sources */,
 				CF876D511D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
+				CFC4F9A21F1074940000B3EE /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFD7266C1E42E1ED00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFD726421E42E10300603077 /* OrthodoxMonospace.mm in Sources */,
 				CF1FBF2A1E8F57E500D3569C /* OpenWithExternalEditor.mm in Sources */,
@@ -4644,7 +4644,6 @@
 				CF90698F1BB54077000C3CBB /* MassCopySheetController.mm in Sources */,
 				CF7D13511BF1B6F0001F53FD /* FileLinkOperationJob.mm in Sources */,
 				CFDAC2051DF921160039A104 /* PanelDataStatistics.cpp in Sources */,
-				CF7D134F1BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CF94CF941DD4418000EEA420 /* Layout.mm in Sources */,
 				CFC4F99F1F0F40430000B3EE /* Link.mm in Sources */,
 				CF9F4A921EC9442C00E0AF82 /* Compress.mm in Sources */,
@@ -4756,6 +4755,7 @@
 				CF84C8F81DBB2AC300B4E888 /* PanelListView.mm in Sources */,
 				CFDAC2141DFBBD110039A104 /* PanelView.mm in Sources */,
 				CFDAC2991DFBF9260039A104 /* TermTask.cpp in Sources */,
+				CFC4F9A31F1074940000B3EE /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFDAC2271DFBD6910039A104 /* PanelData.mm in Sources */,
 				CF9F4AD31ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
 				CF876D4C1D530F46009C0CCE /* InternalViewerController.mm in Sources */,
@@ -4791,7 +4791,6 @@
 				CF9F4B031ECC8DE200E0AF82 /* ExecuteInTerminal.mm in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF818B621EA0610E00BC28E6 /* FindFiles.mm in Sources */,
-				CF50C3F81C0ADDE8009DF611 /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFD726131E42E08100603077 /* Config.mm in Sources */,
 				CFD726C51E42E29A00603077 /* Layout.mm in Sources */,
 				CFD7266D1E42E1F000603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
@@ -4850,6 +4849,7 @@
 				CF9069871BB54035000C3CBB /* Job.cpp in Sources */,
 				CF1FBF251E8F57CF00D3569C /* FavoriteComposing.mm in Sources */,
 				CFD8CD3E1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
+				CFC4F9A01F1074920000B3EE /* FileLinkNewSymlinkSheetController.mm in Sources */,
 				CFD726641E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */,
 				CF04DDE91E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CFD726C81E42E2A100603077 /* PanelBriefView.mm in Sources */,

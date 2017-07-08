@@ -35,7 +35,15 @@
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);    
     self.SourcePath.stringValue = [NSString stringWithUTF8StdString:m_SrcPath];
     self.LinkPath.stringValue = [NSString stringWithUTF8StdString:m_LinkPath];
+    
     [self.window makeFirstResponder:self.LinkPath];
+    const auto r = [self.LinkPath.stringValue rangeOfCharacterFromSet:
+                    [NSCharacterSet characterSetWithCharactersInString:@"/"]
+                                               options:NSBackwardsSearch];
+    if( r.location != NSNotFound )
+        self.LinkPath.currentEditor.selectedRange = NSMakeRange(r.location+1,
+                                                                self.LinkPath.stringValue.length);
+
     GA().PostScreenView("Symlink Create");
 }
 

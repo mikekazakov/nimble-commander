@@ -1,8 +1,5 @@
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSMenu+Hierarchical.h>
-#include <NimbleCommander/Operations/Link/FileLinkAlterSymlinkSheetController.h>
-#include <NimbleCommander/Operations/Link/FileLinkNewHardlinkSheetController.h>
-#include <NimbleCommander/Operations/Link/FileLinkOperation.h>
 #include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Operations/Copy/MassCopySheetController.h>
 #include <NimbleCommander/Operations/OperationsController.h>
@@ -49,8 +46,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.file.reveal_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item;
-    IF_MENU_TAG("menu.command.link_create_hard")     return self.isPanelActive && self.activePanelView.item && !self.activePanelView.item.IsDir() && self.activePanelView.item.Host()->IsNativeFS();
-    IF_MENU_TAG("menu.command.link_edit")            return self.isPanelActive && self.activePanelView.item && self.activePanelView.item.IsSymlink() && self.activePanelView.item.Host()->IsNativeFS();
     IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive;
     IF_MENU_TAG("menu.command.copy_as")              return self.isPanelActive;
     IF_MENU_TAG("menu.command.move_to")              return self.isPanelActive;
@@ -178,51 +173,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         return;
     
     [self.class performVFSItemOpenInPanel:opp item:item];
-}
-
-- (IBAction)OnEditSymbolicLinkCommand:(id)sender
-{
-    if( !self.activePanelController )
-        return;
-    
-    auto item = self.activePanelView.item;
-    if( !item || !item.IsSymlink() )
-        return;
-    
-    FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];
-    [sheet showSheetFor:self.window
-             sourcePath:item.Symlink()
-               linkPath:item.Name()
-      completionHandler:^(NSModalResponse returnCode) {
-          if(returnCode == NSModalResponseOK)
-              [m_OperationsController AddOperation:[[FileLinkOperation alloc] initWithAlteringOfSymbolicLink:sheet.sourcePath.c_str()
-                                                                                                    linkname:item.Path().c_str()]
-               ];
-      }];
-}
-
-- (IBAction)OnCreateHardLinkCommand:(id)sender
-{
-    auto item = self.activePanelView.item;
-    if( item.IsDir() || !item.Host()->IsNativeFS() )
-        return;
-    
-    FileLinkNewHardlinkSheetController *sheet = [FileLinkNewHardlinkSheetController new];
-    [sheet showSheetFor:self.window withSourceName:item.Name() completionHandler:^(NSModalResponse returnCode) {
-                 if( returnCode == NSModalResponseOK ) {
-                     string path = sheet.result;
-                     if( path.empty() )
-                         return;
-                     
-                     if( path.front() != '/')
-                         path = item.Directory() + path;
-                     
-                     [m_OperationsController AddOperation:
-                      [[FileLinkOperation alloc] initWithNewHardLink:item.Path().c_str()
-                                                            linkname:path.c_str()
-                      ]];
-                 }
-             }];
 }
 
 // when Operation.AddOnFinishHandler will use C++ lambdas - change return type here:

@@ -5,13 +5,16 @@
 #include "../MainWindowFilePanelState.h"
 #include "../../MainWindowController.h"
 #include <NimbleCommander/Operations/Link/FileLinkNewSymlinkSheetController.h>
+#include <NimbleCommander/Operations/Link/FileLinkAlterSymlinkSheetController.h>
+#include <NimbleCommander/Operations/Link/FileLinkNewHardlinkSheetController.h>
 #include <Operations/Linkage.h>
 #include <Utility/PathManip.h>
 
 namespace nc::panel::actions {
 
 static PanelController *FindVisibleOppositeController( PanelController *_source );
-static void FocusResult( PanelController *_target, const string &_path );
+static void FocusResult( PanelController *_target, const string &_path, bool _refresh );
+static void Refresh( PanelController *_target );
 
 bool CreateSymlink::Predicate( PanelController *_target ) const
 {
@@ -62,9 +65,10 @@ void CreateSymlink::Perform( PanelController *_target, id _sender ) const
         const auto operation = make_shared<nc::ops::Linkage>(dest, value, vfs,
                                                              nc::ops::LinkageType::CreateSymlink);
         __weak PanelController *weak_panel = opposite;
-        operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_panel, dest]{
-            if( PanelController *panel = weak_panel )
-                FocusResult(panel, dest);
+        const bool force_refresh = !_target.receivesUpdateNotifications;               
+        operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion,
+                                     [weak_panel, dest, force_refresh]{
+            FocusResult((PanelController *)weak_panel, dest, force_refresh);
         });
         [_target.mainWindowController enqueueOperation:operation];
     };
@@ -75,9 +79,87 @@ void CreateSymlink::Perform( PanelController *_target, id _sender ) const
       completionHandler:handler];
 }
 
+bool AlterSymlink::Predicate( PanelController *_target ) const
+{
+    const auto item = _target.view.item;
+    return item && item.IsSymlink() && item.Host()->IsWritable();
+}
+    
+void AlterSymlink::Perform( PanelController *_target, id _sender ) const
+{
+    const auto item = _target.view.item;
+    if( !item || !item.IsSymlink() )
+        return;
+    
+    FileLinkAlterSymlinkSheetController *sheet = [FileLinkAlterSymlinkSheetController new];
+    const auto handler = ^(NSModalResponse returnCode) {
+        if( returnCode != NSModalResponseOK )
+            return;
+        const auto dest = item.Path();
+        const auto value = sheet.sourcePath;
+        const auto operation = make_shared<nc::ops::Linkage>(dest, value, item.Host(),
+                                                             nc::ops::LinkageType::AlterSymlink);
+        const bool force_refresh = !_target.receivesUpdateNotifications;
+        if( force_refresh ) {
+            __weak PanelController *weak_panel = _target;
+            operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_panel]{
+                Refresh((PanelController*)weak_panel);
+            });
+        }
+        [_target.mainWindowController enqueueOperation:operation];
+    };
+    [sheet showSheetFor:_target.window
+             sourcePath:item.Symlink()
+               linkPath:item.Name()
+      completionHandler:handler];
+}
+
+bool CreateHardlink::Predicate( PanelController *_target ) const
+{
+    const auto item = _target.view.item;
+    return item && !item.IsDir() && item.Host()->IsNativeFS();
+}
+
+void CreateHardlink::Perform( PanelController *_target, id _sender ) const
+{
+    if( !Predicate(_target) )
+        return;
+    
+    const auto item = _target.view.item;
+    FileLinkNewHardlinkSheetController *sheet = [FileLinkNewHardlinkSheetController new];
+    const auto handler = ^(NSModalResponse returnCode) {
+        if( returnCode != NSModalResponseOK )
+            return;
+
+        string path = sheet.result;
+        if( path.empty() )
+            return;
+        
+        if( path.front() != '/')
+            path = item.Directory() + path;
+        
+        const auto dest = path;
+        const auto value = item.Path();
+        const auto operation = make_shared<nc::ops::Linkage>(dest, value, item.Host(),
+                                                             nc::ops::LinkageType::CreateHardlink);
+        const bool force_refresh = !_target.receivesUpdateNotifications;
+        __weak PanelController *weak_panel = _target;
+        operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion,
+                                     [weak_panel, dest, force_refresh]{
+            FocusResult((PanelController*)weak_panel, dest,force_refresh );
+        });
+
+        [_target.mainWindowController enqueueOperation:operation];
+    };
+    
+    [sheet showSheetFor:_target.window
+         withSourceName:item.Name()
+      completionHandler:handler];
+}
+
 static PanelController *FindVisibleOppositeController( PanelController *_source )
 {
-    auto state = _source.state;
+    const auto state = _source.state;
     if( !state.bothPanelsAreVisible )
         return nil;
     if( [state isLeftController:_source] )
@@ -87,7 +169,7 @@ static PanelController *FindVisibleOppositeController( PanelController *_source 
     return nil;
 }
 
-static void FocusResult( PanelController *_target, const string &_path )
+static void FocusResult( PanelController *_target, const string &_path, bool _refresh )
 {
     if( !_target  )
         return;
@@ -97,15 +179,29 @@ static void FocusResult( PanelController *_target, const string &_path )
         const auto directory =  EnsureTrailingSlash(result_path.parent_path().native());
         const auto filename = result_path.filename().native();
         if( _target.isUniform && _target.currentDirectoryPath == directory ) {
-            [_target refreshPanel];
+            if( _refresh )
+                [_target refreshPanel];
             nc::panel::DelayedSelection req;
             req.filename = filename;
             [_target ScheduleDelayedSelectionChangeFor:req];
         }
     }
     else
-        dispatch_to_main_queue([_target, _path]{
-            FocusResult(_target, _path);
+        dispatch_to_main_queue([_target, _path, _refresh]{
+            FocusResult(_target, _path, _refresh);
+        });
+}
+
+static void Refresh( PanelController *_target )
+{
+    if( !_target  )
+        return;
+    
+    if( dispatch_is_main_queue() )
+        [_target refreshPanel];
+    else
+        dispatch_to_main_queue([_target]{
+            Refresh(_target);
         });
 }
 

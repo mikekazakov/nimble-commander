@@ -55,10 +55,10 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         return true;
     }
     catch(exception &e) {
-        cout << "validateMenuItem has caught an exception: " << e.what() << endl;
+        cerr << "validateMenuItem has caught an exception: " << e.what() << endl;
     }
     catch(...) {
-        cout << "validateMenuItem has caught an unknown exception!" << endl;
+        cerr << "validateMenuItem has caught an unknown exception!" << endl;
     }
     return false;
 }
@@ -163,6 +163,8 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 - (IBAction)OnGoToQuickListsFavorites:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToQuickListsConnections:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnEditSymbolicLinkCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnCreateHardLinkCommand:(id)sender { Perform(_cmd, self, sender); }
 @end
 
 using namespace nc::panel::actions;
@@ -256,6 +258,8 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.command.compress_here",          @selector(onCompressItemsHere:),        new CompressHere},
 {"menu.command.compress_to_opposite",   @selector(onCompressItems:),            new CompressToOpposite},
 {"menu.command.link_create_soft",       @selector(OnCreateSymbolicLinkCommand:),new CreateSymlink},
+{"menu.command.link_edit",              @selector(OnEditSymbolicLinkCommand:),  new AlterSymlink},
+{"menu.command.link_create_hard",       @selector(OnCreateHardLinkCommand:),    new CreateHardlink}
 };
 
 static const PanelAction *ActionByTag(int _tag) noexcept
@@ -268,7 +272,7 @@ static const PanelAction *ActionByTag(int _tag) noexcept
                 if( auto tag = am.TagFromAction(get<0>(a)); tag >= 0 )
                     m.emplace( tag, get<2>(a) );
                 else
-                    cout << "warning - unrecognized action: " << get<0>(a) << endl;
+                    cerr << "warning - unrecognized action: " << get<0>(a) << endl;
             }
         return m;
     }();
@@ -297,7 +301,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender)
         }
     }
     else {
-        cout << "warning - unrecognized selector: " <<
+        cerr << "warning - unrecognized selector: " <<
             NSStringFromSelector(_sel).UTF8String << endl;
     }
 }

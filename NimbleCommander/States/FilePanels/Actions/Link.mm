@@ -62,12 +62,15 @@ void CreateSymlink::Perform( PanelController *_target, id _sender ) const
     const auto handler = ^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK || sheet.linkPath.empty() )
             return;
-        const auto dest = sheet.linkPath;
+        const auto dest = sheet.linkPath.front() == '/' ?
+            sheet.linkPath :
+            item.Directory() + sheet.linkPath;
+        const auto focus_opposite = sheet.linkPath.front() == '/';
         const auto value = sheet.sourcePath;
         const auto operation = make_shared<nc::ops::Linkage>(dest, value, vfs,
                                                              nc::ops::LinkageType::CreateSymlink);
-        __weak PanelController *weak_panel = opposite;
-        const bool force_refresh = !_target.receivesUpdateNotifications;               
+        __weak PanelController *weak_panel = focus_opposite ? opposite : _target;
+        const bool force_refresh = !weak_panel.receivesUpdateNotifications;
         operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion,
                                      [weak_panel, dest, force_refresh]{
             FocusResult((PanelController *)weak_panel, dest, force_refresh);

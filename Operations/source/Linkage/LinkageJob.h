@@ -6,7 +6,22 @@
 
 namespace nc::ops {
 
-class LinkageJob final : public Job
+struct LinkageJobCallbacks
+{
+    function< void(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnCreateSymlinkError =
+    [](int _err, const string &_path, VFSHost &_vfs){};
+    
+    function< void(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnAlterSymlinkError =
+    [](int _err, const string &_path, VFSHost &_vfs){};
+
+    function< void(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnCreateHardlinkError =
+    [](int _err, const string &_path, VFSHost &_vfs){};
+};
+
+class LinkageJob final : public Job, public LinkageJobCallbacks
 {
 public:
     LinkageJob(const string& _link_path, const string &_link_value,

@@ -4,9 +4,7 @@
 
 @property (strong) IBOutlet NSTextField *Text;
 @property (strong) IBOutlet NSTextField *LinkName;
-
-- (IBAction)OnCreate:(id)sender;
-- (IBAction)OnCancel:(id)sender;
+@property bool isValid;
 
 @end
 
@@ -23,6 +21,7 @@
 {
     if( self = [super initWithWindowNibName:@"CreateHardlinkDialog"] ) {
         m_SourceName = _src;
+        self.isValid = false;
     }
     return self;
 }
@@ -30,10 +29,8 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-//    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     [self.Text setStringValue:[NSString stringWithFormat:@"Create a hardlink of \'%@\' to:", [NSString stringWithUTF8StdString:m_SourceName]]];
     [self.window makeFirstResponder:self.LinkName];
-//    GA().PostScreenView("Hardlink Create");
 }
 
 - (IBAction)OnCreate:(id)sender
@@ -49,12 +46,16 @@
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }
 
-//- (void)showSheetFor:(NSWindow *)_window
-//      withSourceName:(const string&)_src
-//   completionHandler:(void (^)(NSModalResponse returnCode))_handler
-//{
-//    m_SourceName = _src;
-//    [super beginSheetForWindow:_window completionHandler:_handler];
-//}
+- (void)controlTextDidChange:(NSNotification *)notification
+{
+    if( objc_cast<NSTextField>(notification.object) == self.LinkName )
+        [self validate];
+}
+
+- (void)validate
+{
+    const auto v = self.LinkName.stringValue;
+    self.isValid = v && v.length > 0;
+}
 
 @end

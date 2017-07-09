@@ -2,14 +2,11 @@
 
 #include <Cocoa/Cocoa.h>
 
-@interface NCOpsCreateHardlinkDialog : NSWindowController
+@interface NCOpsCreateHardlinkDialog : NSWindowController<NSTextFieldDelegate>
 
 - (instancetype)initWithSourceName:(const string&)_src;
 
 @property (readonly) const string &result;
 
-//- (void)showSheetFor:(NSWindow *)_window
-//      withSourceName:(const string&)_src
-//   completionHandler:(void (^)(NSModalResponse returnCode))_handler;
 
 @end

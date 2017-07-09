@@ -18,6 +18,9 @@ public:
 
 private:
     virtual Job *GetJob() noexcept override;
+    void OnCreateSymlinkError(int _err, const string &_path, VFSHost &_vfs);
+    void OnAlterSymlinkError(int _err, const string &_path, VFSHost &_vfs);
+    void OnCreatehardlinkError(int _err, const string &_path, VFSHost &_vfs);
 
     unique_ptr<LinkageJob> m_Job;
 };

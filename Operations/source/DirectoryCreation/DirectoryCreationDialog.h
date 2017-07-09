@@ -2,7 +2,7 @@
 
 #include <Cocoa/Cocoa.h>
 
-@interface NCOpsDirectoryCreationDialog : NSWindowController
+@interface NCOpsDirectoryCreationDialog : NSWindowController<NSTextFieldDelegate>
 
 @property (readonly) const string &result;
 

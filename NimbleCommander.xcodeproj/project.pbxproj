@@ -2676,8 +2676,6 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				CFC4F99D1F0F40430000B3EE /* Link.h */,
-				CFC4F99E1F0F40430000B3EE /* Link.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
 				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
 				CF0260C81E9DF45D0025B50F /* BatchRename.h */,
@@ -2712,6 +2710,8 @@
 				CFD8CDB11E8CCD0A00E4DC53 /* GoToFolder.mm */,
 				CFD8CDC21E8CDBFA00E4DC53 /* InsertFromPasteboard.h */,
 				CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */,
+				CFC4F99D1F0F40430000B3EE /* Link.h */,
+				CFC4F99E1F0F40430000B3EE /* Link.mm */,
 				CF0260BB1E9DC9000025B50F /* MakeNew.h */,
 				CF0260BC1E9DC9000025B50F /* MakeNew.mm */,
 				CF90C0B41EC161E70056E3B8 /* NavigateHistory.h */,

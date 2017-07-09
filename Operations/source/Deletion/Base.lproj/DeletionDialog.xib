@@ -19,14 +19,14 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="361" height="110"/>
+            <rect key="contentRect" x="196" y="240" width="380" height="110"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="361" height="110"/>
+                <rect key="frame" x="0.0" y="0.0" width="380" height="110"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="20">
-                        <rect key="frame" x="146" y="13" width="92" height="32"/>
+                        <rect key="frame" x="165" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="zFu-jE-a9c"/>
                         </constraints>
@@ -43,7 +43,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" allowsCharacterPickerTouchBarItem="NO" preferredMaxLayoutWidth="321" translatesAutoresizingMaskIntoConstraints="NO" id="26">
-                        <rect key="frame" x="18" y="73" width="325" height="17"/>
+                        <rect key="frame" x="18" y="73" width="344" height="17"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="27">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -51,7 +51,7 @@ Gw
                         </textFieldCell>
                     </textField>
                     <popUpButton translatesAutoresizingMaskIntoConstraints="NO" id="5JK-Gz-nyy">
-                        <rect key="frame" x="321" y="17" width="22" height="26"/>
+                        <rect key="frame" x="340" y="17" width="22" height="26"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="18" id="15n-x3-edq"/>
                             <constraint firstAttribute="height" constant="21" id="uNC-oj-DSc"/>
@@ -72,7 +72,7 @@ Gw
                         </connections>
                     </popUpButton>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CAY-6l-o48">
-                        <rect key="frame" x="238" y="13" width="92" height="32"/>
+                        <rect key="frame" x="257" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="0Jp-uN-XhM"/>
                         </constraints>

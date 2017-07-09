@@ -18,14 +18,16 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" visibleAtLaunch="NO" animationBehavior="default" id="1" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="340" height="122"/>
+            <rect key="contentRect" x="196" y="240" width="480" height="122"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <value key="minSize" type="size" width="480" height="122"/>
+            <value key="maxSize" type="size" width="800" height="122"/>
             <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="340" height="122"/>
+                <rect key="frame" x="0.0" y="0.0" width="480" height="122"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="5">
-                        <rect key="frame" x="234" y="13" width="92" height="32"/>
+                        <rect key="frame" x="374" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="16"/>
                         </constraints>
@@ -38,10 +40,11 @@ DQ
                         </buttonCell>
                         <connections>
                             <action selector="OnCreate:" target="-2" id="17"/>
+                            <binding destination="-2" name="enabled" keyPath="self.isValid" id="bds-dY-K7H"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="9">
-                        <rect key="frame" x="142" y="13" width="92" height="32"/>
+                        <rect key="frame" x="282" y="13" width="92" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="QMe-PX-b96"/>
                         </constraints>
@@ -57,19 +60,22 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="19">
-                        <rect key="frame" x="20" y="55" width="300" height="22"/>
+                        <rect key="frame" x="20" y="55" width="440" height="22"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="Fmz-os-jfQ"/>
                             <constraint firstAttribute="width" relation="lessThanOrEqual" constant="700" id="xmL-qs-udR"/>
                         </constraints>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="20">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="Enter a folder name" drawsBackground="YES" id="20">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
+                        <connections>
+                            <outlet property="delegate" destination="-2" id="zVv-Dr-Dni"/>
+                        </connections>
                     </textField>
                     <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="35">
-                        <rect key="frame" x="18" y="85" width="304" height="17"/>
+                        <rect key="frame" x="18" y="85" width="444" height="17"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Create the folder:" id="36">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -97,5 +103,6 @@ Gw
             </connections>
             <point key="canvasLocation" x="488" y="272"/>
         </window>
+        <userDefaultsController representsSharedInstance="YES" id="P9o-lg-TQS"/>
     </objects>
 </document>

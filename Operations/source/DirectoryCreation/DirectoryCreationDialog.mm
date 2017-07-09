@@ -2,11 +2,9 @@
 
 @interface NCOpsDirectoryCreationDialog()
 
-- (IBAction)OnCreate:(id)sender;
-- (IBAction)OnCancel:(id)sender;
 @property (strong) IBOutlet NSTextField *TextField;
 @property (strong) IBOutlet NSButton *CreateButton;
-
+@property bool isValid;
 @end
 
 
@@ -21,6 +19,7 @@
 {
     self = [super initWithWindowNibName:@"DirectoryCreationDialog"];
     if( self ) {
+        self.isValid = false;
     }
     return self;
 }
@@ -45,6 +44,18 @@
 - (IBAction)OnCancel:(id)sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
+}
+
+- (void)controlTextDidChange:(NSNotification *)notification
+{
+    if( objc_cast<NSTextField>(notification.object) == self.TextField )
+        [self validate];
+}
+
+- (void)validate
+{
+    const auto v = self.TextField.stringValue;
+    self.isValid = v && v.length > 0;
 }
 
 @end

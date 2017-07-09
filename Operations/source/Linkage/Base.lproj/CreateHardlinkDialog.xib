@@ -20,6 +20,8 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="480" height="122"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <value key="minSize" type="size" width="480" height="122"/>
+            <value key="maxSize" type="size" width="800" height="122"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="480" height="122"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -42,6 +44,9 @@
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
+                        <connections>
+                            <outlet property="delegate" destination="-2" id="8f3-pi-4xP"/>
+                        </connections>
                     </textField>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="16">
                         <rect key="frame" x="374" y="13" width="92" height="32"/>
@@ -57,6 +62,7 @@ DQ
                         </buttonCell>
                         <connections>
                             <action selector="OnCreate:" target="-2" id="26"/>
+                            <binding destination="-2" name="enabled" keyPath="self.isValid" id="k6R-9a-oBC"/>
                         </connections>
                     </button>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="20">
@@ -93,7 +99,7 @@ Gw
             <connections>
                 <outlet property="delegate" destination="-2" id="4"/>
             </connections>
-            <point key="canvasLocation" x="293" y="359"/>
+            <point key="canvasLocation" x="395" y="286"/>
         </window>
     </objects>
 </document>

@@ -98,6 +98,9 @@
 		CFC4F9C11F108CD60000B3EE /* AlterSymlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */; };
 		CFC4F9C21F10B06C0000B3EE /* CreateHardlinkDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9B11F10890B0000B3EE /* CreateHardlinkDialog.mm */; };
 		CFC4F9C31F10B06F0000B3EE /* CreateHardlinkDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */; };
+		CFC4F9C71F11D5A10000B3EE /* AlterSymlinkDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9C41F11D5A10000B3EE /* AlterSymlinkDialog.h */; };
+		CFC4F9C81F11D5A10000B3EE /* CreateHardlinkDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9C51F11D5A10000B3EE /* CreateHardlinkDialog.h */; };
+		CFC4F9C91F11D5A10000B3EE /* CreateSymlinkDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9C61F11D5A10000B3EE /* CreateSymlinkDialog.h */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
@@ -217,6 +220,9 @@
 		CFC4F9BD1F1089150000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Linkage/ru.lproj/AlterSymlinkDialog.strings; sourceTree = "<group>"; };
 		CFC4F9BE1F10891A0000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Linkage/ru.lproj/CreateHardlinkDialog.strings; sourceTree = "<group>"; };
 		CFC4F9BF1F10891E0000B3EE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Linkage/ru.lproj/CreateSymlinkDialog.strings; sourceTree = "<group>"; };
+		CFC4F9C41F11D5A10000B3EE /* AlterSymlinkDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlterSymlinkDialog.h; path = include/Operations/AlterSymlinkDialog.h; sourceTree = "<group>"; };
+		CFC4F9C51F11D5A10000B3EE /* CreateHardlinkDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateHardlinkDialog.h; path = include/Operations/CreateHardlinkDialog.h; sourceTree = "<group>"; };
+		CFC4F9C61F11D5A10000B3EE /* CreateSymlinkDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateSymlinkDialog.h; path = include/Operations/CreateSymlinkDialog.h; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -381,15 +387,15 @@
 		CFC4F9851F0F22700000B3EE /* Linkage */ = {
 			isa = PBXGroup;
 			children = (
-				CFC4F9B21F10890B0000B3EE /* CreateSymlinkDialog.h */,
-				CFC4F9B31F10890B0000B3EE /* CreateSymlinkDialog.mm */,
-				CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */,
 				CFC4F9AE1F10890B0000B3EE /* AlterSymlinkDialog.h */,
 				CFC4F9AF1F10890B0000B3EE /* AlterSymlinkDialog.mm */,
 				CFC4F9A81F10890B0000B3EE /* AlterSymlinkDialog.xib */,
 				CFC4F9B01F10890B0000B3EE /* CreateHardlinkDialog.h */,
 				CFC4F9B11F10890B0000B3EE /* CreateHardlinkDialog.mm */,
 				CFC4F9AA1F10890B0000B3EE /* CreateHardlinkDialog.xib */,
+				CFC4F9B21F10890B0000B3EE /* CreateSymlinkDialog.h */,
+				CFC4F9B31F10890B0000B3EE /* CreateSymlinkDialog.mm */,
+				CFC4F9AC1F10890B0000B3EE /* CreateSymlinkDialog.xib */,
 				CFC4F9861F0F22850000B3EE /* Linkage.h */,
 				CFC4F9871F0F22850000B3EE /* Linkage.mm */,
 				CFC4F9881F0F22850000B3EE /* LinkageJob.cpp */,
@@ -449,10 +455,13 @@
 		CFF53B8A1EE24F1B00F567C4 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F9C41F11D5A10000B3EE /* AlterSymlinkDialog.h */,
 				CFC4F9901F0F22900000B3EE /* BatchRenaming.h */,
 				CFC4F9911F0F22900000B3EE /* BatchRenamingDialog.h */,
 				CFC4F9921F0F22900000B3EE /* BatchRenamingScheme.h */,
 				CF7084DC1EF7CF7E0072F0F6 /* Compression.h */,
+				CFC4F9C51F11D5A10000B3EE /* CreateHardlinkDialog.h */,
+				CFC4F9C61F11D5A10000B3EE /* CreateSymlinkDialog.h */,
 				CFC4F92B1F0B49C00000B3EE /* Deletion.h */,
 				CFC4F9931F0F22900000B3EE /* DeletionDialog.h */,
 				CFC4F92C1F0B49C00000B3EE /* DirectoryCreation.h */,
@@ -499,6 +508,7 @@
 				CFC4F9B71F10890B0000B3EE /* AlterSymlinkDialog.h in Headers */,
 				CFC4F8EE1F0224710000B3EE /* AsyncDialogResponse.h in Headers */,
 				CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */,
+				CFC4F9C71F11D5A10000B3EE /* AlterSymlinkDialog.h in Headers */,
 				CFC4F8CF1EFA07F00000B3EE /* PoolView.h in Headers */,
 				CFC4F9941F0F22900000B3EE /* BatchRenaming.h in Headers */,
 				CFC4F8E41EFCE0380000B3EE /* BriefOperationView.h in Headers */,
@@ -515,6 +525,7 @@
 				CFC4F9951F0F22900000B3EE /* BatchRenamingDialog.h in Headers */,
 				CFC4F9BB1F10890B0000B3EE /* CreateSymlinkDialog.h in Headers */,
 				CFC4F91B1F09D9740000B3EE /* Deletion.h in Headers */,
+				CFC4F9C91F11D5A10000B3EE /* CreateSymlinkDialog.h in Headers */,
 				CFC4F9201F09DCC80000B3EE /* Options.h in Headers */,
 				CFC4F9571F0CB0260000B3EE /* DirectoryCreationDialog.h in Headers */,
 				CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */,
@@ -536,6 +547,7 @@
 				CFC4F9021F0617E20000B3EE /* ModalDialogResponses.h in Headers */,
 				CFC4F92E1F0B49C00000B3EE /* DirectoryCreation.h in Headers */,
 				CFC4F9B91F10890B0000B3EE /* CreateHardlinkDialog.h in Headers */,
+				CFC4F9C81F11D5A10000B3EE /* CreateHardlinkDialog.h in Headers */,
 				CFC4F9641F0CC66E0000B3EE /* BatchRenamingScheme.h in Headers */,
 				CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */,
 				CFC4F90A1F06253D0000B3EE /* DirectoryCreationJob.h in Headers */,

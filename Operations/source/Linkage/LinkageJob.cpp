@@ -15,6 +15,7 @@ LinkageJob::LinkageJob(const string& _link_path, const string &_link_value,
 
     Statistics().SetPreferredSource(Statistics::SourceType::Items);
     Statistics().CommitEstimated(Statistics::SourceType::Items, 1);
+    
 }
 
 LinkageJob::~LinkageJob()
@@ -38,7 +39,7 @@ void LinkageJob::DoSymlinkCreation()
         Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
     }
     else {
-        // ...
+        m_OnCreateSymlinkError(rc, m_LinkPath, *m_VFS);
         Stop();
     }
 }
@@ -47,15 +48,21 @@ void LinkageJob::DoSymlinkAlteration()
 {
     VFSStat st;
     const auto stat_rc = m_VFS->Stat( m_LinkPath.c_str(), st, VFSFlags::F_NoFollow );
-    if( stat_rc != VFSError::Ok || (st.mode & S_IFMT) != S_IFLNK ) {
-        // ...
+    if( stat_rc != VFSError::Ok ) {
+        m_OnAlterSymlinkError(stat_rc, m_LinkPath, *m_VFS);
+        Stop();
+        return;
+    }
+    
+    if( (st.mode & S_IFMT) != S_IFLNK ) {
+        m_OnAlterSymlinkError( VFSError::FromErrno(EEXIST), m_LinkPath, *m_VFS);
         Stop();
         return;
     }
     
     const auto unlink_rc = m_VFS->Unlink( m_LinkPath.c_str() );
     if( unlink_rc != VFSError::Ok ) {
-        // ...
+        m_OnAlterSymlinkError(unlink_rc, m_LinkPath, *m_VFS);
         Stop();
         return;
     }
@@ -65,7 +72,7 @@ void LinkageJob::DoSymlinkAlteration()
         Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
     }
     else {
-        // ...
+        m_OnAlterSymlinkError(link_rc, m_LinkPath, *m_VFS);
         Stop();
     }
 }
@@ -73,7 +80,7 @@ void LinkageJob::DoSymlinkAlteration()
 void LinkageJob::DoHardlinkCreation()
 {
     if( !m_VFS->IsNativeFS() ) {
-        // ...
+        m_OnCreateHardlinkError( VFSError::FromErrno(ENOTSUP), m_LinkPath, *m_VFS );
         Stop();
         return;
     }
@@ -83,7 +90,7 @@ void LinkageJob::DoHardlinkCreation()
         Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
     }
     else {
-        // ...
+        m_OnCreateHardlinkError( VFSError::FromErrno(), m_LinkPath, *m_VFS );
         Stop();
     }
 }

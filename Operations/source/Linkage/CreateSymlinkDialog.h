@@ -2,7 +2,7 @@
 
 #include <Cocoa/Cocoa.h>
 
-@interface NCOpsCreateSymlinkDialog : NSWindowController
+@interface NCOpsCreateSymlinkDialog : NSWindowController<NSTextFieldDelegate>
 
 - (instancetype) initWithSourcePath:(const string&)_src_path andDestPath:(const string&)_link_path;
 

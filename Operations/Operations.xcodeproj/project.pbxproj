@@ -101,6 +101,12 @@
 		CFC4F9C71F11D5A10000B3EE /* AlterSymlinkDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9C41F11D5A10000B3EE /* AlterSymlinkDialog.h */; };
 		CFC4F9C81F11D5A10000B3EE /* CreateHardlinkDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9C51F11D5A10000B3EE /* CreateHardlinkDialog.h */; };
 		CFC4F9C91F11D5A10000B3EE /* CreateSymlinkDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9C61F11D5A10000B3EE /* CreateSymlinkDialog.h */; };
+		CFC4F9CC1F14BECA0000B3EE /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9CB1F14BECA0000B3EE /* Options.h */; };
+		CFC4F9CF1F14BFFE0000B3EE /* AttrsChanging.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9CD1F14BFFE0000B3EE /* AttrsChanging.h */; };
+		CFC4F9D01F14BFFE0000B3EE /* AttrsChanging.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9CE1F14BFFE0000B3EE /* AttrsChanging.mm */; };
+		CFC4F9D31F14C4030000B3EE /* AttrsChangingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9D11F14C4030000B3EE /* AttrsChangingJob.cpp */; };
+		CFC4F9D41F14C4030000B3EE /* AttrsChangingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9D21F14C4030000B3EE /* AttrsChangingJob.h */; };
+		CFC4F9D71F14FA100000B3EE /* AttrsChanging_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9D51F14F9FE0000B3EE /* AttrsChanging_Tests.mm */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
@@ -223,6 +229,12 @@
 		CFC4F9C41F11D5A10000B3EE /* AlterSymlinkDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AlterSymlinkDialog.h; path = include/Operations/AlterSymlinkDialog.h; sourceTree = "<group>"; };
 		CFC4F9C51F11D5A10000B3EE /* CreateHardlinkDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateHardlinkDialog.h; path = include/Operations/CreateHardlinkDialog.h; sourceTree = "<group>"; };
 		CFC4F9C61F11D5A10000B3EE /* CreateSymlinkDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateSymlinkDialog.h; path = include/Operations/CreateSymlinkDialog.h; sourceTree = "<group>"; };
+		CFC4F9CB1F14BECA0000B3EE /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = source/AttrsChanging/Options.h; sourceTree = "<group>"; };
+		CFC4F9CD1F14BFFE0000B3EE /* AttrsChanging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttrsChanging.h; path = source/AttrsChanging/AttrsChanging.h; sourceTree = "<group>"; };
+		CFC4F9CE1F14BFFE0000B3EE /* AttrsChanging.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AttrsChanging.mm; path = source/AttrsChanging/AttrsChanging.mm; sourceTree = "<group>"; };
+		CFC4F9D11F14C4030000B3EE /* AttrsChangingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AttrsChangingJob.cpp; path = source/AttrsChanging/AttrsChangingJob.cpp; sourceTree = "<group>"; };
+		CFC4F9D21F14C4030000B3EE /* AttrsChangingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttrsChangingJob.h; path = source/AttrsChanging/AttrsChangingJob.h; sourceTree = "<group>"; };
+		CFC4F9D51F14F9FE0000B3EE /* AttrsChanging_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AttrsChanging_Tests.mm; path = tests/AttrsChanging_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -375,11 +387,12 @@
 		CFC4F9611F0CC6550000B3EE /* Operations */ = {
 			isa = PBXGroup;
 			children = (
-				CFC4F9851F0F22700000B3EE /* Linkage */,
+				CFC4F9CA1F14BEA30000B3EE /* AttrsChanging */,
 				CFC4F9601F0CC6480000B3EE /* BatchRenaming */,
+				CFF53B8E1EE24FC300F567C4 /* Compression */,
 				CFC4F9161F09D9620000B3EE /* Deletion */,
 				CFC4F9031F0625090000B3EE /* DirectoryCreation */,
-				CFF53B8E1EE24FC300F567C4 /* Compression */,
+				CFC4F9851F0F22700000B3EE /* Linkage */,
 			);
 			name = Operations;
 			sourceTree = "<group>";
@@ -403,6 +416,18 @@
 				CFC4F98A1F0F22850000B3EE /* Options.h */,
 			);
 			name = Linkage;
+			sourceTree = "<group>";
+		};
+		CFC4F9CA1F14BEA30000B3EE /* AttrsChanging */ = {
+			isa = PBXGroup;
+			children = (
+				CFC4F9CD1F14BFFE0000B3EE /* AttrsChanging.h */,
+				CFC4F9CE1F14BFFE0000B3EE /* AttrsChanging.mm */,
+				CFC4F9D11F14C4030000B3EE /* AttrsChangingJob.cpp */,
+				CFC4F9D21F14C4030000B3EE /* AttrsChangingJob.h */,
+				CFC4F9CB1F14BECA0000B3EE /* Options.h */,
+			);
+			name = AttrsChanging;
 			sourceTree = "<group>";
 		};
 		CFF53B251EDD197300F567C4 = {
@@ -429,6 +454,7 @@
 		CFF53B3C1EDD197300F567C4 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4F9D51F14F9FE0000B3EE /* AttrsChanging_Tests.mm */,
 				CFC4F9981F0F271E0000B3EE /* Linkage_Tests.mm */,
 				CFC4F9661F0CEEB90000B3EE /* BatchRenaming_Tests.mm */,
 				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
@@ -531,6 +557,7 @@
 				CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */,
 				CFC4F95D1F0CB07A0000B3EE /* DeletionDialog.h in Headers */,
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
+				CFC4F9D41F14C4030000B3EE /* AttrsChangingJob.h in Headers */,
 				CFC4F97F1F0DEC280000B3EE /* BatchRenamingDialog.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
 				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
@@ -541,6 +568,7 @@
 				CFC4F9701F0CEFB60000B3EE /* BatchRenamingJob.h in Headers */,
 				CFC4F96D1F0CEFB60000B3EE /* BatchRenaming.h in Headers */,
 				CFC4F91E1F09D9740000B3EE /* DeletionJob.h in Headers */,
+				CFC4F9CC1F14BECA0000B3EE /* Options.h in Headers */,
 				CFC4F8C91EFA05B00000B3EE /* PoolViewController.h in Headers */,
 				CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */,
 				CFC4F98F1F0F22850000B3EE /* Options.h in Headers */,
@@ -548,6 +576,7 @@
 				CFC4F92E1F0B49C00000B3EE /* DirectoryCreation.h in Headers */,
 				CFC4F9B91F10890B0000B3EE /* CreateHardlinkDialog.h in Headers */,
 				CFC4F9C81F11D5A10000B3EE /* CreateHardlinkDialog.h in Headers */,
+				CFC4F9CF1F14BFFE0000B3EE /* AttrsChanging.h in Headers */,
 				CFC4F9641F0CC66E0000B3EE /* BatchRenamingScheme.h in Headers */,
 				CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */,
 				CFC4F90A1F06253D0000B3EE /* DirectoryCreationJob.h in Headers */,
@@ -679,6 +708,7 @@
 				CFC4F9BC1F10890B0000B3EE /* CreateSymlinkDialog.mm in Sources */,
 				CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.cpp in Sources */,
 				CFC4F95E1F0CB07A0000B3EE /* DeletionDialog.mm in Sources */,
+				CFC4F9D31F14C4030000B3EE /* AttrsChangingJob.cpp in Sources */,
 				CFC4F9801F0DEC280000B3EE /* BatchRenamingDialog.mm in Sources */,
 				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,
 				CFC4F9C01F108CD20000B3EE /* AlterSymlinkDialog.mm in Sources */,
@@ -699,6 +729,7 @@
 				CFC4F8E51EFCE0380000B3EE /* BriefOperationView.mm in Sources */,
 				CFF53BAF1EEA840600F567C4 /* Statistics.cpp in Sources */,
 				CFC4F8D81EFB5F780000B3EE /* BriefOperationViewController.mm in Sources */,
+				CFC4F9D01F14BFFE0000B3EE /* AttrsChanging.mm in Sources */,
 				CFC4F9821F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -711,6 +742,7 @@
 				CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */,
 				CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */,
 				CFC4F99A1F0F27230000B3EE /* Linkage_Tests.mm in Sources */,
+				CFC4F9D71F14FA100000B3EE /* AttrsChanging_Tests.mm in Sources */,
 				CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */,
 				CFC4F9231F09DFF60000B3EE /* Deletion_Tests.mm in Sources */,
 			);

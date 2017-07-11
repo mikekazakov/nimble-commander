@@ -830,6 +830,62 @@ int VFSNetSFTPHost::CreateSymlink(const char *_symlink_path,
         return VFSErrorForConnection(*conn);
 }
 
+int VFSNetSFTPHost::ChMod(const char *_path,
+                          uint16_t _mode,
+                          const VFSCancelChecker &_cancel_checker)
+{
+    unique_ptr<Connection> conn;
+    if( int rc = GetConnection(conn); rc < 0 )
+        return rc;
+    
+    AutoConnectionReturn acr(conn, this);
+
+
+    LIBSSH2_SFTP_ATTRIBUTES attrs;
+    memset( &attrs, 0, sizeof(attrs) );
+    attrs.flags = LIBSSH2_SFTP_ATTR_PERMISSIONS;
+    attrs.permissions = _mode;
+    
+    const auto rc = libssh2_sftp_stat_ex(conn->sftp,
+                                         _path,
+                                         (unsigned)strlen(_path),
+                                         LIBSSH2_SFTP_SETSTAT,
+                                         &attrs);
+    if( rc == 0 )
+        return VFSError::Ok;
+    else
+        return VFSErrorForConnection(*conn);
+}
+
+int VFSNetSFTPHost::ChOwn(const char *_path,
+                          unsigned _uid,
+                          unsigned _gid,
+                          const VFSCancelChecker &_cancel_checker)
+{
+    unique_ptr<Connection> conn;
+    if( int rc = GetConnection(conn); rc < 0 )
+        return rc;
+    
+    AutoConnectionReturn acr(conn, this);
+
+
+    LIBSSH2_SFTP_ATTRIBUTES attrs;
+    memset( &attrs, 0, sizeof(attrs) );
+    attrs.flags = LIBSSH2_SFTP_ATTR_UIDGID;
+    attrs.uid = _uid;
+    attrs.gid = _gid;
+    
+    const auto rc = libssh2_sftp_stat_ex(conn->sftp,
+                                         _path,
+                                         (unsigned)strlen(_path),
+                                         LIBSSH2_SFTP_SETSTAT,
+                                         &attrs);
+    if( rc == 0 )
+        return VFSError::Ok;
+    else
+        return VFSErrorForConnection(*conn);
+}
+
 static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session)
 {
     const auto banner = libssh2_session_banner_get(_session);

@@ -56,6 +56,14 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
                                        "");
 }
 
+- (VFSHostPtr) hostForVBoxUbuntu
+{
+    return make_shared<VFSNetSFTPHost>(g_VBoxUbuntu1404x64,
+                                       "r2d2",
+                                       "r2d2",
+                                       "");
+}
+
 - (void)testBasicWithHost:(VFSHostPtr)host
 {
     VFSListingPtr listing;
@@ -265,13 +273,9 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 
 - (void)testCreateLink
 {
-  try
+    try
     {
-        const VFSHostPtr host = make_shared<VFSNetSFTPHost>(g_VBoxUbuntu1404x64,
-                                                            "r2d2",
-                                                            "r2d2",
-                                                            "");
-
+        const VFSHostPtr host = self.hostForVBoxUbuntu;
         const auto lnk_path = "/home/r2d2/smtest";
         const auto createlink_rc = host->CreateSymlink(lnk_path,
                                                        "/path/to/some/rubbish");
@@ -287,5 +291,56 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
         XCTAssert( e.code() == 0 );
     }
 }
+
+- (void)testChmod
+{
+    try
+    {
+        const auto host = self.hostForVBoxUbuntu;
+        const auto path = "/home/r2d2/chmodtest";
+
+        XCTAssert( VFSEasyCreateEmptyFile(path, host) == VFSError::Ok );
+        VFSStat st;
+        XCTAssert( host->Stat(path, st, 0) == VFSError::Ok );
+        XCTAssert( st.mode_bits.xusr == 0 );
+
+        st.mode_bits.xusr = 1;
+        XCTAssert( host->ChMod(path, st.mode) == VFSError::Ok );
+        
+        memset( &st, 0, sizeof(st) );        
+        XCTAssert( host->Stat(path, st, 0) == VFSError::Ok );
+        XCTAssert( st.mode_bits.xusr == 1 );
+        
+        XCTAssert( host->Unlink(path) == VFSError::Ok );
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
+
+- (void)testChown
+{
+    try
+    {
+        const auto host = self.hostForVBoxDebian7x86;
+        const auto path = "/root/chowntest";
+
+        XCTAssert( VFSEasyCreateEmptyFile(path, host) == VFSError::Ok );
+        VFSStat st;
+        XCTAssert( host->Stat(path, st, 0) == VFSError::Ok );
+        
+        const auto new_uid = st.uid + 1;
+        const auto new_gid = st.gid + 1;
+        XCTAssert( host->ChOwn(path, new_uid, new_gid) == VFSError::Ok );
+        
+        XCTAssert( host->Stat(path, st, 0) == VFSError::Ok );
+        XCTAssert( st.uid == new_uid );
+        XCTAssert( st.gid == new_gid );
+        
+        XCTAssert( host->Unlink(path) == VFSError::Ok );
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
+
 
 @end

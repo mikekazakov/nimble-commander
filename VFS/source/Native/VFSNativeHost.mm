@@ -635,7 +635,7 @@ int VFSNativeHost::Rename(const char *_old_path, const char *_new_path, const VF
     auto &io = RoutedIO::Default;
     int ret = io.rename(_old_path, _new_path);
     if(ret == 0)
-        return 0;
+        return VFSError::Ok;
     return VFSError::FromErrno();
 }
 
@@ -672,4 +672,31 @@ int VFSNativeHost::Trash(const char *_path, const VFSCancelChecker &_cancel_chec
         return VFSError::Ok;
     else
         return VFSError::FromNSError(error);
+}
+
+int VFSNativeHost::ChMod(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
+{
+    if( _path == nullptr )
+        return VFSError::FromErrno(EINVAL);
+    
+    auto &io = RoutedIO::Default;
+    const auto ret = io.chmod(_path, _mode);
+    if( ret == 0 )
+        return VFSError::Ok;
+    return VFSError::FromErrno();
+}
+
+int VFSNativeHost::ChOwn(const char *_path,
+                         unsigned _uid,
+                         unsigned _gid,
+                         const VFSCancelChecker &_cancel_checker)
+{
+    if( _path == nullptr )
+        return VFSError::FromErrno(EINVAL);
+
+    auto &io = RoutedIO::Default;
+    const auto ret = io.chown(_path, _uid, _gid);
+    if( ret == 0 )
+        return VFSError::Ok;
+    return VFSError::FromErrno();
 }

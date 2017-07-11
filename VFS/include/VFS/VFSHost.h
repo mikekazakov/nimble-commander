@@ -218,7 +218,7 @@ public:
 
     
     /***********************************************************************************************
-     * Making changes to filesystem
+     * Making changes to the filesystem
      **********************************************************************************************/
     
     virtual int CreateFile(const char* _path,
@@ -272,9 +272,17 @@ public:
                          struct timespec *_acc_time,
                          const VFSCancelChecker &_cancel_checker = nullptr);
     
+    virtual int ChMod(const char *_path,
+                      uint16_t _mode,
+                      const VFSCancelChecker &_cancel_checker = nullptr);
+    
+    virtual int ChOwn(const char *_path,
+                      unsigned _uid,
+                      unsigned _gid,
+                      const VFSCancelChecker &_cancel_checker = nullptr);
     
     /***********************************************************************************************
-     * Changes observation
+     * Observation of changes
      **********************************************************************************************/
 
     /**

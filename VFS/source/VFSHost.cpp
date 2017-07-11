@@ -393,6 +393,11 @@ int VFSHost::Rename(const char *_old_path, const char *_new_path, const VFSCance
     return VFSError::NotSupported;
 }
 
+int VFSHost::ChMod(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
+{
+    return VFSError::NotSupported;
+}
+
 int VFSHost::GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs)
 {
     return VFSError::NotSupported;
@@ -556,4 +561,11 @@ int VFSHost::FetchFlexibleListingItems(const string& _directory_path,
 void VFSHost::SetDesctructCallback( function<void(const VFSHost*)> _callback )
 {
     m_OnDesctruct = _callback;
+}
+
+int VFSHost::ChOwn(const char *_path,
+                   unsigned _uid,
+                   unsigned _gid, const VFSCancelChecker &_cancel_checker)
+{
+    return VFSError::NotSupported;
 }

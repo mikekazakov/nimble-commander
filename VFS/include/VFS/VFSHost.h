@@ -178,7 +178,12 @@ public:
                                    char *_valid_path,
                                    int _flags,
                                    const VFSCancelChecker &_cancel_checker = nullptr);
-    
+
+    virtual int FetchUsers(vector<VFSUser> &_target,
+                                 const VFSCancelChecker &_cancel_checker = nullptr);
+
+    virtual int FetchGroups(vector<VFSGroup> &_target,
+                                  const VFSCancelChecker &_cancel_checker = nullptr);
     
     /***********************************************************************************************
      * Directories iteration, listings fetching

@@ -1,11 +1,4 @@
-//
-//  VFSNativeHost.cpp
-//  Files
-//
-//  Created by Michael G. Kazakov on 26.08.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
+#include  <OpenDirectory/OpenDirectory.h>
 #include <sys/attr.h>
 #include <sys/errno.h>
 #include <sys/vnode.h>
@@ -20,6 +13,7 @@
 #include <VFS/VFSError.h>
 #include "../VFSListingInput.h"
 #include "Fetching.h"
+
 
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
@@ -699,4 +693,119 @@ int VFSNativeHost::ChOwn(const char *_path,
     if( ret == 0 )
         return VFSError::Ok;
     return VFSError::FromErrno();
+}
+
+int VFSNativeHost::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
+{
+    _target.clear();
+
+    NSError *error;
+    const auto node_name = @"/Local/Default";
+    const auto node = [ODNode nodeWithSession:ODSession.defaultSession
+                                         name:node_name
+                                        error:&error];
+    if( !node )
+        return VFSError::FromNSError(error);
+
+    const auto attributes = @[kODAttributeTypeUniqueID, kODAttributeTypeFullName];
+    const auto query = [ODQuery queryWithNode:node
+                               forRecordTypes:kODRecordTypeUsers
+                                    attribute:nil
+                                    matchType:0
+                                  queryValues:nil
+                             returnAttributes:attributes
+                               maximumResults:0
+                                        error:&error];
+    if( !query )
+        return VFSError::FromNSError(error);
+
+    const auto records = [query resultsAllowingPartial:false
+                                                 error:&error];
+    if( !records )
+        return VFSError::FromNSError(error);
+    
+    for( ODRecord *record in records ) {
+        const auto uid_values = [record valuesForAttribute:kODAttributeTypeUniqueID error:nil];
+        if( uid_values == nil || uid_values.count == 0 )
+            continue;
+        const auto uid = (uint32_t)objc_cast<NSString>(uid_values.firstObject).integerValue;
+
+        const auto gecos_values = [record valuesForAttribute:kODAttributeTypeFullName error:nil];
+        const auto gecos = (gecos_values && gecos_values.count > 0) ?
+            objc_cast<NSString>(gecos_values.firstObject).UTF8String : "";
+        
+        VFSUser user;
+        user.uid = uid;
+        user.name = record.recordName.UTF8String;
+        user.gecos = gecos;
+        _target.emplace_back( move(user) );
+    }
+    
+    sort(begin(_target),
+         end(_target),
+         [](const auto &_1, const auto &_2){ return (signed)_1.uid < (signed)_2.uid; });
+    _target.erase(unique(begin(_target),
+                          end(_target),
+                          [](const auto &_1, const auto &_2){ return _1.uid == _2.uid; }),
+                  end(_target));
+    
+    return VFSError::Ok;
+}
+
+int VFSNativeHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
+{
+    _target.clear();
+
+    NSError *error;
+    const auto node_name = @"/Local/Default";
+    const auto node = [ODNode nodeWithSession:ODSession.defaultSession
+                                         name:node_name
+                                        error:&error];
+    if( !node )
+        return VFSError::FromNSError(error);
+
+    const auto attributes = @[kODAttributeTypePrimaryGroupID, kODAttributeTypeFullName];
+    const auto query = [ODQuery queryWithNode:node
+                               forRecordTypes:kODRecordTypeGroups
+                                    attribute:nil
+                                    matchType:0
+                                  queryValues:nil
+                             returnAttributes:attributes
+                               maximumResults:0
+                                        error:&error];
+    if( !query )
+        return VFSError::FromNSError(error);
+    
+    
+    const auto records = [query resultsAllowingPartial:false
+                                                 error:&error];
+    if( !records )
+        return VFSError::FromNSError(error);
+    
+    for( ODRecord *record in records ) {
+        const auto gid_values =[record valuesForAttribute:kODAttributeTypePrimaryGroupID error:nil];
+        if( gid_values == nil || gid_values.count == 0 )
+            continue;
+        const auto gid = (uint32_t)objc_cast<NSString>(gid_values.firstObject).integerValue;
+
+        const auto gecos_values = [record valuesForAttribute:kODAttributeTypeFullName error:nil];
+        const auto gecos = (gecos_values && gecos_values.count > 0) ?
+            objc_cast<NSString>(gecos_values.firstObject).UTF8String : "";
+        
+        VFSGroup group;
+        group.gid = gid;
+        group.name = record.recordName.UTF8String;
+        group.gecos = gecos;
+        _target.emplace_back( move(group) );
+    }
+    
+    sort(begin(_target),
+         end(_target),
+         [](const auto &_1, const auto &_2){ return (signed)_1.gid < (signed)_2.gid; });
+    _target.erase(unique(begin(_target),
+                          end(_target),
+                          [](const auto &_1, const auto &_2){ return _1.gid == _2.gid; }),
+                  end(_target));
+    
+    return VFSError::Ok;
 }

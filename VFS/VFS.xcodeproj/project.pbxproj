@@ -115,6 +115,11 @@
 		CF818B7F1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */; };
 		CF818B801EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */; };
 		CFC4F9301F0B5E250000B3EE /* VFSListingObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F92F1F0B5E250000B3EE /* VFSListingObjC.mm */; };
+		CFC4F9F51F1719860000B3EE /* VFSNetSFTPOSDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9F31F1719860000B3EE /* VFSNetSFTPOSDetector.cpp */; };
+		CFC4F9F61F1719860000B3EE /* VFSNetSFTPOSDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9F41F1719860000B3EE /* VFSNetSFTPOSDetector.h */; };
+		CFC4F9F81F171A470000B3EE /* VFSNetSFTPOSType.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9F71F171A470000B3EE /* VFSNetSFTPOSType.h */; };
+		CFC4F9FB1F171E990000B3EE /* VFSNetSFTPAccountsFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9F91F171E990000B3EE /* VFSNetSFTPAccountsFetcher.cpp */; };
+		CFC4F9FC1F171E990000B3EE /* VFSNetSFTPAccountsFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9FA1F171E990000B3EE /* VFSNetSFTPAccountsFetcher.h */; };
 		CFD725F61E42DC3200603077 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F51E42DC3200603077 /* libbz2.a */; };
 		CFD725F81E42DC3600603077 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F71E42DC3600603077 /* liblzma.a */; };
 		CFD725FA1E42DC4B00603077 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F91E42DC4B00603077 /* libz.a */; };
@@ -253,6 +258,11 @@
 		CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFileDownloadDelegate.h; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.h; sourceTree = "<group>"; };
 		CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileDownloadDelegate.mm; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.mm; sourceTree = "<group>"; };
 		CFC4F92F1F0B5E250000B3EE /* VFSListingObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListingObjC.mm; path = source/VFSListingObjC.mm; sourceTree = "<group>"; };
+		CFC4F9F31F1719860000B3EE /* VFSNetSFTPOSDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPOSDetector.cpp; path = source/NetSFTP/VFSNetSFTPOSDetector.cpp; sourceTree = "<group>"; };
+		CFC4F9F41F1719860000B3EE /* VFSNetSFTPOSDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPOSDetector.h; path = source/NetSFTP/VFSNetSFTPOSDetector.h; sourceTree = "<group>"; };
+		CFC4F9F71F171A470000B3EE /* VFSNetSFTPOSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPOSType.h; path = source/NetSFTP/VFSNetSFTPOSType.h; sourceTree = "<group>"; };
+		CFC4F9F91F171E990000B3EE /* VFSNetSFTPAccountsFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPAccountsFetcher.cpp; path = source/NetSFTP/VFSNetSFTPAccountsFetcher.cpp; sourceTree = "<group>"; };
+		CFC4F9FA1F171E990000B3EE /* VFSNetSFTPAccountsFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPAccountsFetcher.h; path = source/NetSFTP/VFSNetSFTPAccountsFetcher.h; sourceTree = "<group>"; };
 		CFD725F51E42DC3200603077 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = ../Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CFD725F71E42DC3600603077 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CFD725F91E42DC4B00603077 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../Files/Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
@@ -488,12 +498,17 @@
 		CF69D0471DA232E300992B84 /* NetSFTP */ = {
 			isa = PBXGroup;
 			children = (
-				CF7A09BB1EC4382700533B07 /* VFSNetSFTPKeyValidator.cpp */,
-				CF7A09BC1EC4382700533B07 /* VFSNetSFTPKeyValidator.h */,
+				CFC4F9F91F171E990000B3EE /* VFSNetSFTPAccountsFetcher.cpp */,
+				CFC4F9FA1F171E990000B3EE /* VFSNetSFTPAccountsFetcher.h */,
+				CFC4F9F71F171A470000B3EE /* VFSNetSFTPOSType.h */,
 				CF69D0481DA232EF00992B84 /* VFSNetSFTPFile.cpp */,
 				CF69D0491DA232EF00992B84 /* VFSNetSFTPFile.h */,
 				CF69D04A1DA232EF00992B84 /* VFSNetSFTPHost.cpp */,
 				CF69D04B1DA232EF00992B84 /* VFSNetSFTPHost.h */,
+				CF7A09BB1EC4382700533B07 /* VFSNetSFTPKeyValidator.cpp */,
+				CF7A09BC1EC4382700533B07 /* VFSNetSFTPKeyValidator.h */,
+				CFC4F9F31F1719860000B3EE /* VFSNetSFTPOSDetector.cpp */,
+				CFC4F9F41F1719860000B3EE /* VFSNetSFTPOSDetector.h */,
 			);
 			name = NetSFTP;
 			sourceTree = "<group>";
@@ -551,11 +566,13 @@
 				CF69CFFB1DA227E400992B84 /* VFS.h in Headers */,
 				CF69D0751DA2353000992B84 /* VFSPSFile.h in Headers */,
 				CF69D06B1DA2344A00992B84 /* VFSArchiveUnRARHost.h in Headers */,
+				CFC4F9F61F1719860000B3EE /* VFSNetSFTPOSDetector.h in Headers */,
 				CF69D0591DA2336500992B84 /* VFSArchiveHost.h in Headers */,
 				CF69D0061DA227E400992B84 /* VFSPath.h in Headers */,
 				CF7A09BE1EC4382700533B07 /* VFSNetSFTPKeyValidator.h in Headers */,
 				CF1168831E91FB4A00CC515A /* Aux.h in Headers */,
 				CF69D07A1DA238D400992B84 /* VFSListingInput.h in Headers */,
+				CFC4F9FC1F171E990000B3EE /* VFSNetSFTPAccountsFetcher.h in Headers */,
 				CF69D0581DA2336500992B84 /* VFSArchiveFile.h in Headers */,
 				CF69D0761DA2353000992B84 /* VFSPSHost.h in Headers */,
 				CF69D0461DA2324100992B84 /* VFSNetFTPInternalsForward.h in Headers */,
@@ -585,6 +602,7 @@
 				CF69CFFE1DA227E400992B84 /* VFSDeclarations.h in Headers */,
 				CF69D02C1DA2305A00992B84 /* VFSNativeFile.h in Headers */,
 				CF69D0331DA231EA00992B84 /* xattr.h in Headers */,
+				CFC4F9F81F171A470000B3EE /* VFSNetSFTPOSType.h in Headers */,
 				CF1FBF3B1E909AC400D3569C /* Fetching.h in Headers */,
 				CF69D00B1DA228C800992B84 /* VFS-prefix.pch in Headers */,
 				CF69D02D1DA2305A00992B84 /* VFSNativeHost.h in Headers */,
@@ -710,6 +728,7 @@
 				CF69D0201DA22BE800992B84 /* VFSPath.cpp in Sources */,
 				CF69D0601DA233F700992B84 /* AppleDoubleEA.cpp in Sources */,
 				CF69D05A1DA2336500992B84 /* VFSArchiveHost.mm in Sources */,
+				CFC4F9F51F1719860000B3EE /* VFSNetSFTPOSDetector.cpp in Sources */,
 				CF22A10F1E9290FB00149C44 /* VFSNetDropboxFile.mm in Sources */,
 				CF69D0451DA2324100992B84 /* VFSNetFTPInternals.mm in Sources */,
 				CF69D0431DA2324100992B84 /* VFSNetFTPHost.mm in Sources */,
@@ -722,6 +741,7 @@
 				CF69D0171DA22BE800992B84 /* VFSArchiveProxy.mm in Sources */,
 				CF69D01E1DA22BE800992B84 /* VFSListing.cpp in Sources */,
 				CF69D0321DA231EA00992B84 /* xattr.cpp in Sources */,
+				CFC4F9FB1F171E990000B3EE /* VFSNetSFTPAccountsFetcher.cpp in Sources */,
 				CF69D0571DA2336500992B84 /* VFSArchiveFile.cpp in Sources */,
 				CF69D01C1DA22BE800992B84 /* VFSFile.cpp in Sources */,
 				CF69D02E1DA2305A00992B84 /* VFSNativeHost.mm in Sources */,

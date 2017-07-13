@@ -4,8 +4,11 @@
 using namespace nc::ops;
 
 @interface NCOpsAttrsChangingDialog ()
-@property (strong) IBOutlet NSView *permissionsBlockView;
 @property (strong) IBOutlet NSStackView *stackView;
+@property (strong) IBOutlet NSView *permissionsBlockView;
+@property (strong) IBOutlet NSView *ownageBlockView;
+
+
 @property (strong) IBOutlet NSButton *permUsrR;
 @property (strong) IBOutlet NSButton *permUsrW;
 @property (strong) IBOutlet NSButton *permUsrX;
@@ -19,11 +22,17 @@ using namespace nc::ops;
 @property (strong) IBOutlet NSButton *permSGID;
 @property (strong) IBOutlet NSButton *permSticky;
 
+@property (strong) IBOutlet NSPopUpButton *userPopup;
+@property (strong) IBOutlet NSPopUpButton *groupPopup;
+
+
 @property (strong) IBOutlet NSButton *processSubfolders;
 
 @end
 
 static AttrsChangingCommand::Permissions ExtractCommon( const vector<VFSListingItem> &_items );
+static NSString *UserToString( const VFSUser &_user );
+static NSString *GroupToString( const VFSGroup &_group );
 
 @implementation NCOpsAttrsChangingDialog
 {
@@ -31,6 +40,8 @@ static AttrsChangingCommand::Permissions ExtractCommon( const vector<VFSListingI
     bool m_ProcessSubfolders;
     
     AttrsChangingCommand m_Command;
+    vector<VFSUser> m_Users;
+    vector<VFSGroup> m_Groups;
 }
 
 @synthesize command = m_Command;
@@ -41,6 +52,8 @@ static AttrsChangingCommand::Permissions ExtractCommon( const vector<VFSListingI
     if( self ) {
         m_Items = move(_items);
         m_ProcessSubfolders = false;
+        m_Items.front().Host()->FetchUsers(m_Users);
+        m_Items.front().Host()->FetchGroups(m_Groups);
     }
     return self;
 }
@@ -48,6 +61,7 @@ static AttrsChangingCommand::Permissions ExtractCommon( const vector<VFSListingI
 - (void)windowDidLoad {
     [super windowDidLoad];
     [self.stackView addView:self.permissionsBlockView inGravity:NSStackViewGravityTop];
+    [self.stackView addView:self.ownageBlockView inGravity:NSStackViewGravityCenter];
 
     [self populate];
 }
@@ -69,6 +83,7 @@ static AttrsChangingCommand::Permissions ExtractCommon( const vector<VFSListingI
 - (void)populate
 {
     [self fillPermUIWithPermissions:ExtractCommon(m_Items)];
+    [self fillOwnageControls];
 }
 
 - (void)fillPermUIWithPermissions:(const AttrsChangingCommand::Permissions&)_p
@@ -113,6 +128,38 @@ static AttrsChangingCommand::Permissions ExtractCommon( const vector<VFSListingI
     m( self.permSticky,_p.sticky);
     
     [self.window makeFirstResponder:fr];
+}
+
+- (void)fillOwnageControls
+{
+//    NSSize menu_pic_size;
+//    menu_pic_size.width = menu_pic_size.height = [NSFont menuFontOfSize:0].pointSize;
+//
+//    NSImage *img_user = [NSImage imageNamed:NSImageNameUser];
+//    img_user.size = menu_pic_size;
+    [self.userPopup removeAllItems];
+    for( const auto &i: m_Users ) {
+        const auto entry = UserToString(i);
+        [self.userPopup addItemWithTitle:entry];
+//        self.UsersPopUpButton.lastItem.image = img_user;
+//        
+//        if(m_ProcessSubfolders) {
+//            if(m_HasCommonUID && m_UserDidEditOthers[OtherAttrs::uid] && m_State[1].uid == i.pw_uid )
+//                [self.UsersPopUpButton selectItem:self.UsersPopUpButton.lastItem];
+//        }
+//        else {
+//            if(m_HasCommonUID && m_State[1].uid == i.pw_uid)
+//                [self.UsersPopUpButton selectItem:self.UsersPopUpButton.lastItem];
+//        }
+    }
+    
+    [self.groupPopup removeAllItems];
+    for( const auto &i: m_Groups ) {
+        const auto entry = GroupToString(i);
+        [self.groupPopup addItemWithTitle:entry];
+
+    }
+
 }
 
 - (AttrsChangingCommand::Permissions) extractPermissionsFromUI
@@ -194,6 +241,32 @@ static AttrsChangingCommand::Permissions ExtractCommon( const vector<VFSListingI
     p.sticky= optional_common_bool_value(first, last, [](auto m){ return bool(m & S_ISVTX); });
 
     return p;
+}
+
+static NSString *UserToString( const VFSUser &_user )
+{
+    if( _user.gecos.empty() )
+        return [NSString stringWithFormat:@"%@ (%d)",
+                [NSString stringWithUTF8StdString:_user.name],
+                signed(_user.uid)];
+    else
+        return [NSString stringWithFormat:@"%@ (%d) - %@",
+                [NSString stringWithUTF8StdString:_user.name],
+                signed(_user.uid),
+                [NSString stringWithUTF8StdString:_user.gecos]];
+}
+
+static NSString *GroupToString( const VFSGroup &_group )
+{
+    if( _group.gecos.empty() )
+        return [NSString stringWithFormat:@"%@ (%d)",
+                [NSString stringWithUTF8StdString:_group.name],
+                signed(_group.gid)];
+    else
+        return [NSString stringWithFormat:@"%@ (%d) - %@",
+                [NSString stringWithUTF8StdString:_group.name],
+                signed(_group.gid),
+                [NSString stringWithUTF8StdString:_group.gecos]];
 }
 
 @end

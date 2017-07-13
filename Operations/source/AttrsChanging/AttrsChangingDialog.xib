@@ -8,6 +8,8 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NCOpsAttrsChangingDialog">
             <connections>
+                <outlet property="groupPopup" destination="7nq-iO-87t" id="UJV-ki-Nfp"/>
+                <outlet property="ownageBlockView" destination="8N3-aG-3fm" id="wTO-5a-Fnm"/>
                 <outlet property="permGrpR" destination="RcZ-Dd-M5E" id="VaE-fi-ICD"/>
                 <outlet property="permGrpW" destination="YST-uC-OSM" id="vFO-fA-MGL"/>
                 <outlet property="permGrpX" destination="5dw-OU-oEA" id="auW-QD-TTk"/>
@@ -23,6 +25,7 @@
                 <outlet property="permissionsBlockView" destination="MFH-yu-Et9" id="oOe-zx-Nbj"/>
                 <outlet property="processSubfolders" destination="SpV-en-P7h" id="cvh-CI-6u8"/>
                 <outlet property="stackView" destination="qn6-Zy-uWf" id="1wj-fA-bfl"/>
+                <outlet property="userPopup" destination="sAf-8i-aCH" id="iOo-3s-46a"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -31,12 +34,16 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="480" height="270"/>
+            <rect key="contentRect" x="196" y="240" width="480" height="405"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <rect key="frame" x="0.0" y="0.0" width="480" height="405"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
+                    <stackView orientation="vertical" alignment="centerX" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" fixedFrame="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qn6-Zy-uWf">
+                        <rect key="frame" x="20" y="61" width="440" height="324"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </stackView>
                     <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bDH-Ic-UEE">
                         <rect key="frame" x="385" y="13" width="81" height="32"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -65,12 +72,8 @@ Gw
                             <action selector="onCancel:" target="-2" id="lSQ-NP-K69"/>
                         </connections>
                     </button>
-                    <stackView orientation="vertical" alignment="centerX" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="249.99998474121094" fixedFrame="YES" detachesHiddenViews="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qn6-Zy-uWf">
-                        <rect key="frame" x="20" y="61" width="440" height="200"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </stackView>
                     <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SpV-en-P7h">
-                        <rect key="frame" x="18" y="18" width="138" height="25"/>
+                        <rect key="frame" x="18" y="22" width="138" height="25"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                         <buttonCell key="cell" type="check" title="Process subfolders" bezelStyle="regularSquare" imagePosition="left" inset="2" id="8Wh-3d-3ib">
                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
@@ -85,6 +88,7 @@ Gw
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
+            <point key="canvasLocation" x="232" y="174.5"/>
         </window>
         <customView id="MFH-yu-Et9" userLabel="Top">
             <rect key="frame" x="0.0" y="0.0" width="469" height="109"/>
@@ -327,7 +331,61 @@ Gw
                 <constraint firstItem="pBd-d8-e7c" firstAttribute="baseline" secondItem="5gd-HL-u49" secondAttribute="baseline" id="z83-9e-Z11"/>
                 <constraint firstItem="nws-SE-6vS" firstAttribute="bottom" secondItem="hWv-AP-baa" secondAttribute="bottom" id="zBg-EK-ISY"/>
             </constraints>
-            <point key="canvasLocation" x="2" y="489"/>
+            <point key="canvasLocation" x="-322" y="370"/>
+        </customView>
+        <customView id="8N3-aG-3fm">
+            <rect key="frame" x="0.0" y="0.0" width="466" height="78"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Aph-aC-BZ6">
+                    <rect key="frame" x="20" y="41" width="94" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="User" id="uAb-sS-2AX">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kfR-Z3-hA1">
+                    <rect key="frame" x="20" y="8" width="104" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Group" id="w1W-MU-8Jb">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sAf-8i-aCH">
+                    <rect key="frame" x="144" y="38" width="258" height="26"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="253" id="PF3-LO-l8Y"/>
+                    </constraints>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="dSO-cK-nCy">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="P9c-KN-bft"/>
+                    </popUpButtonCell>
+                </popUpButton>
+                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7nq-iO-87t">
+                    <rect key="frame" x="144" y="3" width="258" height="26"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="253" id="B8A-tM-0v4"/>
+                    </constraints>
+                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="uAs-xh-4cZ">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="qQZ-I6-1CN"/>
+                    </popUpButtonCell>
+                </popUpButton>
+            </subviews>
+            <constraints>
+                <constraint firstItem="7nq-iO-87t" firstAttribute="top" secondItem="sAf-8i-aCH" secondAttribute="bottom" constant="14" id="GjP-di-w7h"/>
+                <constraint firstAttribute="trailing" secondItem="7nq-iO-87t" secondAttribute="trailing" constant="67" id="TcZ-NG-QDx"/>
+                <constraint firstItem="sAf-8i-aCH" firstAttribute="top" secondItem="8N3-aG-3fm" secondAttribute="top" constant="16" id="UTB-GH-NbO"/>
+                <constraint firstAttribute="trailing" secondItem="sAf-8i-aCH" secondAttribute="trailing" constant="67" id="W3k-9M-FVZ"/>
+                <constraint firstAttribute="bottom" secondItem="7nq-iO-87t" secondAttribute="bottom" constant="6" id="rdd-td-FDt"/>
+            </constraints>
+            <point key="canvasLocation" x="-399" y="399"/>
         </customView>
     </objects>
 </document>

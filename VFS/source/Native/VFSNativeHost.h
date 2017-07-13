@@ -79,6 +79,13 @@ public:
                          struct timespec *_chg_time,
                          struct timespec *_acc_time,
                          const VFSCancelChecker &_cancel_checker) override;
+
+    virtual int FetchUsers(vector<VFSUser> &_target,
+                           const VFSCancelChecker &_cancel_checker) override;
+
+    virtual int FetchGroups(vector<VFSGroup> &_target,
+                            const VFSCancelChecker &_cancel_checker) override;
+    
     
     shared_ptr<const VFSNativeHost> SharedPtr() const {return static_pointer_cast<const VFSNativeHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSNativeHost> SharedPtr() {return static_pointer_cast<VFSNativeHost>(VFSHost::SharedPtr());}

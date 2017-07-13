@@ -13,6 +13,8 @@
 #include "../VFSListingInput.h"
 #include "VFSNetSFTPHost.h"
 #include "VFSNetSFTPFile.h"
+#include "VFSNetSFTPOSDetector.h"
+#include "VFSNetSFTPAccountsFetcher.h"
 
 static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session);
 
@@ -186,6 +188,8 @@ int VFSNetSFTPHost::DoInit()
     if(rc < 0)
         return rc;
     
+    m_OSType = VFSNetSFTPOSDetector{conn->ssh}.Detect();
+    
     if( !Config().home.empty() ) {
         // user specified an initial path - just use it
         m_HomeDir = Config().home;
@@ -216,7 +220,7 @@ int VFSNetSFTPHost::DoInit()
             
             if( rc <= 0 )
                 return VFSError::NetSFTPErrorSSH;
-            buffer[rc - 1] = 0;
+            buffer[rc-1] = 0;
             
             m_HomeDir = buffer;
         }
@@ -884,6 +888,37 @@ int VFSNetSFTPHost::ChOwn(const char *_path,
         return VFSError::Ok;
     else
         return VFSErrorForConnection(*conn);
+}
+
+int VFSNetSFTPHost::FetchUsers(vector<VFSUser> &_target,
+                               const VFSCancelChecker &_cancel_checker)
+{
+    if( m_OSType == VFSNetSFTPOSType::Unknown )
+        return VFSError::FromErrno(ENODEV);
+    
+    unique_ptr<Connection> conn;
+    if( int rc = GetConnection(conn); rc < 0 )
+        return rc;
+    
+    AutoConnectionReturn acr(conn, this);
+    
+    VFSNetSFTPAccountsFetcher fetcher{conn->ssh, m_OSType};
+    return fetcher.FetchUsers(_target);
+}
+
+int VFSNetSFTPHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
+{
+    if( m_OSType == VFSNetSFTPOSType::Unknown )
+        return VFSError::FromErrno(ENODEV);
+    
+    unique_ptr<Connection> conn;
+    if( int rc = GetConnection(conn); rc < 0 )
+        return rc;
+    
+    AutoConnectionReturn acr(conn, this);
+    
+    VFSNetSFTPAccountsFetcher fetcher{conn->ssh, m_OSType};
+    return fetcher.FetchGroups(_target);
 }
 
 static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session)

@@ -569,3 +569,13 @@ int VFSHost::ChOwn(const char *_path,
 {
     return VFSError::NotSupported;
 }
+
+int VFSHost::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
+{
+    return VFSError::NotSupported;
+}
+
+int VFSHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
+{
+    return VFSError::NotSupported;
+}

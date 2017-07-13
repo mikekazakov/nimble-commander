@@ -152,6 +152,9 @@ NSError* ToNSError(int _code)
 
 int FromNSError(NSError* _err)
 {
+    if( !_err )
+        return VFSError::GenericError;
+
     if( [_err.domain isEqualToString:NSCocoaErrorDomain] )
         return int(_err.code - 1500000);
     if( [_err.domain isEqualToString:NSPOSIXErrorDomain] )

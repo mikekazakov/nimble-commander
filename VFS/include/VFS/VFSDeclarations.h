@@ -153,6 +153,20 @@ private:
     string  m_Verb;
 };
 
+struct VFSUser
+{
+    uint32_t uid;
+    string name;
+    string gecos;
+};
+
+struct VFSGroup
+{
+    uint32_t gid;
+    string name;
+    string gecos;
+};
+
 class VFSHost;
 class VFSListing;
 class VFSFile;

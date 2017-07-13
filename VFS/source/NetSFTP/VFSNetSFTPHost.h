@@ -15,6 +15,8 @@ typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;
 typedef struct _LIBSSH2_USERAUTH_KBDINT_PROMPT LIBSSH2_USERAUTH_KBDINT_PROMPT;
 typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONSE;
 
+#include "VFSNetSFTPOSType.h"
+
 class VFSNetSFTPHost final : public VFSHost
 {
 public:
@@ -81,6 +83,10 @@ public:
                       unsigned _uid,
                       unsigned _gid,
                       const VFSCancelChecker &_cancel_checker) override;
+    virtual int FetchUsers(vector<VFSUser> &_target,
+                           const VFSCancelChecker &_cancel_checker) override;
+    virtual int FetchGroups(vector<VFSGroup> &_target,
+                            const VFSCancelChecker &_cancel_checker) override;
     
     virtual bool ShouldProduceThumbnails() const override;
     
@@ -120,4 +126,5 @@ private:
     string                                      m_HomeDir;
     in_addr_t                                   m_HostAddr = 0;
     bool                                        m_ReversedSymlinkParameters = false;
+    VFSNetSFTPOSType                            m_OSType = VFSNetSFTPOSType::Unknown;
 };

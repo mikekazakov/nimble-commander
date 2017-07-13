@@ -25,12 +25,16 @@ using namespace nc::ops;
 @property (strong) IBOutlet NSPopUpButton *userPopup;
 @property (strong) IBOutlet NSPopUpButton *groupPopup;
 
-
 @property (strong) IBOutlet NSButton *processSubfolders;
 
 @end
 
-static AttrsChangingCommand::Permissions ExtractCommon( const vector<VFSListingItem> &_items );
+static AttrsChangingCommand::Permissions
+    ExtractCommonPermissions( const vector<VFSListingItem> &_items );
+static AttrsChangingCommand::Ownage
+    ExtractCommonOwnage( const vector<VFSListingItem> &_items );
+
+
 static NSString *UserToString( const VFSUser &_user );
 static NSString *GroupToString( const VFSGroup &_group );
 
@@ -71,6 +75,7 @@ static NSString *GroupToString( const VFSGroup &_group );
     m_Command.items = m_Items;
     m_Command.apply_to_subdirs = m_ProcessSubfolders;
     m_Command.permissions = [self extractPermissionsFromUI];
+    m_Command.ownage = [self extractOwnageFromUI];
 
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
@@ -82,8 +87,8 @@ static NSString *GroupToString( const VFSGroup &_group );
 
 - (void)populate
 {
-    [self fillPermUIWithPermissions:ExtractCommon(m_Items)];
-    [self fillOwnageControls];
+    [self fillPermUIWithPermissions:ExtractCommonPermissions(m_Items)];
+    [self fillOwnageControls:ExtractCommonOwnage(m_Items)];
 }
 
 - (void)fillPermUIWithPermissions:(const AttrsChangingCommand::Permissions&)_p
@@ -130,39 +135,111 @@ static NSString *GroupToString( const VFSGroup &_group );
     [self.window makeFirstResponder:fr];
 }
 
-- (void)fillOwnageControls
+- (void)makeDefaultOwnerSelection:(const AttrsChangingCommand::Ownage&)_o
 {
-//    NSSize menu_pic_size;
-//    menu_pic_size.width = menu_pic_size.height = [NSFont menuFontOfSize:0].pointSize;
-//
-//    NSImage *img_user = [NSImage imageNamed:NSImageNameUser];
-//    img_user.size = menu_pic_size;
-    [self.userPopup removeAllItems];
-    for( const auto &i: m_Users ) {
-        const auto entry = UserToString(i);
-        [self.userPopup addItemWithTitle:entry];
-//        self.UsersPopUpButton.lastItem.image = img_user;
-//        
-//        if(m_ProcessSubfolders) {
-//            if(m_HasCommonUID && m_UserDidEditOthers[OtherAttrs::uid] && m_State[1].uid == i.pw_uid )
-//                [self.UsersPopUpButton selectItem:self.UsersPopUpButton.lastItem];
-//        }
-//        else {
-//            if(m_HasCommonUID && m_State[1].uid == i.pw_uid)
-//                [self.UsersPopUpButton selectItem:self.UsersPopUpButton.lastItem];
-//        }
+    if( m_ProcessSubfolders ) {
+        [self.userPopup selectItemWithTag:-1];
     }
-    
-    [self.groupPopup removeAllItems];
-    for( const auto &i: m_Groups ) {
-        const auto entry = GroupToString(i);
-        [self.groupPopup addItemWithTitle:entry];
-
+    else {
+        if( _o.uid )
+            [self.userPopup selectItemWithTag:*_o.uid];
+        else
+            [self.userPopup selectItemWithTag:-1];
     }
-
 }
 
-- (AttrsChangingCommand::Permissions) extractPermissionsFromUI
+- (void)makeDefaultGroupSelection:(const AttrsChangingCommand::Ownage&)_o
+{
+    if( m_ProcessSubfolders ) {
+        [self.groupPopup selectItemWithTag:-1];
+    }
+    else {
+        if( _o.gid )
+            [self.groupPopup selectItemWithTag:*_o.gid];
+        else
+            [self.groupPopup selectItemWithTag:-1];
+    }
+}
+
+static NSImage *UserIcon()
+{
+    static const auto icon = []{
+        const auto img = [NSImage imageNamed:NSImageNameUser];
+        img.size = NSMakeSize([NSFont menuFontOfSize:0].pointSize,
+                              [NSFont menuFontOfSize:0].pointSize);
+        return img;
+    }();
+    return icon;
+}
+
+static NSImage *GroupIcon()
+{
+    static const auto icon = []{
+        const auto img = [NSImage imageNamed:NSImageNameUserGroup];
+        img.size = NSMakeSize([NSFont menuFontOfSize:0].pointSize,
+                              [NSFont menuFontOfSize:0].pointSize);
+        return img;
+    }();
+    return icon;
+}
+
+static const auto g_MixedOwnageTitle = @"[???]";
+
+- (void)fillOwner:(const AttrsChangingCommand::Ownage&)_o
+{
+    const auto popup = self.userPopup;
+    const auto previous_selection = popup.tag > 0 ?
+        optional<long>{popup.selectedTag} :
+        optional<long>{};
+    [popup removeAllItems];
+    for( const auto &i: m_Users ) {
+        const auto entry = UserToString(i);
+        [popup addItemWithTitle:entry];
+        popup.lastItem.tag = i.uid;
+        popup.lastItem.image = UserIcon();
+    }
+    
+    if( !_o.uid || m_ProcessSubfolders ) {
+        [popup addItemWithTitle:g_MixedOwnageTitle];
+        popup.lastItem.tag = -1;
+        popup.lastItem.image = UserIcon();
+    }
+    
+    if( !previous_selection || ![popup selectItemWithTag:*previous_selection] )
+        [self makeDefaultOwnerSelection:_o];
+}
+
+- (void)fillGroup:(const AttrsChangingCommand::Ownage&)_o
+{
+    const auto popup = self.groupPopup;
+    const auto previous_selection = popup.tag > 0 ?
+        optional<long>{self.groupPopup.selectedTag} :
+        optional<long>{};
+    
+    [popup removeAllItems];
+    for( const auto &i: m_Groups ) {
+        const auto entry = GroupToString(i);
+        [popup addItemWithTitle:entry];
+        popup.lastItem.tag = i.gid;
+        popup.lastItem.image = GroupIcon();
+    }
+    
+    if( !_o.gid || m_ProcessSubfolders ) {
+        [popup addItemWithTitle:g_MixedOwnageTitle];
+        popup.lastItem.tag = -1;
+        popup.lastItem.image = GroupIcon();
+    }
+    if( !previous_selection || ![popup selectItemWithTag:*previous_selection] )
+        [self makeDefaultGroupSelection:_o];
+}
+
+- (void)fillOwnageControls:(const AttrsChangingCommand::Ownage&)_o
+{
+    [self fillOwner:_o];
+    [self fillGroup:_o];
+}
+
+- (optional<AttrsChangingCommand::Permissions>) extractPermissionsFromUI
 {
     AttrsChangingCommand::Permissions p;
 
@@ -187,15 +264,53 @@ static NSString *GroupToString( const VFSGroup &_group );
     m( self.permSGID,  p.sgid  );
     m( self.permSticky,p.sticky);
 
+    if( !p.usr_r && !p.usr_w && !p.usr_x && !p.grp_r && !p.grp_w && !p.grp_x &&
+        !p.oth_r && !p.oth_w && !p.oth_x && !p.suid  && !p.sgid  && !p.sticky )
+        return nullopt;
+
+    const auto common = ExtractCommonPermissions(m_Items);
+    if( !m_ProcessSubfolders &&
+        p.usr_r == common.usr_r &&
+        p.usr_w == common.usr_w &&
+        p.usr_x == common.usr_x &&
+        p.grp_r == common.grp_r &&
+        p.grp_w == common.grp_w &&
+        p.grp_x == common.grp_x &&
+        p.oth_r == common.oth_r &&
+        p.oth_w == common.oth_w &&
+        p.oth_x == common.oth_x &&
+        p.suid  == common.suid  &&
+        p.sgid  == common.sgid  &&
+        p.sticky== common.sticky )
+        return nullopt;
+    
     return p;
+}
+
+- (optional<AttrsChangingCommand::Ownage>) extractOwnageFromUI
+{
+   AttrsChangingCommand::Ownage o;
+   if( const auto u = self.userPopup.selectedTag; u >= 0 )
+       o.uid = (uint32_t)u;
+   if( const auto g = self.groupPopup.selectedTag; g >= 0 )
+       o.gid = (uint32_t)g;
+   
+    if( !o.uid && !o.gid )
+        return nullopt;
+   
+    const auto common = ExtractCommonOwnage(m_Items);
+    if( !m_ProcessSubfolders &&
+        o.uid == common.uid  &&
+        o.gid == common.gid   )
+        return nullopt;
+    
+    return o;
 }
 
 - (IBAction)onProcessSubfolder:(id)sender
 {
     m_ProcessSubfolders = self.processSubfolders.state;
-//    dispatch_to_main_queue([=]{
-        [self populate];
-//    });
+    [self populate];
 }
 
 - (IBAction)onPermCheckbox:(id)sender
@@ -204,21 +319,30 @@ static NSString *GroupToString( const VFSGroup &_group );
         b.tag++;
 }
 
+- (IBAction)onOwnagePopup:(id)sender
+{
+    if( const auto b = objc_cast<NSPopUpButton>(sender) )
+        b.tag++;
+}
+
 template <class _InputIterator, class _Predicate>
-static optional<bool>
-optional_common_bool_value(_InputIterator _first, _InputIterator _last, _Predicate _pred)
+static auto optional_common_value(_InputIterator _first,
+                                  _InputIterator _last,
+                                  _Predicate _pred)
+-> optional<decay_t<decltype(_pred(*_first))>>
 {
     if( _first == _last )
         return nullopt;
     
-    const optional<bool> value = _pred(*(_first++));
+    const optional<decay_t<decltype(_pred(*_first))>> value = _pred(*(_first++));
     for(; _first != _last; ++_first )
         if( _pred(*_first) != *value )
             return nullopt;
     return value;
 }
 
-static AttrsChangingCommand::Permissions ExtractCommon( const vector<VFSListingItem> &_items )
+static AttrsChangingCommand::Permissions ExtractCommonPermissions
+( const vector<VFSListingItem> &_items )
 {
     vector<uint16_t> modes;
     for( const auto &i: _items )
@@ -227,20 +351,29 @@ static AttrsChangingCommand::Permissions ExtractCommon( const vector<VFSListingI
     AttrsChangingCommand::Permissions p;
 
     const auto first = begin(modes), last = end(modes);
-    p.usr_r = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_IRUSR); });
-    p.usr_w = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_IWUSR); });
-    p.usr_x = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_IXUSR); });
-    p.grp_r = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_IRGRP); });
-    p.grp_w = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_IWGRP); });
-    p.grp_x = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_IXGRP); });
-    p.oth_r = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_IROTH); });
-    p.oth_w = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_IWOTH); });
-    p.oth_x = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_IXOTH); });
-    p.suid  = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_ISUID); });
-    p.sgid  = optional_common_bool_value(first, last, [](auto m){ return bool(m & S_ISGID); });
-    p.sticky= optional_common_bool_value(first, last, [](auto m){ return bool(m & S_ISVTX); });
+    p.usr_r = optional_common_value(first, last, [](auto m)->bool{ return m & S_IRUSR; });
+    p.usr_w = optional_common_value(first, last, [](auto m)->bool{ return m & S_IWUSR; });
+    p.usr_x = optional_common_value(first, last, [](auto m)->bool{ return m & S_IXUSR; });
+    p.grp_r = optional_common_value(first, last, [](auto m)->bool{ return m & S_IRGRP; });
+    p.grp_w = optional_common_value(first, last, [](auto m)->bool{ return m & S_IWGRP; });
+    p.grp_x = optional_common_value(first, last, [](auto m)->bool{ return m & S_IXGRP; });
+    p.oth_r = optional_common_value(first, last, [](auto m)->bool{ return m & S_IROTH; });
+    p.oth_w = optional_common_value(first, last, [](auto m)->bool{ return m & S_IWOTH; });
+    p.oth_x = optional_common_value(first, last, [](auto m)->bool{ return m & S_IXOTH; });
+    p.suid  = optional_common_value(first, last, [](auto m)->bool{ return m & S_ISUID; });
+    p.sgid  = optional_common_value(first, last, [](auto m)->bool{ return m & S_ISGID; });
+    p.sticky= optional_common_value(first, last, [](auto m)->bool{ return m & S_ISVTX; });
 
     return p;
+}
+
+static AttrsChangingCommand::Ownage
+ExtractCommonOwnage( const vector<VFSListingItem> &_items )
+{
+    AttrsChangingCommand::Ownage o;
+    o.uid = optional_common_value(begin(_items), end(_items), [](auto &i){ return i.UnixUID(); });
+    o.gid = optional_common_value(begin(_items), end(_items), [](auto &i){ return i.UnixGID(); });
+    return o;
 }
 
 static NSString *UserToString( const VFSUser &_user )

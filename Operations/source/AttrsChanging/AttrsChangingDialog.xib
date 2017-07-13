@@ -331,7 +331,7 @@ Gw
                 <constraint firstItem="pBd-d8-e7c" firstAttribute="baseline" secondItem="5gd-HL-u49" secondAttribute="baseline" id="z83-9e-Z11"/>
                 <constraint firstItem="nws-SE-6vS" firstAttribute="bottom" secondItem="hWv-AP-baa" secondAttribute="bottom" id="zBg-EK-ISY"/>
             </constraints>
-            <point key="canvasLocation" x="-322" y="370"/>
+            <point key="canvasLocation" x="-453" y="199"/>
         </customView>
         <customView id="8N3-aG-3fm">
             <rect key="frame" x="0.0" y="0.0" width="466" height="78"/>
@@ -340,7 +340,7 @@ Gw
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Aph-aC-BZ6">
                     <rect key="frame" x="20" y="41" width="94" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="User" id="uAb-sS-2AX">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Owner" id="uAb-sS-2AX">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -365,6 +365,9 @@ Gw
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="P9c-KN-bft"/>
                     </popUpButtonCell>
+                    <connections>
+                        <action selector="onOwnagePopup:" target="-2" id="X7y-mt-jGq"/>
+                    </connections>
                 </popUpButton>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7nq-iO-87t">
                     <rect key="frame" x="144" y="3" width="258" height="26"/>
@@ -376,6 +379,9 @@ Gw
                         <font key="font" metaFont="menu"/>
                         <menu key="menu" id="qQZ-I6-1CN"/>
                     </popUpButtonCell>
+                    <connections>
+                        <action selector="onOwnagePopup:" target="-2" id="Qnu-d8-bpR"/>
+                    </connections>
                 </popUpButton>
             </subviews>
             <constraints>

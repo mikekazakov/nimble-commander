@@ -1,6 +1,8 @@
 #include "AttrsChangingJob.h"
 #include <Utility/PathManip.h>
 
+#include <sys/acl.h>
+
 namespace nc::ops {
 
 struct AttrsChangingJob::Meta
@@ -14,6 +16,8 @@ static pair<uint16_t,uint16_t> PermissionsValueAndMask(const AttrsChangingComman
 AttrsChangingJob::AttrsChangingJob( AttrsChangingCommand _command ):
     m_Command( move(_command) )
 {
+    if( m_Command.permissions )
+        m_ChmodCommand = PermissionsValueAndMask( *m_Command.permissions );
 }
 
 AttrsChangingJob::~AttrsChangingJob()
@@ -99,7 +103,6 @@ bool AttrsChangingJob::ScanItem(const string &_full_path,
     return true;
 }
 
-
 void AttrsChangingJob::DoChange()
 {
     int n = 0;
@@ -113,17 +116,32 @@ void AttrsChangingJob::DoChange()
 
 void AttrsChangingJob::AlterSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat )
 {
-    if( m_Command.permissions )
+    if( m_ChmodCommand )
         ChmodSingleItem(_path, _vfs, _stat);
+    if( m_Command.ownage )
+        ChownSingleItem(_path, _vfs, _stat);
 }
-
 
 void AttrsChangingJob::ChmodSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat )
 {
-    const auto [new_mode, mask] = PermissionsValueAndMask( *m_Command.permissions );
+    const auto [new_mode, mask] = *m_ChmodCommand;
     const uint16_t mode = (_stat.mode & ~mask) | (new_mode & mask);
+    if( mode == _stat.mode )
+        return;
+    
     const auto chmod_rc = _vfs.ChMod(_path.c_str(), mode);
     // ...
+}
+
+void AttrsChangingJob::ChownSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat )
+{
+    const auto new_uid = m_Command.ownage->uid ? *m_Command.ownage->uid : _stat.uid;
+    const auto new_gid = m_Command.ownage->gid ? *m_Command.ownage->gid : _stat.gid;
+    if( new_uid == _stat.uid && new_gid == _stat.gid )
+        return;
+    
+    const auto chown_rc = _vfs.ChOwn(_path.c_str(), new_uid, new_gid);
+    // if ...
 }
 
 static pair<uint16_t,uint16_t> PermissionsValueAndMask(const AttrsChangingCommand::Permissions &_p)

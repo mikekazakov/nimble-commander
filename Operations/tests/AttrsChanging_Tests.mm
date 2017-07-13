@@ -84,6 +84,26 @@ using namespace nc::ops;
     XCTAssert( (st.mode & ~S_IFMT) == 0700 );
 }
 
+- (void)testChown
+{
+    const auto path = (m_TmpDir/"test").native();
+    close( creat( path.c_str(), 0755 ) );
+    
+    AttrsChangingCommand cmd;
+    cmd.items = [self fetchItems:{"test"} fromDirectory:m_TmpDir.native()];
+    cmd.ownage.emplace();
+    cmd.ownage->gid = 12;
+    
+    AttrsChanging operation{ cmd };
+    operation.Start();
+    operation.Wait();
+    XCTAssert( operation.State() == OperationState::Completed );
+    
+    VFSStat st;
+    XCTAssert( m_NativeHost->Stat(path.c_str(), st, 0) == VFSError::Ok );
+    XCTAssert( st.gid == 12 );
+}
+
 - (path)makeTmpDir
 {
     char dir[MAXPATHLEN];

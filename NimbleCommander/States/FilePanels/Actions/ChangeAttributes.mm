@@ -7,19 +7,37 @@
 #include "ChangeAttributes.h"
 #include "../PanelData.h"
 #include "../PanelView.h"
+#include "../../MainWindowController.h"
+
+#include <Operations/AttrsChangingDialog.h>
+#include <Operations/AttrsChanging.h>
 
 namespace nc::panel::actions {
 
 bool ChangeAttributes::Predicate( PanelController *_target ) const
 {
     auto i = _target.view.item;
-    return i &&
-        ( (!i.IsDotDot() && i.Host()->IsNativeFS()) ||
-            _target.data.Stats().selected_entries_amount > 0 );
+    return (bool)i;
+    
+//    return i &&
+//        ( (!i.IsDotDot() && i.Host()->IsNativeFS()) ||
+//            _target.data.Stats().selected_entries_amount > 0 );
 }
 
 void ChangeAttributes::Perform( PanelController *_target, id _sender ) const
 {
+    auto aa = _target.selectedEntriesOrFocusedEntry;
+    auto sh = [[NCOpsAttrsChangingDialog alloc] initWithItems:aa];
+    
+    [_target.mainWindowController beginSheet:sh.window
+                           completionHandler:^(NSModalResponse returnCode) {
+        if( returnCode == NSModalResponseOK ) {
+            const auto op = make_shared<nc::ops::AttrsChanging>(sh.command);
+            [_target.mainWindowController enqueueOperation:op];
+        }
+    }];
+    return;
+
     auto entries = to_shared_ptr(_target.selectedEntriesOrFocusedEntry);
     if( entries->empty() )
         return;

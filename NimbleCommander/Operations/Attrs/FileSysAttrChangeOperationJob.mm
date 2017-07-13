@@ -1,11 +1,3 @@
-//
-//  FileSysAttrChangeOperationJob.mm
-//  Directories
-//
-//  Created by Michael G. Kazakov on 02.04.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/param.h>
@@ -47,40 +39,10 @@ void FileSysAttrChangeOperationJob::Do()
             it.base_dir_index = (unsigned)linear_find_or_insert(m_SourceItemsBaseDirectories, i.Directory());
             m_SourceItems.emplace_back( move(it) );
         }
-        
-        
-//        struct SourceItem
-//        {
-//            // full path = m_SourceItemsBaseDirectories[base_dir_index] + ... + m_Items[m_Items[parent_index].parent_index].item_name +  m_Items[parent_index].item_name + item_name;
-//            string      item_name;
-//            int         parent_index;
-//            unsigned    base_dir_index;
-//            //        uint16_t    host_index;
-//            //        uint16_t    mode;
-//        };
-        
-        
     }
         
-        
-    
-//    if(m_Command->process_subdirs)
-//    {
-//        ScanDirs();
-//    }
-//    else
-//    {
-//        // just use original files list
-//        m_Files.swap(m_Command->files);
-//    }
-//    unsigned items_count = m_Files.size();
-//    assert(items_count != 0);
-//
     if(CheckPauseOrStop()) { SetStopped(); return; }
     
-//    char entryfilename[MAXPATHLEN], *entryfilename_var;
-//    strcpy(entryfilename, m_Command->root_path.c_str());
-//    entryfilename_var = &entryfilename[0] + strlen(entryfilename);
     
     m_Stats.StartTimeTracking();
     m_Stats.SetMaxValue(m_SourceItems.size());

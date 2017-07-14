@@ -69,8 +69,10 @@ public:
     
     virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
     
-    virtual int ChMod(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker) override;
-    virtual int ChOwn(const char *_path, unsigned _uid, unsigned _gid, const VFSCancelChecker &_cancel_checker) override;
+    virtual int SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker) override;
+    virtual int SetFlags(const char *_path, uint32_t _flags, const VFSCancelChecker &_cancel_checker) override;
+    
+    virtual int SetOwnership(const char *_path, unsigned _uid, unsigned _gid, const VFSCancelChecker &_cancel_checker) override;
     
     virtual int SetTimes(const char *_path,
                          int _flags,

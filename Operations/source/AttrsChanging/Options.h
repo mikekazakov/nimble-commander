@@ -27,8 +27,23 @@ struct AttrsChangingCommand
         optional<unsigned> gid;
     };
     optional<Ownage> ownage;
-    
-    // + flags
+
+    struct Flags { // currently assumes only a native MacOSX interface, not a Posix/VFS layer
+        optional<bool> u_nodump;
+        optional<bool> u_immutable;
+        optional<bool> u_append;
+        optional<bool> u_opaque;
+        optional<bool> u_tracked;
+        optional<bool> u_hidden;
+        optional<bool> u_compressed;
+        optional<bool> s_archived;
+        optional<bool> s_immutable;
+        optional<bool> s_append;
+        optional<bool> s_restricted;
+        optional<bool> s_nounlink;
+    };
+    optional<Flags> flags;
+
     // + times
 
     vector<VFSListingItem> items;

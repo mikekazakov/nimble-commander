@@ -53,6 +53,11 @@ VFSMeta VFSNativeHost::Meta()
 VFSNativeHost::VFSNativeHost():
     VFSHost("", 0, Tag)
 {
+    AddFeatures(VFSHostFeatures::FetchUsers |
+                VFSHostFeatures::FetchGroups |
+                VFSHostFeatures::SetOwnership |
+                VFSHostFeatures::SetFlags |
+                VFSHostFeatures::SetPermissions );
 }
 
 int VFSNativeHost::FetchDirectoryListing(const char *_path,
@@ -668,7 +673,7 @@ int VFSNativeHost::Trash(const char *_path, const VFSCancelChecker &_cancel_chec
         return VFSError::FromNSError(error);
 }
 
-int VFSNativeHost::ChMod(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
+int VFSNativeHost::SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
 {
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);
@@ -680,10 +685,22 @@ int VFSNativeHost::ChMod(const char *_path, uint16_t _mode, const VFSCancelCheck
     return VFSError::FromErrno();
 }
 
-int VFSNativeHost::ChOwn(const char *_path,
-                         unsigned _uid,
-                         unsigned _gid,
-                         const VFSCancelChecker &_cancel_checker)
+int VFSNativeHost::SetFlags(const char *_path, uint32_t _flags, const VFSCancelChecker &_cancel_checker)
+{
+    if( _path == nullptr )
+        return VFSError::FromErrno(EINVAL);
+    
+    auto &io = RoutedIO::Default;
+    const auto ret = io.chflags(_path, _flags);
+    if( ret == 0 )
+        return VFSError::Ok;
+    return VFSError::FromErrno();
+}
+
+int VFSNativeHost::SetOwnership(const char *_path,
+                                unsigned _uid,
+                                unsigned _gid,
+                                const VFSCancelChecker &_cancel_checker)
 {
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);

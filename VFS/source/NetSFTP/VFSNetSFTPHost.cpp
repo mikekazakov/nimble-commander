@@ -228,6 +228,10 @@ int VFSNetSFTPHost::DoInit()
     
     ReturnConnection(move(conn));
     
+    AddFeatures( VFSHostFeatures::SetOwnership | VFSHostFeatures::SetPermissions );
+    if( m_OSType != VFSNetSFTPOSType::Unknown )
+        AddFeatures( VFSHostFeatures::FetchUsers | VFSHostFeatures::FetchGroups );
+    
     return 0;
 }
 
@@ -834,7 +838,7 @@ int VFSNetSFTPHost::CreateSymlink(const char *_symlink_path,
         return VFSErrorForConnection(*conn);
 }
 
-int VFSNetSFTPHost::ChMod(const char *_path,
+int VFSNetSFTPHost::SetPermissions(const char *_path,
                           uint16_t _mode,
                           const VFSCancelChecker &_cancel_checker)
 {
@@ -861,10 +865,10 @@ int VFSNetSFTPHost::ChMod(const char *_path,
         return VFSErrorForConnection(*conn);
 }
 
-int VFSNetSFTPHost::ChOwn(const char *_path,
-                          unsigned _uid,
-                          unsigned _gid,
-                          const VFSCancelChecker &_cancel_checker)
+int VFSNetSFTPHost::SetOwnership(const char *_path,
+                                 unsigned _uid,
+                                 unsigned _gid,
+                                 const VFSCancelChecker &_cancel_checker)
 {
     unique_ptr<Connection> conn;
     if( int rc = GetConnection(conn); rc < 0 )

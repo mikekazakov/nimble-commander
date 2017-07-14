@@ -12,12 +12,15 @@ struct AttrsChangingJob::Meta
 };
 
 static pair<uint16_t,uint16_t> PermissionsValueAndMask(const AttrsChangingCommand::Permissions &_p);
+static pair<uint32_t,uint32_t> FlagsValueAndMask(const AttrsChangingCommand::Flags &_f);
 
 AttrsChangingJob::AttrsChangingJob( AttrsChangingCommand _command ):
     m_Command( move(_command) )
 {
     if( m_Command.permissions )
         m_ChmodCommand = PermissionsValueAndMask( *m_Command.permissions );
+    if( m_Command.flags )
+        m_ChflagCommand = FlagsValueAndMask( *m_Command.flags );
 }
 
 AttrsChangingJob::~AttrsChangingJob()
@@ -120,6 +123,8 @@ void AttrsChangingJob::AlterSingleItem( const string &_path, VFSHost &_vfs, cons
         ChmodSingleItem(_path, _vfs, _stat);
     if( m_Command.ownage )
         ChownSingleItem(_path, _vfs, _stat);
+    if( m_ChflagCommand )
+        ChflagSingleItem(_path, _vfs, _stat);
 }
 
 void AttrsChangingJob::ChmodSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat )
@@ -129,7 +134,7 @@ void AttrsChangingJob::ChmodSingleItem( const string &_path, VFSHost &_vfs, cons
     if( mode == _stat.mode )
         return;
     
-    const auto chmod_rc = _vfs.ChMod(_path.c_str(), mode);
+    const auto chmod_rc = _vfs.SetPermissions(_path.c_str(), mode);
     // ...
 }
 
@@ -140,7 +145,18 @@ void AttrsChangingJob::ChownSingleItem( const string &_path, VFSHost &_vfs, cons
     if( new_uid == _stat.uid && new_gid == _stat.gid )
         return;
     
-    const auto chown_rc = _vfs.ChOwn(_path.c_str(), new_uid, new_gid);
+    const auto chown_rc = _vfs.SetOwnership(_path.c_str(), new_uid, new_gid);
+    // if ...
+}
+
+void AttrsChangingJob::ChflagSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat )
+{
+    const auto [new_flags, mask] = *m_ChflagCommand;
+    const uint32_t flags = (_stat.flags & ~mask) | (new_flags & mask);
+    if( flags == _stat.flags )
+        return;
+    
+    const auto chflags_rc = _vfs.SetFlags(_path.c_str(), flags);
     // if ...
 }
 
@@ -169,6 +185,34 @@ static pair<uint16_t,uint16_t> PermissionsValueAndMask(const AttrsChangingComman
     m( _p.sgid,  S_ISGID );
     m( _p.sticky,S_ISVTX );
 
+    return {value, mask};
+}
+
+static pair<uint32_t,uint32_t> FlagsValueAndMask(const AttrsChangingCommand::Flags &_f)
+{
+    uint32_t value = 0;
+    uint32_t mask  = 0;
+    const auto m = [&](const optional<bool> &_v, uint32_t _b) {
+        if( _v ) {
+            mask |= _b;
+            if( *_v )
+                value |= _b;
+        }
+    };
+
+    m( _f.u_nodump,  UF_NODUMP );
+    m( _f.u_immutable, UF_IMMUTABLE );
+    m( _f.u_append,  UF_APPEND );
+    m( _f.u_opaque, UF_OPAQUE );
+    m( _f.u_tracked, UF_TRACKED );
+    m( _f.u_hidden, UF_HIDDEN );
+    m( _f.u_compressed, UF_COMPRESSED );
+    m( _f.s_archived, SF_ARCHIVED );
+    m( _f.s_immutable, SF_IMMUTABLE );
+    m( _f.s_append,  SF_APPEND );
+    m( _f.s_restricted,  SF_RESTRICTED );
+    m( _f.s_nounlink, SF_NOUNLINK );
+    
     return {value, mask};
 }
 

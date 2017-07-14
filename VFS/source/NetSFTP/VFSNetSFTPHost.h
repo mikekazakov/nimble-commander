@@ -76,13 +76,13 @@ public:
     virtual int CreateSymlink(const char *_symlink_path,
                               const char *_symlink_value,
                               const VFSCancelChecker &_cancel_checker) override;
-    virtual int ChMod(const char *_path,
+    virtual int SetPermissions(const char *_path,
                       uint16_t _mode,
                       const VFSCancelChecker &_cancel_checker) override;
-    virtual int ChOwn(const char *_path,
-                      unsigned _uid,
-                      unsigned _gid,
-                      const VFSCancelChecker &_cancel_checker) override;
+    virtual int SetOwnership(const char *_path,
+                             unsigned _uid,
+                             unsigned _gid,
+                             const VFSCancelChecker &_cancel_checker) override;
     virtual int FetchUsers(vector<VFSUser> &_target,
                            const VFSCancelChecker &_cancel_checker) override;
     virtual int FetchGroups(vector<VFSGroup> &_target,

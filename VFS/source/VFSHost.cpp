@@ -168,7 +168,8 @@ VFSHost::VFSHost(const char *_junction_path,
                  const char *_fs_tag):
     m_JunctionPath(_junction_path ? _junction_path : ""),
     m_Parent(_parent),
-    m_Tag(_fs_tag)
+    m_Tag(_fs_tag),
+    m_Features(0)
 {
 }
 
@@ -393,7 +394,7 @@ int VFSHost::Rename(const char *_old_path, const char *_new_path, const VFSCance
     return VFSError::NotSupported;
 }
 
-int VFSHost::ChMod(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
+int VFSHost::SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -563,9 +564,10 @@ void VFSHost::SetDesctructCallback( function<void(const VFSHost*)> _callback )
     m_OnDesctruct = _callback;
 }
 
-int VFSHost::ChOwn(const char *_path,
-                   unsigned _uid,
-                   unsigned _gid, const VFSCancelChecker &_cancel_checker)
+int VFSHost::SetOwnership(const char *_path,
+                          unsigned _uid,
+                          unsigned _gid,
+                          const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -578,4 +580,24 @@ int VFSHost::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_cance
 int VFSHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
+}
+
+int VFSHost::SetFlags(const char *_path, uint32_t _flags, const VFSCancelChecker &_cancel_checker )
+{
+    return VFSError::NotSupported;
+}
+
+void VFSHost::SetFeatures( uint64_t _features_bitset )
+{
+    m_Features = _features_bitset;
+}
+
+void VFSHost::AddFeatures( uint64_t _features_bitset )
+{
+    SetFeatures( Features() | _features_bitset );
+}
+
+uint64_t VFSHost::Features() const noexcept
+{
+    return m_Features;
 }

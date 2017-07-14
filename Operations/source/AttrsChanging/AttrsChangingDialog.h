@@ -1,9 +1,8 @@
 #pragma once
 #import <Cocoa/Cocoa.h>
+#include "Options.h"
 
 class VFSListingItem;
-
-#include "Options.h"
 
 @interface NCOpsAttrsChangingDialog : NSWindowController
 

@@ -34,6 +34,17 @@ private:
     weak_ptr<VFSHost>   m_Host;
 };
 
+struct VFSHostFeatures
+{
+    enum Features : uint64_t {
+        FetchUsers      = 1  <<  0,
+        FetchGroups     = 1  <<  1,
+        SetPermissions  = 1  <<  2,
+        SetFlags        = 1  <<  3,
+        SetOwnership    = 1  <<  4
+    };
+};
+
 class VFSHost : public enable_shared_from_this<VFSHost>
 {
 public:
@@ -88,6 +99,12 @@ public:
      * archives can be immutable, so we can use some aggressive caching for them on higher layers.
      */
     virtual bool IsImmutableFS() const noexcept;
+    
+    /**
+     * Get a set of features of this VFSHost implementation.
+     * A bitset with it's bits corresponding an enumeration in VFSHostFeatures.
+     */
+    uint64_t Features() const noexcept;
     
     /**
      * _callback will be exectuded in VFSHost dectructor, just before this instance will die.
@@ -277,14 +294,27 @@ public:
                          struct timespec *_acc_time,
                          const VFSCancelChecker &_cancel_checker = nullptr);
     
-    virtual int ChMod(const char *_path,
-                      uint16_t _mode,
-                      const VFSCancelChecker &_cancel_checker = nullptr);
-    
-    virtual int ChOwn(const char *_path,
-                      unsigned _uid,
-                      unsigned _gid,
-                      const VFSCancelChecker &_cancel_checker = nullptr);
+    /**
+     * Change permissions similarly to chmod().
+     */
+    virtual int SetPermissions(const char *_path,
+                               uint16_t _mode,
+                               const VFSCancelChecker &_cancel_checker = nullptr);
+
+    /**
+     * Change flags similarly to chflags().
+     */
+    virtual int SetFlags(const char *_path,
+                         uint32_t _flags,
+                         const VFSCancelChecker &_cancel_checker = nullptr);
+
+    /**
+     * Change ownership similarly to chown().
+     */
+    virtual int SetOwnership(const char *_path,
+                             unsigned _uid,
+                             unsigned _gid,
+                             const VFSCancelChecker &_cancel_checker = nullptr);
     
     /***********************************************************************************************
      * Observation of changes
@@ -301,6 +331,9 @@ public:
     virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path,
                                                          function<void()> _handler);
     
+protected:
+    void SetFeatures( uint64_t _features_bitset );
+    void AddFeatures( uint64_t _features_bitset );
     
 private:
     virtual void StopDirChangeObserving(unsigned long _ticket);
@@ -308,6 +341,7 @@ private:
     const string                    m_JunctionPath; // path in Parent VFS, relative to it's root
     const shared_ptr<VFSHost>       m_Parent;
     const char*                     m_Tag;
+    uint64_t                        m_Features;
     function<void(const VFSHost*)>  m_OnDesctruct;
     
     // forbid copying

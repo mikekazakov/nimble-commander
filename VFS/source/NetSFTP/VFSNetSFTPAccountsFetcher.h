@@ -13,10 +13,10 @@ public:
     int FetchGroups(vector<VFSGroup> &_target);
 
 private:
-    int GetUsersFromLinux( vector<VFSUser> &_target );
-    int GetGroupsFromLinux( vector<VFSGroup> &_target );
-    int GetUsersFromMacOSX( vector<VFSUser> &_target );
-    int GetGroupsFromMacOSX( vector<VFSGroup> &_target );
+    int GetUsersViaGetent( vector<VFSUser> &_target );
+    int GetGroupsViaGetent( vector<VFSGroup> &_target );
+    int GetUsersViaOpenDirectory( vector<VFSUser> &_target );
+    int GetGroupsViaOpenDirectory( vector<VFSGroup> &_target );
     optional<string> Execute( const string &_command );
 
     LIBSSH2_SESSION *const m_Session;

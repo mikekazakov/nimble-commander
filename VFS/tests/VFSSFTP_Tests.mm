@@ -12,7 +12,7 @@
 #include <Habanero/DispatchGroup.h>
 
 static const auto g_QNAPNAS             = "192.168.2.5";
-static const auto g_VBoxDebian7x86      = "debian7x86.local";
+static const auto g_VBoxDebian7x86      = "debian7x86.local"; // 170
 static const auto g_VBoxDebian8x86      = "192.168.2.173";
 static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 

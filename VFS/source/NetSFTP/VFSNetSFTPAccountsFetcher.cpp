@@ -15,10 +15,10 @@ int VFSNetSFTPAccountsFetcher::FetchUsers( vector<VFSUser> &_target )
     _target.clear();
     
     int rc = VFSError::Ok;
-    if( m_OSType == VFSNetSFTPOSType::Linux )
-        rc = GetUsersFromLinux(_target);
+    if( m_OSType == VFSNetSFTPOSType::Linux || m_OSType == VFSNetSFTPOSType::xBSD )
+        rc = GetUsersViaGetent(_target);
     else if( m_OSType == VFSNetSFTPOSType::MacOSX )
-        rc = GetUsersFromMacOSX(_target);
+        rc = GetUsersViaOpenDirectory(_target);
     else
         rc = VFSError::FromErrno(ENODEV);
     
@@ -41,10 +41,10 @@ int VFSNetSFTPAccountsFetcher::FetchGroups(vector<VFSGroup> &_target)
     _target.clear();
     
     int rc = VFSError::Ok;
-    if( m_OSType == VFSNetSFTPOSType::Linux )
-        rc = GetGroupsFromLinux(_target);
+    if( m_OSType == VFSNetSFTPOSType::Linux || m_OSType == VFSNetSFTPOSType::xBSD )
+        rc = GetGroupsViaGetent(_target);
     else if( m_OSType == VFSNetSFTPOSType::MacOSX )
-        rc = GetGroupsFromMacOSX(_target);
+        rc = GetGroupsViaOpenDirectory(_target);
     else
         rc =  VFSError::FromErrno(ENODEV);
     
@@ -62,7 +62,7 @@ int VFSNetSFTPAccountsFetcher::FetchGroups(vector<VFSGroup> &_target)
     return VFSError::Ok;
 }
 
-int VFSNetSFTPAccountsFetcher::GetUsersFromLinux( vector<VFSUser> &_target )
+int VFSNetSFTPAccountsFetcher::GetUsersViaGetent( vector<VFSUser> &_target )
 {
     const auto getent = Execute("getent passwd");
     if( !getent )
@@ -88,7 +88,7 @@ int VFSNetSFTPAccountsFetcher::GetUsersFromLinux( vector<VFSUser> &_target )
     return VFSError::Ok;
 }
 
-int VFSNetSFTPAccountsFetcher::GetGroupsFromLinux( vector<VFSGroup> &_target )
+int VFSNetSFTPAccountsFetcher::GetGroupsViaGetent( vector<VFSGroup> &_target )
 {
     const auto getent = Execute("getent group");
     if( !getent )
@@ -100,8 +100,8 @@ int VFSNetSFTPAccountsFetcher::GetGroupsFromLinux( vector<VFSGroup> &_target )
     for( const auto &e: entries ) {
         vector<string> fields;
         boost::algorithm::split(fields, e, [](auto c){ return c == ':'; });
-        const auto group_fields = 4;
-        if( fields.size() == group_fields ) {
+        const auto group_fields_at_least = 3;
+        if( fields.size() >= group_fields_at_least ) {
             VFSGroup group;
             group.name = fields[0];
             group.gid = (unsigned)atoi(fields[2].c_str());
@@ -112,7 +112,7 @@ int VFSNetSFTPAccountsFetcher::GetGroupsFromLinux( vector<VFSGroup> &_target )
     return VFSError::Ok;
 }
 
-int VFSNetSFTPAccountsFetcher::GetUsersFromMacOSX( vector<VFSUser> &_target )
+int VFSNetSFTPAccountsFetcher::GetUsersViaOpenDirectory( vector<VFSUser> &_target )
 {
     const auto ds_ids = Execute("dscl . -list /Users UniqueID");
     if( !ds_ids )
@@ -154,7 +154,7 @@ int VFSNetSFTPAccountsFetcher::GetUsersFromMacOSX( vector<VFSUser> &_target )
     return VFSError::Ok;
 }
 
-int VFSNetSFTPAccountsFetcher::GetGroupsFromMacOSX( vector<VFSGroup> &_target )
+int VFSNetSFTPAccountsFetcher::GetGroupsViaOpenDirectory( vector<VFSGroup> &_target )
 {
     const auto ds_ids = Execute("dscl . -list /Groups PrimaryGroupID");
     if( !ds_ids )

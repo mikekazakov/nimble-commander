@@ -83,6 +83,12 @@ public:
                              unsigned _uid,
                              unsigned _gid,
                              const VFSCancelChecker &_cancel_checker) override;
+    virtual int SetTimes(const char *_path,
+                         optional<time_t> _birth_time,
+                         optional<time_t> _mod_time,
+                         optional<time_t> _chg_time,
+                         optional<time_t> _acc_time,
+                         const VFSCancelChecker &_cancel_checker) override;
     virtual int FetchUsers(vector<VFSUser> &_target,
                            const VFSCancelChecker &_cancel_checker) override;
     virtual int FetchGroups(vector<VFSGroup> &_target,

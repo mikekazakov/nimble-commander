@@ -33,11 +33,10 @@ static int CopyNodeAttrs(const char *_src_full_path,
         return result;
 
     _dst_host->SetTimes(_dst_full_path,
-                        VFSFlags::F_NoFollow,
-                        &st.btime,
-                        &st.mtime,
-                        &st.ctime,
-                        &st.atime,
+                        st.btime.tv_sec,
+                        st.mtime.tv_sec,
+                        st.ctime.tv_sec,
+                        st.atime.tv_sec,
                         0);
     
     return 0;

@@ -368,13 +368,11 @@ int VFSHost::CreateSymlink(const char *_symlink_path, const char *_symlink_value
 }
 
 int VFSHost::SetTimes(const char *_path,
-                      int _flags,
-                      struct timespec *_birth_time,
-                      struct timespec *_mod_time,
-                      struct timespec *_chg_time,
-                      struct timespec *_acc_time,
-                      const VFSCancelChecker &_cancel_checker
-                     )
+                      optional<time_t> _birth_time,
+                      optional<time_t> _mod_time,
+                      optional<time_t> _chg_time,
+                      optional<time_t> _acc_time,
+                      const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }

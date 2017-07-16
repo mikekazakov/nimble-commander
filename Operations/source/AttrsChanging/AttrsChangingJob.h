@@ -26,6 +26,7 @@ private:
     void ChmodSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
     void ChownSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
     void ChflagSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
+    void ChtimesSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
 
     struct Meta;
     const AttrsChangingCommand m_Command;

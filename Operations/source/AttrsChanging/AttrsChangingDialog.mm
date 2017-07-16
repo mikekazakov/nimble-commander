@@ -12,6 +12,7 @@ using namespace nc::ops;
 @property (strong) IBOutlet NSView *permissionsBlockView;
 @property (strong) IBOutlet NSView *ownageBlockView;
 @property (strong) IBOutlet NSView *flagsBlockView;
+@property (strong) IBOutlet NSView *timesBlockView;
 
 @property (strong) IBOutlet NSButton *permUsrR;
 @property (strong) IBOutlet NSButton *permUsrW;
@@ -42,6 +43,15 @@ using namespace nc::ops;
 @property (strong) IBOutlet NSButton *flagSNounlink;
 @property (strong) IBOutlet NSButton *flagSRestricted;
 
+@property (strong) IBOutlet NSDatePicker *timesATime;
+@property (strong) IBOutlet NSButton *timesATimeCheckbox;
+@property (strong) IBOutlet NSDatePicker *timesMTime;
+@property (strong) IBOutlet NSButton *timesMTimeCheckbox;
+@property (strong) IBOutlet NSDatePicker *timesCTime;
+@property (strong) IBOutlet NSButton *timesCTimeCheckbox;
+@property (strong) IBOutlet NSDatePicker *timesBTime;
+@property (strong) IBOutlet NSButton *timesBTimeCheckbox;
+
 @property (strong) IBOutlet NSButton *processSubfolders;
 
 @end
@@ -52,7 +62,8 @@ static AttrsChangingCommand::Ownage
     ExtractCommonOwnage( const vector<VFSListingItem> &_items );
 static AttrsChangingCommand::Flags
     ExtractCommonFlags( const vector<VFSListingItem> &_items );
-
+static AttrsChangingCommand::Times
+    ExtractCommonTimes( const vector<VFSListingItem> &_items );
 
 static NSString *UserToString( const VFSUser &_user );
 static NSString *GroupToString( const VFSGroup &_group );
@@ -64,12 +75,14 @@ static NSString *GroupToString( const VFSGroup &_group );
     AttrsChangingCommand::Permissions m_CommonItemsPermissions;
     AttrsChangingCommand::Ownage m_CommonItemsOwnage;
     AttrsChangingCommand::Flags m_CommonItemsFlags;
+    AttrsChangingCommand::Times m_CommonItemsTimes;
     VFSHostPtr m_VFS;
     
     bool m_ProcessSubfolders;
     bool m_AccessRightsBlockShown;
     bool m_OwnageBlockShown;
     bool m_FlagsBlockShown;
+    bool m_TimesBlockShown;
     
     AttrsChangingCommand m_Command;
     vector<VFSUser> m_Users;
@@ -94,16 +107,19 @@ static NSString *GroupToString( const VFSGroup &_group );
     m_CommonItemsPermissions = ExtractCommonPermissions(m_Items);
     m_CommonItemsOwnage = ExtractCommonOwnage(m_Items);
     m_CommonItemsFlags = ExtractCommonFlags(m_Items);
+    m_CommonItemsTimes = ExtractCommonTimes(m_Items);
     m_VFS = m_Items.front().Host();
     m_ProcessSubfolders = false;
     m_Items.front().Host()->FetchUsers(m_Users);
     m_Items.front().Host()->FetchGroups(m_Groups);
     
-    m_AccessRightsBlockShown = (m_VFS->Features() & VFSHostFeatures::SetPermissions);
-    m_OwnageBlockShown = (m_VFS->Features() & VFSHostFeatures::SetOwnership) &&
+    const auto vfs_features = m_VFS->Features();
+    m_AccessRightsBlockShown = vfs_features & VFSHostFeatures::SetPermissions;
+    m_OwnageBlockShown = (vfs_features & VFSHostFeatures::SetOwnership) &&
                          !m_Users.empty() &&
                          !m_Groups.empty();
-    m_FlagsBlockShown = m_VFS->Features() & VFSHostFeatures::SetFlags;
+    m_FlagsBlockShown = vfs_features & VFSHostFeatures::SetFlags;
+    m_TimesBlockShown = vfs_features & VFSHostFeatures::SetTimes;
     
     return self;
 }
@@ -118,6 +134,9 @@ static NSString *GroupToString( const VFSGroup &_group );
         [self.stackView addArrangedSubview:self.flagsBlockView];
     if( m_OwnageBlockShown )
         [self.stackView addArrangedSubview:self.ownageBlockView];
+    if( m_TimesBlockShown )
+        [self.stackView addArrangedSubview:self.timesBlockView];
+        
     [self.window updateConstraintsIfNeeded];
 
     [self populate];
@@ -130,6 +149,7 @@ static NSString *GroupToString( const VFSGroup &_group );
     m_Command.permissions = [self extractPermissionsFromUI];
     m_Command.ownage = [self extractOwnageFromUI];
     m_Command.flags = [self extractFlagsFromUI];
+    m_Command.times = [self extractTimesFromUI];
 
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
@@ -147,6 +167,8 @@ static NSString *GroupToString( const VFSGroup &_group );
         [self fillOwnageControls:m_CommonItemsOwnage];
     if( m_FlagsBlockShown )
         [self fillFlags];
+    if( m_TimesBlockShown )
+        [self fillTimes];
 }
 
 - (void)fillFlags
@@ -192,6 +214,101 @@ static NSString *GroupToString( const VFSGroup &_group );
     m( self.flagSRestricted,f.s_restricted );
     
     [self.window makeFirstResponder:fr];
+}
+
+- (void)fillTimepicker:(NSDatePicker*)_dp andCheckbox:(NSButton*)_b withTime:(optional<time_t>)_t
+{
+    const auto user_has_entered_date = _dp.tag > 0;
+    const auto user_has_toggled_applying = _b.tag > 0;
+    
+    if( !user_has_entered_date ) {
+        if( _t )
+            _dp.dateValue = [NSDate dateWithTimeIntervalSince1970:*_t];
+        else
+            _dp.dateValue = [NSDate date];
+    }
+    
+    if( !user_has_toggled_applying ) {
+        if( _t && !m_ProcessSubfolders )
+            _b.state = NSOnState;
+        else
+            _b.state = NSOffState;
+    }
+
+    if( _b.state == NSOnState ) {
+        _dp.enabled = true;
+        _dp.textColor = NSColor.controlTextColor;
+    }
+    else {
+        _dp.enabled = false;
+        _dp.textColor = NSColor.disabledControlTextColor;
+    }
+}
+
+- (void)fillTimes
+{
+    [self fillTimepicker:self.timesATime
+             andCheckbox:self.timesATimeCheckbox
+                withTime:m_CommonItemsTimes.atime];
+    [self fillTimepicker:self.timesMTime
+             andCheckbox:self.timesMTimeCheckbox
+                withTime:m_CommonItemsTimes.mtime];
+    [self fillTimepicker:self.timesCTime
+             andCheckbox:self.timesCTimeCheckbox
+                withTime:m_CommonItemsTimes.ctime];
+    [self fillTimepicker:self.timesBTime
+             andCheckbox:self.timesBTimeCheckbox
+                withTime:m_CommonItemsTimes.btime];
+}
+
+- (IBAction)onTimesCheckboxClicked:(id)sender
+{
+    if( const auto b = objc_cast<NSButton>(sender) ) {
+        b.tag++;
+        [self fillTimes];
+    }
+}
+
+- (IBAction)onTimeChanged:(id)sender
+{
+    if( const auto dp = objc_cast<NSDatePicker>(sender) )
+        dp.tag++;
+}
+
+- (IBAction)onTimesSetATime:(id)sender
+{
+    self.timesATime.dateValue = [NSDate date];
+    self.timesATime.tag++;
+    self.timesATimeCheckbox.state = NSOnState;
+    self.timesATimeCheckbox.tag++;
+    [self fillTimes];
+}
+
+- (IBAction)onTimesSetMTime:(id)sender
+{
+    self.timesMTime.dateValue = [NSDate date];
+    self.timesMTime.tag++;
+    self.timesMTimeCheckbox.state = NSOnState;
+    self.timesMTimeCheckbox.tag++;
+    [self fillTimes];
+}
+
+- (IBAction)onTimesSetCTime:(id)sender
+{
+    self.timesCTime.dateValue = [NSDate date];
+    self.timesCTime.tag++;
+    self.timesCTimeCheckbox.state = NSOnState;
+    self.timesCTimeCheckbox.tag++;
+    [self fillTimes];
+}
+
+- (IBAction)onTimesSetBTime:(id)sender
+{
+    self.timesBTime.dateValue = [NSDate date];
+    self.timesBTime.tag++;
+    self.timesBTimeCheckbox.state = NSOnState;
+    self.timesBTimeCheckbox.tag++;
+    [self fillTimes];
 }
 
 - (void)fillPermUIWithPermissions:(const AttrsChangingCommand::Permissions&)_p
@@ -468,6 +585,38 @@ static const auto g_MixedOwnageTitle = @"[???]";
     return o;
 }
 
+- (optional<AttrsChangingCommand::Times>) extractTimesFromUI
+{
+    if( !m_TimesBlockShown )
+        return nullopt;
+    
+    AttrsChangingCommand::Times t;
+    if( self.timesATimeCheckbox.state == NSOnState )
+        t.atime = self.timesATime.dateValue.timeIntervalSince1970;
+    if( self.timesMTimeCheckbox.state == NSOnState )
+        t.mtime = self.timesMTime.dateValue.timeIntervalSince1970;
+    if( self.timesCTimeCheckbox.state == NSOnState )
+        t.ctime = self.timesCTime.dateValue.timeIntervalSince1970;
+    if( self.timesBTimeCheckbox.state == NSOnState )
+        t.btime = self.timesBTime.dateValue.timeIntervalSince1970;
+
+    const auto &common = m_CommonItemsTimes;
+    if( !m_ProcessSubfolders && t.atime == common.atime )
+        t.atime = nullopt;
+    if( !m_ProcessSubfolders && t.mtime == common.mtime )
+        t.mtime = nullopt;
+    if( !m_ProcessSubfolders && t.ctime == common.ctime )
+        t.ctime = nullopt;
+    if( !m_ProcessSubfolders && t.btime == common.btime )
+        t.btime = nullopt;
+
+    if( !t.atime && !t.mtime && !t.ctime && !t.btime )
+        return nullopt;
+    
+
+    return t;
+}
+
 - (IBAction)onProcessSubfolder:(id)sender
 {
     m_ProcessSubfolders = self.processSubfolders.state;
@@ -534,8 +683,7 @@ static AttrsChangingCommand::Permissions ExtractCommonPermissions
     return p;
 }
 
-static AttrsChangingCommand::Ownage
-ExtractCommonOwnage( const vector<VFSListingItem> &_items )
+static AttrsChangingCommand::Ownage ExtractCommonOwnage( const vector<VFSListingItem> &_items )
 {
     AttrsChangingCommand::Ownage o;
     o.uid = optional_common_value(begin(_items), end(_items), [](auto &i){ return i.UnixUID(); });
@@ -543,8 +691,7 @@ ExtractCommonOwnage( const vector<VFSListingItem> &_items )
     return o;
 }
 
-static AttrsChangingCommand::Flags
-    ExtractCommonFlags( const vector<VFSListingItem> &_items )
+static AttrsChangingCommand::Flags ExtractCommonFlags( const vector<VFSListingItem> &_items )
 {
     vector<uint32_t> flags;
     for( const auto &i: _items )
@@ -566,6 +713,19 @@ static AttrsChangingCommand::Flags
     f.s_nounlink   = optional_common_value( b, e, [](auto m)->bool{ return m & SF_NOUNLINK; });
 
     return f;
+}
+
+static AttrsChangingCommand::Times ExtractCommonTimes( const vector<VFSListingItem> &_items )
+{
+    AttrsChangingCommand::Times t;
+   
+    const auto b = begin(_items), e = end(_items);
+    t.atime = optional_common_value(b, e, [](auto &i){ return i.ATime(); });
+    t.mtime = optional_common_value(b, e, [](auto &i){ return i.MTime(); });
+    t.ctime = optional_common_value(b, e, [](auto &i){ return i.CTime(); });
+    t.btime = optional_common_value(b, e, [](auto &i){ return i.BTime(); });
+    
+    return t;
 }
 
 static NSString *UserToString( const VFSUser &_user )

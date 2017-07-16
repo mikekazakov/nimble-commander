@@ -29,6 +29,12 @@ AttrsChangingJob::~AttrsChangingJob()
 
 void AttrsChangingJob::Perform()
 {
+    if(!m_Command.permissions &&
+       !m_Command.ownage &&
+       !m_Command.flags &&
+       !m_Command.times )
+        return;
+
     DoScan();
     DoChange();
 }
@@ -125,6 +131,8 @@ void AttrsChangingJob::AlterSingleItem( const string &_path, VFSHost &_vfs, cons
         ChownSingleItem(_path, _vfs, _stat);
     if( m_ChflagCommand )
         ChflagSingleItem(_path, _vfs, _stat);
+    if( m_Command.times )
+        ChtimesSingleItem(_path, _vfs, _stat);
 }
 
 void AttrsChangingJob::ChmodSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat )
@@ -157,6 +165,16 @@ void AttrsChangingJob::ChflagSingleItem( const string &_path, VFSHost &_vfs, con
         return;
     
     const auto chflags_rc = _vfs.SetFlags(_path.c_str(), flags);
+    // if ...
+}
+
+void AttrsChangingJob::ChtimesSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat )
+{
+    const auto set_times_rc = _vfs.SetTimes(_path.c_str(),
+                                            m_Command.times->btime,
+                                            m_Command.times->mtime,
+                                            m_Command.times->ctime,
+                                            m_Command.times->atime);
     // if ...
 }
 

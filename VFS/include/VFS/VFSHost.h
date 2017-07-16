@@ -41,7 +41,8 @@ struct VFSHostFeatures
         FetchGroups     = 1  <<  1,
         SetPermissions  = 1  <<  2,
         SetFlags        = 1  <<  3,
-        SetOwnership    = 1  <<  4
+        SetOwnership    = 1  <<  4,
+        SetTimes        = 1  <<  5
     };
 };
 
@@ -283,15 +284,14 @@ public:
                        const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
-     * Adjust file node times. Any of timespec time pointers can be NULL, so they will be ignored.
+     * Adjust file node times.
      * NoFollow flag can be specified to alter symlink node itself.
      */
     virtual int SetTimes(const char *_path,
-                         int _flags,
-                         struct timespec *_birth_time,
-                         struct timespec *_mod_time,
-                         struct timespec *_chg_time,
-                         struct timespec *_acc_time,
+                         optional<time_t> _birth_time,
+                         optional<time_t> _mod_time,
+                         optional<time_t> _chg_time,
+                         optional<time_t> _acc_time,
                          const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**

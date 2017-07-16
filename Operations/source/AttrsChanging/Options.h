@@ -44,8 +44,14 @@ struct AttrsChangingCommand
     };
     optional<Flags> flags;
 
-    // + times
-
+    struct Times {
+        optional<long> atime;
+        optional<long> mtime;
+        optional<long> ctime;
+        optional<long> btime;
+    };
+    optional<Times> times;
+    
     vector<VFSListingItem> items;
     bool apply_to_subdirs = false;
 };

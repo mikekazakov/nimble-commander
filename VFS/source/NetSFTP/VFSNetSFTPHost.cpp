@@ -228,7 +228,9 @@ int VFSNetSFTPHost::DoInit()
     
     ReturnConnection(move(conn));
     
-    AddFeatures( VFSHostFeatures::SetOwnership | VFSHostFeatures::SetPermissions );
+    AddFeatures(VFSHostFeatures::SetOwnership |
+                VFSHostFeatures::SetPermissions |
+                VFSHostFeatures::SetTimes );
     if( m_OSType != VFSNetSFTPOSType::Unknown )
         AddFeatures( VFSHostFeatures::FetchUsers | VFSHostFeatures::FetchGroups );
     
@@ -882,6 +884,63 @@ int VFSNetSFTPHost::SetOwnership(const char *_path,
     attrs.flags = LIBSSH2_SFTP_ATTR_UIDGID;
     attrs.uid = _uid;
     attrs.gid = _gid;
+    
+    const auto rc = libssh2_sftp_stat_ex(conn->sftp,
+                                         _path,
+                                         (unsigned)strlen(_path),
+                                         LIBSSH2_SFTP_SETSTAT,
+                                         &attrs);
+    if( rc == 0 )
+        return VFSError::Ok;
+    else
+        return VFSErrorForConnection(*conn);
+}
+
+int VFSNetSFTPHost::SetTimes(const char *_path,
+                             optional<time_t> _birth_time,
+                             optional<time_t> _mod_time,
+                             optional<time_t> _chg_time,
+                             optional<time_t> _acc_time,
+                             const VFSCancelChecker &_cancel_checker)
+{
+    _birth_time = nullopt;
+    _chg_time = nullopt;
+    
+    if( !_birth_time && !_mod_time && !_chg_time && !_acc_time )
+        return VFSError::Ok;
+    
+
+    unique_ptr<Connection> conn;
+    if( int rc = GetConnection(conn); rc < 0 )
+        return rc;
+    
+    AutoConnectionReturn acr(conn, this);
+
+    if( !_mod_time || !_acc_time ) {
+        LIBSSH2_SFTP_ATTRIBUTES attrs;
+        const int rc = libssh2_sftp_stat_ex(conn->sftp,
+                                            _path,
+                                            (unsigned)strlen(_path),
+                                            LIBSSH2_SFTP_LSTAT,
+                                            &attrs);
+        if( rc != 0 )
+            return VFSErrorForConnection(*conn);
+        
+        if( attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME ) {
+            if( !_mod_time )
+                _mod_time = attrs.mtime;
+            if( !_acc_time )
+                _acc_time = attrs.atime;
+        }
+        else
+            return VFSError::NotSupported;
+    }
+    
+    LIBSSH2_SFTP_ATTRIBUTES attrs;
+    memset( &attrs, 0, sizeof(attrs) );
+    attrs.flags = LIBSSH2_SFTP_ATTR_ACMODTIME;
+    attrs.atime = *_acc_time;
+    attrs.mtime = *_mod_time;
     
     const auto rc = libssh2_sftp_stat_ex(conn->sftp,
                                          _path,

@@ -188,13 +188,6 @@ static AppDelegate *g_Me = nil;
 
 - (id) init
 {
-//    VeryImportantFunction();
-//    cout << (void*)VFSNativeHost::Tag << endl;
-//
-//    cout << VeryImportantFunction() << endl;
-//    cout << AbraCadabra{}.Process(42) << endl;
-//    AbraCadabra{};
-
     self = [super init];
     if(self) {
         g_Me = self;

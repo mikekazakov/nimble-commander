@@ -75,11 +75,10 @@ public:
     virtual int SetOwnership(const char *_path, unsigned _uid, unsigned _gid, const VFSCancelChecker &_cancel_checker) override;
     
     virtual int SetTimes(const char *_path,
-                         int _flags,
-                         struct timespec *_birth_time,
-                         struct timespec *_mod_time,
-                         struct timespec *_chg_time,
-                         struct timespec *_acc_time,
+                         optional<time_t> _birth_time,
+                         optional<time_t> _mod_time,
+                         optional<time_t> _chg_time,
+                         optional<time_t> _acc_time,
                          const VFSCancelChecker &_cancel_checker) override;
 
     virtual int FetchUsers(vector<VFSUser> &_target,

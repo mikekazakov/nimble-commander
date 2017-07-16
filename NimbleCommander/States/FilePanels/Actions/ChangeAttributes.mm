@@ -35,7 +35,7 @@ void ChangeAttributes::Perform( PanelController *_target, id _sender ) const
             const auto op = make_shared<nc::ops::AttrsChanging>(sh.command);
             if( !_target.receivesUpdateNotifications ) {
                 __weak PanelController *weak_panel = _target;
-                op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=]{
+                op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
                     dispatch_to_main_queue( [=]{
                         [(PanelController*)weak_panel refreshPanel];
                     });

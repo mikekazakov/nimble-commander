@@ -13,6 +13,7 @@
 // do not change these strings, they are used for persistency in NSUserDefaults
 static auto g_ToolbarIdentifier = @"FilePanelsToolbar";
 static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
+static const auto g_MaxPoolViewWith = 540.;
 
 @interface MainWindowFilePanelsStateToolbarDelegate()
 
@@ -157,7 +158,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     
         item.view = m_PoolViewController.view;
         item.minSize = m_PoolViewController.view.bounds.size;
-        item.maxSize = NSMakeSize(600, item.minSize.height);
+        item.maxSize = NSMakeSize(g_MaxPoolViewWith, item.minSize.height);
         item.paletteLabel = item.label = @"Operations Pool";
         m_PoolViewToolbarItem = item;
         return item;
@@ -195,7 +196,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     
     if( const auto wnd = m_PoolViewController.view.window ) {
         const auto sz = m_PoolViewController.view.window.frame.size;
-        const auto max_width = min(sz.width / 2.4, 600.);
+        const auto max_width = min(sz.width / 2.4, g_MaxPoolViewWith);
         const auto clipped_max_wdith = max(m_PoolViewToolbarItem.minSize.width, max_width);
         m_PoolViewToolbarItem.maxSize = NSMakeSize(clipped_max_wdith,
                                                    m_PoolViewToolbarItem.maxSize.height );

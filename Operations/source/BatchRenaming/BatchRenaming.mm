@@ -29,6 +29,7 @@ BatchRenaming::BatchRenaming(vector<string> _src_paths,
 
 BatchRenaming::~BatchRenaming()
 {
+    Wait();
 }
 
 Job *BatchRenaming::GetJob() noexcept

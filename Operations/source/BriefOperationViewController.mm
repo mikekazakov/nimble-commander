@@ -130,7 +130,8 @@ static const auto g_SlowUpdateFreq = 1.0;
 
 - (void)updateRapid
 {
-    const auto done = m_Operation->Statistics().DoneFraction(Statistics::SourceType::Bytes);
+    const auto preffered_source = m_Operation->Statistics().PreferredSource();
+    const auto done = m_Operation->Statistics().DoneFraction(preffered_source);
     if( done != 0.0 && self.progressBar.isIndeterminate ) {
         [self.progressBar setIndeterminate:false];
         [self.progressBar stopAnimation:self];

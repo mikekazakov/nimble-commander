@@ -7,7 +7,35 @@
 
 namespace nc::ops {
 
-class AttrsChangingJob : public Job
+struct AttrsChangingJobCallbacks
+{
+    enum class SourceAccessErrorResolution { Stop, Skip };
+    function< SourceAccessErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnSourceAccessError =
+    [](int _err, const string &_path,VFSHost &_vfs){ return SourceAccessErrorResolution::Stop; };
+
+    enum class ChmodErrorResolution { Stop, Skip };
+    function< ChmodErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnChmodError =
+    [](int _err, const string &_path,VFSHost &_vfs){ return ChmodErrorResolution::Stop; };
+
+    enum class ChownErrorResolution { Stop, Skip };
+    function< ChownErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnChownError =
+    [](int _err, const string &_path,VFSHost &_vfs){ return ChownErrorResolution::Stop; };
+
+    enum class FlagsErrorResolution { Stop, Skip };
+    function< FlagsErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnFlagsError =
+    [](int _err, const string &_path,VFSHost &_vfs){ return FlagsErrorResolution::Stop; };
+
+    enum class TimesErrorResolution { Stop, Skip };
+    function< TimesErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    m_OnTimesError =
+    [](int _err, const string &_path,VFSHost &_vfs){ return TimesErrorResolution::Stop; };
+};
+
+class AttrsChangingJob : public Job, public AttrsChangingJobCallbacks
 {
 public:
     AttrsChangingJob( AttrsChangingCommand _command );
@@ -16,17 +44,17 @@ public:
 private:
     virtual void Perform() override;
     void DoScan();
-    bool ScanItem(unsigned _origin_item);
-    bool ScanItem(const string &_full_path,
+    void ScanItem(unsigned _origin_item);
+    void ScanItem(const string &_full_path,
                   const string &_filename,
                   unsigned _origin_item,
                   const chained_strings::node *_prefix);
     void DoChange();
-    void AlterSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
-    void ChmodSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
-    void ChownSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
-    void ChflagSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
-    void ChtimesSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
+    bool AlterSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
+    bool ChmodSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
+    bool ChownSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
+    bool ChflagSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
+    bool ChtimesSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat );
 
     struct Meta;
     const AttrsChangingCommand m_Command;

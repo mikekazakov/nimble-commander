@@ -1,8 +1,10 @@
 #include "Operation.h"
 #include "Job.h"
 #include "AsyncDialogResponse.h"
+#include "ModalDialogResponses.h"
 #include <VFS/VFS.h>
 #include "HaltReasonDialog.h"
+#include "GenericErrorDialog.h"
 #include <cxxabi.h>
 
 namespace nc::ops
@@ -196,6 +198,23 @@ void Operation::Show( NSWindow *_dialog, shared_ptr<AsyncDialogResponse> _respon
                 return;
         }
     _response->Abort();
+}
+
+void Operation::ShowGenericDialogWithAbortSkipAndSkipAllButtons
+    (NSString *_message, int _err, const string &_path, shared_ptr<VFSHost> _vfs,
+    shared_ptr<AsyncDialogResponse> _ctx)
+{
+    const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
+
+    sheet.style = GenericErrorDialogStyle::Caution;
+    sheet.message = _message;
+    sheet.path = [NSString stringWithUTF8String:_path.c_str()];
+    sheet.errorNo = _err;
+    [sheet addButtonWithTitle:@"Abort" responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:@"Skip" responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:@"Skip All" responseCode:NSModalResponseSkipAll];
+
+    Show(sheet.window, _ctx);
 }
 
 void Operation::WaitForDialogResponse( shared_ptr<AsyncDialogResponse> _response )

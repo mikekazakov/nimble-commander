@@ -2311,7 +2311,7 @@
 				CF7D13891BF5E38B001F53FD /* OperationStats.mm */,
 				CFD9F94D1A623E4E001B3F33 /* Operations.strings */,
 				CFAC50CD1714016800A3E5C5 /* Copy */,
-				CFC058DD170B27D500A20CF2 /* UnixAttr */,
+				CFC058DD170B27D500A20CF2 /* UnixAttr [UNUSED] */,
 				CF128875177FF6F0002816C2 /* FileLinkOperation [UNUSED] */,
 				CF55CDD81B29EF52001B4F91 /* Batch Rename [UNUSED] */,
 				CF9DF215171320980008CBAE /* CreateDirectoryOperation [UNUSED] */,
@@ -3149,7 +3149,7 @@
 			name = ExternalEditor;
 			sourceTree = "<group>";
 		};
-		CFC058DD170B27D500A20CF2 /* UnixAttr */ = {
+		CFC058DD170B27D500A20CF2 /* UnixAttr [UNUSED] */ = {
 			isa = PBXGroup;
 			children = (
 				CF7D13601BF1BCAE001F53FD /* FileSysAttrChangeOperation.h */,
@@ -3162,7 +3162,7 @@
 				CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */,
 				CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */,
 			);
-			name = UnixAttr;
+			name = "UnixAttr [UNUSED]";
 			sourceTree = "<group>";
 		};
 		CFC5120816C4BD3D00D247EE = {

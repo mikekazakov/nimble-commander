@@ -4,7 +4,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-
 using namespace nc::ops;
 
 @interface NCOpsAttrsChangingDialog ()
@@ -53,7 +52,6 @@ using namespace nc::ops;
 @property (strong) IBOutlet NSButton *timesBTimeCheckbox;
 
 @property (strong) IBOutlet NSButton *processSubfolders;
-
 @end
 
 static AttrsChangingCommand::Permissions
@@ -144,7 +142,7 @@ static NSString *GroupToString( const VFSGroup &_group );
 
 - (IBAction)onOK:(id)sender
 {
-    m_Command.items = m_Items;
+    m_Command.items = move(m_Items);
     m_Command.apply_to_subdirs = m_ProcessSubfolders;
     m_Command.permissions = [self extractPermissionsFromUI];
     m_Command.ownage = [self extractOwnageFromUI];
@@ -639,6 +637,24 @@ static const auto g_MixedOwnageTitle = @"[???]";
 {
     if( const auto b = objc_cast<NSButton>(sender) )
         b.tag++;
+}
+
++ (bool)canEditAnythingInItems:(const vector<VFSListingItem>&)_items
+{
+    if( _items.empty() )
+        return false;
+
+    if( !all_equal(begin(_items), end(_items), [](auto &i){ return i.Host(); }) )
+        return false;
+
+    const auto &vfs = _items.front().Host();
+    const auto vfs_features = vfs->Features();
+    if((vfs_features & VFSHostFeatures::SetPermissions) ||
+       (vfs_features & VFSHostFeatures::SetOwnership) ||
+       (vfs_features & VFSHostFeatures::SetFlags) ||
+       (vfs_features & VFSHostFeatures::SetTimes) )
+        return true;
+    return false;
 }
 
 template <class _InputIterator, class _Predicate>

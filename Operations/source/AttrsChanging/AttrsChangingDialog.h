@@ -6,8 +6,9 @@ class VFSListingItem;
 
 @interface NCOpsAttrsChangingDialog : NSWindowController
 
-
 - (instancetype) initWithItems:(vector<VFSListingItem>)_items;
+
++ (bool)canEditAnythingInItems:(const vector<VFSListingItem>&)_items;
 
 @property (readonly) const nc::ops::AttrsChangingCommand &command;
 

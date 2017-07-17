@@ -588,46 +588,19 @@ int VFSNativeHost::SetTimes(const char *_path,
         return VFSError::InvalidCall;
     
     if( !_birth_time  && !_mod_time && !_chg_time  && !_acc_time )
-        return 0;
+        return VFSError::Ok;
     
-    // TODO: optimize this with first opening a file descriptor and then using fsetattrlist.
-    // (that should be faster).
+    auto &io = RoutedIO::Default;
+    if( _birth_time && io.chbtime(_path, *_birth_time) != 0 )
+        return VFSError::FromErrno();
+    if( _mod_time && io.chmtime(_path, *_mod_time) != 0 )
+        return VFSError::FromErrno();
+    if( _chg_time && io.chctime(_path, *_chg_time) != 0 )
+        return VFSError::FromErrno();
+    if( _acc_time && io.chatime(_path, *_acc_time) != 0 )
+        return VFSError::FromErrno();
     
-    int result = 0;
-    const int flags = FSOPT_NOFOLLOW;
-    struct attrlist attrs;
-    memset(&attrs, 0, sizeof(attrs));
-    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
-    
-    if( _birth_time ) {
-        attrs.commonattr = ATTR_CMN_CRTIME;
-        timespec birth_time{ *_birth_time, 0 };
-        if( setattrlist(_path, &attrs, &birth_time, sizeof(struct timespec), flags) < 0 )
-            result = VFSError::FromErrno();
-    }
-    
-    if( _chg_time ) {
-        attrs.commonattr = ATTR_CMN_CHGTIME;
-        timespec chg_time{ *_chg_time, 0 };
-        if( setattrlist(_path, &attrs, &chg_time, sizeof(struct timespec), flags) < 0 )
-            result = VFSError::FromErrno();
-    }
-    
-    if( _mod_time ) {
-        attrs.commonattr = ATTR_CMN_MODTIME;
-        timespec mod_time{ *_mod_time, 0 };
-        if( setattrlist(_path, &attrs, &mod_time, sizeof(struct timespec), flags) < 0 )
-            result = VFSError::FromErrno();
-    }
-        
-    if( _acc_time ) {
-        attrs.commonattr = ATTR_CMN_ACCTIME;
-        timespec acc_time{ *_acc_time, 0 };
-        if( setattrlist(_path, &attrs, &acc_time, sizeof(struct timespec), flags) < 0 )
-            result = VFSError::FromErrno();
-    }
-    
-    return result;
+    return VFSError::Ok;
 }
 
 int VFSNativeHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)

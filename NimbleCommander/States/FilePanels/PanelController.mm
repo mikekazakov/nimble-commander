@@ -2,7 +2,6 @@
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/NSMenu+Hierarchical.h>
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include "../MainWindowController.h"
 #include "Views/QuickPreview.h"
 #include "MainWindowFilePanelState.h"
@@ -32,6 +31,7 @@
 #include "Actions/OpenFile.h"
 #include "Actions/GoToFolder.h"
 #include "Actions/Enter.h"
+#include <Operations/Copying.h>
 
 using namespace nc::core;
 using namespace nc::panel;
@@ -807,12 +807,18 @@ static bool RouteKeyboardInputIntoTerminal()
         return;
     }
     
-    FileCopyOperation *op = [FileCopyOperation singleItemRenameOperation:item newName:target_fn];
+    nc::ops::FileCopyOperationOptions opts;
+    opts.docopy = false;
+
+    const auto op = make_shared<nc::ops::Copying>(vector<VFSListingItem>{item},
+                                                  item.Directory() + target_fn,
+                                                  item.Host(),
+                                                  opts);
 
     if( self.isUniform ) {
         string curr_path = self.currentDirectoryPath;
         auto curr_vfs = self.vfs;
-        [op AddOnFinishHandler:^{
+        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
             if(self.currentDirectoryPath == curr_path && self.vfs == curr_vfs)
                 dispatch_to_main_queue( [=]{
                     DelayedSelection req;
@@ -820,10 +826,10 @@ static bool RouteKeyboardInputIntoTerminal()
                     [self ScheduleDelayedSelectionChangeFor:req];
                     [self refreshPanel];
                 } );
-        }];
+        });
     }
     
-    [self.state AddOperation:op];
+    [self.mainWindowController enqueueOperation:op];
 }
 
 - (void) panelViewDidBecomeFirstResponder

@@ -2,9 +2,8 @@
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include <Operations/Linkage.h>
+#include <Operations/Copying.h>
 #include "../MainWindowController.h"
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
-#include <NimbleCommander/Operations/OperationsController.h>
 #include "PanelController+DragAndDrop.h"
 #include "MainWindowFilePanelState.h"
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -455,34 +454,34 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
         
         if( operation == NSDragOperationCopy ) {
             FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
-            auto op = [[FileCopyOperation alloc] initWithItems:move(files)
-                                               destinationPath:destination.Path()
-                                               destinationHost:destination.Host()
-                                                       options:opts];
+            const auto op = make_shared<nc::ops::Copying>(move(files),
+                                                          destination.Path(),
+                                                          destination.Host(),
+                                                          opts);
             __weak PanelController *dst_cntr = self;
-            [op AddOnFinishHandler:^{
+            op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
                 dispatch_to_main_queue([dst_cntr]{
                     if(PanelController *pc = dst_cntr) [pc refreshPanel];
                 });
-            }];
-            [self.state.OperationsController AddOperation:op];
+            });
+            [self.mainWindowController enqueueOperation:op];
             return true;
         }
         else if( operation == NSDragOperationMove ) {
             FileCopyOperationOptions opts = MakeDefaultFileMoveOptions();
-            auto op = [[FileCopyOperation alloc] initWithItems:move(files)
-                                               destinationPath:destination.Path()
-                                               destinationHost:destination.Host()
-                                                       options:opts];
+            const auto op = make_shared<nc::ops::Copying>(move(files),
+                                                          destination.Path(),
+                                                          destination.Host(),
+                                                          opts);
             __weak PanelController *src_cntr = source.sourceController;
             __weak PanelController *dst_cntr = self;
-            [op AddOnFinishHandler:^{
+            op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
                 dispatch_to_main_queue([src_cntr, dst_cntr]{
                     if(PanelController *pc = src_cntr) [pc refreshPanel];
                     if(PanelController *pc = dst_cntr) [pc refreshPanel];
                 });
-            }];
-            [self.state.OperationsController AddOperation:op];
+            });
+            [self.mainWindowController enqueueOperation:op];
             return true;
         }
         else if( operation == NSDragOperationLink &&
@@ -513,18 +512,19 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
         
         // TODO: support move from other apps someday?
         FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
-        auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
-                                           destinationPath:destination.Path()
-                                           destinationHost:destination.Host()
-                                                   options:opts];
+        const auto op = make_shared<nc::ops::Copying>(move(source_items),
+                                                      destination.Path(),
+                                                      destination.Host(),
+                                                      opts);
+
         
         __weak PanelController *dst_cntr = self;
-        [op AddOnFinishHandler:^{
+        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
             dispatch_to_main_queue([dst_cntr]{
                 if(PanelController *pc = dst_cntr) [pc refreshPanel];
             });
-        }];
-        [self.state.OperationsController AddOperation:op];
+        });
+        [self.mainWindowController enqueueOperation:op];
         return true;
     }
     else if( [pasteboard.types containsObject:url_promise_uti] && dest_native ) {

@@ -1,7 +1,5 @@
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
-//#include <NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.h>
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelAux.h"
@@ -10,6 +8,7 @@
 #include "../../MainWindowController.h"
 #include <Operations/DirectoryCreation.h>
 #include <Operations/DirectoryCreationDialog.h>
+#include <Operations/Copying.h>
 
 namespace nc::panel::actions {
 
@@ -199,12 +198,8 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
     const path destination = dir / name / "/";
     
     const auto options = MakeDefaultFileMoveOptions();
-    auto op = [[FileCopyOperation alloc] initWithItems:files
-                                       destinationPath:destination.native()
-                                       destinationHost:vfs
-                                               options:options];
-    
-    [op AddOnFinishHandler:^{
+    const auto op = make_shared<nc::ops::Copying>(files, destination.native(), vfs, options);
+    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=]{
         dispatch_to_main_queue([=]{
             if( PanelController *panel = weak_panel ) {
                 if( force_reload )
@@ -213,9 +208,9 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
                 ScheduleRenaming(name, panel);
             }
         });
-    }];
+    });
     
-    [_target.state AddOperation:op];
+    [_target.mainWindowController enqueueOperation:op];
 }
 
 bool MakeNewNamedFolder::Predicate( PanelController *_target ) const

@@ -1,11 +1,6 @@
 #include "MainWindowFilePanelState.h"
-#include <NimbleCommander/Operations/OperationsSummaryViewController.h>
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
-
-//#include <NimbleCommander/States/MainWindowController.h>
-
-
 #include <Operations/PoolViewController.h>
 
 
@@ -142,12 +137,6 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.go.right_panel").PrettyString();
         return item;
     }
-    if( [itemIdentifier isEqualToString:@"filepanels_operations_box"] ) {
-        NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        item.view = self.state.operationsSummaryView.view;
-        item.paletteLabel = item.label = @"Operations";
-        return item;
-    }
     if( [itemIdentifier isEqualToString:@"operations_pool"] ) {
     
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
@@ -216,7 +205,6 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     @[ @"filepanels_left_goto_button",
        NSToolbarFlexibleSpaceItemIdentifier,
        @"operations_pool",
-       @"filepanels_operations_box",
        NSToolbarFlexibleSpaceItemIdentifier,
        @"filepanels_right_goto_button"];
     
@@ -234,7 +222,6 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     NSMutableArray *a = [[NSMutableArray alloc] init];
     [a addObject:@"filepanels_left_goto_button"];
     [a addObject:@"filepanels_right_goto_button"];
-    [a addObject:@"filepanels_operations_box"];
     [a addObject:@"operations_pool"];
     
     auto tools = m_State.externalToolsStorage.GetAllTools();

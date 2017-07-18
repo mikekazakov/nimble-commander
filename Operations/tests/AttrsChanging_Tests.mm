@@ -104,6 +104,47 @@ using namespace nc::ops;
     XCTAssert( st.gid == 12 );
 }
 
+- (void)testChflags
+{
+    const auto path = (m_TmpDir/"test").native();
+    close( creat( path.c_str(), 0755 ) );
+    
+    AttrsChangingCommand cmd;
+    cmd.items = [self fetchItems:{"test"} fromDirectory:m_TmpDir.native()];
+    cmd.flags.emplace();
+    cmd.flags->u_hidden = true;
+    
+    AttrsChanging operation{ cmd };
+    operation.Start();
+    operation.Wait();
+    XCTAssert( operation.State() == OperationState::Completed );
+    
+    VFSStat st;
+    XCTAssert( m_NativeHost->Stat(path.c_str(), st, 0) == VFSError::Ok );
+    XCTAssert( st.flags & UF_HIDDEN );
+}
+
+- (void)testSetTime
+{
+    const auto path = (m_TmpDir/"test").native();
+    const auto mtime = (long)[NSDate dateWithTimeIntervalSinceNow:-10000].timeIntervalSince1970;
+    close( creat( path.c_str(), 0755 ) );
+    
+    AttrsChangingCommand cmd;
+    cmd.items = [self fetchItems:{"test"} fromDirectory:m_TmpDir.native()];
+    cmd.times.emplace();
+    cmd.times->mtime = mtime;
+ 
+    AttrsChanging operation{ cmd };
+    operation.Start();
+    operation.Wait();
+    XCTAssert( operation.State() == OperationState::Completed );
+    
+    VFSStat st;
+    XCTAssert( m_NativeHost->Stat(path.c_str(), st, 0) == VFSError::Ok );
+    XCTAssert( st.mtime.tv_sec == mtime );
+}
+
 - (path)makeTmpDir
 {
     char dir[MAXPATHLEN];

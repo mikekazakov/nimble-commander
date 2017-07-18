@@ -119,9 +119,6 @@ static bool GoToForcesPanelActivation()
 
 @implementation MainWindowFilePanelState
 
-@synthesize OperationsController = m_OperationsController;
-@synthesize operationsSummaryView = m_OpSummaryController;
-
 - (instancetype) initBaseWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
 {
     if( self = [super initWithFrame:frameRect] ) {
@@ -129,13 +126,13 @@ static bool GoToForcesPanelActivation()
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
         
-        m_OperationsController = [[OperationsController alloc] init];
-        m_OpSummaryController = [[OperationsSummaryViewController alloc] initWithController:m_OperationsController];
         // setup background view if any to be shown
-        if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
-            SetupRatingOverlay( m_OpSummaryController.backgroundView );
-        else if( ActivationManager::Type() == ActivationManager::Distribution::Trial && !ActivationManager::Instance().UserHadRegistered() )
-            SetupUnregisteredLabel(m_OpSummaryController.backgroundView);
+
+///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//        if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
+//            SetupRatingOverlay( m_OpSummaryController.backgroundView );
+//        else if( ActivationManager::Type() == ActivationManager::Distribution::Trial && !ActivationManager::Instance().UserHadRegistered() )
+//            SetupUnregisteredLabel(m_OpSummaryController.backgroundView);
         
         m_LeftPanelControllers.emplace_back([PanelController new]);
         m_RightPanelControllers.emplace_back([PanelController new]);
@@ -727,7 +724,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 
 - (bool)WindowShouldClose:(MainWindowController*)sender
 {
-    if (m_OperationsController.OperationsCount == 0 &&
+    if( /*(m_OperationsController.OperationsCount == 0 &&*/
         !self.isAnythingRunningInOverlappedTerminal )
         return true;
     
@@ -737,7 +734,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     dialog.messageText = NSLocalizedString(@"The window has running operations. Do you want to stop them and close the window?", "Asking user to close window with some operations running");
     [dialog beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse result) {
         if (result == NSAlertFirstButtonReturn) {
-            [m_OperationsController Stop];
+//            [m_OperationsController Stop];
             [self.window close];
         }
     }];
@@ -814,11 +811,6 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         m_MainSplitView.rightOverlay = 0;
     else if([self isRightController:_panel])
         m_MainSplitView.leftOverlay = 0;
-}
-
-- (void) AddOperation:(Operation*)_operation
-{
-    [m_OperationsController AddOperation:_operation];
 }
 
 - (void)onShowTabsSettingChanged
@@ -908,6 +900,11 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 - (nc::ops::Pool&) operationsPool
 {
     return *m_OperationsPool;
+}
+
+- (MainWindowController*) mainWindowController
+{
+    return (MainWindowController*)self.window.delegate;
 }
 
 @end

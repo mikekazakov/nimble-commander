@@ -1,10 +1,11 @@
 #include <VFS/Native.h>
 #include <Utility/PathManip.h>
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include "../PanelController.h"
 #include "../PanelAux.h"
 #include "../MainWindowFilePanelState.h"
 #include "InsertFromPasteboard.h"
+#include <Operations/Copying.h>
+#include "../../MainWindowController.h"
 
 namespace nc::panel::actions {
 
@@ -59,19 +60,20 @@ static void PasteOrMove( PanelController *_target, bool _paste)
     
     FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
     opts.docopy = _paste;
-    auto op = [[FileCopyOperation alloc] initWithItems:move(source_items)
-                                       destinationPath:_target.currentDirectoryPath
-                                       destinationHost:_target.vfs
-                                               options:opts];
-    
     __weak PanelController *wpc = _target;
-    [op AddOnFinishHandler:^{
+    const auto op = make_shared<nc::ops::Copying>(move(source_items),
+                                                  _target.currentDirectoryPath,
+                                                  _target.vfs,
+                                                  opts
+                                                  );
+    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=]{
         dispatch_to_main_queue( [=]{
-            if(PanelController *pc = wpc) [pc refreshPanel];
+            if(PanelController *pc = wpc)
+                [pc refreshPanel];
         });
-    }];
-    
-    [_target.state AddOperation:op];
+    });
+    [_target.mainWindowController enqueueOperation:op];
+
 }
 
 bool PasteFromPasteboard::Predicate( PanelController *_target ) const

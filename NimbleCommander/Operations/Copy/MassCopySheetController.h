@@ -9,7 +9,7 @@
 #include <Utility/SheetController.h>
 #include <VFS/VFS.h>
 
-struct FileCopyOperationOptions;
+#include "Options.h"
 
 @interface MassCopySheetController : SheetController<NSTextFieldDelegate>
 

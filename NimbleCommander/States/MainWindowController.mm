@@ -421,11 +421,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 //    mtb.ResetMicro("  [self.topmostState Assigned] ");
 }
 
-- (OperationsController*) OperationsController
-{
-    return m_PanelState.OperationsController;
-}
-
 - (void) RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host
 {
     dispatch_assert_main_queue();

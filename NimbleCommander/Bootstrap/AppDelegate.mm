@@ -523,7 +523,7 @@ static AppDelegate *g_Me = nil;
 {
     bool has_running_ops = false;
     for (MainWindowController *wincont: m_MainWindows)
-        if (wincont.OperationsController.OperationsCount > 0) {
+        if(/*wincont.OperationsController.OperationsCount > 0*/false) {
             has_running_ops = true;
             break;
         }
@@ -543,7 +543,7 @@ static AppDelegate *g_Me = nil;
         if (result == NSAlertSecondButtonReturn) return NSTerminateCancel;
         
         for (MainWindowController *wincont : m_MainWindows) {
-            [wincont.OperationsController Stop];
+//            [wincont.OperationsController Stop];
             [wincont.terminalState Terminate];
         }
     }

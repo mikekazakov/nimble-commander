@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Habanero/ScopedObservable.h>
-#include "Statistics.h"
 
 @class NSWindow;
 @class NSString;
@@ -12,6 +11,7 @@ namespace nc::ops
 {
 
 class Job;
+class Statistics;
 struct AsyncDialogResponse;
 
 enum class OperationState
@@ -26,9 +26,8 @@ enum class OperationState
 class Operation : private ScopedObservableBase
 {
 public:
-    Operation();
     virtual ~Operation();
-
+    
     void Start();
     void Pause();
     void Resume();
@@ -61,6 +60,7 @@ public:
     void AbortUIWaiting() noexcept;
     
 protected:
+    Operation();
     virtual Job *GetJob() noexcept;
     virtual void OnJobFinished();
     virtual void OnJobPaused();

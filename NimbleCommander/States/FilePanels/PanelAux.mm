@@ -1,8 +1,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
-#include <NimbleCommander/Operations/OperationsController.h>
 #include <VFS/Native.h>
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
@@ -13,6 +11,7 @@
 #include "PanelAux.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "ExternalEditorInfo.h"
+#include <Operations/Copying.h>
 
 namespace nc::panel {
 
@@ -87,19 +86,19 @@ static void RegisterRemoteFileUploading(const string& _original_path,
         if( ret == 0 ) {
             FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
             opts.exist_behavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
-            auto operation = [[FileCopyOperation alloc] initWithItems:listing_items
-                                                      destinationPath:_original_path
-                                                      destinationHost:vfs
-                                                              options:opts];
+            const auto op = make_shared<nc::ops::Copying>(listing_items,
+                                                          _original_path,
+                                                          vfs,
+                                                          opts);
             if( auto pc = (PanelController*)origin_controller )
                 if( !pc.receivesUpdateNotifications )
-                    [operation AddOnFinishHandler:[=]{
+                    op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
                         dispatch_to_main_queue( [=]{
                             // TODO: perhaps need to check that path didn't changed
                             [(PanelController*)origin_controller refreshPanel];
                         });
-                    }];
-            [window.OperationsController AddOperation:operation];
+                    });
+            [window enqueueOperation:op];
         }
     };
     

@@ -21,14 +21,13 @@ namespace nc::panel::data {
 }
 
 class ExternalToolsStorage;
+@class MainWindowController;
 @class Operation;
 @class PanelView;
 @class PanelController;
-@class OperationsController;
 @class QuickLookView;
 @class BriefSystemOverview;
 @class FilePanelMainSplitView;
-@class OperationsSummaryViewController;
 @class FilePanelOverlappedTerminal;
 @class MainWindowFilePanelsStateToolbarDelegate;
 @class ColoredSeparatorLine;
@@ -46,9 +45,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
     unique_ptr<MainWindowFilePanelState_OverlappedTerminalSupport> m_OverlappedTerminal;
     
-    OperationsController *m_OperationsController;
-    OperationsSummaryViewController *m_OpSummaryController;
-    
     ColoredSeparatorLine *m_SeparatorLine;
     MainWindowFilePanelsStateToolbarDelegate *m_ToolbarDelegate;
     __weak NSResponder   *m_LastResponder;
@@ -59,10 +55,9 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     shared_ptr<nc::ops::Pool> m_OperationsPool;
 }
 
+@property (nonatomic, readonly) MainWindowController* mainWindowController;
 @property (nonatomic, readonly) ExternalToolsStorage &externalToolsStorage;
-@property (nonatomic, readonly) OperationsController *OperationsController;
 @property (nonatomic, readonly) nc::ops::Pool& operationsPool;
-@property (nonatomic, readonly) OperationsSummaryViewController *operationsSummaryView;
 @property (nonatomic, readonly) bool isPanelActive;
 @property (nonatomic, readonly) bool goToForcesPanelActivation;
 
@@ -94,9 +89,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (BriefSystemOverview*)RequestBriefSystemOverview:(PanelController*)_panel;
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd;
 - (void)CloseOverlay:(PanelController*)_panel;
-
-
-- (void) AddOperation:(Operation*)_operation;
 
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState;
 - (void) decodeRestorableState:(const rapidjson::StandaloneValue&)_state;

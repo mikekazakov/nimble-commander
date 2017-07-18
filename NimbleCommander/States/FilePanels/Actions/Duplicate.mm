@@ -5,8 +5,9 @@
 #include "../PanelData.h"
 #include "../PanelView.h"
 #include "../PanelAux.h"
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include "../MainWindowFilePanelState.h"
+#include "../../MainWindowController.h"
+#include <Operations/Copying.h>
 
 namespace nc::panel::actions {
 
@@ -45,10 +46,11 @@ static void CommonPerform(PanelController *_target, const vector<VFSListingItem>
         
         const auto options = MakeDefaultFileCopyOptions();
         
-        auto op = [[FileCopyOperation alloc] initWithItems:{item}
-                                           destinationPath:item.Directory() + duplicate
-                                           destinationHost:item.Host()
-                                                   options:options];
+        const auto op = make_shared<ops::Copying>(vector<VFSListingItem>{item},
+                                                      item.Directory() + duplicate,
+                                                      item.Host(),
+                                                      options);
+
         if( &item == &_items.front() ) {
             const bool force_refresh = !_target.receivesUpdateNotifications;
             __weak PanelController *weak_panel = _target;
@@ -63,9 +65,9 @@ static void CommonPerform(PanelController *_target, const vector<VFSListingItem>
                     }
                 });
             };
-            [op AddOnFinishHandler:finish_handler];
+            op->ObserveUnticketed(ops::Operation::NotifyAboutCompletion, finish_handler);
          }
-        [_target.state AddOperation:op];
+        [_target.mainWindowController enqueueOperation:op];
     }
 }
 

@@ -3,6 +3,7 @@
 #include "Operation.h"
 #include <Utility/ByteCountFormatter.h>
 #include "StatisticsFormatter.h"
+#include "Statistics.h"
 
 using namespace nc::ops;
 

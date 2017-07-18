@@ -1,3 +1,5 @@
+#pragma once
+
 #include "MainWindowStateProtocol.h"
 
 class VFSHost;
@@ -15,8 +17,6 @@ namespace nc::ops {
 - (instancetype) initDefaultWindow;
 - (instancetype) initWithLastOpenedWindowOptions;
 - (instancetype) initRestoringLastWindowFromConfig;
-
-- (OperationsController*) OperationsController;
 
 // Window state manipulations
 - (void)ResignAsWindowState:(id)_state;

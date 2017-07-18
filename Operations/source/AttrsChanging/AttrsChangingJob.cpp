@@ -1,8 +1,6 @@
 #include "AttrsChangingJob.h"
 #include <Utility/PathManip.h>
 
-#include <sys/acl.h>
-
 namespace nc::ops {
 
 struct AttrsChangingJob::Meta

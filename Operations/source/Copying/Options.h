@@ -1,10 +1,7 @@
 #pragma once
 
-#include <Operations/CopyingOptions.h>
+namespace nc::ops {
 
-using FileCopyOperationOptions = nc::ops::FileCopyOperationOptions;
-
-#if 0
 struct FileCopyOperationOptions
 {
     enum class ChecksumVerification : char
@@ -32,4 +29,5 @@ struct FileCopyOperationOptions
     ChecksumVerification    verification = ChecksumVerification::Never;
     ExistBehavior           exist_behavior = ExistBehavior::Ask;
 };
-#endif
+
+}

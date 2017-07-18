@@ -1,6 +1,5 @@
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSMenu+Hierarchical.h>
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
 #include <NimbleCommander/Operations/Copy/MassCopySheetController.h>
 #include <NimbleCommander/Operations/OperationsController.h>
 #include "MainWindowFilePanelState+Menu.h"
@@ -15,6 +14,9 @@
 #include "Actions/TabSelection.h"
 #include "PanelData.h"
 #include "PanelView.h"
+
+#include "../MainWindowController.h"
+#include <Operations/Copying.h>
 
 using namespace nc::panel;
 
@@ -189,6 +191,19 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     return update_both_panels;
 }
 
+- (function<void()>) refreshBothCurrentControllersLambda2
+{
+    __weak auto cur = self.activePanelController;
+    __weak auto opp = self.oppositePanelController;
+    auto update_both_panels = [=] {
+        dispatch_to_main_queue( [=]{
+            [(PanelController*)cur refreshPanel];
+            [(PanelController*)opp refreshPanel];
+        });
+    };
+    return update_both_panels;
+}
+
 - (IBAction)OnFileCopyCommand:(id)sender{
     if( !self.activePanelController || !self.oppositePanelController )
         return;
@@ -197,7 +212,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     if( entries.empty() )
         return;
     
-    auto update_both_panels = self.refreshBothCurrentControllersLambda;
+    auto update_both_panels = self.refreshBothCurrentControllersLambda2;
     
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
@@ -214,10 +229,10 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         auto opts = mc.resultOptions;
         if( !host || path.empty() )
             return; // ui possibly has fucked up
-        
-        auto op = [[FileCopyOperation alloc] initWithItems:move(entries) destinationPath:path destinationHost:host options:opts];
-        [op AddOnFinishHandler:update_both_panels];        
-        [m_OperationsController AddOperation:op];
+
+        const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
+        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
+        [self.mainWindowController enqueueOperation:op];
     }];
 }
 
@@ -232,7 +247,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
     auto entries = vector<VFSListingItem>({item});
     
-    auto update_both_panels = self.refreshBothCurrentControllersLambda;
+    auto update_both_panels = self.refreshBothCurrentControllersLambda2;
         
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:item.Host()
@@ -248,11 +263,11 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         auto host = mc.resultHost;
         auto opts = mc.resultOptions;
         if( !host || path.empty() )
-            return; // ui possibly has fucked up
+            return; // ui had possibly fucked up
         
-        auto op = [[FileCopyOperation alloc] initWithItems:move(entries) destinationPath:path destinationHost:host options:opts];
-        [op AddOnFinishHandler:update_both_panels];
-        [m_OperationsController AddOperation:op];
+        const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
+        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
+        [self.mainWindowController enqueueOperation:op];
     }];
 }
 
@@ -267,7 +282,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     if( entries.empty() )
         return;
     
-    auto update_both_panels = self.refreshBothCurrentControllersLambda;
+    auto update_both_panels = self.refreshBothCurrentControllersLambda2;
         
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
@@ -283,11 +298,11 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         auto host = mc.resultHost;
         auto opts = mc.resultOptions;
         if( !host || path.empty() )
-            return; // ui possibly has fucked up
+            return; // ui had possibly fucked up
         
-        auto op = [[FileCopyOperation alloc] initWithItems:move(entries) destinationPath:path destinationHost:host options:opts];
-        [op AddOnFinishHandler:update_both_panels];
-        [m_OperationsController AddOperation:op];
+        const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
+        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
+        [self.mainWindowController enqueueOperation:op];
     }];
 }
 
@@ -301,7 +316,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         return;
     
     auto entries = vector<VFSListingItem>({item});
-    auto update_both_panels = self.refreshBothCurrentControllersLambda;
+    auto update_both_panels = self.refreshBothCurrentControllersLambda2;
     __weak auto cur = self.activePanelController;
     auto mc = [[MassCopySheetController alloc] initWithItems:entries
                                                    sourceVFS:item.Host()
@@ -317,19 +332,19 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         auto host = mc.resultHost;
         auto opts = mc.resultOptions;
         if( !host || path.empty() )
-            return; // ui possibly has fucked up
+            return; // ui had possibly fucked up
         
-        auto op = [[FileCopyOperation alloc] initWithItems:move(entries) destinationPath:path destinationHost:host options:opts];
-        [op AddOnFinishHandler:update_both_panels];
-        [op AddOnFinishHandler:^{
+        const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
+        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
+        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
             dispatch_to_main_queue( [=]{
                 string single_fn_rename = ::path(path).filename().native();
                 nc::panel::DelayedSelection req;
                 req.filename = single_fn_rename;
                 [(PanelController*)cur ScheduleDelayedSelectionChangeFor:req];
             });
-        }];
-        [m_OperationsController AddOperation:op];
+        });
+        [self.mainWindowController enqueueOperation:op];
     }];
 }
 

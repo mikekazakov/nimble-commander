@@ -7,6 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF4BCEE81F1D9CAA005F8414 /* DialogResults.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEE31F1D9CAA005F8414 /* DialogResults.h */; };
+		CF4BCEE91F1D9CAA005F8414 /* CopyingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */; };
+		CF4BCEEA1F1D9CAA005F8414 /* CopyingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */; };
+		CF4BCEEB1F1D9CAA005F8414 /* CopyingJobSourceItems.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCEE61F1D9CAA005F8414 /* CopyingJobSourceItems.cpp */; };
+		CF4BCEEC1F1D9CAA005F8414 /* Options.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEE71F1D9CAA005F8414 /* Options.h */; };
+		CF4BCEEF1F1DA207005F8414 /* Copying.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEED1F1DA207005F8414 /* Copying.h */; };
+		CF4BCEF01F1DA207005F8414 /* Copying.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCEEE1F1DA207005F8414 /* Copying.mm */; };
+		CF4BCEF51F1DA5AF005F8414 /* AttrsChanging.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEF11F1DA5AF005F8414 /* AttrsChanging.h */; };
+		CF4BCEF61F1DA5AF005F8414 /* AttrsChangingDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEF21F1DA5AF005F8414 /* AttrsChangingDialog.h */; };
+		CF4BCEF71F1DA5AF005F8414 /* Copying.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEF31F1DA5AF005F8414 /* Copying.h */; };
+		CF4BCEF81F1DA5AF005F8414 /* CopyingOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEF41F1DA5AF005F8414 /* CopyingOptions.h */; };
 		CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084D61EF7CC770072F0F6 /* Pool.h */; };
 		CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7084D71EF7CC770072F0F6 /* Pool.mm */; };
 		CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DA1EF7CCB00072F0F6 /* Pool.h */; };
@@ -134,6 +145,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF4BCEE31F1D9CAA005F8414 /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = source/Copying/DialogResults.h; sourceTree = "<group>"; };
+		CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CopyingJob.cpp; path = source/Copying/CopyingJob.cpp; sourceTree = "<group>"; };
+		CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingJob.h; path = source/Copying/CopyingJob.h; sourceTree = "<group>"; };
+		CF4BCEE61F1D9CAA005F8414 /* CopyingJobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CopyingJobSourceItems.cpp; path = source/Copying/CopyingJobSourceItems.cpp; sourceTree = "<group>"; };
+		CF4BCEE71F1D9CAA005F8414 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = source/Copying/Options.h; sourceTree = "<group>"; };
+		CF4BCEED1F1DA207005F8414 /* Copying.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Copying.h; path = source/Copying/Copying.h; sourceTree = "<group>"; };
+		CF4BCEEE1F1DA207005F8414 /* Copying.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Copying.mm; path = source/Copying/Copying.mm; sourceTree = "<group>"; };
+		CF4BCEF11F1DA5AF005F8414 /* AttrsChanging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttrsChanging.h; path = include/Operations/AttrsChanging.h; sourceTree = "<group>"; };
+		CF4BCEF21F1DA5AF005F8414 /* AttrsChangingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttrsChangingDialog.h; path = include/Operations/AttrsChangingDialog.h; sourceTree = "<group>"; };
+		CF4BCEF31F1DA5AF005F8414 /* Copying.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Copying.h; path = include/Operations/Copying.h; sourceTree = "<group>"; };
+		CF4BCEF41F1DA5AF005F8414 /* CopyingOptions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingOptions.h; path = include/Operations/CopyingOptions.h; sourceTree = "<group>"; };
 		CF7084D61EF7CC770072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = source/Pool.h; sourceTree = "<group>"; };
 		CF7084D71EF7CC770072F0F6 /* Pool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pool.mm; path = source/Pool.mm; sourceTree = "<group>"; };
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
@@ -289,6 +311,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF4BCEE21F1D9C9A005F8414 /* Copying */ = {
+			isa = PBXGroup;
+			children = (
+				CF4BCEED1F1DA207005F8414 /* Copying.h */,
+				CF4BCEEE1F1DA207005F8414 /* Copying.mm */,
+				CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */,
+				CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */,
+				CF4BCEE61F1D9CAA005F8414 /* CopyingJobSourceItems.cpp */,
+				CF4BCEE31F1D9CAA005F8414 /* DialogResults.h */,
+				CF4BCEE71F1D9CAA005F8414 /* Options.h */,
+			);
+			name = Copying;
+			sourceTree = "<group>";
+		};
 		CFC4F8E11EFCD9B40000B3EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -396,6 +432,7 @@
 				CFC4F9CA1F14BEA30000B3EE /* AttrsChanging */,
 				CFC4F9601F0CC6480000B3EE /* BatchRenaming */,
 				CFF53B8E1EE24FC300F567C4 /* Compression */,
+				CF4BCEE21F1D9C9A005F8414 /* Copying */,
 				CFC4F9161F09D9620000B3EE /* Deletion */,
 				CFC4F9031F0625090000B3EE /* DirectoryCreation */,
 				CFC4F9851F0F22700000B3EE /* Linkage */,
@@ -490,6 +527,10 @@
 		CFF53B8A1EE24F1B00F567C4 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF4BCEF11F1DA5AF005F8414 /* AttrsChanging.h */,
+				CF4BCEF21F1DA5AF005F8414 /* AttrsChangingDialog.h */,
+				CF4BCEF31F1DA5AF005F8414 /* Copying.h */,
+				CF4BCEF41F1DA5AF005F8414 /* CopyingOptions.h */,
 				CFC4F9C41F11D5A10000B3EE /* AlterSymlinkDialog.h */,
 				CFC4F9901F0F22900000B3EE /* BatchRenaming.h */,
 				CFC4F9911F0F22900000B3EE /* BatchRenamingDialog.h */,
@@ -543,14 +584,18 @@
 				CFC4F9B71F10890B0000B3EE /* AlterSymlinkDialog.h in Headers */,
 				CFC4F8EE1F0224710000B3EE /* AsyncDialogResponse.h in Headers */,
 				CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */,
+				CF4BCEF51F1DA5AF005F8414 /* AttrsChanging.h in Headers */,
+				CF4BCEF61F1DA5AF005F8414 /* AttrsChangingDialog.h in Headers */,
 				CFC4F9C71F11D5A10000B3EE /* AlterSymlinkDialog.h in Headers */,
 				CFC4F8CF1EFA07F00000B3EE /* PoolView.h in Headers */,
 				CFC4F9941F0F22900000B3EE /* BatchRenaming.h in Headers */,
+				CF4BCEEC1F1D9CAA005F8414 /* Options.h in Headers */,
 				CFC4F8E41EFCE0380000B3EE /* BriefOperationView.h in Headers */,
 				CFC4F9971F0F22900000B3EE /* DeletionDialog.h in Headers */,
 				CFF53B761EDE53E800F567C4 /* Operation.h in Headers */,
 				CFC4F8D31EFA17070000B3EE /* Internal.h in Headers */,
 				CFC4F9811F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.h in Headers */,
+				CF4BCEF71F1DA5AF005F8414 /* Copying.h in Headers */,
 				CFC4F98E1F0F22850000B3EE /* LinkageJob.h in Headers */,
 				CFC4F8D01EFA07F00000B3EE /* PoolViewController.h in Headers */,
 				CFC4F9511F0CA84D0000B3EE /* DirectoryCreationDialog.h in Headers */,
@@ -563,11 +608,13 @@
 				CFC4F91B1F09D9740000B3EE /* Deletion.h in Headers */,
 				CFC4F9C91F11D5A10000B3EE /* CreateSymlinkDialog.h in Headers */,
 				CFC4F9201F09DCC80000B3EE /* Options.h in Headers */,
+				CF4BCEE81F1D9CAA005F8414 /* DialogResults.h in Headers */,
 				CFC4F9571F0CB0260000B3EE /* DirectoryCreationDialog.h in Headers */,
 				CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */,
 				CFC4F95D1F0CB07A0000B3EE /* DeletionDialog.h in Headers */,
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
 				CFC4F9D41F14C4030000B3EE /* AttrsChangingJob.h in Headers */,
+				CF4BCEF81F1DA5AF005F8414 /* CopyingOptions.h in Headers */,
 				CFC4F97F1F0DEC280000B3EE /* BatchRenamingDialog.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
 				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
@@ -584,7 +631,9 @@
 				CFC4F98F1F0F22850000B3EE /* Options.h in Headers */,
 				CFC4F9021F0617E20000B3EE /* ModalDialogResponses.h in Headers */,
 				CFC4F92E1F0B49C00000B3EE /* DirectoryCreation.h in Headers */,
+				CF4BCEEF1F1DA207005F8414 /* Copying.h in Headers */,
 				CFC4F9B91F10890B0000B3EE /* CreateHardlinkDialog.h in Headers */,
+				CF4BCEEA1F1D9CAA005F8414 /* CopyingJob.h in Headers */,
 				CFC4F9C81F11D5A10000B3EE /* CreateHardlinkDialog.h in Headers */,
 				CFC4F9CF1F14BFFE0000B3EE /* AttrsChanging.h in Headers */,
 				CFC4F9641F0CC66E0000B3EE /* BatchRenamingScheme.h in Headers */,
@@ -723,6 +772,7 @@
 				CFC4F9D31F14C4030000B3EE /* AttrsChangingJob.cpp in Sources */,
 				CFC4F9801F0DEC280000B3EE /* BatchRenamingDialog.mm in Sources */,
 				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,
+				CF4BCEF01F1DA207005F8414 /* Copying.mm in Sources */,
 				CFC4F9C01F108CD20000B3EE /* AlterSymlinkDialog.mm in Sources */,
 				CFC4F8CA1EFA05B00000B3EE /* PoolViewController.mm in Sources */,
 				CFC4F9C21F10B06C0000B3EE /* CreateHardlinkDialog.mm in Sources */,
@@ -735,6 +785,8 @@
 				CFC4F91C1F09D9740000B3EE /* Deletion.mm in Sources */,
 				CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */,
 				CFC4F98C1F0F22850000B3EE /* Linkage.mm in Sources */,
+				CF4BCEEB1F1D9CAA005F8414 /* CopyingJobSourceItems.cpp in Sources */,
+				CF4BCEE91F1D9CAA005F8414 /* CopyingJob.cpp in Sources */,
 				CFC4F91D1F09D9740000B3EE /* DeletionJob.cpp in Sources */,
 				CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */,
 				CFC4F98D1F0F22850000B3EE /* LinkageJob.cpp in Sources */,
@@ -930,6 +982,8 @@
 					Security,
 					"-framework",
 					Cocoa,
+					"-framework",
+					OpenDirectory,
 				);
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1025,6 +1079,8 @@
 					Security,
 					"-framework",
 					Cocoa,
+					"-framework",
+					OpenDirectory,
 				);
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;

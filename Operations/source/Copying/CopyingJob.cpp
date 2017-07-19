@@ -1,11 +1,3 @@
-//
-//  FileCopyOperationNew.cpp
-//  Files
-//
-//  Created by Michael G. Kazakov on 25/09/15.
-//  Copyright © 2015 Michael G. Kazakov. All rights reserved.
-//
-
 #include <sys/xattr.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -17,81 +9,12 @@
 #include <RoutedIO/RoutedIO.h>
 #include "CopyingJob.h"
 #include "DialogResults.h"
+#include "../Statistics.h"
+#include "NativeFSHelpers.h"
+
+using namespace nc::ops::copying;
 
 namespace nc::ops {
-
-static bool ShouldPreallocateSpace(int64_t _bytes_to_write, const NativeFileSystemInfo &_fs_info)
-{
-    const auto min_prealloc_size = 4096;
-    if( _bytes_to_write <= min_prealloc_size )
-        return false;
-
-    // need to check destination fs and permit preallocation only on certain filesystems
-    static const auto prealloc_on = { "hfs", "apfs" };
-    return count( begin(prealloc_on), end(prealloc_on), _fs_info.fs_type_name ) != 0;
-}
-
-// PreallocateSpace assumes following ftruncate, meaningless otherwise
-static void PreallocateSpace(int64_t _preallocate_delta, int _file_des)
-{
-    fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, _preallocate_delta};
-    if( fcntl(_file_des, F_PREALLOCATE, &preallocstore) == -1 ) {
-        preallocstore.fst_flags = F_ALLOCATEALL;
-        fcntl(_file_des, F_PREALLOCATE, &preallocstore);
-    }
-}
-
-static void AdjustFileTimesForNativePath(const char* _target_path, struct stat &_with_times)
-{
-    struct attrlist attrs;
-    memset(&attrs, 0, sizeof(attrs));
-    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
-    
-    attrs.commonattr = ATTR_CMN_MODTIME;
-    setattrlist(_target_path, &attrs, &_with_times.st_mtimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_CRTIME;
-    setattrlist(_target_path, &attrs, &_with_times.st_birthtimespec, sizeof(struct timespec), 0);
-    
-    //  do we really need atime to be changed?
-    //    attrs.commonattr = ATTR_CMN_ACCTIME;
-    //    fsetattrlist(_target_fd, &attrs, &_with_times.st_atimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_CHGTIME;
-    setattrlist(_target_path, &attrs, &_with_times.st_ctimespec, sizeof(struct timespec), 0);
-}
-
-static void AdjustFileTimesForNativePath(const char* _target_path, const VFSStat &_with_times)
-{
-    auto st = _with_times.SysStat();
-    AdjustFileTimesForNativePath(_target_path, st);
-}
-
-static void AdjustFileTimesForNativeFD(int _target_fd, struct stat &_with_times)
-{
-    struct attrlist attrs;
-    memset(&attrs, 0, sizeof(attrs));
-    attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
-    
-    attrs.commonattr = ATTR_CMN_MODTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times.st_mtimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_CRTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times.st_birthtimespec, sizeof(struct timespec), 0);
-
-//  do we really need atime to be changed?
-//    attrs.commonattr = ATTR_CMN_ACCTIME;
-//    fsetattrlist(_target_fd, &attrs, &_with_times.st_atimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_CHGTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times.st_ctimespec, sizeof(struct timespec), 0);
-}
-
-static void AdjustFileTimesForNativeFD(int _target_fd, const VFSStat &_with_times)
-{
-    auto st = _with_times.SysStat();
-    AdjustFileTimesForNativeFD(_target_fd, st);
-}
 
 static string FilenameFromPath(string _str)
 {
@@ -124,10 +47,10 @@ CopyingJob::ChecksumExpectation::ChecksumExpectation( int _source_ind, string _d
     copy(begin(_md5), end(_md5), begin(md5.buf));
 }
 
-void CopyingJob::Init(vector<VFSListingItem> _source_items,
-                                   const string &_dest_path,
-                                   const VFSHostPtr &_dest_host,
-                                   FileCopyOperationOptions _opts)
+CopyingJob::CopyingJob(vector<VFSListingItem> _source_items,
+                       const string &_dest_path,
+                       const VFSHostPtr &_dest_host,
+                       FileCopyOperationOptions _opts)
 {
     m_VFSListingItems = move(_source_items);
     m_InitialDestinationPath = _dest_path;
@@ -139,6 +62,12 @@ void CopyingJob::Init(vector<VFSListingItem> _source_items,
         
     if( m_VFSListingItems.empty() )
         cerr << "CopyingJobNew::Init(..) was called with an empty entries list!" << endl;
+    
+    Statistics().SetPreferredSource(Statistics::SourceType::Bytes);
+}
+
+CopyingJob::~CopyingJob()
+{
 }
 
 bool CopyingJob::IsSingleInitialItemProcessing() const noexcept
@@ -215,17 +144,13 @@ void CopyingJob::Perform()
     
     if( BlockIfPaused(); IsStopped() )
         return;
-
-//    SetCompleted();
 }
 
 void CopyingJob::ProcessItems()
 {
     SetState(JobStage::Process);
 
-/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//    m_Stats.StartTimeTracking();
-//    m_Stats.SetMaxValue( m_SourceItems.TotalRegBytes() );
+    Statistics().CommitEstimated(Statistics::SourceType::Bytes, m_SourceItems.TotalRegBytes());
     
     const bool dest_host_is_native = m_DestinationHost->IsNativeFS();
     auto is_same_native_volume = [this]( int _index ) {
@@ -240,9 +165,6 @@ void CopyingJob::ProcessItems()
         auto source_path = m_SourceItems.ComposeFullPath(index);
         
         StepResult step_result = StepResult::Stop;
-
-/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//        m_Stats.SetCurrentItem( m_SourceItems.ItemName(index) );
         
         if( S_ISREG(source_mode) ) {
             /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -269,9 +191,8 @@ void CopyingJob::ProcessItems()
                 else {
                     if( is_same_native_volume(index) ) { // rename
                         step_result = RenameNativeFile(source_path, destination_path);
-/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//                        if( step_result == StepResult::Ok )
-//                            m_Stats.AddValue( source_size );
+                        if( step_result == StepResult::Ok )
+                            Statistics().CommitProcessed(Statistics::SourceType::Bytes, source_size);
                     }
                     else { // move
                         step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
@@ -298,9 +219,8 @@ void CopyingJob::ProcessItems()
                     if( &source_host == m_DestinationHost.get() ) { // rename
                         // moving on the same host - lets do rename
                         step_result = RenameVFSFile(source_host, source_path, destination_path);
-/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//                        if( step_result == StepResult::Ok )
-//                            m_Stats.AddValue( source_size );
+                        if( step_result == StepResult::Ok )
+                            Statistics().CommitProcessed(Statistics::SourceType::Bytes, source_size);
                     }
                     else { // move
                         step_result = CopyVFSFileToVFSFile(source_host, source_path, destination_path, data_feedback);
@@ -379,17 +299,12 @@ void CopyingJob::ProcessItems()
         if( step_result == StepResult::SkipAll )
             ToggleSkipAll();
     }
-
-/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//    m_Stats.SetCurrentItem("");
     
     bool all_matched = true;
     if( !m_Checksums.empty() ) {
         SetState(JobStage::Verify);
         for( auto &item: m_Checksums ) {
             bool matched = false;
-/// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//            m_Stats.SetCurrentItem( FilenameFromPath(item.destination_path) );
             auto step_result = VerifyCopiedFile(item, matched);
             if( step_result != StepResult::Ok || matched != true ) {
                 m_OnFileVerificationFailed( item.destination_path );
@@ -398,11 +313,9 @@ void CopyingJob::ProcessItems()
         }
     }
     
-//    if( CheckPauseOrStop() ) return;
     if( BlockIfPaused(); IsStopped() )
         return;
 
-    
     // be sure to all it only if ALL previous steps wre OK.
     if( all_matched ) {
         SetState(JobStage::Cleaning);
@@ -560,7 +473,7 @@ static bool IsAnExternalExtenedAttributesStorage( VFSHost &_host, const string &
     return _host.Exists( path );
 }
 
-tuple<CopyingJob::StepResult, CopyingJob::SourceItems> CopyingJob::ScanSourceItems()
+tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
 {
     
     SourceItems db;
@@ -569,9 +482,6 @@ tuple<CopyingJob::StepResult, CopyingJob::SourceItems> CopyingJob::ScanSourceIte
     for( auto&i: m_VFSListingItems ) {
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stop;
-    
-//        if( CheckPauseOrStop() )
-//            return StepResult::Stop;
         
         auto host_indx = db.InsertOrFindHost(i.Host());
         auto &host = db.Host(host_indx);
@@ -628,9 +538,6 @@ tuple<CopyingJob::StepResult, CopyingJob::SourceItems> CopyingJob::ScanSourceIte
                     for( auto &entry: dir_ents ) {
                         if( BlockIfPaused(); IsStopped() )
                             return StepResult::Stop;
-                    
-//                        if( CheckPauseOrStop() )
-//                            return StepResult::Stop;
                         
                         // go into recursion
                         scan_item(my_indx,
@@ -882,11 +789,8 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
     while( src_stat_buffer.st_size != destination_bytes_written ) {
         
         // check user decided to pause operation or discard it
-//        if( CheckPauseOrStop() )
-//            return StepResult::Stop;
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stop;
-
         
         // <<<--- writing in secondary thread --->>>
         optional<StepResult> write_return; // optional storage for error returning
@@ -956,9 +860,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
         if( read_return )
             return *read_return;
 
-        // update statistics
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//        m_Stats.AddValue( bytes_to_write );
+        Statistics().CommitProcessed(Statistics::SourceType::Bytes, bytes_to_write);
         
         // swap buffers ang go again
         bytes_to_write = has_read;
@@ -1217,8 +1119,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     while( src_stat_buffer.size != destination_bytes_written ) {
         
         // check user decided to pause operation or discard it
-//        if( CheckPauseOrStop() )
-//            return StepResult::Stop;
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stop;
         
@@ -1291,9 +1191,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
         if( read_return )
             return *read_return;
         
-        // update statistics
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//        m_Stats.AddValue( bytes_to_write );
+        Statistics().CommitProcessed(Statistics::SourceType::Bytes, bytes_to_write);
         
         // swap buffers ang go again
         bytes_to_write = has_read;
@@ -1507,8 +1405,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     while( src_stat_buffer.size != destination_bytes_written ) {
         
         // check user decided to pause operation or discard it
-//        if( CheckPauseOrStop() )
-//            return StepResult::Stop;
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stop;
 
@@ -1582,9 +1478,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
         if( read_return )
             return *read_return;
         
-        // update statistics
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//        m_Stats.AddValue( bytes_to_write );
+        Statistics().CommitProcessed(Statistics::SourceType::Bytes, bytes_to_write);
         
         // swap buffers ang go again
         bytes_to_write = has_read;

@@ -1,19 +1,15 @@
-//
-//  FileCopyOperationSourceItems.cpp
-//  Files
-//
-//  Created by Michael G. Kazakov on 07/10/15.
-//  Copyright © 2015 Michael G. Kazakov. All rights reserved.
-//
-
 #include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
-#include "CopyingJob.h"
+#include "SourceItems.h"
 
-namespace nc::ops {
+namespace nc::ops::copying {
 
-int CopyingJob::SourceItems::InsertItem( uint16_t _host_index, unsigned _base_dir_index, int _parent_index, string _item_name, const VFSStat &_stat )
+int SourceItems::InsertItem(uint16_t _host_index,
+                            unsigned _base_dir_index,
+                            int _parent_index,
+                            string _item_name,
+                            const VFSStat &_stat )
 {
     if( _host_index >= m_SourceItemsHosts.size() ||
        _base_dir_index >= m_SourceItemsBaseDirectories.size() ||
@@ -37,14 +33,14 @@ int CopyingJob::SourceItems::InsertItem( uint16_t _host_index, unsigned _base_di
     return int(m_Items.size() - 1);
 }
 
-string CopyingJob::SourceItems::ComposeFullPath( int _item_no ) const
+string SourceItems::ComposeFullPath( int _item_no ) const
 {
     auto rel_path = ComposeRelativePath( _item_no );
     rel_path.insert(0, m_SourceItemsBaseDirectories[ m_Items[_item_no].base_dir_index] );
     return rel_path;
 }
 
-string CopyingJob::SourceItems::ComposeRelativePath( int _item_no ) const
+string SourceItems::ComposeRelativePath( int _item_no ) const
 {
     auto &meta = m_Items.at(_item_no);
     array<int, 128> parents;
@@ -64,57 +60,57 @@ string CopyingJob::SourceItems::ComposeRelativePath( int _item_no ) const
     return path;
 }
 
-int CopyingJob::SourceItems::ItemsAmount() const noexcept
+int SourceItems::ItemsAmount() const noexcept
 {
     return (int)m_Items.size();
 }
 
-uint64_t CopyingJob::SourceItems::TotalRegBytes() const noexcept
+uint64_t SourceItems::TotalRegBytes() const noexcept
 {
     return m_TotalRegBytes;
 }
 
-mode_t CopyingJob::SourceItems::ItemMode( int _item_no ) const
+mode_t SourceItems::ItemMode( int _item_no ) const
 {
     return m_Items.at(_item_no).mode;
 }
 
-uint64_t CopyingJob::SourceItems::ItemSize( int _item_no ) const
+uint64_t SourceItems::ItemSize( int _item_no ) const
 {
     return m_Items.at(_item_no).item_size;
 }
 
-const string& CopyingJob::SourceItems::ItemName( int _item_no ) const
+const string& SourceItems::ItemName( int _item_no ) const
 {
     return m_Items.at(_item_no).item_name;
 }
 
-dev_t CopyingJob::SourceItems::ItemDev( int _item_no ) const
+dev_t SourceItems::ItemDev( int _item_no ) const
 {
     return m_Items.at(_item_no).dev_num;
 }
 
-VFSHost &CopyingJob::SourceItems::ItemHost( int _item_no ) const
+VFSHost &SourceItems::ItemHost( int _item_no ) const
 {
     return *m_SourceItemsHosts[ m_Items.at(_item_no).host_index ];
 }
 
-uint16_t CopyingJob::SourceItems::InsertOrFindHost( const VFSHostPtr &_host )
+uint16_t SourceItems::InsertOrFindHost( const VFSHostPtr &_host )
 {
     return (uint16_t)linear_find_or_insert(m_SourceItemsHosts, _host);
 }
 
-unsigned CopyingJob::SourceItems::InsertOrFindBaseDir( const string &_dir )
+unsigned SourceItems::InsertOrFindBaseDir( const string &_dir )
 {
     return (unsigned)linear_find_or_insert(m_SourceItemsBaseDirectories, _dir);
 }
 
-const string &CopyingJob::SourceItems::BaseDir( unsigned _ind ) const
+const string &SourceItems::BaseDir( unsigned _ind ) const
 {
     return m_SourceItemsBaseDirectories.at(_ind);
 }
 
-VFSHost &CopyingJob::SourceItems::Host( uint16_t _ind ) const
+VFSHost &SourceItems::Host( uint16_t _ind ) const
 {
     return *m_SourceItemsHosts.at(_ind);
 }

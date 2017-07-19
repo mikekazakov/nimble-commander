@@ -13,7 +13,6 @@ namespace nc::ops
 class Job
 {
 public:
-    Job();
     virtual ~Job();
 
     void Run();
@@ -34,6 +33,7 @@ public:
     const class Statistics &Statistics() const;
     
 protected:
+    Job();
     virtual void Perform();
     virtual void OnStopped();
 

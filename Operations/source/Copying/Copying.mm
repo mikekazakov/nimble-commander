@@ -7,11 +7,10 @@ Copying::Copying(vector<VFSListingItem> _source_files,
                  const shared_ptr<VFSHost> &_destination_host,
                  const FileCopyOperationOptions &_options)
 {
-    m_Job.reset( new CopyingJob );
-    m_Job->Init(_source_files,
-                _destination_path,
-                _destination_host,
-                _options);
+    m_Job.reset( new CopyingJob(_source_files,
+                                _destination_path,
+                                _destination_host,
+                                _options) );
 }
 
 Copying::~Copying()

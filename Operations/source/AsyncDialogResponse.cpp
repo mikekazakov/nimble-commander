@@ -27,5 +27,22 @@ void AsyncDialogResponse::Wait() noexcept
     unique_lock<mutex> lck{lock};
     blocker.wait(lck, pred);
 }
+
+void AsyncDialogResponse::SetApplyToAll( bool _v  )
+{
+    messages["apply_to_all"] = _v;
+}
+
+bool AsyncDialogResponse::IsApplyToAllSet() noexcept
+{
+    const auto it = messages.find("apply_to_all");
+    if( it == end(messages) )
+        return false;
+
+    if( const auto v = any_cast<bool>(&it->second) )
+        return *v;
     
+    return false;
+}
+
 }

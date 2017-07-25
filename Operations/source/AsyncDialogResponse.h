@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ModalDialogResponses.h"
+
 namespace nc::ops {
 
 struct AsyncDialogResponse
@@ -12,6 +14,9 @@ struct AsyncDialogResponse
     void Abort() noexcept;
     void Commit(long _response) noexcept;
     void Wait() noexcept;
+    
+    void SetApplyToAll( bool _v = true );
+    bool IsApplyToAllSet() noexcept;
 };
 
 }

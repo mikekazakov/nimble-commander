@@ -660,17 +660,21 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
             preallocate_delta = src_stat_buffer.st_size;
         };
         
-        auto action = m_Options.exist_behavior;
-        if( action == FileCopyOperationOptions::ExistBehavior::Ask )
-            if( auto b = DialogResultToExistBehavior( m_OnCopyDestinationAlreadyExists(src_stat_buffer, dst_stat_buffer, _dst_path) ) )
-                action = *b;
-        
-        switch( action ) {
-            case FileCopyOperationOptions::ExistBehavior::SkipAll:      return StepResult::Skipped;
-            case FileCopyOperationOptions::ExistBehavior::OverwriteOld: if( src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime ) return StepResult::Skipped;
-            case FileCopyOperationOptions::ExistBehavior::OverwriteAll: setup_overwrite(); break;
-            case FileCopyOperationOptions::ExistBehavior::AppendAll:    setup_append(); break;
-            default:                                                    return StepResult::Stop;
+        const auto res = m_OnCopyDestinationAlreadyExists(src_stat_buffer, dst_stat_buffer, _dst_path);
+        switch( res ) {
+            case CopyDestExistsResolution::Skip:
+                return StepResult::Skipped;
+            case CopyDestExistsResolution::OverwriteOld:
+                if( src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime )
+                    return StepResult::Skipped;
+            case CopyDestExistsResolution::Overwrite:
+                setup_overwrite();
+                break;
+            case CopyDestExistsResolution::Append:
+                setup_append();
+                break;
+            default:
+                return StepResult::Stop;
         }
     }
     else {
@@ -990,17 +994,21 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
             preallocate_delta = src_stat_buffer.size;
         };
         
-        auto action = m_Options.exist_behavior;
-        if( action == FileCopyOperationOptions::ExistBehavior::Ask )
-            if( auto b = DialogResultToExistBehavior( m_OnCopyDestinationAlreadyExists(src_stat_buffer.SysStat(), dst_stat_buffer, _dst_path) ) )
-                action = *b;
-        
-        switch( action ) {
-            case FileCopyOperationOptions::ExistBehavior::SkipAll:      return StepResult::Skipped;
-            case FileCopyOperationOptions::ExistBehavior::OverwriteOld: if( src_stat_buffer.mtime.tv_sec <= dst_stat_buffer.st_mtime ) return StepResult::Skipped;
-            case FileCopyOperationOptions::ExistBehavior::OverwriteAll: setup_overwrite(); break;
-            case FileCopyOperationOptions::ExistBehavior::AppendAll:    setup_append(); break;
-            default:                                                    return StepResult::Stop;
+        const auto res = m_OnCopyDestinationAlreadyExists(src_stat_buffer.SysStat(), dst_stat_buffer, _dst_path);
+        switch( res ) {
+            case CopyDestExistsResolution::Skip:
+                return StepResult::Skipped;
+            case CopyDestExistsResolution::OverwriteOld:
+                if( src_stat_buffer.mtime.tv_sec <= dst_stat_buffer.st_mtime )
+                    return StepResult::Skipped;
+            case CopyDestExistsResolution::Overwrite:
+                setup_overwrite();
+                break;
+            case CopyDestExistsResolution::Append:
+                setup_append();
+                break;
+            default:
+                return StepResult::Stop;
         }
     }
     else {
@@ -1311,17 +1319,21 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
             initial_writing_offset = dst_stat_buffer.size;
         };
         
-        auto action = m_Options.exist_behavior;
-        if( action == FileCopyOperationOptions::ExistBehavior::Ask )
-            if( auto b = DialogResultToExistBehavior( m_OnCopyDestinationAlreadyExists(src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path) ) )
-                action = *b;
-        
-        switch( action ) {
-            case FileCopyOperationOptions::ExistBehavior::SkipAll:      return StepResult::Skipped;
-            case FileCopyOperationOptions::ExistBehavior::OverwriteOld: if( src_stat_buffer.mtime.tv_sec <= dst_stat_buffer.mtime.tv_sec ) return StepResult::Skipped;
-            case FileCopyOperationOptions::ExistBehavior::OverwriteAll: setup_overwrite(); break;
-            case FileCopyOperationOptions::ExistBehavior::AppendAll:    setup_append(); break;
-            default:                                                    return StepResult::Stop;
+        const auto res = m_OnCopyDestinationAlreadyExists(src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path);
+        switch( res ) {
+            case CopyDestExistsResolution::Skip:
+                return StepResult::Skipped;
+            case CopyDestExistsResolution::OverwriteOld:
+                if( src_stat_buffer.mtime.tv_sec <= dst_stat_buffer.mtime.tv_sec )
+                    return StepResult::Skipped;
+            case CopyDestExistsResolution::Overwrite:
+                setup_overwrite();
+                break;
+            case CopyDestExistsResolution::Append:
+                setup_append();
+                break;
+            default:
+                return StepResult::Stop;
         }
     }
     else {

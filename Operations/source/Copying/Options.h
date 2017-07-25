@@ -17,7 +17,8 @@ struct FileCopyOperationOptions
         SkipAll         = 1, // silently skips any copiyng file, if target exists
         OverwriteAll    = 2, // overwrites existings target
         OverwriteOld    = 3, // overwrites existings target only if date is less, skip otherwise
-        AppendAll       = 4  // appends to target
+        AppendAll       = 4, // appends to target
+        Stop            = 5  // abort entire operation
     };
     
     bool docopy = true;      // it it false then operation will do renaming/moving

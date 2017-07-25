@@ -23,8 +23,14 @@ public:
 
 private:
     virtual Job *GetJob() noexcept override;
+    int OnCopyDestExists(const struct stat &_src, const struct stat &_dst, const string &_path);
+    void OnCopyDestExistsUI(const struct stat &_src, const struct stat &_dst, const string &_path,
+                            shared_ptr<AsyncDialogResponse> _ctx);
+    
 
     unique_ptr<CopyingJob> m_Job;
+    FileCopyOperationOptions::ExistBehavior m_ExistBehavior;
+    
 };
 
 }

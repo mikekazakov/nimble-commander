@@ -17,16 +17,17 @@ struct CopyingJobCallbacks
     function<int(int _vfs_error, string _path)> m_OnCantAccessSourceItem
         = [](int _vfs_error, string _path){ return FileCopyOperationDR::Stop; };
 
-    // expect: FileCopyOperationDR::Skip, FileCopyOperationDR::Stop, FileCopyOperationDR::Overwrite, FileCopyOperationDR::OverwriteOld, FileCopyOperationDR::Append
     enum class CopyDestExistsResolution { Stop, Skip, Overwrite, OverwriteOld, Append };
     function<CopyDestExistsResolution(const struct stat &_src, const struct stat &_dst, const string &_path)>
     m_OnCopyDestinationAlreadyExists
     = [](const struct stat &_src, const struct stat &_dst, const string &_path)
     { return CopyDestExistsResolution::Stop; };
     
-    // expects: FileCopyOperationDR::Skip, FileCopyOperationDR::Stop, FileCopyOperationDR::Overwrite, FileCopyOperationDR::OverwriteOld
-    function<int(const struct stat &_src_stat, const struct stat &_dst_stat, string _path)> m_OnRenameDestinationAlreadyExists
-        = [](const struct stat &_src_stat, const struct stat &_dst_stat, string _path){ return FileCopyOperationDR::Stop; };
+    enum class RenameDestExistsResolution { Stop, Skip, Overwrite, OverwriteOld };
+    function<RenameDestExistsResolution(const struct stat &_src, const struct stat &_dst, const string &_path)>
+    m_OnRenameDestinationAlreadyExists
+    = [](const struct stat &_src_stat, const struct stat &_dst_stat, const string &_path)
+    { return RenameDestExistsResolution::Stop; };
     
     // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnCantOpenDestinationFile

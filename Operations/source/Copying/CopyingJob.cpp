@@ -16,28 +16,6 @@ using namespace nc::ops::copying;
 
 namespace nc::ops {
 
-static string FilenameFromPath(string _str)
-{
-    if( _str.empty() )
-        return _str;
-    auto sl = _str.find_last_of('/');
-    if( sl == _str.npos )
-        return _str;
-    _str.erase(begin(_str), begin(_str)+sl+1);
-    return _str;
-}
-
-static optional<FileCopyOperationOptions::ExistBehavior> DialogResultToExistBehavior( int _dr )
-{
-    switch( _dr ) {
-        case FileCopyOperationDR::Overwrite:    return FileCopyOperationOptions::ExistBehavior::OverwriteAll;
-        case FileCopyOperationDR::OverwriteOld: return FileCopyOperationOptions::ExistBehavior::OverwriteOld;
-        case FileCopyOperationDR::Append:       return FileCopyOperationOptions::ExistBehavior::AppendAll;
-        case FileCopyOperationDR::Skip:         return FileCopyOperationOptions::ExistBehavior::SkipAll;
-        default:                                return nullopt;
-    }
-}
-
 CopyingJob::ChecksumExpectation::ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 ):
     original_item( _source_ind ),
     destination_path( move(_destination) )
@@ -61,7 +39,7 @@ CopyingJob::CopyingJob(vector<VFSListingItem> _source_items,
     m_IsSingleInitialItemProcessing = m_VFSListingItems.size() == 1;
         
     if( m_VFSListingItems.empty() )
-        cerr << "CopyingJobNew::Init(..) was called with an empty entries list!" << endl;
+        cerr << "CopyingJob(..) was called with an empty entries list!" << endl;
     
     Statistics().SetPreferredSource(Statistics::SourceType::Bytes);
 }
@@ -1737,7 +1715,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
 }
 
 CopyingJob::StepResult CopyingJob::RenameNativeFile(const string& _src_path,
-                                                                              const string& _dst_path) const
+                                                    const string& _dst_path) const
 {
     auto &io = RoutedIO::Default;    
     
@@ -1761,21 +1739,24 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(const string& _src_path,
             }
         }
         
-        if( src_stat_buffer.st_dev != dst_stat_buffer.st_dev || // actually st_dev should ALWAYS be the same for this routine
+        
+        if( src_stat_buffer.st_dev != dst_stat_buffer.st_dev ||
             src_stat_buffer.st_ino != dst_stat_buffer.st_ino ) {
             // files are different, so renaming into _dst_path will erase it.
             // need to ask user what to do
-
-            auto action = m_Options.exist_behavior;
-            if( action == FileCopyOperationOptions::ExistBehavior::Ask )
-                if( auto b = DialogResultToExistBehavior( m_OnRenameDestinationAlreadyExists(src_stat_buffer, dst_stat_buffer, _dst_path) ) )
-                    action = *b;
-            
-            switch( action ) {
-                case FileCopyOperationOptions::ExistBehavior::SkipAll:      return StepResult::Skipped;
-                case FileCopyOperationOptions::ExistBehavior::OverwriteOld: if( src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime ) return StepResult::Skipped;
-                case FileCopyOperationOptions::ExistBehavior::OverwriteAll: break;
-                default:                                                    return StepResult::Stop;
+            const auto res = m_OnRenameDestinationAlreadyExists(src_stat_buffer,
+                                                                dst_stat_buffer,
+                                                                _dst_path);
+            switch( res ) {
+                case RenameDestExistsResolution::Skip:
+                    return StepResult::Skipped;
+                case RenameDestExistsResolution::OverwriteOld:
+                    if( src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime )
+                        return StepResult::Skipped;
+                case RenameDestExistsResolution::Overwrite:
+                    break;
+                default:
+                    return StepResult::Stop;
             }
         }
     }
@@ -1822,16 +1803,19 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
         }
         
         // renaming into _dst_path will erase it. need to ask user what to do
-        auto action = m_Options.exist_behavior;
-        if( action == FileCopyOperationOptions::ExistBehavior::Ask )
-            if( auto b = DialogResultToExistBehavior( m_OnRenameDestinationAlreadyExists(src_stat_buffer.SysStat(), dst_stat_buffer.SysStat(), _dst_path) ) )
-                action = *b;
-        
-        switch( action ) {
-            case FileCopyOperationOptions::ExistBehavior::SkipAll:      return StepResult::Skipped;
-            case FileCopyOperationOptions::ExistBehavior::OverwriteOld: if( src_stat_buffer.mtime.tv_nsec <= dst_stat_buffer.mtime.tv_nsec ) return StepResult::Skipped;
-            case FileCopyOperationOptions::ExistBehavior::OverwriteAll: break;
-            default:                                                    return StepResult::Stop;
+        const auto res = m_OnRenameDestinationAlreadyExists(src_stat_buffer.SysStat(),
+                                                            dst_stat_buffer.SysStat(),
+                                                            _dst_path);
+        switch( res ) {
+            case RenameDestExistsResolution::Skip:
+                return StepResult::Skipped;
+            case RenameDestExistsResolution::OverwriteOld:
+                if( src_stat_buffer.mtime.tv_nsec <= dst_stat_buffer.mtime.tv_nsec )
+                    return StepResult::Skipped;
+            case RenameDestExistsResolution::Overwrite:
+                break;
+            default:
+                return StepResult::Stop;
         }
     }
 

@@ -25,7 +25,16 @@ Copying::Copying(vector<VFSListingItem> _source_files,
     [this](const struct stat &_src, const struct stat &_dst, const string &_path) {
         return (Callbacks::RenameDestExistsResolution)OnRenameDestExists(_src, _dst, _path);
     };
+    m_Job->m_OnCantAccessSourceItem =
+    [this](int _vfs_error, const string &_path, VFSHost &_vfs) {
+        return (Callbacks::CantAccessSourceItemResolution)OnCantAccessSourceItem(_vfs_error, _path, _vfs);
+    };
+    m_Job->m_OnCantOpenDestinationFile =
+    [this](int _1, const string &_2, VFSHost &_3) {
+        return (Callbacks::CantOpenDestinationFileResolution)OnCantOpenDestinationFile(_1, _2, _3);
+    };
 }
+
 
 Copying::~Copying()
 {
@@ -147,5 +156,58 @@ void Copying::OnRenameDestExistsUI(const struct stat &_src, const struct stat &_
     sheet.allowAppending = false;
     Show(sheet.window, _ctx);
 }
+
+int Copying::OnCantAccessSourceItem(int _err, const string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll )
+        return (int)Callbacks::CantAccessSourceItemResolution::Skip;
+    if( !IsInteractive() )
+        return (int)Callbacks::CantAccessSourceItemResolution::Stop;
+    
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to access a file",
+                                                    _err,
+                                                    _path,
+                                                    _vfs.shared_from_this(),
+                                                    ctx);
+    WaitForDialogResponse(ctx);
+
+    
+    if( ctx->response == NSModalResponseSkip )
+        return (int)Callbacks::CantAccessSourceItemResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return (int)Callbacks::CantAccessSourceItemResolution::Skip;
+    }
+    else
+        return (int)Callbacks::CantAccessSourceItemResolution::Stop;
+}
+
+int Copying::OnCantOpenDestinationFile(int _err, const string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll )
+        return (int)Callbacks::CantOpenDestinationFileResolution::Skip;
+    if( !IsInteractive() )
+        return (int)Callbacks::CantOpenDestinationFileResolution::Stop;
+    
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to open a destination file",
+                                                    _err,
+                                                    _path,
+                                                    _vfs.shared_from_this(),
+                                                    ctx);
+    WaitForDialogResponse(ctx);
+
+    if( ctx->response == NSModalResponseSkip )
+        return (int)Callbacks::CantOpenDestinationFileResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return (int)Callbacks::CantOpenDestinationFileResolution::Skip;
+    }
+    else
+        return (int)Callbacks::CantOpenDestinationFileResolution::Stop;
+}
+
+
 
 }

@@ -204,6 +204,11 @@ void Operation::ShowGenericDialogWithAbortSkipAndSkipAllButtons
     (NSString *_message, int _err, const string &_path, shared_ptr<VFSHost> _vfs,
     shared_ptr<AsyncDialogResponse> _ctx)
 {
+    if( !dispatch_is_main_queue() )
+        return dispatch_to_main_queue([=]{
+            ShowGenericDialogWithAbortSkipAndSkipAllButtons(_message, _err, _path, _vfs, _ctx);
+        });
+    
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
     sheet.style = GenericErrorDialogStyle::Caution;

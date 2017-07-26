@@ -11,6 +11,7 @@
 #include "DialogResults.h"
 #include "../Statistics.h"
 #include "NativeFSHelpers.h"
+#include <VFS/Native.h>
 
 using namespace nc::ops::copying;
 
@@ -63,10 +64,10 @@ CopyingJob::JobStage CopyingJob::Stage() const noexcept
     return m_Stage;
 }
 
-void CopyingJob::ToggleSkipAll()
-{
-    m_SkipAll = true;
-}
+//void CopyingJob::ToggleSkipAll()
+//{
+//    m_SkipAll = true;
+//}
 
 void CopyingJob::ToggleExistBehaviorSkipAll()
 {
@@ -273,9 +274,6 @@ void CopyingJob::ProcessItems()
             return;
         if( BlockIfPaused(); IsStopped() )
             return;
-        
-        if( step_result == StepResult::SkipAll )
-            ToggleSkipAll();
     }
     
     bool all_matched = true;
@@ -475,14 +473,11 @@ tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
             // gather stat() information regarding current entry
             int ret;
             VFSStat st;
-            while( (ret = host.Stat(path.c_str(), st, stat_flags, nullptr)) < 0 ) {
-                if( m_SkipAll ) return StepResult::Skipped;
-                switch( m_OnCantAccessSourceItem(ret, path) ) {
-                    case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-                    case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-                    case FileCopyOperationDR::Stop:       return StepResult::Stop;
+            if( (ret = host.Stat(path.c_str(), st, stat_flags, nullptr)) < 0 )
+                switch( m_OnCantAccessSourceItem(ret, path, host) ) {
+                    case CantAccessSourceItemResolution::Skip: return StepResult::Skipped;
+                    case CantAccessSourceItemResolution::Stop: return StepResult::Stop;
                 }
-            }
             
             if( S_ISREG(st.mode) ) {
                 // check if file is an external EA
@@ -503,12 +498,10 @@ tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
                     (m_DestinationHost->IsNativeFS() && m_DestinationNativeFSInfo != NativeFSManager::Instance().VolumeFromDevID(st.dev) );
                 if( should_go_inside ) {
                     vector<string> dir_ents;
-                    while( (ret = host.IterateDirectoryListing(path.c_str(), [&](auto &_) { return dir_ents.emplace_back(_.name), true; })) < 0 ) {
-                        if( m_SkipAll ) return StepResult::Skipped;
-                        switch( m_OnCantAccessSourceItem(ret, path) ) {
-                            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-                            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-                            case FileCopyOperationDR::Stop:       return StepResult::Stop;
+                    if( (ret = host.IterateDirectoryListing(path.c_str(), [&](auto &_) { return dir_ents.emplace_back(_.name), true; })) < 0 ) {
+                        switch( m_OnCantAccessSourceItem(ret, path, host) ) {
+                            case CantAccessSourceItemResolution::Skip:  return StepResult::Skipped;
+                            case CantAccessSourceItemResolution::Stop:  return StepResult::Stop;
                         }
                         dir_ents.clear();
                     }
@@ -551,14 +544,11 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
     
     // we initially open source file in non-blocking mode, so we can fail early and not to cause a hang. (hi, apple!)
     int source_fd = -1;
-    while( (source_fd = io.open(_src_path.c_str(), O_RDONLY|O_NONBLOCK|O_SHLOCK)) == -1 &&
-           (source_fd = io.open(_src_path.c_str(), O_RDONLY|O_NONBLOCK)) == -1 ) {
-        // failed to open source file
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:       return StepResult::Stop;
+    if( (source_fd = io.open(_src_path.c_str(), O_RDONLY|O_NONBLOCK|O_SHLOCK)) == -1 &&
+        (source_fd = io.open(_src_path.c_str(), O_RDONLY|O_NONBLOCK)) == -1 ) {
+        switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path, *VFSNativeHost::SharedHost() ) ) {
+            case CantAccessSourceItemResolution::Skip:       return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:       return StepResult::Stop;
         }
     }
 
@@ -585,15 +575,11 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
     
     // get information about source file
     struct stat src_stat_buffer;
-    while( fstat(source_fd, &src_stat_buffer) == -1 ) {
-        // failed to stat source
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:       return StepResult::Stop;
+    if( fstat(source_fd, &src_stat_buffer) == -1 )
+        switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path, *VFSNativeHost::SharedHost() ) ) {
+            case CantAccessSourceItemResolution::Skip:       return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:       return StepResult::Stop;
         }
-    }
   
     // find fs info for source file.
     auto src_fs_info_holder = NativeFSManager::Instance().VolumeFromDevID( src_stat_buffer.st_dev );
@@ -664,29 +650,19 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
     }
     
     // open file descriptor for destination
-    int destination_fd = -1;
-    
-    while( true ) {
-        // we want to copy src permissions if options say so or just put default ones
-        mode_t open_mode = m_Options.copy_unix_flags ? src_stat_buffer.st_mode : S_IRUSR | S_IWUSR | S_IRGRP;
-        mode_t old_umask = umask( 0 );
-        destination_fd = io.open( _dst_path.c_str(), dst_open_flags, open_mode );
-        umask(old_umask);
+    // we want to copy src permissions if options say so or just put default ones
+    const mode_t open_mode = m_Options.copy_unix_flags ?
+                             src_stat_buffer.st_mode :
+                             S_IRUSR | S_IWUSR | S_IRGRP;
+    const mode_t old_umask = umask( 0 );
+    int destination_fd = io.open( _dst_path.c_str(), dst_open_flags, open_mode );
+    umask(old_umask);
 
-        if( destination_fd != -1 )
-            break; // we're good to go
-        
-        // failed to open destination file
-        if( m_SkipAll )
-            return StepResult::Skipped;
-        
-        switch( m_OnCantOpenDestinationFile(VFSError::FromErrno(), _dst_path) ) {
-            case FileCopyOperationDR::Retry:      continue;
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            default:                              return StepResult::Stop;
+    if( destination_fd == -1 )
+        switch( m_OnCantOpenDestinationFile(VFSError::FromErrno(), _dst_path, *VFSNativeHost::SharedHost()) ) {
+            case CantOpenDestinationFileResolution::Skip:   return StepResult::Skipped;
+            case CantOpenDestinationFileResolution::Stop:   return StepResult::Stop;
         }
-    }
     
     // don't forget ot close destination file descriptor anyway
     auto close_destination = at_scope_end([&]{
@@ -730,8 +706,6 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
     if( need_dst_truncate )
         while( ftruncate(destination_fd, total_dst_size) == -1 ) {
             // failed to set dest file size
-            if(m_SkipAll)
-                return StepResult::Skipped;
             
             switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
                 case FileCopyOperationDR::Retry:      continue;
@@ -745,8 +719,6 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
     if( initial_writing_offset > 0 ) {
         while( lseek(destination_fd, initial_writing_offset, SEEK_SET) == -1  ) {
             // failed seek in a file. lolwut?
-            if(m_SkipAll)
-                return StepResult::Skipped;
             
             switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
                 case FileCopyOperationDR::Retry:      continue;
@@ -788,10 +760,6 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
                     destination_bytes_written += n_written;
                 }
                 else if( n_written < 0 || (++write_loops > max_io_loops) ) {
-                    if(m_SkipAll) {
-                        write_return = StepResult::Skipped;
-                        return;
-                    }
                     switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
                         case FileCopyOperationDR::Retry:      continue;
                         case FileCopyOperationDR::Skip:       write_return = StepResult::Skipped; return;
@@ -820,10 +788,6 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
                 to_read -= read_result;
             }
             else if( (read_result < 0) || (++read_loops > max_io_loops) ) {
-                if(m_SkipAll) {
-                    read_return = StepResult::Skipped;
-                    break;
-                }
                 switch( m_OnSourceFileReadError(VFSError::FromErrno(), _src_path) ) {
                     case FileCopyOperationDR::Retry:      continue;
                     case FileCopyOperationDR::Skip:       read_return = StepResult::Skipped; break;
@@ -903,11 +867,9 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     VFSStat src_stat_buffer;
     while( (ret = _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, 0, nullptr)) < 0 ) {
         // failed to stat source
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:       return StepResult::Stop;
+        switch( m_OnCantAccessSourceItem( ret, _src_path, _src_vfs ) ) {
+            case CantAccessSourceItemResolution::Skip:       return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:       return StepResult::Stop;
         }
     }
 
@@ -915,22 +877,18 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     VFSFilePtr src_file;
     while( (ret = _src_vfs.CreateFile(_src_path.c_str(), src_file)) < 0 ) {
         // failed to create file object
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:       return StepResult::Stop;
+        switch( m_OnCantAccessSourceItem( ret, _src_path, _src_vfs ) ) {
+            case CantAccessSourceItemResolution::Skip:       return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:       return StepResult::Stop;
         }
     }
 
     // open source file
     while( (ret = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache)) < 0 ) {
         // failed to open source file
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:       return StepResult::Stop;
+        switch( m_OnCantAccessSourceItem( ret, _src_path, _src_vfs ) ) {
+            case CantAccessSourceItemResolution::Skip:       return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:       return StepResult::Stop;
         }
     }
     
@@ -998,29 +956,17 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     }
     
     // open file descriptor for destination
-    int destination_fd = -1;
-    
-    while( true ) {
-        // we want to copy src permissions if options say so or just put default ones
-        mode_t open_mode = m_Options.copy_unix_flags ? src_stat_buffer.mode : S_IRUSR | S_IWUSR | S_IRGRP;
-        mode_t old_umask = umask( 0 );
-        destination_fd = io.open( _dst_path.c_str(), dst_open_flags, open_mode );
-        umask(old_umask);
+    // we want to copy src permissions if options say so or just put default ones
+    const mode_t open_mode = m_Options.copy_unix_flags ? src_stat_buffer.mode : S_IRUSR | S_IWUSR | S_IRGRP;
+    const mode_t old_umask = umask( 0 );
+    int destination_fd = io.open( _dst_path.c_str(), dst_open_flags, open_mode );
+    umask(old_umask);
         
-        if( destination_fd != -1 )
-            break; // we're good to go
-        
-        // failed to open destination file
-        if( m_SkipAll )
-            return StepResult::Skipped;
-        
-        switch( m_OnCantOpenDestinationFile(VFSError::FromErrno(), _dst_path) ) {
-            case FileCopyOperationDR::Retry:      continue;
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            default:                                return StepResult::Stop;
+    if( destination_fd == -1 )
+        switch( m_OnCantOpenDestinationFile(VFSError::FromErrno(), _dst_path, *VFSNativeHost::SharedHost()) ) {
+            case CantOpenDestinationFileResolution::Skip:   return StepResult::Skipped;
+            case CantOpenDestinationFileResolution::Stop:   return StepResult::Stop;
         }
-    }
     
     // don't forget ot close destination file descriptor anyway
     auto close_destination = at_scope_end([&]{
@@ -1064,9 +1010,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     if( need_dst_truncate )
         while( ftruncate(destination_fd, total_dst_size) == -1 ) {
             // failed to set dest file size
-            if(m_SkipAll)
-                return StepResult::Skipped;
-            
             switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
                 case FileCopyOperationDR::Retry:      continue;
                 case FileCopyOperationDR::Skip:       return StepResult::Skipped;
@@ -1079,9 +1022,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     if( initial_writing_offset > 0 ) {
         while( lseek(destination_fd, initial_writing_offset, SEEK_SET) == -1  ) {
             // failed seek in a file. lolwut?
-            if(m_SkipAll)
-                return StepResult::Skipped;
-            
             switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
                 case FileCopyOperationDR::Retry:      continue;
                 case FileCopyOperationDR::Skip:       return StepResult::Skipped;
@@ -1122,10 +1062,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
                     destination_bytes_written += n_written;
                 }
                 else if( n_written < 0 || (++write_loops > max_io_loops) ) {
-                    if(m_SkipAll) {
-                        write_return = StepResult::Skipped;
-                        return;
-                    }
                     switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
                         case FileCopyOperationDR::Retry:      continue;
                         case FileCopyOperationDR::Skip:       write_return = StepResult::Skipped; return;
@@ -1155,10 +1091,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
                 to_read -= read_result;
             }
             else if( (read_result < 0) || (++read_loops > max_io_loops) ) {
-                if(m_SkipAll) {
-                    read_return = StepResult::Skipped;
-                    break;
-                }
                 switch( m_OnSourceFileReadError((int)read_result, _src_path) ) {
                     case FileCopyOperationDR::Retry:      continue;
                     case FileCopyOperationDR::Skip:       read_return = StepResult::Skipped; break;
@@ -1231,11 +1163,9 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     VFSStat src_stat_buffer;
     while( (ret = _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, 0, nullptr)) < 0 ) {
         // failed to stat source
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:       return StepResult::Stop;
+        switch( m_OnCantAccessSourceItem( ret, _src_path, _src_vfs ) ) {
+            case CantAccessSourceItemResolution::Skip:       return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:       return StepResult::Stop;
         }
     }
     
@@ -1243,22 +1173,18 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     VFSFilePtr src_file;
     while( (ret = _src_vfs.CreateFile(_src_path.c_str(), src_file)) < 0 ) {
         // failed to create file object
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:       return StepResult::Stop;
+        switch( m_OnCantAccessSourceItem( ret, _src_path, _src_vfs ) ) {
+            case CantAccessSourceItemResolution::Skip:       return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:       return StepResult::Stop;
         }
     }
     
     // open source file
     while( (ret = src_file->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache)) < 0 ) {
         // failed to open source file
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:       return StepResult::Stop;
+        switch( m_OnCantAccessSourceItem( ret, _src_path, _src_vfs ) ) {
+            case CantAccessSourceItemResolution::Skip:       return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:       return StepResult::Stop;
         }
     }
     
@@ -1323,43 +1249,21 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     
     // open file object for destination
     VFSFilePtr dst_file;
-    while( (ret = m_DestinationHost->CreateFile(_dst_path.c_str(), dst_file)) != 0 ) {
-        // failed to create destination file
-        if( m_SkipAll )
-            return StepResult::Skipped;
-        
-        switch( m_OnCantOpenDestinationFile(ret, _dst_path) ) {
-            case FileCopyOperationDR::Retry:      continue;
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            default:                                return StepResult::Stop;
+    if( const auto rc = m_DestinationHost->CreateFile(_dst_path.c_str(), dst_file); rc != 0 )
+        switch( m_OnCantOpenDestinationFile(rc, _dst_path, *m_DestinationHost) ) {
+            case CantOpenDestinationFileResolution::Skip:   return StepResult::Skipped;
+            case CantOpenDestinationFileResolution::Stop:   return StepResult::Stop;
         }
-        
-    }
     
     // open file itself
-    while( true ) {
-        dst_open_flags |= m_Options.copy_unix_flags ?
-            (src_stat_buffer.mode & (S_IRWXU | S_IRWXG | S_IRWXO)) :
-            (S_IRUSR | S_IWUSR | S_IRGRP);
-        
-        ret = dst_file->Open(dst_open_flags);
-        if( ret == 0 )
-            break; // ok
-        
-        // failed to open dest file
-        if( m_SkipAll )
-            return StepResult::Skipped;
-        
-        switch( m_OnCantOpenDestinationFile(ret, _dst_path) ) {
-            case FileCopyOperationDR::Retry:      continue;
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            default:                                return StepResult::Stop;
+    dst_open_flags |= m_Options.copy_unix_flags ?
+                      (src_stat_buffer.mode & (S_IRWXU | S_IRWXG | S_IRWXO)) :
+                      (S_IRUSR | S_IWUSR | S_IRGRP);
+    if( const auto rc = dst_file->Open(dst_open_flags); rc != 0 )
+        switch( m_OnCantOpenDestinationFile(rc, _dst_path, *m_DestinationHost) ) {
+            case CantOpenDestinationFileResolution::Skip:   return StepResult::Skipped;
+            case CantOpenDestinationFileResolution::Stop:   return StepResult::Stop;
         }
-    }
-    
-
     
     // for some circumstances we have to clean up remains if anything goes wrong
     // and do it BEFORE close_destination fires
@@ -1414,10 +1318,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
                     destination_bytes_written += n_written;
                 }
                 else if( n_written < 0 || (++write_loops > max_io_loops) ) {
-                    if(m_SkipAll) {
-                        write_return = StepResult::Skipped;
-                        return;
-                    }
                     switch( m_OnDestinationFileWriteError((int)n_written, _dst_path) ) {
                         case FileCopyOperationDR::Retry:      continue;
                         case FileCopyOperationDR::Skip:       write_return = StepResult::Skipped; return;
@@ -1446,10 +1346,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
                 to_read -= read_result;
             }
             else if( (read_result < 0) || (++read_loops > max_io_loops) ) {
-                if(m_SkipAll) {
-                    read_return = StepResult::Skipped;
-                    break;
-                }
                 switch( m_OnSourceFileReadError((int)read_result, _src_path) ) {
                     case FileCopyOperationDR::Retry:      continue;
                     case FileCopyOperationDR::Skip:       read_return = StepResult::Skipped; break;
@@ -1557,8 +1453,6 @@ CopyingJob::StepResult CopyingJob::CopyNativeDirectoryToNativeDirectory(const st
         constexpr mode_t new_dir_mode = S_IXUSR|S_IXGRP|S_IXOTH|S_IRUSR|S_IRGRP|S_IROTH|S_IWUSR;
         while( io.mkdir(_dst_path.c_str(), new_dir_mode) == -1  ) {
             // failed to create a directory
-            if(m_SkipAll)
-                return StepResult::Skipped;
             switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path) ) {
                 case FileCopyOperationDR::Retry:      continue;
                 case FileCopyOperationDR::Skip:       return StepResult::Skipped;
@@ -1625,8 +1519,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
         constexpr mode_t new_dir_mode = S_IXUSR|S_IXGRP|S_IXOTH|S_IRUSR|S_IRGRP|S_IROTH|S_IWUSR;
         while( io.mkdir(_dst_path.c_str(), new_dir_mode) == -1  ) {
             // failed to create a directory
-            if(m_SkipAll)
-                return StepResult::Skipped;
             switch( m_OnCantCreateDestinationDir(VFSError::FromErrno(), _dst_path) ) {
                 case FileCopyOperationDR::Retry:      continue;
                 case FileCopyOperationDR::Skip:       return StepResult::Skipped;
@@ -1678,18 +1570,12 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
     int ret = 0;
     VFSStat src_st, dest_st;
     
-    while( (ret = _src_vfs.Stat(_src_path.c_str(), src_st, 0, 0)) != 0) {
+    if( (ret = _src_vfs.Stat(_src_path.c_str(), src_st, 0, 0)) != 0) {
         // failed to stat source directory
-        if(m_SkipAll)
-            return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem(ret, _dst_path) ) {
-            case FileCopyOperationDR::Retry:      continue;
-            case FileCopyOperationDR::Skip:       return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:    return StepResult::SkipAll;
-            default:                                return StepResult::Stop;
+        switch( m_OnCantAccessSourceItem(ret, _dst_path, _src_vfs) ) {
+            case CantAccessSourceItemResolution::Skip: return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop: return StepResult::Stop;
         }
-        
-        
     }
 
     if( m_DestinationHost->Stat( _dst_path.c_str(), dest_st, VFSFlags::F_NoFollow, 0) == 0) {
@@ -1698,8 +1584,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
     else {
         while( (ret = m_DestinationHost->CreateDirectory(_dst_path.c_str(), src_st.mode, 0)) != 0) {
             // failed to create a directory
-            if(m_SkipAll)
-                return StepResult::Skipped;
             switch( m_OnCantCreateDestinationDir(ret, _dst_path) ) {
                 case FileCopyOperationDR::Retry:      continue;
                 case FileCopyOperationDR::Skip:       return StepResult::Skipped;
@@ -1727,15 +1611,11 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(const string& _src_path,
         // silently rename the file.
         
         struct stat src_stat_buffer;
-        while( io.lstat(_src_path.c_str(), &src_stat_buffer) == -1) {
+        if( io.lstat(_src_path.c_str(), &src_stat_buffer) == -1) {
             // failed to stat source
-            if( m_SkipAll ) return StepResult::Skipped;
-            switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
-                case FileCopyOperationDR::Retry:    continue;
-                case FileCopyOperationDR::Skip:     return StepResult::Skipped;
-                case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
-                case FileCopyOperationDR::Stop:     return StepResult::Stop;
-                default:                            return StepResult::Stop;
+            switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path, *VFSNativeHost::SharedHost() ) ) {
+                case CantAccessSourceItemResolution::Skip:     return StepResult::Skipped;
+                case CantAccessSourceItemResolution::Stop:     return StepResult::Stop;
             }
         }
         
@@ -1764,8 +1644,6 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(const string& _src_path,
     // do rename itself
     while( io.rename(_src_path.c_str(), _dst_path.c_str()) == -1 ) {
         // failed to rename
-        if( m_SkipAll ) return StepResult::Skipped;
-        
         // ask user what to do
         switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
             case FileCopyOperationDR::Retry:    continue;
@@ -1779,8 +1657,8 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(const string& _src_path,
 }
 
 CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
-                                                                           const string& _src_path,
-                                                                           const string& _dst_path) const
+                                                 const string& _src_path,
+                                                 const string& _dst_path) const
 {
     // check if destination file already exist
     int ret = 0;
@@ -1790,15 +1668,11 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
         // Destination file already exists.
         
         VFSStat src_stat_buffer;
-        while( (ret = _common_host.Stat(_src_path.c_str(), src_stat_buffer, VFSFlags::F_NoFollow, nullptr)) != 0 ) {
+        if( (ret = _common_host.Stat(_src_path.c_str(), src_stat_buffer, VFSFlags::F_NoFollow, nullptr)) != 0 ) {
             // failed to stat source
-            if( m_SkipAll ) return StepResult::Skipped;
-            switch( m_OnCantAccessSourceItem( ret, _src_path ) ) {
-                case FileCopyOperationDR::Retry:    continue;
-                case FileCopyOperationDR::Skip:     return StepResult::Skipped;
-                case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
-                case FileCopyOperationDR::Stop:     return StepResult::Stop;
-                default:                            return StepResult::Stop;
+            switch( m_OnCantAccessSourceItem( ret, _src_path, _common_host ) ) {
+                case CantAccessSourceItemResolution::Skip:     return StepResult::Skipped;
+                case CantAccessSourceItemResolution::Stop:     return StepResult::Stop;
             }
         }
         
@@ -1823,8 +1697,6 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
     while( (ret = _common_host.Rename(_src_path.c_str(), _dst_path.c_str())) != 0 ) {
     
         // failed to rename
-        if( m_SkipAll ) return StepResult::Skipped;
-        
         // ask user what to do
         switch( m_OnDestinationFileWriteError(ret, _dst_path) ) {
             case FileCopyOperationDR::Retry:    continue;
@@ -1860,7 +1732,6 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation& _
     int rc;
     while( (rc = m_DestinationHost->CreateFile( _exp.destination_path.c_str(), file, nullptr )) != 0) {
         // failed to create dest file object
-        if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnDestinationFileReadError( rc, _exp.destination_path ) ) {
             case FileCopyOperationDR::Retry:    continue;
             case FileCopyOperationDR::Skip:     return StepResult::Skipped;
@@ -1872,7 +1743,6 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation& _
 
     while( (rc = file->Open( VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache )) != 0) {
         // failed to open dest file
-        if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnDestinationFileReadError( rc, _exp.destination_path ) ) {
             case FileCopyOperationDR::Retry:    continue;
             case FileCopyOperationDR::Skip:     return StepResult::Skipped;
@@ -1898,7 +1768,6 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation& _
 
         ssize_t r = file->Read(buf, min(szleft, buf_sz));
         if(r < 0) {
-            if( m_SkipAll ) return StepResult::Skipped;
             switch( m_OnDestinationFileReadError( (int)r, _exp.destination_path ) ) {
                 case FileCopyOperationDR::Retry:    continue;
                 case FileCopyOperationDR::Skip:     return StepResult::Skipped;
@@ -1922,7 +1791,7 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation& _
 }
 
 CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(const string& _src_path,
-                                                                                       const string& _dst_path) const
+                                                             const string& _dst_path) const
 {
     auto &io = RoutedIO::Default;
     
@@ -1930,22 +1799,17 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(const string& _src_
     int result;
     ssize_t sz;
     
-    while( (sz = io.readlink(_src_path.c_str(), linkpath, MAXPATHLEN)) == -1 ) {
+    if( (sz = io.readlink(_src_path.c_str(), linkpath, MAXPATHLEN)) == -1 ) {
         // failed to read symlink from source
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path ) ) {
-            case FileCopyOperationDR::Retry:    continue;
-            case FileCopyOperationDR::Skip:     return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:     return StepResult::Stop;
-            default:                            return StepResult::Stop;
+        switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path, *VFSNativeHost::SharedHost() ) ) {
+            case CantAccessSourceItemResolution::Skip:     return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:     return StepResult::Stop;
         }
     }
     linkpath[sz] = 0;    
     
     while( (result = io.symlink(linkpath, _dst_path.c_str())) == -1 ) {
         // failed to create a symlink
-        if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
             case FileCopyOperationDR::Retry:    continue;
             case FileCopyOperationDR::Skip:     return StepResult::Skipped;
@@ -1958,29 +1822,24 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(const string& _src_
 }
 
 CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
-                                                                                    const string& _src_path,
-                                                                                    const string& _dst_path) const
+                                                          const string& _src_path,
+                                                          const string& _dst_path) const
 {
     auto &io = RoutedIO::Default;
     
     char linkpath[MAXPATHLEN];
     int result;
     
-    while( (result = _src_vfs.ReadSymlink(_src_path.c_str(), linkpath, MAXPATHLEN)) < 0 ) {
+    if( (result = _src_vfs.ReadSymlink(_src_path.c_str(), linkpath, MAXPATHLEN)) < 0 ) {
         // failed to read symlink from source
-        if( m_SkipAll ) return StepResult::Skipped;
-        switch( m_OnCantAccessSourceItem( result, _src_path ) ) {
-            case FileCopyOperationDR::Retry:    continue;
-            case FileCopyOperationDR::Skip:     return StepResult::Skipped;
-            case FileCopyOperationDR::SkipAll:  return StepResult::SkipAll;
-            case FileCopyOperationDR::Stop:     return StepResult::Stop;
-            default:                            return StepResult::Stop;
+        switch( m_OnCantAccessSourceItem( result, _src_path, _src_vfs ) ) {
+            case CantAccessSourceItemResolution::Skip:     return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:     return StepResult::Stop;
         }
     }
     
     while( (result = io.symlink(linkpath, _dst_path.c_str())) == -1 ) {
         // failed to create a symlink
-        if( m_SkipAll ) return StepResult::Skipped;
         switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path) ) {
             case FileCopyOperationDR::Retry:    continue;
             case FileCopyOperationDR::Skip:     return StepResult::Skipped;

@@ -27,12 +27,12 @@ private:
     int OnRenameDestExists(const struct stat &_src, const struct stat &_dst, const string &_path);
     void OnRenameDestExistsUI(const struct stat &_src, const struct stat &_dst, const string &_path,
                             shared_ptr<AsyncDialogResponse> _ctx);
-
-    
+    int OnCantAccessSourceItem(int _vfs_error, const string &_path, VFSHost &_vfs);
+    int OnCantOpenDestinationFile(int _vfs_error, const string &_path, VFSHost &_vfs);
 
     unique_ptr<CopyingJob> m_Job;
     FileCopyOperationOptions::ExistBehavior m_ExistBehavior;
-    
+    bool m_SkipAll = false;
 };
 
 }

@@ -14,8 +14,11 @@ namespace nc::ops {
 
 struct CopyingJobCallbacks
 {
-    function<int(int _vfs_error, string _path)> m_OnCantAccessSourceItem
-        = [](int _vfs_error, string _path){ return FileCopyOperationDR::Stop; };
+    enum class CantAccessSourceItemResolution { Stop, Skip };
+    function<CantAccessSourceItemResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
+    m_OnCantAccessSourceItem
+    = [](int _vfs_error, const string &_path, VFSHost &_vfs)
+    { return CantAccessSourceItemResolution::Stop; };
 
     enum class CopyDestExistsResolution { Stop, Skip, Overwrite, OverwriteOld, Append };
     function<CopyDestExistsResolution(const struct stat &_src, const struct stat &_dst, const string &_path)>
@@ -29,9 +32,11 @@ struct CopyingJobCallbacks
     = [](const struct stat &_src_stat, const struct stat &_dst_stat, const string &_path)
     { return RenameDestExistsResolution::Stop; };
     
-    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
-    function<int(int _vfs_error, string _path)> m_OnCantOpenDestinationFile
-        = [](int _vfs_error, string _path){ return FileCopyOperationDR::Stop; };
+    enum class CantOpenDestinationFileResolution { Stop, Skip };
+    function<CantOpenDestinationFileResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
+    m_OnCantOpenDestinationFile
+    = [](int _vfs_error, const string &_path, VFSHost &_vfs)
+    { return CantOpenDestinationFileResolution::Stop; };
     
     // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
     function<int(int _vfs_error, string _path)> m_OnSourceFileReadError
@@ -87,7 +92,7 @@ public:
     JobStage Stage() const noexcept;
     bool IsSingleInitialItemProcessing() const noexcept;
     bool IsSingleScannedItemProcessing() const noexcept;
-    void ToggleSkipAll();
+//    void ToggleSkipAll();
     void ToggleExistBehaviorSkipAll();
     void ToggleExistBehaviorOverwriteAll();
     void ToggleExistBehaviorOverwriteOld();
@@ -200,7 +205,7 @@ private:
     const DispatchGroup                         m_IOGroup;
     bool                                        m_IsSingleInitialItemProcessing = false;
     bool                                        m_IsSingleScannedItemProcessing = false;
-    bool                                        m_SkipAll       = false;
+//    bool                                        m_SkipAll       = false;
     JobStage                                    m_Stage         = JobStage::None;
     
     FileCopyOperationOptions                    m_Options;

@@ -2,58 +2,72 @@
 #include "CopyingJob.h"
 #include "../AsyncDialogResponse.h"
 #include "FileAlreadyExistDialog.h"
+#include <Utility/PathManip.h>
 
 namespace nc::ops {
 
 using Callbacks = CopyingJobCallbacks;
+
+static string BuildTitle(const vector<VFSListingItem> &_source_files,
+                         const string& _destination_path,
+                         const FileCopyOperationOptions &_options);
 
 Copying::Copying(vector<VFSListingItem> _source_files,
                  const string& _destination_path,
                  const shared_ptr<VFSHost> &_destination_host,
                  const FileCopyOperationOptions &_options)
 {
+    SetTitle( BuildTitle(_source_files, _destination_path, _options) );
     m_ExistBehavior = _options.exist_behavior;
+    
     m_Job.reset( new CopyingJob(_source_files,
                                 _destination_path,
                                 _destination_host,
                                 _options) );
-    m_Job->m_OnCopyDestinationAlreadyExists =
-    [this](const struct stat &_src, const struct stat &_dst, const string &_path) {
-        return (Callbacks::CopyDestExistsResolution)OnCopyDestExists(_src, _dst, _path);
-    };
-    m_Job->m_OnRenameDestinationAlreadyExists =
-    [this](const struct stat &_src, const struct stat &_dst, const string &_path) {
-        return (Callbacks::RenameDestExistsResolution)OnRenameDestExists(_src, _dst, _path);
-    };
-    m_Job->m_OnCantAccessSourceItem = [this](int _1, const string &_2, VFSHost &_3) {
-        return (Callbacks::CantAccessSourceItemResolution)OnCantAccessSourceItem(_1, _2, _3);
-    };
-    m_Job->m_OnCantOpenDestinationFile = [this](int _1, const string &_2, VFSHost &_3) {
-        return (Callbacks::CantOpenDestinationFileResolution)OnCantOpenDestinationFile(_1, _2, _3);
-    };
-    m_Job->m_OnSourceFileReadError = [this](int _1, const string &_2, VFSHost &_3) {
-        return (Callbacks::SourceFileReadErrorResolution)OnSourceFileReadError(_1, _2, _3);
-    };
-    m_Job->m_OnDestinationFileReadError = [this](int _1, const string &_2, VFSHost &_3) {
-        return (Callbacks::DestinationFileReadErrorResolution)OnDestinationFileReadError(_1, _2, _3);
-    };
-    m_Job->m_OnDestinationFileWriteError = [this](int _1, const string &_2, VFSHost &_3) {
-        return (Callbacks::DestinationFileWriteErrorResolution)OnDestinationFileWriteError(_1, _2, _3);
-    };
-    m_Job->m_OnCantCreateDestinationRootDir = [this](int _1, const string &_2, VFSHost &_3) {
-        OnCantCreateDestinationRootDir(_1, _2, _3);
-    };
-    m_Job->m_OnCantCreateDestinationDir = [this](int _1, const string &_2, VFSHost &_3) {
-        return (Callbacks::CantCreateDestinationDirResolution)OnCantCreateDestinationDir(_1, _2, _3);
-    };
-    m_Job->m_OnFileVerificationFailed = [this](const string &_1, VFSHost &_2) {
-        OnFileVerificationFailed(_1, _2);
-    };
+    SetupCallbacks();
 }
 
 Copying::~Copying()
 {
     Wait();
+}
+
+void Copying::SetupCallbacks()
+{
+    auto &j = *m_Job;
+    using С = CopyingJobCallbacks;
+    j.m_OnCopyDestinationAlreadyExists =
+    [this](const struct stat &_src, const struct stat &_dst, const string &_path) {
+        return (С::CopyDestExistsResolution)OnCopyDestExists(_src, _dst, _path);
+    };
+    j.m_OnRenameDestinationAlreadyExists =
+    [this](const struct stat &_src, const struct stat &_dst, const string &_path) {
+        return (С::RenameDestExistsResolution)OnRenameDestExists(_src, _dst, _path);
+    };
+    j.m_OnCantAccessSourceItem = [this](int _1, const string &_2, VFSHost &_3) {
+        return (С::CantAccessSourceItemResolution)OnCantAccessSourceItem(_1, _2, _3);
+    };
+    j.m_OnCantOpenDestinationFile = [this](int _1, const string &_2, VFSHost &_3) {
+        return (С::CantOpenDestinationFileResolution)OnCantOpenDestinationFile(_1, _2, _3);
+    };
+    j.m_OnSourceFileReadError = [this](int _1, const string &_2, VFSHost &_3) {
+        return (С::SourceFileReadErrorResolution)OnSourceFileReadError(_1, _2, _3);
+    };
+    j.m_OnDestinationFileReadError = [this](int _1, const string &_2, VFSHost &_3) {
+        return (С::DestinationFileReadErrorResolution)OnDestinationFileReadError(_1, _2, _3);
+    };
+    j.m_OnDestinationFileWriteError = [this](int _1, const string &_2, VFSHost &_3) {
+        return (С::DestinationFileWriteErrorResolution)OnDestinationFileWriteError(_1, _2, _3);
+    };
+    j.m_OnCantCreateDestinationRootDir = [this](int _1, const string &_2, VFSHost &_3) {
+        OnCantCreateDestinationRootDir(_1, _2, _3);
+    };
+    j.m_OnCantCreateDestinationDir = [this](int _1, const string &_2, VFSHost &_3) {
+        return (С::CantCreateDestinationDirResolution)OnCantCreateDestinationDir(_1, _2, _3);
+    };
+    j.m_OnFileVerificationFailed = [this](const string &_1, VFSHost &_2) {
+        OnFileVerificationFailed(_1, _2);
+    };
 }
 
 Job *Copying::GetJob() noexcept
@@ -337,6 +351,51 @@ void Copying::OnFileVerificationFailed(const string &_path, VFSHost &_vfs)
                                         _vfs.shared_from_this(),
                                         ctx);
     WaitForDialogResponse(ctx);
+}
+
+static NSString *OpTitlePreffix(bool _copying)
+{
+    return _copying ?
+        @"Copying" :
+        @"Moving" ;
+}
+
+static NSString *OpTitleForSingleItem(bool _copying, NSString *_item, NSString *_to)
+{
+    return [NSString stringWithFormat:@"%@ \u201c%@\u201d to \u201c%@\u201d",
+            OpTitlePreffix(_copying),
+            _item,
+            _to];
+}
+
+static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_to)
+{
+    return [NSString stringWithFormat:@"%@ %@ items to \u201c%@\u201d",
+            OpTitlePreffix(_copying),
+            [NSNumber numberWithInt:_items],
+            _to];
+}
+
+static NSString *ExtractCopyToName(const string&_s)
+{
+    char buff[MAXPATHLEN] = {0};
+    bool use_buff = GetDirectoryNameFromPath(_s.c_str(), buff, MAXPATHLEN);
+    NSString *to = [NSString stringWithUTF8String:(use_buff ? buff : _s.c_str())];
+    return to;
+}
+
+static string BuildTitle(const vector<VFSListingItem> &_source_files,
+                         const string& _destination_path,
+                         const FileCopyOperationOptions &_options)
+{
+    if ( _source_files.size() == 1)
+        return OpTitleForSingleItem(_options.docopy,
+                                    _source_files.front().NSName(),
+                                    ExtractCopyToName(_destination_path)).UTF8String;
+    else
+        return OpTitleForMultipleItems(_options.docopy,
+                                       (int)_source_files.size(),
+                                       ExtractCopyToName(_destination_path)).UTF8String;
 }
 
 }

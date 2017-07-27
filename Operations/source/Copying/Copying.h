@@ -21,6 +21,7 @@ public:
 
 private:
     virtual Job *GetJob() noexcept override;
+    void SetupCallbacks();
     int OnCopyDestExists(const struct stat &_src, const struct stat &_dst, const string &_path);
     void OnCopyDestExistsUI(const struct stat &_src, const struct stat &_dst, const string &_path,
                             shared_ptr<AsyncDialogResponse> _ctx);

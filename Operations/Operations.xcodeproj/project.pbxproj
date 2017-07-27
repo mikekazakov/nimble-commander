@@ -25,6 +25,8 @@
 		CF4BCF0C1F1EF579005F8414 /* FileAlreadyExistDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4BCF081F1EF579005F8414 /* FileAlreadyExistDialog.xib */; };
 		CF4BCF0D1F1EF579005F8414 /* FileAlreadyExistDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF0A1F1EF579005F8414 /* FileAlreadyExistDialog.h */; };
 		CF4BCF0E1F1EF579005F8414 /* FileAlreadyExistDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF0B1F1EF579005F8414 /* FileAlreadyExistDialog.mm */; };
+		CF4BCF3F1F29A326005F8414 /* ChecksumExpectation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF3D1F29A326005F8414 /* ChecksumExpectation.cpp */; };
+		CF4BCF401F29A326005F8414 /* ChecksumExpectation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF3E1F29A326005F8414 /* ChecksumExpectation.h */; };
 		CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084D61EF7CC770072F0F6 /* Pool.h */; };
 		CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7084D71EF7CC770072F0F6 /* Pool.mm */; };
 		CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DA1EF7CCB00072F0F6 /* Pool.h */; };
@@ -171,6 +173,8 @@
 		CF4BCF0A1F1EF579005F8414 /* FileAlreadyExistDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileAlreadyExistDialog.h; path = source/Copying/FileAlreadyExistDialog.h; sourceTree = "<group>"; };
 		CF4BCF0B1F1EF579005F8414 /* FileAlreadyExistDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileAlreadyExistDialog.mm; path = source/Copying/FileAlreadyExistDialog.mm; sourceTree = "<group>"; };
 		CF4BCF0F1F1EF581005F8414 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Copying/ru.lproj/FileAlreadyExistDialog.strings; sourceTree = "<group>"; };
+		CF4BCF3D1F29A326005F8414 /* ChecksumExpectation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ChecksumExpectation.cpp; path = source/Copying/ChecksumExpectation.cpp; sourceTree = "<group>"; };
+		CF4BCF3E1F29A326005F8414 /* ChecksumExpectation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChecksumExpectation.h; path = source/Copying/ChecksumExpectation.h; sourceTree = "<group>"; };
 		CF7084D61EF7CC770072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = source/Pool.h; sourceTree = "<group>"; };
 		CF7084D71EF7CC770072F0F6 /* Pool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pool.mm; path = source/Pool.mm; sourceTree = "<group>"; };
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
@@ -329,6 +333,8 @@
 		CF4BCEE21F1D9C9A005F8414 /* Copying */ = {
 			isa = PBXGroup;
 			children = (
+				CF4BCF3D1F29A326005F8414 /* ChecksumExpectation.cpp */,
+				CF4BCF3E1F29A326005F8414 /* ChecksumExpectation.h */,
 				CF4BCF081F1EF579005F8414 /* FileAlreadyExistDialog.xib */,
 				CF4BCF0A1F1EF579005F8414 /* FileAlreadyExistDialog.h */,
 				CF4BCF0B1F1EF579005F8414 /* FileAlreadyExistDialog.mm */,
@@ -664,6 +670,7 @@
 				CFC4F9641F0CC66E0000B3EE /* BatchRenamingScheme.h in Headers */,
 				CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */,
 				CFC4F90A1F06253D0000B3EE /* DirectoryCreationJob.h in Headers */,
+				CF4BCF401F29A326005F8414 /* ChecksumExpectation.h in Headers */,
 				CF4BCF031F1EEFCE005F8414 /* NativeFSHelpers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -818,6 +825,7 @@
 				CFC4F91D1F09D9740000B3EE /* DeletionJob.cpp in Sources */,
 				CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */,
 				CFC4F98D1F0F22850000B3EE /* LinkageJob.cpp in Sources */,
+				CF4BCF3F1F29A326005F8414 /* ChecksumExpectation.cpp in Sources */,
 				CFC4F8E51EFCE0380000B3EE /* BriefOperationView.mm in Sources */,
 				CFF53BAF1EEA840600F567C4 /* Statistics.cpp in Sources */,
 				CFC4F8D81EFB5F780000B3EE /* BriefOperationViewController.mm in Sources */,

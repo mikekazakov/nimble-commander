@@ -9,6 +9,7 @@
 #include "DialogResults.h"
 #include "../Job.h"
 #include "SourceItems.h"
+#include "ChecksumExpectation.h"
 
 namespace nc::ops {
 
@@ -130,17 +131,6 @@ private:
         FixedPath    // path = dest_path
     };
     
-    struct ChecksumExpectation
-    {
-        ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 );
-        string destination_path;
-        int original_item;        
-        struct {
-            uint8_t buf[16];
-        } md5;
-    };
-    
-
     void                    ProcessItems();
     
     PathCompositionType     AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const;
@@ -183,7 +173,7 @@ private:
     StepResult RenameVFSFile(VFSHost &_common_host,
                              const string& _src_path,
                              const string& _dst_path) const;
-    StepResult VerifyCopiedFile(const ChecksumExpectation& _exp, bool &_matched);
+    StepResult VerifyCopiedFile(const copying::ChecksumExpectation& _exp, bool &_matched);
     void        CleanSourceItems() const;
     void        SetState(JobStage _state);
     
@@ -195,7 +185,7 @@ private:
     
     vector<VFSListingItem>                      m_VFSListingItems;
     copying::SourceItems                        m_SourceItems;
-    vector<ChecksumExpectation>                 m_Checksums;
+    vector<copying::ChecksumExpectation>        m_Checksums;
     vector<unsigned>                            m_SourceItemsToDelete;
     VFSHostPtr                                  m_DestinationHost;
     shared_ptr<const NativeFileSystemInfo>      m_DestinationNativeFSInfo; // used only for native vfs

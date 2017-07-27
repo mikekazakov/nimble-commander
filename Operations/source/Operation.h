@@ -79,7 +79,7 @@ protected:
                                              shared_ptr<AsyncDialogResponse> _ctx);
     void WaitForDialogResponse( shared_ptr<AsyncDialogResponse> _response );
     void ReportHaltReason( NSString *_message, int _error, const string &_path, VFSHost &_vfs );
-    void SetTitle( const string &_title );
+    void SetTitle( string _title );
 
 private:
     Operation(const Operation&) = delete;

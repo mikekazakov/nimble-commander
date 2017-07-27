@@ -297,12 +297,12 @@ string Operation::Title() const
         return m_Title;
 }
 
-void Operation::SetTitle( const string &_title )
+void Operation::SetTitle( string _title )
 {
     LOCK_GUARD(m_TitleLock) {
         if( m_Title == _title )
             return;
-        m_Title = _title;
+        m_Title = move(_title);
     }
     FireObservers(NotifyAboutTitleChange);
 }

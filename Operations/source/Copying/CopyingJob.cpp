@@ -17,15 +17,6 @@ using namespace nc::ops::copying;
 
 namespace nc::ops {
 
-CopyingJob::ChecksumExpectation::ChecksumExpectation( int _source_ind, string _destination, const vector<uint8_t> &_md5 ):
-    original_item( _source_ind ),
-    destination_path( move(_destination) )
-{
-    if(_md5.size() != 16)
-        throw invalid_argument("CopyingJobNew::ChecksumExpectation::ChecksumExpectation: _md5 should be 16 bytes long!");
-    copy(begin(_md5), end(_md5), begin(md5.buf));
-}
-
 CopyingJob::CopyingJob(vector<VFSListingItem> _source_items,
                        const string &_dest_path,
                        const VFSHostPtr &_dest_host,
@@ -1713,9 +1704,6 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation& _
     uint64_t buf_sz = m_BufferSize;
 
     while( szleft > 0 ) {
-        // check user decided to pause operation or discard it
-//        if( CheckPauseOrStop() )
-//            return StepResult::Stop;
         if( BlockIfPaused(); IsStopped() )
             return StepResult::Stop;
 
@@ -1733,10 +1721,7 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation& _
     }
     file->Close();
 
-    auto md5 = hash.Final();
-    bool checksum_match = equal(begin(md5), end(md5), begin(_exp.md5.buf));
-    _matched = checksum_match;
-    
+    _matched = _exp == hash.Final();
     return StepResult::Ok;
 }
 

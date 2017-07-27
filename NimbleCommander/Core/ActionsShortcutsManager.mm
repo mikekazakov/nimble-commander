@@ -251,7 +251,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.view.sorting_by_size",                           u8"^⌘4"     }, // ctrl+cmd+4
     {"menu.view.sorting_by_creation_time",                  u8"^⌘5"     }, // ctrl+cmd+5
     {"menu.view.sorting_by_added_time",                     u8"^⌘6"     }, // ctrl+cmd+6
-    {"menu.view.sorting_view_hidden",                       u8"⇧⌥⌘i"    }, // shift+alt+cmd+i
+    {"menu.view.sorting_view_hidden",                       u8"⇧⌘."     }, // shift+cmd+.
     {"menu.view.sorting_separate_folders",                  u8""        },
     {"menu.view.sorting_extensionless_folders",             u8""        },
     {"menu.view.sorting_case_sensitive",                    u8""        },

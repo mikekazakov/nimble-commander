@@ -38,29 +38,39 @@ struct CopyingJobCallbacks
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
     { return CantOpenDestinationFileResolution::Stop; };
     
-    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
-    function<int(int _vfs_error, string _path)> m_OnSourceFileReadError
-        = [](int _vfs_error, string _path){ return FileCopyOperationDR::Stop; };
+    enum class SourceFileReadErrorResolution { Stop, Skip };
+    function<SourceFileReadErrorResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
+    m_OnSourceFileReadError
+    = [](int _vfs_error, const string &_path, VFSHost &_vfs)
+    { return SourceFileReadErrorResolution::Stop; };
 
-    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
-    function<int(int _vfs_error, string _path)> m_OnDestinationFileReadError
-        = [](int _vfs_error, string _path){ return FileCopyOperationDR::Stop; };
+    enum class DestinationFileReadErrorResolution { Stop, Skip };
+    function<DestinationFileReadErrorResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
+    m_OnDestinationFileReadError
+    = [](int _vfs_error, const string &_path, VFSHost &_vfs)
+    { return DestinationFileReadErrorResolution::Stop; };
     
-    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
-    function<int(int _vfs_error, string _path)> m_OnDestinationFileWriteError
-        = [](int _vfs_error, string _path){ return FileCopyOperationDR::Stop; };
+    enum class DestinationFileWriteErrorResolution { Stop, Skip};
+    function<DestinationFileWriteErrorResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
+    m_OnDestinationFileWriteError
+    = [](int _vfs_error, const string &_path, VFSHost &_vfs)
+    { return DestinationFileWriteErrorResolution::Stop; };
 
-    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Stop
-    function<int(int _vfs_error, string _path)> m_OnCantCreateDestinationRootDir
-        = [](int _vfs_error, string _path){ return FileCopyOperationDR::Stop; };
+    function<void(int _vfs_error, const string &_path, VFSHost &_vfs)>
+    m_OnCantCreateDestinationRootDir
+    = [](int _vfs_error, const string &_path, VFSHost &_vfs)
+    {};
 
-    // expect: FileCopyOperationDR::Retry, FileCopyOperationDR::Skip, FileCopyOperationDR::SkipAll, FileCopyOperationDR::Stop
-    function<int(int _vfs_error, string _path)> m_OnCantCreateDestinationDir
-        = [](int _vfs_error, string _path){ return FileCopyOperationDR::Stop; };
+    enum class CantCreateDestinationDirResolution { Stop, Skip };
+    function<CantCreateDestinationDirResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
+    m_OnCantCreateDestinationDir
+    = [](int _vfs_error, const string &_path, VFSHost &_vfs)
+    { return CantCreateDestinationDirResolution::Stop; };
     
-    // expects: FileCopyOperationDR::Continue
-    function<int(string _path)> m_OnFileVerificationFailed
-        = [](string _path){ return FileCopyOperationDR::Continue; };
+    function<void(const string &_path, VFSHost &_vfs)>
+    m_OnFileVerificationFailed
+    = [](const string &_path, VFSHost &_vfs)
+    {};
 };
 
 class CopyingJob : public Job, public CopyingJobCallbacks
@@ -92,7 +102,6 @@ public:
     JobStage Stage() const noexcept;
     bool IsSingleInitialItemProcessing() const noexcept;
     bool IsSingleScannedItemProcessing() const noexcept;
-//    void ToggleSkipAll();
     void ToggleExistBehaviorSkipAll();
     void ToggleExistBehaviorOverwriteAll();
     void ToggleExistBehaviorOverwriteOld();
@@ -111,11 +120,8 @@ private:
         // user asked us to stop
         Stop,
         
-        // an error has occured, but current step was skipped since user asked us to do so or if SkipAll flag is on
+        // an error has occured, but current step was skipped since user asked us to do so
         Skipped,
-        
-        // an error has occured, but current step was skipped since user asked us to do so and to skip any other errors
-        SkipAll
     };
     
     enum class PathCompositionType
@@ -205,7 +211,6 @@ private:
     const DispatchGroup                         m_IOGroup;
     bool                                        m_IsSingleInitialItemProcessing = false;
     bool                                        m_IsSingleScannedItemProcessing = false;
-//    bool                                        m_SkipAll       = false;
     JobStage                                    m_Stage         = JobStage::None;
     
     FileCopyOperationOptions                    m_Options;

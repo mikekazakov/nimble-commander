@@ -25,16 +25,31 @@ Copying::Copying(vector<VFSListingItem> _source_files,
     [this](const struct stat &_src, const struct stat &_dst, const string &_path) {
         return (Callbacks::RenameDestExistsResolution)OnRenameDestExists(_src, _dst, _path);
     };
-    m_Job->m_OnCantAccessSourceItem =
-    [this](int _vfs_error, const string &_path, VFSHost &_vfs) {
-        return (Callbacks::CantAccessSourceItemResolution)OnCantAccessSourceItem(_vfs_error, _path, _vfs);
+    m_Job->m_OnCantAccessSourceItem = [this](int _1, const string &_2, VFSHost &_3) {
+        return (Callbacks::CantAccessSourceItemResolution)OnCantAccessSourceItem(_1, _2, _3);
     };
-    m_Job->m_OnCantOpenDestinationFile =
-    [this](int _1, const string &_2, VFSHost &_3) {
+    m_Job->m_OnCantOpenDestinationFile = [this](int _1, const string &_2, VFSHost &_3) {
         return (Callbacks::CantOpenDestinationFileResolution)OnCantOpenDestinationFile(_1, _2, _3);
     };
+    m_Job->m_OnSourceFileReadError = [this](int _1, const string &_2, VFSHost &_3) {
+        return (Callbacks::SourceFileReadErrorResolution)OnSourceFileReadError(_1, _2, _3);
+    };
+    m_Job->m_OnDestinationFileReadError = [this](int _1, const string &_2, VFSHost &_3) {
+        return (Callbacks::DestinationFileReadErrorResolution)OnDestinationFileReadError(_1, _2, _3);
+    };
+    m_Job->m_OnDestinationFileWriteError = [this](int _1, const string &_2, VFSHost &_3) {
+        return (Callbacks::DestinationFileWriteErrorResolution)OnDestinationFileWriteError(_1, _2, _3);
+    };
+    m_Job->m_OnCantCreateDestinationRootDir = [this](int _1, const string &_2, VFSHost &_3) {
+        OnCantCreateDestinationRootDir(_1, _2, _3);
+    };
+    m_Job->m_OnCantCreateDestinationDir = [this](int _1, const string &_2, VFSHost &_3) {
+        return (Callbacks::CantCreateDestinationDirResolution)OnCantCreateDestinationDir(_1, _2, _3);
+    };
+    m_Job->m_OnFileVerificationFailed = [this](const string &_1, VFSHost &_2) {
+        OnFileVerificationFailed(_1, _2);
+    };
 }
-
 
 Copying::~Copying()
 {
@@ -208,6 +223,120 @@ int Copying::OnCantOpenDestinationFile(int _err, const string &_path, VFSHost &_
         return (int)Callbacks::CantOpenDestinationFileResolution::Stop;
 }
 
+int Copying::OnSourceFileReadError(int _err, const string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll )
+        return (int)Callbacks::SourceFileReadErrorResolution::Skip;
+    if( !IsInteractive() )
+        return (int)Callbacks::SourceFileReadErrorResolution::Stop;
+    
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to read a source file",
+                                                    _err,
+                                                    _path,
+                                                    _vfs.shared_from_this(),
+                                                    ctx);
+    WaitForDialogResponse(ctx);
 
+    if( ctx->response == NSModalResponseSkip )
+        return (int)Callbacks::SourceFileReadErrorResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return (int)Callbacks::SourceFileReadErrorResolution::Skip;
+    }
+    else
+        return (int)Callbacks::SourceFileReadErrorResolution::Stop;
+}
+
+int Copying::OnDestinationFileReadError(int _err, const string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll )
+        return (int)Callbacks::DestinationFileReadErrorResolution::Skip;
+    if( !IsInteractive() )
+        return (int)Callbacks::DestinationFileReadErrorResolution::Stop;
+    
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to read a destination file",
+                                                    _err,
+                                                    _path,
+                                                    _vfs.shared_from_this(),
+                                                    ctx);
+    WaitForDialogResponse(ctx);
+
+    if( ctx->response == NSModalResponseSkip )
+        return (int)Callbacks::DestinationFileReadErrorResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return (int)Callbacks::DestinationFileReadErrorResolution::Skip;
+    }
+    else
+        return (int)Callbacks::DestinationFileReadErrorResolution::Stop;
+}
+
+int Copying::OnDestinationFileWriteError(int _err, const string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll )
+        return (int)Callbacks::DestinationFileWriteErrorResolution::Skip;
+    if( !IsInteractive() )
+        return (int)Callbacks::DestinationFileWriteErrorResolution::Stop;
+    
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to write a file",
+                                                    _err,
+                                                    _path,
+                                                    _vfs.shared_from_this(),
+                                                    ctx);
+    WaitForDialogResponse(ctx);
+
+    if( ctx->response == NSModalResponseSkip )
+        return (int)Callbacks::DestinationFileWriteErrorResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return (int)Callbacks::DestinationFileWriteErrorResolution::Skip;
+    }
+    else
+        return (int)Callbacks::DestinationFileWriteErrorResolution::Stop;
+}
+
+void Copying::OnCantCreateDestinationRootDir(int _vfs_error, const string &_path, VFSHost &_vfs)
+{
+    ReportHaltReason(@"Failed to create a directory", _vfs_error, _path, _vfs);
+}
+
+int Copying::OnCantCreateDestinationDir(int _vfs_error, const string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll )
+        return (int)Callbacks::CantCreateDestinationDirResolution::Skip;
+    if( !IsInteractive() )
+        return (int)Callbacks::CantCreateDestinationDirResolution::Stop;
+    
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to create a directory",
+                                                    _vfs_error,
+                                                    _path,
+                                                    _vfs.shared_from_this(),
+                                                    ctx);
+    WaitForDialogResponse(ctx);
+
+    if( ctx->response == NSModalResponseSkip )
+        return (int)Callbacks::CantCreateDestinationDirResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return (int)Callbacks::CantCreateDestinationDirResolution::Skip;
+    }
+    else
+        return (int)Callbacks::CantCreateDestinationDirResolution::Stop;
+}
+
+void Copying::OnFileVerificationFailed(const string &_path, VFSHost &_vfs)
+{
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialogWithContinueButton(@"Checksum verification failed",
+                                        VFSError::FromErrno(EIO),
+                                        _path,
+                                        _vfs.shared_from_this(),
+                                        ctx);
+    WaitForDialogResponse(ctx);
+}
 
 }

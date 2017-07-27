@@ -222,6 +222,28 @@ void Operation::ShowGenericDialogWithAbortSkipAndSkipAllButtons
     Show(sheet.window, _ctx);
 }
 
+void Operation::ShowGenericDialogWithContinueButton(NSString *_message,
+                                                    int _err,
+                                                    const string &_path,
+                                                    shared_ptr<VFSHost> _vfs,
+                                                    shared_ptr<AsyncDialogResponse> _ctx)
+{
+    if( !dispatch_is_main_queue() )
+        return dispatch_to_main_queue([=]{
+            ShowGenericDialogWithContinueButton(_message, _err, _path, _vfs, _ctx);
+        });
+    
+    const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
+
+    sheet.style = GenericErrorDialogStyle::Caution;
+    sheet.message = _message;
+    sheet.path = [NSString stringWithUTF8String:_path.c_str()];
+    sheet.errorNo = _err;
+    [sheet addButtonWithTitle:@"Continue" responseCode:NSModalResponseContinue];
+    
+    Show(sheet.window, _ctx);
+}
+
 void Operation::WaitForDialogResponse( shared_ptr<AsyncDialogResponse> _response )
 {
     dispatch_assert_background_queue();

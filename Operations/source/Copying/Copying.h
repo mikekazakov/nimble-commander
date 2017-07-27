@@ -29,6 +29,12 @@ private:
                             shared_ptr<AsyncDialogResponse> _ctx);
     int OnCantAccessSourceItem(int _vfs_error, const string &_path, VFSHost &_vfs);
     int OnCantOpenDestinationFile(int _vfs_error, const string &_path, VFSHost &_vfs);
+    int OnSourceFileReadError(int _vfs_error, const string &_path, VFSHost &_vfs);
+    int OnDestinationFileReadError(int _vfs_error, const string &_path, VFSHost &_vfs);
+    int OnDestinationFileWriteError(int _vfs_error, const string &_path, VFSHost &_vfs);
+    void OnCantCreateDestinationRootDir(int _vfs_error, const string &_path, VFSHost &_vfs);
+    int OnCantCreateDestinationDir(int _vfs_error, const string &_path, VFSHost &_vfs);
+    void OnFileVerificationFailed(const string &_path, VFSHost &_vfs);
 
     unique_ptr<CopyingJob> m_Job;
     FileCopyOperationOptions::ExistBehavior m_ExistBehavior;

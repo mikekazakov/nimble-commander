@@ -26,9 +26,12 @@ public:
     ObservationTicket Observe( uint64_t _notification_mask, function<void()> _callback );
     void ObserveUnticketed( uint64_t _notification_mask, function<void()> _callback );
     
+    bool Empty() const;
     int TotalOperationsCount() const;
     int RunningOperationsCount() const;
     vector<shared_ptr<Operation>> Operations() const;
+
+    void StopAndWaitForShutdown();
 
     bool IsInteractive() const;
     void SetDialogCallback(function<void(NSWindow*, function<void(NSModalResponse)>)> _callback);
@@ -42,7 +45,7 @@ private:
     void StartPendingOperations();
     
     vector<shared_ptr<Operation>>           m_RunningOperations;
-    deque<shared_ptr<Operation>>            m_PendingOperataions;
+    deque<shared_ptr<Operation>>            m_PendingOperations;
     mutable mutex                           m_Lock;
     
     function<void(NSWindow *dialog, function<void(NSModalResponse response)>)> m_DialogPresentation;

@@ -1,7 +1,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSMenu+Hierarchical.h>
-#include <NimbleCommander/Operations/Copy/MassCopySheetController.h>
-#include <NimbleCommander/Operations/OperationsController.h>
+//#include <NimbleCommander/Operations/Copy/MassCopySheetController.h>
+//#include <NimbleCommander/Operations/OperationsController.h>
 #include "MainWindowFilePanelState+Menu.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
@@ -17,6 +17,7 @@
 
 #include "../MainWindowController.h"
 #include <Operations/Copying.h>
+#include <Operations/CopyingDialog.h>
 
 using namespace nc::panel;
 
@@ -214,13 +215,15 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     
     auto update_both_panels = self.refreshBothCurrentControllersLambda2;
     
-    auto mc = [[MassCopySheetController alloc] initWithItems:entries
-                                                   sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
-                                             sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
-                                          initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
-                                              destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:MakeDefaultFileCopyOptions()];
-    [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+    auto mc = [[NCOpsCopyingDialog alloc] initWithItems:entries
+                                              sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
+                                        sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
+                                     initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
+                                         destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
+                                       operationOptions:MakeDefaultFileCopyOptions()];
+    mc.allowVerification = ActivationManager::Instance().HasCopyVerification();
+    [self.mainWindowController beginSheet:mc.window
+                        completionHandler:^(NSModalResponse returnCode){
         if( returnCode != NSModalResponseOK )
             return;
         
@@ -249,13 +252,15 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     
     auto update_both_panels = self.refreshBothCurrentControllersLambda2;
         
-    auto mc = [[MassCopySheetController alloc] initWithItems:entries
-                                                   sourceVFS:item.Host()
-                                             sourceDirectory:item.Directory()
-                                          initialDestination:item.Filename()
-                                              destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:MakeDefaultFileCopyOptions()];
-    [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+    auto mc = [[NCOpsCopyingDialog alloc] initWithItems:entries
+                                              sourceVFS:item.Host()
+                                        sourceDirectory:item.Directory()
+                                     initialDestination:item.Filename()
+                                         destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
+                                       operationOptions:MakeDefaultFileCopyOptions()];
+    mc.allowVerification = ActivationManager::Instance().HasCopyVerification();
+    [self.mainWindowController beginSheet:mc.window
+                        completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;
         
@@ -284,13 +289,15 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     
     auto update_both_panels = self.refreshBothCurrentControllersLambda2;
         
-    auto mc = [[MassCopySheetController alloc] initWithItems:entries
-                                                   sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
-                                             sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
-                                          initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
-                                              destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:MakeDefaultFileMoveOptions()];
-    [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+    auto mc = [[NCOpsCopyingDialog alloc] initWithItems:entries
+                                              sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
+                                        sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
+                                     initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
+                                         destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
+                                       operationOptions:MakeDefaultFileMoveOptions()];
+    mc.allowVerification = ActivationManager::Instance().HasCopyVerification();
+    [self.mainWindowController beginSheet:mc.window
+                        completionHandler:^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;
         
@@ -318,13 +325,15 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     auto entries = vector<VFSListingItem>({item});
     auto update_both_panels = self.refreshBothCurrentControllersLambda2;
     __weak auto cur = self.activePanelController;
-    auto mc = [[MassCopySheetController alloc] initWithItems:entries
-                                                   sourceVFS:item.Host()
-                                             sourceDirectory:item.Directory()
-                                          initialDestination:item.Filename()
-                                              destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                            operationOptions:MakeDefaultFileMoveOptions()];
-    [mc beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
+    auto mc = [[NCOpsCopyingDialog alloc] initWithItems:entries
+                                              sourceVFS:item.Host()
+                                        sourceDirectory:item.Directory()
+                                     initialDestination:item.Filename()
+                                         destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
+                                       operationOptions:MakeDefaultFileMoveOptions()];
+    mc.allowVerification = ActivationManager::Instance().HasCopyVerification();
+    [self.mainWindowController beginSheet:mc.window
+                        completionHandler:^(NSModalResponse returnCode){
         if( returnCode != NSModalResponseOK )
             return;
         

@@ -50,7 +50,7 @@ void Pool::Enqueue( shared_ptr<Operation> _operation )
     });
 
     LOCK_GUARD(m_Lock)
-        m_PendingOperataions.push_back( _operation );
+        m_PendingOperations.push_back( _operation );
     
     FireObservers( NotifyAboutAddition );
     StartPendingOperations();
@@ -64,7 +64,7 @@ void Pool::OperationDidFinish( const shared_ptr<Operation> &_operation )
 {
     LOCK_GUARD(m_Lock) {
         erase_from(m_RunningOperations, _operation);
-        erase_from(m_PendingOperataions, _operation);
+        erase_from(m_PendingOperations, _operation);
     }
     FireObservers( NotifyAboutRemoval );
     StartPendingOperations();
@@ -77,9 +77,9 @@ void Pool::StartPendingOperations()
     LOCK_GUARD(m_Lock) {
         const auto running_now = m_RunningOperations.size();
         while( running_now + to_start.size() < m_ConcurrencyPerPool &&
-               !m_PendingOperataions.empty() ) {
-            const auto op = m_PendingOperataions.front();
-            m_PendingOperataions.pop_front();
+               !m_PendingOperations.empty() ) {
+            const auto op = m_PendingOperations.front();
+            m_PendingOperations.pop_front();
             to_start.emplace_back( op  );
             m_RunningOperations.emplace_back( op );
         }
@@ -108,14 +108,14 @@ int Pool::RunningOperationsCount() const
 int Pool::TotalOperationsCount() const
 {
     LOCK_GUARD(m_Lock)
-        return (int)m_RunningOperations.size() + (int)m_PendingOperataions.size();
+        return (int)m_RunningOperations.size() + (int)m_PendingOperations.size();
 }
 
 vector<shared_ptr<Operation>> Pool::Operations() const
 {
     LOCK_GUARD(m_Lock) {
         auto v = m_RunningOperations;
-        v.insert( end(v), begin(m_PendingOperataions), end(m_PendingOperataions) );
+        v.insert( end(v), begin(m_PendingOperations), end(m_PendingOperations) );
         return v;
     }
 }
@@ -147,6 +147,25 @@ int Pool::ConcurrencyPerPool()
 void Pool::SetConcurrencyPerPool( int _maximum_current_operations )
 {
     m_ConcurrencyPerPool = _maximum_current_operations;
+}
+
+bool Pool::Empty() const
+{
+    LOCK_GUARD(m_Lock)
+        return m_RunningOperations.empty() && m_PendingOperations.empty();
+}
+
+void Pool::StopAndWaitForShutdown()
+{
+    LOCK_GUARD(m_Lock) {
+        for( auto &o: m_PendingOperations )
+            o->Stop();
+        for( auto &o: m_RunningOperations )
+            o->Stop();
+    }
+
+    while( !Empty() )
+        this_thread::sleep_for(10ms);
 }
 
 }

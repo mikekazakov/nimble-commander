@@ -11,7 +11,7 @@
 
 WorkspaceIconsCache& WorkspaceIconsCache::Instance()
 {
-    static auto inst = make_unique<WorkspaceIconsCache>();
+    static auto inst = new WorkspaceIconsCache;
     return *inst;
 }
 

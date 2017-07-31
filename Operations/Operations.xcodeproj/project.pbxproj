@@ -27,6 +27,12 @@
 		CF4BCF0E1F1EF579005F8414 /* FileAlreadyExistDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF0B1F1EF579005F8414 /* FileAlreadyExistDialog.mm */; };
 		CF4BCF3F1F29A326005F8414 /* ChecksumExpectation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF3D1F29A326005F8414 /* ChecksumExpectation.cpp */; };
 		CF4BCF401F29A326005F8414 /* ChecksumExpectation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF3E1F29A326005F8414 /* ChecksumExpectation.h */; };
+		CF4BCF511F2F07DB005F8414 /* CopyingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4BCF4C1F2F07DB005F8414 /* CopyingDialog.xib */; };
+		CF4BCF521F2F07DB005F8414 /* CopyingDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF4E1F2F07DB005F8414 /* CopyingDialog.h */; };
+		CF4BCF531F2F07DB005F8414 /* CopyingDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF4F1F2F07DB005F8414 /* CopyingDialog.mm */; };
+		CF4BCF541F2F07DB005F8414 /* CopyingDialogDisclosedView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4BCF501F2F07DB005F8414 /* CopyingDialogDisclosedView.xib */; };
+		CF4BCF581F2F1508005F8414 /* DisclosureViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF561F2F1508005F8414 /* DisclosureViewController.h */; };
+		CF4BCF591F2F1508005F8414 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */; };
 		CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084D61EF7CC770072F0F6 /* Pool.h */; };
 		CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7084D71EF7CC770072F0F6 /* Pool.mm */; };
 		CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DA1EF7CCB00072F0F6 /* Pool.h */; };
@@ -175,6 +181,13 @@
 		CF4BCF0F1F1EF581005F8414 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Copying/ru.lproj/FileAlreadyExistDialog.strings; sourceTree = "<group>"; };
 		CF4BCF3D1F29A326005F8414 /* ChecksumExpectation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ChecksumExpectation.cpp; path = source/Copying/ChecksumExpectation.cpp; sourceTree = "<group>"; };
 		CF4BCF3E1F29A326005F8414 /* ChecksumExpectation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChecksumExpectation.h; path = source/Copying/ChecksumExpectation.h; sourceTree = "<group>"; };
+		CF4BCF4D1F2F07DB005F8414 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = source/Copying/Base.lproj/CopyingDialog.xib; sourceTree = "<group>"; };
+		CF4BCF4E1F2F07DB005F8414 /* CopyingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingDialog.h; path = source/Copying/CopyingDialog.h; sourceTree = "<group>"; };
+		CF4BCF4F1F2F07DB005F8414 /* CopyingDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyingDialog.mm; path = source/Copying/CopyingDialog.mm; sourceTree = "<group>"; };
+		CF4BCF501F2F07DB005F8414 /* CopyingDialogDisclosedView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CopyingDialogDisclosedView.xib; path = source/Copying/CopyingDialogDisclosedView.xib; sourceTree = "<group>"; };
+		CF4BCF551F2F07E2005F8414 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Copying/ru.lproj/CopyingDialog.strings; sourceTree = "<group>"; };
+		CF4BCF561F2F1508005F8414 /* DisclosureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisclosureViewController.h; path = source/Copying/DisclosureViewController.h; sourceTree = "<group>"; };
+		CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DisclosureViewController.m; path = source/Copying/DisclosureViewController.m; sourceTree = "<group>"; };
 		CF7084D61EF7CC770072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = source/Pool.h; sourceTree = "<group>"; };
 		CF7084D71EF7CC770072F0F6 /* Pool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pool.mm; path = source/Pool.mm; sourceTree = "<group>"; };
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
@@ -335,14 +348,20 @@
 			children = (
 				CF4BCF3D1F29A326005F8414 /* ChecksumExpectation.cpp */,
 				CF4BCF3E1F29A326005F8414 /* ChecksumExpectation.h */,
-				CF4BCF081F1EF579005F8414 /* FileAlreadyExistDialog.xib */,
-				CF4BCF0A1F1EF579005F8414 /* FileAlreadyExistDialog.h */,
-				CF4BCF0B1F1EF579005F8414 /* FileAlreadyExistDialog.mm */,
 				CF4BCEED1F1DA207005F8414 /* Copying.h */,
 				CF4BCEEE1F1DA207005F8414 /* Copying.mm */,
+				CF4BCF4E1F2F07DB005F8414 /* CopyingDialog.h */,
+				CF4BCF4F1F2F07DB005F8414 /* CopyingDialog.mm */,
+				CF4BCF4C1F2F07DB005F8414 /* CopyingDialog.xib */,
+				CF4BCF501F2F07DB005F8414 /* CopyingDialogDisclosedView.xib */,
 				CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */,
 				CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */,
 				CF4BCEE31F1D9CAA005F8414 /* DialogResults.h */,
+				CF4BCF561F2F1508005F8414 /* DisclosureViewController.h */,
+				CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */,
+				CF4BCF0A1F1EF579005F8414 /* FileAlreadyExistDialog.h */,
+				CF4BCF0B1F1EF579005F8414 /* FileAlreadyExistDialog.mm */,
+				CF4BCF081F1EF579005F8414 /* FileAlreadyExistDialog.xib */,
 				CF4BCF001F1EEFCE005F8414 /* NativeFSHelpers.cpp */,
 				CF4BCF011F1EEFCE005F8414 /* NativeFSHelpers.h */,
 				CF4BCEE71F1D9CAA005F8414 /* Options.h */,
@@ -643,6 +662,7 @@
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
 				CFC4F9D41F14C4030000B3EE /* AttrsChangingJob.h in Headers */,
 				CF4BCEF81F1DA5AF005F8414 /* CopyingOptions.h in Headers */,
+				CF4BCF581F2F1508005F8414 /* DisclosureViewController.h in Headers */,
 				CFC4F97F1F0DEC280000B3EE /* BatchRenamingDialog.h in Headers */,
 				CFF53B7A1EDEA83900F567C4 /* Job.h in Headers */,
 				CFC4F8DD1EFCC0040000B3EE /* StatisticsFormatter.h in Headers */,
@@ -652,6 +672,7 @@
 				CFC4F9961F0F22900000B3EE /* BatchRenamingScheme.h in Headers */,
 				CF4BCF051F1EF0F2005F8414 /* SourceItems.h in Headers */,
 				CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */,
+				CF4BCF521F2F07DB005F8414 /* CopyingDialog.h in Headers */,
 				CFC4F9701F0CEFB60000B3EE /* BatchRenamingJob.h in Headers */,
 				CFC4F96D1F0CEFB60000B3EE /* BatchRenaming.h in Headers */,
 				CFC4F91E1F09D9740000B3EE /* DeletionJob.h in Headers */,
@@ -759,6 +780,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF4BCF0C1F1EF579005F8414 /* FileAlreadyExistDialog.xib in Resources */,
+				CF4BCF511F2F07DB005F8414 /* CopyingDialog.xib in Resources */,
 				CFC4F9B61F10890B0000B3EE /* CreateSymlinkDialog.xib in Resources */,
 				CFC4F9C31F10B06F0000B3EE /* CreateHardlinkDialog.xib in Resources */,
 				CFC4F8CC1EFA05DA0000B3EE /* PoolViewController.xib in Resources */,
@@ -771,6 +793,7 @@
 				CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */,
 				CFC4F9501F0CA84D0000B3EE /* DirectoryCreationDialog.xib in Resources */,
 				CFC4F97E1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.xib in Resources */,
+				CF4BCF541F2F07DB005F8414 /* CopyingDialogDisclosedView.xib in Resources */,
 				CFC4F9EB1F15BA800000B3EE /* AttrsChangingDialog.xib in Resources */,
 				CFC4F9001F04B0780000B3EE /* Localizable.strings in Resources */,
 				CFC4F8FE1F04AF2B0000B3EE /* Localizable.stringsdict in Resources */,
@@ -803,6 +826,7 @@
 				CFC4F9BC1F10890B0000B3EE /* CreateSymlinkDialog.mm in Sources */,
 				CFC4F8EF1F0224710000B3EE /* AsyncDialogResponse.cpp in Sources */,
 				CFC4F95E1F0CB07A0000B3EE /* DeletionDialog.mm in Sources */,
+				CF4BCF531F2F07DB005F8414 /* CopyingDialog.mm in Sources */,
 				CFC4F9D31F14C4030000B3EE /* AttrsChangingJob.cpp in Sources */,
 				CF4BCF021F1EEFCE005F8414 /* NativeFSHelpers.cpp in Sources */,
 				CFC4F9801F0DEC280000B3EE /* BatchRenamingDialog.mm in Sources */,
@@ -813,6 +837,7 @@
 				CFC4F9C21F10B06C0000B3EE /* CreateHardlinkDialog.mm in Sources */,
 				CFC4F9651F0CC66E0000B3EE /* BatchRenamingScheme.mm in Sources */,
 				CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */,
+				CF4BCF591F2F1508005F8414 /* DisclosureViewController.m in Sources */,
 				CFC4F8DE1EFCC0040000B3EE /* StatisticsFormatter.mm in Sources */,
 				CFC4F8EA1F00E5D30000B3EE /* HaltReasonDialog.mm in Sources */,
 				CFC4F8B41EF7E3860000B3EE /* CompressionJob.cpp in Sources */,
@@ -867,6 +892,15 @@
 				CF4BCF0F1F1EF581005F8414 /* ru */,
 			);
 			name = FileAlreadyExistDialog.xib;
+			sourceTree = "<group>";
+		};
+		CF4BCF4C1F2F07DB005F8414 /* CopyingDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF4BCF4D1F2F07DB005F8414 /* Base */,
+				CF4BCF551F2F07E2005F8414 /* ru */,
+			);
+			name = CopyingDialog.xib;
 			sourceTree = "<group>";
 		};
 		CFC4F94A1F0CA84D0000B3EE /* DirectoryCreationDialog.xib */ = {

@@ -22,7 +22,7 @@ void Job::Perform()
 
 void Job::Run()
 {
-    if( m_IsRunning )
+    if( m_IsRunning || m_IsStopped )
         return;
     
     m_IsRunning = true;

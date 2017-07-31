@@ -43,6 +43,7 @@
 #include <NimbleCommander/Viewer/InternalViewerWindowController.h>
 #include <NimbleCommander/GeneralUI/TrialWindowController.h>
 #include <NimbleCommander/GeneralUI/VFSListWindowController.h>
+#include <Operations/Pool.h>
 #include "AppDelegate.h"
 #include "Config.h"
 #include "AppDelegate+Migration.h"
@@ -522,8 +523,8 @@ static AppDelegate *g_Me = nil;
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
 {
     bool has_running_ops = false;
-    for (MainWindowController *wincont: m_MainWindows)
-        if(/*wincont.OperationsController.OperationsCount > 0*/false) {
+    for( const auto wincont: m_MainWindows )
+        if( !wincont.operationsPool.Empty() ) {
             has_running_ops = true;
             break;
         }
@@ -532,7 +533,7 @@ static AppDelegate *g_Me = nil;
             break;
         }
     
-    if (has_running_ops) {
+    if( has_running_ops ) {
         Alert *alert = [[Alert alloc] init];
         alert.messageText = NSLocalizedString(@"The application has running operations. Do you want to stop all operations and quit?", "Asking user for quitting app with activity");
         [alert addButtonWithTitle:NSLocalizedString(@"Stop and Quit", "Asking user for quitting app with activity - confirmation")];
@@ -540,10 +541,11 @@ static AppDelegate *g_Me = nil;
         NSInteger result = [alert runModal];
         
         // If cancel is pressed.
-        if (result == NSAlertSecondButtonReturn) return NSTerminateCancel;
+        if( result == NSAlertSecondButtonReturn )
+            return NSTerminateCancel;
         
-        for (MainWindowController *wincont : m_MainWindows) {
-//            [wincont.OperationsController Stop];
+        for( const auto wincont : m_MainWindows ) {
+            wincont.operationsPool.StopAndWaitForShutdown();
             [wincont.terminalState Terminate];
         }
     }

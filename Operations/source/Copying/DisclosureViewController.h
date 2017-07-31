@@ -47,6 +47,8 @@
 
 //@import AppKit;
 
+#include <Cocoa/Cocoa.h>
+
 @interface DisclosureViewController : NSViewController
 
 @property IBOutlet NSView *disclosedView;

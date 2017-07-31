@@ -6,7 +6,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="MassCopySheetController">
+        <customObject id="-2" userLabel="File's Owner" customClass="NCOpsCopyingDialog">
             <connections>
                 <outlet property="ButtonsPart" destination="vpz-Xu-YxL" id="d68-FX-lUt"/>
                 <outlet property="CopyButton" destination="16" id="56"/>
@@ -64,7 +64,7 @@
                 <constraint firstItem="12" firstAttribute="top" secondItem="oVI-wD-asY" secondAttribute="top" constant="20" symbolic="YES" id="vPR-jX-cCV"/>
                 <constraint firstItem="5" firstAttribute="top" secondItem="12" secondAttribute="bottom" constant="8" symbolic="YES" id="wya-Y0-uaF"/>
             </constraints>
-            <point key="canvasLocation" x="-291" y="600.5"/>
+            <point key="canvasLocation" x="-418" y="480"/>
         </customView>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView translatesAutoresizingMaskIntoConstraints="NO" id="vpz-Xu-YxL" userLabel="Buttons">
@@ -160,7 +160,7 @@ Gw
             <point key="canvasLocation" x="19" y="268"/>
         </button>
         <viewController title="Advanced options" nibName="MassCopySheetDisclosureViewController" id="jQo-c7-41i" customClass="DisclosureViewController"/>
-        <viewController title="Advanced options" nibName="MassCopySheetDisclosureViewController" id="E1e-vG-fVc" customClass="DisclosureViewController">
+        <viewController title="Advanced options" nibName="CopyingDialogDisclosedView" id="E1e-vG-fVc" customClass="DisclosureViewController">
             <connections>
                 <outlet property="disclosedView" destination="4Xp-mm-USZ" id="h1o-T6-hK4"/>
             </connections>

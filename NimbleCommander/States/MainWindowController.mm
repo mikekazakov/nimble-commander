@@ -22,9 +22,8 @@
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
-
-
 #include <Operations/Pool.h>
+#include <Operations/AggregateProgressTracker.h>
 
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";
@@ -91,7 +90,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 //            }];
 //        }
     });
-    
+    AppDelegate.me.operationsProgressTracker.AddPool(*m_OperationsPool);
     
     m_ToolbarVisible = GlobalConfig().GetBool( g_ConfigShowToolbar );
     

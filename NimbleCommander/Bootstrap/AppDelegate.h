@@ -12,6 +12,10 @@ class VFSHost;
 class FavoriteLocationsStorage;
 class NetworkConnectionsManager;
 
+namespace nc::ops {
+    class AggregateProgressTracker;
+}
+
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
 - (void) addMainWindow:(MainWindowController*) _wnd;
@@ -35,12 +39,6 @@ class NetworkConnectionsManager;
  * Equal to (AppDelegate*) ((NSApplication*)NSApp).delegate.
  */
 + (AppDelegate*) me;
-
-/**
- * Will set a progress indicator at the bottom of app icon to a specified value in [0; 1].
- * Any value below 0.0 or above 1.0 will cause progress indicator to disappear.
- */
-@property (nonatomic) double progress;
 
 /**
  * Signals that applications runs in unit testing environment.
@@ -80,5 +78,7 @@ class NetworkConnectionsManager;
 @property (nonatomic, readonly) NetworkConnectionsManager &networkConnectionsManager;
 
 @property (nonatomic, readonly) AppStoreHelper *appStoreHelper;
+
+@property (nonatomic, readonly) nc::ops::AggregateProgressTracker &operationsProgressTracker;
 
 @end

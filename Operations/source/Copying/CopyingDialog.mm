@@ -92,7 +92,6 @@ static string MakeCanonicPath(string _input)
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-//    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     [self.DisclosedViewController toggleDisclosure:self];
     [self.StackView insertView:self.PathPart atIndex:0 inGravity:NSStackViewGravityTop];
     [self.StackView insertView:self.DisclosedViewController.view atIndex:0 inGravity:NSStackViewGravityBottom];
@@ -132,22 +131,17 @@ static string MakeCanonicPath(string _input)
     [self.VerifySetting selectItemWithTag:(int)m_Options.verification];
     if( !self.allowVerification )
         self.VerifySetting.enabled = false;
-    
-//    GA().PostScreenView("File Copy");
 }
 
 - (IBAction)OnCopy:(id)sender
 {
     [self validate];
     [self fillOptions];
-    
-//    [self endSheet:NSModalResponseOK];
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
 - (IBAction)OnCancel:(id)sender
 {
-//    [self endSheet:NSModalResponseCancel];
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }
 

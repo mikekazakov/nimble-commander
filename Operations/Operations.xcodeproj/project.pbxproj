@@ -33,6 +33,9 @@
 		CF4BCF541F2F07DB005F8414 /* CopyingDialogDisclosedView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4BCF501F2F07DB005F8414 /* CopyingDialogDisclosedView.xib */; };
 		CF4BCF581F2F1508005F8414 /* DisclosureViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF561F2F1508005F8414 /* DisclosureViewController.h */; };
 		CF4BCF591F2F1508005F8414 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */; };
+		CF4BCF5C1F301303005F8414 /* AggregateProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF5A1F301303005F8414 /* AggregateProgressTracker.h */; };
+		CF4BCF5D1F301303005F8414 /* AggregateProgressTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF5B1F301303005F8414 /* AggregateProgressTracker.mm */; };
+		CF4BCF5F1F30130B005F8414 /* CopyingDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF5E1F30130B005F8414 /* CopyingDialog.h */; };
 		CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084D61EF7CC770072F0F6 /* Pool.h */; };
 		CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7084D71EF7CC770072F0F6 /* Pool.mm */; };
 		CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DA1EF7CCB00072F0F6 /* Pool.h */; };
@@ -188,6 +191,9 @@
 		CF4BCF551F2F07E2005F8414 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Copying/ru.lproj/CopyingDialog.strings; sourceTree = "<group>"; };
 		CF4BCF561F2F1508005F8414 /* DisclosureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisclosureViewController.h; path = source/Copying/DisclosureViewController.h; sourceTree = "<group>"; };
 		CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DisclosureViewController.m; path = source/Copying/DisclosureViewController.m; sourceTree = "<group>"; };
+		CF4BCF5A1F301303005F8414 /* AggregateProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AggregateProgressTracker.h; path = source/AggregateProgressTracker.h; sourceTree = "<group>"; };
+		CF4BCF5B1F301303005F8414 /* AggregateProgressTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AggregateProgressTracker.mm; path = source/AggregateProgressTracker.mm; sourceTree = "<group>"; };
+		CF4BCF5E1F30130B005F8414 /* CopyingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingDialog.h; path = include/Operations/CopyingDialog.h; sourceTree = "<group>"; };
 		CF7084D61EF7CC770072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = source/Pool.h; sourceTree = "<group>"; };
 		CF7084D71EF7CC770072F0F6 /* Pool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pool.mm; path = source/Pool.mm; sourceTree = "<group>"; };
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
@@ -400,16 +406,29 @@
 		CFC4F90E1F0745170000B3EE /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				CFF53BAC1EEA840600F567C4 /* Statistics.h */,
-				CFF53BAD1EEA840600F567C4 /* Statistics.cpp */,
-				CFF53BCD1EF3913B00F567C4 /* Progress.h */,
-				CFF53BCC1EF3913B00F567C4 /* Progress.cpp */,
-				CFF53B781EDEA83900F567C4 /* Job.h */,
+				CF4BCF5A1F301303005F8414 /* AggregateProgressTracker.h */,
+				CF4BCF5B1F301303005F8414 /* AggregateProgressTracker.mm */,
+				CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.cpp */,
+				CFC4F8EC1F0224710000B3EE /* AsyncDialogResponse.h */,
+				CFC4F8E21EFCE0380000B3EE /* BriefOperationView.h */,
+				CFC4F8E31EFCE0380000B3EE /* BriefOperationView.mm */,
+				CFC4F8D51EFB5F780000B3EE /* BriefOperationViewController.h */,
+				CFC4F8D61EFB5F780000B3EE /* BriefOperationViewController.mm */,
+				CFC4F8D91EFB5FAB0000B3EE /* BriefOperationViewController.xib */,
+				CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */,
+				CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */,
+				CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */,
+				CFC4F8E61F00E5D30000B3EE /* HaltReasonDialog.h */,
+				CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */,
+				CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */,
+				CFC4F8D11EFA17070000B3EE /* Internal.h */,
+				CFC4F8D21EFA17070000B3EE /* Internal.mm */,
 				CFF53B791EDEA83900F567C4 /* Job.cpp */,
+				CFF53B781EDEA83900F567C4 /* Job.h */,
+				CFC4F9011F0617E20000B3EE /* ModalDialogResponses.h */,
 				CFF53B741EDE53E800F567C4 /* Operation.h */,
 				CFF53B751EDE53E800F567C4 /* Operation.mm */,
-				CFC4F8EC1F0224710000B3EE /* AsyncDialogResponse.h */,
-				CFC4F8ED1F0224710000B3EE /* AsyncDialogResponse.cpp */,
+				CFF53B871EE1577100F567C4 /* Operations-prefix.pch */,
 				CF7084D61EF7CC770072F0F6 /* Pool.h */,
 				CF7084D71EF7CC770072F0F6 /* Pool.mm */,
 				CFC4F8C31EFA05B00000B3EE /* PoolView.h */,
@@ -417,23 +436,12 @@
 				CFC4F8C51EFA05B00000B3EE /* PoolViewController.h */,
 				CFC4F8C61EFA05B00000B3EE /* PoolViewController.mm */,
 				CFC4F8CB1EFA05DA0000B3EE /* PoolViewController.xib */,
-				CFC4F8D11EFA17070000B3EE /* Internal.h */,
-				CFC4F8D21EFA17070000B3EE /* Internal.mm */,
-				CFC4F8E21EFCE0380000B3EE /* BriefOperationView.h */,
-				CFC4F8E31EFCE0380000B3EE /* BriefOperationView.mm */,
-				CFC4F8D51EFB5F780000B3EE /* BriefOperationViewController.h */,
-				CFC4F8D61EFB5F780000B3EE /* BriefOperationViewController.mm */,
-				CFC4F8D91EFB5FAB0000B3EE /* BriefOperationViewController.xib */,
+				CFF53BCC1EF3913B00F567C4 /* Progress.cpp */,
+				CFF53BCD1EF3913B00F567C4 /* Progress.h */,
+				CFF53BAD1EEA840600F567C4 /* Statistics.cpp */,
+				CFF53BAC1EEA840600F567C4 /* Statistics.h */,
 				CFC4F8DB1EFCC0040000B3EE /* StatisticsFormatter.h */,
 				CFC4F8DC1EFCC0040000B3EE /* StatisticsFormatter.mm */,
-				CFC4F8E61F00E5D30000B3EE /* HaltReasonDialog.h */,
-				CFC4F8E71F00E5D30000B3EE /* HaltReasonDialog.mm */,
-				CFC4F8E81F00E5D30000B3EE /* HaltReasonDialog.xib */,
-				CFC4F9011F0617E20000B3EE /* ModalDialogResponses.h */,
-				CFC4F8F01F0243D30000B3EE /* GenericErrorDialog.h */,
-				CFC4F8F11F0243D30000B3EE /* GenericErrorDialog.mm */,
-				CFC4F8F21F0243D30000B3EE /* GenericErrorDialog.xib */,
-				CFF53B871EE1577100F567C4 /* Operations-prefix.pch */,
 			);
 			name = Base;
 			sourceTree = "<group>";
@@ -573,6 +581,7 @@
 		CFF53B8A1EE24F1B00F567C4 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF4BCF5E1F30130B005F8414 /* CopyingDialog.h */,
 				CFC4F9C41F11D5A10000B3EE /* AlterSymlinkDialog.h */,
 				CF4BCEF11F1DA5AF005F8414 /* AttrsChanging.h */,
 				CF4BCEF21F1DA5AF005F8414 /* AttrsChangingDialog.h */,
@@ -631,6 +640,7 @@
 				CFC4F9B71F10890B0000B3EE /* AlterSymlinkDialog.h in Headers */,
 				CFC4F8EE1F0224710000B3EE /* AsyncDialogResponse.h in Headers */,
 				CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */,
+				CF4BCF5F1F30130B005F8414 /* CopyingDialog.h in Headers */,
 				CF4BCEF51F1DA5AF005F8414 /* AttrsChanging.h in Headers */,
 				CF4BCEF61F1DA5AF005F8414 /* AttrsChangingDialog.h in Headers */,
 				CFC4F9C71F11D5A10000B3EE /* AlterSymlinkDialog.h in Headers */,
@@ -646,6 +656,7 @@
 				CFC4F98E1F0F22850000B3EE /* LinkageJob.h in Headers */,
 				CFC4F8D01EFA07F00000B3EE /* PoolViewController.h in Headers */,
 				CFC4F9511F0CA84D0000B3EE /* DirectoryCreationDialog.h in Headers */,
+				CF4BCF5C1F301303005F8414 /* AggregateProgressTracker.h in Headers */,
 				CFC4F8D71EFB5F780000B3EE /* BriefOperationViewController.h in Headers */,
 				CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */,
 				CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */,
@@ -821,6 +832,7 @@
 				CFC4F96E1F0CEFB60000B3EE /* BatchRenaming.mm in Sources */,
 				CFC4F9091F06253D0000B3EE /* DirectoryCreation.mm in Sources */,
 				CFC4F8F41F0243D30000B3EE /* GenericErrorDialog.mm in Sources */,
+				CF4BCF5D1F301303005F8414 /* AggregateProgressTracker.mm in Sources */,
 				CFC4F9EA1F15BA800000B3EE /* AttrsChangingDialog.mm in Sources */,
 				CFC4F9521F0CA84D0000B3EE /* DirectoryCreationDialog.mm in Sources */,
 				CFC4F9BC1F10890B0000B3EE /* CreateSymlinkDialog.mm in Sources */,

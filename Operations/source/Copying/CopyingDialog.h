@@ -1,6 +1,4 @@
-//#include <Utility/SheetController.h>
 #include <VFS/VFS.h>
-
 #include "Options.h"
 
 @interface NCOpsCopyingDialog : NSWindowController<NSTextFieldDelegate>

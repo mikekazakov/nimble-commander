@@ -44,6 +44,7 @@
 #include <NimbleCommander/GeneralUI/TrialWindowController.h>
 #include <NimbleCommander/GeneralUI/VFSListWindowController.h>
 #include <Operations/Pool.h>
+#include <Operations/AggregateProgressTracker.h>
 #include "AppDelegate.h"
 #include "Config.h"
 #include "AppDelegate+Migration.h"
@@ -162,6 +163,16 @@ static void UpdateMenuItemsPlaceholders( const char *_action )
 }
 
 static AppDelegate *g_Me = nil;
+
+@interface AppDelegate()
+
+/**
+ * Will set a progress indicator at the bottom of app icon to a specified value in [0; 1].
+ * Any value below 0.0 or above 1.0 will cause progress indicator to disappear.
+ */
+@property (nonatomic) double progress;
+
+@end
 
 @implementation AppDelegate
 {
@@ -857,6 +868,18 @@ static AppDelegate *g_Me = nil;
 - (NetworkConnectionsManager&)networkConnectionsManager
 {
     return ConfigBackedNetworkConnectionsManager::Instance();
+}
+
+- (nc::ops::AggregateProgressTracker&) operationsProgressTracker
+{
+    static const auto apt = [self]{
+        const auto apt = make_shared<nc::ops::AggregateProgressTracker>();
+        apt->SetProgressCallback([](double _progress){
+            g_Me.progress = _progress;
+        });
+        return apt;
+    }();
+    return *apt.get();
 }
 
 @end

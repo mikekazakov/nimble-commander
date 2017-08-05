@@ -75,20 +75,11 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     window.delegate = self;
     window.restorationClass = self.class;
     m_OperationsPool = nc::ops::Pool::Make();
-//    __weak NSWindow *weak_wnd = window;
     __weak MainWindowController *weak_self = self;
-    m_OperationsPool->SetDialogCallback([weak_self](NSWindow *_dlg, function<void (NSModalResponse)> _cb){
-        if( MainWindowController *ctrl = weak_self)
-            [ctrl beginSheet:_dlg completionHandler:^(NSModalResponse rc) {
-                _cb(rc);
-            }];
-//        if( NSWindow *window = weak_wnd ) {
-//            CocoaAppearanceManager::Instance().ManageWindowApperance(_dlg);
-//            GA().PostScreenView(_dlg.windowController.className.UTF8String);
-//            [window beginSheet:_dlg completionHandler:^(NSModalResponse returnCode) {
-//                _cb(returnCode);
-//            }];
-//        }
+    m_OperationsPool->SetDialogCallback([weak_self](NSWindow *_dlg,
+                                                    function<void (NSModalResponse)> _cb){
+        if( MainWindowController *wnd = weak_self)
+            [wnd beginSheet:_dlg completionHandler:^(NSModalResponse rc) { _cb(rc); }];
     });
     AppDelegate.me.operationsProgressTracker.AddPool(*m_OperationsPool);
     

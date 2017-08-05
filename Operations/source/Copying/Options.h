@@ -2,7 +2,7 @@
 
 namespace nc::ops {
 
-struct FileCopyOperationOptions
+struct CopyingOptions
 {
     enum class ChecksumVerification : char
     {

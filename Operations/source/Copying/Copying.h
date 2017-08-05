@@ -16,7 +16,7 @@ public:
     Copying(vector<VFSListingItem> _source_files,
             const string& _destination_path,
             const shared_ptr<VFSHost> &_destination_host,
-            const FileCopyOperationOptions &_options);
+            const CopyingOptions &_options);
     ~Copying();
 
 private:
@@ -38,7 +38,7 @@ private:
     void OnFileVerificationFailed(const string &_path, VFSHost &_vfs);
 
     unique_ptr<CopyingJob> m_Job;
-    FileCopyOperationOptions::ExistBehavior m_ExistBehavior;
+    CopyingOptions::ExistBehavior m_ExistBehavior;
     bool m_SkipAll = false;
 };
 

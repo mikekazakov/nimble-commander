@@ -58,7 +58,7 @@ static void PasteOrMove( PanelController *_target, bool _paste)
     if( source_items.empty() )
         return; // errors on fetching listings?
     
-    FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
+    auto opts = MakeDefaultFileCopyOptions();
     opts.docopy = _paste;
     __weak PanelController *wpc = _target;
     const auto op = make_shared<nc::ops::Copying>(move(source_items),

@@ -12,9 +12,6 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/FeedbackManager.h>
-#include <NimbleCommander/Operations/Copy/FileCopyOperation.h>
-#include <NimbleCommander/Operations/OperationsController.h>
-#include <NimbleCommander/Operations/OperationsSummaryViewController.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include "MainWindowFilePanelState.h"
 #include "PanelController.h"
@@ -724,8 +721,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 
 - (bool)WindowShouldClose:(MainWindowController*)sender
 {
-    if( /*(m_OperationsController.OperationsCount == 0 &&*/
-        !self.isAnythingRunningInOverlappedTerminal )
+    if( self.operationsPool.Empty() && !self.isAnythingRunningInOverlappedTerminal )
         return true;
     
     Alert *dialog = [[Alert alloc] init];
@@ -734,7 +730,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     dialog.messageText = NSLocalizedString(@"The window has running operations. Do you want to stop them and close the window?", "Asking user to close window with some operations running");
     [dialog beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse result) {
         if (result == NSAlertFirstButtonReturn) {
-//            [m_OperationsController Stop];
+            self.operationsPool.StopAndWaitForShutdown();
             [self.window close];
         }
     }];

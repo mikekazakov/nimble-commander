@@ -53,12 +53,12 @@ static string MakeCanonicPath(string _input)
 
 @implementation NCOpsCopyingDialog
 {
-    vector<VFSListingItem>  m_SourceItems;
+    vector<VFSListingItem>          m_SourceItems;
     VFSHostPtr                      m_SourceHost; // can be nullptr in case of non-uniform listing
     string                          m_SourceDirectory; // may be "" if SourceHost is nullptr
     string                          m_InitialDestination;
     VFSHostPtr                      m_DestinationHost; // can be nullptr in case of non-uniform listing
-    FileCopyOperationOptions        m_Options;
+    CopyingOptions                  m_Options;
     
     string                          m_ResultDestination;
     VFSHostPtr                      m_ResultHost;
@@ -73,7 +73,7 @@ static string MakeCanonicPath(string _input)
                sourceDirectory:(const string&)_source_directory
             initialDestination:(const string&)_initial_destination
                 destinationVFS:(const VFSHostPtr&)_destination_host
-              operationOptions:(const FileCopyOperationOptions&)_options
+              operationOptions:(const CopyingOptions&)_options
 {
     self = [super initWithWindowNibName:@"CopyingDialog"];
     if( self ) {
@@ -197,7 +197,7 @@ static string MakeCanonicPath(string _input)
     m_Options.copy_file_times      = self.CopyFileTimesCheckbox.state == NSOnState;
     m_Options.copy_unix_flags      = self.CopyUNIXFlagsCheckbox.state == NSOnState;
     m_Options.copy_unix_owners     = self.CopyUnixOwnersCheckbox.state == NSOnState;
-    m_Options.verification         = (FileCopyOperationOptions::ChecksumVerification) self.VerifySetting.selectedTag;
+    m_Options.verification         = (CopyingOptions::ChecksumVerification) self.VerifySetting.selectedTag;
 }
 
 - (void)validate

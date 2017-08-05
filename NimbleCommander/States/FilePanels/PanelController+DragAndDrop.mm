@@ -453,7 +453,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
         const auto operation = BuildOperationMaskForLocal(source, destination);
         
         if( operation == NSDragOperationCopy ) {
-            FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
+            const auto opts = MakeDefaultFileCopyOptions();
             const auto op = make_shared<nc::ops::Copying>(move(files),
                                                           destination.Path(),
                                                           destination.Host(),
@@ -468,7 +468,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
             return true;
         }
         else if( operation == NSDragOperationMove ) {
-            FileCopyOperationOptions opts = MakeDefaultFileMoveOptions();
+            const auto opts = MakeDefaultFileMoveOptions();
             const auto op = make_shared<nc::ops::Copying>(move(files),
                                                           destination.Path(),
                                                           destination.Host(),
@@ -511,7 +511,7 @@ static void UpdateValidDropNumber( id <NSDraggingInfo> _dragging,
             return false; // errors on fetching listings?
         
         // TODO: support move from other apps someday?
-        FileCopyOperationOptions opts = MakeDefaultFileCopyOptions();
+        const auto opts = MakeDefaultFileCopyOptions();
         const auto op = make_shared<nc::ops::Copying>(move(source_items),
                                                       destination.Path(),
                                                       destination.Host(),

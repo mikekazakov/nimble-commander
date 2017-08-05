@@ -1,9 +1,5 @@
 #pragma once
 
-#include <Operations/CopyingOptions.h>
-
-using FileCopyOperationOptions = nc::ops::FileCopyOperationOptions;
-
 #if 0
 struct FileCopyOperationOptions
 {

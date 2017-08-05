@@ -80,7 +80,7 @@ public:
     CopyingJob(vector<VFSListingItem> _source_items,
                const string &_dest_path,
                const VFSHostPtr &_dest_host,
-               FileCopyOperationOptions _opts
+               CopyingOptions _opts
                );
     ~CopyingJob();
     
@@ -103,15 +103,11 @@ public:
     JobStage Stage() const noexcept;
     bool IsSingleInitialItemProcessing() const noexcept;
     bool IsSingleScannedItemProcessing() const noexcept;
-    void ToggleExistBehaviorSkipAll();
-    void ToggleExistBehaviorOverwriteAll();
-    void ToggleExistBehaviorOverwriteOld();
-    void ToggleExistBehaviorAppendAll();
     
 private:
     virtual void Perform() override;
     
-    using ChecksumVerification = FileCopyOperationOptions::ChecksumVerification;
+    using ChecksumVerification = CopyingOptions::ChecksumVerification;
     
     enum class StepResult
     {
@@ -203,7 +199,7 @@ private:
     bool                                        m_IsSingleScannedItemProcessing = false;
     JobStage                                    m_Stage         = JobStage::None;
     
-    FileCopyOperationOptions                    m_Options;
+    CopyingOptions                              m_Options;
 };
 
 }

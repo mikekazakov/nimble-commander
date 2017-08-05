@@ -1,5 +1,5 @@
 #include <VFS/VFS.h>
-#include <NimbleCommander/Operations/Copy/Options.h>
+#include <Operations/CopyingOptions.h>
 
 @class PanelController;
 class ExternalEditorStartupInfo;
@@ -38,7 +38,7 @@ public:
 };
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item);
-FileCopyOperationOptions MakeDefaultFileCopyOptions();
-FileCopyOperationOptions MakeDefaultFileMoveOptions();
+nc::ops::CopyingOptions MakeDefaultFileCopyOptions();
+nc::ops::CopyingOptions MakeDefaultFileMoveOptions();
 bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept;
 }

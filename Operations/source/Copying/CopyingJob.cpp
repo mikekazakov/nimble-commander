@@ -20,7 +20,7 @@ namespace nc::ops {
 CopyingJob::CopyingJob(vector<VFSListingItem> _source_items,
                        const string &_dest_path,
                        const VFSHostPtr &_dest_host,
-                       FileCopyOperationOptions _opts)
+                       CopyingOptions _opts)
 {
     m_VFSListingItems = move(_source_items);
     m_InitialDestinationPath = _dest_path;
@@ -53,26 +53,6 @@ bool CopyingJob::IsSingleScannedItemProcessing() const noexcept
 CopyingJob::JobStage CopyingJob::Stage() const noexcept
 {
     return m_Stage;
-}
-
-void CopyingJob::ToggleExistBehaviorSkipAll()
-{
-    m_Options.exist_behavior = FileCopyOperationOptions::ExistBehavior::SkipAll;
-}
-
-void CopyingJob::ToggleExistBehaviorOverwriteAll()
-{
-    m_Options.exist_behavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
-}
-
-void CopyingJob::ToggleExistBehaviorOverwriteOld()
-{
-    m_Options.exist_behavior = FileCopyOperationOptions::ExistBehavior::OverwriteOld;
-}
-
-void CopyingJob::ToggleExistBehaviorAppendAll()
-{
-    m_Options.exist_behavior = FileCopyOperationOptions::ExistBehavior::AppendAll;
 }
 
 void CopyingJob::Perform()
@@ -316,7 +296,7 @@ string CopyingJob::ComposeDestinationNameForItem( int _src_item_index ) const
 }
 
 // side-effects: none.
-static bool IsSingleDirectoryCaseRenaming( const FileCopyOperationOptions &_options, const vector<VFSListingItem> &_items, const VFSHostPtr& _dest_host, const VFSStat &_dest_stat )
+static bool IsSingleDirectoryCaseRenaming( const CopyingOptions &_options, const vector<VFSListingItem> &_items, const VFSHostPtr& _dest_host, const VFSStat &_dest_stat )
 {
     return  S_ISDIR(_dest_stat.mode)            &&
             _options.docopy == false            &&

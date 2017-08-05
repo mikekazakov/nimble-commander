@@ -807,7 +807,7 @@ static bool RouteKeyboardInputIntoTerminal()
         return;
     }
     
-    nc::ops::FileCopyOperationOptions opts;
+    nc::ops::CopyingOptions opts;
     opts.docopy = false;
 
     const auto op = make_shared<nc::ops::Copying>(vector<VFSListingItem>{item},

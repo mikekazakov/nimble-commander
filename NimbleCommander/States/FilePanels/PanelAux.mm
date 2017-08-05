@@ -84,8 +84,8 @@ static void RegisterRemoteFileUploading(const string& _original_path,
                                                                 listing_items,
                                                                 nullptr);
         if( ret == 0 ) {
-            FileCopyOperationOptions opts = panel::MakeDefaultFileCopyOptions();
-            opts.exist_behavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
+            auto opts = panel::MakeDefaultFileCopyOptions();
+            opts.exist_behavior = nc::ops::CopyingOptions::ExistBehavior::OverwriteAll;
             const auto op = make_shared<nc::ops::Copying>(listing_items,
                                                           _original_path,
                                                           vfs,
@@ -324,31 +324,31 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
     return false;
 }
 
-static FileCopyOperationOptions::ChecksumVerification DefaultChecksumVerificationSetting()
+static ops::CopyingOptions::ChecksumVerification DefaultChecksumVerificationSetting()
 {
     if( !ActivationManager::Instance().HasCopyVerification() )
-        return FileCopyOperationOptions::ChecksumVerification::Never;
+        return ops::CopyingOptions::ChecksumVerification::Never;
     int v = GlobalConfig().GetInt(g_ConfigDefaultVerificationSetting);
-    if( v == (int)FileCopyOperationOptions::ChecksumVerification::Always )
-       return FileCopyOperationOptions::ChecksumVerification::Always;
-    else if( v == (int)FileCopyOperationOptions::ChecksumVerification::WhenMoves )
-        return FileCopyOperationOptions::ChecksumVerification::WhenMoves;
+    if( v == (int)ops::CopyingOptions::ChecksumVerification::Always )
+       return ops::CopyingOptions::ChecksumVerification::Always;
+    else if( v == (int)ops::CopyingOptions::ChecksumVerification::WhenMoves )
+        return ops::CopyingOptions::ChecksumVerification::WhenMoves;
     else
-        return FileCopyOperationOptions::ChecksumVerification::Never;
+        return ops::CopyingOptions::ChecksumVerification::Never;
 }
 
-FileCopyOperationOptions MakeDefaultFileCopyOptions()
+ops::CopyingOptions MakeDefaultFileCopyOptions()
 {
-    FileCopyOperationOptions options;
+    ops::CopyingOptions options;
     options.docopy = true;
     options.verification = DefaultChecksumVerificationSetting();
 
     return options;
 }
 
-FileCopyOperationOptions MakeDefaultFileMoveOptions()
+ops::CopyingOptions MakeDefaultFileMoveOptions()
 {
-    FileCopyOperationOptions options;
+    ops::CopyingOptions options;
     options.docopy = false;
     options.verification = DefaultChecksumVerificationSetting();
 

@@ -10,12 +10,12 @@ using Callbacks = CopyingJobCallbacks;
 
 static string BuildTitle(const vector<VFSListingItem> &_source_files,
                          const string& _destination_path,
-                         const FileCopyOperationOptions &_options);
+                         const CopyingOptions &_options);
 
 Copying::Copying(vector<VFSListingItem> _source_files,
                  const string& _destination_path,
                  const shared_ptr<VFSHost> &_destination_host,
-                 const FileCopyOperationOptions &_options)
+                 const CopyingOptions &_options)
 {
     SetTitle( BuildTitle(_source_files, _destination_path, _options) );
     m_ExistBehavior = _options.exist_behavior;
@@ -78,15 +78,15 @@ Job *Copying::GetJob() noexcept
 int Copying::OnCopyDestExists(const struct stat &_src, const struct stat &_dst, const string &_path)
 {
     switch( m_ExistBehavior ) {
-        case FileCopyOperationOptions::ExistBehavior::SkipAll:
+        case CopyingOptions::ExistBehavior::SkipAll:
             return (int)Callbacks::CopyDestExistsResolution::Skip;
-        case FileCopyOperationOptions::ExistBehavior::Stop:
+        case CopyingOptions::ExistBehavior::Stop:
             return (int)Callbacks::CopyDestExistsResolution::Stop;
-        case FileCopyOperationOptions::ExistBehavior::AppendAll:
+        case CopyingOptions::ExistBehavior::AppendAll:
             return (int)Callbacks::CopyDestExistsResolution::Append;
-        case FileCopyOperationOptions::ExistBehavior::OverwriteAll:
+        case CopyingOptions::ExistBehavior::OverwriteAll:
             return (int)Callbacks::CopyDestExistsResolution::Overwrite;
-        case FileCopyOperationOptions::ExistBehavior::OverwriteOld:
+        case CopyingOptions::ExistBehavior::OverwriteOld:
             return (int)Callbacks::CopyDestExistsResolution::OverwriteOld;
         default:
             break;
@@ -101,22 +101,22 @@ int Copying::OnCopyDestExists(const struct stat &_src, const struct stat &_dst, 
     
     if( ctx->response == NSModalResponseSkip ) {
         if( ctx->IsApplyToAllSet() )
-            m_ExistBehavior = FileCopyOperationOptions::ExistBehavior::SkipAll;
+            m_ExistBehavior = CopyingOptions::ExistBehavior::SkipAll;
         return (int)Callbacks::CopyDestExistsResolution::Skip;
     }
     if( ctx->response == NSModalResponseAppend ) {
         if( ctx->IsApplyToAllSet() )
-            m_ExistBehavior = FileCopyOperationOptions::ExistBehavior::AppendAll;
+            m_ExistBehavior = CopyingOptions::ExistBehavior::AppendAll;
         return (int)Callbacks::CopyDestExistsResolution::Append;
     }
     if( ctx->response == NSModalResponseOverwrite ) {
         if( ctx->IsApplyToAllSet() )
-            m_ExistBehavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
+            m_ExistBehavior = CopyingOptions::ExistBehavior::OverwriteAll;
         return (int)Callbacks::CopyDestExistsResolution::Overwrite;
     }
     if( ctx->response == NSModalResponseOverwriteOld ) {
         if( ctx->IsApplyToAllSet() )
-            m_ExistBehavior = FileCopyOperationOptions::ExistBehavior::OverwriteOld;
+            m_ExistBehavior = CopyingOptions::ExistBehavior::OverwriteOld;
         return (int)Callbacks::CopyDestExistsResolution::OverwriteOld;
     }
     return (int)Callbacks::CopyDestExistsResolution::Stop;
@@ -137,13 +137,13 @@ int Copying::OnRenameDestExists(const struct stat &_src, const struct stat &_dst
                                 const string &_path)
 {
     switch( m_ExistBehavior ) {
-        case FileCopyOperationOptions::ExistBehavior::SkipAll:
+        case CopyingOptions::ExistBehavior::SkipAll:
             return (int)Callbacks::RenameDestExistsResolution::Skip;
-        case FileCopyOperationOptions::ExistBehavior::Stop:
+        case CopyingOptions::ExistBehavior::Stop:
             return (int)Callbacks::RenameDestExistsResolution::Stop;
-        case FileCopyOperationOptions::ExistBehavior::OverwriteAll:
+        case CopyingOptions::ExistBehavior::OverwriteAll:
             return (int)Callbacks::RenameDestExistsResolution::Overwrite;
-        case FileCopyOperationOptions::ExistBehavior::OverwriteOld:
+        case CopyingOptions::ExistBehavior::OverwriteOld:
             return (int)Callbacks::RenameDestExistsResolution::OverwriteOld;
         default:
             break;
@@ -158,17 +158,17 @@ int Copying::OnRenameDestExists(const struct stat &_src, const struct stat &_dst
 
     if( ctx->response == NSModalResponseSkip ) {
         if( ctx->IsApplyToAllSet() )
-            m_ExistBehavior = FileCopyOperationOptions::ExistBehavior::SkipAll;
+            m_ExistBehavior = CopyingOptions::ExistBehavior::SkipAll;
         return (int)Callbacks::RenameDestExistsResolution::Skip;
     }
     if( ctx->response == NSModalResponseOverwrite ) {
         if( ctx->IsApplyToAllSet() )
-            m_ExistBehavior = FileCopyOperationOptions::ExistBehavior::OverwriteAll;
+            m_ExistBehavior = CopyingOptions::ExistBehavior::OverwriteAll;
         return (int)Callbacks::RenameDestExistsResolution::Overwrite;
     }
     if( ctx->response == NSModalResponseOverwriteOld ) {
         if( ctx->IsApplyToAllSet() )
-            m_ExistBehavior = FileCopyOperationOptions::ExistBehavior::OverwriteOld;
+            m_ExistBehavior = CopyingOptions::ExistBehavior::OverwriteOld;
         return (int)Callbacks::RenameDestExistsResolution::OverwriteOld;
     }
     return (int)Callbacks::RenameDestExistsResolution::Stop;
@@ -386,7 +386,7 @@ static NSString *ExtractCopyToName(const string&_s)
 
 static string BuildTitle(const vector<VFSListingItem> &_source_files,
                          const string& _destination_path,
-                         const FileCopyOperationOptions &_options)
+                         const CopyingOptions &_options)
 {
     if ( _source_files.size() == 1)
         return OpTitleForSingleItem(_options.docopy,

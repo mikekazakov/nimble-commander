@@ -5,7 +5,7 @@
 
 @property (readonly) string                     resultDestination;
 @property (readonly) VFSHostPtr                 resultHost;
-@property (readonly) nc::ops::FileCopyOperationOptions   resultOptions;
+@property (readonly) nc::ops::CopyingOptions    resultOptions;
 @property bool allowVerification;
 
 - (instancetype) initWithItems:(vector<VFSListingItem>)_source_items
@@ -13,6 +13,6 @@
                sourceDirectory:(const string&)_source_directory
             initialDestination:(const string&)_initial_destination
                 destinationVFS:(const VFSHostPtr&)_destination_host
-              operationOptions:(const nc::ops::FileCopyOperationOptions&)_options;
+              operationOptions:(const nc::ops::CopyingOptions&)_options;
 
 @end

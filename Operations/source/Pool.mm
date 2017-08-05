@@ -68,6 +68,9 @@ void Pool::OperationDidFinish( const shared_ptr<Operation> &_operation )
     }
     FireObservers( NotifyAboutRemoval );
     StartPendingOperations();
+    
+    if( _operation->State() == OperationState::Completed && m_OperationCompletionCallback )
+        m_OperationCompletionCallback(_operation);
 }
 
 void Pool::StartPendingOperations()
@@ -122,7 +125,12 @@ vector<shared_ptr<Operation>> Pool::Operations() const
 
 void Pool::SetDialogCallback(function<void(NSWindow*, function<void(NSModalResponse)>)> _callback)
 {
-    m_DialogPresentation = _callback;
+    m_DialogPresentation = move(_callback);
+}
+
+void Pool::SetOperationCompletionCallback(function<void(const shared_ptr<Operation>&)> _callback)
+{
+    m_OperationCompletionCallback = move(_callback);
 }
 
 bool Pool::IsInteractive() const

@@ -35,6 +35,7 @@ public:
 
     bool IsInteractive() const;
     void SetDialogCallback(function<void(NSWindow*, function<void(NSModalResponse)>)> _callback);
+    void SetOperationCompletionCallback(function<void(const shared_ptr<Operation>&)> _callback);
 
 private:
     Pool(const Pool&) = delete;
@@ -49,6 +50,7 @@ private:
     mutable mutex                           m_Lock;
     
     function<void(NSWindow *dialog, function<void(NSModalResponse response)>)> m_DialogPresentation;
+    function<void(const shared_ptr<Operation>&)> m_OperationCompletionCallback;
     static atomic_int m_ConcurrencyPerPool;
 };
 

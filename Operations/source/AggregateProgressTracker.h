@@ -20,6 +20,7 @@ private:
     int OperationsAmount() const;
     tuple<int, double> OperationsAmountAndProgress() const;
     void Update();
+    void Purge();
     void Signal( double _progress );
     atomic_bool m_IsTracking;
     atomic_bool m_IsUpdateScheduled;

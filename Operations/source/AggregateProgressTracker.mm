@@ -20,6 +20,8 @@ AggregateProgressTracker::~AggregateProgressTracker()
 
 void AggregateProgressTracker::AddPool( Pool &_pool )
 {
+    Purge();
+
     const auto p = _pool.shared_from_this();
     LOCK_GUARD(m_Lock) {
         if( any_of( begin(m_Pools), end(m_Pools), [=](const auto &_i){ return _i.lock() == p; } ) )
@@ -120,6 +122,15 @@ void AggregateProgressTracker::SetProgressCallback( function<void(double _progre
 {
     dispatch_assert_main_queue();
     m_Callback = move(_callback);
+}
+
+void AggregateProgressTracker::Purge()
+{
+    LOCK_GUARD(m_Lock)
+        m_Pools.erase(remove_if(begin(m_Pools),
+                                end(m_Pools),
+                                [](auto &v){ return v.expired(); }),
+                      end(m_Pools));
 }
 
 }

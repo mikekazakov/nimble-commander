@@ -22,9 +22,11 @@
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <Operations/Pool.h>
 #include <Operations/AggregateProgressTracker.h>
 
+using namespace nc;
 
 static const auto g_ConfigShowToolbar = "general.showToolbar";
 static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
@@ -78,9 +80,18 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     __weak MainWindowController *weak_self = self;
     m_OperationsPool->SetDialogCallback([weak_self](NSWindow *_dlg,
                                                     function<void (NSModalResponse)> _cb){
+        NSBeep();
         if( MainWindowController *wnd = weak_self)
             [wnd beginSheet:_dlg completionHandler:^(NSModalResponse rc) { _cb(rc); }];
     });
+    m_OperationsPool->SetOperationCompletionCallback([weak_self](const shared_ptr<nc::ops::Operation>& _op){
+        if( MainWindowController *wnd = weak_self)
+            dispatch_to_main_queue([=]{
+                auto &center = core::UserNotificationsCenter::Instance();
+                center.ReportCompletedOperation(*_op, wnd.window);
+            });
+    });
+    
     AppDelegate.me.operationsProgressTracker.AddPool(*m_OperationsPool);
     
     m_ToolbarVisible = GlobalConfig().GetBool( g_ConfigShowToolbar );

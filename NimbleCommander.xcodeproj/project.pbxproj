@@ -644,6 +644,7 @@
 		CFACF9AB1E24804D00FD6AB6 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
 		CFACFA3F1E24AB1200FD6AB6 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */; };
+		CFB44F0C1F35F0B900E7555E /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
 		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB66F911D8537A90017D2A0 /* FeedbackManager.mm */; };
@@ -1769,6 +1770,8 @@
 		CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.h; sourceTree = SOURCE_ROOT; };
 		CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.mm; sourceTree = SOURCE_ROOT; };
 		CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarViewLib.xcodeproj; path = 3rd_Party/MMTabBarView/MMTabBarViewLib.xcodeproj; sourceTree = SOURCE_ROOT; };
+		CFB44F0A1F35F0B900E7555E /* UserNotificationsCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserNotificationsCenter.h; path = NimbleCommander/Core/UserNotificationsCenter.h; sourceTree = SOURCE_ROOT; };
+		CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UserNotificationsCenter.mm; path = NimbleCommander/Core/UserNotificationsCenter.mm; sourceTree = SOURCE_ROOT; };
 		CFB517FF1BDF53D0000AAE89 /* shared_mutex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = shared_mutex.cpp; path = 3rd_party/LLVM/shared_mutex.cpp; sourceTree = "<group>"; };
 		CFB598C0196E3A1F00D4C108 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Help.pdf; path = NimbleCommander/Resources/Help.pdf; sourceTree = SOURCE_ROOT; };
 		CFB66F901D8537A90017D2A0 /* FeedbackManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FeedbackManager.h; path = NimbleCommander/Core/FeedbackManager.h; sourceTree = SOURCE_ROOT; };
@@ -2935,6 +2938,8 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CFB44F0A1F35F0B900E7555E /* UserNotificationsCenter.h */,
+				CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */,
 				CFDAC23D1DFBE18C0039A104 /* ActionShortcut.h */,
 				CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */,
 				CFDAC23F1DFBE18C0039A104 /* ActionsShortcutsManager.h */,
@@ -4380,6 +4385,7 @@
 				CFDAC2311DFBDBCB0039A104 /* Config.mm in Sources */,
 				CFDAC2B21DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CF4E56431D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
+				CFB44F0C1F35F0B900E7555E /* UserNotificationsCenter.mm in Sources */,
 				CFDAC2CD1DFD0F840039A104 /* QLVFSThumbnailsCache.mm in Sources */,
 				CFD6DD251D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CFD8CDD01E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,

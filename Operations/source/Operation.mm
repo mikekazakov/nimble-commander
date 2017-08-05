@@ -197,6 +197,7 @@ void Operation::Show( NSWindow *_dialog, shared_ptr<AsyncDialogResponse> _respon
             if( shown )
                 return;
         }
+    
     _response->Abort();
 }
 

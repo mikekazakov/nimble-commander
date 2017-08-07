@@ -5,7 +5,10 @@
 
 using namespace nc::ops;
 
+static const auto g_ViewAppearTimeout = 100ms;
+
 @interface NCOpsPoolViewController()
+@property (strong) IBOutlet NSView *idleViewHolder;
 @property (strong) IBOutlet NSView *briefViewHolder;
 @property (strong) IBOutlet NSButton *upButton;
 @property (strong) IBOutlet NSButton *downButton;
@@ -93,6 +96,19 @@ using namespace nc::ops;
         [self hideBriefView];
     else
         [self showBriefView:m_BriefViews[m_IndexToShow]];
+    
+    [self updateIdleViewVisibility];
+}
+
+- (void)updateIdleViewVisibility
+{
+    if( self.idleView.hidden && m_ShownOperation == nil )
+        self.idleView.hidden = false;
+    else if( !self.idleView.hidden && m_ShownOperation != nil )
+        dispatch_to_main_queue_after(g_ViewAppearTimeout, [=]{
+            if( m_ShownOperation )
+                self.idleView.hidden = true;
+        });
 }
 
 - (void)showBriefView:(NCOpsBriefOperationViewController*)_view
@@ -150,5 +166,9 @@ using namespace nc::ops;
     }
 }
 
+- (NSView*)idleView
+{
+    return self.idleViewHolder;
+}
 
 @end

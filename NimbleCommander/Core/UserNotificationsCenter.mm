@@ -6,27 +6,7 @@
 static const auto g_DefaultMinElapsedOperationTime = 30s;
 static const auto g_Window = @"window";
 
-static void MakeWindowKey( unsigned long _wnd_adress );
-
 @interface NCCoreUserNotificationCenterDelegate : NSObject<NSUserNotificationCenterDelegate>
-@end
-
-@implementation NCCoreUserNotificationCenterDelegate
-
-- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center 
-     shouldPresentNotification:(NSUserNotification *)notification
-{
-    return true;
-}
-
-- (void)userNotificationCenter:(NSUserNotificationCenter *)center
-       didActivateNotification:(NSUserNotification *)notification
-{
-    if( notification.userInfo )
-        if( const auto packed_wnd_address = objc_cast<NSNumber>(notification.userInfo[g_Window]) )
-            MakeWindowKey( packed_wnd_address.unsignedLongValue );
-}
-
 @end
 
 namespace nc::core {
@@ -44,7 +24,7 @@ UserNotificationsCenter::~UserNotificationsCenter()
 
 UserNotificationsCenter &UserNotificationsCenter::Instance()
 {
-    static auto inst = new UserNotificationsCenter;
+    static const auto inst = new UserNotificationsCenter;
     return *inst;
 }
 
@@ -64,8 +44,6 @@ void UserNotificationsCenter::ReportCompletedOperation(const nc::ops::Operation 
     [NSUserNotificationCenter.defaultUserNotificationCenter deliverNotification:un];
 }
 
-}
-
 static void MakeWindowKey( unsigned long _wnd_adress )
 {
     const auto windows = NSApp.windows;
@@ -76,3 +54,22 @@ static void MakeWindowKey( unsigned long _wnd_adress )
         }
 }
 
+}
+
+@implementation NCCoreUserNotificationCenterDelegate
+
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center 
+     shouldPresentNotification:(NSUserNotification *)notification
+{
+    return true;
+}
+
+- (void)userNotificationCenter:(NSUserNotificationCenter *)center
+       didActivateNotification:(NSUserNotification *)notification
+{
+    if( notification.userInfo )
+        if( const auto packed_wnd_address = objc_cast<NSNumber>(notification.userInfo[g_Window]) )
+            nc::core::MakeWindowKey( packed_wnd_address.unsignedLongValue );
+}
+
+@end

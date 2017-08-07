@@ -3,8 +3,6 @@
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include <Operations/PoolViewController.h>
 
-
-
 // do not change these strings, they are used for persistency in NSUserDefaults
 static auto g_ToolbarIdentifier = @"FilePanelsToolbar";
 static auto g_ExternalToolsIdentifiersPrefix = @"external_tool_";
@@ -35,6 +33,7 @@ static const auto g_MaxPoolViewWith = 540.;
 @synthesize toolbar = m_Toolbar;
 @synthesize leftPanelGoToButton = m_LeftPanelGoToButton;
 @synthesize rightPanelGoToButton = m_RightPanelGoToButton;
+@synthesize operationsPoolViewController = m_PoolViewController;
 
 - (instancetype) initWithFilePanelsState:(MainWindowFilePanelState*)_state
 {
@@ -54,6 +53,10 @@ static const auto g_MaxPoolViewWith = 540.;
                 [(MainWindowFilePanelsStateToolbarDelegate*)weak_self externalToolsChanged];
             });
         });
+        
+        m_PoolViewController = [[NCOpsPoolViewController alloc] initWithPool:
+                                self.state.operationsPool];
+        [m_PoolViewController loadView];
     }
     return self;
 }
@@ -138,13 +141,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         return item;
     }
     if( [itemIdentifier isEqualToString:@"operations_pool"] ) {
-    
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
-        
-        if( !m_PoolViewController )
-            m_PoolViewController = [[NCOpsPoolViewController alloc] initWithPool:
-                self.state.operationsPool];
-    
         item.view = m_PoolViewController.view;
         item.minSize = m_PoolViewController.view.bounds.size;
         item.maxSize = NSMakeSize(g_MaxPoolViewWith, item.minSize.height);

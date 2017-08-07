@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
@@ -10,6 +10,7 @@
             <connections>
                 <outlet property="briefViewHolder" destination="B4U-QC-TQx" id="sKv-wM-9xj"/>
                 <outlet property="downButton" destination="Amm-UI-EXl" id="Al5-C0-TRK"/>
+                <outlet property="idleViewHolder" destination="Uxg-px-o5e" id="cyN-am-8fI"/>
                 <outlet property="upButton" destination="6qb-FW-bHe" id="EFa-aS-SK4"/>
                 <outlet property="view" destination="ATb-7c-oae" id="Qol-vk-7yk"/>
             </connections>
@@ -20,6 +21,9 @@
             <rect key="frame" x="0.0" y="0.0" width="325" height="36"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
             <subviews>
+                <customView translatesAutoresizingMaskIntoConstraints="NO" id="Uxg-px-o5e">
+                    <rect key="frame" x="0.0" y="0.0" width="325" height="36"/>
+                </customView>
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="B4U-QC-TQx">
                     <rect key="frame" x="24" y="0.0" width="300" height="36"/>
                 </customView>
@@ -61,13 +65,18 @@
             <constraints>
                 <constraint firstItem="RvR-Jq-dpl" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="1jM-jP-pCD"/>
                 <constraint firstItem="WYl-Hs-CbZ" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="4HA-eV-RUI"/>
+                <constraint firstAttribute="trailing" secondItem="Uxg-px-o5e" secondAttribute="trailing" id="6Gn-fN-CtN"/>
                 <constraint firstItem="B4U-QC-TQx" firstAttribute="leading" secondItem="Amm-UI-EXl" secondAttribute="trailing" id="GBA-Oy-ZnT"/>
                 <constraint firstAttribute="bottom" secondItem="RvR-Jq-dpl" secondAttribute="bottom" id="H83-MA-9ah"/>
+                <constraint firstItem="Uxg-px-o5e" firstAttribute="leading" secondItem="ATb-7c-oae" secondAttribute="leading" id="Hrf-rF-hWl"/>
                 <constraint firstItem="B4U-QC-TQx" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="I30-FX-wB6"/>
                 <constraint firstItem="Amm-UI-EXl" firstAttribute="leading" secondItem="ATb-7c-oae" secondAttribute="leading" id="Jq4-9V-zFv"/>
+                <constraint firstItem="B4U-QC-TQx" firstAttribute="leading" secondItem="ATb-7c-oae" secondAttribute="leading" constant="24" id="Mdi-cj-6BF"/>
                 <constraint firstItem="WYl-Hs-CbZ" firstAttribute="leading" secondItem="ATb-7c-oae" secondAttribute="leading" id="Nce-fK-yfe"/>
                 <constraint firstAttribute="trailing" secondItem="RvR-Jq-dpl" secondAttribute="trailing" id="T6z-bh-iJm"/>
                 <constraint firstItem="6qb-FW-bHe" firstAttribute="leading" secondItem="ATb-7c-oae" secondAttribute="leading" id="YO4-o6-aht"/>
+                <constraint firstItem="Uxg-px-o5e" firstAttribute="top" secondItem="ATb-7c-oae" secondAttribute="top" id="ZwC-vN-nhs"/>
+                <constraint firstAttribute="bottom" secondItem="Uxg-px-o5e" secondAttribute="bottom" id="fbc-da-XWF"/>
                 <constraint firstAttribute="bottom" secondItem="WYl-Hs-CbZ" secondAttribute="bottom" id="g1i-2m-a0p"/>
                 <constraint firstAttribute="bottom" secondItem="Amm-UI-EXl" secondAttribute="bottom" id="jM3-mG-fva"/>
                 <constraint firstItem="RvR-Jq-dpl" firstAttribute="leading" secondItem="B4U-QC-TQx" secondAttribute="trailing" id="jem-t1-mBw"/>

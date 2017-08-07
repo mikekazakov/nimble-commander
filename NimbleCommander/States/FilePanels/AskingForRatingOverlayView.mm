@@ -79,7 +79,7 @@
                                                             toItem:self
                                                          attribute:NSLayoutAttributeCenterY
                                                         multiplier:1
-                                                          constant:2]];
+                                                          constant:0]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_LevelIndicator
                                                          attribute:NSLayoutAttributeCenterX
                                                          relatedBy:NSLayoutRelationEqual
@@ -103,7 +103,7 @@
                                                             toItem:self
                                                          attribute:NSLayoutAttributeCenterY
                                                         multiplier:1
-                                                          constant:3]];
+                                                          constant:0]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_Annotation
                                                          attribute:NSLayoutAttributeCenterX
                                                          relatedBy:NSLayoutRelationEqual
@@ -112,7 +112,7 @@
                                                         multiplier:1
                                                           constant:0]];
         
-        m_DiscardButton = [[NSButton alloc] initWithFrame:NSMakeRect(277, 2, 14, 14)];
+        m_DiscardButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 14, 14)];
         m_DiscardButton.translatesAutoresizingMaskIntoConstraints = false;
         m_DiscardButton.image = [NSImage imageNamed:NSImageNameStopProgressFreestandingTemplate];
         m_DiscardButton.imagePosition = NSImageOnly;
@@ -128,7 +128,7 @@
                                                             toItem:self
                                                          attribute:NSLayoutAttributeCenterY
                                                         multiplier:1
-                                                          constant:3]];
+                                                          constant:0]];
         [self addConstraint:[NSLayoutConstraint constraintWithItem:m_DiscardButton
                                                          attribute:NSLayoutAttributeRight
                                                          relatedBy:NSLayoutRelationEqual

@@ -12,4 +12,6 @@ namespace nc::ops {
 
 - (instancetype) initWithPool:(nc::ops::Pool&)_pool;
 
+@property (nonatomic, readonly) NSView *idleView;
+
 @end

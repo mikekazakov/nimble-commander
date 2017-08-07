@@ -26,8 +26,8 @@
 #include "Actions/ShowGoToPopup.h"
 #include "PanelData.h"
 #include "PanelView.h"
-
 #include <Operations/Pool.h>
+#include <Operations/PoolViewController.h>
 
 using namespace nc::panel;
 
@@ -90,14 +90,44 @@ static void SetupUnregisteredLabel(NSView *_background_view)
                                                                     toItem:_background_view
                                                                  attribute:NSLayoutAttributeCenterY
                                                                 multiplier:1.0
-                                                                  constant:2]];
+                                                                  constant:0]];
     [_background_view layoutSubtreeIfNeeded];
 }
 
 static void SetupRatingOverlay(NSView *_background_view)
 {
     AskingForRatingOverlayView *v = [[AskingForRatingOverlayView alloc] initWithFrame:_background_view.bounds];
+    v.translatesAutoresizingMaskIntoConstraints = false;
     [_background_view addSubview:v];
+    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:v
+                                                                 attribute:NSLayoutAttributeCenterX
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:_background_view
+                                                                 attribute:NSLayoutAttributeCenterX
+                                                                multiplier:1.0
+                                                                  constant:0]];
+    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:v
+                                                                 attribute:NSLayoutAttributeCenterY
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:_background_view
+                                                                 attribute:NSLayoutAttributeCenterY
+                                                                multiplier:1.0
+                                                                  constant:0]];
+    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:v
+                                                                 attribute:NSLayoutAttributeWidth
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:_background_view
+                                                                 attribute:NSLayoutAttributeWidth
+                                                                multiplier:1.0
+                                                                  constant:0]];
+    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:v
+                                                                 attribute:NSLayoutAttributeHeight
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:_background_view
+                                                                 attribute:NSLayoutAttributeHeight
+                                                                multiplier:1.0
+                                                                  constant:0]];
+    [_background_view layoutSubtreeIfNeeded];
 }
 
 static bool GoToForcesPanelActivation()
@@ -122,14 +152,6 @@ static bool GoToForcesPanelActivation()
         m_OperationsPool = _pool.shared_from_this();
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
-        
-        // setup background view if any to be shown
-
-///!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//        if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
-//            SetupRatingOverlay( m_OpSummaryController.backgroundView );
-//        else if( ActivationManager::Type() == ActivationManager::Distribution::Trial && !ActivationManager::Instance().UserHadRegistered() )
-//            SetupUnregisteredLabel(m_OpSummaryController.backgroundView);
         
         m_LeftPanelControllers.emplace_back([PanelController new]);
         m_RightPanelControllers.emplace_back([PanelController new]);
@@ -299,6 +321,12 @@ static bool GoToForcesPanelActivation()
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==1)-[dummy(>=100)]-(==0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[dummy(>=100)]-(0)-|" options:0 metrics:nil views:views]];
     }
+    
+    if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
+        SetupRatingOverlay( m_ToolbarDelegate.operationsPoolViewController.idleView );
+    else if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
+            !ActivationManager::Instance().UserHadRegistered() )
+        SetupUnregisteredLabel( m_ToolbarDelegate.operationsPoolViewController.idleView );
 }
 
 - (void) Assigned

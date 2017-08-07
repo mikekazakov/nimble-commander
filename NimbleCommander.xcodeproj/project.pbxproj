@@ -2938,8 +2938,6 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CFB44F0A1F35F0B900E7555E /* UserNotificationsCenter.h */,
-				CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */,
 				CFDAC23D1DFBE18C0039A104 /* ActionShortcut.h */,
 				CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */,
 				CFDAC23F1DFBE18C0039A104 /* ActionsShortcutsManager.h */,
@@ -2976,6 +2974,8 @@
 				CFDAC2A01DFBFBA10039A104 /* TemporaryNativeFileStorage.cpp */,
 				CFDAC2A11DFBFBA10039A104 /* TemporaryNativeFileStorage.h */,
 				CF5FE7FE1E149FF700CD83B4 /* Theming */,
+				CFB44F0A1F35F0B900E7555E /* UserNotificationsCenter.h */,
+				CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */,
 				CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */,
 				CF56BF521D68061600A08D2B /* VFSInstanceManager.h */,
 				CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */,

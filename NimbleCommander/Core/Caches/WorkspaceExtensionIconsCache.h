@@ -1,5 +1,7 @@
 #pragma once
 
+namespace nc::core {
+
 class WorkspaceExtensionIconsCache
 {
 public:
@@ -8,8 +10,8 @@ public:
     NSImage *CachedIconForExtension( const string& _extension ) const;
     NSImage *IconForExtension( const string& _extension );
 
-    NSImage *GenericFileIcon() const;
-    NSImage *GenericFolderIcon() const;
+    NSImage *GenericFileIcon() const noexcept;
+    NSImage *GenericFolderIcon() const noexcept;
     
 private:
     WorkspaceExtensionIconsCache();
@@ -20,3 +22,5 @@ private:
     NSImage *m_GenericFileIcon;
     NSImage *m_GenericFolderIcon;
 };
+
+}

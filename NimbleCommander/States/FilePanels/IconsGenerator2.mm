@@ -12,6 +12,8 @@
 #include "PanelDataItemVolatileData.h"
 #include "IconsGenerator2.h"
 
+using namespace nc::core;
+
 static const auto g_DummyImage = [[NSImage alloc] initWithSize:NSMakeSize(0,0)];
 
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
@@ -256,13 +258,6 @@ NSImage *IconsGenerator2::GetCachedExtensionIcon( const VFSListingItem &_item) c
     if( !_item.HasExtension() )
         return nil;
 
-/*    LOCK_GUARD( m_ExtensionIconsCacheLock ) {
-        auto it = m_ExtensionIconsCache.find( _item.Extension() );
-        if( it != end(m_ExtensionIconsCache) )
-            return it->second;
-    }
-    
-    return nil; */
     return WorkspaceExtensionIconsCache::Instance().CachedIconForExtension( _item.Extension() );
 }
 

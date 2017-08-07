@@ -643,7 +643,6 @@
 		CFA7FA751C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFACF9AB1E24804D00FD6AB6 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
 		CFACFA3F1E24AB1200FD6AB6 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
-		CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */; };
 		CFB44F0C1F35F0B900E7555E /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
 		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
@@ -1766,7 +1765,6 @@
 		CFA7E02B1EB97B60001FE66C /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delete.h; path = NimbleCommander/States/FilePanels/Actions/Delete.h; sourceTree = SOURCE_ROOT; };
 		CFA7E02C1EB97B60001FE66C /* Delete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Delete.mm; path = NimbleCommander/States/FilePanels/Actions/Delete.mm; sourceTree = SOURCE_ROOT; };
 		CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JobTrash.mm; path = NimbleCommander/Operations/Delete/JobTrash.mm; sourceTree = SOURCE_ROOT; };
-		CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeCopy_Tests.mm; sourceTree = "<group>"; };
 		CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.h; sourceTree = SOURCE_ROOT; };
 		CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.mm; sourceTree = SOURCE_ROOT; };
 		CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarViewLib.xcodeproj; path = 3rd_Party/MMTabBarView/MMTabBarViewLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -2514,7 +2512,6 @@
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
 				CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */,
-				CFABC4AC1ABDC6AD00C8513F /* Operation_NativeCopy_Tests.mm */,
 				CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */,
 				CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */,
 				CF5913CD191C98C7003007F1 /* Operation_CreateDirectory_VFS_Tests.mm */,
@@ -3909,7 +3906,6 @@
 				CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
 				CFDAC29C1DFBF9430039A104 /* TermScreenBufferTests.mm in Sources */,
 				CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */,
-				CFADC52A1BDA688D00CB9A78 /* Operation_NativeCopy_Tests.mm in Sources */,
 				CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */,
 				CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */,
 				CFDAC29B1DFBF93C0039A104 /* TermShellTask_Tests.mm in Sources */,

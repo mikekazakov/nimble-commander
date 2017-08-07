@@ -114,6 +114,7 @@
 		CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D8E1E659D33002DB0E2 /* libssh2.a */; };
 		CF818B7F1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */; };
 		CF818B801EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */; };
+		CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */; };
 		CFC4F9301F0B5E250000B3EE /* VFSListingObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F92F1F0B5E250000B3EE /* VFSListingObjC.mm */; };
 		CFC4F9F51F1719860000B3EE /* VFSNetSFTPOSDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9F31F1719860000B3EE /* VFSNetSFTPOSDetector.cpp */; };
 		CFC4F9F61F1719860000B3EE /* VFSNetSFTPOSDetector.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9F41F1719860000B3EE /* VFSNetSFTPOSDetector.h */; };
@@ -257,6 +258,7 @@
 		CF7C7D8E1E659D33002DB0E2 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = ../3rd_Party/libssh2/built/libssh2.a; sourceTree = "<group>"; };
 		CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFileDownloadDelegate.h; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.h; sourceTree = "<group>"; };
 		CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileDownloadDelegate.mm; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.mm; sourceTree = "<group>"; };
+		CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CFC4F92F1F0B5E250000B3EE /* VFSListingObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListingObjC.mm; path = source/VFSListingObjC.mm; sourceTree = "<group>"; };
 		CFC4F9F31F1719860000B3EE /* VFSNetSFTPOSDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPOSDetector.cpp; path = source/NetSFTP/VFSNetSFTPOSDetector.cpp; sourceTree = "<group>"; };
 		CFC4F9F41F1719860000B3EE /* VFSNetSFTPOSDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPOSDetector.h; path = source/NetSFTP/VFSNetSFTPOSDetector.h; sourceTree = "<group>"; };
@@ -279,6 +281,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */,
 				CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */,
 				CF1847031E41C86D008B7C9F /* libVFS.a in Frameworks */,
 				CF18471E1E41CA2D008B7C9F /* libUtility.a in Frameworks */,
@@ -350,6 +353,7 @@
 		CF1847121E41C9C0008B7C9F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */,
 				CF7C7D8E1E659D33002DB0E2 /* libssh2.a */,
 				CFD727411E42EC9D00603077 /* AppKit.framework */,
 				CFD7273F1E42EC9A00603077 /* Foundation.framework */,

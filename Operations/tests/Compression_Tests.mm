@@ -2,6 +2,7 @@
 #include <thread>
 
 #include "../source/Compression/Compression.h"
+#include "../source/Statistics.h"
 
 #include <VFS/VFS.h>
 #include <VFS/ArcLA.h>

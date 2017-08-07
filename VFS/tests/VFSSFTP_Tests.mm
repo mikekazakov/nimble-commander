@@ -305,7 +305,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
         XCTAssert( st.mode_bits.xusr == 0 );
 
         st.mode_bits.xusr = 1;
-        XCTAssert( host->ChMod(path, st.mode) == VFSError::Ok );
+        XCTAssert( host->SetPermissions(path, st.mode) == VFSError::Ok );
         
         memset( &st, 0, sizeof(st) );        
         XCTAssert( host->Stat(path, st, 0) == VFSError::Ok );
@@ -330,7 +330,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
         
         const auto new_uid = st.uid + 1;
         const auto new_gid = st.gid + 1;
-        XCTAssert( host->ChOwn(path, new_uid, new_gid) == VFSError::Ok );
+        XCTAssert( host->SetOwnership(path, new_uid, new_gid) == VFSError::Ok );
         
         XCTAssert( host->Stat(path, st, 0) == VFSError::Ok );
         XCTAssert( st.uid == new_uid );

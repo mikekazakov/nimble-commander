@@ -7,6 +7,9 @@
 using namespace nc::ops;
 
 @interface NCOpsAttrsChangingDialog ()
+
+@property (strong) IBOutlet NSTextField *titleLabel;
+
 @property (strong) IBOutlet NSStackView *stackView;
 @property (strong) IBOutlet NSView *permissionsBlockView;
 @property (strong) IBOutlet NSView *ownageBlockView;
@@ -65,6 +68,7 @@ static AttrsChangingCommand::Times
 
 static NSString *UserToString( const VFSUser &_user );
 static NSString *GroupToString( const VFSGroup &_group );
+static NSString *Title( const vector<VFSListingItem> &_items );
 
 @implementation NCOpsAttrsChangingDialog
 {
@@ -125,6 +129,7 @@ static NSString *GroupToString( const VFSGroup &_group );
 - (void)windowDidLoad {
     [super windowDidLoad];
     self.processSubfolders.hidden = !m_ItemsHaveDirectories;
+    self.titleLabel.stringValue = Title(m_Items);
     
     if( m_AccessRightsBlockShown )
         [self.stackView addArrangedSubview:self.permissionsBlockView];
@@ -768,6 +773,18 @@ static NSString *GroupToString( const VFSGroup &_group )
                 [NSString stringWithUTF8StdString:_group.name],
                 signed(_group.gid),
                 [NSString stringWithUTF8StdString:_group.gecos]];
+}
+
+static NSString *Title( const vector<VFSListingItem> &_items )
+{
+    if( _items.size() == 1 )
+        return [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for \u201c%@\u201d",
+                                                            "Title for file attributes sheet, single item"),
+                [NSString stringWithUTF8String:_items.front().Name()]];
+    else
+        return [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for %@ selected items",
+                                                            "Title for file attributes sheet, multiple items"),
+                [NSNumber numberWithInt:(int)_items.size()]];
 }
 
 @end

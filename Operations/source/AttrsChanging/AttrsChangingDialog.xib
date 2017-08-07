@@ -49,6 +49,7 @@
                 <outlet property="timesCTimeCheckbox" destination="I14-XW-NWp" id="2eD-EJ-6a0"/>
                 <outlet property="timesMTime" destination="uLt-OG-yTH" id="FCY-Qc-aFR"/>
                 <outlet property="timesMTimeCheckbox" destination="zz0-7u-NZ2" id="r9l-Dr-AZ8"/>
+                <outlet property="titleLabel" destination="MPq-ER-GB5" id="vta-FP-KkJ"/>
                 <outlet property="userPopup" destination="sAf-8i-aCH" id="iOo-3s-46a"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -58,10 +59,10 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="480" height="81"/>
+            <rect key="contentRect" x="196" y="240" width="480" height="204"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" wantsLayer="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="81"/>
+                <rect key="frame" x="0.0" y="0.0" width="480" height="103"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <stackView distribution="equalSpacing" orientation="vertical" alignment="centerX" spacing="0.0" horizontalStackHuggingPriority="249.99998474121094" verticalStackHuggingPriority="1000" verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="qn6-Zy-uWf">
@@ -109,25 +110,43 @@ Gw
                             <action selector="onCancel:" target="-2" id="lSQ-NP-K69"/>
                         </connections>
                     </button>
+                    <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="UHU-jf-Myf">
+                        <rect key="frame" x="12" y="59" width="456" height="5"/>
+                    </box>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MPq-ER-GB5">
+                        <rect key="frame" x="18" y="66" width="444" height="17"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" id="TbX-xD-4as">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
                 </subviews>
                 <constraints>
                     <constraint firstItem="qn6-Zy-uWf" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="1NE-50-IFk"/>
+                    <constraint firstItem="UHU-jf-Myf" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="12" symbolic="YES" id="3Y7-0T-R2J"/>
                     <constraint firstAttribute="trailing" secondItem="bDH-Ic-UEE" secondAttribute="trailing" constant="20" symbolic="YES" id="3bn-gU-QTt"/>
+                    <constraint firstItem="MPq-ER-GB5" firstAttribute="centerX" secondItem="se5-gp-TjO" secondAttribute="centerX" id="6AN-5a-Chl"/>
                     <constraint firstItem="bDH-Ic-UEE" firstAttribute="top" secondItem="qn6-Zy-uWf" secondAttribute="bottom" constant="20" id="7mA-mB-klG"/>
+                    <constraint firstAttribute="trailing" secondItem="UHU-jf-Myf" secondAttribute="trailing" constant="12" symbolic="YES" id="8ZX-X4-tdP"/>
                     <constraint firstAttribute="trailing" secondItem="qn6-Zy-uWf" secondAttribute="trailing" id="9qI-lZ-rlC"/>
-                    <constraint firstItem="qn6-Zy-uWf" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" id="GM2-Jd-fU4"/>
                     <constraint firstItem="SpV-en-P7h" firstAttribute="baseline" secondItem="fX5-3b-SgT" secondAttribute="baseline" id="HRU-0z-poI"/>
                     <constraint firstItem="bDH-Ic-UEE" firstAttribute="leading" secondItem="fX5-3b-SgT" secondAttribute="trailing" constant="12" symbolic="YES" id="LGi-0a-789"/>
                     <constraint firstItem="SpV-en-P7h" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Lsc-zW-Cz5"/>
+                    <constraint firstItem="MPq-ER-GB5" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="NJX-yO-b4u"/>
                     <constraint firstItem="fX5-3b-SgT" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="SpV-en-P7h" secondAttribute="trailing" constant="8" symbolic="YES" id="YMi-OZ-AgZ"/>
+                    <constraint firstAttribute="trailing" secondItem="MPq-ER-GB5" secondAttribute="trailing" constant="20" symbolic="YES" id="abf-IL-Al8"/>
+                    <constraint firstItem="MPq-ER-GB5" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="bBH-3g-PRG"/>
                     <constraint firstAttribute="bottom" secondItem="bDH-Ic-UEE" secondAttribute="bottom" constant="20" symbolic="YES" id="eKM-jU-N5I"/>
+                    <constraint firstItem="UHU-jf-Myf" firstAttribute="top" secondItem="MPq-ER-GB5" secondAttribute="bottom" constant="4" id="hvR-qV-Yj8"/>
+                    <constraint firstItem="qn6-Zy-uWf" firstAttribute="top" secondItem="UHU-jf-Myf" secondAttribute="bottom" id="tRe-EH-Gwp"/>
                     <constraint firstItem="bDH-Ic-UEE" firstAttribute="centerY" secondItem="fX5-3b-SgT" secondAttribute="centerY" id="zbD-5P-X55"/>
                 </constraints>
             </view>
             <connections>
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
             </connections>
-            <point key="canvasLocation" x="232" y="255"/>
+            <point key="canvasLocation" x="-34" y="168"/>
         </window>
         <customView verticalHuggingPriority="1000" verticalCompressionResistancePriority="1000" translatesAutoresizingMaskIntoConstraints="NO" id="MFH-yu-Et9" userLabel="Permissions">
             <rect key="frame" x="0.0" y="0.0" width="427" height="108"/>
@@ -874,7 +893,7 @@ Gw
                 <constraint firstItem="KwA-83-ial" firstAttribute="leading" secondItem="I14-XW-NWp" secondAttribute="trailing" constant="1" id="u6M-Uc-VE8"/>
                 <constraint firstItem="I14-XW-NWp" firstAttribute="baseline" secondItem="Vl5-6g-JlL" secondAttribute="baseline" id="zzb-pK-gjX"/>
             </constraints>
-            <point key="canvasLocation" x="-172" y="71"/>
+            <point key="canvasLocation" x="-275" y="-116"/>
         </customView>
     </objects>
 </document>

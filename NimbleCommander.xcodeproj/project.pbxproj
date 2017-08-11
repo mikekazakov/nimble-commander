@@ -1172,6 +1172,7 @@
 		CFF6F38F1A13567C00011177 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
 		CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
+		CFFA942E1F3DBF790035E606 /* Dock.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA942D1F3DBF790035E606 /* Dock.mm */; };
 		CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
 		CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
 		CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
@@ -2032,6 +2033,8 @@
 		CFF6F3A71A1358B100011177 /* Files-Pro.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; name = "Files-Pro.entitlements"; path = "NimbleCommander/Resources/Files-Pro.entitlements"; sourceTree = SOURCE_ROOT; };
 		CFF877451D83C5700006DF7F /* AskingForRatingOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AskingForRatingOverlayView.h; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.h; sourceTree = SOURCE_ROOT; };
 		CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AskingForRatingOverlayView.mm; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.mm; sourceTree = SOURCE_ROOT; };
+		CFFA942C1F3DBF790035E606 /* Dock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dock.h; path = NimbleCommander/Core/Dock.h; sourceTree = SOURCE_ROOT; };
+		CFFA942D1F3DBF790035E606 /* Dock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Dock.mm; path = NimbleCommander/Core/Dock.mm; sourceTree = SOURCE_ROOT; };
 		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearchPopupViewController.h; path = ../NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.h; sourceTree = "<group>"; };
 		CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SpotlightSearchPopupViewController.mm; path = ../NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.mm; sourceTree = "<group>"; };
 		CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsSummaryViewController.h; path = NimbleCommander/Operations/OperationsSummaryViewController.h; sourceTree = SOURCE_ROOT; };
@@ -2945,6 +2948,8 @@
 				CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */,
 				CFDAC2C51DFD0F370039A104 /* Caches */,
 				CFDAC2F71DFD17520039A104 /* Common.mm */,
+				CFFA942C1F3DBF790035E606 /* Dock.h */,
+				CFFA942D1F3DBF790035E606 /* Dock.mm */,
 				CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */,
 				CF4E56E91D50712C00452912 /* FileMask.cpp */,
 				CF4E56E81D50712C00452912 /* FileMask.h */,
@@ -4364,6 +4369,7 @@
 				CFDAC2E31DFD142C0039A104 /* FileWindow.cpp in Sources */,
 				CF56C2CC1DC358F200F0DF0F /* PanelBriefViewCollectionViewLayout.mm in Sources */,
 				CF56C2C31DC1A33300F0DF0F /* PanelListViewGeometry.mm in Sources */,
+				CFFA942E1F3DBF790035E606 /* Dock.mm in Sources */,
 				CFDAC2301DFBDBCB0039A104 /* Config.cpp in Sources */,
 				CFDAC2491DFBEE340039A104 /* MainWindowController.mm in Sources */,
 				CF9F4AED1ECADEDB00E0AF82 /* OpenFile.mm in Sources */,

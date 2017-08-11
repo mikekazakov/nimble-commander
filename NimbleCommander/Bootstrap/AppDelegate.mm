@@ -25,6 +25,7 @@
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>
 #include <NimbleCommander/Core/Alert.h>
+#include <NimbleCommander/Core/Dock.h>
 #include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
@@ -49,6 +50,7 @@
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
+
 
 static SUUpdater *g_Sparkle = nil;
 
@@ -127,24 +129,6 @@ static bool AskUserToProvideUsageStatistics()
     return [alert runModal] == NSAlertFirstButtonReturn;
 }
 
-static NSProgressIndicator *AddDockProgressIndicator( NSDockTile *_dock )
-{
-    NSImageView *iv = [NSImageView new];
-    iv.image = NSApplication.sharedApplication.applicationIconImage;
-    _dock.contentView = iv;
-    
-    NSProgressIndicator *progress = [[NSProgressIndicator alloc] initWithFrame:NSMakeRect(0, 2, _dock.size.width, 18)];
-    progress.style = NSProgressIndicatorBarStyle;
-    progress.indeterminate = NO;
-    progress.bezeled = true;
-    progress.minValue = 0;
-    progress.maxValue = 1;
-    progress.hidden = true;
-    [iv addSubview:progress];
-
-    return progress;
-}
-
 static void UpdateMenuItemsPlaceholders( int _tag )
 {
     static const auto app_name = (NSString*)[NSBundle.mainBundle.infoDictionary
@@ -166,11 +150,7 @@ static AppDelegate *g_Me = nil;
 
 @interface AppDelegate()
 
-/**
- * Will set a progress indicator at the bottom of app icon to a specified value in [0; 1].
- * Any value below 0.0 or above 1.0 will cause progress indicator to disappear.
- */
-@property (nonatomic) double progress;
+@property (nonatomic, readonly) nc::core::Dock& dock;
 
 @end
 
@@ -179,9 +159,6 @@ static AppDelegate *g_Me = nil;
     vector<MainWindowController *>              m_MainWindows;
     vector<InternalViewerWindowController*>     m_ViewerWindows;
     spinlock                                    m_ViewerWindowsLock;
-    NSProgressIndicator *m_ProgressIndicator;
-    NSDockTile          *m_DockTile;
-    double              m_AppProgress;
     bool                m_IsRunningTests;
     string              m_SupportDirectory;
     string              m_ConfigDirectory;
@@ -204,7 +181,6 @@ static AppDelegate *g_Me = nil;
     if(self) {
         g_Me = self;
         m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
-        m_AppProgress = -1;
 
         if( ActivationManager::ForAppStore() &&
            ![NSFileManager.defaultManager fileExistsAtPath:NSBundle.mainBundle.appStoreReceiptURL.path] ) {
@@ -389,10 +365,6 @@ static AppDelegate *g_Me = nil;
     UpdateMenuItemsPlaceholders( "menu.nimble_commander.quit" );
     UpdateMenuItemsPlaceholders( 17000 ); // Menu->Help
     
-    // init app dock progress bar
-    m_DockTile = NSApplication.sharedApplication.dockTile;
-    m_ProgressIndicator = AddDockProgressIndicator(m_DockTile);
-    
     // calling modules running in background
     TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
     
@@ -463,30 +435,7 @@ static AppDelegate *g_Me = nil;
 {
     // currently considering only admin mode for setting badge info
     bool admin = RoutedIO::Instance().Enabled();
-    m_DockTile.badgeLabel = admin ? @"ADMIN" : @"";
-}
-
-- (double) progress
-{
-    return m_AppProgress;
-}
-
-- (void) setProgress:(double)_progress
-{
-    if(_progress == m_AppProgress)
-        return;
-    
-    if(_progress >= 0.0 && _progress <= 1.0) {
-        m_ProgressIndicator.doubleValue = _progress;
-        m_ProgressIndicator.hidden = false;
-    }
-    else {
-        m_ProgressIndicator.hidden = true;
-    }
-    
-    m_AppProgress = _progress;
-    
-    [m_DockTile display];
+    NSApplication.sharedApplication.dockTile.badgeLabel = admin ? @"ADMIN" : @"";
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
@@ -875,11 +824,17 @@ static AppDelegate *g_Me = nil;
     static const auto apt = [self]{
         const auto apt = make_shared<nc::ops::AggregateProgressTracker>();
         apt->SetProgressCallback([](double _progress){
-            g_Me.progress = _progress;
+            g_Me.dock.SetProgress( _progress );
         });
         return apt;
     }();
     return *apt.get();
+}
+
+- (nc::core::Dock&) dock
+{
+    static const auto instance = new nc::core::Dock;
+    return *instance;
 }
 
 @end

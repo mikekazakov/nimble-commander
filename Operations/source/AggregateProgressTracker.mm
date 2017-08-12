@@ -69,7 +69,7 @@ int AggregateProgressTracker::OperationsAmount() const
     LOCK_GUARD(m_Lock) {
         for( const auto &wp: m_Pools )
             if( const auto p = wp.lock() )
-                amount += p->TotalOperationsCount();
+                amount += p->RunningOperationsCount();
     }
     return amount;
 }
@@ -82,7 +82,7 @@ tuple<int, double> AggregateProgressTracker::OperationsAmountAndProgress() const
         for( const auto &wp: m_Pools )
             if( const auto p = wp.lock() )
                 if( !p->Empty() )
-                    for( const auto op: p->Operations() ) {
+                    for( const auto op: p->RunningOperations() ) {
                         const auto &stat = op->Statistics();
                         progress += stat.DoneFraction( stat.PreferredSource() );
                         ++amount;

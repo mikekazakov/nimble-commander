@@ -27,9 +27,10 @@ public:
     void ObserveUnticketed( uint64_t _notification_mask, function<void()> _callback );
     
     bool Empty() const;
-    int TotalOperationsCount() const;
+    int OperationsCount() const;
     int RunningOperationsCount() const;
     vector<shared_ptr<Operation>> Operations() const;
+    vector<shared_ptr<Operation>> RunningOperations() const;
 
     void StopAndWaitForShutdown();
 

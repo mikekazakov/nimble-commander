@@ -108,7 +108,7 @@ int Pool::RunningOperationsCount() const
         return (int)m_RunningOperations.size();
 }
 
-int Pool::TotalOperationsCount() const
+int Pool::OperationsCount() const
 {
     LOCK_GUARD(m_Lock)
         return (int)m_RunningOperations.size() + (int)m_PendingOperations.size();
@@ -121,6 +121,12 @@ vector<shared_ptr<Operation>> Pool::Operations() const
         v.insert( end(v), begin(m_PendingOperations), end(m_PendingOperations) );
         return v;
     }
+}
+
+vector<shared_ptr<Operation>> Pool::RunningOperations() const
+{
+    LOCK_GUARD(m_Lock)
+        return m_RunningOperations;
 }
 
 void Pool::SetDialogCallback(function<void(NSWindow*, function<void(NSModalResponse)>)> _callback)
@@ -154,6 +160,8 @@ int Pool::ConcurrencyPerPool()
 
 void Pool::SetConcurrencyPerPool( int _maximum_current_operations )
 {
+    if( _maximum_current_operations < 1 )
+        _maximum_current_operations = 1;
     m_ConcurrencyPerPool = _maximum_current_operations;
 }
 

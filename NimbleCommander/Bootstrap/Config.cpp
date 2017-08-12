@@ -557,6 +557,13 @@ GenericConfig::ObservationTicket GenericConfig::Observe(const char *_path,
     return ObservationTicket(this, t);
 }
 
+void GenericConfig::ObserveUnticketed(const char *_path, function<void()> _change_callback)
+{
+    auto ticket = Observe(_path, move(_change_callback));
+    ticket.ticket = 0;
+    ticket.instance = nullptr;
+}
+
 void GenericConfig::StopObserving(unsigned long _ticket)
 {
     if( !_ticket )

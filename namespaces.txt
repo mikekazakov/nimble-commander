@@ -1,4 +1,5 @@
 ::nc (NC)
+   ::bootstrap
    ::core
    ::panel
       ::actions

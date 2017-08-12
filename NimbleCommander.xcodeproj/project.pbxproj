@@ -1173,6 +1173,7 @@
 		CFF6F3A51A13576200011177 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFF877471D83C5700006DF7F /* AskingForRatingOverlayView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */; };
 		CFFA942E1F3DBF790035E606 /* Dock.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA942D1F3DBF790035E606 /* Dock.mm */; };
+		CFFA943C1F3E9C4D0035E606 /* ConfigWiring.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA943B1F3E9C4D0035E606 /* ConfigWiring.mm */; };
 		CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
 		CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
 		CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */; };
@@ -2035,6 +2036,8 @@
 		CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AskingForRatingOverlayView.mm; path = NimbleCommander/States/FilePanels/AskingForRatingOverlayView.mm; sourceTree = SOURCE_ROOT; };
 		CFFA942C1F3DBF790035E606 /* Dock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Dock.h; path = NimbleCommander/Core/Dock.h; sourceTree = SOURCE_ROOT; };
 		CFFA942D1F3DBF790035E606 /* Dock.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Dock.mm; path = NimbleCommander/Core/Dock.mm; sourceTree = SOURCE_ROOT; };
+		CFFA943A1F3E9C4D0035E606 /* ConfigWiring.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigWiring.h; path = NimbleCommander/Bootstrap/ConfigWiring.h; sourceTree = SOURCE_ROOT; };
+		CFFA943B1F3E9C4D0035E606 /* ConfigWiring.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConfigWiring.mm; path = NimbleCommander/Bootstrap/ConfigWiring.mm; sourceTree = SOURCE_ROOT; };
 		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearchPopupViewController.h; path = ../NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.h; sourceTree = "<group>"; };
 		CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SpotlightSearchPopupViewController.mm; path = ../NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.mm; sourceTree = "<group>"; };
 		CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsSummaryViewController.h; path = NimbleCommander/Operations/OperationsSummaryViewController.h; sourceTree = SOURCE_ROOT; };
@@ -2775,6 +2778,8 @@
 				CFDAC22D1DFBDBCB0039A104 /* Config.cpp */,
 				CFDAC22E1DFBDBCB0039A104 /* Config.h */,
 				CFDAC22F1DFBDBCB0039A104 /* Config.mm */,
+				CFFA943A1F3E9C4D0035E606 /* ConfigWiring.h */,
+				CFFA943B1F3E9C4D0035E606 /* ConfigWiring.mm */,
 				CF1846EE1E3F1C15008B7C9F /* fixed_eytzinger_map.h */,
 				CFDAC2321DFBDE2B0039A104 /* main.cpp */,
 				CFC5122916C4BD3D00D247EE /* MainMenu.xib */,
@@ -4386,6 +4391,7 @@
 				CFDAC29A1DFBF9260039A104 /* TermView.mm in Sources */,
 				CFDAC2311DFBDBCB0039A104 /* Config.mm in Sources */,
 				CFDAC2B21DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
+				CFFA943C1F3E9C4D0035E606 /* ConfigWiring.mm in Sources */,
 				CF4E56431D5064FE00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFB44F0C1F35F0B900E7555E /* UserNotificationsCenter.mm in Sources */,
 				CFDAC2CD1DFD0F840039A104 /* QLVFSThumbnailsCache.mm in Sources */,

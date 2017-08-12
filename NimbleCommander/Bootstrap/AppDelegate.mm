@@ -50,7 +50,9 @@
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
+#include "ConfigWiring.h"
 
+using namespace nc::bootstrap;
 
 static SUUpdater *g_Sparkle = nil;
 
@@ -405,6 +407,8 @@ static AppDelegate *g_Me = nil;
     
     if( !ActivationManager::ForAppStore() && !self.isRunningTests )
         PFMoveToApplicationsFolderIfNecessary();
+    
+    ConfigWiring{GlobalConfig()}.Wire();
 }
 
 - (void) setupConfigs

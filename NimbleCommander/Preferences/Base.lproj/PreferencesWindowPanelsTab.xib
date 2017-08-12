@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
@@ -51,7 +51,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="760">
-                                        <rect key="frame" x="245" y="156" width="278" height="18"/>
+                                        <rect key="frame" x="245" y="119" width="278" height="18"/>
                                         <buttonCell key="cell" type="check" title="Ignore directories when selecting by mask" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="761">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -93,7 +93,7 @@
                                         </connections>
                                     </textField>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="bG0-HE-nN2">
-                                        <rect key="frame" x="245" y="196" width="268" height="18"/>
+                                        <rect key="frame" x="245" y="159" width="268" height="18"/>
                                         <buttonCell key="cell" type="check" title="Allow dragging and dropping into folders" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="CRv-aQ-f4K">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -103,7 +103,7 @@
                                         </connections>
                                     </button>
                                     <button translatesAutoresizingMaskIntoConstraints="NO" id="dyN-tf-vzT">
-                                        <rect key="frame" x="245" y="176" width="330" height="18"/>
+                                        <rect key="frame" x="245" y="139" width="330" height="18"/>
                                         <buttonCell key="cell" type="check" title="Redirect keyboard input to the overlapped terminal" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="8nl-FW-wYu">
                                             <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                             <font key="font" metaFont="system"/>
@@ -159,24 +159,78 @@
                                             <binding destination="-3" name="selectedTag" keyPath="delegate.config.filePanel.operations.defaultChecksumVerification" id="jIT-wa-WaM"/>
                                         </connections>
                                     </popUpButton>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rBd-jv-fCu">
+                                        <rect key="frame" x="166" y="194" width="75" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Allow up to:" id="qHq-Tf-LQT">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
+                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4Ba-iq-Pby">
+                                        <rect key="frame" x="245" y="188" width="52" height="26"/>
+                                        <popUpButtonCell key="cell" type="push" title="1" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" tag="1" imageScaling="proportionallyDown" inset="2" selectedItem="DmJ-72-Pie" id="A4V-Gy-kSq">
+                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="menu"/>
+                                            <menu key="menu" id="amp-OU-uFt">
+                                                <items>
+                                                    <menuItem title="1" tag="1" id="DmJ-72-Pie">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="2" tag="2" id="KOP-ta-GeN">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="3" tag="3" id="LwC-Ok-eGM">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="4" tag="4" id="d2C-Dx-g7k">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="5" state="on" tag="5" id="kca-NL-vEh">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="10" tag="10" id="EhI-e1-THf">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                        <connections>
+                                            <binding destination="-3" name="selectedTag" keyPath="delegate.config.filePanel.operations.concurrencyPerWindow" id="wHT-Qo-D68"/>
+                                        </connections>
+                                    </popUpButton>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sYM-UF-55G">
+                                        <rect key="frame" x="298" y="194" width="255" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="simulateneous file operations per window" id="gnX-Dl-80b">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstItem="bG0-HE-nN2" firstAttribute="top" secondItem="4Ba-iq-Pby" secondAttribute="bottom" constant="16" id="35J-3L-YW5"/>
                                     <constraint firstItem="8Dv-Ox-hiC" firstAttribute="baseline" secondItem="ctP-zl-GEx" secondAttribute="baseline" id="9TB-RV-GpO"/>
                                     <constraint firstItem="ZdQ-lR-XN2" firstAttribute="top" secondItem="22" secondAttribute="top" constant="20" symbolic="YES" id="ATf-HT-dH1"/>
                                     <constraint firstItem="ebH-ed-TXz" firstAttribute="baseline" secondItem="VQQ-O6-dIM" secondAttribute="baseline" id="B5J-g7-icW"/>
                                     <constraint firstItem="gE9-bs-3HL" firstAttribute="leading" secondItem="ZdQ-lR-XN2" secondAttribute="trailing" constant="8" symbolic="YES" id="BBI-kV-sgn"/>
                                     <constraint firstItem="dyN-tf-vzT" firstAttribute="leading" secondItem="bG0-HE-nN2" secondAttribute="leading" id="DU7-SE-zDX"/>
                                     <constraint firstItem="naE-Zr-UF7" firstAttribute="top" secondItem="8Dv-Ox-hiC" secondAttribute="bottom" constant="4" id="FTL-2k-eoc"/>
+                                    <constraint firstItem="sYM-UF-55G" firstAttribute="leading" secondItem="4Ba-iq-Pby" secondAttribute="trailing" constant="6" id="Gou-jE-LnQ"/>
+                                    <constraint firstItem="4Ba-iq-Pby" firstAttribute="baseline" secondItem="rBd-jv-fCu" secondAttribute="baseline" id="HRk-21-Wtk"/>
+                                    <constraint firstItem="sYM-UF-55G" firstAttribute="baseline" secondItem="4Ba-iq-Pby" secondAttribute="baseline" id="HgR-Pu-H61"/>
+                                    <constraint firstItem="4Ba-iq-Pby" firstAttribute="top" secondItem="ebH-ed-TXz" secondAttribute="bottom" constant="16" id="Hv2-4E-zUe"/>
                                     <constraint firstItem="gE9-bs-3HL" firstAttribute="baseline" secondItem="ZdQ-lR-XN2" secondAttribute="baseline" id="NC4-Mv-1lJ"/>
                                     <constraint firstItem="ebH-ed-TXz" firstAttribute="top" secondItem="naE-Zr-UF7" secondAttribute="bottom" constant="16" id="RXx-hA-OtO"/>
                                     <constraint firstItem="dyN-tf-vzT" firstAttribute="top" secondItem="bG0-HE-nN2" secondAttribute="bottom" constant="6" id="Rjs-NU-zQ4"/>
+                                    <constraint firstItem="4Ba-iq-Pby" firstAttribute="leading" secondItem="rBd-jv-fCu" secondAttribute="trailing" constant="8" symbolic="YES" id="Ruo-gn-xkT"/>
+                                    <constraint firstItem="4Ba-iq-Pby" firstAttribute="leading" secondItem="ebH-ed-TXz" secondAttribute="leading" id="Y3c-eu-PIK"/>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="gE9-bs-3HL" secondAttribute="trailing" constant="20" symbolic="YES" id="Zdd-WO-wwS"/>
                                     <constraint firstItem="ebH-ed-TXz" firstAttribute="leading" secondItem="VQQ-O6-dIM" secondAttribute="trailing" constant="8" symbolic="YES" id="dfW-nT-wta"/>
                                     <constraint firstItem="ebH-ed-TXz" firstAttribute="leading" secondItem="naE-Zr-UF7" secondAttribute="leading" id="dlN-gC-bDN"/>
                                     <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="bG0-HE-nN2" secondAttribute="leading" id="gF5-M3-lF5"/>
                                     <constraint firstItem="8Dv-Ox-hiC" firstAttribute="leading" secondItem="gE9-bs-3HL" secondAttribute="leading" id="gj7-D8-2UO"/>
                                     <constraint firstItem="naE-Zr-UF7" firstAttribute="leading" secondItem="8Dv-Ox-hiC" secondAttribute="leading" id="hOZ-HX-7It"/>
-                                    <constraint firstItem="bG0-HE-nN2" firstAttribute="top" secondItem="ebH-ed-TXz" secondAttribute="bottom" constant="16" id="hba-3u-dd4"/>
                                     <constraint firstItem="gE9-bs-3HL" firstAttribute="leading" secondItem="22" secondAttribute="centerX" multiplier="0.77" id="kP2-l4-Ypb"/>
                                     <constraint firstItem="760" firstAttribute="top" secondItem="dyN-tf-vzT" secondAttribute="bottom" constant="6" id="nGE-U8-qOA"/>
                                     <constraint firstItem="760" firstAttribute="leading" secondItem="dyN-tf-vzT" secondAttribute="leading" id="r16-lX-uQn"/>
@@ -564,7 +618,7 @@
                                                             <rect key="frame" x="8" y="45" width="240" height="206"/>
                                                             <clipView key="contentView" id="Q5x-oK-mXN">
                                                                 <rect key="frame" x="1" y="0.0" width="238" height="205"/>
-                                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                                                <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
                                                                     <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" rowHeight="20" headerView="1CY-V7-OVc" viewBased="YES" id="LBn-0D-ZCF">
                                                                         <rect key="frame" x="0.0" y="0.0" width="261" height="182"/>

@@ -219,7 +219,13 @@
              * Time in milliseconds, after which NC will give up on watching for changes in shadow 
              * copy of VFS file. Measured from making of shadow copy or from the it's last change.
              */
-            "vfsShadowUploadObservationDropDelay": 3600000
+            "vfsShadowUploadObservationDropDelay": 3600000,
+            
+            /**
+             * Maximum amount of concurrent file operation running simultaneously in a single window.
+             * Any operation added after this value is reached will wait in a queue.
+             */
+             "concurrencyPerWindow": 5
         },
         
         /**

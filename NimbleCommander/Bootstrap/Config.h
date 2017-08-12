@@ -68,6 +68,7 @@ public:
     struct ObservationTicket;
     
     ObservationTicket Observe(const char *_path, function<void()> _change_callback); // _change_callback can be fired from any thread
+    void ObserveUnticketed(const char *_path, function<void()> _change_callback); // _change_callback can be fired from any thread
     template <typename C, typename T>
     void ObserveMany(C &_storage, function<void()> _change_callback, const T &_paths )
     {

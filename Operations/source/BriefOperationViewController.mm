@@ -151,6 +151,9 @@ static const auto g_SlowUpdateFreq = 1.0;
 - (IBAction)onStop:(id)sender
 {
     m_Operation->Stop();
+    self.stopButton.hidden = true;
+    self.pauseButton.hidden = true;
+    self.resumeButton.hidden = true;
 }
 
 - (IBAction)onPause:(id)sender

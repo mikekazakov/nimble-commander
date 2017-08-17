@@ -7,68 +7,38 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF0939301D10214200D67AC6 /* FunctionKeysPass.h in Headers */ = {isa = PBXBuildFile; fileRef = CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */; };
-		CF0939321D10214D00D67AC6 /* FunctionKeysPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */; };
-		CF1846F61E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1846F51E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h */; };
-		CF1846F81E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */; };
-		CF1E3D0A1D57562800609ADB /* ButtonWithTextColor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */; };
-		CF1E3D0C1D57563100609ADB /* ButtonWithTextColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */; };
-		CF34BEEF1E225EB3006A6B72 /* ColoredSeparatorLine.h in Headers */ = {isa = PBXBuildFile; fileRef = CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */; };
-		CF34BEF11E225EB9006A6B72 /* ColoredSeparatorLine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */; };
-		CF3E6DF51E386F52002B4AAD /* NSEventModifierFlagsHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */; };
-		CF56C2D11DC3719000F0DF0F /* ByteCountFormatter.h in Headers */ = {isa = PBXBuildFile; fileRef = CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */; };
-		CF56C2D31DC371A000F0DF0F /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */; };
-		CF84C8E71DB867F200B4E888 /* Layout.h in Headers */ = {isa = PBXBuildFile; fileRef = CF84C8E61DB867F200B4E888 /* Layout.h */; };
-		CF84C8E91DB867FC00B4E888 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8E81DB867FC00B4E888 /* Layout.mm */; };
-		CF960E1D1C992F2C001D8B02 /* Encodings.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E171C992F2C001D8B02 /* Encodings.h */; };
-		CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E181C992F2C001D8B02 /* HexadecimalColor.h */; };
-		CF960E1F1C992F2C001D8B02 /* ObjCpp.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E191C992F2C001D8B02 /* ObjCpp.h */; };
-		CF960E201C992F2C001D8B02 /* PathManip.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E1A1C992F2C001D8B02 /* PathManip.h */; };
-		CF960E211C992F2C001D8B02 /* SystemInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E1B1C992F2C001D8B02 /* SystemInformation.h */; };
-		CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF960E1C1C992F2C001D8B02 /* VolumeInformation.h */; };
-		CF960E291C992F35001D8B02 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF960E231C992F35001D8B02 /* Encodings.cpp */; };
-		CF960E2A1C992F35001D8B02 /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */; };
-		CF960E2B1C992F35001D8B02 /* HexadecimalColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E251C992F35001D8B02 /* HexadecimalColor.mm */; };
-		CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF960E261C992F35001D8B02 /* PathManip.c */; };
-		CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E271C992F35001D8B02 /* SystemInformation.mm */; };
-		CF960E2E1C992F35001D8B02 /* VolumeInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF960E281C992F35001D8B02 /* VolumeInformation.cpp */; };
-		CFC4F9721F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */; };
-		CFC4F9741F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */; };
-		CFD3CAF11DA4AD2A006DA143 /* KeychainServices.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */; };
-		CFD3CAF31DA4AD32006DA143 /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */; };
-		CFD62BD21C9A679F0021EE7F /* NSObject+MassObserving.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */; };
-		CFD62BD41C9A67A60021EE7F /* NSObject+MassObserving.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */; };
-		CFD62BD61C9A6B4B0021EE7F /* FontCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BD51C9A6B4B0021EE7F /* FontCache.h */; };
-		CFD62BD81C9A6B630021EE7F /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BD71C9A6B630021EE7F /* FontCache.cpp */; };
-		CFD62BDA1C9A6BE30021EE7F /* FontExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BD91C9A6BE30021EE7F /* FontExtras.h */; };
-		CFD62BDC1C9A6BEB0021EE7F /* FontExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */; };
-		CFD62BE81C9A709C0021EE7F /* FPSLimitedDrawer.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BE71C9A709C0021EE7F /* FPSLimitedDrawer.h */; };
-		CFD62BEA1C9A70A40021EE7F /* FPSLimitedDrawer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */; };
-		CFD62BF51C9A79910021EE7F /* NSView+Sugar.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BF41C9A79910021EE7F /* NSView+Sugar.h */; };
-		CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */; };
-		CFD62BF91C9A7A860021EE7F /* NSTimer+Tolerance.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BF81C9A7A860021EE7F /* NSTimer+Tolerance.h */; };
-		CFD62BFB1C9A7A8D0021EE7F /* NSTimer+Tolerance.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */; };
-		CFD62BFD1C9A84500021EE7F /* StringExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62BFC1C9A84500021EE7F /* StringExtras.h */; };
-		CFD62BFF1C9A84570021EE7F /* StringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BFE1C9A84570021EE7F /* StringExtras.mm */; };
-		CFD62C011C9A87170021EE7F /* FontExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C001C9A87170021EE7F /* FontExtras.mm */; };
-		CFD62C031C9A89B50021EE7F /* NSMenu+Hierarchical.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */; };
-		CFD62C051C9A89BD0021EE7F /* NSMenu+Hierarchical.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */; };
-		CFD62C071C9A95240021EE7F /* SyncMessageBox.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C061C9A95240021EE7F /* SyncMessageBox.h */; };
-		CFD62C091C9A952C0021EE7F /* SyncMessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */; };
-		CFD62C101C9AB4770021EE7F /* FSEventsDirUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */; };
-		CFD62C121C9AB47F0021EE7F /* FSEventsDirUpdate.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C111C9AB47F0021EE7F /* FSEventsDirUpdate.h */; };
-		CFD62C161C9AEC9D0021EE7F /* NativeFSManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C151C9AEC9D0021EE7F /* NativeFSManager.h */; };
-		CFD62C181C9AECA50021EE7F /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */; };
-		CFD62C1A1C9AFF210021EE7F /* SheetController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C191C9AFF210021EE7F /* SheetController.h */; };
-		CFD62C1C1C9AFF280021EE7F /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1B1C9AFF280021EE7F /* SheetController.mm */; };
-		CFD62C1E1C9B01320021EE7F /* SheetWithHotkeys.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62C1D1C9B01320021EE7F /* SheetWithHotkeys.h */; };
-		CFD62C201C9B013A0021EE7F /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */; };
-		CFDAC2291DFBD8690039A104 /* BlinkingCaret.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */; };
-		CFDAC22B1DFBD8740039A104 /* BlinkingCaret.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */; };
-		CFDAC2B81DFD0BDC0039A104 /* DataBlockAnalysis.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */; };
-		CFDAC2BA1DFD0BE30039A104 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */; };
-		CFDAC2BC1DFD0C980039A104 /* ExtensionLowercaseComparison.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */; };
-		CFDAC2BE1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */; };
+		CFFA94671F453CC00035E606 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */; };
+		CFFA94681F453CC00035E606 /* BlinkingCaret.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */; };
+		CFFA94691F453CC00035E606 /* ButtonWithTextColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */; };
+		CFFA946A1F453CC00035E606 /* ByteCountFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */; };
+		CFFA946B1F453CC00035E606 /* ColoredSeparatorLine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */; };
+		CFFA946C1F453CC00035E606 /* DataBlockAnalysis.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */; };
+		CFFA946D1F453CC00035E606 /* Encodings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF960E231C992F35001D8B02 /* Encodings.cpp */; };
+		CFFA946E1F453CC00035E606 /* EncodingsAdditions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */; };
+		CFFA946F1F453CC00035E606 /* ExtensionLowercaseComparison.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */; };
+		CFFA94701F453CC00035E606 /* FontCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BD71C9A6B630021EE7F /* FontCache.cpp */; };
+		CFFA94711F453CC00035E606 /* FontExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */; };
+		CFFA94721F453CC00035E606 /* FontExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C001C9A87170021EE7F /* FontExtras.mm */; };
+		CFFA94731F453CC00035E606 /* FPSLimitedDrawer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BE91C9A70A40021EE7F /* FPSLimitedDrawer.mm */; };
+		CFFA94741F453CC00035E606 /* FSEventsDirUpdate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C0F1C9AB4770021EE7F /* FSEventsDirUpdate.cpp */; };
+		CFFA94751F453CC00035E606 /* FunctionKeysPass.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */; };
+		CFFA94761F453CC00035E606 /* HexadecimalColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E251C992F35001D8B02 /* HexadecimalColor.mm */; };
+		CFFA94771F453CC00035E606 /* KeychainServices.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */; };
+		CFFA94781F453CC00035E606 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8E81DB867FC00B4E888 /* Layout.mm */; };
+		CFFA94791F453CC00035E606 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */; };
+		CFFA947A1F453CC00035E606 /* NSMenu+Hierarchical.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */; };
+		CFFA947B1F453CC00035E606 /* NSObject+MassObserving.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */; };
+		CFFA947C1F453CC00035E606 /* NSTimer+Tolerance.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */; };
+		CFFA947D1F453CC00035E606 /* NSView+Sugar.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */; };
+		CFFA947E1F453CC00035E606 /* PathManip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF960E261C992F35001D8B02 /* PathManip.c */; };
+		CFFA947F1F453CC00035E606 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1B1C9AFF280021EE7F /* SheetController.mm */; };
+		CFFA94801F453CC00035E606 /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */; };
+		CFFA94811F453CC00035E606 /* StringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BFE1C9A84570021EE7F /* StringExtras.mm */; };
+		CFFA94821F453CC00035E606 /* SyncMessageBox.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */; };
+		CFFA94831F453CC00035E606 /* SystemInformation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF960E271C992F35001D8B02 /* SystemInformation.mm */; };
+		CFFA94841F453CC00035E606 /* VerticallyCenteredTextFieldCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */; };
+		CFFA94851F453CC00035E606 /* VolumeInformation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF960E281C992F35001D8B02 /* VolumeInformation.cpp */; };
+		CFFA948F1F453DF30035E606 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA948E1F453DF30035E606 /* libHabanero.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -85,7 +55,6 @@
 		CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter.mm; path = source/ByteCountFormatter.mm; sourceTree = "<group>"; };
 		CF84C8E61DB867F200B4E888 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = include/Utility/Layout.h; sourceTree = "<group>"; };
 		CF84C8E81DB867FC00B4E888 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = source/Layout.mm; sourceTree = "<group>"; };
-		CF960E0C1C97FA73001D8B02 /* libUtility.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libUtility.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF960E171C992F2C001D8B02 /* Encodings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Encodings.h; path = include/Utility/Encodings.h; sourceTree = "<group>"; };
 		CF960E181C992F2C001D8B02 /* HexadecimalColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexadecimalColor.h; path = include/Utility/HexadecimalColor.h; sourceTree = "<group>"; };
 		CF960E191C992F2C001D8B02 /* ObjCpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjCpp.h; path = include/Utility/ObjCpp.h; sourceTree = "<group>"; };
@@ -135,13 +104,16 @@
 		CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DataBlockAnalysis.mm; path = source/DataBlockAnalysis.mm; sourceTree = "<group>"; };
 		CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionLowercaseComparison.h; path = include/Utility/ExtensionLowercaseComparison.h; sourceTree = "<group>"; };
 		CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionLowercaseComparison.cpp; path = source/ExtensionLowercaseComparison.cpp; sourceTree = "<group>"; };
+		CFFA94631F453CB60035E606 /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFFA948E1F453DF30035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		CF960E091C97FA73001D8B02 /* Frameworks */ = {
+		CFFA94601F453CB60035E606 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFFA948F1F453DF30035E606 /* libHabanero.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,13 +126,14 @@
 				CF960E151C992EDC001D8B02 /* Headers */,
 				CF960E161C992EE7001D8B02 /* Source */,
 				CF960DDC1C97F833001D8B02 /* Products */,
+				CFFA948D1F453DF30035E606 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
 		CF960DDC1C97F833001D8B02 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CF960E0C1C97FA73001D8B02 /* libUtility.a */,
+				CFFA94631F453CB60035E606 /* libUtility.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -241,57 +214,34 @@
 			name = Source;
 			sourceTree = "<group>";
 		};
+		CFFA948D1F453DF30035E606 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CFFA948E1F453DF30035E606 /* libHabanero.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		CF960E0A1C97FA73001D8B02 /* Headers */ = {
+		CFFA94611F453CB60035E606 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF1846F61E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h in Headers */,
-				CF960E1E1C992F2C001D8B02 /* HexadecimalColor.h in Headers */,
-				CFDAC2BC1DFD0C980039A104 /* ExtensionLowercaseComparison.h in Headers */,
-				CFD62C071C9A95240021EE7F /* SyncMessageBox.h in Headers */,
-				CFDAC2291DFBD8690039A104 /* BlinkingCaret.h in Headers */,
-				CF0939301D10214200D67AC6 /* FunctionKeysPass.h in Headers */,
-				CF960E1F1C992F2C001D8B02 /* ObjCpp.h in Headers */,
-				CFD62BF91C9A7A860021EE7F /* NSTimer+Tolerance.h in Headers */,
-				CFD62C1E1C9B01320021EE7F /* SheetWithHotkeys.h in Headers */,
-				CF960E1D1C992F2C001D8B02 /* Encodings.h in Headers */,
-				CF960E211C992F2C001D8B02 /* SystemInformation.h in Headers */,
-				CFD62BD21C9A679F0021EE7F /* NSObject+MassObserving.h in Headers */,
-				CFD62BE81C9A709C0021EE7F /* FPSLimitedDrawer.h in Headers */,
-				CFD62BD61C9A6B4B0021EE7F /* FontCache.h in Headers */,
-				CF34BEEF1E225EB3006A6B72 /* ColoredSeparatorLine.h in Headers */,
-				CF1E3D0A1D57562800609ADB /* ButtonWithTextColor.h in Headers */,
-				CF3E6DF51E386F52002B4AAD /* NSEventModifierFlagsHolder.h in Headers */,
-				CFD3CAF11DA4AD2A006DA143 /* KeychainServices.h in Headers */,
-				CFC4F9721F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h in Headers */,
-				CF960E201C992F2C001D8B02 /* PathManip.h in Headers */,
-				CFD62C121C9AB47F0021EE7F /* FSEventsDirUpdate.h in Headers */,
-				CFDAC2B81DFD0BDC0039A104 /* DataBlockAnalysis.h in Headers */,
-				CF960E221C992F2C001D8B02 /* VolumeInformation.h in Headers */,
-				CFD62BF51C9A79910021EE7F /* NSView+Sugar.h in Headers */,
-				CFD62C031C9A89B50021EE7F /* NSMenu+Hierarchical.h in Headers */,
-				CF56C2D11DC3719000F0DF0F /* ByteCountFormatter.h in Headers */,
-				CFD62C161C9AEC9D0021EE7F /* NativeFSManager.h in Headers */,
-				CFD62BDA1C9A6BE30021EE7F /* FontExtras.h in Headers */,
-				CF84C8E71DB867F200B4E888 /* Layout.h in Headers */,
-				CFD62C1A1C9AFF210021EE7F /* SheetController.h in Headers */,
-				CFD62BFD1C9A84500021EE7F /* StringExtras.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		CF960E0B1C97FA73001D8B02 /* Utility */ = {
+		CFFA94621F453CB60035E606 /* Utility */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF960E121C97FA73001D8B02 /* Build configuration list for PBXNativeTarget "Utility" */;
+			buildConfigurationList = CFFA94641F453CB60035E606 /* Build configuration list for PBXNativeTarget "Utility" */;
 			buildPhases = (
-				CF960E081C97FA73001D8B02 /* Sources */,
-				CF960E091C97FA73001D8B02 /* Frameworks */,
-				CF960E0A1C97FA73001D8B02 /* Headers */,
+				CFFA945F1F453CB60035E606 /* Sources */,
+				CFFA94601F453CB60035E606 /* Frameworks */,
+				CFFA94611F453CB60035E606 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -299,8 +249,8 @@
 			);
 			name = Utility;
 			productName = Utility;
-			productReference = CF960E0C1C97FA73001D8B02 /* libUtility.a */;
-			productType = "com.apple.product-type.library.static";
+			productReference = CFFA94631F453CB60035E606 /* libUtility.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
 
@@ -311,8 +261,9 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = "MIchael Kazakov";
 				TargetAttributes = {
-					CF960E0B1C97FA73001D8B02 = {
-						CreatedOnToolsVersion = 7.2.1;
+					CFFA94621F453CB60035E606 = {
+						CreatedOnToolsVersion = 8.3.2;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -328,47 +279,47 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CF960E0B1C97FA73001D8B02 /* Utility */,
+				CFFA94621F453CB60035E606 /* Utility */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		CF960E081C97FA73001D8B02 /* Sources */ = {
+		CFFA945F1F453CB60035E606 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD62C051C9A89BD0021EE7F /* NSMenu+Hierarchical.mm in Sources */,
-				CFDAC2BE1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp in Sources */,
-				CFD62BEA1C9A70A40021EE7F /* FPSLimitedDrawer.mm in Sources */,
-				CFD62BFF1C9A84570021EE7F /* StringExtras.mm in Sources */,
-				CF960E2E1C992F35001D8B02 /* VolumeInformation.cpp in Sources */,
-				CFD62BDC1C9A6BEB0021EE7F /* FontExtras.cpp in Sources */,
-				CFD62C181C9AECA50021EE7F /* NativeFSManager.mm in Sources */,
-				CFD62BD41C9A67A60021EE7F /* NSObject+MassObserving.m in Sources */,
-				CF960E2C1C992F35001D8B02 /* PathManip.c in Sources */,
-				CFDAC22B1DFBD8740039A104 /* BlinkingCaret.mm in Sources */,
-				CF960E291C992F35001D8B02 /* Encodings.cpp in Sources */,
-				CF1846F81E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm in Sources */,
-				CFD62C091C9A952C0021EE7F /* SyncMessageBox.mm in Sources */,
-				CF84C8E91DB867FC00B4E888 /* Layout.mm in Sources */,
-				CF960E2A1C992F35001D8B02 /* EncodingsAdditions.mm in Sources */,
-				CFD62C101C9AB4770021EE7F /* FSEventsDirUpdate.cpp in Sources */,
-				CFD62C201C9B013A0021EE7F /* SheetWithHotkeys.mm in Sources */,
-				CFC4F9741F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm in Sources */,
-				CF960E2D1C992F35001D8B02 /* SystemInformation.mm in Sources */,
-				CF0939321D10214D00D67AC6 /* FunctionKeysPass.mm in Sources */,
-				CF34BEF11E225EB9006A6B72 /* ColoredSeparatorLine.mm in Sources */,
-				CFDAC2BA1DFD0BE30039A104 /* DataBlockAnalysis.mm in Sources */,
-				CF56C2D31DC371A000F0DF0F /* ByteCountFormatter.mm in Sources */,
-				CFD62BF71C9A799B0021EE7F /* NSView+Sugar.mm in Sources */,
-				CF1E3D0C1D57563100609ADB /* ButtonWithTextColor.mm in Sources */,
-				CFD62C1C1C9AFF280021EE7F /* SheetController.mm in Sources */,
-				CFD62C011C9A87170021EE7F /* FontExtras.mm in Sources */,
-				CFD62BFB1C9A7A8D0021EE7F /* NSTimer+Tolerance.m in Sources */,
-				CFD3CAF31DA4AD32006DA143 /* KeychainServices.cpp in Sources */,
-				CF960E2B1C992F35001D8B02 /* HexadecimalColor.mm in Sources */,
-				CFD62BD81C9A6B630021EE7F /* FontCache.cpp in Sources */,
+				CFFA94691F453CC00035E606 /* ButtonWithTextColor.mm in Sources */,
+				CFFA94751F453CC00035E606 /* FunctionKeysPass.mm in Sources */,
+				CFFA947C1F453CC00035E606 /* NSTimer+Tolerance.m in Sources */,
+				CFFA94671F453CC00035E606 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
+				CFFA946D1F453CC00035E606 /* Encodings.cpp in Sources */,
+				CFFA94771F453CC00035E606 /* KeychainServices.cpp in Sources */,
+				CFFA94791F453CC00035E606 /* NativeFSManager.mm in Sources */,
+				CFFA94711F453CC00035E606 /* FontExtras.cpp in Sources */,
+				CFFA94701F453CC00035E606 /* FontCache.cpp in Sources */,
+				CFFA94801F453CC00035E606 /* SheetWithHotkeys.mm in Sources */,
+				CFFA946A1F453CC00035E606 /* ByteCountFormatter.mm in Sources */,
+				CFFA947B1F453CC00035E606 /* NSObject+MassObserving.m in Sources */,
+				CFFA946F1F453CC00035E606 /* ExtensionLowercaseComparison.cpp in Sources */,
+				CFFA94811F453CC00035E606 /* StringExtras.mm in Sources */,
+				CFFA947A1F453CC00035E606 /* NSMenu+Hierarchical.mm in Sources */,
+				CFFA94781F453CC00035E606 /* Layout.mm in Sources */,
+				CFFA94841F453CC00035E606 /* VerticallyCenteredTextFieldCell.mm in Sources */,
+				CFFA946B1F453CC00035E606 /* ColoredSeparatorLine.mm in Sources */,
+				CFFA947D1F453CC00035E606 /* NSView+Sugar.mm in Sources */,
+				CFFA94851F453CC00035E606 /* VolumeInformation.cpp in Sources */,
+				CFFA94741F453CC00035E606 /* FSEventsDirUpdate.cpp in Sources */,
+				CFFA94831F453CC00035E606 /* SystemInformation.mm in Sources */,
+				CFFA94681F453CC00035E606 /* BlinkingCaret.mm in Sources */,
+				CFFA94821F453CC00035E606 /* SyncMessageBox.mm in Sources */,
+				CFFA946E1F453CC00035E606 /* EncodingsAdditions.mm in Sources */,
+				CFFA94731F453CC00035E606 /* FPSLimitedDrawer.mm in Sources */,
+				CFFA947F1F453CC00035E606 /* SheetController.mm in Sources */,
+				CFFA946C1F453CC00035E606 /* DataBlockAnalysis.mm in Sources */,
+				CFFA94721F453CC00035E606 /* FontExtras.mm in Sources */,
+				CFFA947E1F453CC00035E606 /* PathManip.c in Sources */,
+				CFFA94761F453CC00035E606 /* HexadecimalColor.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,9 +367,13 @@
 					"$(PROJECT_DIR)/../Habanero/include",
 					"$(PROJECT_DIR)/include",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SystemConfiguration,
+				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
@@ -462,8 +417,12 @@
 					"$(PROJECT_DIR)/../Habanero/include",
 					"$(PROJECT_DIR)/include",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-framework",
+					SystemConfiguration,
+				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
@@ -472,18 +431,32 @@
 			};
 			name = Release;
 		};
-		CF960E131C97FA73001D8B02 /* Debug */ = {
+		CFFA94651F453CB60035E606 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/";
 				EXECUTABLE_PREFIX = lib;
+				INSTALL_PATH = "@executable_path/../Frameworks/";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		CF960E141C97FA73001D8B02 /* Release */ = {
+		CFFA94661F453CB60035E606 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/";
 				EXECUTABLE_PREFIX = lib;
+				INSTALL_PATH = "@executable_path/../Frameworks/";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -500,14 +473,13 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CF960E121C97FA73001D8B02 /* Build configuration list for PBXNativeTarget "Utility" */ = {
+		CFFA94641F453CB60035E606 /* Build configuration list for PBXNativeTarget "Utility" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				CF960E131C97FA73001D8B02 /* Debug */,
-				CF960E141C97FA73001D8B02 /* Release */,
+				CFFA94651F453CB60035E606 /* Debug */,
+				CFFA94661F453CB60035E606 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

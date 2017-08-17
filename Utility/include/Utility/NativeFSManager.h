@@ -49,7 +49,12 @@ struct NativeFileSystemInfo
         /**
          * ID of device, used in stat() syscall
          */
+        
+        uint32_t sent_1 = -1;
+        
         dev_t dev_id;
+        
+        uint32_t sent_2 = -1;
         
         /**
          * User that mounted the filesystem.

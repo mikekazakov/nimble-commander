@@ -1,9 +1,6 @@
 [submodule "3rd_Party/rapidjson"]
 	path = 3rd_Party/rapidjson
 	url = https://github.com/miloyip/rapidjson.git
-[submodule "habanero"]
-	path = habanero
-	url = https://github.com/mikekazakov/habanero.git
 [submodule "3rd_Party/AppAuth/AppAuth-iOS"]
 	path = 3rd_Party/AppAuth/AppAuth-iOS
 	url = https://github.com/openid/AppAuth-iOS.git

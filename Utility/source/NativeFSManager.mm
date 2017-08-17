@@ -16,6 +16,7 @@
 #include <Utility/FSEventsDirUpdate.h>
 #include <Utility/NativeFSManager.h>
 #include <Utility/StringExtras.h>
+#include <iostream>
 
 using namespace std;
 
@@ -125,11 +126,16 @@ NativeFSManager &NativeFSManager::Instance()
 
 static void GetAllInfos(NativeFileSystemInfo &_volume)
 {
-    GetBasicInfo(_volume);
-    GetFormatInfo(_volume);
-    GetInterfacesInfo(_volume);
-    GetVerboseInfo(_volume);
-    UpdateSpaceInfo(_volume);
+    if( !GetBasicInfo(_volume) )
+        cerr << "failed to GetBasicInfo() on the volume: " << _volume.mounted_at_path << endl;
+    if( !GetFormatInfo(_volume) )
+        cerr << "failed to GetFormatInfo() on the volume: " << _volume.mounted_at_path << endl;
+    if( !GetInterfacesInfo(_volume) )
+        cerr << "failed to GetInterfacesInfo() on the volume: " << _volume.mounted_at_path << endl;
+    if( !GetVerboseInfo(_volume) )
+        cerr << "failed to GetVerboseInfo() on the volume: " << _volume.mounted_at_path << endl;
+    if( !UpdateSpaceInfo(_volume) )
+        cerr << "failed to UpdateSpaceInfo() on the volume: " << _volume.mounted_at_path << endl;
 }
 
 static bool GetBasicInfo(NativeFileSystemInfo &_volume)
@@ -174,8 +180,10 @@ static bool GetBasicInfo(NativeFileSystemInfo &_volume)
     
     
     struct stat entry_stat;
-    if( ::stat(_volume.mounted_at_path.c_str(), &entry_stat) != 0 )
+    if( ::stat(_volume.mounted_at_path.c_str(), &entry_stat) != 0 ) {
+        cerr << "failed to stat() a volume: " << _volume.mounted_at_path << endl;
         return false;
+    }
 
     _volume.basic.dev_id = entry_stat.st_dev;
     

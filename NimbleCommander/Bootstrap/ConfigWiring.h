@@ -11,7 +11,8 @@ public:
     void Wire();
 
 private:
-    void SetupPoolConcurrency();
+    void SetupOperationsPool();
+    void SetupNotification();
     
     GenericConfig &m_Config;    
 };

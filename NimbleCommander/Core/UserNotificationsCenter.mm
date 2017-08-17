@@ -12,6 +12,7 @@ static const auto g_Window = @"window";
 namespace nc::core {
 
 UserNotificationsCenter::UserNotificationsCenter():
+    m_ShowWhenActive{ true },
     m_MinElapsedOperationTime{ g_DefaultMinElapsedOperationTime }
 {
     static auto delegate = [[NCCoreUserNotificationCenterDelegate alloc] init];
@@ -44,6 +45,26 @@ void UserNotificationsCenter::ReportCompletedOperation(const nc::ops::Operation 
     [NSUserNotificationCenter.defaultUserNotificationCenter deliverNotification:un];
 }
 
+bool UserNotificationsCenter::ShowWhenActive() const noexcept
+{
+    return m_ShowWhenActive;
+}
+
+void UserNotificationsCenter::SetShowWhenActive( bool _value )
+{
+    m_ShowWhenActive = _value;
+}
+
+nanoseconds UserNotificationsCenter::MinElapsedOperationTime() const noexcept
+{
+    return m_MinElapsedOperationTime;
+}
+
+void UserNotificationsCenter::SetMinElapsedOperationTime( nanoseconds _value )
+{
+    m_MinElapsedOperationTime = _value;
+}
+
 static void MakeWindowKey( unsigned long _wnd_adress )
 {
     const auto windows = NSApp.windows;
@@ -61,7 +82,7 @@ static void MakeWindowKey( unsigned long _wnd_adress )
 - (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center 
      shouldPresentNotification:(NSUserNotification *)notification
 {
-    return true;
+    return nc::core::UserNotificationsCenter::Instance().ShowWhenActive();
 }
 
 - (void)userNotificationCenter:(NSUserNotificationCenter *)center

@@ -17,7 +17,7 @@ private:
     AggregateProgressTracker(const AggregateProgressTracker&) = delete;
     void operator=(const AggregateProgressTracker&) = delete;
     void PoolsChanged();
-    int OperationsAmount() const;
+    bool ArePoolsEmpty() const;
     tuple<int, double> OperationsAmountAndProgress() const;
     void Update();
     void Purge();

@@ -1,0 +1,409 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CFFA94491F4535750035E606 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; };
+		CFFA944A1F4535750035E606 /* CFStackAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */; };
+		CFFA944B1F4535750035E606 /* CFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA01C99C2AE0021EE7F /* CFString.cpp */; };
+		CFFA944C1F4535750035E606 /* chained_strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */; };
+		CFFA944D1F4535750035E606 /* CommonPaths.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */; };
+		CFFA944E1F4535750035E606 /* CommonPaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */; };
+		CFFA944F1F4535750035E606 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA31C99C2AE0021EE7F /* debug.cpp */; };
+		CFFA94501F4535750035E606 /* dispatch_cpp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */; };
+		CFFA94511F4535750035E606 /* DispatchGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */; };
+		CFFA94521F4535750035E606 /* GoogleAnalytics.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */; };
+		CFFA94531F4535750035E606 /* Hash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA71C99C2AE0021EE7F /* Hash.cpp */; };
+		CFFA94541F4535750035E606 /* IdleSleepPreventer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */; };
+		CFFA94551F4535750035E606 /* KVO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA91C99C2AE0021EE7F /* KVO.cpp */; };
+		CFFA94561F4535750035E606 /* mach_time.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */; };
+		CFFA94571F4535750035E606 /* Observable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD6DD211D6C44C1006B94C2 /* Observable.cpp */; };
+		CFFA94581F4535750035E606 /* ScopedObservable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BD91EF7995E00F567C4 /* ScopedObservable.cpp */; };
+		CFFA94591F4535750035E606 /* SerialQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB690541E0670FF00BBA5BD /* SerialQueue.cpp */; };
+		CFFA945A1F4535750035E606 /* spinlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */; };
+		CFFA945B1F4535750035E606 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CF27F9401E373BDA009A3ACF /* GoogleAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoogleAnalytics.h; path = ../habanero/include/Habanero/GoogleAnalytics.h; sourceTree = "<group>"; };
+		CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GoogleAnalytics.mm; path = ../habanero/source/GoogleAnalytics.mm; sourceTree = "<group>"; };
+		CF47DF701E063CC500AAAF3C /* DispatchGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DispatchGroup.h; path = ../habanero/include/Habanero/DispatchGroup.h; sourceTree = "<group>"; };
+		CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchGroup.cpp; path = ../habanero/source/DispatchGroup.cpp; sourceTree = "<group>"; };
+		CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFStackAllocator.cpp; path = source/CFStackAllocator.cpp; sourceTree = "<group>"; };
+		CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = spinlock.cpp; path = ../habanero/source/spinlock.cpp; sourceTree = "<group>"; };
+		CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFDefaultsCPP.h; path = include/Habanero/CFDefaultsCPP.h; sourceTree = "<group>"; };
+		CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFDefaultsCPP.cpp; path = source/CFDefaultsCPP.cpp; sourceTree = "<group>"; };
+		CFB690541E0670FF00BBA5BD /* SerialQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SerialQueue.cpp; path = ../habanero/source/SerialQueue.cpp; sourceTree = "<group>"; };
+		CFB690561E06710900BBA5BD /* SerialQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SerialQueue.h; path = ../habanero/include/Habanero/SerialQueue.h; sourceTree = "<group>"; };
+		CFB6905D1E0677D900BBA5BD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../habanero/README.md; sourceTree = "<group>"; };
+		CFD62B861C99C2A60021EE7F /* algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = algo.h; path = include/Habanero/algo.h; sourceTree = "<group>"; };
+		CFD62B871C99C2A60021EE7F /* CFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFString.h; path = include/Habanero/CFString.h; sourceTree = "<group>"; };
+		CFD62B881C99C2A60021EE7F /* CommonPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommonPaths.h; path = include/Habanero/CommonPaths.h; sourceTree = "<group>"; };
+		CFD62B891C99C2A60021EE7F /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = debug.h; path = include/Habanero/debug.h; sourceTree = "<group>"; };
+		CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dispatch_cpp.h; path = include/Habanero/dispatch_cpp.h; sourceTree = "<group>"; };
+		CFD62B8C1C99C2A60021EE7F /* Hash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Hash.h; path = include/Habanero/Hash.h; sourceTree = "<group>"; };
+		CFD62B8D1C99C2A60021EE7F /* IdleSleepPreventer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IdleSleepPreventer.h; path = include/Habanero/IdleSleepPreventer.h; sourceTree = "<group>"; };
+		CFD62B8E1C99C2A60021EE7F /* KVO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KVO.h; path = include/Habanero/KVO.h; sourceTree = "<group>"; };
+		CFD62B8F1C99C2A60021EE7F /* mach_time.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mach_time.h; path = include/Habanero/mach_time.h; sourceTree = "<group>"; };
+		CFD62B901C99C2A60021EE7F /* spinlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = spinlock.h; path = include/Habanero/spinlock.h; sourceTree = "<group>"; };
+		CFD62B911C99C2A60021EE7F /* tiny_string.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tiny_string.h; path = include/Habanero/tiny_string.h; sourceTree = "<group>"; };
+		CFD62B921C99C2A60021EE7F /* variable_container.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = variable_container.h; path = include/Habanero/variable_container.h; sourceTree = "<group>"; };
+		CFD62BA01C99C2AE0021EE7F /* CFString.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFString.cpp; path = source/CFString.cpp; sourceTree = "<group>"; };
+		CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommonPaths.cpp; path = source/CommonPaths.cpp; sourceTree = "<group>"; };
+		CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CommonPaths.mm; path = source/CommonPaths.mm; sourceTree = "<group>"; };
+		CFD62BA31C99C2AE0021EE7F /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debug.cpp; path = source/debug.cpp; sourceTree = "<group>"; };
+		CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dispatch_cpp.cpp; path = source/dispatch_cpp.cpp; sourceTree = "<group>"; };
+		CFD62BA71C99C2AE0021EE7F /* Hash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Hash.cpp; path = source/Hash.cpp; sourceTree = "<group>"; };
+		CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IdleSleepPreventer.cpp; path = source/IdleSleepPreventer.cpp; sourceTree = "<group>"; };
+		CFD62BA91C99C2AE0021EE7F /* KVO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KVO.cpp; path = source/KVO.cpp; sourceTree = "<group>"; };
+		CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mach_time.cpp; path = source/mach_time.cpp; sourceTree = "<group>"; };
+		CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = tiny_string.cpp; path = source/tiny_string.cpp; sourceTree = "<group>"; };
+		CFD62BBB1C99C73E0021EE7F /* chained_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = chained_strings.h; path = include/Habanero/chained_strings.h; sourceTree = "<group>"; };
+		CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chained_strings.cpp; path = source/chained_strings.cpp; sourceTree = "<group>"; };
+		CFD6DD1F1D6C44B8006B94C2 /* Observable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Observable.h; path = include/Habanero/Observable.h; sourceTree = "<group>"; };
+		CFD6DD211D6C44C1006B94C2 /* Observable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Observable.cpp; path = source/Observable.cpp; sourceTree = "<group>"; };
+		CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFStackAllocator.h; path = include/Habanero/CFStackAllocator.h; sourceTree = "<group>"; };
+		CFF53BD71EF7995700F567C4 /* ScopedObservable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScopedObservable.h; path = ../habanero/include/Habanero/ScopedObservable.h; sourceTree = "<group>"; };
+		CFF53BD91EF7995E00F567C4 /* ScopedObservable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScopedObservable.cpp; path = ../habanero/source/ScopedObservable.cpp; sourceTree = "<group>"; };
+		CFFA94411F45322E0035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CFFA943E1F45322E0035E606 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CFD62B691C99C19A0021EE7F = {
+			isa = PBXGroup;
+			children = (
+				CFB6905D1E0677D900BBA5BD /* README.md */,
+				CFD62B841C99C2510021EE7F /* Headers */,
+				CFD62B851C99C2590021EE7F /* Source */,
+				CFD62B731C99C19A0021EE7F /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		CFD62B731C99C19A0021EE7F /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFFA94411F45322E0035E606 /* libHabanero.dylib */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CFD62B841C99C2510021EE7F /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				CFD62B861C99C2A60021EE7F /* algo.h */,
+				CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */,
+				CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */,
+				CFD62B871C99C2A60021EE7F /* CFString.h */,
+				CFD62BBB1C99C73E0021EE7F /* chained_strings.h */,
+				CFD62B881C99C2A60021EE7F /* CommonPaths.h */,
+				CFD62B891C99C2A60021EE7F /* debug.h */,
+				CFD62B8A1C99C2A60021EE7F /* dispatch_cpp.h */,
+				CF47DF701E063CC500AAAF3C /* DispatchGroup.h */,
+				CF27F9401E373BDA009A3ACF /* GoogleAnalytics.h */,
+				CFD62B8C1C99C2A60021EE7F /* Hash.h */,
+				CFD62B8D1C99C2A60021EE7F /* IdleSleepPreventer.h */,
+				CFD62B8E1C99C2A60021EE7F /* KVO.h */,
+				CFD62B8F1C99C2A60021EE7F /* mach_time.h */,
+				CFD6DD1F1D6C44B8006B94C2 /* Observable.h */,
+				CFF53BD71EF7995700F567C4 /* ScopedObservable.h */,
+				CFB690561E06710900BBA5BD /* SerialQueue.h */,
+				CFD62B901C99C2A60021EE7F /* spinlock.h */,
+				CFD62B911C99C2A60021EE7F /* tiny_string.h */,
+				CFD62B921C99C2A60021EE7F /* variable_container.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		CFD62B851C99C2590021EE7F /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */,
+				CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */,
+				CFD62BA01C99C2AE0021EE7F /* CFString.cpp */,
+				CFD62BBD1C99C7480021EE7F /* chained_strings.cpp */,
+				CFD62BA11C99C2AE0021EE7F /* CommonPaths.cpp */,
+				CFD62BA21C99C2AE0021EE7F /* CommonPaths.mm */,
+				CFD62BA31C99C2AE0021EE7F /* debug.cpp */,
+				CFD62BA41C99C2AE0021EE7F /* dispatch_cpp.cpp */,
+				CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */,
+				CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */,
+				CFD62BA71C99C2AE0021EE7F /* Hash.cpp */,
+				CFD62BA81C99C2AE0021EE7F /* IdleSleepPreventer.cpp */,
+				CFD62BA91C99C2AE0021EE7F /* KVO.cpp */,
+				CFD62BAA1C99C2AE0021EE7F /* mach_time.cpp */,
+				CFD6DD211D6C44C1006B94C2 /* Observable.cpp */,
+				CFF53BD91EF7995E00F567C4 /* ScopedObservable.cpp */,
+				CFB690541E0670FF00BBA5BD /* SerialQueue.cpp */,
+				CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */,
+				CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CFFA943F1F45322E0035E606 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CFFA94401F45322E0035E606 /* Habanero */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFFA94421F45322F0035E606 /* Build configuration list for PBXNativeTarget "Habanero" */;
+			buildPhases = (
+				CFFA943D1F45322E0035E606 /* Sources */,
+				CFFA943E1F45322E0035E606 /* Frameworks */,
+				CFFA943F1F45322E0035E606 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Habanero;
+			productName = Habanero1;
+			productReference = CFFA94411F45322E0035E606 /* libHabanero.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CFD62B6A1C99C19A0021EE7F /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0720;
+				ORGANIZATIONNAME = "MIchael Kazakov";
+				TargetAttributes = {
+					CFFA94401F45322E0035E606 = {
+						CreatedOnToolsVersion = 8.3.2;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = CFD62B6D1C99C19A0021EE7F /* Build configuration list for PBXProject "Habanero" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CFD62B691C99C19A0021EE7F;
+			productRefGroup = CFD62B731C99C19A0021EE7F /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CFFA94401F45322E0035E606 /* Habanero */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CFFA943D1F45322E0035E606 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFFA94491F4535750035E606 /* CFDefaultsCPP.cpp in Sources */,
+				CFFA94541F4535750035E606 /* IdleSleepPreventer.cpp in Sources */,
+				CFFA944E1F4535750035E606 /* CommonPaths.mm in Sources */,
+				CFFA94511F4535750035E606 /* DispatchGroup.cpp in Sources */,
+				CFFA944D1F4535750035E606 /* CommonPaths.cpp in Sources */,
+				CFFA94591F4535750035E606 /* SerialQueue.cpp in Sources */,
+				CFFA94501F4535750035E606 /* dispatch_cpp.cpp in Sources */,
+				CFFA944C1F4535750035E606 /* chained_strings.cpp in Sources */,
+				CFFA94551F4535750035E606 /* KVO.cpp in Sources */,
+				CFFA94581F4535750035E606 /* ScopedObservable.cpp in Sources */,
+				CFFA94531F4535750035E606 /* Hash.cpp in Sources */,
+				CFFA944A1F4535750035E606 /* CFStackAllocator.cpp in Sources */,
+				CFFA945A1F4535750035E606 /* spinlock.cpp in Sources */,
+				CFFA945B1F4535750035E606 /* tiny_string.cpp in Sources */,
+				CFFA94571F4535750035E606 /* Observable.cpp in Sources */,
+				CFFA944B1F4535750035E606 /* CFString.cpp in Sources */,
+				CFFA94561F4535750035E606 /* mach_time.cpp in Sources */,
+				CFFA944F1F4535750035E606 /* debug.cpp in Sources */,
+				CFFA94521F4535750035E606 /* GoogleAnalytics.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CFD62B791C99C19A0021EE7F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
+					/usr/local/include,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++1z",
+				);
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-framework",
+					IOKit,
+				);
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				USE_HEADERMAP = NO;
+			};
+			name = Debug;
+		};
+		CFD62B7A1C99C19A0021EE7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include",
+					/usr/local/include,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_CPLUSPLUSFLAGS = (
+					"$(OTHER_CFLAGS)",
+					"-std=c++1z",
+				);
+				OTHER_LDFLAGS = (
+					"-lz",
+					"-framework",
+					IOKit,
+				);
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
+		CFFA94431F45322F0035E606 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/";
+				EXECUTABLE_PREFIX = lib;
+				INSTALL_PATH = "@executable_path/../Frameworks/";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CFFA94441F45322F0035E606 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/";
+				EXECUTABLE_PREFIX = lib;
+				INSTALL_PATH = "@executable_path/../Frameworks/";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CFD62B6D1C99C19A0021EE7F /* Build configuration list for PBXProject "Habanero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFD62B791C99C19A0021EE7F /* Debug */,
+				CFD62B7A1C99C19A0021EE7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFFA94421F45322F0035E606 /* Build configuration list for PBXNativeTarget "Habanero" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFFA94431F45322F0035E606 /* Debug */,
+				CFFA94441F45322F0035E606 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CFD62B6A1C99C19A0021EE7F /* Project object */;
+}

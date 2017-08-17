@@ -551,8 +551,10 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
   
     // find fs info for source file.
     auto src_fs_info_holder = NativeFSManager::Instance().VolumeFromDevID( src_stat_buffer.st_dev );
-    if( !src_fs_info_holder )
+    if( !src_fs_info_holder ) {
+        cerr << "Failed to find fs_info for dev_id: " << src_stat_buffer.st_dev << endl;
         return StepResult::Stop; // something VERY BAD has happened, can't go on
+    }
     auto &src_fs_info = *src_fs_info_holder;
     
     // setting up copying scenario

@@ -21,7 +21,20 @@
         /**
          * Force NC to treat incoming FnXX keys as functional ones, not multimedia controls
          */
-        "alwaysUseFnKeysAsFunctional": false
+        "alwaysUseFnKeysAsFunctional": false,
+        
+        "notifications": {            
+            /**
+             * Allow to show notifications when NC is a frontmost application.
+             */
+            "showWhenActive": true,
+            
+            /**
+             * A minimum time threshold in seconds, after which a completion of a file operation
+             * will trigger a notification.
+             */
+            "minElapsedOperationTime": 30
+        }
     },
 
     /**
@@ -799,12 +812,6 @@
                       "viewerSelectionColor": "#245DFA",
                       "viewerBackgroundColor": "#141414"
                       }
-                      
-        
-        
-        
-        
-        
         ]
     }
 }

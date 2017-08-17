@@ -84,10 +84,6 @@
 		CFC4F9231F09DFF60000B3EE /* Deletion_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */; };
 		CFC4F92D1F0B49C00000B3EE /* Deletion.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F92B1F0B49C00000B3EE /* Deletion.h */; };
 		CFC4F92E1F0B49C00000B3EE /* DirectoryCreation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F92C1F0B49C00000B3EE /* DirectoryCreation.h */; };
-		CFC4F9431F0BB9320000B3EE /* libVFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B851EE1544B00F567C4 /* libVFS.a */; };
-		CFC4F9451F0BB93A0000B3EE /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4F9441F0BB93A0000B3EE /* libRoutedIO.a */; };
-		CFC4F9471F0BB9470000B3EE /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4F9461F0BB9470000B3EE /* libUtility.a */; };
-		CFC4F9491F0BB94C0000B3EE /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4F9481F0BB94C0000B3EE /* libHabanero.a */; };
 		CFC4F9501F0CA84D0000B3EE /* DirectoryCreationDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F94A1F0CA84D0000B3EE /* DirectoryCreationDialog.xib */; };
 		CFC4F9511F0CA84D0000B3EE /* DirectoryCreationDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F94C1F0CA84D0000B3EE /* DirectoryCreationDialog.h */; };
 		CFC4F9521F0CA84D0000B3EE /* DirectoryCreationDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */; };
@@ -151,6 +147,10 @@
 		CFF53BAF1EEA840600F567C4 /* Statistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BAD1EEA840600F567C4 /* Statistics.cpp */; };
 		CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BCC1EF3913B00F567C4 /* Progress.cpp */; };
 		CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53BCD1EF3913B00F567C4 /* Progress.h */; };
+		CFFA945E1F4539E50035E606 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA945D1F4539E50035E606 /* libHabanero.dylib */; };
+		CFFA948C1F453D960035E606 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA948B1F453D960035E606 /* libUtility.dylib */; };
+		CFFA94A11F45418D0035E606 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */; };
+		CFFA94E21F45448A0035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E11F45448A0035E606 /* libVFS.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -326,6 +326,10 @@
 		CFF53BAD1EEA840600F567C4 /* Statistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Statistics.cpp; path = source/Statistics.cpp; sourceTree = "<group>"; };
 		CFF53BCC1EF3913B00F567C4 /* Progress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Progress.cpp; path = source/Progress.cpp; sourceTree = "<group>"; };
 		CFF53BCD1EF3913B00F567C4 /* Progress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Progress.h; path = source/Progress.h; sourceTree = "<group>"; };
+		CFFA945D1F4539E50035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
+		CFFA948B1F453D960035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = ../Utility/build/Debug/libUtility.dylib; sourceTree = "<group>"; };
+		CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libRoutedIO.dylib; path = ../RoutedIO/build/Debug/libRoutedIO.dylib; sourceTree = "<group>"; };
+		CFFA94E11F45448A0035E606 /* libVFS.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libVFS.dylib; path = ../VFS/build/Debug/libVFS.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -333,10 +337,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFC4F9491F0BB94C0000B3EE /* libHabanero.a in Frameworks */,
-				CFC4F9471F0BB9470000B3EE /* libUtility.a in Frameworks */,
-				CFC4F9451F0BB93A0000B3EE /* libRoutedIO.a in Frameworks */,
-				CFC4F9431F0BB9320000B3EE /* libVFS.a in Frameworks */,
+				CFFA94A11F45418D0035E606 /* libRoutedIO.dylib in Frameworks */,
+				CFFA945E1F4539E50035E606 /* libHabanero.dylib in Frameworks */,
+				CFFA94E21F45448A0035E606 /* libVFS.dylib in Frameworks */,
+				CFFA948C1F453D960035E606 /* libUtility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -572,6 +576,10 @@
 		CFF53B711EDD401900F567C4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFFA94E11F45448A0035E606 /* libVFS.dylib */,
+				CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */,
+				CFFA948B1F453D960035E606 /* libUtility.dylib */,
+				CFFA945D1F4539E50035E606 /* libHabanero.dylib */,
 				CFC4F9481F0BB94C0000B3EE /* libHabanero.a */,
 				CFC4F9461F0BB9470000B3EE /* libUtility.a */,
 				CFC4F9441F0BB93A0000B3EE /* libRoutedIO.a */,
@@ -1051,11 +1059,6 @@
 					"-std=c++1z",
 				);
 				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lVFS",
-					"-lHabanero",
-					"-lUtility",
-					"-lRoutedIO",
 					"-larchive",
 					"-lboost_system",
 					"-lboost_filesystem",
@@ -1080,6 +1083,10 @@
 					Cocoa,
 					"-framework",
 					OpenDirectory,
+					"-framework",
+					QuartzCore,
+					"-framework",
+					IOKit,
 				);
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1148,11 +1155,6 @@
 					"-std=c++1z",
 				);
 				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lVFS",
-					"-lHabanero",
-					"-lUtility",
-					"-lRoutedIO",
 					"-larchive",
 					"-lboost_system",
 					"-lboost_filesystem",
@@ -1177,6 +1179,10 @@
 					Cocoa,
 					"-framework",
 					OpenDirectory,
+					"-framework",
+					QuartzCore,
+					"-framework",
+					IOKit,
 				);
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1192,7 +1198,6 @@
 				CLANG_MODULES_AUTOLINK = NO;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -1212,7 +1217,6 @@
 				CLANG_MODULES_AUTOLINK = NO;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = NO;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";

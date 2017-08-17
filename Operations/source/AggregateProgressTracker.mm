@@ -38,7 +38,7 @@ void AggregateProgressTracker::AddPool( Pool &_pool )
 
 void AggregateProgressTracker::PoolsChanged()
 {
-    const auto should_track = OperationsAmount() != 0;
+    const auto should_track = !ArePoolsEmpty();
     if( should_track == m_IsTracking )
         return;
     
@@ -63,15 +63,14 @@ void AggregateProgressTracker::PoolsChanged()
     }
 }
 
-int AggregateProgressTracker::OperationsAmount() const
+bool AggregateProgressTracker::ArePoolsEmpty() const
 {
-    int amount = 0;
-    LOCK_GUARD(m_Lock) {
+    LOCK_GUARD(m_Lock)
         for( const auto &wp: m_Pools )
             if( const auto p = wp.lock() )
-                amount += p->RunningOperationsCount();
-    }
-    return amount;
+                if( !p->Empty() )
+                    return false;
+    return true;
 }
 
 tuple<int, double> AggregateProgressTracker::OperationsAmountAndProgress() const

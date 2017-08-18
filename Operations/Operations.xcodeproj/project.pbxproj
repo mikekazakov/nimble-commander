@@ -151,6 +151,7 @@
 		CFFA948C1F453D960035E606 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA948B1F453D960035E606 /* libUtility.dylib */; };
 		CFFA94A11F45418D0035E606 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */; };
 		CFFA94E21F45448A0035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E11F45448A0035E606 /* libVFS.dylib */; };
+		CFFA950B1F456FD80035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA950A1F456FD80035E606 /* libVFS.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -330,6 +331,7 @@
 		CFFA948B1F453D960035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = ../Utility/build/Debug/libUtility.dylib; sourceTree = "<group>"; };
 		CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libRoutedIO.dylib; path = ../RoutedIO/build/Debug/libRoutedIO.dylib; sourceTree = "<group>"; };
 		CFFA94E11F45448A0035E606 /* libVFS.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libVFS.dylib; path = ../VFS/build/Debug/libVFS.dylib; sourceTree = "<group>"; };
+		CFFA950A1F456FD80035E606 /* libVFS.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libVFS.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libVFS.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -348,6 +350,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFFA950B1F456FD80035E606 /* libVFS.dylib in Frameworks */,
 				CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -576,6 +579,7 @@
 		CFF53B711EDD401900F567C4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFFA950A1F456FD80035E606 /* libVFS.dylib */,
 				CFFA94E11F45448A0035E606 /* libVFS.dylib */,
 				CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */,
 				CFFA948B1F453D960035E606 /* libUtility.dylib */,
@@ -1195,7 +1199,6 @@
 		CFF53B441EDD197300F567C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_MODULES_AUTOLINK = NO;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -1214,7 +1217,6 @@
 		CFF53B451EDD197300F567C4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_MODULES_AUTOLINK = NO;
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;

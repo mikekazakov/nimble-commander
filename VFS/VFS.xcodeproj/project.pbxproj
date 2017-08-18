@@ -83,6 +83,7 @@
 		CFFA94EC1F4546480035E606 /* DirectoryService.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94EB1F4546480035E606 /* DirectoryService.framework */; };
 		CFFA94ED1F45468A0035E606 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273F1E42EC9A00603077 /* Foundation.framework */; };
 		CFFA94EE1F4546B80035E606 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FF1E42DD6000603077 /* LDAP.framework */; };
+		CFFA950C1F4570BA0035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94AF1F4543840035E606 /* libVFS.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -226,6 +227,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFFA950C1F4570BA0035E606 /* libVFS.dylib in Frameworks */,
 				CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */,
 				CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */,
 				CF18471E1E41CA2D008B7C9F /* libUtility.a in Frameworks */,
@@ -921,6 +923,7 @@
 				CFFA94B21F4543840035E606 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

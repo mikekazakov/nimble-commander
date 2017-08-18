@@ -99,13 +99,16 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 - (BOOL)becomeFirstResponder
 {
     self.needsDisplay = true;
-    return YES;
+    [self discardCursorRects];
+    [self resetCursorRects];
+    return true;
 }
 
 - (BOOL)resignFirstResponder
 {
     self.needsDisplay = true;
-    return YES;
+    [self discardCursorRects];
+    return true;
 }
 
 -(BOOL) isOpaque
@@ -115,7 +118,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void)resetCursorRects
 {
-    [self addCursorRect:self.frame cursor:[NSCursor IBeamCursor]];
+    if( self == self.window.firstResponder )
+        [self addCursorRect:self.frame cursor:NSCursor.IBeamCursor];
 }
 
 - (TermParser *)parser

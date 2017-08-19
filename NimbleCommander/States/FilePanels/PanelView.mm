@@ -13,6 +13,8 @@
 #include "IconsGenerator2.h"
 #include "PanelViewDelegate.h"
 #include "Actions/Enter.h"
+#include "DragReceiver.h"
+
 
 enum class CursorSelectionType : int8_t
 {
@@ -1128,7 +1130,6 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     m_ItemsView.sortMode = m_Data->SortMode();
 }
 
-//@property (nonatomic, readonly) PanelController *controller
 - (PanelController*)controller
 {
     return objc_cast<PanelController>(m_Delegate);
@@ -1141,18 +1142,17 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 + (NSArray*) acceptedDragAndDropTypes
 {
-    return PanelController.acceptedDragAndDropTypes;
+    return DragReceiver::AcceptedUTIs();
 }
 
 - (NSDragOperation)panelItem:(int)_sorted_index operationForDragging:(id <NSDraggingInfo>)_dragging
 {
-    return [self.controller validateDraggingOperation:_dragging
-                                         forPanelItem:_sorted_index];
+    return DragReceiver{self.controller, _dragging, _sorted_index}.Validate();
 }
 
 - (bool)panelItem:(int)_sorted_index performDragOperation:(id<NSDraggingInfo>)_dragging
 {
-    return [self.controller performDragOperation:_dragging forPanelItem:_sorted_index];
+    return DragReceiver{self.controller, _dragging, _sorted_index}.Perform();
 }
 
 - (NSPopover*)showPopoverUnderPathBarWithView:(NSViewController*)_view

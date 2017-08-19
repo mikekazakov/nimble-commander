@@ -170,7 +170,7 @@ static bool _name()\
         return GlobalConfig().GetBool((_path));\
     };\
     static bool value = []{\
-        static auto ticket = GlobalConfig().Observe((_path), []{\
+        GlobalConfig().ObserveUnticketed((_path), []{\
             value = fetch();\
         });\
         return fetch();\

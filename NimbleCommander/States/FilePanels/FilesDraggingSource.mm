@@ -102,10 +102,11 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTType
             // ||!! actually this mask is not used by the receiver !!||
             // need some complex logic here later
             
-            if( m_Items.size() > 1 || !m_AreAllHostsNative )
-                return NSDragOperationCopy|NSDragOperationMove;
+            if( !m_AreAllHostsNative )
+                return NSDragOperationCopy|NSDragOperationGeneric|NSDragOperationMove;
             
-            return NSDragOperationCopy|NSDragOperationLink|NSDragOperationMove;
+//            return NSDragOperationCopy|NSDragOperationLink|NSDragOperationMove;
+            return NSDragOperationCopy|NSDragOperationLink|NSDragOperationGeneric|NSDragOperationMove;
             
         default:
             return NSDragOperationNone;

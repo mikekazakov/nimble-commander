@@ -3,7 +3,9 @@
 #include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
 
-namespace nc::panel::data {
+namespace nc::panel {
+
+namespace data {
     struct ItemVolatileData;
     class Model;
 }
@@ -24,7 +26,8 @@ public:
     void SetHiDPI( bool _is_hi_dpi );
     
     // do not rely on .size of this image, it may not respect scale factor.
-    NSImage *ImageFor( const VFSListingItem &_item, nc::panel::data::ItemVolatileData &_item_vd );
+    NSImage *ImageFor( const VFSListingItem &_item, data::ItemVolatileData &_item_vd );
+    NSImage *AvailbleImageFor(const VFSListingItem &_item, data::ItemVolatileData _item_vd ) const;
 
     void SyncDiscardedAndOutdated( nc::panel::data::Model &_pd );
     
@@ -95,3 +98,5 @@ private:
     mutable spinlock        m_RequestsStashLock;
     queue<BuildRequest>     m_RequestsStash;
 };
+
+}

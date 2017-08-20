@@ -6,6 +6,7 @@
 @interface PanelDraggingItem : NSPasteboardItem
 
 @property (nonatomic, readonly) const VFSListingItem& item;
+@property (nonatomic) NSImage                        *icon;
 
 - (PanelDraggingItem*) initWithItem:(const VFSListingItem&)_item;
 - (void) reset;

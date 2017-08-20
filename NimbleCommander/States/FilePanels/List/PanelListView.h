@@ -2,19 +2,22 @@
 
 #include "../PanelViewImplementationProtocol.h"
 
-namespace nc::panel::data {
+namespace nc::panel {
+class IconsGenerator2;
+namespace data {
     class Model;
+}
 }
 
 struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 class PanelListViewGeometry;
-class IconsGenerator2;
+
 struct PanelListViewColumnsLayout;
 
 @interface PanelListView: NSView<PanelViewImplementationProtocol, NSTableViewDataSource, NSTableViewDelegate>
 
-- (id) initWithFrame:(NSRect)frameRect andIC:(IconsGenerator2&)_ic;
+- (id) initWithFrame:(NSRect)frameRect andIC:(nc::panel::IconsGenerator2&)_ic;
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;

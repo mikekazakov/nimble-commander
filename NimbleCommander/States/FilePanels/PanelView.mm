@@ -5,7 +5,6 @@
 #include "PanelView.h"
 #include "PanelData.h"
 #include "PanelController.h"
-#include "PanelController+DragAndDrop.h"
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
 #include "PanelViewHeader.h"
@@ -14,7 +13,7 @@
 #include "PanelViewDelegate.h"
 #include "Actions/Enter.h"
 #include "DragReceiver.h"
-
+#include "DragSender.h"
 
 enum class CursorSelectionType : int8_t
 {
@@ -1019,27 +1018,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     assert(dispatch_is_main_queue());
     auto pos = [m_ItemsView sortedItemPosAtPoint:_window_point hitTestOption:_options];
     return pos;
-    
-    
-//    if(pos < 0)
-//    return -1;
-    
-    //return -1;
-//    assert(dispatch_is_main_queue());
-//    int pos = m_Presentation->GetItemIndexByPointInView(_point, _options);
-//    if(pos < 0)
-//        return -1;
-//    
-//    auto item = m_State.Data->EntryAtSortPosition(pos);
-//    if(!item)
-//        return -1;
-//    return pos;
 }
-
-/*- (void) appWillResignActive
-{
-    [self commitFieldEditor];
-}*/
 
 - (void) windowStatusDidChange
 {
@@ -1121,7 +1100,16 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (void)panelItem:(int)_sorted_index mouseDragged:(NSEvent*)_event
 {
-    [self.controller initiateDragFromView:self itemNo:_sorted_index byEvent:_event];
+    DragSender sender{self.controller};
+    sender.SetIconCallback([self](int _item_index) -> NSImage* {
+        if( const auto entry = m_Data->EntryAtSortPosition(_item_index) ) {
+            const auto vd = m_Data->VolatileDataAtSortPosition(_item_index);            
+            return m_IconsGenerator.AvailbleImageFor(entry, vd).copy;
+        }
+        return nil;
+    });
+    
+    sender.Start(self, _event, _sorted_index);
 }
 
 - (void) dataSortingHasChanged
@@ -1152,7 +1140,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (bool)panelItem:(int)_sorted_index performDragOperation:(id<NSDraggingInfo>)_dragging
 {
-    return DragReceiver{self.controller, _dragging, _sorted_index}.Perform();
+    return DragReceiver{self.controller, _dragging, _sorted_index}.Receive();
 }
 
 - (NSPopover*)showPopoverUnderPathBarWithView:(NSViewController*)_view

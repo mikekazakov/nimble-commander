@@ -12,6 +12,8 @@
 #include "PanelDataItemVolatileData.h"
 #include "IconsGenerator2.h"
 
+namespace nc::panel {
+
 using namespace nc::core;
 
 static const auto g_DummyImage = [[NSImage alloc] initWithSize:NSMakeSize(0,0)];
@@ -247,7 +249,6 @@ unsigned short IconsGenerator2::GetSuitablePositionForNewIcon()
 
 NSImage *IconsGenerator2::GetGenericIcon( const VFSListingItem &_item ) const
 {
-//    return _item.IsDir() ? m_GenericFolderIcon : m_GenericFileIcon;
     return _item.IsDir() ?
         WorkspaceExtensionIconsCache::Instance().GenericFolderIcon():
         WorkspaceExtensionIconsCache::Instance().GenericFileIcon();
@@ -275,7 +276,7 @@ bool IconsGenerator2::IsRequestsStashFull() const
     return amount >= MaxStashedRequests;
 }
 
-NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, nc::panel::data::ItemVolatileData &_item_vd)
+NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolatileData &_item_vd)
 {
     dispatch_assert_main_queue(); // STA api design
     assert( m_UpdateCallback );
@@ -351,6 +352,27 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, nc::panel::data:
     RunOrStash( move(br) );
 
     return is.Any();
+}
+
+NSImage *IconsGenerator2::AvailbleImageFor(const VFSListingItem &_item,
+                                           data::ItemVolatileData _item_vd ) const
+{
+    dispatch_assert_main_queue(); // STA api design
+    
+    if( _item_vd.icon > 0 ) {
+        const int number = _item_vd.icon - 1;
+        assert( number < m_Icons.size() );
+        
+        const auto &is = m_Icons[number];
+        assert( is );
+
+        return is->Any(); // short path - return a stored icon from stash
+    }
+    
+    if( const auto icon = GetCachedExtensionIcon(_item) )
+        return icon;
+    
+    return GetGenericIcon(_item);
 }
 
 void IconsGenerator2::RunOrStash( BuildRequest _req )
@@ -564,4 +586,6 @@ void IconsGenerator2::SetHiDPI( bool _is_hi_dpi )
 int IconsGenerator2::IconSize() const noexcept
 {
     return m_IconSize;
+}
+
 }

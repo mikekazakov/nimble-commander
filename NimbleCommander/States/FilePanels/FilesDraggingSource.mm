@@ -9,7 +9,10 @@ static const auto g_PasteboardFileURLPromiseUTI = (NSString *)kPasteboardTypeFil
 // "public.file-url"
 static const auto g_PasteboardFileURLUTI = (NSString *)kUTTypeFileURL;
 
-static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType, (__bridge CFStringRef)NSFilenamesPboardType, kUTTypeData));
+static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(
+    UTTypeCreatePreferredIdentifierForTag(kUTTagClassNSPboardType,
+                                          (__bridge CFStringRef)NSFilenamesPboardType,
+                                          kUTTypeData));
 
 @implementation PanelDraggingItem
 {
@@ -24,7 +27,8 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTType
         m_Item = _item;
 
         // for File URL Promise. need to check if this is necessary
-        [self setString:(NSString*)kUTTypeData forType:(NSString *)kPasteboardTypeFilePromiseContent];
+        [self setString:(NSString*)kUTTypeData
+                forType:(NSString *)kPasteboardTypeFilePromiseContent];
     }
     return self;
 }
@@ -44,9 +48,6 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTType
     VFSHostPtr                  m_CommonHost;
     bool                        m_AreAllHostsWriteable;
     bool                        m_AreAllHostsNative;
-//    bool                        m_FilenameURLsPasteboard;
-//    bool                        m_FilenamesPasteboard;
-//    bool                        m_URLsPromisePasteboard;
 }
 
 @synthesize areAllHostsWriteable = m_AreAllHostsWriteable;
@@ -65,7 +66,6 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTType
     self = [super init];
     if(self) {
         m_SourceController = _controller;
-//        m_FilenameURLsPasteboard = m_FilenamesPasteboard = m_URLsPromisePasteboard = true;
         m_AreAllHostsWriteable = false;
         m_AreAllHostsNative = false;
     }
@@ -91,22 +91,23 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(UTType
     m_Items.emplace_back(_item);
 }
 
-- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session
+  sourceOperationMaskForDraggingContext:(NSDraggingContext)context
 {
-    switch(context) {
+    switch( context ) {
         case NSDraggingContextOutsideApplication:
-            return NSDragOperationCopy|NSDragOperationGeneric;
-            break;
+            if( m_AreAllHostsNative && m_AreAllHostsWriteable )
+                return NSDragOperationCopy | NSDragOperationLink |
+                       NSDragOperationGeneric | NSDragOperationMove;
+            else
+                return NSDragOperationCopy;
             
         case NSDraggingContextWithinApplication:
-            // ||!! actually this mask is not used by the receiver !!||
-            // need some complex logic here later
-            
-            if( !m_AreAllHostsNative )
-                return NSDragOperationCopy|NSDragOperationGeneric|NSDragOperationMove;
-            
-//            return NSDragOperationCopy|NSDragOperationLink|NSDragOperationMove;
-            return NSDragOperationCopy|NSDragOperationLink|NSDragOperationGeneric|NSDragOperationMove;
+            if( m_AreAllHostsNative )
+                return NSDragOperationCopy | NSDragOperationLink |
+                       NSDragOperationGeneric | NSDragOperationMove;
+            else
+                return NSDragOperationCopy | NSDragOperationGeneric | NSDragOperationMove;
             
         default:
             return NSDragOperationNone;
@@ -213,7 +214,9 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
 //}
 
 // dispatch incoming data request
-- (void)pasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item provideDataForType:(NSString *)type
+- (void)pasteboard:(NSPasteboard *)sender
+              item:(PanelDraggingItem *)item
+provideDataForType:(NSString *)type
 {
     if( !item.item )
         return;
@@ -227,7 +230,9 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
 //        [self provideFilenamesURLsPasteboard:sender item:item];
 }
 
-- (void)draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation
+- (void)draggingSession:(NSDraggingSession *)session
+           endedAtPoint:(NSPoint)screenPoint
+              operation:(NSDragOperation)operation
 {
     for( auto &item: m_Items )
         [item reset];

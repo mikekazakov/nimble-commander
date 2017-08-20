@@ -16,7 +16,7 @@ public:
     ~DragReceiver();
 
     NSDragOperation Validate();
-    bool Perform();
+    bool Receive();
     static NSArray<NSString*> *AcceptedUTIs();
 
 private:

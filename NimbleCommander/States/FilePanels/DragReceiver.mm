@@ -87,7 +87,7 @@ NSDragOperation DragReceiver::Validate()
     return operation;
 }
 
-bool DragReceiver::Perform()
+bool DragReceiver::Receive()
 {
     const auto destination = ComposeDestination();
     if( !destination || !destination.Host()->IsWritable() )

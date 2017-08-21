@@ -599,3 +599,34 @@ uint64_t VFSHost::Features() const noexcept
 {
     return m_Features;
 }
+
+uint64_t VFSHost::FullHashForPath( const char *_path ) const noexcept
+{
+    if( !_path )
+        return 0;
+
+    const auto max_hosts = 8;
+    array<const VFSHost*, max_hosts> hosts;
+    int hosts_n = 0;
+    
+    auto cur = this;
+    while( cur && hosts_n < max_hosts ) {
+        hosts[hosts_n++] = cur;
+        cur = cur->Parent().get();
+    }
+    
+    const auto buf_sz = 4096;
+    char buf[buf_sz];
+    char *p = &buf[0];
+    
+    while( hosts_n > 0 ) {
+        const auto host = hosts[--hosts_n];
+        p = stpcpy(p, host->FSTag());
+        p = stpcpy(p, "|");
+        p = stpcpy(p, host->JunctionPath());
+        p = stpcpy(p, "|");
+    }
+    p = stpcpy(p, _path);
+    
+    return hash<string_view>()( string_view(&buf[0], p - &buf[0]) );
+}

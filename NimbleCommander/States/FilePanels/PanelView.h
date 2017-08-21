@@ -47,8 +47,8 @@ namespace nc::panel::data {
 //- (rapidjson::StandaloneValue) encodeRestorableState;
 //- (void) loadRestorableState:(const rapidjson::StandaloneValue&)_state;
 
-- (void) SavePathState;
-- (void) LoadPathState;
+- (void) savePathState;
+- (void) loadPathState;
 
 /**
  * _text can be nil.

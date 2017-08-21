@@ -1117,7 +1117,7 @@ loadPreviousState:(bool)_load_state
             
             [self CancelBackgroundOperations]; // clean running operations if any
             dispatch_or_run_in_main_queue([=]{
-                [m_View SavePathState];
+                [m_View savePathState];
                 m_Data.Load(listing, data::Model::PanelType::Directory);
                 [m_View dataUpdated];
                 [m_View panelChangedWithFocusedFilename:c->RequestFocusedEntry
@@ -1147,7 +1147,7 @@ loadPreviousState:(bool)_load_state
 {
     [self CancelBackgroundOperations]; // clean running operations if any
     dispatch_or_run_in_main_queue([=]{
-        [m_View SavePathState];
+        [m_View savePathState];
         m_Data.Load(_listing, data::Model::PanelType::Temporary);
         [m_View dataUpdated];
         [m_View panelChangedWithFocusedFilename:"" loadPreviousState:false];

@@ -113,6 +113,11 @@ public:
      */
     void SetDesctructCallback( function<void(const VFSHost*)> _callback );
     
+    /**
+     * Calculates a hash of a string representation of a hosts stack and the corresponding path.
+     * Should not be used for an offline state storing.
+     */
+    uint64_t FullHashForPath( const char *_path ) const noexcept;
     
     /***********************************************************************************************
      * Probing, information, lookup

@@ -28,23 +28,7 @@ struct PanelViewStateStorage
     string focused_item;
 };
 
-static size_t HashForPath( const VFSHostPtr &_at_vfs, const string &_path )
-{
-    string full;
-    auto c = _at_vfs;
-    while( c ) {
-        // we need to incorporate options somehow here. or not?
-        string part = string(c->Tag) + string(c->JunctionPath()) + "|";
-        full.insert(0, part);
-        c = c->Parent();
-    }
-    full += _path;
-    return hash<string>()(full);
-}
-
 using namespace nc::panel;
-
-////////////////////////////////////////////////////////////////////////////////
 
 @interface PanelView()
 
@@ -56,7 +40,7 @@ using namespace nc::panel;
 {
     data::Model                *m_Data;
     
-    unordered_map<size_t, PanelViewStateStorage> m_States; // TODO: change no something simplier
+    unordered_map<uint64_t, PanelViewStateStorage> m_States;
     NSString                   *m_HeaderTitle;
     NCPanelViewFieldEditor     *m_RenamingEditor;
 
@@ -97,7 +81,7 @@ using namespace nc::panel;
         [self addSubview:m_FooterView];
         
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
-//        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
+
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_HeaderView(==20)]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_HeaderView]-(0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
@@ -297,9 +281,6 @@ using namespace nc::panel;
     
     int origpos = m_CursorPos;
     
-//    m_Presentation->MoveCursorToPrevItem();
-//    if(m_State->Data->SortedDirectoryEntries().empty()) return;
-//
     if( m_CursorPos < 0 )
         return;
     
@@ -310,11 +291,6 @@ using namespace nc::panel;
     
     
     m_CursorPos--;
-//    EnsureCursorIsVisible();
-    
-    
-//    if(m_CursorSelectionType != CursorSelectionType::No)
-    
     
     [self OnCursorPositionChanged];
 }
@@ -324,16 +300,11 @@ using namespace nc::panel;
     dispatch_assert_main_queue();
     
     int origpos = m_CursorPos;
-//    m_Presentation->MoveCursorToNextItem();
-    
-//    if(m_State->Data->SortedDirectoryEntries().empty()) return;
-//
     [self performKeyboardSelection:origpos last_included:origpos];
     if( m_CursorPos + 1 >= m_Data->SortedDirectoryEntries().size() )
         return;
 
     m_CursorPos++;
-    
     
     [self OnCursorPositionChanged];
 }
@@ -406,7 +377,6 @@ using namespace nc::panel;
     dispatch_assert_main_queue();
     
     const auto orig_pos = m_CursorPos;
-//    m_Presentation->MoveCursorToNextColumn();
     
     if( m_Data->SortedDirectoryEntries().empty() ) return;
     const auto total_items = (int)m_Data->SortedDirectoryEntries().size();
@@ -434,7 +404,6 @@ using namespace nc::panel;
     
     m_CursorPos = 0;
     
-//    m_Presentation->MoveCursorToFirstItem();
 
     [self performKeyboardSelection:origpos last_included:m_CursorPos];
     [self OnCursorPositionChanged];
@@ -452,8 +421,6 @@ using namespace nc::panel;
     
     m_CursorPos = (int)m_Data->SortedDirectoryEntries().size() - 1;
     
-//    m_Presentation->MoveCursorToLastItem();
-
     [self performKeyboardSelection:origpos last_included: m_CursorPos];
     [self OnCursorPositionChanged];
 }
@@ -520,7 +487,6 @@ using namespace nc::panel;
         if([del respondsToSelector:@selector(PanelViewCursorChanged:)])
             [del PanelViewCursorChanged:self];
     
-//    m_LastPotentialRenamingLBDown = -1;
     [self commitFieldEditor];
 }
 
@@ -763,7 +729,7 @@ using namespace nc::panel;
     }
 }
 
-- (void) SavePathState
+- (void) savePathState
 {
     assert( dispatch_is_main_queue() );
     if(!m_Data || !m_Data->Listing().IsUniform())
@@ -771,28 +737,29 @@ using namespace nc::panel;
     
     auto &listing = m_Data->Listing();
     
-    auto item = self.item;
+    const auto item = self.item;
     if( !item )
         return;
     
-    auto &storage = m_States[ HashForPath(listing.Host(), listing.Directory()) ];
-    
+    const auto hash = listing.Host()->FullHashForPath(listing.Directory().c_str());
+    auto &storage = m_States[ hash  ];
     storage.focused_item = item.Name();
 }
 
-- (void) LoadPathState
+- (void) loadPathState
 {
     assert( dispatch_is_main_queue() );
     if( !m_Data || !m_Data->Listing().IsUniform() )
         return;
     
-    auto &listing = m_Data->Listing();
+    const auto &listing = m_Data->Listing();
     
-    auto it = m_States.find(HashForPath(listing.Host(), listing.Directory()));
-    if(it == end(m_States))
+    const auto hash = listing.Host()->FullHashForPath(listing.Directory().c_str());
+    const auto it = m_States.find( hash );
+    if( it == end(m_States) )
         return;
     
-    auto &storage = it->second;
+    const auto &storage = it->second;
     int cursor = m_Data->SortedIndexForName(storage.focused_item.c_str());
     if( cursor < 0 )
         return;
@@ -804,29 +771,23 @@ using namespace nc::panel;
 - (void)panelChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load
 {
     assert( dispatch_is_main_queue() );
-//    m_State.ItemsDisplayOffset = 0;
     m_CursorPos = -1;
     
     if( _load )
-        [self LoadPathState];
+        [self loadPathState];
     
     const int cur = m_Data->SortedIndexForName(_focused_filename.c_str());
     if( cur >= 0 ) {
-        //m_Presentation->SetCursorPos(cur);
         [self setCurpos:cur];
-//        [self OnCursorPositionChanged];
     }
     
     if( m_CursorPos < 0 &&
         m_Data->SortedDirectoryEntries().size() > 0) {
-//        m_Presentation->SetCursorPos(0);
         [self setCurpos:0];
-//        [self OnCursorPositionChanged];
     }
     
     [self discardFieldEditor];
     [self setHeaderTitle:self.headerTitleForPanel];
-//    m_Presentation->OnDirectoryChanged();
 }
 
 - (void)startFieldEditorRenaming
@@ -942,9 +903,7 @@ using namespace nc::panel;
     dispatch_assert_main_queue();
     if( m_HeaderTitle != headerTitle ) {
         m_HeaderTitle = headerTitle;
-//        if( m_Presentation )
-//            m_Presentation->OnPanelTitleChanged();
-        [m_HeaderView setPath:m_HeaderTitle];        
+        [m_HeaderView setPath:m_HeaderTitle];
     }
 }
 

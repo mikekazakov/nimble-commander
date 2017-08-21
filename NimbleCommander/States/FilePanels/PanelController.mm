@@ -434,7 +434,7 @@ static void HeatUpConfigValues()
     m_Data.ReLoad(_ptr);
     [m_View dataUpdated];
     
-    if(![self CheckAgainstRequestedSelection])
+    if(![self checkAgainstRequestedFocusing])
         pers.Restore();
     
     [self OnCursorChanged];
@@ -511,7 +511,7 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
 {
-    [self ClearSelectionRequest]; // on any key press we clear entry selection request if any
+    [self clearFocusingRequest]; // on any key press we clear entry selection request if any
  
     const bool route_to_overlapped_terminal = RouteKeyboardInputIntoTerminal();
     const bool terminal_can_eat = route_to_overlapped_terminal &&
@@ -707,7 +707,7 @@ static bool RouteKeyboardInputIntoTerminal()
             });
         });
     
-    [self ClearSelectionRequest];
+    [self clearFocusingRequest];
     [self QuickSearchClearFiltering];
     [self.state PanelPathChanged:self];
     [self OnCursorChanged];
@@ -818,9 +818,9 @@ static bool RouteKeyboardInputIntoTerminal()
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
             if(self.currentDirectoryPath == curr_path && self.vfs == curr_vfs)
                 dispatch_to_main_queue( [=]{
-                    DelayedSelection req;
+                    DelayedFocusing req;
                     req.filename = target_fn;
-                    [self ScheduleDelayedSelectionChangeFor:req];
+                    [self scheduleDelayedFocusing:req];
                     [self refreshPanel];
                 } );
         });
@@ -1196,7 +1196,7 @@ loadPreviousState:(bool)_load_state
     });
 }
 
-- (void) ScheduleDelayedSelectionChangeFor:(DelayedSelection)request;
+- (void) scheduleDelayedFocusing:(DelayedFocusing)request
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     // we assume that _item_name will not contain any forward slashes
@@ -1209,10 +1209,10 @@ loadPreviousState:(bool)_load_state
     m_DelayedSelection.done = request.done;
     
     if(request.check_now)
-        [self CheckAgainstRequestedSelection];
+        [self checkAgainstRequestedFocusing];
 }
 
-- (bool) CheckAgainstRequestedSelection
+- (bool) checkAgainstRequestedFocusing
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
     if(m_DelayedSelection.filename.empty())
@@ -1247,7 +1247,7 @@ loadPreviousState:(bool)_load_state
     return false;
 }
 
-- (void) ClearSelectionRequest
+- (void) clearFocusingRequest
 {
     m_DelayedSelection.filename.clear();
     m_DelayedSelection.done = nullptr;

@@ -272,6 +272,19 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         
         const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
+        __weak PanelController *weak_panel = self.activePanelController;
+        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
+            dispatch_to_main_queue( [=]{
+                if( PanelController *panel = weak_panel ) {
+                    if( panel.isUniform &&
+                        panel.currentDirectoryPath == ::path(path).parent_path().native()+"/" ) {
+                       nc::panel::DelayedFocusing req;
+                       req.filename = ::path(path).filename().native();
+                       [(PanelController*)panel scheduleDelayedFocusing:req];
+                    }
+                }
+            });
+        });
         [self.mainWindowController enqueueOperation:op];
     }];
 }
@@ -348,9 +361,9 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
             dispatch_to_main_queue( [=]{
                 string single_fn_rename = ::path(path).filename().native();
-                nc::panel::DelayedSelection req;
+                nc::panel::DelayedFocusing req;
                 req.filename = single_fn_rename;
-                [(PanelController*)cur ScheduleDelayedSelectionChangeFor:req];
+                [(PanelController*)cur scheduleDelayedFocusing:req];
             });
         });
         [self.mainWindowController enqueueOperation:op];

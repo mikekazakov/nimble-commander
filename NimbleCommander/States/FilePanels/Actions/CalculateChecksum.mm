@@ -39,9 +39,9 @@ void CalculateChecksum::Perform( PanelController *_target, id _sender ) const
     [sheet beginSheetForWindow:_target.window
              completionHandler:^(NSModalResponse returnCode) {
                  if(sheet.didSaved) {
-                     DelayedSelection req;
+                     DelayedFocusing req;
                      req.filename = sheet.savedFilename;
-                     [_target ScheduleDelayedSelectionChangeFor:req];
+                     [_target scheduleDelayedFocusing:req];
                  }
              }];
 }

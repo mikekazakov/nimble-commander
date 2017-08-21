@@ -206,9 +206,9 @@ static void FocusResult( PanelController *_target, const shared_ptr<nc::ops::Com
         const auto filename = result_path.filename().native();
         if( _target.isUniform && _target.currentDirectoryPath == directory ) {
             [_target refreshPanel];
-            nc::panel::DelayedSelection req;
+            nc::panel::DelayedFocusing req;
             req.filename = filename;
-            [_target ScheduleDelayedSelectionChangeFor:req];
+            [_target scheduleDelayedFocusing:req];
         }
     }
     else

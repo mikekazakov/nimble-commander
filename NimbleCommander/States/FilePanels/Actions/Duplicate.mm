@@ -57,9 +57,9 @@ static void CommonPerform(PanelController *_target, const vector<VFSListingItem>
             auto finish_handler = ^{
                 dispatch_to_main_queue( [weak_panel, duplicate, force_refresh]{
                     if( PanelController *panel = weak_panel) {
-                        nc::panel::DelayedSelection req;
+                        nc::panel::DelayedFocusing req;
                         req.filename = duplicate;
-                        [panel ScheduleDelayedSelectionChangeFor:req];
+                        [panel scheduleDelayedFocusing:req];
                         if( force_refresh  )
                             [panel refreshPanel];
                     }

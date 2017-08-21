@@ -54,7 +54,7 @@ private:
     __weak PanelController *panel;
 };
 
-struct DelayedSelection
+struct DelayedFocusing
 {
     string          filename;
     milliseconds    timeout = 500ms;
@@ -189,19 +189,7 @@ loadPreviousState:(bool)_load_state
  * If on any checking it will be found that time for request has went out - it will be removed (500ms is just ok for _time_out_in_ms).
  * Will also deselect any currenly selected items.
  */
-- (void) ScheduleDelayedSelectionChangeFor:(nc::panel::DelayedSelection)request;
-
-/**
- * Private PanelController method.
- * Return true if it moved or just set the cursor position.
- */
-- (bool) CheckAgainstRequestedSelection;
-
-/**
- * Private PanelController method.
- */
-- (void) ClearSelectionRequest;
-
+- (void) scheduleDelayedFocusing:(nc::panel::DelayedFocusing)request;
 
 - (void) QuickSearchClearFiltering;
 - (void) QuickSearchSetCriteria:(NSString *)_text;

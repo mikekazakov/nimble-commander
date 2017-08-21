@@ -178,9 +178,9 @@ static void FocusResult( PanelController *_target, const string &_path, bool _re
         if( _target.isUniform && _target.currentDirectoryPath == directory ) {
             if( _refresh )
                 [_target refreshPanel];
-            nc::panel::DelayedSelection req;
+            nc::panel::DelayedFocusing req;
             req.filename = filename;
-            [_target ScheduleDelayedSelectionChangeFor:req];
+            [_target scheduleDelayedFocusing:req];
         }
     }
     else

@@ -79,7 +79,7 @@ static string FindSuitableName( const string& _initial, const VFSListing &_listi
 static void ScheduleRenaming( const string& _filename, PanelController *_panel )
 {
     __weak PanelController *weak_panel = _panel;
-    DelayedSelection req;
+    DelayedFocusing req;
     req.filename = _filename;
     req.timeout = 2s;
     req.done = [=]{
@@ -87,15 +87,15 @@ static void ScheduleRenaming( const string& _filename, PanelController *_panel )
             [((PanelController*)weak_panel).view startFieldEditorRenaming];
         });
     };
-    [_panel ScheduleDelayedSelectionChangeFor:req];
+    [_panel scheduleDelayedFocusing:req];
 }
 
 static void ScheduleFocus( const string& _filename, PanelController *_panel )
 {
-    DelayedSelection req;
+    DelayedFocusing req;
     req.filename = _filename;
     req.timeout = 2s;
-    [_panel ScheduleDelayedSelectionChangeFor:req];
+    [_panel scheduleDelayedFocusing:req];
 }
 
 bool MakeNewFile::Predicate( PanelController *_target ) const

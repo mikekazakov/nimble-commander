@@ -778,28 +778,25 @@ static bool RouteKeyboardInputIntoTerminal()
     [m_View volatileDataChanged];
 }
 
-- (void) PanelViewRenamingFieldEditorFinished:(PanelView*)_view text:(NSString*)_filename
+- (void) PanelViewRenamingFieldEditorFinished:(PanelView*)_view text:(const string&)_filename
 {
-    if(_filename == nil ||
-       _filename.length == 0 ||
-       _filename.fileSystemRepresentation == nullptr ||
-       [_filename isEqualToString:@"."] ||
-       [_filename isEqualToString:@".."] ||
-       !m_View.item ||
-       m_View.item.IsDotDot() ||
-       !m_View.item.Host()->IsWritable() ||
-       [_filename isEqualToString:m_View.item.NSName()])
+    if( _filename == "." ||
+        _filename == ".." ||
+        !m_View.item ||
+        m_View.item.IsDotDot() ||
+        !m_View.item.Host()->IsWritable() ||
+        _filename == m_View.item.Name())
         return;
     
-    string target_fn = _filename.fileSystemRepresentationSafe;
+    string target_fn = _filename;
     auto item = m_View.item;
-    
  
     // checking for invalid symbols
     if( !item.Host()->ValidateFilename(target_fn.c_str()) ) {
         Alert *a = [[Alert alloc] init];
+        const auto fn = [NSString stringWithUTF8StdString:target_fn];
         a.messageText = [NSString stringWithFormat:NSLocalizedString(@"The name “%@” can’t be used.", "Message text when user is entering an invalid filename"),
-                         _filename.length <= 256 ? _filename : [[_filename substringToIndex:256] stringByAppendingString:@"..."]
+                         fn.length <= 256 ? fn : [[fn substringToIndex:256] stringByAppendingString:@"..."]
                          ];
         a.informativeText = NSLocalizedString(@"Try using a name with fewer characters or without punctuation marks.", "Informative text when user is entering an invalid filename");
         a.alertStyle = NSCriticalAlertStyle;

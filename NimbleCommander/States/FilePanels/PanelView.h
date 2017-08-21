@@ -12,7 +12,7 @@ namespace nc::panel::data {
     struct Model;
 }
 
-@interface PanelView : NSView<NSDraggingDestination, NSTextViewDelegate>
+@interface PanelView : NSView<NSDraggingDestination>
 @property (nonatomic) id <PanelViewDelegate> delegate;
 @property (nonatomic, readonly) bool active; // means that window is key and view is the first responder. KVO-compatible
 @property (nonatomic) int curpos; // will call EnsureCursorIsVisible implicitly on set

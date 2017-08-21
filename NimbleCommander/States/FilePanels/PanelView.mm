@@ -14,6 +14,7 @@
 #include "Actions/Enter.h"
 #include "DragReceiver.h"
 #include "DragSender.h"
+#include "PanelViewFieldEditor.h"
 
 enum class CursorSelectionType : int8_t
 {
@@ -57,8 +58,7 @@ using namespace nc::panel;
     
     unordered_map<size_t, PanelViewStateStorage> m_States; // TODO: change no something simplier
     NSString                   *m_HeaderTitle;
-    NSScrollView               *m_RenamingEditor; // NSTextView inside
-    string                      m_RenamingOriginalName;
+    NCPanelViewFieldEditor     *m_RenamingEditor;
 
     __weak id<PanelViewDelegate> m_Delegate;
     NSView<PanelViewImplementationProtocol> *m_ItemsView;
@@ -829,43 +829,12 @@ using namespace nc::panel;
 //    m_Presentation->OnDirectoryChanged();
 }
 
-static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_selection )
-{
-    static auto dot = [NSCharacterSet characterSetWithCharactersInString:@"."];
-
-    // disassemble filename into parts
-    const auto length = _string.length;
-    const NSRange whole = NSMakeRange(0, length);
-    NSRange name;
-    optional<NSRange> extension;
-    
-    const NSRange r = [_string rangeOfCharacterFromSet:dot options:NSBackwardsSearch];
-    if( r.location > 0 && r.location < length - 1) { // has extension
-        name = NSMakeRange(0, r.location);
-        extension = NSMakeRange(r.location + 1, length - r.location - 1);
-    }
-    else { // no extension
-        name = whole;
-    }
-
-    if( _current_selection.length == 0 ) // no selection currently - return name
-        return name;
-    else {
-        if( NSEqualRanges(_current_selection, name) ) // current selection is name only
-            return extension ? *extension : whole;
-        else if( NSEqualRanges(_current_selection, whole) ) // current selection is all filename
-            return name;
-        else
-            return whole;
-    }
-}
-
 - (void)startFieldEditorRenaming
 {
     if( m_RenamingEditor != nil ) {
-        // if renaming editor is already here - iterate selection. (assuming consequent ctrl+f6 hits here
-        if( auto tv = objc_cast<NSTextView>(m_RenamingEditor.documentView) )
-            tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
+        // if renaming editor is already here - just iterate a selection.
+        // (assuming consequent ctrl+f6 hits here)    
+        [m_RenamingEditor markNextFilenamePart];
         return;
     }
     
@@ -876,119 +845,61 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     const auto item = self.item;
     if( !item || item.IsDotDot() || !item.Host()->IsWritable() )
         return;
-    
-    m_RenamingEditor = [NSScrollView new];
-    m_RenamingEditor.borderType = NSNoBorder;
-    m_RenamingEditor.hasVerticalScroller = false;
-    m_RenamingEditor.hasHorizontalScroller = false;
-    m_RenamingEditor.autoresizingMask = NSViewNotSizable;
-    m_RenamingEditor.verticalScrollElasticity = NSScrollElasticityNone;
-    m_RenamingEditor.horizontalScrollElasticity = NSScrollElasticityNone;
+  
+    m_RenamingEditor = [[NCPanelViewFieldEditor alloc] initWithFilename:item.Filename()];
+    __weak PanelView *weak_self = self;
+    m_RenamingEditor.onTextEntered = ^(const string &_new_filename){
+        if( auto sself = weak_self ) {
+            if( !sself->m_RenamingEditor ||
+                !sself.item ||
+                sself.item.Name() != sself->m_RenamingEditor.originalFilename )
+                return;
+            [sself.delegate PanelViewRenamingFieldEditorFinished:sself
+                                                            text:_new_filename];
+        }
+    };
+    m_RenamingEditor.onEditingFinished = ^{
+        if( auto sself = weak_self ) {
+            [sself->m_RenamingEditor removeFromSuperview];
+            sself->m_RenamingEditor = nil;
+            
+            if( sself.window.firstResponder == nil || sself.window.firstResponder == sself.window )
+                dispatch_to_main_queue([=]{
+                    [sself.window makeFirstResponder:sself];
+                });
+        }
+    };
 
-    NSTextView *tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-    tv.delegate = self;
-    tv.fieldEditor = true;
-    tv.string = item.NSName();
-    tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
-    tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
-    tv.verticallyResizable = tv.horizontallyResizable = true;
-    tv.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
-    tv.richText = false;
-    tv.importsGraphics = false;
-    tv.allowsImageEditing = false;
-    tv.automaticQuoteSubstitutionEnabled = false;
-    tv.automaticLinkDetectionEnabled = false;
-    tv.continuousSpellCheckingEnabled = false;
-    tv.grammarCheckingEnabled = false;
-    tv.insertionPointColor = NSColor.blackColor;
-    tv.backgroundColor = NSColor.whiteColor;
-    tv.textColor = NSColor.blackColor;
-    
-    static const auto ps = []()-> NSParagraphStyle* {
-        NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
-        style.lineBreakMode = NSLineBreakByClipping;
-        return style;
-    }();
-    tv.defaultParagraphStyle = ps;
-    tv.textContainer.widthTracksTextView = tv.textContainer.heightTracksTextView = false;
-    tv.textContainer.containerSize = CGSizeMake(FLT_MAX, FLT_MAX);
-    
-    m_RenamingEditor.documentView = tv;
     [m_ItemsView setupFieldEditor:m_RenamingEditor forItemAtIndex:cursor_pos];
-    
     [self.window makeFirstResponder:m_RenamingEditor];
-    
-    m_RenamingOriginalName = item.Name();
 }
 
 - (void)commitFieldEditor
 {
-    if(m_RenamingEditor) {
-        [self.window makeFirstResponder:self]; // will implicitly call textShouldEndEditing:
-        [m_RenamingEditor removeFromSuperview];
-        m_RenamingEditor = nil;
-    }
-    m_RenamingOriginalName = "";
-}
-
-- (void)discardFieldEditor
-{
-    m_RenamingOriginalName = "";
-    if(m_RenamingEditor) {
+    if( m_RenamingEditor ) {
         [self.window makeFirstResponder:self];
         [m_RenamingEditor removeFromSuperview];
         m_RenamingEditor = nil;
     }
 }
 
-- (BOOL)textShouldEndEditing:(NSText *)textObject
+- (void)discardFieldEditor
 {
-    if(!m_RenamingEditor)
-        return true;
-    
-    if(!self.item || m_RenamingOriginalName != self.item.Name())
-        return true;
-    
-    NSTextView *tv = m_RenamingEditor.documentView;
-    [self.delegate PanelViewRenamingFieldEditorFinished:self text:tv.string];
-    return true;
-}
-
-- (void)textDidEndEditing:(NSNotification *)notification
-{
-    [m_RenamingEditor removeFromSuperview];
-    m_RenamingEditor = nil;
-    m_RenamingOriginalName = "";
-    
-    if( self.window.firstResponder == nil || self.window.firstResponder == self.window )
-        dispatch_to_main_queue([=]{
-            [self.window makeFirstResponder:self];
-        });
-}
-
-- (NSArray *)textView:(NSTextView *)textView
-          completions:(NSArray *)words
-  forPartialWordRange:(NSRange)charRange
-  indexOfSelectedItem:(NSInteger *)index
-{
-    return @[];
-}
-
-- (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
-{
-    if(commandSelector == NSSelectorFromString(@"cancelOperation:")) {
-        [self discardFieldEditor];
-        return true;
+    if( m_RenamingEditor ) {
+        m_RenamingEditor.onTextEntered = nil;
+        [self.window makeFirstResponder:self];
+        [m_RenamingEditor removeFromSuperview];
+        m_RenamingEditor = nil;
     }
-    return false;
 }
 
 - (void) dataUpdated
 {
     assert( dispatch_is_main_queue() );
-    if(!self.item || m_RenamingOriginalName != self.item.Name())
-        [self discardFieldEditor];
-//    [self setNeedsDisplay];
+    if( m_RenamingEditor )
+        if( !self.item || m_RenamingEditor.originalFilename != self.item.Name() )
+            [self discardFieldEditor];
+    
     [m_ItemsView dataChanged];
     [m_ItemsView setCursorPosition:m_CursorPos];
     

@@ -135,7 +135,6 @@
 		CFC4F9D71F14FA100000B3EE /* AttrsChanging_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9D51F14F9FE0000B3EE /* AttrsChanging_Tests.mm */; };
 		CFC4F9E91F15BA800000B3EE /* AttrsChangingDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9E61F15BA800000B3EE /* AttrsChangingDialog.h */; };
 		CFC4F9EA1F15BA800000B3EE /* AttrsChangingDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9E71F15BA800000B3EE /* AttrsChangingDialog.mm */; };
-		CFC4F9EB1F15BA800000B3EE /* AttrsChangingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFC4F9E81F15BA800000B3EE /* AttrsChangingDialog.xib */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
@@ -152,6 +151,7 @@
 		CFFA94A11F45418D0035E606 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */; };
 		CFFA94E21F45448A0035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E11F45448A0035E606 /* libVFS.dylib */; };
 		CFFA950B1F456FD80035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA950A1F456FD80035E606 /* libVFS.dylib */; };
+		CFFA953E1F4C0C390035E606 /* AttrsChangingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95401F4C0C390035E606 /* AttrsChangingDialog.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -303,7 +303,6 @@
 		CFC4F9D51F14F9FE0000B3EE /* AttrsChanging_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AttrsChanging_Tests.mm; path = tests/AttrsChanging_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFC4F9E61F15BA800000B3EE /* AttrsChangingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttrsChangingDialog.h; path = source/AttrsChanging/AttrsChangingDialog.h; sourceTree = "<group>"; };
 		CFC4F9E71F15BA800000B3EE /* AttrsChangingDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AttrsChangingDialog.mm; path = source/AttrsChanging/AttrsChangingDialog.mm; sourceTree = "<group>"; };
-		CFC4F9E81F15BA800000B3EE /* AttrsChangingDialog.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AttrsChangingDialog.xib; path = source/AttrsChanging/AttrsChangingDialog.xib; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -332,6 +331,7 @@
 		CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libRoutedIO.dylib; path = ../RoutedIO/build/Debug/libRoutedIO.dylib; sourceTree = "<group>"; };
 		CFFA94E11F45448A0035E606 /* libVFS.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libVFS.dylib; path = ../VFS/build/Debug/libVFS.dylib; sourceTree = "<group>"; };
 		CFFA950A1F456FD80035E606 /* libVFS.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libVFS.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libVFS.dylib"; sourceTree = "<group>"; };
+		CFFA953F1F4C0C390035E606 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AttrsChangingDialog.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -534,7 +534,7 @@
 				CFC4F9CB1F14BECA0000B3EE /* Options.h */,
 				CFC4F9E61F15BA800000B3EE /* AttrsChangingDialog.h */,
 				CFC4F9E71F15BA800000B3EE /* AttrsChangingDialog.mm */,
-				CFC4F9E81F15BA800000B3EE /* AttrsChangingDialog.xib */,
+				CFFA95401F4C0C390035E606 /* AttrsChangingDialog.xib */,
 			);
 			name = AttrsChanging;
 			sourceTree = "<group>";
@@ -820,7 +820,7 @@
 				CFC4F9501F0CA84D0000B3EE /* DirectoryCreationDialog.xib in Resources */,
 				CFC4F97E1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.xib in Resources */,
 				CF4BCF541F2F07DB005F8414 /* CopyingDialogDisclosedView.xib in Resources */,
-				CFC4F9EB1F15BA800000B3EE /* AttrsChangingDialog.xib in Resources */,
+				CFFA953E1F4C0C390035E606 /* AttrsChangingDialog.xib in Resources */,
 				CFC4F9001F04B0780000B3EE /* Localizable.strings in Resources */,
 				CFC4F8FE1F04AF2B0000B3EE /* Localizable.stringsdict in Resources */,
 			);
@@ -992,6 +992,15 @@
 				CFC4F9BF1F10891E0000B3EE /* ru */,
 			);
 			name = CreateSymlinkDialog.xib;
+			sourceTree = "<group>";
+		};
+		CFFA95401F4C0C390035E606 /* AttrsChangingDialog.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFFA953F1F4C0C390035E606 /* Base */,
+			);
+			name = AttrsChangingDialog.xib;
+			path = source/AttrsChanging;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

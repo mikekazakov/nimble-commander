@@ -52,6 +52,18 @@ static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
         {"panel.show_preview",                  NSLocalizedString(@"File Panels ▶ Show Preview", "")},
         {"panel.go_into_enclosing_folder",      NSLocalizedString(@"File Panels ▶ Go to Enclosing Folder", "")},
         {"panel.go_into_folder",                NSLocalizedString(@"File Panels ▶ Go Into Folder", "")},
+        {"panel.show_previous_tab",             NSLocalizedString(@"File Panels ▶ Show Previous Tab", "")},
+        {"panel.show_next_tab",                 NSLocalizedString(@"File Panels ▶ Show Next Tab", "")},
+        {"panel.show_tab_no_1",                 NSLocalizedString(@"File Panels ▶ Show Tab №1", "")},
+        {"panel.show_tab_no_2",                 NSLocalizedString(@"File Panels ▶ Show Tab №2", "")},
+        {"panel.show_tab_no_3",                 NSLocalizedString(@"File Panels ▶ Show Tab №3", "")},
+        {"panel.show_tab_no_4",                 NSLocalizedString(@"File Panels ▶ Show Tab №4", "")},
+        {"panel.show_tab_no_5",                 NSLocalizedString(@"File Panels ▶ Show Tab №5", "")},
+        {"panel.show_tab_no_6",                 NSLocalizedString(@"File Panels ▶ Show Tab №6", "")},
+        {"panel.show_tab_no_7",                 NSLocalizedString(@"File Panels ▶ Show Tab №7", "")},
+        {"panel.show_tab_no_8",                 NSLocalizedString(@"File Panels ▶ Show Tab №8", "")},
+        {"panel.show_tab_no_9",                 NSLocalizedString(@"File Panels ▶ Show Tab №9", "")},
+        {"panel.show_tab_no_10",                NSLocalizedString(@"File Panels ▶ Show Tab №10", "")},
     };
     
     for( auto &i: titles )

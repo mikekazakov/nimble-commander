@@ -38,7 +38,6 @@
 #include <NimbleCommander/States/FilePanels/Favorites.h>
 #include <NimbleCommander/States/FilePanels/FavoritesWindowController.h>
 #include <NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h>
-#include <NimbleCommander/Operations/OperationsController.h>
 #include <NimbleCommander/Preferences/Preferences.h>
 #include <NimbleCommander/Viewer/InternalViewerController.h>
 #include <NimbleCommander/Viewer/InternalViewerWindowController.h>

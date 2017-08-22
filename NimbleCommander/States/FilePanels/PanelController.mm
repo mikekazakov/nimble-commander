@@ -563,36 +563,36 @@ static bool RouteKeyboardInputIntoTerminal()
         static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_file_open, &hk_file_open_native, &hk_go_root, &hk_go_home, &hk_preview, &hk_go_into, &kh_go_outside}, {"menu.file.enter", "menu.file.open", "panel.go_root", "panel.go_home", "panel.show_preview", "panel.go_into_folder", "panel.go_into_enclosing_folder"});
 
         if( !terminal_can_eat ) {
-            if( hk_preview.IsKeyDown(unicode, keycode, modif) ) {
+            if( hk_preview.IsKeyDown(unicode, modif) ) {
                 [self OnFileViewCommand:self];
                 return true;
             }
-            if( hk_go_home.IsKeyDown(unicode, keycode, modif) ) {
+            if( hk_go_home.IsKeyDown(unicode, modif) ) {
                 static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
                 [[NSApp menu] performActionForItemWithTagHierarchical:tag];
                 return true;
             }
-            if( hk_go_root.IsKeyDown(unicode, keycode, modif) ) {
+            if( hk_go_root.IsKeyDown(unicode, modif) ) {
                 static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.root");
                 [[NSApp menu] performActionForItemWithTagHierarchical:tag];
                 return true;
             }
-            if( hk_go_into.IsKeyDown(unicode, keycode, modif) ) {
+            if( hk_go_into.IsKeyDown(unicode, modif) ) {
                 static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.into_folder");
                 [[NSApp menu] performActionForItemWithTagHierarchical:tag];
                 return true;
             }
-            if( kh_go_outside.IsKeyDown(unicode, keycode, modif) ) {
+            if( kh_go_outside.IsKeyDown(unicode, modif) ) {
                 static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.enclosing_folder");
                 [[NSApp menu] performActionForItemWithTagHierarchical:tag];
                 return true;
             }
-            if( hk_file_open.IsKeyDown(unicode, keycode, modif) ) {
+            if( hk_file_open.IsKeyDown(unicode, modif) ) {
                 // we keep it here to avoid blinking on menu item
                 actions::Enter{}.Perform(self, self);
                 return true;
             }
-            if( hk_file_open_native.IsKeyDown(unicode, keycode, modif) ) {
+            if( hk_file_open_native.IsKeyDown(unicode, modif) ) {
                 // we keep it here to avoid blinking on menu item
                 actions::OpenFilesWithDefaultHandler{}.Perform(self, self);
                 return true;

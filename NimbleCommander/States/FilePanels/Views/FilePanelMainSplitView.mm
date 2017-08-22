@@ -249,23 +249,19 @@ static const auto g_ResizingGran = 14.;
     if ( characters.length != 1 )
         return [super performKeyEquivalent:theEvent];
     
-    auto mod = theEvent.modifierFlags;
-    mod &= ~NSAlphaShiftKeyMask;
-    mod &= ~NSNumericPadKeyMask;
-    mod &= ~NSFunctionKeyMask;
-    auto unicode = [characters characterAtIndex:0];
-    auto kc = theEvent.keyCode;
+    const auto mod = theEvent.modifierFlags;
+    const auto unicode = [characters characterAtIndex:0];
     
     static ActionsShortcutsManager::ShortCut hk_move_left, hk_move_right;
     static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_move_left, &hk_move_right},
                                                                      {"menu.view.panels_position.move_left", "menu.view.panels_position.move_right"});
     
-    if( hk_move_left.IsKeyDown(unicode, kc, mod) ) {
+    if( hk_move_left.IsKeyDown(unicode, mod) ) {
         [self OnViewPanelsPositionMoveLeft:self];
         return true;
     }
 
-    if( hk_move_right.IsKeyDown(unicode, kc, mod) ) {
+    if( hk_move_right.IsKeyDown(unicode, mod) ) {
         [self OnViewPanelsPositionMoveRight:self];
         return true;
     }

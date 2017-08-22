@@ -416,7 +416,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     if ( characters.length != 1 )
         return [super performKeyEquivalent:theEvent];
     
-    auto kc = theEvent.keyCode;
     auto mod = theEvent.modifierFlags & NSDeviceIndependentModifierFlagsMask;
     mod &= ~NSAlphaShiftKeyMask;
     mod &= ~NSNumericPadKeyMask;
@@ -441,22 +440,22 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_move_up, &hk_move_down, &hk_showhide, &hk_focus},
                                                                          {"menu.view.panels_position.move_up", "menu.view.panels_position.move_down", "menu.view.panels_position.showpanels", "menu.view.panels_position.focusterminal"});
         
-        if( hk_move_up.IsKeyDown(unicode, kc, mod)  ) {
+        if( hk_move_up.IsKeyDown(unicode, mod)  ) {
             [self OnViewPanelsPositionMoveUp:self];
             return true;
         }
         
-        if( hk_move_down.IsKeyDown(unicode, kc, mod) ) {
+        if( hk_move_down.IsKeyDown(unicode, mod) ) {
             [self OnViewPanelsPositionMoveDown:self];
             return true;
         }
         
-        if( hk_showhide.IsKeyDown(unicode, kc, mod) ) {
+        if( hk_showhide.IsKeyDown(unicode, mod) ) {
             [self OnViewPanelsPositionShowHidePanels:self];
             return true;
         }
         
-        if( hk_focus.IsKeyDown(unicode, kc, mod) ) {
+        if( hk_focus.IsKeyDown(unicode, mod) ) {
             [self OnViewPanelsPositionFocusOverlappedTerminal:self];
             return true;
         }

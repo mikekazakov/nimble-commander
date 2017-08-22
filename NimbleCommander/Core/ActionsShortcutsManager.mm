@@ -181,6 +181,18 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"panel.go_root",                                   100'090},
     {"panel.go_home",                                   100'100},
     {"panel.show_preview",                              100'110},
+    {"panel.show_previous_tab",                         100'140},
+    {"panel.show_next_tab",                             100'150},
+    {"panel.show_tab_no_1",                             100'160},
+    {"panel.show_tab_no_2",                             100'161},
+    {"panel.show_tab_no_3",                             100'162},
+    {"panel.show_tab_no_4",                             100'163},
+    {"panel.show_tab_no_5",                             100'164},
+    {"panel.show_tab_no_6",                             100'165},
+    {"panel.show_tab_no_7",                             100'166},
+    {"panel.show_tab_no_8",                             100'167},
+    {"panel.show_tab_no_9",                             100'168},
+    {"panel.show_tab_no_10",                            100'169},
 };
 
 
@@ -351,6 +363,19 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     {"panel.go_root",                                       u8"/"       }, // slash
     {"panel.go_home",                                       u8"~"       }, // tilde
     {"panel.show_preview",                                  u8" "       }, // space
+    {"panel.show_previous_tab",                             u8"⇧⌘["     }, // shift+cmd+[
+    {"panel.show_next_tab",                                 u8"⇧⌘]"     }, // shift+cmd+]
+    {"panel.show_tab_no_1",                                 u8""        },
+    {"panel.show_tab_no_2",                                 u8""        },
+    {"panel.show_tab_no_3",                                 u8""        },
+    {"panel.show_tab_no_4",                                 u8""        },
+    {"panel.show_tab_no_5",                                 u8""        },
+    {"panel.show_tab_no_6",                                 u8""        },
+    {"panel.show_tab_no_7",                                 u8""        },
+    {"panel.show_tab_no_8",                                 u8""        },
+    {"panel.show_tab_no_9",                                 u8""        },
+    {"panel.show_tab_no_10",                                u8""        },
+    
 };
 
 ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater( initializer_list<ShortCut*> _hotkeys, initializer_list<const char*> _actions )

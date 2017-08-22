@@ -478,9 +478,6 @@
 		CF8D0D051D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
 		CF8D0D061D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
 		CF8D0D071D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
-		CF90698A1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069881BB54052000C3CBB /* FileAlreadyExistSheetController.xib */; };
-		CF90698B1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069881BB54052000C3CBB /* FileAlreadyExistSheetController.xib */; };
-		CF90698C1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069881BB54052000C3CBB /* FileAlreadyExistSheetController.xib */; };
 		CF90C0291EBB02850056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF90C02A1EBB03280056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF90C02B1EBB04910056E3B8 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; };
@@ -604,7 +601,6 @@
 		CFA53A4E1D433E2A00C562A7 /* CalculateChecksumSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */; };
 		CFA53A501D433E2A00C562A7 /* RHPreferencesWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF039EA31791112900DC85D6 /* RHPreferencesWindow.xib */; };
 		CFA53A521D433E2A00C562A7 /* SelectionWithMaskPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */; };
-		CFA53A561D433E2A00C562A7 /* FileAlreadyExistSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9069881BB54052000C3CBB /* FileAlreadyExistSheetController.xib */; };
 		CFA53A591D433E2A00C562A7 /* PreferencesWindowToolsTab.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */; };
 		CFA53A5A1D433E2A00C562A7 /* State.json in Resources */ = {isa = PBXBuildFile; fileRef = CFD6295C1C2CE3AD0050EC68 /* State.json */; };
 		CFA53A5B1D433E2A00C562A7 /* AskForPasswordWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */; };
@@ -1500,8 +1496,6 @@
 		CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileMask_Tests.mm; path = NimbleCommander/Core/FileMask_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_party/NSFileManager+DirectoryLocations.h"; sourceTree = "<group>"; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_party/NSFileManager+DirectoryLocations.m"; sourceTree = "<group>"; };
-		CF50C4761C0EB52A009DF611 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileAlreadyExistSheetController.strings; sourceTree = "<group>"; };
-		CF50C4771C0EB6A0009DF611 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MassCopySheetController.strings; sourceTree = "<group>"; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerHistory.h; path = NimbleCommander/Viewer/InternalViewerHistory.h; sourceTree = SOURCE_ROOT; };
 		CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerHistory.mm; path = NimbleCommander/Viewer/InternalViewerHistory.mm; sourceTree = SOURCE_ROOT; };
@@ -1591,62 +1585,6 @@
 		CF7C7CE31E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTab.strings; sourceTree = "<group>"; };
 		CF7C7CE41E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTabColoringRulesControl.strings; sourceTree = "<group>"; };
 		CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ByteCountFormatter_Tests.mm; sourceTree = "<group>"; };
-		CF7D132A1BEF24C9001F53FD /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = NimbleCommander/Operations/Delete/DialogResults.h; sourceTree = SOURCE_ROOT; };
-		CF7D13341BF1AFE0001F53FD /* BatchRename.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRename.h; path = ../NimbleCommander/Operations/BatchRename/BatchRename.h; sourceTree = "<group>"; };
-		CF7D13351BF1AFE0001F53FD /* BatchRename.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRename.mm; path = ../NimbleCommander/Operations/BatchRename/BatchRename.mm; sourceTree = "<group>"; };
-		CF7D13361BF1AFE0001F53FD /* BatchRenameOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameOperation.h; path = ../NimbleCommander/Operations/BatchRename/BatchRenameOperation.h; sourceTree = "<group>"; };
-		CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameOperation.mm; path = ../NimbleCommander/Operations/BatchRename/BatchRenameOperation.mm; sourceTree = "<group>"; };
-		CF7D13381BF1AFE0001F53FD /* BatchRenameOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameOperationJob.h; path = ../NimbleCommander/Operations/BatchRename/BatchRenameOperationJob.h; sourceTree = "<group>"; };
-		CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameOperationJob.mm; path = ../NimbleCommander/Operations/BatchRename/BatchRenameOperationJob.mm; sourceTree = "<group>"; };
-		CF7D133D1BF1B091001F53FD /* BatchRenameSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameSheetController.h; path = ../NimbleCommander/Operations/BatchRename/BatchRenameSheetController.h; sourceTree = "<group>"; };
-		CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameSheetController.mm; path = ../NimbleCommander/Operations/BatchRename/BatchRenameSheetController.mm; sourceTree = "<group>"; };
-		CF7D133F1BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BatchRenameSheetRangeSelectionPopoverController.h; path = ../NimbleCommander/Operations/BatchRename/BatchRenameSheetRangeSelectionPopoverController.h; sourceTree = "<group>"; };
-		CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BatchRenameSheetRangeSelectionPopoverController.mm; path = ../NimbleCommander/Operations/BatchRename/BatchRenameSheetRangeSelectionPopoverController.mm; sourceTree = "<group>"; };
-		CF7D13431BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkAlterSymlinkSheetController.h; path = ../NimbleCommander/Operations/Link/FileLinkAlterSymlinkSheetController.h; sourceTree = "<group>"; };
-		CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkAlterSymlinkSheetController.mm; path = ../NimbleCommander/Operations/Link/FileLinkAlterSymlinkSheetController.mm; sourceTree = "<group>"; };
-		CF7D13451BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkNewHardlinkSheetController.h; path = ../NimbleCommander/Operations/Link/FileLinkNewHardlinkSheetController.h; sourceTree = "<group>"; };
-		CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkNewHardlinkSheetController.mm; path = ../NimbleCommander/Operations/Link/FileLinkNewHardlinkSheetController.mm; sourceTree = "<group>"; };
-		CF7D13471BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkNewSymlinkSheetController.h; path = ../NimbleCommander/Operations/Link/FileLinkNewSymlinkSheetController.h; sourceTree = "<group>"; };
-		CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkNewSymlinkSheetController.mm; path = ../NimbleCommander/Operations/Link/FileLinkNewSymlinkSheetController.mm; sourceTree = "<group>"; };
-		CF7D13491BF1B6F0001F53FD /* FileLinkOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkOperation.h; path = ../NimbleCommander/Operations/Link/FileLinkOperation.h; sourceTree = "<group>"; };
-		CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkOperation.mm; path = ../NimbleCommander/Operations/Link/FileLinkOperation.mm; sourceTree = "<group>"; };
-		CF7D134B1BF1B6F0001F53FD /* FileLinkOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileLinkOperationJob.h; path = ../NimbleCommander/Operations/Link/FileLinkOperationJob.h; sourceTree = "<group>"; };
-		CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileLinkOperationJob.mm; path = ../NimbleCommander/Operations/Link/FileLinkOperationJob.mm; sourceTree = "<group>"; };
-		CF7D13521BF1B964001F53FD /* CreateDirectoryOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectoryOperation.h; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperation.h; sourceTree = SOURCE_ROOT; };
-		CF7D13531BF1B964001F53FD /* CreateDirectoryOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectoryOperation.mm; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperation.mm; sourceTree = SOURCE_ROOT; };
-		CF7D13541BF1B964001F53FD /* CreateDirectoryOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectoryOperationJob.h; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperationJob.h; sourceTree = SOURCE_ROOT; };
-		CF7D13551BF1B964001F53FD /* CreateDirectoryOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectoryOperationJob.mm; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperationJob.mm; sourceTree = SOURCE_ROOT; };
-		CF7D13561BF1B964001F53FD /* CreateDirectoryOperationVFSJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectoryOperationVFSJob.h; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperationVFSJob.h; sourceTree = SOURCE_ROOT; };
-		CF7D13571BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectoryOperationVFSJob.mm; path = NimbleCommander/Operations/CreateDirectory/CreateDirectoryOperationVFSJob.mm; sourceTree = SOURCE_ROOT; };
-		CF7D13581BF1B964001F53FD /* CreateDirectorySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CreateDirectorySheetController.h; path = NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.h; sourceTree = SOURCE_ROOT; };
-		CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CreateDirectorySheetController.mm; path = NimbleCommander/Operations/CreateDirectory/CreateDirectorySheetController.mm; sourceTree = SOURCE_ROOT; };
-		CF7D135E1BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperationCommand.h; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperationCommand.h; sourceTree = "<group>"; };
-		CF7D13601BF1BCAE001F53FD /* FileSysAttrChangeOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperation.h; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperation.h; sourceTree = "<group>"; };
-		CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperation.mm; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperation.mm; sourceTree = "<group>"; };
-		CF7D13621BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysAttrChangeOperationJob.h; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperationJob.h; sourceTree = "<group>"; };
-		CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperationJob.mm; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperationJob.mm; sourceTree = "<group>"; };
-		CF7D13641BF1BCAE001F53FD /* FileSysEntryAttrSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileSysEntryAttrSheetController.h; path = ../NimbleCommander/Operations/Attrs/FileSysEntryAttrSheetController.h; sourceTree = "<group>"; };
-		CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysEntryAttrSheetController.mm; path = ../NimbleCommander/Operations/Attrs/FileSysEntryAttrSheetController.mm; sourceTree = "<group>"; };
-		CF7D136B1BF5A6C5001F53FD /* FileSysAttrChangeOperation_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileSysAttrChangeOperation_Tests.mm; path = ../NimbleCommander/Operations/Attrs/FileSysAttrChangeOperation_Tests.mm; sourceTree = "<group>"; };
-		CF7D13771BF5E0FE001F53FD /* FileCompressOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCompressOperation.h; path = NimbleCommander/Operations/Compress/FileCompressOperation.h; sourceTree = SOURCE_ROOT; };
-		CF7D13781BF5E0FE001F53FD /* FileCompressOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCompressOperation.mm; path = NimbleCommander/Operations/Compress/FileCompressOperation.mm; sourceTree = SOURCE_ROOT; };
-		CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileCompressOperationJob.cpp; path = NimbleCommander/Operations/Compress/FileCompressOperationJob.cpp; sourceTree = SOURCE_ROOT; };
-		CF7D137A1BF5E0FE001F53FD /* FileCompressOperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCompressOperationJob.h; path = NimbleCommander/Operations/Compress/FileCompressOperationJob.h; sourceTree = SOURCE_ROOT; };
-		CF7D137D1BF5E38B001F53FD /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operation.h; path = NimbleCommander/Operations/Operation.h; sourceTree = SOURCE_ROOT; };
-		CF7D137E1BF5E38B001F53FD /* Operation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Operation.mm; path = NimbleCommander/Operations/Operation.mm; sourceTree = SOURCE_ROOT; };
-		CF7D137F1BF5E38B001F53FD /* OperationDialogAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationDialogAlert.h; path = NimbleCommander/Operations/OperationDialogAlert.h; sourceTree = SOURCE_ROOT; };
-		CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationDialogAlert.mm; path = NimbleCommander/Operations/OperationDialogAlert.mm; sourceTree = SOURCE_ROOT; };
-		CF7D13831BF5E38B001F53FD /* OperationDialogProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationDialogProtocol.h; path = NimbleCommander/Operations/OperationDialogProtocol.h; sourceTree = SOURCE_ROOT; };
-		CF7D13841BF5E38B001F53FD /* OperationJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OperationJob.cpp; path = NimbleCommander/Operations/OperationJob.cpp; sourceTree = SOURCE_ROOT; };
-		CF7D13851BF5E38B001F53FD /* OperationJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationJob.h; path = NimbleCommander/Operations/OperationJob.h; sourceTree = SOURCE_ROOT; };
-		CF7D13861BF5E38B001F53FD /* OperationsController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsController.h; path = NimbleCommander/Operations/OperationsController.h; sourceTree = SOURCE_ROOT; };
-		CF7D13871BF5E38B001F53FD /* OperationsController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationsController.mm; path = NimbleCommander/Operations/OperationsController.mm; sourceTree = SOURCE_ROOT; };
-		CF7D13881BF5E38B001F53FD /* OperationStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationStats.h; path = NimbleCommander/Operations/OperationStats.h; sourceTree = SOURCE_ROOT; };
-		CF7D13891BF5E38B001F53FD /* OperationStats.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationStats.mm; path = NimbleCommander/Operations/OperationStats.mm; sourceTree = SOURCE_ROOT; };
-		CF7D13901BF5E3A8001F53FD /* GenericOperationView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GenericOperationView.h; path = NimbleCommander/Operations/GenericOperationView.h; sourceTree = SOURCE_ROOT; };
-		CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GenericOperationView.mm; path = NimbleCommander/Operations/GenericOperationView.mm; sourceTree = SOURCE_ROOT; };
-		CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OperationsSummaryViewController.mm; path = NimbleCommander/Operations/OperationsSummaryViewController.mm; sourceTree = SOURCE_ROOT; };
-		CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = OperationsSummaryViewController.xib; path = NimbleCommander/Operations/OperationsSummaryViewController.xib; sourceTree = SOURCE_ROOT; };
 		CF7D7A741C15AAC200ECEBA0 /* Config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Config.json; path = NimbleCommander/Resources/Config.json; sourceTree = SOURCE_ROOT; };
 		CF811A901D8262BE001F9E7F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = SOURCE_ROOT; };
 		CF811A911D8262BE001F9E7F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_Party/OpenSSL/built/libssl.a; sourceTree = SOURCE_ROOT; };
@@ -1656,7 +1594,6 @@
 		CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pasteboard.mm; path = NimbleCommander/States/FilePanels/Helpers/Pasteboard.mm; sourceTree = SOURCE_ROOT; };
 		CF818B721EA0830400BC28E6 /* CopyToPasteboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyToPasteboard.h; path = NimbleCommander/States/FilePanels/Actions/CopyToPasteboard.h; sourceTree = SOURCE_ROOT; };
 		CF818B731EA0830400BC28E6 /* CopyToPasteboard.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyToPasteboard.mm; path = NimbleCommander/States/FilePanels/Actions/CopyToPasteboard.mm; sourceTree = SOURCE_ROOT; };
-		CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JobSourceItems.cpp; path = NimbleCommander/Operations/Copy/JobSourceItems.cpp; sourceTree = SOURCE_ROOT; };
 		CF84C8DD1DB74B3A00B4E888 /* PanelViewHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeader.h; path = NimbleCommander/States/FilePanels/PanelViewHeader.h; sourceTree = SOURCE_ROOT; };
 		CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeader.mm; path = NimbleCommander/States/FilePanels/PanelViewHeader.mm; sourceTree = SOURCE_ROOT; };
 		CF84C8F61DBB2AC300B4E888 /* PanelListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListView.h; path = NimbleCommander/States/FilePanels/List/PanelListView.h; sourceTree = SOURCE_ROOT; };
@@ -1708,18 +1645,6 @@
 		CF9066B419AB54CE001DC687 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_party/built/lib/libcrypto.a; sourceTree = "<group>"; };
 		CF9066B519AB54CE001DC687 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_party/built/lib/libssl.a; sourceTree = "<group>"; };
 		CF9066C319AB7928001DC687 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
-		CF9069651BB54035000C3CBB /* FileAlreadyExistSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileAlreadyExistSheetController.h; path = NimbleCommander/Operations/Copy/FileAlreadyExistSheetController.h; sourceTree = SOURCE_ROOT; };
-		CF9069661BB54035000C3CBB /* FileAlreadyExistSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileAlreadyExistSheetController.mm; path = NimbleCommander/Operations/Copy/FileAlreadyExistSheetController.mm; sourceTree = SOURCE_ROOT; };
-		CF9069671BB54035000C3CBB /* FileCopyOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileCopyOperation.h; path = NimbleCommander/Operations/Copy/FileCopyOperation.h; sourceTree = SOURCE_ROOT; };
-		CF9069681BB54035000C3CBB /* FileCopyOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileCopyOperation.mm; path = NimbleCommander/Operations/Copy/FileCopyOperation.mm; sourceTree = SOURCE_ROOT; };
-		CF9069711BB54035000C3CBB /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = NimbleCommander/Operations/Copy/Job.cpp; sourceTree = SOURCE_ROOT; };
-		CF9069721BB54035000C3CBB /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = NimbleCommander/Operations/Copy/Job.h; sourceTree = SOURCE_ROOT; };
-		CF9069891BB54052000C3CBB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileAlreadyExistSheetController.xib; sourceTree = "<group>"; };
-		CF90698D1BB54077000C3CBB /* MassCopySheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MassCopySheetController.h; path = NimbleCommander/Operations/Copy/MassCopySheetController.h; sourceTree = SOURCE_ROOT; };
-		CF90698E1BB54077000C3CBB /* MassCopySheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MassCopySheetController.mm; path = NimbleCommander/Operations/Copy/MassCopySheetController.mm; sourceTree = SOURCE_ROOT; };
-		CF9069931BB54081000C3CBB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MassCopySheetController.xib; sourceTree = "<group>"; };
-		CF9069981BB542A5000C3CBB /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = NimbleCommander/Operations/Copy/DialogResults.h; sourceTree = SOURCE_ROOT; };
-		CF9069991BB55A22000C3CBB /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = NimbleCommander/Operations/Copy/Options.h; sourceTree = SOURCE_ROOT; };
 		CF90C0081EBAE3190056E3B8 /* NetworkConnectionIconProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkConnectionIconProvider.h; path = NimbleCommander/Core/NetworkConnectionIconProvider.h; sourceTree = SOURCE_ROOT; };
 		CF90C0091EBAE3190056E3B8 /* NetworkConnectionIconProvider.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NetworkConnectionIconProvider.mm; path = NimbleCommander/Core/NetworkConnectionIconProvider.mm; sourceTree = SOURCE_ROOT; };
 		CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = LetsMove.xcodeproj; path = 3rd_Party/LetsMove/LetsMove/LetsMove.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -1773,7 +1698,6 @@
 		CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenNetworkConnection.mm; path = NimbleCommander/States/FilePanels/Actions/OpenNetworkConnection.mm; sourceTree = SOURCE_ROOT; };
 		CFA7E02B1EB97B60001FE66C /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delete.h; path = NimbleCommander/States/FilePanels/Actions/Delete.h; sourceTree = SOURCE_ROOT; };
 		CFA7E02C1EB97B60001FE66C /* Delete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Delete.mm; path = NimbleCommander/States/FilePanels/Actions/Delete.mm; sourceTree = SOURCE_ROOT; };
-		CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = JobTrash.mm; path = NimbleCommander/Operations/Delete/JobTrash.mm; sourceTree = SOURCE_ROOT; };
 		CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.h; sourceTree = SOURCE_ROOT; };
 		CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.mm; sourceTree = SOURCE_ROOT; };
 		CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarViewLib.xcodeproj; path = 3rd_Party/MMTabBarView/MMTabBarViewLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -1794,10 +1718,6 @@
 		CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowToolsTab.mm; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.mm; sourceTree = SOURCE_ROOT; };
 		CFB8CDBC1D82BFAD007B1142 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = 3rd_party/built/lib/libssh2.a; sourceTree = "<group>"; };
 		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		CFC044E51B2F318500969A5E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BatchRenameSheetRangeSelectionPopoverController.xib; sourceTree = "<group>"; };
-		CFC044EA1B2F325A00969A5E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BatchRenameSheetController.xib; sourceTree = "<group>"; };
-		CFC044EF1B303FAD00969A5E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/BatchRenameSheetController.strings; sourceTree = "<group>"; };
-		CFC044F31B303FAE00969A5E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/BatchRenameSheetRangeSelectionPopoverController.strings; sourceTree = "<group>"; };
 		CFC4F99D1F0F40430000B3EE /* Link.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Link.h; path = NimbleCommander/States/FilePanels/Actions/Link.h; sourceTree = SOURCE_ROOT; };
 		CFC4F99E1F0F40430000B3EE /* Link.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Link.mm; path = NimbleCommander/States/FilePanels/Actions/Link.mm; sourceTree = SOURCE_ROOT; };
 		CFC5121116C4BD3D00D247EE /* Nimble Commander.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Nimble Commander.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1814,22 +1734,10 @@
 		CFCCFBC51A5D7F0E00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/GoToFolderSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBCA1A5E29EC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProcessSheetController.xib; sourceTree = "<group>"; };
 		CFCCFBCF1A5E2CFC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/DetailedVolumeInformationSheetController.xib; sourceTree = "<group>"; };
-		CFCCFBD91A5E49FC00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileSysEntryAttrSheetController.xib; sourceTree = "<group>"; };
-		CFCCFBDE1A5E653600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileLinkNewSymlinkSheetController.xib; sourceTree = "<group>"; };
-		CFCCFBE31A5E673900313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileLinkAlterSymlinkSheetController.xib; sourceTree = "<group>"; };
-		CFCCFBE81A5E67F600313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileLinkNewHardlinkSheetController.xib; sourceTree = "<group>"; };
-		CFCCFBED1A5E6B7E00313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CreateDirectorySheetController.xib; sourceTree = "<group>"; };
-		CFCCFBF21A5E6E3400313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FileDeletionSheetController.xib; sourceTree = "<group>"; };
-		CFCCFBFF1A5E7F7400313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/CreateDirectorySheetController.strings; sourceTree = "<group>"; };
 		CFCCFC011A5E80A300313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/DetailedVolumeInformationSheetController.strings; sourceTree = "<group>"; };
 		CFCCFC031A5E853100313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ProcessSheetController.strings; sourceTree = "<group>"; };
-		CFCCFC041A5E891100313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileDeletionSheetController.strings; sourceTree = "<group>"; };
-		CFCCFC0A1A5E891200313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileSysEntryAttrSheetController.strings; sourceTree = "<group>"; };
 		CFCCFC101A5E891400313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FTPConnectionSheetController.strings; sourceTree = "<group>"; };
-		CFCCFC111A5E891400313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileLinkNewHardlinkSheetController.strings; sourceTree = "<group>"; };
 		CFCCFC121A5E891400313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/GoToFolderSheetController.strings; sourceTree = "<group>"; };
-		CFCCFC141A5E891600313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileLinkAlterSymlinkSheetController.strings; sourceTree = "<group>"; };
-		CFCCFC151A5E891600313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FileLinkNewSymlinkSheetController.strings; sourceTree = "<group>"; };
 		CFCCFC161A5E891600313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		CFCCFC171A5E891700313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SFTPConnectionSheetController.strings; sourceTree = "<group>"; };
 		CFCCFC201A5E891A00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/CalculateChecksumSheetController.strings; sourceTree = "<group>"; };
@@ -1850,13 +1758,6 @@
 		CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListWindowController.mm; path = NimbleCommander/GeneralUI/VFSListWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowFilePanelsStateToolbarDelegate.h; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h; sourceTree = SOURCE_ROOT; };
 		CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowFilePanelsStateToolbarDelegate.mm; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.mm; sourceTree = SOURCE_ROOT; };
-		CFD6F9051BEBA96600A1B046 /* FileDeletionOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionOperation.h; path = NimbleCommander/Operations/Delete/FileDeletionOperation.h; sourceTree = SOURCE_ROOT; };
-		CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionOperation.mm; path = NimbleCommander/Operations/Delete/FileDeletionOperation.mm; sourceTree = SOURCE_ROOT; };
-		CFD6F90B1BEBA96600A1B046 /* FileDeletionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDeletionSheetController.h; path = NimbleCommander/Operations/Delete/FileDeletionSheetController.h; sourceTree = SOURCE_ROOT; };
-		CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDeletionSheetController.mm; path = NimbleCommander/Operations/Delete/FileDeletionSheetController.mm; sourceTree = SOURCE_ROOT; };
-		CFD6F9111BEBAADE00A1B046 /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = NimbleCommander/Operations/Delete/Job.cpp; sourceTree = SOURCE_ROOT; };
-		CFD6F9121BEBAADE00A1B046 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = NimbleCommander/Operations/Delete/Job.h; sourceTree = SOURCE_ROOT; };
-		CFD6F9141BEBBF6E00A1B046 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Options.h; path = NimbleCommander/Operations/Delete/Options.h; sourceTree = SOURCE_ROOT; };
 		CFD727431E442BA400603077 /* Operation_Archive.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Operation_Archive.mm; path = NimbleCommander/Tests/Operation_Archive.mm; sourceTree = SOURCE_ROOT; };
 		CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = 3rd_party/built/lib/libboost_filesystem.a; sourceTree = "<group>"; };
 		CFD7E4E6190FD61E0064D249 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = 3rd_party/built/lib/libboost_system.a; sourceTree = "<group>"; };
@@ -1886,8 +1787,6 @@
 		CFD8CDCF1E8CF07F00E4DC53 /* CalculateChecksum.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CalculateChecksum.mm; path = NimbleCommander/States/FilePanels/Actions/CalculateChecksum.mm; sourceTree = SOURCE_ROOT; };
 		CFD8CDD41E8DEDB200E4DC53 /* SpotlightSearch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearch.h; path = NimbleCommander/States/FilePanels/Actions/SpotlightSearch.h; sourceTree = SOURCE_ROOT; };
 		CFD8CDD51E8DEDB200E4DC53 /* SpotlightSearch.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SpotlightSearch.mm; path = NimbleCommander/States/FilePanels/Actions/SpotlightSearch.mm; sourceTree = SOURCE_ROOT; };
-		CFD9F94C1A623E4E001B3F33 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Operations.strings; sourceTree = "<group>"; };
-		CFD9F9531A62415C001B3F33 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Operations.strings; sourceTree = "<group>"; };
 		CFDAC2031DF921160039A104 /* PanelDataStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataStatistics.h; path = NimbleCommander/States/FilePanels/PanelDataStatistics.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2041DF921160039A104 /* PanelDataStatistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PanelDataStatistics.cpp; path = NimbleCommander/States/FilePanels/PanelDataStatistics.cpp; sourceTree = SOURCE_ROOT; };
 		CFDAC20C1DF921E10039A104 /* PanelDataItemVolatileData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PanelDataItemVolatileData.cpp; path = NimbleCommander/States/FilePanels/PanelDataItemVolatileData.cpp; sourceTree = SOURCE_ROOT; };
@@ -2029,7 +1928,6 @@
 		CFDB17C119B3075000781976 /* SFTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFTPConnectionSheetController.h; path = ../NimbleCommander/States/FilePanels/Views/SFTPConnectionSheetController.h; sourceTree = "<group>"; };
 		CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SFTPConnectionSheetController.mm; path = ../NimbleCommander/States/FilePanels/Views/SFTPConnectionSheetController.mm; sourceTree = "<group>"; };
 		CFDF449F1D2B990A0062F7AD /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Media.xcassets; path = NimbleCommander/Resources/Media.xcassets; sourceTree = SOURCE_ROOT; };
-		CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MassCopySheetDisclosureViewController.xib; path = NimbleCommander/Operations/Copy/MassCopySheetDisclosureViewController.xib; sourceTree = SOURCE_ROOT; };
 		CFEF4E3A1A6BB409009A1524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Operations.xcodeproj; path = Operations/Operations.xcodeproj; sourceTree = "<group>"; };
 		CFF695701E20C6CF0069EEA4 /* TabBarStyle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TabBarStyle.h; path = NimbleCommander/States/FilePanels/Views/TabBarStyle.h; sourceTree = SOURCE_ROOT; };
@@ -2051,7 +1949,6 @@
 		CFFA953C1F4A759E0035E606 /* PanelViewFieldEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFieldEditor.mm; path = NimbleCommander/States/FilePanels/PanelViewFieldEditor.mm; sourceTree = SOURCE_ROOT; };
 		CFFED0891CC0B41F0059611B /* SpotlightSearchPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpotlightSearchPopupViewController.h; path = ../NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.h; sourceTree = "<group>"; };
 		CFFED08A1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SpotlightSearchPopupViewController.mm; path = ../NimbleCommander/States/FilePanels/Views/SpotlightSearchPopupViewController.mm; sourceTree = "<group>"; };
-		CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationsSummaryViewController.h; path = NimbleCommander/Operations/OperationsSummaryViewController.h; sourceTree = SOURCE_ROOT; };
 		CFFFBABA1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "NimbleCommander-CI-Info.plist"; path = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -2218,37 +2115,6 @@
 			path = Files;
 			sourceTree = "<group>";
 		};
-		B528011916FCF347004E260D /* Operations [UNUSED] */ = {
-			isa = PBXGroup;
-			children = (
-				CF7D13901BF5E3A8001F53FD /* GenericOperationView.h */,
-				CF7D13911BF5E3A8001F53FD /* GenericOperationView.mm */,
-				CFFFBAB01D44654B00DFE4D6 /* OperationsSummaryViewController.h */,
-				CF7D13921BF5E3A8001F53FD /* OperationsSummaryViewController.mm */,
-				CF7D13931BF5E3A8001F53FD /* OperationsSummaryViewController.xib */,
-				CF7D137D1BF5E38B001F53FD /* Operation.h */,
-				CF7D137E1BF5E38B001F53FD /* Operation.mm */,
-				CF7D137F1BF5E38B001F53FD /* OperationDialogAlert.h */,
-				CF7D13801BF5E38B001F53FD /* OperationDialogAlert.mm */,
-				CF7D13831BF5E38B001F53FD /* OperationDialogProtocol.h */,
-				CF7D13841BF5E38B001F53FD /* OperationJob.cpp */,
-				CF7D13851BF5E38B001F53FD /* OperationJob.h */,
-				CF7D13861BF5E38B001F53FD /* OperationsController.h */,
-				CF7D13871BF5E38B001F53FD /* OperationsController.mm */,
-				CF7D13881BF5E38B001F53FD /* OperationStats.h */,
-				CF7D13891BF5E38B001F53FD /* OperationStats.mm */,
-				CFD9F94D1A623E4E001B3F33 /* Operations.strings */,
-				CFAC50CD1714016800A3E5C5 /* Copy [UNUSED] */,
-				CFC058DD170B27D500A20CF2 /* UnixAttr [UNUSED] */,
-				CF128875177FF6F0002816C2 /* FileLinkOperation [UNUSED] */,
-				CF55CDD81B29EF52001B4F91 /* Batch Rename [UNUSED] */,
-				CF9DF215171320980008CBAE /* CreateDirectoryOperation [UNUSED] */,
-				CFA58396170EA35E00E508CF /* Delete [UNUSED] */,
-				CFCD87FD1815377100D82455 /* FileCompressOperation [UNUSED] */,
-			);
-			name = "Operations [UNUSED]";
-			sourceTree = "<group>";
-		};
 		B52D9A81173D324600EC7154 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
@@ -2407,26 +2273,6 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
-		CF128875177FF6F0002816C2 /* FileLinkOperation [UNUSED] */ = {
-			isa = PBXGroup;
-			children = (
-				CF7D13431BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.h */,
-				CF7D13441BF1B6F0001F53FD /* FileLinkAlterSymlinkSheetController.mm */,
-				CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */,
-				CF7D13451BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.h */,
-				CF7D13461BF1B6F0001F53FD /* FileLinkNewHardlinkSheetController.mm */,
-				CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */,
-				CF7D13471BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.h */,
-				CF7D13481BF1B6F0001F53FD /* FileLinkNewSymlinkSheetController.mm */,
-				CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */,
-				CF7D13491BF1B6F0001F53FD /* FileLinkOperation.h */,
-				CF7D134A1BF1B6F0001F53FD /* FileLinkOperation.mm */,
-				CF7D134B1BF1B6F0001F53FD /* FileLinkOperationJob.h */,
-				CF7D134C1BF1B6F0001F53FD /* FileLinkOperationJob.mm */,
-			);
-			name = "FileLinkOperation [UNUSED]";
-			sourceTree = "<group>";
-		};
 		CF27414D1803E60D006D6687 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -2545,25 +2391,6 @@
 				CF9DBE171A48836A00FF735B /* Helpers */,
 			);
 			name = FilePanels;
-			sourceTree = "<group>";
-		};
-		CF55CDD81B29EF52001B4F91 /* Batch Rename [UNUSED] */ = {
-			isa = PBXGroup;
-			children = (
-				CF7D133D1BF1B091001F53FD /* BatchRenameSheetController.h */,
-				CF7D133E1BF1B091001F53FD /* BatchRenameSheetController.mm */,
-				CFC044EB1B2F325A00969A5E /* BatchRenameSheetController.xib */,
-				CF7D133F1BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.h */,
-				CF7D13401BF1B091001F53FD /* BatchRenameSheetRangeSelectionPopoverController.mm */,
-				CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */,
-				CF7D13341BF1AFE0001F53FD /* BatchRename.h */,
-				CF7D13351BF1AFE0001F53FD /* BatchRename.mm */,
-				CF7D13361BF1AFE0001F53FD /* BatchRenameOperation.h */,
-				CF7D13371BF1AFE0001F53FD /* BatchRenameOperation.mm */,
-				CF7D13381BF1AFE0001F53FD /* BatchRenameOperationJob.h */,
-				CF7D13391BF1AFE0001F53FD /* BatchRenameOperationJob.mm */,
-			);
-			name = "Batch Rename [UNUSED]";
 			sourceTree = "<group>";
 		};
 		CF5D25E31DB604060073156F /* Brief */ = {
@@ -2839,22 +2666,6 @@
 			name = Helpers;
 			sourceTree = "<group>";
 		};
-		CF9DF215171320980008CBAE /* CreateDirectoryOperation [UNUSED] */ = {
-			isa = PBXGroup;
-			children = (
-				CF7D13521BF1B964001F53FD /* CreateDirectoryOperation.h */,
-				CF7D13531BF1B964001F53FD /* CreateDirectoryOperation.mm */,
-				CF7D13541BF1B964001F53FD /* CreateDirectoryOperationJob.h */,
-				CF7D13551BF1B964001F53FD /* CreateDirectoryOperationJob.mm */,
-				CF7D13561BF1B964001F53FD /* CreateDirectoryOperationVFSJob.h */,
-				CF7D13571BF1B964001F53FD /* CreateDirectoryOperationVFSJob.mm */,
-				CF7D13581BF1B964001F53FD /* CreateDirectorySheetController.h */,
-				CF7D13591BF1B964001F53FD /* CreateDirectorySheetController.mm */,
-				CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */,
-			);
-			name = "CreateDirectoryOperation [UNUSED]";
-			sourceTree = "<group>";
-		};
 		CFA3D7C319625F63006A30A1 /* gtm */ = {
 			isa = PBXGroup;
 			children = (
@@ -2862,23 +2673,6 @@
 				CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */,
 			);
 			name = gtm;
-			sourceTree = "<group>";
-		};
-		CFA58396170EA35E00E508CF /* Delete [UNUSED] */ = {
-			isa = PBXGroup;
-			children = (
-				CF7D132A1BEF24C9001F53FD /* DialogResults.h */,
-				CFD6F9141BEBBF6E00A1B046 /* Options.h */,
-				CFD6F9051BEBA96600A1B046 /* FileDeletionOperation.h */,
-				CFD6F9061BEBA96600A1B046 /* FileDeletionOperation.mm */,
-				CFD6F9121BEBAADE00A1B046 /* Job.h */,
-				CFD6F9111BEBAADE00A1B046 /* Job.cpp */,
-				CFA82C8C1BEC7AA50070A152 /* JobTrash.mm */,
-				CFD6F90B1BEBA96600A1B046 /* FileDeletionSheetController.h */,
-				CFD6F90C1BEBA96600A1B046 /* FileDeletionSheetController.mm */,
-				CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */,
-			);
-			name = "Delete [UNUSED]";
 			sourceTree = "<group>";
 		};
 		CFA7E0141EB83B8D001FE66C /* Network */ = {
@@ -2912,27 +2706,6 @@
 				CFFFBABA1D46284600DFE4D6 /* NimbleCommander-CI-Info.plist */,
 			);
 			name = "NC NonMAS CI";
-			sourceTree = "<group>";
-		};
-		CFAC50CD1714016800A3E5C5 /* Copy [UNUSED] */ = {
-			isa = PBXGroup;
-			children = (
-				CF9069981BB542A5000C3CBB /* DialogResults.h */,
-				CF9069991BB55A22000C3CBB /* Options.h */,
-				CF90698D1BB54077000C3CBB /* MassCopySheetController.h */,
-				CF90698E1BB54077000C3CBB /* MassCopySheetController.mm */,
-				CF9069921BB54081000C3CBB /* MassCopySheetController.xib */,
-				CFE9DDFB1BE1C330007BBCD3 /* MassCopySheetDisclosureViewController.xib */,
-				CF9069651BB54035000C3CBB /* FileAlreadyExistSheetController.h */,
-				CF9069661BB54035000C3CBB /* FileAlreadyExistSheetController.mm */,
-				CF9069881BB54052000C3CBB /* FileAlreadyExistSheetController.xib */,
-				CF9069671BB54035000C3CBB /* FileCopyOperation.h */,
-				CF9069681BB54035000C3CBB /* FileCopyOperation.mm */,
-				CF9069721BB54035000C3CBB /* Job.h */,
-				CF9069711BB54035000C3CBB /* Job.cpp */,
-				CF826B4D1BC4D7BA0031C5D0 /* JobSourceItems.cpp */,
-			);
-			name = "Copy [UNUSED]";
 			sourceTree = "<group>";
 		};
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
@@ -3086,22 +2859,6 @@
 			name = ExternalEditor;
 			sourceTree = "<group>";
 		};
-		CFC058DD170B27D500A20CF2 /* UnixAttr [UNUSED] */ = {
-			isa = PBXGroup;
-			children = (
-				CF7D13601BF1BCAE001F53FD /* FileSysAttrChangeOperation.h */,
-				CF7D13611BF1BCAE001F53FD /* FileSysAttrChangeOperation.mm */,
-				CF7D136B1BF5A6C5001F53FD /* FileSysAttrChangeOperation_Tests.mm */,
-				CF7D13621BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.h */,
-				CF7D13631BF1BCAE001F53FD /* FileSysAttrChangeOperationJob.mm */,
-				CF7D135E1BF1BCAE001F53FD /* FileSysAttrChangeOperationCommand.h */,
-				CF7D13641BF1BCAE001F53FD /* FileSysEntryAttrSheetController.h */,
-				CF7D13651BF1BCAE001F53FD /* FileSysEntryAttrSheetController.mm */,
-				CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */,
-			);
-			name = "UnixAttr [UNUSED]";
-			sourceTree = "<group>";
-		};
 		CFC5120816C4BD3D00D247EE = {
 			isa = PBXGroup;
 			children = (
@@ -3191,7 +2948,6 @@
 			children = (
 				CF876D161D51DFD0009C0CCE /* Bootstrap */,
 				CFAC50D5171557E100A3E5C5 /* Core */,
-				B528011916FCF347004E260D /* Operations [UNUSED] */,
 				CFDAC3011DFD20810039A104 /* GeneralUI */,
 				B52EB78B172277C5004ABC2E /* Preferences */,
 				CF876D171D51E00B009C0CCE /* States */,
@@ -3210,17 +2966,6 @@
 				CF6D99A6196676200077B146 /* NS Free MAS */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		CFCD87FD1815377100D82455 /* FileCompressOperation [UNUSED] */ = {
-			isa = PBXGroup;
-			children = (
-				CF7D13771BF5E0FE001F53FD /* FileCompressOperation.h */,
-				CF7D13781BF5E0FE001F53FD /* FileCompressOperation.mm */,
-				CF7D13791BF5E0FE001F53FD /* FileCompressOperationJob.cpp */,
-				CF7D137A1BF5E0FE001F53FD /* FileCompressOperationJob.h */,
-			);
-			name = "FileCompressOperation [UNUSED]";
 			sourceTree = "<group>";
 		};
 		CFD62B7F1C99C1C90021EE7F /* Products */ = {
@@ -3619,7 +3364,6 @@
 				CF8D0CF41D963E1000ADFF14 /* InternalViewerToolbar.xib in Resources */,
 				CF7C7CD11E5C3EE2002DB0E2 /* PreferencesWindowThemesTabImportSheet.xib in Resources */,
 				CF4E56A21D5068CC00452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
-				CF90698B1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CF3120C51A510F640062185A /* Localizable.strings in Resources */,
 				CF9F4B371ECD813300E0AF82 /* DropboxAccountSheetController.xib in Resources */,
 				CF7C7CC51E5C3EB9002DB0E2 /* PreferencesWindowThemesTab.xib in Resources */,
@@ -3706,7 +3450,6 @@
 				CF9F4B3C1ECD814800E0AF82 /* ConnectToServer.xib in Resources */,
 				CF9F4B111ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF8D0CE41D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
-				CFA53A561D433E2A00C562A7 /* FileAlreadyExistSheetController.xib in Resources */,
 				CF8D0CFF1D963E3400ADFF14 /* InternalViewerController.xib in Resources */,
 				CF7C7CC41E5C3EB9002DB0E2 /* PreferencesWindowThemesTab.xib in Resources */,
 				CFA53A591D433E2A00C562A7 /* PreferencesWindowToolsTab.xib in Resources */,
@@ -3769,7 +3512,6 @@
 				CF7C7CC91E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
 				CF8D0CE31D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
 				CF1E3D1F1D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
-				CF90698A1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */,
 				CF754D4D1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
@@ -3805,7 +3547,6 @@
 				CF4E56C61D50692300452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CFF6F3721A13567C00011177 /* MainMenu.xib in Resources */,
 				CF4E56B31D5068EB00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
-				CF90698C1BB54052000C3CBB /* FileAlreadyExistSheetController.xib in Resources */,
 				CF3120C61A510F640062185A /* Localizable.strings in Resources */,
 				CF4E56DD1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
 				CFCCFC511A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */,
@@ -5032,26 +4773,6 @@
 			path = NimbleCommander/GeneralUI;
 			sourceTree = SOURCE_ROOT;
 		};
-		CF9069881BB54052000C3CBB /* FileAlreadyExistSheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF9069891BB54052000C3CBB /* Base */,
-				CF50C4761C0EB52A009DF611 /* ru */,
-			);
-			name = FileAlreadyExistSheetController.xib;
-			path = NimbleCommander/Operations/Copy;
-			sourceTree = SOURCE_ROOT;
-		};
-		CF9069921BB54081000C3CBB /* MassCopySheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF9069931BB54081000C3CBB /* Base */,
-				CF50C4771C0EB6A0009DF611 /* ru */,
-			);
-			name = MassCopySheetController.xib;
-			path = NimbleCommander/Operations/Copy;
-			sourceTree = SOURCE_ROOT;
-		};
 		CF9F4B151ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -5101,26 +4822,6 @@
 			name = NetworkShareSheetController.xib;
 			path = NimbleCommander/States/FilePanels/Views;
 			sourceTree = SOURCE_ROOT;
-		};
-		CFC044E61B2F318500969A5E /* BatchRenameSheetRangeSelectionPopoverController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFC044E51B2F318500969A5E /* Base */,
-				CFC044F31B303FAE00969A5E /* ru */,
-			);
-			name = BatchRenameSheetRangeSelectionPopoverController.xib;
-			path = ../NimbleCommander/Operations/BatchRename;
-			sourceTree = "<group>";
-		};
-		CFC044EB1B2F325A00969A5E /* BatchRenameSheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFC044EA1B2F325A00969A5E /* Base */,
-				CFC044EF1B303FAD00969A5E /* ru */,
-			);
-			name = BatchRenameSheetController.xib;
-			path = ../NimbleCommander/Operations/BatchRename;
-			sourceTree = "<group>";
 		};
 		CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
@@ -5211,66 +4912,6 @@
 			path = ../NimbleCommander/GeneralUI;
 			sourceTree = "<group>";
 		};
-		CFCCFBDA1A5E49FC00313845 /* FileSysEntryAttrSheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCCFBD91A5E49FC00313845 /* Base */,
-				CFCCFC0A1A5E891200313845 /* ru */,
-			);
-			name = FileSysEntryAttrSheetController.xib;
-			path = ../NimbleCommander/Operations/Attrs;
-			sourceTree = "<group>";
-		};
-		CFCCFBDF1A5E653600313845 /* FileLinkNewSymlinkSheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCCFBDE1A5E653600313845 /* Base */,
-				CFCCFC151A5E891600313845 /* ru */,
-			);
-			name = FileLinkNewSymlinkSheetController.xib;
-			path = ../NimbleCommander/Operations/Link;
-			sourceTree = "<group>";
-		};
-		CFCCFBE41A5E673900313845 /* FileLinkAlterSymlinkSheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCCFBE31A5E673900313845 /* Base */,
-				CFCCFC141A5E891600313845 /* ru */,
-			);
-			name = FileLinkAlterSymlinkSheetController.xib;
-			path = ../NimbleCommander/Operations/Link;
-			sourceTree = "<group>";
-		};
-		CFCCFBE91A5E67F600313845 /* FileLinkNewHardlinkSheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCCFBE81A5E67F600313845 /* Base */,
-				CFCCFC111A5E891400313845 /* ru */,
-			);
-			name = FileLinkNewHardlinkSheetController.xib;
-			path = ../NimbleCommander/Operations/Link;
-			sourceTree = "<group>";
-		};
-		CFCCFBEE1A5E6B7E00313845 /* CreateDirectorySheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCCFBED1A5E6B7E00313845 /* Base */,
-				CFCCFBFF1A5E7F7400313845 /* ru */,
-			);
-			name = CreateDirectorySheetController.xib;
-			path = NimbleCommander/Operations/CreateDirectory;
-			sourceTree = SOURCE_ROOT;
-		};
-		CFCCFBF31A5E6E3400313845 /* FileDeletionSheetController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCCFBF21A5E6E3400313845 /* Base */,
-				CFCCFC041A5E891100313845 /* ru */,
-			);
-			name = FileDeletionSheetController.xib;
-			path = NimbleCommander/Operations/Delete;
-			sourceTree = SOURCE_ROOT;
-		};
 		CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -5299,16 +4940,6 @@
 			name = FilePanelsQuickSearch.strings;
 			path = NimbleCommander/States/FilePanels;
 			sourceTree = SOURCE_ROOT;
-		};
-		CFD9F94D1A623E4E001B3F33 /* Operations.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFD9F94C1A623E4E001B3F33 /* Base */,
-				CFD9F9531A62415C001B3F33 /* ru */,
-			);
-			name = Operations.strings;
-			path = ../NimbleCommander/Operations;
-			sourceTree = "<group>";
 		};
 		CFEF4E3B1A6BB409009A1524 /* Preferences.strings */ = {
 			isa = PBXVariantGroup;

@@ -164,16 +164,30 @@ NSString *ActionShortcut::PrettyString() const
             vis_key];
 }
 
-bool ActionShortcut::IsKeyDown(uint16_t _unicode, uint16_t _keycode, uint64_t _modifiers) const noexcept
+bool ActionShortcut::IsKeyDown(uint16_t _unicode, uint64_t _modifiers) const noexcept
 {
+    if( !unicode )
+        return false;
+
     // exclude CapsLock/NumPad/Func from our decision process
-    unsigned long clean_modif = _modifiers &
-    (NSDeviceIndependentModifierFlagsMask & (~NSAlphaShiftKeyMask & ~NSNumericPadKeyMask & ~NSFunctionKeyMask) );
+    constexpr auto mask = NSDeviceIndependentModifierFlagsMask &
+        (~NSAlphaShiftKeyMask & ~NSNumericPadKeyMask & ~NSFunctionKeyMask);
+    auto clean_modif = _modifiers & mask;
     
     if( unicode >= 32 && unicode < 128 && modifiers == 0 )
         clean_modif &= ~NSShiftKeyMask; // some chars were produced by pressing key with shift
-        
-    return modifiers == clean_modif && unicode == _unicode;
+    
+    if( modifiers == clean_modif && unicode == _unicode )
+        return true;
+    
+    if( (modifiers & NSShiftKeyMask) && (modifiers == clean_modif) ) {
+        if( unicode >= 97 && unicode <= 125 && unicode == _unicode + 32 )
+            return true;
+        if( unicode >= 65 && unicode <= 93 && unicode + 32 == _unicode )
+            return true;
+    }
+    
+    return false;
 }
 
 bool ActionShortcut::operator==(const ActionShortcut&_r) const

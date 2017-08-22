@@ -3,6 +3,8 @@
 #include <Carbon/Carbon.h>
 #include "ActionShortcut.h"
 
+static_assert( sizeof(ActionShortcut) == 4 );
+
 ActionShortcut::ActionShortcut():
     unicode(0),
     modifiers(0)
@@ -20,16 +22,17 @@ ActionShortcut::ActionShortcut(const char* _from): // construct from persistency
     wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> convert;
     u16string utf16 = convert.from_bytes(_from);
     u16string_view v(utf16);
+    uint64_t mod_flags = 0;
     while( !v.empty() ) {
         auto c = v.front();
         if( c == u'⇧' )
-            modifiers |= NSShiftKeyMask;
+            mod_flags |= NSShiftKeyMask;
         else if( c == u'^' )
-            modifiers |= NSControlKeyMask;
+            mod_flags |= NSControlKeyMask;
         else if( c == u'⌥' )
-            modifiers |= NSAlternateKeyMask;
+            mod_flags |= NSAlternateKeyMask;
         else if( c == u'⌘' )
-            modifiers |= NSCommandKeyMask;
+            mod_flags |= NSCommandKeyMask;
         else {
             if( v == u"\\r" )
                 unicode = '\r';
@@ -41,16 +44,19 @@ ActionShortcut::ActionShortcut(const char* _from): // construct from persistency
         }
         v.remove_prefix(1);
     }
+    modifiers = mod_flags;
 }
 
 ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long _modif):
     unicode(_unicode),
     modifiers(0)
 {
-    if(_modif & NSShiftKeyMask)     modifiers |= NSShiftKeyMask;
-    if(_modif & NSControlKeyMask)   modifiers |= NSControlKeyMask;
-    if(_modif & NSAlternateKeyMask) modifiers |= NSAlternateKeyMask;
-    if(_modif & NSCommandKeyMask)   modifiers |= NSCommandKeyMask;
+    uint64_t mod_flags = 0;
+    if(_modif & NSShiftKeyMask)     mod_flags |= NSShiftKeyMask;
+    if(_modif & NSControlKeyMask)   mod_flags |= NSControlKeyMask;
+    if(_modif & NSAlternateKeyMask) mod_flags |= NSAlternateKeyMask;
+    if(_modif & NSCommandKeyMask)   mod_flags |= NSCommandKeyMask;
+    modifiers = mod_flags;
 }
 
 ActionShortcut::operator bool() const
@@ -174,13 +180,13 @@ bool ActionShortcut::IsKeyDown(uint16_t _unicode, uint64_t _modifiers) const noe
         (~NSAlphaShiftKeyMask & ~NSNumericPadKeyMask & ~NSFunctionKeyMask);
     auto clean_modif = _modifiers & mask;
     
-    if( unicode >= 32 && unicode < 128 && modifiers == 0 )
+    if( unicode >= 32 && unicode < 128 && modifiers.is_empty() )
         clean_modif &= ~NSShiftKeyMask; // some chars were produced by pressing key with shift
     
-    if( modifiers == clean_modif && unicode == _unicode )
+    if( modifiers == NSEventModifierFlagsHolder{clean_modif} && unicode == _unicode )
         return true;
     
-    if( (modifiers & NSShiftKeyMask) && (modifiers == clean_modif) ) {
+    if( modifiers.is_shift() && modifiers == NSEventModifierFlagsHolder{clean_modif} ) {
         if( unicode >= 97 && unicode <= 125 && unicode == _unicode + 32 )
             return true;
         if( unicode >= 65 && unicode <= 93 && unicode + 32 == _unicode )
@@ -190,16 +196,13 @@ bool ActionShortcut::IsKeyDown(uint16_t _unicode, uint64_t _modifiers) const noe
     return false;
 }
 
-bool ActionShortcut::operator==(const ActionShortcut&_r) const
+bool ActionShortcut::operator==(const ActionShortcut &_rhs) const
 {
-    if(modifiers != _r.modifiers)
-        return false;
-    if(unicode != _r.unicode)
-        return false;
-    return true;
+    return modifiers == _rhs.modifiers &&
+           unicode == _rhs.unicode;
 }
 
-bool ActionShortcut::operator!=(const ActionShortcut&_r) const
+bool ActionShortcut::operator!=(const ActionShortcut &_rhs) const
 {
-    return !(*this == _r);
+    return !(*this == _rhs);
 }

@@ -12,6 +12,8 @@ struct NSEventModifierFlagsHolder
     inline NSEventModifierFlagsHolder( NSEventModifierFlags _flags ) noexcept :
         flags( ((_flags & NSEventModifierFlagDeviceIndependentFlagsMask) >> 16) & 0xFF ) {}
     
+    inline bool is_empty()      const noexcept
+        { return flags == 0; }
     inline bool is_capslock()   const noexcept
         { return flags & (NSEventModifierFlagCapsLock     >> 16); }
     inline bool is_shift()      const noexcept

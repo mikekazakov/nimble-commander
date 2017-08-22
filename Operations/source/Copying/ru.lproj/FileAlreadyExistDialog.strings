@@ -37,9 +37,3 @@
 /* Class = "NSTextFieldCell"; title = "File already exists"; ObjectID = "120"; */
 "120.title" = "Файл уже существует";
 
-/* Class = "NSButton"; ibShadowedToolTip = "⎋"; ObjectID = "149"; */
-"149.ibShadowedToolTip" = "⎋";
-
-/* Class = "NSButtonCell"; title = "Hide"; ObjectID = "151"; */
-"151.title" = "Скрыть";
-

@@ -1,0 +1,180 @@
+/* No comment provided by engineer. */
+"%@ %@ items to “%@”" = "%1$@ %2$@ объектов в “%3$@”";
+
+/* No comment provided by engineer. */
+"%@ of %@" = "%1$@ из %2$@";
+
+/* No comment provided by engineer. */
+"%@ of %@ - %@/s" = "%1$@ из %2$@ - %3$@/с";
+
+/* No comment provided by engineer. */
+"%@ of %@ - %@/s, %@" = "%1$@ из %2$@ - %3$@/с, %4$@";
+
+/* No comment provided by engineer. */
+"%@ of %@ - Paused" = "%1$@ из %2$@ - Пауза";
+
+/* No comment provided by engineer. */
+"%@ of %@, %@" = "%1$@ из %2$@, %3$@";
+
+/* Compressing “%@” */
+"%@ to “%@”" = "%1$@ в “%2$@”";
+
+/* No comment provided by engineer. */
+"%@ “%@” to “%@”" = "%1$@ “%2$@” в “%3$@”";
+
+/* No comment provided by engineer. */
+"Abort" = "Прервать";
+
+/* No comment provided by engineer. */
+"Altering a symbolic link" = "Изменение символической ссылки";
+
+/* Title for attributes changing operation */
+"Altering file attributes" = "Изменение файловых атрибутов";
+
+/* Operation title batch renaming */
+"Batch renaming %@ items" = "Групповое переименование %@ объектов";
+
+/* Title for file attributes sheet, multiple items */
+"Change file attributes for %@ selected items" = "Изменить файловые атрибуты для %@ объектов";
+
+/* Title for file attributes sheet, single item */
+"Change file attributes for “%@”" = "Изменить файловые атрибуты для “%@”";
+
+/* No comment provided by engineer. */
+"Checksum verification failed" = "Ошибка верификации контрольной суммы";
+
+/* No comment provided by engineer. */
+"Close" = "Закрыть";
+
+/* Compressing %d items */
+"Compressing %d items" = "Сжатие %d объектов";
+
+/* Compressing “%@” */
+"Compressing “%@”" = "Сжатите “%@”";
+
+/* No comment provided by engineer. */
+"Continue" = "Продолжить";
+
+/* Copy files sheet prompt, copying many files */
+"Copy %@ items to:" = "Скопировать %@ объектов в:";
+
+/* Copy files sheet prompt, copying single file */
+"Copy “%@” to:" = "Скопировать “%@” в:";
+
+/* Prefix of a file operation */
+"Copying" = "Копирование";
+
+/* No comment provided by engineer. */
+"Create a hardlink of '%@' to:" = "Создать жесткую ссылку '%@' на:";
+
+/* Creating a directory “%@” */
+"Creating a directory “%@”" = "Создание директории “%@”";
+
+/* No comment provided by engineer. */
+"Creating a new hard link" = "Создание новой жесткой ссылки";
+
+/* No comment provided by engineer. */
+"Creating a new symbolic link" = "Создание новой символической ссылки";
+
+/* Menu item title in file deletion sheet */
+"Delete Permanently" = "Удалить необратимо";
+
+/* Operation title for multiple items deletion */
+"Deleting %@ items" = "Удаление %@ объектов";
+
+/* Operation title for single item deletion */
+"Deleting “%@”" = "Удаление “%@”";
+
+/* Asking user to delete multiple files */
+"Do you want to delete %@ items?" = "Вы ходите удалить %@ объектов?";
+
+/* Asking user to delete a file */
+"Do you want to delete “%@”?" = "Вы ходите удалить “%@”?";
+
+/* No comment provided by engineer. */
+"Failed to access a directory" = "Отсутствует доступ к папке";
+
+/* No comment provided by engineer. */
+"Failed to access a file" = "Отсутствует доступ к файлу";
+
+/* No comment provided by engineer. */
+"Failed to access an item" = "Отсутствует доступ к объекту";
+
+/* No comment provided by engineer. */
+"Failed to alter a symbolic link" = "Не удалось изменить символическую ссылку";
+
+/* No comment provided by engineer. */
+"Failed to create a directory" = "Не удалось создать папку";
+
+/* No comment provided by engineer. */
+"Failed to create a hard link" = "Не удалось создать жесткую ссылку";
+
+/* No comment provided by engineer. */
+"Failed to create a symbolic link" = "Не удалось создать символическую ссылку";
+
+/* No comment provided by engineer. */
+"Failed to delete a directory" = "Не удалось удалить папку";
+
+/* No comment provided by engineer. */
+"Failed to delete a file" = "Не удалось удалить файл";
+
+/* No comment provided by engineer. */
+"Failed to move an item to Trash" = "Не удалось переместить объект в Корзину";
+
+/* No comment provided by engineer. */
+"Failed to open a destination file" = "Не удалось открыть целевой файл";
+
+/* No comment provided by engineer. */
+"Failed to perform chflags" = "Не удалось выполнить chflags";
+
+/* No comment provided by engineer. */
+"Failed to perform chmod" = "Не удалось выполнить chmod";
+
+/* No comment provided by engineer. */
+"Failed to perform chown" = "Не удалось выполнить chown";
+
+/* No comment provided by engineer. */
+"Failed to read a destination file" = "Не удалось прочитать целевой файл";
+
+/* No comment provided by engineer. */
+"Failed to read a file" = "Не удалось прочитать файл";
+
+/* No comment provided by engineer. */
+"Failed to read a source file" = "Не удалось прочитать исходный файл";
+
+/* No comment provided by engineer. */
+"Failed to rename an item" = "Не удалось переименовать объект";
+
+/* No comment provided by engineer. */
+"Failed to set file time" = "Не удалось установить время файла";
+
+/* No comment provided by engineer. */
+"Failed to write a file" = "Не удалось записать файл";
+
+/* No comment provided by engineer. */
+"Failed to write an archive" = "Не удалось записать архив";
+
+/* Menu item title in file deletion sheet */
+"Move to Trash" = "Переместить в Корзину";
+
+/* Prefix of a file operation */
+"Moving" = "Перенос";
+
+/* Move files sheet prompt, moving many files */
+"Rename/move %@ items to:" = "Переименовать/переместить %@ объектов в:";
+
+/* Move files sheet prompt, moving single file */
+"Rename/move “%@” to:" = "Переименовать/переместить “%@” в:";
+
+/* No comment provided by engineer. */
+"Skip" = "Пропустить";
+
+/* No comment provided by engineer. */
+"Skip All" = "Пропустить все";
+
+/* No comment provided by engineer. */
+"Symbolic link '%@' points at:" = "Символическая ссылка '%@' указывает на:";
+
+/* No comment provided by engineer. */
+"Waiting in the queue..." = "Ожидание в очереди...";
+

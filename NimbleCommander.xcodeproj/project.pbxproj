@@ -789,9 +789,9 @@
 		CFD726641E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */; };
 		CFD726651E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */; };
 		CFD726661E42E1E400603077 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */; };
-		CFD726671E42E1E700603077 /* NCPanelContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* NCPanelContextMenu.mm */; };
-		CFD726681E42E1E700603077 /* NCPanelContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* NCPanelContextMenu.mm */; };
-		CFD726691E42E1E800603077 /* NCPanelContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* NCPanelContextMenu.mm */; };
+		CFD726671E42E1E700603077 /* ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */; };
+		CFD726681E42E1E700603077 /* ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */; };
+		CFD726691E42E1E800603077 /* ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */; };
 		CFD7266A1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
 		CFD7266B1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
 		CFD7266C1E42E1ED00603077 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
@@ -1048,7 +1048,7 @@
 		CFDAC25B1DFBF0B30039A104 /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24D1DFBF0B30039A104 /* PanelController+DataAccess.mm */; };
 		CFDAC25E1DFBF0B30039A104 /* PanelController+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2531DFBF0B30039A104 /* PanelController+Menu.mm */; };
 		CFDAC26E1DFBF20F0039A104 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */; };
-		CFDAC26F1DFBF20F0039A104 /* NCPanelContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* NCPanelContextMenu.mm */; };
+		CFDAC26F1DFBF20F0039A104 /* ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */; };
 		CFDAC2701DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
 		CFDAC2711DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
 		CFDAC2721DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26B1DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm */; };
@@ -1937,8 +1937,8 @@
 		CFDAC2531DFBF0B30039A104 /* PanelController+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "PanelController+Menu.mm"; path = "NimbleCommander/States/FilePanels/PanelController+Menu.mm"; sourceTree = SOURCE_ROOT; };
 		CFDAC2621DFBF20F0039A104 /* MainWindowFilePanelState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowFilePanelState.h; path = NimbleCommander/States/FilePanels/MainWindowFilePanelState.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowFilePanelState.mm; path = NimbleCommander/States/FilePanels/MainWindowFilePanelState.mm; sourceTree = SOURCE_ROOT; };
-		CFDAC2641DFBF20F0039A104 /* NCPanelContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NCPanelContextMenu.h; path = NimbleCommander/States/FilePanels/NCPanelContextMenu.h; sourceTree = SOURCE_ROOT; };
-		CFDAC2651DFBF20F0039A104 /* NCPanelContextMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NCPanelContextMenu.mm; path = NimbleCommander/States/FilePanels/NCPanelContextMenu.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC2641DFBF20F0039A104 /* ContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContextMenu.h; path = NimbleCommander/States/FilePanels/ContextMenu.h; sourceTree = SOURCE_ROOT; };
+		CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ContextMenu.mm; path = NimbleCommander/States/FilePanels/ContextMenu.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2661DFBF20F0039A104 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MainWindowFilePanelState+Menu.h"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+Menu.h"; sourceTree = SOURCE_ROOT; };
 		CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "MainWindowFilePanelState+Menu.mm"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+Menu.mm"; sourceTree = SOURCE_ROOT; };
 		CFDAC2681DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MainWindowFilePanelState+OverlappedTerminalSupport.h"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+OverlappedTerminalSupport.h"; sourceTree = SOURCE_ROOT; };
@@ -2333,6 +2333,8 @@
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CFDAC2641DFBF20F0039A104 /* ContextMenu.h */,
+				CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */,
 				CFFA95231F47CA760035E606 /* DragReceiver.h */,
 				CFFA95241F47CA760035E606 /* DragReceiver.mm */,
 				CFFA952D1F4930BA0035E606 /* DragSender.h */,
@@ -2357,8 +2359,6 @@
 				CFDAC26B1DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm */,
 				CFDAC26C1DFBF20F0039A104 /* MainWindowFilePanelState+Tools.h */,
 				CFDAC26D1DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm */,
-				CFDAC2641DFBF20F0039A104 /* NCPanelContextMenu.h */,
-				CFDAC2651DFBF20F0039A104 /* NCPanelContextMenu.mm */,
 				CF9F4AD11ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.h */,
 				CF9F4AD21ECA8E7900E0AF82 /* NCPanelOpenWithMenuDelegate.mm */,
 				CFDAC2BF1DFD0DE40039A104 /* PanelAux.h */,
@@ -4048,7 +4048,7 @@
 				CFD726E11E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CF4E56D61D506B9700452912 /* FindFilesSheetController.mm in Sources */,
 				CFD7266B1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
-				CFD726681E42E1E700603077 /* NCPanelContextMenu.mm in Sources */,
+				CFD726681E42E1E700603077 /* ContextMenu.mm in Sources */,
 				CFD726F81E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */,
 				CFD727361E42E35500603077 /* TermView.mm in Sources */,
 				CF7C7CB51E5ACDD4002DB0E2 /* Alert.mm in Sources */,
@@ -4330,7 +4330,7 @@
 				CFD7271F1E42E33000603077 /* MainWindowTerminalState.mm in Sources */,
 				CF2F43481EAF345400AA031A /* ConnectToServer.mm in Sources */,
 				CFD726751E42E1FB00603077 /* MainWindowFilePanelState+Tools.mm in Sources */,
-				CFD726691E42E1E800603077 /* NCPanelContextMenu.mm in Sources */,
+				CFD726691E42E1E800603077 /* ContextMenu.mm in Sources */,
 				CFA53A121D433E2A00C562A7 /* shared_mutex.cpp in Sources */,
 				CF04DDE71E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CFD726D31E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
@@ -4447,7 +4447,7 @@
 				CF94CF941DD4418000EEA420 /* Layout.mm in Sources */,
 				CFC4F99F1F0F40430000B3EE /* Link.mm in Sources */,
 				CF9F4A921EC9442C00E0AF82 /* Compress.mm in Sources */,
-				CFDAC26F1DFBF20F0039A104 /* NCPanelContextMenu.mm in Sources */,
+				CFDAC26F1DFBF20F0039A104 /* ContextMenu.mm in Sources */,
 				CF4E56EA1D50712C00452912 /* FileMask.cpp in Sources */,
 				CFDAC2481DFBEE340039A104 /* MainWindow.mm in Sources */,
 				CFD8CDBE1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
@@ -4572,7 +4572,7 @@
 				CFD726E61E42E2CE00603077 /* PanelListViewDateTimeView.mm in Sources */,
 				CF818B5F1EA0610E00BC28E6 /* BatchRename.mm in Sources */,
 				CFD7260A1E42E07300603077 /* Application.mm in Sources */,
-				CFD726671E42E1E700603077 /* NCPanelContextMenu.mm in Sources */,
+				CFD726671E42E1E700603077 /* ContextMenu.mm in Sources */,
 				CFD726731E42E1FA00603077 /* MainWindowFilePanelState+Tools.mm in Sources */,
 				CF4E56D41D506B9700452912 /* FindFilesSheetController.mm in Sources */,
 				CFD726B01E42E26100603077 /* CopyFilePaths.mm in Sources */,

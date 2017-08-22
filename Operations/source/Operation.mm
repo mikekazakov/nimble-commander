@@ -6,6 +6,7 @@
 #include "HaltReasonDialog.h"
 #include "GenericErrorDialog.h"
 #include "Statistics.h"
+#include "Internal.h"
 
 namespace nc::ops
 {
@@ -216,10 +217,13 @@ void Operation::ShowGenericDialogWithAbortSkipAndSkipAllButtons
     sheet.message = _message;
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.errorNo = _err;
-    [sheet addButtonWithTitle:@"Abort" responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:@"Skip" responseCode:NSModalResponseSkip];
-    [sheet addButtonWithTitle:@"Skip All" responseCode:NSModalResponseSkipAll];
-
+    
+    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "")
+                 responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "")
+                 responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
+                 responseCode:NSModalResponseSkipAll];
     Show(sheet.window, _ctx);
 }
 
@@ -240,8 +244,8 @@ void Operation::ShowGenericDialogWithContinueButton(NSString *_message,
     sheet.message = _message;
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.errorNo = _err;
-    [sheet addButtonWithTitle:@"Continue" responseCode:NSModalResponseContinue];
-    
+    [sheet addButtonWithTitle:NSLocalizedString(@"Continue", "")
+                 responseCode:NSModalResponseContinue];
     Show(sheet.window, _ctx);
 }
 

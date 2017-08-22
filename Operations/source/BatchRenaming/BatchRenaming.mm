@@ -66,7 +66,7 @@ void BatchRenaming::OnRenameErrorUI(int _err, const string &_path, shared_ptr<VF
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = @"Failed to rename an item";
+    sheet.message = NSLocalizedString(@"Failed to rename an item", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.errorNo = _err;
     [sheet addAbortButton];
@@ -79,10 +79,7 @@ void BatchRenaming::OnRenameErrorUI(int _err, const string &_path, shared_ptr<VF
 static string Caption( const vector<string> &_paths )
 {
     return [NSString localizedStringWithFormat:
-            NSLocalizedStringFromTableInBundle(@"Batch renaming %@ items",
-                                               @"Localizable.strings",
-                                               Bundle(),
-                                               "Operation title batch renaming"),
+            NSLocalizedString(@"Batch renaming %@ items", "Operation title batch renaming"),
             [NSNumber numberWithUnsignedLong:_paths.size()]].UTF8String;
 }
 

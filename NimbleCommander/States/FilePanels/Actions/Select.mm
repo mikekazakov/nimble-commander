@@ -21,7 +21,7 @@ void DeselectAll::Perform( PanelController *_target, id _sender ) const
 
 void InvertSelection::Perform( PanelController *_target, id _sender ) const
 {
-    auto selector = PanelDataSelection(_target.data);
+    auto selector = data::SelectionBuilder(_target.data);
     [_target setEntriesSelection:selector.InvertSelection()];
 }
 
@@ -42,8 +42,8 @@ void SelectAllByExtension::Perform( PanelController *_target, id _sender ) const
         return;
     
     const string extension = item.HasExtension() ? item.Extension() : "";
-    auto selector = PanelDataSelection(_target.data,
-                                       _target.ignoreDirectoriesOnSelectionByMask);
+    auto selector = data::SelectionBuilder(_target.data,
+                                           _target.ignoreDirectoriesOnSelectionByMask);
     auto selection = selector.SelectionByExtension(extension, m_ResultSelection);
     [_target setEntriesSelection:selection];
 }
@@ -62,8 +62,8 @@ void SelectAllByMask::Perform( PanelController *_target, id _sender ) const
         if( !FileMask::IsWildCard(mask) )
             mask = FileMask::ToExtensionWildCard(mask);
         
-        auto selector = PanelDataSelection(_target.data,
-                                           _target.ignoreDirectoriesOnSelectionByMask);
+        auto selector = data::SelectionBuilder(_target.data,
+                                               _target.ignoreDirectoriesOnSelectionByMask);
         auto selection = selector.SelectionByMask(mask, m_ResultSelection);
         [_target setEntriesSelection:selection];
     };

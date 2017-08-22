@@ -1,6 +1,7 @@
 #include "Copying.h"
 #include "CopyingJob.h"
 #include "../AsyncDialogResponse.h"
+#include "../Internal.h"
 #include "FileAlreadyExistDialog.h"
 #include <Utility/PathManip.h>
 
@@ -194,7 +195,7 @@ int Copying::OnCantAccessSourceItem(int _err, const string &_path, VFSHost &_vfs
         return (int)Callbacks::CantAccessSourceItemResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to access a file",
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to access a file", ""),
                                                     _err,
                                                     _path,
                                                     _vfs.shared_from_this(),
@@ -220,7 +221,7 @@ int Copying::OnCantOpenDestinationFile(int _err, const string &_path, VFSHost &_
         return (int)Callbacks::CantOpenDestinationFileResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to open a destination file",
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to open a destination file", ""),
                                                     _err,
                                                     _path,
                                                     _vfs.shared_from_this(),
@@ -245,7 +246,7 @@ int Copying::OnSourceFileReadError(int _err, const string &_path, VFSHost &_vfs)
         return (int)Callbacks::SourceFileReadErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to read a source file",
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to read a source file", ""),
                                                     _err,
                                                     _path,
                                                     _vfs.shared_from_this(),
@@ -270,7 +271,7 @@ int Copying::OnDestinationFileReadError(int _err, const string &_path, VFSHost &
         return (int)Callbacks::DestinationFileReadErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to read a destination file",
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to read a destination file", ""),
                                                     _err,
                                                     _path,
                                                     _vfs.shared_from_this(),
@@ -295,7 +296,7 @@ int Copying::OnDestinationFileWriteError(int _err, const string &_path, VFSHost 
         return (int)Callbacks::DestinationFileWriteErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to write a file",
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to write a file", ""),
                                                     _err,
                                                     _path,
                                                     _vfs.shared_from_this(),
@@ -314,7 +315,8 @@ int Copying::OnDestinationFileWriteError(int _err, const string &_path, VFSHost 
 
 void Copying::OnCantCreateDestinationRootDir(int _vfs_error, const string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(@"Failed to create a directory", _vfs_error, _path, _vfs);
+    ReportHaltReason(NSLocalizedString(@"Failed to create a directory", ""),
+                     _vfs_error, _path, _vfs);
 }
 
 int Copying::OnCantCreateDestinationDir(int _vfs_error, const string &_path, VFSHost &_vfs)
@@ -325,7 +327,7 @@ int Copying::OnCantCreateDestinationDir(int _vfs_error, const string &_path, VFS
         return (int)Callbacks::CantCreateDestinationDirResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to create a directory",
+    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to create a directory", ""),
                                                     _vfs_error,
                                                     _path,
                                                     _vfs.shared_from_this(),
@@ -345,7 +347,7 @@ int Copying::OnCantCreateDestinationDir(int _vfs_error, const string &_path, VFS
 void Copying::OnFileVerificationFailed(const string &_path, VFSHost &_vfs)
 {
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithContinueButton(@"Checksum verification failed",
+    ShowGenericDialogWithContinueButton(NSLocalizedString(@"Checksum verification failed", ""),
                                         VFSError::FromErrno(EIO),
                                         _path,
                                         _vfs.shared_from_this(),
@@ -356,13 +358,14 @@ void Copying::OnFileVerificationFailed(const string &_path, VFSHost &_vfs)
 static NSString *OpTitlePreffix(bool _copying)
 {
     return _copying ?
-        @"Copying" :
-        @"Moving" ;
+        NSLocalizedString(@"Copying", "Prefix of a file operation") :
+        NSLocalizedString(@"Moving", "Prefix of a file operation") ;
 }
 
 static NSString *OpTitleForSingleItem(bool _copying, NSString *_item, NSString *_to)
 {
-    return [NSString stringWithFormat:@"%@ \u201c%@\u201d to \u201c%@\u201d",
+    auto fmt = NSLocalizedString(@"%@ \u201c%@\u201d to \u201c%@\u201d", "");
+    return [NSString stringWithFormat:fmt,
             OpTitlePreffix(_copying),
             _item,
             _to];
@@ -370,7 +373,8 @@ static NSString *OpTitleForSingleItem(bool _copying, NSString *_item, NSString *
 
 static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_to)
 {
-    return [NSString stringWithFormat:@"%@ %@ items to \u201c%@\u201d",
+    auto fmt = NSLocalizedString(@"%@ %@ items to \u201c%@\u201d", "");
+    return [NSString stringWithFormat:fmt,
             OpTitlePreffix(_copying),
             [NSNumber numberWithInt:_items],
             _to];

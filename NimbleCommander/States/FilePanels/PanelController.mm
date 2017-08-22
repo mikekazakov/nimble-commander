@@ -27,7 +27,7 @@
 #include "PanelDataPersistency.h"
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include "PanelController+Menu.h"
-#include "NCPanelContextMenu.h"
+#include "ContextMenu.h"
 #include "Actions/OpenFile.h"
 #include "Actions/GoToFolder.h"
 #include "Actions/Enter.h"

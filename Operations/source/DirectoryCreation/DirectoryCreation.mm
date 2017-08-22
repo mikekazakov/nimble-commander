@@ -17,10 +17,8 @@ DirectoryCreation::DirectoryCreation( string _directory_name, string _root_folde
     };
 
     const auto title = [NSString localizedStringWithFormat:
-        NSLocalizedStringFromTableInBundle(@"Creating a directory \u201c%@\u201d",
-                                           @"Localizable.strings",
-                                           Bundle(),
-                                           "Creating a directory \u201c%@\u201d"),
+                        NSLocalizedString(@"Creating a directory \u201c%@\u201d",
+                                          "Creating a directory \u201c%@\u201d"),
                 [NSString stringWithUTF8StdString:_directory_name]];
     SetTitle(title.UTF8String);
 }
@@ -42,7 +40,8 @@ const vector<string> &DirectoryCreation::DirectoryNames() const
 
 void DirectoryCreation::OnError(int _err, const string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(@"Failed to create a directory", _err, _path, _vfs);
+    ReportHaltReason(NSLocalizedString(@"Failed to create a directory", ""),
+                     _err, _path, _vfs);
 }
 
 static vector<string> Split( const string &_directory )

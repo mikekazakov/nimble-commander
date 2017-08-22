@@ -1,4 +1,7 @@
 #include "AlterSymlinkDialog.h"
+#include "../Internal.h"
+
+using namespace nc::ops;
 
 @interface NCOpsAlterSymlinkDialog ()
 
@@ -30,7 +33,9 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    self.Text.stringValue = [NSString stringWithFormat:@"Symbolic link \'%@\' points at:", [NSString stringWithUTF8StdString:m_LinkPath]];
+    auto t = [NSString stringWithFormat:NSLocalizedString(@"Symbolic link \'%@\' points at:", ""),
+              [NSString stringWithUTF8StdString:m_LinkPath]];
+    self.Text.stringValue = t;
     self.SourcePath.stringValue = [NSString stringWithUTF8StdString:m_SrcPath];
     [self.window makeFirstResponder:self.SourcePath];
 }

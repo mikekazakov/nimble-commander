@@ -1,13 +1,13 @@
 #pragma once
 
 namespace nc::panel::data {
-    class Model;
-}
 
-class PanelDataSelection
+class Model;
+
+class SelectionBuilder
 {
 public:
-    PanelDataSelection(const nc::panel::data::Model &_pd, bool _ignore_dirs_on_mask = true);
+    SelectionBuilder(const nc::panel::data::Model &_pd, bool _ignore_dirs_on_mask = true);
 
     // it would be good to transform these methods into something like this:
     // pair<vector<unsigned>,vector<bool>> to reduce redundant operations.
@@ -22,4 +22,6 @@ public:
 private:
     const nc::panel::data::Model &m_Data;
     bool m_IgnoreDirectoriesOnMaskSelection;
+};
+
 };

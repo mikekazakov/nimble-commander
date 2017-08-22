@@ -68,13 +68,16 @@ void Deletion::OnReadDirErrorUI(int _err, const string &_path, shared_ptr<VFSHos
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = @"Failed to access a directory";
+    sheet.message = NSLocalizedString(@"Failed to access a directory", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.errorNo = _err;
-    [sheet addButtonWithTitle:@"Abort" responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:@"Skip" responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "")
+                 responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "")
+                 responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:@"Skip All" responseCode:NSModalResponseSkipAll];
+        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
+                     responseCode:NSModalResponseSkipAll];
 
     Show(sheet.window, _ctx);
 }
@@ -108,13 +111,16 @@ void Deletion::OnUnlinkErrorUI(int _err, const string &_path, shared_ptr<VFSHost
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = @"Failed to delete a file";
+    sheet.message = NSLocalizedString(@"Failed to delete a file", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.errorNo = _err;
-    [sheet addButtonWithTitle:@"Abort" responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:@"Skip" responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "")
+                 responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "")
+                 responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:@"Skip All" responseCode:NSModalResponseSkipAll];
+        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
+                     responseCode:NSModalResponseSkipAll];
 
     Show(sheet.window, _ctx);                     
 }
@@ -149,13 +155,16 @@ void Deletion::OnRmdirErrorUI(int _err, const string &_path, shared_ptr<VFSHost>
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = @"Failed to delete a directory";
+    sheet.message = NSLocalizedString(@"Failed to delete a directory", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.errorNo = _err;
-    [sheet addButtonWithTitle:@"Abort" responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:@"Skip" responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "")
+                 responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "")
+                 responseCode:NSModalResponseSkip];
     if( m_Job->ItemsInScript() > 0 )
-        [sheet addButtonWithTitle:@"Skip All" responseCode:NSModalResponseSkipAll];
+        [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
+                     responseCode:NSModalResponseSkipAll];
 
     Show(sheet.window, _ctx);
 }
@@ -198,13 +207,16 @@ void Deletion::OnTrashErrorUI(int _err, const string &_path, shared_ptr<VFSHost>
     const auto sheet = [[NCOpsGenericErrorDialog alloc] initWithContext:_ctx];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = @"Failed to move an item to Trash";
+    sheet.message = NSLocalizedString(@"Failed to move an item to Trash", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.showApplyToAll = m_Job->ItemsInScript() > 0;
     sheet.errorNo = _err;
-    [sheet addButtonWithTitle:@"Abort" responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:@"Delete Permanently" responseCode:NSModalResponseDeletePermanently];
-    [sheet addButtonWithTitle:@"Skip" responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "")
+                 responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Delete Permanently", "")
+                 responseCode:NSModalResponseDeletePermanently];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "")
+                 responseCode:NSModalResponseSkip];
 
     Show(sheet.window, _ctx);
 }
@@ -213,17 +225,13 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
 {
     if( _files.size() == 1 )
         return  [NSString localizedStringWithFormat:
-                 NSLocalizedStringFromTableInBundle(@"Deleting \u201c%@\u201d",
-                                                    @"Localizable.strings",
-                                                    Bundle(),
-                                                    "Operation title for single item deletion"),
+                 NSLocalizedString(@"Deleting \u201c%@\u201d",
+                                   "Operation title for single item deletion"),
                  _files.front().NSDisplayName()];
     else
         return [NSString localizedStringWithFormat:
-                NSLocalizedStringFromTableInBundle(@"Deleting %@ items",
-                                                   @"Localizable.strings",
-                                                   Bundle(),
-                                                   "Operation title for multiple items deletion"),
+                NSLocalizedString(@"Deleting %@ items",
+                                  "Operation title for multiple items deletion"),
                 [NSNumber numberWithUnsignedLong:_files.size()]];
 }
 

@@ -72,8 +72,10 @@ using namespace nc::ops;
 
 - (void)placeButtons
 {
-    if( m_Buttons.empty() )
-        m_Buttons.emplace_back(make_pair(@"Close", m_EscapeButtonResponse));
+    if( m_Buttons.empty() ) {
+        auto title = NSLocalizedString(@"Close", "");
+        m_Buttons.emplace_back(make_pair(title, m_EscapeButtonResponse));
+    }
 
     NSButton *last = nil;
     const auto content_view = self.window.contentView;
@@ -164,17 +166,20 @@ using namespace nc::ops;
 
 - (void) addAbortButton
 {
-    [self addButtonWithTitle:@"Abort" responseCode:nc::ops::NSModalResponseStop];
+    auto title = NSLocalizedString(@"Abort", "");
+    [self addButtonWithTitle:title responseCode:nc::ops::NSModalResponseStop];
 }
 
 - (void) addSkipButton
 {
-    [self addButtonWithTitle:@"Skip" responseCode:nc::ops::NSModalResponseSkip];
+    auto title = NSLocalizedString(@"Skip", "");
+    [self addButtonWithTitle:title responseCode:nc::ops::NSModalResponseSkip];
 }
 
 - (void) addSkipAllButton
 {
-    [self addButtonWithTitle:@"Skip All" responseCode:nc::ops::NSModalResponseSkipAll];
+    auto title = NSLocalizedString(@"Skip All", "");
+    [self addButtonWithTitle:title responseCode:nc::ops::NSModalResponseSkipAll];
 }
 
 @end

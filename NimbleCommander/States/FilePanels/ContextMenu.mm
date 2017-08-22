@@ -1,4 +1,4 @@
-#include "NCPanelContextMenu.h"
+#include "ContextMenu.h"
 #include "PanelController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "Actions/CopyToPasteboard.h"

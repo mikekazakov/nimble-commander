@@ -1,5 +1,6 @@
 #include "Linkage.h"
 #include "LinkageJob.h"
+#include "../Internal.h"
 
 namespace nc::ops {
 
@@ -35,27 +36,30 @@ Job *Linkage::GetJob() noexcept
 
 void Linkage::OnCreateSymlinkError(int _err, const string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(@"Failed to create a symbolic link", _err, _path, _vfs);
+    ReportHaltReason(NSLocalizedString(@"Failed to create a symbolic link", ""),
+                     _err, _path, _vfs);
 }
 
 void Linkage::OnAlterSymlinkError(int _err, const string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(@"Failed to alter a symbolic link", _err, _path, _vfs);
+    ReportHaltReason(NSLocalizedString(@"Failed to alter a symbolic link", ""),
+                     _err, _path, _vfs);
 }
 
 void Linkage::OnCreatehardlinkError(int _err, const string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(@"Failed to create a hard link", _err, _path, _vfs);
+    ReportHaltReason(NSLocalizedString(@"Failed to create a hard link", ""),
+                     _err, _path, _vfs);
 }
 
 static NSString *Caption( LinkageType _type )
 {
     if( _type == LinkageType::CreateSymlink )
-        return @"Creating a new symbolic link";
+        return NSLocalizedString(@"Creating a new symbolic link", "");
     if( _type == LinkageType::AlterSymlink )
-        return @"Altering a symbolic link";
+        return NSLocalizedString(@"Altering a symbolic link", "");
     if( _type == LinkageType::CreateHardlink )
-        return @"Creating a new hard link";
+        return NSLocalizedString(@"Creating a new hard link", "");
     return @"";
 }
 

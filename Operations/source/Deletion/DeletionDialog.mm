@@ -1,4 +1,5 @@
 #include "DeletionDialog.h"
+#include "../Internal.h"
 #include <VFS/VFS.h>
 
 using namespace nc::ops;

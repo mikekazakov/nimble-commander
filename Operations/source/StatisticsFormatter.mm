@@ -1,6 +1,7 @@
 #include "StatisticsFormatter.h"
 #include <Utility/ByteCountFormatter.h>
 #include "Statistics.h"
+#include "Internal.h"
 
 namespace nc::ops {
 
@@ -28,7 +29,8 @@ NSString *StatisticsFormatter::WithItems() const
     const auto volume_processed_str = [NSString stringWithFormat:@"%llu", volume_processed];
 
     if( m_Stats.IsPaused() ) {
-        return [NSString stringWithFormat:@"%@ of %@ - Paused",
+        auto fmt = NSLocalizedString(@"%@ of %@ - Paused", "");
+        return [NSString localizedStringWithFormat:fmt,
                 volume_processed_str,
                 volume_total_str];
     }
@@ -36,13 +38,15 @@ NSString *StatisticsFormatter::WithItems() const
         const auto eta = m_Stats.ETA(Statistics::SourceType::Items);
         const auto eta_str = eta ? FormatETAString(*eta) : nil;
         if( eta_str ) {
-            return [NSString stringWithFormat:@"%@ of %@, %@",
+            auto fmt = NSLocalizedString(@"%@ of %@, %@", "");
+            return [NSString localizedStringWithFormat:fmt,
                     volume_processed_str,
                     volume_total_str,
                     eta_str];
         }
         else {
-            return [NSString stringWithFormat:@"%@ of %@",
+            auto fmt = NSLocalizedString(@"%@ of %@", "");
+            return [NSString localizedStringWithFormat:fmt,
                     volume_processed_str,
                     volume_total_str];
         }
@@ -61,7 +65,8 @@ NSString *StatisticsFormatter::WithBytes() const
     const auto volume_processed_str = fmt.ToNSString(volume_processed, fmt_type);
 
     if( m_Stats.IsPaused() ) {
-        return [NSString stringWithFormat:@"%@ of %@ - Paused",
+        auto fmt = NSLocalizedString(@"%@ of %@ - Paused", "");
+        return [NSString localizedStringWithFormat:fmt,
                 volume_processed_str,
                 volume_total_str];
     }
@@ -72,21 +77,24 @@ NSString *StatisticsFormatter::WithBytes() const
             const auto eta = m_Stats.ETA(Statistics::SourceType::Bytes);
             const auto eta_str = eta ? FormatETAString(*eta) : nil;
             if( eta_str ) {
-                return [NSString stringWithFormat:@"%@ of %@ - %@/s, %@",
+                auto fmt = NSLocalizedString(@"%@ of %@ - %@/s, %@", "");
+                return [NSString localizedStringWithFormat:fmt,
                         volume_processed_str,
                         volume_total_str,
                         speed_str,
                         eta_str];
             }
             else {
-                return [NSString stringWithFormat:@"%@ of %@ - %@/s",
+                auto fmt = NSLocalizedString(@"%@ of %@ - %@/s", "");
+                return [NSString localizedStringWithFormat:fmt,
                         volume_processed_str,
                         volume_total_str,
                         speed_str];
             }
         }
         else {
-            return [NSString stringWithFormat:@"%@ of %@",
+            auto fmt = NSLocalizedString(@"%@ of %@", "");
+            return [NSString localizedStringWithFormat:fmt,
                     volume_processed_str,
                     volume_total_str];
         }

@@ -27,7 +27,8 @@ AttrsChanging::AttrsChanging( AttrsChangingCommand _command )
     m_Job->m_OnTimesError = [this](int _err, const string &_path, VFSHost &_vfs) {
         return (Callbacks::TimesErrorResolution)OnTimesError(_err, _path, _vfs);
     };
-    SetTitle("Altering file attributes");
+    auto title = NSLocalizedString(@"Altering file attributes", "Title for attributes changing operation");
+    SetTitle(title.UTF8String);
 }
 
 AttrsChanging::~AttrsChanging()
@@ -49,11 +50,8 @@ int AttrsChanging::OnSourceAccessError(int _err, const string &_path, VFSHost &_
     const auto ctx = make_shared<AsyncDialogResponse>();
     
     dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to access an item",
-                                                        _err,
-                                                        _path,
-                                                        vfs,
-                                                        ctx);
+        auto message = NSLocalizedString(@"Failed to access an item", "");
+        ShowGenericDialogWithAbortSkipAndSkipAllButtons(message, _err, _path, vfs, ctx);
     });
     WaitForDialogResponse(ctx);
     
@@ -76,11 +74,8 @@ int AttrsChanging::OnChmodError(int _err, const string &_path, VFSHost &_vfs)
     
     const auto ctx = make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to perform chmod",
-                                                        _err,
-                                                        _path,
-                                                        vfs,
-                                                        ctx);
+        auto message = NSLocalizedString(@"Failed to perform chmod", "");
+        ShowGenericDialogWithAbortSkipAndSkipAllButtons(message, _err, _path, vfs, ctx);
     });
     WaitForDialogResponse(ctx);
     
@@ -104,11 +99,8 @@ int AttrsChanging::OnChownError(int _err, const string &_path, VFSHost &_vfs)
     
     const auto ctx = make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to perform chown",
-                                                        _err,
-                                                        _path,
-                                                        vfs,
-                                                        ctx);
+        auto message = NSLocalizedString(@"Failed to perform chown", "");
+        ShowGenericDialogWithAbortSkipAndSkipAllButtons(message, _err, _path, vfs, ctx);
     });
     WaitForDialogResponse(ctx);
     
@@ -131,11 +123,8 @@ int AttrsChanging::OnFlagsError(int _err, const string &_path, VFSHost &_vfs)
             
     const auto ctx = make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to perform chflags",
-                                                        _err,
-                                                        _path,
-                                                        vfs,
-                                                        ctx);
+        auto message = NSLocalizedString(@"Failed to perform chflags", "");
+        ShowGenericDialogWithAbortSkipAndSkipAllButtons(message, _err, _path, vfs, ctx);
     });
     WaitForDialogResponse(ctx);
     
@@ -159,11 +148,8 @@ int AttrsChanging::OnTimesError(int _err, const string &_path, VFSHost &_vfs)
     
     const auto ctx = make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        ShowGenericDialogWithAbortSkipAndSkipAllButtons(@"Failed to set file time",
-                                                        _err,
-                                                        _path,
-                                                        vfs,
-                                                        ctx);
+        auto message = NSLocalizedString(@"Failed to set file time", "");
+        ShowGenericDialogWithAbortSkipAndSkipAllButtons(message, _err, _path, vfs, ctx);
     });
     WaitForDialogResponse(ctx);
     

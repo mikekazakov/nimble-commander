@@ -5,14 +5,16 @@
 #include "PanelDataItemVolatileData.h"
 #include <VFS/VFS.h>
 
-PanelDataSelection::PanelDataSelection(const nc::panel::data::Model &_pd, bool _ignore_dirs_on_mask):
+namespace nc::panel::data {
+
+SelectionBuilder::SelectionBuilder(const Model &_pd, bool _ignore_dirs_on_mask):
     m_Data(_pd),
     m_IgnoreDirectoriesOnMaskSelection(_ignore_dirs_on_mask)
 {
 }
 
-vector<bool> PanelDataSelection::SelectionByExtension(const string &_extension,
-                                                      bool _result_selection ) const
+vector<bool> SelectionBuilder::SelectionByExtension(const string &_extension,
+                                                    bool _result_selection ) const
 {
     auto &comparison = ExtensionLowercaseComparison::Instance();
     const auto extension = comparison.ExtensionToLowercase( _extension );
@@ -42,7 +44,7 @@ vector<bool> PanelDataSelection::SelectionByExtension(const string &_extension,
     return selection;
 }
 
-vector<bool> PanelDataSelection::SelectionByMask(const string &_mask,
+vector<bool> SelectionBuilder::SelectionByMask(const string &_mask,
                                                  bool _result_selection ) const
 {
     FileMask mask(_mask);
@@ -63,11 +65,13 @@ vector<bool> PanelDataSelection::SelectionByMask(const string &_mask,
     return selection;
 }
 
-vector<bool> PanelDataSelection::InvertSelection() const
+vector<bool> SelectionBuilder::InvertSelection() const
 {
     const auto count = m_Data.SortedEntriesCount();
     vector<bool> selection(count);
     for( int i = 0; i < count; ++i )
         selection[i] = !m_Data.VolatileDataAtSortPosition(i).is_selected();
     return selection;
+}
+
 }

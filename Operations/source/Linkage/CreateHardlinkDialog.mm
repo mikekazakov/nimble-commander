@@ -1,4 +1,7 @@
 #include "CreateHardlinkDialog.h"
+#include "../Internal.h"
+
+using namespace nc::ops;
 
 @interface NCOpsCreateHardlinkDialog ()
 
@@ -29,7 +32,10 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    [self.Text setStringValue:[NSString stringWithFormat:@"Create a hardlink of \'%@\' to:", [NSString stringWithUTF8StdString:m_SourceName]]];
+    
+    auto t = [NSString stringWithFormat:NSLocalizedString(@"Create a hardlink of \'%@\' to:", ""),
+              [NSString stringWithUTF8StdString:m_SourceName]];
+    self.Text.stringValue = t;
     [self.window makeFirstResponder:self.LinkName];
 }
 

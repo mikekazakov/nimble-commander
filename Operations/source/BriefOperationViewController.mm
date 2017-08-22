@@ -4,6 +4,7 @@
 #include <Utility/ByteCountFormatter.h>
 #include "StatisticsFormatter.h"
 #include "Statistics.h"
+#include "Internal.h"
 
 using namespace nc::ops;
 
@@ -143,7 +144,7 @@ static const auto g_SlowUpdateFreq = 1.0;
 - (void)updateSlow
 {
     if(m_Operation->State() == OperationState::Cold)
-        self.ETA.stringValue = @"Waiting in the queue...";
+        self.ETA.stringValue = NSLocalizedString(@"Waiting in the queue...", "");
     else
         self.ETA.stringValue = StatisticsFormatter{m_Operation->Statistics()}.ProgressCaption();
 }

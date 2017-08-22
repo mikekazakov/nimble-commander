@@ -57,12 +57,14 @@ string Compression::ArchivePath() const
 
 void Compression::OnTargetWriteError(int _err, const string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(@"Failed to write an archive", _err, _path, _vfs);
+    ReportHaltReason(NSLocalizedString(@"Failed to write an archive", ""),
+                     _err, _path, _vfs);
 }
 
 void Compression::OnSourceReadError(int _err, const string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(@"Failed to read a file", _err, _path, _vfs);
+    ReportHaltReason(NSLocalizedString(@"Failed to read a file", ""),
+                     _err, _path, _vfs);
 }
 
 int Compression::OnSourceScanError(int _err, const string &_path, VFSHost &_vfs)
@@ -93,12 +95,12 @@ void Compression::OnSourceScanErrorUI(int _err, const string &_path, VFSHostPtr 
     auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
     sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = @"Failed to access an item";
+    sheet.message = NSLocalizedString(@"Failed to access an item", "");
     sheet.path = [NSString stringWithUTF8String:_path.c_str()];
     sheet.errorNo = _err;
-    [sheet addButtonWithTitle:@"Abort" responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:@"Skip" responseCode:NSModalResponseSkip];
-    [sheet addButtonWithTitle:@"Skip All" responseCode:NSModalResponseSkipAll];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
 
     Show(sheet.window, _ctx);
 }
@@ -134,17 +136,11 @@ NSString *Compression::BuildTitlePrefix() const
 {
     if( m_InitialSingleItemFilename.empty() )
         return [NSString localizedStringWithFormat:
-                NSLocalizedStringFromTableInBundle(@"Compressing %d items",
-                                                   @"Localizable.strings",
-                                                   Bundle(),
-                                                   "Compressing %d items"),
+                NSLocalizedString(@"Compressing %d items", "Compressing %d items"),
                 m_InitialSourceItemsAmount];
     else
         return [NSString localizedStringWithFormat:
-                NSLocalizedStringFromTableInBundle(@"Compressing \u201c%@\u201d",
-                                                   @"Localizable.strings",
-                                                   Bundle(),
-                                                   "Compressing \u201c%@\u201d"),
+                NSLocalizedString(@"Compressing \u201c%@\u201d", "Compressing \u201c%@\u201d"),
                 [NSString stringWithUTF8StdString:m_InitialSingleItemFilename]];
 }
 
@@ -157,10 +153,7 @@ string Compression::BuildTitleWithArchiveFilename() const
 {
     auto p = path(m_Job->TargetArchivePath());
     return [NSString localizedStringWithFormat:
-                NSLocalizedStringFromTableInBundle(@"%@ to \u201c%@\u201d",
-                                                   @"Localizable.strings",
-                                                   Bundle(),
-                                                   "Compressing \u201c%@\u201d"),
+                NSLocalizedString(@"%@ to \u201c%@\u201d", "Compressing \u201c%@\u201d"),
                 BuildTitlePrefix(),
                 [NSString stringWithUTF8StdString:p.filename().native()]].UTF8String;
 }

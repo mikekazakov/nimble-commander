@@ -193,10 +193,10 @@ private:
 @property (strong) IBOutlet NSTextField         *SizeTextField;
 @property (strong)          NSString            *SizeTextFieldValue;
 @property (strong) IBOutlet NSPopUpButton       *SizeMetricPopUp;
-@property (strong) IBOutlet NSButton            *SearchForDirsButton;
 @property (strong) IBOutlet NSButton            *SearchInSubDirsButton;
 @property (strong) IBOutlet NSButton            *SearchInArchivesButton;
 @property (strong) IBOutlet NSPopUpButton       *EncodingsPopUp;
+@property (strong) IBOutlet NSPopUpButton       *searchForPopup;
 @property NSMutableArray            *FoundItems;
 @property FindFilesSheetFoundItem   *focusedItem; // may be nullptr
 
@@ -390,8 +390,12 @@ private:
     int search_options = 0;
     if( self.SearchInSubDirsButton.intValue )
         search_options |= SearchForFiles::Options::GoIntoSubDirs;
-    if( self.SearchForDirsButton.intValue )
-        search_options |= SearchForFiles::Options::SearchForDirs;
+    switch( self.searchForPopup.selectedTag ) {
+        case 1:     search_options |= SearchForFiles::Options::SearchForFiles;  break;
+        case 2:     search_options |= SearchForFiles::Options::SearchForDirs;   break;
+        default:    search_options |= SearchForFiles::Options::SearchForDirs |
+                                      SearchForFiles::Options::SearchForFiles;
+    }
     if( self.SearchInArchivesButton.intValue )
         search_options |= SearchForFiles::Options::LookInArchives;
     return search_options;

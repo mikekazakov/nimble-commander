@@ -174,6 +174,12 @@ void SearchForFiles::ProcessDirent(const char* _full_path,
        _dirent.type == VFSDirEnt::Dir &&
        (m_SearchOptions & Options::SearchForDirs) == 0 )
         failed_filtering = true;
+
+    // Filter by being a reg or link
+    if(failed_filtering == false &&
+       (_dirent.type == VFSDirEnt::Reg || _dirent.type == VFSDirEnt::Link ) &&
+       (m_SearchOptions & Options::SearchForFiles) == 0 )
+        failed_filtering = true;
     
     // Filter by filename
     if(failed_filtering == false &&
@@ -200,8 +206,7 @@ void SearchForFiles::ProcessDirent(const char* _full_path,
     
     // Filter by file content
     CFRange content_pos{-1, 0};
-    if(failed_filtering == false && m_FilterContent)
-    {
+    if(failed_filtering == false && m_FilterContent) {
        if(_dirent.type != VFSDirEnt::Reg || !FilterByContent(_full_path, _in_host, content_pos) )
            failed_filtering = true;
     }
@@ -261,7 +266,7 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
     return false;
 }
 
-bool SearchForFiles::FilterByFilename(const char* _filename)
+bool SearchForFiles::FilterByFilename(const char* _filename) const
 {
     return m_FilterNameMask->MatchName(_filename);
 }

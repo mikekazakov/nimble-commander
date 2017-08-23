@@ -20,7 +20,8 @@ public:
         enum {
             GoIntoSubDirs   = 0x0001,
             SearchForDirs   = 0x0002,
-            LookInArchives  = 0x0004,
+            SearchForFiles  = 0x0004,
+            LookInArchives  = 0x0008,
         };
     };
     
@@ -120,7 +121,7 @@ private:
     
     void NotifyLookingIn(const char* _path) const;
     bool FilterByContent(const char* _full_path, VFSHost &_in_host, CFRange &_r);
-    bool FilterByFilename(const char* _filename);
+    bool FilterByFilename(const char* _filename) const;
     
     SerialQueue                 m_Queue;
     optional<FilterName>        m_FilterName;

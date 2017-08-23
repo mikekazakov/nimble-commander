@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
         <capability name="box content view" minToolsVersion="7.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -18,7 +18,6 @@
                 <outlet property="MaskComboBox" destination="4kJ-ln-DDa" id="tcq-gO-ET7"/>
                 <outlet property="PanelButton" destination="g6m-zK-tE9" id="dzJ-q0-FO6"/>
                 <outlet property="SearchButton" destination="40b-pd-d3f" id="1i2-gY-Yd6"/>
-                <outlet property="SearchForDirsButton" destination="cVD-9V-sOV" id="Xm9-f3-i97"/>
                 <outlet property="SearchInArchivesButton" destination="Mrn-CD-zhD" id="KeH-Li-Z1i"/>
                 <outlet property="SearchInSubDirsButton" destination="JW2-j0-Voo" id="yTt-Bz-lQ6"/>
                 <outlet property="SizeMetricPopUp" destination="WTz-uI-fN2" id="Que-En-XOr"/>
@@ -28,6 +27,7 @@
                 <outlet property="TextComboBox" destination="CJi-sh-esy" id="8u6-7B-YOy"/>
                 <outlet property="ViewButton" destination="XFM-mL-fme" id="jkK-DT-DOM"/>
                 <outlet property="WholePhraseButton" destination="aZ1-vD-r1s" id="o7B-5g-Rzl"/>
+                <outlet property="searchForPopup" destination="rhf-af-9N3" id="LoP-ts-vtk"/>
                 <outlet property="window" destination="1" id="Lu5-vi-FVF"/>
             </connections>
         </customObject>
@@ -36,10 +36,10 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="FindFilesSheet" animationBehavior="default" id="1" customClass="SheetWithHotkeys">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="622" height="525"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="contentRect" x="196" y="240" width="622" height="696"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="622" height="525"/>
+                <rect key="frame" x="0.0" y="0.0" width="622" height="696"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button toolTip="⎋" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="00I-4I-INo">
@@ -78,13 +78,13 @@ DQ
                         </connections>
                     </button>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="axX-0L-v6g">
-                        <rect key="frame" x="20" y="61" width="582" height="259"/>
+                        <rect key="frame" x="20" y="61" width="582" height="424"/>
                         <clipView key="contentView" id="vBG-YV-mkX">
-                            <rect key="frame" x="1" y="0.0" width="580" height="258"/>
+                            <rect key="frame" x="1" y="0.0" width="580" height="423"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Jgw-jU-GMB" id="03U-A8-eOk">
-                                    <rect key="frame" x="0.0" y="0.0" width="580" height="235"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="580" height="400"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -293,21 +293,13 @@ DQ
                         </connections>
                     </button>
                     <box autoresizesSubviews="NO" borderType="none" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="3im-V9-my6">
-                        <rect key="frame" x="-3" y="324" width="628" height="203"/>
+                        <rect key="frame" x="-3" y="489" width="628" height="209"/>
                         <view key="contentView" id="lGh-LY-EvR">
-                            <rect key="frame" x="0.0" y="0.0" width="628" height="203"/>
+                            <rect key="frame" x="0.0" y="0.0" width="628" height="209"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jb7-tj-7W9">
-                                    <rect key="frame" x="76" y="163" width="171" height="17"/>
-                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Search for files using mask:" id="R8e-FO-aEj">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                    </textFieldCell>
-                                </textField>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="JW2-j0-Voo">
-                                    <rect key="frame" x="256" y="144" width="139" height="18"/>
+                                    <rect key="frame" x="256" y="150" width="139" height="18"/>
                                     <buttonCell key="cell" type="check" title="Look in subdirectories" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="lJf-WO-EGY">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -328,33 +320,6 @@ DQ
                                         <binding destination="-2" name="animate" keyPath="self.SearchButton.state" id="N5I-LM-aRW"/>
                                     </connections>
                                 </progressIndicator>
-                                <comboBox toolTip="^M" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4kJ-ln-DDa">
-                                    <rect key="frame" x="253" y="159" width="245" height="26"/>
-                                    <constraints>
-                                        <constraint firstAttribute="width" constant="242" id="56T-dj-u8L"/>
-                                    </constraints>
-                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Mask like *, or *.txt, or *.txt, *.jpg" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="10" id="QoT-rJ-7t8">
-                                        <font key="font" metaFont="system"/>
-                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                    </comboBoxCell>
-                                    <connections>
-                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="RFO-13-TdB">
-                                            <dictionary key="options">
-                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                            </dictionary>
-                                        </binding>
-                                        <binding destination="-2" name="value" keyPath="self.MaskComboBoxValue" id="zlY-kZ-zvU">
-                                            <dictionary key="options">
-                                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
-                                                <string key="NSNullPlaceholder">Mask like *, or *.txt, or *.txt, *.jpg</string>
-                                            </dictionary>
-                                        </binding>
-                                        <outlet property="dataSource" destination="-2" id="BBQ-Qd-bAM"/>
-                                        <outlet property="delegate" destination="-2" id="QzV-2F-h63"/>
-                                        <outlet property="nextKeyView" destination="JW2-j0-Voo" id="tzM-ap-eJd"/>
-                                    </connections>
-                                </comboBox>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O0G-eo-ej9">
                                     <rect key="frame" x="147" y="87" width="100" height="17"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Containing text:" id="sq9-fx-uq3">
@@ -495,15 +460,15 @@ DQ
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     </comboBoxCell>
                                     <connections>
-                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="tqk-lT-9Mw">
-                                            <dictionary key="options">
-                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                            </dictionary>
-                                        </binding>
                                         <binding destination="-2" name="value" keyPath="self.TextComboBoxValue" id="uaK-ba-QWq">
                                             <dictionary key="options">
                                                 <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                                 <string key="NSNullPlaceholder">Enter a text to search</string>
+                                            </dictionary>
+                                        </binding>
+                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="tqk-lT-9Mw">
+                                            <dictionary key="options">
+                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
                                         <outlet property="dataSource" destination="-2" id="KFh-7g-crI"/>
@@ -522,15 +487,15 @@ DQ
                                         <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                     </textFieldCell>
                                     <connections>
-                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="jJ8-0T-lpC">
-                                            <dictionary key="options">
-                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
-                                            </dictionary>
-                                        </binding>
                                         <binding destination="-2" name="value" keyPath="self.SizeTextFieldValue" id="ERT-n5-ZFK">
                                             <dictionary key="options">
                                                 <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                                 <string key="NSNullPlaceholder">0</string>
+                                            </dictionary>
+                                        </binding>
+                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="jJ8-0T-lpC">
+                                            <dictionary key="options">
+                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
                                         <outlet property="delegate" destination="-2" id="UOB-M8-x8c"/>
@@ -538,7 +503,7 @@ DQ
                                     </connections>
                                 </textField>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="Mrn-CD-zhD">
-                                    <rect key="frame" x="256" y="128" width="107" height="18"/>
+                                    <rect key="frame" x="256" y="134" width="107" height="18"/>
                                     <buttonCell key="cell" type="check" title="Look in archives" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="7HA-yk-SzZ">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -550,32 +515,81 @@ DQ
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
-                                        <outlet property="nextKeyView" destination="cVD-9V-sOV" id="Uxt-zv-3os"/>
                                     </connections>
                                 </button>
-                                <button translatesAutoresizingMaskIntoConstraints="NO" id="cVD-9V-sOV">
-                                    <rect key="frame" x="256" y="112" width="136" height="18"/>
-                                    <buttonCell key="cell" type="check" title="Search for directories" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="ia5-oC-fH7">
-                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                                        <font key="font" metaFont="smallSystem"/>
-                                    </buttonCell>
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jb7-tj-7W9">
+                                    <rect key="frame" x="68" y="169" width="179" height="17"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Search for items using mask:" id="R8e-FO-aEj">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <comboBox toolTip="^M" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4kJ-ln-DDa">
+                                    <rect key="frame" x="253" y="165" width="245" height="26"/>
+                                    <constraints>
+                                        <constraint firstAttribute="width" constant="242" id="56T-dj-u8L"/>
+                                    </constraints>
+                                    <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Mask like *, or *.txt, or *.txt, *.jpg" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="10" id="QoT-rJ-7t8">
+                                        <font key="font" metaFont="system"/>
+                                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    </comboBoxCell>
                                     <connections>
-                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="NXo-Na-pRD"/>
-                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="FAY-ZU-Jg5">
+                                        <binding destination="-2" name="value" keyPath="self.MaskComboBoxValue" id="zlY-kZ-zvU">
+                                            <dictionary key="options">
+                                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                                <string key="NSNullPlaceholder">Mask like *, or *.txt, or *.txt, *.jpg</string>
+                                            </dictionary>
+                                        </binding>
+                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="RFO-13-TdB">
                                             <dictionary key="options">
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
-                                        <outlet property="nextKeyView" destination="CJi-sh-esy" id="32Y-yB-5Hd"/>
+                                        <outlet property="dataSource" destination="-2" id="BBQ-Qd-bAM"/>
+                                        <outlet property="delegate" destination="-2" id="QzV-2F-h63"/>
+                                        <outlet property="nextKeyView" destination="JW2-j0-Voo" id="tzM-ap-eJd"/>
                                     </connections>
-                                </button>
+                                </comboBox>
+                                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w87-Kl-zeY">
+                                    <rect key="frame" x="257" y="117" width="62" height="14"/>
+                                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Search for:" id="HCA-wY-Kq2">
+                                        <font key="font" metaFont="smallSystem"/>
+                                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                    </textFieldCell>
+                                </textField>
+                                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rhf-af-9N3">
+                                    <rect key="frame" x="322" y="112" width="121" height="22"/>
+                                    <popUpButtonCell key="cell" type="push" title="Files and folders" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="9y5-XT-tuj" id="qXn-z1-0pd">
+                                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                        <font key="font" metaFont="smallSystem"/>
+                                        <menu key="menu" id="386-Tu-LZ5">
+                                            <items>
+                                                <menuItem title="Files and folders" state="on" id="9y5-XT-tuj">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="Files" tag="1" id="HFH-1O-0dG">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                                <menuItem title="Folders" tag="2" id="cqA-Yt-0Rm">
+                                                    <modifierMask key="keyEquivalentModifierMask"/>
+                                                </menuItem>
+                                            </items>
+                                        </menu>
+                                    </popUpButtonCell>
+                                </popUpButton>
                             </subviews>
                             <constraints>
+                                <constraint firstItem="CJi-sh-esy" firstAttribute="top" secondItem="rhf-af-9N3" secondAttribute="bottom" constant="8" id="3eb-AJ-E6H"/>
+                                <constraint firstItem="rhf-af-9N3" firstAttribute="leading" secondItem="w87-Kl-zeY" secondAttribute="trailing" constant="8" symbolic="YES" id="C0g-E5-FJD"/>
+                                <constraint firstItem="rhf-af-9N3" firstAttribute="top" secondItem="Mrn-CD-zhD" secondAttribute="bottom" constant="4" id="JT8-sd-SQP"/>
                                 <constraint firstItem="Mrn-CD-zhD" firstAttribute="top" secondItem="JW2-j0-Voo" secondAttribute="bottom" constant="4" id="QLe-OZ-5y2"/>
+                                <constraint firstItem="Mrn-CD-zhD" firstAttribute="leading" secondItem="JW2-j0-Voo" secondAttribute="leading" id="QVG-al-1lI"/>
                                 <constraint firstAttribute="bottom" secondItem="kfR-KH-AUs" secondAttribute="bottom" constant="4" id="QdO-es-leH"/>
-                                <constraint firstItem="cVD-9V-sOV" firstAttribute="top" secondItem="Mrn-CD-zhD" secondAttribute="bottom" constant="4" id="UJx-Cc-XMl"/>
-                                <constraint firstItem="Mrn-CD-zhD" firstAttribute="leading" secondItem="cVD-9V-sOV" secondAttribute="leading" id="myA-PJ-UC4"/>
-                                <constraint firstItem="CJi-sh-esy" firstAttribute="top" secondItem="cVD-9V-sOV" secondAttribute="bottom" constant="8" id="v0d-NI-kDj"/>
+                                <constraint firstItem="rhf-af-9N3" firstAttribute="baseline" secondItem="w87-Kl-zeY" secondAttribute="baseline" id="jn3-xn-BXg"/>
+                                <constraint firstItem="w87-Kl-zeY" firstAttribute="leading" secondItem="Mrn-CD-zhD" secondAttribute="leading" id="o8U-ap-SOh"/>
                             </constraints>
                         </view>
                         <constraints>
@@ -593,7 +607,6 @@ DQ
                             <constraint firstItem="CJi-sh-esy" firstAttribute="leading" secondItem="kfR-KH-AUs" secondAttribute="leading" id="L5y-XF-2eK"/>
                             <constraint firstItem="O0G-eo-ej9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="3im-V9-my6" secondAttribute="leading" constant="8" id="ME1-hC-f31"/>
                             <constraint firstItem="NWO-0P-f1V" firstAttribute="centerY" secondItem="a2f-4v-JJC" secondAttribute="centerY" id="Mjl-Wm-9zK"/>
-                            <constraint firstItem="cVD-9V-sOV" firstAttribute="leading" secondItem="4kJ-ln-DDa" secondAttribute="leading" constant="6" id="NmI-zU-kax"/>
                             <constraint firstItem="a2f-4v-JJC" firstAttribute="centerY" secondItem="kfR-KH-AUs" secondAttribute="centerY" id="RJb-ZG-NWf"/>
                             <constraint firstItem="kfR-KH-AUs" firstAttribute="leading" secondItem="NWO-0P-f1V" secondAttribute="trailing" constant="8" symbolic="YES" id="TnJ-Bu-oDb"/>
                             <constraint firstItem="CJi-sh-esy" firstAttribute="trailing" secondItem="4kJ-ln-DDa" secondAttribute="trailing" id="U58-CV-eEp"/>
@@ -644,7 +657,7 @@ DQ
             <connections>
                 <outlet property="initialFirstResponder" destination="4kJ-ln-DDa" id="sXp-iX-M7j"/>
             </connections>
-            <point key="canvasLocation" x="-116" y="240.5"/>
+            <point key="canvasLocation" x="-116" y="326"/>
         </window>
         <arrayController objectClassName="FindFilesSheetFoundItem" editable="NO" selectsInsertedObjects="NO" avoidsEmptySelection="NO" automaticallyRearrangesObjects="YES" id="ehN-Ke-Ten">
             <declaredKeys>

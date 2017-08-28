@@ -227,7 +227,7 @@ static NSString *Caption(const vector<VFSListingItem> &_files)
         return  [NSString localizedStringWithFormat:
                  NSLocalizedString(@"Deleting \u201c%@\u201d",
                                    "Operation title for single item deletion"),
-                 _files.front().NSDisplayName()];
+                 _files.front().DisplayNameNS()];
     else
         return [NSString localizedStringWithFormat:
                 NSLocalizedString(@"Deleting %@ items",

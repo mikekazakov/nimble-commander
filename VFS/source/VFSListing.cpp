@@ -757,17 +757,17 @@ const string& VFSListingItem::Filename() const
     return L->Filename(I);
 }
 
-const char *VFSListingItem::Name() const
+const char *VFSListingItem::FilenameC() const
 {
     return L->Filename(I).c_str();
 }
 
-size_t VFSListingItem::NameLen() const
+size_t VFSListingItem::FilenameLen() const
 {
     return L->Filename(I).length();
 }
 
-CFStringRef VFSListingItem::CFName() const
+CFStringRef VFSListingItem::FilenameCF() const
 {
     return L->FilenameCF(I);
 }
@@ -782,7 +782,7 @@ const string& VFSListingItem::DisplayName() const
     return L->DisplayFilename(I);
 }
 
-CFStringRef VFSListingItem::CFDisplayName() const
+CFStringRef VFSListingItem::DisplayNameCF() const
 {
     return L->DisplayFilenameCF(I);
 }

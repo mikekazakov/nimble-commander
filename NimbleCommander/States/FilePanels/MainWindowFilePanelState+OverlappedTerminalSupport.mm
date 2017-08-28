@@ -178,9 +178,9 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
         if( auto entry = pc.view.item ) {
             if( IsEligbleToTryToExecuteInConsole(entry) &&
                 m_OverlappedTerminal->terminal.isShellVirgin )
-                [m_OverlappedTerminal->terminal feedShellWithInput:"./"s + entry.Name()];
+                [m_OverlappedTerminal->terminal feedShellWithInput:"./"s + entry.Filename()];
             else
-                [m_OverlappedTerminal->terminal feedShellWithInput:entry.Name()];
+                [m_OverlappedTerminal->terminal feedShellWithInput:entry.Filename()];
         }
 }
 

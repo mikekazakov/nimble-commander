@@ -75,7 +75,7 @@ bool TextualFilter::IsValidItem(const VFSListingItem& _item,
     if( textlen == 0 )
         return true; // will return true on any item with @"" filter
     
-    NSString *name = _item.NSDisplayName();
+    NSString *name = _item.DisplayNameNS();
     if( type == Anywhere ) {
         NSRange result = [name rangeOfString:text
                                      options:NSCaseInsensitiveSearch];

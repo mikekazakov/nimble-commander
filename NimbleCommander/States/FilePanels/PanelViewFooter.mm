@@ -281,7 +281,7 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     // output is a direct filename or symlink path in ->filename form
     if(!_dirent.IsSymlink()) {
         if( _dirent.Listing()->IsUniform() ) // this looks like a hacky solution
-            return _dirent.NSName(); // we're on regular panel - just return filename
+            return _dirent.FilenameNS(); // we're on regular panel - just return filename
         
         // we're on non-uniform panel like temporary, will return full path
         return [NSString stringWithUTF8StdString:_dirent.Path()];

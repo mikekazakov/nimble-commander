@@ -102,7 +102,7 @@ using namespace nc::ops;
 {
     if(m_Items->size() == 1)
         self.Label.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Do you want to delete “%@”?", "Asking user to delete a file"),
-                                  [NSString stringWithUTF8String:m_Items->front().Name()]];
+                                  [NSString stringWithUTF8String:m_Items->front().FilenameC()]];
     else
         self.Label.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Do you want to delete %@ items?", "Asking user to delete multiple files"),
                                   [NSNumber numberWithUnsignedLong:m_Items->size()]];

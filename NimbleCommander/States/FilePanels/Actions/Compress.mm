@@ -109,7 +109,7 @@ bool context::CompressHere::ValidateMenuItem( PanelController *_target, NSMenuIt
             NSLocalizedStringFromTable(@"Compress \u201c%@\u201d",
                                        @"FilePanelsContextMenu",
                                        "Compress one item here"),
-            m_Items.front().NSDisplayName()];
+            m_Items.front().DisplayNameNS()];
 
     return Predicate(_target);
 }
@@ -158,7 +158,7 @@ bool context::CompressToOpposite::ValidateMenuItem( PanelController *_target, NS
             NSLocalizedStringFromTable(@"Compress \u201c%@\u201d in Opposite Panel",
                                        @"FilePanelsContextMenu",
                                        "Compress one item"),
-            m_Items.front().NSDisplayName()];
+            m_Items.front().DisplayNameNS()];
 
     
     return Predicate(_target);

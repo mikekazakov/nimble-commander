@@ -398,7 +398,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                        andVD:(data::ItemVolatileData&)_vd
 {
     NSImage* icon = m_IconsGenerator->ImageFor(_item, _vd);
-    [_view setFilename:_item.NSDisplayName()];
+    [_view setFilename:_item.DisplayNameNS()];
     [_view setIcon:icon];
 }
 

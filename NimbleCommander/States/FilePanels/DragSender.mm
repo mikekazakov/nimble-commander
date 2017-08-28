@@ -177,7 +177,7 @@ static NSDraggingImageComponent *BuildLabelComponent(PanelDraggingItem* _item,
         return attrs;
     }();
     
-    const auto filename = _item.item.NSName();
+    const auto filename = _item.item.FilenameNS();
     const auto estimated_label_bounds = [filename boundingRectWithSize:NSMakeSize(max_label_width,0)
                                                                options:0
                                                             attributes:attributes];

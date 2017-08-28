@@ -13,7 +13,7 @@
         return "";
     
     if(auto item = self.view.item)
-        return item.Name();
+        return item.Filename();
     
     return "";
 }
@@ -36,7 +36,7 @@
     
     auto item = self.view.item;
     if(item && !item.IsDotDot())
-        return vector<string>{ item.Name() };
+        return vector<string>{ item.Filename() };
     
     return {};
 }
@@ -107,7 +107,7 @@
         return self.data.SelectedEntriesFilenames();
     
     if(auto item = self.view.item)
-        return vector<string>{ item.Name() };
+        return vector<string>{ item.Filename() };
     
     return {};
 }

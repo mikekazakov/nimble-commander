@@ -10,12 +10,12 @@ NSString* VFSListing::DisplayFilenameNS(unsigned _ind) const
     return (__bridge NSString*)DisplayFilenameCF(_ind);
 }
 
-NSString* VFSListingItem::NSName() const
+NSString* VFSListingItem::FilenameNS() const
 {
     return L->FilenameNS(I);
 }
 
-NSString* VFSListingItem::NSDisplayName() const
+NSString* VFSListingItem::DisplayNameNS() const
 {
     return L->DisplayFilenameNS(I);
 }

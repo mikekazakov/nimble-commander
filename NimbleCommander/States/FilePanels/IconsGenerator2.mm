@@ -321,7 +321,7 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolati
     if( auto icon = GetCachedExtensionIcon(_item) )
         is.filetype = icon;
 
-    auto rel_path = _item.IsDotDot() ? _item.Directory() : string(_item.Directory()) + _item.Name();
+    auto rel_path = _item.IsDotDot() ? _item.Directory() : _item.Directory() + _item.Filename();
     bool is_native_fs = _item.Host()->IsNativeFS();
     
     // check if we already have thumbnail built

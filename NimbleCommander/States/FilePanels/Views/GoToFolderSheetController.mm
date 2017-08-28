@@ -27,10 +27,10 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
         if( !i.IsDir() )
             continue;
         
-        if(  i.NSDisplayName().length < range.length )
+        if(  i.DisplayNameNS().length < range.length )
             continue;
         
-        auto compare = [i.NSDisplayName() compare:prefix
+        auto compare = [i.DisplayNameNS() compare:prefix
                                           options:NSCaseInsensitiveSearch
                                             range:range];
         

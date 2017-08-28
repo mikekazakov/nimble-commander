@@ -1,0 +1,356 @@
+#include "Internal.h"
+#include "VFSNetWebDAVHost.h"
+#include <boost/algorithm/string/split.hpp>
+#include <Habanero/algo.h>
+#include <pugixml/pugixml.hpp>
+#include "DateTimeParser.h"
+
+namespace nc::vfs::webdav {
+    
+const char *HostConfiguration::Tag() const
+{
+    return WebDAVHost::Tag;
+}
+    
+const char *HostConfiguration::Junction() const
+{
+    return server_url.c_str();
+}
+    
+bool HostConfiguration::operator==(const HostConfiguration&_rhs) const
+{
+    return server_url == _rhs.server_url &&
+            user       == _rhs.user &&
+            passwd     == _rhs.passwd &&
+            path       == _rhs.path &&
+            port       == _rhs.port;
+}
+
+static size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp)
+{
+    const auto sz = size * nmemb;
+    auto &str = *(string*)userp;
+    str.insert( str.size(), (const char *)buffer, sz );
+    return sz;
+}
+
+struct CURLInputStringContext
+{
+    string_view data;
+    ssize_t offset = 0;
+    
+    static size_t Read(void *_buf, size_t _size, size_t _nmemb, void *_userp)
+    {
+        auto &context = *(CURLInputStringContext*)_userp;
+        const auto to_read = min( context.data.size() - context.offset, _size * _nmemb );
+        memcpy( _buf, context.data.data() + context.offset, to_read );
+        context.offset += to_read;
+        return to_read;
+    }
+    
+//    #define CURL_SEEKFUNC_OK       0
+//#define CURL_SEEKFUNC_FAIL     1 /* fail the entire transfer */
+//#define CURL_SEEKFUNC_CANTSEEK 2 /* tell libcurl seeking can't be done, so
+//                                    libcurl might try other means instead */
+// 
+    
+    static int Seek(void *_userp, curl_off_t _offset, int _origin)
+    {
+        auto &context = *(CURLInputStringContext*)_userp;
+        if( _origin == SEEK_SET ) {
+            if( _offset >= 0 && _offset <= context.data.size() ) {
+                context.offset = _offset;
+                return CURL_SEEKFUNC_OK;
+            }
+        }
+        if( _origin == SEEK_CUR ) {
+            const auto pos = context.offset + _offset;
+            if( pos >= 0 && pos <= context.data.size() ) {
+                context.offset = pos;
+                return CURL_SEEKFUNC_OK;
+            }
+        }
+        if( _origin == SEEK_END ) {
+            const auto pos = (ssize_t)context.data.size() + _offset;
+            if( pos >= 0 && pos <= context.data.size() ) {
+                context.offset = pos;
+                return CURL_SEEKFUNC_OK;
+            }
+        }
+        return CURL_SEEKFUNC_CANTSEEK;
+    }
+};
+
+
+static HTTPRequests::Mask ParseSupportedRequests( const string &_options_response_header )
+{
+    vector<string> lines;
+    boost::split(lines, _options_response_header,
+                 [](char _c){ return _c == '\r' || _c == '\n'; }, boost::token_compress_on);
+
+    HTTPRequests::Mask mask = HTTPRequests::None;
+    
+    static const auto allowed_prefix = "Allow: "s;
+    const auto allowed = find_if(begin(lines), end(lines), [](const auto &_line){
+        return has_prefix(_line, allowed_prefix);
+    });
+    if( allowed != end(lines) ) {
+        const auto requests_set = allowed->substr( allowed_prefix.size() );
+//        cout << requests_set << endl;
+        vector<string> requests;
+        boost::split(requests, requests_set,
+                     [](char _c){ return _c == ',' || _c == ' '; },
+                     boost::token_compress_on);
+        for( const auto &request: requests ) {
+            if( request == "GET" )          mask |= HTTPRequests::Get;
+            if( request == "HEAD" )         mask |= HTTPRequests::Head;
+            if( request == "POST" )         mask |= HTTPRequests::Post;
+            if( request == "PUT" )          mask |= HTTPRequests::Put;
+            if( request == "DELETE" )       mask |= HTTPRequests::Delete;
+            if( request == "CONNECT" )      mask |= HTTPRequests::Connect;
+            if( request == "OPTIONS" )      mask |= HTTPRequests::Options;
+            if( request == "TRACE" )        mask |= HTTPRequests::Trace;
+            if( request == "COPY" )         mask |= HTTPRequests::Copy;
+            if( request == "LOCK" )         mask |= HTTPRequests::Lock;
+            if( request == "MKCOL" )        mask |= HTTPRequests::Mkcol;
+            if( request == "MOVE" )         mask |= HTTPRequests::Move;
+            if( request == "PROPFIND" )     mask |= HTTPRequests::PropFind;
+            if( request == "PROPPATCH" )    mask |= HTTPRequests::PropPatch;
+            if( request == "UNLOCK" )       mask |= HTTPRequests::Unlock;
+        }
+    }
+
+    return mask;
+}
+
+void HTTPRequests::Print( const Mask _mask )
+{
+    if( _mask == 0 )
+        return;
+
+    if( _mask & HTTPRequests::Get )         cout << "GET ";
+    if( _mask & HTTPRequests::Head )        cout << "HEAD ";
+    if( _mask & HTTPRequests::Post )        cout << "POST ";
+    if( _mask & HTTPRequests::Put )         cout << "PUT ";
+    if( _mask & HTTPRequests::Delete )      cout << "DELETE ";
+    if( _mask & HTTPRequests::Connect )     cout << "CONNECT ";
+    if( _mask & HTTPRequests::Options )     cout << "OPTIONS ";
+    if( _mask & HTTPRequests::Trace )       cout << "TRACE " ;
+    if( _mask & HTTPRequests::Copy )        cout << "COPY ";
+    if( _mask & HTTPRequests::Lock )        cout << "LOCK ";
+    if( _mask & HTTPRequests::Mkcol )       cout << "MKCOL ";
+    if( _mask & HTTPRequests::Move )        cout << "MOVE ";
+    if( _mask & HTTPRequests::PropFind )    cout << "PROPFIND ";
+    if( _mask & HTTPRequests::PropPatch )   cout << "PROPPATCH ";
+    if( _mask & HTTPRequests::Unlock )      cout << "UNLOCK ";
+    cout << endl;
+}
+
+//OPTIONS,GET,HEAD,POST,DELETE,TRACE,PROPFIND,PROPPATCH,COPY,MOVE,LOCK,UNLOCK
+
+
+
+pair<int, HTTPRequests::Mask> FetchServerOptions( const HostConfiguration& _options )
+{
+    const auto curl = curl_easy_init();
+    const auto clear_curl = at_scope_end([=]{ curl_easy_cleanup(curl); });
+    
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC | CURLAUTH_DIGEST);
+    curl_easy_setopt(curl, CURLOPT_USERNAME, _options.user.c_str());
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, _options.passwd.c_str());
+    
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "OPTIONS");
+    curl_easy_setopt(curl, CURLOPT_URL, _options.full_url.c_str());
+    string response;
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+    string headers;
+    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
+    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
+
+    const auto rc = curl_easy_perform(curl);
+    if( rc == CURLE_OK ) {
+        const auto requests = ParseSupportedRequests(headers);
+        return {rc, requests};
+    }
+    else {
+        return {rc, HTTPRequests::None};
+    }
+}
+
+[[maybe_unused]] const auto g_FullListingMessage =
+    "<?xml version=\"1.0\"?>"
+    "<a:propfind xmlns:a=\"DAV:\">"
+        "<a:allprop/>"
+    "</a:propfind>";
+[[maybe_unused]] const auto g_LeanListingMessage =
+    "<?xml version=\"1.0\"?>"
+    "<a:propfind xmlns:a=\"DAV:\">"
+        "<a:prop><a:resourcetype/></a:prop>\n"
+        "<a:prop><a:getcontentlength/></a:prop>\n"
+        "<a:prop><a:getlastmodified/></a:prop>\n"
+        "<a:prop><a:creationdate/></a:prop>\n"
+    "</a:propfind>";
+
+
+
+static time_t ParseModDate( const char *_date_time )
+{
+    if( const auto t = DateTimeFromRFC1123(_date_time); t >= 0 )
+        return t;
+    if( const auto t = DateTimeFromRFC850(_date_time); t >= 0 )
+        return t;
+    return DateTimeFromASCTime(_date_time);
+}
+
+optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
+{
+    using namespace pugi;
+    static const auto href_query    = xpath_query{ "./*[local-name()='href']" };
+    static const auto len_query     = xpath_query{ "./*/*/*[local-name()='getcontentlength']" };
+    static const auto restype_query = xpath_query{ "./*/*/*[local-name()='resourcetype']" };    
+    static const auto credate_query = xpath_query{ "./*/*/*[local-name()='creationdate']" };
+    static const auto moddate_query = xpath_query{ "./*/*/*[local-name()='getlastmodified']" };
+    
+    PropFindResponse response;
+    
+    if( const auto href = _node.select_node(href_query) )
+        if( const auto c = href.node().first_child() )
+            if( const auto v = c.value() )
+                response.path = v;
+    if( response.path.empty() )
+        return nullopt;
+
+    if( const auto len = _node.select_node(len_query) )
+        if( const auto c = len.node().first_child() )
+            if( const auto v = c.value() )
+                response.size = atol(v);
+    
+    if( const auto res = _node.select_node(restype_query) )
+        if( const auto c = res.node().first_child() )
+            if( strstr(c.name(), "collection") )
+                response.is_directory = true;
+    
+    if( const auto credate = _node.select_node(credate_query) )
+        if( const auto c = credate.node().first_child() )
+            if( const auto v = c.value() )
+                if( const auto t = DateTimeFromRFC3339(v);  t >= 0 )
+                    response.creation_date = t;
+    
+    if( const auto modddate = _node.select_node(moddate_query) )
+        if( const auto c = modddate.node().first_child() )
+            if( const auto v = c.value() )
+                if(const auto t = ParseModDate(v);  t >= 0 )
+                    response.modification_date = t;
+
+    return optional<PropFindResponse>{ move(response) };
+}
+
+vector<PropFindResponse> ParseDAVListing( const string &_xml_listing )
+{
+    using namespace pugi;
+
+    xml_document doc;
+    xml_parse_result result = doc.load_string( _xml_listing.c_str() );
+    if( !result )
+        return {};
+
+    vector<PropFindResponse> items;
+    const auto response_nodes = doc.select_nodes("/*/*[local-name()='response']");
+    for( const auto &response: response_nodes )
+        if( auto item = ParseResponseNode(response.node()) )
+            items.emplace_back( move(*item) );
+    
+    return items;
+}
+
+vector<PropFindResponse> PruneFilepaths( vector<PropFindResponse> _items, const string &_base_path){
+    if( _base_path.front() != '/' || _base_path.back() != '/' )
+        throw invalid_argument("PruneFilepaths need a path with heading and trailing slashes");
+    const auto base_path_len = _base_path.length();
+    _items.erase(remove_if(begin(_items), end(_items), [&](auto &_item){
+            if( !has_prefix(_item.path, _base_path ) )
+                return true;
+        
+            _item.path.erase(0, base_path_len);
+        
+            if( _item.path.empty() ) {
+                _item.path = "..";
+            }
+            else if( _item.path.back() == '/' ) {
+                if( !_item.is_directory )
+                    return true;
+                _item.path.pop_back();
+            }
+     
+            return false;
+    }), end(_items));
+    return _items;
+}
+
+pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _options,
+                                                    const string &_path )
+{
+    if( _path.back() != '/' )
+        throw invalid_argument("path must contain a trailing slash");
+
+    const auto curl = curl_easy_init();
+    const auto clear_curl = at_scope_end([=]{ curl_easy_cleanup(curl); });
+    
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC | CURLAUTH_DIGEST);
+    curl_easy_setopt(curl, CURLOPT_USERNAME, _options.user.c_str());
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, _options.passwd.c_str());
+    
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PROPFIND");
+    struct curl_slist *chunk = NULL;
+    chunk = curl_slist_append(chunk, "Depth: 1");
+    chunk = curl_slist_append(chunk, "translate: f");
+    
+    chunk = curl_slist_append(chunk, "Content-Type: application/xml; charset=\"utf-8\"");
+
+    const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+    auto url = _options.full_url;
+    if( _path != "/" )
+        url += _path;
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+    CURLInputStringContext context;
+//    context.data = g_ListingMessage;
+    context.data = g_LeanListingMessage;
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+    curl_easy_setopt(curl, CURLOPT_READFUNCTION, CURLInputStringContext::Read);
+    curl_easy_setopt(curl, CURLOPT_READDATA, &context);
+    curl_easy_setopt(curl, CURLOPT_SEEKFUNCTION, CURLInputStringContext::Seek);
+    curl_easy_setopt(curl, CURLOPT_SEEKDATA, &context);
+    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, context.data.size());
+    
+    string response;
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+    
+    string headers;
+    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
+    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
+
+    const auto rc = curl_easy_perform(curl);
+    if( rc == CURLE_OK ) {
+        auto items = ParseDAVListing(response);
+        const auto base_path = "/"s + _options.path + _path;
+        items = PruneFilepaths(move(items), base_path);
+//                (_path == "/" ? _path
+//        items = PruneFilepaths(move(items), "/"s + _options.path + "/"s);
+//        int a = 10;
+        return {rc, move(items)};
+    }
+    return {rc, {}};
+}
+
+int CURlErrorToVFSError( int _curle )
+{
+    // TODO: write
+    return VFSError::FromErrno(EIO);
+}
+
+}

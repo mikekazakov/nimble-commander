@@ -23,7 +23,7 @@ void CalculateChecksum::Perform( PanelController *_target, id _sender ) const
     auto selected_entries = _target.selectedEntriesOrFocusedEntry;
     for( auto &i: selected_entries )
         if( i.IsReg() && !i.IsSymlink() ) {
-            filenames.emplace_back( i.Name() );
+            filenames.emplace_back( i.Filename() );
             sizes.emplace_back( i.Size() );
         }
 

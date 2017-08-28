@@ -116,7 +116,7 @@ static string MakeCanonicPath(string _input)
                                                 [NSNumber numberWithInt:amount]];
         else
             self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Copy \u201c%@\u201d to:", "Copy files sheet prompt, copying single file"),
-                                                [NSString stringWithUTF8String:m_SourceItems.front().Name()]];
+                                                [NSString stringWithUTF8String:m_SourceItems.front().FilenameC()]];
         self.CopyButton.title = self.CopyButtonStringStub.title;
     }
     else {
@@ -125,7 +125,7 @@ static string MakeCanonicPath(string _input)
                                                 [NSNumber numberWithInt:amount]];
         else
             self.DescriptionText.stringValue = [NSString stringWithFormat:NSLocalizedString(@"Rename/move \u201c%@\u201d to:", "Move files sheet prompt, moving single file"),
-                                                [NSString stringWithUTF8String:m_SourceItems.front().Name()]];
+                                                [NSString stringWithUTF8String:m_SourceItems.front().FilenameC()]];
         self.CopyButton.title = self.RenameButtonStringStub.title;
     }
     [self.VerifySetting selectItemWithTag:(int)m_Options.verification];

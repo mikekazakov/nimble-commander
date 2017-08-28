@@ -20,8 +20,8 @@ ExternalEntryKey::ExternalEntryKey(const VFSListingItem& _item,
                                    const ItemVolatileData &_item_vd):
     ExternalEntryKey()
 {
-    name = _item.Name();
-    display_name = _item.NSDisplayName();
+    name = _item.Filename();
+    display_name = _item.DisplayNameNS();
     extension = _item.HasExtension() ? _item.Extension() : "";
     size = _item_vd.size;
     mtime = _item.MTime();

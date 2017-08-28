@@ -33,7 +33,7 @@ bool CopyToPasteboard::ValidateMenuItem( PanelController *_target, NSMenuItem *_
                 NSLocalizedStringFromTable(@"Copy \u201c%@\u201d",
                                            @"FilePanelsContextMenu",
                                            "Copy one item"),
-                          item.NSDisplayName()];
+                          item.DisplayNameNS()];
         }
         else
             _item.title = @"";
@@ -81,7 +81,7 @@ bool context::CopyToPasteboard::ValidateMenuItem(PanelController *_target,
             NSLocalizedStringFromTable(@"Copy \u201c%@\u201d",
                                        @"FilePanelsContextMenu",
                                        "Copy one item"),
-                       m_Items.front().NSDisplayName()];
+                       m_Items.front().DisplayNameNS()];
     return Predicate(_target);
 }
 

@@ -780,7 +780,7 @@ static NSString *Title( const vector<VFSListingItem> &_items )
     if( _items.size() == 1 )
         return [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for \u201c%@\u201d",
                                                             "Title for file attributes sheet, single item"),
-                [NSString stringWithUTF8String:_items.front().Name()]];
+                [NSString stringWithUTF8String:_items.front().FilenameC()]];
     else
         return [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for %@ selected items",
                                                             "Title for file attributes sheet, multiple items"),

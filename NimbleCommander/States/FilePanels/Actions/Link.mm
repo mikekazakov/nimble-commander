@@ -54,7 +54,7 @@ void CreateSymlink::Perform( PanelController *_target, id _sender ) const
     const auto link_path = opposite.currentDirectoryPath +
         ( item.IsDotDot() ?
             _target.data.DirectoryPathShort() :
-            item.Name() );
+            item.Filename() );
 
     const auto sheet = [[NCOpsCreateSymlinkDialog alloc] initWithSourcePath:source_path
                                                                 andDestPath:link_path];
@@ -94,7 +94,7 @@ void AlterSymlink::Perform( PanelController *_target, id _sender ) const
         return;
     
     const auto sheet = [[NCOpsAlterSymlinkDialog alloc] initWithSourcePath:item.Symlink()
-                                                               andLinkName:item.Name()];
+                                                               andLinkName:item.Filename()];
     const auto handler = ^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;
@@ -126,7 +126,7 @@ void CreateHardlink::Perform( PanelController *_target, id _sender ) const
         return;
     
     const auto item = _target.view.item;
-    const auto sheet = [[NCOpsCreateHardlinkDialog alloc] initWithSourceName:item.Name()];
+    const auto sheet = [[NCOpsCreateHardlinkDialog alloc] initWithSourceName:item.Filename()];
     const auto handler = ^(NSModalResponse returnCode) {
         if( returnCode != NSModalResponseOK )
             return;

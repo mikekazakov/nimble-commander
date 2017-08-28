@@ -394,7 +394,7 @@ static string BuildTitle(const vector<VFSListingItem> &_source_files,
 {
     if ( _source_files.size() == 1)
         return OpTitleForSingleItem(_options.docopy,
-                                    _source_files.front().NSName(),
+                                    _source_files.front().FilenameNS(),
                                     ExtractCopyToName(_destination_path)).UTF8String;
     else
         return OpTitleForMultipleItems(_options.docopy,

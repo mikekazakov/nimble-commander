@@ -280,7 +280,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     const auto count = m_Data ? (int)m_Data->SortedDirectoryEntries().size() : 0;
     vector<CFStringRef> strings(count);
     for( auto i = 0; i < count; ++i )
-        strings[i] = m_Data->EntryAtSortPosition(i).CFDisplayName();
+        strings[i] = m_Data->EntryAtSortPosition(i).DisplayNameCF();
     m_FilenamesPxWidths = FontGeometryInfo::CalculateStringsWidths(
         strings,
         CurrentTheme().FilePanelsBriefFont()

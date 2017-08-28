@@ -52,7 +52,7 @@ using namespace nc::panel;
 - (void) setItem:(VFSListingItem)_item
 {
     m_Item = _item;
-    self.carrier.filename = m_Item.NSDisplayName();
+    self.carrier.filename = m_Item.DisplayNameNS();
     self.carrier.isSymlink = m_Item.IsSymlink();    
     [self updateItemLayout];
 }

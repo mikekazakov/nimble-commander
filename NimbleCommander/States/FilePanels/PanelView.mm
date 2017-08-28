@@ -742,7 +742,7 @@ using namespace nc::panel;
     
     const auto hash = listing.Host()->FullHashForPath(listing.Directory().c_str());
     auto &storage = m_States[ hash  ];
-    storage.focused_item = item.Name();
+    storage.focused_item = item.Filename();
 }
 
 - (void) loadPathState
@@ -812,7 +812,7 @@ using namespace nc::panel;
         if( auto sself = weak_self ) {
             if( !sself->m_RenamingEditor ||
                 !sself.item ||
-                sself.item.Name() != sself->m_RenamingEditor.originalFilename )
+                sself.item.Filename() != sself->m_RenamingEditor.originalFilename )
                 return;
             [sself.delegate PanelViewRenamingFieldEditorFinished:sself
                                                             text:_new_filename];
@@ -857,7 +857,7 @@ using namespace nc::panel;
 {
     assert( dispatch_is_main_queue() );
     if( m_RenamingEditor )
-        if( !self.item || m_RenamingEditor.originalFilename != self.item.Name() )
+        if( !self.item || m_RenamingEditor.originalFilename != self.item.Filename() )
             [self discardFieldEditor];
     
     [m_ItemsView dataChanged];

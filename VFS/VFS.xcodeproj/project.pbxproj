@@ -84,6 +84,10 @@
 		CFFA94ED1F45468A0035E606 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273F1E42EC9A00603077 /* Foundation.framework */; };
 		CFFA94EE1F4546B80035E606 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FF1E42DD6000603077 /* LDAP.framework */; };
 		CFFA950C1F4570BA0035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94AF1F4543840035E606 /* libVFS.dylib */; };
+		CFFA95561F4E63970035E606 /* VFSNetWebDAVHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95541F4E60850035E606 /* VFSNetWebDAVHost.mm */; };
+		CFFA95581F4E65A60035E606 /* WebDAV_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95571F4E65A60035E606 /* WebDAV_Tests.mm */; };
+		CFFA955C1F4EA72A0035E606 /* Internal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA955A1F4EA7200035E606 /* Internal.mm */; };
+		CFFA95601F5291540035E606 /* DateTimeParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA955E1F528A7B0035E606 /* DateTimeParser.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -220,6 +224,13 @@
 		CFFA94E51F4544F90035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CFFA94E71F4544FB0035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 		CFFA94EB1F4546480035E606 /* DirectoryService.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DirectoryService.framework; path = System/Library/Frameworks/DirectoryService.framework; sourceTree = SDKROOT; };
+		CFFA95531F4E60850035E606 /* VFSNetWebDAVHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetWebDAVHost.h; path = source/NetWebDAV/VFSNetWebDAVHost.h; sourceTree = "<group>"; };
+		CFFA95541F4E60850035E606 /* VFSNetWebDAVHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetWebDAVHost.mm; path = source/NetWebDAV/VFSNetWebDAVHost.mm; sourceTree = "<group>"; };
+		CFFA95571F4E65A60035E606 /* WebDAV_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDAV_Tests.mm; path = tests/WebDAV_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CFFA95591F4EA7200035E606 /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/NetWebDAV/Internal.h; sourceTree = "<group>"; };
+		CFFA955A1F4EA7200035E606 /* Internal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Internal.mm; path = source/NetWebDAV/Internal.mm; sourceTree = "<group>"; };
+		CFFA955D1F528A7B0035E606 /* DateTimeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DateTimeParser.h; path = source/NetWebDAV/DateTimeParser.h; sourceTree = "<group>"; };
+		CFFA955E1F528A7B0035E606 /* DateTimeParser.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DateTimeParser.mm; path = source/NetWebDAV/DateTimeParser.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,13 +304,14 @@
 		CF1846FF1E41C86D008B7C9F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */,
+				CF1847021E41C86D008B7C9F /* Info.plist */,
 				CF1847091E41C8A5008B7C9F /* tests_common.h */,
 				CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */,
+				CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */,
 				CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */,
 				CF18470C1E41C8A5008B7C9F /* VFSPS_Tests.mm */,
 				CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */,
-				CF1847021E41C86D008B7C9F /* Info.plist */,
+				CFFA95571F4E65A60035E606 /* WebDAV_Tests.mm */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -397,6 +409,7 @@
 				CF11687C1E91FA9D00CC515A /* NetDropbox */,
 				CF69D0341DA2323400992B84 /* NetFTP */,
 				CF69D0471DA232E300992B84 /* NetSFTP */,
+				CFFA95521F4E604D0035E606 /* NetWebDAV */,
 				CF69D06E1DA2352000992B84 /* PS */,
 				CF69D02F1DA231DA00992B84 /* XAttr */,
 				CF69D00A1DA228C800992B84 /* VFS-prefix.pch */,
@@ -514,6 +527,19 @@
 			name = PS;
 			sourceTree = "<group>";
 		};
+		CFFA95521F4E604D0035E606 /* NetWebDAV */ = {
+			isa = PBXGroup;
+			children = (
+				CFFA955D1F528A7B0035E606 /* DateTimeParser.h */,
+				CFFA955E1F528A7B0035E606 /* DateTimeParser.mm */,
+				CFFA95591F4EA7200035E606 /* Internal.h */,
+				CFFA955A1F4EA7200035E606 /* Internal.mm */,
+				CFFA95531F4E60850035E606 /* VFSNetWebDAVHost.h */,
+				CFFA95541F4E60850035E606 /* VFSNetWebDAVHost.mm */,
+			);
+			name = NetWebDAV;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -592,8 +618,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				CF1846FD1E41C86D008B7C9F /* VFS Tests */,
 				CFFA94AE1F4543840035E606 /* VFS */,
+				CF1846FD1E41C86D008B7C9F /* VFS Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -615,6 +641,7 @@
 			files = (
 				CF1847101E41C8A5008B7C9F /* VFSPS_Tests.mm in Sources */,
 				CF1168871E91FE9300CC515A /* VFSDropbox_Tests.mm in Sources */,
+				CFFA95581F4E65A60035E606 /* WebDAV_Tests.mm in Sources */,
 				CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */,
 				CF18472E1E41CF6B008B7C9F /* VFSArchive_Tests.mm in Sources */,
 				CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */,
@@ -628,6 +655,7 @@
 				CFFA94CE1F4543C70035E606 /* VFSPSHost.mm in Sources */,
 				CFFA94BE1F4543AB0035E606 /* VFSNetDropboxFile.mm in Sources */,
 				CFFA94D81F4543ED0035E606 /* VFSListing.cpp in Sources */,
+				CFFA95601F5291540035E606 /* DateTimeParser.mm in Sources */,
 				CFFA94B41F4543920035E606 /* VFSArchiveHost.mm in Sources */,
 				CFFA94B71F45439B0035E606 /* VFSArchiveUnRARHost.cpp in Sources */,
 				CFFA94CB1F4543BC0035E606 /* VFSNetSFTPOSDetector.cpp in Sources */,
@@ -657,6 +685,8 @@
 				CFFA94B81F45439B0035E606 /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CFFA94CD1F4543C70035E606 /* VFSPSFile.cpp in Sources */,
 				CFFA94C61F4543B30035E606 /* VFSNetFTPInternals.mm in Sources */,
+				CFFA95561F4E63970035E606 /* VFSNetWebDAVHost.mm in Sources */,
+				CFFA955C1F4EA72A0035E606 /* Internal.mm in Sources */,
 				CFFA94B51F4543920035E606 /* VFSArchiveInternal.mm in Sources */,
 				CFFA94DA1F4543ED0035E606 /* VFSPath.cpp in Sources */,
 				CFFA94D11F4543ED0035E606 /* VFSConfiguration.cpp in Sources */,
@@ -751,6 +781,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/include/",
 					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
+					"$(PROJECT_DIR)/../3rd_Party/pugixml/include/",
 					"$(PROJECT_DIR)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -759,6 +790,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/built",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/built",
+					"$(PROJECT_DIR)/../3rd_Party/pugixml/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -779,6 +811,7 @@
 					"-lssh2",
 					"-lunrar",
 					"-lcurl",
+					"-lpugixml",
 				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -833,6 +866,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/include/",
 					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
+					"$(PROJECT_DIR)/../3rd_Party/pugixml/include/",
 					"$(PROJECT_DIR)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -841,6 +875,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/built",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/built",
+					"$(PROJECT_DIR)/../3rd_Party/pugixml/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -860,6 +895,7 @@
 					"-lssh2",
 					"-lunrar",
 					"-lcurl",
+					"-lpugixml",
 				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

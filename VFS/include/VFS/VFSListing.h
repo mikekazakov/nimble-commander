@@ -177,18 +177,18 @@ public:
     
     // currently mimicking old VFSListingItem interface, may change methods names later
     const string&   Filename()          const;
-    const char     *Name()              const;
-    size_t          NameLen()           const;
-    CFStringRef     CFName()            const;
+    const char     *FilenameC()         const;
+    size_t          FilenameLen()       const;
+    CFStringRef     FilenameCF()        const;
 #ifdef __OBJC__
-    NSString*       NSName()            const;
+    NSString*       FilenameNS()        const;
 #endif
 
     bool            HasDisplayName()    const;
     const string&   DisplayName()       const;
-    CFStringRef     CFDisplayName()     const;
+    CFStringRef     DisplayNameCF()     const;
 #ifdef __OBJC__
-    NSString*       NSDisplayName()     const;
+    NSString*       DisplayNameNS()     const;
 #endif
 
     bool            HasExtension()      const;

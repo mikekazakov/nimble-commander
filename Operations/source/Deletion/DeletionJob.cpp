@@ -53,7 +53,7 @@ void DeletionJob::DoScan()
         else {
             const auto is_ea_storage = IsEAStorage(*item.Host(),
                                                    item.Directory(),
-                                                   item.Name(),
+                                                   item.FilenameC(),
                                                    item.UnixType());
             if( !is_ea_storage ) {
                 m_Paths.push_back( item.Filename(), nullptr );

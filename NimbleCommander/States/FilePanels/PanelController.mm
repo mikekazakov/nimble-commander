@@ -132,7 +132,7 @@ GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const data:
 {
     auto cur_pos = _view.curpos;
     if(cur_pos >= 0 && m_View.item ) {
-        m_OldCursorName = m_View.item.Name();
+        m_OldCursorName = m_View.item.Filename();
         m_OldEntrySortKeys = _data.EntrySortKeysAtSortPosition(cur_pos);
     }
 }
@@ -637,7 +637,7 @@ static bool RouteKeyboardInputIntoTerminal()
                 dispatch_to_main_queue([=]{
                     GenericCursorPersistance pers(m_View, m_Data);
                     // may cause re-sorting if current sorting is by size
-                    if( m_Data.SetCalculatedSizeForDirectory(i.Name(), i.Directory().c_str(), result) ) {
+                    if( m_Data.SetCalculatedSizeForDirectory(i.FilenameC(), i.Directory().c_str(), result) ) {
                         [m_View dataUpdated];
                         [m_View volatileDataChanged];
                         pers.Restore();
@@ -785,7 +785,7 @@ static bool RouteKeyboardInputIntoTerminal()
         !m_View.item ||
         m_View.item.IsDotDot() ||
         !m_View.item.Host()->IsWritable() ||
-        _filename == m_View.item.Name())
+        _filename == m_View.item.Filename())
         return;
     
     string target_fn = _filename;

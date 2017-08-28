@@ -104,7 +104,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
             fi.item = e;
             fi.mod_time = e.MTime();
             localtime_r(&fi.mod_time, &fi.mod_time_tm);
-            fi.filename = e.NSName();
+            fi.filename = e.FilenameNS();
             
             static auto cs = [NSCharacterSet characterSetWithCharactersInString:@"."];
             auto r = [fi.filename rangeOfCharacterFromSet:cs options:NSBackwardsSearch];
@@ -119,7 +119,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
             }
             
             m_FileInfos.emplace_back( move(fi) );
-            m_ResultSource.emplace_back( e.Directory() + e.Name() );
+            m_ResultSource.emplace_back( e.Directory() + e.Filename() );
         }
         
         
@@ -127,7 +127,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
             
             {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
-                tf.stringValue = e.NSName();
+                tf.stringValue = e.FilenameNS();
                 tf.bordered = false;
                 tf.editable = false;
                 tf.drawsBackground = false;
@@ -137,7 +137,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
             
             {
                 NSTextField *tf = [[NSTextField alloc] initWithFrame:NSRect()];
-                tf.stringValue = e.NSName();
+                tf.stringValue = e.FilenameNS();
                 tf.bordered = false;
                 tf.editable = false;
                 tf.drawsBackground = false;

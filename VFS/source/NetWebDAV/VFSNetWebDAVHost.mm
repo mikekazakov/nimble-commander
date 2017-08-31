@@ -45,16 +45,18 @@ WebDAVHost::WebDAVHost(const string &_serv_url,
     I.reset( new State{Config()} );
 //    I->m_Pool.Return
 
+    {
+        auto ar = I->m_Pool.Get();
+        auto [rc, requests] = FetchServerOptions( Config(), *ar.connection );
+        if( rc != CURLE_OK ) {
+            throw rc;
+        }
+        if( (requests & HTTPRequests::MinimalRequiredSet) !=  HTTPRequests::MinimalRequiredSet ) {
+            HTTPRequests::Print(requests);
+            throw VFSErrorException( VFSError::FromErrno(EPROTONOSUPPORT) );
+        }
+    }
 
-    auto ar = I->m_Pool.Get();
-    auto [rc, requests] = FetchServerOptions( Config(), *ar.connection );
-    if( rc != CURLE_OK ) {   
-        throw rc;
-    }
-    if( (requests & HTTPRequests::MinimalRequiredSet) !=  HTTPRequests::MinimalRequiredSet ) {
-        HTTPRequests::Print(requests);
-        throw VFSErrorException( VFSError::FromErrno(EPROTONOSUPPORT) );
-    }
 }
 
 WebDAVHost::~WebDAVHost()
@@ -94,17 +96,12 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
             return VFSError::GenericError;
     }
 
-    if( _flags & VFSFlags::F_NoDotDot ) {
+    if( (_flags & VFSFlags::F_NoDotDot) || path == "/" )
         items.erase( remove_if(begin(items), end(items), [](const auto &_item){
             return _item.filename == "..";
         }), end(items));
-    }
-    else {
-        partition( begin(items), end(items), [](const auto &_i){
-            return _i.filename == "..";
-        
-        });
-    }
+    else
+        partition( begin(items), end(items), [](const auto &_i){ return _i.filename == ".."; });
 
     VFSListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
@@ -133,6 +130,45 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
     }
 
     _target = VFSListing::Build(move(listing_source));
+    return VFSError::Ok;
+}
+
+int WebDAVHost::IterateDirectoryListing(const char *_path,
+                                        const function<bool(const VFSDirEnt &_dirent)> &_handler)
+{
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+
+    const auto path =  EnsureTrailingSlash(_path);
+
+    vector<PropFindResponse> items;
+    if( auto cached = I->m_Cache.Listing(path) ) {
+        items = move( *cached );
+    }
+    else {
+        const auto refresh_rc = RefreshListingAtPath(path, nullptr);
+        if( refresh_rc != VFSError::Ok )
+            return refresh_rc;
+        
+        if( auto cached = I->m_Cache.Listing(path) )
+            items = move( *cached );
+        else
+            return VFSError::GenericError;
+    }
+
+    items.erase( remove_if(begin(items), end(items), [](const auto &_item){
+            return _item.filename == "..";
+        }), end(items));
+
+    for( const auto &i: items ) {
+        VFSDirEnt e;
+        strcpy(e.name, i.filename.c_str());
+        e.name_len = i.filename.length();
+        e.type = i.is_directory ? DT_DIR : DT_REG;
+        if( !_handler(e) )
+            return VFSError::Cancelled;
+    }
+
     return VFSError::Ok;
 }
 
@@ -197,6 +233,29 @@ int WebDAVHost::RefreshListingAtPath( const string &_path, const VFSCancelChecke
     
     return VFSError::Ok;
 }
+
+int WebDAVHost::StatFS(const char *_path,
+                       VFSStatFS &_stat,
+                       const VFSCancelChecker &_cancel_checker)
+{
+    auto ar = I->m_Pool.Get();
+    const auto [rc, free, used] = FetchSpaceQuota(Config(), *ar.connection);
+    if( rc != CURLE_OK )
+        return CURlErrorToVFSError(rc);
+    
+    if( free >= 0 ) {
+        _stat.free_bytes = free;
+        _stat.avail_bytes = free;
+    }
+    if( free >= 0 && used >= 0 ) {
+        _stat.total_bytes = free + used;
+    }
+    
+    _stat.volume_name = Config().full_url;
+
+    return VFSError::Ok;
+}
+
 
 static VFSConfiguration ComposeConfiguration(const string &_serv_url,
                                              const string &_user,

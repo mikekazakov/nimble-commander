@@ -126,7 +126,8 @@ static NSTextField *CreateStockTF()
 
 - (void) CreateControls
 {
-    NSFont *text_font = [NSFont labelFontOfSize:11];
+    const auto text_font = [NSFont labelFontOfSize:11];
+    const auto digits_font = [NSFont monospacedDigitSystemFontOfSize:11 weight:NSFontWeightRegular];
  
     // clear current layout
     while ([self.subviews count] > 0)
@@ -178,19 +179,19 @@ static NSTextField *CreateStockTF()
 
         m_TextCPULoadSystem = CreateStockTF();
         m_TextCPULoadSystem.alignment = NSRightTextAlignment;
-        m_TextCPULoadSystem.font = text_font;
+        m_TextCPULoadSystem.font = digits_font;
         m_TextCPULoadSystem.textColor = [NSColor colorWithCalibratedRed:1.00 green:0.15 blue:0.10 alpha:1.0];
         [cpu_box addSubview:m_TextCPULoadSystem];
     
         m_TextCPULoadUser = CreateStockTF();
         m_TextCPULoadUser.alignment = NSRightTextAlignment;
-        m_TextCPULoadUser.font = text_font;
+        m_TextCPULoadUser.font = digits_font;
         m_TextCPULoadUser.textColor = [NSColor colorWithCalibratedRed:0.10 green:0.15 blue:1.00 alpha:1.0];
         [cpu_box addSubview:m_TextCPULoadUser];
     
         m_TextCPULoadIdle = CreateStockTF();
         m_TextCPULoadIdle.alignment = NSRightTextAlignment;
-        m_TextCPULoadIdle.font = text_font;
+        m_TextCPULoadIdle.font = digits_font;
         [cpu_box addSubview:m_TextCPULoadIdle];
     
         NSDictionary *cpu_box_views = NSDictionaryOfVariableBindings(m_TextCPULoadSystem, m_TextCPULoadUser, m_TextCPULoadIdle, cpu_sysload_title, cpu_usrload_title, cpu_idle_title, line1, line2);
@@ -244,17 +245,17 @@ static NSTextField *CreateStockTF()
     
         m_TextMemTotal = CreateStockTF();
         m_TextMemTotal.alignment = NSRightTextAlignment;
-        m_TextMemTotal.font = text_font;
+        m_TextMemTotal.font = digits_font;
         [ram_box addSubview:m_TextMemTotal];
 
         m_TextMemUsed = CreateStockTF();
         m_TextMemUsed.alignment = NSRightTextAlignment;
-        m_TextMemUsed.font = text_font;
+        m_TextMemUsed.font = digits_font;
         [ram_box addSubview:m_TextMemUsed];
 
         m_TextMemSwap = CreateStockTF();
         m_TextMemSwap.alignment = NSRightTextAlignment;
-        m_TextMemSwap.font = text_font;
+        m_TextMemSwap.font = digits_font;
         [ram_box addSubview:m_TextMemSwap];
     
         NSDictionary *ram_box_views = NSDictionaryOfVariableBindings(m_TextMemTotal, m_TextMemUsed, m_TextMemSwap, ram_total_title, ram_used_title, ram_swap_title, line1, line2);
@@ -334,7 +335,7 @@ static NSTextField *CreateStockTF()
         [system_box addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[line2]-(==7)-[m_TextUserName]" options:0 metrics:nil views:system_box_views]];
     }
     
-    ////////////////////////////////////////////////////////////////////////////////// SYSTEM
+    ////////////////////////////////////////////////////////////////////////////////// STORAGE
     NSBox *storage_box = [[NSBox alloc] initWithFrame:NSRect()];
     {
         storage_box.translatesAutoresizingMaskIntoConstraints = NO;
@@ -378,12 +379,12 @@ static NSTextField *CreateStockTF()
     
         m_TextVolumeTotalBytes = CreateStockTF();
         m_TextVolumeTotalBytes.alignment = NSRightTextAlignment;
-        m_TextVolumeTotalBytes.font = text_font;
+        m_TextVolumeTotalBytes.font = digits_font;
         [storage_box addSubview:m_TextVolumeTotalBytes];
     
         m_TextVolumeAvailBytes = CreateStockTF();
         m_TextVolumeAvailBytes.alignment = NSRightTextAlignment;
-        m_TextVolumeAvailBytes.font = text_font;
+        m_TextVolumeAvailBytes.font = digits_font;
         [storage_box addSubview:m_TextVolumeAvailBytes];
     
         NSDictionary *storage_views = NSDictionaryOfVariableBindings(line1, line2, vol_title, bytes_title, free_title, m_TextVolumeName, m_TextVolumeTotalBytes, m_TextVolumeAvailBytes);

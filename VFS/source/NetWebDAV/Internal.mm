@@ -175,21 +175,16 @@ pair<int, HTTPRequests::Mask> FetchServerOptions(const HostConfiguration& _optio
     }
 }
 
-[[maybe_unused]] const auto g_FullListingMessage =
+const auto g_PropfindMessage =
     "<?xml version=\"1.0\"?>"
     "<a:propfind xmlns:a=\"DAV:\">"
-        "<a:allprop/>"
+        "<a:prop>"
+            "<a:resourcetype/>"
+            "<a:getcontentlength/>"
+            "<a:getlastmodified/>"
+            "<a:creationdate/>"
+        "</a:prop>"
     "</a:propfind>";
-[[maybe_unused]] const auto g_LeanListingMessage =
-    "<?xml version=\"1.0\"?>"
-    "<a:propfind xmlns:a=\"DAV:\">\n"
-        "<a:prop><a:resourcetype/></a:prop>\n"
-        "<a:prop><a:getcontentlength/></a:prop>\n"
-        "<a:prop><a:getlastmodified/></a:prop>\n"
-        "<a:prop><a:creationdate/></a:prop>\n"
-    "</a:propfind>";
-
-
 
 static time_t ParseModDate( const char *_date_time )
 {
@@ -214,7 +209,7 @@ optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
     if( const auto href = _node.select_node(href_query) )
         if( const auto c = href.node().first_child() )
             if( const auto v = c.value() )
-                response.filename = v;
+                response.filename = URIUnescape(v);
     if( response.filename.empty() )
         return nullopt;
 
@@ -279,6 +274,8 @@ vector<PropFindResponse> PruneFilepaths( vector<PropFindResponse> _items, const 
                     return true;
                 _item.filename.pop_back();
             }
+        
+            _item.filename = _item.filename;
      
             return false;
     }), end(_items));
@@ -305,13 +302,14 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
 
     auto url = _options.full_url;
-    if( _path != "/" )
-        url += _path;
+    if( _path != "/" ) {
+        url.pop_back();
+        url += URIEscape(_path);
+    }
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
     CURLInputStringContext context;
-    context.data = g_FullListingMessage;
-//    context.data = g_LeanListingMessage;
+    context.data = g_PropfindMessage;
     curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, CURLInputStringContext::Read);
     curl_easy_setopt(curl, CURLOPT_READDATA, &context);
@@ -367,5 +365,102 @@ pair<string, string> DeconstructPath(const string &_path)
         return { _path.substr(0, ls+1), _path.substr(ls+1) };
     }
 }
+
+string URIEscape( const string &_unescaped )
+{
+    static const auto acs = NSCharacterSet.URLPathAllowedCharacterSet;
+    if( auto str = [NSString stringWithUTF8StdString:_unescaped] )
+        if( auto percents = [str stringByAddingPercentEncodingWithAllowedCharacters:acs] )
+            if( auto utf8 = percents.UTF8String )
+                return utf8;
+    return {};
+}
+
+string URIUnescape( const string &_escaped )
+{
+    if( auto str = [NSString stringWithUTF8StdString:_escaped] )
+        if( auto stripped = [str stringByRemovingPercentEncoding] )
+            if( auto utf8 = stripped.UTF8String )
+                return utf8;
+    return {};
+}
+
+// free space, used space
+static pair<long, long> ParseSpaceQouta( const string &_xml )
+{
+    using namespace pugi;
+
+    xml_document doc;
+    xml_parse_result result = doc.load_string( _xml.c_str() );
+    if( !result )
+        return {-1, -1};
+
+    long free = -1;
+    static const auto free_query = xpath_query{"./*/*/*/*/*[local-name()='quota-available-bytes']"};
+    if( const auto href = doc.select_node(free_query) )
+        if( const auto c = href.node().first_child() )
+            if( const auto v = c.value() )
+                free = atol(v);
+
+    long used = -1;
+    static const auto used_query = xpath_query{"./*/*/*/*/*[local-name()='quota-used-bytes']"};
+    if( const auto href = doc.select_node(used_query) )
+        if( const auto c = href.node().first_child() )
+            if( const auto v = c.value() )
+                used = atol(v);
+    
+    return {free, used};
+}
+
+const auto g_QuotaMessage =
+    "<?xml version=\"1.0\"?>"
+    "<a:propfind xmlns:a=\"DAV:\">"
+        "<a:prop>"
+            "<a:quota-available-bytes/>"
+            "<a:quota-used-bytes/>"
+        "</a:prop>"
+    "</a:propfind>";
+tuple<int, long, long> FetchSpaceQuota(const HostConfiguration& _options,
+                                       Connection &_connection )
+{
+    const auto curl = _connection.EasyHandle();
+    
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PROPFIND");
+    
+    struct curl_slist *chunk = nullptr;
+    chunk = curl_slist_append(chunk, "Depth: 0");
+    chunk = curl_slist_append(chunk, "Content-Type: application/xml; charset=\"utf-8\"");
+    const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+    auto url = _options.full_url;
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+    CURLInputStringContext context;
+    context.data = g_QuotaMessage;
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+    curl_easy_setopt(curl, CURLOPT_READFUNCTION, CURLInputStringContext::Read);
+    curl_easy_setopt(curl, CURLOPT_READDATA, &context);
+    curl_easy_setopt(curl, CURLOPT_SEEKFUNCTION, CURLInputStringContext::Seek);
+    curl_easy_setopt(curl, CURLOPT_SEEKDATA, &context);
+    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, context.data.size());
+    
+    string response;
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+    string headers;
+    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
+    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
+
+    const auto rc = curl_easy_perform(curl);
+    if( rc == CURLE_OK ) {
+        const auto [free, used] = ParseSpaceQouta(response);
+        return {rc, free, used};
+    }
+
+    return {rc, -1, -1};
+}
+
 
 }

@@ -15,11 +15,10 @@ public:
     string passwd;
     string path;
 //    string verbose; // cached only. not counted in operator ==
-    string full_url;
+    string full_url; // http[s]://server:port/base_path/
     bool https;
     int   port;
-    
-    
+        
     const char *Tag() const;
     const char *Junction() const;
     bool operator==(const HostConfiguration&_rhs) const;
@@ -69,11 +68,18 @@ constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
 pair<int, HTTPRequests::Mask> FetchServerOptions(const HostConfiguration& _options,
                                                  Connection &_connection );
 
+// curle, free space, used space
+tuple<int, long, long> FetchSpaceQuota(const HostConfiguration& _options,
+                                       Connection &_connection );
+    
 pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _options,
                                                     Connection &_connection,
                                                     const string &_path );
 pair<string, string> DeconstructPath(const string &_path);
 int CURlErrorToVFSError( int _curle );
     
+string URIEscape( const string &_unescaped );
+string URIUnescape( const string &_escaped );
+
 
 }

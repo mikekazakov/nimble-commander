@@ -50,11 +50,11 @@ NSImage *NetworkConnectionIconProvider::Icon16px(const VFSInstanceManager::Promi
 {
     const auto tag = _promise.tag();
     
-    if( tag == VFSNetDropboxHost::Tag )
+    if( tag == VFSNetDropboxHost::UniqueTag )
         return Dropbox();
     
-    if( tag == VFSNetFTPHost::Tag ||
-        tag == VFSNetSFTPHost::Tag )
+    if( tag == VFSNetFTPHost::UniqueTag ||
+        tag == VFSNetSFTPHost::UniqueTag )
         return Generic();
     
     return nil;

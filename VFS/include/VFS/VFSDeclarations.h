@@ -140,6 +140,7 @@ struct VFSStat
     static void ToSysStat(const VFSStat &_from, struct stat &_to);
     struct stat SysStat() const noexcept;
     inline static meaningT AllMeaning() { const uint64_t t = ~0; return *(meaningT*)&t; }
+    inline static meaningT NoMeaning() { const uint64_t t = 0; return *(meaningT*)&t; }
 };
 
 class VFSErrorException : public exception

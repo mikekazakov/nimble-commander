@@ -20,7 +20,7 @@ struct VFSArchiveUnRARSeekCache;
 class VFSArchiveUnRARHost final : public VFSHost
 {
 public:
-    static const char *Tag;
+    static const char *UniqueTag;
     VFSArchiveUnRARHost(const string &_path);
     VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
     ~VFSArchiveUnRARHost();

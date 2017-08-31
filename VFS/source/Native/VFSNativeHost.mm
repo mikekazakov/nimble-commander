@@ -19,14 +19,14 @@
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
-const char *VFSNativeHost::Tag = "native";
+const char *VFSNativeHost::UniqueTag = "native";
 
 class VFSNativeHostConfiguration
 {
 public:
     const char *Tag() const
     {
-        return VFSNativeHost::Tag;
+        return VFSNativeHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -43,7 +43,7 @@ public:
 VFSMeta VFSNativeHost::Meta()
 {
     VFSMeta m;
-    m.Tag = Tag;
+    m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
         return SharedHost();
     };
@@ -51,7 +51,7 @@ VFSMeta VFSNativeHost::Meta()
 }
 
 VFSNativeHost::VFSNativeHost():
-    VFSHost("", 0, Tag)
+    VFSHost("", 0, UniqueTag)
 {
     AddFeatures(VFSHostFeatures::FetchUsers |
                 VFSHostFeatures::FetchGroups |

@@ -14,6 +14,10 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
 - (void)testBasic
 {
     shared_ptr<WebDAVHost> host(new WebDAVHost("192.168.2.5", "admin", "iddqd", "Public", false, 5000));
+
+    VFSListingPtr listing;
+    int rc = host->FetchDirectoryListing("/", listing, 0, nullptr);
+    XCTAssert(rc == VFSError::Ok);
 }
 
 
@@ -71,6 +75,48 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
     XCTAssert( !has_fn("..") );
     XCTAssert( has_fn("README.md") );
     XCTAssert( has_fn("scorpions-lifes_like_a_river.gpx") );
+}
+
+- (void)testCanFetchMultipleListingsOnBoxCom
+{
+    const auto host = [self spawnBoxComHost];
+    VFSListingPtr listing;
+    
+    int rc1 = host->FetchDirectoryListing("/Test1", listing, 0, nullptr);
+    XCTAssert(rc1 == VFSError::Ok);
+    int rc2 = host->FetchDirectoryListing("/", listing, 0, nullptr);
+    XCTAssert(rc2 == VFSError::Ok);
+    int rc3 = host->FetchDirectoryListing("/Test1", listing, 0, nullptr);
+    XCTAssert(rc3 == VFSError::Ok);
+}
+
+- (void)testConsecutiveStatsOnBoxCom
+{
+    const auto host = [self spawnBoxComHost];
+    VFSStat st;
+    int rc = host->Stat("/Test1/scorpions-lifes_like_a_river.gpx", st, 0, nullptr);
+    XCTAssert( rc == VFSError::Ok );
+    XCTAssert( st.size == 65039 );
+    XCTAssert( S_ISREG(st.mode) );
+
+    rc = host->Stat("/Test1/README.md", st, 0, nullptr);
+    XCTAssert( rc == VFSError::Ok );
+    XCTAssert( st.size == 1450 );
+    XCTAssert( S_ISREG(st.mode) );
+
+    rc = host->Stat("/Test1/", st, 0, nullptr);
+    XCTAssert( rc == VFSError::Ok );
+    XCTAssert( S_ISDIR(st.mode) );
+
+    rc = host->Stat("/", st, 0, nullptr);
+    XCTAssert( rc == VFSError::Ok );
+    XCTAssert( S_ISDIR(st.mode) );
+
+    rc = host->Stat("", st, 0, nullptr);
+    XCTAssert( rc != VFSError::Ok );
+    
+    rc = host->Stat("/SomeGibberish/MoreGibberish/EvenMoregibberish.txt", st, 0, nullptr);
+    XCTAssert( rc != VFSError::Ok );
 }
 
 

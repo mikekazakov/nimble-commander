@@ -12,35 +12,6 @@ using namespace nc::panel;
 
 static const auto g_MaxTimeRange = 60 * 60 * 24 * 14; // 14 days range for bothering with visits
 
-static size_t HashForPath( const VFSHost &_at_vfs, const string &_path )
-{
-    constexpr auto max_depth = 32;
-    array<const VFSHost*, max_depth> hosts;
-    int hosts_n = 0;
-
-    auto cur = &_at_vfs;
-    while( cur && hosts_n < max_depth ) {
-        hosts[hosts_n++] = cur;
-        cur = cur->Parent().get();
-    }
-    
-    char buf[4096] = "";
-    while( hosts_n > 0 ) {
-        auto &host = *hosts[--hosts_n];
-        strcat( buf, host.FSTag() );
-        strcat( buf, "|" );
-        strcat( buf, host.Configuration().VerboseJunction() );
-        strcat( buf, "|" );
-    }
-    strcat( buf, _path.c_str() );
-    if( _path.empty() || _path.back() != '/' )
-        strcat( buf, "/" );
-
-//    cout << buf << endl;
-
-    return hash<string_view>()(buf);
-}
-
 static shared_ptr<const FavoriteLocationsStorage::Location>
 Encode( const VFSHost &_host, const string &_directory )
 {
@@ -85,7 +56,7 @@ void FavoriteLocationsStorage::AddFavoriteLocation(VFSHost &_host,
                                                    const string &_title)
 {
     dispatch_assert_main_queue();
-    const auto footprint = HashForPath( _host, _directory );
+    const auto footprint = _host.FullHashForPath( _directory.c_str() );
 
     const auto has_already = any_of( begin(m_Favorites), end(m_Favorites), [&](auto &i){
         return i.footprint == footprint;
@@ -135,7 +106,7 @@ optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorage::
     
     Favorite f;
     f.location = location;
-    f.footprint = HashForPath( _host, _directory );
+    f.footprint = _host.FullHashForPath( _directory.c_str() );
     if( _title.empty() ) {
         auto p = path( _directory );
         if( p.filename() == "." )
@@ -153,7 +124,7 @@ void FavoriteLocationsStorage::ReportLocationVisit( VFSHost &_host, const string
 {
     dispatch_assert_main_queue();
     const auto timestamp = time(nullptr);
-    const auto footprint = HashForPath( _host, _directory );
+    const auto footprint = _host.FullHashForPath( _directory.c_str() );
     
     const auto existing = m_Visits.find(footprint);
     if( existing != end(m_Visits) ) {

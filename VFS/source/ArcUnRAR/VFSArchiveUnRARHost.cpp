@@ -35,7 +35,7 @@ static time_t DosTimeToUnixTime(uint32_t _dos_time)
     return timegm(&timeinfo);
 }
 
-const char *VFSArchiveUnRARHost::Tag = "arc_unrar";
+const char *VFSArchiveUnRARHost::UniqueTag = "arc_unrar";
 
 class VFSArchiveUnRARHostConfiguration
 {
@@ -44,7 +44,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSArchiveUnRARHost::Tag;
+        return VFSArchiveUnRARHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -66,7 +66,7 @@ static VFSConfiguration ComposeConfiguration( const string &_path )
 }
 
 VFSArchiveUnRARHost::VFSArchiveUnRARHost(const string &_path):
-    VFSHost(_path.c_str(), VFSNativeHost::SharedHost(), Tag),
+    VFSHost(_path.c_str(), VFSNativeHost::SharedHost(), UniqueTag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
     m_Configuration( ComposeConfiguration(_path) )
 {
@@ -76,7 +76,7 @@ VFSArchiveUnRARHost::VFSArchiveUnRARHost(const string &_path):
 }
 
 VFSArchiveUnRARHost::VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
-    VFSHost(_config.Get<VFSArchiveUnRARHostConfiguration>().path.c_str(), _parent, Tag),
+    VFSHost(_config.Get<VFSArchiveUnRARHostConfiguration>().path.c_str(), _parent, UniqueTag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
     m_Configuration(_config)
 {
@@ -107,7 +107,7 @@ VFSConfiguration VFSArchiveUnRARHost::Configuration() const
 VFSMeta VFSArchiveUnRARHost::Meta()
 {
     VFSMeta m;
-    m.Tag = Tag;
+    m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
         return make_shared<VFSArchiveUnRARHost>(_parent, _config);
     };

@@ -10,7 +10,7 @@
 class VFSNetDropboxHost final : public VFSHost
 {
 public:
-    static const char *Tag;
+    static const char *UniqueTag;
 
     VFSNetDropboxHost( const string &_account, const string &_access_token );
     VFSNetDropboxHost( const VFSConfiguration &_config );

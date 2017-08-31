@@ -2,13 +2,24 @@
 #include "Internal.h"
 #include <Utility/PathManip.h>
 #include "../VFSListingInput.h"
+#include "ConnectionsPool.h"
+#include "Cache.h"
 
 namespace nc::vfs {
 
 using namespace webdav;
 
-const char *WebDAVHost::Tag = "net_webdav";
+const char *WebDAVHost::UniqueTag = "net_webdav";
 
+struct WebDAVHost::State
+{
+    State( const HostConfiguration &_config ):
+        m_Pool{_config}
+    {}
+    
+    ConnectionsPool m_Pool;
+    Cache           m_Cache;
+};
 
 static VFSConfiguration ComposeConfiguration(const string &_serv_url,
                                              const string &_user,
@@ -23,23 +34,27 @@ WebDAVHost::WebDAVHost(const string &_serv_url,
                        const string &_path,
                        bool _https,
                        int _port):
-    VFSHost(_serv_url.c_str(), nullptr, Tag),
+    VFSHost(_serv_url.c_str(), nullptr, UniqueTag),
     m_Configuration( ComposeConfiguration(_serv_url, _user, _passwd, _path, _https, _port) )
 {
-    auto [rc, requests] = FetchServerOptions( Config() );
-    if( rc != CURLE_OK ) {
-        
+
+//    inst->curl = curl_easy_init();
+
+
+//    FetchDAVListing(Config(), "/");
+    I.reset( new State{Config()} );
+//    I->m_Pool.Return
+
+
+    auto ar = I->m_Pool.Get();
+    auto [rc, requests] = FetchServerOptions( Config(), *ar.connection );
+    if( rc != CURLE_OK ) {   
         throw rc;
     }
     if( (requests & HTTPRequests::MinimalRequiredSet) !=  HTTPRequests::MinimalRequiredSet ) {
         HTTPRequests::Print(requests);
         throw VFSErrorException( VFSError::FromErrno(EPROTONOSUPPORT) );
     }
-
-//    inst->curl = curl_easy_init();
-
-
-//    FetchDAVListing(Config(), "/");
 }
 
 WebDAVHost::~WebDAVHost()
@@ -59,18 +74,37 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
 
-    string path =  EnsureTrailingSlash(_path);
+    const auto path =  EnsureTrailingSlash(_path);
     
-    auto [fetch_rc, fetch_items] = FetchDAVListing(Config(), path);
-    if( fetch_rc != CURLE_OK ) {
-        return CURlErrorToVFSError(fetch_rc);
+    if( _flags & VFSFlags::F_ForceRefresh )
+        I->m_Cache.DiscardListing(path);
+    
+    vector<PropFindResponse> items;
+    if( auto cached = I->m_Cache.Listing(path) ) {
+        items = move( *cached );
+    }
+    else {
+        const auto refresh_rc = RefreshListingAtPath(path, _cancel_checker);
+        if( refresh_rc != VFSError::Ok )
+            return refresh_rc;
+        
+        if( auto cached = I->m_Cache.Listing(path) )
+            items = move( *cached );
+        else
+            return VFSError::GenericError;
     }
 
-    if( _flags & VFSFlags::F_NoDotDot )
-        fetch_items.erase( remove_if(begin(fetch_items), end(fetch_items), [](const auto &_item){
-            return _item.path == "..";
-        }), end(fetch_items));
-
+    if( _flags & VFSFlags::F_NoDotDot ) {
+        items.erase( remove_if(begin(items), end(items), [](const auto &_item){
+            return _item.filename == "..";
+        }), end(items));
+    }
+    else {
+        partition( begin(items), end(items), [](const auto &_i){
+            return _i.filename == "..";
+        
+        });
+    }
 
     VFSListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
@@ -81,8 +115,8 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
     listing_source.mtimes.reset( variable_container<>::type::sparse );
 
     int index = 0;
-    for( auto &e: fetch_items ) {
-        listing_source.filenames.emplace_back( e.path );
+    for( auto &e: items ) {
+        listing_source.filenames.emplace_back( e.filename );
         listing_source.unix_modes.emplace_back( e.is_directory ?
                                                DirectoryAccessMode :
                                                RegularFileAccessMode );
@@ -99,6 +133,68 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
     }
 
     _target = VFSListing::Build(move(listing_source));
+    return VFSError::Ok;
+}
+
+int WebDAVHost::Stat(const char *_path,
+                     VFSStat &_st,
+                     int _flags,
+                     const VFSCancelChecker &_cancel_checker)
+{
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+
+
+    PropFindResponse item;
+    if( auto cached = I->m_Cache.Item(_path) ) {
+        item = move(*cached);
+    }
+    else {
+        const auto [directory, filename] =  DeconstructPath(_path);
+        if( directory.empty() )
+            return VFSError::InvalidCall;
+        const auto rc = RefreshListingAtPath(directory, _cancel_checker);
+        if( rc != VFSError::Ok )
+            return rc;
+        
+        if( auto cached = I->m_Cache.Item(_path) )
+            item = move(*cached);
+        else
+            return VFSError::GenericError;
+    }
+    
+    memset( &_st, 0, sizeof(_st) );
+    _st.mode = item.is_directory ? DirectoryAccessMode : RegularFileAccessMode;
+    if( item.size >= 0 ) {
+        _st.size = item.size;
+        _st.meaning.size = 1;
+    }
+    if( item.creation_date >= 0 ) {
+        _st.btime.tv_sec = item.creation_date;
+        _st.meaning.btime = true;
+    }
+    if( item.modification_date >= 0 ) {
+        _st.mtime.tv_sec = _st.ctime.tv_sec = item.modification_date;
+        _st.meaning.mtime = _st.meaning.ctime = true;
+    }
+        
+    return VFSError::Ok;
+}
+
+
+int WebDAVHost::RefreshListingAtPath( const string &_path, const VFSCancelChecker &_cancel_checker )
+{
+    if( _path.back() != '/' )
+        throw invalid_argument("RefreshListingAtPath requires a path with a trailing slash");
+    
+    auto ar = I->m_Pool.Get();
+    auto [fetch_rc, fetch_items] = FetchDAVListing(Config(), *ar.connection, _path);
+    if( fetch_rc != CURLE_OK ) {
+        return CURlErrorToVFSError(fetch_rc);
+    }
+
+    I->m_Cache.CommitListing( _path, move(fetch_items) );
+    
     return VFSError::Ok;
 }
 

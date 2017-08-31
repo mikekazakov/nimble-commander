@@ -4,12 +4,13 @@
 #include <Habanero/algo.h>
 #include <pugixml/pugixml.hpp>
 #include "DateTimeParser.h"
+#include "ConnectionsPool.h"
 
 namespace nc::vfs::webdav {
     
 const char *HostConfiguration::Tag() const
 {
-    return WebDAVHost::Tag;
+    return WebDAVHost::UniqueTag;
 }
     
 const char *HostConfiguration::Junction() const
@@ -150,14 +151,10 @@ void HTTPRequests::Print( const Mask _mask )
 
 
 
-pair<int, HTTPRequests::Mask> FetchServerOptions( const HostConfiguration& _options )
+pair<int, HTTPRequests::Mask> FetchServerOptions(const HostConfiguration& _options,
+                                                 Connection &_connection )
 {
-    const auto curl = curl_easy_init();
-    const auto clear_curl = at_scope_end([=]{ curl_easy_cleanup(curl); });
-    
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC | CURLAUTH_DIGEST);
-    curl_easy_setopt(curl, CURLOPT_USERNAME, _options.user.c_str());
-    curl_easy_setopt(curl, CURLOPT_PASSWORD, _options.passwd.c_str());
+    const auto curl = _connection.EasyHandle();
     
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "OPTIONS");
     curl_easy_setopt(curl, CURLOPT_URL, _options.full_url.c_str());
@@ -185,7 +182,7 @@ pair<int, HTTPRequests::Mask> FetchServerOptions( const HostConfiguration& _opti
     "</a:propfind>";
 [[maybe_unused]] const auto g_LeanListingMessage =
     "<?xml version=\"1.0\"?>"
-    "<a:propfind xmlns:a=\"DAV:\">"
+    "<a:propfind xmlns:a=\"DAV:\">\n"
         "<a:prop><a:resourcetype/></a:prop>\n"
         "<a:prop><a:getcontentlength/></a:prop>\n"
         "<a:prop><a:getlastmodified/></a:prop>\n"
@@ -217,8 +214,8 @@ optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
     if( const auto href = _node.select_node(href_query) )
         if( const auto c = href.node().first_child() )
             if( const auto v = c.value() )
-                response.path = v;
-    if( response.path.empty() )
+                response.filename = v;
+    if( response.filename.empty() )
         return nullopt;
 
     if( const auto len = _node.select_node(len_query) )
@@ -269,18 +266,18 @@ vector<PropFindResponse> PruneFilepaths( vector<PropFindResponse> _items, const 
         throw invalid_argument("PruneFilepaths need a path with heading and trailing slashes");
     const auto base_path_len = _base_path.length();
     _items.erase(remove_if(begin(_items), end(_items), [&](auto &_item){
-            if( !has_prefix(_item.path, _base_path ) )
+            if( !has_prefix(_item.filename, _base_path ) )
                 return true;
         
-            _item.path.erase(0, base_path_len);
+            _item.filename.erase(0, base_path_len);
         
-            if( _item.path.empty() ) {
-                _item.path = "..";
+            if( _item.filename.empty() ) {
+                _item.filename = "..";
             }
-            else if( _item.path.back() == '/' ) {
+            else if( _item.filename.back() == '/' ) {
                 if( !_item.is_directory )
                     return true;
-                _item.path.pop_back();
+                _item.filename.pop_back();
             }
      
             return false;
@@ -289,17 +286,13 @@ vector<PropFindResponse> PruneFilepaths( vector<PropFindResponse> _items, const 
 }
 
 pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _options,
+                                                    Connection &_connection,
                                                     const string &_path )
 {
     if( _path.back() != '/' )
         throw invalid_argument("path must contain a trailing slash");
 
-    const auto curl = curl_easy_init();
-    const auto clear_curl = at_scope_end([=]{ curl_easy_cleanup(curl); });
-    
-    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC | CURLAUTH_DIGEST);
-    curl_easy_setopt(curl, CURLOPT_USERNAME, _options.user.c_str());
-    curl_easy_setopt(curl, CURLOPT_PASSWORD, _options.passwd.c_str());
+    const auto curl = _connection.EasyHandle();
     
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PROPFIND");
     struct curl_slist *chunk = NULL;
@@ -317,8 +310,8 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
     CURLInputStringContext context;
-//    context.data = g_ListingMessage;
-    context.data = g_LeanListingMessage;
+    context.data = g_FullListingMessage;
+//    context.data = g_LeanListingMessage;
     curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, CURLInputStringContext::Read);
     curl_easy_setopt(curl, CURLOPT_READDATA, &context);
@@ -329,6 +322,7 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
     string response;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
     
     string headers;
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
@@ -336,12 +330,12 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
 
     const auto rc = curl_easy_perform(curl);
     if( rc == CURLE_OK ) {
+//        cout << headers << endl;
+//        cout << response << endl;    
+    
         auto items = ParseDAVListing(response);
         const auto base_path = "/"s + _options.path + _path;
         items = PruneFilepaths(move(items), base_path);
-//                (_path == "/" ? _path
-//        items = PruneFilepaths(move(items), "/"s + _options.path + "/"s);
-//        int a = 10;
         return {rc, move(items)};
     }
     return {rc, {}};
@@ -351,6 +345,27 @@ int CURlErrorToVFSError( int _curle )
 {
     // TODO: write
     return VFSError::FromErrno(EIO);
+}
+
+pair<string, string> DeconstructPath(const string &_path)
+{
+    if( _path.empty() )
+        return {};
+    if( _path == "/" )
+        return {"/", ".."};
+    
+    if( _path.back() == '/' ) {
+        const auto ls = _path.find_last_of('/', _path.length() - 2);
+        if( ls == string::npos )
+            return {};
+        return { _path.substr(0, ls+1), _path.substr(ls+1, _path.length() - ls - 2) };
+    }
+    else {
+        const auto ls = _path.find_last_of('/');
+        if( ls == string::npos )
+            return {};
+        return { _path.substr(0, ls+1), _path.substr(ls+1) };
+    }
 }
 
 }

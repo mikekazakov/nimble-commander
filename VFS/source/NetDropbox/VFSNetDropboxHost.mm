@@ -6,7 +6,7 @@
 
 using namespace VFSNetDropbox;
 
-const char *VFSNetDropboxHost::Tag = "net_dropbox";
+const char *VFSNetDropboxHost::UniqueTag = "net_dropbox";
 
 class VFSNetDropboxHostConfiguration
 {
@@ -17,7 +17,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSNetDropboxHost::Tag;
+        return VFSNetDropboxHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -55,7 +55,7 @@ struct VFSNetDropboxHost::State
 };
 
 VFSNetDropboxHost::VFSNetDropboxHost( const string &_account, const string &_access_token ):
-    VFSHost("", nullptr, VFSNetDropboxHost::Tag),
+    VFSHost("", nullptr, VFSNetDropboxHost::UniqueTag),
     I(make_unique<State>()),
     m_Config{Compose(_account, _access_token)}
 {
@@ -64,7 +64,7 @@ VFSNetDropboxHost::VFSNetDropboxHost( const string &_account, const string &_acc
 }
 
 VFSNetDropboxHost::VFSNetDropboxHost( const VFSConfiguration &_config ):
-    VFSHost("", nullptr, VFSNetDropboxHost::Tag),
+    VFSHost("", nullptr, VFSNetDropboxHost::UniqueTag),
     I(make_unique<State>()),
     m_Config(_config)
 {
@@ -133,7 +133,7 @@ pair<int, string> VFSNetDropboxHost::CheckTokenAndRetrieveAccountEmail( const st
 VFSMeta VFSNetDropboxHost::Meta()
 {
     VFSMeta m;
-    m.Tag = Tag;
+    m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent,
                            const VFSConfiguration& _config,
                            VFSCancelChecker _cancel_checker) {

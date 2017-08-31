@@ -23,7 +23,7 @@ public:
     VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = nullptr);
     ~VFSArchiveHost();
     
-    static const char *Tag;
+    static const char *UniqueTag;
     virtual VFSConfiguration Configuration() const override;    
     static VFSMeta Meta();
 

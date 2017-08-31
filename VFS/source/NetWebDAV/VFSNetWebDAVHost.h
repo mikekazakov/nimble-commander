@@ -11,7 +11,7 @@ namespace webdav {
 class WebDAVHost : public VFSHost
 {
 public:
-    static const char *Tag;
+    static const char *UniqueTag;
 
     WebDAVHost(const string &_serv_url,
                const string &_user,
@@ -25,10 +25,19 @@ public:
                               shared_ptr<VFSListing> &_target,
                               int _flags,
                               const VFSCancelChecker &_cancel_checker) override;
+    int Stat(const char *_path,
+             VFSStat &_st,
+             int _flags,
+             const VFSCancelChecker &_cancel_checker) override;
+    
     
 private:
     const webdav::HostConfiguration &Config() const noexcept;
+    int RefreshListingAtPath( const string &_path, const VFSCancelChecker &_cancel_checker );
 
+
+    struct State;
+    unique_ptr<State> I;
     VFSConfiguration m_Configuration;
 };
 

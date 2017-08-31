@@ -4,6 +4,8 @@
 
 namespace nc::vfs::webdav {
 
+class Connection;
+
 
 class HostConfiguration
 {
@@ -53,7 +55,7 @@ namespace HTTPRequests {
 
 struct PropFindResponse
 {
-    string path;
+    string filename;
     long size = -1;
     time_t creation_date = -1;
     time_t modification_date = -1;
@@ -64,11 +66,13 @@ constexpr uint16_t DirectoryAccessMode = S_IRUSR | S_IWUSR | S_IFDIR | S_IXUSR;
 constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
 
 
-pair<int, HTTPRequests::Mask> FetchServerOptions( const HostConfiguration& _options );
+pair<int, HTTPRequests::Mask> FetchServerOptions(const HostConfiguration& _options,
+                                                 Connection &_connection );
 
 pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _options,
+                                                    Connection &_connection,
                                                     const string &_path );
-
+pair<string, string> DeconstructPath(const string &_path);
 int CURlErrorToVFSError( int _curle );
     
 

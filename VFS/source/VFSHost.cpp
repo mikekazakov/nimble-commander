@@ -12,7 +12,7 @@
 #include "../include/VFS/VFSHost.h"
 
 static_assert(sizeof(VFSStat) == 128, "");
-const char *VFSHost::Tag = "nullfs";
+const char *VFSHost::UniqueTag = "nullfs";
 
 bool VFSStatFS::operator==(const VFSStatFS& _r) const
 {
@@ -145,7 +145,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSHost::Tag;
+        return VFSHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -189,7 +189,7 @@ shared_ptr<const VFSHost> VFSHost::SharedPtr() const
     return shared_from_this();
 }
 
-const char *VFSHost::FSTag() const noexcept
+const char *VFSHost::Tag() const noexcept
 {
     return m_Tag;
 }
@@ -404,7 +404,7 @@ int VFSHost::GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>>
 
 const shared_ptr<VFSHost> &VFSHost::DummyHost()
 {
-    static auto host = make_shared<VFSHost>("", nullptr, VFSHost::Tag);
+    static auto host = make_shared<VFSHost>("", nullptr, VFSHost::UniqueTag);
     return host;
 }
 
@@ -621,7 +621,7 @@ uint64_t VFSHost::FullHashForPath( const char *_path ) const noexcept
     
     while( hosts_n > 0 ) {
         const auto host = hosts[--hosts_n];
-        p = stpcpy(p, host->FSTag());
+        p = stpcpy(p, host->Tag());
         p = stpcpy(p, "|");
         p = stpcpy(p, host->JunctionPath());
         p = stpcpy(p, "|");

@@ -23,7 +23,7 @@ public:
     VFSNetFTPHost(const VFSConfiguration &_config); // should be of type VFSNetFTPHostConfiguration
     ~VFSNetFTPHost();
 
-    static  const char *Tag;
+    static  const char *UniqueTag;
     static VFSMeta Meta();
     virtual VFSConfiguration Configuration() const override;    
 

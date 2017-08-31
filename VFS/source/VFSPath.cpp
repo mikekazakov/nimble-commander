@@ -57,7 +57,7 @@ bool operator !=(const VFSPath& _lhs, const VFSPath& _rhs) noexcept
 }
 
 VFSPathStack::Part::Part(VFSHost &_host):
-    fs_tag(_host.FSTag()),
+    fs_tag(_host.Tag()),
     junction(_host.JunctionPath()),
     host(_host.shared_from_this()),
     configuration(_host.Configuration())

@@ -20,7 +20,7 @@
 #include "VFSPSInternal.h"
 #include "VFSPSFile.h"
 
-const char *VFSPSHost::Tag = "psfs";
+const char *VFSPSHost::UniqueTag = "psfs";
 
 static NSDateFormatter *ProcDateFormatter()
 {
@@ -249,7 +249,7 @@ class VFSPSHostConfiguration
 public:
     const char *Tag() const
     {
-        return VFSPSHost::Tag;
+        return VFSPSHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -269,7 +269,7 @@ public:
 };
 
 VFSPSHost::VFSPSHost():
-    VFSHost("", shared_ptr<VFSHost>(0), Tag),
+    VFSHost("", shared_ptr<VFSHost>(0), UniqueTag),
     m_UpdateQ("VFSPSHost")
 {
     CommitProcs(GetProcs());
@@ -289,7 +289,7 @@ VFSConfiguration VFSPSHost::Configuration() const
 VFSMeta VFSPSHost::Meta()
 {
     VFSMeta m;
-    m.Tag = Tag;
+    m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
         return GetSharedOrNew();
     };

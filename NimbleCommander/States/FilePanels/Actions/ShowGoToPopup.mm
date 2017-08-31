@@ -581,7 +581,7 @@ NSImage* MenuItemBuilder::ImageForLocation(const PersistentLocation &_location)
 NSImage *MenuItemBuilder::ImageForPromiseAndPath(const VFSInstanceManager::Promise &_promise,
                                                  const string& _path )
 {
-    if( _promise.tag() == VFSNativeHost::Tag ) {
+    if( _promise.tag() == VFSNativeHost::UniqueTag ) {
         static const auto workspace = NSWorkspace.sharedWorkspace;
         if( auto image = [workspace iconForFile:[NSString stringWithUTF8StdString:_path]] ) {
             image.size = g_IconSize;

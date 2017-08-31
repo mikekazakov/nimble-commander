@@ -110,7 +110,7 @@ static int EnumerateAttrs( int _fd, vector<pair<string, unsigned>> &_attrs )
     return 0;
 }
 
-const char *VFSXAttrHost::Tag = "xattr";
+const char *VFSXAttrHost::UniqueTag = "xattr";
 static const mode_t g_RegMode = S_IRUSR | S_IWUSR | S_IFREG;
 static const mode_t g_RootMode = S_IRUSR | S_IXUSR | S_IFDIR;
 
@@ -128,7 +128,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSXAttrHost::Tag;
+        return VFSXAttrHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -155,7 +155,7 @@ VFSXAttrHost::VFSXAttrHost( const string &_file_path, const VFSHostPtr& _host ):
 }
 
 VFSXAttrHost::VFSXAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
-    VFSHost( _config.Get<VFSXAttrHostConfiguration>().path.c_str(), _parent, Tag ),
+    VFSHost( _config.Get<VFSXAttrHostConfiguration>().path.c_str(), _parent, UniqueTag ),
     m_Configuration(_config)
 {
     auto path = JunctionPath();
@@ -200,7 +200,7 @@ VFSConfiguration VFSXAttrHost::Configuration() const
 VFSMeta VFSXAttrHost::Meta()
 {
     VFSMeta m;
-    m.Tag = Tag;
+    m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
         return make_shared<VFSXAttrHost>(_parent, _config);
     };

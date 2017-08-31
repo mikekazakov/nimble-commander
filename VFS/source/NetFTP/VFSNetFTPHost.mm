@@ -15,7 +15,7 @@
 
 using namespace VFSNetFTP;
 
-const char *VFSNetFTPHost::Tag = "net_ftp";
+const char *VFSNetFTPHost::UniqueTag = "net_ftp";
 
 class VFSNetFTPHostConfiguration
 {
@@ -29,7 +29,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSNetFTPHost::Tag;
+        return VFSNetFTPHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -79,7 +79,7 @@ VFSNetFTPHost::VFSNetFTPHost(const string &_serv_url,
                              const string &_passwd,
                              const string &_start_dir,
                              long   _port):
-    VFSHost(_serv_url.c_str(), nullptr, Tag),
+    VFSHost(_serv_url.c_str(), nullptr, UniqueTag),
     m_Configuration( ComposeConfiguration(_serv_url, _user, _passwd, _start_dir, _port) ),
     m_Cache(make_unique<VFSNetFTP::Cache>())
 {
@@ -89,7 +89,7 @@ VFSNetFTPHost::VFSNetFTPHost(const string &_serv_url,
 }
 
 VFSNetFTPHost::VFSNetFTPHost(const VFSConfiguration &_config):
-    VFSHost( _config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr, Tag),
+    VFSHost( _config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
     m_Cache(make_unique<VFSNetFTP::Cache>()),
     m_Configuration(_config)
 {
@@ -106,7 +106,7 @@ const class VFSNetFTPHostConfiguration &VFSNetFTPHost::Config() const noexcept
 VFSMeta VFSNetFTPHost::Meta()
 {
     VFSMeta m;
-    m.Tag = Tag;
+    m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
         return make_shared<VFSNetFTPHost>(_config);
     };

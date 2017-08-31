@@ -49,7 +49,7 @@ struct VFSHostFeatures
 class VFSHost : public enable_shared_from_this<VFSHost>
 {
 public:
-    static const char *Tag;
+    static const char *UniqueTag;
     static const shared_ptr<VFSHost> &DummyHost();
     
     /**
@@ -77,7 +77,7 @@ public:
      * Each virtual file system must return a unique statically allocated identifier string, 
      * specified at construction time.
      */
-    const char *FSTag() const noexcept;
+    const char *Tag() const noexcept;
     
     /**
      * Returns a path of a filesystem root.
@@ -136,7 +136,7 @@ public:
     
     /**
      * VFS version of stat().
-     * Default implementation does nothing, subclass MUST implement it.
+     * Default implementation does nothing, subclasses MUST implement it.
      */
     virtual int Stat(const char *_path,
                      VFSStat &_st,

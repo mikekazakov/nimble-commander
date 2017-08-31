@@ -15,7 +15,7 @@ class VFSNativeHost final : public VFSHost
 public:
     VFSNativeHost();
     
-    static const char *Tag;    
+    static const char *UniqueTag;
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
     

@@ -21,7 +21,7 @@ class VFSNetSFTPHost final : public VFSHost
 {
 public:
     // vfs identity
-    static  const char *Tag;
+    static  const char *UniqueTag;
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
     

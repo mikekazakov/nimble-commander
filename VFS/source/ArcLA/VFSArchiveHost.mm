@@ -18,7 +18,7 @@
 #include "VFSArchiveInternal.h"
 #include "VFSArchiveFile.h"
 
-const char *VFSArchiveHost::Tag = "arc_libarchive";
+const char *VFSArchiveHost::UniqueTag = "arc_libarchive";
 
 class VFSArchiveHostConfiguration
 {
@@ -28,7 +28,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSArchiveHost::Tag;
+        return VFSArchiveHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -98,7 +98,7 @@ static void DecodeStringToUTF8(const void* _bytes,
 }
 
 VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password, VFSCancelChecker _cancel_checker):
-    VFSHost(_path.c_str(), _parent, Tag),
+    VFSHost(_path.c_str(), _parent, UniqueTag),
     m_Configuration( ComposeConfiguration(_path, move(_password)) )
 {
     assert(_parent);
@@ -113,7 +113,7 @@ VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, o
 }
 
 VFSArchiveHost::VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker):
-    VFSHost( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, Tag),
+    VFSHost( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, UniqueTag),
     m_Configuration(_config)
 {
     assert(_parent);
@@ -151,7 +151,7 @@ const VFSArchiveHostConfiguration &VFSArchiveHost::Config() const
 VFSMeta VFSArchiveHost::Meta()
 {
     VFSMeta m;
-    m.Tag = Tag;
+    m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
         return make_shared<VFSArchiveHost>(_parent, _config, _cancel_checker);
     };

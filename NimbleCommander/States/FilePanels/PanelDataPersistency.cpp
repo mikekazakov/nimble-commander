@@ -96,32 +96,32 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host );
 
 static bool IsNetworkVFS( const VFSHost& _host )
 {
-    const auto tag = _host.FSTag();
-    return tag == VFSNetFTPHost::Tag ||
-           tag == VFSNetSFTPHost::Tag ||
-           tag == VFSNetDropboxHost::Tag;
+    const auto tag = _host.Tag();
+    return tag == VFSNetFTPHost::UniqueTag ||
+           tag == VFSNetSFTPHost::UniqueTag ||
+           tag == VFSNetDropboxHost::UniqueTag;
 }
 
 static any EncodeState( const VFSHost& _host )
 {
-    auto tag = _host.FSTag();
-    if( tag == VFSNativeHost::Tag ) {
+    auto tag = _host.Tag();
+    if( tag == VFSNativeHost::UniqueTag ) {
         return Native{};
     }
-    else if( tag == VFSPSHost::Tag ) {
+    else if( tag == VFSPSHost::UniqueTag ) {
         return PSFS{};
     }
-    else if( tag == VFSXAttrHost::Tag ) {
+    else if( tag == VFSXAttrHost::UniqueTag ) {
         return XAttr{ _host.JunctionPath() };
     }
     else if( IsNetworkVFS(_host) ) {
         if( auto conn = ConnectionsManager().ConnectionForVFS(_host) )
             return Network{ conn->Uuid() };
     }
-    else if( tag == VFSArchiveHost::Tag ) {
+    else if( tag == VFSArchiveHost::UniqueTag ) {
         return ArcLA{ _host.JunctionPath() };
     }
-    else if( tag == VFSArchiveUnRARHost::Tag ) {
+    else if( tag == VFSArchiveUnRARHost::UniqueTag ) {
         return ArcUnRAR{ _host.JunctionPath() };
     }
     return {};
@@ -241,13 +241,13 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
                 return nullopt; // invalid data
             const auto tag = string_view{ h[g_HostInfoTypeKey].GetString() };
             
-            if( tag == VFSNativeHost::Tag ) {
+            if( tag == VFSNativeHost::UniqueTag ) {
                 result.hosts.emplace_back( Native{} );
             }
-            else if( tag == VFSPSHost::Tag ) {
+            else if( tag == VFSPSHost::UniqueTag ) {
                 result.hosts.emplace_back( PSFS{} );
             }
-            else if( tag == VFSXAttrHost::Tag ) {
+            else if( tag == VFSXAttrHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
                     return nullopt; // invalid data
                 if( result.hosts.size() < 1 )
@@ -264,7 +264,7 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
                 
                 result.hosts.emplace_back( Network{ uuid } );
             }
-            else if( tag == VFSArchiveHost::Tag ) {
+            else if( tag == VFSArchiveHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
                     return nullopt; // invalid data
                 if( result.hosts.size() < 1 )
@@ -272,7 +272,7 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
                 
                 result.hosts.emplace_back( ArcLA{ h[g_HostInfoJunctionKey].GetString() } );
             }
-            else if( tag == VFSArchiveUnRARHost::Tag ) {
+            else if( tag == VFSArchiveUnRARHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
                     return nullopt; // invalid data
                 if( result.hosts.size() < 1 || !linb::any_cast<Native>(&result.hosts.back()) )
@@ -289,11 +289,11 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
 static const char *VFSTagForNetworkConnection( const NetworkConnectionsManager::Connection &_conn )
 {
     if( auto ftp = _conn.Cast<NetworkConnectionsManager::FTP>() )
-        return VFSNetFTPHost::Tag;
+        return VFSNetFTPHost::UniqueTag;
     else if( auto sftp =_conn.Cast<NetworkConnectionsManager::SFTP>() )
-        return VFSNetSFTPHost::Tag;
+        return VFSNetSFTPHost::UniqueTag;
     else if( auto dropbox = _conn.Cast<NetworkConnectionsManager::Dropbox>() )
-        return VFSNetDropboxHost::Tag;
+        return VFSNetDropboxHost::UniqueTag;
     else
         return "<unknown_vfs>";
 }
@@ -302,20 +302,20 @@ string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc 
 {
     string footprint;
     if( _loc.hosts.empty() ) {
-        footprint += VFSNativeHost::Tag;
+        footprint += VFSNativeHost::UniqueTag;
         footprint += "||";
     }
     for( auto &h: _loc.hosts ) {
         if( auto native = any_cast<Native>(&h) ) {
-            footprint += VFSNativeHost::Tag;
+            footprint += VFSNativeHost::UniqueTag;
             footprint += "|";
         }
         else if( auto psfs = any_cast<PSFS>(&h) ) {
-            footprint += VFSPSHost::Tag;
+            footprint += VFSPSHost::UniqueTag;
             footprint += "|[psfs]:";
         }
         else if( auto xattr = any_cast<XAttr>(&h) ) {
-            footprint += VFSXAttrHost::Tag;
+            footprint += VFSXAttrHost::UniqueTag;
             footprint += "|";
             footprint += xattr->junction;
         }
@@ -328,12 +328,12 @@ string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc 
             }
         }
         else if( auto la = any_cast<ArcLA>(&h) ) {
-            footprint += VFSArchiveHost::Tag;
+            footprint += VFSArchiveHost::UniqueTag;
             footprint += "|";
             footprint += la->junction;
         }
         else if( auto rar = any_cast<ArcUnRAR>(&h) ) {
-            footprint += VFSArchiveUnRARHost::Tag;
+            footprint += VFSArchiveUnRARHost::UniqueTag;
             footprint += "|";
             footprint += rar->junction;
         }
@@ -394,17 +394,17 @@ string PanelDataPersisency::MakeVerbosePathString( const VFSHost &_host, const s
 optional<rapidjson::StandaloneValue> PanelDataPersisency::EncodeVFSHostInfo( const VFSHost& _host )
 {
     using namespace rapidjson;
-    auto tag = _host.FSTag();
+    auto tag = _host.Tag();
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
-    if( tag == VFSNativeHost::Tag ) {
+    if( tag == VFSNativeHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
         return move(json);
     }
-    else if( tag == VFSPSHost::Tag ) {
+    else if( tag == VFSPSHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
         return move(json);
     }
-    else if( tag == VFSXAttrHost::Tag ) {
+    else if( tag == VFSXAttrHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
         json.AddMember( MakeStandaloneString(g_HostInfoJunctionKey), MakeStandaloneString(_host.JunctionPath()), g_CrtAllocator );
         return move(json);
@@ -416,8 +416,8 @@ optional<rapidjson::StandaloneValue> PanelDataPersisency::EncodeVFSHostInfo( con
             return move(json);
         }
     }
-    else if( tag == VFSArchiveHost::Tag ||
-             tag == VFSArchiveUnRARHost::Tag ) {
+    else if( tag == VFSArchiveHost::UniqueTag ||
+             tag == VFSArchiveUnRARHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
         json.AddMember( MakeStandaloneString(g_HostInfoJunctionKey), MakeStandaloneString(_host.JunctionPath()), g_CrtAllocator );
         return move(json);
@@ -431,19 +431,19 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
     if( auto native = any_cast<Native>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
-                       MakeStandaloneString(VFSNativeHost::Tag),
+                       MakeStandaloneString(VFSNativeHost::UniqueTag),
                        g_CrtAllocator );
         return move(json);
     }
     else if( auto psfs = any_cast<PSFS>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
-                       MakeStandaloneString(VFSPSHost::Tag),
+                       MakeStandaloneString(VFSPSHost::UniqueTag),
                        g_CrtAllocator );
         return move(json);
     }
     else if( auto xattr = any_cast<XAttr>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
-                       MakeStandaloneString(VFSXAttrHost::Tag),
+                       MakeStandaloneString(VFSXAttrHost::UniqueTag),
                        g_CrtAllocator );
         json.AddMember( MakeStandaloneString(g_HostInfoJunctionKey),
                        MakeStandaloneString(xattr->junction),
@@ -461,7 +461,7 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
     }
     else if( auto la = any_cast<ArcLA>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
-                       MakeStandaloneString(VFSArchiveHost::Tag),
+                       MakeStandaloneString(VFSArchiveHost::UniqueTag),
                        g_CrtAllocator );
         json.AddMember(MakeStandaloneString(g_HostInfoJunctionKey),
                        MakeStandaloneString(la->junction),
@@ -470,7 +470,7 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
     }
     else if( auto rar = any_cast<ArcUnRAR>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
-                       MakeStandaloneString(VFSArchiveUnRARHost::Tag),
+                       MakeStandaloneString(VFSArchiveUnRARHost::UniqueTag),
                        g_CrtAllocator );
         json.AddMember(MakeStandaloneString(g_HostInfoJunctionKey),
                        MakeStandaloneString(rar->junction),
@@ -501,13 +501,13 @@ int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_
                     return VFSError::GenericError; // invalid data
                 const auto tag = string_view{ h[g_HostInfoTypeKey].GetString() };
                 
-                if( tag == VFSNativeHost::Tag ) {
+                if( tag == VFSNativeHost::UniqueTag ) {
                     vfs.emplace_back( VFSNativeHost::SharedHost() );
                 }
-                else if( tag == VFSPSHost::Tag ) {
+                else if( tag == VFSPSHost::UniqueTag ) {
                     vfs.emplace_back( VFSPSHost::GetSharedOrNew() );
                 }
-                else if( tag == VFSXAttrHost::Tag ) {
+                else if( tag == VFSXAttrHost::UniqueTag ) {
                     if( !has_string(g_HostInfoJunctionKey) )
                         return VFSError::GenericError; // invalid data
                     if( vfs.size() < 1 )
@@ -531,7 +531,7 @@ int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_
                     else
                         return VFSError::GenericError; // failed to find connection by uuid
                 }
-                else if( tag == VFSArchiveHost::Tag ) {
+                else if( tag == VFSArchiveHost::UniqueTag ) {
                     if( !has_string(g_HostInfoJunctionKey) )
                         return VFSError::GenericError; // invalid data
                     if( vfs.size() < 1 )
@@ -540,7 +540,7 @@ int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_
                     auto host = make_shared<VFSArchiveHost>( h[g_HostInfoJunctionKey].GetString(), vfs.back() );
                     vfs.emplace_back( host );
                 }
-                else if( tag == VFSArchiveUnRARHost::Tag ) {
+                else if( tag == VFSArchiveUnRARHost::UniqueTag ) {
                     if( !has_string(g_HostInfoJunctionKey) )
                         return VFSError::GenericError; // invalid data
                     if( vfs.size() < 1 || !vfs.back()->IsNativeFS() )
@@ -565,18 +565,18 @@ int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_
 
 static bool Fits( VFSHost& _alive, const any &_encoded )
 {
-    const auto tag = _alive.FSTag();
+    const auto tag = _alive.Tag();
     const auto encoded = &_encoded;
 
-    if( tag == VFSNativeHost::Tag ) {
+    if( tag == VFSNativeHost::UniqueTag ) {
         if( any_cast<Native>(encoded) )
             return true;
     }
-    else if( tag == VFSPSHost::Tag ) {
+    else if( tag == VFSPSHost::UniqueTag ) {
         if( any_cast<PSFS>(encoded) )
             return true;
     }
-    else if( tag == VFSXAttrHost::Tag ) {
+    else if( tag == VFSXAttrHost::UniqueTag ) {
         if( auto xattr = any_cast<XAttr>(encoded) )
             return xattr->junction == _alive.JunctionPath();
     }
@@ -585,11 +585,11 @@ static bool Fits( VFSHost& _alive, const any &_encoded )
             if( auto conn = ConnectionsManager().ConnectionForVFS( _alive ) )
                 return network->connection == conn->Uuid();
     }
-    else if( tag == VFSArchiveHost::Tag ) {
+    else if( tag == VFSArchiveHost::UniqueTag ) {
         if( auto la = any_cast<ArcLA>(encoded) )
             return la->junction == _alive.JunctionPath();
     }
-    else if( tag == VFSArchiveUnRARHost::Tag ) {
+    else if( tag == VFSArchiveUnRARHost::UniqueTag ) {
         if( auto unrar = any_cast<ArcUnRAR>(encoded) )
             return unrar->junction == _alive.JunctionPath();
     }

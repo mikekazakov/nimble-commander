@@ -19,7 +19,7 @@ public:
     VFSPSHost();
     ~VFSPSHost();
     
-    static const char *Tag;    
+    static const char *UniqueTag;    
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
     

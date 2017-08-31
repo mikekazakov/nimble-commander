@@ -67,7 +67,7 @@ struct VFSNetSFTPHost::AutoConnectionReturn // classic RAII stuff to prevent con
     VFSNetSFTPHost *m_This;
 };
 
-const char *VFSNetSFTPHost::Tag = "net_sftp";
+const char *VFSNetSFTPHost::UniqueTag = "net_sftp";
 
 class VFSNetSFTPHostConfiguration
 {
@@ -82,7 +82,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSNetSFTPHost::Tag;
+        return VFSNetSFTPHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -114,7 +114,7 @@ VFSConfiguration VFSNetSFTPHost::Configuration() const
 VFSMeta VFSNetSFTPHost::Meta()
 {
     VFSMeta m;
-    m.Tag = Tag;
+    m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
         return make_shared<VFSNetSFTPHost>(_config);
     };
@@ -122,7 +122,7 @@ VFSMeta VFSNetSFTPHost::Meta()
 }
 
 VFSNetSFTPHost::VFSNetSFTPHost(const VFSConfiguration &_config):
-    VFSHost(_config.Get<VFSNetSFTPHostConfiguration>().server_url.c_str(), nullptr, Tag),
+    VFSHost(_config.Get<VFSNetSFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
     m_Config(_config)
 {
     int rc = DoInit();
@@ -154,7 +154,7 @@ VFSNetSFTPHost::VFSNetSFTPHost(const string &_serv_url,
                                const string &_keypath,
                                long   _port,
                                const string &_home):
-    VFSHost(_serv_url.c_str(), nullptr, Tag),
+    VFSHost(_serv_url.c_str(), nullptr, UniqueTag),
     m_Config( ComposeConfguration(_serv_url, _user, _passwd, _keypath, _port, _home))
 {    
     int rc = DoInit();

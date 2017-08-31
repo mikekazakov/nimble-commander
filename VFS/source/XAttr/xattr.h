@@ -12,7 +12,7 @@ public:
     VFSXAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
     ~VFSXAttrHost();
 
-    static const char *Tag;
+    static const char *UniqueTag;
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
     

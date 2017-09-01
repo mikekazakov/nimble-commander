@@ -63,9 +63,19 @@ WebDAVHost::~WebDAVHost()
 {
 }
 
+VFSConfiguration WebDAVHost::Configuration() const
+{
+    return m_Configuration;
+}
+
 const HostConfiguration &WebDAVHost::Config() const noexcept
 {
     return m_Configuration.GetUnchecked<webdav::HostConfiguration>();
+}
+
+bool WebDAVHost::IsWritable() const
+{
+    return true;
 }
 
 int WebDAVHost::FetchDirectoryListing(const char *_path,
@@ -180,23 +190,27 @@ int WebDAVHost::Stat(const char *_path,
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
 
-
     PropFindResponse item;
-    if( auto cached = I->m_Cache.Item(_path) ) {
-        item = move(*cached);
+    auto [cached_1st, cached_1st_res] = I->m_Cache.Item(_path);
+    if( cached_1st ) {
+        item = move(*cached_1st);
     }
     else {
+        if( cached_1st_res == Cache::E::NonExist )
+            return VFSError::FromErrno(ENOENT);
+    
         const auto [directory, filename] =  DeconstructPath(_path);
         if( directory.empty() )
             return VFSError::InvalidCall;
         const auto rc = RefreshListingAtPath(directory, _cancel_checker);
         if( rc != VFSError::Ok )
             return rc;
-        
-        if( auto cached = I->m_Cache.Item(_path) )
-            item = move(*cached);
+    
+        auto [cached_2nd, cached_2nd_res] = I->m_Cache.Item(_path);
+        if( cached_2nd )
+            item = move(*cached_2nd);
         else
-            return VFSError::GenericError;
+            return VFSError::FromErrno(ENOENT);
     }
     
     memset( &_st, 0, sizeof(_st) );
@@ -216,7 +230,6 @@ int WebDAVHost::Stat(const char *_path,
         
     return VFSError::Ok;
 }
-
 
 int WebDAVHost::RefreshListingAtPath( const string &_path, const VFSCancelChecker &_cancel_checker )
 {
@@ -238,7 +251,7 @@ int WebDAVHost::StatFS(const char *_path,
                        VFSStatFS &_stat,
                        const VFSCancelChecker &_cancel_checker)
 {
-    auto ar = I->m_Pool.Get();
+    const auto ar = I->m_Pool.Get();
     const auto [rc, free, used] = FetchSpaceQuota(Config(), *ar.connection);
     if( rc != CURLE_OK )
         return CURlErrorToVFSError(rc);
@@ -256,6 +269,55 @@ int WebDAVHost::StatFS(const char *_path,
     return VFSError::Ok;
 }
 
+int WebDAVHost::CreateDirectory(const char* _path,
+                                int _mode,
+                                const VFSCancelChecker &_cancel_checker)
+{
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+
+    const auto path =  EnsureTrailingSlash(_path);
+    const auto ar = I->m_Pool.Get();
+    const auto rc = RequestMKCOL(Config(), *ar.connection, path);
+    if( rc != VFSError::Ok )
+        return rc;
+    
+    I->m_Cache.CommitMkDir(path);
+
+    return VFSError::Ok;
+}
+
+int WebDAVHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
+{
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+
+    const auto path =  EnsureTrailingSlash(_path);
+    const auto ar = I->m_Pool.Get();
+    const auto rc = RequestDelete(Config(), *ar.connection, path);
+    if( rc != VFSError::Ok )
+        return rc;
+    
+    I->m_Cache.CommitRmDir(path);
+
+    return VFSError::Ok;
+}
+
+int WebDAVHost::Unlink(const char *_path,
+                       const VFSCancelChecker &_cancel_checker )
+{
+    if( !_path || _path[0] != '/' )
+        return VFSError::InvalidCall;
+
+    const auto ar = I->m_Pool.Get();
+    const auto rc = RequestDelete(Config(), *ar.connection, _path);
+    if( rc != VFSError::Ok )
+        return rc;
+    
+    I->m_Cache.CommitUnlink(_path);
+
+    return VFSError::Ok;
+}
 
 static VFSConfiguration ComposeConfiguration(const string &_serv_url,
                                              const string &_user,
@@ -274,11 +336,13 @@ static VFSConfiguration ComposeConfiguration(const string &_serv_url,
     config.path = _path;
     config.https = _https;
     config.port = _port;
-//    config.verbose = "ftp://"s + (config.user.empty() ? "" : config.user + "@" ) + config.server_url;
+    config.verbose = (_https ? "https://" : "http://") +
+                      (config.user.empty() ? "" : config.user + "@" ) +
+                      _serv_url + "/" + _path;
 
-    config.full_url = (_https ? "https://"s : "http://"s) +
+    config.full_url = (_https ? "https://" : "http://") +
                       _serv_url +
-                      ":"s + to_string(_port) +
+                      ":" + to_string(_port) +
                       "/" + _path + "/";
 
     return VFSConfiguration( move(config) );

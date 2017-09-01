@@ -10,17 +10,18 @@ class Connection;
 class HostConfiguration
 {
 public:
-    string server_url;
-    string user;
-    string passwd;
-    string path;
-//    string verbose; // cached only. not counted in operator ==
-    string full_url; // http[s]://server:port/base_path/
-    bool https;
-    int   port;
-        
+    string  server_url;
+    string  user;
+    string  passwd;
+    string  path;
+    string  verbose; // cached only. not counted in operator ==
+    string  full_url; // http[s]://server:port/base_path/
+    bool    https;
+    int     port;
+    
     const char *Tag() const;
     const char *Junction() const;
+    const char *VerboseJunction() const;
     bool operator==(const HostConfiguration&_rhs) const;
 };
 
@@ -71,15 +72,29 @@ pair<int, HTTPRequests::Mask> FetchServerOptions(const HostConfiguration& _optio
 // curle, free space, used space
 tuple<int, long, long> FetchSpaceQuota(const HostConfiguration& _options,
                                        Connection &_connection );
-    
+
 pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _options,
                                                     Connection &_connection,
                                                     const string &_path );
+
+int RequestMKCOL(const HostConfiguration& _options,
+                 Connection &_connection,
+                 const string &_path );
+    
+int RequestDelete(const HostConfiguration& _options,
+                  Connection &_connection,
+                  const string &_path );
+
+    
 pair<string, string> DeconstructPath(const string &_path);
 int CURlErrorToVFSError( int _curle );
+//int CURlErrorToVFSError( int _curle, CURL *_handle );
+int ToVFSError( int _curl_rc, int _http_rc );
+
     
 string URIEscape( const string &_unescaped );
 string URIUnescape( const string &_escaped );
-
+string URIForPath(const HostConfiguration& _options, const string &_path);
+int curl_easy_get_response_code(CURL *_handle);
 
 }

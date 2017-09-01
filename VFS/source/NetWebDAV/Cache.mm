@@ -52,21 +52,22 @@ optional<vector<PropFindResponse>> Cache::Listing( string _at_path ) const
     return nullopt;
 }
 
-optional<PropFindResponse> Cache::Item(const string &_at_path) const
+// better to tell if the listing is valid but the item doesn't exist
+pair<optional<PropFindResponse>, Cache::E> Cache::Item(const string &_at_path) const
 {
     const auto [directory, filename] = DeconstructPath(_at_path);
     if( filename.empty() )
-        return {};
+        return {nullopt, E::NonExist};
     
     LOCK_GUARD(m_Lock) {
         const auto dir_it = m_Dirs.find(directory);
         if( dir_it == end(m_Dirs) )
-            return {};
+            return {nullopt, E::Unknown};
 
         const auto &listing = dir_it->second;
 
         if( IsOutdated(listing) )
-            return {};
+            return {nullopt, E::Unknown};
 
         const auto item = lower_bound(begin(listing.items),
                                       end(listing.items),
@@ -75,16 +76,14 @@ optional<PropFindResponse> Cache::Item(const string &_at_path) const
                                           return _1.filename < _2;
                                       });
         if( item == end(listing.items) || item->filename != filename )
-            return {};
+            return {nullopt, E::NonExist};
         
         const auto index = distance(begin(listing.items), item);
         if( listing.dirty_marks[index] )
             return {};
         
-        return *item;
+        return {*item, E::Ok};
     }
-    
-    return {};
 }
 
 void Cache::DiscardListing( string _at_path )
@@ -98,6 +97,72 @@ void Cache::DiscardListing( string _at_path )
 bool Cache::IsOutdated(const Directory &_listing)
 {
     return _listing.fetch_time + g_ListingTimeout < machtime();
+}
+
+void Cache::CommitMkDir( string _at_path )
+{
+    _at_path = EnsureNoTrailingSlash( move(_at_path) );
+    const auto [directory, filename] = DeconstructPath(_at_path);
+    if( filename.empty() )
+        return;
+
+    LOCK_GUARD(m_Lock) {
+        const auto dir_it = m_Dirs.find(directory);
+        if( dir_it == end(m_Dirs) )
+            return;
+
+        auto &listing = dir_it->second;
+        const auto item_it = lower_bound(begin(listing.items),
+                                         end(listing.items),
+                                         filename,
+                                         []( auto &_1, auto &_2 ){
+                                             return _1.filename < _2;
+                                         });
+        if( item_it == end(listing.items) || item_it->filename != filename  ) {
+            PropFindResponse r;
+            r.filename = filename;
+            r.is_directory = true;
+            const auto index = distance(begin(listing.items), item_it);
+            listing.items.insert( item_it, move(r) );
+            listing.dirty_marks.insert(begin(listing.dirty_marks)+index, true);
+        }
+        else {
+            const auto index = distance(begin(listing.items), item_it);
+            listing.dirty_marks[index] = true;
+        }
+    }
+}
+
+void Cache::CommitRmDir( const string &_at_path )
+{
+    CommitUnlink(_at_path);
+    DiscardListing(_at_path);
+}
+
+void Cache::CommitUnlink( const string &_at_path )
+{
+    const auto [directory, filename] = DeconstructPath(_at_path);
+    if( filename.empty() )
+        return;
+    
+    LOCK_GUARD(m_Lock) {
+        const auto dir_it = m_Dirs.find(directory);
+        if( dir_it == end(m_Dirs) )
+            return;
+
+        auto &listing = dir_it->second;
+        const auto item_it = lower_bound(begin(listing.items),
+                                         end(listing.items),
+                                         filename,
+                                         []( auto &_1, auto &_2 ){
+                                             return _1.filename < _2;
+                                         });
+        if( item_it != end(listing.items) && item_it->filename == filename  ) {
+            const auto index = distance(begin(listing.items), item_it);
+            listing.items.erase( item_it );
+            listing.dirty_marks.erase( begin(listing.dirty_marks) + index );
+        }
+    }
 }
 
 }

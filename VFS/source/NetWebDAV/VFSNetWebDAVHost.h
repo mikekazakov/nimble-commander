@@ -21,20 +21,34 @@ public:
                int _port = -1);
     ~WebDAVHost();
     
+    
+    VFSConfiguration Configuration() const override;
+    
+    bool IsWritable() const override;
+    
     int FetchDirectoryListing(const char *_path,
                               shared_ptr<VFSListing> &_target,
                               int _flags,
                               const VFSCancelChecker &_cancel_checker) override;
+    
     int IterateDirectoryListing(const char *_path,
                                 const function<bool(const VFSDirEnt &_dirent)> &_handler) override;
     int Stat(const char *_path,
              VFSStat &_st,
              int _flags,
              const VFSCancelChecker &_cancel_checker) override;
+    
     int StatFS(const char *_path,
                VFSStatFS &_stat,
                const VFSCancelChecker &_cancel_checker) override;
     
+    int CreateDirectory(const char* _path,
+                        int _mode,
+                        const VFSCancelChecker &_cancel_checker) override;
+    
+    int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;    
+    int Unlink(const char *_path,
+               const VFSCancelChecker &_cancel_checker ) override;
     
 private:
     const webdav::HostConfiguration &Config() const noexcept;

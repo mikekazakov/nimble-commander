@@ -1,5 +1,6 @@
 #include "tests_common.h"
 #include "../source/NetWebDAV/VFSNetWebDAVHost.h"
+#include <VFS/VFSEasyOps.h>
 
 using namespace nc::vfs;
 
@@ -13,7 +14,7 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
 
 - (void)testBasic
 {
-    shared_ptr<WebDAVHost> host(new WebDAVHost("192.168.2.5", "admin", "iddqd", "Public", false, 5000));
+    shared_ptr<WebDAVHost> host(new WebDAVHost("192.168.2.5", "guest", "", "Public", false, 5000));
 
     VFSListingPtr listing;
     int rc = host->FetchDirectoryListing("/", listing, 0, nullptr);
@@ -54,7 +55,7 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
         });
     };
     
-    XCTAssert( has_fn("..") );
+    XCTAssert( !has_fn("..") );
     XCTAssert( has_fn("Test1") );
 }
 
@@ -63,7 +64,7 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
     const auto host = [self spawnBoxComHost];
     VFSListingPtr listing;
     
-    int rc = host->FetchDirectoryListing("/Test1", listing, VFSFlags::F_NoDotDot, nullptr);
+    int rc = host->FetchDirectoryListing("/Test1", listing, 0, nullptr);
     XCTAssert(rc == VFSError::Ok);
     
     const auto has_fn = [listing]( const char *_fn ) {
@@ -72,7 +73,7 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
         });
     };
     
-    XCTAssert( !has_fn("..") );
+    XCTAssert( has_fn("..") );
     XCTAssert( has_fn("README.md") );
     XCTAssert( has_fn("scorpions-lifes_like_a_river.gpx") );
 }
@@ -119,5 +120,28 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
     XCTAssert( rc != VFSError::Ok );
 }
 
+- (void)testCreateDirectory
+{
+    const auto host = [self spawnBoxComHost];
+    
+    VFSEasyDelete(p1, host);    
+
+    const auto p1 = "/Test2/";
+    XCTAssert( host->CreateDirectory(p1, 0, nullptr) == VFSError::Ok );
+    XCTAssert( host->Exists(p1) );
+    XCTAssert( host->IsDirectory(p1, 0) );
+
+    const auto p2 = "/Test2/SubDir1";
+    XCTAssert( host->CreateDirectory(p2, 0, nullptr) == VFSError::Ok );
+    XCTAssert( host->Exists(p2) );
+    XCTAssert( host->IsDirectory(p2, 0) );
+
+    const auto p3 = "/Test2/SubDir2";
+    XCTAssert( host->CreateDirectory(p3, 0, nullptr) == VFSError::Ok );
+    XCTAssert( host->Exists(p3) );
+    XCTAssert( host->IsDirectory(p3, 0) );
+    
+    VFSEasyDelete(p1, host);
+}
 
 @end

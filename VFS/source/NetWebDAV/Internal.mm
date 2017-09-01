@@ -18,6 +18,11 @@ const char *HostConfiguration::Junction() const
     return server_url.c_str();
 }
     
+const char *HostConfiguration::VerboseJunction() const
+{
+    return verbose.c_str();
+}
+    
 bool HostConfiguration::operator==(const HostConfiguration&_rhs) const
 {
     return server_url == _rhs.server_url &&
@@ -37,6 +42,10 @@ static size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, v
 
 struct CURLInputStringContext
 {
+    CURLInputStringContext(){};
+    CURLInputStringContext(const string &_str):data(_str){};
+    CURLInputStringContext(const char   *_str):data(_str){};
+
     string_view data;
     ssize_t offset = 0;
     
@@ -48,12 +57,6 @@ struct CURLInputStringContext
         context.offset += to_read;
         return to_read;
     }
-    
-//    #define CURL_SEEKFUNC_OK       0
-//#define CURL_SEEKFUNC_FAIL     1 /* fail the entire transfer */
-//#define CURL_SEEKFUNC_CANTSEEK 2 /* tell libcurl seeking can't be done, so
-//                                    libcurl might try other means instead */
-// 
     
     static int Seek(void *_userp, curl_off_t _offset, int _origin)
     {
@@ -175,17 +178,6 @@ pair<int, HTTPRequests::Mask> FetchServerOptions(const HostConfiguration& _optio
     }
 }
 
-const auto g_PropfindMessage =
-    "<?xml version=\"1.0\"?>"
-    "<a:propfind xmlns:a=\"DAV:\">"
-        "<a:prop>"
-            "<a:resourcetype/>"
-            "<a:getcontentlength/>"
-            "<a:getlastmodified/>"
-            "<a:creationdate/>"
-        "</a:prop>"
-    "</a:propfind>";
-
 static time_t ParseModDate( const char *_date_time )
 {
     if( const auto t = DateTimeFromRFC1123(_date_time); t >= 0 )
@@ -287,7 +279,7 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
                                                     const string &_path )
 {
     if( _path.back() != '/' )
-        throw invalid_argument("path must contain a trailing slash");
+        throw invalid_argument("FetchDAVListing: path must contain a trailing slash");
 
     const auto curl = _connection.EasyHandle();
     
@@ -301,15 +293,20 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
     const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
     curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
 
-    auto url = _options.full_url;
-    if( _path != "/" ) {
-        url.pop_back();
-        url += URIEscape(_path);
-    }
+    const auto url = URIForPath(_options, _path);
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
-    CURLInputStringContext context;
-    context.data = g_PropfindMessage;
+    const auto g_PropfindMessage =
+        "<?xml version=\"1.0\"?>"
+        "<a:propfind xmlns:a=\"DAV:\">"
+            "<a:prop>"
+                "<a:resourcetype/>"
+                "<a:getcontentlength/>"
+                "<a:getlastmodified/>"
+                "<a:creationdate/>"
+            "</a:prop>"
+        "</a:propfind>";
+    CURLInputStringContext context{g_PropfindMessage};
     curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, CURLInputStringContext::Read);
     curl_easy_setopt(curl, CURLOPT_READDATA, &context);
@@ -320,11 +317,10 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
     string response;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-
     
-    string headers;
-    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
-    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
+//    string headers;
+//    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
+//    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
 
     const auto rc = curl_easy_perform(curl);
     if( rc == CURLE_OK ) {
@@ -412,17 +408,18 @@ static pair<long, long> ParseSpaceQouta( const string &_xml )
     return {free, used};
 }
 
-const auto g_QuotaMessage =
-    "<?xml version=\"1.0\"?>"
-    "<a:propfind xmlns:a=\"DAV:\">"
-        "<a:prop>"
-            "<a:quota-available-bytes/>"
-            "<a:quota-used-bytes/>"
-        "</a:prop>"
-    "</a:propfind>";
 tuple<int, long, long> FetchSpaceQuota(const HostConfiguration& _options,
                                        Connection &_connection )
 {
+    const auto g_QuotaMessage =
+        "<?xml version=\"1.0\"?>"
+        "<a:propfind xmlns:a=\"DAV:\">"
+            "<a:prop>"
+                "<a:quota-available-bytes/>"
+                "<a:quota-used-bytes/>"
+            "</a:prop>"
+        "</a:propfind>";
+    
     const auto curl = _connection.EasyHandle();
     
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PROPFIND");
@@ -436,8 +433,7 @@ tuple<int, long, long> FetchSpaceQuota(const HostConfiguration& _options,
     auto url = _options.full_url;
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
-    CURLInputStringContext context;
-    context.data = g_QuotaMessage;
+    CURLInputStringContext context{g_QuotaMessage};
     curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, CURLInputStringContext::Read);
     curl_easy_setopt(curl, CURLOPT_READDATA, &context);
@@ -449,10 +445,6 @@ tuple<int, long, long> FetchSpaceQuota(const HostConfiguration& _options,
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
-    string headers;
-    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
-    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
-
     const auto rc = curl_easy_perform(curl);
     if( rc == CURLE_OK ) {
         const auto [free, used] = ParseSpaceQouta(response);
@@ -462,5 +454,90 @@ tuple<int, long, long> FetchSpaceQuota(const HostConfiguration& _options,
     return {rc, -1, -1};
 }
 
+int RequestMKCOL(const HostConfiguration& _options,
+                 Connection &_connection,
+                 const string &_path )
+{
+    if( _path.back() != '/' )
+        throw invalid_argument("RequestMKCOL: path must contain a trailing slash");
+
+    const auto curl = _connection.EasyHandle();
+    
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "MKCOL");
+    
+    struct curl_slist *chunk = nullptr;
+    chunk = curl_slist_append(chunk, ("Host: "s + _options.server_url).c_str());
+    const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+    const auto url = URIForPath(_options, _path);
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    
+    string response;
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+    const auto curl_rc = curl_easy_perform(curl);
+    const auto http_rc = curl_easy_get_response_code(curl);
+    if( curl_rc == CURLE_OK && http_rc == 201 )
+        return VFSError::Ok;
+    else
+        return ToVFSError(curl_rc, http_rc);
+}
+
+int RequestDelete(const HostConfiguration& _options,
+                  Connection &_connection,
+                  const string &_path )
+{
+    if( _path == "/" )
+        return VFSError::FromErrno(EPERM);
+//    if( _path.back() == '/' )
+//        throw invalid_argument("RequestDelete: path must not contain a trailing slash");
+    
+    const auto curl = _connection.EasyHandle();
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+    
+    struct curl_slist *chunk = nullptr;
+    chunk = curl_slist_append(chunk, ("Host: "s + _options.server_url).c_str());
+    const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+    const auto url = URIForPath(_options, _path);
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    
+    string response;
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+    const auto curl_rc = curl_easy_perform(curl);
+    const auto http_rc = curl_easy_get_response_code(curl);
+    if( curl_rc == CURLE_OK && http_rc == 204 )
+        return VFSError::Ok;
+    else
+        return ToVFSError(curl_rc, http_rc);
+}
+
+string URIForPath(const HostConfiguration& _options, const string &_path)
+{
+    auto uri = _options.full_url;
+    if( _path != "/" ) {
+        uri.pop_back();
+        uri += URIEscape(_path);
+    }
+    return uri;
+}
+
+int ToVFSError( int _curl_rc, int _http_rc )
+{
+    // TODO: write
+    return VFSError::FromErrno(EIO);
+}
+
+int curl_easy_get_response_code(CURL *_handle)
+{
+    long code = 0;
+    curl_easy_getinfo(_handle, CURLINFO_RESPONSE_CODE, &code);
+    return (int)code;
+}
 
 }

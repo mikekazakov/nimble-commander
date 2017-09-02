@@ -4,6 +4,7 @@
 #include "../VFSListingInput.h"
 #include "ConnectionsPool.h"
 #include "Cache.h"
+#include "File.h"
 
 namespace nc::vfs {
 
@@ -17,7 +18,7 @@ struct WebDAVHost::State
         m_Pool{_config}
     {}
     
-    ConnectionsPool m_Pool;
+    class ConnectionsPool m_Pool;
     Cache           m_Cache;
 };
 
@@ -27,6 +28,7 @@ static VFSConfiguration ComposeConfiguration(const string &_serv_url,
                                              const string &_path,
                                              bool _https,
                                              int _port);
+static bool IsValidInputPath(const char *_path);
 
 WebDAVHost::WebDAVHost(const string &_serv_url,
                        const string &_user,
@@ -83,7 +85,7 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
                                       int _flags,
                                       const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
     const auto path =  EnsureTrailingSlash(_path);
@@ -146,7 +148,7 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
 int WebDAVHost::IterateDirectoryListing(const char *_path,
                                         const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    if( !_path || _path[0] != '/' )
+    if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
     const auto path =  EnsureTrailingSlash(_path);
@@ -187,7 +189,7 @@ int WebDAVHost::Stat(const char *_path,
                      int _flags,
                      const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
     PropFindResponse item;
@@ -273,7 +275,7 @@ int WebDAVHost::CreateDirectory(const char* _path,
                                 int _mode,
                                 const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
     const auto path =  EnsureTrailingSlash(_path);
@@ -289,7 +291,7 @@ int WebDAVHost::CreateDirectory(const char* _path,
 
 int WebDAVHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path[0] != '/' )
+    if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
     const auto path =  EnsureTrailingSlash(_path);
@@ -306,7 +308,7 @@ int WebDAVHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_canc
 int WebDAVHost::Unlink(const char *_path,
                        const VFSCancelChecker &_cancel_checker )
 {
-    if( !_path || _path[0] != '/' )
+    if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
     const auto ar = I->m_Pool.Get();
@@ -317,6 +319,23 @@ int WebDAVHost::Unlink(const char *_path,
     I->m_Cache.CommitUnlink(_path);
 
     return VFSError::Ok;
+}
+
+int WebDAVHost::CreateFile(const char* _path,
+                           shared_ptr<VFSFile> &_target,
+                           const VFSCancelChecker &_cancel_checker)
+{
+    if( !IsValidInputPath(_path) )
+        return VFSError::InvalidCall;
+
+    _target = make_shared<File>(_path, dynamic_pointer_cast<WebDAVHost>(shared_from_this()));
+
+    return VFSError::Ok;
+}
+
+webdav::ConnectionsPool& WebDAVHost::ConnectionsPool()
+{
+    return I->m_Pool;
 }
 
 static VFSConfiguration ComposeConfiguration(const string &_serv_url,
@@ -346,6 +365,11 @@ static VFSConfiguration ComposeConfiguration(const string &_serv_url,
                       "/" + _path + "/";
 
     return VFSConfiguration( move(config) );
+}
+
+static bool IsValidInputPath(const char *_path)
+{
+    return _path != nullptr && _path[0] == '/';
 }
 
 }

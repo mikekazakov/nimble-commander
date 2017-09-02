@@ -13,17 +13,28 @@ public:
     ~Connection();
 
     CURL *EasyHandle();
-    
+    CURLM *MultiHandle();
+
+    bool IsMultiHandleAttached() const;
+    void AttachMultiHandle();
+    void DetachMultiHandle();
+
+    using ProgressCallback = function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
+    void SetProgreessCallback( ProgressCallback _callback );
     void Clear();
+
+
 
 private:
     void operator=(const Connection&) = delete;
     Connection(const Connection&) = delete;
+    static int Progress(void *_clientp, long _dltotal, long _dlnow, long _ultotal, long _ulnow);
 
-    CURL * const m_EasyHandle;
+    CURL * const    m_EasyHandle = nullptr;
+    CURLM *         m_MultiHandle = nullptr;
+    bool            m_MultiHandleAttached = false;
+    ProgressCallback m_ProgressCallback;
 };
-
-
 
 class ConnectionsPool
 {
@@ -34,6 +45,7 @@ public:
     struct AR;
 
     AR Get();
+    unique_ptr<Connection> GetRaw();
     void Return(unique_ptr<Connection> _connection);
 
 

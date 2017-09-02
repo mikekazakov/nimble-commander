@@ -90,6 +90,8 @@
 		CFFA95601F5291540035E606 /* DateTimeParser.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA955E1F528A7B0035E606 /* DateTimeParser.mm */; };
 		CFFA95641F5672DF0035E606 /* ConnectionsPool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95621F5506FC0035E606 /* ConnectionsPool.mm */; };
 		CFFA95681F57B4F20035E606 /* Cache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95661F57B2710035E606 /* Cache.mm */; };
+		CFFA956C1F5A477F0035E606 /* File.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA956A1F5A43DD0035E606 /* File.mm */; };
+		CFFA95701F5A57030035E606 /* ReadBuffer.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA956E1F5A4EDC0035E606 /* ReadBuffer.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -237,6 +239,10 @@
 		CFFA95621F5506FC0035E606 /* ConnectionsPool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ConnectionsPool.mm; path = source/NetWebDAV/ConnectionsPool.mm; sourceTree = "<group>"; };
 		CFFA95651F57B2710035E606 /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Cache.h; path = source/NetWebDAV/Cache.h; sourceTree = "<group>"; };
 		CFFA95661F57B2710035E606 /* Cache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Cache.mm; path = source/NetWebDAV/Cache.mm; sourceTree = "<group>"; };
+		CFFA95691F5A43DD0035E606 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/NetWebDAV/File.h; sourceTree = "<group>"; };
+		CFFA956A1F5A43DD0035E606 /* File.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = File.mm; path = source/NetWebDAV/File.mm; sourceTree = "<group>"; };
+		CFFA956D1F5A4EDC0035E606 /* ReadBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ReadBuffer.h; path = source/NetWebDAV/ReadBuffer.h; sourceTree = "<group>"; };
+		CFFA956E1F5A4EDC0035E606 /* ReadBuffer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ReadBuffer.mm; path = source/NetWebDAV/ReadBuffer.mm; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -536,6 +542,10 @@
 		CFFA95521F4E604D0035E606 /* NetWebDAV */ = {
 			isa = PBXGroup;
 			children = (
+				CFFA956D1F5A4EDC0035E606 /* ReadBuffer.h */,
+				CFFA956E1F5A4EDC0035E606 /* ReadBuffer.mm */,
+				CFFA95691F5A43DD0035E606 /* File.h */,
+				CFFA956A1F5A43DD0035E606 /* File.mm */,
 				CFFA95651F57B2710035E606 /* Cache.h */,
 				CFFA95661F57B2710035E606 /* Cache.mm */,
 				CFFA95611F5506FC0035E606 /* ConnectionsPool.h */,
@@ -673,11 +683,13 @@
 				CFFA94C71F4543BC0035E606 /* VFSNetSFTPAccountsFetcher.cpp in Sources */,
 				CFFA94C81F4543BC0035E606 /* VFSNetSFTPFile.cpp in Sources */,
 				CFFA95641F5672DF0035E606 /* ConnectionsPool.mm in Sources */,
+				CFFA95701F5A57030035E606 /* ReadBuffer.mm in Sources */,
 				CFFA94CF1F4543CC0035E606 /* xattr.cpp in Sources */,
 				CFFA94D71F4543ED0035E606 /* VFSHost.cpp in Sources */,
 				CFFA94D21F4543ED0035E606 /* VFSEasyOps.mm in Sources */,
 				CFFA94CA1F4543BC0035E606 /* VFSNetSFTPKeyValidator.cpp in Sources */,
 				CFFA94CC1F4543C70035E606 /* AppleDoubleEA.cpp in Sources */,
+				CFFA956C1F5A477F0035E606 /* File.mm in Sources */,
 				CFFA94BA1F4543A30035E606 /* DisplayNamesCache.mm in Sources */,
 				CFFA94DB1F4543ED0035E606 /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CFFA94D91F4543ED0035E606 /* VFSListingObjC.mm in Sources */,

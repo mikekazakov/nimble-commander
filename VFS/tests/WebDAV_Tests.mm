@@ -120,13 +120,13 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
     XCTAssert( rc != VFSError::Ok );
 }
 
-- (void)testCreateDirectory
+- (void)testCreateDirectoryOnBoxCom
 {
     const auto host = [self spawnBoxComHost];
     
+    const auto p1 = "/Test2/";
     VFSEasyDelete(p1, host);    
 
-    const auto p1 = "/Test2/";
     XCTAssert( host->CreateDirectory(p1, 0, nullptr) == VFSError::Ok );
     XCTAssert( host->Exists(p1) );
     XCTAssert( host->IsDirectory(p1, 0) );
@@ -142,6 +142,24 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
     XCTAssert( host->IsDirectory(p3, 0) );
     
     VFSEasyDelete(p1, host);
+}
+
+- (void)testFileReadOnBoxCom
+{
+    const auto host = [self spawnBoxComHost];
+    VFSFilePtr file;
+    const auto path = "/Test1/scorpions-lifes_like_a_river.gpx";
+    const auto filecr_rc = host->CreateFile(path, file, nullptr);
+    XCTAssert( filecr_rc == VFSError::Ok );
+
+    const auto open_rc = file->Open(VFSFlags::OF_Read);
+    XCTAssert( open_rc == VFSError::Ok );
+    
+    auto data = file->ReadFile();
+    XCTAssert(data &&
+              data->size() == 65039 &&
+              data->at(65037) == 4 &&
+              data->at(65038) == 0 );    
 }
 
 @end

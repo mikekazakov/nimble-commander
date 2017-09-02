@@ -6,6 +6,7 @@ namespace nc::vfs {
 
 namespace webdav {
     class HostConfiguration;
+    class ConnectionsPool;
 }
 
 class WebDAVHost : public VFSHost
@@ -47,11 +48,19 @@ public:
                         const VFSCancelChecker &_cancel_checker) override;
     
     int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;    
+
     int Unlink(const char *_path,
                const VFSCancelChecker &_cancel_checker ) override;
     
-private:
+    int CreateFile(const char* _path,
+                   shared_ptr<VFSFile> &_target,
+                   const VFSCancelChecker &_cancel_checker) override;
+    
+    
     const webdav::HostConfiguration &Config() const noexcept;
+    class webdav::ConnectionsPool& ConnectionsPool();
+    
+private:
     int RefreshListingAtPath( const string &_path, const VFSCancelChecker &_cancel_checker );
 
 

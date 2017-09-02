@@ -1,4 +1,4 @@
-::nc (NC)
+::nc
    ::bootstrap
    ::core
    ::panel
@@ -7,7 +7,7 @@
       ::data
    ::ops
    ::util
+   ::vfs
 
 future:
-   ::vfs
    ::term

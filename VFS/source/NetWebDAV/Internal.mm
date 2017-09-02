@@ -295,6 +295,7 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
 
     const auto url = URIForPath(_options, _path);
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    cout << url << endl;
 
     const auto g_PropfindMessage =
         "<?xml version=\"1.0\"?>"
@@ -515,6 +516,16 @@ int RequestDelete(const HostConfiguration& _options,
         return VFSError::Ok;
     else
         return ToVFSError(curl_rc, http_rc);
+}
+
+int RequestHead(const HostConfiguration& _options,
+                  Connection &_connection,
+                  const string &_path )
+{
+    
+
+
+    return 0;
 }
 
 string URIForPath(const HostConfiguration& _options, const string &_path)

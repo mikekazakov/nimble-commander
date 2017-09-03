@@ -60,7 +60,6 @@ public:
     virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
     virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
     
-    virtual bool ShouldProduceThumbnails() const override;
     virtual bool IsWritable() const override;
     
     virtual bool IsDirChangeObservingAvailable(const char *_path) override;    

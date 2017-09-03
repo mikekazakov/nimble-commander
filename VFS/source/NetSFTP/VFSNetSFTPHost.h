@@ -94,8 +94,6 @@ public:
     virtual int FetchGroups(vector<VFSGroup> &_target,
                             const VFSCancelChecker &_cancel_checker) override;
     
-    virtual bool ShouldProduceThumbnails() const override;
-    
     // internal stuff
     struct Connection
     {

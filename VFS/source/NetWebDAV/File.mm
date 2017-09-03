@@ -13,8 +13,6 @@ File::File(const char* _relative_path, const shared_ptr<WebDAVHost> &_host):
 
 File::~File()
 {
-    // TODO: return the connection to the host
-
     Close();
 }
 
@@ -110,10 +108,9 @@ void File::SpawnDownloadConnectionIfNeeded()
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
     const auto curl = m_Conn->EasyHandle();
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
-    
     const auto url = URIForPath(m_Host.Config(), RelativePath());
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ReadBuffer::Write);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &m_ReadBuffer);
     

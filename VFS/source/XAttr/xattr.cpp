@@ -356,11 +356,6 @@ int VFSXAttrHost::Rename(const char *_old_path, const char *_new_path, const VFS
     return VFSError::Ok;
 }
 
-bool VFSXAttrHost::ShouldProduceThumbnails() const
-{
-    return false;
-}
-
 void VFSXAttrHost::ReportChange()
 {
     Fetch();

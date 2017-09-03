@@ -379,7 +379,7 @@ int VFSHost::SetTimes(const char *_path,
 
 bool VFSHost::ShouldProduceThumbnails() const
 {
-    return true;
+    return false;
 }
 
 int VFSHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)

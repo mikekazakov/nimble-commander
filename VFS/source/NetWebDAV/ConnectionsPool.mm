@@ -15,12 +15,15 @@ Connection::Connection( const HostConfiguration& _config ):
     m_EasyHandle(SpawnOrThrow())
 {
     const auto auth_methods = CURLAUTH_BASIC | CURLAUTH_DIGEST;
+    const auto ua = "Nimble Commander";
+    
     curl_easy_setopt(m_EasyHandle, CURLOPT_HTTPAUTH, auth_methods);
     curl_easy_setopt(m_EasyHandle, CURLOPT_USERNAME, _config.user.c_str());
     curl_easy_setopt(m_EasyHandle, CURLOPT_PASSWORD, _config.passwd.c_str());
     curl_easy_setopt(m_EasyHandle, CURLOPT_XFERINFOFUNCTION, Progress);
     curl_easy_setopt(m_EasyHandle, CURLOPT_XFERINFODATA, this);
     curl_easy_setopt(m_EasyHandle, CURLOPT_NOPROGRESS, 0);
+    curl_easy_setopt(m_EasyHandle, CURLOPT_USERAGENT, ua);
 }
 
 Connection::~Connection()
@@ -119,8 +122,8 @@ ConnectionsPool::AR ConnectionsPool::Get()
         return AR{make_unique<Connection>(m_Config), *this};
     }
     else {
-        unique_ptr<Connection> c = move(m_Connections.front());
-        m_Connections.pop_front();
+        unique_ptr<Connection> c = move(m_Connections.back());
+        m_Connections.pop_back();
         return AR{move(c), *this};
     }
 }

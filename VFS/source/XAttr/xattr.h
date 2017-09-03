@@ -31,10 +31,7 @@ public:
     
     virtual int Unlink(const char *_path, const VFSCancelChecker &_cancel_checker) override;
     virtual int Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker) override;
-    
-    virtual bool ShouldProduceThumbnails() const override;
-
-    
+        
     void    ReportChange(); // will cause host to reload xattrs list
     
 private:

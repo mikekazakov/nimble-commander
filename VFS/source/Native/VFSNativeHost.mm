@@ -61,6 +61,11 @@ VFSNativeHost::VFSNativeHost():
                 VFSHostFeatures::SetTimes );
 }
 
+bool VFSNativeHost::ShouldProduceThumbnails() const
+{
+    return true;
+}
+
 int VFSNativeHost::FetchDirectoryListing(const char *_path,
                                          shared_ptr<VFSListing> &_target,
                                          int _flags,

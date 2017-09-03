@@ -18,8 +18,6 @@ public:
 
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
-
-    bool ShouldProduceThumbnails() const override;
     
     virtual bool IsWritable() const override;
     

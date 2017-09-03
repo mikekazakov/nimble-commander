@@ -372,11 +372,6 @@ int VFSNetFTPHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-bool VFSNetFTPHost::ShouldProduceThumbnails() const
-{
-    return false;
-}
-
 int VFSNetFTPHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     path path = _path;

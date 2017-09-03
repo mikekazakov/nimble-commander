@@ -654,11 +654,6 @@ int VFSPSHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecke
     return 0;
 }
 
-bool VFSPSHost::ShouldProduceThumbnails() const
-{
-    return false;
-}
-
 // return true if process has died, if it didn't on timeout - returns false
 // on any errors returns nullopt
 optional<bool> WaitForProcessToDie( int pid )

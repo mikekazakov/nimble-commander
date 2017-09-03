@@ -43,15 +43,12 @@ public:
     ~ConnectionsPool();
 
     struct AR;
-
     AR Get();
     unique_ptr<Connection> GetRaw();
     void Return(unique_ptr<Connection> _connection);
 
-
-
 private:
-    deque< unique_ptr<Connection> > m_Connections;
+    vector< unique_ptr<Connection> > m_Connections;
     const HostConfiguration &m_Config;
 };
 

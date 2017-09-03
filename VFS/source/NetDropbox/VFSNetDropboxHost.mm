@@ -147,11 +147,6 @@ VFSConfiguration VFSNetDropboxHost::Configuration() const
     return m_Config;
 }
 
-bool VFSNetDropboxHost::ShouldProduceThumbnails() const
-{
-    return false;
-}
-
 NSURLSession *VFSNetDropboxHost::GenericSession() const
 {
     return I->m_GenericSession;

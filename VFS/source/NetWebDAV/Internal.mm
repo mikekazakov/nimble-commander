@@ -284,18 +284,18 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
     const auto curl = _connection.EasyHandle();
     
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PROPFIND");
-    struct curl_slist *chunk = NULL;
-    chunk = curl_slist_append(chunk, "Depth: 1");
-    chunk = curl_slist_append(chunk, "translate: f");
     
-    chunk = curl_slist_append(chunk, "Content-Type: application/xml; charset=\"utf-8\"");
-
-    const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+    static const auto headers = []{
+        struct curl_slist *chunk = nullptr;
+        chunk = curl_slist_append(chunk, "Depth: 1");
+        chunk = curl_slist_append(chunk, "translate: f");
+        chunk = curl_slist_append(chunk, "Content-Type: application/xml; charset=\"utf-8\"");
+        return chunk;
+    }();
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 
     const auto url = URIForPath(_options, _path);
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    cout << url << endl;
 
     const auto g_PropfindMessage =
         "<?xml version=\"1.0\"?>"
@@ -319,10 +319,12 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
     
+    
+    
 //    string headers;
 //    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
 //    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
-
+    
     const auto rc = curl_easy_perform(curl);
     if( rc == CURLE_OK ) {
 //        cout << headers << endl;

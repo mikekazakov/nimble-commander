@@ -608,11 +608,6 @@ int VFSNetSFTPHost::CreateFile(const char* _path, shared_ptr<VFSFile> &_target, 
     return VFSError::Ok;
 }
 
-bool VFSNetSFTPHost::ShouldProduceThumbnails() const
-{
-    return false;
-}
-
 bool VFSNetSFTPHost::IsWritable() const
 {
     return true; // dummy now

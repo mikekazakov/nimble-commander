@@ -1,5 +1,6 @@
 #include "File.h"
 #include "Internal.h"
+#include "Cache.h"
 
 namespace nc::vfs::webdav {
 
@@ -108,6 +109,70 @@ ssize_t File::Read(void *_buf, size_t _size)
     return has_read;
 }
 
+ssize_t File::Write(const void *_buf, size_t _size)
+{
+    if( !IsOpened() ||
+        !(m_OpenFlags & VFSFlags::OF_Write) ||
+        m_Size < 0 )
+        return VFSError::FromErrno(EINVAL);
+
+    m_WriteBuffer.Write(_buf, _size);
+
+    SpawnUploadConnectionIfNeeded();
+
+    bool error = false;
+    
+    const auto multi = m_Conn->MultiHandle();
+    int running_handles = 0;
+    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) ) ;
+    
+    do  {
+        if( !SelectMulti(multi) ) {
+            error = true;
+            break;
+        }
+        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
+    } while( !m_WriteBuffer.Empty() && running_handles);
+
+    if( running_handles == 0 )
+        if( HasErrors(multi) )
+            error  = true;
+
+    if( error )
+        return VFSError::FromErrno(EIO);
+
+    const auto has_written = _size - m_WriteBuffer.Size();
+    m_Pos += has_written;
+    m_WriteBuffer.Discard( _size - has_written );
+
+    return has_written;
+}
+
+static size_t NullWrite(void *_buffer, size_t _size, size_t _nmemb, void *_userp)
+{
+    return _size * _nmemb;
+}
+
+void File::SpawnUploadConnectionIfNeeded()
+{
+    if( m_Conn )
+        return;
+    
+    m_Conn = m_Host.ConnectionsPool().GetRaw();
+    assert(m_Conn);
+    const auto curl = m_Conn->EasyHandle();
+    const auto url = URIForPath(m_Host.Config(), RelativePath());
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+    curl_easy_setopt(curl, CURLOPT_READFUNCTION, WriteBuffer::Read);
+    curl_easy_setopt(curl, CURLOPT_READDATA, &m_WriteBuffer);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, NullWrite);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, nullptr);
+    curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, m_Size);
+    
+    m_Conn->AttachMultiHandle();
+}
+
 void File::SpawnDownloadConnectionIfNeeded()
 {
     if( m_Conn )
@@ -142,16 +207,49 @@ static void AbortPendingDownload(Connection &_conn)
     } while(running_handles);
 }
 
+static void ConcludePendingUpload( Connection &_conn )
+{
+    const auto multi = _conn.MultiHandle();
+    int running_handles = 0;
+    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
+    
+    if( running_handles == 0)
+        return;
+    
+    while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
+    
+    while( running_handles ) {
+        if( !SelectMulti( multi ) )
+            break;
+        while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
+    }
+}
+
 int File::Close()
 {
-    m_ReadBuffer.Clear();
-    
     if( m_OpenFlags & VFSFlags::OF_Read ) {
         if( m_Conn ) {
             AbortPendingDownload(*m_Conn);
             m_Host.ConnectionsPool().Return( move(m_Conn) );
         }
     }
+    else if( m_OpenFlags & VFSFlags::OF_Write ) {
+        // ????
+        if( m_Size == 0 && !m_Conn )
+            Write("", 0);
+        
+        if( m_Conn ) {
+            ConcludePendingUpload(*m_Conn);
+            m_Host.ConnectionsPool().Return( move(m_Conn) );
+        }
+        
+        m_Conn.reset();
+        
+        m_Host.Cache().CommitMkFile(RelativePath());
+    }
+    
+    m_ReadBuffer.Clear();
+    m_WriteBuffer.Clear();
     
     m_OpenFlags = 0;
     m_Pos = 0;
@@ -181,6 +279,8 @@ ssize_t File::Size() const
 
 bool File::Eof() const
 {
+    if( !IsOpened() )
+        return true;
     return m_Pos == m_Size;
 }
 

@@ -103,7 +103,7 @@ void Connection::Clear()
     curl_easy_setopt(m_EasyHandle, CURLOPT_WRITEDATA, stdout);
     curl_easy_setopt(m_EasyHandle, CURLOPT_HEADERFUNCTION, nullptr);
     curl_easy_setopt(m_EasyHandle, CURLOPT_HEADERDATA, nullptr);
-    
+    curl_easy_setopt(m_EasyHandle, CURLOPT_NOBODY, 0);
     m_ProgressCallback = nullptr;
 }
 

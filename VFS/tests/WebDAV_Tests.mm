@@ -1,6 +1,7 @@
 #include "tests_common.h"
 #include "../source/NetWebDAV/VFSNetWebDAVHost.h"
 #include <VFS/VFSEasyOps.h>
+#include <VFS/Native.h>
 
 using namespace nc::vfs;
 
@@ -160,6 +161,79 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
               data->size() == 65039 &&
               data->at(65037) == 4 &&
               data->at(65038) == 0 );    
+}
+
+//int WriteFile(const void *_d, size_t _sz);
+
+- (void)testSimpleFileWriteOnBoxCom
+{
+    const auto host = [self spawnBoxComHost];
+    VFSFilePtr file;
+    const auto path = "/temp_file";
+    const auto filecr_rc = host->CreateFile(path, file, nullptr);
+    XCTAssert( filecr_rc == VFSError::Ok );
+
+    const auto open_rc = file->Open(VFSFlags::OF_Write);
+    XCTAssert( open_rc == VFSError::Ok );
+
+    string_view str{"Hello, world!"};
+    file->SetUploadSize(str.size());
+    const auto write_rc = file->WriteFile(str.data(), str.size());
+    XCTAssert( write_rc == VFSError::Ok );
+    
+    XCTAssert( file->Close() == VFSError::Ok );
+    
+    const auto open_rc2 = file->Open(VFSFlags::OF_Read);
+    XCTAssert( open_rc2 == VFSError::Ok );
+
+    const auto d = file->ReadFile();
+
+    XCTAssert((d &&
+              d->size() == str.size() &&
+              str == string_view{(const char*)d->data(), d->size()}) );
+    
+    XCTAssert( file->Close() == VFSError::Ok );
+    
+    VFSEasyDelete(path, host);
+}
+
+- (void)testEmptyFileCreationOnBoxCom
+{
+    const auto host = [self spawnBoxComHost];
+    VFSFilePtr file;
+    const auto path = "/empty_file";
+    const auto filecr_rc = host->CreateFile(path, file, nullptr);
+    XCTAssert( filecr_rc == VFSError::Ok );
+
+    const auto open_rc = file->Open(VFSFlags::OF_Write);
+    XCTAssert( open_rc == VFSError::Ok );
+
+    file->SetUploadSize(0);
+    
+    XCTAssert( file->Close() == VFSError::Ok );
+    
+    VFSEasyDelete(path, host);
+}
+
+- (void) testComplexCopyToBoxCom
+{
+    const auto host = [self spawnBoxComHost];
+    const auto copy_rc = VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs",
+                                              VFSNativeHost::SharedHost(),
+                                              "/Test2",
+                                              host);
+    XCTAssert( copy_rc == VFSError::Ok );
+
+    int res = 0;
+    int cmp_rc = VFSCompareNodes("/System/Library/Filesystems/msdos.fs",
+                                  VFSNativeHost::SharedHost(),
+                                  "/Test2",
+                                  host,
+                                  res);
+                                  
+    XCTAssert( cmp_rc == VFSError::Ok && res == 0 );
+    
+    VFSEasyDelete("/Test2", host);
 }
 
 @end

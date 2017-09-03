@@ -2,6 +2,8 @@
 
 namespace nc::vfs::webdav {
 
+static const auto g_DefaultCapacity = 32768;
+
 ReadBuffer::ReadBuffer()
 {
 }
@@ -23,6 +25,8 @@ size_t ReadBuffer::Size() const noexcept
 
 void ReadBuffer::Grow(int _new_size) noexcept
 {
+    _new_size = max(_new_size, g_DefaultCapacity);
+    assert( m_Size < _new_size );
     m_Capacity = _new_size;
     m_Bytes = (uint8_t*)realloc(m_Bytes, m_Capacity);
 }

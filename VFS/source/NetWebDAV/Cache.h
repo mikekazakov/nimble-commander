@@ -23,6 +23,7 @@ public:
     void DiscardListing( string _at_path );    
     void CommitMkDir( string _at_path );
     void CommitRmDir( const string &_at_path );
+    void CommitMkFile( string _at_path );
     void CommitUnlink( const string &_at_path );
     
 

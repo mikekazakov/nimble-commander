@@ -7,9 +7,10 @@ namespace nc::vfs {
 namespace webdav {
     class HostConfiguration;
     class ConnectionsPool;
+    class Cache;
 }
 
-class WebDAVHost : public VFSHost
+class WebDAVHost final : public VFSHost
 {
 public:
     static const char *UniqueTag;
@@ -58,7 +59,8 @@ public:
     
     
     const webdav::HostConfiguration &Config() const noexcept;
-    class webdav::ConnectionsPool& ConnectionsPool();
+    class webdav::ConnectionsPool &ConnectionsPool();
+    class webdav::Cache &Cache();
     
 private:
     int RefreshListingAtPath( const string &_path, const VFSCancelChecker &_cancel_checker );

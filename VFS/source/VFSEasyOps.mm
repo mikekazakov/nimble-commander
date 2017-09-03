@@ -405,3 +405,52 @@ int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr & _vfs)
         
     return file->Close();
 }
+
+int VFSCompareNodes(const path& _file1_full_path,
+                    const VFSHostPtr& _file1_host,
+                    const path& _file2_full_path,
+                    const VFSHostPtr& _file2_host,
+                    int &_result)
+{
+    // not comparing flags, perm, times, xattrs, acls etc now
+    
+    VFSStat st1, st2;
+    int ret;
+    if((ret =_file1_host->Stat(_file1_full_path.c_str(), st1, VFSFlags::F_NoFollow, 0)) < 0)
+        return ret;
+    
+    if((ret =_file2_host->Stat(_file2_full_path.c_str(), st2, VFSFlags::F_NoFollow, 0)) < 0)
+        return ret;
+    
+    if((st1.mode & S_IFMT) != (st2.mode & S_IFMT)) {
+        _result = -1;
+        return 0;
+    }
+    
+    if( S_ISREG(st1.mode) ) {
+        if(int64_t(st1.size) - int64_t(st2.size) != 0)
+            _result = int(int64_t(st1.size) - int64_t(st2.size));
+    }
+    else if( S_ISLNK(st1.mode) ) {
+        char link1[MAXPATHLEN], link2[MAXPATHLEN];
+        if( (ret = _file1_host->ReadSymlink(_file1_full_path.c_str(), link1, MAXPATHLEN, 0)) < 0)
+            return ret;
+        if( (ret = _file2_host->ReadSymlink(_file2_full_path.c_str(), link2, MAXPATHLEN, 0)) < 0)
+            return ret;
+        if( strcmp(link1, link2) != 0)
+            _result = strcmp(link1, link2);
+    }
+    else if ( S_ISDIR(st1.mode) ) {
+        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+            int ret = VFSCompareNodes( _file1_full_path / _dirent.name,
+                                        _file1_host,
+                                        _file2_full_path / _dirent.name,
+                                        _file2_host,
+                                        _result);
+            if(ret != 0)
+                return false;
+            return true;
+        });
+    }
+    return 0;
+}

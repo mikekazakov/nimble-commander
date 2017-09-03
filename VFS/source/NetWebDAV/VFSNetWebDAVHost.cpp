@@ -19,7 +19,7 @@ struct WebDAVHost::State
     {}
     
     class ConnectionsPool m_Pool;
-    Cache           m_Cache;
+    class Cache           m_Cache;
 };
 
 static VFSConfiguration ComposeConfiguration(const string &_serv_url,
@@ -336,6 +336,11 @@ int WebDAVHost::CreateFile(const char* _path,
 webdav::ConnectionsPool& WebDAVHost::ConnectionsPool()
 {
     return I->m_Pool;
+}
+
+webdav::Cache &WebDAVHost::Cache()
+{
+    return I->m_Cache;
 }
 
 static VFSConfiguration ComposeConfiguration(const string &_serv_url,

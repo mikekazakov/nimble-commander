@@ -2,30 +2,31 @@
 
 namespace nc::vfs::webdav {
 
-class ReadBuffer
+class WriteBuffer
 {
 public:
-    ReadBuffer();
-    ~ReadBuffer();
+    WriteBuffer();
+    ~WriteBuffer();
     
     bool Empty() const noexcept;
     size_t Size() const noexcept;
-    
+
     void Clear();
-    size_t Read(void* _buffer, size_t _bytes) noexcept;
+    void Write(const void* _buffer, size_t _bytes) noexcept;
     size_t Discard(size_t _bytes) noexcept;
-    static size_t Write(void *_buffer, size_t _size, size_t _nmemb, void *_userp);
-    
+    static size_t Read(void *_ptr, size_t _size, size_t _nmemb, void *_data);
+
 private:
-    ReadBuffer(const ReadBuffer&) = delete;
-    void operator=(const ReadBuffer&) = delete;
+    WriteBuffer(const WriteBuffer&) = delete;
+    void operator=(const WriteBuffer&) = delete;
     void Grow(int _new_size) noexcept;
     void PushBack(const void *_data, int _size) noexcept;
     void PopFront(int _size) noexcept;
-
+    
     uint8_t *m_Bytes = nullptr;
     int      m_Size = 0;
     int      m_Capacity = 0;
+
 };
 
 }

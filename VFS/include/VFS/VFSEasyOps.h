@@ -55,3 +55,9 @@ int VFSEasyCopyNode(const char *_src_full_path,
                     );
 
 int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr &_vfs);
+
+int VFSCompareNodes(const path& _file1_full_path,
+                    const VFSHostPtr& _file1_host,
+                    const path& _file2_full_path,
+                    const VFSHostPtr& _file2_host,
+                    int &_result);

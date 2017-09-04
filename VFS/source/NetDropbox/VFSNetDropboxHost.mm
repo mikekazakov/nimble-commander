@@ -59,8 +59,7 @@ VFSNetDropboxHost::VFSNetDropboxHost( const string &_account, const string &_acc
     I(make_unique<State>()),
     m_Config{Compose(_account, _access_token)}
 {
-    Construct(_account, _access_token);
-    InitialAccountLookup();
+    Init();
 }
 
 VFSNetDropboxHost::VFSNetDropboxHost( const VFSConfiguration &_config ):
@@ -68,8 +67,14 @@ VFSNetDropboxHost::VFSNetDropboxHost( const VFSConfiguration &_config ):
     I(make_unique<State>()),
     m_Config(_config)
 {
+    Init();
+}
+
+void VFSNetDropboxHost::Init()
+{
     Construct(Config().account, Config().token);
     InitialAccountLookup();
+    AddFeatures( VFSHostFeatures::NonEmptyRmDir );
 }
 
 void VFSNetDropboxHost::Construct(const string &_account, const string &_access_token)

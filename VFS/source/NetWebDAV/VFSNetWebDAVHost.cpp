@@ -59,6 +59,7 @@ WebDAVHost::WebDAVHost(const string &_serv_url,
         }
     }
 
+    AddFeatures(VFSHostFeatures::NonEmptyRmDir);
 }
 
 WebDAVHost::~WebDAVHost()

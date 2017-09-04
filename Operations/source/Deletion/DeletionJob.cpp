@@ -47,7 +47,9 @@ void DeletionJob::DoScan()
             si.type = m_Type;
             m_Script.emplace(si);
             
-            if( m_Type != DeletionType::Trash )
+            const auto nonempty_rm = bool(item.Host()->Features() & VFSHostFeatures::NonEmptyRmDir);
+            if( m_Type == DeletionType::Permanent &&
+                nonempty_rm == false )
                 ScanDirectory(item.Path(), i, si.filename);
         }
         else {

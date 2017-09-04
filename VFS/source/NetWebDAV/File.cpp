@@ -241,8 +241,7 @@ int File::Close()
         }
     }
     else if( m_OpenFlags & VFSFlags::OF_Write ) {
-        // ????
-        if( m_Size == 0 && !m_Conn )
+        if( !m_Conn )
             Write("", 0);
         
         if( m_Conn ) {

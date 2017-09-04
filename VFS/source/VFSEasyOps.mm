@@ -374,12 +374,13 @@ int VFSEasyDelete(const char *_full_path, const shared_ptr<VFSHost> &_host)
         return result;
     
     if((st.mode & S_IFMT) == S_IFDIR) {
-        _host->IterateDirectoryListing(_full_path, [&](const VFSDirEnt &_dirent) {
-            path p = _full_path;
-            p /= _dirent.name;
-            VFSEasyDelete(p.native().c_str(), _host);
-            return true;
-        });
+        if( !(_host->Features() & VFSHostFeatures::NonEmptyRmDir) )
+            _host->IterateDirectoryListing(_full_path, [&](const VFSDirEnt &_dirent) {
+                path p = _full_path;
+                p /= _dirent.name;
+                VFSEasyDelete(p.native().c_str(), _host);
+                return true;
+            });
         return _host->RemoveDirectory(_full_path, 0);
     }
     else

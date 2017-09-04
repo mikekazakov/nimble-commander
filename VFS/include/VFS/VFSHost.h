@@ -42,7 +42,8 @@ struct VFSHostFeatures
         SetPermissions  = 1  <<  2,
         SetFlags        = 1  <<  3,
         SetOwnership    = 1  <<  4,
-        SetTimes        = 1  <<  5
+        SetTimes        = 1  <<  5,
+        NonEmptyRmDir   = 1  <<  6
     };
 };
 
@@ -270,7 +271,8 @@ public:
                        const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
-     * Deletes an empty directory. Will fail on non-empty ones.
+     * Deletes an empty directory. Will fail on non-empty ones, unless NonEmptyRmDir flag is
+     * specified.
      */
     virtual int RemoveDirectory(const char *_path,
                                 const VFSCancelChecker &_cancel_checker = nullptr);

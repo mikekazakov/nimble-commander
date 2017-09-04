@@ -85,10 +85,10 @@ int RequestDelete(const HostConfiguration& _options,
                   Connection &_connection,
                   const string &_path );
 
-int RequestHead(const HostConfiguration& _options,
-                  Connection &_connection,
-                  const string &_path );
-
+int RequestMove(const HostConfiguration& _options,
+                Connection &_connection,
+                const string &_src,
+                const string &_dst );
     
 pair<string, string> DeconstructPath(const string &_path);
 int CURlErrorToVFSError( int _curle );

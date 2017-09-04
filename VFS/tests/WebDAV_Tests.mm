@@ -212,6 +212,8 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
     
     XCTAssert( file->Close() == VFSError::Ok );
     
+    XCTAssert( host->Exists(path) );
+    
     VFSEasyDelete(path, host);
 }
 
@@ -235,5 +237,23 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
     
     VFSEasyDelete("/Test2", host);
 }
+
+- (void) testRenameOnBoxCom
+{
+    const auto host = [self spawnBoxComHost];
+    
+    const auto p1 = "/new_empty_file";
+    const auto creat_rc = VFSEasyCreateEmptyFile(p1, host);
+    XCTAssert( creat_rc == VFSError::Ok );
+    
+    const auto p2 = u8"/new_empty_file_тест_ееёёё";
+    const auto rename_rc = host->Rename(p1, p2, nullptr);
+    XCTAssert( rename_rc == VFSError::Ok );
+    
+    XCTAssert( host->Exists(p2) );
+    
+    VFSEasyDelete(p2, host);
+}
+
 
 @end

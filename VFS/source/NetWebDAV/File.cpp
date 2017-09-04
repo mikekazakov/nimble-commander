@@ -214,8 +214,13 @@ static void AbortPendingDownload(Connection &_conn)
     } while(running_handles);
 }
 
-static void ConcludePendingUpload( Connection &_conn )
+static void ConcludePendingUpload( Connection &_conn, bool _abort)
 {
+    if( _abort )
+        _conn.SetProgreessCallback([](long, long, long, long){
+            return false;
+        });
+
     const auto multi = _conn.MultiHandle();
     int running_handles = 0;
     while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
@@ -245,7 +250,7 @@ int File::Close()
             Write("", 0);
         
         if( m_Conn ) {
-            ConcludePendingUpload(*m_Conn);
+            ConcludePendingUpload( *m_Conn, m_Pos < m_Size );
             m_Host.ConnectionsPool().Return( move(m_Conn) );
         }
         

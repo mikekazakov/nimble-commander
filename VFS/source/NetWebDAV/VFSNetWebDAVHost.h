@@ -57,6 +57,9 @@ public:
                    shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker) override;
     
+    int Rename(const char *_old_path,
+               const char *_new_path,
+               const VFSCancelChecker &_cancel_checker ) override;
     
     const webdav::HostConfiguration &Config() const noexcept;
     class webdav::ConnectionsPool &ConnectionsPool();

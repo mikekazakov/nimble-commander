@@ -520,12 +520,36 @@ int RequestDelete(const HostConfiguration& _options,
         return ToVFSError(curl_rc, http_rc);
 }
 
-int RequestHead(const HostConfiguration& _options,
-                  Connection &_connection,
-                  const string &_path )
+int RequestMove(const HostConfiguration& _options,
+                Connection &_connection,
+                const string &_src,
+                const string &_dst )
 {
-    
+    if( _src == "/" )
+        return VFSError::FromErrno(EPERM);
 
+    const auto curl = _connection.EasyHandle();
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "MOVE");
+    
+    struct curl_slist *chunk = nullptr;
+    chunk = curl_slist_append(chunk, ("Host: " + _options.server_url).c_str());
+    chunk = curl_slist_append(chunk, ("Destination: " + URIForPath(_options, _dst)).c_str());
+    const auto clear_chunk = at_scope_end([=]{ curl_slist_free_all(chunk); });
+    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+    const auto url = URIForPath(_options, _src);
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+
+    string response;
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+    const auto curl_rc = curl_easy_perform(curl);
+    const auto http_rc = curl_easy_get_response_code(curl);
+    if( curl_rc == CURLE_OK && (http_rc == 201 || http_rc == 204) )
+        return VFSError::Ok;
+    else
+        return ToVFSError(curl_rc, http_rc);
 
     return 0;
 }
@@ -539,6 +563,7 @@ string URIForPath(const HostConfiguration& _options, const string &_path)
     }
     return uri;
 }
+
 
 int ToVFSError( int _curl_rc, int _http_rc )
 {

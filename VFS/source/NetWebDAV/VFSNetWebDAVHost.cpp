@@ -344,6 +344,23 @@ webdav::Cache &WebDAVHost::Cache()
     return I->m_Cache;
 }
 
+int WebDAVHost::Rename(const char *_old_path,
+                       const char *_new_path,
+                       const VFSCancelChecker &_cancel_checker )
+{
+    if( !IsValidInputPath(_old_path) || !IsValidInputPath(_new_path) )
+        return VFSError::InvalidCall;
+
+    const auto ar = I->m_Pool.Get();
+    const auto rc = RequestMove(Config(), *ar.connection, _old_path, _new_path);
+    if( rc != VFSError::Ok )
+        return rc;
+    
+    I->m_Cache.CommitMove(_old_path, _new_path);
+
+    return VFSError::Ok;
+}
+
 static VFSConfiguration ComposeConfiguration(const string &_serv_url,
                                              const string &_user,
                                              const string &_passwd,

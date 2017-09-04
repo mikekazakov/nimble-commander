@@ -31,6 +31,8 @@ void Cache::CommitListing( const string &_at_path, vector<PropFindResponse> _ite
         directory.dirty_marks.resize( directory.items.size() );
         fill( begin(directory.dirty_marks), end(directory.dirty_marks), false );
     }
+    
+    Notify(path);
 }
 
 optional<vector<PropFindResponse>> Cache::Listing( const string &_at_path ) const
@@ -130,6 +132,8 @@ void Cache::CommitMkDir( const string &_at_path )
         
         listing.has_dirty_items = true;
     }
+    
+    Notify(directory);
 }
 
 void Cache::CommitMkFile( const string &_at_path )
@@ -164,6 +168,8 @@ void Cache::CommitMkFile( const string &_at_path )
         
         listing.has_dirty_items = true;
     }
+
+    Notify(directory);
 }
 
 void Cache::CommitRmDir( const string &_at_path )
@@ -197,6 +203,8 @@ void Cache::CommitUnlink( const string &_at_path )
         }
         listing.has_dirty_items = true;
     }
+    
+    Notify(directory);
 }
 
 void Cache::CommitMove( const string &_old_path, const string &_new_path )
@@ -234,6 +242,7 @@ void Cache::CommitMove( const string &_old_path, const string &_new_path )
             listing.dirty_marks.erase( begin(listing.dirty_marks) + index );
         }
     }
+    Notify(old_directory);
     
     const auto [new_directory, new_filename] = DeconstructPath(_new_path);
     if( new_filename.empty() )
@@ -263,6 +272,49 @@ void Cache::CommitMove( const string &_old_path, const string &_new_path )
                 listing.dirty_marks[index] = true;
             }
         }
+    }
+    
+    Notify(new_directory);
+}
+
+void Cache::Notify( const string &_changed_dir_path )
+{
+    LOCK_GUARD(m_ObserversLock) {
+        auto [first, last] = m_Observers.equal_range(_changed_dir_path);
+        for(; first != last; ++first )
+            first->second.callback();
+    }
+}
+
+unsigned long Cache::Observe(const string &_path, function<void()> _handler)
+{
+    if( !_handler )
+        return 0;
+    
+    const auto ticket = m_LastTicket++;
+    
+    Observer o;
+    o.callback = move(_handler);
+    o.ticket = ticket;
+    
+    LOCK_GUARD(m_ObserversLock) {
+        m_Observers.emplace( make_pair(EnsureTrailingSlash(_path), move(o)) );
+    }
+
+    return ticket;
+}
+
+void Cache::StopObserving(unsigned long _ticket)
+{
+    if( _ticket == 0 )
+        return;
+    
+    LOCK_GUARD(m_ObserversLock) {
+        const auto it = find_if(begin(m_Observers), end(m_Observers), [_ticket](const auto &_o){
+            return _o.second.ticket == _ticket;
+        });
+        if( it != end(m_Observers) )
+            m_Observers.erase(it);
     }
 }
 

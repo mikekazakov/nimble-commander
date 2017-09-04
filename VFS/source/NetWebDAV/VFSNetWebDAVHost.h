@@ -61,11 +61,18 @@ public:
                const char *_new_path,
                const VFSCancelChecker &_cancel_checker ) override;
     
+    bool IsDirChangeObservingAvailable(const char *_path) override;
+    
+    VFSHostDirObservationTicket DirChangeObserve(const char *_path,
+                                                 function<void()> _handler) override;
+    
+    
     const webdav::HostConfiguration &Config() const noexcept;
     class webdav::ConnectionsPool &ConnectionsPool();
     class webdav::Cache &Cache();
     
 private:
+    void StopDirChangeObserving(unsigned long _ticket) override;
     int RefreshListingAtPath( const string &_path, const VFSCancelChecker &_cancel_checker );
 
 

@@ -27,6 +27,9 @@ public:
     void CommitUnlink( const string &_at_path );
     void CommitMove( const string &_old_path, const string &_new_path );
 
+    unsigned long Observe(const string &_path, function<void()> _handler);
+    void StopObserving(unsigned long _ticket);
+
 private:
     struct Directory
     {
@@ -36,11 +39,21 @@ private:
         vector<PropFindResponse> items; // sorted by .path
         vector<bool> dirty_marks;
     };
+    struct Observer
+    {
+        function<void()> callback;
+        unsigned long ticket;
+    };
 
+    void Notify( const string &_changed_dir_path );
     static bool IsOutdated(const Directory &);
     
     unordered_map<string, Directory> m_Dirs;
     mutable mutex m_Lock;
+    
+    atomic_ulong m_LastTicket{1};
+    unordered_multimap<string, Observer> m_Observers;
+    mutable mutex m_ObserversLock;
 };
 
 }

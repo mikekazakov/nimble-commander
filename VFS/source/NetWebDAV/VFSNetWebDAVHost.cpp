@@ -361,6 +361,25 @@ int WebDAVHost::Rename(const char *_old_path,
     return VFSError::Ok;
 }
 
+bool WebDAVHost::IsDirChangeObservingAvailable(const char *_path)
+{
+    return true;
+}
+
+VFSHostDirObservationTicket WebDAVHost::DirChangeObserve(const char *_path,
+                                                         function<void()> _handler)
+{
+    if( !IsValidInputPath(_path) )
+        return {};
+    const auto ticket = I->m_Cache.Observe(_path, move(_handler));
+    return VFSHostDirObservationTicket{ticket, shared_from_this()};
+}
+
+void WebDAVHost::StopDirChangeObserving(unsigned long _ticket)
+{
+    I->m_Cache.StopObserving(_ticket);
+}
+
 static VFSConfiguration ComposeConfiguration(const string &_serv_url,
                                              const string &_user,
                                              const string &_passwd,

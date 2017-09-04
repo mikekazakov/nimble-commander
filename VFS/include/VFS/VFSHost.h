@@ -341,9 +341,10 @@ public:
 protected:
     void SetFeatures( uint64_t _features_bitset );
     void AddFeatures( uint64_t _features_bitset );
+
+    virtual void StopDirChangeObserving(unsigned long _ticket);
     
 private:
-    virtual void StopDirChangeObserving(unsigned long _ticket);
 
     const string                    m_JunctionPath; // path in Parent VFS, relative to it's root
     const shared_ptr<VFSHost>       m_Parent;

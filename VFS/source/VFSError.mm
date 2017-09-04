@@ -27,6 +27,9 @@ VFSErrorException::VFSErrorException( int _err ) :
     m_Code(_err)
 {
     m_Verb = "vfs exception code #"s + to_string(_err);
+    if( const auto e = VFSError::ToNSError(_err) )
+        if( const auto d = e.description )
+            m_Verb = d.UTF8String;
 }
 
 const char* VFSErrorException::what() const noexcept

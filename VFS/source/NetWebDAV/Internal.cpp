@@ -5,6 +5,7 @@
 #include <pugixml/pugixml.hpp>
 #include "DateTimeParser.h"
 #include "ConnectionsPool.h"
+#include "PathRoutines.h"
 
 namespace nc::vfs::webdav {
     
@@ -85,6 +86,10 @@ struct CURLInputStringContext
     }
 };
 
+static bool IsOkHTTPRC( const int _rc )
+{
+    return _rc >= 200 & _rc < 300;
+}
 
 static HTTPRequests::Mask ParseSupportedRequests( const string &_options_response_header )
 {
@@ -168,13 +173,14 @@ pair<int, HTTPRequests::Mask> FetchServerOptions(const HostConfiguration& _optio
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
 
-    const auto rc = curl_easy_perform(curl);
-    if( rc == CURLE_OK ) {
+    const auto curl_rc = curl_easy_perform(curl);
+    const auto http_rc = curl_easy_get_response_code(curl);
+    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) ) {
         const auto requests = ParseSupportedRequests(headers);
-        return {rc, requests};
+        return {VFSError::Ok, requests};
     }
     else {
-        return {rc, HTTPRequests::None};
+        return {ToVFSError(curl_rc, http_rc), HTTPRequests::None};
     }
 }
 
@@ -187,7 +193,7 @@ static time_t ParseModDate( const char *_date_time )
     return DateTimeFromASCTime(_date_time);
 }
 
-optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
+static optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
 {
     using namespace pugi;
     static const auto href_query    = xpath_query{ "./*[local-name()='href']" };
@@ -325,63 +331,18 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
 //    curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
 //    curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
     
-    const auto rc = curl_easy_perform(curl);
-    if( rc == CURLE_OK ) {
+    const auto curl_rc = curl_easy_perform(curl);
+    const auto http_rc = curl_easy_get_response_code(curl);
+    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) ) {
 //        cout << headers << endl;
 //        cout << response << endl;    
     
         auto items = ParseDAVListing(response);
         const auto base_path = "/"s + _options.path + _path;
         items = PruneFilepaths(move(items), base_path);
-        return {rc, move(items)};
+        return {VFSError::Ok, move(items)};
     }
-    return {rc, {}};
-}
-
-int CURlErrorToVFSError( int _curle )
-{
-    // TODO: write
-    return VFSError::FromErrno(EIO);
-}
-
-pair<string, string> DeconstructPath(const string &_path)
-{
-    if( _path.empty() )
-        return {};
-    if( _path == "/" )
-        return {"/", ".."};
-    
-    if( _path.back() == '/' ) {
-        const auto ls = _path.find_last_of('/', _path.length() - 2);
-        if( ls == string::npos )
-            return {};
-        return { _path.substr(0, ls+1), _path.substr(ls+1, _path.length() - ls - 2) };
-    }
-    else {
-        const auto ls = _path.find_last_of('/');
-        if( ls == string::npos )
-            return {};
-        return { _path.substr(0, ls+1), _path.substr(ls+1) };
-    }
-}
-
-string URIEscape( const string &_unescaped )
-{
-    static const auto acs = NSCharacterSet.URLPathAllowedCharacterSet;
-    if( auto str = [NSString stringWithUTF8StdString:_unescaped] )
-        if( auto percents = [str stringByAddingPercentEncodingWithAllowedCharacters:acs] )
-            if( auto utf8 = percents.UTF8String )
-                return utf8;
-    return {};
-}
-
-string URIUnescape( const string &_escaped )
-{
-    if( auto str = [NSString stringWithUTF8StdString:_escaped] )
-        if( auto stripped = [str stringByRemovingPercentEncoding] )
-            if( auto utf8 = stripped.UTF8String )
-                return utf8;
-    return {};
+    return {ToVFSError(curl_rc, http_rc), {}};
 }
 
 // free space, used space
@@ -448,13 +409,14 @@ tuple<int, long, long> FetchSpaceQuota(const HostConfiguration& _options,
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
-    const auto rc = curl_easy_perform(curl);
-    if( rc == CURLE_OK ) {
+    const auto curl_rc = curl_easy_perform(curl);
+    const auto http_rc = curl_easy_get_response_code(curl);
+    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) ) {
         const auto [free, used] = ParseSpaceQouta(response);
-        return {rc, free, used};
+        return {VFSError::Ok, free, used};
     }
-
-    return {rc, -1, -1};
+    else
+        return {ToVFSError(curl_rc, http_rc), -1, -1};
 }
 
 int RequestMKCOL(const HostConfiguration& _options,
@@ -482,7 +444,7 @@ int RequestMKCOL(const HostConfiguration& _options,
 
     const auto curl_rc = curl_easy_perform(curl);
     const auto http_rc = curl_easy_get_response_code(curl);
-    if( curl_rc == CURLE_OK && http_rc == 201 )
+    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) )
         return VFSError::Ok;
     else
         return ToVFSError(curl_rc, http_rc);
@@ -514,7 +476,7 @@ int RequestDelete(const HostConfiguration& _options,
 
     const auto curl_rc = curl_easy_perform(curl);
     const auto http_rc = curl_easy_get_response_code(curl);
-    if( curl_rc == CURLE_OK && http_rc == 204 )
+    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) )
         return VFSError::Ok;
     else
         return ToVFSError(curl_rc, http_rc);
@@ -546,33 +508,67 @@ int RequestMove(const HostConfiguration& _options,
 
     const auto curl_rc = curl_easy_perform(curl);
     const auto http_rc = curl_easy_get_response_code(curl);
-    if( curl_rc == CURLE_OK && (http_rc == 201 || http_rc == 204) )
+    if( curl_rc == CURLE_OK && IsOkHTTPRC(http_rc) )
         return VFSError::Ok;
     else
         return ToVFSError(curl_rc, http_rc);
-
-    return 0;
 }
 
-string URIForPath(const HostConfiguration& _options, const string &_path)
+int ToVFSError( const int _curl_rc, const int _http_rc ) noexcept
 {
-    auto uri = _options.full_url;
-    if( _path != "/" ) {
-        uri.pop_back();
-        uri += URIEscape(_path);
-    }
-    return uri;
-}
-
-
-int ToVFSError( int _curl_rc, int _http_rc )
-{
-    // TODO: write
-    return VFSError::FromErrno(EIO);
+    if( _curl_rc == CURLE_OK )
+        switch( _http_rc ) {
+            case 400:   return VFSError::FromErrno(EINVAL);
+            case 401:   return VFSError::FromErrno(EAUTH);
+            case 402:   return VFSError::FromErrno(EAUTH);
+            case 403:   return VFSError::FromErrno(EACCES);
+            case 404:   return VFSError::FromErrno(ENOENT);
+            case 405:   return VFSError::FromErrno(ENODEV);
+            case 406:   return VFSError::FromErrno(EINVAL);
+            case 407:   return VFSError::FromErrno(ECONNREFUSED);
+            case 408:   return VFSError::FromErrno(ETIMEDOUT);
+            case 409:   return VFSError::FromErrno(EINVAL);
+            case 410:   return VFSError::FromErrno(ENOENT);
+            case 411:   return VFSError::FromErrno(EINVAL);
+            case 412:   return VFSError::FromErrno(EINVAL);
+            case 413:   return VFSError::FromErrno(EOVERFLOW);
+            case 414:   return VFSError::FromErrno(ENAMETOOLONG);
+            case 415:   return VFSError::FromErrno(EINVAL);
+            case 416:   return VFSError::FromErrno(EINVAL);
+            case 417:   return VFSError::FromErrno(EINVAL);
+            case 421:   return VFSError::FromErrno(ECONNABORTED);
+            case 422:   return VFSError::FromErrno(EINVAL);
+            case 423:   return VFSError::FromErrno(EPERM);
+            case 424:   return VFSError::FromErrno(EINVAL);
+            case 428:   return VFSError::FromErrno(EINVAL);
+            case 429:   return VFSError::FromErrno(EMFILE);
+            case 431:   return VFSError::FromErrno(EOVERFLOW);
+            case 507:   return VFSError::FromErrno(EDQUOT);
+            case 508:   return VFSError::FromErrno(ELOOP);
+            default:    return VFSError::FromErrno(EIO);
+        }
+    else
+        switch( _curl_rc ) {
+            case CURLE_UNSUPPORTED_PROTOCOL:    return VFSError::FromErrno(EPROTO);
+            case CURLE_FAILED_INIT:             return VFSError::FromErrno(ENODEV);
+            case CURLE_URL_MALFORMAT:           return VFSError::FromErrno(EINVAL);
+            case CURLE_NOT_BUILT_IN:            return VFSError::FromErrno(EPROTONOSUPPORT);
+            case CURLE_COULDNT_RESOLVE_HOST:    return VFSError::FromErrno(EHOSTUNREACH);
+            case CURLE_COULDNT_CONNECT:         return VFSError::FromErrno(EADDRNOTAVAIL);
+            case CURLE_REMOTE_ACCESS_DENIED:    return VFSError::FromErrno(EACCES);
+            case CURLE_OPERATION_TIMEDOUT:      return VFSError::FromErrno(ETIMEDOUT);
+            case CURLE_ABORTED_BY_CALLBACK:     return VFSError::FromErrno(ECANCELED);
+            case CURLE_BAD_FUNCTION_ARGUMENT:   return VFSError::FromErrno(EINVAL);
+            case CURLE_INTERFACE_FAILED:        return VFSError::FromErrno(ENETDOWN);
+            case CURLE_LOGIN_DENIED:            return VFSError::FromErrno(EAUTH);
+            case CURLE_REMOTE_FILE_EXISTS:      return VFSError::FromErrno(EEXIST);
+            default:                            return VFSError::FromErrno(EIO);
+        }
 }
 
 int curl_easy_get_response_code(CURL *_handle)
 {
+    assert( _handle != nullptr );
     long code = 0;
     curl_easy_getinfo(_handle, CURLINFO_RESPONSE_CODE, &code);
     return (int)code;

@@ -255,5 +255,32 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
     VFSEasyDelete(p2, host);
 }
 
+- (void)testStatFSonBoxCom
+{
+    const auto host = [self spawnBoxComHost];
+    VFSStatFS st;
+    const auto statfs_rc = host->StatFS("/", st, nullptr);
+    XCTAssert( statfs_rc == VFSError::Ok );
+    XCTAssert( st.total_bytes > 1'000'000'000 );
+}
+
+- (void)testInvalidCredentials
+{
+    try {
+        new WebDAVHost("dav.box.com",
+                       g_BoxComUsername,
+                       "SomeRandomGibberish",
+                       "dav",
+                       true);
+    }
+    catch(VFSErrorException _ex) {
+        XCTAssert( true );
+        return;
+    }
+    catch(...) {
+        XCTAssert( false );
+    }
+    XCTAssert( false );
+}
 
 @end

@@ -72,6 +72,7 @@ public:
     class webdav::Cache &Cache();
     
 private:
+    void Init();
     void StopDirChangeObserving(unsigned long _ticket) override;
     int RefreshListingAtPath( const string &_path, const VFSCancelChecker &_cancel_checker );
 

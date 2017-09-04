@@ -1,6 +1,7 @@
 #include "Cache.h"
 #include <Utility/PathManip.h>
 #include "Internal.h"
+#include "PathRoutines.h"
 
 namespace nc::vfs::webdav {
 

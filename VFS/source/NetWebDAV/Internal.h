@@ -90,15 +90,8 @@ int RequestMove(const HostConfiguration& _options,
                 const string &_src,
                 const string &_dst );
     
-pair<string, string> DeconstructPath(const string &_path);
-int CURlErrorToVFSError( int _curle );
-//int CURlErrorToVFSError( int _curle, CURL *_handle );
-int ToVFSError( int _curl_rc, int _http_rc );
-
+int ToVFSError( int _curl_rc, int _http_rc ) noexcept;
     
-string URIEscape( const string &_unescaped );
-string URIUnescape( const string &_escaped );
-string URIForPath(const HostConfiguration& _options, const string &_path);
 int curl_easy_get_response_code(CURL *_handle);
 
 }

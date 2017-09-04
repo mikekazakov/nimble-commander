@@ -5,6 +5,7 @@
 #include "ConnectionsPool.h"
 #include "Cache.h"
 #include "File.h"
+#include "PathRoutines.h"
 
 namespace nc::vfs {
 
@@ -39,31 +40,28 @@ WebDAVHost::WebDAVHost(const string &_serv_url,
     VFSHost(_serv_url.c_str(), nullptr, UniqueTag),
     m_Configuration( ComposeConfiguration(_serv_url, _user, _passwd, _path, _https, _port) )
 {
-
-//    inst->curl = curl_easy_init();
-
-
-//    FetchDAVListing(Config(), "/");
-    I.reset( new State{Config()} );
-//    I->m_Pool.Return
-
-    {
-        auto ar = I->m_Pool.Get();
-        auto [rc, requests] = FetchServerOptions( Config(), *ar.connection );
-        if( rc != CURLE_OK ) {
-            throw rc;
-        }
-        if( (requests & HTTPRequests::MinimalRequiredSet) !=  HTTPRequests::MinimalRequiredSet ) {
-            HTTPRequests::Print(requests);
-            throw VFSErrorException( VFSError::FromErrno(EPROTONOSUPPORT) );
-        }
-    }
-
-    AddFeatures(VFSHostFeatures::NonEmptyRmDir);
+    Init();
 }
 
 WebDAVHost::~WebDAVHost()
 {
+}
+
+void WebDAVHost::Init()
+{
+    I.reset( new State{Config()} );
+
+    auto ar = I->m_Pool.Get();
+    const auto [rc, requests] = FetchServerOptions( Config(), *ar.connection );
+    if( rc != VFSError::Ok )
+        throw VFSErrorException(rc);
+    
+    if( (requests & HTTPRequests::MinimalRequiredSet) !=  HTTPRequests::MinimalRequiredSet ) {
+        HTTPRequests::Print(requests);
+        throw VFSErrorException( VFSError::FromErrno(EPROTONOSUPPORT) );
+    }
+
+    AddFeatures(VFSHostFeatures::NonEmptyRmDir);
 }
 
 VFSConfiguration WebDAVHost::Configuration() const
@@ -240,12 +238,11 @@ int WebDAVHost::RefreshListingAtPath( const string &_path, const VFSCancelChecke
         throw invalid_argument("RefreshListingAtPath requires a path with a trailing slash");
     
     auto ar = I->m_Pool.Get();
-    auto [fetch_rc, fetch_items] = FetchDAVListing(Config(), *ar.connection, _path);
-    if( fetch_rc != CURLE_OK ) {
-        return CURlErrorToVFSError(fetch_rc);
-    }
+    auto [rc, items] = FetchDAVListing(Config(), *ar.connection, _path);
+    if( rc != VFSError::Ok )
+        return rc;
 
-    I->m_Cache.CommitListing( _path, move(fetch_items) );
+    I->m_Cache.CommitListing( _path, move(items) );
     
     return VFSError::Ok;
 }
@@ -256,8 +253,8 @@ int WebDAVHost::StatFS(const char *_path,
 {
     const auto ar = I->m_Pool.Get();
     const auto [rc, free, used] = FetchSpaceQuota(Config(), *ar.connection);
-    if( rc != CURLE_OK )
-        return CURlErrorToVFSError(rc);
+    if( rc != VFSError::Ok )
+        return rc;
     
     if( free >= 0 ) {
         _stat.free_bytes = free;

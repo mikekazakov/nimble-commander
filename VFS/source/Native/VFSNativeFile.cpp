@@ -25,7 +25,7 @@ VFSNativeFile::~VFSNativeFile()
     Close();
 }
 
-int VFSNativeFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
+int VFSNativeFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;
     auto fs_info = NativeFSManager::Instance().VolumeFromPath(Path());

@@ -7,7 +7,7 @@ class VFSXAttrFile final: public VFSFile
 {
 public:
     VFSXAttrFile( const string &_xattr_path, const shared_ptr<VFSXAttrHost> &_parent, int _fd );
-    virtual int Open(int _open_flags, VFSCancelChecker _cancel_checker = nullptr) override;
+    virtual int Open(int _open_flags, const VFSCancelChecker &_cancel_checker = nullptr) override;
     virtual int  Close() override;
     virtual bool IsOpened() const override;
     virtual ReadParadigm  GetReadParadigm() const override;
@@ -373,7 +373,7 @@ VFSXAttrFile::VFSXAttrFile( const string &_xattr_path, const shared_ptr<VFSXAttr
 {
 }
 
-int VFSXAttrFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
+int VFSXAttrFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( IsOpened() )
         return VFSError::InvalidCall;

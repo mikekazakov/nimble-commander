@@ -12,7 +12,7 @@ public:
     VFSNetDropboxFile(const char* _relative_path, const shared_ptr<VFSNetDropboxHost> &_host);
     ~VFSNetDropboxFile();
 
-    virtual int Open(int _open_flags, VFSCancelChecker _cancel_checker) override;
+    virtual int Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual int Close() override;
     virtual int PreferredIOSize() const override;
     virtual bool    IsOpened() const override;

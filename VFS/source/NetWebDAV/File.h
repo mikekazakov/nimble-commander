@@ -14,7 +14,7 @@ public:
     File(const char* _relative_path, const shared_ptr<WebDAVHost> &_host);
     ~File();
 
-    int Open(int _open_flags, VFSCancelChecker _cancel_checker) override;
+    int Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool    IsOpened() const override;
     int     Close() override;
     ssize_t Pos() const override;

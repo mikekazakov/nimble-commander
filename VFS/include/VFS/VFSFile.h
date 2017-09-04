@@ -50,7 +50,7 @@ public:
     virtual ~VFSFile();
 
     virtual int     Open(int _open_flags,
-                         VFSCancelChecker _cancel_checker = nullptr);
+                         const VFSCancelChecker &_cancel_checker = nullptr);
     virtual bool    IsOpened() const;
     virtual int     Close();
 

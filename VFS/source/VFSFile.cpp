@@ -71,7 +71,7 @@ bool VFSFile::IsOpened() const
     return false;
 }
 
-int     VFSFile::Open(int, VFSCancelChecker){ return SetLastError(VFSError::NotSupported); }
+int     VFSFile::Open(int, const VFSCancelChecker&){ return SetLastError(VFSError::NotSupported); }
 int     VFSFile::Close()             { return SetLastError(VFSError::NotSupported); }
 off_t   VFSFile::Seek(off_t, int)    { return SetLastError(VFSError::NotSupported); }
 ssize_t VFSFile::Pos() const         { return SetLastError(VFSError::NotSupported); }

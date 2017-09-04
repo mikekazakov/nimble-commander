@@ -74,7 +74,7 @@ NSURLRequest *VFSNetDropboxFile::BuildDownloadRequest() const
     return request;
 }
 
-int VFSNetDropboxFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
+int VFSNetDropboxFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( m_State != Cold )
         return VFSError::InvalidCall;

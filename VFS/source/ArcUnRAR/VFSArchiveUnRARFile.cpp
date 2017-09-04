@@ -24,7 +24,7 @@ VFSArchiveUnRARFile::~VFSArchiveUnRARFile()
     assert(m_ExtractionRunning == false);
 }
 
-int VFSArchiveUnRARFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
+int VFSArchiveUnRARFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( strlen(Path()) < 2 || Path()[0] != '/' )
         return SetLastError(VFSError::NotFound);

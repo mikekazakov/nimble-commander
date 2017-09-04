@@ -19,7 +19,7 @@ public:
     ~VFSArchiveFile();
     
     
-    virtual int     Open(int _open_flags, VFSCancelChecker _cancel_checker) override;
+    virtual int     Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual bool    IsOpened() const override;
     virtual int     Close() override;
     virtual ssize_t Read(void *_buf, size_t _size) override;

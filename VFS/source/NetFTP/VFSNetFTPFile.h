@@ -19,7 +19,7 @@ public:
     ~VFSNetFTPFile();
     
 //        OF_Truncate is implicitly added to VFSFile when OF_Append is not used - FTP specific
-    virtual int Open(int _open_flags, VFSCancelChecker _cancel_checker) override;
+    virtual int Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual bool    IsOpened() const override;
     virtual int     Close() override;    
     virtual ReadParadigm GetReadParadigm() const override;

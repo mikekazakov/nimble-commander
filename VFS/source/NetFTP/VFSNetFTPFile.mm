@@ -58,7 +58,7 @@ path VFSNetFTPFile::DirName() const
     return path(Path()).parent_path();
 }
 
-int VFSNetFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
+int VFSNetFTPFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     auto ftp_host = dynamic_pointer_cast<VFSNetFTPHost>(Host());
     VFSStat stat;

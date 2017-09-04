@@ -501,10 +501,10 @@ const static double g_BorderWidth = 1.0;
         {
             string path;
             if( m_File->File()->Host()->IsNativeFS() )
-                path = m_File->File()->RelativePath();
+                path = m_File->File()->Path();
             else {
                 if( !m_NativeStoredFile )
-                    m_NativeStoredFile = TemporaryNativeFileStorage::Instance().CopySingleFile(m_File->File()->RelativePath(), m_File->File()->Host());
+                    m_NativeStoredFile = TemporaryNativeFileStorage::Instance().CopySingleFile(m_File->File()->Path(), m_File->File()->Host());
                 if( m_NativeStoredFile )
                     path = *m_NativeStoredFile;
             }

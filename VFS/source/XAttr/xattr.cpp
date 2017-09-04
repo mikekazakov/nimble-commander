@@ -566,7 +566,7 @@ ssize_t VFSXAttrFile::Write(const void *_buf, size_t _size)
 
 const char *VFSXAttrFile::XAttrName() const noexcept
 {
-    const char *path = RelativePath();
+    const char *path = Path();
     if( path[0] != '/' )
         return nullptr;
     return path + 1;

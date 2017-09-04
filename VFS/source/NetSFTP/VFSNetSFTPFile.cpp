@@ -44,8 +44,8 @@ int VFSNetSFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
     
     LIBSSH2_SFTP_HANDLE *handle = libssh2_sftp_open_ex(conn->sftp,
-                                                       RelativePath(),
-                                                       (unsigned)strlen(RelativePath()),
+                                                       Path(),
+                                                       (unsigned)strlen(Path()),
                                                        sftp_flags,
                                                        mode,
                                                        LIBSSH2_SFTP_OPENFILE);

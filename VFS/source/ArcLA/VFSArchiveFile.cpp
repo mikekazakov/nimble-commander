@@ -24,7 +24,7 @@ VFSArchiveFile::~VFSArchiveFile()
 
 int VFSArchiveFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
-    if( strlen(RelativePath()) < 2 || RelativePath()[0] != '/' )
+    if( strlen(Path()) < 2 || Path()[0] != '/' )
         return SetLastError(VFSError::NotFound);
     
     if(_open_flags & VFSFlags::OF_Write)
@@ -34,7 +34,7 @@ int VFSArchiveFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     auto host = dynamic_pointer_cast<VFSArchiveHost>(Host());
 
     char file_path[MAXPATHLEN*2];
-    res = host->ResolvePathIfNeeded(RelativePath(), file_path, _open_flags);
+    res = host->ResolvePathIfNeeded(Path(), file_path, _open_flags);
     if(res < 0)
         return res;
 

@@ -180,7 +180,7 @@ public:
     
     shared_ptr<VFSFile> SharedPtr();
     shared_ptr<const VFSFile> SharedPtr() const;
-    const char* RelativePath() const noexcept;
+    const char* Path() const noexcept;
     const shared_ptr<VFSHost> &Host() const;
 protected:
     /**

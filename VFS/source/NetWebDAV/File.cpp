@@ -24,7 +24,7 @@ int File::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 
     if( _open_flags & VFSFlags::OF_Read ) {
         VFSStat st;
-        const auto stat_rc = m_Host.Stat(RelativePath(), st, 0, _cancel_checker);
+        const auto stat_rc = m_Host.Stat(Path(), st, 0, _cancel_checker);
         if( stat_rc != VFSError::Ok )
             return stat_rc;
         
@@ -38,7 +38,7 @@ int File::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     if( _open_flags & VFSFlags::OF_Write ) {
         if( _open_flags & VFSFlags::OF_NoExist ) {
             VFSStat st;
-            const auto stat_rc = m_Host.Stat(RelativePath(), st, 0, _cancel_checker);
+            const auto stat_rc = m_Host.Stat(Path(), st, 0, _cancel_checker);
             if( stat_rc == VFSError::Ok )
                 return VFSError::FromErrno(EEXIST);
         }
@@ -168,7 +168,7 @@ void File::SpawnUploadConnectionIfNeeded()
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
     const auto curl = m_Conn->EasyHandle();
-    const auto url = URIForPath(m_Host.Config(), RelativePath());
+    const auto url = URIForPath(m_Host.Config(), Path());
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, WriteBuffer::Read);
@@ -188,7 +188,7 @@ void File::SpawnDownloadConnectionIfNeeded()
     m_Conn = m_Host.ConnectionsPool().GetRaw();
     assert(m_Conn);
     const auto curl = m_Conn->EasyHandle();
-    const auto url = URIForPath(m_Host.Config(), RelativePath());
+    const auto url = URIForPath(m_Host.Config(), Path());
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "GET");
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, ReadBuffer::Write);
@@ -252,7 +252,7 @@ int File::Close()
         
         m_Conn.reset();
         
-        m_Host.Cache().CommitMkFile(RelativePath());
+        m_Host.Cache().CommitMkFile(Path());
     }
     
     m_ReadBuffer.Clear();

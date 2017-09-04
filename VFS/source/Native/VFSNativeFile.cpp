@@ -28,7 +28,7 @@ VFSNativeFile::~VFSNativeFile()
 int VFSNativeFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
     auto &io = RoutedIO::Default;
-    auto fs_info = NativeFSManager::Instance().VolumeFromPath(RelativePath());
+    auto fs_info = NativeFSManager::Instance().VolumeFromPath(Path());
     
     int openflags = O_NONBLOCK;
     
@@ -44,7 +44,7 @@ int VFSNativeFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
     
     int mode = _open_flags & (S_IRWXU | S_IRWXG | S_IRWXO);
     
-    m_FD = io.open(RelativePath(), openflags, mode);
+    m_FD = io.open(Path(), openflags, mode);
     if(m_FD < 0)
     {
         return SetLastError(VFSError::FromErrno(errno));
@@ -183,7 +183,7 @@ bool VFSNativeFile::Eof() const
 shared_ptr<VFSFile> VFSNativeFile::Clone() const
 {
     return make_shared<VFSNativeFile>(
-                                           RelativePath(),
+                                           Path(),
                                            dynamic_pointer_cast<VFSNativeHost>(Host()));
 }
 

@@ -29,7 +29,7 @@ int VFSNetFTPFile::Close()
     {
         // if we're still writing - finish it and tell cache about changes
         FinishWriting();
-        dynamic_pointer_cast<VFSNetFTPHost>(Host())->Cache().CommitNewFile(RelativePath());
+        dynamic_pointer_cast<VFSNetFTPHost>(Host())->Cache().CommitNewFile(Path());
     }
     if(m_CURL && m_Mode == Mode::Read)
     {
@@ -55,21 +55,21 @@ int VFSNetFTPFile::Close()
 
 path VFSNetFTPFile::DirName() const
 {
-    return path(RelativePath()).parent_path();
+    return path(Path()).parent_path();
 }
 
 int VFSNetFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
     auto ftp_host = dynamic_pointer_cast<VFSNetFTPHost>(Host());
     VFSStat stat;
-    int stat_ret = ftp_host->Stat(RelativePath(), stat, 0, _cancel_checker);
+    int stat_ret = ftp_host->Stat(Path(), stat, 0, _cancel_checker);
     
     if( stat_ret == 0 &&
        ((stat.mode & S_IFMT) == S_IFREG) &&
        (_open_flags & VFSFlags::OF_Read) != 0 &&
        (_open_flags & VFSFlags::OF_Write) == 0 )
     {
-        m_URLRequest = ftp_host->BuildFullURLString(RelativePath());
+        m_URLRequest = ftp_host->BuildFullURLString(Path());
         m_CURL  = ftp_host->InstanceForIOAtDir(DirName().c_str());
         m_FileSize = stat.size;
         
@@ -94,7 +94,7 @@ int VFSNetFTPFile::Open(int _open_flags, VFSCancelChecker _cancel_checker)
             (_open_flags & VFSFlags::OF_Read)  == 0 &&
             (_open_flags & VFSFlags::OF_Write) != 0 )
     {        
-        m_URLRequest = ftp_host->BuildFullURLString(RelativePath());
+        m_URLRequest = ftp_host->BuildFullURLString(Path());
         m_CURL = ftp_host->InstanceForIOAtDir(DirName().c_str());
         
         if(m_CURL->IsAttached())

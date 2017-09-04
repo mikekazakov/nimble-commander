@@ -20,7 +20,7 @@ VFSSeqToRandomROWrapperFile::Backend::~Backend()
 }
 
 VFSSeqToRandomROWrapperFile::VFSSeqToRandomROWrapperFile(const VFSFilePtr &_file_to_wrap):
-    VFSFile(_file_to_wrap->RelativePath(), _file_to_wrap->Host()),
+    VFSFile(_file_to_wrap->Path(), _file_to_wrap->Host()),
     m_SeqFile(_file_to_wrap)
 {
 }
@@ -260,5 +260,5 @@ shared_ptr<VFSSeqToRandomROWrapperFile> VFSSeqToRandomROWrapperFile::Share()
 {
     if( !IsOpened() )
         return nullptr;
-    return shared_ptr<VFSSeqToRandomROWrapperFile>(new VFSSeqToRandomROWrapperFile(RelativePath(), Host(), m_Backend));
+    return shared_ptr<VFSSeqToRandomROWrapperFile>(new VFSSeqToRandomROWrapperFile(Path(), Host(), m_Backend));
 }

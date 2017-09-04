@@ -31,7 +31,7 @@ shared_ptr<const VFSFile> VFSFile::SharedPtr() const
     return shared_from_this();
 }
 
-const char* VFSFile::RelativePath() const noexcept
+const char* VFSFile::Path() const noexcept
 {
     return m_RelativePath.c_str();
 }

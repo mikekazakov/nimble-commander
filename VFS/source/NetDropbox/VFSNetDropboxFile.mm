@@ -70,7 +70,7 @@ NSURLRequest *VFSNetDropboxFile::BuildDownloadRequest() const
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Download];
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
-    InsetHTTPHeaderPathspec(request, RelativePath());
+    InsetHTTPHeaderPathspec(request, Path());
     return request;
 }
 
@@ -226,7 +226,7 @@ int VFSNetDropboxFile::PreferredIOSize() const
 string VFSNetDropboxFile::BuildUploadPathspec() const
 {
     string spec =
-        "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(RelativePath()) + "\" ";
+        "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(Path()) + "\" ";
     if( m_OpenFlags & VFSFlags::OF_Truncate )
         spec += ", \"mode\": { \".tag\": \"overwrite\" } ";
     spec += "}";

@@ -19,6 +19,9 @@ File::~File()
 
 int File::Open(int _open_flags, VFSCancelChecker _cancel_checker)
 {
+    if( _open_flags & VFSFlags::OF_Append )
+        return VFSError::FromErrno(EPERM);
+
     if( _open_flags & VFSFlags::OF_Read ) {
         VFSStat st;
         const auto stat_rc = m_Host.Stat(RelativePath(), st, 0, _cancel_checker);
@@ -33,8 +36,12 @@ int File::Open(int _open_flags, VFSCancelChecker _cancel_checker)
         return VFSError::Ok;
     }
     if( _open_flags & VFSFlags::OF_Write ) {
-        /// TODO: ???
-        
+        if( _open_flags & VFSFlags::OF_NoExist ) {
+            VFSStat st;
+            const auto stat_rc = m_Host.Stat(RelativePath(), st, 0, _cancel_checker);
+            if( stat_rc == VFSError::Ok )
+                return VFSError::FromErrno(EEXIST);
+        }
         m_OpenFlags = _open_flags;
         return VFSError::Ok;
     }
@@ -254,6 +261,7 @@ int File::Close()
     m_OpenFlags = 0;
     m_Pos = 0;
     m_Size = -1;
+        
     return 0;
 }
 

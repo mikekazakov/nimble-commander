@@ -27,7 +27,7 @@ namespace VFSFlags
     OF_Read     = 0x00010000,
     OF_Write    = 0x00020000,
     OF_Create   = 0x00040000,
-    OF_NoExist  = 0x00080000, // POSIX O_EXCL actucally, for clarity
+    OF_NoExist  = 0x00080000, // POSIX O_EXCL actcually, for clarity
     OF_ShLock   = 0x00100000, // not yet implemented
     OF_ExLock   = 0x00200000, // not yet implemented
     OF_NoCache  = 0x00400000, // turns off caching if supported

@@ -37,7 +37,7 @@ private:
     unique_ptr<Connection> m_Conn;
     int         m_OpenFlags = 0;
     long        m_Pos = 0;
-    long        m_Size = -1;    
+    long        m_Size = -1;
 };
 
 }

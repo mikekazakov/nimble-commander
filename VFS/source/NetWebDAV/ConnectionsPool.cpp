@@ -27,6 +27,8 @@ Connection::Connection( const HostConfiguration& _config ):
     curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 1L);
     curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 60L);
     curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 30L);
+    curl_easy_setopt(curl, CURLOPT_PORT, long(_config.port));
+    curl_easy_setopt(curl, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 }
 
 Connection::~Connection()

@@ -5,23 +5,29 @@
 
 using namespace nc::vfs;
 
+static const auto g_NASUsername = "guest";
+static const auto g_NASPassword = "";
 static const auto g_BoxComUsername = "mike.kazakov+ncwebdavtest@gmail.com";
 static const auto g_BoxComPassword = "6S3zUvkkNikF";
+static const auto g_YandexDiskUsername = "mike.kazakov-ncwebdavtest";
+static const auto g_YandexDiskPassword = "p4ycikmk][r%v*{em";
+
 
 @interface WebDAV_Tests : XCTestCase
 @end
 
 @implementation WebDAV_Tests
 
-- (void)testBasic
+
+- (shared_ptr<WebDAVHost>) spawnNASHost
 {
-    shared_ptr<WebDAVHost> host(new WebDAVHost("192.168.2.5", "guest", "", "Public", false, 5000));
-
-    VFSListingPtr listing;
-    int rc = host->FetchDirectoryListing("/", listing, 0, nullptr);
-    XCTAssert(rc == VFSError::Ok);
+    return shared_ptr<WebDAVHost> (new WebDAVHost("blaze.local",
+                                                  g_NASUsername,
+                                                  g_NASPassword,
+                                                  "Public",
+                                                  false,
+                                                  5000));
 }
-
 
 - (shared_ptr<WebDAVHost>) spawnBoxComHost
 {
@@ -30,6 +36,24 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
                                                   g_BoxComPassword,
                                                   "dav",
                                                   true));
+}
+
+- (shared_ptr<WebDAVHost>) spawnYandexDiskHost
+{
+    return shared_ptr<WebDAVHost> (new WebDAVHost("webdav.yandex.com",
+                                                  g_YandexDiskUsername,
+                                                  g_YandexDiskPassword,
+                                                  "",
+                                                  true));
+}
+
+- (void)testCanConnectToLocalNAS
+{
+    const auto host = [self spawnNASHost];
+
+    VFSListingPtr listing;
+    int rc = host->FetchDirectoryListing("/", listing, 0, nullptr);
+    XCTAssert(rc == VFSError::Ok);
 }
 
 - (void)testCanConnectToBoxCom
@@ -220,6 +244,7 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
 - (void) testComplexCopyToBoxCom
 {
     const auto host = [self spawnBoxComHost];
+    VFSEasyDelete("/Test2", host);    
     const auto copy_rc = VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs",
                                               VFSNativeHost::SharedHost(),
                                               "/Test2",
@@ -261,7 +286,7 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
     VFSStatFS st;
     const auto statfs_rc = host->StatFS("/", st, nullptr);
     XCTAssert( statfs_rc == VFSError::Ok );
-    XCTAssert( st.total_bytes > 1'000'000'000 );
+    XCTAssert( st.total_bytes > 1'000'000'000L );
 }
 
 - (void)testInvalidCredentials
@@ -281,6 +306,56 @@ static const auto g_BoxComPassword = "6S3zUvkkNikF";
         XCTAssert( false );
     }
     XCTAssert( false );
+}
+
+- (void)testYandexDiskAccess
+{
+    const auto host = [self spawnYandexDiskHost];
+    VFSStatFS st;
+    const auto statfs_rc = host->StatFS("/", st, nullptr);
+    XCTAssert( statfs_rc == VFSError::Ok );
+    XCTAssert( st.total_bytes > 5'000'000'000L );
+}
+
+- (void)testSimpleDownloadFromYandexDisk
+{
+    const auto host = [self spawnYandexDiskHost];
+    
+    VFSFilePtr file;
+    const auto path = "/Bears.jpg";
+    const auto filecr_rc = host->CreateFile(path, file, nullptr);
+    XCTAssert( filecr_rc == VFSError::Ok );
+
+    const auto open_rc = file->Open(VFSFlags::OF_Read);
+    XCTAssert( open_rc == VFSError::Ok );
+    
+    auto data = file->ReadFile();
+    XCTAssert(data &&
+              data->size() == 1'555'830 &&
+              data->at(1'555'828) == 255 &&
+              data->at(1'555'829) == 217 );
+}
+
+- (void) testComplexCopyToYandexDisk
+{
+    const auto host = [self spawnYandexDiskHost];
+    VFSEasyDelete("/Test2", host);    
+    const auto copy_rc = VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs",
+                                              VFSNativeHost::SharedHost(),
+                                              "/Test2",
+                                              host);
+    XCTAssert( copy_rc == VFSError::Ok );
+
+    int res = 0;
+    int cmp_rc = VFSCompareNodes("/System/Library/Filesystems/msdos.fs",
+                                  VFSNativeHost::SharedHost(),
+                                  "/Test2",
+                                  host,
+                                  res);
+                                  
+    XCTAssert( cmp_rc == VFSError::Ok && res == 0 );
+    
+    VFSEasyDelete("/Test2", host);
 }
 
 @end

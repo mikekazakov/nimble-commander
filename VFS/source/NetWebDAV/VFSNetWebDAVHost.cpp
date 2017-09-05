@@ -56,10 +56,13 @@ void WebDAVHost::Init()
     if( rc != VFSError::Ok )
         throw VFSErrorException(rc);
     
-    if( (requests & HTTPRequests::MinimalRequiredSet) !=  HTTPRequests::MinimalRequiredSet ) {
-        HTTPRequests::Print(requests);
-        throw VFSErrorException( VFSError::FromErrno(EPROTONOSUPPORT) );
-    }
+// it's besically good to check available requests before commiting to work with the server,
+// BUT my local QNAP NAS is pretty fucked up and reports a gibberish like
+// "Allow: GET,HEAD,POST,OPTIONS,HEAD,HEAD", which doesn't help at all.
+//    if( (requests & HTTPRequests::MinimalRequiredSet) !=  HTTPRequests::MinimalRequiredSet ) {
+//        HTTPRequests::Print(requests);
+//        throw VFSErrorException( VFSError::FromErrno(EPROTONOSUPPORT) );
+//    }
 
     AddFeatures(VFSHostFeatures::NonEmptyRmDir);
 }
@@ -384,7 +387,7 @@ static VFSConfiguration ComposeConfiguration(const string &_serv_url,
                                              bool _https,
                                              int    _port)
 {
-    if( _port < 0 )
+    if( _port <= 0 )
         _port = _https ? 443 : 80;
 
     HostConfiguration config;
@@ -397,11 +400,9 @@ static VFSConfiguration ComposeConfiguration(const string &_serv_url,
     config.verbose = (_https ? "https://" : "http://") +
                       (config.user.empty() ? "" : config.user + "@" ) +
                       _serv_url + "/" + _path;
-
     config.full_url = (_https ? "https://" : "http://") +
-                      _serv_url +
-                      ":" + to_string(_port) +
-                      "/" + _path + "/";
+                      _serv_url + "/" +
+                      (_path.empty() ? "" :  _path + "/");
 
     return VFSConfiguration( move(config) );
 }

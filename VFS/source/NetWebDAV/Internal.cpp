@@ -338,7 +338,7 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
 //        cout << response << endl;    
     
         auto items = ParseDAVListing(response);
-        const auto base_path = "/"s + _options.path + _path;
+        const auto base_path = (_options.path.empty() ? "" :  "/" + _options.path) + _path;
         items = PruneFilepaths(move(items), base_path);
         return {VFSError::Ok, move(items)};
     }

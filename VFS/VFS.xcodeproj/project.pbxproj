@@ -850,6 +850,8 @@
 					"-lunrar",
 					"-lcurl",
 					"-lpugixml",
+					"-framework",
+					Kerberos,
 				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -936,6 +938,8 @@
 					"-lunrar",
 					"-lcurl",
 					"-lpugixml",
+					"-framework",
+					Kerberos,
 				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

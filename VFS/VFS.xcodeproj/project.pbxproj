@@ -31,7 +31,6 @@
 		CFD725F81E42DC3600603077 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F71E42DC3600603077 /* liblzma.a */; };
 		CFD725FA1E42DC4B00603077 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F91E42DC4B00603077 /* libz.a */; };
 		CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */; };
-		CFD725FD1E42DD3A00603077 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FC1E42DD3A00603077 /* libcurl.a */; };
 		CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847171E41C9F9008B7C9F /* Security.framework */; };
 		CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FF1E42DD6000603077 /* LDAP.framework */; };
 		CFD7273C1E42EC7B00603077 /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */; };
@@ -225,7 +224,6 @@
 		CFD725F51E42DC3200603077 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = ../Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
 		CFD725F71E42DC3600603077 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CFD725F91E42DC4B00603077 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../Files/Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
-		CFD725FC1E42DD3A00603077 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = ../Files/3rd_party/built/lib/libcurl.a; sourceTree = "<group>"; };
 		CFD725FF1E42DD6000603077 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CFD7273D1E42EC8E00603077 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -279,7 +277,6 @@
 				CF1847301E41CFB7008B7C9F /* libarchive.a in Frameworks */,
 				CFD725FA1E42DC4B00603077 /* libz.a in Frameworks */,
 				CFD725F61E42DC3200603077 /* libbz2.a in Frameworks */,
-				CFD725FD1E42DD3A00603077 /* libcurl.a in Frameworks */,
 				CFD725F81E42DC3600603077 /* liblzma.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,7 +347,6 @@
 				CFD7273D1E42EC8E00603077 /* Carbon.framework */,
 				CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */,
 				CFD725FF1E42DD6000603077 /* LDAP.framework */,
-				CFD725FC1E42DD3A00603077 /* libcurl.a */,
 				CFD725F91E42DC4B00603077 /* libz.a */,
 				CFD725F71E42DC3600603077 /* liblzma.a */,
 				CFD725F51E42DC3200603077 /* libbz2.a */,
@@ -815,22 +811,24 @@
 					"$(PROJECT_DIR)/../Habanero/include",
 					"$(PROJECT_DIR)/../Utility/include",
 					"$(PROJECT_DIR)/../RoutedIO/include",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/include/",
 					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/include/",
+					"$(PROJECT_DIR)/../3rd_Party/libcurl/include/",
+					"$(PROJECT_DIR)/../Files/3rd_party/built/include/",
 					"$(PROJECT_DIR)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/built",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/built",
+					"$(PROJECT_DIR)/../3rd_Party/libcurl/built",
+					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -900,22 +898,24 @@
 					"$(PROJECT_DIR)/../Habanero/include",
 					"$(PROJECT_DIR)/../Utility/include",
 					"$(PROJECT_DIR)/../RoutedIO/include",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/include/",
 					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/include/",
+					"$(PROJECT_DIR)/../3rd_Party/libcurl/include/",
+					"$(PROJECT_DIR)/../Files/3rd_party/built/include/",
 					"$(PROJECT_DIR)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/../3rd_Party/libssh2/built",
 					"$(PROJECT_DIR)/../3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/built",
+					"$(PROJECT_DIR)/../3rd_Party/libcurl/built",
+					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;

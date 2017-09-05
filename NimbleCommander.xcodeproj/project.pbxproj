@@ -271,7 +271,6 @@
 		CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
 		CF6D9C7519667A180077B146 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */; };
 		CF6D9C7619667A180077B146 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E6190FD61E0064D249 /* libboost_system.a */; };
-		CF6D9C7719667A180077B146 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
 		CF6D9C7C19667A190077B146 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C7919667A190077B146 /* liblzma.a */; };
 		CF6D9C7F19667A270077B146 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C7E19667A270077B146 /* Carbon.framework */; };
 		CF6D9C8119667A2D0077B146 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C8019667A2D0077B146 /* LDAP.framework */; };
@@ -1116,7 +1115,6 @@
 		CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
 		CFF6F3541A13567C00011177 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CFF6F3551A13567C00011177 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
-		CFF6F3561A13567C00011177 /* libcurl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CD1913778800E170FC /* libcurl.a */; };
 		CFF6F3571A13567C00011177 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E5190FD61E0064D249 /* libboost_filesystem.a */; };
 		CFF6F3581A13567C00011177 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7E4E6190FD61E0064D249 /* libboost_system.a */; };
 		CFF6F35A1A13567C00011177 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA3D7C81962613B006A30A1 /* Carbon.framework */; };
@@ -1379,7 +1377,6 @@
 		CF09394B1D196FB500D67AC6 /* ExternalToolParameterValueSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalToolParameterValueSheetController.h; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF0939541D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ExternalToolParameterValueSheetController.mm; path = NimbleCommander/States/FilePanels/ExternalToolParameterValueSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF0E76DF1E4C1BE30052A679 /* liblzmadec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzmadec.a; path = 3rd_Party/liblzmadec/built/liblzmadec.a; sourceTree = SOURCE_ROOT; };
-		CF1100CD1913778800E170FC /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = 3rd_party/built/lib/libcurl.a; sourceTree = "<group>"; };
 		CF1100CF1913788800E170FC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFSDelete_Tests.mm; sourceTree = "<group>"; };
@@ -2001,7 +1998,6 @@
 				CF6D9C7C19667A190077B146 /* liblzma.a in Frameworks */,
 				CF6D9C7519667A180077B146 /* libboost_filesystem.a in Frameworks */,
 				CF6D9C7619667A180077B146 /* libboost_system.a in Frameworks */,
-				CF6D9C7719667A180077B146 /* libcurl.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2078,7 +2074,6 @@
 				CF844DBE1D43231500C735DB /* libz.a in Frameworks */,
 				CFF6F3541A13567C00011177 /* libcrypto.dylib in Frameworks */,
 				CFF6F3551A13567C00011177 /* libssl.dylib in Frameworks */,
-				CFF6F3561A13567C00011177 /* libcurl.a in Frameworks */,
 				CFF6F3571A13567C00011177 /* libboost_filesystem.a in Frameworks */,
 				CF9B12C01D8A6B4100C4E0A5 /* libcrypto.a in Frameworks */,
 				CFF6F3581A13567C00011177 /* libboost_system.a in Frameworks */,
@@ -2512,8 +2507,8 @@
 		CF69CFD71DA2250C00992B84 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				CFD725F31E42DBD900603077 /* VFS Tests.xctest */,
 				CF69CFDB1DA2250C00992B84 /* libVFS.dylib */,
+				CFD725F31E42DBD900603077 /* VFS Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2986,7 +2981,6 @@
 				CF029BFA17E878A400415033 /* libbz2.a */,
 				CF811A901D8262BE001F9E7F /* libcrypto.a */,
 				CF9066B419AB54CE001DC687 /* libcrypto.a */,
-				CF1100CD1913778800E170FC /* libcurl.a */,
 				CF6D9C7919667A190077B146 /* liblzma.a */,
 				CF561B1517D6290F009D37A4 /* liblzma.a */,
 				CFB8CDBC1D82BFAD007B1142 /* libssh2.a */,

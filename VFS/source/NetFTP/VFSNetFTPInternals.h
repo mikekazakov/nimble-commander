@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../../Files/3rd_party/built/include/curl/curl.h"
+#include <curl/curl.h>
 #include <VFS/VFSHost.h>
 #include "VFSNetFTPCache.h"
 

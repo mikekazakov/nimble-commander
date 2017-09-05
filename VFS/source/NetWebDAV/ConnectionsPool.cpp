@@ -16,14 +16,17 @@ Connection::Connection( const HostConfiguration& _config ):
 {
     const auto auth_methods = CURLAUTH_BASIC | CURLAUTH_DIGEST;
     const auto ua = "Nimble Commander";
-    
-    curl_easy_setopt(m_EasyHandle, CURLOPT_HTTPAUTH, auth_methods);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_USERNAME, _config.user.c_str());
-    curl_easy_setopt(m_EasyHandle, CURLOPT_PASSWORD, _config.passwd.c_str());
-    curl_easy_setopt(m_EasyHandle, CURLOPT_XFERINFOFUNCTION, Progress);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_XFERINFODATA, this);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_NOPROGRESS, 0);
-    curl_easy_setopt(m_EasyHandle, CURLOPT_USERAGENT, ua);
+    const auto curl = m_EasyHandle;
+    curl_easy_setopt(curl, CURLOPT_HTTPAUTH, auth_methods);
+    curl_easy_setopt(curl, CURLOPT_USERNAME, _config.user.c_str());
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, _config.passwd.c_str());
+    curl_easy_setopt(curl, CURLOPT_XFERINFOFUNCTION, Progress);
+    curl_easy_setopt(curl, CURLOPT_XFERINFODATA, this);
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, ua);
+    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_LIMIT, 1L);
+    curl_easy_setopt(curl, CURLOPT_LOW_SPEED_TIME, 60L);
+    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 30L);
 }
 
 Connection::~Connection()

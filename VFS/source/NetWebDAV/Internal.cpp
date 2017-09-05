@@ -516,7 +516,10 @@ int RequestMove(const HostConfiguration& _options,
 
 int ToVFSError( const int _curl_rc, const int _http_rc ) noexcept
 {
-    if( _curl_rc == CURLE_OK )
+    if( _curl_rc == CURLE_OK ) {
+        if( IsOkHTTPRC(_http_rc) )
+            return VFSError::Ok;
+            
         switch( _http_rc ) {
             case 400:   return VFSError::FromErrno(EINVAL);
             case 401:   return VFSError::FromErrno(EAUTH);
@@ -547,6 +550,7 @@ int ToVFSError( const int _curl_rc, const int _http_rc ) noexcept
             case 508:   return VFSError::FromErrno(ELOOP);
             default:    return VFSError::FromErrno(EIO);
         }
+    }
     else
         switch( _curl_rc ) {
             case CURLE_UNSUPPORTED_PROTOCOL:    return VFSError::FromErrno(EPROTO);

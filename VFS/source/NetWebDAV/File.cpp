@@ -65,18 +65,22 @@ static bool SelectMulti( CURLM *_multi )
     return rc != -1;
 }
 
-static bool HasErrors( CURLM *_multi )
+static int ErrorIfAny( CURLM *_multi )
 {
-    bool has_error = false;
-    int msgs_left = 1;
-    while( msgs_left ) {
-        const auto msg = curl_multi_info_read(_multi, &msgs_left);
-        if( msg == nullptr ||
-            msg->msg != CURLMSG_DONE ||
-            msg->data.result != CURLE_OK )
-            has_error = true;
+    CURLMsg *msg;
+    int msgs_left = 0;
+    while( (msg = curl_multi_info_read(_multi, &msgs_left)) != nullptr ) {
+        if( msg->msg == CURLMSG_DONE ) {
+            const auto curle_rc = msg->data.result;
+            if( curle_rc != CURLE_OK )
+                return ToVFSError(curle_rc, 0);
+
+            const auto http_rc = curl_easy_get_response_code(msg->easy_handle);
+            if( http_rc >= 300 )
+                return ToVFSError(curle_rc, http_rc);
+        }
     }
-    return has_error;
+    return VFSError::Ok;
 }
 
 ssize_t File::Read(void *_buf, size_t _size)
@@ -86,7 +90,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     if( _size == 0 || Eof() )
         return 0;
 
-    bool error = false;
+    int vfs_error = VFSError::Ok;
     
     if( m_ReadBuffer.Size() < _size ) {
         SpawnDownloadConnectionIfNeeded();
@@ -97,19 +101,18 @@ ssize_t File::Read(void *_buf, size_t _size)
         
         while( m_ReadBuffer.Size() < _size && running_handles) {
             if( !SelectMulti(multi) ) {
-                error = true;
+                vfs_error = VFSError::FromErrno();
                 break;
             }
             while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
         }
 
         if( running_handles == 0 )
-            if( HasErrors(multi) )
-                error  = true;
+            vfs_error = ErrorIfAny(multi);
     }
 
-    if( error )
-        return VFSError::FromErrno(EIO);
+    if( vfs_error != VFSError::Ok )
+        return vfs_error;
 
     const auto has_read = m_ReadBuffer.Read(_buf, _size);
     m_Pos += has_read;
@@ -128,7 +131,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
 
     SpawnUploadConnectionIfNeeded();
 
-    bool error = false;
+    int vfs_error = VFSError::Ok;
     
     const auto multi = m_Conn->MultiHandle();
     int running_handles = 0;
@@ -136,18 +139,17 @@ ssize_t File::Write(const void *_buf, size_t _size)
     
     do  {
         if( !SelectMulti(multi) ) {
-            error = true;
+            vfs_error = VFSError::FromErrno();
             break;
         }
         while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
-    } while( !m_WriteBuffer.Empty() && running_handles);
+    } while( !m_WriteBuffer.Empty() && running_handles );
 
     if( running_handles == 0 )
-        if( HasErrors(multi) )
-            error  = true;
+        vfs_error = ErrorIfAny(multi);
 
-    if( error )
-        return VFSError::FromErrno(EIO);
+    if( vfs_error != VFSError::Ok )
+        return vfs_error;
 
     const auto has_written = _size - m_WriteBuffer.Size();
     m_Pos += has_written;
@@ -215,7 +217,7 @@ static void AbortPendingDownload(Connection &_conn)
     } while(running_handles);
 }
 
-static void ConcludePendingUpload( Connection &_conn, bool _abort)
+static int ConcludePendingUpload( Connection &_conn, bool _abort)
 {
     if( _abort )
         _conn.SetProgreessCallback([](long, long, long, long){
@@ -227,19 +229,25 @@ static void ConcludePendingUpload( Connection &_conn, bool _abort)
     while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
     
     if( running_handles == 0)
-        return;
+        return ErrorIfAny(multi);
     
     while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
     
     while( running_handles ) {
         if( !SelectMulti( multi ) )
-            break;
+            return VFSError::FromErrno();
         while( CURLM_CALL_MULTI_PERFORM == curl_multi_perform(multi, &running_handles) );
     }
+    return ErrorIfAny(multi);
 }
 
 int File::Close()
 {
+    if( !IsOpened() )
+        return VFSError::FromErrno(EINVAL);
+    
+    int result = VFSError::Ok;
+    
     if( m_OpenFlags & VFSFlags::OF_Read ) {
         if( m_Conn ) {
             AbortPendingDownload(*m_Conn);
@@ -251,7 +259,7 @@ int File::Close()
             Write("", 0);
         
         if( m_Conn ) {
-            ConcludePendingUpload( *m_Conn, m_Pos < m_Size );
+            result = ConcludePendingUpload( *m_Conn, m_Pos < m_Size );
             m_Host.ConnectionsPool().Return( move(m_Conn) );
         }
         
@@ -267,7 +275,7 @@ int File::Close()
     m_Pos = 0;
     m_Size = -1;
         
-    return 0;
+    return result;
 }
 
 File::ReadParadigm File::GetReadParadigm() const

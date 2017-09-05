@@ -233,6 +233,13 @@ void CopyingJob::ProcessItems()
             }
             else {
                 /* NOT SUPPORTED YET */
+//                int a = 10;
+//                if( m_Options.docopy ) { // copy
+//                    step_result = CopyVFSFileToVFSFile(source_host, source_path, destination_path, nullptr);
+//                }
+
+                // TODO: show error??
+                
             }
             
             
@@ -240,8 +247,10 @@ void CopyingJob::ProcessItems()
         }
 
         // check current item result
-        if( step_result == StepResult::Stop)
+        if( step_result == StepResult::Stop) {
+            Stop();
             return;
+        }
         if( BlockIfPaused(); IsStopped() )
             return;
     }

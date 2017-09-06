@@ -2,6 +2,7 @@
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <VFS/NetDropbox.h>
+#include <VFS/NetWebDAV.h>
 
 static const auto g_16px = NSMakeSize(16, 16);
 
@@ -54,7 +55,8 @@ NSImage *NetworkConnectionIconProvider::Icon16px(const VFSInstanceManager::Promi
         return Dropbox();
     
     if( tag == VFSNetFTPHost::UniqueTag ||
-        tag == VFSNetSFTPHost::UniqueTag )
+        tag == VFSNetSFTPHost::UniqueTag ||
+        tag == nc::vfs::WebDAVHost::UniqueTag )
         return Generic();
     
     return nil;

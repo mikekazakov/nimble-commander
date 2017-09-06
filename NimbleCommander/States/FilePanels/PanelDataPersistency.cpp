@@ -12,6 +12,7 @@
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <VFS/NetDropbox.h>
+#include <VFS/NetWebDAV.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include <NimbleCommander/Core/rapidjson.h>
@@ -99,7 +100,8 @@ static bool IsNetworkVFS( const VFSHost& _host )
     const auto tag = _host.Tag();
     return tag == VFSNetFTPHost::UniqueTag ||
            tag == VFSNetSFTPHost::UniqueTag ||
-           tag == VFSNetDropboxHost::UniqueTag;
+           tag == VFSNetDropboxHost::UniqueTag ||
+           tag == vfs::WebDAVHost::UniqueTag;
 }
 
 static any EncodeState( const VFSHost& _host )
@@ -294,6 +296,8 @@ static const char *VFSTagForNetworkConnection( const NetworkConnectionsManager::
         return VFSNetSFTPHost::UniqueTag;
     else if( auto dropbox = _conn.Cast<NetworkConnectionsManager::Dropbox>() )
         return VFSNetDropboxHost::UniqueTag;
+    else if( auto webdav = _conn.Cast<NetworkConnectionsManager::WebDAV>() )
+        return vfs::WebDAVHost::UniqueTag;
     else
         return "<unknown_vfs>";
 }

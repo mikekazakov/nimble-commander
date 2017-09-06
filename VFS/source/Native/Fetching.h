@@ -20,7 +20,7 @@ public:
         dev_t               dev;
         uint64_t            inode;
         uint32_t            flags;
-        int64_t             size; // will be 0 if absent
+        int64_t             size; // will be -1 if absent
     };
     
     using Callback = function<void(const CallbackParams &_params)>;

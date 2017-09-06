@@ -153,6 +153,11 @@ NSError* ToNSError(int _code)
             ];
 }
 
+int FromCFNetwork(int _errno)
+{
+    return int(_errno - 2500000);
+}
+
 int FromNSError(NSError* _err)
 {
     if( !_err )

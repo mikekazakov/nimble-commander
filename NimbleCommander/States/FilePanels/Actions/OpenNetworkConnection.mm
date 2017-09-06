@@ -9,6 +9,7 @@
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <VFS/NetDropbox.h>
+#include <VFS/NetWebDAV.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 
@@ -75,6 +76,40 @@ static bool GoToSFTP(PanelController *_target,
         dispatch_to_main_queue([=]{
             Alert *alert = [[Alert alloc] init];
             alert.messageText = NSLocalizedString(@"SFTP connection error:", "Showing error when connecting to SFTP server");
+            alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
+            [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+            [alert runModal];
+        });
+    }
+    return false;
+}
+
+static bool GoToWebDAV(PanelController *_target,
+                       const NetworkConnectionsManager::Connection &_connection,
+                       const string& _passwd)
+{
+    dispatch_assert_background_queue();
+    auto &info = _connection.Get<NetworkConnectionsManager::WebDAV>();
+    try {
+        auto host = make_shared<vfs::WebDAVHost>(info.host,
+                                                info.user,
+                                                _passwd,
+                                                info.path,
+                                                info.https,
+                                                info.port
+                                                );
+        dispatch_to_main_queue([=]{
+            [_target GoToDir:"/" vfs:host select_entry:"" async:true];
+        });
+        
+        // save successful connection to history
+        _target.networkConnectionsManager.ReportUsage(_connection);
+
+        return true;
+    } catch (const VFSErrorException &e) {
+        dispatch_to_main_queue([=]{
+            Alert *alert = [[Alert alloc] init];
+            alert.messageText = NSLocalizedString(@"WebDAV connection error:", "Showing error when connecting to WebDAV server");
             alert.informativeText = VFSError::ToNSError(e.code()).localizedDescription;
             [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
             [alert runModal];
@@ -250,7 +285,6 @@ static void GoToConnection(PanelController *_target,
             bool success = GoToSFTP(_target, connection, passwd);
             if( success && should_save_passwd )
                  _target.networkConnectionsManager.SetPassword(connection, passwd);
-            
         });
     else if( connection.IsType<NetworkConnectionsManager::LANShare>() )
         GoToLANShare(_target, connection, passwd, should_save_passwd);
@@ -258,6 +292,13 @@ static void GoToConnection(PanelController *_target,
         dispatch_to_background([=]{
             auto activity = [_target registerExtActivity];
             GoToDropboxStorage(_target, connection, passwd);
+        });
+    else if( connection.IsType<NetworkConnectionsManager::WebDAV>() )
+        dispatch_to_background([=]{
+            auto activity = [_target registerExtActivity];
+            bool success = GoToWebDAV(_target, connection, passwd);
+            if( success && should_save_passwd )
+                 _target.networkConnectionsManager.SetPassword(connection, passwd);
         });
 }
 

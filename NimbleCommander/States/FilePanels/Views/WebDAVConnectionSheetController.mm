@@ -1,0 +1,145 @@
+#include "WebDAVConnectionSheetController.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <boost/algorithm/string.hpp>
+
+@interface WebDAVConnectionSheetController()
+@property bool isValid;
+@property (strong) IBOutlet NSTextField *titleTextField;
+@property (strong) IBOutlet NSPopUpButton *protocolPopup;
+@property (strong) IBOutlet NSTextField *serverTextField;
+@property (strong) IBOutlet NSTextField *basePathTextField;
+@property (strong) IBOutlet NSTextField *usernameTextField;
+@property (strong) IBOutlet NSSecureTextField *passwordTextField;
+@property (strong) IBOutlet NSTextField *remotePortTextField;
+@property (strong) IBOutlet NSButton *connectButton;
+
+@end
+
+@implementation WebDAVConnectionSheetController
+{
+    optional<NetworkConnectionsManager::Connection> m_Original;
+    optional<string> m_Password;
+    NetworkConnectionsManager::WebDAV m_Connection;
+}
+
+- (id) init
+{
+    self = [super init];
+    if(self) {
+        self.isValid = false;
+    }
+    return self;
+}
+
+- (void) windowDidLoad
+{
+    [super windowDidLoad];
+    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+
+    if( self.setupMode )
+        self.connectButton.title = self.connectButton.alternateTitle;
+
+    GA().PostScreenView("WebDAV Connection");
+    
+    if( m_Original ) {
+        auto &c = m_Original->Get<NetworkConnectionsManager::WebDAV>();
+        self.titleTextField.stringValue = [NSString stringWithUTF8StdString:c.title];
+        self.serverTextField.stringValue = [NSString stringWithUTF8StdString:c.host];
+        self.basePathTextField.stringValue = [NSString stringWithUTF8StdString:c.path];
+        self.usernameTextField.stringValue = [NSString stringWithUTF8StdString:c.user];
+        [self.protocolPopup selectItemWithTag:(int)c.https];
+        if( c.port > 0 )
+            self.remotePortTextField.stringValue = [NSString stringWithFormat:@"%i", c.port];
+    }
+    
+    if( m_Password )
+        self.passwordTextField.stringValue = [NSString stringWithUTF8StdString:*m_Password];
+    
+    [self validate];    
+}
+
+- (void)setConnection:(NetworkConnectionsManager::Connection)connection
+{
+    m_Original = connection;
+}
+
+- (NetworkConnectionsManager::Connection)connection
+{
+    return NetworkConnectionsManager::Connection( m_Connection );
+}
+
+- (void)setPassword:(string)_password
+{
+    m_Password = _password;
+}
+
+static const char *SafeStr( const char *_s )
+{
+    return _s ? _s : "";
+}
+
+- (string)password
+{
+    return m_Password ? *m_Password : "";
+}
+
+static string TrimSlashes(string _str)
+{
+    using namespace boost;
+    trim_left_if(_str, is_any_of("/"));
+    trim_right_if(_str, is_any_of("/"));
+    return _str;
+}
+
+- (IBAction)onConnect:(id)sender
+{
+    if( m_Original)
+        m_Connection.uuid = m_Original->Uuid();
+    else
+        m_Connection.uuid =  NetworkConnectionsManager::MakeUUID();
+    
+    
+    m_Connection.title = SafeStr(self.titleTextField.stringValue.UTF8String);
+    m_Connection.host = SafeStr(self.serverTextField.stringValue.UTF8String);
+    m_Connection.path = TrimSlashes(SafeStr(self.basePathTextField.stringValue.UTF8String));
+    m_Connection.user = SafeStr(self.usernameTextField.stringValue.UTF8String);
+    m_Connection.https = self.protocolPopup.selectedTag == 1;
+    m_Connection.port = 0;
+    if( self.remotePortTextField.intValue != 0 )
+        m_Connection.port = self.remotePortTextField.intValue;
+    
+    m_Password = string(SafeStr(self.passwordTextField.stringValue.UTF8String));
+    
+    [self endSheet:NSModalResponseOK];
+}
+
+- (IBAction)onCancel:(id)sender
+{
+    [self endSheet:NSModalResponseCancel];
+}
+
+- (void)controlTextDidChange:(NSNotification *)obj
+{
+    [self validate];
+}
+
+- (void)validate
+{
+    self.isValid = self.validateServer && self.validatePort;
+}
+
+- (bool) validateServer
+{
+    const auto v = self.serverTextField.stringValue;
+    return v != nil && v.length > 0;
+}
+
+- (bool)validatePort
+{
+    return !self.remotePortTextField.stringValue ||
+        (self.remotePortTextField.stringValue.intValue >= 0 &&
+         self.remotePortTextField.stringValue.intValue < 65'536);
+}
+
+@end

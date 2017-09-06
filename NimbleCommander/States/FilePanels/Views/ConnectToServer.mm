@@ -3,6 +3,7 @@
 #include "SFTPConnectionSheetController.h"
 #include "NetworkShareSheetController.h"
 #include "DropboxAccountSheetController.h"
+#include "WebDAVConnectionSheetController.h"
 #include <Utility/SheetWithHotkeys.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
@@ -46,6 +47,11 @@ private:
     virtual void Visit( const NetworkConnectionsManager::Dropbox &_share )
     {
         m_Sheet = [[DropboxAccountSheetController alloc] init];
+    }
+
+    virtual void Visit( const NetworkConnectionsManager::WebDAV &_share )
+    {
+        m_Sheet = [[WebDAVConnectionSheetController alloc] init];
     }
 
     NetworkConnectionsManager::Connection m_Connection;
@@ -282,6 +288,11 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 - (IBAction)onAddSFTPServer:(id)sender
 {
     [self runNewConnectionSheet:[[SFTPConnectionSheetController alloc] init]];
+}
+
+- (IBAction)onAddWebDAVServer:(id)sender
+{
+    [self runNewConnectionSheet:[[WebDAVConnectionSheetController alloc] init]];
 }
 
 - (IBAction)onAddNetworkShare:(id)sender

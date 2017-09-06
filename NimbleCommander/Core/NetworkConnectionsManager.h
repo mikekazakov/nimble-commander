@@ -15,6 +15,7 @@ public:
         class SFTP;
         class LANShare;
         class Dropbox;
+        class WebDAV;
     class ConnectionVisitor;
     
     
@@ -77,6 +78,7 @@ public:
     virtual void Visit( const NetworkConnectionsManager::SFTP &_sftp );
     virtual void Visit( const NetworkConnectionsManager::LANShare &_share );
     virtual void Visit( const NetworkConnectionsManager::Dropbox &_account );
+    virtual void Visit( const NetworkConnectionsManager::WebDAV &_webdav );
 };
 
 class NetworkConnectionsManager::Connection
@@ -175,6 +177,17 @@ class NetworkConnectionsManager::Dropbox : public NetworkConnectionsManager::Bas
 public:
     string account;
     bool operator==(const Dropbox&_rhs) const noexcept;
+};
+
+class NetworkConnectionsManager::WebDAV : public NetworkConnectionsManager::BaseConnection
+{
+public:
+    string host;
+    string path;
+    string user;
+    int port;
+    bool https;
+    bool operator==(const WebDAV&_rhs) const noexcept;
 };
 
 struct NetworkConnectionsManager::Connection::Concept

@@ -21,10 +21,12 @@ public:
                const string &_path,
                bool _https = false,
                int _port = -1);
+    WebDAVHost( const VFSConfiguration &_config );               
     ~WebDAVHost();
     
-    
     VFSConfiguration Configuration() const override;
+    
+    static VFSMeta Meta();    
     
     bool IsWritable() const override;
     
@@ -66,6 +68,10 @@ public:
     VFSHostDirObservationTicket DirChangeObserve(const char *_path,
                                                  function<void()> _handler) override;
     
+    const string &Host() const noexcept;
+    const string &Path() const noexcept;
+    const string Username() const noexcept;
+    const int Port() const noexcept;
     
     const webdav::HostConfiguration &Config() const noexcept;
     class webdav::ConnectionsPool &ConnectionsPool();

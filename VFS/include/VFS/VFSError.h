@@ -92,7 +92,8 @@ namespace VFSError
     int FromErrno(int _errno);
     int FromErrno();
     int FromLibarchive(int _errno);
-
+    int FromCFNetwork(int _errno);
+    
 #ifdef __OBJC__
     NSError* ToNSError(int _code);
     int FromNSError(NSError* _err);

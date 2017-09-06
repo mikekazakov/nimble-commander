@@ -13,10 +13,13 @@
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <VFS/NetDropbox.h>
+#include <VFS/NetWebDAV.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/rapidjson.h>
 
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
+
+using namespace nc;
 
 static const auto g_ConfigFilename = "NetworkConnections.json";
 static const auto g_ConnectionsKey = "connections";
@@ -66,7 +69,6 @@ static GenericConfig::ConfigValue ConnectionToJSONObject( NetworkConnectionsMana
     }
     if( _c.IsType<NetworkConnectionsManager::SFTP>() ) {
         auto &c = _c.Get<NetworkConnectionsManager::SFTP>();
-
         auto o = FillBasicConnectionInfoInJSONObject("sftp", c);
         o.AddMember("user", value(c.user.c_str(), alloc), alloc);
         o.AddMember("host", value(c.host.c_str(), alloc), alloc);
@@ -90,6 +92,17 @@ static GenericConfig::ConfigValue ConnectionToJSONObject( NetworkConnectionsMana
         o.AddMember("account", value(c.account.c_str(), alloc), alloc);
         return o;
     }
+    if( const auto p = _c.Cast<NetworkConnectionsManager::WebDAV>() ) {
+        const auto &c = *p;
+        auto o = FillBasicConnectionInfoInJSONObject("webdav", c);
+        o.AddMember("user", value(c.user.c_str(), alloc), alloc);
+        o.AddMember("host", value(c.host.c_str(), alloc), alloc);
+        o.AddMember("path", value(c.path.c_str(), alloc), alloc);
+        o.AddMember("https", value(c.https), alloc);
+        o.AddMember("port", value(c.port), alloc);
+        return o;
+    }
+    
     return GenericConfig::ConfigValue(rapidjson::kNullType);
 }
 
@@ -97,11 +110,21 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
 {
     static const boost::uuids::string_generator uuid_gen{};
     using namespace rapidjson;
-    auto has_string = [&](const char *k){ return _object.HasMember(k) &&
-                                                 _object[k].GetType() == kStringType; };
-    auto has_number = [&](const char *k){ return _object.HasMember(k) &&
-                                                 _object[k].GetType() == kNumberType; };
-    
+    auto has_string = [&](const char *k){
+        if( const auto i = _object.FindMember(k); i != _object.MemberEnd() )
+            return i->value.GetType() == kStringType;
+        return false;
+    };
+    auto has_number = [&](const char *k) {
+        if( const auto i = _object.FindMember(k); i != _object.MemberEnd() )
+            return i->value.GetType() == kNumberType;
+        return false;
+    };
+    auto has_bool   = [&](const char *k) {
+        if( const auto i = _object.FindMember(k); i != _object.MemberEnd() )
+            return i->value.GetType() == kFalseType || i->value.GetType() == kTrueType;
+        return false;
+    };
 
     if( _object.GetType() != kObjectType )
         return nullopt;
@@ -167,6 +190,22 @@ static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( c
         
         return NetworkConnectionsManager::Connection( move(c) );
     }
+    else if( type == "webdav" ) {
+        if( !has_string("user") || !has_string("host") || !has_string("path") ||
+            !has_number("port") || !has_bool("https") )
+                return nullopt;
+        
+        NetworkConnectionsManager::WebDAV c;
+        c.uuid = uuid_gen( _object["uuid"].GetString() );
+        c.title = _object["title"].GetString();
+        c.user = _object["user"].GetString();
+        c.host = _object["host"].GetString();
+        c.path = _object["path"].GetString();
+        c.https = _object["https"].GetBool();
+        c.port = _object["port"].GetInt();
+     
+        return NetworkConnectionsManager::Connection( move(c) );
+    }
 
     return nullopt;
 }
@@ -192,6 +231,8 @@ static string KeychainWhereFromConnection( const NetworkConnectionsManager::Conn
             c->host + "/" + c->share;
     if( auto c = _c.Cast<NetworkConnectionsManager::Dropbox>() )
         return "dropbox://"s + c->account;
+    if( auto c = _c.Cast<NetworkConnectionsManager::WebDAV>() )
+        return (c->https ? "https://" : "http://") + c->host + (c->path.empty() ? "" : "/"+c->path);
     return "";
 }
 
@@ -205,6 +246,8 @@ static string KeychainAccountFromConnection( const NetworkConnectionsManager::Co
         return c->user;
     if( auto c = _c.Cast<NetworkConnectionsManager::Dropbox>() )
         return c->account;
+    if( auto c = _c.Cast<NetworkConnectionsManager::WebDAV>() )
+        return c->user;
     return "";
 }
 
@@ -402,43 +445,48 @@ bool ConfigBackedNetworkConnectionsManager::AskForPassword(const Connection &_co
 optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::
     ConnectionForVFS(const VFSHost& _vfs) const
 {
-    if( auto ftp = dynamic_cast<const VFSNetFTPHost*>(&_vfs) ) {
-        LOCK_GUARD(m_Lock) {
-            auto it = find_if( begin(m_Connections), end(m_Connections), [&](const Connection &i){
-                if( auto p = i.Cast<FTP>() )
-                    return p->host == ftp->ServerUrl() &&
-                           p->user == ftp->User() &&
-                           p->port == ftp->Port();
-                return false;
-            } );
-            if( it != end(m_Connections) )
-                return *it;
-        }
-    }
-    else if( auto sftp = dynamic_cast<const VFSNetSFTPHost*>(&_vfs) ) {
-        LOCK_GUARD(m_Lock) {
-            auto it = find_if( begin(m_Connections), end(m_Connections), [&](const Connection &i){
-                if( auto p = i.Cast<SFTP>() )
-                    return p->host == sftp->ServerUrl() &&
-                           p->user == sftp->User() &&
-                           p->keypath == sftp->Keypath() &&
-                           p->port == sftp->Port();
-                return false;
-            });
-            if( it != end(m_Connections) )
-                return *it;
-        }
-    }
-    else if( auto dropbox = dynamic_cast<const VFSNetDropboxHost*>(&_vfs) ) {
-        LOCK_GUARD(m_Lock) {
-            auto it = find_if( begin(m_Connections), end(m_Connections), [&](const Connection &i){
-                if( auto p = i.Cast<Dropbox>() )
-                    return p->account == dropbox->Account();
-                return false;
-            });
-            if( it != end(m_Connections) )
-                return *it;
-        }
+    function<bool(const Connection &)> pred;
+
+    if( auto ftp = dynamic_cast<const VFSNetFTPHost*>(&_vfs) )
+        pred = [ftp](const Connection &i){
+            if( auto p = i.Cast<FTP>() )
+                return p->host == ftp->ServerUrl() &&
+                    p->user == ftp->User() &&
+                    p->port == ftp->Port();
+            return false;
+        };
+    else if( auto sftp = dynamic_cast<const VFSNetSFTPHost*>(&_vfs) )
+        pred = [sftp](const Connection &i){
+            if( auto p = i.Cast<SFTP>() )
+                return p->host == sftp->ServerUrl() &&
+                    p->user == sftp->User() &&
+                    p->keypath == sftp->Keypath() &&
+                    p->port == sftp->Port();
+            return false;
+        };
+    else if( auto dropbox = dynamic_cast<const VFSNetDropboxHost*>(&_vfs) )
+        pred = [dropbox](const Connection &i){
+            if( auto p = i.Cast<Dropbox>() )
+                return p->account == dropbox->Account();
+            return false;
+        };
+    else if( auto webdav = dynamic_cast<const nc::vfs::WebDAVHost*>(&_vfs) )
+        pred = [webdav](const Connection &i){
+            if( auto p = i.Cast<WebDAV>() )
+                return p->host == webdav->Host() &&
+                    p->path == webdav->Path() &&
+                    p->user == webdav->Username() &&
+                    p->port == webdav->Port();
+            return false;
+        };
+    
+    if( !pred )
+        return nullopt;
+    
+    LOCK_GUARD(m_Lock) {
+        const auto it = find_if( begin(m_Connections), end(m_Connections), pred );
+        if( it != end(m_Connections) )
+            return *it;
     }
     
     return nullopt;
@@ -462,14 +510,15 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection
         host = make_shared<VFSNetSFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
     else if( auto dropbox = _connection.Cast<Dropbox>() )
         host = make_shared<VFSNetDropboxHost>( dropbox->account, passwd );
+    else if( auto w = _connection.Cast<WebDAV>() )
+        host = make_shared<vfs::WebDAVHost>( w->host, w->user, passwd, w->path, w->https, w->port );
     
     if( host ) {
         ReportUsage(_connection);
         if( shoud_save_passwd )
             SetPassword(_connection, passwd);
-        return host;
     }
-    return nullptr;
+    return host;
 }
 
 static string NetFSErrorString( int _code )

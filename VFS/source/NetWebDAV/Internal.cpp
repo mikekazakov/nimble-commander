@@ -6,6 +6,7 @@
 #include "DateTimeParser.h"
 #include "ConnectionsPool.h"
 #include "PathRoutines.h"
+#include <CFNetwork/CFNetworkErrors.h>
 
 namespace nc::vfs::webdav {
     
@@ -254,14 +255,17 @@ vector<PropFindResponse> ParseDAVListing( const string &_xml_listing )
     return items;
 }
 
-vector<PropFindResponse> PruneFilepaths( vector<PropFindResponse> _items, const string &_base_path){
+static vector<PropFindResponse> PruneFilepaths(vector<PropFindResponse> _items,
+                                               const string &_base_path)
+{
     if( _base_path.front() != '/' || _base_path.back() != '/' )
         throw invalid_argument("PruneFilepaths need a path with heading and trailing slashes");
+    
     const auto base_path_len = _base_path.length();
     _items.erase(remove_if(begin(_items), end(_items), [&](auto &_item){
             if( !has_prefix(_item.filename, _base_path ) )
                 return true;
-        
+
             _item.filename.erase(0, base_path_len);
         
             if( _item.filename.empty() ) {
@@ -278,6 +282,21 @@ vector<PropFindResponse> PruneFilepaths( vector<PropFindResponse> _items, const 
             return false;
     }), end(_items));
     return _items;
+}
+
+[[maybe_unused]]
+// macOS server doesn't prefix filepaths with "webdav" prefix, but I didn't manage to get it
+// to work properly anyway. Maybe later.
+static bool FilepathsHavePathPrefix(const vector<PropFindResponse> &_items, const string &_path)
+{
+    if( _path.empty() )
+        return false;
+    
+    const auto base_path = "/" + _path;
+    const auto server_uses_prefixes = all_of(begin(_items), end(_items), [&](const auto &_item){
+        return has_prefix(_item.filename, base_path);
+    });
+    return server_uses_prefixes;
 }
 
 pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _options,
@@ -338,7 +357,8 @@ pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _op
 //        cout << response << endl;    
     
         auto items = ParseDAVListing(response);
-        const auto base_path = (_options.path.empty() ? "" :  "/" + _options.path) + _path;
+        const auto use_prefix = true /* FilepathsHavePathPrefix(items, _options.path) */;
+        const auto base_path = use_prefix ? "/" + _options.path + _path : _path;
         items = PruneFilepaths(move(items), base_path);
         return {VFSError::Ok, move(items)};
     }
@@ -521,6 +541,7 @@ int ToVFSError( const int _curl_rc, const int _http_rc ) noexcept
             return VFSError::Ok;
             
         switch( _http_rc ) {
+            // TODO:: 3xx
             case 400:   return VFSError::FromErrno(EINVAL);
             case 401:   return VFSError::FromErrno(EAUTH);
             case 402:   return VFSError::FromErrno(EAUTH);
@@ -566,6 +587,7 @@ int ToVFSError( const int _curl_rc, const int _http_rc ) noexcept
             case CURLE_INTERFACE_FAILED:        return VFSError::FromErrno(ENETDOWN);
             case CURLE_LOGIN_DENIED:            return VFSError::FromErrno(EAUTH);
             case CURLE_REMOTE_FILE_EXISTS:      return VFSError::FromErrno(EEXIST);
+            case CURLE_SSL_CACERT:              return VFSError::FromCFNetwork(kCFURLErrorSecureConnectionFailed);
             default:                            return VFSError::FromErrno(EIO);
         }
 }

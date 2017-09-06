@@ -4,8 +4,11 @@ namespace nc::panel::data {
 
 struct ItemVolatileData
 {
+    enum Size : uint64_t {
+        invalid_size = numeric_limits<uint64_t>::max()
+    };
+
     enum {
-        invalid_size = (0xFFFFFFFFFFFFFFFFu),
         flag_selected   = 1 << 0,
         flag_shown      = 1 << 1,
         flag_highlight  = 1 << 2  // temporary item highlight, for instance for context menu

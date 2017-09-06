@@ -9,14 +9,6 @@
 #include <Utility/FunctionKeysPass.h>
 #include <RoutedIO/RoutedIO.h>
 #include "../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
-#include <VFS/Native.h>
-#include <VFS/ArcLA.h>
-#include <VFS/ArcUnRAR.h>
-#include <VFS/PS.h>
-#include <VFS/XAttr.h>
-#include <VFS/NetFTP.h>
-#include <VFS/NetSFTP.h>
-#include <VFS/NetDropbox.h>
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
@@ -50,6 +42,7 @@
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
 #include "ConfigWiring.h"
+#include "VFSInit.h"
 
 using namespace nc::bootstrap;
 
@@ -211,15 +204,7 @@ static AppDelegate *g_Me = nil;
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification
 {
-    // modules initialization
-    VFSFactory::Instance().RegisterVFS(       VFSNativeHost::Meta() );
-    VFSFactory::Instance().RegisterVFS(           VFSPSHost::Meta() );
-    VFSFactory::Instance().RegisterVFS(      VFSNetSFTPHost::Meta() );
-    VFSFactory::Instance().RegisterVFS(       VFSNetFTPHost::Meta() );
-    VFSFactory::Instance().RegisterVFS(   VFSNetDropboxHost::Meta() );
-    VFSFactory::Instance().RegisterVFS(      VFSArchiveHost::Meta() );
-    VFSFactory::Instance().RegisterVFS( VFSArchiveUnRARHost::Meta() );
-    VFSFactory::Instance().RegisterVFS(        VFSXAttrHost::Meta() );
+    RegisterAvailableVFS();
     
     NativeFSManager::Instance();
     FeedbackManager::Instance();

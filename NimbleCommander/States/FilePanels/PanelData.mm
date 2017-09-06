@@ -72,9 +72,18 @@ static void InitVolatileDataWithListing( vector<ItemVolatileData> &_vd, const VF
 {
     _vd.clear();
     _vd.resize(_listing.Count());
-    for( unsigned i = 0, e = _listing.Count(); i != e; ++i )
-        if( !_listing.IsDir(i) )
+    for( unsigned i = 0, e = _listing.Count(); i != e; ++i ) {
+        if( _listing.IsDir(i) ) {
+            if( _listing.HasSize(i) ) {
+                const auto sz = _listing.Size(i);
+                if( sz != numeric_limits<uint64_t>::max() )
+                    _vd[i].size = sz;
+            }
+        }
+        else {
             _vd[i].size = _listing.Size(i);
+        }
+    }
 }
 
 void Model::Load(const shared_ptr<VFSListing> &_listing, PanelType _type)
@@ -101,6 +110,18 @@ void Model::Load(const shared_ptr<VFSListing> &_listing, PanelType _type)
     UpdateStatictics();
 }
 
+static void UpdateWithExisingVD( ItemVolatileData &_new_vd, const ItemVolatileData &_ex_vd )
+{
+    if( _new_vd.size == ItemVolatileData::invalid_size ) {
+        _new_vd = _ex_vd;
+    }
+    else {
+        const auto sz = _new_vd.size;
+        _new_vd = _ex_vd;
+        _new_vd.size = sz;
+    }
+}
+
 void Model::ReLoad(const shared_ptr<VFSListing> &_listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
@@ -122,7 +143,9 @@ void Model::ReLoad(const shared_ptr<VFSListing> &_listing)
         check:  int dst = dirbyrawcname[dst_i];
             int cmp = m_Listing->Filename(src).compare( _listing->Filename(dst) );
             if( cmp == 0 ) {
-                new_vd[ dst ] = m_VolatileData[ src ];
+                
+//                new_vd[ dst ] = m_VolatileData[ src ];
+                UpdateWithExisingVD( new_vd[dst], m_VolatileData[src] );
                 
                 ++dst_i;                    // check this! we assume that normal directory can't hold two files with a same name
             }
@@ -148,7 +171,8 @@ void Model::ReLoad(const shared_ptr<VFSListing> &_listing)
     check2: int dst = dst_keys_ind[dst_i];
             int cmp = src_keys[src].compare( dst_keys[dst] );
             if( cmp == 0 ) {
-                new_vd[ dst ] = m_VolatileData[ src ];
+//                new_vd[ dst ] = m_VolatileData[ src ];
+                UpdateWithExisingVD( new_vd[dst], m_VolatileData[src] );
                 ++dst_i;
             }
             else if( cmp > 0 ) {

@@ -31,7 +31,7 @@ struct ConnectionPathBuilder : public NetworkConnectionsManager::ConnectionVisit
     {
         connection.Accept(*this);
     }
-    string Path() const
+    string Path()
     {
         return move(path);
     }
@@ -55,6 +55,14 @@ private:
     {
         path = "dropbox://" + dropbox.account;
     }
+    void Visit( const NetworkConnectionsManager::WebDAV &webdav )
+    {
+        path = (webdav.https ? "https://" : "http://") +
+            (webdav.user.empty() ? "" : webdav.user + "@" ) +
+            webdav.host +
+            (webdav.path.empty() ? "" :  "/" + webdav.path );
+    }
+    
     string path;
     const NetworkConnectionsManager::Connection &connection;
 };
@@ -128,6 +136,11 @@ void NetworkConnectionsManager::ConnectionVisitor::Visit(
 {
 }
 
+void NetworkConnectionsManager::ConnectionVisitor::Visit(
+    const NetworkConnectionsManager::WebDAV &_webdav )
+{
+}
+
 bool NetworkConnectionsManager::BaseConnection::operator==(const BaseConnection&_rhs) const noexcept
 {
     return uuid == _rhs.uuid && title == _rhs.title;
@@ -165,4 +178,14 @@ bool NetworkConnectionsManager::Dropbox::operator==(const Dropbox&_rhs) const no
 {
     return BaseConnection::operator==(_rhs) &&
         account == _rhs.account;
+}
+
+bool NetworkConnectionsManager::WebDAV::operator==(const WebDAV&_rhs) const noexcept
+{
+    return BaseConnection::operator==(_rhs) &&
+        host == _rhs.host &&
+        path == _rhs.path &&
+        user == _rhs.user &&
+        port == _rhs.port &&
+        https== _rhs.https;
 }

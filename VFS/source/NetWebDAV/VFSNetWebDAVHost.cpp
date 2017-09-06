@@ -43,6 +43,13 @@ WebDAVHost::WebDAVHost(const string &_serv_url,
     Init();
 }
 
+WebDAVHost::WebDAVHost( const VFSConfiguration &_config ):
+    VFSHost(_config.Get<HostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
+    m_Configuration(_config)
+{
+    Init();
+}
+
 WebDAVHost::~WebDAVHost()
 {
 }
@@ -380,6 +387,38 @@ void WebDAVHost::StopDirChangeObserving(unsigned long _ticket)
     I->m_Cache.StopObserving(_ticket);
 }
 
+VFSMeta WebDAVHost::Meta()
+{
+    VFSMeta m;
+    m.Tag = UniqueTag;
+    m.SpawnWithConfig = [](const VFSHostPtr &_parent,
+                           const VFSConfiguration& _config,
+                           VFSCancelChecker _cancel_checker) {
+        return make_shared<WebDAVHost>(_config);
+    };
+    return m;
+}
+
+const string &WebDAVHost::Host() const noexcept
+{
+    return Config().server_url;
+}
+
+const string &WebDAVHost::Path() const noexcept
+{
+    return Config().path;
+}
+
+const string WebDAVHost::Username() const noexcept
+{
+    return Config().user;
+}
+
+const int WebDAVHost::Port() const noexcept
+{
+    return Config().port;
+}
+
 static VFSConfiguration ComposeConfiguration(const string &_serv_url,
                                              const string &_user,
                                              const string &_passwd,
@@ -399,7 +438,8 @@ static VFSConfiguration ComposeConfiguration(const string &_serv_url,
     config.port = _port;
     config.verbose = (_https ? "https://" : "http://") +
                       (config.user.empty() ? "" : config.user + "@" ) +
-                      _serv_url + "/" + _path;
+                      _serv_url +
+                      (_path.empty() ? "" :  "/" + _path );
     config.full_url = (_https ? "https://" : "http://") +
                       _serv_url + "/" +
                       (_path.empty() ? "" :  _path + "/");

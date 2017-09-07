@@ -25,6 +25,8 @@
 		CF1FDD041F5BBA6F00AF1EBD /* WriteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1FDD021F5BBA6F00AF1EBD /* WriteBuffer.cpp */; };
 		CF1FDD071F5D4AEC00AF1EBD /* PathRoutines.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1FDD051F5D4AEC00AF1EBD /* PathRoutines.h */; };
 		CF1FDD081F5D4AEC00AF1EBD /* PathRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FDD061F5D4AEC00AF1EBD /* PathRoutines.mm */; };
+		CF3E2F861F60DF08001BFFCE /* Requests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F841F60DF08001BFFCE /* Requests.cpp */; };
+		CF3E2F871F60DF08001BFFCE /* Requests.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3E2F851F60DF08001BFFCE /* Requests.h */; };
 		CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D8E1E659D33002DB0E2 /* libssh2.a */; };
 		CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */; };
 		CFD725F61E42DC3200603077 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F51E42DC3200603077 /* libbz2.a */; };
@@ -135,6 +137,8 @@
 		CF22A1111E9751A800149C44 /* VFSNetDropboxFileUploadStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileUploadStream.mm; path = source/NetDropbox/VFSNetDropboxFileUploadStream.mm; sourceTree = "<group>"; };
 		CF22A1141E97755000149C44 /* VFSNetDropboxFileUploadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFileUploadDelegate.h; path = source/NetDropbox/VFSNetDropboxFileUploadDelegate.h; sourceTree = "<group>"; };
 		CF22A1151E97755000149C44 /* VFSNetDropboxFileUploadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileUploadDelegate.mm; path = source/NetDropbox/VFSNetDropboxFileUploadDelegate.mm; sourceTree = "<group>"; };
+		CF3E2F841F60DF08001BFFCE /* Requests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Requests.cpp; path = source/NetWebDAV/Requests.cpp; sourceTree = "<group>"; };
+		CF3E2F851F60DF08001BFFCE /* Requests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Requests.h; path = source/NetWebDAV/Requests.h; sourceTree = "<group>"; };
 		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
 		CF69CFE11DA227E400992B84 /* ArcUnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcUnRAR.h; path = include/VFS/ArcUnRAR.h; sourceTree = "<group>"; };
 		CF69CFE21DA227E400992B84 /* Native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Native.h; path = include/VFS/Native.h; sourceTree = "<group>"; };
@@ -546,24 +550,26 @@
 		CFFA95521F4E604D0035E606 /* NetWebDAV */ = {
 			isa = PBXGroup;
 			children = (
+				CFFA95661F57B2710035E606 /* Cache.cpp */,
+				CFFA95651F57B2710035E606 /* Cache.h */,
+				CFFA95621F5506FC0035E606 /* ConnectionsPool.cpp */,
+				CFFA95611F5506FC0035E606 /* ConnectionsPool.h */,
+				CFFA955E1F528A7B0035E606 /* DateTimeParser.cpp */,
+				CFFA955D1F528A7B0035E606 /* DateTimeParser.h */,
+				CFFA956A1F5A43DD0035E606 /* File.cpp */,
+				CFFA95691F5A43DD0035E606 /* File.h */,
+				CFFA955A1F4EA7200035E606 /* Internal.cpp */,
+				CFFA95591F4EA7200035E606 /* Internal.h */,
 				CF1FDD051F5D4AEC00AF1EBD /* PathRoutines.h */,
 				CF1FDD061F5D4AEC00AF1EBD /* PathRoutines.mm */,
-				CF1FDD011F5BBA6F00AF1EBD /* WriteBuffer.h */,
-				CF1FDD021F5BBA6F00AF1EBD /* WriteBuffer.cpp */,
-				CFFA956D1F5A4EDC0035E606 /* ReadBuffer.h */,
 				CFFA956E1F5A4EDC0035E606 /* ReadBuffer.cpp */,
-				CFFA95691F5A43DD0035E606 /* File.h */,
-				CFFA956A1F5A43DD0035E606 /* File.cpp */,
-				CFFA95651F57B2710035E606 /* Cache.h */,
-				CFFA95661F57B2710035E606 /* Cache.cpp */,
-				CFFA95611F5506FC0035E606 /* ConnectionsPool.h */,
-				CFFA95621F5506FC0035E606 /* ConnectionsPool.cpp */,
-				CFFA955D1F528A7B0035E606 /* DateTimeParser.h */,
-				CFFA955E1F528A7B0035E606 /* DateTimeParser.cpp */,
-				CFFA95591F4EA7200035E606 /* Internal.h */,
-				CFFA955A1F4EA7200035E606 /* Internal.cpp */,
-				CFFA95531F4E60850035E606 /* VFSNetWebDAVHost.h */,
+				CFFA956D1F5A4EDC0035E606 /* ReadBuffer.h */,
+				CF3E2F841F60DF08001BFFCE /* Requests.cpp */,
+				CF3E2F851F60DF08001BFFCE /* Requests.h */,
 				CFFA95541F4E60850035E606 /* VFSNetWebDAVHost.cpp */,
+				CFFA95531F4E60850035E606 /* VFSNetWebDAVHost.h */,
+				CF1FDD021F5BBA6F00AF1EBD /* WriteBuffer.cpp */,
+				CF1FDD011F5BBA6F00AF1EBD /* WriteBuffer.h */,
 			);
 			name = NetWebDAV;
 			sourceTree = "<group>";
@@ -576,6 +582,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF1FDD071F5D4AEC00AF1EBD /* PathRoutines.h in Headers */,
+				CF3E2F871F60DF08001BFFCE /* Requests.h in Headers */,
 				CF1FDD031F5BBA6F00AF1EBD /* WriteBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -725,6 +732,7 @@
 				CFFA94DA1F4543ED0035E606 /* VFSPath.cpp in Sources */,
 				CFFA94D11F4543ED0035E606 /* VFSConfiguration.cpp in Sources */,
 				CFFA94BB1F4543A30035E606 /* VFSNativeFile.cpp in Sources */,
+				CF3E2F861F60DF08001BFFCE /* Requests.cpp in Sources */,
 				CFFA94D01F4543ED0035E606 /* VFSArchiveProxy.mm in Sources */,
 				CFFA94C21F4543AB0035E606 /* VFSNetDropboxHost.mm in Sources */,
 				CFFA94C41F4543B30035E606 /* VFSNetFTPFile.mm in Sources */,

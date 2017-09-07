@@ -33,6 +33,7 @@
 #include "Actions/Enter.h"
 #include <Operations/Copying.h>
 
+using namespace nc;
 using namespace nc::core;
 using namespace nc::panel;
 
@@ -526,11 +527,13 @@ static bool RouteKeyboardInputIntoTerminal()
 //        if(keycode == 3 ) { // 'F' button
 //            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
 //                
-//                static const auto account = "mike.kazakov@gmail.com";
-//                static const auto g_Token = "4LRIcv92dSgAAAAAAAAMENZLSUeRl53EU1iwuuw4FecM1Y27FEjEXch4HDd3oK3N";
-////                static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yWYustS3CdlqYkN";
-//                shared_ptr<VFSHost> host = make_shared<VFSNetDropboxHost>(account, g_Token);
-//                
+////                shared_ptr<VFSHost> host = make_shared<vfs::WebDAVHost>("192.168.2.5",
+////                                                                        "guest",
+////                                                                        "",
+////                                                                        "Public",
+////                                                                        false,
+////                                                                        5000);
+//
 //                [self GoToDir:"/"
 //                          vfs:host
 //                 select_entry:""

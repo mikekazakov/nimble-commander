@@ -6,6 +6,7 @@
 #include "Cache.h"
 #include "File.h"
 #include "PathRoutines.h"
+#include "Requests.h"
 
 namespace nc::vfs {
 
@@ -59,7 +60,7 @@ void WebDAVHost::Init()
     I.reset( new State{Config()} );
 
     auto ar = I->m_Pool.Get();
-    const auto [rc, requests] = FetchServerOptions( Config(), *ar.connection );
+    const auto [rc, requests] = RequestServerOptions( Config(), *ar.connection );
     if( rc != VFSError::Ok )
         throw VFSErrorException(rc);
     
@@ -248,7 +249,7 @@ int WebDAVHost::RefreshListingAtPath( const string &_path, const VFSCancelChecke
         throw invalid_argument("RefreshListingAtPath requires a path with a trailing slash");
     
     auto ar = I->m_Pool.Get();
-    auto [rc, items] = FetchDAVListing(Config(), *ar.connection, _path);
+    auto [rc, items] = RequestDAVListing(Config(), *ar.connection, _path);
     if( rc != VFSError::Ok )
         return rc;
 
@@ -262,7 +263,7 @@ int WebDAVHost::StatFS(const char *_path,
                        const VFSCancelChecker &_cancel_checker)
 {
     const auto ar = I->m_Pool.Get();
-    const auto [rc, free, used] = FetchSpaceQuota(Config(), *ar.connection);
+    const auto [rc, free, used] = RequestSpaceQuota(Config(), *ar.connection);
     if( rc != VFSError::Ok )
         return rc;
     

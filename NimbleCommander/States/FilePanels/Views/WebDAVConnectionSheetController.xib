@@ -24,7 +24,7 @@
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" frameAutosaveName="" animationBehavior="default" id="gAG-R5-z6L">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="213" width="415" height="427"/>
+            <rect key="contentRect" x="196" y="213" width="415" height="297"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="w53-Cv-Q0I">
                 <rect key="frame" x="0.0" y="0.0" width="415" height="297"/>
@@ -62,7 +62,7 @@
                     </textField>
                     <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L8g-2E-V4B">
                         <rect key="frame" x="128" y="113" width="267" height="22"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="root" drawsBackground="YES" id="GUX-BP-Egc">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="anonymous" drawsBackground="YES" id="GUX-BP-Egc">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -160,7 +160,7 @@
                     </textField>
                     <textField verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4aN-3r-63j">
                         <rect key="frame" x="128" y="141" width="267" height="22"/>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="i.e &quot;dav&quot;, or leave it blank" drawsBackground="YES" id="B2t-My-jEr">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" placeholderString="e.g. &quot;dav&quot;, or leave it blank" drawsBackground="YES" id="B2t-My-jEr">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -281,7 +281,7 @@ DQ
                     <constraint firstItem="jA8-2m-oha" firstAttribute="centerY" secondItem="oEk-hQ-Lmw" secondAttribute="centerY" id="zCo-iN-9P0"/>
                 </constraints>
             </view>
-            <point key="canvasLocation" x="556" y="251"/>
+            <point key="canvasLocation" x="483" y="176"/>
         </window>
         <userDefaultsController representsSharedInstance="YES" id="YRi-K9-SeY"/>
     </objects>

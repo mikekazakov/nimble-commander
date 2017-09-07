@@ -64,31 +64,6 @@ struct PropFindResponse
 
 constexpr uint16_t DirectoryAccessMode = S_IRUSR | S_IWUSR | S_IFDIR | S_IXUSR;
 constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
-
-
-pair<int, HTTPRequests::Mask> FetchServerOptions(const HostConfiguration& _options,
-                                                 Connection &_connection );
-
-// curle, free space, used space
-tuple<int, long, long> FetchSpaceQuota(const HostConfiguration& _options,
-                                       Connection &_connection );
-
-pair<int, vector<PropFindResponse>> FetchDAVListing(const HostConfiguration& _options,
-                                                    Connection &_connection,
-                                                    const string &_path );
-
-int RequestMKCOL(const HostConfiguration& _options,
-                 Connection &_connection,
-                 const string &_path );
-    
-int RequestDelete(const HostConfiguration& _options,
-                  Connection &_connection,
-                  const string &_path );
-
-int RequestMove(const HostConfiguration& _options,
-                Connection &_connection,
-                const string &_src,
-                const string &_dst );
     
 int ToVFSError( int _curl_rc, int _http_rc ) noexcept;
     

@@ -475,8 +475,7 @@ optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMa
             if( auto p = i.Cast<WebDAV>() )
                 return p->host == webdav->Host() &&
                     p->path == webdav->Path() &&
-                    p->user == webdav->Username() &&
-                    p->port == webdav->Port();
+                    p->user == webdav->Username();
             return false;
         };
     

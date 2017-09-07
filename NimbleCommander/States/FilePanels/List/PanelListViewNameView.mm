@@ -231,9 +231,19 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     [self addSubview:_editor];
 }
 
+static bool HasNoModifiers( NSEvent *_event )
+{
+    const auto m = _event.modifierFlags;
+    const auto mask = NSEventModifierFlagShift | NSEventModifierFlagControl |
+                      NSEventModifierFlagOption | NSEventModifierFlagCommand;
+    return (m & mask) == 0;
+}
+
 - (void) mouseDown:(NSEvent *)event
 {
-    m_PermitFieldRenaming = self.row.selected && self.row.panelActive;
+    m_PermitFieldRenaming = self.row.selected &&
+                            self.row.panelActive &&
+                            HasNoModifiers(event);
     [super mouseDown:event];
 }
 

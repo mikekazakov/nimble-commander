@@ -194,13 +194,23 @@ static bool     g_RowReadyToDrag = false;
 static void*    g_MouseDownCarrier = nullptr;
 static NSPoint  g_LastMouseDownPos = {};
 
+static bool HasNoModifiers( NSEvent *_event )
+{
+    const auto m = _event.modifierFlags;
+    const auto mask = NSEventModifierFlagShift | NSEventModifierFlagControl |
+                      NSEventModifierFlagOption | NSEventModifierFlagCommand;
+    return (m & mask) == 0;
+}
+
 - (void) mouseDown:(NSEvent *)event
 {
-    m_PermitFieldRenaming = m_Controller.selected && m_Controller.panelActive;
-    
     const auto my_index = m_Controller.itemIndex;
     if( my_index < 0 )
         return;
+ 
+    m_PermitFieldRenaming = m_Controller.selected &&
+                            m_Controller.panelActive &&
+                            HasNoModifiers(event);
     
     [m_Controller.briefView.panelView panelItem:my_index mouseDown:event];
     

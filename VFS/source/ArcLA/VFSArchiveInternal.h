@@ -70,5 +70,6 @@ struct VFSArchiveDir
 {
     string full_path;          // should alway be with trailing slash
     string name_in_parent;     // can be "" only for root directory, full_path will be "/"
+    uint64_t content_size = 0;
     deque<VFSArchiveDirEntry> entries;
 };

@@ -253,7 +253,7 @@ int VFSXAttrHost::FetchDirectoryListing(const char *_path,
             listing_source.filenames.emplace_back( ".." );
             listing_source.unix_types.emplace_back( DT_DIR );
             listing_source.unix_modes.emplace_back( g_RootMode );
-            listing_source.sizes.insert( 0, 0 );
+            listing_source.sizes.insert( 0, VFSListingInput::unknown_size );
         }
         
         for( const auto &i: m_Attrs ) {

@@ -310,7 +310,7 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
         listing_source.unix_types.emplace_back( DT_DIR );
         listing_source.unix_modes.emplace_back( S_IRUSR | S_IWUSR | S_IFDIR );
         auto curtime = time(0);
-        listing_source.sizes.insert(0, 0 );
+        listing_source.sizes.insert(0, VFSListingInput::unknown_size );
         listing_source.atimes.insert(0, curtime );
         listing_source.btimes.insert(0, curtime );
         listing_source.ctimes.insert(0, curtime );
@@ -323,7 +323,11 @@ int VFSNetFTPHost::FetchDirectoryListing(const char *_path,
         listing_source.unix_modes.emplace_back( entry.mode );
         int index = int(listing_source.filenames.size()-1);
         
-        listing_source.sizes.insert(index, entry.size );
+        listing_source.sizes.insert(index,
+                                    S_ISDIR(entry.mode) ?
+                                        VFSListingInput::unknown_size :
+                                        entry.size
+        );
         listing_source.atimes.insert(index, entry.time );
         listing_source.btimes.insert(index, entry.time );
         listing_source.ctimes.insert(index, entry.time );

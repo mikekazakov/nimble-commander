@@ -108,6 +108,7 @@ private:
     const class VFSArchiveHostConfiguration &Config() const;
     
     int ReadArchiveListing();
+    uint64_t UpdateDirectorySize( VFSArchiveDir &_directory, const string &_path );
     VFSArchiveDir* FindOrBuildDir(const char* _path_with_tr_sl);
     
     

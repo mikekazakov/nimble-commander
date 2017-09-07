@@ -32,9 +32,13 @@ struct VFSListingInput
     variable_container<string>      display_filenames{variable_container<>::type::sparse};
     
     /**
-     * can be dense or sparse. on common size will throw an exception
+     * can be dense or sparse. on common size will throw an exception.
+     * client can treat entries with value of undefined_size as an ebsent ones (useful for dirs).
      */
     variable_container<uint64_t>    sizes{variable_container<>::type::sparse};
+    enum {
+        unknown_size = numeric_limits<uint64_t>::max()
+    };
     
     /**
      * can be dense or sparse. on common size will throw an exception

@@ -406,6 +406,8 @@ int VFSArchiveHost::ReadArchiveListing()
     
     m_LastItemUID = aruid - 1;
     
+    UpdateDirectorySize(m_PathToDir["/"], "/");
+    
     if( ret == ARCHIVE_EOF )
         return VFSError::Ok;
 
@@ -415,6 +417,27 @@ int VFSArchiveHost::ReadArchiveListing()
         return VFSError::Ok;
 
     return VFSError::GenericError;
+}
+
+uint64_t VFSArchiveHost::UpdateDirectorySize( VFSArchiveDir &_directory, const string &_path )
+{
+    uint64_t size = 0;
+    for( auto &e: _directory.entries )
+        if( S_ISDIR(e.st.st_mode) ) {
+            const auto subdir_path = _path + e.name + "/";
+            const auto it = m_PathToDir.find(subdir_path);
+            if( it != end(m_PathToDir) ) {
+                const auto subdir_sz = UpdateDirectorySize(it->second, subdir_path);
+                e.st.st_size = subdir_sz;
+                size += subdir_sz;
+            }
+        }
+        else if( S_ISREG(e.st.st_mode) )
+            size += e.st.st_size;
+    
+    _directory.content_size = size;
+    
+    return size;
 }
 
 VFSArchiveDir* VFSArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
@@ -482,6 +505,8 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
     if(i == m_PathToDir.end())
         return VFSError::NotFound;
     
+    const auto &directory = i->second;
+    
     VFSListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
@@ -504,13 +529,13 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
         listing_source.btimes.insert(0, curtime );
         listing_source.ctimes.insert(0, curtime );
         listing_source.mtimes.insert(0, curtime );
-        listing_source.sizes.insert( 0, 0 );
+        listing_source.sizes.insert( 0, directory.content_size );
         listing_source.uids.insert( 0, 0 );
         listing_source.gids.insert( 0, 0 );
         listing_source.unix_flags.insert( 0, 0);
     }
     
-    for( auto &entry: i->second.entries ) {
+    for( auto &entry: directory.entries ) {
         listing_source.filenames.emplace_back( entry.name );
         listing_source.unix_types.emplace_back( IFTODT(entry.st.st_mode) );
 
@@ -525,7 +550,10 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
             }
         
         listing_source.unix_modes.emplace_back( stat.st_mode );
-        listing_source.sizes.insert( index, stat.st_size );
+        listing_source.sizes.insert( index,
+//                                    S_ISDIR(stat.st_mode) ?
+//                                        VFSListingInput::unknown_size :
+                                        stat.st_size );
         listing_source.atimes.insert( index, stat.st_atime );
         listing_source.ctimes.insert( index, stat.st_ctime );
         listing_source.mtimes.insert( index, stat.st_mtime );

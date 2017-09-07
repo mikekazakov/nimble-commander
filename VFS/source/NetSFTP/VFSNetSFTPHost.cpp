@@ -442,7 +442,10 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
             listing_source.filenames[index] = filename;
             listing_source.unix_modes[index] = (attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) ? attrs.permissions : (S_IFREG | S_IRUSR);
             listing_source.unix_types[index] = (attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) ? IFTODT(attrs.permissions) : DT_REG;
-            listing_source.sizes.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_SIZE) ? attrs.filesize : 0);
+            const auto size = S_ISDIR(attrs.permissions) ?
+                VFSListingInput::unknown_size :
+                ((attrs.flags & LIBSSH2_SFTP_ATTR_SIZE) ? attrs.filesize : 0);
+            listing_source.sizes.insert(index, size );
             listing_source.uids.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) ? (uid_t)attrs.uid : 0);
             listing_source.gids.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) ? (uid_t)attrs.gid : 0);
             listing_source.atimes.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME) ? attrs.atime : 0);

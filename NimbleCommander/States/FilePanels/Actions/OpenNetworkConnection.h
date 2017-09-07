@@ -14,6 +14,11 @@ struct OpenNewSFTPConnection : PanelAction
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
+struct OpenNewWebDAVConnection : PanelAction
+{
+    void Perform( PanelController *_target, id _sender ) const override;
+};
+
 struct OpenNewDropboxStorage : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;

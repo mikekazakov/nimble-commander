@@ -94,6 +94,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 - (IBAction)OnGoToSavedConnectionItem:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToFTP:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToSFTP:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onGoToWebDAV:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToNetworkShare:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToDropboxStorage:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnConnectToNetworkServer:(id)sender { Perform(_cmd, self, sender); }
@@ -165,6 +166,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnCreateHardLinkCommand:(id)sender { Perform(_cmd, self, sender); }
+
 @end
 
 using namespace nc::panel::actions;
@@ -228,6 +230,7 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.go.to_folder",       @selector(OnGoToFolder:),       new GoToFolder},
 {"menu.go.connect.ftp",             @selector(OnGoToFTP:),                  new OpenNewFTPConnection},
 {"menu.go.connect.sftp",            @selector(OnGoToSFTP:),                 new OpenNewSFTPConnection},
+{"menu.go.connect.webdav",          @selector(onGoToWebDAV:),               new OpenNewWebDAVConnection},
 {"menu.go.connect.lanshare",        @selector(OnGoToNetworkShare:),         new OpenNewLANShare},
 {"menu.go.connect.dropbox",         @selector(OnGoToDropboxStorage:),       new OpenNewDropboxStorage},
 {"menu.go.connect.network_server",  @selector(OnConnectToNetworkServer:),   new OpenNetworkConnections},

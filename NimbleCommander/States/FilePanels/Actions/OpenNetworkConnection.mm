@@ -5,6 +5,7 @@
 #include "../Views/NetworkShareSheetController.h"
 #include "../Views/ConnectToServer.h"
 #include "../Views/DropboxAccountSheetController.h"
+#include "../Views/WebDAVConnectionSheetController.h"
 #include <VFS/Native.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
@@ -257,6 +258,26 @@ void OpenNewLANShare::Perform(PanelController *_target, id _sender) const
         _target.networkConnectionsManager.SetPassword(connection, password);
         
         GoToLANShare(_target, connection, password, false);
+    }];
+}
+
+void OpenNewWebDAVConnection::Perform( PanelController *_target, id _sender ) const
+{
+    const auto sheet = [[WebDAVConnectionSheetController alloc] init];
+    const auto window = _target.window;
+    [sheet beginSheetForWindow:window completionHandler:^(NSModalResponse returnCode) {
+        if(returnCode != NSModalResponseOK)
+            return;
+            
+        auto connection = sheet.connection;
+        string password = sheet.password;
+        
+        _target.networkConnectionsManager.InsertConnection(connection);
+        _target.networkConnectionsManager.SetPassword(connection, password);
+        dispatch_to_background([=]{
+            auto activity = [_target registerExtActivity];
+            GoToWebDAV(_target, connection, password);
+        });
     }];
 }
 

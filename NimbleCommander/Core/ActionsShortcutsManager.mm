@@ -109,6 +109,7 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.go.to_folder",                               14'110},
     {"menu.go.connect.ftp",                             14'130},
     {"menu.go.connect.sftp",                            14'140},
+    {"menu.go.connect.webdav",                          14'280},
     {"menu.go.connect.lanshare",                        14'230},
     {"menu.go.connect.dropbox",                         14'250},
     {"menu.go.connect.network_server",                  14'240},
@@ -296,6 +297,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.go.to_folder",                                   u8"⇧⌘g"     }, // shift+cmd+g
     {"menu.go.connect.ftp",                                 u8""        },
     {"menu.go.connect.sftp",                                u8""        },
+    {"menu.go.connect.webdav",                              u8""        },
     {"menu.go.connect.lanshare",                            u8""        },
     {"menu.go.connect.dropbox",                             u8""        },
     {"menu.go.connect.network_server",                      u8"⌘k"      }, // cmd+k

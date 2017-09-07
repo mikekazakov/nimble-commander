@@ -806,16 +806,15 @@ using namespace nc::panel;
     if( !item || item.IsDotDot() || !item.Host()->IsWritable() )
         return;
   
-    m_RenamingEditor = [[NCPanelViewFieldEditor alloc] initWithFilename:item.Filename()];
+    m_RenamingEditor = [[NCPanelViewFieldEditor alloc] initWithItem:item];
     __weak PanelView *weak_self = self;
     m_RenamingEditor.onTextEntered = ^(const string &_new_filename){
         if( auto sself = weak_self ) {
-            if( !sself->m_RenamingEditor ||
-                !sself.item ||
-                sself.item.Filename() != sself->m_RenamingEditor.originalFilename )
+            if( !sself->m_RenamingEditor )
                 return;
-            [sself.delegate PanelViewRenamingFieldEditorFinished:sself
-                                                            text:_new_filename];
+
+            [sself.controller requestQuickRenamingOfItem:sself->m_RenamingEditor.originalItem
+                                                      to:_new_filename];
         }
     };
     m_RenamingEditor.onEditingFinished = ^{
@@ -857,7 +856,7 @@ using namespace nc::panel;
 {
     assert( dispatch_is_main_queue() );
     if( m_RenamingEditor )
-        if( !self.item || m_RenamingEditor.originalFilename != self.item.Filename() )
+        if( !self.item || m_RenamingEditor.originalItem.Filename() != self.item.Filename() )
             [self discardFieldEditor];
     
     [m_ItemsView dataChanged];
@@ -933,8 +932,10 @@ using namespace nc::panel;
         if( !self.active )
             [self.window makeFirstResponder:self];
         
-        if( !m_Data->IsValidSortPosition(_sorted_index) )
+        if( !m_Data->IsValidSortPosition(_sorted_index) ) {
+            [self commitFieldEditor];
             return;
+        }
 
         const int current_cursor_pos = m_CursorPos;
         const auto click_entry_vd = m_Data->VolatileDataAtSortPosition(_sorted_index);

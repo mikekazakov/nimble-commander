@@ -781,21 +781,20 @@ static bool RouteKeyboardInputIntoTerminal()
     [m_View volatileDataChanged];
 }
 
-- (void) PanelViewRenamingFieldEditorFinished:(PanelView*)_view text:(const string&)_filename
+- (void) requestQuickRenamingOfItem:(VFSListingItem)_item to:(const string&)_filename
 {
     if( _filename == "." ||
         _filename == ".." ||
-        !m_View.item ||
-        m_View.item.IsDotDot() ||
-        !m_View.item.Host()->IsWritable() ||
-        _filename == m_View.item.Filename())
+        !_item ||
+        _item.IsDotDot() ||
+        !_item.Host()->IsWritable() ||
+        _filename == _item.Filename())
         return;
     
-    string target_fn = _filename;
-    auto item = m_View.item;
+    const auto target_fn = _filename;
  
     // checking for invalid symbols
-    if( !item.Host()->ValidateFilename(target_fn.c_str()) ) {
+    if( !_item.Host()->ValidateFilename(target_fn.c_str()) ) {
         Alert *a = [[Alert alloc] init];
         const auto fn = [NSString stringWithUTF8StdString:target_fn];
         a.messageText = [NSString stringWithFormat:NSLocalizedString(@"The name “%@” can’t be used.", "Message text when user is entering an invalid filename"),
@@ -810,12 +809,12 @@ static bool RouteKeyboardInputIntoTerminal()
     nc::ops::CopyingOptions opts;
     opts.docopy = false;
 
-    const auto op = make_shared<nc::ops::Copying>(vector<VFSListingItem>{item},
-                                                  item.Directory() + target_fn,
-                                                  item.Host(),
+    const auto op = make_shared<nc::ops::Copying>(vector<VFSListingItem>{_item},
+                                                  _item.Directory() + target_fn,
+                                                  _item.Host(),
                                                   opts);
 
-    if( self.isUniform ) {
+    if( self.isUniform && m_View.item && m_View.item.Filename() == _item.Filename() ) {
         string curr_path = self.currentDirectoryPath;
         auto curr_vfs = self.vfs;
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{

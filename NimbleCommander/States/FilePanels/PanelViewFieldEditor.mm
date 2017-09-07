@@ -6,17 +6,17 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 {
     NSTextView      *m_TextView;
     NSUndoManager   *m_UndoManager;
-    string           m_OriginalFilename;
+    VFSListingItem   m_OriginalItem;
 }
 
 @synthesize textView = m_TextView;
-@synthesize originalFilename = m_OriginalFilename;
+@synthesize originalItem = m_OriginalItem;
 
-- (instancetype)initWithFilename:(const string&)_filename
+- (instancetype)initWithItem:(VFSListingItem)_item
 {
     self = [super init];
     if( self ) {
-        m_OriginalFilename = _filename;
+        m_OriginalItem = _item;
         m_UndoManager = [[NSUndoManager alloc] init];
         
         [self buildTextView];
@@ -43,7 +43,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     tv.delegate = self;
     tv.fieldEditor = true;
     tv.allowsUndo = true;
-    tv.string = [NSString stringWithUTF8StdString:m_OriginalFilename];
+    tv.string = [NSString stringWithUTF8StdString:m_OriginalItem.Filename()];
     tv.selectedRange = NextFilenameSelectionRange( tv.string, tv.selectedRange );
     tv.maxSize = NSMakeSize(FLT_MAX, FLT_MAX);
     tv.verticallyResizable = tv.horizontallyResizable = true;

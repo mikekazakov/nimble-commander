@@ -194,6 +194,8 @@ loadPreviousState:(bool)_load_state
 - (void) QuickSearchClearFiltering;
 - (void) QuickSearchSetCriteria:(NSString *)_text;
 
+- (void) requestQuickRenamingOfItem:(VFSListingItem)_item to:(const string&)_new_filename;
+
 @end
 
 // internal stuff, move it somewehere else

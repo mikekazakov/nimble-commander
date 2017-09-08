@@ -805,7 +805,7 @@ unique_ptr<VFSArchiveState> VFSArchiveHost::ClosestState(uint32_t _requested_ite
     if( best != m_States.end() ) {
         auto state = move(*best);
         m_States.erase(best);
-        return move(state);
+        return state;
     }
     
     return nullptr;

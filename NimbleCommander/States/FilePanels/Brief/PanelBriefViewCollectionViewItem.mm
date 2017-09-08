@@ -27,7 +27,8 @@ using namespace nc::panel;
     self.carrier.qsHighlight = {0, 0};
 }
 
-- (nullable instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil
+- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil
+                         bundle:(nullable NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nil bundle:nil];
     if( self ) {

@@ -105,8 +105,8 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
 
 - (BOOL)menuHasKeyEquivalent:(NSMenu*)menu
                     forEvent:(NSEvent*)event
-                      target:(__nullable id* __nullable)target
-                      action:(__nullable SEL* __nullable)action
+                      target:(__nullable id* _Nonnull)target
+                      action:(__nullable SEL* _Nonnull)action
 {
     return false; // this menu has no hotkeys, so there's no reason to (re)build it upon a keydown.
 }

@@ -186,7 +186,8 @@ int Deletion::OnTrashError(int _err, const string &_path, VFSHost &_vfs)
     WaitForDialogResponse(ctx);
     
     const auto apply_to_all = ctx->messages.count("apply_to_all") &&
-                              any_cast<bool>(ctx->messages["apply_to_all"]);
+                              any_cast<bool>(&ctx->messages["apply_to_all"]) &&
+                              *any_cast<bool>(&ctx->messages["apply_to_all"]);
     if( ctx->response == NSModalResponseSkip  ) {
         if( apply_to_all )
             m_SkipAll = true;

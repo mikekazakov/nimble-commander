@@ -357,7 +357,7 @@ vector<VFSPSHost::ProcInfo> VFSPSHost::GetProcs()
     
     free(proc_list);
     
-    return move(procs);
+    return procs;
 }
 
 void VFSPSHost::UpdateCycle()

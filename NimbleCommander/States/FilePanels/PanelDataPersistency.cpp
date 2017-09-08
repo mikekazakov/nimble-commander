@@ -277,7 +277,7 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
             else if( tag == VFSArchiveUnRARHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
                     return nullopt; // invalid data
-                if( result.hosts.size() < 1 || !linb::any_cast<Native>(&result.hosts.back()) )
+                if( result.hosts.size() < 1 || !any_cast<Native>(&result.hosts.back()) )
                     return nullopt; // invalid data
                 
                 result.hosts.emplace_back( ArcUnRAR{ h[g_HostInfoJunctionKey].GetString() } );

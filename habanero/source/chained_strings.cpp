@@ -185,7 +185,7 @@ std::string chained_strings::node::to_str_with_pref() const
     for(int i = nodes_n-1; i >= 0; --i)
         res.append(nodes[i]->c_str(), nodes[i]->len);
 
-    return move(res);
+    return res;
 }
 
 bool chained_strings::empty() const

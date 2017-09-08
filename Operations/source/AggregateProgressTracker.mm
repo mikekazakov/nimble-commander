@@ -81,7 +81,7 @@ tuple<int, double> AggregateProgressTracker::OperationsAmountAndProgress() const
         for( const auto &wp: m_Pools )
             if( const auto p = wp.lock() )
                 if( !p->Empty() )
-                    for( const auto op: p->RunningOperations() ) {
+                    for( const auto &op: p->RunningOperations() ) {
                         const auto &stat = op->Statistics();
                         progress += stat.DoneFraction( stat.PreferredSource() );
                         ++amount;

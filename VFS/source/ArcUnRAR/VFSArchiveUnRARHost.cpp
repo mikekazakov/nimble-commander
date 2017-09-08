@@ -496,7 +496,8 @@ unique_ptr<VFSArchiveUnRARSeekCache> VFSArchiveUnRARHost::SeekCache(uint32_t _re
         res->rar_handle = rar_file;
     });
     
-    return move(res);
+    auto tmp = move(res);
+    return tmp;
 }
 
 void VFSArchiveUnRARHost::CommitSeekCache(unique_ptr<VFSArchiveUnRARSeekCache> _sc)

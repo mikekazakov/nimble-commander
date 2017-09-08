@@ -62,7 +62,7 @@ bool BatchRenamingScheme::BuildActionsScript( NSString *_mask )
     auto opt_decomposition = DecomposeMaskIntoPlaceholders( _mask );
     if( !opt_decomposition )
         return false;
-    auto decomposition = move(opt_decomposition.value());
+    auto decomposition = move(*opt_decomposition);
 
     bool ok = true;
     
@@ -167,8 +167,8 @@ bool BatchRenamingScheme::ParsePlaceholder( NSString *_ph )
                 auto v = ParsePlaceholder_TextExtraction(_ph, position);
                 if( !v )
                     break;
-                AddInsertName(v.value().first);
-                position += v.value().second;
+                AddInsertName(v->first);
+                position += v->second;
                 continue;
             }
             case 'E':
@@ -177,8 +177,8 @@ bool BatchRenamingScheme::ParsePlaceholder( NSString *_ph )
                 auto v = ParsePlaceholder_TextExtraction(_ph, position);
                 if( !v )
                     break;
-                AddInsertExtension(v.value().first);
-                position += v.value().second;
+                AddInsertExtension(v->first);
+                position += v->second;
                 continue;
             }
             case 'C':
@@ -187,8 +187,8 @@ bool BatchRenamingScheme::ParsePlaceholder( NSString *_ph )
                 auto v = ParsePlaceholder_Counter(_ph, position, m_DefaultCounter.start, m_DefaultCounter.step, m_DefaultCounter.width,     m_DefaultCounter.stripe);
                 if( !v )
                     break;
-                AddInsertCounter(v.value().first);
-                position += v.value().second;
+                AddInsertCounter(v->first);
+                position += v->second;
                 continue;
             }
         }
@@ -319,11 +319,11 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
         return make_pair( TextExtraction(), n); // [N
     }
     else { // [N123....
-        auto first_num = num_if.value().first;
+        auto first_num = num_if->first;
         if(first_num < 1)
             return nullopt;
         first_num--;
-        n += num_if.value().second;
+        n += num_if->second;
 
         if( _pos+n == l ) { //  [N567]
             TextExtraction ins;
@@ -338,11 +338,11 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
                 TextExtraction ins;
                 num_if = EatUShort( _ph, _pos + n );
                 if( num_if ) { // [N5-10
-                    auto second_num = num_if.value().first;
+                    auto second_num = num_if->first;
                     if(second_num < 1)
                         return nullopt;
                     second_num--;
-                    n += num_if.value().second;
+                    n += num_if->second;
                     ins.zero_flag = zero_flag;
                     ins.space_flag = space_flag;
                     ins.direct_range = Range(first_num, second_num >= first_num ? second_num - first_num + 1 : 0);
@@ -362,11 +362,11 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
                             if( !num_if )
                                 return nullopt; // [N5--something <- invalid
                             
-                            auto second_num = num_if.value().first; // [N5--3
+                            auto second_num = num_if->first; // [N5--3
                             if(second_num < 1)
                                 return nullopt;
                             --second_num;
-                            n += num_if.value().second;
+                            n += num_if->second;
                             
                             ins.direct_range = nullopt;
                             ins.from_first = first_num;
@@ -383,8 +383,8 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
                 if(!num_if)  // [N5,  <- invalid
                     return nullopt;
                 
-                auto second_num = num_if.value().first; // [N5,10
-                n += num_if.value().second;
+                auto second_num = num_if->first; // [N5,10
+                n += num_if->second;
                 TextExtraction ins;
                 ins.zero_flag = zero_flag;
                 ins.space_flag = space_flag;
@@ -408,11 +408,11 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
                     ins.reverse_range = Range(first_num, Range::max_length());
                 }
                 else { // [N-5-2
-                    auto second_num = num_if.value().first;
+                    auto second_num = num_if->first;
                     if(second_num < 1)
                         return nullopt;
                     second_num--;
-                    n += num_if.value().second;
+                    n += num_if->second;
                     ins.reverse_range = Range(first_num, second_num <= first_num ? first_num - second_num + 1 : 0);
                 }
                 return make_pair( ins, n);
@@ -423,8 +423,8 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
                 if(!num_if)
                     return nullopt; // [N-5,something <- invalid
                 
-                auto second_num = num_if.value().first; // [N-5,4
-                n += num_if.value().second;
+                auto second_num = num_if->first; // [N-5,4
+                n += num_if->second;
                 
                 TextExtraction ins;
                 ins.direct_range = nullopt;
@@ -492,7 +492,7 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
         return @"";
     
     if( _te.direct_range ) {
-        auto rr = _te.direct_range.value();
+        auto rr = *_te.direct_range;
         auto sr = Range(0, length);
         if( !sr.intersects( rr ) )
             return @"";
@@ -513,7 +513,7 @@ NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction
         }
     }
     else if( _te.reverse_range ) {
-        auto rr = _te.reverse_range.value();
+        auto rr = *_te.reverse_range;
         auto sr = Range(0, length);
         if(rr.location + 1 > sr.length)
             rr.location = 0;

@@ -58,6 +58,8 @@ int Deletion::OnReadDirError(int _err, const string &_path, VFSHost &_vfs)
         m_SkipAll = true;
         return (int)Callbacks::ReadDirErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::ReadDirErrorResolution::Retry;
     else
         return (int)Callbacks::ReadDirErrorResolution::Stop;
 }
@@ -78,6 +80,8 @@ void Deletion::OnReadDirErrorUI(int _err, const string &_path, shared_ptr<VFSHos
     if( m_Job->ItemsInScript() > 0 )
         [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
                      responseCode:NSModalResponseSkipAll];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "")
+                 responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);
 }
@@ -97,6 +101,8 @@ int Deletion::OnUnlinkError(int _err, const string &_path, VFSHost &_vfs)
 
     if( ctx->response == NSModalResponseSkip  )
         return (int)Callbacks::UnlinkErrorResolution::Skip;
+    else if( ctx->response == NSModalResponseRetry  )
+        return (int)Callbacks::UnlinkErrorResolution::Retry;
     else if( ctx->response == NSModalResponseSkipAll ) {
         m_SkipAll = true;
         return (int)Callbacks::UnlinkErrorResolution::Skip;
@@ -121,6 +127,8 @@ void Deletion::OnUnlinkErrorUI(int _err, const string &_path, shared_ptr<VFSHost
     if( m_Job->ItemsInScript() > 0 )
         [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
                      responseCode:NSModalResponseSkipAll];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "")
+                 responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);                     
 }
@@ -138,15 +146,16 @@ int Deletion::OnRmdirError(int _err, const string &_path, VFSHost &_vfs)
     });
     WaitForDialogResponse(ctx);
 
-    if( ctx->response == NSModalResponseSkip  )
+    if( ctx->response == NSModalResponseSkip )
         return (int)Callbacks::RmdirErrorResolution::Skip;
+    else if( ctx->response == NSModalResponseRetry )
+            return (int)Callbacks::RmdirErrorResolution::Retry;
     else if( ctx->response == NSModalResponseSkipAll ) {
         m_SkipAll = true;
         return (int)Callbacks::RmdirErrorResolution::Skip;
     }
     else
         return (int)Callbacks::RmdirErrorResolution::Stop;
-
 }
 
 void Deletion::OnRmdirErrorUI(int _err, const string &_path, shared_ptr<VFSHost> _vfs,
@@ -165,6 +174,8 @@ void Deletion::OnRmdirErrorUI(int _err, const string &_path, shared_ptr<VFSHost>
     if( m_Job->ItemsInScript() > 0 )
         [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
                      responseCode:NSModalResponseSkipAll];
+    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "")
+                 responseCode:NSModalResponseRetry];
 
     Show(sheet.window, _ctx);
 }
@@ -185,16 +196,15 @@ int Deletion::OnTrashError(int _err, const string &_path, VFSHost &_vfs)
     });
     WaitForDialogResponse(ctx);
     
-    const auto apply_to_all = ctx->messages.count("apply_to_all") &&
-                              any_cast<bool>(&ctx->messages["apply_to_all"]) &&
-                              *any_cast<bool>(&ctx->messages["apply_to_all"]);
     if( ctx->response == NSModalResponseSkip  ) {
-        if( apply_to_all )
+        if( ctx->IsApplyToAllSet() )
             m_SkipAll = true;
         return (int)Callbacks::TrashErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::TrashErrorResolution::Retry;
     else if( ctx->response == NSModalResponseDeletePermanently  ) {
-        if( apply_to_all )
+        if( ctx->IsApplyToAllSet() )
             m_DeleteAllOnTrashError = true;
         return (int)Callbacks::TrashErrorResolution::DeletePermanently;
     }
@@ -218,7 +228,8 @@ void Deletion::OnTrashErrorUI(int _err, const string &_path, shared_ptr<VFSHost>
                  responseCode:NSModalResponseDeletePermanently];
     [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "")
                  responseCode:NSModalResponseSkip];
-
+    [sheet addButtonWithTitle:NSLocalizedString(@"Retry", "")
+                 responseCode:NSModalResponseRetry];
     Show(sheet.window, _ctx);
 }
 

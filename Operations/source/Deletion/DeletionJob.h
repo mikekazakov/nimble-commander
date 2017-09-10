@@ -9,22 +9,22 @@ namespace nc::ops {
 
 struct DeletionJobCallbacks
 {
-    enum class ReadDirErrorResolution { Stop, Skip };
+    enum class ReadDirErrorResolution { Stop, Skip, Retry };
     function< ReadDirErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnReadDirError =
     [](int _err, const string &_path, VFSHost &_vfs){ return ReadDirErrorResolution::Stop; };
 
-    enum class UnlinkErrorResolution { Stop, Skip };
+    enum class UnlinkErrorResolution { Stop, Skip, Retry };
     function< UnlinkErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnUnlinkError =
     [](int _err, const string &_path, VFSHost &_vfs){ return UnlinkErrorResolution::Stop; };
 
-    enum class RmdirErrorResolution { Stop, Skip };
+    enum class RmdirErrorResolution { Stop, Skip, Retry };
     function< RmdirErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnRmdirError =
     [](int _err, const string &_path, VFSHost &_vfs){ return RmdirErrorResolution::Stop; };
 
-    enum class TrashErrorResolution { Stop, Skip, DeletePermanently };
+    enum class TrashErrorResolution { Stop, Skip, DeletePermanently, Retry };
     function< TrashErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnTrashError =
     [](int _err, const string &_path, VFSHost &_vfs){ return TrashErrorResolution::Stop; };

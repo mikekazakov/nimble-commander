@@ -13,5 +13,6 @@ inline constexpr long NSModalResponseDeletePermanently  = -10'002;
 inline constexpr long NSModalResponseOverwrite          = -10'003;
 inline constexpr long NSModalResponseOverwriteOld       = -10'004;
 inline constexpr long NSModalResponseAppend             = -10'005;
+inline constexpr long NSModalResponseRetry              = -10'006;
 
 }

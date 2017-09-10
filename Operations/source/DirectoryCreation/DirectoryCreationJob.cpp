@@ -37,25 +37,28 @@ void DirectoryCreationJob::Perform()
 
 bool DirectoryCreationJob::MakeDir(const string &_path)
 {
-    VFSStat st;
-    const auto stat_rc = m_VFS->Stat(_path.c_str(), st, 0);
-    if( stat_rc == VFSError::Ok ){
-        if( !st.mode_bits.dir ) {
-            m_OnError( VFSError::FromErrno(EEXIST), _path, *m_VFS );
-            Stop();
-            return false;
-        }
+    while(true) {
+        VFSStat st;
+        const auto stat_rc = m_VFS->Stat(_path.c_str(), st, 0);
+        if( stat_rc != VFSError::Ok )
+            break;
+        if( !st.mode_bits.dir )
+            switch( m_OnError( VFSError::FromErrno(EEXIST), _path, *m_VFS ) ) {
+                case ErrorResolution::Retry: continue;
+                default: Stop(); return false;
+            }
     }
-    else {
+    
+    while(true) {
         const auto mkdir_rc = m_VFS->CreateDirectory(_path.c_str(), g_CreateMode);
-        if( mkdir_rc != VFSError::Ok ) {
-            m_OnError( mkdir_rc, _path, *m_VFS );
-            Stop();
-            return false;
+        if( mkdir_rc == VFSError::Ok )
+            return true;
+        switch( m_OnError( mkdir_rc, _path, *m_VFS ) ) {
+            case ErrorResolution::Retry: continue;
+            default: Stop(); return false;
         }
     }
     return true;
 }
-
 
 }

@@ -2,10 +2,13 @@
 #include "DirectoryCreationJob.h"
 #include <boost/algorithm/string/split.hpp>
 #include "../Internal.h"
+#include "../AsyncDialogResponse.h"
 
 namespace nc::ops {
 
 static vector<string> Split( const string &_directory );
+
+using Callbacks = DirectoryCreationJobCallbacks;
 
 DirectoryCreation::DirectoryCreation( string _directory_name, string _root_folder, VFSHost &_vfs )
 {
@@ -13,7 +16,7 @@ DirectoryCreation::DirectoryCreation( string _directory_name, string _root_folde
 
     m_Job.reset( new DirectoryCreationJob{m_Directories, _root_folder, _vfs.shared_from_this()} );
     m_Job->m_OnError = [this](int _err, const string &_path, VFSHost &_vfs) {
-        OnError(_err, _path, _vfs);
+        return (Callbacks::ErrorResolution)OnError(_err, _path, _vfs);
     };
 
     const auto title = [NSString localizedStringWithFormat:
@@ -38,10 +41,18 @@ const vector<string> &DirectoryCreation::DirectoryNames() const
     return m_Directories;
 }
 
-void DirectoryCreation::OnError(int _err, const string &_path, VFSHost &_vfs)
+int DirectoryCreation::OnError(int _err, const string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(NSLocalizedString(@"Failed to create a directory", ""),
-                     _err, _path, _vfs);
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialog(GenericDialog::AbortRetry,
+                      NSLocalizedString(@"Failed to create a directory", ""),
+                      _err, {_vfs, _path}, ctx);
+    WaitForDialogResponse(ctx);
+
+    if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::ErrorResolution::Retry;
+    else
+        return (int)Callbacks::ErrorResolution::Stop;
 }
 
 static vector<string> Split( const string &_directory )

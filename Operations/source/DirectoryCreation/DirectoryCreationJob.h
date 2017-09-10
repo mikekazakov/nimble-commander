@@ -7,9 +7,10 @@ namespace nc::ops {
 
 struct DirectoryCreationJobCallbacks
 {
-    function< void(int _err, const string &_path, VFSHost &_vfs) >
+    enum class ErrorResolution { Stop, Retry };
+    function< ErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnError =
-    [](int _err, const string &_path, VFSHost &_vfs){};
+    [](int _err, const string &_path, VFSHost &_vfs){ return ErrorResolution::Stop; };
 };
 
 class DirectoryCreationJob final : public Job, public DirectoryCreationJobCallbacks

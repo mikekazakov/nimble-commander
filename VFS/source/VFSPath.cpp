@@ -19,6 +19,11 @@ VFSPath::VFSPath(const VFSHostPtr &_host, string _path):
 {
 }
 
+VFSPath::VFSPath(VFSHost &_host, string _path):
+    VFSPath(_host.shared_from_this(), move(_path))
+{
+}
+
 const VFSHostPtr& VFSPath::Host() const noexcept
 {
     return m_Host;

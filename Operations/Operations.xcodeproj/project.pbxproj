@@ -409,13 +409,13 @@
 		CFC4F9031F0625090000B3EE /* DirectoryCreation */ = {
 			isa = PBXGroup;
 			children = (
-				CFC4F94A1F0CA84D0000B3EE /* DirectoryCreationDialog.xib */,
-				CFC4F94C1F0CA84D0000B3EE /* DirectoryCreationDialog.h */,
-				CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */,
 				CFC4F9041F06253D0000B3EE /* DirectoryCreation.h */,
 				CFC4F9051F06253D0000B3EE /* DirectoryCreation.mm */,
-				CFC4F9061F06253D0000B3EE /* DirectoryCreationJob.h */,
+				CFC4F94C1F0CA84D0000B3EE /* DirectoryCreationDialog.h */,
+				CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */,
+				CFC4F94A1F0CA84D0000B3EE /* DirectoryCreationDialog.xib */,
 				CFC4F9071F06253D0000B3EE /* DirectoryCreationJob.cpp */,
+				CFC4F9061F06253D0000B3EE /* DirectoryCreationJob.h */,
 			);
 			name = DirectoryCreation;
 			sourceTree = "<group>";
@@ -466,14 +466,14 @@
 		CFC4F9161F09D9620000B3EE /* Deletion */ = {
 			isa = PBXGroup;
 			children = (
-				CFC4F9581F0CB07A0000B3EE /* DeletionDialog.xib */,
-				CFC4F95A1F0CB07A0000B3EE /* DeletionDialog.h */,
-				CFC4F95B1F0CB07A0000B3EE /* DeletionDialog.mm */,
-				CFC4F91F1F09DCC80000B3EE /* Options.h */,
 				CFC4F9171F09D9740000B3EE /* Deletion.h */,
 				CFC4F9181F09D9740000B3EE /* Deletion.mm */,
+				CFC4F95A1F0CB07A0000B3EE /* DeletionDialog.h */,
+				CFC4F95B1F0CB07A0000B3EE /* DeletionDialog.mm */,
+				CFC4F9581F0CB07A0000B3EE /* DeletionDialog.xib */,
 				CFC4F9191F09D9740000B3EE /* DeletionJob.cpp */,
 				CFC4F91A1F09D9740000B3EE /* DeletionJob.h */,
+				CFC4F91F1F09DCC80000B3EE /* Options.h */,
 			);
 			name = Deletion;
 			sourceTree = "<group>";

@@ -202,50 +202,45 @@ void Operation::Show( NSWindow *_dialog, shared_ptr<AsyncDialogResponse> _respon
     _response->Abort();
 }
 
-void Operation::ShowGenericDialogWithAbortSkipAndSkipAllButtons
-    (NSString *_message, int _err, const string &_path, shared_ptr<VFSHost> _vfs,
-    shared_ptr<AsyncDialogResponse> _ctx)
-{
-    if( !dispatch_is_main_queue() )
-        return dispatch_to_main_queue([=]{
-            ShowGenericDialogWithAbortSkipAndSkipAllButtons(_message, _err, _path, _vfs, _ctx);
-        });
-    
-    const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
-
-    sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = _message;
-    sheet.path = [NSString stringWithUTF8String:_path.c_str()];
-    sheet.errorNo = _err;
-    
-    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "")
-                 responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "")
-                 responseCode:NSModalResponseSkip];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "")
-                 responseCode:NSModalResponseSkipAll];
-    Show(sheet.window, _ctx);
+void Operation::AddButtonsForGenericDialog(const GenericDialog _dialog_type,
+                                           NCOpsGenericErrorDialog *_dialog) {
+    if( _dialog_type == GenericDialog::AbortRetry ) {
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "")
+                       responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Retry", "")
+                       responseCode:NSModalResponseRetry];
+    }
+    if( _dialog_type == GenericDialog::Continue ) {
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Continue", "")
+                     responseCode:NSModalResponseContinue];
+    }
+    if( _dialog_type == GenericDialog::AbortSkipSkipAll ) {
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "")
+                       responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "")
+                       responseCode:NSModalResponseSkip];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "")
+                       responseCode:NSModalResponseSkipAll];
+    }
 }
 
-void Operation::ShowGenericDialogWithContinueButton(NSString *_message,
-                                                    int _err,
-                                                    const string &_path,
-                                                    shared_ptr<VFSHost> _vfs,
-                                                    shared_ptr<AsyncDialogResponse> _ctx)
+void Operation::ShowGenericDialog(GenericDialog _dialog_type,
+                                  NSString *_message,
+                                  int _err,
+                                  VFSPath _path,
+                                  shared_ptr<AsyncDialogResponse> _ctx)
 {
     if( !dispatch_is_main_queue() )
         return dispatch_to_main_queue([=]{
-            ShowGenericDialogWithContinueButton(_message, _err, _path, _vfs, _ctx);
+            ShowGenericDialog(_dialog_type, _message, _err, _path, _ctx);
         });
     
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
-
     sheet.style = GenericErrorDialogStyle::Caution;
     sheet.message = _message;
-    sheet.path = [NSString stringWithUTF8String:_path.c_str()];
+    sheet.path = [NSString stringWithUTF8String:_path.Path().c_str()];
     sheet.errorNo = _err;
-    [sheet addButtonWithTitle:NSLocalizedString(@"Continue", "")
-                 responseCode:NSModalResponseContinue];
+    AddButtonsForGenericDialog(_dialog_type, sheet);
     Show(sheet.window, _ctx);
 }
 

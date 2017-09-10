@@ -195,11 +195,9 @@ int Copying::OnCantAccessSourceItem(int _err, const string &_path, VFSHost &_vfs
         return (int)Callbacks::CantAccessSourceItemResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to access a file", ""),
-                                                    _err,
-                                                    _path,
-                                                    _vfs.shared_from_this(),
-                                                    ctx);
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to access a file", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
     
@@ -221,11 +219,9 @@ int Copying::OnCantOpenDestinationFile(int _err, const string &_path, VFSHost &_
         return (int)Callbacks::CantOpenDestinationFileResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to open a destination file", ""),
-                                                    _err,
-                                                    _path,
-                                                    _vfs.shared_from_this(),
-                                                    ctx);
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to open a destination file", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -246,11 +242,9 @@ int Copying::OnSourceFileReadError(int _err, const string &_path, VFSHost &_vfs)
         return (int)Callbacks::SourceFileReadErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to read a source file", ""),
-                                                    _err,
-                                                    _path,
-                                                    _vfs.shared_from_this(),
-                                                    ctx);
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to read a source file", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -271,11 +265,9 @@ int Copying::OnDestinationFileReadError(int _err, const string &_path, VFSHost &
         return (int)Callbacks::DestinationFileReadErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to read a destination file", ""),
-                                                    _err,
-                                                    _path,
-                                                    _vfs.shared_from_this(),
-                                                    ctx);
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to read a destination file", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -296,11 +288,9 @@ int Copying::OnDestinationFileWriteError(int _err, const string &_path, VFSHost 
         return (int)Callbacks::DestinationFileWriteErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to write a file", ""),
-                                                    _err,
-                                                    _path,
-                                                    _vfs.shared_from_this(),
-                                                    ctx);
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to write a file", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -319,7 +309,7 @@ void Copying::OnCantCreateDestinationRootDir(int _vfs_error, const string &_path
                      _vfs_error, _path, _vfs);
 }
 
-int Copying::OnCantCreateDestinationDir(int _vfs_error, const string &_path, VFSHost &_vfs)
+int Copying::OnCantCreateDestinationDir(int _err, const string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll )
         return (int)Callbacks::CantCreateDestinationDirResolution::Skip;
@@ -327,11 +317,9 @@ int Copying::OnCantCreateDestinationDir(int _vfs_error, const string &_path, VFS
         return (int)Callbacks::CantCreateDestinationDirResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSLocalizedString(@"Failed to create a directory", ""),
-                                                    _vfs_error,
-                                                    _path,
-                                                    _vfs.shared_from_this(),
-                                                    ctx);
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to create a directory", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip )
@@ -347,11 +335,9 @@ int Copying::OnCantCreateDestinationDir(int _vfs_error, const string &_path, VFS
 void Copying::OnFileVerificationFailed(const string &_path, VFSHost &_vfs)
 {
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialogWithContinueButton(NSLocalizedString(@"Checksum verification failed", ""),
-                                        VFSError::FromErrno(EIO),
-                                        _path,
-                                        _vfs.shared_from_this(),
-                                        ctx);
+    ShowGenericDialog(GenericDialog::Continue,
+                      NSLocalizedString(@"Checksum verification failed", ""),
+                      VFSError::FromErrno(EIO), {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 }
 

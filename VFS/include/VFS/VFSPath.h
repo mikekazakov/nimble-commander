@@ -16,6 +16,7 @@ class VFSPath
 public:
     VFSPath();
     VFSPath(const VFSHostPtr &_host, string _path);
+    VFSPath(VFSHost &_host, string _path);
     VFSPath(const VFSPath &_rhs) = default;
     VFSPath(VFSPath &&_rhs) = default;
     

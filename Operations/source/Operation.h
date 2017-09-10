@@ -4,8 +4,10 @@
 
 @class NSWindow;
 @class NSString;
+@class NCOpsGenericErrorDialog;
 
 class VFSHost;
+class VFSPath;
 
 namespace nc::ops
 {
@@ -60,6 +62,12 @@ public:
     void AbortUIWaiting() noexcept;
     
 protected:
+    enum class GenericDialog {
+        AbortRetry,
+        AbortSkipSkipAll,
+        Continue
+    };
+
     Operation();
     virtual Job *GetJob() noexcept;
     virtual void OnJobFinished();
@@ -67,16 +75,13 @@ protected:
     virtual void OnJobResumed();
     bool IsInteractive() const noexcept;
     void Show( NSWindow *_dialog, shared_ptr<AsyncDialogResponse> _response );
-    void ShowGenericDialogWithAbortSkipAndSkipAllButtons(NSString *_message,
-                                                         int _err,
-                                                         const string &_path,
-                                                         shared_ptr<VFSHost> _vfs,
-                                                         shared_ptr<AsyncDialogResponse> _ctx);
-    void ShowGenericDialogWithContinueButton(NSString *_message,
-                                             int _err,
-                                             const string &_path,
-                                             shared_ptr<VFSHost> _vfs,
-                                             shared_ptr<AsyncDialogResponse> _ctx);
+    static void AddButtonsForGenericDialog(GenericDialog _dialog_type,
+                                           NCOpsGenericErrorDialog *_dialog);
+    void ShowGenericDialog(GenericDialog _dialog_type,
+                           NSString *_message,
+                           int _err,
+                           VFSPath _path,                           
+                           shared_ptr<AsyncDialogResponse> _ctx);
     void WaitForDialogResponse( shared_ptr<AsyncDialogResponse> _response );
     void ReportHaltReason( NSString *_message, int _error, const string &_path, VFSHost &_vfs );
     void SetTitle( string _title );

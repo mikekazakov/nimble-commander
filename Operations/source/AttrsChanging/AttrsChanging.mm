@@ -49,10 +49,9 @@ int AttrsChanging::OnSourceAccessError(int _err, const string &_path, VFSHost &_
             (int)Callbacks::SourceAccessErrorResolution::Stop;
     const auto ctx = make_shared<AsyncDialogResponse>();
     
-    dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        auto message = NSLocalizedString(@"Failed to access an item", "");
-        ShowGenericDialogWithAbortSkipAndSkipAllButtons(message, _err, _path, vfs, ctx);
-    });
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to access an item", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
     
     if( ctx->response == NSModalResponseSkip )
@@ -73,10 +72,9 @@ int AttrsChanging::OnChmodError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::ChmodErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        auto message = NSLocalizedString(@"Failed to perform chmod", "");
-        ShowGenericDialogWithAbortSkipAndSkipAllButtons(message, _err, _path, vfs, ctx);
-    });
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to perform chmod", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
     
     if( ctx->response == NSModalResponseSkip )
@@ -98,10 +96,9 @@ int AttrsChanging::OnChownError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::ChownErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        auto message = NSLocalizedString(@"Failed to perform chown", "");
-        ShowGenericDialogWithAbortSkipAndSkipAllButtons(message, _err, _path, vfs, ctx);
-    });
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to perform chown", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
     
     if( ctx->response == NSModalResponseSkip )
@@ -122,10 +119,9 @@ int AttrsChanging::OnFlagsError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::FlagsErrorResolution::Stop;
             
     const auto ctx = make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        auto message = NSLocalizedString(@"Failed to perform chflags", "");
-        ShowGenericDialogWithAbortSkipAndSkipAllButtons(message, _err, _path, vfs, ctx);
-    });
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to perform chflags", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
     
     if( ctx->response == NSModalResponseSkip )
@@ -147,10 +143,9 @@ int AttrsChanging::OnTimesError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::TimesErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        auto message = NSLocalizedString(@"Failed to set file time", "");
-        ShowGenericDialogWithAbortSkipAndSkipAllButtons(message, _err, _path, vfs, ctx);
-    });
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to set file time", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
     
     if( ctx->response == NSModalResponseSkip )

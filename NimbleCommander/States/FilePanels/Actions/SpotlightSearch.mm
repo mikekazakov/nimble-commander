@@ -105,20 +105,22 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &
 
 void SpotlightSearch::Perform( PanelController *_target, id _sender ) const
 {
-    SpotlightSearchPopupViewController *view = [[SpotlightSearchPopupViewController alloc] init];
-    view.handler = [=](const string& _query){
-        auto task = [=]( const function<bool()> &_cancelled ) {
-            if( auto l = FetchSearchResultsAsListing(FetchSpotlightResults(_query),
-                                                     *VFSNativeHost::SharedHost(),
-                                                     _target.vfsFetchingFlags,
-                                                     _cancelled
-                                                     ) )
-                dispatch_to_main_queue([=]{
-                    [_target loadNonUniformListing:l];
-                });
-        };
-      
-        [_target commitCancelableLoadingTask:move(task)];
+    const auto view = [[SpotlightSearchPopupViewController alloc] init];
+    __weak PanelController *wp = _target;
+    view.handler = [wp](const string& _query){
+        if( PanelController *panel = wp ) {
+            auto task = [=]( const function<bool()> &_cancelled ) {
+                if( auto l = FetchSearchResultsAsListing(FetchSpotlightResults(_query),
+                                                         *VFSNativeHost::SharedHost(),
+                                                         panel.vfsFetchingFlags,
+                                                         _cancelled
+                                                         ) )
+                    dispatch_to_main_queue([=]{
+                        [panel loadNonUniformListing:l];
+                    });
+            };
+            [panel commitCancelableLoadingTask:move(task)];
+        }
     };
     
     [_target.view showPopoverUnderPathBarWithView:view andDelegate:view];

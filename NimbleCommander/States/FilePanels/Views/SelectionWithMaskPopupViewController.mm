@@ -1,11 +1,3 @@
-//
-//  SelectionWithMaskPopupViewController.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 23/08/14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
 #include "SelectionWithMaskPopupViewController.h"

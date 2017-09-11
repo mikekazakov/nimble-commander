@@ -55,17 +55,20 @@ SelectAllByMask::SelectAllByMask( bool _result_selection ):
 
 void SelectAllByMask::Perform( PanelController *_target, id _sender ) const
 {
-    SelectionWithMaskPopupViewController *view = [[SelectionWithMaskPopupViewController alloc]
-        initForWindow:_target.window doesSelect:m_ResultSelection];
-    view.handler = [=](NSString *_mask) {
-        string mask = _mask.fileSystemRepresentationSafe;
-        if( !FileMask::IsWildCard(mask) )
-            mask = FileMask::ToExtensionWildCard(mask);
-        
-        auto selector = data::SelectionBuilder(_target.data,
-                                               _target.ignoreDirectoriesOnSelectionByMask);
-        auto selection = selector.SelectionByMask(mask, m_ResultSelection);
-        [_target setEntriesSelection:selection];
+    const auto view = [[SelectionWithMaskPopupViewController alloc] initForWindow:_target.window
+                                                                       doesSelect:m_ResultSelection];
+    __weak PanelController *wp = _target;
+    view.handler = [wp, this](NSString *_mask) {
+        if( PanelController *panel = wp ) {
+            string mask = _mask.fileSystemRepresentationSafe;
+            if( !FileMask::IsWildCard(mask) )
+                mask = FileMask::ToExtensionWildCard(mask);
+            
+            auto selector = data::SelectionBuilder(panel.data,
+                                                   panel.ignoreDirectoriesOnSelectionByMask);
+            auto selection = selector.SelectionByMask(mask, m_ResultSelection);
+            [panel setEntriesSelection:selection];
+        }
     };
     
     [_target.view showPopoverUnderPathBarWithView:view andDelegate:view];

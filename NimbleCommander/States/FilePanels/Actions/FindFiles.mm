@@ -42,19 +42,22 @@ void FindFiles::Perform( PanelController *_target, id _sender ) const
     sheet.path = _target.isUniform ?
         _target.currentDirectoryPath :
         _target.view.item.Directory();
-    sheet.onPanelize = [=](const vector<VFSPath> &_paths) {
-        auto task = [=]( const function<bool()> &_cancelled ) {
-            auto l = FetchSearchResultsAsListing(_paths,
-                                                 _target.vfsFetchingFlags,
-                                                 _cancelled
-                                                 );
-            if( l )
-                dispatch_to_main_queue([=]{
-                    [_target loadNonUniformListing:l];
-                });
-        
-        };
-        [_target commitCancelableLoadingTask:move(task)];
+    __weak PanelController *wp = _target;
+    sheet.onPanelize = [wp](const vector<VFSPath> &_paths) {
+        if( PanelController *panel = wp ) {
+            auto task = [=]( const function<bool()> &_cancelled ) {
+                auto l = FetchSearchResultsAsListing(_paths,
+                                                     panel.vfsFetchingFlags,
+                                                     _cancelled
+                                                     );
+                if( l )
+                    dispatch_to_main_queue([=]{
+                        [panel loadNonUniformListing:l];
+                    });
+                
+            };
+            [panel commitCancelableLoadingTask:move(task)];
+        }
     };
     
     [sheet beginSheetForWindow:_target.window

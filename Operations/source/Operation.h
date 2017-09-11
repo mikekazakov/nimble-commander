@@ -65,6 +65,7 @@ protected:
     enum class GenericDialog {
         AbortRetry,
         AbortSkipSkipAll,
+        AbortSkipSkipAllRetry,
         Continue
     };
 

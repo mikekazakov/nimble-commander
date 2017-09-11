@@ -222,6 +222,16 @@ void Operation::AddButtonsForGenericDialog(const GenericDialog _dialog_type,
         [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "")
                        responseCode:NSModalResponseSkipAll];
     }
+    if( _dialog_type == GenericDialog::AbortSkipSkipAllRetry ) {
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Abort", "")
+                       responseCode:NSModalResponseStop];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip", "")
+                       responseCode:NSModalResponseSkip];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Skip All", "")
+                       responseCode:NSModalResponseSkipAll];
+        [_dialog addButtonWithTitle:NSLocalizedString(@"Retry", "")
+                       responseCode:NSModalResponseRetry];
+    }
 }
 
 void Operation::ShowGenericDialog(GenericDialog _dialog_type,

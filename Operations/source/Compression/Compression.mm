@@ -73,10 +73,10 @@ int Compression::OnSourceScanError(int _err, const string &_path, VFSHost &_vfs)
         return m_SkipAll ?
             (int)Callbacks::SourceScanErrorResolution::Skip :
             (int)Callbacks::SourceScanErrorResolution::Stop;
-    auto ctx = make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        OnSourceScanErrorUI(_err, _path, vfs, ctx);
-    });
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
+                      NSLocalizedString(@"Failed to access an item", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
     
     if( ctx->response == NSModalResponseSkip  )
@@ -85,24 +85,10 @@ int Compression::OnSourceScanError(int _err, const string &_path, VFSHost &_vfs)
         m_SkipAll = true;
         return (int)Callbacks::SourceScanErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::SourceScanErrorResolution::Retry;
     else
         return (int)Callbacks::SourceScanErrorResolution::Stop;
-}
-
-void Compression::OnSourceScanErrorUI(int _err, const string &_path, VFSHostPtr _vfs,
-                                      shared_ptr<AsyncDialogResponse> _ctx)
-{
-    auto sheet = [[NCOpsGenericErrorDialog alloc] init];
-
-    sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = NSLocalizedString(@"Failed to access an item", "");
-    sheet.path = [NSString stringWithUTF8String:_path.c_str()];
-    sheet.errorNo = _err;
-    [sheet addButtonWithTitle:NSLocalizedString(@"Abort", "") responseCode:NSModalResponseStop];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Skip", "") responseCode:NSModalResponseSkip];
-    [sheet addButtonWithTitle:NSLocalizedString(@"Skip All", "") responseCode:NSModalResponseSkipAll];
-
-    Show(sheet.window, _ctx);
 }
 
 int Compression::OnSourceAccessError(int _err, const string &_path, VFSHost &_vfs)
@@ -111,10 +97,10 @@ int Compression::OnSourceAccessError(int _err, const string &_path, VFSHost &_vf
         return m_SkipAll ?
             (int)Callbacks::SourceAccessErrorResolution::Skip :
             (int)Callbacks::SourceAccessErrorResolution::Stop;
-    auto ctx = make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        OnSourceScanErrorUI(_err, _path, vfs, ctx);
-    });
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
+                      NSLocalizedString(@"Failed to access an item", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
     
     if( ctx->response == NSModalResponseSkip )
@@ -123,6 +109,8 @@ int Compression::OnSourceAccessError(int _err, const string &_path, VFSHost &_vf
         m_SkipAll = true;
         return (int)Callbacks::SourceAccessErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::SourceAccessErrorResolution::Retry;
     else
         return (int)Callbacks::SourceAccessErrorResolution::Stop;
 }

@@ -15,12 +15,12 @@ struct CompressionJobCallbacks
     m_TargetPathDefined =
     []{};
 
-    enum class SourceScanErrorResolution { Stop, Skip };
+    enum class SourceScanErrorResolution { Stop, Skip, Retry };
     function< SourceScanErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_SourceScanError =
     [](int _err, const string &_path,VFSHost &_vfs){ return SourceScanErrorResolution::Stop; };
     
-    enum class SourceAccessErrorResolution { Stop, Skip };
+    enum class SourceAccessErrorResolution { Stop, Skip, Retry };
     function< SourceAccessErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_SourceAccessError =
     [](int _err, const string &_path, VFSHost &_vfs){ return SourceAccessErrorResolution::Stop; };

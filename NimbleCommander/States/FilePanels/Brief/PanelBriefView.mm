@@ -15,8 +15,10 @@
 #include "PanelBriefViewCollectionViewLayout.h"
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewCollectionViewBackground.h"
+#include "TextWidthsCache.h"
 
 using namespace ::nc::panel;
+using namespace ::nc::panel::brief;
 
 // font_size, double_icon, icon_size, line_height, text_baseline
 static const array< tuple<int8_t, int8_t, int8_t, int8_t, int8_t>, 21> g_FixedLayoutData = {{
@@ -277,16 +279,19 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 
 - (void) calculateFilenamesWidths
 {
+    const auto min_width = 50;
+
     const auto count = m_Data ? (int)m_Data->SortedDirectoryEntries().size() : 0;
-    vector<CFStringRef> strings(count);
+    vector<reference_wrapper<const string>> strings;
+    strings.reserve(count);
     for( auto i = 0; i < count; ++i )
-        strings[i] = m_Data->EntryAtSortPosition(i).DisplayNameCF();
-    m_FilenamesPxWidths = FontGeometryInfo::CalculateStringsWidths(
-        strings,
-        CurrentTheme().FilePanelsBriefFont()
-    );
+        strings.emplace_back( ref(m_Data->EntryAtSortPosition(i).DisplayName()) );
+    
+    m_FilenamesPxWidths = TextWithdsCache::Instance().Widths(strings,
+                                                             CurrentTheme().FilePanelsBriefFont());
+    
     auto max_it = max_element( begin(m_FilenamesPxWidths), end(m_FilenamesPxWidths) );
-    m_MaxFilenamePxWidth = max_it != end(m_FilenamesPxWidths) ? *max_it : 50;
+    m_MaxFilenamePxWidth = max_it != end(m_FilenamesPxWidths) ? *max_it : min_width;
 }
 
 - (NSSize)collectionView:(NSCollectionView *)collectionView

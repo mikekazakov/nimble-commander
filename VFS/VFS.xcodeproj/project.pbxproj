@@ -9,13 +9,7 @@
 /* Begin PBXBuildFile section */
 		CF1168871E91FE9300CC515A /* VFSDropbox_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */; };
 		CF1847101E41C8A5008B7C9F /* VFSPS_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470C1E41C8A5008B7C9F /* VFSPS_Tests.mm */; };
-		CF1847141E41C9C0008B7C9F /* libHabanero.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847131E41C9C0008B7C9F /* libHabanero.a */; };
-		CF1847161E41C9D7008B7C9F /* libRoutedIO.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847151E41C9D7008B7C9F /* libRoutedIO.a */; };
 		CF18471C1E41CA19008B7C9F /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18471B1E41CA19008B7C9F /* ServiceManagement.framework */; };
-		CF18471E1E41CA2D008B7C9F /* libUtility.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18471D1E41CA2D008B7C9F /* libUtility.a */; };
-		CF1847201E41CA45008B7C9F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF18471F1E41CA45008B7C9F /* SystemConfiguration.framework */; };
-		CF1847221E41CAFF008B7C9F /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847211E41CAFF008B7C9F /* libboost_filesystem.a */; };
-		CF1847241E41CB07008B7C9F /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847231E41CB07008B7C9F /* libboost_system.a */; };
 		CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */; };
 		CF18472C1E41CC7B008B7C9F /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847281E41CC4C008B7C9F /* libcrypto.a */; };
 		CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847261E41CC49008B7C9F /* libssl.a */; };
@@ -29,9 +23,6 @@
 		CF3E2F871F60DF08001BFFCE /* Requests.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3E2F851F60DF08001BFFCE /* Requests.h */; };
 		CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D8E1E659D33002DB0E2 /* libssh2.a */; };
 		CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */; };
-		CFD725F61E42DC3200603077 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F51E42DC3200603077 /* libbz2.a */; };
-		CFD725F81E42DC3600603077 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F71E42DC3600603077 /* liblzma.a */; };
-		CFD725FA1E42DC4B00603077 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725F91E42DC4B00603077 /* libz.a */; };
 		CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */; };
 		CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847171E41C9F9008B7C9F /* Security.framework */; };
 		CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FF1E42DD6000603077 /* LDAP.framework */; };
@@ -113,15 +104,9 @@
 		CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSFTP_Tests.mm; path = tests/VFSFTP_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF18470C1E41C8A5008B7C9F /* VFSPS_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSPS_Tests.mm; path = tests/VFSPS_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSSFTP_Tests.mm; path = tests/VFSSFTP_Tests.mm; sourceTree = SOURCE_ROOT; };
-		CF1847131E41C9C0008B7C9F /* libHabanero.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHabanero.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.a"; sourceTree = "<group>"; };
-		CF1847151E41C9D7008B7C9F /* libRoutedIO.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRoutedIO.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.a"; sourceTree = "<group>"; };
 		CF1847171E41C9F9008B7C9F /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CF1847191E41CA0B008B7C9F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		CF18471B1E41CA19008B7C9F /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
-		CF18471D1E41CA2D008B7C9F /* libUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtility.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.a"; sourceTree = "<group>"; };
-		CF18471F1E41CA45008B7C9F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
-		CF1847211E41CAFF008B7C9F /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_filesystem.a; path = ../Files/3rd_party/built/lib/libboost_filesystem.a; sourceTree = "<group>"; };
-		CF1847231E41CB07008B7C9F /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libboost_system.a; path = ../Files/3rd_party/built/lib/libboost_system.a; sourceTree = "<group>"; };
 		CF1847261E41CC49008B7C9F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = ../3rd_Party/OpenSSL/built/libssl.a; sourceTree = "<group>"; };
 		CF1847281E41CC4C008B7C9F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = ../3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = "<group>"; };
 		CF18472F1E41CFB7008B7C9F /* libarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarchive.a; path = ../3rd_Party/libarchive/built/libarchive.a; sourceTree = "<group>"; };
@@ -225,9 +210,6 @@
 		CFC4F9F71F171A470000B3EE /* VFSNetSFTPOSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPOSType.h; path = source/NetSFTP/VFSNetSFTPOSType.h; sourceTree = "<group>"; };
 		CFC4F9F91F171E990000B3EE /* VFSNetSFTPAccountsFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPAccountsFetcher.cpp; path = source/NetSFTP/VFSNetSFTPAccountsFetcher.cpp; sourceTree = "<group>"; };
 		CFC4F9FA1F171E990000B3EE /* VFSNetSFTPAccountsFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPAccountsFetcher.h; path = source/NetSFTP/VFSNetSFTPAccountsFetcher.h; sourceTree = "<group>"; };
-		CFD725F51E42DC3200603077 /* libbz2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbz2.a; path = ../Files/3rd_party/built/lib/libbz2.a; sourceTree = "<group>"; };
-		CFD725F71E42DC3600603077 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = ../Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
-		CFD725F91E42DC4B00603077 /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = ../Files/Files/3rd_party/built/lib/libz.a; sourceTree = "<group>"; };
 		CFD725FF1E42DD6000603077 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CFD7273D1E42EC8E00603077 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -263,12 +245,6 @@
 				CFFA950C1F4570BA0035E606 /* libVFS.dylib in Frameworks */,
 				CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */,
 				CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */,
-				CF18471E1E41CA2D008B7C9F /* libUtility.a in Frameworks */,
-				CF1847141E41C9C0008B7C9F /* libHabanero.a in Frameworks */,
-				CF1847161E41C9D7008B7C9F /* libRoutedIO.a in Frameworks */,
-				CF1847221E41CAFF008B7C9F /* libboost_filesystem.a in Frameworks */,
-				CF1847241E41CB07008B7C9F /* libboost_system.a in Frameworks */,
-				CF1847201E41CA45008B7C9F /* SystemConfiguration.framework in Frameworks */,
 				CF18471C1E41CA19008B7C9F /* ServiceManagement.framework in Frameworks */,
 				CFD7273E1E42EC8E00603077 /* Carbon.framework in Frameworks */,
 				CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */,
@@ -279,9 +255,6 @@
 				CF18472D1E41CC82008B7C9F /* libssl.a in Frameworks */,
 				CF18472C1E41CC7B008B7C9F /* libcrypto.a in Frameworks */,
 				CF1847301E41CFB7008B7C9F /* libarchive.a in Frameworks */,
-				CFD725FA1E42DC4B00603077 /* libz.a in Frameworks */,
-				CFD725F61E42DC3200603077 /* libbz2.a in Frameworks */,
-				CFD725F81E42DC3600603077 /* liblzma.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,21 +324,12 @@
 				CFD7273D1E42EC8E00603077 /* Carbon.framework */,
 				CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */,
 				CFD725FF1E42DD6000603077 /* LDAP.framework */,
-				CFD725F91E42DC4B00603077 /* libz.a */,
-				CFD725F71E42DC3600603077 /* liblzma.a */,
-				CFD725F51E42DC3200603077 /* libbz2.a */,
 				CF18472F1E41CFB7008B7C9F /* libarchive.a */,
 				CF1847281E41CC4C008B7C9F /* libcrypto.a */,
 				CF1847261E41CC49008B7C9F /* libssl.a */,
-				CF1847231E41CB07008B7C9F /* libboost_system.a */,
-				CF1847211E41CAFF008B7C9F /* libboost_filesystem.a */,
-				CF18471F1E41CA45008B7C9F /* SystemConfiguration.framework */,
-				CF18471D1E41CA2D008B7C9F /* libUtility.a */,
 				CF18471B1E41CA19008B7C9F /* ServiceManagement.framework */,
 				CF1847191E41CA0B008B7C9F /* SystemConfiguration.framework */,
 				CF1847171E41C9F9008B7C9F /* Security.framework */,
-				CF1847151E41C9D7008B7C9F /* libRoutedIO.a */,
-				CF1847131E41C9C0008B7C9F /* libHabanero.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -749,7 +713,6 @@
 		CF1847061E41C86D008B7C9F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
@@ -762,7 +725,6 @@
 		CF1847071E41C86D008B7C9F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
@@ -832,8 +794,8 @@
 					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libcurl/include/",
+					"$(PROJECT_DIR)/../3rd_Party/lzma/include/",
 					"$(PROJECT_DIR)/../3rd_Party/boost/include/",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/include/",
 					"$(PROJECT_DIR)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -844,7 +806,9 @@
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/built",
 					"$(PROJECT_DIR)/../3rd_Party/libcurl/built",
 					"$(PROJECT_DIR)/../3rd_Party/boost/built",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/../3rd_Party/lzma/built",
+					"$(PROJECT_DIR)/../3rd_Party/bz2/built",
+					"$(PROJECT_DIR)/../3rd_Party/z/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -925,8 +889,8 @@
 					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libcurl/include/",
+					"$(PROJECT_DIR)/../3rd_Party/lzma/include/",
 					"$(PROJECT_DIR)/../3rd_Party/boost/include/",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/include/",
 					"$(PROJECT_DIR)/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -937,7 +901,9 @@
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/built",
 					"$(PROJECT_DIR)/../3rd_Party/libcurl/built",
 					"$(PROJECT_DIR)/../3rd_Party/boost/built",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/../3rd_Party/lzma/built",
+					"$(PROJECT_DIR)/../3rd_Party/bz2/built",
+					"$(PROJECT_DIR)/../3rd_Party/z/built",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;

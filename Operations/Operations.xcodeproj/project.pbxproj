@@ -1090,13 +1090,11 @@
 					"$(PROJECT_DIR)/../RoutedIO/include",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include",
 					"$(PROJECT_DIR)/../3rd_Party/boost/include",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/../3rd_Party/boost/built",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -1190,13 +1188,11 @@
 					"$(PROJECT_DIR)/../RoutedIO/include",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include",
 					"$(PROJECT_DIR)/../3rd_Party/boost/include",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/../3rd_Party/boost/built",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;

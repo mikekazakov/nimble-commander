@@ -144,4 +144,12 @@ static NSEvent *SwapScrollAxis( NSEvent *_event )
     }
 }
 
+- (void)prepareContentInRect:(NSRect)rect
+{
+    // Disabling the responsive scrolling/prefetching for now on 10.13+.
+    // It destroys the loading time, need to fix it later somehow
+    // https://developer.apple.com/library/content/releasenotes/AppKit/RN-AppKit/
+    [super prepareContentInRect:self.visibleRect];
+}
+
 @end

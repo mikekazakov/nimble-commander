@@ -26,8 +26,9 @@
 
 - (NSArray<__kindof NSCollectionViewLayoutAttributes *> *)layoutAttributesForElementsInRect:(NSRect)rect
 {
-    const auto attrs = [super layoutAttributesForElementsInRect:rect];
-    
+    const auto orig_attrs = [super layoutAttributesForElementsInRect:rect];
+    const auto attrs = [[NSArray alloc] initWithArray:orig_attrs copyItems:true];
+
     const int items_per_column = self.rowsCount;
     if( !items_per_column )
         return attrs;

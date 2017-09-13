@@ -70,6 +70,9 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
+        self.autoresizingMask = NSViewNotSizable;
+        self.autoresizesSubviews = false;
+        self.translatesAutoresizingMaskIntoConstraints = false;
         m_TextColor = NSColor.blackColor;
         m_Filename = @"";
         m_QSHighlight = {0, 0};
@@ -91,18 +94,6 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
 - (BOOL) wantsDefaultClipping
 {
     return false;
-}
-
-- (void)setFrameSize:(NSSize)newSize
-{
-    [super setFrameSize:newSize];
-    [self setNeedsDisplay:true];
-}
-
-- (void) setFrame:(NSRect)frame
-{
-    [super setFrame:frame];
-    [self setNeedsDisplay:true];
 }
 
 - (NSRect) calculateTextSegmentFromBounds:(NSRect)bounds

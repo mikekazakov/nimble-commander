@@ -212,7 +212,9 @@ int VFSNativeHost::FetchDirectoryListing(const char *_path,
                 listing_source.unix_flags[n]    = stat_buffer.st_flags;
                 listing_source.uids[n]          = stat_buffer.st_uid;
                 listing_source.gids[n]          = stat_buffer.st_gid;
-                listing_source.sizes[n]         = stat_buffer.st_size;
+                listing_source.sizes[n]         = S_ISDIR(stat_buffer.st_mode) ?
+                                                    -1 :
+                                                    stat_buffer.st_size;
             }
         }
 

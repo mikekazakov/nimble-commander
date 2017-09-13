@@ -212,7 +212,9 @@ int VFSNativeFetching::ReadDirAttributesStat(
             params.dev      = stat_buffer.st_dev;
             params.inode    = stat_buffer.st_ino;
             params.flags    = stat_buffer.st_flags;
-            params.size     = stat_buffer.st_size;
+            params.size     = -1;
+            if( !S_ISDIR(stat_buffer.st_mode) )
+                params.size     = stat_buffer.st_size;
             
             _cb_fetch(1);
             _cb_param(params);

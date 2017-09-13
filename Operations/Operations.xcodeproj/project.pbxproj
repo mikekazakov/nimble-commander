@@ -41,6 +41,10 @@
 		CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DA1EF7CCB00072F0F6 /* Pool.h */; };
 		CF7084DD1EF7CF7E0072F0F6 /* Compression.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DC1EF7CF7E0072F0F6 /* Compression.h */; };
 		CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */; };
+		CFBEF9021F67E56A00C63816 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBEF9061F67E56A00C63816 /* libHabanero.dylib */; };
+		CFBEF9031F67E56A00C63816 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBEF9071F67E56A00C63816 /* libRoutedIO.dylib */; };
+		CFBEF9041F67E56A00C63816 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBEF9081F67E56A00C63816 /* libUtility.dylib */; };
+		CFBEF90A1F67F0AF00C63816 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBEF9091F67E56A00C63816 /* libVFS.dylib */; };
 		CFC4F8B31EF7E3830000B3EE /* Compression.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B901EE24FEC00F567C4 /* Compression.mm */; };
 		CFC4F8B41EF7E3860000B3EE /* CompressionJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B931EE2515400F567C4 /* CompressionJob.cpp */; };
 		CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F8C31EFA05B00000B3EE /* PoolView.h */; };
@@ -145,11 +149,6 @@
 		CFF53BAF1EEA840600F567C4 /* Statistics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BAD1EEA840600F567C4 /* Statistics.cpp */; };
 		CFF53BCE1EF3913B00F567C4 /* Progress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFF53BCC1EF3913B00F567C4 /* Progress.cpp */; };
 		CFF53BCF1EF3913B00F567C4 /* Progress.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53BCD1EF3913B00F567C4 /* Progress.h */; };
-		CFFA945E1F4539E50035E606 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA945D1F4539E50035E606 /* libHabanero.dylib */; };
-		CFFA948C1F453D960035E606 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA948B1F453D960035E606 /* libUtility.dylib */; };
-		CFFA94A11F45418D0035E606 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */; };
-		CFFA94E21F45448A0035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E11F45448A0035E606 /* libVFS.dylib */; };
-		CFFA950B1F456FD80035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA950A1F456FD80035E606 /* libVFS.dylib */; };
 		CFFA953E1F4C0C390035E606 /* AttrsChangingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95401F4C0C390035E606 /* AttrsChangingDialog.xib */; };
 		CFFA95431F4C17CC0035E606 /* Info-TestsPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFFA95451F4C17CC0035E606 /* Info-TestsPlist.strings */; };
 		CFFA95491F4C17CD0035E606 /* Info-FrameworkPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFFA954B1F4C17CD0035E606 /* Info-FrameworkPlist.strings */; };
@@ -203,6 +202,10 @@
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
 		CF7084DC1EF7CF7E0072F0F6 /* Compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Compression.h; path = include/Operations/Compression.h; sourceTree = "<group>"; };
 		CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Copying_Tests.mm; path = tests/Copying_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CFBEF9061F67E56A00C63816 /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFBEF9071F67E56A00C63816 /* libRoutedIO.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libRoutedIO.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFBEF9081F67E56A00C63816 /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFBEF9091F67E56A00C63816 /* libVFS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libVFS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFC4F8C31EFA05B00000B3EE /* PoolView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoolView.h; path = source/PoolView.h; sourceTree = "<group>"; };
 		CFC4F8C41EFA05B00000B3EE /* PoolView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoolView.mm; path = source/PoolView.mm; sourceTree = "<group>"; };
 		CFC4F8C51EFA05B00000B3EE /* PoolViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoolViewController.h; path = source/PoolViewController.h; sourceTree = "<group>"; };
@@ -243,9 +246,6 @@
 		CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Deletion_Tests.mm; path = tests/Deletion_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFC4F92B1F0B49C00000B3EE /* Deletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Deletion.h; path = include/Operations/Deletion.h; sourceTree = "<group>"; };
 		CFC4F92C1F0B49C00000B3EE /* DirectoryCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreation.h; path = include/Operations/DirectoryCreation.h; sourceTree = "<group>"; };
-		CFC4F9441F0BB93A0000B3EE /* libRoutedIO.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRoutedIO.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.a"; sourceTree = "<group>"; };
-		CFC4F9461F0BB9470000B3EE /* libUtility.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libUtility.a; path = ../Utility/build/Debug/libUtility.a; sourceTree = "<group>"; };
-		CFC4F9481F0BB94C0000B3EE /* libHabanero.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libHabanero.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.a"; sourceTree = "<group>"; };
 		CFC4F94B1F0CA84D0000B3EE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = source/DirectoryCreation/Base.lproj/DirectoryCreationDialog.xib; sourceTree = "<group>"; };
 		CFC4F94C1F0CA84D0000B3EE /* DirectoryCreationDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DirectoryCreationDialog.h; path = source/DirectoryCreation/DirectoryCreationDialog.h; sourceTree = "<group>"; };
 		CFC4F94D1F0CA84D0000B3EE /* DirectoryCreationDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DirectoryCreationDialog.mm; path = source/DirectoryCreation/DirectoryCreationDialog.mm; sourceTree = "<group>"; };
@@ -314,7 +314,6 @@
 		CFF53B781EDEA83900F567C4 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = source/Job.h; sourceTree = SOURCE_ROOT; };
 		CFF53B791EDEA83900F567C4 /* Job.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Job.cpp; path = source/Job.cpp; sourceTree = SOURCE_ROOT; };
 		CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BasicOperationsSemantics_Tests.mm; path = tests/BasicOperationsSemantics_Tests.mm; sourceTree = SOURCE_ROOT; };
-		CFF53B851EE1544B00F567C4 /* libVFS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libVFS.a; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libVFS.a"; sourceTree = "<group>"; };
 		CFF53B871EE1577100F567C4 /* Operations-prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Operations-prefix.pch"; path = "source/Operations-prefix.pch"; sourceTree = "<group>"; };
 		CFF53B8C1EE24F9E00F567C4 /* Job.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Job.h; path = include/Operations/Job.h; sourceTree = "<group>"; };
 		CFF53B8D1EE24F9E00F567C4 /* Operation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Operation.h; path = include/Operations/Operation.h; sourceTree = "<group>"; };
@@ -327,11 +326,6 @@
 		CFF53BAD1EEA840600F567C4 /* Statistics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Statistics.cpp; path = source/Statistics.cpp; sourceTree = "<group>"; };
 		CFF53BCC1EF3913B00F567C4 /* Progress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Progress.cpp; path = source/Progress.cpp; sourceTree = "<group>"; };
 		CFF53BCD1EF3913B00F567C4 /* Progress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Progress.h; path = source/Progress.h; sourceTree = "<group>"; };
-		CFFA945D1F4539E50035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
-		CFFA948B1F453D960035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = ../Utility/build/Debug/libUtility.dylib; sourceTree = "<group>"; };
-		CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libRoutedIO.dylib; path = ../RoutedIO/build/Debug/libRoutedIO.dylib; sourceTree = "<group>"; };
-		CFFA94E11F45448A0035E606 /* libVFS.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libVFS.dylib; path = ../VFS/build/Debug/libVFS.dylib; sourceTree = "<group>"; };
-		CFFA950A1F456FD80035E606 /* libVFS.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libVFS.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libVFS.dylib"; sourceTree = "<group>"; };
 		CFFA953F1F4C0C390035E606 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AttrsChangingDialog.xib; sourceTree = "<group>"; };
 		CFFA95441F4C17CC0035E606 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Info-TestsPlist.strings"; sourceTree = "<group>"; };
 		CFFA95461F4C17CD0035E606 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/AttrsChangingDialog.strings; sourceTree = "<group>"; };
@@ -345,10 +339,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFFA94A11F45418D0035E606 /* libRoutedIO.dylib in Frameworks */,
-				CFFA945E1F4539E50035E606 /* libHabanero.dylib in Frameworks */,
-				CFFA94E21F45448A0035E606 /* libVFS.dylib in Frameworks */,
-				CFFA948C1F453D960035E606 /* libUtility.dylib in Frameworks */,
+				CFBEF90A1F67F0AF00C63816 /* libVFS.dylib in Frameworks */,
+				CFBEF9021F67E56A00C63816 /* libHabanero.dylib in Frameworks */,
+				CFBEF9031F67E56A00C63816 /* libRoutedIO.dylib in Frameworks */,
+				CFBEF9041F67E56A00C63816 /* libUtility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,7 +350,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFFA950B1F456FD80035E606 /* libVFS.dylib in Frameworks */,
 				CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -587,15 +580,10 @@
 		CFF53B711EDD401900F567C4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CFFA950A1F456FD80035E606 /* libVFS.dylib */,
-				CFFA94E11F45448A0035E606 /* libVFS.dylib */,
-				CFFA94A01F45418D0035E606 /* libRoutedIO.dylib */,
-				CFFA948B1F453D960035E606 /* libUtility.dylib */,
-				CFFA945D1F4539E50035E606 /* libHabanero.dylib */,
-				CFC4F9481F0BB94C0000B3EE /* libHabanero.a */,
-				CFC4F9461F0BB9470000B3EE /* libUtility.a */,
-				CFC4F9441F0BB93A0000B3EE /* libRoutedIO.a */,
-				CFF53B851EE1544B00F567C4 /* libVFS.a */,
+				CFBEF9061F67E56A00C63816 /* libHabanero.dylib */,
+				CFBEF9071F67E56A00C63816 /* libRoutedIO.dylib */,
+				CFBEF9081F67E56A00C63816 /* libUtility.dylib */,
+				CFBEF9091F67E56A00C63816 /* libVFS.dylib */,
 				CFF53B721EDD401900F567C4 /* Cocoa.framework */,
 			);
 			name = Frameworks;
@@ -1089,7 +1077,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1102,20 +1089,22 @@
 					"$(PROJECT_DIR)/../Utility/include",
 					"$(PROJECT_DIR)/../RoutedIO/include",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include",
+					"$(PROJECT_DIR)/../3rd_Party/boost/include",
 					"$(PROJECT_DIR)/../Files/3rd_party/built/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/../3rd_Party/boost/built",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
+					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-larchive",
-					"-lboost_system",
-					"-lboost_filesystem",
+					"-lboost_system-mt",
+					"-lboost_filesystem-mt",
 					"-lz",
 					"-lssl",
 					"-lcrypto",
@@ -1188,7 +1177,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "source/Operations-prefix.pch";
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -1201,19 +1189,21 @@
 					"$(PROJECT_DIR)/../Utility/include",
 					"$(PROJECT_DIR)/../RoutedIO/include",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/include",
+					"$(PROJECT_DIR)/../3rd_Party/boost/include",
 					"$(PROJECT_DIR)/../Files/3rd_party/built/include",
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
-					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
+					"$(PROJECT_DIR)/../3rd_Party/boost/built",
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
+					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"-larchive",
-					"-lboost_system",
-					"-lboost_filesystem",
+					"-lboost_system-mt",
+					"-lboost_filesystem-mt",
 					"-lz",
 					"-lssl",
 					"-lcrypto",

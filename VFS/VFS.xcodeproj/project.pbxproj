@@ -815,7 +815,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -833,6 +832,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libcurl/include/",
+					"$(PROJECT_DIR)/../3rd_Party/boost/include/",
 					"$(PROJECT_DIR)/../Files/3rd_party/built/include/",
 					"$(PROJECT_DIR)/include",
 				);
@@ -843,6 +843,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/built",
 					"$(PROJECT_DIR)/../3rd_Party/libcurl/built",
+					"$(PROJECT_DIR)/../3rd_Party/boost/built",
 					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
@@ -850,8 +851,8 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-larchive",
-					"-lboost_system",
-					"-lboost_filesystem",
+					"-lboost_system-mt",
+					"-lboost_filesystem-mt",
 					"-lz",
 					"-lssl",
 					"-lcrypto",
@@ -907,7 +908,6 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "source/VFS-prefix.pch";
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -925,6 +925,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/include/",
 					"$(PROJECT_DIR)/../3rd_Party/libcurl/include/",
+					"$(PROJECT_DIR)/../3rd_Party/boost/include/",
 					"$(PROJECT_DIR)/../Files/3rd_party/built/include/",
 					"$(PROJECT_DIR)/include",
 				);
@@ -935,14 +936,15 @@
 					"$(PROJECT_DIR)/../3rd_Party/unrar/built",
 					"$(PROJECT_DIR)/../3rd_Party/pugixml/built",
 					"$(PROJECT_DIR)/../3rd_Party/libcurl/built",
+					"$(PROJECT_DIR)/../3rd_Party/boost/built",
 					"$(PROJECT_DIR)/../Files/3rd_party/built/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"-larchive",
-					"-lboost_system",
-					"-lboost_filesystem",
+					"-lboost_system-mt",
+					"-lboost_filesystem-mt",
 					"-lz",
 					"-lssl",
 					"-lcrypto",
@@ -966,7 +968,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/";
 				EXECUTABLE_PREFIX = lib;
 				INSTALL_PATH = "@executable_path/../Frameworks/";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
@@ -979,7 +981,7 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/";
 				EXECUTABLE_PREFIX = lib;
 				INSTALL_PATH = "@executable_path/../Frameworks/";
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";

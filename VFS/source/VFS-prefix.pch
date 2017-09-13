@@ -63,8 +63,7 @@
     #include <experimental/optional>
     using namespace std::experimental;
 
-    // TODO: remove absolute path!
-    #include "../../Files/3rd_party/built/include/boost/filesystem.hpp"
+    #include <boost/filesystem.hpp>
     using boost::filesystem::path;
 
     #include <Utility/StringExtras.h>

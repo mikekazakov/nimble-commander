@@ -98,26 +98,29 @@ vector<short> FontGeometryInfo::CalculateStringsWidths( const vector<CFStringRef
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0);
     for( auto r: chunks )
         dispatch_group_async(group, queue, [&, r]{
-            CFMutableStringRef storage = CFStringCreateMutable(NULL, r.length * 100);
+            const auto storage = CFStringCreateMutable(NULL, r.length * 100);
             for( auto i = (int)r.location; i < r.location + r.length; ++i ) {
                 CFStringAppend(storage, _strings[i]);
                 CFStringAppend(storage, CFSTR("\n"));
             }
             
             const auto storage_length = CFStringGetLength(storage);
-            CFAttributedStringRef stringRef = CFAttributedStringCreate(NULL, storage, (CFDictionaryRef)attrs);
-            CTFramesetterRef framesetterRef = CTFramesetterCreateWithAttributedString(stringRef);
-            CTFrameRef frameRef = CTFramesetterCreateFrame(framesetterRef, CFRangeMake(0, storage_length), path, NULL);
-            NSArray *lines = (__bridge NSArray*)CTFrameGetLines(frameRef);
+            const auto attr_string = CFAttributedStringCreate(NULL, storage, (CFDictionaryRef)attrs);
+            const auto framesetter = CTFramesetterCreateWithAttributedString(attr_string);
+            const auto frame = CTFramesetterCreateFrame(framesetter,
+                                                        CFRangeMake(0, storage_length),
+                                                        path,
+                                                        NULL);
+            NSArray *lines = (__bridge NSArray*)CTFrameGetLines(frame);
             int i = 0;
             for( id item in lines ) {
                 CTLineRef line = (__bridge CTLineRef)item;
                 double lineWidth = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
                 widths[ r.location + i++ ] = (short)floor( lineWidth + 0.5 );
             }
-            CFRelease(frameRef);
-            CFRelease(framesetterRef);
-            CFRelease(stringRef);
+            CFRelease(frame);
+            CFRelease(framesetter);
+            CFRelease(attr_string);
             CFRelease(storage);
         });
     dispatch_group_wait(group, DISPATCH_TIME_FOREVER);

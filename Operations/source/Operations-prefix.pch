@@ -63,12 +63,8 @@
     #include <experimental/optional>
     using namespace std::experimental;
 
-//    #include "../../Files/3rd_party/any.hpp"
-//    using linb::any;
-//    using linb::any_cast;
 
-    // TODO: remove absolute path!
-    #include "../../Files/3rd_party/built/include/boost/filesystem.hpp"
+    #include <boost/filesystem.hpp>
     using boost::filesystem::path;
 
     #include <Utility/StringExtras.h>

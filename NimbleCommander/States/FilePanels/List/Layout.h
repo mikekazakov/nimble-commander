@@ -1,5 +1,5 @@
 #pragma once
-#include "../../../Files/3rd_party/built/include/boost/container/static_vector.hpp"
+#include <boost/container/static_vector.hpp>
 
 enum class PanelListViewColumns : signed char
 {

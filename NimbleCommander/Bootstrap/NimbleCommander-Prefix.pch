@@ -47,10 +47,10 @@
     #include <Habanero/mach_time.h>
     #include <Habanero/spinlock.h>
 
-    #include "../../Files/3rd_party/built/include/boost/filesystem.hpp"
+    #include <boost/filesystem.hpp>
     using boost::filesystem::path;
 
-    #include "../../Files/3rd_party/built/include/boost/logic/tribool.hpp"
+    #include <boost/logic/tribool.hpp>
     using boost::logic::tribool;
     using boost::logic::indeterminate;
 

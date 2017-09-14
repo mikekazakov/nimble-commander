@@ -45,7 +45,7 @@ int BatchRenaming::OnRenameError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::RenameErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to rename an item", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
@@ -56,6 +56,8 @@ int BatchRenaming::OnRenameError(int _err, const string &_path, VFSHost &_vfs)
         m_SkipAll = true;
         return (int)Callbacks::RenameErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry  )
+        return (int)Callbacks::RenameErrorResolution::Retry;
     else
         return (int)Callbacks::RenameErrorResolution::Stop;
 }

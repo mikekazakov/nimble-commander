@@ -7,7 +7,7 @@ namespace nc::ops {
 
 struct BatchRenamingJobCallbacks
 {
-    enum class RenameErrorResolution { Stop, Skip };
+    enum class RenameErrorResolution { Stop, Skip, Retry };
     function< RenameErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnRenameError =
     [](int _err, const string &_path, VFSHost &_vfs){ return RenameErrorResolution::Stop; };

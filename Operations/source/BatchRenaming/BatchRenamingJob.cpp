@@ -32,27 +32,36 @@ void BatchRenamingJob::Perform()
 
 void BatchRenamingJob::Rename( const string &_src, const string &_dst )
 {
-    if( _src == _dst )
+    if( _src == _dst ) {
+        Statistics().CommitProcessed(Statistics::SourceType::Items, 1);    
         return;
-    
-    const auto dst_exists = m_VFS->Exists( _dst.c_str() );
-    
-    int rc = VFSError::Ok;
-    if( dst_exists && LowercaseEqual(_src, _dst) == false )
-        rc = VFSError::FromErrno(EEXIST);
-    else
-        rc = m_VFS->Rename( _src.c_str(), _dst.c_str() );
-    
-    if( rc == VFSError::Ok ) {
-        Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
     }
-    else {
-        const auto r = m_OnRenameError(rc, _dst, *m_VFS);
-        if( r == RenameErrorResolution::Skip )
-            Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+    
+    while( true ) {
+        const auto dst_exists = m_VFS->Exists( _dst.c_str() );
+        
+        int rc = VFSError::Ok;
+        if( dst_exists && LowercaseEqual(_src, _dst) == false )
+            rc = VFSError::FromErrno(EEXIST);
         else
-            Stop();
+            rc = m_VFS->Rename( _src.c_str(), _dst.c_str() );
+        
+        if( rc == VFSError::Ok )
+            break;
+        
+        switch( m_OnRenameError(rc, _dst, *m_VFS) ) {
+            case RenameErrorResolution::Skip:
+                Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                return;
+            case RenameErrorResolution::Stop:
+                Stop();
+                return;
+            case RenameErrorResolution::Retry:
+                continue;
+        }
     }
+    
+    Statistics().CommitProcessed(Statistics::SourceType::Items, 1);
 }
 
 }

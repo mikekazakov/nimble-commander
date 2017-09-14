@@ -2,9 +2,10 @@
 
 #include <stdint.h>
 #include <string>
-#include <string_view>
+#include <experimental/string_view>
 
 using namespace std;
+using namespace std::experimental;
 
 uint32_t HexadecimalColorStringToRGBA( string_view _string ) noexcept;
 void HexadecimalColorRGBAToString( uint32_t _rgba, char _string[10] ) noexcept;

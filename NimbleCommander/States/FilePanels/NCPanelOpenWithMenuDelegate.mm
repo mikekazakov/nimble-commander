@@ -104,8 +104,8 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
 
 - (BOOL)menuHasKeyEquivalent:(NSMenu*)menu
                     forEvent:(NSEvent*)event
-                      target:(__nullable id* _Nonnull)target
-                      action:(__nullable SEL* _Nonnull)action
+                      target:(__nullable id* _Nullable)target
+                      action:(__nullable SEL* _Nullable)action
 {
     return false;
 }

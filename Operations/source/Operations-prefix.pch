@@ -50,7 +50,7 @@
     #include <functional>
     #include <future>
     #include <random>
-    #include <string_view>
+    #include <experimental/string_view>
 
     #include <Habanero/dispatch_cpp.h>
     #include <Habanero/mach_time.h>
@@ -59,10 +59,12 @@
     using namespace std;
     using namespace std::chrono;
 
-    #include <experimental/any>
     #include <experimental/optional>
     using namespace std::experimental;
 
+    #include <any.hpp>
+    using linb::any;
+    using linb::any_cast;
 
     #include <boost/filesystem.hpp>
     using boost::filesystem::path;

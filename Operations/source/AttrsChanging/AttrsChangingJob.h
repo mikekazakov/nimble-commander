@@ -9,27 +9,27 @@ namespace nc::ops {
 
 struct AttrsChangingJobCallbacks
 {
-    enum class SourceAccessErrorResolution { Stop, Skip };
+    enum class SourceAccessErrorResolution { Stop, Skip, Retry };
     function< SourceAccessErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnSourceAccessError =
     [](int _err, const string &_path,VFSHost &_vfs){ return SourceAccessErrorResolution::Stop; };
 
-    enum class ChmodErrorResolution { Stop, Skip };
+    enum class ChmodErrorResolution { Stop, Skip, Retry };
     function< ChmodErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnChmodError =
     [](int _err, const string &_path,VFSHost &_vfs){ return ChmodErrorResolution::Stop; };
 
-    enum class ChownErrorResolution { Stop, Skip };
+    enum class ChownErrorResolution { Stop, Skip, Retry };
     function< ChownErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnChownError =
     [](int _err, const string &_path,VFSHost &_vfs){ return ChownErrorResolution::Stop; };
 
-    enum class FlagsErrorResolution { Stop, Skip };
+    enum class FlagsErrorResolution { Stop, Skip, Retry };
     function< FlagsErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnFlagsError =
     [](int _err, const string &_path,VFSHost &_vfs){ return FlagsErrorResolution::Stop; };
 
-    enum class TimesErrorResolution { Stop, Skip };
+    enum class TimesErrorResolution { Stop, Skip, Retry };
     function< TimesErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_OnTimesError =
     [](int _err, const string &_path,VFSHost &_vfs){ return TimesErrorResolution::Stop; };

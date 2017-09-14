@@ -49,7 +49,7 @@ int AttrsChanging::OnSourceAccessError(int _err, const string &_path, VFSHost &_
             (int)Callbacks::SourceAccessErrorResolution::Stop;
     const auto ctx = make_shared<AsyncDialogResponse>();
     
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to access an item", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
@@ -60,6 +60,8 @@ int AttrsChanging::OnSourceAccessError(int _err, const string &_path, VFSHost &_
         m_SkipAll = true;
         return (int)Callbacks::SourceAccessErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::SourceAccessErrorResolution::Retry;
     else
         return (int)Callbacks::SourceAccessErrorResolution::Stop;
 }
@@ -72,7 +74,7 @@ int AttrsChanging::OnChmodError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::ChmodErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to perform chmod", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
@@ -83,10 +85,11 @@ int AttrsChanging::OnChmodError(int _err, const string &_path, VFSHost &_vfs)
         m_SkipAll = true;
         return (int)Callbacks::ChmodErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::ChmodErrorResolution::Retry;
     else
         return (int)Callbacks::ChmodErrorResolution::Stop;
 }
-
 
 int AttrsChanging::OnChownError(int _err, const string &_path, VFSHost &_vfs)
 {
@@ -96,7 +99,7 @@ int AttrsChanging::OnChownError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::ChownErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to perform chown", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
@@ -107,6 +110,8 @@ int AttrsChanging::OnChownError(int _err, const string &_path, VFSHost &_vfs)
         m_SkipAll = true;
         return (int)Callbacks::ChownErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::ChownErrorResolution::Retry;
     else
         return (int)Callbacks::ChownErrorResolution::Stop;
 }
@@ -119,7 +124,7 @@ int AttrsChanging::OnFlagsError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::FlagsErrorResolution::Stop;
             
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to perform chflags", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
@@ -130,9 +135,10 @@ int AttrsChanging::OnFlagsError(int _err, const string &_path, VFSHost &_vfs)
         m_SkipAll = true;
         return (int)Callbacks::FlagsErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::FlagsErrorResolution::Retry;
     else
         return (int)Callbacks::FlagsErrorResolution::Stop;
-
 }
 
 int AttrsChanging::OnTimesError(int _err, const string &_path, VFSHost &_vfs)
@@ -143,7 +149,7 @@ int AttrsChanging::OnTimesError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::TimesErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to set file time", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
@@ -154,6 +160,8 @@ int AttrsChanging::OnTimesError(int _err, const string &_path, VFSHost &_vfs)
         m_SkipAll = true;
         return (int)Callbacks::TimesErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::TimesErrorResolution::Retry;
     else
         return (int)Callbacks::TimesErrorResolution::Stop;
 }

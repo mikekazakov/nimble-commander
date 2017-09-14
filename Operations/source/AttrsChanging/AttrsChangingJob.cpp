@@ -58,11 +58,15 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
     const auto path = item.Path();
     auto &vfs = *item.Host();
     VFSStat st;
-    const auto stat_rc = vfs.Stat(path.c_str(), st, 0);
-    if( stat_rc != VFSError::Ok ) {
-        if( m_OnSourceAccessError(stat_rc, path, vfs) == SourceAccessErrorResolution::Stop )
-            Stop();
-        return;
+    while( true ) {
+        const auto stat_rc = vfs.Stat(path.c_str(), st, 0);
+        if( stat_rc == VFSError::Ok )
+            break;
+        switch( m_OnSourceAccessError(stat_rc, path, vfs) ) {
+            case SourceAccessErrorResolution::Stop: Stop(); return;
+            case SourceAccessErrorResolution::Skip: return;
+            case SourceAccessErrorResolution::Retry: continue;
+        }
     }
 
     Meta m;
@@ -75,15 +79,21 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
     
     if( m_Command.apply_to_subdirs && item.IsDir() ) {
         vector<VFSDirEnt> dir_entries;
-        const auto list_rc = vfs.IterateDirectoryListing(path.c_str(), [&](const VFSDirEnt &_entry){
-            dir_entries.emplace_back(_entry);
-            return true;
-        });
-        if( list_rc != VFSError::Ok ) {
-            if( m_OnSourceAccessError(list_rc, path, vfs) == SourceAccessErrorResolution::Stop )
-                Stop();
-            return;
+        while( true ) {
+            const auto callback = [&](const VFSDirEnt &_entry){
+                dir_entries.emplace_back(_entry);
+                return true;
+            };
+            const auto list_rc = vfs.IterateDirectoryListing(path.c_str(), callback);
+            if( list_rc == VFSError::Ok )
+                break;
+            switch( m_OnSourceAccessError(list_rc, path, vfs) ) {
+                case SourceAccessErrorResolution::Stop: Stop(); return;
+                case SourceAccessErrorResolution::Skip: return;
+                case SourceAccessErrorResolution::Retry: continue;
+            }
         }
+        
         const auto prefix = &m_Filenames.back();
         for( auto &dirent: dir_entries )
             ScanItem(path + "/" + dirent.name, dirent.name, _origin_item, prefix);
@@ -99,11 +109,15 @@ void AttrsChangingJob::ScanItem(const string &_full_path,
     auto &vfs = *item.Host();
 
     VFSStat st;
-    const auto stat_rc = vfs.Stat(_full_path.c_str(), st, 0);
-    if( stat_rc != VFSError::Ok ) {
-        if( m_OnSourceAccessError(stat_rc, _full_path, vfs) == SourceAccessErrorResolution::Stop )
-            Stop();
-        return;
+    while( true ) {
+        const auto stat_rc = vfs.Stat(_full_path.c_str(), st, 0);
+        if( stat_rc == VFSError::Ok )
+            break;
+        switch( m_OnSourceAccessError(stat_rc, _full_path, vfs) ) {
+            case SourceAccessErrorResolution::Stop: Stop(); return;
+            case SourceAccessErrorResolution::Skip: return;
+            case SourceAccessErrorResolution::Retry: continue;
+        }
     }
 
     Meta m;
@@ -116,15 +130,19 @@ void AttrsChangingJob::ScanItem(const string &_full_path,
 
     if( m_Command.apply_to_subdirs && S_ISDIR(st.mode) ) {
         vector<VFSDirEnt> dir_entries;
-        const auto list_rc = vfs.IterateDirectoryListing(_full_path.c_str(),
-                                                         [&](const VFSDirEnt &_entry){
-            dir_entries.emplace_back(_entry);
-            return true;
-        });
-         if( list_rc != VFSError::Ok ) {
-            if( m_OnSourceAccessError(list_rc, _full_path, vfs) == SourceAccessErrorResolution::Stop )
-                Stop();
-            return;
+        while( true ) {
+            const auto callback = [&](const VFSDirEnt &_entry){
+                dir_entries.emplace_back(_entry);
+                return true;
+            };
+            const auto list_rc = vfs.IterateDirectoryListing(_full_path.c_str(), callback);
+            if( list_rc == VFSError::Ok )
+                break;
+            switch( m_OnSourceAccessError(list_rc, _full_path, vfs) ) {
+                case SourceAccessErrorResolution::Stop: Stop(); return;
+                case SourceAccessErrorResolution::Skip: return;
+                case SourceAccessErrorResolution::Retry: continue;
+            }
         }
         const auto prefix = &m_Filenames.back();
         for( auto &dirent: dir_entries )
@@ -178,15 +196,19 @@ bool AttrsChangingJob::ChmodSingleItem( const string &_path, VFSHost &_vfs, cons
     if( mode == _stat.mode )
         return true;
     
-    const auto chmod_rc = _vfs.SetPermissions(_path.c_str(), mode);
-    if( chmod_rc != VFSError::Ok ) {
-        const auto resolution = m_OnChmodError(chmod_rc, _path, _vfs);
-        if( resolution == ChmodErrorResolution::Stop )
-            Stop();
-        if( resolution == ChmodErrorResolution::Skip )
-            Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
-        return false;
+    while( true ) {
+        const auto chmod_rc = _vfs.SetPermissions(_path.c_str(), mode);
+        if( chmod_rc == VFSError::Ok )
+            break;
+        switch( m_OnChmodError(chmod_rc, _path, _vfs) ) {
+            case ChmodErrorResolution::Stop: Stop(); return false;
+            case ChmodErrorResolution::Skip:
+                Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                return false;
+            case ChmodErrorResolution::Retry: continue;
+        }
     }
+    
     return true;
 }
 
@@ -197,15 +219,19 @@ bool AttrsChangingJob::ChownSingleItem( const string &_path, VFSHost &_vfs, cons
     if( new_uid == _stat.uid && new_gid == _stat.gid )
         return true;
     
-    const auto chown_rc = _vfs.SetOwnership(_path.c_str(), new_uid, new_gid);
-    if( chown_rc != VFSError::Ok ) {
-        const auto resolution = m_OnChownError(chown_rc, _path, _vfs);
-        if( resolution == ChownErrorResolution::Stop )
-            Stop();
-        if( resolution == ChownErrorResolution::Skip )
-            Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
-        return false;
+    while( true ) {
+        const auto chown_rc = _vfs.SetOwnership(_path.c_str(), new_uid, new_gid);
+        if( chown_rc == VFSError::Ok )
+            break;
+        switch( m_OnChownError(chown_rc, _path, _vfs) ) {
+            case ChownErrorResolution::Stop: Stop(); return false;
+            case ChownErrorResolution::Skip:
+                Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                return false;
+            case ChownErrorResolution::Retry: continue;
+        }
     }
+    
     return true;
 }
 
@@ -216,33 +242,41 @@ bool AttrsChangingJob::ChflagSingleItem( const string &_path, VFSHost &_vfs, con
     if( flags == _stat.flags )
         return true;
     
-    const auto chflags_rc = _vfs.SetFlags(_path.c_str(), flags);
-    if( chflags_rc != VFSError::Ok ) {
-        const auto resolution = m_OnFlagsError(chflags_rc, _path, _vfs);
-        if( resolution == FlagsErrorResolution::Stop )
-            Stop();
-        if( resolution == FlagsErrorResolution::Skip )
-            Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
-        return false;
+    while( true ) {
+        const auto chflags_rc = _vfs.SetFlags(_path.c_str(), flags);
+        if( chflags_rc == VFSError::Ok )
+            break;
+        switch( m_OnFlagsError(chflags_rc, _path, _vfs) ) {
+            case FlagsErrorResolution::Stop: Stop(); return false;
+            case FlagsErrorResolution::Skip:
+                Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                return false;
+            case FlagsErrorResolution::Retry: continue;
+        }
     }
+
     return true;
 }
 
 bool AttrsChangingJob::ChtimesSingleItem( const string &_path, VFSHost &_vfs, const VFSStat &_stat )
 {
-    const auto set_times_rc = _vfs.SetTimes(_path.c_str(),
-                                            m_Command.times->btime,
-                                            m_Command.times->mtime,
-                                            m_Command.times->ctime,
-                                            m_Command.times->atime);
-    if( set_times_rc != VFSError::Ok ) {
-        const auto resolution = m_OnTimesError(set_times_rc, _path, _vfs);
-        if( resolution == TimesErrorResolution::Stop )
-            Stop();
-        if( resolution == TimesErrorResolution::Skip )
-            Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
-        return false;
+    while( true ) {
+        const auto set_times_rc = _vfs.SetTimes(_path.c_str(),
+                                                m_Command.times->btime,
+                                                m_Command.times->mtime,
+                                                m_Command.times->ctime,
+                                                m_Command.times->atime);
+        if( set_times_rc == VFSError::Ok )
+            break;
+        switch( m_OnTimesError(set_times_rc, _path, _vfs) ) {
+            case TimesErrorResolution::Stop: Stop(); return false;
+            case TimesErrorResolution::Skip:
+                Statistics().CommitSkipped(Statistics::SourceType::Items, 1);
+                return false;
+            case TimesErrorResolution::Retry: continue;
+        }
     }
+
     return true;
 }
 

@@ -209,8 +209,11 @@ void CompressionJob::ProcessDirectoryItem(const chained_strings::node &_node, in
     });
     archive_entry_set_pathname(entry, itemname.c_str());
     archive_entry_copy_stat(entry, vfs_stat);
-    archive_write_header(m_Archive, entry);
-    // TODO: error handling
+    const auto head_write_rc = archive_write_header(m_Archive, entry);
+    if( head_write_rc < 0 ) {
+        m_TargetWriteError(m_TargetFile->LastError(), m_TargetArchivePath, *m_DstVFS);
+        Stop();
+    }
     
     VFSFilePtr src_file;
     vfs.CreateFile(source_path.c_str(), src_file);
@@ -261,8 +264,12 @@ void CompressionJob::ProcessRegularItem(const chained_strings::node &_node, int 
     
     archive_entry_set_pathname(entry, itemname.c_str());
     archive_entry_copy_stat(entry, stat);
-    archive_write_header(m_Archive, entry);
-        
+    const auto head_write_rc = archive_write_header(m_Archive, entry);
+    if( head_write_rc < 0 ) {
+        m_TargetWriteError(m_TargetFile->LastError(), m_TargetArchivePath, *m_DstVFS);
+        Stop();
+    }
+    
     int buf_sz = 256*1024; // Why 256Kb?
     char buf[buf_sz];
     ssize_t source_read_rc;
@@ -270,37 +277,30 @@ void CompressionJob::ProcessRegularItem(const chained_strings::node &_node, int 
         if( BlockIfPaused(); IsStopped() )
             return;
         
-        ssize_t la_ret = archive_write_data(m_Archive, buf, source_read_rc);
-        assert(la_ret == source_read_rc || la_ret < 0); // currently no cycle here, may need it in future
-        // TODO: remove this assert!!!
+        ssize_t to_write = source_read_rc,
+                la_rc = 0;
+        do {
+            la_rc = archive_write_data(m_Archive, buf, to_write);
+            if( la_rc >= 0 )
+                to_write -= la_rc;
+            else
+                break;
+        } while( to_write > 0 );
         
-        
-        if( la_ret < 0 ) { // some error on write has occured
-            // TODO: handle somehow
+        if( la_rc < 0 ) {
+            m_TargetWriteError(m_TargetFile->LastError(), m_TargetArchivePath, *m_DstVFS);
             Stop();
             return;
-            
-            // assume that there's I/O problem with target VFS file - say about it
-            //                if(m_SkipAll) return;
-            //                int result = m_OnCantWriteArchive(m_TargetFile->LastError());
-            //                if(result == OperationDialogResult::Retry) goto retry_la_write;
-            //                if(result == OperationDialogResult::Skip) return;
-            //                if(result == OperationDialogResult::SkipAll) {m_SkipAll = true; return;}
-            //                if(result == OperationDialogResult::Stop) { RequestStop(); return; }
         }
-            
-            // update statistics
         
         Statistics().CommitProcessed(Statistics::SourceType::Bytes, source_read_rc);
-//            m_TotalBytesProcessed += vfs_read_ret;
-//            m_Stats.SetValue(m_TotalBytesProcessed);
     }
     
-    if( source_read_rc < 0 ) {
-        m_SourceReadError((int)source_read_rc, source_path, vfs);
-        Stop();
-        return;
-    }
+    if( source_read_rc < 0 )
+        switch( m_SourceReadError((int)source_read_rc, source_path, vfs) ) {
+            case SourceReadErrorResolution::Stop: Stop(); return;
+            case SourceReadErrorResolution::Skip: return;
+        }
     
     WriteEAsIfAny(*src_file, m_Archive, itemname.c_str());
 }

@@ -33,7 +33,7 @@ private:
     string BuildTitleWithArchiveFilename() const;
     void OnTargetPathDefined();
     void OnTargetWriteError(int _err, const string &_path, VFSHost &_vfs);
-    void OnSourceReadError(int _err, const string &_path, VFSHost &_vfs);
+    int OnSourceReadError(int _err, const string &_path, VFSHost &_vfs);
     int OnSourceScanError(int _err, const string &_path, VFSHost &_vfs);
     int OnSourceAccessError(int _err, const string &_path, VFSHost &_vfs);
 

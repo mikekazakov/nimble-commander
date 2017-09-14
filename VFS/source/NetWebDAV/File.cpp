@@ -86,7 +86,7 @@ static int ErrorIfAny( CURLM *_multi )
 ssize_t File::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() || !(m_OpenFlags & VFSFlags::OF_Read) )
-        return VFSError::FromErrno(EINVAL);
+        return SetLastError(VFSError::FromErrno(EINVAL));
     if( _size == 0 || Eof() )
         return 0;
 
@@ -112,7 +112,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     }
 
     if( vfs_error != VFSError::Ok )
-        return vfs_error;
+        return SetLastError(vfs_error);
 
     const auto has_read = m_ReadBuffer.Read(_buf, _size);
     m_Pos += has_read;
@@ -125,7 +125,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
     if( !IsOpened() ||
         !(m_OpenFlags & VFSFlags::OF_Write) ||
         m_Size < 0 )
-        return VFSError::FromErrno(EINVAL);
+        return SetLastError(VFSError::FromErrno(EINVAL));
 
     m_WriteBuffer.Write(_buf, _size);
 
@@ -149,7 +149,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         vfs_error = ErrorIfAny(multi);
 
     if( vfs_error != VFSError::Ok )
-        return vfs_error;
+        return SetLastError(vfs_error);
 
     const auto has_written = _size - m_WriteBuffer.Size();
     m_Pos += has_written;
@@ -275,7 +275,7 @@ int File::Close()
     m_Pos = 0;
     m_Size = -1;
         
-    return result;
+    return SetLastError(result);
 }
 
 File::ReadParadigm File::GetReadParadigm() const
@@ -308,7 +308,7 @@ bool File::Eof() const
 int File::SetUploadSize(size_t _size)
 {
     if( !IsOpened() || m_Size >= 0 )
-        return VFSError::FromErrno(EINVAL);
+        return SetLastError(VFSError::FromErrno(EINVAL));
     
     m_Size = _size;
     

@@ -25,9 +25,10 @@ struct CompressionJobCallbacks
     m_SourceAccessError =
     [](int _err, const string &_path, VFSHost &_vfs){ return SourceAccessErrorResolution::Stop; };
 
-    function< void(int _err, const string &_path, VFSHost &_vfs) >
+    enum class SourceReadErrorResolution { Stop, Skip };
+    function< SourceReadErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
     m_SourceReadError =
-    [](int _err, const string &_path, VFSHost &_vfs){};
+    [](int _err, const string &_path, VFSHost &_vfs){ return  SourceReadErrorResolution::Stop; };
 
     function< void(int _err, const string &_path, VFSHost &_vfs) >
     m_TargetWriteError =

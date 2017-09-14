@@ -28,7 +28,7 @@ Compression::Compression(vector<VFSListingItem> _src_files,
         OnTargetWriteError(_err, _path, _vfs);
     };
     m_Job->m_SourceReadError = [this](int _err, const string &_path, VFSHost &_vfs) {
-        OnSourceReadError(_err, _path, _vfs);
+        return (Callbacks::SourceReadErrorResolution)OnSourceReadError(_err, _path, _vfs);
     };
     m_Job->m_SourceScanError = [this](int _err, const string &_path, VFSHost &_vfs) {
         return (Callbacks::SourceScanErrorResolution)OnSourceScanError(_err, _path, _vfs);
@@ -61,10 +61,27 @@ void Compression::OnTargetWriteError(int _err, const string &_path, VFSHost &_vf
                      _err, _path, _vfs);
 }
 
-void Compression::OnSourceReadError(int _err, const string &_path, VFSHost &_vfs)
+int Compression::OnSourceReadError(int _err, const string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(NSLocalizedString(@"Failed to read a file", ""),
-                     _err, _path, _vfs);
+    if( m_SkipAll || !IsInteractive() )
+        return m_SkipAll ?
+            (int)Callbacks::SourceReadErrorResolution::Skip :
+            (int)Callbacks::SourceReadErrorResolution::Stop;
+
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to read a file", ""),
+                      _err, {_vfs, _path}, ctx);
+    WaitForDialogResponse(ctx);
+
+    if( ctx->response == NSModalResponseSkip )
+        return (int)Callbacks::SourceReadErrorResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return (int)Callbacks::SourceReadErrorResolution::Skip;
+    }
+    else
+        return (int)Callbacks::SourceReadErrorResolution::Stop;
 }
 
 int Compression::OnSourceScanError(int _err, const string &_path, VFSHost &_vfs)

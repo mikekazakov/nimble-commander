@@ -78,9 +78,9 @@ static NSString *SizeStringFromEncodedSize( uint64_t _sz )
     return false;
 }
 
-- (void) viewDidMoveToWindow
+- (void) viewDidMoveToSuperview
 {
-    [super viewDidMoveToWindow];
+    [super viewDidMoveToSuperview];
     if( auto rv = objc_cast<PanelListViewRowView>(self.superview) )
         m_RowView = rv;
 }
@@ -88,10 +88,8 @@ static NSString *SizeStringFromEncodedSize( uint64_t _sz )
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    m_RowView = nil;
     m_Size = g_InvalidSize;
     m_String = @"";
-    m_TextAttributes = nil;
 }
 
 - (void) drawRect:(NSRect)dirtyRect
@@ -104,7 +102,7 @@ static NSString *SizeStringFromEncodedSize( uint64_t _sz )
             
             [rv.rowBackgroundColor set];
             NSRectFill(self.bounds);
-            DrawTableVerticalSeparatorForView(self);            
+            DrawTableVerticalSeparatorForView(self);
             
             const auto text_rect = NSMakeRect(geometry.LeftInset(),
                                               geometry.TextBaseLine(),

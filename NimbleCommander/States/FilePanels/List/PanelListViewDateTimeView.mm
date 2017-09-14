@@ -62,9 +62,9 @@
     return false;
 }
 
-- (void) viewDidMoveToWindow
+- (void)viewDidMoveToSuperview
 {
-    [super viewDidMoveToWindow];
+    [super viewDidMoveToSuperview];
     if( auto rv = objc_cast<PanelListViewRowView>(self.superview) )
         m_RowView = rv;
 }
@@ -72,7 +72,6 @@
 - (void)prepareForReuse
 {
     [super prepareForReuse];
-    m_RowView = nil;
     m_Time = 0;
     m_Line = nullptr;
     m_String = @"";

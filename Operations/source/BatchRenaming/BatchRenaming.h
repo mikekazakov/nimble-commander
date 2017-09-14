@@ -19,8 +19,6 @@ public:
 private:
     virtual Job *GetJob() noexcept override;
     int OnRenameError(int _err, const string &_path, VFSHost &_vfs);
-    void OnRenameErrorUI(int _err, const string &_path, shared_ptr<VFSHost> _vfs,
-                         shared_ptr<AsyncDialogResponse> _ctx);
     
     unique_ptr<BatchRenamingJob> m_Job;
     bool m_SkipAll = false;

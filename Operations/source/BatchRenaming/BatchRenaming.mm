@@ -45,9 +45,9 @@ int BatchRenaming::OnRenameError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::RenameErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
-        OnRenameErrorUI(_err, _path, vfs, ctx);
-    });
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+                      NSLocalizedString(@"Failed to rename an item", ""),
+                      _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
     if( ctx->response == NSModalResponseSkip  )
@@ -58,22 +58,6 @@ int BatchRenaming::OnRenameError(int _err, const string &_path, VFSHost &_vfs)
     }
     else
         return (int)Callbacks::RenameErrorResolution::Stop;
-}
-
-void BatchRenaming::OnRenameErrorUI(int _err, const string &_path, shared_ptr<VFSHost> _vfs,
-                                    shared_ptr<AsyncDialogResponse> _ctx)
-{
-    const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
-
-    sheet.style = GenericErrorDialogStyle::Caution;
-    sheet.message = NSLocalizedString(@"Failed to rename an item", "");
-    sheet.path = [NSString stringWithUTF8String:_path.c_str()];
-    sheet.errorNo = _err;
-    [sheet addAbortButton];
-    [sheet addSkipButton];
-    [sheet addSkipAllButton];
-
-    Show(sheet.window, _ctx);
 }
 
 static string Caption( const vector<string> &_paths )

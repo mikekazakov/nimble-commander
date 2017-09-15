@@ -289,7 +289,7 @@
 /* Class = "NSMenuItem"; title = "Duplicate"; ObjectID = "Geu-4j-RaR"; */
 "Geu-4j-RaR.title" = "Дублировать";
 
-/* Class = "NSMenuItem"; title = "Visit Forum"; ObjectID = "HVZ-vW-Cgv"; */
+/* Class = "NSMenuItem"; title = "Visit the Forum"; ObjectID = "HVZ-vW-Cgv"; */
 "HVZ-vW-Cgv.title" = "Посетить форум";
 
 /* Class = "NSMenuItem"; title = "Show/Hide Toolbar"; ObjectID = "I1T-dz-dM2"; */
@@ -471,6 +471,9 @@
 
 /* Class = "NSMenuItem"; title = "Connections"; ObjectID = "kWp-fQ-T0l"; */
 "kWp-fQ-T0l.title" = "Соединения";
+
+/* Class = "NSMenuItem"; title = "WebDAV Server..."; ObjectID = "lCt-r7-rIq"; */
+"lCt-r7-rIq.title" = "WebDAV серверу...";
 
 /* Class = "NSMenuItem"; title = "Favorites"; ObjectID = "lo8-qp-RcL"; */
 "lo8-qp-RcL.title" = "Избранные";

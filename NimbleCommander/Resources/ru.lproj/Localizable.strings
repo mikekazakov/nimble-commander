@@ -31,12 +31,6 @@
 /* Menu item option in internal viewer search */
 "Case-sensitive search" = "Поиск с учетом регистра";
 
-/* Title for file attributes sheet, multiple items */
-"Change file attributes for %@ selected items" = "Изменить файловые атрибуты для %@ выбранных объектов";
-
-/* Title for file attributes sheet, single item */
-"Change file attributes for “%@”" = "Изменить файловые атрибуты для “%@”";
-
 /* Menu item title for check if any Nimble Commander updates are available */
 "Check for Updates..." = "Проверить наличие обновлений...";
 
@@ -65,15 +59,6 @@
 /* Connections popup menu title in file panels */
 "Connections" = "Соединения";
 
-/* Copy files sheet prompt, copying many files */
-"Copy %@ items to:" = "Копировать %@ объектов в:";
-
-/* Copy files sheet prompt, copying single file */
-"Copy “%@” to:" = "Копировать “%@” в:";
-
-/* Menu item title in file deletion sheet */
-"Delete Permanently" = "Удалить необратимо";
-
 /* Title for deselection by mask popup */
 "Deselect files by mask:" = "Снять выделение по маске:";
 
@@ -82,12 +67,6 @@
 
 /* Asking to close window with processes running */
 "Do you want to close this window?" = "Вы хотите закрыть это окно?";
-
-/* Asking user to delete multiple files */
-"Do you want to delete %@ items?" = "Вы хотите удалить %@ объектов?";
-
-/* Asking user to delete a file */
-"Do you want to delete “%@”?" = "Вы хотите удалить “%@”?";
 
 /* No comment provided by engineer. */
 "Don't send" = "Не отправлять";
@@ -165,7 +144,43 @@
 "File Panels ▶ Scroll to the Previous Page" = "Файловые панели ▶ Прокрутить к предыдущей странице";
 
 /* No comment provided by engineer. */
+"File Panels ▶ Show Next Tab" = "Файловые панели ▶ Показать предыдущую вкладку";
+
+/* No comment provided by engineer. */
 "File Panels ▶ Show Preview" = "Файловые панели ▶ Показать быстрый просмотр";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Previous Tab" = "Файловые панели ▶ Показать закладку вкладку";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Tab №1" = "Файловые панели ▶ Показать вкладку №1";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Tab №2" = "Файловые панели ▶ Показать вкладку №2";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Tab №3" = "Файловые панели ▶ Показать вкладку №3";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Tab №4" = "Файловые панели ▶ Показать вкладку №4";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Tab №5" = "Файловые панели ▶ Показать вкладку №5";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Tab №6" = "Файловые панели ▶ Показать вкладку №6";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Tab №7" = "Файловые панели ▶ Показать вкладку №7";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Tab №8" = "Файловые панели ▶ Показать вкладку №8";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Tab №9" = "Файловые панели ▶ Показать вкладку №9";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Show Tab №10" = "Файловые панели ▶ Показать вкладку №10";
 
 /* No comment provided by engineer. */
 "File Panels ▶ Toggle Selection" = "Файловые панели ▶ Изменить выделение";
@@ -218,9 +233,6 @@
 /* Brief System Information mac model label title */
 "Mac Model:" = "Модель Mac:";
 
-/* Menu item title in file deletion sheet */
-"Move to Trash" = "Переместить в Корзину";
-
 /* No comment provided by engineer. */
 "N/A" = "Н/Д";
 
@@ -250,12 +262,6 @@
 
 /* Menu item title in internal viewer search */
 "Recents" = "Последние";
-
-/* Move files sheet prompt, moving many files */
-"Rename/move %@ items to:" = "Переименовать/переместить %@ объектов в:";
-
-/* Move files sheet prompt, moving single file */
-"Rename/move “%@” to:" = "Переименовать/переместить “%@” в:";
 
 /* Showing error when connecting to SFTP server */
 "SFTP connection error:" = "Ошибка подключения SFTP:";
@@ -381,6 +387,9 @@
 /* Volumes popup menu title in file panels */
 "Volumes" = "Тома";
 
+/* Showing error when connecting to WebDAV server */
+"WebDAV connection error:" = "Ошибка подключения WebDAV:";
+
 /* Asking user to provide anonymous usage information - informative text */
 "Would you like to send anonymous usage statistics to the developer? None of your personal data would be collected." = "Хотели бы Вы отправлять разработчику анонимную статистику об использовании? Никакая личная информация о Вас не будет собираться.";
 
@@ -389,9 +398,6 @@
 
 /* Asking user for confirmation on erasing custom theme - informative text */
 "You can’t undo this action." = "Вы не сможете отменить эту операцию.";
-
-/* Combo box element available when multiple elements are selected with different values */
-"[Mixed]" = "[Разные]";
 
 /* Folders dummy string when size is not available, for English is 'Folder' */
 "__MODERNPRESENTATION_FOLDER_WORD" = "Папка";

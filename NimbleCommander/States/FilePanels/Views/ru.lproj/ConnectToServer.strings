@@ -25,6 +25,9 @@
 /* Class = "NSMenuItem"; title = "FTP Server"; ObjectID = "f3W-UC-2ji"; */
 "f3W-UC-2ji.title" = "FTP сервер";
 
+/* Class = "NSMenuItem"; title = "WebDAV Server"; ObjectID = "gyF-1f-E8G"; */
+"gyF-1f-E8G.title" = "WebDAV сервер";
+
 /* Class = "NSMenuItem"; title = "Dropbox Account"; ObjectID = "ltj-qY-kNR"; */
 "ltj-qY-kNR.title" = "Учетная запись Dropbox";
 

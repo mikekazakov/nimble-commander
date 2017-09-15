@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="17A360a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
@@ -91,7 +91,7 @@ DQ
                                     <tableViewGridLines key="gridStyleMask" vertical="YES"/>
                                     <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
                                     <tableColumns>
-                                        <tableColumn editable="NO" width="116" minWidth="40" maxWidth="1000" id="A8Z-IY-14U">
+                                        <tableColumn identifier="" editable="NO" width="116" minWidth="40" maxWidth="1000" id="A8Z-IY-14U">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Location">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -107,7 +107,7 @@ DQ
                                                 <binding destination="ehN-Ke-Ten" name="value" keyPath="arrangedObjects.location" id="cEg-3A-4Sx"/>
                                             </connections>
                                         </tableColumn>
-                                        <tableColumn editable="NO" width="100" minWidth="40" maxWidth="1000" id="dF0-bR-jEM">
+                                        <tableColumn identifier="" editable="NO" width="100" minWidth="40" maxWidth="1000" id="dF0-bR-jEM">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left" title="Filename">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -123,7 +123,7 @@ DQ
                                                 <binding destination="ehN-Ke-Ten" name="value" keyPath="arrangedObjects.filename" id="OSH-eR-KEZ"/>
                                             </connections>
                                         </tableColumn>
-                                        <tableColumn editable="NO" width="60" minWidth="60" maxWidth="60" id="kY9-vv-6NZ">
+                                        <tableColumn identifier="" editable="NO" width="60" minWidth="60" maxWidth="60" id="kY9-vv-6NZ">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Size">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -143,7 +143,7 @@ DQ
                                                 </binding>
                                             </connections>
                                         </tableColumn>
-                                        <tableColumn editable="NO" width="80" minWidth="80" maxWidth="80" id="cGo-Vw-Uqq">
+                                        <tableColumn identifier="" editable="NO" width="80" minWidth="80" maxWidth="80" id="cGo-Vw-Uqq">
                                             <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="right" title="Modify time">
                                                 <font key="font" metaFont="smallSystem"/>
                                                 <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
@@ -292,7 +292,7 @@ DQ
                             <outlet property="nextKeyView" destination="XFM-mL-fme" id="bNf-7Z-deN"/>
                         </connections>
                     </button>
-                    <box autoresizesSubviews="NO" borderType="none" title="Box" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="3im-V9-my6">
+                    <box autoresizesSubviews="NO" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="3im-V9-my6">
                         <rect key="frame" x="-3" y="489" width="628" height="209"/>
                         <view key="contentView" id="lGh-LY-EvR">
                             <rect key="frame" x="0.0" y="0.0" width="628" height="209"/>
@@ -368,7 +368,7 @@ DQ
                                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="fPn-ZK-SEq">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="menu"/>
-                                        <menu key="menu" title="OtherViews" id="10X-cZ-a2S">
+                                        <menu key="menu" id="10X-cZ-a2S">
                                             <items>
                                                 <menuItem title="≥" id="ydK-d2-gsz">
                                                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -397,7 +397,7 @@ DQ
                                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="kh9-Bc-dmG">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="menu"/>
-                                        <menu key="menu" title="OtherViews" id="8sA-yU-MON">
+                                        <menu key="menu" id="8sA-yU-MON">
                                             <items>
                                                 <menuItem title="b" id="Tt9-8O-AZV">
                                                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -440,7 +440,7 @@ DQ
                                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="s7I-69-JHa">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
-                                        <menu key="menu" title="OtherViews" id="EnK-Kt-A7e"/>
+                                        <menu key="menu" id="EnK-Kt-A7e"/>
                                     </popUpButtonCell>
                                     <connections>
                                         <action selector="onSearchSettingsUIChanged:" target="-2" id="kmK-Dp-x8i"/>

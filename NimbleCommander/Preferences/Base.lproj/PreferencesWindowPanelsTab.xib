@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="17A360a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
@@ -61,7 +61,7 @@
                                         </connections>
                                     </button>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ctP-zl-GEx">
-                                        <rect key="frame" x="119" y="294" width="122" height="17"/>
+                                        <rect key="frame" x="118" y="294" width="123" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Default paths (L/R):" id="GnB-SA-FAJ">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -232,12 +232,12 @@
                                     </textField>
                                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="HA6-nD-n3C">
                                         <rect key="frame" x="400" y="131" width="108" height="26"/>
-                                        <popUpButtonCell key="cell" type="push" title="None" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="7dI-h3-gRl" id="dvv-YB-cJl">
+                                        <popUpButtonCell key="cell" type="push" title="None" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="7dI-h3-gRl" id="dvv-YB-cJl">
                                             <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
                                             <menu key="menu" id="wMZ-nM-3uf">
                                                 <items>
-                                                    <menuItem title="None" id="7dI-h3-gRl">
+                                                    <menuItem title="None" state="on" id="7dI-h3-gRl">
                                                         <modifierMask key="keyEquivalentModifierMask"/>
                                                     </menuItem>
                                                     <menuItem title="5 seconds" tag="5" id="MYh-VM-sQ8">
@@ -749,7 +749,7 @@
                                                                 <rect key="frame" x="1" y="189" width="238" height="16"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                             </scroller>
-                                                            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="Imy-ip-pNG">
+                                                            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="NO" id="Imy-ip-pNG">
                                                                 <rect key="frame" x="224" y="17" width="15" height="102"/>
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                             </scroller>
@@ -903,7 +903,7 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <subviews>
                                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="akq-5t-0gg">
-                                        <rect key="frame" x="108" y="275" width="132" height="17"/>
+                                        <rect key="frame" x="109" y="275" width="131" height="17"/>
                                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Trim filenames at the" id="HwC-SG-gm8">
                                             <font key="font" metaFont="system"/>
                                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -1255,7 +1255,7 @@
                     </tabViewItems>
                 </tabView>
                 <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SXr-cI-gX5">
-                    <rect key="frame" x="146" y="361" width="349" height="24"/>
+                    <rect key="frame" x="137" y="361" width="366" height="24"/>
                     <segmentedCell key="cell" refusesFirstResponder="YES" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="qL1-bW-KKU">
                         <font key="font" metaFont="system"/>
                         <segments>
@@ -1270,13 +1270,13 @@
                     </connections>
                 </segmentedControl>
                 <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="XPK-Gd-7KS">
-                    <rect key="frame" x="20" y="371" width="124" height="6"/>
+                    <rect key="frame" x="20" y="371" width="115" height="6"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="2" id="2ea-BW-oig"/>
                     </constraints>
                 </box>
                 <box verticalHuggingPriority="750" boxType="separator" translatesAutoresizingMaskIntoConstraints="NO" id="b4T-s7-3po">
-                    <rect key="frame" x="497" y="371" width="123" height="6"/>
+                    <rect key="frame" x="505" y="371" width="115" height="6"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="2" id="4kf-nO-Kvl"/>
                     </constraints>

@@ -19,6 +19,9 @@
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "8sA-yU-MON"; */
 "8sA-yU-MON.title" = "";
 
+/* Class = "NSMenuItem"; title = "Files and folders"; ObjectID = "9y5-XT-tuj"; */
+"9y5-XT-tuj.title" = "Файлы и папки";
+
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "10X-cZ-a2S"; */
 "10X-cZ-a2S.title" = "";
 
@@ -36,6 +39,12 @@
 
 /* Class = "NSMenu"; title = "OtherViews"; ObjectID = "EnK-Kt-A7e"; */
 "EnK-Kt-A7e.title" = "";
+
+/* Class = "NSTextFieldCell"; title = "Search for:"; ObjectID = "HCA-wY-Kq2"; */
+"HCA-wY-Kq2.title" = "Искать:";
+
+/* Class = "NSMenuItem"; title = "Files"; ObjectID = "HFH-1O-0dG"; */
+"HFH-1O-0dG.title" = "Файлы";
 
 /* Class = "NSButtonCell"; title = "Whole phrase"; ObjectID = "HbZ-P4-Wk5"; */
 "HbZ-P4-Wk5.title" = "Фраза целиком";
@@ -58,7 +67,7 @@
 /* Class = "NSComboBoxCell"; placeholderString = "Mask like *, or *.txt, or *.txt, *.jpg"; ObjectID = "QoT-rJ-7t8"; */
 "QoT-rJ-7t8.placeholderString" = "Маска, например *, или *.txt, или *.txt, *.jpg";
 
-/* Class = "NSTextFieldCell"; title = "Search for files using mask:"; ObjectID = "R8e-FO-aEj"; */
+/* Class = "NSTextFieldCell"; title = "Search for items using mask:"; ObjectID = "R8e-FO-aEj"; */
 "R8e-FO-aEj.title" = "Искать файлы с маской:";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "ROy-iE-OqK"; */
@@ -91,14 +100,14 @@
 /* Class = "NSButtonCell"; title = "View"; ObjectID = "cjR-hz-P7N"; */
 "cjR-hz-P7N.title" = "Просмотр";
 
+/* Class = "NSMenuItem"; title = "Folders"; ObjectID = "cqA-Yt-0Rm"; */
+"cqA-Yt-0Rm.title" = "Папки";
+
 /* Class = "NSTableColumn"; headerCell.title = "Filename"; ObjectID = "dF0-bR-jEM"; */
 "dF0-bR-jEM.headerCell.title" = "Имя файла";
 
 /* Class = "NSButton"; ibShadowedToolTip = "^P"; ObjectID = "g6m-zK-tE9"; */
 "g6m-zK-tE9.ibShadowedToolTip" = "^P";
-
-/* Class = "NSButtonCell"; title = "Search for directories"; ObjectID = "ia5-oC-fH7"; */
-"ia5-oC-fH7.title" = "Искать папки";
 
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "jtt-0L-3Vf"; */
 "jtt-0L-3Vf.title" = "";

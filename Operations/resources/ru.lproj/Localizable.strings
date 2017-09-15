@@ -167,6 +167,9 @@
 "Rename/move “%@” to:" = "Переименовать/переместить “%@” в:";
 
 /* No comment provided by engineer. */
+"Retry" = "Повторить";
+
+/* No comment provided by engineer. */
 "Skip" = "Пропустить";
 
 /* No comment provided by engineer. */

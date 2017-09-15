@@ -61,7 +61,7 @@ void Copying::SetupCallbacks()
         return (С::DestinationFileWriteErrorResolution)OnDestinationFileWriteError(_1, _2, _3);
     };
     j.m_OnCantCreateDestinationRootDir = [this](int _1, const string &_2, VFSHost &_3) {
-        OnCantCreateDestinationRootDir(_1, _2, _3);
+        return (С::CantCreateDestinationRootDirResolution)OnCantCreateDestinationRootDir(_1, _2, _3);
     };
     j.m_OnCantCreateDestinationDir = [this](int _1, const string &_2, VFSHost &_3) {
         return (С::CantCreateDestinationDirResolution)OnCantCreateDestinationDir(_1, _2, _3);
@@ -195,18 +195,19 @@ int Copying::OnCantAccessSourceItem(int _err, const string &_path, VFSHost &_vfs
         return (int)Callbacks::CantAccessSourceItemResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to access a file", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
 
-    
     if( ctx->response == NSModalResponseSkip )
         return (int)Callbacks::CantAccessSourceItemResolution::Skip;
     else if( ctx->response == NSModalResponseSkipAll ) {
         m_SkipAll = true;
         return (int)Callbacks::CantAccessSourceItemResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::CantAccessSourceItemResolution::Retry;
     else
         return (int)Callbacks::CantAccessSourceItemResolution::Stop;
 }
@@ -219,7 +220,7 @@ int Copying::OnCantOpenDestinationFile(int _err, const string &_path, VFSHost &_
         return (int)Callbacks::CantOpenDestinationFileResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to open a destination file", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
@@ -230,6 +231,8 @@ int Copying::OnCantOpenDestinationFile(int _err, const string &_path, VFSHost &_
         m_SkipAll = true;
         return (int)Callbacks::CantOpenDestinationFileResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::CantOpenDestinationFileResolution::Retry;
     else
         return (int)Callbacks::CantOpenDestinationFileResolution::Stop;
 }
@@ -242,7 +245,7 @@ int Copying::OnSourceFileReadError(int _err, const string &_path, VFSHost &_vfs)
         return (int)Callbacks::SourceFileReadErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to read a source file", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
@@ -253,6 +256,8 @@ int Copying::OnSourceFileReadError(int _err, const string &_path, VFSHost &_vfs)
         m_SkipAll = true;
         return (int)Callbacks::SourceFileReadErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::SourceFileReadErrorResolution::Retry;
     else
         return (int)Callbacks::SourceFileReadErrorResolution::Stop;
 }
@@ -288,7 +293,7 @@ int Copying::OnDestinationFileWriteError(int _err, const string &_path, VFSHost 
         return (int)Callbacks::DestinationFileWriteErrorResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to write a file", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
@@ -299,14 +304,24 @@ int Copying::OnDestinationFileWriteError(int _err, const string &_path, VFSHost 
         m_SkipAll = true;
         return (int)Callbacks::DestinationFileWriteErrorResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::DestinationFileWriteErrorResolution::Retry;
     else
         return (int)Callbacks::DestinationFileWriteErrorResolution::Stop;
 }
 
-void Copying::OnCantCreateDestinationRootDir(int _vfs_error, const string &_path, VFSHost &_vfs)
+int Copying::OnCantCreateDestinationRootDir(int _err, const string &_path, VFSHost &_vfs)
 {
-    ReportHaltReason(NSLocalizedString(@"Failed to create a directory", ""),
-                     _vfs_error, _path, _vfs);
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialog(GenericDialog::AbortRetry,
+                      NSLocalizedString(@"Failed to create a directory", ""),
+                      _err, {_vfs, _path}, ctx);
+    WaitForDialogResponse(ctx);
+    
+    if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::CantCreateDestinationRootDirResolution::Retry;
+    else
+        return (int)Callbacks::CantCreateDestinationRootDirResolution::Stop;
 }
 
 int Copying::OnCantCreateDestinationDir(int _err, const string &_path, VFSHost &_vfs)
@@ -317,7 +332,7 @@ int Copying::OnCantCreateDestinationDir(int _err, const string &_path, VFSHost &
         return (int)Callbacks::CantCreateDestinationDirResolution::Stop;
     
     const auto ctx = make_shared<AsyncDialogResponse>();
-    ShowGenericDialog(GenericDialog::AbortSkipSkipAll,
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
                       NSLocalizedString(@"Failed to create a directory", ""),
                       _err, {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
@@ -328,6 +343,8 @@ int Copying::OnCantCreateDestinationDir(int _err, const string &_path, VFSHost &
         m_SkipAll = true;
         return (int)Callbacks::CantCreateDestinationDirResolution::Skip;
     }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::CantCreateDestinationDirResolution::Retry;
     else
         return (int)Callbacks::CantCreateDestinationDirResolution::Stop;
 }

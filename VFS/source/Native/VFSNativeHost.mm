@@ -335,7 +335,7 @@ int VFSNativeHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-const shared_ptr<VFSNativeHost> &VFSNativeHost::SharedHost()
+const shared_ptr<VFSNativeHost> &VFSNativeHost::SharedHost() noexcept
 {
     static auto host = make_shared<VFSNativeHost>();
     return host;

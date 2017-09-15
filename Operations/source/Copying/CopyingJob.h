@@ -15,7 +15,7 @@ namespace nc::ops {
 
 struct CopyingJobCallbacks
 {
-    enum class CantAccessSourceItemResolution { Stop, Skip };
+    enum class CantAccessSourceItemResolution { Stop, Skip, Retry };
     function<CantAccessSourceItemResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
     m_OnCantAccessSourceItem
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
@@ -33,13 +33,13 @@ struct CopyingJobCallbacks
     = [](const struct stat &_src_stat, const struct stat &_dst_stat, const string &_path)
     { return RenameDestExistsResolution::Stop; };
     
-    enum class CantOpenDestinationFileResolution { Stop, Skip };
+    enum class CantOpenDestinationFileResolution { Stop, Skip, Retry };
     function<CantOpenDestinationFileResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
     m_OnCantOpenDestinationFile
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
     { return CantOpenDestinationFileResolution::Stop; };
     
-    enum class SourceFileReadErrorResolution { Stop, Skip };
+    enum class SourceFileReadErrorResolution { Stop, Skip, Retry };
     function<SourceFileReadErrorResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
     m_OnSourceFileReadError
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
@@ -51,18 +51,19 @@ struct CopyingJobCallbacks
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
     { return DestinationFileReadErrorResolution::Stop; };
     
-    enum class DestinationFileWriteErrorResolution { Stop, Skip};
+    enum class DestinationFileWriteErrorResolution { Stop, Skip, Retry };
     function<DestinationFileWriteErrorResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
     m_OnDestinationFileWriteError
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
     { return DestinationFileWriteErrorResolution::Stop; };
 
-    function<void(int _vfs_error, const string &_path, VFSHost &_vfs)>
+    enum class CantCreateDestinationRootDirResolution { Stop, Retry };
+    function<CantCreateDestinationRootDirResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
     m_OnCantCreateDestinationRootDir
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
-    {};
+    { return CantCreateDestinationRootDirResolution::Stop; };
 
-    enum class CantCreateDestinationDirResolution { Stop, Skip };
+    enum class CantCreateDestinationDirResolution { Stop, Skip, Retry };
     function<CantCreateDestinationDirResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
     m_OnCantCreateDestinationDir
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)

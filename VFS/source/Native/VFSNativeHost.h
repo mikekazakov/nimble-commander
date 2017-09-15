@@ -90,7 +90,7 @@ public:
     
     shared_ptr<const VFSNativeHost> SharedPtr() const {return static_pointer_cast<const VFSNativeHost>(VFSHost::SharedPtr());}
     shared_ptr<VFSNativeHost> SharedPtr() {return static_pointer_cast<VFSNativeHost>(VFSHost::SharedPtr());}
-    static const shared_ptr<VFSNativeHost> &SharedHost();
+    static const shared_ptr<VFSNativeHost> &SharedHost() noexcept;
     virtual bool IsNativeFS() const noexcept override;
 private:
     

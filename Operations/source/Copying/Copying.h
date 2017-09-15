@@ -33,7 +33,7 @@ private:
     int OnSourceFileReadError(int _vfs_error, const string &_path, VFSHost &_vfs);
     int OnDestinationFileReadError(int _vfs_error, const string &_path, VFSHost &_vfs);
     int OnDestinationFileWriteError(int _vfs_error, const string &_path, VFSHost &_vfs);
-    void OnCantCreateDestinationRootDir(int _vfs_error, const string &_path, VFSHost &_vfs);
+    int OnCantCreateDestinationRootDir(int _vfs_error, const string &_path, VFSHost &_vfs);
     int OnCantCreateDestinationDir(int _vfs_error, const string &_path, VFSHost &_vfs);
     void OnFileVerificationFailed(const string &_path, VFSHost &_vfs);
 

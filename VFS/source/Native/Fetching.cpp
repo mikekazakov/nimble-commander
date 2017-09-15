@@ -64,7 +64,6 @@ int VFSNativeFetching::ReadSingleEntryAttributesByPath(
         attribute_set_t   returned;
         dev_t             dev;
         fsobj_type_t      obj_type;
-        fsobj_id_t        obj_id;
         struct timespec   crt_time;
         struct timespec   mod_time;
         struct timespec   chg_time;
@@ -73,9 +72,10 @@ int VFSNativeFetching::ReadSingleEntryAttributesByPath(
         gid_t             gid;
         u_int32_t         access;
         u_int32_t         flags;
+        u_int64_t         inode;
         struct timespec   add_time;
         off_t             file_size;
-    } __attribute__((aligned(4), packed)) attrs; // for convenience, not very used
+    } __attribute__((aligned(4), packed)) attrs;
     
     attrlist attr_list;
     memset(&attr_list, 0, sizeof(attr_list));
@@ -83,16 +83,16 @@ int VFSNativeFetching::ReadSingleEntryAttributesByPath(
     attr_list.commonattr  = ATTR_CMN_RETURNED_ATTRS |
                             ATTR_CMN_DEVID          |
                             ATTR_CMN_OBJTYPE        |
-                            ATTR_CMN_OBJPERMANENTID |
                             ATTR_CMN_CRTIME         |
                             ATTR_CMN_MODTIME        |
                             ATTR_CMN_CHGTIME        |
                             ATTR_CMN_ACCTIME        |
-                            ATTR_CMN_ADDEDTIME      |
                             ATTR_CMN_OWNERID        |
                             ATTR_CMN_GRPID          |
                             ATTR_CMN_ACCESSMASK	    |
-                            ATTR_CMN_FLAGS;
+                            ATTR_CMN_FLAGS          |
+                            ATTR_CMN_FILEID         |
+                            ATTR_CMN_ADDEDTIME;
     attr_list.fileattr    = ATTR_FILE_DATALENGTH;
     
     const int fd = _io.open(_path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK | O_CLOEXEC);
@@ -123,9 +123,6 @@ int VFSNativeFetching::ReadSingleEntryAttributesByPath(
     if( attrs.returned.commonattr & ATTR_CMN_OBJTYPE )
         params.mode = VNodeToUnixMode( attrs.obj_type );
     
-    if( attrs.returned.commonattr & ATTR_CMN_OBJPERMANENTID )
-        params.inode = attrs.obj_id.fid_objno;
-    
     if( attrs.returned.commonattr & ATTR_CMN_CRTIME )
         params.crt_time = attrs.crt_time.tv_sec;
     
@@ -154,6 +151,9 @@ int VFSNativeFetching::ReadSingleEntryAttributesByPath(
         params.add_time = attrs.add_time.tv_sec;
     else
         params.add_time = -1;
+
+    if( attrs.returned.commonattr & ATTR_CMN_FILEID )
+        params.inode = attrs.inode;
     
     if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH )
         params.size = attrs.file_size;
@@ -233,21 +233,6 @@ int VFSNativeFetching::ReadDirAttributesBulk(
         uint32_t          length;
         attribute_set_t   returned;
         uint32_t          error;
-        attrreference_t   name_info;
-        char              *name;
-        dev_t             dev;
-        fsobj_type_t      obj_type;
-        fsobj_id_t        obj_id;
-        struct timespec   crt_time;
-        struct timespec   mod_time;
-        struct timespec   chg_time;
-        struct timespec   acc_time;
-        uid_t             uid;
-        gid_t             gid;
-        u_int32_t         access;
-        u_int32_t         flags;
-        struct timespec   add_time;
-        off_t             file_size;
     } __attribute__((aligned(4), packed)); // for convenience, not very used
 
     attrlist attr_list;
@@ -258,7 +243,6 @@ int VFSNativeFetching::ReadDirAttributesBulk(
                             ATTR_CMN_ERROR          |
                             ATTR_CMN_DEVID          |    
                             ATTR_CMN_OBJTYPE        |
-                            ATTR_CMN_OBJPERMANENTID |
                             ATTR_CMN_CRTIME         |
                             ATTR_CMN_MODTIME        |
                             ATTR_CMN_CHGTIME        |
@@ -267,7 +251,8 @@ int VFSNativeFetching::ReadDirAttributesBulk(
                             ATTR_CMN_OWNERID        |
                             ATTR_CMN_GRPID          |
                             ATTR_CMN_ACCESSMASK	    |
-                            ATTR_CMN_FLAGS;
+                            ATTR_CMN_FLAGS          |
+                            ATTR_CMN_FILEID;
     attr_list.fileattr    = ATTR_FILE_DATALENGTH;
     
 
@@ -325,11 +310,6 @@ int VFSNativeFetching::ReadDirAttributesBulk(
                     field += sizeof(fsobj_type_t);
                 }
                 
-                if( attrs.returned.commonattr & ATTR_CMN_OBJPERMANENTID ) {
-                    params.inode = ((fsobj_id_t*)field)->fid_objno;
-                    field += sizeof(fsobj_id_t);
-                }
-
                 if( attrs.returned.commonattr & ATTR_CMN_CRTIME ) {
                     params.crt_time = ((timespec*)field)->tv_sec;
                     field += sizeof(timespec);
@@ -368,6 +348,11 @@ int VFSNativeFetching::ReadDirAttributesBulk(
                 if( attrs.returned.commonattr & ATTR_CMN_FLAGS ) {
                     params.flags = *(uint32_t*)field;
                     field += sizeof(u_int32_t);
+                }
+                
+                if( attrs.returned.commonattr & ATTR_CMN_FILEID ) {
+                    params.inode = *(uint64_t*)field;
+                    field += sizeof(uint64_t);
                 }
                 
                 if( attrs.returned.commonattr & ATTR_CMN_ADDEDTIME ) {

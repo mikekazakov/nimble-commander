@@ -307,13 +307,28 @@ string CopyingJob::ComposeDestinationNameForItem( int _src_item_index ) const
 // side-effects: none.
 static bool IsSingleDirectoryCaseRenaming( const CopyingOptions &_options, const vector<VFSListingItem> &_items, const VFSHostPtr& _dest_host, const VFSStat &_dest_stat )
 {
-    return  S_ISDIR(_dest_stat.mode)            &&
-            _options.docopy == false            &&
-            _items.size() == 1                  &&
-            _items.front().Host()->IsNativeFS() &&
-            _items.front().Host() == _dest_host &&
-            _items.front().IsDir()              &&
-            _items.front().Inode() == _dest_stat.inode;
+    if( !S_ISDIR(_dest_stat.mode) )
+        return false;
+
+    if( _options.docopy )
+        return false;
+
+    if( _items.size() != 1 )
+        return false;
+    
+    if( !_items.front().Host()->IsNativeFS()  )
+        return false;
+    
+    if( _items.front().Host() != _dest_host )
+        return false;
+    
+    if( !_items.front().IsDir() )
+        return false;
+    
+    if( _items.front().Inode() != _dest_stat.inode )
+        return false;
+    
+    return true;
 }
 
 CopyingJob::PathCompositionType CopyingJob::AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const

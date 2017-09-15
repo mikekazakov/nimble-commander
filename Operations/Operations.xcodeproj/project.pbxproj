@@ -1132,6 +1132,7 @@
 					QuartzCore,
 					"-framework",
 					IOKit,
+					"-lVFS",
 				);
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;
@@ -1233,6 +1234,7 @@
 					QuartzCore,
 					"-framework",
 					IOKit,
+					"-lVFS",
 				);
 				SDKROOT = macosx;
 				STRIP_INSTALLED_PRODUCT = NO;

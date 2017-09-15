@@ -28,99 +28,99 @@ using namespace nc::ops;
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"", 0); // [N
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 0 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 0 );
+            auto a = v->first;
             XCTAssert(a.direct_range &&
-                      a.direct_range.value().location == 0 &&
-                      a.direct_range.value().length == BatchRenamingScheme::Range::max_length());
+                      a.direct_range->location == 0 &&
+                      a.direct_range->length == BatchRenamingScheme::Range::max_length());
         }
     }
     
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364", 0); //[N364]
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 3 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 3 );
+            auto a = v->first;
             XCTAssert(a.direct_range &&
-                      a.direct_range.value().location == 363 &&
-                      a.direct_range.value().length == 1);
+                      a.direct_range->location == 363 &&
+                      a.direct_range->length == 1);
         }
     }
 
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364 ", 0); //[N364 ]
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 3 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 3 );
+            auto a = v->first;
             XCTAssert(a.direct_range &&
-                      a.direct_range.value().location == 363 &&
-                      a.direct_range.value().length == 1);
+                      a.direct_range->location == 363 &&
+                      a.direct_range->length == 1);
         }
     }
 
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364-365 ", 0); //[N364-365  ]
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 7 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 7 );
+            auto a = v->first;
             XCTAssert(a.direct_range &&
-                      a.direct_range.value().location == 363 &&
-                      a.direct_range.value().length == 2);
+                      a.direct_range->location == 363 &&
+                      a.direct_range->length == 2);
         }
     }
     
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"364,10 ", 0); //[364,10  ]
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 6 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 6 );
+            auto a = v->first;
             XCTAssert(a.direct_range &&
-                      a.direct_range.value().location == 363 &&
-                      a.direct_range.value().length == 10);
+                      a.direct_range->location == 363 &&
+                      a.direct_range->length == 10);
         }
     }
 
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"-10-", 0); // [N-10-]
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 4 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 4 );
+            auto a = v->first;
             XCTAssert(!a.direct_range &&
                       a.reverse_range &&
-                      a.reverse_range.value().location == 9 &&
-                      a.reverse_range.value().length == BatchRenamingScheme::Range::max_length());
+                      a.reverse_range->location == 9 &&
+                      a.reverse_range->length == BatchRenamingScheme::Range::max_length());
         }
     }
     
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"-10-2", 0); // [N-10-1]
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 5 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 5 );
+            auto a = v->first;
             XCTAssert(!a.direct_range &&
                       a.reverse_range &&
-                      a.reverse_range.value().location == 9 &&
-                      a.reverse_range.value().length == 9);
+                      a.reverse_range->location == 9 &&
+                      a.reverse_range->length == 9);
         }
     }
     
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"-10,3", 0); // [N-10-1]
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 5 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 5 );
+            auto a = v->first;
             XCTAssert(!a.direct_range &&
                       a.reverse_range &&
-                      a.reverse_range.value().location == 9 &&
-                      a.reverse_range.value().length == 3);
+                      a.reverse_range->location == 9 &&
+                      a.reverse_range->length == 3);
         }
     }
 
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_TextExtraction(@"12--15", 0); // [N4--3]
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 6 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 6 );
+            auto a = v->first;
             XCTAssert(!a.direct_range &&
                       !a.reverse_range &&
                       a.from_first == 11 &&
@@ -135,8 +135,8 @@ using namespace nc::ops;
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@"-763+3/99:7", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 11 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 11 );
+            auto a = v->first;
             XCTAssert(a.start == -763 &&
                       a.step == 3 &&
                       a.stripe == 99 &&
@@ -147,8 +147,8 @@ using namespace nc::ops;
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@"-763", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 4 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 4 );
+            auto a = v->first;
             XCTAssert(a.start == -763);
         }
     }
@@ -156,8 +156,8 @@ using namespace nc::ops;
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@"763", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 3 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 3 );
+            auto a = v->first;
             XCTAssert(a.start == 763);
         }
     }
@@ -165,8 +165,8 @@ using namespace nc::ops;
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@"+-13", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 4 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 4 );
+            auto a = v->first;
             XCTAssert(a.step == -13);
         }
     }
@@ -174,8 +174,8 @@ using namespace nc::ops;
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@"/71", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 3 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 3 );
+            auto a = v->first;
             XCTAssert(a.stripe == 71);
         }
     }
@@ -183,8 +183,8 @@ using namespace nc::ops;
     {   const auto v = BatchRenamingScheme::ParsePlaceholder_Counter(@":12", 0, 1, 1, 1, 1);
         XCTAssert(v);
         if( v ) {
-            XCTAssert( v.value().second == 3 );
-            auto a = v.value().first;
+            XCTAssert( v->second == 3 );
+            auto a = v->first;
             XCTAssert(a.width == 12);
         }
     }

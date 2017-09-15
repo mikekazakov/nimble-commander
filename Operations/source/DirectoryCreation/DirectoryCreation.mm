@@ -43,6 +43,9 @@ const vector<string> &DirectoryCreation::DirectoryNames() const
 
 int DirectoryCreation::OnError(int _err, const string &_path, VFSHost &_vfs)
 {
+    if( !IsInteractive() )
+        return (int)Callbacks::ErrorResolution::Stop;
+
     const auto ctx = make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortRetry,
                       NSLocalizedString(@"Failed to create a directory", ""),

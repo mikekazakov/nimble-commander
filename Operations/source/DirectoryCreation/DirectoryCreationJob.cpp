@@ -42,11 +42,15 @@ bool DirectoryCreationJob::MakeDir(const string &_path)
         const auto stat_rc = m_VFS->Stat(_path.c_str(), st, 0);
         if( stat_rc != VFSError::Ok )
             break;
-        if( !st.mode_bits.dir )
+        if( st.mode_bits.dir ) {
+            return true;
+        }
+        else {
             switch( m_OnError( VFSError::FromErrno(EEXIST), _path, *m_VFS ) ) {
                 case ErrorResolution::Retry: continue;
                 default: Stop(); return false;
             }
+        }
     }
     
     while(true) {

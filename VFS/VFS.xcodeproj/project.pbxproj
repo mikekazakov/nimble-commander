@@ -831,6 +831,7 @@
 					"-lpugixml",
 					"-framework",
 					Kerberos,
+					"-lHabanero",
 				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -928,6 +929,7 @@
 					"-lpugixml",
 					"-framework",
 					Kerberos,
+					"-lHabanero",
 				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

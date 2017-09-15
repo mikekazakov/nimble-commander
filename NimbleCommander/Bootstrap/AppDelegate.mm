@@ -354,9 +354,11 @@ static AppDelegate *g_Me = nil;
     // calling modules running in background
     TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
     
+    auto &am = ActivationManager::Instance();
+    
     // Non-MAS version stuff below:
     if( !ActivationManager::ForAppStore() && !self.isRunningTests ) {
-        if( ActivationManager::Instance().ShouldShowTrialNagScreen() ) // check if we should show a nag screen
+        if( am.ShouldShowTrialNagScreen() ) // check if we should show a nag screen
             dispatch_to_main_queue_after(500ms, []{ [TrialWindowController showTrialWindow]; });
 
         // setup Sparkle updater stuff
@@ -389,6 +391,9 @@ static AppDelegate *g_Me = nil;
         FunctionalKeysPass::Instance().Enable();
     }
     
+    if( ActivationManager::Type() == ActivationManager::Distribution::Trial )
+        self.dock.SetUnregisteredBadge( !am.UserHadRegistered() );
+
     if( !ActivationManager::ForAppStore() && !self.isRunningTests )
         PFMoveToApplicationsFolderIfNecessary();
     
@@ -417,13 +422,6 @@ static AppDelegate *g_Me = nil;
         GlobalConfig().Commit();
         StateConfig().Commit();
     });
-}
-
-- (void) updateDockTileBadge
-{
-    // currently considering only admin mode for setting badge info
-    bool admin = RoutedIO::Instance().Enabled();
-    NSApplication.sharedApplication.dockTile.badgeLabel = admin ? @"ADMIN" : @"";
 }
 
 - (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
@@ -539,7 +537,8 @@ static AppDelegate *g_Me = nil;
     for( NSString *pathstring in filenames )
         if( auto fs = pathstring.fileSystemRepresentationSafe ) {
             static const auto nc_license_extension = "."s + ActivationManager::LicenseFileExtension();
-            if( filenames.count == 1 && path(fs).extension() == nc_license_extension ) {
+            if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
+               filenames.count == 1 && path(fs).extension() == nc_license_extension ) {
                 string p = fs;
                 dispatch_to_main_queue([=]{ [self processProvidedLicenseFile:p]; });
                 return;
@@ -566,6 +565,7 @@ static AppDelegate *g_Me = nil;
         [alert runModal];
         
         [self updateMainMenuFeaturesByVersionAndState];
+        self.dock.SetUnregisteredBadge( false );
         GA().PostEvent("Licensing", "Buy", "Successful external license activation");
     }
 }
@@ -687,7 +687,7 @@ static AppDelegate *g_Me = nil;
         GA().PostScreenView("Admin Mode");
     }
 
-    [self updateDockTileBadge];
+    self.dock.SetAdminBadge( RoutedIO::Instance().Enabled() );
 }
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item

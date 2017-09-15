@@ -1,17 +1,25 @@
 #include "Dock.h"
+#include <Utility/VerticallyCenteredTextFieldCell.h>
 
 @interface NCCoreDockProgressIndicator : NSProgressIndicator
 @end
 
 namespace nc::core {
 
+static const auto g_AdminBadge = @"ADMIN";
+static const auto g_Unregistered = @"UNREGISTERED";
+
+static NSView *MakeUnregBadge( NSSize _title_size );
+
 Dock::Dock():
     m_Progress{-1.},
-    m_Tile{NSApplication.sharedApplication.dockTile}
+    m_Tile{NSApplication.sharedApplication.dockTile},
+    m_Admin{false},
+    m_Unregistered{false}
 {
-    NSImageView *iv = [NSImageView new];
-    iv.image = NSApplication.sharedApplication.applicationIconImage;
-    m_Tile.contentView = iv;
+    m_ContentView = [NSImageView new];
+    m_ContentView.image = NSApplication.sharedApplication.applicationIconImage;
+    m_Tile.contentView = m_ContentView;
     
     const auto ind_rect = NSMakeRect(0, 0, m_Tile.size.width, 14);
     m_Indicator = [[NCCoreDockProgressIndicator alloc] initWithFrame:ind_rect];
@@ -21,7 +29,7 @@ Dock::Dock():
     m_Indicator.maxValue = 1;
     m_Indicator.hidden = true;
     m_Indicator.wantsLayer = true;
-    [iv addSubview:m_Indicator];
+    [m_ContentView addSubview:m_Indicator];
 }
 
 Dock::~Dock()
@@ -48,6 +56,70 @@ void Dock::SetProgress(double _value)
     
     m_Progress = _value;
     [m_Tile display];
+}
+
+void Dock::SetAdminBadge( bool _value )
+{
+    if( m_Admin == _value )
+        return;
+    m_Admin = _value;
+    UpdateBadge();
+}
+
+bool Dock::IsAdminBadgeSet() const noexcept
+{
+    return m_Admin;
+}
+
+void Dock::SetUnregisteredBadge( bool _value )
+{
+    if( m_Unregistered == _value )
+        return;
+    m_Unregistered = _value;
+    
+    if( !m_UnregBadge ) {
+        m_UnregBadge = MakeUnregBadge(m_Tile.size);
+        [m_ContentView addSubview:m_UnregBadge];
+    }
+    
+    m_UnregBadge.hidden = !m_Unregistered;
+    [m_Tile display];
+}
+
+bool Dock::IsAUnregisteredBadgeSet() const noexcept
+{
+    return m_Unregistered;
+}
+
+void Dock::UpdateBadge()
+{
+    if( m_Admin )
+        m_Tile.badgeLabel = g_AdminBadge;
+    else
+        m_Tile.badgeLabel = @"";
+}
+
+static NSView *MakeUnregBadge( NSSize _title_size )
+{
+    const auto height = 30;
+    const auto rc = NSMakeRect(0, (_title_size.height-height)/2, _title_size.width, height);
+    const auto v = [[NSTextField alloc] initWithFrame:rc];
+    v.cell = [[VerticallyCenteredTextFieldCell alloc] init];
+    v.font = [NSFont systemFontOfSize:16];
+    v.textColor = NSColor.whiteColor;
+    v.stringValue = g_Unregistered;
+    v.editable = false;
+    v.bezeled = false;
+    v.alignment = NSTextAlignmentCenter;
+    v.usesSingleLineMode = true;
+    v.lineBreakMode = NSLineBreakByClipping;
+    v.drawsBackground = false;
+    v.wantsLayer = true;
+    v.layer.backgroundColor = [NSColor colorWithRed:0.96 green:0.20 blue:0.18 alpha:1.].CGColor;
+    v.layer.cornerRadius = rc.size.height / 2;
+    v.layer.opaque = false;
+    v.layer.opacity = 0.9;
+    return v;
 }
 
 }

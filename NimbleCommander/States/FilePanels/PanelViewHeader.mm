@@ -335,7 +335,7 @@ static const auto g_LightenFilter = []{
 {
     self.searchPrompt = nil;
     [self.window makeFirstResponder:m_PanelView];
-    [((PanelController*)m_PanelView.delegate) QuickSearchClearFiltering];
+    [((PanelController*)m_PanelView.delegate) clearQuickSearchFiltering];
 }
 
 - (void) onSearchFieldAction:(id)sender

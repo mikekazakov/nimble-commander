@@ -119,7 +119,7 @@ class GenericCursorPersistance
 public:
     GenericCursorPersistance(PanelView* _view, const data::Model &_data);
     void Restore() const;
-    
+    bool IsValid() const noexcept;
 private:
     PanelView                  *m_View;
     const data::Model          &m_Data;
@@ -136,6 +136,11 @@ GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const data:
         m_OldCursorName = m_View.item.Filename();
         m_OldEntrySortKeys = _data.EntrySortKeysAtSortPosition(cur_pos);
     }
+}
+
+bool GenericCursorPersistance::IsValid() const noexcept
+{
+    return !m_OldCursorName.empty();
 }
 
 void GenericCursorPersistance::Restore() const
@@ -344,7 +349,7 @@ static void HeatUpConfigValues()
     m_QuickSearchIsSoftFiltering = GlobalConfig().GetBool( g_ConfigQuickSearchSoftFiltering );
     m_QuickSearchTypingView = GlobalConfig().GetBool( g_ConfigQuickSearchTypingView );
     m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchKeyOption) );
-    [self QuickSearchClearFiltering];
+    [self clearQuickSearchFiltering];
 }
 
 - (void) setState:(MainWindowFilePanelState *)state
@@ -553,7 +558,7 @@ static bool RouteKeyboardInputIntoTerminal()
             [self.state CloseOverlay:self];
             m_BriefSystemOverview = nil;
             m_QuickLook = nil;
-            [self QuickSearchClearFiltering];
+            [self clearQuickSearchFiltering];
             return true;
         }
         if( keycode == 36 ) { // Return button
@@ -711,7 +716,7 @@ static bool RouteKeyboardInputIntoTerminal()
         });
     
     [self clearFocusingRequest];
-    [self QuickSearchClearFiltering];
+    [self clearQuickSearchFiltering];
     [self.state PanelPathChanged:self];
     [self OnCursorChanged];
     [self UpdateBriefSystemOverview];
@@ -1387,20 +1392,21 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     return _str;
 }
 
-- (void) QuickSearchClearFiltering
+- (void) clearQuickSearchFiltering
 {
-    if(m_View == nil)
+    if( m_View == nil )
         return;
     
     GenericCursorPersistance pers(m_View, m_Data);
-    
-    bool any_changed = m_Data.ClearTextFiltering();
-    
+    const auto any_changed = m_Data.ClearTextFiltering();
     [m_View setQuickSearchPrompt:nil withMatchesCount:0];
     
     if( any_changed ) {
         [m_View dataUpdated];
-        pers.Restore();
+        if( pers.IsValid() )
+            pers.Restore();
+        else
+            m_View.curpos = m_Data.SortedEntriesCount() > 0 ? 0 : -1;
     }
 }
 
@@ -1418,7 +1424,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
         return false;
     
     if( text.length == 0 ) {
-        [self QuickSearchClearFiltering];
+        [self clearQuickSearchFiltering];
         return true;
     }
     
@@ -1463,7 +1469,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
         dispatch_to_main_queue_after(g_FastSeachDelayTresh + 1000ns, [=]{
             if(PanelController *sself = wself)
                 if( sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime() )
-                    [sself QuickSearchClearFiltering];
+                    [sself clearQuickSearchFiltering];
         });
         
         [m_View volatileDataChanged];
@@ -1498,7 +1504,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
         return false;
 
     if( text.length == 0 ) {
-        [self QuickSearchClearFiltering];
+        [self clearQuickSearchFiltering];
         return true;
     }
 

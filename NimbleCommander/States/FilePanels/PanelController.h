@@ -191,7 +191,7 @@ loadPreviousState:(bool)_load_state
  */
 - (void) scheduleDelayedFocusing:(nc::panel::DelayedFocusing)request;
 
-- (void) QuickSearchClearFiltering;
+- (void) clearQuickSearchFiltering;
 - (void) QuickSearchSetCriteria:(NSString *)_text;
 
 - (void) requestQuickRenamingOfItem:(VFSListingItem)_item to:(const string&)_new_filename;

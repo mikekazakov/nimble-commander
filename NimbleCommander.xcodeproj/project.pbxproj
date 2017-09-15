@@ -89,8 +89,6 @@
 		CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
 		CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
-		CF2329591BDCEB400092BCAD /* Operation_VFSDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */; };
-		CF23295A1BDCEB770092BCAD /* Operation_NativeDelete_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */; };
 		CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */; };
 		CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
 		CF2437701DEDF9B300245C14 /* PanelViewFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */; };
@@ -1372,8 +1370,6 @@
 		CF0E76DF1E4C1BE30052A679 /* liblzmadec.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzmadec.a; path = 3rd_Party/liblzmadec/built/liblzmadec.a; sourceTree = SOURCE_ROOT; };
 		CF1100CF1913788800E170FC /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
-		CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFSDelete_Tests.mm; sourceTree = "<group>"; };
-		CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_NativeDelete_Tests.mm; sourceTree = "<group>"; };
 		CF15D0811E8E1E7A00FEAA04 /* OpenWithExternalEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenWithExternalEditor.h; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.h; sourceTree = SOURCE_ROOT; };
 		CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenWithExternalEditor.mm; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.mm; sourceTree = SOURCE_ROOT; };
 		CF1846EE1E3F1C15008B7C9F /* fixed_eytzinger_map.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = fixed_eytzinger_map.h; path = NimbleCommander/Bootstrap/fixed_eytzinger_map.h; sourceTree = SOURCE_ROOT; };
@@ -2340,8 +2336,6 @@
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
 				CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */,
-				CF1100DE191B4E5A00E170FC /* Operation_VFSDelete_Tests.mm */,
-				CF1100E1191B8DAA00E170FC /* Operation_NativeDelete_Tests.mm */,
 				CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
@@ -3634,7 +3628,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF2329591BDCEB400092BCAD /* Operation_VFSDelete_Tests.mm in Sources */,
 				CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
 				CFDAC29C1DFBF9430039A104 /* TermScreenBufferTests.mm in Sources */,
 				CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */,
@@ -3645,7 +3638,6 @@
 				CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */,
 				CFDAC29D1DFBF9850039A104 /* TermScreenTests.mm in Sources */,
 				CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */,
-				CF23295A1BDCEB770092BCAD /* Operation_NativeDelete_Tests.mm in Sources */,
 				CF62371D1EB4436B00152B2B /* QLThumbnailsCache_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

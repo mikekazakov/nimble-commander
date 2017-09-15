@@ -2,7 +2,7 @@
 "2cu-Xx-BNh.title" = "Базовый путь:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "Default"; ObjectID = "9GC-kO-Qzl"; */
-"9GC-kO-Qzl.placeholderString" = "Авто";
+"9GC-kO-Qzl.placeholderString" = "авто";
 
 /* Class = "NSTextFieldCell"; placeholderString = "e.g. \"dav\", or leave it blank"; ObjectID = "B2t-My-jEr"; */
 "B2t-My-jEr.placeholderString" = "напр. \"dav\", или оставить пустым";

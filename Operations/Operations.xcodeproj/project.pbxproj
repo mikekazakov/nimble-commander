@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF36DBE91F6BF3FB004A018E /* Archive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */; };
 		CF4BCEE81F1D9CAA005F8414 /* DialogResults.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEE31F1D9CAA005F8414 /* DialogResults.h */; };
 		CF4BCEE91F1D9CAA005F8414 /* CopyingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */; };
 		CF4BCEEA1F1D9CAA005F8414 /* CopyingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */; };
@@ -166,6 +167,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Archive_Tests.mm; path = tests/Archive_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF4BCEE31F1D9CAA005F8414 /* DialogResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DialogResults.h; path = source/Copying/DialogResults.h; sourceTree = "<group>"; };
 		CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CopyingJob.cpp; path = source/Copying/CopyingJob.cpp; sourceTree = "<group>"; };
 		CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingJob.h; path = source/Copying/CopyingJob.h; sourceTree = "<group>"; };
@@ -564,6 +566,7 @@
 		CFF53B3C1EDD197300F567C4 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */,
 				CFC4F9D51F14F9FE0000B3EE /* AttrsChanging_Tests.mm */,
 				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
 				CFC4F9661F0CEEB90000B3EE /* BatchRenaming_Tests.mm */,
@@ -892,6 +895,7 @@
 				CFC4F9681F0CEEBD0000B3EE /* BatchRenaming_Tests.mm in Sources */,
 				CFF53B841EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm in Sources */,
 				CFF53B961EE252F200F567C4 /* Compression_Tests.mm in Sources */,
+				CF36DBE91F6BF3FB004A018E /* Archive_Tests.mm in Sources */,
 				CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */,
 				CFC4F99A1F0F27230000B3EE /* Linkage_Tests.mm in Sources */,
 				CFC4F9D71F14FA100000B3EE /* AttrsChanging_Tests.mm in Sources */,

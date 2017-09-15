@@ -1,6 +1,7 @@
 #import <XCTest/XCTest.h>
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
+#include <VFS/NetFTP.h>
 #include "../source/DirectoryCreation/DirectoryCreation.h"
 
 using namespace nc::ops;
@@ -108,6 +109,41 @@ using namespace nc::ops;
     XCTAssert( !m_NativeHost->Exists((m_TmpDir/"Test1/Test2").c_str()) );
     XCTAssert( !m_NativeHost->Exists((m_TmpDir/"Test1/Test2/Test3").c_str()) );
 }
+
+- (void)testOnLocalFTPServer
+{
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+    {
+        DirectoryCreation operation("/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/",
+                                "/",
+                                *host);
+        operation.Start();
+        operation.Wait();
+    }
+    
+    VFSStat st;
+    XCTAssert( host->Stat("/Public/!FilesTesting/Dir/Other/Dir/And/Many/other fancy dirs/", st, 0, 0) == 0);
+    XCTAssert( VFSEasyDelete("/Public/!FilesTesting/Dir", host) == 0);
+    
+    {
+        DirectoryCreation operation("AnotherDir/AndSecondOne",
+                                    "/Public/!FilesTesting",
+                                    *host);
+        operation.Start();
+        operation.Wait();
+    }
+    
+    XCTAssert( host->Stat("/Public/!FilesTesting/AnotherDir/AndSecondOne", st, 0, 0) == 0);
+    XCTAssert( VFSEasyDelete("/Public/!FilesTesting/AnotherDir", host) == 0);
+}
+
 
 - (path)makeTmpDir
 {

@@ -6,6 +6,7 @@ class TermScreen;
 // http://en.wikipedia.org/wiki/ANSI_escape_code
 // http://graphcomp.com/info/specs/ansi_col.html
 // http://vt100.net/docs/vt100-ug/chapter3.html
+// http://www.real-world-systems.com/docs/ANSIcode.html
 
 class TermParser
 {

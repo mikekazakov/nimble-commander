@@ -2,10 +2,10 @@
 
 namespace nc::panel::brief {
 
-class TextWithdsCache
+class TextWidthsCache
 {
 public:
-    static TextWithdsCache& Instance();
+    static TextWidthsCache& Instance();
 
     vector<short> Widths( const vector<reference_wrapper<const string>> &_strings, NSFont *_font );
 
@@ -16,8 +16,8 @@ private:
         atomic_bool purge_scheduled{false};
     };
     
-    TextWithdsCache();
-    ~TextWithdsCache();
+    TextWidthsCache();
+    ~TextWidthsCache();
     Cache &ForFont(NSFont *_font);
     void PurgeIfNeeded(Cache &_cache);
     static void Purge(Cache &_cache);

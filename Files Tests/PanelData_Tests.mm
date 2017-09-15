@@ -116,17 +116,17 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     data.SetSortMode(sorting);
     data.Load(move(listing), data::Model::PanelType::Directory);
     
-    XCTAssert(data.SortedIndexForName(listing->Item(0).Name()) == 0);
-    XCTAssert(data.SortedIndexForName(listing->Item(2).Name()) == 1);
-    XCTAssert(data.SortedIndexForName(listing->Item(1).Name()) == 2);
-    XCTAssert(data.SortedIndexForName(listing->Item(3).Name()) == 3);
+    XCTAssert(data.SortedIndexForName(listing->Item(0).FilenameC()) == 0);
+    XCTAssert(data.SortedIndexForName(listing->Item(2).FilenameC()) == 1);
+    XCTAssert(data.SortedIndexForName(listing->Item(1).FilenameC()) == 2);
+    XCTAssert(data.SortedIndexForName(listing->Item(3).FilenameC()) == 3);
     
     sorting.case_sens = true;
     data.SetSortMode(sorting);
-    XCTAssert(data.SortedIndexForName(listing->Item(2).Name()) == 0);
-    XCTAssert(data.SortedIndexForName(listing->Item(3).Name()) == 1);
-    XCTAssert(data.SortedIndexForName(listing->Item(0).Name()) == 2);
-    XCTAssert(data.SortedIndexForName(listing->Item(1).Name()) == 3);
+    XCTAssert(data.SortedIndexForName(listing->Item(2).FilenameC()) == 0);
+    XCTAssert(data.SortedIndexForName(listing->Item(3).FilenameC()) == 1);
+    XCTAssert(data.SortedIndexForName(listing->Item(0).FilenameC()) == 2);
+    XCTAssert(data.SortedIndexForName(listing->Item(1).FilenameC()) == 3);
 }
 
 - (void)testHardFiltering
@@ -259,8 +259,8 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
     VFSHostPtr host = VFSNativeHost::SharedHost();
     VFSListingPtr listing;
     data::Model data;
-    PanelDataSelection selector{data, true};
-    PanelDataSelection selector_w_dirs{data, false};
+    data::SelectionBuilder selector{data, true};
+    data::SelectionBuilder selector_w_dirs{data, false};
     
     host->FetchDirectoryListing("/bin/", listing, 0);
     data.Load(listing, data::Model::PanelType::Directory);

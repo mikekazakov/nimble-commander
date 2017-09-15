@@ -287,7 +287,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     for( auto i = 0; i < count; ++i )
         strings.emplace_back( ref(m_Data->EntryAtSortPosition(i).DisplayName()) );
     
-    m_FilenamesPxWidths = TextWithdsCache::Instance().Widths(strings,
+    m_FilenamesPxWidths = TextWidthsCache::Instance().Widths(strings,
                                                              CurrentTheme().FilePanelsBriefFont());
     
     auto max_it = max_element( begin(m_FilenamesPxWidths), end(m_FilenamesPxWidths) );

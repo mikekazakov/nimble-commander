@@ -353,10 +353,14 @@ void TermParser::EatByte(unsigned char _byte, int &_result_flags)
             return;
             
         case EState::TitleSemicolon:
-            if (c==';') {
+            if( c==';' ) {
                 m_EscState = EState::TitleBuf;
                 m_Title.clear();
             }
+            else if( c == '1' )
+                // I have no idea why the fuck VIM on 10.13 uses this weird format, but it does:
+                // ESC ] 1 1 ; title BELL
+                return;
             else
                 m_EscState = EState::Normal;
             return;

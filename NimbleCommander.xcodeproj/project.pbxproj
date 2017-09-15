@@ -124,6 +124,26 @@
 		CF36DBE11F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
 		CF36DBE21F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
 		CF36DBE31F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
+		CF36DBEA1F6C1806004A018E /* PanelViewFieldEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA953C1F4A759E0035E606 /* PanelViewFieldEditor.mm */; };
+		CF36DBEB1F6C1807004A018E /* PanelViewFieldEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA953C1F4A759E0035E606 /* PanelViewFieldEditor.mm */; };
+		CF36DBEC1F6C1807004A018E /* PanelViewFieldEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA953C1F4A759E0035E606 /* PanelViewFieldEditor.mm */; };
+		CF36DBED1F6C184D004A018E /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; };
+		CF36DBEE1F6C185D004A018E /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF36DBEF1F6C18DA004A018E /* DragSender.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA952E1F4930BA0035E606 /* DragSender.mm */; };
+		CF36DBF01F6C18DA004A018E /* DragSender.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA952E1F4930BA0035E606 /* DragSender.mm */; };
+		CF36DBF11F6C18DB004A018E /* DragSender.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA952E1F4930BA0035E606 /* DragSender.mm */; };
+		CF36DBF21F6C18F3004A018E /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */; };
+		CF36DBF31F6C18F4004A018E /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */; };
+		CF36DBF41F6C18F4004A018E /* TextWidthsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */; };
+		CF36DBF51F6C195A004A018E /* DragReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95241F47CA760035E606 /* DragReceiver.mm */; };
+		CF36DBF61F6C195B004A018E /* DragReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95241F47CA760035E606 /* DragReceiver.mm */; };
+		CF36DBF71F6C195C004A018E /* DragReceiver.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95241F47CA760035E606 /* DragReceiver.mm */; };
+		CF36DBF81F6C1987004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
+		CF36DBF91F6C1988004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
+		CF36DBFA1F6C1988004A018E /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
+		CF36DBFB1F6C1B60004A018E /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
+		CF36DBFC1F6C1B63004A018E /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; };
+		CF36DBFD1F6C1C09004A018E /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; };
 		CF3E2F661F5FA7C8001BFFCE /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF3E2F791F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
 		CF3E2F7A1F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
@@ -1301,6 +1321,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CF36DBEE1F6C185D004A018E /* Sparkle.framework in Copy Files */,
 				CFFA95111F45A2D50035E606 /* libHabanero.dylib in Copy Files */,
 				CFFA95101F45A2CF0035E606 /* libUtility.dylib in Copy Files */,
 				CFFA950F1F45A2C80035E606 /* libRoutedIO.dylib in Copy Files */,
@@ -1944,6 +1965,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF36DBFD1F6C1C09004A018E /* libUtility.dylib in Frameworks */,
+				CF36DBFC1F6C1B63004A018E /* libHabanero.dylib in Frameworks */,
+				CF36DBFB1F6C1B60004A018E /* libVFS.dylib in Frameworks */,
 				CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1993,6 +2017,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF36DBED1F6C184D004A018E /* Sparkle.framework in Frameworks */,
 				CFFA95121F45A2EB0035E606 /* Operations.framework in Frameworks */,
 				CF90C02C1EBB04960056E3B8 /* LetsMove.framework in Frameworks */,
 				CF1FBF3C1E90ABC000D3569C /* NetFS.framework in Frameworks */,
@@ -3166,7 +3191,6 @@
 						};
 					};
 					CFA539591D433E2A00C562A7 = {
-						DevelopmentTeam = AC5SJT236H;
 						ProvisioningStyle = Manual;
 					};
 					CFC5121016C4BD3D00D247EE = {
@@ -3657,6 +3681,7 @@
 				CF0939561D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CFD8CDC01E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
 				CFD726EE1E42E2D900603077 /* PanelListViewRowView.mm in Sources */,
+				CF36DBEB1F6C1807004A018E /* PanelViewFieldEditor.mm in Sources */,
 				CFD726951E42E22A00603077 /* PanelDataItemVolatileData.cpp in Sources */,
 				CFD726201E42E0AC00603077 /* ActionShortcut.mm in Sources */,
 				CF818B5A1EA0610D00BC28E6 /* ToggleSort.mm in Sources */,
@@ -3736,6 +3761,7 @@
 				CF876D3E1D51E0B0009C0CCE /* BigFileView.mm in Sources */,
 				CF818B591EA0610D00BC28E6 /* ShowGoToPopup.mm in Sources */,
 				CFB66FCC1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
+				CF36DBF91F6C1988004A018E /* VFSInit.mm in Sources */,
 				CF6A428A1CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
 				CF1863FB1D8B9224008628E4 /* ProFeaturesWindowController.mm in Sources */,
 				CF9F4AF81ECC8DAC00E0AF82 /* Compress.mm in Sources */,
@@ -3756,9 +3782,11 @@
 				CFD726D81E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */,
 				CF818B581EA0610D00BC28E6 /* MakeNew.mm in Sources */,
 				CF6237221EB4444200152B2B /* PanelDataExternalEntryKey.mm in Sources */,
+				CF36DBF61F6C195B004A018E /* DragReceiver.mm in Sources */,
 				CF818B6D1EA0615300BC28E6 /* FilterPopUpMenu.mm in Sources */,
 				CF75E88C1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
 				CF8B24411E6FC696008EB447 /* Favorites.cpp in Sources */,
+				CF36DBF41F6C18F4004A018E /* TextWidthsCache.mm in Sources */,
 				CFD726E11E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CF4E56D61D506B9700452912 /* FindFilesSheetController.mm in Sources */,
 				CFD7266B1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
@@ -3789,6 +3817,7 @@
 				CF7C7CB21E5ACDBD002DB0E2 /* TabSelection.mm in Sources */,
 				CF7A09DB1EC44A4000533B07 /* OpenNetworkConnection.mm in Sources */,
 				CF876D521D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
+				CF36DBF01F6C18DA004A018E /* DragSender.mm in Sources */,
 				CF4E56C41D50691F00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF2F43491EAF345400AA031A /* ConnectToServer.mm in Sources */,
 				CFD727071E42E30100603077 /* FilePanelOverlappedTerminal.mm in Sources */,
@@ -3896,6 +3925,7 @@
 				CF7A09DC1EC44A4000533B07 /* OpenNetworkConnection.mm in Sources */,
 				CF7A09B31EC2DF6300533B07 /* Duplicate.mm in Sources */,
 				CF4E56AC1D5068DD00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
+				CF36DBF71F6C195C004A018E /* DragReceiver.mm in Sources */,
 				CFD726DF1E42E2C300603077 /* PanelListView.mm in Sources */,
 				CF04DE071E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CFA5398D1D433E2A00C562A7 /* GTMHotKeyTextField.mm in Sources */,
@@ -3978,6 +4008,7 @@
 				CF818B4E1EA0610C00BC28E6 /* ShowGoToPopup.mm in Sources */,
 				CFD726BE1E42E28A00603077 /* IconsGenerator2.mm in Sources */,
 				CF6237201EB4443F00152B2B /* PanelDataEntriesComparator.mm in Sources */,
+				CF36DBF11F6C18DB004A018E /* DragSender.mm in Sources */,
 				CF818B481EA0610C00BC28E6 /* ToggleLayout.mm in Sources */,
 				CF818B681EA0612F00BC28E6 /* PanelDataSelection.mm in Sources */,
 				CFD7269C1E42E23600603077 /* PanelDataSortMode.mm in Sources */,
@@ -4007,6 +4038,7 @@
 				CF818B4A1EA0610C00BC28E6 /* CalculateSizes.mm in Sources */,
 				CFD7265A1E42E1B400603077 /* MainWindow.mm in Sources */,
 				CFD726151E42E08200603077 /* Config.mm in Sources */,
+				CF36DBFA1F6C1988004A018E /* VFSInit.mm in Sources */,
 				CFA539FA1D433E2A00C562A7 /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFD7272E1E42E34700603077 /* TermShellTask.cpp in Sources */,
 				CFD727161E42E32200603077 /* ConfigBackedNetworkConnectionsManager.mm in Sources */,
@@ -4051,11 +4083,13 @@
 				CFD727341E42E35000603077 /* TermTask.cpp in Sources */,
 				CFD7263C1E42E0E700603077 /* MASAppInstalledChecker.cpp in Sources */,
 				CFD7270D1E42E30900603077 /* QuickPreview.mm in Sources */,
+				CF36DBEC1F6C1807004A018E /* PanelViewFieldEditor.mm in Sources */,
 				CF1FBF241E8F57CD00D3569C /* FavoritesMenuDelegate.mm in Sources */,
 				CF818B7C1EA4573500BC28E6 /* Pasteboard.mm in Sources */,
 				CF75E88B1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
 				CF7A09B01EC2DF5D00533B07 /* Delete.mm in Sources */,
 				CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
+				CF36DBF31F6C18F4004A018E /* TextWidthsCache.mm in Sources */,
 				CF818B6B1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
 				CFD726271E42E0BA00603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
 			);
@@ -4325,6 +4359,7 @@
 				CFD7269D1E42E23900603077 /* PanelDataStatistics.cpp in Sources */,
 				CFD726BC1E42E28900603077 /* IconsGenerator2.mm in Sources */,
 				CF818B641EA0610E00BC28E6 /* ShowGoToPopup.mm in Sources */,
+				CF36DBEF1F6C18DA004A018E /* DragSender.mm in Sources */,
 				CF4E56A01D5068C800452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFD7270B1E42E30800603077 /* QuickPreview.mm in Sources */,
 				CFD8CDC71E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
@@ -4348,6 +4383,7 @@
 				CF1FBF251E8F57CF00D3569C /* FavoriteComposing.mm in Sources */,
 				CFD8CD3E1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
 				CFD726641E42E1E300603077 /* MainWindowFilePanelState.mm in Sources */,
+				CF36DBF21F6C18F3004A018E /* TextWidthsCache.mm in Sources */,
 				CF04DDE91E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CFD726C81E42E2A100603077 /* PanelBriefView.mm in Sources */,
 				CFD726EA1E42E2D500603077 /* PanelListViewNameView.mm in Sources */,
@@ -4355,6 +4391,7 @@
 				CFD727321E42E34F00603077 /* TermTask.cpp in Sources */,
 				CF56BF041D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */,
 				CFD726B91E42E28600603077 /* PanelViewImplementationProtocol.mm in Sources */,
+				CF36DBF51F6C195A004A018E /* DragReceiver.mm in Sources */,
 				CFD726ED1E42E2D900603077 /* PanelListViewRowView.mm in Sources */,
 				CFD726F91E42E2E800603077 /* PanelListViewTableView.mm in Sources */,
 				CF6237211EB4444200152B2B /* PanelDataExternalEntryKey.mm in Sources */,
@@ -4363,6 +4400,7 @@
 				CF818B751EA4572C00BC28E6 /* CopyToPasteboard.mm in Sources */,
 				CFF6F2831A13567C00011177 /* CalculateChecksumSheetController.mm in Sources */,
 				CFD726C21E42E29100603077 /* PanelViewFooter.mm in Sources */,
+				CF36DBF81F6C1987004A018E /* VFSInit.mm in Sources */,
 				CFD6DD1A1D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
 				CFD8CDB51E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
@@ -4406,6 +4444,7 @@
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,
 				CFD726E01E42E2C600603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CF2F43591EAF395900AA031A /* NetworkConnectionsManager.mm in Sources */,
+				CF36DBEA1F6C1806004A018E /* PanelViewFieldEditor.mm in Sources */,
 				CF7A09DA1EC44A3F00533B07 /* OpenNetworkConnection.mm in Sources */,
 				CFD7264F1E42E12400603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CFD7271A1E42E32C00603077 /* MainWindowExternalTerminalEditorState.mm in Sources */,
@@ -5025,12 +5064,13 @@
 		CFA53A6B1D433E2A00C562A7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
-				DEVELOPMENT_TEAM = AC5SJT236H;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party",
+					"$(PROJECT_DIR)/3rd_Party/Sparkle",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -5048,12 +5088,13 @@
 		CFA53A6C1D433E2A00C562A7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party",
+					"$(PROJECT_DIR)/3rd_Party/Sparkle",
 				);
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";

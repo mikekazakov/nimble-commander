@@ -11,21 +11,21 @@ namespace nc::panel::brief {
 static const auto g_MaxStrings = 10'000;
 static const auto g_PurgeDelay = 20min;
 
-TextWithdsCache::TextWithdsCache()
+TextWidthsCache::TextWidthsCache()
 {
 }
 
-TextWithdsCache::~TextWithdsCache()
+TextWidthsCache::~TextWidthsCache()
 {
 }
 
-TextWithdsCache& TextWithdsCache::Instance()
+TextWidthsCache& TextWidthsCache::Instance()
 {
-    static const auto inst = new TextWithdsCache;
+    static const auto inst = new TextWidthsCache;
     return *inst;
 }
 
-vector<short> TextWithdsCache::Widths(const vector<reference_wrapper<const string>> &_strings,
+vector<short> TextWidthsCache::Widths(const vector<reference_wrapper<const string>> &_strings,
                                       NSFont *_font )
 {
     assert( _font != nullptr );
@@ -69,7 +69,7 @@ vector<short> TextWithdsCache::Widths(const vector<reference_wrapper<const strin
     return widths;
 }
 
-TextWithdsCache::Cache &TextWithdsCache::ForFont(NSFont *_font)
+TextWidthsCache::Cache &TextWidthsCache::ForFont(NSFont *_font)
 {
     char buf[1024];
     const auto name = _font.fontName.UTF8String;
@@ -81,7 +81,7 @@ TextWithdsCache::Cache &TextWithdsCache::ForFont(NSFont *_font)
     }
 }
 
-void TextWithdsCache::PurgeIfNeeded(Cache &_cache)
+void TextWidthsCache::PurgeIfNeeded(Cache &_cache)
 {
     LOCK_GUARD(_cache.lock) {
         if( _cache.widthds.size() >= g_MaxStrings && !_cache.purge_scheduled ) {
@@ -93,7 +93,7 @@ void TextWithdsCache::PurgeIfNeeded(Cache &_cache)
     }
 }
 
-void TextWithdsCache::Purge(Cache &_cache)
+void TextWidthsCache::Purge(Cache &_cache)
 {
     LOCK_GUARD(_cache.lock) {
         _cache.widthds.clear();

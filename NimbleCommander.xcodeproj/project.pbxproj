@@ -260,7 +260,6 @@
 		CF6237241EB4444B00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF6237251EB4444C00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF6237261EB4444D00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
-		CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */; };
 		CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
 		CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
 		CF662AE31D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
@@ -1430,7 +1429,6 @@
 		CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDAVConnectionSheetController.mm; path = NimbleCommander/States/FilePanels/Views/WebDAVConnectionSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF3E6DF61E3870AB002B4AAD /* PanelViewPresentationSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationSettings.h; path = NimbleCommander/States/FilePanels/PanelViewPresentationSettings.h; sourceTree = SOURCE_ROOT; };
 		CF3E6DF71E3870AB002B4AAD /* PanelViewPresentationSettings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewPresentationSettings.mm; path = NimbleCommander/States/FilePanels/PanelViewPresentationSettings.mm; sourceTree = SOURCE_ROOT; };
-		CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Operation_VFStoVFSCopy_Tests.mm; sourceTree = "<group>"; };
 		CF44AACA1DAF32A30064D754 /* IconsGenerator2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconsGenerator2.h; path = NimbleCommander/States/FilePanels/IconsGenerator2.h; sourceTree = SOURCE_ROOT; };
 		CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconsGenerator2.mm; path = NimbleCommander/States/FilePanels/IconsGenerator2.mm; sourceTree = SOURCE_ROOT; };
 		CF45CA2B1D3E3A6F0074F04C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PreferencesWindowToolsTab.xib; sourceTree = "<group>"; };
@@ -2335,7 +2333,6 @@
 				CF47A992186C61A600745C4C /* chained_strings_Tests.mm */,
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
-				CF42E3631910D7AC007576CB /* Operation_VFStoVFSCopy_Tests.mm */,
 				CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
@@ -3628,7 +3625,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF64BB5B1BDB4E3200B0A3FA /* Operation_VFStoVFSCopy_Tests.mm in Sources */,
 				CFDAC29C1DFBF9430039A104 /* TermScreenBufferTests.mm in Sources */,
 				CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */,
 				CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */,

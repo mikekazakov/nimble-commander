@@ -1,10 +1,14 @@
 #import <XCTest/XCTest.h>
 #include <sys/stat.h>
 #include <VFS/Native.h>
+#include <VFS/NetFTP.h>
+#include <VFS/ArcUnRAR.h>
+#include <VFS/XAttr.h>
 #include "../source/Copying/Copying.h"
 
 using namespace nc::ops;
 static const path g_DataPref = "/.FilesTestingData";
+static const string g_PhotosRAR   = "/.FilesTestingData/archives/"s + "photos.rar";
 
 static vector<VFSListingItem> FetchItems(const string& _directory_path,
                                                  const vector<string> &_filenames,
@@ -15,11 +19,33 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     return items;
 }
 
+static int VFSCompareEntries(const path& _file1_full_path,
+                             const VFSHostPtr& _file1_host,
+                             const path& _file2_full_path,
+                             const VFSHostPtr& _file2_host,
+                             int &_result);
 
 @interface CopyingTests : XCTestCase
 @end
 
 @implementation CopyingTests
+{
+    path m_TmpDir;
+    shared_ptr<VFSHost> m_NativeHost;
+}
+
+- (void)setUp
+{
+    [super setUp];
+    m_NativeHost = VFSNativeHost::SharedHost();
+    m_TmpDir = self.makeTmpDir;
+}
+
+- (void)tearDown
+{
+    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    [super tearDown];
+}
 
 - (void)testOverwriteBugRegression
 {
@@ -145,6 +171,329 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( VFSEasyDelete(dir.c_str(), host) == 0);
 }
 
+- (void)testCopyToFTP_192_168_2_5_____1
+{
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+    const char *fn1 = "/System/Library/Kernels/kernel",
+               *fn2 = "/Public/!FilesTesting/kernel";
+
+    [self EnsureClean:fn2 at:host];
+    
+    CopyingOptions opts;
+    Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *VFSNativeHost::SharedHost()),
+               "/Public/!FilesTesting/",
+               host,
+               opts);
+    
+    op.Start();
+    op.Wait();
+        
+    int compare;
+    XCTAssert( VFSEasyCompareFiles(fn1, VFSNativeHost::SharedHost(), fn2, host, compare) == 0);
+    XCTAssert( compare == 0);
+    
+    XCTAssert( host->Unlink(fn2, 0) == 0);
+}
+
+- (void)testCopyToFTP_192_168_2_5_____2
+{
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+    auto files = {"Info.plist", "PkgInfo", "version.plist"};
+    
+    for(auto &i: files)
+      [self EnsureClean:"/Public/!FilesTesting/"s + i at:host];
+    
+    CopyingOptions opts;
+    Copying op(FetchItems("/Applications/Mail.app/Contents", {begin(files), end(files)}, *VFSNativeHost::SharedHost()),
+               "/Public/!FilesTesting/",
+               host,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    
+    for(auto &i: files) {
+        int compare;
+        XCTAssert( VFSEasyCompareFiles(("/Applications/Mail.app/Contents/"s + i).c_str(),
+                                       VFSNativeHost::SharedHost(),
+                                       ("/Public/!FilesTesting/"s + i).c_str(),
+                                       host,
+                                       compare) == 0);
+        XCTAssert( compare == 0);
+        XCTAssert( host->Unlink(("/Public/!FilesTesting/"s + i).c_str(), 0) == 0);
+    }
+}
+
+- (void)testCopyToFTP_192_168_2_5_____3
+{
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+    [self EnsureClean:"/Public/!FilesTesting/bin" at:host];
+    
+    CopyingOptions opts;
+    Copying op(FetchItems("/", {"bin"}, *VFSNativeHost::SharedHost()),
+               "/Public/!FilesTesting/",
+               host,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/bin",
+                                 VFSNativeHost::SharedHost(),
+                                 "/Public/!FilesTesting/bin",
+                                 host,
+                                 result) == 0);
+    XCTAssert( result == 0 );
+    
+    [self EnsureClean:"/Public/!FilesTesting/bin" at:host];
+}
+
+- (void)testCopyGenericToGeneric_Modes_CopyToPrefix
+{
+    CopyingOptions opts;
+    Copying op(FetchItems("/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost()),
+               m_TmpDir.native(),
+               m_NativeHost,
+               opts);
+    
+    op.Start();
+    op.Wait();
+
+    int result = 0;
+    XCTAssert( VFSCompareEntries(path("/Applications") / "Mail.app",
+                                 VFSNativeHost::SharedHost(),
+                                 m_TmpDir / "Mail.app",
+                                 VFSNativeHost::SharedHost(),
+                                 result) == 0);
+    XCTAssert( result == 0 );
+}
+
+- (void)testCopyGenericToGeneric_Modes_CopyToPrefix_WithAbsentDirectoriesInPath
+{
+    // just like testCopyGenericToGeneric_Modes_CopyToPrefix but file copy operation should build a destination path
+    path dst_dir = m_TmpDir / "Some" / "Absent" / "Dir" / "Is" / "Here/";
+    
+    CopyingOptions opts;
+    Copying op(FetchItems("/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost()),
+               dst_dir.native(),
+               m_NativeHost,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries(path("/Applications") / "Mail.app",
+                                 VFSNativeHost::SharedHost(),
+                                 dst_dir / "Mail.app",
+                                 VFSNativeHost::SharedHost(),
+                                 result) == 0);
+    XCTAssert( result == 0 );
+}
+
+// this test is now actually outdated, since FileCopyOperation now requires that destination path is absolute
+- (void)testCopyGenericToGeneric_Modes_CopyToPrefix_WithLocalDir
+{
+    // works on single host - In and Out same as where source files are
+    auto host = VFSNativeHost::SharedHost();
+    
+    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",
+                               host,
+                               (m_TmpDir / "Mail.app").c_str(),
+                               host) == 0);
+    
+    CopyingOptions opts;
+    Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *VFSNativeHost::SharedHost()),
+               (m_TmpDir / "SomeDirectoryName/").native(),
+               m_NativeHost,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, m_TmpDir / "SomeDirectoryName" / "Mail.app", host, result) == 0);
+    XCTAssert( result == 0 );
+}
+
+// this test is now somewhat outdated, since FileCopyOperation now requires that destination path is absolute
+- (void)testCopyGenericToGeneric_Modes_CopyToPathName_WithLocalDir
+{
+    // works on single host - In and Out same as where source files are
+    // Copies "Mail.app" to "Mail2.app" in the same dir
+    auto host = VFSNativeHost::SharedHost();
+    
+    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",
+                               host,
+                               (path(m_TmpDir) / "Mail.app").c_str(),
+                               host) == 0);
+    
+    CopyingOptions opts;
+    Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *VFSNativeHost::SharedHost()),
+               (m_TmpDir / "Mail2.app").native(),
+               m_NativeHost,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, m_TmpDir / "Mail2.app", host, result) == 0);
+    XCTAssert( result == 0 );
+}
+
+- (void)testCopyGenericToGeneric_Modes_CopyToPathName_SingleFile
+{
+    VFSHostPtr host;
+    try {
+        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+    const char *fn1 = "/System/Library/Kernels/kernel",
+    *fn2 = "/Public/!FilesTesting/kernel",
+    *fn3 = "/Public/!FilesTesting/kernel copy";
+    
+    [self EnsureClean:fn2 at:host];
+    [self EnsureClean:fn3 at:host];
+    
+    {
+        CopyingOptions opts;
+        Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *VFSNativeHost::SharedHost()),
+                   "/Public/!FilesTesting/",
+                   host,
+                   {});
+        op.Start();
+        op.Wait();
+    }
+    
+    int compare;
+    XCTAssert( VFSEasyCompareFiles(fn1, VFSNativeHost::SharedHost(), fn2, host, compare) == 0);
+    XCTAssert( compare == 0);
+    
+    
+    {
+        CopyingOptions opts;
+        Copying op(FetchItems("/Public/!FilesTesting/", {"kernel"}, *host),
+                   fn3,
+                   host,
+                   {});
+        op.Start();
+        op.Wait();
+    }
+    
+    XCTAssert( VFSEasyCompareFiles(fn2, host, fn3, host, compare) == 0);
+    XCTAssert( compare == 0);
+    
+    XCTAssert( host->Unlink(fn2, 0) == 0);
+    XCTAssert( host->Unlink(fn3, 0) == 0);
+}
+
+- (void)testCopyGenericToGeneric_Modes_RenameToPathPreffix
+{
+    // works on single host - In and Out same as where source files are
+    // Copies "Mail.app" to "Mail2.app" in the same dir
+    auto dir2 = m_TmpDir / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
+    auto host = VFSNativeHost::SharedHost();
+    
+    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app", host, (m_TmpDir / "Mail.app").c_str(), host) == 0);
+    
+    
+     CopyingOptions opts;
+     opts.docopy = false;
+        Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *host),
+                   dir2.native(),
+                   host,
+                   {});
+        op.Start();
+        op.Wait();
+    
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, dir2 / "Mail.app", host, result) == 0);
+    XCTAssert( result == 0 );
+}
+
+- (void)testCopyGenericToGeneric_Modes_RenameToPathName
+{
+    // works on single host - In and Out same as where source files are
+    // Copies "Mail.app" to "Mail2.app" in the same dir
+    auto host = VFSNativeHost::SharedHost();
+    
+    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app", host, (m_TmpDir / "Mail.app").c_str(), host) == 0);
+    
+    CopyingOptions opts;
+    opts.docopy = false;
+    Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *host),
+               (m_TmpDir / "Mail2.app").native(),
+               host,
+               {});
+    op.Start();
+    op.Wait();
+
+    int result = 0;
+    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, m_TmpDir / "Mail2.app", host, result) == 0);
+    XCTAssert( result == 0 );
+}
+
+- (void)testCopyUnRARToXAttr
+{
+    VFSHostPtr host_src;
+    try {
+        host_src = make_shared<VFSArchiveUnRARHost>(g_PhotosRAR);
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+    auto file = m_TmpDir / "tmp";
+    fclose( fopen(file.c_str(), "w") );
+    
+    VFSHostPtr host_dst;
+    try {
+        host_dst = make_shared<VFSXAttrHost>(file.c_str(), VFSNativeHost::SharedHost());
+    } catch( VFSErrorException &e ) {
+        XCTAssert( e.code() == 0 );
+        return;
+    }
+    
+     CopyingOptions opts;
+    opts.docopy = false;
+    Copying op(FetchItems(u8"/Чемал-16/", {"IMG_0257.JPG"}, *host_src),
+               "/",
+               host_dst,
+               {});
+    op.Start();
+    op.Wait();
+    
+    int result = 0;
+    XCTAssert( VFSEasyCompareFiles(u8"/Чемал-16/IMG_0257.JPG", host_src, "/IMG_0257.JPG", host_dst, result) == 0);
+    XCTAssert( result == 0 );
+}
+
 - (path)makeTmpDir
 {
     char dir[MAXPATHLEN];
@@ -153,16 +502,54 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     return dir;
 }
 
-- (void) waitUntilFinish:(volatile bool&)_finished
+- (void) EnsureClean:(const string&)_fn at:(const VFSHostPtr&)_h
 {
-    microseconds sleeped = 0us, sleep_tresh = 60s;
-    while (!_finished) {
-        this_thread::sleep_for(100us);
-        sleeped += 100us;
-        XCTAssert( sleeped < sleep_tresh);
-        if(sleeped > sleep_tresh)
-            break;
+    VFSStat stat;
+    if( _h->Stat(_fn.c_str(), stat, 0, 0) == 0)
+        XCTAssert( VFSEasyDelete(_fn.c_str(), _h) == 0);
+}
+
+static int VFSCompareEntries(const path& _file1_full_path,
+                             const VFSHostPtr& _file1_host,
+                             const path& _file2_full_path,
+                             const VFSHostPtr& _file2_host,
+                             int &_result)
+{
+    // not comparing flags, perm, times, xattrs, acls etc now
+    
+    VFSStat st1, st2;
+    int ret;
+    if((ret =_file1_host->Stat(_file1_full_path.c_str(), st1, 0, 0)) != 0)
+        return ret;
+
+    if((ret =_file2_host->Stat(_file2_full_path.c_str(), st2, 0, 0)) != 0)
+        return ret;
+    
+    if((st1.mode & S_IFMT) != (st2.mode & S_IFMT))
+    {
+        _result = -1;
+        return 0;
     }
+    
+    if( S_ISREG(st1.mode) )
+    {
+        _result = int(int64_t(st1.size) - int64_t(st2.size));
+        return 0;
+    }
+    else if ( S_ISDIR(st1.mode) )
+    {
+        _file1_host->IterateDirectoryListing(_file1_full_path.c_str(), [&](const VFSDirEnt &_dirent) {
+            int ret = VFSCompareEntries( _file1_full_path / _dirent.name,
+                                        _file1_host,
+                                        _file2_full_path / _dirent.name,
+                                        _file2_host,
+                                        _result);
+            if(ret != 0)
+                return false;
+            return true;
+        });
+    }
+    return 0;
 }
 
 @end

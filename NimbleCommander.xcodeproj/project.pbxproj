@@ -123,11 +123,11 @@
 		CF31F6701DFE644B005A1A40 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF31F66F1DFE644B005A1A40 /* Layout.mm */; };
 		CF36DBDE1F6BA76B004A018E /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; };
 		CF36DBDF1F6BA77B004A018E /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF36DBE01F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
+		CF36DBE11F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
+		CF36DBE21F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
+		CF36DBE31F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */; };
 		CF3E2F661F5FA7C8001BFFCE /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
-		CF3E2F731F5FC227001BFFCE /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF3E2F721F5FC227001BFFCE /* WebDAVConnectionSheetController.xib */; };
-		CF3E2F741F5FC227001BFFCE /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF3E2F721F5FC227001BFFCE /* WebDAVConnectionSheetController.xib */; };
-		CF3E2F751F5FC227001BFFCE /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF3E2F721F5FC227001BFFCE /* WebDAVConnectionSheetController.xib */; };
-		CF3E2F761F5FC227001BFFCE /* WebDAVConnectionSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF3E2F721F5FC227001BFFCE /* WebDAVConnectionSheetController.xib */; };
 		CF3E2F791F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
 		CF3E2F7A1F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
 		CF3E2F7B1F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
@@ -1428,9 +1428,10 @@
 		CF31F66E1DFE644B005A1A40 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/Brief/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF31F66F1DFE644B005A1A40 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = NimbleCommander/States/FilePanels/Brief/Layout.mm; sourceTree = SOURCE_ROOT; };
 		CF36DBDD1F6BA76B004A018E /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_Party/Sparkle/Sparkle.framework; sourceTree = SOURCE_ROOT; };
+		CF36DBE41F6BCDA0004A018E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/WebDAVConnectionSheetController.xib; sourceTree = "<group>"; };
+		CF36DBE61F6BCF5B004A018E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/WebDAVConnectionSheetController.strings; sourceTree = "<group>"; };
 		CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInit.h; path = NimbleCommander/Bootstrap/VFSInit.h; sourceTree = SOURCE_ROOT; };
 		CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSInit.mm; path = NimbleCommander/Bootstrap/VFSInit.mm; sourceTree = SOURCE_ROOT; };
-		CF3E2F721F5FC227001BFFCE /* WebDAVConnectionSheetController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = WebDAVConnectionSheetController.xib; path = NimbleCommander/States/FilePanels/Views/WebDAVConnectionSheetController.xib; sourceTree = SOURCE_ROOT; };
 		CF3E2F771F5FC24C001BFFCE /* WebDAVConnectionSheetController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebDAVConnectionSheetController.h; path = NimbleCommander/States/FilePanels/Views/WebDAVConnectionSheetController.h; sourceTree = SOURCE_ROOT; };
 		CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDAVConnectionSheetController.mm; path = NimbleCommander/States/FilePanels/Views/WebDAVConnectionSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF3E6DF61E3870AB002B4AAD /* PanelViewPresentationSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewPresentationSettings.h; path = NimbleCommander/States/FilePanels/PanelViewPresentationSettings.h; sourceTree = SOURCE_ROOT; };
@@ -2687,7 +2688,7 @@
 				CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */,
 				CF3E2F771F5FC24C001BFFCE /* WebDAVConnectionSheetController.h */,
 				CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */,
-				CF3E2F721F5FC227001BFFCE /* WebDAVConnectionSheetController.xib */,
+				CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */,
 			);
 			name = Network;
 			sourceTree = "<group>";
@@ -3371,7 +3372,7 @@
 				CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
 				CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF4E56BB1D5068F700452912 /* PreferencesWindowPanelsTab.xib in Resources */,
-				CF3E2F751F5FC227001BFFCE /* WebDAVConnectionSheetController.xib in Resources */,
+				CF36DBE21F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */,
 				CF8D0D001D963E3400ADFF14 /* InternalViewerController.xib in Resources */,
 				CF9F4B3D1ECD814800E0AF82 /* ConnectToServer.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
@@ -3437,7 +3438,7 @@
 				CF4E56CE1D50694200452912 /* PreferencesWindowViewerTab.xib in Resources */,
 				CFA53A521D433E2A00C562A7 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF9F4B3C1ECD814800E0AF82 /* ConnectToServer.xib in Resources */,
-				CF3E2F741F5FC227001BFFCE /* WebDAVConnectionSheetController.xib in Resources */,
+				CF36DBE11F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */,
 				CF9F4B111ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF8D0CE41D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
 				CF8D0CFF1D963E3400ADFF14 /* InternalViewerController.xib in Resources */,
@@ -3490,7 +3491,7 @@
 				CF4E56811D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF876D301D51E089009C0CCE /* BigFileViewSheet.xib in Resources */,
 				CF306F931CE9E54C002326FA /* main_icon.icns in Resources */,
-				CF3E2F731F5FC227001BFFCE /* WebDAVConnectionSheetController.xib in Resources */,
+				CF36DBE01F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */,
 				CF4E56841D50669C00452912 /* PreferencesWindowTerminalTab.xib in Resources */,
 				CF4E56701D50667300452912 /* PreferencesWindowExternalEditorsTab.xib in Resources */,
 				CFCCFC5E1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
@@ -3556,7 +3557,7 @@
 				CF9F4B3E1ECD814800E0AF82 /* ConnectToServer.xib in Resources */,
 				CF9F4B131ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF876D571D53296C009C0CCE /* InternalViewerWindowController.xib in Resources */,
-				CF3E2F761F5FC227001BFFCE /* WebDAVConnectionSheetController.xib in Resources */,
+				CF36DBE31F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */,
 				CF45CA2A1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFA7FA741C1D6E06000D039F /* Config.json in Resources */,
 				CFF6F38B1A13567C00011177 /* RHPreferencesWindow.xib in Resources */,
@@ -4526,6 +4527,16 @@
 			name = Localizable.strings;
 			path = ../NimbleCommander/Resources;
 			sourceTree = "<group>";
+		};
+		CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF36DBE41F6BCDA0004A018E /* Base */,
+				CF36DBE61F6BCF5B004A018E /* ru */,
+			);
+			name = WebDAVConnectionSheetController.xib;
+			path = NimbleCommander/States/FilePanels/Views;
+			sourceTree = SOURCE_ROOT;
 		};
 		CF45CA2C1D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib */ = {
 			isa = PBXVariantGroup;

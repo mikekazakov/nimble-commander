@@ -7,23 +7,14 @@
 /* Class = "NSMenuItem"; title = "="; ObjectID = "3HI-7Z-GC3"; */
 "3HI-7Z-GC3.title" = "=";
 
-/* Class = "NSBox"; title = "Box"; ObjectID = "3im-V9-my6"; */
-"3im-V9-my6.title" = "";
-
 /* Class = "NSComboBox"; ibShadowedToolTip = "^M"; ObjectID = "4kJ-ln-DDa"; */
 "4kJ-ln-DDa.ibShadowedToolTip" = "^M";
 
 /* Class = "NSButtonCell"; title = "Look in archives"; ObjectID = "7HA-yk-SzZ"; */
 "7HA-yk-SzZ.title" = "Искать в архивах";
 
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "8sA-yU-MON"; */
-"8sA-yU-MON.title" = "";
-
 /* Class = "NSMenuItem"; title = "Files and folders"; ObjectID = "9y5-XT-tuj"; */
 "9y5-XT-tuj.title" = "Файлы и папки";
-
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "10X-cZ-a2S"; */
-"10X-cZ-a2S.title" = "";
 
 /* Class = "NSComboBoxCell"; placeholderString = "Enter a text to search"; ObjectID = "17I-3a-9vx"; */
 "17I-3a-9vx.placeholderString" = "Введите текст для поиска";
@@ -36,9 +27,6 @@
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "0"; ObjectID = "ERT-n5-ZFK"; */
 "ERT-n5-ZFK.ibShadowedIsNilPlaceholder" = "0";
-
-/* Class = "NSMenu"; title = "OtherViews"; ObjectID = "EnK-Kt-A7e"; */
-"EnK-Kt-A7e.title" = "";
 
 /* Class = "NSTextFieldCell"; title = "Search for:"; ObjectID = "HCA-wY-Kq2"; */
 "HCA-wY-Kq2.title" = "Искать:";

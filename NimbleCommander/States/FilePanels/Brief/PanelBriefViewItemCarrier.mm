@@ -96,6 +96,18 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     return false;
 }
 
+- (void)setFrameSize:(NSSize)newSize
+{
+    [super setFrameSize:newSize];
+    [self setNeedsDisplay:true];
+}
+
+- (void) setFrame:(NSRect)frame
+{
+    [super setFrame:frame];
+    [self setNeedsDisplay:true];
+}
+
 - (NSRect) calculateTextSegmentFromBounds:(NSRect)bounds
 {
     const int origin = m_LayoutConstants.icon_size ?

@@ -391,8 +391,10 @@ static AppDelegate *g_Me = nil;
         FunctionalKeysPass::Instance().Enable();
     }
     
-    if( ActivationManager::Type() == ActivationManager::Distribution::Trial )
-        self.dock.SetUnregisteredBadge( !am.UserHadRegistered() );
+    if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
+        am.UserHadRegistered() == false &&
+        am.IsTrialPeriod() == false )
+        self.dock.SetUnregisteredBadge( true );
 
     if( !ActivationManager::ForAppStore() && !self.isRunningTests )
         PFMoveToApplicationsFolderIfNecessary();

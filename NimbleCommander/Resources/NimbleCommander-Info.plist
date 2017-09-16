@@ -80,5 +80,7 @@ All rights reserved.</string>
 	</dict>
 	<key>SUFeedURL</key>
 	<string>https://magnumbytes.com/downloads/releases/sparkle-nimble-commander.xml</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>SparkleDSA_Pub.pem</string>
 </dict>
 </plist>

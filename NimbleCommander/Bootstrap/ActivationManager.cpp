@@ -187,7 +187,6 @@ ActivationManager::ActivationManager()
             m_TrialDaysLeft = ::TrialDaysLeft();
             
             if( m_TrialDaysLeft > 0 ) {
-//                m_IsActivated = true;
                 m_IsTrialPeriod = true;
                 GA().PostEvent("Licensing", "Trial Startup", "Trial valid", m_TrialDaysLeft);
             }

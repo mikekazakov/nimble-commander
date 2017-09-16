@@ -403,6 +403,7 @@ void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
     m_ActionToTag.assign( begin(g_ActionsTags), end(g_ActionsTags) );
+    assert( m_ActionToTag.size() == g_ActionsTags.size() );
     
     {
         vector< pair<int, const char*> > tag_to_action;
@@ -410,6 +411,7 @@ ActionsShortcutsManager::ActionsShortcutsManager()
         for( auto &p: g_ActionsTags)
             tag_to_action.emplace_back( p.second, p.first );
         m_TagToAction.assign( begin(tag_to_action), end(tag_to_action) );
+        assert( m_TagToAction.size() == g_ActionsTags.size()  );
     }
     
     {
@@ -421,6 +423,7 @@ ActionsShortcutsManager::ActionsShortcutsManager()
                 default_shortcuts.emplace_back( i->second, d.second );
         }
         m_ShortCutsDefaults.assign( begin(default_shortcuts), end(default_shortcuts) );
+        assert(m_ShortCutsDefaults.size() == g_DefaultShortcuts.size() );
     }
     
 

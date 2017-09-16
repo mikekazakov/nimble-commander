@@ -373,6 +373,7 @@
 		CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CF7C7CEC1E5D39AD002DB0E2 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
 		CF7D7A751C15AAC200ECEBA0 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
+		CF7E35781F6CAF2F009D15D9 /* SparkleDSA_Pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */; };
 		CF818B3D1EA05AC600BC28E6 /* PanelDataSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B3C1EA05AC600BC28E6 /* PanelDataSelection.mm */; };
 		CF818B451EA0610C00BC28E6 /* Select.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDB51E9F7353008FA79E /* Select.mm */; };
 		CF818B461EA0610C00BC28E6 /* RenameInPlace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDB21E9F4AF3008FA79E /* RenameInPlace.mm */; };
@@ -1596,6 +1597,7 @@
 		CF7C7CE41E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTabColoringRulesControl.strings; sourceTree = "<group>"; };
 		CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ByteCountFormatter_Tests.mm; sourceTree = "<group>"; };
 		CF7D7A741C15AAC200ECEBA0 /* Config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Config.json; path = NimbleCommander/Resources/Config.json; sourceTree = SOURCE_ROOT; };
+		CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SparkleDSA_Pub.pem; path = NimbleCommander/Resources/SparkleDSA_Pub.pem; sourceTree = SOURCE_ROOT; };
 		CF811A901D8262BE001F9E7F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = SOURCE_ROOT; };
 		CF811A911D8262BE001F9E7F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_Party/OpenSSL/built/libssl.a; sourceTree = SOURCE_ROOT; };
 		CF818B3B1EA05AC600BC28E6 /* PanelDataSelection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataSelection.h; path = NimbleCommander/States/FilePanels/PanelDataSelection.h; sourceTree = SOURCE_ROOT; };
@@ -2519,6 +2521,7 @@
 		CF6D99A5196675FE0077B146 /* NC NonMAS */ = {
 			isa = PBXGroup;
 			children = (
+				CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */,
 				CF6D9D2B1966A56E0077B146 /* NimbleCommander-Info.plist */,
 			);
 			name = "NC NonMAS";
@@ -3520,6 +3523,7 @@
 				CFCCFBAE1A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
 				CF9F4B101ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF8D0CE91D9623E000ADFF14 /* RegistrationInfoWindow.xib in Resources */,
+				CF7E35781F6CAF2F009D15D9 /* SparkleDSA_Pub.pem in Resources */,
 				CFDAC2FD1DFD1C120039A104 /* TrialWindowController.xib in Resources */,
 				CFCCFBC21A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFEF4E371A6BB409009A1524 /* Preferences.strings in Resources */,

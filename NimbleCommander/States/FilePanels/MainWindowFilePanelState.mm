@@ -64,6 +64,36 @@ static string ExpandPath(const string &_ref )
     return {};
 }
 
+static void SetupUnregisteredLabel(NSView *_background_view)
+{
+    NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0,0,0,0)];
+    tf.translatesAutoresizingMaskIntoConstraints = false;
+    tf.stringValue = @"UNREGISTERED";
+    tf.editable = false;
+    tf.bordered = false;
+    tf.drawsBackground = false;
+    tf.alignment = NSTextAlignmentCenter;
+    tf.textColor = NSColor.tertiaryLabelColor;
+    tf.font = [NSFont labelFontOfSize:12];
+    
+    [_background_view addSubview:tf];
+    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                                 attribute:NSLayoutAttributeCenterX
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:_background_view
+                                                                 attribute:NSLayoutAttributeCenterX
+                                                                multiplier:1.0
+                                                                  constant:0]];
+    [_background_view addConstraint:[NSLayoutConstraint constraintWithItem:tf
+                                                                 attribute:NSLayoutAttributeCenterY
+                                                                 relatedBy:NSLayoutRelationEqual
+                                                                    toItem:_background_view
+                                                                 attribute:NSLayoutAttributeCenterY
+                                                                multiplier:1.0
+                                                                  constant:0]];
+    [_background_view layoutSubtreeIfNeeded];
+}
+
 static void SetupRatingOverlay(NSView *_background_view)
 {
     AskingForRatingOverlayView *v = [[AskingForRatingOverlayView alloc] initWithFrame:_background_view.bounds];
@@ -294,6 +324,9 @@ static bool GoToForcesPanelActivation()
     
     if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
         SetupRatingOverlay( m_ToolbarDelegate.operationsPoolViewController.idleView );
+    else if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
+            !ActivationManager::Instance().UserHadRegistered() )
+        SetupUnregisteredLabel( m_ToolbarDelegate.operationsPoolViewController.idleView );
 }
 
 - (void) Assigned

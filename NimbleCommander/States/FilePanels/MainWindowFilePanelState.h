@@ -91,7 +91,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (void)CloseOverlay:(PanelController*)_panel;
 
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState;
-- (void) decodeRestorableState:(const rapidjson::StandaloneValue&)_state;
+- (bool) decodeRestorableState:(const rapidjson::StandaloneValue&)_state;
 - (void) markRestorableStateAsInvalid;
 
 - (void) saveDefaultInitialState;

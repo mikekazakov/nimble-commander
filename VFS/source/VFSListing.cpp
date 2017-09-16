@@ -305,9 +305,9 @@ VFSListingPtr VFSListing::ProduceUpdatedTemporaryPanelListing( const VFSListing&
     return Build( move(result) );
 }
 
-shared_ptr<VFSListing> VFSListing::EmptyListing()
+const shared_ptr<VFSListing> &VFSListing::EmptyListing() noexcept
 {
-    static shared_ptr<VFSListing> empty = []{
+    static const auto empty = []{
         auto l = Alloc();
         l->m_ItemsCount = 0;
         l->m_Hosts.insert(0, VFSHost::DummyHost());

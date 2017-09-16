@@ -155,7 +155,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
             initEmptyFileStateWithFrame:self.window.contentView.frame
             andPool:*m_OperationsPool];
         
-        [self restoreDefaultWindowStateFromConfig];
+        if( ![self restoreDefaultWindowStateFromConfig] )
+            [m_PanelState loadDefaultPanelContent];
         
         // run the state
         [self pushState:m_PanelState];
@@ -166,7 +167,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (instancetype) initForSystemRestoration
 {
    if( self = [self initBase] ) {
-        
+       
         // almost "free" state initially
         m_PanelState = [[MainWindowFilePanelState alloc]
             initEmptyFileStateWithFrame:self.window.contentView.frame
@@ -182,7 +183,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 {
     return [self initDefaultWindow];
 }
-
 
 -(void) dealloc
 {
@@ -230,12 +230,14 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     [super encodeRestorableStateWithCoder:coder];
 }
 
-- (void)restoreDefaultWindowStateFromConfig
+- (bool)restoreDefaultWindowStateFromConfig
 {
     // supposed to be called when windows are restored upon app start
-    auto panels_state = StateConfig().Get(g_JSONRestorationFilePanelsStateKey);
-    if( !panels_state.IsNull() )
-        [m_PanelState decodeRestorableState:panels_state];
+    const auto panels_state = StateConfig().Get(g_JSONRestorationFilePanelsStateKey);
+    if( panels_state.IsNull() )
+        return false;
+    
+    return [m_PanelState decodeRestorableState:panels_state];
 }
 
 - (void)restoreDefaultWindowStateFromLastOpenedWindow

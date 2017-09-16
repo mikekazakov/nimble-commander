@@ -42,6 +42,11 @@ public:
     void ReLoad(const shared_ptr<VFSListing> &_listing);
 
     /**
+     * Tells whether Model was provided with a valid listing object.  
+     */
+    bool IsLoaded() const noexcept;
+
+    /**
      * Will throw logic_error if called on listing with no common host.
      */
     const shared_ptr<VFSHost>&      Host() const;

@@ -36,7 +36,7 @@ namespace nc::ops {
                                         params:(const string&)_params
                                      fileTitle:(const string&)_file_title;
 
-- (void)restoreDefaultWindowStateFromConfig;
+- (bool)restoreDefaultWindowStateFromConfig;
 - (void)restoreDefaultWindowStateFromLastOpenedWindow;
 + (bool)canRestoreDefaultWindowStateFromLastOpenedWindow;
 

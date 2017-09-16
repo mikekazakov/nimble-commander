@@ -68,6 +68,11 @@ Model::~Model()
 {
 }
 
+bool Model::IsLoaded() const noexcept
+{
+    return m_Listing != VFSListing::EmptyListing();
+}
+
 static void InitVolatileDataWithListing( vector<ItemVolatileData> &_vd, const VFSListing &_listing)
 {
     _vd.clear();

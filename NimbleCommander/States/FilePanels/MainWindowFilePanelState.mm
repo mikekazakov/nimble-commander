@@ -606,10 +606,10 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return move(json);
 }
 
-- (void) decodeRestorableState:(const rapidjson::StandaloneValue&)_state
+- (bool) decodeRestorableState:(const rapidjson::StandaloneValue&)_state
 {
     if( !_state.IsObject() )
-        return;
+        return false;
     
     if( _state.HasMember(g_ResorationPanelsKey) ) {
         const auto &json_panels = _state[g_ResorationPanelsKey];
@@ -668,6 +668,9 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
             }
         }
     }
+    
+    return m_LeftPanelControllers.front().data.IsLoaded() &&
+           m_RightPanelControllers.front().data.IsLoaded();
 }
 
 - (void) markRestorableStateAsInvalid

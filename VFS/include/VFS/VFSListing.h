@@ -31,7 +31,7 @@ class VFSWeakListingItem;
 class VFSListing : public enable_shared_from_this<VFSListing>
 {
 public:
-    static VFSListingPtr    EmptyListing();
+    static const VFSListingPtr &EmptyListing() noexcept;
     static VFSListingPtr    Build(VFSListingInput &&_input);
     
     /**

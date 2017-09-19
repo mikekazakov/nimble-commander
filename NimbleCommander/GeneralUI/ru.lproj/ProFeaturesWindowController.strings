@@ -35,7 +35,7 @@
 "lwf-Ux-yiP.title" = "Редактор атрибутов";
 
 /* Class = "NSTextFieldCell"; title = "FTP, SFTP and Dropbox connectivity"; ObjectID = "v7q-uc-sjB"; */
-"v7q-uc-sjB.title" = "Доступ к FTP, SFTP и Dropbox";
+"v7q-uc-sjB.title" = "FTP, SFTP, WebDAV, Dropbox";
 
 /* Class = "NSTextFieldCell"; title = "External tools integration"; ObjectID = "y8W-w4-V0a"; */
 "y8W-w4-V0a.title" = "Внешние инструменты";

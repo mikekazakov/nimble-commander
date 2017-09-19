@@ -150,6 +150,11 @@
 		CF39A0E51F70C20C005A4583 /* libUtility.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF39A0E61F70C20C005A4583 /* libRoutedIO.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF39A0E71F70C20C005A4583 /* libVFS.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF39A0E81F70C5B8005A4583 /* Operations.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF39A0E91F70C5CA005A4583 /* libHabanero.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF39A0EA1F70C5CA005A4583 /* libUtility.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF39A0EB1F70C5CA005A4583 /* libRoutedIO.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF39A0EC1F70C5CA005A4583 /* libVFS.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF3E2F661F5FA7C8001BFFCE /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF3E2F791F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
 		CF3E2F7A1F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
@@ -1308,6 +1313,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CF39A0E91F70C5CA005A4583 /* libHabanero.dylib in CopyFiles */,
+				CF39A0EA1F70C5CA005A4583 /* libUtility.dylib in CopyFiles */,
+				CF39A0EB1F70C5CA005A4583 /* libRoutedIO.dylib in CopyFiles */,
+				CF39A0EC1F70C5CA005A4583 /* libVFS.dylib in CopyFiles */,
+				CF39A0E81F70C5B8005A4583 /* Operations.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

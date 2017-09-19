@@ -147,7 +147,7 @@ static void CheckMASReceipt()
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunreachable-code"
     const auto path = NSBundle.mainBundle.appStoreReceiptURL.path;
-    const auto exists = ![NSFileManager.defaultManager fileExistsAtPath:path];
+    const auto exists = [NSFileManager.defaultManager fileExistsAtPath:path];
     if( !exists ) {
         NSLog(@"no receipt - exit the app with code 173");
         exit(173);

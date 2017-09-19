@@ -144,6 +144,12 @@
 		CF36DBFB1F6C1B60004A018E /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
 		CF36DBFC1F6C1B63004A018E /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; };
 		CF36DBFD1F6C1C09004A018E /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; };
+		CF39A0E21F70C1E1005A4583 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; };
+		CF39A0E31F70C1FF005A4583 /* Operations.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF39A0E41F70C20C005A4583 /* libHabanero.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF39A0E51F70C20C005A4583 /* libUtility.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF39A0E61F70C20C005A4583 /* libRoutedIO.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF39A0E71F70C20C005A4583 /* libVFS.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF3E2F661F5FA7C8001BFFCE /* VFSInit.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */; };
 		CF3E2F791F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
 		CF3E2F7A1F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F781F5FC277001BFFCE /* WebDAVConnectionSheetController.mm */; };
@@ -296,7 +302,6 @@
 		CF6D9C55196678010077B146 /* FTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */; };
 		CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB709BE18E561F200A83E61 /* ProcessSheetController.mm */; };
-		CF6D9C7C19667A190077B146 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C7919667A190077B146 /* liblzma.a */; };
 		CF6D9C7F19667A270077B146 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C7E19667A270077B146 /* Carbon.framework */; };
 		CF6D9C8119667A2D0077B146 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C8019667A2D0077B146 /* LDAP.framework */; };
 		CF6D9C8319667A330077B146 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6D9C8219667A330077B146 /* Security.framework */; };
@@ -425,10 +430,6 @@
 		CF818B7A1EA4573400BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
 		CF818B7B1EA4573400BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
 		CF818B7C1EA4573500BC28E6 /* Pasteboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */; };
-		CF844DBC1D43230A00C735DB /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
-		CF844DBD1D43230F00C735DB /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
-		CF844DBE1D43231500C735DB /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
-		CF844DBF1D43231600C735DB /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFC17E87C2700415033 /* libz.a */; };
 		CF844DC01D43231900C735DB /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
 		CF84C8DF1DB74B3A00B4E888 /* PanelViewHeader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */; };
 		CF84C8F81DBB2AC300B4E888 /* PanelListView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8F71DBB2AC300B4E888 /* PanelListView.mm */; };
@@ -1139,8 +1140,6 @@
 		CFF6F3621A13567C00011177 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC5121416C4BD3D00D247EE /* Cocoa.framework */; };
 		CFF6F3631A13567C00011177 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B50976A31729BA150080412E /* Quartz.framework */; };
 		CFF6F3661A13567C00011177 /* libSystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF73A6201816B36C00F59016 /* libSystem.dylib */; };
-		CFF6F3681A13567C00011177 /* libbz2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF029BFA17E878A400415033 /* libbz2.a */; };
-		CFF6F3691A13567C00011177 /* liblzma.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF561B1517D6290F009D37A4 /* liblzma.a */; };
 		CFF6F36C1A13567C00011177 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFC5121D16C4BD3D00D247EE /* InfoPlist.strings */; };
 		CFF6F36D1A13567C00011177 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = CFC5122316C4BD3D00D247EE /* Credits.rtf */; };
 		CFF6F3711A13567C00011177 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
@@ -1295,6 +1294,11 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CF39A0E41F70C20C005A4583 /* libHabanero.dylib in CopyFiles */,
+				CF39A0E51F70C20C005A4583 /* libUtility.dylib in CopyFiles */,
+				CF39A0E61F70C20C005A4583 /* libRoutedIO.dylib in CopyFiles */,
+				CF39A0E71F70C20C005A4583 /* libVFS.dylib in CopyFiles */,
+				CF39A0E31F70C1FF005A4583 /* Operations.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1981,8 +1985,6 @@
 				CFF53B641EDD1A6100F567C4 /* Operations.framework in Frameworks */,
 				CF1FBF1A1E8F57B700D3569C /* NetFS.framework in Frameworks */,
 				CF2A3CE91E667F9A00E6C6F0 /* libssh2.a in Frameworks */,
-				CF844DBF1D43231600C735DB /* libz.a in Frameworks */,
-				CF844DBD1D43230F00C735DB /* libbz2.a in Frameworks */,
 				CF9B12C41D8A6B4700C4E0A5 /* libssl.a in Frameworks */,
 				CF6E44571CC9DFBC009F45B0 /* libAquaticPrime.a in Frameworks */,
 				CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */,
@@ -2000,7 +2002,6 @@
 				CF6D9C8F19667A5E0077B146 /* Cocoa.framework in Frameworks */,
 				CF6D9C8D19667A570077B146 /* OpenDirectory.framework in Frameworks */,
 				CF6D9C8B19667A500077B146 /* DiskArbitration.framework in Frameworks */,
-				CF844DBC1D43230A00C735DB /* liblzma.a in Frameworks */,
 				CF9B12C11D8A6B4100C4E0A5 /* libcrypto.a in Frameworks */,
 				CF6D9C8919667A4A0077B146 /* QuartzCore.framework in Frameworks */,
 				CF6D9C8719667A420077B146 /* IOKit.framework in Frameworks */,
@@ -2011,7 +2012,6 @@
 				CF6D9C8319667A330077B146 /* Security.framework in Frameworks */,
 				CF6D9C8119667A2D0077B146 /* LDAP.framework in Frameworks */,
 				CF6D9C7F19667A270077B146 /* Carbon.framework in Frameworks */,
-				CF6D9C7C19667A190077B146 /* liblzma.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2070,6 +2070,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF39A0E21F70C1E1005A4583 /* Operations.framework in Frameworks */,
 				CF9F4AF61ECC8D9500E0AF82 /* NetFS.framework in Frameworks */,
 				CF2A3CEA1E667FAF00E6C6F0 /* libssh2.a in Frameworks */,
 				CF02B5A61D0A61FD00F2760D /* libarchive.a in Frameworks */,
@@ -2081,7 +2082,6 @@
 				CF7C7CE71E5D353C002DB0E2 /* libMMTabBarViewLib.a in Frameworks */,
 				CF02B5A01D0A61C000F2760D /* libUtility.dylib in Frameworks */,
 				CF955F041B8DC6E0004A25AF /* libz.dylib in Frameworks */,
-				CF844DBE1D43231500C735DB /* libz.a in Frameworks */,
 				CFF6F3541A13567C00011177 /* libcrypto.dylib in Frameworks */,
 				CFF6F3551A13567C00011177 /* libssl.dylib in Frameworks */,
 				CF9B12C01D8A6B4100C4E0A5 /* libcrypto.a in Frameworks */,
@@ -2096,8 +2096,6 @@
 				CFF6F3621A13567C00011177 /* Cocoa.framework in Frameworks */,
 				CFF6F3631A13567C00011177 /* Quartz.framework in Frameworks */,
 				CFF6F3661A13567C00011177 /* libSystem.dylib in Frameworks */,
-				CFF6F3681A13567C00011177 /* libbz2.a in Frameworks */,
-				CFF6F3691A13567C00011177 /* liblzma.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

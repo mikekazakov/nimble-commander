@@ -140,6 +140,30 @@ static void UpdateMenuItemsPlaceholders( const char *_action )
     UpdateMenuItemsPlaceholders( ActionsShortcutsManager::Instance().TagFromAction(_action) );
 }
 
+static void CheckMASReceipt()
+{
+    if( !ActivationManager::ForAppStore() )
+        return;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunreachable-code"
+    const auto path = NSBundle.mainBundle.appStoreReceiptURL.path;
+    const auto exists = ![NSFileManager.defaultManager fileExistsAtPath:path];
+    if( !exists ) {
+        NSLog(@"no receipt - exit the app with code 173");
+        exit(173);
+    }
+#pragma clang diagnostic pop
+}
+
+static void CheckDefaultsReset()
+{
+    const auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask |
+                            NSAlternateKeyMask | NSCommandKeyMask;
+    if( (NSEvent.modifierFlags & erase_mask) == erase_mask )
+        if( AskUserToResetDefaults() )
+            exit(0);
+}
+
 static AppDelegate *g_Me = nil;
 
 @interface AppDelegate()
@@ -175,23 +199,9 @@ static AppDelegate *g_Me = nil;
     if(self) {
         g_Me = self;
         m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
-
-        if( ActivationManager::ForAppStore() &&
-           ![NSFileManager.defaultManager fileExistsAtPath:NSBundle.mainBundle.appStoreReceiptURL.path] ) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunreachable-code"
-            NSLog(@"no receipt - exit the app with code 173");
-            exit(173);
-#pragma clang diagnostic pop
-        }
-        
-        const auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask | NSAlternateKeyMask | NSCommandKeyMask;
-        if( (NSEvent.modifierFlags & erase_mask) == erase_mask )
-            if( AskUserToResetDefaults() )
-                exit(0);
-        
+        CheckMASReceipt();
+        CheckDefaultsReset();
         m_SupportDirectory = EnsureTrailingSlash(NSFileManager.defaultManager.applicationSupportDirectory.fileSystemRepresentationSafe);
-        
         [self setupConfigs];
     }
     return self;
@@ -316,6 +326,7 @@ static AppDelegate *g_Me = nil;
     enable( "menu.go.processes_list",           am.HasPSFS() );
     enable( "menu.go.connect.ftp",              am.HasNetworkConnectivity() );
     enable( "menu.go.connect.sftp",             am.HasNetworkConnectivity() );
+    enable( "menu.go.connect.webdav",           am.HasNetworkConnectivity() );
     enable( "menu.go.connect.lanshare",         am.HasLANSharesMounting() );
     enable( "menu.go.connect.dropbox",          am.HasNetworkConnectivity() );
     enable( "menu.go.connect.network_server",   am.HasNetworkConnectivity() );

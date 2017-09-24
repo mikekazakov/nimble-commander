@@ -289,6 +289,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/../3rd_Party/boost/include",
 					/usr/local/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
@@ -346,6 +347,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/../3rd_Party/boost/include",
 					/usr/local/include,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;

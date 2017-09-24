@@ -1,8 +1,8 @@
 #include "OIDRedirectHTTPHandler+FixedPort.h"
-#import "OIDRedirectHTTPHandler.h"
+#import <macOS/OIDRedirectHTTPHandler.h>
 #import "OIDAuthorizationService.h"
 #import "OIDErrorUtilities.h"
-#import "OIDLoopbackHTTPServer.h"
+#import <macOS/LoopbackHTTPServer/OIDLoopbackHTTPServer.h>
 
 @implementation OIDRedirectHTTPHandler(FixedPort)
 

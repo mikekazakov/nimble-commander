@@ -3210,6 +3210,7 @@
 					};
 					CFF6F2391A13567C00011177 = {
 						DevelopmentTeam = AC5SJT236H;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -5338,6 +5339,7 @@
 				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/Files-Pro.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
+				DEVELOPMENT_TEAM = AC5SJT236H;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party",
@@ -5358,6 +5360,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				WRAPPER_EXTENSION = app;
 			};
@@ -5367,8 +5371,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/Files-Pro.entitlements";
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
+				DEVELOPMENT_TEAM = AC5SJT236H;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party",
@@ -5386,6 +5391,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";
+				PROVISIONING_PROFILE = "27cbc021-1511-4d70-a382-6017daad4cd6";
+				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files-Pro";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				WRAPPER_EXTENSION = app;
 			};

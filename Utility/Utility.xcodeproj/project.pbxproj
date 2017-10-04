@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */; };
+		CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */; };
 		CF6E64E31F6271BF00BF986E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E21F6271BF00BF986E /* CoreText.framework */; };
 		CF6E64E51F6271CF00BF986E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E41F6271CF00BF986E /* Foundation.framework */; };
 		CF6E64E71F6271DA00BF986E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E61F6271DA00BF986E /* CoreGraphics.framework */; };
@@ -52,6 +54,8 @@
 		CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FunctionKeysPass.mm; path = source/FunctionKeysPass.mm; sourceTree = "<group>"; };
 		CF1846F51E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VerticallyCenteredTextFieldCell.h; path = include/Utility/VerticallyCenteredTextFieldCell.h; sourceTree = "<group>"; };
 		CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VerticallyCenteredTextFieldCell.mm; path = source/VerticallyCenteredTextFieldCell.mm; sourceTree = "<group>"; };
+		CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OrthodoxMonospace.h; path = include/Utility/OrthodoxMonospace.h; sourceTree = "<group>"; };
+		CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OrthodoxMonospace.mm; path = source/OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ButtonWithTextColor.h; path = include/Utility/ButtonWithTextColor.h; sourceTree = "<group>"; };
 		CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ButtonWithTextColor.mm; path = source/ButtonWithTextColor.mm; sourceTree = "<group>"; };
 		CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColoredSeparatorLine.h; path = include/Utility/ColoredSeparatorLine.h; sourceTree = "<group>"; };
@@ -159,6 +163,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */,
 				CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
@@ -197,6 +202,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */,
 				CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
@@ -253,6 +259,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -337,6 +344,7 @@
 				CFFA94831F453CC00035E606 /* SystemInformation.mm in Sources */,
 				CFFA94681F453CC00035E606 /* BlinkingCaret.mm in Sources */,
 				CFFA94821F453CC00035E606 /* SyncMessageBox.mm in Sources */,
+				CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */,
 				CFFA946E1F453CC00035E606 /* EncodingsAdditions.mm in Sources */,
 				CFFA94731F453CC00035E606 /* FPSLimitedDrawer.mm in Sources */,
 				CFFA947F1F453CC00035E606 /* SheetController.mm in Sources */,
@@ -396,6 +404,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../Habanero/include",
 					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/include/Utility",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
@@ -456,6 +465,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../Habanero/include",
 					"$(PROJECT_DIR)/include",
+					"$(PROJECT_DIR)/include/Utility",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;

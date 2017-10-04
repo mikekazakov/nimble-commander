@@ -1,20 +1,14 @@
-//
-//  FilePanelOverlappedTerminal.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 16/07/15.
-//  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
-//
-
 #include <Habanero/CommonPaths.h>
 #include <Utility/FontCache.h>
 #include <NimbleCommander/States/Terminal/TermShellTask.h>
-#include <NimbleCommander/States/Terminal/TermScreen.h>
-#include <NimbleCommander/States/Terminal/TermParser.h>
+#include <Term/Screen.h>
+#include <Term/Parser.h>
 #include <NimbleCommander/States/Terminal/TermView.h>
 #include <NimbleCommander/States/Terminal/TermScrollView.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "FilePanelOverlappedTerminal.h"
+
+using namespace nc;
 
 static const auto g_UseDefault = "terminal.useDefaultLoginShell";
 static const auto g_CustomPath = "terminal.customShellPath";
@@ -26,7 +20,7 @@ static const auto g_LongProcessDelay = 100ms;
 {
     TermScrollView             *m_TermScrollView;
     unique_ptr<TermShellTask>   m_Task;
-    unique_ptr<TermParser>      m_Parser;
+    unique_ptr<term::Parser>    m_Parser;
     string                      m_InitalWD;
     function<void()>            m_OnShellCWDChanged;
     function<void()>            m_OnLongTaskStarted;
@@ -62,7 +56,7 @@ static const auto g_LongProcessDelay = 100ms;
                 m_Task->SetShellPath(*s);
         
         auto task_ptr = m_Task.get();
-        m_Parser = make_unique<TermParser>(m_TermScrollView.screen,
+        m_Parser = make_unique<term::Parser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){
                                                task_ptr->WriteChildInput( string_view((const char*)_d, _sz) );
                                            });
@@ -237,7 +231,7 @@ static const auto g_LongProcessDelay = 100ms;
     if( auto line = m_TermScrollView.screen.Buffer().LineFromNo( m_BashCommandStartY ) ) {
         auto i = min( max(begin(line), begin(line)+m_BashCommandStartX), end(line) );
         auto e = end( line );
-        if( !TermScreenBuffer::HasOccupiedChars(i, e) )
+        if( !term::ScreenBuffer::HasOccupiedChars(i, e) )
             virgin = true;
     }
 //    m_TermScrollView.screen.Unlock();

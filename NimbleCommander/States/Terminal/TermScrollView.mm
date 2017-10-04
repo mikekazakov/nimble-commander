@@ -11,10 +11,12 @@
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Bootstrap/Config.h>
-#include "TermParser.h"
+#include <Term/Parser.h>
 #include "TermView.h"
-#include "TermScreen.h"
+#include <Term/Screen.h>
 #include "TermScrollView.h"
+
+using namespace nc;
 
 static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
 
@@ -73,7 +75,7 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
 {
     TermView                               *m_View;
     TermScrollViewFlippableDocumentHolder  *m_ViewHolder;
-    unique_ptr<TermScreen>                  m_Screen;
+    unique_ptr<term::Screen>                  m_Screen;
     ThemesManager::ObservationTicket    m_ThemeObservation;        
 }
 
@@ -98,8 +100,8 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
         self.contentView.backgroundColor = CurrentTheme().TerminalBackgroundColor();
         self.verticalLineScroll = m_View.fontCache.Height();
         
-        m_Screen = make_unique<TermScreen>(floor(rc.size.width / m_View.fontCache.Width()),
-                                           floor(rc.size.height / m_View.fontCache.Height()));
+        m_Screen = make_unique<term::Screen>(floor(rc.size.width / m_View.fontCache.Width()),
+                                             floor(rc.size.height / m_View.fontCache.Height()));
         
         [m_View AttachToScreen:m_Screen.get()];
         
@@ -141,7 +143,7 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (TermScreen&) screen
+- (term::Screen&) screen
 {
     assert(m_Screen);
     return *m_Screen;

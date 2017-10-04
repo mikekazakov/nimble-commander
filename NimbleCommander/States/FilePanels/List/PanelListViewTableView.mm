@@ -2,7 +2,6 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include <NimbleCommander/Core/OrthodoxMonospace.h>
 #include "../PanelView.h"
 #include "PanelListViewTableView.h"
 

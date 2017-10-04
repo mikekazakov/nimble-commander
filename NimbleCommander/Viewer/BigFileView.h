@@ -9,8 +9,8 @@
 #pragma once
 
 #include <Utility/Encodings.h>
+#include <Utility/OrthodoxMonospace.h>
 #include <NimbleCommander/Core/FileWindow.h>
-#include <NimbleCommander/Core/OrthodoxMonospace.h>
 
 enum class BigFileViewModes : int
 { // changing this values may cause stored history corruption

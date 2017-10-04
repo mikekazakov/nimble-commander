@@ -16,10 +16,12 @@
 #include <NimbleCommander/States/MainWindowController.h>
 #include "MainWindowTerminalState.h"
 #include "TermShellTask.h"
-#include "TermScreen.h"
-#include "TermParser.h"
+#include <Term/Screen.h>
+#include <Term/Parser.h>
 #include "TermView.h"
 #include "TermScrollView.h"
+
+using namespace nc;
 
 static const auto g_UseDefault = "terminal.useDefaultLoginShell";
 static const auto g_CustomPath = "terminal.customShellPath";
@@ -28,7 +30,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
 {
     TermScrollView             *m_TermScrollView;    
     unique_ptr<TermShellTask>   m_Task;
-    unique_ptr<TermParser>      m_Parser;
+    unique_ptr<term::Parser>    m_Parser;
     string                      m_InitalWD;
     NSLayoutConstraint         *m_TopLayoutConstraint;
 }
@@ -51,7 +53,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
             if( auto s = GlobalConfig().GetString(g_CustomPath) )
                 m_Task->SetShellPath(*s);
         auto task_ptr = m_Task.get();
-        m_Parser = make_unique<TermParser>(m_TermScrollView.screen,
+        m_Parser = make_unique<term::Parser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){
                                                task_ptr->WriteChildInput( string_view((const char*)_d, _sz) );
                                            });
@@ -135,7 +137,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
             bool newtitle = false;
             if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
                 int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
-                if(flags & TermParser::Result_ChangedTitle)
+                if(flags & nc::term::Parser::Result_ChangedTitle)
                     newtitle = true;
             }
             [strongself->m_TermScrollView.view.fpsDrawer invalidate];

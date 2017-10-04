@@ -1,7 +1,6 @@
 #pragma once
 
 #include <VFS/VFS.h>
-#include <NimbleCommander/Core/OrthodoxMonospace.h>
 #include "../PanelDataItemVolatileData.h"
 
 @class PanelListView;

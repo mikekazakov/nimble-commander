@@ -10,22 +10,25 @@
 #include <Utility/FontCache.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/BlinkingCaret.h>
+#include <Utility/OrthodoxMonospace.h>
 #include <Habanero/algo.h>
-#include <NimbleCommander/Core/OrthodoxMonospace.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "TermView.h"
-#include "TermScreen.h"
-#include "TermParser.h"
+#include <Term/Screen.h>
+#include <Term/Parser.h>
+
+using namespace nc;
+using namespace nc::term;
 
 static const auto g_ConfigMaxFPS = "terminal.maxFPS";
 static const auto g_ConfigCursorMode = "terminal.cursorMode";
 
 static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 
-using SelPoint = TermScreenPoint;
+using SelPoint = term::ScreenPoint;
 
 static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
@@ -35,8 +38,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 @implementation TermView
 {
     shared_ptr<FontCache> m_FontCache;
-    TermScreen     *m_Screen;
-    TermParser     *m_Parser;
+    term::Screen     *m_Screen;
+    term::Parser     *m_Parser;
     
     int             m_LastScreenFullHeight;
     bool            m_HasSelection;
@@ -122,7 +125,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         [self addCursorRect:self.frame cursor:NSCursor.IBeamCursor];
 }
 
-- (TermParser *)parser
+- (term::Parser *)parser
 {
     return m_Parser;
 }
@@ -132,12 +135,12 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return *m_FontCache;
 }
 
-- (void) AttachToScreen:(TermScreen*)_scr
+- (void) AttachToScreen:(term::Screen*)_scr
 {
     m_Screen = _scr;
 }
 
-- (void) AttachToParser:(TermParser*)_par
+- (void) AttachToParser:(term::Parser*)_par
 {
     m_Parser = _par;
 }
@@ -370,7 +373,7 @@ struct DrawColors
 }
 
 static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
-- (void) DrawLine:(TermScreenBuffer::RangePair<const TermScreenBuffer::Space>)_line
+- (void) DrawLine:(term::ScreenBuffer::RangePair<const term::ScreenBuffer::Space>)_line
              at_y:(int)_y
             sel_y:(int)_sel_y
           context:(CGContextRef)_context
@@ -387,10 +390,10 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
     for( auto char_space: _line ) {
         const auto fg_fill_color = char_space.reverse ?
-            ( char_space.foreground != TermScreenColors::Default ?
+            ( char_space.foreground != ScreenColors::Default ?
                 _colors.ansi_colors[char_space.foreground] :
                 _colors.foreground_color ) :
-            ( char_space.background != TermScreenColors::Default ?
+            ( char_space.background != ScreenColors::Default ?
                 _colors.ansi_colors[char_space.background] :
                 _colors.background_color );
         
@@ -465,12 +468,12 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         auto c = _colors.foreground_color;
 
         if( char_space.reverse ) {
-            c = char_space.background != TermScreenColors::Default ?
+            c = char_space.background != ScreenColors::Default ?
                 _colors.ansi_colors[char_space.background] :
                 _colors.background_color;
         } else {
             int foreground = char_space.foreground;
-            if( foreground != TermScreenColors::Default ){
+            if( foreground != ScreenColors::Default ){
                 if( char_space.intensity )
                     foreground += 8;
                 c = _colors.ansi_colors[foreground];
@@ -482,7 +485,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         
         if(char_space.l != 0 &&
            char_space.l != 32 &&
-           char_space.l != TermScreen::MultiCellGlyph
+           char_space.l != Screen::MultiCellGlyph
            ) {
 //            if(c != curr_c)
 //                oms::SetFillColor(_context, curr_c = c);
@@ -613,8 +616,8 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     auto lock = m_Screen->AcquireLock();
     if( m_Screen->Buffer().LineFromNo(position.y) ) {
         m_HasSelection = true;
-        m_SelStart = TermScreenPoint( 0, position.y );
-        m_SelEnd = TermScreenPoint( m_Screen->Buffer().Width(), position.y );
+        m_SelStart = ScreenPoint( 0, position.y );
+        m_SelEnd = ScreenPoint( m_Screen->Buffer().Width(), position.y );
         while( m_Screen->Buffer().LineWrapped(m_SelStart.y-1) )
             m_SelStart.y--;
         while( m_Screen->Buffer().LineWrapped(m_SelEnd.y) )

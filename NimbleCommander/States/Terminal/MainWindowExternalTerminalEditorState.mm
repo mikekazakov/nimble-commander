@@ -9,16 +9,19 @@
 #include <Utility/FontCache.h>
 #include "../../../NimbleCommander/States/MainWindowController.h"
 #include "TermSingleTask.h"
-#include "TermScreen.h"
-#include "TermParser.h"
+#include <Term/Screen.h>
+#include <Term/Parser.h>
 #include "TermView.h"
 #include "TermScrollView.h"
 #include "MainWindowExternalTerminalEditorState.h"
 
+using namespace nc;
+using namespace nc::term;
+
 @implementation MainWindowExternalTerminalEditorState
 {
     unique_ptr<TermSingleTask>  m_Task;
-    unique_ptr<TermParser>      m_Parser;
+    unique_ptr<Parser>          m_Parser;
     TermScrollView             *m_TermScrollView;
     path                        m_BinaryPath;
     string                      m_Params;
@@ -49,10 +52,10 @@
         
         m_Task = make_unique<TermSingleTask>();
         auto task_raw_ptr = m_Task.get();
-        m_Parser = make_unique<TermParser>(m_TermScrollView.screen,
-                                           [=](const void* _d, int _sz){
-                                               task_raw_ptr->WriteChildInput(_d, _sz);
-                                           });
+        m_Parser = make_unique<Parser>(m_TermScrollView.screen,
+                                       [=](const void* _d, int _sz){
+                                           task_raw_ptr->WriteChildInput(_d, _sz);
+                                       });
 
         m_Parser->SetTaskScreenResize([=](int sx, int sy) {
             task_raw_ptr->ResizeWindow(sx, sy);
@@ -65,7 +68,7 @@
                 bool newtitle = false;
                 if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
                     int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
-                    if(flags & TermParser::Result_ChangedTitle)
+                    if(flags & Parser::Result_ChangedTitle)
                         newtitle = true;
                     strongself->m_Parser->Flush();
                 }

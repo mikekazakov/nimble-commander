@@ -10,8 +10,11 @@
 
 #include <Utility/FPSLimitedDrawer.h>
 
-class TermScreen;
-class TermParser;
+#include <Term/Screen.h>
+#include <Term/Parser.h>
+
+//class TermScreen;
+//class TermParser;
 class FontCache;
 
 enum class TermViewCursor : int8_t
@@ -25,15 +28,15 @@ enum class TermViewCursor : int8_t
 
 @property (nonatomic, readonly) FPSLimitedDrawer *fpsDrawer;
 @property (nonatomic, readonly) const FontCache &fontCache;
-@property (nonatomic, readonly) TermParser *parser; // may be nullptr
+@property (nonatomic, readonly) nc::term::Parser *parser; // may be nullptr
 @property (nonatomic) bool reportsSizeByOccupiedContent;
 @property (nonatomic) bool allowCursorBlinking;
 @property (nonatomic, readonly) NSFont *font;
 @property (nonatomic, readonly) NSColor *backgroundColor;
 
 - (void) reloadGeometry;
-- (void) AttachToScreen:(TermScreen*)_scr;
-- (void) AttachToParser:(TermParser*)_par;
+- (void) AttachToScreen:(nc::term::Screen*)_scr;
+- (void) AttachToParser:(nc::term::Parser*)_par;
 
 - (void) adjustSizes:(bool)_mandatory; // implicitly calls scrollToBottom when full height changes
 - (void) scrollToBottom;

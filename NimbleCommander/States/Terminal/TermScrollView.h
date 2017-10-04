@@ -9,13 +9,17 @@
 #pragma once
 
 @class TermView;
-class TermScreen;
+//class TermScreen;
+namespace nc::term {
+    class Screen;
+}
+
 
 @interface TermScrollView : NSScrollView
 
 - (id)initWithFrame:(NSRect)frameRect attachToTop:(bool)top;
 
 @property (nonatomic, readonly) TermView    *view;
-@property (nonatomic, readonly) TermScreen  &screen;
+@property (nonatomic, readonly) nc::term::Screen  &screen;
 
 @end

@@ -15,10 +15,10 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include "MainWindowTerminalState.h"
-#include "TermShellTask.h"
+#include <Term/TermShellTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
-#include "TermView.h"
+#include <Term/TermView.h>
 #include "TermScrollView.h"
 
 using namespace nc;

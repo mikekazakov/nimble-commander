@@ -18,6 +18,19 @@
 		CF1ADE451F7E76C4003E9B76 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE441F7E76C4003E9B76 /* Carbon.framework */; };
 		CF1ADE481F7E77AE003E9B76 /* TranslateMaps.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */; };
 		CF1ADE491F7E77AE003E9B76 /* TranslateMaps.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE471F7E77AE003E9B76 /* TranslateMaps.h */; };
+		CF41350D1F846CE6007429B6 /* TermShellTask.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41350A1F846CE6007429B6 /* TermShellTask.h */; };
+		CF41350E1F846CE6007429B6 /* TermSingleTask.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41350B1F846CE6007429B6 /* TermSingleTask.h */; };
+		CF41350F1F846CE6007429B6 /* TermTask.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41350C1F846CE6007429B6 /* TermTask.h */; };
+		CF4135141F846CF2007429B6 /* Term-prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = CF4135101F846CF2007429B6 /* Term-prefix.pch */; };
+		CF4135151F846CF2007429B6 /* TermShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135111F846CF2007429B6 /* TermShellTask.cpp */; };
+		CF4135161F846CF2007429B6 /* TermSingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4135121F846CF2007429B6 /* TermSingleTask.mm */; };
+		CF4135171F846CF2007429B6 /* TermTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135131F846CF2007429B6 /* TermTask.cpp */; };
+		CF4135191F846D48007429B6 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF4135181F846D48007429B6 /* libHabanero.dylib */; };
+		CF41351B1F8666B4007429B6 /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41351A1F8666B4007429B6 /* Settings.h */; };
+		CF41351D1F8666BF007429B6 /* Settings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351C1F8666BF007429B6 /* Settings.mm */; };
+		CF4135231F890BC8007429B6 /* CursorMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4135221F890BC8007429B6 /* CursorMode.h */; };
+		CF4135251F891165007429B6 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4135241F891165007429B6 /* TermView.mm */; };
+		CF4135271F89116E007429B6 /* TermView.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4135261F89116E007429B6 /* TermView.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +46,19 @@
 		CF1ADE441F7E76C4003E9B76 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TranslateMaps.cpp; path = source/TranslateMaps.cpp; sourceTree = SOURCE_ROOT; };
 		CF1ADE471F7E77AE003E9B76 /* TranslateMaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TranslateMaps.h; path = source/TranslateMaps.h; sourceTree = SOURCE_ROOT; };
+		CF41350A1F846CE6007429B6 /* TermShellTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermShellTask.h; path = include/Term/TermShellTask.h; sourceTree = "<group>"; };
+		CF41350B1F846CE6007429B6 /* TermSingleTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermSingleTask.h; path = include/Term/TermSingleTask.h; sourceTree = "<group>"; };
+		CF41350C1F846CE6007429B6 /* TermTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermTask.h; path = include/Term/TermTask.h; sourceTree = "<group>"; };
+		CF4135101F846CF2007429B6 /* Term-prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Term-prefix.pch"; path = "source/Term-prefix.pch"; sourceTree = SOURCE_ROOT; };
+		CF4135111F846CF2007429B6 /* TermShellTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TermShellTask.cpp; path = source/TermShellTask.cpp; sourceTree = SOURCE_ROOT; };
+		CF4135121F846CF2007429B6 /* TermSingleTask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermSingleTask.mm; path = source/TermSingleTask.mm; sourceTree = SOURCE_ROOT; };
+		CF4135131F846CF2007429B6 /* TermTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TermTask.cpp; path = source/TermTask.cpp; sourceTree = SOURCE_ROOT; };
+		CF4135181F846D48007429B6 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-anoqrbggulscaqdgumhicyupwnaj/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
+		CF41351A1F8666B4007429B6 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = include/Term/Settings.h; sourceTree = "<group>"; };
+		CF41351C1F8666BF007429B6 /* Settings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Settings.mm; path = source/Settings.mm; sourceTree = SOURCE_ROOT; };
+		CF4135221F890BC8007429B6 /* CursorMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorMode.h; path = include/Term/CursorMode.h; sourceTree = "<group>"; };
+		CF4135241F891165007429B6 /* TermView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermView.mm; path = source/TermView.mm; sourceTree = SOURCE_ROOT; };
+		CF4135261F89116E007429B6 /* TermView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermView.h; path = include/Term/TermView.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,6 +68,7 @@
 			files = (
 				CF1ADE451F7E76C4003E9B76 /* Carbon.framework in Frameworks */,
 				CF1ADE431F7E76BF003E9B76 /* Cocoa.framework in Frameworks */,
+				CF4135191F846D48007429B6 /* libHabanero.dylib in Frameworks */,
 				CF1ADE3D1F7E742D003E9B76 /* libUtility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -70,6 +97,12 @@
 		CF1ADE0C1F7E6A2A003E9B76 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF4135241F891165007429B6 /* TermView.mm */,
+				CF41351C1F8666BF007429B6 /* Settings.mm */,
+				CF4135101F846CF2007429B6 /* Term-prefix.pch */,
+				CF4135111F846CF2007429B6 /* TermShellTask.cpp */,
+				CF4135121F846CF2007429B6 /* TermSingleTask.mm */,
+				CF4135131F846CF2007429B6 /* TermTask.cpp */,
 				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
 				CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */,
 				CF1ADE471F7E77AE003E9B76 /* TranslateMaps.h */,
@@ -83,6 +116,12 @@
 		CF1ADE2A1F7E6C3F003E9B76 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF4135261F89116E007429B6 /* TermView.h */,
+				CF4135221F890BC8007429B6 /* CursorMode.h */,
+				CF41351A1F8666B4007429B6 /* Settings.h */,
+				CF41350A1F846CE6007429B6 /* TermShellTask.h */,
+				CF41350B1F846CE6007429B6 /* TermSingleTask.h */,
+				CF41350C1F846CE6007429B6 /* TermTask.h */,
 				CF1ADE3E1F7E7587003E9B76 /* Parser.h */,
 				CF1ADE371F7E7370003E9B76 /* Screen.h */,
 				CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */,
@@ -93,6 +132,7 @@
 		CF1ADE3B1F7E742D003E9B76 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF4135181F846D48007429B6 /* libHabanero.dylib */,
 				CF1ADE441F7E76C4003E9B76 /* Carbon.framework */,
 				CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */,
 				CF1ADE3C1F7E742D003E9B76 /* libUtility.dylib */,
@@ -107,9 +147,16 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF41350F1F846CE6007429B6 /* TermTask.h in Headers */,
+				CF4135231F890BC8007429B6 /* CursorMode.h in Headers */,
 				CF1ADE491F7E77AE003E9B76 /* TranslateMaps.h in Headers */,
+				CF41350E1F846CE6007429B6 /* TermSingleTask.h in Headers */,
+				CF4135141F846CF2007429B6 /* Term-prefix.pch in Headers */,
+				CF41350D1F846CE6007429B6 /* TermShellTask.h in Headers */,
 				CF1ADE3F1F7E7587003E9B76 /* Parser.h in Headers */,
+				CF4135271F89116E007429B6 /* TermView.h in Headers */,
 				CF1ADE381F7E7370003E9B76 /* Screen.h in Headers */,
+				CF41351B1F8666B4007429B6 /* Settings.h in Headers */,
 				CF1ADE361F7E7344003E9B76 /* ScreenBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -172,7 +219,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF1ADE2D1F7E6C4B003E9B76 /* ScreenBuffer.cpp in Sources */,
+				CF4135151F846CF2007429B6 /* TermShellTask.cpp in Sources */,
+				CF4135171F846CF2007429B6 /* TermTask.cpp in Sources */,
+				CF4135161F846CF2007429B6 /* TermSingleTask.mm in Sources */,
+				CF41351D1F8666BF007429B6 /* Settings.mm in Sources */,
 				CF1ADE481F7E77AE003E9B76 /* TranslateMaps.cpp in Sources */,
+				CF4135251F891165007429B6 /* TermView.mm in Sources */,
 				CF1ADE3A1F7E7379003E9B76 /* Screen.cpp in Sources */,
 				CF1ADE411F7E7593003E9B76 /* Parser.mm in Sources */,
 			);

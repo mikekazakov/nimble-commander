@@ -6,7 +6,7 @@
 #include <VFS/Native.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "Terminal/MainWindowTerminalState.h"
-#include "Terminal/TermShellTask.h"
+#include <Term/TermShellTask.h>
 #include "Terminal/MainWindowExternalTerminalEditorState.h"
 #include "InternalViewer/MainWindowInternalViewerState.h"
 #include "../Viewer/InternalViewerWindowController.h"

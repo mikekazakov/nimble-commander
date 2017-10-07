@@ -1,9 +1,9 @@
 #include <Habanero/CommonPaths.h>
 #include <Utility/FontCache.h>
-#include <NimbleCommander/States/Terminal/TermShellTask.h>
+#include <Term/TermShellTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
-#include <NimbleCommander/States/Terminal/TermView.h>
+#include <Term/TermView.h>
 #include <NimbleCommander/States/Terminal/TermScrollView.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "FilePanelOverlappedTerminal.h"

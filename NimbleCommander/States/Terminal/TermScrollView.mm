@@ -12,9 +12,10 @@
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Term/Parser.h>
-#include "TermView.h"
+#include <Term/TermView.h>
 #include <Term/Screen.h>
 #include "TermScrollView.h"
+#include "SettingsAdaptor.h"
 
 using namespace nc;
 
@@ -88,6 +89,7 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
         auto rc = self.contentView.bounds;
         
         m_View = [[TermView alloc] initWithFrame:rc];
+        m_View.settings = term::TerminalSettings();
         m_ViewHolder = [[TermScrollViewFlippableDocumentHolder alloc] initWithFrame:rc andView:m_View beFlipped:top];
         self.documentView = m_ViewHolder;
         self.hasVerticalScroller = !GlobalConfig().GetBool(g_ConfigHideScrollbar);
@@ -151,7 +153,9 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
 
 - (void)onFontChanged
 {
-    [m_View reloadGeometry];
+    // [m_View reloadGeometry];
+    // TODO: set font manually
+    
     [self frameDidChange]; // handle with care - it will cause geometry recalculating
 }
 

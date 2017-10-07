@@ -1,6 +1,6 @@
 #include "../../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
 #include <VFS/VFS.h>
-#include <NimbleCommander/States/Terminal/TermSingleTask.h>
+#include <Term/TermSingleTask.h>
 #include <NimbleCommander/Core/FileMask.h>
 #include <NimbleCommander/Core/rapidjson.h>
 #include <NimbleCommander/Bootstrap/Config.h>

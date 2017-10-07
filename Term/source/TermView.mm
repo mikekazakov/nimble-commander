@@ -8,23 +8,18 @@
 
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontCache.h>
+#include <Utility/FontExtras.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/BlinkingCaret.h>
 #include <Utility/OrthodoxMonospace.h>
 #include <Habanero/algo.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <NimbleCommander/Core/Theming/Theme.h>
-#include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include <NimbleCommander/Bootstrap/Config.h>
 #include "TermView.h"
-#include <Term/Screen.h>
-#include <Term/Parser.h>
+#include "Screen.h"
+#include "Parser.h"
+#include "Settings.h"
 
 using namespace nc;
 using namespace nc::term;
-
-static const auto g_ConfigMaxFPS = "terminal.maxFPS";
-static const auto g_ConfigCursorMode = "terminal.cursorMode";
 
 static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 
@@ -51,8 +46,14 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     FPSLimitedDrawer *m_FPS;
     NSSize          m_IntrinsicSize;
     unique_ptr<BlinkingCaret> m_BlinkingCaret;
-    vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
-    ThemesManager::ObservationTicket    m_ThemeObservation;    
+    NSFont  *m_Font;
+    NSColor *m_ForegroundColor;
+    NSColor *m_BoldForegroundColor;
+    NSColor *m_BackgroundColor;
+    NSColor *m_SelectionColor;
+    NSColor *m_CursorColor;
+    NSColor *m_AnsiColors[16];
+    shared_ptr<nc::term::Settings> m_Settings;
 }
 
 @synthesize fpsDrawer = m_FPS;
@@ -62,31 +63,44 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     self = [super initWithFrame:frame];
     if (self) {
+        m_CursorType = TermViewCursor::Block;
         m_BlinkingCaret = make_unique<BlinkingCaret>(self);
         m_LastScreenFullHeight = 0;
         m_HasSelection = false;
         m_ReportsSizeByOccupiedContent = false;
+        m_Font = [NSFont fontWithStringDescription:@"Menlo-Regular, 13"];
+        m_FontCache = FontCache::FontCacheFromFont( (__bridge CTFontRef)m_Font );
+        [self setupBasicColors];
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
-        m_FPS.fps = GlobalConfig().GetInt(g_ConfigMaxFPS);
+        m_FPS.fps = 60;
         m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, frame.size.height);
-        [self reloadGeometry];
-        [self reloadAppearance];
-
-        __weak TermView* weak_self = self;
-        GlobalConfig().ObserveMany(m_ConfigObservationTickets,
-                                   [=]{ [(TermView*)weak_self reloadAppearance]; },
-                                   initializer_list<const char*>{
-                                       g_ConfigCursorMode,
-                                   });
-        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
-            ThemesManager::Notifications::Terminal, [weak_self]{
-            if( auto strong_self = weak_self ) {
-                [strong_self reloadGeometry];
-                [strong_self setNeedsDisplay:true];
-            }
-        });
     }
     return self;
+}
+
+- (void)setupBasicColors
+{
+    m_ForegroundColor = [NSColor colorWithHexStdString:"#BFBFBF"];
+    m_BoldForegroundColor = [NSColor colorWithHexStdString:"#E5E5E5"];
+    m_BackgroundColor = [NSColor colorWithHexStdString:"#000000"];
+    m_SelectionColor = [NSColor colorWithHexStdString:"#E5E5E5"];
+    m_CursorColor    = [NSColor colorWithHexStdString:"#666666"];
+    m_AnsiColors[0]  = [NSColor colorWithHexStdString:"#000000"];
+    m_AnsiColors[1]  = [NSColor colorWithHexStdString:"#990000"];
+    m_AnsiColors[2]  = [NSColor colorWithHexStdString:"#00A600"];
+    m_AnsiColors[3]  = [NSColor colorWithHexStdString:"#999900"];
+    m_AnsiColors[4]  = [NSColor colorWithHexStdString:"#0000B2"];
+    m_AnsiColors[5]  = [NSColor colorWithHexStdString:"#B200B2"];
+    m_AnsiColors[6]  = [NSColor colorWithHexStdString:"#00A6B2"];
+    m_AnsiColors[7]  = [NSColor colorWithHexStdString:"#BFBFBF"];
+    m_AnsiColors[8]  = [NSColor colorWithHexStdString:"#666666"];
+    m_AnsiColors[9]  = [NSColor colorWithHexStdString:"#E50000"];
+    m_AnsiColors[10] = [NSColor colorWithHexStdString:"#00D900"];
+    m_AnsiColors[11] = [NSColor colorWithHexStdString:"#E5E500"];
+    m_AnsiColors[12] = [NSColor colorWithHexStdString:"#0000FF"];
+    m_AnsiColors[13] = [NSColor colorWithHexStdString:"#E500E5"];
+    m_AnsiColors[14] = [NSColor colorWithHexStdString:"#00E5E5"];
+    m_AnsiColors[15] = [NSColor colorWithHexStdString:"#E5E5E5"];
 }
 
 - (BOOL)isFlipped
@@ -155,17 +169,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return m_BlinkingCaret->Enabled();
 }
 
-- (void) reloadAppearance
-{
-    m_CursorType            = (TermViewCursor)GlobalConfig().GetInt(g_ConfigCursorMode);
-    [self setNeedsDisplay:true];
-}
-
-- (void) reloadGeometry
-{
-    m_FontCache = FontCache::FontCacheFromFont( (__bridge CTFontRef)CurrentTheme().TerminalFont() );
-}
-
 - (void)keyDown:(NSEvent *)event
 {
     NSString*  const character = [event charactersIgnoringModifiers];
@@ -211,7 +214,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 - (void)adjustSizes:(bool)_mandatory
 {
-//    int full_height = m_Screen->Height() + m_Screen->Buffer().BackScreenLines();
     const int full_lines_height = self.fullScreenLinesHeight;
     if( full_lines_height == m_LastScreenFullHeight && _mandatory == false )
         return;
@@ -224,11 +226,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     const auto rest = size_without_insets.height - floor(size_without_insets.height / m_FontCache->Height()) * m_FontCache->Height();
 
     m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, full_lines_height_px + rest + g_Insets.top + g_Insets.bottom);
-//    NSLog(@"height = %f, addition = %f", m_IntrinsicSize.height, rest);
     [self invalidateIntrinsicContentSize];
     [self.enclosingScrollView layoutSubtreeIfNeeded];
-    
-    
     [self scrollToBottom];
 }
 
@@ -250,63 +249,19 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     }
 }
 
-static array<CGColor*, 16> ANSIColors()
-{
-    array<CGColor*, 16> a;
-    a[0] = CurrentTheme().TerminalAnsiColor0().CGColor;
-    a[1] = CurrentTheme().TerminalAnsiColor1().CGColor;
-    a[2] = CurrentTheme().TerminalAnsiColor2().CGColor;
-    a[3] = CurrentTheme().TerminalAnsiColor3().CGColor;
-    a[4] = CurrentTheme().TerminalAnsiColor4().CGColor;
-    a[5] = CurrentTheme().TerminalAnsiColor5().CGColor;
-    a[6] = CurrentTheme().TerminalAnsiColor6().CGColor;
-    a[7] = CurrentTheme().TerminalAnsiColor7().CGColor;
-    a[8] = CurrentTheme().TerminalAnsiColor8().CGColor;
-    a[9] = CurrentTheme().TerminalAnsiColor9().CGColor;
-    a[10] = CurrentTheme().TerminalAnsiColorA().CGColor;
-    a[11] = CurrentTheme().TerminalAnsiColorB().CGColor;
-    a[12] = CurrentTheme().TerminalAnsiColorC().CGColor;
-    a[13] = CurrentTheme().TerminalAnsiColorD().CGColor;
-    a[14] = CurrentTheme().TerminalAnsiColorE().CGColor;
-    a[15] = CurrentTheme().TerminalAnsiColorF().CGColor;
-    return a;
-}
-
-namespace {
-struct DrawColors
-{
-    CGColor* selection_color = CurrentTheme().TerminalSelectionColor().CGColor;
-    CGColor* foreground_color = CurrentTheme().TerminalForegroundColor().CGColor;
-    CGColor* bold_foreground_color = CurrentTheme().TerminalBoldForegroundColor().CGColor;
-    CGColor* background_color = CurrentTheme().TerminalBackgroundColor().CGColor;
-    array<CGColor*, 16> ansi_colors = ANSIColors();
-};
-
-}
-
 - (void)drawRect:(NSRect)dirtyRect
 {
 	[super drawRect:dirtyRect];
-	
-    const auto draw_colors = DrawColors{};
     
     // Drawing code here.
     CGContextRef context = NSGraphicsContext.currentContext.CGContext;
     CGContextSaveGState(context);
     auto restore_gstate = at_scope_end([=]{ CGContextRestoreGState(context); });
-//    oms::SetFillColor(context, m_BackgroundColor);
-    CGContextSetFillColorWithColor( context, draw_colors.background_color );
+    CGContextSetFillColorWithColor( context, m_BackgroundColor.CGColor );
     CGContextFillRect( context, NSRectToCGRect(self.bounds) );
     
     if( !m_Screen )
         return;
-    
-/*    static uint64_t last_redraw = GetTimeInNanoseconds();
-    uint64_t now = GetTimeInNanoseconds();
-    NSLog(@"%llu", (now - last_redraw)/1000000);
-    last_redraw = now;*/
-    
-//    MachTimeBenchmark mtb;
     
     CGContextTranslateCTM(context, g_Insets.left, g_Insets.top);
 
@@ -325,22 +280,19 @@ struct DrawColors
     
     auto lock = m_Screen->AcquireLock();
     
-//    oms::SetParamsForUserASCIIArt(context, m_FontCache);
     oms::SetParamsForUserReadableText(context, m_FontCache.get());
     CGContextSetShouldSmoothFonts(context, true);
 
     for(int i = line_start, bsl = m_Screen->Buffer().BackScreenLines();
         i < line_end;
-        ++i)
-    {
+        ++i) {
         if(i < bsl) { // scrollback
             if(auto line = m_Screen->Buffer().LineFromNo(i - bsl))
                 [self DrawLine:line
                           at_y:i
                          sel_y:i - bsl
                        context:context
-                     cursor_at:-1
-                        colors:draw_colors];
+                     cursor_at:-1];
         }
         else { // real screen
             if(auto line = m_Screen->Buffer().LineFromNo(i - bsl))
@@ -348,28 +300,9 @@ struct DrawColors
                           at_y:i
                          sel_y:i - bsl
                        context:context
-                     cursor_at:(m_Screen->CursorY() != i - bsl) ? -1 : m_Screen->CursorX()
-                        colors:draw_colors];
+                     cursor_at:(m_Screen->CursorY() != i - bsl) ? -1 : m_Screen->CursorX()];
         }
     }
-    
-#ifdef DEBUG
-//    [self drawBackscreenOnscreenBorder:context];
-#endif
-    
-    
-//    mtb.ResetMilli();
-}
-
-- (void)drawBackscreenOnscreenBorder:(CGContextRef)_context
-{
-    CGRect rc;
-    rc.origin.x = 0;
-    rc.origin.y = m_Screen->Buffer().BackScreenLines() * m_FontCache->Height();
-    rc.size.width = self.bounds.size.width;
-    rc.size.height = 1;
-    CGContextSetRGBFillColor(_context, 1, 1, 1, 1);
-    CGContextFillRect(_context, rc);
 }
 
 static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
@@ -378,29 +311,20 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
             sel_y:(int)_sel_y
           context:(CGContextRef)_context
         cursor_at:(int)_cur_x
-           colors:(const DrawColors&)_colors
 {
-    // draw backgrounds
-    //CGColorEqualToColor
-    
-//    DoubleColor curr_c = {-1, -1, -1, -1};
     auto current_color = g_ClearCGColor;
-    
     int x = 0;
 
     for( auto char_space: _line ) {
         const auto fg_fill_color = char_space.reverse ?
             ( char_space.foreground != ScreenColors::Default ?
-                _colors.ansi_colors[char_space.foreground] :
-                _colors.foreground_color ) :
+                m_AnsiColors[char_space.foreground] :
+                m_ForegroundColor).CGColor :
             ( char_space.background != ScreenColors::Default ?
-                _colors.ansi_colors[char_space.background] :
-                _colors.background_color );
+                m_AnsiColors[char_space.background] :
+                m_BackgroundColor).CGColor;
         
-//        if( fg_fill_color != m_BackgroundColor ) {
-        if( !CGColorEqualToColor(fg_fill_color, _colors.background_color) ) {
-//            if( fg_fill_color != curr_c )
-//                oms::SetFillColor(_context, curr_c = fg_fill_color);
+        if( !CGColorEqualToColor(fg_fill_color, m_BackgroundColor.CGColor) ) {
             if( !CGColorEqualToColor(fg_fill_color, current_color) )  {
                 current_color = fg_fill_color;
                 CGContextSetFillColorWithColor(_context, current_color );
@@ -440,11 +364,9 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
                             m_FontCache->Height());
         
         if( rc.origin.x >= 0 ) {
-//            oms::SetFillColor(_context, m_SelectionColor);
-            CGContextSetFillColorWithColor( _context, _colors.selection_color );
+            CGContextSetFillColorWithColor( _context, m_SelectionColor.CGColor );
             CGContextFillRect( _context, rc );
         }
-        
     }
     
     // draw cursor if it's here
@@ -457,29 +379,25 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     
     // draw glyphs
     x = 0;
-//    curr_c = {-1, -1, -1, -1};
     current_color = g_ClearCGColor;
     CGContextSetShouldAntialias(_context, true);
     
-//    for(TermScreen::Space char_space: _line.chars)
-
     for( const auto char_space: _line ) {
-//        DoubleColor c = m_ForegroundColor;
-        auto c = _colors.foreground_color;
+        auto c = m_ForegroundColor.CGColor;
 
         if( char_space.reverse ) {
             c = char_space.background != ScreenColors::Default ?
-                _colors.ansi_colors[char_space.background] :
-                _colors.background_color;
+                m_AnsiColors[char_space.background].CGColor :
+                m_BackgroundColor.CGColor;
         } else {
             int foreground = char_space.foreground;
             if( foreground != ScreenColors::Default ){
                 if( char_space.intensity )
                     foreground += 8;
-                c = _colors.ansi_colors[foreground];
+                c = m_AnsiColors[foreground].CGColor;
             } else {
                 if( char_space.intensity )
-                    c = _colors.bold_foreground_color;
+                    c =  m_BoldForegroundColor.CGColor;
             }
         }
         
@@ -487,8 +405,6 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
            char_space.l != 32 &&
            char_space.l != Screen::MultiCellGlyph
            ) {
-//            if(c != curr_c)
-//                oms::SetFillColor(_context, curr_c = c);
             if( !CGColorEqualToColor(c, current_color) )  {
                 current_color = c;
                 CGContextSetFillColorWithColor(_context, current_color );
@@ -513,9 +429,8 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
                 CGContextRestoreGState(_context);
         }        
         
-        if(char_space.underline)
-        {
-            /* NEED REAL UNDERLINE POSITION HERE !!! */
+        if( char_space.underline ) {
+            /* NEED A REAL UNDERLINE POSITION HERE !!! */
             // need to set color here?
             CGRect rc;
             rc.origin.x = x * m_FontCache->Width();
@@ -537,8 +452,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     if( is_wnd_active && is_first_responder ) {
         m_BlinkingCaret->ScheduleNextRedraw(); // be sure not to call Shedule... when view is not active
         if( m_BlinkingCaret->Visible() ) {
-//            oms::SetFillColor(_context, m_CursorColor);
-            CGContextSetFillColorWithColor(_context, CurrentTheme().TerminalCursorColor().CGColor );
+            CGContextSetFillColorWithColor(_context, m_CursorColor.CGColor );
             switch (m_CursorType) {
                 case TermViewCursor::Block:
                     CGContextFillRect(_context, NSRectToCGRect(_char_rect));
@@ -561,8 +475,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         }
     }
     else {
-//        oms::SetStrokeColor(_context, m_CursorColor);
-        CGContextSetStrokeColorWithColor(_context, CurrentTheme().TerminalCursorColor().CGColor );
+        CGContextSetStrokeColorWithColor(_context, m_CursorColor.CGColor );
         CGContextSetLineWidth(_context, 1);
         CGContextSetShouldAntialias(_context, false);
         _char_rect.origin.y += 1;
@@ -775,14 +688,169 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     [self setNeedsDisplay];
 }
 
+- (shared_ptr<nc::term::Settings>) settings
+{
+    return m_Settings;
+}
+
+- (void)setSettings:(shared_ptr<nc::term::Settings>)settings
+{
+    // unwire existing observation
+    if( m_Settings ) {
+        // ...
+    }
+    
+    self.font = settings->Font();
+    self.foregroundColor = settings->ForegroundColor();
+    self.boldForegroundColor = settings->BoldForegroundColor();
+    self.backgroundColor = settings->BackgroundColor();
+    self.selectionColor = settings->SelectionColor();
+    self.cursorColor = settings->CursorColor();
+    self.ansiColor0 = settings->AnsiColor0();
+    self.ansiColor1 = settings->AnsiColor1();
+    self.ansiColor2 = settings->AnsiColor2();
+    self.ansiColor3 = settings->AnsiColor3();
+    self.ansiColor4 = settings->AnsiColor4();
+    self.ansiColor5 = settings->AnsiColor5();
+    self.ansiColor6 = settings->AnsiColor6();
+    self.ansiColor7 = settings->AnsiColor7();
+    self.ansiColor8 = settings->AnsiColor8();
+    self.ansiColor9 = settings->AnsiColor9();
+    self.ansiColorA = settings->AnsiColorA();
+    self.ansiColorB = settings->AnsiColorB();
+    self.ansiColorC = settings->AnsiColorC();
+    self.ansiColorD = settings->AnsiColorD();
+    self.ansiColorE = settings->AnsiColorE();
+    self.ansiColorF = settings->AnsiColorF();
+    m_FPS.fps = settings->MaxFPS();
+    self.cursorMode = settings->CursorMode();
+    
+    // wire new observation
+    m_Settings = settings;
+}
+
+- (nc::term::CursorMode) cursorMode
+{
+    return m_CursorType;
+}
+
+- (void)setCursorMode:(nc::term::CursorMode)cursorMode
+{
+    if( m_CursorType != cursorMode ) {
+        m_CursorType = cursorMode;
+        self.needsDisplay = true;
+    }
+}
+
 - (NSFont*) font
 {
-    return (__bridge NSFont*) m_FontCache->BaseFont();
+    return m_Font;
+}
+
+- (void) setFont:(NSFont *)font
+{
+    if( m_Font != font ) {
+        m_Font = font;
+        m_FontCache = FontCache::FontCacheFromFont( (__bridge CTFontRef)m_Font );
+        self.needsDisplay = true;
+    }
+}
+
+- (NSColor*) foregroundColor
+{
+    return m_ForegroundColor;
+}
+
+- (void)setForegroundColor:(NSColor *)foregroundColor
+{
+    if( m_ForegroundColor != foregroundColor ) {
+        m_ForegroundColor = foregroundColor;
+        self.needsDisplay = true;
+    }
+}
+
+- (NSColor*)boldForegroundColor
+{
+    return m_BoldForegroundColor;
+}
+
+- (void)setBoldForegroundColor:(NSColor *)boldForegroundColor
+{
+    if( m_BoldForegroundColor != boldForegroundColor ) {
+        m_BoldForegroundColor = boldForegroundColor;
+        self.needsDisplay = true;
+    }
 }
 
 - (NSColor*) backgroundColor
 {
-    return CurrentTheme().TerminalBackgroundColor();
+    return m_BackgroundColor;
 }
+
+- (void) setBackgroundColor:(NSColor *)backgroundColor
+{
+    if( m_BackgroundColor != backgroundColor ) {
+        m_BackgroundColor = backgroundColor;
+        self.needsDisplay = true;
+    }
+}
+
+- (NSColor*)selectionColor
+{
+    return m_SelectionColor;
+}
+
+- (void) setSelectionColor:(NSColor *)selectionColor
+{
+    if( m_SelectionColor != selectionColor ) {
+        m_SelectionColor = selectionColor;
+        self.needsDisplay = true;
+    }
+}
+
+- (NSColor*)cursorColor
+{
+    return m_CursorColor;
+}
+
+- (void)setCursorColor:(NSColor *)cursorColor
+{
+    if( m_CursorColor != cursorColor ) {
+        m_CursorColor = cursorColor;
+        self.needsDisplay = true;
+    }
+}
+
+#define ANSI_COLOR( getter, setter, index ) \
+    - (NSColor*)getter \
+    {\
+        return m_AnsiColors[index];\
+    }\
+    - (void)setter:(NSColor *)color\
+    {\
+        if( m_AnsiColors[index] != color ) { \
+            m_AnsiColors[index] = color; \
+            self.needsDisplay = true; \
+        }\
+    }
+
+ANSI_COLOR(ansiColor0, setAnsiColor0, 0);
+ANSI_COLOR(ansiColor1, setAnsiColor1, 1);
+ANSI_COLOR(ansiColor2, setAnsiColor2, 2);
+ANSI_COLOR(ansiColor3, setAnsiColor3, 3);
+ANSI_COLOR(ansiColor4, setAnsiColor4, 4);
+ANSI_COLOR(ansiColor5, setAnsiColor5, 5);
+ANSI_COLOR(ansiColor6, setAnsiColor6, 6);
+ANSI_COLOR(ansiColor7, setAnsiColor7, 7);
+ANSI_COLOR(ansiColor8, setAnsiColor8, 8);
+ANSI_COLOR(ansiColor9, setAnsiColor9, 9);
+ANSI_COLOR(ansiColorA, setAnsiColorA, 10);
+ANSI_COLOR(ansiColorB, setAnsiColorB, 11);
+ANSI_COLOR(ansiColorC, setAnsiColorC, 12);
+ANSI_COLOR(ansiColorD, setAnsiColorD, 13);
+ANSI_COLOR(ansiColorE, setAnsiColorE, 14);
+ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
+
+#undef ANSI_COLOR
 
 @end

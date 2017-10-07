@@ -8,10 +8,10 @@
 
 #include <Utility/FontCache.h>
 #include "../../../NimbleCommander/States/MainWindowController.h"
-#include "TermSingleTask.h"
+#include <Term/TermSingleTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
-#include "TermView.h"
+#include <Term/TermView.h>
 #include "TermScrollView.h"
 #include "MainWindowExternalTerminalEditorState.h"
 

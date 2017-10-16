@@ -19,7 +19,7 @@ namespace nc::term {
     class Settings;
 }
 
-@interface TermView : NSView<ViewWithFPSLimitedDrawer>
+@interface NCTermView : NSView<ViewWithFPSLimitedDrawer>
 
 @property (nonatomic, readonly) FPSLimitedDrawer *fpsDrawer;
 @property (nonatomic, readonly) const FontCache &fontCache;

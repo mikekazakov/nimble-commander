@@ -13,7 +13,7 @@
 #include <Utility/BlinkingCaret.h>
 #include <Utility/OrthodoxMonospace.h>
 #include <Habanero/algo.h>
-#include "TermView.h"
+#include "View.h"
 #include "Screen.h"
 #include "Parser.h"
 #include "Settings.h"
@@ -30,7 +30,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     return _ch >= 0x2500 && _ch <= 0x257F;
 }
 
-@implementation TermView
+@implementation NCTermView
 {
     shared_ptr<FontCache> m_FontCache;
     term::Screen     *m_Screen;
@@ -196,7 +196,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     m_LastScreenFullHeight = full_lines_height;
     
     const auto clipview = self.enclosingScrollView.contentView;
-    const auto size_without_insets = [TermView insetSize:NSMakeSize(self.frame.size.width, clipview.frame.size.height)];
+    const auto size_without_insets = [NCTermView insetSize:NSMakeSize(self.frame.size.width, clipview.frame.size.height)];
     const auto full_lines_height_px = full_lines_height * m_FontCache->Height(); // full content height
     const auto rest = size_without_insets.height - floor(size_without_insets.height / m_FontCache->Height()) * m_FontCache->Height();
 
@@ -242,7 +242,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
     int line_start=0, line_end=0;
     const auto clipviewbounds = self.enclosingScrollView.contentView.bounds;
-    const auto effective_height = [TermView insetSize:NSMakeSize(0, clipviewbounds.size.height)].height;
+    const auto effective_height = [NCTermView insetSize:NSMakeSize(0, clipviewbounds.size.height)].height;
     if( self.superview.isFlipped ) { // regular terminal
         line_start = floor( (clipviewbounds.origin.y + g_Insets.top ) / m_FontCache->Height());
         line_end   = line_start + ceil(effective_height / m_FontCache->Height());
@@ -708,7 +708,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     m_Settings = settings;
     [self loadSettings];
     
-    __weak TermView* weak_self = self;
+    __weak NCTermView* weak_self = self;
     m_SettingsNotificationTicket = settings->StartChangesObserving([weak_self]{
         if( auto s = weak_self )
             [s loadSettings];

@@ -11,8 +11,8 @@
 #include <Term/TermSingleTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
-#include <Term/TermView.h>
-#include <Term/TermScrollView.h>
+#include <Term/View.h>
+#include <Term/ScrollView.h>
 #include "SettingsAdaptor.h"
 #include "MainWindowExternalTerminalEditorState.h"
 
@@ -23,7 +23,7 @@ using namespace nc::term;
 {
     unique_ptr<TermSingleTask>  m_Task;
     unique_ptr<Parser>          m_Parser;
-    TermScrollView             *m_TermScrollView;
+    NCTermScrollView           *m_TermScrollView;
     path                        m_BinaryPath;
     string                      m_Params;
     string                      m_FileTitle;
@@ -41,9 +41,9 @@ using namespace nc::term;
         m_Params = _params;
         m_FileTitle = _file_title;
 
-        m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds
-                                                     attachToTop:true
-                                                     settings:term::TerminalSettings()];
+        m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
+                                                       attachToTop:true
+                                                          settings:term::TerminalSettings()];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_TermScrollView];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];

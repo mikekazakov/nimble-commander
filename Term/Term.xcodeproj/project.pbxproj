@@ -29,10 +29,12 @@
 		CF41351B1F8666B4007429B6 /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41351A1F8666B4007429B6 /* Settings.h */; };
 		CF41351D1F8666BF007429B6 /* Settings.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351C1F8666BF007429B6 /* Settings.mm */; };
 		CF4135231F890BC8007429B6 /* CursorMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4135221F890BC8007429B6 /* CursorMode.h */; };
-		CF4135251F891165007429B6 /* TermView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4135241F891165007429B6 /* TermView.mm */; };
-		CF4135271F89116E007429B6 /* TermView.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4135261F89116E007429B6 /* TermView.h */; };
-		CF50996C1F94800F000AFDE7 /* TermScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = CF50996B1F94800F000AFDE7 /* TermScrollView.h */; };
-		CF50996E1F948018000AFDE7 /* TermScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50996D1F948018000AFDE7 /* TermScrollView.mm */; };
+		CF4135251F891165007429B6 /* View.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4135241F891165007429B6 /* View.mm */; };
+		CF4135271F89116E007429B6 /* View.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4135261F89116E007429B6 /* View.h */; };
+		CF50996C1F94800F000AFDE7 /* ScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = CF50996B1F94800F000AFDE7 /* ScrollView.h */; };
+		CF50996E1F948018000AFDE7 /* ScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50996D1F948018000AFDE7 /* ScrollView.mm */; };
+		CF5099711F948400000AFDE7 /* FlippableHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF50996F1F948400000AFDE7 /* FlippableHolder.h */; };
+		CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099701F948400000AFDE7 /* FlippableHolder.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,10 +61,12 @@
 		CF41351A1F8666B4007429B6 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = include/Term/Settings.h; sourceTree = "<group>"; };
 		CF41351C1F8666BF007429B6 /* Settings.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Settings.mm; path = source/Settings.mm; sourceTree = SOURCE_ROOT; };
 		CF4135221F890BC8007429B6 /* CursorMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CursorMode.h; path = include/Term/CursorMode.h; sourceTree = "<group>"; };
-		CF4135241F891165007429B6 /* TermView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermView.mm; path = source/TermView.mm; sourceTree = SOURCE_ROOT; };
-		CF4135261F89116E007429B6 /* TermView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermView.h; path = include/Term/TermView.h; sourceTree = "<group>"; };
-		CF50996B1F94800F000AFDE7 /* TermScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TermScrollView.h; path = include/Term/TermScrollView.h; sourceTree = "<group>"; };
-		CF50996D1F948018000AFDE7 /* TermScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScrollView.mm; path = source/TermScrollView.mm; sourceTree = SOURCE_ROOT; };
+		CF4135241F891165007429B6 /* View.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = View.mm; path = source/View.mm; sourceTree = SOURCE_ROOT; };
+		CF4135261F89116E007429B6 /* View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = View.h; path = include/Term/View.h; sourceTree = "<group>"; };
+		CF50996B1F94800F000AFDE7 /* ScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScrollView.h; path = include/Term/ScrollView.h; sourceTree = "<group>"; };
+		CF50996D1F948018000AFDE7 /* ScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ScrollView.mm; path = source/ScrollView.mm; sourceTree = SOURCE_ROOT; };
+		CF50996F1F948400000AFDE7 /* FlippableHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlippableHolder.h; path = source/FlippableHolder.h; sourceTree = SOURCE_ROOT; };
+		CF5099701F948400000AFDE7 /* FlippableHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FlippableHolder.mm; path = source/FlippableHolder.mm; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,18 +105,20 @@
 		CF1ADE0C1F7E6A2A003E9B76 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF50996F1F948400000AFDE7 /* FlippableHolder.h */,
+				CF5099701F948400000AFDE7 /* FlippableHolder.mm */,
 				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
 				CF1ADE391F7E7379003E9B76 /* Screen.cpp */,
 				CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */,
+				CF50996D1F948018000AFDE7 /* ScrollView.mm */,
 				CF41351C1F8666BF007429B6 /* Settings.mm */,
 				CF4135101F846CF2007429B6 /* Term-prefix.pch */,
-				CF50996D1F948018000AFDE7 /* TermScrollView.mm */,
 				CF4135111F846CF2007429B6 /* TermShellTask.cpp */,
 				CF4135121F846CF2007429B6 /* TermSingleTask.mm */,
 				CF4135131F846CF2007429B6 /* TermTask.cpp */,
-				CF4135241F891165007429B6 /* TermView.mm */,
 				CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */,
 				CF1ADE471F7E77AE003E9B76 /* TranslateMaps.h */,
+				CF4135241F891165007429B6 /* View.mm */,
 			);
 			name = Source;
 			path = Term;
@@ -125,12 +131,12 @@
 				CF1ADE3E1F7E7587003E9B76 /* Parser.h */,
 				CF1ADE371F7E7370003E9B76 /* Screen.h */,
 				CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */,
+				CF50996B1F94800F000AFDE7 /* ScrollView.h */,
 				CF41351A1F8666B4007429B6 /* Settings.h */,
-				CF50996B1F94800F000AFDE7 /* TermScrollView.h */,
 				CF41350A1F846CE6007429B6 /* TermShellTask.h */,
 				CF41350B1F846CE6007429B6 /* TermSingleTask.h */,
 				CF41350C1F846CE6007429B6 /* TermTask.h */,
-				CF4135261F89116E007429B6 /* TermView.h */,
+				CF4135261F89116E007429B6 /* View.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -157,11 +163,12 @@
 				CF4135231F890BC8007429B6 /* CursorMode.h in Headers */,
 				CF1ADE491F7E77AE003E9B76 /* TranslateMaps.h in Headers */,
 				CF41350E1F846CE6007429B6 /* TermSingleTask.h in Headers */,
-				CF50996C1F94800F000AFDE7 /* TermScrollView.h in Headers */,
+				CF50996C1F94800F000AFDE7 /* ScrollView.h in Headers */,
 				CF4135141F846CF2007429B6 /* Term-prefix.pch in Headers */,
 				CF41350D1F846CE6007429B6 /* TermShellTask.h in Headers */,
 				CF1ADE3F1F7E7587003E9B76 /* Parser.h in Headers */,
-				CF4135271F89116E007429B6 /* TermView.h in Headers */,
+				CF5099711F948400000AFDE7 /* FlippableHolder.h in Headers */,
+				CF4135271F89116E007429B6 /* View.h in Headers */,
 				CF1ADE381F7E7370003E9B76 /* Screen.h in Headers */,
 				CF41351B1F8666B4007429B6 /* Settings.h in Headers */,
 				CF1ADE361F7E7344003E9B76 /* ScreenBuffer.h in Headers */,
@@ -226,15 +233,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF1ADE2D1F7E6C4B003E9B76 /* ScreenBuffer.cpp in Sources */,
+				CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */,
 				CF4135151F846CF2007429B6 /* TermShellTask.cpp in Sources */,
 				CF4135171F846CF2007429B6 /* TermTask.cpp in Sources */,
 				CF4135161F846CF2007429B6 /* TermSingleTask.mm in Sources */,
 				CF41351D1F8666BF007429B6 /* Settings.mm in Sources */,
 				CF1ADE481F7E77AE003E9B76 /* TranslateMaps.cpp in Sources */,
-				CF4135251F891165007429B6 /* TermView.mm in Sources */,
+				CF4135251F891165007429B6 /* View.mm in Sources */,
 				CF1ADE3A1F7E7379003E9B76 /* Screen.cpp in Sources */,
 				CF1ADE411F7E7593003E9B76 /* Parser.mm in Sources */,
-				CF50996E1F948018000AFDE7 /* TermScrollView.mm in Sources */,
+				CF50996E1F948018000AFDE7 /* ScrollView.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

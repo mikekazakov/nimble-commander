@@ -3,8 +3,8 @@
 #include <Term/TermShellTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
-#include <Term/TermView.h>
-#include <Term/TermScrollView.h>
+#include <Term/View.h>
+#include <Term/ScrollView.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/States/Terminal/SettingsAdaptor.h>
 #include "FilePanelOverlappedTerminal.h"
@@ -19,7 +19,7 @@ static const auto g_LongProcessDelay = 100ms;
 
 @implementation FilePanelOverlappedTerminal
 {
-    TermScrollView             *m_TermScrollView;
+    NCTermScrollView           *m_TermScrollView;
     unique_ptr<TermShellTask>   m_Task;
     unique_ptr<term::Parser>    m_Parser;
     string                      m_InitalWD;
@@ -44,9 +44,9 @@ static const auto g_LongProcessDelay = 100ms;
         m_RunningLongTask = false;
         m_InitalWD = CommonPaths::Home();
         
-        m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds
-                                                     attachToTop:false
-                                                     settings:term::TerminalSettings()];
+        m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
+                                                       attachToTop:false
+                                                          settings:term::TerminalSettings()];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         m_TermScrollView.view.reportsSizeByOccupiedContent = true;
         [self addSubview:m_TermScrollView];

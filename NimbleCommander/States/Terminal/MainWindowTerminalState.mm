@@ -18,8 +18,8 @@
 #include <Term/TermShellTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
-#include <Term/TermView.h>
-#include <Term/TermScrollView.h>
+#include <Term/View.h>
+#include <Term/ScrollView.h>
 #include "SettingsAdaptor.h"
 
 using namespace nc;
@@ -29,7 +29,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
 @implementation MainWindowTerminalState
 {
-    TermScrollView             *m_TermScrollView;    
+    NCTermScrollView           *m_TermScrollView;
     unique_ptr<TermShellTask>   m_Task;
     unique_ptr<term::Parser>    m_Parser;
     string                      m_InitalWD;
@@ -43,9 +43,9 @@ static const auto g_CustomPath = "terminal.customShellPath";
     {
         m_InitalWD = CommonPaths::Home();
         
-        m_TermScrollView = [[TermScrollView alloc] initWithFrame:self.bounds
-                                                     attachToTop:true
-                                                     settings:term::TerminalSettings()];
+        m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
+                                                       attachToTop:true
+                                                          settings:term::TerminalSettings()];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_TermScrollView];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];

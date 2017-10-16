@@ -8,73 +8,22 @@
 
 #include <Utility/FontCache.h>
 #include "Parser.h"
-#include "TermView.h"
+#include "View.h"
 #include "Screen.h"
 #include "Settings.h"
-#include "TermScrollView.h"
+#include "ScrollView.h"
+#include "FlippableHolder.h"
 
 using namespace nc;
 using namespace nc::term;
 
-@interface TermScrollViewFlippableDocumentHolder : NSView
-- (id)initWithFrame:(NSRect)frameRect andView:(TermView*)view beFlipped:(bool)flipped;
-@end
-
-@implementation TermScrollViewFlippableDocumentHolder
+@implementation NCTermScrollView
 {
-    bool m_Flipped;
-}
-
-- (id)initWithFrame:(NSRect)frameRect andView:(TermView*)view beFlipped:(bool)flipped
-{
-    self = [super initWithFrame:frameRect];
-    if(self) {
-        m_Flipped = flipped;
-
-        view.translatesAutoresizingMaskIntoConstraints = NO;
-        [self addSubview:view];
-        
-        [self addConstraints:
-         [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[view]-0-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:NSDictionaryOfVariableBindings(view)]];
-        [self addConstraints:
-         [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-0-[view]-0-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:NSDictionaryOfVariableBindings(view)]];
-        self.translatesAutoresizingMaskIntoConstraints = false;
-    }
-    return self;
-}
-
-- (BOOL) isFlipped
-{
-    return m_Flipped;
-}
-
-- (NSRect)adjustScroll:(NSRect)proposedVisibleRect
-{
-    if( self.subviews.count > 0 &&
-        [self.subviews[0] respondsToSelector:@selector(adjustScroll:)] )
-        return [self.subviews[0] adjustScroll:proposedVisibleRect];
-        
-    return proposedVisibleRect;
-}
-
-@end
-
-///////////////////////////////////////////////////////////////////////// TermScrollView
-
-@implementation TermScrollView
-{
-    TermView                               *m_View;
-    TermScrollViewFlippableDocumentHolder  *m_ViewHolder;
-    unique_ptr<term::Screen>                  m_Screen;
-    
-    shared_ptr<nc::term::Settings> m_Settings;
-    int m_SettingsNotificationTicket;
+    NCTermView                     *m_View;
+    NCTermFlippableHolder          *m_ViewHolder;
+    unique_ptr<term::Screen>        m_Screen;
+    shared_ptr<nc::term::Settings>  m_Settings;
+    int                             m_SettingsNotificationTicket;
 }
 
 @synthesize view = m_View;
@@ -88,9 +37,11 @@ using namespace nc::term;
     if(self) {
         auto rc = self.contentView.bounds;
         m_Settings = settings;
-        m_View = [[TermView alloc] initWithFrame:rc];
+        m_View = [[NCTermView alloc] initWithFrame:rc];
         m_View.settings = settings;
-        m_ViewHolder = [[TermScrollViewFlippableDocumentHolder alloc] initWithFrame:rc andView:m_View beFlipped:top];
+        m_ViewHolder = [[NCTermFlippableHolder alloc] initWithFrame:rc
+                                                            andView:m_View
+                                                          beFlipped:top];
         self.documentView = m_ViewHolder;
         self.hasVerticalScroller = !settings->HideScrollbar();
         self.borderType = NSNoBorder;
@@ -124,7 +75,7 @@ using namespace nc::term;
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
         
-        __weak TermScrollView* weak_self = self;
+        __weak NCTermScrollView* weak_self = self;
         m_SettingsNotificationTicket = m_Settings->StartChangesObserving([weak_self]{
             if( auto strong_self = weak_self )
                 [strong_self onSettingsChanged];
@@ -164,7 +115,8 @@ using namespace nc::term;
 
 - (void)frameDidChange
 {
-    const auto sz = [TermView insetSize:NSMakeSize(m_View.frame.size.width, self.contentView.frame.size.height)];
+    const auto full_size = NSMakeSize(m_View.frame.size.width, self.contentView.frame.size.height);
+    const auto sz = [NCTermView insetSize:full_size];
     
     int sy = floor(sz.height / m_View.fontCache.Height());
     int sx = floor(sz.width / m_View.fontCache.Width());

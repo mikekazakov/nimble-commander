@@ -24,7 +24,9 @@
 #include <util.h>
 #include <syslog.h>
 
-#include "TermSingleTask.h"
+#include "SingleTask.h"
+
+namespace nc::term {
 
 static vector<string> SplitArgs(const char *_args)
 {
@@ -66,16 +68,16 @@ static const char *ImgNameFromPath(const char *_path)
     return img_name;
 }
 
-TermSingleTask::TermSingleTask()
+SingleTask::SingleTask()
 {
 }
 
-TermSingleTask::~TermSingleTask()
+SingleTask::~SingleTask()
 {
     CleanUp();
 }
 
-void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, int _sx, int _sy)
+void SingleTask::Launch(const char *_full_binary_path, const char *_params, int _sx, int _sy)
 {
     m_TermSX = _sx;
     m_TermSY = _sy;
@@ -144,7 +146,7 @@ void TermSingleTask::Launch(const char *_full_binary_path, const char *_params, 
     }
 }
 
-void TermSingleTask::WriteChildInput(const void *_d, size_t _sz)
+void SingleTask::WriteChildInput(const void *_d, size_t _sz)
 {
     if(m_MasterFD < 0 || m_TaskPID < 0 || _sz == 0)
         return;
@@ -153,7 +155,7 @@ void TermSingleTask::WriteChildInput(const void *_d, size_t _sz)
     write(m_MasterFD, _d, _sz);
 }
 
-void TermSingleTask::ReadChildOutput()
+void SingleTask::ReadChildOutput()
 {
     int rc;
     fd_set fd_in, fd_err;
@@ -209,7 +211,7 @@ end_of_all:
     CleanUp();
 }
 
-void TermSingleTask::EscapeSpaces(char *_buf)
+void SingleTask::EscapeSpaces(char *_buf)
 {
     size_t sz = strlen(_buf);
     for(size_t i = 0; i < sz; ++i)
@@ -222,7 +224,7 @@ void TermSingleTask::EscapeSpaces(char *_buf)
         }
 }
 
-void TermSingleTask::ResizeWindow(int _sx, int _sy)
+void SingleTask::ResizeWindow(int _sx, int _sy)
 {
     if(m_MasterFD < 0 || m_TaskPID < 0)
         return;
@@ -238,7 +240,7 @@ void TermSingleTask::ResizeWindow(int _sx, int _sy)
     SetTermWindow(m_MasterFD, _sx, _sy);
 }
 
-void TermSingleTask::CleanUp()
+void SingleTask::CleanUp()
 {
     lock_guard<mutex> lock(m_Lock);
     
@@ -263,4 +265,6 @@ void TermSingleTask::CleanUp()
         close(m_MasterFD);
         m_MasterFD = -1;
     }
+}
+
 }

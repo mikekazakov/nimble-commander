@@ -16,23 +16,25 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <termios.h>
-#include "TermTask.h"
+#include "Task.h"
 
-TermTask::TermTask()
+namespace nc::term {
+
+Task::Task()
 {
 }
 
-TermTask::~TermTask()
+Task::~Task()
 {
 }
 
-void TermTask::SetOnChildOutput( function<void(const void *_d, size_t _sz)> _callback )
+void Task::SetOnChildOutput( function<void(const void *_d, size_t _sz)> _callback )
 {
     lock_guard<mutex> lock(m_OnChildOutputLock);
     m_OnChildOutput = make_shared<decltype(_callback)>(move(_callback));
 }
 
-void TermTask::DoCalloutOnChildOutput( const void *_d, size_t _sz  )
+void Task::DoCalloutOnChildOutput( const void *_d, size_t _sz  )
 {
     m_OnChildOutputLock.lock();
     auto clbk = m_OnChildOutput;
@@ -42,7 +44,7 @@ void TermTask::DoCalloutOnChildOutput( const void *_d, size_t _sz  )
         (*clbk)(_d, _sz);
 }
 
-int TermTask::SetTermWindow(int _fd,
+int Task::SetTermWindow(int _fd,
                             unsigned short _chars_width,
                             unsigned short _chars_height,
                             unsigned short _pix_width,
@@ -56,7 +58,7 @@ int TermTask::SetTermWindow(int _fd,
     return ioctl(_fd, TIOCSWINSZ, (char *)&winsize);
 }
 
-int TermTask::SetupTermios(int _fd)
+int Task::SetupTermios(int _fd)
 {
     struct termios term_sett; // Saved terminal settings
     
@@ -73,7 +75,7 @@ int TermTask::SetupTermios(int _fd)
     return tcsetattr(_fd, /*TCSADRAIN*/TCSANOW, &term_sett);
 }
 
-void TermTask::SetupHandlesAndSID(int _slave_fd)
+void Task::SetupHandlesAndSID(int _slave_fd)
 {
     // The slave side of the PTY becomes the standard input and outputs of the child process
     close(0); // Close standard input (current terminal)
@@ -128,7 +130,7 @@ static string GetLocale()
     return locale;
 }
 
-const map<string, string> &TermTask::BuildEnv()
+const map<string, string> &Task::BuildEnv()
 {
     static map<string, string> env;
     static once_flag once;
@@ -155,13 +157,13 @@ const map<string, string> &TermTask::BuildEnv()
     return env;
 }
 
-void TermTask::SetEnv(const map<string, string>& _env)
+void Task::SetEnv(const map<string, string>& _env)
 {
     for(auto &i: _env)
         setenv(i.first.c_str(), i.second.c_str(), 1);
 }
 
-unsigned TermTask::ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf_sz, int _usec_wait)
+unsigned Task::ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf_sz, int _usec_wait)
 {
     fd_set fdset;
     unsigned already_read = 0;
@@ -184,7 +186,7 @@ unsigned TermTask::ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf
     return already_read;
 }
 
-string TermTask::EscapeShellFeed(const string &_feed)
+string Task::EscapeShellFeed(const string &_feed)
 {
     static const char to_esc[] = {'|', '&', ';', '<', '>', '(', ')', '$', '\'', '\\', '\"', '`', ' ', '\t' };
     string result;
@@ -209,14 +211,14 @@ static const char *GetImgNameFromPath(const char *_path)
     return img_name;
 }
 
-void TermTask::CloseAllFDAbove3()
+void Task::CloseAllFDAbove3()
 {
     static const int max_fd = (int)sysconf(_SC_OPEN_MAX);
     for( int fd = 3; fd < max_fd; fd++ )
         close(fd);
 }
 
-int TermTask::RunDetachedProcess(const string &_process_path, const vector<string> &_args)
+int Task::RunDetachedProcess(const string &_process_path, const vector<string> &_args)
 {
     const int rc = fork();
     if( rc == 0 ) {
@@ -234,4 +236,6 @@ int TermTask::RunDetachedProcess(const string &_process_path, const vector<strin
     }
 
     return rc;
+}
+
 }

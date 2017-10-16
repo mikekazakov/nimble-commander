@@ -9,7 +9,7 @@
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "ExternalToolParameterValueSheetController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include <Term/TermTask.h>
+#include <Term/Task.h>
 
 static string EscapeSpaces(string _str)
 {
@@ -246,7 +246,7 @@ static bool IsRunnableExecutable( const string &_path )
         }
         else {
             // need to start a console tool in background
-            TermTask::RunDetachedProcess(et.m_ExecutablePath, pars);
+            nc::term::Task::RunDetachedProcess(et.m_ExecutablePath, pars);
         }
     }
 }

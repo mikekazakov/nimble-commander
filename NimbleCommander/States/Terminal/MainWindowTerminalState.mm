@@ -15,7 +15,7 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include "MainWindowTerminalState.h"
-#include <Term/TermShellTask.h>
+#include <Term/ShellTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
 #include <Term/View.h>
@@ -23,6 +23,7 @@
 #include "SettingsAdaptor.h"
 
 using namespace nc;
+using namespace nc::term;
 
 static const auto g_UseDefault = "terminal.useDefaultLoginShell";
 static const auto g_CustomPath = "terminal.customShellPath";
@@ -30,8 +31,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
 @implementation MainWindowTerminalState
 {
     NCTermScrollView           *m_TermScrollView;
-    unique_ptr<TermShellTask>   m_Task;
-    unique_ptr<term::Parser>    m_Parser;
+    unique_ptr<ShellTask>       m_Task;
+    unique_ptr<Parser>          m_Parser;
     string                      m_InitalWD;
     NSLayoutConstraint         *m_TopLayoutConstraint;
 }
@@ -45,18 +46,18 @@ static const auto g_CustomPath = "terminal.customShellPath";
         
         m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
                                                        attachToTop:true
-                                                          settings:term::TerminalSettings()];
+                                                          settings:TerminalSettings()];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_TermScrollView];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
 
-        m_Task = make_unique<TermShellTask>();
+        m_Task = make_unique<ShellTask>();
         if( !GlobalConfig().GetBool(g_UseDefault) )
             if( auto s = GlobalConfig().GetString(g_CustomPath) )
                 m_Task->SetShellPath(*s);
         auto task_ptr = m_Task.get();
-        m_Parser = make_unique<term::Parser>(m_TermScrollView.screen,
+        m_Parser = make_unique<Parser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){
                                                task_ptr->WriteChildInput( string_view((const char*)_d, _sz) );
                                            });
@@ -106,7 +107,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     return nil;
 }
 
-- (TermShellTask&) task
+- (ShellTask&) task
 {
     assert(m_Task);
     return *m_Task;
@@ -140,7 +141,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
             bool newtitle = false;
             if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
                 int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
-                if(flags & nc::term::Parser::Result_ChangedTitle)
+                if(flags & Parser::Result_ChangedTitle)
                     newtitle = true;
             }
             [strongself->m_TermScrollView.view.fpsDrawer invalidate];
@@ -162,8 +163,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
 #pragma clang diagnostic pop
     
     // need right CWD here
-    if( m_Task->State() == TermShellTask::TaskState::Inactive ||
-        m_Task->State() == TermShellTask::TaskState::Dead ) {
+    if( m_Task->State() == ShellTask::TaskState::Inactive ||
+        m_Task->State() == ShellTask::TaskState::Dead ) {
         m_Task->ResizeWindow( m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height() );
         m_Task->Launch( m_InitalWD.c_str() );
     }
@@ -220,9 +221,9 @@ static const auto g_CustomPath = "terminal.customShellPath";
 {
 //    NSLog(@"1! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
     
-    if(m_Task->State() == TermShellTask::TaskState::Dead ||
-       m_Task->State() == TermShellTask::TaskState::Inactive ||
-       m_Task->State() == TermShellTask::TaskState::Shell)
+    if(m_Task->State() == ShellTask::TaskState::Dead ||
+       m_Task->State() == ShellTask::TaskState::Inactive ||
+       m_Task->State() == ShellTask::TaskState::Shell)
         return true;
     
     auto children = m_Task->ChildrenList();
@@ -254,7 +255,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
 - (bool) isAnythingRunning
 {
     auto state = m_Task->State();
-    return state == TermShellTask::TaskState::ProgramExternal || state == TermShellTask::TaskState::ProgramInternal;
+    return state == ShellTask::TaskState::ProgramExternal ||
+           state == ShellTask::TaskState::ProgramInternal;
 }
 
 - (void) Terminate
@@ -264,8 +266,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
 - (string)CWD
 {
-    if(m_Task->State() == TermShellTask::TaskState::Inactive ||
-       m_Task->State() == TermShellTask::TaskState::Dead)
+    if(m_Task->State() == ShellTask::TaskState::Inactive ||
+       m_Task->State() == ShellTask::TaskState::Dead)
         return "";
     
     return m_Task->CWD();
@@ -292,7 +294,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     // in that case - change working directory so volume can be actually unmounted.
     if( NSString *path = notification.userInfo[@"NSDevicePath"] ) {
         auto state = self.task.State();
-        if( state == TermShellTask::TaskState::Shell ) {
+        if( state == ShellTask::TaskState::Shell ) {
             auto cwd_volume = NativeFSManager::Instance().VolumeFromPath( self.CWD );
             auto unmounting_volume = NativeFSManager::Instance().VolumeFromPath(
                 path.fileSystemRepresentationSafe );

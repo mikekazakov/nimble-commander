@@ -9,6 +9,7 @@
 #include "PanelHistory.h"
 
 using namespace nc::panel;
+using namespace nc::term;
 
 static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTerminal";
 
@@ -36,8 +37,8 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     if( !m_OverlappedTerminal->terminal )
         return false;
     auto s = m_OverlappedTerminal->terminal.state;
-    return (s != TermShellTask::TaskState::Inactive) &&
-           (s != TermShellTask::TaskState::Dead );
+    return (s != ShellTask::TaskState::Inactive) &&
+           (s != ShellTask::TaskState::Dead );
 }
 
 - (void) increaseBottomTerminalGap
@@ -70,7 +71,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
 - (void) activateOverlappedTerminal
 {
     auto s = m_OverlappedTerminal->terminal.state;
-    if( s == TermShellTask::TaskState::Inactive || s == TermShellTask::TaskState::Dead ) {
+    if( s == ShellTask::TaskState::Inactive || s == ShellTask::TaskState::Dead ) {
         string wd;
         if( auto p = self.activePanelController )
             wd = p.history.LastNativeDirectoryVisited();
@@ -168,7 +169,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
 - (void) feedOverlappedTerminalWithCurrentFilename
 {
     if( !self.overlappedTerminalVisible ||
-         m_OverlappedTerminal->terminal.state != TermShellTask::TaskState::Shell )
+         m_OverlappedTerminal->terminal.state != ShellTask::TaskState::Shell )
         return;
     
     auto pc = self.activePanelController;
@@ -186,7 +187,8 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
 
 - (void) feedOverlappedTerminalWithFilenamesMenu
 {
-    if( !self.overlappedTerminalVisible || m_OverlappedTerminal->terminal.state != TermShellTask::TaskState::Shell )
+    if( !self.overlappedTerminalVisible ||
+        m_OverlappedTerminal->terminal.state != ShellTask::TaskState::Shell )
         return;
 
     auto cpc = self.activePanelController;
@@ -218,7 +220,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
 - (bool) handleReturnKeyWithOverlappedTerminal
 {
     if( self.overlappedTerminalVisible &&
-        m_OverlappedTerminal->terminal.state == TermShellTask::TaskState::Shell &&
+        m_OverlappedTerminal->terminal.state == ShellTask::TaskState::Shell &&
         m_OverlappedTerminal->terminal.isShellVirgin == false ) {
         // dirty, dirty shell... lets clear it all with Return key
         [m_OverlappedTerminal->terminal commitShell];
@@ -232,7 +234,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
 - (bool) executeInOverlappedTerminalIfPossible:(const string&)_filename at:(const string&)_path
 {
     if( self.overlappedTerminalVisible &&
-       m_OverlappedTerminal->terminal.state == TermShellTask::TaskState::Shell &&
+       m_OverlappedTerminal->terminal.state == ShellTask::TaskState::Shell &&
        m_OverlappedTerminal->terminal.isShellVirgin == true ) {
         // assumes that _filename is eligible to execute in terminal (should be check by PanelController before)
         [m_OverlappedTerminal->terminal feedShellWithInput:"./"s + _filename];
@@ -247,8 +249,8 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     if( !m_OverlappedTerminal->terminal )
         return false;
     auto s = m_OverlappedTerminal->terminal.state;
-    return s == TermShellTask::TaskState::ProgramInternal ||
-           s == TermShellTask::TaskState::ProgramExternal ;
+    return s == ShellTask::TaskState::ProgramInternal ||
+           s == ShellTask::TaskState::ProgramExternal ;
 }
 
 - (bool) overlappedTerminalWillEatKeyDown:(NSEvent *)event

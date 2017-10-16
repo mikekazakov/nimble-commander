@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <Term/TermShellTask.h>
+#include <Term/ShellTask.h>
 
 @interface FilePanelOverlappedTerminal : NSView
 
@@ -24,7 +24,7 @@
 - (bool) canFeedShellWithKeyDown:(NSEvent *)event;
 - (bool) feedShellWithKeyDown:(NSEvent *)event;
 
-@property (nonatomic, readonly) TermShellTask::TaskState state;
+@property (nonatomic, readonly) nc::term::ShellTask::TaskState state;
 
 /**
  * tries to understand if Bash shell has something entered awaiting for Enter hit.

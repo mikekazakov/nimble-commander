@@ -23,10 +23,11 @@
 #include <Utility/PathManip.h>
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
-#include "TermShellTask.h"
+#include "ShellTask.h"
+
+namespace nc::term {
 
 static const int    g_PromptPipe    = 20;
-static const int    g_MaxFD         = (int)sysconf(_SC_OPEN_MAX);
 
 static char *g_BashParams[2]    = {(char*)"-L", 0};
 static char *g_ZSHParams[3]     = {(char*)"-Z", (char*)"-g", 0};
@@ -36,7 +37,7 @@ static char **g_ShellParams[3]  = { g_BashParams, g_ZSHParams, g_TCSH };
 static bool IsDirectoryAvailableForBrowsing(const char *_path)
 {
     DIR *dirp = opendir(_path);
-    if(dirp == 0)
+    if( dirp == nullptr )
         return false;
     closedir(dirp);
     return true;
@@ -47,6 +48,12 @@ static bool IsDirectoryAvailableForBrowsing(const string &_path)
     return IsDirectoryAvailableForBrowsing(_path.c_str());
 }
 
+static int MaxFD()
+{
+    static const int max_fd = (int)sysconf(_SC_OPEN_MAX);
+    return max_fd;
+}
+
 static string GetDefaultShell()
 {
     if( const char *shell = getenv("SHELL") )
@@ -55,25 +62,25 @@ static string GetDefaultShell()
         return "/bin/bash";
 }
 
-static TermShellTask::ShellType DetectShellType( const string &_path )
+static ShellTask::ShellType DetectShellType( const string &_path )
 {
     if( _path.find("/bash") != string::npos )
-        return TermShellTask::ShellType::Bash;
+        return ShellTask::ShellType::Bash;
     if( _path.find("/zsh") != string::npos )
-        return TermShellTask::ShellType::ZSH;
+        return ShellTask::ShellType::ZSH;
     if( _path.find("/tcsh") != string::npos )
-        return TermShellTask::ShellType::TCSH;
+        return ShellTask::ShellType::TCSH;
     if( _path.find("/csh") != string::npos )
-        return TermShellTask::ShellType::TCSH;
-    return TermShellTask::ShellType::Unknown;
+        return ShellTask::ShellType::TCSH;
+    return ShellTask::ShellType::Unknown;
 }
 
-TermShellTask::TermShellTask():
+ShellTask::ShellTask():
     m_ShellPath( GetDefaultShell() )
 {
 }
 
-TermShellTask::~TermShellTask()
+ShellTask::~ShellTask()
 {
     m_IsShuttingDown = true;
     CleanUp();
@@ -84,10 +91,10 @@ static bool fd_is_valid(int fd)
     return fcntl(fd, F_GETFD) != -1 || errno != EBADF;
 }
 
-bool TermShellTask::Launch(const char *_work_dir)
+bool ShellTask::Launch(const char *_work_dir)
 {
     if( m_InputThread.joinable() )
-        throw logic_error("TermShellTask::Launch called with joinable input thread");
+        throw logic_error("ShellTask::Launch called with joinable input thread");
 
     m_ShellType = DetectShellType(m_ShellPath);
     if( m_ShellType == ShellType::Unknown )
@@ -137,7 +144,7 @@ bool TermShellTask::Launch(const char *_work_dir)
         SetState(TaskState::Shell);
         
         m_InputThread = thread([=]{
-            pthread_setname_np( ("TermShellTask background input thread, PID="s + to_string(m_ShellPID)).c_str() );
+            pthread_setname_np( ("ShellTask background input thread, PID="s + to_string(m_ShellPID)).c_str() );
             ReadChildOutput();
         });
         
@@ -191,7 +198,7 @@ bool TermShellTask::Launch(const char *_work_dir)
         // implicitly closing m_MasterFD, slave_fd and m_CwdPipe[1]
         // A BAD, BAAAD implementation - it tries to close ANY possible file descriptor for this process
         // consider a better way here
-        for(int fd = 3; fd < g_MaxFD; fd++)
+        for(int fd = 3, e = MaxFD(); fd < e; fd++)
             if(fd != g_PromptPipe)
                 close(fd);
         
@@ -204,7 +211,7 @@ bool TermShellTask::Launch(const char *_work_dir)
     return true;
 }
 
-void TermShellTask::ReadChildOutput()
+void ShellTask::ReadChildOutput()
 {
     int rc;
     fd_set fd_in, fd_err;
@@ -263,7 +270,7 @@ end_of_all:
     ;
 }
 
-void TermShellTask::ProcessPwdPrompt(const void *_d, int _sz)
+void ShellTask::ProcessPwdPrompt(const void *_d, int _sz)
 {
     string current_cwd = m_CWD;
     bool do_nr_hack = false;
@@ -310,7 +317,7 @@ void TermShellTask::ProcessPwdPrompt(const void *_d, int _sz)
 }
 
 
-void TermShellTask::DoOnPwdPromptCallout( const char *_cwd, bool _changed ) const
+void ShellTask::DoOnPwdPromptCallout( const char *_cwd, bool _changed ) const
 {
     m_OnPwdPromptLock.lock();
     auto on_pwd = m_OnPwdPrompt;
@@ -320,7 +327,7 @@ void TermShellTask::DoOnPwdPromptCallout( const char *_cwd, bool _changed ) cons
         (*on_pwd)(_cwd, _changed);
 }
 
-void TermShellTask::WriteChildInput( string_view _data )
+void ShellTask::WriteChildInput( string_view _data )
 {
     if( m_State == TaskState::Inactive || m_State == TaskState::Dead )
         return;
@@ -339,7 +346,7 @@ void TermShellTask::WriteChildInput( string_view _data )
     }
 }
 
-void TermShellTask::CleanUp()
+void ShellTask::CleanUp()
 {
     LOCK_GUARD(m_Lock) {
         if(m_ShellPID > 0) {
@@ -383,7 +390,7 @@ void TermShellTask::CleanUp()
     }
 }
 
-void TermShellTask::ShellDied()
+void ShellTask::ShellDied()
 {
     if( m_ShellPID > 0 ) { // no need to call it if PID is already set to invalid - we're in closing state
         SetState(TaskState::Dead);
@@ -391,7 +398,7 @@ void TermShellTask::ShellDied()
     }
 }
 
-void TermShellTask::SetState(TaskState _new_state)
+void ShellTask::SetState(TaskState _new_state)
 {
     m_State = _new_state;
   
@@ -400,7 +407,7 @@ void TermShellTask::SetState(TaskState _new_state)
 //    printf("TermTask state changed to %d\n", _new_state);
 }
 
-void TermShellTask::ChDir(const char *_new_cwd)
+void ShellTask::ChDir(const char *_new_cwd)
 {
     if( m_State != TaskState::Shell )
         return;
@@ -429,7 +436,7 @@ void TermShellTask::ChDir(const char *_new_cwd)
     WriteChildInput( child_feed );
 }
 
-bool TermShellTask::IsCurrentWD(const char *_what) const
+bool ShellTask::IsCurrentWD(const char *_what) const
 {
     char cwd[MAXPATHLEN];
     strcpy(cwd, _what);
@@ -440,7 +447,7 @@ bool TermShellTask::IsCurrentWD(const char *_what) const
     return m_CWD == cwd;
 }
 
-void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *_parameters)
+void ShellTask::Execute(const char *_short_fn, const char *_at, const char *_parameters)
 {
     if(m_State != TaskState::Shell)
         return;
@@ -487,7 +494,7 @@ void TermShellTask::Execute(const char *_short_fn, const char *_at, const char *
     WriteChildInput( input );
 }
 
-void TermShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
+void ShellTask::ExecuteWithFullPath(const char *_path, const char *_parameters)
 {
     if(m_State != TaskState::Shell)
         return;
@@ -505,7 +512,7 @@ void TermShellTask::ExecuteWithFullPath(const char *_path, const char *_paramete
     WriteChildInput( input );
 }
 
-vector<string> TermShellTask::ChildrenList() const
+vector<string> ShellTask::ChildrenList() const
 {
     if( m_State == TaskState::Inactive || m_State == TaskState::Dead || m_ShellPID < 0 )
         return {};
@@ -537,7 +544,7 @@ again:  if( ppid == m_ShellPID ) {
     return result;
 }
 
-int TermShellTask::ShellChildPID() const
+int ShellTask::ShellChildPID() const
 {
     if(m_State == TaskState::Inactive || m_State == TaskState::Dead || m_State == TaskState::Shell || m_ShellPID < 0)
         return -1;
@@ -562,13 +569,13 @@ int TermShellTask::ShellChildPID() const
     return child_pid;
 }
 
-string TermShellTask::CWD() const
+string ShellTask::CWD() const
 {
     lock_guard<mutex> lock(m_Lock);
     return m_CWD;
 }
 
-void TermShellTask::ResizeWindow(int _sx, int _sy)
+void ShellTask::ResizeWindow(int _sx, int _sy)
 {
     if( m_TermSX == _sx && m_TermSY == _sy )
         return;
@@ -577,31 +584,33 @@ void TermShellTask::ResizeWindow(int _sx, int _sy)
     m_TermSY = _sy;
     
     if( m_State != TaskState::Inactive && m_State != TaskState::Dead )
-        TermTask::SetTermWindow(m_MasterFD, _sx, _sy);
+        Task::SetTermWindow(m_MasterFD, _sx, _sy);
 }
 
-void TermShellTask::Terminate()
+void ShellTask::Terminate()
 {
     CleanUp();
 }
 
-void TermShellTask::SetOnPwdPrompt(function<void(const char *_cwd, bool _changed)> _callback )
+void ShellTask::SetOnPwdPrompt(function<void(const char *_cwd, bool _changed)> _callback )
 {
     LOCK_GUARD(m_OnPwdPromptLock)
         m_OnPwdPrompt = to_shared_ptr( move(_callback) );
 }
 
-void TermShellTask::SetOnStateChange( function<void(TaskState _new_state)> _callback )
+void ShellTask::SetOnStateChange( function<void(TaskState _new_state)> _callback )
 {
     m_OnStateChanged = move( _callback );
 }
 
-TermShellTask::TaskState TermShellTask::State() const
+ShellTask::TaskState ShellTask::State() const
 {
     return m_State;
 }
 
-void TermShellTask::SetShellPath(const string &_path)
+void ShellTask::SetShellPath(const string &_path)
 {
     m_ShellPath = _path;
+}
+
 }

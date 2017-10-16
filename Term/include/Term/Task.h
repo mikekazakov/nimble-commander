@@ -8,11 +8,13 @@
 
 #pragma once
 
-class TermTask
+namespace nc::term {
+
+class Task
 {
 public:
-    TermTask();
-    ~TermTask(); // NO virtual here
+    Task();
+    ~Task(); // NO virtual here
     
     
     void SetOnChildOutput( function<void(const void *_d, size_t _sz)> _callback );
@@ -55,3 +57,5 @@ private:
     mutex                                                   m_OnChildOutputLock;
     
 };
+
+}

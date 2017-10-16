@@ -8,13 +8,15 @@
 
 #pragma once
 
-#include "TermTask.h"
+#include "Task.h"
 
-class TermSingleTask : public TermTask
+namespace nc::term {
+
+class SingleTask : public Task
 {
 public:
-    TermSingleTask();
-    ~TermSingleTask();
+    SingleTask();
+    ~SingleTask();
     
     /**
      * _params will be divided by ' ' character. any "\ " entries will be changed to " ".
@@ -39,3 +41,5 @@ private:
     int             m_TermSY   = 0;
     string          m_TaskBinaryName;
 };
+
+}

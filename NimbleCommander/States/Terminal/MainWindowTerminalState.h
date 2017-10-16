@@ -10,7 +10,10 @@
 
 #include "../../../NimbleCommander/States/MainWindowStateProtocol.h"
 
-class TermShellTask;
+namespace nc::term {
+    class ShellTask;
+}
+
 @interface MainWindowTerminalState : NSView<MainWindowStateProtocol>
 
 @property (nonatomic, readonly) bool isAnythingRunning;
@@ -26,6 +29,6 @@ class TermShellTask;
 
 - (string) CWD;
 
-- (TermShellTask&) task;
+- (nc::term::ShellTask&) task;
 
 @end

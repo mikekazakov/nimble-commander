@@ -1,6 +1,6 @@
 #include <Habanero/CommonPaths.h>
 #include <Utility/FontCache.h>
-#include <Term/TermShellTask.h>
+#include <Term/ShellTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
 #include <Term/View.h>
@@ -10,6 +10,7 @@
 #include "FilePanelOverlappedTerminal.h"
 
 using namespace nc;
+using namespace nc::term;
 
 static const auto g_UseDefault = "terminal.useDefaultLoginShell";
 static const auto g_CustomPath = "terminal.customShellPath";
@@ -20,8 +21,8 @@ static const auto g_LongProcessDelay = 100ms;
 @implementation FilePanelOverlappedTerminal
 {
     NCTermScrollView           *m_TermScrollView;
-    unique_ptr<TermShellTask>   m_Task;
-    unique_ptr<term::Parser>    m_Parser;
+    unique_ptr<ShellTask>       m_Task;
+    unique_ptr<Parser>          m_Parser;
     string                      m_InitalWD;
     function<void()>            m_OnShellCWDChanged;
     function<void()>            m_OnLongTaskStarted;
@@ -46,20 +47,20 @@ static const auto g_LongProcessDelay = 100ms;
         
         m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
                                                        attachToTop:false
-                                                          settings:term::TerminalSettings()];
+                                                          settings:TerminalSettings()];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         m_TermScrollView.view.reportsSizeByOccupiedContent = true;
         [self addSubview:m_TermScrollView];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
         
-        m_Task = make_unique<TermShellTask>();
+        m_Task = make_unique<ShellTask>();
         if( !GlobalConfig().GetBool(g_UseDefault) )
             if( auto s = GlobalConfig().GetString(g_CustomPath) )
                 m_Task->SetShellPath(*s);
         
         auto task_ptr = m_Task.get();
-        m_Parser = make_unique<term::Parser>(m_TermScrollView.screen,
+        m_Parser = make_unique<Parser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){
                                                task_ptr->WriteChildInput( string_view((const char*)_d, _sz) );
                                            });
@@ -77,7 +78,7 @@ static const auto g_LongProcessDelay = 100ms;
         m_Task->SetOnPwdPrompt([=](const char *_cwd, bool _changed){
             [(FilePanelOverlappedTerminal*)weakself onBashPrompt:_cwd cwdChanged:_changed];
         });
-        m_Task->SetOnStateChange([=](TermShellTask::TaskState _state){
+        m_Task->SetOnStateChange([=](ShellTask::TaskState _state){
             [(FilePanelOverlappedTerminal*)weakself onTaskStateChanged:_state];
         });
 #pragma clang diagnostic pop
@@ -109,16 +110,16 @@ static const auto g_LongProcessDelay = 100ms;
         });
 }
 
-- (void) onTaskStateChanged:(TermShellTask::TaskState)_state
+- (void) onTaskStateChanged:(ShellTask::TaskState)_state
 {
-    if( _state == TermShellTask::TaskState::ProgramInternal ||
-        _state == TermShellTask::TaskState::ProgramExternal ) {
+    if( _state == ShellTask::TaskState::ProgramInternal ||
+        _state == ShellTask::TaskState::ProgramExternal ) {
         dispatch_to_main_queue_after(g_TaskStartInputDelay, [=]{
             int task_pid = m_Task->ShellChildPID();
             if(task_pid >= 0)
                 dispatch_to_main_queue_after(g_LongProcessDelay, [=]{
-                    if( (m_Task->State() == TermShellTask::TaskState::ProgramInternal ||
-                         m_Task->State() == TermShellTask::TaskState::ProgramExternal) &&
+                    if( (m_Task->State() == ShellTask::TaskState::ProgramInternal ||
+                         m_Task->State() == ShellTask::TaskState::ProgramExternal) &&
                          m_Task->ShellChildPID() == task_pid ) {
                         m_RunningLongTask = true;
                         if( m_OnLongTaskStarted )
@@ -171,7 +172,7 @@ static const auto g_LongProcessDelay = 100ms;
     return m_TermScrollView.screen.Height();
 }
 
-- (TermShellTask::TaskState) state
+- (ShellTask::TaskState) state
 {
     return m_Task->State();
 }
@@ -182,8 +183,8 @@ static const auto g_LongProcessDelay = 100ms;
         m_InitalWD = _initial_wd;
         
     const auto s = m_Task->State();
-    if( s == TermShellTask::TaskState::Inactive ||
-        s == TermShellTask::TaskState::Dead ) {
+    if( s == ShellTask::TaskState::Inactive ||
+        s == ShellTask::TaskState::Dead ) {
         m_Task->ResizeWindow( m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height() );
         m_Task->Launch( m_InitalWD.c_str() );
     }
@@ -206,10 +207,10 @@ static const auto g_LongProcessDelay = 100ms;
 
 - (void) feedShellWithInput:(const string&)_input
 {
-    if( self.state != TermShellTask::TaskState::Shell )
+    if( self.state != ShellTask::TaskState::Shell )
         return;
 
-    auto esc = TermTask::EscapeShellFeed( _input );
+    auto esc = Task::EscapeShellFeed( _input );
     if( !esc.empty() ) {
         esc += " ";
         m_Task->WriteChildInput( esc );
@@ -218,14 +219,14 @@ static const auto g_LongProcessDelay = 100ms;
 
 - (void) commitShell
 {
-    if( self.state != TermShellTask::TaskState::Shell )
+    if( self.state != ShellTask::TaskState::Shell )
         return;
     m_Task->WriteChildInput( "\n" );
 }
 
 - (bool) isShellVirgin
 {
-    if( self.state != TermShellTask::TaskState::Shell )
+    if( self.state != ShellTask::TaskState::Shell )
         return false;
     
     auto virgin = false;
@@ -234,7 +235,7 @@ static const auto g_LongProcessDelay = 100ms;
     if( auto line = m_TermScrollView.screen.Buffer().LineFromNo( m_BashCommandStartY ) ) {
         auto i = min( max(begin(line), begin(line)+m_BashCommandStartX), end(line) );
         auto e = end( line );
-        if( !term::ScreenBuffer::HasOccupiedChars(i, e) )
+        if( !ScreenBuffer::HasOccupiedChars(i, e) )
             virgin = true;
     }
 //    m_TermScrollView.screen.Unlock();
@@ -267,7 +268,7 @@ static const auto g_LongProcessDelay = 100ms;
 
 - (bool) canFeedShellWithKeyDown:(NSEvent *)event
 {
-    if( self.state != TermShellTask::TaskState::Shell )
+    if( self.state != ShellTask::TaskState::Shell )
         return false;
     
     static NSCharacterSet *chars;

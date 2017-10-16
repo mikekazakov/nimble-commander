@@ -8,13 +8,15 @@
 
 #pragma once
 
-#include "TermTask.h"
+#include "Task.h"
 
-class TermShellTask : public TermTask
+namespace nc::term {
+
+class ShellTask : public Task
 {
 public:
-    TermShellTask();
-    ~TermShellTask();
+    ShellTask();
+    ~ShellTask();
     
     enum class TaskState {
 
@@ -145,3 +147,5 @@ private:
     string m_ShellPath = "";
     volatile bool m_IsShuttingDown = false;
 };
+
+}

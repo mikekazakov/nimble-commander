@@ -1,6 +1,6 @@
 #include "../../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
 #include <VFS/VFS.h>
-#include <Term/TermSingleTask.h>
+#include <Term/SingleTask.h>
 #include <NimbleCommander/Core/FileMask.h>
 #include <NimbleCommander/Core/rapidjson.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -421,7 +421,7 @@ string ExternalEditorStartupInfo::SubstituteFileName(const string &_path) const
 {
     char esc_buf[MAXPATHLEN];
     strcpy(esc_buf, _path.c_str());
-    TermSingleTask::EscapeSpaces(esc_buf);
+    nc::term::SingleTask::EscapeSpaces(esc_buf);
     
     if( m_Arguments.empty() )
         return esc_buf; // just return escaped file path

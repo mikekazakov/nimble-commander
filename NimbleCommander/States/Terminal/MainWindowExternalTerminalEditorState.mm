@@ -8,7 +8,7 @@
 
 #include <Utility/FontCache.h>
 #include "../../../NimbleCommander/States/MainWindowController.h"
-#include <Term/TermSingleTask.h>
+#include <Term/SingleTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
 #include <Term/View.h>
@@ -21,7 +21,7 @@ using namespace nc::term;
 
 @implementation MainWindowExternalTerminalEditorState
 {
-    unique_ptr<TermSingleTask>  m_Task;
+    unique_ptr<SingleTask>  m_Task;
     unique_ptr<Parser>          m_Parser;
     NCTermScrollView           *m_TermScrollView;
     path                        m_BinaryPath;
@@ -53,7 +53,7 @@ using namespace nc::term;
         
         __weak MainWindowExternalTerminalEditorState *weakself = self;
         
-        m_Task = make_unique<TermSingleTask>();
+        m_Task = make_unique<SingleTask>();
         auto task_raw_ptr = m_Task.get();
         m_Parser = make_unique<Parser>(m_TermScrollView.screen,
                                        [=](const void* _d, int _sz){

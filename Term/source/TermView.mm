@@ -70,39 +70,12 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         m_LastScreenFullHeight = 0;
         m_HasSelection = false;
         m_ReportsSizeByOccupiedContent = false;
-        m_Font = [NSFont fontWithStringDescription:@"Menlo-Regular, 13"];
-        m_FontCache = FontCache::FontCacheFromFont( (__bridge CTFontRef)m_Font );
-        [self setupBasicColors];
         m_FPS = [[FPSLimitedDrawer alloc] initWithView:self];
         m_FPS.fps = 60;
         m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, frame.size.height);
+        self.settings = DefaultSettings::SharedDefaultSettings();
     }
     return self;
-}
-
-- (void)setupBasicColors
-{
-    m_ForegroundColor = [NSColor colorWithHexStdString:"#BFBFBF"];
-    m_BoldForegroundColor = [NSColor colorWithHexStdString:"#E5E5E5"];
-    m_BackgroundColor = [NSColor colorWithHexStdString:"#000000"];
-    m_SelectionColor = [NSColor colorWithHexStdString:"#E5E5E5"];
-    m_CursorColor    = [NSColor colorWithHexStdString:"#666666"];
-    m_AnsiColors[0]  = [NSColor colorWithHexStdString:"#000000"];
-    m_AnsiColors[1]  = [NSColor colorWithHexStdString:"#990000"];
-    m_AnsiColors[2]  = [NSColor colorWithHexStdString:"#00A600"];
-    m_AnsiColors[3]  = [NSColor colorWithHexStdString:"#999900"];
-    m_AnsiColors[4]  = [NSColor colorWithHexStdString:"#0000B2"];
-    m_AnsiColors[5]  = [NSColor colorWithHexStdString:"#B200B2"];
-    m_AnsiColors[6]  = [NSColor colorWithHexStdString:"#00A6B2"];
-    m_AnsiColors[7]  = [NSColor colorWithHexStdString:"#BFBFBF"];
-    m_AnsiColors[8]  = [NSColor colorWithHexStdString:"#666666"];
-    m_AnsiColors[9]  = [NSColor colorWithHexStdString:"#E50000"];
-    m_AnsiColors[10] = [NSColor colorWithHexStdString:"#00D900"];
-    m_AnsiColors[11] = [NSColor colorWithHexStdString:"#E5E500"];
-    m_AnsiColors[12] = [NSColor colorWithHexStdString:"#0000FF"];
-    m_AnsiColors[13] = [NSColor colorWithHexStdString:"#E500E5"];
-    m_AnsiColors[14] = [NSColor colorWithHexStdString:"#00E5E5"];
-    m_AnsiColors[15] = [NSColor colorWithHexStdString:"#E5E5E5"];
 }
 
 - (BOOL)isFlipped
@@ -726,6 +699,9 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void)setSettings:(shared_ptr<nc::term::Settings>)settings
 {
+    if( m_Settings == settings )
+        return;
+
     if( m_Settings )
         m_Settings->StopChangesObserving(m_SettingsNotificationTicket);
 

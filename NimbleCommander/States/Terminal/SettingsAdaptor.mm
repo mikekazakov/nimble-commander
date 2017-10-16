@@ -9,8 +9,9 @@ namespace nc::term {
 
 static const auto g_ConfigMaxFPS = "terminal.maxFPS";
 static const auto g_ConfigCursorMode = "terminal.cursorMode";
+static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
     
-class SettingsImpl : public Settings
+class SettingsImpl : public DefaultSettings
 {
     ThemesManager::ObservationTicket m_ThemeObservation;
     vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
@@ -96,6 +97,9 @@ public:
     int MaxFPS() const override { return GlobalConfig().GetInt(g_ConfigMaxFPS); }
     enum CursorMode CursorMode() const override {
         return  (enum CursorMode)GlobalConfig().GetInt(g_ConfigCursorMode);
+    }
+    bool HideScrollbar() const override {
+        return GlobalConfig().GetBool(g_ConfigHideScrollbar);
     }
 };
     

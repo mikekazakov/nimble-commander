@@ -7,19 +7,14 @@
 //
 
 #include <Utility/FontCache.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <NimbleCommander/Core/Theming/Theme.h>
-#include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include <NimbleCommander/Bootstrap/Config.h>
-#include <Term/Parser.h>
-#include <Term/TermView.h>
-#include <Term/Screen.h>
+#include "Parser.h"
+#include "TermView.h"
+#include "Screen.h"
+#include "Settings.h"
 #include "TermScrollView.h"
-#include "SettingsAdaptor.h"
 
 using namespace nc;
-
-static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
+using namespace nc::term;
 
 @interface TermScrollViewFlippableDocumentHolder : NSView
 - (id)initWithFrame:(NSRect)frameRect andView:(TermView*)view beFlipped:(bool)flipped;
@@ -77,29 +72,34 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
     TermView                               *m_View;
     TermScrollViewFlippableDocumentHolder  *m_ViewHolder;
     unique_ptr<term::Screen>                  m_Screen;
-    ThemesManager::ObservationTicket    m_ThemeObservation;        
+    
+    shared_ptr<nc::term::Settings> m_Settings;
+    int m_SettingsNotificationTicket;
 }
 
 @synthesize view = m_View;
 
-- (id)initWithFrame:(NSRect)frameRect attachToTop:(bool)top
+- (id)initWithFrame:(NSRect)frameRect
+        attachToTop:(bool)top
+        settings:(shared_ptr<nc::term::Settings>)settings
 {
+    assert(settings);
     self = [super initWithFrame:frameRect];
     if(self) {
         auto rc = self.contentView.bounds;
-        
+        m_Settings = settings;
         m_View = [[TermView alloc] initWithFrame:rc];
-        m_View.settings = term::TerminalSettings();
+        m_View.settings = settings;
         m_ViewHolder = [[TermScrollViewFlippableDocumentHolder alloc] initWithFrame:rc andView:m_View beFlipped:top];
         self.documentView = m_ViewHolder;
-        self.hasVerticalScroller = !GlobalConfig().GetBool(g_ConfigHideScrollbar);
+        self.hasVerticalScroller = !settings->HideScrollbar();
         self.borderType = NSNoBorder;
         self.verticalScrollElasticity = NSScrollElasticityNone;
         self.scrollsDynamically = true;
         self.contentView.copiesOnScroll = false;
         self.contentView.canDrawConcurrently = false;
         self.contentView.drawsBackground = true;
-        self.contentView.backgroundColor = CurrentTheme().TerminalBackgroundColor();
+        self.contentView.backgroundColor = m_Settings->BackgroundColor();
         self.verticalLineScroll = m_View.fontCache.Height();
         
         m_Screen = make_unique<term::Screen>(floor(rc.size.width / m_View.fontCache.Width()),
@@ -125,19 +125,21 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
                                                  object:self];
         
         __weak TermScrollView* weak_self = self;
-        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
-            ThemesManager::Notifications::Terminal, [weak_self]{
-            if( auto strong_self = weak_self ) {
-                [strong_self onFontChanged];
-                strong_self.contentView.backgroundColor = CurrentTheme().TerminalBackgroundColor();
-            }
+        m_SettingsNotificationTicket = m_Settings->StartChangesObserving([weak_self]{
+            if( auto strong_self = weak_self )
+                [strong_self onSettingsChanged];
         });
         
-        
         [self frameDidChange];
-        
     }
     return self;
+}
+
+- (id)initWithFrame:(NSRect)frameRect attachToTop:(bool)top
+{
+    return [self initWithFrame:frameRect
+                   attachToTop:top
+                   settings:DefaultSettings::SharedDefaultSettings()];
 }
 
 - (void) dealloc
@@ -151,12 +153,13 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
     return *m_Screen;
 }
 
-- (void)onFontChanged
+- (void)onSettingsChanged
 {
-    // [m_View reloadGeometry];
-    // TODO: set font manually
-    
-    [self frameDidChange]; // handle with care - it will cause geometry recalculating
+    self.contentView.backgroundColor = m_Settings->BackgroundColor();
+    if( m_View.font != m_Settings->Font() ) {
+        m_View.font = m_Settings->Font();
+        [self frameDidChange]; // handle with care - it will cause geometry recalculating
+    }
 }
 
 - (void)frameDidChange

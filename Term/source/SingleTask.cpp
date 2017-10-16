@@ -182,16 +182,13 @@ void SingleTask::ReadChildOutput()
             goto end_of_all; // error on select(), let's think that task has died
 
         // If data on master side of PTY (some child's output)
-        if(FD_ISSET(m_MasterFD, &fd_in))
-        {
+        if(FD_ISSET(m_MasterFD, &fd_in)) {
             rc = (int)read(m_MasterFD, input, input_sz);
-            if (rc > 0)
-            {
+            if (rc > 0) {
                 DoCalloutOnChildOutput(input, rc);
             }
-            else if(rc < 0)
-            {
-                NSLog(@"Error %d on read master PTY", errno);
+            else if(rc < 0) {
+                cerr << "Error " << errno << " on read master PTY" << endl;
                 goto end_of_all;
             }
         }

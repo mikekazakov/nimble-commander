@@ -23,7 +23,7 @@
 		CF41350F1F846CE6007429B6 /* Task.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41350C1F846CE6007429B6 /* Task.h */; };
 		CF4135141F846CF2007429B6 /* Term-prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = CF4135101F846CF2007429B6 /* Term-prefix.pch */; };
 		CF4135151F846CF2007429B6 /* ShellTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135111F846CF2007429B6 /* ShellTask.cpp */; };
-		CF4135161F846CF2007429B6 /* SingleTask.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4135121F846CF2007429B6 /* SingleTask.mm */; };
+		CF4135161F846CF2007429B6 /* SingleTask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135121F846CF2007429B6 /* SingleTask.cpp */; };
 		CF4135171F846CF2007429B6 /* Task.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4135131F846CF2007429B6 /* Task.cpp */; };
 		CF4135191F846D48007429B6 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF4135181F846D48007429B6 /* libHabanero.dylib */; };
 		CF41351B1F8666B4007429B6 /* Settings.h in Headers */ = {isa = PBXBuildFile; fileRef = CF41351A1F8666B4007429B6 /* Settings.h */; };
@@ -72,7 +72,7 @@
 		CF41350C1F846CE6007429B6 /* Task.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Task.h; path = include/Term/Task.h; sourceTree = "<group>"; };
 		CF4135101F846CF2007429B6 /* Term-prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "Term-prefix.pch"; path = "source/Term-prefix.pch"; sourceTree = SOURCE_ROOT; };
 		CF4135111F846CF2007429B6 /* ShellTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShellTask.cpp; path = source/ShellTask.cpp; sourceTree = SOURCE_ROOT; };
-		CF4135121F846CF2007429B6 /* SingleTask.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SingleTask.mm; path = source/SingleTask.mm; sourceTree = SOURCE_ROOT; };
+		CF4135121F846CF2007429B6 /* SingleTask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SingleTask.cpp; path = source/SingleTask.cpp; sourceTree = SOURCE_ROOT; };
 		CF4135131F846CF2007429B6 /* Task.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Task.cpp; path = source/Task.cpp; sourceTree = SOURCE_ROOT; };
 		CF4135181F846D48007429B6 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-anoqrbggulscaqdgumhicyupwnaj/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 		CF41351A1F8666B4007429B6 /* Settings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Settings.h; path = include/Term/Settings.h; sourceTree = "<group>"; };
@@ -150,7 +150,7 @@
 				CF50996D1F948018000AFDE7 /* ScrollView.mm */,
 				CF41351C1F8666BF007429B6 /* Settings.mm */,
 				CF4135111F846CF2007429B6 /* ShellTask.cpp */,
-				CF4135121F846CF2007429B6 /* SingleTask.mm */,
+				CF4135121F846CF2007429B6 /* SingleTask.cpp */,
 				CF4135131F846CF2007429B6 /* Task.cpp */,
 				CF4135101F846CF2007429B6 /* Term-prefix.pch */,
 				CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */,
@@ -320,7 +320,7 @@
 				CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */,
 				CF4135151F846CF2007429B6 /* ShellTask.cpp in Sources */,
 				CF4135171F846CF2007429B6 /* Task.cpp in Sources */,
-				CF4135161F846CF2007429B6 /* SingleTask.mm in Sources */,
+				CF4135161F846CF2007429B6 /* SingleTask.cpp in Sources */,
 				CF41351D1F8666BF007429B6 /* Settings.mm in Sources */,
 				CF1ADE481F7E77AE003E9B76 /* TranslateMaps.cpp in Sources */,
 				CF4135251F891165007429B6 /* View.mm in Sources */,

@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "../../../NimbleCommander/States/MainWindowStateProtocol.h"
+#include <NimbleCommander/States/MainWindowStateProtocol.h>
 
-@interface MainWindowExternalTerminalEditorState : NSView<MainWindowStateProtocol>
+@interface NCTermExternalEditorState : NSView<MainWindowStateProtocol>
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
                       binary:(const path&)_binary_path

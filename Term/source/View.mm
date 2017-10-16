@@ -32,29 +32,29 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 @implementation NCTermView
 {
-    shared_ptr<FontCache> m_FontCache;
-    term::Screen     *m_Screen;
-    term::Parser     *m_Parser;
+    shared_ptr<FontCache>   m_FontCache;
+    Screen                 *m_Screen;
+    Parser                 *m_Parser;
     
-    int             m_LastScreenFullHeight;
-    bool            m_HasSelection;
-    bool            m_ReportsSizeByOccupiedContent;
-    TermViewCursor  m_CursorType;
-    SelPoint        m_SelStart;
-    SelPoint        m_SelEnd;
+    int                     m_LastScreenFullHeight;
+    bool                    m_HasSelection;
+    bool                    m_ReportsSizeByOccupiedContent;
+    TermViewCursor          m_CursorType;
+    SelPoint                m_SelStart;
+    SelPoint                m_SelEnd;
     
-    FPSLimitedDrawer *m_FPS;
-    NSSize          m_IntrinsicSize;
+    FPSLimitedDrawer       *m_FPS;
+    NSSize                  m_IntrinsicSize;
     unique_ptr<BlinkingCaret> m_BlinkingCaret;
-    NSFont  *m_Font;
-    NSColor *m_ForegroundColor;
-    NSColor *m_BoldForegroundColor;
-    NSColor *m_BackgroundColor;
-    NSColor *m_SelectionColor;
-    NSColor *m_CursorColor;
-    NSColor *m_AnsiColors[16];
-    shared_ptr<nc::term::Settings> m_Settings;
-    int m_SettingsNotificationTicket;
+    NSFont                 *m_Font;
+    NSColor                *m_ForegroundColor;
+    NSColor                *m_BoldForegroundColor;
+    NSColor                *m_BackgroundColor;
+    NSColor                *m_SelectionColor;
+    NSColor                *m_CursorColor;
+    NSColor                *m_AnsiColors[16];
+    shared_ptr<Settings>    m_Settings;
+    int                     m_SettingsNotificationTicket;
 }
 
 @synthesize fpsDrawer = m_FPS;
@@ -461,7 +461,8 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect
 {
-    proposedVisibleRect.origin.y = floor(proposedVisibleRect.origin.y/m_FontCache->Height() + 0.5) * m_FontCache->Height();
+    const auto font_height = m_FontCache->Height();
+    proposedVisibleRect.origin.y = floor(proposedVisibleRect.origin.y/font_height + 0.5) * font_height;
     return proposedVisibleRect;
 }
 

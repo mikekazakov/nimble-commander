@@ -21,7 +21,7 @@
 #include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include <NimbleCommander/States/Terminal/MainWindowTerminalState.h>
+#include <NimbleCommander/States/Terminal/ShellState.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include <NimbleCommander/States/FilePanels/ExternalToolsSupport.h>
@@ -505,7 +505,7 @@ static AppDelegate *g_Me = nil;
         
         for( const auto wincont : m_MainWindows ) {
             wincont.operationsPool.StopAndWaitForShutdown();
-            [wincont.terminalState Terminate];
+            [wincont.terminalState terminate];
         }
     }
     

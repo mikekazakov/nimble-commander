@@ -78,7 +78,7 @@ public:
     void DoShiftRowRight(int _chars);    
     
     void SetTitle(const char *_t);
-    inline const string& Title() const { return m_Title; }
+    const string& Title() const;
     
 private:
     void CopyLineChars(int _from, int _to);

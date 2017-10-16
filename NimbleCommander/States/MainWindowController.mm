@@ -5,8 +5,8 @@
 #include <rapidjson/prettywriter.h>
 #include <VFS/Native.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
-#include "Terminal/MainWindowTerminalState.h"
-#include "Terminal/MainWindowExternalTerminalEditorState.h"
+#include "Terminal/ShellState.h"
+#include "Terminal/ExternalEditorState.h"
 #include "InternalViewer/MainWindowInternalViewerState.h"
 #include "../Viewer/InternalViewerWindowController.h"
 #include "../GeneralUI/RegistrationInfoWindow.h"
@@ -44,7 +44,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 {
     vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
     MainWindowFilePanelState    *m_PanelState;
-    MainWindowTerminalState     *m_Terminal;
+    NCTermShellState     *m_Terminal;
     MainWindowInternalViewerState *m_Viewer;
     
     SerialQueue                  m_BigFileViewLoadingQ;
@@ -383,7 +383,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     // here we need to synchonize cwd in terminal and cwd in active file panel
     if(self.topmostState == m_PanelState && is_terminal_resigning && m_PanelState.isPanelActive) {
         if( auto pc = m_PanelState.activePanelController ){
-            auto cwd = m_Terminal.CWD;
+            auto cwd = m_Terminal.cwd;
             if( pc.isUniform && (!pc.vfs->IsNativeFS() || pc.currentDirectoryPath != cwd) ) {
                 auto cnt = make_shared<nc::panel::DirectoryChangeRequest>();
                 cnt->VFS = VFSNativeHost::SharedHost();
@@ -471,15 +471,15 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void)requestTerminal:(const string&)_cwd;
 {
-    if(m_Terminal == nil) {
-        MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:[self.window.contentView frame]];
-        [state SetInitialWD:_cwd];
+    if( m_Terminal == nil ) {
+        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame];
+        state.initialWD = _cwd;
         [self pushState:state];
         m_Terminal = state;
     }
     else {
         [self pushState:m_Terminal];
-        [m_Terminal ChDir:_cwd.c_str()];
+        [m_Terminal chDir:_cwd];
     }
 }
 
@@ -490,47 +490,45 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void)requestTerminalExecution:(const char*)_filename at:(const char*)_cwd withParameters:(const char*)_params
 {
-    if(m_Terminal == nil) {
-        MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:self.window.contentView.frame];
-        [state SetInitialWD:_cwd];
+    if( m_Terminal == nil ) {
+        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame];
+        state.initialWD = string(_cwd);
         [self pushState:state];
         m_Terminal = state;
     }
     else {
         [self pushState:m_Terminal];
     }
-    [m_Terminal Execute:_filename at:_cwd with_parameters:_params];
+    [m_Terminal execute:_filename at:_cwd parameters:_params];
 }
 
 - (void)requestTerminalExecutionWithFullPath:(const char*)_binary_path withParameters:(const char*)_params
 {
     dispatch_assert_main_queue();
     
-    if(m_Terminal == nil) {
-        MainWindowTerminalState *state = [[MainWindowTerminalState alloc] initWithFrame:self.window.contentView.frame];
+    if( m_Terminal == nil ) {
+        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame];
         if( PanelController *pc = m_PanelState.activePanelController )
             if( pc.isUniform && pc.vfs->IsNativeFS() )
-                [state SetInitialWD:pc.currentDirectoryPath];
+                state.initialWD = pc.currentDirectoryPath;
         [self pushState:state];
         m_Terminal = state;
     }
     else {
         [self pushState:m_Terminal];
     }
-    [m_Terminal Execute:_binary_path with_parameters:_params];
+    [m_Terminal executeWithFullPath:_binary_path parameters:_params];
 }
 
 - (void)RequestExternalEditorTerminalExecution:(const string&)_full_app_path
                                         params:(const string&)_params
                                      fileTitle:(const string&)_file_title
 {
-    auto frame = [self.window.contentView frame];
-    MainWindowExternalTerminalEditorState *state = [MainWindowExternalTerminalEditorState alloc];
-    state = [state initWithFrameAndParams:frame
-                                   binary:_full_app_path
-                                   params:_params
-                                fileTitle:_file_title
-             ];
+    const auto frame = self.window.contentView.frame;
+    const auto state = [[NCTermExternalEditorState alloc] initWithFrameAndParams:frame
+                                                                          binary:_full_app_path
+                                                                          params:_params
+                                                                       fileTitle:_file_title];
     [self pushState:state];
 }
 

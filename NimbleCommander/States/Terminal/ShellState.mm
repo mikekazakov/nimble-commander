@@ -6,15 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
+#include "ShellState.h"
 #include <Habanero/CommonPaths.h>
 #include <Utility/NativeFSManager.h>
+#include <Utility/PathManip.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
-#include "MainWindowTerminalState.h"
 #include <Term/ShellTask.h>
 #include <Term/Screen.h>
 #include <Term/Parser.h>
@@ -28,7 +29,7 @@ using namespace nc::term;
 static const auto g_UseDefault = "terminal.useDefaultLoginShell";
 static const auto g_CustomPath = "terminal.customShellPath";
 
-@implementation MainWindowTerminalState
+@implementation NCTermShellState
 {
     NCTermScrollView           *m_TermScrollView;
     unique_ptr<ShellTask>       m_Task;
@@ -49,8 +50,17 @@ static const auto g_CustomPath = "terminal.customShellPath";
                                                           settings:TerminalSettings()];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_TermScrollView];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
+        const auto views = NSDictionaryOfVariableBindings(m_TermScrollView);
+        [self addConstraints:
+            [NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|"
+                                                    options:0
+                                                    metrics:nil
+                                                    views:views]];
+        [self addConstraints:
+            [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_TermScrollView]-(==0)-|"
+                                                    options:0
+                                                    metrics:nil
+                                                    views:views]];
 
         m_Task = make_unique<ShellTask>();
         if( !GlobalConfig().GetBool(g_UseDefault) )
@@ -113,9 +123,14 @@ static const auto g_CustomPath = "terminal.customShellPath";
     return *m_Task;
 }
 
-- (void) SetInitialWD:(const string&)_wd
+- (string) initialWD
 {
-    if(!_wd.empty())
+    return m_InitalWD;
+}
+
+- (void) setInitialWD:(const string&)_wd
+{
+    if( !_wd.empty() )
         m_InitalWD = _wd;
 }
 
@@ -131,13 +146,9 @@ static const auto g_CustomPath = "terminal.customShellPath";
     m_TopLayoutConstraint.active = true;
     [self layoutSubtreeIfNeeded];
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-repeated-use-of-weak"
-    
-    __weak MainWindowTerminalState *weakself = self;
-    
+    __weak NCTermShellState *weakself = self;
     m_Task->SetOnChildOutput([=](const void* _d, int _sz){
-        if(MainWindowTerminalState *strongself = weakself) {
+        if( auto strongself = weakself ) {
             bool newtitle = false;
             if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
                 int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
@@ -148,19 +159,18 @@ static const auto g_CustomPath = "terminal.customShellPath";
             dispatch_to_main_queue( [=]{
                 [strongself->m_TermScrollView.view adjustSizes:false];
                 if(newtitle)
-                    [strongself UpdateTitle];
+                    [strongself updateTitle];
             });
         }
     });
     
     m_Task->SetOnPwdPrompt([=](const char *_cwd, bool _changed){
-        if(MainWindowTerminalState *strongself = weakself) {
+        if( auto strongself = weakself ) {
             strongself->m_TermScrollView.screen.SetTitle("");
-            [strongself UpdateTitle];
+            [strongself updateTitle];
         }
     });
     
-#pragma clang diagnostic pop
     
     // need right CWD here
     if( m_Task->State() == ShellTask::TaskState::Inactive ||
@@ -171,7 +181,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
     
     [self.window makeFirstResponder:m_TermScrollView.view];
-    [self UpdateTitle];
+    [self updateTitle];
     GA().PostScreenView("Terminal State");
 }
 
@@ -180,41 +190,39 @@ static const auto g_CustomPath = "terminal.customShellPath";
     m_TopLayoutConstraint.active = false;
 }
 
-- (void) UpdateTitle
+- (void) updateTitle
 {
-    auto lock = m_TermScrollView.screen.AcquireLock();
-    NSString *title = [NSString stringWithUTF8StdString:m_TermScrollView.screen.Title()];
-    
-    if(title.length == 0) {
-        string cwd = m_Task->CWD();        
-        if(!cwd.empty() && cwd.back() != '/')
-            cwd += '/';
-        title = [NSString stringWithUTF8StdString:cwd];
-    }
-
+    const auto lock = m_TermScrollView.screen.AcquireLock();
+    const auto screen_title = m_TermScrollView.screen.Title();
+    const auto title = [NSString stringWithUTF8StdString:screen_title.empty() ?
+                        EnsureTrailingSlash(m_Task->CWD()) :
+                        screen_title];
     dispatch_or_run_in_main_queue([=]{
         self.window.title = title;
     });
 }
 
-- (void) ChDir:(const char*)_new_dir
+- (void) chDir:(const string&)_new_dir
 {
-    m_Task->ChDir(_new_dir);
+    m_Task->ChDir(_new_dir.c_str());
 }
 
-- (void) Execute:(const char *)_short_fn at:(const char*)_at
+- (void) execute:(const char *)_binary_name
+              at:(const char*)_binary_dir
 {
-    m_Task->Execute(_short_fn, _at, nullptr);
+    [self execute:_binary_name at:_binary_dir parameters:nullptr];
 }
 
-- (void) Execute:(const char *)_short_fn at:(const char*)_at with_parameters:(const char*)_params
+- (void) execute:(const char *)_binary_name
+              at:(const char*)_binary_dir
+      parameters:(const char*)_params
 {
-    m_Task->Execute(_short_fn, _at, _params);
+    m_Task->Execute(_binary_dir, _binary_dir, _params);
 }
 
-- (void) Execute:(const char *)_full_fn with_parameters:(const char*)_params
+- (void) executeWithFullPath:(const char *)_path parameters:(const char*)_params
 {
-    m_Task->ExecuteWithFullPath(_full_fn, _params);    
+    m_Task->ExecuteWithFullPath(_path, _params);
 }
 
 - (bool)WindowShouldClose:(MainWindowController*)sender
@@ -259,12 +267,12 @@ static const auto g_CustomPath = "terminal.customShellPath";
            state == ShellTask::TaskState::ProgramInternal;
 }
 
-- (void) Terminate
+- (void) terminate
 {
     m_Task->Terminate();
 }
 
-- (string)CWD
+- (string)cwd
 {
     if(m_Task->State() == ShellTask::TaskState::Inactive ||
        m_Task->State() == ShellTask::TaskState::Dead)
@@ -295,11 +303,11 @@ static const auto g_CustomPath = "terminal.customShellPath";
     if( NSString *path = notification.userInfo[@"NSDevicePath"] ) {
         auto state = self.task.State();
         if( state == ShellTask::TaskState::Shell ) {
-            auto cwd_volume = NativeFSManager::Instance().VolumeFromPath( self.CWD );
+            auto cwd_volume = NativeFSManager::Instance().VolumeFromPath( self.cwd );
             auto unmounting_volume = NativeFSManager::Instance().VolumeFromPath(
                 path.fileSystemRepresentationSafe );
             if( cwd_volume == unmounting_volume )
-                [self ChDir:"/Volumes/"]; // TODO: need to do something more elegant
+                [self chDir:"/Volumes/"]; // TODO: need to do something more elegant
         }
     }
 }

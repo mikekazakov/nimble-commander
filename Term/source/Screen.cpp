@@ -370,4 +370,9 @@ void Screen::GoToDefaultPosition()
     GoTo(0, 0);
 }
 
+const string& Screen::Title() const
+{
+    return m_Title;
+}
+
 }

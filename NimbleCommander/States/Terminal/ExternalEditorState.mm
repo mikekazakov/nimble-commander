@@ -14,12 +14,12 @@
 #include <Term/View.h>
 #include <Term/ScrollView.h>
 #include "SettingsAdaptor.h"
-#include "MainWindowExternalTerminalEditorState.h"
+#include "ExternalEditorState.h"
 
 using namespace nc;
 using namespace nc::term;
 
-@implementation MainWindowExternalTerminalEditorState
+@implementation NCTermExternalEditorState
 {
     unique_ptr<SingleTask>  m_Task;
     unique_ptr<Parser>          m_Parser;
@@ -46,12 +46,19 @@ using namespace nc::term;
                                                           settings:term::TerminalSettings()];
         m_TermScrollView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_TermScrollView];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
+        const auto views = NSDictionaryOfVariableBindings(m_TermScrollView);
+        [self addConstraints:
+            [NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|"
+                                                    options:0
+                                                    metrics:nil
+                                                    views:views]];
+        [self addConstraints:
+            [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_TermScrollView]-(==0)-|"
+                                                    options:0
+                                                    metrics:nil
+                                                    views:views]];
         
-        
-        
-        __weak MainWindowExternalTerminalEditorState *weakself = self;
+        __weak NCTermExternalEditorState *weakself = self;
         
         m_Task = make_unique<SingleTask>();
         auto task_raw_ptr = m_Task.get();
@@ -67,7 +74,7 @@ using namespace nc::term;
         [m_TermScrollView.view AttachToParser:m_Parser.get()];
 
         m_Task->SetOnChildOutput([=](const void* _d, int _sz){
-            if(MainWindowExternalTerminalEditorState *strongself = weakself) {
+            if( auto strongself = weakself ) {
                 bool newtitle = false;
                 if( auto lock = strongself->m_TermScrollView.screen.AcquireLock() ) {
                     int flags = strongself->m_Parser->EatBytes((const unsigned char*)_d, _sz);
@@ -86,7 +93,7 @@ using namespace nc::term;
         });
         m_Task->SetOnChildDied(^{
             dispatch_to_main_queue( [=]{
-                if(MainWindowExternalTerminalEditorState *strongself = weakself)
+                if( auto strongself = weakself )
                     [(MainWindowController*)strongself.window.delegate ResignAsWindowState:strongself];
             });
         });
@@ -116,7 +123,10 @@ using namespace nc::term;
     m_TopLayoutConstraint.active = true;
     [self layoutSubtreeIfNeeded];
 
-    m_Task->Launch(m_BinaryPath.c_str(), m_Params.c_str(), m_TermScrollView.screen.Width(), m_TermScrollView.screen.Height());
+    m_Task->Launch(m_BinaryPath.c_str(),
+                   m_Params.c_str(),
+                   m_TermScrollView.screen.Width(),
+                   m_TermScrollView.screen.Height());
     
     [self.window makeFirstResponder:m_TermScrollView.view];
     [self updateTitle];

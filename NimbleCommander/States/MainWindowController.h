@@ -5,7 +5,7 @@
 class VFSHost;
 @class OperationsController;
 @class MainWindowFilePanelState;
-@class MainWindowTerminalState;
+@class NCTermShellState;
 
 namespace nc::ops {
     class Pool;
@@ -42,7 +42,7 @@ namespace nc::ops {
 
 // Access to states
 @property (nonatomic, readonly) MainWindowFilePanelState*   filePanelsState;  // one and only one per window
-@property (nonatomic, readonly) MainWindowTerminalState*    terminalState;    // zero or one per window
+@property (nonatomic, readonly) NCTermShellState*           terminalState;    // zero or one per window
 @property (nonatomic, readonly) id<MainWindowStateProtocol> topmostState;
 @property (nonatomic, readonly) nc::ops::Pool&              operationsPool;
 

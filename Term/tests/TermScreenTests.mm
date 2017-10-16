@@ -9,7 +9,9 @@
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 
-#import "TermScreen.h"
+#import "Screen.h"
+
+using namespace nc::term;
 
 @interface TermScreenTests : XCTestCase
 
@@ -21,7 +23,7 @@
 
 - (void)testEraseInLine
 {
-    TermScreen scr(10, 1);
+    Screen scr(10, 1);
     scr.GoTo(0, 0);
     scr.PutString("ABCDE");
     XCTAssert(scr.Buffer().DumpScreenAsANSI() == "ABCDE     ");
@@ -40,7 +42,7 @@
 
 - (void)testEraseInLineCount
 {
-    TermScreen scr(10, 1);
+    Screen scr(10, 1);
     scr.GoTo(0, 0);
     scr.PutString("ABCDE");
     XCTAssert(scr.Buffer().DumpScreenAsANSI() == "ABCDE     ");
@@ -60,7 +62,7 @@
 
 - (void)testScrollDown
 {
-    TermScreen scr(10, 3);
+    Screen scr(10, 3);
     scr.GoTo(0, 0);
     scr.PutString("ABCDE");
     scr.GoTo(0, 1);

@@ -80,13 +80,4 @@ public:
     void StopChangesObserving( int _ticket ) override;
 };
 
-
-
-
-//    static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
-//    static const auto g_UseDefault = "terminal.useDefaultLoginShell";
-//    static const auto g_CustomPath = "terminal.customShellPath";
-//    static const auto g_ConfigMaxFPS = "terminal.maxFPS";
-//    static const auto g_ConfigCursorMode = "terminal.cursorMode";
 }
-

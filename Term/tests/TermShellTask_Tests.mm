@@ -8,9 +8,11 @@
 
 #include <Habanero/CommonPaths.h>
 #include "../../../Files Tests/tests_common.h"
-#include "TermShellTask.h"
-#include "TermScreen.h"
-#include "TermParser.h"
+#include "ShellTask.h"
+#include "Screen.h"
+#include "Parser.h"
+
+using namespace nc::term;
 
 static void testSleep(microseconds _us)
 {
@@ -46,8 +48,8 @@ static string ToRealPath(const string &_from)
 @implementation TermShellTask_Tests
 
 - (void)testBasic {
-    TermShellTask shell;
-    XCTAssert( shell.State() == TermShellTask::TaskState::Inactive );
+    ShellTask shell;
+    XCTAssert( shell.State() == ShellTask::TaskState::Inactive );
     
     string cwd = CommonPaths::Home();
     shell.ResizeWindow(100, 100);
@@ -56,7 +58,7 @@ static string ToRealPath(const string &_from)
     
     // check cwd
     XCTAssert( ToRealPath(shell.CWD()) == ToRealPath(cwd) );
-    XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
+    XCTAssert( shell.State() == ShellTask::TaskState::Shell);
     
     // the only task is running is shell itself, and is not returned by ChildrenList
     XCTAssert( shell.ChildrenList().empty() );
@@ -66,20 +68,20 @@ static string ToRealPath(const string &_from)
     testSleep( 1s );
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
-    XCTAssert( shell.State() == TermShellTask::TaskState::ProgramExternal);
+    XCTAssert( shell.State() == ShellTask::TaskState::ProgramExternal);
     
     // simulates user press Q to quit top
     shell.WriteChildInput("q");
     testSleep( 1s );
     XCTAssert( shell.ChildrenList().empty() );
-    XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
+    XCTAssert( shell.State() == ShellTask::TaskState::Shell);
   
     // check chdir
     cwd = CommonPaths::Home() + "Downloads/";
     shell.ChDir( cwd.c_str() );
     testSleep( 1s );
     XCTAssert( shell.CWD() == cwd );
-    XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
+    XCTAssert( shell.State() == ShellTask::TaskState::Shell);
     
     // test chdir in the middle of some typing
     shell.WriteChildInput("ls ");
@@ -87,19 +89,19 @@ static string ToRealPath(const string &_from)
     shell.ChDir( cwd.c_str() );
     testSleep( 1s );
     XCTAssert( shell.CWD() == cwd );
-    XCTAssert( shell.State() == TermShellTask::TaskState::Shell);
+    XCTAssert( shell.State() == ShellTask::TaskState::Shell);
 
     // check internal program state
     shell.WriteChildInput("top\r");
     testSleep( 1s );
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
-    XCTAssert( shell.State() == TermShellTask::TaskState::ProgramInternal );
+    XCTAssert( shell.State() == ShellTask::TaskState::ProgramInternal );
 
     // check termination
     shell.Terminate();
     XCTAssert( shell.ChildrenList().empty() );
-    XCTAssert( shell.State() == TermShellTask::TaskState::Inactive );
+    XCTAssert( shell.State() == ShellTask::TaskState::Inactive );
     
     // check execution with short path in different directory
     shell.Launch(CommonPaths::Home().c_str());
@@ -108,7 +110,7 @@ static string ToRealPath(const string &_from)
     testSleep( 1s );
     XCTAssert( shell.ChildrenList().size() == 1 );
     XCTAssert( shell.ChildrenList()[0] == "top" );
-    XCTAssert( shell.State() == TermShellTask::TaskState::ProgramExternal );
+    XCTAssert( shell.State() == ShellTask::TaskState::ProgramExternal );
     
     shell.Terminate();
     XCTAssert( shell.ChildrenList().empty() );
@@ -116,9 +118,9 @@ static string ToRealPath(const string &_from)
 
 - (void)testVim1
 {
-    auto shell = make_shared<TermShellTask>();
-    auto screen = make_shared<TermScreen>(40, 10);
-    auto parser = make_shared<TermParser>(*screen,
+    auto shell = make_shared<ShellTask>();
+    auto screen = make_shared<Screen>(40, 10);
+    auto parser = make_shared<Parser>(*screen,
                                           [&](const void* _d, int _sz){
                                               shell->WriteChildInput( string_view((const char*)_d, _sz) );
                                           });

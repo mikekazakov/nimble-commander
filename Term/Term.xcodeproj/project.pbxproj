@@ -35,7 +35,24 @@
 		CF50996E1F948018000AFDE7 /* ScrollView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF50996D1F948018000AFDE7 /* ScrollView.mm */; };
 		CF5099711F948400000AFDE7 /* FlippableHolder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF50996F1F948400000AFDE7 /* FlippableHolder.h */; };
 		CF5099721F948400000AFDE7 /* FlippableHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099701F948400000AFDE7 /* FlippableHolder.mm */; };
+		CF50997C1F948E7C000AFDE7 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */; };
+		CF50998B1F948F1F000AFDE7 /* TermScreenBufferTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099851F948EF9000AFDE7 /* TermScreenBufferTests.mm */; };
+		CF50998C1F948F22000AFDE7 /* TermScreenTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099861F948EF9000AFDE7 /* TermScreenTests.mm */; };
+		CF50998D1F948F25000AFDE7 /* TermShellTask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099871F948EF9000AFDE7 /* TermShellTask_Tests.mm */; };
+		CF50998E1F948FD8000AFDE7 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */; };
+		CF5099901F948FDD000AFDE7 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF50998F1F948FDD000AFDE7 /* libUtility.dylib */; };
+		CF5099921F948FFA000AFDE7 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF5099911F948FFA000AFDE7 /* libHabanero.dylib */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CF50997D1F948E7C000AFDE7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF1ADE021F7E6A2A003E9B76 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CF1ADE091F7E6A2A003E9B76;
+			remoteInfo = Term;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libTerm.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,6 +84,13 @@
 		CF50996D1F948018000AFDE7 /* ScrollView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ScrollView.mm; path = source/ScrollView.mm; sourceTree = SOURCE_ROOT; };
 		CF50996F1F948400000AFDE7 /* FlippableHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlippableHolder.h; path = source/FlippableHolder.h; sourceTree = SOURCE_ROOT; };
 		CF5099701F948400000AFDE7 /* FlippableHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FlippableHolder.mm; path = source/FlippableHolder.mm; sourceTree = SOURCE_ROOT; };
+		CF5099771F948E7C000AFDE7 /* Term Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Term Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF50997B1F948E7C000AFDE7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../tests/Info.plist; sourceTree = "<group>"; };
+		CF5099851F948EF9000AFDE7 /* TermScreenBufferTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenBufferTests.mm; path = tests/TermScreenBufferTests.mm; sourceTree = SOURCE_ROOT; };
+		CF5099861F948EF9000AFDE7 /* TermScreenTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermScreenTests.mm; path = tests/TermScreenTests.mm; sourceTree = SOURCE_ROOT; };
+		CF5099871F948EF9000AFDE7 /* TermShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TermShellTask_Tests.mm; path = tests/TermShellTask_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF50998F1F948FDD000AFDE7 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
+		CF5099911F948FFA000AFDE7 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +105,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CF5099741F948E7C000AFDE7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF5099921F948FFA000AFDE7 /* libHabanero.dylib in Frameworks */,
+				CF5099901F948FDD000AFDE7 /* libUtility.dylib in Frameworks */,
+				CF50998E1F948FD8000AFDE7 /* Cocoa.framework in Frameworks */,
+				CF50997C1F948E7C000AFDE7 /* libTerm.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -89,6 +124,7 @@
 			children = (
 				CF1ADE2A1F7E6C3F003E9B76 /* Headers */,
 				CF1ADE0C1F7E6A2A003E9B76 /* Source */,
+				CF5099781F948E7C000AFDE7 /* Tests */,
 				CF1ADE0B1F7E6A2A003E9B76 /* Products */,
 				CF1ADE3B1F7E742D003E9B76 /* Frameworks */,
 			);
@@ -98,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */,
+				CF5099771F948E7C000AFDE7 /* Term Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -144,12 +181,26 @@
 		CF1ADE3B1F7E742D003E9B76 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF5099911F948FFA000AFDE7 /* libHabanero.dylib */,
+				CF50998F1F948FDD000AFDE7 /* libUtility.dylib */,
 				CF4135181F846D48007429B6 /* libHabanero.dylib */,
 				CF1ADE441F7E76C4003E9B76 /* Carbon.framework */,
 				CF1ADE421F7E76BF003E9B76 /* Cocoa.framework */,
 				CF1ADE3C1F7E742D003E9B76 /* libUtility.dylib */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CF5099781F948E7C000AFDE7 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				CF5099851F948EF9000AFDE7 /* TermScreenBufferTests.mm */,
+				CF5099861F948EF9000AFDE7 /* TermScreenTests.mm */,
+				CF5099871F948EF9000AFDE7 /* TermShellTask_Tests.mm */,
+				CF50997B1F948E7C000AFDE7 /* Info.plist */,
+			);
+			name = Tests;
+			path = "Term Tests";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -195,6 +246,24 @@
 			productReference = CF1ADE0A1F7E6A2A003E9B76 /* libTerm.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		CF5099761F948E7C000AFDE7 /* Term Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF50997F1F948E7C000AFDE7 /* Build configuration list for PBXNativeTarget "Term Tests" */;
+			buildPhases = (
+				CF5099731F948E7C000AFDE7 /* Sources */,
+				CF5099741F948E7C000AFDE7 /* Frameworks */,
+				CF5099751F948E7C000AFDE7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CF50997E1F948E7C000AFDE7 /* PBXTargetDependency */,
+			);
+			name = "Term Tests";
+			productName = "Term Tests";
+			productReference = CF5099771F948E7C000AFDE7 /* Term Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -205,6 +274,10 @@
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CF1ADE091F7E6A2A003E9B76 = {
+						CreatedOnToolsVersion = 8.3.2;
+						ProvisioningStyle = Automatic;
+					};
+					CF5099761F948E7C000AFDE7 = {
 						CreatedOnToolsVersion = 8.3.2;
 						ProvisioningStyle = Automatic;
 					};
@@ -223,9 +296,20 @@
 			projectRoot = "";
 			targets = (
 				CF1ADE091F7E6A2A003E9B76 /* Term */,
+				CF5099761F948E7C000AFDE7 /* Term Tests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CF5099751F948E7C000AFDE7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CF1ADE061F7E6A2A003E9B76 /* Sources */ = {
@@ -246,7 +330,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CF5099731F948E7C000AFDE7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF50998B1F948F1F000AFDE7 /* TermScreenBufferTests.mm in Sources */,
+				CF50998C1F948F22000AFDE7 /* TermScreenTests.mm in Sources */,
+				CF50998D1F948F25000AFDE7 /* TermShellTask_Tests.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		CF50997E1F948E7C000AFDE7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CF1ADE091F7E6A2A003E9B76 /* Term */;
+			targetProxy = CF50997D1F948E7C000AFDE7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		CF1ADE131F7E6A2A003E9B76 /* Debug */ = {
@@ -298,7 +400,7 @@
 					"$(PROJECT_DIR)/include/Term",
 				);
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/boost/built";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -357,7 +459,7 @@
 					"$(PROJECT_DIR)/include/Term",
 				);
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/boost/built";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -402,6 +504,30 @@
 			};
 			name = Release;
 		};
+		CF5099801F948E7C000AFDE7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.magnumbytes.Term-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CF5099811F948E7C000AFDE7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.magnumbytes.Term-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -422,6 +548,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		CF50997F1F948E7C000AFDE7 /* Build configuration list for PBXNativeTarget "Term Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF5099801F948E7C000AFDE7 /* Debug */,
+				CF5099811F948E7C000AFDE7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

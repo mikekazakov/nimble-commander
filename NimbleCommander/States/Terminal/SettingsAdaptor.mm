@@ -1,6 +1,8 @@
 #include "SettingsAdaptor.h"
 #include <Term/Settings.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <NimbleCommander/Core/Theming/ThemesManager.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 
 namespace nc::term {
@@ -10,7 +12,65 @@ static const auto g_ConfigCursorMode = "terminal.cursorMode";
     
 class SettingsImpl : public Settings
 {
+    ThemesManager::ObservationTicket m_ThemeObservation;
+    vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
+    vector<pair<int, function<void()>>> m_Callbacks;
+    int m_LastTicket = 1;
 public:
+    SettingsImpl()
+    {
+        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+            ThemesManager::Notifications::Terminal,
+            []{ DispatchNotification();
+        });
+        GlobalConfig().ObserveMany(
+            m_ConfigObservationTickets,
+            []{ DispatchNotification(); },
+            initializer_list<const char*>{g_ConfigCursorMode}
+        );
+    }
+    
+    int StartChangesObserving( function<void()> _callback ) override
+    {
+        dispatch_assert_main_queue();
+        if( !_callback )
+            return 0;
+        const auto ticket = m_LastTicket++;
+        m_Callbacks.emplace_back(ticket, move(_callback));
+        return ticket;
+    }
+    
+    void StopChangesObserving( int _ticket ) override
+    {
+        dispatch_assert_main_queue();
+        if( _ticket > 0 )
+            m_Callbacks.erase(
+                remove_if(
+                    begin(m_Callbacks),
+                    end(m_Callbacks),
+                    [_ticket](const auto &v) { return v.first == _ticket; }
+                    ),
+                end(m_Callbacks)
+            );
+    }
+    
+    void FireNotification() const
+    {
+        dispatch_assert_main_queue();
+        for( const auto &c: m_Callbacks )
+            c.second();
+    }
+    
+    static void DispatchNotification()
+    {
+        if( dispatch_is_main_queue() )
+            dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification();
+        else
+            dispatch_to_main_queue([]{
+                dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification();
+            });
+    }
+    
     NSFont  *Font() const override { return CurrentTheme().TerminalFont(); }
     NSColor *ForegroundColor() const override { return CurrentTheme().TerminalForegroundColor(); }
     NSColor *BoldForegroundColor() const override { return CurrentTheme().TerminalBoldForegroundColor(); };
@@ -41,7 +101,7 @@ public:
     
 shared_ptr<Settings> TerminalSettings()
 {
-    const auto settings = make_shared<SettingsImpl>();
+    static const auto settings = make_shared<SettingsImpl>();
     return settings;
 }
 

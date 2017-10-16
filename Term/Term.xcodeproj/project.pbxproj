@@ -97,17 +97,17 @@
 		CF1ADE0C1F7E6A2A003E9B76 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CF4135241F891165007429B6 /* TermView.mm */,
+				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
+				CF1ADE391F7E7379003E9B76 /* Screen.cpp */,
+				CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */,
 				CF41351C1F8666BF007429B6 /* Settings.mm */,
 				CF4135101F846CF2007429B6 /* Term-prefix.pch */,
 				CF4135111F846CF2007429B6 /* TermShellTask.cpp */,
 				CF4135121F846CF2007429B6 /* TermSingleTask.mm */,
 				CF4135131F846CF2007429B6 /* TermTask.cpp */,
-				CF1ADE401F7E7593003E9B76 /* Parser.mm */,
+				CF4135241F891165007429B6 /* TermView.mm */,
 				CF1ADE461F7E77AE003E9B76 /* TranslateMaps.cpp */,
 				CF1ADE471F7E77AE003E9B76 /* TranslateMaps.h */,
-				CF1ADE391F7E7379003E9B76 /* Screen.cpp */,
-				CF1ADE2B1F7E6C4B003E9B76 /* ScreenBuffer.cpp */,
 			);
 			name = Source;
 			path = Term;
@@ -116,15 +116,15 @@
 		CF1ADE2A1F7E6C3F003E9B76 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CF4135261F89116E007429B6 /* TermView.h */,
 				CF4135221F890BC8007429B6 /* CursorMode.h */,
+				CF1ADE3E1F7E7587003E9B76 /* Parser.h */,
+				CF1ADE371F7E7370003E9B76 /* Screen.h */,
+				CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */,
 				CF41351A1F8666B4007429B6 /* Settings.h */,
 				CF41350A1F846CE6007429B6 /* TermShellTask.h */,
 				CF41350B1F846CE6007429B6 /* TermSingleTask.h */,
 				CF41350C1F846CE6007429B6 /* TermTask.h */,
-				CF1ADE3E1F7E7587003E9B76 /* Parser.h */,
-				CF1ADE371F7E7370003E9B76 /* Screen.h */,
-				CF1ADE351F7E7344003E9B76 /* ScreenBuffer.h */,
+				CF4135261F89116E007429B6 /* TermView.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";

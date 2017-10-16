@@ -40,9 +40,8 @@ public:
     virtual int MaxFPS() const = 0;
     virtual enum CursorMode CursorMode() const = 0;
     
-    // observe changes
-    
-    
+    virtual int StartChangesObserving( function<void()> _callback ) = 0;
+    virtual void StopChangesObserving( int _ticket ) = 0;
 };
 
 //    static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
@@ -50,32 +49,5 @@ public:
 //    static const auto g_CustomPath = "terminal.customShellPath";
 //    static const auto g_ConfigMaxFPS = "terminal.maxFPS";
 //    static const auto g_ConfigCursorMode = "terminal.cursorMode";
-
-//    
-//    NSFont  *TerminalFont() const noexcept;
-//    NSColor *TerminalOverlayColor() const noexcept;
-//    NSColor *TerminalForegroundColor() const noexcept;
-//    NSColor *TerminalBoldForegroundColor() const noexcept;
-//    NSColor *TerminalBackgroundColor() const noexcept;
-//    NSColor *TerminalSelectionColor() const noexcept;
-//    NSColor *TerminalCursorColor() const noexcept;
-//    NSColor *TerminalAnsiColor0() const noexcept;
-//    NSColor *TerminalAnsiColor1() const noexcept;
-//    NSColor *TerminalAnsiColor2() const noexcept;
-//    NSColor *TerminalAnsiColor3() const noexcept;
-//    NSColor *TerminalAnsiColor4() const noexcept;
-//    NSColor *TerminalAnsiColor5() const noexcept;
-//    NSColor *TerminalAnsiColor6() const noexcept;
-//    NSColor *TerminalAnsiColor7() const noexcept;
-//    NSColor *TerminalAnsiColor8() const noexcept;
-//    NSColor *TerminalAnsiColor9() const noexcept;
-//    NSColor *TerminalAnsiColorA() const noexcept;
-//    NSColor *TerminalAnsiColorB() const noexcept;
-//    NSColor *TerminalAnsiColorC() const noexcept;
-//    NSColor *TerminalAnsiColorD() const noexcept;
-//    NSColor *TerminalAnsiColorE() const noexcept;
-//    NSColor *TerminalAnsiColorF() const noexcept;
-//    
-    
 }
 

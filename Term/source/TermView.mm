@@ -54,6 +54,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     NSColor *m_CursorColor;
     NSColor *m_AnsiColors[16];
     shared_ptr<nc::term::Settings> m_Settings;
+    int m_SettingsNotificationTicket;
 }
 
 @synthesize fpsDrawer = m_FPS;
@@ -63,6 +64,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 {
     self = [super initWithFrame:frame];
     if (self) {
+        m_SettingsNotificationTicket = 0;
         m_CursorType = TermViewCursor::Block;
         m_BlinkingCaret = make_unique<BlinkingCaret>(self);
         m_LastScreenFullHeight = 0;
@@ -688,6 +690,35 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     [self setNeedsDisplay];
 }
 
+- (void)loadSettings
+{
+    assert( m_Settings );
+    self.font = m_Settings->Font();
+    self.foregroundColor = m_Settings->ForegroundColor();
+    self.boldForegroundColor = m_Settings->BoldForegroundColor();
+    self.backgroundColor = m_Settings->BackgroundColor();
+    self.selectionColor = m_Settings->SelectionColor();
+    self.cursorColor = m_Settings->CursorColor();
+    self.ansiColor0 = m_Settings->AnsiColor0();
+    self.ansiColor1 = m_Settings->AnsiColor1();
+    self.ansiColor2 = m_Settings->AnsiColor2();
+    self.ansiColor3 = m_Settings->AnsiColor3();
+    self.ansiColor4 = m_Settings->AnsiColor4();
+    self.ansiColor5 = m_Settings->AnsiColor5();
+    self.ansiColor6 = m_Settings->AnsiColor6();
+    self.ansiColor7 = m_Settings->AnsiColor7();
+    self.ansiColor8 = m_Settings->AnsiColor8();
+    self.ansiColor9 = m_Settings->AnsiColor9();
+    self.ansiColorA = m_Settings->AnsiColorA();
+    self.ansiColorB = m_Settings->AnsiColorB();
+    self.ansiColorC = m_Settings->AnsiColorC();
+    self.ansiColorD = m_Settings->AnsiColorD();
+    self.ansiColorE = m_Settings->AnsiColorE();
+    self.ansiColorF = m_Settings->AnsiColorF();
+    m_FPS.fps = m_Settings->MaxFPS();
+    self.cursorMode = m_Settings->CursorMode();
+}
+
 - (shared_ptr<nc::term::Settings>) settings
 {
     return m_Settings;
@@ -695,38 +726,17 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
 
 - (void)setSettings:(shared_ptr<nc::term::Settings>)settings
 {
-    // unwire existing observation
-    if( m_Settings ) {
-        // ...
-    }
-    
-    self.font = settings->Font();
-    self.foregroundColor = settings->ForegroundColor();
-    self.boldForegroundColor = settings->BoldForegroundColor();
-    self.backgroundColor = settings->BackgroundColor();
-    self.selectionColor = settings->SelectionColor();
-    self.cursorColor = settings->CursorColor();
-    self.ansiColor0 = settings->AnsiColor0();
-    self.ansiColor1 = settings->AnsiColor1();
-    self.ansiColor2 = settings->AnsiColor2();
-    self.ansiColor3 = settings->AnsiColor3();
-    self.ansiColor4 = settings->AnsiColor4();
-    self.ansiColor5 = settings->AnsiColor5();
-    self.ansiColor6 = settings->AnsiColor6();
-    self.ansiColor7 = settings->AnsiColor7();
-    self.ansiColor8 = settings->AnsiColor8();
-    self.ansiColor9 = settings->AnsiColor9();
-    self.ansiColorA = settings->AnsiColorA();
-    self.ansiColorB = settings->AnsiColorB();
-    self.ansiColorC = settings->AnsiColorC();
-    self.ansiColorD = settings->AnsiColorD();
-    self.ansiColorE = settings->AnsiColorE();
-    self.ansiColorF = settings->AnsiColorF();
-    m_FPS.fps = settings->MaxFPS();
-    self.cursorMode = settings->CursorMode();
-    
-    // wire new observation
+    if( m_Settings )
+        m_Settings->StopChangesObserving(m_SettingsNotificationTicket);
+
     m_Settings = settings;
+    [self loadSettings];
+    
+    __weak TermView* weak_self = self;
+    m_SettingsNotificationTicket = settings->StartChangesObserving([weak_self]{
+        if( auto s = weak_self )
+            [s loadSettings];
+    });
 }
 
 - (nc::term::CursorMode) cursorMode

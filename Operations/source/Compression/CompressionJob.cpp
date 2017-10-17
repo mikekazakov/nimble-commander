@@ -529,7 +529,7 @@ static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source
     
     size_t metadata_sz = 0;
     // will quick almost immediately if there's no EAs
-    void *metadata = BuildAppleDoubleFromEA(_src, &metadata_sz);
+    void *metadata = vfs::BuildAppleDoubleFromEA(_src, &metadata_sz);
     if(metadata == 0)
         return true;
     

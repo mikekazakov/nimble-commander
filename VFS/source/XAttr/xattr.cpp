@@ -3,10 +3,12 @@
 #include <VFS/VFSFile.h>
 #include "../VFSListingInput.h"
 
-class VFSXAttrFile final: public VFSFile
+namespace nc::vfs {
+
+class XAttrFile final: public VFSFile
 {
 public:
-    VFSXAttrFile( const string &_xattr_path, const shared_ptr<VFSXAttrHost> &_parent, int _fd );
+    XAttrFile( const string &_xattr_path, const shared_ptr<XAttrHost> &_parent, int _fd );
     virtual int Open(int _open_flags, const VFSCancelChecker &_cancel_checker = nullptr) override;
     virtual int  Close() override;
     virtual bool IsOpened() const override;
@@ -34,47 +36,6 @@ private:
     ssize_t                 m_UploadSize = -1;
 };
 
-// XATTR_MAXNAMELEN
-
-//The maximum supported size of extended attribute can be found out using pathconf(2) with
-//_PC_XATTR_SIZE_BITS option.
-
-//// get current file descriptor's open flags
-//{
-
-
-///* Options for pathname based xattr calls */
-//#define XATTR_NOFOLLOW   0x0001     /* Don't follow symbolic links */
-//
-///* Options for setxattr calls */
-//#define XATTR_CREATE     0x0002     /* set the value, fail if attr already exists */
-//#define XATTR_REPLACE    0x0004     /* set the value, fail if attr does not exist */
-//
-///* Set this to bypass authorization checking (eg. if doing auth-related work) */
-//#define XATTR_NOSECURITY 0x0008
-//
-///* Set this to bypass the default extended attribute file (dot-underscore file) */
-//#define XATTR_NODEFAULT  0x0010
-//
-///* option for f/getxattr() and f/listxattr() to expose the HFS Compression extended attributes */
-//#define XATTR_SHOWCOMPRESSION 0x0020
-//
-//#define	XATTR_MAXNAMELEN   127
-//
-///* See the ATTR_CMN_FNDRINFO section of getattrlist(2) for details on FinderInfo */
-//#define	XATTR_FINDERINFO_NAME	  "com.apple.FinderInfo"
-//
-//#define	XATTR_RESOURCEFORK_NAME	  "com.apple.ResourceFork"
-//ssize_t getxattr(const char *path, const char *name, void *value, size_t size, u_int32_t position, int options);
-//ssize_t fgetxattr(int fd, const char *name, void *value, size_t size, u_int32_t position, int options);
-//int setxattr(const char *path, const char *name, const void *value, size_t size, u_int32_t position, int options);
-//int fsetxattr(int fd, const char *name, const void *value, size_t size, u_int32_t position, int options);
-//int removexattr(const char *path, const char *name, int options);
-//int fremovexattr(int fd, const char *name, int options);
-//ssize_t listxattr(const char *path, char *namebuff, size_t size, int options);
-//ssize_t flistxattr(int fd, char *namebuff, size_t size, int options);
-
-//    if( !_path || _path[0] != '/' )
 static bool is_absolute_path( const char *_s ) noexcept
 {
     return _s != nullptr && _s[0] == '/';
@@ -110,7 +71,7 @@ static int EnumerateAttrs( int _fd, vector<pair<string, unsigned>> &_attrs )
     return 0;
 }
 
-const char *VFSXAttrHost::UniqueTag = "xattr";
+const char *XAttrHost::UniqueTag = "xattr";
 static const mode_t g_RegMode = S_IRUSR | S_IWUSR | S_IFREG;
 static const mode_t g_RootMode = S_IRUSR | S_IXUSR | S_IFDIR;
 
@@ -128,7 +89,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSXAttrHost::UniqueTag;
+        return XAttrHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -147,14 +108,14 @@ public:
     }
 };
 
-VFSXAttrHost::VFSXAttrHost( const string &_file_path, const VFSHostPtr& _host ):
-    VFSXAttrHost( _host,
+XAttrHost::XAttrHost( const string &_file_path, const VFSHostPtr& _host ):
+    XAttrHost( _host,
                  VFSConfiguration( VFSXAttrHostConfiguration(_file_path) )
                  )
 {
 }
 
-VFSXAttrHost::VFSXAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
+XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
     VFSHost( _config.Get<VFSXAttrHostConfiguration>().path.c_str(), _parent, UniqueTag ),
     m_Configuration(_config)
 {
@@ -187,32 +148,32 @@ VFSXAttrHost::VFSXAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_c
     m_FD = fd;
 }
 
-VFSXAttrHost::~VFSXAttrHost()
+XAttrHost::~XAttrHost()
 {
     close(m_FD);
 }
 
-VFSConfiguration VFSXAttrHost::Configuration() const
+VFSConfiguration XAttrHost::Configuration() const
 {
     return m_Configuration;
 }
 
-VFSMeta VFSXAttrHost::Meta()
+VFSMeta XAttrHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
-        return make_shared<VFSXAttrHost>(_parent, _config);
+        return make_shared<XAttrHost>(_parent, _config);
     };
     return m;
 }
 
-bool VFSXAttrHost::IsWritable() const
+bool XAttrHost::IsWritable() const
 {
     return true;
 }
 
-int VFSXAttrHost::Fetch()
+int XAttrHost::Fetch()
 {
     vector<pair<string, unsigned>> info;
     int ret = EnumerateAttrs(m_FD, info);
@@ -224,7 +185,7 @@ int VFSXAttrHost::Fetch()
     return VFSError::Ok;
 }
 
-int VFSXAttrHost::FetchDirectoryListing(const char *_path,
+int XAttrHost::FetchDirectoryListing(const char *_path,
                                         shared_ptr<VFSListing> &_target,
                                         int _flags,
                                         const VFSCancelChecker &_cancel_checker)
@@ -268,7 +229,7 @@ int VFSXAttrHost::FetchDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int VFSXAttrHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int XAttrHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( !is_absolute_path(_path) )
         return VFSError::NotFound;
@@ -304,18 +265,18 @@ int VFSXAttrHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCan
     return VFSError::FromErrno(ENOENT);
 }
 
-int VFSXAttrHost::CreateFile(const char* _path,
+int XAttrHost::CreateFile(const char* _path,
                              shared_ptr<VFSFile> &_target,
                              const VFSCancelChecker &_cancel_checker)
 {
-    auto file = make_shared<VFSXAttrFile>(_path, static_pointer_cast<VFSXAttrHost>(shared_from_this()), m_FD);
+    auto file = make_shared<XAttrFile>(_path, static_pointer_cast<XAttrHost>(shared_from_this()), m_FD);
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
 }
 
-int VFSXAttrHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
+int XAttrHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     if( !_path || _path[0] != '/' )
         return VFSError::FromErrno(ENOENT);
@@ -328,7 +289,7 @@ int VFSXAttrHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_chec
     return VFSError::Ok;
 }
 
-int VFSXAttrHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
+int XAttrHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
 {
     if( !_old_path || _old_path[0] != '/' ||
         !_new_path || _new_path[0] != '/' )
@@ -356,7 +317,7 @@ int VFSXAttrHost::Rename(const char *_old_path, const char *_new_path, const VFS
     return VFSError::Ok;
 }
 
-void VFSXAttrHost::ReportChange()
+void XAttrHost::ReportChange()
 {
     Fetch();
 
@@ -367,13 +328,13 @@ void VFSXAttrHost::ReportChange()
 //bool VFSHost::ValidateFilename(const char *_filename) const
 
 
-VFSXAttrFile::VFSXAttrFile( const string &_xattr_path, const shared_ptr<VFSXAttrHost> &_parent, int _fd ):
+XAttrFile::XAttrFile( const string &_xattr_path, const shared_ptr<XAttrHost> &_parent, int _fd ):
     VFSFile(_xattr_path.c_str(), _parent),
     m_FD(_fd)
 {
 }
 
-int VFSXAttrFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int XAttrFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( IsOpened() )
         return VFSError::InvalidCall;
@@ -407,7 +368,7 @@ int VFSXAttrFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
     return VFSError::Ok;
 }
 
-int VFSXAttrFile::Close()
+int XAttrFile::Close()
 {
     m_Size = 0;
     m_FileBuf.reset();
@@ -417,37 +378,37 @@ int VFSXAttrFile::Close()
     return 0;
 }
 
-bool VFSXAttrFile::IsOpened() const
+bool XAttrFile::IsOpened() const
 {
     return m_OpenFlags != 0;
 }
 
-VFSFile::ReadParadigm VFSXAttrFile::GetReadParadigm() const
+VFSFile::ReadParadigm XAttrFile::GetReadParadigm() const
 {
     return VFSFile::ReadParadigm::Random;
 }
 
-VFSFile::WriteParadigm VFSXAttrFile::GetWriteParadigm() const
+VFSFile::WriteParadigm XAttrFile::GetWriteParadigm() const
 {
     return VFSFile::WriteParadigm::Upload;
 }
 
-ssize_t VFSXAttrFile::Pos() const
+ssize_t XAttrFile::Pos() const
 {
     return m_Position;
 }
 
-ssize_t VFSXAttrFile::Size() const
+ssize_t XAttrFile::Size() const
 {
     return m_Size;
 }
 
-bool VFSXAttrFile::Eof() const
+bool XAttrFile::Eof() const
 {
     return m_Position >= m_Size;
 }
 
-off_t VFSXAttrFile::Seek(off_t _off, int _basis)
+off_t XAttrFile::Seek(off_t _off, int _basis)
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
@@ -474,7 +435,7 @@ off_t VFSXAttrFile::Seek(off_t _off, int _basis)
     return m_Position;
 }
 
-ssize_t VFSXAttrFile::Read(void *_buf, size_t _size)
+ssize_t XAttrFile::Read(void *_buf, size_t _size)
 {
     if( !IsOpened() || !IsOpenedForReading() )
         return SetLastError(VFSError::InvalidCall);
@@ -492,7 +453,7 @@ ssize_t VFSXAttrFile::Read(void *_buf, size_t _size)
     return to_read;
 }
 
-ssize_t VFSXAttrFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+ssize_t XAttrFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if( !IsOpened() || !IsOpenedForReading() )
         return SetLastError(VFSError::InvalidCall);
@@ -505,17 +466,17 @@ ssize_t VFSXAttrFile::ReadAt(off_t _pos, void *_buf, size_t _size)
     return sz;
 }
 
-bool VFSXAttrFile::IsOpenedForReading() const noexcept
+bool XAttrFile::IsOpenedForReading() const noexcept
 {
     return m_OpenFlags & VFSFlags::OF_Read;
 }
 
-bool VFSXAttrFile::IsOpenedForWriting() const noexcept
+bool XAttrFile::IsOpenedForWriting() const noexcept
 {
     return m_OpenFlags & VFSFlags::OF_Write;
 }
 
-int VFSXAttrFile::SetUploadSize(size_t _size)
+int XAttrFile::SetUploadSize(size_t _size)
 {
     if( !IsOpenedForWriting() )
         return VFSError::FromErrno( EINVAL );
@@ -534,13 +495,13 @@ int VFSXAttrFile::SetUploadSize(size_t _size)
         if( fsetxattr(m_FD, XAttrName(), buf, 0, 0, 0) != 0 )
             return VFSError::FromErrno();
         
-        dynamic_pointer_cast<VFSXAttrHost>(Host())->ReportChange();        
+        dynamic_pointer_cast<XAttrHost>(Host())->ReportChange();
     }
     
     return 0;
 }
 
-ssize_t VFSXAttrFile::Write(const void *_buf, size_t _size)
+ssize_t XAttrFile::Write(const void *_buf, size_t _size)
 {
     if( !IsOpenedForWriting() ||
         !m_FileBuf )
@@ -557,17 +518,19 @@ ssize_t VFSXAttrFile::Write(const void *_buf, size_t _size)
             if( fsetxattr(m_FD, XAttrName(), m_FileBuf.get(), m_UploadSize, 0, 0) != 0 )
                 return VFSError::FromErrno();
             
-            dynamic_pointer_cast<VFSXAttrHost>(Host())->ReportChange();
+            dynamic_pointer_cast<XAttrHost>(Host())->ReportChange();
         }
         return to_write;
     }
     return 0;
 }
 
-const char *VFSXAttrFile::XAttrName() const noexcept
+const char *XAttrFile::XAttrName() const noexcept
 {
     const char *path = Path();
     if( path[0] != '/' )
         return nullptr;
     return path + 1;
+}
+
 }

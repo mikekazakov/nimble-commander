@@ -10,6 +10,8 @@
 
 #include <VFS/VFS.h>
 
+namespace nc::vfs {
+
 struct AppleDoubleEA
 {
     // no allocations, only pointing at original memory buffer
@@ -28,3 +30,5 @@ vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _
 
 void *BuildAppleDoubleFromEA(VFSFile &_file,
                              size_t *_buf_sz);
+
+}

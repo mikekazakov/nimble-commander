@@ -11,17 +11,21 @@
 #include "../../include/VFS/VFSHost.h"
 #include "../../include/VFS/VFSFile.h"
 
-struct VFSArchiveMediator;
-struct VFSArchiveDir;
-struct VFSArchiveDirEntry;
-struct VFSArchiveState;
+namespace nc::vfs {
 
-class VFSArchiveHost final : public VFSHost
+namespace arc {
+struct Mediator;
+struct Dir;
+struct DirEntry;
+struct State;
+}
+
+class ArchiveHost final : public VFSHost
 {
 public:
-    VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password = nullopt, VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
-    VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = nullptr);
-    ~VFSArchiveHost();
+    ArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password = nullopt, VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
+    ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = nullptr);
+    ~ArchiveHost();
     
     static const char *UniqueTag;
     virtual VFSConfiguration Configuration() const override;    
@@ -61,14 +65,14 @@ public:
     // return zero on not found
     uint32_t ItemUID(const char* _filename);
     
-    unique_ptr<VFSArchiveState> ClosestState(uint32_t _requested_item);
-    void CommitState(unique_ptr<VFSArchiveState> _state);
+    unique_ptr<arc::State> ClosestState(uint32_t _requested_item);
+    void CommitState(unique_ptr<arc::State> _state);
     
     // use SeekCache or open a new file and seeks to requested item
-    int ArchiveStateForItem(const char *_filename, unique_ptr<VFSArchiveState> &_target);
+    int ArchiveStateForItem(const char *_filename, unique_ptr<arc::State> &_target);
     
-    shared_ptr<const VFSArchiveHost> SharedPtr() const {return static_pointer_cast<const VFSArchiveHost>(VFSHost::SharedPtr());}
-    shared_ptr<VFSArchiveHost> SharedPtr() {return static_pointer_cast<VFSArchiveHost>(VFSHost::SharedPtr());}
+    shared_ptr<const ArchiveHost> SharedPtr() const {return static_pointer_cast<const ArchiveHost>(VFSHost::SharedPtr());}
+    shared_ptr<ArchiveHost> SharedPtr() {return static_pointer_cast<ArchiveHost>(VFSHost::SharedPtr());}
     
     /** return VFSError, not uids returned */
     int ResolvePathIfNeeded(const char *_path, char *_resolved_path, int _flags);
@@ -95,10 +99,10 @@ public:
     };
     
     /** searches for entry in archive without any path resolving */
-    const VFSArchiveDirEntry *FindEntry(const char* _path);
+    const arc::DirEntry *FindEntry(const char* _path);
     
     /** searches for entry in archive by id */
-    const VFSArchiveDirEntry *FindEntry(uint32_t _uid);
+    const arc::DirEntry *FindEntry(uint32_t _uid);
     
     /** find symlink and resolves it if not already. returns nullptr on error. */
     const Symlink *ResolvedSymlink(uint32_t _uid);
@@ -108,11 +112,11 @@ private:
     const class VFSArchiveHostConfiguration &Config() const;
     
     int ReadArchiveListing();
-    uint64_t UpdateDirectorySize( VFSArchiveDir &_directory, const string &_path );
-    VFSArchiveDir* FindOrBuildDir(const char* _path_with_tr_sl);
+    uint64_t UpdateDirectorySize( arc::Dir &_directory, const string &_path );
+    arc::Dir* FindOrBuildDir(const char* _path_with_tr_sl);
     
     
-    void InsertDummyDirInto(VFSArchiveDir *_parent, const char* _dir_name);
+    void InsertDummyDirInto(arc::Dir *_parent, const char* _dir_name);
     struct archive* SpawnLibarchive();
     
     /**
@@ -125,9 +129,9 @@ private:
     
     VFSConfiguration                        m_Configuration;
     shared_ptr<VFSFile>                     m_ArFile;
-    shared_ptr<VFSArchiveMediator>          m_Mediator;
+    shared_ptr<arc::Mediator>               m_Mediator;
     struct archive                         *m_Arc = nullptr;
-    map<string, VFSArchiveDir>              m_PathToDir;
+    map<string, arc::Dir>                   m_PathToDir;
     uint32_t                                m_TotalFiles = 0;
     uint32_t                                m_TotalDirs = 0;
     uint32_t                                m_TotalRegs = 0;
@@ -139,7 +143,9 @@ private:
     map<uint32_t, Symlink>                  m_Symlinks;
     recursive_mutex                         m_SymlinksResolveLock;
     
-    vector< pair<VFSArchiveDir*, uint32_t>> m_EntryByUID; // points to directory and entry No inside it
-    vector<unique_ptr<VFSArchiveState>>     m_States;
+    vector<pair<arc::Dir*, uint32_t>>       m_EntryByUID; // points to directory and entry No inside it
+    vector<unique_ptr<arc::State>>          m_States;
     mutex                                   m_StatesLock;
 };
+
+}

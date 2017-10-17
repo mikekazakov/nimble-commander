@@ -9,20 +9,22 @@
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 #include <VFS/AppleDoubleEA.h>
-#include "VFSArchiveFile.h"
-#include "VFSArchiveInternal.h"
+#include "File.h"
+#include "Internal.h"
 
-VFSArchiveFile::VFSArchiveFile(const char* _relative_path, const shared_ptr<VFSArchiveHost> &_host):
+namespace nc::vfs::arc {
+
+File::File(const char* _relative_path, const shared_ptr<ArchiveHost> &_host):
     VFSFile(_relative_path, _host)
 {
 }
 
-VFSArchiveFile::~VFSArchiveFile()
+File::~File()
 {
     Close();
 }
 
-int VFSArchiveFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( strlen(Path()) < 2 || Path()[0] != '/' )
         return SetLastError(VFSError::NotFound);
@@ -31,7 +33,7 @@ int VFSArchiveFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checke
         return SetLastError(VFSError::NotSupported); // ArchiveFile is Read-Only
 
     int res;
-    auto host = dynamic_pointer_cast<VFSArchiveHost>(Host());
+    auto host = dynamic_pointer_cast<ArchiveHost>(Host());
 
     char file_path[MAXPATHLEN*2];
     res = host->ResolvePathIfNeeded(Path(), file_path, _open_flags);
@@ -42,7 +44,7 @@ int VFSArchiveFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checke
       !(_open_flags & VFSFlags::OF_Directory) )
         return VFSError::FromErrno(EISDIR);
     
-    unique_ptr<VFSArchiveState> state;
+    unique_ptr<State> state;
     res = host->ArchiveStateForItem(file_path, state);
     if(res < 0)
         return res;
@@ -60,45 +62,45 @@ int VFSArchiveFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checke
     return VFSError::Ok;;
 }
 
-bool VFSArchiveFile::IsOpened() const
+bool File::IsOpened() const
 {
     return m_State != nullptr;
 }
 
-int VFSArchiveFile::Close()
+int File::Close()
 {
-    dynamic_pointer_cast<VFSArchiveHost>(Host())->CommitState( move(m_State) );
+    dynamic_pointer_cast<ArchiveHost>(Host())->CommitState( move(m_State) );
     m_State.reset();
     return VFSError::Ok;
 }
 
-VFSFile::ReadParadigm VFSArchiveFile::GetReadParadigm() const
+VFSFile::ReadParadigm File::GetReadParadigm() const
 {
     return VFSFile::ReadParadigm::Sequential;
 }
 
-ssize_t VFSArchiveFile::Pos() const
+ssize_t File::Pos() const
 {
     if(!IsOpened())
         return SetLastError(VFSError::InvalidCall);
     return m_Position;
 }
 
-ssize_t VFSArchiveFile::Size() const
+ssize_t File::Size() const
 {
     if(!IsOpened())
         return SetLastError(VFSError::InvalidCall);
     return m_Size;
 }
 
-bool VFSArchiveFile::Eof() const
+bool File::Eof() const
 {
     if(!IsOpened())
         return true;
     return m_Position == m_Size;
 }
 
-ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
+ssize_t File::Read(void *_buf, size_t _size)
 {
     if(IsOpened() == 0) return SetLastError(VFSError::InvalidCall);
     if(Eof())     return 0;
@@ -119,12 +121,12 @@ ssize_t VFSArchiveFile::Read(void *_buf, size_t _size)
     return size;
 }
 
-unsigned VFSArchiveFile::XAttrCount() const
+unsigned File::XAttrCount() const
 {
     return (unsigned)m_EA.size();
 }
 
-void VFSArchiveFile::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
+void File::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
 {
     if(!_handler || m_EA.empty())
         return;
@@ -134,7 +136,7 @@ void VFSArchiveFile::XAttrIterateNames( function<bool(const char* _xattr_name)> 
             break;
 }
 
-ssize_t VFSArchiveFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
+ssize_t File::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
 {
     if(!IsOpened() || !_xattr_name)
         return SetLastError(VFSError::InvalidCall);
@@ -150,4 +152,6 @@ ssize_t VFSArchiveFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t 
         }
 
     return SetLastError(VFSError::NotFound);
+}
+
 }

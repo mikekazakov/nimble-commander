@@ -8,15 +8,19 @@
 
 #pragma once
 
-#include "VFSArchiveHost.h"
+#include "Host.h"
 
+namespace nc::vfs {
 struct AppleDoubleEA;
+}
 
-class VFSArchiveFile : public VFSFile
+namespace nc::vfs::arc {
+
+class File final : public VFSFile
 {
 public:
-    VFSArchiveFile(const char* _relative_path, const shared_ptr<VFSArchiveHost> &_host);
-    ~VFSArchiveFile();
+    File(const char* _relative_path, const shared_ptr<ArchiveHost> &_host);
+    ~File();
     
     
     virtual int     Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
@@ -31,8 +35,10 @@ public:
     virtual void XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const override;
     virtual ssize_t XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const override;
 private:
-    unique_ptr<VFSArchiveState> m_State;
+    unique_ptr<State> m_State;
     vector<AppleDoubleEA> m_EA;
     ssize_t        m_Position;
     ssize_t        m_Size;
 };
+
+}

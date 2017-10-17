@@ -21,6 +21,8 @@
 		CF1FDD081F5D4AEC00AF1EBD /* PathRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FDD061F5D4AEC00AF1EBD /* PathRoutines.mm */; };
 		CF3E2F861F60DF08001BFFCE /* Requests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F841F60DF08001BFFCE /* Requests.cpp */; };
 		CF3E2F871F60DF08001BFFCE /* Requests.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3E2F851F60DF08001BFFCE /* Requests.h */; };
+		CF5099951F95C881000AFDE7 /* EncodingDetection.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5099931F95C881000AFDE7 /* EncodingDetection.h */; };
+		CF5099961F95C881000AFDE7 /* EncodingDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099941F95C881000AFDE7 /* EncodingDetection.mm */; };
 		CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D8E1E659D33002DB0E2 /* libssh2.a */; };
 		CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */; };
 		CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */; };
@@ -30,9 +32,9 @@
 		CFD7273E1E42EC8E00603077 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273D1E42EC8E00603077 /* Carbon.framework */; };
 		CFD727401E42EC9A00603077 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273F1E42EC9A00603077 /* Foundation.framework */; };
 		CFD727421E42EC9D00603077 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD727411E42EC9D00603077 /* AppKit.framework */; };
-		CFFA94B31F4543920035E606 /* VFSArchiveFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0511DA2336500992B84 /* VFSArchiveFile.cpp */; };
-		CFFA94B41F4543920035E606 /* VFSArchiveHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0541DA2336500992B84 /* VFSArchiveHost.mm */; };
-		CFFA94B51F4543920035E606 /* VFSArchiveInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0561DA2336500992B84 /* VFSArchiveInternal.mm */; };
+		CFFA94B31F4543920035E606 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0511DA2336500992B84 /* File.cpp */; };
+		CFFA94B41F4543920035E606 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0541DA2336500992B84 /* Host.cpp */; };
+		CFFA94B51F4543920035E606 /* Internal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0561DA2336500992B84 /* Internal.cpp */; };
 		CFFA94B61F45439B0035E606 /* VFSArchiveUnRARFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0621DA2344A00992B84 /* VFSArchiveUnRARFile.cpp */; };
 		CFFA94B71F45439B0035E606 /* VFSArchiveUnRARHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0641DA2344A00992B84 /* VFSArchiveUnRARHost.cpp */; };
 		CFFA94B81F45439B0035E606 /* VFSArchiveUnRARInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0661DA2344A00992B84 /* VFSArchiveUnRARInternals.cpp */; };
@@ -124,6 +126,8 @@
 		CF22A1151E97755000149C44 /* VFSNetDropboxFileUploadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileUploadDelegate.mm; path = source/NetDropbox/VFSNetDropboxFileUploadDelegate.mm; sourceTree = "<group>"; };
 		CF3E2F841F60DF08001BFFCE /* Requests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Requests.cpp; path = source/NetWebDAV/Requests.cpp; sourceTree = "<group>"; };
 		CF3E2F851F60DF08001BFFCE /* Requests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Requests.h; path = source/NetWebDAV/Requests.h; sourceTree = "<group>"; };
+		CF5099931F95C881000AFDE7 /* EncodingDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EncodingDetection.h; path = source/ArcLA/EncodingDetection.h; sourceTree = "<group>"; };
+		CF5099941F95C881000AFDE7 /* EncodingDetection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EncodingDetection.mm; path = source/ArcLA/EncodingDetection.mm; sourceTree = "<group>"; };
 		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
 		CF69CFE11DA227E400992B84 /* ArcUnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcUnRAR.h; path = include/VFS/ArcUnRAR.h; sourceTree = "<group>"; };
 		CF69CFE21DA227E400992B84 /* Native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Native.h; path = include/VFS/Native.h; sourceTree = "<group>"; };
@@ -178,12 +182,12 @@
 		CF69D0491DA232EF00992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/NetSFTP/File.h; sourceTree = "<group>"; };
 		CF69D04A1DA232EF00992B84 /* SFTPHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SFTPHost.cpp; path = source/NetSFTP/SFTPHost.cpp; sourceTree = "<group>"; };
 		CF69D04B1DA232EF00992B84 /* SFTPHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFTPHost.h; path = source/NetSFTP/SFTPHost.h; sourceTree = "<group>"; };
-		CF69D0511DA2336500992B84 /* VFSArchiveFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveFile.cpp; path = source/ArcLA/VFSArchiveFile.cpp; sourceTree = "<group>"; };
-		CF69D0521DA2336500992B84 /* VFSArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveFile.h; path = source/ArcLA/VFSArchiveFile.h; sourceTree = "<group>"; };
-		CF69D0531DA2336500992B84 /* VFSArchiveHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveHost.h; path = source/ArcLA/VFSArchiveHost.h; sourceTree = "<group>"; };
-		CF69D0541DA2336500992B84 /* VFSArchiveHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveHost.mm; path = source/ArcLA/VFSArchiveHost.mm; sourceTree = "<group>"; };
-		CF69D0551DA2336500992B84 /* VFSArchiveInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveInternal.h; path = source/ArcLA/VFSArchiveInternal.h; sourceTree = "<group>"; };
-		CF69D0561DA2336500992B84 /* VFSArchiveInternal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSArchiveInternal.mm; path = source/ArcLA/VFSArchiveInternal.mm; sourceTree = "<group>"; };
+		CF69D0511DA2336500992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/ArcLA/File.cpp; sourceTree = "<group>"; };
+		CF69D0521DA2336500992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/ArcLA/File.h; sourceTree = "<group>"; };
+		CF69D0531DA2336500992B84 /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/ArcLA/Host.h; sourceTree = "<group>"; };
+		CF69D0541DA2336500992B84 /* Host.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Host.cpp; path = source/ArcLA/Host.cpp; sourceTree = "<group>"; };
+		CF69D0551DA2336500992B84 /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/ArcLA/Internal.h; sourceTree = "<group>"; };
+		CF69D0561DA2336500992B84 /* Internal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Internal.cpp; path = source/ArcLA/Internal.cpp; sourceTree = "<group>"; };
 		CF69D05D1DA233EC00992B84 /* AppleDoubleEA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppleDoubleEA.h; path = include/VFS/AppleDoubleEA.h; sourceTree = "<group>"; };
 		CF69D05F1DA233F700992B84 /* AppleDoubleEA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppleDoubleEA.cpp; path = source/AppleDoubleEA.cpp; sourceTree = "<group>"; };
 		CF69D0621DA2344A00992B84 /* VFSArchiveUnRARFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARFile.cpp; path = source/ArcUnRAR/VFSArchiveUnRARFile.cpp; sourceTree = "<group>"; };
@@ -476,12 +480,14 @@
 		CF69D0501DA2335700992B84 /* ArcLA */ = {
 			isa = PBXGroup;
 			children = (
-				CF69D0511DA2336500992B84 /* VFSArchiveFile.cpp */,
-				CF69D0521DA2336500992B84 /* VFSArchiveFile.h */,
-				CF69D0531DA2336500992B84 /* VFSArchiveHost.h */,
-				CF69D0541DA2336500992B84 /* VFSArchiveHost.mm */,
-				CF69D0551DA2336500992B84 /* VFSArchiveInternal.h */,
-				CF69D0561DA2336500992B84 /* VFSArchiveInternal.mm */,
+				CF5099931F95C881000AFDE7 /* EncodingDetection.h */,
+				CF5099941F95C881000AFDE7 /* EncodingDetection.mm */,
+				CF69D0511DA2336500992B84 /* File.cpp */,
+				CF69D0521DA2336500992B84 /* File.h */,
+				CF69D0541DA2336500992B84 /* Host.cpp */,
+				CF69D0531DA2336500992B84 /* Host.h */,
+				CF69D0561DA2336500992B84 /* Internal.cpp */,
+				CF69D0551DA2336500992B84 /* Internal.h */,
 			);
 			name = ArcLA;
 			sourceTree = "<group>";
@@ -548,6 +554,7 @@
 				CF1FDD071F5D4AEC00AF1EBD /* PathRoutines.h in Headers */,
 				CF3E2F871F60DF08001BFFCE /* Requests.h in Headers */,
 				CF1FDD031F5BBA6F00AF1EBD /* WriteBuffer.h in Headers */,
+				CF5099951F95C881000AFDE7 /* EncodingDetection.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,7 +665,8 @@
 				CFFA94BE1F4543AB0035E606 /* VFSNetDropboxFile.mm in Sources */,
 				CFFA94D81F4543ED0035E606 /* VFSListing.cpp in Sources */,
 				CFFA95601F5291540035E606 /* DateTimeParser.cpp in Sources */,
-				CFFA94B41F4543920035E606 /* VFSArchiveHost.mm in Sources */,
+				CFFA94B41F4543920035E606 /* Host.cpp in Sources */,
+				CF5099961F95C881000AFDE7 /* EncodingDetection.mm in Sources */,
 				CFFA94B71F45439B0035E606 /* VFSArchiveUnRARHost.cpp in Sources */,
 				CFFA94CB1F4543BC0035E606 /* OSDetector.cpp in Sources */,
 				CFFA94D51F4543ED0035E606 /* VFSFile.cpp in Sources */,
@@ -679,7 +687,7 @@
 				CFFA94B61F45439B0035E606 /* VFSArchiveUnRARFile.cpp in Sources */,
 				CFFA94C11F4543AB0035E606 /* VFSNetDropboxFileUploadStream.mm in Sources */,
 				CFFA94D31F4543ED0035E606 /* VFSError.mm in Sources */,
-				CFFA94B31F4543920035E606 /* VFSArchiveFile.cpp in Sources */,
+				CFFA94B31F4543920035E606 /* File.cpp in Sources */,
 				CFFA94C91F4543BC0035E606 /* SFTPHost.cpp in Sources */,
 				CFFA94B91F4543A30035E606 /* Fetching.cpp in Sources */,
 				CFFA94C31F4543B30035E606 /* VFSNetFTPCache.mm in Sources */,
@@ -692,7 +700,7 @@
 				CFFA94C61F4543B30035E606 /* VFSNetFTPInternals.mm in Sources */,
 				CFFA95561F4E63970035E606 /* WebDAVHost.cpp in Sources */,
 				CFFA955C1F4EA72A0035E606 /* Internal.cpp in Sources */,
-				CFFA94B51F4543920035E606 /* VFSArchiveInternal.mm in Sources */,
+				CFFA94B51F4543920035E606 /* Internal.cpp in Sources */,
 				CFFA94DA1F4543ED0035E606 /* VFSPath.cpp in Sources */,
 				CFFA94D11F4543ED0035E606 /* VFSConfiguration.cpp in Sources */,
 				CFFA94BB1F4543A30035E606 /* VFSNativeFile.cpp in Sources */,

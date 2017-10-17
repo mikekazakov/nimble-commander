@@ -14,11 +14,16 @@
 #include <libarchive/archive_entry.h>
 #include <VFS/AppleDoubleEA.h>
 #include "../VFSListingInput.h"
-#include "VFSArchiveHost.h"
-#include "VFSArchiveInternal.h"
-#include "VFSArchiveFile.h"
+#include "Host.h"
+#include "Internal.h"
+#include "File.h"
+#include "EncodingDetection.h"
 
-const char *VFSArchiveHost::UniqueTag = "arc_libarchive";
+namespace nc::vfs {
+
+using namespace arc;
+
+const char *ArchiveHost::UniqueTag = "arc_libarchive";
 
 class VFSArchiveHostConfiguration
 {
@@ -28,7 +33,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSArchiveHost::UniqueTag;
+        return ArchiveHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -49,27 +54,6 @@ static VFSConfiguration ComposeConfiguration(const string &_path, optional<strin
     config.path = _path;
     config.password = move(_passwd);
     return VFSConfiguration( move(config) );
-}
-
-
-static CFStringEncoding DetectEncoding( const void* _bytes, size_t _sz )
-{
-    NSData *data = [NSData dataWithBytesNoCopy:(void*)_bytes
-                                        length:_sz
-                                  freeWhenDone:false];
-    
-    NSStringEncoding ns_enc = [NSString stringEncodingForData:data
-                                           encodingOptions:nil
-                                           convertedString:nil
-                                       usedLossyConversion:nil];
-    if( ns_enc == 0 )
-        return kCFStringEncodingMacRoman;
-    
-    CFStringEncoding cf_enc = CFStringConvertNSStringEncodingToEncoding(ns_enc);
-    if( cf_enc == kCFStringEncodingInvalidId )
-        return kCFStringEncodingMacRoman;
-
-    return cf_enc;
 }
 
 static void DecodeStringToUTF8(const void* _bytes,
@@ -97,7 +81,7 @@ static void DecodeStringToUTF8(const void* _bytes,
     }
 }
 
-VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password, VFSCancelChecker _cancel_checker):
+ArchiveHost::ArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password, VFSCancelChecker _cancel_checker):
     VFSHost(_path.c_str(), _parent, UniqueTag),
     m_Configuration( ComposeConfiguration(_path, move(_password)) )
 {
@@ -112,7 +96,7 @@ VFSArchiveHost::VFSArchiveHost(const string &_path, const VFSHostPtr &_parent, o
     }
 }
 
-VFSArchiveHost::VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker):
+ArchiveHost::ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker):
     VFSHost( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, UniqueTag),
     m_Configuration(_config)
 {
@@ -127,38 +111,38 @@ VFSArchiveHost::VFSArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration
     }
 }
 
-VFSArchiveHost::~VFSArchiveHost()
+ArchiveHost::~ArchiveHost()
 {
     if(m_Arc != 0)
         archive_read_free(m_Arc);
 }
 
-bool VFSArchiveHost::IsImmutableFS() const noexcept
+bool ArchiveHost::IsImmutableFS() const noexcept
 {
     return true;
 }
 
-VFSConfiguration VFSArchiveHost::Configuration() const
+VFSConfiguration ArchiveHost::Configuration() const
 {
     return m_Configuration;
 }
 
-const VFSArchiveHostConfiguration &VFSArchiveHost::Config() const
+const VFSArchiveHostConfiguration &ArchiveHost::Config() const
 {
     return m_Configuration.GetUnchecked<VFSArchiveHostConfiguration>();
 }
 
-VFSMeta VFSArchiveHost::Meta()
+VFSMeta ArchiveHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
-        return make_shared<VFSArchiveHost>(_parent, _config, _cancel_checker);
+        return make_shared<ArchiveHost>(_parent, _config, _cancel_checker);
     };
     return m;
 }
 
-int VFSArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
+int ArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
 {
     assert(m_Arc == 0);
 
@@ -191,14 +175,14 @@ int VFSArchiveHost::DoInit(VFSCancelChecker _cancel_checker)
         return VFSError::InvalidCall;
     }
     
-    m_Mediator = make_shared<VFSArchiveMediator>();
+    m_Mediator = make_shared<Mediator>();
     m_Mediator->file = m_ArFile;
     
     m_Arc = SpawnLibarchive();
     
     archive_read_set_callback_data(m_Arc, m_Mediator.get());
-    archive_read_set_read_callback(m_Arc, VFSArchiveMediator::myread);
-    archive_read_set_seek_callback(m_Arc, VFSArchiveMediator::myseek);
+    archive_read_set_read_callback(m_Arc, Mediator::myread);
+    archive_read_set_seek_callback(m_Arc, Mediator::myseek);
     res = archive_read_open1(m_Arc);
     if( res < 0 ) {
         archive_read_free(m_Arc);
@@ -265,13 +249,13 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
     return true;
 }
 
-int VFSArchiveHost::ReadArchiveListing()
+int ArchiveHost::ReadArchiveListing()
 {
     assert(m_Arc != 0);
     uint32_t aruid = 0;
 
     {
-    VFSArchiveDir root_dir;
+    Dir root_dir;
     root_dir.full_path = "/";
     root_dir.name_in_parent  = "";
     m_PathToDir.emplace("/", move(root_dir));
@@ -279,7 +263,7 @@ int VFSArchiveHost::ReadArchiveListing()
 
     optional<CFStringEncoding> detected_encoding;
 
-    VFSArchiveDir *parent_dir = &m_PathToDir["/"s];
+    Dir *parent_dir = &m_PathToDir["/"s];
     struct archive_entry *aentry;
     int ret;
     while ((ret = archive_read_next_header(m_Arc, &aentry)) == ARCHIVE_OK) {
@@ -342,7 +326,7 @@ int VFSArchiveHost::ReadArchiveListing()
         if(parent_dir->full_path != parent_path)
             parent_dir = FindOrBuildDir(parent_path);
                 
-        VFSArchiveDirEntry *entry = 0;
+        DirEntry *entry = 0;
         unsigned entry_index_in_dir = 0;
         if(isdir) // check if it wasn't added before via FindOrBuildDir
             for(size_t i = 0, e = parent_dir->entries.size(); i<e; ++i) {
@@ -355,7 +339,7 @@ int VFSArchiveHost::ReadArchiveListing()
             }
         
         if(entry == 0) {
-            parent_dir->entries.push_back(VFSArchiveDirEntry());
+            parent_dir->entries.emplace_back();
             entry_index_in_dir = (unsigned)parent_dir->entries.size() - 1;
             entry = &parent_dir->entries.back();
             entry->name = short_name;
@@ -392,7 +376,7 @@ int VFSArchiveHost::ReadArchiveListing()
                 char tmp[1024];
                 strcpy(tmp, path);
                 tmp[path_len-1] = 0;
-                VFSArchiveDir dir;
+                Dir dir;
                 dir.full_path = path; // full_path is with trailing slash
                 dir.name_in_parent = strrchr(tmp, '/')+1;
                 m_PathToDir.emplace(path, move(dir));
@@ -419,7 +403,7 @@ int VFSArchiveHost::ReadArchiveListing()
     return VFSError::GenericError;
 }
 
-uint64_t VFSArchiveHost::UpdateDirectorySize( VFSArchiveDir &_directory, const string &_path )
+uint64_t ArchiveHost::UpdateDirectorySize( Dir &_directory, const string &_path )
 {
     uint64_t size = 0;
     for( auto &e: _directory.entries )
@@ -440,7 +424,7 @@ uint64_t VFSArchiveHost::UpdateDirectorySize( VFSArchiveDir &_directory, const s
     return size;
 }
 
-VFSArchiveDir* VFSArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
+Dir* ArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
 {
     assert(IsPathWithTrailingSlash(_path_with_tr_sl));
     auto i = m_PathToDir.find(_path_with_tr_sl);
@@ -461,34 +445,34 @@ VFSArchiveDir* VFSArchiveHost::FindOrBuildDir(const char* _path_with_tr_sl)
     // TODO: need to check presense of entry_name in parent_dir
     
     InsertDummyDirInto(parent_dir, entry_name);
-    VFSArchiveDir entry;
+    Dir entry;
     entry.full_path = _path_with_tr_sl;
     entry.name_in_parent  = entry_name;
     auto i2 = m_PathToDir.emplace(_path_with_tr_sl, move(entry));
     return &(*i2.first).second;
 }
 
-void VFSArchiveHost::InsertDummyDirInto(VFSArchiveDir *_parent, const char* _dir_name)
+void ArchiveHost::InsertDummyDirInto(Dir *_parent, const char* _dir_name)
 {
-    _parent->entries.push_back(VFSArchiveDirEntry());
+    _parent->entries.emplace_back();
     auto &entry = _parent->entries.back();
     entry.name = _dir_name;
     memset(&entry.st, 0, sizeof(entry.st));
     entry.st.st_mode = S_IFDIR;
 }
 
-int VFSArchiveHost::CreateFile(const char* _path,
+int ArchiveHost::CreateFile(const char* _path,
                                shared_ptr<VFSFile> &_target,
                                const VFSCancelChecker &_cancel_checker)
 {
-    auto file = make_shared<VFSArchiveFile>(_path, SharedPtr());
+    auto file = make_shared<File>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
 }
 
-int VFSArchiveHost::FetchDirectoryListing(const char *_path,
+int ArchiveHost::FetchDirectoryListing(const char *_path,
                                           shared_ptr<VFSListing> &_target,
                                           int _flags,
                                           const VFSCancelChecker &_cancel_checker)
@@ -567,7 +551,7 @@ int VFSArchiveHost::FetchDirectoryListing(const char *_path,
     return 0;
 }
 
-bool VFSArchiveHost::IsDirectory(const char *_path,
+bool ArchiveHost::IsDirectory(const char *_path,
                                  int _flags,
                                  const VFSCancelChecker &_cancel_checker)
 {
@@ -578,7 +562,7 @@ bool VFSArchiveHost::IsDirectory(const char *_path,
     return VFSHost::IsDirectory(_path, _flags, _cancel_checker);
 }
 
-int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int ArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( !_path )
         return VFSError::InvalidCall;
@@ -604,7 +588,7 @@ int VFSArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSC
     return VFSError::NotFound;
 }
 
-int VFSArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path, int _flags)
+int ArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path, int _flags)
 {
     if(!_path || !_resolved_path)
         return VFSError::InvalidCall;
@@ -619,7 +603,7 @@ int VFSArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path,
     return VFSError::Ok;
 }
 
-int VFSArchiveHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
+int ArchiveHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     assert(_path != 0);
     if(_path[0] != '/')
@@ -657,7 +641,7 @@ int VFSArchiveHost::IterateDirectoryListing(const char *_path, const function<bo
     return VFSError::Ok;
 }
 
-uint32_t VFSArchiveHost::ItemUID(const char* _filename)
+uint32_t ArchiveHost::ItemUID(const char* _filename)
 {
     auto it = FindEntry(_filename);
     if(it)
@@ -665,7 +649,7 @@ uint32_t VFSArchiveHost::ItemUID(const char* _filename)
     return 0;
 }
 
-const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
+const DirEntry *ArchiveHost::FindEntry(const char* _path)
 {
     if(!_path || _path[0] != '/') return 0;
     
@@ -710,7 +694,7 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(const char* _path)
     return 0;
 }
 
-const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(uint32_t _uid)
+const DirEntry *ArchiveHost::FindEntry(uint32_t _uid)
 {
     if(!_uid || _uid >= m_EntryByUID.size())
         return nullptr;
@@ -722,7 +706,7 @@ const VFSArchiveDirEntry *VFSArchiveHost::FindEntry(uint32_t _uid)
     return &dir->entries[ind];
 }
 
-int VFSArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
+int ArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
 {
     if(!_path || _path[0] != '/')
         return VFSError::NotFound;
@@ -762,7 +746,7 @@ int VFSArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
     return result_uid;
 }
 
-int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
+int ArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
 {
     char vol_name[256];
     if(!GetFilenameFromPath(JunctionPath(), vol_name))
@@ -776,12 +760,12 @@ int VFSArchiveHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelC
     return 0;
 }
 
-bool VFSArchiveHost::ShouldProduceThumbnails() const
+bool ArchiveHost::ShouldProduceThumbnails() const
 {
     return true;
 }
 
-unique_ptr<VFSArchiveState> VFSArchiveHost::ClosestState(uint32_t _requested_item)
+unique_ptr<State> ArchiveHost::ClosestState(uint32_t _requested_item)
 {
     if(_requested_item == 0)
         return nullptr;
@@ -811,7 +795,7 @@ unique_ptr<VFSArchiveState> VFSArchiveHost::ClosestState(uint32_t _requested_ite
     return nullptr;
 }
 
-void VFSArchiveHost::CommitState(unique_ptr<VFSArchiveState> _state)
+void ArchiveHost::CommitState(unique_ptr<State> _state)
 {
     if(!_state)
         return;
@@ -831,7 +815,7 @@ void VFSArchiveHost::CommitState(unique_ptr<VFSArchiveState> _state)
     }
 }
 
-int VFSArchiveHost::ArchiveStateForItem(const char *_filename, unique_ptr<VFSArchiveState> &_target)
+int ArchiveHost::ArchiveStateForItem(const char *_filename, unique_ptr<State> &_target)
 {
     uint32_t requested_item = ItemUID(_filename);
     if(requested_item == 0)
@@ -857,7 +841,7 @@ int VFSArchiveHost::ArchiveStateForItem(const char *_filename, unique_ptr<VFSArc
         if(res < 0)
             return res;
         
-        auto new_state = make_unique<VFSArchiveState>(file, SpawnLibarchive());
+        auto new_state = make_unique<State>(file, SpawnLibarchive());
         if( (res = new_state->Open()) < 0 ) {
             int rc = VFSError::FromLibarchive(new_state->Errno());
             return rc;
@@ -895,7 +879,7 @@ int VFSArchiveHost::ArchiveStateForItem(const char *_filename, unique_ptr<VFSArc
     return VFSError::Ok;
 }
 
-struct archive* VFSArchiveHost::SpawnLibarchive()
+struct archive* ArchiveHost::SpawnLibarchive()
 {
     archive *arc = archive_read_new();
     archive_read_support_filter_all(arc);
@@ -916,7 +900,7 @@ struct archive* VFSArchiveHost::SpawnLibarchive()
     return arc;
 }
 
-void VFSArchiveHost::ResolveSymlink(uint32_t _uid)
+void ArchiveHost::ResolveSymlink(uint32_t _uid)
 {
     if(!_uid || _uid >= m_EntryByUID.size())
         return;
@@ -989,7 +973,7 @@ void VFSArchiveHost::ResolveSymlink(uint32_t _uid)
     symlink.state = SymlinkState::Resolved;
 }
 
-const VFSArchiveHost::Symlink *VFSArchiveHost::ResolvedSymlink(uint32_t _uid)
+const ArchiveHost::Symlink *ArchiveHost::ResolvedSymlink(uint32_t _uid)
 {
     auto iter = m_Symlinks.find(_uid);
     if(iter == end(m_Symlinks))
@@ -1001,7 +985,7 @@ const VFSArchiveHost::Symlink *VFSArchiveHost::ResolvedSymlink(uint32_t _uid)
     return &iter->second;
 }
 
-int VFSArchiveHost::ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker)
+int ArchiveHost::ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker)
 {
     auto entry = FindEntry(_symlink_path);
     if(!entry)
@@ -1022,4 +1006,6 @@ int VFSArchiveHost::ReadSymlink(const char *_symlink_path, char *_buffer, size_t
     strcpy(_buffer, val.c_str());
     
     return VFSError::Ok;
+}
+
 }

@@ -7,7 +7,7 @@
 //
 
 #include "../include/VFS/VFSArchiveProxy.h"
-#include "ArcLA/VFSArchiveHost.h"
+#include "ArcLA/Host.h"
 #include "ArcUnRAR/VFSArchiveUnRARHost.h"
 
 //bool VFSArchiveProxy::CanOpenFileAsArchive(const string &_path,
@@ -41,7 +41,7 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const string &_path,
     }
     
     try {
-        auto archive = make_shared<VFSArchiveHost>(_path, _parent, nullopt, _cancel_checker);
+        auto archive = make_shared<nc::vfs::ArchiveHost>(_path, _parent, nullopt, _cancel_checker);
         return archive;
     } catch (VFSErrorException &e) {
         if( e.code() == VFSError::ArclibPasswordRequired && _passwd ) {
@@ -49,7 +49,7 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const string &_path,
             if( passwd.empty() )
                 return nullptr;
             try {
-                auto archive = make_shared<VFSArchiveHost>(_path, _parent, passwd, _cancel_checker);
+                auto archive = make_shared<nc::vfs::ArchiveHost>(_path, _parent, passwd, _cancel_checker);
                 return archive;
             } catch (VFSErrorException &e) {
             }

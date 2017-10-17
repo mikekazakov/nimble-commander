@@ -6,11 +6,13 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "VFSArchiveInternal.h"
+#include "Internal.h"
 
-ssize_t VFSArchiveMediator::myread(struct archive *a, void *client_data, const void **buff)
+namespace nc::vfs::arc {
+
+ssize_t Mediator::myread(struct archive *a, void *client_data, const void **buff)
 {
-    VFSArchiveMediator *_this = (VFSArchiveMediator *)client_data;
+    Mediator *_this = (Mediator *)client_data;
     *buff = &_this->buf[0];
         
     ssize_t result = _this->file->Read(&_this->buf[0], bufsz);
@@ -19,16 +21,16 @@ ssize_t VFSArchiveMediator::myread(struct archive *a, void *client_data, const v
     return result;
 }
     
-off_t VFSArchiveMediator::myseek(struct archive *a, void *client_data, off_t offset, int whence)
+off_t Mediator::myseek(struct archive *a, void *client_data, off_t offset, int whence)
 {
-    VFSArchiveMediator *_this = (VFSArchiveMediator *)client_data;
+    Mediator *_this = (Mediator *)client_data;
     off_t result = _this->file->Seek(offset, whence);
     if(result < 0)
         return ARCHIVE_FATAL; // handle somehow
     return result;
 }
 
-void VFSArchiveMediator::setup(struct archive *a)
+void Mediator::setup(struct archive *a)
 {
     assert(file.get() != 0);
     assert(file->GetReadParadigm() >= VFSFile::ReadParadigm::Seek);
@@ -37,7 +39,7 @@ void VFSArchiveMediator::setup(struct archive *a)
     archive_read_set_seek_callback(a, myseek);
 }
 
-VFSArchiveState::VFSArchiveState(const VFSFilePtr &_file, struct archive *_arc):
+State::State(const VFSFilePtr &_file, struct archive *_arc):
     m_File(_file),
     m_Archive(_arc)
 {
@@ -48,21 +50,21 @@ VFSArchiveState::VFSArchiveState(const VFSFilePtr &_file, struct archive *_arc):
     Setup();
 }
 
-VFSArchiveState::~VFSArchiveState()
+State::~State()
 {
     archive_read_free(m_Archive);
 }
 
-void VFSArchiveState::Setup()
+void State::Setup()
 {
     archive_read_set_callback_data(m_Archive, this);
     archive_read_set_read_callback(m_Archive, myread);
     archive_read_set_seek_callback(m_Archive, myseek);
 }
 
-ssize_t VFSArchiveState::myread(struct archive *a, void *client_data, const void **buff)
+ssize_t State::myread(struct archive *a, void *client_data, const void **buff)
 {
-    VFSArchiveState *_this = (VFSArchiveState *)client_data;
+    auto _this = (State *)client_data;
     *buff = &_this->m_Buf;
     
     ssize_t result = _this->m_File->Read(&_this->m_Buf[0], BufferSize);
@@ -71,16 +73,16 @@ ssize_t VFSArchiveState::myread(struct archive *a, void *client_data, const void
     return result;   
 }
 
-off_t VFSArchiveState::myseek(struct archive *a, void *client_data, off_t offset, int whence)
+off_t State::myseek(struct archive *a, void *client_data, off_t offset, int whence)
 {
-    VFSArchiveState *_this = (VFSArchiveState *)client_data;
+    auto _this = (State *)client_data;
     off_t result = _this->m_File->Seek(offset, whence);
     if(result < 0)
         return ARCHIVE_FATAL; // handle somehow
     return result;
 }
 
-void VFSArchiveState::SetEntry(struct archive_entry *_e, uint32_t _uid)
+void State::SetEntry(struct archive_entry *_e, uint32_t _uid)
 {
     assert(_uid >= m_UID);
     assert(_e);
@@ -89,12 +91,14 @@ void VFSArchiveState::SetEntry(struct archive_entry *_e, uint32_t _uid)
     m_Consumed = false;
 }
 
-int VFSArchiveState::Open()
+int State::Open()
 {
     return archive_read_open1(m_Archive);
 }
 
-int VFSArchiveState::Errno()
+int State::Errno()
 {
     return archive_errno(m_Archive);
+}
+
 }

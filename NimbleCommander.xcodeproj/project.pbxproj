@@ -447,7 +447,6 @@
 		CF876D251D51E04A009C0CCE /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D191D51E04A009C0CCE /* BigFileView.mm */; };
 		CF876D261D51E04A009C0CCE /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1B1D51E04A009C0CCE /* BigFileViewDataBackend.mm */; };
 		CF876D271D51E04A009C0CCE /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1D1D51E04A009C0CCE /* BigFileViewHex.mm */; };
-		CF876D281D51E04A009C0CCE /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1F1D51E04A009C0CCE /* BigFileViewHistory.mm */; };
 		CF876D291D51E04A009C0CCE /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */; };
 		CF876D2A1D51E04A009C0CCE /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D241D51E04A009C0CCE /* BigFileViewText.mm */; };
 		CF876D301D51E089009C0CCE /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF876D351D51E089009C0CCE /* BigFileViewSheet.xib */; };
@@ -457,19 +456,16 @@
 		CF876D381D51E0AF009C0CCE /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D191D51E04A009C0CCE /* BigFileView.mm */; };
 		CF876D391D51E0AF009C0CCE /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1B1D51E04A009C0CCE /* BigFileViewDataBackend.mm */; };
 		CF876D3A1D51E0AF009C0CCE /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1D1D51E04A009C0CCE /* BigFileViewHex.mm */; };
-		CF876D3B1D51E0AF009C0CCE /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1F1D51E04A009C0CCE /* BigFileViewHistory.mm */; };
 		CF876D3C1D51E0AF009C0CCE /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */; };
 		CF876D3D1D51E0AF009C0CCE /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D241D51E04A009C0CCE /* BigFileViewText.mm */; };
 		CF876D3E1D51E0B0009C0CCE /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D191D51E04A009C0CCE /* BigFileView.mm */; };
 		CF876D3F1D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1B1D51E04A009C0CCE /* BigFileViewDataBackend.mm */; };
 		CF876D401D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1D1D51E04A009C0CCE /* BigFileViewHex.mm */; };
-		CF876D411D51E0B0009C0CCE /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1F1D51E04A009C0CCE /* BigFileViewHistory.mm */; };
 		CF876D421D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */; };
 		CF876D431D51E0B0009C0CCE /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D241D51E04A009C0CCE /* BigFileViewText.mm */; };
 		CF876D441D51E0B0009C0CCE /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D191D51E04A009C0CCE /* BigFileView.mm */; };
 		CF876D451D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1B1D51E04A009C0CCE /* BigFileViewDataBackend.mm */; };
 		CF876D461D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1D1D51E04A009C0CCE /* BigFileViewHex.mm */; };
-		CF876D471D51E0B0009C0CCE /* BigFileViewHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D1F1D51E04A009C0CCE /* BigFileViewHistory.mm */; };
 		CF876D481D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */; };
 		CF876D491D51E0B0009C0CCE /* BigFileViewText.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D241D51E04A009C0CCE /* BigFileViewText.mm */; };
 		CF876D4C1D530F46009C0CCE /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
@@ -1618,8 +1614,6 @@
 		CF876D1B1D51E04A009C0CCE /* BigFileViewDataBackend.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewDataBackend.mm; path = NimbleCommander/Viewer/BigFileViewDataBackend.mm; sourceTree = SOURCE_ROOT; };
 		CF876D1C1D51E04A009C0CCE /* BigFileViewHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileViewHex.h; path = NimbleCommander/Viewer/BigFileViewHex.h; sourceTree = SOURCE_ROOT; };
 		CF876D1D1D51E04A009C0CCE /* BigFileViewHex.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewHex.mm; path = NimbleCommander/Viewer/BigFileViewHex.mm; sourceTree = SOURCE_ROOT; };
-		CF876D1E1D51E04A009C0CCE /* BigFileViewHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileViewHistory.h; path = NimbleCommander/Viewer/BigFileViewHistory.h; sourceTree = SOURCE_ROOT; };
-		CF876D1F1D51E04A009C0CCE /* BigFileViewHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewHistory.mm; path = NimbleCommander/Viewer/BigFileViewHistory.mm; sourceTree = SOURCE_ROOT; };
 		CF876D201D51E04A009C0CCE /* BigFileViewProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileViewProtocol.h; path = NimbleCommander/Viewer/BigFileViewProtocol.h; sourceTree = SOURCE_ROOT; };
 		CF876D211D51E04A009C0CCE /* BigFileViewSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileViewSheet.h; path = NimbleCommander/Viewer/BigFileViewSheet.h; sourceTree = SOURCE_ROOT; };
 		CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewSheet.mm; path = NimbleCommander/Viewer/BigFileViewSheet.mm; sourceTree = SOURCE_ROOT; };
@@ -2303,8 +2297,6 @@
 				CF876D1B1D51E04A009C0CCE /* BigFileViewDataBackend.mm */,
 				CF876D1C1D51E04A009C0CCE /* BigFileViewHex.h */,
 				CF876D1D1D51E04A009C0CCE /* BigFileViewHex.mm */,
-				CF876D1E1D51E04A009C0CCE /* BigFileViewHistory.h */,
-				CF876D1F1D51E04A009C0CCE /* BigFileViewHistory.mm */,
 				CF876D201D51E04A009C0CCE /* BigFileViewProtocol.h */,
 				CF876D211D51E04A009C0CCE /* BigFileViewSheet.h */,
 				CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */,
@@ -3818,7 +3810,6 @@
 				CFD7265F1E42E1D700603077 /* FilesDraggingSource.mm in Sources */,
 				CFD726111E42E07D00603077 /* Config.cpp in Sources */,
 				CFD726F41E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */,
-				CF876D411D51E0B0009C0CCE /* BigFileViewHistory.mm in Sources */,
 				CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */,
 				CFD8CDCC1E8CE65600E4DC53 /* OpenXAttr.mm in Sources */,
 				CFD7267D1E42E20800603077 /* PanelController+DataAccess.mm in Sources */,
@@ -3917,7 +3908,6 @@
 				CFD726121E42E07E00603077 /* Config.cpp in Sources */,
 				CF4E56F01D5072E600452912 /* FileMask.cpp in Sources */,
 				CFD726071E42E06F00603077 /* AppDelegateCPP.mm in Sources */,
-				CF876D471D51E0B0009C0CCE /* BigFileViewHistory.mm in Sources */,
 				CFD726961E42E22C00603077 /* PanelDataItemVolatileData.cpp in Sources */,
 				CF4E56B91D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFFA951E1F45A3580035E606 /* Link.mm in Sources */,
@@ -4149,7 +4139,6 @@
 				CF876D261D51E04A009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF4E56421D5064FE00452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFDAC2DE1DFD137F0039A104 /* QuickPreview.mm in Sources */,
-				CF876D281D51E04A009C0CCE /* BigFileViewHistory.mm in Sources */,
 				CFDAC2CE1DFD0F840039A104 /* WorkspaceIconsCache.mm in Sources */,
 				CFDAC2051DF921160039A104 /* PanelDataStatistics.cpp in Sources */,
 				CF94CF941DD4418000EEA420 /* Layout.mm in Sources */,
@@ -4361,7 +4350,6 @@
 				CF818B7B1EA4573400BC28E6 /* Pasteboard.mm in Sources */,
 				CF4E56EE1D5072E500452912 /* FileMask.cpp in Sources */,
 				CFD726F31E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */,
-				CF876D3B1D51E0AF009C0CCE /* BigFileViewHistory.mm in Sources */,
 				CF4E56B61D5068F000452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFD726E71E42E2D100603077 /* PanelListViewGeometry.mm in Sources */,
 				CFD7265B1E42E1B700603077 /* MainWindowController.mm in Sources */,

@@ -52,7 +52,6 @@ namespace nc::term {
 
 @property (nonatomic) shared_ptr<nc::term::Settings> settings;
 
-//- (void) reloadGeometry;
 - (void) AttachToScreen:(nc::term::Screen*)_scr;
 - (void) AttachToParser:(nc::term::Parser*)_par;
 

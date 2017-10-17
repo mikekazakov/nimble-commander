@@ -40,8 +40,8 @@
 		CFFA94B81F45439B0035E606 /* Internals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0661DA2344A00992B84 /* Internals.cpp */; };
 		CFFA94B91F4543A30035E606 /* Fetching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBF381E909AC400D3569C /* Fetching.cpp */; };
 		CFFA94BA1F4543A30035E606 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */; };
-		CFFA94BB1F4543A30035E606 /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0251DA2305A00992B84 /* VFSNativeFile.cpp */; };
-		CFFA94BC1F4543A30035E606 /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0281DA2305A00992B84 /* VFSNativeHost.mm */; };
+		CFFA94BB1F4543A30035E606 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0251DA2305A00992B84 /* File.cpp */; };
+		CFFA94BC1F4543A30035E606 /* Host.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0281DA2305A00992B84 /* Host.mm */; };
 		CFFA94BD1F4543AB0035E606 /* Aux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1168821E91FB4A00CC515A /* Aux.mm */; };
 		CFFA94BE1F4543AB0035E606 /* File.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A10D1E9290FB00149C44 /* File.mm */; };
 		CFFA94BF1F4543AB0035E606 /* FileDownloadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B7E1EA715ED00BC28E6 /* FileDownloadDelegate.mm */; };
@@ -163,10 +163,10 @@
 		CF69D0161DA22BE800992B84 /* VFSSeqToRandomWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSSeqToRandomWrapper.cpp; path = source/VFSSeqToRandomWrapper.cpp; sourceTree = "<group>"; };
 		CF69D0231DA2305A00992B84 /* DisplayNamesCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayNamesCache.h; path = source/Native/DisplayNamesCache.h; sourceTree = "<group>"; };
 		CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DisplayNamesCache.mm; path = source/Native/DisplayNamesCache.mm; sourceTree = "<group>"; };
-		CF69D0251DA2305A00992B84 /* VFSNativeFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNativeFile.cpp; path = source/Native/VFSNativeFile.cpp; sourceTree = "<group>"; };
-		CF69D0261DA2305A00992B84 /* VFSNativeFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNativeFile.h; path = source/Native/VFSNativeFile.h; sourceTree = "<group>"; };
-		CF69D0271DA2305A00992B84 /* VFSNativeHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNativeHost.h; path = source/Native/VFSNativeHost.h; sourceTree = "<group>"; };
-		CF69D0281DA2305A00992B84 /* VFSNativeHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNativeHost.mm; path = source/Native/VFSNativeHost.mm; sourceTree = "<group>"; };
+		CF69D0251DA2305A00992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/Native/File.cpp; sourceTree = "<group>"; };
+		CF69D0261DA2305A00992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/Native/File.h; sourceTree = "<group>"; };
+		CF69D0271DA2305A00992B84 /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/Native/Host.h; sourceTree = "<group>"; };
+		CF69D0281DA2305A00992B84 /* Host.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Host.mm; path = source/Native/Host.mm; sourceTree = "<group>"; };
 		CF69D0301DA231EA00992B84 /* xattr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = xattr.cpp; path = source/XAttr/xattr.cpp; sourceTree = "<group>"; };
 		CF69D0311DA231EA00992B84 /* xattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = xattr.h; path = source/XAttr/xattr.h; sourceTree = "<group>"; };
 		CF69D0351DA2324100992B84 /* Cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Cache.h; path = source/NetFTP/Cache.h; sourceTree = "<group>"; };
@@ -425,10 +425,10 @@
 				CF1FBF391E909AC400D3569C /* Fetching.h */,
 				CF69D0231DA2305A00992B84 /* DisplayNamesCache.h */,
 				CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */,
-				CF69D0251DA2305A00992B84 /* VFSNativeFile.cpp */,
-				CF69D0261DA2305A00992B84 /* VFSNativeFile.h */,
-				CF69D0271DA2305A00992B84 /* VFSNativeHost.h */,
-				CF69D0281DA2305A00992B84 /* VFSNativeHost.mm */,
+				CF69D0251DA2305A00992B84 /* File.cpp */,
+				CF69D0261DA2305A00992B84 /* File.h */,
+				CF69D0271DA2305A00992B84 /* Host.h */,
+				CF69D0281DA2305A00992B84 /* Host.mm */,
 			);
 			name = Native;
 			sourceTree = "<group>";
@@ -694,7 +694,7 @@
 				CFFA94D41F4543ED0035E606 /* VFSFactory.cpp in Sources */,
 				CFFA94C01F4543AB0035E606 /* FileUploadDelegate.mm in Sources */,
 				CFFA94D61F4543ED0035E606 /* VFSGenericMemReadOnlyFile.cpp in Sources */,
-				CFFA94BC1F4543A30035E606 /* VFSNativeHost.mm in Sources */,
+				CFFA94BC1F4543A30035E606 /* Host.mm in Sources */,
 				CFFA94B81F45439B0035E606 /* Internals.cpp in Sources */,
 				CFFA94CD1F4543C70035E606 /* File.cpp in Sources */,
 				CFFA94C61F4543B30035E606 /* Internals.mm in Sources */,
@@ -703,7 +703,7 @@
 				CFFA94B51F4543920035E606 /* Internal.cpp in Sources */,
 				CFFA94DA1F4543ED0035E606 /* VFSPath.cpp in Sources */,
 				CFFA94D11F4543ED0035E606 /* VFSConfiguration.cpp in Sources */,
-				CFFA94BB1F4543A30035E606 /* VFSNativeFile.cpp in Sources */,
+				CFFA94BB1F4543A30035E606 /* File.cpp in Sources */,
 				CF3E2F861F60DF08001BFFCE /* Requests.cpp in Sources */,
 				CFFA94D01F4543ED0035E606 /* VFSArchiveProxy.mm in Sources */,
 				CFFA94C21F4543AB0035E606 /* Host.mm in Sources */,

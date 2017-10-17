@@ -2,7 +2,9 @@
 
 class PosixIOInterface;
 
-class VFSNativeFetching
+namespace nc::vfs::native {
+
+class Fetching
 {
 public:
 
@@ -59,3 +61,4 @@ public:
     static int CountDirEntries( const int _dir_fd );
 };
 
+}

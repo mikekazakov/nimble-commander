@@ -9,10 +9,12 @@
 #include <sys/xattr.h>
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
-#include "VFSNativeFile.h"
-#include "VFSNativeHost.h"
+#include "File.h"
+#include "Host.h"
 
-VFSNativeFile::VFSNativeFile(const char* _relative_path, const shared_ptr<VFSNativeHost> &_host):
+namespace nc::vfs::native {
+
+File::File(const char* _relative_path, const shared_ptr<NativeHost> &_host):
     VFSFile(_relative_path, _host),
     m_FD(-1),
     m_Position(0),
@@ -20,12 +22,12 @@ VFSNativeFile::VFSNativeFile(const char* _relative_path, const shared_ptr<VFSNat
 {
 }
 
-VFSNativeFile::~VFSNativeFile()
+File::~File()
 {
     Close();
 }
 
-int VFSNativeFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;
     auto fs_info = NativeFSManager::Instance().VolumeFromPath(Path());
@@ -63,12 +65,12 @@ int VFSNativeFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker
     return VFSError::Ok;
 }
 
-bool VFSNativeFile::IsOpened() const
+bool File::IsOpened() const
 {
     return m_FD >= 0;
 }
 
-int VFSNativeFile::Close()
+int File::Close()
 {
     if(m_FD >= 0)
     {
@@ -81,7 +83,7 @@ int VFSNativeFile::Close()
     return VFSError::Ok;
 }
 
-ssize_t VFSNativeFile::Read(void *_buf, size_t _size)
+ssize_t File::Read(void *_buf, size_t _size)
 {
     if(m_FD < 0) return SetLastError(VFSError::InvalidCall);
     if(Eof())    return 0;
@@ -95,7 +97,7 @@ ssize_t VFSNativeFile::Read(void *_buf, size_t _size)
     return SetLastError(VFSError::FromErrno(errno));
 }
 
-ssize_t VFSNativeFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+ssize_t File::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if(m_FD < 0)
         return SetLastError(VFSError::InvalidCall);
@@ -105,7 +107,7 @@ ssize_t VFSNativeFile::ReadAt(off_t _pos, void *_buf, size_t _size)
     return ret;
 }
 
-off_t VFSNativeFile::Seek(off_t _off, int _basis)
+off_t File::Seek(off_t _off, int _basis)
 {
     if(m_FD < 0)
         return SetLastError(VFSError::InvalidCall);
@@ -121,7 +123,7 @@ off_t VFSNativeFile::Seek(off_t _off, int _basis)
     return SetLastError(VFSError::FromErrno(errno));
 }
 
-ssize_t VFSNativeFile::Write(const void *_buf, size_t _size)
+ssize_t File::Write(const void *_buf, size_t _size)
 {
     if(m_FD < 0)
         return SetLastError(VFSError::InvalidCall);
@@ -137,7 +139,7 @@ ssize_t VFSNativeFile::Write(const void *_buf, size_t _size)
     return SetLastError(VFSError::FromErrno(errno));
 }
 
-VFSFile::ReadParadigm VFSNativeFile::GetReadParadigm() const
+VFSFile::ReadParadigm File::GetReadParadigm() const
 {
     if(m_FD < 0) // on not-opened files we return maximum possible value
         return VFSFile::ReadParadigm::Random;
@@ -147,7 +149,7 @@ VFSFile::ReadParadigm VFSNativeFile::GetReadParadigm() const
     return VFSFile::ReadParadigm::NoRead;
 }
 
-VFSFile::WriteParadigm VFSNativeFile::GetWriteParadigm() const
+VFSFile::WriteParadigm File::GetWriteParadigm() const
 {
     if(m_FD < 0) // on not-opened files we return maximum possible value
         return VFSFile::WriteParadigm::Random;
@@ -157,21 +159,21 @@ VFSFile::WriteParadigm VFSNativeFile::GetWriteParadigm() const
     return VFSFile::WriteParadigm::NoWrite;
 }
 
-ssize_t VFSNativeFile::Pos() const
+ssize_t File::Pos() const
 {
     if(m_FD < 0)
         return SetLastError(VFSError::InvalidCall);
     return m_Position;
 }
 
-ssize_t VFSNativeFile::Size() const
+ssize_t File::Size() const
 {
     if(m_FD < 0)
         return SetLastError(VFSError::InvalidCall);
     return m_Size;
 }
 
-bool VFSNativeFile::Eof() const
+bool File::Eof() const
 {
     if(m_FD < 0) {
         SetLastError(VFSError::InvalidCall);
@@ -180,14 +182,13 @@ bool VFSNativeFile::Eof() const
     return m_Position >= m_Size;
 }
 
-shared_ptr<VFSFile> VFSNativeFile::Clone() const
+shared_ptr<VFSFile> File::Clone() const
 {
-    return make_shared<VFSNativeFile>(
-                                           Path(),
-                                           dynamic_pointer_cast<VFSNativeHost>(Host()));
+    return make_shared<File>(Path(),
+                             dynamic_pointer_cast<VFSNativeHost>(Host()));
 }
 
-unsigned VFSNativeFile::XAttrCount() const
+unsigned File::XAttrCount() const
 {
     if(m_FD < 0)
         return 0;
@@ -212,7 +213,7 @@ unsigned VFSNativeFile::XAttrCount() const
     return count;
 }
 
-void VFSNativeFile::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
+void File::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
 {
     if(m_FD < 0 || !_handler)
         return;
@@ -237,7 +238,7 @@ void VFSNativeFile::XAttrIterateNames( function<bool(const char* _xattr_name)> _
     }
 }
 
-ssize_t VFSNativeFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
+ssize_t File::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
 {
     if(m_FD < 0)
         return SetLastError(VFSError::InvalidCall);
@@ -249,3 +250,4 @@ ssize_t VFSNativeFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _
     return ret;
 }
 
+}

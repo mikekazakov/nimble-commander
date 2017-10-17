@@ -8,6 +8,8 @@
 
 #include "DisplayNamesCache.h"
 
+namespace nc::vfs::native {
+
 DisplayNamesCache& DisplayNamesCache::Instance()
 {
     static auto inst = new DisplayNamesCache; // never free
@@ -22,13 +24,15 @@ static bool is_same_filename( const char *_filename, const string &_path )
 
 optional<const char*> DisplayNamesCache::Fast_Unlocked( ino_t _ino, dev_t _dev, const string &_path ) const noexcept
 {
-    // just go thru all tags and check if we have the requested one - should be VERY FAST
-    const auto e = (int)m_Inodes.size();
-    for( int i = 0; i != e; ++i )
-        if( m_Inodes[i] == _ino )
-            if( m_Devs[i] == _dev )
-                if( is_same_filename(m_Filenames[i], _path) )
-                    return m_DisplayNames[i];
+    const auto inodes = m_Devices.find(_dev);
+    if( inodes == end(m_Devices) )
+        return nullopt;
+
+    const auto range = inodes->second.equal_range(_ino);
+    for( auto i = range.first; i != range.second; ++i )
+        if( is_same_filename( i->second.fs_filename, _path) )
+            return i->second.display_filename;
+
     return nullopt;
 }
 
@@ -45,12 +49,11 @@ void DisplayNamesCache::Commit_Locked(ino_t _ino,
                                       const string &_path,
                                       const char *_dispay_name )
 {
-    
+    Filename f;
+    f.fs_filename = filename_dup(_path);
+    f.display_filename = _dispay_name;
     lock_guard<spinlock> guard(m_WriteLock);
-    m_Inodes.emplace_back( _ino );
-    m_Devs.emplace_back( _dev );
-    m_Filenames.emplace_back( filename_dup(_path) );
-    m_DisplayNames.emplace_back( _dispay_name );
+    m_Devices[_dev].insert( make_pair(_ino, f) );
 }
 
 const char* DisplayNamesCache::DisplayName( const struct stat &_st, const string &_path )
@@ -104,4 +107,6 @@ const char* DisplayNamesCache::DisplayName( ino_t _ino, dev_t _dev, const string
     Commit_Locked( _ino, _dev, _path, generated_str );
     return generated_str;
     // SLOW PATH ENDS
+}
+
 }

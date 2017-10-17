@@ -8,8 +8,8 @@
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
 #include "DisplayNamesCache.h"
-#include "VFSNativeHost.h"
-#include "VFSNativeFile.h"
+#include "Host.h"
+#include "File.h"
 #include <VFS/VFSError.h>
 #include "../VFSListingInput.h"
 #include "Fetching.h"
@@ -19,7 +19,11 @@
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
-const char *VFSNativeHost::UniqueTag = "native";
+namespace nc::vfs {
+
+using namespace native;
+
+const char *NativeHost::UniqueTag = "native";
 
 class VFSNativeHostConfiguration
 {
@@ -40,7 +44,7 @@ public:
     }
 };
 
-VFSMeta VFSNativeHost::Meta()
+VFSMeta NativeHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
@@ -50,7 +54,7 @@ VFSMeta VFSNativeHost::Meta()
     return m;
 }
 
-VFSNativeHost::VFSNativeHost():
+NativeHost::NativeHost():
     VFSHost("", 0, UniqueTag)
 {
     AddFeatures(VFSHostFeatures::FetchUsers |
@@ -61,12 +65,12 @@ VFSNativeHost::VFSNativeHost():
                 VFSHostFeatures::SetTimes );
 }
 
-bool VFSNativeHost::ShouldProduceThumbnails() const
+bool NativeHost::ShouldProduceThumbnails() const
 {
     return true;
 }
 
-int VFSNativeHost::FetchDirectoryListing(const char *_path,
+int NativeHost::FetchDirectoryListing(const char *_path,
                                          shared_ptr<VFSListing> &_target,
                                          int _flags,
                                          const VFSCancelChecker &_cancel_checker)
@@ -86,7 +90,7 @@ int VFSNativeHost::FetchDirectoryListing(const char *_path,
     });
     
     const int approx_entries_count = [&]{
-        auto count = VFSNativeFetching::CountDirEntries(fd);
+        auto count = Fetching::CountDirEntries(fd);
         if( count < 0 ) // negative means error
             count = 64;
          return count + (need_to_add_dot_dot ? 1 : 0);
@@ -123,7 +127,7 @@ int VFSNativeHost::FetchDirectoryListing(const char *_path,
         listing_source.sizes.resize( _sz );
     };
     
-    auto fill = [&]( int _n, const VFSNativeFetching::CallbackParams &_params ) {
+    auto fill = [&]( int _n, const Fetching::CallbackParams &_params ) {
         listing_source.filenames[_n]     = _params.filename;
         listing_source.inodes[_n]        = _params.inode;
         listing_source.unix_types[_n]    = IFTODT(_params.mode);
@@ -152,12 +156,12 @@ int VFSNativeHost::FetchDirectoryListing(const char *_path,
     resize_dense( approx_entries_count );
     
     int next_entry_index = 0;
-    auto cb_param = [&](const VFSNativeFetching::CallbackParams &_params){
+    auto cb_param = [&](const Fetching::CallbackParams &_params){
         fill(next_entry_index++, _params);
     };
     
     if( need_to_add_dot_dot ) {
-        VFSNativeFetching::ReadSingleEntryAttributesByPath( io, _path, cb_param );
+        Fetching::ReadSingleEntryAttributesByPath( io, _path, cb_param );
         listing_source.filenames[0] = "..";
     }
     
@@ -169,8 +173,8 @@ int VFSNativeHost::FetchDirectoryListing(const char *_path,
 
     // when Admin Mode is on - we use different fetch route
     const int ret = is_native_io ?
-        VFSNativeFetching::ReadDirAttributesBulk( fd, cb_fetch, cb_param ) :
-        VFSNativeFetching::ReadDirAttributesStat( fd, listing_source.directories[0].c_str(), cb_fetch, cb_param);
+        Fetching::ReadDirAttributesBulk( fd, cb_fetch, cb_param ) :
+        Fetching::ReadDirAttributesStat( fd, listing_source.directories[0].c_str(), cb_fetch, cb_param);
     if( ret != 0 )
         return VFSError::FromErrno(ret);
     
@@ -225,7 +229,7 @@ int VFSNativeHost::FetchDirectoryListing(const char *_path,
     return 0;
 }
 
-int VFSNativeHost::FetchSingleItemListing(const char *_path,
+int NativeHost::FetchSingleItemListing(const char *_path,
                                           shared_ptr<VFSListing> &_target,
                                           int _flags,
                                           const VFSCancelChecker &_cancel_checker)
@@ -266,7 +270,7 @@ int VFSNativeHost::FetchSingleItemListing(const char *_path,
     listing_source.unix_types.resize(1);
     listing_source.filenames.emplace_back( filename );
 
-    auto cb_param = [&](const VFSNativeFetching::CallbackParams &_params){
+    auto cb_param = [&](const Fetching::CallbackParams &_params){
         listing_source.inodes[0]        = _params.inode;
         listing_source.unix_types[0]    = IFTODT(_params.mode);
         listing_source.atimes[0]        = _params.acc_time;
@@ -293,7 +297,7 @@ int VFSNativeHost::FetchSingleItemListing(const char *_path,
             }
     };
     
-    int ret = VFSNativeFetching::ReadSingleEntryAttributesByPath( io, _path, cb_param );
+    int ret = Fetching::ReadSingleEntryAttributesByPath( io, _path, cb_param );
     if( ret != 0 )
         return VFSError::FromErrno(ret);
     
@@ -324,20 +328,20 @@ int VFSNativeHost::FetchSingleItemListing(const char *_path,
     return 0;
 }
 
-int VFSNativeHost::CreateFile(const char* _path,
+int NativeHost::CreateFile(const char* _path,
                               shared_ptr<VFSFile> &_target,
                               const VFSCancelChecker &_cancel_checker)
 {
-    auto file = make_shared<VFSNativeFile>(_path, SharedPtr());
+    auto file = make_shared<File>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
 }
 
-const shared_ptr<VFSNativeHost> &VFSNativeHost::SharedHost() noexcept
+const shared_ptr<NativeHost> &NativeHost::SharedHost() noexcept
 {
-    static auto host = make_shared<VFSNativeHost>();
+    static auto host = make_shared<NativeHost>();
     return host;
 }
 
@@ -416,8 +420,8 @@ cleanup:
 }
 
 
-ssize_t VFSNativeHost::CalculateDirectorySize(const char *_path,
-                                              const VFSCancelChecker &_cancel_checker)
+ssize_t NativeHost::CalculateDirectorySize(const char *_path,
+                                           const VFSCancelChecker &_cancel_checker)
 {
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
@@ -441,25 +445,25 @@ ssize_t VFSNativeHost::CalculateDirectorySize(const char *_path,
         return result;
 }
 
-bool VFSNativeHost::IsDirChangeObservingAvailable(const char *_path)
+bool NativeHost::IsDirChangeObservingAvailable(const char *_path)
 {
     if(!_path)
         return false;
     return access(_path, R_OK) == 0; // should use _not_ routed I/O here!
 }
 
-VFSHostDirObservationTicket VFSNativeHost::DirChangeObserve(const char *_path, function<void()> _handler)
+VFSHostDirObservationTicket NativeHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     uint64_t t = FSEventsDirUpdate::Instance().AddWatchPath(_path, _handler);
     return t ? VFSHostDirObservationTicket(t, shared_from_this()) : VFSHostDirObservationTicket();
 }
 
-void VFSNativeHost::StopDirChangeObserving(unsigned long _ticket)
+void NativeHost::StopDirChangeObserving(unsigned long _ticket)
 {
     FSEventsDirUpdate::Instance().RemoveWatchPathWithTicket(_ticket);
 }
 
-int VFSNativeHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int NativeHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
     memset(&_st, 0, sizeof(_st));
@@ -476,7 +480,7 @@ int VFSNativeHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCa
     return VFSError::FromErrno();
 }
 
-int VFSNativeHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
+int NativeHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
     
@@ -505,7 +509,7 @@ int VFSNativeHost::IterateDirectoryListing(const char *_path, const function<boo
     return VFSError::Ok;
 }
 
-int VFSNativeHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
+int NativeHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
 {
     struct statfs info;
     if(statfs(_path, &info) < 0)
@@ -525,7 +529,7 @@ int VFSNativeHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelCh
     return 0;
 }
 
-int VFSNativeHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
+int NativeHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;
     int ret = io.unlink(_path);
@@ -534,12 +538,12 @@ int VFSNativeHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_che
     return VFSError::FromErrno();
 }
 
-bool VFSNativeHost::IsWritable() const
+bool NativeHost::IsWritable() const
 {
     return true; // dummy now
 }
 
-int VFSNativeHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
+int NativeHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;
     int ret = io.mkdir(_path, _mode);
@@ -548,7 +552,7 @@ int VFSNativeHost::CreateDirectory(const char* _path, int _mode, const VFSCancel
     return VFSError::FromErrno();
 }
 
-int VFSNativeHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
+int NativeHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;
     int ret = io.rmdir(_path);
@@ -557,7 +561,7 @@ int VFSNativeHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_c
     return VFSError::FromErrno();
 }
 
-int VFSNativeHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker)
+int NativeHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;
     ssize_t sz = io.readlink(_path, _buffer, _buffer_size);
@@ -571,9 +575,9 @@ int VFSNativeHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_
     return 0;
 }
 
-int VFSNativeHost::CreateSymlink(const char *_symlink_path,
-                                 const char *_symlink_value,
-                                 const VFSCancelChecker &_cancel_checker)
+int NativeHost::CreateSymlink(const char *_symlink_path,
+                              const char *_symlink_value,
+                              const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;
     int result = io.symlink(_symlink_value, _symlink_path);
@@ -583,13 +587,13 @@ int VFSNativeHost::CreateSymlink(const char *_symlink_path,
     return 0;
 }
 
-int VFSNativeHost::SetTimes(const char *_path,
-                            optional<time_t> _birth_time,
-                            optional<time_t> _mod_time,
-                            optional<time_t> _chg_time,
-                            optional<time_t> _acc_time,
-                            const VFSCancelChecker &_cancel_checker
-                            )
+int NativeHost::SetTimes(const char *_path,
+                         optional<time_t> _birth_time,
+                         optional<time_t> _mod_time,
+                         optional<time_t> _chg_time,
+                         optional<time_t> _acc_time,
+                         const VFSCancelChecker &_cancel_checker
+                         )
 {
     if(_path == nullptr)
         return VFSError::InvalidCall;
@@ -610,7 +614,7 @@ int VFSNativeHost::SetTimes(const char *_path,
     return VFSError::Ok;
 }
 
-int VFSNativeHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
+int NativeHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;
     int ret = io.rename(_old_path, _new_path);
@@ -619,18 +623,18 @@ int VFSNativeHost::Rename(const char *_old_path, const char *_new_path, const VF
     return VFSError::FromErrno();
 }
 
-bool VFSNativeHost::IsNativeFS() const noexcept
+bool NativeHost::IsNativeFS() const noexcept
 {
     return true;
 }
 
-VFSConfiguration VFSNativeHost::Configuration() const
+VFSConfiguration NativeHost::Configuration() const
 {
     static const auto aa = VFSNativeHostConfiguration();
     return aa;
 }
 
-int VFSNativeHost::Trash(const char *_path, const VFSCancelChecker &_cancel_checker)
+int NativeHost::Trash(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);
@@ -654,7 +658,7 @@ int VFSNativeHost::Trash(const char *_path, const VFSCancelChecker &_cancel_chec
         return VFSError::FromNSError(error);
 }
 
-int VFSNativeHost::SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
+int NativeHost::SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
 {
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);
@@ -666,7 +670,7 @@ int VFSNativeHost::SetPermissions(const char *_path, uint16_t _mode, const VFSCa
     return VFSError::FromErrno();
 }
 
-int VFSNativeHost::SetFlags(const char *_path, uint32_t _flags, const VFSCancelChecker &_cancel_checker)
+int NativeHost::SetFlags(const char *_path, uint32_t _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);
@@ -678,10 +682,10 @@ int VFSNativeHost::SetFlags(const char *_path, uint32_t _flags, const VFSCancelC
     return VFSError::FromErrno();
 }
 
-int VFSNativeHost::SetOwnership(const char *_path,
-                                unsigned _uid,
-                                unsigned _gid,
-                                const VFSCancelChecker &_cancel_checker)
+int NativeHost::SetOwnership(const char *_path,
+                             unsigned _uid,
+                             unsigned _gid,
+                             const VFSCancelChecker &_cancel_checker)
 {
     if( _path == nullptr )
         return VFSError::FromErrno(EINVAL);
@@ -693,7 +697,7 @@ int VFSNativeHost::SetOwnership(const char *_path,
     return VFSError::FromErrno();
 }
 
-int VFSNativeHost::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
+int NativeHost::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
 {
     _target.clear();
 
@@ -750,7 +754,7 @@ int VFSNativeHost::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &
     return VFSError::Ok;
 }
 
-int VFSNativeHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
+int NativeHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
 {
     _target.clear();
 
@@ -806,4 +810,6 @@ int VFSNativeHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker
                   end(_target));
     
     return VFSError::Ok;
+}
+
 }

@@ -10,10 +10,12 @@
 
 #include <VFS/VFSHost.h>
 
-class VFSNativeHost final : public VFSHost
+namespace nc::vfs {
+
+class NativeHost final : public VFSHost
 {
 public:
-    VFSNativeHost();
+    NativeHost();
     
     static const char *UniqueTag;
     virtual VFSConfiguration Configuration() const override;
@@ -88,10 +90,14 @@ public:
                             const VFSCancelChecker &_cancel_checker) override;
     virtual bool ShouldProduceThumbnails() const override;
     
-    shared_ptr<const VFSNativeHost> SharedPtr() const {return static_pointer_cast<const VFSNativeHost>(VFSHost::SharedPtr());}
-    shared_ptr<VFSNativeHost> SharedPtr() {return static_pointer_cast<VFSNativeHost>(VFSHost::SharedPtr());}
-    static const shared_ptr<VFSNativeHost> &SharedHost() noexcept;
+    shared_ptr<const NativeHost> SharedPtr() const {return static_pointer_cast<const NativeHost>(VFSHost::SharedPtr());}
+    shared_ptr<NativeHost> SharedPtr() {return static_pointer_cast<NativeHost>(VFSHost::SharedPtr());}
+    static const shared_ptr<NativeHost> &SharedHost() noexcept;
     virtual bool IsNativeFS() const noexcept override;
 private:
     
 };
+
+}
+
+using VFSNativeHost = nc::vfs::NativeHost;

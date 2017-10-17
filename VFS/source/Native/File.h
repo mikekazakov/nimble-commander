@@ -9,13 +9,17 @@
 #pragma once
 #include <VFS/VFSFile.h>
 
-class VFSNativeHost;
+namespace nc::vfs {
+class NativeHost;
+}
 
-class VFSNativeFile : public VFSFile
+namespace nc::vfs::native {
+
+class File : public VFSFile
 {
 public:
-    VFSNativeFile(const char* _relative_path, const shared_ptr<VFSNativeHost> &_host);
-    ~VFSNativeFile();
+    File(const char* _relative_path, const shared_ptr<NativeHost> &_host);
+    ~File();
     
     virtual int     Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual bool    IsOpened() const override;
@@ -45,3 +49,5 @@ private:
     ssize_t m_Position;
     ssize_t m_Size;
 };
+
+}

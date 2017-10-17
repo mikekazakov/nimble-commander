@@ -11,6 +11,8 @@
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
+namespace nc::vfs::native {
+
 static mode_t VNodeToUnixMode( const fsobj_type_t _type )
 {
     switch( _type ) {
@@ -27,14 +29,14 @@ static mode_t VNodeToUnixMode( const fsobj_type_t _type )
 
 static int LStatByPath(PosixIOInterface &_io,
                        const char *_path,
-                       const VFSNativeFetching::Callback &_cb_param)
+                       const Fetching::Callback &_cb_param)
 {
     struct stat stat_buffer;
     int ret = _io.lstat(_path, &stat_buffer);
     if( ret != 0)
         return ret;
  
-    VFSNativeFetching::CallbackParams params;
+    Fetching::CallbackParams params;
     params.filename = "";
     params.crt_time = stat_buffer.st_birthtimespec.tv_sec;
     params.mod_time = stat_buffer.st_mtimespec.tv_sec;
@@ -54,7 +56,7 @@ static int LStatByPath(PosixIOInterface &_io,
     return 0;
 }
 
-int VFSNativeFetching::ReadSingleEntryAttributesByPath(
+int Fetching::ReadSingleEntryAttributesByPath(
     PosixIOInterface &_io,
     const char *_path,
     const Callback &_cb_param)
@@ -166,7 +168,7 @@ int VFSNativeFetching::ReadSingleEntryAttributesByPath(
 }
 
 // assuming this will be called when Admin Mode is on
-int VFSNativeFetching::ReadDirAttributesStat(
+int Fetching::ReadDirAttributesStat(
     const int _dir_fd,
     const char *_dir_path,
     const function<void(int _fetched_now)> &_cb_fetch,
@@ -224,7 +226,7 @@ int VFSNativeFetching::ReadDirAttributesStat(
     return 0;
 }
 
-int VFSNativeFetching::ReadDirAttributesBulk(
+int Fetching::ReadDirAttributesBulk(
     const int _dir_fd,
     const function<void(int _fetched_now)> &_cb_fetch,
     const Callback &_cb_param)
@@ -375,7 +377,7 @@ int VFSNativeFetching::ReadDirAttributesBulk(
     }
 }
 
-int VFSNativeFetching::CountDirEntries( const int _dir_fd )
+int Fetching::CountDirEntries( const int _dir_fd )
 {
     struct Count {
         u_int32_t length;
@@ -389,4 +391,6 @@ int VFSNativeFetching::CountDirEntries( const int _dir_fd )
     if( fgetattrlist( _dir_fd, &attr_list, &count, sizeof(count), 0 ) == 0 )
         return count.count;
     return VFSError::FromErrno();
+}
+
 }

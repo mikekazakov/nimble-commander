@@ -7,7 +7,7 @@
 //
 
 #include <Utility/PathManip.h>
-#include "../Native/VFSNativeHost.h"
+#include "../Native/Host.h"
 #include "../VFSListingInput.h"
 #include "Host.h"
 #include "Internals.h"

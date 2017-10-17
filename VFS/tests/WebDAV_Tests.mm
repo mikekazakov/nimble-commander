@@ -1,5 +1,5 @@
 #include "tests_common.h"
-#include "../source/NetWebDAV/VFSNetWebDAVHost.h"
+#include "../source/NetWebDAV/WebDAVHost.h"
 #include <VFS/VFSEasyOps.h>
 #include <VFS/Native.h>
 

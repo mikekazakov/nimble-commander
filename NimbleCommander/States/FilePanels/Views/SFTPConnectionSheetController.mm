@@ -169,8 +169,8 @@ static bool ValidateFileExistence( const string &_filepath )
     
     self.invalidKeypath = false;
 
-    VFSNetSFTPKeyValidator validator(self.keypath.fileSystemRepresentation,
-                                     self.passwordEntered.UTF8String);
+    nc::vfs::sftp::KeyValidator validator{self.keypath.fileSystemRepresentation,
+                                          self.passwordEntered.UTF8String};
     if( validator.Validate() ) {
         self.invalidPassword = false;
         return true;

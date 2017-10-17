@@ -9,13 +9,16 @@
 #pragma once
 
 #include <VFS/VFSFile.h>
-#include "VFSNetSFTPHost.h"
+#include <libssh2_sftp.h>
+#include "SFTPHost.h"
 
-class VFSNetSFTPFile : public VFSFile
+namespace nc::vfs::sftp {
+
+class File : public VFSFile
 {
 public:
-    VFSNetSFTPFile(const char* _relative_path, shared_ptr<VFSNetSFTPHost> _host);
-    ~VFSNetSFTPFile();
+    File(const char* _relative_path, shared_ptr<SFTPHost> _host);
+    ~File();
     
     virtual int Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual bool    IsOpened() const override;
@@ -30,8 +33,10 @@ public:
     virtual bool Eof() const override;
 
 private:
-    unique_ptr<VFSNetSFTPHost::Connection> m_Connection;
+    unique_ptr<SFTPHost::Connection> m_Connection;
     LIBSSH2_SFTP_HANDLE *m_Handle = nullptr;
     ssize_t m_Position = 0;
     ssize_t m_Size     = 0;    
 };
+
+}

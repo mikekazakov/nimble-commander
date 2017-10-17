@@ -455,7 +455,7 @@ optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMa
                     p->port == ftp->Port();
             return false;
         };
-    else if( auto sftp = dynamic_cast<const VFSNetSFTPHost*>(&_vfs) )
+    else if( auto sftp = dynamic_cast<const nc::vfs::SFTPHost*>(&_vfs) )
         pred = [sftp](const Connection &i){
             if( auto p = i.Cast<SFTP>() )
                 return p->host == sftp->ServerUrl() &&
@@ -506,7 +506,7 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection
     if( auto ftp = _connection.Cast<FTP>() )
         host = make_shared<VFSNetFTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port );
     else if( auto sftp = _connection.Cast<SFTP>() )
-        host = make_shared<VFSNetSFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
+        host = make_shared<vfs::SFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
     else if( auto dropbox = _connection.Cast<Dropbox>() )
         host = make_shared<VFSNetDropboxHost>( dropbox->account, passwd );
     else if( auto w = _connection.Cast<WebDAV>() )

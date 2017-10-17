@@ -1,5 +1,5 @@
 #include "Requests.h"
-#include "VFSNetWebDAVHost.h"
+#include "WebDAVHost.h"
 #include <boost/algorithm/string/split.hpp>
 #include <Habanero/algo.h>
 #include <pugixml/pugixml.hpp>

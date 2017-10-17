@@ -15,9 +15,11 @@ typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;
 typedef struct _LIBSSH2_USERAUTH_KBDINT_PROMPT LIBSSH2_USERAUTH_KBDINT_PROMPT;
 typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONSE;
 
-#include "VFSNetSFTPOSType.h"
+#include "OSType.h"
 
-class VFSNetSFTPHost final : public VFSHost
+namespace nc::vfs {
+
+class SFTPHost final : public VFSHost
 {
 public:
     // vfs identity
@@ -26,13 +28,13 @@ public:
     static VFSMeta Meta();
     
     // construction
-    VFSNetSFTPHost(const string &_serv_url,
-                   const string &_user,
-                   const string &_passwd, // when keypath is empty passwd is password for auth, otherwise it's a keyphrase for decrypting private key
-                   const string &_keypath, // full path to private key
-                   long          _port = 22,
-                   const string &_home = "");
-    VFSNetSFTPHost(const VFSConfiguration &_config); // should be of type VFSNetSFTPHostConfiguration
+    SFTPHost(const string &_serv_url,
+             const string &_user,
+             const string &_passwd, // when keypath is empty passwd is password for auth, otherwise it's a keyphrase for decrypting private key
+             const string &_keypath, // full path to private key
+             long          _port = 22,
+             const string &_home = "");
+    SFTPHost(const VFSConfiguration &_config); // should be of type VFSNetSFTPHostConfiguration
     
     const string& HomeDir() const; // no guarantees about trailing slash
     const string& ServerUrl() const noexcept;
@@ -108,8 +110,8 @@ public:
     int GetConnection(unique_ptr<Connection> &_t);
     void ReturnConnection(unique_ptr<Connection> _t);
     
-    shared_ptr<const VFSNetSFTPHost> SharedPtr() const {return static_pointer_cast<const VFSNetSFTPHost>(VFSHost::SharedPtr());}
-    shared_ptr<VFSNetSFTPHost> SharedPtr() {return static_pointer_cast<VFSNetSFTPHost>(VFSHost::SharedPtr());}
+    shared_ptr<const SFTPHost> SharedPtr() const {return static_pointer_cast<const SFTPHost>(VFSHost::SharedPtr());}
+    shared_ptr<SFTPHost> SharedPtr() {return static_pointer_cast<SFTPHost>(VFSHost::SharedPtr());}
     
 private:
     struct AutoConnectionReturn;
@@ -122,7 +124,7 @@ private:
     int SpawnSFTP(unique_ptr<Connection> &_t);
     
     in_addr_t InetAddr() const;
-    const class VFSNetSFTPHostConfiguration &Config() const;
+    const class SFTPHostConfiguration &Config() const;
     
     vector<unique_ptr<Connection>>              m_Connections;
     mutex                                       m_ConnectionsLock;
@@ -130,5 +132,7 @@ private:
     string                                      m_HomeDir;
     in_addr_t                                   m_HostAddr = 0;
     bool                                        m_ReversedSymlinkParameters = false;
-    VFSNetSFTPOSType                            m_OSType = VFSNetSFTPOSType::Unknown;
+    sftp::OSType                                m_OSType = sftp::OSType::Unknown;
 };
+
+}

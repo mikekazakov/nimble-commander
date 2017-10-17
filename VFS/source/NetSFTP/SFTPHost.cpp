@@ -11,14 +11,16 @@
 #include <libssh2.h>
 #include <libssh2_sftp.h>
 #include "../VFSListingInput.h"
-#include "VFSNetSFTPHost.h"
-#include "VFSNetSFTPFile.h"
-#include "VFSNetSFTPOSDetector.h"
-#include "VFSNetSFTPAccountsFetcher.h"
+#include "SFTPHost.h"
+#include "File.h"
+#include "OSDetector.h"
+#include "AccountsFetcher.h"
+
+namespace nc::vfs {
 
 static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session);
 
-VFSNetSFTPHost::Connection::~Connection()
+SFTPHost::Connection::~Connection()
 {
     if(sftp) {
         libssh2_sftp_shutdown(sftp);
@@ -37,7 +39,7 @@ VFSNetSFTPHost::Connection::~Connection()
     }
 }
 
-bool VFSNetSFTPHost::Connection::Alive() const
+bool SFTPHost::Connection::Alive() const
 {
     const auto socket_ok = [&]{
         int error = 0;
@@ -51,9 +53,9 @@ bool VFSNetSFTPHost::Connection::Alive() const
     return socket_ok && session_ok;
 }
 
-struct VFSNetSFTPHost::AutoConnectionReturn // classic RAII stuff to prevent connections leaking in operations
+struct SFTPHost::AutoConnectionReturn // classic RAII stuff to prevent connections leaking in operations
 {
-    inline AutoConnectionReturn(unique_ptr<Connection> &_conn, VFSNetSFTPHost *_this):
+    inline AutoConnectionReturn(unique_ptr<Connection> &_conn, SFTPHost *_this):
         m_Conn(_conn),
         m_This(_this) {
         assert(_conn != nullptr);
@@ -64,12 +66,12 @@ struct VFSNetSFTPHost::AutoConnectionReturn // classic RAII stuff to prevent con
         m_This->ReturnConnection(move(m_Conn));
     }
     unique_ptr<Connection> &m_Conn;
-    VFSNetSFTPHost *m_This;
+    SFTPHost *m_This;
 };
 
-const char *VFSNetSFTPHost::UniqueTag = "net_sftp";
+const char *SFTPHost::UniqueTag = "net_sftp";
 
-class VFSNetSFTPHostConfiguration
+class SFTPHostConfiguration
 {
 public:
     string server_url;
@@ -82,7 +84,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSNetSFTPHost::UniqueTag;
+        return SFTPHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -90,7 +92,7 @@ public:
         return server_url.c_str();
     }
     
-    bool operator==(const VFSNetSFTPHostConfiguration&_rhs) const
+    bool operator==(const SFTPHostConfiguration&_rhs) const
     {
         return server_url == _rhs.server_url &&
                user       == _rhs.user &&
@@ -106,23 +108,23 @@ public:
     }
 };
 
-VFSConfiguration VFSNetSFTPHost::Configuration() const
+VFSConfiguration SFTPHost::Configuration() const
 {
     return m_Config;
 }
 
-VFSMeta VFSNetSFTPHost::Meta()
+VFSMeta SFTPHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
-        return make_shared<VFSNetSFTPHost>(_config);
+        return make_shared<SFTPHost>(_config);
     };
     return m;
 }
 
-VFSNetSFTPHost::VFSNetSFTPHost(const VFSConfiguration &_config):
-    VFSHost(_config.Get<VFSNetSFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
+SFTPHost::SFTPHost(const VFSConfiguration &_config):
+    VFSHost(_config.Get<SFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
     m_Config(_config)
 {
     int rc = DoInit();
@@ -137,7 +139,7 @@ static VFSConfiguration ComposeConfguration(const string &_serv_url,
                                             long   _port,
                                             const string &_home)
 {
-    VFSNetSFTPHostConfiguration config;
+    SFTPHostConfiguration config;
     config.server_url = _serv_url;
     config.user = _user;
     config.passwd = _passwd;
@@ -148,7 +150,7 @@ static VFSConfiguration ComposeConfguration(const string &_serv_url,
     return VFSConfiguration( move(config) );
 }
 
-VFSNetSFTPHost::VFSNetSFTPHost(const string &_serv_url,
+SFTPHost::SFTPHost(const string &_serv_url,
                                const string &_user,
                                const string &_passwd,
                                const string &_keypath,
@@ -162,7 +164,7 @@ VFSNetSFTPHost::VFSNetSFTPHost(const string &_serv_url,
         throw VFSErrorException(rc);
 }
 
-int VFSNetSFTPHost::DoInit()
+int SFTPHost::DoInit()
 {
     static once_flag once;
     call_once(once, []{
@@ -188,7 +190,7 @@ int VFSNetSFTPHost::DoInit()
     if(rc < 0)
         return rc;
     
-    m_OSType = VFSNetSFTPOSDetector{conn->ssh}.Detect();
+    m_OSType = sftp::OSDetector{conn->ssh}.Detect();
     
     if( !Config().home.empty() ) {
         // user specified an initial path - just use it
@@ -231,37 +233,37 @@ int VFSNetSFTPHost::DoInit()
     AddFeatures(VFSHostFeatures::SetOwnership |
                 VFSHostFeatures::SetPermissions |
                 VFSHostFeatures::SetTimes );
-    if( m_OSType != VFSNetSFTPOSType::Unknown )
+    if( m_OSType != sftp::OSType::Unknown )
         AddFeatures( VFSHostFeatures::FetchUsers | VFSHostFeatures::FetchGroups );
     
     return 0;
 }
 
-const class VFSNetSFTPHostConfiguration &VFSNetSFTPHost::Config() const
+const class SFTPHostConfiguration &SFTPHost::Config() const
 {
-    return m_Config.GetUnchecked<VFSNetSFTPHostConfiguration>();
+    return m_Config.GetUnchecked<SFTPHostConfiguration>();
 }
 
-const string& VFSNetSFTPHost::HomeDir() const
+const string& SFTPHost::HomeDir() const
 {
     return m_HomeDir;
 }
 
-void VFSNetSFTPHost::SpawnSSH2_KbdCallback(const char *name, int name_len,
+void SFTPHost::SpawnSSH2_KbdCallback(const char *name, int name_len,
                          const char *instruction, int instruction_len,
                          int num_prompts,
                          const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts,
                          LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
                          void **abstract)
 {
-    VFSNetSFTPHost *_this = *(VFSNetSFTPHost **)abstract;
+    SFTPHost *_this = *(SFTPHost **)abstract;
     if (num_prompts == 1) {
         responses[0].text = strdup(_this->Config().passwd.c_str());
         responses[0].length = (unsigned)_this->Config().passwd.length();
     }
 }
 
-int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
+int SFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
 {
     _t = nullptr;
     auto connection = make_unique<Connection>();
@@ -334,7 +336,7 @@ int VFSNetSFTPHost::SpawnSSH2(unique_ptr<Connection> &_t)
     return 0;
 }
 
-int VFSNetSFTPHost::SpawnSFTP(unique_ptr<Connection> &_t)
+int SFTPHost::SpawnSFTP(unique_ptr<Connection> &_t)
 {    
     _t->sftp = libssh2_sftp_init(_t->ssh);
     
@@ -344,7 +346,7 @@ int VFSNetSFTPHost::SpawnSFTP(unique_ptr<Connection> &_t)
     return 0;
 }
 
-int VFSNetSFTPHost::GetConnection(unique_ptr<Connection> &_t)
+int SFTPHost::GetConnection(unique_ptr<Connection> &_t)
 {
     LOCK_GUARD(m_ConnectionsLock) {
         while( !m_Connections.empty() ) {
@@ -367,7 +369,7 @@ int VFSNetSFTPHost::GetConnection(unique_ptr<Connection> &_t)
     return SpawnSFTP(_t);
 }
 
-void VFSNetSFTPHost::ReturnConnection(unique_ptr<Connection> _t)
+void SFTPHost::ReturnConnection(unique_ptr<Connection> _t)
 {
     if(!_t->Alive())
         return;
@@ -377,12 +379,12 @@ void VFSNetSFTPHost::ReturnConnection(unique_ptr<Connection> _t)
     m_Connections.emplace_back(move(_t));
 }
 
-in_addr_t VFSNetSFTPHost::InetAddr() const
+in_addr_t SFTPHost::InetAddr() const
 {
     return m_HostAddr;
 }
 
-int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
+int SFTPHost::FetchDirectoryListing(const char *_path,
                                           shared_ptr<VFSListing> &_target,
                                           int _flags,
                                           const VFSCancelChecker &_cancel_checker)
@@ -479,7 +481,7 @@ int VFSNetSFTPHost::FetchDirectoryListing(const char *_path,
     return 0;    
 }
 
-int VFSNetSFTPHost::Stat(const char *_path,
+int SFTPHost::Stat(const char *_path,
                          VFSStat &_st,
                          int _flags,
                          const VFSCancelChecker &_cancel_checker)
@@ -534,7 +536,7 @@ int VFSNetSFTPHost::Stat(const char *_path,
     return 0;
 }
 
-int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
+int SFTPHost::IterateDirectoryListing(const char *_path,
                                             const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     unique_ptr<Connection> conn;
@@ -578,7 +580,7 @@ int VFSNetSFTPHost::IterateDirectoryListing(const char *_path,
     return 0;
 }
 
-int VFSNetSFTPHost::StatFS(const char *_path,
+int SFTPHost::StatFS(const char *_path,
                            VFSStatFS &_stat,
                            const VFSCancelChecker &_cancel_checker)
 {
@@ -602,21 +604,21 @@ int VFSNetSFTPHost::StatFS(const char *_path,
     return 0;
 }
 
-int VFSNetSFTPHost::CreateFile(const char* _path, shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::CreateFile(const char* _path, shared_ptr<VFSFile> &_target, const VFSCancelChecker &_cancel_checker)
 {
-    auto file = make_shared<VFSNetSFTPFile>(_path, SharedPtr());
+    auto file = make_shared<sftp::File>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
 }
 
-bool VFSNetSFTPHost::IsWritable() const
+bool SFTPHost::IsWritable() const
 {
     return true; // dummy now
 }
 
-int VFSNetSFTPHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -633,7 +635,7 @@ int VFSNetSFTPHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_ch
     return 0;
 }
 
-int VFSNetSFTPHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -651,7 +653,7 @@ int VFSNetSFTPHost::Rename(const char *_old_path, const char *_new_path, const V
     return 0;
 }
 
-int VFSNetSFTPHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -668,7 +670,7 @@ int VFSNetSFTPHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_
     return 0;
 }
 
-int VFSNetSFTPHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -685,7 +687,7 @@ int VFSNetSFTPHost::CreateDirectory(const char* _path, int _mode, const VFSCance
     return 0;
 }
 
-int VFSNetSFTPHost::VFSErrorForConnection(Connection &_conn) const
+int SFTPHost::VFSErrorForConnection(Connection &_conn) const
 {
     using namespace VFSError;
     int sess_errno = libssh2_session_last_errno(_conn.ssh);
@@ -767,27 +769,27 @@ int VFSNetSFTPHost::VFSErrorForConnection(Connection &_conn) const
     return NetSFTPErrorSSH;
 }
 
-const string& VFSNetSFTPHost::ServerUrl() const noexcept
+const string& SFTPHost::ServerUrl() const noexcept
 {
     return Config().server_url;
 }
 
-const string& VFSNetSFTPHost::User() const noexcept
+const string& SFTPHost::User() const noexcept
 {
     return Config().user;
 }
 
-const string& VFSNetSFTPHost::Keypath() const noexcept
+const string& SFTPHost::Keypath() const noexcept
 {
     return Config().keypath;
 }
 
-long VFSNetSFTPHost::Port() const noexcept
+long SFTPHost::Port() const noexcept
 {
     return Config().port;
 }
 
-int VFSNetSFTPHost::ReadSymlink(const char *_symlink_path,
+int SFTPHost::ReadSymlink(const char *_symlink_path,
                                 char *_buffer,
                                 size_t _buffer_size,
                                 const VFSCancelChecker &_cancel_checker)
@@ -813,7 +815,7 @@ int VFSNetSFTPHost::ReadSymlink(const char *_symlink_path,
     }
 }
 
-int VFSNetSFTPHost::CreateSymlink(const char *_symlink_path,
+int SFTPHost::CreateSymlink(const char *_symlink_path,
                                   const char *_symlink_value,
                                   const VFSCancelChecker &_cancel_checker)
 {
@@ -838,7 +840,7 @@ int VFSNetSFTPHost::CreateSymlink(const char *_symlink_path,
         return VFSErrorForConnection(*conn);
 }
 
-int VFSNetSFTPHost::SetPermissions(const char *_path,
+int SFTPHost::SetPermissions(const char *_path,
                           uint16_t _mode,
                           const VFSCancelChecker &_cancel_checker)
 {
@@ -865,7 +867,7 @@ int VFSNetSFTPHost::SetPermissions(const char *_path,
         return VFSErrorForConnection(*conn);
 }
 
-int VFSNetSFTPHost::SetOwnership(const char *_path,
+int SFTPHost::SetOwnership(const char *_path,
                                  unsigned _uid,
                                  unsigned _gid,
                                  const VFSCancelChecker &_cancel_checker)
@@ -894,7 +896,7 @@ int VFSNetSFTPHost::SetOwnership(const char *_path,
         return VFSErrorForConnection(*conn);
 }
 
-int VFSNetSFTPHost::SetTimes(const char *_path,
+int SFTPHost::SetTimes(const char *_path,
                              optional<time_t> _birth_time,
                              optional<time_t> _mod_time,
                              optional<time_t> _chg_time,
@@ -951,10 +953,10 @@ int VFSNetSFTPHost::SetTimes(const char *_path,
         return VFSErrorForConnection(*conn);
 }
 
-int VFSNetSFTPHost::FetchUsers(vector<VFSUser> &_target,
+int SFTPHost::FetchUsers(vector<VFSUser> &_target,
                                const VFSCancelChecker &_cancel_checker)
 {
-    if( m_OSType == VFSNetSFTPOSType::Unknown )
+    if( m_OSType == sftp::OSType::Unknown )
         return VFSError::FromErrno(ENODEV);
     
     unique_ptr<Connection> conn;
@@ -963,13 +965,13 @@ int VFSNetSFTPHost::FetchUsers(vector<VFSUser> &_target,
     
     AutoConnectionReturn acr(conn, this);
     
-    VFSNetSFTPAccountsFetcher fetcher{conn->ssh, m_OSType};
+    sftp::AccountsFetcher fetcher{conn->ssh, m_OSType};
     return fetcher.FetchUsers(_target);
 }
 
-int VFSNetSFTPHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
 {
-    if( m_OSType == VFSNetSFTPOSType::Unknown )
+    if( m_OSType == sftp::OSType::Unknown )
         return VFSError::FromErrno(ENODEV);
     
     unique_ptr<Connection> conn;
@@ -978,7 +980,7 @@ int VFSNetSFTPHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecke
     
     AutoConnectionReturn acr(conn, this);
     
-    VFSNetSFTPAccountsFetcher fetcher{conn->ssh, m_OSType};
+    sftp::AccountsFetcher fetcher{conn->ssh, m_OSType};
     return fetcher.FetchGroups(_target);
 }
 
@@ -986,4 +988,6 @@ static bool ServerHasReversedSymlinkParameters(LIBSSH2_SESSION *_session)
 {
     const auto banner = libssh2_session_banner_get(_session);
     return banner && (strstr(banner, "OpenSSH") || strstr(banner, "mod_sftp"));
+}
+
 }

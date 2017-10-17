@@ -11,6 +11,8 @@
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/DispatchGroup.h>
 
+using namespace nc::vfs;
+
 static const auto g_QNAPNAS             = "192.168.2.5";
 static const auto g_VBoxDebian7x86      = "debian7x86.local"; // 170
 static const auto g_VBoxDebian8x86      = "192.168.2.173";
@@ -23,45 +25,45 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 
 - (VFSHostPtr) hostForVBoxDebian7x86
 {
-    return make_shared<VFSNetSFTPHost>(g_VBoxDebian7x86,
-                                       "root",
-                                       "123456",
-                                       "",
-                                       -1);
+    return make_shared<SFTPHost>(g_VBoxDebian7x86,
+                                 "root",
+                                 "123456",
+                                 "",
+                                 -1);
 }
 
 - (VFSHostPtr) hostForVBoxDebian7x86WithPrivKey
 {
-    return make_shared<VFSNetSFTPHost>(g_VBoxDebian7x86,
-                                       "root",
-                                       "",
-                                       "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root",
-                                       -1);
+    return make_shared<SFTPHost>(g_VBoxDebian7x86,
+                                 "root",
+                                 "",
+                                 "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root",
+                                 -1);
 }
 
 - (VFSHostPtr) hostForVBoxDebian7x86WithPrivKeyPass
 {
-    return make_shared<VFSNetSFTPHost>(g_VBoxDebian7x86,
-                                       "root",
-                                       "qwerty",
-                                       "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root_qwerty",
-                                       -1);
+    return make_shared<SFTPHost>(g_VBoxDebian7x86,
+                                 "root",
+                                 "qwerty",
+                                 "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root_qwerty",
+                                 -1);
 }
 
 - (VFSHostPtr) hostForVBoxDebian8x86
 {
-    return make_shared<VFSNetSFTPHost>(g_VBoxDebian8x86,
-                                       "r2d2",
-                                       "r2d2",
-                                       "");
+    return make_shared<SFTPHost>(g_VBoxDebian8x86,
+                                 "r2d2",
+                                 "r2d2",
+                                 "");
 }
 
 - (VFSHostPtr) hostForVBoxUbuntu
 {
-    return make_shared<VFSNetSFTPHost>(g_VBoxUbuntu1404x64,
-                                       "r2d2",
-                                       "r2d2",
-                                       "");
+    return make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
+                                 "r2d2",
+                                 "r2d2",
+                                 "");
 }
 
 - (void)testBasicWithHost:(VFSHostPtr)host
@@ -131,11 +133,11 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 - (void)testInvalidPWD_Debian
 {
     try {
-        make_shared<VFSNetSFTPHost>(g_VBoxDebian7x86,
-                                    "wiufhiwhf",
-                                    "u3hf8973h89fh",
-                                    "",
-                                    -1);
+        make_shared<SFTPHost>(g_VBoxDebian7x86,
+                              "wiufhiwhf",
+                              "u3hf8973h89fh",
+                              "",
+                              -1);
         XCTAssert( false );
     } catch ( VFSErrorException &e ) {
         XCTAssert( e.code() != 0 );
@@ -145,11 +147,11 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 - (void)testInvalidPWD_NAS
 {
     try {
-        make_shared<VFSNetSFTPHost>(g_QNAPNAS,
-                                    "wiufhiwhf",
-                                    "u3hf8973h89fh",
-                                    "",
-                                    -1);
+        make_shared<SFTPHost>(g_QNAPNAS,
+                              "wiufhiwhf",
+                              "u3hf8973h89fh",
+                              "",
+                              -1);
         XCTAssert( false );
     } catch ( VFSErrorException &e ) {
         XCTAssert( e.code() != 0 );
@@ -180,7 +182,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 - (void) testBasicUbuntu1404
 {
     try { // auth with private key
-        auto host = make_shared<VFSNetSFTPHost>(g_VBoxUbuntu1404x64,
+        auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
                                     "r2d2",
                                     "",
                                     "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2");
@@ -190,10 +192,10 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
     }
     
     try { // auth with encrypted private key
-        auto host = make_shared<VFSNetSFTPHost>(g_VBoxUbuntu1404x64,
-                                                "r2d2",
-                                                "qwerty",
-                                                "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2_qwerty");
+        auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
+                                          "r2d2",
+                                          "qwerty",
+                                          "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2_qwerty");
     XCTAssert( host->HomeDir() == "/home/r2d2" );
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
@@ -201,10 +203,10 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 
     
     try { // auth with login-password pair
-        auto host = make_shared<VFSNetSFTPHost>(g_VBoxUbuntu1404x64,
-                                                "r2d2",
-                                                "r2d2",
-                                                "");
+        auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
+                                          "r2d2",
+                                          "r2d2",
+                                          "");
         XCTAssert( host->HomeDir() == "/home/r2d2" );
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );

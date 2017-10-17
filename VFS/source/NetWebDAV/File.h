@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VFSNetWebDAVHost.h"
+#include "WebDAVHost.h"
 #include <VFS/VFSFile.h>
 #include "ReadBuffer.h"
 #include "WriteBuffer.h"

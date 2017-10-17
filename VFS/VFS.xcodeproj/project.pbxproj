@@ -50,11 +50,11 @@
 		CFFA94C41F4543B30035E606 /* VFSNetFTPFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0381DA2324100992B84 /* VFSNetFTPFile.mm */; };
 		CFFA94C51F4543B30035E606 /* VFSNetFTPHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03A1DA2324100992B84 /* VFSNetFTPHost.mm */; };
 		CFFA94C61F4543B30035E606 /* VFSNetFTPInternals.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03C1DA2324100992B84 /* VFSNetFTPInternals.mm */; };
-		CFFA94C71F4543BC0035E606 /* VFSNetSFTPAccountsFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9F91F171E990000B3EE /* VFSNetSFTPAccountsFetcher.cpp */; };
-		CFFA94C81F4543BC0035E606 /* VFSNetSFTPFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0481DA232EF00992B84 /* VFSNetSFTPFile.cpp */; };
-		CFFA94C91F4543BC0035E606 /* VFSNetSFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D04A1DA232EF00992B84 /* VFSNetSFTPHost.cpp */; };
-		CFFA94CA1F4543BC0035E606 /* VFSNetSFTPKeyValidator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09BB1EC4382700533B07 /* VFSNetSFTPKeyValidator.cpp */; };
-		CFFA94CB1F4543BC0035E606 /* VFSNetSFTPOSDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9F31F1719860000B3EE /* VFSNetSFTPOSDetector.cpp */; };
+		CFFA94C71F4543BC0035E606 /* AccountsFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9F91F171E990000B3EE /* AccountsFetcher.cpp */; };
+		CFFA94C81F4543BC0035E606 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0481DA232EF00992B84 /* File.cpp */; };
+		CFFA94C91F4543BC0035E606 /* SFTPHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D04A1DA232EF00992B84 /* SFTPHost.cpp */; };
+		CFFA94CA1F4543BC0035E606 /* KeyValidator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF7A09BB1EC4382700533B07 /* KeyValidator.cpp */; };
+		CFFA94CB1F4543BC0035E606 /* OSDetector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9F31F1719860000B3EE /* OSDetector.cpp */; };
 		CFFA94CC1F4543C70035E606 /* AppleDoubleEA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D05F1DA233F700992B84 /* AppleDoubleEA.cpp */; };
 		CFFA94CD1F4543C70035E606 /* VFSPSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D06F1DA2353000992B84 /* VFSPSFile.cpp */; };
 		CFFA94CE1F4543C70035E606 /* VFSPSHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0721DA2353000992B84 /* VFSPSHost.mm */; };
@@ -80,7 +80,7 @@
 		CFFA94ED1F45468A0035E606 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273F1E42EC9A00603077 /* Foundation.framework */; };
 		CFFA94EE1F4546B80035E606 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FF1E42DD6000603077 /* LDAP.framework */; };
 		CFFA950C1F4570BA0035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94AF1F4543840035E606 /* libVFS.dylib */; };
-		CFFA95561F4E63970035E606 /* VFSNetWebDAVHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95541F4E60850035E606 /* VFSNetWebDAVHost.cpp */; };
+		CFFA95561F4E63970035E606 /* WebDAVHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95541F4E60850035E606 /* WebDAVHost.cpp */; };
 		CFFA95581F4E65A60035E606 /* WebDAV_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA95571F4E65A60035E606 /* WebDAV_Tests.mm */; };
 		CFFA955C1F4EA72A0035E606 /* Internal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFFA955A1F4EA7200035E606 /* Internal.cpp */; };
 		CFFA95601F5291540035E606 /* DateTimeParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFFA955E1F528A7B0035E606 /* DateTimeParser.cpp */; };
@@ -174,10 +174,10 @@
 		CF69D03B1DA2324100992B84 /* VFSNetFTPInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetFTPInternals.h; path = source/NetFTP/VFSNetFTPInternals.h; sourceTree = "<group>"; };
 		CF69D03C1DA2324100992B84 /* VFSNetFTPInternals.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetFTPInternals.mm; path = source/NetFTP/VFSNetFTPInternals.mm; sourceTree = "<group>"; };
 		CF69D03D1DA2324100992B84 /* VFSNetFTPInternalsForward.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetFTPInternalsForward.h; path = source/NetFTP/VFSNetFTPInternalsForward.h; sourceTree = "<group>"; };
-		CF69D0481DA232EF00992B84 /* VFSNetSFTPFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPFile.cpp; path = source/NetSFTP/VFSNetSFTPFile.cpp; sourceTree = "<group>"; };
-		CF69D0491DA232EF00992B84 /* VFSNetSFTPFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPFile.h; path = source/NetSFTP/VFSNetSFTPFile.h; sourceTree = "<group>"; };
-		CF69D04A1DA232EF00992B84 /* VFSNetSFTPHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPHost.cpp; path = source/NetSFTP/VFSNetSFTPHost.cpp; sourceTree = "<group>"; };
-		CF69D04B1DA232EF00992B84 /* VFSNetSFTPHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPHost.h; path = source/NetSFTP/VFSNetSFTPHost.h; sourceTree = "<group>"; };
+		CF69D0481DA232EF00992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/NetSFTP/File.cpp; sourceTree = "<group>"; };
+		CF69D0491DA232EF00992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/NetSFTP/File.h; sourceTree = "<group>"; };
+		CF69D04A1DA232EF00992B84 /* SFTPHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SFTPHost.cpp; path = source/NetSFTP/SFTPHost.cpp; sourceTree = "<group>"; };
+		CF69D04B1DA232EF00992B84 /* SFTPHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SFTPHost.h; path = source/NetSFTP/SFTPHost.h; sourceTree = "<group>"; };
 		CF69D0511DA2336500992B84 /* VFSArchiveFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveFile.cpp; path = source/ArcLA/VFSArchiveFile.cpp; sourceTree = "<group>"; };
 		CF69D0521DA2336500992B84 /* VFSArchiveFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveFile.h; path = source/ArcLA/VFSArchiveFile.h; sourceTree = "<group>"; };
 		CF69D0531DA2336500992B84 /* VFSArchiveHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveHost.h; path = source/ArcLA/VFSArchiveHost.h; sourceTree = "<group>"; };
@@ -198,18 +198,18 @@
 		CF69D0721DA2353000992B84 /* VFSPSHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSPSHost.mm; path = source/PS/VFSPSHost.mm; sourceTree = "<group>"; };
 		CF69D0731DA2353000992B84 /* VFSPSInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPSInternal.h; path = source/PS/VFSPSInternal.h; sourceTree = "<group>"; };
 		CF69D0791DA238D400992B84 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = include/VFS/VFSListingInput.h; sourceTree = "<group>"; };
-		CF7A09BB1EC4382700533B07 /* VFSNetSFTPKeyValidator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPKeyValidator.cpp; path = source/NetSFTP/VFSNetSFTPKeyValidator.cpp; sourceTree = "<group>"; };
-		CF7A09BC1EC4382700533B07 /* VFSNetSFTPKeyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPKeyValidator.h; path = source/NetSFTP/VFSNetSFTPKeyValidator.h; sourceTree = "<group>"; };
+		CF7A09BB1EC4382700533B07 /* KeyValidator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyValidator.cpp; path = source/NetSFTP/KeyValidator.cpp; sourceTree = "<group>"; };
+		CF7A09BC1EC4382700533B07 /* KeyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyValidator.h; path = source/NetSFTP/KeyValidator.h; sourceTree = "<group>"; };
 		CF7C7D8E1E659D33002DB0E2 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = ../3rd_Party/libssh2/built/libssh2.a; sourceTree = "<group>"; };
 		CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFileDownloadDelegate.h; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.h; sourceTree = "<group>"; };
 		CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileDownloadDelegate.mm; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.mm; sourceTree = "<group>"; };
 		CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CFC4F92F1F0B5E250000B3EE /* VFSListingObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListingObjC.mm; path = source/VFSListingObjC.mm; sourceTree = "<group>"; };
-		CFC4F9F31F1719860000B3EE /* VFSNetSFTPOSDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPOSDetector.cpp; path = source/NetSFTP/VFSNetSFTPOSDetector.cpp; sourceTree = "<group>"; };
-		CFC4F9F41F1719860000B3EE /* VFSNetSFTPOSDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPOSDetector.h; path = source/NetSFTP/VFSNetSFTPOSDetector.h; sourceTree = "<group>"; };
-		CFC4F9F71F171A470000B3EE /* VFSNetSFTPOSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPOSType.h; path = source/NetSFTP/VFSNetSFTPOSType.h; sourceTree = "<group>"; };
-		CFC4F9F91F171E990000B3EE /* VFSNetSFTPAccountsFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetSFTPAccountsFetcher.cpp; path = source/NetSFTP/VFSNetSFTPAccountsFetcher.cpp; sourceTree = "<group>"; };
-		CFC4F9FA1F171E990000B3EE /* VFSNetSFTPAccountsFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetSFTPAccountsFetcher.h; path = source/NetSFTP/VFSNetSFTPAccountsFetcher.h; sourceTree = "<group>"; };
+		CFC4F9F31F1719860000B3EE /* OSDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OSDetector.cpp; path = source/NetSFTP/OSDetector.cpp; sourceTree = "<group>"; };
+		CFC4F9F41F1719860000B3EE /* OSDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSDetector.h; path = source/NetSFTP/OSDetector.h; sourceTree = "<group>"; };
+		CFC4F9F71F171A470000B3EE /* OSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSType.h; path = source/NetSFTP/OSType.h; sourceTree = "<group>"; };
+		CFC4F9F91F171E990000B3EE /* AccountsFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AccountsFetcher.cpp; path = source/NetSFTP/AccountsFetcher.cpp; sourceTree = "<group>"; };
+		CFC4F9FA1F171E990000B3EE /* AccountsFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccountsFetcher.h; path = source/NetSFTP/AccountsFetcher.h; sourceTree = "<group>"; };
 		CFD725FF1E42DD6000603077 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CFD7273D1E42EC8E00603077 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -220,8 +220,8 @@
 		CFFA94E51F4544F90035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CFFA94E71F4544FB0035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 		CFFA94EB1F4546480035E606 /* DirectoryService.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DirectoryService.framework; path = System/Library/Frameworks/DirectoryService.framework; sourceTree = SDKROOT; };
-		CFFA95531F4E60850035E606 /* VFSNetWebDAVHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetWebDAVHost.h; path = source/NetWebDAV/VFSNetWebDAVHost.h; sourceTree = "<group>"; };
-		CFFA95541F4E60850035E606 /* VFSNetWebDAVHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNetWebDAVHost.cpp; path = source/NetWebDAV/VFSNetWebDAVHost.cpp; sourceTree = "<group>"; };
+		CFFA95531F4E60850035E606 /* WebDAVHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebDAVHost.h; path = source/NetWebDAV/WebDAVHost.h; sourceTree = "<group>"; };
+		CFFA95541F4E60850035E606 /* WebDAVHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebDAVHost.cpp; path = source/NetWebDAV/WebDAVHost.cpp; sourceTree = "<group>"; };
 		CFFA95571F4E65A60035E606 /* WebDAV_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebDAV_Tests.mm; path = tests/WebDAV_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFFA95591F4EA7200035E606 /* Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internal.h; path = source/NetWebDAV/Internal.h; sourceTree = "<group>"; };
 		CFFA955A1F4EA7200035E606 /* Internal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Internal.cpp; path = source/NetWebDAV/Internal.cpp; sourceTree = "<group>"; };
@@ -357,16 +357,14 @@
 		CF69CFDD1DA227B100992B84 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CF11687A1E91FA9200CC515A /* NetDropbox.h */,
-				CF69D0791DA238D400992B84 /* VFSListingInput.h */,
 				CF69D05D1DA233EC00992B84 /* AppleDoubleEA.h */,
 				CF69CFE01DA227E400992B84 /* ArcLA.h */,
 				CF69CFE11DA227E400992B84 /* ArcUnRAR.h */,
 				CF69CFE21DA227E400992B84 /* Native.h */,
+				CF11687A1E91FA9200CC515A /* NetDropbox.h */,
 				CF69CFE31DA227E400992B84 /* NetFTP.h */,
 				CF69CFE41DA227E400992B84 /* NetSFTP.h */,
 				CF69CFE51DA227E400992B84 /* PS.h */,
-				CF69CFE61DA227E400992B84 /* XAttr.h */,
 				CF69CFE71DA227E400992B84 /* VFS.h */,
 				CF69CFE81DA227E400992B84 /* VFSArchiveProxy.h */,
 				CF69CFE91DA227E400992B84 /* VFSConfiguration.h */,
@@ -378,8 +376,10 @@
 				CF69CFEF1DA227E400992B84 /* VFSGenericMemReadOnlyFile.h */,
 				CF69CFF01DA227E400992B84 /* VFSHost.h */,
 				CF69CFF11DA227E400992B84 /* VFSListing.h */,
+				CF69D0791DA238D400992B84 /* VFSListingInput.h */,
 				CF69CFF21DA227E400992B84 /* VFSPath.h */,
 				CF69CFF31DA227E400992B84 /* VFSSeqToRandomWrapper.h */,
+				CF69CFE61DA227E400992B84 /* XAttr.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -458,17 +458,17 @@
 		CF69D0471DA232E300992B84 /* NetSFTP */ = {
 			isa = PBXGroup;
 			children = (
-				CFC4F9F91F171E990000B3EE /* VFSNetSFTPAccountsFetcher.cpp */,
-				CFC4F9FA1F171E990000B3EE /* VFSNetSFTPAccountsFetcher.h */,
-				CFC4F9F71F171A470000B3EE /* VFSNetSFTPOSType.h */,
-				CF69D0481DA232EF00992B84 /* VFSNetSFTPFile.cpp */,
-				CF69D0491DA232EF00992B84 /* VFSNetSFTPFile.h */,
-				CF69D04A1DA232EF00992B84 /* VFSNetSFTPHost.cpp */,
-				CF69D04B1DA232EF00992B84 /* VFSNetSFTPHost.h */,
-				CF7A09BB1EC4382700533B07 /* VFSNetSFTPKeyValidator.cpp */,
-				CF7A09BC1EC4382700533B07 /* VFSNetSFTPKeyValidator.h */,
-				CFC4F9F31F1719860000B3EE /* VFSNetSFTPOSDetector.cpp */,
-				CFC4F9F41F1719860000B3EE /* VFSNetSFTPOSDetector.h */,
+				CFC4F9F91F171E990000B3EE /* AccountsFetcher.cpp */,
+				CFC4F9FA1F171E990000B3EE /* AccountsFetcher.h */,
+				CFC4F9F71F171A470000B3EE /* OSType.h */,
+				CF69D0481DA232EF00992B84 /* File.cpp */,
+				CF69D0491DA232EF00992B84 /* File.h */,
+				CF69D04A1DA232EF00992B84 /* SFTPHost.cpp */,
+				CF69D04B1DA232EF00992B84 /* SFTPHost.h */,
+				CF7A09BB1EC4382700533B07 /* KeyValidator.cpp */,
+				CF7A09BC1EC4382700533B07 /* KeyValidator.h */,
+				CFC4F9F31F1719860000B3EE /* OSDetector.cpp */,
+				CFC4F9F41F1719860000B3EE /* OSDetector.h */,
 			);
 			name = NetSFTP;
 			sourceTree = "<group>";
@@ -530,8 +530,8 @@
 				CFFA956D1F5A4EDC0035E606 /* ReadBuffer.h */,
 				CF3E2F841F60DF08001BFFCE /* Requests.cpp */,
 				CF3E2F851F60DF08001BFFCE /* Requests.h */,
-				CFFA95541F4E60850035E606 /* VFSNetWebDAVHost.cpp */,
-				CFFA95531F4E60850035E606 /* VFSNetWebDAVHost.h */,
+				CFFA95541F4E60850035E606 /* WebDAVHost.cpp */,
+				CFFA95531F4E60850035E606 /* WebDAVHost.h */,
 				CF1FDD021F5BBA6F00AF1EBD /* WriteBuffer.cpp */,
 				CF1FDD011F5BBA6F00AF1EBD /* WriteBuffer.h */,
 			);
@@ -660,16 +660,16 @@
 				CFFA95601F5291540035E606 /* DateTimeParser.cpp in Sources */,
 				CFFA94B41F4543920035E606 /* VFSArchiveHost.mm in Sources */,
 				CFFA94B71F45439B0035E606 /* VFSArchiveUnRARHost.cpp in Sources */,
-				CFFA94CB1F4543BC0035E606 /* VFSNetSFTPOSDetector.cpp in Sources */,
+				CFFA94CB1F4543BC0035E606 /* OSDetector.cpp in Sources */,
 				CFFA94D51F4543ED0035E606 /* VFSFile.cpp in Sources */,
-				CFFA94C71F4543BC0035E606 /* VFSNetSFTPAccountsFetcher.cpp in Sources */,
-				CFFA94C81F4543BC0035E606 /* VFSNetSFTPFile.cpp in Sources */,
+				CFFA94C71F4543BC0035E606 /* AccountsFetcher.cpp in Sources */,
+				CFFA94C81F4543BC0035E606 /* File.cpp in Sources */,
 				CFFA95641F5672DF0035E606 /* ConnectionsPool.cpp in Sources */,
 				CFFA95701F5A57030035E606 /* ReadBuffer.cpp in Sources */,
 				CFFA94CF1F4543CC0035E606 /* xattr.cpp in Sources */,
 				CFFA94D71F4543ED0035E606 /* VFSHost.cpp in Sources */,
 				CFFA94D21F4543ED0035E606 /* VFSEasyOps.mm in Sources */,
-				CFFA94CA1F4543BC0035E606 /* VFSNetSFTPKeyValidator.cpp in Sources */,
+				CFFA94CA1F4543BC0035E606 /* KeyValidator.cpp in Sources */,
 				CFFA94CC1F4543C70035E606 /* AppleDoubleEA.cpp in Sources */,
 				CFFA956C1F5A477F0035E606 /* File.cpp in Sources */,
 				CFFA94BA1F4543A30035E606 /* DisplayNamesCache.mm in Sources */,
@@ -680,7 +680,7 @@
 				CFFA94C11F4543AB0035E606 /* VFSNetDropboxFileUploadStream.mm in Sources */,
 				CFFA94D31F4543ED0035E606 /* VFSError.mm in Sources */,
 				CFFA94B31F4543920035E606 /* VFSArchiveFile.cpp in Sources */,
-				CFFA94C91F4543BC0035E606 /* VFSNetSFTPHost.cpp in Sources */,
+				CFFA94C91F4543BC0035E606 /* SFTPHost.cpp in Sources */,
 				CFFA94B91F4543A30035E606 /* Fetching.cpp in Sources */,
 				CFFA94C31F4543B30035E606 /* VFSNetFTPCache.mm in Sources */,
 				CFFA94D41F4543ED0035E606 /* VFSFactory.cpp in Sources */,
@@ -690,7 +690,7 @@
 				CFFA94B81F45439B0035E606 /* VFSArchiveUnRARInternals.cpp in Sources */,
 				CFFA94CD1F4543C70035E606 /* VFSPSFile.cpp in Sources */,
 				CFFA94C61F4543B30035E606 /* VFSNetFTPInternals.mm in Sources */,
-				CFFA95561F4E63970035E606 /* VFSNetWebDAVHost.cpp in Sources */,
+				CFFA95561F4E63970035E606 /* WebDAVHost.cpp in Sources */,
 				CFFA955C1F4EA72A0035E606 /* Internal.cpp in Sources */,
 				CFFA94B51F4543920035E606 /* VFSArchiveInternal.mm in Sources */,
 				CFFA94DA1F4543ED0035E606 /* VFSPath.cpp in Sources */,

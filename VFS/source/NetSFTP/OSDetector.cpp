@@ -1,4 +1,6 @@
-#include "VFSNetSFTPOSDetector.h"
+#include "OSDetector.h"
+
+namespace nc::vfs::sftp {
 
 static const auto g_Linux = "Linux";
 static const auto g_MacOSX = "Darwin";
@@ -7,24 +9,22 @@ static const auto g_FreeBSD = "FreeBSD";
 static const auto g_OpenBSD = "OpenBSD";
 static const auto g_NetBSD = "NetBSD";
 
-
-
-VFSNetSFTPOSDetector::VFSNetSFTPOSDetector( LIBSSH2_SESSION *_session ):
+OSDetector::OSDetector( LIBSSH2_SESSION *_session ):
     m_Session(_session)
 {
 }
 
-VFSNetSFTPOSType VFSNetSFTPOSDetector::Detect()
+OSType OSDetector::Detect()
 {
     LIBSSH2_CHANNEL *channel = libssh2_channel_open_session(m_Session);
     if( channel == nullptr )
-        return VFSNetSFTPOSType::Unknown;
+        return OSType::Unknown;
 
     int rc = libssh2_channel_exec(channel, "uname -s");
     if( rc < 0 ) {
         libssh2_channel_close(channel);
         libssh2_channel_free(channel);
-        return VFSNetSFTPOSType::Unknown;
+        return OSType::Unknown;
     }
 
     char buffer[512];
@@ -33,16 +33,18 @@ VFSNetSFTPOSType VFSNetSFTPOSDetector::Detect()
     libssh2_channel_free(channel);
 
     if( rc <= 0 )
-        return VFSNetSFTPOSType::Unknown;
+        return OSType::Unknown;
     buffer[rc - 1] = 0;
 
     const auto eq = [&]( const char *s ) { return strcmp(buffer, s) == 0; };
     if( eq(g_Linux) )
-        return VFSNetSFTPOSType::Linux;
+        return OSType::Linux;
     if( eq(g_MacOSX) )
-        return VFSNetSFTPOSType::MacOSX;
+        return OSType::MacOSX;
     if( eq(g_DragonFlyBSD) || eq(g_FreeBSD) || eq(g_OpenBSD) || eq(g_NetBSD) )
-        return VFSNetSFTPOSType::xBSD;
+        return OSType::xBSD;
 
-    return VFSNetSFTPOSType::Unknown;
+    return OSType::Unknown;
+}
+
 }

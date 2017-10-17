@@ -1,4 +1,4 @@
 #pragma once
 
 #include "VFS.h"
-#include "../../source/NetWebDAV/VFSNetWebDAVHost.h"
+#include "../../source/NetWebDAV/WebDAVHost.h"

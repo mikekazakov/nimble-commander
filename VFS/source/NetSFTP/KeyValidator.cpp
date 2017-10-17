@@ -1,4 +1,4 @@
-#include "VFSNetSFTPKeyValidator.h"
+#include "KeyValidator.h"
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdocumentation"
@@ -7,14 +7,15 @@
 #include <openssl/pem.h>
 #pragma clang diagnostic pop
 
-VFSNetSFTPKeyValidator::VFSNetSFTPKeyValidator
-    ( const char *_private_key_path, const char *_passphrase ):
+namespace nc::vfs::sftp {
+
+KeyValidator::KeyValidator( const char *_private_key_path, const char *_passphrase ):
     m_KeyPath(_private_key_path),
     m_Passphrase(_passphrase)
 {
 }
 
-bool VFSNetSFTPKeyValidator::Validate() const
+bool KeyValidator::Validate() const
 {
     if( m_KeyPath == nullptr )
         return false;
@@ -36,4 +37,6 @@ bool VFSNetSFTPKeyValidator::Validate() const
     EVP_PKEY_free(pk);
     
     return true;
+}
+
 }

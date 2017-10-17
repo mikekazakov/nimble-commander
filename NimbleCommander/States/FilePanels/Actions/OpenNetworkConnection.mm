@@ -58,7 +58,7 @@ static bool GoToSFTP(PanelController *_target,
     dispatch_assert_background_queue();
     auto &info = _connection.Get<NetworkConnectionsManager::SFTP>();
     try {
-        auto host = make_shared<VFSNetSFTPHost>(info.host,
+        auto host = make_shared<vfs::SFTPHost>(info.host,
                                                 info.user,
                                                 _passwd,
                                                 info.keypath,

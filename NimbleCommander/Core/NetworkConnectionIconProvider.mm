@@ -55,7 +55,7 @@ NSImage *NetworkConnectionIconProvider::Icon16px(const VFSInstanceManager::Promi
         return Dropbox();
     
     if( tag == VFSNetFTPHost::UniqueTag ||
-        tag == VFSNetSFTPHost::UniqueTag ||
+        tag == nc::vfs::SFTPHost::UniqueTag ||
         tag == nc::vfs::WebDAVHost::UniqueTag )
         return Generic();
     

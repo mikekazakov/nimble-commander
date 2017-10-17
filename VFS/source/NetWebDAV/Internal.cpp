@@ -1,5 +1,5 @@
 #include "Internal.h"
-#include "VFSNetWebDAVHost.h"
+#include "WebDAVHost.h"
 #include <CFNetwork/CFNetworkErrors.h>
 
 namespace nc::vfs::webdav {

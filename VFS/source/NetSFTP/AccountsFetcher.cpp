@@ -1,23 +1,25 @@
-#include "VFSNetSFTPAccountsFetcher.h"
+#include "AccountsFetcher.h"
 #include <VFS/VFSError.h>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/trim.hpp>
 
-VFSNetSFTPAccountsFetcher::VFSNetSFTPAccountsFetcher
-(LIBSSH2_SESSION *_session, VFSNetSFTPOSType _os_type ):
+namespace nc::vfs::sftp {
+
+AccountsFetcher::AccountsFetcher
+(LIBSSH2_SESSION *_session, OSType _os_type ):
     m_Session(_session),
     m_OSType(_os_type)
 {
 }
 
-int VFSNetSFTPAccountsFetcher::FetchUsers( vector<VFSUser> &_target )
+int AccountsFetcher::FetchUsers( vector<VFSUser> &_target )
 {
     _target.clear();
     
     int rc = VFSError::Ok;
-    if( m_OSType == VFSNetSFTPOSType::Linux || m_OSType == VFSNetSFTPOSType::xBSD )
+    if( m_OSType == OSType::Linux || m_OSType == OSType::xBSD )
         rc = GetUsersViaGetent(_target);
-    else if( m_OSType == VFSNetSFTPOSType::MacOSX )
+    else if( m_OSType == OSType::MacOSX )
         rc = GetUsersViaOpenDirectory(_target);
     else
         rc = VFSError::FromErrno(ENODEV);
@@ -36,14 +38,14 @@ int VFSNetSFTPAccountsFetcher::FetchUsers( vector<VFSUser> &_target )
     return VFSError::Ok;
 }
 
-int VFSNetSFTPAccountsFetcher::FetchGroups(vector<VFSGroup> &_target)
+int AccountsFetcher::FetchGroups(vector<VFSGroup> &_target)
 {
     _target.clear();
     
     int rc = VFSError::Ok;
-    if( m_OSType == VFSNetSFTPOSType::Linux || m_OSType == VFSNetSFTPOSType::xBSD )
+    if( m_OSType == OSType::Linux || m_OSType == OSType::xBSD )
         rc = GetGroupsViaGetent(_target);
-    else if( m_OSType == VFSNetSFTPOSType::MacOSX )
+    else if( m_OSType == OSType::MacOSX )
         rc = GetGroupsViaOpenDirectory(_target);
     else
         rc =  VFSError::FromErrno(ENODEV);
@@ -62,7 +64,7 @@ int VFSNetSFTPAccountsFetcher::FetchGroups(vector<VFSGroup> &_target)
     return VFSError::Ok;
 }
 
-int VFSNetSFTPAccountsFetcher::GetUsersViaGetent( vector<VFSUser> &_target )
+int AccountsFetcher::GetUsersViaGetent( vector<VFSUser> &_target )
 {
     const auto getent = Execute("getent passwd");
     if( !getent )
@@ -88,7 +90,7 @@ int VFSNetSFTPAccountsFetcher::GetUsersViaGetent( vector<VFSUser> &_target )
     return VFSError::Ok;
 }
 
-int VFSNetSFTPAccountsFetcher::GetGroupsViaGetent( vector<VFSGroup> &_target )
+int AccountsFetcher::GetGroupsViaGetent( vector<VFSGroup> &_target )
 {
     const auto getent = Execute("getent group");
     if( !getent )
@@ -112,7 +114,7 @@ int VFSNetSFTPAccountsFetcher::GetGroupsViaGetent( vector<VFSGroup> &_target )
     return VFSError::Ok;
 }
 
-int VFSNetSFTPAccountsFetcher::GetUsersViaOpenDirectory( vector<VFSUser> &_target )
+int AccountsFetcher::GetUsersViaOpenDirectory( vector<VFSUser> &_target )
 {
     const auto ds_ids = Execute("dscl . -list /Users UniqueID");
     if( !ds_ids )
@@ -154,7 +156,7 @@ int VFSNetSFTPAccountsFetcher::GetUsersViaOpenDirectory( vector<VFSUser> &_targe
     return VFSError::Ok;
 }
 
-int VFSNetSFTPAccountsFetcher::GetGroupsViaOpenDirectory( vector<VFSGroup> &_target )
+int AccountsFetcher::GetGroupsViaOpenDirectory( vector<VFSGroup> &_target )
 {
     const auto ds_ids = Execute("dscl . -list /Groups PrimaryGroupID");
     if( !ds_ids )
@@ -196,7 +198,7 @@ int VFSNetSFTPAccountsFetcher::GetGroupsViaOpenDirectory( vector<VFSGroup> &_tar
     return VFSError::Ok;
 }
 
-optional<string> VFSNetSFTPAccountsFetcher::Execute( const string &_command )
+optional<string> AccountsFetcher::Execute( const string &_command )
 {
     LIBSSH2_CHANNEL *channel = libssh2_channel_open_session(m_Session);
     if( channel == nullptr )
@@ -224,4 +226,6 @@ optional<string> VFSNetSFTPAccountsFetcher::Execute( const string &_command )
         return nullopt;
     
     return move(response);
+}
+
 }

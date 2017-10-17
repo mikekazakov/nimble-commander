@@ -6,29 +6,30 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#include "File.h"
 #include <libssh2.h>
 #include <libssh2_sftp.h>
-#include "VFSNetSFTPFile.h"
-#include "VFSNetSFTPHost.h"
+#include "SFTPHost.h"
 
-VFSNetSFTPFile::VFSNetSFTPFile(const char* _relative_path,
-                               shared_ptr<VFSNetSFTPHost> _host):
+namespace nc::vfs::sftp {
+
+File::File(const char* _relative_path, shared_ptr<SFTPHost> _host):
     VFSFile(_relative_path, _host)
 {
 }
 
-VFSNetSFTPFile::~VFSNetSFTPFile()
+File::~File()
 {
     Close();
 }
 
-int VFSNetSFTPFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if(IsOpened())
         Close();
     
-    auto sftp_host = dynamic_pointer_cast<VFSNetSFTPHost>(Host());
-    unique_ptr<VFSNetSFTPHost::Connection> conn;
+    auto sftp_host = dynamic_pointer_cast<SFTPHost>(Host());
+    unique_ptr<SFTPHost::Connection> conn;
     int rc;
     if( (rc = sftp_host->GetConnection(conn)) != 0 )
         return rc;
@@ -69,12 +70,12 @@ int VFSNetSFTPFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checke
     return 0;
 }
 
-bool VFSNetSFTPFile::IsOpened() const
+bool File::IsOpened() const
 {
     return m_Connection && m_Handle;
 }
 
-int VFSNetSFTPFile::Close()
+int File::Close()
 {
     if( m_Handle ) {
         libssh2_sftp_close(m_Handle);
@@ -82,24 +83,24 @@ int VFSNetSFTPFile::Close()
     }
     
     if( m_Connection )
-        dynamic_pointer_cast<VFSNetSFTPHost>(Host())->ReturnConnection(move(m_Connection));
+        dynamic_pointer_cast<SFTPHost>(Host())->ReturnConnection(move(m_Connection));
 
     m_Position = 0;
     m_Size     = 0;
     return 0;
 }
 
-VFSFile::ReadParadigm VFSNetSFTPFile::GetReadParadigm() const
+VFSFile::ReadParadigm File::GetReadParadigm() const
 {
     return VFSFile::ReadParadigm::Seek;
 }
 
-VFSFile::WriteParadigm VFSNetSFTPFile::GetWriteParadigm() const
+VFSFile::WriteParadigm File::GetWriteParadigm() const
 {
     return VFSFile::WriteParadigm::Seek;
 }
 
-off_t VFSNetSFTPFile::Seek(off_t _off, int _basis)
+off_t File::Seek(off_t _off, int _basis)
 {
     uint64_t req = 0;
     if( _basis == VFSFile::Seek_Set )
@@ -116,7 +117,7 @@ off_t VFSNetSFTPFile::Seek(off_t _off, int _basis)
     return pos;
 }
 
-ssize_t VFSNetSFTPFile::Read(void *_buf, size_t _size)
+ssize_t File::Read(void *_buf, size_t _size)
 {
     if(!IsOpened())
         return SetLastError(VFSError::InvalidCall);
@@ -128,10 +129,10 @@ ssize_t VFSNetSFTPFile::Read(void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(dynamic_pointer_cast<VFSNetSFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
+        return SetLastError(dynamic_pointer_cast<SFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
 }
 
-ssize_t VFSNetSFTPFile::Write(const void *_buf, size_t _size)
+ssize_t File::Write(const void *_buf, size_t _size)
 {
     if(!IsOpened())
         return SetLastError(VFSError::InvalidCall);
@@ -145,10 +146,10 @@ ssize_t VFSNetSFTPFile::Write(const void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(dynamic_pointer_cast<VFSNetSFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
+        return SetLastError(dynamic_pointer_cast<SFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
 }
 
-ssize_t VFSNetSFTPFile::Pos() const
+ssize_t File::Pos() const
 {
     if(!IsOpened())
         return SetLastError(VFSError::InvalidCall);
@@ -156,7 +157,7 @@ ssize_t VFSNetSFTPFile::Pos() const
     return m_Position;
 }
 
-ssize_t VFSNetSFTPFile::Size() const
+ssize_t File::Size() const
 {
     if(!IsOpened())
         return SetLastError(VFSError::InvalidCall);
@@ -164,7 +165,7 @@ ssize_t VFSNetSFTPFile::Size() const
     return m_Size;
 }
 
-bool VFSNetSFTPFile::Eof() const
+bool File::Eof() const
 {
     if(!IsOpened()) {
         SetLastError(VFSError::InvalidCall);        
@@ -172,4 +173,6 @@ bool VFSNetSFTPFile::Eof() const
     }
     
     return m_Position >= m_Size;
+}
+
 }

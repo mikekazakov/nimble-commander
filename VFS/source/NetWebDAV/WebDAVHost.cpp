@@ -1,4 +1,4 @@
-#include "VFSNetWebDAVHost.h"
+#include "WebDAVHost.h"
 #include "Internal.h"
 #include <Utility/PathManip.h>
 #include "../VFSListingInput.h"

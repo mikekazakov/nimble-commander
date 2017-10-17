@@ -455,7 +455,7 @@ optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMa
                     p->port == ftp->Port();
             return false;
         };
-    else if( auto sftp = dynamic_cast<const nc::vfs::SFTPHost*>(&_vfs) )
+    else if( auto sftp = dynamic_cast<const vfs::SFTPHost*>(&_vfs) )
         pred = [sftp](const Connection &i){
             if( auto p = i.Cast<SFTP>() )
                 return p->host == sftp->ServerUrl() &&
@@ -464,13 +464,13 @@ optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMa
                     p->port == sftp->Port();
             return false;
         };
-    else if( auto dropbox = dynamic_cast<const VFSNetDropboxHost*>(&_vfs) )
+    else if( auto dropbox = dynamic_cast<const vfs::DropboxHost*>(&_vfs) )
         pred = [dropbox](const Connection &i){
             if( auto p = i.Cast<Dropbox>() )
                 return p->account == dropbox->Account();
             return false;
         };
-    else if( auto webdav = dynamic_cast<const nc::vfs::WebDAVHost*>(&_vfs) )
+    else if( auto webdav = dynamic_cast<const vfs::WebDAVHost*>(&_vfs) )
         pred = [webdav](const Connection &i){
             if( auto p = i.Cast<WebDAV>() )
                 return p->host == webdav->Host() &&
@@ -508,7 +508,7 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection
     else if( auto sftp = _connection.Cast<SFTP>() )
         host = make_shared<vfs::SFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
     else if( auto dropbox = _connection.Cast<Dropbox>() )
-        host = make_shared<VFSNetDropboxHost>( dropbox->account, passwd );
+        host = make_shared<vfs::DropboxHost>( dropbox->account, passwd );
     else if( auto w = _connection.Cast<WebDAV>() )
         host = make_shared<vfs::WebDAVHost>( w->host, w->user, passwd, w->path, w->https, w->port );
     

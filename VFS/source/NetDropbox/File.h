@@ -1,16 +1,18 @@
 #pragma once
 
-#include "VFSNetDropboxHost.h"
+#include "Host.h"
 
-@class VFSNetDropboxFileDownloadDelegate;
-@class VFSNetDropboxFileUploadStream;
-@class VFSNetDropboxFileUploadDelegate;
+@class NCVFSDropboxFileDownloadDelegate;
+@class NCVFSDropboxFileUploadStream;
+@class NCVFSDropboxFileUploadDelegate;
 
-class VFSNetDropboxFile final : public VFSFile
+namespace nc::vfs::dropbox {
+
+class File final : public VFSFile
 {
 public:
-    VFSNetDropboxFile(const char* _relative_path, const shared_ptr<VFSNetDropboxHost> &_host);
-    ~VFSNetDropboxFile();
+    File(const char* _relative_path, const shared_ptr<class DropboxHost> &_host);
+    ~File();
 
     virtual int Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual int Close() override;
@@ -58,7 +60,7 @@ private:
     NSURLRequest *BuildRequestForUploadSessionAppend() const;
     NSURLRequest *BuildRequestForUploadSessionFinish() const;
     string BuildUploadPathspec() const;
-    const VFSNetDropboxHost &DropboxHost() const;
+    const DropboxHost &DropboxHost() const;
     ssize_t WaitForUploadBufferConsumption() const;
     void PushUploadDataIntoFIFOAndNotifyStream( const void *_buf, size_t _size );
     void ExtractSessionIdOrCancelUploadAsync( NSData *_data );
@@ -70,7 +72,7 @@ private:
         deque<uint8_t>          fifo;
         long                    fifo_offset = 0; // is it always equal to m_FilePos???
         NSURLSessionDataTask   *task;
-        VFSNetDropboxFileDownloadDelegate *delegate = nil;
+        NCVFSDropboxFileDownloadDelegate *delegate = nil;
     };
     struct Upload {
         deque<uint8_t>                  fifo;
@@ -80,8 +82,8 @@ private:
         int                             part_no = 0;
         int                             parts_count = 0;
         NSURLSessionUploadTask         *task = nil;
-        VFSNetDropboxFileUploadDelegate*delegate = nil;
-        VFSNetDropboxFileUploadStream  *stream = nil;
+        NCVFSDropboxFileUploadDelegate *delegate = nil;
+        NCVFSDropboxFileUploadStream   *stream = nil;
         string                          session_id;
         atomic_bool                     append_accepted{false};
     };
@@ -100,3 +102,5 @@ private:
     unique_ptr<Download>m_Download; // exists only on reading
     unique_ptr<Upload>  m_Upload;   // exists only on writing    
 };
+
+}

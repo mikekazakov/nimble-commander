@@ -1,23 +1,23 @@
-#include "VFSNetDropboxFile.h"
+#include "File.h"
 #include "Aux.h"
-#include "VFSNetDropboxFileUploadStream.h"
-#include "VFSNetDropboxFileUploadDelegate.h"
-#include "VFSNetDropboxFileDownloadDelegate.h"
+#include "FileUploadStream.h"
+#include "FileUploadDelegate.h"
+#include "FileDownloadDelegate.h"
 
-using namespace VFSNetDropbox;
+namespace nc::vfs::dropbox {
 
-VFSNetDropboxFile::VFSNetDropboxFile(const char* _relative_path,
-                                     const shared_ptr<VFSNetDropboxHost> &_host):
+File::File(const char* _relative_path,
+           const shared_ptr<class DropboxHost> &_host):
     VFSFile(_relative_path, _host)
 {
 }
 
-VFSNetDropboxFile::~VFSNetDropboxFile()
+File::~File()
 {
     Close();
 }
 
-int VFSNetDropboxFile::Close()
+int File::Close()
 {
     if( m_Upload ) {
         if( m_State == Uploading ) {
@@ -65,7 +65,7 @@ int VFSNetDropboxFile::Close()
     return rc;
 }
 
-NSURLRequest *VFSNetDropboxFile::BuildDownloadRequest() const
+NSURLRequest *File::BuildDownloadRequest() const
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Download];
     request.HTTPMethod = @"POST";
@@ -74,7 +74,7 @@ NSURLRequest *VFSNetDropboxFile::BuildDownloadRequest() const
     return request;
 }
 
-int VFSNetDropboxFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( m_State != Cold )
         return VFSError::InvalidCall;
@@ -82,7 +82,7 @@ int VFSNetDropboxFile::Open(int _open_flags, const VFSCancelChecker &_cancel_che
     assert( !m_Upload && !m_Download );
 
     if( (_open_flags & VFSFlags::OF_Read) == VFSFlags::OF_Read ) {
-        auto delegate = [[VFSNetDropboxFileDownloadDelegate alloc] init];
+        auto delegate = [[NCVFSDropboxFileDownloadDelegate alloc] init];
         delegate.handleResponse = [this](ssize_t _size) { HandleDownloadResponseAsync(_size); };
         delegate.handleData = [this](NSData *_data) { AppendDownloadedDataAsync(_data); };
         delegate.handleError = [this](int _error) { HandleDownloadError(_error); };
@@ -117,7 +117,7 @@ int VFSNetDropboxFile::Open(int _open_flags, const VFSCancelChecker &_cancel_che
     return VFSError::InvalidCall;
 }
 
-void VFSNetDropboxFile::WaitForDownloadResponse() const
+void File::WaitForDownloadResponse() const
 {
     unique_lock<mutex> lk(m_SignalLock);
     m_Signal.wait(lk, [=]{
@@ -125,7 +125,7 @@ void VFSNetDropboxFile::WaitForDownloadResponse() const
     } );
 }
 
-void VFSNetDropboxFile::HandleDownloadResponseAsync( ssize_t _download_size )
+void File::HandleDownloadResponseAsync( ssize_t _download_size )
 {
     if( m_State != Initiated )
         return;
@@ -134,7 +134,7 @@ void VFSNetDropboxFile::HandleDownloadResponseAsync( ssize_t _download_size )
     SwitchToState(Downloading);
 }
 
-void VFSNetDropboxFile::HandleDownloadError( int _error )
+void File::HandleDownloadError( int _error )
 {
     if( m_State == Initiated  || m_State == Downloading ) {
         SetLastError(_error);
@@ -142,17 +142,17 @@ void VFSNetDropboxFile::HandleDownloadError( int _error )
     }
 }
 
-VFSNetDropboxFile::ReadParadigm VFSNetDropboxFile::GetReadParadigm() const
+File::ReadParadigm File::GetReadParadigm() const
 {
     return ReadParadigm::Sequential;
 }
 
-VFSNetDropboxFile::WriteParadigm VFSNetDropboxFile::GetWriteParadigm() const
+File::WriteParadigm File::GetWriteParadigm() const
 {
     return WriteParadigm::Upload;
 }
 
-void VFSNetDropboxFile::AppendDownloadedDataAsync( NSData *_data )
+void File::AppendDownloadedDataAsync( NSData *_data )
 {
     if( !_data || _data.length == 0 || m_State != Downloading || !m_Download || m_FileSize < 0 )
         return;
@@ -166,22 +166,22 @@ void VFSNetDropboxFile::AppendDownloadedDataAsync( NSData *_data )
     m_Signal.notify_all();
 }
 
-ssize_t VFSNetDropboxFile::Pos() const
+ssize_t File::Pos() const
 {
     return 0;
 }
 
-ssize_t VFSNetDropboxFile::Size() const
+ssize_t File::Size() const
 {
     return m_FileSize >= 0 ? m_FileSize : VFSError::InvalidCall;
 }
 
-bool VFSNetDropboxFile::Eof() const
+bool File::Eof() const
 {
     return m_FilePos == m_FileSize;
 }
 
-ssize_t VFSNetDropboxFile::Read(void *_buf, size_t _size)
+ssize_t File::Read(void *_buf, size_t _size)
 {
     if( m_State != Downloading && m_State != Completed )
         return VFSError::InvalidCall;
@@ -210,7 +210,7 @@ ssize_t VFSNetDropboxFile::Read(void *_buf, size_t _size)
     return LastError();
 }
 
-bool VFSNetDropboxFile::IsOpened() const
+bool File::IsOpened() const
 {
     return m_State == Initiated ||
             m_State == Downloading ||
@@ -218,12 +218,12 @@ bool VFSNetDropboxFile::IsOpened() const
             m_State == Completed;
 }
 
-int VFSNetDropboxFile::PreferredIOSize() const
+int File::PreferredIOSize() const
 {
     return 32768; // packets are usually 16384 bytes long, use IO twice as long
 }
 
-string VFSNetDropboxFile::BuildUploadPathspec() const
+string File::BuildUploadPathspec() const
 {
     string spec =
         "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(Path()) + "\" ";
@@ -233,7 +233,7 @@ string VFSNetDropboxFile::BuildUploadPathspec() const
     return spec;
 }
 
-NSURLRequest *VFSNetDropboxFile::BuildRequestForSinglePartUpload() const
+NSURLRequest *File::BuildRequestForSinglePartUpload() const
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:api::Upload];
     request.HTTPMethod = @"POST";
@@ -246,7 +246,7 @@ NSURLRequest *VFSNetDropboxFile::BuildRequestForSinglePartUpload() const
     return request;
 }
 
-void VFSNetDropboxFile::StartSmallUpload()
+void File::StartSmallUpload()
 {
     assert( m_Upload != nullptr );
     assert( m_Upload->upload_size >= 0 && m_Upload->upload_size <= m_ChunkSize );
@@ -254,7 +254,7 @@ void VFSNetDropboxFile::StartSmallUpload()
     assert( m_Upload->stream == nil );
     assert( m_Upload->task == nil );
 
-    auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
+    auto stream = [[NCVFSDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool {
         return HasDataToFeedUploadTaskAsync();
     };
@@ -262,7 +262,7 @@ void VFSNetDropboxFile::StartSmallUpload()
         return FeedUploadTaskAsync(_buffer, _sz);
     };
     
-    auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
+    auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
         if( m_State == Initiated || m_State == Uploading ) {
             if( _vfs_error == VFSError::Ok ) {
@@ -289,7 +289,7 @@ void VFSNetDropboxFile::StartSmallUpload()
     [task resume];
 }
 
-NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionInit() const
+NSURLRequest *File::BuildRequestForUploadSessionInit() const
 {
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc]initWithURL:api::UploadSessionStart];
     request.HTTPMethod = @"POST";
@@ -301,7 +301,7 @@ NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionInit() const
     return request;
 }
 
-void VFSNetDropboxFile::StartSession()
+void File::StartSession()
 {
     assert( m_Upload != nullptr );
     assert( m_Upload->upload_size > m_ChunkSize );
@@ -309,7 +309,7 @@ void VFSNetDropboxFile::StartSession()
     assert( m_Upload->stream == nil );
     assert( m_Upload->task == nil );
 
-    auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
+    auto stream = [[NCVFSDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool {
         return HasDataToFeedUploadTaskAsync();
     };
@@ -317,7 +317,7 @@ void VFSNetDropboxFile::StartSession()
         return FeedUploadTaskAsync(_buffer, _sz);
     };
     
-    auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
+    auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
         if( m_State == Uploading && _vfs_error != VFSError::Ok ) {
             SetLastError(_vfs_error);
@@ -343,7 +343,7 @@ void VFSNetDropboxFile::StartSession()
     [task resume];
 }
 
-NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionAppend() const
+NSURLRequest *File::BuildRequestForUploadSessionAppend() const
 {
     NSMutableURLRequest *request =[[NSMutableURLRequest alloc]initWithURL:api::UploadSessionAppend];
     request.HTTPMethod = @"POST";
@@ -364,7 +364,7 @@ NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionAppend() const
     return request;
 }
 
-void VFSNetDropboxFile::StartSessionAppend()
+void File::StartSessionAppend()
 {
     assert( m_State == Uploading );
     assert( m_Upload != nullptr );
@@ -377,7 +377,7 @@ void VFSNetDropboxFile::StartSessionAppend()
     assert( !m_Upload->session_id.empty() );
     m_Upload->part_no++;
 
-   auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
+   auto stream = [[NCVFSDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool {
         return HasDataToFeedUploadTaskAsync();
     };
@@ -385,7 +385,7 @@ void VFSNetDropboxFile::StartSessionAppend()
         return FeedUploadTaskAsync(_buffer, _sz);
     };
     
-    auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
+    auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
         if( m_State == Uploading && _vfs_error != VFSError::Ok ) {
             SetLastError(_vfs_error);
@@ -407,7 +407,7 @@ void VFSNetDropboxFile::StartSessionAppend()
     [task resume];
 }
 
-NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionFinish() const
+NSURLRequest *File::BuildRequestForUploadSessionFinish() const
 {
     NSMutableURLRequest *request =[[NSMutableURLRequest alloc]initWithURL:api::UploadSessionFinish];
     request.HTTPMethod = @"POST";
@@ -431,7 +431,7 @@ NSURLRequest *VFSNetDropboxFile::BuildRequestForUploadSessionFinish() const
     return request;
 }
 
-void VFSNetDropboxFile::StartSessionFinish()
+void File::StartSessionFinish()
 {
     assert( m_State == Uploading );
     assert( m_Upload != nullptr );
@@ -444,7 +444,7 @@ void VFSNetDropboxFile::StartSessionFinish()
     assert( !m_Upload->session_id.empty() );
     m_Upload->part_no++;
 
-    auto stream = [[VFSNetDropboxFileUploadStream alloc] init];
+    auto stream = [[NCVFSDropboxFileUploadStream alloc] init];
     stream.hasDataToFeed = [this]() -> bool {
         return HasDataToFeedUploadTaskAsync();
     };
@@ -452,7 +452,7 @@ void VFSNetDropboxFile::StartSessionFinish()
         return FeedUploadTaskAsync(_buffer, _sz);
     };
     
-    auto delegate = [[VFSNetDropboxFileUploadDelegate alloc] initWithStream:stream];
+    auto delegate = [[NCVFSDropboxFileUploadDelegate alloc] initWithStream:stream];
     delegate.handleFinished = [this](int _vfs_error){
         if( m_State == Uploading ) {
             if( _vfs_error == VFSError::Ok ) {
@@ -478,7 +478,7 @@ void VFSNetDropboxFile::StartSessionFinish()
     [task resume];
 }
 
-int VFSNetDropboxFile::SetUploadSize(size_t _size)
+int File::SetUploadSize(size_t _size)
 {
     if( !m_Upload ||
         m_State != Initiated )
@@ -495,7 +495,7 @@ int VFSNetDropboxFile::SetUploadSize(size_t _size)
     return VFSError::Ok;
 }
 
-ssize_t VFSNetDropboxFile::WaitForUploadBufferConsumption() const
+ssize_t File::WaitForUploadBufferConsumption() const
 {
     const ssize_t to_eat = m_Upload->fifo.size();
     ssize_t eaten = 0;
@@ -509,7 +509,7 @@ ssize_t VFSNetDropboxFile::WaitForUploadBufferConsumption() const
     return eaten;
 }
 
-void VFSNetDropboxFile::PushUploadDataIntoFIFOAndNotifyStream( const void *_buf, size_t _size )
+void File::PushUploadDataIntoFIFOAndNotifyStream( const void *_buf, size_t _size )
 {
     lock_guard<mutex> lock{m_DataLock};
     m_Upload->fifo.insert(end(m_Upload->fifo),
@@ -518,7 +518,7 @@ void VFSNetDropboxFile::PushUploadDataIntoFIFOAndNotifyStream( const void *_buf,
     [m_Upload->stream notifyAboutNewData];
 }
 
-void VFSNetDropboxFile::ExtractSessionIdOrCancelUploadAsync( NSData *_data )
+void File::ExtractSessionIdOrCancelUploadAsync( NSData *_data )
 {
     if( m_State != Uploading )
         return;
@@ -536,7 +536,7 @@ void VFSNetDropboxFile::ExtractSessionIdOrCancelUploadAsync( NSData *_data )
     SwitchToState(Canceled);
 }
 
-void VFSNetDropboxFile::WaitForSessionIdOrError() const
+void File::WaitForSessionIdOrError() const
 {
     unique_lock<mutex> lock(m_SignalLock);
     m_Signal.wait(lock, [this]{
@@ -547,7 +547,7 @@ void VFSNetDropboxFile::WaitForSessionIdOrError() const
     });
 }
 
-void VFSNetDropboxFile::WaitForAppendToComplete() const
+void File::WaitForAppendToComplete() const
 {
     unique_lock<mutex> lock(m_SignalLock);
     m_Signal.wait(lock, [this]{
@@ -558,7 +558,7 @@ void VFSNetDropboxFile::WaitForAppendToComplete() const
     });
 }
 
-ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
+ssize_t File::Write(const void *_buf, size_t _size)
 {
     if( !m_Upload ||
         m_State != Uploading ||
@@ -624,7 +624,7 @@ ssize_t VFSNetDropboxFile::Write(const void *_buf, size_t _size)
     return eaten;
 }
 
-ssize_t VFSNetDropboxFile::FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz )
+ssize_t File::FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz )
 {
     if( _sz == 0 )
         return 0;
@@ -643,7 +643,7 @@ ssize_t VFSNetDropboxFile::FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz )
     return sz;
 }
 
-bool VFSNetDropboxFile::HasDataToFeedUploadTaskAsync() const
+bool File::HasDataToFeedUploadTaskAsync() const
 {
     if( m_State != Uploading )
         return false;
@@ -651,7 +651,7 @@ bool VFSNetDropboxFile::HasDataToFeedUploadTaskAsync() const
     return !m_Upload->fifo.empty();
 }
 
-int VFSNetDropboxFile::SetChunkSize( size_t _size )
+int File::SetChunkSize( size_t _size )
 {
     if( m_State != Cold )
         return VFSError::InvalidCall;
@@ -662,7 +662,7 @@ int VFSNetDropboxFile::SetChunkSize( size_t _size )
     return VFSError::FromErrno(EINVAL);
 }
 
-void VFSNetDropboxFile::CheckStateTransition( State _new_state ) const
+void File::CheckStateTransition( State _new_state ) const
 {
     static const bool valid_flow[StatesAmount][StatesAmount] = {
 /* Valid transitions from index1 to index2                              */
@@ -677,14 +677,16 @@ void VFSNetDropboxFile::CheckStateTransition( State _new_state ) const
         cerr << "suspicious state change: " << m_State << " to " << _new_state << endl;
 }
 
-void VFSNetDropboxFile::SwitchToState( State _new_state )
+void File::SwitchToState( State _new_state )
 {
     CheckStateTransition( _new_state );
     m_State = _new_state;
     m_Signal.notify_all();
 }
 
-const VFSNetDropboxHost &VFSNetDropboxFile::DropboxHost() const
+const DropboxHost &File::DropboxHost() const
 {
-    return *((VFSNetDropboxHost*)Host().get());
+    return *((class DropboxHost*)Host().get());
+}
+
 }

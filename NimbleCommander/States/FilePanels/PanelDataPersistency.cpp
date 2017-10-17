@@ -100,7 +100,7 @@ static bool IsNetworkVFS( const VFSHost& _host )
     const auto tag = _host.Tag();
     return tag == vfs::FTPHost::UniqueTag ||
            tag == vfs::SFTPHost::UniqueTag ||
-           tag == VFSNetDropboxHost::UniqueTag ||
+           tag == vfs::DropboxHost::UniqueTag ||
            tag == vfs::WebDAVHost::UniqueTag;
 }
 
@@ -295,7 +295,7 @@ static const char *VFSTagForNetworkConnection( const NetworkConnectionsManager::
     else if( auto sftp =_conn.Cast<NetworkConnectionsManager::SFTP>() )
         return vfs::SFTPHost::UniqueTag;
     else if( auto dropbox = _conn.Cast<NetworkConnectionsManager::Dropbox>() )
-        return VFSNetDropboxHost::UniqueTag;
+        return vfs::DropboxHost::UniqueTag;
     else if( auto webdav = _conn.Cast<NetworkConnectionsManager::WebDAV>() )
         return vfs::WebDAVHost::UniqueTag;
     else

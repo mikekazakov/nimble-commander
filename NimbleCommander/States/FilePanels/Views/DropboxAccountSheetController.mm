@@ -5,6 +5,8 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 
+using namespace nc;
+
 static const auto kClientID = @"ics7strw94rj93l";
 static const auto kClientSecret = @"jz0dp0x27yw1cg3";
 static const auto g_LoopbackPort = (uint16_t)56789;
@@ -148,7 +150,7 @@ enum class State
     self.state = State::Validating;
 
     dispatch_to_background([=]{
-        auto res = VFSNetDropboxHost::CheckTokenAndRetrieveAccountEmail(_token.UTF8String);
+        auto res = vfs::DropboxHost::CheckTokenAndRetrieveAccountEmail(_token.UTF8String);
         auto rc = res.first;
         auto email = res.second;
         dispatch_to_main_queue([=]{

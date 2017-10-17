@@ -1,10 +1,11 @@
-#include "VFSNetDropboxFileDownloadDelegate.h"
+#include "FileDownloadDelegate.h"
 #include <VFS/VFSError.h>
 #include "Aux.h"
 
-using namespace VFSNetDropbox;
+using namespace nc::vfs;
+using namespace nc::vfs::dropbox;
 
-@implementation VFSNetDropboxFileDownloadDelegate
+@implementation NCVFSDropboxFileDownloadDelegate
 {
     mutex                                   m_CallbacksLock;
     function<void(ssize_t _size_or_error)>  m_ResponseHandler;

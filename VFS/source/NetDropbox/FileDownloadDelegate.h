@@ -1,6 +1,6 @@
 #pragma once
 
-@interface VFSNetDropboxFileDownloadDelegate : NSObject<NSURLSessionDelegate>
+@interface NCVFSDropboxFileDownloadDelegate : NSObject<NSURLSessionDelegate>
 
 // non-reentrant callbacks, don't change them when upon execution
 @property (nonatomic) function<void(ssize_t _size_or_error)>    handleResponse;

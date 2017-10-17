@@ -126,7 +126,7 @@ static void GoToDropboxStorage(PanelController *_target,
     dispatch_assert_background_queue();
     auto &info = _connection.Get<NetworkConnectionsManager::Dropbox>();
     try {
-        auto host = make_shared<VFSNetDropboxHost>(info.account, _passwd);
+        auto host = make_shared<vfs::DropboxHost>(info.account, _passwd);
         dispatch_to_main_queue([=]{
 //            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
             [_target GoToDir:"/" vfs:host select_entry:"" async:true];

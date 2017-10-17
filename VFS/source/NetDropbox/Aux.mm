@@ -2,7 +2,7 @@
 #include <VFS/VFSError.h>
 #include "Aux.h"
 
-namespace VFSNetDropbox {
+namespace nc::vfs::dropbox {
 
 NSURL* const api::GetCurrentAccount =
     [NSURL URLWithString:@"https://api.dropboxapi.com/2/users/get_current_account"];

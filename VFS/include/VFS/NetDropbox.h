@@ -1,4 +1,4 @@
 #pragma once
 
 #include "VFS.h"
-#include "../../source/NetDropbox/VFSNetDropboxHost.h"
+#include "../../source/NetDropbox/Host.h"

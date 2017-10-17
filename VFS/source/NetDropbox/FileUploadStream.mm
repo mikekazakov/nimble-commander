@@ -1,6 +1,6 @@
-#include "VFSNetDropboxFileUploadStream.h"
+#include "FileUploadStream.h"
 
-@implementation VFSNetDropboxFileUploadStream
+@implementation NCVFSDropboxFileUploadStream
 {
     NSStreamStatus m_Status;
     bool           m_EOF;    

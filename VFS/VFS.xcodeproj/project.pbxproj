@@ -43,11 +43,11 @@
 		CFFA94BB1F4543A30035E606 /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0251DA2305A00992B84 /* VFSNativeFile.cpp */; };
 		CFFA94BC1F4543A30035E606 /* VFSNativeHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0281DA2305A00992B84 /* VFSNativeHost.mm */; };
 		CFFA94BD1F4543AB0035E606 /* Aux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1168821E91FB4A00CC515A /* Aux.mm */; };
-		CFFA94BE1F4543AB0035E606 /* VFSNetDropboxFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A10D1E9290FB00149C44 /* VFSNetDropboxFile.mm */; };
-		CFFA94BF1F4543AB0035E606 /* VFSNetDropboxFileDownloadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */; };
-		CFFA94C01F4543AB0035E606 /* VFSNetDropboxFileUploadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A1151E97755000149C44 /* VFSNetDropboxFileUploadDelegate.mm */; };
-		CFFA94C11F4543AB0035E606 /* VFSNetDropboxFileUploadStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A1111E9751A800149C44 /* VFSNetDropboxFileUploadStream.mm */; };
-		CFFA94C21F4543AB0035E606 /* VFSNetDropboxHost.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF11687E1E91FAAA00CC515A /* VFSNetDropboxHost.mm */; };
+		CFFA94BE1F4543AB0035E606 /* File.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A10D1E9290FB00149C44 /* File.mm */; };
+		CFFA94BF1F4543AB0035E606 /* FileDownloadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B7E1EA715ED00BC28E6 /* FileDownloadDelegate.mm */; };
+		CFFA94C01F4543AB0035E606 /* FileUploadDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A1151E97755000149C44 /* FileUploadDelegate.mm */; };
+		CFFA94C11F4543AB0035E606 /* FileUploadStream.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF22A1111E9751A800149C44 /* FileUploadStream.mm */; };
+		CFFA94C21F4543AB0035E606 /* Host.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF11687E1E91FAAA00CC515A /* Host.mm */; };
 		CFFA94C31F4543B30035E606 /* Cache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0361DA2324100992B84 /* Cache.mm */; };
 		CFFA94C41F4543B30035E606 /* File.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0381DA2324100992B84 /* File.mm */; };
 		CFFA94C51F4543B30035E606 /* Host.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D03A1DA2324100992B84 /* Host.mm */; };
@@ -94,8 +94,8 @@
 
 /* Begin PBXFileReference section */
 		CF11687A1E91FA9200CC515A /* NetDropbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetDropbox.h; path = include/VFS/NetDropbox.h; sourceTree = "<group>"; };
-		CF11687D1E91FAAA00CC515A /* VFSNetDropboxHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxHost.h; path = source/NetDropbox/VFSNetDropboxHost.h; sourceTree = "<group>"; };
-		CF11687E1E91FAAA00CC515A /* VFSNetDropboxHost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxHost.mm; path = source/NetDropbox/VFSNetDropboxHost.mm; sourceTree = "<group>"; };
+		CF11687D1E91FAAA00CC515A /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/NetDropbox/Host.h; sourceTree = "<group>"; };
+		CF11687E1E91FAAA00CC515A /* Host.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Host.mm; path = source/NetDropbox/Host.mm; sourceTree = "<group>"; };
 		CF1168811E91FB4A00CC515A /* Aux.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Aux.h; path = source/NetDropbox/Aux.h; sourceTree = "<group>"; };
 		CF1168821E91FB4A00CC515A /* Aux.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Aux.mm; path = source/NetDropbox/Aux.mm; sourceTree = "<group>"; };
 		CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSDropbox_Tests.mm; path = tests/VFSDropbox_Tests.mm; sourceTree = SOURCE_ROOT; };
@@ -118,12 +118,12 @@
 		CF1FDD021F5BBA6F00AF1EBD /* WriteBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WriteBuffer.cpp; path = source/NetWebDAV/WriteBuffer.cpp; sourceTree = "<group>"; };
 		CF1FDD051F5D4AEC00AF1EBD /* PathRoutines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PathRoutines.h; path = source/NetWebDAV/PathRoutines.h; sourceTree = "<group>"; };
 		CF1FDD061F5D4AEC00AF1EBD /* PathRoutines.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PathRoutines.mm; path = source/NetWebDAV/PathRoutines.mm; sourceTree = "<group>"; };
-		CF22A10C1E9290FB00149C44 /* VFSNetDropboxFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFile.h; path = source/NetDropbox/VFSNetDropboxFile.h; sourceTree = "<group>"; };
-		CF22A10D1E9290FB00149C44 /* VFSNetDropboxFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFile.mm; path = source/NetDropbox/VFSNetDropboxFile.mm; sourceTree = "<group>"; };
-		CF22A1101E9751A800149C44 /* VFSNetDropboxFileUploadStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFileUploadStream.h; path = source/NetDropbox/VFSNetDropboxFileUploadStream.h; sourceTree = "<group>"; };
-		CF22A1111E9751A800149C44 /* VFSNetDropboxFileUploadStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileUploadStream.mm; path = source/NetDropbox/VFSNetDropboxFileUploadStream.mm; sourceTree = "<group>"; };
-		CF22A1141E97755000149C44 /* VFSNetDropboxFileUploadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFileUploadDelegate.h; path = source/NetDropbox/VFSNetDropboxFileUploadDelegate.h; sourceTree = "<group>"; };
-		CF22A1151E97755000149C44 /* VFSNetDropboxFileUploadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileUploadDelegate.mm; path = source/NetDropbox/VFSNetDropboxFileUploadDelegate.mm; sourceTree = "<group>"; };
+		CF22A10C1E9290FB00149C44 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/NetDropbox/File.h; sourceTree = "<group>"; };
+		CF22A10D1E9290FB00149C44 /* File.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = File.mm; path = source/NetDropbox/File.mm; sourceTree = "<group>"; };
+		CF22A1101E9751A800149C44 /* FileUploadStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileUploadStream.h; path = source/NetDropbox/FileUploadStream.h; sourceTree = "<group>"; };
+		CF22A1111E9751A800149C44 /* FileUploadStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileUploadStream.mm; path = source/NetDropbox/FileUploadStream.mm; sourceTree = "<group>"; };
+		CF22A1141E97755000149C44 /* FileUploadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileUploadDelegate.h; path = source/NetDropbox/FileUploadDelegate.h; sourceTree = "<group>"; };
+		CF22A1151E97755000149C44 /* FileUploadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileUploadDelegate.mm; path = source/NetDropbox/FileUploadDelegate.mm; sourceTree = "<group>"; };
 		CF3E2F841F60DF08001BFFCE /* Requests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Requests.cpp; path = source/NetWebDAV/Requests.cpp; sourceTree = "<group>"; };
 		CF3E2F851F60DF08001BFFCE /* Requests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Requests.h; path = source/NetWebDAV/Requests.h; sourceTree = "<group>"; };
 		CF5099931F95C881000AFDE7 /* EncodingDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EncodingDetection.h; path = source/ArcLA/EncodingDetection.h; sourceTree = "<group>"; };
@@ -205,8 +205,8 @@
 		CF7A09BB1EC4382700533B07 /* KeyValidator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyValidator.cpp; path = source/NetSFTP/KeyValidator.cpp; sourceTree = "<group>"; };
 		CF7A09BC1EC4382700533B07 /* KeyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyValidator.h; path = source/NetSFTP/KeyValidator.h; sourceTree = "<group>"; };
 		CF7C7D8E1E659D33002DB0E2 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = ../3rd_Party/libssh2/built/libssh2.a; sourceTree = "<group>"; };
-		CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSNetDropboxFileDownloadDelegate.h; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.h; sourceTree = "<group>"; };
-		CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSNetDropboxFileDownloadDelegate.mm; path = source/NetDropbox/VFSNetDropboxFileDownloadDelegate.mm; sourceTree = "<group>"; };
+		CF818B7D1EA715ED00BC28E6 /* FileDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDownloadDelegate.h; path = source/NetDropbox/FileDownloadDelegate.h; sourceTree = "<group>"; };
+		CF818B7E1EA715ED00BC28E6 /* FileDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDownloadDelegate.mm; path = source/NetDropbox/FileDownloadDelegate.mm; sourceTree = "<group>"; };
 		CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
 		CFC4F92F1F0B5E250000B3EE /* VFSListingObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListingObjC.mm; path = source/VFSListingObjC.mm; sourceTree = "<group>"; };
 		CFC4F9F31F1719860000B3EE /* OSDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OSDetector.cpp; path = source/NetSFTP/OSDetector.cpp; sourceTree = "<group>"; };
@@ -285,16 +285,16 @@
 			children = (
 				CF1168811E91FB4A00CC515A /* Aux.h */,
 				CF1168821E91FB4A00CC515A /* Aux.mm */,
-				CF22A10C1E9290FB00149C44 /* VFSNetDropboxFile.h */,
-				CF22A10D1E9290FB00149C44 /* VFSNetDropboxFile.mm */,
-				CF818B7D1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.h */,
-				CF818B7E1EA715ED00BC28E6 /* VFSNetDropboxFileDownloadDelegate.mm */,
-				CF22A1141E97755000149C44 /* VFSNetDropboxFileUploadDelegate.h */,
-				CF22A1151E97755000149C44 /* VFSNetDropboxFileUploadDelegate.mm */,
-				CF22A1101E9751A800149C44 /* VFSNetDropboxFileUploadStream.h */,
-				CF22A1111E9751A800149C44 /* VFSNetDropboxFileUploadStream.mm */,
-				CF11687D1E91FAAA00CC515A /* VFSNetDropboxHost.h */,
-				CF11687E1E91FAAA00CC515A /* VFSNetDropboxHost.mm */,
+				CF22A10C1E9290FB00149C44 /* File.h */,
+				CF22A10D1E9290FB00149C44 /* File.mm */,
+				CF818B7D1EA715ED00BC28E6 /* FileDownloadDelegate.h */,
+				CF818B7E1EA715ED00BC28E6 /* FileDownloadDelegate.mm */,
+				CF22A1141E97755000149C44 /* FileUploadDelegate.h */,
+				CF22A1151E97755000149C44 /* FileUploadDelegate.mm */,
+				CF22A1101E9751A800149C44 /* FileUploadStream.h */,
+				CF22A1111E9751A800149C44 /* FileUploadStream.mm */,
+				CF11687D1E91FAAA00CC515A /* Host.h */,
+				CF11687E1E91FAAA00CC515A /* Host.mm */,
 			);
 			name = NetDropbox;
 			sourceTree = "<group>";
@@ -662,7 +662,7 @@
 			files = (
 				CFFA94CE1F4543C70035E606 /* Host.mm in Sources */,
 				CF1FDD041F5BBA6F00AF1EBD /* WriteBuffer.cpp in Sources */,
-				CFFA94BE1F4543AB0035E606 /* VFSNetDropboxFile.mm in Sources */,
+				CFFA94BE1F4543AB0035E606 /* File.mm in Sources */,
 				CFFA94D81F4543ED0035E606 /* VFSListing.cpp in Sources */,
 				CFFA95601F5291540035E606 /* DateTimeParser.cpp in Sources */,
 				CFFA94B41F4543920035E606 /* Host.cpp in Sources */,
@@ -685,14 +685,14 @@
 				CFFA94D91F4543ED0035E606 /* VFSListingObjC.mm in Sources */,
 				CFFA94BD1F4543AB0035E606 /* Aux.mm in Sources */,
 				CFFA94B61F45439B0035E606 /* VFSArchiveUnRARFile.cpp in Sources */,
-				CFFA94C11F4543AB0035E606 /* VFSNetDropboxFileUploadStream.mm in Sources */,
+				CFFA94C11F4543AB0035E606 /* FileUploadStream.mm in Sources */,
 				CFFA94D31F4543ED0035E606 /* VFSError.mm in Sources */,
 				CFFA94B31F4543920035E606 /* File.cpp in Sources */,
 				CFFA94C91F4543BC0035E606 /* SFTPHost.cpp in Sources */,
 				CFFA94B91F4543A30035E606 /* Fetching.cpp in Sources */,
 				CFFA94C31F4543B30035E606 /* Cache.mm in Sources */,
 				CFFA94D41F4543ED0035E606 /* VFSFactory.cpp in Sources */,
-				CFFA94C01F4543AB0035E606 /* VFSNetDropboxFileUploadDelegate.mm in Sources */,
+				CFFA94C01F4543AB0035E606 /* FileUploadDelegate.mm in Sources */,
 				CFFA94D61F4543ED0035E606 /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CFFA94BC1F4543A30035E606 /* VFSNativeHost.mm in Sources */,
 				CFFA94B81F45439B0035E606 /* VFSArchiveUnRARInternals.cpp in Sources */,
@@ -706,12 +706,12 @@
 				CFFA94BB1F4543A30035E606 /* VFSNativeFile.cpp in Sources */,
 				CF3E2F861F60DF08001BFFCE /* Requests.cpp in Sources */,
 				CFFA94D01F4543ED0035E606 /* VFSArchiveProxy.mm in Sources */,
-				CFFA94C21F4543AB0035E606 /* VFSNetDropboxHost.mm in Sources */,
+				CFFA94C21F4543AB0035E606 /* Host.mm in Sources */,
 				CFFA94C41F4543B30035E606 /* File.mm in Sources */,
 				CFFA94C51F4543B30035E606 /* Host.mm in Sources */,
 				CF1FDD081F5D4AEC00AF1EBD /* PathRoutines.mm in Sources */,
 				CFFA95681F57B4F20035E606 /* Cache.cpp in Sources */,
-				CFFA94BF1F4543AB0035E606 /* VFSNetDropboxFileDownloadDelegate.mm in Sources */,
+				CFFA94BF1F4543AB0035E606 /* FileDownloadDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

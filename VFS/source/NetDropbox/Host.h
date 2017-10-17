@@ -3,18 +3,20 @@
 #include <VFS/VFSHost.h>
 #include <VFS/VFSFile.h>
 
+namespace nc::vfs {
+
 /**
  * This every API call may take seconds to complete, VFSNetDropboxHost assumes primarily background
  * usage. When called from the main thread, this VFS will bug caller's console with warning. 
  */
-class VFSNetDropboxHost final : public VFSHost
+class DropboxHost final : public VFSHost
 {
 public:
     static const char *UniqueTag;
 
-    VFSNetDropboxHost( const string &_account, const string &_access_token );
-    VFSNetDropboxHost( const VFSConfiguration &_config );
-    ~VFSNetDropboxHost();
+    DropboxHost( const string &_account, const string &_access_token );
+    DropboxHost( const VFSConfiguration &_config );
+    ~DropboxHost();
 
     virtual VFSConfiguration Configuration() const override;
     static VFSMeta Meta();
@@ -57,8 +59,8 @@ public:
                        const char *_new_path,
                        const VFSCancelChecker &_cancel_checker ) override;
 
-    shared_ptr<const VFSNetDropboxHost> SharedPtr() const {return static_pointer_cast<const VFSNetDropboxHost>(VFSHost::SharedPtr());}
-    shared_ptr<VFSNetDropboxHost> SharedPtr() {return static_pointer_cast<VFSNetDropboxHost>(VFSHost::SharedPtr());}
+    shared_ptr<const DropboxHost> SharedPtr() const {return static_pointer_cast<const DropboxHost>(VFSHost::SharedPtr());}
+    shared_ptr<DropboxHost> SharedPtr() {return static_pointer_cast<DropboxHost>(VFSHost::SharedPtr());}
 
     const string &Account() const;
     const string &Token() const;
@@ -80,3 +82,5 @@ private:
     unique_ptr<State> I;
     VFSConfiguration m_Config;    
 };
+
+}

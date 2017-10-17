@@ -1,12 +1,14 @@
 #include <Utility/PathManip.h>
 #include "../VFSListingInput.h"
 #include "Aux.h"
-#include "VFSNetDropboxHost.h"
-#include "VFSNetDropboxFile.h"
+#include "Host.h"
+#include "File.h"
 
-using namespace VFSNetDropbox;
+namespace nc::vfs {
 
-const char *VFSNetDropboxHost::UniqueTag = "net_dropbox";
+using namespace dropbox;
+
+const char *DropboxHost::UniqueTag = "net_dropbox";
 
 class VFSNetDropboxHostConfiguration
 {
@@ -17,7 +19,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSNetDropboxHost::UniqueTag;
+        return DropboxHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -45,7 +47,7 @@ static VFSNetDropboxHostConfiguration Compose(const string &_account, const stri
     return config;
 }
 
-struct VFSNetDropboxHost::State
+struct DropboxHost::State
 {
     string          m_Account;
     string          m_Token;
@@ -54,30 +56,30 @@ struct VFSNetDropboxHost::State
     AccountInfo     m_AccountInfo;
 };
 
-VFSNetDropboxHost::VFSNetDropboxHost( const string &_account, const string &_access_token ):
-    VFSHost("", nullptr, VFSNetDropboxHost::UniqueTag),
+DropboxHost::DropboxHost( const string &_account, const string &_access_token ):
+    VFSHost("", nullptr, DropboxHost::UniqueTag),
     I(make_unique<State>()),
     m_Config{Compose(_account, _access_token)}
 {
     Init();
 }
 
-VFSNetDropboxHost::VFSNetDropboxHost( const VFSConfiguration &_config ):
-    VFSHost("", nullptr, VFSNetDropboxHost::UniqueTag),
+DropboxHost::DropboxHost( const VFSConfiguration &_config ):
+    VFSHost("", nullptr, DropboxHost::UniqueTag),
     I(make_unique<State>()),
     m_Config(_config)
 {
     Init();
 }
 
-void VFSNetDropboxHost::Init()
+void DropboxHost::Init()
 {
     Construct(Config().account, Config().token);
     InitialAccountLookup();
     AddFeatures( VFSHostFeatures::NonEmptyRmDir );
 }
 
-void VFSNetDropboxHost::Construct(const string &_account, const string &_access_token)
+void DropboxHost::Construct(const string &_account, const string &_access_token)
 {
     I->m_Account = _account;
     I->m_Token = _access_token;
@@ -89,16 +91,16 @@ void VFSNetDropboxHost::Construct(const string &_account, const string &_access_
     I->m_AuthString = [NSString stringWithFormat:@"Bearer %s", I->m_Token.c_str()];
 }
 
-VFSNetDropboxHost::~VFSNetDropboxHost()
+DropboxHost::~DropboxHost()
 {
 }
 
-const VFSNetDropboxHostConfiguration &VFSNetDropboxHost::Config() const
+const VFSNetDropboxHostConfiguration &DropboxHost::Config() const
 {
     return m_Config.Get<VFSNetDropboxHostConfiguration>();
 }
 
-void VFSNetDropboxHost::InitialAccountLookup()
+void DropboxHost::InitialAccountLookup()
 {
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::GetCurrentAccount];
     req.HTTPMethod = @"POST";
@@ -115,7 +117,7 @@ void VFSNetDropboxHost::InitialAccountLookup()
         throw VFSErrorException( rc );
 }
 
-pair<int, string> VFSNetDropboxHost::CheckTokenAndRetrieveAccountEmail( const string &_token )
+pair<int, string> DropboxHost::CheckTokenAndRetrieveAccountEmail( const string &_token )
 {
     const auto config = NSURLSessionConfiguration.defaultSessionConfiguration;
     const auto session = [NSURLSession sessionWithConfiguration:config];
@@ -135,39 +137,39 @@ pair<int, string> VFSNetDropboxHost::CheckTokenAndRetrieveAccountEmail( const st
         return {rc, ""};
 }
 
-VFSMeta VFSNetDropboxHost::Meta()
+VFSMeta DropboxHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent,
                            const VFSConfiguration& _config,
                            VFSCancelChecker _cancel_checker) {
-        return make_shared<VFSNetDropboxHost>(_config);
+        return make_shared<DropboxHost>(_config);
     };
     return m;
 }
 
-VFSConfiguration VFSNetDropboxHost::Configuration() const
+VFSConfiguration DropboxHost::Configuration() const
 {
     return m_Config;
 }
 
-NSURLSession *VFSNetDropboxHost::GenericSession() const
+NSURLSession *DropboxHost::GenericSession() const
 {
     return I->m_GenericSession;
 }
 
-NSURLSessionConfiguration *VFSNetDropboxHost::GenericConfiguration() const
+NSURLSessionConfiguration *DropboxHost::GenericConfiguration() const
 {
     return NSURLSessionConfiguration.defaultSessionConfiguration;
 }
 
-void VFSNetDropboxHost::FillAuth( NSMutableURLRequest *_request ) const
+void DropboxHost::FillAuth( NSMutableURLRequest *_request ) const
 {
     [_request setValue:I->m_AuthString forHTTPHeaderField:@"Authorization"];
 }
 
-int VFSNetDropboxHost::StatFS(const char *_path,
+int DropboxHost::StatFS(const char *_path,
                               VFSStatFS &_stat,
                               const VFSCancelChecker &_cancel_checker)
 {
@@ -198,7 +200,7 @@ int VFSNetDropboxHost::StatFS(const char *_path,
     return rc;
 }
 
-int VFSNetDropboxHost::Stat(const char *_path,
+int DropboxHost::Stat(const char *_path,
                             VFSStat &_st,
                             int _flags,
                             const VFSCancelChecker &_cancel_checker)
@@ -255,7 +257,7 @@ int VFSNetDropboxHost::Stat(const char *_path,
     return rc;
 }
 
-int VFSNetDropboxHost::IterateDirectoryListing(const char *_path,
+int DropboxHost::IterateDirectoryListing(const char *_path,
                                                const function<bool(const VFSDirEnt &_dirent)> &_handler)
 { // TODO: process ListFolderResult.has_more
     WarnAboutUsingInMainThread();
@@ -302,7 +304,7 @@ int VFSNetDropboxHost::IterateDirectoryListing(const char *_path,
     return rc;
 }
 
-int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
+int DropboxHost::FetchDirectoryListing(const char *_path,
                                              shared_ptr<VFSListing> &_target,
                                              int _flags,
                                              const VFSCancelChecker &_cancel_checker)
@@ -368,23 +370,23 @@ int VFSNetDropboxHost::FetchDirectoryListing(const char *_path,
     return rc;
 }
 
-int VFSNetDropboxHost::CreateFile(const char* _path,
+int DropboxHost::CreateFile(const char* _path,
                                   shared_ptr<VFSFile> &_target,
                                   const VFSCancelChecker &_cancel_checker)
 {
-    auto file = make_shared<VFSNetDropboxFile>(_path, SharedPtr());
+    auto file = make_shared<File>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
 }
 
-const string &VFSNetDropboxHost::Token() const
+const string &DropboxHost::Token() const
 {
     return I->m_Token;
 }
 
-int VFSNetDropboxHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker )
+int DropboxHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker )
 {
    WarnAboutUsingInMainThread();
 
@@ -400,7 +402,7 @@ int VFSNetDropboxHost::Unlink(const char *_path, const VFSCancelChecker &_cancel
     return rc;
 }
 
-int VFSNetDropboxHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker )
+int DropboxHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker )
 {
     WarnAboutUsingInMainThread();
 
@@ -420,7 +422,7 @@ int VFSNetDropboxHost::RemoveDirectory(const char *_path, const VFSCancelChecker
     return rc;
 }
 
-int VFSNetDropboxHost::CreateDirectory(const char* _path,
+int DropboxHost::CreateDirectory(const char* _path,
                                        int _mode,
                                        const VFSCancelChecker &_cancel_checker )
 {
@@ -442,12 +444,12 @@ int VFSNetDropboxHost::CreateDirectory(const char* _path,
     return rc;
 }
 
-bool VFSNetDropboxHost::IsWritable() const
+bool DropboxHost::IsWritable() const
 {
     return true;
 }
 
-int VFSNetDropboxHost::Rename(const char *_old_path,
+int DropboxHost::Rename(const char *_old_path,
                               const char *_new_path,
                               const VFSCancelChecker &_cancel_checker)
 {
@@ -473,7 +475,9 @@ int VFSNetDropboxHost::Rename(const char *_old_path,
     return rc;
 }
 
-const string &VFSNetDropboxHost::Account() const
+const string &DropboxHost::Account() const
 {
     return I->m_Account;
+}
+
 }

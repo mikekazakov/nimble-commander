@@ -1,6 +1,6 @@
 #pragma once
 
-@interface VFSNetDropboxFileUploadDelegate : NSObject<NSURLSessionDelegate>
+@interface NCVFSDropboxFileUploadDelegate : NSObject<NSURLSessionDelegate>
 
 - (instancetype)initWithStream:(NSInputStream*)_stream;
 

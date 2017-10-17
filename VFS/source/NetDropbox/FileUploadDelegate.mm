@@ -1,10 +1,11 @@
 #include <VFS/VFSError.h>
-#include "VFSNetDropboxFileUploadDelegate.h"
+#include "FileUploadDelegate.h"
 #include "Aux.h"
 
-using namespace VFSNetDropbox;
+using namespace nc::vfs;
+using namespace nc::vfs::dropbox;
 
-@implementation VFSNetDropboxFileUploadDelegate
+@implementation NCVFSDropboxFileUploadDelegate
 {
     NSInputStream  *m_Stream;
     mutex                           m_CallbacksLock;

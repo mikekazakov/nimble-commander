@@ -1,6 +1,6 @@
 #pragma once
 
-@interface VFSNetDropboxFileUploadStream : NSInputStream
+@interface NCVFSDropboxFileUploadStream : NSInputStream
 
 // stream -> client connection, called from some background thread.
 // NOT REENTRANT!

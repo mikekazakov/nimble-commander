@@ -6,12 +6,16 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "VFSPSFile.h"
+#include "File.h"
 
-VFSPSFile::VFSPSFile(const char* _relative_path, shared_ptr<VFSHost> _host, const string &_file):
+namespace nc::vfs {
+
+PSFile::PSFile(const char* _relative_path, shared_ptr<VFSHost> _host, const string &_file):
     VFSGenericMemReadOnlyFile(_relative_path,
                               _host,
                               _file.c_str(),
                               _file.length())
 {
+}
+
 }

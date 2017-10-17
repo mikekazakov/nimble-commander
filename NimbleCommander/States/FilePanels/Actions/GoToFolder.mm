@@ -89,7 +89,7 @@ void GoToRootFolder::Perform( PanelController *_target, id _sender ) const
 
 void GoToProcessesList::Perform( PanelController *_target, id _sender ) const
 {
-    [_target GoToDir:"/" vfs:VFSPSHost::GetSharedOrNew() select_entry:"" async:true];
+    [_target GoToDir:"/" vfs:vfs::PSHost::GetSharedOrNew() select_entry:"" async:true];
 }
 
 void GoToFavoriteLocation::Perform( PanelController *_target, id _sender ) const

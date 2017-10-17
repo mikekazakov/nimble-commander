@@ -9,10 +9,14 @@
 #pragma once
 
 #include <VFS/VFSGenericMemReadOnlyFile.h>
-#include "VFSPSHost.h"
+#include "Host.h"
 
-class VFSPSFile : public VFSGenericMemReadOnlyFile
+namespace nc::vfs {
+
+class PSFile : public VFSGenericMemReadOnlyFile
 {
 public:
-    VFSPSFile(const char* _relative_path, shared_ptr<VFSHost> _host, const string &_file);
+    PSFile(const char* _relative_path, shared_ptr<VFSHost> _host, const string &_file);
 };
+
+}

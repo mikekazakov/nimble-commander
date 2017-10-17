@@ -14,7 +14,7 @@ namespace nc::bootstrap {
 void RegisterAvailableVFS()
 {
     VFSFactory::Instance().RegisterVFS(       VFSNativeHost::Meta() );
-    VFSFactory::Instance().RegisterVFS(           VFSPSHost::Meta() );
+    VFSFactory::Instance().RegisterVFS(         vfs::PSHost::Meta() );
     VFSFactory::Instance().RegisterVFS(       vfs::SFTPHost::Meta() );
     VFSFactory::Instance().RegisterVFS(       VFSNetFTPHost::Meta() );
     VFSFactory::Instance().RegisterVFS(   VFSNetDropboxHost::Meta() );

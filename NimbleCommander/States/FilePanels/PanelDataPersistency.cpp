@@ -110,7 +110,7 @@ static any EncodeState( const VFSHost& _host )
     if( tag == VFSNativeHost::UniqueTag ) {
         return Native{};
     }
-    else if( tag == VFSPSHost::UniqueTag ) {
+    else if( tag == vfs::PSHost::UniqueTag ) {
         return PSFS{};
     }
     else if( tag == VFSXAttrHost::UniqueTag ) {
@@ -246,7 +246,7 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
             if( tag == VFSNativeHost::UniqueTag ) {
                 result.hosts.emplace_back( Native{} );
             }
-            else if( tag == VFSPSHost::UniqueTag ) {
+            else if( tag == vfs::PSHost::UniqueTag ) {
                 result.hosts.emplace_back( PSFS{} );
             }
             else if( tag == VFSXAttrHost::UniqueTag ) {
@@ -315,7 +315,7 @@ string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc 
             footprint += "|";
         }
         else if( auto psfs = any_cast<PSFS>(&h) ) {
-            footprint += VFSPSHost::UniqueTag;
+            footprint += vfs::PSHost::UniqueTag;
             footprint += "|[psfs]:";
         }
         else if( auto xattr = any_cast<XAttr>(&h) ) {
@@ -404,7 +404,7 @@ optional<rapidjson::StandaloneValue> PanelDataPersisency::EncodeVFSHostInfo( con
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
         return move(json);
     }
-    else if( tag == VFSPSHost::UniqueTag ) {
+    else if( tag == vfs::PSHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
         return move(json);
     }
@@ -441,7 +441,7 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
     }
     else if( auto psfs = any_cast<PSFS>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
-                       MakeStandaloneString(VFSPSHost::UniqueTag),
+                       MakeStandaloneString(vfs::PSHost::UniqueTag),
                        g_CrtAllocator );
         return move(json);
     }
@@ -508,8 +508,8 @@ int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_
                 if( tag == VFSNativeHost::UniqueTag ) {
                     vfs.emplace_back( VFSNativeHost::SharedHost() );
                 }
-                else if( tag == VFSPSHost::UniqueTag ) {
-                    vfs.emplace_back( VFSPSHost::GetSharedOrNew() );
+                else if( tag == vfs::PSHost::UniqueTag ) {
+                    vfs.emplace_back( vfs::PSHost::GetSharedOrNew() );
                 }
                 else if( tag == VFSXAttrHost::UniqueTag ) {
                     if( !has_string(g_HostInfoJunctionKey) )
@@ -576,7 +576,7 @@ static bool Fits( VFSHost& _alive, const any &_encoded )
         if( any_cast<Native>(encoded) )
             return true;
     }
-    else if( tag == VFSPSHost::UniqueTag ) {
+    else if( tag == vfs::PSHost::UniqueTag ) {
         if( any_cast<PSFS>(encoded) )
             return true;
     }
@@ -637,7 +637,7 @@ int PanelDataPersisency::CreateVFSFromLocation( const PersistentLocation &_state
                 vfs.emplace_back( VFSNativeHost::SharedHost() );
             }
             else if( auto psfs = any_cast<PSFS>(&h) ) {
-                vfs.emplace_back( VFSPSHost::GetSharedOrNew() );
+                vfs.emplace_back( vfs::PSHost::GetSharedOrNew() );
             }
             else if( auto xattr = any_cast<XAttr>(&h) ) {
                 if( vfs.size() < 1 )

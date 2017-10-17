@@ -10,17 +10,16 @@
 #include <sys/resource.h>
 #include <sys/proc_info.h>
 #include <pwd.h>
-//#define __APPLE_API_PRIVATE
-//#include "../../3rd_party/apple_sandbox.h"
-//#undef __APPLE_API_PRIVATE
 #include <Utility/SystemInformation.h>
 #include <RoutedIO/RoutedIO.h>
 #include "../VFSListingInput.h"
-#include "VFSPSHost.h"
-#include "VFSPSInternal.h"
-#include "VFSPSFile.h"
+#include "Host.h"
+#include "Internal.h"
+#include "File.h"
 
-const char *VFSPSHost::UniqueTag = "psfs";
+namespace nc::vfs {
+
+const char *PSHost::UniqueTag = "psfs";
 
 static NSDateFormatter *ProcDateFormatter()
 {
@@ -249,7 +248,7 @@ class VFSPSHostConfiguration
 public:
     const char *Tag() const
     {
-        return VFSPSHost::UniqueTag;
+        return PSHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -268,25 +267,25 @@ public:
     }
 };
 
-VFSPSHost::VFSPSHost():
+PSHost::PSHost():
     VFSHost("", shared_ptr<VFSHost>(0), UniqueTag),
-    m_UpdateQ("VFSPSHost")
+    m_UpdateQ("PSHost")
 {
     CommitProcs(GetProcs());
 }
 
-VFSPSHost::~VFSPSHost()
+PSHost::~PSHost()
 {
 //    m_UpdateQ->Stop();
 }
 
-VFSConfiguration VFSPSHost::Configuration() const
+VFSConfiguration PSHost::Configuration() const
 {
     static auto c = VFSPSHostConfiguration();
     return c;
 }
 
-VFSMeta VFSPSHost::Meta()
+VFSMeta PSHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
@@ -296,21 +295,21 @@ VFSMeta VFSPSHost::Meta()
     return m;
 }
 
-shared_ptr<VFSPSHost> VFSPSHost::GetSharedOrNew()
+shared_ptr<PSHost> PSHost::GetSharedOrNew()
 {
     static mutex mt;
-    static weak_ptr<VFSPSHost> cache;
+    static weak_ptr<PSHost> cache;
     
     lock_guard<mutex> lock(mt);
     if(auto host = cache.lock())
         return host;
     
-    auto host = make_shared<VFSPSHost>();
+    auto host = make_shared<PSHost>();
     cache = host;
     return host;
 }
 
-vector<VFSPSHost::ProcInfo> VFSPSHost::GetProcs()
+vector<PSHost::ProcInfo> PSHost::GetProcs()
 {
     size_t proc_cnt = 0;
     kinfo_proc *proc_list = 0;
@@ -360,9 +359,9 @@ vector<VFSPSHost::ProcInfo> VFSPSHost::GetProcs()
     return procs;
 }
 
-void VFSPSHost::UpdateCycle()
+void PSHost::UpdateCycle()
 {
-    auto weak_this = weak_ptr<VFSPSHost>(SharedPtr());
+    auto weak_this = weak_ptr<PSHost>(SharedPtr());
     m_UpdateQ.Run([=]{
         if(m_UpdateQ.IsStopped())
             return;
@@ -384,7 +383,7 @@ void VFSPSHost::UpdateCycle()
     });
 }
 
-void VFSPSHost::EnsureUpdateRunning()
+void PSHost::EnsureUpdateRunning()
 {
     if(m_UpdateStarted == false)
     {
@@ -393,7 +392,7 @@ void VFSPSHost::EnsureUpdateRunning()
     }
 }
 
-void VFSPSHost::CommitProcs(vector<ProcInfo> _procs)
+void PSHost::CommitProcs(vector<ProcInfo> _procs)
 {
     lock_guard<mutex> lock(m_Lock);
 
@@ -421,7 +420,7 @@ void VFSPSHost::CommitProcs(vector<ProcInfo> _procs)
         i.second();
 }
 
-string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _data)
+string PSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _data)
 {
     string result;
     
@@ -470,7 +469,7 @@ string VFSPSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _
     return result;
 }
 
-int VFSPSHost::FetchDirectoryListing(const char *_path,
+int PSHost::FetchDirectoryListing(const char *_path,
                                      shared_ptr<VFSListing> &_target,
                                      int _flags,
                                      const VFSCancelChecker &_cancel_checker)
@@ -507,7 +506,7 @@ int VFSPSHost::FetchDirectoryListing(const char *_path,
     return 0;
 }
 
-bool VFSPSHost::IsDirectory(const char *_path,
+bool PSHost::IsDirectory(const char *_path,
                             int _flags,
                             const VFSCancelChecker &_cancel_checker)
 {
@@ -517,7 +516,7 @@ bool VFSPSHost::IsDirectory(const char *_path,
     return true;
 }
 
-int VFSPSHost::CreateFile(const char* _path,
+int PSHost::CreateFile(const char* _path,
                           shared_ptr<VFSFile> &_target,
                           const VFSCancelChecker &_cancel_checker)
 {
@@ -531,14 +530,14 @@ int VFSPSHost::CreateFile(const char* _path,
     if(index < 0)
         return VFSError::NotFound;
     
-    auto file = make_shared<VFSPSFile>(_path, SharedPtr(), m_Data->files[index]);
+    auto file = make_shared<PSFile>(_path, SharedPtr(), m_Data->files[index]);
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
 }
 
-int VFSPSHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int PSHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
 {
     static VFSStat::meaningT m;
     static once_flag once;
@@ -574,7 +573,7 @@ int VFSPSHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancel
     return VFSError::Ok;
 }
 
-int VFSPSHost::ProcIndexFromFilepath_Unlocked(const char *_filepath)
+int PSHost::ProcIndexFromFilepath_Unlocked(const char *_filepath)
 {
     if(_filepath == nullptr)
         return -1;
@@ -593,12 +592,12 @@ int VFSPSHost::ProcIndexFromFilepath_Unlocked(const char *_filepath)
     return int(it - begin(m_Data->plain_filenames));
 }
 
-bool VFSPSHost::IsDirChangeObservingAvailable(const char *_path)
+bool PSHost::IsDirChangeObservingAvailable(const char *_path)
 {
     return true;
 }
 
-VFSHostDirObservationTicket VFSPSHost::DirChangeObserve(const char *_path, function<void()> _handler)
+VFSHostDirObservationTicket PSHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;
@@ -606,7 +605,7 @@ VFSHostDirObservationTicket VFSPSHost::DirChangeObserve(const char *_path, funct
     return VFSHostDirObservationTicket(ticket, shared_from_this());
 }
 
-void VFSPSHost::StopDirChangeObserving(unsigned long _ticket)
+void PSHost::StopDirChangeObserving(unsigned long _ticket)
 {
     auto it = find_if(begin(m_UpdateHandlers),
                       end(m_UpdateHandlers),
@@ -615,7 +614,7 @@ void VFSPSHost::StopDirChangeObserving(unsigned long _ticket)
         m_UpdateHandlers.erase(it);
 }
 
-int VFSPSHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
+int PSHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     assert(_path != 0);
     if(_path[0] != '/' || _path[1] != 0)
@@ -642,7 +641,7 @@ int VFSPSHost::IterateDirectoryListing(const char *_path, const function<bool(co
     return VFSError::Ok;
 }
 
-int VFSPSHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
+int PSHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
 {
     _stat.volume_name = "Processes List";
     _stat.avail_bytes = _stat.free_bytes = 0;
@@ -683,7 +682,7 @@ optional<bool> WaitForProcessToDie( int pid )
     return false;
 }
 
-int VFSPSHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
+int PSHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     if(_path == nullptr)
         return VFSError::InvalidCall;
@@ -731,4 +730,6 @@ int VFSPSHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker
     }
     else
         return VFSError::Ok; // what to return here??
+}
+
 }

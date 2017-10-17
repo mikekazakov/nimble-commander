@@ -9,6 +9,8 @@
 #include "tests_common.h"
 #include <VFS/PS.h>
 
+using namespace nc::vfs;
+
 @interface VFSPS_Tests : XCTestCase
 @end
 
@@ -16,7 +18,7 @@
 
 - (void)testBasic
 {
-    auto host = make_shared<VFSPSHost>();
+    auto host = make_shared<PSHost>();
     VFSListingPtr list;
     host->FetchDirectoryListing("/", list, 0, 0);
 

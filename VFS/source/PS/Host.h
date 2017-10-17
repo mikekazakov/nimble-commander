@@ -12,12 +12,13 @@
 #include <VFS/VFSHost.h>
 #include <VFS/VFSFile.h>
 
+namespace nc::vfs {
 
-class VFSPSHost final : public VFSHost
+class PSHost final : public VFSHost
 {
 public:
-    VFSPSHost();
-    ~VFSPSHost();
+    PSHost();
+    ~PSHost();
     
     static const char *UniqueTag;    
     virtual VFSConfiguration Configuration() const override;
@@ -53,10 +54,10 @@ public:
      * If there's a living fs already - it will return it, if - will create new.
      * It will store a weak ptr and will not extend FS living time.
      */
-    static shared_ptr<VFSPSHost> GetSharedOrNew();
+    static shared_ptr<PSHost> GetSharedOrNew();
     
-    shared_ptr<const VFSPSHost> SharedPtr() const {return static_pointer_cast<const VFSPSHost>(VFSHost::SharedPtr());}
-    shared_ptr<VFSPSHost> SharedPtr() {return static_pointer_cast<VFSPSHost>(VFSHost::SharedPtr());}
+    shared_ptr<const PSHost> SharedPtr() const {return static_pointer_cast<const PSHost>(VFSHost::SharedPtr());}
+    shared_ptr<PSHost> SharedPtr() {return static_pointer_cast<PSHost>(VFSHost::SharedPtr());}
     
     struct ProcInfo;
     struct Snapshot;
@@ -79,3 +80,5 @@ private:
     SerialQueue         m_UpdateQ;
     bool                m_UpdateStarted = false;
 };
+
+}

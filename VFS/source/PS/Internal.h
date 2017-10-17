@@ -10,9 +10,11 @@
 #import <libproc.h>
 #import <sys/sysctl.h>
 
-#import "VFSPSHost.h"
+#import "Host.h"
 
-struct VFSPSHost::ProcInfo
+namespace nc::vfs {
+
+struct PSHost::ProcInfo
 {
     // process id
     pid_t	pid;
@@ -49,7 +51,7 @@ struct VFSPSHost::ProcInfo
     bool rusage_avail;
 };
 
-struct VFSPSHost::Snapshot
+struct PSHost::Snapshot
 {
     time_t                  taken_time;
     vector<ProcInfo>        procs;
@@ -62,3 +64,5 @@ struct VFSPSHost::Snapshot
     // like "75 - KernelEventAgent.txt"
     vector<string>          plain_filenames;
 };
+
+}

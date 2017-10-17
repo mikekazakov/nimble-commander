@@ -6,11 +6,13 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "VFSArchiveUnRARFile.h"
-#include "VFSArchiveUnRARHost.h"
-#include "VFSArchiveUnRARInternals.h"
+#include "File.h"
+#include "Host.h"
+#include "Internals.h"
 
-VFSArchiveUnRARFile::VFSArchiveUnRARFile(const char* _relative_path, shared_ptr<VFSArchiveUnRARHost> _host):
+namespace nc::vfs::unrar {
+
+File::File(const char* _relative_path, shared_ptr<UnRARHost> _host):
     VFSFile(_relative_path, _host),
     m_UnpackThread(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)),
     m_UnpackBuffer(new uint8_t[m_UnpackBufferDefaultCapacity]),
@@ -18,13 +20,13 @@ VFSArchiveUnRARFile::VFSArchiveUnRARFile(const char* _relative_path, shared_ptr<
 {
 }
 
-VFSArchiveUnRARFile::~VFSArchiveUnRARFile()
+File::~File()
 {
     Close();
     assert(m_ExtractionRunning == false);
 }
 
-int VFSArchiveUnRARFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( strlen(Path()) < 2 || Path()[0] != '/' )
         return SetLastError(VFSError::NotFound);
@@ -32,7 +34,7 @@ int VFSArchiveUnRARFile::Open(int _open_flags, const VFSCancelChecker &_cancel_c
     if(_open_flags & VFSFlags::OF_Write)
         return SetLastError(VFSError::NotSupported); // UnRAR is Read-Only
     
-    auto rar_host = dynamic_pointer_cast<VFSArchiveUnRARHost>(Host());
+    auto rar_host = dynamic_pointer_cast<UnRARHost>(Host());
     auto entry = rar_host->FindEntry(Path());
     if(entry == 0)
         return SetLastError(VFSError::NotFound);
@@ -85,12 +87,12 @@ int VFSArchiveUnRARFile::Open(int _open_flags, const VFSCancelChecker &_cancel_c
     return 0;
 }
 
-bool VFSArchiveUnRARFile::IsOpened() const
+bool File::IsOpened() const
 {
     return m_Archive.get() != nullptr;
 }
 
-int VFSArchiveUnRARFile::Close()
+int File::Close()
 {
     m_ExitUnpacking = true;
     
@@ -105,7 +107,7 @@ int VFSArchiveUnRARFile::Close()
     
     if(m_Archive)
     {
-        auto rar_host = dynamic_pointer_cast<VFSArchiveUnRARHost>(Host());
+        auto rar_host = dynamic_pointer_cast<UnRARHost>(Host());
         if(m_Entry->uuid < rar_host->LastItemUUID())
         {
             m_Archive->uid = m_Entry->uuid;
@@ -143,9 +145,9 @@ int VFSArchiveUnRARFile::Close()
     return 0;
 }
 
-int VFSArchiveUnRARFile::ProcessRAR(unsigned int _msg, long _user_data, long _p1, long _p2)
+int File::ProcessRAR(unsigned int _msg, long _user_data, long _p1, long _p2)
 {
-    VFSArchiveUnRARFile *_this = (VFSArchiveUnRARFile *)_user_data;
+    auto _this = (File *)_user_data;
     
 	switch(_msg) {
 		case UCM_CHANGEVOLUME:
@@ -187,12 +189,12 @@ int VFSArchiveUnRARFile::ProcessRAR(unsigned int _msg, long _user_data, long _p1
 	return 0;
 }
 
-int VFSArchiveUnRARFile::ProcessRARDummy(unsigned int _msg, long _user_data, long _p1, long _p2)
+int File::ProcessRARDummy(unsigned int _msg, long _user_data, long _p1, long _p2)
 {
     return 0;
 }
 
-ssize_t VFSArchiveUnRARFile::Read(void *_buf, const size_t _size)
+ssize_t File::Read(void *_buf, const size_t _size)
 {
     if(!m_Archive)
         return SetLastError(VFSError::InvalidCall);
@@ -226,28 +228,30 @@ ssize_t VFSArchiveUnRARFile::Read(void *_buf, const size_t _size)
     return sz;
 }
 
-VFSFile::ReadParadigm VFSArchiveUnRARFile::GetReadParadigm() const
+VFSFile::ReadParadigm File::GetReadParadigm() const
 {
     return VFSFile::ReadParadigm::Sequential;
 }
 
-ssize_t VFSArchiveUnRARFile::Pos() const
+ssize_t File::Pos() const
 {
     if(!m_Archive)
         return SetLastError(VFSError::InvalidCall);
     return m_Position;
 }
 
-ssize_t VFSArchiveUnRARFile::Size() const
+ssize_t File::Size() const
 {
     if(!m_Archive)
         return SetLastError(VFSError::InvalidCall);
     return m_Entry->unpacked_size;
 }
 
-bool VFSArchiveUnRARFile::Eof() const
+bool File::Eof() const
 {
     if(!m_Archive)
         return true;
     return m_Position >= m_Entry->unpacked_size;
+}
+
 }

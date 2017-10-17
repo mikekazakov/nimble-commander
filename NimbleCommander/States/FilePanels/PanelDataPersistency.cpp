@@ -123,7 +123,7 @@ static any EncodeState( const VFSHost& _host )
     else if( tag == vfs::ArchiveHost::UniqueTag ) {
         return ArcLA{ _host.JunctionPath() };
     }
-    else if( tag == VFSArchiveUnRARHost::UniqueTag ) {
+    else if( tag == vfs::UnRARHost::UniqueTag ) {
         return ArcUnRAR{ _host.JunctionPath() };
     }
     return {};
@@ -274,7 +274,7 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
                 
                 result.hosts.emplace_back( ArcLA{ h[g_HostInfoJunctionKey].GetString() } );
             }
-            else if( tag == VFSArchiveUnRARHost::UniqueTag ) {
+            else if( tag == vfs::UnRARHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
                     return nullopt; // invalid data
                 if( result.hosts.size() < 1 || !any_cast<Native>(&result.hosts.back()) )
@@ -337,7 +337,7 @@ string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc 
             footprint += la->junction;
         }
         else if( auto rar = any_cast<ArcUnRAR>(&h) ) {
-            footprint += VFSArchiveUnRARHost::UniqueTag;
+            footprint += vfs::UnRARHost::UniqueTag;
             footprint += "|";
             footprint += rar->junction;
         }
@@ -421,7 +421,7 @@ optional<rapidjson::StandaloneValue> PanelDataPersisency::EncodeVFSHostInfo( con
         }
     }
     else if( tag == vfs::ArchiveHost::UniqueTag ||
-             tag == VFSArchiveUnRARHost::UniqueTag ) {
+             tag == vfs::UnRARHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
         json.AddMember( MakeStandaloneString(g_HostInfoJunctionKey), MakeStandaloneString(_host.JunctionPath()), g_CrtAllocator );
         return move(json);
@@ -474,7 +474,7 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
     }
     else if( auto rar = any_cast<ArcUnRAR>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
-                       MakeStandaloneString(VFSArchiveUnRARHost::UniqueTag),
+                       MakeStandaloneString(vfs::UnRARHost::UniqueTag),
                        g_CrtAllocator );
         json.AddMember(MakeStandaloneString(g_HostInfoJunctionKey),
                        MakeStandaloneString(rar->junction),
@@ -544,13 +544,13 @@ int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_
                     auto host = make_shared<vfs::ArchiveHost>( h[g_HostInfoJunctionKey].GetString(), vfs.back() );
                     vfs.emplace_back( host );
                 }
-                else if( tag == VFSArchiveUnRARHost::UniqueTag ) {
+                else if( tag == vfs::UnRARHost::UniqueTag ) {
                     if( !has_string(g_HostInfoJunctionKey) )
                         return VFSError::GenericError; // invalid data
                     if( vfs.size() < 1 || !vfs.back()->IsNativeFS() )
                         return VFSError::GenericError; // invalid data
                     
-                    auto host = make_shared<VFSArchiveUnRARHost>( h[g_HostInfoJunctionKey].GetString() );
+                    auto host = make_shared<vfs::UnRARHost>( h[g_HostInfoJunctionKey].GetString() );
                     vfs.emplace_back( host );
                 }
                 // ...
@@ -593,7 +593,7 @@ static bool Fits( VFSHost& _alive, const any &_encoded )
         if( auto la = any_cast<ArcLA>(encoded) )
             return la->junction == _alive.JunctionPath();
     }
-    else if( tag == VFSArchiveUnRARHost::UniqueTag ) {
+    else if( tag == vfs::UnRARHost::UniqueTag ) {
         if( auto unrar = any_cast<ArcUnRAR>(encoded) )
             return unrar->junction == _alive.JunctionPath();
     }
@@ -668,7 +668,7 @@ int PanelDataPersisency::CreateVFSFromLocation( const PersistentLocation &_state
                 if( vfs.size() < 1 || !vfs.back()->IsNativeFS() )
                     return VFSError::GenericError; // invalid data
                 
-                auto host = make_shared<VFSArchiveUnRARHost>( rar->junction.c_str() );
+                auto host = make_shared<vfs::UnRARHost>( rar->junction.c_str() );
                 vfs.emplace_back( host );
             }
         }

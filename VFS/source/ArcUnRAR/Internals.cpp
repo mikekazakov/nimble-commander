@@ -6,8 +6,10 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "VFSArchiveUnRARInternals.h"
+#include "Internals.h"
 #include <VFS/VFSError.h>
+
+namespace nc::vfs::unrar {
 
 int VFSArchiveUnRARErrorToVFSError(int _rar_error)
 {
@@ -22,8 +24,10 @@ int VFSArchiveUnRARErrorToVFSError(int _rar_error)
     return VFSError::GenericError;
 }
 
-VFSArchiveUnRARSeekCache::~VFSArchiveUnRARSeekCache()
+SeekCache::~SeekCache()
 {
     if(rar_handle)
         RARCloseArchive(rar_handle);
+}
+
 }

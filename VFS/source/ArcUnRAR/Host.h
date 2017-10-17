@@ -13,17 +13,21 @@
 #include "../../include/VFS/VFSHost.h"
 #include "../../include/VFS/VFSFile.h"
 
-struct VFSArchiveUnRAREntry;
-struct VFSArchiveUnRARDirectory;
-struct VFSArchiveUnRARSeekCache;
+namespace nc::vfs {
 
-class VFSArchiveUnRARHost final : public VFSHost
+namespace unrar {
+struct Entry;
+struct Directory;
+struct SeekCache;
+}
+
+class UnRARHost final : public VFSHost
 {
 public:
     static const char *UniqueTag;
-    VFSArchiveUnRARHost(const string &_path);
-    VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
-    ~VFSArchiveUnRARHost();
+    UnRARHost(const string &_path);
+    UnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
+    ~UnRARHost();
     
     virtual bool IsImmutableFS() const noexcept override;
     virtual VFSConfiguration Configuration() const override;
@@ -72,35 +76,35 @@ public:
     /**
      * Return nullptr on not found.
      */
-    const VFSArchiveUnRAREntry *FindEntry(const string &_full_path) const;
+    const unrar::Entry *FindEntry(const string &_full_path) const;
     
     /**
      * Inserts opened rar handle into host's seek cache.
      */
-    void CommitSeekCache(unique_ptr<VFSArchiveUnRARSeekCache> _sc);
+    void CommitSeekCache(unique_ptr<unrar::SeekCache> _sc);
     
     /**
      * if there're no appropriate caches, host will try to open a new RAR handle.
      * If can't satisfy this call - zero ptr is returned.
      */
-    unique_ptr<VFSArchiveUnRARSeekCache> SeekCache(uint32_t _requested_item);
+    unique_ptr<unrar::SeekCache> SeekCache(uint32_t _requested_item);
     
     
-    shared_ptr<const VFSArchiveUnRARHost> SharedPtr() const {return static_pointer_cast<const VFSArchiveUnRARHost>(VFSHost::SharedPtr());}
-    shared_ptr<VFSArchiveUnRARHost> SharedPtr() {return static_pointer_cast<VFSArchiveUnRARHost>(VFSHost::SharedPtr());}
+    shared_ptr<const UnRARHost> SharedPtr() const {return static_pointer_cast<const UnRARHost>(VFSHost::SharedPtr());}
+    shared_ptr<UnRARHost> SharedPtr() {return static_pointer_cast<UnRARHost>(VFSHost::SharedPtr());}
     
 private:
     int DoInit(); // flags will be added later
     
     int InitialReadFileList(void *_rar_handle);
 
-    VFSArchiveUnRARDirectory *FindOrBuildDirectory(const string& _path_with_tr_sl);
-    const VFSArchiveUnRARDirectory *FindDirectory(const string& _path) const;
+    unrar::Directory *FindOrBuildDirectory(const string& _path_with_tr_sl);
+    const unrar::Directory *FindDirectory(const string& _path) const;
     
-    map<string, VFSArchiveUnRARDirectory>   m_PathToDir; // path to dir with trailing slash -> directory contents
+    map<string, unrar::Directory>           m_PathToDir; // path to dir with trailing slash -> directory contents
     uint32_t                                m_LastItemUID = 0;
-    list<unique_ptr<VFSArchiveUnRARSeekCache>> m_SeekCaches;
-    dispatch_queue_t                           m_SeekCacheControl;
+    list<unique_ptr<unrar::SeekCache>>      m_SeekCaches;
+    dispatch_queue_t                        m_SeekCacheControl;
     uint64_t                                m_PackedItemsSize = 0;
     uint64_t                                m_UnpackedItemsSize = 0;
     bool                                    m_IsSolidArchive = false;
@@ -109,3 +113,5 @@ private:
 
     // TODO: int m_FD for exclusive lock?
 };
+
+}

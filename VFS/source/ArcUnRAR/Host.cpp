@@ -9,9 +9,13 @@
 #include <Utility/PathManip.h>
 #include "../Native/VFSNativeHost.h"
 #include "../VFSListingInput.h"
-#include "VFSArchiveUnRARHost.h"
-#include "VFSArchiveUnRARInternals.h"
-#include "VFSArchiveUnRARFile.h"
+#include "Host.h"
+#include "Internals.h"
+#include "File.h"
+
+namespace nc::vfs {
+
+using namespace unrar;
 
 static time_t DosTimeToUnixTime(uint32_t _dos_time)
 {
@@ -35,7 +39,7 @@ static time_t DosTimeToUnixTime(uint32_t _dos_time)
     return timegm(&timeinfo);
 }
 
-const char *VFSArchiveUnRARHost::UniqueTag = "arc_unrar";
+const char *UnRARHost::UniqueTag = "arc_unrar";
 
 class VFSArchiveUnRARHostConfiguration
 {
@@ -44,7 +48,7 @@ public:
     
     const char *Tag() const
     {
-        return VFSArchiveUnRARHost::UniqueTag;
+        return UnRARHost::UniqueTag;
     }
     
     const char *Junction() const
@@ -65,7 +69,7 @@ static VFSConfiguration ComposeConfiguration( const string &_path )
     return VFSConfiguration( move(config) );
 }
 
-VFSArchiveUnRARHost::VFSArchiveUnRARHost(const string &_path):
+UnRARHost::UnRARHost(const string &_path):
     VFSHost(_path.c_str(), VFSNativeHost::SharedHost(), UniqueTag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
     m_Configuration( ComposeConfiguration(_path) )
@@ -75,7 +79,7 @@ VFSArchiveUnRARHost::VFSArchiveUnRARHost(const string &_path):
         throw VFSErrorException(rc);
 }
 
-VFSArchiveUnRARHost::VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
+UnRARHost::UnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
     VFSHost(_config.Get<VFSArchiveUnRARHostConfiguration>().path.c_str(), _parent, UniqueTag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
     m_Configuration(_config)
@@ -88,33 +92,33 @@ VFSArchiveUnRARHost::VFSArchiveUnRARHost(const VFSHostPtr &_parent, const VFSCon
         throw VFSErrorException(rc);
 }
 
-VFSArchiveUnRARHost::~VFSArchiveUnRARHost()
+UnRARHost::~UnRARHost()
 {
     dispatch_sync(m_SeekCacheControl, ^{});
     dispatch_release(m_SeekCacheControl);
 }
 
-bool VFSArchiveUnRARHost::IsImmutableFS() const noexcept
+bool UnRARHost::IsImmutableFS() const noexcept
 {
     return true;
 }
 
-VFSConfiguration VFSArchiveUnRARHost::Configuration() const
+VFSConfiguration UnRARHost::Configuration() const
 {
     return m_Configuration;
 }
 
-VFSMeta VFSArchiveUnRARHost::Meta()
+VFSMeta UnRARHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
-        return make_shared<VFSArchiveUnRARHost>(_parent, _config);
+        return make_shared<UnRARHost>(_parent, _config);
     };
     return m;
 }
 
-bool VFSArchiveUnRARHost::IsRarArchive(const char *_archive_native_path)
+bool UnRARHost::IsRarArchive(const char *_archive_native_path)
 {
     if(_archive_native_path == nullptr ||
        _archive_native_path[0] != '/')
@@ -142,7 +146,7 @@ bool VFSArchiveUnRARHost::IsRarArchive(const char *_archive_native_path)
     return result;
 }
 
-int VFSArchiveUnRARHost::DoInit()
+int UnRARHost::DoInit()
 {
     if(!Parent() || Parent()->IsNativeFS() == false)
         return VFSError::NotSupported;
@@ -169,9 +173,9 @@ int VFSArchiveUnRARHost::DoInit()
     return 0;
 }
 
-int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
+int UnRARHost::InitialReadFileList(void *_rar_handle)
 {
-    auto root_dir = m_PathToDir.emplace("/", VFSArchiveUnRARDirectory());
+    auto root_dir = m_PathToDir.emplace("/", Directory());
     root_dir.first->second.full_path = "/";
     root_dir.first->second.time = m_ArchiveFileStat.st_mtimespec.tv_sec;
     
@@ -207,8 +211,8 @@ int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
 
         string entry_short_name(last_sl + 1);
         
-        VFSArchiveUnRARDirectory    *parent_dir = FindOrBuildDirectory(parent_dir_path);
-        VFSArchiveUnRAREntry        *entry = nullptr;
+        Directory    *parent_dir = FindOrBuildDirectory(parent_dir_path);
+        Entry        *entry = nullptr;
         
         bool is_directory = (header.Flags & RHDF_DIRECTORY) != 0;
         if(is_directory)
@@ -257,7 +261,7 @@ int VFSArchiveUnRARHost::InitialReadFileList(void *_rar_handle)
     return 0;
 }
 
-VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindOrBuildDirectory(const string& _path_with_tr_sl)
+Directory *UnRARHost::FindOrBuildDirectory(const string& _path_with_tr_sl)
 {
     auto i = m_PathToDir.find(_path_with_tr_sl);
     if(i != m_PathToDir.end())
@@ -272,21 +276,21 @@ VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindOrBuildDirectory(const string
 
     string short_name(_path_with_tr_sl, last_sl + 1, _path_with_tr_sl.size() - last_sl - 2);
     
-    if( find_if(begin(entries), end(entries), [&](const VFSArchiveUnRAREntry&_i) {return _i.name == short_name;} )
+    if( find_if(begin(entries), end(entries), [&](const auto &_i) {return _i.name == short_name;} )
        == end(parent_dir->entries) ) {
         parent_dir->entries.emplace_back();
         parent_dir->entries.back().name = short_name;
     }
     
-    auto dir = m_PathToDir.emplace(_path_with_tr_sl, VFSArchiveUnRARDirectory());
+    auto dir = m_PathToDir.emplace(_path_with_tr_sl, Directory());
     dir.first->second.full_path = _path_with_tr_sl;
     return &dir.first->second;
 }
 
-int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
-                                               shared_ptr<VFSListing> &_target,
-                                               int _flags,
-                                               const VFSCancelChecker &_cancel_checker)
+int UnRARHost::FetchDirectoryListing(const char *_path,
+                                     shared_ptr<VFSListing> &_target,
+                                     int _flags,
+                                     const VFSCancelChecker &_cancel_checker)
 {
     auto dir = FindDirectory(_path);
     if(!dir)
@@ -332,8 +336,8 @@ int VFSArchiveUnRARHost::FetchDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int VFSArchiveUnRARHost::IterateDirectoryListing(const char *_path,
-                                                 const function<bool(const VFSDirEnt &_dirent)> &_handler)
+int UnRARHost::IterateDirectoryListing(const char *_path,
+                                       const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     auto dir = FindDirectory(_path);
     if(!dir)
@@ -353,7 +357,7 @@ int VFSArchiveUnRARHost::IterateDirectoryListing(const char *_path,
     return 0;
 }
 
-const VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindDirectory(const string& _path) const
+const Directory *UnRARHost::FindDirectory(const string& _path) const
 {
     string path = _path;
     if(path.back() != '/')
@@ -366,7 +370,7 @@ const VFSArchiveUnRARDirectory *VFSArchiveUnRARHost::FindDirectory(const string&
     return &i->second;
 }
 
-int VFSArchiveUnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int UnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
 {
     static VFSStat::meaningT m;
     static once_flag once;
@@ -411,7 +415,7 @@ int VFSArchiveUnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, const
     return VFSError::NotFound;
 }
 
-const VFSArchiveUnRAREntry *VFSArchiveUnRARHost::FindEntry(const string &_full_path) const
+const Entry *UnRARHost::FindEntry(const string &_full_path) const
 {
     if(_full_path.empty())
         return nullptr;
@@ -440,19 +444,19 @@ const VFSArchiveUnRAREntry *VFSArchiveUnRARHost::FindEntry(const string &_full_p
     return nullptr;
 }
 
-uint32_t VFSArchiveUnRARHost::ItemUUID(const string& _filename) const
+uint32_t UnRARHost::ItemUUID(const string& _filename) const
 {
     if(auto entry = FindEntry(_filename))
         return entry->uuid;
     return 0;
 }
 
-unique_ptr<VFSArchiveUnRARSeekCache> VFSArchiveUnRARHost::SeekCache(uint32_t _requested_item)
+unique_ptr<unrar::SeekCache> UnRARHost::SeekCache(uint32_t _requested_item)
 {
     if(_requested_item == 0)
         return 0;
     
-    __block unique_ptr<VFSArchiveUnRARSeekCache> res;
+    __block unique_ptr<unrar::SeekCache> res;
     
     dispatch_sync(m_SeekCacheControl, ^{
         // choose the closest cached archive handle if any
@@ -492,7 +496,7 @@ unique_ptr<VFSArchiveUnRARSeekCache> VFSArchiveUnRARHost::SeekCache(uint32_t _re
             return;
         
 //        NSLog(@"spawned new");
-        res = unique_ptr<VFSArchiveUnRARSeekCache>(new VFSArchiveUnRARSeekCache);
+        res = make_unique<unrar::SeekCache>();
         res->rar_handle = rar_file;
     });
     
@@ -500,40 +504,37 @@ unique_ptr<VFSArchiveUnRARSeekCache> VFSArchiveUnRARHost::SeekCache(uint32_t _re
     return tmp;
 }
 
-void VFSArchiveUnRARHost::CommitSeekCache(unique_ptr<VFSArchiveUnRARSeekCache> _sc)
+void UnRARHost::CommitSeekCache(unique_ptr<unrar::SeekCache> _sc)
 {
     assert(_sc->uid < m_LastItemUID);
-    __block unique_ptr<VFSArchiveUnRARSeekCache> sc(move(_sc));
+    __block unique_ptr<unrar::SeekCache> sc(move(_sc));
     dispatch_sync(m_SeekCacheControl, ^{
         m_SeekCaches.push_back(move(sc));
     });
 }
 
-int VFSArchiveUnRARHost::CreateFile(const char* _path,
+int UnRARHost::CreateFile(const char* _path,
                                     shared_ptr<VFSFile> &_target,
                                     const VFSCancelChecker &_cancel_checker)
 {
-    auto file = make_shared<VFSArchiveUnRARFile>(_path, SharedPtr());
+    auto file = make_shared<unrar::File>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
 }
 
-bool VFSArchiveUnRARHost::ShouldProduceThumbnails() const
+bool UnRARHost::ShouldProduceThumbnails() const
 {
-//    if(m_IsSolidArchive && m_PackedItemsSize > 64*1024*1024)
-//        return false;
-//    return true;
     return false;
 }
 
-uint32_t VFSArchiveUnRARHost::LastItemUUID() const
+uint32_t UnRARHost::LastItemUUID() const
 {
     return m_LastItemUID;
 };
 
-int VFSArchiveUnRARHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
+int UnRARHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
 {
     char vol_name[256];
     if(!GetFilenameFromPath(JunctionPath(), vol_name))
@@ -545,4 +546,6 @@ int VFSArchiveUnRARHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCa
     _stat.avail_bytes = 0;
     
     return 0;
+}
+
 }

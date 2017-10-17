@@ -35,9 +35,9 @@
 		CFFA94B31F4543920035E606 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0511DA2336500992B84 /* File.cpp */; };
 		CFFA94B41F4543920035E606 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0541DA2336500992B84 /* Host.cpp */; };
 		CFFA94B51F4543920035E606 /* Internal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0561DA2336500992B84 /* Internal.cpp */; };
-		CFFA94B61F45439B0035E606 /* VFSArchiveUnRARFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0621DA2344A00992B84 /* VFSArchiveUnRARFile.cpp */; };
-		CFFA94B71F45439B0035E606 /* VFSArchiveUnRARHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0641DA2344A00992B84 /* VFSArchiveUnRARHost.cpp */; };
-		CFFA94B81F45439B0035E606 /* VFSArchiveUnRARInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0661DA2344A00992B84 /* VFSArchiveUnRARInternals.cpp */; };
+		CFFA94B61F45439B0035E606 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0621DA2344A00992B84 /* File.cpp */; };
+		CFFA94B71F45439B0035E606 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0641DA2344A00992B84 /* Host.cpp */; };
+		CFFA94B81F45439B0035E606 /* Internals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0661DA2344A00992B84 /* Internals.cpp */; };
 		CFFA94B91F4543A30035E606 /* Fetching.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1FBF381E909AC400D3569C /* Fetching.cpp */; };
 		CFFA94BA1F4543A30035E606 /* DisplayNamesCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */; };
 		CFFA94BB1F4543A30035E606 /* VFSNativeFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0251DA2305A00992B84 /* VFSNativeFile.cpp */; };
@@ -190,12 +190,12 @@
 		CF69D0561DA2336500992B84 /* Internal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Internal.cpp; path = source/ArcLA/Internal.cpp; sourceTree = "<group>"; };
 		CF69D05D1DA233EC00992B84 /* AppleDoubleEA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppleDoubleEA.h; path = include/VFS/AppleDoubleEA.h; sourceTree = "<group>"; };
 		CF69D05F1DA233F700992B84 /* AppleDoubleEA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AppleDoubleEA.cpp; path = source/AppleDoubleEA.cpp; sourceTree = "<group>"; };
-		CF69D0621DA2344A00992B84 /* VFSArchiveUnRARFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARFile.cpp; path = source/ArcUnRAR/VFSArchiveUnRARFile.cpp; sourceTree = "<group>"; };
-		CF69D0631DA2344A00992B84 /* VFSArchiveUnRARFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARFile.h; path = source/ArcUnRAR/VFSArchiveUnRARFile.h; sourceTree = "<group>"; };
-		CF69D0641DA2344A00992B84 /* VFSArchiveUnRARHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARHost.cpp; path = source/ArcUnRAR/VFSArchiveUnRARHost.cpp; sourceTree = "<group>"; };
-		CF69D0651DA2344A00992B84 /* VFSArchiveUnRARHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARHost.h; path = source/ArcUnRAR/VFSArchiveUnRARHost.h; sourceTree = "<group>"; };
-		CF69D0661DA2344A00992B84 /* VFSArchiveUnRARInternals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSArchiveUnRARInternals.cpp; path = source/ArcUnRAR/VFSArchiveUnRARInternals.cpp; sourceTree = "<group>"; };
-		CF69D0671DA2344A00992B84 /* VFSArchiveUnRARInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSArchiveUnRARInternals.h; path = source/ArcUnRAR/VFSArchiveUnRARInternals.h; sourceTree = "<group>"; };
+		CF69D0621DA2344A00992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/ArcUnRAR/File.cpp; sourceTree = "<group>"; };
+		CF69D0631DA2344A00992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/ArcUnRAR/File.h; sourceTree = "<group>"; };
+		CF69D0641DA2344A00992B84 /* Host.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Host.cpp; path = source/ArcUnRAR/Host.cpp; sourceTree = "<group>"; };
+		CF69D0651DA2344A00992B84 /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/ArcUnRAR/Host.h; sourceTree = "<group>"; };
+		CF69D0661DA2344A00992B84 /* Internals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Internals.cpp; path = source/ArcUnRAR/Internals.cpp; sourceTree = "<group>"; };
+		CF69D0671DA2344A00992B84 /* Internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Internals.h; path = source/ArcUnRAR/Internals.h; sourceTree = "<group>"; };
 		CF69D06F1DA2353000992B84 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = File.cpp; path = source/PS/File.cpp; sourceTree = "<group>"; };
 		CF69D0701DA2353000992B84 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = File.h; path = source/PS/File.h; sourceTree = "<group>"; };
 		CF69D0711DA2353000992B84 /* Host.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Host.h; path = source/PS/Host.h; sourceTree = "<group>"; };
@@ -495,12 +495,12 @@
 		CF69D0611DA2343700992B84 /* ArcUnRAR */ = {
 			isa = PBXGroup;
 			children = (
-				CF69D0621DA2344A00992B84 /* VFSArchiveUnRARFile.cpp */,
-				CF69D0631DA2344A00992B84 /* VFSArchiveUnRARFile.h */,
-				CF69D0641DA2344A00992B84 /* VFSArchiveUnRARHost.cpp */,
-				CF69D0651DA2344A00992B84 /* VFSArchiveUnRARHost.h */,
-				CF69D0661DA2344A00992B84 /* VFSArchiveUnRARInternals.cpp */,
-				CF69D0671DA2344A00992B84 /* VFSArchiveUnRARInternals.h */,
+				CF69D0621DA2344A00992B84 /* File.cpp */,
+				CF69D0631DA2344A00992B84 /* File.h */,
+				CF69D0641DA2344A00992B84 /* Host.cpp */,
+				CF69D0651DA2344A00992B84 /* Host.h */,
+				CF69D0661DA2344A00992B84 /* Internals.cpp */,
+				CF69D0671DA2344A00992B84 /* Internals.h */,
 			);
 			name = ArcUnRAR;
 			sourceTree = "<group>";
@@ -667,7 +667,7 @@
 				CFFA95601F5291540035E606 /* DateTimeParser.cpp in Sources */,
 				CFFA94B41F4543920035E606 /* Host.cpp in Sources */,
 				CF5099961F95C881000AFDE7 /* EncodingDetection.mm in Sources */,
-				CFFA94B71F45439B0035E606 /* VFSArchiveUnRARHost.cpp in Sources */,
+				CFFA94B71F45439B0035E606 /* Host.cpp in Sources */,
 				CFFA94CB1F4543BC0035E606 /* OSDetector.cpp in Sources */,
 				CFFA94D51F4543ED0035E606 /* VFSFile.cpp in Sources */,
 				CFFA94C71F4543BC0035E606 /* AccountsFetcher.cpp in Sources */,
@@ -684,7 +684,7 @@
 				CFFA94DB1F4543ED0035E606 /* VFSSeqToRandomWrapper.cpp in Sources */,
 				CFFA94D91F4543ED0035E606 /* VFSListingObjC.mm in Sources */,
 				CFFA94BD1F4543AB0035E606 /* Aux.mm in Sources */,
-				CFFA94B61F45439B0035E606 /* VFSArchiveUnRARFile.cpp in Sources */,
+				CFFA94B61F45439B0035E606 /* File.cpp in Sources */,
 				CFFA94C11F4543AB0035E606 /* FileUploadStream.mm in Sources */,
 				CFFA94D31F4543ED0035E606 /* VFSError.mm in Sources */,
 				CFFA94B31F4543920035E606 /* File.cpp in Sources */,
@@ -695,7 +695,7 @@
 				CFFA94C01F4543AB0035E606 /* FileUploadDelegate.mm in Sources */,
 				CFFA94D61F4543ED0035E606 /* VFSGenericMemReadOnlyFile.cpp in Sources */,
 				CFFA94BC1F4543A30035E606 /* VFSNativeHost.mm in Sources */,
-				CFFA94B81F45439B0035E606 /* VFSArchiveUnRARInternals.cpp in Sources */,
+				CFFA94B81F45439B0035E606 /* Internals.cpp in Sources */,
 				CFFA94CD1F4543C70035E606 /* File.cpp in Sources */,
 				CFFA94C61F4543B30035E606 /* Internals.mm in Sources */,
 				CFFA95561F4E63970035E606 /* WebDAVHost.cpp in Sources */,

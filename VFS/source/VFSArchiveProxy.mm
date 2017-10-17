@@ -8,7 +8,7 @@
 
 #include "../include/VFS/VFSArchiveProxy.h"
 #include "ArcLA/Host.h"
-#include "ArcUnRAR/VFSArchiveUnRARHost.h"
+#include "ArcUnRAR/Host.h"
 
 //bool VFSArchiveProxy::CanOpenFileAsArchive(const string &_path,
 //                                           shared_ptr<VFSHost> _parent)
@@ -30,10 +30,10 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const string &_path,
                                               )
 {
     if(_parent->IsNativeFS() &&
-       VFSArchiveUnRARHost::IsRarArchive(_path.c_str()) )
+       nc::vfs::UnRARHost::IsRarArchive(_path.c_str()) )
     {
         try {
-            auto host = make_shared<VFSArchiveUnRARHost>(_path);
+            auto host = make_shared<nc::vfs::UnRARHost>(_path);
             return host;
         } catch (VFSErrorException &e) {
         }

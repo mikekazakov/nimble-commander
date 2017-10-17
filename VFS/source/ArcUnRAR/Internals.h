@@ -10,7 +10,9 @@
 #include <unrar/raros.hpp>
 #include <unrar/dll.hpp>
 
-struct VFSArchiveUnRAREntry
+namespace nc::vfs::unrar {
+
+struct Entry
 {
     string      rar_name;       // original full name in rar archive, for search and comparisons
     string      name;           // utf-8
@@ -21,19 +23,21 @@ struct VFSArchiveUnRAREntry
     bool        isdir = false;
 };
 
-struct VFSArchiveUnRARDirectory
+struct Directory
 {
     string full_path; // full path to directory including trailing slash
     time_t time = 0;
-    deque<VFSArchiveUnRAREntry> entries;
+    deque<Entry> entries;
 };
 
-struct VFSArchiveUnRARSeekCache
+struct SeekCache
 {
-    ~VFSArchiveUnRARSeekCache();
+    ~SeekCache();
     
     void    *rar_handle = 0;
     uint32_t uid = 0; // uid of a last read item. if client want to use such cache, their's uid should be bigger than uid
 };
 
 int VFSArchiveUnRARErrorToVFSError(int _rar_error);
+
+}

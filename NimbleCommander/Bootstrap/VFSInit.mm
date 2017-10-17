@@ -19,7 +19,7 @@ void RegisterAvailableVFS()
     VFSFactory::Instance().RegisterVFS(        vfs::FTPHost::Meta() );
     VFSFactory::Instance().RegisterVFS(    vfs::DropboxHost::Meta() );
     VFSFactory::Instance().RegisterVFS(    vfs::ArchiveHost::Meta() );
-    VFSFactory::Instance().RegisterVFS( VFSArchiveUnRARHost::Meta() );
+    VFSFactory::Instance().RegisterVFS(      vfs::UnRARHost::Meta() );
     VFSFactory::Instance().RegisterVFS(      vfs::XAttrHost::Meta() );
     VFSFactory::Instance().RegisterVFS(     vfs::WebDAVHost::Meta() );
 }

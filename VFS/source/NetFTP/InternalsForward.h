@@ -8,15 +8,19 @@
 
 #pragma once
 
-class VFSNetFTPHost;
-class VFSNetFTPFile;
 
-namespace VFSNetFTP
-{
+namespace nc::vfs {
+
+class FTPHost;
+
+namespace ftp {
     struct CURLInstance;
     struct Entry;
     struct Directory;
     struct ReadBuffer;
     struct WriteBuffer;
     class Cache;
+    class File;
+}
+
 }

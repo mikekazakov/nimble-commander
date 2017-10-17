@@ -23,12 +23,12 @@ static bool GoToFTP(PanelController *_target,
     dispatch_assert_background_queue();    
     auto &info = _connection.Get<NetworkConnectionsManager::FTP>();
     try {
-        auto host = make_shared<VFSNetFTPHost>(info.host,
-                                               info.user,
-                                               _passwd,
-                                               info.path,
-                                               info.port
-                                               );
+        auto host = make_shared<vfs::FTPHost>(info.host,
+                                              info.user,
+                                              _passwd,
+                                              info.path,
+                                              info.port
+                                              );
         dispatch_to_main_queue([=]{
 //            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
 

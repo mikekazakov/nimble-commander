@@ -11,6 +11,8 @@
 #include <VFS/ArcLA.h>
 #include <VFS/Native.h>
 
+using namespace nc::vfs;
+
 static const auto g_Preffix = "/.FilesTestingData/archives/"s;
 static const auto g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
 static const auto g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
@@ -81,9 +83,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testXNUSource_TAR
 {
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_XNU.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<ArchiveHost>(g_XNU.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -144,9 +146,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 // was fault before 1.0.6, so introducing this regression test
 - (void)testAngular
 {
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_Angular.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<ArchiveHost>(g_Angular.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -174,9 +176,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 // symlinks were faulty in <1.1.3
 - (void)testXNU2
 {
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_XNU2.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<ArchiveHost>(g_XNU2.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -200,9 +202,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 - (void)testEncrypted
 {
     const auto passwd = "pass1"s;
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_Encrypted.c_str(), VFSNativeHost::SharedHost(), passwd);
+        host = make_shared<ArchiveHost>(g_Encrypted.c_str(), VFSNativeHost::SharedHost(), passwd);
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -224,9 +226,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 // contains symlinks
 - (void)testAdiumZip
 {
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<ArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -257,9 +259,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testAdiumZip_XAttrs
 {
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<ArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -289,9 +291,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testLZMASupport
 {
-  shared_ptr<VFSArchiveHost> host;
+  shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_LZMA.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<ArchiveHost>(g_LZMA.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -311,9 +313,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testArchiveWithWarning
 {
-  shared_ptr<VFSArchiveHost> host;
+  shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_WarningArchive.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<ArchiveHost>(g_WarningArchive.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -333,9 +335,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testChineseArchive
 {
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_ChineseArchive.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<ArchiveHost>(g_ChineseArchive.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -355,9 +357,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testArchiveWithHeadingSlash
 {
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_HeadingSlash.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<ArchiveHost>(g_HeadingSlash.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -369,9 +371,9 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void)testArchiveWithSlashDir
 {
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_SlashDir.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<ArchiveHost>(g_SlashDir.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;

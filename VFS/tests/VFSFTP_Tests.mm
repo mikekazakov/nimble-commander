@@ -11,6 +11,7 @@
 #include <VFS/NetFTP.h>
 #include <VFS/Native.h>
 
+using namespace nc::vfs;
 
 static string g_LocalFTP = "192.168.2.5";
 static string g_LocalTestPath = "/Public/!FilesTesting/";
@@ -29,7 +30,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -66,7 +67,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
+        host = make_shared<FTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -103,7 +104,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -137,7 +138,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
+        host = make_shared<FTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -184,7 +185,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>(g_LocalFTP, "", "", "/");
+        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -213,7 +214,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>(g_LocalFTP, "", "", "/");
+        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -250,7 +251,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
+        host = make_shared<FTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -284,7 +285,7 @@ static string UUID()
     auto path = "/debian/pool";
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("ftp.debian.org", "", "", path);
+        host = make_shared<FTPHost>("ftp.debian.org", "", "", path);
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -303,7 +304,7 @@ static string UUID()
 {
     VFSHostPtr host;
     try {
-        auto host = make_shared<VFSNetFTPHost>("ftp.debian.org", "", "", "/debian/dists/wheezy/main/installer-amd64/20130430/images/hd-media/");
+        auto host = make_shared<FTPHost>("ftp.debian.org", "", "", "/debian/dists/wheezy/main/installer-amd64/20130430/images/hd-media/");
         
         // check seeking at big distance and reading an arbitrary selected known data block
         VFSFilePtr file;
@@ -325,7 +326,7 @@ static string UUID()
     auto path = "/redhat/dst2007/APPLICATIONS/";
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("ftp.redhat.com", "", "", path);
+        host = make_shared<FTPHost>("ftp.redhat.com", "", "", path);
     } catch (VFSErrorException &e) {
         XCTAssert( 0 );
         return;
@@ -346,7 +347,7 @@ static string UUID()
     
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("ftp.debian.org", "", "", path.parent_path().native());
+        host = make_shared<FTPHost>("ftp.debian.org", "", "", path.parent_path().native());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;        

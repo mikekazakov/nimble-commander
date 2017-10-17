@@ -447,7 +447,7 @@ optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMa
 {
     function<bool(const Connection &)> pred;
 
-    if( auto ftp = dynamic_cast<const VFSNetFTPHost*>(&_vfs) )
+    if( auto ftp = dynamic_cast<const vfs::FTPHost*>(&_vfs) )
         pred = [ftp](const Connection &i){
             if( auto p = i.Cast<FTP>() )
                 return p->host == ftp->ServerUrl() &&
@@ -504,7 +504,7 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection
     
     VFSHostPtr host;
     if( auto ftp = _connection.Cast<FTP>() )
-        host = make_shared<VFSNetFTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port );
+        host = make_shared<vfs::FTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port );
     else if( auto sftp = _connection.Cast<SFTP>() )
         host = make_shared<vfs::SFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
     else if( auto dropbox = _connection.Cast<Dropbox>() )

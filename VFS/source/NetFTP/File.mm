@@ -1,35 +1,34 @@
-#include "VFSNetFTPFile.h"
-#include "VFSNetFTPHost.h"
-#include "VFSNetFTPInternals.h"
-#include "VFSNetFTPCache.h"
+#include "File.h"
+#include "Host.h"
+#include "Internals.h"
+#include "Cache.h"
 
-using namespace VFSNetFTP;
+namespace nc::vfs::ftp {
 
-VFSNetFTPFile::VFSNetFTPFile(const char* _relative_path,
-                             shared_ptr<VFSNetFTPHost> _host):
+File::File(const char* _relative_path, shared_ptr<FTPHost> _host):
     VFSFile(_relative_path, _host),
     m_ReadBuf(make_unique<ReadBuffer>()),
     m_WriteBuf(make_unique<WriteBuffer>())
 {
 }
 
-VFSNetFTPFile::~VFSNetFTPFile()
+File::~File()
 {
     Close();
 }
 
-bool VFSNetFTPFile::IsOpened() const
+bool File::IsOpened() const
 {
     return m_Mode != Mode::Closed;
 }
 
-int VFSNetFTPFile::Close()
+int File::Close()
 {
     if(m_CURL && m_Mode == Mode::Write)
     {
         // if we're still writing - finish it and tell cache about changes
         FinishWriting();
-        dynamic_pointer_cast<VFSNetFTPHost>(Host())->Cache().CommitNewFile(Path());
+        dynamic_pointer_cast<FTPHost>(Host())->Cache().CommitNewFile(Path());
     }
     if(m_CURL && m_Mode == Mode::Read)
     {
@@ -39,7 +38,7 @@ int VFSNetFTPFile::Close()
     
     if(m_CURL)
     {
-        auto host = dynamic_pointer_cast<VFSNetFTPHost>(Host());
+        auto host = dynamic_pointer_cast<FTPHost>(Host());
         host->CommitIOInstanceAtDir(DirName().c_str(), move(m_CURL));
     }
 
@@ -53,14 +52,14 @@ int VFSNetFTPFile::Close()
     return 0;
 }
 
-path VFSNetFTPFile::DirName() const
+path File::DirName() const
 {
     return path(Path()).parent_path();
 }
 
-int VFSNetFTPFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
 {
-    auto ftp_host = dynamic_pointer_cast<VFSNetFTPHost>(Host());
+    auto ftp_host = dynamic_pointer_cast<FTPHost>(Host());
     VFSStat stat;
     int stat_ret = ftp_host->Stat(Path(), stat, 0, _cancel_checker);
     
@@ -127,7 +126,7 @@ int VFSNetFTPFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker
     return VFSError::NotSupported;
 }
 
-ssize_t VFSNetFTPFile::ReadChunk(
+ssize_t File::ReadChunk(
                                  void *_read_to,
                                  uint64_t _read_size,
                                  uint64_t _file_offset,
@@ -243,7 +242,7 @@ ssize_t VFSNetFTPFile::ReadChunk(
     return size;
 }
 
-ssize_t VFSNetFTPFile::Read(void *_buf, size_t _size)
+ssize_t File::Read(void *_buf, size_t _size)
 {
     if(Eof())
         return 0;
@@ -256,7 +255,7 @@ ssize_t VFSNetFTPFile::Read(void *_buf, size_t _size)
     return ret;
 }
 
-ssize_t VFSNetFTPFile::Write(const void *_buf, size_t _size)
+ssize_t File::Write(const void *_buf, size_t _size)
 {
     // TODO: reconnecting support
     
@@ -320,34 +319,34 @@ ssize_t VFSNetFTPFile::Write(const void *_buf, size_t _size)
     return _size;
 }
 
-VFSFile::ReadParadigm VFSNetFTPFile::GetReadParadigm() const
+VFSFile::ReadParadigm File::GetReadParadigm() const
 {
     return VFSFile::ReadParadigm::Seek;
 }
 
-VFSFile::WriteParadigm VFSNetFTPFile::GetWriteParadigm() const
+VFSFile::WriteParadigm File::GetWriteParadigm() const
 {
     return VFSFile::WriteParadigm::Sequential;
 }
 
-ssize_t VFSNetFTPFile::Pos() const
+ssize_t File::Pos() const
 {
     return m_FilePos;
 }
 
-ssize_t VFSNetFTPFile::Size() const
+ssize_t File::Size() const
 {
     return m_FileSize;
 }
 
-bool VFSNetFTPFile::Eof() const
+bool File::Eof() const
 {
     if(!IsOpened())
         return true;
     return m_FilePos >= m_FileSize;
 }
 
-off_t VFSNetFTPFile::Seek(off_t _off, int _basis)
+off_t File::Seek(off_t _off, int _basis)
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
@@ -376,7 +375,7 @@ off_t VFSNetFTPFile::Seek(off_t _off, int _basis)
     return m_FilePos;
 }
 
-void VFSNetFTPFile::FinishWriting()
+void File::FinishWriting()
 {
     assert(m_Mode == Mode::Write);
     
@@ -406,7 +405,7 @@ void VFSNetFTPFile::FinishWriting()
     }
 }
 
-void VFSNetFTPFile::FinishReading()
+void File::FinishReading()
 {
     assert(m_Mode == Mode::Read);
     
@@ -419,4 +418,6 @@ void VFSNetFTPFile::FinishReading()
     do {
         while(CURLM_CALL_MULTI_PERFORM == curl_multi_perform(m_CURL->curlm, &running_handles));
     } while(running_handles);
+}
+
 }

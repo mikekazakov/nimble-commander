@@ -8,20 +8,22 @@
 
 #pragma once
 #include <VFS/VFSHost.h>
-#include "VFSNetFTPInternalsForward.h"
+#include "InternalsForward.h"
 
 // RTFM: http://www.ietf.org/rfc/rfc959.txt
 
-class VFSNetFTPHost final : public VFSHost
+namespace nc::vfs {
+
+class FTPHost final : public VFSHost
 {
 public:
-    VFSNetFTPHost(const string &_serv_url,
-                  const string &_user,
-                  const string &_passwd,
-                  const string &_start_dir,
-                  long   _port = 21);
-    VFSNetFTPHost(const VFSConfiguration &_config); // should be of type VFSNetFTPHostConfiguration
-    ~VFSNetFTPHost();
+    FTPHost(const string &_serv_url,
+            const string &_user,
+            const string &_passwd,
+            const string &_start_dir,
+            long   _port = 21);
+    FTPHost(const VFSConfiguration &_config); // should be of type VFSNetFTPHostConfiguration
+    ~FTPHost();
 
     static  const char *UniqueTag;
     static VFSMeta Meta();
@@ -71,43 +73,43 @@ public:
 
     void MakeDirectoryStructureDirty(const char *_path);
     
-    unique_ptr<VFSNetFTP::CURLInstance> InstanceForIOAtDir(const path &_dir);
-    void CommitIOInstanceAtDir(const path &_dir, unique_ptr<VFSNetFTP::CURLInstance> _i);
+    unique_ptr<ftp::CURLInstance> InstanceForIOAtDir(const path &_dir);
+    void CommitIOInstanceAtDir(const path &_dir, unique_ptr<ftp::CURLInstance> _i);
     
     
-    inline VFSNetFTP::Cache &Cache() const { return *m_Cache.get(); };
+    inline ftp::Cache &Cache() const { return *m_Cache.get(); };
     
-    shared_ptr<const VFSNetFTPHost> SharedPtr() const {return static_pointer_cast<const VFSNetFTPHost>(VFSHost::SharedPtr());}
-    shared_ptr<VFSNetFTPHost> SharedPtr() {return static_pointer_cast<VFSNetFTPHost>(VFSHost::SharedPtr());}
+    shared_ptr<const FTPHost> SharedPtr() const {return static_pointer_cast<const FTPHost>(VFSHost::SharedPtr());}
+    shared_ptr<FTPHost> SharedPtr() {return static_pointer_cast<FTPHost>(VFSHost::SharedPtr());}
     
 private:
     int DoInit();
-    int DownloadAndCacheListing(VFSNetFTP::CURLInstance *_inst,
+    int DownloadAndCacheListing(ftp::CURLInstance *_inst,
                                 const char *_path,
-                                shared_ptr<VFSNetFTP::Directory> *_cached_dir,
+                                shared_ptr<ftp::Directory> *_cached_dir,
                                 VFSCancelChecker _cancel_checker);
     
-    int GetListingForFetching(VFSNetFTP::CURLInstance *_inst,
+    int GetListingForFetching(ftp::CURLInstance *_inst,
                          const char *_path,
-                         shared_ptr<VFSNetFTP::Directory> *_cached_dir,
+                         shared_ptr<ftp::Directory> *_cached_dir,
                          VFSCancelChecker _cancel_checker);
     
-    unique_ptr<VFSNetFTP::CURLInstance> SpawnCURL();
+    unique_ptr<ftp::CURLInstance> SpawnCURL();
     
-    int DownloadListing(VFSNetFTP::CURLInstance *_inst,
+    int DownloadListing(ftp::CURLInstance *_inst,
                         const char *_path,
                         string &_buffer,
                         VFSCancelChecker _cancel_checker);
     
     void InformDirectoryChanged(const string &_dir_wth_sl);
     
-    void BasicOptsSetup(VFSNetFTP::CURLInstance *_inst);
+    void BasicOptsSetup(ftp::CURLInstance *_inst);
     const class VFSNetFTPHostConfiguration &Config() const noexcept;
     
-    unique_ptr<VFSNetFTP::Cache>        m_Cache;
-    unique_ptr<VFSNetFTP::CURLInstance> m_ListingInstance;
+    unique_ptr<ftp::Cache>        m_Cache;
+    unique_ptr<ftp::CURLInstance> m_ListingInstance;
     
-    map<path, unique_ptr<VFSNetFTP::CURLInstance>>  m_IOIntances;
+    map<path, unique_ptr<ftp::CURLInstance>>  m_IOIntances;
     mutex                                           m_IOIntancesLock;
     
     struct UpdateHandler
@@ -122,3 +124,5 @@ private:
     unsigned long                   m_LastUpdateTicket = 1;
     VFSConfiguration                m_Configuration;
 };
+
+}

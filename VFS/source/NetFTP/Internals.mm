@@ -7,11 +7,10 @@
 //
 
 #include <sys/stat.h>
-#include "VFSNetFTPInternals.h"
-#include "VFSNetFTPHost.h"
+#include "Internals.h"
+#include "Host.h"
 
-namespace VFSNetFTP
-{
+namespace nc::vfs::ftp {
 
 size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp)
 {

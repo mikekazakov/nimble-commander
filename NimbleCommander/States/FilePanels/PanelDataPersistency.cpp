@@ -98,7 +98,7 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host );
 static bool IsNetworkVFS( const VFSHost& _host )
 {
     const auto tag = _host.Tag();
-    return tag == VFSNetFTPHost::UniqueTag ||
+    return tag == vfs::FTPHost::UniqueTag ||
            tag == vfs::SFTPHost::UniqueTag ||
            tag == VFSNetDropboxHost::UniqueTag ||
            tag == vfs::WebDAVHost::UniqueTag;
@@ -291,7 +291,7 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
 static const char *VFSTagForNetworkConnection( const NetworkConnectionsManager::Connection &_conn )
 {
     if( auto ftp = _conn.Cast<NetworkConnectionsManager::FTP>() )
-        return VFSNetFTPHost::UniqueTag;
+        return vfs::FTPHost::UniqueTag;
     else if( auto sftp =_conn.Cast<NetworkConnectionsManager::SFTP>() )
         return vfs::SFTPHost::UniqueTag;
     else if( auto dropbox = _conn.Cast<NetworkConnectionsManager::Dropbox>() )

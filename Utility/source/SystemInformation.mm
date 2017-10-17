@@ -216,6 +216,7 @@ OSXVersion GetOSXVersion() noexcept
         const auto sys_ver = NSProcessInfo.processInfo.operatingSystemVersion;
         if( sys_ver.majorVersion == 10 )
             switch( sys_ver.minorVersion ) {
+                case 13:    return OSXVersion::OSX_13;
                 case 12:    return OSXVersion::OSX_12;
                 case 11:    return OSXVersion::OSX_11;
                 case 10:    return OSXVersion::OSX_10;
@@ -229,11 +230,10 @@ OSXVersion GetOSXVersion() noexcept
 bool GetSystemOverview(SystemOverview &_overview)
 {
     // get machine name everytime
-    CFStringRef computer_name = SCDynamicStoreCopyComputerName(0, 0);
-    if(computer_name == NULL)
-        return false;
-    _overview.computer_name =  ((__bridge NSString*)computer_name).UTF8String;
-    CFRelease(computer_name);
+    if( auto computer_name = SCDynamicStoreCopyComputerName(nullptr, nullptr) ) {
+        _overview.computer_name =  ((__bridge NSString*)computer_name).UTF8String;
+        CFRelease(computer_name);
+    }
     
     // get full user name everytime
     _overview.user_full_name = NSFullUserName().UTF8String;
@@ -245,39 +245,33 @@ bool GetSystemOverview(SystemOverview &_overview)
     call_once(once, []{
         char model[256];
         size_t len = 256;
-        if(sysctlbyname("hw.model", model, &len, NULL, 0) == 0)
-        {
-            coded_model = model;
-            NSString *ns_model = [NSString stringWithUTF8String:model];
-            NSDictionary *dict;
-            NSBundle *bundle;
-            if((bundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/ServerInformation.framework/"]))
-                if(NSString *path = [bundle pathForResource:@"SIMachineAttributes" ofType:@"plist"])
+        if( sysctlbyname("hw.model", model, &len, NULL, 0) != 0)
+            return;
+        coded_model = model;
+        NSDictionary *dict;
+        if( auto bundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/ServerInformation.framework/"] )
+            if( auto path = [bundle pathForResource:@"SIMachineAttributes" ofType:@"plist"] )
+                dict = [NSDictionary dictionaryWithContentsOfFile:path];
+        if( !dict )
+            if( auto bundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/ServerKit.framework/"] )
+                if( auto path = [bundle pathForResource:@"XSMachineAttributes" ofType:@"plist"] )
                     dict = [NSDictionary dictionaryWithContentsOfFile:path];
-            if(!dict && (bundle = [NSBundle bundleWithPath:@"/System/Library/PrivateFrameworks/ServerKit.framework/"]))
-                if(NSString *path = [bundle pathForResource:@"XSMachineAttributes" ofType:@"plist"])
-                    dict = [NSDictionary dictionaryWithContentsOfFile:path];
+        if( !dict )
+            return;
         
-            if(dict)
-                if(id nestdict = [dict objectForKey:ns_model])
-                    if(nestdict && [nestdict isKindOfClass:[NSDictionary class]])
-                    {
-                        id nestnestdict = [(NSDictionary*)nestdict objectForKey:@"_LOCALIZABLE_"];
-                        if(nestnestdict && [nestnestdict isKindOfClass:[NSDictionary class]])
-                        {
-                            id nest_human_model = [(NSDictionary*)nestnestdict objectForKey:@"model"];
-                            if(nest_human_model && [nest_human_model isKindOfClass:[NSString class]])
-                                human_model = nest_human_model;
-                            
-                            id marketing_model = [(NSDictionary*)nestnestdict objectForKey:@"marketingModel"];
-                            if(nest_human_model && marketing_model && [marketing_model isKindOfClass:[NSString class]])
-                            {
-                                NSArray *split = [marketing_model componentsSeparatedByCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"()"]];
-                                if([split count] == 3)
-                                    human_model = [NSString stringWithFormat:@"%@ (%@)", nest_human_model, [split objectAtIndex:1]];
-                            }
-                        }
+        if( auto info = objc_cast<NSDictionary>(dict[[NSString stringWithUTF8String:model]]) ) {
+            if( auto localizable = objc_cast<NSDictionary>(info[@"_LOCALIZABLE_"]) ) {
+                auto model = objc_cast<NSString>(localizable[@"model"]);
+                if( model ) {
+                    human_model = model;
+                    if( auto market_model = objc_cast<NSString>(localizable[@"marketingModel"]) ) {
+                        auto cs = [NSCharacterSet characterSetWithCharactersInString:@"()"];
+                        auto splitted = [market_model componentsSeparatedByCharactersInSet:cs];
+                        if( splitted.count == 3)
+                            human_model = [NSString stringWithFormat:@"%@ (%@)", model, splitted[1]];
                     }
+                }
+            }
         }
     });
     

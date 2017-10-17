@@ -51,6 +51,7 @@ enum class OSXVersion
     OSX_10      = 1100,
     OSX_11      = 1110,
     OSX_12      = 1120,
+    OSX_13      = 1130,
     OSX_Unknown = 100500
 };
     

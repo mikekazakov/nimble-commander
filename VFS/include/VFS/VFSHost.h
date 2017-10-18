@@ -12,7 +12,7 @@
 #include "VFSDeclarations.h"
 #include "VFSConfiguration.h"
 #include "VFSFactory.h"
-#include "VFSListing.h"
+#include "../../source/Listing.h"
 
 class VFSHostDirObservationTicket
 {

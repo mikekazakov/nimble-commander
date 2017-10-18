@@ -1,5 +1,4 @@
 #include "PanelDataExternalEntryKey.h"
-#include <VFS/VFSListing.h>
 #include "PanelDataItemVolatileData.h"
 
 namespace nc::panel::data {

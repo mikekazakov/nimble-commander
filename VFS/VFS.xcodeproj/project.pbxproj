@@ -25,6 +25,7 @@
 		CF5099961F95C881000AFDE7 /* EncodingDetection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5099941F95C881000AFDE7 /* EncodingDetection.mm */; };
 		CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D8E1E659D33002DB0E2 /* libssh2.a */; };
 		CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */; };
+		CFCE73151F972623009E2FD7 /* Listing.h in Headers */ = {isa = PBXBuildFile; fileRef = CFCE73141F972623009E2FD7 /* Listing.h */; };
 		CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */; };
 		CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847171E41C9F9008B7C9F /* Security.framework */; };
 		CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FF1E42DD6000603077 /* LDAP.framework */; };
@@ -69,8 +70,8 @@
 		CFFA94D51F4543ED0035E606 /* VFSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0111DA22BE800992B84 /* VFSFile.cpp */; };
 		CFFA94D61F4543ED0035E606 /* VFSGenericMemReadOnlyFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0121DA22BE800992B84 /* VFSGenericMemReadOnlyFile.cpp */; };
 		CFFA94D71F4543ED0035E606 /* VFSHost.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0081DA2281E00992B84 /* VFSHost.cpp */; };
-		CFFA94D81F4543ED0035E606 /* VFSListing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0131DA22BE800992B84 /* VFSListing.cpp */; };
-		CFFA94D91F4543ED0035E606 /* VFSListingObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F92F1F0B5E250000B3EE /* VFSListingObjC.mm */; };
+		CFFA94D81F4543ED0035E606 /* Listing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0131DA22BE800992B84 /* Listing.cpp */; };
+		CFFA94D91F4543ED0035E606 /* ListingObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F92F1F0B5E250000B3EE /* ListingObjC.mm */; };
 		CFFA94DA1F4543ED0035E606 /* VFSPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0151DA22BE800992B84 /* VFSPath.cpp */; };
 		CFFA94DB1F4543ED0035E606 /* VFSSeqToRandomWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0161DA22BE800992B84 /* VFSSeqToRandomWrapper.cpp */; };
 		CFFA94E41F4544F60035E606 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E31F4544F60035E606 /* libRoutedIO.dylib */; };
@@ -145,7 +146,6 @@
 		CF69CFEE1DA227E400992B84 /* VFSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSFile.h; path = include/VFS/VFSFile.h; sourceTree = "<group>"; };
 		CF69CFEF1DA227E400992B84 /* VFSGenericMemReadOnlyFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSGenericMemReadOnlyFile.h; path = include/VFS/VFSGenericMemReadOnlyFile.h; sourceTree = "<group>"; };
 		CF69CFF01DA227E400992B84 /* VFSHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSHost.h; path = include/VFS/VFSHost.h; sourceTree = "<group>"; };
-		CF69CFF11DA227E400992B84 /* VFSListing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListing.h; path = include/VFS/VFSListing.h; sourceTree = "<group>"; };
 		CF69CFF21DA227E400992B84 /* VFSPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSPath.h; path = include/VFS/VFSPath.h; sourceTree = "<group>"; };
 		CF69CFF31DA227E400992B84 /* VFSSeqToRandomWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSSeqToRandomWrapper.h; path = include/VFS/VFSSeqToRandomWrapper.h; sourceTree = "<group>"; };
 		CF69D0081DA2281E00992B84 /* VFSHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSHost.cpp; path = source/VFSHost.cpp; sourceTree = "<group>"; };
@@ -157,7 +157,7 @@
 		CF69D0101DA22BE800992B84 /* VFSFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSFactory.cpp; path = source/VFSFactory.cpp; sourceTree = "<group>"; };
 		CF69D0111DA22BE800992B84 /* VFSFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSFile.cpp; path = source/VFSFile.cpp; sourceTree = "<group>"; };
 		CF69D0121DA22BE800992B84 /* VFSGenericMemReadOnlyFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSGenericMemReadOnlyFile.cpp; path = source/VFSGenericMemReadOnlyFile.cpp; sourceTree = "<group>"; };
-		CF69D0131DA22BE800992B84 /* VFSListing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSListing.cpp; path = source/VFSListing.cpp; sourceTree = "<group>"; };
+		CF69D0131DA22BE800992B84 /* Listing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Listing.cpp; path = source/Listing.cpp; sourceTree = "<group>"; };
 		CF69D0141DA22BE800992B84 /* ListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ListingInput.h; path = source/ListingInput.h; sourceTree = "<group>"; };
 		CF69D0151DA22BE800992B84 /* VFSPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSPath.cpp; path = source/VFSPath.cpp; sourceTree = "<group>"; };
 		CF69D0161DA22BE800992B84 /* VFSSeqToRandomWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSSeqToRandomWrapper.cpp; path = source/VFSSeqToRandomWrapper.cpp; sourceTree = "<group>"; };
@@ -208,12 +208,13 @@
 		CF818B7D1EA715ED00BC28E6 /* FileDownloadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileDownloadDelegate.h; path = source/NetDropbox/FileDownloadDelegate.h; sourceTree = "<group>"; };
 		CF818B7E1EA715ED00BC28E6 /* FileDownloadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileDownloadDelegate.mm; path = source/NetDropbox/FileDownloadDelegate.mm; sourceTree = "<group>"; };
 		CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenDirectory.framework; path = System/Library/Frameworks/OpenDirectory.framework; sourceTree = SDKROOT; };
-		CFC4F92F1F0B5E250000B3EE /* VFSListingObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListingObjC.mm; path = source/VFSListingObjC.mm; sourceTree = "<group>"; };
+		CFC4F92F1F0B5E250000B3EE /* ListingObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ListingObjC.mm; path = source/ListingObjC.mm; sourceTree = "<group>"; };
 		CFC4F9F31F1719860000B3EE /* OSDetector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OSDetector.cpp; path = source/NetSFTP/OSDetector.cpp; sourceTree = "<group>"; };
 		CFC4F9F41F1719860000B3EE /* OSDetector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSDetector.h; path = source/NetSFTP/OSDetector.h; sourceTree = "<group>"; };
 		CFC4F9F71F171A470000B3EE /* OSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSType.h; path = source/NetSFTP/OSType.h; sourceTree = "<group>"; };
 		CFC4F9F91F171E990000B3EE /* AccountsFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AccountsFetcher.cpp; path = source/NetSFTP/AccountsFetcher.cpp; sourceTree = "<group>"; };
 		CFC4F9FA1F171E990000B3EE /* AccountsFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccountsFetcher.h; path = source/NetSFTP/AccountsFetcher.h; sourceTree = "<group>"; };
+		CFCE73141F972623009E2FD7 /* Listing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Listing.h; path = source/Listing.h; sourceTree = "<group>"; };
 		CFD725FF1E42DD6000603077 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CFD7273D1E42EC8E00603077 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -379,7 +380,6 @@
 				CF69CFEE1DA227E400992B84 /* VFSFile.h */,
 				CF69CFEF1DA227E400992B84 /* VFSGenericMemReadOnlyFile.h */,
 				CF69CFF01DA227E400992B84 /* VFSHost.h */,
-				CF69CFF11DA227E400992B84 /* VFSListing.h */,
 				CF69D0791DA238D400992B84 /* VFSListingInput.h */,
 				CF69CFF21DA227E400992B84 /* VFSPath.h */,
 				CF69CFF31DA227E400992B84 /* VFSSeqToRandomWrapper.h */,
@@ -409,8 +409,9 @@
 				CF69D0111DA22BE800992B84 /* VFSFile.cpp */,
 				CF69D0121DA22BE800992B84 /* VFSGenericMemReadOnlyFile.cpp */,
 				CF69D0081DA2281E00992B84 /* VFSHost.cpp */,
-				CF69D0131DA22BE800992B84 /* VFSListing.cpp */,
-				CFC4F92F1F0B5E250000B3EE /* VFSListingObjC.mm */,
+				CFCE73141F972623009E2FD7 /* Listing.h */,
+				CF69D0131DA22BE800992B84 /* Listing.cpp */,
+				CFC4F92F1F0B5E250000B3EE /* ListingObjC.mm */,
 				CF69D0141DA22BE800992B84 /* ListingInput.h */,
 				CF69D0151DA22BE800992B84 /* VFSPath.cpp */,
 				CF69D0161DA22BE800992B84 /* VFSSeqToRandomWrapper.cpp */,
@@ -552,6 +553,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF1FDD071F5D4AEC00AF1EBD /* PathRoutines.h in Headers */,
+				CFCE73151F972623009E2FD7 /* Listing.h in Headers */,
 				CF3E2F871F60DF08001BFFCE /* Requests.h in Headers */,
 				CF1FDD031F5BBA6F00AF1EBD /* WriteBuffer.h in Headers */,
 				CF5099951F95C881000AFDE7 /* EncodingDetection.h in Headers */,
@@ -663,7 +665,7 @@
 				CFFA94CE1F4543C70035E606 /* Host.mm in Sources */,
 				CF1FDD041F5BBA6F00AF1EBD /* WriteBuffer.cpp in Sources */,
 				CFFA94BE1F4543AB0035E606 /* File.mm in Sources */,
-				CFFA94D81F4543ED0035E606 /* VFSListing.cpp in Sources */,
+				CFFA94D81F4543ED0035E606 /* Listing.cpp in Sources */,
 				CFFA95601F5291540035E606 /* DateTimeParser.cpp in Sources */,
 				CFFA94B41F4543920035E606 /* Host.cpp in Sources */,
 				CF5099961F95C881000AFDE7 /* EncodingDetection.mm in Sources */,
@@ -682,7 +684,7 @@
 				CFFA956C1F5A477F0035E606 /* File.cpp in Sources */,
 				CFFA94BA1F4543A30035E606 /* DisplayNamesCache.mm in Sources */,
 				CFFA94DB1F4543ED0035E606 /* VFSSeqToRandomWrapper.cpp in Sources */,
-				CFFA94D91F4543ED0035E606 /* VFSListingObjC.mm in Sources */,
+				CFFA94D91F4543ED0035E606 /* ListingObjC.mm in Sources */,
 				CFFA94BD1F4543AB0035E606 /* Aux.mm in Sources */,
 				CFFA94B61F45439B0035E606 /* File.cpp in Sources */,
 				CFFA94C11F4543AB0035E606 /* FileUploadStream.mm in Sources */,

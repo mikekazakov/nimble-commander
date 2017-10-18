@@ -170,9 +170,14 @@ struct VFSGroup
 
 namespace nc::vfs {
     class Listing;
+    class ListingItem;
+    class WeakListingItem;
 }
 
-using VFSListing = nc::vfs::Listing;
+using VFSListing            = nc::vfs::Listing;
+using VFSListingPtr         = shared_ptr<nc::vfs::Listing>;
+using VFSListingItem        = nc::vfs::ListingItem;
+using VFSWeakListingItem    = nc::vfs::WeakListingItem;
 
 class VFSHost;
 class VFSFile;
@@ -181,6 +186,5 @@ class VFSConfiguration;
 
 typedef shared_ptr<VFSHost>         VFSHostPtr;
 typedef weak_ptr<VFSHost>           VFSHostWeakPtr;
-using VFSListingPtr = shared_ptr<nc::vfs::Listing>;
 typedef shared_ptr<VFSFile>         VFSFilePtr;
 typedef function<bool()>            VFSCancelChecker;

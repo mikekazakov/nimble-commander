@@ -6,14 +6,14 @@
 //  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../include/VFS/VFSListing.h"
+#include "Listing.h"
 #include "../include/VFS/VFSHost.h"
 #include "ListingInput.h"
 
 namespace nc::vfs {
 
-static_assert( is_move_constructible<VFSListingItem>::value, "" );
-static_assert( is_move_constructible<VFSListing::iterator>::value, "" );
+static_assert( is_move_constructible<ListingItem>::value, "" );
+static_assert( is_move_constructible<Listing::iterator>::value, "" );
 
 static bool BasicDirectoryCheck(const string& _str)
 {
@@ -122,7 +122,7 @@ shared_ptr<Listing> Listing::Build(ListingInput &&_input)
     return l;
 }
 
-ListingInput Listing::Compose(const vector<shared_ptr<VFSListing>> &_listings)
+ListingInput Listing::Compose(const vector<shared_ptr<Listing>> &_listings)
 {
     ListingInput result;
     result.hosts.reset( variable_container<>::type::dense );
@@ -181,7 +181,7 @@ ListingInput Listing::Compose(const vector<shared_ptr<VFSListing>> &_listings)
     return result;
 }
 
-ListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listings, const vector< vector<unsigned> > &_items_indeces)
+ListingInput Listing::Compose(const vector<shared_ptr<Listing>> &_listings, const vector< vector<unsigned> > &_items_indeces)
 {
     if( _listings.size() != _items_indeces.size() )
         throw invalid_argument("VFSListing::Compose input containers has different sizes");
@@ -247,7 +247,7 @@ ListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listings
     return result;
 }
 
-VFSListingPtr VFSListing::ProduceUpdatedTemporaryPanelListing( const VFSListing& _original, VFSCancelChecker _cancel_checker )
+VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing( const Listing& _original, VFSCancelChecker _cancel_checker )
 {
     ListingInput result;
     unsigned count = 0;
@@ -307,7 +307,7 @@ VFSListingPtr VFSListing::ProduceUpdatedTemporaryPanelListing( const VFSListing&
     return Build( move(result) );
 }
 
-const shared_ptr<VFSListing> &VFSListing::EmptyListing() noexcept
+const shared_ptr<Listing> &Listing::EmptyListing() noexcept
 {
     static const auto empty = []{
         auto l = Alloc();
@@ -689,360 +689,360 @@ bool Listing::IsHidden(unsigned _ind) const
     return (Filename(_ind)[0] == '.' || (UnixFlags(_ind) & UF_HIDDEN)) && !IsDotDot(_ind);
 }
 
-VFSListingItem Listing::Item(unsigned _ind) const
+ListingItem Listing::Item(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    return VFSListingItem(shared_from_this(), _ind);
+    return ListingItem(shared_from_this(), _ind);
 }
 
 Listing::iterator Listing::begin() const noexcept
 {
     iterator it;
-    it.i = VFSListingItem(shared_from_this(), 0);
+    it.i = ListingItem(shared_from_this(), 0);
     return it;
 }
 
 Listing::iterator Listing::end() const noexcept
 {
     iterator it;
-    it.i = VFSListingItem(shared_from_this(), m_ItemsCount);
+    it.i = ListingItem(shared_from_this(), m_ItemsCount);
     return it;
 }
 
 /**
  * VFSListingItem
  *///////
-VFSListingItem::VFSListingItem() noexcept:
+ListingItem::ListingItem() noexcept:
     I( numeric_limits<unsigned>::max() ),
     L( nullptr )
 {
 }
 
-VFSListingItem::VFSListingItem(const shared_ptr<const class Listing>& _listing, unsigned _ind) noexcept:
+ListingItem::ListingItem(const shared_ptr<const class Listing>& _listing, unsigned _ind) noexcept:
     I(_ind),
     L(_listing)
 {
 }
 
-VFSListingItem::operator bool() const noexcept
+ListingItem::operator bool() const noexcept
 {
     return (bool)L;
 }
 
-const shared_ptr<const Listing>& VFSListingItem::Listing() const noexcept
+const shared_ptr<const Listing>& ListingItem::Listing() const noexcept
 {
     return L;
 }
 
-unsigned VFSListingItem::Index() const noexcept
+unsigned ListingItem::Index() const noexcept
 {
     return I;
 }
 
-string VFSListingItem::Path() const
+string ListingItem::Path() const
 {
     return L->Path(I);
 }
 
-const VFSHostPtr& VFSListingItem::Host() const
+const VFSHostPtr& ListingItem::Host() const
 {
     return L->Host(I);
 }
 
-const string& VFSListingItem::Directory() const
+const string& ListingItem::Directory() const
 {
     return L->Directory(I);
 }
 
-const string& VFSListingItem::Filename() const
+const string& ListingItem::Filename() const
 {
     return L->Filename(I);
 }
 
-const char *VFSListingItem::FilenameC() const
+const char *ListingItem::FilenameC() const
 {
     return L->Filename(I).c_str();
 }
 
-size_t VFSListingItem::FilenameLen() const
+size_t ListingItem::FilenameLen() const
 {
     return L->Filename(I).length();
 }
 
-CFStringRef VFSListingItem::FilenameCF() const
+CFStringRef ListingItem::FilenameCF() const
 {
     return L->FilenameCF(I);
 }
 
-bool VFSListingItem::HasDisplayName() const
+bool ListingItem::HasDisplayName() const
 {
     return L->HasDisplayFilename(I);
 }
 
-const string& VFSListingItem::DisplayName() const
+const string& ListingItem::DisplayName() const
 {
     return L->DisplayFilename(I);
 }
 
-CFStringRef VFSListingItem::DisplayNameCF() const
+CFStringRef ListingItem::DisplayNameCF() const
 {
     return L->DisplayFilenameCF(I);
 }
 
-bool VFSListingItem::HasExtension() const
+bool ListingItem::HasExtension() const
 {
     return L->HasExtension(I);
 }
 
-uint16_t VFSListingItem::ExtensionOffset() const
+uint16_t ListingItem::ExtensionOffset() const
 {
     return L->ExtensionOffset(I);
 }
 
-const char* VFSListingItem::Extension() const
+const char* ListingItem::Extension() const
 {
     return L->Extension(I);
 }
 
-const char* VFSListingItem::ExtensionIfAny() const
+const char* ListingItem::ExtensionIfAny() const
 {
     return HasExtension() ? Extension() : "";
 }
 
-string VFSListingItem::FilenameWithoutExt() const
+string ListingItem::FilenameWithoutExt() const
 {
     return L->FilenameWithoutExt(I);
 }
 
-mode_t VFSListingItem::UnixMode() const
+mode_t ListingItem::UnixMode() const
 {
     return L->UnixMode(I);
 }
 
-uint8_t VFSListingItem::UnixType() const
+uint8_t ListingItem::UnixType() const
 {
     return L->UnixType(I);
 }
 
-bool VFSListingItem::HasSize() const
+bool ListingItem::HasSize() const
 {
     return L->HasSize(I);
 }
 
-uint64_t VFSListingItem::Size() const
+uint64_t ListingItem::Size() const
 {
     return L->Size(I);
 }
 
-bool VFSListingItem::HasInode() const
+bool ListingItem::HasInode() const
 {
     return L->HasInode(I);
 }
 
-uint64_t VFSListingItem::Inode() const
+uint64_t ListingItem::Inode() const
 {
     return L->Inode(I);
 }
 
-bool VFSListingItem::HasATime() const
+bool ListingItem::HasATime() const
 {
     return L->HasATime(I);
 }
 
-time_t VFSListingItem::ATime() const
+time_t ListingItem::ATime() const
 {
     return L->ATime(I);
 }
 
-bool VFSListingItem::HasMTime() const
+bool ListingItem::HasMTime() const
 {
     return L->HasMTime(I);
 }
 
-time_t VFSListingItem::MTime() const
+time_t ListingItem::MTime() const
 {
     return L->MTime(I);
 }
 
-bool VFSListingItem::HasCTime() const
+bool ListingItem::HasCTime() const
 {
     return L->HasCTime(I);
 }
 
-time_t VFSListingItem::CTime() const
+time_t ListingItem::CTime() const
 {
     return L->CTime(I);
 }
 
-bool VFSListingItem::HasBTime() const
+bool ListingItem::HasBTime() const
 {
     return L->HasBTime(I);
 }
 
-time_t VFSListingItem::BTime() const
+time_t ListingItem::BTime() const
 {
     return L->BTime(I);
 }
 
-bool VFSListingItem::HasAddTime() const
+bool ListingItem::HasAddTime() const
 {
     return L->HasAddTime(I);
 }
 
-time_t VFSListingItem::AddTime() const
+time_t ListingItem::AddTime() const
 {
     return L->AddTime(I);
 }
 
-bool VFSListingItem::HasUnixFlags() const
+bool ListingItem::HasUnixFlags() const
 {
     return L->HasUnixFlags(I);
 }
 
-uint32_t VFSListingItem::UnixFlags() const
+uint32_t ListingItem::UnixFlags() const
 {
     return L->UnixFlags(I);
 }
 
-bool VFSListingItem::HasUnixUID() const
+bool ListingItem::HasUnixUID() const
 {
     return L->HasUID(I);
 }
 
-uid_t VFSListingItem::UnixUID() const
+uid_t ListingItem::UnixUID() const
 {
     return L->UID(I);
 }
 
-bool VFSListingItem::HasUnixGID() const
+bool ListingItem::HasUnixGID() const
 {
     return L->HasGID(I);
 }
 
-gid_t VFSListingItem::UnixGID() const
+gid_t ListingItem::UnixGID() const
 {
     return L->GID(I);
 }
 
-bool VFSListingItem::HasSymlink() const
+bool ListingItem::HasSymlink() const
 {
     return L->HasSymlink(I);
 }
 
-const char *VFSListingItem::Symlink() const
+const char *ListingItem::Symlink() const
 {
     return L->Symlink(I).c_str();
 }
 
-bool VFSListingItem::IsDir() const
+bool ListingItem::IsDir() const
 {
     return L->IsDir(I);
 }
 
-bool VFSListingItem::IsReg() const
+bool ListingItem::IsReg() const
 {
     return L->IsReg(I);
 }
 
-bool VFSListingItem::IsSymlink() const
+bool ListingItem::IsSymlink() const
 {
     return L->IsSymlink(I);
 }
 
-bool VFSListingItem::IsDotDot() const
+bool ListingItem::IsDotDot() const
 {
     return L->IsDotDot(I);
 }
 
-bool VFSListingItem::IsHidden() const
+bool ListingItem::IsHidden() const
 {
     return L->IsHidden(I);
 }
 
-bool VFSListingItem::operator ==(const VFSListingItem&_) const noexcept
+bool ListingItem::operator ==(const ListingItem&_) const noexcept
 {
     return I == _.I && L == _.L;
 }
 
-bool VFSListingItem::operator !=(const VFSListingItem&_) const noexcept
+bool ListingItem::operator !=(const ListingItem&_) const noexcept
 {
     return I != _.I || L != _.L;
 }
 
-VFSWeakListingItem::VFSWeakListingItem() noexcept
+WeakListingItem::WeakListingItem() noexcept
 {
 }
 
-VFSWeakListingItem::VFSWeakListingItem(const VFSListingItem &_item) noexcept:
+WeakListingItem::WeakListingItem(const ListingItem &_item) noexcept:
     L(_item.L),
     I(_item.I)
 {
 }
 
-VFSWeakListingItem::VFSWeakListingItem(const VFSWeakListingItem &_item) noexcept:
+WeakListingItem::WeakListingItem(const WeakListingItem &_item) noexcept:
     L(_item.L),
     I(_item.I)
 {
 }
 
-VFSWeakListingItem::VFSWeakListingItem(VFSWeakListingItem &&_item) noexcept:
+WeakListingItem::WeakListingItem(WeakListingItem &&_item) noexcept:
     L( move(_item.L) ),
     I( _item.I )
 {
 }
 
-const VFSWeakListingItem& VFSWeakListingItem::operator=( const VFSListingItem &_item ) noexcept
+const WeakListingItem& WeakListingItem::operator=( const ListingItem &_item ) noexcept
 {
     L = _item.L;
     I = _item.I;
     return *this;
 }
 
-const VFSWeakListingItem& VFSWeakListingItem::operator=( const VFSWeakListingItem &_item ) noexcept
+const WeakListingItem& WeakListingItem::operator=( const WeakListingItem &_item ) noexcept
 {
     L = _item.L;
     I = _item.I;
     return *this;
 }
 
-const VFSWeakListingItem& VFSWeakListingItem::operator=( VFSWeakListingItem &&_item ) noexcept
+const WeakListingItem& WeakListingItem::operator=( WeakListingItem &&_item ) noexcept
 {
     L = move(_item.L);
     I = _item.I;
     return *this;
 }
 
-VFSListingItem VFSWeakListingItem::Lock() const noexcept
+ListingItem WeakListingItem::Lock() const noexcept
 {
     return { L.lock(), I };
 }
 
-bool VFSWeakListingItem::operator ==(const VFSWeakListingItem&_) const noexcept
+bool WeakListingItem::operator ==(const WeakListingItem&_) const noexcept
 {
     return I == _.I && !L.owner_before(_.L) && !_.L.owner_before(L);
 }
 
-bool VFSWeakListingItem::operator !=(const VFSWeakListingItem&_) const noexcept
+bool WeakListingItem::operator !=(const WeakListingItem&_) const noexcept
 {
     return !(*this == _);
 }
 
-bool VFSWeakListingItem::operator ==(const VFSListingItem&_) const noexcept
+bool WeakListingItem::operator ==(const ListingItem&_) const noexcept
 {
     return I == _.I && !L.owner_before(_.L) && !_.L.owner_before(L);
 }
 
-bool VFSWeakListingItem::operator !=(const VFSListingItem&_) const noexcept
+bool WeakListingItem::operator !=(const ListingItem&_) const noexcept
 {
     return !(*this == _);
 }
 
-bool operator==(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept
+bool operator==(const ListingItem&_l, const WeakListingItem&_r) noexcept
 {
     return _r == _l;
 }
 
-bool operator!=(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept
+bool operator!=(const ListingItem&_l, const WeakListingItem&_r) noexcept
 {
     return !(_r == _l);
 }
@@ -1085,7 +1085,7 @@ bool Listing::iterator::operator!=(const iterator& _r) const noexcept
     return !(*this == _r);
 }
 
-const VFSListingItem& Listing::iterator::operator*() const noexcept
+const ListingItem& Listing::iterator::operator*() const noexcept
 {
     return i;
 }

@@ -1,4 +1,4 @@
-#include "../include/VFS/VFSListing.h"
+#include "Listing.h"
 
 NSString* VFSListing::FilenameNS(unsigned _ind) const
 {

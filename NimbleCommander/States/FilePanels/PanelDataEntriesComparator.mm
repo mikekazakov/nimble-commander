@@ -1,5 +1,4 @@
 #include "PanelDataEntriesComparator.h"
-#include <VFS/VFSListing.h>
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataExternalEntryKey.h"
 

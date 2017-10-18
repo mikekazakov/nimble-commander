@@ -10,7 +10,7 @@
 
 #include <Habanero/variable_container.h>
 #include <Habanero/CFString.h>
-#include "VFSDeclarations.h"
+#include <VFS/VFSDeclarations.h>
 
 /**
  * A note about symlinks handling. Listing must be aware, that some items might be symlinks.
@@ -27,8 +27,8 @@
 namespace nc::vfs {
 
 struct ListingInput;
-class VFSListingItem;
-class VFSWeakListingItem;
+class ListingItem;
+class WeakListingItem;
 
 class Listing : public enable_shared_from_this<Listing>
 {
@@ -58,7 +58,7 @@ public:
     bool                HasCommonHost       () const noexcept;
     bool                HasCommonDirectory  () const noexcept;
 
-    VFSListingItem      Item                (unsigned _ind) const;
+    ListingItem         Item                (unsigned _ind) const;
 
     const string&       Directory           () const; // will throw if there's no common directory
     const string&       Directory           (unsigned _ind) const;
@@ -131,7 +131,7 @@ public:
     bool                IsSymlink           (unsigned _ind) const;
     bool                IsHidden            (unsigned _ind) const;
     
-    struct iterator;
+    class iterator;
     iterator            begin               () const noexcept;
     iterator            end                 () const noexcept;
     
@@ -165,12 +165,12 @@ private:
     variable_container<CFString>    m_DisplayFilenamesCF;
 };
 
-// VFSListingItem class is a simple wrapper around (pointer;index) pair for object-oriented access to listing items with value semantics.
-class VFSListingItem
+// ListingItem class is a simple wrapper around (pointer;index) pair for object-oriented access to listing items with value semantics.
+class ListingItem
 {
 public:
-    VFSListingItem() noexcept;
-    VFSListingItem(const shared_ptr<const VFSListing>& _listing, unsigned _ind) noexcept;
+    ListingItem() noexcept;
+    ListingItem(const shared_ptr<const Listing>& _listing, unsigned _ind) noexcept;
     operator                                bool()              const noexcept;
     const shared_ptr<const Listing>&        Listing()           const noexcept;
     unsigned                                Index()             const noexcept;
@@ -243,45 +243,46 @@ public:
     bool            IsDotDot()          const;
     bool            IsHidden()          const;
     
-    bool operator ==(const VFSListingItem&_) const noexcept;
-    bool operator !=(const VFSListingItem&_) const noexcept;
+    bool operator ==(const ListingItem&_) const noexcept;
+    bool operator !=(const ListingItem&_) const noexcept;
     
 private:
-    shared_ptr<const VFSListing>    L;
+    shared_ptr<const class Listing> L;
     unsigned                        I;
     friend Listing::iterator;
-    friend VFSWeakListingItem;
+    friend WeakListingItem;
 };
 
-class VFSWeakListingItem
+class WeakListingItem
 {
 public:
-    VFSWeakListingItem() noexcept;
-    VFSWeakListingItem(const VFSListingItem &_item) noexcept;
-    VFSWeakListingItem(const VFSWeakListingItem &_item) noexcept;
-    VFSWeakListingItem(VFSWeakListingItem &&_item) noexcept;
+    WeakListingItem() noexcept;
+    WeakListingItem(const ListingItem &_item) noexcept;
+    WeakListingItem(const WeakListingItem &_item) noexcept;
+    WeakListingItem(WeakListingItem &&_item) noexcept;
     
-    const VFSWeakListingItem& operator=( const VFSListingItem &_item ) noexcept;
-    const VFSWeakListingItem& operator=( const VFSWeakListingItem &_item ) noexcept;
-    const VFSWeakListingItem& operator=( VFSWeakListingItem &&_item ) noexcept;
+    const WeakListingItem& operator=( const ListingItem &_item ) noexcept;
+    const WeakListingItem& operator=( const WeakListingItem &_item ) noexcept;
+    const WeakListingItem& operator=( WeakListingItem &&_item ) noexcept;
     
-    VFSListingItem Lock() const noexcept;
+    ListingItem Lock() const noexcept;
     
-    bool operator ==(const VFSWeakListingItem&) const noexcept;
-    bool operator !=(const VFSWeakListingItem&) const noexcept;
-    bool operator ==(const VFSListingItem&) const noexcept;
-    bool operator !=(const VFSListingItem&) const noexcept;
+    bool operator ==(const WeakListingItem&) const noexcept;
+    bool operator !=(const WeakListingItem&) const noexcept;
+    bool operator ==(const ListingItem&) const noexcept;
+    bool operator !=(const ListingItem&) const noexcept;
     
 private:
-    weak_ptr<const VFSListing>  L;
+    weak_ptr<const Listing>  L;
     unsigned                    I;
 };
 
-bool operator==(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept;
-bool operator!=(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept;
+bool operator==(const ListingItem&_l, const WeakListingItem&_r) noexcept;
+bool operator!=(const ListingItem&_l, const WeakListingItem&_r) noexcept;
 
-struct Listing::iterator
+class Listing::iterator
 {
+public:
     iterator &operator--() noexcept; // prefix decrement
     iterator &operator++() noexcept; // prefix increment
     iterator operator--(int) noexcept; // posfix decrement
@@ -289,14 +290,11 @@ struct Listing::iterator
     
     bool operator==(const iterator& _r) const noexcept;
     bool operator!=(const iterator& _r) const noexcept;
-    const VFSListingItem& operator*() const noexcept;
+    const ListingItem& operator*() const noexcept;
 
 private:
-    VFSListingItem i;
+    ListingItem i;
     friend class Listing;
 };
 
 };
-
-using nc::vfs::VFSListingItem;
-using nc::vfs::VFSWeakListingItem;

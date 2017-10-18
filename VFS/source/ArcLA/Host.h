@@ -20,7 +20,7 @@ struct DirEntry;
 struct State;
 }
 
-class ArchiveHost final : public VFSHost
+class ArchiveHost final : public Host
 {
 public:
     ArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password = nullopt, VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
@@ -71,8 +71,8 @@ public:
     // use SeekCache or open a new file and seeks to requested item
     int ArchiveStateForItem(const char *_filename, unique_ptr<arc::State> &_target);
     
-    shared_ptr<const ArchiveHost> SharedPtr() const {return static_pointer_cast<const ArchiveHost>(VFSHost::SharedPtr());}
-    shared_ptr<ArchiveHost> SharedPtr() {return static_pointer_cast<ArchiveHost>(VFSHost::SharedPtr());}
+    shared_ptr<const ArchiveHost> SharedPtr() const {return static_pointer_cast<const ArchiveHost>(Host::SharedPtr());}
+    shared_ptr<ArchiveHost> SharedPtr() {return static_pointer_cast<ArchiveHost>(Host::SharedPtr());}
     
     /** return VFSError, not uids returned */
     int ResolvePathIfNeeded(const char *_path, char *_resolved_path, int _flags);

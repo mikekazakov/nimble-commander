@@ -116,7 +116,7 @@ XAttrHost::XAttrHost( const string &_file_path, const VFSHostPtr& _host ):
 }
 
 XAttrHost::XAttrHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
-    VFSHost( _config.Get<VFSXAttrHostConfiguration>().path.c_str(), _parent, UniqueTag ),
+    Host( _config.Get<VFSXAttrHostConfiguration>().path.c_str(), _parent, UniqueTag ),
     m_Configuration(_config)
 {
     auto path = JunctionPath();

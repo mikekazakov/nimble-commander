@@ -9,7 +9,7 @@ namespace nc::vfs {
  * This every API call may take seconds to complete, VFSNetDropboxHost assumes primarily background
  * usage. When called from the main thread, this VFS will bug caller's console with warning. 
  */
-class DropboxHost final : public VFSHost
+class DropboxHost final : public Host
 {
 public:
     static const char *UniqueTag;
@@ -59,8 +59,8 @@ public:
                        const char *_new_path,
                        const VFSCancelChecker &_cancel_checker ) override;
 
-    shared_ptr<const DropboxHost> SharedPtr() const {return static_pointer_cast<const DropboxHost>(VFSHost::SharedPtr());}
-    shared_ptr<DropboxHost> SharedPtr() {return static_pointer_cast<DropboxHost>(VFSHost::SharedPtr());}
+    shared_ptr<const DropboxHost> SharedPtr() const {return static_pointer_cast<const DropboxHost>(Host::SharedPtr());}
+    shared_ptr<DropboxHost> SharedPtr() {return static_pointer_cast<DropboxHost>(Host::SharedPtr());}
 
     const string &Account() const;
     const string &Token() const;

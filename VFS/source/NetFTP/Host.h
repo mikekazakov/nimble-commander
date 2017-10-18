@@ -14,7 +14,7 @@
 
 namespace nc::vfs {
 
-class FTPHost final : public VFSHost
+class FTPHost final : public Host
 {
 public:
     FTPHost(const string &_serv_url,
@@ -79,8 +79,8 @@ public:
     
     inline ftp::Cache &Cache() const { return *m_Cache.get(); };
     
-    shared_ptr<const FTPHost> SharedPtr() const {return static_pointer_cast<const FTPHost>(VFSHost::SharedPtr());}
-    shared_ptr<FTPHost> SharedPtr() {return static_pointer_cast<FTPHost>(VFSHost::SharedPtr());}
+    shared_ptr<const FTPHost> SharedPtr() const {return static_pointer_cast<const FTPHost>(Host::SharedPtr());}
+    shared_ptr<FTPHost> SharedPtr() {return static_pointer_cast<FTPHost>(Host::SharedPtr());}
     
 private:
     int DoInit();

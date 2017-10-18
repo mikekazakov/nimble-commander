@@ -55,7 +55,7 @@ VFSMeta NativeHost::Meta()
 }
 
 NativeHost::NativeHost():
-    VFSHost("", 0, UniqueTag)
+    Host("", 0, UniqueTag)
 {
     AddFeatures(HostFeatures::FetchUsers |
                 HostFeatures::FetchGroups |

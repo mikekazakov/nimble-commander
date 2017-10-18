@@ -268,7 +268,7 @@ public:
 };
 
 PSHost::PSHost():
-    VFSHost("", shared_ptr<VFSHost>(0), UniqueTag),
+    Host("", shared_ptr<Host>(0), UniqueTag),
     m_UpdateQ("PSHost")
 {
     CommitProcs(GetProcs());

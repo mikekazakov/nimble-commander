@@ -81,7 +81,7 @@ FTPHost::FTPHost(const string &_serv_url,
                  const string &_passwd,
                  const string &_start_dir,
                  long   _port):
-    VFSHost(_serv_url.c_str(), nullptr, UniqueTag),
+    Host(_serv_url.c_str(), nullptr, UniqueTag),
     m_Configuration( ComposeConfiguration(_serv_url, _user, _passwd, _start_dir, _port) ),
     m_Cache(make_unique<ftp::Cache>())
 {
@@ -91,7 +91,7 @@ FTPHost::FTPHost(const string &_serv_url,
 }
 
 FTPHost::FTPHost(const VFSConfiguration &_config):
-    VFSHost( _config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
+    Host( _config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
     m_Cache(make_unique<ftp::Cache>()),
     m_Configuration(_config)
 {

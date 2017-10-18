@@ -70,7 +70,7 @@ static VFSConfiguration ComposeConfiguration( const string &_path )
 }
 
 UnRARHost::UnRARHost(const string &_path):
-    VFSHost(_path.c_str(), VFSNativeHost::SharedHost(), UniqueTag),
+    Host(_path.c_str(), VFSNativeHost::SharedHost(), UniqueTag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
     m_Configuration( ComposeConfiguration(_path) )
 {
@@ -80,7 +80,7 @@ UnRARHost::UnRARHost(const string &_path):
 }
 
 UnRARHost::UnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config):
-    VFSHost(_config.Get<VFSArchiveUnRARHostConfiguration>().path.c_str(), _parent, UniqueTag),
+    Host(_config.Get<VFSArchiveUnRARHostConfiguration>().path.c_str(), _parent, UniqueTag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
     m_Configuration(_config)
 {

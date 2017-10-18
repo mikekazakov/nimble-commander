@@ -57,7 +57,7 @@ struct DropboxHost::State
 };
 
 DropboxHost::DropboxHost( const string &_account, const string &_access_token ):
-    VFSHost("", nullptr, DropboxHost::UniqueTag),
+    Host("", nullptr, DropboxHost::UniqueTag),
     I(make_unique<State>()),
     m_Config{Compose(_account, _access_token)}
 {
@@ -65,7 +65,7 @@ DropboxHost::DropboxHost( const string &_account, const string &_access_token ):
 }
 
 DropboxHost::DropboxHost( const VFSConfiguration &_config ):
-    VFSHost("", nullptr, DropboxHost::UniqueTag),
+    Host("", nullptr, DropboxHost::UniqueTag),
     I(make_unique<State>()),
     m_Config(_config)
 {

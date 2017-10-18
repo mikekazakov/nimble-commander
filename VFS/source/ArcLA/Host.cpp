@@ -82,7 +82,7 @@ static void DecodeStringToUTF8(const void* _bytes,
 }
 
 ArchiveHost::ArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password, VFSCancelChecker _cancel_checker):
-    VFSHost(_path.c_str(), _parent, UniqueTag),
+    Host(_path.c_str(), _parent, UniqueTag),
     m_Configuration( ComposeConfiguration(_path, move(_password)) )
 {
     assert(_parent);
@@ -97,7 +97,7 @@ ArchiveHost::ArchiveHost(const string &_path, const VFSHostPtr &_parent, optiona
 }
 
 ArchiveHost::ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker):
-    VFSHost( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, UniqueTag),
+    Host( _config.Get<VFSArchiveHostConfiguration>().path.c_str(), _parent, UniqueTag),
     m_Configuration(_config)
 {
     assert(_parent);
@@ -559,7 +559,7 @@ bool ArchiveHost::IsDirectory(const char *_path,
     if(_path[0] != '/') return false;
     if(strcmp(_path, "/") == 0) return true;
         
-    return VFSHost::IsDirectory(_path, _flags, _cancel_checker);
+    return Host::IsDirectory(_path, _flags, _cancel_checker);
 }
 
 int ArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)

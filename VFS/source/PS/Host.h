@@ -14,7 +14,7 @@
 
 namespace nc::vfs {
 
-class PSHost final : public VFSHost
+class PSHost final : public Host
 {
 public:
     PSHost();
@@ -56,8 +56,8 @@ public:
      */
     static shared_ptr<PSHost> GetSharedOrNew();
     
-    shared_ptr<const PSHost> SharedPtr() const {return static_pointer_cast<const PSHost>(VFSHost::SharedPtr());}
-    shared_ptr<PSHost> SharedPtr() {return static_pointer_cast<PSHost>(VFSHost::SharedPtr());}
+    shared_ptr<const PSHost> SharedPtr() const {return static_pointer_cast<const PSHost>(Host::SharedPtr());}
+    shared_ptr<PSHost> SharedPtr() {return static_pointer_cast<PSHost>(Host::SharedPtr());}
     
     struct ProcInfo;
     struct Snapshot;

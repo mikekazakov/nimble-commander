@@ -10,7 +10,7 @@
 
 namespace nc::vfs {
 
-PSFile::PSFile(const char* _relative_path, shared_ptr<VFSHost> _host, const string &_file):
+PSFile::PSFile(const char* _relative_path, shared_ptr<class Host> _host, const string &_file):
     VFSGenericMemReadOnlyFile(_relative_path,
                               _host,
                               _file.c_str(),

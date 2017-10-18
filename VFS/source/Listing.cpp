@@ -312,7 +312,7 @@ const shared_ptr<Listing> &Listing::EmptyListing() noexcept
     static const auto empty = []{
         auto l = Alloc();
         l->m_ItemsCount = 0;
-        l->m_Hosts.insert(0, VFSHost::DummyHost());
+        l->m_Hosts.insert(0, Host::DummyHost());
         l->m_Directories.insert(0, "/");
         return l;
     }();

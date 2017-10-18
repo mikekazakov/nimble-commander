@@ -5,7 +5,7 @@
 
 namespace nc::vfs {
 
-class XAttrHost final: public VFSHost
+class XAttrHost final: public Host
 {
 public:
     XAttrHost( const string &_file_path, const VFSHostPtr& _host ); // _host must be native currently

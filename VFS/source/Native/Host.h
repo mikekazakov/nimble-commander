@@ -12,7 +12,7 @@
 
 namespace nc::vfs {
 
-class NativeHost final : public VFSHost
+class NativeHost final : public Host
 {
 public:
     NativeHost();
@@ -90,8 +90,8 @@ public:
                             const VFSCancelChecker &_cancel_checker) override;
     virtual bool ShouldProduceThumbnails() const override;
     
-    shared_ptr<const NativeHost> SharedPtr() const {return static_pointer_cast<const NativeHost>(VFSHost::SharedPtr());}
-    shared_ptr<NativeHost> SharedPtr() {return static_pointer_cast<NativeHost>(VFSHost::SharedPtr());}
+    shared_ptr<const NativeHost> SharedPtr() const {return static_pointer_cast<const NativeHost>(Host::SharedPtr());}
+    shared_ptr<NativeHost> SharedPtr() {return static_pointer_cast<NativeHost>(Host::SharedPtr());}
     static const shared_ptr<NativeHost> &SharedHost() noexcept;
     virtual bool IsNativeFS() const noexcept override;
 private:

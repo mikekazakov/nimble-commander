@@ -21,7 +21,7 @@ struct Directory;
 struct SeekCache;
 }
 
-class UnRARHost final : public VFSHost
+class UnRARHost final : public Host
 {
 public:
     static const char *UniqueTag;
@@ -90,8 +90,8 @@ public:
     unique_ptr<unrar::SeekCache> SeekCache(uint32_t _requested_item);
     
     
-    shared_ptr<const UnRARHost> SharedPtr() const {return static_pointer_cast<const UnRARHost>(VFSHost::SharedPtr());}
-    shared_ptr<UnRARHost> SharedPtr() {return static_pointer_cast<UnRARHost>(VFSHost::SharedPtr());}
+    shared_ptr<const UnRARHost> SharedPtr() const {return static_pointer_cast<const UnRARHost>(Host::SharedPtr());}
+    shared_ptr<UnRARHost> SharedPtr() {return static_pointer_cast<UnRARHost>(Host::SharedPtr());}
     
 private:
     int DoInit(); // flags will be added later

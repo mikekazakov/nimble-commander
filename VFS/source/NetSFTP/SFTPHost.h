@@ -19,7 +19,7 @@ typedef struct _LIBSSH2_USERAUTH_KBDINT_RESPONSE LIBSSH2_USERAUTH_KBDINT_RESPONS
 
 namespace nc::vfs {
 
-class SFTPHost final : public VFSHost
+class SFTPHost final : public Host
 {
 public:
     // vfs identity
@@ -110,8 +110,8 @@ public:
     int GetConnection(unique_ptr<Connection> &_t);
     void ReturnConnection(unique_ptr<Connection> _t);
     
-    shared_ptr<const SFTPHost> SharedPtr() const {return static_pointer_cast<const SFTPHost>(VFSHost::SharedPtr());}
-    shared_ptr<SFTPHost> SharedPtr() {return static_pointer_cast<SFTPHost>(VFSHost::SharedPtr());}
+    shared_ptr<const SFTPHost> SharedPtr() const {return static_pointer_cast<const SFTPHost>(Host::SharedPtr());}
+    shared_ptr<SFTPHost> SharedPtr() {return static_pointer_cast<SFTPHost>(Host::SharedPtr());}
     
 private:
     struct AutoConnectionReturn;

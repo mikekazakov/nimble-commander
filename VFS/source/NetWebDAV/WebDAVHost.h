@@ -10,7 +10,7 @@ namespace webdav {
     class Cache;
 }
 
-class WebDAVHost final : public VFSHost
+class WebDAVHost final : public Host
 {
 public:
     static const char *UniqueTag;

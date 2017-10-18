@@ -597,12 +597,12 @@ bool PSHost::IsDirChangeObservingAvailable(const char *_path)
     return true;
 }
 
-VFSHostDirObservationTicket PSHost::DirChangeObserve(const char *_path, function<void()> _handler)
+HostDirObservationTicket PSHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;
     m_UpdateHandlers.emplace_back(ticket, _handler);
-    return VFSHostDirObservationTicket(ticket, shared_from_this());
+    return HostDirObservationTicket(ticket, shared_from_this());
 }
 
 void PSHost::StopDirChangeObserving(unsigned long _ticket)

@@ -50,7 +50,7 @@ public:
     virtual int RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker) override;
     
     virtual bool IsDirChangeObservingAvailable(const char *_path) override;
-    virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler) override;
+    virtual HostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;
     
     virtual ssize_t CalculateDirectorySize(const char *_path,

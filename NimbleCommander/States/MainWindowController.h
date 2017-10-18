@@ -1,8 +1,8 @@
 #pragma once
 
 #include "MainWindowStateProtocol.h"
+#include <VFS/VFS.h>
 
-class VFSHost;
 @class OperationsController;
 @class MainWindowFilePanelState;
 @class NCTermShellState;

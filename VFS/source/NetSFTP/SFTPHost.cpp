@@ -230,11 +230,11 @@ int SFTPHost::DoInit()
     
     ReturnConnection(move(conn));
     
-    AddFeatures(VFSHostFeatures::SetOwnership |
-                VFSHostFeatures::SetPermissions |
-                VFSHostFeatures::SetTimes );
+    AddFeatures(HostFeatures::SetOwnership |
+                HostFeatures::SetPermissions |
+                HostFeatures::SetTimes );
     if( m_OSType != sftp::OSType::Unknown )
-        AddFeatures( VFSHostFeatures::FetchUsers | VFSHostFeatures::FetchGroups );
+        AddFeatures( HostFeatures::FetchUsers | HostFeatures::FetchGroups );
     
     return 0;
 }

@@ -57,12 +57,12 @@ VFSMeta NativeHost::Meta()
 NativeHost::NativeHost():
     VFSHost("", 0, UniqueTag)
 {
-    AddFeatures(VFSHostFeatures::FetchUsers |
-                VFSHostFeatures::FetchGroups |
-                VFSHostFeatures::SetOwnership |
-                VFSHostFeatures::SetFlags |
-                VFSHostFeatures::SetPermissions |
-                VFSHostFeatures::SetTimes );
+    AddFeatures(HostFeatures::FetchUsers |
+                HostFeatures::FetchGroups |
+                HostFeatures::SetOwnership |
+                HostFeatures::SetFlags |
+                HostFeatures::SetPermissions |
+                HostFeatures::SetTimes );
 }
 
 bool NativeHost::ShouldProduceThumbnails() const
@@ -452,10 +452,10 @@ bool NativeHost::IsDirChangeObservingAvailable(const char *_path)
     return access(_path, R_OK) == 0; // should use _not_ routed I/O here!
 }
 
-VFSHostDirObservationTicket NativeHost::DirChangeObserve(const char *_path, function<void()> _handler)
+HostDirObservationTicket NativeHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     uint64_t t = FSEventsDirUpdate::Instance().AddWatchPath(_path, _handler);
-    return t ? VFSHostDirObservationTicket(t, shared_from_this()) : VFSHostDirObservationTicket();
+    return t ? HostDirObservationTicket(t, shared_from_this()) : HostDirObservationTicket();
 }
 
 void NativeHost::StopDirChangeObserving(unsigned long _ticket)

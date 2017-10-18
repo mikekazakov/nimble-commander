@@ -72,7 +72,7 @@ void WebDAVHost::Init()
 //        throw VFSErrorException( VFSError::FromErrno(EPROTONOSUPPORT) );
 //    }
 
-    AddFeatures(VFSHostFeatures::NonEmptyRmDir);
+    AddFeatures(HostFeatures::NonEmptyRmDir);
 }
 
 VFSConfiguration WebDAVHost::Configuration() const
@@ -374,13 +374,13 @@ bool WebDAVHost::IsDirChangeObservingAvailable(const char *_path)
     return true;
 }
 
-VFSHostDirObservationTicket WebDAVHost::DirChangeObserve(const char *_path,
+HostDirObservationTicket WebDAVHost::DirChangeObserve(const char *_path,
                                                          function<void()> _handler)
 {
     if( !IsValidInputPath(_path) )
         return {};
     const auto ticket = I->m_Cache.Observe(_path, move(_handler));
-    return VFSHostDirObservationTicket{ticket, shared_from_this()};
+    return HostDirObservationTicket{ticket, shared_from_this()};
 }
 
 void WebDAVHost::StopDirChangeObserving(unsigned long _ticket)

@@ -50,7 +50,7 @@ void DeletionJob::DoScan()
             si.type = m_Type;
             m_Script.emplace(si);
             
-            const auto nonempty_rm = bool(item.Host()->Features() & VFSHostFeatures::NonEmptyRmDir);
+            const auto nonempty_rm = bool(item.Host()->Features() & vfs::HostFeatures::NonEmptyRmDir);
             if( m_Type == DeletionType::Permanent &&
                 nonempty_rm == false )
                 ScanDirectory(item.Path(), i, si.filename);

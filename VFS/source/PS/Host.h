@@ -46,7 +46,7 @@ public:
     virtual int IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler) override;
     
     virtual bool IsDirChangeObservingAvailable(const char *_path) override;    
-    virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler) override;
+    virtual HostDirObservationTicket DirChangeObserve(const char *_path, function<void()> _handler) override;
     virtual void StopDirChangeObserving(unsigned long _ticket) override;
     
     /**

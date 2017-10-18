@@ -1,8 +1,7 @@
 #pragma once
 
 #include <boost/uuid/uuid.hpp>
-
-class VFSHost;
+#include <VFS/VFS.h>
 
 class NetworkConnectionsManager
 {

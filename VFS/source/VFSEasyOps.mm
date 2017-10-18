@@ -13,6 +13,8 @@
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
 
+using namespace nc::vfs;
+
 static int CopyNodeAttrs(const char *_src_full_path,
                          shared_ptr<VFSHost> _src_host,
                          const char *_dst_full_path,
@@ -374,7 +376,7 @@ int VFSEasyDelete(const char *_full_path, const shared_ptr<VFSHost> &_host)
         return result;
     
     if((st.mode & S_IFMT) == S_IFDIR) {
-        if( !(_host->Features() & VFSHostFeatures::NonEmptyRmDir) )
+        if( !(_host->Features() & HostFeatures::NonEmptyRmDir) )
             _host->IterateDirectoryListing(_full_path, [&](const VFSDirEnt &_dirent) {
                 path p = _full_path;
                 p /= _dirent.name;

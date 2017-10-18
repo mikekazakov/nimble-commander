@@ -565,7 +565,7 @@ bool FTPHost::IsDirChangeObservingAvailable(const char *_path)
     return true;
 }
 
-VFSHostDirObservationTicket FTPHost::DirChangeObserve(const char *_path, function<void()> _handler)
+HostDirObservationTicket FTPHost::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     if(_path == 0 || _path[0] != '/')
         return {};
@@ -579,7 +579,7 @@ VFSHostDirObservationTicket FTPHost::DirChangeObserve(const char *_path, functio
     if(h.path.back() != '/') h.path += '/';
     h.handler = move(_handler);
     
-    return VFSHostDirObservationTicket(h.ticket, shared_from_this());
+    return HostDirObservationTicket(h.ticket, shared_from_this());
 }
 
 void FTPHost::StopDirChangeObserving(unsigned long _ticket)

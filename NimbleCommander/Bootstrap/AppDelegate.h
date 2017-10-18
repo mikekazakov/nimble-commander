@@ -1,5 +1,7 @@
 #pragma once
 
+#include <VFS/VFS.h>
+
 @class MainWindowController;
 @class InternalViewerWindowController;
 @class GenericConfigObjC;
@@ -8,7 +10,6 @@ class ExternalToolsStorage;
 class PanelViewLayoutsStorage;
 class ThemesManager;
 class ExternalEditorsStorage;
-class VFSHost;
 class FavoriteLocationsStorage;
 class NetworkConnectionsManager;
 

@@ -1,13 +1,11 @@
 #pragma once
 
 #include <Habanero/ScopedObservable.h>
+#include <VFS/VFS.h>
 
 @class NSWindow;
 @class NSString;
 @class NCOpsGenericErrorDialog;
-
-class VFSHost;
-class VFSPath;
 
 namespace nc::ops
 {

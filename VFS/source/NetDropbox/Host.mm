@@ -76,7 +76,7 @@ void DropboxHost::Init()
 {
     Construct(Config().account, Config().token);
     InitialAccountLookup();
-    AddFeatures( VFSHostFeatures::NonEmptyRmDir );
+    AddFeatures( HostFeatures::NonEmptyRmDir );
 }
 
 void DropboxHost::Construct(const string &_account, const string &_access_token)

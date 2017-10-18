@@ -1,9 +1,8 @@
 #pragma once
 
+#include <VFS/VFS.h>
 #include "../Operation.h"
 #include "Options.h"
-
-class VFSHost;
 
 namespace nc::ops {
 

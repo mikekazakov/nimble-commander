@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Habanero/Observable.h>
+#include <VFS/VFS.h>
 #include "PanelDataPersistency.h"
 
-class VFSHost;
 class GenericConfig;
 
 // STA API design at the moment, call it only from main thread!

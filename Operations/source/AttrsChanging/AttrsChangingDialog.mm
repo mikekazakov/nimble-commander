@@ -116,12 +116,12 @@ static NSString *Title( const vector<VFSListingItem> &_items );
     m_Items.front().Host()->FetchGroups(m_Groups);
     
     const auto vfs_features = m_VFS->Features();
-    m_AccessRightsBlockShown = vfs_features & VFSHostFeatures::SetPermissions;
-    m_OwnageBlockShown = (vfs_features & VFSHostFeatures::SetOwnership) &&
+    m_AccessRightsBlockShown = vfs_features & nc::vfs::HostFeatures::SetPermissions;
+    m_OwnageBlockShown = (vfs_features & nc::vfs::HostFeatures::SetOwnership) &&
                          !m_Users.empty() &&
                          !m_Groups.empty();
-    m_FlagsBlockShown = vfs_features & VFSHostFeatures::SetFlags;
-    m_TimesBlockShown = vfs_features & VFSHostFeatures::SetTimes;
+    m_FlagsBlockShown = vfs_features & nc::vfs::HostFeatures::SetFlags;
+    m_TimesBlockShown = vfs_features & nc::vfs::HostFeatures::SetTimes;
     
     return self;
 }
@@ -654,10 +654,10 @@ static const auto g_MixedOwnageTitle = @"[???]";
 
     const auto &vfs = _items.front().Host();
     const auto vfs_features = vfs->Features();
-    if((vfs_features & VFSHostFeatures::SetPermissions) ||
-       (vfs_features & VFSHostFeatures::SetOwnership) ||
-       (vfs_features & VFSHostFeatures::SetFlags) ||
-       (vfs_features & VFSHostFeatures::SetTimes) )
+    if((vfs_features & nc::vfs::HostFeatures::SetPermissions) ||
+       (vfs_features & nc::vfs::HostFeatures::SetOwnership) ||
+       (vfs_features & nc::vfs::HostFeatures::SetFlags) ||
+       (vfs_features & nc::vfs::HostFeatures::SetTimes) )
         return true;
     return false;
 }

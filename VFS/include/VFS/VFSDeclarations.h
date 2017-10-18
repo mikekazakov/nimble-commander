@@ -172,19 +172,19 @@ namespace nc::vfs {
     class Listing;
     class ListingItem;
     class WeakListingItem;
+    class Host;
 }
 
 using VFSListing            = nc::vfs::Listing;
 using VFSListingPtr         = shared_ptr<nc::vfs::Listing>;
 using VFSListingItem        = nc::vfs::ListingItem;
 using VFSWeakListingItem    = nc::vfs::WeakListingItem;
+using VFSHost               = nc::vfs::Host;
+using VFSHostPtr            = shared_ptr<nc::vfs::Host>;
+using VFSHostWeakPtr        = weak_ptr<nc::vfs::Host>;
 
-class VFSHost;
 class VFSFile;
 class VFSPath;
 class VFSConfiguration;
-
-typedef shared_ptr<VFSHost>         VFSHostPtr;
-typedef weak_ptr<VFSHost>           VFSHostWeakPtr;
 typedef shared_ptr<VFSFile>         VFSFilePtr;
 typedef function<bool()>            VFSCancelChecker;

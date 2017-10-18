@@ -26,6 +26,7 @@
 		CF7C7D8F1E659D33002DB0E2 /* libssh2.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CF7C7D8E1E659D33002DB0E2 /* libssh2.a */; };
 		CFB44F2E1F383D4B00E7555E /* OpenDirectory.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFB44F2D1F383D4B00E7555E /* OpenDirectory.framework */; };
 		CFCE73151F972623009E2FD7 /* Listing.h in Headers */ = {isa = PBXBuildFile; fileRef = CFCE73141F972623009E2FD7 /* Listing.h */; };
+		CFCE73171F972B7A009E2FD7 /* Stat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFCE73161F972B7A009E2FD7 /* Stat.cpp */; };
 		CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */; };
 		CFD725FE1E42DD4C00603077 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1847171E41C9F9008B7C9F /* Security.framework */; };
 		CFD726001E42DD6000603077 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD725FF1E42DD6000603077 /* LDAP.framework */; };
@@ -215,6 +216,7 @@
 		CFC4F9F91F171E990000B3EE /* AccountsFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AccountsFetcher.cpp; path = source/NetSFTP/AccountsFetcher.cpp; sourceTree = "<group>"; };
 		CFC4F9FA1F171E990000B3EE /* AccountsFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AccountsFetcher.h; path = source/NetSFTP/AccountsFetcher.h; sourceTree = "<group>"; };
 		CFCE73141F972623009E2FD7 /* Listing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Listing.h; path = source/Listing.h; sourceTree = "<group>"; };
+		CFCE73161F972B7A009E2FD7 /* Stat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Stat.cpp; path = source/Stat.cpp; sourceTree = "<group>"; };
 		CFD725FF1E42DD6000603077 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CFD7273B1E42EC7B00603077 /* DiskArbitration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DiskArbitration.framework; path = System/Library/Frameworks/DiskArbitration.framework; sourceTree = SDKROOT; };
 		CFD7273D1E42EC8E00603077 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
@@ -409,6 +411,7 @@
 				CF69D0111DA22BE800992B84 /* VFSFile.cpp */,
 				CF69D0121DA22BE800992B84 /* VFSGenericMemReadOnlyFile.cpp */,
 				CF69D0081DA2281E00992B84 /* VFSHost.cpp */,
+				CFCE73161F972B7A009E2FD7 /* Stat.cpp */,
 				CFCE73141F972623009E2FD7 /* Listing.h */,
 				CF69D0131DA22BE800992B84 /* Listing.cpp */,
 				CFC4F92F1F0B5E250000B3EE /* ListingObjC.mm */,
@@ -696,6 +699,7 @@
 				CFFA94D41F4543ED0035E606 /* VFSFactory.cpp in Sources */,
 				CFFA94C01F4543AB0035E606 /* FileUploadDelegate.mm in Sources */,
 				CFFA94D61F4543ED0035E606 /* VFSGenericMemReadOnlyFile.cpp in Sources */,
+				CFCE73171F972B7A009E2FD7 /* Stat.cpp in Sources */,
 				CFFA94BC1F4543A30035E606 /* Host.mm in Sources */,
 				CFFA94B81F45439B0035E606 /* Internals.cpp in Sources */,
 				CFFA94CD1F4543C70035E606 /* File.cpp in Sources */,

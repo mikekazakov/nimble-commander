@@ -65,8 +65,8 @@ public:
     
     bool IsDirChangeObservingAvailable(const char *_path) override;
     
-    VFSHostDirObservationTicket DirChangeObserve(const char *_path,
-                                                 function<void()> _handler) override;
+    HostDirObservationTicket DirChangeObserve(const char *_path,
+                                              function<void()> _handler) override;
     
     const string &Host() const noexcept;
     const string &Path() const noexcept;

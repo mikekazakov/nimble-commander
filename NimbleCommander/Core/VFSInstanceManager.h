@@ -1,8 +1,8 @@
 #pragma once
 
+#include <VFS/VFS.h>
 #include <Habanero/Observable.h>
 
-class VFSHost;
 class VFSConfiguration;
 class VFSInstanceManager;
 

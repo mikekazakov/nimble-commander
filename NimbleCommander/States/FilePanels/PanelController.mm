@@ -200,7 +200,7 @@ static void HeatUpConfigValues()
     PanelView                   *m_View;  // create and owns
     
     // VFS changes observation
-    VFSHostDirObservationTicket  m_UpdatesObservationTicket;
+    vfs::HostDirObservationTicket       m_UpdatesObservationTicket;
     
     // VFS listing fetch flags
     int                         m_VFSFetchingFlags;

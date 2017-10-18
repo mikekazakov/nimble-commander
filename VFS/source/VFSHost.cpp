@@ -6,107 +6,38 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include <sys/stat.h>
 #include <Utility/PathManip.h>
 #include "ListingInput.h"
 #include "../include/VFS/VFSHost.h"
 
-static_assert(sizeof(VFSStat) == 128, "");
-const char *VFSHost::UniqueTag = "nullfs";
+namespace nc::vfs {
 
-bool VFSStatFS::operator==(const VFSStatFS& _r) const
-{
-    return total_bytes == _r.total_bytes &&
-    free_bytes == _r.free_bytes  &&
-    avail_bytes == _r.avail_bytes &&
-    volume_name == _r.volume_name;
-}
-
-bool VFSStatFS::operator!=(const VFSStatFS& _r) const
-{
-    return total_bytes != _r.total_bytes ||
-    free_bytes != _r.free_bytes  ||
-    avail_bytes != _r.avail_bytes ||
-    volume_name != _r.volume_name;
-}
-
-void VFSStat::FromSysStat(const struct stat &_from, VFSStat &_to)
-{
-    _to.dev     = _from.st_dev;
-    _to.rdev    = _from.st_rdev;
-    _to.inode   = _from.st_ino;
-    _to.mode    = _from.st_mode;
-    _to.nlink   = _from.st_nlink;
-    _to.uid     = _from.st_uid;
-    _to.gid     = _from.st_gid;
-    _to.size    = _from.st_size;
-    _to.blocks  = _from.st_blocks;
-    _to.blksize = _from.st_blksize;
-    _to.flags   = _from.st_flags;
-    _to.atime   = _from.st_atimespec;
-    _to.mtime   = _from.st_mtimespec;
-    _to.ctime   = _from.st_ctimespec;
-    _to.btime   = _from.st_birthtimespec;
-    _to.meaning = AllMeaning();
-}
-
-void VFSStat::ToSysStat(const VFSStat &_from, struct stat &_to)
-{
-    memset(&_to, 0, sizeof(_to));
-    _to.st_dev              = _from.dev;
-    _to.st_rdev             = _from.rdev;
-    _to.st_ino              = _from.inode;
-    _to.st_mode             = _from.mode;
-    _to.st_nlink            = _from.nlink;
-    _to.st_uid              = _from.uid;
-    _to.st_gid              = _from.gid;
-    _to.st_size             = _from.size;
-    _to.st_blocks           = _from.blocks;
-    _to.st_blksize          = _from.blksize;
-    _to.st_flags            = _from.flags;
-    _to.st_atimespec        = _from.atime;
-    _to.st_mtimespec        = _from.mtime;
-    _to.st_ctimespec        = _from.ctime;
-    _to.st_birthtimespec    = _from.btime;
-}
-
-struct stat VFSStat::SysStat() const noexcept
-{
-    struct stat st;
-    ToSysStat(*this, st);
-    return st;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////// VFSHostDirObservationTicket
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-VFSHostDirObservationTicket::VFSHostDirObservationTicket() noexcept:
+HostDirObservationTicket::HostDirObservationTicket() noexcept:
     m_Ticket(0),
     m_Host()
 {
 }
 
-VFSHostDirObservationTicket::VFSHostDirObservationTicket(unsigned long _ticket, weak_ptr<VFSHost> _host) noexcept:
+HostDirObservationTicket::HostDirObservationTicket(unsigned long _ticket, weak_ptr<VFSHost> _host) noexcept:
     m_Ticket(_ticket),
     m_Host(_host)
 {
     assert( (_ticket == 0 && _host.expired()) || (_ticket != 0 && !_host.expired()) );
 }
 
-VFSHostDirObservationTicket::VFSHostDirObservationTicket(VFSHostDirObservationTicket &&_rhs) noexcept:
+HostDirObservationTicket::HostDirObservationTicket(HostDirObservationTicket &&_rhs) noexcept:
     m_Ticket(_rhs.m_Ticket),
     m_Host(move(_rhs.m_Host))
 {
     _rhs.m_Ticket = 0;
 }
 
-VFSHostDirObservationTicket::~VFSHostDirObservationTicket()
+HostDirObservationTicket::~HostDirObservationTicket()
 {
     reset();
 }
 
-VFSHostDirObservationTicket &VFSHostDirObservationTicket::operator=(VFSHostDirObservationTicket &&_rhs)
+HostDirObservationTicket &HostDirObservationTicket::operator=(HostDirObservationTicket &&_rhs)
 {
     reset();
     m_Ticket = _rhs.m_Ticket;
@@ -115,17 +46,17 @@ VFSHostDirObservationTicket &VFSHostDirObservationTicket::operator=(VFSHostDirOb
     return *this;
 }
 
-bool VFSHostDirObservationTicket::valid() const noexcept
+bool HostDirObservationTicket::valid() const noexcept
 {
     return m_Ticket != 0;
 }
 
-VFSHostDirObservationTicket::operator bool() const noexcept
+HostDirObservationTicket::operator bool() const noexcept
 {
     return valid();
 }
 
-void VFSHostDirObservationTicket::reset()
+void HostDirObservationTicket::reset()
 {
     if(valid()) {
         if(auto h = m_Host.lock())
@@ -135,37 +66,30 @@ void VFSHostDirObservationTicket::reset()
     }
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////// VFSHostConfiguration
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const char *Host::UniqueTag = "nullfs";
 
 class VFSHostConfiguration
 {
 public:
-    
     const char *Tag() const
     {
-        return VFSHost::UniqueTag;
+        return Host::UniqueTag;
     }
-    
+        
     const char *Junction() const
     {
         return "";
     }
-    
+        
     bool operator==(const VFSHostConfiguration&) const
     {
         return true;
     }
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////// VFSHost
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-VFSHost::VFSHost(const char *_junction_path,
-                 const shared_ptr<VFSHost> &_parent,
-                 const char *_fs_tag):
+    
+Host::Host(const char *_junction_path,
+           const shared_ptr<Host> &_parent,
+           const char *_fs_tag):
     m_JunctionPath(_junction_path ? _junction_path : ""),
     m_Parent(_parent),
     m_Tag(_fs_tag),
@@ -173,57 +97,57 @@ VFSHost::VFSHost(const char *_junction_path,
 {
 }
 
-VFSHost::~VFSHost()
+Host::~Host()
 {
     if( m_OnDesctruct )
         m_OnDesctruct( this );
 }
 
-shared_ptr<VFSHost> VFSHost::SharedPtr()
+shared_ptr<VFSHost> Host::SharedPtr()
 {
     return shared_from_this();
 }
 
-shared_ptr<const VFSHost> VFSHost::SharedPtr() const
+shared_ptr<const VFSHost> Host::SharedPtr() const
 {
     return shared_from_this();
 }
 
-const char *VFSHost::Tag() const noexcept
+const char *Host::Tag() const noexcept
 {
     return m_Tag;
 }
 
-const VFSHostPtr& VFSHost::Parent() const noexcept
+const VFSHostPtr& Host::Parent() const noexcept
 {
     return m_Parent;    
 }
 
-const char* VFSHost::JunctionPath() const noexcept
+const char* Host::JunctionPath() const noexcept
 {
     return m_JunctionPath.c_str();
 }
 
-bool VFSHost::IsWritable() const
+bool Host::IsWritable() const
 {
     return false;
 }
 
-bool VFSHost::IsWritableAtPath(const char *_dir) const
+bool Host::IsWritableAtPath(const char *_dir) const
 {
     return IsWritable();
 }
 
-int VFSHost::CreateFile(const char* _path,
-                       shared_ptr<VFSFile> &_target,
-                       const VFSCancelChecker &_cancel_checker)
+int Host::CreateFile(const char* _path,
+                     shared_ptr<VFSFile> &_target,
+                     const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-bool VFSHost::IsDirectory(const char *_path,
-                          int _flags,
-                          const VFSCancelChecker &_cancel_checker)
+bool Host::IsDirectory(const char *_path,
+                       int _flags,
+                       const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     if(Stat(_path, st, _flags, _cancel_checker) < 0)
@@ -232,9 +156,9 @@ bool VFSHost::IsDirectory(const char *_path,
     return (st.mode & S_IFMT) == S_IFDIR;
 }
 
-bool VFSHost::IsSymlink(const char *_path,
-                        int _flags,
-                        const VFSCancelChecker &_cancel_checker)
+bool Host::IsSymlink(const char *_path,
+                     int _flags,
+                     const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     if(Stat(_path, st, _flags, _cancel_checker) < 0)
@@ -243,10 +167,10 @@ bool VFSHost::IsSymlink(const char *_path,
     return (st.mode & S_IFMT) == S_IFLNK;
 }
 
-bool VFSHost::FindLastValidItem(const char *_orig_path,
-                               char *_valid_path,
-                               int _flags,
-                               const VFSCancelChecker &_cancel_checker)
+bool Host::FindLastValidItem(const char *_orig_path,
+                             char *_valid_path,
+                             int _flags,
+                             const VFSCancelChecker &_cancel_checker)
 {
     // TODO: maybe it's better to go left-to-right than right-to-left
     if(_orig_path[0] != '/') return false;
@@ -279,9 +203,8 @@ bool VFSHost::FindLastValidItem(const char *_orig_path,
     return false;
 }
 
-ssize_t VFSHost::CalculateDirectorySize(const char *_path,
-                                        const VFSCancelChecker &_cancel_checker
-                                        )
+ssize_t Host::CalculateDirectorySize(const char *_path,
+                                     const VFSCancelChecker &_cancel_checker)
 {
     if(_path == 0 || _path[0] != '/')
         return VFSError::InvalidCall;
@@ -311,126 +234,126 @@ ssize_t VFSHost::CalculateDirectorySize(const char *_path,
     return total_size;
 }
 
-bool VFSHost::IsDirChangeObservingAvailable(const char *_path)
+bool Host::IsDirChangeObservingAvailable(const char *_path)
 {
     return false;
 }
 
-VFSHostDirObservationTicket VFSHost::DirChangeObserve(const char *_path, function<void()> _handler)
+HostDirObservationTicket Host::DirChangeObserve(const char *_path, function<void()> _handler)
 {
     return {};
 }
 
-void VFSHost::StopDirChangeObserving(unsigned long _ticket)
+void Host::StopDirChangeObserving(unsigned long _ticket)
 {
 }
 
-int VFSHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int Host::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
+int Host::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     // TODO: write a default implementation using listing fetching.
     // it will be less efficient, but for some FS like PS it will be ok
     return VFSError::NotSupported;
 }
 
-int VFSHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
+int Host::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
+int Host::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::Trash(const char *_path, const VFSCancelChecker &_cancel_checker)
+int Host::Trash(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
+int Host::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker)
+int Host::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::CreateSymlink(const char *_symlink_path, const char *_symlink_value, const VFSCancelChecker &_cancel_checker)
+int Host::CreateSymlink(const char *_symlink_path, const char *_symlink_value, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::SetTimes(const char *_path,
-                      optional<time_t> _birth_time,
-                      optional<time_t> _mod_time,
-                      optional<time_t> _chg_time,
-                      optional<time_t> _acc_time,
-                      const VFSCancelChecker &_cancel_checker)
+int Host::SetTimes(const char *_path,
+                   optional<time_t> _birth_time,
+                   optional<time_t> _mod_time,
+                   optional<time_t> _chg_time,
+                   optional<time_t> _acc_time,
+                   const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-bool VFSHost::ShouldProduceThumbnails() const
+bool Host::ShouldProduceThumbnails() const
 {
     return false;
 }
 
-int VFSHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
+int Host::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
+int Host::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
+int Host::SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs)
+int Host::GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs)
 {
     return VFSError::NotSupported;
 }
 
-const shared_ptr<VFSHost> &VFSHost::DummyHost()
+const shared_ptr<Host> &Host::DummyHost()
 {
-    static auto host = make_shared<VFSHost>("", nullptr, VFSHost::UniqueTag);
+    static auto host = make_shared<Host>("", nullptr, Host::UniqueTag);
     return host;
 }
 
-VFSConfiguration VFSHost::Configuration() const
+VFSConfiguration Host::Configuration() const
 {
     static auto config = VFSConfiguration( VFSHostConfiguration() );
     return config;
 }
 
-bool VFSHost::Exists(const char *_path, const VFSCancelChecker &_cancel_checker)
+bool Host::Exists(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
     return Stat(_path, st, 0, _cancel_checker) == 0;
 }
 
-bool VFSHost::IsImmutableFS() const noexcept
+bool Host::IsImmutableFS() const noexcept
 {
     return false;
 }
 
-bool VFSHost::IsNativeFS() const noexcept
+bool Host::IsNativeFS() const noexcept
 {
     return false;
 }
 
-bool VFSHost::ValidateFilename(const char *_filename) const
+bool Host::ValidateFilename(const char *_filename) const
 {
     if( !_filename )
         return false;
@@ -444,18 +367,18 @@ bool VFSHost::ValidateFilename(const char *_filename) const
     return find_first_of(i, e, begin(invalid_chars), end(invalid_chars)) == e;
 }
 
-int VFSHost::FetchDirectoryListing(const char *_path,
-                                   shared_ptr<VFSListing> &_target,
-                                   int _flags,
-                                   const VFSCancelChecker &_cancel_checker)
+int Host::FetchDirectoryListing(const char *_path,
+                                shared_ptr<Listing> &_target,
+                                int _flags,
+                                const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::FetchSingleItemListing(const char *_path,
-                                    shared_ptr<VFSListing> &_target,
-                                    int _flags,
-                                    const VFSCancelChecker &_cancel_checker)
+int Host::FetchSingleItemListing(const char *_path,
+                                 shared_ptr<Listing> &_target,
+                                 int _flags,
+                                 const VFSCancelChecker &_cancel_checker)
 {
     // as we came here - there's no special implementation in derived class,
     // so need to try to emulate it with available methods.
@@ -534,11 +457,11 @@ int VFSHost::FetchSingleItemListing(const char *_path,
     return 0;
 }
 
-int VFSHost::FetchFlexibleListingItems(const string& _directory_path,
-                                       const vector<string> &_filenames,
-                                       int _flags,
-                                       vector<VFSListingItem> &_result,
-                                       const VFSCancelChecker &_cancel_checker)
+int Host::FetchFlexibleListingItems(const string& _directory_path,
+                                    const vector<string> &_filenames,
+                                    int _flags,
+                                    vector<VFSListingItem> &_result,
+                                    const VFSCancelChecker &_cancel_checker)
 {
     shared_ptr<VFSListing> listing;
     int ret = FetchDirectoryListing(_directory_path.c_str(), listing, _flags, _cancel_checker);
@@ -557,50 +480,50 @@ int VFSHost::FetchFlexibleListingItems(const string& _directory_path,
     return 0;
 }
 
-void VFSHost::SetDesctructCallback( function<void(const VFSHost*)> _callback )
+void Host::SetDesctructCallback( function<void(const VFSHost*)> _callback )
 {
     m_OnDesctruct = _callback;
 }
 
-int VFSHost::SetOwnership(const char *_path,
-                          unsigned _uid,
-                          unsigned _gid,
-                          const VFSCancelChecker &_cancel_checker)
+int Host::SetOwnership(const char *_path,
+                       unsigned _uid,
+                       unsigned _gid,
+                       const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
+int Host::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
+int Host::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int VFSHost::SetFlags(const char *_path, uint32_t _flags, const VFSCancelChecker &_cancel_checker )
+int Host::SetFlags(const char *_path, uint32_t _flags, const VFSCancelChecker &_cancel_checker )
 {
     return VFSError::NotSupported;
 }
 
-void VFSHost::SetFeatures( uint64_t _features_bitset )
+void Host::SetFeatures( uint64_t _features_bitset )
 {
     m_Features = _features_bitset;
 }
 
-void VFSHost::AddFeatures( uint64_t _features_bitset )
+void Host::AddFeatures( uint64_t _features_bitset )
 {
     SetFeatures( Features() | _features_bitset );
 }
 
-uint64_t VFSHost::Features() const noexcept
+uint64_t Host::Features() const noexcept
 {
     return m_Features;
 }
 
-uint64_t VFSHost::FullHashForPath( const char *_path ) const noexcept
+uint64_t Host::FullHashForPath( const char *_path ) const noexcept
 {
     if( !_path )
         return 0;
@@ -629,4 +552,6 @@ uint64_t VFSHost::FullHashForPath( const char *_path ) const noexcept
     p = stpcpy(p, _path);
     
     return hash<string_view>()( string_view(&buf[0], p - &buf[0]) );
+}
+
 }

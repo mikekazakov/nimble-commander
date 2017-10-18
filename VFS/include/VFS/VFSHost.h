@@ -14,27 +14,29 @@
 #include "VFSFactory.h"
 #include "../../source/Listing.h"
 
-class VFSHostDirObservationTicket
+namespace nc::vfs {
+
+class HostDirObservationTicket
 {
 public:
-    VFSHostDirObservationTicket() noexcept;
-    VFSHostDirObservationTicket(unsigned long _ticket, weak_ptr<VFSHost> _host) noexcept;
-    VFSHostDirObservationTicket(VFSHostDirObservationTicket &&_rhs) noexcept;
-    ~VFSHostDirObservationTicket();
+    HostDirObservationTicket() noexcept;
+    HostDirObservationTicket(unsigned long _ticket, weak_ptr<Host> _host) noexcept;
+    HostDirObservationTicket(HostDirObservationTicket &&_rhs) noexcept;
+    ~HostDirObservationTicket();
     
-    VFSHostDirObservationTicket &operator=(VFSHostDirObservationTicket &&_rhs);
+    HostDirObservationTicket &operator=(HostDirObservationTicket &&_rhs);
     operator bool() const noexcept;
     bool valid() const noexcept;
     void reset();
     
 private:
-    VFSHostDirObservationTicket(const VFSHostDirObservationTicket &_rhs) = delete;
-    VFSHostDirObservationTicket &operator=(const VFSHostDirObservationTicket &_rhs) = delete;
+    HostDirObservationTicket(const HostDirObservationTicket &_rhs) = delete;
+    HostDirObservationTicket &operator=(const HostDirObservationTicket &_rhs) = delete;
     unsigned long       m_Ticket;
-    weak_ptr<VFSHost>   m_Host;
+    weak_ptr<Host>      m_Host;
 };
-
-struct VFSHostFeatures
+    
+struct HostFeatures
 {
     enum Features : uint64_t {
         FetchUsers      = 1  <<  0,
@@ -46,26 +48,26 @@ struct VFSHostFeatures
         NonEmptyRmDir   = 1  <<  6
     };
 };
-
-class VFSHost : public enable_shared_from_this<VFSHost>
+    
+class Host : public enable_shared_from_this<Host>
 {
 public:
     static const char *UniqueTag;
-    static const shared_ptr<VFSHost> &DummyHost();
+    static const shared_ptr<Host> &DummyHost();
     
     /**
      * junction path and parent can be nil
      */
-    VFSHost(const char *_junction_path, const shared_ptr<VFSHost> &_parent, const char *_fs_tag);
-    virtual ~VFSHost();
+    Host(const char *_junction_path, const shared_ptr<Host> &_parent, const char *_fs_tag);
+    virtual ~Host();
     
     
     /***********************************************************************************************
      * Configuration / meta data
      **********************************************************************************************/
 
-    shared_ptr<VFSHost> SharedPtr();
-    shared_ptr<const VFSHost> SharedPtr() const;
+    shared_ptr<Host> SharedPtr();
+    shared_ptr<const Host> SharedPtr() const;
 
     /**
      * Consequent calls should return the same object if no changes had occured.
@@ -335,8 +337,8 @@ public:
     /**
      * _handler can be called from any thread
      */
-    virtual VFSHostDirObservationTicket DirChangeObserve(const char *_path,
-                                                         function<void()> _handler);
+    virtual HostDirObservationTicket DirChangeObserve(const char *_path,
+                                                      function<void()> _handler);
     
 protected:
     void SetFeatures( uint64_t _features_bitset );
@@ -347,13 +349,15 @@ protected:
 private:
 
     const string                    m_JunctionPath; // path in Parent VFS, relative to it's root
-    const shared_ptr<VFSHost>       m_Parent;
+    const shared_ptr<Host>          m_Parent;
     const char*                     m_Tag;
     uint64_t                        m_Features;
     function<void(const VFSHost*)>  m_OnDesctruct;
     
     // forbid copying
-    VFSHost(const VFSHost& _r) = delete;
-    void operator=(const VFSHost& _r) = delete;
-    friend class VFSHostDirObservationTicket;
+    Host(const Host& _r) = delete;
+    void operator=(const Host& _r) = delete;
+    friend class HostDirObservationTicket;
 };
+
+}

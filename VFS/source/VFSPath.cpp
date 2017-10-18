@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
 //
 
-#include "../include/VFS/VFSHost.h"
+#include "../include/VFS/Host.h"
 #include "../include/VFS/VFSPath.h"
 
 VFSPath::VFSPath()

@@ -7,7 +7,7 @@
 //
 
 #pragma once
-#include <VFS/VFSHost.h>
+#include <VFS/Host.h>
 #include "InternalsForward.h"
 
 // RTFM: http://www.ietf.org/rfc/rfc959.txt

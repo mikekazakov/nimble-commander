@@ -7,7 +7,7 @@
 //
 
 #include "Listing.h"
-#include "../include/VFS/VFSHost.h"
+#include "../include/VFS/Host.h"
 #include "ListingInput.h"
 
 namespace nc::vfs {

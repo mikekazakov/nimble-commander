@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "VFSHost.h"
+#include "Host.h"
 
 
 class VFSArchiveProxy

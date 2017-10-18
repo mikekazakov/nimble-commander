@@ -9,7 +9,7 @@
 #pragma once
 
 #include <Habanero/SerialQueue.h>
-#include <VFS/VFSHost.h>
+#include <VFS/Host.h>
 #include <VFS/VFSFile.h>
 
 namespace nc::vfs {

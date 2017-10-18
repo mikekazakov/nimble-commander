@@ -9,7 +9,7 @@
 #pragma once
 
 #include <curl/curl.h>
-#include <VFS/VFSHost.h>
+#include <VFS/Host.h>
 #include "Cache.h"
 
 namespace nc::vfs::ftp {

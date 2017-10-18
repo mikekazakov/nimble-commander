@@ -8,7 +8,7 @@
 
 #include "../include/VFS/VFSFile.h"
 #include "../include/VFS/VFSError.h"
-#include "../include/VFS/VFSHost.h"
+#include "../include/VFS/Host.h"
 
 VFSFile::VFSFile(const char* _relative_path, const VFSHostPtr &_host):
     m_RelativePath(_relative_path ? _relative_path : ""),

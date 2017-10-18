@@ -1,7 +1,7 @@
 #pragma once
 
 #include <sys/stat.h>
-#include <VFS/VFSHost.h>
+#include <VFS/Host.h>
 
 namespace nc::vfs {
 

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <VFS/VFSHost.h>
+#include <VFS/Host.h>
 
 typedef struct _LIBSSH2_SFTP    LIBSSH2_SFTP;
 typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;

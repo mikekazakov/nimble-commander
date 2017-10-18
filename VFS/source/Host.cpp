@@ -8,7 +8,7 @@
 
 #include <Utility/PathManip.h>
 #include "ListingInput.h"
-#include "../include/VFS/VFSHost.h"
+#include "../include/VFS/Host.h"
 
 namespace nc::vfs {
 

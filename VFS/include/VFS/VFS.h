@@ -12,7 +12,7 @@
 
 #include "VFSDeclarations.h"
 #include "VFSError.h"
-#include "VFSHost.h"
+#include "Host.h"
 #include "VFSFile.h"
 #include "VFSPath.h"
 #include "VFSEasyOps.h"

@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "../../include/VFS/VFSHost.h"
+#include "../../include/VFS/Host.h"
 #include "../../include/VFS/VFSFile.h"
 
 namespace nc::vfs {

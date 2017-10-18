@@ -8,7 +8,7 @@
 
 #pragma once
 #import "VFSFile.h"
-#import "VFSHost.h"
+#import "Host.h"
 
 int VFSEasyCopyFile(const char *_src_full_path,
                     shared_ptr<VFSHost> _src_host,

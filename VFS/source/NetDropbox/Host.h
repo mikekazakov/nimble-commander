@@ -1,6 +1,6 @@
 #pragma once
 
-#include <VFS/VFSHost.h>
+#include <VFS/Host.h>
 #include <VFS/VFSFile.h>
 
 namespace nc::vfs {

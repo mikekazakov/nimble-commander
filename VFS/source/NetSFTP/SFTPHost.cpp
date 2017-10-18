@@ -10,7 +10,7 @@
 #include <Utility/PathManip.h>
 #include <libssh2.h>
 #include <libssh2_sftp.h>
-#include "../VFSListingInput.h"
+#include "../ListingInput.h"
 #include "SFTPHost.h"
 #include "File.h"
 #include "OSDetector.h"
@@ -397,7 +397,7 @@ int SFTPHost::FetchDirectoryListing(const char *_path,
     AutoConnectionReturn acr(conn, this);
     
     // setup of listing structure
-    VFSListingInput listing_source;
+    ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
     listing_source.sizes.reset( variable_container<>::type::dense );
@@ -445,7 +445,7 @@ int SFTPHost::FetchDirectoryListing(const char *_path,
             listing_source.unix_modes[index] = (attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) ? attrs.permissions : (S_IFREG | S_IRUSR);
             listing_source.unix_types[index] = (attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) ? IFTODT(attrs.permissions) : DT_REG;
             const auto size = S_ISDIR(attrs.permissions) ?
-                VFSListingInput::unknown_size :
+                ListingInput::unknown_size :
                 ((attrs.flags & LIBSSH2_SFTP_ATTR_SIZE) ? attrs.filesize : 0);
             listing_source.sizes.insert(index, size );
             listing_source.uids.insert(index, (attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) ? (uid_t)attrs.uid : 0);

@@ -1,6 +1,6 @@
 #pragma once
 
-class VFSListingItem;
+#include <VFS/VFS.h>
 
 namespace nc::panel::data {
 

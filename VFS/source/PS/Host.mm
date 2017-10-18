@@ -12,7 +12,7 @@
 #include <pwd.h>
 #include <Utility/SystemInformation.h>
 #include <RoutedIO/RoutedIO.h>
-#include "../VFSListingInput.h"
+#include "../ListingInput.h"
 #include "Host.h"
 #include "Internal.h"
 #include "File.h"
@@ -482,7 +482,7 @@ int PSHost::FetchDirectoryListing(const char *_path,
     auto data = m_Data;
     
     // set up or listing structure
-    VFSListingInput listing_source;
+    ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = _path;
     listing_source.sizes.reset( variable_container<>::type::dense );

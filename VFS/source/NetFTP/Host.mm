@@ -7,7 +7,7 @@
 //
 
 #include <Utility/PathManip.h>
-#include "../VFSListingInput.h"
+#include "../ListingInput.h"
 #include "Host.h"
 #include "Internals.h"
 #include "Cache.h"
@@ -297,7 +297,7 @@ int FTPHost::FetchDirectoryListing(const char *_path,
         return result;
     
     // setup of listing structure
-    VFSListingInput listing_source;
+    ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
     listing_source.sizes.reset( variable_container<>::type::dense );
@@ -312,7 +312,7 @@ int FTPHost::FetchDirectoryListing(const char *_path,
         listing_source.unix_types.emplace_back( DT_DIR );
         listing_source.unix_modes.emplace_back( S_IRUSR | S_IWUSR | S_IFDIR );
         auto curtime = time(0);
-        listing_source.sizes.insert(0, VFSListingInput::unknown_size );
+        listing_source.sizes.insert(0, ListingInput::unknown_size );
         listing_source.atimes.insert(0, curtime );
         listing_source.btimes.insert(0, curtime );
         listing_source.ctimes.insert(0, curtime );
@@ -327,7 +327,7 @@ int FTPHost::FetchDirectoryListing(const char *_path,
         
         listing_source.sizes.insert(index,
                                     S_ISDIR(entry.mode) ?
-                                        VFSListingInput::unknown_size :
+                                        ListingInput::unknown_size :
                                         entry.size
         );
         listing_source.atimes.insert(index, entry.time );

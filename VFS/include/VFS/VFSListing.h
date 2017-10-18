@@ -12,10 +12,6 @@
 #include <Habanero/CFString.h>
 #include "VFSDeclarations.h"
 
-struct VFSListingInput;
-class VFSListingItem;
-class VFSWeakListingItem;
-
 /**
  * A note about symlinks handling. Listing must be aware, that some items might be symlinks.
  * UnixType() must stay unfollowed, i.e. specifying that an entry is a symlink.
@@ -27,23 +23,31 @@ class VFSWeakListingItem;
  * Size()
  * Symlink()
  */
- 
-class VFSListing : public enable_shared_from_this<VFSListing>
+
+namespace nc::vfs {
+
+struct ListingInput;
+class VFSListingItem;
+class VFSWeakListingItem;
+
+class Listing : public enable_shared_from_this<Listing>
 {
 public:
     static const VFSListingPtr &EmptyListing() noexcept;
-    static VFSListingPtr    Build(VFSListingInput &&_input);
+    static VFSListingPtr    Build(ListingInput &&_input);
     
     /**
      * compose many listings into a new ListingInput.
      * it will contain only sparse-based variable containers.
      * will throw on errors
      */
-    static VFSListingInput Compose(const vector<shared_ptr<VFSListing>> &_listings);
-    static VFSListingInput Compose(const vector<shared_ptr<VFSListing>> &_listings, const vector< vector<unsigned> > &_items_indeces);
+    static ListingInput Compose(const vector<shared_ptr<Listing>> &_listings);
+    static ListingInput Compose(const vector<shared_ptr<Listing>> &_listings,
+                                const vector< vector<unsigned> > &_items_indeces);
     
     
-    static VFSListingPtr ProduceUpdatedTemporaryPanelListing( const VFSListing& _original, VFSCancelChecker _cancel_checker );
+    static VFSListingPtr ProduceUpdatedTemporaryPanelListing(const Listing& _original,
+                                                             VFSCancelChecker _cancel_checker );
     
     /**
      * Returns items amount in this listing. 
@@ -132,9 +136,9 @@ public:
     iterator            end                 () const noexcept;
     
 private:
-    VFSListing();
-    ~VFSListing();
-    static shared_ptr<VFSListing> Alloc(); // fighting against c++...
+    Listing();
+    ~Listing();
+    static shared_ptr<Listing> Alloc(); // fighting against c++...
     void BuildFilenames();    
     
     unsigned                        m_ItemsCount;
@@ -168,7 +172,7 @@ public:
     VFSListingItem() noexcept;
     VFSListingItem(const shared_ptr<const VFSListing>& _listing, unsigned _ind) noexcept;
     operator                                bool()              const noexcept;
-    const shared_ptr<const VFSListing>&     Listing()           const noexcept;
+    const shared_ptr<const Listing>&        Listing()           const noexcept;
     unsigned                                Index()             const noexcept;
     
     string          Path()              const;
@@ -245,7 +249,7 @@ public:
 private:
     shared_ptr<const VFSListing>    L;
     unsigned                        I;
-    friend VFSListing::iterator;
+    friend Listing::iterator;
     friend VFSWeakListingItem;
 };
 
@@ -276,7 +280,7 @@ private:
 bool operator==(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept;
 bool operator!=(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept;
 
-struct VFSListing::iterator
+struct Listing::iterator
 {
     iterator &operator--() noexcept; // prefix decrement
     iterator &operator++() noexcept; // prefix increment
@@ -289,5 +293,10 @@ struct VFSListing::iterator
 
 private:
     VFSListingItem i;
-    friend class VFSListing;
+    friend class Listing;
 };
+
+};
+
+using nc::vfs::VFSListingItem;
+using nc::vfs::VFSWeakListingItem;

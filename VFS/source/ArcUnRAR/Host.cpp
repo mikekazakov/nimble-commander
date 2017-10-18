@@ -8,7 +8,7 @@
 
 #include <Utility/PathManip.h>
 #include "../Native/Host.h"
-#include "../VFSListingInput.h"
+#include "../ListingInput.h"
 #include "Host.h"
 #include "Internals.h"
 #include "File.h"
@@ -296,7 +296,7 @@ int UnRARHost::FetchDirectoryListing(const char *_path,
     if(!dir)
         return VFSError::NotFound;
 
-    VFSListingInput listing_source;
+    ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
     listing_source.atimes.reset( variable_container<>::type::dense );
@@ -314,7 +314,7 @@ int UnRARHost::FetchDirectoryListing(const char *_path,
         listing_source.btimes.insert(0, curtime );
         listing_source.ctimes.insert(0, curtime );
         listing_source.mtimes.insert(0, curtime );
-        listing_source.sizes.insert( 0, VFSListingInput::unknown_size );
+        listing_source.sizes.insert( 0, ListingInput::unknown_size );
     }
     
     for( auto &entry: dir->entries ) {
@@ -324,7 +324,7 @@ int UnRARHost::FetchDirectoryListing(const char *_path,
         int index = int(listing_source.filenames.size() - 1);
         listing_source.sizes.insert( index,
                                     entry.isdir ?
-                                        VFSListingInput::unknown_size :
+                                        ListingInput::unknown_size :
                                         entry.unpacked_size );
         listing_source.atimes.insert( index, entry.time );
         listing_source.ctimes.insert( index, entry.time );

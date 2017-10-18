@@ -11,7 +11,7 @@
 #include "Host.h"
 #include "File.h"
 #include <VFS/VFSError.h>
-#include "../VFSListingInput.h"
+#include "../ListingInput.h"
 #include "Fetching.h"
 
 
@@ -96,7 +96,7 @@ int NativeHost::FetchDirectoryListing(const char *_path,
          return count + (need_to_add_dot_dot ? 1 : 0);
     }();
     
-    VFSListingInput listing_source;
+    ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
     listing_source.inodes.reset( variable_container<>::type::dense );
@@ -250,7 +250,7 @@ int NativeHost::FetchSingleItemListing(const char *_path,
     
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
 
-    VFSListingInput listing_source;
+    ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = directory;
     listing_source.inodes.reset( variable_container<>::type::common );

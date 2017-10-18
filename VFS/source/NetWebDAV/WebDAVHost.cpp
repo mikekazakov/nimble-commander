@@ -1,7 +1,7 @@
 #include "WebDAVHost.h"
 #include "Internal.h"
 #include <Utility/PathManip.h>
-#include "../VFSListingInput.h"
+#include "../ListingInput.h"
 #include "ConnectionsPool.h"
 #include "Cache.h"
 #include "File.h"
@@ -125,7 +125,7 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
     else
         partition( begin(items), end(items), [](const auto &_i){ return _i.filename == ".."; });
 
-    VFSListingInput listing_source;
+    ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] =  path;
     listing_source.sizes.reset( variable_container<>::type::dense );

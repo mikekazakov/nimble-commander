@@ -1,10 +1,8 @@
 #pragma once
 
 #include <Cocoa/Cocoa.h>
-//#include <Utility/SheetController.h>
+#include <VFS/VFS.h>
 #include "Options.h"
-
-class VFSListingItem;
 
 @interface NCOpsDeletionDialog : NSWindowController
 

@@ -8,7 +8,7 @@
 
 #include <sys/stat.h>
 #include <Utility/PathManip.h>
-#include "VFSListingInput.h"
+#include "ListingInput.h"
 #include "../include/VFS/VFSHost.h"
 
 static_assert(sizeof(VFSStat) == 128, "");
@@ -480,7 +480,7 @@ int VFSHost::FetchSingleItemListing(const char *_path,
     if( ret != 0 )
         return ret;
     
-    VFSListingInput listing_source;
+    nc::vfs::ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = directory;
     listing_source.inodes.reset( variable_container<>::type::common );

@@ -1,12 +1,9 @@
 #pragma once
 
+#include <VFS/VFS.h>
 #include "PanelDataSortMode.h"
 #include "PanelDataStatistics.h"
 #include "PanelDataFilter.h"
-
-class VFSHost;
-class VFSListing;
-class VFSListingItem;
 
 namespace nc::panel::data {
 

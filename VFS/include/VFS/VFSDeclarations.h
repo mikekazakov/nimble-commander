@@ -168,14 +168,19 @@ struct VFSGroup
     string gecos;
 };
 
+namespace nc::vfs {
+    class Listing;
+}
+
+using VFSListing = nc::vfs::Listing;
+
 class VFSHost;
-class VFSListing;
 class VFSFile;
 class VFSPath;
 class VFSConfiguration;
 
 typedef shared_ptr<VFSHost>         VFSHostPtr;
 typedef weak_ptr<VFSHost>           VFSHostWeakPtr;
-typedef shared_ptr<VFSListing> VFSListingPtr;
+using VFSListingPtr = shared_ptr<nc::vfs::Listing>;
 typedef shared_ptr<VFSFile>         VFSFilePtr;
 typedef function<bool()>            VFSCancelChecker;

@@ -1,8 +1,7 @@
 #pragma once
 
+#include <VFS/VFS.h>
 #include "PanelDataSortMode.h"
-
-class VFSListing;
 
 namespace nc::panel::data {
 

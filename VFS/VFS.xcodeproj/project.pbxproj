@@ -158,7 +158,7 @@
 		CF69D0111DA22BE800992B84 /* VFSFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSFile.cpp; path = source/VFSFile.cpp; sourceTree = "<group>"; };
 		CF69D0121DA22BE800992B84 /* VFSGenericMemReadOnlyFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSGenericMemReadOnlyFile.cpp; path = source/VFSGenericMemReadOnlyFile.cpp; sourceTree = "<group>"; };
 		CF69D0131DA22BE800992B84 /* VFSListing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSListing.cpp; path = source/VFSListing.cpp; sourceTree = "<group>"; };
-		CF69D0141DA22BE800992B84 /* VFSListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSListingInput.h; path = source/VFSListingInput.h; sourceTree = "<group>"; };
+		CF69D0141DA22BE800992B84 /* ListingInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ListingInput.h; path = source/ListingInput.h; sourceTree = "<group>"; };
 		CF69D0151DA22BE800992B84 /* VFSPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSPath.cpp; path = source/VFSPath.cpp; sourceTree = "<group>"; };
 		CF69D0161DA22BE800992B84 /* VFSSeqToRandomWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSSeqToRandomWrapper.cpp; path = source/VFSSeqToRandomWrapper.cpp; sourceTree = "<group>"; };
 		CF69D0231DA2305A00992B84 /* DisplayNamesCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayNamesCache.h; path = source/Native/DisplayNamesCache.h; sourceTree = "<group>"; };
@@ -411,7 +411,7 @@
 				CF69D0081DA2281E00992B84 /* VFSHost.cpp */,
 				CF69D0131DA22BE800992B84 /* VFSListing.cpp */,
 				CFC4F92F1F0B5E250000B3EE /* VFSListingObjC.mm */,
-				CF69D0141DA22BE800992B84 /* VFSListingInput.h */,
+				CF69D0141DA22BE800992B84 /* ListingInput.h */,
 				CF69D0151DA22BE800992B84 /* VFSPath.cpp */,
 				CF69D0161DA22BE800992B84 /* VFSSeqToRandomWrapper.cpp */,
 			);

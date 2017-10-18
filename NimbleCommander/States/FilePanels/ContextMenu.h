@@ -1,6 +1,6 @@
 #pragma once
 
-class VFSListingItem;
+#include <VFS/VFS.h>
 @class PanelController;
 
 @interface NCPanelContextMenu : NSMenu<NSMenuDelegate>

@@ -8,7 +8,9 @@
 
 #include "../include/VFS/VFSListing.h"
 #include "../include/VFS/VFSHost.h"
-#include "VFSListingInput.h"
+#include "ListingInput.h"
+
+namespace nc::vfs {
 
 static_assert( is_move_constructible<VFSListingItem>::value, "" );
 static_assert( is_move_constructible<VFSListing::iterator>::value, "" );
@@ -22,7 +24,7 @@ static bool BasicDirectoryCheck(const string& _str)
     return true;
 }
 
-static void Validate(const VFSListingInput& _source)
+static void Validate(const ListingInput& _source)
 {
     int items_no = (int)_source.filenames.size();
 
@@ -73,7 +75,7 @@ static void Validate(const VFSListingInput& _source)
     
 }
 
-static void Compress( VFSListingInput &_input )
+static void Compress( ListingInput &_input )
 {
     if( _input.sizes.mode() == variable_container<>::type::sparse && _input.sizes.is_contiguous() )         _input.sizes.compress_contiguous();
     if( _input.inodes.mode() == variable_container<>::type::sparse && _input.inodes.is_contiguous() )     	_input.inodes.compress_contiguous();
@@ -90,7 +92,7 @@ static void Compress( VFSListingInput &_input )
     
 }
 
-shared_ptr<VFSListing> VFSListing::Build(VFSListingInput &&_input)
+shared_ptr<Listing> Listing::Build(ListingInput &&_input)
 {
     Validate( _input ); // will throw an exception on error
     Compress( _input );
@@ -120,9 +122,9 @@ shared_ptr<VFSListing> VFSListing::Build(VFSListingInput &&_input)
     return l;
 }
 
-VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listings)
+ListingInput Listing::Compose(const vector<shared_ptr<VFSListing>> &_listings)
 {
-    VFSListingInput result;
+    ListingInput result;
     result.hosts.reset( variable_container<>::type::dense );
     result.directories.reset( variable_container<>::type::dense );
     result.display_filenames.reset( variable_container<>::type::sparse );
@@ -179,12 +181,12 @@ VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listi
     return result;
 }
 
-VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listings, const vector< vector<unsigned> > &_items_indeces)
+ListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listings, const vector< vector<unsigned> > &_items_indeces)
 {
     if( _listings.size() != _items_indeces.size() )
         throw invalid_argument("VFSListing::Compose input containers has different sizes");
     
-    VFSListingInput result;
+    ListingInput result;
     result.hosts.reset( variable_container<>::type::dense );
     result.directories.reset( variable_container<>::type::dense );
     result.display_filenames.reset( variable_container<>::type::sparse );
@@ -247,7 +249,7 @@ VFSListingInput VFSListing::Compose(const vector<shared_ptr<VFSListing>> &_listi
 
 VFSListingPtr VFSListing::ProduceUpdatedTemporaryPanelListing( const VFSListing& _original, VFSCancelChecker _cancel_checker )
 {
-    VFSListingInput result;
+    ListingInput result;
     unsigned count = 0;
     result.hosts.reset( variable_container<>::type::dense );
     result.directories.reset( variable_container<>::type::dense );
@@ -317,17 +319,17 @@ const shared_ptr<VFSListing> &VFSListing::EmptyListing() noexcept
     return empty;
 }
 
-shared_ptr<VFSListing> VFSListing::Alloc()
+shared_ptr<Listing> Listing::Alloc()
 {
-    struct make_shared_enabler: public VFSListing {};
+    struct make_shared_enabler: public Listing {};
     return make_shared<make_shared_enabler>();
 }
 
-VFSListing::VFSListing()
+Listing::Listing()
 {
 }
 
-VFSListing::~VFSListing()
+Listing::~Listing()
 {
 }
 
@@ -339,7 +341,7 @@ static CFString UTF8WithFallback(const string &_s)
     return s;
 }
 
-void VFSListing::BuildFilenames()
+void Listing::BuildFilenames()
 {
     size_t i = 0, e = m_Filenames.size();
     m_ItemsCount = (unsigned)e;
@@ -382,37 +384,37 @@ void VFSListing::BuildFilenames()
     if( (a) >= m_ItemsCount ) \
         throw out_of_range(string(__PRETTY_FUNCTION__) + ": index out of range");
 
-bool VFSListing::HasExtension(unsigned _ind) const
+bool Listing::HasExtension(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_ExtensionOffsets[_ind] != 0;
 }
 
-uint16_t VFSListing::ExtensionOffset(unsigned _ind) const
+uint16_t Listing::ExtensionOffset(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_ExtensionOffsets[_ind];
 }
 
-const char *VFSListing::Extension(unsigned _ind) const
+const char *Listing::Extension(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Filenames[_ind].c_str() + m_ExtensionOffsets[_ind];
 }
 
-const string& VFSListing::Filename(unsigned _ind) const
+const string& Listing::Filename(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Filenames[_ind];
 }
 
-CFStringRef VFSListing::FilenameCF(unsigned _ind) const
+CFStringRef Listing::FilenameCF(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return *m_FilenamesCF[_ind];
 }
 
-string VFSListing::Path(unsigned _ind) const
+string Listing::Path(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     if( !IsDotDot(_ind) )
@@ -425,7 +427,7 @@ string VFSListing::Path(unsigned _ind) const
     }
 }
 
-string VFSListing::FilenameWithoutExt(unsigned _ind) const
+string Listing::FilenameWithoutExt(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     if( m_ExtensionOffsets[_ind] == 0 )
@@ -433,14 +435,14 @@ string VFSListing::FilenameWithoutExt(unsigned _ind) const
     return m_Filenames[_ind].substr(0, m_ExtensionOffsets[_ind]-1);
 }
 
-const VFSHostPtr& VFSListing::Host() const
+const VFSHostPtr& Listing::Host() const
 {
     if( HasCommonHost() )
         return m_Hosts[0];
-    throw logic_error("VFSListing::Host() called for listing with no common host");
+    throw logic_error("Listing::Host() called for listing with no common host");
 }
 
-const VFSHostPtr& VFSListing::Host(unsigned _ind) const
+const VFSHostPtr& Listing::Host(unsigned _ind) const
 {
     if( HasCommonHost() )
         return m_Hosts[0];
@@ -450,14 +452,14 @@ const VFSHostPtr& VFSListing::Host(unsigned _ind) const
     }
 }
 
-const string& VFSListing::Directory() const
+const string& Listing::Directory() const
 {
     if( HasCommonDirectory() )
         return m_Directories[0];
-    throw logic_error("VFSListing::Directory() called for listing with no common directory");
+    throw logic_error("Listing::Directory() called for listing with no common directory");
 }
 
-const string& VFSListing::Directory(unsigned _ind) const
+const string& Listing::Directory(unsigned _ind) const
 {
     if( HasCommonDirectory() ) {
         return m_Directories[0];
@@ -468,239 +470,239 @@ const string& VFSListing::Directory(unsigned _ind) const
     }
 }
 
-unsigned VFSListing::Count() const noexcept
+unsigned Listing::Count() const noexcept
 {
     return m_ItemsCount;
 };
 
-bool VFSListing::Empty() const noexcept
+bool Listing::Empty() const noexcept
 {
     return m_ItemsCount == 0;
 }
 
-bool VFSListing::IsUniform() const noexcept
+bool Listing::IsUniform() const noexcept
 {
     return HasCommonHost() && HasCommonDirectory();
 }
 
-bool VFSListing::HasCommonHost() const noexcept
+bool Listing::HasCommonHost() const noexcept
 {
     return m_Hosts.mode() == variable_container<>::type::common;
 }
 
-bool VFSListing::HasCommonDirectory() const noexcept
+bool Listing::HasCommonDirectory() const noexcept
 {
     return m_Directories.mode() == variable_container<>::type::common;
 }
 
-bool VFSListing::HasSize(unsigned _ind) const
+bool Listing::HasSize(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Sizes.has(_ind);
 }
 
-uint64_t VFSListing::Size(unsigned _ind) const
+uint64_t Listing::Size(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Sizes.has(_ind) ? m_Sizes[_ind] : 0;
 }
 
-bool VFSListing::HasInode(unsigned _ind) const
+bool Listing::HasInode(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Inodes.has(_ind);
 }
 
-uint64_t VFSListing::Inode(unsigned _ind) const
+uint64_t Listing::Inode(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Inodes.has(_ind) ? m_Inodes[_ind] : 0;
 }
 
-bool VFSListing::HasATime(unsigned _ind) const
+bool Listing::HasATime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_ATimes.has(_ind);
 }
 
-time_t VFSListing::ATime(unsigned _ind) const
+time_t Listing::ATime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_ATimes.has(_ind) ? m_ATimes[_ind] : m_CreationTime;
 }
 
-bool VFSListing::HasMTime(unsigned _ind) const
+bool Listing::HasMTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_MTimes.has(_ind);
 }
 
-time_t VFSListing::MTime(unsigned _ind) const
+time_t Listing::MTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_MTimes.has(_ind) ? m_MTimes[_ind] : m_CreationTime;
 }
 
-bool VFSListing::HasCTime(unsigned _ind) const
+bool Listing::HasCTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_CTimes.has(_ind);
 }
 
-time_t VFSListing::CTime(unsigned _ind) const
+time_t Listing::CTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_CTimes.has(_ind) ? m_CTimes[_ind] : m_CreationTime;
 }
 
-bool VFSListing::HasBTime(unsigned _ind) const
+bool Listing::HasBTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_BTimes.has(_ind);
 }
 
-time_t VFSListing::BTime(unsigned _ind) const
+time_t Listing::BTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_BTimes.has(_ind) ? m_BTimes[_ind] : m_CreationTime;
 }
 
-bool VFSListing::HasAddTime(unsigned _ind) const
+bool Listing::HasAddTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_AddTimes.has(_ind);
 }
 
-time_t VFSListing::AddTime(unsigned _ind) const
+time_t Listing::AddTime(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_AddTimes.has(_ind) ? m_AddTimes[_ind] : BTime(_ind);
 }
 
-mode_t VFSListing::UnixMode(unsigned _ind) const
+mode_t Listing::UnixMode(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UnixModes[_ind];
 }
 
-uint8_t VFSListing::UnixType(unsigned _ind) const
+uint8_t Listing::UnixType(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UnixTypes[_ind];
 }
 
-bool VFSListing::HasUID(unsigned _ind) const
+bool Listing::HasUID(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UIDS.has(_ind);
 }
 
-uid_t VFSListing::UID(unsigned _ind) const
+uid_t Listing::UID(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UIDS.has(_ind) ? m_UIDS[_ind] : 0;
 }
 
-bool VFSListing::HasGID(unsigned _ind) const
+bool Listing::HasGID(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_GIDS.has(_ind);
 }
 
-gid_t VFSListing::GID(unsigned _ind) const
+gid_t Listing::GID(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_GIDS.has(_ind) ? m_GIDS[_ind] : 0;
 }
 
-bool VFSListing::HasUnixFlags(unsigned _ind) const
+bool Listing::HasUnixFlags(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UnixFlags.has(_ind);
 }
 
-uint32_t VFSListing::UnixFlags(unsigned _ind) const
+uint32_t Listing::UnixFlags(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UnixFlags.has(_ind) ? m_UnixFlags[_ind] : 0;
 }
 
-bool VFSListing::HasSymlink(unsigned _ind) const
+bool Listing::HasSymlink(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_Symlinks.has(_ind);
 }
 
-const string& VFSListing::Symlink(unsigned _ind) const
+const string& Listing::Symlink(unsigned _ind) const
 {
     static const string st = "";
     __CHECK_BOUNDS(_ind);
     return m_Symlinks.has(_ind) ? m_Symlinks[_ind] : st;
 }
 
-bool VFSListing::HasDisplayFilename(unsigned _ind) const
+bool Listing::HasDisplayFilename(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_DisplayFilenames.has(_ind);
 }
 
-const string& VFSListing::DisplayFilename(unsigned _ind) const
+const string& Listing::DisplayFilename(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_DisplayFilenames.has(_ind) ? m_DisplayFilenames[_ind] : Filename(_ind);
 }
 
-CFStringRef VFSListing::DisplayFilenameCF(unsigned _ind) const
+CFStringRef Listing::DisplayFilenameCF(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_DisplayFilenamesCF.has(_ind) ? *m_DisplayFilenamesCF[_ind] : FilenameCF(_ind);
 }
 
-bool VFSListing::IsDotDot(unsigned _ind) const
+bool Listing::IsDotDot(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     auto &s = m_Filenames[_ind];
     return s[0]=='.' && s[1] == '.' && s[2] == 0;
 }
 
-bool VFSListing::IsDir(unsigned _ind) const
+bool Listing::IsDir(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return (m_UnixModes[_ind] & S_IFMT) == S_IFDIR;
 }
 
-bool VFSListing::IsReg(unsigned _ind) const
+bool Listing::IsReg(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return (m_UnixModes[_ind] & S_IFMT) == S_IFREG;
 }
 
-bool VFSListing::IsSymlink(unsigned _ind) const
+bool Listing::IsSymlink(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return m_UnixTypes[_ind] == DT_LNK;
 }
 
-bool VFSListing::IsHidden(unsigned _ind) const
+bool Listing::IsHidden(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return (Filename(_ind)[0] == '.' || (UnixFlags(_ind) & UF_HIDDEN)) && !IsDotDot(_ind);
 }
 
-VFSListingItem VFSListing::Item(unsigned _ind) const
+VFSListingItem Listing::Item(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
     return VFSListingItem(shared_from_this(), _ind);
 }
 
-VFSListing::iterator VFSListing::begin() const noexcept
+Listing::iterator Listing::begin() const noexcept
 {
     iterator it;
     it.i = VFSListingItem(shared_from_this(), 0);
     return it;
 }
 
-VFSListing::iterator VFSListing::end() const noexcept
+Listing::iterator Listing::end() const noexcept
 {
     iterator it;
     it.i = VFSListingItem(shared_from_this(), m_ItemsCount);
@@ -716,7 +718,7 @@ VFSListingItem::VFSListingItem() noexcept:
 {
 }
 
-VFSListingItem::VFSListingItem(const shared_ptr<const VFSListing>& _listing, unsigned _ind) noexcept:
+VFSListingItem::VFSListingItem(const shared_ptr<const class Listing>& _listing, unsigned _ind) noexcept:
     I(_ind),
     L(_listing)
 {
@@ -727,7 +729,7 @@ VFSListingItem::operator bool() const noexcept
     return (bool)L;
 }
 
-const shared_ptr<const VFSListing>& VFSListingItem::Listing() const noexcept
+const shared_ptr<const Listing>& VFSListingItem::Listing() const noexcept
 {
     return L;
 }
@@ -1048,42 +1050,44 @@ bool operator!=(const VFSListingItem&_l, const VFSWeakListingItem&_r) noexcept
 /**
  * VFSListing::iterator
  *///////
-VFSListing::iterator &VFSListing::iterator::operator--() noexcept // prefix decrement
+Listing::iterator &Listing::iterator::operator--() noexcept // prefix decrement
 {
     i.I--;
     return *this;
 }
 
-VFSListing::iterator &VFSListing::iterator::operator++() noexcept // prefix increment
+Listing::iterator &Listing::iterator::operator++() noexcept // prefix increment
 {
     i.I++;
     return *this;
 }
-VFSListing::iterator VFSListing::iterator::operator--(int) noexcept // posfix decrement
+Listing::iterator Listing::iterator::operator--(int) noexcept // posfix decrement
 {
     auto p = *this;
     i.I--;
     return p;
 }
 
-VFSListing::iterator VFSListing::iterator::operator++(int) noexcept // posfix increment
+Listing::iterator Listing::iterator::operator++(int) noexcept // posfix increment
 {
     auto p = *this;
     i.I++;
     return p;
 }
     
-bool VFSListing::iterator::operator==(const iterator& _r) const noexcept
+bool Listing::iterator::operator==(const iterator& _r) const noexcept
 {
     return i.I == _r.i.I && i.L == _r.i.L;
 }
 
-bool VFSListing::iterator::operator!=(const iterator& _r) const noexcept
+bool Listing::iterator::operator!=(const iterator& _r) const noexcept
 {
     return !(*this == _r);
 }
 
-const VFSListingItem& VFSListing::iterator::operator*() const noexcept
+const VFSListingItem& Listing::iterator::operator*() const noexcept
 {
     return i;
+}
+
 }

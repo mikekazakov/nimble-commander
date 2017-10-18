@@ -3,7 +3,9 @@
 #include <Habanero/variable_container.h>
 #include "../include/VFS/VFSDeclarations.h"
 
-struct VFSListingInput
+namespace nc::vfs {
+
+struct ListingInput
 {
     
     /**
@@ -85,3 +87,5 @@ struct VFSListingInput
      */
     variable_container<string>      symlinks{variable_container<>::type::sparse};
 };
+
+}

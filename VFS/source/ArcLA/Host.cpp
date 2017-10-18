@@ -13,7 +13,7 @@
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 #include <VFS/AppleDoubleEA.h>
-#include "../VFSListingInput.h"
+#include "../ListingInput.h"
 #include "Host.h"
 #include "Internal.h"
 #include "File.h"
@@ -491,7 +491,7 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
     
     const auto &directory = i->second;
     
-    VFSListingInput listing_source;
+    ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
     listing_source.atimes.reset( variable_container<>::type::dense );

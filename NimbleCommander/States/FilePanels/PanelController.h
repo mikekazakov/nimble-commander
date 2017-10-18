@@ -2,10 +2,8 @@
 
 #include "PanelViewDelegate.h"
 #include <NimbleCommander/Core/rapidjson_fwd.h>
+#include <VFS/VFS.h>
 
-class VFSHost;
-class VFSListing;
-class VFSListingItem;
 struct VFSInstancePromise;
 class NetworkConnectionsManager;
 @class PanelController;

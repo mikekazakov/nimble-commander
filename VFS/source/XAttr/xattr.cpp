@@ -1,7 +1,7 @@
 #include <sys/xattr.h>
 #include "xattr.h"
 #include <VFS/VFSFile.h>
-#include "../VFSListingInput.h"
+#include "../ListingInput.h"
 
 namespace nc::vfs {
 
@@ -194,7 +194,7 @@ int XAttrHost::FetchDirectoryListing(const char *_path,
         return VFSError::InvalidCall;
     
     // set up or listing structure
-    VFSListingInput listing_source;
+    ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = "/";
     listing_source.atimes.reset( variable_container<>::type::common );
@@ -214,7 +214,7 @@ int XAttrHost::FetchDirectoryListing(const char *_path,
             listing_source.filenames.emplace_back( ".." );
             listing_source.unix_types.emplace_back( DT_DIR );
             listing_source.unix_modes.emplace_back( g_RootMode );
-            listing_source.sizes.insert( 0, VFSListingInput::unknown_size );
+            listing_source.sizes.insert( 0, ListingInput::unknown_size );
         }
         
         for( const auto &i: m_Attrs ) {

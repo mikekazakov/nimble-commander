@@ -1,10 +1,10 @@
 #pragma once
 
+#include <VFS/VFS.h>
 #include "PanelViewTypes.h"
 
 @protocol PanelViewDelegate;
 @class PanelView;
-class VFSListingItem;
 struct PanelViewLayout;
 
 namespace nc::panel::data {

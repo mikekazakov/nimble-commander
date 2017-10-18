@@ -1,8 +1,7 @@
 #pragma once
 
+#include <VFS/VFS.h>
 #include "DefaultAction.h"
-
-class VFSListingItem;
 
 namespace nc::panel::actions {
 

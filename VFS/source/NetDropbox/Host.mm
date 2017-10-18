@@ -1,5 +1,5 @@
 #include <Utility/PathManip.h>
-#include "../VFSListingInput.h"
+#include "../ListingInput.h"
 #include "Aux.h"
 #include "Host.h"
 #include "File.h"
@@ -332,7 +332,7 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
         
         auto entries = ExtractMetadataEntries(json);
         
-        VFSListingInput listing_source;
+        ListingInput listing_source;
         listing_source.hosts[0] = shared_from_this();
         listing_source.directories[0] =  EnsureTrailingSlash(_path);
         listing_source.sizes.reset( variable_container<>::type::sparse );

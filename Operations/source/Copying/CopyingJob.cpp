@@ -107,6 +107,7 @@ void CopyingJob::ProcessItems()
     };
     
     for( int index = 0, index_end = m_SourceItems.ItemsAmount(); index != index_end; ++index ) {
+        m_CurrentlyProcessingSourceItemIndex = index;
         auto source_mode = m_SourceItems.ItemMode(index);
         auto&source_host = m_SourceItems.ItemHost(index);
         auto source_size = m_SourceItems.ItemSize(index);
@@ -264,9 +265,25 @@ CopyingJob::StepResult CopyingJob::ProcessSymlinkItem(VFSHost& _source_host,
                                                       const string &_source_path,
                                                       const string &_destination_path)
 {
-    const bool dest_host_is_native = m_DestinationHost->IsNativeFS();
+    const auto dest_host_is_native = m_DestinationHost->IsNativeFS();
     if( _source_host.IsNativeFS() && dest_host_is_native ) { // native -> native
-        return CopyNativeSymlinkToNative(_source_path, _destination_path);
+        if( m_Options.docopy ) {
+            return CopyNativeSymlinkToNative(_source_path, _destination_path);
+        }
+        else {
+            const auto item_dev = m_SourceItems.ItemDev(m_CurrentlyProcessingSourceItemIndex);
+            const auto item_fs_info = NativeFSManager::Instance().VolumeFromDevID( item_dev );
+            const auto is_same_native_volume = item_fs_info == m_DestinationNativeFSInfo;
+            if( is_same_native_volume ) {
+                return RenameNativeFile(_source_path, _destination_path);
+            }
+            else {
+                const auto result = CopyNativeSymlinkToNative(_source_path, _destination_path);
+                if( result == StepResult::Ok ) // mark source file for deletion
+                    m_SourceItemsToDelete.emplace_back(m_CurrentlyProcessingSourceItemIndex);
+                return result;
+            }
+        }
     }
     else if( dest_host_is_native  ) { // vfs -> native
         return CopyVFSSymlinkToNative(_source_host, _source_path, _destination_path);

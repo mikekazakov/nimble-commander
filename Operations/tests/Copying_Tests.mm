@@ -532,6 +532,26 @@ static int VFSCompareEntries(const path& _file1_full_path,
     XCTAssert( boost::filesystem::read_symlink(m_TmpDir/"D1"/"symlink") == "new_symlink_value" );
 }
 
+- (void)testSymlinkRenaming
+{
+    using namespace boost::filesystem;
+    symlink( "symlink_value", (m_TmpDir/"file1").c_str() );
+    
+    CopyingOptions opts;
+    opts.docopy = false;
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems(m_TmpDir.c_str(), {"file1"}, *host),
+               (m_TmpDir/"file2").c_str(),
+               host,
+               opts);
+
+    op.Start();
+    op.Wait();
+    XCTAssert( op.State() == OperationState::Completed );
+    XCTAssert( symlink_status(m_TmpDir/"file1").type() == file_type::file_not_found );
+    XCTAssert( read_symlink(m_TmpDir/"file2") == "symlink_value" );
+}
+
 - (path)makeTmpDir
 {
     char dir[MAXPATHLEN];

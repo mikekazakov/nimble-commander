@@ -176,6 +176,8 @@ private:
     StepResult CopyVFSSymlinkToNative(VFSHost &_src_vfs,
                                       const string& _src_path,
                                       const string& _dst_path) const;
+    StepResult RenameNativeSymlinkToNative(const string& _src_path,
+                                           const string& _dst_path) const;
     
     StepResult RenameNativeFile(const string& _src_path,
                                 const string& _dst_path) const;
@@ -194,6 +196,7 @@ private:
     
     vector<VFSListingItem>                      m_VFSListingItems;
     copying::SourceItems                        m_SourceItems;
+    int                                         m_CurrentlyProcessingSourceItemIndex = -1;
     vector<copying::ChecksumExpectation>        m_Checksums;
     vector<unsigned>                            m_SourceItemsToDelete;
     VFSHostPtr                                  m_DestinationHost;

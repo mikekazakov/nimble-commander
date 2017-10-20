@@ -176,6 +176,9 @@ private:
     StepResult CopyVFSSymlinkToNative(VFSHost &_src_vfs,
                                       const string& _src_path,
                                       const string& _dst_path) const;
+    StepResult CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
+                                   const string& _src_path,
+                                   const string& _dst_path) const;
     StepResult RenameNativeSymlinkToNative(const string& _src_path,
                                            const string& _dst_path) const;
     

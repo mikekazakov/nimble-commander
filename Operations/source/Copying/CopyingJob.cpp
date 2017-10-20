@@ -286,17 +286,16 @@ CopyingJob::StepResult CopyingJob::ProcessSymlinkItem(VFSHost& _source_host,
         }
     }
     else if( dest_host_is_native  ) { // vfs -> native
-        return CopyVFSSymlinkToNative(_source_host, _source_path, _destination_path);
+        const auto result = CopyVFSSymlinkToNative(_source_host, _source_path, _destination_path);
+        if( m_Options.docopy == false && result == StepResult::Ok)
+            m_SourceItemsToDelete.emplace_back(m_CurrentlyProcessingSourceItemIndex);
+        return result;
     }
-    else {
-        /* NOT SUPPORTED YET */
-        //                int a = 10;
-        //                if( m_Options.docopy ) { // copy
-        //                    step_result = CopyVFSFileToVFSFile(source_host, source_path, destination_path, nullptr);
-        //                }
-        
-        // TODO: show error??
-        
+    else { // vfs -> vfs
+        const auto result = CopyVFSSymlinkToVFS(_source_host, _source_path, _destination_path);
+        if( m_Options.docopy == false && result == StepResult::Ok)
+            m_SourceItemsToDelete.emplace_back(m_CurrentlyProcessingSourceItemIndex);
+        return result;
     }
     return StepResult::Stop;
 }
@@ -1893,7 +1892,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(const string& _src_
     }
     
     struct stat dst_stat_buffer;
-    if( io.lstat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
+    if( io.lstat(_dst_path.c_str(), &dst_stat_buffer) == 0 ) {
         struct stat src_stat_buffer;
         while( true ) {
             const auto rc = io.lstat(_src_path.c_str(), &src_stat_buffer);
@@ -1980,7 +1979,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
     }
     
     struct stat dst_stat_buffer;
-    if( io.lstat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
+    if( io.lstat(_dst_path.c_str(), &dst_stat_buffer) == 0 ) {
         VFSStat src_stat_buffer;
         while( true ) {
             const auto rc = _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, VFSFlags::F_NoFollow);
@@ -2034,6 +2033,88 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
         if( rc == 0 )
             break;
         switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, dst_host) ) {
+            case DestinationFileWriteErrorResolution::Skip: return StepResult::Skipped;
+            case DestinationFileWriteErrorResolution::Stop: return StepResult::Stop;
+            case DestinationFileWriteErrorResolution::Retry: continue;
+        }
+    }
+    
+    return StepResult::Ok;
+}
+
+CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
+                                                       const string& _src_path,
+                                                       const string& _dst_path) const
+{
+    auto &dst_host = *m_DestinationHost;
+    
+    char linkpath[MAXPATHLEN];
+    while( true ) {
+        const auto rc = _src_vfs.ReadSymlink(_src_path.c_str(), linkpath, MAXPATHLEN);
+        if( rc == VFSError::Ok )
+            break;
+        switch( m_OnCantAccessSourceItem( rc, _src_path, _src_vfs ) ) {
+            case CantAccessSourceItemResolution::Skip:  return StepResult::Skipped;
+            case CantAccessSourceItemResolution::Stop:  return StepResult::Stop;
+            case CantAccessSourceItemResolution::Retry: continue;
+        }
+    }
+    
+    VFSStat dst_stat_buffer;
+    if( dst_host.Stat(_dst_path.c_str(), dst_stat_buffer, VFSFlags::F_NoFollow) == VFSError::Ok ) {
+        VFSStat src_stat_buffer;
+        while( true ) {
+            const auto rc = _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, VFSFlags::F_NoFollow);
+            if( rc == VFSError::Ok )
+                break;
+            switch( m_OnCantAccessSourceItem( rc, _src_path, _src_vfs) ) {
+                case CantAccessSourceItemResolution::Skip:  return StepResult::Skipped;
+                case CantAccessSourceItemResolution::Stop:  return StepResult::Stop;
+                case CantAccessSourceItemResolution::Retry: continue;
+            }
+        }
+        
+        // different objects, need to erase destination before calling symlink()
+        // need to ask user what to do
+        struct stat posix_src_stat_buffer, posix_dst_stat_buffer;
+        VFSStat::ToSysStat(src_stat_buffer, posix_src_stat_buffer);
+        VFSStat::ToSysStat(dst_stat_buffer, posix_dst_stat_buffer);
+        const auto res = m_OnRenameDestinationAlreadyExists(posix_src_stat_buffer,
+                                                            posix_dst_stat_buffer,
+                                                            _dst_path);
+        switch( res ) {
+            case RenameDestExistsResolution::Skip:
+                return StepResult::Skipped;
+            case RenameDestExistsResolution::OverwriteOld:
+                if( posix_src_stat_buffer.st_mtime <= posix_dst_stat_buffer.st_mtime )
+                    return StepResult::Skipped;
+            case RenameDestExistsResolution::Overwrite:
+                break;
+            default:
+                return StepResult::Stop;
+        }
+        
+        if( dst_host.Trash(_dst_path.c_str(), nullptr) != VFSError::Ok ) {
+            while( true ) {
+                const auto rc = dst_stat_buffer.mode_bits.dir ?
+                    dst_host.RemoveDirectory(_dst_path.c_str()) :
+                    dst_host.Unlink(_dst_path.c_str());
+                if( rc == VFSError::Ok )
+                    break;
+                switch( m_OnCantDeleteDestinationFile(rc, _dst_path, dst_host) ) {
+                    case CantDeleteDestinationFileResolution::Skip: return StepResult::Skipped;
+                    case CantDeleteDestinationFileResolution::Stop: return StepResult::Stop;
+                    case CantDeleteDestinationFileResolution::Retry:continue;
+                }
+            }
+        }
+    }
+    
+    while( true ) {
+        const auto rc = dst_host.CreateSymlink(_dst_path.c_str(), linkpath);
+        if( rc == VFSError::Ok )
+            break;
+        switch( m_OnDestinationFileWriteError(rc, _dst_path, dst_host) ) {
             case DestinationFileWriteErrorResolution::Skip: return StepResult::Skipped;
             case DestinationFileWriteErrorResolution::Stop: return StepResult::Stop;
             case DestinationFileWriteErrorResolution::Retry: continue;

@@ -883,10 +883,6 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
         else
             fchflags(destination_fd, src_stat_buffer.st_flags);
     }
-
-    // do times things
-    if( m_Options.copy_file_times && do_set_times )
-        AdjustFileTimesForNativeFD(destination_fd, src_stat_buffer);
     
     // do ownage things
     // TODO: we actually can't chown without superuser rights.
@@ -896,6 +892,24 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
             io.chown(_dst_path.c_str(), src_stat_buffer.st_uid, src_stat_buffer.st_gid);
         else // short path
             fchown(destination_fd, src_stat_buffer.st_uid, src_stat_buffer.st_gid);
+    }
+
+    // do times things #1
+    if( m_Options.copy_file_times &&
+        do_set_times &&
+        m_DestinationNativeFSInfo->mount_flags.local ) {
+        AdjustFileTimesForNativeFD(destination_fd, src_stat_buffer);
+        do_set_times = false;
+    }
+    
+    close(destination_fd);
+    destination_fd = -1;
+
+    // do times things #2
+    if( m_Options.copy_file_times &&
+        do_set_times ) {
+        // thanks to the issue in SMB driver, we need to have a separate logic for remote mounts
+        AdjustFileTimesForNativePath(_dst_path.c_str(), src_stat_buffer);
     }
     
     return StepResult::Ok;
@@ -1195,10 +1209,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     if( m_Options.copy_xattrs && src_file->XAttrCount() > 0 )
         CopyXattrsFromVFSFileToNativeFD(*src_file, destination_fd);
     
-    // adjust destination time as source
-    if(m_Options.copy_file_times && do_set_times)
-        AdjustFileTimesForNativeFD(destination_fd, src_stat_buffer);
-    
     // change flags
     if( m_Options.copy_unix_flags && src_stat_buffer.meaning.flags ) {
         if(io.isrouted()) // long path
@@ -1213,6 +1223,24 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
             io.chown(_dst_path.c_str(), src_stat_buffer.uid, src_stat_buffer.gid);
         else
             fchown(destination_fd, src_stat_buffer.uid, src_stat_buffer.gid);
+    }
+    
+    // do times things #1
+    if( m_Options.copy_file_times &&
+        do_set_times &&
+        m_DestinationNativeFSInfo->mount_flags.local ) {
+        AdjustFileTimesForNativeFD(destination_fd, src_stat_buffer);
+        do_set_times = false;
+    }
+    
+    close(destination_fd);
+    destination_fd = -1;
+
+    // do times things #2
+    if( m_Options.copy_file_times &&
+        do_set_times ) {
+        // thanks to the issue in SMB driver, we need to have a separate logic for remote mounts
+        AdjustFileTimesForNativePath(_dst_path.c_str(), src_stat_buffer);
     }
     
     return StepResult::Ok;

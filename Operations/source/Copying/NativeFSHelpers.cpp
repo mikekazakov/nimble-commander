@@ -28,19 +28,17 @@ void AdjustFileTimesForNativePath(const char* _target_path, struct stat &_with_t
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
     attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
-    
-    attrs.commonattr = ATTR_CMN_MODTIME;
-    setattrlist(_target_path, &attrs, &_with_times.st_mtimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_CRTIME;
-    setattrlist(_target_path, &attrs, &_with_times.st_birthtimespec, sizeof(struct timespec), 0);
-    
-    //  do we really need atime to be changed?
-    //    attrs.commonattr = ATTR_CMN_ACCTIME;
-    //    fsetattrlist(_target_fd, &attrs, &_with_times.st_atimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_CHGTIME;
-    setattrlist(_target_path, &attrs, &_with_times.st_ctimespec, sizeof(struct timespec), 0);
+    attrs.commonattr = ATTR_CMN_CRTIME | ATTR_CMN_MODTIME | ATTR_CMN_CHGTIME | ATTR_CMN_ACCTIME;
+    struct timespec values[4] = {   _with_times.st_birthtimespec,
+                                    _with_times.st_mtimespec,
+                                    _with_times.st_ctimespec,
+                                    _with_times.st_atimespec    };
+    setattrlist(_target_path,
+                 &attrs,
+                 &values[0],
+                 sizeof(values),
+                 0);
+
 }
 
 void AdjustFileTimesForNativePath(const char* _target_path, const VFSStat &_with_times)
@@ -54,19 +52,16 @@ void AdjustFileTimesForNativeFD(int _target_fd, struct stat &_with_times)
     struct attrlist attrs;
     memset(&attrs, 0, sizeof(attrs));
     attrs.bitmapcount = ATTR_BIT_MAP_COUNT;
-    
-    attrs.commonattr = ATTR_CMN_MODTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times.st_mtimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_CRTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times.st_birthtimespec, sizeof(struct timespec), 0);
-
-//  do we really need atime to be changed?
-//    attrs.commonattr = ATTR_CMN_ACCTIME;
-//    fsetattrlist(_target_fd, &attrs, &_with_times.st_atimespec, sizeof(struct timespec), 0);
-    
-    attrs.commonattr = ATTR_CMN_CHGTIME;
-    fsetattrlist(_target_fd, &attrs, &_with_times.st_ctimespec, sizeof(struct timespec), 0);
+    attrs.commonattr = ATTR_CMN_CRTIME | ATTR_CMN_MODTIME | ATTR_CMN_CHGTIME | ATTR_CMN_ACCTIME;
+    struct timespec values[4] = {   _with_times.st_birthtimespec,
+                                    _with_times.st_mtimespec,
+                                    _with_times.st_ctimespec,
+                                    _with_times.st_atimespec    };
+    fsetattrlist(_target_fd,
+                 &attrs,
+                 &values[0],
+                 sizeof(values),
+                 0);
 }
 
 void AdjustFileTimesForNativeFD(int _target_fd, const VFSStat &_with_times)

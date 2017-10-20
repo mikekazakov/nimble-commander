@@ -69,6 +69,12 @@ struct CopyingJobCallbacks
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
     { return CantCreateDestinationDirResolution::Stop; };
     
+    enum class CantDeleteDestinationFileResolution { Stop, Skip, Retry };
+    function<CantDeleteDestinationFileResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
+    m_OnCantDeleteDestinationFile
+    = [](int _vfs_error, const string &_path, VFSHost &_vfs)
+    { return CantDeleteDestinationFileResolution::Stop; };
+    
     function<void(const string &_path, VFSHost &_vfs)>
     m_OnFileVerificationFailed
     = [](const string &_path, VFSHost &_vfs)
@@ -128,7 +134,13 @@ private:
         FixedPath    // path = dest_path
     };
     
-    void                    ProcessItems();
+    void        ProcessItems();
+    StepResult  ProcessSymlinkItem(VFSHost& _source_host,
+                                   const string &_source_path,
+                                   const string &_destination_path);
+    
+    
+    
     
     PathCompositionType     AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const;
     StepResult              BuildDestinationDirectory() const;

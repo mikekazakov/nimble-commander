@@ -225,25 +225,7 @@ void CopyingJob::ProcessItems()
             }
         }
         else if( S_ISLNK(source_mode) ) {
-            if( source_host.IsNativeFS() && dest_host_is_native ) { // native -> native
-                step_result = CopyNativeSymlinkToNative(source_path, destination_path);
-            }
-            else if( dest_host_is_native  ) { // vfs -> native
-                step_result = CopyVFSSymlinkToNative(source_host, source_path, destination_path);
-            }
-            else {
-                /* NOT SUPPORTED YET */
-//                int a = 10;
-//                if( m_Options.docopy ) { // copy
-//                    step_result = CopyVFSFileToVFSFile(source_host, source_path, destination_path, nullptr);
-//                }
-
-                // TODO: show error??
-                
-            }
-            
-            
-            
+            step_result = ProcessSymlinkItem(source_host, source_path, destination_path);
         }
 
         // check current item result
@@ -276,6 +258,30 @@ void CopyingJob::ProcessItems()
         SetState(JobStage::Cleaning);
         CleanSourceItems();
     }
+}
+    
+CopyingJob::StepResult CopyingJob::ProcessSymlinkItem(VFSHost& _source_host,
+                                                      const string &_source_path,
+                                                      const string &_destination_path)
+{
+    const bool dest_host_is_native = m_DestinationHost->IsNativeFS();
+    if( _source_host.IsNativeFS() && dest_host_is_native ) { // native -> native
+        return CopyNativeSymlinkToNative(_source_path, _destination_path);
+    }
+    else if( dest_host_is_native  ) { // vfs -> native
+        return CopyVFSSymlinkToNative(_source_host, _source_path, _destination_path);
+    }
+    else {
+        /* NOT SUPPORTED YET */
+        //                int a = 10;
+        //                if( m_Options.docopy ) { // copy
+        //                    step_result = CopyVFSFileToVFSFile(source_host, source_path, destination_path, nullptr);
+        //                }
+        
+        // TODO: show error??
+        
+    }
+    return StepResult::Stop;
 }
 
 string CopyingJob::ComposeDestinationNameForItem( int _src_item_index ) const
@@ -1869,6 +1875,60 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(const string& _src_
         }
     }
     
+    struct stat dst_stat_buffer;
+    if( io.lstat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
+        struct stat src_stat_buffer;
+        while( true ) {
+            const auto rc = io.lstat(_src_path.c_str(), &src_stat_buffer);
+            if( rc == 0 )
+                break;
+            switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path, host) ) {
+                case CantAccessSourceItemResolution::Skip:  return StepResult::Skipped;
+                case CantAccessSourceItemResolution::Stop:  return StepResult::Stop;
+                case CantAccessSourceItemResolution::Retry: continue;
+            }
+        }
+        
+        if( src_stat_buffer.st_dev == dst_stat_buffer.st_dev &&
+            src_stat_buffer.st_ino == dst_stat_buffer.st_ino ) {
+            // symlinks have the same inode - it's the same object => we're done.
+            return StepResult::Ok;
+        }
+        
+        // different objects, need to erase destination before calling symlink()
+        // need to ask user what to do
+        const auto res = m_OnRenameDestinationAlreadyExists(src_stat_buffer,
+                                                            dst_stat_buffer,
+                                                            _dst_path);
+        switch( res ) {
+            case RenameDestExistsResolution::Skip:
+                return StepResult::Skipped;
+            case RenameDestExistsResolution::OverwriteOld:
+                if( src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime )
+                    return StepResult::Skipped;
+            case RenameDestExistsResolution::Overwrite:
+                break;
+            default:
+                return StepResult::Stop;
+        }
+        
+        // NEED something like io.trash()!
+        if( host.Trash(_dst_path.c_str(), nullptr) != VFSError::Ok ) {
+            while( true ) {
+                const auto rc = S_ISDIR(dst_stat_buffer.st_mode) ?
+                    io.rmdir(_dst_path.c_str()) :
+                    io.unlink(_dst_path.c_str());
+                if( rc == 0 )
+                    break;
+                switch( m_OnCantDeleteDestinationFile(VFSError::FromErrno(), _dst_path, host) ) {
+                    case CantDeleteDestinationFileResolution::Skip: return StepResult::Skipped;
+                    case CantDeleteDestinationFileResolution::Stop: return StepResult::Stop;
+                    case CantDeleteDestinationFileResolution::Retry:continue;
+                }
+            }
+        }
+    }
+    
     while( true ) {
         const auto rc = io.symlink(linkpath, _dst_path.c_str());
         if( rc == 0 )
@@ -1899,6 +1959,56 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
             case CantAccessSourceItemResolution::Skip:  return StepResult::Skipped;
             case CantAccessSourceItemResolution::Stop:  return StepResult::Stop;
             case CantAccessSourceItemResolution::Retry: continue;
+        }
+    }
+    
+    struct stat dst_stat_buffer;
+    if( io.lstat(_dst_path.c_str(), &dst_stat_buffer) != -1 ) {
+        VFSStat src_stat_buffer;
+        while( true ) {
+            const auto rc = _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, VFSFlags::F_NoFollow);
+            if( rc == VFSError::Ok )
+                break;
+            switch( m_OnCantAccessSourceItem( rc, _src_path, _src_vfs) ) {
+                case CantAccessSourceItemResolution::Skip:  return StepResult::Skipped;
+                case CantAccessSourceItemResolution::Stop:  return StepResult::Stop;
+                case CantAccessSourceItemResolution::Retry: continue;
+            }
+        }
+        
+        // different objects, need to erase destination before calling symlink()
+        // need to ask user what to do
+        struct stat posix_src_stat_buffer;
+        VFSStat::ToSysStat(src_stat_buffer, posix_src_stat_buffer);
+        const auto res = m_OnRenameDestinationAlreadyExists(posix_src_stat_buffer,
+                                                            dst_stat_buffer,
+                                                            _dst_path);
+        switch( res ) {
+            case RenameDestExistsResolution::Skip:
+                return StepResult::Skipped;
+            case RenameDestExistsResolution::OverwriteOld:
+                if( posix_src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime )
+                    return StepResult::Skipped;
+            case RenameDestExistsResolution::Overwrite:
+                break;
+            default:
+                return StepResult::Stop;
+        }
+        
+        // NEED something like io.trash()!
+        if( dst_host.Trash(_dst_path.c_str(), nullptr) != VFSError::Ok ) {
+            while( true ) {
+                const auto rc = S_ISDIR(dst_stat_buffer.st_mode) ?
+                io.rmdir(_dst_path.c_str()) :
+                io.unlink(_dst_path.c_str());
+                if( rc == 0 )
+                    break;
+                switch( m_OnCantDeleteDestinationFile(VFSError::FromErrno(), _dst_path, dst_host) ) {
+                    case CantDeleteDestinationFileResolution::Skip: return StepResult::Skipped;
+                    case CantDeleteDestinationFileResolution::Stop: return StepResult::Stop;
+                    case CantDeleteDestinationFileResolution::Retry:continue;
+                }
+            }
         }
     }
     

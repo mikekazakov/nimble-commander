@@ -4,6 +4,7 @@
 #include "../source/Copying/Copying.h"
 #include "../source/Compression/Compression.h"
 
+using namespace nc;
 using namespace nc::ops;
 
 static const string g_Preffix = "/.FilesTestingData/archives/";
@@ -54,9 +55,9 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 
 - (void)testAdiumZip_CopyFromVFS
 {
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<vfs::ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<vfs::ArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -77,9 +78,9 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 
 - (void)testExtractedFilesSignature
 {
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<vfs::ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>(g_Files.c_str(), VFSNativeHost::SharedHost());
+        host = make_shared<vfs::ArchiveHost>(g_Files.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -105,9 +106,9 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     operation.Start();
     operation.Wait();
 
-    shared_ptr<VFSArchiveHost> host;
+    shared_ptr<vfs::ArchiveHost> host;
     try {
-        host = make_shared<VFSArchiveHost>( operation.ArchivePath().c_str(), m_NativeHost);
+        host = make_shared<vfs::ArchiveHost>( operation.ArchivePath().c_str(), m_NativeHost);
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;

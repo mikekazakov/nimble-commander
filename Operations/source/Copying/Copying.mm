@@ -66,6 +66,9 @@ void Copying::SetupCallbacks()
     j.m_OnCantCreateDestinationDir = [this](int _1, const string &_2, VFSHost &_3) {
         return (С::CantCreateDestinationDirResolution)OnCantCreateDestinationDir(_1, _2, _3);
     };
+    j.m_OnCantDeleteDestinationFile = [this](int _1, const string &_2, VFSHost &_3) {
+        return (С::CantDeleteDestinationFileResolution)OnCantDeleteDestinationFile(_1, _2, _3);
+    };
     j.m_OnFileVerificationFailed = [this](const string &_1, VFSHost &_2) {
         OnFileVerificationFailed(_1, _2);
     };
@@ -349,6 +352,31 @@ int Copying::OnCantCreateDestinationDir(int _err, const string &_path, VFSHost &
         return (int)Callbacks::CantCreateDestinationDirResolution::Stop;
 }
 
+int Copying::OnCantDeleteDestinationFile(int _err, const string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll )
+        return (int)Callbacks::CantDeleteDestinationFileResolution::Skip;
+    if( !IsInteractive() )
+        return (int)Callbacks::CantDeleteDestinationFileResolution::Stop;
+    
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
+                      NSLocalizedString(@"Failed to delete a destination file", ""),
+                      _err, {_vfs, _path}, ctx);
+    WaitForDialogResponse(ctx);
+    
+    if( ctx->response == NSModalResponseSkip )
+        return (int)Callbacks::CantDeleteDestinationFileResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return (int)Callbacks::CantDeleteDestinationFileResolution::Skip;
+    }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::CantDeleteDestinationFileResolution::Retry;
+    else
+        return (int)Callbacks::CantDeleteDestinationFileResolution::Stop;
+}
+    
 void Copying::OnFileVerificationFailed(const string &_path, VFSHost &_vfs)
 {
     const auto ctx = make_shared<AsyncDialogResponse>();

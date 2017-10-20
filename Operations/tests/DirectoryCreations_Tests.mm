@@ -5,6 +5,7 @@
 #include "../source/DirectoryCreation/DirectoryCreation.h"
 
 using namespace nc::ops;
+using namespace nc::vfs;
 
 @interface DirectoryCreationTests : XCTestCase
 @end
@@ -114,7 +115,7 @@ using namespace nc::ops;
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;

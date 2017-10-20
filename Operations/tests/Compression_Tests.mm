@@ -17,7 +17,7 @@ static const string g_Files = g_Preffix + "files-1.1.0(1341).zip";
 static const string g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
 static const string g_FileWithXAttr = "Leopard WaR3z.icns";
 
-
+using namespace nc;
 using namespace nc::ops;
 
 @interface CompressionTests : XCTestCase
@@ -62,7 +62,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     
     try {
-        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         XCTAssert( arc_host->StatTotalFiles() == 0 );
     }
     catch (VFSErrorException &e) {
@@ -84,7 +84,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
                operation.Statistics().ElapsedTime() < 1s );
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     try {
-        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         XCTAssert( arc_host->StatTotalFiles() == 1 );
         int cmp_result = 0;
         const auto cmp_rc =  VFSEasyCompareFiles("/System/Library/Kernels/kernel", m_NativeHost,
@@ -115,7 +115,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     
     try {
-        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         XCTAssert( arc_host->StatTotalFiles() == filenames.size() );
         
         for( auto &fn: filenames) {
@@ -144,7 +144,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     
     try {
-        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         int cmp_result = 0;
         const auto cmp_rc = VFSCompareEntries("/bin/",
                                               m_NativeHost,
@@ -171,7 +171,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
 
     try {
-        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         int cmp_result = 0;
         const auto cmp_rc = VFSCompareEntries("/Applications/Chess.app",
                                               m_NativeHost,
@@ -206,7 +206,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
 
     try {
-        auto arc_host = make_shared<VFSArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         int cmp_result = 0;
         const auto cmp_rc = VFSCompareEntries("/Applications/iTunes.app",
                                               m_NativeHost,

@@ -7,6 +7,7 @@
 #include "../source/Copying/Copying.h"
 
 using namespace nc::ops;
+using namespace nc::vfs;
 static const path g_DataPref = "/.FilesTestingData";
 static const string g_PhotosRAR   = "/.FilesTestingData/archives/"s + "photos.rar";
 
@@ -175,7 +176,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -206,7 +207,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -242,7 +243,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -350,11 +351,10 @@ static int VFSCompareEntries(const path& _file1_full_path,
                                (path(m_TmpDir) / "Mail.app").c_str(),
                                host) == 0);
     
-    CopyingOptions opts;
     Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *VFSNativeHost::SharedHost()),
                (m_TmpDir / "Mail2.app").native(),
                m_NativeHost,
-               opts);
+               {});
     
     op.Start();
     op.Wait();
@@ -368,7 +368,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<VFSNetFTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -382,7 +382,6 @@ static int VFSCompareEntries(const path& _file1_full_path,
     [self EnsureClean:fn3 at:host];
     
     {
-        CopyingOptions opts;
         Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *VFSNativeHost::SharedHost()),
                    "/Public/!FilesTesting/",
                    host,
@@ -397,7 +396,6 @@ static int VFSCompareEntries(const path& _file1_full_path,
     
     
     {
-        CopyingOptions opts;
         Copying op(FetchItems("/Public/!FilesTesting/", {"kernel"}, *host),
                    fn3,
                    host,
@@ -422,15 +420,14 @@ static int VFSCompareEntries(const path& _file1_full_path,
     
     XCTAssert( VFSEasyCopyNode("/Applications/Mail.app", host, (m_TmpDir / "Mail.app").c_str(), host) == 0);
     
-    
-     CopyingOptions opts;
-     opts.docopy = false;
-        Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *host),
-                   dir2.native(),
-                   host,
-                   {});
-        op.Start();
-        op.Wait();
+    CopyingOptions opts;
+    opts.docopy = false;
+    Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *host),
+               dir2.native(),
+               host,
+               opts);
+    op.Start();
+    op.Wait();
     
     int result = 0;
     XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, dir2 / "Mail.app", host, result) == 0);
@@ -450,7 +447,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *host),
                (m_TmpDir / "Mail2.app").native(),
                host,
-               {});
+               opts);
     op.Start();
     op.Wait();
 
@@ -463,7 +460,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host_src;
     try {
-        host_src = make_shared<VFSArchiveUnRARHost>(g_PhotosRAR);
+        host_src = make_shared<UnRARHost>(g_PhotosRAR);
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -474,14 +471,12 @@ static int VFSCompareEntries(const path& _file1_full_path,
     
     VFSHostPtr host_dst;
     try {
-        host_dst = make_shared<VFSXAttrHost>(file.c_str(), VFSNativeHost::SharedHost());
+        host_dst = make_shared<XAttrHost>(file.c_str(), VFSNativeHost::SharedHost());
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
     }
     
-     CopyingOptions opts;
-    opts.docopy = false;
     Copying op(FetchItems(u8"/Чемал-16/", {"IMG_0257.JPG"}, *host_src),
                "/",
                host_dst,
@@ -492,6 +487,49 @@ static int VFSCompareEntries(const path& _file1_full_path,
     int result = 0;
     XCTAssert( VFSEasyCompareFiles(u8"/Чемал-16/IMG_0257.JPG", host_src, "/IMG_0257.JPG", host_dst, result) == 0);
     XCTAssert( result == 0 );
+}
+
+- (void)testSymlinksOverwriting
+{
+    symlink( "old_symlink_value", (m_TmpDir/"file1").c_str() );
+    symlink( "new_symlink_value", (m_TmpDir/"file2").c_str() );
+    
+    CopyingOptions opts;
+    opts.docopy = true;
+    opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems(m_TmpDir.c_str(), {"file2"}, *host),
+               (m_TmpDir/"file1").c_str(),
+               host,
+               opts);
+
+    op.Start();
+    op.Wait();
+    XCTAssert( op.State() == OperationState::Completed );
+    XCTAssert( boost::filesystem::read_symlink(m_TmpDir/"file1") == "new_symlink_value" );
+}
+
+- (void)testOverwritingOfSymlinksInSubdir
+{
+    mkdir((m_TmpDir/"D1").c_str(), 0755);
+    symlink( "old_symlink_value", (m_TmpDir/"D1"/"symlink").c_str() );
+    mkdir((m_TmpDir/"D2").c_str(), 0755);
+    mkdir((m_TmpDir/"D2"/"D1").c_str(), 0755);
+    symlink( "new_symlink_value", (m_TmpDir/"D2"/"D1"/"symlink").c_str() );
+    
+    CopyingOptions opts;
+    opts.docopy = true;
+    opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems((m_TmpDir/"D2").c_str(), {"D1"}, *host),
+               m_TmpDir.c_str(),
+               host,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    XCTAssert( op.State() == OperationState::Completed );
+    XCTAssert( boost::filesystem::read_symlink(m_TmpDir/"D1"/"symlink") == "new_symlink_value" );
 }
 
 - (path)makeTmpDir

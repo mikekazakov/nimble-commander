@@ -207,17 +207,17 @@ static const auto g_CustomPath = "terminal.customShellPath";
     m_Task->ChDir(_new_dir.c_str());
 }
 
-- (void) execute:(const char *)_binary_name
+- (void) execute:(const char*)_binary_name
               at:(const char*)_binary_dir
 {
     [self execute:_binary_name at:_binary_dir parameters:nullptr];
 }
 
-- (void) execute:(const char *)_binary_name
+- (void) execute:(const char*)_binary_name
               at:(const char*)_binary_dir
       parameters:(const char*)_params
 {
-    m_Task->Execute(_binary_dir, _binary_dir, _params);
+    m_Task->Execute(_binary_name, _binary_dir, _params);
 }
 
 - (void) executeWithFullPath:(const char *)_path parameters:(const char*)_params

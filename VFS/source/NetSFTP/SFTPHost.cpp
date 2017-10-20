@@ -48,8 +48,9 @@ bool SFTPHost::Connection::Alive() const
         return retval == 0 && error == 0;
     }();
     
-    const auto session_ok = libssh2_session_last_errno(ssh) == 0;
-    
+    const auto last_errno = libssh2_session_last_errno(ssh);
+    const auto session_ok = last_errno == LIBSSH2_ERROR_NONE ||
+                            last_errno == LIBSSH2_ERROR_SFTP_PROTOCOL;    
     return socket_ok && session_ok;
 }
 

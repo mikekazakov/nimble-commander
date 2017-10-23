@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "tests_common.h"
+#import <XCTest/XCTest.h>
 #include <VFS/VFS.h>
 #include <NimbleCommander/States/FilePanels/PanelData.h>
 #include <NimbleCommander/Core/FileWindow.h>

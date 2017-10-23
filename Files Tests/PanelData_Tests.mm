@@ -14,11 +14,12 @@
 #include <NimbleCommander/States/FilePanels/PanelData.h>
 #include <NimbleCommander/States/FilePanels/PanelDataSelection.h>
 
+using namespace nc;
 using namespace nc::panel;
 
 static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filenames )
 {
-    VFSListingInput l;
+    vfs::ListingInput l;
     
     l.directories.reset( variable_container<>::type::common );
     l.directories[0] = "/";
@@ -38,7 +39,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filena
 // filename, is_directory
 static shared_ptr<VFSListing> ProduceDummyListing( const vector<tuple<string,bool>> &_entries )
 {
-    VFSListingInput l;
+    vfs::ListingInput l;
     
     l.directories.reset( variable_container<>::type::common );
     l.directories[0] = "/";

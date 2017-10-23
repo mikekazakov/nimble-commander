@@ -90,7 +90,6 @@
 		CF1FBF3C1E90ABC000D3569C /* NetFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD8CD9C1E823CAC00E4DC53 /* NetFS.framework */; };
 		CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
-		CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
 		CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
 		CF2437701DEDF9B300245C14 /* PanelViewFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */; };
 		CF2740841E57F5DD000D4365 /* Alert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2740831E57F5DD000D4365 /* Alert.mm */; };
@@ -129,7 +128,7 @@
 		CF36DBEB1F6C1807004A018E /* PanelViewFieldEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA953C1F4A759E0035E606 /* PanelViewFieldEditor.mm */; };
 		CF36DBEC1F6C1807004A018E /* PanelViewFieldEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA953C1F4A759E0035E606 /* PanelViewFieldEditor.mm */; };
 		CF36DBED1F6C184D004A018E /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; };
-		CF36DBEE1F6C185D004A018E /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF36DBEE1F6C185D004A018E /* Sparkle.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF36DBDD1F6BA76B004A018E /* Sparkle.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CF36DBEF1F6C18DA004A018E /* DragSender.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA952E1F4930BA0035E606 /* DragSender.mm */; };
 		CF36DBF01F6C18DA004A018E /* DragSender.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA952E1F4930BA0035E606 /* DragSender.mm */; };
 		CF36DBF11F6C18DB004A018E /* DragSender.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFFA952E1F4930BA0035E606 /* DragSender.mm */; };
@@ -283,6 +282,13 @@
 		CF5FE8041E14A08500CD83B4 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
 		CF5FE80B1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80A1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm */; };
 		CF5FE80E1E16461600CD83B4 /* PanelListViewTableHeaderView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */; };
+		CF614AEA1F9D92A20005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
+		CF614AEB1F9D92A30005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
+		CF614AEC1F9D92A40005F2DB /* SettingsAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF41351F1F890709007429B6 /* SettingsAdaptor.mm */; };
+		CF614AED1F9D92B30005F2DB /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
+		CF614AEE1F9D92D70005F2DB /* libTerm.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
+		CF614AEF1F9D92EA0005F2DB /* Operations.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CF614AF01F9D932B0005F2DB /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
 		CF62371D1EB4436B00152B2B /* QLThumbnailsCache_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6237061EB4436400152B2B /* QLThumbnailsCache_Tests.mm */; };
 		CF62371E1EB4443E00152B2B /* PanelDataEntriesComparator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42D91EAD9E3D00AA031A /* PanelDataEntriesComparator.mm */; };
 		CF62371F1EB4443F00152B2B /* PanelDataEntriesComparator.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42D91EAD9E3D00AA031A /* PanelDataEntriesComparator.mm */; };
@@ -506,7 +512,7 @@
 		CF8D0D061D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
 		CF8D0D071D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
 		CF90C0291EBB02850056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		CF90C02A1EBB03280056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		CF90C02A1EBB03280056E3B8 /* LetsMove.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CF90C02B1EBB04910056E3B8 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; };
 		CF90C02C1EBB04960056E3B8 /* LetsMove.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF90C0281EBB02240056E3B8 /* LetsMove.framework */; };
 		CF90C0B61EC161E70056E3B8 /* NavigateHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0B51EC161E70056E3B8 /* NavigateHistory.mm */; };
@@ -1122,10 +1128,10 @@
 		CFFA949F1F4541360035E606 /* libHabanero.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CFFA95081F45638F0035E606 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
 		CFFA95091F4564100035E606 /* libVFS.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CFFA950D1F45A2BD0035E606 /* libVFS.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CFFA950F1F45A2C80035E606 /* libRoutedIO.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CFFA95101F45A2CF0035E606 /* libUtility.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CFFA95111F45A2D50035E606 /* libHabanero.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CFFA950D1F45A2BD0035E606 /* libVFS.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
+		CFFA950F1F45A2C80035E606 /* libRoutedIO.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; };
+		CFFA95101F45A2CF0035E606 /* libUtility.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF768DF51C99C0F4002748BC /* libUtility.dylib */; };
+		CFFA95111F45A2D50035E606 /* libHabanero.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */; };
 		CFFA95121F45A2EB0035E606 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B611EDD19A400F567C4 /* Operations.framework */; };
 		CFFA95131F45A3040035E606 /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
 		CFFA95141F45A3050035E606 /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
@@ -1161,6 +1167,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = CF5099771F948E7C000AFDE7;
 			remoteInfo = "Term Tests";
+		};
+		CF614AD81F9D91F10005F2DB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF614ABE1F9D8E6D0005F2DB;
+			remoteInfo = "Habanero Tests";
+		};
+		CF614AE51F9D91F10005F2DB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF614A9D1F9D86CC0005F2DB;
+			remoteInfo = "Utility Tests";
 		};
 		CF69CF9C1DA2003D00992B84 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1310,6 +1330,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CF614AEF1F9D92EA0005F2DB /* Operations.framework in Copy Files */,
+				CF614AEE1F9D92D70005F2DB /* libTerm.dylib in Copy Files */,
 				CF36DBEE1F6C185D004A018E /* Sparkle.framework in Copy Files */,
 				CFFA95111F45A2D50035E606 /* libHabanero.dylib in Copy Files */,
 				CFFA95101F45A2CF0035E606 /* libUtility.dylib in Copy Files */,
@@ -1452,7 +1474,6 @@
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		CF47A985186C607C00745C4C /* NimbleCommander Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NimbleCommander Tests-Info.plist"; sourceTree = "<group>"; };
 		CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Files Tests-Prefix.pch"; sourceTree = "<group>"; };
-		CF47A992186C61A600745C4C /* chained_strings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chained_strings_Tests.mm; sourceTree = "<group>"; };
 		CF47A994186C663000745C4C /* tests_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests_common.h; sourceTree = "<group>"; };
 		CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTPConnectionSheetController.h; path = ../NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.h; sourceTree = "<group>"; };
 		CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FTPConnectionSheetController.mm; path = ../NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.mm; sourceTree = "<group>"; };
@@ -1749,7 +1770,7 @@
 		CFCCFC591A5FAFFD00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
 		CFCCFC611A5FBC9500313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/FilePanelsQuickSearch.strings; sourceTree = "<group>"; };
 		CFCCFC631A5FBD9600313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FilePanelsQuickSearch.strings; sourceTree = "<group>"; };
-		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FileWindow_Tests.mm; sourceTree = "<group>"; };
+		CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileWindow_Tests.mm; path = NimbleCommander/Core/FileWindow_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFD3CB1B1DA4C888006DA143 /* PanelBriefView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefView.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefView.h; sourceTree = SOURCE_ROOT; };
 		CFD3CB1C1DA4C888006DA143 /* PanelBriefView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefView.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefView.mm; sourceTree = SOURCE_ROOT; };
 		CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
@@ -1934,6 +1955,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF614AED1F9D92B30005F2DB /* libTerm.dylib in Frameworks */,
 				CF36DBFD1F6C1C09004A018E /* libUtility.dylib in Frameworks */,
 				CF36DBFC1F6C1B63004A018E /* libHabanero.dylib in Frameworks */,
 				CF36DBFB1F6C1B60004A018E /* libVFS.dylib in Frameworks */,
@@ -1986,6 +2008,7 @@
 				CFFA95121F45A2EB0035E606 /* Operations.framework in Frameworks */,
 				CF90C02C1EBB04960056E3B8 /* LetsMove.framework in Frameworks */,
 				CF1FBF3C1E90ABC000D3569C /* NetFS.framework in Frameworks */,
+				CF614AF01F9D932B0005F2DB /* libTerm.dylib in Frameworks */,
 				CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */,
 				CFD727391E42E3EE00603077 /* libRoutedIO.dylib in Frameworks */,
 				CFD727381E42E3E300603077 /* libVFS.dylib in Frameworks */,
@@ -2326,7 +2349,6 @@
 			children = (
 				CF6237061EB4436400152B2B /* QLThumbnailsCache_Tests.mm */,
 				CF47A994186C663000745C4C /* tests_common.h */,
-				CF47A992186C61A600745C4C /* chained_strings_Tests.mm */,
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
@@ -2508,6 +2530,7 @@
 			isa = PBXGroup;
 			children = (
 				CF768DF51C99C0F4002748BC /* libUtility.dylib */,
+				CF614AE61F9D91F10005F2DB /* Utility Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -2927,6 +2950,7 @@
 			isa = PBXGroup;
 			children = (
 				CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */,
+				CF614AD91F9D91F10005F2DB /* Habanero Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3231,6 +3255,20 @@
 			fileType = wrapper.cfbundle;
 			path = "Term Tests.xctest";
 			remoteRef = CF5099831F948EEB000AFDE7 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF614AD91F9D91F10005F2DB /* Habanero Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Habanero Tests.xctest";
+			remoteRef = CF614AD81F9D91F10005F2DB /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF614AE61F9D91F10005F2DB /* Utility Tests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = "Utility Tests.xctest";
+			remoteRef = CF614AE51F9D91F10005F2DB /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */ = {
@@ -3626,7 +3664,6 @@
 				CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */,
 				CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */,
 				CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */,
-				CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */,
 				CF62371D1EB4436B00152B2B /* QLThumbnailsCache_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3763,6 +3800,7 @@
 				CFD726171E42E09000603077 /* CocoaAppearanceManager.mm in Sources */,
 				CF9F4AFE1ECC8DC200E0AF82 /* Enter.mm in Sources */,
 				CFD726711E42E1F600603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
+				CF614AEB1F9D92A30005F2DB /* SettingsAdaptor.mm in Sources */,
 				CF876D431D51E0B0009C0CCE /* BigFileViewText.mm in Sources */,
 				CFD726EB1E42E2D500603077 /* PanelListViewNameView.mm in Sources */,
 				CFD727181E42E32400603077 /* ToolsMenuDelegate.mm in Sources */,
@@ -3968,6 +4006,7 @@
 				CFD7265D1E42E1B800603077 /* MainWindowController.mm in Sources */,
 				CFD726C71E42E29B00603077 /* Layout.mm in Sources */,
 				CFA2D6051E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
+				CF614AEC1F9D92A40005F2DB /* SettingsAdaptor.mm in Sources */,
 				CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CFD7263A1E42E0D900603077 /* LaunchServices.mm in Sources */,
 				CFFA95181F45A3180035E606 /* Dock.mm in Sources */,
@@ -4273,6 +4312,7 @@
 				CFD726131E42E08100603077 /* Config.mm in Sources */,
 				CFD726C51E42E29A00603077 /* Layout.mm in Sources */,
 				CFD7266D1E42E1F000603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
+				CF614AEA1F9D92A20005F2DB /* SettingsAdaptor.mm in Sources */,
 				CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
 				CF7C7CAA1E5ACDBC002DB0E2 /* TabSelection.mm in Sources */,
 				CF1FBF281E8F57E400D3569C /* OpenWithExternalEditor.mm in Sources */,
@@ -4912,9 +4952,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
-				DEVELOPMENT_TEAM = AC5SJT236H;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
@@ -4935,9 +4974,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_IDENTITY = "";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
-				DEVELOPMENT_TEAM = AC5SJT236H;
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -4996,7 +5034,6 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
-				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party",
@@ -5020,7 +5057,6 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
-				DEVELOPMENT_TEAM = AC5SJT236H;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Files/3rd_party",

@@ -438,7 +438,10 @@ CopyingJob::StepResult CopyingJob::BuildDestinationDirectory() const
     return StepResult::Ok;
 }
 
-static bool IsAnExternalExtenedAttributesStorage( VFSHost &_host, const string &_path, const string& _item_name, const VFSStat &_st )
+static bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
+                                                 const string &_path,
+                                                 const string& _item_name,
+                                                 const VFSStat &_st )
 {
     // currently we think that ExtEAs can be only on native VFS
     if( !_host.IsNativeFS() )
@@ -1492,13 +1495,22 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
     // we're ok, turn off destination cleaning
     clean_destination.disengage();
     
-    
     // TODO:
     // xattrs
     // owners
     // flags
-    // file times
     
+    dst_file->Close();
+    dst_file.reset();
+    
+    if( m_Options.copy_file_times &&
+        do_set_times &&
+        m_DestinationHost->Features() & vfs::HostFeatures::SetTimes )
+        m_DestinationHost->SetTimes(_dst_path.c_str(),
+                                    src_stat_buffer.btime.tv_sec,
+                                    src_stat_buffer.mtime.tv_sec,
+                                    src_stat_buffer.ctime.tv_sec,
+                                    src_stat_buffer.atime.tv_sec);
     return StepResult::Ok;
 }
 
@@ -1658,9 +1670,6 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
     if( _src_vfs.Stat(_src_path.c_str(), src_stat_buffer, 0, 0) < 0 )
         return StepResult::Ok;
     
-    if( m_Options.copy_file_times )
-        AdjustFileTimesForNativePath( _dst_path.c_str(), src_stat_buffer );
-    
     if(m_Options.copy_unix_flags) {
         // change unix mode
         mode_t mode = src_stat_buffer.mode;
@@ -1681,6 +1690,9 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToNativeDirectory(VFSHost &_s
                 if( src_file->XAttrCount() > 0 )
                     CopyXattrsFromVFSFileToPath(*src_file, _dst_path.c_str() );
     }
+    
+    if( m_Options.copy_file_times )
+        AdjustFileTimesForNativePath( _dst_path.c_str(), src_stat_buffer );
     
     return StepResult::Ok;
 }
@@ -1718,7 +1730,13 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
         }
     }
     
-    // no attrs currently
+    if( m_Options.copy_file_times &&
+        m_DestinationHost->Features() & vfs::HostFeatures::SetTimes )
+        m_DestinationHost->SetTimes(_dst_path.c_str(),
+                                    src_st.btime.tv_sec,
+                                    src_st.mtime.tv_sec,
+                                    src_st.ctime.tv_sec,
+                                    src_st.atime.tv_sec);
     
     return StepResult::Ok;
 }

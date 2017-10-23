@@ -8,7 +8,28 @@
 
 #include <random>
 #include <Habanero/chained_strings.h>
-#include "tests_common.h"
+#import <XCTest/XCTest.h>
+#include <string>
+
+using namespace std;
+
+#define _XCTAssertCPPThrows(test, expression, expressionStr, format...) \
+    ({ \
+        bool __caughtException = false; \
+        try { \
+            (expression); \
+        } \
+        catch (...) { \
+            __caughtException = true; \
+        }\
+        if (!__caughtException) { \
+            _XCTRegisterFailure(test, _XCTFailureDescription(_XCTAssertion_Throws, 0, expressionStr), format); \
+    } \
+})
+
+#define XCTAssertCPPThrows(expression, format...) \
+    _XCTAssertCPPThrows(self, expression, @#expression, format)
+
 
 @interface chained_strings_Tests : XCTestCase
 @end

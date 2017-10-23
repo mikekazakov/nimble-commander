@@ -48,10 +48,10 @@
 		CF47DF701E063CC500AAAF3C /* DispatchGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DispatchGroup.h; path = ../habanero/include/Habanero/DispatchGroup.h; sourceTree = "<group>"; };
 		CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchGroup.cpp; path = ../habanero/source/DispatchGroup.cpp; sourceTree = "<group>"; };
 		CF614ABE1F9D8E6D0005F2DB /* Habanero Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Habanero Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF614ACA1F9D8E950005F2DB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../../habanero/tests/Info.plist; sourceTree = "<group>"; };
-		CF614ACD1F9D8EDC0005F2DB /* Hash_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Hash_Tests.mm; path = ../../habanero/tests/Hash_Tests.mm; sourceTree = "<group>"; };
-		CF614ACE1F9D8EDD0005F2DB /* VariableContainer_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VariableContainer_Tests.mm; path = ../../habanero/tests/VariableContainer_Tests.mm; sourceTree = "<group>"; };
-		CF614AD11F9D8EF00005F2DB /* chained_strings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = chained_strings_Tests.mm; path = ../../habanero/tests/chained_strings_Tests.mm; sourceTree = "<group>"; };
+		CF614ACA1F9D8E950005F2DB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../habanero/tests/Info.plist; sourceTree = SOURCE_ROOT; };
+		CF614ACD1F9D8EDC0005F2DB /* Hash_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Hash_Tests.mm; path = ../habanero/tests/Hash_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF614ACE1F9D8EDD0005F2DB /* VariableContainer_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VariableContainer_Tests.mm; path = ../habanero/tests/VariableContainer_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF614AD11F9D8EF00005F2DB /* chained_strings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = chained_strings_Tests.mm; path = ../habanero/tests/chained_strings_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFStackAllocator.cpp; path = source/CFStackAllocator.cpp; sourceTree = "<group>"; };
 		CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = spinlock.cpp; path = ../habanero/source/spinlock.cpp; sourceTree = "<group>"; };
 		CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFDefaultsCPP.h; path = include/Habanero/CFDefaultsCPP.h; sourceTree = "<group>"; };
@@ -350,7 +350,6 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.magnumbytes.Habanero-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -368,7 +367,6 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = tests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.magnumbytes.Habanero-Tests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -539,6 +537,7 @@
 				CF614AC71F9D8E6E0005F2DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		CFD62B6D1C99C19A0021EE7F /* Build configuration list for PBXProject "Habanero" */ = {
 			isa = XCConfigurationList;

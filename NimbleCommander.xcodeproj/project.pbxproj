@@ -694,7 +694,6 @@
 		CFCCFBCC1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */; };
 		CFCCFBCD1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */; };
 		CFCCFBCE1A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */; };
-		CFCCFC441A5EB38B00313845 /* Files Tests-InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */; };
 		CFCCFC4F1A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
 		CFCCFC501A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
 		CFCCFC511A5FA85400313845 /* FilePanelsContextMenu.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */; };
@@ -1472,9 +1471,6 @@
 		CF45CA381D3E433D0074F04C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ExternalToolParameterValueSheetController.strings; sourceTree = "<group>"; };
 		CF47A980186C607C00745C4C /* Nimble Commander.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nimble Commander.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		CF47A985186C607C00745C4C /* NimbleCommander Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "NimbleCommander Tests-Info.plist"; sourceTree = "<group>"; };
-		CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Files Tests-Prefix.pch"; sourceTree = "<group>"; };
-		CF47A994186C663000745C4C /* tests_common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tests_common.h; sourceTree = "<group>"; };
 		CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTPConnectionSheetController.h; path = ../NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.h; sourceTree = "<group>"; };
 		CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FTPConnectionSheetController.mm; path = ../NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.mm; sourceTree = "<group>"; };
 		CF4E562E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowExternalEditorsTab.h; path = NimbleCommander/Preferences/PreferencesWindowExternalEditorsTab.h; sourceTree = SOURCE_ROOT; };
@@ -1645,7 +1641,7 @@
 		CF876D4D1D53296C009C0CCE /* InternalViewerWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerWindowController.h; path = NimbleCommander/Viewer/InternalViewerWindowController.h; sourceTree = SOURCE_ROOT; };
 		CF876D4E1D53296C009C0CCE /* InternalViewerWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerWindowController.mm; path = NimbleCommander/Viewer/InternalViewerWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InternalViewerWindowController.xib; path = NimbleCommander/Viewer/InternalViewerWindowController.xib; sourceTree = SOURCE_ROOT; };
-		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = PanelData_Tests.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = PanelData_Tests.mm; path = NimbleCommander/States/FilePanels/PanelData_Tests.mm; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CF8B24361E6FC68D008EB447 /* Favorites.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Favorites.cpp; path = NimbleCommander/States/FilePanels/Favorites.cpp; sourceTree = SOURCE_ROOT; };
 		CF8B24371E6FC68D008EB447 /* Favorites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Favorites.h; path = NimbleCommander/States/FilePanels/Favorites.h; sourceTree = SOURCE_ROOT; };
 		CF8D0CE71D96234900ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FeedbackWindow.xib; sourceTree = "<group>"; };
@@ -1764,8 +1760,6 @@
 		CFCCFC161A5E891600313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		CFCCFC171A5E891700313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SFTPConnectionSheetController.strings; sourceTree = "<group>"; };
 		CFCCFC201A5E891A00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/CalculateChecksumSheetController.strings; sourceTree = "<group>"; };
-		CFCCFC451A5EB38B00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = "ru.lproj/Files Tests-InfoPlist.strings"; sourceTree = "<group>"; };
-		CFCCFC481A5EB6B500313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = "Base.lproj/Files Tests-InfoPlist.strings"; sourceTree = "<group>"; };
 		CFCCFC521A5FA85400313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
 		CFCCFC591A5FAFFD00313845 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FilePanelsContextMenu.strings; sourceTree = "<group>"; };
 		CFCCFC611A5FBC9500313845 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/FilePanelsQuickSearch.strings; sourceTree = "<group>"; };
@@ -2225,6 +2219,7 @@
 				CFDAC2531DFBF0B30039A104 /* PanelController+Menu.mm */,
 				CFDAC2251DFBD6910039A104 /* PanelData.h */,
 				CFDAC2261DFBD6910039A104 /* PanelData.mm */,
+				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CF2F42D81EAD9E3D00AA031A /* PanelDataEntriesComparator.h */,
 				CF2F42D91EAD9E3D00AA031A /* PanelDataEntriesComparator.mm */,
 				CF2F42E21EADA55000AA031A /* PanelDataExternalEntryKey.h */,
@@ -2342,29 +2337,6 @@
 				CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */,
 			);
 			name = Viewer;
-			sourceTree = "<group>";
-		};
-		CF47A983186C607C00745C4C /* Tests */ = {
-			isa = PBXGroup;
-			children = (
-				CF6237061EB4436400152B2B /* QLThumbnailsCache_Tests.mm */,
-				CF47A994186C663000745C4C /* tests_common.h */,
-				CF89533118795030001C0391 /* PanelData_Tests.mm */,
-				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
-				CF47A984186C607C00745C4C /* Supporting Files */,
-			);
-			name = Tests;
-			path = "Files Tests";
-			sourceTree = "<group>";
-		};
-		CF47A984186C607C00745C4C /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */,
-				CF47A985186C607C00745C4C /* NimbleCommander Tests-Info.plist */,
-				CF47A98B186C607C00745C4C /* Files Tests-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		CF536C0D16C92EA200F37203 /* FilePanels */ = {
@@ -2723,6 +2695,7 @@
 				CF4E56E91D50712C00452912 /* FileMask.cpp */,
 				CF4E56E81D50712C00452912 /* FileMask.h */,
 				CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */,
+				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
 				CFDAC2E01DFD142C0039A104 /* FileWindow.h */,
 				CFDAC2D61DFD11970039A104 /* LaunchServices.h */,
 				CFDAC2D71DFD11970039A104 /* LaunchServices.mm */,
@@ -2847,7 +2820,6 @@
 				CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */,
 				CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */,
 				CFC5121A16C4BD3D00D247EE /* Source */,
-				CF47A983186C607C00745C4C /* Tests */,
 				B51014CF170721340023FF24 /* Resources */,
 				CFC5121316C4BD3D00D247EE /* Frameworks */,
 				CFC5121216C4BD3D00D247EE /* Products */,
@@ -2997,6 +2969,7 @@
 				CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */,
 				CFDAC2C61DFD0F840039A104 /* QLThumbnailsCache.h */,
 				CFDAC2C71DFD0F840039A104 /* QLThumbnailsCache.mm */,
+				CF6237061EB4436400152B2B /* QLThumbnailsCache_Tests.mm */,
 				CFDAC2C81DFD0F840039A104 /* QLVFSThumbnailsCache.h */,
 				CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */,
 				CFDAC2CA1DFD0F840039A104 /* WorkspaceIconsCache.h */,
@@ -3355,7 +3328,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFCCFC441A5EB38B00313845 /* Files Tests-InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4906,15 +4878,6 @@
 			path = ../NimbleCommander/GeneralUI;
 			sourceTree = "<group>";
 		};
-		CFCCFC461A5EB38B00313845 /* Files Tests-InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CFCCFC451A5EB38B00313845 /* ru */,
-				CFCCFC481A5EB6B500313845 /* Base */,
-			);
-			name = "Files Tests-InfoPlist.strings";
-			sourceTree = "<group>";
-		};
 		CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -4963,7 +4926,7 @@
 					"$(inherited)",
 					"__NC_VERSION_TRIAL__=1",
 				);
-				INFOPLIST_FILE = "Files Tests/NimbleCommander Tests-Info.plist";
+				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander Tests-Info.plist";
 				PRODUCT_NAME = "Nimble Commander";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NimbleCommander NonMAS CI.app/Contents/MacOS/NimbleCommander NonMAS CI";
 				WRAPPER_EXTENSION = xctest;
@@ -4983,7 +4946,7 @@
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
-				INFOPLIST_FILE = "Files Tests/NimbleCommander Tests-Info.plist";
+				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander Tests-Info.plist";
 				PRODUCT_NAME = "Nimble Commander";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NimbleCommander NonMAS CI.app/Contents/MacOS/NimbleCommander NonMAS CI";
 				WRAPPER_EXTENSION = xctest;

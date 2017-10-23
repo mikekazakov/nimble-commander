@@ -8,6 +8,4 @@
    ::ops
    ::util
    ::vfs
-
-future:
    ::term

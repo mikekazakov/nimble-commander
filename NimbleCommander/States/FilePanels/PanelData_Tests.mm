@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
+#import <XCTest/XCTest.h>
 #include <sys/dirent.h>
-#include "tests_common.h"
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
 #include <VFS/VFSListingInput.h>

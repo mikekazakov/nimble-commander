@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */; };
 		CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */; };
+		CF614AA21F9D86CC0005F2DB /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94631F453CB60035E606 /* libUtility.dylib */; };
+		CF614AAF1F9D87230005F2DB /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */; };
+		CF614AB01F9D87260005F2DB /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */; };
 		CF6E64E31F6271BF00BF986E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E21F6271BF00BF986E /* CoreText.framework */; };
 		CF6E64E51F6271CF00BF986E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E41F6271CF00BF986E /* Foundation.framework */; };
 		CF6E64E71F6271DA00BF986E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E61F6271DA00BF986E /* CoreGraphics.framework */; };
@@ -49,6 +52,16 @@
 		CFFA948F1F453DF30035E606 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA948E1F453DF30035E606 /* libHabanero.dylib */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		CF614AA31F9D86CC0005F2DB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF960DD21C97F833001D8B02 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFFA94621F453CB60035E606;
+			remoteInfo = Utility;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FunctionKeysPass.h; path = include/Utility/FunctionKeysPass.h; sourceTree = "<group>"; };
 		CF0939311D10214D00D67AC6 /* FunctionKeysPass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FunctionKeysPass.mm; path = source/FunctionKeysPass.mm; sourceTree = "<group>"; };
@@ -63,6 +76,10 @@
 		CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSEventModifierFlagsHolder.h; path = include/Utility/NSEventModifierFlagsHolder.h; sourceTree = "<group>"; };
 		CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ByteCountFormatter.h; path = include/Utility/ByteCountFormatter.h; sourceTree = "<group>"; };
 		CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter.mm; path = source/ByteCountFormatter.mm; sourceTree = "<group>"; };
+		CF614A9D1F9D86CC0005F2DB /* Utility Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Utility Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter_Tests.mm; path = tests/ByteCountFormatter_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Encodings_Tests.mm; path = tests/Encodings_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF614AAA1F9D871D0005F2DB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = tests/Info.plist; sourceTree = SOURCE_ROOT; };
 		CF6E64E21F6271BF00BF986E /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		CF6E64E41F6271CF00BF986E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CF6E64E61F6271DA00BF986E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -125,6 +142,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		CF614A9A1F9D86CC0005F2DB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF614AA21F9D86CC0005F2DB /* libUtility.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFFA94601F453CB60035E606 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -142,11 +167,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF614A9E1F9D86CC0005F2DB /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */,
+				CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */,
+				CF614AAA1F9D871D0005F2DB /* Info.plist */,
+			);
+			name = Tests;
+			path = "Utility Tests";
+			sourceTree = "<group>";
+		};
 		CF960DD11C97F833001D8B02 = {
 			isa = PBXGroup;
 			children = (
 				CF960E151C992EDC001D8B02 /* Headers */,
 				CF960E161C992EE7001D8B02 /* Source */,
+				CF614A9E1F9D86CC0005F2DB /* Tests */,
 				CF960DDC1C97F833001D8B02 /* Products */,
 				CFFA948D1F453DF30035E606 /* Frameworks */,
 			);
@@ -156,6 +193,7 @@
 			isa = PBXGroup;
 			children = (
 				CFFA94631F453CB60035E606 /* libUtility.dylib */,
+				CF614A9D1F9D86CC0005F2DB /* Utility Tests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -266,6 +304,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		CF614A9C1F9D86CC0005F2DB /* Utility Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF614AA71F9D86CC0005F2DB /* Build configuration list for PBXNativeTarget "Utility Tests" */;
+			buildPhases = (
+				CF614A991F9D86CC0005F2DB /* Sources */,
+				CF614A9A1F9D86CC0005F2DB /* Frameworks */,
+				CF614A9B1F9D86CC0005F2DB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CF614AA41F9D86CC0005F2DB /* PBXTargetDependency */,
+			);
+			name = "Utility Tests";
+			productName = "Utility Tests";
+			productReference = CF614A9D1F9D86CC0005F2DB /* Utility Tests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		CFFA94621F453CB60035E606 /* Utility */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CFFA94641F453CB60035E606 /* Build configuration list for PBXNativeTarget "Utility" */;
@@ -292,6 +348,10 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "MIchael Kazakov";
 				TargetAttributes = {
+					CF614A9C1F9D86CC0005F2DB = {
+						CreatedOnToolsVersion = 8.3.2;
+						ProvisioningStyle = Automatic;
+					};
 					CFFA94621F453CB60035E606 = {
 						CreatedOnToolsVersion = 8.3.2;
 						ProvisioningStyle = Automatic;
@@ -311,11 +371,31 @@
 			projectRoot = "";
 			targets = (
 				CFFA94621F453CB60035E606 /* Utility */,
+				CF614A9C1F9D86CC0005F2DB /* Utility Tests */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		CF614A9B1F9D86CC0005F2DB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		CF614A991F9D86CC0005F2DB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF614AB01F9D87260005F2DB /* Encodings_Tests.mm in Sources */,
+				CF614AAF1F9D87230005F2DB /* ByteCountFormatter_Tests.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFFA945F1F453CB60035E606 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -357,7 +437,49 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		CF614AA41F9D86CC0005F2DB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFFA94621F453CB60035E606 /* Utility */;
+			targetProxy = CF614AA31F9D86CC0005F2DB /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		CF614AA51F9D86CC0005F2DB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.magnumbytes.Utility-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CF614AA61F9D86CC0005F2DB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.magnumbytes.Utility-Tests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		CF960DED1C97F833001D8B02 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -518,6 +640,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		CF614AA71F9D86CC0005F2DB /* Build configuration list for PBXNativeTarget "Utility Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF614AA51F9D86CC0005F2DB /* Debug */,
+				CF614AA61F9D86CC0005F2DB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		CF960DD51C97F833001D8B02 /* Build configuration list for PBXProject "Utility" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

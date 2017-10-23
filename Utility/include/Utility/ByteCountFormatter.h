@@ -8,6 +8,10 @@
 
 #pragma once
 
+#include <vector>
+
+using namespace std;
+
 /**
  All _UTF8 methods forms a null-terminated string.
  All _UTF16 methods forms a string without null-terminator.

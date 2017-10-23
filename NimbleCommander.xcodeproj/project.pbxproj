@@ -91,7 +91,6 @@
 		CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
 		CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF47A992186C61A600745C4C /* chained_strings_Tests.mm */; };
-		CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */; };
 		CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
 		CF2437701DEDF9B300245C14 /* PanelViewFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */; };
 		CF2740841E57F5DD000D4365 /* Alert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2740831E57F5DD000D4365 /* Alert.mm */; };
@@ -1587,7 +1586,6 @@
 		CF7C7CE21E5C4CD7002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTabImportSheet.strings; sourceTree = "<group>"; };
 		CF7C7CE31E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTab.strings; sourceTree = "<group>"; };
 		CF7C7CE41E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTabColoringRulesControl.strings; sourceTree = "<group>"; };
-		CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ByteCountFormatter_Tests.mm; sourceTree = "<group>"; };
 		CF7D7A741C15AAC200ECEBA0 /* Config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Config.json; path = NimbleCommander/Resources/Config.json; sourceTree = SOURCE_ROOT; };
 		CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SparkleDSA_Pub.pem; path = NimbleCommander/Resources/SparkleDSA_Pub.pem; sourceTree = SOURCE_ROOT; };
 		CF811A901D8262BE001F9E7F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = SOURCE_ROOT; };
@@ -2331,7 +2329,6 @@
 				CF47A992186C61A600745C4C /* chained_strings_Tests.mm */,
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
-				CF7C93C21A0E1A9C00FAE649 /* ByteCountFormatter_Tests.mm */,
 				CF47A984186C607C00745C4C /* Supporting Files */,
 			);
 			name = Tests;
@@ -3628,7 +3625,6 @@
 				CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */,
 				CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */,
 				CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */,
-				CF2329601BDCEDBE0092BCAD /* ByteCountFormatter_Tests.mm in Sources */,
 				CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */,
 				CF2329541BDCD74E0092BCAD /* chained_strings_Tests.mm in Sources */,
 				CF62371D1EB4436B00152B2B /* QLThumbnailsCache_Tests.mm in Sources */,

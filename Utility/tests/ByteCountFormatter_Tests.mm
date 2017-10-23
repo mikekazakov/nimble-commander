@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
 //
 
-#include "tests_common.h"
+#import <XCTest/XCTest.h>
 #include <Utility/ByteCountFormatter.h>
 
 @interface ByteCountFormatter_Tests : XCTestCase

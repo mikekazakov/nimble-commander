@@ -1,4 +1,4 @@
-#include "../../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
+#include "../../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <VFS/VFS.h>
 #include <Term/SingleTask.h>
 #include <NimbleCommander/Core/FileMask.h>

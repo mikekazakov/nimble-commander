@@ -1,5 +1,5 @@
 #include <Utility/PathManip.h>
-#include "../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
+#include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include "AppDelegate.h"
 #include "AppDelegateCPP.h"
 

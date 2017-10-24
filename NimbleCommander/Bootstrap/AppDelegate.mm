@@ -8,7 +8,7 @@
 #include <Utility/PathManip.h>
 #include <Utility/FunctionKeysPass.h>
 #include <RoutedIO/RoutedIO.h>
-#include "../../Files/3rd_party/NSFileManager+DirectoryLocations.h"
+#include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>

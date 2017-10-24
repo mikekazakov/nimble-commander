@@ -8,7 +8,7 @@
 
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/FunctionKeysPass.h>
-#import "GTMHotKeyTextField.h"
+#import <3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.h>
 #include "../Core/ActionsShortcutsManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
 #include "../Bootstrap/ActivationManager.h"

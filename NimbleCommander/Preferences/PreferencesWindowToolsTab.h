@@ -8,7 +8,7 @@
 
 #pragma once
 
-#import "../../Files/3rd_party/RHPreferences/RHPreferences/RHPreferences.h"
+#import <3rd_Party/RHPreferences/RHPreferences/RHPreferences.h>
 
 class ExternalToolsStorage;
 

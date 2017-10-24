@@ -7,3 +7,6 @@
 [submodule "3rd_Party/LetsMove/LetsMove"]
 	path = 3rd_Party/LetsMove/LetsMove
 	url = https://github.com/potionfactory/LetsMove.git
+[submodule "3rd_Party/RHPreferences/RHPreferences"]
+	path = 3rd_Party/RHPreferences/RHPreferences
+	url = https://github.com/heardrwt/RHPreferences.git

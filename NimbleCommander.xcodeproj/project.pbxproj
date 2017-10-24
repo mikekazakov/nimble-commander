@@ -1707,8 +1707,8 @@
 		CFA3743D19A8D9C50012D088 /* SelectionWithMaskPopupViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SelectionWithMaskPopupViewController.h; path = ../NimbleCommander/States/FilePanels/Views/SelectionWithMaskPopupViewController.h; sourceTree = "<group>"; };
 		CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SelectionWithMaskPopupViewController.mm; path = ../NimbleCommander/States/FilePanels/Views/SelectionWithMaskPopupViewController.mm; sourceTree = "<group>"; };
 		CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = SelectionWithMaskPopupViewController.xib; path = ../NimbleCommander/States/FilePanels/Views/SelectionWithMaskPopupViewController.xib; sourceTree = "<group>"; };
-		CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMHotKeyTextField.h; path = 3rd_party/gtm/GTMHotKeyTextField.h; sourceTree = "<group>"; };
-		CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GTMHotKeyTextField.mm; path = 3rd_party/gtm/GTMHotKeyTextField.mm; sourceTree = "<group>"; };
+		CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GTMHotKeyTextField.h; path = NimbleCommander/Preferences/GTMHotKeyTextField.h; sourceTree = SOURCE_ROOT; };
+		CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GTMHotKeyTextField.mm; path = NimbleCommander/Preferences/GTMHotKeyTextField.mm; sourceTree = SOURCE_ROOT; };
 		CFA3D7C81962613B006A30A1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CFA53A6D1D433E2A00C562A7 /* NimbleCommander NonMAS CI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NimbleCommander NonMAS CI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFA7DFF61EB6FD82001FE66C /* OpenNetworkConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenNetworkConnection.h; path = NimbleCommander/States/FilePanels/Actions/OpenNetworkConnection.h; sourceTree = SOURCE_ROOT; };
@@ -2122,6 +2122,8 @@
 		B52EB78B172277C5004ABC2E /* Preferences */ = {
 			isa = PBXGroup;
 			children = (
+				CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */,
+				CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */,
 				CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */,
 				CF4E569D1D50687A00452912 /* Preferences.h */,
 				CF4E562E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.h */,
@@ -2632,15 +2634,6 @@
 			name = Helpers;
 			sourceTree = "<group>";
 		};
-		CFA3D7C319625F63006A30A1 /* gtm */ = {
-			isa = PBXGroup;
-			children = (
-				CFA3D7C519625F71006A30A1 /* GTMHotKeyTextField.h */,
-				CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */,
-			);
-			name = gtm;
-			sourceTree = "<group>";
-		};
 		CFA7E0141EB83B8D001FE66C /* Network */ = {
 			isa = PBXGroup;
 			children = (
@@ -2952,7 +2945,6 @@
 				CF90C0201EBB02240056E3B8 /* LetsMove.xcodeproj */,
 				CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */,
 				CFB517F91BDF53C1000AAE89 /* LLVM */,
-				CFA3D7C319625F63006A30A1 /* gtm */,
 				CF039E981791109000DC85D6 /* RHPreferences */,
 				CF8629201B956B3300B33CFD /* SparkleEmbedded */,
 				CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */,

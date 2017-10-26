@@ -59,7 +59,6 @@
     using namespace std;
     using namespace std::chrono;
 
-//    #include <experimental/any>
     #include <experimental/optional>
     using namespace std::experimental;
 
@@ -70,5 +69,14 @@
 
     #ifdef __OBJC__
         #include <Utility/ObjCpp.h>
+    #endif
+#endif
+
+#ifndef NCE
+    #if __has_include(<.nc_sensitive.h>)
+        #include <.nc_sensitive.h>
+        #define NCE( v ) (v)
+    #else
+        #define NCE( v ) ("")
     #endif
 #endif

@@ -130,6 +130,7 @@
 		CF3E2F851F60DF08001BFFCE /* Requests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Requests.h; path = source/NetWebDAV/Requests.h; sourceTree = "<group>"; };
 		CF5099931F95C881000AFDE7 /* EncodingDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EncodingDetection.h; path = source/ArcLA/EncodingDetection.h; sourceTree = "<group>"; };
 		CF5099941F95C881000AFDE7 /* EncodingDetection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EncodingDetection.mm; path = source/ArcLA/EncodingDetection.mm; sourceTree = "<group>"; };
+		CF5FD92C1FA1BD0700752E59 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = config.xcconfig; path = config/config.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
 		CF69CFE11DA227E400992B84 /* ArcUnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcUnRAR.h; path = include/VFS/ArcUnRAR.h; sourceTree = "<group>"; };
 		CF69CFE21DA227E400992B84 /* Native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Native.h; path = include/VFS/Native.h; sourceTree = "<group>"; };
@@ -341,9 +342,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		CF5FD92B1FA1BCE900752E59 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CF5FD92C1FA1BD0700752E59 /* config.xcconfig */,
+			);
+			name = Config;
+			sourceTree = "<group>";
+		};
 		CF69CFC61DA224E200992B84 = {
 			isa = PBXGroup;
 			children = (
+				CF5FD92B1FA1BCE900752E59 /* Config */,
 				CF69CFDD1DA227B100992B84 /* Headers */,
 				CF69CFDF1DA227C100992B84 /* Source */,
 				CF1846FF1E41C86D008B7C9F /* Tests */,
@@ -750,6 +760,7 @@
 		};
 		CF69CFD11DA224E200992B84 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF5FD92C1FA1BD0700752E59 /* config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -796,21 +807,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../Habanero/include",
-					"$(PROJECT_DIR)/../Utility/include",
-					"$(PROJECT_DIR)/../RoutedIO/include",
-					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
-					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
-					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
-					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/include/",
-					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
-					"$(PROJECT_DIR)/../3rd_Party/pugixml/include/",
-					"$(PROJECT_DIR)/../3rd_Party/libcurl/include/",
-					"$(PROJECT_DIR)/../3rd_Party/lzma/include/",
-					"$(PROJECT_DIR)/../3rd_Party/boost/include/",
-					"$(PROJECT_DIR)/include",
-				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
@@ -830,23 +826,6 @@
 					"$(OTHER_CFLAGS)",
 					"-std=c++1z",
 				);
-				OTHER_LDFLAGS = (
-					"-larchive",
-					"-lboost_system-mt",
-					"-lboost_filesystem-mt",
-					"-lz",
-					"-lssl",
-					"-lcrypto",
-					"-llzma",
-					"-lbz2",
-					"-lssh2",
-					"-lunrar",
-					"-lcurl",
-					"-lpugixml",
-					"-framework",
-					Kerberos,
-					"-lHabanero",
-				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				USE_HEADERMAP = NO;
@@ -855,6 +834,7 @@
 		};
 		CF69CFD21DA224E200992B84 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF5FD92C1FA1BD0700752E59 /* config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -895,21 +875,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../Habanero/include",
-					"$(PROJECT_DIR)/../Utility/include",
-					"$(PROJECT_DIR)/../RoutedIO/include",
-					"$(PROJECT_DIR)/../3rd_Party/libarchive/include/",
-					"$(PROJECT_DIR)/../3rd_Party/unrar/include/",
-					"$(PROJECT_DIR)/../3rd_Party/libssh2/include/",
-					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/include/",
-					"$(PROJECT_DIR)/../3rd_Party/rapidjson/include/",
-					"$(PROJECT_DIR)/../3rd_Party/pugixml/include/",
-					"$(PROJECT_DIR)/../3rd_Party/libcurl/include/",
-					"$(PROJECT_DIR)/../3rd_Party/lzma/include/",
-					"$(PROJECT_DIR)/../3rd_Party/boost/include/",
-					"$(PROJECT_DIR)/include",
-				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
@@ -927,23 +892,6 @@
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-std=c++1z",
-				);
-				OTHER_LDFLAGS = (
-					"-larchive",
-					"-lboost_system-mt",
-					"-lboost_filesystem-mt",
-					"-lz",
-					"-lssl",
-					"-lcrypto",
-					"-llzma",
-					"-lbz2",
-					"-lssh2",
-					"-lunrar",
-					"-lcurl",
-					"-lpugixml",
-					"-framework",
-					Kerberos,
-					"-lHabanero",
 				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;

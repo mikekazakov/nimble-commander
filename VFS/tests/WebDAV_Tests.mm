@@ -5,13 +5,12 @@
 
 using namespace nc::vfs;
 
-static const auto g_NASUsername = "guest";
-static const auto g_NASPassword = "";
-static const auto g_BoxComUsername = "mike.kazakov+ncwebdavtest@gmail.com";
-static const auto g_BoxComPassword = "6S3zUvkkNikF";
-static const auto g_YandexDiskUsername = "mike.kazakov-ncwebdavtest";
-static const auto g_YandexDiskPassword = "p4ycikmk][r%v*{em";
-
+static const auto g_NASUsername = NCE(nc::env::test::webdav_nas_username);
+static const auto g_NASPassword = NCE(nc::env::test::webdav_nas_password);
+static const auto g_BoxComUsername = NCE(nc::env::test::webdav_boxcom_username);
+static const auto g_BoxComPassword = NCE(nc::env::test::webdav_boxcom_password);
+static const auto g_YandexDiskUsername = NCE(nc::env::test::webdav_yandexdisk_username);
+static const auto g_YandexDiskPassword = NCE(nc::env::test::webdav_yandexdisk_password);
 
 @interface WebDAV_Tests : XCTestCase
 @end
@@ -186,8 +185,6 @@ static const auto g_YandexDiskPassword = "p4ycikmk][r%v*{em";
               data->at(65037) == 4 &&
               data->at(65038) == 0 );    
 }
-
-//int WriteFile(const void *_d, size_t _sz);
 
 - (void)testSimpleFileWriteOnBoxCom
 {

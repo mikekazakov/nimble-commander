@@ -4,8 +4,8 @@
 
 using namespace nc::vfs;
 
-static const auto g_Account = "mike.kazakov+ncdropboxtest@gmail.com";
-static const auto g_Token = "-chTBf0f5HAAAAAAAAAACybjBH4SYO9sh3HrD_TtKyUusrLu0yWYustS3CdlqYkN";
+static const auto g_Account = NCE(nc::env::test::dropbox_account);
+static const auto g_Token = NCE(nc::env::test::dropbox_token);
 
 static vector<uint8_t> MakeNoise(size_t size);
 

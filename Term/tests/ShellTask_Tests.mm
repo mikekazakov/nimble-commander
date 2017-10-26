@@ -7,7 +7,7 @@
 //
 
 #include <Habanero/CommonPaths.h>
-#include "../../../Files Tests/tests_common.h"
+#import <XCTest/XCTest.h>
 #include "ShellTask.h"
 #include "Screen.h"
 #include "Parser.h"

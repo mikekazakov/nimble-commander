@@ -91,6 +91,7 @@
 		CF5099871F948EF9000AFDE7 /* ShellTask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShellTask_Tests.mm; path = tests/ShellTask_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF50998F1F948FDD000AFDE7 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
 		CF5099911F948FFA000AFDE7 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
+		CF5FD92A1FA1AC5100752E59 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = config.xcconfig; path = config/config.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +123,7 @@
 		CF1ADE011F7E6A2A003E9B76 = {
 			isa = PBXGroup;
 			children = (
+				CF5FD9291FA1AC1200752E59 /* Config */,
 				CF1ADE2A1F7E6C3F003E9B76 /* Headers */,
 				CF1ADE0C1F7E6A2A003E9B76 /* Source */,
 				CF5099781F948E7C000AFDE7 /* Tests */,
@@ -201,6 +203,14 @@
 			);
 			name = Tests;
 			path = "Term Tests";
+			sourceTree = "<group>";
+		};
+		CF5FD9291FA1AC1200752E59 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CF5FD92A1FA1AC5100752E59 /* config.xcconfig */,
+			);
+			name = Config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -353,14 +363,10 @@
 /* Begin XCBuildConfiguration section */
 		CF1ADE131F7E6A2A003E9B76 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF5FD92A1FA1AC5100752E59 /* config.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -378,11 +384,8 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREFIX_HEADER = "source/Term-prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -393,39 +396,18 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../Habanero/include",
-					"$(PROJECT_DIR)/../Utility/include",
-					"$(PROJECT_DIR)/../3rd_Party/boost/include/",
-					"$(PROJECT_DIR)/include/Term",
-				);
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/boost/built";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-std=c++1z",
-				);
-				OTHER_LDFLAGS = (
-					"-lboost_system-mt",
-					"-lboost_filesystem-mt",
-				);
 				SDKROOT = macosx;
-				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
 		CF1ADE141F7E6A2A003E9B76 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF5FD92A1FA1AC5100752E59 /* config.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "c++14";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
@@ -443,34 +425,15 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PREFIX_HEADER = "source/Term-prefix.pch";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../Habanero/include",
-					"$(PROJECT_DIR)/../Utility/include",
-					"$(PROJECT_DIR)/../3rd_Party/boost/include/",
-					"$(PROJECT_DIR)/include/Term",
-				);
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/boost/built";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-std=c++1z",
-				);
-				OTHER_LDFLAGS = (
-					"-lboost_system-mt",
-					"-lboost_filesystem-mt",
-				);
 				SDKROOT = macosx;
-				USE_HEADERMAP = NO;
 			};
 			name = Release;
 		};
@@ -556,6 +519,7 @@
 				CF5099811F948E7C000AFDE7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

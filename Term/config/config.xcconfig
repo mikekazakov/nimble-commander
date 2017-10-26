@@ -1,0 +1,14 @@
+// paths
+HEADER_SEARCH_PATHS = $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../3rd_Party/boost/include $(PROJECT_DIR)/include/Term
+LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/boost/built
+USE_HEADERMAP = NO
+GCC_PREFIX_HEADER = source/Term-prefix.pch
+
+// c++
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++1z
+
+// objective-c
+CLANG_ENABLE_OBJC_ARC = YES
+
+// ld
+OTHER_LDFLAGS = -lboost_system-mt -lboost_filesystem-mt

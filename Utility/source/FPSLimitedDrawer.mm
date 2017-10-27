@@ -1,11 +1,4 @@
-//
-//  FPSBasedDrawer.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 16.06.14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2014-2016 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <atomic>
 #include <Habanero/mach_time.h>
 #include <Habanero/dispatch_cpp.h>

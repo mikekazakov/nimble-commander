@@ -1,3 +1,4 @@
+// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <string>
 #include <array>
 #include <Utility/FontExtras.h>

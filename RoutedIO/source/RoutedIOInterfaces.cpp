@@ -1,11 +1,4 @@
-//
-//  RoutedIOInterfaces.cpp
-//  Files
-//
-//  Created by Michael G. Kazakov on 29/11/14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <assert.h>
 #include <stdio.h>
 #include <stdint.h>

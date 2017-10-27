@@ -1,3 +1,4 @@
+// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <experimental/string_view>
 #include <sys/param.h>
 #include <Habanero/CFStackAllocator.h>

@@ -1,3 +1,4 @@
+// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <unordered_map>
 #include <Utility/HexadecimalColor.h>
 

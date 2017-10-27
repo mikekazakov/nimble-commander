@@ -7,8 +7,8 @@
 
 using namespace nc;
 
-static const auto kClientID = @"ics7strw94rj93l";
-static const auto kClientSecret = @"jz0dp0x27yw1cg3";
+static const auto kClientID     = [NSString stringWithUTF8String:NCE(env::dropbox_client_id)];
+static const auto kClientSecret = [NSString stringWithUTF8String:NCE(env::dropbox_client_secret)];
 static const auto g_LoopbackPort = (uint16_t)56789;
 static const auto g_SuccessURL =
     [NSURL URLWithString:@"http://magnumbytes.com/static/dropbox_oauth_redirect.html"];

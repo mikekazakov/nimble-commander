@@ -48,54 +48,52 @@ static bool AppStoreReceiptContainsProFeaturesInApp()
 
 static bool CheckAquaticLicense( const string& _path )
 {
-    bool result = false;
+    string key;
+    key += NCE(nc::env::aqp_pk_00);
+    key += NCE(nc::env::aqp_pk_01);
+    key += NCE(nc::env::aqp_pk_02);
+    key += NCE(nc::env::aqp_pk_03);
+    key += NCE(nc::env::aqp_pk_04);
+    key += NCE(nc::env::aqp_pk_05);
+    key += NCE(nc::env::aqp_pk_06);
+    key += NCE(nc::env::aqp_pk_07);
+    key += NCE(nc::env::aqp_pk_08);
+    key += NCE(nc::env::aqp_pk_09);
+    key += NCE(nc::env::aqp_pk_10);
+    key += NCE(nc::env::aqp_pk_11);
+    key += NCE(nc::env::aqp_pk_12);
+    key += NCE(nc::env::aqp_pk_13);
+    key += NCE(nc::env::aqp_pk_14);
+    key += NCE(nc::env::aqp_pk_15);
+    key += NCE(nc::env::aqp_pk_16);
+    key += NCE(nc::env::aqp_pk_17);
+    key += NCE(nc::env::aqp_pk_18);
+    key += NCE(nc::env::aqp_pk_19);
+    key += NCE(nc::env::aqp_pk_20);
+    key += NCE(nc::env::aqp_pk_21);
+    key += NCE(nc::env::aqp_pk_22);
+    key += NCE(nc::env::aqp_pk_23);
+    key += NCE(nc::env::aqp_pk_24);
+    key += NCE(nc::env::aqp_pk_25);
+    key += NCE(nc::env::aqp_pk_26);
+    key += NCE(nc::env::aqp_pk_27);
+    key += NCE(nc::env::aqp_pk_28);
+    key += NCE(nc::env::aqp_pk_29);
+    key += NCE(nc::env::aqp_pk_30);
+    key += NCE(nc::env::aqp_pk_31);
+    key += NCE(nc::env::aqp_pk_32);
+
+    const auto cf_key = CFStringCreateWithUTF8StdString(key);
+    APSetKey(cf_key);
     
-    // *** Begin Public Key ***
-    CFMutableStringRef key = CFStringCreateMutable(NULL, 0);
-    CFStringAppend(key, CFSTR("0x"));
-    CFStringAppend(key, CFSTR("D"));
-    CFStringAppend(key, CFSTR("D"));
-    CFStringAppend(key, CFSTR("C6D9CE4C4EA6980BAFA46CCF3D"));
-    CFStringAppend(key, CFSTR("3746B1"));
-    CFStringAppend(key, CFSTR("5"));
-    CFStringAppend(key, CFSTR("5"));
-    CFStringAppend(key, CFSTR("02156543495FFAFB6B48BC"));
-    CFStringAppend(key, CFSTR("3CA349"));
-    CFStringAppend(key, CFSTR("4"));
-    CFStringAppend(key, CFSTR("4"));
-    CFStringAppend(key, CFSTR("D3BFE421FD4DCF4E11111F"));
-    CFStringAppend(key, CFSTR("E7E18386"));
-    CFStringAppend(key, CFSTR("F"));
-    CFStringAppend(key, CFSTR("F"));
-    CFStringAppend(key, CFSTR("1B13E87A81EC4BE5559A"));
-    CFStringAppend(key, CFSTR("C898"));
-    CFStringAppend(key, CFSTR("B"));
-    CFStringAppend(key, CFSTR("B"));
-    CFStringAppend(key, CFSTR("C05AA00D5234A228EDEFBFA7"));
-    CFStringAppend(key, CFSTR("3B561CA5"));
-    CFStringAppend(key, CFSTR("D"));
-    CFStringAppend(key, CFSTR("D"));
-    CFStringAppend(key, CFSTR("52AFB6CC25099F90686B"));
-    CFStringAppend(key, CFSTR("F2FE94F08350"));
-    CFStringAppend(key, CFSTR("1"));
-    CFStringAppend(key, CFSTR("1"));
-    CFStringAppend(key, CFSTR("EA3D09EB10D0E661"));
-    CFStringAppend(key, CFSTR("4"));
-    CFStringAppend(key, CFSTR("8"));
-    CFStringAppend(key, CFSTR("8"));
-    CFStringAppend(key, CFSTR("A02025D7CEFD7471B08035C92D0"));
-    CFStringAppend(key, CFSTR("8287E0D6F6E05C29BD"));
-    // *** End Public Key ***
-    
-    APSetKey(key);
-    
+    bool result = false;    
     if( CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)_path.c_str(), _path.length(), false) ) {
         if( APVerifyLicenseFile(url) )
             result = true;
         CFRelease(url);
     }
     
-	CFRelease(key);
+	CFRelease(cf_key);
     
     return result;
 }

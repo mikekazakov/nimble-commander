@@ -1,11 +1,4 @@
-//
-//  MainWindow.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 01/11/14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/SystemInformation.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>

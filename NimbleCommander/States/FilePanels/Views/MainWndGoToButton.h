@@ -1,11 +1,4 @@
-//
-//  MainWndGoToButton.h
-//  Directories
-//
-//  Created by Michael G. Kazakov on 11.03.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>

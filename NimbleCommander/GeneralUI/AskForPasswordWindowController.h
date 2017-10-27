@@ -1,11 +1,4 @@
-//
-//  AskForPasswordWindowController.h
-//  Files
-//
-//  Created by Michael G. Kazakov on 26/01/16.
-//  Copyright © 2016 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 /**
@@ -14,8 +7,6 @@
 bool RunAskForPasswordModalWindow( const string& _password_for, string &_passwd );
 
 #ifdef __OBJC__
-
-//bool RunAskForPasswordSheet( const string& _password_for, string &_passwd, NSWindow *_for_window );
 
 @interface AskForPasswordWindowController : NSWindowController
 

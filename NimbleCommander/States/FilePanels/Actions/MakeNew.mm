@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"

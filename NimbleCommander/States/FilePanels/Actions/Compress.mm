@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Compress.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
@@ -5,9 +6,7 @@
 #include "../MainWindowFilePanelState.h"
 #include "../../MainWindowController.h"
 #include <VFS/VFS.h>
-//#include <NimbleCommander/Operations/Compress/FileCompressOperation.h>
 #include <Utility/PathManip.h>
-
 #include <Operations/Compression.h>
 
 namespace nc::panel::actions {

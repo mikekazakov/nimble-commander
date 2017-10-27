@@ -1,12 +1,4 @@
-//
-//  MMYosemiteTabStyle.m
-//  --------------------
-//
-//  Based on MMUnifiedTabStyle.m by Keith Blount
-//  Created by Ajin Man Tuladhar on 04/11/2014.
-//  Copyright 2014 Ajin Man Tuladhar. All rights reserved.
-//
-
+// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "TabBarStyle.h"
 #import <MMTabBarView/MMTabStyle.h>
 #import <MMTabBarView/MMAttachedTabBarButton.h>
@@ -15,13 +7,9 @@
 #import <MMTabBarView/NSBezierPath+MMTabBarViewExtensions.h>
 #import <MMTabBarView/MMOverflowPopUpButton.h>
 #import <MMTabBarView/MMTabBarView.Private.h>
-
-
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
-
-NS_ASSUME_NONNULL_BEGIN
 
 static const auto g_TabCloseSize = NSMakeSize(12, 12);
 
@@ -258,19 +246,12 @@ static nanoseconds g_LastImagesRebuildTime = 0ns;
     return YES;
 }
 
-#pragma mark -
-#pragma mark Drag Support
-
 - (NSRect)draggingRectForTabButton:(MMAttachedTabBarButton *)aButton ofTabBarView:(MMTabBarView *)tabBarView {
 
 	NSRect dragRect = [aButton stackingFrame];
 	dragRect.size.width++;
 	return dragRect;
-    
 }
-
-#pragma mark -
-#pragma mark Add Tab Button
 
 - (void)updateAddButton:(MMRolloverButton *)aButton ofTabBarView:(MMTabBarView *)tabBarView {
     
@@ -280,40 +261,25 @@ static nanoseconds g_LastImagesRebuildTime = 0ns;
     [aButton setRolloverImage:g_TabAddHoverImage];
 }
 
-#pragma mark -
-#pragma mark Providing Images
-
 - (NSImage *)closeButtonImageOfType:(MMCloseButtonImageType)type forTabCell:(MMTabBarButtonCell *)cell
 {
     switch (type) {
         case MMCloseButtonImageTypeStandard:
-//            return _staticYosemiteTabClose_FrontImage();
             return g_TabCloseFreeImage;
         case MMCloseButtonImageTypeRollover:
-//            return _staticYosemiteTabClose_Front_RolloverImage();
             return g_TabCloseHoverImage;
         case MMCloseButtonImageTypePressed:
-//            return _staticYosemiteTabClose_Front_PressedImage();
             return g_TabClosePressedImage;
-            
         case MMCloseButtonImageTypeDirty:
-//            return _staticYosemiteTabCloseDirty_FrontImage();
             return g_TabCloseFreeImage;
         case MMCloseButtonImageTypeDirtyRollover:
-//            return _staticYosemiteTabCloseDirty_Front_RolloverImage();
             return g_TabCloseHoverImage;
         case MMCloseButtonImageTypeDirtyPressed:
-//            return _staticYosemiteTabCloseDirty_Front_PressedImage();
             return g_TabClosePressedImage;
-            
         default:
             break;
     }
-    
 }
-
-#pragma mark -
-#pragma mark Drawing
 
 - (NSAttributedString *)attributedStringValueForTabCell:(MMTabBarButtonCell *)cell
 {
@@ -436,5 +402,3 @@ static nanoseconds g_LastImagesRebuildTime = 0ns;
 }
 
 @end
-
-NS_ASSUME_NONNULL_END

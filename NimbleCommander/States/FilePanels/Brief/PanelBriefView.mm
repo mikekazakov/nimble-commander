@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFS.h>
 #include <Habanero/algo.h>
 #include <Utility/FontExtras.h>

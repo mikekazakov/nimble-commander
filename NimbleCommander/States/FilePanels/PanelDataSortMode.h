@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 // 2 bytes long, OK to pass by value everywhere

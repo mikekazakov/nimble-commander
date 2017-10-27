@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
 #include <boost/uuid/uuid_io.hpp>

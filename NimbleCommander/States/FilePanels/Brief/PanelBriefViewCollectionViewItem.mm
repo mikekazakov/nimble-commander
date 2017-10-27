@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
@@ -33,7 +34,8 @@ using namespace nc::panel;
     self = [super initWithNibName:nil bundle:nil];
     if( self ) {
         m_PanelActive = false;
-        PanelBriefViewItemCarrier *v = [[PanelBriefViewItemCarrier alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
+        const auto rc = NSMakeRect(0, 0, 10, 10);
+        PanelBriefViewItemCarrier *v = [[PanelBriefViewItemCarrier alloc] initWithFrame:rc];
         v.controller = self;
         self.view = v;
     }

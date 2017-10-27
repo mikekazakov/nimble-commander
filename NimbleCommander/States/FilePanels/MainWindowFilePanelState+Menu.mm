@@ -1,7 +1,6 @@
+// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Utility/NSMenu+Hierarchical.h>
-//#include <NimbleCommander/Operations/Copy/MassCopySheetController.h>
-//#include <NimbleCommander/Operations/OperationsController.h>
 #include "MainWindowFilePanelState+Menu.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>

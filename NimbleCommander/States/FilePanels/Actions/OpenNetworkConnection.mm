@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OpenNetworkConnection.h"
 #include "../PanelController.h"
 #include "../Views/FTPConnectionSheetController.h"

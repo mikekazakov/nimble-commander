@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSListingInput.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
 #include "../PanelController.h"

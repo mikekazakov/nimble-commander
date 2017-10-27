@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NavigateHistory.h"
 #include "../PanelController.h"
 #include "../PanelHistory.h"

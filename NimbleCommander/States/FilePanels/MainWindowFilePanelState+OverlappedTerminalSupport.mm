@@ -1,3 +1,4 @@
+// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"

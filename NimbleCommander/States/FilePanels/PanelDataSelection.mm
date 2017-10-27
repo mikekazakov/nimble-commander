@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ExtensionLowercaseComparison.h>
 #include <NimbleCommander/Core/FileMask.h>
 #include "PanelDataSelection.h"

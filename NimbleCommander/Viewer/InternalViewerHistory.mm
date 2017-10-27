@@ -1,3 +1,4 @@
+// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../Core/rapidjson.h"
 #include "InternalViewerHistory.h"
 

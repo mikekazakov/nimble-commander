@@ -1,3 +1,4 @@
+// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataEntriesComparator.h"

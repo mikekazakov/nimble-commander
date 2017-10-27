@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ToolsMenuDelegate.h"
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "MainWindowFilePanelState+Menu.h"

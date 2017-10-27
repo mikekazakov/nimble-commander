@@ -1,3 +1,4 @@
+// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerToolbarProtocol.h"
 
 // this NSToolbarItem descent ensures that it's size is always in-sync with inlayed NSTextField's content width.

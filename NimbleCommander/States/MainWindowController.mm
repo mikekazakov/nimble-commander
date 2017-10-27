@@ -1,3 +1,4 @@
+// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/debug.h>
 #include <NimbleCommander/Core/rapidjson.h>
 #include <rapidjson/stringbuffer.h>

@@ -1,11 +1,4 @@
-//
-//  QuickPreview.m
-//  Files
-//
-//  Created by Pavel Dogurevich on 26.04.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Quartz/Quartz.h>
 #include "QuickPreview.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>

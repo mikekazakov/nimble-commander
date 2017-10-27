@@ -1,11 +1,4 @@
-//
-//  FavoritesWindowController.m
-//  NimbleCommander
-//
-//  Created by Michael G. Kazakov on 3/15/17.
-//  Copyright © 2017 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Habanero/algo.h>
 #include <Utility/SheetWithHotkeys.h>

@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/SerialQueue.h>
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>

@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListViewDateFormatting.h"
 
 // Finder (10.12) heuristics for min column width:

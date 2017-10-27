@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SettingsAdaptor.h"
 #include <Term/Settings.h>
 #include <NimbleCommander/Core/Theming/Theme.h>

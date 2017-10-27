@@ -1,11 +1,4 @@
-//
-//  MainWindowInternalViewerState.m
-//  NimbleCommander
-//
-//  Created by Michael G. Kazakov on 8/10/16.
-//  Copyright © 2016 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../MainWindowController.h"

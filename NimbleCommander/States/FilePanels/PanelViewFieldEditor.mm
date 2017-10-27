@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFieldEditor.h"
 
 static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_selection );

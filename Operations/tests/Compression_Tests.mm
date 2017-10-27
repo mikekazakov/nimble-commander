@@ -8,15 +8,6 @@
 #include <VFS/ArcLA.h>
 #include <VFS/Native.h>
 
-static const string g_Preffix = "/.FilesTestingData/archives/";
-static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
-static const string g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
-static const string g_Adium = g_Preffix + "adium.app.zip";
-static const string g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
-static const string g_Files = g_Preffix + "files-1.1.0(1341).zip";
-static const string g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
-static const string g_FileWithXAttr = "Leopard WaR3z.icns";
-
 using namespace nc;
 using namespace nc::ops;
 

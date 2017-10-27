@@ -26,5 +26,3 @@
 
 #define XCTAssertCPPThrows(expression, format...) \
     _XCTAssertCPPThrows(self, expression, @#expression, format)
-
-static const path g_DataPref = "/.FilesTestingData";

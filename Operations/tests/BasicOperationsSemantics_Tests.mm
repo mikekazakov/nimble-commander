@@ -4,15 +4,6 @@
 #include "../include/Operations/Job.h"
 
 using namespace std;
-
-#include <VFS/VFS.h>
-#include <VFS/ArcLA.h>
-#include <VFS/Native.h>
-
-static const std::string g_Preffix = "/.FilesTestingData/archives/";
-static const std::string g_Adium = g_Preffix + "adium.app.zip";
-
-
 using namespace nc::ops;
 
 namespace {
@@ -53,7 +44,6 @@ struct MyOperation : public Operation
     std::mutex cv_lock;
     std::condition_variable cv;
     
-//    myop.SetFinishCallback([&]{ cv.notify_all(); });
     myop.ObserveUnticketed(Operation::NotifyAboutFinish, [&]{ cv.notify_all(); });    
     
     myop.Start();
@@ -93,19 +83,6 @@ struct MyOperation : public Operation
     MyOperation myop;
     XCTAssert( myop.State() == OperationState::Cold );
 }
-
-//- (void)testAdiumZip_CopyFromVFS
-//{
-////    auto dir = self.makeTmpDir;
-//    
-//    std::shared_ptr<VFSArchiveHost> host;
-//    try {
-//        host = std::make_shared<VFSArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
-//    } catch (VFSErrorException &e) {
-//        XCTAssert( e.code() == 0 );
-//        return;
-//    }
-//}
 
 @end
 

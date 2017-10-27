@@ -7,7 +7,7 @@
 using namespace nc;
 using namespace nc::ops;
 
-static const string g_Preffix = "/.FilesTestingData/archives/";
+static const string g_Preffix = string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
 static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
 static const string g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
 static const string g_Adium = g_Preffix + "adium.app.zip";

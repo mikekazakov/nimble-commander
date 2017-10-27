@@ -13,6 +13,7 @@
 
 using namespace nc::vfs;
 
+static const path g_Keys = path(NCE(nc::env::test::ext_data_prefix)) / "sftp";
 static const auto g_QNAPNAS             = "192.168.2.5";
 static const auto g_VBoxDebian7x86      = "debian7x86.local"; // 170
 static const auto g_VBoxDebian8x86      = "192.168.2.173";
@@ -37,7 +38,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
     return make_shared<SFTPHost>(g_VBoxDebian7x86,
                                  "root",
                                  "",
-                                 "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root",
+                                 (g_Keys/"id_rsa_debian7x86_local_root").c_str(),
                                  -1);
 }
 
@@ -46,7 +47,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
     return make_shared<SFTPHost>(g_VBoxDebian7x86,
                                  "root",
                                  "qwerty",
-                                 "/.FilesTestingData/sftp/id_rsa_debian7x86_local_root_qwerty",
+                                 (g_Keys/"id_rsa_debian7x86_local_root_qwerty").c_str(),
                                  -1);
 }
 
@@ -185,7 +186,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
         auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
                                     "r2d2",
                                     "",
-                                    "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2");
+                                    (g_Keys/"id_rsa_ubuntu1404x64_local_r2d2").c_str());
         XCTAssert( host->HomeDir() == "/home/r2d2" );
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
@@ -195,7 +196,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
         auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
                                           "r2d2",
                                           "qwerty",
-                                          "/.FilesTestingData/sftp/id_rsa_ubuntu1404x64_local_r2d2_qwerty");
+                                          (g_Keys/"id_rsa_ubuntu1404x64_local_r2d2_qwerty").c_str());
     XCTAssert( host->HomeDir() == "/home/r2d2" );
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );

@@ -13,7 +13,7 @@
 
 using namespace nc::vfs;
 
-static const auto g_Preffix = "/.FilesTestingData/archives/"s;
+static const auto g_Preffix = string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
 static const auto g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
 static const auto g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
 static const auto g_Adium = g_Preffix + "adium.app.zip";

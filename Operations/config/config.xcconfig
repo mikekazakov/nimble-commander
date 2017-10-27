@@ -1,0 +1,1 @@
+HEADER_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/c++/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../RoutedIO/include $(PROJECT_DIR)/../3rd_Party/libarchive/include $(PROJECT_DIR)/../3rd_Party/boost/include $(HOME)

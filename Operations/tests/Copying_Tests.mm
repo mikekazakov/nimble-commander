@@ -8,8 +8,8 @@
 
 using namespace nc::ops;
 using namespace nc::vfs;
-static const path g_DataPref = "/.FilesTestingData";
-static const string g_PhotosRAR   = "/.FilesTestingData/archives/"s + "photos.rar";
+static const path g_DataPref = NCE(nc::env::test::ext_data_prefix);
+static const path g_PhotosRAR = g_DataPref / "archives" / "photos.rar";
 
 static vector<VFSListingItem> FetchItems(const string& _directory_path,
                                                  const vector<string> &_filenames,
@@ -460,7 +460,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host_src;
     try {
-        host_src = make_shared<UnRARHost>(g_PhotosRAR);
+        host_src = make_shared<UnRARHost>(g_PhotosRAR.c_str());
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;

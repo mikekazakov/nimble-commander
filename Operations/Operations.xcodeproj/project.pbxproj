@@ -199,6 +199,7 @@
 		CF4BCF5A1F301303005F8414 /* AggregateProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AggregateProgressTracker.h; path = source/AggregateProgressTracker.h; sourceTree = "<group>"; };
 		CF4BCF5B1F301303005F8414 /* AggregateProgressTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AggregateProgressTracker.mm; path = source/AggregateProgressTracker.mm; sourceTree = "<group>"; };
 		CF4BCF5E1F30130B005F8414 /* CopyingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingDialog.h; path = include/Operations/CopyingDialog.h; sourceTree = "<group>"; };
+		CF5FD93E1FA2D3B400752E59 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = config.xcconfig; path = config/config.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF7084D61EF7CC770072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = source/Pool.h; sourceTree = "<group>"; };
 		CF7084D71EF7CC770072F0F6 /* Pool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pool.mm; path = source/Pool.mm; sourceTree = "<group>"; };
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
@@ -387,6 +388,14 @@
 			name = Copying;
 			sourceTree = "<group>";
 		};
+		CF5FD93D1FA2D39F00752E59 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CF5FD93E1FA2D3B400752E59 /* config.xcconfig */,
+			);
+			name = Config;
+			sourceTree = "<group>";
+		};
 		CFC4F8E11EFCD9B40000B3EE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -545,6 +554,7 @@
 		CFF53B251EDD197300F567C4 = {
 			isa = PBXGroup;
 			children = (
+				CF5FD93D1FA2D39F00752E59 /* Config */,
 				CFF53B8A1EE24F1B00F567C4 /* Headers */,
 				CFF53B8B1EE24F2400F567C4 /* Source */,
 				CFF53B3C1EDD197300F567C4 /* Tests */,
@@ -1040,6 +1050,7 @@
 /* Begin XCBuildConfiguration section */
 		CFF53B411EDD197300F567C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF5FD93E1FA2D3B400752E59 /* config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1087,15 +1098,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../3rd_Party/c++/include",
-					"$(PROJECT_DIR)/../VFS/include",
-					"$(PROJECT_DIR)/../Habanero/include",
-					"$(PROJECT_DIR)/../Utility/include",
-					"$(PROJECT_DIR)/../RoutedIO/include",
-					"$(PROJECT_DIR)/../3rd_Party/libarchive/include",
-					"$(PROJECT_DIR)/../3rd_Party/boost/include",
-				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/../3rd_Party/boost/built",
@@ -1149,6 +1151,7 @@
 		};
 		CFF53B421EDD197300F567C4 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF5FD93E1FA2D3B400752E59 /* config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
@@ -1190,15 +1193,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../3rd_Party/c++/include",
-					"$(PROJECT_DIR)/../VFS/include",
-					"$(PROJECT_DIR)/../Habanero/include",
-					"$(PROJECT_DIR)/../Utility/include",
-					"$(PROJECT_DIR)/../RoutedIO/include",
-					"$(PROJECT_DIR)/../3rd_Party/libarchive/include",
-					"$(PROJECT_DIR)/../3rd_Party/boost/include",
-				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
 					"$(PROJECT_DIR)/../3rd_Party/boost/built",

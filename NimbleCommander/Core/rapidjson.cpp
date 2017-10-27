@@ -1,17 +1,19 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "rapidjson.h"
 
 namespace rapidjson
 {
-    CrtAllocator g_CrtAllocator;
+CrtAllocator g_CrtAllocator;
     
-    GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> MakeStandaloneString(const char *_str)
-    {
-        return StandaloneValue(_str, g_CrtAllocator);
-    }
-    GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> MakeStandaloneString(const string &_str)
-    {
-        return StandaloneValue(_str.c_str(), g_CrtAllocator);
-    }
+GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> MakeStandaloneString(const char *_str)
+{
+    return StandaloneValue(_str, g_CrtAllocator);
+}
+
+GenericValue<rapidjson::UTF8<>, rapidjson::CrtAllocator> MakeStandaloneString(const string &_str)
+{
+    return StandaloneValue(_str.c_str(), g_CrtAllocator);
+}
     
 optional<bool> GetOptionalBoolFromObject( const StandaloneValue& _value, const char *_name )
 {

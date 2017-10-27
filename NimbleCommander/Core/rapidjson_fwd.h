@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #ifdef RAPIDJSON_RAPIDJSON_H_
@@ -19,18 +20,18 @@
 
 namespace rapidjson
 {
-    extern CrtAllocator g_CrtAllocator;
+extern CrtAllocator g_CrtAllocator;
     
-    using StandaloneDocument = GenericDocument<rapidjson::UTF8<char>,
-                                               rapidjson::CrtAllocator,
-                                               rapidjson::CrtAllocator>;
+using StandaloneDocument = GenericDocument<rapidjson::UTF8<char>,
+                                           rapidjson::CrtAllocator,
+                                           rapidjson::CrtAllocator>;
     
-    using StandaloneValue = GenericValue<rapidjson::UTF8<char>,
-                                         rapidjson::CrtAllocator>;
+using StandaloneValue = GenericValue<rapidjson::UTF8<char>,
+                                     rapidjson::CrtAllocator>;
     
-    StandaloneValue MakeStandaloneString(const char *_str);
-    StandaloneValue MakeStandaloneString(const string &_str);
-    optional<bool> GetOptionalBoolFromObject( const StandaloneValue& _value, const char *_name );
-    optional<int> GetOptionalIntFromObject( const StandaloneValue& _value, const char *_name );
-    optional<const char*> GetOptionalStringFromObject( const StandaloneValue& _value, const char *_name );
+StandaloneValue MakeStandaloneString(const char *_str);
+StandaloneValue MakeStandaloneString(const string &_str);
+optional<bool> GetOptionalBoolFromObject( const StandaloneValue& _value, const char *_name );
+optional<int> GetOptionalIntFromObject( const StandaloneValue& _value, const char *_name );
+optional<const char*> GetOptionalStringFromObject( const StandaloneValue& _value, const char *_name );
 }

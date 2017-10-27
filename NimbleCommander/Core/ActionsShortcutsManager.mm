@@ -1,12 +1,13 @@
+// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/rapidjson.h>
 #include "ActionsShortcutsManager.h"
 
-// this ket should not exist in config defaults
+// this key should not exist in config defaults
 static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
 
- // persistance holy grail is below, change id's only in emergency case:
+ // the persistance holy grail is below, change ids only in emergency case:
 static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.nimble_commander.about",                     10'000},
     {"menu.nimble_commander.preferences",               10'010},
@@ -380,7 +381,8 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     
 };
 
-ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater( initializer_list<ShortCut*> _hotkeys, initializer_list<const char*> _actions )
+ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(initializer_list<ShortCut*> _hotkeys,
+                                                            initializer_list<const char*> _actions )
 {
     if( _hotkeys.size() != _actions.size() )
         throw logic_error("_hotkeys.size() != _actions.size()");

@@ -1,12 +1,4 @@
-//
-//  FileMask_Tests.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 22/08/14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
-//#include "tests_common.h"
+// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include "FileMask.h"
 

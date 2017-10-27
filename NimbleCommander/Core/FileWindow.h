@@ -1,3 +1,4 @@
+// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "VFS/VFSFile.h"

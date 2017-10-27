@@ -1,3 +1,4 @@
+// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Quartz/Quartz.h>
 #include <sys/stat.h>
 #include <Habanero/algo.h>

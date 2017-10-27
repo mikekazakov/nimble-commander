@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>

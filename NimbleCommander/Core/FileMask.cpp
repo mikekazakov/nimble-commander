@@ -1,3 +1,4 @@
+// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/param.h>
@@ -24,7 +25,10 @@ string regex_escape(const string& string_to_escape)
     // do not escape "?" and "*"
     static const regex escape( "[.^$|()\\[\\]{}+\\\\]" );
     static const string replace( "\\\\&" );
-    return regex_replace(string_to_escape, escape, replace, regex_constants::match_default | regex_constants::format_sed);
+    return regex_replace(string_to_escape,
+                         escape,
+                         replace,
+                         regex_constants::match_default | regex_constants::format_sed);
 }
 
 void trim_leading_whitespaces(string& _str)

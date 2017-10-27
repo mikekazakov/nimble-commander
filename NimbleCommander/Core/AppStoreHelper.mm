@@ -1,3 +1,4 @@
+// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CFDefaultsCPP.h>
 #include <NimbleCommander/GeneralUI/ProFeaturesWindowController.h>
 #include <NimbleCommander/Core/FeedbackManager.h>
@@ -119,16 +120,6 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     GA().PostEvent("Licensing", "Buy", "Restore IAP purchases");
     [SKPaymentQueue.defaultQueue restoreCompletedTransactions];
 }
-
-//- (void) paymentQueueRestoreCompletedTransactionsFinished:(SKPaymentQueue *)queue
-//{
-//    auto callback = m_PurchaseCallback;
-//    for( SKPaymentTransaction *transaction in queue.transactions ) {
-//        string identifier = transaction.payment.productIdentifier.UTF8String;
-//        if( callback )
-//            dispatch_to_main_queue([=]{ callback(identifier); } );
-//    }
-//}
 
 - (void) showProFeaturesWindow
 {

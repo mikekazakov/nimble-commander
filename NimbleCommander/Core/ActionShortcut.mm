@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <locale>
 #include <codecvt>
 #include <Carbon/Carbon.h>
@@ -159,7 +160,9 @@ NSString *ActionShortcut::PrettyString() const
         return @"";
     
     NSString *vis_key;
-    auto it = find_if( begin(unicode_to_nice_string), end(unicode_to_nice_string), [=](auto &_i){ return _i.first == unicode; });
+    auto it = find_if(begin(unicode_to_nice_string),
+                      end(unicode_to_nice_string),
+                      [=](auto &_i){ return _i.first == unicode; });
     if( it != end(unicode_to_nice_string) )
         vis_key = it->second;
     else

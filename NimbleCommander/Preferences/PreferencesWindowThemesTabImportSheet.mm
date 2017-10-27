@@ -1,11 +1,4 @@
-//
-//  PreferencesWindowThemesTabImportSheet.m
-//  NimbleCommander
-//
-//  Created by Michael G. Kazakov on 1/26/17.
-//  Copyright © 2017 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "PreferencesWindowThemesTabImportSheet.h"
 
 @interface PreferencesWindowThemesTabImportSheet ()
@@ -19,8 +12,6 @@
     [super windowDidLoad];
     self.overwriteCurrentTheme = true;
     self.importAsNewTheme = false;
-    
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
 }
 
 - (IBAction)onImport:(id)sender

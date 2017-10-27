@@ -1,11 +1,4 @@
-//
-//  PreferencesWindowThemesTab.m
-//  NimbleCommander
-//
-//  Created by Michael G. Kazakov on 1/17/17.
-//  Copyright © 2017 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <fstream>
 #include <NimbleCommander/Core/rapidjson.h>
 #include <rapidjson/error/en.h>

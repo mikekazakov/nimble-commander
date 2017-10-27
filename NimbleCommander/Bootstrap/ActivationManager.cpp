@@ -1,3 +1,4 @@
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <AquaticPrime/AquaticPrime.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <Utility/SystemInformation.h>

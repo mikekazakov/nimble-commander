@@ -1,12 +1,6 @@
-//#include "3rd_party/NSFileManager+DirectoryLocations.h"
+// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 
 @implementation AppDelegate (Migration)
-
-//- (void) migrateViewerHistory_1_1_3_to_1_1_5
-//{
-//    [BigFileViewHistory moveToNewHistory];
-//}
-
 @end

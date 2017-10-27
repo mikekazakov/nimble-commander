@@ -1,11 +1,4 @@
-//
-//  Application.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 04/06/15.
-//  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2015-2016 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Application.h"
 
 @implementation Application
@@ -26,19 +19,22 @@
     }
     catch(exception &e)
     {
-        cout << "Exception caught: " << e.what() << endl;
+        cerr << "Exception caught: " << e.what() << endl;
     }
     catch(exception *e)
     {
-        cout << "Exception caught: " << e->what() << endl;
+        cerr << "Exception caught: " << e->what() << endl;
     }
     catch(...)
     {
-        cout << "Caught an unhandled exception!" << endl;
+        cerr << "Caught an unhandled exception!" << endl;
     }
 }
 
-- (NSEvent *)nextEventMatchingMask:(NSEventMask)mask untilDate:(NSDate *)expiration inMode:(NSString *)mode dequeue:(BOOL)deqFlag
+- (NSEvent *)nextEventMatchingMask:(NSEventMask)mask
+                         untilDate:(NSDate *)expiration
+                            inMode:(NSString *)mode
+                           dequeue:(BOOL)deqFlag
 {
     try
     {
@@ -46,15 +42,15 @@
     }
     catch(exception &e)
     {
-        cout << "Exception caught: " << e.what() << endl;
+        cerr << "Exception caught: " << e.what() << endl;
     }
     catch(exception *e)
     {
-        cout << "Exception caught: " << e->what() << endl;
+        cerr << "Exception caught: " << e->what() << endl;
     }
     catch(...)
     {
-        cout << "Caught an unhandled exception!" << endl;
+        cerr << "Caught an unhandled exception!" << endl;
     }
 
     return nil;

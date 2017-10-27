@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Linkage.h"
 #include "LinkageJob.h"
 #include "../Internal.h"

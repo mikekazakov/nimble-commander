@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreation.h"
 #include "DirectoryCreationJob.h"
 #include <boost/algorithm/string/split.hpp>

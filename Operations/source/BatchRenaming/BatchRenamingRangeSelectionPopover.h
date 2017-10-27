@@ -1,3 +1,4 @@
+// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #import <Cocoa/Cocoa.h>
 

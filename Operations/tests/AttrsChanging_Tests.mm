@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include "../source/AttrsChanging/AttrsChanging.h"
 #include <VFS/Native.h>

@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionDialog.h"
 #include "../Internal.h"
 #include <VFS/VFS.h>

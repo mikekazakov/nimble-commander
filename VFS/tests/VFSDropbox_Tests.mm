@@ -1,3 +1,4 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "tests_common.h"
 #include <VFS/NetDropbox.h>
 #include <VFS/../../source/NetDropbox/File.h>

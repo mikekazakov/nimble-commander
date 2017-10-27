@@ -1,17 +1,9 @@
-//
-//  VFSSeqToSeekWrapper.cpp
-//  Files
-//
-//  Created by Michael G. Kazakov on 28.08.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
 #include <Utility/SystemInformation.h>
 #include "../include/VFS/VFSSeqToRandomWrapper.h"
 #include "../include/VFS/VFSError.h"
-//#include "../../NimbleCommander/Bootstrap/ActivationManager.h"
 
 VFSSeqToRandomROWrapperFile::Backend::~Backend()
 {

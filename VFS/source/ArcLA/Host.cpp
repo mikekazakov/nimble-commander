@@ -1,11 +1,4 @@
-//
-//  VFSArchiveHost.cpp
-//  Files
-//
-//  Created by Michael G. Kazakov on 27.08.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <Habanero/CFStackAllocator.h>
 #include <Utility/PathManip.h>

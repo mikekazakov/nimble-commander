@@ -1,11 +1,4 @@
-//
-//  TermScreenBufferTests.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 30/06/15.
-//  Copyright (c) 2015 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 

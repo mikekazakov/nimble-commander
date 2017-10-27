@@ -1,3 +1,5 @@
+// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+
 // basic C facilities
 #include <assert.h>
 #include <stdio.h>
@@ -59,7 +61,6 @@
     using namespace std;
     using namespace std::chrono;
 
-//    #include <experimental/any>
     #include <experimental/optional>
     using namespace std::experimental;
 

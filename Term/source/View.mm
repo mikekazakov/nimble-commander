@@ -1,11 +1,4 @@
-//
-//  TermView.m
-//  TermPlays
-//
-//  Created by Michael G. Kazakov on 17.11.13.
-//  Copyright (c) 2013 Michael G. Kazakov. All rights reserved.
-//
-
+// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontCache.h>
 #include <Utility/FontExtras.h>

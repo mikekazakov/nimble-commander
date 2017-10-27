@@ -1,0 +1,1 @@
+HEADER_SEARCH_PATHS = 3rd_Party/c++/include 3rd_Party/libarchive/include 3rd_Party/unrar/include 3rd_Party/AquaticPrime/include 3rd_Party/rapidjson/include 3rd_Party/boost/include 3rd_Party/AppAuth/AppAuth-iOS/Source/** 3rd_Party/LetsMove 3rd_Party/MMTabBarView Habanero/include Utility/include RoutedIO/include VFS/include Operations/include Term/include . $(HOME)

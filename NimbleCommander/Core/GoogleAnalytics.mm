@@ -9,18 +9,27 @@ static void PostStartupInfo()
         GA().PostEvent("Init info", "Hardware", so.coded_model.c_str());
     
     NSString* lang = [NSLocale.autoupdatingCurrentLocale objectForKey:NSLocaleLanguageCode];
-    GA().PostEvent( "Init info", "UI Language", [lang UTF8String] );
+    GA().PostEvent( "Init info", "UI Language", lang.UTF8String );
+}
+
+static const char *TrackingID()
+{
+    switch( ActivationManager::Type() ) {
+        case ActivationManager::Distribution::Trial:
+            return NCE(nc::env::ga_nonmas_trial);
+        case ActivationManager::Distribution::Free:
+            return NCE(nc::env::ga_mas_free);
+        case ActivationManager::Distribution::Paid:
+            return NCE(nc::env::ga_mas_paid);
+        default:
+            return "";
+    }
 }
 
 GoogleAnalytics& GA() noexcept
 {
     static GoogleAnalytics *inst = []{
-        const auto tracking_id =
-             ActivationManager::Type() == ActivationManager::Distribution::Trial ? "UA-47180125-2" :
-            (ActivationManager::Type() == ActivationManager::Distribution::Free  ? "UA-47180125-3" :
-                                                                                   "UA-47180125-4");
-    
-        const auto ga = new GoogleAnalytics(tracking_id);
+        const auto ga = new GoogleAnalytics( TrackingID() );
         if( ga->IsEnabled() )
             dispatch_to_background( PostStartupInfo );
         return ga;

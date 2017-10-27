@@ -1543,6 +1543,7 @@
 		CF56C2DC1DC45BD200F0DF0F /* PanelListViewDateFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewDateFormatting.h; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.h; sourceTree = SOURCE_ROOT; };
 		CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewDateFormatting.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.mm; sourceTree = SOURCE_ROOT; };
 		CF5A0B291C9E7D76005839B7 /* libunrar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libunrar.a; path = 3rd_Party/unrar/built/libunrar.a; sourceTree = SOURCE_ROOT; };
+		CF5FD92D1FA2C02E00752E59 /* shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = shared.xcconfig; path = NimbleCommander/Bootstrap/shared.xcconfig; sourceTree = SOURCE_ROOT; wrapsLines = 1; };
 		CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilesDraggingSource.h; path = NimbleCommander/States/FilePanels/FilesDraggingSource.h; sourceTree = SOURCE_ROOT; };
 		CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilesDraggingSource.mm; path = NimbleCommander/States/FilePanels/FilesDraggingSource.mm; sourceTree = SOURCE_ROOT; };
 		CF5FE7D31E120A4900CD83B4 /* CopyFilePaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyFilePaths.h; path = NimbleCommander/States/FilePanels/Actions/CopyFilePaths.h; sourceTree = SOURCE_ROOT; };
@@ -2574,6 +2575,7 @@
 				CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */,
 				CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */,
 				CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */,
+				CF5FD92D1FA2C02E00752E59 /* shared.xcconfig */,
 			);
 			name = Bootstrap;
 			sourceTree = "<group>";
@@ -5029,6 +5031,7 @@
 		};
 		CFC5122C16C4BD3D00D247EE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF5FD92D1FA2C02E00752E59 /* shared.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LIBRARY = "libc++";
@@ -5067,24 +5070,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"3rd_Party/c++/include",
-					3rd_Party/libarchive/include/,
-					3rd_Party/unrar/include/,
-					3rd_Party/AquaticPrime/include/,
-					3rd_Party/rapidjson/include/,
-					3rd_Party/boost/include/,
-					"3rd_Party/AppAuth/AppAuth-iOS/Source/**",
-					3rd_Party/LetsMove/,
-					3rd_Party/MMTabBarView/,
-					Habanero/include/,
-					Utility/include/,
-					RoutedIO/include/,
-					VFS/include/,
-					Operations/include/,
-					Term/include/,
-					.,
-				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
@@ -5118,6 +5103,7 @@
 		};
 		CFC5122D16C4BD3D00D247EE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF5FD92D1FA2C02E00752E59 /* shared.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LIBRARY = "libc++";
@@ -5150,24 +5136,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = (
-					"3rd_Party/c++/include",
-					3rd_Party/libarchive/include/,
-					3rd_Party/unrar/include/,
-					3rd_Party/AquaticPrime/include/,
-					3rd_Party/rapidjson/include/,
-					3rd_Party/boost/include/,
-					"3rd_Party/AppAuth/AppAuth-iOS/Source/**",
-					3rd_Party/LetsMove/,
-					3rd_Party/MMTabBarView/,
-					Habanero/include/,
-					Utility/include/,
-					RoutedIO/include/,
-					VFS/include/,
-					Operations/include/,
-					Term/include/,
-					.,
-				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/3rd_Party/libarchive/built",

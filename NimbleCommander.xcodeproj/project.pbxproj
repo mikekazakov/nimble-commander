@@ -299,6 +299,8 @@
 		CF6237241EB4444B00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF6237251EB4444C00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
 		CF6237261EB4444D00152B2B /* PanelDataOptionsPersistence.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2F42E61EADB8D000AA031A /* PanelDataOptionsPersistence.mm */; };
+		CF65729B1FA6D08F00ABF85F /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
+		CF65729C1FA6D0AA00ABF85F /* libTerm.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
 		CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
 		CF662AE31D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
@@ -1288,6 +1290,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CF65729C1FA6D0AA00ABF85F /* libTerm.dylib in CopyFiles */,
 				CF39A0E41F70C20C005A4583 /* libHabanero.dylib in CopyFiles */,
 				CF39A0E51F70C20C005A4583 /* libUtility.dylib in CopyFiles */,
 				CF39A0E61F70C20C005A4583 /* libRoutedIO.dylib in CopyFiles */,
@@ -1538,7 +1541,7 @@
 		CF56C2DC1DC45BD200F0DF0F /* PanelListViewDateFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewDateFormatting.h; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.h; sourceTree = SOURCE_ROOT; };
 		CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewDateFormatting.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.mm; sourceTree = SOURCE_ROOT; };
 		CF5A0B291C9E7D76005839B7 /* libunrar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libunrar.a; path = 3rd_Party/unrar/built/libunrar.a; sourceTree = SOURCE_ROOT; };
-		CF5FD92D1FA2C02E00752E59 /* shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = shared.xcconfig; path = NimbleCommander/Bootstrap/shared.xcconfig; sourceTree = SOURCE_ROOT; wrapsLines = 1; };
+		CF5FD92D1FA2C02E00752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = NimbleCommander/Bootstrap/default.xcconfig; sourceTree = SOURCE_ROOT; wrapsLines = 1; };
 		CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilesDraggingSource.h; path = NimbleCommander/States/FilePanels/FilesDraggingSource.h; sourceTree = SOURCE_ROOT; };
 		CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilesDraggingSource.mm; path = NimbleCommander/States/FilePanels/FilesDraggingSource.mm; sourceTree = SOURCE_ROOT; };
 		CF5FE7D31E120A4900CD83B4 /* CopyFilePaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyFilePaths.h; path = NimbleCommander/States/FilePanels/Actions/CopyFilePaths.h; sourceTree = SOURCE_ROOT; };
@@ -1552,6 +1555,8 @@
 		CF5FE80C1E16461600CD83B4 /* PanelListViewTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewTableHeaderView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.h; sourceTree = SOURCE_ROOT; };
 		CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTableHeaderView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.mm; sourceTree = SOURCE_ROOT; };
 		CF6237061EB4436400152B2B /* QLThumbnailsCache_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCache_Tests.mm; path = NimbleCommander/Tests/QLThumbnailsCache_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF6572991FA6CD7300ABF85F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = NimbleCommander/Bootstrap/debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		CF65729A1FA6CD8100ABF85F /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = NimbleCommander/Bootstrap/release.xcconfig; sourceTree = SOURCE_ROOT; };
 		CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActivationManager.cpp; path = NimbleCommander/Bootstrap/ActivationManager.cpp; sourceTree = SOURCE_ROOT; };
 		CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivationManager.h; path = NimbleCommander/Bootstrap/ActivationManager.h; sourceTree = SOURCE_ROOT; };
 		CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RoutedIO.xcodeproj; path = RoutedIO/RoutedIO.xcodeproj; sourceTree = "<group>"; };
@@ -2046,6 +2051,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF65729B1FA6D08F00ABF85F /* libTerm.dylib in Frameworks */,
 				CF39A0E21F70C1E1005A4583 /* Operations.framework in Frameworks */,
 				CF9F4AF61ECC8D9500E0AF82 /* NetFS.framework in Frameworks */,
 				CF2A3CEA1E667FAF00E6C6F0 /* libssh2.a in Frameworks */,
@@ -2458,6 +2464,16 @@
 			name = Theming;
 			sourceTree = "<group>";
 		};
+		CF6572861FA6C4B000ABF85F /* xcconfig */ = {
+			isa = PBXGroup;
+			children = (
+				CF5FD92D1FA2C02E00752E59 /* default.xcconfig */,
+				CF6572991FA6CD7300ABF85F /* debug.xcconfig */,
+				CF65729A1FA6CD8100ABF85F /* release.xcconfig */,
+			);
+			name = xcconfig;
+			sourceTree = "<group>";
+		};
 		CF69CF971DA2003C00992B84 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2547,6 +2563,7 @@
 		CF876D161D51DFD0009C0CCE /* Bootstrap */ = {
 			isa = PBXGroup;
 			children = (
+				CF6572861FA6C4B000ABF85F /* xcconfig */,
 				CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */,
 				CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */,
 				CFDAC2371DFBDEBA0039A104 /* AppDelegate.h */,
@@ -2567,7 +2584,6 @@
 				CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */,
 				CF3E2F641F5FA7C8001BFFCE /* VFSInit.h */,
 				CF3E2F651F5FA7C8001BFFCE /* VFSInit.mm */,
-				CF5FD92D1FA2C02E00752E59 /* shared.xcconfig */,
 			);
 			name = Bootstrap;
 			sourceTree = "<group>";
@@ -4939,11 +4955,8 @@
 					"__NC_VERSION_FREE__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Free-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
 			};
 			name = Debug;
@@ -4955,194 +4968,49 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
 				DEVELOPMENT_TEAM = AC5SJT236H;
-				ENABLE_NS_ASSERTIONS = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_FREE__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Free-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
 		CFA53A6B1D433E2A00C562A7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Files/3rd_party",
-					"$(PROJECT_DIR)/3rd_Party/Sparkle",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__NC_VERSION_TRIAL__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				RUN_CLANG_STATIC_ANALYZER = NO;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
 		CFA53A6C1D433E2A00C562A7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Files/3rd_party",
-					"$(PROJECT_DIR)/3rd_Party/Sparkle",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				RUN_CLANG_STATIC_ANALYZER = NO;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};
 		CFC5122C16C4BD3D00D247EE /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF5FD92D1FA2C02E00752E59 /* shared.xcconfig */;
+			baseConfigurationReference = CF6572991FA6CD7300ABF85F /* debug.xcconfig */;
 			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/3rd_Party/Sparkle/";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "NimbleCommander/Bootstrap/NimbleCommander-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_SHADOW = YES;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
-					"$(PROJECT_DIR)/3rd_Party/unrar/built",
-					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
-					"$(PROJECT_DIR)/3rd_Party/OpenSSL/built",
-					"$(PROJECT_DIR)/3rd_Party/libssh2/built",
-					"$(PROJECT_DIR)/3rd_Party/AppAuth/built",
-					"$(PROJECT_DIR)/3rd_Party/boost/built",
-					"$(SDKROOT)/usr/lib/system",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-std=c++1z",
-				);
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-					"-ObjC",
-					"-lAppAuth-macOS",
-					"-lboost_system-mt",
-					"-lboost_filesystem-mt",
-				);
-				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx;
-				USE_HEADERMAP = NO;
-				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
 		CFC5122D16C4BD3D00D247EE /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF5FD92D1FA2C02E00752E59 /* shared.xcconfig */;
+			baseConfigurationReference = CF65729A1FA6CD8100ABF85F /* release.xcconfig */;
 			buildSettings = {
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/3rd_Party/Sparkle/";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_INLINES_ARE_PRIVATE_EXTERN = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "NimbleCommander/Bootstrap/NimbleCommander-Prefix.pch";
-				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_SHADOW = YES;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
-					"$(PROJECT_DIR)/3rd_Party/unrar/built",
-					"$(PROJECT_DIR)/3rd_Party/AquaticPrime/built",
-					"$(PROJECT_DIR)/3rd_Party/OpenSSL/built",
-					"$(PROJECT_DIR)/3rd_Party/libssh2/built",
-					"$(PROJECT_DIR)/3rd_Party/AppAuth/built",
-					"$(PROJECT_DIR)/3rd_Party/boost/built",
-					"$(SDKROOT)/usr/lib/system",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-std=c++1z",
-				);
-				OTHER_LDFLAGS = (
-					"$(OTHER_LDFLAGS)",
-					"-ObjC",
-					"-lAppAuth-macOS",
-					"-lboost_system-mt",
-					"-lboost_filesystem-mt",
-				);
-				RUN_CLANG_STATIC_ANALYZER = YES;
-				SDKROOT = macosx;
-				USE_HEADERMAP = NO;
-				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
@@ -5152,10 +5020,6 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
 				DEVELOPMENT_TEAM = AC5SJT236H;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/3rd_Party/Sparkle",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__NC_VERSION_TRIAL__=1",
@@ -5163,10 +5027,7 @@
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
@@ -5176,18 +5037,14 @@
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
 				DEVELOPMENT_TEAM = AC5SJT236H;
-				FRAMEWORK_SEARCH_PATHS = (
+				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"$(PROJECT_DIR)/3rd_Party/Sparkle",
+					"__NC_VERSION_TRIAL__=1",
 				);
-				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE = "";
-				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};
@@ -5198,30 +5055,16 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
 				DEVELOPMENT_TEAM = AC5SJT236H;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Files/3rd_party",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__NC_VERSION_PAID__=1",
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Pro-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SDKROOT)/usr/lib/system",
-					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
-					"$(PROJECT_DIR)/3rd_Party/unrar/built",
-					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
-					"$(PROJECT_DIR)/Files/Files/3rd_party/built/lib",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
 		};
@@ -5232,27 +5075,13 @@
 				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
 				DEVELOPMENT_TEAM = AC5SJT236H;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Files/3rd_party",
-				);
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_PAID__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Pro-Info.plist";
-				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(SDKROOT)/usr/lib/system",
-					"$(PROJECT_DIR)/Files/3rd_party/built/lib",
-					"$(PROJECT_DIR)/3rd_Party/unrar/built",
-					"$(PROJECT_DIR)/3rd_Party/libarchive/built",
-					"$(PROJECT_DIR)/Files/Files/3rd_party/built/lib",
-				);
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";
 				PROVISIONING_PROFILE = "27cbc021-1511-4d70-a382-6017daad4cd6";
 				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files-Pro";
 				RUN_CLANG_STATIC_ANALYZER = NO;
-				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};

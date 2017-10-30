@@ -43,7 +43,6 @@ struct ScreenPoint
 class ScreenBuffer
 {
 public:
-#pragma pack(push, 1)
     struct Space
     {
         uint32_t             l; // basic letter, may be non-bmp
@@ -54,9 +53,8 @@ public:
         unsigned intensity  :1;
         unsigned underline  :1;
         unsigned reverse    :1;
-    }; // 10 bytes per screen space
+    } __attribute__((packed)); // 10 bytes per screen space
     static_assert( sizeof(Space) == 10, "" );
-#pragma pop
     
     static const unsigned short MultiCellGlyph = 0xFFFE;    
     

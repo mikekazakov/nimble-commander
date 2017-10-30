@@ -16,6 +16,7 @@ namespace nc::term {
 class Settings
 {
 public:
+    virtual ~Settings() = 0;
     virtual NSFont  *Font() const = 0;
     virtual NSColor *ForegroundColor() const = 0;
     virtual NSColor *BoldForegroundColor() const = 0;

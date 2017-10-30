@@ -74,6 +74,7 @@ public:
 class NetworkConnectionsManager::ConnectionVisitor
 {
 public:
+    virtual ~ConnectionVisitor();
     virtual void Visit( const NetworkConnectionsManager::FTP &_ftp );
     virtual void Visit( const NetworkConnectionsManager::SFTP &_sftp );
     virtual void Visit( const NetworkConnectionsManager::LANShare &_share );

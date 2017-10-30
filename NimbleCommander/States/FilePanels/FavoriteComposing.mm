@@ -37,7 +37,7 @@ optional< FavoriteLocationsStorage::Favorite > FavoriteComposing::
             f->title = title.UTF8String;
     }
     
-    return move(f);
+    return f;
 }
 
 static string TitleForItem( const VFSListingItem &_i )
@@ -61,7 +61,7 @@ optional<FavoriteLocationsStorage::Favorite> FavoriteComposing::
 
     f->title = TitleForItem(_i);
 
-    return move(f);
+    return f;
 }
 
 vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::FinderFavorites()

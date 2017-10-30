@@ -11,6 +11,7 @@
 class PosixIOInterface
 {
 public:
+    virtual ~PosixIOInterface() = 0;
     virtual bool            isrouted() const = 0;
     virtual int             open(const char *_path, int _flags, int _mode = 0) = 0;
     virtual int             close(int _fd) = 0;

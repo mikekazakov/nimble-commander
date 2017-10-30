@@ -29,6 +29,7 @@
 
 
 #import "RHPreferencesWindowController.h"
+#pragma clang diagnostic ignored "-Wassign-enum"
 
 static NSString * const RHPreferencesWindowControllerSelectedItemIdentifier = @"RHPreferencesWindowControllerSelectedItemIdentifier";
 static const CGFloat RHPreferencesWindowControllerResizeAnimationDurationPer100Pixels = 0.05f;

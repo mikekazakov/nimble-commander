@@ -6,6 +6,10 @@
 
 namespace nc::term {
     
+Settings::~Settings()
+{
+}
+    
 shared_ptr<Settings> DefaultSettings::SharedDefaultSettings()
 {
     static const auto settings = make_shared<DefaultSettings>();

@@ -20,7 +20,7 @@ strincmp2(const char *s1, const char *s2, size_t _n)
     return true;
 }
 
-string regex_escape(const string& string_to_escape)
+static string regex_escape(const string& string_to_escape)
 {
     // do not escape "?" and "*"
     static const regex escape( "[.^$|()\\[\\]{}+\\\\]" );
@@ -31,7 +31,7 @@ string regex_escape(const string& string_to_escape)
                          regex_constants::match_default | regex_constants::format_sed);
 }
 
-void trim_leading_whitespaces(string& _str)
+static void trim_leading_whitespaces(string& _str)
 {
     auto first = _str.find_first_not_of(' ');
     if( first == string::npos ) {
@@ -44,7 +44,7 @@ void trim_leading_whitespaces(string& _str)
     _str.erase( begin(_str), next(begin(_str), first) );
 }
 
-vector<string> sub_masks( const string &_source )
+static vector<string> sub_masks( const string &_source )
 {
     vector<string> masks;
     boost::split( masks, _source, [](char _c){ return _c == ',';} );

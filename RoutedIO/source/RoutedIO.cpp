@@ -326,3 +326,7 @@ bool RoutedIO::Enabled() const noexcept
 {
     return m_Enabled;
 }
+
+PosixIOInterface::~PosixIOInterface()
+{
+}

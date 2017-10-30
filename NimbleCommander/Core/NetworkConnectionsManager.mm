@@ -117,6 +117,10 @@ void NetworkConnectionsManager::Connection::Accept(
     m_Object->Accept(_visitor);
 }
 
+NetworkConnectionsManager::ConnectionVisitor::~ConnectionVisitor()
+{
+}
+
 void NetworkConnectionsManager::ConnectionVisitor::Visit(
     const NetworkConnectionsManager::FTP &_ftp )
 {

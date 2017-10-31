@@ -659,6 +659,7 @@
                       "filePanelsListHeaderSeparatorColor": "#00FFFF",
                       "filePanelsListFocusedActiveRowBackgroundColor": "#008080",
                       "filePanelsListFocusedInactiveRowBackgroundColor": "#000080",
+                      "filePanelsListSelectedItemBackgroundColor": "#00000000",
                       "filePanelsListRegularEvenRowBackgroundColor": "#000080",
                       "filePanelsListRegularOddRowBackgroundColor" : "#000080",
                       
@@ -669,6 +670,7 @@
                       "filePanelsBriefRegularOddRowBackgroundColor": "#000080",
                       "filePanelsBriefFocusedActiveItemBackgroundColor": "#008080",
                       "filePanelsBriefFocusedInactiveItemBackgroundColor": "#000080",
+                      "filePanelsBriefSelectedItemBackgroundColor": "#00000000",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
@@ -771,16 +773,19 @@
                       "filePanelsListHeaderSeparatorColor": "#8080806B",
                       "filePanelsListFocusedActiveRowBackgroundColor": "@blueColor",
                       "filePanelsListFocusedInactiveRowBackgroundColor": "#555555",
-                      "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-                      "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
+                      "filePanelsListSelectedItemBackgroundColor": "#55555558",
+                      "filePanelsListRegularEvenRowBackgroundColor": "#000000",
+                      "filePanelsListRegularOddRowBackgroundColor" : "#0A0A0A",
+  
                       
                       /* File Panels -> Brief settings */
                       "filePanelsBriefFont": "@systemFont, 13",
                       "filePanelsBriefGridColor": "#141414",
-                      "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
-                      "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
+                      "filePanelsBriefRegularEvenRowBackgroundColor": "#000000",
+                      "filePanelsBriefRegularOddRowBackgroundColor": "#0A0A0A",
                       "filePanelsBriefFocusedActiveItemBackgroundColor": "@blueColor",
                       "filePanelsBriefFocusedInactiveItemBackgroundColor": "#555555",
+                      "filePanelsBriefSelectedItemBackgroundColor": "#55555558",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",

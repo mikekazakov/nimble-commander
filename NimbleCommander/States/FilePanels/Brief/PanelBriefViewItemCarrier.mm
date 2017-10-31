@@ -119,24 +119,38 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     return NSMakeRect(origin, 0, width, bounds.size.height);
 }
 
-- (void)drawRect:(NSRect)dirtyRect
+- (void)drawDefaultBackgroundWithBounds:(NSRect)bounds inContext:(CGContextRef)context
 {
-    const auto bounds = self.bounds;
+    const bool is_odd = int(self.frame.origin.y / bounds.size.height) % 2;
+    auto c = is_odd ?
+        CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor() :
+        CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
+    CGContextSetFillColorWithColor(context, c.CGColor);
+    CGContextFillRect(context, bounds);
+}
+
+- (void)drawCustomBackgroundWithBounds:(NSRect)bounds inContext:(CGContextRef)context
+{
+    const auto alpha = m_Background.alphaComponent;
     
-    CGContextRef context = NSGraphicsContext.currentContext.CGContext;
+    if( alpha != 1. )
+        [self drawDefaultBackgroundWithBounds:bounds inContext:context];
     
-    if( m_Background  ) {
+    if( alpha != 0. ) {
         CGContextSetFillColorWithColor(context, m_Background.CGColor);
         CGContextFillRect(context, bounds);
     }
-    else {
-        const bool is_odd = int(self.frame.origin.y / bounds.size.height) % 2;
-        auto c = is_odd ?
-            CurrentTheme().FilePanelsBriefRegularOddRowBackgroundColor() :
-            CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
-        CGContextSetFillColorWithColor(context, c.CGColor);
-        CGContextFillRect(context, bounds);
-    }
+}
+
+- (void)drawRect:(NSRect)dirtyRect
+{
+    const auto bounds = self.bounds;
+    const auto context = NSGraphicsContext.currentContext.CGContext;
+    
+    if( m_Background  )
+        [self drawCustomBackgroundWithBounds:bounds inContext:context];
+    else
+        [self drawDefaultBackgroundWithBounds:bounds inContext:context];
     
     if( m_Controller ) {
         const auto column = m_Controller.columnIndex;
@@ -410,7 +424,8 @@ static bool HasNoModifiers( NSEvent *_event )
         return NSDragOperationNone;
     
     if( [self validateDropHitTest:sender] ) {
-        const auto op = [m_Controller.briefView.panelView panelItem:my_index operationForDragging:sender];
+        const auto op = [m_Controller.briefView.panelView panelItem:my_index
+                                               operationForDragging:sender];
         if( op != NSDragOperationNone ) {
             self.isDropTarget = true;
             [self.superview draggingExited:sender];

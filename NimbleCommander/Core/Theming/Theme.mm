@@ -49,8 +49,9 @@ struct Theme::Internals
     NSColor *m_FilePanelsBriefGridColor;
     NSColor *m_FilePanelsBriefRegularEvenRowBackgroundColor;
     NSColor *m_FilePanelsBriefRegularOddRowBackgroundColor;
-    NSColor *m_FilePanelsBriefSelectedActiveItemBackgroundColor;
-    NSColor *m_FilePanelsBriefSelectedInactiveItemBackgroundColor;
+    NSColor *m_FilePanelsBriefFocusedActiveItemBackgroundColor;
+    NSColor *m_FilePanelsBriefFocusedInactiveItemBackgroundColor;
+    NSColor *m_FilePanelsBriefSelectedItemBackgroundColor;
     NSFont  *m_TerminalFont;
     NSColor *m_TerminalOverlayColor;
     NSColor *m_TerminalForegroundColor;
@@ -129,7 +130,8 @@ Theme::Theme( const void *_theme_data, const void *_backup_theme_data ):
             auto v = GenericConfig::ConfigValue( *i, rapidjson::g_CrtAllocator );
             I->m_ColoringRules.emplace_back( PanelViewPresentationItemsColoringRule::FromJSON(v) );
         }
-    I->m_ColoringRules.emplace_back(); // always have a default ("others") non-filtering filter at the back
+    // always have a default ("others") non-filtering filter at the back
+    I->m_ColoringRules.emplace_back();
     
     I->m_FilePanelsGeneralDropBorderColor =
         ExtractColor("filePanelsGeneralDropBorderColor");
@@ -217,10 +219,12 @@ Theme::Theme( const void *_theme_data, const void *_backup_theme_data ):
         ExtractColor("filePanelsBriefRegularEvenRowBackgroundColor");
     I->m_FilePanelsBriefRegularOddRowBackgroundColor =
         ExtractColor("filePanelsBriefRegularOddRowBackgroundColor");
-    I->m_FilePanelsBriefSelectedActiveItemBackgroundColor =
-        ExtractColor("filePanelsBriefSelectedActiveItemBackgroundColor");
-    I->m_FilePanelsBriefSelectedInactiveItemBackgroundColor =
-        ExtractColor("filePanelsBriefSelectedInactiveItemBackgroundColor");
+    I->m_FilePanelsBriefFocusedActiveItemBackgroundColor =
+        ExtractColor("filePanelsBriefFocusedActiveItemBackgroundColor");
+    I->m_FilePanelsBriefFocusedInactiveItemBackgroundColor =
+        ExtractColor("filePanelsBriefFocusedInactiveItemBackgroundColor");
+    I->m_FilePanelsBriefSelectedItemBackgroundColor =
+        ExtractColor("filePanelsBriefSelectedItemBackgroundColor");
     
     I->m_TerminalFont =
         ExtractFont("terminalFont");
@@ -480,14 +484,19 @@ NSColor *Theme::FilePanelsBriefRegularOddRowBackgroundColor() const noexcept
     return I->m_FilePanelsBriefRegularOddRowBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsBriefSelectedActiveItemBackgroundColor() const noexcept
+NSColor *Theme::FilePanelsBriefFocusedActiveItemBackgroundColor() const noexcept
 {
-    return I->m_FilePanelsBriefSelectedActiveItemBackgroundColor;
+    return I->m_FilePanelsBriefFocusedActiveItemBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsBriefSelectedInactiveItemBackgroundColor() const noexcept
+NSColor *Theme::FilePanelsBriefFocusedInactiveItemBackgroundColor() const noexcept
 {
-    return I->m_FilePanelsBriefSelectedInactiveItemBackgroundColor;
+    return I->m_FilePanelsBriefFocusedInactiveItemBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsBriefSelectedItemBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsBriefSelectedItemBackgroundColor;
 }
 
 NSColor *Theme::FilePanelsGeneralOverlayColor() const noexcept

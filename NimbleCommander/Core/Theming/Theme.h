@@ -86,8 +86,10 @@ public:
     NSColor *FilePanelsBriefGridColor() const noexcept;
     NSColor *FilePanelsBriefRegularEvenRowBackgroundColor() const noexcept;
     NSColor *FilePanelsBriefRegularOddRowBackgroundColor() const noexcept;
-    NSColor *FilePanelsBriefSelectedActiveItemBackgroundColor() const noexcept;
-    NSColor *FilePanelsBriefSelectedInactiveItemBackgroundColor() const noexcept;
+    NSColor *FilePanelsBriefFocusedActiveItemBackgroundColor() const noexcept;
+    NSColor *FilePanelsBriefFocusedInactiveItemBackgroundColor() const noexcept;
+    NSColor *FilePanelsBriefSelectedItemBackgroundColor() const noexcept;
+
     
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //  Terminal Emulator section

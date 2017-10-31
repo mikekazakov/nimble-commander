@@ -537,8 +537,9 @@
                       "filePanelsBriefGridColor": "#E6E6E6",
                       "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
-                      "filePanelsBriefSelectedActiveItemBackgroundColor": "@blueColor",
-                      "filePanelsBriefSelectedInactiveItemBackgroundColor": "@lightGrayColor",
+                      "filePanelsBriefFocusedActiveItemBackgroundColor": "@blueColor",
+                      "filePanelsBriefFocusedInactiveItemBackgroundColor": "@lightGrayColor",
+                      "filePanelsBriefSelectedItemBackgroundColor": "@greenColor",                      
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
@@ -665,8 +666,8 @@
                       "filePanelsBriefGridColor": "#00FFFF",
                       "filePanelsBriefRegularEvenRowBackgroundColor": "#000080",
                       "filePanelsBriefRegularOddRowBackgroundColor": "#000080",
-                      "filePanelsBriefSelectedActiveItemBackgroundColor": "#008080",
-                      "filePanelsBriefSelectedInactiveItemBackgroundColor": "#000080",
+                      "filePanelsBriefFocusedActiveItemBackgroundColor": "#008080",
+                      "filePanelsBriefFocusedInactiveItemBackgroundColor": "#000080",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
@@ -777,8 +778,8 @@
                       "filePanelsBriefGridColor": "#141414",
                       "filePanelsBriefRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
-                      "filePanelsBriefSelectedActiveItemBackgroundColor": "@blueColor",
-                      "filePanelsBriefSelectedInactiveItemBackgroundColor": "#555555",
+                      "filePanelsBriefFocusedActiveItemBackgroundColor": "@blueColor",
+                      "filePanelsBriefFocusedInactiveItemBackgroundColor": "#555555",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",

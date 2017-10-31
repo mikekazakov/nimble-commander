@@ -68,14 +68,14 @@ using namespace nc::panel;
 
 - (void) setPanelActive:(bool)_active
 {
-    if( m_PanelActive != _active ) {
-        m_PanelActive = _active;
-        
-        if( self.selected  ) {
-            self.carrier.background = self.selectedBackgroundColor;
-            if( m_Item )
-                [self updateColoring];
-        }
+    if( m_PanelActive == _active )
+        return;
+    
+    m_PanelActive = _active;
+    
+    if( self.selected  ) {
+        [self updateBackgroundColor];
+        [self updateForegroundColor];
     }
 }
 
@@ -85,17 +85,16 @@ using namespace nc::panel;
         return;
     [super setSelected:selected];
     
-    self.carrier.background = selected ? self.selectedBackgroundColor : nil;
-    if( m_Item )
-        [self updateColoring];
+    [self updateBackgroundColor];
+    [self updateForegroundColor];
 }
 
 - (NSColor*) selectedBackgroundColor
 {
     if( m_PanelActive )
-        return CurrentTheme().FilePanelsBriefSelectedActiveItemBackgroundColor();
+        return CurrentTheme().FilePanelsBriefFocusedActiveItemBackgroundColor();
     else
-        return CurrentTheme().FilePanelsBriefSelectedInactiveItemBackgroundColor();
+        return CurrentTheme().FilePanelsBriefFocusedInactiveItemBackgroundColor();
 }
 
 - (PanelBriefView*)briefView
@@ -124,9 +123,11 @@ using namespace nc::panel;
     return index / items_per_column;
 }
 
-- (void) updateColoring
+- (void) updateForegroundColor
 {
-    assert( m_Item );
+    if( !m_Item )
+        return;
+    
     if( self.briefView ) {
         const auto &rules = CurrentTheme().FilePanelsItemsColoringRules();
         const bool focus = self.selected && m_PanelActive;
@@ -138,12 +139,28 @@ using namespace nc::panel;
     }
 }
 
+- (void) updateBackgroundColor
+{
+    if( self.selected ) {
+        self.carrier.background = self.selectedBackgroundColor;
+    }
+    else {
+        if( m_VD.is_selected() ) {
+            self.carrier.background = CurrentTheme().FilePanelsBriefSelectedItemBackgroundColor();
+        }
+        else {
+            self.carrier.background = nil;
+        }
+    }
+}
+
 - (void) setVD:(data::ItemVolatileData)_vd
 {
     if( m_VD == _vd )
         return;
     m_VD = _vd;
-    [self updateColoring];
+    [self updateForegroundColor];
+    [self updateBackgroundColor];
     self.carrier.qsHighlight = {_vd.qs_highlight_begin, _vd.qs_highlight_end};
     self.carrier.highlighted = _vd.is_highlighted();
 }

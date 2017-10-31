@@ -124,8 +124,9 @@ NSArray* BuildThemeSettingsNodesTree()
     SpawnColorNode(@"Grid color", "filePanelsBriefGridColor"),
     SpawnColorNode(@"Even row background", "filePanelsBriefRegularEvenRowBackgroundColor"),
     SpawnColorNode(@"Odd row background", "filePanelsBriefRegularOddRowBackgroundColor"),
-    SpawnColorNode(@"Selected & active item background", "filePanelsBriefSelectedActiveItemBackgroundColor"),
-    SpawnColorNode(@"Selected & inactive item background", "filePanelsBriefSelectedInactiveItemBackgroundColor")
+    SpawnColorNode(@"Focused item background, active panel", "filePanelsBriefFocusedActiveItemBackgroundColor"),
+    SpawnColorNode(@"Focused item background, inactive panel", "filePanelsBriefFocusedInactiveItemBackgroundColor"),
+    SpawnColorNode(@"Selected item background", "filePanelsBriefSelectedItemBackgroundColor")
     ];
     
     auto fp_list_nodes = @[

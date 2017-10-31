@@ -772,7 +772,7 @@
                       "filePanelsListHeaderTextColor": "#777777",
                       "filePanelsListHeaderSeparatorColor": "#8080806B",
                       "filePanelsListFocusedActiveRowBackgroundColor": "@blueColor",
-                      "filePanelsListFocusedInactiveRowBackgroundColor": "#555555",
+                      "filePanelsListFocusedInactiveRowBackgroundColor": "#4B4B4B",
                       "filePanelsListSelectedItemBackgroundColor": "#55555558",
                       "filePanelsListRegularEvenRowBackgroundColor": "#000000",
                       "filePanelsListRegularOddRowBackgroundColor" : "#0A0A0A",
@@ -784,7 +784,7 @@
                       "filePanelsBriefRegularEvenRowBackgroundColor": "#000000",
                       "filePanelsBriefRegularOddRowBackgroundColor": "#0A0A0A",
                       "filePanelsBriefFocusedActiveItemBackgroundColor": "@blueColor",
-                      "filePanelsBriefFocusedInactiveItemBackgroundColor": "#555555",
+                      "filePanelsBriefFocusedInactiveItemBackgroundColor": "#4B4B4B",
                       "filePanelsBriefSelectedItemBackgroundColor": "#55555558",
                       
                       /* Terminal Emulator */

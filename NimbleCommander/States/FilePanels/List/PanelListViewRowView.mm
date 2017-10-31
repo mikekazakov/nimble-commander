@@ -45,9 +45,6 @@ using namespace nc::panel;
         m_TextColor = NSColor.blackColor;
         self.selected = false;
         [self updateColors];
-//        self.wantsLayer = true;
-//        self.canDrawSubviewsIntoLayer = true;
-//        self.layerContentsRedrawPolicy = NSViewLayerContentsRedrawDuringViewResize;
         [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
     }
     return self;
@@ -80,7 +77,7 @@ using namespace nc::panel;
 - (void)setItem:(VFSListingItem)item
 {
     if( m_Item != item ) {
-        m_Item = item; /// ....
+        m_Item = item;
     }
 }
 
@@ -113,16 +110,98 @@ using namespace nc::panel;
     }
 }
 
+struct {
+    uint64_t generation = 0;
+    NSColor *focused_active_odd = nil;
+    NSColor *focused_active_even = nil;
+    NSColor *focused_inactive_odd = nil;
+    NSColor *focused_inactive_even = nil;
+    NSColor *selected_odd = nil;
+    NSColor *selected_even = nil;
+    NSColor *odd = nil;
+    NSColor *even = nil;
+} g_BackgroundColorsCache;
+
+static NSColor *Blend( NSColor *_front, NSColor *_back )
+{
+    const auto alpha = _front.alphaComponent;
+    if( alpha == 1. )
+        return _front;
+    if( alpha == 0. )
+        return _back;
+    
+    const auto cs = NSColorSpace.genericRGBColorSpace;
+    _front = [_front colorUsingColorSpace:cs];
+    _back = [_back colorUsingColorSpace:cs];
+    const auto r = _front.redComponent   * alpha + _back.redComponent   * ( 1. - alpha );
+    const auto g = _front.greenComponent * alpha + _back.greenComponent * ( 1. - alpha );
+    const auto b = _front.blueComponent  * alpha + _back.blueComponent  * ( 1. - alpha );
+    return [NSColor colorWithCalibratedRed:r green:g blue:b alpha:1.];
+}
+
+static void RebuildBackgroundColorsCache()
+{
+    auto &c = g_BackgroundColorsCache;
+    const auto &t = CurrentTheme();
+    c.generation = t.Generation();
+    c.focused_active_odd    = Blend(t.FilePanelsListFocusedActiveRowBackgroundColor(),
+                                    t.FilePanelsListRegularOddRowBackgroundColor() );
+    c.focused_active_even   = Blend(t.FilePanelsListFocusedActiveRowBackgroundColor(),
+                                    t.FilePanelsListRegularEvenRowBackgroundColor() );
+    c.focused_inactive_odd  = Blend(t.FilePanelsListFocusedInactiveRowBackgroundColor(),
+                                    t.FilePanelsListRegularOddRowBackgroundColor() );
+    c.focused_inactive_even = Blend(t.FilePanelsListFocusedInactiveRowBackgroundColor(),
+                                    t.FilePanelsListRegularEvenRowBackgroundColor() );
+    c.selected_odd          = Blend(t.FilePanelsListSelectedRowBackgroundColor(),
+                                    t.FilePanelsListRegularOddRowBackgroundColor() );
+    c.selected_even         = Blend(t.FilePanelsListSelectedRowBackgroundColor(),
+                                    t.FilePanelsListRegularEvenRowBackgroundColor() );
+    c.odd                   = t.FilePanelsListRegularOddRowBackgroundColor();
+    c.even                  = t.FilePanelsListRegularEvenRowBackgroundColor();
+}
+
+static NSColor* FindBackgroundColor(bool _is_focused,
+                                    bool _is_active,
+                                    bool _is_selected,
+                                    bool _is_odd )
+{
+    const auto &c = g_BackgroundColorsCache;
+    if( c.generation != CurrentTheme().Generation() )
+        RebuildBackgroundColorsCache();
+
+    if( _is_focused ) {
+        if( _is_active ) {
+            if( _is_odd )
+                return c.focused_active_odd;
+            else
+                return c.focused_active_even;
+        }
+        else {
+            if( _is_odd )
+                return c.focused_inactive_odd;
+            else
+                return c.focused_inactive_even;
+        }
+    }
+    else {
+        if( _is_selected ) {
+            if( _is_odd )
+                return c.selected_odd;
+            else
+                return c.selected_even;
+        }
+        else {
+            if( _is_odd )
+                return c.odd;
+            else
+                return c.even;
+        }
+    }
+}
+
 - (NSColor*) findCurrentBackgroundColor
 {
-    if( self.selected )
-        return m_PanelActive ?
-            CurrentTheme().FilePanelsListSelectedActiveRowBackgroundColor() :
-            CurrentTheme().FilePanelsListSelectedInactiveRowBackgroundColor();
-    else
-        return m_ItemIndex % 2 ?
-            CurrentTheme().FilePanelsListRegularOddRowBackgroundColor() :
-            CurrentTheme().FilePanelsListRegularEvenRowBackgroundColor();
+    return FindBackgroundColor(self.selected, m_PanelActive, m_VD.is_selected(), m_ItemIndex % 2);
 }
 
 - (NSColor*) findCurrentTextColor
@@ -184,20 +263,12 @@ using namespace nc::panel;
     }    
 }
 
-- (void)addSubview:(NSView *)view positioned:(NSWindowOrderingMode)place relativeTo:(nullable NSView *)otherView
+- (void)addSubview:(NSView *)view
+        positioned:(NSWindowOrderingMode)place
+        relativeTo:(nullable NSView *)otherView
 {
     /* Fuck off you NSTableView, I'll not accept your fake selection view as my child! */
 }
-
-//- (void)display {}
-//- (void)displayIfNeeded{}
-//- (void)displayIfNeededIgnoringOpacity{}
-//- (void)displayRect:(NSRect)rect{}
-//- (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(NSGraphicsContext *)context{}
-//
-//- (void)displayIfNeededInRect:(NSRect)rect{}
-//- (void)displayIfNeededInRectIgnoringOpacity:(NSRect)rect{}
-
 
 - (void)display{}
 - (void)displayIfNeeded{}
@@ -206,7 +277,6 @@ using namespace nc::panel;
 - (void)displayIfNeededInRect:(NSRect)rect{}
 - (void)displayRectIgnoringOpacity:(NSRect)rect{}
 - (void)displayIfNeededInRectIgnoringOpacity:(NSRect)rect{}
-//- (void)drawRect:(NSRect)dirtyRect{}
 - (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(NSGraphicsContext *)context{}
 
 - (void)drawBackgroundInRect:(NSRect)dirtyRect
@@ -229,7 +299,6 @@ using namespace nc::panel;
 {
     if( self.superview )
         [self notifySubviewsToRebuildPresentation];
-    
 }
 
 - (void) notifySubviewsToRebuildPresentation
@@ -237,8 +306,6 @@ using namespace nc::panel;
     for( NSView *w in self.subviews ) {
         if( [w respondsToSelector:@selector(buildPresentation)] )
             [(id)w buildPresentation];
-        
-//        w.layer.backgroundColor = m_RowColor.CGColor;
     }
 }
 
@@ -276,7 +343,6 @@ using namespace nc::panel;
 static bool     g_RowReadyToDrag = false;
 static void*    g_MouseDownRow = nullptr;
 static NSPoint  g_LastMouseDownPos = {};
-//m_LButtonDownPos
 
 - (void) mouseDown:(NSEvent *)event
 {

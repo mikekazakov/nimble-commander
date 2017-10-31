@@ -124,8 +124,8 @@ NSArray* BuildThemeSettingsNodesTree()
     SpawnColorNode(@"Grid color", "filePanelsBriefGridColor"),
     SpawnColorNode(@"Even row background", "filePanelsBriefRegularEvenRowBackgroundColor"),
     SpawnColorNode(@"Odd row background", "filePanelsBriefRegularOddRowBackgroundColor"),
-    SpawnColorNode(@"Focused item background, active panel", "filePanelsBriefFocusedActiveItemBackgroundColor"),
-    SpawnColorNode(@"Focused item background, inactive panel", "filePanelsBriefFocusedInactiveItemBackgroundColor"),
+    SpawnColorNode(@"Focused item background, active", "filePanelsBriefFocusedActiveItemBackgroundColor"),
+    SpawnColorNode(@"Focused item background, inactive", "filePanelsBriefFocusedInactiveItemBackgroundColor"),
     SpawnColorNode(@"Selected item background", "filePanelsBriefSelectedItemBackgroundColor")
     ];
     
@@ -136,8 +136,9 @@ NSArray* BuildThemeSettingsNodesTree()
     SpawnColorNode(@"Header background", "filePanelsListHeaderBackgroundColor"),
     SpawnColorNode(@"Header text color", "filePanelsListHeaderTextColor"),
     SpawnColorNode(@"Header separator", "filePanelsListHeaderSeparatorColor"),
-    SpawnColorNode(@"Selected & active row background", "filePanelsListSelectedActiveRowBackgroundColor"),
-    SpawnColorNode(@"Selected & inactive row background", "filePanelsListSelectedInactiveRowBackgroundColor"),
+    SpawnColorNode(@"Focused item background, active", "filePanelsListFocusedActiveRowBackgroundColor"),
+    SpawnColorNode(@"Focused item background, inactive", "filePanelsListFocusedInactiveRowBackgroundColor"),
+    SpawnColorNode(@"Selected item background", "filePanelsListSelectedItemBackgroundColor"),
     SpawnColorNode(@"Even row background", "filePanelsListRegularEvenRowBackgroundColor"),
     SpawnColorNode(@"Odd row background", "filePanelsListRegularOddRowBackgroundColor")
     ];

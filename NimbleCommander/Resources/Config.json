@@ -527,8 +527,9 @@
                       "filePanelsListHeaderBackgroundColor": "@controlBackgroundColor",
                       "filePanelsListHeaderTextColor": "@headerTextColor",
                       "filePanelsListHeaderSeparatorColor": "#8080806B",
-                      "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
-                      "filePanelsListSelectedInactiveRowBackgroundColor": "@lightGrayColor",
+                      "filePanelsListFocusedActiveRowBackgroundColor": "@blueColor",
+                      "filePanelsListFocusedInactiveRowBackgroundColor": "@lightGrayColor",
+                      "filePanelsListSelectedItemBackgroundColor": "#80C3FF58",                      
                       "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
                       
@@ -539,7 +540,7 @@
                       "filePanelsBriefRegularOddRowBackgroundColor": "@controlAlternatingRowBackgroundColors1",
                       "filePanelsBriefFocusedActiveItemBackgroundColor": "@blueColor",
                       "filePanelsBriefFocusedInactiveItemBackgroundColor": "@lightGrayColor",
-                      "filePanelsBriefSelectedItemBackgroundColor": "@greenColor",                      
+                      "filePanelsBriefSelectedItemBackgroundColor": "#80C3FF58",
                       
                       /* Terminal Emulator */
                       "terminalFont": "Menlo-Regular, 13",
@@ -656,8 +657,8 @@
                       "filePanelsListHeaderBackgroundColor": "#000080",
                       "filePanelsListHeaderTextColor": "@yellowColor",
                       "filePanelsListHeaderSeparatorColor": "#00FFFF",
-                      "filePanelsListSelectedActiveRowBackgroundColor": "#008080",
-                      "filePanelsListSelectedInactiveRowBackgroundColor": "#000080",
+                      "filePanelsListFocusedActiveRowBackgroundColor": "#008080",
+                      "filePanelsListFocusedInactiveRowBackgroundColor": "#000080",
                       "filePanelsListRegularEvenRowBackgroundColor": "#000080",
                       "filePanelsListRegularOddRowBackgroundColor" : "#000080",
                       
@@ -768,8 +769,8 @@
                       "filePanelsListHeaderBackgroundColor": "@controlBackgroundColor",
                       "filePanelsListHeaderTextColor": "#777777",
                       "filePanelsListHeaderSeparatorColor": "#8080806B",
-                      "filePanelsListSelectedActiveRowBackgroundColor": "@blueColor",
-                      "filePanelsListSelectedInactiveRowBackgroundColor": "#555555",
+                      "filePanelsListFocusedActiveRowBackgroundColor": "@blueColor",
+                      "filePanelsListFocusedInactiveRowBackgroundColor": "#555555",
                       "filePanelsListRegularEvenRowBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsListRegularOddRowBackgroundColor" : "@controlAlternatingRowBackgroundColors1",
                       

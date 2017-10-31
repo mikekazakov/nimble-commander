@@ -3,8 +3,13 @@
 #include "ThemePersistence.h"
 #include "Theme.h"
 
+#include <Utility/HexadecimalColor.h>
+
+static atomic_ulong g_LastGeneration{1};
+
 struct Theme::Internals
 {
+    uint64_t m_Generation;
     ThemeAppearance m_ThemeAppearanceType;
     NSAppearance *m_Appearance;
 
@@ -41,8 +46,9 @@ struct Theme::Internals
     NSColor *m_FilePanelsListHeaderBackgroundColor;
     NSColor *m_FilePanelsListHeaderTextColor;
     NSColor *m_FilePanelsListHeaderSeparatorColor;
-    NSColor *m_FilePanelsListSelectedActiveRowBackgroundColor;
-    NSColor *m_FilePanelsListSelectedInactiveRowBackgroundColor;
+    NSColor *m_FilePanelsListFocusedActiveRowBackgroundColor;
+    NSColor *m_FilePanelsListFocusedInactiveRowBackgroundColor;
+    NSColor *m_FilePanelsListSelectedRowBackgroundColor;
     NSColor *m_FilePanelsListRegularEvenRowBackgroundColor;
     NSColor *m_FilePanelsListRegularOddRowBackgroundColor;
     NSFont  *m_FilePanelsBriefFont;
@@ -104,6 +110,7 @@ Theme::Theme( const void *_theme_data, const void *_backup_theme_data ):
         return [NSFont systemFontOfSize:NSFont.systemFontSize];
     };
     
+    I->m_Generation = g_LastGeneration++;
     
     I->m_ThemeAppearanceType = [&]{
         auto cr = doc.FindMember("themeAppearance");
@@ -168,14 +175,16 @@ Theme::Theme( const void *_theme_data, const void *_backup_theme_data ):
         ExtractColor("filePanelsListHeaderTextColor");
     I->m_FilePanelsListHeaderSeparatorColor =
         ExtractColor("filePanelsListHeaderSeparatorColor");
-    I->m_FilePanelsListSelectedActiveRowBackgroundColor =
-        ExtractColor("filePanelsListSelectedActiveRowBackgroundColor");
-    I->m_FilePanelsListSelectedInactiveRowBackgroundColor =
-        ExtractColor("filePanelsListSelectedInactiveRowBackgroundColor");
+    I->m_FilePanelsListFocusedActiveRowBackgroundColor =
+        ExtractColor("filePanelsListFocusedActiveRowBackgroundColor");
+    I->m_FilePanelsListFocusedInactiveRowBackgroundColor =
+        ExtractColor("filePanelsListFocusedInactiveRowBackgroundColor");
     I->m_FilePanelsListRegularEvenRowBackgroundColor =
         ExtractColor("filePanelsListRegularEvenRowBackgroundColor");
     I->m_FilePanelsListRegularOddRowBackgroundColor =
         ExtractColor("filePanelsListRegularOddRowBackgroundColor");
+    I->m_FilePanelsListSelectedRowBackgroundColor =
+        ExtractColor("filePanelsListSelectedItemBackgroundColor");
 
     I->m_FilePanelsFooterFont =
         ExtractFont("filePanelsFooterFont");
@@ -289,6 +298,11 @@ Theme::~Theme()
 {
 }
 
+uint64_t Theme::Generation() const noexcept
+{
+    return I->m_Generation;
+}
+
 ThemeAppearance Theme::AppearanceType() const noexcept
 {
     return I->m_ThemeAppearanceType;
@@ -304,14 +318,19 @@ NSFont *Theme::FilePanelsListFont() const noexcept
     return I->m_FilePanelsListFont;
 }
 
-NSColor *Theme::FilePanelsListSelectedActiveRowBackgroundColor() const noexcept
+NSColor *Theme::FilePanelsListFocusedActiveRowBackgroundColor() const noexcept
 {
-    return I->m_FilePanelsListSelectedActiveRowBackgroundColor;
+    return I->m_FilePanelsListFocusedActiveRowBackgroundColor;
 }
 
-NSColor *Theme::FilePanelsListSelectedInactiveRowBackgroundColor() const noexcept
+NSColor *Theme::FilePanelsListFocusedInactiveRowBackgroundColor() const noexcept
 {
-    return I->m_FilePanelsListSelectedInactiveRowBackgroundColor;
+    return I->m_FilePanelsListFocusedInactiveRowBackgroundColor;
+}
+
+NSColor *Theme::FilePanelsListSelectedRowBackgroundColor() const noexcept
+{
+    return I->m_FilePanelsListSelectedRowBackgroundColor;
 }
 
 NSColor *Theme::FilePanelsListRegularEvenRowBackgroundColor() const noexcept

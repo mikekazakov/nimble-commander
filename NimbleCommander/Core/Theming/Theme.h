@@ -25,6 +25,9 @@ public:
           const /*rapidjson::StandaloneValue*/ void *_2);
     ~Theme();
 
+    // General info querying ///////////////////////////////////////////////////////////////////////
+    uint64_t Generation() const noexcept; // monotonically increasing starting with 1
+    
     // General appearance settings /////////////////////////////////////////////////////////////////
     ThemeAppearance AppearanceType() const noexcept;
     NSAppearance *Appearance() const noexcept;
@@ -76,10 +79,11 @@ public:
     NSColor *FilePanelsListHeaderBackgroundColor() const noexcept;
     NSColor *FilePanelsListHeaderTextColor() const noexcept;
     NSColor *FilePanelsListHeaderSeparatorColor() const noexcept;
-    NSColor *FilePanelsListSelectedActiveRowBackgroundColor() const noexcept;
-    NSColor *FilePanelsListSelectedInactiveRowBackgroundColor() const noexcept;
     NSColor *FilePanelsListRegularEvenRowBackgroundColor() const noexcept;
     NSColor *FilePanelsListRegularOddRowBackgroundColor() const noexcept;
+    NSColor *FilePanelsListFocusedActiveRowBackgroundColor() const noexcept;
+    NSColor *FilePanelsListFocusedInactiveRowBackgroundColor() const noexcept;
+    NSColor *FilePanelsListSelectedRowBackgroundColor() const noexcept;
     
     // File Panels --> Brief presentation settings /////////////////////////////////////////////////
     NSFont  *FilePanelsBriefFont() const noexcept;

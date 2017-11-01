@@ -4,22 +4,17 @@
 #include "../AsyncDialogResponse.h"
 #include "../Internal.h"
 #include "FileAlreadyExistDialog.h"
-#include <Utility/PathManip.h>
+#include "CopyingTitleBuilder.h"
 
 namespace nc::ops {
 
 using Callbacks = CopyingJobCallbacks;
-
-static string BuildTitle(const vector<VFSListingItem> &_source_files,
-                         const string& _destination_path,
-                         const CopyingOptions &_options);
 
 Copying::Copying(vector<VFSListingItem> _source_files,
                  const string& _destination_path,
                  const shared_ptr<VFSHost> &_destination_host,
                  const CopyingOptions &_options)
 {
-    SetTitle( BuildTitle(_source_files, _destination_path, _options) );
     m_ExistBehavior = _options.exist_behavior;
     
     m_Job.reset( new CopyingJob(_source_files,
@@ -27,6 +22,7 @@ Copying::Copying(vector<VFSListingItem> _source_files,
                                 _destination_host,
                                 _options) );
     SetupCallbacks();
+    OnStageChanged();
 }
 
 Copying::~Copying()
@@ -72,6 +68,9 @@ void Copying::SetupCallbacks()
     };
     j.m_OnFileVerificationFailed = [this](const string &_1, VFSHost &_2) {
         OnFileVerificationFailed(_1, _2);
+    };
+    j.m_OnStageChanged = [this]() {
+        OnStageChanged();
     };
 }
 
@@ -387,51 +386,20 @@ void Copying::OnFileVerificationFailed(const string &_path, VFSHost &_vfs)
     WaitForDialogResponse(ctx);
 }
 
-static NSString *OpTitlePreffix(bool _copying)
+void Copying::OnStageChanged()
 {
-    return _copying ?
-        NSLocalizedString(@"Copying", "Prefix of a file operation") :
-        NSLocalizedString(@"Moving", "Prefix of a file operation") ;
-}
-
-static NSString *OpTitleForSingleItem(bool _copying, NSString *_item, NSString *_to)
-{
-    auto fmt = NSLocalizedString(@"%@ \u201c%@\u201d to \u201c%@\u201d", "");
-    return [NSString stringWithFormat:fmt,
-            OpTitlePreffix(_copying),
-            _item,
-            _to];
-}
-
-static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_to)
-{
-    auto fmt = NSLocalizedString(@"%@ %@ items to \u201c%@\u201d", "");
-    return [NSString stringWithFormat:fmt,
-            OpTitlePreffix(_copying),
-            [NSNumber numberWithInt:_items],
-            _to];
-}
-
-static NSString *ExtractCopyToName(const string&_s)
-{
-    char buff[MAXPATHLEN] = {0};
-    bool use_buff = GetDirectoryNameFromPath(_s.c_str(), buff, MAXPATHLEN);
-    NSString *to = [NSString stringWithUTF8String:(use_buff ? buff : _s.c_str())];
-    return to;
-}
-
-static string BuildTitle(const vector<VFSListingItem> &_source_files,
-                         const string& _destination_path,
-                         const CopyingOptions &_options)
-{
-    if ( _source_files.size() == 1)
-        return OpTitleForSingleItem(_options.docopy,
-                                    _source_files.front().FilenameNS(),
-                                    ExtractCopyToName(_destination_path)).UTF8String;
-    else
-        return OpTitleForMultipleItems(_options.docopy,
-                                       (int)_source_files.size(),
-                                       ExtractCopyToName(_destination_path)).UTF8String;
+    CopyingTitleBuilder b{m_Job->SourceItems(),
+                          m_Job->DestinationPath(),
+                          m_Job->Options()};
+    string title = "";
+    switch( m_Job->Stage() ) {
+        case CopyingJob::Stage::None:
+        case CopyingJob::Stage::Preparing:  title = b.TitleForPreparing();  break;
+        case CopyingJob::Stage::Process:    title = b.TitleForProcessing(); break;
+        case CopyingJob::Stage::Verify:     title = b.TitleForVerifying();  break;
+        case CopyingJob::Stage::Cleaning:   title = b.TitleForCleanup();    break;
+    }
+    SetTitle( move(title) );
 }
 
 }

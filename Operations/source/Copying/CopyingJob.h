@@ -7,7 +7,6 @@
 #include <Utility/NativeFSManager.h>
 #include <VFS/VFS.h>
 #include "Options.h"
-#include "DialogResults.h"
 #include "../Job.h"
 #include "SourceItems.h"
 #include "ChecksumExpectation.h"
@@ -80,6 +79,11 @@ struct CopyingJobCallbacks
     m_OnFileVerificationFailed
     = [](const string &_path, VFSHost &_vfs)
     {};
+
+    function<void()>
+    m_OnStageChanged
+    = []()
+    {};
 };
 
 class CopyingJob : public Job, public CopyingJobCallbacks
@@ -92,12 +96,7 @@ public:
                );
     ~CopyingJob();
     
-//    enum class Notify
-//    {
-//        Stage
-//    };
-    
-    enum class JobStage
+    enum class Stage
     {
         None,
         Preparing,
@@ -106,12 +105,12 @@ public:
         Cleaning
     };
     
-
-    
-    JobStage Stage() const noexcept;
+    enum Stage Stage() const noexcept;
     bool IsSingleInitialItemProcessing() const noexcept;
     bool IsSingleScannedItemProcessing() const noexcept;
-    
+    const vector<VFSListingItem> &SourceItems() const noexcept;
+    const string &DestinationPath() const noexcept;
+    const CopyingOptions &Options() const noexcept;
 private:
     virtual void Perform() override;
     
@@ -190,7 +189,7 @@ private:
                              const string& _dst_path) const;
     StepResult VerifyCopiedFile(const copying::ChecksumExpectation& _exp, bool &_matched);
     void        CleanSourceItems() const;
-    void        SetState(JobStage _state);
+    void        SetStage(enum Stage _stage);
     
     
     void                    EraseXattrsFromNativeFD(int _fd_in) const;
@@ -198,14 +197,14 @@ private:
     void                    CopyXattrsFromVFSFileToNativeFD(VFSFile& _source, int _fd_to) const;
     void                    CopyXattrsFromVFSFileToPath(VFSFile& _file, const char *_fn_to) const;
     
-    vector<VFSListingItem>                      m_VFSListingItems;
+    const vector<VFSListingItem>                m_VFSListingItems;
     copying::SourceItems                        m_SourceItems;
     int                                         m_CurrentlyProcessingSourceItemIndex = -1;
     vector<copying::ChecksumExpectation>        m_Checksums;
     vector<unsigned>                            m_SourceItemsToDelete;
     VFSHostPtr                                  m_DestinationHost;
     shared_ptr<const NativeFileSystemInfo>      m_DestinationNativeFSInfo; // used only for native vfs
-    string                                      m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
+    const string                                m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
     string                                      m_DestinationPath;
     PathCompositionType                         m_PathCompositionType;
     
@@ -217,7 +216,7 @@ private:
     const DispatchGroup                         m_IOGroup;
     bool                                        m_IsSingleInitialItemProcessing = false;
     bool                                        m_IsSingleScannedItemProcessing = false;
-    JobStage                                    m_Stage         = JobStage::None;
+    enum Stage                                  m_Stage = Stage::None;
     
     CopyingOptions                              m_Options;
 };

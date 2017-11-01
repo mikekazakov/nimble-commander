@@ -9,7 +9,6 @@
 #include <Utility/PathManip.h>
 #include <RoutedIO/RoutedIO.h>
 #include "CopyingJob.h"
-#include "DialogResults.h"
 #include "../Statistics.h"
 #include "NativeFSHelpers.h"
 #include <VFS/Native.h>
@@ -21,10 +20,10 @@ namespace nc::ops {
 CopyingJob::CopyingJob(vector<VFSListingItem> _source_items,
                        const string &_dest_path,
                        const VFSHostPtr &_dest_host,
-                       CopyingOptions _opts)
+                       CopyingOptions _opts):
+    m_InitialDestinationPath(_dest_path),
+    m_VFSListingItems(move(_source_items))
 {
-    m_VFSListingItems = move(_source_items);
-    m_InitialDestinationPath = _dest_path;
     if( m_InitialDestinationPath.empty() || m_InitialDestinationPath.front() != '/' )
         throw invalid_argument("CopyingJobNew::Init: m_InitialDestinationPath should be an absolute path");
     m_DestinationHost = _dest_host;
@@ -51,14 +50,14 @@ bool CopyingJob::IsSingleScannedItemProcessing() const noexcept
     return m_IsSingleScannedItemProcessing;
 }
 
-CopyingJob::JobStage CopyingJob::Stage() const noexcept
+enum CopyingJob::Stage CopyingJob::Stage() const noexcept
 {
     return m_Stage;
 }
 
 void CopyingJob::Perform()
 {
-    SetState(JobStage::Preparing);
+    SetStage(Stage::Preparing);
 
     bool need_to_build = false;
     auto comp_type = AnalyzeInitialDestination(m_DestinationPath, need_to_build);
@@ -88,8 +87,6 @@ void CopyingJob::Perform()
     
     m_IsSingleScannedItemProcessing = m_SourceItems.ItemsAmount() == 1;
     
-    m_VFSListingItems.clear(); // don't need them anymore
-    
     ProcessItems();
     
     if( BlockIfPaused(); IsStopped() )
@@ -98,7 +95,7 @@ void CopyingJob::Perform()
 
 void CopyingJob::ProcessItems()
 {
-    SetState(JobStage::Process);
+    SetStage(Stage::Process);
 
     Statistics().CommitEstimated(Statistics::SourceType::Bytes, m_SourceItems.TotalRegBytes());
     
@@ -241,7 +238,7 @@ void CopyingJob::ProcessItems()
     
     bool all_matched = true;
     if( !m_Checksums.empty() ) {
-        SetState(JobStage::Verify);
+        SetStage(Stage::Verify);
         for( auto &item: m_Checksums ) {
             bool matched = false;
             auto step_result = VerifyCopiedFile(item, matched);            
@@ -257,7 +254,7 @@ void CopyingJob::ProcessItems()
 
     // be sure to all it only if ALL previous steps wre OK.
     if( all_matched ) {
-        SetState(JobStage::Cleaning);
+        SetStage(Stage::Cleaning);
         CleanSourceItems();
     }
 }
@@ -473,8 +470,7 @@ static bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
 
 tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
 {
-    
-    SourceItems db;
+    class SourceItems db;
     auto stat_flags = m_Options.preserve_symlinks ? VFSFlags::F_NoFollow : 0;
 
     for( auto&i: m_VFSListingItems ) {
@@ -2171,13 +2167,27 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
     return StepResult::Ok;
 }
 
-void CopyingJob::SetState(CopyingJob::JobStage _state)
+void CopyingJob::SetStage(enum Stage _stage)
 {
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//    NotifyWillChange(Notify::Stage);
-    m_Stage = _state;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//    NotifyDidChange(Notify::Stage);
+    if( m_Stage != _stage ) {
+        m_Stage = _stage;
+        m_OnStageChanged();
+    }
+}
+
+const vector<VFSListingItem> &CopyingJob::SourceItems() const noexcept
+{
+    return m_VFSListingItems;
+}
+
+const string &CopyingJob::DestinationPath() const noexcept
+{
+    return m_DestinationPath;
+}
+
+const CopyingOptions &CopyingJob::Options() const noexcept
+{
+    return m_Options;
 }
 
 }

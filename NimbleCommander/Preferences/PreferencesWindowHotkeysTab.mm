@@ -7,6 +7,360 @@
 #include "../Bootstrap/ActivationManager.h"
 #include "PreferencesWindowHotkeysTab.h"
 
+static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item);
+static NSString *ComposeVerboseNonMenuActionTitle(const string &_action);
+static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _index);
+static NSString *LabelTitleForAction( const string &_action, NSMenuItem *_item_for_tag );
+
+namespace {
+
+struct ActionShortcutNode
+{
+    pair<string,int> shortcut;
+    NSString *label;
+};
+
+struct ToolShortcutNode
+{
+    shared_ptr<const ExternalTool> tool;
+    int tool_index;
+    NSString *label;
+};
+
+}
+
+@interface PreferencesWindowHotkeysTab()
+
+@property (strong) IBOutlet NSTableView *Table;
+@property (strong) IBOutlet GTMHotKeyTextField *HotKeyEditFieldTempl;
+@property (strong) IBOutlet NSButton *forceFnButton;
+@property (strong) IBOutlet NSTextField *filterTextField;
+
+@end
+
+@implementation PreferencesWindowHotkeysTab
+{
+    vector<pair<string,int>>                m_Shortcuts;
+    function<ExternalToolsStorage&()>       m_ToolsStorage;
+    ExternalToolsStorage::ObservationTicket m_ToolsObserver;
+    vector<shared_ptr<const ExternalTool>>  m_Tools;
+    vector<any>                             m_AllNodes;
+    vector<any>                             m_FilteredNodes;
+}
+
+- (id) initWithToolsStorage:(function<ExternalToolsStorage&()>)_tool_storage
+{
+    self = [super init];
+    if (self) {
+        m_ToolsStorage = _tool_storage;
+        const auto &all_shortcuts = ActionsShortcutsManager::Instance().AllShortcuts();
+        m_Shortcuts.assign( begin(all_shortcuts), end(all_shortcuts) );
+        
+        // remove shortcuts whichs are absent in main menu
+        const auto absent = [](auto &_t) {
+            if( _t.first.find_first_of("menu.") != 0 )
+                return false;
+            const auto menu_item = [[NSApp mainMenu] itemWithTagHierarchical:_t.second];
+            return menu_item == nil || menu_item.isHidden == true;
+        };
+        m_Shortcuts.erase(remove_if(begin(m_Shortcuts), end(m_Shortcuts), absent),
+                          end(m_Shortcuts));
+    }
+    return self;
+}
+
+- (void) buildData
+{
+    m_AllNodes.clear();
+    for( auto &v: m_Shortcuts ) {
+        const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:v.second];
+        ActionShortcutNode shortcut;
+        shortcut.shortcut = v;
+        shortcut.label = LabelTitleForAction(v.first, menu_item);
+        m_AllNodes.emplace_back( move(shortcut) );
+    }
+    for( int i = 0, e = (int)m_Tools.size(); i != e; ++i ) {
+        const auto &v = m_Tools[i];
+        ToolShortcutNode shortcut;
+        shortcut.tool = v;
+        shortcut.tool_index = i;
+        shortcut.label = ComposeExternalToolTitle(*v, i);
+        m_AllNodes.emplace_back( move(shortcut) );
+    }
+}
+
+- (void)loadView
+{
+    [super loadView];
+    m_Tools = m_ToolsStorage().GetAllTools();
+    
+    if( ActivationManager::Instance().Sandboxed() )
+        self.forceFnButton.hidden = true;
+    
+    m_ToolsObserver = m_ToolsStorage().ObserveChanges([=]{
+        dispatch_to_main_queue([=]{
+            auto old_tools = move(m_Tools);
+            m_Tools = m_ToolsStorage().GetAllTools();
+            
+            [self buildData];
+            [self buildFilteredNodes];
+            
+            if( m_Tools.size() != old_tools.size() )
+                [self.Table noteNumberOfRowsChanged];
+            
+            const auto tools_range = NSMakeRange(m_Shortcuts.size(),
+                                                 m_Shortcuts.size()+m_Tools.size());
+            [self.Table reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:tools_range]
+                                  columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+  
+        });
+    });
+    
+    [self buildData];
+    m_FilteredNodes = m_AllNodes;
+}
+
+-(NSString*)identifier
+{
+    return NSStringFromClass(self.class);
+}
+
+-(NSImage*)toolbarItemImage
+{
+    return [NSImage imageNamed:@"PreferencesIcons_Hotkeys"];
+}
+
+-(NSString*)toolbarItemLabel
+{
+    return NSLocalizedStringFromTable(@"Hotkeys",
+                                      @"Preferences",
+                                      "General preferences tab title");
+}
+
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return m_FilteredNodes.size();
+}
+
+- (GTMHotKeyTextField*) makeDefaultGTMHotKeyTextField
+{
+    const auto data = [NSKeyedArchiver archivedDataWithRootObject:self.HotKeyEditFieldTempl];
+    return [NSKeyedUnarchiver unarchiveObjectWithData:data];
+}
+
+static NSTextField *SpawnLabelForAction( const ActionShortcutNode &_action )
+{
+    const auto tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    tf.toolTip = [NSString stringWithUTF8StdString:_action.shortcut.first];
+    tf.stringValue = _action.label;
+    tf.bordered = false;
+    tf.editable = false;
+    tf.drawsBackground = false;
+    return tf;
+}
+
+static NSTextField *SpawnLabelForTool( const ToolShortcutNode &_node )
+{
+    const auto text_field = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    text_field.toolTip = [NSString stringWithUTF8StdString:_node.tool->m_ExecutablePath];
+    text_field.stringValue = _node.label;
+    text_field.bordered = false;
+    text_field.editable = false;
+    text_field.drawsBackground = false;
+    return text_field;
+}
+
+- (NSView *)tableView:(NSTableView *)tableView
+   viewForTableColumn:(NSTableColumn *)tableColumn
+                  row:(NSInteger)row
+{
+    if( row >= 0 && row < m_FilteredNodes.size() ) {
+        if( auto node = any_cast<ActionShortcutNode>(&m_FilteredNodes[row]) ) {
+            if( [tableColumn.identifier isEqualToString:@"action"] ) {
+                return SpawnLabelForAction(*node);
+            }
+            if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
+                const auto &sm = ActionsShortcutsManager::Instance();
+                const auto short_cut = sm.ShortCutFromTag(node->shortcut.second);
+                const auto is_panel_action = node->shortcut.first.find_first_of("panel.") == 0;
+                const auto default_sort_cut = sm.DefaultShortCutFromTag(node->shortcut.second);
+                
+                const auto key_text_field = [self makeDefaultGTMHotKeyTextField];
+                key_text_field.action = @selector(onHKChanged:);
+                key_text_field.target = self;
+                key_text_field.tag = node->shortcut.second;
+                
+                const auto field_cell = objc_cast<GTMHotKeyTextFieldCell>(key_text_field.cell);
+                field_cell.objectValue = [GTMHotKey hotKeyWithKey:short_cut.Key()
+                                                        modifiers:short_cut.modifiers];
+                field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:default_sort_cut.Key()
+                                                          modifiers:default_sort_cut.modifiers];
+                field_cell.strictModifierRequirement = !is_panel_action;
+                
+                return key_text_field;
+            
+            }
+        }
+        if( auto node = any_cast<ToolShortcutNode>(&m_FilteredNodes[row]) ) {
+            if( [tableColumn.identifier isEqualToString:@"action"] ) {
+                return SpawnLabelForTool(*node);
+            }
+            if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
+                const auto &tool = *node->tool;
+                const auto key_text_field = [self makeDefaultGTMHotKeyTextField];
+                key_text_field.action = @selector(onToolHKChanged:);
+                key_text_field.target = self;
+                key_text_field.tag = node->tool_index;
+                
+                const auto field_cell = objc_cast<GTMHotKeyTextFieldCell>(key_text_field.cell);
+                field_cell.objectValue = [GTMHotKey hotKeyWithKey:tool.m_Shorcut.Key()
+                                                        modifiers:tool.m_Shorcut.modifiers];
+                field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:tool.m_Shorcut.Key()
+                                                          modifiers:tool.m_Shorcut.modifiers];
+                return key_text_field;
+            }
+        }
+
+    }
+    return nil;
+}
+
+- (ActionShortcut) shortcutFromGTMHotKey:(GTMHotKey *)_key
+{
+    auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : 0;
+    auto hk = ActionsShortcutsManager::ShortCut(key, _key.modifiers);
+    return hk;
+}
+
+- (IBAction)onToolHKChanged:(id)sender
+{
+    if( auto tf = objc_cast<GTMHotKeyTextField>(sender) ) {
+        if( auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue) ) {
+            const auto tool_index = tf.tag;
+            const auto hk = [self shortcutFromGTMHotKey:gtm_hk];
+            if( tool_index < m_Tools.size() ) {
+                auto &tool = m_Tools[tool_index];
+                if( hk != tool->m_Shorcut ) {
+                    ExternalTool changed_tool = *tool;
+                    changed_tool.m_Shorcut = hk;
+                    m_ToolsStorage().ReplaceTool(changed_tool, tool_index);
+                }
+            }
+        }
+    }
+}
+
+- (IBAction)onHKChanged:(id)sender
+{
+    auto &am = ActionsShortcutsManager::Instance();
+    if( auto tf = objc_cast<GTMHotKeyTextField>(sender) )
+        if( auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue) ) {
+            auto tag = int(tf.tag);
+            auto hk = [self shortcutFromGTMHotKey:gtm_hk];
+            auto action = am.ActionFromTag(tag);
+            if( am.SetShortCutOverride(action, hk) )
+                am.SetMenuShortCuts(NSApp.mainMenu);
+        }
+}
+
+- (IBAction)OnDefaults:(id)sender
+{
+    NSAlert *alert = [[NSAlert alloc] init];
+    alert.messageText = NSLocalizedStringFromTable(@"Are you sure you want to reset hotkeys to defaults?",
+                                                   @"Preferences",
+                                                   "Message text asking if user really wants to reset hotkeys to defaults");
+    alert.informativeText = NSLocalizedStringFromTable(@"This will clear any custom hotkeys.",
+                                                       @"Preferences",
+                                                       "Informative text when user wants to reset hotkeys to defaults");
+    [alert addButtonWithTitle:NSLocalizedString(@"OK","")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
+    [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
+    if([alert runModal] == NSAlertFirstButtonReturn) {
+        ActionsShortcutsManager::Instance().RevertToDefaults();
+        ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
+        [self.Table reloadData];
+    }
+}
+
+- (IBAction)onForceFnChanged:(id)sender
+{
+    if( self.forceFnButton.state == NSOnState )
+        FunctionalKeysPass::Instance().Enable();
+    else
+        FunctionalKeysPass::Instance().Disable();
+}
+
+- (void)controlTextDidChange:(NSNotification *)obj
+{
+    [self buildFilteredNodes];
+    [self.Table reloadData];    
+}
+
+static bool ValidateNodeForFilter( const any& _node, NSString *_filter )
+{
+    if( auto node = any_cast<ActionShortcutNode>(&_node) ) {
+        const auto label = node->label;
+        if( [label rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
+            return true;
+        
+        const auto scid = [NSString stringWithUTF8StdString:node->shortcut.first];
+        if( [scid rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
+            return true;
+
+        const auto &sm = ActionsShortcutsManager::Instance();
+        const auto short_cut = sm.ShortCutFromTag(node->shortcut.second);
+        const auto prettry_hotkey = short_cut.PrettyString();
+        if( [prettry_hotkey rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
+            return true;
+
+        return false;
+    }
+    if( auto node = any_cast<ToolShortcutNode>(&_node) ) {
+        const auto label = node->label;
+        if( [label rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
+            return true;
+    
+        const auto prettry_hotkey = node->tool->m_Shorcut.PrettyString();
+        if( [prettry_hotkey rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
+            return true;
+        
+        const auto app_path = [NSString stringWithUTF8StdString:node->tool->m_ExecutablePath];
+        if( [app_path rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
+            return true;
+    
+        return false;
+    }
+
+    return false;
+}
+
+- (void)buildFilteredNodes
+{
+    const auto filter = self.filterTextField.stringValue;
+    if( !filter || filter.length == 0 ) {
+        m_FilteredNodes = m_AllNodes;
+    }
+    else {
+        m_FilteredNodes.clear();
+        for( auto &v: m_AllNodes )
+            if( ValidateNodeForFilter(v, filter) )
+                m_FilteredNodes.emplace_back(v);
+    }
+}
+
+@end
+
+
+static NSString *LabelTitleForAction( const string &_action, NSMenuItem *_item_for_tag )
+{
+    if( auto menu_item_title = ComposeVerboseMenuItemTitle(_item_for_tag) )
+        return menu_item_title;
+    else if( auto action_title = ComposeVerboseNonMenuActionTitle(_action) )
+        return action_title;
+    else
+        return [NSString stringWithUTF8StdString:_action];
+}
+
 static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 {
     if(!_item)
@@ -73,219 +427,3 @@ static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _in
              [NSString stringWithFormat:NSLocalizedString(@"Tool #%u", ""), _index] :
              [NSString stringWithUTF8StdString:_et.m_Title]) ];
 }
-
-@interface PreferencesWindowHotkeysTab()
-
-@property (strong) IBOutlet NSTableView *Table;
-@property (strong) IBOutlet GTMHotKeyTextField *HotKeyEditFieldTempl;
-@property (strong) IBOutlet NSButton *forceFnButton;
-
-@end
-
-@implementation PreferencesWindowHotkeysTab
-{
-    vector<pair<string,int>>                            m_Shortcuts;
-    function<ExternalToolsStorage&()>                   m_ToolsStorage;
-    ExternalToolsStorage::ObservationTicket             m_ToolsObserver;
-    vector<shared_ptr<const ExternalTool>>              m_Tools;
-}
-
-- (id) initWithToolsStorage:(function<ExternalToolsStorage&()>)_tool_storage
-{
-    self = [super init];
-    if (self) {
-        m_ToolsStorage = _tool_storage;
-        m_Shortcuts.assign(begin(ActionsShortcutsManager::Instance().AllShortcuts()),
-                           end(ActionsShortcutsManager::Instance().AllShortcuts()));
-        
-        // remove shortcuts whichs are absent in main menu
-        const auto absent = [](auto &_t) {
-            if( _t.first.find_first_of("menu.") != 0 )
-                return false;
-            const auto menu_item = [[NSApp mainMenu] itemWithTagHierarchical:_t.second];
-            return menu_item == nil || menu_item.isHidden == true;
-        };
-        m_Shortcuts.erase(remove_if(begin(m_Shortcuts), end(m_Shortcuts), absent),
-                          end(m_Shortcuts));
-    }
-    return self;
-}
-
-- (void)loadView
-{
-    [super loadView];
-    m_Tools = m_ToolsStorage().GetAllTools();
-    
-    if( ActivationManager::Instance().Sandboxed() )
-        self.forceFnButton.hidden = true;
-    
-    m_ToolsObserver = m_ToolsStorage().ObserveChanges([=]{
-        dispatch_to_main_queue([=]{
-            auto old_tools = move(m_Tools);
-            m_Tools = m_ToolsStorage().GetAllTools();
-            
-            
-            if( m_Tools.size() != old_tools.size() )
-                [self.Table noteNumberOfRowsChanged];
-            
-            const auto tools_range = NSMakeRange(m_Shortcuts.size(),
-                                                 m_Shortcuts.size()+m_Tools.size());
-            [self.Table reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:tools_range]
-                                  columnIndexes:[NSIndexSet indexSetWithIndex:0]];
-        });
-    });
-}
-
--(NSString*)identifier{
-    return NSStringFromClass(self.class);
-}
--(NSImage*)toolbarItemImage{
-    return [NSImage imageNamed:@"PreferencesIcons_Hotkeys"];
-}
--(NSString*)toolbarItemLabel{
-    return NSLocalizedStringFromTable(@"Hotkeys",
-                                      @"Preferences",
-                                      "General preferences tab title");
-}
-
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
-{
-    return m_Shortcuts.size() + m_Tools.size();
-}
-
-- (GTMHotKeyTextField*) makeDefaultGTMHotKeyTextField
-{
-    return [NSKeyedUnarchiver unarchiveObjectWithData:[NSKeyedArchiver archivedDataWithRootObject:self.HotKeyEditFieldTempl]];
-}
-
-- (NSView *)tableView:(NSTableView *)tableView
-   viewForTableColumn:(NSTableColumn *)tableColumn
-                  row:(NSInteger)row
-{
-    if( row >= 0 && row < m_Shortcuts.size() ) {
-        auto &tag = m_Shortcuts[row];
-        NSMenuItem *menu_item = [[NSApp mainMenu] itemWithTagHierarchical:tag.second];
-        
-        if([tableColumn.identifier isEqualToString:@"action"])
-        {
-            NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-            tf.toolTip = [NSString stringWithUTF8StdString:tag.first];
-            if( auto menu_item_title = ComposeVerboseMenuItemTitle(menu_item) )
-                tf.stringValue = menu_item_title;
-            else if( auto action_title = ComposeVerboseNonMenuActionTitle(tag.first) )
-                tf.stringValue = action_title;
-            else
-                tf.stringValue = tf.toolTip;
-            tf.bordered = false;
-            tf.editable = false;
-            tf.drawsBackground = false;
-            return tf;
-        }
-        if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
-            auto sc = ActionsShortcutsManager::Instance().ShortCutFromTag(tag.second);
-            auto default_sc = ActionsShortcutsManager::Instance().DefaultShortCutFromTag(tag.second);
-            GTMHotKeyTextField *tf = [self makeDefaultGTMHotKeyTextField];
-            tf.action = @selector(onHKChanged:);
-            tf.target = self;
-            ((GTMHotKeyTextFieldCell*)tf.cell).objectValue = [GTMHotKey hotKeyWithKey:sc.Key() modifiers:sc.modifiers];
-            ((GTMHotKeyTextFieldCell*)tf.cell).defaultHotKey = [GTMHotKey hotKeyWithKey:default_sc.Key() modifiers:default_sc.modifiers];
-            
-            if( tag.first.find_first_of("panel.") == 0 )
-                ((GTMHotKeyTextFieldCell*)tf.cell).strictModifierRequirement = false;
-            
-            tf.tag = tag.second;
-            
-            return tf;
-        }
-    }
-    else if( row >= 0 && row < m_Shortcuts.size() + m_Tools.size() ) {
-        auto tool_index = row - m_Shortcuts.size();
-        auto &tool = m_Tools[tool_index];
-        
-        if([tableColumn.identifier isEqualToString:@"action"]) {
-            NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-            tf.stringValue = ComposeExternalToolTitle(*tool, (unsigned)tool_index);
-            tf.bordered = false;
-            tf.editable = false;
-            tf.drawsBackground = false;
-            return tf;
-        }
-        if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
-            GTMHotKeyTextField *tf = [self makeDefaultGTMHotKeyTextField];
-            tf.action = @selector(onToolHKChanged:);
-            tf.target = self;
-            tf.tag = tool_index;
-            ((GTMHotKeyTextFieldCell*)tf.cell).objectValue = [GTMHotKey hotKeyWithKey:tool->m_Shorcut.Key() modifiers:tool->m_Shorcut.modifiers];
-            ((GTMHotKeyTextFieldCell*)tf.cell).defaultHotKey = [GTMHotKey hotKeyWithKey:tool->m_Shorcut.Key() modifiers:tool->m_Shorcut.modifiers];
-            return tf;            
-        }
-    }
-    return nil;
-}
-
-- (ActionShortcut) shortcutFromGTMHotKey:(GTMHotKey *)_key
-{
-    auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : 0;
-    auto hk = ActionsShortcutsManager::ShortCut(key, _key.modifiers);
-    return hk;
-}
-
-- (IBAction)onToolHKChanged:(id)sender
-{
-    if( auto tf = objc_cast<GTMHotKeyTextField>(sender) ) {
-        if( auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue) ) {
-            const auto tool_index = tf.tag;
-            const auto hk = [self shortcutFromGTMHotKey:gtm_hk];
-            if( tool_index < m_Tools.size() ) {
-                auto &tool = m_Tools[tool_index];
-                if( hk != tool->m_Shorcut ) {
-                    ExternalTool changed_tool = *tool;
-                    changed_tool.m_Shorcut = hk;
-                    m_ToolsStorage().ReplaceTool(changed_tool, tool_index);
-                }
-            }
-        }
-    }
-}
-
-- (IBAction)onHKChanged:(id)sender
-{
-    auto &am = ActionsShortcutsManager::Instance();
-    if( auto tf = objc_cast<GTMHotKeyTextField>(sender) )
-        if( auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue) ) {
-            auto tag = int(tf.tag);
-            auto hk = [self shortcutFromGTMHotKey:gtm_hk];
-            auto action = am.ActionFromTag(tag);
-            if( am.SetShortCutOverride(action, hk) )
-                am.SetMenuShortCuts([NSApp mainMenu]);
-        }
-}
-
-- (IBAction)OnDefaults:(id)sender
-{
-    NSAlert *alert = [[NSAlert alloc] init];
-    alert.messageText = NSLocalizedStringFromTable(@"Are you sure you want to reset hotkeys to defaults?",
-                                                   @"Preferences",
-                                                   "Message text asking if user really wants to reset hotkeys to defaults");
-    alert.informativeText = NSLocalizedStringFromTable(@"This will clear any custom hotkeys.",
-                                                       @"Preferences",
-                                                       "Informative text when user wants to reset hotkeys to defaults");
-    [alert addButtonWithTitle:NSLocalizedString(@"OK","")];
-    [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
-    [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
-    if([alert runModal] == NSAlertFirstButtonReturn) {
-        ActionsShortcutsManager::Instance().RevertToDefaults();
-        ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
-        [self.Table reloadData];
-    }
-}
-
-- (IBAction)onForceFnChanged:(id)sender
-{
-    if( self.forceFnButton.state == NSOnState )
-        FunctionalKeysPass::Instance().Enable();
-    else
-        FunctionalKeysPass::Instance().Disable();
-}
-
-@end

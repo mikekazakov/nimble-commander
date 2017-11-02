@@ -5,7 +5,8 @@ class ExternalToolsStorage;
 
 @interface PreferencesWindowHotkeysTab : NSViewController<RHPreferencesViewControllerProtocol,
                                                             NSTableViewDataSource,
-                                                            NSTableViewDelegate>
+                                                            NSTableViewDelegate,
+                                                            NSTextFieldDelegate>
 
 - (id) initWithToolsStorage:(function<ExternalToolsStorage&()>)_tool_storage;
 

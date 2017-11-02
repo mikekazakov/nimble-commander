@@ -404,31 +404,17 @@ void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
 
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
-    m_ActionToTag.assign( begin(g_ActionsTags), end(g_ActionsTags) );
-    assert( m_ActionToTag.size() == g_ActionsTags.size() );
-    
-    {
-        vector< pair<int, const char*> > tag_to_action;
-        tag_to_action.reserve(g_ActionsTags.size());
-        for( auto &p: g_ActionsTags)
-            tag_to_action.emplace_back( p.second, p.first );
-        m_TagToAction.assign( begin(tag_to_action), end(tag_to_action) );
-        assert( m_TagToAction.size() == g_ActionsTags.size()  );
+    for( auto &p: g_ActionsTags) {
+        m_TagToAction[p.second] = p.first;
+        m_ActionToTag[p.first] = p.second;
     }
-    
-    {
-        vector<pair<int, const char*>> default_shortcuts;
-        default_shortcuts.reserve( g_DefaultShortcuts.size() );
-        for( auto &d: g_DefaultShortcuts) {
-            auto i = m_ActionToTag.find( d.first );
-            if( i != end(m_ActionToTag) )
-                default_shortcuts.emplace_back( i->second, d.second );
-        }
-        m_ShortCutsDefaults.assign( begin(default_shortcuts), end(default_shortcuts) );
-        assert(m_ShortCutsDefaults.size() == g_DefaultShortcuts.size() );
-    }
-    
 
+    for( auto &d: g_DefaultShortcuts) {
+        auto i = m_ActionToTag.find( d.first );
+        if( i != end(m_ActionToTag) )
+            m_ShortCutsDefaults[i->second] = d.second;
+    }
+    
     ReadOverrideFromConfig();
 }
 
@@ -500,14 +486,13 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
     if( v.GetType() != kObjectType )
         return;
     
-    vector< pair<int, const char*> > overrides;
+    m_ShortCutsOverrides.clear();
     for( auto i = v.MemberBegin(), e = v.MemberEnd(); i != e; ++i )
         if( i->name.GetType() == kStringType && i->value.GetType() == kStringType ) {
             auto att = m_ActionToTag.find( i->name.GetString() );
             if( att != m_ActionToTag.end() )
-                overrides.emplace_back( att->second, i->value.GetString() );
+                m_ShortCutsOverrides[att->second] = i->value.GetString();
         }
-    m_ShortCutsOverrides.assign( begin(overrides), end(overrides) );
 }
 
 ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction(const string &_action) const
@@ -542,7 +527,7 @@ ActionsShortcutsManager::ShortCut ActionsShortcutsManager::DefaultShortCutFromTa
 
 bool ActionsShortcutsManager::SetShortCutOverride(const string &_action, const ShortCut& _sc)
 {
-    int tag = TagFromAction(_action);
+    const auto tag = TagFromAction(_action);
     if( tag <= 0 )
         return false;
     
@@ -550,12 +535,7 @@ bool ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
         // hotkey is same as the default one
         if( m_ShortCutsOverrides.count(tag) ) {
             // if something was written as override - erase it
-            vector< pair<int, ShortCut> > tmp;
-            for( const auto &v: m_ShortCutsOverrides )
-                if( v.first != tag )
-                    tmp.emplace_back( v.first, v.second );
-                    
-            m_ShortCutsOverrides.assign( begin(tmp), end(tmp) );
+            m_ShortCutsOverrides.erase( tag );
             
             // immediately write to config file
             WriteOverridesToConfig();
@@ -565,21 +545,12 @@ bool ActionsShortcutsManager::SetShortCutOverride(const string &_action, const S
         return false;
     }
     
-    auto now = m_ShortCutsOverrides.find(tag);
-    if( now != end(m_ShortCutsOverrides) ) {
-        if( now->second == _sc )
+    const auto current_override = m_ShortCutsOverrides.find(tag);
+    if( current_override != end(m_ShortCutsOverrides) )
+        if( current_override->second == _sc )
             return false; // nothing new, it's the same as currently in overrides
-    
-        m_ShortCutsOverrides[tag] = _sc;
-    }
-    else {
-        vector< pair<int, ShortCut> > tmp;
-        for( const auto &v: m_ShortCutsOverrides )
-            tmp.emplace_back( v.first, v.second );
-        tmp.emplace_back( tag, _sc );
-        
-        m_ShortCutsOverrides.assign( begin(tmp), end(tmp) );
-    }
+
+    m_ShortCutsOverrides[tag] = _sc;
     
     // immediately write to config file
     WriteOverridesToConfig();
@@ -593,7 +564,6 @@ void ActionsShortcutsManager::RevertToDefaults()
     WriteOverridesToConfig();
     FireObservers();
 }
-
 
 void ActionsShortcutsManager::WriteOverridesToConfig() const
 {

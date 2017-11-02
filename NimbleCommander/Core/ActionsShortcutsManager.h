@@ -65,10 +65,10 @@ private:
     void ReadOverrideFromConfig();
     void WriteOverridesToConfig() const;
     
-    fixed_eytzinger_map<int, const char*>       m_TagToAction;
-    fixed_eytzinger_map<string, int, less<>>    m_ActionToTag;
-    fixed_eytzinger_map<int, ShortCut>          m_ShortCutsDefaults;
-    fixed_eytzinger_map<int, ShortCut>          m_ShortCutsOverrides;
+    unordered_map<int, const char*> m_TagToAction;
+    unordered_map<string, int>      m_ActionToTag;
+    unordered_map<int, ShortCut>    m_ShortCutsDefaults;
+    unordered_map<int, ShortCut>    m_ShortCutsOverrides;
 };
 
 class ActionsShortcutsManager::ShortCutsUpdater

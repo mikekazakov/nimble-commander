@@ -99,16 +99,14 @@ static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _in
                            end(ActionsShortcutsManager::Instance().AllShortcuts()));
         
         // remove shortcuts whichs are absent in main menu
-        m_Shortcuts.erase(remove_if(begin(m_Shortcuts),
-                                    end(m_Shortcuts),
-                                    [](auto &_t) {
-                                        if(_t.first.find_first_of("menu.") != 0)
-                                            return false;
-                                        NSMenuItem *it = [[NSApp mainMenu] itemWithTagHierarchical:_t.second];
-                                        return it == nil || it.isHidden == true;
-                                    }),
-                          end(m_Shortcuts)
-                          );
+        const auto absent = [](auto &_t) {
+            if( _t.first.find_first_of("menu.") != 0 )
+                return false;
+            const auto menu_item = [[NSApp mainMenu] itemWithTagHierarchical:_t.second];
+            return menu_item == nil || menu_item.isHidden == true;
+        };
+        m_Shortcuts.erase(remove_if(begin(m_Shortcuts), end(m_Shortcuts), absent),
+                          end(m_Shortcuts));
     }
     return self;
 }
@@ -129,8 +127,11 @@ static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _in
             
             if( m_Tools.size() != old_tools.size() )
                 [self.Table noteNumberOfRowsChanged];
-            [self.Table reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(m_Shortcuts.size(), m_Shortcuts.size()+m_Tools.size())]
-                                       columnIndexes:[NSIndexSet indexSetWithIndex:0]];
+            
+            const auto tools_range = NSMakeRange(m_Shortcuts.size(),
+                                                 m_Shortcuts.size()+m_Tools.size());
+            [self.Table reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:tools_range]
+                                  columnIndexes:[NSIndexSet indexSetWithIndex:0]];
         });
     });
 }

@@ -16,15 +16,27 @@ namespace {
 
 struct ActionShortcutNode
 {
-    pair<string,int> shortcut;
+    pair<string,int> tag;
+    ActionShortcut  current_shortcut;
+    ActionShortcut  default_shortcut;
     NSString *label;
+    bool is_menu_action;
+    bool is_customized;
 };
 
 struct ToolShortcutNode
 {
     shared_ptr<const ExternalTool> tool;
-    int tool_index;
     NSString *label;
+    int tool_index;
+    bool is_customized;
+};
+
+enum class SourceType
+{
+    All,
+    Customized,
+    Conflicts
 };
 
 }
@@ -35,6 +47,11 @@ struct ToolShortcutNode
 @property (strong) IBOutlet GTMHotKeyTextField *HotKeyEditFieldTempl;
 @property (strong) IBOutlet NSButton *forceFnButton;
 @property (strong) IBOutlet NSTextField *filterTextField;
+@property (strong) IBOutlet NSButton *sourceAllButton;
+@property (strong) IBOutlet NSButton *sourceCustomizedButton;
+@property (strong) IBOutlet NSButton *sourceConflictsButton;
+
+@property (nonatomic) SourceType sourceType;
 
 @end
 
@@ -45,13 +62,18 @@ struct ToolShortcutNode
     ExternalToolsStorage::ObservationTicket m_ToolsObserver;
     vector<shared_ptr<const ExternalTool>>  m_Tools;
     vector<any>                             m_AllNodes;
+    vector<any>                             m_SourceNodes;
     vector<any>                             m_FilteredNodes;
+    SourceType                              m_SourceType;
 }
+
+@synthesize sourceType = m_SourceType;
 
 - (id) initWithToolsStorage:(function<ExternalToolsStorage&()>)_tool_storage
 {
     self = [super init];
     if (self) {
+        m_SourceType = SourceType::All;
         m_ToolsStorage = _tool_storage;
         const auto &all_shortcuts = ActionsShortcutsManager::Instance().AllShortcuts();
         m_Shortcuts.assign( begin(all_shortcuts), end(all_shortcuts) );
@@ -60,7 +82,7 @@ struct ToolShortcutNode
         const auto absent = [](auto &_t) {
             if( _t.first.find_first_of("menu.") != 0 )
                 return false;
-            const auto menu_item = [[NSApp mainMenu] itemWithTagHierarchical:_t.second];
+            const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:_t.second];
             return menu_item == nil || menu_item.isHidden == true;
         };
         m_Shortcuts.erase(remove_if(begin(m_Shortcuts), end(m_Shortcuts), absent),
@@ -69,14 +91,27 @@ struct ToolShortcutNode
     return self;
 }
 
+- (void)rebuildAll
+{
+    [self buildData];
+    [self buildSourceNodes];
+    [self buildFilteredNodes];
+    [self.Table reloadData];
+}
+
 - (void) buildData
 {
+    const auto &sm = ActionsShortcutsManager::Instance();
     m_AllNodes.clear();
     for( auto &v: m_Shortcuts ) {
         const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:v.second];
         ActionShortcutNode shortcut;
-        shortcut.shortcut = v;
+        shortcut.tag = v;
         shortcut.label = LabelTitleForAction(v.first, menu_item);
+        shortcut.current_shortcut = sm.ShortCutFromTag(v.second);
+        shortcut.default_shortcut = sm.DefaultShortCutFromTag(v.second);
+        shortcut.is_menu_action = v.first.find_first_of("menu.") == 0;
+        shortcut.is_customized = shortcut.current_shortcut != shortcut.default_shortcut;
         m_AllNodes.emplace_back( move(shortcut) );
     }
     for( int i = 0, e = (int)m_Tools.size(); i != e; ++i ) {
@@ -85,7 +120,29 @@ struct ToolShortcutNode
         shortcut.tool = v;
         shortcut.tool_index = i;
         shortcut.label = ComposeExternalToolTitle(*v, i);
+        shortcut.is_customized = bool(v->m_Shorcut);
         m_AllNodes.emplace_back( move(shortcut) );
+    }
+}
+
+- (void)buildSourceNodes
+{
+    if( m_SourceType == SourceType::All ) {
+        m_SourceNodes = m_AllNodes;
+    }
+    if( m_SourceType == SourceType::Customized ) {
+        m_SourceNodes.clear();
+        for( auto &v: m_AllNodes ) {
+            if( auto node = any_cast<ActionShortcutNode>(&v) )
+                if( node->is_customized )
+                    m_SourceNodes.emplace_back(v);
+            if( auto node = any_cast<ToolShortcutNode>(&v) )
+                if( node->is_customized )
+                    m_SourceNodes.emplace_back(v);
+        }
+    }
+    if( m_SourceType == SourceType::Conflicts ) {
+        m_SourceNodes.clear();
     }
 }
 
@@ -99,25 +156,13 @@ struct ToolShortcutNode
     
     m_ToolsObserver = m_ToolsStorage().ObserveChanges([=]{
         dispatch_to_main_queue([=]{
-            auto old_tools = move(m_Tools);
             m_Tools = m_ToolsStorage().GetAllTools();
-            
-            [self buildData];
-            [self buildFilteredNodes];
-            
-            if( m_Tools.size() != old_tools.size() )
-                [self.Table noteNumberOfRowsChanged];
-            
-            const auto tools_range = NSMakeRange(m_Shortcuts.size(),
-                                                 m_Shortcuts.size()+m_Tools.size());
-            [self.Table reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:tools_range]
-                                  columnIndexes:[NSIndexSet indexSetWithIndex:0]];
-  
+            [self rebuildAll];
         });
     });
     
     [self buildData];
-    m_FilteredNodes = m_AllNodes;
+    m_SourceNodes = m_FilteredNodes = m_AllNodes;
 }
 
 -(NSString*)identifier
@@ -151,7 +196,7 @@ struct ToolShortcutNode
 static NSTextField *SpawnLabelForAction( const ActionShortcutNode &_action )
 {
     const auto tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-    tf.toolTip = [NSString stringWithUTF8StdString:_action.shortcut.first];
+    tf.toolTip = [NSString stringWithUTF8StdString:_action.tag.first];
     tf.stringValue = _action.label;
     tf.bordered = false;
     tf.editable = false;
@@ -180,22 +225,20 @@ static NSTextField *SpawnLabelForTool( const ToolShortcutNode &_node )
                 return SpawnLabelForAction(*node);
             }
             if( [tableColumn.identifier isEqualToString:@"hotkey"] ) {
-                const auto &sm = ActionsShortcutsManager::Instance();
-                const auto short_cut = sm.ShortCutFromTag(node->shortcut.second);
-                const auto is_panel_action = node->shortcut.first.find_first_of("panel.") == 0;
-                const auto default_sort_cut = sm.DefaultShortCutFromTag(node->shortcut.second);
-                
                 const auto key_text_field = [self makeDefaultGTMHotKeyTextField];
                 key_text_field.action = @selector(onHKChanged:);
                 key_text_field.target = self;
-                key_text_field.tag = node->shortcut.second;
+                key_text_field.tag = node->tag.second;
                 
                 const auto field_cell = objc_cast<GTMHotKeyTextFieldCell>(key_text_field.cell);
-                field_cell.objectValue = [GTMHotKey hotKeyWithKey:short_cut.Key()
-                                                        modifiers:short_cut.modifiers];
-                field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:default_sort_cut.Key()
-                                                          modifiers:default_sort_cut.modifiers];
-                field_cell.strictModifierRequirement = !is_panel_action;
+                field_cell.objectValue = [GTMHotKey hotKeyWithKey:node->current_shortcut.Key()
+                                                        modifiers:node->current_shortcut.modifiers];
+                field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:node->default_shortcut.Key()
+                                                          modifiers:node->default_shortcut.modifiers];
+                field_cell.strictModifierRequirement = node->is_menu_action;
+            
+                if( node->is_customized )
+                    field_cell.font = [NSFont boldSystemFontOfSize:field_cell.font.pointSize];
                 
                 return key_text_field;
             
@@ -217,6 +260,9 @@ static NSTextField *SpawnLabelForTool( const ToolShortcutNode &_node )
                                                         modifiers:tool.m_Shorcut.modifiers];
                 field_cell.defaultHotKey = [GTMHotKey hotKeyWithKey:tool.m_Shorcut.Key()
                                                           modifiers:tool.m_Shorcut.modifiers];
+                if( node->is_customized )
+                    field_cell.font = [NSFont boldSystemFontOfSize:field_cell.font.pointSize];
+                
                 return key_text_field;
             }
         }
@@ -258,8 +304,10 @@ static NSTextField *SpawnLabelForTool( const ToolShortcutNode &_node )
             auto tag = int(tf.tag);
             auto hk = [self shortcutFromGTMHotKey:gtm_hk];
             auto action = am.ActionFromTag(tag);
-            if( am.SetShortCutOverride(action, hk) )
-                am.SetMenuShortCuts(NSApp.mainMenu);
+            if( am.SetShortCutOverride(action, hk) ) {
+                am.SetMenuShortCuts( NSApp.mainMenu );
+                [self rebuildAll];
+            }
         }
 }
 
@@ -277,8 +325,8 @@ static NSTextField *SpawnLabelForTool( const ToolShortcutNode &_node )
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if([alert runModal] == NSAlertFirstButtonReturn) {
         ActionsShortcutsManager::Instance().RevertToDefaults();
-        ActionsShortcutsManager::Instance().SetMenuShortCuts([NSApp mainMenu]);
-        [self.Table reloadData];
+        ActionsShortcutsManager::Instance().SetMenuShortCuts(NSApp.mainMenu);
+        [self rebuildAll];
     }
 }
 
@@ -303,13 +351,11 @@ static bool ValidateNodeForFilter( const any& _node, NSString *_filter )
         if( [label rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
             return true;
         
-        const auto scid = [NSString stringWithUTF8StdString:node->shortcut.first];
+        const auto scid = [NSString stringWithUTF8StdString:node->tag.first];
         if( [scid rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
             return true;
 
-        const auto &sm = ActionsShortcutsManager::Instance();
-        const auto short_cut = sm.ShortCutFromTag(node->shortcut.second);
-        const auto prettry_hotkey = short_cut.PrettyString();
+        const auto prettry_hotkey = node->current_shortcut.PrettyString();
         if( [prettry_hotkey rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
             return true;
 
@@ -338,14 +384,47 @@ static bool ValidateNodeForFilter( const any& _node, NSString *_filter )
 {
     const auto filter = self.filterTextField.stringValue;
     if( !filter || filter.length == 0 ) {
-        m_FilteredNodes = m_AllNodes;
+        m_FilteredNodes = m_SourceNodes;
     }
     else {
         m_FilteredNodes.clear();
-        for( auto &v: m_AllNodes )
+        for( auto &v: m_SourceNodes )
             if( ValidateNodeForFilter(v, filter) )
                 m_FilteredNodes.emplace_back(v);
     }
+}
+
+- (IBAction)onSourceButtonClicked:(id)sender
+{
+    SourceType required = SourceType::All;
+    if( sender == self.sourceAllButton ) {
+        required = SourceType::All;
+        self.sourceCustomizedButton.state = NSOffState;
+        self.sourceConflictsButton.state = NSOffState;
+    }
+    if( sender == self.sourceCustomizedButton ) {
+        required = SourceType::Customized;
+        self.sourceAllButton.state = NSOffState;
+        self.sourceConflictsButton.state = NSOffState;
+    }
+    if( sender == self.sourceConflictsButton ) {
+        required = SourceType::Conflicts;
+        self.sourceAllButton.state = NSOffState;
+        self.sourceCustomizedButton.state = NSOffState;
+    }
+    
+    self.sourceType = required;
+}
+
+- (void) setSourceType:(SourceType)sourceType
+{
+    if( m_SourceType == sourceType )
+        return;
+
+    m_SourceType = sourceType;
+    [self buildSourceNodes];
+    [self buildFilteredNodes];
+    [self.Table reloadData];
 }
 
 @end

@@ -68,7 +68,7 @@
     
     if( self.listType.selectedSegment == 0 ) {
         auto snapshot = VFSInstanceManager::Instance().AliveHosts();
-        if( row >= 0 && row < snapshot.size() )
+        if( row >= 0 && row < (int)snapshot.size() )
             info = VFSInstanceManager::Instance().PreserveVFS( snapshot.at(row) );
     }
     else {

@@ -191,7 +191,7 @@ static NSString* PanelListColumnTypeToString( PanelListViewColumns _c )
     if( tableView == self.layoutsListColumnsTable ) {
         if( auto layout = self.selectedLayout ) {
             if( auto list = layout->list() ) {
-                if( row < m_LayoutListColumns.size() ) {
+                if( row < (int)m_LayoutListColumns.size() ) {
                     auto &col = m_LayoutListColumns[row];
                     
                     if( [tableColumn.identifier isEqualToString:@"enabled"]  ) {
@@ -251,7 +251,7 @@ static NSString* PanelListColumnTypeToString( PanelListViewColumns _c )
            drag_to == 0 ) // first item should be filename
             return false;
         
-        assert( drag_from < m_LayoutListColumns.size() );
+        assert( drag_from < (int)m_LayoutListColumns.size() );
         auto i = begin(m_LayoutListColumns);
         if( drag_from < drag_to )
             rotate( i + drag_from, i + drag_from + 1, i + drag_to );
@@ -400,7 +400,7 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
 - (IBAction)onLayoutListColumnEnabledClicked:(id)sender
 {
     int row = (int)[self.layoutsListColumnsTable rowForView:(NSView*)sender];
-    if( row >= 0 && row < m_LayoutListColumns.size() ) {
+    if( row >= 0 && row < (int)m_LayoutListColumns.size() ) {
         m_LayoutListColumns[row].second = ((NSButton*)sender).state == NSOnState;
         [self commitLayoutChanges];
     }

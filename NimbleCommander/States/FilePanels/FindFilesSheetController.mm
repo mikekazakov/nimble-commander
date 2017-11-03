@@ -82,7 +82,7 @@ public:
     {
         erase( remove_if(begin(), end(), [&](auto &_s) { return _s == _value; }), end() );
         insert( begin(), _value );
-        while( size() > m_Max ) pop_back();
+        while( size() > (size_t)m_Max ) pop_back();
     }
     
 private:

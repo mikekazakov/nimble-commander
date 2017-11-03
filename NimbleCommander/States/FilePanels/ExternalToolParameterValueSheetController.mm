@@ -85,7 +85,7 @@
 - (IBAction)onValueChanged:(id)sender
 {
     if( auto tf = objc_cast<NSTextField>(sender) ) {
-        assert( tf.tag < m_Values.size() );
+        assert( tf.tag < (int)m_Values.size() );
         m_Values[tf.tag] = tf.stringValue.UTF8String;
     }
 }

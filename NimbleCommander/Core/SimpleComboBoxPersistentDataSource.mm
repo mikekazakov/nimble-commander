@@ -56,7 +56,7 @@
                   end(m_Items)
                   );
     m_Items.insert(begin(m_Items), item);
-    if(m_Items.size() > m_MaxItems)
+    if((int)m_Items.size() > m_MaxItems)
         m_Items.resize(m_MaxItems);
     m_Clean = false;
 }
@@ -68,7 +68,7 @@
 
 - (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)index
 {
-    if(index >= 0 && index < m_Items.size())
+    if(index >= 0 && index < (long)m_Items.size())
         return m_Items[index];
     return @"";
 }

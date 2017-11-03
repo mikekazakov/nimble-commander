@@ -192,7 +192,7 @@ static NSImage *ProduceBundleThumbnailForVFS_Cached(const string &_path, const V
     return thumbnail.second;
 }
 
-inline static unsigned MaximumConcurrentRunnersForVFS(const VFSHostPtr &_host)
+inline static int MaximumConcurrentRunnersForVFS(const VFSHostPtr &_host)
 {
     return _host->IsNativeFS() ? 64 : 6;
 }
@@ -290,7 +290,7 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolati
         
         int number = _item_vd.icon - 1;
         // sanity check - not founding meta with such number means sanity breach in calling module
-        assert( number < m_Icons.size() );
+        assert( number < (int)m_Icons.size() );
         
         const auto &is = m_Icons[number];
         assert( is );
@@ -362,7 +362,7 @@ NSImage *IconsGenerator2::AvailbleImageFor(const VFSListingItem &_item,
     
     if( _item_vd.icon > 0 ) {
         const int number = _item_vd.icon - 1;
-        assert( number < m_Icons.size() );
+        assert( number < (int)m_Icons.size() );
         
         const auto &is = m_Icons[number];
         assert( is );
@@ -540,7 +540,7 @@ void IconsGenerator2::SyncDiscardedAndOutdated( nc::panel::data::Model &_pd )
             ++m_IconsHoles;
         }
     
-    if( m_IconsHoles == m_Icons.size() ) {
+    if( m_IconsHoles == (int)m_Icons.size() ) {
         // complete change on data - discard everything and increment generation
         m_Icons.clear();
         m_IconsHoles = 0;

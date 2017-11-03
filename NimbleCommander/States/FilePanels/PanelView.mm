@@ -302,7 +302,7 @@ using namespace nc::panel;
     
     int origpos = m_CursorPos;
     [self performKeyboardSelection:origpos last_included:origpos];
-    if( m_CursorPos + 1 >= m_Data->SortedDirectoryEntries().size() )
+    if( m_CursorPos + 1 >= (long)m_Data->SortedDirectoryEntries().size() )
         return;
 
     m_CursorPos++;
@@ -417,7 +417,7 @@ using namespace nc::panel;
     const auto origpos = m_CursorPos;
     
     if( m_Data->SortedDirectoryEntries().empty() ||
-        m_CursorPos == m_Data->SortedDirectoryEntries().size() - 1 )
+        m_CursorPos == (int)m_Data->SortedDirectoryEntries().size() - 1 )
         return;
     
     m_CursorPos = (int)m_Data->SortedDirectoryEntries().size() - 1;
@@ -437,7 +437,7 @@ using namespace nc::panel;
                       last_included:origpos
                              select:!m_Data->VolatileDataAtSortPosition(origpos).is_selected()];
 
-    if( m_CursorPos + 1 < m_Data->SortedDirectoryEntries().size() ) {
+    if( m_CursorPos + 1 < (int)m_Data->SortedDirectoryEntries().size() ) {
         m_CursorPos++;
         [self OnCursorPositionChanged];
     }
@@ -461,7 +461,7 @@ using namespace nc::panel;
     
     const auto clipped_pos = (m_Data->SortedDirectoryEntries().size() > 0 &&
                          _pos >= 0 &&
-                         _pos < m_Data->SortedDirectoryEntries().size() ) ?
+                         _pos < (int)m_Data->SortedDirectoryEntries().size() ) ?
                         _pos : -1;
     
     if (m_CursorPos == clipped_pos)
@@ -613,8 +613,8 @@ using namespace nc::panel;
 - (void) SelectUnselectInRange:(int)_start last_included:(int)_end select:(BOOL)_select
 {
     assert( dispatch_is_main_queue() );
-    if(_start < 0 || _start >= m_Data->SortedDirectoryEntries().size() ||
-         _end < 0 || _end >= m_Data->SortedDirectoryEntries().size() ) {
+    if(_start < 0 || _start >= (int)m_Data->SortedDirectoryEntries().size() ||
+         _end < 0 || _end >= (int)m_Data->SortedDirectoryEntries().size() ) {
         NSLog(@"SelectUnselectInRange - invalid range");
         return;
     }

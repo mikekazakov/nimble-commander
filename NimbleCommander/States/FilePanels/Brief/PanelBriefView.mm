@@ -304,7 +304,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     
     switch( m_ColumnsLayout.mode ) {
         case PanelBriefViewColumnsLayout::Mode::DynamicWidth: {
-            assert( index < m_FilenamesPxWidths.size() );
+            assert( index < (int)m_FilenamesPxWidths.size() );
             short width = m_ColumnsLayout.dynamic_width_equal ?
                 m_MaxFilenamePxWidth :
                 m_FilenamesPxWidths[index];
@@ -504,7 +504,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     // find a new delta between sticked column and visible rect
     const auto new_scroll_position = m_ScrollView.contentView.bounds.origin;
     const auto new_delta = (column_stick &&
-                            *column_stick < column_positions.size() &&
+                            *column_stick < (int)column_positions.size() &&
                             column_positions[*column_stick] != numeric_limits<int>::max() ) ?
         column_positions[*column_stick] - int(new_scroll_position.x) :
         0;

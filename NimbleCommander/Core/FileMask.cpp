@@ -109,7 +109,7 @@ static string ProduceFormCLowercase(string_view _string)
 static optional<string> GetSimpleMask( const string &_regexp )
 {
     const char *str = _regexp.c_str();
-    size_t str_len = _regexp.size();
+    const int str_len = (int)_regexp.size();
     bool simple = false;
     if(str_len > 4 &&
        strncmp(str, ".*\\.", 4) == 0) {

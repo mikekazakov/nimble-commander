@@ -4,12 +4,12 @@
 #include "BigFileViewHex.h"
 #include "BigFileView.h"
 
-static const unsigned g_BytesPerHexLine = 16;
-static const unsigned g_RowOffsetSymbs = 10;
-static const unsigned g_GapBetweenColumns = 2;
-static const unsigned g_SymbsPerBytes = 2;
-static const unsigned g_GapBetweenBytes = 1;
-static const unsigned g_HexColumns = 2;
+static const int g_BytesPerHexLine = 16;
+static const int g_RowOffsetSymbs = 10;
+static const int g_GapBetweenColumns = 2;
+static const int g_SymbsPerBytes = 2;
+static const int g_GapBetweenBytes = 1;
+static const int g_HexColumns = 2;
 
 // return monospace char index before the specified _byte byte.
 // includes spaces (2 space) between columns and spaces (1 space) between bytes
@@ -174,14 +174,14 @@ void BigFileViewHex::OnBufferDecoded()
             // build hex codes
             for(int col = 0; col < g_HexColumns; ++col)
             {
-                const unsigned bytes_num = g_BytesPerHexLine / g_HexColumns;
+                const auto bytes_num = g_BytesPerHexLine / g_HexColumns;
                 const unsigned char *bytes = raw_window + i.row_byte_start;
             
                 UniChar tmp[64];
                 for(int j = 0; j < bytes_num*3; ++j)
                     tmp[j] = ' ';
             
-                for(int j = bytes_num*col; j < i.row_bytes_num; ++j)
+                for(int j = bytes_num*col; j < (int)i.row_bytes_num; ++j)
                 {
                     unsigned char c = bytes[j];
                     unsigned char lower_4bits = g_4Bits_To_Char[ c & 0x0F      ];
@@ -271,7 +271,7 @@ int BigFileViewHex::ByteIndexFromHitTest(CGPoint _p)
     int row_no = y_off + m_RowsOffset;
     if(row_no < 0)
         return -1;
-    if(row_no >= m_Lines.size())
+    if(row_no >= (int)m_Lines.size())
         return (int)m_Data->RawSize() + 1;
 
     int x_off = _p.x - (left_upper.x + m_FontInfo.MonospaceWidth() * (g_RowOffsetSymbs + 3));
@@ -290,7 +290,7 @@ int BigFileViewHex::CharIndexFromHitTest(CGPoint _p)
     int row_no = y_off + m_RowsOffset;
     if(row_no < 0)
         return -1;
-    if(row_no >= m_Lines.size())
+    if(row_no >= (int)m_Lines.size())
         return (int)m_Data->RawSize() + 1; // ???????? here should be m_Data->UniCharSize ?
     
     int x_off = _p.x - (left_upper.x +
@@ -343,8 +343,10 @@ void BigFileViewHex::DoDraw(CGContextRef _context, NSRect _dirty_rect)
         if(bselection.location >= 0 && bselection.length > 0) // draw selection under hex codes
         {
             int start = (int)bselection.location, end = start + (int)bselection.length;
-            if(start < c.row_byte_start) start = c.row_byte_start;
-            if(end > c.row_byte_start + c.row_bytes_num) end = c.row_byte_start + c.row_bytes_num;
+            if(start < (int)c.row_byte_start)
+                start = c.row_byte_start;
+            if(end > int(c.row_byte_start + c.row_bytes_num))
+                end = c.row_byte_start + c.row_bytes_num;
             if(start < end)
             {
                 CGFloat x1 = Hex_CharPosFromByteNo(start - c.row_byte_start) * m_FontInfo.MonospaceWidth();
@@ -412,9 +414,9 @@ void BigFileViewHex::CalculateScrollPosition( double &_position, double &_knob_p
 {
     // update scroller also
     double pos;
-    if( m_Data->FileSize() > g_BytesPerHexLine * m_FrameLines)
+    if( m_Data->FileSize() > uint64_t(g_BytesPerHexLine * m_FrameLines) )
         pos = (double(m_Data->FilePos()) + double(m_RowsOffset*g_BytesPerHexLine) ) /
-        double(m_Data->FileSize() - g_BytesPerHexLine * m_FrameLines);
+            double(m_Data->FileSize() - g_BytesPerHexLine * m_FrameLines);
     else
         pos = 0;
     
@@ -556,7 +558,7 @@ void BigFileViewHex::OnPageUp()
 {
     if(m_Lines.empty()) return;    
     assert(m_RowsOffset < m_Lines.size());
-    if(m_RowsOffset > m_FrameLines + 1)
+    if(m_RowsOffset > unsigned(m_FrameLines + 1))
     {
         m_RowsOffset -= m_FrameLines;
         [m_View setNeedsDisplay];
@@ -579,8 +581,7 @@ void BigFileViewHex::OnPageUp()
 
             assert(anchor_row_offset >= m_Data->FilePos());
             uint64_t anchor_new_offset = anchor_row_offset - m_Data->FilePos();
-//            assert(unsigned(anchor_new_offset / g_BytesPerHexLine) >= m_FrameLines);
-            if(unsigned(anchor_new_offset / g_BytesPerHexLine) >= m_FrameLines)
+            if( long(anchor_new_offset / g_BytesPerHexLine) >= m_FrameLines )
                 m_RowsOffset = unsigned(anchor_new_offset / g_BytesPerHexLine) - m_FrameLines;
             else
                 m_RowsOffset = 0;
@@ -636,7 +637,7 @@ void BigFileViewHex::MoveOffsetWithinWindow(uint32_t _offset)
 
 void BigFileViewHex::HandleVerticalScroll(double _pos)
 {
-    if(m_Data->FileSize() < g_BytesPerHexLine * m_FrameLines)
+    if( m_Data->FileSize() < uint64_t(g_BytesPerHexLine * m_FrameLines) )
         return;
 
     uint64_t file_size = m_Data->FileSize();
@@ -691,7 +692,7 @@ void BigFileViewHex::ScrollToByteOffset(uint64_t _offset)
             unsigned des_row_offset = unsigned ( (_offset - window_pos) / g_BytesPerHexLine );
             if(des_row_offset + m_FrameLines > m_Lines.size())
             {
-                if(des_row_offset > m_FrameLines)
+                if( des_row_offset > unsigned(m_FrameLines) )
                     des_row_offset -= m_FrameLines;
                 else
                     des_row_offset = 0;
@@ -775,8 +776,12 @@ void BigFileViewHex::HandleSelectionWithMouseDragging(NSEvent* event)
             {
                 int sel_start = base_char < curr_char ? base_char : curr_char;
                 int sel_end   = base_char > curr_char ? base_char : curr_char;
-                int sel_start_byte = sel_start < m_Data->UniCharsSize() ? m_Data->UniCharToByteIndeces()[sel_start] : (int)m_Data->RawSize();
-                int sel_end_byte = sel_end < m_Data->UniCharsSize() ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
+                int sel_start_byte = sel_start < long(m_Data->UniCharsSize()) ?
+                    m_Data->UniCharToByteIndeces()[sel_start] :
+                    (int)m_Data->RawSize();
+                int sel_end_byte = sel_end < long(m_Data->UniCharsSize()) ?
+                    m_Data->UniCharToByteIndeces()[sel_end] :
+                    (int)m_Data->RawSize();
                 assert(sel_end_byte >= sel_start_byte);
                 m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
             }

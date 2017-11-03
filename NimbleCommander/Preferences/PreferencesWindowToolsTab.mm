@@ -83,8 +83,7 @@ static bool AskUserToDeleteTool()
         dispatch_to_main_queue([=]{
             m_Tools = m_ToolsStorage().GetAllTools();
   
-            
-            if( m_Tools.size() != self.toolsTable.numberOfRows )
+            if( (long)m_Tools.size() != self.toolsTable.numberOfRows )
                 [self.toolsTable noteNumberOfRowsChanged];
             [self.toolsTable reloadDataForRowIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, m_Tools.size())]
                                        columnIndexes:[NSIndexSet indexSetWithIndex:0]];
@@ -106,7 +105,7 @@ static bool AskUserToDeleteTool()
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
-    if( row >= m_Tools.size() )
+    if( row >= (long)m_Tools.size() )
         return nil;
 
     auto &tool = m_Tools[row];
@@ -152,7 +151,7 @@ static bool AskUserToDeleteTool()
 - (shared_ptr<const ExternalTool>) selectedTool
 {
     NSInteger row = self.toolsTable.selectedRow;
-    return row < m_Tools.size() ? m_Tools[row] : nullptr;
+    return row < (long)m_Tools.size() ? m_Tools[row] : nullptr;
 }
 
 - (void) commitToolChanges:(const ExternalTool&)_et

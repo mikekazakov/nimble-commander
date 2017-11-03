@@ -177,7 +177,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
             viewForTableColumn:(nullable NSTableColumn *)tableColumn
                            row:(NSInteger)row
 {
-    if( row >= m_Connections.size() )
+    if( row >= (int)m_Connections.size() )
         return nil;
 
     const auto c = m_Connections[row];

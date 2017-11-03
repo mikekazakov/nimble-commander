@@ -38,8 +38,8 @@ NSImage *WorkspaceIconsCache::ProduceIcon(const string &_filename)
         bool is_uptodate = false;
         struct stat st;
         if(stat(_filename.c_str(), &st) == 0) {
-            if( i->second.file_size == st.st_size &&
-               i->second.mtime == st.st_mtime &&
+            if(i->second.file_size == (uint64_t)st.st_size &&
+               i->second.mtime == (uint64_t)st.st_mtime &&
                i->second.mode == st.st_mode) {
                 is_uptodate = true;
             }

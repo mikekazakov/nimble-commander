@@ -89,7 +89,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
             viewForTableColumn:(nullable NSTableColumn *)tableColumn
                            row:(NSInteger)row
 {
-    if( row >= m_Favorites.size() )
+    if( row >= (int)m_Favorites.size() )
         return nil;;
     auto &f = m_Favorites[row];
 
@@ -151,7 +151,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
     if( auto rv = objc_cast<NSTableRowView>(tf.superview) )
         if( rv.superview == self.table ) {
             long row_no = [self.table rowForView:rv];
-            if( row_no >= 0 && row_no < m_Favorites.size() ) {
+            if( row_no >= 0 && row_no < (int)m_Favorites.size() ) {
                 auto new_value = tf.stringValue ? tf.stringValue.UTF8String : "";
                 if( m_Favorites[row_no].title != new_value ) {
                     m_Favorites[row_no].title = new_value;
@@ -210,7 +210,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
            drag_to == drag_from + 1) // same index, below
             return false;
         
-        assert( drag_from < m_Favorites.size() );
+        assert( drag_from < (int)m_Favorites.size() );
         
         auto i = begin(m_Favorites);
         if( drag_from < drag_to )
@@ -265,7 +265,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     const auto row = self.table.selectedRow;
     if( row < 0 )
         return;
-    assert( row < m_Favorites.size() );
+    assert( row < (int)m_Favorites.size() );
     m_Favorites.erase( begin(m_Favorites) + row );
 
     [self loadData];
@@ -347,7 +347,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 {
     if( auto it = objc_cast<NSMenuItem>(sender) ) {
         const auto ind = (int)it.tag;
-        if( ind < m_PopupMenuFavorites.size() ) {
+        if( ind < (int)m_PopupMenuFavorites.size() ) {
             m_Favorites.emplace_back( m_PopupMenuFavorites[ind] );
             [self loadData];
             [self commit];

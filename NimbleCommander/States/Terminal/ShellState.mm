@@ -235,10 +235,9 @@ static const auto g_CustomPath = "terminal.customShellPath";
     dialog.messageText = NSLocalizedString(@"Do you want to close this window?", "Asking to close window with processes running");
     NSMutableString *cap = [NSMutableString new];
     [cap appendString:NSLocalizedString(@"Closing this window will terminate the running processes: ", "Informing when closing with running terminal processes")];
-    for(int i = 0; i < children.size(); ++i)
-    {
+    for( int i = 0, e = (int)children.size(); i != e; ++i ) {
         [cap appendString:[NSString stringWithUTF8String:children[i].c_str()]];
-        if(i != children.size() - 1)
+        if(i != (int)children.size() - 1)
             [cap appendString:@", "];
     }
     [cap appendString:@"."];

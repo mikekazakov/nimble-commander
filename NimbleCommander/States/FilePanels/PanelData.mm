@@ -232,7 +232,7 @@ const vector<unsigned>& Model::SortedDirectoryEntries() const noexcept
 
 ItemVolatileData& Model::VolatileDataAtRawPosition( int _pos )
 {
-    if( _pos < 0 || _pos >= m_VolatileData.size() )
+    if( _pos < 0 || _pos >= (int)m_VolatileData.size() )
         throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
     
     return m_VolatileData[_pos];
@@ -240,7 +240,7 @@ ItemVolatileData& Model::VolatileDataAtRawPosition( int _pos )
 
 const ItemVolatileData& Model::VolatileDataAtRawPosition( int _pos ) const
 {
-    if( _pos < 0 || _pos >= m_VolatileData.size() )
+    if( _pos < 0 || _pos >= (int)m_VolatileData.size() )
         throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
     
     return m_VolatileData[_pos];
@@ -258,7 +258,7 @@ const ItemVolatileData& Model::VolatileDataAtSortPosition( int _pos ) const
 
 string Model::FullPathForEntry(int _raw_index) const
 {
-    if(_raw_index < 0 || _raw_index >= m_Listing->Count())
+    if(_raw_index < 0 || _raw_index >= (int)m_Listing->Count())
         return "";
 
     auto entry = m_Listing->Item(_raw_index);
@@ -304,13 +304,13 @@ int Model::RawIndexForName(const char *_filename) const
 int Model::SortedIndexForRawIndex(int _desired_raw_index) const
 {
     if(_desired_raw_index < 0 ||
-       _desired_raw_index >= m_Listing->Count())
+       _desired_raw_index >= (int)m_Listing->Count())
         return -1;
     
     // TODO: consider creating reverse (raw entry->sorted entry) map to speed up performance
     // ( if the code below will every became a problem - we can change it from O(n) to O(1) )
     auto i = find_if(m_EntriesByCustomSort.begin(), m_EntriesByCustomSort.end(),
-            [=](unsigned t) {return t == _desired_raw_index;} );
+            [=](unsigned t) {return t == (unsigned)_desired_raw_index;} );
     if( i < m_EntriesByCustomSort.end() )
         return int(i - m_EntriesByCustomSort.begin());
     return -1;
@@ -447,7 +447,7 @@ int Model::SortIndexForEntry(const VFSListingItem& _item) const noexcept
 
 int Model::RawIndexForSortIndex(int _index) const noexcept
 {
-    if(_index < 0 || _index >= m_EntriesByCustomSort.size())
+    if(_index < 0 || _index >= (int)m_EntriesByCustomSort.size())
         return -1;
     return m_EntriesByCustomSort[_index];
 }
@@ -455,7 +455,7 @@ int Model::RawIndexForSortIndex(int _index) const noexcept
 VFSListingItem Model::EntryAtRawPosition(int _pos) const noexcept
 {
     if( _pos >= 0 &&
-        _pos < m_Listing->Count() )
+        _pos < (int)m_Listing->Count() )
         return m_Listing->Item(_pos);
     return {};
 }
@@ -472,7 +472,7 @@ VFSListingItem Model::EntryAtSortPosition(int _pos) const noexcept
 
 void Model::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
 {
-    if( _at_raw_pos < 0 || _at_raw_pos >= m_Listing->Count() )
+    if( _at_raw_pos < 0 || _at_raw_pos >= (int)m_Listing->Count() )
         return;
     
     if( m_Listing->IsDotDot(_at_raw_pos) )
@@ -493,7 +493,9 @@ void Model::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
             m_Stats.selected_reg_amount++; // mb another check for reg here?
     }
     else {
-        m_Stats.bytes_in_selected_entries = m_Stats.bytes_in_selected_entries >= sz ? m_Stats.bytes_in_selected_entries - sz : 0;
+        m_Stats.bytes_in_selected_entries = m_Stats.bytes_in_selected_entries >= (int64_t)sz ?
+            m_Stats.bytes_in_selected_entries - sz :
+            0;
         
         assert(m_Stats.selected_entries_amount > 0); // sanity check
         m_Stats.selected_entries_amount--;
@@ -511,7 +513,7 @@ void Model::CustomFlagsSelectRaw(int _at_raw_pos, bool _is_selected)
 
 void Model::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
 {
-    if(_at_pos < 0 || _at_pos >= m_EntriesByCustomSort.size())
+    if(_at_pos < 0 || _at_pos >= (int)m_EntriesByCustomSort.size())
         return;
     
     CustomFlagsSelectRaw(m_EntriesByCustomSort[_at_pos], _is_selected);

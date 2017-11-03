@@ -8,7 +8,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
     ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
-    if(r < 0 || r >= sizeof(buf))
+    if(r < 0 || r >= (ssize_t)sizeof(buf))
         return encodings::ENCODING_INVALID;
     buf[r] = 0;
     return encodings::FromComAppleTextEncodingXAttr(buf);

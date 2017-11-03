@@ -641,8 +641,8 @@ const static double g_BorderWidth = 1.0;
     
     int startindex = int(offset - m_Data->UniCharToByteIndeces());
     int endindex   = int(tail - m_Data->UniCharToByteIndeces());
-    assert(startindex >= 0 && startindex < m_Data->UniCharsSize());
-    assert(endindex >= 0 && endindex <= m_Data->UniCharsSize());
+    assert(startindex >= 0 && startindex < (long)m_Data->UniCharsSize());
+    assert(endindex >= 0 && endindex <= (long)m_Data->UniCharsSize());
     
     m_SelectionInWindow = CFRangeMake(start - window_pos, end - start);
     m_SelectionInWindowUnichars = CFRangeMake(startindex, endindex - startindex);
@@ -682,8 +682,8 @@ const static double g_BorderWidth = 1.0;
     }
     else
     {
-        if(_selection.location + _selection.length > m_File->FileSize()) {
-            if(_selection.location > m_File->FileSize()) {
+        if(_selection.location + _selection.length > (long)m_File->FileSize()) {
+            if(_selection.location > (long)m_File->FileSize()) {
                 self.selectionInFile = CFRangeMake(-1, 0); // irrecoverable
                 return;
             }

@@ -354,7 +354,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
-    if( row >= m_Rules.size() )
+    if( row >= (int)m_Rules.size() )
         return nil;
     auto &r = m_Rules[row];
     if([tableColumn.identifier isEqualToString:@"name"]) {
@@ -478,7 +478,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
        drag_to == drag_from + 1) // same index, below
     return false;
     
-    assert(drag_from < m_Rules.size());
+    assert(drag_from < (int)m_Rules.size());
     
     auto i = begin(m_Rules);
     if( drag_from < drag_to )

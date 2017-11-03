@@ -99,7 +99,7 @@ static vector<NetworkConnectionsManager::Connection> LimitedRecentConnections(
     auto connections = _manager.AllConnectionsByMRU();
     
     auto limit = max( GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
-    if( connections.size() > limit )
+    if( (int)connections.size() > limit )
         connections.resize(limit);
     
     return connections;
@@ -221,7 +221,7 @@ static void SetupHotkeys( NSMenu *_menu )
 {
     auto items = _menu.itemArray;
     int hotkey_index = 0;
-    for( int ind = 1; ind < items.count; ++ind )
+    for( int ind = 1, e = (int)items.count; ind != e; ++ind )
         if( auto i = objc_cast<NSMenuItem>([items objectAtIndex:ind]) ) {
             if( i.separatorItem )
                 break;

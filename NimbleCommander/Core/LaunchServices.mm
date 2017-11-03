@@ -172,7 +172,7 @@ LauchServicesHandlers::LauchServicesHandlers
     }
     
     for( auto &i: handlers_count )
-        if( i.second == _handlers_to_merge.size() ) {
+        if( i.second == (int)_handlers_to_merge.size() ) {
             m_Paths.emplace_back(i.first);
             if(i.first == default_handler)
                 m_DefaultHandlerPath = default_handler;

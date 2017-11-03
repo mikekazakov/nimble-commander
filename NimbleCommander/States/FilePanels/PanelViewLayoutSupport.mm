@@ -249,7 +249,7 @@ int PanelViewLayoutsStorage::LayoutsCount() const
 shared_ptr<const PanelViewLayout>  PanelViewLayoutsStorage::GetLayout( int _index ) const
 {
     lock_guard<spinlock> lock(m_LayoutsLock);
-    return (_index >= 0 && _index < m_Layouts.size()) ?
+    return (_index >= 0 && _index < (int)m_Layouts.size()) ?
         m_Layouts[_index] :
         nullptr;
 }
@@ -298,7 +298,7 @@ void PanelViewLayoutsStorage::ReplaceLayoutWithMandatoryNotification
 void PanelViewLayoutsStorage::ReplaceLayout(PanelViewLayout _layout, int _at_index, bool _mandatory)
 {
     LOCK_GUARD(m_LayoutsLock) {
-        if( _at_index < 0 || _at_index >= m_Layouts.size() )
+        if( _at_index < 0 || _at_index >= (int)m_Layouts.size() )
             return;
         if( *m_Layouts[_at_index] == _layout )
             return; // nothing to do - equal layouts

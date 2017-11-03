@@ -388,7 +388,7 @@ ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(initializer_list<Sho
         throw logic_error("_hotkeys.size() != _actions.size()");
     
     auto &am = ActionsShortcutsManager::Instance();
-    for( int i = 0; i < _hotkeys.size(); ++i )
+    for( int i = 0, e = (int)_hotkeys.size(); i != e; ++i )
         m_Pets.emplace_back( _hotkeys.begin()[i], am.TagFromAction(_actions.begin()[i]) );
     m_Ticket = am.ObserveChanges( [this]{ CheckAndUpdate(); } );
     

@@ -147,10 +147,6 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
                                fraction:1.0
                          respectFlipped:false
                                   hints:nil];
-    
-//    [m_Filename drawWithRect:self.bounds
-//                     options:0
-//                  attributes:m_TextAttributes];
 }
 
 - (void) buildPresentation
@@ -167,16 +163,20 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
                                                           attributes:attrs];
     
     auto vd = row_view.vd;
-    if( vd.qs_highlight_begin != vd.qs_highlight_end )
-        if( vd.qs_highlight_begin < m_Filename.length && vd.qs_highlight_end <= m_Filename.length  )
+    if( vd.qs_highlight_begin != vd.qs_highlight_end ) {
+        const short fn_len = m_Filename.length;
+        if( vd.qs_highlight_begin < fn_len && vd.qs_highlight_end <= fn_len ) {
+            const auto range = NSMakeRange(vd.qs_highlight_begin,
+                                           vd.qs_highlight_end - vd.qs_highlight_begin);
             [m_AttrString addAttribute:NSUnderlineStyleAttributeName
                                  value:@(NSUnderlineStyleSingle)
-                                 range:NSMakeRange(vd.qs_highlight_begin, vd.qs_highlight_end - vd.qs_highlight_begin)];
+                                 range:range];
+        }
+    }
     
     [self setNeedsDisplay:true];
 }
 
-//@property (nonatomic) NSImageRep *icon;
 - (void) setIcon:(NSImage *)icon
 {
     if( m_Icon != icon ) {

@@ -85,7 +85,7 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
     if(m_File.FileSize() == 0)
         return Result::NotFound; // for singular case
     
-    if(m_File.FileSize() < encodings::BytesForCodeUnit(m_TextSearchEncoding))
+    if(m_File.FileSize() < (size_t)encodings::BytesForCodeUnit(m_TextSearchEncoding))
         return Result::NotFound; // for singular case
     
     if(m_Position >= m_File.FileSize())
@@ -147,7 +147,7 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
             { // can move on
                 // left some space in the tail to exclude situations when searched text is cut between the windows
                 assert(left_window_gap == 0);
-                assert(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit < m_File.WindowSize());
+                assert(size_t(CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit) < m_File.WindowSize());
                 m_Position = m_Position + m_File.WindowSize() - CFStringGetLength(m_RequestedTextSearch) * g_MaximumCodeUnit;
             }
             else
@@ -157,7 +157,7 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
         }
         else
         {
-            assert(result.location + result.length <= m_DecodedBufferSize); // sanity check
+            assert(size_t(result.location + result.length) <= m_DecodedBufferSize); // sanity check
             // check for whole phrase is this option is set
             if( (m_SearchOptions & OptionFindWholePhrase) && !IsWholePhrase(m_DecodedBufferString, result) )
             {
@@ -170,7 +170,7 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_byte
                 *_offset = m_Position + m_DecodedBufferIndx[result.location];
             
             if(_offset != nullptr)
-                *_bytes_len = (result.location + result.length < m_DecodedBufferSize ?
+                *_bytes_len = (size_t(result.location + result.length) < m_DecodedBufferSize ?
                                m_DecodedBufferIndx[result.location+result.length] :
                                m_File.WindowSize() - left_window_gap )
                                 - m_DecodedBufferIndx[result.location];

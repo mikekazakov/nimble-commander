@@ -47,9 +47,8 @@ static unsigned ShouldCutTrailingSpaces(CFStringRef _string,
     unsigned spaces_count = 0;
     const auto *chars = CFStringGetCharactersPtr(_string);
     assert(chars);
-//    const auto len = CFStringGetLength(_string);
     
-    for(int i = _start + _count - 1; i >= _start; --i)
+    for(int i = _start + _count - 1; i >= (int)_start; --i)
     {
         if(chars[i] == ' ')
             spaces_count++;
@@ -246,7 +245,7 @@ void BigFileViewText::BuildLayout()
     CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString(m_AttrString);
     
     CFIndex start = 0;
-    while(start < m_StringBufferSize)
+    while(start < (unsigned)m_StringBufferSize)
     {
         // 1st - manual hack for breaking lines by space characters
         CFIndex count = 0;
@@ -324,7 +323,7 @@ int BigFileViewText::CharIndexFromPoint(CGPoint _point)
     int line_no = LineIndexFromYPos(_point.y);
     if(line_no < 0)
         return -1;
-    if(line_no >= m_Lines.size())
+    if(line_no >= (long)m_Lines.size())
         return (int)m_StringBufferSize + 1;
     
     const auto &line = m_Lines[line_no];
@@ -435,10 +434,10 @@ void BigFileViewText::CalculateScrollPosition( double &_position, double &_knob_
     else
     {
         double pos = 0.;
-        if(m_Lines.size() > m_FrameLines)
+        if((int)m_Lines.size() > m_FrameLines)
             pos = double(m_VerticalOffset) / double(m_Lines.size() - m_FrameLines);
         double prop = 1.;
-        if(m_Lines.size() > m_FrameLines)
+        if((int)m_Lines.size() > m_FrameLines)
             prop = double(m_FrameLines) / double(m_Lines.size());
         _position = pos;
         _knob_proportion = prop;
@@ -685,7 +684,7 @@ void BigFileViewText::HandleVerticalScroll(double _pos)
         uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
         ScrollToByteOffset(bytepos);
         
-        if(m_Lines.size() - m_VerticalOffset < m_FrameLines )
+        if((int)m_Lines.size() - (int)m_VerticalOffset < m_FrameLines )
             m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
 
         m_SmoothOffset.y = 0;
@@ -743,7 +742,7 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
             if(m_SmoothOffset.y < -m_FontInfo.LineHeight())
             {
                 int dl = int(-m_SmoothOffset.y / m_FontInfo.LineHeight());
-                if(m_VerticalOffset > dl) m_VerticalOffset -= dl;
+                if((int)m_VerticalOffset > dl) m_VerticalOffset -= dl;
                 else m_VerticalOffset = 0;
                 m_SmoothOffset.y += dl * m_FontInfo.LineHeight();
             }
@@ -773,7 +772,7 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
         else if(m_SmoothOffset.x < -m_FontInfo.MonospaceWidth())
         {
             int dx = int(-m_SmoothOffset.x / m_FontInfo.MonospaceWidth());
-            if(m_HorizontalOffset > dx) m_HorizontalOffset -= dx;
+            if((int)m_HorizontalOffset > dx) m_HorizontalOffset -= dx;
             else m_HorizontalOffset = 0;
             m_SmoothOffset.x += dx * m_FontInfo.MonospaceWidth();
         }
@@ -810,7 +809,7 @@ void BigFileViewText::OnWordWrappingChanged()
     BuildLayout();
     if(m_VerticalOffset >= m_Lines.size())
     {
-        if(m_Lines.size() >= m_FrameLines)
+        if((int)m_Lines.size() >= m_FrameLines)
             m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
         else
             m_VerticalOffset = 0;
@@ -857,14 +856,16 @@ void BigFileViewText::OnMouseDown(NSEvent *event)
 void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
 {
     int line_no = LineIndexFromPos([m_View convertPoint:event.locationInWindow fromView:nil]);
-    if(line_no < 0 || line_no >= m_Lines.size())
+    if(line_no < 0 || line_no >= (int)m_Lines.size())
         return;
     
     auto &i = m_Lines[line_no];
     int sel_start = i.unichar_no;
     int sel_end = i.unichar_no + i.unichar_len;
     int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
-    int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
+    int sel_end_byte = sel_end < (long)m_StringBufferSize ?
+        m_Data->UniCharToByteIndeces()[sel_end] :
+        (int)m_Data->RawSize();
     m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
 }
 
@@ -891,7 +892,7 @@ void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
                                     sel_end   = (int)wordRange.location + (int)wordRange.length;
                                     *stop = YES;
                                 }
-                                else if(wordRange.location > uc_index)
+                                else if((int)wordRange.location > uc_index)
                                     *stop = YES;
                             }];
     
@@ -902,7 +903,9 @@ void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
     }
 
     int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
-    int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
+    int sel_end_byte = sel_end < (long)m_StringBufferSize ?
+        m_Data->UniCharToByteIndeces()[sel_end] :
+        (int)m_Data->RawSize();
     m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
 }
 
@@ -938,7 +941,9 @@ void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
             int sel_start = base_ind > curr_ind ? curr_ind : base_ind;
             int sel_end   = base_ind < curr_ind ? curr_ind : base_ind;
             int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
-            int sel_end_byte = sel_end < m_StringBufferSize ? m_Data->UniCharToByteIndeces()[sel_end] : (int)m_Data->RawSize();
+            int sel_end_byte = sel_end < (long)m_StringBufferSize ?
+                m_Data->UniCharToByteIndeces()[sel_end] :
+                (int)m_Data->RawSize();
             assert(sel_end_byte >= sel_start_byte);
             m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
         }

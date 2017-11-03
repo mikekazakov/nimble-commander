@@ -127,22 +127,11 @@ static string GetExecutablePathForBundle( const string& _path )
 static vector<string> FindEnterValueParameters(const ExternalToolsParameters &_p)
 {
     vector<string> ev;
-    for( int i = 0; i < _p.StepsAmount(); ++i )
+    for( int i = 0, e = (int)_p.StepsAmount(); i != e; ++i )
         if( _p.StepNo(i).type == ExternalToolsParameters::ActionType::EnterValue )
             ev.emplace_back( _p.GetEnterValue(_p.StepNo(i).index).name  );
     return ev;
 }
-
-//static string WriteStringIntoTemporaryFile()
-
-//vector<string> selected_info;
-//for( auto &i: selected_items )
-//selected_info.emplace_back( ExtractParamInfoFromListingItem(v.what, i) );
-//
-//if( v.as_parameters ) {
-//    for( auto &s: selected_info )
-//        params += EscapeSpaces(s) + " ";
-
 
 @implementation MainWindowFilePanelState (ToolsSupport)
 
@@ -300,9 +289,9 @@ static bool IsRunnableExecutable( const string &_path )
             auto &v = _par.GetSelectedItems(step.index);
             if( PanelController *context = [self externalToolParametersContextFromLocation:v.location] ) {
                 auto selected_items = context.selectedEntriesOrFocusedEntry;
-                if( v.max > 0 && v.max < selected_items.size() )
+                if( v.max > 0 && v.max < (int)selected_items.size() )
                     selected_items.resize( v.max );
-                if( selected_items.size() > max_files_left  )
+                if( (int)selected_items.size() > max_files_left )
                     selected_items.resize( max_files_left );
             
                 if( !selected_items.empty() ) {

@@ -17,7 +17,7 @@ static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
     ssize_t r = _f->XAttrGet("com.apple.TextEncoding", buf, sizeof(buf));
-    if(r < 0 || r >= sizeof(buf))
+    if(r < 0 || r >= (ssize_t)sizeof(buf))
         return encodings::ENCODING_INVALID;
     buf[r] = 0;
     return encodings::FromComAppleTextEncodingXAttr(buf);
@@ -603,7 +603,7 @@ static int InvertBitFlag( int _value, int _flag )
     NSString *search_request = [NSString stringWithUTF8StdString:_request];
     m_SearchField.stringValue = search_request;
     
-    if( _selection.location + _selection.length < m_SearchFileWindow->FileSize() )
+    if( _selection.location + _selection.length < (int64_t)m_SearchFileWindow->FileSize() )
         m_SearchInFile->MoveCurrentPosition( _selection.location + _selection.length );
     else
         m_SearchInFile->MoveCurrentPosition( 0 );

@@ -346,8 +346,8 @@ static bool HasNoModifiers( NSEvent *_event )
                                                           attributes:attrs];
     
     if(m_QSHighlight.first != m_QSHighlight.second &&
-       m_QSHighlight.first  <  m_Filename.length   &&
-       m_QSHighlight.second <= m_Filename.length    )
+       m_QSHighlight.first  <  (short)m_Filename.length   &&
+       m_QSHighlight.second <= (short)m_Filename.length    )
         [m_AttrString addAttribute:NSUnderlineStyleAttributeName
                              value:@(NSUnderlineStyleSingle)
                              range:NSMakeRange(m_QSHighlight.first,
@@ -363,8 +363,8 @@ static bool HasNoModifiers( NSEvent *_event )
         [m_AttrString removeAttribute:NSUnderlineStyleAttributeName
                                 range:NSMakeRange(0, m_AttrString.length)];
         if(m_QSHighlight.first != m_QSHighlight.second &&
-           m_QSHighlight.first  <  m_Filename.length   &&
-           m_QSHighlight.second <= m_Filename.length    )
+           m_QSHighlight.first  <  (short)m_Filename.length   &&
+           m_QSHighlight.second <= (short)m_Filename.length    )
             [m_AttrString addAttribute:NSUnderlineStyleAttributeName
                                  value:@(NSUnderlineStyleSingle)
                                  range:NSMakeRange(m_QSHighlight.first,

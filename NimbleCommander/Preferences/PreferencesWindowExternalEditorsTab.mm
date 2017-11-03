@@ -110,7 +110,7 @@ static bool AskUserToDeleteEditor()
 - (void)OnTableDoubleClick:(id)table
 {
     NSInteger row = [self.TableView clickedRow];
-    if(row >= [self.ExtEditorsController.arrangedObjects count])
+    if(row >= (int)[self.ExtEditorsController.arrangedObjects count])
         return;
         
     ExternalEditorInfo *item = [self.ExtEditorsController.arrangedObjects objectAtIndex:row];
@@ -152,7 +152,7 @@ static bool AskUserToDeleteEditor()
        drag_to == drag_from + 1) // same index, below
         return false;
     
-    assert(drag_from < [self.ExtEditorsController.arrangedObjects count]);
+    assert(drag_from < (long)[self.ExtEditorsController.arrangedObjects count]);
     if(drag_from < drag_to)
         drag_to--;
     

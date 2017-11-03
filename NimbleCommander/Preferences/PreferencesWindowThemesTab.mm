@@ -280,7 +280,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 - (IBAction)onThemesPopupChange:(id)sender
 {
     int selected_ind = (int)self.themesPopUp.selectedTag;
-    if( selected_ind >= 0 && selected_ind < m_ThemeNames.size() )
+    if( selected_ind >= 0 && selected_ind < (int)m_ThemeNames.size() )
         if( m_Manager->SelectTheme(m_ThemeNames[selected_ind]) ) {
             m_SelectedTheme = selected_ind;
             [self loadSelectedDocument];

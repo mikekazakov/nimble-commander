@@ -264,7 +264,7 @@ static NSImageView *SpawnCautionSign()
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
-    if( row >= 0 && row < m_FilteredNodes.size() ) {
+    if( row >= 0 && row < (int)m_FilteredNodes.size() ) {
         if( auto node = any_cast<ActionShortcutNode>(&m_FilteredNodes[row]) ) {
             if( [tableColumn.identifier isEqualToString:@"action"] ) {
                 return SpawnLabelForAction(*node);
@@ -333,7 +333,7 @@ static NSImageView *SpawnCautionSign()
         if( auto gtm_hk = objc_cast<GTMHotKey>(tf.cell.objectValue) ) {
             const auto tool_index = tf.tag;
             const auto hk = [self shortcutFromGTMHotKey:gtm_hk];
-            if( tool_index < m_Tools.size() ) {
+            if( tool_index < (long)m_Tools.size() ) {
                 auto &tool = m_Tools[tool_index];
                 if( hk != tool->m_Shorcut ) {
                     ExternalTool changed_tool = *tool;

@@ -188,13 +188,13 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
             start++;
         }
     
-        for( int i = start; i < m_OpenWithHandlers.size(); ++i ) {
+        for( int i = start; i < (int)m_OpenWithHandlers.size(); ++i ) {
             auto menu_item = [self makeRegularHandlerItem:m_OpenWithHandlers[i]];
             menu_item.tag = i;
             [menu addItem:menu_item];
         }
 
-        if( start < m_OpenWithHandlers.size() )
+        if( start < (int)m_OpenWithHandlers.size() )
             [menu addItem:NSMenuItem.separatorItem];
     }
     else {
@@ -272,7 +272,7 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
 {
     if( const auto menu_item = objc_cast<NSMenuItem>(sender) ) {
         const auto app_no = menu_item.tag;
-        assert(app_no >= 0 && app_no < m_OpenWithHandlers.size());
+        assert(app_no >= 0 && app_no < (long)m_OpenWithHandlers.size());
         const auto &handler = m_OpenWithHandlers[app_no];
         [self openItemsWithHandler:handler];
         if( [self isAlwaysOpenWith:menu_item.menu] )

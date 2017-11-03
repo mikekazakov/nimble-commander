@@ -223,7 +223,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     [a addObject:@"operations_pool"];
     
     auto tools = m_State.externalToolsStorage.GetAllTools();
-    for( int i = 0; i < tools.size(); ++i )
+    for( int i = 0, e = (int)tools.size(); i != e; ++i )
         [a addObject:[NSString stringWithFormat:@"%@%d", g_ExternalToolsIdentifiersPrefix, i] ];
     
     [a addObject:NSToolbarFlexibleSpaceItemIdentifier];

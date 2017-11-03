@@ -83,7 +83,7 @@ int FileWindow::ReadFileWindowRandomPart(size_t _offset, size_t _len)
     if(readret == 0)
         return VFSError::UnexpectedEOF;
     
-    if(readret < _len) // whatif readret is 0 (EOF) - we may fall into recursion here
+    if((size_t)readret < _len) // whatif readret is 0 (EOF) - we may fall into recursion here
         return ReadFileWindowRandomPart(_offset + readret, _len - readret);
     
     return VFSError::Ok;
@@ -104,7 +104,7 @@ int FileWindow::ReadFileWindowSeqPart(size_t _offset, size_t _len)
     if(readret == 0)
         return VFSError::UnexpectedEOF;
     
-    if(readret < _len)
+    if((size_t)readret < _len)
         return ReadFileWindowSeqPart(_offset + readret, _len - readret);
     
     return VFSError::Ok;
@@ -118,7 +118,7 @@ int FileWindow::MoveWindow(size_t _offset)
     if(_offset == m_WindowPos)
         return VFSError::Ok;
     
-    if(_offset + m_WindowSize > m_File->Size())
+    if(_offset + m_WindowSize > (size_t)m_File->Size())
         return VFSError::InvalidCall;
     
     if(m_File->GetReadParadigm() == VFSFile::ReadParadigm::Random)
@@ -181,12 +181,12 @@ int FileWindow::MoveWindow(size_t _offset)
             size_t len = _offset - m_WindowPos;
             m_WindowPos = _offset;
             int ret = ReadFileWindowSeqPart(off, len);
-            if(ret == 0) assert(m_WindowPos + m_WindowSize ==  m_File->Pos());
+            if(ret == 0) assert(ssize_t(m_WindowPos + m_WindowSize) ==  m_File->Pos());
             return ret;
         }
         else if(_offset >= m_WindowPos)
         { // need to move forward
-            assert(m_File->Pos() < _offset);
+            assert(m_File->Pos() < ssize_t(_offset));
             size_t to_skip = _offset - m_File->Pos();
             
             int ret = (int)m_File->Skip(to_skip);

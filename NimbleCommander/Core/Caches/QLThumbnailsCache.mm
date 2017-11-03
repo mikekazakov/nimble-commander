@@ -95,7 +95,7 @@ pair<NSImage *, bool> QLThumbnailsCache::CheckCacheAndUpdateIfNeededSharedLocked
     struct stat st;
     if( stat(_filename.c_str(), &st) == 0 ) {
         // check if cache is up-to-date
-        if( info.file_size == st.st_size && info.mtime == st.st_mtime ) {
+        if( info.file_size == (uint64_t)st.st_size && info.mtime == (uint64_t)st.st_mtime ) {
             is_uptodate = true;
         }
         else {

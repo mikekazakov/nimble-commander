@@ -213,7 +213,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
         return tf;
     };
     
-    assert(row < m_Filenames.size());
+    assert(row < (int)m_Filenames.size());
     if([tableColumn.identifier isEqualToString:@"filename"]) {
         NSTextField *tf = mktf();
         tf.stringValue = [NSString stringWithUTF8String:m_Filenames[row].c_str()];

@@ -46,7 +46,7 @@
         const int index = (int)i.indexPath.item;
         const int col = index / items_per_column;
         
-        if( col >= columns.size() )
+        if( col >= (int)columns.size() )
             columns.resize(col+1);
         
         const NSRect orig_frame = i.frame;

@@ -209,3 +209,8 @@ bool ActionShortcut::operator!=(const ActionShortcut &_rhs) const
 {
     return !(*this == _rhs);
 }
+
+size_t std::hash<ActionShortcut>::operator()(const ActionShortcut& _ac) const noexcept
+{
+    return ((size_t)_ac.unicode) | (((size_t)_ac.modifiers.flags) << 16);
+}

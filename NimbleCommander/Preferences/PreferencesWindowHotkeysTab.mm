@@ -22,6 +22,7 @@ struct ActionShortcutNode
     NSString *label;
     bool is_menu_action;
     bool is_customized;
+    bool is_conflicted;
 };
 
 struct ToolShortcutNode
@@ -30,6 +31,7 @@ struct ToolShortcutNode
     NSString *label;
     int tool_index;
     bool is_customized;
+    bool is_conflicted;
 };
 
 enum class SourceType
@@ -103,6 +105,7 @@ enum class SourceType
 {
     const auto &sm = ActionsShortcutsManager::Instance();
     m_AllNodes.clear();
+    unordered_map<ActionShortcut, int> counts;
     for( auto &v: m_Shortcuts ) {
         const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:v.second];
         ActionShortcutNode shortcut;
@@ -113,6 +116,7 @@ enum class SourceType
         shortcut.is_menu_action = v.first.find_first_of("menu.") == 0;
         shortcut.is_customized = shortcut.current_shortcut != shortcut.default_shortcut;
         m_AllNodes.emplace_back( move(shortcut) );
+        counts[shortcut.current_shortcut]++;
     }
     for( int i = 0, e = (int)m_Tools.size(); i != e; ++i ) {
         const auto &v = m_Tools[i];
@@ -122,6 +126,32 @@ enum class SourceType
         shortcut.label = ComposeExternalToolTitle(*v, i);
         shortcut.is_customized = bool(v->m_Shorcut);
         m_AllNodes.emplace_back( move(shortcut) );
+        counts[v->m_Shorcut]++;
+    }
+    
+    int conflicts_amount = 0;
+    for( auto &v: m_AllNodes ) {
+        if( auto node = any_cast<ActionShortcutNode>(&v) ) {
+            node->is_conflicted = node->current_shortcut &&
+                                    counts[node->current_shortcut] > 1;
+            if( node->is_conflicted )
+                conflicts_amount++;
+        }
+        if( auto node = any_cast<ToolShortcutNode>(&v) ) {
+            node->is_conflicted = node->tool->m_Shorcut &&
+                                    counts[node->tool->m_Shorcut] > 1;
+            if( node->is_conflicted )
+                conflicts_amount++;
+        }
+    }
+    
+    if( conflicts_amount ) {
+        auto fmt = NSLocalizedString(@"Conflicts (%@)", "");
+        self.sourceConflictsButton.title = [NSString stringWithFormat:fmt,
+                                            [NSNumber numberWithInt:conflicts_amount]];
+    }
+    else {
+        self.sourceConflictsButton.title = self.sourceConflictsButton.alternateTitle;
     }
 }
 
@@ -143,6 +173,14 @@ enum class SourceType
     }
     if( m_SourceType == SourceType::Conflicts ) {
         m_SourceNodes.clear();
+        for( auto &v: m_AllNodes ) {
+            if( auto node = any_cast<ActionShortcutNode>(&v) )
+                if( node->is_conflicted )
+                    m_SourceNodes.emplace_back(v);
+            if( auto node = any_cast<ToolShortcutNode>(&v) )
+                if( node->is_conflicted )
+                    m_SourceNodes.emplace_back(v);
+        }
     }
 }
 
@@ -215,6 +253,13 @@ static NSTextField *SpawnLabelForTool( const ToolShortcutNode &_node )
     return text_field;
 }
 
+static NSImageView *SpawnCautionSign()
+{
+    auto iv = [[NSImageView alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+    iv.image = [NSImage imageNamed:@"AlertCaution"];
+    return iv;
+}
+
 - (NSView *)tableView:(NSTableView *)tableView
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
@@ -241,7 +286,9 @@ static NSTextField *SpawnLabelForTool( const ToolShortcutNode &_node )
                     field_cell.font = [NSFont boldSystemFontOfSize:field_cell.font.pointSize];
                 
                 return key_text_field;
-            
+            }
+            if( [tableColumn.identifier isEqualToString:@"flag"] ) {
+                return node->is_conflicted ? SpawnCautionSign() : nil;
             }
         }
         if( auto node = any_cast<ToolShortcutNode>(&m_FilteredNodes[row]) ) {
@@ -265,8 +312,10 @@ static NSTextField *SpawnLabelForTool( const ToolShortcutNode &_node )
                 
                 return key_text_field;
             }
+            if( [tableColumn.identifier isEqualToString:@"flag"] ) {
+                return node->is_conflicted ? SpawnCautionSign() : nil;
+            }
         }
-
     }
     return nil;
 }
@@ -412,7 +461,6 @@ static bool ValidateNodeForFilter( const any& _node, NSString *_filter )
         self.sourceAllButton.state = NSOffState;
         self.sourceCustomizedButton.state = NSOffState;
     }
-    
     self.sourceType = required;
 }
 
@@ -428,7 +476,6 @@ static bool ValidateNodeForFilter( const any& _node, NSString *_filter )
 }
 
 @end
-
 
 static NSString *LabelTitleForAction( const string &_action, NSMenuItem *_item_for_tag )
 {

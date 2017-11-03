@@ -24,3 +24,9 @@ struct ActionShortcut
     uint16_t                    unicode;
     NSEventModifierFlagsHolder  modifiers;
 };
+
+template<>
+struct std::hash<ActionShortcut>
+{
+    size_t operator()(const ActionShortcut&) const noexcept;
+};

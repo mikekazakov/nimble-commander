@@ -210,7 +210,7 @@ unique_ptr<CURLInstance> FTPHost::SpawnCURL()
 
 int FTPHost::Stat(const char *_path,
                   VFSStat &_st,
-                  int _flags,
+                  unsigned long _flags,
                   const VFSCancelChecker &_cancel_checker)
 {
     if(_path == nullptr || _path[0] != '/' )
@@ -278,7 +278,7 @@ int FTPHost::Stat(const char *_path,
 
 int FTPHost::FetchDirectoryListing(const char *_path,
                                    shared_ptr<VFSListing> &_target,
-                                   int _flags,
+                                   unsigned long _flags,
                                    const VFSCancelChecker &_cancel_checker)
 {
     if( _flags & VFSFlags::F_ForceRefresh )

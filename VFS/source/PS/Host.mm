@@ -464,7 +464,7 @@ string PSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _dat
 
 int PSHost::FetchDirectoryListing(const char *_path,
                                      shared_ptr<VFSListing> &_target,
-                                     int _flags,
+                                     unsigned long _flags,
                                      const VFSCancelChecker &_cancel_checker)
 {
     EnsureUpdateRunning();
@@ -500,7 +500,7 @@ int PSHost::FetchDirectoryListing(const char *_path,
 }
 
 bool PSHost::IsDirectory(const char *_path,
-                            int _flags,
+                            unsigned long _flags,
                             const VFSCancelChecker &_cancel_checker)
 {
     if(_path == 0 ||
@@ -530,7 +530,7 @@ int PSHost::CreateFile(const char* _path,
     return VFSError::Ok;
 }
 
-int PSHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int PSHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     static VFSStat::meaningT m;
     static once_flag once;

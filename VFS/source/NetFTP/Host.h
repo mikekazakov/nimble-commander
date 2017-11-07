@@ -29,14 +29,14 @@ public:
     // core VFSHost methods
     virtual int FetchDirectoryListing(const char *_path,
                                      shared_ptr<VFSListing> &_target,
-                                     int _flags,
+                                     unsigned long _flags,
                                      const VFSCancelChecker &_cancel_checker) override;
     
     virtual int IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler) override;
     
     virtual int Stat(const char *_path,
                      VFSStat &_st,
-                     int _flags,
+                     unsigned long _flags,
                      const VFSCancelChecker &_cancel_checker) override;
     
     virtual int StatFS(const char *_path,

@@ -139,7 +139,7 @@ int Host::CreateFile(const char* _path,
 }
 
 bool Host::IsDirectory(const char *_path,
-                       int _flags,
+                       unsigned long _flags,
                        const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
@@ -150,7 +150,7 @@ bool Host::IsDirectory(const char *_path,
 }
 
 bool Host::IsSymlink(const char *_path,
-                     int _flags,
+                     unsigned long _flags,
                      const VFSCancelChecker &_cancel_checker)
 {
     VFSStat st;
@@ -162,7 +162,7 @@ bool Host::IsSymlink(const char *_path,
 
 bool Host::FindLastValidItem(const char *_orig_path,
                              char *_valid_path,
-                             int _flags,
+                             unsigned long _flags,
                              const VFSCancelChecker &_cancel_checker)
 {
     // TODO: maybe it's better to go left-to-right than right-to-left
@@ -241,7 +241,7 @@ void Host::StopDirChangeObserving(unsigned long _ticket)
 {
 }
 
-int Host::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int Host::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -362,7 +362,7 @@ bool Host::ValidateFilename(const char *_filename) const
 
 int Host::FetchDirectoryListing(const char *_path,
                                 shared_ptr<Listing> &_target,
-                                int _flags,
+                                unsigned long _flags,
                                 const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
@@ -370,7 +370,7 @@ int Host::FetchDirectoryListing(const char *_path,
 
 int Host::FetchSingleItemListing(const char *_path,
                                  shared_ptr<Listing> &_target,
-                                 int _flags,
+                                 unsigned long _flags,
                                  const VFSCancelChecker &_cancel_checker)
 {
     // as we came here - there's no special implementation in derived class,
@@ -452,7 +452,7 @@ int Host::FetchSingleItemListing(const char *_path,
 
 int Host::FetchFlexibleListingItems(const string& _directory_path,
                                     const vector<string> &_filenames,
-                                    int _flags,
+                                    unsigned long _flags,
                                     vector<VFSListingItem> &_result,
                                     const VFSCancelChecker &_cancel_checker)
 {

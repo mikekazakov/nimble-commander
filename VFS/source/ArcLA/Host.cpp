@@ -467,7 +467,7 @@ int ArchiveHost::CreateFile(const char* _path,
 
 int ArchiveHost::FetchDirectoryListing(const char *_path,
                                           shared_ptr<VFSListing> &_target,
-                                          int _flags,
+                                          unsigned long _flags,
                                           const VFSCancelChecker &_cancel_checker)
 {
     char path[MAXPATHLEN*2];
@@ -545,7 +545,7 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
 }
 
 bool ArchiveHost::IsDirectory(const char *_path,
-                                 int _flags,
+                                 unsigned long _flags,
                                  const VFSCancelChecker &_cancel_checker)
 {
     if(!_path) return false;
@@ -555,7 +555,7 @@ bool ArchiveHost::IsDirectory(const char *_path,
     return Host::IsDirectory(_path, _flags, _cancel_checker);
 }
 
-int ArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int ArchiveHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( !_path )
         return VFSError::InvalidCall;
@@ -581,7 +581,7 @@ int ArchiveHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCanc
     return VFSError::NotFound;
 }
 
-int ArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path, int _flags)
+int ArchiveHost::ResolvePathIfNeeded(const char *_path, char *_resolved_path, unsigned long _flags)
 {
     if(!_path || !_resolved_path)
         return VFSError::InvalidCall;

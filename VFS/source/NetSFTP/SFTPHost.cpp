@@ -380,7 +380,7 @@ in_addr_t SFTPHost::InetAddr() const
 
 int SFTPHost::FetchDirectoryListing(const char *_path,
                                           shared_ptr<VFSListing> &_target,
-                                          int _flags,
+                                          unsigned long _flags,
                                           const VFSCancelChecker &_cancel_checker)
 {
     unique_ptr<Connection> conn;
@@ -477,7 +477,7 @@ int SFTPHost::FetchDirectoryListing(const char *_path,
 
 int SFTPHost::Stat(const char *_path,
                          VFSStat &_st,
-                         int _flags,
+                         unsigned long _flags,
                          const VFSCancelChecker &_cancel_checker)
 {
     unique_ptr<Connection> conn;

@@ -136,7 +136,7 @@ public:
      */
     virtual int Stat(const char *_path,
                      VFSStat &_st,
-                     int _flags,
+                     unsigned long _flags,
                      const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
@@ -152,7 +152,7 @@ public:
      * On any errors returns false.
      */
     virtual bool IsDirectory(const char *_path,
-                             int _flags,
+                             unsigned long _flags,
                              const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
@@ -160,7 +160,7 @@ public:
      * On any errors returns false.
      */
     virtual bool IsSymlink(const char *_path,
-                           int _flags,
+                           unsigned long _flags,
                            const VFSCancelChecker &_cancel_checker = nullptr);
     
     /** Return zero upon succes, negative value on error. */
@@ -195,7 +195,7 @@ public:
     
     virtual bool FindLastValidItem(const char *_orig_path,
                                    char *_valid_path,
-                                   int _flags,
+                                   unsigned long _flags,
                                    const VFSCancelChecker &_cancel_checker = nullptr);
 
     virtual int FetchUsers(vector<VFSUser> &_target,
@@ -213,7 +213,7 @@ public:
      */
     virtual int FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> &_target,
-                                      int _flags,
+                                      unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
@@ -223,7 +223,7 @@ public:
      */
     virtual int FetchSingleItemListing(const char *_path_to_item,
                                        shared_ptr<VFSListing> &_target,
-                                       int _flags,
+                                       unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker = nullptr);
 
     /**
@@ -236,7 +236,7 @@ public:
     
     int FetchFlexibleListingItems(const string& _directory_path,
                                   const vector<string> &_filenames,
-                                  int _flags,
+                                  unsigned long _flags,
                                   vector<VFSListingItem> &_result,
                                   const VFSCancelChecker &_cancel_checker);
 

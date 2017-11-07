@@ -61,6 +61,6 @@ private:
 
     shared_ptr<VFSFile> m_File;
     unique_ptr<uint8_t[]> m_Window;
-    size_t m_WindowSize = -1;
-    size_t m_WindowPos = -1;
+    size_t m_WindowSize = numeric_limits<size_t>::max();
+    size_t m_WindowPos = numeric_limits<size_t>::max();
 };

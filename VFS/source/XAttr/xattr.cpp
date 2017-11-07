@@ -188,7 +188,7 @@ int XAttrHost::Fetch()
 
 int XAttrHost::FetchDirectoryListing(const char *_path,
                                         shared_ptr<VFSListing> &_target,
-                                        int _flags,
+                                        unsigned long _flags,
                                         const VFSCancelChecker &_cancel_checker)
 {
     if( !_path || _path != string_view("/") )
@@ -230,7 +230,7 @@ int XAttrHost::FetchDirectoryListing(const char *_path,
     return VFSError::Ok;
 }
 
-int XAttrHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int XAttrHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     if( !is_absolute_path(_path) )
         return VFSError::NotFound;

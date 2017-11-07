@@ -282,7 +282,7 @@ Directory *UnRARHost::FindOrBuildDirectory(const string& _path_with_tr_sl)
 
 int UnRARHost::FetchDirectoryListing(const char *_path,
                                      shared_ptr<VFSListing> &_target,
-                                     int _flags,
+                                     unsigned long _flags,
                                      const VFSCancelChecker &_cancel_checker)
 {
     auto dir = FindDirectory(_path);
@@ -363,7 +363,7 @@ const Directory *UnRARHost::FindDirectory(const string& _path) const
     return &i->second;
 }
 
-int UnRARHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int UnRARHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     static VFSStat::meaningT m;
     static once_flag once;

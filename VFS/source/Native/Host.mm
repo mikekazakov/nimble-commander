@@ -73,7 +73,7 @@ bool NativeHost::ShouldProduceThumbnails() const
 
 int NativeHost::FetchDirectoryListing(const char *_path,
                                          shared_ptr<VFSListing> &_target,
-                                         int _flags,
+                                         unsigned long _flags,
                                          const VFSCancelChecker &_cancel_checker)
 {
     if( !_path || _path[0] != '/' )
@@ -232,7 +232,7 @@ int NativeHost::FetchDirectoryListing(const char *_path,
 
 int NativeHost::FetchSingleItemListing(const char *_path,
                                           shared_ptr<VFSListing> &_target,
-                                          int _flags,
+                                          unsigned long _flags,
                                           const VFSCancelChecker &_cancel_checker)
 {
     if( !_path || _path[0] != '/' )
@@ -464,7 +464,7 @@ void NativeHost::StopDirChangeObserving(unsigned long _ticket)
     FSEventsDirUpdate::Instance().RemoveWatchPathWithTicket(_ticket);
 }
 
-int NativeHost::Stat(const char *_path, VFSStat &_st, int _flags, const VFSCancelChecker &_cancel_checker)
+int NativeHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
     memset(&_st, 0, sizeof(_st));

@@ -5,44 +5,42 @@
 
 namespace VFSFlags
 {
-    enum {
+    constexpr unsigned long None                = 0x00000000;
     
     //  VFSFile opening-time flags
-    OF_IXOth    = 0x00000001, // = S_IXOTH
-    OF_IWOth    = 0x00000002, // = S_IWOTH
-    OF_IROth    = 0x00000004, // = S_IROTH
-    OF_IXGrp    = 0x00000008, // = S_IXGRP
-    OF_IWGrp    = 0x00000010, // = S_IWGRP
-    OF_IRGrp    = 0x00000020, // = S_IRGRP
-    OF_IXUsr    = 0x00000040, // = S_IXUSR
-    OF_IWUsr    = 0x00000080, // = S_IWUSR
-    OF_IRUsr    = 0x00000100, // = S_IRUSR
-    OF_Read     = 0x00010000,
-    OF_Write    = 0x00020000,
-    OF_Create   = 0x00040000,
-    OF_NoExist  = 0x00080000, // POSIX O_EXCL actcually, for clarity
-    OF_ShLock   = 0x00100000, // not yet implemented
-    OF_ExLock   = 0x00200000, // not yet implemented
-    OF_NoCache  = 0x00400000, // turns off caching if supported
-    OF_Append   = 0x00800000, // appends file on writing
-    OF_Truncate = 0x01000000, // truncates files upon opening
-    OF_Directory= 0x02000000, // opens directory for xattr reading
+    constexpr unsigned long OF_IXOth            = 0x00000001; // = S_IXOTH
+    constexpr unsigned long OF_IWOth            = 0x00000002; // = S_IWOTH
+    constexpr unsigned long OF_IROth            = 0x00000004; // = S_IROTH
+    constexpr unsigned long OF_IXGrp            = 0x00000008; // = S_IXGRP
+    constexpr unsigned long OF_IWGrp            = 0x00000010; // = S_IWGRP
+    constexpr unsigned long OF_IRGrp            = 0x00000020; // = S_IRGRP
+    constexpr unsigned long OF_IXUsr            = 0x00000040; // = S_IXUSR
+    constexpr unsigned long OF_IWUsr            = 0x00000080; // = S_IWUSR
+    constexpr unsigned long OF_IRUsr            = 0x00000100; // = S_IRUSR
+    constexpr unsigned long OF_Read             = 0x00010000;
+    constexpr unsigned long OF_Write            = 0x00020000;
+    constexpr unsigned long OF_Create           = 0x00040000;
+    constexpr unsigned long OF_NoExist          = 0x00080000; // POSIX O_EXCL actcually, for clarity
+    constexpr unsigned long OF_ShLock           = 0x00100000; // not yet implemented
+    constexpr unsigned long OF_ExLock           = 0x00200000; // not yet implemented
+    constexpr unsigned long OF_NoCache          = 0x00400000; // turns off caching if supported
+    constexpr unsigned long OF_Append           = 0x00800000; // appends file on writing
+    constexpr unsigned long OF_Truncate         = 0x01000000; // truncates files upon opening
+    constexpr unsigned long OF_Directory        = 0x02000000; // opens directory for xattr reading
         
     // Flags altering host behaviour
     /** do not follow symlinks when resolving item name */
-    F_NoFollow          = 0x10000000,
+    constexpr unsigned long F_NoFollow          = 0x10000000;
         
     // Flags altering listing building
     /** for listing. don't fetch dot-dot entry in directory listing */
-    F_NoDotDot          = 0x20000000,
+    constexpr unsigned long F_NoDotDot          = 0x20000000;
     
     /** for listing. ask system to provide localized display names */
-    F_LoadDisplayNames  = 0x40000000,
+    constexpr unsigned long F_LoadDisplayNames  = 0x40000000;
     
     /** discard caches when fetching information. */
-    F_ForceRefresh      = 0x80000000,
-        
-    };
+    constexpr unsigned long F_ForceRefresh      = 0x80000000;
 };
 
 struct VFSStatFS
@@ -132,8 +130,8 @@ struct VFSStat
     static void FromSysStat(const struct stat &_from, VFSStat &_to);
     static void ToSysStat(const VFSStat &_from, struct stat &_to);
     struct stat SysStat() const noexcept;
-    inline static meaningT AllMeaning() { const uint64_t t = ~0; return *(meaningT*)&t; }
-    inline static meaningT NoMeaning() { const uint64_t t = 0; return *(meaningT*)&t; }
+    inline static meaningT AllMeaning() { const uint64_t t = ~0ull; return *(meaningT*)&t; }
+    inline static meaningT NoMeaning() { const uint64_t t = 0ull; return *(meaningT*)&t; }
 };
 
 class VFSErrorException : public exception

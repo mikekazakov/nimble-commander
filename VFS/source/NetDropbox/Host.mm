@@ -203,7 +203,7 @@ int DropboxHost::StatFS(const char *_path,
 
 int DropboxHost::Stat(const char *_path,
                             VFSStat &_st,
-                            int _flags,
+                            unsigned long _flags,
                             const VFSCancelChecker &_cancel_checker)
 {
     WarnAboutUsingInMainThread();
@@ -307,7 +307,7 @@ int DropboxHost::IterateDirectoryListing(const char *_path,
 
 int DropboxHost::FetchDirectoryListing(const char *_path,
                                              shared_ptr<VFSListing> &_target,
-                                             int _flags,
+                                             unsigned long _flags,
                                              const VFSCancelChecker &_cancel_checker)
 { // TODO: process ListFolderResult.has_more
     WarnAboutUsingInMainThread();

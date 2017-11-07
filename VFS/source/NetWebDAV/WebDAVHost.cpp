@@ -93,7 +93,7 @@ bool WebDAVHost::IsWritable() const
 
 int WebDAVHost::FetchDirectoryListing(const char *_path,
                                       shared_ptr<VFSListing> &_target,
-                                      int _flags,
+                                      unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
@@ -197,7 +197,7 @@ int WebDAVHost::IterateDirectoryListing(const char *_path,
 
 int WebDAVHost::Stat(const char *_path,
                      VFSStat &_st,
-                     int _flags,
+                     unsigned long _flags,
                      const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )

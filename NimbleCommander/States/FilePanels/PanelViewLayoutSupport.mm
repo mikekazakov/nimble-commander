@@ -163,17 +163,17 @@ static optional<PanelViewLayout> LoadLayout( const GenericConfig::ConfigValue& _
         if( o.HasMember(g_BriefModeKey) && o[g_BriefModeKey].IsNumber() )
             brief.mode = (PanelBriefViewColumnsLayout::Mode)o[g_BriefModeKey].GetInt();
         if( o.HasMember(g_BriefFixedModeWidthKey) && o[g_BriefFixedModeWidthKey].IsNumber())
-            brief.fixed_mode_width = o[g_BriefFixedModeWidthKey].GetInt();
+            brief.fixed_mode_width = (short)o[g_BriefFixedModeWidthKey].GetInt();
         if( o.HasMember(g_BriefFixedAmountValueKey) && o[g_BriefFixedAmountValueKey].IsNumber())
-            brief.fixed_amount_value = o[g_BriefFixedAmountValueKey].GetInt();
+            brief.fixed_amount_value = (short)o[g_BriefFixedAmountValueKey].GetInt();
         if( o.HasMember(g_BriefDynamicWidthMinKey) && o[g_BriefDynamicWidthMinKey].IsNumber())
-            brief.dynamic_width_min = o[g_BriefDynamicWidthMinKey].GetInt();
+            brief.dynamic_width_min = (short)o[g_BriefDynamicWidthMinKey].GetInt();
         if( o.HasMember(g_BriefDynamicWidthMaxKey) && o[g_BriefDynamicWidthMaxKey].IsNumber())
-            brief.dynamic_width_max = o[g_BriefDynamicWidthMaxKey].GetInt();
+            brief.dynamic_width_max = (short)o[g_BriefDynamicWidthMaxKey].GetInt();
         if( o.HasMember(g_BriefDynamicWidthEqualKey) && o[g_BriefDynamicWidthEqualKey].IsBool())
             brief.dynamic_width_equal = o[g_BriefDynamicWidthEqualKey].GetBool();
         if( o.HasMember(g_BriefIconScale) && o[g_BriefIconScale].IsInt())
-            brief.icon_scale = o[g_BriefIconScale].GetInt();
+            brief.icon_scale = (uint8_t)o[g_BriefIconScale].GetInt();
         l.layout = brief;
     }
     else if( _from.HasMember(g_ListKey) && _from[g_ListKey].IsObject() ) {
@@ -188,15 +188,15 @@ static optional<PanelViewLayout> LoadLayout( const GenericConfig::ConfigValue& _
             if( i->HasMember(g_ListColumKind) && (*i)[g_ListColumKind].IsNumber() )
                 col.kind = (PanelListViewColumns)(*i)[g_ListColumKind].GetInt();
             if( i->HasMember(g_ListColumWidth) && (*i)[g_ListColumWidth].IsNumber() )
-                col.width = (*i)[g_ListColumWidth].GetInt();
+                col.width = (short)(*i)[g_ListColumWidth].GetInt();
             if( i->HasMember(g_ListColumMinWidth) && (*i)[g_ListColumMinWidth].IsNumber() )
-                col.min_width = (*i)[g_ListColumMinWidth].GetInt();
+                col.min_width = (short)(*i)[g_ListColumMinWidth].GetInt();
             if( i->HasMember(g_ListColumMaxWidth) && (*i)[g_ListColumMaxWidth].IsNumber() )
-                col.max_width = (*i)[g_ListColumMaxWidth].GetInt();
+                col.max_width = (short)(*i)[g_ListColumMaxWidth].GetInt();
             list.columns.emplace_back(col);
         }
         if( o.HasMember(g_ListIconScale) && o[g_ListIconScale].IsInt())
-            list.icon_scale = o[g_ListIconScale].GetInt();
+            list.icon_scale = (uint8_t)o[g_ListIconScale].GetInt();
         l.layout = list;
     }
     else if( _from.HasMember(g_DisabledKey) )

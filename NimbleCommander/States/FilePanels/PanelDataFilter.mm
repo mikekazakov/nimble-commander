@@ -83,8 +83,8 @@ bool TextualFilter::IsValidItem(const VFSListingItem& _item,
         if( result.length == 0 )
             return false;
 
-        _found_range.first = result.location;
-        _found_range.second = result.location + result.length;
+        _found_range.first = (short)result.location;
+        _found_range.second = short(result.location + result.length);
         
         return true;
     }
@@ -95,8 +95,8 @@ bool TextualFilter::IsValidItem(const VFSListingItem& _item,
         if( result.length == 0 )
             return false;
         
-        _found_range.first = result.location;
-        _found_range.second = result.location + result.length;
+        _found_range.first = short(result.location);
+        _found_range.second = short(result.location + result.length);
         
         return true;
     }
@@ -105,8 +105,8 @@ bool TextualFilter::IsValidItem(const VFSListingItem& _item,
             NSRange result = [name rangeOfString:text
                                          options:NSCaseInsensitiveSearch|NSAnchoredSearch];
             if( result.length != 0  ) {
-                _found_range.first = result.location;
-                _found_range.second = result.location + result.length;
+                _found_range.first = short(result.location);
+                _found_range.second = short(result.location + result.length);
                 return true;
             }
         }
@@ -120,8 +120,8 @@ bool TextualFilter::IsValidItem(const VFSListingItem& _item,
                                      options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch
                                        range:NSMakeRange(dotrange.location - textlen, textlen)];
                 if( result.length != 0 ) {
-                    _found_range.first = result.location;
-                    _found_range.second = result.location + result.length;
+                    _found_range.first = short(result.location);
+                    _found_range.second = short(result.location + result.length);
                     return true;
                 }
             }
@@ -131,8 +131,8 @@ bool TextualFilter::IsValidItem(const VFSListingItem& _item,
         NSRange result = [name rangeOfString:text
                                      options:NSCaseInsensitiveSearch|NSAnchoredSearch|NSBackwardsSearch];
         if( result.length != 0 ) {
-            _found_range.first = result.location;
-            _found_range.second = result.location + result.length;
+            _found_range.first = short(result.location);
+            _found_range.second = short(result.location + result.length);
             return true;
         }
         else

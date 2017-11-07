@@ -96,7 +96,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     const int origin = g.IconSize() ?
         2 * g.LeftInset() + g.IconSize() :
         g.LeftInset();
-    const int width = bounds.size.width - origin - g.RightInset();
+    const auto width = bounds.size.width - origin - g.RightInset();
 
     return NSMakeRect(origin, 0, width, bounds.size.height);
 }
@@ -164,7 +164,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     
     auto vd = row_view.vd;
     if( vd.qs_highlight_begin != vd.qs_highlight_end ) {
-        const short fn_len = m_Filename.length;
+        const short fn_len = (short)m_Filename.length;
         if( vd.qs_highlight_begin < fn_len && vd.qs_highlight_end <= fn_len ) {
             const auto range = NSMakeRange(vd.qs_highlight_begin,
                                            vd.qs_highlight_end - vd.qs_highlight_begin);

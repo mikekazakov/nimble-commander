@@ -479,7 +479,7 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
         if( c.second ) {
             l.columns.emplace_back( c.first );
         }
-    l.icon_scale = [&]{
+    l.icon_scale = [&]() -> uint8_t {
         if( self.layoutsListIcon2x.state ) return 2;
         if( self.layoutsListIcon1x.state ) return 1;
         return 0;
@@ -499,22 +499,22 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
     if( self.layoutsBriefDynamicRadioChoosen )
         l.mode = PanelBriefViewColumnsLayout::Mode::DynamicWidth;
 
-    l.fixed_mode_width =  self.layoutsBriefFixedValueTextField.intValue;
+    l.fixed_mode_width =  (short)self.layoutsBriefFixedValueTextField.intValue;
     if( l.fixed_mode_width < 40 )
         l.fixed_mode_width = 40;
-    l.fixed_amount_value = self.layoutsBriefAmountValueTextField.intValue;
+    l.fixed_amount_value = (short)self.layoutsBriefAmountValueTextField.intValue;
     if( l.fixed_amount_value < 1 )
         l.fixed_amount_value = 1;
-    l.dynamic_width_min = self.layoutsBriefDynamicMinValueTextField.intValue;
+    l.dynamic_width_min = (short)self.layoutsBriefDynamicMinValueTextField.intValue;
     if( l.dynamic_width_min < 40 )
         l.dynamic_width_min = 40;
-    l.dynamic_width_max = self.layoutsBriefDynamicMaxValueTextField.intValue;
+    l.dynamic_width_max = (short)self.layoutsBriefDynamicMaxValueTextField.intValue;
     if( l.dynamic_width_max < 40 )
         l.dynamic_width_max = 40;
     if( l.dynamic_width_max < l.dynamic_width_min )
         l.dynamic_width_max = l.dynamic_width_min;
     l.dynamic_width_equal = self.layoutsBriefDynamicEqualCheckbox.state;
-    l.icon_scale = [&]{
+    l.icon_scale = [&]() -> uint8_t {
         if( self.layoutsBriefIcon2x.state ) return 2;
         if( self.layoutsBriefIcon1x.state ) return 1;
         return 0;

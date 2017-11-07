@@ -191,7 +191,7 @@ shared_ptr<const rapidjson::StandaloneValue> ThemesManager::
     if( i != end(m_DefaultThemes) )
         return i->second;
     
-    assert( !"default config is corrupted, there's no Modern theme" );
+    assert( "default config is corrupted, there's no Modern theme" == nullptr );
 }
 
 static uint64_t NotificationMaskForKey( const string &_key )

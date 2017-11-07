@@ -119,7 +119,7 @@ static NSView *MakeUnregBadge( NSSize _title_size )
     v.layer.backgroundColor = [NSColor colorWithRed:0.96 green:0.20 blue:0.18 alpha:1.].CGColor;
     v.layer.cornerRadius = rc.size.height / 2;
     v.layer.opaque = false;
-    v.layer.opacity = 0.9;
+    v.layer.opacity = 0.9f;
     return v;
 }
 

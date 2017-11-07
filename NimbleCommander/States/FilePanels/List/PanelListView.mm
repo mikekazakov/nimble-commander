@@ -261,12 +261,18 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 - (void)widthDidChangeForColumn:(NSTableColumn*)_column
 {
     using df = PanelListViewDateFormatting;
-    if( _column == m_DateCreatedColumn )
-        self.dateCreatedFormattingStyle = df::SuitableStyleForWidth( m_DateCreatedColumn.width, self.font );
-    if( _column == m_DateAddedColumn )
-        self.dateAddedFormattingStyle = df::SuitableStyleForWidth( m_DateAddedColumn.width, self.font );
-    if( _column == m_DateModifiedColumn )
-        self.dateModifiedFormattingStyle = df::SuitableStyleForWidth( m_DateModifiedColumn.width, self.font );
+    if( _column == m_DateCreatedColumn ) {
+        const auto style = df::SuitableStyleForWidth( (int)m_DateCreatedColumn.width, self.font );
+        self.dateCreatedFormattingStyle = style;
+    }
+    if( _column == m_DateAddedColumn ) {
+        const auto style = df::SuitableStyleForWidth( (int)m_DateAddedColumn.width, self.font );
+        self.dateAddedFormattingStyle = style;
+    }
+    if( _column == m_DateModifiedColumn ) {
+        const auto style = df::SuitableStyleForWidth( (int)m_DateModifiedColumn.width, self.font );
+        self.dateModifiedFormattingStyle = style;
+    }
     [self notifyLastColumnToRedraw];
 }
 
@@ -320,7 +326,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     if( const auto row_view = objc_cast<PanelListViewRowView>(abstract_row_view) ) {
         if( const auto vfs_item = row_view.item ) {
             const auto identifier = tableColumn.identifier;
-            const auto kind = IdentifierToKind( [identifier characterAtIndex:0] );
+            const auto kind = IdentifierToKind( (uint8_t)[identifier characterAtIndex:0] );
             if( kind == PanelListViewColumns::Filename ) {
                 auto nv = RetrieveOrSpawnView<PanelListViewNameView>(tableView, identifier);
                 if( m_Data->IsValidSortPosition((int)row) ) {
@@ -496,7 +502,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (int)itemsInColumn
 {
-    return m_ScrollView.contentView.bounds.size.height / m_Geometry.LineHeight();
+    return int(m_ScrollView.contentView.bounds.size.height / m_Geometry.LineHeight());
 }
 
 - (int) maxNumberOfVisibleItems
@@ -619,7 +625,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     for( NSTableColumn *tc in m_TableView.tableColumns) {
         PanelListViewColumnsLayout::Column c;
         c.kind = [self typeByColumn:tc];
-        c.width = tc.width;
+        c.width = short(tc.width);
         l.columns.emplace_back( c );
     }
     return l;
@@ -812,7 +818,7 @@ shouldReorderColumn:(NSInteger)columnIndex
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
     if( menuItem.action == @selector(onToggleColumnVisibilty:) ) {
-        const auto kind = IdentifierToKind( [menuItem.identifier characterAtIndex:0] );
+        const auto kind = IdentifierToKind( (uint8_t)[menuItem.identifier characterAtIndex:0] );
         const auto column = [self columnByType:kind];
         menuItem.state = column && [m_TableView.tableColumns containsObject:column];
     }
@@ -822,7 +828,7 @@ shouldReorderColumn:(NSInteger)columnIndex
 - (IBAction)onToggleColumnVisibilty:(id)sender
 {
     if( auto menu_item = objc_cast<NSMenuItem>(sender) ) {
-        const auto kind = IdentifierToKind( [menu_item.identifier characterAtIndex:0] );
+        const auto kind = IdentifierToKind( (uint8_t)[menu_item.identifier characterAtIndex:0] );
         
         if( kind == PanelListViewColumns::Empty )
             return;

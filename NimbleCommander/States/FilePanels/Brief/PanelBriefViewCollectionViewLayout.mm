@@ -51,9 +51,9 @@
         
         const NSRect orig_frame = i.frame;
         if( columns[col].width < orig_frame.size.width )
-            columns[col].width = orig_frame.size.width;
+            columns[col].width = int(orig_frame.size.width);
         if( columns[col].origin > orig_frame.origin.x )
-            columns[col].origin = orig_frame.origin.x;
+            columns[col].origin = int(orig_frame.origin.x);
     }
     
     for( NSCollectionViewLayoutAttributes *i in attrs ) {

@@ -114,7 +114,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     const int origin = m_LayoutConstants.icon_size ?
         2 * m_LayoutConstants.inset_left + m_LayoutConstants.icon_size :
         m_LayoutConstants.inset_left;
-    const int width = bounds.size.width - origin - m_LayoutConstants.inset_right;
+    const auto width = bounds.size.width - origin - m_LayoutConstants.inset_right;
 
     return NSMakeRect(origin, 0, width, bounds.size.height);
 }

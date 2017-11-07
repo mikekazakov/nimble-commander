@@ -25,7 +25,7 @@
     NSPoint mouseLocation = self.window.mouseLocationOutsideOfEventStream;
     mouseLocation = [self convertPoint:mouseLocation fromView: nil];
     
-    float f = mouseLocation.x / self.bounds.size.width;
+    auto f = mouseLocation.x / self.bounds.size.width;
     int n = (int)floor( f * self.maxValue );
     self.integerValue = n+1;
 }

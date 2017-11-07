@@ -33,7 +33,8 @@ static NSString *SortLetter(data::SortMode _mode)
 
 static float Brightness( NSColor *_color )
 {
-    return [_color colorUsingColorSpace:NSColorSpace.genericRGBColorSpace].brightnessComponent;
+    const auto c = [_color colorUsingColorSpace:NSColorSpace.genericRGBColorSpace];
+    return (float)c.brightnessComponent;
 }
 
 static bool IsDark( NSColor *_color )

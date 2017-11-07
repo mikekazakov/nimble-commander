@@ -206,14 +206,14 @@ static const CGFloat RHPreferencesWindowControllerResizeAnimationDurationPer100P
         }   
                 
         //resize to Preferred window size for given view (duration is determined by difference between current and new sizes)
-        float hDifference = fabs(new.view.bounds.size.height - old.view.bounds.size.height);
-        float wDifference = fabs(new.view.bounds.size.width - old.view.bounds.size.width);
+        float hDifference = (float)fabs(new.view.bounds.size.height - old.view.bounds.size.height);
+        float wDifference = (float)fabs(new.view.bounds.size.width - old.view.bounds.size.width);
         float difference = MAX(hDifference, wDifference);
-        float duration = MAX(RHPreferencesWindowControllerResizeAnimationDurationPer100Pixels * ( difference / 100), 0.10); // we always want a slight animation        
+        float duration = (float)MAX(RHPreferencesWindowControllerResizeAnimationDurationPer100Pixels * ( difference / 100), 0.10); // we always want a slight animation
         [self resizeWindowForContentSize:new.view.bounds.size duration:duration];
 
         double delayInSeconds = duration + 0.02; // +.02 to give time for resize to finish before appearing
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, delayInSeconds * NSEC_PER_SEC);
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
         dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
 
             //make sure our "new" vc is still the selected vc before we add it as a subview, otherwise it's possible we could add more than one vc to the window. (the user has likely clicked to another tab during resizing.)

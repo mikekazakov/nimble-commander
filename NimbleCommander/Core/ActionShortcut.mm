@@ -40,7 +40,7 @@ ActionShortcut::ActionShortcut(const char* _from): // construct from persistency
             else if( v == u"\\t" )
                 unicode = '\t';
             else
-                unicode = towlower( v.front() );
+                unicode = (uint16_t)towlower( v.front() );
             break;
         }
         v.remove_prefix(1);

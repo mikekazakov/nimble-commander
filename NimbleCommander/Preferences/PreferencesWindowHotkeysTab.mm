@@ -322,8 +322,8 @@ static NSImageView *SpawnCautionSign()
 
 - (ActionShortcut) shortcutFromGTMHotKey:(GTMHotKey *)_key
 {
-    auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : 0;
-    auto hk = ActionsShortcutsManager::ShortCut(key, _key.modifiers);
+    const auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : (uint16_t)0;
+    const auto hk = ActionsShortcutsManager::ShortCut(key, _key.modifiers);
     return hk;
 }
 

@@ -182,7 +182,7 @@ FavoriteLocationsStorage::FrecentlyUsed( int _amount ) const
         const auto frequency = get<1>(v) / max_visits; // [0..1]
         const auto recency = 1. - float(now - get<2>(v)) / float(g_MaxTimeRange); // [0..1]
         const auto score = frequency + recency; // [0..2]
-        get<3>(v) = score;
+        get<3>(v) = (float)score;
     }
 
     sort( begin(recent_visits), end(recent_visits), [](auto &_1, auto _2){

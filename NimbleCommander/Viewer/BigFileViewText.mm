@@ -313,7 +313,7 @@ CGPoint BigFileViewText::TextAnchor()
 int BigFileViewText::LineIndexFromYPos(double _y)
 {
     CGPoint left_upper = TextAnchor();
-    int y_off = ceil((left_upper.y - _y) / m_FontInfo.LineHeight());
+    int y_off = (int)ceil((left_upper.y - _y) / m_FontInfo.LineHeight());
     int line_no = y_off + m_VerticalOffset;
     return line_no;
 }
@@ -693,7 +693,7 @@ void BigFileViewText::HandleVerticalScroll(double _pos)
     { // we have all file decomposed into strings, so we can do smooth scrolling now
         double full_document_size = double(m_Lines.size()) * m_FontInfo.LineHeight();
         double scroll_y_offset = _pos * (full_document_size - m_FrameSize.height);
-        m_VerticalOffset = floor(scroll_y_offset / m_FontInfo.LineHeight());
+        m_VerticalOffset = (unsigned)floor(scroll_y_offset / m_FontInfo.LineHeight());
         m_SmoothOffset.y = scroll_y_offset - m_VerticalOffset * m_FontInfo.LineHeight();
         [m_View setNeedsDisplay];
     }
@@ -797,7 +797,7 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
 void BigFileViewText::OnFrameChanged()
 {
     NSSize sz = m_View.contentBounds;
-    m_FrameLines = sz.height / m_FontInfo.LineHeight();
+    m_FrameLines = int(sz.height / m_FontInfo.LineHeight());
 
     if(m_FrameSize.width != sz.width)
         BuildLayout();

@@ -94,7 +94,7 @@ using namespace nc::panel;
 
 - (id)initWithFrame:(NSRect)frame
 {
-    assert( !"don't call [PanelView initWithFrame:(NSRect)frame]" );
+    assert( "don't call [PanelView initWithFrame:(NSRect)frame]" == nullptr );
     return nil;
 }
 

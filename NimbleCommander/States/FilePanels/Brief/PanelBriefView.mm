@@ -50,13 +50,13 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
                                                           PanelBriefViewColumnsLayout _layout)
 {
     assert( _font );
-    static const int insets[4] = {7, 1, 5, 1};
+    static const short insets[4] = {7, 1, 5, 1};
 
     // TODO: generic case for custom font (not SF)
 
-    int icon_size = 16;
-    int line_height = 20;
-    int text_baseline = 4;
+    short icon_size = 16;
+    short line_height = 20;
+    short text_baseline = 4;
     const int font_size = (int)floor(_font.pointSize+0.5);
     
     // check predefined values
@@ -73,22 +73,22 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
     else {
         // try to calculate something by ourselves
         auto font_info = FontGeometryInfo( (__bridge CTFontRef)_font );
-        line_height = font_info.LineHeight() + insets[1] + insets[3];
+        line_height = short(font_info.LineHeight()) + insets[1] + insets[3];
         if( _layout.icon_scale == 1 && line_height < 17 )
             line_height = 17;
         else if( _layout.icon_scale == 2 && line_height < 35 )
             line_height = 35;
         
-        text_baseline = insets[1] + font_info.Descent();
+        text_baseline = insets[1] + short(font_info.Descent());
         icon_size = _layout.icon_scale * 16;
     }
     
 
     PanelBriefViewItemLayoutConstants lc;
-    lc.inset_left = insets[0]/*7*/;
-    lc.inset_top = insets[1]/*1*/;
-    lc.inset_right = insets[2]/*5*/;
-    lc.inset_bottom = insets[3]/*1*/;
+    lc.inset_left = (int8_t)insets[0]/*7*/;
+    lc.inset_top = (int8_t)insets[1]/*1*/;
+    lc.inset_right = (int8_t)insets[2]/*5*/;
+    lc.inset_bottom = (int8_t)insets[3]/*1*/;
     lc.icon_size = icon_size/*16*/;
     lc.font_baseline = text_baseline /*4*/;
     lc.item_height = line_height /*20*/;

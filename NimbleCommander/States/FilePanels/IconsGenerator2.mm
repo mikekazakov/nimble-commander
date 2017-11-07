@@ -241,7 +241,7 @@ unsigned short IconsGenerator2::GetSuitablePositionForNewIcon()
             if( !m_Icons[i] ) {
                 m_Icons[i].emplace();
                 --m_IconsHoles;
-                return i;
+                return (unsigned short)i;
             }
         }
         assert( 0 );

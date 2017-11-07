@@ -89,7 +89,7 @@ BigFileViewHex::~BigFileViewHex()
 void BigFileViewHex::GrabFontGeometry()
 {
     m_FontInfo = FontGeometryInfo([m_View TextFont]);
-    m_FrameLines = floor(m_View.contentBounds.height / m_FontInfo.LineHeight() );
+    m_FrameLines = (int)floor(m_View.contentBounds.height / m_FontInfo.LineHeight() );
 }
 
 void BigFileViewHex::OnBufferDecoded()
@@ -267,15 +267,15 @@ int BigFileViewHex::ByteIndexFromHitTest(CGPoint _p)
 {
     CGPoint left_upper = TextAnchor();
     
-    int y_off = ceil((left_upper.y - _p.y) / m_FontInfo.LineHeight());
+    int y_off = (int)ceil((left_upper.y - _p.y) / m_FontInfo.LineHeight());
     int row_no = y_off + m_RowsOffset;
     if(row_no < 0)
         return -1;
     if(row_no >= (int)m_Lines.size())
         return (int)m_Data->RawSize() + 1;
 
-    int x_off = _p.x - (left_upper.x + m_FontInfo.MonospaceWidth() * (g_RowOffsetSymbs + 3));
-    int char_ind = ceil(x_off / m_FontInfo.MonospaceWidth());
+    int x_off = int(_p.x - (left_upper.x + m_FontInfo.MonospaceWidth() * (g_RowOffsetSymbs + 3)));
+    int char_ind = (int)ceil(x_off / m_FontInfo.MonospaceWidth());
     int byte_pos = Hex_ByteFromCharPos(char_ind);
     if(byte_pos < 0) byte_pos = 0;
     return m_Lines[row_no].row_byte_start + byte_pos;
@@ -286,14 +286,14 @@ int BigFileViewHex::CharIndexFromHitTest(CGPoint _p)
 {
     CGPoint left_upper = TextAnchor();
     
-    int y_off = ceil((left_upper.y - _p.y) / m_FontInfo.LineHeight());
+    int y_off = (int)ceil((left_upper.y - _p.y) / m_FontInfo.LineHeight());
     int row_no = y_off + m_RowsOffset;
     if(row_no < 0)
         return -1;
     if(row_no >= (int)m_Lines.size())
         return (int)m_Data->RawSize() + 1; // ???????? here should be m_Data->UniCharSize ?
     
-    int x_off = _p.x - (left_upper.x +
+    int x_off = (int)_p.x - (int)(left_upper.x +
                         m_FontInfo.MonospaceWidth() * (g_RowOffsetSymbs + 3) +
                         m_FontInfo.MonospaceWidth() * (g_BytesPerHexLine / g_HexColumns * 3 + 2) * 2);
     
@@ -647,7 +647,7 @@ void BigFileViewHex::HandleVerticalScroll(double _pos)
 
 void BigFileViewHex::OnFrameChanged()
 {
-    m_FrameLines = floor([m_View frame].size.height / m_FontInfo.LineHeight());
+    m_FrameLines = (int)floor([m_View frame].size.height / m_FontInfo.LineHeight());
 }
 
 void BigFileViewHex::ScrollToByteOffset(uint64_t _offset)

@@ -254,5 +254,5 @@ NSString *PanelListViewDateFormatting::Format( Style _style, time_t _time )
 
 PanelListViewDateFormatting::Style PanelListViewDateFormatting::SuitableStyleForWidth( int _width, NSFont *_font )
 {
-    return StyleForWidthHardcodedLikeFinder( _width, _font.pointSize );
+    return StyleForWidthHardcodedLikeFinder( _width, (int)_font.pointSize );
 }

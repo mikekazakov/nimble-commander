@@ -51,14 +51,14 @@ static tuple<short, short, short> GrabGeometryFromSystemFont( NSFont *_font, int
     }
     else {
         auto font_info = FontGeometryInfo( (__bridge CTFontRef)_font );
-        line_height = font_info.LineHeight() + insets[1] + insets[3];
+        line_height = short(font_info.LineHeight()) + insets[1] + insets[3];
         if( _icon_scale == 1 && line_height < 17 )
             line_height = 17;
         else if( _icon_scale == 2 && line_height < 35 )
             line_height = 35;
         
-        text_baseline = insets[1] + font_info.Descent();
-        icon_size = _icon_scale * 16;
+        text_baseline = insets[1] + short(font_info.Descent());
+        icon_size = short(_icon_scale) * 16;
     }
     return make_tuple(line_height, text_baseline, icon_size);
 }

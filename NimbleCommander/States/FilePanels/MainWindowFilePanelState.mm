@@ -535,17 +535,17 @@ static bool GoToForcesPanelActivation()
     
     // find window geometry
     NSWindow* window = [self window];
-    float leftEdge = NSMaxX([[window standardWindowButton:NSWindowZoomButton] frame]);
+    auto leftEdge = NSMaxX([window standardWindowButton:NSWindowZoomButton].frame);
     NSButton* fsbutton = [window standardWindowButton:NSWindowFullScreenButton];
-    float rightEdge = fsbutton ? [fsbutton frame].origin.x : NSMaxX([window frame]);
+    auto rightEdge = fsbutton ? fsbutton.frame.origin.x : NSMaxX(window.frame);
          
     // Leave 8 pixels of padding around the title.
     const int kTitlePadding = 8;
-    float titleWidth = rightEdge - leftEdge - 2 * kTitlePadding;
+    const auto titleWidth = rightEdge - leftEdge - 2 * kTitlePadding;
          
     // Sending |titleBarFontOfSize| 0 returns default size
-    NSDictionary* attributes = [NSDictionary dictionaryWithObject:[NSFont titleBarFontOfSize:0] forKey:NSFontAttributeName];
-    window.title = StringByTruncatingToWidth(path, titleWidth, kTruncateAtStart, attributes);
+    const auto attributes = @{NSFontAttributeName: [NSFont titleBarFontOfSize:0]};
+    window.title = StringByTruncatingToWidth(path, (float)titleWidth, kTruncateAtStart, attributes);
 }
 
 static rapidjson::StandaloneValue EncodePanelsStates(

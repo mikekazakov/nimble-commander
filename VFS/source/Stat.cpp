@@ -2,25 +2,27 @@
 #include <VFS/VFSDeclarations.h>
 #include <sys/stat.h>
 
-static_assert(sizeof(VFSStat) == 128, "");
+namespace nc::vfs {
 
-bool VFSStatFS::operator==(const VFSStatFS& _r) const
+static_assert(sizeof(Stat) == 128, "");
+
+bool StatFS::operator==(const StatFS& _r) const
 {
     return total_bytes == _r.total_bytes &&
-    free_bytes == _r.free_bytes  &&
-    avail_bytes == _r.avail_bytes &&
-    volume_name == _r.volume_name;
+            free_bytes == _r.free_bytes  &&
+            avail_bytes == _r.avail_bytes &&
+            volume_name == _r.volume_name;
 }
 
-bool VFSStatFS::operator!=(const VFSStatFS& _r) const
+bool StatFS::operator!=(const StatFS& _r) const
 {
     return total_bytes != _r.total_bytes ||
-    free_bytes != _r.free_bytes  ||
-    avail_bytes != _r.avail_bytes ||
-    volume_name != _r.volume_name;
+            free_bytes != _r.free_bytes  ||
+            avail_bytes != _r.avail_bytes ||
+            volume_name != _r.volume_name;
 }
 
-void VFSStat::FromSysStat(const struct stat &_from, VFSStat &_to)
+void Stat::FromSysStat(const struct stat &_from, Stat &_to)
 {
     _to.dev     = _from.st_dev;
     _to.rdev    = _from.st_rdev;
@@ -40,7 +42,7 @@ void VFSStat::FromSysStat(const struct stat &_from, VFSStat &_to)
     _to.meaning = AllMeaning();
 }
 
-void VFSStat::ToSysStat(const VFSStat &_from, struct stat &_to)
+void Stat::ToSysStat(const Stat &_from, struct stat &_to)
 {
     memset(&_to, 0, sizeof(_to));
     _to.st_dev              = _from.dev;
@@ -60,9 +62,11 @@ void VFSStat::ToSysStat(const VFSStat &_from, struct stat &_to)
     _to.st_birthtimespec    = _from.btime;
 }
 
-struct stat VFSStat::SysStat() const noexcept
+struct stat Stat::SysStat() const noexcept
 {
     struct stat st;
     ToSysStat(*this, st);
     return st;
+}
+
 }

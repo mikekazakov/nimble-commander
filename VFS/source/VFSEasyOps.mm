@@ -389,10 +389,8 @@ int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr & _vfs)
     if( ret != 0 )
         return ret;
     
-    using namespace VFSFlags;
-    
-    ret = file->Open(OF_IRUsr | OF_IRGrp | OF_IROth | OF_IWUsr |
-                     OF_Write | OF_Create);
+    ret = file->Open(VFSFlags::OF_IRUsr | VFSFlags::OF_IRGrp | VFSFlags::OF_IROth |
+                    VFSFlags::OF_IWUsr | VFSFlags::OF_Write | VFSFlags::OF_Create);
     if( ret != 0 )
         return ret;
     

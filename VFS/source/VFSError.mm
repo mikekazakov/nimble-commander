@@ -16,7 +16,9 @@ layout:
 [-2'000'000.. -3'000'000): NSURLError        vfs err = nsurlerror - 2'500'000
  */
 
-VFSErrorException::VFSErrorException( int _err ) :
+namespace nc::vfs {
+
+ErrorException::ErrorException( int _err ) :
     m_Code(_err)
 {
     m_Verb = "vfs exception code #"s + to_string(_err);
@@ -25,14 +27,16 @@ VFSErrorException::VFSErrorException( int _err ) :
             m_Verb = d.UTF8String;
 }
 
-const char* VFSErrorException::what() const noexcept
+const char* ErrorException::what() const noexcept
 {
     return m_Verb.c_str();
 }
 
-int VFSErrorException::code() const noexcept
+int ErrorException::code() const noexcept
 {
     return m_Code;
+}
+
 }
 
 namespace VFSError

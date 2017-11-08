@@ -276,7 +276,8 @@ int Fetching::ReadDirAttributesBulk(
             
             char *entry_start = &attr_buf[0];
             for( int index = 0; index < retcount; index++ ) {
-                Attrs attrs = {0};
+                Attrs attrs;
+                memset(&attrs, 0, sizeof(Attrs));
                 
                 char *field = entry_start;
                 attrs.length = *(uint32_t *)field;

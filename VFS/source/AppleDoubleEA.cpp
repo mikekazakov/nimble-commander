@@ -378,7 +378,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file,
             attr_entry_t *entry = (attr_entry_t *)((char *)apple_double + ea.attr_hdr_offset);
             entry->offset   = SWAP32(ea.attr_data_offset);
             entry->length   = SWAP32(ea.data_sz);
-            entry->namelen  = ea.name_len + 1;
+            entry->namelen  = uint8_t(ea.name_len + 1);
             strcpy((char*)&entry->name[0], ea.name);
             memcpy((char *)apple_double + ea.attr_data_offset, ea.data.get(), ea.data_sz);
         }

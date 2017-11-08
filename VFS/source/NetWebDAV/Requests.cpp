@@ -33,21 +33,21 @@ struct CURLInputStringContext
     {
         auto &context = *(CURLInputStringContext*)_userp;
         if( _origin == SEEK_SET ) {
-            if( _offset >= 0 && _offset <= context.data.size() ) {
+            if( _offset >= 0 && _offset <= (ssize_t)context.data.size() ) {
                 context.offset = _offset;
                 return CURL_SEEKFUNC_OK;
             }
         }
         if( _origin == SEEK_CUR ) {
             const auto pos = context.offset + _offset;
-            if( pos >= 0 && pos <= context.data.size() ) {
+            if( pos >= 0 && pos <= (ssize_t)context.data.size() ) {
                 context.offset = pos;
                 return CURL_SEEKFUNC_OK;
             }
         }
         if( _origin == SEEK_END ) {
             const auto pos = (ssize_t)context.data.size() + _offset;
-            if( pos >= 0 && pos <= context.data.size() ) {
+            if( pos >= 0 && pos <= (ssize_t)context.data.size() ) {
                 context.offset = pos;
                 return CURL_SEEKFUNC_OK;
             }
@@ -187,7 +187,7 @@ static optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
     return optional<PropFindResponse>{ move(response) };
 }
 
-vector<PropFindResponse> ParseDAVListing( const string &_xml_listing )
+static vector<PropFindResponse> ParseDAVListing( const string &_xml_listing )
 {
     using namespace pugi;
 

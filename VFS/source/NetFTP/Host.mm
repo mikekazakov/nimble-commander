@@ -609,7 +609,7 @@ int FTPHost::IterateDirectoryListing(const char *_path, const function<bool(cons
     {
         VFSDirEnt e;
         strcpy(e.name, i.name.c_str());
-        e.name_len = i.name.length();
+        e.name_len = uint16_t(i.name.length());
         e.type = IFTODT(i.mode);
 
         if( !_handler(e) )

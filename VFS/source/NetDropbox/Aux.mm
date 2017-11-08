@@ -214,7 +214,7 @@ Metadata ParseMetadata( const rapidjson::Value &_value )
         if( auto mod_date = GetString(_value, "server_modified") )
             if( auto str = [NSString stringWithUTF8String:mod_date] )
                 if( auto date = [date_formatter dateFromString:str] )
-                    m.chg_time = date.timeIntervalSince1970;
+                    m.chg_time = int64_t(date.timeIntervalSince1970);
     }
     else if( folder_type == type ) {
         m.is_directory = true;

@@ -90,7 +90,7 @@ static int parse_dir_unix(const char *line,
         }
     }
     
-    sbuf->st_nlink = nlink;
+    sbuf->st_nlink = (nlink_t)nlink;
     
     sbuf->st_size = size;
     /*    if (ftpfs.blksize) {

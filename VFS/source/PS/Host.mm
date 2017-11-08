@@ -309,8 +309,7 @@ vector<PSHost::ProcInfo> PSHost::GetProcs()
     sysinfo::GetBSDProcessList(&proc_list, &proc_cnt);
     
     vector<ProcInfo> procs(proc_cnt);
-    for(int kip_i = 0; kip_i < proc_cnt; ++kip_i)
-    {
+    for( size_t kip_i = 0; kip_i < proc_cnt; ++kip_i ) {
         const kinfo_proc &kip = proc_list[kip_i];
         
         ProcInfo curr;

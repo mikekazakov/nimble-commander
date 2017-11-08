@@ -435,9 +435,10 @@ int SFTPHost::FetchDirectoryListing(const char *_path,
                 index = int(listing_source.filenames.size() - 1);
             }
             
+            const bool has_perm = (attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS);
             listing_source.filenames[index] = filename;
-            listing_source.unix_modes[index] = (attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) ? attrs.permissions : (S_IFREG | S_IRUSR);
-            listing_source.unix_types[index] = (attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) ? IFTODT(attrs.permissions) : DT_REG;
+            listing_source.unix_modes[index] = has_perm ? mode_t(attrs.permissions) : (S_IFREG | S_IRUSR);
+            listing_source.unix_types[index] = has_perm ? IFTODT(attrs.permissions) : DT_REG;
             const auto size = S_ISDIR(attrs.permissions) ?
                 ListingInput::unknown_size :
                 ((attrs.flags & LIBSSH2_SFTP_ATTR_SIZE) ? attrs.filesize : 0);
@@ -465,7 +466,7 @@ int SFTPHost::FetchDirectoryListing(const char *_path,
             // read info about real object
             LIBSSH2_SFTP_ATTRIBUTES stat;
             if(libssh2_sftp_stat_ex(conn->sftp, path.c_str(), (unsigned)path.length(), LIBSSH2_SFTP_STAT, &stat) >= 0) {
-                listing_source.unix_modes[index] = stat.permissions;
+                listing_source.unix_modes[index] = mode_t(stat.permissions);
                 listing_source.sizes.insert(index, stat.filesize);
             }
         }
@@ -500,7 +501,7 @@ int SFTPHost::Stat(const char *_path,
     memset(&_st, 0, sizeof(_st));
 
     if(attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) {
-        _st.mode = attrs.permissions;
+        _st.mode = mode_t(attrs.permissions);
         _st.meaning.mode = 1;
     }
 
@@ -562,7 +563,7 @@ int SFTPHost::IterateDirectoryListing(const char *_path,
             break; // can't process without meanful mode
         
         strcpy(e.name, mem);
-        e.name_len = strlen(mem);
+        e.name_len = uint16_t(strlen(mem));
         e.type = IFTODT(attrs.permissions);
         
         if( !_handler(e) )

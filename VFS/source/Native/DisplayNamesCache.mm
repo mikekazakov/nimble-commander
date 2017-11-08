@@ -55,7 +55,7 @@ const char* DisplayNamesCache::DisplayName( const struct stat &_st, const string
 }
 
 static NSFileManager *filemanager = NSFileManager.defaultManager;
-const char* Slow( const string &_path )
+static const char* Slow( const string &_path )
 {
     NSString *path = [NSString stringWithUTF8StdStringNoCopy:_path];
     if( path == nil )

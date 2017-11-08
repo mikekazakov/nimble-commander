@@ -52,17 +52,17 @@ static void Validate(const ListingInput& _source)
         throw logic_error("VFSListingInput validation failed: symlinks can't be common");
     
     if(_source.hosts.mode() == variable_container<>::type::dense &&
-       _source.hosts.size() != items_no )
+       (int)_source.hosts.size() != items_no )
         throw logic_error("VFSListingInput validation failed: hosts amount is inconsistent");
     
     if(_source.directories.mode() == variable_container<>::type::dense &&
-       _source.directories.size() != items_no)
+       (int)_source.directories.size() != items_no)
         throw logic_error("VFSListingInput validation failed: directories amount is inconsistent");
     
-    if(_source.unix_modes.size() != items_no)
+    if((int)_source.unix_modes.size() != items_no)
         throw logic_error("VFSListingInput validation failed: unix_modes amount is inconsistent");
     
-    if(_source.unix_types.size() != items_no)
+    if((int)_source.unix_types.size() != items_no)
         throw logic_error("VFSListingInput validation failed: unix_types amount is inconsistent");
         
     
@@ -342,7 +342,6 @@ void Listing::BuildFilenames()
     m_FilenamesCF.resize( e );
     m_ExtensionOffsets.resize( e );
     
-//    variable_container<CFString>    m_DisplayFilenamesCF;
     m_DisplayFilenamesCF = variable_container<CFString>(variable_container<>::type::sparse);
     
     for(; i != e; ++i ) {
@@ -365,11 +364,8 @@ void Listing::BuildFilenames()
         if( dot_it != string::npos &&
             dot_it != 0 &&
             dot_it != current.size()-1 )
-            offset = dot_it+1;
+            offset = uint16_t(dot_it+1);
         m_ExtensionOffsets[i] = offset;
-        
-        
-    
     }
 }
 

@@ -113,8 +113,8 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
         if( refresh_rc != VFSError::Ok )
             return refresh_rc;
         
-        if( auto cached = I->m_Cache.Listing(path) )
-            items = move( *cached );
+        if( auto cached2 = I->m_Cache.Listing(path) )
+            items = move( *cached2 );
         else
             return VFSError::GenericError;
     }
@@ -173,8 +173,8 @@ int WebDAVHost::IterateDirectoryListing(const char *_path,
         if( refresh_rc != VFSError::Ok )
             return refresh_rc;
         
-        if( auto cached = I->m_Cache.Listing(path) )
-            items = move( *cached );
+        if( auto cached2 = I->m_Cache.Listing(path) )
+            items = move( *cached2 );
         else
             return VFSError::GenericError;
     }
@@ -186,7 +186,7 @@ int WebDAVHost::IterateDirectoryListing(const char *_path,
     for( const auto &i: items ) {
         VFSDirEnt e;
         strcpy(e.name, i.filename.c_str());
-        e.name_len = i.filename.length();
+        e.name_len = uint16_t(i.filename.length());
         e.type = i.is_directory ? DT_DIR : DT_REG;
         if( !_handler(e) )
             return VFSError::Cancelled;

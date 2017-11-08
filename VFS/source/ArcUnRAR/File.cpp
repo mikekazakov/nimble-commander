@@ -104,7 +104,7 @@ int File::Close()
         if(m_Entry->uuid < rar_host->LastItemUUID())
         {
             m_Archive->uid = m_Entry->uuid;
-            if(m_TotalExtracted == m_Entry->unpacked_size)
+            if((uint64_t)m_TotalExtracted == m_Entry->unpacked_size)
             {
                 rar_host->CommitSeekCache(move(m_Archive));
             }

@@ -340,7 +340,7 @@ int UnRARHost::IterateDirectoryListing(const char *_path,
     for(auto &it: dir->entries)
     {
         strcpy(dirent.name, it.name.c_str());
-        dirent.name_len = it.name.length();
+        dirent.name_len = uint16_t(it.name.length());
         dirent.type = it.isdir ? VFSDirEnt::Dir : VFSDirEnt::Reg;
 
         if(!_handler(dirent))

@@ -219,7 +219,7 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
         const auto filename_sz = path_sz - second_slash_pos - 2;
         const auto parent_path_sz = second_slash_pos + 1;
         
-        if( filename_sz >= _filename_sz || parent_path_sz >= _parent_path_sz )
+        if( (int)filename_sz >= _filename_sz || (int)parent_path_sz >= _parent_path_sz )
             return false;
         
         strncpy( _filename, _path + second_slash_pos + 1, filename_sz );
@@ -231,7 +231,7 @@ static bool SplitIntoFilenameAndParentPath(const char *_path,
         const auto filename_sz = path_sz - (slash + 1 - _path);
         const auto parent_path_sz = slash - _path + 1;
         
-        if( filename_sz >= _filename_sz || parent_path_sz >= _parent_path_sz )
+        if( (int)filename_sz >= _filename_sz || (int)parent_path_sz >= _parent_path_sz )
             return false;
         
         strcpy( _filename, slash + 1 );
@@ -620,7 +620,7 @@ int ArchiveHost::IterateDirectoryListing(const char *_path, const function<bool(
     for(const auto &it: i->second.entries)
         {
             strcpy(dir.name, it.name.c_str());
-            dir.name_len = it.name.length();
+            dir.name_len = uint16_t(it.name.length());
             
             if(S_ISDIR(it.st.st_mode)) dir.type = VFSDirEnt::Dir;
             else if(S_ISREG(it.st.st_mode)) dir.type = VFSDirEnt::Reg;

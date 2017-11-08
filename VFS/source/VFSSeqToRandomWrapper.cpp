@@ -68,7 +68,7 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(int _flags,
         uint8_t *d = &backend->m_DataBuf[0];
         uint8_t *e = d + backend->m_Size;
         ssize_t res;
-        while( ( res = m_SeqFile->Read(d, MIN(e-d, max_io)) ) > 0) {
+        while( ( res = m_SeqFile->Read(d, min(e-d, (long)max_io)) ) > 0) {
             d += res;
 
             if(_cancel_checker && _cancel_checker())
@@ -208,12 +208,12 @@ ssize_t VFSSeqToRandomROWrapperFile::ReadAt(off_t _pos, void *_buf, size_t _size
         return VFSError::InvalidCall;
     
     if( m_Backend->m_DataBuf ) {
-        ssize_t toread = MIN(m_Backend->m_Size - _pos, _size);
+        ssize_t toread = min(m_Backend->m_Size - _pos, (off_t)_size);
         memcpy(_buf, &m_Backend->m_DataBuf[_pos], toread);
         return toread;
     }
     else if( m_Backend->m_FD >= 0 ) {
-        ssize_t toread = MIN(m_Backend->m_Size - _pos, _size);
+        ssize_t toread = min(m_Backend->m_Size - _pos, (off_t)_size);
         ssize_t res = pread(m_Backend->m_FD, _buf, toread, _pos);
         if(res >= 0)
             return res;

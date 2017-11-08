@@ -51,19 +51,19 @@ static const auto g_MaxTextWidth = 600;
 
 - (void)callout:(id)sender
 {
-    if( ![sender respondsToSelector:@selector(representedObject)] )
-        return;
-    auto any_holder = objc_cast<AnyHolder>([sender representedObject]);
-    if( !any_holder )
-        return;
-    
-    if( m_State ) {
-        [m_State revealPanel:m_Panel];
-        if( !m_Panel.isActive && m_State.goToForcesPanelActivation )
-            [m_State ActivatePanelByController:m_Panel];
+    if( auto menu_item = objc_cast<NSMenuItem>(sender) ) {
+        auto any_holder = objc_cast<AnyHolder>(menu_item.representedObject);
+        if( !any_holder )
+            return;
+        
+        if( m_State ) {
+            [m_State revealPanel:m_Panel];
+            if( !m_Panel.isActive && m_State.goToForcesPanelActivation )
+                [m_State ActivatePanelByController:m_Panel];
+        }
+        
+        [self performGoTo:any_holder.any sender:sender];
     }
-    
-    [self performGoTo:any_holder.any sender:sender];
 }
 
 - (void) performGoTo:(const any&)_context sender:(id)sender

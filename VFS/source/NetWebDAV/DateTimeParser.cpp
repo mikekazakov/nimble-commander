@@ -104,7 +104,7 @@ static time_t ParseUnlocked( CFDateFormatterRef _fmt, const char *_date_time )
                                                               str,
                                                               nullptr);
         if( date ) {
-            result = CFDateGetAbsoluteTime(date) + kCFAbsoluteTimeIntervalSince1970;
+            result = time_t(CFDateGetAbsoluteTime(date) + kCFAbsoluteTimeIntervalSince1970);
             CFRelease(date);
         }
         CFRelease(str);

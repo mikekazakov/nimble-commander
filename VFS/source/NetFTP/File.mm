@@ -368,8 +368,8 @@ off_t File::Seek(off_t _off, int _basis)
     
     if(req_pos < 0)
         return VFSError::InvalidCall;
-    if(req_pos > m_FileSize)
-        req_pos = m_FileSize;
+    if(req_pos > (off_t)m_FileSize)
+        req_pos = (off_t)m_FileSize;
 
     m_FilePos = req_pos;
     

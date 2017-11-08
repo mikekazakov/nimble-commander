@@ -489,7 +489,7 @@ int File::SetUploadSize(size_t _size)
     
     m_Upload->upload_size = _size;
     
-    if( _size <= m_ChunkSize )
+    if( _size <= (size_t)m_ChunkSize )
         StartSmallUpload();
     else
         StartSession();
@@ -564,7 +564,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
     if( !m_Upload ||
         m_State != Uploading ||
         m_Upload->upload_size < 0 ||
-        m_FilePos + _size > m_Upload->upload_size )
+        m_FilePos + (long)_size > m_Upload->upload_size )
         return VFSError::InvalidCall;
     
     assert( m_Upload->fifo.empty() );

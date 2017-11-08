@@ -293,7 +293,7 @@ int DropboxHost::IterateDirectoryListing(const char *_path,
                     VFSDirEnt dirent;
                     dirent.type = metadata.is_directory ? VFSDirEnt::Dir : VFSDirEnt::Reg;
                     strcpy( dirent.name, metadata.name.c_str() );
-                    dirent.name_len = metadata.name.length();
+                    dirent.name_len = uint16_t(metadata.name.length());
                     bool goon = _handler(dirent);
                     if( !goon )
                         return VFSError::Cancelled;

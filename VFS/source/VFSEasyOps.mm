@@ -64,7 +64,7 @@ static int CopyFileContentsSmall(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _
     if(res_read < 0)
         return (int)res_read;
     
-    if(res_read == 0 && total_wrote != src_size)
+    if(res_read == 0 && (uint64_t)total_wrote != src_size)
         return VFSError::UnexpectedEOF;
 
     return 0;

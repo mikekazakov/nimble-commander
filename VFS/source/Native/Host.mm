@@ -547,7 +547,7 @@ bool NativeHost::IsWritable() const
 int NativeHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;
-    int ret = io.mkdir(_path, _mode);
+    int ret = io.mkdir(_path, mode_t(_mode));
     if(ret == 0)
         return 0;
     return VFSError::FromErrno();
@@ -569,7 +569,7 @@ int NativeHost::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_siz
     if(sz < 0)
         return VFSError::FromErrno();
     
-    if(sz >= _buffer_size)
+    if(sz >= (long)_buffer_size)
         return VFSError::SmallBuffer;
     
     _buffer[sz] = 0;

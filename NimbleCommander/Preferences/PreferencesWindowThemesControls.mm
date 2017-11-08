@@ -266,9 +266,9 @@
 @end
 
 @interface PreferencesWindowThemesTabColoringRulesControl()
-@property (strong) IBOutlet NSView *carrier;
-@property (strong) IBOutlet NSTableView *table;
-@property (strong) IBOutlet NSSegmentedControl *plusMinus;
+@property (nonatomic) IBOutlet NSView *carrier;
+@property (nonatomic) IBOutlet NSTableView *table;
+@property (nonatomic) IBOutlet NSSegmentedControl *plusMinus;
 
 
 @end

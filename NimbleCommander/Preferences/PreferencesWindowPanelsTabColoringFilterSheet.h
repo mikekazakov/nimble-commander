@@ -8,13 +8,13 @@
 - (IBAction)OnOK:(id)sender;
 
 @property (nonatomic, readonly) PanelViewPresentationItemsColoringFilter filter;
-@property (strong) IBOutlet NSButton *executable;
-@property (strong) IBOutlet NSButton *hidden;
-@property (strong) IBOutlet NSButton *directory;
-@property (strong) IBOutlet NSButton *symlink;
-@property (strong) IBOutlet NSButton *regular;
-@property (strong) IBOutlet NSButton *selected;
-@property (strong) IBOutlet NSTextField *mask;
+@property (nonatomic) IBOutlet NSButton *executable;
+@property (nonatomic) IBOutlet NSButton *hidden;
+@property (nonatomic) IBOutlet NSButton *directory;
+@property (nonatomic) IBOutlet NSButton *symlink;
+@property (nonatomic) IBOutlet NSButton *regular;
+@property (nonatomic) IBOutlet NSButton *selected;
+@property (nonatomic) IBOutlet NSTextField *mask;
 
 
 @end

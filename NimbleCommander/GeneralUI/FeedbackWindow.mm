@@ -4,7 +4,7 @@
 #include "FeedbackWindow.h"
 
 @interface FeedbackWindow ()
-@property (strong) IBOutlet NSTabView *tabView;
+@property (nonatomic) IBOutlet NSTabView *tabView;
 
 @end
 

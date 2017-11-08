@@ -6,14 +6,14 @@
 #include "FTPConnectionSheetController.h"
 
 @interface FTPConnectionSheetController()
-@property (strong) NSString *title;
-@property (strong) NSString *server;
-@property (strong) NSString *username;
-@property (strong) NSString *passwordEntered;
-@property (strong) NSString *path;
-@property (strong) NSString *port;
-@property (strong) IBOutlet NSButton *connectButton;
-@property bool isValid;
+@property (nonatomic) NSString *title;
+@property (nonatomic) NSString *server;
+@property (nonatomic) NSString *username;
+@property (nonatomic) NSString *passwordEntered;
+@property (nonatomic) NSString *path;
+@property (nonatomic) NSString *port;
+@property (nonatomic) IBOutlet NSButton *connectButton;
+@property (nonatomic) bool isValid;
 @end
 
 @implementation FTPConnectionSheetController

@@ -9,9 +9,9 @@
 @interface PreferencesWindowExternalEditorsTab ()
 
 @property (nonatomic) NSMutableArray *ExtEditors;
-@property (strong) IBOutlet NSArrayController *ExtEditorsController;
-@property (strong) IBOutlet NSTableView *TableView;
-@property (strong) IBOutlet NSSegmentedControl *addRemove;
+@property (nonatomic) IBOutlet NSArrayController *ExtEditorsController;
+@property (nonatomic) IBOutlet NSTableView *TableView;
+@property (nonatomic) IBOutlet NSSegmentedControl *addRemove;
 
 - (IBAction)OnNewEditor:(id)sender;
 

@@ -8,24 +8,23 @@
 
 @interface DetailedVolumeInformationSheetController ()
 
-@property (strong) IBOutlet NSButton *OkButton;
-- (IBAction)OnOK:(id)sender;
-@property (strong) IBOutlet NSTextField *NameTextField;
-@property (strong) IBOutlet NSTextField *MountedAtTextField;
-@property (strong) IBOutlet NSTextField *DeviceTextField;
-@property (strong) IBOutlet NSTextField *FormatTextField;
-@property (strong) IBOutlet NSTextField *TotalBytesTextField;
-@property (strong) IBOutlet NSTextField *FreeBytesTextField;
-@property (strong) IBOutlet NSTextField *AvailableBytesTextField;
-@property (strong) IBOutlet NSTextField *UsedBytesTextField;
-@property (strong) IBOutlet NSTextField *ObjectsCountTextField;
-@property (strong) IBOutlet NSTextField *FileCountTextField;
-@property (strong) IBOutlet NSTextField *FoldersCountTextField;
-@property (strong) IBOutlet NSTextField *MaxObjectsTextField;
-@property (strong) IBOutlet NSTextField *IOBlockSizeTextField;
-@property (strong) IBOutlet NSTextField *MinAllocationTextField;
-@property (strong) IBOutlet NSTextField *AllocationClumpTextField;
-@property (strong) IBOutlet NSTextView *AdvancedTextView;
+@property (nonatomic) IBOutlet NSButton *OkButton;
+@property (nonatomic) IBOutlet NSTextField *NameTextField;
+@property (nonatomic) IBOutlet NSTextField *MountedAtTextField;
+@property (nonatomic) IBOutlet NSTextField *DeviceTextField;
+@property (nonatomic) IBOutlet NSTextField *FormatTextField;
+@property (nonatomic) IBOutlet NSTextField *TotalBytesTextField;
+@property (nonatomic) IBOutlet NSTextField *FreeBytesTextField;
+@property (nonatomic) IBOutlet NSTextField *AvailableBytesTextField;
+@property (nonatomic) IBOutlet NSTextField *UsedBytesTextField;
+@property (nonatomic) IBOutlet NSTextField *ObjectsCountTextField;
+@property (nonatomic) IBOutlet NSTextField *FileCountTextField;
+@property (nonatomic) IBOutlet NSTextField *FoldersCountTextField;
+@property (nonatomic) IBOutlet NSTextField *MaxObjectsTextField;
+@property (nonatomic) IBOutlet NSTextField *IOBlockSizeTextField;
+@property (nonatomic) IBOutlet NSTextField *MinAllocationTextField;
+@property (nonatomic) IBOutlet NSTextField *AllocationClumpTextField;
+@property (nonatomic) IBOutlet NSTextView *AdvancedTextView;
 
 @end
 

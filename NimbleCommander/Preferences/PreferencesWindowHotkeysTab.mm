@@ -45,13 +45,13 @@ enum class SourceType
 
 @interface PreferencesWindowHotkeysTab()
 
-@property (strong) IBOutlet NSTableView *Table;
-@property (strong) IBOutlet GTMHotKeyTextField *HotKeyEditFieldTempl;
-@property (strong) IBOutlet NSButton *forceFnButton;
-@property (strong) IBOutlet NSTextField *filterTextField;
-@property (strong) IBOutlet NSButton *sourceAllButton;
-@property (strong) IBOutlet NSButton *sourceCustomizedButton;
-@property (strong) IBOutlet NSButton *sourceConflictsButton;
+@property (nonatomic) IBOutlet NSTableView *Table;
+@property (nonatomic) IBOutlet GTMHotKeyTextField *HotKeyEditFieldTempl;
+@property (nonatomic) IBOutlet NSButton *forceFnButton;
+@property (nonatomic) IBOutlet NSTextField *filterTextField;
+@property (nonatomic) IBOutlet NSButton *sourceAllButton;
+@property (nonatomic) IBOutlet NSButton *sourceCustomizedButton;
+@property (nonatomic) IBOutlet NSButton *sourceConflictsButton;
 
 @property (nonatomic) SourceType sourceType;
 

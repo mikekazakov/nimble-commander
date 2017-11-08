@@ -6,16 +6,16 @@
 
 @interface BigFileViewSheet ()
 
-@property (strong) IBOutlet BigFileView *view;
+@property (nonatomic) IBOutlet BigFileView *view;
 
-@property (strong) IBOutlet NSPopUpButton *mode;
-@property (strong) IBOutlet NSTextField *fileSize;
-@property (strong) IBOutlet NSButton *filePos;
-@property (strong) IBOutlet NSProgressIndicator *searchIndicator;
-@property (strong) IBOutlet NSSearchField *searchField;
-@property (strong) IBOutlet NSPopover *settingsPopover;
-@property (strong) IBOutlet NSPopUpButton *encodings;
-@property (strong) IBOutlet NSButton *wordWrap;
+@property (nonatomic) IBOutlet NSPopUpButton *mode;
+@property (nonatomic) IBOutlet NSTextField *fileSize;
+@property (nonatomic) IBOutlet NSButton *filePos;
+@property (nonatomic) IBOutlet NSProgressIndicator *searchIndicator;
+@property (nonatomic) IBOutlet NSSearchField *searchField;
+@property (nonatomic) IBOutlet NSPopover *settingsPopover;
+@property (nonatomic) IBOutlet NSPopUpButton *encodings;
+@property (nonatomic) IBOutlet NSButton *wordWrap;
 
 - (IBAction)OnClose:(id)sender;
 

@@ -176,30 +176,30 @@ private:
 @property (nonatomic) bool didAnySearchStarted;
 @property (nonatomic) bool searchingNow;
 
-@property (strong) IBOutlet NSButton            *CloseButton;
-@property (strong) IBOutlet NSButton            *SearchButton;
-@property (strong) IBOutlet NSButton            *GoToButton;
-@property (strong) IBOutlet NSButton            *ViewButton;
-@property (strong) IBOutlet NSButton            *PanelButton;
-@property (strong) IBOutlet NSComboBox          *MaskComboBox;
-@property (strong)          NSString            *MaskComboBoxValue;
-@property (strong) IBOutlet NSComboBox          *TextComboBox;
-@property (strong)          NSString            *TextComboBoxValue;
-@property (strong) IBOutlet NSTextField         *LookingIn;
-@property (strong) IBOutlet NSTableView         *TableView;
-@property (strong) IBOutlet NSButton            *CaseSensitiveButton;
-@property (strong) IBOutlet NSButton            *WholePhraseButton;
-@property (strong) IBOutlet NSArrayController   *ArrayController;
-@property (strong) IBOutlet NSPopUpButton       *SizeRelationPopUp;
-@property (strong) IBOutlet NSTextField         *SizeTextField;
-@property (strong)          NSString            *SizeTextFieldValue;
-@property (strong) IBOutlet NSPopUpButton       *SizeMetricPopUp;
-@property (strong) IBOutlet NSButton            *SearchInSubDirsButton;
-@property (strong) IBOutlet NSButton            *SearchInArchivesButton;
-@property (strong) IBOutlet NSPopUpButton       *EncodingsPopUp;
-@property (strong) IBOutlet NSPopUpButton       *searchForPopup;
-@property NSMutableArray            *FoundItems;
-@property FindFilesSheetFoundItem   *focusedItem; // may be nullptr
+@property (nonatomic) IBOutlet NSButton            *CloseButton;
+@property (nonatomic) IBOutlet NSButton            *SearchButton;
+@property (nonatomic) IBOutlet NSButton            *GoToButton;
+@property (nonatomic) IBOutlet NSButton            *ViewButton;
+@property (nonatomic) IBOutlet NSButton            *PanelButton;
+@property (nonatomic) IBOutlet NSComboBox          *MaskComboBox;
+@property (nonatomic)          NSString            *MaskComboBoxValue;
+@property (nonatomic) IBOutlet NSComboBox          *TextComboBox;
+@property (nonatomic)          NSString            *TextComboBoxValue;
+@property (nonatomic) IBOutlet NSTextField         *LookingIn;
+@property (nonatomic) IBOutlet NSTableView         *TableView;
+@property (nonatomic) IBOutlet NSButton            *CaseSensitiveButton;
+@property (nonatomic) IBOutlet NSButton            *WholePhraseButton;
+@property (nonatomic) IBOutlet NSArrayController   *ArrayController;
+@property (nonatomic) IBOutlet NSPopUpButton       *SizeRelationPopUp;
+@property (nonatomic) IBOutlet NSTextField         *SizeTextField;
+@property (nonatomic)          NSString            *SizeTextFieldValue;
+@property (nonatomic) IBOutlet NSPopUpButton       *SizeMetricPopUp;
+@property (nonatomic) IBOutlet NSButton            *SearchInSubDirsButton;
+@property (nonatomic) IBOutlet NSButton            *SearchInArchivesButton;
+@property (nonatomic) IBOutlet NSPopUpButton       *EncodingsPopUp;
+@property (nonatomic) IBOutlet NSPopUpButton       *searchForPopup;
+@property (nonatomic) NSMutableArray            *FoundItems;
+@property (nonatomic) FindFilesSheetFoundItem   *focusedItem; // may be nullptr
 
 @end
 

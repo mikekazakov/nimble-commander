@@ -38,10 +38,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 
 @interface PreferencesWindowViewerTab()
 
-@property (strong) IBOutlet NSPopUpButton *DefaultEncoding;
-
-- (IBAction) DefaultEncodingChanged:(id)sender;
-- (IBAction) ClearHistory:(id)sender;
+@property (nonatomic) IBOutlet NSPopUpButton *DefaultEncoding;
 
 @end
 

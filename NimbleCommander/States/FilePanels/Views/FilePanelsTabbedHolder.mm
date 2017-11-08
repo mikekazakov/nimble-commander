@@ -9,7 +9,7 @@
 
 @interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
 
-@property (assign) BOOL hasCloseButton;
+@property (atomic, assign) BOOL hasCloseButton;
 
 @end
 

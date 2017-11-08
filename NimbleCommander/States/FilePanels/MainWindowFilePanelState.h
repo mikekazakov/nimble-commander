@@ -75,7 +75,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (void)PanelPathChanged:(PanelController*)_panel;
 - (void)revealEntries:(const vector<string>&)_filenames inDirectory:(const string&)_path;
 
-@property (readonly) vector< tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
+@property (nonatomic, readonly) vector< tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
 
 
 - (QuickLookView*)RequestQuickLookView:(PanelController*)_panel;
@@ -157,7 +157,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (void)addNewControllerOnRightPane:(PanelController*)_pc;
 
 
-@property (strong) IBOutlet NSToolbar *filePanelsToolsbar;
+@property (nonatomic) IBOutlet NSToolbar *filePanelsToolsbar;
 
 @end
 

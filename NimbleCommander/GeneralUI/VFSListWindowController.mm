@@ -5,8 +5,8 @@
 #include "VFSListWindowController.h"
 
 @interface VFSListWindowController ()
-@property (strong) IBOutlet NSTableView *vfsTable;
-@property (strong) IBOutlet NSSegmentedControl *listType;
+@property (nonatomic) IBOutlet NSTableView *vfsTable;
+@property (nonatomic) IBOutlet NSSegmentedControl *listType;
 
 @end
 

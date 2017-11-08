@@ -5,8 +5,8 @@
 
 @interface GoToFolderSheetController : NSWindowController <NSTextFieldDelegate>
 
-@property (strong)      PanelController     *panel;
-@property (readonly)    const string        &requestedPath;
+@property (nonatomic)      PanelController     *panel;
+@property (nonatomic, readonly)    const string        &requestedPath;
 
 - (void)showSheetWithParentWindow:(NSWindow *)_window
                           handler:(function<void()>)_handler;

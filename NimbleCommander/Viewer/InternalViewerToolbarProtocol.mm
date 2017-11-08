@@ -40,15 +40,15 @@
 // Only for IB's sake
 @interface InternalViewerToolbarDummyOwner : NSObject<InternalViewerToolbarProtocol>
 
-@property (strong) IBOutlet NSToolbar *internalViewerToolbar;
-@property (strong) IBOutlet NSSearchField *internalViewerToolbarSearchField;
-@property (strong) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
-@property (strong) IBOutlet NSPopUpButton *internalViewerToolbarEncodingsPopUp;
-@property (strong) IBOutlet NSPopUpButton *internalViewerToolbarModePopUp;
-@property (strong) IBOutlet NSButton *internalViewerToolbarPositionButton;
-@property (strong) IBOutlet NSTextField *internalViewerToolbarFileSizeLabel;
-@property (strong) IBOutlet NSPopover *internalViewerToolbarPopover;
-@property (strong) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
+@property (nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
+@property (nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
+@property (nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
+@property (nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarEncodingsPopUp;
+@property (nonatomic) IBOutlet NSPopUpButton *internalViewerToolbarModePopUp;
+@property (nonatomic) IBOutlet NSButton *internalViewerToolbarPositionButton;
+@property (nonatomic) IBOutlet NSTextField *internalViewerToolbarFileSizeLabel;
+@property (nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
+@property (nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
 
 @end
 

@@ -66,34 +66,34 @@ static const auto g_LayoutColumnsDDType = @"PreferencesWindowPanelsTabPrivateTab
 
 @interface PreferencesWindowPanelsTab()
 
-@property (strong) IBOutlet NSTabView *tabParts;
-@property (strong) IBOutlet NSPopUpButton *fileSizeFormatCombo;
-@property (strong) IBOutlet NSPopUpButton *selectionSizeFormatCombo;
+@property (nonatomic) IBOutlet NSTabView *tabParts;
+@property (nonatomic) IBOutlet NSPopUpButton *fileSizeFormatCombo;
+@property (nonatomic) IBOutlet NSPopUpButton *selectionSizeFormatCombo;
 
 // layout bindings
-@property (strong) IBOutlet NSTableView *layoutsTable;
-@property bool anyLayoutSelected;
-@property (strong) IBOutlet NSTextField *layoutTitle;
-@property (strong) IBOutlet NSPopUpButton *layoutType;
-@property (strong) IBOutlet NSTabView  *layoutDetailsTabView;
-@property (strong) IBOutlet NSButton   *layoutsBriefFixedRadio;
-@property ()                bool        layoutsBriefFixedRadioChoosen;
-@property (strong) IBOutlet NSTextField*layoutsBriefFixedValueTextField;
-@property (strong) IBOutlet NSButton   *layoutsBriefAmountRadio;
-@property ()                bool        layoutsBriefAmountRadioChoosen;
-@property (strong) IBOutlet NSTextField*layoutsBriefAmountValueTextField;
-@property (strong) IBOutlet NSButton   *layoutsBriefDynamicRadio;
-@property ()                bool        layoutsBriefDynamicRadioChoosen;
-@property (strong) IBOutlet NSTextField*layoutsBriefDynamicMinValueTextField;
-@property (strong) IBOutlet NSTextField*layoutsBriefDynamicMaxValueTextField;
-@property (strong) IBOutlet NSButton   *layoutsBriefDynamicEqualCheckbox;
-@property (strong) IBOutlet NSButton   *layoutsBriefIcon0x;
-@property (strong) IBOutlet NSButton   *layoutsBriefIcon1x;
-@property (strong) IBOutlet NSButton   *layoutsBriefIcon2x;
-@property (strong) IBOutlet NSTableView*layoutsListColumnsTable;
-@property (strong) IBOutlet NSButton   *layoutsListIcon0x;
-@property (strong) IBOutlet NSButton   *layoutsListIcon1x;
-@property (strong) IBOutlet NSButton   *layoutsListIcon2x;
+@property (nonatomic) IBOutlet NSTableView *layoutsTable;
+@property (nonatomic)          bool         anyLayoutSelected;
+@property (nonatomic) IBOutlet NSTextField *layoutTitle;
+@property (nonatomic) IBOutlet NSPopUpButton*layoutType;
+@property (nonatomic) IBOutlet NSTabView  *layoutDetailsTabView;
+@property (nonatomic) IBOutlet NSButton   *layoutsBriefFixedRadio;
+@property (nonatomic)          bool        layoutsBriefFixedRadioChoosen;
+@property (nonatomic) IBOutlet NSTextField*layoutsBriefFixedValueTextField;
+@property (nonatomic) IBOutlet NSButton   *layoutsBriefAmountRadio;
+@property (nonatomic)          bool        layoutsBriefAmountRadioChoosen;
+@property (nonatomic) IBOutlet NSTextField*layoutsBriefAmountValueTextField;
+@property (nonatomic) IBOutlet NSButton   *layoutsBriefDynamicRadio;
+@property (nonatomic)          bool        layoutsBriefDynamicRadioChoosen;
+@property (nonatomic) IBOutlet NSTextField*layoutsBriefDynamicMinValueTextField;
+@property (nonatomic) IBOutlet NSTextField*layoutsBriefDynamicMaxValueTextField;
+@property (nonatomic) IBOutlet NSButton   *layoutsBriefDynamicEqualCheckbox;
+@property (nonatomic) IBOutlet NSButton   *layoutsBriefIcon0x;
+@property (nonatomic) IBOutlet NSButton   *layoutsBriefIcon1x;
+@property (nonatomic) IBOutlet NSButton   *layoutsBriefIcon2x;
+@property (nonatomic) IBOutlet NSTableView*layoutsListColumnsTable;
+@property (nonatomic) IBOutlet NSButton   *layoutsListIcon0x;
+@property (nonatomic) IBOutlet NSButton   *layoutsListIcon1x;
+@property (nonatomic) IBOutlet NSButton   *layoutsListIcon2x;
 
 
 @end

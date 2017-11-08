@@ -8,16 +8,16 @@
 static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 
 @interface SFTPConnectionSheetController()
-@property (strong) NSString *title;
-@property (strong) NSString *server;
-@property (strong) NSString *username;
-@property (strong) NSString *passwordEntered;
-@property (strong) NSString *port;
-@property (strong) NSString *keypath;
-@property (strong) IBOutlet NSButton *connectButton;
-@property bool isValid;
-@property bool invalidPassword;
-@property bool invalidKeypath;
+@property (nonatomic) NSString *title;
+@property (nonatomic) NSString *server;
+@property (nonatomic) NSString *username;
+@property (nonatomic) NSString *passwordEntered;
+@property (nonatomic) NSString *port;
+@property (nonatomic) NSString *keypath;
+@property (nonatomic) IBOutlet NSButton *connectButton;
+@property (nonatomic) bool isValid;
+@property (nonatomic) bool invalidPassword;
+@property (nonatomic) bool invalidKeypath;
 
 @end
 

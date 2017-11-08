@@ -9,8 +9,8 @@ static spinlock                         g_InitialMaskLock;
 
 @interface SelectionWithMaskPopupViewController()
 
-@property (strong) IBOutlet NSComboBox *comboBox;
-@property (strong) IBOutlet NSTextField *titleLabel;
+@property (nonatomic) IBOutlet NSComboBox *comboBox;
+@property (nonatomic) IBOutlet NSTextField *titleLabel;
 
 @end
 

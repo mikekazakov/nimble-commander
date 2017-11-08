@@ -44,9 +44,9 @@ private:
 
 @interface PreferencesWindowTerminalTab()
 
-@property (strong) IBOutlet NSTextField *fontVisibleName;
+@property (nonatomic) IBOutlet NSTextField *fontVisibleName;
 
-@property bool usesDefaultLoginShell;
+@property (nonatomic) bool usesDefaultLoginShell;
 
 @end
 

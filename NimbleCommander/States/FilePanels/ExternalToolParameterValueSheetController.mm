@@ -4,9 +4,9 @@
 
 @interface ExternalToolParameterValueSheetController ()
 
-@property (strong) IBOutlet NSLayoutConstraint *buttonConstraint;
-@property (strong) IBOutlet NSView *valueBlockView;
-@property (strong) IBOutlet NSButton *okButton;
+@property (nonatomic) IBOutlet NSLayoutConstraint *buttonConstraint;
+@property (nonatomic) IBOutlet NSView *valueBlockView;
+@property (nonatomic) IBOutlet NSButton *okButton;
 
 @end
 

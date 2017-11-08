@@ -5,15 +5,15 @@
 #include <boost/algorithm/string.hpp>
 
 @interface WebDAVConnectionSheetController()
-@property bool isValid;
-@property (strong) IBOutlet NSTextField *titleTextField;
-@property (strong) IBOutlet NSPopUpButton *protocolPopup;
-@property (strong) IBOutlet NSTextField *serverTextField;
-@property (strong) IBOutlet NSTextField *basePathTextField;
-@property (strong) IBOutlet NSTextField *usernameTextField;
-@property (strong) IBOutlet NSSecureTextField *passwordTextField;
-@property (strong) IBOutlet NSTextField *remotePortTextField;
-@property (strong) IBOutlet NSButton *connectButton;
+@property (nonatomic) bool isValid;
+@property (nonatomic) IBOutlet NSTextField *titleTextField;
+@property (nonatomic) IBOutlet NSPopUpButton *protocolPopup;
+@property (nonatomic) IBOutlet NSTextField *serverTextField;
+@property (nonatomic) IBOutlet NSTextField *basePathTextField;
+@property (nonatomic) IBOutlet NSTextField *usernameTextField;
+@property (nonatomic) IBOutlet NSSecureTextField *passwordTextField;
+@property (nonatomic) IBOutlet NSTextField *remotePortTextField;
+@property (nonatomic) IBOutlet NSButton *connectButton;
 
 @end
 

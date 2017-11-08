@@ -44,7 +44,7 @@
 @end
 
 @interface AskingForRatingOverlayView ()
-@property bool mouseHover;
+@property (nonatomic) bool mouseHover;
 @end
 
 @implementation AskingForRatingOverlayView

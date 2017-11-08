@@ -43,8 +43,8 @@ static int InvertBitFlag( int _value, int _flag )
 
 @interface InternalViewerController()
 
-@property (strong) IBOutlet NSPopover *goToPositionPopover;
-@property (strong) IBOutlet NSTextField *goToPositionValueTextField;
+@property (nonatomic) IBOutlet NSPopover *goToPositionPopover;
+@property (nonatomic) IBOutlet NSTextField *goToPositionValueTextField;
 
 @end
 

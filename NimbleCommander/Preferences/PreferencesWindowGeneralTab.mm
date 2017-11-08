@@ -7,8 +7,8 @@
 
 @interface PreferencesWindowGeneralTab()
 
-@property (strong) IBOutlet NSButton *FSAccessResetButton;
-@property (strong) IBOutlet NSTextField *FSAccessLabel;
+@property (nonatomic) IBOutlet NSButton *FSAccessResetButton;
+@property (nonatomic) IBOutlet NSTextField *FSAccessLabel;
 
 @end
 

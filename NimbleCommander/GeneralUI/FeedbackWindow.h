@@ -3,6 +3,6 @@
 
 @interface FeedbackWindow : NSWindowController
 
-@property int rating;
+@property (nonatomic) int rating;
 
 @end

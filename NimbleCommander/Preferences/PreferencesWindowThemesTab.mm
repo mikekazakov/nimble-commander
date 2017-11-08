@@ -40,12 +40,12 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 }
 
 @interface PreferencesWindowThemesTab ()
-@property (strong) IBOutlet NSOutlineView *outlineView;
-@property (strong) IBOutlet NSPopUpButton *themesPopUp;
-@property (strong) IBOutlet NSButton *importButton;
-@property (strong) IBOutlet NSButton *exportButton;
-@property bool selectedThemeCanBeRemoved;
-@property bool selectedThemeCanBeReverted;
+@property (nonatomic) IBOutlet NSOutlineView *outlineView;
+@property (nonatomic) IBOutlet NSPopUpButton *themesPopUp;
+@property (nonatomic) IBOutlet NSButton *importButton;
+@property (nonatomic) IBOutlet NSButton *exportButton;
+@property (nonatomic) bool selectedThemeCanBeRemoved;
+@property (nonatomic) bool selectedThemeCanBeReverted;
 @end
 
 @implementation PreferencesWindowThemesTab

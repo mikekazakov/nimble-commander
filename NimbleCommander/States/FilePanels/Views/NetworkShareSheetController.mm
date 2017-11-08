@@ -5,17 +5,17 @@
 
 @interface NetworkShareSheetController ()
 
-@property (strong) NSString *title;
-@property (strong) NSString *server;
-@property (strong) NSString *share;
-@property (strong) NSString *username;
-@property (strong) NSString *passwordEntered;
-@property (strong) NSString *mountpath;
-@property (strong) IBOutlet NSPopUpButton *protocol;
-@property (strong) IBOutlet NSButton *connectButton;
+@property (nonatomic) NSString *title;
+@property (nonatomic) NSString *server;
+@property (nonatomic) NSString *share;
+@property (nonatomic) NSString *username;
+@property (nonatomic) NSString *passwordEntered;
+@property (nonatomic) NSString *mountpath;
+@property (nonatomic) IBOutlet NSPopUpButton *protocol;
+@property (nonatomic) IBOutlet NSButton *connectButton;
 
-@property bool valid;
-@property bool nfsSelected;
+@property (nonatomic) bool valid;
+@property (nonatomic) bool nfsSelected;
 @end
 
 @implementation NetworkShareSheetController

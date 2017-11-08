@@ -7,6 +7,6 @@
 
 - (id) initWithValueNames:(vector<string>)_names;
 
-@property (readonly) const vector<string>& values;
+@property (nonatomic, readonly) const vector<string>& values;
 
 @end

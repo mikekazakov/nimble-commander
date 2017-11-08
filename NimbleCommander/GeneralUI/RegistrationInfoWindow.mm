@@ -5,11 +5,11 @@
 #include "RegistrationInfoWindow.h"
 
 @interface RegistrationInfoWindow ()
-@property (strong) IBOutlet NSTabView *tabView;
-@property (strong) IBOutlet NSTextField *apProduct;
-@property (strong) IBOutlet NSTextField *apName;
-@property (strong) IBOutlet NSTextField *apEmail;
-@property (strong) IBOutlet NSTextField *apCompany;
+@property (nonatomic) IBOutlet NSTabView *tabView;
+@property (nonatomic) IBOutlet NSTextField *apProduct;
+@property (nonatomic) IBOutlet NSTextField *apName;
+@property (nonatomic) IBOutlet NSTextField *apEmail;
+@property (nonatomic) IBOutlet NSTextField *apCompany;
 @end
 
 @implementation RegistrationInfoWindow

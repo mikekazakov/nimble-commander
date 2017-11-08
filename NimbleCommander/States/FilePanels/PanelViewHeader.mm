@@ -50,7 +50,7 @@ static const auto g_LightenFilter = []{
 }();
 
 @interface PanelViewHeader()
-@property (strong) IBOutlet NSMenu *sortMenuPopup;
+@property (nonatomic) IBOutlet NSMenu *sortMenuPopup;
 @end
 
 @implementation PanelViewHeader

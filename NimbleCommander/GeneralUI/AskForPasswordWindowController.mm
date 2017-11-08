@@ -4,10 +4,8 @@
 #include "AskForPasswordWindowController.h"
 
 @interface AskForPasswordWindowController ()
-- (IBAction)onOk:(id)sender;
-- (IBAction)onCancel:(id)sender;
-@property (strong) IBOutlet NSSecureTextField *Password;
-@property (strong) IBOutlet NSTextField *Resource;
+@property (nonatomic) IBOutlet NSSecureTextField *Password;
+@property (nonatomic) IBOutlet NSTextField *Resource;
 
 @end
 

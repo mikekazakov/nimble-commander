@@ -38,10 +38,10 @@ enum class State
 @property (nonatomic) bool isSuccess;
 @property (nonatomic) bool isFailure;
 
-@property (strong) IBOutlet NSTextField *titleField;
-@property (strong) IBOutlet NSTextField *accountField;
-@property (strong) IBOutlet NSTextField *failureReasonField;
-@property (strong) IBOutlet NSButton *connectButton;
+@property (strong, nonatomic) IBOutlet NSTextField *titleField;
+@property (strong, nonatomic) IBOutlet NSTextField *accountField;
+@property (strong, nonatomic) IBOutlet NSTextField *failureReasonField;
+@property (strong, nonatomic) IBOutlet NSButton *connectButton;
 
 @end
 

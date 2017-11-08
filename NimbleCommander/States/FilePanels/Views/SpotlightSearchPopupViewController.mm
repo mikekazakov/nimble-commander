@@ -7,7 +7,7 @@ static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.querie
 
 @interface SpotlightSearchPopupViewController ()
 
-@property (strong) IBOutlet NSComboBox *queryComboBox;
+@property (nonatomic) IBOutlet NSComboBox *queryComboBox;
 
 @end
 

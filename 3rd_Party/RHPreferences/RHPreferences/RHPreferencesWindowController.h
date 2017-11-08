@@ -39,10 +39,10 @@
 
 //properties
 @property (copy) NSString *windowTitle;
-@property (assign) BOOL windowTitleShouldAutomaticlyUpdateToReflectSelectedViewController; //defaults to YES
+@property (nonatomic, assign) BOOL windowTitleShouldAutomaticlyUpdateToReflectSelectedViewController; //defaults to YES
 
-@property (retain) IBOutlet NSToolbar *toolbar;
-@property (retain) IBOutlet NSArray *viewControllers; //controllers should implement RHPreferencesViewControllerProtocol
+@property (nonatomic, retain) IBOutlet NSToolbar *toolbar;
+@property (nonatomic, retain) IBOutlet NSArray *viewControllers; //controllers should implement RHPreferencesViewControllerProtocol
 
 @property (assign) NSUInteger selectedIndex;
 @property (assign) NSViewController <RHPreferencesViewControllerProtocol> *selectedViewController;

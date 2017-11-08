@@ -36,11 +36,11 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 
 @interface GoToFolderSheetController()
 
-@property (readonly) string currentDirectory; // return expanded value
-@property (readonly) string currentFilename;
-@property (strong) IBOutlet NSTextField *Text;
-@property (strong) IBOutlet NSTextField *Error;
-@property (strong) IBOutlet NSButton *GoButton;
+@property (nonatomic, readonly) string currentDirectory; // return expanded value
+@property (nonatomic, readonly) string currentFilename;
+@property (nonatomic) IBOutlet NSTextField *Text;
+@property (nonatomic) IBOutlet NSTextField *Error;
+@property (nonatomic) IBOutlet NSButton *GoButton;
 
 - (IBAction)OnGo:(id)sender;
 - (IBAction)OnCancel:(id)sender;

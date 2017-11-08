@@ -7,7 +7,7 @@
 
 @property (nonatomic) bool overwriteCurrentTheme;
 @property (nonatomic) bool importAsNewTheme;
-@property NSString *importAsName;
+@property (nonatomic) NSString *importAsName;
 
 
 @end

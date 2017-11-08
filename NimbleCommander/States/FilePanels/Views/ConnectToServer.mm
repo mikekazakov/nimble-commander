@@ -70,12 +70,12 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 }
 
 @interface ConnectToServer ()
-@property (strong) IBOutlet NSTableView *connectionsTable;
-@property (strong) IBOutlet NSSegmentedControl *controlButtons;
-@property (strong) IBOutlet NSMenu *addNewConnectionMenu;
-@property (strong) IBOutlet NSButton *connectButton;
+@property (nonatomic) IBOutlet NSTableView *connectionsTable;
+@property (nonatomic) IBOutlet NSSegmentedControl *controlButtons;
+@property (nonatomic) IBOutlet NSMenu *addNewConnectionMenu;
+@property (nonatomic) IBOutlet NSButton *connectButton;
 
-@property (readonly) bool LANSharesEnabled;
+@property (nonatomic, readonly) bool LANSharesEnabled;
 
 @end
 

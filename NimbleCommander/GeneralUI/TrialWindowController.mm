@@ -19,10 +19,8 @@
 
 @interface TrialWindowController ()
 
-@property (strong) IBOutlet NSTextField *versionTextField;
-@property (strong) IBOutlet NSTextView *messageTextView;
-
-- (IBAction)OnClose:(id)sender;
+@property (nonatomic) IBOutlet NSTextField *versionTextField;
+@property (nonatomic) IBOutlet NSTextView *messageTextView;
 
 @end
 

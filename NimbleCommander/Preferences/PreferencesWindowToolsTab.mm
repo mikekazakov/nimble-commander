@@ -5,15 +5,15 @@
 
 @interface PreferencesWindowToolsTab ()
 
-@property (strong) IBOutlet NSTableView                            *toolsTable;
-@property (strong) IBOutlet NSTextField                            *toolTitle;
-@property (strong) IBOutlet NSTextField                            *toolPath;
-@property (strong) IBOutlet NSTextField                            *toolParameters;
-@property (strong) IBOutlet NSPopUpButton                          *toolStartupMode;
-@property (strong) IBOutlet NSSegmentedControl                     *toolsAddRemove;
-@property (strong) IBOutlet NSMenu                                 *parametersMenu;
-@property (strong) IBOutlet NSButton                               *addParameterButton;
-@property bool                                                      anySelected;
+@property (nonatomic) IBOutlet NSTableView                            *toolsTable;
+@property (nonatomic) IBOutlet NSTextField                            *toolTitle;
+@property (nonatomic) IBOutlet NSTextField                            *toolPath;
+@property (nonatomic) IBOutlet NSTextField                            *toolParameters;
+@property (nonatomic) IBOutlet NSPopUpButton                          *toolStartupMode;
+@property (nonatomic) IBOutlet NSSegmentedControl                     *toolsAddRemove;
+@property (nonatomic) IBOutlet NSMenu                                 *parametersMenu;
+@property (nonatomic) IBOutlet NSButton                               *addParameterButton;
+@property (nonatomic) bool                                             anySelected;
 @property (readonly, nonatomic) bool                                haveCommandLineTools;
 @property (readonly, nonatomic) shared_ptr<const ExternalTool>      selectedTool;
 

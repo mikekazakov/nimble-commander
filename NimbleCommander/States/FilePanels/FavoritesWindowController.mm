@@ -17,9 +17,9 @@ static const auto g_FavoritesWindowControllerDragDataType =
     @"FavoritesWindowControllerDragDataType";
 
 @interface FavoritesWindowController ()
-@property (strong) IBOutlet NSTableView *table;
-@property (strong) IBOutlet NSSegmentedControl *buttons;
-@property (strong) IBOutlet NSMenu *optionsMenu;
+@property (nonatomic) IBOutlet NSTableView *table;
+@property (nonatomic) IBOutlet NSSegmentedControl *buttons;
+@property (nonatomic) IBOutlet NSMenu *optionsMenu;
 
 @end
 

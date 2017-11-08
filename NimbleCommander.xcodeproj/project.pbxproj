@@ -1541,7 +1541,7 @@
 		CF56C2DC1DC45BD200F0DF0F /* PanelListViewDateFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewDateFormatting.h; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.h; sourceTree = SOURCE_ROOT; };
 		CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewDateFormatting.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.mm; sourceTree = SOURCE_ROOT; };
 		CF5A0B291C9E7D76005839B7 /* libunrar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libunrar.a; path = 3rd_Party/unrar/built/libunrar.a; sourceTree = SOURCE_ROOT; };
-		CF5FD92D1FA2C02E00752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = NimbleCommander/Bootstrap/default.xcconfig; sourceTree = SOURCE_ROOT; wrapsLines = 1; };
+		CF5FD92D1FA2C02E00752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = NimbleCommander/Config/default.xcconfig; sourceTree = SOURCE_ROOT; wrapsLines = 1; };
 		CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilesDraggingSource.h; path = NimbleCommander/States/FilePanels/FilesDraggingSource.h; sourceTree = SOURCE_ROOT; };
 		CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilesDraggingSource.mm; path = NimbleCommander/States/FilePanels/FilesDraggingSource.mm; sourceTree = SOURCE_ROOT; };
 		CF5FE7D31E120A4900CD83B4 /* CopyFilePaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyFilePaths.h; path = NimbleCommander/States/FilePanels/Actions/CopyFilePaths.h; sourceTree = SOURCE_ROOT; };
@@ -1555,8 +1555,8 @@
 		CF5FE80C1E16461600CD83B4 /* PanelListViewTableHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewTableHeaderView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.h; sourceTree = SOURCE_ROOT; };
 		CF5FE80D1E16461600CD83B4 /* PanelListViewTableHeaderView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewTableHeaderView.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewTableHeaderView.mm; sourceTree = SOURCE_ROOT; };
 		CF6237061EB4436400152B2B /* QLThumbnailsCache_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCache_Tests.mm; path = NimbleCommander/Tests/QLThumbnailsCache_Tests.mm; sourceTree = SOURCE_ROOT; };
-		CF6572991FA6CD7300ABF85F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = NimbleCommander/Bootstrap/debug.xcconfig; sourceTree = SOURCE_ROOT; };
-		CF65729A1FA6CD8100ABF85F /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = NimbleCommander/Bootstrap/release.xcconfig; sourceTree = SOURCE_ROOT; };
+		CF6572991FA6CD7300ABF85F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = NimbleCommander/Config/debug.xcconfig; sourceTree = SOURCE_ROOT; };
+		CF65729A1FA6CD8100ABF85F /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = NimbleCommander/Config/release.xcconfig; sourceTree = SOURCE_ROOT; };
 		CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActivationManager.cpp; path = NimbleCommander/Bootstrap/ActivationManager.cpp; sourceTree = SOURCE_ROOT; };
 		CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivationManager.h; path = NimbleCommander/Bootstrap/ActivationManager.h; sourceTree = SOURCE_ROOT; };
 		CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RoutedIO.xcodeproj; path = RoutedIO/RoutedIO.xcodeproj; sourceTree = "<group>"; };
@@ -2258,6 +2258,16 @@
 			name = Core;
 			sourceTree = "<group>";
 		};
+		CF197C051FB31597009F6C59 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CF5FD92D1FA2C02E00752E59 /* default.xcconfig */,
+				CF6572991FA6CD7300ABF85F /* debug.xcconfig */,
+				CF65729A1FA6CD8100ABF85F /* release.xcconfig */,
+			);
+			name = Config;
+			sourceTree = "<group>";
+		};
 		CF1ADE191F7E6A6F003E9B76 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2464,16 +2474,6 @@
 			name = Theming;
 			sourceTree = "<group>";
 		};
-		CF6572861FA6C4B000ABF85F /* xcconfig */ = {
-			isa = PBXGroup;
-			children = (
-				CF5FD92D1FA2C02E00752E59 /* default.xcconfig */,
-				CF6572991FA6CD7300ABF85F /* debug.xcconfig */,
-				CF65729A1FA6CD8100ABF85F /* release.xcconfig */,
-			);
-			name = xcconfig;
-			sourceTree = "<group>";
-		};
 		CF69CF971DA2003C00992B84 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -2563,7 +2563,6 @@
 		CF876D161D51DFD0009C0CCE /* Bootstrap */ = {
 			isa = PBXGroup;
 			children = (
-				CF6572861FA6C4B000ABF85F /* xcconfig */,
 				CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */,
 				CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */,
 				CFDAC2371DFBDEBA0039A104 /* AppDelegate.h */,
@@ -2891,6 +2890,7 @@
 		CFC5121A16C4BD3D00D247EE /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF197C051FB31597009F6C59 /* Config */,
 				CF876D161D51DFD0009C0CCE /* Bootstrap */,
 				CFAC50D5171557E100A3E5C5 /* Core */,
 				CFDAC3011DFD20810039A104 /* GeneralUI */,

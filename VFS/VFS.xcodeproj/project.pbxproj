@@ -114,6 +114,8 @@
 		CF1847261E41CC49008B7C9F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = ../3rd_Party/OpenSSL/built/libssl.a; sourceTree = "<group>"; };
 		CF1847281E41CC4C008B7C9F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = ../3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = "<group>"; };
 		CF18472F1E41CFB7008B7C9F /* libarchive.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libarchive.a; path = ../3rd_Party/libarchive/built/libarchive.a; sourceTree = "<group>"; };
+		CF197BFA1FB2CE1D009F6C59 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
+		CF197BFC1FB2CE33009F6C59 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF1FBF381E909AC400D3569C /* Fetching.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Fetching.cpp; path = source/Native/Fetching.cpp; sourceTree = "<group>"; };
 		CF1FBF391E909AC400D3569C /* Fetching.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Fetching.h; path = source/Native/Fetching.h; sourceTree = "<group>"; };
 		CF1FDD011F5BBA6F00AF1EBD /* WriteBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WriteBuffer.h; path = source/NetWebDAV/WriteBuffer.h; sourceTree = "<group>"; };
@@ -130,7 +132,7 @@
 		CF3E2F851F60DF08001BFFCE /* Requests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Requests.h; path = source/NetWebDAV/Requests.h; sourceTree = "<group>"; };
 		CF5099931F95C881000AFDE7 /* EncodingDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EncodingDetection.h; path = source/ArcLA/EncodingDetection.h; sourceTree = "<group>"; };
 		CF5099941F95C881000AFDE7 /* EncodingDetection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EncodingDetection.mm; path = source/ArcLA/EncodingDetection.mm; sourceTree = "<group>"; };
-		CF5FD92C1FA1BD0700752E59 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = config.xcconfig; path = config/config.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
+		CF5FD92C1FA1BD0700752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF69CFE01DA227E400992B84 /* ArcLA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcLA.h; path = include/VFS/ArcLA.h; sourceTree = "<group>"; };
 		CF69CFE11DA227E400992B84 /* ArcUnRAR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArcUnRAR.h; path = include/VFS/ArcUnRAR.h; sourceTree = "<group>"; };
 		CF69CFE21DA227E400992B84 /* Native.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Native.h; path = include/VFS/Native.h; sourceTree = "<group>"; };
@@ -345,7 +347,9 @@
 		CF5FD92B1FA1BCE900752E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF5FD92C1FA1BD0700752E59 /* config.xcconfig */,
+				CF5FD92C1FA1BD0700752E59 /* default.xcconfig */,
+				CF197BFA1FB2CE1D009F6C59 /* debug.xcconfig */,
+				CF197BFC1FB2CE33009F6C59 /* release.xcconfig */,
 			);
 			name = Config;
 			sourceTree = "<group>";
@@ -760,24 +764,15 @@
 		};
 		CF69CFD11DA224E200992B84 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF5FD92C1FA1BD0700752E59 /* config.xcconfig */;
+			baseConfigurationReference = CF197BFA1FB2CE1D009F6C59 /* debug.xcconfig */;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_TESTABILITY = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 			};
 			name = Debug;
 		};
 		CF69CFD21DA224E200992B84 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF5FD92C1FA1BD0700752E59 /* config.xcconfig */;
+			baseConfigurationReference = CF197BFC1FB2CE33009F6C59 /* release.xcconfig */;
 			buildSettings = {
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
 			};
 			name = Release;
 		};

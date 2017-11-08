@@ -206,7 +206,7 @@ ssize_t File::Read(void *_buf, const size_t _size)
         
     // just give unpacked data away, don't unpack any more now
     ssize_t sz = min(ssize_t(_size), ssize_t(m_UnpackBufferSize));
-    assert(sz + m_Position <= m_Entry->unpacked_size);
+    assert(sz + m_Position <= (long)m_Entry->unpacked_size);
         
     memcpy(_buf,
            m_UnpackBuffer.get(),
@@ -217,7 +217,7 @@ ssize_t File::Read(void *_buf, const size_t _size)
     m_UnpackBufferSize -= sz;
     m_Position += sz;
     
-    assert( sz <= _size );
+    assert( sz <= (long)_size );
     return sz;
 }
 
@@ -244,7 +244,7 @@ bool File::Eof() const
 {
     if(!m_Archive)
         return true;
-    return m_Position >= m_Entry->unpacked_size;
+    return m_Position >= (ssize_t)m_Entry->unpacked_size;
 }
 
 }

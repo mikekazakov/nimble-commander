@@ -390,12 +390,12 @@ void PSHost::CommitProcs(vector<ProcInfo> _procs)
 
     auto newdata = make_shared<Snapshot>();
     
-    newdata->taken_time = [[NSDate date] timeIntervalSince1970];
+    newdata->taken_time = time_t(NSDate.date.timeIntervalSince1970);
     newdata->procs.swap(_procs);
     newdata->files.reserve(newdata->procs.size());
     newdata->plain_filenames.reserve(newdata->procs.size());
     
-    for(int i = 0; i < newdata->procs.size(); ++i)
+    for(unsigned i = 0; i < (unsigned)newdata->procs.size(); ++i)
         newdata->pid_to_index[ newdata->procs[i].pid ] = i;
     
     for(auto &i: newdata->procs)
@@ -623,7 +623,7 @@ int PSHost::IterateDirectoryListing(const char *_path, const function<bool(const
     {
         VFSDirEnt dir;
         strcpy(dir.name, i.c_str());
-        dir.name_len = i.size();
+        dir.name_len = uint16_t(i.size());
         dir.type = VFSDirEnt::Reg;
         
         if(!_handler(dir))
@@ -647,7 +647,7 @@ int PSHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &
 
 // return true if process has died, if it didn't on timeout - returns false
 // on any errors returns nullopt
-optional<bool> WaitForProcessToDie( int pid )
+static optional<bool> WaitForProcessToDie( int pid )
 {
     int kq = kqueue();
     if( kq == -1 )

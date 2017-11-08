@@ -130,7 +130,7 @@ static int CopyFileContentsLarge(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _
 
 static int CopyFileContents(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _dst)
 {
-    const uint64_t small_large_tresh = 16*1024*1024; // 16mb
+    const ssize_t small_large_tresh = 16*1024*1024; // 16mb
     
     if(_src->Size() > small_large_tresh )
         return CopyFileContentsLarge(_src, _dst);

@@ -276,7 +276,7 @@ string EscapeStringForJSONInHTTPHeader(const string &_original)
         else {
             if( c == '"' || c == '\\' )
                 after += '\\';
-            after += c;
+            after += (char)c;
         }
     }
     return after;

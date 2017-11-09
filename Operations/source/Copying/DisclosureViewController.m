@@ -67,6 +67,8 @@
 @implementation DisclosureViewController
 {
     BOOL _disclosureIsClosed;
+    NSString *_hideTitle;
+    NSString *_showTitle;
 }
 
 - (id)init
@@ -80,6 +82,8 @@
     if (self != nil)
     {
         _disclosureIsClosed = NO;
+        _hideTitle = self.disclosureButton.title;
+        _showTitle = self.disclosureButton.alternateTitle;
     }
     return self;
 }
@@ -87,6 +91,9 @@
 - (void)awakeFromNib
 {
     _disclosureIsClosed = NO;
+        _hideTitle = self.disclosureButton.title;
+        _showTitle = self.disclosureButton.alternateTitle;
+
 }
 
 - (void)setTitle:(NSString *)title
@@ -147,14 +154,16 @@
                 context.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
                 // Animate the closing constraint to 0, causing the bottom of the header to be flush with the bottom of the overall disclosure view.
                 self.closingConstraint.animator.constant = 0;
-                self.disclosureButton.title = @"Show";
+                self.disclosureButton.title = _showTitle;
             } completionHandler:^{
                 _disclosureIsClosed = YES;
+                _disclosedView.hidden = YES;
             }];
         else {
             self.closingConstraint.constant = 0;
-            self.disclosureButton.title = @"Show";
+            self.disclosureButton.title = _showTitle;
             _disclosureIsClosed = YES;
+            _disclosedView.hidden = YES;
         }
     }
     else
@@ -164,16 +173,18 @@
                 context.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
                 // Animate the constraint to fit the disclosed view again
                 self.closingConstraint.animator.constant -= self.disclosedView.frame.size.height;
-                self.disclosureButton.title = @"Hide";
+                self.disclosureButton.title = _hideTitle;
+                _disclosedView.hidden = NO;
             } completionHandler:^{
                 // The constraint is no longer needed, we can remove it.
                 [self.view removeConstraint:self.closingConstraint];
                 _disclosureIsClosed = NO;
             }];
         else {
-            self.disclosureButton.title = @"Hide";
+            self.disclosureButton.title = _hideTitle;
             [self.view removeConstraint:self.closingConstraint];
             _disclosureIsClosed = NO;
+            _disclosedView.hidden = NO;
         }
     }
 }

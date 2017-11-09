@@ -4,6 +4,7 @@
 #include <Habanero/algo.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "../Internal.h"
 
 using namespace nc::ops;
 

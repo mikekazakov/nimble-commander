@@ -1,0 +1,9 @@
+
+/* Class = "NSTextFieldCell"; title = "Disclosure Panel Description"; ObjectID = "MtR-6I-AUf"; */
+"MtR-6I-AUf.title" = "";
+
+/* Class = "NSButtonCell"; alternateTitle = "Show"; ObjectID = "wp7-qH-dKo"; */
+"wp7-qH-dKo.alternateTitle" = "Показать";
+
+/* Class = "NSButtonCell"; title = "Hide"; ObjectID = "wp7-qH-dKo"; */
+"wp7-qH-dKo.title" = "Скрыть";

@@ -1,5 +1,6 @@
 #include "CopyingTitleBuilder.h"
 #include <Utility/PathManip.h>
+#include "../Internal.h"
 
 namespace nc::ops {
 

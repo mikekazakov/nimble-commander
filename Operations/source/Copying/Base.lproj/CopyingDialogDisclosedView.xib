@@ -1,7 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9060" systemVersion="15B42" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="17A405" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9060"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="DisclosureViewController">
@@ -20,10 +22,9 @@
                 <customView translatesAutoresizingMaskIntoConstraints="NO" id="jMJ-zR-Jy6" userLabel="Header View">
                     <rect key="frame" x="0.0" y="118" width="341" height="26"/>
                     <subviews>
-                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AHm-RH-J72">
-                            <rect key="frame" x="83" y="6" width="165" height="14"/>
-                            <animations/>
-                            <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Disclosure Panel Description" id="MtR-6I-AUf">
+                        <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AHm-RH-J72">
+                            <rect key="frame" x="83" y="6" width="4" height="14"/>
+                            <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="MtR-6I-AUf">
                                 <font key="font" metaFont="smallSystemBold"/>
                                 <color key="textColor" white="0.10000000000000001" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -37,8 +38,7 @@
                             <constraints>
                                 <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="61" id="0NB-ce-B2V"/>
                             </constraints>
-                            <animations/>
-                            <buttonCell key="cell" type="inline" title="Hide" bezelStyle="inline" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wp7-qH-dKo">
+                            <buttonCell key="cell" type="inline" title="Hide" alternateTitle="Show" bezelStyle="inline" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="wp7-qH-dKo">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                 <font key="font" metaFont="smallSystemBold"/>
                             </buttonCell>
@@ -54,7 +54,6 @@
                         <constraint firstItem="GjJ-bM-Ca9" firstAttribute="baseline" secondItem="AHm-RH-J72" secondAttribute="baseline" id="vYY-mk-AeS"/>
                         <constraint firstItem="GjJ-bM-Ca9" firstAttribute="leading" secondItem="jMJ-zR-Jy6" secondAttribute="leading" constant="20" symbolic="YES" id="yNp-Q2-Y1w"/>
                     </constraints>
-                    <animations/>
                 </customView>
             </subviews>
             <constraints>
@@ -62,7 +61,6 @@
                 <constraint firstItem="jMJ-zR-Jy6" firstAttribute="top" secondItem="1" secondAttribute="top" id="Sbt-AY-76C"/>
                 <constraint firstItem="jMJ-zR-Jy6" firstAttribute="leading" secondItem="1" secondAttribute="leading" id="xJl-QQ-QLc"/>
             </constraints>
-            <animations/>
             <point key="canvasLocation" x="510.5" y="333"/>
         </customView>
     </objects>

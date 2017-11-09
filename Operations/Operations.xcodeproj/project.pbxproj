@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF197C251FB4381E009F6C59 /* CopyingDialogDisclosedView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF197C271FB4381E009F6C59 /* CopyingDialogDisclosedView.xib */; };
 		CF36DBE91F6BF3FB004A018E /* Archive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */; };
 		CF4BCEE91F1D9CAA005F8414 /* CopyingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */; };
 		CF4BCEEA1F1D9CAA005F8414 /* CopyingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */; };
@@ -30,7 +31,6 @@
 		CF4BCF511F2F07DB005F8414 /* CopyingDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4BCF4C1F2F07DB005F8414 /* CopyingDialog.xib */; };
 		CF4BCF521F2F07DB005F8414 /* CopyingDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF4E1F2F07DB005F8414 /* CopyingDialog.h */; };
 		CF4BCF531F2F07DB005F8414 /* CopyingDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF4F1F2F07DB005F8414 /* CopyingDialog.mm */; };
-		CF4BCF541F2F07DB005F8414 /* CopyingDialogDisclosedView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4BCF501F2F07DB005F8414 /* CopyingDialogDisclosedView.xib */; };
 		CF4BCF581F2F1508005F8414 /* DisclosureViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF561F2F1508005F8414 /* DisclosureViewController.h */; };
 		CF4BCF591F2F1508005F8414 /* DisclosureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */; };
 		CF4BCF5C1F301303005F8414 /* AggregateProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF5A1F301303005F8414 /* AggregateProgressTracker.h */; };
@@ -168,6 +168,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		CF197C261FB4381E009F6C59 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CopyingDialogDisclosedView.xib; sourceTree = "<group>"; };
+		CF197C291FB43825009F6C59 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/CopyingDialogDisclosedView.strings; sourceTree = "<group>"; };
 		CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Archive_Tests.mm; path = tests/Archive_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CopyingJob.cpp; path = source/Copying/CopyingJob.cpp; sourceTree = "<group>"; };
 		CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingJob.h; path = source/Copying/CopyingJob.h; sourceTree = "<group>"; };
@@ -192,7 +194,6 @@
 		CF4BCF4D1F2F07DB005F8414 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = source/Copying/Base.lproj/CopyingDialog.xib; sourceTree = "<group>"; };
 		CF4BCF4E1F2F07DB005F8414 /* CopyingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingDialog.h; path = source/Copying/CopyingDialog.h; sourceTree = "<group>"; };
 		CF4BCF4F1F2F07DB005F8414 /* CopyingDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyingDialog.mm; path = source/Copying/CopyingDialog.mm; sourceTree = "<group>"; };
-		CF4BCF501F2F07DB005F8414 /* CopyingDialogDisclosedView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = CopyingDialogDisclosedView.xib; path = source/Copying/CopyingDialogDisclosedView.xib; sourceTree = "<group>"; };
 		CF4BCF551F2F07E2005F8414 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = source/Copying/ru.lproj/CopyingDialog.strings; sourceTree = "<group>"; };
 		CF4BCF561F2F1508005F8414 /* DisclosureViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisclosureViewController.h; path = source/Copying/DisclosureViewController.h; sourceTree = "<group>"; };
 		CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DisclosureViewController.m; path = source/Copying/DisclosureViewController.m; sourceTree = "<group>"; };
@@ -374,7 +375,7 @@
 				CF4BCF4E1F2F07DB005F8414 /* CopyingDialog.h */,
 				CF4BCF4F1F2F07DB005F8414 /* CopyingDialog.mm */,
 				CF4BCF4C1F2F07DB005F8414 /* CopyingDialog.xib */,
-				CF4BCF501F2F07DB005F8414 /* CopyingDialogDisclosedView.xib */,
+				CF197C271FB4381E009F6C59 /* CopyingDialogDisclosedView.xib */,
 				CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */,
 				CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */,
 				CF4BCF561F2F1508005F8414 /* DisclosureViewController.h */,
@@ -834,7 +835,7 @@
 				CFC4F8EB1F00E5D30000B3EE /* HaltReasonDialog.xib in Resources */,
 				CFC4F9501F0CA84D0000B3EE /* DirectoryCreationDialog.xib in Resources */,
 				CFC4F97E1F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.xib in Resources */,
-				CF4BCF541F2F07DB005F8414 /* CopyingDialogDisclosedView.xib in Resources */,
+				CF197C251FB4381E009F6C59 /* CopyingDialogDisclosedView.xib in Resources */,
 				CFFA953E1F4C0C390035E606 /* AttrsChangingDialog.xib in Resources */,
 				CFC4F8FE1F04AF2B0000B3EE /* Localizable.stringsdict in Resources */,
 			);
@@ -930,6 +931,16 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		CF197C271FB4381E009F6C59 /* CopyingDialogDisclosedView.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CF197C261FB4381E009F6C59 /* Base */,
+				CF197C291FB43825009F6C59 /* ru */,
+			);
+			name = CopyingDialogDisclosedView.xib;
+			path = source/Copying;
+			sourceTree = "<group>";
+		};
 		CF4BCF081F1EF579005F8414 /* FileAlreadyExistDialog.xib */ = {
 			isa = PBXVariantGroup;
 			children = (

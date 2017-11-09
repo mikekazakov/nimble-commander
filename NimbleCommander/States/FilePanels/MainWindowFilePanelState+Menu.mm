@@ -230,7 +230,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         auto host = mc.resultHost;
         auto opts = mc.resultOptions;
         if( !host || path.empty() )
-            return; // ui possibly has fucked up
+            return; // ui invariant is broken
 
         const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
@@ -267,7 +267,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         auto host = mc.resultHost;
         auto opts = mc.resultOptions;
         if( !host || path.empty() )
-            return; // ui had possibly fucked up
+            return; // ui invariant is broken
         
         const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
@@ -317,7 +317,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         auto host = mc.resultHost;
         auto opts = mc.resultOptions;
         if( !host || path.empty() )
-            return; // ui had possibly fucked up
+            return; // ui invariant is broken
         
         const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
@@ -353,7 +353,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         auto host = mc.resultHost;
         auto opts = mc.resultOptions;
         if( !host || path.empty() )
-            return; // ui had possibly fucked up
+            return; // ui invariant is broken
         
         const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);

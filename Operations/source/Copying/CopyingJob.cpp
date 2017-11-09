@@ -73,7 +73,7 @@ void CopyingJob::Perform()
         if( !(m_DestinationNativeFSInfo = NativeFSManager::Instance().VolumeFromPath(m_DestinationPath)) ) {
             m_DestinationNativeFSInfo = NativeFSManager::Instance().VolumeFromPathFast(m_DestinationPath); // this may be wrong in case of symlinks
             if( !m_DestinationNativeFSInfo ) {
-                Stop(); // we're totally fucked. can't go on
+                Stop(); // we're totally broken. can't go on
                 return;
             }
         }

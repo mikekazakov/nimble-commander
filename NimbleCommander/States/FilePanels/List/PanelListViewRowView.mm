@@ -267,7 +267,7 @@ static NSColor* FindBackgroundColor(bool _is_focused,
         positioned:(NSWindowOrderingMode)place
         relativeTo:(nullable NSView *)otherView
 {
-    /* Fuck off you NSTableView, I'll not accept your fake selection view as my child! */
+    /* Go away you NSTableView, I'll not accept your fake selection view as my child! */
 }
 
 - (void)display{}

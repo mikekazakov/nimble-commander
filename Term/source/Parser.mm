@@ -211,7 +211,7 @@ void Parser::EatByte(unsigned char _byte, int &_result_flags)
                 m_Title.clear();
             }
             else if( c == '1' )
-                // I have no idea why the fuck VIM on 10.13 uses this weird format, but it does:
+                // I have no idea why the on earth VIM on 10.13 uses this weird format, but it does:
                 // ESC ] 1 1 ; title BELL
                 return;
             else
@@ -235,7 +235,7 @@ void Parser::EatByte(unsigned char _byte, int &_result_flags)
                  
         case EState::ProcParams:
             if(c == '>') {
-                // modifier '>' is somehow related with alternative screen, don't give a fuck now
+                // modifier '>' is somehow related with alternative screen, ignore now
                 return;
             }
             
@@ -596,7 +596,7 @@ void Parser::CSI_DEC_PMS(bool _on)
                     break;
                     
                 case 1034:
-                    // dont give a fuck what meta mode is, need to implement
+                    // ignore meta mode for now, need to implement
                     // 1034:
                     // rmm     mo      End meta mode
                     // smm     mm      Begin meta mode (8th bit set)

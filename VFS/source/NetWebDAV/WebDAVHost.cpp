@@ -66,7 +66,7 @@ void WebDAVHost::Init()
         throw VFSErrorException(rc);
     
 // it's besically good to check available requests before commiting to work with the server,
-// BUT my local QNAP NAS is pretty fucked up and reports a gibberish like
+// BUT my local QNAP NAS is pretty strange and reports a gibberish like
 // "Allow: GET,HEAD,POST,OPTIONS,HEAD,HEAD", which doesn't help at all.
 //    if( (requests & HTTPRequests::MinimalRequiredSet) !=  HTTPRequests::MinimalRequiredSet ) {
 //        HTTPRequests::Print(requests);

@@ -33,7 +33,7 @@ public:
     ~Model();
     
     // these methods should be called by a controller, since some view's props have to be updated
-    // PanelData is solely sync class - it does not give a fuck about concurrency,
+    // PanelData is solely sync class - it does not know about concurrency,
     // any parallelism should be done by callers (i.e. controller)
     // just like Metallica:
     void Load  (const shared_ptr<VFSListing> &_listing, PanelType _type);

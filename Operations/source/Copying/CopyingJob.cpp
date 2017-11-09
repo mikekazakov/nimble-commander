@@ -91,6 +91,8 @@ void CopyingJob::Perform()
     
     if( BlockIfPaused(); IsStopped() )
         return;
+    
+    SetStage(Stage::Default);
 }
 
 void CopyingJob::ProcessItems()

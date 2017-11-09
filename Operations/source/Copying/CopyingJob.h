@@ -98,7 +98,7 @@ public:
     
     enum class Stage
     {
-        None,
+        Default,
         Preparing,
         Process,
         Verify,
@@ -216,7 +216,7 @@ private:
     const DispatchGroup                         m_IOGroup;
     bool                                        m_IsSingleInitialItemProcessing = false;
     bool                                        m_IsSingleScannedItemProcessing = false;
-    enum Stage                                  m_Stage = Stage::None;
+    enum Stage                                  m_Stage = Stage::Default;
     
     CopyingOptions                              m_Options;
 };

@@ -393,9 +393,9 @@ void Copying::OnStageChanged()
                           m_Job->Options()};
     string title = "";
     switch( m_Job->Stage() ) {
-        case CopyingJob::Stage::None:
-        case CopyingJob::Stage::Preparing:  title = b.TitleForPreparing();  break;
+        case CopyingJob::Stage::Default:
         case CopyingJob::Stage::Process:    title = b.TitleForProcessing(); break;
+        case CopyingJob::Stage::Preparing:  title = b.TitleForPreparing();  break;
         case CopyingJob::Stage::Verify:     title = b.TitleForVerifying();  break;
         case CopyingJob::Stage::Cleaning:   title = b.TitleForCleanup();    break;
     }

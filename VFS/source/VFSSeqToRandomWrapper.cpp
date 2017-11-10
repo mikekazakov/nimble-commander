@@ -28,7 +28,7 @@ VFSSeqToRandomROWrapperFile::~VFSSeqToRandomROWrapperFile()
     Close();
 }
 
-int VFSSeqToRandomROWrapperFile::Open(int _flags,
+int VFSSeqToRandomROWrapperFile::Open(unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker,
                                       function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress)
 {
@@ -36,7 +36,7 @@ int VFSSeqToRandomROWrapperFile::Open(int _flags,
     return ret;
 }
 
-int VFSSeqToRandomROWrapperFile::OpenBackend(int _flags,
+int VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
                                              VFSCancelChecker _cancel_checker,
                                              function<void(uint64_t _bytes_proc, uint64_t _bytes_total)> _progress)
 {
@@ -142,7 +142,7 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(int _flags,
     return VFSError::Ok;
 }
 
-int VFSSeqToRandomROWrapperFile::Open(int _flags, const VFSCancelChecker &_cancel_checker)
+int VFSSeqToRandomROWrapperFile::Open(unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     return Open(_flags, _cancel_checker, nullptr);
 }

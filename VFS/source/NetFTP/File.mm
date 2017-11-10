@@ -58,7 +58,7 @@ path File::DirName() const
     return path(Path()).parent_path();
 }
 
-int File::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     auto ftp_host = dynamic_pointer_cast<FTPHost>(Host());
     VFSStat stat;

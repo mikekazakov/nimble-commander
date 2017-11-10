@@ -10,7 +10,7 @@ class XAttrFile final: public VFSFile
 {
 public:
     XAttrFile( const string &_xattr_path, const shared_ptr<XAttrHost> &_parent, int _fd );
-    virtual int Open(int _open_flags, const VFSCancelChecker &_cancel_checker = nullptr) override;
+    virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = nullptr) override;
     virtual int  Close() override;
     virtual bool IsOpened() const override;
     virtual ReadParadigm  GetReadParadigm() const override;
@@ -30,7 +30,7 @@ private:
     bool IsOpenedForWriting() const noexcept;
     
     const int               m_FD; // non-owning
-    int                     m_OpenFlags = 0;
+    unsigned long           m_OpenFlags = 0;
     unique_ptr<uint8_t[]>   m_FileBuf;
     ssize_t                 m_Position = 0;
     ssize_t                 m_Size = 0;
@@ -335,7 +335,7 @@ XAttrFile::XAttrFile( const string &_xattr_path, const shared_ptr<XAttrHost> &_p
 {
 }
 
-int XAttrFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int XAttrFile::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( IsOpened() )
         return VFSError::InvalidCall;

@@ -42,7 +42,7 @@ public:
     VFSFile(const char* _relative_path, const VFSHostPtr &_host);
     virtual ~VFSFile();
 
-    virtual int     Open(int _open_flags,
+    virtual int     Open(unsigned long _open_flags,
                          const VFSCancelChecker &_cancel_checker = nullptr);
     virtual bool    IsOpened() const;
     virtual int     Close();

@@ -12,7 +12,7 @@ public:
                               uint64_t _mem_size);
     
     
-    virtual int     Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    virtual int     Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual bool    IsOpened() const override;
     virtual int     Close() override;
     

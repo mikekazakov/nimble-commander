@@ -19,7 +19,7 @@ File::~File()
     Close();
 }
 
-int File::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( _open_flags & VFSFlags::OF_Append )
         return VFSError::FromErrno(EPERM);

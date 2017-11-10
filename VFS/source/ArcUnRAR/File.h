@@ -20,7 +20,7 @@ public:
     File(const char* _relative_path, shared_ptr<UnRARHost> _host);
     ~File();
     
-    virtual int Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual bool    IsOpened() const override;
     virtual int     Close() override;
 

@@ -14,7 +14,7 @@ public:
     File(const char* _relative_path, const shared_ptr<NativeHost> &_host);
     ~File();
     
-    virtual int     Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    virtual int     Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual bool    IsOpened() const override;
     virtual int     Close() override;
     virtual ssize_t Read(void *_buf, size_t _size) override;
@@ -38,7 +38,7 @@ public:
     virtual shared_ptr<VFSFile> Clone() const override;
 private:
     int     m_FD;
-    int     m_OpenFlags;
+    unsigned long m_OpenFlags;
     ssize_t m_Position;
     ssize_t m_Size;
 };

@@ -15,7 +15,7 @@ public:
     File(const char* _relative_path, const shared_ptr<WebDAVHost> &_host);
     ~File();
 
-    int Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     bool    IsOpened() const override;
     int     Close() override;
     ssize_t Pos() const override;
@@ -36,7 +36,7 @@ private:
     ReadBuffer  m_ReadBuffer;
     WriteBuffer m_WriteBuffer;
     unique_ptr<Connection> m_Conn;
-    int         m_OpenFlags = 0;
+    unsigned long m_OpenFlags = 0;
     long        m_Pos = 0;
     long        m_Size = -1;
 };

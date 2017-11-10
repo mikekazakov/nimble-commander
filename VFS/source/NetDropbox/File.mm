@@ -75,7 +75,7 @@ NSURLRequest *File::BuildDownloadRequest() const
     return request;
 }
 
-int File::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     if( m_State != Cold )
         return VFSError::InvalidCall;

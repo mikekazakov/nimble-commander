@@ -96,7 +96,7 @@ bool VFSGenericMemReadOnlyFile::Eof() const
     return m_Pos == (long)m_Size;
 }
 
-int VFSGenericMemReadOnlyFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int VFSGenericMemReadOnlyFile::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     m_Opened = true;
     return 0;

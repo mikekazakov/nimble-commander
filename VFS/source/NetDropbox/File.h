@@ -15,7 +15,7 @@ public:
     File(const char* _relative_path, const shared_ptr<class DropboxHost> &_host);
     ~File();
 
-    virtual int Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual int Close() override;
     virtual int PreferredIOSize() const override;
     virtual bool    IsOpened() const override;
@@ -89,7 +89,7 @@ private:
         atomic_bool                     append_accepted{false};
     };
 
-    int                 m_OpenFlags = 0;
+    unsigned long       m_OpenFlags = 0;
     long                m_FilePos = 0;
     long                m_FileSize = -1;
     long                m_ChunkSize = 150 * 1000 * 1000; // 150Mb according to dropbox docs

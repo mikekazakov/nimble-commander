@@ -5,6 +5,7 @@
 
 @interface NCOpsDirectoryCreationDialog : NSWindowController<NSTextFieldDelegate>
 
-@property (readonly) const string &result;
+@property (nonatomic, readonly) const string &result;
+@property (nonatomic, readwrite) string suggestion;
 
 @end

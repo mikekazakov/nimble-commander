@@ -12,9 +12,11 @@
 @implementation NCOpsDirectoryCreationDialog
 {
     string m_Result;
+    string m_Suggestion;
 }
 
 @synthesize result = m_Result;
+@synthesize suggestion = m_Suggestion;
 
 - (instancetype)init
 {
@@ -28,7 +30,9 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    [self.window makeFirstResponder:self.TextField];
+    if( auto v = [NSString stringWithUTF8StdString:m_Suggestion] )
+        self.TextField.stringValue = v;
+    [self.window makeFirstResponder:self.TextField];        
 }
 
 - (IBAction)OnCreate:(id)sender

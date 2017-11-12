@@ -32,7 +32,7 @@
     [super windowDidLoad];
     if( auto v = [NSString stringWithUTF8StdString:m_Suggestion] )
         self.TextField.stringValue = v;
-    [self.window makeFirstResponder:self.TextField];        
+    [self.window makeFirstResponder:self.TextField];
 }
 
 - (IBAction)OnCreate:(id)sender

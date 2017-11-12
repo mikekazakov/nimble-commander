@@ -11,6 +11,7 @@
 #include "../Favorites.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
+#include "../MainWindowFilePanelsStateToolbarDelegate.h"
 #include "ShowGoToPopup.h"
 #include "OpenNetworkConnection.h"
 #include "../PanelHistory.h"
@@ -373,8 +374,29 @@ static NSMenu *BuildHistoryQuickList( PanelController *_panel )
     return menu;
 }
 
-void ShowLeftGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender )
+static bool RerouteGoToEventToLeftToolbarButton( MainWindowFilePanelState *_target, id _sender )
 {
+    if( objc_cast<NSButton>(_sender) )
+        return false;
+    
+    const auto toolbar = _target.toolbar;
+    const auto delegate = objc_cast<MainWindowFilePanelsStateToolbarDelegate>(toolbar.delegate);
+    if( !delegate )
+        return false;
+    
+    if( !delegate.leftPanelGoToButton ||
+        !delegate.leftPanelGoToButton.window )
+        return false;
+
+    [delegate.leftPanelGoToButton performClick:_target];
+    return true;
+}
+
+void ShowLeftGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender ) const
+{
+    if( RerouteGoToEventToLeftToolbarButton(_target, _sender) )
+        return;
+
     const auto menu = BuildGoToMenu(_target, _target.leftPanelController);
     
     if( auto button = objc_cast<NSButton>(_sender) )
@@ -388,8 +410,29 @@ void ShowLeftGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender )
                                 inView:_target];
 }
 
-void ShowRightGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender )
+static bool RerouteGoToEventToRightToolbarButton( MainWindowFilePanelState *_target, id _sender )
 {
+    if( objc_cast<NSButton>(_sender) )
+        return false;
+    
+    const auto toolbar = _target.toolbar;
+    const auto delegate = objc_cast<MainWindowFilePanelsStateToolbarDelegate>(toolbar.delegate);
+    if( !delegate )
+        return false;
+    
+    if( !delegate.rightPanelGoToButton ||
+        !delegate.rightPanelGoToButton.window )
+        return false;
+
+    [delegate.rightPanelGoToButton performClick:_target];
+    return true;
+}
+
+void ShowRightGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender ) const
+{
+    if( RerouteGoToEventToRightToolbarButton(_target, _sender) )
+        return;
+
     const auto menu = BuildGoToMenu(_target, _target.rightPanelController);
     
     if( auto button = objc_cast<NSButton>(_sender) )

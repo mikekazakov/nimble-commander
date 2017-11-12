@@ -4,5 +4,7 @@
 @interface MainWindowFilePanelState (Menu)
 
 - (IBAction)onExternMenuActionCalled:(id)sender;
+- (IBAction)onLeftPanelGoToButtonAction:(id)sender;
+- (IBAction)onRightPanelGoToButtonAction:(id)sender;
 
 @end

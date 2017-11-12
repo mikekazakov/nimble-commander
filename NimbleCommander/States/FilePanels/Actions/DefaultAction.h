@@ -14,11 +14,12 @@ struct PanelAction
     virtual void Perform( PanelController *_target, id _sender ) const;
 };
 
-struct DefaultStateAction
+struct StateAction
 {
-    static bool Predicate( MainWindowFilePanelState *_target );
-    static bool ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item );
-    static void Perform( MainWindowFilePanelState *_target, id _sender );
+    virtual ~StateAction();
+    virtual bool Predicate( MainWindowFilePanelState *_target ) const;
+    virtual bool ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const;
+    virtual void Perform( MainWindowFilePanelState *_target, id _sender ) const;
 };
 
 };

@@ -142,10 +142,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  */
 - (void) changeFocusedSide;
 
-// UI wiring
-- (IBAction)onLeftPanelGoToButtonAction:(id)sender;
-- (IBAction)onRightPanelGoToButtonAction:(id)sender;
-
 @end
 
 

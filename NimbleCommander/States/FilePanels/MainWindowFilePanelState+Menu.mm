@@ -13,12 +13,18 @@
 #include "Actions/TabSelection.h"
 #include "PanelData.h"
 #include "PanelView.h"
-
+#include "Actions/ShowGoToPopup.h"
 #include "../MainWindowController.h"
 #include <Operations/Copying.h>
 #include <Operations/CopyingDialog.h>
+#include <NimbleCommander/Core/Alert.h>
 
+using namespace nc::core;
 using namespace nc::panel;
+namespace nc::panel {
+static const nc::panel::actions::StateAction *ActionByTag(int _tag) noexcept;
+static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
+}
 
 static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
@@ -43,7 +49,9 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
 - (BOOL) validateMenuItemImpl:(NSMenuItem *)item
 {
-    const auto tag = item.tag;
+    const auto tag = (int)item.tag;
+    if( const auto action = ActionByTag(tag) )
+        return action->ValidateMenuItem(self, item);
 
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
@@ -509,7 +517,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
                 [self runExtTool:t];
 }
 
- - (IBAction)onSwitchDualSinglePaneMode:(id)sender
+- (IBAction)onSwitchDualSinglePaneMode:(id)sender
 {
     if( m_MainSplitView.anyCollapsed ) {
         if( m_MainSplitView.isLeftCollapsed )
@@ -525,4 +533,61 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     }
 }
 
+- (IBAction)onLeftPanelGoToButtonAction:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)onRightPanelGoToButtonAction:(id)sender { Perform(_cmd, self, sender); }
+
 @end
+
+using namespace nc::panel::actions;
+namespace nc::panel {
+
+static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
+{"menu.go.left_panel",      @selector(onLeftPanelGoToButtonAction:),    new ShowLeftGoToPopup},
+{"menu.go.right_panel",     @selector(onRightPanelGoToButtonAction:),   new ShowRightGoToPopup},
+};
+
+static const StateAction *ActionByTag(int _tag) noexcept
+{
+    static const auto actions = []{
+        unordered_map<int, const StateAction*> m;
+        auto &am = ActionsShortcutsManager::Instance();
+        for( auto &a: g_Wiring )
+            if( get<0>(a)[0] != 0 ) {
+                if( auto tag = am.TagFromAction(get<0>(a)); tag >= 0 )
+                    m.emplace( tag, get<2>(a) );
+                else
+                    cerr << "warning - unrecognized action: " << get<0>(a) << endl;
+            }
+        return m;
+    }();
+    const auto v = actions.find(_tag);
+    return v == end(actions) ? nullptr : v->second;
+}
+
+static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender)
+{
+    static const auto actions = []{
+        unordered_map<SEL, const StateAction*> m;
+        for( auto &a: g_Wiring )
+            m.emplace( get<1>(a), get<2>(a) );
+        return m;
+    }();
+
+    if( const auto action = actions.find(_sel); action != end(actions)  ) {
+        try {
+            action->second->Perform(_target, _sender);
+        }
+        catch( exception &e ) {
+            ShowExceptionAlert(e);
+        }
+        catch(...){
+            ShowExceptionAlert();
+        }
+    }
+    else {
+        cerr << "warning - unrecognized selector: " <<
+            NSStringFromSelector(_sel).UTF8String << endl;
+    }
+}
+
+}

@@ -24,7 +24,6 @@
 #include "Views/FilePanelMainSplitView.h"
 #include "Views/BriefSystemOverview.h"
 #include "Views/FilePanelOverlappedTerminal.h"
-#include "Actions/ShowGoToPopup.h"
 #include "PanelData.h"
 #include "PanelView.h"
 #include <Operations/Pool.h>
@@ -378,26 +377,6 @@ static bool GoToForcesPanelActivation()
             if( [resp isDescendantOf:self] )
                 m_LastResponder = resp;
     }
-}
-
-- (IBAction)onLeftPanelGoToButtonAction:(id)sender
-{
-    if(!objc_cast<NSButton>(sender) &&
-       m_ToolbarDelegate.leftPanelGoToButton &&
-       m_ToolbarDelegate.leftPanelGoToButton.window )
-        [m_ToolbarDelegate.leftPanelGoToButton performClick:self];
-    else
-        nc::panel::actions::ShowLeftGoToPopup::Perform(self, sender);
-}
-
-- (IBAction)onRightPanelGoToButtonAction:(id)sender
-{
-    if(!objc_cast<NSButton>(sender) &&
-       m_ToolbarDelegate.rightPanelGoToButton &&
-       m_ToolbarDelegate.rightPanelGoToButton.window )
-        [m_ToolbarDelegate.rightPanelGoToButton performClick:self];
-    else
-        nc::panel::actions::ShowRightGoToPopup::Perform(self, sender);
 }
 
 - (bool) isPanelActive

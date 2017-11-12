@@ -11,14 +11,14 @@ namespace nc::panel::actions {
 //                          NetworkConnectionsManager::Instance()
 //                          GlobalConfig
 
-struct ShowLeftGoToPopup : DefaultStateAction
+struct ShowLeftGoToPopup : StateAction
 {
-    static void Perform( MainWindowFilePanelState *_target, id _sender );
+    void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
 };
 
-struct ShowRightGoToPopup : DefaultStateAction
+struct ShowRightGoToPopup : StateAction
 {
-    static void Perform( MainWindowFilePanelState *_target, id _sender );
+    void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
 };
 
 struct ShowConnectionsQuickList : PanelAction

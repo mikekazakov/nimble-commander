@@ -21,17 +21,21 @@ void PanelAction::Perform( PanelController *_target, id _sender ) const
 {
 }
 
-bool DefaultStateAction::Predicate( MainWindowFilePanelState *_target )
+StateAction::~StateAction()
+{
+}
+
+bool StateAction::Predicate( MainWindowFilePanelState *_target ) const
 {
     return true;
 }
 
-bool DefaultStateAction::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item )
+bool StateAction::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const
 {
     return Predicate( _target );
 }
 
-void DefaultStateAction::Perform( MainWindowFilePanelState *_target, id _sender )
+void StateAction::Perform( MainWindowFilePanelState *_target, id _sender ) const
 {
 }
 

@@ -4805,8 +4805,8 @@
 				CFCCFC161A5E891600313845 /* ru */,
 			);
 			name = MainMenu.xib;
-			path = ../NimbleCommander/Bootstrap;
-			sourceTree = "<group>";
+			path = NimbleCommander/Bootstrap;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFBB21A5D340000313845 /* SFTPConnectionSheetController.xib */ = {
 			isa = PBXVariantGroup;

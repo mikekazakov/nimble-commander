@@ -1,22 +1,22 @@
 // Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-@class MainWindowFilePanelState;
+#include "DefaultAction.h"
 
 namespace nc::panel::actions {
 
-struct ShowNextTab
+struct ShowNextTab final : StateAction
 {
-    static bool Predicate( MainWindowFilePanelState *_target );
-    static bool ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item );
-    static void Perform( MainWindowFilePanelState *_target, id _sender );
+    bool Predicate( MainWindowFilePanelState *_target ) const override;
+    bool ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const override;
+    void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
 };
 
-struct ShowPreviousTab
+struct ShowPreviousTab final : StateAction
 {
-    static bool Predicate( MainWindowFilePanelState *_target );
-    static bool ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item );
-    static void Perform( MainWindowFilePanelState *_target, id _sender );
+    bool Predicate( MainWindowFilePanelState *_target ) const override;
+    bool ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const override;
+    void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
 };
 
 }

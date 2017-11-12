@@ -4,32 +4,32 @@
 
 namespace nc::panel::actions {
 
-bool ShowNextTab::Predicate( MainWindowFilePanelState *_target )
+bool ShowNextTab::Predicate( MainWindowFilePanelState *_target ) const
 {
     return _target.currentSideTabsCount > 1;
 }
 
-bool ShowNextTab::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item )
+bool ShowNextTab::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const
 {
     return Predicate( _target );
 }
 
-void ShowNextTab::Perform( MainWindowFilePanelState *_target, id _sender )
+void ShowNextTab::Perform( MainWindowFilePanelState *_target, id _sender ) const
 {
     [_target selectNextFilePanelTab];
 }
 
-bool ShowPreviousTab::Predicate( MainWindowFilePanelState *_target )
+bool ShowPreviousTab::Predicate( MainWindowFilePanelState *_target ) const
 {
     return _target.currentSideTabsCount > 1;
 }
 
-bool ShowPreviousTab::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item )
+bool ShowPreviousTab::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const
 {
     return Predicate( _target );
 }
 
-void ShowPreviousTab::Perform( MainWindowFilePanelState *_target, id _sender )
+void ShowPreviousTab::Perform( MainWindowFilePanelState *_target, id _sender ) const
 {
     [_target selectPreviousFilePanelTab];
 }

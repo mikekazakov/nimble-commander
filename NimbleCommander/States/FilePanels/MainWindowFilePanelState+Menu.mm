@@ -23,6 +23,7 @@
 using namespace nc::core;
 using namespace nc::panel;
 namespace nc::panel {
+static const nc::panel::actions::StateAction *ActionByName(const char* _name) noexcept;
 static const nc::panel::actions::StateAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
 }
@@ -79,10 +80,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         item.hidden = self.currentSideTabsCount < 2;
         return true;
     }
-    IF_MENU_TAG("menu.window.show_previous_tab")
-        return nc::panel::actions::ShowPreviousTab::ValidateMenuItem(self, item);
-    IF_MENU_TAG("menu.window.show_next_tab")
-        return nc::panel::actions::ShowNextTab::ValidateMenuItem(self, item);
     IF_MENU_TAG("menu.view.show_tabs") {
         item.title = GlobalConfig().GetBool(g_ConfigGeneralShowTabs) ?
             NSLocalizedString(@"Hide Tab Bar", "Menu item title for hiding tab bar") :
@@ -401,16 +398,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     [self.window performClose:sender];
 }
 
-- (IBAction)OnWindowShowPreviousTab:(id)sender
-{
-    nc::panel::actions::ShowPreviousTab::Perform(self, sender);
-}
-
-- (IBAction)OnWindowShowNextTab:(id)sender
-{
-    nc::panel::actions::ShowNextTab::Perform(self, sender);
-}
-
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
 {
     NSString* characters = theEvent.charactersIgnoringModifiers;
@@ -423,20 +410,23 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     mod &= ~NSFunctionKeyMask;
     auto unicode = [characters characterAtIndex:0];
     
-    // workaround for (shift)+ctrl+tab when it's menu item is disabled. mysterious stuff...
+    // workaround for (shift)+ctrl+tab when its menu item is disabled, so NSWindow won't steal
+    // the keystroke. This is a bad design choice, since it assumes Ctrl+Tab/Shift+Ctrl+Tab for
+    // tabs switching, which might not be true for custom key bindings.
     if( unicode == NSTabCharacter && mod == NSControlKeyMask ) {
-        if( nc::panel::actions::ShowNextTab::Predicate(self) )
+        if( ActionByName("menu.window.show_next_tab")->Predicate(self) )
             return [super performKeyEquivalent:theEvent];
         return true;
     }
-    if( unicode == NSTabCharacter && mod == (NSControlKeyMask|NSShiftKeyMask) ) {
-        if( nc::panel::actions::ShowPreviousTab::Predicate(self) )
+    if( unicode == NSTabCharacter && mod == (NSControlKeyMask|NSShiftKeyMask ) ) {
+        if( ActionByName("menu.window.show_previous_tab")->Predicate(self) )
             return [super performKeyEquivalent:theEvent];
         return true;
     }
 
     // overlapped terminal stuff
-    if( ActivationManager::Instance().HasTerminal() ) {
+    static const auto has_terminal = ActivationManager::Instance().HasTerminal();
+    if( has_terminal ) {
         static ActionsShortcutsManager::ShortCut hk_move_up, hk_move_down, hk_showhide, hk_focus;
         static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_move_up, &hk_move_down, &hk_showhide, &hk_focus},
                                                                          {"menu.view.panels_position.move_up", "menu.view.panels_position.move_down", "menu.view.panels_position.showpanels", "menu.view.panels_position.focusterminal"});
@@ -514,6 +504,8 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 - (IBAction)onSwitchDualSinglePaneMode:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onLeftPanelGoToButtonAction:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onRightPanelGoToButtonAction:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnWindowShowPreviousTab:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnWindowShowNextTab:(id)sender { Perform(_cmd, self, sender); }
 
 @end
 
@@ -523,8 +515,23 @@ namespace nc::panel {
 static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
 {"menu.go.left_panel",                  @selector(onLeftPanelGoToButtonAction:),    new ShowLeftGoToPopup},
 {"menu.go.right_panel",                 @selector(onRightPanelGoToButtonAction:),   new ShowRightGoToPopup},
-{"menu.view.switch_dual_single_mode",   @selector(onSwitchDualSinglePaneMode:),     new ToggleSingleOrDualMode}
+{"menu.view.switch_dual_single_mode",   @selector(onSwitchDualSinglePaneMode:),     new ToggleSingleOrDualMode},
+{"menu.window.show_previous_tab",       @selector(OnWindowShowPreviousTab:),        new ShowPreviousTab},
+{"menu.window.show_next_tab",           @selector(OnWindowShowNextTab:),            new ShowNextTab}
 };
+
+static const nc::panel::actions::StateAction *ActionByName(const char* _name) noexcept
+{
+    static const auto actions = []{
+        unordered_map<string, const StateAction*> m;
+        for( auto &a: g_Wiring )
+            if( get<0>(a)[0] != 0 )
+                m.emplace( get<0>(a), get<2>(a) );
+        return m;
+    }();
+    const auto v = actions.find(_name);
+    return v == end(actions) ? nullptr : v->second;
+}
 
 static const StateAction *ActionByTag(int _tag) noexcept
 {

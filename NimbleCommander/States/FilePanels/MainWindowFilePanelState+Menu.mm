@@ -14,6 +14,7 @@
 #include "PanelData.h"
 #include "PanelView.h"
 #include "Actions/ShowGoToPopup.h"
+#include "Actions/ToggleSingleOrDualMode.h"
 #include "../MainWindowController.h"
 #include <Operations/Copying.h>
 #include <Operations/CopyingDialog.h>
@@ -92,13 +93,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
         item.title = NSLocalizedString(@"Show Terminal", "Menu item title for showing terminal");
         return true;
     }
-    IF_MENU_TAG("menu.view.switch_dual_single_mode") {
-        item.title = m_MainSplitView.anyCollapsed ?
-            NSLocalizedString(@"Toggle Dual-Pane Mode", "Menu item title for switching to dual-pane mode") :
-            NSLocalizedString(@"Toggle Single-Pane Mode", "Menu item title for switching to single-pane mode");
-        return true;
-    }
-    
     return true;
 }
 
@@ -517,22 +511,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
                 [self runExtTool:t];
 }
 
-- (IBAction)onSwitchDualSinglePaneMode:(id)sender
-{
-    if( m_MainSplitView.anyCollapsed ) {
-        if( m_MainSplitView.isLeftCollapsed )
-            [m_MainSplitView expandLeftView];
-        else if( m_MainSplitView.isRightCollapsed )
-            [m_MainSplitView expandRightView];
-    }
-    else if( auto apc = self.activePanelController) {
-        if( apc == self.leftPanelController )
-            [m_MainSplitView collapseRightView];
-        else if( apc == self.rightPanelController )
-            [m_MainSplitView collapseLeftView];
-    }
-}
-
+- (IBAction)onSwitchDualSinglePaneMode:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onLeftPanelGoToButtonAction:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onRightPanelGoToButtonAction:(id)sender { Perform(_cmd, self, sender); }
 
@@ -542,8 +521,9 @@ using namespace nc::panel::actions;
 namespace nc::panel {
 
 static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
-{"menu.go.left_panel",      @selector(onLeftPanelGoToButtonAction:),    new ShowLeftGoToPopup},
-{"menu.go.right_panel",     @selector(onRightPanelGoToButtonAction:),   new ShowRightGoToPopup},
+{"menu.go.left_panel",                  @selector(onLeftPanelGoToButtonAction:),    new ShowLeftGoToPopup},
+{"menu.go.right_panel",                 @selector(onRightPanelGoToButtonAction:),   new ShowRightGoToPopup},
+{"menu.view.switch_dual_single_mode",   @selector(onSwitchDualSinglePaneMode:),     new ToggleSingleOrDualMode}
 };
 
 static const StateAction *ActionByTag(int _tag) noexcept

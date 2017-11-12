@@ -56,6 +56,7 @@
 		CF1100D01913788800E170FC /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1100CF1913788800E170FC /* Security.framework */; };
 		CF15D0831E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */; };
 		CF1863FB1D8B9224008628E4 /* ProFeaturesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */; };
+		CF197C431FB81ACB009F6C59 /* ToggleSingleOrDualMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C421FB81ACA009F6C59 /* ToggleSingleOrDualMode.mm */; };
 		CF1ADE291F7E6BB4003E9B76 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
 		CF1ADE4A1F7E7B28003E9B76 /* libTerm.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF1E3D0F1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */; };
@@ -1404,6 +1405,8 @@
 		CF1846F91E419B53008B7C9F /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
 		CF1863F61D8B9224008628E4 /* ProFeaturesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProFeaturesWindowController.h; path = NimbleCommander/GeneralUI/ProFeaturesWindowController.h; sourceTree = SOURCE_ROOT; };
 		CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProFeaturesWindowController.mm; path = NimbleCommander/GeneralUI/ProFeaturesWindowController.mm; sourceTree = SOURCE_ROOT; };
+		CF197C411FB81ACA009F6C59 /* ToggleSingleOrDualMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToggleSingleOrDualMode.h; path = NimbleCommander/States/FilePanels/Actions/ToggleSingleOrDualMode.h; sourceTree = SOURCE_ROOT; };
+		CF197C421FB81ACA009F6C59 /* ToggleSingleOrDualMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToggleSingleOrDualMode.mm; path = NimbleCommander/States/FilePanels/Actions/ToggleSingleOrDualMode.mm; sourceTree = SOURCE_ROOT; };
 		CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Term.xcodeproj; path = Term/Term.xcodeproj; sourceTree = "<group>"; };
 		CF1E3D0D1D59A49F00609ADB /* InternalViewerViewPreviewMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerViewPreviewMode.h; path = NimbleCommander/Viewer/InternalViewerViewPreviewMode.h; sourceTree = SOURCE_ROOT; };
 		CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerViewPreviewMode.mm; path = NimbleCommander/Viewer/InternalViewerViewPreviewMode.mm; sourceTree = SOURCE_ROOT; };
@@ -2453,6 +2456,8 @@
 				CF27408D1E594C46000D4365 /* TabSelection.mm */,
 				CF0260D01E9F10060025B50F /* ToggleLayout.h */,
 				CF0260D11E9F10060025B50F /* ToggleLayout.mm */,
+				CF197C411FB81ACA009F6C59 /* ToggleSingleOrDualMode.h */,
+				CF197C421FB81ACA009F6C59 /* ToggleSingleOrDualMode.mm */,
 				CF0139AD1E99DAC100E44F2D /* ToggleSort.h */,
 				CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */,
 			);
@@ -4164,6 +4169,7 @@
 				CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
 				CF0139B21E99EC4A00E44F2D /* DefaultAction.mm in Sources */,
+				CF197C431FB81ACB009F6C59 /* ToggleSingleOrDualMode.mm in Sources */,
 				CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CF0939391D11986D00D67AC6 /* ExternalToolsSupport.mm in Sources */,
 				CF5FE80E1E16461600CD83B4 /* PanelListViewTableHeaderView.mm in Sources */,

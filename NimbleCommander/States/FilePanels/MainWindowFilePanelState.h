@@ -49,6 +49,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 }
 
 @property (nonatomic, readonly) MainWindowController* mainWindowController;
+@property (nonatomic, readonly) FilePanelMainSplitView *splitView;
 @property (nonatomic, readonly) ExternalToolsStorage &externalToolsStorage;
 @property (nonatomic, readonly) nc::ops::Pool& operationsPool;
 @property (nonatomic, readonly) bool isPanelActive;

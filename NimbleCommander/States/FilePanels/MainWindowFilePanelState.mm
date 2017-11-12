@@ -146,6 +146,8 @@ static bool GoToForcesPanelActivation()
 
 @implementation MainWindowFilePanelState
 
+@synthesize splitView = m_MainSplitView;
+
 - (instancetype) initBaseWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
 {
     if( self = [super initWithFrame:frameRect] ) {
@@ -711,14 +713,6 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         locations.ReportLocationVisit( *_panel.vfs, _panel.currentDirectoryPath );
     }
 }
-
-//- (void) didBecomeKeyWindow
-//{
-/*    // update key modifiers state for views
-    unsigned long flags = [NSEvent modifierFlags];
-    for(auto p: m_LeftPanelControllers) [p ModifierFlagsChanged:flags];
-    for(auto p: m_RightPanelControllers) [p ModifierFlagsChanged:flags];*/
-//}
 
 - (void)WindowDidResize
 {

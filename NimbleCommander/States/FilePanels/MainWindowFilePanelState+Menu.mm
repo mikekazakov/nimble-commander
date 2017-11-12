@@ -15,6 +15,7 @@
 #include "PanelView.h"
 #include "Actions/ShowGoToPopup.h"
 #include "Actions/ToggleSingleOrDualMode.h"
+#include "Actions/ShowTabs.h"
 #include "../MainWindowController.h"
 #include <Operations/Copying.h>
 #include <Operations/CopyingDialog.h>
@@ -27,8 +28,6 @@ static const nc::panel::actions::StateAction *ActionByName(const char* _name) no
 static const nc::panel::actions::StateAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
 }
-
-static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 
 @implementation MainWindowFilePanelState (Menu)
 
@@ -78,12 +77,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     }
     IF_MENU_TAG("menu.file.close_window") {
         item.hidden = self.currentSideTabsCount < 2;
-        return true;
-    }
-    IF_MENU_TAG("menu.view.show_tabs") {
-        item.title = GlobalConfig().GetBool(g_ConfigGeneralShowTabs) ?
-            NSLocalizedString(@"Hide Tab Bar", "Menu item title for hiding tab bar") :
-            NSLocalizedString(@"Show Tab Bar", "Menu item title for showing tab bar");
         return true;
     }
     IF_MENU_TAG("menu.view.show_terminal") {
@@ -455,11 +448,6 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
     return [super performKeyEquivalent:theEvent];
 }
 
-- (IBAction)OnShowTabs:(id)sender
-{
-    GlobalConfig().Set( g_ConfigGeneralShowTabs, !GlobalConfig().GetBool(g_ConfigGeneralShowTabs) );
-}
-
 - (IBAction)OnViewPanelsPositionMoveUp:(id)sender
 {
     [self increaseBottomTerminalGap];
@@ -506,6 +494,7 @@ static const auto g_ConfigGeneralShowTabs = "general.showTabs";
 - (IBAction)onRightPanelGoToButtonAction:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnWindowShowPreviousTab:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnWindowShowNextTab:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnShowTabs:(id)sender{ Perform(_cmd, self, sender); }
 
 @end
 
@@ -517,7 +506,8 @@ static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
 {"menu.go.right_panel",                 @selector(onRightPanelGoToButtonAction:),   new ShowRightGoToPopup},
 {"menu.view.switch_dual_single_mode",   @selector(onSwitchDualSinglePaneMode:),     new ToggleSingleOrDualMode},
 {"menu.window.show_previous_tab",       @selector(OnWindowShowPreviousTab:),        new ShowPreviousTab},
-{"menu.window.show_next_tab",           @selector(OnWindowShowNextTab:),            new ShowNextTab}
+{"menu.window.show_next_tab",           @selector(OnWindowShowNextTab:),            new ShowNextTab},
+{"menu.view.show_tabs",                 @selector(OnShowTabs:),                     new ShowTabs}
 };
 
 static const nc::panel::actions::StateAction *ActionByName(const char* _name) noexcept

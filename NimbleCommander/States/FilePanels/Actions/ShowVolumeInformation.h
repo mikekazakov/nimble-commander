@@ -5,7 +5,7 @@
 
 namespace nc::panel::actions {
 
-struct ShowVolumeInformation : PanelAction
+struct ShowVolumeInformation final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;

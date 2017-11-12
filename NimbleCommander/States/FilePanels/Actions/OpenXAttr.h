@@ -5,7 +5,7 @@
 
 namespace nc::panel::actions {
 
-struct OpenXAttr : PanelAction
+struct OpenXAttr final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;

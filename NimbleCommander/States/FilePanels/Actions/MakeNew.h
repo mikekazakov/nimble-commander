@@ -7,25 +7,25 @@
 
 namespace nc::panel::actions {
 
-struct MakeNewFile : PanelAction
+struct MakeNewFile final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct MakeNewFolder : PanelAction
+struct MakeNewFolder final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct MakeNewNamedFolder : PanelAction
+struct MakeNewNamedFolder final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct MakeNewFolderWithSelection : PanelAction
+struct MakeNewFolderWithSelection final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;

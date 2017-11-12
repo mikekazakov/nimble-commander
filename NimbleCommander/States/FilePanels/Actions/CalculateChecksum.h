@@ -5,7 +5,7 @@
 
 namespace nc::panel::actions {
 
-struct CalculateChecksum : PanelAction
+struct CalculateChecksum final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;

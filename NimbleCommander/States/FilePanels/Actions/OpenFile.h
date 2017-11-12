@@ -6,25 +6,25 @@
 
 namespace nc::panel::actions {
 
-struct OpenFileWithSubmenu : PanelAction
+struct OpenFileWithSubmenu final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
 };
 
-struct AlwaysOpenFileWithSubmenu : PanelAction
+struct AlwaysOpenFileWithSubmenu final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
 };
 
-struct OpenFocusedFileWithDefaultHandler : PanelAction
+struct OpenFocusedFileWithDefaultHandler final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct OpenFilesWithDefaultHandler : PanelAction
+struct OpenFilesWithDefaultHandler final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
@@ -32,7 +32,7 @@ struct OpenFilesWithDefaultHandler : PanelAction
 
 namespace context {
 
-struct OpenFileWithDefaultHandler : PanelAction
+struct OpenFileWithDefaultHandler final : PanelAction
 {
     OpenFileWithDefaultHandler(const vector<VFSListingItem>& _items);
     bool Predicate( PanelController *_target ) const override;

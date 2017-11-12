@@ -9,7 +9,7 @@ namespace nc::panel::actions {
 
 // external dependency: AppDelegate.me.panelLayouts
 
-struct ToggleLayout : PanelAction
+struct ToggleLayout final : PanelAction
 {
     ToggleLayout( int _layout_index );
     

@@ -9,7 +9,7 @@ namespace nc::panel::actions {
 // config: filePanel.spotlight.format;
 // config: filePanel.spotlight.maxCount;
 
-struct SpotlightSearch : PanelAction
+struct SpotlightSearch final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };

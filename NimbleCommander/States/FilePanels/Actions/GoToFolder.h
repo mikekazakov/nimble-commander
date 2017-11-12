@@ -9,68 +9,68 @@ namespace nc::panel::actions {
 
 // external dependency - SanboxManager and ActivationManager
 
-struct GoToFolder : PanelAction
+struct GoToFolder final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToHomeFolder : PanelAction
+struct GoToHomeFolder final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToDocumentsFolder : PanelAction
+struct GoToDocumentsFolder final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToDesktopFolder : PanelAction
+struct GoToDesktopFolder final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToDownloadsFolder : PanelAction
+struct GoToDownloadsFolder final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToApplicationsFolder : PanelAction
+struct GoToApplicationsFolder final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToUtilitiesFolder : PanelAction
+struct GoToUtilitiesFolder final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToLibraryFolder : PanelAction
+struct GoToLibraryFolder final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToRootFolder : PanelAction
+struct GoToRootFolder final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToProcessesList : PanelAction
+struct GoToProcessesList final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToFavoriteLocation : PanelAction
+struct GoToFavoriteLocation final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoToEnclosingFolder : PanelAction
+struct GoToEnclosingFolder final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoIntoFolder : PanelAction
+struct GoIntoFolder final : PanelAction
 {
     GoIntoFolder( bool _force_checking_for_archive = false );
     bool Predicate( PanelController *_target ) const override;

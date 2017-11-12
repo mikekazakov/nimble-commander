@@ -6,7 +6,7 @@
 namespace nc::panel::actions {
 
 // has en external dependency: AppDelegate.me.externalEditorsStorage
-struct OpenWithExternalEditor : PanelAction
+struct OpenWithExternalEditor final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;

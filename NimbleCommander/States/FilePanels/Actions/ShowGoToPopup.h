@@ -11,38 +11,38 @@ namespace nc::panel::actions {
 //                          NetworkConnectionsManager::Instance()
 //                          GlobalConfig
 
-struct ShowLeftGoToPopup : StateAction
+struct ShowLeftGoToPopup final : StateAction
 {
     void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
 };
 
-struct ShowRightGoToPopup : StateAction
+struct ShowRightGoToPopup final : StateAction
 {
     void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
 };
 
-struct ShowConnectionsQuickList : PanelAction
+struct ShowConnectionsQuickList final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ShowFavoritesQuickList : PanelAction
+struct ShowFavoritesQuickList final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ShowVolumesQuickList : PanelAction
+struct ShowVolumesQuickList final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ShowParentFoldersQuickList : PanelAction
+struct ShowParentFoldersQuickList final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ShowHistoryQuickList : PanelAction
+struct ShowHistoryQuickList final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };

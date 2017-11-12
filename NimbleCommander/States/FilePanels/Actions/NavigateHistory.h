@@ -5,13 +5,13 @@
 
 namespace nc::panel::actions {
 
-struct GoBack : PanelAction
+struct GoBack final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct GoForward : PanelAction
+struct GoForward final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;

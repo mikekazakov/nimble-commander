@@ -7,13 +7,13 @@ namespace nc::panel::actions {
 
 // extract additional state from NSPasteboard.generalPasteboard
 
-struct PasteFromPasteboard : PanelAction
+struct PasteFromPasteboard final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct MoveFromPasteboard : PanelAction
+struct MoveFromPasteboard final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;

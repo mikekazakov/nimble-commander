@@ -8,7 +8,7 @@ namespace nc::panel::actions {
 
 // dependency: NativeFSManager::Instance()
 
-struct Delete : PanelAction
+struct Delete final : PanelAction
 {
     Delete( bool _permanently = false );
     bool Predicate( PanelController *_target ) const override;
@@ -17,7 +17,7 @@ private:
     bool m_Permanently;
 };
 
-struct MoveToTrash : PanelAction
+struct MoveToTrash final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
@@ -25,7 +25,7 @@ struct MoveToTrash : PanelAction
 
 namespace context {
 
-struct DeletePermanently : PanelAction
+struct DeletePermanently final : PanelAction
 {
    DeletePermanently(const vector<VFSListingItem> &_items);
     bool Predicate( PanelController *_target ) const override;
@@ -35,7 +35,7 @@ private:
     bool m_AllWriteable;
 };
 
-struct MoveToTrash : PanelAction
+struct MoveToTrash final : PanelAction
 {
     MoveToTrash(const vector<VFSListingItem> &_items);
     bool Predicate( PanelController *_target ) const override;

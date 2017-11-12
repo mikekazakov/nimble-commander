@@ -6,13 +6,13 @@
 
 namespace nc::panel::actions {
 
-struct CompressHere : PanelAction
+struct CompressHere final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct CompressToOpposite : PanelAction
+struct CompressToOpposite final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
@@ -20,7 +20,7 @@ struct CompressToOpposite : PanelAction
 
 namespace context {
 
-struct CompressHere : PanelAction
+struct CompressHere final : PanelAction
 {
     CompressHere(const vector<VFSListingItem>&_items);
     bool Predicate( PanelController *_target ) const override;
@@ -30,7 +30,7 @@ private:
     const vector<VFSListingItem> &m_Items;
 };
 
-struct CompressToOpposite : PanelAction
+struct CompressToOpposite final : PanelAction
 {
     CompressToOpposite(const vector<VFSListingItem>&_items);
     bool Predicate( PanelController *_target ) const override;

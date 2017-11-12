@@ -5,7 +5,7 @@
 
 namespace nc::panel::actions {
 
-struct Enter : PanelAction
+struct Enter final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;

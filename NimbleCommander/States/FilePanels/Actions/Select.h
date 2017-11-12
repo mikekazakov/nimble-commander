@@ -5,22 +5,22 @@
 
 namespace nc::panel::actions {
 
-struct SelectAll : PanelAction
+struct SelectAll final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct DeselectAll : PanelAction
+struct DeselectAll final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct InvertSelection : PanelAction
+struct InvertSelection final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct SelectAllByExtension : PanelAction
+struct SelectAllByExtension final : PanelAction
 {
     SelectAllByExtension( bool _result_selection );
     bool Predicate( PanelController *_target ) const override;
@@ -29,7 +29,7 @@ private:
     bool m_ResultSelection;
 };
 
-struct SelectAllByMask : PanelAction
+struct SelectAllByMask final : PanelAction
 {
     SelectAllByMask( bool _result_selection );
     void Perform( PanelController *_target, id _sender ) const override;

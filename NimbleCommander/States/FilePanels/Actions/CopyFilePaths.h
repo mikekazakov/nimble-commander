@@ -5,13 +5,13 @@
 
 namespace nc::panel::actions {
 
-struct CopyFileName : PanelAction
+struct CopyFileName final : PanelAction
 {
     bool Predicate( PanelController *_source ) const override;
     void Perform( PanelController *_source, id _sender ) const override;
 };
 
-struct CopyFilePath : PanelAction
+struct CopyFilePath final : PanelAction
 {
     bool Predicate( PanelController *_source ) const override;
     void Perform( PanelController *_source, id _sender ) const override;

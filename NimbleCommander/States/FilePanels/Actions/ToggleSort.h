@@ -7,67 +7,67 @@
 
 namespace nc::panel::actions {
 
-struct ToggleSortingByName : PanelAction
+struct ToggleSortingByName final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ToggleSortingByExtension : PanelAction
+struct ToggleSortingByExtension final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ToggleSortingBySize : PanelAction
+struct ToggleSortingBySize final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ToggleSortingByModifiedTime : PanelAction
+struct ToggleSortingByModifiedTime final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ToggleSortingByCreatedTime : PanelAction
+struct ToggleSortingByCreatedTime final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ToggleSortingByAddedTime : PanelAction
+struct ToggleSortingByAddedTime final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ToggleSortingCaseSensitivity : PanelAction
+struct ToggleSortingCaseSensitivity final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ToggleSortingFoldersSeparation : PanelAction
+struct ToggleSortingFoldersSeparation final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ToggleSortingExtensionlessFolders : PanelAction
+struct ToggleSortingExtensionlessFolders final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ToggleSortingNumerical : PanelAction
+struct ToggleSortingNumerical final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct ToggleSortingShowHidden : PanelAction
+struct ToggleSortingShowHidden final : PanelAction
 {
     bool ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const override;
     void Perform( PanelController *_target, id _sender ) const override;

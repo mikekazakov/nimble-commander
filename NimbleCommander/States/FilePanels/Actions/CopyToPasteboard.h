@@ -17,7 +17,7 @@ protected:
 
 namespace context {
 
-struct CopyToPasteboard : panel::actions::CopyToPasteboard
+struct CopyToPasteboard final : panel::actions::CopyToPasteboard
 {
     CopyToPasteboard(const vector<VFSListingItem> &_items);
     bool Predicate( PanelController *_target ) const override;

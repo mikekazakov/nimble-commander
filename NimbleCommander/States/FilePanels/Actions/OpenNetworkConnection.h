@@ -5,38 +5,38 @@
 
 namespace nc::panel::actions {
 
-struct OpenNewFTPConnection : PanelAction
+struct OpenNewFTPConnection final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct OpenNewSFTPConnection : PanelAction
+struct OpenNewSFTPConnection final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct OpenNewWebDAVConnection : PanelAction
+struct OpenNewWebDAVConnection final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct OpenNewDropboxStorage : PanelAction
+struct OpenNewDropboxStorage final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct OpenNewLANShare : PanelAction
+struct OpenNewLANShare final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
-struct OpenNetworkConnections : PanelAction
+struct OpenNetworkConnections final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };
 
 // will extract additional context from _sender.representedObject
-struct OpenExistingNetworkConnection : PanelAction
+struct OpenExistingNetworkConnection final : PanelAction
 {
     void Perform( PanelController *_target, id _sender ) const override;
 };

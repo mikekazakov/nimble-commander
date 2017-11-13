@@ -59,6 +59,7 @@
 		CF197C431FB81ACB009F6C59 /* ToggleSingleOrDualMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C421FB81ACA009F6C59 /* ToggleSingleOrDualMode.mm */; };
 		CF197C461FB834B7009F6C59 /* ShowTabs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C451FB834B7009F6C59 /* ShowTabs.mm */; };
 		CF197C491FB92E80009F6C59 /* CopyFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C481FB92E80009F6C59 /* CopyFile.mm */; };
+		CF197C4C1FB960CC009F6C59 /* RevealInOppositePanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */; };
 		CF1ADE291F7E6BB4003E9B76 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
 		CF1ADE4A1F7E7B28003E9B76 /* libTerm.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF1E3D0F1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */; };
@@ -1413,6 +1414,8 @@
 		CF197C451FB834B7009F6C59 /* ShowTabs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowTabs.mm; path = NimbleCommander/States/FilePanels/Actions/ShowTabs.mm; sourceTree = SOURCE_ROOT; };
 		CF197C471FB92E80009F6C59 /* CopyFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyFile.h; path = NimbleCommander/States/FilePanels/Actions/CopyFile.h; sourceTree = SOURCE_ROOT; };
 		CF197C481FB92E80009F6C59 /* CopyFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyFile.mm; path = NimbleCommander/States/FilePanels/Actions/CopyFile.mm; sourceTree = SOURCE_ROOT; };
+		CF197C4A1FB960CC009F6C59 /* RevealInOppositePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RevealInOppositePanel.h; path = NimbleCommander/States/FilePanels/Actions/RevealInOppositePanel.h; sourceTree = SOURCE_ROOT; };
+		CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RevealInOppositePanel.mm; path = NimbleCommander/States/FilePanels/Actions/RevealInOppositePanel.mm; sourceTree = SOURCE_ROOT; };
 		CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Term.xcodeproj; path = Term/Term.xcodeproj; sourceTree = "<group>"; };
 		CF1E3D0D1D59A49F00609ADB /* InternalViewerViewPreviewMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerViewPreviewMode.h; path = NimbleCommander/Viewer/InternalViewerViewPreviewMode.h; sourceTree = SOURCE_ROOT; };
 		CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerViewPreviewMode.mm; path = NimbleCommander/Viewer/InternalViewerViewPreviewMode.mm; sourceTree = SOURCE_ROOT; };
@@ -2452,6 +2455,8 @@
 				CFD8CDC91E8CE65600E4DC53 /* OpenXAttr.mm */,
 				CF6ECDB11E9F4AF3008FA79E /* RenameInPlace.h */,
 				CF6ECDB21E9F4AF3008FA79E /* RenameInPlace.mm */,
+				CF197C4A1FB960CC009F6C59 /* RevealInOppositePanel.h */,
+				CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */,
 				CF6ECDB41E9F7353008FA79E /* Select.h */,
 				CF6ECDB51E9F7353008FA79E /* Select.mm */,
 				CF0139B61E9B156500E44F2D /* ShowGoToPopup.h */,
@@ -4249,6 +4254,7 @@
 				CF876D2A1D51E04A009C0CCE /* BigFileViewText.mm in Sources */,
 				CFDAC2711DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */,
+				CF197C4C1FB960CC009F6C59 /* RevealInOppositePanel.mm in Sources */,
 				CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
 				CFDAC2331DFBDE2B0039A104 /* main.cpp in Sources */,
 				CFDAC2111DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,

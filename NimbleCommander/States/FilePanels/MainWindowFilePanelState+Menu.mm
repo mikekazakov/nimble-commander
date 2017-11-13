@@ -6,11 +6,11 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/FilePanels/ToolsMenuDelegate.h>
 #include "Actions/TabSelection.h"
-#include "PanelView.h"
 #include "Actions/ShowGoToPopup.h"
 #include "Actions/ToggleSingleOrDualMode.h"
 #include "Actions/ShowTabs.h"
 #include "Actions/CopyFile.h"
+#include "Actions/RevealInOppositePanel.h"
 #include "../MainWindowController.h"
 #include <NimbleCommander/Core/Alert.h>
 
@@ -49,7 +49,6 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
 
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF_MENU_TAG("menu.file.reveal_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item;
     IF_MENU_TAG("menu.file.close") {
         unsigned tabs = self.currentSideTabsCount;
         if( tabs == 0 ) {
@@ -104,58 +103,6 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
         self.activePanelController.vfs->IsNativeFS() )
         path = self.activePanelController.currentDirectoryPath;
     [(MainWindowController*)self.window.delegate requestTerminal:path];
-}
-
-+ (void)performVFSItemOpenInPanel:(PanelController*)_panel item:(VFSListingItem)_item
-{
-    assert( _panel != nil && (bool)_item );
-    
-    if( _item.IsDir() )
-        [_panel GoToDir:_item.Path()
-                    vfs:_item.Host()
-           select_entry:""
-                  async:true];
-    else
-        [_panel GoToDir:_item.Directory()
-                    vfs:_item.Host()
-           select_entry:_item.Filename()
-                  async:true];
-}
-
-- (IBAction)OnFileOpenInOppositePanel:(id)sender
-{
-    if(!self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item)
-        return;
-    auto cur = self.activePanelController;
-    auto opp = self.oppositePanelController;
-    auto item = cur.view.item;
-    if( !cur || !opp || !item )
-        return;
-    
-    [self.class performVFSItemOpenInPanel:opp item:item];
-}
-
-- (IBAction)OnFileOpenInNewOppositePanelTab:(id)sender
-{
-    if( !self.isPanelActive || m_MainSplitView.anyCollapsedOrOverlayed || !self.activePanelView.item )
-        return;
-    auto cur = self.activePanelController;
-    if( !cur )
-        return;
-    
-    auto item = cur.view.item;
-    if( !item )
-        return;
-    
-    PanelController *opp = nil;
-    if( cur == self.leftPanelController )
-        opp = [self spawnNewTabInTabView:m_MainSplitView.rightTabbedHolder.tabView autoDirectoryLoading:false activateNewPanel:false];
-    else if( cur == self.rightPanelController )
-        opp = [self spawnNewTabInTabView:m_MainSplitView.leftTabbedHolder.tabView autoDirectoryLoading:false activateNewPanel:false];
-    if( !opp )
-        return;
-    
-    [self.class performVFSItemOpenInPanel:opp item:item];
 }
 
 - (IBAction)OnFileNewTab:(id)sender
@@ -218,8 +165,10 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
     static const auto has_terminal = ActivationManager::Instance().HasTerminal();
     if( has_terminal ) {
         static ActionsShortcutsManager::ShortCut hk_move_up, hk_move_down, hk_showhide, hk_focus;
-        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_move_up, &hk_move_down, &hk_showhide, &hk_focus},
-                                                                         {"menu.view.panels_position.move_up", "menu.view.panels_position.move_down", "menu.view.panels_position.showpanels", "menu.view.panels_position.focusterminal"});
+        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
+            {&hk_move_up, &hk_move_down, &hk_showhide, &hk_focus},
+            {"menu.view.panels_position.move_up", "menu.view.panels_position.move_down",
+             "menu.view.panels_position.showpanels", "menu.view.panels_position.focusterminal"});
         
         if( hk_move_up.IsKeyDown(unicode, mod)  ) {
             [self OnViewPanelsPositionMoveUp:self];
@@ -296,6 +245,8 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
 - (IBAction)OnFileCopyAsCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnFileRenameMoveCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnFileRenameMoveAsCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnFileOpenInOppositePanel:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnFileOpenInNewOppositePanelTab:(id)sender { Perform(_cmd, self, sender); }
 
 @end
 
@@ -303,16 +254,18 @@ using namespace nc::panel::actions;
 namespace nc::panel {
 
 static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
-{"menu.go.left_panel",                  @selector(onLeftPanelGoToButtonAction:),    new ShowLeftGoToPopup},
-{"menu.go.right_panel",                 @selector(onRightPanelGoToButtonAction:),   new ShowRightGoToPopup},
-{"menu.view.switch_dual_single_mode",   @selector(onSwitchDualSinglePaneMode:),     new ToggleSingleOrDualMode},
-{"menu.window.show_previous_tab",       @selector(OnWindowShowPreviousTab:),        new ShowPreviousTab},
-{"menu.window.show_next_tab",           @selector(OnWindowShowNextTab:),            new ShowNextTab},
-{"menu.view.show_tabs",                 @selector(OnShowTabs:),                     new ShowTabs},
-{"menu.command.copy_to",                @selector(OnFileCopyCommand:),              new CopyTo},
-{"menu.command.copy_as",                @selector(OnFileCopyAsCommand:),            new CopyAs},
-{"menu.command.move_to",                @selector(OnFileRenameMoveCommand:),        new MoveTo},
-{"menu.command.move_as",                @selector(OnFileRenameMoveAsCommand:),      new MoveAs}
+{"menu.go.left_panel",                      @selector(onLeftPanelGoToButtonAction:),    new ShowLeftGoToPopup},
+{"menu.go.right_panel",                     @selector(onRightPanelGoToButtonAction:),   new ShowRightGoToPopup},
+{"menu.view.switch_dual_single_mode",       @selector(onSwitchDualSinglePaneMode:),     new ToggleSingleOrDualMode},
+{"menu.window.show_previous_tab",           @selector(OnWindowShowPreviousTab:),        new ShowPreviousTab},
+{"menu.window.show_next_tab",               @selector(OnWindowShowNextTab:),            new ShowNextTab},
+{"menu.view.show_tabs",                     @selector(OnShowTabs:),                     new ShowTabs},
+{"menu.command.copy_to",                    @selector(OnFileCopyCommand:),              new CopyTo},
+{"menu.command.copy_as",                    @selector(OnFileCopyAsCommand:),            new CopyAs},
+{"menu.command.move_to",                    @selector(OnFileRenameMoveCommand:),        new MoveTo},
+{"menu.command.move_as",                    @selector(OnFileRenameMoveAsCommand:),      new MoveAs},
+{"menu.file.reveal_in_opposite_panel",      @selector(OnFileOpenInOppositePanel:),      new RevealInOppositePanel},
+{"menu.file.reveal_in_opposite_panel_tab",  @selector(OnFileOpenInNewOppositePanelTab:),new RevealInOppositePanelTab},
 };
 
 static const nc::panel::actions::StateAction *ActionByName(const char* _name) noexcept

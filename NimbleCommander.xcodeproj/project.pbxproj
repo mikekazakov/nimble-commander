@@ -58,6 +58,7 @@
 		CF1863FB1D8B9224008628E4 /* ProFeaturesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */; };
 		CF197C431FB81ACB009F6C59 /* ToggleSingleOrDualMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C421FB81ACA009F6C59 /* ToggleSingleOrDualMode.mm */; };
 		CF197C461FB834B7009F6C59 /* ShowTabs.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C451FB834B7009F6C59 /* ShowTabs.mm */; };
+		CF197C491FB92E80009F6C59 /* CopyFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C481FB92E80009F6C59 /* CopyFile.mm */; };
 		CF1ADE291F7E6BB4003E9B76 /* libTerm.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; };
 		CF1ADE4A1F7E7B28003E9B76 /* libTerm.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF1ADE251F7E6A6F003E9B76 /* libTerm.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF1E3D0F1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */; };
@@ -1410,6 +1411,8 @@
 		CF197C421FB81ACA009F6C59 /* ToggleSingleOrDualMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ToggleSingleOrDualMode.mm; path = NimbleCommander/States/FilePanels/Actions/ToggleSingleOrDualMode.mm; sourceTree = SOURCE_ROOT; };
 		CF197C441FB834B7009F6C59 /* ShowTabs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShowTabs.h; path = NimbleCommander/States/FilePanels/Actions/ShowTabs.h; sourceTree = SOURCE_ROOT; };
 		CF197C451FB834B7009F6C59 /* ShowTabs.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowTabs.mm; path = NimbleCommander/States/FilePanels/Actions/ShowTabs.mm; sourceTree = SOURCE_ROOT; };
+		CF197C471FB92E80009F6C59 /* CopyFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyFile.h; path = NimbleCommander/States/FilePanels/Actions/CopyFile.h; sourceTree = SOURCE_ROOT; };
+		CF197C481FB92E80009F6C59 /* CopyFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CopyFile.mm; path = NimbleCommander/States/FilePanels/Actions/CopyFile.mm; sourceTree = SOURCE_ROOT; };
 		CF1ADE181F7E6A6F003E9B76 /* Term.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Term.xcodeproj; path = Term/Term.xcodeproj; sourceTree = "<group>"; };
 		CF1E3D0D1D59A49F00609ADB /* InternalViewerViewPreviewMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerViewPreviewMode.h; path = NimbleCommander/Viewer/InternalViewerViewPreviewMode.h; sourceTree = SOURCE_ROOT; };
 		CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerViewPreviewMode.mm; path = NimbleCommander/Viewer/InternalViewerViewPreviewMode.mm; sourceTree = SOURCE_ROOT; };
@@ -2409,6 +2412,8 @@
 				CF6ECDA81E9F4776008FA79E /* ChangeAttributes.mm */,
 				CF9F4A901EC9442C00E0AF82 /* Compress.h */,
 				CF9F4A911EC9442C00E0AF82 /* Compress.mm */,
+				CF197C471FB92E80009F6C59 /* CopyFile.h */,
+				CF197C481FB92E80009F6C59 /* CopyFile.mm */,
 				CF5FE7D31E120A4900CD83B4 /* CopyFilePaths.h */,
 				CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */,
 				CF818B721EA0830400BC28E6 /* CopyToPasteboard.h */,
@@ -4089,6 +4094,7 @@
 				CFDAC2301DFBDBCB0039A104 /* Config.cpp in Sources */,
 				CFDAC2491DFBEE340039A104 /* MainWindowController.mm in Sources */,
 				CF9F4AED1ECADEDB00E0AF82 /* OpenFile.mm in Sources */,
+				CF197C491FB92E80009F6C59 /* CopyFile.mm in Sources */,
 				CFD8CD5B1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm in Sources */,
 				CF818B741EA0830400BC28E6 /* CopyToPasteboard.mm in Sources */,
 				CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,

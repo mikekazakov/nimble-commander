@@ -1,24 +1,17 @@
 // Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/CommonPaths.h>
-#include <Utility/NSMenu+Hierarchical.h>
 #include "MainWindowFilePanelState+Menu.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
-#include "PanelAux.h"
 #include "Views/FilePanelMainSplitView.h"
-#include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/FilePanels/ToolsMenuDelegate.h>
-#include <NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h>
 #include "Actions/TabSelection.h"
-#include "PanelData.h"
 #include "PanelView.h"
 #include "Actions/ShowGoToPopup.h"
 #include "Actions/ToggleSingleOrDualMode.h"
 #include "Actions/ShowTabs.h"
+#include "Actions/CopyFile.h"
 #include "../MainWindowController.h"
-#include <Operations/Copying.h>
-#include <Operations/CopyingDialog.h>
 #include <NimbleCommander/Core/Alert.h>
 
 using namespace nc::core;
@@ -57,10 +50,6 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
     IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
     IF_MENU_TAG("menu.file.reveal_in_opposite_panel")  return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed && self.activePanelView.item;
-    IF_MENU_TAG("menu.command.copy_to")              return self.isPanelActive;
-    IF_MENU_TAG("menu.command.copy_as")              return self.isPanelActive;
-    IF_MENU_TAG("menu.command.move_to")              return self.isPanelActive;
-    IF_MENU_TAG("menu.command.move_as")              return self.isPanelActive;
     IF_MENU_TAG("menu.file.close") {
         unsigned tabs = self.currentSideTabsCount;
         if( tabs == 0 ) {
@@ -167,198 +156,6 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
         return;
     
     [self.class performVFSItemOpenInPanel:opp item:item];
-}
-
-// when Operation.AddOnFinishHandler will use C++ lambdas - change return type here:
-- (void (^)()) refreshBothCurrentControllersLambda
-{
-    __weak auto cur = self.activePanelController;
-    __weak auto opp = self.oppositePanelController;
-    auto update_both_panels = [=] {
-        dispatch_to_main_queue( [=]{
-            [(PanelController*)cur refreshPanel];
-            [(PanelController*)opp refreshPanel];
-        });
-    };
-    return update_both_panels;
-}
-
-- (function<void()>) refreshBothCurrentControllersLambda2
-{
-    __weak auto cur = self.activePanelController;
-    __weak auto opp = self.oppositePanelController;
-    auto update_both_panels = [=] {
-        dispatch_to_main_queue( [=]{
-            [(PanelController*)cur refreshPanel];
-            [(PanelController*)opp refreshPanel];
-        });
-    };
-    return update_both_panels;
-}
-
-- (IBAction)OnFileCopyCommand:(id)sender{
-    if( !self.activePanelController || !self.oppositePanelController )
-        return;
-    
-    auto entries = self.activePanelController.selectedEntriesOrFocusedEntry;
-    if( entries.empty() )
-        return;
-    
-    auto update_both_panels = self.refreshBothCurrentControllersLambda2;
-    
-    auto mc = [[NCOpsCopyingDialog alloc] initWithItems:entries
-                                              sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
-                                        sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
-                                     initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
-                                         destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                       operationOptions:MakeDefaultFileCopyOptions()];
-    mc.allowVerification = ActivationManager::Instance().HasCopyVerification();
-    [self.mainWindowController beginSheet:mc.window
-                        completionHandler:^(NSModalResponse returnCode){
-        if( returnCode != NSModalResponseOK )
-            return;
-        
-        auto path = mc.resultDestination;
-        auto host = mc.resultHost;
-        auto opts = mc.resultOptions;
-        if( !host || path.empty() )
-            return; // ui invariant is broken
-
-        const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
-        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
-        [self.mainWindowController enqueueOperation:op];
-    }];
-}
-
-- (IBAction)OnFileCopyAsCommand:(id)sender{
-    if( !self.activePanelController || !self.oppositePanelController )
-        return;
-    
-    // process only current cursor item
-    auto item = self.activePanelView.item;
-    if( !item || item.IsDotDot() )
-        return;
-
-    auto entries = vector<VFSListingItem>({item});
-    
-    auto update_both_panels = self.refreshBothCurrentControllersLambda2;
-        
-    auto mc = [[NCOpsCopyingDialog alloc] initWithItems:entries
-                                              sourceVFS:item.Host()
-                                        sourceDirectory:item.Directory()
-                                     initialDestination:item.Filename()
-                                         destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                       operationOptions:MakeDefaultFileCopyOptions()];
-    mc.allowVerification = ActivationManager::Instance().HasCopyVerification();
-    [self.mainWindowController beginSheet:mc.window
-                        completionHandler:^(NSModalResponse returnCode) {
-        if( returnCode != NSModalResponseOK )
-            return;
-        
-        auto path = mc.resultDestination;
-        auto host = mc.resultHost;
-        auto opts = mc.resultOptions;
-        if( !host || path.empty() )
-            return; // ui invariant is broken
-        
-        const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
-        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
-        __weak PanelController *weak_panel = self.activePanelController;
-        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
-            dispatch_to_main_queue( [=]{
-                if( PanelController *panel = weak_panel ) {
-                    if( panel.isUniform &&
-                        panel.currentDirectoryPath == ::path(path).parent_path().native()+"/" ) {
-                       nc::panel::DelayedFocusing req;
-                       req.filename = ::path(path).filename().native();
-                       [(PanelController*)panel scheduleDelayedFocusing:req];
-                    }
-                }
-            });
-        });
-        [self.mainWindowController enqueueOperation:op];
-    }];
-}
-
-- (IBAction)OnFileRenameMoveCommand:(id)sender{
-    if( !self.activePanelController || !self.oppositePanelController )
-        return;
-    
-    if( self.activePanelController.isUniform && !self.activePanelController.vfs->IsWritable() )
-        return;
-    
-    auto entries = self.activePanelController.selectedEntriesOrFocusedEntry;
-    if( entries.empty() )
-        return;
-    
-    auto update_both_panels = self.refreshBothCurrentControllersLambda2;
-        
-    auto mc = [[NCOpsCopyingDialog alloc] initWithItems:entries
-                                              sourceVFS:self.activePanelController.isUniform ? self.activePanelController.vfs : nullptr
-                                        sourceDirectory:self.activePanelController.isUniform ? self.activePanelController.currentDirectoryPath : ""
-                                     initialDestination:self.oppositePanelController.isUniform ? self.oppositePanelController.currentDirectoryPath : ""
-                                         destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                       operationOptions:MakeDefaultFileMoveOptions()];
-    mc.allowVerification = ActivationManager::Instance().HasCopyVerification();
-    [self.mainWindowController beginSheet:mc.window
-                        completionHandler:^(NSModalResponse returnCode) {
-        if( returnCode != NSModalResponseOK )
-            return;
-        
-        auto path = mc.resultDestination;
-        auto host = mc.resultHost;
-        auto opts = mc.resultOptions;
-        if( !host || path.empty() )
-            return; // ui invariant is broken
-        
-        const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
-        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
-        [self.mainWindowController enqueueOperation:op];
-    }];
-}
-
-- (IBAction)OnFileRenameMoveAsCommand:(id)sender {
-    if( !self.activePanelController || !self.oppositePanelController )
-        return;
-    
-    // process only current cursor item
-    auto item = self.activePanelView.item;
-    if( !item || item.IsDotDot() || !item.Host()->IsWritable() )
-        return;
-    
-    auto entries = vector<VFSListingItem>({item});
-    auto update_both_panels = self.refreshBothCurrentControllersLambda2;
-    __weak auto cur = self.activePanelController;
-    auto mc = [[NCOpsCopyingDialog alloc] initWithItems:entries
-                                              sourceVFS:item.Host()
-                                        sourceDirectory:item.Directory()
-                                     initialDestination:item.Filename()
-                                         destinationVFS:self.oppositePanelController.isUniform ? self.oppositePanelController.vfs : nullptr
-                                       operationOptions:MakeDefaultFileMoveOptions()];
-    mc.allowVerification = ActivationManager::Instance().HasCopyVerification();
-    [self.mainWindowController beginSheet:mc.window
-                        completionHandler:^(NSModalResponse returnCode){
-        if( returnCode != NSModalResponseOK )
-            return;
-        
-        auto path = mc.resultDestination;
-        auto host = mc.resultHost;
-        auto opts = mc.resultOptions;
-        if( !host || path.empty() )
-            return; // ui invariant is broken
-        
-        const auto op = make_shared<nc::ops::Copying>(move(entries), path, host, opts);
-        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, update_both_panels);
-        op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
-            dispatch_to_main_queue( [=]{
-                string single_fn_rename = ::path(path).filename().native();
-                nc::panel::DelayedFocusing req;
-                req.filename = single_fn_rename;
-                [(PanelController*)cur scheduleDelayedFocusing:req];
-            });
-        });
-        [self.mainWindowController enqueueOperation:op];
-    }];
 }
 
 - (IBAction)OnFileNewTab:(id)sender
@@ -495,6 +292,10 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
 - (IBAction)OnWindowShowPreviousTab:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnWindowShowNextTab:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnShowTabs:(id)sender{ Perform(_cmd, self, sender); }
+- (IBAction)OnFileCopyCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnFileCopyAsCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnFileRenameMoveCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnFileRenameMoveAsCommand:(id)sender { Perform(_cmd, self, sender); }
 
 @end
 
@@ -507,7 +308,11 @@ static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
 {"menu.view.switch_dual_single_mode",   @selector(onSwitchDualSinglePaneMode:),     new ToggleSingleOrDualMode},
 {"menu.window.show_previous_tab",       @selector(OnWindowShowPreviousTab:),        new ShowPreviousTab},
 {"menu.window.show_next_tab",           @selector(OnWindowShowNextTab:),            new ShowNextTab},
-{"menu.view.show_tabs",                 @selector(OnShowTabs:),                     new ShowTabs}
+{"menu.view.show_tabs",                 @selector(OnShowTabs:),                     new ShowTabs},
+{"menu.command.copy_to",                @selector(OnFileCopyCommand:),              new CopyTo},
+{"menu.command.copy_as",                @selector(OnFileCopyAsCommand:),            new CopyAs},
+{"menu.command.move_to",                @selector(OnFileRenameMoveCommand:),        new MoveTo},
+{"menu.command.move_as",                @selector(OnFileRenameMoveAsCommand:),      new MoveAs}
 };
 
 static const nc::panel::actions::StateAction *ActionByName(const char* _name) noexcept

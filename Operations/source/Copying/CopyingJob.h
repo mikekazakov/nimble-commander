@@ -74,7 +74,13 @@ struct CopyingJobCallbacks
     m_OnCantDeleteDestinationFile
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
     { return CantDeleteDestinationFileResolution::Stop; };
-    
+
+    enum class CantDeleteSourceFileResolution { Stop, Skip, Retry };
+    function<CantDeleteSourceFileResolution(int _vfs_error, const string &_path, VFSHost &_vfs)>
+    m_OnCantDeleteSourceItem
+    = [](int _vfs_error, const string &_path, VFSHost &_vfs)
+    { return CantDeleteSourceFileResolution::Stop; };
+
     function<void(const string &_path, VFSHost &_vfs)>
     m_OnFileVerificationFailed
     = [](const string &_path, VFSHost &_vfs)
@@ -188,7 +194,8 @@ private:
                              const string& _src_path,
                              const string& _dst_path) const;
     StepResult VerifyCopiedFile(const copying::ChecksumExpectation& _exp, bool &_matched);
-    void        CleanSourceItems() const;
+    void        ClearSourceItems();
+    void        ClearSourceItem( const string &_path, mode_t _mode, VFSHost &_host );
     void        SetStage(enum Stage _stage);
     
     

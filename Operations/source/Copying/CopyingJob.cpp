@@ -257,7 +257,7 @@ void CopyingJob::ProcessItems()
     // be sure to all it only if ALL previous steps wre OK.
     if( all_matched ) {
         SetStage(Stage::Cleaning);
-        CleanSourceItems();
+        ClearSourceItems();
     }
 }
     
@@ -1854,7 +1854,7 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
     return StepResult::Ok;
 }
 
-void CopyingJob::CleanSourceItems() const
+void CopyingJob::ClearSourceItems()
 {
     for( auto i = rbegin(m_SourceItemsToDelete), e = rend(m_SourceItemsToDelete); i != e; ++i ) {
         auto index = *i;
@@ -1862,11 +1862,29 @@ void CopyingJob::CleanSourceItems() const
         auto&host = m_SourceItems.ItemHost(index);
         auto source_path = m_SourceItems.ComposeFullPath(index);
         
-        // maybe any error handling here?
-        if( S_ISDIR(mode) )
-            host.RemoveDirectory( source_path.c_str() );
-        else
-            host.Unlink( source_path.c_str() );
+        ClearSourceItem(source_path, mode, host);
+        
+        if( BlockIfPaused(); IsStopped() )
+            return;
+    }
+}
+
+void CopyingJob::ClearSourceItem( const string &_path, mode_t _mode, VFSHost &_host )
+{
+    while( true ) {
+        const auto is_dir = S_ISDIR(_mode);
+        const auto vfs_rc = is_dir ?
+            _host.RemoveDirectory( _path.c_str() ) :
+            _host.Unlink( _path.c_str() );
+        
+        if( vfs_rc == VFSError::Ok )
+            break;
+        
+        switch( m_OnCantDeleteSourceItem(vfs_rc, _path, _host ) ) {
+            case CantDeleteSourceFileResolution::Skip: return;
+            case CantDeleteSourceFileResolution::Stop: Stop(); return;
+            case CantDeleteSourceFileResolution::Retry: continue;
+        }
     }
 }
 

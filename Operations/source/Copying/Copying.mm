@@ -66,6 +66,9 @@ void Copying::SetupCallbacks()
     j.m_OnCantDeleteDestinationFile = [this](int _1, const string &_2, VFSHost &_3) {
         return (С::CantDeleteDestinationFileResolution)OnCantDeleteDestinationFile(_1, _2, _3);
     };
+    j.m_OnCantDeleteSourceItem = [this](int _1, const string &_2, VFSHost &_3) {
+        return (С::CantDeleteSourceFileResolution)OnCantDeleteSourceItem(_1, _2, _3);
+    };
     j.m_OnFileVerificationFailed = [this](const string &_1, VFSHost &_2) {
         OnFileVerificationFailed(_1, _2);
     };
@@ -384,6 +387,31 @@ void Copying::OnFileVerificationFailed(const string &_path, VFSHost &_vfs)
                       NSLocalizedString(@"Checksum verification failed", ""),
                       VFSError::FromErrno(EIO), {_vfs, _path}, ctx);
     WaitForDialogResponse(ctx);
+}
+
+int Copying::OnCantDeleteSourceItem(int _err, const string &_path, VFSHost &_vfs)
+{
+     if( m_SkipAll )
+        return (int)Callbacks::CantDeleteSourceFileResolution::Skip;
+    if( !IsInteractive() )
+        return (int)Callbacks::CantDeleteSourceFileResolution::Stop;
+    
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllRetry,
+                      NSLocalizedString(@"Failed to delete a source item", ""),
+                      _err, {_vfs, _path}, ctx);
+    WaitForDialogResponse(ctx);
+    
+    if( ctx->response == NSModalResponseSkip )
+        return (int)Callbacks::CantDeleteSourceFileResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return (int)Callbacks::CantDeleteSourceFileResolution::Skip;
+    }
+    else if( ctx->response == NSModalResponseRetry )
+        return (int)Callbacks::CantDeleteSourceFileResolution::Retry;
+    else
+        return (int)Callbacks::CantDeleteSourceFileResolution::Stop;
 }
 
 void Copying::OnStageChanged()

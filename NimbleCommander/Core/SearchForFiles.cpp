@@ -73,13 +73,13 @@ void SearchForFiles::ClearFilters()
 }
 
 bool SearchForFiles::Go(const string &_from_path,
-                    const VFSHostPtr &_in_host,
-                    int _options,
-                    FoundCallback _found_callback,
-                    function<void()> _finish_callback,
-                    function<void(const char*)> _looking_in_callback,
-                    SpawnArchiveCallback _spawn_archive_callback
-                    )
+                        const VFSHostPtr &_in_host,
+                        int _options,
+                        FoundCallback _found_callback,
+                        function<void()> _finish_callback,
+                        LookingInCallback _looking_in_callback,
+                        SpawnArchiveCallback _spawn_archive_callback
+                        )
 {
     if( IsRunning() )
         return false;
@@ -115,10 +115,10 @@ void SearchForFiles::Wait()
     m_Queue.Wait();
 }
 
-void SearchForFiles::NotifyLookingIn(const char* _path) const
+void SearchForFiles::NotifyLookingIn(const char* _path, VFSHost &_in_host) const
 {
     if( m_LookingInCallback )
-        m_LookingInCallback(_path);
+        m_LookingInCallback( _path, _in_host );
 }
 
 void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
@@ -132,7 +132,7 @@ void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
         auto path = move( m_DirsFIFO.front() );
         m_DirsFIFO.pop();
         
-        NotifyLookingIn( path.Path().c_str() );
+        NotifyLookingIn( path.Path().c_str(), *path.Host() );
         
         path.Host()->IterateDirectoryListing(path.Path().c_str(),
                                       [&](const VFSDirEnt &_dirent)
@@ -227,7 +227,7 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
     if(file->Open(VFSFlags::OF_Read) != 0)
         return false;
     
-    NotifyLookingIn( _full_path );
+    NotifyLookingIn( _full_path, _in_host );
     
     FileWindow fw;
     if(fw.OpenFile(file) != 0 )

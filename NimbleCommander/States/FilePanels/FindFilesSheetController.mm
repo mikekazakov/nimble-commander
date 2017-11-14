@@ -74,7 +74,8 @@ public:
     {
         GenericConfig::ConfigValue arr(rapidjson::kArrayType);
         for( auto &s: *this )
-            arr.PushBack( GenericConfig::ConfigValue(s.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
+            arr.PushBack(GenericConfig::ConfigValue(s.c_str(), GenericConfig::g_CrtAllocator),
+                         GenericConfig::g_CrtAllocator );
         StateConfig().Set(m_Path, arr);
     }
     
@@ -458,51 +459,59 @@ private:
     
     m_FileSearch->SetFilterSize( self.searchFilterSizeFromUI );
     
+    auto found_callback = [=](const char *_filename,
+                              const char *_in_path,
+                              VFSHost& _in_host,
+                              CFRange _cont_pos){
+        FindFilesSheetControllerFoundItem it;
+        it.host = _in_host.SharedPtr();
+        it.filename = _filename;
+        it.dir_path = ensure_no_tr_slash(_in_path);
+        it.full_filename = ensure_tr_slash(_in_path) + it.filename;
+        it.content_pos = _cont_pos;
+        it.rel_path = to_relative_path(it.host,
+                                       ensure_tr_slash(_in_path),
+                                       string(m_Host->JunctionPath()) + m_Path);
+        
+        
+        // TODO: need some decent cancelling mechanics here
+        auto stat_block = [=, it=move(it)]()mutable{
+            // doing stat()'ing item in async background thread
+            it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
+            
+            FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:move(it)];
+            m_BatchQueue.Run([self, item]{
+                // dumping result entry into batch array in BatchQueue
+                [m_FoundItemsBatch addObject:item];
+            });
+        };
+        
+        if( _in_host.IsNativeFS() )
+            m_StatGroup.Run( move(stat_block) );
+        else
+            m_StatQueue.Run( move(stat_block) );
+        
+        if(m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults)
+            m_FileSearch->Stop(); // gorshochek, ne vari!!!
+    };
+    auto finish_callback = [=]{
+        [self onSearchFinished];
+    };
+    auto lookin_in_callback = [=](const char *_path, VFSHost& _in_host) {
+        auto verbose_path = _in_host.MakePathVerbose(_path);
+        LOCK_GUARD(m_LookingInPathGuard)
+            m_LookingInPath = move(verbose_path);
+    };
+    auto spawn_archive_callback = [=](const char*_for_path, VFSHost& _in_host)->VFSHostPtr {
+        return [self spawnArchiveFromPath:_for_path inVFS:_in_host.SharedPtr()];
+    };
     const bool started = m_FileSearch->Go(m_Path,
                                           m_Host,
                                           self.searchOptionsFromUI,
-                                          [=](const char *_filename, const char *_in_path, VFSHost& _in_host, CFRange _cont_pos){
-                                              FindFilesSheetControllerFoundItem it;
-                                              it.host = _in_host.SharedPtr();
-                                              it.filename = _filename;
-                                              it.dir_path = ensure_no_tr_slash(_in_path);
-                                              it.full_filename = ensure_tr_slash(_in_path) + it.filename;
-                                              it.content_pos = _cont_pos;
-                                              it.rel_path = to_relative_path(it.host,
-                                                                             ensure_tr_slash(_in_path),
-                                                                             string(m_Host->JunctionPath()) + m_Path);
-                                              
-                                              
-                                              // TODO: need some decent cancelling mechanics here
-                                              auto stat_block = [=, it=move(it)]()mutable{
-                                                  // doing stat()'ing item in async background thread
-                                                  it.host->Stat(it.full_filename.c_str(), it.st, 0, 0);
-                                                  
-                                                  FindFilesSheetFoundItem *item = [[FindFilesSheetFoundItem alloc] initWithFoundItem:move(it)];
-                                                  m_BatchQueue.Run([self, item]{
-                                                      // dumping result entry into batch array in BatchQueue
-                                                      [m_FoundItemsBatch addObject:item];
-                                                  });
-                                              };
-                                              
-                                              if( _in_host.IsNativeFS() )
-                                                  m_StatGroup.Run( move(stat_block) );
-                                              else
-                                                  m_StatQueue.Run( move(stat_block) );
-                                              
-                                              if(m_FoundItems.count + m_FoundItemsBatch.count >= g_MaximumSearchResults)
-                                                  m_FileSearch->Stop(); // gorshochek, ne vari!!!
-                                          },
-                                          [=]{
-                                              [self onSearchFinished];
-                                          },
-                                          [=](const char *_path) {
-                                              LOCK_GUARD(m_LookingInPathGuard)
-                                                m_LookingInPath = _path;
-                                          },
-                                          [=](const char*_for_path, VFSHost& _in_host)->VFSHostPtr{
-                                              return [self spawnArchiveFromPath:_for_path inVFS:_in_host.SharedPtr()];
-                                          }
+                                          move(found_callback),
+                                          move(finish_callback),
+                                          move(lookin_in_callback),
+                                          move(spawn_archive_callback)
                                           );
     self.searchingNow = started;
     if(started) {

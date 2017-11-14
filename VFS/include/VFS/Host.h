@@ -115,6 +115,8 @@ public:
      */
     uint64_t FullHashForPath( const char *_path ) const noexcept;
     
+    string MakePathVerbose( const char *_path ) const;
+    
     /***********************************************************************************************
      * Probing, information, lookup
      **********************************************************************************************/

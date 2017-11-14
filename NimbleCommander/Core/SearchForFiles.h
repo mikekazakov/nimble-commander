@@ -42,6 +42,8 @@ public:
     
     using SpawnArchiveCallback = function<VFSHostPtr(const char*_for_path, VFSHost& _in_host)>;
     
+    using LookingInCallback = function<void(const char*, VFSHost&)>;
+    
     SearchForFiles();
     ~SearchForFiles();
     
@@ -75,7 +77,7 @@ public:
             int _options,
             FoundCallback _found_callback,
             function<void()> _finish_callback,
-            function<void(const char*)> _looking_in_callback = nullptr,
+            LookingInCallback _looking_in_callback = nullptr,
             SpawnArchiveCallback _spawn_archive_callback = nullptr
             );
     
@@ -112,7 +114,7 @@ private:
                            VFSHost &_in_host,
                            CFRange _cont_range);
     
-    void NotifyLookingIn(const char* _path) const;
+    void NotifyLookingIn(const char* _path, VFSHost &_in_host) const;
     bool FilterByContent(const char* _full_path, VFSHost &_in_host, CFRange &_r);
     bool FilterByFilename(const char* _filename) const;
     
@@ -125,7 +127,7 @@ private:
     FoundCallback               m_Callback;
     SpawnArchiveCallback        m_SpawnArchiveCallback;
     function<void()>            m_FinishCallback;
-    function<void(const char*)> m_LookingInCallback;
+    LookingInCallback           m_LookingInCallback;
     int                         m_SearchOptions;
     queue<VFSPath>              m_DirsFIFO;
 };

@@ -547,4 +547,23 @@ uint64_t Host::FullHashForPath( const char *_path ) const noexcept
     return hash<string_view>()( string_view(&buf[0], p - &buf[0]) );
 }
 
+string Host::MakePathVerbose( const char *_path ) const
+{
+    array<const Host*, 8> hosts;
+    int hosts_n = 0;
+    
+    auto cur = this;
+    while( cur && hosts_n < 8  ) {
+        hosts[hosts_n++] = cur;
+        cur = cur->Parent().get();
+    }
+    
+    string verbose_path;
+    while( hosts_n > 0 )
+        verbose_path += hosts[--hosts_n]->Configuration().VerboseJunction();
+    
+    verbose_path += _path;
+    return verbose_path;
+}
+
 }

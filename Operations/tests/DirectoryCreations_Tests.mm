@@ -5,6 +5,8 @@
 #include <VFS/NetFTP.h>
 #include "../source/DirectoryCreation/DirectoryCreation.h"
 
+static const auto g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
+
 using namespace nc::ops;
 using namespace nc::vfs;
 
@@ -116,7 +118,7 @@ using namespace nc::vfs;
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;

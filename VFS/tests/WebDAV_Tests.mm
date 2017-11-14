@@ -6,6 +6,7 @@
 
 using namespace nc::vfs;
 
+static const auto g_NASHost = NCE(nc::env::test::webdav_nas_host);
 static const auto g_NASUsername = NCE(nc::env::test::webdav_nas_username);
 static const auto g_NASPassword = NCE(nc::env::test::webdav_nas_password);
 static const auto g_BoxComUsername = NCE(nc::env::test::webdav_boxcom_username);
@@ -21,7 +22,7 @@ static const auto g_YandexDiskPassword = NCE(nc::env::test::webdav_yandexdisk_pa
 
 - (shared_ptr<WebDAVHost>) spawnNASHost
 {
-    return shared_ptr<WebDAVHost> (new WebDAVHost("blaze.local",
+    return shared_ptr<WebDAVHost> (new WebDAVHost(g_NASHost,
                                                   g_NASUsername,
                                                   g_NASPassword,
                                                   "Public",

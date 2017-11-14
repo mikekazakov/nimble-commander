@@ -11,6 +11,7 @@ using namespace nc::ops;
 using namespace nc::vfs;
 static const path g_DataPref = NCE(nc::env::test::ext_data_prefix);
 static const path g_PhotosRAR = g_DataPref / "archives" / "photos.rar";
+static const auto g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
 
 static vector<VFSListingItem> FetchItems(const string& _directory_path,
                                                  const vector<string> &_filenames,
@@ -177,7 +178,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -208,7 +209,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -244,7 +245,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -369,7 +370,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;

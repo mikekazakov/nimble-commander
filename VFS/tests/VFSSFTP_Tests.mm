@@ -7,10 +7,18 @@
 using namespace nc::vfs;
 
 static const path g_Keys = path(NCE(nc::env::test::ext_data_prefix)) / "sftp";
-static const auto g_QNAPNAS             = "192.168.2.5";
-static const auto g_VBoxDebian7x86      = "debian7x86.local"; // 170
-static const auto g_VBoxDebian8x86      = "192.168.2.173";
-static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
+static const auto g_QNAPNAS                     = NCE(nc::env::test::sftp_qnap_nas_host);
+static const auto g_VBoxDebian7x86              = NCE(nc::env::test::sftp_vbox_debian_7x86_host);
+static const auto g_VBoxDebian7x86User          = NCE(nc::env::test::sftp_vbox_debian_7x86_user);
+static const auto g_VBoxDebian7x86Passwd        = NCE(nc::env::test::sftp_vbox_debian_7x86_passwd);
+static const auto g_VBoxDebian7x86KeyPasswd     = NCE(nc::env::test::sftp_vbox_debian_7x86_key_passwd);
+static const auto g_VBoxDebian8x86              = NCE(nc::env::test::sftp_vbox_debian_8x86_host);
+static const auto g_VBoxDebian8x86User          = NCE(nc::env::test::sftp_vbox_debian_8x86_user);
+static const auto g_VBoxDebian8x86Passwd        = NCE(nc::env::test::sftp_vbox_debian_8x86_passwd);
+static const auto g_VBoxUbuntu1404x64           = NCE(nc::env::test::sftp_vbox_ubuntu_1404x64_host);
+static const auto g_VBoxUbuntu1404x64User       = NCE(nc::env::test::sftp_vbox_ubuntu_1404x64_user);
+static const auto g_VBoxUbuntu1404x64Passwd     = NCE(nc::env::test::sftp_vbox_ubuntu_1404x64_passwd);
+static const auto g_VBoxUbuntu1404x64KeyPasswd  = NCE(nc::env::test::sftp_vbox_ubuntu_1404x64_key_passwd);
 
 @interface VFSSFTP_Tests : XCTestCase
 @end
@@ -20,8 +28,8 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 - (VFSHostPtr) hostForVBoxDebian7x86
 {
     return make_shared<SFTPHost>(g_VBoxDebian7x86,
-                                 "root",
-                                 "123456",
+                                 g_VBoxDebian7x86User,
+                                 g_VBoxDebian7x86Passwd,
                                  "",
                                  -1);
 }
@@ -29,7 +37,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 - (VFSHostPtr) hostForVBoxDebian7x86WithPrivKey
 {
     return make_shared<SFTPHost>(g_VBoxDebian7x86,
-                                 "root",
+                                 g_VBoxDebian7x86User,
                                  "",
                                  (g_Keys/"id_rsa_debian7x86_local_root").c_str(),
                                  -1);
@@ -38,8 +46,8 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 - (VFSHostPtr) hostForVBoxDebian7x86WithPrivKeyPass
 {
     return make_shared<SFTPHost>(g_VBoxDebian7x86,
-                                 "root",
-                                 "qwerty",
+                                 g_VBoxDebian7x86User,
+                                 g_VBoxDebian7x86KeyPasswd,
                                  (g_Keys/"id_rsa_debian7x86_local_root_qwerty").c_str(),
                                  -1);
 }
@@ -47,16 +55,16 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 - (VFSHostPtr) hostForVBoxDebian8x86
 {
     return make_shared<SFTPHost>(g_VBoxDebian8x86,
-                                 "r2d2",
-                                 "r2d2",
+                                 g_VBoxDebian8x86User,
+                                 g_VBoxDebian8x86Passwd,
                                  "");
 }
 
 - (VFSHostPtr) hostForVBoxUbuntu
 {
     return make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
-                                 "r2d2",
-                                 "r2d2",
+                                 g_VBoxUbuntu1404x64User,
+                                 g_VBoxUbuntu1404x64Passwd,
                                  "");
 }
 
@@ -177,7 +185,7 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
 {
     try { // auth with private key
         auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
-                                    "r2d2",
+                                    g_VBoxUbuntu1404x64User,
                                     "",
                                     (g_Keys/"id_rsa_ubuntu1404x64_local_r2d2").c_str());
         XCTAssert( host->HomeDir() == "/home/r2d2" );
@@ -187,8 +195,8 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
     
     try { // auth with encrypted private key
         auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
-                                          "r2d2",
-                                          "qwerty",
+                                          g_VBoxUbuntu1404x64User,
+                                          g_VBoxUbuntu1404x64KeyPasswd,
                                           (g_Keys/"id_rsa_ubuntu1404x64_local_r2d2_qwerty").c_str());
     XCTAssert( host->HomeDir() == "/home/r2d2" );
     } catch (VFSErrorException &e) {
@@ -198,8 +206,8 @@ static const auto g_VBoxUbuntu1404x64   = "192.168.2.171";
     
     try { // auth with login-password pair
         auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
-                                          "r2d2",
-                                          "r2d2",
+                                          g_VBoxUbuntu1404x64User,
+                                          g_VBoxUbuntu1404x64Passwd,
                                           "");
         XCTAssert( host->HomeDir() == "/home/r2d2" );
     } catch (VFSErrorException &e) {

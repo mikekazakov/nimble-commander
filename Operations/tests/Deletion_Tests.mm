@@ -8,6 +8,8 @@
 using namespace nc;
 using namespace nc::ops;
 
+static const auto g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
+
 @interface DeletionTests : XCTestCase
 @end
 
@@ -135,7 +137,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 - (void)testSimpleDeleteFromFTP
 {
     try {
-        auto host = make_shared<vfs::FTPHost>("192.168.2.5", "", "", "/");
+        auto host = make_shared<vfs::FTPHost>(g_LocalFTP, "", "", "/");
         
         const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/mach_kernel";
         VFSStat stat;
@@ -160,7 +162,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 - (void)testDeletingFromFTPDirectory
 {
     try {
-        auto host = make_shared<vfs::FTPHost>("192.168.2.5", "", "", "/");
+        auto host = make_shared<vfs::FTPHost>(g_LocalFTP, "", "", "/");
         
         const char *fn1 = "/bin", *fn2 = "/Public/!FilesTesting/bin";
         VFSStat stat;

@@ -6,7 +6,7 @@
 
 using namespace nc::vfs;
 
-static string g_LocalFTP = "192.168.2.5";
+static string g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
 static string g_LocalTestPath = "/Public/!FilesTesting/";
 
 static string UUID()
@@ -19,11 +19,11 @@ static string UUID()
 
 @implementation VFSFTP_Tests
 
-- (void)test192_168_2_5
+- (void)testLocalFTP
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -56,48 +56,11 @@ static string UUID()
     XCTAssert( host->Stat(fn2, stat, 0, 0) != 0);
 }
 
-- (void)testMacMini
+- (void)testLocalFTP_EmptyFileTest
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
-    } catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-        return;
-    }
-    
-    const char *fn1 = "/System/Library/Kernels/kernel",
-    *fn2 = "/kernel";
-    VFSStat stat;
-    
-    // if there's a trash from previous runs - remove it
-    if( host->Stat(fn2, stat, 0, 0) == 0)
-        XCTAssert( host->Unlink(fn2, 0) == 0);
-    
-    // copy file to remote server
-    XCTAssert( VFSEasyCopyFile(fn1, VFSNativeHost::SharedHost(), fn2, host) == 0);
-    int compare;
-    
-    // compare it with origin
-    XCTAssert( VFSEasyCompareFiles(fn1, VFSNativeHost::SharedHost(), fn2, host, compare) == 0);
-    XCTAssert( compare == 0);
-    
-    // check that it appeared in stat cache
-    XCTAssert( host->Stat(fn2, stat, 0, 0) == 0);
-    
-    // delete it
-    XCTAssert( host->Unlink(fn2, 0) == 0);
-    XCTAssert( host->Unlink("/Public/!FilesTesting/wf8g2398fg239f6g23976fg79gads", 0) != 0); // also check deleting wrong entry
-    
-    // check that it is no longer available in stat cache
-    XCTAssert( host->Stat(fn2, stat, 0, 0) != 0);
-}
-
-- (void)test192_168_2_5_EmptyFileTest
-{
-    VFSHostPtr host;
-    try {
-        host = make_shared<FTPHost>("192.168.2.5", "", "", "/");
+        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -123,55 +86,6 @@ static string UUID()
     
     XCTAssert( host->Unlink(fn, 0) == 0 );
     XCTAssert( host->Stat(fn, stat, 0, 0) != 0);
-}
-
-// thanks to QNAP weird firmware update - it's ftp server stop overwriting files and began to appending them always
-// so currently using OSX Server built-in ftp.
-- (void)testMacMini_AppendTest
-{
-    VFSHostPtr host;
-    try {
-        host = make_shared<FTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
-    } catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-        return;
-    }
-    const char *fn = "/Public/!FilesTesting/append.txt";
-
-    VFSStat stat;
-    if( host->Stat(fn, stat, 0, 0) == 0 )
-        XCTAssert( host->Unlink(fn, 0) == 0 );
-
-    VFSFilePtr file;
-    const char *str = "Hello World!\n";
-    const char *str2= "Underworld!\n";
-    XCTAssert( host->CreateFile(fn, file, 0) == 0 );
-    XCTAssert( file->Open(VFSFlags::OF_Write | VFSFlags::OF_Create) == 0 );
-    XCTAssert( file->Write(str, strlen(str)) == strlen(str) );
-    XCTAssert( file->Close() == 0 );
-
-    XCTAssert( file->Open(VFSFlags::OF_Write | VFSFlags::OF_Append) == 0 );
-    XCTAssert( file->Size() == strlen(str) );
-    XCTAssert( file->Pos() == strlen(str) );
-    XCTAssert( file->Write(str, strlen(str)) == strlen(str) );
-    XCTAssert( file->Close() == 0 );
-    
-    XCTAssert( host->Stat(fn, stat, 0, 0) == 0 );
-    XCTAssert( stat.size == strlen(str)*2 );
-    
-    XCTAssert( file->Open(VFSFlags::OF_Write) == 0 ); // should implicitly truncating for FTP uploads
-    XCTAssert( file->Size() == 0 );
-    XCTAssert( file->Pos() == 0 );
-    XCTAssert( file->Write(str2, strlen(str2)) == strlen(str2) );
-    XCTAssert( file->Close() == 0);
-    
-    XCTAssert( host->Stat(fn, stat, 0, 0) == 0 );
-    XCTAssert( stat.size == strlen(str2) );
-    
-    XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
-    char buf[4096];
-    XCTAssert( file->Read(buf, 4096) == strlen(str2) );
-    XCTAssert( memcmp(buf, str2, strlen(str2)) == 0 );
 }
 
 - (void) testLocal_MKD_RMD
@@ -240,39 +154,6 @@ static string UUID()
     XCTAssert( host->RemoveDirectory((g_LocalTestPath + "DirectoryName2").c_str(), 0) == 0);
 }
 
-- (void) testLocal_Rename_127001
-{
-    VFSHostPtr host;
-    try {
-        host = make_shared<FTPHost>("lucyfire.local", "r2d2", "r2d2", "/");
-    } catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-        return;
-    }
-    string fn1 = "/System/Library/Kernels/kernel", fn2 = "/kernel", fn3 = "/kernel34234234";
-    
-    VFSStat stat;
-    
-    // if there's a trash from previous runs - remove it
-    if( host->Stat(fn2.c_str(), stat, 0, 0) == 0)
-        XCTAssert( host->Unlink(fn2.c_str(), 0) == 0);
-    
-    XCTAssert( VFSEasyCopyFile(fn1.c_str(), VFSNativeHost::SharedHost(), fn2.c_str(), host) == 0);
-    XCTAssert( host->Rename(fn2.c_str(), fn3.c_str(), 0) == 0);
-    XCTAssert( host->Stat(fn3.c_str(), stat, 0, 0) == 0);
-    XCTAssert( host->Unlink(fn3.c_str(), 0) == 0);
-    
-    if( host->Stat("/DirectoryName1", stat, 0, 0) == 0)
-        XCTAssert( host->RemoveDirectory("/DirectoryName1", 0) == 0);
-    if( host->Stat("/DirectoryName2", stat, 0, 0) == 0)
-        XCTAssert( host->RemoveDirectory("/DirectoryName2", 0) == 0);
-    
-    XCTAssert( host->CreateDirectory("/DirectoryName1", 0640, 0) == 0);
-    XCTAssert( host->Rename("/DirectoryName1/", "/DirectoryName2/", 0) == 0);
-    XCTAssert( host->Stat("/DirectoryName2", stat, 0, 0) == 0);
-    XCTAssert( host->RemoveDirectory("/DirectoryName2", 0) == 0);
-}
-
 - (void)testListing_Debian_Org
 {
     auto path = "/debian/pool";
@@ -295,7 +176,6 @@ static string UUID()
 
 - (void)testSeekRead_Debian_Org
 {
-    VFSHostPtr host;
     try {
         auto host = make_shared<FTPHost>("ftp.debian.org", "", "", "/debian/dists/wheezy/main/installer-amd64/20130430/images/hd-media/");
         

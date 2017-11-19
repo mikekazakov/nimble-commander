@@ -108,6 +108,18 @@
                                                      dirtyRect.size.height));
                     }
                 }
+                
+                if( valid_columns > 0 ) {
+                    const auto &column_widths = layout.columnWidths;
+                    const auto origin = column_origins[valid_columns - 1];
+                    const auto width = column_widths[valid_columns - 1];
+                    if( origin != numeric_limits<int>::max() && width != 0 )
+                        CGContextFillRect(context,
+                                          CGRectMake(origin + width - 1,
+                                                     dirtyRect.origin.y,
+                                                     1,
+                                                     dirtyRect.size.height));
+                }
             }
         }
     }

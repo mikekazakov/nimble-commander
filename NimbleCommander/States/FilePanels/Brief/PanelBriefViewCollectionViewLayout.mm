@@ -4,6 +4,7 @@
 @implementation PanelBriefViewCollectionViewLayout
 {
     vector<int> m_ColumnPositions;
+    vector<int> m_ColumnWidths;
 }
 
 - (id) init
@@ -71,14 +72,24 @@
     
     if( m_ColumnPositions.size() < columns.size() )
         m_ColumnPositions.resize( columns.size(), numeric_limits<int>::max() );
+    if( m_ColumnWidths.size() < columns.size() )
+        m_ColumnWidths.resize(columns.size(), 0);
     
     bool any_changes = false;
-    for( int i = 0, e = (int)columns.size(); i != e; ++i )
-        if( columns[i].origin != numeric_limits<int>::max() )
+    for( int i = 0, e = (int)columns.size(); i != e; ++i ) {
+        if( columns[i].origin != numeric_limits<int>::max() ) {
             if(columns[i].origin != m_ColumnPositions[i]) {
                 m_ColumnPositions[i] = columns[i].origin;
                 any_changes = true;
             }
+        }
+        if( columns[i].width != 0 ) {
+            if( columns[i].width != m_ColumnWidths[i] ) {
+                m_ColumnWidths[i] = columns[i].width;
+                any_changes = true;
+            }
+        }
+    }
 
     static const bool draws_grid =
         [self.collectionView respondsToSelector:@selector(setBackgroundViewScrollsWithContent:)];
@@ -88,10 +99,16 @@
     return attrs;
 }
 
-- (vector<int>&) columnPositions
+- (const vector<int>&) columnPositions
 {
     dispatch_assert_main_queue();
     return m_ColumnPositions;
+}
+
+- (const vector<int>&) columnWidths
+{
+    dispatch_assert_main_queue();
+    return m_ColumnWidths;
 }
 
 @end

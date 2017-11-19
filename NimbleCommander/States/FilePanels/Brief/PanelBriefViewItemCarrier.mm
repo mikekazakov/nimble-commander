@@ -152,18 +152,13 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     else
         [self drawDefaultBackgroundWithBounds:bounds inContext:context];
     
-    if( m_Controller ) {
-        const auto column = m_Controller.columnIndex;
-        if( column >= 0 && column != m_Controller.briefView.columns - 1 ) {
-            const auto grid_color = CurrentTheme().FilePanelsBriefGridColor();
-                CGContextSetFillColorWithColor(context, grid_color.CGColor);
-                CGContextFillRect(context, NSMakeRect(bounds.size.width-1,
-                                                      0,
-                                                      1,
-                                                      bounds.size.height));
-        }
-    }
-    
+    const auto grid_color = CurrentTheme().FilePanelsBriefGridColor();
+    CGContextSetFillColorWithColor(context, grid_color.CGColor);
+    CGContextFillRect(context, NSMakeRect(bounds.size.width-1,
+                                          0,
+                                          1,
+                                          bounds.size.height));
+
     const auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
     /* using additional 0.5 width to eliminame situations, when drawWithRect trims string due to,
     rounding/rendering side effects */

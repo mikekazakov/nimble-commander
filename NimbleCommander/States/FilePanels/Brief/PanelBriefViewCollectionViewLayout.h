@@ -4,7 +4,7 @@
 @interface PanelBriefViewCollectionViewLayout : NSCollectionViewFlowLayout
 
 - (int) rowsCount;
-- (vector<int>&) columnPositions; // may contain "empty value" - numeric_limits<int>::max()
-
+- (const vector<int>&) columnPositions; // may contain "empty value" - numeric_limits<int>::max()
+- (const vector<int>&) columnWidths; // may contain zero as a placeholder
 
 @end

@@ -4,5 +4,7 @@
 #include <Cocoa/Cocoa.h>
 
 @interface NCFilenameTextStorage : NSTextStorage
+@end
 
+@interface NCFilenameTextCell : NSTextFieldCell
 @end

@@ -1,7 +1,9 @@
 // Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilenameTextControl.h"
+#include <AppKit/AppKit.h>
+#include "ObjCpp.h"
 
-static const auto g_CS = [NSCharacterSet characterSetWithCharactersInString:@".,-_"];
+static const auto g_CS = [NSCharacterSet characterSetWithCharactersInString:@".,-_/\\"];
 
 @interface NCFilenameTextStorage ()
 @property (nonatomic, strong) NSMutableAttributedString *backingStore;
@@ -83,6 +85,34 @@ static const auto g_CS = [NSCharacterSet characterSetWithCharactersInString:@".,
     }
     
     return [super nextWordFromIndex:location forward:isForward];
+}
+
+@end
+
+@implementation NCFilenameTextCell
+{
+    NSTextView* m_FieldEditor;
+    bool m_IsBuilding;
+}
+
+- (NSTextView *)fieldEditorForView:(NSView *)aControlView
+{
+    if( !m_FieldEditor ) {
+        if( m_IsBuilding == true )
+            return nil;
+        m_IsBuilding = true;
+        
+        const auto default_fe = [aControlView.window fieldEditor:true
+                                                       forObject:aControlView];
+        if( !objc_cast<NSTextView>(default_fe) )
+            return nil;
+        
+        const auto archived_fe = [NSKeyedArchiver archivedDataWithRootObject:default_fe];
+        const id copied_fe = [NSKeyedUnarchiver unarchiveObjectWithData:archived_fe];
+        m_FieldEditor = objc_cast<NSTextView>(copied_fe);
+        [m_FieldEditor.layoutManager replaceTextStorage:[[NCFilenameTextStorage alloc] init]];
+    }
+    return m_FieldEditor;
 }
 
 @end

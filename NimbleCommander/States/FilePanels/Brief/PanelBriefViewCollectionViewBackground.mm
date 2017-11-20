@@ -101,11 +101,11 @@
                         break;
                     }
                     else {
-                        CGContextFillRect(context,
-                                          CGRectMake(origin-1,
-                                                     dirtyRect.origin.y,
-                                                     1,
-                                                     dirtyRect.size.height));
+                        const auto rc = CGRectMake(origin-1,
+                                                   dirtyRect.origin.y,
+                                                   1,
+                                                   dirtyRect.size.height);
+                        CGContextFillRect(context, rc);
                     }
                 }
                 
@@ -113,12 +113,16 @@
                     const auto &column_widths = layout.columnWidths;
                     const auto origin = column_origins[valid_columns - 1];
                     const auto width = column_widths[valid_columns - 1];
-                    if( origin != numeric_limits<int>::max() && width != 0 )
-                        CGContextFillRect(context,
-                                          CGRectMake(origin + width - 1,
-                                                     dirtyRect.origin.y,
-                                                     1,
-                                                     dirtyRect.size.height));
+                    if( origin != numeric_limits<int>::max() &&
+                        width != 0 &&
+                        origin >= dirty_start &&
+                        origin + width - 1 < dirty_start ) {
+                        const auto rc = CGRectMake(origin + width - 1,
+                                                   dirtyRect.origin.y,
+                                                   1,
+                                                   dirtyRect.size.height);
+                        CGContextFillRect(context, rc);
+                    }
                 }
             }
         }

@@ -1,5 +1,6 @@
 // Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFieldEditor.h"
+#include <Utility/FilenameTextControl.h>
 
 static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_selection );
 
@@ -41,6 +42,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
         return style;
     }();
     const auto tv = [[NSTextView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+    [tv.layoutManager replaceTextStorage:[[NCFilenameTextStorage alloc] init]];
     tv.delegate = self;
     tv.fieldEditor = true;
     tv.allowsUndo = true;

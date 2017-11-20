@@ -2202,6 +2202,27 @@ static NSMutableDictionary *registeredStyleClasses = nil;
 	[_tabView selectTabViewItem:[sender tabViewItem]];
 }
 
+- (void)_didClickSelectedTabButton:(id)sender {
+    
+    MMAttachedTabBarButton *button = (MMAttachedTabBarButton *)sender;
+    if (!button || ![button isKindOfClass:[MMAttachedTabBarButton class]])
+        {
+            NSBeep();
+            return;
+        }
+    
+    NSTabViewItem *tabViewItem = [button tabViewItem];
+    if (!tabViewItem || ![tabViewItem isKindOfClass:[NSTabViewItem class]])
+        {
+            NSBeep();
+            return;
+        }
+    
+    if (_delegate && [_delegate respondsToSelector:@selector(tabView:receivedClickOnSelectedTabViewItem:)]) {
+        [_delegate tabView:_tabView receivedClickOnSelectedTabViewItem:tabViewItem];
+    }
+}
+
 - (void)_didClickCloseButton:(id)sender {
 
     MMAttachedTabBarButton *button = (MMAttachedTabBarButton *)[sender enclosingTabBarButton];

@@ -661,6 +661,9 @@ NS_ASSUME_NONNULL_BEGIN
     // Accessibility
 - (NSString *)accessibilityStringForTabView:(NSTabView *)aTabView objectCount:(NSInteger)objectCount;
 
+    // Hacks
+- (void)tabView:(NSTabView *)aTabView receivedClickOnSelectedTabViewItem:(NSTabViewItem *)tabViewItem;
+
     // Deprecated Methods
 - (BOOL)tabView:(NSTabView *)aTabView shouldDragTabViewItem:(NSTabViewItem *)tabViewItem fromTabBar:(id)tabBarControl __attribute__((deprecated("implement -tabView:shouldDragTabViewItem:inTabBarView: instead.")));
 - (BOOL)tabView:(NSTabView *)aTabView shouldDropTabViewItem:(NSTabViewItem *)tabViewItem inTabBar:(id)tabBarControl __attribute__((deprecated("implement -tabView:shouldDropTabViewItem:inTabBarView: instead.")));

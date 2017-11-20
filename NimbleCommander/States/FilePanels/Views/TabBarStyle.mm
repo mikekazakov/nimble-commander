@@ -151,17 +151,11 @@ static auto g_TabAddPressedImage = MakeTabAddPressedImage();
 	return [[self class] name];
 }
 
-#pragma mark -
-#pragma mark Creation/Destruction
-
 - (id) init {
 	if ((self = [super init])) {
 	}
 	return self;
 }
-
-#pragma mark -
-#pragma mark Tab View Specific
 
 - (BOOL)needsResizeTabsToFitTotalWidth
 {

@@ -12,6 +12,7 @@
 #import "MMTabDragAssistant.h"
 #import "MMTabStyle.h"
 #import "NSView+MMTabBarViewExtensions.h"
+#import "MMTabBarView.Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -143,6 +144,9 @@ NS_ASSUME_NONNULL_BEGIN
             [previousSelectedButton setState:NSOffState];
             [self setState:NSOnState];
             [self sendAction:[self action] to:[self target]];
+        }
+        else {
+            [tabBarView _didClickSelectedTabButton:self];
         }
     }
 

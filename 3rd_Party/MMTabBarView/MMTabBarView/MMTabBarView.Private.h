@@ -22,6 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)_overflowMenuAction:(id)sender;
 - (void)_didClickTabButton:(id)sender;
 - (void)_didClickCloseButton:(id)sender;
+- (void)_didClickSelectedTabButton:(id)sender;
 
 @end
 

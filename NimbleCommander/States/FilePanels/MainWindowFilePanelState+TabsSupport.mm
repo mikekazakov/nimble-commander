@@ -32,12 +32,23 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 }
 
 - (void)tabView:(NSTabView *)tabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem
+{    
+    if( const auto panel_view = objc_cast<PanelView>(tabViewItem.view) ) {
+        [self.window makeFirstResponder:panel_view];
+        m_MainSplitView.leftOverlay = nil;
+        m_MainSplitView.rightOverlay = nil;
+    }
+}
+
+- (void)tabView:(NSTabView *)aTabView receivedClickOnSelectedTabViewItem:(NSTabViewItem *)tabViewItem
 {
-    // just set current PanelView to first responder
-    assert( [tabViewItem.view isKindOfClass:PanelView.class] );
-    [self.window makeFirstResponder:tabViewItem.view];
-    m_MainSplitView.leftOverlay = nil;
-    m_MainSplitView.rightOverlay = nil;
+    if( const auto panel_view = objc_cast<PanelView>(tabViewItem.view) ) {
+        if( panel_view.active )
+            return;
+        [self.window makeFirstResponder:panel_view];
+        m_MainSplitView.leftOverlay = nil;
+        m_MainSplitView.rightOverlay = nil;
+    }
 }
 
 - (void) updateTabNameForController:(PanelController*)_controller

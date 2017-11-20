@@ -116,7 +116,7 @@
                     if( origin != numeric_limits<int>::max() &&
                         width != 0 &&
                         origin >= dirty_start &&
-                        origin + width - 1 < dirty_start ) {
+                        origin + width - 1 < dirty_end ) {
                         const auto rc = CGRectMake(origin + width - 1,
                                                    dirtyRect.origin.y,
                                                    1,

@@ -67,7 +67,7 @@ void CloseTab::Perform( MainWindowFilePanelState *_target, id _sender ) const
         tabs = _target.splitView.rightTabbedHolder.tabsCount;
     
     if( tabs > 1 )
-        [_target closeCurrentTab];
+        [_target closeTabForController:act_pc];
     else
         [_target.window performClose:_sender];
 }
@@ -120,6 +120,44 @@ void context::AddNewTab::Perform( MainWindowFilePanelState *_target, id _sender 
         return;
     
     [_target addNewTabToTabView:target_tab_view];
+}
+    
+context::CloseTab::CloseTab(PanelController *_current_pc):
+    m_CurrentPC(_current_pc)
+{
+}
+
+bool context::CloseTab::Predicate( MainWindowFilePanelState *_target ) const
+{
+    if( [_target isLeftController:m_CurrentPC] )
+        return _target.leftControllers.size() > 1;
+    if( [_target isRightController:m_CurrentPC] )
+        return _target.rightControllers.size() > 1;
+    return false;
+}
+
+void context::CloseTab::Perform( MainWindowFilePanelState *_target, id _sender ) const
+{
+    [_target closeTabForController:m_CurrentPC];
+}
+    
+context::CloseOtherTabs::CloseOtherTabs(PanelController *_current_pc):
+    m_CurrentPC(_current_pc)
+{
+}
+
+bool context::CloseOtherTabs::Predicate( MainWindowFilePanelState *_target ) const
+{
+    if( [_target isLeftController:m_CurrentPC] )
+        return _target.leftControllers.size() > 1;
+    if( [_target isRightController:m_CurrentPC] )
+        return _target.rightControllers.size() > 1;
+    return false;
+}
+    
+void context::CloseOtherTabs::Perform( MainWindowFilePanelState *_target, id _sender ) const
+{
+    [_target closeOtherTabsForController:m_CurrentPC];
 }
     
 }

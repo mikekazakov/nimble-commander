@@ -258,27 +258,57 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
         }
 }
 
-- (void) closeCurrentTab
+- (void) closeTabForController:(PanelController*)_controller
 {
-    PanelController *cur = self.activePanelController;
-    if(!cur)
-        return;
-
     NSTabViewItem *it;
     MMTabBarView *bar;
-    
-    if( cur.view == m_MainSplitView.leftTabbedHolder.current ) {
-        it = [m_MainSplitView.leftTabbedHolder tabViewItemForController:cur];
+
+    if( [self isLeftController:_controller] ) {
+        it = [m_MainSplitView.leftTabbedHolder tabViewItemForController:_controller];
         bar = m_MainSplitView.leftTabbedHolder.tabBar;
     }
-    else if( cur.view == m_MainSplitView.rightTabbedHolder.current ) {
-        it = [m_MainSplitView.rightTabbedHolder tabViewItemForController:cur];
+    else if ( [self isRightController:_controller] ) {
+        it = [m_MainSplitView.rightTabbedHolder tabViewItemForController:_controller];
         bar = m_MainSplitView.rightTabbedHolder.tabBar;
     }
+ 
+    if( it && bar )
+        if(const auto button = [bar attachedButtonForTabViewItem:it] )
+            dispatch_to_main_queue([=]{
+                if( const auto close_button = button.closeButton )
+                    [close_button sendAction:close_button.action
+                                          to:close_button.target];
+            });
+}
+
+- (void) closeOtherTabsForController:(PanelController*)_controller
+{
+    MMTabBarView *bar;
+    if( [self isLeftController:_controller] )
+        bar = m_MainSplitView.leftTabbedHolder.tabBar;
+    else if ( [self isRightController:_controller] )
+        bar = m_MainSplitView.rightTabbedHolder.tabBar;
     
-    if(it && bar)
-        if(MMAttachedTabBarButton *bb = [bar attachedButtonForTabViewItem:it])
-            [bar performSelector:bb.closeButtonAction withObject:bb.closeButton afterDelay:0.0];
+    if( !bar )
+        return;
+    
+    vector<NSTabViewItem *> items;
+    for( NSTabViewItem *it in bar.tabView.tabViewItems )
+        if( it.view != _controller.view )
+            items.emplace_back(it);
+    
+    if( items.empty() )
+        return;
+    
+    dispatch_to_background([=]{
+        for( auto it: items )
+            dispatch_to_main_queue([=]{
+                if( const auto button = [bar attachedButtonForTabViewItem:it] )
+                    if( const auto close_button = button.closeButton )
+                        [close_button sendAction:close_button.action
+                                              to:close_button.target];
+            });
+    });
 }
 
 - (unsigned) currentSideTabsCount

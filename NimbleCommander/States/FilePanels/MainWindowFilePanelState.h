@@ -112,12 +112,14 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  * May return nil in init/shutdown period or in invalid state.
  */
 @property (nonatomic, readonly) PanelController *leftPanelController;
+@property (nonatomic, readonly) vector<PanelController*> leftControllers;
 
 /**
  * Pick one of a controllers in right side tabbed bar, which is currently selected (regardless if it is active or not).
  * May return nil in init/shutdown period or in invalid state.
  */
 @property (nonatomic, readonly) PanelController *rightPanelController;
+@property (nonatomic, readonly) vector<PanelController*> rightControllers;
 
 /**
  * Checks if this controller is one of a state's left-side controllers set.

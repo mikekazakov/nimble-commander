@@ -9,7 +9,8 @@
 - (PanelController*)spawnNewTabInTabView:(NSTabView *)aTabView autoDirectoryLoading:(bool)_load activateNewPanel:(bool)_activate;
 
 - (void) updateTabNameForController:(PanelController*)_controller;
-- (void) closeCurrentTab;
+- (void) closeTabForController:(PanelController*)_controller;
+- (void) closeOtherTabsForController:(PanelController*)_controller;
 - (void) updateTabBarsVisibility;
 - (void) updateTabBarButtons;
 

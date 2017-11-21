@@ -439,6 +439,16 @@ static bool GoToForcesPanelActivation()
     return objc_cast<PanelController>(m_MainSplitView.rightTabbedHolder.current.delegate);
 }
 
+- (vector<PanelController*>) leftControllers
+{
+    return m_LeftPanelControllers;
+}
+
+- (vector<PanelController*>) rightControllers
+{
+    return m_RightPanelControllers;
+}
+
 - (bool) isLeftController:(PanelController*)_controller
 {
     return any_of(begin(m_LeftPanelControllers), end(m_LeftPanelControllers), [&](auto p){ return p == _controller; });

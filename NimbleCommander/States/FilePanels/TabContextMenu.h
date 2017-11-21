@@ -3,7 +3,7 @@
 @class PanelController;
 @class MainWindowFilePanelState;
 
-@interface NCPanelTabContextMenu : NSMenu<NSMenuDelegate>
+@interface NCPanelTabContextMenu : NSMenu
 
 - (instancetype) initWithPanel:(PanelController*)_panel
                        ofState:(MainWindowFilePanelState*)_state;

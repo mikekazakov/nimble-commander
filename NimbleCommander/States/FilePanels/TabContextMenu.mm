@@ -25,7 +25,6 @@ static void Perform(const ActionsT &_actions,
 {
     self = [super init];
     if(self) {
-        self.delegate = self;
         m_State = _state;
         m_CurrentPanel = _panel;
 
@@ -37,9 +36,10 @@ static void Perform(const ActionsT &_actions,
 
 - (void)buildActions
 {
-    m_Actions[@selector(onAddNewTab:)] = make_unique<actions::context::AddNewTab>(m_CurrentPanel);
-    
-
+    using namespace actions::context;
+    m_Actions[@selector(onAddNewTab:)] = make_unique<AddNewTab>(m_CurrentPanel);
+    m_Actions[@selector(onCloseTab:)] = make_unique<CloseTab>(m_CurrentPanel);
+    m_Actions[@selector(onCloseOtherTabs:)] = make_unique<CloseOtherTabs>(m_CurrentPanel);
 }
 
 - (void)buildMenuItems
@@ -49,13 +49,23 @@ static void Perform(const ActionsT &_actions,
     new_tab.target = self;
     new_tab.action = @selector(onAddNewTab:);
     [self addItem:new_tab];
+
+    const auto close_tab = [[NSMenuItem alloc] init];
+    close_tab.title = NSLocalizedString(@"Close Tab", "");
+    close_tab.target = self;
+    close_tab.action = @selector(onCloseTab:);
+    [self addItem:close_tab];
     
+    const auto close_other_tabs = [[NSMenuItem alloc] init];
+    close_other_tabs.title = NSLocalizedString(@"Close Other Tabs", "");
+    close_other_tabs.target = self;
+    close_other_tabs.action = @selector(onCloseOtherTabs:);
+    [self addItem:close_other_tabs];
 }
 
-- (IBAction)onAddNewTab:(id)sender
-{
-    [self perform:_cmd for:sender];
-}
+- (IBAction)onAddNewTab:(id)sender { [self perform:_cmd for:sender]; }
+- (IBAction)onCloseTab:(id)sender { [self perform:_cmd for:sender]; }
+- (IBAction)onCloseOtherTabs:(id)sender { [self perform:_cmd for:sender]; }
 
 - (void)perform:(SEL)_sel for:(id)_sender
 {
@@ -82,7 +92,7 @@ static void Perform(const ActionsT &_actions,
 
 static const actions::StateAction* ActionBySelector(const ActionsT &_actions, SEL _sel)
 {
-    if( const auto action = _actions.find(_sel); action != end(_actions)  )
+    if( const auto action = _actions.find(_sel); action != end(_actions) )
         return action->second.get();
         
     return nullptr;
@@ -93,7 +103,7 @@ static void Perform(const ActionsT &_actions,
                     MainWindowFilePanelState *_target,
                     id _sender)
 {
-    if( const auto action = _actions.find(_sel); action != end(_actions)  ) {
+    if( const auto action = _actions.find(_sel); action != end(_actions) ) {
         try {
             action->second->Perform(_target, _sender);
         }
@@ -106,6 +116,6 @@ static void Perform(const ActionsT &_actions,
     }
     else {
         cerr << "warning - unrecognized selector: " <<
-        NSStringFromSelector(_sel).UTF8String << endl;
+            NSStringFromSelector(_sel).UTF8String << endl;
     }
 }

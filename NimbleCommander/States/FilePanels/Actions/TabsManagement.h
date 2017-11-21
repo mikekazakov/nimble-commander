@@ -46,6 +46,24 @@ private:
     PanelController *m_CurrentPC;
 };
     
+struct CloseTab final : StateAction
+{
+    CloseTab(PanelController *_current_pc);
+    bool Predicate( MainWindowFilePanelState *_target ) const override;
+    void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
+private:
+    PanelController *m_CurrentPC;
+};
+
+struct CloseOtherTabs final : StateAction
+{
+    CloseOtherTabs(PanelController *_current_pc);
+    bool Predicate( MainWindowFilePanelState *_target ) const override;
+    void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
+private:
+    PanelController *m_CurrentPC;
+};
+    
 }
     
 }

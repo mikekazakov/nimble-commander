@@ -200,11 +200,13 @@ NS_ASSUME_NONNULL_BEGIN
     MMTabBarView *tabBarView = [self tabBarView];
 
     NSRect draggingRect = [self draggingRect];
-        
-	[tabBarView lockFocus];
-    [tabBarView display];  // forces update to ensure that we get current state
-	NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initWithFocusedViewRect:draggingRect];
-	[tabBarView unlockFocus];
+
+    if( ![tabBarView canDraw] )
+        return nil;
+    
+    NSBitmapImageRep *rep = [tabBarView bitmapImageRepForCachingDisplayInRect:draggingRect];
+    [tabBarView cacheDisplayInRect:draggingRect toBitmapImageRep:rep];
+    
 	NSImage *image = [[NSImage alloc] initWithSize:[rep size]];
 	[image addRepresentation:rep];
 	NSImage *returnImage = [[NSImage alloc] initWithSize:[rep size]];

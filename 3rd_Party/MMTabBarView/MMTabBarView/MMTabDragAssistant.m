@@ -350,7 +350,8 @@ static MMTabDragAssistant *sharedDragAssistant = nil;
         [tabBarView setIsReorderingTabViewItems:YES];
         [tabBarView insertAttachedButton:_attachedTabBarButton atTabItemIndex:destinationIndex];
         [tabBarView setIsReorderingTabViewItems:NO];
-                                                            
+        
+        [_sourceTabBar update:NO];
         [tabBarView update:NO];
 
         if ((_sourceTabBar != destTabBarView || sourceIndex != destinationIndex) && [[_sourceTabBar delegate] respondsToSelector:@selector(tabView:didDropTabViewItem:inTabBarView:)]) {
@@ -910,8 +911,8 @@ static MMTabDragAssistant *sharedDragAssistant = nil;
     BOOL shouldDragSourceWindow = ([[_sourceTabBar tabView] numberOfTabViewItems] == 1 && isLeavingSourceTabBar);
     
         // do nothing if the tab bar we exited did not participate
-    if (!shouldDragSourceWindow && [tabBarView destinationIndexForDraggedItem] == NSNotFound)
-        return;
+//    if (!shouldDragSourceWindow && [tabBarView destinationIndexForDraggedItem] == NSNotFound)
+//        return;
 
 	[self setDestinationTabBar:nil];
     [tabBarView setDestinationIndexForDraggedItem:NSNotFound];

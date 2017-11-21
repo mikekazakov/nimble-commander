@@ -40,7 +40,8 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     }
 }
 
-- (void)tabView:(NSTabView *)aTabView receivedClickOnSelectedTabViewItem:(NSTabViewItem *)tabViewItem
+- (void)tabView:(NSTabView *)aTabView
+receivedClickOnSelectedTabViewItem:(NSTabViewItem *)tabViewItem
 {
     if( const auto panel_view = objc_cast<PanelView>(tabViewItem.view) ) {
         if( panel_view.active )
@@ -51,23 +52,108 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     }
 }
 
-- (void) updateTabNameForController:(PanelController*)_controller
+- (BOOL)tabView:(NSTabView *)aTabView
+shouldAllowTabViewItem:(NSTabViewItem *)tabViewItem
+toLeaveTabBarView:(MMTabBarView *)tabBarView
+{
+    return aTabView.numberOfTabViewItems > 1;
+}
+
+- (NSDragOperation)tabView:(NSTabView *)aTabView
+              validateDrop:(id <NSDraggingInfo>)sender
+              proposedItem:(NSTabViewItem *)tabViewItem
+             proposedIndex:(NSUInteger)proposedIndex
+              inTabBarView:(MMTabBarView *)tabBarView
+{
+    const auto dragged_panel_view = objc_cast<PanelView>(tabViewItem.view);
+    if( !dragged_panel_view )
+        return NSDragOperationNone;
+    
+    if( dragged_panel_view.window != self.window )
+        return NSDragOperationNone;
+    
+    return NSDragOperationGeneric;
+}
+
+- (void)tabView:(NSTabView*)aTabView
+didDropTabViewItem:(NSTabViewItem *)tabViewItem
+   inTabBarView:(MMTabBarView *)tabBarView
+{
+    const auto dropped_panel_view = objc_cast<PanelView>(tabViewItem.view);
+    if( !dropped_panel_view )
+        return;
+    
+    const auto dropped_panel_controller =  objc_cast<PanelController>(dropped_panel_view.delegate);
+    if( !dropped_panel_controller )
+        return;
+    
+    const auto index = [tabBarView.tabView indexOfTabViewItem:tabViewItem];
+    if( index == NSNotFound )
+        return;
+    
+    if( [self isRightController:dropped_panel_controller] ) {
+        const auto it = find(begin(m_RightPanelControllers),
+                             end(m_RightPanelControllers),
+                             dropped_panel_controller);
+        if( it == end(m_RightPanelControllers) )
+            return;
+        m_RightPanelControllers.erase(it);
+    }
+
+    if( [self isLeftController:dropped_panel_controller] ) {
+        const auto it = find(begin(m_LeftPanelControllers),
+                             end(m_LeftPanelControllers),
+                             dropped_panel_controller);
+        if( it == end(m_LeftPanelControllers) )
+            return;
+        m_LeftPanelControllers.erase(it);
+    }
+    
+    if( [tabBarView isDescendantOf:m_MainSplitView.leftTabbedHolder] )
+        m_LeftPanelControllers.insert(next(begin(m_LeftPanelControllers), index),
+                                      dropped_panel_controller);
+    else if( [tabBarView isDescendantOf:m_MainSplitView.rightTabbedHolder] )
+        m_RightPanelControllers.insert(next(begin(m_RightPanelControllers), index),
+                                       dropped_panel_controller);
+
+    // empty or unselected tab view?
+}
+
+static string TabNameForController( PanelController* _controller )
 {
     path p = _controller.currentDirectoryPath;
     string name = p == "/" ? p.native() : p.parent_path().filename().native();
-    if( name == "/" && _controller.isUniform && _controller.vfs->Parent() )
-        name = path(_controller.vfs->JunctionPath()).filename().native(); // source file name for vfs like archives and xattr
-    
-    NSArray *tabs;
+    if( name == "/" && _controller.isUniform && _controller.vfs->Parent() ) {
+        // source file name for vfs like archives and xattr
+        name = path(_controller.vfs->JunctionPath()).filename().native();
+    }
+    return name;
+}
+
+- (NSTabViewItem*) tabViewItemForPanelController:(PanelController*)_controller
+{
+    NSArray<NSTabViewItem*> *tabs;
     if([self isLeftController:_controller])
         tabs = m_MainSplitView.leftTabbedHolder.tabView.tabViewItems;
     else if([self isRightController:_controller])
         tabs = m_MainSplitView.rightTabbedHolder.tabView.tabViewItems;
     
-    if(tabs)
-        for(NSTabViewItem *it in tabs)
-            if(it.view == _controller.view)
-                it.label = [NSString stringWithUTF8String:name.c_str()];
+    if( !tabs )
+        return nil;
+    
+    for(NSTabViewItem *it in tabs)
+        if( it.view == _controller.view )
+            return it;
+    
+    return nil;
+}
+
+- (void) updateTabNameForController:(PanelController*)_controller
+{
+    if( const auto tab_item = [self tabViewItemForPanelController:_controller] ) {
+        const auto name = TabNameForController(_controller);
+        tab_item.label = [NSString stringWithUTF8StdString:name];
+    }
 }
 
 - (void)addNewTabToTabView:(NSTabView *)aTabView
@@ -75,7 +161,9 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     [self spawnNewTabInTabView:aTabView autoDirectoryLoading:true activateNewPanel:true];
 }
 
-- (PanelController*)spawnNewTabInTabView:(NSTabView *)aTabView autoDirectoryLoading:(bool)_load activateNewPanel:(bool)_activate
+- (PanelController*)spawnNewTabInTabView:(NSTabView *)aTabView
+                    autoDirectoryLoading:(bool)_load
+                        activateNewPanel:(bool)_activate
 {
     PanelController *pc = [PanelController new];
     pc.state = self;
@@ -96,14 +184,20 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     [pc copyOptionsFromController:source];
     if( _load ) {
         if( source.isUniform ) {
-            [pc GoToDir:source.currentDirectoryPath vfs:source.vfs select_entry:"" async:false];
+            [pc GoToDir:source.currentDirectoryPath
+                    vfs:source.vfs
+           select_entry:""
+                  async:false];
         }
         else if( !source.history.Empty() ) {
             auto h = source.history.All();
             [pc GoToVFSPromise:h.back().get().vfs onPath:h.back().get().path];
         }
         else
-            [pc GoToDir:CommonPaths::Home() vfs:VFSNativeHost::SharedHost() select_entry:"" async:false];
+            [pc GoToDir:CommonPaths::Home()
+                    vfs:VFSNativeHost::SharedHost()
+           select_entry:""
+                  async:false];
     }
     
     if( _activate )
@@ -112,21 +206,9 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     return pc;
 }
 
-/*- (BOOL)tabView:(NSTabView *)aTabView disableTabCloseForTabViewItem:(NSTabViewItem *)tabViewItem
-{
-    return false;
-}
-
-- (BOOL)tabView:(NSTabView *)aTabView shouldCloseTabViewItem:(NSTabViewItem *)tabViewItem
-{
-    return true;
-}
-
-- (void)tabView:(NSTabView *)aTabView willCloseTabViewItem:(NSTabViewItem *)tabViewItem
-{
-}*/
-
-- (void)tabView:(NSTabView *)aTabView didMoveTabViewItem:(NSTabViewItem *)tabViewItem toIndex:(NSUInteger)index
+- (void)tabView:(NSTabView *)aTabView
+didMoveTabViewItem:(NSTabViewItem *)tabViewItem
+        toIndex:(NSUInteger)index
 {
     PanelController *pc =  (PanelController*)(((PanelView*)tabViewItem.view).delegate);
     if( [self isLeftController:pc] ) {
@@ -148,7 +230,9 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     }
 }
 
-- (BOOL)tabView:(NSTabView *)aTabView shouldDragTabViewItem:(NSTabViewItem *)tabViewItem inTabBarView:(MMTabBarView *)tabBarView
+- (BOOL)tabView:(NSTabView *)aTabView
+shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
+   inTabBarView:(MMTabBarView *)tabBarView
 {
     return aTabView.numberOfTabViewItems > 1;
 }
@@ -252,7 +336,8 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 
 - (void) updateTabBarsVisibility
 {
-    unsigned lc = m_MainSplitView.leftTabbedHolder.tabsCount, rc = m_MainSplitView.rightTabbedHolder.tabsCount;
+    unsigned lc = m_MainSplitView.leftTabbedHolder.tabsCount,
+             rc = m_MainSplitView.rightTabbedHolder.tabsCount;
     bool should_be_shown = m_ShowTabs ? true : (lc > 1 || rc > 1);
     m_MainSplitView.leftTabbedHolder.tabBarShown = should_be_shown;
     m_MainSplitView.rightTabbedHolder.tabBarShown = should_be_shown;
@@ -260,12 +345,11 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 
 - (void) updateTabBarButtons
 {
-    [m_MainSplitView.leftTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:^(MMAttachedTabBarButton *aButton, NSUInteger idx, BOOL *stop) {
-            [aButton setNeedsDisplay];
-        }];
-    [m_MainSplitView.rightTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:^(MMAttachedTabBarButton *aButton, NSUInteger idx, BOOL *stop) {
-            [aButton setNeedsDisplay];
-            }];
+    const auto handler = ^(MMAttachedTabBarButton *aButton, NSUInteger idx, BOOL *stop) {
+        [aButton setNeedsDisplay];
+    };
+    [m_MainSplitView.leftTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
+    [m_MainSplitView.rightTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
 }
 
 - (FilePanelsTabbedHolder *) leftTabbedHolder
@@ -276,6 +360,52 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 - (FilePanelsTabbedHolder *) rightTabbedHolder
 {
     return m_MainSplitView.rightTabbedHolder;
+}
+
+static NSImage *ResizeImage( NSImage* _img, NSSize _new_size)
+{
+    if( !_img.valid )
+        return nil;
+    
+    NSImage *small_img = [[NSImage alloc] initWithSize:_new_size];
+    [small_img lockFocus];
+    _img.size = _new_size;
+    NSGraphicsContext.currentContext.imageInterpolation = NSImageInterpolationHigh;
+    [_img drawAtPoint:NSZeroPoint
+             fromRect:CGRectMake(0, 0, _new_size.width, _new_size.height)
+            operation:NSCompositeCopy
+             fraction:1.0];
+    [small_img unlockFocus];
+    
+    return small_img;
+}
+
+- (NSImage *)tabView:(NSTabView *)aTabView
+ imageForTabViewItem:(NSTabViewItem *)tabViewItem
+              offset:(NSSize *)offset
+           styleMask:(NSUInteger *)styleMask
+{
+    const auto panel_view = objc_cast<PanelView>(tabViewItem.view);
+    if( !panel_view )
+        return nil;
+    
+    const auto bitmap = [panel_view bitmapImageRepForCachingDisplayInRect:panel_view.bounds];
+    if( !bitmap )
+        return nil;
+    
+    [panel_view cacheDisplayInRect:panel_view.bounds toBitmapImageRep:bitmap];
+    
+    auto image = [[NSImage alloc] init];
+    [image addRepresentation:bitmap];
+    
+    
+    const auto max_dim = 320.;
+    const auto scale = max( bitmap.size.width, bitmap.size.height ) / max_dim;
+    if( scale > 1 )
+        image = ResizeImage(image, NSMakeSize(bitmap.size.width / scale,
+                                              bitmap.size.height / scale));
+    
+    return image;
 }
 
 @end

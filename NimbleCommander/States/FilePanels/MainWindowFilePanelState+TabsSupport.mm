@@ -9,6 +9,7 @@
 #include "Views/FilePanelMainSplitView.h"
 #include "FilesDraggingSource.h"
 #include "PanelHistory.h"
+#include "TabContextMenu.h"
 
 template <class _Cont, class _Tp>
 inline void erase_from(_Cont &__cont_, const _Tp& __value_)
@@ -398,7 +399,6 @@ static NSImage *ResizeImage( NSImage* _img, NSSize _new_size)
     auto image = [[NSImage alloc] init];
     [image addRepresentation:bitmap];
     
-    
     const auto max_dim = 320.;
     const auto scale = max( bitmap.size.width, bitmap.size.height ) / max_dim;
     if( scale > 1 )
@@ -406,6 +406,15 @@ static NSImage *ResizeImage( NSImage* _img, NSSize _new_size)
                                               bitmap.size.height / scale));
     
     return image;
+}
+
+- (NSMenu *)tabView:(NSTabView *)aTabView menuForTabViewItem:(NSTabViewItem *)tabViewItem
+{
+    if( auto pv = objc_cast<PanelView>(tabViewItem.view) )
+        if( auto pc = objc_cast<PanelController>(pv.delegate) )
+            return [[NCPanelTabContextMenu alloc] initWithPanel:pc ofState:self];
+    
+    return nil;
 }
 
 @end

@@ -5,7 +5,7 @@
 #include "Views/FilePanelMainSplitView.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/FilePanels/ToolsMenuDelegate.h>
-#include "Actions/TabSelection.h"
+#include "Actions/TabsManagement.h"
 #include "Actions/ShowGoToPopup.h"
 #include "Actions/ToggleSingleOrDualMode.h"
 #include "Actions/ShowTabs.h"
@@ -26,52 +26,26 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
-    try
-    {
-        return [self validateMenuItemImpl:item];
+    try {
+        const auto tag = (int)item.tag;
+        if( const auto action = ActionByTag(tag) )
+            return action->ValidateMenuItem(self, item);
+        
+        IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+        IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
+        IF_MENU_TAG("menu.view.show_terminal") {
+            item.title = NSLocalizedString(@"Show Terminal", "Menu item title for showing terminal");
+            return true;
+        }
+        return true;
     }
-    catch(exception &e)
-    {
+    catch(exception &e) {
         cout << "Exception caught: " << e.what() << endl;
     }
-    catch(...)
-    {
+    catch(...) {
         cout << "Caught an unhandled exception!" << endl;
     }
     return false;
-}
-
-- (BOOL) validateMenuItemImpl:(NSMenuItem *)item
-{
-    const auto tag = (int)item.tag;
-    if( const auto action = ActionByTag(tag) )
-        return action->ValidateMenuItem(self, item);
-
-    IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-    IF_MENU_TAG("menu.file.close") {
-        unsigned tabs = self.currentSideTabsCount;
-        if( tabs == 0 ) {
-            // in this case (no other adequate responders) - pass validation  up
-            NSResponder *resp = self;
-            while( (resp = resp.nextResponder) )
-                if( [resp respondsToSelector:item.action] && [resp respondsToSelector:@selector(validateMenuItem:)] )
-                    return [resp validateMenuItem:item];
-            return true;
-        }
-        item.title = tabs > 1 ? NSLocalizedString(@"Close Tab", "Menu item title for closing current tab") :
-                                NSLocalizedString(@"Close Window", "Menu item title for closing current window");
-        return true;
-    }
-    IF_MENU_TAG("menu.file.close_window") {
-        item.hidden = self.currentSideTabsCount < 2;
-        return true;
-    }
-    IF_MENU_TAG("menu.view.show_terminal") {
-        item.title = NSLocalizedString(@"Show Terminal", "Menu item title for showing terminal");
-        return true;
-    }
-    return true;
 }
 
 - (IBAction)OnSyncPanels:(id)sender
@@ -103,36 +77,6 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
         self.activePanelController.vfs->IsNativeFS() )
         path = self.activePanelController.currentDirectoryPath;
     [(MainWindowController*)self.window.delegate requestTerminal:path];
-}
-
-- (IBAction)OnFileNewTab:(id)sender
-{
-    if(!self.activePanelController)
-        return;
-    if(self.activePanelController == self.leftPanelController)
-       [self addNewTabToTabView:m_MainSplitView.leftTabbedHolder.tabView];
-    else if(self.activePanelController == self.rightPanelController)
-        [self addNewTabToTabView:m_MainSplitView.rightTabbedHolder.tabView];
-}
-
-- (IBAction)performClose:(id)sender
-{
-    PanelController *cur = self.activePanelController;
-    int tabs = 1;
-    if( [self isLeftController:cur] )
-        tabs = m_MainSplitView.leftTabbedHolder.tabsCount;
-    if( [self isRightController:cur] )
-        tabs = m_MainSplitView.rightTabbedHolder.tabsCount;
-
-    if(tabs > 1)
-        [self closeCurrentTab];
-    else
-        [self.window performClose:sender];
-}
-
-- (IBAction)OnFileCloseWindow:(id)sender
-{
-    [self.window performClose:sender];
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
@@ -235,6 +179,9 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
                 [self runExtTool:t];
 }
 
+- (IBAction)performClose:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnFileCloseWindow:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnFileNewTab:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onSwitchDualSinglePaneMode:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onLeftPanelGoToButtonAction:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)onRightPanelGoToButtonAction:(id)sender { Perform(_cmd, self, sender); }
@@ -254,6 +201,9 @@ using namespace nc::panel::actions;
 namespace nc::panel {
 
 static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
+{"menu.file.new_tab",                       @selector(OnFileNewTab:),                   new AddNewTab},
+{"menu.file.close",                         @selector(performClose:),                   new CloseTab},
+{"menu.file.close_window",                  @selector(OnFileCloseWindow:),              new CloseWindow},
 {"menu.go.left_panel",                      @selector(onLeftPanelGoToButtonAction:),    new ShowLeftGoToPopup},
 {"menu.go.right_panel",                     @selector(onRightPanelGoToButtonAction:),   new ShowRightGoToPopup},
 {"menu.view.switch_dual_single_mode",       @selector(onSwitchDualSinglePaneMode:),     new ToggleSingleOrDualMode},

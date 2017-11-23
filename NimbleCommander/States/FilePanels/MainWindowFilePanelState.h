@@ -90,6 +90,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 - (void) saveDefaultInitialState;
 
+- (void) swapPanels;
+
 /**
  * Return currently active file panel if any.
  */

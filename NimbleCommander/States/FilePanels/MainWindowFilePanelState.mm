@@ -918,4 +918,14 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return (MainWindowController*)self.window.delegate;
 }
 
+- (void) swapPanels
+{
+    if( m_MainSplitView.anyCollapsedOrOverlayed )
+        return;
+    
+    swap(m_LeftPanelControllers, m_RightPanelControllers);
+    [m_MainSplitView swapViews];
+    [self markRestorableStateAsInvalid];
+}
+
 @end

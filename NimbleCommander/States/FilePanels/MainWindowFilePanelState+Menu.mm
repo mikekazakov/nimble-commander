@@ -1,8 +1,6 @@
 // Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState+Menu.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
-#include <NimbleCommander/States/FilePanels/PanelController.h>
-#include "Views/FilePanelMainSplitView.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/FilePanels/ToolsMenuDelegate.h>
 #include "Actions/TabsManagement.h"
@@ -13,7 +11,6 @@
 #include "Actions/RevealInOppositePanel.h"
 #include "Actions/ShowTerminal.h"
 #include "Actions/SyncPanels.h"
-#include "../MainWindowController.h"
 #include <NimbleCommander/Core/Alert.h>
 
 using namespace nc::core;
@@ -22,37 +19,14 @@ namespace nc::panel {
 static const nc::panel::actions::StateAction *ActionByName(const char* _name) noexcept;
 static const nc::panel::actions::StateAction *ActionByTag(int _tag) noexcept;
 static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
+static bool Validate(MainWindowFilePanelState *_target, NSMenuItem *_item) noexcept;
 }
 
 @implementation MainWindowFilePanelState (Menu)
 
-- (BOOL) validateMenuItem:(NSMenuItem *)item
+- (BOOL) validateMenuItem:(NSMenuItem *)_item
 {
-    try {
-        const auto tag = (int)item.tag;
-        if( const auto action = ActionByTag(tag) )
-            return action->ValidateMenuItem(self, item);
-        
-        IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-        return true;
-    }
-    catch(exception &e) {
-        cout << "Exception caught: " << e.what() << endl;
-    }
-    catch(...) {
-        cout << "Caught an unhandled exception!" << endl;
-    }
-    return false;
-}
-
-- (IBAction)OnSwapPanels:(id)sender
-{
-    if(m_MainSplitView.anyCollapsedOrOverlayed)
-        return;
-    
-    swap(m_LeftPanelControllers, m_RightPanelControllers);
-    [m_MainSplitView swapViews];
-    [self markRestorableStateAsInvalid];
+    return Validate(self, _item);
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
@@ -155,6 +129,7 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
                 [self runExtTool:t];
 }
 
+- (IBAction)OnSwapPanels:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnSyncPanels:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnShowTerminal:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)performClose:(id)sender { Perform(_cmd, self, sender); }
@@ -190,6 +165,7 @@ static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
 {"menu.view.show_tabs",                     @selector(OnShowTabs:),                     new ShowTabs},
 {"menu.view.show_terminal",                 @selector(OnShowTerminal:),                 new ShowTerminal},
 {"menu.view.sync_panels",                   @selector(OnSyncPanels:),                   new SyncPanels},
+{"menu.view.swap_panels",                   @selector(OnSwapPanels:),                   new SwapPanels},
 {"menu.command.copy_to",                    @selector(OnFileCopyCommand:),              new CopyTo},
 {"menu.command.copy_as",                    @selector(OnFileCopyAsCommand:),            new CopyAs},
 {"menu.command.move_to",                    @selector(OnFileRenameMoveCommand:),        new MoveTo},
@@ -198,11 +174,11 @@ static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
 {"menu.file.reveal_in_opposite_panel_tab",  @selector(OnFileOpenInNewOppositePanelTab:),new RevealInOppositePanelTab},
 };
 
-static const nc::panel::actions::StateAction *ActionByName(const char* _name) noexcept
+static const StateAction *ActionByName(const char* _name) noexcept
 {
     static const auto actions = []{
         unordered_map<string, const StateAction*> m;
-        for( auto &a: g_Wiring )
+        for( const auto &a: g_Wiring )
             if( get<0>(a)[0] != 0 )
                 m.emplace( get<0>(a), get<2>(a) );
         return m;
@@ -215,8 +191,8 @@ static const StateAction *ActionByTag(int _tag) noexcept
 {
     static const auto actions = []{
         unordered_map<int, const StateAction*> m;
-        auto &am = ActionsShortcutsManager::Instance();
-        for( auto &a: g_Wiring )
+        const auto &am = ActionsShortcutsManager::Instance();
+        for( const auto &a: g_Wiring )
             if( get<0>(a)[0] != 0 ) {
                 if( auto tag = am.TagFromAction(get<0>(a)); tag >= 0 )
                     m.emplace( tag, get<2>(a) );
@@ -233,7 +209,7 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender)
 {
     static const auto actions = []{
         unordered_map<SEL, const StateAction*> m;
-        for( auto &a: g_Wiring )
+        for( const auto &a: g_Wiring )
             m.emplace( get<1>(a), get<2>(a) );
         return m;
     }();
@@ -253,6 +229,22 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender)
         cerr << "warning - unrecognized selector: " <<
             NSStringFromSelector(_sel).UTF8String << endl;
     }
+}
+    
+static bool Validate(MainWindowFilePanelState *_target, NSMenuItem *_item) noexcept
+{
+    try {
+        if( const auto action = ActionByTag( (int)_item.tag ) )
+            return action->ValidateMenuItem(_target, _item);
+        return true;
+    }
+    catch(exception &e) {
+        cout << "Exception caught: " << e.what() << endl;
+    }
+    catch(...) {
+        cout << "Caught an unhandled exception!" << endl;
+    }
+    return false;
 }
 
 }

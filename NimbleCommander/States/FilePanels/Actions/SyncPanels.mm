@@ -40,5 +40,15 @@ void SyncPanels::Perform( MainWindowFilePanelState *_target, id _sender ) const
         [opp loadNonUniformListing:cur.data.ListingPtr()];
     }
 }
+
+bool SwapPanels::Predicate( MainWindowFilePanelState *_target ) const
+{
+    return _target.isPanelActive && !_target.splitView.anyCollapsedOrOverlayed;
+}
+
+void SwapPanels::Perform( MainWindowFilePanelState *_target, id _sender ) const
+{
+    [_target swapPanels];
+}
     
 }

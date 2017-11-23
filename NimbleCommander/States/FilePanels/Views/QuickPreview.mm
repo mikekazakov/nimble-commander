@@ -2,6 +2,7 @@
 #include <Quartz/Quartz.h>
 #include "QuickPreview.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
+#include <Utility/SystemInformation.h>
 
 static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
 static const nanoseconds g_Delay = 100ms;
@@ -138,8 +139,10 @@ static const nanoseconds g_Delay = 100ms;
 
 - (void)frameDidChange
 {
-    NSView *subview = self.subviews[0];
-    [subview setFrameSize:self.frame.size];
+    if( sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_13 ) {
+        NSView *subview = self.subviews[0];
+        [subview setFrameSize:self.frame.size];
+    }
 }
 
 @end

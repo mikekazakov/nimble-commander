@@ -11,6 +11,7 @@
 #include "Actions/ShowTabs.h"
 #include "Actions/CopyFile.h"
 #include "Actions/RevealInOppositePanel.h"
+#include "Actions/ShowTerminal.h"
 #include "../MainWindowController.h"
 #include <NimbleCommander/Core/Alert.h>
 
@@ -33,10 +34,6 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
         
         IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
         IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-        IF_MENU_TAG("menu.view.show_terminal") {
-            item.title = NSLocalizedString(@"Show Terminal", "Menu item title for showing terminal");
-            return true;
-        }
         return true;
     }
     catch(exception &e) {
@@ -67,16 +64,6 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
     swap(m_LeftPanelControllers, m_RightPanelControllers);
     [m_MainSplitView swapViews];
     [self markRestorableStateAsInvalid];
-}
-
-- (IBAction)OnShowTerminal:(id)sender
-{
-    string path = "";
-    if( self.isPanelActive &&
-        self.activePanelController.isUniform &&
-        self.activePanelController.vfs->IsNativeFS() )
-        path = self.activePanelController.currentDirectoryPath;
-    [(MainWindowController*)self.window.delegate requestTerminal:path];
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
@@ -179,6 +166,7 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
                 [self runExtTool:t];
 }
 
+- (IBAction)OnShowTerminal:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)performClose:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnFileCloseWindow:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnFileNewTab:(id)sender { Perform(_cmd, self, sender); }
@@ -210,6 +198,7 @@ static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
 {"menu.window.show_previous_tab",           @selector(OnWindowShowPreviousTab:),        new ShowPreviousTab},
 {"menu.window.show_next_tab",               @selector(OnWindowShowNextTab:),            new ShowNextTab},
 {"menu.view.show_tabs",                     @selector(OnShowTabs:),                     new ShowTabs},
+{"menu.view.show_terminal",                 @selector(OnShowTerminal:),                 new ShowTerminal},
 {"menu.command.copy_to",                    @selector(OnFileCopyCommand:),              new CopyTo},
 {"menu.command.copy_as",                    @selector(OnFileCopyAsCommand:),            new CopyAs},
 {"menu.command.move_to",                    @selector(OnFileRenameMoveCommand:),        new MoveTo},

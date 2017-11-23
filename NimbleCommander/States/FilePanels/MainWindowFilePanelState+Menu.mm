@@ -12,6 +12,7 @@
 #include "Actions/CopyFile.h"
 #include "Actions/RevealInOppositePanel.h"
 #include "Actions/ShowTerminal.h"
+#include "Actions/SyncPanels.h"
 #include "../MainWindowController.h"
 #include <NimbleCommander/Core/Alert.h>
 
@@ -33,7 +34,6 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
             return action->ValidateMenuItem(self, item);
         
         IF_MENU_TAG("menu.view.swap_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
-        IF_MENU_TAG("menu.view.sync_panels")             return self.isPanelActive && !m_MainSplitView.anyCollapsedOrOverlayed;
         return true;
     }
     catch(exception &e) {
@@ -43,17 +43,6 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
         cout << "Caught an unhandled exception!" << endl;
     }
     return false;
-}
-
-- (IBAction)OnSyncPanels:(id)sender
-{
-    if(!self.activePanelController || !self.oppositePanelController || m_MainSplitView.anyCollapsedOrOverlayed)
-        return;
-    
-    [self.oppositePanelController GoToDir:self.activePanelController.currentDirectoryPath
-                                      vfs:self.activePanelController.vfs
-                             select_entry:""
-                                    async:true];
 }
 
 - (IBAction)OnSwapPanels:(id)sender
@@ -166,6 +155,7 @@ static void Perform(SEL _sel, MainWindowFilePanelState *_target, id _sender);
                 [self runExtTool:t];
 }
 
+- (IBAction)OnSyncPanels:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnShowTerminal:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)performClose:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnFileCloseWindow:(id)sender { Perform(_cmd, self, sender); }
@@ -199,6 +189,7 @@ static const tuple<const char*, SEL, const StateAction *> g_Wiring[] = {
 {"menu.window.show_next_tab",               @selector(OnWindowShowNextTab:),            new ShowNextTab},
 {"menu.view.show_tabs",                     @selector(OnShowTabs:),                     new ShowTabs},
 {"menu.view.show_terminal",                 @selector(OnShowTerminal:),                 new ShowTerminal},
+{"menu.view.sync_panels",                   @selector(OnSyncPanels:),                   new SyncPanels},
 {"menu.command.copy_to",                    @selector(OnFileCopyCommand:),              new CopyTo},
 {"menu.command.copy_as",                    @selector(OnFileCopyAsCommand:),            new CopyAs},
 {"menu.command.move_to",                    @selector(OnFileRenameMoveCommand:),        new MoveTo},

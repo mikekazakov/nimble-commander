@@ -4564,8 +4564,8 @@
 				CF3120CC1A5115DA0062185A /* ru */,
 			);
 			name = Localizable.strings;
-			path = ../NimbleCommander/Resources;
-			sourceTree = "<group>";
+			path = NimbleCommander/Resources;
+			sourceTree = SOURCE_ROOT;
 		};
 		CF36DBE51F6BCDA0004A018E /* WebDAVConnectionSheetController.xib */ = {
 			isa = PBXVariantGroup;
@@ -4794,8 +4794,8 @@
 				CF8D0D0B1D964C9800ADFF14 /* ru */,
 			);
 			name = SpotlightSearchPopupViewController.xib;
-			path = ../NimbleCommander/States/FilePanels/Views;
-			sourceTree = "<group>";
+			path = NimbleCommander/States/FilePanels/Views;
+			sourceTree = SOURCE_ROOT;
 		};
 		CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */ = {
 			isa = PBXVariantGroup;
@@ -4874,8 +4874,8 @@
 				CF3120CA1A5115D90062185A /* ru */,
 			);
 			name = InfoPlist.strings;
-			path = ../NimbleCommander/Resources;
-			sourceTree = "<group>";
+			path = NimbleCommander/Resources;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFC5122316C4BD3D00D247EE /* Credits.rtf */ = {
 			isa = PBXVariantGroup;
@@ -4903,8 +4903,8 @@
 				CFCCFC171A5E891700313845 /* ru */,
 			);
 			name = SFTPConnectionSheetController.xib;
-			path = ../NimbleCommander/States/FilePanels/Views;
-			sourceTree = "<group>";
+			path = NimbleCommander/States/FilePanels/Views;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */ = {
 			isa = PBXVariantGroup;
@@ -4913,7 +4913,7 @@
 				CFCCFC201A5E891A00313845 /* ru */,
 			);
 			name = CalculateChecksumSheetController.xib;
-			path = ../NimbleCommander/GeneralUI;
+			path = NimbleCommander/GeneralUI;
 			sourceTree = "<group>";
 		};
 		CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */ = {
@@ -4923,8 +4923,8 @@
 				CFCCFC101A5E891400313845 /* ru */,
 			);
 			name = FTPConnectionSheetController.xib;
-			path = ../NimbleCommander/States/FilePanels/Views;
-			sourceTree = "<group>";
+			path = NimbleCommander/States/FilePanels/Views;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */ = {
 			isa = PBXVariantGroup;
@@ -4933,8 +4933,8 @@
 				CFCCFC121A5E891400313845 /* ru */,
 			);
 			name = GoToFolderSheetController.xib;
-			path = ../NimbleCommander/States/FilePanels/Views;
-			sourceTree = "<group>";
+			path = NimbleCommander/States/FilePanels/Views;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFBCB1A5E29EC00313845 /* ProcessSheetController.xib */ = {
 			isa = PBXVariantGroup;
@@ -4943,8 +4943,8 @@
 				CFCCFC031A5E853100313845 /* ru */,
 			);
 			name = ProcessSheetController.xib;
-			path = ../NimbleCommander/GeneralUI;
-			sourceTree = "<group>";
+			path = NimbleCommander/GeneralUI;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFBD01A5E2CFC00313845 /* DetailedVolumeInformationSheetController.xib */ = {
 			isa = PBXVariantGroup;
@@ -4953,8 +4953,8 @@
 				CFCCFC011A5E80A300313845 /* ru */,
 			);
 			name = DetailedVolumeInformationSheetController.xib;
-			path = ../NimbleCommander/GeneralUI;
-			sourceTree = "<group>";
+			path = NimbleCommander/GeneralUI;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFC531A5FA85400313845 /* FilePanelsContextMenu.strings */ = {
 			isa = PBXVariantGroup;
@@ -4983,8 +4983,8 @@
 				CFD83AD81A6D62CC002EE49B /* ru */,
 			);
 			name = Preferences.strings;
-			path = ../NimbleCommander/Preferences;
-			sourceTree = "<group>";
+			path = NimbleCommander/Preferences;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXVariantGroup section */
 

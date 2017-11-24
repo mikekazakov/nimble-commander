@@ -3072,9 +3072,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		CF47A97F186C607B00745C4C /* Nimble Commander Tests */ = {
+		CF47A97F186C607B00745C4C /* NimbleCommander-Tests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "Nimble Commander Tests" */;
+			buildConfigurationList = CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "NimbleCommander-Tests" */;
 			buildPhases = (
 				CF47A97C186C607B00745C4C /* Sources */,
 				CF47A97D186C607B00745C4C /* Frameworks */,
@@ -3085,7 +3085,7 @@
 			dependencies = (
 				CFA53A731D433F8A00C562A7 /* PBXTargetDependency */,
 			);
-			name = "Nimble Commander Tests";
+			name = "NimbleCommander-Tests";
 			productName = "Files Tests";
 			productReference = CF47A980186C607C00745C4C /* Nimble Commander.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -3265,7 +3265,7 @@
 				CFC5121016C4BD3D00D247EE /* NimbleCommander-NonMAS */,
 				CF6D997C196675290077B146 /* NimbleCommander-MAS-Free */,
 				CFF6F2391A13567C00011177 /* NimbleCommander-MAS-Paid */,
-				CF47A97F186C607B00745C4C /* Nimble Commander Tests */,
+				CF47A97F186C607B00745C4C /* NimbleCommander-Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -4995,7 +4995,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "";
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_Unsigned";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
 					"$(inherited)",
@@ -5017,7 +5017,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "";
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_Unsigned";
 				ENABLE_NS_ASSERTIONS = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(DEVELOPER_FRAMEWORKS_DIR)",
@@ -5048,7 +5048,6 @@
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE = "2bd0fb03-b8f2-4d67-baaa-60aed9dd8f5d";
 				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files-Lite Development";
-				RUN_CLANG_STATIC_ANALYZER = NO;
 			};
 			name = Debug;
 		};
@@ -5071,7 +5070,7 @@
 		CFA53A6B1D433E2A00C562A7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_Unsigned";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"__NC_VERSION_TRIAL__=1",
@@ -5085,7 +5084,7 @@
 		CFA53A6C1D433E2A00C562A7 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial_CI";
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_Unsigned";
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-CI-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
@@ -5122,7 +5121,6 @@
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE = "7305d5ad-6123-4d75-ba47-7756710e2edf";
 				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files Developer ID";
-				RUN_CLANG_STATIC_ANALYZER = NO;
 			};
 			name = Debug;
 		};
@@ -5141,7 +5139,6 @@
 				PRODUCT_NAME = "Nimble Commander";
 				PROVISIONING_PROFILE = "7305d5ad-6123-4d75-ba47-7756710e2edf";
 				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files Developer ID";
-				RUN_CLANG_STATIC_ANALYZER = NO;
 			};
 			name = Release;
 		};
@@ -5161,7 +5158,6 @@
 				PRODUCT_NAME = "Nimble Commander Pro";
 				PROVISIONING_PROFILE = "74a49677-3296-4445-9568-47a2f63c32f2";
 				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files-Pro Development";
-				RUN_CLANG_STATIC_ANALYZER = NO;
 			};
 			name = Debug;
 		};
@@ -5178,14 +5174,13 @@
 				PRODUCT_NAME = "Nimble Commander Pro";
 				PROVISIONING_PROFILE = "74a49677-3296-4445-9568-47a2f63c32f2";
 				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files-Pro Development";
-				RUN_CLANG_STATIC_ANALYZER = NO;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "Nimble Commander Tests" */ = {
+		CF47A98E186C607C00745C4C /* Build configuration list for PBXNativeTarget "NimbleCommander-Tests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CF47A98F186C607C00745C4C /* Debug */,

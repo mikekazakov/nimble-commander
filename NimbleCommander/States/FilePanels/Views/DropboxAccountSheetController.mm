@@ -139,7 +139,7 @@ enum class State
     } else {
         self.state = State::Failure;
         if( _error == nil || [_error.domain isEqualToString:OIDOAuthAuthorizationErrorDomain] )
-            self.failureReasonField.stringValue = @"Unable to authorize";
+            self.failureReasonField.stringValue = NSLocalizedString(@"Unable to authorize", "");
         else
             self.failureReasonField.stringValue = _error.localizedDescription;
     }

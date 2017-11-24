@@ -130,14 +130,14 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     if( [itemIdentifier isEqualToString:@"filepanels_left_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_LeftPanelGoToButton;
-        item.paletteLabel = item.label = @"Left GoTo";
+        item.paletteLabel = item.label = NSLocalizedString(@"Left GoTo", "Toolbar palette");
         item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.go.left_panel").PrettyString();
         return item;
     }
     if( [itemIdentifier isEqualToString:@"filepanels_right_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
         item.view = m_RightPanelGoToButton;
-        item.paletteLabel = item.label = @"Right GoTo";
+        item.paletteLabel = item.label = NSLocalizedString(@"Right GoTo", "Toolbar palette");
         item.toolTip = ActionsShortcutsManager::Instance().ShortCutFromAction("menu.go.right_panel").PrettyString();
         return item;
     }
@@ -146,7 +146,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         item.view = m_PoolViewController.view;
         item.minSize = m_PoolViewController.view.bounds.size;
         item.maxSize = NSMakeSize(g_MaxPoolViewWith, item.minSize.height);
-        item.paletteLabel = item.label = @"Operations Pool";
+        item.paletteLabel = item.label = NSLocalizedString(@"Operations", "Toolbar palette");
         m_PoolViewToolbarItem = item;
         return item;
     }

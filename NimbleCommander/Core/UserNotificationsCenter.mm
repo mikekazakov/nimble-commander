@@ -37,7 +37,7 @@ void UserNotificationsCenter::ReportCompletedOperation(const nc::ops::Operation 
         return;
 
     NSUserNotification *un = [[NSUserNotification alloc] init];
-    un.title = @"Operation is complete";
+    un.title = NSLocalizedString(@"Operation is complete", "Notification text");
     un.subtitle = [NSString stringWithUTF8StdString:_operation.Title()];
     un.soundName = NSUserNotificationDefaultSoundName;
     const auto wnd_address = (unsigned long)(__bridge void*)_in_window;

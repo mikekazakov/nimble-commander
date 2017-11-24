@@ -3048,6 +3048,7 @@
 				CFCCFBB71A5D4E6100313845 /* CalculateChecksumSheetController.xib */,
 			);
 			name = GeneralUI;
+			path = NimbleCommander/GeneralUI;
 			sourceTree = "<group>";
 		};
 		CFF53B5C1EDD19A400F567C4 /* Products */ = {
@@ -4914,7 +4915,7 @@
 			);
 			name = CalculateChecksumSheetController.xib;
 			path = NimbleCommander/GeneralUI;
-			sourceTree = "<group>";
+			sourceTree = SOURCE_ROOT;
 		};
 		CFCCFBBC1A5D687600313845 /* FTPConnectionSheetController.xib */ = {
 			isa = PBXVariantGroup;

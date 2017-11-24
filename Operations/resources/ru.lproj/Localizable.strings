@@ -44,6 +44,9 @@
 "Checksum verification failed" = "Ошибка верификации контрольной суммы";
 
 /* No comment provided by engineer. */
+"Cleaning up.." = "Завершение...";
+
+/* No comment provided by engineer. */
 "Close" = "Закрыть";
 
 /* Compressing %d items */
@@ -113,10 +116,16 @@
 "Failed to create a symbolic link" = "Не удалось создать символическую ссылку";
 
 /* No comment provided by engineer. */
+"Failed to delete a destination file" = "Не удалось удалить целевой файл";
+
+/* No comment provided by engineer. */
 "Failed to delete a directory" = "Не удалось удалить папку";
 
 /* No comment provided by engineer. */
 "Failed to delete a file" = "Не удалось удалить файл";
+
+/* No comment provided by engineer. */
+"Failed to delete a source item" = "Не удалось удалить исходный файл";
 
 /* No comment provided by engineer. */
 "Failed to move an item to Trash" = "Не удалось переместить объект в Корзину";
@@ -160,6 +169,18 @@
 /* Prefix of a file operation */
 "Moving" = "Перенос";
 
+/* No comment provided by engineer. */
+"Preparing to copy %@ items" = "Подготовка к копированию %@ объектов";
+
+/* No comment provided by engineer. */
+"Preparing to copy “%@”" = "Подготовка к копированию “%@”";
+
+/* No comment provided by engineer. */
+"Preparing to move %@ items" = "Подготовка к перемещению %@ объектов";
+
+/* No comment provided by engineer. */
+"Preparing to move “%@”" = "Подготовка к перемещению “%@”";
+
 /* Move files sheet prompt, moving many files */
 "Rename/move %@ items to:" = "Переименовать/переместить %@ объектов в:";
 
@@ -177,6 +198,9 @@
 
 /* No comment provided by engineer. */
 "Symbolic link '%@' points at:" = "Символическая ссылка '%@' указывает на:";
+
+/* No comment provided by engineer. */
+"Verifying operation result.." = "Верификация результата...";
 
 /* No comment provided by engineer. */
 "Waiting in the queue..." = "Ожидание в очереди...";

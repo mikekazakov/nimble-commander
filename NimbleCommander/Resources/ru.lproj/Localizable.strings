@@ -40,6 +40,9 @@
 /* Asking the user to grant filesystem access for NC */
 "Click “Allow Access” to grant access to files in the selected directory" = "Нажмите “Разрешить доступ” чтобы позволить работать с файлами в выбранной директории";
 
+/* No comment provided by engineer. */
+"Close Other Tabs" = "Закрыть другие вкладки";
+
 /* Menu item title for closing current tab */
 "Close Tab" = "Закрыть вкладку";
 
@@ -55,6 +58,9 @@
 
 /* Brief System Information computer name label title */
 "Computer Name:" = "Имя компьютера:";
+
+/* No comment provided by engineer. */
+"Conflicts (%@)" = "Конфликты (%@)";
 
 /* Connections popup menu title in file panels */
 "Connections" = "Соединения";
@@ -230,6 +236,9 @@
 /* IAP dialog text for URL pointing to website */
 "Learn more about advanced tools" = "Узнать больше о дополнительных возможностях";
 
+/* Toolbar palette */
+"Left GoTo" = "Левый Переход";
+
 /* Brief System Information mac model label title */
 "Mac Model:" = "Модель Mac:";
 
@@ -240,6 +249,9 @@
 "New Folder with Items" = "Новая папка с объектами";
 
 /* No comment provided by engineer. */
+"New Tab" = "Новая вкладка";
+
+/* No comment provided by engineer. */
 "No" = "Нет";
 
 /* No comment provided by engineer. */
@@ -247,6 +259,12 @@
 
 /* Title for process sheet when opening a vfs file */
 "Opening file..." = "Открытие файла...";
+
+/* Notification text */
+"Operation is complete" = "Операция завершена";
+
+/* Toolbar palette */
+"Operations" = "Операции";
 
 /* Upper-dirs popup menu title in file panels */
 "Parent Folders" = "Родительские папки";
@@ -262,6 +280,9 @@
 
 /* Menu item title in internal viewer search */
 "Recents" = "Последние";
+
+/* Toolbar palette */
+"Right GoTo" = "Правый Переход";
 
 /* Showing error when connecting to SFTP server */
 "SFTP connection error:" = "Ошибка подключения SFTP:";
@@ -368,6 +389,9 @@
 
 /* Informative text when user is entering an invalid filename */
 "Try using a name with fewer characters or without punctuation marks." = "Попытайтесь использовать имя с меньшим количеством символов или без знаков пунктуации.";
+
+/* No comment provided by engineer. */
+"Unable to authorize" = "Не удалось авторизовать";
 
 /* Informing a user that NC can't connect to network share */
 "Unable to connect to a network share" = "Не удалось подключиться к сетевой папке";

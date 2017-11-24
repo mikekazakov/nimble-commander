@@ -34,7 +34,7 @@
 /* Class = "NSTextFieldCell"; title = "Attributes editor"; ObjectID = "lwf-Ux-yiP"; */
 "lwf-Ux-yiP.title" = "Редактор атрибутов";
 
-/* Class = "NSTextFieldCell"; title = "FTP, SFTP and Dropbox connectivity"; ObjectID = "v7q-uc-sjB"; */
+/* Class = "NSTextFieldCell"; title = "FTP, SFTP, WebDAV, Dropbox"; ObjectID = "v7q-uc-sjB"; */
 "v7q-uc-sjB.title" = "FTP, SFTP, WebDAV, Dropbox";
 
 /* Class = "NSTextFieldCell"; title = "External tools integration"; ObjectID = "y8W-w4-V0a"; */

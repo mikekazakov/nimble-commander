@@ -365,12 +365,6 @@ static bool GoToForcesPanelActivation()
 {
 }
 
-- (void) layout
-{
-//    cout << self.bounds.size.width << " " << self.bounds.size.height << endl;
-    [super layout];
-}
-
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
 {
     if(_wnd == nil) {

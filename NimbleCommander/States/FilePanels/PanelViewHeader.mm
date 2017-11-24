@@ -1,5 +1,4 @@
 // Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <QuartzCore/QuartzCore.h>
 #include <Utility/Layout.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
@@ -41,13 +40,6 @@ static bool IsDark( NSColor *_color )
 {
     return Brightness(_color) < 0.60;
 }
-
-static const auto g_LightenFilter = []{
-    CIFilter *lighten = [CIFilter filterWithName:@"CIColorControls"];
-    [lighten setDefaults];
-    [lighten setValue:@1 forKey:@"inputBrightness"];
-    return lighten;
-}();
 
 @interface PanelViewHeader()
 @property (nonatomic) IBOutlet NSMenu *sortMenuPopup;
@@ -141,8 +133,8 @@ static const auto g_LightenFilter = []{
         m_BusyIndicator.controlSize = NSSmallControlSize;
         m_BusyIndicator.displayedWhenStopped = false;
         if( CurrentTheme().AppearanceType() == ThemeAppearance::Light &&
-            IsDark(CurrentTheme().FilePanelsHeaderActiveBackgroundColor()) )
-            m_BusyIndicator.contentFilters = @[g_LightenFilter];
+           IsDark(CurrentTheme().FilePanelsHeaderActiveBackgroundColor()) )
+            m_BusyIndicator.appearance = [NSAppearance appearanceNamed:NSAppearanceNameVibrantDark];        
         [self addSubview:m_BusyIndicator positioned:NSWindowAbove relativeTo:m_PathTextField];
         
         [self setupAppearance];

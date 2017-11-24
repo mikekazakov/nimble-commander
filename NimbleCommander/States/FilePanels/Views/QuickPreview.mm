@@ -53,6 +53,8 @@ static const nanoseconds g_Delay = 100ms;
 
 - (void)viewDidMoveToSuperview
 {
+    [super viewDidMoveToSuperview];
+    
     if(self.superview == nil)
         [self close];
 }
@@ -200,6 +202,8 @@ static const nanoseconds g_Delay = 100ms;
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
 {
+    [super viewWillMoveToWindow:_wnd];
+    
     if(!_wnd)
         return;
     [NSNotificationCenter.defaultCenter addObserver:self

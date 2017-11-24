@@ -350,7 +350,7 @@ const shared_ptr<NativeHost> &NativeHost::SharedHost() noexcept
 static int CalculateDirectoriesSizesHelper(char *_path,
                                       size_t _path_len,
                                       bool &_iscancelling,
-                                      VFSCancelChecker _checker,
+                                      const VFSCancelChecker &_checker,
                                       dispatch_queue &_stat_queue,
                                       int64_t &_size_stock)
 {
@@ -362,7 +362,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
     
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
     
-    DIR *dirp = io.opendir(_path);
+    const auto dirp = io.opendir(_path);
     if( dirp == 0 )
         return VFSError::FromErrno();
     
@@ -372,21 +372,21 @@ static int CalculateDirectoriesSizesHelper(char *_path,
     _path[_path_len+1] = 0;
     char *var = _path + _path_len + 1;
     
-    while((entp = io.readdir(dirp)) != NULL)
-    {
-        if(_checker && _checker())
-        {
+    while((entp = io.readdir(dirp)) != NULL) {
+        if( _checker && _checker() ) {
             _iscancelling = true;
             goto cleanup;
         }
         
-        if(entp->d_ino == 0) continue; // apple's documentation suggest to skip such files
-        if(entp->d_namlen == 1 && entp->d_name[0] == '.') continue; // do not process self entry
-        if(entp->d_namlen == 2 && entp->d_name[0] == '.' && entp->d_name[1] == '.') continue; // do not process parent entry
+        if( entp->d_ino == 0 )
+            continue; // apple's documentation suggest to skip such files
+        if( entp->d_namlen == 1 && entp->d_name[0] == '.' )
+            continue; // do not process self entry
+        if( entp->d_namlen == 2 && entp->d_name[0] == '.' && entp->d_name[1] == '.' )
+            continue; // do not process parent entry
         
         memcpy(var, entp->d_name, entp->d_namlen+1);
-        if(entp->d_type == DT_DIR)
-        {
+        if( entp->d_type == DT_DIR ) {
             CalculateDirectoriesSizesHelper(_path,
                                       _path_len + entp->d_namlen + 1,
                                       _iscancelling,
@@ -396,20 +396,15 @@ static int CalculateDirectoriesSizesHelper(char *_path,
             if(_iscancelling)
                 goto cleanup;
         }
-        else if(entp->d_type == DT_REG || entp->d_type == DT_LNK)
-        {
-            char *full_path = (char*) malloc(_path_len + entp->d_namlen + 2);
-            memcpy(full_path, _path, _path_len + entp->d_namlen + 2);
-            
-            _stat_queue.async([&,full_path]{
-                if(_iscancelling) return;
+        else if( entp->d_type == DT_REG || entp->d_type == DT_LNK ) {
+            string full_path = _path;
+            _stat_queue.async([&,full_path = move(full_path)]{
+                if( _iscancelling )
+                    return;
                 
                 struct stat st;
-                
-                if(io.lstat(full_path, &st) == 0)
+                if( io.lstat(full_path.c_str(), &st) == 0 )
                     _size_stock += st.st_size;
-                
-                free(full_path);
             });
         }
     }

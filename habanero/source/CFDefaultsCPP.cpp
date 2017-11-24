@@ -143,7 +143,7 @@ long CFDefaultsGetLong(CFStringRef _key)
 void CFDefaultsSetDouble(CFStringRef _key, double _value)
 {
     CFNumberRef num = CFNumberCreate(NULL, kCFNumberDoubleType, &_value);
-    if( !num )
+    if( num == nullptr )
         return;
     auto release_val = at_scope_end([=]{ CFRelease(num); });
     CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
@@ -152,7 +152,7 @@ void CFDefaultsSetDouble(CFStringRef _key, double _value)
 void CFDefaultsSetInt(CFStringRef _key, int _value)
 {
     CFNumberRef num = CFNumberCreate(NULL, kCFNumberIntType, &_value);
-    if( !num )
+    if( num == nullptr )
         return;
     auto release_val = at_scope_end([=]{ CFRelease(num); });
     CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
@@ -161,7 +161,7 @@ void CFDefaultsSetInt(CFStringRef _key, int _value)
 void CFDefaultsSetLong(CFStringRef _key, long _value)
 {
     CFNumberRef num = CFNumberCreate(NULL, kCFNumberLongType, &_value);
-    if( !num )
+    if( num == nullptr )
         return;
     auto release_val = at_scope_end([=]{ CFRelease(num); });
     CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);

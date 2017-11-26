@@ -5007,7 +5007,7 @@
 				);
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander Tests-Info.plist";
 				PRODUCT_NAME = "Nimble Commander";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NimbleCommander NonMAS CI.app/Contents/MacOS/NimbleCommander NonMAS CI";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NimbleCommander-Unsigned.app/Contents/MacOS/NimbleCommander-Unsigned";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -5027,7 +5027,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_TRIAL__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander Tests-Info.plist";
 				PRODUCT_NAME = "Nimble Commander";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NimbleCommander NonMAS CI.app/Contents/MacOS/NimbleCommander NonMAS CI";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NimbleCommander-Unsigned.app/Contents/MacOS/NimbleCommander-Unsigned";
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;

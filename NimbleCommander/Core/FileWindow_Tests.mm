@@ -15,7 +15,7 @@ public:
                               ReadParadigm _behave_as);
     
     
-    virtual int     Open(int _open_flags, const VFSCancelChecker &_cancel_checker) override;
+    virtual int     Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
     virtual bool    IsOpened() const override {return m_Opened;}
     virtual int     Close() override;
     
@@ -139,7 +139,7 @@ bool TestGenericMemReadOnlyFile::Eof() const
     return m_Pos == m_Size;
 }
 
-int TestGenericMemReadOnlyFile::Open(int _open_flags, const VFSCancelChecker &_cancel_checker)
+int TestGenericMemReadOnlyFile::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     m_Opened = true;
     return 0;

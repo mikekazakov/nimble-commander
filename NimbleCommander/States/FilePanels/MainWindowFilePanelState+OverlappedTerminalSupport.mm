@@ -131,12 +131,12 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
 {
     [self activateOverlappedTerminal];
     [self moveFocusToOverlappedTerminal];
-    m_MainSplitView.hidden = true;
+    m_SplitView.hidden = true;
 }
 
 - (void) showPanelsSplitView
 {
-    m_MainSplitView.hidden = false;
+    m_SplitView.hidden = false;
     [self moveFocusBackToPanels];
 }
 

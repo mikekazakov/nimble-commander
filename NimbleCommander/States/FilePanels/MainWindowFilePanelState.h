@@ -33,7 +33,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     vector<PanelController*> m_RightPanelControllers;
     __weak PanelController*  m_LastFocusedPanelController;
     
-    FilePanelMainSplitView *m_MainSplitView;
+    FilePanelMainSplitView *m_SplitView;
     NSLayoutConstraint     *m_MainSplitViewBottomConstraint;
 
     unique_ptr<MainWindowFilePanelState_OverlappedTerminalSupport> m_OverlappedTerminal;
@@ -79,7 +79,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) vector< tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
 
 
-- (QuickLookView*)RequestQuickLookView:(PanelController*)_panel;
+- (QuickLookView*)quickLookForPanel:(PanelController*)_panel make:(bool)_make_if_absent;
 - (BriefSystemOverview*)RequestBriefSystemOverview:(PanelController*)_panel;
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd;
 - (void)CloseOverlay:(PanelController*)_panel;

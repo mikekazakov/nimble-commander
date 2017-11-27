@@ -229,10 +229,7 @@ static void HeatUpConfigValues()
     uint64_t            m_NextActivityTicket;
     vector<uint64_t>    m_ActivitiesTickets;
     spinlock            m_ActivitiesTicketsLock;
-    
-    // QuickLook support
-    __weak QuickLookView *m_QuickLook;
-    
+        
     // BriefSystemOverview support
     __weak BriefSystemOverview* m_BriefSystemOverview;
     
@@ -444,7 +441,7 @@ static void HeatUpConfigValues()
     if(![self checkAgainstRequestedFocusing])
         pers.Restore();
     
-    [self OnCursorChanged];
+    [self onCursorChanged];
     [self QuickSearchUpdate];
     [m_View setNeedsDisplay];
 }
@@ -530,26 +527,6 @@ static bool RouteKeyboardInputIntoTerminal()
         unichar const unicode        = [character characterAtIndex:0];
         unsigned short const keycode = event.keyCode;
         
-//        if(keycode == 3 ) { // 'F' button
-//            if( (modif&NSDeviceIndependentModifierFlagsMask) == (NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) {
-//                
-////                shared_ptr<VFSHost> host = make_shared<vfs::WebDAVHost>("192.168.2.5",
-////                                                                        "guest",
-////                                                                        "",
-////                                                                        "Public",
-////                                                                        false,
-////                                                                        5000);
-//
-//                [self GoToDir:"/"
-//                          vfs:host
-//                 select_entry:""
-//                        async:true];
-//                
-//                
-//                return true;
-//            }
-//        }
-        
         if( unicode == NSTabCharacter ) { // Tab button
             [self.state changeFocusedSide];
             return true;
@@ -558,7 +535,6 @@ static bool RouteKeyboardInputIntoTerminal()
             [self CancelBackgroundOperations];
             [self.state CloseOverlay:self];
             m_BriefSystemOverview = nil;
-            m_QuickLook = nil;
             [self clearQuickSearchFiltering];
             return true;
         }
@@ -719,7 +695,7 @@ static bool RouteKeyboardInputIntoTerminal()
     [self clearFocusingRequest];
     [self clearQuickSearchFiltering];
     [self.state PanelPathChanged:self];
-    [self OnCursorChanged];
+    [self onCursorChanged];
     [self UpdateBriefSystemOverview];
 
     if( self.isUniform )
@@ -734,11 +710,12 @@ static bool RouteKeyboardInputIntoTerminal()
         [wc invalidateRestorableState];
 }
 
-- (void) OnCursorChanged
+- (void) onCursorChanged
 {
     // update QuickLook if any
-    if( auto i = self.view.item )
-        [(QuickLookView *)m_QuickLook PreviewItem:i.Path() vfs:i.Host()];
+    if( auto ql = self.quickLook )
+        if( auto i = self.view.item )
+            [ql PreviewItem:i.Path() vfs:i.Host()];
 }
 
 - (void) UpdateBriefSystemOverview
@@ -753,7 +730,7 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (void) PanelViewCursorChanged:(PanelView*)_view
 {
-    [self OnCursorChanged];
+    [self onCursorChanged];
 }
 
 - (NSMenu*) panelView:(PanelView*)_view requestsContextMenuForItemNo:(int)_sort_pos
@@ -1277,15 +1254,18 @@ loadPreviousState:(bool)_load_state
 - (IBAction)OnFileViewCommand:(id)sender
 {
     // Close quick preview, if it is open.
-    if( m_QuickLook ) {
+    if( self.quickLook ) {
         [self.state CloseOverlay:self];
-        m_QuickLook = nil;
-        return;
     }
-    
-    m_QuickLook = [self.state RequestQuickLookView:self];
-    if( m_QuickLook )
-        [self OnCursorChanged];
+    else {
+        if( [self.state quickLookForPanel:self make:true] )
+            [self onCursorChanged];
+    }
+}
+
+- (QuickLookView *)quickLook
+{
+    return [self.state quickLookForPanel:self make:false];
 }
 
 static const nanoseconds g_FastSeachDelayTresh = 4s;
@@ -1485,13 +1465,11 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     auto filtering = m_Data.HardFiltering();
     if(!filtering.text.text) {
         [m_View setQuickSearchPrompt:nil withMatchesCount:0];
-//        m_View.quickSearchPrompt = nil;
     }
     else {
         int total = (int)m_Data.SortedDirectoryEntries().size();
         if(total > 0 && m_Data.Listing().IsDotDot(0))
             total--;
-//        m_View.quickSearchPrompt = PromptForMatchesAndString(total, filtering.text.text);
         [m_View setQuickSearchPrompt:filtering.text.text withMatchesCount:total];
     }
 }

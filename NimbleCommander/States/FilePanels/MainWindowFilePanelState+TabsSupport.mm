@@ -36,8 +36,8 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 {    
     if( const auto panel_view = objc_cast<PanelView>(tabViewItem.view) ) {
         [self.window makeFirstResponder:panel_view];
-        m_MainSplitView.leftOverlay = nil;
-        m_MainSplitView.rightOverlay = nil;
+        m_SplitView.leftOverlay = nil;
+        m_SplitView.rightOverlay = nil;
     }
 }
 
@@ -48,8 +48,8 @@ receivedClickOnSelectedTabViewItem:(NSTabViewItem *)tabViewItem
         if( panel_view.active )
             return;
         [self.window makeFirstResponder:panel_view];
-        m_MainSplitView.leftOverlay = nil;
-        m_MainSplitView.rightOverlay = nil;
+        m_SplitView.leftOverlay = nil;
+        m_SplitView.rightOverlay = nil;
     }
 }
 
@@ -110,10 +110,10 @@ didDropTabViewItem:(NSTabViewItem *)tabViewItem
         m_LeftPanelControllers.erase(it);
     }
     
-    if( [tabBarView isDescendantOf:m_MainSplitView.leftTabbedHolder] )
+    if( [tabBarView isDescendantOf:m_SplitView.leftTabbedHolder] )
         m_LeftPanelControllers.insert(next(begin(m_LeftPanelControllers), index),
                                       dropped_panel_controller);
-    else if( [tabBarView isDescendantOf:m_MainSplitView.rightTabbedHolder] )
+    else if( [tabBarView isDescendantOf:m_SplitView.rightTabbedHolder] )
         m_RightPanelControllers.insert(next(begin(m_RightPanelControllers), index),
                                        dropped_panel_controller);
 
@@ -135,9 +135,9 @@ static string TabNameForController( PanelController* _controller )
 {
     NSArray<NSTabViewItem*> *tabs;
     if([self isLeftController:_controller])
-        tabs = m_MainSplitView.leftTabbedHolder.tabView.tabViewItems;
+        tabs = m_SplitView.leftTabbedHolder.tabView.tabViewItems;
     else if([self isRightController:_controller])
-        tabs = m_MainSplitView.rightTabbedHolder.tabView.tabViewItems;
+        tabs = m_SplitView.rightTabbedHolder.tabView.tabViewItems;
     
     if( !tabs )
         return nil;
@@ -169,15 +169,15 @@ static string TabNameForController( PanelController* _controller )
     PanelController *pc = [PanelController new];
     pc.state = self;
     PanelController *source = nil;
-    if( aTabView == m_MainSplitView.leftTabbedHolder.tabView ) {
+    if( aTabView == m_SplitView.leftTabbedHolder.tabView ) {
         source = self.leftPanelController;
         m_LeftPanelControllers.emplace_back(pc);
-        [m_MainSplitView.leftTabbedHolder addPanel:pc.view];
+        [m_SplitView.leftTabbedHolder addPanel:pc.view];
     }
-    else if( aTabView == m_MainSplitView.rightTabbedHolder.tabView ) {
+    else if( aTabView == m_SplitView.rightTabbedHolder.tabView ) {
         source = self.rightPanelController;
         m_RightPanelControllers.emplace_back(pc);
-        [m_MainSplitView.rightTabbedHolder addPanel:pc.view];
+        [m_SplitView.rightTabbedHolder addPanel:pc.view];
     }
     else
         assert(0); // something is really broken
@@ -264,12 +264,12 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
     MMTabBarView *bar;
 
     if( [self isLeftController:_controller] ) {
-        it = [m_MainSplitView.leftTabbedHolder tabViewItemForController:_controller];
-        bar = m_MainSplitView.leftTabbedHolder.tabBar;
+        it = [m_SplitView.leftTabbedHolder tabViewItemForController:_controller];
+        bar = m_SplitView.leftTabbedHolder.tabBar;
     }
     else if ( [self isRightController:_controller] ) {
-        it = [m_MainSplitView.rightTabbedHolder tabViewItemForController:_controller];
-        bar = m_MainSplitView.rightTabbedHolder.tabBar;
+        it = [m_SplitView.rightTabbedHolder tabViewItemForController:_controller];
+        bar = m_SplitView.rightTabbedHolder.tabBar;
     }
  
     if( it && bar )
@@ -285,9 +285,9 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
 {
     MMTabBarView *bar;
     if( [self isLeftController:_controller] )
-        bar = m_MainSplitView.leftTabbedHolder.tabBar;
+        bar = m_SplitView.leftTabbedHolder.tabBar;
     else if ( [self isRightController:_controller] )
-        bar = m_MainSplitView.rightTabbedHolder.tabBar;
+        bar = m_SplitView.rightTabbedHolder.tabBar;
     
     if( !bar )
         return;
@@ -319,9 +319,9 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
     PanelController *cur = self.activePanelController;
     int tabs = 1;
     if( [self isLeftController:cur] )
-        tabs = m_MainSplitView.leftTabbedHolder.tabsCount;
+        tabs = m_SplitView.leftTabbedHolder.tabsCount;
     else if( [self isRightController:cur] )
-        tabs = m_MainSplitView.rightTabbedHolder.tabsCount;
+        tabs = m_SplitView.rightTabbedHolder.tabsCount;
     return tabs;
 }
 
@@ -332,9 +332,9 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
         return nil;
     
     if([self isLeftController:cur])
-        return m_MainSplitView.leftTabbedHolder.tabBar;
+        return m_SplitView.leftTabbedHolder.tabBar;
     else if([self isRightController:cur])
-        return m_MainSplitView.rightTabbedHolder.tabBar;
+        return m_SplitView.rightTabbedHolder.tabBar;
     
     return nil;
 }
@@ -346,9 +346,9 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
         return nil;
     
     if([self isLeftController:cur])
-        return m_MainSplitView.leftTabbedHolder;
+        return m_SplitView.leftTabbedHolder;
     else if([self isRightController:cur])
-        return m_MainSplitView.rightTabbedHolder;
+        return m_SplitView.rightTabbedHolder;
     
     return nil;
 }
@@ -367,11 +367,11 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
 
 - (void) updateTabBarsVisibility
 {
-    unsigned lc = m_MainSplitView.leftTabbedHolder.tabsCount,
-             rc = m_MainSplitView.rightTabbedHolder.tabsCount;
+    unsigned lc = m_SplitView.leftTabbedHolder.tabsCount,
+             rc = m_SplitView.rightTabbedHolder.tabsCount;
     bool should_be_shown = m_ShowTabs ? true : (lc > 1 || rc > 1);
-    m_MainSplitView.leftTabbedHolder.tabBarShown = should_be_shown;
-    m_MainSplitView.rightTabbedHolder.tabBarShown = should_be_shown;
+    m_SplitView.leftTabbedHolder.tabBarShown = should_be_shown;
+    m_SplitView.rightTabbedHolder.tabBarShown = should_be_shown;
 }
 
 - (void) updateTabBarButtons
@@ -379,18 +379,18 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
     const auto handler = ^(MMAttachedTabBarButton *aButton, NSUInteger idx, BOOL *stop) {
         [aButton setNeedsDisplay];
     };
-    [m_MainSplitView.leftTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
-    [m_MainSplitView.rightTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
+    [m_SplitView.leftTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
+    [m_SplitView.rightTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
 }
 
 - (FilePanelsTabbedHolder *) leftTabbedHolder
 {
-    return m_MainSplitView.leftTabbedHolder;
+    return m_SplitView.leftTabbedHolder;
 }
 
 - (FilePanelsTabbedHolder *) rightTabbedHolder
 {
-    return m_MainSplitView.rightTabbedHolder;
+    return m_SplitView.rightTabbedHolder;
 }
 
 static NSImage *ResizeImage( NSImage* _img, NSSize _new_size)

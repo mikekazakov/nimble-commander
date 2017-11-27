@@ -149,7 +149,7 @@ static NSString *TitleForData( const data::Model* _data );
 
 @implementation MainWindowFilePanelState
 
-@synthesize splitView = m_MainSplitView;
+@synthesize splitView = m_SplitView;
 
 - (instancetype) initBaseWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
 {
@@ -296,13 +296,13 @@ static NSString *TitleForData( const data::Model* _data );
 
 - (void) CreateControls
 {
-    m_MainSplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
-    m_MainSplitView.translatesAutoresizingMaskIntoConstraints = NO;
-    [m_MainSplitView.leftTabbedHolder addPanel:m_LeftPanelControllers.front().view];
-    [m_MainSplitView.rightTabbedHolder addPanel:m_RightPanelControllers.front().view];
-    m_MainSplitView.leftTabbedHolder.tabBar.delegate = self;
-    m_MainSplitView.rightTabbedHolder.tabBar.delegate = self;
-    [self addSubview:m_MainSplitView];
+    m_SplitView = [[FilePanelMainSplitView alloc] initWithFrame:NSRect()];
+    m_SplitView.translatesAutoresizingMaskIntoConstraints = NO;
+    [m_SplitView.leftTabbedHolder addPanel:m_LeftPanelControllers.front().view];
+    [m_SplitView.rightTabbedHolder addPanel:m_RightPanelControllers.front().view];
+    m_SplitView.leftTabbedHolder.tabBar.delegate = self;
+    m_SplitView.rightTabbedHolder.tabBar.delegate = self;
+    [self addSubview:m_SplitView];
     
     m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
     m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
@@ -312,11 +312,11 @@ static NSString *TitleForData( const data::Model* _data );
     
     m_ToolbarDelegate = [[MainWindowFilePanelsStateToolbarDelegate alloc] initWithFilePanelsState:self];
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_MainSplitView);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_SeparatorLine(<=1)]-(==0)-[m_MainSplitView]" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_MainSplitView]-(0)-|" options:0 metrics:nil views:views]];
+    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_SplitView);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_SeparatorLine(<=1)]-(==0)-[m_SplitView]" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_SplitView]-(0)-|" options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
-    m_MainSplitViewBottomConstraint = [NSLayoutConstraint constraintWithItem:m_MainSplitView
+    m_MainSplitViewBottomConstraint = [NSLayoutConstraint constraintWithItem:m_SplitView
                                                                    attribute:NSLayoutAttributeBottom
                                                                    relatedBy:NSLayoutRelationEqual
                                                                       toItem:self
@@ -372,7 +372,7 @@ static NSString *TitleForData( const data::Model* _data );
     }
     else {
         // if we don't know which view should be active - make left panel a first responder
-        [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
+        [self.window makeFirstResponder:m_SplitView.leftTabbedHolder.current];
     }
     
     [self updateTitle];
@@ -447,12 +447,12 @@ static NSString *TitleForData( const data::Model* _data );
 
 - (PanelController*) leftPanelController
 {
-    return objc_cast<PanelController>(m_MainSplitView.leftTabbedHolder.current.delegate);
+    return objc_cast<PanelController>(m_SplitView.leftTabbedHolder.current.delegate);
 }
 
 - (PanelController*) rightPanelController
 {
-    return objc_cast<PanelController>(m_MainSplitView.rightTabbedHolder.current.delegate);
+    return objc_cast<PanelController>(m_SplitView.rightTabbedHolder.current.delegate);
 }
 
 - (vector<PanelController*>) leftControllers
@@ -465,50 +465,61 @@ static NSString *TitleForData( const data::Model* _data );
     return m_RightPanelControllers;
 }
 
+static bool Has(const vector<PanelController*> &_c, PanelController* _p) noexcept
+{
+    // this is called very often, so in order to help optimizer I manually removed all
+    // Objective-C / ARC related semantics by casting everything to raw void*.
+    // the difference between assembly outputs is huge.
+    const void** first  = (const void**)(const void*)_c.data();
+    const void** last   = first + _c.size();
+    const void*  value  = (__bridge const void*)_p;
+    return find( first, last, value ) != last;
+}
+
 - (bool) isLeftController:(PanelController*)_controller
 {
-    return any_of(begin(m_LeftPanelControllers), end(m_LeftPanelControllers), [&](auto p){ return p == _controller; });
+    return Has(m_LeftPanelControllers, _controller);
 }
 
 - (bool) isRightController:(PanelController*)_controller
 {
-    return any_of(begin(m_RightPanelControllers), end(m_RightPanelControllers), [&](auto p){ return p == _controller; });
+    return Has(m_RightPanelControllers, _controller);
 }
 
 - (void) changeFocusedSide
 {
-    if( m_MainSplitView.anyCollapsedOrOverlayed )
+    if( m_SplitView.anyCollapsedOrOverlayed )
         return;
     if( auto cur = self.activePanelController ) {
         if( [self isLeftController:cur] )
-            [self.window makeFirstResponder:m_MainSplitView.rightTabbedHolder.current];
+            [self.window makeFirstResponder:m_SplitView.rightTabbedHolder.current];
         else
-            [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
+            [self.window makeFirstResponder:m_SplitView.leftTabbedHolder.current];
     }
 }
 
 - (void)ActivatePanelByController:(PanelController *)controller
 {
     if([self isLeftController:controller]) {
-        if(m_MainSplitView.leftTabbedHolder.current == controller.view) {
-            [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
+        if(m_SplitView.leftTabbedHolder.current == controller.view) {
+            [self.window makeFirstResponder:m_SplitView.leftTabbedHolder.current];
             return;
         }
-        for(NSTabViewItem *it in m_MainSplitView.leftTabbedHolder.tabView.tabViewItems)
+        for(NSTabViewItem *it in m_SplitView.leftTabbedHolder.tabView.tabViewItems)
             if(it.view == controller.view) {
-                [m_MainSplitView.leftTabbedHolder.tabView selectTabViewItem:it];
+                [m_SplitView.leftTabbedHolder.tabView selectTabViewItem:it];
                 [self.window makeFirstResponder:controller.view];
                 return;
             }
     }
     else if([self isRightController:controller]) {
-        if(m_MainSplitView.rightTabbedHolder.current == controller.view) {
-            [self.window makeFirstResponder:m_MainSplitView.rightTabbedHolder.current];
+        if(m_SplitView.rightTabbedHolder.current == controller.view) {
+            [self.window makeFirstResponder:m_SplitView.rightTabbedHolder.current];
             return;
         }
-        for(NSTabViewItem *it in m_MainSplitView.rightTabbedHolder.tabView.tabViewItems)
+        for(NSTabViewItem *it in m_SplitView.rightTabbedHolder.tabView.tabViewItems)
             if(it.view == controller.view) {
-                [m_MainSplitView.rightTabbedHolder.tabView selectTabViewItem:it];
+                [m_SplitView.rightTabbedHolder.tabView selectTabViewItem:it];
                 [self.window makeFirstResponder:controller.view];
                 return;
             }
@@ -791,31 +802,43 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return r;
 }
 
-- (QuickLookView*)RequestQuickLookView:(PanelController*)_panel
+- (QuickLookView*)quickLookForPanel:(PanelController*)_panel make:(bool)_make_if_absent
 {
-    if( m_MainSplitView.anyCollapsed )
+    if( !_make_if_absent ) {
+        if( [self isLeftController:_panel] )
+            return objc_cast<QuickLookView>(m_SplitView.rightOverlay);
+        if( [self isRightController:_panel] )
+            return objc_cast<QuickLookView>(m_SplitView.leftOverlay);
         return nil;
+    }
+    else {
+        if( m_SplitView.anyCollapsed )
+            return nil;
+        
+        const auto rc = NSMakeRect(0, 0, 100, 100);
+        QuickLookView *view = [[QuickLookView alloc] initWithFrame:rc];
+        
+        if( [self isLeftController:_panel] )
+            m_SplitView.rightOverlay = view;
+        else if([self isRightController:_panel])
+            m_SplitView.leftOverlay = view;
+        else
+            return nil;
 
-    QuickLookView *view = [[QuickLookView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-    if([self isLeftController:_panel])
-        m_MainSplitView.rightOverlay = view;
-    else if([self isRightController:_panel])
-        m_MainSplitView.leftOverlay = view;
-    else
-        return nil;
-    return view;
+        return view;
+    }
 }
 
 - (BriefSystemOverview*)RequestBriefSystemOverview:(PanelController*)_panel
 {
-    if( m_MainSplitView.anyCollapsed )
+    if( m_SplitView.anyCollapsed )
         return nil;
         
     BriefSystemOverview *view = [[BriefSystemOverview alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     if([self isLeftController:_panel])
-        m_MainSplitView.rightOverlay = view;
+        m_SplitView.rightOverlay = view;
     else if([self isRightController:_panel])
-        m_MainSplitView.leftOverlay = view;
+        m_SplitView.leftOverlay = view;
     else
         return nil;
     return view;
@@ -824,9 +847,9 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 - (void)CloseOverlay:(PanelController*)_panel
 {
     if([self isLeftController:_panel])
-        m_MainSplitView.rightOverlay = 0;
+        m_SplitView.rightOverlay = nil;
     else if([self isRightController:_panel])
-        m_MainSplitView.leftOverlay = 0;
+        m_SplitView.leftOverlay = nil;
 }
 
 - (void)onShowTabsSettingChanged
@@ -853,17 +876,17 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 
 - (bool)isPanelsSplitViewHidden
 {
-    return m_MainSplitView.hidden;
+    return m_SplitView.hidden;
 }
 
 - (bool) anyPanelCollapsed
 {
-    return m_MainSplitView.anyCollapsed;
+    return m_SplitView.anyCollapsed;
 }
 
 - (bool) bothPanelsAreVisible
 {
-    return !m_MainSplitView.hidden && !m_MainSplitView.anyCollapsedOrOverlayed;
+    return !m_SplitView.hidden && !m_SplitView.anyCollapsedOrOverlayed;
 }
 
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd
@@ -878,13 +901,13 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 - (void)addNewControllerOnLeftPane:(PanelController*)_pc
 {
     m_LeftPanelControllers.emplace_back(_pc);
-    [m_MainSplitView.leftTabbedHolder addPanel:_pc.view];
+    [m_SplitView.leftTabbedHolder addPanel:_pc.view];
 }
 
 - (void)addNewControllerOnRightPane:(PanelController*)_pc
 {
     m_RightPanelControllers.emplace_back(_pc);
-    [m_MainSplitView.rightTabbedHolder addPanel:_pc.view];
+    [m_SplitView.rightTabbedHolder addPanel:_pc.view];
 }
 
 - (ExternalToolsStorage&)externalToolsStorage
@@ -895,16 +918,16 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 - (void)revealPanel:(PanelController *)panel
 {
     if( [self isRightController:panel] ) {
-        if( m_MainSplitView.isRightCollapsed )
-            [m_MainSplitView expandRightView];
-        m_MainSplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
+        if( m_SplitView.isRightCollapsed )
+            [m_SplitView expandRightView];
+        m_SplitView.rightOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     }
     else if( [self isLeftController:panel] ) {
     
-      if( m_MainSplitView.isLeftCollapsed )
-        [m_MainSplitView expandLeftView];
+      if( m_SplitView.isLeftCollapsed )
+        [m_SplitView expandLeftView];
     
-        m_MainSplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
+        m_SplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
     }
 }
 
@@ -925,11 +948,11 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 
 - (void) swapPanels
 {
-    if( m_MainSplitView.anyCollapsedOrOverlayed )
+    if( m_SplitView.anyCollapsedOrOverlayed )
         return;
     
     swap(m_LeftPanelControllers, m_RightPanelControllers);
-    [m_MainSplitView swapViews];
+    [m_SplitView swapViews];
     [self markRestorableStateAsInvalid];
 }
 

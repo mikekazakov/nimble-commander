@@ -32,6 +32,7 @@
 #include "Actions/Enter.h"
 #include "Actions/Link.h"
 #include "Actions/ViewFile.h"
+#include "Actions/RefreshPanel.h"
 #include "PanelView.h"
 #include <NimbleCommander/Core/Alert.h>
 
@@ -63,11 +64,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     return false;
 }
 
-- (IBAction)OnRefreshPanel:(id)sender
-{
-    [self forceRefreshPanel];
-}
-
+- (IBAction)OnRefreshPanel:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnFileInternalBigViewCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnOpen:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoIntoDirectory:(id)sender { Perform(_cmd, self, sender); }
@@ -207,6 +204,7 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.view.toggle_layout_8",  @selector(onToggleViewLayout8:),  new ToggleLayout{7}},
 {"menu.view.toggle_layout_9",  @selector(onToggleViewLayout9:),  new ToggleLayout{8}},
 {"menu.view.toggle_layout_10", @selector(onToggleViewLayout10:), new ToggleLayout{9}},
+{"menu.view.refresh",       @selector(OnRefreshPanel:),     new RefreshPanel},
 {"menu.go.enclosing_folder",@selector(OnGoToUpperDirectory:),new GoToEnclosingFolder},
 {"menu.go.into_folder",     @selector(OnGoIntoDirectory:),  new GoIntoFolder{true}},
 {"menu.go.back",            @selector(OnGoBack:),           new GoBack},

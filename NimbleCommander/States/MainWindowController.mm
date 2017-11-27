@@ -404,24 +404,15 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     dispatch_assert_main_queue();
     m_WindowState.push_back(_state);
     
-//    MachTimeBenchmark mtb;
-    
     [self updateTitleAndToolbarVisibilityWith:self.topmostState.toolbar
                                toolbarVisible:self.toolbarVisible
                                    needsTitle:self.currentStateNeedWindowTitle];
-//    mtb.ResetMicro("  [self updateTitleAndToolbarVisibilityWith ");
-    
     
     self.window.contentView = self.topmostState.windowContentView;
-//    mtb.ResetMicro("  self.window.contentView = ");
-    
     [self.window makeFirstResponder:self.window.contentView];
-//    mtb.ResetMicro("  [self.window makeFirstResponder ");
     
     if([self.topmostState respondsToSelector:@selector(Assigned)])
-        [self.topmostState Assigned];
-    
-//    mtb.ResetMicro("  [self.topmostState Assigned] ");
+        [self.topmostState Assigned];    
 }
 
 - (void) RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host
@@ -538,13 +529,13 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     return m_WindowState.empty() ? nil : m_WindowState.back();
 }
 
+static const auto g_HideToolbarTitle = NSLocalizedString(@"Hide Toolbar", "Menu item title");
+static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu item title");
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
     auto tag = item.tag;
     IF_MENU_TAG("menu.view.show_toolbar") {
-        item.title = self.toolbarVisible ?
-            NSLocalizedString(@"Hide Toolbar", "Menu item title"):
-            NSLocalizedString(@"Show Toolbar", "Menu item title");
+        item.title = self.toolbarVisible ? g_HideToolbarTitle : g_ShowToolbarTitle;
         return self.window.toolbar != nil;
     }
     return true;

@@ -292,6 +292,10 @@
 		CF56C2CF1DC35E8B00F0DF0F /* PanelListViewSizeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */; };
 		CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */; };
 		CF56C2DE1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */; };
+		CF5E9A381FCBC521005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
+		CF5E9A481FCBC66A005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
+		CF5E9A491FCBC66B005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
+		CF5E9A4A1FCBC66B005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
 		CF5FE7CB1E0CDEA600CD83B4 /* FilesDraggingSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */; };
 		CF5FE7D51E120A4900CD83B4 /* CopyFilePaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */; };
 		CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
@@ -1586,6 +1590,8 @@
 		CF56C2DC1DC45BD200F0DF0F /* PanelListViewDateFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewDateFormatting.h; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.h; sourceTree = SOURCE_ROOT; };
 		CF56C2DD1DC45BD200F0DF0F /* PanelListViewDateFormatting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelListViewDateFormatting.mm; path = NimbleCommander/States/FilePanels/List/PanelListViewDateFormatting.mm; sourceTree = SOURCE_ROOT; };
 		CF5A0B291C9E7D76005839B7 /* libunrar.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libunrar.a; path = 3rd_Party/unrar/built/libunrar.a; sourceTree = SOURCE_ROOT; };
+		CF5E9A361FCBC521005608F5 /* ViewFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewFile.h; path = NimbleCommander/States/FilePanels/Actions/ViewFile.h; sourceTree = SOURCE_ROOT; };
+		CF5E9A371FCBC521005608F5 /* ViewFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewFile.mm; path = NimbleCommander/States/FilePanels/Actions/ViewFile.mm; sourceTree = SOURCE_ROOT; };
 		CF5FD92D1FA2C02E00752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = NimbleCommander/Config/default.xcconfig; sourceTree = SOURCE_ROOT; wrapsLines = 1; };
 		CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilesDraggingSource.h; path = NimbleCommander/States/FilePanels/FilesDraggingSource.h; sourceTree = SOURCE_ROOT; };
 		CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilesDraggingSource.mm; path = NimbleCommander/States/FilePanels/FilesDraggingSource.mm; sourceTree = SOURCE_ROOT; };
@@ -2515,6 +2521,8 @@
 				CF197C421FB81ACA009F6C59 /* ToggleSingleOrDualMode.mm */,
 				CF0139AD1E99DAC100E44F2D /* ToggleSort.h */,
 				CF0139AE1E99DAC100E44F2D /* ToggleSort.mm */,
+				CF5E9A361FCBC521005608F5 /* ViewFile.h */,
+				CF5E9A371FCBC521005608F5 /* ViewFile.mm */,
 			);
 			name = Actions;
 			sourceTree = "<group>";
@@ -3889,6 +3897,7 @@
 				CFD726391E42E0D900603077 /* LaunchServices.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CFD726E81E42E2D200603077 /* PanelListViewGeometry.mm in Sources */,
+				CF5E9A4A1FCBC66B005608F5 /* ViewFile.mm in Sources */,
 				CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */,
 				CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFDEB8291D2BB7F1009BCCBD /* ExternalToolsSupport.mm in Sources */,
@@ -4055,6 +4064,7 @@
 				CFA539F51D433E2A00C562A7 /* RHPreferencesWindowController.m in Sources */,
 				CFD7261E1E42E0A700603077 /* ThemesManager.mm in Sources */,
 				CF9F4AFC1ECC8DBD00E0AF82 /* OpenFile.mm in Sources */,
+				CF5E9A381FCBC521005608F5 /* ViewFile.mm in Sources */,
 				CF7C7CB31E5ACDBE002DB0E2 /* TabsManagement.mm in Sources */,
 				CFD7264E1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFD726541E42E12800603077 /* TemporaryNativeFileStorage.cpp in Sources */,
@@ -4268,6 +4278,7 @@
 				CFD8CDCA1E8CE65600E4DC53 /* OpenXAttr.mm in Sources */,
 				CF27408E1E594C46000D4365 /* TabsManagement.mm in Sources */,
 				CFDAC2CC1DFD0F840039A104 /* QLThumbnailsCache.mm in Sources */,
+				CF5E9A491FCBC66B005608F5 /* ViewFile.mm in Sources */,
 				CF56C2CB1DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CF818B3D1EA05AC600BC28E6 /* PanelDataSelection.mm in Sources */,
 				CFFA952F1F4930BA0035E606 /* DragSender.mm in Sources */,
@@ -4431,6 +4442,7 @@
 				CF818B7B1EA4573400BC28E6 /* Pasteboard.mm in Sources */,
 				CF4E56EE1D5072E500452912 /* FileMask.cpp in Sources */,
 				CFD726F31E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */,
+				CF5E9A481FCBC66A005608F5 /* ViewFile.mm in Sources */,
 				CF4E56B61D5068F000452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFD726E71E42E2D100603077 /* PanelListViewGeometry.mm in Sources */,
 				CFD7265B1E42E1B700603077 /* MainWindowController.mm in Sources */,

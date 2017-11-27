@@ -2,7 +2,6 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include "PanelController+Menu.h"
 #include "MainWindowFilePanelState.h"
-#include <NimbleCommander/States/MainWindowController.h>
 #include "Actions/CopyFilePaths.h"
 #include "Actions/AddToFavorites.h"
 #include "Actions/GoToFolder.h"
@@ -32,6 +31,7 @@
 #include "Actions/OpenFile.h"
 #include "Actions/Enter.h"
 #include "Actions/Link.h"
+#include "Actions/ViewFile.h"
 #include "PanelView.h"
 #include <NimbleCommander/Core/Alert.h>
 
@@ -50,7 +50,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         const auto tag = (int)item.tag;
         if( const auto action = ActionByTag(tag) )
             return action->ValidateMenuItem(self, item);
-        IF_MENU_TAG("menu.command.internal_viewer")         return self.view.item && !self.view.item.IsDir();
         IF_MENU_TAG("menu.command.quick_look")              return self.view.item && !self.state.anyPanelCollapsed;
         IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
         return true;
@@ -64,19 +63,12 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     return false;
 }
 
-- (IBAction)OnFileInternalBigViewCommand:(id)sender {
-    if( auto i = self.view.item ) {
-        if( i.IsDir() )
-            return;
-        [self.mainWindowController RequestBigFileView:i.Path() with_fs:i.Host()];
-    }
-}
-
 - (IBAction)OnRefreshPanel:(id)sender
 {
     [self forceRefreshPanel];
 }
 
+- (IBAction)OnFileInternalBigViewCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnOpen:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoIntoDirectory:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnGoToUpperDirectory:(id)sender { Perform(_cmd, self, sender); }
@@ -242,6 +234,7 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.go.quick_lists.volumes",         @selector(OnGoToQuickListsVolumes:),    new ShowVolumesQuickList},
 {"menu.go.quick_lists.connections",     @selector(OnGoToQuickListsConnections:),new ShowConnectionsQuickList},
 {"",                                    @selector(OnGoToFavoriteLocation:),     new GoToFavoriteLocation},
+{"menu.command.internal_viewer",        @selector(OnFileInternalBigViewCommand:),new ViewFile},
 {"menu.command.select_with_mask",       @selector(OnSelectByMask:),             new SelectAllByMask{true}},
 {"menu.command.select_with_extension",  @selector(OnQuickSelectByExtension:),   new SelectAllByExtension{true}},
 {"menu.command.deselect_with_mask",     @selector(OnDeselectByMask:),           new SelectAllByMask{false}},

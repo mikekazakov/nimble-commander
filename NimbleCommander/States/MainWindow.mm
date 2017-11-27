@@ -90,12 +90,14 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
     return false;
 }
 
+static const auto g_CloseWindowTitle =
+    NSLocalizedString(@"Close Window", "Menu item title");
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
     auto tag = item.tag;
     
     IF_MENU_TAG("menu.file.close") {
-        item.title = NSLocalizedString(@"Close Window", "Menu item title");
+        item.title = g_CloseWindowTitle;
         return true;
     }
     IF_MENU_TAG("menu.file.close_window") {

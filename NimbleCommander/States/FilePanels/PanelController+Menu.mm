@@ -33,6 +33,7 @@
 #include "Actions/Link.h"
 #include "Actions/ViewFile.h"
 #include "Actions/RefreshPanel.h"
+#include "Actions/ShowQuickLook.h"
 #include "PanelView.h"
 #include <NimbleCommander/Core/Alert.h>
 
@@ -40,6 +41,7 @@ using namespace nc::core;
 using namespace nc::panel;
 namespace nc::panel {
 static const nc::panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
+static const nc::panel::actions::PanelAction *ActionBySel(SEL _sel) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
 }
 
@@ -51,7 +53,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         const auto tag = (int)item.tag;
         if( const auto action = ActionByTag(tag) )
             return action->ValidateMenuItem(self, item);
-        IF_MENU_TAG("menu.command.quick_look")              return self.view.item && !self.state.anyPanelCollapsed;
         IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
         return true;
     }
@@ -60,6 +61,23 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     }
     catch(...) {
         cerr << "validateMenuItem has caught an unknown exception!" << endl;
+    }
+    return false;
+}
+
+- (bool) validateActionBySelector:(SEL)_selector
+{
+    if( const auto action = ActionBySel(_selector) ) {
+        try {
+            return action->Predicate(self);
+        }
+        catch(exception &e) {
+            cerr << "validateActionBySelector has caught an exception: " << e.what() << endl;
+        }
+        catch(...) {
+            cerr << "validateActionBySelector has caught an unknown exception!" << endl;
+        }
+        return false;
     }
     return false;
 }
@@ -156,6 +174,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 - (IBAction)OnCreateSymbolicLinkCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnEditSymbolicLinkCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnCreateHardLinkCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnFileViewCommand:(id)sender { Perform(_cmd, self, sender); }
 
 @end
 
@@ -232,6 +251,7 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.go.quick_lists.volumes",         @selector(OnGoToQuickListsVolumes:),    new ShowVolumesQuickList},
 {"menu.go.quick_lists.connections",     @selector(OnGoToQuickListsConnections:),new ShowConnectionsQuickList},
 {"",                                    @selector(OnGoToFavoriteLocation:),     new GoToFavoriteLocation},
+{"menu.command.quick_look",             @selector(OnFileViewCommand:),          new ShowQuickLook},    
 {"menu.command.internal_viewer",        @selector(OnFileInternalBigViewCommand:),new ViewFile},
 {"menu.command.select_with_mask",       @selector(OnSelectByMask:),             new SelectAllByMask{true}},
 {"menu.command.select_with_extension",  @selector(OnQuickSelectByExtension:),   new SelectAllByExtension{true}},
@@ -271,11 +291,11 @@ static const PanelAction *ActionByTag(int _tag) noexcept
             }
         return m;
     }();
-    const auto v = actions.find(_tag);
-    return v == end(actions) ? nullptr : v->second;
+    const auto action = actions.find(_tag);
+    return action == end(actions) ? nullptr : action->second;
 }
-
-static void Perform(SEL _sel, PanelController *_target, id _sender)
+    
+static const PanelAction *ActionBySel(SEL _sel) noexcept
 {
     static const auto actions = []{
         unordered_map<SEL, const PanelAction*> m;
@@ -283,10 +303,15 @@ static void Perform(SEL _sel, PanelController *_target, id _sender)
             m.emplace( get<1>(a), get<2>(a) );
         return m;
     }();
+    const auto action = actions.find(_sel);
+    return action == end(actions) ? nullptr : action->second;
+}
 
-    if( const auto action = actions.find(_sel); action != end(actions)  ) {
+static void Perform(SEL _sel, PanelController *_target, id _sender)
+{
+    if( const auto action = ActionBySel(_sel) ) {
         try {
-            action->second->Perform(_target, _sender);
+            action->Perform(_target, _sender);
         }
         catch( exception &e ) {
             ShowExceptionAlert(e);

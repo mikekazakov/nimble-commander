@@ -4,6 +4,9 @@
 
 @interface PanelController (Menu)
 
+- (bool) validateActionBySelector:(SEL)_selector;
+
+- (IBAction)OnFileViewCommand:(id)sender;
 - (IBAction)OnGoToSavedConnectionItem:(id)sender;
 - (IBAction)OnGoToFavoriteLocation:(id)sender;
 

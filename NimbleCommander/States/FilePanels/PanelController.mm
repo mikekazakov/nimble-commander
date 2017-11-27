@@ -549,7 +549,10 @@ static bool RouteKeyboardInputIntoTerminal()
 
         if( !terminal_can_eat ) {
             if( hk_preview.IsKeyDown(unicode, modif) ) {
-                [self OnFileViewCommand:self];
+                if( [self validateActionBySelector:@selector(OnFileViewCommand:)] )
+                    [self OnFileViewCommand:self];
+                else
+                    NSBeep();
                 return true;
             }
             if( hk_go_home.IsKeyDown(unicode, modif) ) {
@@ -712,7 +715,11 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (void) onCursorChanged
 {
-    // update QuickLook if any
+    [self updatedAttachedQuickLook];
+}
+
+- (void)updatedAttachedQuickLook
+{
     if( auto ql = self.quickLook )
         if( auto i = self.view.item )
             [ql PreviewItem:i.Path() vfs:i.Host()];
@@ -1249,18 +1256,6 @@ loadPreviousState:(bool)_load_state
     m_BriefSystemOverview = [self.state RequestBriefSystemOverview:self];
     if( m_BriefSystemOverview )
         [self UpdateBriefSystemOverview];
-}
-
-- (IBAction)OnFileViewCommand:(id)sender
-{
-    // Close quick preview, if it is open.
-    if( self.quickLook ) {
-        [self.state CloseOverlay:self];
-    }
-    else {
-        if( [self.state quickLookForPanel:self make:true] )
-            [self onCursorChanged];
-    }
 }
 
 - (QuickLookView *)quickLook

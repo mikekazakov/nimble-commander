@@ -4,16 +4,17 @@
 @class MainWindowController;
 @class MyToolbar;
 
-@protocol MainWindowStateProtocol <NSObject>
-- (NSView*) windowContentView;
-- (NSToolbar*) toolbar;
+@protocol NCMainWindowState<NSObject>
+
+@required
+- (NSView*) windowStateContentView;
+- (NSToolbar*) windowStateToolbar;
 
 @optional
-- (void)Assigned;
-- (void)Resigned;
-- (void)didBecomeKeyWindow;
-- (void)WindowDidResize;
+- (void)windowStateDidBecomeAssigned;
+- (void)windowStateDidResign;
 - (void)WindowWillClose;
 - (bool)WindowShouldClose:(MainWindowController*)sender;
-- (bool)needsWindowTitle;
+- (bool)windowStateNeedsTitle;
+
 @end

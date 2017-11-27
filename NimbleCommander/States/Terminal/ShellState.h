@@ -7,7 +7,7 @@ namespace nc::term {
     class ShellTask;
 }
 
-@interface NCTermShellState : NSView<MainWindowStateProtocol>
+@interface NCTermShellState : NSView<NCMainWindowState>
 
 @property (nonatomic, readonly) bool isAnythingRunning;
 

@@ -379,7 +379,7 @@ static bool RerouteGoToEventToLeftToolbarButton( MainWindowFilePanelState *_targ
     if( objc_cast<NSButton>(_sender) )
         return false;
     
-    const auto toolbar = _target.toolbar;
+    const auto toolbar = _target.windowStateToolbar;
     const auto delegate = objc_cast<MainWindowFilePanelsStateToolbarDelegate>(toolbar.delegate);
     if( !delegate )
         return false;
@@ -415,7 +415,7 @@ static bool RerouteGoToEventToRightToolbarButton( MainWindowFilePanelState *_tar
     if( objc_cast<NSButton>(_sender) )
         return false;
     
-    const auto toolbar = _target.toolbar;
+    const auto toolbar = _target.windowStateToolbar;
     const auto delegate = objc_cast<MainWindowFilePanelsStateToolbarDelegate>(toolbar.delegate);
     if( !delegate )
         return false;

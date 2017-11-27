@@ -22,7 +22,7 @@ namespace nc::ops {
 // Window state manipulations
 - (void)ResignAsWindowState:(id)_state;
 
-- (void)RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host;
+- (void)requestViewerFor:(string)_filepath at:(shared_ptr<VFSHost>) _host;
 
 - (void)requestTerminal:(const string&)_cwd;
 - (void)requestTerminalExecution:(const char*)_filename
@@ -44,7 +44,7 @@ namespace nc::ops {
 // Access to states
 @property (nonatomic, readonly) MainWindowFilePanelState*   filePanelsState;  // one and only one per window
 @property (nonatomic, readonly) NCTermShellState*           terminalState;    // zero or one per window
-@property (nonatomic, readonly) id<MainWindowStateProtocol> topmostState;
+@property (nonatomic, readonly) id<NCMainWindowState>       topmostState;
 @property (nonatomic, readonly) nc::ops::Pool&              operationsPool;
 
 

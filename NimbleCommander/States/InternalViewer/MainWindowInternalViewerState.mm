@@ -71,17 +71,17 @@
     
 }
 
-- (NSView*) windowContentView
+- (NSView*)windowStateContentView
 {
     return self.view;
 }
 
-- (NSToolbar*) toolbar
+- (NSToolbar*)windowStateToolbar
 {
     return self.internalViewerToolbar;
 }
 
-- (bool) needsWindowTitle
+- (bool)windowStateNeedsTitle
 {
     return true;
 }
@@ -93,7 +93,7 @@
 //    return [m_Controller performSyncOpening];
 }
 
-- (void) Assigned
+- (void)windowStateDidBecomeAssigned
 {
     const auto v = self.view;
     m_TopLayoutConstraint = [NSLayoutConstraint constraintWithItem:self.embeddedFileView
@@ -117,7 +117,7 @@
     GA().PostScreenView("File Viewer State");
 }
 
-- (void) Resigned
+- (void)windowStateDidResign
 {
     m_TopLayoutConstraint.active = false;
     self.view.window.nextResponder = m_Controller.nextResponder;

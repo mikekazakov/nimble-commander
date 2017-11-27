@@ -144,6 +144,9 @@ static bool GoToForcesPanelActivation()
     return force;
 }
 
+static NSString *TrimmedTitleForWindow( NSString *_title, NSWindow *_window );
+static NSString *TitleForData( const data::Model* _data );
+
 @implementation MainWindowFilePanelState
 
 @synthesize splitView = m_MainSplitView;
@@ -218,11 +221,30 @@ static bool GoToForcesPanelActivation()
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (BOOL)acceptsFirstResponder { return true; }
-- (NSToolbar*)toolbar { return m_ToolbarDelegate.toolbar; }
-- (NSView*) windowContentView { return self; }
-- (BOOL) isOpaque { return true; }
-- (BOOL) wantsUpdateLayer { return true; }
+- (BOOL)acceptsFirstResponder
+{
+    return true;
+}
+
+- (NSToolbar*)windowStateToolbar
+{
+    return m_ToolbarDelegate.toolbar;
+}
+
+- (NSView*) windowStateContentView
+{
+    return self;
+}
+
+- (BOOL) isOpaque
+{
+    return true;
+}
+
+- (BOOL) wantsUpdateLayer
+{
+    return true;
+}
 
 - (void) updateLayer
 {
@@ -331,7 +353,7 @@ static bool GoToForcesPanelActivation()
         SetupUnregisteredLabel( m_ToolbarDelegate.operationsPoolViewController.idleView );
 }
 
-- (void) Assigned
+- (void) windowStateDidBecomeAssigned
 {
     NSLayoutConstraint *c = [NSLayoutConstraint constraintWithItem:m_SeparatorLine
                                                          attribute:NSLayoutAttributeTop
@@ -353,7 +375,7 @@ static bool GoToForcesPanelActivation()
         [self.window makeFirstResponder:m_MainSplitView.leftTabbedHolder.current];
     }
     
-    [self UpdateTitle];
+    [self updateTitle];
     
     [m_ToolbarDelegate notifyStateWasAssigned];
     
@@ -361,7 +383,7 @@ static bool GoToForcesPanelActivation()
     GA().PostScreenView("File Panels State");
 }
 
-- (void) Resigned
+- (void) windowStateDidResign
 {
 }
 
@@ -495,42 +517,16 @@ static bool GoToForcesPanelActivation()
 
 - (void)activePanelChangedTo:(PanelController *)controller
 {
-    [self UpdateTitle];
+    [self updateTitle];
     [self updateTabBarButtons];
     m_LastFocusedPanelController = controller;
     [self synchronizeOverlappedTerminalWithPanel:controller];
     [self markRestorableStateAsInvalid];
 }
 
-- (void) UpdateTitle
+- (void)updateTitle
 {
-    auto data = self.activePanelData;
-    if(!data) {
-        self.window.title = @"";
-        return;
-    }
-    string path_raw = data->VerboseDirectoryFullPath();
-    
-    NSString *path = [NSString stringWithUTF8String:path_raw.c_str()];
-    if(path == nil)
-    {
-        self.window.title = @"...";
-        return;
-    }
-    
-    // find window geometry
-    NSWindow* window = [self window];
-    auto leftEdge = NSMaxX([window standardWindowButton:NSWindowZoomButton].frame);
-    NSButton* fsbutton = [window standardWindowButton:NSWindowFullScreenButton];
-    auto rightEdge = fsbutton ? fsbutton.frame.origin.x : NSMaxX(window.frame);
-         
-    // Leave 8 pixels of padding around the title.
-    const int kTitlePadding = 8;
-    const auto titleWidth = rightEdge - leftEdge - 2 * kTitlePadding;
-         
-    // Sending |titleBarFontOfSize| 0 returns default size
-    const auto attributes = @{NSFontAttributeName: [NSFont titleBarFontOfSize:0]};
-    window.title = StringByTruncatingToWidth(path, (float)titleWidth, kTruncateAtStart, attributes);
+    self.window.title = TrimmedTitleForWindow(TitleForData(self.activePanelData), self.window);
 }
 
 static rapidjson::StandaloneValue EncodePanelsStates(
@@ -705,7 +701,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         return;
 
     if( _panel == self.activePanelController ) {
-        [self UpdateTitle];
+        [self updateTitle];
         [self synchronizeOverlappedTerminalWithPanel:_panel];
     }
     
@@ -718,9 +714,24 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     }
 }
 
-- (void)WindowDidResize
+- (void)viewDidMoveToWindow
 {
-    [self UpdateTitle];
+    if( self.window ) {
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(windowDidResize)
+                                                   name:NSWindowDidResizeNotification
+                                                 object:self.window];
+    }
+    else {
+        [NSNotificationCenter.defaultCenter removeObserver:self
+                                                      name:NSWindowDidResizeNotification
+                                                    object:nil];
+    }
+}
+
+- (void)windowDidResize
+{
+    [self updateTitle];
 }
 
 - (void)WindowWillClose
@@ -923,3 +934,26 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 }
 
 @end
+
+static NSString *TrimmedTitleForWindow( NSString *_title, NSWindow *_window )
+{
+    static const auto attributes = @{NSFontAttributeName: [NSFont titleBarFontOfSize:0]};
+    
+    const auto left = NSMaxX([_window standardWindowButton:NSWindowZoomButton].frame);
+    const auto right = _window.frame.size.width;
+    const auto padding = 8.;
+    const auto width = right - left - 2 * padding;
+    return StringByTruncatingToWidth(_title, (float)width, kTruncateAtStart, attributes);
+}
+
+static NSString *TitleForData( const data::Model* _data )
+{
+    if( !_data )
+        return @"";
+    
+    const auto path = [NSString stringWithUTF8StdString:_data->VerboseDirectoryFullPath()];
+    if( !path )
+        return @"...";
+    
+    return path;
+}

@@ -43,7 +43,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 @implementation MainWindowController
 {
-    vector<NSObject<MainWindowStateProtocol> *> m_WindowState; // .back is current state
+    vector<NSObject<NCMainWindowState> *> m_WindowState; // .back is current state
     MainWindowFilePanelState    *m_PanelState;
     NCTermShellState     *m_Terminal;
     MainWindowInternalViewerState *m_Viewer;
@@ -271,7 +271,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (bool)currentStateNeedWindowTitle
 {
     auto state = self.topmostState;
-    if(state && [state respondsToSelector:@selector(needsWindowTitle)] && [state needsWindowTitle])
+    if(state && [state respondsToSelector:@selector(windowStateNeedsTitle)] && [state windowStateNeedsTitle])
         return true;
     return false;
 }
@@ -293,13 +293,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     m_ToolbarVisible = _toolbar_visible;
 }
 
-- (void)windowDidResize:(NSNotification *)notification
-{
-    for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(WindowDidResize)])
-            [i WindowDidResize];
-}
-
 - (void)windowWillClose:(NSNotification *)notification
 {
     // the are the last main window - need to save current state as "default" in state config
@@ -318,8 +311,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     
     while(!m_WindowState.empty())
     {
-        if([m_WindowState.back() respondsToSelector:@selector(Resigned)])
-            [m_WindowState.back() Resigned];
+        if([m_WindowState.back() respondsToSelector:@selector(windowStateDidResign)])
+            [m_WindowState.back() windowStateDidResign];
         
         m_WindowState.pop_back();
     }
@@ -346,9 +339,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (void)didBecomeKeyWindow
 {
     g_LastFocusedMainWindowController = self;
-    for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(didBecomeKeyWindow)])
-            [i didBecomeKeyWindow];
 }
 
 - (IBAction)OnShowToolbar:(id)sender
@@ -371,15 +361,15 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
     bool is_terminal_resigning = self.topmostState == m_Terminal;
     
-    if([self.topmostState respondsToSelector:@selector(Resigned)])
-        [self.topmostState Resigned];
+    if([self.topmostState respondsToSelector:@selector(windowStateDidResign)])
+        [self.topmostState windowStateDidResign];
     m_WindowState.pop_back();
     
-    self.window.contentView = self.topmostState.windowContentView;
+    self.window.contentView = self.topmostState.windowStateContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
-    if([self.topmostState respondsToSelector:@selector(Assigned)])
-        [self.topmostState Assigned];
+    if([self.topmostState respondsToSelector:@selector(windowStateDidBecomeAssigned)])
+        [self.topmostState windowStateDidBecomeAssigned];
     
     // here we need to synchonize cwd in terminal and cwd in active file panel
     if(self.topmostState == m_PanelState && is_terminal_resigning && m_PanelState.isPanelActive) {
@@ -394,28 +384,28 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         }
     }
 
-    [self updateTitleAndToolbarVisibilityWith:self.topmostState.toolbar
+    [self updateTitleAndToolbarVisibilityWith:self.topmostState.windowStateToolbar
                                toolbarVisible:self.toolbarVisible
                                    needsTitle:self.currentStateNeedWindowTitle];
 }
 
-- (void) pushState:(NSObject<MainWindowStateProtocol> *)_state
+- (void) pushState:(NSObject<NCMainWindowState> *)_state
 {
     dispatch_assert_main_queue();
     m_WindowState.push_back(_state);
     
-    [self updateTitleAndToolbarVisibilityWith:self.topmostState.toolbar
+    [self updateTitleAndToolbarVisibilityWith:self.topmostState.windowStateToolbar
                                toolbarVisible:self.toolbarVisible
                                    needsTitle:self.currentStateNeedWindowTitle];
     
-    self.window.contentView = self.topmostState.windowContentView;
+    self.window.contentView = self.topmostState.windowStateContentView;
     [self.window makeFirstResponder:self.window.contentView];
     
-    if([self.topmostState respondsToSelector:@selector(Assigned)])
-        [self.topmostState Assigned];    
+    if([self.topmostState respondsToSelector:@selector(windowStateDidBecomeAssigned)])
+        [self.topmostState windowStateDidBecomeAssigned];    
 }
 
-- (void) RequestBigFileView:(string)_filepath with_fs:(shared_ptr<VFSHost>) _host
+- (void)requestViewerFor:(string)_filepath at:(shared_ptr<VFSHost>) _host
 {
     dispatch_assert_main_queue();
     
@@ -524,7 +514,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     [self pushState:state];
 }
 
-- (id<MainWindowStateProtocol>) topmostState
+- (id<NCMainWindowState>) topmostState
 {
     return m_WindowState.empty() ? nil : m_WindowState.back();
 }

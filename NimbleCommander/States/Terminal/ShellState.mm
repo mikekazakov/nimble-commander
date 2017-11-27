@@ -100,12 +100,12 @@ static const auto g_CustomPath = "terminal.customShellPath";
     NSRectFill(dirtyRect);
 }
 
-- (NSView*) windowContentView
+- (NSView*) windowStateContentView
 {
     return self;
 }
 
-- (NSToolbar*) toolbar
+- (NSToolbar*) windowStateToolbar
 {
     return nil;
 }
@@ -127,7 +127,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
         m_InitalWD = _wd;
 }
 
-- (void) Assigned
+- (void) windowStateDidBecomeAssigned
 {
     m_TopLayoutConstraint = [NSLayoutConstraint constraintWithItem:m_TermScrollView
                                                          attribute:NSLayoutAttributeTop
@@ -178,7 +178,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     GA().PostScreenView("Terminal State");
 }
 
-- (void)Resigned
+- (void)windowStateDidResign
 {
     m_TopLayoutConstraint.active = false;
 }

@@ -94,17 +94,17 @@ using namespace nc::term;
     return self;
 }
 
-- (NSView*) windowContentView
+- (NSView*) windowStateContentView
 {
     return self;
 }
 
-- (NSToolbar*)toolbar
+- (NSToolbar*)windowStateToolbar
 {
     return nil;
 }
 
-- (void) Assigned
+- (void) windowStateDidBecomeAssigned
 {
     m_TopLayoutConstraint = [NSLayoutConstraint constraintWithItem:m_TermScrollView
                                                          attribute:NSLayoutAttributeTop
@@ -125,7 +125,7 @@ using namespace nc::term;
     [self updateTitle];
 }
 
-- (void)Resigned
+- (void)windowStateDidResign
 {
     m_TopLayoutConstraint.active = false;
 }

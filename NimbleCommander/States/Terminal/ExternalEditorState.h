@@ -3,7 +3,7 @@
 
 #include <NimbleCommander/States/MainWindowStateProtocol.h>
 
-@interface NCTermExternalEditorState : NSView<MainWindowStateProtocol>
+@interface NCTermExternalEditorState : NSView<NCMainWindowState>
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
                       binary:(const path&)_binary_path

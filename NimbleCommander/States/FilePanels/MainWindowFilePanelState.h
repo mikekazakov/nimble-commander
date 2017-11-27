@@ -27,7 +27,7 @@ class ExternalToolsStorage;
 
 struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
-@interface MainWindowFilePanelState : NSView<MainWindowStateProtocol, MMTabBarViewDelegate>
+@interface MainWindowFilePanelState : NSView<NCMainWindowState, MMTabBarViewDelegate>
 {
     vector<PanelController*> m_LeftPanelControllers;
     vector<PanelController*> m_RightPanelControllers;

@@ -26,9 +26,9 @@ void ViewFile::Perform( PanelController *_target, id _sender ) const
     
     if( item.IsDir() )
         return;
-    
-    [_target.mainWindowController RequestBigFileView:item.Path()
-                                             with_fs:item.Host()];
+
+    [_target.mainWindowController requestViewerFor:item.Path()
+                                                at:item.Host()];
 }
     
 }

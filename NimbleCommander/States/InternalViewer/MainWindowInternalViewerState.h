@@ -6,7 +6,7 @@
 #include "../../Viewer/BigFileView.h"
 #include "../../Viewer/InternalViewerToolbarProtocol.h"
 
-@interface MainWindowInternalViewerState : NSViewController<MainWindowStateProtocol>
+@interface MainWindowInternalViewerState : NSViewController<NCMainWindowState>
 
 - (bool)openFile:(const string&)_path atVFS:(const VFSHostPtr&)_host;
 

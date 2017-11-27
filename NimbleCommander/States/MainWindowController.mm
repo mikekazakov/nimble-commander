@@ -303,8 +303,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     }
     
     for(auto i: m_WindowState)
-        if([i respondsToSelector:@selector(WindowWillClose)])
-            [i WindowWillClose];
+        if([i respondsToSelector:@selector(windowStateWillClose)])
+            [i windowStateWillClose];
 
     self.window.contentView = nil;
     [self.window makeFirstResponder:nil];
@@ -325,12 +325,12 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (BOOL)windowShouldClose:(id)sender
 {
     for( auto i = m_WindowState.rbegin(), e = m_WindowState.rend(); i != e; ++i )
-        if( [*i respondsToSelector:@selector(WindowShouldClose:)] )
-            if( ![*i WindowShouldClose:self] )
+        if( [*i respondsToSelector:@selector(windowStateShouldClose:)] )
+            if( ![*i windowStateShouldClose:self] )
                 return false;
     
     if( m_Terminal != nil )
-        if( ![m_Terminal WindowShouldClose:self] )
+        if( ![m_Terminal windowStateShouldClose:self] )
             return false;
     
     return true;

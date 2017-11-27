@@ -218,10 +218,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
     m_Task->ExecuteWithFullPath(_path, _params);
 }
 
-- (bool)WindowShouldClose:(MainWindowController*)sender
-{
-//    NSLog(@"1! %ld", CFGetRetainCount((__bridge CFTypeRef)self));
-    
+- (bool)windowStateShouldClose:(MainWindowController*)sender
+{    
     if(m_Task->State() == ShellTask::TaskState::Dead ||
        m_Task->State() == ShellTask::TaskState::Inactive ||
        m_Task->State() == ShellTask::TaskState::Shell)

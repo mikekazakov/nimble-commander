@@ -145,7 +145,7 @@ using namespace nc::term;
     });
 }
 
-- (bool)WindowShouldClose:(MainWindowController*)sender
+- (bool)windowStateShouldClose:(MainWindowController*)sender
 {
     return false;
 }

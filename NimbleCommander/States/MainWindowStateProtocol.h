@@ -2,7 +2,6 @@
 #pragma once
 
 @class MainWindowController;
-@class MyToolbar;
 
 @protocol NCMainWindowState<NSObject>
 
@@ -13,8 +12,8 @@
 @optional
 - (void)windowStateDidBecomeAssigned;
 - (void)windowStateDidResign;
-- (void)WindowWillClose;
-- (bool)WindowShouldClose:(MainWindowController*)sender;
+- (void)windowStateWillClose;
+- (bool)windowStateShouldClose:(MainWindowController*)sender;
 - (bool)windowStateNeedsTitle;
 
 @end

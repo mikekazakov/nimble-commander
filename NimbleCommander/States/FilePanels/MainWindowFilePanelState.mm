@@ -734,12 +734,12 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     [self updateTitle];
 }
 
-- (void)WindowWillClose
+- (void)windowStateWillClose
 {
     [self saveOverlappedTerminalSettings];
 }
 
-- (bool)WindowShouldClose:(MainWindowController*)sender
+- (bool)windowStateShouldClose:(MainWindowController*)sender
 {
     if( self.operationsPool.Empty() && !self.isAnythingRunningInOverlappedTerminal )
         return true;

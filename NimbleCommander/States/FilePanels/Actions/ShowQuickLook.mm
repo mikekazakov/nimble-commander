@@ -25,7 +25,7 @@ void ShowQuickLook::Perform( PanelController *_target, id _sender ) const
     }
     else {
         if( [state quickLookForPanel:_target make:true] )
-            [_target updatedAttachedQuickLook];
+            [_target updateAttachedQuickLook];
     }
 }
     

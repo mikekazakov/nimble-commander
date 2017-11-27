@@ -229,9 +229,6 @@ static void HeatUpConfigValues()
     uint64_t            m_NextActivityTicket;
     vector<uint64_t>    m_ActivitiesTickets;
     spinlock            m_ActivitiesTicketsLock;
-        
-    // BriefSystemOverview support
-    __weak BriefSystemOverview* m_BriefSystemOverview;
     
     // delayed entry selection support
     struct
@@ -534,7 +531,6 @@ static bool RouteKeyboardInputIntoTerminal()
         if( keycode == 53 ) { // Esc button
             [self CancelBackgroundOperations];
             [self.state CloseOverlay:self];
-            m_BriefSystemOverview = nil;
             [self clearQuickSearchFiltering];
             return true;
         }
@@ -699,7 +695,7 @@ static bool RouteKeyboardInputIntoTerminal()
     [self clearQuickSearchFiltering];
     [self.state PanelPathChanged:self];
     [self onCursorChanged];
-    [self UpdateBriefSystemOverview];
+    [self updateAttachedBriefSystemOverview];
 
     if( self.isUniform )
         m_History.Put( self.vfs, self.currentDirectoryPath );
@@ -715,19 +711,19 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (void) onCursorChanged
 {
-    [self updatedAttachedQuickLook];
+    [self updateAttachedQuickLook];
 }
 
-- (void)updatedAttachedQuickLook
+- (void)updateAttachedQuickLook
 {
     if( auto ql = self.quickLook )
         if( auto i = self.view.item )
             [ql PreviewItem:i.Path() vfs:i.Host()];
 }
 
-- (void) UpdateBriefSystemOverview
+- (void)updateAttachedBriefSystemOverview
 {
-    if( auto bso = (BriefSystemOverview *)m_BriefSystemOverview ) {
+    if( const auto bso = self.briefSystemOverview ) {
         if( auto i = self.view.item )
             [bso UpdateVFSTarget:i.Directory() host:i.Host()];
         else if( self.isUniform )
@@ -824,7 +820,8 @@ static bool RouteKeyboardInputIntoTerminal()
 - (void) panelViewDidBecomeFirstResponder
 {
     [self.state activePanelChangedTo:self];
-//    [self ModifierFlagsChanged:[NSEvent modifierFlags]];
+    [self updateAttachedQuickLook];
+    [self updateAttachedBriefSystemOverview];
 }
 
 + (bool) ensureCanGoToNativeFolderSync:(const string&)_path
@@ -1245,17 +1242,9 @@ loadPreviousState:(bool)_load_state
     m_DelayedSelection.done = nullptr;
 }
 
-- (IBAction)OnBriefSystemOverviewCommand:(id)sender
+- (BriefSystemOverview*) briefSystemOverview
 {
-    if( m_BriefSystemOverview ) {
-        [self.state CloseOverlay:self];
-        m_BriefSystemOverview = nil;
-        return;
-    }
-    
-    m_BriefSystemOverview = [self.state RequestBriefSystemOverview:self];
-    if( m_BriefSystemOverview )
-        [self UpdateBriefSystemOverview];
+    return [self.state briefSystemOverviewForPanel:self make:false];
 }
 
 - (QuickLookView *)quickLook

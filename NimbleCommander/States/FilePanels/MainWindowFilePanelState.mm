@@ -802,21 +802,23 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return r;
 }
 
-- (QuickLookView*)quickLookForPanel:(PanelController*)_panel make:(bool)_make_if_absent
+- (QuickLookView*)quickLookForPanel:(PanelController*)_panel
+                               make:(bool)_make_if_absent
 {
-    if( !_make_if_absent ) {
-        if( [self isLeftController:_panel] )
-            return objc_cast<QuickLookView>(m_SplitView.rightOverlay);
-        if( [self isRightController:_panel] )
-            return objc_cast<QuickLookView>(m_SplitView.leftOverlay);
-        return nil;
-    }
-    else {
+    if( [self isLeftController:_panel] )
+        if( const auto ql = objc_cast<QuickLookView>(m_SplitView.rightOverlay) )
+            return ql;
+    
+    if( [self isRightController:_panel] )
+        if( const auto ql = objc_cast<QuickLookView>(m_SplitView.leftOverlay)  )
+            return ql;
+    
+    if( _make_if_absent ) {
         if( m_SplitView.anyCollapsed )
             return nil;
         
         const auto rc = NSMakeRect(0, 0, 100, 100);
-        QuickLookView *view = [[QuickLookView alloc] initWithFrame:rc];
+        const auto view = [[QuickLookView alloc] initWithFrame:rc];
         
         if( [self isLeftController:_panel] )
             m_SplitView.rightOverlay = view;
@@ -827,21 +829,39 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 
         return view;
     }
+    
+    return nil;
 }
 
-- (BriefSystemOverview*)RequestBriefSystemOverview:(PanelController*)_panel
+- (BriefSystemOverview*)briefSystemOverviewForPanel:(PanelController*)_panel
+                                               make:(bool)_make_if_absent
 {
-    if( m_SplitView.anyCollapsed )
-        return nil;
+    if( [self isLeftController:_panel] )
+        if( const auto bso = objc_cast<BriefSystemOverview>(m_SplitView.rightOverlay) )
+            return bso;
+    
+    if( [self isRightController:_panel] )
+        if( const auto bso = objc_cast<BriefSystemOverview>(m_SplitView.leftOverlay)  )
+            return bso;
+    
+    if( _make_if_absent ) {
+        if( m_SplitView.anyCollapsed )
+            return nil;
         
-    BriefSystemOverview *view = [[BriefSystemOverview alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
-    if([self isLeftController:_panel])
-        m_SplitView.rightOverlay = view;
-    else if([self isRightController:_panel])
-        m_SplitView.leftOverlay = view;
-    else
-        return nil;
-    return view;
+        const auto rc = NSMakeRect(0, 0, 100, 100);
+        const auto view = [[BriefSystemOverview alloc] initWithFrame:rc];
+
+        if( [self isLeftController:_panel] )
+            m_SplitView.rightOverlay = view;
+        else if( [self isRightController:_panel] )
+            m_SplitView.leftOverlay = view;
+        else
+            return nil;
+        
+        return view;
+    }
+    
+    return nil;
 }
 
 - (void)CloseOverlay:(PanelController*)_panel

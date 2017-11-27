@@ -195,16 +195,14 @@ loadPreviousState:(bool)_load_state
 
 - (void) requestQuickRenamingOfItem:(VFSListingItem)_item to:(const string&)_new_filename;
 
-- (void)updatedAttachedQuickLook;
-
+- (void)updateAttachedQuickLook;
+- (void)updateAttachedBriefSystemOverview;
 @end
 
 // internal stuff, move it somewehere else
 @interface PanelController ()
-- (IBAction)OnBriefSystemOverviewCommand:(id)sender;
 - (void) finishExtActivityWithTicket:(uint64_t)_ticket;
 - (void) CancelBackgroundOperations;
-- (void) UpdateBriefSystemOverview;
 - (void) contextMenuDidClose:(NSMenu*)_menu;
 @end
 

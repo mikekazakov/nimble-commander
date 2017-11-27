@@ -304,6 +304,10 @@
 		CF5E9A541FCBF5BD005608F5 /* ShowQuickLook.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A521FCBF57A005608F5 /* ShowQuickLook.mm */; };
 		CF5E9A551FCBF5BE005608F5 /* ShowQuickLook.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A521FCBF57A005608F5 /* ShowQuickLook.mm */; };
 		CF5E9A561FCBF5BF005608F5 /* ShowQuickLook.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A521FCBF57A005608F5 /* ShowQuickLook.mm */; };
+		CF5E9A591FCBFE77005608F5 /* ShowSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */; };
+		CF5E9A5A1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */; };
+		CF5E9A5B1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */; };
+		CF5E9A5C1FCBFED9005608F5 /* ShowSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */; };
 		CF5FE7CB1E0CDEA600CD83B4 /* FilesDraggingSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */; };
 		CF5FE7D51E120A4900CD83B4 /* CopyFilePaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */; };
 		CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
@@ -1604,6 +1608,8 @@
 		CF5E9A4C1FCBDD37005608F5 /* RefreshPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RefreshPanel.mm; path = NimbleCommander/States/FilePanels/Actions/RefreshPanel.mm; sourceTree = SOURCE_ROOT; };
 		CF5E9A511FCBF57A005608F5 /* ShowQuickLook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShowQuickLook.h; path = NimbleCommander/States/FilePanels/Actions/ShowQuickLook.h; sourceTree = SOURCE_ROOT; };
 		CF5E9A521FCBF57A005608F5 /* ShowQuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowQuickLook.mm; path = NimbleCommander/States/FilePanels/Actions/ShowQuickLook.mm; sourceTree = SOURCE_ROOT; };
+		CF5E9A571FCBFE77005608F5 /* ShowSystemOverview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShowSystemOverview.h; path = NimbleCommander/States/FilePanels/Actions/ShowSystemOverview.h; sourceTree = SOURCE_ROOT; };
+		CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowSystemOverview.mm; path = NimbleCommander/States/FilePanels/Actions/ShowSystemOverview.mm; sourceTree = SOURCE_ROOT; };
 		CF5FD92D1FA2C02E00752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = NimbleCommander/Config/default.xcconfig; sourceTree = SOURCE_ROOT; wrapsLines = 1; };
 		CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilesDraggingSource.h; path = NimbleCommander/States/FilePanels/FilesDraggingSource.h; sourceTree = SOURCE_ROOT; };
 		CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilesDraggingSource.mm; path = NimbleCommander/States/FilePanels/FilesDraggingSource.mm; sourceTree = SOURCE_ROOT; };
@@ -2457,6 +2463,8 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
+				CF5E9A571FCBFE77005608F5 /* ShowSystemOverview.h */,
+				CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */,
 				CF5E9A511FCBF57A005608F5 /* ShowQuickLook.h */,
 				CF5E9A521FCBF57A005608F5 /* ShowQuickLook.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
@@ -3834,6 +3842,7 @@
 				CFD726D21E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CFD726FD1E42E2F400603077 /* TabBarStyle.mm in Sources */,
 				CF876D401D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
+				CF5E9A5C1FCBFED9005608F5 /* ShowSystemOverview.mm in Sources */,
 				CF4E56EF1D5072E500452912 /* FileMask.cpp in Sources */,
 				CFD726441E42E10700603077 /* rapidjson.cpp in Sources */,
 				CFD726D81E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */,
@@ -4008,6 +4017,7 @@
 				CF4E56B91D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CF5E9A531FCBF57A005608F5 /* ShowQuickLook.mm in Sources */,
 				CFFA951E1F45A3580035E606 /* Link.mm in Sources */,
+				CF5E9A591FCBFE77005608F5 /* ShowSystemOverview.mm in Sources */,
 				CFD8CDC51E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
 				CFD726371E42E0D500603077 /* FileWindow.cpp in Sources */,
 				CFD7260F1E42E07A00603077 /* main.cpp in Sources */,
@@ -4224,6 +4234,7 @@
 				CF4E56401D5064FE00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CF5E9A561FCBF5BF005608F5 /* ShowQuickLook.mm in Sources */,
 				CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */,
+				CF5E9A5B1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */,
 				CF56C2B81DC1934D00F0DF0F /* PanelListViewNameView.mm in Sources */,
 				CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */,
 				CF04DDDD1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm in Sources */,
@@ -4542,6 +4553,7 @@
 				CFD726261E42E0B900603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
 				CF818B631EA0610E00BC28E6 /* MakeNew.mm in Sources */,
+				CF5E9A5A1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */,
 				CFD726611E42E1DB00603077 /* ExternalEditorInfo.mm in Sources */,
 				CFD7263D1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
 				CFBA63AE1FC1A4F900077682 /* CopyFile.mm in Sources */,

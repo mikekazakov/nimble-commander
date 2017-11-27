@@ -1,7 +1,7 @@
 // Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
+#include <NimbleCommander/Core/Alert.h>
 #include "PanelController+Menu.h"
-#include "MainWindowFilePanelState.h"
 #include "Actions/CopyFilePaths.h"
 #include "Actions/AddToFavorites.h"
 #include "Actions/GoToFolder.h"
@@ -34,8 +34,7 @@
 #include "Actions/ViewFile.h"
 #include "Actions/RefreshPanel.h"
 #include "Actions/ShowQuickLook.h"
-#include "PanelView.h"
-#include <NimbleCommander/Core/Alert.h>
+#include "Actions/ShowSystemOverview.h"
 
 using namespace nc::core;
 using namespace nc::panel;
@@ -53,7 +52,6 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         const auto tag = (int)item.tag;
         if( const auto action = ActionByTag(tag) )
             return action->ValidateMenuItem(self, item);
-        IF_MENU_TAG("menu.command.system_overview")         return !self.state.anyPanelCollapsed;
         return true;
     }
     catch(exception &e) {
@@ -82,6 +80,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     return false;
 }
 
+- (IBAction)OnBriefSystemOverviewCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnRefreshPanel:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnFileInternalBigViewCommand:(id)sender { Perform(_cmd, self, sender); }
 - (IBAction)OnOpen:(id)sender { Perform(_cmd, self, sender); }
@@ -251,7 +250,8 @@ static const tuple<const char*, SEL, const PanelAction *> g_Wiring[] = {
 {"menu.go.quick_lists.volumes",         @selector(OnGoToQuickListsVolumes:),    new ShowVolumesQuickList},
 {"menu.go.quick_lists.connections",     @selector(OnGoToQuickListsConnections:),new ShowConnectionsQuickList},
 {"",                                    @selector(OnGoToFavoriteLocation:),     new GoToFavoriteLocation},
-{"menu.command.quick_look",             @selector(OnFileViewCommand:),          new ShowQuickLook},    
+{"menu.command.quick_look",             @selector(OnFileViewCommand:),          new ShowQuickLook},
+{"menu.command.system_overview",        @selector(OnBriefSystemOverviewCommand:),new ShowSystemOverview},
 {"menu.command.internal_viewer",        @selector(OnFileInternalBigViewCommand:),new ViewFile},
 {"menu.command.select_with_mask",       @selector(OnSelectByMask:),             new SelectAllByMask{true}},
 {"menu.command.select_with_extension",  @selector(OnQuickSelectByExtension:),   new SelectAllByExtension{true}},

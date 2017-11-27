@@ -475,6 +475,9 @@ static NSTextField *CreateStockTF()
 
 - (void) UpdateVFSTarget:(const string&)_path host:(shared_ptr<VFSHost>)_host
 {
+    if( m_TargetVFSHost == _host && m_TargetVFSPath == _path )
+        return;
+    
     // TODO: need to prevent inefficient updates here when volume remains the same. (?)
     
     m_TargetVFSPath = _path;

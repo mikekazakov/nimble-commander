@@ -80,7 +80,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 
 - (QuickLookView*)quickLookForPanel:(PanelController*)_panel make:(bool)_make_if_absent;
-- (BriefSystemOverview*)RequestBriefSystemOverview:(PanelController*)_panel;
+- (BriefSystemOverview*)briefSystemOverviewForPanel:(PanelController*)_panel make:(bool)_make_if_absent;
+
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd;
 - (void)CloseOverlay:(PanelController*)_panel;
 

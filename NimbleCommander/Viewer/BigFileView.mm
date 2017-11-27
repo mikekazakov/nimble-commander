@@ -265,6 +265,8 @@ const static double g_BorderWidth = 1.0;
     });
     
     self.mode = _mode;
+    self.verticalPositionInBytes = 0;
+    self.selectionInFile = CFRangeMake(-1, 0);
     
     [self willChangeValueForKey:@"encoding"];
     [self didChangeValueForKey:@"encoding"];

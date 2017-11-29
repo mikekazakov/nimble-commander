@@ -114,7 +114,6 @@ static NCPanelQLPanelProxy *Proxy();
 
 @end
 
-
 @implementation NCPanelQLPanelProxy
 {
     NSURL *m_URL;

@@ -1,10 +1,9 @@
 // Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Quartz/Quartz.h>
 #include "QuickLookOverlay.h"
-#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include <Utility/SystemInformation.h>
+#include "QuickLookVFSBridge.h"
 
-static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
 static const nanoseconds g_Delay = 100ms;
 
 @interface NCPanelQLOverlayWrapper : QLPreviewView
@@ -15,9 +14,10 @@ static const nanoseconds g_Delay = 100ms;
 
 @implementation NCPanelQLOverlayWrapper
 {
-    string              m_OrigPath;
+    string              m_CurrentPath;
+    VFSHostWeakPtr      m_CurrentHost;
     atomic_bool         m_Closed;
-    atomic_ullong       m_CurrentPreviewTicket;
+    atomic_ullong       m_CurrentTicket;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
@@ -25,7 +25,7 @@ static const nanoseconds g_Delay = 100ms;
     self = [super initWithFrame:frameRect style:QLPreviewViewStyleNormal];
     if (self) {
         m_Closed = false;
-        m_CurrentPreviewTicket = 0;
+        m_CurrentTicket = 0;
         self.shouldCloseWithWindow = false;
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(frameDidChange)
@@ -59,87 +59,56 @@ static const nanoseconds g_Delay = 100ms;
         [self close];
 }
 
-- (void) doPreviewItemNative:(const string&)_path
-{
-    NSString *fn = [NSString stringWithUTF8StdString:_path];
-    if(!fn)
-        return;
-    
-    self.previewItem = [NSURL fileURLWithPath:fn];
-}
-
-- (void) doPreviewItemVFS:(const string&)_path vfs:(const VFSHostPtr&)_host ticket:(uint64_t)_ticket
-{
-    auto &tnfs = TemporaryNativeFileStorage::Instance();
-    bool dir = _host->IsDirectory(_path.c_str(), 0, 0);
-    
-    if( !dir ) {
-        VFSStat st;
-        if(_host->Stat(_path.c_str(), st, 0, 0) < 0) {
-            dispatch_to_main_queue( [=]{ self.previewItem = nil; });
-            return;
-        }
-        if(st.size > g_MaxFileSizeForVFSQL) {
-            dispatch_to_main_queue( [=]{ self.previewItem = nil; });
-            return;
-        }
-        
-        if( auto tmp = tnfs.CopySingleFile(_path, *_host) ) {
-            NSString *fn = [NSString stringWithUTF8StdString:*tmp];
-            if( !m_Closed && fn && _ticket == m_CurrentPreviewTicket )
-                dispatch_to_main_queue( [=]{
-                    if(!m_Closed)
-                        self.previewItem = [NSURL fileURLWithPath:fn];
-                });
-        }
-    }
-    else {
-        // basic check that directory looks like a bundle
-        if(!path(_path).has_extension() ||
-           path(_path).filename() == path(_path).extension() ) {
-            if(!m_Closed)
-                dispatch_to_main_queue( [=]{ self.previewItem = nil; });
-            return;
-        }
-        
-        string tmp;
-        if(!tnfs.CopyDirectory(_path, _host, g_MaxFileSizeForVFSQL, nullptr, tmp))
-            return;
-        NSString *fn = [NSString stringWithUTF8StdString:tmp];
-        if(!m_Closed && fn &&_ticket == m_CurrentPreviewTicket)
-            dispatch_to_main_queue( [=]{
-                if(!m_Closed)
-                    self.previewItem = [NSURL fileURLWithPath:fn];
-            });
-    }
-}
-
 - (void)previewItem:(const string&)_path at:(const VFSHostPtr&)_host
 {
+    dispatch_assert_main_queue();
+    
     if( m_Closed )
         return;
     
-    // may cause collisions of same filenames on different vfs, nevermind for now
-    if( m_OrigPath == _path )
+    if( !_host || _path.empty() )
         return;
     
-    m_OrigPath = _path;
+    if( _path == m_CurrentPath &&
+        _host == m_CurrentHost.lock() )
+        return;
+    
+    m_CurrentPath = _path;
+    m_CurrentHost = _host;
+    
+    if( _host->IsNativeFS() )
+        [self doNativeNative:_path];
+    else
+        [self doVFSPreview:_path host:_host ticket:m_CurrentTicket];
+}
+
+- (void) doNativeNative:(const string&)_path
+{
+    if( const auto path = [NSString stringWithUTF8StdString:_path] )
+        self.previewItem = [NSURL fileURLWithPath:path];
+}
+
+- (void)doVFSPreview:(const string&)_path host:(const VFSHostPtr&)_host ticket:(uint64_t)_ticket
+{
     string path = _path;
-    uint64_t ticket = ++m_CurrentPreviewTicket;
-  
-    if(_host->IsNativeFS())
-        dispatch_to_main_queue_after(g_Delay, [=]{
-            if(ticket != m_CurrentPreviewTicket || m_Closed)
-                return;
-            [self doPreviewItemNative:path];
-        });
-    else {
-        VFSHostPtr host = _host;
-        dispatch_after(g_Delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), [=]{
-            if(ticket == m_CurrentPreviewTicket)
-                [self doPreviewItemVFS:path vfs:host ticket:ticket];
-        });
-    }
+    VFSHostPtr host = _host;
+    dispatch_after(g_Delay,
+                   dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
+                   [=]{
+                       if( _ticket != m_CurrentTicket || m_Closed )
+                           return;
+
+                       const auto url = nc::panel::QuickLookVFSBridge{}.FetchItem(path, *host);
+                       
+                       if( _ticket != m_CurrentTicket || m_Closed )
+                           return;
+
+                       dispatch_to_main_queue([=]{
+                           if( _ticket != m_CurrentTicket || m_Closed )
+                               return;
+                           self.previewItem = url;
+                       });
+                   });
 }
 
 - (void)frameDidChange

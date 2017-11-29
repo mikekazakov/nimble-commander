@@ -1,6 +1,5 @@
 // Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShowQuickLook.h"
-//#include <Quartz/Quartz.h>
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include "../MainWindowFilePanelState.h"

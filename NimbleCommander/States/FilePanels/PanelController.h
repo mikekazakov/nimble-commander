@@ -9,7 +9,6 @@ struct VFSInstancePromise;
 class NetworkConnectionsManager;
 @class PanelController;
 @class PanelView;
-@class QuickLookView;
 @class BriefSystemOverview;
 @class MainWindowFilePanelState;
 @class MainWindowController;

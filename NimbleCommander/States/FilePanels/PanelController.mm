@@ -4,7 +4,7 @@
 #include <Utility/NSView+Sugar.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include "../MainWindowController.h"
-#include "Views/QuickPreview.h"
+#include "PanelPreview.h"
 #include "MainWindowFilePanelState.h"
 #include "Views/BriefSystemOverview.h"
 #include <NimbleCommander/Core/Alert.h>
@@ -530,7 +530,7 @@ static bool RouteKeyboardInputIntoTerminal()
         }
         if( keycode == 53 ) { // Esc button
             [self CancelBackgroundOperations];
-            [self.state CloseOverlay:self];
+            [self.state closeAttachedUI:self];
             [self clearQuickSearchFiltering];
             return true;
         }
@@ -718,7 +718,8 @@ static bool RouteKeyboardInputIntoTerminal()
 {
     if( auto ql = self.quickLook )
         if( auto i = self.view.item )
-            [ql PreviewItem:i.Path() vfs:i.Host()];
+            [ql previewVFSItem:VFSPath{i.Host(), i.Path()}
+                      forPanel:self];
 }
 
 - (void)updateAttachedBriefSystemOverview
@@ -1247,7 +1248,7 @@ loadPreviousState:(bool)_load_state
     return [self.state briefSystemOverviewForPanel:self make:false];
 }
 
-- (QuickLookView *)quickLook
+- (id<NCPanelPreview>)quickLook
 {
     return [self.state quickLookForPanel:self make:false];
 }
@@ -1567,6 +1568,5 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
     if(!m_QuickSearchIsSoftFiltering)
         [self QuickSearchHardUpdateTypingUI];
 }
-
 
 @end

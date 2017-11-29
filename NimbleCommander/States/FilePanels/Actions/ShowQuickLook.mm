@@ -1,11 +1,12 @@
 // Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShowQuickLook.h"
+//#include <Quartz/Quartz.h>
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include "../MainWindowFilePanelState.h"
 
 namespace nc::panel::actions {
-    
+
 bool ShowQuickLook::Predicate( PanelController *_target ) const
 {
     if( !_target.view.item )
@@ -21,7 +22,7 @@ void ShowQuickLook::Perform( PanelController *_target, id _sender ) const
 {
     const auto state = _target.state;
     if( [state quickLookForPanel:_target make:false] ) {
-        [state CloseOverlay:_target];
+        [state closeAttachedUI:_target];
     }
     else {
         if( [state quickLookForPanel:_target make:true] )

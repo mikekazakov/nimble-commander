@@ -308,6 +308,14 @@
 		CF5E9A5A1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */; };
 		CF5E9A5B1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */; };
 		CF5E9A5C1FCBFED9005608F5 /* ShowSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */; };
+		CF5E9A601FCD6ADF005608F5 /* QuickLookPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A5F1FCD6ADF005608F5 /* QuickLookPanel.mm */; };
+		CF5E9A611FCD6AF4005608F5 /* QuickLookPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A5F1FCD6ADF005608F5 /* QuickLookPanel.mm */; };
+		CF5E9A621FCD6AF4005608F5 /* QuickLookPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A5F1FCD6ADF005608F5 /* QuickLookPanel.mm */; };
+		CF5E9A631FCD6AF5005608F5 /* QuickLookPanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A5F1FCD6ADF005608F5 /* QuickLookPanel.mm */; };
+		CF5E9A661FCE735C005608F5 /* QuickLookVFSBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A651FCE735C005608F5 /* QuickLookVFSBridge.mm */; };
+		CF5E9A671FCE738A005608F5 /* QuickLookVFSBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A651FCE735C005608F5 /* QuickLookVFSBridge.mm */; };
+		CF5E9A681FCE738B005608F5 /* QuickLookVFSBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A651FCE735C005608F5 /* QuickLookVFSBridge.mm */; };
+		CF5E9A691FCE738C005608F5 /* QuickLookVFSBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A651FCE735C005608F5 /* QuickLookVFSBridge.mm */; };
 		CF5FE7CB1E0CDEA600CD83B4 /* FilesDraggingSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */; };
 		CF5FE7D51E120A4900CD83B4 /* CopyFilePaths.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE7D41E120A4900CD83B4 /* CopyFilePaths.mm */; };
 		CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
@@ -996,9 +1004,9 @@
 		CFD727081E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */; };
 		CFD727091E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */; };
 		CFD7270A1E42E30500603077 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */; };
-		CFD7270B1E42E30800603077 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */; };
-		CFD7270C1E42E30800603077 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */; };
-		CFD7270D1E42E30900603077 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */; };
+		CFD7270B1E42E30800603077 /* QuickLookOverlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */; };
+		CFD7270C1E42E30800603077 /* QuickLookOverlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */; };
+		CFD7270D1E42E30900603077 /* QuickLookOverlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */; };
 		CFD7270E1E42E30C00603077 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */; };
 		CFD7270F1E42E30D00603077 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */; };
 		CFD727101E42E30D00603077 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */; };
@@ -1107,7 +1115,7 @@
 		CFDAC2D11DFD105A0039A104 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CF1DFD105A0039A104 /* MASAppInstalledChecker.cpp */; };
 		CFDAC2D81DFD11970039A104 /* LaunchServices.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2D71DFD11970039A104 /* LaunchServices.mm */; };
 		CFDAC2DB1DFD12EF0039A104 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */; };
-		CFDAC2DE1DFD137F0039A104 /* QuickPreview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */; };
+		CFDAC2DE1DFD137F0039A104 /* QuickLookOverlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */; };
 		CFDAC2E31DFD142C0039A104 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */; };
 		CFDAC2E41DFD142C0039A104 /* SearchInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */; };
 		CFDAC2ED1DFD152C0039A104 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E61DFD152C0039A104 /* FilePanelMainSplitView.mm */; };
@@ -1610,6 +1618,11 @@
 		CF5E9A521FCBF57A005608F5 /* ShowQuickLook.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowQuickLook.mm; path = NimbleCommander/States/FilePanels/Actions/ShowQuickLook.mm; sourceTree = SOURCE_ROOT; };
 		CF5E9A571FCBFE77005608F5 /* ShowSystemOverview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShowSystemOverview.h; path = NimbleCommander/States/FilePanels/Actions/ShowSystemOverview.h; sourceTree = SOURCE_ROOT; };
 		CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowSystemOverview.mm; path = NimbleCommander/States/FilePanels/Actions/ShowSystemOverview.mm; sourceTree = SOURCE_ROOT; };
+		CF5E9A5D1FCD46AD005608F5 /* PanelPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelPreview.h; path = NimbleCommander/States/FilePanels/PanelPreview.h; sourceTree = SOURCE_ROOT; };
+		CF5E9A5E1FCD6ADF005608F5 /* QuickLookPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickLookPanel.h; path = NimbleCommander/States/FilePanels/Views/QuickLookPanel.h; sourceTree = SOURCE_ROOT; };
+		CF5E9A5F1FCD6ADF005608F5 /* QuickLookPanel.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QuickLookPanel.mm; path = NimbleCommander/States/FilePanels/Views/QuickLookPanel.mm; sourceTree = SOURCE_ROOT; };
+		CF5E9A641FCE735C005608F5 /* QuickLookVFSBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickLookVFSBridge.h; path = NimbleCommander/States/FilePanels/Views/QuickLookVFSBridge.h; sourceTree = SOURCE_ROOT; };
+		CF5E9A651FCE735C005608F5 /* QuickLookVFSBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QuickLookVFSBridge.mm; path = NimbleCommander/States/FilePanels/Views/QuickLookVFSBridge.mm; sourceTree = SOURCE_ROOT; };
 		CF5FD92D1FA2C02E00752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = NimbleCommander/Config/default.xcconfig; sourceTree = SOURCE_ROOT; wrapsLines = 1; };
 		CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilesDraggingSource.h; path = NimbleCommander/States/FilePanels/FilesDraggingSource.h; sourceTree = SOURCE_ROOT; };
 		CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilesDraggingSource.mm; path = NimbleCommander/States/FilePanels/FilesDraggingSource.mm; sourceTree = SOURCE_ROOT; };
@@ -1965,8 +1978,8 @@
 		CFDAC2D71DFD11970039A104 /* LaunchServices.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LaunchServices.mm; path = NimbleCommander/Core/LaunchServices.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2D91DFD12EF0039A104 /* BriefSystemOverview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BriefSystemOverview.h; path = NimbleCommander/States/FilePanels/Views/BriefSystemOverview.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BriefSystemOverview.mm; path = NimbleCommander/States/FilePanels/Views/BriefSystemOverview.mm; sourceTree = SOURCE_ROOT; };
-		CFDAC2DC1DFD137F0039A104 /* QuickPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickPreview.h; path = NimbleCommander/States/FilePanels/Views/QuickPreview.h; sourceTree = SOURCE_ROOT; };
-		CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QuickPreview.mm; path = NimbleCommander/States/FilePanels/Views/QuickPreview.mm; sourceTree = SOURCE_ROOT; };
+		CFDAC2DC1DFD137F0039A104 /* QuickLookOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickLookOverlay.h; path = NimbleCommander/States/FilePanels/Views/QuickLookOverlay.h; sourceTree = SOURCE_ROOT; };
+		CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QuickLookOverlay.mm; path = NimbleCommander/States/FilePanels/Views/QuickLookOverlay.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileWindow.cpp; path = NimbleCommander/Core/FileWindow.cpp; sourceTree = SOURCE_ROOT; };
 		CFDAC2E01DFD142C0039A104 /* FileWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWindow.h; path = NimbleCommander/Core/FileWindow.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchInFile.cpp; path = NimbleCommander/Core/SearchInFile.cpp; sourceTree = SOURCE_ROOT; };
@@ -2253,6 +2266,7 @@
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CF5E9A5D1FCD46AD005608F5 /* PanelPreview.h */,
 				CFDAC2641DFBF20F0039A104 /* ContextMenu.h */,
 				CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */,
 				CFFA95231F47CA760035E606 /* DragReceiver.h */,
@@ -2352,7 +2366,6 @@
 		CF27414D1803E60D006D6687 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				CFA7E0141EB83B8D001FE66C /* Network */,
 				CFF877451D83C5700006DF7F /* AskingForRatingOverlayView.h */,
 				CFF877461D83C5700006DF7F /* AskingForRatingOverlayView.mm */,
 				CFDAC2D91DFD12EF0039A104 /* BriefSystemOverview.h */,
@@ -2374,8 +2387,13 @@
 				CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */,
 				CFDAC2F41DFD16DF0039A104 /* MainWndGoToButton.h */,
 				CFDAC2F51DFD16DF0039A104 /* MainWndGoToButton.mm */,
-				CFDAC2DC1DFD137F0039A104 /* QuickPreview.h */,
-				CFDAC2DD1DFD137F0039A104 /* QuickPreview.mm */,
+				CFA7E0141EB83B8D001FE66C /* Network */,
+				CFDAC2DC1DFD137F0039A104 /* QuickLookOverlay.h */,
+				CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */,
+				CF5E9A5E1FCD6ADF005608F5 /* QuickLookPanel.h */,
+				CF5E9A5F1FCD6ADF005608F5 /* QuickLookPanel.mm */,
+				CF5E9A641FCE735C005608F5 /* QuickLookVFSBridge.h */,
+				CF5E9A651FCE735C005608F5 /* QuickLookVFSBridge.mm */,
 				CFA3743D19A8D9C50012D088 /* SelectionWithMaskPopupViewController.h */,
 				CFA3743E19A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm */,
 				CFA3743F19A8D9C50012D088 /* SelectionWithMaskPopupViewController.xib */,
@@ -2463,10 +2481,6 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				CF5E9A571FCBFE77005608F5 /* ShowSystemOverview.h */,
-				CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */,
-				CF5E9A511FCBF57A005608F5 /* ShowQuickLook.h */,
-				CF5E9A521FCBF57A005608F5 /* ShowQuickLook.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
 				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
 				CF0260C81E9DF45D0025B50F /* BatchRename.h */,
@@ -2527,6 +2541,10 @@
 				CF6ECDB51E9F7353008FA79E /* Select.mm */,
 				CF0139B61E9B156500E44F2D /* ShowGoToPopup.h */,
 				CF0139B71E9B156500E44F2D /* ShowGoToPopup.mm */,
+				CF5E9A511FCBF57A005608F5 /* ShowQuickLook.h */,
+				CF5E9A521FCBF57A005608F5 /* ShowQuickLook.mm */,
+				CF5E9A571FCBFE77005608F5 /* ShowSystemOverview.h */,
+				CF5E9A581FCBFE77005608F5 /* ShowSystemOverview.mm */,
 				CF197C441FB834B7009F6C59 /* ShowTabs.h */,
 				CF197C451FB834B7009F6C59 /* ShowTabs.mm */,
 				CF20DF331FC66E5F0074ABB8 /* ShowTerminal.h */,
@@ -3734,7 +3752,7 @@
 				CFD726361E42E0D500603077 /* FileWindow.cpp in Sources */,
 				CF7A09D71EC44A2000533B07 /* NetworkConnectionIconProvider.mm in Sources */,
 				CF818B531EA0610D00BC28E6 /* ToggleLayout.mm in Sources */,
-				CFD7270C1E42E30800603077 /* QuickPreview.mm in Sources */,
+				CFD7270C1E42E30800603077 /* QuickLookOverlay.mm in Sources */,
 				CFA3744119A8D9C60012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF9F4B071ECC919A00E0AF82 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */,
 				CFD726B71E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
@@ -3921,6 +3939,7 @@
 				CFD726501E42E12400603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CFD7263E1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
 				CFD726CC1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */,
+				CF5E9A681FCE738B005608F5 /* QuickLookVFSBridge.mm in Sources */,
 				CFD726391E42E0D900603077 /* LaunchServices.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CFD726E81E42E2D200603077 /* PanelListViewGeometry.mm in Sources */,
@@ -3930,6 +3949,7 @@
 				CFDEB8291D2BB7F1009BCCBD /* ExternalToolsSupport.mm in Sources */,
 				CF4E569E1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF818B6A1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
+				CF5E9A621FCD6AF4005608F5 /* QuickLookPanel.mm in Sources */,
 				CF1E3D2C1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 				CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
 				CFD726AE1E42E25600603077 /* SharingService.mm in Sources */,
@@ -3964,6 +3984,7 @@
 				CFD726C11E42E28E00603077 /* PanelViewHeader.mm in Sources */,
 				CF90C0BD1EC171FD0056E3B8 /* PanelDataFilter.mm in Sources */,
 				CFD727101E42E30D00603077 /* BriefSystemOverview.mm in Sources */,
+				CF5E9A601FCD6ADF005608F5 /* QuickLookPanel.mm in Sources */,
 				CF4E56BF1D50691700452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFD6DD261D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CF20DF351FC66E5F0074ABB8 /* ShowTerminal.mm in Sources */,
@@ -4149,7 +4170,8 @@
 				CF04DDE71E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CFD726D31E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CFD7263C1E42E0E700603077 /* MASAppInstalledChecker.cpp in Sources */,
-				CFD7270D1E42E30900603077 /* QuickPreview.mm in Sources */,
+				CFD7270D1E42E30900603077 /* QuickLookOverlay.mm in Sources */,
+				CF5E9A661FCE735C005608F5 /* QuickLookVFSBridge.mm in Sources */,
 				CF36DBEC1F6C1807004A018E /* PanelViewFieldEditor.mm in Sources */,
 				CF1FBF241E8F57CD00D3569C /* FavoritesMenuDelegate.mm in Sources */,
 				CF818B7C1EA4573500BC28E6 /* Pasteboard.mm in Sources */,
@@ -4181,6 +4203,7 @@
 				CFD8CDB81E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
 				CFDAC2721DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF4E56D21D506B9200452912 /* FindFilesSheetController.mm in Sources */,
+				CF5E9A631FCD6AF5005608F5 /* QuickLookPanel.mm in Sources */,
 				CFDAC28F1DFBF9260039A104 /* ShellState.mm in Sources */,
 				CFDAC2361DFBDE560039A104 /* Application.mm in Sources */,
 				CF20DF471FC670120074ABB8 /* ShowTerminal.mm in Sources */,
@@ -4228,6 +4251,7 @@
 				CF15D0831E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm in Sources */,
 				CF5FE80B1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CF4E563E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
+				CF5E9A691FCE738C005608F5 /* QuickLookVFSBridge.mm in Sources */,
 				CFDAC2421DFBE18C0039A104 /* ActionsShortcutsManager.mm in Sources */,
 				CFDAC2C41DFD0DE40039A104 /* SharingService.mm in Sources */,
 				CF27F9391E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm in Sources */,
@@ -4256,7 +4280,7 @@
 				CFDAC28E1DFBF9260039A104 /* ExternalEditorState.mm in Sources */,
 				CF876D261D51E04A009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF4E56421D5064FE00452912 /* PreferencesWindowPanelsTab.mm in Sources */,
-				CFDAC2DE1DFD137F0039A104 /* QuickPreview.mm in Sources */,
+				CFDAC2DE1DFD137F0039A104 /* QuickLookOverlay.mm in Sources */,
 				CFDAC2CE1DFD0F840039A104 /* WorkspaceIconsCache.mm in Sources */,
 				CFDAC2051DF921160039A104 /* PanelDataStatistics.cpp in Sources */,
 				CF94CF941DD4418000EEA420 /* Layout.mm in Sources */,
@@ -4430,7 +4454,7 @@
 				CF818B641EA0610E00BC28E6 /* ShowGoToPopup.mm in Sources */,
 				CF36DBEF1F6C18DA004A018E /* DragSender.mm in Sources */,
 				CF4E56A01D5068C800452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
-				CFD7270B1E42E30800603077 /* QuickPreview.mm in Sources */,
+				CFD7270B1E42E30800603077 /* QuickLookOverlay.mm in Sources */,
 				CFD8CDC71E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
 				CFD727051E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFD726491E42E11B00603077 /* SearchInFile.cpp in Sources */,
@@ -4536,6 +4560,7 @@
 				CFB66FCD1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CFD8CDD31E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,
 				CFD726DD1E42E2C100603077 /* PanelListView.mm in Sources */,
+				CF5E9A611FCD6AF4005608F5 /* QuickLookPanel.mm in Sources */,
 				CF8B24401E6FC695008EB447 /* Favorites.cpp in Sources */,
 				CFD726D41E42E2B100603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */,
 				CFD726F01E42E2DD00603077 /* PanelListViewSizeView.mm in Sources */,
@@ -4556,6 +4581,7 @@
 				CF5E9A5A1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */,
 				CFD726611E42E1DB00603077 /* ExternalEditorInfo.mm in Sources */,
 				CFD7263D1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
+				CF5E9A671FCE738A005608F5 /* QuickLookVFSBridge.mm in Sources */,
 				CFBA63AE1FC1A4F900077682 /* CopyFile.mm in Sources */,
 				CF4E56B01D5068E600452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CFD726091E42E07100603077 /* AppDelegateCPP.mm in Sources */,

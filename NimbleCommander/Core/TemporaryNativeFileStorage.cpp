@@ -197,10 +197,10 @@ optional<string> TemporaryNativeFileStorage::WriteStringIntoTempFile( const stri
     return string(path);
 }
 
-optional<string> TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath, const VFSHostPtr &_host)
+optional<string> TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath, VFSHost &_host)
 {
     VFSFilePtr vfs_file;
-    if( _host->CreateFile(_vfs_filepath.c_str(), vfs_file, 0) < 0 )
+    if( _host.CreateFile(_vfs_filepath.c_str(), vfs_file, 0) < 0 )
         return nullopt;
 
     if( vfs_file->Open(VFSFlags::OF_Read) < 0 )

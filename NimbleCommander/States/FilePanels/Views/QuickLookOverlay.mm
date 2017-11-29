@@ -1,19 +1,19 @@
 // Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Quartz/Quartz.h>
-#include "QuickPreview.h"
+#include "QuickLookOverlay.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include <Utility/SystemInformation.h>
 
 static const uint64_t g_MaxFileSizeForVFSQL = 64*1024*1024; // 64mb
 static const nanoseconds g_Delay = 100ms;
 
-@interface QuickLookWrapper : QLPreviewView
+@interface NCPanelQLOverlayWrapper : QLPreviewView
 
-- (void)PreviewItem:(const string&)_path vfs:(const VFSHostPtr&)_host;
+- (void)previewItem:(const string&)_path at:(const VFSHostPtr&)_host;
 
 @end
 
-@implementation QuickLookWrapper
+@implementation NCPanelQLOverlayWrapper
 {
     string              m_OrigPath;
     atomic_bool         m_Closed;
@@ -70,7 +70,7 @@ static const nanoseconds g_Delay = 100ms;
 
 - (void) doPreviewItemVFS:(const string&)_path vfs:(const VFSHostPtr&)_host ticket:(uint64_t)_ticket
 {
-    static auto &tnfs = TemporaryNativeFileStorage::Instance();
+    auto &tnfs = TemporaryNativeFileStorage::Instance();
     bool dir = _host->IsDirectory(_path.c_str(), 0, 0);
     
     if( !dir ) {
@@ -84,7 +84,7 @@ static const nanoseconds g_Delay = 100ms;
             return;
         }
         
-        if( auto tmp = tnfs.CopySingleFile(_path, _host) ) {
+        if( auto tmp = tnfs.CopySingleFile(_path, *_host) ) {
             NSString *fn = [NSString stringWithUTF8StdString:*tmp];
             if( !m_Closed && fn && _ticket == m_CurrentPreviewTicket )
                 dispatch_to_main_queue( [=]{
@@ -114,11 +114,14 @@ static const nanoseconds g_Delay = 100ms;
     }
 }
 
-- (void)PreviewItem:(const string&)_path vfs:(const VFSHostPtr&)_host
+- (void)previewItem:(const string&)_path at:(const VFSHostPtr&)_host
 {
+    if( m_Closed )
+        return;
+    
     // may cause collisions of same filenames on different vfs, nevermind for now
-    assert(!m_Closed);
-    if(m_OrigPath == _path) return;
+    if( m_OrigPath == _path )
+        return;
     
     m_OrigPath = _path;
     string path = _path;
@@ -149,22 +152,30 @@ static const nanoseconds g_Delay = 100ms;
 
 @end
 
-@implementation QuickLookView
+@implementation NCPanelQLOverlay
 {
-    QuickLookWrapper *m_QL;
+    NCPanelQLOverlayWrapper *m_QL;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if (self) {
-        m_QL = [[QuickLookWrapper alloc] initWithFrame:self.frame];
+        m_QL = [[NCPanelQLOverlayWrapper alloc] initWithFrame:self.frame];
         m_QL.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_QL];
 
         NSDictionary *views = NSDictionaryOfVariableBindings(m_QL);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_QL]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_QL]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:
+            [NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_QL]-(==0)-|"
+                                                    options:0
+                                                    metrics:nil
+                                                      views:views]];
+        [self addConstraints:
+            [NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_QL]-(==0)-|"
+                                                    options:0
+                                                    metrics:nil
+                                                      views:views]];
     }
     return self;
 }
@@ -174,9 +185,12 @@ static const nanoseconds g_Delay = 100ms;
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (void)PreviewItem:(const string&)_path vfs:(const VFSHostPtr&)_host
+- (void)previewVFSItem:(const VFSPath&)_path forPanel:(PanelController*)_panel
 {
-    [m_QL PreviewItem:_path vfs:_host];
+    if( !_path )
+        return;
+    
+    [m_QL previewItem:_path.Path() at:_path.Host()];
 }
 
 - (BOOL) acceptsFirstResponder

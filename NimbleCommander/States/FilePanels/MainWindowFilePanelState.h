@@ -6,6 +6,8 @@
 #include "../MainWindowStateProtocol.h"
 #include "../../Bootstrap/Config.h"
 
+#include "PanelPreview.h"
+
 namespace nc::ops {
     class Pool;
 }
@@ -18,7 +20,6 @@ class ExternalToolsStorage;
 @class Operation;
 @class PanelView;
 @class PanelController;
-@class QuickLookView;
 @class BriefSystemOverview;
 @class FilePanelMainSplitView;
 @class FilePanelOverlappedTerminal;
@@ -79,11 +80,11 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) vector< tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
 
 
-- (QuickLookView*)quickLookForPanel:(PanelController*)_panel make:(bool)_make_if_absent;
+- (id<NCPanelPreview>)quickLookForPanel:(PanelController*)_panel make:(bool)_make_if_absent;
 - (BriefSystemOverview*)briefSystemOverviewForPanel:(PanelController*)_panel make:(bool)_make_if_absent;
 
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd;
-- (void)CloseOverlay:(PanelController*)_panel;
+- (void)closeAttachedUI:(PanelController*)_panel;
 
 - (optional<rapidjson::StandaloneValue>) encodeRestorableState;
 - (bool) decodeRestorableState:(const rapidjson::StandaloneValue&)_state;

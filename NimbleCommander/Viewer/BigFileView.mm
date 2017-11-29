@@ -499,7 +499,7 @@ const static double g_BorderWidth = 1.0;
                 path = m_File->File()->Path();
             else {
                 if( !m_NativeStoredFile )
-                    m_NativeStoredFile = TemporaryNativeFileStorage::Instance().CopySingleFile(m_File->File()->Path(), m_File->File()->Host());
+                    m_NativeStoredFile = TemporaryNativeFileStorage::Instance().CopySingleFile(m_File->File()->Path(), *m_File->File()->Host());
                 if( m_NativeStoredFile )
                     path = *m_NativeStoredFile;
             }

@@ -15,7 +15,7 @@ void ShowSystemOverview::Perform( PanelController *_target, id _sender ) const
     const auto state = _target.state;
         
     if( [state briefSystemOverviewForPanel:_target make:false] ) {
-        [state CloseOverlay:_target];
+        [state closeAttachedUI:_target];
     }
     else {
         if( [state briefSystemOverviewForPanel:_target make:true] )

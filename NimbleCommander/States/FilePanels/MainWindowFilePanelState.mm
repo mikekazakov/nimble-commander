@@ -20,7 +20,7 @@
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include "AskingForRatingOverlayView.h"
 #include "Favorites.h"
-#include "Views/QuickPreview.h"
+#include "Views/QuickLookOverlay.h"
 #include "Views/FilePanelMainSplitView.h"
 #include "Views/BriefSystemOverview.h"
 #include "Views/FilePanelOverlappedTerminal.h"
@@ -28,6 +28,8 @@
 #include "PanelView.h"
 #include <Operations/Pool.h>
 #include <Operations/PoolViewController.h>
+#include "Views/QuickLookPanel.h"
+#include <Quartz/Quartz.h>
 
 using namespace nc::panel;
 
@@ -802,35 +804,52 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return r;
 }
 
-- (QuickLookView*)quickLookForPanel:(PanelController*)_panel
-                               make:(bool)_make_if_absent
-{
-    if( [self isLeftController:_panel] )
-        if( const auto ql = objc_cast<QuickLookView>(m_SplitView.rightOverlay) )
-            return ql;
-    
-    if( [self isRightController:_panel] )
-        if( const auto ql = objc_cast<QuickLookView>(m_SplitView.leftOverlay)  )
-            return ql;
-    
-    if( _make_if_absent ) {
-        if( m_SplitView.anyCollapsed )
-            return nil;
-        
-        const auto rc = NSMakeRect(0, 0, 100, 100);
-        const auto view = [[QuickLookView alloc] initWithFrame:rc];
-        
-        if( [self isLeftController:_panel] )
-            m_SplitView.rightOverlay = view;
-        else if([self isRightController:_panel])
-            m_SplitView.leftOverlay = view;
-        else
-            return nil;
+static bool g_Panel = false;
 
-        return view;
+- (id<NCPanelPreview>)quickLookForPanel:(PanelController*)_panel
+                                   make:(bool)_make_if_absent
+{
+    if( g_Panel )  {
+        if( !_panel.isActive )
+            return nil;
+        
+        if( QLPreviewPanel.sharedPreviewPanelExists && QLPreviewPanel.sharedPreviewPanel.isVisible )
+            return [NCPanelQLPanelAdaptor adaptorForState:self];
+        
+        if( !_make_if_absent )
+            return nil;
+        
+        [QLPreviewPanel.sharedPreviewPanel makeKeyAndOrderFront:nil];
+        return [NCPanelQLPanelAdaptor adaptorForState:self];
     }
-    
-    return nil;
+    else {
+        if( [self isLeftController:_panel] )
+            if( const auto ql = objc_cast<NCPanelQLOverlay>(m_SplitView.rightOverlay) )
+                return ql;
+        
+        if( [self isRightController:_panel] )
+            if( const auto ql = objc_cast<NCPanelQLOverlay>(m_SplitView.leftOverlay)  )
+                return ql;
+        
+        if( _make_if_absent ) {
+            if( m_SplitView.anyCollapsed )
+                return nil;
+            
+            const auto rc = NSMakeRect(0, 0, 100, 100);
+            const auto view = [[NCPanelQLOverlay alloc] initWithFrame:rc];
+            
+            if( [self isLeftController:_panel] )
+                m_SplitView.rightOverlay = view;
+            else if([self isRightController:_panel])
+                m_SplitView.leftOverlay = view;
+            else
+                return nil;
+            
+            return view;
+        }
+        
+        return nil;
+    }
 }
 
 - (BriefSystemOverview*)briefSystemOverviewForPanel:(PanelController*)_panel
@@ -864,12 +883,15 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return nil;
 }
 
-- (void)CloseOverlay:(PanelController*)_panel
+- (void)closeAttachedUI:(PanelController*)_panel
 {
-    if([self isLeftController:_panel])
+    if( [self isLeftController:_panel] )
         m_SplitView.rightOverlay = nil;
-    else if([self isRightController:_panel])
+    else if( [self isRightController:_panel] )
         m_SplitView.leftOverlay = nil;
+    
+    if( QLPreviewPanel.sharedPreviewPanelExists && QLPreviewPanel.sharedPreviewPanel.isVisible )
+        [QLPreviewPanel.sharedPreviewPanel orderOut:nil];
 }
 
 - (void)onShowTabsSettingChanged
@@ -974,6 +996,23 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     swap(m_LeftPanelControllers, m_RightPanelControllers);
     [m_SplitView swapViews];
     [self markRestorableStateAsInvalid];
+}
+
+- (BOOL)acceptsPreviewPanelControl:(QLPreviewPanel *)panel
+{
+    return true;
+}
+
+- (void)beginPreviewPanelControl:(QLPreviewPanel *)panel
+{
+    [NCPanelQLPanelAdaptor registerQuickLook:panel forState:self];
+    if( auto pc = self.activePanelController )
+        [pc updateAttachedQuickLook];
+}
+
+- (void)endPreviewPanelControl:(QLPreviewPanel *)panel
+{
+    [NCPanelQLPanelAdaptor unregisterQuickLook:panel forState:self];
 }
 
 @end

@@ -402,7 +402,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     [self.window makeFirstResponder:self.window.contentView];
     
     if([self.topmostState respondsToSelector:@selector(windowStateDidBecomeAssigned)])
-        [self.topmostState windowStateDidBecomeAssigned];    
+        [self.topmostState windowStateDidBecomeAssigned];
 }
 
 - (void)requestViewerFor:(string)_filepath at:(shared_ptr<VFSHost>) _host

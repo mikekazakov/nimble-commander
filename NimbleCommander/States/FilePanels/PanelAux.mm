@@ -161,7 +161,7 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
             return;
         }
         
-        if( auto tmp_path = TemporaryNativeFileStorage::Instance().CopySingleFile(_filename, _host) ) {
+        if( auto tmp_path = TemporaryNativeFileStorage::Instance().CopySingleFile(_filename, *_host) ) {
             RegisterRemoteFileUploading( _filename, _host, *tmp_path, _panel );
             
             NSString *fn = [NSString stringWithUTF8StdString:*tmp_path];
@@ -222,7 +222,7 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
             if(st.size > g_MaxFileSizeForVFSOpen)
                 continue;
             
-            if( auto tmp = TemporaryNativeFileStorage::Instance().CopySingleFile(i, _host) ) {
+            if( auto tmp = TemporaryNativeFileStorage::Instance().CopySingleFile(i, *_host) ) {
                 RegisterRemoteFileUploading( i, _host, *tmp, _panel );
                 if( NSString *s = [NSString stringWithUTF8StdString:*tmp] )
                     [arr addObject: [[NSURL alloc] initFileURLWithPath:s] ];
@@ -272,7 +272,7 @@ void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
                 return;
             }
             
-            if( auto tmp = TemporaryNativeFileStorage::Instance().CopySingleFile(_filepath, _host) ) {
+            if( auto tmp = TemporaryNativeFileStorage::Instance().CopySingleFile(_filepath, *_host) ) {
                 RegisterRemoteFileUploading( _filepath, _host, *tmp, _panel );
                 dispatch_to_main_queue([=]{ // when we sucessfuly download a file - request terminal execution in main thread
                     if( MainWindowController* wnd = (MainWindowController*)_panel.window.delegate )

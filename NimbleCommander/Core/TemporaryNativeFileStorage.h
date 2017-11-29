@@ -11,7 +11,7 @@ public:
     /**
      * Thread-safe.
      */
-    optional<string> CopySingleFile( const string &_vfs_filepath, const VFSHostPtr &_host );
+    optional<string> CopySingleFile( const string &_vfs_filepath, VFSHost &_host );
 
     // _vfs_dirpath may be with trailing slash or without
     bool CopyDirectory(const string &_vfs_dirpath,

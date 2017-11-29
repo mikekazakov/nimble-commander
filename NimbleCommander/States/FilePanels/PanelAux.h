@@ -42,4 +42,6 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item);
 nc::ops::CopyingOptions MakeDefaultFileCopyOptions();
 nc::ops::CopyingOptions MakeDefaultFileMoveOptions();
 bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept;
+bool ShowQuickLookAsFloatingPanel() noexcept;
+    
 }

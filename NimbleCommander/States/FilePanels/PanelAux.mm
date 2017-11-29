@@ -21,6 +21,7 @@ static const auto g_ConfigExecutableExtensionsWhitelist = "filePanel.general.exe
 static const auto g_ConfigDefaultVerificationSetting = "filePanel.operations.defaultChecksumVerification";
 static const auto g_CheckDelay = "filePanel.operations.vfsShadowUploadChangesCheckDelay";
 static const auto g_DropDelay = "filePanel.operations.vfsShadowUploadObservationDropDelay";
+static const auto g_QLPanel = "filePanel.presentation.showQuickLookAsFloatingPanel";
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
 
 static milliseconds UploadingCheckDelay()
@@ -380,4 +381,19 @@ bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept
     return any_of(begin(archive_extensions), end(archive_extensions), [&](auto &_) { return extension == _; } );
 }
 
+    
+bool ShowQuickLookAsFloatingPanel() noexcept
+{
+    static const auto fetch = []{
+        return GlobalConfig().GetBool(g_QLPanel);
+    };
+    static bool value = []{
+        GlobalConfig().ObserveUnticketed(g_QLPanel, []{
+            value = fetch();
+        });
+        return fetch();
+    }();
+    return value;
+}
+    
 }

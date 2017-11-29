@@ -30,6 +30,7 @@
 #include <Operations/PoolViewController.h>
 #include "Views/QuickLookPanel.h"
 #include <Quartz/Quartz.h>
+#include "PanelAux.h"
 
 using namespace nc::panel;
 
@@ -804,12 +805,10 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return r;
 }
 
-static bool g_Panel = false;
-
 - (id<NCPanelPreview>)quickLookForPanel:(PanelController*)_panel
                                    make:(bool)_make_if_absent
 {
-    if( g_Panel )  {
+    if( ShowQuickLookAsFloatingPanel() )  {
         if( !_panel.isActive )
             return nil;
         
@@ -1000,7 +999,7 @@ static bool g_Panel = false;
 
 - (BOOL)acceptsPreviewPanelControl:(QLPreviewPanel *)panel
 {
-    return true;
+    return ShowQuickLookAsFloatingPanel();
 }
 
 - (void)beginPreviewPanelControl:(QLPreviewPanel *)panel

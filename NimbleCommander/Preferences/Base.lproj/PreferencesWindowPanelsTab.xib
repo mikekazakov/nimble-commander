@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="17A360a" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="17B48" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
@@ -1086,6 +1086,36 @@
                                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                         </textFieldCell>
                                     </textField>
+                                    <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="VgC-zo-Un0">
+                                        <rect key="frame" x="244" y="118" width="138" height="26"/>
+                                        <popUpButtonCell key="cell" type="push" title="Panel Overlay" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="tGa-eg-1b9" id="S1o-ux-BWl">
+                                            <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                            <font key="font" metaFont="menu"/>
+                                            <menu key="menu" id="FNt-EW-xiF">
+                                                <items>
+                                                    <menuItem title="Panel Overlay" state="on" id="tGa-eg-1b9">
+                                                        <modifierMask key="keyEquivalentModifierMask"/>
+                                                    </menuItem>
+                                                    <menuItem title="Floating Window" tag="1" id="lWr-bP-O1U"/>
+                                                </items>
+                                            </menu>
+                                        </popUpButtonCell>
+                                        <connections>
+                                            <binding destination="-3" name="selectedTag" keyPath="delegate.config.filePanel.presentation.showQuickLookAsFloatingPanel" id="7KV-zP-VsA">
+                                                <dictionary key="options">
+                                                    <string key="NSValueTransformerName">PreferencesBoolToNumberValueTransformer</string>
+                                                </dictionary>
+                                            </binding>
+                                        </connections>
+                                    </popUpButton>
+                                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" misplaced="YES" allowsCharacterPickerTouchBarItem="NO" translatesAutoresizingMaskIntoConstraints="NO" id="oFm-S6-3bz">
+                                        <rect key="frame" x="63" y="124" width="177" height="17"/>
+                                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Show Preview as a:" id="5JY-Qe-Lw7">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                    </textField>
                                 </subviews>
                                 <constraints>
                                     <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="dB8-J7-xZw" secondAttribute="trailing" constant="20" symbolic="YES" id="0lE-oO-kxl"/>
@@ -1098,15 +1128,19 @@
                                     <constraint firstItem="O3v-fq-9DO" firstAttribute="top" secondItem="A0a-2e-yUq" secondAttribute="bottom" constant="6" id="JCW-Be-Fy1"/>
                                     <constraint firstItem="Z4N-q8-7Fi" firstAttribute="leading" secondItem="dJX-fB-ocG" secondAttribute="leading" id="ON5-f8-78J"/>
                                     <constraint firstItem="dJX-fB-ocG" firstAttribute="top" secondItem="s1m-K3-6d7" secondAttribute="bottom" constant="6" id="PYJ-OF-RRc"/>
+                                    <constraint firstItem="VgC-zo-Un0" firstAttribute="baseline" secondItem="oFm-S6-3bz" secondAttribute="baseline" id="RzS-TG-XJO"/>
                                     <constraint firstItem="dB8-J7-xZw" firstAttribute="leading" secondItem="jkP-c6-fJK" secondAttribute="trailing" constant="6" id="ShB-YL-Tcz"/>
                                     <constraint firstItem="K0q-Bt-VV8" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ZHg-CC-MJJ" secondAttribute="leading" constant="20" symbolic="YES" id="SwZ-rf-fgO"/>
+                                    <constraint firstItem="VgC-zo-Un0" firstAttribute="top" secondItem="O3v-fq-9DO" secondAttribute="bottom" constant="16" id="T3A-F8-gPY"/>
                                     <constraint firstItem="s1m-K3-6d7" firstAttribute="top" secondItem="lg9-3W-PJz" secondAttribute="bottom" constant="6" id="WUt-b2-8Iq"/>
                                     <constraint firstItem="PAI-kH-D5y" firstAttribute="top" secondItem="ZHg-CC-MJJ" secondAttribute="top" constant="20" symbolic="YES" id="XU5-IU-lYk"/>
                                     <constraint firstItem="jkP-c6-fJK" firstAttribute="leading" secondItem="O3v-fq-9DO" secondAttribute="trailing" constant="6" id="Xv2-cU-arU"/>
+                                    <constraint firstItem="VgC-zo-Un0" firstAttribute="leading" secondItem="oFm-S6-3bz" secondAttribute="trailing" constant="8" symbolic="YES" id="bPd-OH-BFW"/>
                                     <constraint firstItem="s1m-K3-6d7" firstAttribute="leading" secondItem="lg9-3W-PJz" secondAttribute="leading" id="bWg-a3-XIt"/>
                                     <constraint firstItem="Z4N-q8-7Fi" firstAttribute="leading" secondItem="S4C-EV-3OR" secondAttribute="trailing" constant="8" symbolic="YES" id="bz1-ha-5m8"/>
                                     <constraint firstItem="A0a-2e-yUq" firstAttribute="top" secondItem="EaD-ec-z3N" secondAttribute="bottom" constant="16" id="iet-19-RKW"/>
                                     <constraint firstItem="lg9-3W-PJz" firstAttribute="leading" secondItem="ZHg-CC-MJJ" secondAttribute="centerX" multiplier="0.77" id="kxA-Vh-1rB"/>
+                                    <constraint firstItem="O3v-fq-9DO" firstAttribute="leading" secondItem="VgC-zo-Un0" secondAttribute="leading" id="lXD-o8-UtU"/>
                                     <constraint firstItem="EaD-ec-z3N" firstAttribute="leading" secondItem="K0q-Bt-VV8" secondAttribute="trailing" constant="8" symbolic="YES" id="qc9-Ba-iPI"/>
                                     <constraint firstItem="S4C-EV-3OR" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ZHg-CC-MJJ" secondAttribute="leading" constant="20" symbolic="YES" id="rOF-oD-i5P"/>
                                     <constraint firstItem="A0a-2e-yUq" firstAttribute="baseline" secondItem="kie-nn-i70" secondAttribute="baseline" id="rYE-D8-GpM"/>

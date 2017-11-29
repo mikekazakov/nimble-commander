@@ -155,7 +155,14 @@
              * 1 - Middle
              * 2 - Trailing
              */
-            "filenamesTrimmingMode": 1
+            "filenamesTrimmingMode": 1,
+            
+            /**
+             * Switched between two modes of Preview:
+             * false - as a panel overlay
+             * true - as a floating window
+             */
+            "showQuickLookAsFloatingPanel": false
         },
         
         /**

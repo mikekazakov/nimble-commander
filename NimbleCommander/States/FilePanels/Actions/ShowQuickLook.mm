@@ -3,6 +3,7 @@
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include "../MainWindowFilePanelState.h"
+#include "../PanelAux.h"
 
 namespace nc::panel::actions {
 
@@ -11,6 +12,9 @@ bool ShowQuickLook::Predicate( PanelController *_target ) const
     if( !_target.view.item )
         return false;
 
+    if( ShowQuickLookAsFloatingPanel() )
+        return true;
+    
     if( _target.state.anyPanelCollapsed )
         return false;
     

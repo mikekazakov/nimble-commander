@@ -5,6 +5,7 @@
 
 namespace nc::panel::actions {
     
+// external dependency: PanelAux
 struct ShowQuickLook final : PanelAction
 {
     bool Predicate( PanelController *_target ) const override;

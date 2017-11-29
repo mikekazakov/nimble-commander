@@ -64,15 +64,13 @@ static NCPanelQLPanelProxy *Proxy();
 
 - (void)doVFSPreview:(const string&)_path host:(const VFSHostPtr&)_host ticket:(uint64_t)_ticket
 {
-    string path = _path;
-    VFSHostPtr host = _host;
     dispatch_after(g_Delay,
                    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),
                    [=]{
                        if( _ticket != m_CurrentTicket )
                            return;
                        
-                       const auto url = nc::panel::QuickLookVFSBridge{}.FetchItem(path, *host);
+                       const auto url = nc::panel::QuickLookVFSBridge{}.FetchItem(_path, *_host);
                        
                        if( _ticket != m_CurrentTicket )
                            return;
@@ -140,12 +138,16 @@ static NCPanelQLPanelProxy *Proxy();
 
 - (BOOL)previewPanel:(QLPreviewPanel *)panel handleEvent:(NSEvent *)event
 {
-    if( MainWindowFilePanelState *state = self.target ) {
-        if( event.type == NSKeyDown ) {
+    if( panel.inFullScreenMode )
+        return false;
+
+    if( event.type == NSKeyDown ) {
+        if( MainWindowFilePanelState *state = self.target ) {
             [state.window.firstResponder keyDown:event];
             return true;
         }
     }
+    
     return false;
 }
 

@@ -84,7 +84,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         if( MainWindowController *wnd = weak_self)
             [wnd beginSheet:_dlg completionHandler:^(NSModalResponse rc) { _cb(rc); }];
     });
-    m_OperationsPool->SetOperationCompletionCallback([weak_self](const shared_ptr<nc::ops::Operation>& _op){
+    m_OperationsPool->SetOperationCompletionCallback([weak_self]
+                                                     (const shared_ptr<nc::ops::Operation>& _op){
         if( MainWindowController *wnd = weak_self)
             dispatch_to_main_queue([=]{
                 auto &center = core::UserNotificationsCenter::Instance();
@@ -101,8 +102,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
                                                name:NSWindowDidBecomeKeyNotification
                                              object:self.window];
     
-    m_ConfigTickets.emplace_back( GlobalConfig().Observe(g_ConfigShowToolbar,
-                                                         objc_callback(self, @selector(onConfigShowToolbarChanged))) );
+    auto callback = objc_callback(self, @selector(onConfigShowToolbarChanged));
+    m_ConfigTickets.emplace_back(GlobalConfig().Observe(g_ConfigShowToolbar, move(callback)));
     
     [AppDelegate.me addMainWindow:self];
     
@@ -203,9 +204,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         completionHandler(nil, nil);
         return;
     }
-//  looks like current bugs in OSX10.10. uncomment this later:
-//    if(configuration::is_sandboxed && [NSApp modalWindow] != nil)
-//        return;
     
     NSWindow *window = nil;
     if( [identifier isEqualToString:MainWindow.defaultIdentifier] ) {
@@ -219,12 +217,10 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 {
     if( auto panels_state = [m_PanelState encodeRestorableState] ) {
         rapidjson::StringBuffer buffer;
-//        rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
         rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
         panels_state->Accept(writer);
-//        if(AmIBeingDebugged())
-//            cout << buffer.GetString() << endl;
-        [coder encodeObject:[NSString stringWithUTF8String:buffer.GetString()] forKey:g_CocoaRestorationFilePanelsStateKey];
+        [coder encodeObject:[NSString stringWithUTF8String:buffer.GetString()]
+                     forKey:g_CocoaRestorationFilePanelsStateKey];
     }
     
     [super encodeRestorableStateWithCoder:coder];
@@ -243,10 +239,13 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (void)restoreDefaultWindowStateFromLastOpenedWindow
 {
     // supposed to be called when new window is allocated
-    if( MainWindowController *last = g_LastFocusedMainWindowController ) {
-        [m_PanelState.leftPanelController copyOptionsFromController:last->m_PanelState.leftPanelController];
-        [m_PanelState.rightPanelController copyOptionsFromController:last->m_PanelState.rightPanelController];
-    }
+    MainWindowController *last = g_LastFocusedMainWindowController;
+    if( !last )
+        return;
+    
+    const auto file_state = last->m_PanelState;
+    [m_PanelState.leftPanelController copyOptionsFromController:file_state.leftPanelController];
+    [m_PanelState.rightPanelController copyOptionsFromController:file_state.rightPanelController];
 }
 
 + (bool)canRestoreDefaultWindowStateFromLastOpenedWindow
@@ -256,9 +255,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
-    if( auto json = objc_cast<NSString>([coder decodeObjectForKey:g_CocoaRestorationFilePanelsStateKey]) ) {
-//        if(AmIBeingDebugged())
-//            NSLog(@"%@", json);
+    const id encoded_state = [coder decodeObjectForKey:g_CocoaRestorationFilePanelsStateKey];
+    if( auto json = objc_cast<NSString>(encoded_state) ) {
         rapidjson::StandaloneDocument state;
         rapidjson::ParseResult ok = state.Parse<rapidjson::kParseCommentsFlag>( json.UTF8String );
         if( ok )
@@ -270,8 +268,10 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (bool)currentStateNeedWindowTitle
 {
-    auto state = self.topmostState;
-    if(state && [state respondsToSelector:@selector(windowStateNeedsTitle)] && [state windowStateNeedsTitle])
+    const auto state = self.topmostState;
+    if( !state )
+        return false;
+    if( [state respondsToSelector:@selector(windowStateNeedsTitle)] && state.windowStateNeedsTitle )
         return true;
     return false;
 }
@@ -349,7 +349,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (void)onConfigShowToolbarChanged
 {
     bool visible = GlobalConfig().GetBool( g_ConfigShowToolbar );
-    [self updateTitleAndToolbarVisibilityWith:self.window.toolbar toolbarVisible:visible needsTitle:self.currentStateNeedWindowTitle];
+    [self updateTitleAndToolbarVisibilityWith:self.window.toolbar
+                               toolbarVisible:visible
+                                   needsTitle:self.currentStateNeedWindowTitle];
 }
 
 - (void) ResignAsWindowState:(id)_state
@@ -426,7 +428,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
             }
         }
         else { // as a window
-            if( InternalViewerWindowController *window = [AppDelegate.me findInternalViewerWindowForPath:_filepath onVFS:_host] ) {
+            if( auto *window = [AppDelegate.me findInternalViewerWindowForPath:_filepath
+                                                                         onVFS:_host] ) {
                 // already has this one
                 dispatch_to_main_queue([=]{
                     [window showWindow:self];
@@ -435,7 +438,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
             else {
                 // need to create a new one
                 dispatch_sync(dispatch_get_main_queue(),[&]{
-                    window = [[InternalViewerWindowController alloc] initWithFilepath:_filepath at:_host];
+                    window = [[InternalViewerWindowController alloc] initWithFilepath:_filepath
+                                                                                   at:_host];
                 });
                 if( [window performBackgrounOpening] ) {
                     dispatch_to_main_queue([=]{
@@ -470,7 +474,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     [self requestTerminalExecution:_filename at:_cwd withParameters:nullptr];
 }
 
-- (void)requestTerminalExecution:(const char*)_filename at:(const char*)_cwd withParameters:(const char*)_params
+- (void)requestTerminalExecution:(const char*)_filename
+                              at:(const char*)_cwd
+                  withParameters:(const char*)_params
 {
     if( m_Terminal == nil ) {
         const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame];
@@ -484,7 +490,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     [m_Terminal execute:_filename at:_cwd parameters:_params];
 }
 
-- (void)requestTerminalExecutionWithFullPath:(const char*)_binary_path withParameters:(const char*)_params
+- (void)requestTerminalExecutionWithFullPath:(const char*)_binary_path
+                              withParameters:(const char*)_params
 {
     dispatch_assert_main_queue();
     

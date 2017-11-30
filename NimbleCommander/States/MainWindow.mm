@@ -10,7 +10,7 @@ static const auto g_FrameIdentifier = @"MainWindow";
 static const auto g_MinWindowSize = NSMakeSize(640, 480);
 static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 
-@implementation MainWindow
+@implementation NCMainWindow
 
 + (NSString*) defaultIdentifier
 {

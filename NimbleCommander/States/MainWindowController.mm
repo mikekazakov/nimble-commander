@@ -66,7 +66,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 - (instancetype)initBase
 {
-    auto window = [[MainWindow alloc] init];
+    auto window = [[NCMainWindow alloc] init];
     if( !window )
         return nil;
     
@@ -206,7 +206,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     }
     
     NSWindow *window = nil;
-    if( [identifier isEqualToString:MainWindow.defaultIdentifier] ) {
+    if( [identifier isEqualToString:NCMainWindow.defaultIdentifier] ) {
         auto ctrl = [[MainWindowController alloc] initForSystemRestoration];
         window = ctrl.window;
     }

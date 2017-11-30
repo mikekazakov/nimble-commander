@@ -22,6 +22,8 @@ struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked)
 
 namespace nc::vfs {
 
+static uint32_t MergeUnixFlags( uint32_t _symlink_flags, uint32_t _target_flags ) noexcept;
+    
 using namespace native;
 
 const char *NativeHost::UniqueTag = "native";
@@ -214,7 +216,8 @@ int NativeHost::FetchDirectoryListing(const char *_path,
                         &stat_buffer);
             if( stat_ret == 0 ) {
                 listing_source.unix_modes[n]    = stat_buffer.st_mode;
-                listing_source.unix_flags[n]    = stat_buffer.st_flags;
+                listing_source.unix_flags[n]    = MergeUnixFlags(listing_source.unix_flags[n],
+                                                                 stat_buffer.st_flags);
                 listing_source.uids[n]          = stat_buffer.st_uid;
                 listing_source.gids[n]          = stat_buffer.st_gid;
                 listing_source.sizes[n]         = S_ISDIR(stat_buffer.st_mode) ?
@@ -317,7 +320,8 @@ int NativeHost::FetchSingleItemListing(const char *_path,
         const auto stat_ret = io.stat(path, &stat_buffer);
         if( stat_ret == 0 ) {
             listing_source.unix_modes[0]    = stat_buffer.st_mode;
-            listing_source.unix_flags[0]    = stat_buffer.st_flags;
+            listing_source.unix_flags[0]    = MergeUnixFlags(listing_source.unix_flags[0],
+                                                             stat_buffer.st_flags);
             listing_source.uids[0]          = stat_buffer.st_uid;
             listing_source.gids[0]          = stat_buffer.st_gid;
             listing_source.sizes[0]         = stat_buffer.st_size;
@@ -808,4 +812,12 @@ int NativeHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_
     return VFSError::Ok;
 }
 
+    
+static uint32_t MergeUnixFlags( uint32_t _symlink_flags, uint32_t _target_flags ) noexcept
+{
+    const uint32_t hidden_flag = _symlink_flags & UF_HIDDEN;
+    return _target_flags | hidden_flag;
 }
+    
+}
+

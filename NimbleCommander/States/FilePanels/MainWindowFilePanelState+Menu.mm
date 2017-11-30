@@ -35,11 +35,10 @@ static bool Validate(MainWindowFilePanelState *_target, NSMenuItem *_item) noexc
     if ( characters.length != 1 )
         return [super performKeyEquivalent:theEvent];
     
-    auto mod = theEvent.modifierFlags & NSDeviceIndependentModifierFlagsMask;
-    mod &= ~NSAlphaShiftKeyMask;
-    mod &= ~NSNumericPadKeyMask;
-    mod &= ~NSFunctionKeyMask;
-    auto unicode = [characters characterAtIndex:0];
+    constexpr auto mask = NSDeviceIndependentModifierFlagsMask &
+                    ~(NSAlphaShiftKeyMask | NSNumericPadKeyMask | NSFunctionKeyMask);
+    const auto mod = theEvent.modifierFlags & mask;
+    const auto unicode = [characters characterAtIndex:0];
     
     // workaround for (shift)+ctrl+tab when its menu item is disabled, so NSWindow won't steal
     // the keystroke. This is a bad design choice, since it assumes Ctrl+Tab/Shift+Ctrl+Tab for

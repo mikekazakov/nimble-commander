@@ -8,6 +8,7 @@
 #include <RoutedIO/RoutedIO.h>
 #include <experimental/optional>
 #include <vector>
+#include <iostream>
 #include "RoutedIOInterfaces.h"
 
 using namespace std;
@@ -21,6 +22,8 @@ PosixIOInterface &RoutedIO::Default   = IOWrappedCreateProxy();
 
 static const char *g_HelperLabel      = "info.filesmanager.Files.PrivilegedIOHelperV2";
 static CFStringRef g_HelperLabelCF    = CFStringCreateWithUTF8StringNoCopy(g_HelperLabel);
+
+static const char *AuthRCToString(OSStatus _rc);
 
 static PosixIOInterface &IODirectCreateProxy() {
     static PosixIOInterfaceNative direct;
@@ -107,21 +110,26 @@ bool RoutedIO::IsHelperCurrent()
 
 bool RoutedIO::TurnOn()
 {
-    if( sysinfo::IsThisProcessSandboxed() )
+    if( sysinfo::IsThisProcessSandboxed() ) {
+        cerr << "RoutedIO::TurnOn() was called in the sandboxed process." << endl;
         return false;
+    }
     
-    if(m_Enabled)
+    if( m_Enabled )
         return true;
     
     if( !IsHelperInstalled() ) {
-        if( !AskToInstallHelper() )
+        if( !AskToInstallHelper() ) {
+            cerr << "RoutedIO::TurnOn() failed to install the priviledged helper." << endl;
             return false;
+        }
     }
     
     if(!AuthenticateAsAdmin())
         return false;
         
     if( !IsHelperCurrent() ) {
+        cerr << "RoutedIO::TurnOn() detected an outdated helper." << endl;
         // we have another version of a helper app
         if( Connect() && IsHelperAlive() ) {
             // ask helper it remove itself and then to exit gracefully
@@ -141,10 +149,13 @@ bool RoutedIO::TurnOn()
             xpc_release(m_Connection);
             m_Connection = nullptr;
             
-            if( !AskToInstallHelper() )
+            if( !AskToInstallHelper() ) {
+                cerr << "RoutedIO::TurnOn() failed to install the priviledged helper." << endl;
                 return false;
+            }
         }
         else {
+            cerr << "RoutedIO::TurnOn() failed to communicate with an outdated helper." << endl;
             // helper is not current we can't ask it to remove itself. protocol/signing probs?
             // anywhay, can go this way, no turning routing on
             return false;
@@ -197,8 +208,10 @@ bool RoutedIO::AskToInstallHelper()
     
     /* Obtain the right to install privileged helper tools (kSMRightBlessPrivilegedHelper). */
     OSStatus status = AuthorizationCreate(&authRights, kAuthorizationEmptyEnvironment, flags, &authRef);
-    if (status != errAuthorizationSuccess)
+    if( status != errAuthorizationSuccess ) {
+        cerr << "RoutedIO::AskToInstallHelper() failed to execute AuthorizationCreate() with the error: " << AuthRCToString(status) << "." << endl;
         return false;
+    }
 
     m_AuthenticatedAsAdmin = true;
     CFErrorRef error;
@@ -242,8 +255,10 @@ bool RoutedIO::AuthenticateAsAdmin()
     
     if(status == errAuthorizationSuccess)
         m_AuthenticatedAsAdmin = true;
+    else
+        cerr << "RoutedIO::AuthenticateAsAdmin() failed to execute AuthorizationCreate() with the error: " << AuthRCToString(status) << "." << endl;
     
-    return status == errAuthorizationSuccess;
+    return m_AuthenticatedAsAdmin;
 }
 
 bool RoutedIO::Connect()
@@ -259,7 +274,6 @@ bool RoutedIO::Connect()
         xpc_type_t type = xpc_get_type(event);
         if (type == XPC_TYPE_ERROR) {
             if (event == XPC_ERROR_CONNECTION_INVALID) {
-//                xpc_release(connection);
                 m_Connection = nullptr;
             }
         }
@@ -267,7 +281,8 @@ bool RoutedIO::Connect()
     
     xpc_connection_resume(connection);
 
-    if(!SayImAuthenticated(connection)) {
+    if( !SayImAuthenticated(connection) ) {
+        cerr << "RoutedIO::Connect() failed to call SayImAuthenticated()" << endl;
         xpc_connection_cancel(connection);
         return false;
     }
@@ -329,4 +344,25 @@ bool RoutedIO::Enabled() const noexcept
 
 PosixIOInterface::~PosixIOInterface()
 {
+}
+
+static const char *AuthRCToString(OSStatus _rc)
+{
+    switch( _rc ) {
+        case errAuthorizationSuccess:               return "errAuthorizationSuccess";
+        case errAuthorizationInvalidSet:            return "errAuthorizationInvalidSet";
+        case errAuthorizationInvalidRef:            return "errAuthorizationInvalidRef";
+        case errAuthorizationInvalidTag:            return "errAuthorizationInvalidTag";
+        case errAuthorizationInvalidPointer:        return "errAuthorizationInvalidPointer";
+        case errAuthorizationDenied:                return "errAuthorizationDenied";
+        case errAuthorizationCanceled:              return "errAuthorizationCanceled";
+        case errAuthorizationInteractionNotAllowed: return "errAuthorizationInteractionNotAllowed";
+        case errAuthorizationInternal:              return "errAuthorizationInternal";
+        case errAuthorizationExternalizeNotAllowed: return "errAuthorizationExternalizeNotAllowed";
+        case errAuthorizationInternalizeNotAllowed: return "errAuthorizationInternalizeNotAllowed";
+        case errAuthorizationInvalidFlags:          return "errAuthorizationInvalidFlags";
+        case errAuthorizationToolExecuteFailure:    return "errAuthorizationToolExecuteFailure";
+        case errAuthorizationToolEnvironmentError:  return "errAuthorizationToolEnvironmentError";
+        default:                                    return "Unknown OSStatus";
+    }
 }

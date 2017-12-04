@@ -1456,7 +1456,6 @@
 		CF1100D1191378BD00E170FC /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		CF15D0811E8E1E7A00FEAA04 /* OpenWithExternalEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenWithExternalEditor.h; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.h; sourceTree = SOURCE_ROOT; };
 		CF15D0821E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenWithExternalEditor.mm; path = NimbleCommander/States/FilePanels/Actions/OpenWithExternalEditor.mm; sourceTree = SOURCE_ROOT; };
-		CF1846F91E419B53008B7C9F /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
 		CF1863F61D8B9224008628E4 /* ProFeaturesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProFeaturesWindowController.h; path = NimbleCommander/GeneralUI/ProFeaturesWindowController.h; sourceTree = SOURCE_ROOT; };
 		CF1863F71D8B9224008628E4 /* ProFeaturesWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProFeaturesWindowController.mm; path = NimbleCommander/GeneralUI/ProFeaturesWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CF197C411FB81ACA009F6C59 /* ToggleSingleOrDualMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ToggleSingleOrDualMode.h; path = NimbleCommander/States/FilePanels/Actions/ToggleSingleOrDualMode.h; sourceTree = SOURCE_ROOT; };
@@ -1584,6 +1583,7 @@
 		CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileMask_Tests.mm; path = NimbleCommander/Core/FileMask_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"; sourceTree = SOURCE_ROOT; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.m"; sourceTree = SOURCE_ROOT; };
+		CF51D11E1FD512A70026CC00 /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerHistory.h; path = NimbleCommander/Viewer/InternalViewerHistory.h; sourceTree = SOURCE_ROOT; };
 		CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerHistory.mm; path = NimbleCommander/Viewer/InternalViewerHistory.mm; sourceTree = SOURCE_ROOT; };
@@ -2266,7 +2266,6 @@
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CF5E9A5D1FCD46AD005608F5 /* PanelPreview.h */,
 				CFDAC2641DFBF20F0039A104 /* ContextMenu.h */,
 				CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */,
 				CFFA95231F47CA760035E606 /* DragReceiver.h */,
@@ -2275,7 +2274,7 @@
 				CFFA952E1F4930BA0035E606 /* DragSender.mm */,
 				CFDAC2FE1DFD1D7C0039A104 /* ExternalEditorInfo.h */,
 				CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */,
-				CF1846F91E419B53008B7C9F /* ExternalEditorInfoPrivate.h */,
+				CF51D11E1FD512A70026CC00 /* ExternalEditorInfoPrivate.h */,
 				CF09393D1D12785E00D67AC6 /* ExternalToolsSupport_Tests.mm */,
 				CF0939371D11986D00D67AC6 /* ExternalToolsSupport.h */,
 				CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */,
@@ -2326,6 +2325,7 @@
 				CFDAC2031DF921160039A104 /* PanelDataStatistics.h */,
 				CFDAC2191DFBC6CB0039A104 /* PanelHistory.h */,
 				CFDAC21A1DFBC6CB0039A104 /* PanelHistory.mm */,
+				CF5E9A5D1FCD46AD005608F5 /* PanelPreview.h */,
 				CFDAC2121DFBBD110039A104 /* PanelView.h */,
 				CFDAC2131DFBBD110039A104 /* PanelView.mm */,
 				CF90C0C01EC174470056E3B8 /* PanelViewDelegate.h */,

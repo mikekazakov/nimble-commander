@@ -13,6 +13,9 @@
 /* Class = "NSMenuItem"; title = "No modifiers"; ObjectID = "4uL-sd-1Qi"; */
 "4uL-sd-1Qi.title" = "Без модификаторов";
 
+/* Class = "NSTextFieldCell"; title = "Show Preview as a:"; ObjectID = "5JY-Qe-Lw7"; */
+"5JY-Qe-Lw7.title" = "Показывать быстрый просмотр:";
+
 /* Class = "NSTextFieldCell"; title = "Icon Size:"; ObjectID = "5rZ-uP-KIK"; */
 "5rZ-uP-KIK.title" = "Размер иконки:";
 
@@ -223,6 +226,9 @@
 /* Class = "NSMenuItem"; title = "5"; ObjectID = "kca-NL-vEh"; */
 "kca-NL-vEh.title" = "5";
 
+/* Class = "NSMenuItem"; title = "Floating Window"; ObjectID = "lWr-bP-O1U"; */
+"lWr-bP-O1U.title" = "В отдельном окне";
+
 /* Class = "NSTextFieldCell"; title = "Allow up to:"; ObjectID = "qHq-Tf-LQT"; */
 "qHq-Tf-LQT.title" = "Разрешать до:";
 
@@ -246,6 +252,9 @@
 
 /* Class = "NSMenuItem"; title = "1"; ObjectID = "tBZ-Qz-rwE"; */
 "tBZ-Qz-rwE.title" = "1";
+
+/* Class = "NSMenuItem"; title = "Panel Overlay"; ObjectID = "tGa-eg-1b9"; */
+"tGa-eg-1b9.title" = "Поверх панели";
 
 /* Class = "NSMenuItem"; title = "1"; ObjectID = "tVd-i1-4F6"; */
 "tVd-i1-4F6.title" = "1";

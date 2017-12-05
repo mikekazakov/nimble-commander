@@ -1,3 +1,5 @@
+VALID_ARCHS = x86_64
+
 // paths
 HEADER_SEARCH_PATHS = $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../3rd_Party/boost/include $(PROJECT_DIR)/include/Term
 LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/boost/built

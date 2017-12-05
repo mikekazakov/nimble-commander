@@ -13,7 +13,6 @@
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
-#include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>

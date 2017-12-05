@@ -684,6 +684,10 @@
 		CFA7E02D1EB97B60001FE66C /* Delete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7E02C1EB97B60001FE66C /* Delete.mm */; };
 		CFA7FA741C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
 		CFA7FA751C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
+		CFA9DD8D1FD668370099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
+		CFA9DD9D1FD6694E0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
+		CFA9DD9E1FD6694F0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
+		CFA9DD9F1FD6694F0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
 		CFACF9AB1E24804D00FD6AB6 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
 		CFACFA3F1E24AB1200FD6AB6 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CFB44F0C1F35F0B900E7555E /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
@@ -1797,6 +1801,8 @@
 		CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenNetworkConnection.mm; path = NimbleCommander/States/FilePanels/Actions/OpenNetworkConnection.mm; sourceTree = SOURCE_ROOT; };
 		CFA7E02B1EB97B60001FE66C /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delete.h; path = NimbleCommander/States/FilePanels/Actions/Delete.h; sourceTree = SOURCE_ROOT; };
 		CFA7E02C1EB97B60001FE66C /* Delete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Delete.mm; path = NimbleCommander/States/FilePanels/Actions/Delete.mm; sourceTree = SOURCE_ROOT; };
+		CFA9DD8B1FD668370099DD91 /* Interactions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interactions.h; path = NimbleCommander/Bootstrap/Interactions.h; sourceTree = SOURCE_ROOT; };
+		CFA9DD8C1FD668370099DD91 /* Interactions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Interactions.mm; path = NimbleCommander/Bootstrap/Interactions.mm; sourceTree = SOURCE_ROOT; };
 		CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.h; sourceTree = SOURCE_ROOT; };
 		CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.mm; sourceTree = SOURCE_ROOT; };
 		CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarViewLib.xcodeproj; path = 3rd_Party/MMTabBarView/MMTabBarViewLib.xcodeproj; sourceTree = SOURCE_ROOT; };
@@ -2688,6 +2694,8 @@
 				CFDAC22F1DFBDBCB0039A104 /* Config.mm */,
 				CFFA943A1F3E9C4D0035E606 /* ConfigWiring.h */,
 				CFFA943B1F3E9C4D0035E606 /* ConfigWiring.mm */,
+				CFA9DD8B1FD668370099DD91 /* Interactions.h */,
+				CFA9DD8C1FD668370099DD91 /* Interactions.mm */,
 				CFDAC2321DFBDE2B0039A104 /* main.cpp */,
 				CFC5122916C4BD3D00D247EE /* MainMenu.xib */,
 				CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */,
@@ -3845,6 +3853,7 @@
 				CF818B501EA0610D00BC28E6 /* Select.mm in Sources */,
 				CF876D3E1D51E0B0009C0CCE /* BigFileView.mm in Sources */,
 				CF818B591EA0610D00BC28E6 /* ShowGoToPopup.mm in Sources */,
+				CFA9DD9E1FD6694F0099DD91 /* Interactions.mm in Sources */,
 				CFB66FCC1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF36DBF91F6C1988004A018E /* VFSInit.mm in Sources */,
 				CF6A428A1CD7B9BF0085CAF9 /* shared_mutex.cpp in Sources */,
@@ -4100,6 +4109,7 @@
 				CFD7265D1E42E1B800603077 /* MainWindowController.mm in Sources */,
 				CFBA63B01FC1A4FA00077682 /* CopyFile.mm in Sources */,
 				CFD726C71E42E29B00603077 /* Layout.mm in Sources */,
+				CFA9DD8D1FD668370099DD91 /* Interactions.mm in Sources */,
 				CFA2D6051E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
 				CF614AEC1F9D92A40005F2DB /* SettingsAdaptor.mm in Sources */,
 				CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
@@ -4319,6 +4329,7 @@
 				CF04DE061E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CF4E56441D5064FE00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
 				CF876D501D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
+				CFA9DD9F1FD6694F0099DD91 /* Interactions.mm in Sources */,
 				CFB709C018E561F200A83E61 /* ProcessSheetController.mm in Sources */,
 				CFA7DFF81EB6FD82001FE66C /* OpenNetworkConnection.mm in Sources */,
 				CFDAC2EF1DFD152C0039A104 /* FilePanelsTabbedHolder.mm in Sources */,
@@ -4505,6 +4516,7 @@
 				CFD7265B1E42E1B700603077 /* MainWindowController.mm in Sources */,
 				CFBA63B11FC1A50B00077682 /* ToggleSingleOrDualMode.mm in Sources */,
 				CFD726A01E42E23E00603077 /* PanelHistory.mm in Sources */,
+				CFA9DD9D1FD6694E0099DD91 /* Interactions.mm in Sources */,
 				CF6237241EB4444B00152B2B /* PanelDataOptionsPersistence.mm in Sources */,
 				CFD7260D1E42E07900603077 /* main.cpp in Sources */,
 				CFD7261C1E42E0A500603077 /* ThemesManager.mm in Sources */,

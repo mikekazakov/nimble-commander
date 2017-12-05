@@ -44,6 +44,7 @@
 #include "ActivationManager.h"
 #include "ConfigWiring.h"
 #include "VFSInit.h"
+#include "Interactions.h"
 
 using namespace nc::bootstrap;
 
@@ -75,53 +76,15 @@ GenericConfig &StateConfig() noexcept
     return *g_State;
 }
 
-static optional<string> AskUserForLicenseFile()
+static void ResetDefaults()
 {
-    NSOpenPanel *panel = [NSOpenPanel openPanel];
-    panel.resolvesAliases = true;
-    panel.canChooseDirectories = false;
-    panel.canChooseFiles = true;
-    panel.allowsMultipleSelection = false;
-    panel.showsHiddenFiles = true;
-    panel.allowedFileTypes = @[ [NSString stringWithUTF8StdString:ActivationManager::LicenseFileExtension()] ];
-    panel.allowsOtherFileTypes = false;
-    panel.directoryURL = [[NSURL alloc] initFileURLWithPath:[NSString stringWithUTF8StdString:CommonPaths::Downloads()] isDirectory:true];
-    if( [panel runModal] == NSFileHandlingPanelOKButton )
-        if(panel.URL != nil) {
-            string path = panel.URL.path.fileSystemRepresentationSafe;
-            return path;
-        }
-    return nullopt;
-}
-
-static bool AskUserToResetDefaults()
-{
-    Alert *alert = [[Alert alloc] init];
-    alert.messageText = NSLocalizedString(@"Are you sure you want to reset settings to defaults?", "Asking user for confirmation on erasing custom settings - message");
-    alert.informativeText = NSLocalizedString(@"This will erase all your custom settings.", "Asking user for confirmation on erasing custom settings - informative text");
-    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    [alert.buttons objectAtIndex:0].keyEquivalent = @"";
-    if( [alert runModal] == NSAlertFirstButtonReturn ) {
-        [NSUserDefaults.standardUserDefaults removePersistentDomainForName:NSBundle.mainBundle.bundleIdentifier];
-        [NSUserDefaults.standardUserDefaults synchronize];
-        GlobalConfig().ResetToDefaults();
-        StateConfig().ResetToDefaults();
-        GlobalConfig().Commit();
-        StateConfig().Commit();
-        return  true;
-    }
-    return false;
-}
-
-static bool AskUserToProvideUsageStatistics()
-{
-    Alert *alert = [[Alert alloc] init];
-    alert.messageText = NSLocalizedString(@"Please help us to improve the product", "Asking user to provide anonymous usage information - message");
-    alert.informativeText = NSLocalizedString(@"Would you like to send anonymous usage statistics to the developer? None of your personal data would be collected.", "Asking user to provide anonymous usage information - informative text");
-    [alert addButtonWithTitle:NSLocalizedString(@"Send", "")];
-    [alert addButtonWithTitle:NSLocalizedString(@"Don't send", "")];
-    return [alert runModal] == NSAlertFirstButtonReturn;
+    const auto bundle_id = NSBundle.mainBundle.bundleIdentifier;
+    [NSUserDefaults.standardUserDefaults removePersistentDomainForName:bundle_id];
+    [NSUserDefaults.standardUserDefaults synchronize];
+    GlobalConfig().ResetToDefaults();
+    StateConfig().ResetToDefaults();
+    GlobalConfig().Commit();
+    StateConfig().Commit();
 }
 
 static void UpdateMenuItemsPlaceholders( int _tag )
@@ -143,17 +106,14 @@ static void UpdateMenuItemsPlaceholders( const char *_action )
 
 static void CheckMASReceipt()
 {
-    if( !ActivationManager::ForAppStore() )
-        return;
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunreachable-code"
-    const auto path = NSBundle.mainBundle.appStoreReceiptURL.path;
-    const auto exists = [NSFileManager.defaultManager fileExistsAtPath:path];
-    if( !exists ) {
-        NSLog(@"no receipt - exit the app with code 173");
-        exit(173);
+    if constexpr ( ActivationManager::ForAppStore() ) {
+        const auto path = NSBundle.mainBundle.appStoreReceiptURL.path;
+        const auto exists = [NSFileManager.defaultManager fileExistsAtPath:path];
+        if( !exists ) {
+            cerr << "No receipt - exit the app with code 173" << endl;
+            exit(173);
+        }
     }
-#pragma clang diagnostic pop
 }
 
 static void CheckDefaultsReset()
@@ -161,8 +121,10 @@ static void CheckDefaultsReset()
     const auto erase_mask = NSAlphaShiftKeyMask | NSShiftKeyMask |
                             NSAlternateKeyMask | NSCommandKeyMask;
     if( (NSEvent.modifierFlags & erase_mask) == erase_mask )
-        if( AskUserToResetDefaults() )
+        if( AskUserToResetDefaults() ) {
+            ResetDefaults();
             exit(0);
+        }
 }
 
 static AppDelegate *g_Me = nil;
@@ -199,10 +161,12 @@ static AppDelegate *g_Me = nil;
     self = [super init];
     if(self) {
         g_Me = self;
-        m_IsRunningTests = (NSClassFromString(@"XCTestCase") != nil);
+        m_IsRunningTests = NSClassFromString(@"XCTestCase") != nullptr;
         CheckMASReceipt();
         CheckDefaultsReset();
-        m_SupportDirectory = EnsureTrailingSlash(NSFileManager.defaultManager.applicationSupportDirectory.fileSystemRepresentationSafe);
+        m_SupportDirectory =
+            EnsureTrailingSlash(NSFileManager.defaultManager.
+                                applicationSupportDirectory.fileSystemRepresentationSafe);
         [self setupConfigs];
     }
     return self;
@@ -429,10 +393,16 @@ static AppDelegate *g_Me = nil;
         [fm createDirectoryAtPath:state withIntermediateDirectories:true attributes:nil error:nil];
     m_StateDirectory = state.fileSystemRepresentationSafe;
     
-    g_Config = new GenericConfig([NSBundle.mainBundle pathForResource:@"Config" ofType:@"json"].fileSystemRepresentationSafe, self.configDirectory + "Config.json");
-    g_State  = new GenericConfig([NSBundle.mainBundle pathForResource:@"State" ofType:@"json"].fileSystemRepresentationSafe, self.stateDirectory + "State.json");
+    const auto bundle = NSBundle.mainBundle;
+    const auto config_defaults_path = [bundle pathForResource:@"Config"
+                                                       ofType:@"json"].fileSystemRepresentationSafe;
+    const auto state_defaults_path = [bundle pathForResource:@"State"
+                                                      ofType:@"json"].fileSystemRepresentationSafe;
+    g_Config = new GenericConfig(config_defaults_path, self.configDirectory + "Config.json");
+    g_State  = new GenericConfig(state_defaults_path, self.stateDirectory + "State.json");
     
-    atexit([]{ // this callback is quite brutal, but works well. may need to find some more gentle approach
+    atexit([]{
+        // this callback is quite brutal, but works well. may need to find some more gentle approach
         GlobalConfig().Commit();
         StateConfig().Commit();
     });
@@ -757,7 +727,11 @@ static AppDelegate *g_Me = nil;
 
 - (bool) askToResetDefaults
 {
-    return AskUserToResetDefaults();
+    if( AskUserToResetDefaults() ) {
+        ResetDefaults();
+        return true;
+    }
+    return false;
 }
 
 - (void) addInternalViewerWindow:(InternalViewerWindowController*)_wnd

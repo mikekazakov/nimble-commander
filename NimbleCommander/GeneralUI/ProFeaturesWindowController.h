@@ -2,7 +2,7 @@
 #pragma once
 
 @interface ProFeaturesWindowController : NSWindowController
-@property bool                          suppressDontShowAgain;
+@property (nonatomic) bool              suppressDontShowAgain;
 @property (nonatomic, readonly) bool    dontShowAgain;
 
 @end

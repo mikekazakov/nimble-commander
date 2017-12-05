@@ -4,9 +4,9 @@
 #include "ProFeaturesWindowController.h"
 
 @interface ProFeaturesWindowController ()
-@property (strong) IBOutlet NSTextView *learnMoreURL;
-@property (strong) IBOutlet NSTextField *priceLabel;
-@property (strong) IBOutlet NSButton *dontShowAgainCheckbox;
+@property (nonatomic) IBOutlet NSTextView *learnMoreURL;
+@property (nonatomic) IBOutlet NSTextField *priceLabel;
+@property (nonatomic) IBOutlet NSButton *dontShowAgainCheckbox;
 
 @end
 

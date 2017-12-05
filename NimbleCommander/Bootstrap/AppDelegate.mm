@@ -508,15 +508,19 @@ static AppDelegate *g_Me = nil;
 
 - (void)application:(NSApplication *)sender openFiles:(NSArray<NSString *> *)filenames
 {
+    static const auto nc_license_extension = "."s + ActivationManager::LicenseFileExtension();
+    
     vector<string> paths;
     for( NSString *pathstring in filenames )
         if( auto fs = pathstring.fileSystemRepresentationSafe ) {
-            static const auto nc_license_extension = "."s + ActivationManager::LicenseFileExtension();
-            if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
-               filenames.count == 1 && path(fs).extension() == nc_license_extension ) {
-                string p = fs;
-                dispatch_to_main_queue([=]{ [self processProvidedLicenseFile:p]; });
-                return;
+            if constexpr( ActivationManager::Type() == ActivationManager::Distribution::Trial ) {
+                if( filenames.count == 1 && path(fs).extension() == nc_license_extension ) {
+                    string p = fs;
+                    dispatch_to_main_queue([=]{
+                        [self processProvidedLicenseFile:p];
+                    });
+                    return;
+                }
             }
             
             // WTF Cocoa??

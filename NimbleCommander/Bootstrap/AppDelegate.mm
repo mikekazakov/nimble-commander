@@ -17,7 +17,6 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>
-#include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/Dock.h>
 #include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
@@ -464,16 +463,9 @@ static AppDelegate *g_Me = nil;
         }
     
     if( has_running_ops ) {
-        Alert *alert = [[Alert alloc] init];
-        alert.messageText = NSLocalizedString(@"The application has running operations. Do you want to stop all operations and quit?", "Asking user for quitting app with activity");
-        [alert addButtonWithTitle:NSLocalizedString(@"Stop and Quit", "Asking user for quitting app with activity - confirmation")];
-        [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-        NSInteger result = [alert runModal];
-        
-        // If cancel is pressed.
-        if( result == NSAlertSecondButtonReturn )
+        if( !AskToExitWithRunningOperations() )
             return NSTerminateCancel;
-        
+
         for( const auto wincont : m_MainWindows ) {
             wincont.operationsPool.StopAndWaitForShutdown();
             [wincont.terminalState terminate];
@@ -541,13 +533,7 @@ static AppDelegate *g_Me = nil;
 {
     const bool valid_and_installed = ActivationManager::Instance().ProcessLicenseFile(_path);
     if( valid_and_installed ) {
-        Alert *alert = [[Alert alloc] init];
-        alert.icon = [NSImage imageNamed:@"checked_icon"];
-        alert.messageText       = NSLocalizedString(@"__THANKS_FOR_REGISTER_MESSAGE", "Message to thank user for buying");
-        alert.informativeText   = NSLocalizedString(@"__THANKS_FOR_REGISTER_INFORMATIVE", "Informative text to thank user for buying");
-        [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-        [alert runModal];
-        
+        ThankUserForBuyingALicense();
         [self updateMainMenuFeaturesByVersionAndState];
         self.dock.SetUnregisteredBadge( false );
         GA().PostEvent("Licensing", "Buy", "Successful external license activation");
@@ -562,7 +548,8 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)OnPurchaseExternalLicense:(id)sender
 {
-    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:@"http://magnumbytes.com/redirectlinks/buy_license"]];
+    const auto url = [NSURL URLWithString:@"http://magnumbytes.com/redirectlinks/buy_license"];
+    [NSWorkspace.sharedWorkspace openURL:url];
     GA().PostEvent("Licensing", "Buy", "Go to 3rd party registrator");
 }
 
@@ -646,13 +633,15 @@ static AppDelegate *g_Me = nil;
 
 - (IBAction)OnShowHelp:(id)sender
 {
-    [NSWorkspace.sharedWorkspace openURL:[NSBundle.mainBundle URLForResource:@"Help" withExtension:@"pdf"]];
+    const auto url = [NSBundle.mainBundle URLForResource:@"Help" withExtension:@"pdf"];
+    [NSWorkspace.sharedWorkspace openURL:url];
     GA().PostEvent("Help", "Click", "Open Help");
 }
 
 - (IBAction)onMainMenuPerformGoToProductForum:(id)sender
 {
-    [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:@"http://magnumbytes.com/forum/"]];
+    const auto url = [NSURL URLWithString:@"http://magnumbytes.com/forum/"];
+    [NSWorkspace.sharedWorkspace openURL:url];
     GA().PostEvent("Help", "Click", "Visit Forum");
 }
 
@@ -661,14 +650,11 @@ static AppDelegate *g_Me = nil;
     if( RoutedIO::Instance().Enabled() )
         RoutedIO::Instance().TurnOff();
     else {
-        bool result = RoutedIO::Instance().TurnOn();
-        if( !result ) {
-            Alert *alert = [[Alert alloc] init];
-            alert.messageText = NSLocalizedString(@"Failed to access the privileged helper.", "Information that toggling admin mode on has failed");
-            [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-            [alert runModal];
-        }
         GA().PostScreenView("Admin Mode");
+        
+        const auto turned_on = RoutedIO::Instance().TurnOn();
+        if( !turned_on )
+            WarnAboutFailingToAccessPriviledgedHelper();
     }
 
     self.dock.SetAdminBadge( RoutedIO::Instance().Enabled() );
@@ -691,13 +677,13 @@ static AppDelegate *g_Me = nil;
 
 - (GenericConfigObjC*) config
 {
-    static GenericConfigObjC *global_config_bridge = [[GenericConfigObjC alloc] initWithConfig:g_Config];
+    static auto global_config_bridge = [[GenericConfigObjC alloc] initWithConfig:g_Config];
     return global_config_bridge;
 }
 
 - (ExternalToolsStorage&) externalTools
 {
-    static ExternalToolsStorage* i = new ExternalToolsStorage(g_ConfigExternalToolsList);
+    static auto i = new ExternalToolsStorage(g_ConfigExternalToolsList);
     return *i;
 }
 

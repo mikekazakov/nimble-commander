@@ -66,4 +66,48 @@ bool AskUserToProvideUsageStatistics()
     return [alert runModal] == NSAlertFirstButtonReturn;
 }
     
+bool AskToExitWithRunningOperations()
+{
+    const auto msg =
+        NSLocalizedString(@"The application has running operations. Do you want to stop all operations and quit?",
+                          "Asking user for quitting app with activity");
+    
+    Alert *alert = [[Alert alloc] init];
+    alert.messageText = msg;
+    [alert addButtonWithTitle:NSLocalizedString(@"Stop and Quit", "Asking user for quitting app with activity - confirmation")];
+    [alert addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    NSInteger result = [alert runModal];
+    
+    return result == NSAlertFirstButtonReturn;
+}
+    
+void ThankUserForBuyingALicense()
+{
+    const auto msg =
+        NSLocalizedString(@"__THANKS_FOR_REGISTER_MESSAGE",
+                          "Message to thank user for buying");
+    const auto info =
+        NSLocalizedString(@"__THANKS_FOR_REGISTER_INFORMATIVE",
+                          "Informative text to thank user for buying");
+    
+    Alert *alert = [[Alert alloc] init];
+    alert.icon = [NSImage imageNamed:@"checked_icon"];
+    alert.messageText = msg;
+    alert.informativeText = info;
+    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+    [alert runModal];
+}
+
+void WarnAboutFailingToAccessPriviledgedHelper()
+{
+    const auto msg =
+        NSLocalizedString(@"Failed to access the privileged helper.",
+                          "Information that toggling admin mode on has failed");
+    
+    Alert *alert = [[Alert alloc] init];
+    alert.messageText = msg;
+    [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
+    [alert runModal];
+}
+    
 }

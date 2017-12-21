@@ -162,7 +162,7 @@ int Fetching::ReadSingleEntryAttributesByPath(
     }
     
     if( attrs.returned.commonattr & ATTR_CMN_ACCESSMASK ) {
-        params.mode |= *reinterpret_cast<const u_int32_t*>(field);
+        params.mode |= *reinterpret_cast<const u_int32_t*>(field) & (~S_IFMT);
         field += sizeof(u_int32_t);
     }
     
@@ -285,123 +285,120 @@ int Fetching::ReadDirAttributesBulk(
                             ATTR_CMN_FILEID;
     attr_list.fileattr    = ATTR_FILE_DATALENGTH;
     
-
-    char attr_buf[65536];
+    const auto attr_buf_size = 65536;
+    char attr_buf[attr_buf_size];
     CallbackParams params;
     while( true ) {
-        const int retcount = getattrlistbulk(_dir_fd,
-                                             &attr_list,
-                                             &attr_buf[0],
-                                             sizeof(attr_buf),
-                                             0);
+        const int retcount = getattrlistbulk(_dir_fd, &attr_list, &attr_buf[0], attr_buf_size, 0);
         if( retcount < 0 )
             return errno;
-        else if (retcount == 0)
+        
+        if( retcount == 0 )
             return 0;
-        else {
-            _cb_fetch(retcount);
+        
+        _cb_fetch(retcount);
+        
+        const char *entry_start = &attr_buf[0];
+        for( int index = 0; index < retcount; index++ ) {
+            Attrs attrs;
+            memset(&attrs, 0, sizeof(Attrs));
             
-            char *entry_start = &attr_buf[0];
-            for( int index = 0; index < retcount; index++ ) {
-                Attrs attrs;
-                memset(&attrs, 0, sizeof(Attrs));
-                
-                char *field = entry_start;
-                attrs.length = *(uint32_t *)field;
+            const char *field = entry_start;
+            attrs.length = *reinterpret_cast<const uint32_t*>(field);
+            field += sizeof(uint32_t);
+            
+            entry_start += attrs.length;
+            
+            attrs.returned = *reinterpret_cast<const attribute_set_t *>(field);
+            field += sizeof(attribute_set_t);
+            
+            if( attrs.returned.commonattr & ATTR_CMN_ERROR ) {
+                attrs.error = *reinterpret_cast<const uint32_t*>(field);
                 field += sizeof(uint32_t);
-                
-                entry_start += attrs.length;
-                
-                attrs.returned = *(attribute_set_t *)field;
-                field += sizeof(attribute_set_t);
-                
-                if( attrs.returned.commonattr & ATTR_CMN_ERROR ) {
-                    attrs.error = *(uint32_t *)field;
-                    field += sizeof(uint32_t);
-                }
-                
-                if( attrs.error != 0 )
-                    continue;
-                
-                if ( attrs.returned.commonattr & ATTR_CMN_NAME ) {
-                    params.filename = field + ((attrreference_t *)field)->attr_dataoffset;
-                    field += sizeof(attrreference_t);
-                }
-                else
-                    continue; // can't work without filename
-                
-                if( attrs.returned.commonattr & ATTR_CMN_DEVID ) {
-                    params.dev = *(dev_t*)field;
-                    field += sizeof(dev_t);
-                }
-                
-                params.mode = 0;
-                if( attrs.returned.commonattr & ATTR_CMN_OBJTYPE ) {
-                    params.mode = VNodeToUnixMode(*(fsobj_type_t *)field);
-                    field += sizeof(fsobj_type_t);
-                }
-                
-                if( attrs.returned.commonattr & ATTR_CMN_CRTIME ) {
-                    params.crt_time = ((timespec*)field)->tv_sec;
-                    field += sizeof(timespec);
-                }
-                
-                if( attrs.returned.commonattr & ATTR_CMN_MODTIME ) {
-                    params.mod_time = ((timespec*)field)->tv_sec;
-                    field += sizeof(timespec);
-                }
-
-                if( attrs.returned.commonattr & ATTR_CMN_CHGTIME ) {
-                    params.chg_time = ((timespec*)field)->tv_sec;
-                    field += sizeof(timespec);
-                }
-
-                if( attrs.returned.commonattr & ATTR_CMN_ACCTIME ) {
-                    params.acc_time = ((timespec*)field)->tv_sec;
-                    field += sizeof(timespec);
-                }
-                
-                if( attrs.returned.commonattr & ATTR_CMN_OWNERID ) {
-                    params.uid = *(uid_t*)field;
-                    field += sizeof(uid_t);
-                }
-
-                if( attrs.returned.commonattr & ATTR_CMN_GRPID ) {
-                    params.gid = *(gid_t*)field;
-                    field += sizeof(gid_t);
-                }
-
-                if( attrs.returned.commonattr & ATTR_CMN_ACCESSMASK ) {
-                    params.mode |= ((*(u_int32_t*)field) & (~S_IFMT));
-                    field += sizeof(u_int32_t);
-                }
-                
-                if( attrs.returned.commonattr & ATTR_CMN_FLAGS ) {
-                    params.flags = *(uint32_t*)field;
-                    field += sizeof(u_int32_t);
-                }
-                
-                if( attrs.returned.commonattr & ATTR_CMN_FILEID ) {
-                    params.inode = *(uint64_t*)field;
-                    field += sizeof(uint64_t);
-                }
-                
-                if( attrs.returned.commonattr & ATTR_CMN_ADDEDTIME ) {
-                    params.add_time = ((timespec*)field)->tv_sec;
-                    field += sizeof(timespec);
-                }
-                else
-                    params.add_time = -1;
-                
-                if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH ) {
-                    params.size = *(off_t*)field;
-                    /* field += sizeof(off_t); */
-                }
-                else
-                    params.size = -1;
-                    
-                _cb_param( params );
             }
+            
+            if( attrs.error != 0 )
+                continue;
+            
+            if( attrs.returned.commonattr & ATTR_CMN_NAME ) {
+                params.filename = field +
+                reinterpret_cast<const attrreference_t *>(field)->attr_dataoffset;
+                field += sizeof(attrreference_t);
+            }
+            else
+                continue; // can't work without filename
+            
+            if( attrs.returned.commonattr & ATTR_CMN_DEVID ) {
+                params.dev = *reinterpret_cast<const dev_t*>(field);
+                field += sizeof(dev_t);
+            }
+            
+            params.mode = 0;
+            if( attrs.returned.commonattr & ATTR_CMN_OBJTYPE ) {
+                params.mode = VNodeToUnixMode(*reinterpret_cast<const fsobj_type_t*>(field));
+                field += sizeof(fsobj_type_t);
+            }
+            
+            if( attrs.returned.commonattr & ATTR_CMN_CRTIME ) {
+                params.crt_time = reinterpret_cast<const struct timespec*>(field)->tv_sec;
+                field += sizeof(timespec);
+            }
+            
+            if( attrs.returned.commonattr & ATTR_CMN_MODTIME ) {
+                params.mod_time = reinterpret_cast<const struct timespec*>(field)->tv_sec;
+                field += sizeof(timespec);
+            }
+            
+            if( attrs.returned.commonattr & ATTR_CMN_CHGTIME ) {
+                params.chg_time = reinterpret_cast<const struct timespec*>(field)->tv_sec;
+                field += sizeof(timespec);
+            }
+            
+            if( attrs.returned.commonattr & ATTR_CMN_ACCTIME ) {
+                params.acc_time = reinterpret_cast<const struct timespec*>(field)->tv_sec;
+                field += sizeof(timespec);
+            }
+            
+            if( attrs.returned.commonattr & ATTR_CMN_OWNERID ) {
+                params.uid = *reinterpret_cast<const uid_t*>(field);
+                field += sizeof(uid_t);
+            }
+            
+            if( attrs.returned.commonattr & ATTR_CMN_GRPID ) {
+                params.gid = *reinterpret_cast<const gid_t*>(field);
+                field += sizeof(gid_t);
+            }
+            
+            if( attrs.returned.commonattr & ATTR_CMN_ACCESSMASK ) {
+                params.mode |= *reinterpret_cast<const u_int32_t*>(field) & (~S_IFMT);
+                field += sizeof(u_int32_t);
+            }
+            
+            if( attrs.returned.commonattr & ATTR_CMN_FLAGS ) {
+                params.flags = *reinterpret_cast<const u_int32_t*>(field);
+                field += sizeof(u_int32_t);
+            }
+            
+            if( attrs.returned.commonattr & ATTR_CMN_FILEID ) {
+                params.inode = *reinterpret_cast<const u_int64_t*>(field);
+                field += sizeof(uint64_t);
+            }
+            
+            if( attrs.returned.commonattr & ATTR_CMN_ADDEDTIME ) {
+                params.add_time = reinterpret_cast<const struct timespec*>(field)->tv_sec;
+                field += sizeof(timespec);
+            }
+            else
+                params.add_time = -1;
+            
+            if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH ) {
+                params.size = *reinterpret_cast<const off_t*>(field);
+                field += sizeof(off_t);
+            }
+            else
+                params.size = -1;
+            
+            _cb_param( params );
         }
     }
 }

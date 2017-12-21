@@ -106,8 +106,10 @@ static NCPanelQLPanelProxy *Proxy();
 + (void)unregisterQuickLook:(QLPreviewPanel *)_ql_panel forState:(MainWindowFilePanelState*)_state;
 {
     auto p = Proxy();
-    if( p.target == _state )
+    if( p.target == _state ) {
         p.target = nil;
+        [p setPreviewURL:nil];
+    }
 }
 
 @end

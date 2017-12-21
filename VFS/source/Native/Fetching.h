@@ -11,19 +11,19 @@ public:
 
     struct CallbackParams
     {
-        const char*         filename;
-        time_t              crt_time;
-        time_t              mod_time;
-        time_t              chg_time;
-        time_t              acc_time;
-        time_t              add_time; // may be -1 if absent
-        uid_t               uid;
-        gid_t               gid;
-        mode_t              mode;
-        dev_t               dev;
-        uint64_t            inode;
-        uint32_t            flags;
-        int64_t             size; // will be -1 if absent
+        const char*         filename = nullptr;
+        time_t              crt_time = 0;
+        time_t              mod_time = 0;
+        time_t              chg_time = 0;
+        time_t              acc_time = 0;
+        time_t              add_time = 0; // may be -1 if absent
+        uid_t               uid = 0;
+        gid_t               gid = 0;
+        mode_t              mode = 0;
+        dev_t               dev = 0;
+        uint64_t            inode = 0;
+        uint32_t            flags = 0;
+        int64_t             size = 0; // will be -1 if absent
     };
     
     using Callback = function<void(const CallbackParams &_params)>;

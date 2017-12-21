@@ -119,47 +119,74 @@ int Fetching::ReadSingleEntryAttributesByPath(
     CallbackParams params;
     params.filename = "";
     
-    if( attrs.returned.commonattr & ATTR_CMN_DEVID )
-        params.dev = attrs.dev;
+    const char *field = (const char*)&attrs.dev;
+    if( attrs.returned.commonattr & ATTR_CMN_DEVID ) {
+        params.dev = *reinterpret_cast<const dev_t*>(field);
+        field += sizeof(dev_t);
+    }
     
     params.mode = 0;
-    if( attrs.returned.commonattr & ATTR_CMN_OBJTYPE )
-        params.mode = VNodeToUnixMode( attrs.obj_type );
+    if( attrs.returned.commonattr & ATTR_CMN_OBJTYPE ) {
+        params.mode = VNodeToUnixMode(*reinterpret_cast<const fsobj_type_t*>(field));
+        field += sizeof(fsobj_type_t);
+    }
     
-    if( attrs.returned.commonattr & ATTR_CMN_CRTIME )
-        params.crt_time = attrs.crt_time.tv_sec;
+    if( attrs.returned.commonattr & ATTR_CMN_CRTIME ) {
+        params.crt_time = reinterpret_cast<const struct timespec*>(field)->tv_sec;
+        field += sizeof(struct timespec);
+    }
     
-    if( attrs.returned.commonattr & ATTR_CMN_MODTIME )
-        params.mod_time = attrs.mod_time.tv_sec;
+    if( attrs.returned.commonattr & ATTR_CMN_MODTIME ) {
+        params.mod_time = reinterpret_cast<const struct timespec*>(field)->tv_sec;
+        field += sizeof(struct timespec);
+    }
     
-    if( attrs.returned.commonattr & ATTR_CMN_CHGTIME )
-        params.chg_time = attrs.chg_time.tv_sec;
+    if( attrs.returned.commonattr & ATTR_CMN_CHGTIME ) {
+        params.chg_time = reinterpret_cast<const struct timespec*>(field)->tv_sec;
+        field += sizeof(struct timespec);
+    }
     
-    if( attrs.returned.commonattr & ATTR_CMN_ACCTIME )
-        params.acc_time = attrs.acc_time.tv_sec;
+    if( attrs.returned.commonattr & ATTR_CMN_ACCTIME ) {
+        params.acc_time = reinterpret_cast<const struct timespec*>(field)->tv_sec;
+        field += sizeof(struct timespec);
+    }
     
-    if( attrs.returned.commonattr & ATTR_CMN_OWNERID )
-        params.uid = attrs.uid;
+    if( attrs.returned.commonattr & ATTR_CMN_OWNERID ) {
+        params.uid = *reinterpret_cast<const uid_t*>(field);
+        field += sizeof(uid_t);
+    }
     
-    if( attrs.returned.commonattr & ATTR_CMN_GRPID )
-        params.gid = attrs.gid;
+    if( attrs.returned.commonattr & ATTR_CMN_GRPID ) {
+        params.gid = *reinterpret_cast<const gid_t*>(field);
+        field += sizeof(gid_t);
+    }
     
-    if( attrs.returned.commonattr & ATTR_CMN_ACCESSMASK )
-        params.mode |= attrs.access;
+    if( attrs.returned.commonattr & ATTR_CMN_ACCESSMASK ) {
+        params.mode |= *reinterpret_cast<const u_int32_t*>(field);
+        field += sizeof(u_int32_t);
+    }
     
-    if( attrs.returned.commonattr & ATTR_CMN_FLAGS )
-        params.flags = attrs.flags;
+    if( attrs.returned.commonattr & ATTR_CMN_FLAGS ) {
+        params.flags = *reinterpret_cast<const u_int32_t*>(field);
+        field += sizeof(u_int32_t);
+    }
     
-    if( attrs.returned.commonattr & ATTR_CMN_ADDEDTIME )
-        params.add_time = attrs.add_time.tv_sec;
+    if( attrs.returned.commonattr & ATTR_CMN_FILEID ) {
+        params.inode = *reinterpret_cast<const u_int64_t*>(field);
+        field += sizeof(u_int64_t);
+    }
+    
+    if( attrs.returned.commonattr & ATTR_CMN_ADDEDTIME ) {
+        params.add_time = reinterpret_cast<const struct timespec*>(field)->tv_sec;
+        field += sizeof(struct timespec);
+    }
     else
         params.add_time = -1;
-
-    if( attrs.returned.commonattr & ATTR_CMN_FILEID )
-        params.inode = attrs.inode;
     
-    if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH )
-        params.size = attrs.file_size;
+    if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH ) {
+        params.size = *reinterpret_cast<const off_t*>(field);
+        field += sizeof(off_t);
+    }
     else
         params.size = -1;
     

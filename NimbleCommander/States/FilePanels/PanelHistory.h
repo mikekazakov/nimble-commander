@@ -3,6 +3,7 @@
 
 #include <VFS/VFS.h>
 #include "../../Core/VFSInstanceManager.h"
+#include "ListingPromise.h"
 
 namespace nc::panel {
 
@@ -12,14 +13,8 @@ namespace nc::panel {
 class History
 {
 public:
-    // currenly we store only vfs info and directory inside it
-    struct Path
-    {
-        bool operator==(const Path&_rhs) const noexcept;
-        bool operator!=(const Path&_rhs) const noexcept;
-        VFSInstanceManager::Promise     vfs;
-        string                          path;
-    };
+    using Path = ListingPromise;
+    
     
     bool IsRecording() const noexcept;
     unsigned Length() const noexcept;
@@ -43,7 +38,7 @@ public:
      * Will turn History into "recording" state.
      * History was in playing state - will discard anything in front of current position.
      */
-    void Put(const VFSHostPtr &_vfs, string _directory_path);
+    void Put(const VFSListing &_listing );
     
     /**
      * Will return nullptr if history is in "recording" state.

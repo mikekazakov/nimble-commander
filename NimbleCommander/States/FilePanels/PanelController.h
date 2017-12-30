@@ -107,7 +107,7 @@ public:
 @property (nonatomic, readonly) NSWindow* window;
 @property (nonatomic, readonly) bool receivesUpdateNotifications; // returns true if underlying vfs will notify controller that content has changed
 @property (nonatomic, readonly) bool ignoreDirectoriesOnSelectionByMask;
-@property (nonatomic, readonly) int vfsFetchingFlags;
+@property (nonatomic, readonly) unsigned long vfsFetchingFlags;
 @property (nonatomic) int layoutIndex;
 @property (nonatomic, readonly) NetworkConnectionsManager& networkConnectionsManager;
 
@@ -166,8 +166,10 @@ public:
 loadPreviousState:(bool)_load_state
           async:(bool)_asynchronous;
 
-// sync operation
-- (void) loadNonUniformListing:(const shared_ptr<VFSListing>&)_listing;
+/**
+ * Loads existing listing into the panel. Save to call from any thread.
+ */
+- (void) loadListing:(const shared_ptr<VFSListing>&)_listing;
 
 // will load previous view state if any
 - (void) GoToVFSPromise:(const VFSInstancePromise&)_promise onPath:(const string&)_directory;

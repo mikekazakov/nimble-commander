@@ -92,6 +92,10 @@
 		CF1FBF2C1E8F57E900D3569C /* AddToFavorites.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */; };
 		CF1FBF2D1E8F57EA00D3569C /* AddToFavorites.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */; };
 		CF1FBF3C1E90ABC000D3569C /* NetFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD8CD9C1E823CAC00E4DC53 /* NetFS.framework */; };
+		CF2083EE1FEFAAA00014D6AD /* ListingPromise.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2083ED1FEFAAA00014D6AD /* ListingPromise.mm */; };
+		CF2084151FF14E260014D6AD /* ListingPromise.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2083ED1FEFAAA00014D6AD /* ListingPromise.mm */; };
+		CF2084251FF14E260014D6AD /* ListingPromise.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2083ED1FEFAAA00014D6AD /* ListingPromise.mm */; };
+		CF2084261FF14E270014D6AD /* ListingPromise.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2083ED1FEFAAA00014D6AD /* ListingPromise.mm */; };
 		CF20DF181FC41CF90074ABB8 /* TabContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF171FC41CF90074ABB8 /* TabContextMenu.mm */; };
 		CF20DF281FC41E9B0074ABB8 /* TabContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF171FC41CF90074ABB8 /* TabContextMenu.mm */; };
 		CF20DF291FC41E9B0074ABB8 /* TabContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF171FC41CF90074ABB8 /* TabContextMenu.mm */; };
@@ -1478,6 +1482,8 @@
 		CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainWindowInternalViewerState.xib; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.xib; sourceTree = SOURCE_ROOT; };
 		CF1E3D281D5AF7E000609ADB /* InternalViewerToolbarProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerToolbarProtocol.h; path = NimbleCommander/Viewer/InternalViewerToolbarProtocol.h; sourceTree = SOURCE_ROOT; };
 		CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerToolbarProtocol.mm; path = NimbleCommander/Viewer/InternalViewerToolbarProtocol.mm; sourceTree = SOURCE_ROOT; };
+		CF2083EC1FEFAAA00014D6AD /* ListingPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ListingPromise.h; path = NimbleCommander/States/FilePanels/ListingPromise.h; sourceTree = SOURCE_ROOT; };
+		CF2083ED1FEFAAA00014D6AD /* ListingPromise.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ListingPromise.mm; path = NimbleCommander/States/FilePanels/ListingPromise.mm; sourceTree = SOURCE_ROOT; };
 		CF20DF161FC41CF90074ABB8 /* TabContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TabContextMenu.h; path = NimbleCommander/States/FilePanels/TabContextMenu.h; sourceTree = SOURCE_ROOT; };
 		CF20DF171FC41CF90074ABB8 /* TabContextMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TabContextMenu.mm; path = NimbleCommander/States/FilePanels/TabContextMenu.mm; sourceTree = SOURCE_ROOT; };
 		CF20DF331FC66E5F0074ABB8 /* ShowTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShowTerminal.h; path = NimbleCommander/States/FilePanels/Actions/ShowTerminal.h; sourceTree = SOURCE_ROOT; };
@@ -2286,6 +2292,8 @@
 				CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */,
 				CF5FE7C91E0CDEA600CD83B4 /* FilesDraggingSource.h */,
 				CF5FE7CA1E0CDEA600CD83B4 /* FilesDraggingSource.mm */,
+				CF2083EC1FEFAAA00014D6AD /* ListingPromise.h */,
+				CF2083ED1FEFAAA00014D6AD /* ListingPromise.mm */,
 				CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */,
 				CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */,
 				CFDAC2621DFBF20F0039A104 /* MainWindowFilePanelState.h */,
@@ -3887,6 +3895,7 @@
 				CFD726681E42E1E700603077 /* ContextMenu.mm in Sources */,
 				CFD726F81E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF7C7CB51E5ACDD4002DB0E2 /* Alert.mm in Sources */,
+				CF2084251FF14E260014D6AD /* ListingPromise.mm in Sources */,
 				CF4E56BE1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CFD8CD3D1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
 				CF876D3F1D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */,
@@ -4124,6 +4133,7 @@
 				CFA539F51D433E2A00C562A7 /* RHPreferencesWindowController.m in Sources */,
 				CFD7261E1E42E0A700603077 /* ThemesManager.mm in Sources */,
 				CF9F4AFC1ECC8DBD00E0AF82 /* OpenFile.mm in Sources */,
+				CF2083EE1FEFAAA00014D6AD /* ListingPromise.mm in Sources */,
 				CF5E9A381FCBC521005608F5 /* ViewFile.mm in Sources */,
 				CF7C7CB31E5ACDBE002DB0E2 /* TabsManagement.mm in Sources */,
 				CFD7264E1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
@@ -4344,6 +4354,7 @@
 				CF56BF541D68061600A08D2B /* VFSInstanceManager.cpp in Sources */,
 				CFD8CDCA1E8CE65600E4DC53 /* OpenXAttr.mm in Sources */,
 				CF27408E1E594C46000D4365 /* TabsManagement.mm in Sources */,
+				CF2084261FF14E270014D6AD /* ListingPromise.mm in Sources */,
 				CFDAC2CC1DFD0F840039A104 /* QLThumbnailsCache.mm in Sources */,
 				CF5E9A491FCBC66B005608F5 /* ViewFile.mm in Sources */,
 				CF56C2CB1DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm in Sources */,
@@ -4521,6 +4532,7 @@
 				CFD7260D1E42E07900603077 /* main.cpp in Sources */,
 				CFD7261C1E42E0A500603077 /* ThemesManager.mm in Sources */,
 				CF20DF4C1FC694B60074ABB8 /* SyncPanels.mm in Sources */,
+				CF2084151FF14E260014D6AD /* ListingPromise.mm in Sources */,
 				CFDEB8281D2BB7F0009BCCBD /* ExternalToolsSupport.mm in Sources */,
 				CFD726B31E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CFD726A31E42E24400603077 /* PanelView.mm in Sources */,

@@ -28,14 +28,14 @@ using namespace std;
     XCTAssert( sb1.size() == 0 );
     XCTAssert( sb1.empty() == true );
     
-    StringsBulk sb2 = StringsBulkBuilder{}.Build();
+    StringsBulk sb2 = StringsBulk::Builder{}.Build();
     XCTAssert( sb2.size() == 0 );
     XCTAssert( sb2.empty() == true );
 }
 
 - (void)testBasic
 {
-    StringsBulkBuilder sbb;
+    StringsBulk::Builder sbb;
     sbb.Add("Hello");
     sbb.Add(", ");
     sbb.Add("World!");
@@ -51,7 +51,7 @@ using namespace std;
 {
     const auto s = ""s;
     const auto n = 1000000;
-    StringsBulkBuilder sbb;
+    StringsBulk::Builder sbb;
     for( int i = 0; i < n; ++i )
         sbb.Add(s);
     const auto sb = sbb.Build();
@@ -81,7 +81,33 @@ using namespace std;
             s[j] = (unsigned char)( j % 255 + 1 );
         v.emplace_back(s);
     }
-    StringsBulkBuilder sbb;
+    StringsBulk::Builder sbb;
+    for( int i = 0; i < n; ++i )
+        sbb.Add(v[i]);
+    
+    const auto sb = sbb.Build();
+    for( int i = 0; i < n; ++i ) {
+        XCTAssert( sb[i] == v[i] );
+        XCTAssert( sb.at(i) == v[i] );
+    }
+    
+    int index = 0;
+    for( auto s: sb )
+        XCTAssert( s == v[index++] );
+}
+
+- (void)testNonOwningBuilder
+{
+    const auto n = 10000;
+    vector<string> v;
+    for( int i = 0; i < n; ++i) {
+        const auto l = rand() % 1000;
+        string s(l, ' ');
+        for( int j = 0; j < l; ++j)
+            s[j] = (unsigned char)( j % 255 + 1 );
+        v.emplace_back(s);
+    }
+    StringsBulk::NonOwningBuilder sbb;
     for( int i = 0; i < n; ++i )
         sbb.Add(v[i]);
     
@@ -98,7 +124,7 @@ using namespace std;
 
 - (void)testEquality
 {
-    StringsBulkBuilder sbb;
+    StringsBulk::Builder sbb;
     sbb.Add("Hello");
     sbb.Add(", ");
     sbb.Add("World!");

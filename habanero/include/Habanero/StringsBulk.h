@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <memory>
 #include <string>
+#include <experimental/string_view>
 #include <vector>
 
 namespace hbn {
@@ -25,6 +26,8 @@ class StringsBulk
 {
 public:
     class Iterator;
+    class Builder;
+    class NonOwningBuilder;
     
     StringsBulk() noexcept;
     StringsBulk(const StringsBulk&);
@@ -39,6 +42,8 @@ public:
 
     const char *at(size_t _index) const;
     const char *operator[](size_t _index) const;
+    const char *front() const noexcept;
+    const char *back() const noexcept;    
 
     Iterator begin() const noexcept;
     Iterator end() const noexcept;
@@ -46,7 +51,8 @@ public:
 private:
     struct Ctrl;
     friend Iterator;
-    friend class StringsBulkBuilder;
+    friend Builder;
+    friend NonOwningBuilder;
     
     StringsBulk(size_t _strings_amount, Ctrl *_data) noexcept;
     static Ctrl *Allocate( size_t _number_of_strings, size_t total_chars );
@@ -55,8 +61,12 @@ private:
     Ctrl *m_Ctrl;
 };
     
-bool operator ==(const StringsBulk &_lhs, const StringsBulk& _rhs);
-bool operator !=(const StringsBulk &_lhs, const StringsBulk& _rhs);
+bool operator ==(const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept;
+bool operator !=(const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept;
+bool operator < (const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept;
+bool operator <=(const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept;
+bool operator > (const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept;
+bool operator >=(const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept;
     
 class StringsBulk::Iterator
 {
@@ -79,13 +89,13 @@ public:
 
     bool operator ==(const Iterator&) const noexcept;
     bool operator !=(const Iterator&) const noexcept;
-    bool operator<(const Iterator&)  const noexcept;
-    bool operator<=(const Iterator&)  const noexcept;
-    bool operator>(const Iterator&)  const noexcept;
-    bool operator>=(const Iterator&)  const noexcept;
+    bool operator < (const Iterator&) const noexcept;
+    bool operator <=(const Iterator&) const noexcept;
+    bool operator > (const Iterator&) const noexcept;
+    bool operator >=(const Iterator&) const noexcept;
     
     const char *operator*()const noexcept;
-    const char *operator[](long)const noexcept;
+    const char *operator[](long _index)const noexcept;
     
     void swap(Iterator &_rhs) noexcept;
 private:
@@ -98,11 +108,13 @@ StringsBulk::Iterator operator+(StringsBulk::Iterator _i, long _n) noexcept;
 StringsBulk::Iterator operator+(long _n, StringsBulk::Iterator _i) noexcept;
 StringsBulk::Iterator operator-(StringsBulk::Iterator _i, long _n) noexcept;
     
-class StringsBulkBuilder
+class StringsBulk::Builder
 {
 public:
-    ~StringsBulkBuilder();
+    ~Builder();
 
+    size_t Size() const noexcept;
+    bool Empty() const noexcept;
     void Add(std::string _s);
     StringsBulk Build() const;
     
@@ -110,13 +122,28 @@ private:
     size_t TotalBytesForChars() const noexcept;
     std::vector<std::string> m_Strings;
 };
+    
+class StringsBulk::NonOwningBuilder
+{
+public:
+    ~NonOwningBuilder();
+    
+    size_t Size() const noexcept;
+    bool Empty() const noexcept;
+    void Add(std::experimental::string_view _s);
+    StringsBulk Build() const;
+    
+private:
+    size_t TotalBytesForChars() const noexcept;
+    std::vector<std::experimental::string_view> m_Strings;
+};
 
 }
 
 namespace std {
     
 template<>
-void swap(hbn::StringsBulk::Iterator &_lhs, hbn::StringsBulk::Iterator &_rhs) noexcept
+inline void swap(hbn::StringsBulk::Iterator &_lhs, hbn::StringsBulk::Iterator &_rhs) noexcept
 {
     _lhs.swap(_rhs);
 }

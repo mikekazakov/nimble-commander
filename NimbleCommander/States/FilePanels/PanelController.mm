@@ -204,7 +204,7 @@ static void HeatUpConfigValues()
     vfs::HostDirObservationTicket       m_UpdatesObservationTicket;
     
     // VFS listing fetch flags
-    int                         m_VFSFetchingFlags;
+    unsigned long                       m_VFSFetchingFlags;
     
     // Quick searching section
     bool                                m_QuickSearchIsSoftFiltering;
@@ -696,9 +696,7 @@ static bool RouteKeyboardInputIntoTerminal()
     [self.state PanelPathChanged:self];
     [self onCursorChanged];
     [self updateAttachedBriefSystemOverview];
-
-    if( self.isUniform )
-        m_History.Put( self.vfs, self.currentDirectoryPath );
+    m_History.Put(m_Data.Listing());
     
     [self markRestorableStateAsInvalid];
 }
@@ -1133,12 +1131,15 @@ loadPreviousState:(bool)_load_state
     }
 }
 
-- (void) loadNonUniformListing:(const shared_ptr<VFSListing>&)_listing
+- (void) loadListing:(const shared_ptr<VFSListing>&)_listing
 {
     [self CancelBackgroundOperations]; // clean running operations if any
     dispatch_or_run_in_main_queue([=]{
         [m_View savePathState];
-        m_Data.Load(_listing, data::Model::PanelType::Temporary);
+        if( _listing->IsUniform() )
+            m_Data.Load(_listing, data::Model::PanelType::Directory);
+        else
+            m_Data.Load(_listing, data::Model::PanelType::Temporary);
         [m_View dataUpdated];
         [m_View panelChangedWithFocusedFilename:"" loadPreviousState:false];
         [self OnPathChanged];
@@ -1149,7 +1150,6 @@ loadPreviousState:(bool)_load_state
 {
     path initial_path = self.currentDirectoryPath;
     auto initial_vfs = self.vfs;
-//    m_DirectoryLoadingQ->Run([=](const SerialQueue &_que) {
     m_DirectoryLoadingQ.Run([=]{
         // 1st - try to locate a valid dir in current host
         path path = initial_path;

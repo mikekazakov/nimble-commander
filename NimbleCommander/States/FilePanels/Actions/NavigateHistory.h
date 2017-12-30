@@ -18,3 +18,15 @@ struct GoForward final : PanelAction
 };
 
 }
+
+namespace nc::panel {
+
+class ListingPromise;
+    
+class ListingPromiseLoader
+{
+public:
+    void Load( const ListingPromise &_promise, PanelController *_panel );
+};
+    
+}

@@ -155,9 +155,22 @@ const char *StringsBulk::at(size_t _index) const
     
 const char *StringsBulk::operator[](size_t _index) const
 {
+    assert( _index < m_Count );
     return m_Ctrl->Get(_index);
 }
  
+const char *StringsBulk::front() const noexcept
+{
+    assert( !empty() );
+    return operator[](0);
+}
+    
+const char *StringsBulk::back() const noexcept
+{
+    assert( !empty() );
+    return operator[](m_Count-1);
+}
+    
 StringsBulk::Iterator StringsBulk::begin() const noexcept
 {
     StringsBulk::Iterator i;
@@ -173,26 +186,75 @@ StringsBulk::Iterator StringsBulk::end() const noexcept
     i.m_Ctrl = m_Ctrl;
     return i;
 }
-
-bool operator==(const StringsBulk &_lhs, const StringsBulk& _rhs)
-{
-    if( _lhs.size() != _rhs.size() )
-        return false;
     
-    auto i1 = _lhs.begin(), i2 = _lhs.begin();
-    auto count = _lhs.size();
-    while( count-- ) {
-        if( strcmp(*i1, *i2) != 0 )
-            return false;
-        ++i1;
-        ++i2;
-    }
-    return true;
+    
+StringsBulk::Ctrl *StringsBulk::Allocate( size_t _number_of_strings, size_t _total_chars )
+{
+    assert( _number_of_strings != 0 );
+    
+    const size_t bytes = sizeof(Ctrl) +
+    sizeof(uint32_t) * _number_of_strings +
+    _total_chars;
+    
+    const auto ctrl = reinterpret_cast<Ctrl*>( malloc(bytes) );
+    if( ctrl == nullptr )
+        throw std::bad_alloc();
+    
+    ctrl->bytes = bytes;
+    ctrl->count = _number_of_strings;
+    
+    return ctrl;
 }
     
-bool operator!=(const StringsBulk &_lhs, const StringsBulk& _rhs)
+bool operator==(const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept
+{
+    auto comp = [](const char *_1, const char *_2){
+        return strcmp(_1, _2) == 0;
+    };
+    return _lhs.size() == _rhs.size() &&
+            std::equal( _lhs.begin(), _lhs.end(), _rhs.begin(), comp );
+}
+    
+bool operator!=(const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept
 {
     return !(_lhs == _rhs);
+}
+
+template <class _InputIterator1, class _InputIterator2>
+static bool lexicographical_strcmp_compare(_InputIterator1 __first1, _InputIterator1 __last1,
+                                           _InputIterator2 __first2, _InputIterator2 __last2)
+{
+    for(; __first2 != __last2; ++__first1, ++__first2 ) {
+        if( __first1 == __last1 )
+            return true;
+        
+        const auto cmp = strcmp( *__first1, *__first2 );
+        if( cmp < 0 )
+            return true;
+        if( cmp > 0 )
+            return false;
+    }
+    return false;
+}
+    
+bool operator <(const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept
+{
+    return lexicographical_strcmp_compare( _lhs.begin(), _lhs.end(), _rhs.begin(), _rhs.end() );
+}
+    
+bool operator <=(const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept
+{
+    return !(_rhs < _lhs);
+}
+    
+bool operator >(const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept
+{
+    return _rhs < _lhs;
+}
+    
+bool operator >=(const StringsBulk &_lhs, const StringsBulk& _rhs) noexcept
+{
+    return !(_lhs < _rhs);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -315,39 +377,85 @@ StringsBulk::Iterator operator-(StringsBulk::Iterator _i, long _n) noexcept
     _i -= _n;
     return _i;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// StringsBulk::NonOwningBuilder
+////////////////////////////////////////////////////////////////////////////////////////////////////
+StringsBulk::NonOwningBuilder::~NonOwningBuilder()
+{
+}
+            
+void StringsBulk::NonOwningBuilder::Add(std::experimental::string_view _s)
+{
+    m_Strings.emplace_back( _s );
+}
+
+size_t StringsBulk::NonOwningBuilder::Size() const noexcept
+{
+    return m_Strings.size();
+}
+            
+bool StringsBulk::NonOwningBuilder::Empty() const noexcept
+{
+    return Size() == 0;
+}
+
+StringsBulk StringsBulk::NonOwningBuilder::Build() const
+{
+    if( m_Strings.empty() )
+        return {};
     
+    const auto strings_num = m_Strings.size();
+    const auto total_chars = TotalBytesForChars();
+    
+    const auto ctrl = StringsBulk::Allocate(strings_num, total_chars);
+    auto offsets = reinterpret_cast<uint32_t*>(reinterpret_cast<char *>(ctrl) +
+                                               sizeof(StringsBulk::Ctrl));
+    char *storage = reinterpret_cast<char *>(ctrl) +
+                    sizeof(StringsBulk::Ctrl) +
+                    sizeof(uint32_t) * strings_num;
+    for( size_t index = 0; index < strings_num; ++index ) {
+        offsets[index] = uint32_t(storage - reinterpret_cast<char *>(ctrl));
+        const auto string_bytes = m_Strings[index].length();
+        memcpy( storage, m_Strings[index].data(), string_bytes );
+        storage[string_bytes] = 0;
+        storage += string_bytes + 1;
+    }
+    
+    return StringsBulk{strings_num, ctrl};
+}
+            
+size_t StringsBulk::NonOwningBuilder::TotalBytesForChars() const noexcept
+{
+    size_t total_chars = 0;
+    for( const auto &s: m_Strings )
+        total_chars += s.length() + 1;
+    return total_chars;
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // StringsBulkBuilder
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-StringsBulkBuilder::~StringsBulkBuilder()
+StringsBulk::Builder::~Builder()
 {
 }
     
-void StringsBulkBuilder::Add(std::string _s)
+void StringsBulk::Builder::Add(std::string _s)
 {
     m_Strings.emplace_back( std::move(_s) );
 }
-
-StringsBulk::Ctrl *StringsBulk::Allocate( size_t _number_of_strings, size_t _total_chars )
+    
+size_t StringsBulk::Builder::Size() const noexcept
 {
-    assert( _number_of_strings != 0 );
+    return m_Strings.size();
+}
     
-    const size_t bytes = sizeof(Ctrl) +
-                         sizeof(uint32_t) * _number_of_strings +
-                         _total_chars;
-
-    const auto ctrl = reinterpret_cast<Ctrl*>( malloc(bytes) );
-    if( ctrl == nullptr )
-        throw std::bad_alloc();
-    
-    ctrl->bytes = bytes;
-    ctrl->count = _number_of_strings;
-    
-    return ctrl;
+bool StringsBulk::Builder::Empty() const noexcept
+{
+    return Size() == 0;
 }
 
-StringsBulk StringsBulkBuilder::Build() const
+StringsBulk StringsBulk::Builder::Build() const
 {
     if( m_Strings.empty() )
         return {};
@@ -371,7 +479,7 @@ StringsBulk StringsBulkBuilder::Build() const
     return StringsBulk{strings_num, ctrl};
 }
     
-size_t StringsBulkBuilder::TotalBytesForChars() const noexcept
+size_t StringsBulk::Builder::TotalBytesForChars() const noexcept
 {
     size_t total_chars = 0;
     for( const auto &s: m_Strings )

@@ -2,33 +2,24 @@
 #include "NavigateHistory.h"
 #include "../PanelController.h"
 #include "../PanelHistory.h"
+#include <NimbleCommander/Core/VFSInstanceManager.h>
 
 namespace nc::panel::actions {
 
 bool GoBack::Predicate( PanelController *_target ) const
 {
-    const auto &history = _target.history;
-    return history.CanMoveBack() || ( !history.Empty() && !_target.isUniform );
+    return _target.history.CanMoveBack();
 }
-
+    
 void GoBack::Perform( PanelController *_target, id _sender ) const
 {
     auto &history = _target.history;
-    if( _target.isUniform ) {
-        if( !history.CanMoveBack() )
-            return;
-        history.MoveBack();
-    }
-    else {
-        // a different logic here, since non-uniform listings like search results
-        // (and temporary panels later) are not written into history
-        if( history.Empty() )
-            return;
-        history.RewindAt( history.Length()-1 );
-    }
+    if( !history.CanMoveBack() )
+        return;
+    history.MoveBack();
     
-    [_target GoToVFSPromise:history.Current()->vfs
-                     onPath:history.Current()->path];
+    if( history.Current() )
+        ListingPromiseLoader{}.Load( *history.Current(), _target );
 }
 
 bool GoForward::Predicate( PanelController *_target ) const
@@ -42,8 +33,36 @@ void GoForward::Perform( PanelController *_target, id _sender ) const
     if( !history.CanMoveForth() )
         return;
     history.MoveForth();
-    [_target GoToVFSPromise:history.Current()->vfs
-                     onPath:history.Current()->path];
+
+    if( history.Current() )
+        ListingPromiseLoader{}.Load( *history.Current(), _target );
+}
+
+}
+
+namespace nc::panel {
+
+void ListingPromiseLoader::Load( const ListingPromise &_promise, PanelController *_panel )
+{
+    auto task = [=]( const function<bool()> &_cancelled ) {
+        const auto vfs_adapter = [&](const VFSInstancePromise& _promise){
+            return VFSInstanceManager::Instance().RetrieveVFS(_promise, _cancelled );
+        };
+        
+        try {
+            const auto listing = _promise.Restore(_panel.vfsFetchingFlags,
+                                                  vfs_adapter,
+                                                  _cancelled);
+            if( listing )
+                dispatch_to_main_queue([=]{
+                    [_panel loadListing:listing];
+                });
+        }
+        catch(...){
+            //...
+        }
+    };
+    [_panel commitCancelableLoadingTask:move(task)];
 }
 
 }

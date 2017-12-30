@@ -9,6 +9,7 @@
 #include "Views/FilePanelMainSplitView.h"
 #include "FilesDraggingSource.h"
 #include "PanelHistory.h"
+#include "PanelData.h"
 #include "TabContextMenu.h"
 
 template <class _Cont, class _Tp>
@@ -183,23 +184,8 @@ static string TabNameForController( PanelController* _controller )
         assert(0); // something is really broken
     
     [pc copyOptionsFromController:source];
-    if( _load ) {
-        if( source.isUniform ) {
-            [pc GoToDir:source.currentDirectoryPath
-                    vfs:source.vfs
-           select_entry:""
-                  async:false];
-        }
-        else if( !source.history.Empty() ) {
-            auto h = source.history.All();
-            [pc GoToVFSPromise:h.back().get().vfs onPath:h.back().get().path];
-        }
-        else
-            [pc GoToDir:CommonPaths::Home()
-                    vfs:VFSNativeHost::SharedHost()
-           select_entry:""
-                  async:false];
-    }
+    if( _load )
+        [pc loadListing:source.data.ListingPtr()];
     
     if( _activate )
         [self ActivatePanelByController:pc];

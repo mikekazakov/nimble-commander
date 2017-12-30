@@ -89,7 +89,7 @@ static vector<string> FetchSpotlightResults(const string& _query)
 
 static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &_file_paths,
                                                           VFSHost &_vfs,
-                                                          int _fetch_flags,
+                                                          unsigned long _fetch_flags,
                                                           const VFSCancelChecker &_cancel_checker)
 {
     vector<VFSListingPtr> listings;
@@ -117,7 +117,7 @@ void SpotlightSearch::Perform( PanelController *_target, id _sender ) const
                                                          _cancelled
                                                          ) )
                     dispatch_to_main_queue([=]{
-                        [panel loadNonUniformListing:l];
+                        [panel loadListing:l];
                     });
             };
             [panel commitCancelableLoadingTask:move(task)];

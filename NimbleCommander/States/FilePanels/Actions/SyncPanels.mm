@@ -37,7 +37,7 @@ void SyncPanels::Perform( MainWindowFilePanelState *_target, id _sender ) const
                async:true];
     }
     else {
-        [opp loadNonUniformListing:cur.data.ListingPtr()];
+        [opp loadListing:cur.data.ListingPtr()];
     }
 }
 

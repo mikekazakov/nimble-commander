@@ -13,10 +13,12 @@
 #include "../PanelController.h"
 #include "../MainWindowFilePanelsStateToolbarDelegate.h"
 #include "ShowGoToPopup.h"
+#include "NavigateHistory.h"
 #include "OpenNetworkConnection.h"
 #include "../PanelHistory.h"
 #include "../PanelData.h"
 #include "../PanelView.h"
+#include <compose_visitors.hpp>
 
 static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
 static const auto g_ConfigMaxNetworkConnections = "filePanel.general.maximumNetworkConnectionsInGoToMenu";
@@ -79,6 +81,8 @@ static const auto g_MaxTextWidth = 600;
         [m_Panel GoToDir:vfs_path->Path() vfs:vfs_path->Host() select_entry:"" async:true];
     else if( auto promise = any_cast<pair<VFSInstanceManager::Promise, string>>(&_context) )
         [m_Panel GoToVFSPromise:promise->first onPath:promise->second];
+    else if( auto listing_promise = any_cast<nc::panel::ListingPromise>(&_context) )
+        nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
 }
 
 @end
@@ -188,6 +192,7 @@ public:
     NSMenuItem *MenuItemForPath( const VFSPath &_p );
     NSMenuItem *MenuItemForPromiseAndPath(const VFSInstanceManager::Promise &_promise,
                                           const string &_path);
+    NSMenuItem *MenuItemForListingPromise(const ListingPromise &_promise);
 
 private:
     NSImage *ImageForLocation( const PersistentLocation &_location );
@@ -367,7 +372,7 @@ static NSMenu *BuildHistoryQuickList( PanelController *_panel )
     MenuItemBuilder builder{_panel.networkConnectionsManager, action_target};
     
     for( auto &i: history )
-        [menu addItem:builder.MenuItemForPromiseAndPath(i.get().vfs, i.get().path)];
+        [menu addItem:builder.MenuItemForListingPromise(i.get())];
 
     SetupHotkeys(menu);
 
@@ -596,6 +601,31 @@ NSMenuItem *MenuItemBuilder::MenuItemForPromiseAndPath(const VFSInstanceManager:
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
 
+    return menu_item;
+}
+
+NSMenuItem *MenuItemBuilder::MenuItemForListingPromise(const ListingPromise &_promise)
+{
+    const auto menu_item = [[NSMenuItem alloc] init];
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_promise}];
+    menu_item.target = m_ActionTarget;
+    menu_item.action = @selector(callout:);
+    
+    const auto visitor = compose_visitors
+    (
+     [&](const ListingPromise::UniformListing &l) {
+         const auto title = l.promise.verbose_title() + l.directory;
+         menu_item.title = [NSString stringWithUTF8StdString:title];
+         menu_item.image = ImageForPromiseAndPath(l.promise, l.directory);
+     },
+     [&](const ListingPromise::NonUniformListing &l)
+     {
+         const auto count = [NSNumber numberWithUnsignedInteger:l.EntriesCount()];
+         menu_item.title = [NSString stringWithFormat:@"Temporary Panel (%@)", count];
+     }
+    );
+    boost::apply_visitor(visitor, _promise.Description());
+    
     return menu_item;
 }
 

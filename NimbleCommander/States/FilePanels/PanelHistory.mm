@@ -3,16 +3,6 @@
 
 namespace nc::panel {
 
-bool History::Path::operator==(const Path&_rhs) const noexcept
-{
-    return vfs == _rhs.vfs && path == _rhs.path;
-}
-
-bool History::Path::operator!=(const Path&_rhs) const noexcept
-{
-    return !(*this == _rhs);
-}
-
 bool History::IsRecording() const noexcept
 {
     return m_IsRecording;
@@ -68,20 +58,20 @@ const History::Path* History::Current() const
     return &*next(begin(m_History), m_PlayingPosition);
 }
 
-
-void History::Put(const VFSHostPtr &_vfs, string _directory_path)
+void History::Put(const VFSListing &_listing )
 {
-    if( _vfs->IsNativeFS() )
-        m_LastNativeDirectory = _directory_path;
+    if( _listing.IsUniform() && _listing.Host()->IsNativeFS() )
+        m_LastNativeDirectory = _listing.Directory();
     
-    Path new_path;
-    new_path.vfs = VFSInstanceManager::Instance().TameVFS(_vfs);
-    new_path.path = move(_directory_path);
+    const auto adapter = [](const shared_ptr<VFSHost>&_host) -> VFSInstancePromise {
+        return VFSInstanceManager::Instance().TameVFS(_host);
+    };
+    ListingPromise promise{_listing, adapter};
     
     if( m_IsRecording ) {
-        if( !m_History.empty() && m_History.back() == new_path )
+        if( !m_History.empty() && m_History.back() == promise )
             return;
-        m_History.emplace_back( move(new_path) );
+        m_History.emplace_back( move(promise) );
         if( m_History.size() > m_HistoryLength )
             m_History.pop_front();
     }
@@ -89,10 +79,11 @@ void History::Put(const VFSHostPtr &_vfs, string _directory_path)
         assert(m_PlayingPosition < m_History.size());
         auto i = begin(m_History);
         advance(i, m_PlayingPosition);
-        if( *i != new_path ) {
+        if( *i != promise ) {
             m_IsRecording = true;
-            m_History.resize(m_PlayingPosition + 1);
-            m_History.emplace_back( move(new_path) );
+            while( m_History.size() > m_PlayingPosition + 1 )
+                m_History.pop_back();
+            m_History.emplace_back( move(promise) );
         }
     }
 }

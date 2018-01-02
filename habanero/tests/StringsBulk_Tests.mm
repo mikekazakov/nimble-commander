@@ -89,6 +89,7 @@ using namespace std;
     for( int i = 0; i < n; ++i ) {
         XCTAssert( sb[i] == v[i] );
         XCTAssert( sb.at(i) == v[i] );
+        XCTAssert( sb.string_length(i) == v[i].length() );
     }
     
     int index = 0;

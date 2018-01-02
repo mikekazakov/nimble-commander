@@ -29,13 +29,20 @@ struct StringsBulk::Ctrl
     // offsets: count * 4 bytes
     // null-terminated strings
     
-    inline const uint32_t *Offsets() const {
+    inline const uint32_t *Offsets() const noexcept {
         const auto raw = reinterpret_cast<const char *>(this);
         return reinterpret_cast<const uint32_t*>(raw + sizeof(Ctrl));
     }
     
-    inline const char *Get(size_t _index) const {
+    inline const char *Get(size_t _index) const noexcept {
         return reinterpret_cast<const char *>(this) + Offsets()[_index];
+    }
+    
+    inline size_t StrLen(size_t _index) const noexcept {
+        if( _index + 1 < count )
+            return Offsets()[_index + 1] - Offsets()[_index] - 1;
+        else
+            return bytes - Offsets()[_index] - 1;
     }
 };
 
@@ -187,7 +194,13 @@ StringsBulk::Iterator StringsBulk::end() const noexcept
     return i;
 }
     
-    
+size_t StringsBulk::string_length(size_t _index) const
+{
+    if( _index >= m_Count )
+        throw std::out_of_range("StringsBulk::string_length(size_t _index): invalid index");
+    return m_Ctrl->StrLen(_index);
+}
+
 StringsBulk::Ctrl *StringsBulk::Allocate( size_t _number_of_strings, size_t _total_chars )
 {
     assert( _number_of_strings != 0 );

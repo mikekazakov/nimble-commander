@@ -42,6 +42,7 @@ public:
 
     const char *at(size_t _index) const;
     const char *operator[](size_t _index) const;
+    size_t string_length(size_t _index) const;
     const char *front() const noexcept;
     const char *back() const noexcept;    
 

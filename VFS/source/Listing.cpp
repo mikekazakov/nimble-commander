@@ -68,18 +68,25 @@ static void Validate(const ListingInput& _source)
     
 }
 
+template <class C>
+static void CompressIntoContiguous( C &_cont )
+{
+    if( _cont.mode() == variable_container<>::type::sparse && _cont.is_contiguous() )
+        _cont.compress_contiguous();
+}
+    
 static void Compress( ListingInput &_input )
 {
-    if( _input.sizes.mode() == variable_container<>::type::sparse && _input.sizes.is_contiguous() )         _input.sizes.compress_contiguous();
-    if( _input.inodes.mode() == variable_container<>::type::sparse && _input.inodes.is_contiguous() )     	_input.inodes.compress_contiguous();
-    if( _input.atimes.mode() == variable_container<>::type::sparse && _input.atimes.is_contiguous() )       _input.atimes.compress_contiguous();
-    if( _input.mtimes.mode() == variable_container<>::type::sparse && _input.mtimes.is_contiguous() )       _input.mtimes.compress_contiguous();
-    if( _input.ctimes.mode() == variable_container<>::type::sparse && _input.ctimes.is_contiguous() )       _input.ctimes.compress_contiguous();
-    if( _input.btimes.mode() == variable_container<>::type::sparse && _input.btimes.is_contiguous() )       _input.btimes.compress_contiguous();
-    if( _input.add_times.mode() == variable_container<>::type::sparse && _input.add_times.is_contiguous() ) _input.add_times.compress_contiguous();
-    if( _input.uids.mode() == variable_container<>::type::sparse && _input.uids.is_contiguous() )           _input.uids.compress_contiguous();
-    if( _input.gids.mode() == variable_container<>::type::sparse && _input.gids.is_contiguous() )           _input.gids.compress_contiguous();
-    if( _input.unix_flags.mode() == variable_container<>::type::sparse && _input.unix_flags.is_contiguous() ) _input.unix_flags.compress_contiguous();
+    CompressIntoContiguous( _input.sizes );
+    CompressIntoContiguous( _input.inodes );
+    CompressIntoContiguous( _input.atimes );
+    CompressIntoContiguous( _input.mtimes );
+    CompressIntoContiguous( _input.ctimes );
+    CompressIntoContiguous( _input.btimes );
+    CompressIntoContiguous( _input.add_times );
+    CompressIntoContiguous( _input.uids );
+    CompressIntoContiguous( _input.gids );
+    CompressIntoContiguous( _input.unix_flags );
 
     // todo: ability to compress hosts into common? dense is an overkill here in most cases
     

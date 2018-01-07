@@ -749,11 +749,13 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
     auto &dst_fs_info = *dst_fs_info_holder;
     
     if( ShouldPreallocateSpace(preallocate_delta, dst_fs_info) ) {
-        // tell systme to preallocate space for data since we dont want to trash our disk
-        PreallocateSpace(preallocate_delta, destination_fd);
-        
-        // truncate is needed for actual preallocation
-        need_dst_truncate = true;
+        // tell the system to preallocate a space for data since we dont want to trash our disk
+        if( TryToPreallocateSpace(preallocate_delta, destination_fd) ) {
+            if( SupportsFastTruncationAfterPreallocation(dst_fs_info) ) {
+                // truncate is needed for actual preallocation
+                need_dst_truncate = true;
+            }
+        }
     }
     
     // set right size for destination file for preallocating itself and for reducing file size if necessary
@@ -1082,11 +1084,13 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
     auto &dst_fs_info = *dst_fs_info_holder;
     
     if( ShouldPreallocateSpace(preallocate_delta, dst_fs_info) ) {
-        // tell systme to preallocate space for data since we dont want to trash our disk
-        PreallocateSpace(preallocate_delta, destination_fd);
-        
-        // truncate is needed for actual preallocation
-        need_dst_truncate = true;
+        // tell the system to preallocate a space for data since we dont want to trash our disk
+        if( TryToPreallocateSpace(preallocate_delta, destination_fd) ) {
+            if( SupportsFastTruncationAfterPreallocation(dst_fs_info) ) {
+                // truncate is needed for actual preallocation
+                need_dst_truncate = true;
+            }
+        }
     }
     
     // set right size for destination file for preallocating itself and for reducing file size if necessary

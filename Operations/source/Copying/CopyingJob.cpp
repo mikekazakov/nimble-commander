@@ -17,16 +17,23 @@ using namespace nc::ops::copying;
 
 namespace nc::ops {
 
+// return true if _1st is older than _2nd
+static bool EntryIsOlder( const struct stat &_1st, const struct stat &_2nd );
+static bool EntryIsOlder( const VFSStat &_1st, const VFSStat &_2nd );
+    
 CopyingJob::CopyingJob(vector<VFSListingItem> _source_items,
                        const string &_dest_path,
                        const VFSHostPtr &_dest_host,
                        CopyingOptions _opts):
     m_InitialDestinationPath(_dest_path),
-    m_VFSListingItems(move(_source_items))
+    m_VFSListingItems(move(_source_items)),
+    m_DestinationHost(_dest_host),
+    m_IsDestinationHostNative(_dest_host->IsNativeFS())
 {
-    if( m_InitialDestinationPath.empty() || m_InitialDestinationPath.front() != '/' )
-        throw invalid_argument("CopyingJobNew::Init: m_InitialDestinationPath should be an absolute path");
-    m_DestinationHost = _dest_host;
+    if( m_InitialDestinationPath.empty() || m_InitialDestinationPath.front() != '/' ) {
+        const auto msg = "CopyingJob::CopyingJob(): destination path should be an absolute path";
+        throw invalid_argument(msg);
+    }
     m_Options = _opts;
     m_IsSingleInitialItemProcessing = m_VFSListingItems.size() == 1;
         
@@ -60,14 +67,14 @@ void CopyingJob::Perform()
     SetStage(Stage::Preparing);
 
     bool need_to_build = false;
-    auto comp_type = AnalyzeInitialDestination(m_DestinationPath, need_to_build);
+    const auto composition_type = AnalyzeInitialDestination(m_DestinationPath, need_to_build);
     if( need_to_build ) {
         if( BuildDestinationDirectory() != StepResult::Ok ) {
             Stop();
             return;
         }
     }
-    m_PathCompositionType = comp_type;
+    m_PathCompositionType = composition_type;
  
     if( m_DestinationHost->IsNativeFS() )
         if( !(m_DestinationNativeFSInfo = NativeFSManager::Instance().VolumeFromPath(m_DestinationPath)) ) {
@@ -101,7 +108,6 @@ void CopyingJob::ProcessItems()
 
     Statistics().CommitEstimated(Statistics::SourceType::Bytes, m_SourceItems.TotalRegBytes());
     
-    const bool dest_host_is_native = m_DestinationHost->IsNativeFS();
     auto is_same_native_volume = [this]( int _index ) {
         return NativeFSManager::Instance().VolumeFromDevID( m_SourceItems.ItemDev(_index) ) == m_DestinationNativeFSInfo;
     };
@@ -133,7 +139,7 @@ void CopyingJob::ProcessItems()
             else if( !m_Options.docopy && m_Options.verification >= ChecksumVerification::WhenMoves )
                 data_feedback = hash_feedback;
             
-            if( source_host.IsNativeFS() && dest_host_is_native ) { // native -> native ///////////////////////
+            if( source_host.IsNativeFS() && m_IsDestinationHostNative ) { // native -> native ///////////////////////
                 // native fs processing
                 if( m_Options.docopy ) { // copy
                     step_result = CopyNativeFileToNativeFile(source_path, destination_path, data_feedback);
@@ -151,7 +157,7 @@ void CopyingJob::ProcessItems()
                     }
                 }
             }
-            else if( dest_host_is_native  ) { // vfs -> native ///////////////////////////////////////////////
+            else if( m_IsDestinationHostNative  ) { // vfs -> native ///////////////////////////////////////////////
                 if( m_Options.docopy ) { // copy
                     step_result = CopyVFSFileToNativeFile(source_host, source_path, destination_path, data_feedback);
                 }
@@ -184,50 +190,10 @@ void CopyingJob::ProcessItems()
             if( hash )
                 m_Checksums.emplace_back( index, destination_path, hash->Final() );
         }
-        else if( S_ISDIR(source_mode) ) {
-            /////////////////////////////////////////////////////////////////////////////////////////////////
-            // Directories
-            /////////////////////////////////////////////////////////////////////////////////////////////////
-            if( source_host.IsNativeFS() && dest_host_is_native ) { // native -> native
-                if( m_Options.docopy ) { // copy
-                    step_result = CopyNativeDirectoryToNativeDirectory(source_path, destination_path);
-                }
-                else { // move
-                    if( is_same_native_volume(index) ) { // rename
-                        step_result = RenameNativeFile(source_path, destination_path);
-                    }
-                    else { // move
-                        step_result = CopyNativeDirectoryToNativeDirectory(source_path, destination_path);
-                        if( step_result == StepResult::Ok )
-                            m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
-                    }
-                }
-            }
-            else if( dest_host_is_native  ) { // vfs -> native
-                step_result = CopyVFSDirectoryToNativeDirectory(source_host, source_path, destination_path);
-                if( !m_Options.docopy && step_result == StepResult::Ok )
-                    m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
-            }
-            else {
-                if( m_Options.docopy ) { // copy
-                    step_result = CopyVFSDirectoryToVFSDirectory(source_host, source_path, destination_path);
-                }
-                else { // move
-                    if( &source_host == m_DestinationHost.get() ) { // moving on the same host - lets do rename
-                        step_result = RenameVFSFile(source_host, source_path, destination_path);
-                    }
-                    else {
-                        step_result = CopyVFSDirectoryToVFSDirectory(source_host, source_path, destination_path);
-                        if( !m_Options.docopy && step_result == StepResult::Ok )
-                            m_SourceItemsToDelete.emplace_back(index); // mark source file for deletion
-                    }
-                }
-                
-            }
-        }
-        else if( S_ISLNK(source_mode) ) {
+        else if( S_ISDIR(source_mode) )
+            step_result = ProcessDirectoryItem(source_host, source_path, index, destination_path);
+        else if( S_ISLNK(source_mode) )
             step_result = ProcessSymlinkItem(source_host, source_path, destination_path);
-        }
 
         // check current item result
         if( step_result == StepResult::Stop) {
@@ -259,6 +225,63 @@ void CopyingJob::ProcessItems()
         SetStage(Stage::Cleaning);
         ClearSourceItems();
     }
+}
+    
+CopyingJob::StepResult CopyingJob::ProcessDirectoryItem(VFSHost& _source_host,
+                                                        const string &_source_path,
+                                                        int _source_index,
+                                                        const string &_destination_path)
+{
+    auto result = StepResult::Stop;
+    if( _source_host.IsNativeFS() && m_IsDestinationHostNative ) { // native -> native
+        if( m_Options.docopy ) { // copy
+            result = CopyNativeDirectoryToNativeDirectory(_source_path, _destination_path);
+        }
+        else { // move
+            const auto src_dev_id = m_SourceItems.ItemDev(_source_index);
+            const auto src_fs_info = NativeFSManager::Instance().VolumeFromDevID( src_dev_id );
+            const auto same_volume = src_fs_info == m_DestinationNativeFSInfo;
+            if( same_volume ) { // rename
+                const auto rename_result = RenameNativeDirectory(_source_path, _destination_path);
+                result = rename_result.first;
+                if( result == StepResult::Ok &&
+                    rename_result.second == SourceItemAftermath::NeedsToBeDeleted ) {
+                    m_SourceItemsToDelete.emplace_back(_source_index);
+                }
+            }
+            else { // move
+                result = CopyNativeDirectoryToNativeDirectory(_source_path, _destination_path);
+                if( result == StepResult::Ok ) {
+                    m_SourceItemsToDelete.emplace_back(_source_index);
+                }
+            }
+        }
+    }
+    else if( m_IsDestinationHostNative  ) { // vfs -> native
+        result = CopyVFSDirectoryToNativeDirectory(_source_host, _source_path, _destination_path);
+        if( !m_Options.docopy && result == StepResult::Ok ) {
+            m_SourceItemsToDelete.emplace_back(_source_index);
+        }
+    }
+    else { // vfs -> vfs
+        if( m_Options.docopy ) { // copy
+            result = CopyVFSDirectoryToVFSDirectory(_source_host, _source_path, _destination_path);
+        }
+        else { // move
+            const auto same_vfs = &_source_host == m_DestinationHost.get();
+            if( same_vfs ) { // moving on the same host - lets do rename
+                result = RenameVFSFile(_source_host, _source_path, _destination_path);
+            }
+            else {
+                result = CopyVFSDirectoryToVFSDirectory(_source_host, _source_path, _destination_path);
+                if( !m_Options.docopy && result == StepResult::Ok ) {
+                    // mark source file for deletion
+                    m_SourceItemsToDelete.emplace_back(_source_index);
+                }
+            }
+        }
+    }
+    return result;
 }
     
 CopyingJob::StepResult CopyingJob::ProcessSymlinkItem(VFSHost& _source_host,
@@ -300,18 +323,19 @@ CopyingJob::StepResult CopyingJob::ProcessSymlinkItem(VFSHost& _source_host,
     return StepResult::Stop;
 }
 
-string CopyingJob::ComposeDestinationNameForItem( int _src_item_index ) const
+string CopyingJob::ComposeDestinationNameForItemInDB(int _src_item_index,
+                                                     const copying::SourceItems &_db ) const
 {
-//    PathPreffix, // path = dest_path + source_rel_path
-//    FixedPath    // path = dest_path + [source_rel_path without heading]
+    //    PathPreffix, // path = dest_path + source_rel_path
+    //    FixedPath    // path = dest_path + [source_rel_path without heading]
     if( m_PathCompositionType == PathCompositionType::PathPreffix ) {
-        auto path = m_SourceItems.ComposeRelativePath(_src_item_index);
+        auto path = _db.ComposeRelativePath(_src_item_index);
         path.insert(0, m_DestinationPath);
         return path;
     }
     else {
         auto result = m_DestinationPath;
-        auto src = m_SourceItems.ComposeRelativePath(_src_item_index);
+        auto src = _db.ComposeRelativePath(_src_item_index);
         if( m_IsSingleInitialItemProcessing ) {
             // for top level we need to just leave path without changes - skip top level's entry name.
             // for nested entries we need to cut first part of a path.
@@ -325,9 +349,17 @@ string CopyingJob::ComposeDestinationNameForItem( int _src_item_index ) const
         return result;
     }
 }
+    
+string CopyingJob::ComposeDestinationNameForItem( int _src_item_index ) const
+{
+    return ComposeDestinationNameForItemInDB(_src_item_index, m_SourceItems);
+}
 
 // side-effects: none.
-static bool IsSingleDirectoryCaseRenaming( const CopyingOptions &_options, const vector<VFSListingItem> &_items, const VFSHostPtr& _dest_host, const VFSStat &_dest_stat )
+static bool IsSingleDirectoryCaseRenaming(const CopyingOptions &_options,
+                                          const vector<VFSListingItem> &_items,
+                                          const VFSHost& _dest_host,
+                                          const VFSStat &_dest_stat )
 {
     if( !S_ISDIR(_dest_stat.mode) )
         return false;
@@ -341,7 +373,7 @@ static bool IsSingleDirectoryCaseRenaming( const CopyingOptions &_options, const
     if( !_items.front().Host()->IsNativeFS()  )
         return false;
     
-    if( _items.front().Host() != _dest_host )
+    if( _items.front().Host().get() != &_dest_host )
         return false;
     
     if( !_items.front().IsDir() )
@@ -359,7 +391,7 @@ CopyingJob::PathCompositionType CopyingJob::AnalyzeInitialDestination(string &_r
     if( m_DestinationHost->Stat(m_InitialDestinationPath.c_str(), st, 0, nullptr ) == 0) {
         // destination entry already exist
         if( S_ISDIR(st.mode) &&
-            !IsSingleDirectoryCaseRenaming(m_Options, m_VFSListingItems, m_DestinationHost, st) // special exception for renaming a single directory on native case-insensitive fs
+            !IsSingleDirectoryCaseRenaming(m_Options, m_VFSListingItems, *m_DestinationHost, st) // special exception for renaming a single directory on native case-insensitive fs
            ) {
             _result_destination = EnsureTrailingSlash( m_InitialDestinationPath );
             return PathCompositionType::PathPreffix;
@@ -386,7 +418,6 @@ CopyingJob::PathCompositionType CopyingJob::AnalyzeInitialDestination(string &_r
         }
     }
 }
-
 
 template <class T>
 static void ReverseForEachDirectoryInString(const string& _path, T _t)
@@ -438,38 +469,6 @@ CopyingJob::StepResult CopyingJob::BuildDestinationDirectory() const
     return StepResult::Ok;
 }
 
-static bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
-                                                 const string &_path,
-                                                 const string& _item_name,
-                                                 const VFSStat &_st )
-{
-    // currently we think that ExtEAs can be only on native VFS
-    if( !_host.IsNativeFS() )
-        return false;
-    
-    // any ExtEA should have ._Filename format
-    auto cstring = _item_name.c_str();
-    if( cstring[0] != '.' || cstring[1] != '_' || cstring[2] == 0 )
-        return false;
-    
-    // check if current filesystem uses external eas
-    auto fs_info = NativeFSManager::Instance().VolumeFromDevID( _st.dev );
-    if( !fs_info || fs_info->interfaces.extended_attr == true )
-        return false;
-    
-    // check if a 'main' file exists
-    char path[MAXPATHLEN];
-    strcpy(path, _path.c_str());
-    
-    // some magick to produce /path/subpath/filename from a /path/subpath/._filename
-    char *last_dst = strrchr(path, '/');
-    if( !last_dst )
-        return false;
-    strcpy( last_dst + 1, cstring + 2 );
-    
-    return _host.Exists( path );
-}
-
 tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
 {
     class SourceItems db;
@@ -516,10 +515,11 @@ tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
             else if( S_ISDIR(st.mode) ) {
                 int my_indx = db.InsertItem(host_indx, base_dir_indx, _parent_ind, _item_name, st);
                 
-                bool should_go_inside =
+                const auto should_go_inside =
                     m_Options.docopy ||
                     &host != &*m_DestinationHost || // comparing hosts by their addresses. which is NOT GREAT at all
-                    (m_DestinationHost->IsNativeFS() && m_DestinationNativeFSInfo != NativeFSManager::Instance().VolumeFromDevID(st.dev) );
+                    (m_DestinationHost->IsNativeFS() && m_DestinationNativeFSInfo != NativeFSManager::Instance().VolumeFromDevID(st.dev) ) ||
+                    m_DestinationHost->Exists( ComposeDestinationNameForItemInDB(my_indx, db).c_str() );
                 if( should_go_inside ) {
                     vector<string> dir_ents;
                     while( true ) {
@@ -677,7 +677,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
             case CopyDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case CopyDestExistsResolution::OverwriteOld:
-                if( src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime )
+                if( !EntryIsOlder( dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
             case CopyDestExistsResolution::Overwrite:
                 setup_overwrite();
@@ -919,9 +919,9 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile(const string& _src
     return StepResult::Ok;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 // vfs file -> native file copying routine
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////
 CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile(VFSHost &_src_vfs,
                                                            const string& _src_path,
                                                            const string& _dst_path,
@@ -1337,7 +1337,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToVFSFile(VFSHost &_src_vfs,
             case CopyDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case CopyDestExistsResolution::OverwriteOld:
-                if( src_stat_buffer.mtime.tv_sec <= dst_stat_buffer.mtime.tv_sec )
+                if( !EntryIsOlder( dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
             case CopyDestExistsResolution::Overwrite:
                 setup_overwrite();
@@ -1558,7 +1558,7 @@ void CopyingJob::CopyXattrsFromVFSFileToPath(VFSFile& _file, const char *_fn_to)
     auto buf = m_Buffers[0].get();
     size_t buf_sz = m_BufferSize;
     
-    _file.XAttrIterateNames(^bool(const char *name){
+    _file.XAttrIterateNames([&](const char *name){
         ssize_t res = _file.XAttrGet(name, buf, buf_sz);
         if(res >= 0)
             setxattr(_fn_to, name, buf, res, 0, 0);
@@ -1744,6 +1744,104 @@ CopyingJob::StepResult CopyingJob::CopyVFSDirectoryToVFSDirectory(VFSHost &_src_
     return StepResult::Ok;
 }
 
+pair<CopyingJob::StepResult,
+     CopyingJob::SourceItemAftermath>
+CopyingJob::RenameNativeDirectory(const string& _src_path,
+                                  const string& _dst_path) const
+{
+    auto &io = RoutedIO::Default;
+    auto &host = *VFSNativeHost::SharedHost();
+    
+    // check if destination file already exist
+    struct stat dst_stat_buffer;
+    const auto dst_dir_exists = io.lstat(_dst_path.c_str(), &dst_stat_buffer) != -1;
+    if( dst_dir_exists ) {
+        // TODO: check if item is not a directory
+        // if is a regular file
+        //   if ask a permission to delete it
+        //      delete target
+        //      call RenameNativeDirectory again
+        
+        struct stat src_stat_buffer;
+        while( true ) {
+            const auto rc = io.lstat(_src_path.c_str(), &src_stat_buffer);
+            if( rc == 0 )
+                break;
+            switch( m_OnCantAccessSourceItem( VFSError::FromErrno(), _src_path, host) ) {
+                case CantAccessSourceItemResolution::Skip:  return {StepResult::Skipped,
+                                                                    SourceItemAftermath::NoChanges};
+                case CantAccessSourceItemResolution::Stop:  return {StepResult::Stop,
+                                                                    SourceItemAftermath::NoChanges};
+                case CantAccessSourceItemResolution::Retry: continue;
+            }
+        }
+        
+        const auto res = m_OnRenameDestinationAlreadyExists(src_stat_buffer,
+                                                            dst_stat_buffer,
+                                                            _dst_path);
+        switch( res ) {
+            case RenameDestExistsResolution::Skip:
+                return {StepResult::Skipped, SourceItemAftermath::NoChanges};
+            case RenameDestExistsResolution::OverwriteOld:
+                if( !EntryIsOlder( dst_stat_buffer, src_stat_buffer) )
+                    return {StepResult::Skipped, SourceItemAftermath::NoChanges};
+            case RenameDestExistsResolution::Overwrite:
+                break;
+            default:
+                return {StepResult::Stop, SourceItemAftermath::NoChanges};
+        }
+    }
+    
+    if( dst_dir_exists ) {
+        // just copy attributes from the source directory to the existing target directory
+        int src_fd = io.open(_src_path.c_str(), O_RDONLY);
+        if( src_fd == -1 )
+            return {StepResult::Ok, SourceItemAftermath::NoChanges};
+        auto clean_src_fd = at_scope_end([&]{ close(src_fd); });
+        
+        int dst_fd = io.open(_dst_path.c_str(), O_RDONLY); // strangely this works
+        if( dst_fd == -1 )
+            return {StepResult::Ok, SourceItemAftermath::NoChanges};
+        auto clean_dst_fd = at_scope_end([&]{ close(dst_fd); });
+        
+        struct stat src_stat;
+        if( fstat(src_fd, &src_stat) != 0 )
+            return {StepResult::Ok, SourceItemAftermath::NoChanges};
+        
+        if( m_Options.copy_unix_flags ) {
+            fchmod(dst_fd, src_stat.st_mode);
+            fchflags(dst_fd, src_stat.st_flags);
+        }
+        
+        if( m_Options.copy_unix_owners )
+            io.chown(_dst_path.c_str(), src_stat.st_uid, src_stat.st_gid);
+        
+        if( m_Options.copy_xattrs )
+            CopyXattrsFromNativeFDToNativeFD(src_fd, dst_fd);
+        
+        if( m_Options.copy_file_times )
+            AdjustFileTimesForNativeFD(dst_fd, src_stat);
+        
+        return {StepResult::Ok, SourceItemAftermath::NeedsToBeDeleted};
+    }
+    else {
+        // do actual rename on fs level
+        while( true ) {
+            const auto rc = io.rename(_src_path.c_str(), _dst_path.c_str());
+            if( rc == 0 )
+                break;
+            switch( m_OnDestinationFileWriteError(VFSError::FromErrno(), _dst_path, host) ) {
+                case DestinationFileWriteErrorResolution::Skip:
+                    return {StepResult::Skipped, SourceItemAftermath::NoChanges};
+                case DestinationFileWriteErrorResolution::Stop:
+                    return {StepResult::Stop, SourceItemAftermath::NoChanges};
+                case DestinationFileWriteErrorResolution::Retry: continue;
+            }
+        }
+        return {StepResult::Ok, SourceItemAftermath::Moved};
+    }
+}
+
 CopyingJob::StepResult CopyingJob::RenameNativeFile(const string& _src_path,
                                                     const string& _dst_path) const
 {
@@ -1780,7 +1878,7 @@ CopyingJob::StepResult CopyingJob::RenameNativeFile(const string& _src_path,
                 case RenameDestExistsResolution::Skip:
                     return StepResult::Skipped;
                 case RenameDestExistsResolution::OverwriteOld:
-                    if( src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime )
+                    if( !EntryIsOlder( dst_stat_buffer, src_stat_buffer) )
                         return StepResult::Skipped;
                 case RenameDestExistsResolution::Overwrite:
                     break;
@@ -1834,7 +1932,7 @@ CopyingJob::StepResult CopyingJob::RenameVFSFile(VFSHost &_common_host,
             case RenameDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case RenameDestExistsResolution::OverwriteOld:
-                if( src_stat_buffer.mtime.tv_nsec <= dst_stat_buffer.mtime.tv_nsec )
+                if( !EntryIsOlder( dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
             case RenameDestExistsResolution::Overwrite:
                 break;
@@ -1987,7 +2085,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeSymlinkToNative(const string& _src_
             case RenameDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case RenameDestExistsResolution::OverwriteOld:
-                if( src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime )
+                if( !EntryIsOlder( dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
             case RenameDestExistsResolution::Overwrite:
                 break;
@@ -2070,7 +2168,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToNative(VFSHost &_src_vfs,
             case RenameDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case RenameDestExistsResolution::OverwriteOld:
-                if( posix_src_stat_buffer.st_mtime <= dst_stat_buffer.st_mtime )
+                if( !EntryIsOlder( dst_stat_buffer, posix_src_stat_buffer) )
                     return StepResult::Skipped;
             case RenameDestExistsResolution::Overwrite:
                 break;
@@ -2153,7 +2251,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
             case RenameDestExistsResolution::Skip:
                 return StepResult::Skipped;
             case RenameDestExistsResolution::OverwriteOld:
-                if( posix_src_stat_buffer.st_mtime <= posix_dst_stat_buffer.st_mtime )
+                if( !EntryIsOlder( dst_stat_buffer, src_stat_buffer) )
                     return StepResult::Skipped;
             case RenameDestExistsResolution::Overwrite:
                 break;
@@ -2214,4 +2312,22 @@ const CopyingOptions &CopyingJob::Options() const noexcept
     return m_Options;
 }
 
+static bool EntryIsOlder( const struct stat &_1st, const struct stat &_2nd )
+{
+    if( _1st.st_mtimespec.tv_sec < _2nd.st_mtimespec.tv_sec )
+        return true;
+    if( _1st.st_mtimespec.tv_sec > _2nd.st_mtimespec.tv_sec )
+        return false;
+    return _1st.st_mtimespec.tv_nsec < _2nd.st_mtimespec.tv_nsec;
+}
+    
+static bool EntryIsOlder( const VFSStat &_1st, const VFSStat &_2nd )
+{
+    if( _1st.mtime.tv_sec < _2nd.mtime.tv_sec )
+        return true;
+    if( _1st.mtime.tv_sec > _2nd.mtime.tv_sec )
+        return false;
+    return _1st.mtime.tv_nsec < _2nd.mtime.tv_nsec;
+}
+    
 }

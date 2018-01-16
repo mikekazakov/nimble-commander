@@ -89,5 +89,36 @@ void AdjustFileTimesForNativeFD(int _target_fd, const VFSStat &_with_times)
     AdjustFileTimesForNativeFD(_target_fd, st);
 }
 
-
+bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
+                                          const string &_path,
+                                          const string& _item_name,
+                                          const VFSStat &_st )
+{
+    // currently we think that ExtEAs can be only on native VFS
+    if( !_host.IsNativeFS() )
+        return false;
+    
+    // any ExtEA should have ._Filename format
+    auto cstring = _item_name.c_str();
+    if( cstring[0] != '.' || cstring[1] != '_' || cstring[2] == 0 )
+        return false;
+    
+    // check if current filesystem uses external eas
+    auto fs_info = NativeFSManager::Instance().VolumeFromDevID( _st.dev );
+    if( !fs_info || fs_info->interfaces.extended_attr == true )
+        return false;
+    
+    // check if a 'main' file exists
+    char path[MAXPATHLEN];
+    strcpy(path, _path.c_str());
+    
+    // some magick to produce /path/subpath/filename from a /path/subpath/._filename
+    char *last_dst = strrchr(path, '/');
+    if( !last_dst )
+        return false;
+    strcpy( last_dst + 1, cstring + 2 );
+    
+    return _host.Exists( path );
+}
+    
 }

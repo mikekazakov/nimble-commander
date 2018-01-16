@@ -620,6 +620,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForListingPromise(const ListingPromise &_pr
      },
      [&](const ListingPromise::NonUniformListing &l)
      {
+         // TODO: format the number properly
          const auto count = [NSNumber numberWithUnsignedInteger:l.EntriesCount()];
          menu_item.title = [NSString stringWithFormat:@"Temporary Panel (%@)", count];
      }

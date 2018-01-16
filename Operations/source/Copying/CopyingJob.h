@@ -140,18 +140,28 @@ private:
         FixedPath    // path = dest_path
     };
     
+    enum class SourceItemAftermath
+    {
+        NoChanges,
+        Moved,
+        NeedsToBeDeleted
+    };
+    
     void        ProcessItems();
     StepResult  ProcessSymlinkItem(VFSHost& _source_host,
                                    const string &_source_path,
                                    const string &_destination_path);
-    
-    
-    
+    StepResult  ProcessDirectoryItem(VFSHost& _source_host,
+                                     const string &_source_path,
+                                     int _source_index,
+                                     const string &_destination_path);
     
     PathCompositionType     AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const;
     StepResult              BuildDestinationDirectory() const;
     tuple<StepResult, copying::SourceItems> ScanSourceItems();
-    string                  ComposeDestinationNameForItem( int _src_item_index ) const;
+    string ComposeDestinationNameForItem( int _src_item_index ) const;
+    string ComposeDestinationNameForItemInDB(int _src_item_index,
+                                             const copying::SourceItems &_db ) const;
     
     // + stats callback
     StepResult CopyNativeFileToNativeFile(const string& _src_path,
@@ -190,6 +200,10 @@ private:
     
     StepResult RenameNativeFile(const string& _src_path,
                                 const string& _dst_path) const;
+
+    pair<StepResult, SourceItemAftermath> RenameNativeDirectory(const string& _src_path,
+                                                                const string& _dst_path) const;
+    
     StepResult RenameVFSFile(VFSHost &_common_host,
                              const string& _src_path,
                              const string& _dst_path) const;
@@ -209,7 +223,8 @@ private:
     int                                         m_CurrentlyProcessingSourceItemIndex = -1;
     vector<copying::ChecksumExpectation>        m_Checksums;
     vector<unsigned>                            m_SourceItemsToDelete;
-    VFSHostPtr                                  m_DestinationHost;
+    const VFSHostPtr                            m_DestinationHost;
+    const bool                                  m_IsDestinationHostNative;
     shared_ptr<const NativeFileSystemInfo>      m_DestinationNativeFSInfo; // used only for native vfs
     const string                                m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
     string                                      m_DestinationPath;

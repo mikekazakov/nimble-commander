@@ -634,18 +634,42 @@ int SFTPHost::Rename(const char *_old_path, const char *_new_path, const VFSCanc
 {
     unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
-    if(rc)
+    if( rc != VFSError::Ok )
         return rc;
     
     AutoConnectionReturn acr(conn, this);
     
-    rc = libssh2_sftp_rename_ex(conn->sftp, _old_path, (unsigned)strlen(_old_path), _new_path, (unsigned)strlen(_new_path),
-                                LIBSSH2_SFTP_RENAME_OVERWRITE | LIBSSH2_SFTP_RENAME_ATOMIC | LIBSSH2_SFTP_RENAME_NATIVE);
+    const auto rename_flags = LIBSSH2_SFTP_RENAME_OVERWRITE |
+                              LIBSSH2_SFTP_RENAME_ATOMIC |
+                              LIBSSH2_SFTP_RENAME_NATIVE;
+    const auto rename_rc = libssh2_sftp_rename_ex(conn->sftp,
+                                                  _old_path, (unsigned)strlen(_old_path),
+                                                  _new_path, (unsigned)strlen(_new_path),
+                                                  rename_flags);
+    if( rename_rc == LIBSSH2_ERROR_NONE )
+        return VFSError::Ok;
     
-    if(rc < 0)
+    const auto rename_vfs_rc = VFSErrorForConnection(*conn);
+    
+    if( rename_rc == LIBSSH2_ERROR_SFTP_PROTOCOL &&
+        libssh2_sftp_last_error(conn->sftp) == LIBSSH2_FX_FAILURE &&
+        Exists(_new_path, _cancel_checker) == true ) {
+        // it's likely that a SSH server forbids a direct usage of overwriting semantics
+        // lets try to fallback to "rm + mv" scheme
+        const auto unlink_rc = Unlink(_new_path, _cancel_checker);
+        if( unlink_rc != VFSError::Ok )
+            return unlink_rc;
+        
+        const auto rename2_rc = libssh2_sftp_rename_ex(conn->sftp,
+                                                       _old_path, (unsigned)strlen(_old_path),
+                                                       _new_path, (unsigned)strlen(_new_path),
+                                                       rename_flags);
+        if( rename2_rc == LIBSSH2_ERROR_NONE )
+            return VFSError::Ok;
+        
         return VFSErrorForConnection(*conn);
-    
-    return 0;
+    }
+    return rename_vfs_rc;
 }
 
 int SFTPHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)

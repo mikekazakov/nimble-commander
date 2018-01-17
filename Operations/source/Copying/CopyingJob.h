@@ -235,6 +235,7 @@ private:
     const string                                m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
     string                                      m_DestinationPath;
     PathCompositionType                         m_PathCompositionType;
+    class NativeFSManager                      &m_NativeFSManager;
     
     // buffers are allocated once in job init and are used to manupulate files' bytes.
     // thus no parallel routines should run using these buffers

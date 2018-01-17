@@ -812,6 +812,14 @@ int NativeHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_
     return VFSError::Ok;
 }
 
+bool NativeHost::IsCaseSensitiveAtPath(const char *_dir) const
+{
+    if( !_dir || _dir[0] != '/' )
+        return true;
+    if( const auto fs_info = NativeFSManager::Instance().VolumeFromMountPoint( _dir ) )
+        return fs_info->format.case_sensitive;
+    return true;
+}
     
 static uint32_t MergeUnixFlags( uint32_t _symlink_flags, uint32_t _target_flags ) noexcept
 {

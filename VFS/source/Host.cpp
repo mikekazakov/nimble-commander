@@ -565,5 +565,10 @@ string Host::MakePathVerbose( const char *_path ) const
     verbose_path += _path;
     return verbose_path;
 }
+    
+bool Host::IsCaseSensitiveAtPath(const char *_dir) const
+{
+    return true;
+}
 
 }

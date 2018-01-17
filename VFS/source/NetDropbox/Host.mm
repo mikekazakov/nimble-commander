@@ -480,5 +480,10 @@ const string &DropboxHost::Account() const
 {
     return I->m_Account;
 }
+    
+bool DropboxHost::IsCaseSensitiveAtPath(const char *_dir) const
+{
+    return false;
+}
 
 }

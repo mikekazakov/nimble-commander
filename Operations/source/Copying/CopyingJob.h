@@ -209,6 +209,10 @@ private:
 
     pair<StepResult, SourceItemAftermath> RenameNativeDirectory(const string& _src_path,
                                                                 const string& _dst_path) const;
+
+    pair<StepResult, SourceItemAftermath> RenameVFSDirectory(VFSHost &_common_host,
+                                                             const string& _src_path,
+                                                             const string& _dst_path) const;
     
     StepResult RenameVFSFile(VFSHost &_common_host,
                              const string& _src_path,

@@ -131,6 +131,12 @@ public:
      * Default implementation returns IsWritable();
      */
     virtual bool IsWritableAtPath(const char *_dir) const;
+
+    /**
+     * Tell if VFS differs between "Filename" and "filename" starting from a _dir.
+     * In case of error will return "true" as a fallback value.
+     */
+    virtual bool IsCaseSensitiveAtPath(const char *_dir = "/") const;
     
     /**
      * VFS version of stat().

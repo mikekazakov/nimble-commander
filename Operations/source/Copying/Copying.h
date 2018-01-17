@@ -36,6 +36,7 @@ private:
     int OnCantCreateDestinationDir(int _vfs_error, const string &_path, VFSHost &_vfs);
     int OnCantDeleteDestinationFile(int _vfs_error, const string &_path, VFSHost &_vfs);
     int OnCantDeleteSourceItem(int _vfs_error, const string &_path, VFSHost &_vfs);
+    int OnNotADirectory(const string &_path, VFSHost &_vfs);
     void OnFileVerificationFailed(const string &_path, VFSHost &_vfs);
     void OnStageChanged();
 

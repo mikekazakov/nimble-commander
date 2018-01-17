@@ -65,6 +65,7 @@ protected:
         AbortRetry,
         AbortSkipSkipAll,
         AbortSkipSkipAllRetry,
+        AbortSkipSkipAllOverwrite,
         Continue
     };
 

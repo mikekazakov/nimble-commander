@@ -81,6 +81,12 @@ struct CopyingJobCallbacks
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
     { return CantDeleteSourceFileResolution::Stop; };
 
+    enum class NotADirectoryResolution { Stop, Skip, Overwrite };
+    function<NotADirectoryResolution(const string &_path, VFSHost &_vfs)>
+    m_OnNotADirectory
+    = [](const string &_path, VFSHost &_vfs)
+    { return NotADirectoryResolution::Stop; };
+    
     function<void(const string &_path, VFSHost &_vfs)>
     m_OnFileVerificationFailed
     = [](const string &_path, VFSHost &_vfs)
@@ -156,7 +162,7 @@ private:
                                      int _source_index,
                                      const string &_destination_path);
     
-    PathCompositionType     AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build) const;
+    PathCompositionType     AnalyzeInitialDestination(string &_result_destination, bool &_need_to_build);
     StepResult              BuildDestinationDirectory() const;
     tuple<StepResult, copying::SourceItems> ScanSourceItems();
     string ComposeDestinationNameForItem( int _src_item_index ) const;
@@ -238,6 +244,7 @@ private:
     const DispatchGroup                         m_IOGroup;
     bool                                        m_IsSingleInitialItemProcessing = false;
     bool                                        m_IsSingleScannedItemProcessing = false;
+    bool                                        m_IsSingleDirectoryCaseRenaming = false;
     enum Stage                                  m_Stage = Stage::Default;
     
     CopyingOptions                              m_Options;

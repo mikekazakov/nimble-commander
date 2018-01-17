@@ -15,7 +15,7 @@ int SourceItems::InsertItem(uint16_t _host_index,
     if( _host_index >= m_SourceItemsHosts.size() ||
        _base_dir_index >= m_SourceItemsBaseDirectories.size() ||
        (_parent_index >= 0 && _parent_index >= m_Items.size() ) )
-        throw invalid_argument("CopyingJobNew::SourceItems::InsertItem: invalid index");
+        throw invalid_argument("SourceItems::InsertItem: invalid index");
     
     if( S_ISREG(_stat.mode) )
         m_TotalRegBytes += _stat.size;
@@ -58,6 +58,10 @@ string SourceItems::ComposeRelativePath( int _item_no ) const
         path += m_Items[ parents[i] ].item_name;
     
     path += meta.item_name;
+    
+    if( !path.empty() && path.back() == '/' )
+        path.pop_back();
+    
     return path;
 }
 

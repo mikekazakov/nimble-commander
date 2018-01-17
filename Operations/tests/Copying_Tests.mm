@@ -593,6 +593,80 @@ static uint32_t FileFlags(const char *path)
     XCTAssert((FileFlags((m_TmpDir / "DirA" / "TestDir").c_str()) & UF_HIDDEN ) != 0 );
 }
 
+- (void)testRenamingDirIntoExistingReg
+{
+    using namespace boost::filesystem;
+    // DirA/item (file)
+    // DirB/item (directory)
+    mkdir( (m_TmpDir / "DirA").c_str(), 0755 );
+    close( open((m_TmpDir / "DirA" / "item").c_str(),
+                O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    mkdir( (m_TmpDir / "DirB").c_str(), 0755 );
+    mkdir( (m_TmpDir / "DirB" / "item").c_str(), 0755 );
+    
+    CopyingOptions opts;
+    opts.docopy = false;
+    opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
+               (m_TmpDir/"DirA").c_str(),
+               host,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    XCTAssert( op.State() == OperationState::Completed );
+    XCTAssert(status(m_TmpDir / "DirB" / "item").type() == file_type::file_not_found );
+    XCTAssert(status(m_TmpDir / "DirA" / "item").type() == file_type::directory_file );
+}
+
+- (void)testRenamingNonEmptyDirIntoExistingReg
+{
+    using namespace boost::filesystem;
+    // DirA/item (file)
+    // DirB/item (directory)
+    // DirB/item/test
+    mkdir( (m_TmpDir / "DirA").c_str(), 0755 );
+    close( open((m_TmpDir / "DirA" / "item").c_str(),
+                O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    mkdir( (m_TmpDir / "DirB").c_str(), 0755 );
+    mkdir( (m_TmpDir / "DirB" / "item").c_str(), 0755 );
+    close( open((m_TmpDir / "DirB" / "item" / "test").c_str(),
+                O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    
+    CopyingOptions opts;
+    opts.docopy = false;
+    opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
+               (m_TmpDir/"DirA").c_str(),
+               host,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    XCTAssert( op.State() == OperationState::Completed );
+    XCTAssert(status(m_TmpDir / "DirB" / "item").type() == file_type::file_not_found );
+    XCTAssert(status(m_TmpDir / "DirA" / "item").type() == file_type::directory_file );
+    XCTAssert(status(m_TmpDir / "DirA" / "item" / "test").type() == file_type::regular_file );
+}
+
+- (void)testCopiedApplicationHasAValidSignature
+{
+    CopyingOptions opts;
+    opts.docopy = true;
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems("/Applications", {"Mail.app"}, *host),
+               m_TmpDir.c_str(),
+               host,
+               opts);
+    op.Start();
+    op.Wait();
+    XCTAssert( op.State() == OperationState::Completed );
+    const auto command = "/usr/bin/codesign --verify "s + (m_TmpDir/"Mail.app").native();
+    XCTAssert( system( command.c_str() ) == 0);
+}
+
 - (path)makeTmpDir
 {
     char dir[MAXPATHLEN];

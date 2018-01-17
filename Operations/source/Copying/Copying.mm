@@ -69,6 +69,9 @@ void Copying::SetupCallbacks()
     j.m_OnCantDeleteSourceItem = [this](int _1, const string &_2, VFSHost &_3) {
         return (С::CantDeleteSourceFileResolution)OnCantDeleteSourceItem(_1, _2, _3);
     };
+    j.m_OnNotADirectory = [this](const string &_1, VFSHost &_2) {
+        return (С::NotADirectoryResolution)OnNotADirectory(_1, _2);
+    };
     j.m_OnFileVerificationFailed = [this](const string &_1, VFSHost &_2) {
         OnFileVerificationFailed(_1, _2);
     };
@@ -412,6 +415,33 @@ int Copying::OnCantDeleteSourceItem(int _err, const string &_path, VFSHost &_vfs
         return (int)Callbacks::CantDeleteSourceFileResolution::Retry;
     else
         return (int)Callbacks::CantDeleteSourceFileResolution::Stop;
+}
+    
+int Copying::OnNotADirectory(const string &_path, VFSHost &_vfs)
+{
+    if( m_SkipAll )
+        return (int)Callbacks::NotADirectoryResolution::Skip;
+    if( m_ExistBehavior == CopyingOptions::ExistBehavior::OverwriteAll )
+        return (int)Callbacks::NotADirectoryResolution::Overwrite;
+    if( !IsInteractive() )
+        return (int)Callbacks::NotADirectoryResolution::Stop;
+
+    const auto ctx = make_shared<AsyncDialogResponse>();
+    ShowGenericDialog(GenericDialog::AbortSkipSkipAllOverwrite,
+                      NSLocalizedString(@"Item is not a directory", ""),
+                      VFSError::FromErrno(EEXIST), {_vfs, _path}, ctx);
+    WaitForDialogResponse(ctx);
+    
+    if( ctx->response == NSModalResponseSkip )
+        return (int)Callbacks::NotADirectoryResolution::Skip;
+    else if( ctx->response == NSModalResponseSkipAll ) {
+        m_SkipAll = true;
+        return (int)Callbacks::NotADirectoryResolution::Skip;
+    }
+    else if( ctx->response == NSModalResponseOverwrite )
+        return (int)Callbacks::NotADirectoryResolution::Overwrite;
+    else
+        return (int)Callbacks::NotADirectoryResolution::Stop;
 }
 
 void Copying::OnStageChanged()

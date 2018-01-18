@@ -620,9 +620,16 @@ NSMenuItem *MenuItemBuilder::MenuItemForListingPromise(const ListingPromise &_pr
      },
      [&](const ListingPromise::NonUniformListing &l)
      {
-         // TODO: format the number properly
+         static const auto formatter = []{
+             auto fmt = [[NSNumberFormatter alloc] init];
+             fmt.usesGroupingSeparator = true;
+             fmt.groupingSize = 3;
+             return fmt;
+         }();
+         
          const auto count = [NSNumber numberWithUnsignedInteger:l.EntriesCount()];
-         menu_item.title = [NSString stringWithFormat:@"Temporary Panel (%@)", count];
+         menu_item.title = [NSString stringWithFormat:@"Temporary Panel (%@)",
+                            [formatter stringFromNumber:count]];
      }
     );
     boost::apply_visitor(visitor, _promise.Description());

@@ -223,7 +223,7 @@ void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
 {
     const auto cd = [[NCOpsDirectoryCreationDialog alloc] init];
     if( const auto item = _target.view.item )
-        if( item.IsDir() && !item.IsDotDot() )
+        if( !item.IsDotDot() )
             cd.suggestion = item.Filename();
     
     [_target.mainWindowController beginSheet:cd.window

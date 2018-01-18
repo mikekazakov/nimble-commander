@@ -13,10 +13,12 @@
 {
     string m_Result;
     string m_Suggestion;
+    function<bool(const string&)> m_ValidationCallback;
 }
 
 @synthesize result = m_Result;
 @synthesize suggestion = m_Suggestion;
+@synthesize validationCallback = m_ValidationCallback;
 
 - (instancetype)init
 {
@@ -33,6 +35,7 @@
     if( auto v = [NSString stringWithUTF8StdString:m_Suggestion] )
         self.TextField.stringValue = v;
     [self.window makeFirstResponder:self.TextField];
+    [self validate];
 }
 
 - (IBAction)OnCreate:(id)sender
@@ -60,7 +63,15 @@
 - (void)validate
 {
     const auto v = self.TextField.stringValue;
-    self.isValid = v && v.length > 0;
+    if( !v  ) {
+        self.isValid = false;
+    }
+    else {
+        if( m_ValidationCallback )
+            self.isValid = m_ValidationCallback( v.UTF8String );
+        else
+            self.isValid = v.length > 0;
+    }
 }
 
 @end

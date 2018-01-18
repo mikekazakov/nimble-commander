@@ -7,5 +7,6 @@
 
 @property (nonatomic, readonly) const string &result;
 @property (nonatomic, readwrite) string suggestion;
+@property (nonatomic, readwrite) function<bool(const string&)> validationCallback;
 
 @end

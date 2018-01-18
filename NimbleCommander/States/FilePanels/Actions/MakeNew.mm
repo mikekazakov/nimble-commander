@@ -219,12 +219,23 @@ bool MakeNewNamedFolder::Predicate( PanelController *_target ) const
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
+static bool ValidateDirectoryInput(const string &_text)
+{
+    const auto max_len = 256;
+    if( _text.empty() || _text.length() > max_len )
+        return false;
+    static const auto invalid_chars = ":\\\r\t\n";
+    return _text.find_first_of(invalid_chars) == string::npos;
+}
+    
 void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
 {
     const auto cd = [[NCOpsDirectoryCreationDialog alloc] init];
     if( const auto item = _target.view.item )
         if( !item.IsDotDot() )
             cd.suggestion = item.Filename();
+
+    cd.validationCallback = ValidateDirectoryInput;
     
     [_target.mainWindowController beginSheet:cd.window
                            completionHandler:^(NSModalResponse returnCode) {

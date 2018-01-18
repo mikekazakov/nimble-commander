@@ -9,6 +9,9 @@
 /* Begin PBXBuildFile section */
 		CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */; };
 		CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */; };
+		CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3847272010756800BAB3BE /* FilenameTextNavigation.h */; };
+		CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */; };
+		CF38472D2010780E00BAB3BE /* FilenameTextNavigation_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */; };
 		CF614AA21F9D86CC0005F2DB /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94631F453CB60035E606 /* libUtility.dylib */; };
 		CF614AAF1F9D87230005F2DB /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */; };
 		CF614AB01F9D87260005F2DB /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */; };
@@ -75,6 +78,9 @@
 		CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ButtonWithTextColor.mm; path = source/ButtonWithTextColor.mm; sourceTree = "<group>"; };
 		CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColoredSeparatorLine.h; path = include/Utility/ColoredSeparatorLine.h; sourceTree = "<group>"; };
 		CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ColoredSeparatorLine.mm; path = source/ColoredSeparatorLine.mm; sourceTree = "<group>"; };
+		CF3847272010756800BAB3BE /* FilenameTextNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextNavigation.h; path = include/Utility/FilenameTextNavigation.h; sourceTree = "<group>"; };
+		CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextNavigation.mm; path = source/FilenameTextNavigation.mm; sourceTree = "<group>"; };
+		CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextNavigation_Tests.mm; path = tests/FilenameTextNavigation_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSEventModifierFlagsHolder.h; path = include/Utility/NSEventModifierFlagsHolder.h; sourceTree = "<group>"; };
 		CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ByteCountFormatter.h; path = include/Utility/ByteCountFormatter.h; sourceTree = "<group>"; };
 		CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter.mm; path = source/ByteCountFormatter.mm; sourceTree = "<group>"; };
@@ -176,6 +182,7 @@
 			children = (
 				CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */,
 				CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */,
+				CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */,
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
 			);
 			name = Tests;
@@ -213,6 +220,7 @@
 				CF960E171C992F2C001D8B02 /* Encodings.h */,
 				CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */,
 				CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */,
+				CF3847272010756800BAB3BE /* FilenameTextNavigation.h */,
 				CFD62BD51C9A6B4B0021EE7F /* FontCache.h */,
 				CFD62BD91C9A6BE30021EE7F /* FontExtras.h */,
 				CFD62BE71C9A709C0021EE7F /* FPSLimitedDrawer.h */,
@@ -254,6 +262,7 @@
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
 				CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */,
 				CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */,
+				CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */,
 				CFD62BD71C9A6B630021EE7F /* FontCache.cpp */,
 				CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */,
 				CFD62C001C9A87170021EE7F /* FontExtras.mm */,
@@ -303,6 +312,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */,
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
 				CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */,
 			);
@@ -400,6 +410,7 @@
 			files = (
 				CF614AB01F9D87260005F2DB /* Encodings_Tests.mm in Sources */,
 				CF614AAF1F9D87230005F2DB /* ByteCountFormatter_Tests.mm in Sources */,
+				CF38472D2010780E00BAB3BE /* FilenameTextNavigation_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,6 +419,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFFA94691F453CC00035E606 /* ButtonWithTextColor.mm in Sources */,
+				CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */,
 				CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */,
 				CFFA94751F453CC00035E606 /* FunctionKeysPass.mm in Sources */,
 				CFFA947C1F453CC00035E606 /* NSTimer+Tolerance.m in Sources */,

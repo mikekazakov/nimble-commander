@@ -1,9 +1,8 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilenameTextControl.h"
 #include <AppKit/AppKit.h>
 #include "ObjCpp.h"
-
-static const auto g_CS = [NSCharacterSet characterSetWithCharactersInString:@".,-_/\\"];
+#include "FilenameTextNavigation.h"
 
 @interface NCFilenameTextStorage ()
 @property (nonatomic, strong) NSMutableAttributedString *backingStore;
@@ -54,37 +53,10 @@ static const auto g_CS = [NSCharacterSet characterSetWithCharactersInString:@".,
 - (NSUInteger)nextWordFromIndex:(NSUInteger)location
                         forward:(BOOL)isForward
 {
-    if( self.string.length == 0 )
-        return 0;
-    
-    if( isForward ) {
-        if( location == self.string.length )
-            return location;
-        
-        const auto search_range = NSMakeRange(location + 1, self.string.length - location - 1);
-        const auto result = [self.string rangeOfCharacterFromSet:g_CS
-                                                         options:0
-                                                           range:search_range];
-        if( result.location != NSNotFound )
-            return result.location;
-        else
-            return self.string.length;
-    }
-    else {
-        if( location == 0 )
-            return location;
-        
-        const auto search_range = NSMakeRange(0, location - 1);
-        const auto result = [self.string rangeOfCharacterFromSet:g_CS
-                                                         options:NSBackwardsSearch
-                                                           range:search_range];
-        if( result.location != NSNotFound )
-            return result.location + 1;
-        else
-            return 0;
-    }
-    
-    return [super nextWordFromIndex:location forward:isForward];
+    if( isForward )
+        return FilenameTextNavigation::NavigateToNextWord(self.string, location);
+    else
+        return FilenameTextNavigation::NavigateToPreviousWord(self.string, location);
 }
 
 @end

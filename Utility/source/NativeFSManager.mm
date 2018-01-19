@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <AppKit/AppKit.h>
 #include <DiskArbitration/DiskArbitration.h>
 #include <sys/param.h>
@@ -9,6 +9,7 @@
 #include <Utility/FSEventsDirUpdate.h>
 #include <Utility/NativeFSManager.h>
 #include <Utility/StringExtras.h>
+#include <Habanero/dispatch_cpp.h>
 #include <iostream>
 
 using namespace std;
@@ -20,29 +21,24 @@ static bool GetBasicInfo(NativeFileSystemInfo &_volume);
 static bool GetFormatInfo(NativeFileSystemInfo &_volume);
 static bool GetInterfacesInfo(NativeFileSystemInfo &_volume);
 static bool GetVerboseInfo(NativeFileSystemInfo &_volume);
-static bool UpdateSpaceInfo(NativeFileSystemInfo &_volume);
+static bool UpdateSpaceInfo(const NativeFileSystemInfo &_volume);
 static bool VolumeHasTrash(const std::string &_volume_path);
-
-static vector<string> GetFullFSList()
-{
-    struct statfs* mounts;
-    struct stat st;
-    int num_mounts = getmntinfo(&mounts, MNT_WAIT);
-    
-    vector<string> result;
-    for (int i = 0; i < num_mounts; i++)
-        if(lstat(mounts[i].f_mntonname, &st) == 0)
-            result.emplace_back(mounts[i].f_mntonname);
-    
-    return result;
-}
+static vector<string> GetFullFSList();
 
 struct NativeFSManagerProxy2 // this proxy is needed only for private methods access
 {
-    static void OnDidMount(const string &_on_path)                              { g_SharedFSManager->OnDidMount(_on_path);              }
-    static void OnWillUnmount(const string &_on_path)                           { g_SharedFSManager->OnWillUnmount(_on_path);           }
-    static void OnDidUnmount(const string &_on_path)                            { g_SharedFSManager->OnDidUnmount(_on_path);            }
-    static void OnDidRename(const string &_old_path, const string &_new_path)   { g_SharedFSManager->OnDidRename(_old_path, _new_path); }
+    static void OnDidMount(const string &_on_path) {
+        g_SharedFSManager->OnDidMount(_on_path);
+    }
+    static void OnWillUnmount(const string &_on_path) {
+        g_SharedFSManager->OnWillUnmount(_on_path);
+    }
+    static void OnDidUnmount(const string &_on_path) {
+        g_SharedFSManager->OnDidUnmount(_on_path);
+    }
+    static void OnDidRename(const string &_old_path, const string &_new_path) {
+        g_SharedFSManager->OnDidRename(_old_path, _new_path);
+    }
 };
 
 @interface NativeFSManagerProxy : NSObject
@@ -75,37 +71,27 @@ struct NativeFSManagerProxy2 // this proxy is needed only for private methods ac
 }
 @end
 
-static bool VolumeHasTrash_NSFileManager(const string &_volume_path)
-{
-    auto url = CFURLCreateFromFileSystemRepresentation(0, (const UInt8*)_volume_path.c_str(), _volume_path.length(), true);
-    if(!url)
-        return false;
-    NSURL *trash = [[NSFileManager defaultManager] URLForDirectory:NSTrashDirectory
-                                                          inDomain:NSUserDomainMask
-                                                 appropriateForURL:(__bridge NSURL*)url
-                                                            create:NO
-                                                             error:nil];
-    CFRelease(url);
-    return trash != nil;
-}
-
 NativeFSManager::NativeFSManager()
 {
-    for(auto &i: GetFullFSList())
-    {
+    for( const auto &mount_path: GetFullFSList() ) {
         m_Volumes.emplace_back(make_shared<NativeFileSystemInfo>());
         
         auto volume = m_Volumes.back();
-        volume->mounted_at_path = i;
+        volume->mounted_at_path = mount_path;
         
         GetAllInfos(*volume.get());
     }
     
-	NSNotificationCenter *center = NSWorkspace.sharedWorkspace.notificationCenter;
-	[center addObserver:NativeFSManagerProxy.class selector:@selector(volumeDidMount:) name:NSWorkspaceDidMountNotification object:nil];
-	[center addObserver:NativeFSManagerProxy.class selector:@selector(volumeDidRename:) name:NSWorkspaceDidRenameVolumeNotification object:nil];
-	[center addObserver:NativeFSManagerProxy.class selector:@selector(volumeDidUnmount:) name:NSWorkspaceDidUnmountNotification object:nil];
-	[center addObserver:NativeFSManagerProxy.class selector:@selector(volumeWillUnmount:) name:NSWorkspaceWillUnmountNotification object:nil];
+	const auto center = NSWorkspace.sharedWorkspace.notificationCenter;
+    const auto observer = NativeFSManagerProxy.class;
+	[center addObserver:observer selector:@selector(volumeDidMount:)
+                   name:NSWorkspaceDidMountNotification object:nil];
+	[center addObserver:observer selector:@selector(volumeDidRename:)
+                   name:NSWorkspaceDidRenameVolumeNotification object:nil];
+	[center addObserver:observer selector:@selector(volumeDidUnmount:)
+                   name:NSWorkspaceDidUnmountNotification object:nil];
+	[center addObserver:observer selector:@selector(volumeWillUnmount:)
+                   name:NSWorkspaceWillUnmountNotification object:nil];
 }
 
 NativeFSManager &NativeFSManager::Instance()
@@ -199,25 +185,30 @@ static bool GetFormatInfo(NativeFileSystemInfo &_v)
     if(getattrlist(_v.mounted_at_path.c_str(), &attrs, &i, sizeof(i), 0) != 0)
         return false;
     
-    _v.format.persistent_objects_ids = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_PERSISTENTOBJECTIDS;
-    _v.format.symbolic_links         = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_SYMBOLICLINKS;
-    _v.format.hard_links             = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_HARDLINKS;
-    _v.format.journal                = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_JOURNAL;
-    _v.format.journal_active         = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_JOURNAL_ACTIVE;
-    _v.format.no_root_times          = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_NO_ROOT_TIMES;
-    _v.format.sparse_files           = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_SPARSE_FILES;
-    _v.format.zero_runs              = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_ZERO_RUNS;
-    _v.format.case_sensitive         = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_CASE_SENSITIVE;
-    _v.format.case_preserving        = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_CASE_PRESERVING;
-    _v.format.fast_statfs            = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_FAST_STATFS;
-    _v.format.filesize_2tb           = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_2TB_FILESIZE;
-    _v.format.open_deny_modes        = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_OPENDENYMODES;
-    _v.format.hidden_files           = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_HIDDEN_FILES;
-    _v.format.path_from_id           = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_PATH_FROM_ID;
-    _v.format.no_volume_sizes        = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_NO_VOLUME_SIZES;
-    _v.format.object_ids_64bit       = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_64BIT_OBJECT_IDS;
-    _v.format.decmpfs_compression    = i.c.capabilities[VOL_CAPABILITIES_FORMAT] & VOL_CAP_FMT_DECMPFS_COMPRESSION;
-    
+    const auto volume_format = i.c.capabilities[VOL_CAPABILITIES_FORMAT];
+    _v.format.persistent_objects_ids = volume_format & VOL_CAP_FMT_PERSISTENTOBJECTIDS;
+    _v.format.symbolic_links         = volume_format & VOL_CAP_FMT_SYMBOLICLINKS;
+    _v.format.hard_links             = volume_format & VOL_CAP_FMT_HARDLINKS;
+    _v.format.journal                = volume_format & VOL_CAP_FMT_JOURNAL;
+    _v.format.journal_active         = volume_format & VOL_CAP_FMT_JOURNAL_ACTIVE;
+    _v.format.no_root_times          = volume_format & VOL_CAP_FMT_NO_ROOT_TIMES;
+    _v.format.sparse_files           = volume_format & VOL_CAP_FMT_SPARSE_FILES;
+    _v.format.zero_runs              = volume_format & VOL_CAP_FMT_ZERO_RUNS;
+    _v.format.case_sensitive         = volume_format & VOL_CAP_FMT_CASE_SENSITIVE;
+    _v.format.case_preserving        = volume_format & VOL_CAP_FMT_CASE_PRESERVING;
+    _v.format.fast_statfs            = volume_format & VOL_CAP_FMT_FAST_STATFS;
+    _v.format.filesize_2tb           = volume_format & VOL_CAP_FMT_2TB_FILESIZE;
+    _v.format.open_deny_modes        = volume_format & VOL_CAP_FMT_OPENDENYMODES;
+    _v.format.hidden_files           = volume_format & VOL_CAP_FMT_HIDDEN_FILES;
+    _v.format.path_from_id           = volume_format & VOL_CAP_FMT_PATH_FROM_ID;
+    _v.format.no_volume_sizes        = volume_format & VOL_CAP_FMT_NO_VOLUME_SIZES;
+    _v.format.object_ids_64bit       = volume_format & VOL_CAP_FMT_64BIT_OBJECT_IDS;
+    _v.format.decmpfs_compression    = volume_format & VOL_CAP_FMT_DECMPFS_COMPRESSION;
+    _v.format.dir_hardlinks          = volume_format & VOL_CAP_FMT_DIR_HARDLINKS;
+    _v.format.document_id            = volume_format & VOL_CAP_FMT_DOCUMENT_ID;
+    _v.format.write_generation_count = volume_format & VOL_CAP_FMT_WRITE_GENERATION_COUNT;
+    _v.format.no_immutable_files     = volume_format & VOL_CAP_FMT_NO_IMMUTABLE_FILES;
+    _v.format.no_permissions         = volume_format & VOL_CAP_FMT_NO_PERMISSIONS;
     return true;
 }
 
@@ -236,22 +227,25 @@ static bool GetInterfacesInfo(NativeFileSystemInfo &_v)
     
     if(getattrlist(_v.mounted_at_path.c_str(), &attrs, &i, sizeof(i), 0) != 0)
         return false;
-    
-    _v.interfaces.search_fs         = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_SEARCHFS;
-    _v.interfaces.attr_list         = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_ATTRLIST;
-    _v.interfaces.nfs_export        = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_NFSEXPORT;
-    _v.interfaces.read_dir_attr     = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_READDIRATTR;
-    _v.interfaces.exchange_data     = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_EXCHANGEDATA;
-    _v.interfaces.copy_file         = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_COPYFILE;
-    _v.interfaces.allocate          = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_ALLOCATE;
-    _v.interfaces.vol_rename        = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_VOL_RENAME;
-    _v.interfaces.adv_lock          = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_ADVLOCK;
-    _v.interfaces.file_lock         = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_FLOCK;
-    _v.interfaces.extended_security = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_EXTENDED_SECURITY;
-    _v.interfaces.user_access       = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_USERACCESS;
-    _v.interfaces.mandatory_lock    = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_MANLOCK;
-    _v.interfaces.extended_attr     = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_EXTENDED_ATTR;
-    _v.interfaces.named_streams     = i.c.capabilities[VOL_CAPABILITIES_INTERFACES] & VOL_CAP_INT_NAMEDSTREAMS;
+    const auto volume_interfaces = i.c.capabilities[VOL_CAPABILITIES_INTERFACES];
+    _v.interfaces.search_fs         = volume_interfaces & VOL_CAP_INT_SEARCHFS;
+    _v.interfaces.attr_list         = volume_interfaces & VOL_CAP_INT_ATTRLIST;
+    _v.interfaces.nfs_export        = volume_interfaces & VOL_CAP_INT_NFSEXPORT;
+    _v.interfaces.read_dir_attr     = volume_interfaces & VOL_CAP_INT_READDIRATTR;
+    _v.interfaces.exchange_data     = volume_interfaces & VOL_CAP_INT_EXCHANGEDATA;
+    _v.interfaces.copy_file         = volume_interfaces & VOL_CAP_INT_COPYFILE;
+    _v.interfaces.allocate          = volume_interfaces & VOL_CAP_INT_ALLOCATE;
+    _v.interfaces.vol_rename        = volume_interfaces & VOL_CAP_INT_VOL_RENAME;
+    _v.interfaces.adv_lock          = volume_interfaces & VOL_CAP_INT_ADVLOCK;
+    _v.interfaces.file_lock         = volume_interfaces & VOL_CAP_INT_FLOCK;
+    _v.interfaces.extended_security = volume_interfaces & VOL_CAP_INT_EXTENDED_SECURITY;
+    _v.interfaces.user_access       = volume_interfaces & VOL_CAP_INT_USERACCESS;
+    _v.interfaces.mandatory_lock    = volume_interfaces & VOL_CAP_INT_MANLOCK;
+    _v.interfaces.extended_attr     = volume_interfaces & VOL_CAP_INT_EXTENDED_ATTR;
+    _v.interfaces.named_streams     = volume_interfaces & VOL_CAP_INT_NAMEDSTREAMS;
+    _v.interfaces.clone             = volume_interfaces & VOL_CAP_INT_CLONE;
+    _v.interfaces.rename_swap       = volume_interfaces & VOL_CAP_INT_RENAME_SWAP;
+    _v.interfaces.rename_excl       = volume_interfaces & VOL_CAP_INT_RENAME_EXCL;
     _v.interfaces.has_trash         = VolumeHasTrash(_v.mounted_at_path);
     return true;
 }
@@ -316,18 +310,22 @@ void NativeFSManager::OnDidMount(const string &_on_path)
         volume->mounted_at_path = _on_path;
         GetAllInfos(*volume.get());
         
-        lock_guard<recursive_mutex> lock(m_Lock);
-        auto it = find_if(begin(m_Volumes),
-                          end(m_Volumes),
-                          [=] (shared_ptr<NativeFileSystemInfo>& _v) {
-                              return _v->mounted_at_path == _on_path;
-                            }
-                          );
-        if(it != end(m_Volumes))
-            m_Volumes.erase(it);
-        
-        m_Volumes.emplace_back(volume);
+        lock_guard<mutex> lock(m_Lock);
+        InsertNewVolume_Unlocked(volume);
     });
+}
+
+void NativeFSManager::InsertNewVolume_Unlocked( const shared_ptr<NativeFileSystemInfo> &_volume )
+{
+    const auto it = find_if(begin(m_Volumes),
+                            end(m_Volumes),
+                            [=] (shared_ptr<NativeFileSystemInfo>& _v) {
+                                return _v->mounted_at_path == _volume->mounted_at_path;
+                            });
+    if( it != end(m_Volumes) )
+        *it = _volume;
+    else
+        m_Volumes.emplace_back(_volume);
 }
 
 void NativeFSManager::OnWillUnmount(const string &_on_path)
@@ -378,17 +376,18 @@ void NativeFSManager::OnDidRename(const string &_old_path, const string &_new_pa
     FSEventsDirUpdate::Instance().OnVolumeDidUnmount(_old_path);
 }
 
-vector<shared_ptr<NativeFileSystemInfo>> NativeFSManager::Volumes() const
+vector<NativeFSManager::Info> NativeFSManager::Volumes() const
 {
-    lock_guard<recursive_mutex> lock(m_Lock);
-    return m_Volumes;
+    lock_guard<mutex> lock(m_Lock);
+    vector<NativeFSManager::Info> volumes( begin(m_Volumes), end(m_Volumes) );
+    return volumes;
 }
 
-static bool UpdateSpaceInfo(NativeFileSystemInfo &_volume)
+static bool UpdateSpaceInfo(const NativeFileSystemInfo &_volume)
 {
     struct statfs stat;
     
-    if(statfs(_volume.mounted_at_path.c_str(), &stat) != 0)
+    if( statfs(_volume.mounted_at_path.c_str(), &stat) != 0 )
         return false;
     
     _volume.basic.total_blocks      = stat.f_blocks;
@@ -402,16 +401,15 @@ static bool UpdateSpaceInfo(NativeFileSystemInfo &_volume)
     return true;
 }
 
-void NativeFSManager::UpdateSpaceInformation(const shared_ptr<NativeFileSystemInfo> &_volume)
+void NativeFSManager::UpdateSpaceInformation(const Info &_volume)
 {
-    if(!_volume)
+    if( !_volume )
         return;
     
-    lock_guard<recursive_mutex> lock(m_Lock);
-    UpdateSpaceInfo(*_volume.get());
+    UpdateSpaceInfo( *_volume.get() );
 }
 
-shared_ptr<const NativeFileSystemInfo> NativeFSManager::VolumeFromFD(int _fd) const
+NativeFSManager::Info NativeFSManager::VolumeFromFD(int _fd) const
 {
     struct stat st;
     if( fstat(_fd, &st) < 0 )
@@ -419,19 +417,22 @@ shared_ptr<const NativeFileSystemInfo> NativeFSManager::VolumeFromFD(int _fd) co
     return VolumeFromDevID( st.st_dev );
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(const string &_path) const
+NativeFSManager::Info NativeFSManager::VolumeFromPathFast(const string &_path) const
 {
-    shared_ptr<NativeFileSystemInfo> result = shared_ptr<NativeFileSystemInfo>(nullptr);
+    lock_guard<mutex> lock(m_Lock);
+    return VolumeFromPathFast_Unlocked(_path);
+}
 
-    if(_path.empty())
-        return result;
+NativeFSManager::Info NativeFSManager::VolumeFromPathFast_Unlocked(const string &_path) const
+{
+    if( _path.empty() )
+        return {};
 
-    lock_guard<recursive_mutex> lock(m_Lock);
+    shared_ptr<NativeFileSystemInfo> result;
     size_t best_fit_sz = 0;
     for(auto &vol: m_Volumes)
-        if(_path.compare(0, vol->mounted_at_path.size(), vol->mounted_at_path) == 0 &&
-           vol->mounted_at_path.size() > best_fit_sz)
-        {
+        if( _path.compare(0, vol->mounted_at_path.size(), vol->mounted_at_path) == 0 &&
+            vol->mounted_at_path.size() > best_fit_sz ) {
             best_fit_sz = vol->mounted_at_path.size();
             result = vol;
         }
@@ -439,41 +440,51 @@ shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPathFast(const strin
     return result;
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(const string &_mount_point) const
+NativeFSManager::Info NativeFSManager::VolumeFromMountPoint(const string &_mount_point) const
 {
-    lock_guard<recursive_mutex> lock(m_Lock);
-    auto it = find_if(begin(m_Volumes), end(m_Volumes), [&](auto&_){ return _->mounted_at_path == _mount_point; } );
-    if(it != end(m_Volumes))
-        return *it;
-    return nullptr;
+    return VolumeFromMountPoint( _mount_point.c_str() );
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromMountPoint(const char *_mount_point) const
+NativeFSManager::Info NativeFSManager::VolumeFromMountPoint(const char *_mount_point) const
 {
-    if(_mount_point == nullptr)
+    lock_guard<mutex> lock(m_Lock);
+    return VolumeFromMountPoint_Unlocked(_mount_point);
+}
+
+NativeFSManager::Info NativeFSManager::VolumeFromMountPoint_Unlocked(const char *_mount_point) const
+{
+    if( !_mount_point )
         return nullptr;
-    lock_guard<recursive_mutex> lock(m_Lock);
-    auto it = find_if(begin(m_Volumes), end(m_Volumes), [=](auto&_){ return _->mounted_at_path == _mount_point; } );
-    if(it != end(m_Volumes))
+    const auto it = find_if(begin(m_Volumes),
+                            end(m_Volumes),
+                            [=](auto&_){ return _->mounted_at_path == _mount_point; } );
+    if( it != end(m_Volumes) )
         return *it;
     return nullptr;
 }
 
-shared_ptr<const NativeFileSystemInfo> NativeFSManager::VolumeFromDevID(dev_t _dev_id) const
+NativeFSManager::Info NativeFSManager::VolumeFromDevID(dev_t _dev_id) const
 {
-    lock_guard<recursive_mutex> lock(m_Lock);
-    auto it = find_if(begin(m_Volumes), end(m_Volumes), [=](auto&_){ return _->basic.dev_id == _dev_id; } );
-    if(it != end(m_Volumes))
+    lock_guard<mutex> lock(m_Lock);
+    return VolumeFromDevID_Unlocked(_dev_id);
+}
+
+NativeFSManager::Info NativeFSManager::VolumeFromDevID_Unlocked(dev_t _dev_id) const
+{
+    const auto it = find_if(begin(m_Volumes),
+                            end(m_Volumes),
+                            [=](auto&_){ return _->basic.dev_id == _dev_id; } );
+    if( it != end(m_Volumes) )
         return *it;
     return nullptr;
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const string &_path) const
+NativeFSManager::Info NativeFSManager::VolumeFromPath(const string &_path) const
 {
     return VolumeFromPath( _path.c_str() );
 }
 
-shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeFromPath(const char* _path) const
+NativeFSManager::Info NativeFSManager::VolumeFromPath(const char* _path) const
 {
     // TODO: compare performance with stat() and searching for fs with dev_id    
     struct statfs info;
@@ -515,16 +526,15 @@ static void EjectOnUnmount( DADiskRef disk, DADissenterRef dissenter, void *cont
 
 void NativeFSManager::EjectVolumeContainingPath(const string &_path)
 {
-    dispatch_async(dispatch_get_main_queue(), [=]{
-        if(auto volume = VolumeFromPath(_path)) {
-            DASessionRef session = DASessionCreate(kCFAllocatorDefault);
+    dispatch_to_main_queue([=]{
+        if( const auto volume = VolumeFromPath(_path) ) {
+            const auto session = DASessionCreate(kCFAllocatorDefault);
             DASessionScheduleWithRunLoop(session, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-            CFURLRef url = (__bridge CFURLRef)volume->verbose.url;
-            if( DADiskRef disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url) ) {
-                auto need_eject = true; // maybe change in some case?
+            const auto url = (__bridge CFURLRef)volume->verbose.url;
+            if( const auto disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url) ) {
                 DADiskUnmount(disk,
                               kDADiskUnmountOptionForce,
-                              need_eject ? EjectOnUnmount : nullptr,
+                              EjectOnUnmount,
                               nullptr);
                 CFRelease(disk);
             }
@@ -535,5 +545,31 @@ void NativeFSManager::EjectVolumeContainingPath(const string &_path)
 
 static bool VolumeHasTrash(const string &_volume_path)
 {
-    return VolumeHasTrash_NSFileManager(_volume_path);
+    const auto url = CFURLCreateFromFileSystemRepresentation(0,
+                                                             (const UInt8*)_volume_path.c_str(),
+                                                             _volume_path.length(),
+                                                             true);
+    if( !url )
+        return false;
+    const auto trash = [[NSFileManager defaultManager] URLForDirectory:NSTrashDirectory
+                                                              inDomain:NSUserDomainMask
+                                                     appropriateForURL:(__bridge NSURL*)url
+                                                                create:true
+                                                                 error:nil];
+    CFRelease(url);
+    return trash != nil;
+}
+
+static vector<string> GetFullFSList()
+{
+    struct statfs* mounts;
+    struct stat st;
+    int num_mounts = getmntinfo(&mounts, MNT_WAIT);
+    
+    vector<string> result;
+    for (int i = 0; i < num_mounts; i++)
+        if(lstat(mounts[i].f_mntonname, &st) == 0)
+            result.emplace_back(mounts[i].f_mntonname);
+            
+            return result;
 }

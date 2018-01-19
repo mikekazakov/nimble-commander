@@ -89,9 +89,9 @@ static const auto g_MaxTextWidth = 600;
 
 namespace nc::panel::actions {
 
-static vector<shared_ptr<NativeFileSystemInfo>> VolumesToShow()
+static vector<shared_ptr<const NativeFileSystemInfo>> VolumesToShow()
 {
-    vector<shared_ptr<NativeFileSystemInfo>> volumes;
+    vector<shared_ptr<const NativeFileSystemInfo>> volumes;
     for( auto &i: NativeFSManager::Instance().Volumes() )
         if( i->mount_flags.dont_browse == false )
             volumes.emplace_back(i);

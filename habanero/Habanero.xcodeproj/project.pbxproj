@@ -14,6 +14,8 @@
 		CF614AD31F9D8EFD0005F2DB /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AD11F9D8EF00005F2DB /* chained_strings_Tests.mm */; };
 		CF614AD41F9D8F000005F2DB /* Hash_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614ACD1F9D8EDC0005F2DB /* Hash_Tests.mm */; };
 		CF614AD51F9D8F030005F2DB /* VariableContainer_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614ACE1F9D8EDD0005F2DB /* VariableContainer_Tests.mm */; };
+		CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD22CD32012DDDF00608DFE /* LRUCache.h */; };
+		CFD22CD72012DDFD00608DFE /* LRUCache_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD22CD52012DDF800608DFE /* LRUCache_Tests.mm */; };
 		CFFA94491F4535750035E606 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; };
 		CFFA944A1F4535750035E606 /* CFStackAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */; };
 		CFFA944B1F4535750035E606 /* CFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA01C99C2AE0021EE7F /* CFString.cpp */; };
@@ -65,6 +67,8 @@
 		CFB690541E0670FF00BBA5BD /* SerialQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SerialQueue.cpp; path = ../habanero/source/SerialQueue.cpp; sourceTree = "<group>"; };
 		CFB690561E06710900BBA5BD /* SerialQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SerialQueue.h; path = ../habanero/include/Habanero/SerialQueue.h; sourceTree = "<group>"; };
 		CFB6905D1E0677D900BBA5BD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../habanero/README.md; sourceTree = "<group>"; };
+		CFD22CD32012DDDF00608DFE /* LRUCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LRUCache.h; path = ../habanero/include/Habanero/LRUCache.h; sourceTree = "<group>"; };
+		CFD22CD52012DDF800608DFE /* LRUCache_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LRUCache_Tests.mm; path = ../habanero/tests/LRUCache_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CFD62B861C99C2A60021EE7F /* algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = algo.h; path = include/Habanero/algo.h; sourceTree = "<group>"; };
 		CFD62B871C99C2A60021EE7F /* CFString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFString.h; path = include/Habanero/CFString.h; sourceTree = "<group>"; };
 		CFD62B881C99C2A60021EE7F /* CommonPaths.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CommonPaths.h; path = include/Habanero/CommonPaths.h; sourceTree = "<group>"; };
@@ -119,6 +123,7 @@
 		CF614ABF1F9D8E6E0005F2DB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CFD22CD52012DDF800608DFE /* LRUCache_Tests.mm */,
 				CF2084021FEFB2F70014D6AD /* StringsBulk_Tests.mm */,
 				CF614AD11F9D8EF00005F2DB /* chained_strings_Tests.mm */,
 				CF614ACD1F9D8EDC0005F2DB /* Hash_Tests.mm */,
@@ -152,6 +157,7 @@
 		CFD62B841C99C2510021EE7F /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD22CD32012DDDF00608DFE /* LRUCache.h */,
 				CF2083FE1FEFACF30014D6AD /* StringsBulk.h */,
 				CFD62B861C99C2A60021EE7F /* algo.h */,
 				CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */,
@@ -212,6 +218,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF2083FF1FEFACF30014D6AD /* StringsBulk.h in Headers */,
+				CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,6 +315,7 @@
 				CF614AD41F9D8F000005F2DB /* Hash_Tests.mm in Sources */,
 				CF614AD51F9D8F030005F2DB /* VariableContainer_Tests.mm in Sources */,
 				CF2084041FEFB2FA0014D6AD /* StringsBulk_Tests.mm in Sources */,
+				CFD22CD72012DDFD00608DFE /* LRUCache_Tests.mm in Sources */,
 				CF614AD31F9D8EFD0005F2DB /* chained_strings_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

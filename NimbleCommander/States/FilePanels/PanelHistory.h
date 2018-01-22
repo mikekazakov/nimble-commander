@@ -36,20 +36,25 @@ public:
     
     /**
      * Will turn History into "recording" state.
-     * History was in playing state - will discard anything in front of current position.
+     * If history was in playing state - will discard anything in front of current position.
      */
     void Put(const VFSListing &_listing );
     
     /**
      * Will return nullptr if history is in "recording" state.
      */
-    const Path* Current() const;
+    const Path* CurrentPlaying() const;
 
     /**
      * Will put History in "playing" state and adjust playing position accordingly,
      * and return current history element
      */
     const Path* RewindAt(size_t _indx);
+    
+    /**
+     * Returns the one most recently visited, either in a recording state or in a playing state.
+     */
+    const Path* MostRecent() const;
     
     vector<reference_wrapper<const Path>> All() const;
     

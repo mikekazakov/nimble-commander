@@ -32,6 +32,8 @@
 #include <Quartz/Quartz.h>
 #include "PanelAux.h"
 #include "PanelControllerPersistency.h"
+#include "ClosedPanelsHistory.h"
+#include "PanelHistory.h"
 
 using namespace nc::panel;
 
@@ -154,10 +156,12 @@ static NSString *TitleForData( const data::Model* _data );
 @implementation MainWindowFilePanelState
 
 @synthesize splitView = m_SplitView;
+@synthesize closedPanelsHistory = m_ClosedPanelsHistory;
 
 - (instancetype) initBaseWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
 {
     if( self = [super initWithFrame:frameRect] ) {
+        m_ClosedPanelsHistory = nullptr;
         m_OperationsPool = _pool.shared_from_this();
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
@@ -754,6 +758,11 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 - (void)windowStateWillClose
 {
     [self saveOverlappedTerminalSettings];
+  
+    for( auto pc: m_LeftPanelControllers )
+        [self panelWillBeClosed:pc];
+    for( auto pc: m_RightPanelControllers )
+        [self panelWillBeClosed:pc];
 }
 
 - (bool)windowStateShouldClose:(MainWindowController*)sender
@@ -971,6 +980,14 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         [m_SplitView expandLeftView];
     
         m_SplitView.leftOverlay = nil; // may cause bad situations with weak pointers inside panel controller here
+    }
+}
+
+- (void)panelWillBeClosed:(PanelController*)_pc
+{
+    if( m_ClosedPanelsHistory ) {
+        if( auto *listing_promise = _pc.history.MostRecent() )
+            m_ClosedPanelsHistory->AddListing( *listing_promise );
     }
 }
 

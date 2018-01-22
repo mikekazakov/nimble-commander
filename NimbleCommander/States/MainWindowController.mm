@@ -25,6 +25,7 @@
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <Operations/Pool.h>
 #include <Operations/AggregateProgressTracker.h>
+//#include "FilePanels/ClosedPanelsHistoryImpl.h"
 
 using namespace nc;
 
@@ -120,7 +121,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
             initDefaultFileStateWithFrame:self.window.contentView.frame
             andPool:*m_OperationsPool];
         
-        [self pushState:m_PanelState];
+        [self concludeInit];
     }
     
     return self;
@@ -141,8 +142,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         // load initial contents
         [m_PanelState loadDefaultPanelContent];
         
-        // run the state
-        [self pushState:m_PanelState];
+        [self concludeInit];
     }
     return self;
 }
@@ -158,9 +158,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
         
         if( ![self restoreDefaultWindowStateFromConfig] )
             [m_PanelState loadDefaultPanelContent];
-        
-        // run the state
-        [self pushState:m_PanelState];
+     
+        [self concludeInit];
     }
     return self;
 }
@@ -174,8 +173,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
             initEmptyFileStateWithFrame:self.window.contentView.frame
             andPool:*m_OperationsPool];
        
-        // run the state
-        [self pushState:m_PanelState];
+       [self concludeInit];
     }
     return self;
 }
@@ -183,6 +181,18 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (instancetype) init
 {
     return [self initDefaultWindow];
+}
+
+- (void)concludeInit
+{
+    assert( m_PanelState != nil );
+    
+    // TODO: this is temporary
+//    static const auto closed_panels_history = new nc::panel::ClosedPanelsHistoryImpl; // yes, "leak"
+//    m_PanelState.closedPanelsHistory = closed_panels_history;
+    
+    // run the state
+    [self pushState:m_PanelState];
 }
 
 -(void) dealloc

@@ -163,6 +163,13 @@ static string TabNameForController( PanelController* _controller )
     [self spawnNewTabInTabView:aTabView autoDirectoryLoading:true activateNewPanel:true];
 }
 
+/*
+- (void)showAddTabMenuForTabView:(NSTabView *)aTabView
+{
+
+}
+*/
+
 - (PanelController*)spawnNewTabInTabView:(NSTabView *)aTabView
                     autoDirectoryLoading:(bool)_load
                         activateNewPanel:(bool)_activate
@@ -239,6 +246,7 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
     // NB! at this moment a tab was already removed from NSTabView objects
     if( auto pv = objc_cast<PanelView>(tabViewItem.view) )
         if( auto pc = objc_cast<PanelController>(pv.delegate) ) {
+            [self panelWillBeClosed:pc];
             erase_from(m_LeftPanelControllers, pc);
             erase_from(m_RightPanelControllers, pc);
         }

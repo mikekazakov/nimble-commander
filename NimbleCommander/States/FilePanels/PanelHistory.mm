@@ -51,11 +51,24 @@ void History::MoveBack()
     }
 }
 
-const History::Path* History::Current() const
+const History::Path* History::CurrentPlaying() const
 {
     if( m_IsRecording )
         return nullptr;
     return &*next(begin(m_History), m_PlayingPosition);
+}
+    
+const History::Path* History::MostRecent() const
+{
+    if( m_IsRecording ) {
+        if( !m_History.empty() )
+            return &m_History.back();
+        return nullptr;
+    }
+    else {
+        assert(m_PlayingPosition < m_History.size());
+        return &*next(begin(m_History), m_PlayingPosition);
+    }
 }
 
 void History::Put(const VFSListing &_listing )
@@ -114,7 +127,7 @@ const History::Path* History::RewindAt(size_t _indx)
     m_IsRecording = false;
     m_PlayingPosition = (unsigned)_indx;
     
-    return Current();
+    return CurrentPlaying();
 }
 
 const string &History::LastNativeDirectoryVisited() const noexcept

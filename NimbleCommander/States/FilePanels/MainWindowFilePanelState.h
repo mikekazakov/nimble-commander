@@ -11,8 +11,12 @@
 namespace nc::ops {
     class Pool;
 }
-namespace nc::panel::data {
-    class Model;
+
+namespace nc::panel {
+    class ClosedPanelsHistory;
+    namespace data {
+        class Model;
+    }
 }
 
 class ExternalToolsStorage;
@@ -47,6 +51,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     
     vector<GenericConfig::ObservationTicket> m_ConfigTickets;
     shared_ptr<nc::ops::Pool> m_OperationsPool;
+    nc::panel::ClosedPanelsHistory *m_ClosedPanelsHistory;
 }
 
 @property (nonatomic, readonly) MainWindowController* mainWindowController;
@@ -55,6 +60,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) nc::ops::Pool& operationsPool;
 @property (nonatomic, readonly) bool isPanelActive;
 @property (nonatomic, readonly) bool goToForcesPanelActivation;
+@property (nonatomic, readwrite) nc::panel::ClosedPanelsHistory *closedPanelsHistory;
 
 - (instancetype) initDefaultFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool;
 - (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool;
@@ -158,7 +164,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 - (void)addNewControllerOnLeftPane:(PanelController*)_pc;
 - (void)addNewControllerOnRightPane:(PanelController*)_pc;
-
+- (void)panelWillBeClosed:(PanelController*)_pc;
 
 @property (nonatomic) IBOutlet NSToolbar *filePanelsToolsbar;
 

@@ -18,8 +18,8 @@ void GoBack::Perform( PanelController *_target, id _sender ) const
         return;
     history.MoveBack();
     
-    if( history.Current() )
-        ListingPromiseLoader{}.Load( *history.Current(), _target );
+    if( auto listing_promise = history.CurrentPlaying() )
+        ListingPromiseLoader{}.Load( *listing_promise, _target );
 }
 
 bool GoForward::Predicate( PanelController *_target ) const
@@ -34,8 +34,8 @@ void GoForward::Perform( PanelController *_target, id _sender ) const
         return;
     history.MoveForth();
 
-    if( history.Current() )
-        ListingPromiseLoader{}.Load( *history.Current(), _target );
+    if( auto listing_promise = history.CurrentPlaying() )
+        ListingPromiseLoader{}.Load( *listing_promise, _target );
 }
 
 }

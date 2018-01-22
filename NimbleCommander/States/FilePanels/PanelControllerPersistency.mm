@@ -59,24 +59,57 @@ static void LoadHomeDirectory(PanelController *_panel)
     context->RequestedDirectory = CommonPaths::Home();
     [_panel GoToDirWithContext:context];
 }
+    
+static void RecoverSavedPathAtVFS(const VFSHostPtr &_host,
+                                 const string &_path,
+                                 PanelController *_panel)
+{
+    auto shared_request = make_shared<DirectoryChangeRequest>();
+    auto &ctx = *shared_request;
+    ctx.VFS = _host;
+    ctx.PerformAsynchronous = true;
+    ctx.RequestedDirectory = _path;
+    ctx.LoadingResultCallback = [=](int _rc){
+        if( _rc != VFSError::Ok && !_panel.data.IsLoaded() ) {
+            // failed to load a listing on this VFS on specified path
+            // will try upper directories on this VFS up to the root,
+            // in case if everyone fails we will fallback to Home Directory on native VFS.
+            auto fs_path = path{_path};
+            if( fs_path.filename() == "." )
+                fs_path.remove_filename();
+            
+            if( fs_path.has_parent_path() ) {
+                auto upper_dir = fs_path.parent_path().native();
+                dispatch_to_main_queue([=]{
+                    RecoverSavedPathAtVFS(_host, upper_dir, _panel);
+                });
+            }
+            else {
+                dispatch_to_main_queue([=]{
+                    LoadHomeDirectory(_panel);
+                });
+            }
+        }
+    };
+    [_panel GoToDirWithContext:shared_request];
+}
 
 // will go async
-static void RecoverSavedContent( shared_ptr<rapidjson::StandaloneValue> _saved_state,
+static void RecoverSavedContent(shared_ptr<rapidjson::StandaloneValue> _saved_state,
                                 PanelController *_panel )
 {
     auto workload = [_panel, _saved_state](const function<bool()> &_cancel_checker){
         VFSHostPtr host;
-        if( PanelDataPersisency::CreateVFSFromState(*_saved_state, host) == VFSError::Ok ) {
+        const auto rc = PanelDataPersisency::CreateVFSFromState(*_saved_state, host);
+        if( rc == VFSError::Ok ) {
+            // the VFS was recovered, lets go inside it.
             string path = PanelDataPersisency::GetPathFromState(*_saved_state);
             dispatch_to_main_queue([=]{
-                auto context = make_shared<DirectoryChangeRequest>();
-                context->VFS = host;
-                context->PerformAsynchronous = true;
-                context->RequestedDirectory = path;
-                [_panel GoToDirWithContext:context];
+                RecoverSavedPathAtVFS(host, path, _panel);
             });
         }
         else if( !_panel.data.IsLoaded() ) {
+            // the VFS was not recovered.
             // we should not leave panel in empty/dummy state,
             // lets go to home directory as a fallback path
             dispatch_to_main_queue([=]{
@@ -100,9 +133,8 @@ void ControllerStateJSONDecoder::Decode(const rapidjson::StandaloneValue &_state
             data::OptionsImporter{_data}.Import( _state[g_RestorationSortingKey] );
         }];
     
-    if( _state.HasMember(g_RestorationLayoutKey) )
-        if( _state[g_RestorationLayoutKey].IsNumber() )
-            m_Panel.layoutIndex = _state[g_RestorationLayoutKey].GetInt();
+    if( auto layout_index = GetOptionalIntFromObject(_state, g_RestorationLayoutKey) )
+        m_Panel.layoutIndex = *layout_index;
     
     if( _state.HasMember(g_RestorationDataKey) ) {
         auto data = make_shared<rapidjson::StandaloneValue>();

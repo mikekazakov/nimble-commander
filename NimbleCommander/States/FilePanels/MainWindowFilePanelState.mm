@@ -914,7 +914,6 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 
 - (void)frameDidChange
 {
-//    [self layoutSubtreeIfNeeded];
     [self updateBottomConstraint];
 }
 

@@ -47,10 +47,6 @@ static const auto g_ConfigQuickSearchSoftFiltering              = "filePanel.qui
 static const auto g_ConfigQuickSearchTypingView                 = "filePanel.quickSearch.typingView";
 static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.quickSearch.keyOption";
 
-static const auto g_RestorationDataKey = "data";
-static const auto g_RestorationSortingKey = "sorting";
-static const auto g_RestorationLayoutKey = "layout";
-
 struct PanelQuickSearchMode
 {
     enum KeyModif { // persistancy-bound values, don't change it
@@ -833,73 +829,18 @@ static bool RouteKeyboardInputIntoTerminal()
     return [PanelController ensureCanGoToNativeFolderSync:_path];
 }
 
-- (optional<rapidjson::StandaloneValue>) encodeRestorableState
+- (void)changeDataOptions:(const function<void(nc::panel::data::Model& _data)>&)_workload
 {
-    return [self encodeStateWithOptions:ControllerStateEncoding::EncodeEverything];
-}
-
-- (optional<rapidjson::StandaloneValue>) encodeStateWithOptions:(ControllerStateEncoding::Options)_options
-{
-    rapidjson::StandaloneValue json(rapidjson::kObjectType);
+    assert(dispatch_is_main_queue());    
+    assert( _workload );
     
-    if( _options & ControllerStateEncoding::EncodeContentState ) {
-        if( auto v = PanelDataPersisency::EncodeVFSPath(m_Data.Listing()) )
-            json.AddMember(rapidjson::MakeStandaloneString(g_RestorationDataKey),
-                           move(*v),
-                           rapidjson::g_CrtAllocator );
-        else
-            return nullopt;
-    }
+    GenericCursorPersistance pers(m_View, m_Data);
     
-    if( _options & ControllerStateEncoding::EncodeDataOptions ) {
-        json.AddMember(rapidjson::MakeStandaloneString(g_RestorationSortingKey),
-                       data::OptionsExporter{m_Data}.Export(), rapidjson::g_CrtAllocator );
-    }
+    _workload(m_Data);
     
-    if( _options & ControllerStateEncoding::EncodeViewOptions ) {
-        json.AddMember(rapidjson::MakeStandaloneString(g_RestorationLayoutKey),
-                       rapidjson::StandaloneValue(m_ViewLayoutIndex), rapidjson::g_CrtAllocator );
-    }
-    
-    return move(json);
-}
-
-- (bool) loadRestorableState:(const rapidjson::StandaloneValue&)_state
-{
-    assert(dispatch_is_main_queue());
-    if( _state.IsObject() ) {
-        if( _state.HasMember(g_RestorationSortingKey) ) {
-            GenericCursorPersistance pers(m_View, m_Data);
-            data::OptionsImporter{m_Data}.Import( _state[g_RestorationSortingKey] );
-            [m_View dataUpdated];
-            [m_View dataSortingHasChanged];
-            pers.Restore();
-        }
-        
-        if( _state.HasMember(g_RestorationLayoutKey) )
-            if( _state[g_RestorationLayoutKey].IsNumber() )
-                self.layoutIndex = _state[g_RestorationLayoutKey].GetInt();
-        
-        if( _state.HasMember(g_RestorationDataKey) ) {
-            auto data = make_shared<rapidjson::StandaloneValue>();
-            data->CopyFrom(_state[g_RestorationDataKey], rapidjson::g_CrtAllocator);
-            m_DirectoryLoadingQ.Run([=]{
-                VFSHostPtr host;
-                if( PanelDataPersisency::CreateVFSFromState(*data, host) == VFSError::Ok ) {
-                    string path = PanelDataPersisency::GetPathFromState(*data);
-                    dispatch_to_main_queue([=]{
-                        auto context = make_shared<DirectoryChangeRequest>();
-                        context->VFS = host;
-                        context->PerformAsynchronous = true;
-                        context->RequestedDirectory = path;
-                        [self GoToDirWithContext:context];
-                    });
-                }
-            });
-        }
-        return true;
-    }
-    return false;
+    [m_View dataUpdated];
+    [m_View dataSortingHasChanged];
+    pers.Restore();
 }
 
 - (id)validRequestorForSendType:(NSString *)sendType

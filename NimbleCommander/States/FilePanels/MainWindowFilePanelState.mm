@@ -31,6 +31,7 @@
 #include "Views/QuickLookPanel.h"
 #include <Quartz/Quartz.h>
 #include "PanelAux.h"
+#include "PanelControllerPersistency.h"
 
 using namespace nc::panel;
 
@@ -201,11 +202,11 @@ static NSString *TitleForData( const data::Model* _data );
     
     const auto left_it = defaults.FindMember(g_InitialStateLeftDefaults);
     if( left_it != defaults.MemberEnd() )
-        [m_LeftPanelControllers.front() loadRestorableState:left_it->value];
+        ControllerStateJSONDecoder{m_LeftPanelControllers.front()}.Decode(left_it->value);
     
     const auto right_it = defaults.FindMember(g_InitialStateRightDefaults);
     if( right_it != defaults.MemberEnd() )
-        [m_RightPanelControllers.front() loadRestorableState:right_it->value];
+        ControllerStateJSONDecoder{m_RightPanelControllers.front()}.Decode(right_it->value);
 }
 
 - (void) setupNotificationsCallbacks
@@ -552,12 +553,14 @@ static rapidjson::StandaloneValue EncodePanelsStates(
     StandaloneValue left{kArrayType};
     StandaloneValue right{kArrayType};
     
+    const auto encoding_opts = ControllerStateEncoding::EncodeEverything;
+    
     for( auto pc: _left )
-        if( auto v = [pc encodeRestorableState] )
+        if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts) )
             left.PushBack( move(*v), g_CrtAllocator );
     
     for( auto pc: _right )
-        if( auto v = [pc encodeRestorableState] )
+        if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts) )
             right.PushBack( move(*v), g_CrtAllocator );
     
     json.PushBack( move(left), g_CrtAllocator );
@@ -617,10 +620,10 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
                         auto pc = [PanelController new];
                         pc.state = self;
                         [self addNewControllerOnLeftPane:pc];
-                        [pc loadRestorableState:*i];
+                        ControllerStateJSONDecoder{pc}.Decode(*i);
                     }
                     else
-                        [m_LeftPanelControllers.front() loadRestorableState:*i];
+                        ControllerStateJSONDecoder{m_LeftPanelControllers.front()}.Decode(*i);
                 }
             
             const auto &right = json_panels[1];
@@ -630,10 +633,10 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
                         auto pc = [PanelController new];
                         pc.state = self;
                         [self addNewControllerOnRightPane:pc];
-                        [pc loadRestorableState:*i];
+                        ControllerStateJSONDecoder{pc}.Decode(*i);
                     }
                     else
-                        [m_RightPanelControllers.front() loadRestorableState:*i];
+                        ControllerStateJSONDecoder{m_RightPanelControllers.front()}.Decode(*i);
                 }
         }
     }
@@ -689,11 +692,11 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
                            ControllerStateEncoding::EncodeDataOptions |
                            ControllerStateEncoding::EncodeViewOptions);
     
-    auto left_panel_options = [left_panel encodeStateWithOptions:to_encode];
+    auto left_panel_options = ControllerStateJSONEncoder{left_panel}.Encode(to_encode);
     if( !left_panel_options )
         return;
     
-    auto right_panel_options = [right_panel encodeStateWithOptions:to_encode];
+    auto right_panel_options = ControllerStateJSONEncoder{right_panel}.Encode(to_encode);
     if( !right_panel_options )
         return;
     

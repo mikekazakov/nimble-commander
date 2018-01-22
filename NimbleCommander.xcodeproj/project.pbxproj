@@ -684,6 +684,10 @@
 		CFA53A611D433E2A00C562A7 /* GoToFolderSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */; };
 		CFA53A621D433E2A00C562A7 /* Preferences.strings in Resources */ = {isa = PBXBuildFile; fileRef = CFEF4E3B1A6BB409009A1524 /* Preferences.strings */; };
 		CFA53A641D433E2A00C562A7 /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
+		CFA6C85C2015944D00CD7681 /* PanelControllerPersistency.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA6C85B2015944D00CD7681 /* PanelControllerPersistency.mm */; };
+		CFA6C86C20159C7000CD7681 /* PanelControllerPersistency.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA6C85B2015944D00CD7681 /* PanelControllerPersistency.mm */; };
+		CFA6C86D20159C7100CD7681 /* PanelControllerPersistency.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA6C85B2015944D00CD7681 /* PanelControllerPersistency.mm */; };
+		CFA6C86E20159C7200CD7681 /* PanelControllerPersistency.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA6C85B2015944D00CD7681 /* PanelControllerPersistency.mm */; };
 		CFA7DFF81EB6FD82001FE66C /* OpenNetworkConnection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */; };
 		CFA7E02D1EB97B60001FE66C /* Delete.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA7E02C1EB97B60001FE66C /* Delete.mm */; };
 		CFA7FA741C1D6E06000D039F /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
@@ -1803,6 +1807,8 @@
 		CFA3D7C619625F71006A30A1 /* GTMHotKeyTextField.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GTMHotKeyTextField.mm; path = 3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.mm; sourceTree = SOURCE_ROOT; };
 		CFA3D7C81962613B006A30A1 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		CFA53A6D1D433E2A00C562A7 /* NimbleCommander-Unsigned.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "NimbleCommander-Unsigned.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFA6C85A2015944D00CD7681 /* PanelControllerPersistency.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelControllerPersistency.h; path = NimbleCommander/States/FilePanels/PanelControllerPersistency.h; sourceTree = SOURCE_ROOT; };
+		CFA6C85B2015944D00CD7681 /* PanelControllerPersistency.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelControllerPersistency.mm; path = NimbleCommander/States/FilePanels/PanelControllerPersistency.mm; sourceTree = SOURCE_ROOT; };
 		CFA7DFF61EB6FD82001FE66C /* OpenNetworkConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenNetworkConnection.h; path = NimbleCommander/States/FilePanels/Actions/OpenNetworkConnection.h; sourceTree = SOURCE_ROOT; };
 		CFA7DFF71EB6FD82001FE66C /* OpenNetworkConnection.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OpenNetworkConnection.mm; path = NimbleCommander/States/FilePanels/Actions/OpenNetworkConnection.mm; sourceTree = SOURCE_ROOT; };
 		CFA7E02B1EB97B60001FE66C /* Delete.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Delete.h; path = NimbleCommander/States/FilePanels/Actions/Delete.h; sourceTree = SOURCE_ROOT; };
@@ -2316,6 +2322,8 @@
 				CFDAC24D1DFBF0B30039A104 /* PanelController+DataAccess.mm */,
 				CFDAC2521DFBF0B30039A104 /* PanelController+Menu.h */,
 				CFDAC2531DFBF0B30039A104 /* PanelController+Menu.mm */,
+				CFA6C85A2015944D00CD7681 /* PanelControllerPersistency.h */,
+				CFA6C85B2015944D00CD7681 /* PanelControllerPersistency.mm */,
 				CF89533118795030001C0391 /* PanelData_Tests.mm */,
 				CFDAC2251DFBD6910039A104 /* PanelData.h */,
 				CFDAC2261DFBD6910039A104 /* PanelData.mm */,
@@ -3815,6 +3823,7 @@
 				CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */,
 				CF56BEFA1D5C26AF00A08D2B /* InternalViewerController.mm in Sources */,
 				CFD726861E42E21800603077 /* PanelController+Menu.mm in Sources */,
+				CFA6C86D20159C7100CD7681 /* PanelControllerPersistency.mm in Sources */,
 				CF4E56A61D5068D300452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF56BF561D68129800A08D2B /* VFSInstanceManager.cpp in Sources */,
 				CF818B571EA0610D00BC28E6 /* FindFiles.mm in Sources */,
@@ -4095,6 +4104,7 @@
 				CFA539CD1D433E2A00C562A7 /* ProcessSheetController.mm in Sources */,
 				CF818B451EA0610C00BC28E6 /* Select.mm in Sources */,
 				CF818B491EA0610C00BC28E6 /* BatchRename.mm in Sources */,
+				CFA6C85C2015944D00CD7681 /* PanelControllerPersistency.mm in Sources */,
 				CFFA95151F45A3050035E606 /* UserNotificationsCenter.mm in Sources */,
 				CFA539D11D433E2A00C562A7 /* SFTPConnectionSheetController.mm in Sources */,
 				CFD726CD1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */,
@@ -4319,6 +4329,7 @@
 				CFD8CDD61E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CFF695721E20C6CF0069EEA4 /* TabBarStyle.mm in Sources */,
 				CF75E8E01EB189040028C108 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */,
+				CFA6C86E20159C7200CD7681 /* PanelControllerPersistency.mm in Sources */,
 				CFDAC23C1DFBDEBA0039A104 /* AppDelegateCPP.mm in Sources */,
 				CF04DDF51E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
 				CF6ECDB31E9F4AF3008FA79E /* RenameInPlace.mm in Sources */,
@@ -4441,6 +4452,7 @@
 				CFD726B01E42E26100603077 /* CopyFilePaths.mm in Sources */,
 				CFD7262C1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */,
 				CFFA95161F45A3170035E606 /* Dock.mm in Sources */,
+				CFA6C86C20159C7000CD7681 /* PanelControllerPersistency.mm in Sources */,
 				CF9F4B031ECC8DE200E0AF82 /* ExecuteInTerminal.mm in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF818B621EA0610E00BC28E6 /* FindFiles.mm in Sources */,

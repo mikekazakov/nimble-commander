@@ -29,6 +29,7 @@
 #import "MMSlideButtonsAnimation.h"
 #import "NSView+MMTabBarViewExtensions.h"
 #import "MMTabBarItem.h"
+#import "MMAddButton.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -55,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
     // control basics
     NSTabView                       *_tabView;                    // the tab view being navigated
     MMOverflowPopUpButton           *_overflowPopUpButton;        // for too many tabs
-    MMRolloverButton                *_addTabButton;
+    MMAddButton                     *_addTabButton;
     MMTabBarController              *_controller;
 
     // Spring-loading.
@@ -2193,6 +2194,13 @@ static NSMutableDictionary *registeredStyleClasses = nil;
     }
 }
 
+- (void)_showAddNewTabMenu:(id)sender {
+    
+    if (_delegate && [_delegate respondsToSelector:@selector(showAddTabMenuForTabView:)]) {
+        [_delegate showAddTabMenuForTabView:_tabView];
+    }
+}
+
 - (void)_overflowMenuAction:(id)sender {
 	NSTabViewItem *tabViewItem = (NSTabViewItem *)[sender representedObject];
 	[_tabView selectTabViewItem:tabViewItem];
@@ -2776,7 +2784,7 @@ StaticImage(AquaTabNewRollover)
     }
         // new tab button
 	NSRect addTabButtonRect = [self addTabButtonRect];
-	_addTabButton = [[MMRolloverButton alloc] initWithFrame:addTabButtonRect];
+	_addTabButton = [[MMAddButton alloc] initWithFrame:addTabButtonRect];
     
     [_addTabButton setImage:_staticAquaTabNewImage()];
     [_addTabButton setAlternateImage:_staticAquaTabNewPressedImage()];
@@ -2793,6 +2801,8 @@ StaticImage(AquaTabNewRollover)
 
     [_addTabButton setTarget:self];
     [_addTabButton setAction:@selector(_addNewTab:)];
+    if (_delegate && [_delegate respondsToSelector:@selector(showAddTabMenuForTabView:)])
+        [_addTabButton setLongPressAction:@selector(_showAddNewTabMenu:)];
     
     [self addSubview:_addTabButton];
 

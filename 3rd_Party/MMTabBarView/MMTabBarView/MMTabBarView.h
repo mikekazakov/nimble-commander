@@ -631,6 +631,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // Adding tabs
 - (void)addNewTabToTabView:(NSTabView *)aTabView;
+- (void)showAddTabMenuForTabView:(NSTabView *)aTabView;
 
     // Contextual menu support
 - (NSMenu *)tabView:(NSTabView *)aTabView menuForTabViewItem:(NSTabViewItem *)tabViewItem;

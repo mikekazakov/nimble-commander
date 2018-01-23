@@ -18,7 +18,7 @@
 #include "../PanelHistory.h"
 #include "../PanelData.h"
 #include "../PanelView.h"
-#include <compose_visitors.hpp>
+#include "../Helpers/LocationFormatter.h"
 
 static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
 static const auto g_ConfigMaxNetworkConnections = "filePanel.general.maximumNetworkConnectionsInGoToMenu";
@@ -611,29 +611,12 @@ NSMenuItem *MenuItemBuilder::MenuItemForListingPromise(const ListingPromise &_pr
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     
-    const auto visitor = compose_visitors
-    (
-     [&](const ListingPromise::UniformListing &l) {
-         const auto title = l.promise.verbose_title() + l.directory;
-         menu_item.title = [NSString stringWithUTF8StdString:title];
-         menu_item.image = ImageForPromiseAndPath(l.promise, l.directory);
-     },
-     [&](const ListingPromise::NonUniformListing &l)
-     {
-         static const auto formatter = []{
-             auto fmt = [[NSNumberFormatter alloc] init];
-             fmt.usesGroupingSeparator = true;
-             fmt.groupingSize = 3;
-             return fmt;
-         }();
-         
-         const auto count = [NSNumber numberWithUnsignedInteger:l.EntriesCount()];
-         menu_item.title = [NSString stringWithFormat:@"Temporary Panel (%@)",
-                            [formatter stringFromNumber:count]];
-     }
-    );
-    boost::apply_visitor(visitor, _promise.Description());
-    
+    const auto options = (loc_fmt::Formatter::RenderOptions)
+                            (loc_fmt::Formatter::RenderMenuTitle|
+                             loc_fmt::Formatter::RenderMenuIcon);
+    auto rep = loc_fmt::ListingPromiseFormatter{}.Render(options, _promise);
+    menu_item.title = rep.menu_title;
+    menu_item.image = rep.menu_icon;    
     return menu_item;
 }
 

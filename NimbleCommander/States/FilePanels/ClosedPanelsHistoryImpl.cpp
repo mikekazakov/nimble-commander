@@ -1,5 +1,4 @@
 #include "ClosedPanelsHistoryImpl.h"
-#include "ListingPromise.h"
 
 namespace nc::panel {
     

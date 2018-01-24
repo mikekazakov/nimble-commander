@@ -79,7 +79,7 @@ struct ArcUnRAR
 
 };
 
-PanelDataPersisency::PanelDataPersisency( NetworkConnectionsManager &_conn_manager ):
+PanelDataPersisency::PanelDataPersisency( const NetworkConnectionsManager &_conn_manager ):
     m_ConnectionsManager(_conn_manager)
 {
 }

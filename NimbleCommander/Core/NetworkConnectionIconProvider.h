@@ -13,7 +13,9 @@ public:
      * May return nil if _promise describes not a network vfs known to NetworkConnectionIconProvider
      */
     NSImage *Icon16px(const VFSInstanceManager::Promise &_promise) const;
-
+    
+    NSImage *Icon16px(const VFSHost &_host) const;
+    
 private:
 
 };

@@ -6,7 +6,6 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
-#include <NimbleCommander/Core/NetworkConnectionIconProvider.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include "../Favorites.h"
 #include "../MainWindowFilePanelState.h"
@@ -89,6 +88,9 @@ static const auto g_MaxTextWidth = 600;
 
 namespace nc::panel::actions {
 
+static NSString *ShrinkMenuItemTitle(NSString *_title);
+
+    
 static vector<shared_ptr<const NativeFileSystemInfo>> VolumesToShow()
 {
     vector<shared_ptr<const NativeFileSystemInfo>> volumes;
@@ -186,7 +188,7 @@ class MenuItemBuilder
 public:
     MenuItemBuilder( NetworkConnectionsManager &_conn_manager, id _action_target );
     NSMenuItem *MenuItemForFavorite( const FavoriteLocationsStorage::Favorite &_f );
-    NSMenuItem *MenuItemForLocation(shared_ptr<const FavoriteLocationsStorage::Location> _f);
+    NSMenuItem *MenuItemForLocation(const FavoriteLocationsStorage::Location &_f);
     NSMenuItem *MenuItemForVolume( const NativeFileSystemInfo &_i );
     NSMenuItem *MenuItemForConnection( const NetworkConnectionsManager::Connection &_c );
     NSMenuItem *MenuItemForPath( const VFSPath &_p );
@@ -195,11 +197,12 @@ public:
     NSMenuItem *MenuItemForListingPromise(const ListingPromise &_promise);
 
 private:
-    NSImage *ImageForLocation( const PersistentLocation &_location );
-    NSImage *ImageForPromiseAndPath(const VFSInstanceManager::Promise &_promise,
-                                    const string& _path );
     NetworkConnectionsManager &m_ConnectionManager;
     id m_ActionTarget;
+    loc_fmt::Formatter::RenderOptions m_FmtOpts = (loc_fmt::Formatter::RenderOptions)
+                                                    (loc_fmt::Formatter::RenderMenuTitle |
+                                                     loc_fmt::Formatter::RenderMenuTooltip |
+                                                     loc_fmt::Formatter::RenderMenuIcon);
 };
 
 }
@@ -321,7 +324,7 @@ static NSMenu *BuildFavoritesQuickList( PanelController *_panel )
         [menu addItem:frequent_header];
 
         for( auto &f: frequent )
-            [menu addItem:builder.MenuItemForLocation(f)];
+            [menu addItem:builder.MenuItemForLocation(*f)];
     }
 
     SetupHotkeys(menu);
@@ -502,90 +505,66 @@ MenuItemBuilder::MenuItemBuilder( NetworkConnectionsManager &_conn_manager, id _
 NSMenuItem *MenuItemBuilder::MenuItemForFavorite( const FavoriteLocationsStorage::Favorite &_f )
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    
-    if( !_f.title.empty() ) {
-        if( auto title = [NSString stringWithUTF8StdString:_f.title] )
-            menu_item.title = title;
-    }
-    else if( auto title = [NSString stringWithUTF8StdString:_f.location->verbose_path] )
-        menu_item.title = StringByTruncatingToWidth(title,
-                                                    g_MaxTextWidth,
-                                                    kTruncateAtMiddle,
-                                                    g_TextAttributes);
-    if( auto tt = [NSString stringWithUTF8StdString:_f.location->verbose_path] )
-        menu_item.toolTip = tt;
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_f.location}];
-    menu_item.image = ImageForLocation(_f.location->hosts_stack);
-    menu_item.image.size = g_IconSize;
-    
+    auto rep = loc_fmt::FavoriteFormatter{m_ConnectionManager}.Render(m_FmtOpts, _f);
+    menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
+    menu_item.toolTip = rep.menu_tooltip;
+    menu_item.image = rep.menu_icon;
     return menu_item;
 }
 
 NSMenuItem *MenuItemBuilder::MenuItemForLocation(
-    shared_ptr<const FavoriteLocationsStorage::Location> _f)
+    const FavoriteLocationsStorage::Location &_f)
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    
-    if( auto title = [NSString stringWithUTF8StdString:_f->verbose_path] ) {
-        menu_item.title = StringByTruncatingToWidth(title,
-                                                    g_MaxTextWidth,
-                                                    kTruncateAtMiddle,
-                                                    g_TextAttributes);
-        menu_item.toolTip = title;
-    }
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_f}];
-    menu_item.image = ImageForLocation(_f->hosts_stack);
-    menu_item.image.size = g_IconSize;
-    
+    auto rep = loc_fmt::FavoriteLocationFormatter{m_ConnectionManager}.Render(m_FmtOpts, _f);
+    menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
+    menu_item.toolTip = rep.menu_tooltip;
+    menu_item.image = rep.menu_icon;
     return menu_item;
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForVolume( const NativeFileSystemInfo &_i )
+NSMenuItem *MenuItemBuilder::MenuItemForVolume( const NativeFileSystemInfo &_volume )
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    
-    menu_item.title = _i.verbose.name;
-    menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_i.mounted_at_path}];
-    menu_item.image = [_i.verbose.icon copy];
-    menu_item.image.size = g_IconSize;
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_volume.mounted_at_path}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-
+    auto rep = loc_fmt::VolumeFormatter{}.Render(m_FmtOpts, _volume);
+    menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
+    menu_item.toolTip = rep.menu_tooltip;
+    menu_item.image = rep.menu_icon;
     return menu_item;
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForConnection( const NetworkConnectionsManager::Connection &_c )
+NSMenuItem *MenuItemBuilder::MenuItemForConnection(const NetworkConnectionsManager::Connection &_c )
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    const auto path = NetworkConnectionsManager::MakeConnectionPath(_c);
-    const auto &title = _c.Title().empty() ? path : _c.Title();
-    menu_item.title = [NSString stringWithUTF8StdString:title];
-    menu_item.toolTip = [NSString stringWithUTF8StdString:path];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_c}];
-    menu_item.image = NetworkConnectionIconProvider{}.Icon16px(_c);
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    
+    auto rep = loc_fmt::NetworkConnectionFormatter{}.Render(m_FmtOpts, _c);
+    menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
+    menu_item.toolTip = rep.menu_tooltip;
+    menu_item.image = rep.menu_icon;
     return menu_item;
 }
 
 NSMenuItem *MenuItemBuilder::MenuItemForPath( const VFSPath &_p )
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    
-    auto title = PanelDataPersisency::MakeVerbosePathString(*_p.Host(), _p.Path());
-    menu_item.title = StringByTruncatingToWidth([NSString stringWithUTF8StdString:title],
-                                                g_MaxTextWidth,
-                                                kTruncateAtMiddle,
-                                                g_TextAttributes);
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_p}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-
+    auto rep = loc_fmt::VFSPathFormatter{}.Render(m_FmtOpts, *_p.Host(), _p.Path());
+    menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
+    menu_item.toolTip = rep.menu_tooltip;
+    menu_item.image = rep.menu_icon;
     return menu_item;
 }
 
@@ -593,14 +572,14 @@ NSMenuItem *MenuItemBuilder::MenuItemForPromiseAndPath(const VFSInstanceManager:
                                       const string &_path)
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    
-    menu_item.title = [NSString stringWithUTF8StdString:_promise.verbose_title() + _path];
-    menu_item.image = ImageForPromiseAndPath(_promise, _path);
     auto data = pair<VFSInstanceManager::Promise, string>{_promise, _path};
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{move(data)}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-
+    auto rep = loc_fmt::VFSPromiseFormatter{}.Render(m_FmtOpts, _promise, _path);
+    menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
+    menu_item.toolTip = rep.menu_tooltip;
+    menu_item.image = rep.menu_icon;
     return menu_item;
 }
 
@@ -610,59 +589,16 @@ NSMenuItem *MenuItemBuilder::MenuItemForListingPromise(const ListingPromise &_pr
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_promise}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    
-    const auto options = (loc_fmt::Formatter::RenderOptions)
-                            (loc_fmt::Formatter::RenderMenuTitle|
-                             loc_fmt::Formatter::RenderMenuIcon);
-    auto rep = loc_fmt::ListingPromiseFormatter{}.Render(options, _promise);
-    menu_item.title = rep.menu_title;
+    auto rep = loc_fmt::ListingPromiseFormatter{}.Render(m_FmtOpts, _promise);
+    menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
+    menu_item.toolTip = rep.menu_tooltip;
     menu_item.image = rep.menu_icon;    
     return menu_item;
 }
 
-NSImage* MenuItemBuilder::ImageForLocation(const PersistentLocation &_location)
+static NSString *ShrinkMenuItemTitle(NSString *_title)
 {
-    if( _location.is_native() ) {
-        auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_location.path.c_str()
-                                                              isDirectory:true
-                                                            relativeToURL:nil];
-        if( url ) {
-            NSImage *img;
-            [url getResourceValue:&img forKey:NSURLEffectiveIconKey error:nil];
-            if( img != nil )
-                return img;
-        }
-    }
-    else if( _location.is_network() ) {
-        auto persistancy = PanelDataPersisency{m_ConnectionManager};
-        if( auto connection = persistancy.ExtractConnectionFromLocation(_location) )
-            return NetworkConnectionIconProvider{}.Icon16px(*connection);
-        else
-            return [NSImage imageNamed:NSImageNameNetwork];
-    }
-    return [NSImage imageNamed:NSImageNameFolder];
-}
-
-NSImage *MenuItemBuilder::ImageForPromiseAndPath(const VFSInstanceManager::Promise &_promise,
-                                                 const string& _path )
-{
-    if( _promise.tag() == VFSNativeHost::UniqueTag ) {
-        static const auto workspace = NSWorkspace.sharedWorkspace;
-        if( auto image = [workspace iconForFile:[NSString stringWithUTF8StdString:_path]] ) {
-            image.size = g_IconSize;
-            return image;
-        }
-    }
-    
-    if( auto image = NetworkConnectionIconProvider{}.Icon16px(_promise) )
-        return image;
-    
-    static const auto fallback = []{
-        auto image = [NSImage imageNamed:NSImageNameFolder];
-        image.size = g_IconSize;
-        return image;
-    }();
-    return fallback;
+    return StringByTruncatingToWidth(_title, g_MaxTextWidth, kTruncateAtMiddle, g_TextAttributes);
 }
 
 }

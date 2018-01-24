@@ -24,7 +24,7 @@ struct PersistentLocation
 class PanelDataPersisency
 {
 public:
-    PanelDataPersisency( NetworkConnectionsManager &_conn_manager );
+    PanelDataPersisency( const NetworkConnectionsManager &_conn_manager );
 
     static string MakeFootprintString( const PersistentLocation &_loc );
     static size_t MakeFootprintStringHash( const PersistentLocation &PersistentLocation );
@@ -82,7 +82,7 @@ uuid: "uuid"
  */
 
 private:
-    NetworkConnectionsManager &m_ConnectionsManager;
+    const NetworkConnectionsManager &m_ConnectionsManager;
 };
 
 }

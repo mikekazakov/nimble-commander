@@ -48,17 +48,25 @@ NSImage *NetworkConnectionIconProvider::
     return Generic();
 }
 
-NSImage *NetworkConnectionIconProvider::Icon16px(const VFSInstanceManager::Promise &_promise) const
+static NSImage *ImageFromTag( const char *_tag )
 {
-    const auto tag = _promise.tag();
-    
-    if( tag == nc::vfs::DropboxHost::UniqueTag )
+    if( _tag == nc::vfs::DropboxHost::UniqueTag )
         return Dropbox();
     
-    if( tag == nc::vfs::FTPHost::UniqueTag ||
-        tag == nc::vfs::SFTPHost::UniqueTag ||
-        tag == nc::vfs::WebDAVHost::UniqueTag )
+    if( _tag == nc::vfs::FTPHost::UniqueTag ||
+        _tag == nc::vfs::SFTPHost::UniqueTag ||
+        _tag == nc::vfs::WebDAVHost::UniqueTag )
         return Generic();
     
     return nil;
+}
+
+NSImage *NetworkConnectionIconProvider::Icon16px(const VFSInstanceManager::Promise &_promise) const
+{
+    return ImageFromTag(_promise.tag());
+}
+
+NSImage *NetworkConnectionIconProvider::Icon16px(const VFSHost &_host) const
+{
+    return ImageFromTag(_host.Tag());
 }

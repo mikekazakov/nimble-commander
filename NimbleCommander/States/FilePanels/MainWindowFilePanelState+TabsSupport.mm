@@ -213,11 +213,13 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     for( auto &v: recents ) {
         
         const auto options = (loc_fmt::Formatter::RenderOptions)
-                                (loc_fmt::Formatter::RenderMenuTitle|
-                                loc_fmt::Formatter::RenderMenuIcon);
+                                (loc_fmt::Formatter::RenderMenuTitle   |
+                                 loc_fmt::Formatter::RenderMenuTooltip |
+                                 loc_fmt::Formatter::RenderMenuIcon );
         const auto rep = loc_fmt::ListingPromiseFormatter{}.Render(options, v);
         NSMenuItem *item = [[NSMenuItem alloc] init];
         item.title = ShrinkTitleForRecentlyClosedMenu(rep.menu_title);
+        item.toolTip = rep.menu_tooltip;
         item.image = rep.menu_icon;
         item.target = self;
         item.action = @selector(respawnRecentlyClosedCallout:);

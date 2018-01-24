@@ -343,7 +343,8 @@ static NSMutableDictionary *registeredStyleClasses = nil;
 
 - (void)windowStatusDidChange:(NSNotification *)notification {
 
-    [self _updateImages];
+    // why on earth this call was here??? this is madness!
+   // [self _updateImages];
 
 	[self setNeedsDisplay:YES];
 

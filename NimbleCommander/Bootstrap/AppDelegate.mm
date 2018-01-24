@@ -43,6 +43,7 @@
 #include "ConfigWiring.h"
 #include "VFSInit.h"
 #include "Interactions.h"
+#include <NimbleCommander/States/MainWindow.h>
 
 using namespace nc::bootstrap;
 
@@ -197,7 +198,7 @@ static NCAppDelegate *g_Me = nil;
         if( sm.Empty() ) {
             sm.AskAccessForPathSync(CommonPaths::Home(), false);
             showed_modal_dialog = true;
-            if( m_MainWindows.empty() )
+            if( self.mainWindowControllers.empty() )
                 [self allocateDefaultMainWindow];
         }
     }
@@ -310,7 +311,7 @@ static NCAppDelegate *g_Me = nil;
 {
     m_FinishedLaunching.toggle();
     
-    if( !m_IsRunningTests && m_MainWindows.empty() )
+    if( !m_IsRunningTests && self.mainWindowControllers.empty() )
         [self applicationOpenUntitledFile:NSApp]; // if there's no restored windows - we'll create a freshly new one
     
     NSApp.servicesProvider = self;
@@ -374,6 +375,11 @@ static NCAppDelegate *g_Me = nil;
         PFMoveToApplicationsFolderIfNecessary();
     
     ConfigWiring{GlobalConfig()}.Wire();
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(windowWillClose:)
+                                                 name:NSWindowWillCloseNotification
+                                               object:nil];
 }
 
 - (void) setupConfigs
@@ -411,24 +417,56 @@ static NCAppDelegate *g_Me = nil;
     return NO;
 }
 
++ (NCMainWindow*) allocateMainWindow
+{
+    auto window = [[NCMainWindow alloc] init];
+    if( !window )
+        return nil;
+    window.restorationClass = self.class;
+    return window;
+}
+
 - (MainWindowController*)allocateDefaultMainWindow
 {
-    MainWindowController *mwc = [[MainWindowController alloc] initDefaultWindow];
+    auto window = [self.class allocateMainWindow];
+    MainWindowController *mwc = [[MainWindowController alloc] initDefaultWindow:window];
+    [self addMainWindow:mwc];
     [mwc showWindow:self];
     return mwc;
 }
 
 - (MainWindowController*)allocateRestoredMainWindow
 {
+    auto window = [self.class allocateMainWindow];
     MainWindowController *mwc;
     if( MainWindowController.canRestoreDefaultWindowStateFromLastOpenedWindow )
-        mwc = [[MainWindowController alloc] initWithLastOpenedWindowOptions];
+        mwc = [[MainWindowController alloc] initWithLastOpenedWindowOptions:window];
     else if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) )
-        mwc = [[MainWindowController alloc] initRestoringLastWindowFromConfig];
+        mwc = [[MainWindowController alloc] initRestoringLastWindowFromConfig:window];
     else
-        mwc = [[MainWindowController alloc] initDefaultWindow];
+        mwc = [[MainWindowController alloc] initDefaultWindow:window];
+    [self addMainWindow:mwc];
     [mwc showWindow:self];
     return mwc;
+}
+
++ (void)restoreWindowWithIdentifier:(NSString *)identifier
+                              state:(NSCoder *)state
+                  completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
+{
+    if( NCAppDelegate.me.isRunningTests ) {
+        completionHandler(nil, nil);
+        return;
+    }
+
+    NSWindow *window = nil;
+    if( [identifier isEqualToString:NCMainWindow.defaultIdentifier] ) {
+        auto nc_mainwindow = [self allocateMainWindow];
+        auto ctrl = [[MainWindowController alloc] initForSystemRestoration:nc_mainwindow];
+        [g_Me addMainWindow:ctrl];
+        window = ctrl.window;
+    }
+    completionHandler(window, nil);
 }
 
 - (IBAction)onMainMenuNewWindow:(id)sender
@@ -448,10 +486,21 @@ static NCAppDelegate *g_Me = nil;
         m_MainWindows.erase(it);
 }
 
+- (void)windowWillClose:(NSNotification*)aNotification
+{
+    if( auto main_wnd = objc_cast<NCMainWindow>(aNotification.object) )
+        if( auto main_ctrl = objc_cast<MainWindowController>(main_wnd.delegate) ) {
+            dispatch_to_main_queue([=]{
+                [self removeMainWindow:main_ctrl];
+            });
+        }
+}
+
 - (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
 {
     bool has_running_ops = false;
-    for( const auto wincont: m_MainWindows )
+    auto controllers = self.mainWindowControllers;
+    for( const auto wincont: controllers )
         if( !wincont.operationsPool.Empty() ) {
             has_running_ops = true;
             break;
@@ -465,7 +514,7 @@ static NCAppDelegate *g_Me = nil;
         if( !AskToExitWithRunningOperations() )
             return NSTerminateCancel;
 
-        for( const auto wincont : m_MainWindows ) {
+        for( const auto wincont : controllers ) {
             wincont.operationsPool.StopAndWaitForShutdown();
             [wincont.terminalState terminate];
         }
@@ -492,7 +541,7 @@ static NCAppDelegate *g_Me = nil;
     if( !m_FinishedLaunching || m_IsRunningTests )
         return false;
     
-    if( !m_MainWindows.empty() )
+    if( !self.mainWindowControllers.empty() )
         return true;
   
     [self onMainMenuNewWindow:sender];

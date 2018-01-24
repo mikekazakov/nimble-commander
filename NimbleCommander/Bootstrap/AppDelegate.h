@@ -21,9 +21,6 @@ namespace nc::ops {
 
 @interface NCAppDelegate : NSObject <NSApplicationDelegate>
 
-- (void) addMainWindow:(MainWindowController*) _wnd;
-- (void) removeMainWindow:(MainWindowController*) _wnd;
-
 - (void) addInternalViewerWindow:(InternalViewerWindowController*) _wnd;
 - (void) removeInternalViewerWindow:(InternalViewerWindowController*) _wnd;
 - (InternalViewerWindowController*) findInternalViewerWindowForPath:(const string&)_path
@@ -36,7 +33,7 @@ namespace nc::ops {
 - (bool) askToResetDefaults;
 
 /** Returns all main windows currently present. */
-@property (nonatomic, readonly) vector<MainWindowController*> mainWindowControllers;
+@property (nonatomic, readonly) const vector<MainWindowController*> &mainWindowControllers;
 
 /**
  * Equal to (NCAppDelegate*) ((NSApplication*)NSApp).delegate.

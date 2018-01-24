@@ -7,6 +7,7 @@
 @class OperationsController;
 @class MainWindowFilePanelState;
 @class NCTermShellState;
+@class NCMainWindow;
 
 namespace nc::ops {
     class Pool;
@@ -15,9 +16,10 @@ namespace nc::ops {
 
 @interface MainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
 
-- (instancetype) initDefaultWindow;
-- (instancetype) initWithLastOpenedWindowOptions;
-- (instancetype) initRestoringLastWindowFromConfig;
+- (instancetype) initDefaultWindow:(NCMainWindow*)window;
+- (instancetype) initWithLastOpenedWindowOptions:(NCMainWindow*)window;
+- (instancetype) initRestoringLastWindowFromConfig:(NCMainWindow*)window;
+- (instancetype) initForSystemRestoration:(NCMainWindow*)window;
 
 // Window state manipulations
 - (void)ResignAsWindowState:(id)_state;

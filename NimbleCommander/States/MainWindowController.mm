@@ -65,18 +65,16 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     return (MainWindowController*)g_LastFocusedMainWindowController;
 }
 
-- (instancetype)initBase
+- (instancetype)initBaseWithWindow:(NCMainWindow*)window
 {
-    auto window = [[NCMainWindow alloc] init];
     if( !window )
         return nil;
     
     self = [super initWithWindow:window];
-    if(!self)
+    if( !self )
         return nil;
 
     window.delegate = self;
-    window.restorationClass = self.class;
     m_OperationsPool = nc::ops::Pool::Make();
     __weak MainWindowController *weak_self = self;
     m_OperationsPool->SetDialogCallback([weak_self](NSWindow *_dlg,
@@ -105,17 +103,15 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     
     auto callback = objc_callback(self, @selector(onConfigShowToolbarChanged));
     m_ConfigTickets.emplace_back(GlobalConfig().Observe(g_ConfigShowToolbar, move(callback)));
-    
-    [NCAppDelegate.me addMainWindow:self];
-    
+        
     [self invalidateRestorableState];
     
     return self;
 }
 
-- (instancetype) initDefaultWindow
+- (instancetype) initDefaultWindow:(NCMainWindow*)window
 {
-    if( self = [self initBase] ) {
+    if( self = [self initBaseWithWindow:window] ) {
        
         m_PanelState = [[MainWindowFilePanelState alloc]
             initDefaultFileStateWithFrame:self.window.contentView.frame
@@ -127,9 +123,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     return self;
 }
 
-- (instancetype) initWithLastOpenedWindowOptions
+- (instancetype) initWithLastOpenedWindowOptions:(NCMainWindow*)window
 {
-    if( self = [self initBase] ) {
+    if( self = [self initBaseWithWindow:window] ) {
         
         // almost "free" state initially
         m_PanelState = [[MainWindowFilePanelState alloc]
@@ -147,9 +143,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     return self;
 }
 
-- (instancetype) initRestoringLastWindowFromConfig
+- (instancetype) initRestoringLastWindowFromConfig:(NCMainWindow*)window
 {
-    if( self = [self initBase] ) {
+    if( self = [self initBaseWithWindow:window] ) {
         
         // almost "free" state initially
         m_PanelState = [[MainWindowFilePanelState alloc]
@@ -164,9 +160,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     return self;
 }
 
-- (instancetype) initForSystemRestoration
+- (instancetype) initForSystemRestoration:(NCMainWindow*)window
 {
-   if( self = [self initBase] ) {
+   if( self = [self initBaseWithWindow:window] ) {
        
         // almost "free" state initially
         m_PanelState = [[MainWindowFilePanelState alloc]
@@ -176,11 +172,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
        [self concludeInit];
     }
     return self;
-}
-
-- (instancetype) init
-{
-    return [self initDefaultWindow];
 }
 
 - (void)concludeInit
@@ -210,17 +201,8 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
                               state:(NSCoder *)state
                   completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
 {
-    if( NCAppDelegate.me.isRunningTests ) {
-        completionHandler(nil, nil);
-        return;
-    }
-    
-    NSWindow *window = nil;
-    if( [identifier isEqualToString:NCMainWindow.defaultIdentifier] ) {
-        auto ctrl = [[MainWindowController alloc] initForSystemRestoration];
-        window = ctrl.window;
-    }
-    completionHandler(window, nil);
+    // this is a legacy stub. it needs to be here for some time.
+    completionHandler(nil, nil);
 }
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
@@ -303,10 +285,19 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     m_ToolbarVisible = _toolbar_visible;
 }
 
+static int CountMainWindows()
+{
+    int count = 0;
+    for( NSWindow *wnd in NSApp.windows )
+        if( [wnd isKindOfClass:NCMainWindow.class] )
+             count++;
+    return count;
+}
+
 - (void)windowWillClose:(NSNotification *)notification
 {
     // the are the last main window - need to save current state as "default" in state config
-    if( NCAppDelegate.me.mainWindowControllers.size() == 1 ) {
+    if( CountMainWindows() == 1 ) {
         if( auto panels_state = [m_PanelState encodeRestorableState] )
             StateConfig().Set(g_JSONRestorationFilePanelsStateKey, *panels_state);
         [m_PanelState saveDefaultInitialState];
@@ -328,8 +319,6 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     }
     m_PanelState = nil;
     m_Terminal = nil;
-    
-    [NCAppDelegate.me removeMainWindow:self];
 }
 
 - (BOOL)windowShouldClose:(id)sender

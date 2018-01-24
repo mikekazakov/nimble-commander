@@ -199,15 +199,14 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         return {};
     
     auto history = m_ClosedPanelsHistory->FrontElements( m_ClosedPanelsHistory->Size() );
+    auto remove_if_present = [&]( PanelController *_pc ) {
+        if( auto current = _pc.history.MostRecent() )
+            if( auto it = find( begin(history), end(history), *current ); it != end(history) )
+                history.erase(it);
+    };
     
-    for( auto &pc: m_LeftPanelControllers )
-        if( auto current = pc.history.MostRecent() )
-            if( auto it = find( begin(history), end(history), *current ); it != end(history) )
-                history.erase(it);
-    for( auto &pc: m_RightPanelControllers )
-        if( auto current = pc.history.MostRecent() )
-            if( auto it = find( begin(history), end(history), *current ); it != end(history) )
-                history.erase(it);
+    for( auto &pc: m_LeftPanelControllers ) remove_if_present(pc);
+    for( auto &pc: m_RightPanelControllers ) remove_if_present(pc);
     
     const auto max_closed_entries_to_show = 12;
     while( history.size() > max_closed_entries_to_show )

@@ -70,6 +70,7 @@
         m_TabBar.translatesAutoresizingMaskIntoConstraints = NO;
         m_TabBar.tabView = m_TabView;
         m_TabBar.showAddTabButton = true;
+        m_TabBar.allowAddTabButtonMenu = true;
         m_TabBar.canCloseOnlyTab = false;
         m_TabBar.disableTabClose = false;
         m_TabBar.onlyShowCloseOnHover = true;

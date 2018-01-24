@@ -70,6 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL                            _disableTabClose;
     BOOL                            _hideForSingleTab;
     BOOL                            _showAddTabButton;
+    BOOL                            _allowAddTabButtonMenu;
     BOOL                            _sizeButtonsToFit;
     BOOL                            _useOverflowMenu;
     BOOL                            _alwaysShowActiveTab;
@@ -962,6 +963,20 @@ static NSMutableDictionary *registeredStyleClasses = nil;
 	_showAddTabButton = value;
     
     [self setNeedsUpdate:YES];
+}
+
+- (BOOL)allowAddTabButtonMenu {
+    return _allowAddTabButtonMenu;
+}
+
+- (void)setAllowAddTabButtonMenu:(BOOL)allowAddTabButtonMenu
+{
+    _allowAddTabButtonMenu = allowAddTabButtonMenu;
+    
+    if( _allowAddTabButtonMenu  )
+        [_addTabButton setLongPressAction:@selector(_showAddNewTabMenu:)];
+    else
+        [_addTabButton setLongPressAction:nil];
 }
 
 - (NSInteger)buttonMinWidth {
@@ -2297,6 +2312,7 @@ static NSMutableDictionary *registeredStyleClasses = nil;
 	_canCloseOnlyTab = NO;
 	_disableTabClose = NO;
 	_showAddTabButton = NO;
+    _allowAddTabButtonMenu = NO;
 	_hideForSingleTab = NO;
 	_sizeButtonsToFit = NO;
 	_isHidden = NO;
@@ -2801,8 +2817,11 @@ StaticImage(AquaTabNewRollover)
 
     [_addTabButton setTarget:self];
     [_addTabButton setAction:@selector(_addNewTab:)];
-    if (_delegate && [_delegate respondsToSelector:@selector(showAddTabMenuForTabView:)])
+
+    if( _allowAddTabButtonMenu  )
         [_addTabButton setLongPressAction:@selector(_showAddNewTabMenu:)];
+    else
+        [_addTabButton setLongPressAction:nil];
     
     [self addSubview:_addTabButton];
 

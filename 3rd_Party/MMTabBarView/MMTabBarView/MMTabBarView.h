@@ -467,6 +467,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (assign) BOOL showAddTabButton;
 
+@property (assign) BOOL allowAddTabButtonMenu;
+
 /**
  *  Minimum width of tab bar buttons
  */

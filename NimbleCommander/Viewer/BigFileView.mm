@@ -116,7 +116,7 @@ const static double g_BorderWidth = 1.0;
                                */
     
     __weak BigFileView* weak_self = self;
-    m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+    m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
         ThemesManager::Notifications::Viewer, [weak_self]{
             if( auto strong_self = weak_self )
                 [strong_self reloadAppearance];

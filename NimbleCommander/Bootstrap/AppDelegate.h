@@ -19,7 +19,7 @@ namespace nc::ops {
     class AggregateProgressTracker;
 }
 
-@interface AppDelegate : NSObject <NSApplicationDelegate>
+@interface NCAppDelegate : NSObject <NSApplicationDelegate>
 
 - (void) addMainWindow:(MainWindowController*) _wnd;
 - (void) removeMainWindow:(MainWindowController*) _wnd;
@@ -39,9 +39,9 @@ namespace nc::ops {
 @property (nonatomic, readonly) vector<MainWindowController*> mainWindowControllers;
 
 /**
- * Equal to (AppDelegate*) ((NSApplication*)NSApp).delegate.
+ * Equal to (NCAppDelegate*) ((NSApplication*)NSApp).delegate.
  */
-+ (AppDelegate*) me;
++ (NCAppDelegate*) me;
 
 /**
  * Signals that applications runs in unit testing environment.

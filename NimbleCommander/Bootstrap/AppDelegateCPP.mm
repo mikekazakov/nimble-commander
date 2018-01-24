@@ -6,18 +6,18 @@
 
 const string &AppDelegateCPP::ConfigDirectory()
 {
-    return AppDelegate.me.configDirectory;
+    return NCAppDelegate.me.configDirectory;
 }
 
 const string &AppDelegateCPP::StateDirectory()
 {
-    return AppDelegate.me.stateDirectory;
+    return NCAppDelegate.me.stateDirectory;
 }
 
 const string &AppDelegateCPP::SupportDirectory()
 {
-    if( AppDelegate.me )
-        return AppDelegate.me.supportDirectory;
+    if( NCAppDelegate.me )
+        return NCAppDelegate.me.supportDirectory;
     
     static string support_dir = EnsureTrailingSlash( NSFileManager.defaultManager.applicationSupportDirectory.fileSystemRepresentationSafe );
     return support_dir;

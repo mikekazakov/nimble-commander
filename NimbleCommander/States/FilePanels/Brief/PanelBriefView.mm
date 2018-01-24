@@ -190,7 +190,7 @@ static const auto g_ScrollingBackground =
         if( auto strong_self = weak_self )
             [strong_self onIconUpdated:_icon_no image:_icon];
     });
-    m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+    m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
         ThemesManager::Notifications::FilePanelsBrief|
         ThemesManager::Notifications::FilePanelsGeneral,
         objc_callback(self, @selector(themeDidChange)));

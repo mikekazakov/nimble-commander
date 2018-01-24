@@ -16,7 +16,7 @@ bool AddToFavorites::Predicate( PanelController *_target ) const
 
 void AddToFavorites::Perform( PanelController *_target, id _sender ) const
 {
-    auto &favorites = AppDelegate.me.favoriteLocationsStorage;
+    auto &favorites = NCAppDelegate.me.favoriteLocationsStorage;
     if( auto item = _target.view.item ) {
         if( auto favorite = FavoriteComposing::FromListingItem(item) )
             favorites.AddFavoriteLocation( move(*favorite) );

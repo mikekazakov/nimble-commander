@@ -40,7 +40,7 @@ static bool AskUserToDeleteEditor()
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
     
-        auto v = AppDelegate.me.externalEditorsStorage.AllExternalEditors();
+        auto v = NCAppDelegate.me.externalEditorsStorage.AllExternalEditors();
         m_Editors = [NSMutableArray new];
         for( auto i: v ) {
             ExternalEditorInfo *ed = [ExternalEditorInfo new];
@@ -93,7 +93,7 @@ static bool AskUserToDeleteEditor()
     for( ExternalEditorInfo *i in m_Editors )
         eds.emplace_back( [i toStartupInfo] );
     
-    AppDelegate.me.externalEditorsStorage.SetExternalEditors( eds );
+    NCAppDelegate.me.externalEditorsStorage.SetExternalEditors( eds );
 }
 
 - (IBAction)OnNewEditor:(id)sender

@@ -3,6 +3,6 @@
 
 #include "AppDelegate.h"
 
-@interface AppDelegate(Migration)
+@interface NCAppDelegate(Migration)
 
 @end

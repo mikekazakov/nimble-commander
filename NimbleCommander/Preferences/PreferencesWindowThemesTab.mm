@@ -63,7 +63,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
-        m_Manager = &AppDelegate.me.themesManager;
+        m_Manager = &NCAppDelegate.me.themesManager;
         [self loadThemesNames];
         [self loadSelectedDocument];
         

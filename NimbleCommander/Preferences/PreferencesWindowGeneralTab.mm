@@ -48,7 +48,7 @@
 
 - (IBAction)ResetToDefaults:(id)sender
 {
-    [(AppDelegate*)[NSApplication sharedApplication].delegate askToResetDefaults];
+    [(NCAppDelegate*)[NSApplication sharedApplication].delegate askToResetDefaults];
 }
 
 - (IBAction)OnFSAccessReset:(id)sender

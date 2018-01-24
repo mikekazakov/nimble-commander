@@ -34,7 +34,7 @@ static const auto g_ResizingGran = 14.;
         [self addSubview:th2];
 
         __weak FilePanelMainSplitView* weak_self = self;
-        m_ThemeChangesObservation = AppDelegate.me.themesManager.ObserveChanges(
+        m_ThemeChangesObservation = NCAppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::FilePanelsGeneral,
             [=]{ [weak_self setNeedsDisplay:true];});
     }

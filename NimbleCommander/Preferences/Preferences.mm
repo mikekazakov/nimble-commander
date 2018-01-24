@@ -15,7 +15,7 @@ void ShowPreferencesWindow()
 {
     static const auto preferences = [=]{
         auto tools_storage = [=]()->ExternalToolsStorage&{
-            return AppDelegate.me.externalTools;
+            return NCAppDelegate.me.externalTools;
         };
         auto tabs = @[[PreferencesWindowGeneralTab new],
                       [PreferencesWindowThemesTab new],

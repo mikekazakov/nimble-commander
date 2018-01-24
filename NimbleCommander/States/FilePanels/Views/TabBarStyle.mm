@@ -166,7 +166,7 @@ static nanoseconds g_LastImagesRebuildTime = 0ns;
 - (NSSize)intrinsicContentSizeOfTabBarView:(MMTabBarView *)tabBarView
 {
     if( !m_Observation ) {
-        auto &tm = AppDelegate.me.themesManager;
+        auto &tm = NCAppDelegate.me.themesManager;
         __weak MMTabBarView *v = tabBarView;
         m_Observation = tm.ObserveChanges(ThemesManager::Notifications::FilePanelsTabs, [v]{
             if( g_LastImagesRebuildTime + 200ms < machtime() ) {

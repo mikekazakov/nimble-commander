@@ -272,8 +272,8 @@ static void HeatUpConfigValues()
         m_VFSFetchingFlags = 0;
         m_NextActivityTicket = 1;
         m_IsAnythingWorksInBackground = false;
-        m_ViewLayoutIndex = AppDelegate.me.panelLayouts.DefaultLayoutIndex();
-        m_AssignedViewLayout = AppDelegate.me.panelLayouts.DefaultLayout();
+        m_ViewLayoutIndex = NCAppDelegate.me.panelLayouts.DefaultLayoutIndex();
+        m_AssignedViewLayout = NCAppDelegate.me.panelLayouts.DefaultLayout();
         
         __weak PanelController* weakself = self;
         auto on_change = [=]{
@@ -301,7 +301,7 @@ static void HeatUpConfigValues()
         add_co(g_ConfigQuickSearchTypingView,   @selector(configQuickSearchSettingsChanged) );
         add_co(g_ConfigQuickSearchKeyOption,    @selector(configQuickSearchSettingsChanged) );
         
-        m_LayoutsObservation = AppDelegate.me.panelLayouts.
+        m_LayoutsObservation = NCAppDelegate.me.panelLayouts.
             ObserveChanges( objc_callback(self, @selector(panelLayoutsChanged)) );
         
         // loading config via simulating it's change
@@ -892,7 +892,7 @@ static bool RouteKeyboardInputIntoTerminal()
 - (void) setLayoutIndex:(int)layoutIndex
 {
     if( m_ViewLayoutIndex != layoutIndex ) {
-        if( auto l = AppDelegate.me.panelLayouts.GetLayout(layoutIndex) )
+        if( auto l = NCAppDelegate.me.panelLayouts.GetLayout(layoutIndex) )
             if( !l->is_disabled() ) {
                 m_ViewLayoutIndex = layoutIndex;
                 m_AssignedViewLayout = l;
@@ -904,7 +904,7 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (void) panelLayoutsChanged
 {
-    if( auto l = AppDelegate.me.panelLayouts.GetLayout(m_ViewLayoutIndex) ) {
+    if( auto l = NCAppDelegate.me.panelLayouts.GetLayout(m_ViewLayoutIndex) ) {
         if( m_AssignedViewLayout && *m_AssignedViewLayout == *l )
             return;
         
@@ -913,7 +913,7 @@ static bool RouteKeyboardInputIntoTerminal()
             [m_View setPresentationLayout:*l];
         }
         else {
-            m_AssignedViewLayout = AppDelegate.me.panelLayouts.LastResortLayout();
+            m_AssignedViewLayout = NCAppDelegate.me.panelLayouts.LastResortLayout();
             [m_View setPresentationLayout:*m_AssignedViewLayout];
         }
     }
@@ -926,7 +926,7 @@ static bool RouteKeyboardInputIntoTerminal()
     layout.layout = [m_View presentationLayout];
 
     if( layout != *m_AssignedViewLayout )
-        AppDelegate.me.panelLayouts.ReplaceLayout( move(layout), m_ViewLayoutIndex );
+        NCAppDelegate.me.panelLayouts.ReplaceLayout( move(layout), m_ViewLayoutIndex );
 }
 
 - (void) commitCancelableLoadingTask:(function<void(const function<bool()> &_is_cancelled)>) _task
@@ -939,7 +939,7 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (NetworkConnectionsManager&)networkConnectionsManager
 {
-    return AppDelegate.me.networkConnectionsManager;
+    return NCAppDelegate.me.networkConnectionsManager;
 }
 
 - (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory

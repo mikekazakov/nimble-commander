@@ -261,7 +261,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
             if( PanelViewFooter *strong_self = weak_self )
                 [strong_self updateVolumeInfo];
         });
-        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+        m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::FilePanelsFooter, [weak_self]{
             if( auto strong_self = weak_self ) {
                 [strong_self setupPresentation];

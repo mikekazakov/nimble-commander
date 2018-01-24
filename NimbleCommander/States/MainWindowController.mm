@@ -94,7 +94,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
             });
     });
     
-    AppDelegate.me.operationsProgressTracker.AddPool(*m_OperationsPool);
+    NCAppDelegate.me.operationsProgressTracker.AddPool(*m_OperationsPool);
     
     m_ToolbarVisible = GlobalConfig().GetBool( g_ConfigShowToolbar );
     
@@ -106,7 +106,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     auto callback = objc_callback(self, @selector(onConfigShowToolbarChanged));
     m_ConfigTickets.emplace_back(GlobalConfig().Observe(g_ConfigShowToolbar, move(callback)));
     
-    [AppDelegate.me addMainWindow:self];
+    [NCAppDelegate.me addMainWindow:self];
     
     [self invalidateRestorableState];
     
@@ -210,7 +210,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
                               state:(NSCoder *)state
                   completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
 {
-    if( AppDelegate.me.isRunningTests ) {
+    if( NCAppDelegate.me.isRunningTests ) {
         completionHandler(nil, nil);
         return;
     }
@@ -306,7 +306,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (void)windowWillClose:(NSNotification *)notification
 {
     // the are the last main window - need to save current state as "default" in state config
-    if( AppDelegate.me.mainWindowControllers.size() == 1 ) {
+    if( NCAppDelegate.me.mainWindowControllers.size() == 1 ) {
         if( auto panels_state = [m_PanelState encodeRestorableState] )
             StateConfig().Set(g_JSONRestorationFilePanelsStateKey, *panels_state);
         [m_PanelState saveDefaultInitialState];
@@ -329,7 +329,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
     m_PanelState = nil;
     m_Terminal = nil;
     
-    [AppDelegate.me removeMainWindow:self];
+    [NCAppDelegate.me removeMainWindow:self];
 }
 
 - (BOOL)windowShouldClose:(id)sender
@@ -438,7 +438,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
             }
         }
         else { // as a window
-            if( auto *window = [AppDelegate.me findInternalViewerWindowForPath:_filepath
+            if( auto *window = [NCAppDelegate.me findInternalViewerWindowForPath:_filepath
                                                                          onVFS:_host] ) {
                 // already has this one
                 dispatch_to_main_queue([=]{

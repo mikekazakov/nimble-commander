@@ -730,7 +730,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     
     
     if( _panel.isUniform ) {
-        auto &locations = AppDelegate.me.favoriteLocationsStorage;
+        auto &locations = NCAppDelegate.me.favoriteLocationsStorage;
         locations.ReportLocationVisit( *_panel.vfs, _panel.currentDirectoryPath );
     }
 }
@@ -964,7 +964,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 
 - (ExternalToolsStorage&)externalToolsStorage
 {
-    return AppDelegate.me.externalTools;
+    return NCAppDelegate.me.externalTools;
 }
 
 - (void)revealPanel:(PanelController *)panel

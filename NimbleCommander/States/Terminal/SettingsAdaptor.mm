@@ -21,7 +21,7 @@ class SettingsImpl : public DefaultSettings
 public:
     SettingsImpl()
     {
-        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+        m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::Terminal,
             []{ DispatchNotification();
         });

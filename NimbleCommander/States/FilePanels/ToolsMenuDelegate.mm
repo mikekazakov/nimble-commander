@@ -70,11 +70,11 @@ static NSMenuItem *ItemForTool( const shared_ptr<const ExternalTool> &_tool, int
     
     // deferred observer setup
     if( !m_ToolsObserver )
-        m_ToolsObserver = AppDelegate.me.externalTools.ObserveChanges(
+        m_ToolsObserver = NCAppDelegate.me.externalTools.ObserveChanges(
             objc_callback(self, @selector(toolsHaveChanged)) );
     
     if( m_IsDirty ) {
-        const auto tools = AppDelegate.me.externalTools.GetAllTools();
+        const auto tools = NCAppDelegate.me.externalTools.GetAllTools();
         
         [menu removeAllItems];
         for( int i = 0, e = (int)tools.size(); i != e; ++i )

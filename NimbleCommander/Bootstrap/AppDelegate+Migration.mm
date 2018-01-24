@@ -2,5 +2,5 @@
 #include "Config.h"
 #include "AppDelegate+Migration.h"
 
-@implementation AppDelegate (Migration)
+@implementation NCAppDelegate (Migration)
 @end

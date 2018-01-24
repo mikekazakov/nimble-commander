@@ -20,7 +20,7 @@ void OpenWithExternalEditor::Perform( PanelController *_target, id _sender ) con
     if( !item || item.IsDotDot() )
         return;
     
-    auto ed = AppDelegate.me.externalEditorsStorage.ViableEditorForItem(item);
+    auto ed = NCAppDelegate.me.externalEditorsStorage.ViableEditorForItem(item);
     if( !ed ) {
         NSBeep();
         return;

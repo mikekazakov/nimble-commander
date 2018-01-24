@@ -84,7 +84,7 @@
     [self window];
     [m_Controller show];
     self.viewerView.focusRingType = NSFocusRingTypeNone;
-    [AppDelegate.me addInternalViewerWindow:self];
+    [NCAppDelegate.me addInternalViewerWindow:self];
     
     [self showWindow:self];
 }
@@ -94,7 +94,7 @@
     [m_Controller saveFileState];
     self.window.delegate = nil;
     dispatch_to_main_queue_after(10ms, [=]{
-        [AppDelegate.me removeInternalViewerWindow:self];
+        [NCAppDelegate.me removeInternalViewerWindow:self];
     });
 }
 

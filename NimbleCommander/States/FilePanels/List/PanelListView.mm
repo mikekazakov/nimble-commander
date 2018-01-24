@@ -147,7 +147,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
             if( auto strong_self = weak_self )
                 [strong_self onIconUpdated:_icon_no image:_icon];
         });
-        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+        m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::FilePanelsList |
             ThemesManager::Notifications::FilePanelsGeneral, [weak_self]{
             if( auto strong_self = weak_self )

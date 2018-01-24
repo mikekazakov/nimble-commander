@@ -141,7 +141,7 @@ static bool IsDark( NSColor *_color )
         [self setupLayout];
         
         __weak PanelViewHeader* weak_self = self;
-        m_ThemeObservation = AppDelegate.me.themesManager.ObserveChanges(
+        m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::FilePanelsHeader, [weak_self]{
             if( auto strong_self = weak_self ) {
                 [strong_self setupAppearance];

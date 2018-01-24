@@ -253,7 +253,7 @@ static string KeychainAccountFromConnection( const NetworkConnectionsManager::Co
 }
 
 ConfigBackedNetworkConnectionsManager::ConfigBackedNetworkConnectionsManager():
-    m_Config("", AppDelegate.me.configDirectory + g_ConfigFilename),
+    m_Config("", NCAppDelegate.me.configDirectory + g_ConfigFilename),
     m_IsWritingConfig(false)
 {
     // Load current configuration

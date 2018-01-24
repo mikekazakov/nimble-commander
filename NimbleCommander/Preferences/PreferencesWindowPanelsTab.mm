@@ -117,7 +117,7 @@ static const auto g_LayoutColumnsDDType = @"PreferencesWindowPanelsTabPrivateTab
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
         // Initialization code here.
-        m_LayoutsStorage = &AppDelegate.me.panelLayouts;
+        m_LayoutsStorage = &NCAppDelegate.me.panelLayouts;
     }
     
     return self;

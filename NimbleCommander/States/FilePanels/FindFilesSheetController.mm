@@ -651,7 +651,7 @@ private:
         });
     }
     else { // as a window
-        if( InternalViewerWindowController *window = [AppDelegate.me findInternalViewerWindowForPath:p onVFS:vfs]  ) {
+        if( InternalViewerWindowController *window = [NCAppDelegate.me findInternalViewerWindowForPath:p onVFS:vfs]  ) {
             // already has this one
             [window showWindow:self];
             

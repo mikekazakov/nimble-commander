@@ -119,7 +119,7 @@ static vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_current )
         current_paths.emplace_back( get<1>(p), get<0>(p) );
     
     vector<VFSPath> other_paths;
-    for( auto ctr: AppDelegate.me.mainWindowControllers )
+    for( auto ctr: NCAppDelegate.me.mainWindowControllers )
         if( auto state = ctr.filePanelsState; state != _current)
             for( auto &p: state.filePanelsCurrentPaths )
                 other_paths.emplace_back( get<1>(p), get<0>(p) );
@@ -261,7 +261,7 @@ static NSMenu *BuildGoToMenu( MainWindowFilePanelState *_state, PanelController 
     
     MenuItemBuilder builder{_panel.networkConnectionsManager, action_target};
     
-    for( auto &f: AppDelegate.me.favoriteLocationsStorage.Favorites() )
+    for( auto &f: NCAppDelegate.me.favoriteLocationsStorage.Favorites() )
         [menu addItem:builder.MenuItemForFavorite(f)];
 
     [menu addItem:NSMenuItem.separatorItem];
@@ -311,10 +311,10 @@ static NSMenu *BuildFavoritesQuickList( PanelController *_panel )
     
     MenuItemBuilder builder{_panel.networkConnectionsManager, action_target};
     
-    for( auto &f: AppDelegate.me.favoriteLocationsStorage.Favorites() )
+    for( auto &f: NCAppDelegate.me.favoriteLocationsStorage.Favorites() )
         [menu addItem:builder.MenuItemForFavorite(f)];
 
-    auto frequent = AppDelegate.me.favoriteLocationsStorage.FrecentlyUsed(10);
+    auto frequent = NCAppDelegate.me.favoriteLocationsStorage.FrecentlyUsed(10);
     if( !frequent.empty() ) {
         [menu addItem:NSMenuItem.separatorItem];
 

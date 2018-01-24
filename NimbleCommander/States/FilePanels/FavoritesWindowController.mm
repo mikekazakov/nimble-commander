@@ -310,7 +310,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 {
     vector< tuple<string,VFSHostPtr> > panel_paths;
     
-    for( auto ctr: AppDelegate.me.mainWindowControllers ) {
+    for( auto ctr: NCAppDelegate.me.mainWindowControllers ) {
         auto state = ctr.filePanelsState;
         auto paths = state.filePanelsCurrentPaths;
         panel_paths.insert( end(panel_paths), begin(paths), end(paths) );

@@ -125,15 +125,15 @@ static void CheckDefaultsReset()
         }
 }
 
-static AppDelegate *g_Me = nil;
+static NCAppDelegate *g_Me = nil;
 
-@interface AppDelegate()
+@interface NCAppDelegate()
 
 @property (nonatomic, readonly) nc::core::Dock& dock;
 
 @end
 
-@implementation AppDelegate
+@implementation NCAppDelegate
 {
     vector<MainWindowController *>              m_MainWindows;
     vector<InternalViewerWindowController*>     m_ViewerWindows;
@@ -170,7 +170,7 @@ static AppDelegate *g_Me = nil;
     return self;
 }
 
-+ (AppDelegate*) me
++ (NCAppDelegate*) me
 {
     return g_Me;
 }
@@ -770,7 +770,7 @@ static AppDelegate *g_Me = nil;
         [w show];
     else {
         auto storage = []()->FavoriteLocationsStorage& {
-            return AppDelegate.me.favoriteLocationsStorage;
+            return NCAppDelegate.me.favoriteLocationsStorage;
         };
         FavoritesWindowController *window = [[FavoritesWindowController alloc]
             initWithFavoritesStorage:storage];

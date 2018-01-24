@@ -35,6 +35,8 @@ int ClosedPanelsHistoryImpl::Size() const
     
 vector<ListingPromise> ClosedPanelsHistoryImpl::FrontElements( int _count ) const
 {
+    if( _count <= 0 )
+        return {};
     _count = min( _count, Size() );
     return { begin(m_Entries), next(begin(m_Entries), _count) };
 }

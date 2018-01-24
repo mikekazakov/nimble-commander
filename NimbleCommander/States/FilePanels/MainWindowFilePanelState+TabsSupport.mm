@@ -193,6 +193,29 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     return StringByTruncatingToWidth(_title, max_width, kTruncateAtMiddle, text_attributes);
 }
 
+- (vector<ListingPromise>)filteredClosedPanelsHistory
+{
+    if( !m_ClosedPanelsHistory )
+        return {};
+    
+    auto history = m_ClosedPanelsHistory->FrontElements( m_ClosedPanelsHistory->Size() );
+    
+    for( auto &pc: m_LeftPanelControllers )
+        if( auto current = pc.history.MostRecent() )
+            if( auto it = find( begin(history), end(history), *current ); it != end(history) )
+                history.erase(it);
+    for( auto &pc: m_RightPanelControllers )
+        if( auto current = pc.history.MostRecent() )
+            if( auto it = find( begin(history), end(history), *current ); it != end(history) )
+                history.erase(it);
+    
+    const auto max_closed_entries_to_show = 12;
+    while( history.size() > max_closed_entries_to_show )
+        history.pop_back();
+    
+    return history;
+}
+
 - (void)showAddTabMenuForTabView:(NSTabView *)aTabView
 {
     if( !m_ClosedPanelsHistory )
@@ -208,8 +231,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     if( !holder )
         return;
 
-    const auto max_closed_entries_to_show = 12;
-    auto recents = m_ClosedPanelsHistory->FrontElements(max_closed_entries_to_show);
+    auto recents = [self filteredClosedPanelsHistory];
     for( auto &v: recents ) {
         
         const auto options = (loc_fmt::Formatter::RenderOptions)

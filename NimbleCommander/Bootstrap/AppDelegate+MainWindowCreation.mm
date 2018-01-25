@@ -5,7 +5,6 @@
 #include <NimbleCommander/States/MainWindow.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
-#include <NimbleCommander/States/FilePanels/ClosedPanelsHistoryImpl.h>
 #include <Operations/Pool.h>
 #include <Operations/AggregateProgressTracker.h>
 #include "Config.h"
@@ -84,9 +83,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     const auto file_state = [self allocateFilePanelsWithFrame:frame
                                                     inContext:_context
                                                   withOpsPool:*operations_pool];
-    // TODO: this is temporary
-    static const auto closed_panels_history = make_shared<nc::panel::ClosedPanelsHistoryImpl>();
-    file_state.closedPanelsHistory = closed_panels_history;
+    file_state.closedPanelsHistory = self.closedPanelsHistory;
+    file_state.favoriteLocationsStorage = self.favoriteLocationsStorage;
     
     window_controller.filePanelsState = file_state;
     

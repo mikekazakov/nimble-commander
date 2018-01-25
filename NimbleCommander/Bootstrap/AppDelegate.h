@@ -19,6 +19,10 @@ namespace nc::ops {
     class AggregateProgressTracker;
 }
 
+namespace nc::panel {
+    class ClosedPanelsHistory;
+}
+
 @interface NCAppDelegate : NSObject <NSApplicationDelegate>
 
 - (void) addInternalViewerWindow:(InternalViewerWindowController*) _wnd;
@@ -73,12 +77,14 @@ namespace nc::ops {
 
 @property (nonatomic, readonly) ExternalEditorsStorage& externalEditorsStorage;
 
-@property (nonatomic, readonly) FavoriteLocationsStorage& favoriteLocationsStorage;
+@property (nonatomic, readonly)const shared_ptr<FavoriteLocationsStorage>& favoriteLocationsStorage;
 
 @property (nonatomic, readonly) NetworkConnectionsManager &networkConnectionsManager;
 
 @property (nonatomic, readonly) AppStoreHelper *appStoreHelper;
 
 @property (nonatomic, readonly) nc::ops::AggregateProgressTracker &operationsProgressTracker;
+
+@property (nonatomic,readonly)const shared_ptr<nc::panel::ClosedPanelsHistory> &closedPanelsHistory;
 
 @end

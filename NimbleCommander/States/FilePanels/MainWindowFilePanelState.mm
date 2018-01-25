@@ -157,6 +157,7 @@ static NSString *TitleForData( const data::Model* _data );
 
 @synthesize splitView = m_SplitView;
 @synthesize closedPanelsHistory = m_ClosedPanelsHistory;
+@synthesize favoriteLocationsStorage = m_FavoriteLocationsStorage;
 
 - (instancetype) initBaseWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
 {
@@ -730,8 +731,9 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     
     
     if( _panel.isUniform ) {
-        auto &locations = NCAppDelegate.me.favoriteLocationsStorage;
-        locations.ReportLocationVisit( *_panel.vfs, _panel.currentDirectoryPath );
+        if( m_FavoriteLocationsStorage )
+            m_FavoriteLocationsStorage->ReportLocationVisit(*_panel.vfs,
+                                                            _panel.currentDirectoryPath );
     }
 }
 

@@ -19,10 +19,10 @@ void AddToFavorites::Perform( PanelController *_target, id _sender ) const
     auto &favorites = NCAppDelegate.me.favoriteLocationsStorage;
     if( auto item = _target.view.item ) {
         if( auto favorite = FavoriteComposing::FromListingItem(item) )
-            favorites.AddFavoriteLocation( move(*favorite) );
+            favorites->AddFavoriteLocation( move(*favorite) );
     }
     else if( _target.isUniform )
-        favorites.AddFavoriteLocation( *_target.vfs, _target.currentDirectoryPath );
+        favorites->AddFavoriteLocation( *_target.vfs, _target.currentDirectoryPath );
 }
 
 };

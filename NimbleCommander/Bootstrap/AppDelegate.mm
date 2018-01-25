@@ -45,6 +45,7 @@
 #include "Interactions.h"
 #include <NimbleCommander/States/MainWindow.h>
 #include "AppDelegate+MainWindowCreation.h"
+#include <NimbleCommander/States/FilePanels/ClosedPanelsHistoryImpl.h>
 
 using namespace nc::bootstrap;
 
@@ -233,13 +234,13 @@ static NCAppDelegate *g_Me = nil;
 
     auto manage_fav_item = item_for_action("menu.go.favorites.manage");
     static auto favorites_delegate = [[FavoriteLocationsMenuDelegate alloc]
-                                      initWithStorage:self.favoriteLocationsStorage
+                                      initWithStorage:*self.favoriteLocationsStorage
                                       andManageMenuItem:manage_fav_item];
     manage_fav_item.menu.delegate = favorites_delegate;
   
     auto clear_freq_item = [NSApp.mainMenu itemWithTagHierarchical:14220];
     static auto frequent_delegate = [[FrequentlyVisitedLocationsMenuDelegate alloc]
-        initWithStorage:self.favoriteLocationsStorage andClearMenuItem:clear_freq_item];
+        initWithStorage:*self.favoriteLocationsStorage andClearMenuItem:clear_freq_item];
     clear_freq_item.menu.delegate = frequent_delegate;
     
     const auto connections_menu_item = item_for_action("menu.go.connect.network_server");
@@ -487,7 +488,7 @@ static NCAppDelegate *g_Me = nil;
     }
     
     // last cleanup before shutting down here:
-    self.favoriteLocationsStorage.StoreData( StateConfig(), "filePanel.favorites" );
+    self.favoriteLocationsStorage->StoreData( StateConfig(), "filePanel.favorites" );
     
     return NSTerminateNow;
 }
@@ -723,10 +724,11 @@ static NCAppDelegate *g_Me = nil;
     return *i;
 }
 
-- (FavoriteLocationsStorage&) favoriteLocationsStorage
+- (const shared_ptr<FavoriteLocationsStorage>&) favoriteLocationsStorage
 {
-    static auto i = new FavoriteLocationsStorage( StateConfig(), "filePanel.favorites" );
-    return *i;
+    static const auto i = make_shared<FavoriteLocationsStorage>(StateConfig(),
+                                                                "filePanel.favorites");
+    return i;
 }
 
 - (bool) askToResetDefaults
@@ -785,7 +787,7 @@ static NCAppDelegate *g_Me = nil;
         [w show];
     else {
         auto storage = []()->FavoriteLocationsStorage& {
-            return NCAppDelegate.me.favoriteLocationsStorage;
+            return *NCAppDelegate.me.favoriteLocationsStorage;
         };
         FavoritesWindowController *window = [[FavoritesWindowController alloc]
             initWithFavoritesStorage:storage];
@@ -815,6 +817,13 @@ static NCAppDelegate *g_Me = nil;
 {
     static const auto instance = new nc::core::Dock;
     return *instance;
+}
+
+- (const shared_ptr<nc::panel::ClosedPanelsHistory>&)closedPanelsHistory
+{
+    static const auto impl = make_shared<nc::panel::ClosedPanelsHistoryImpl>();
+    static const shared_ptr<nc::panel::ClosedPanelsHistory> history = impl;
+    return history;
 }
 
 @end

@@ -13,9 +13,11 @@ class NetworkConnectionsManager;
 @class MainWindowController;
 
 namespace nc::panel {
+
 class History;
 struct PersistentLocation;
-
+class PanelViewLayoutsStorage;
+    
 namespace data {
     struct SortMode;
     struct HardFilter;
@@ -97,6 +99,8 @@ public:
 @property (nonatomic, readonly) unsigned long vfsFetchingFlags;
 @property (nonatomic) int layoutIndex;
 @property (nonatomic, readonly) NetworkConnectionsManager& networkConnectionsManager;
+
+- (instancetype)initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts;
 
 - (void) refreshPanel; // reload panel contents
 - (void) forceRefreshPanel; // user pressed cmd+r by default

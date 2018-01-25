@@ -9,6 +9,11 @@
 //    any layout; // perhaps switch to variant?
 //    // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout or
 //    // PanelViewDisabledLayout at the moment.
+
+using namespace nc::panel;
+
+namespace nc::panel {
+
 bool PanelViewLayout::is_disabled() const
 {
     return  any_cast<PanelViewDisabledLayout>(&layout) != nullptr;
@@ -346,6 +351,8 @@ void PanelViewLayoutsStorage::CommitChanges(bool _fire_observers)
     if(_fire_observers)
         FireObservers();
     dispatch_to_background([=]{ WriteLayoutsToConfig(); });
+}
+
 }
 
 @implementation PanelViewLayoutsMenuDelegate

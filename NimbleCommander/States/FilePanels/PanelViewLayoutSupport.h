@@ -5,6 +5,8 @@
 #include "Brief/Layout.h"
 #include "List/Layout.h"
 
+namespace nc::panel {
+
 struct PanelViewDisabledLayout
 {
     /* dummy layout, used to indicate that this layout is not active */
@@ -90,8 +92,11 @@ private:
     const char*                                 m_ConfigPath;    
 };
 
+}
+
 @interface PanelViewLayoutsMenuDelegate : NSObject<NSMenuDelegate>
 
-- (id) initWithStorage:(PanelViewLayoutsStorage&)_storage;
+- (id) initWithStorage:(nc::panel::PanelViewLayoutsStorage&)_storage;
 
 @end
+

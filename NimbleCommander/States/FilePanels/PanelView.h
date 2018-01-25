@@ -6,11 +6,13 @@
 
 @protocol PanelViewDelegate;
 @class PanelView;
-struct PanelViewLayout;
 
-namespace nc::panel::data {
-    struct ItemVolatileData;
-    struct Model;
+namespace nc::panel {
+    struct PanelViewLayout;
+    namespace data {
+        struct ItemVolatileData;
+        struct Model;
+    }
 }
 
 @interface PanelView : NSView<NSDraggingDestination>
@@ -28,7 +30,7 @@ namespace nc::panel::data {
 @property (nonatomic, readonly) int headerBarHeight;
 @property (nonatomic, readonly) NSProgressIndicator *busyIndicator;
 
-- (id)initWithFrame:(NSRect)frame layout:(const PanelViewLayout&)_layout;
+- (id)initWithFrame:(NSRect)frame layout:(const nc::panel::PanelViewLayout&)_layout;
 
 /**
  * called by controlled when a directory has been entirely changed in PanelData.
@@ -77,7 +79,7 @@ namespace nc::panel::data {
 
 //PanelViewLayout
 - (any) presentationLayout;
-- (void) setPresentationLayout:(const PanelViewLayout&)_layout;
+- (void) setPresentationLayout:(const nc::panel::PanelViewLayout&)_layout;
 
 /*
  * PanelView implementation hooks.

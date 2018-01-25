@@ -35,6 +35,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
 @interface MainWindowFilePanelState : NSView<NCMainWindowState, MMTabBarViewDelegate>
 {
+    function<PanelController*()> m_PanelFactory;
     vector<PanelController*> m_LeftPanelControllers;
     vector<PanelController*> m_RightPanelControllers;
     __weak PanelController*  m_LastFocusedPanelController;
@@ -63,12 +64,14 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) bool isPanelActive;
 @property (nonatomic, readonly) bool goToForcesPanelActivation;
 @property (nonatomic, readwrite)
-shared_ptr<nc::panel::ClosedPanelsHistory> closedPanelsHistory;
+    shared_ptr<nc::panel::ClosedPanelsHistory> closedPanelsHistory;
 @property (nonatomic, readwrite)
-shared_ptr<nc::panel::FavoriteLocationsStorage> favoriteLocationsStorage;
+    shared_ptr<nc::panel::FavoriteLocationsStorage> favoriteLocationsStorage;
 
-- (instancetype) initDefaultFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool;
-- (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool;
+- (instancetype) initWithFrame:(NSRect)frameRect
+                       andPool:(nc::ops::Pool&)_pool
+            loadDefaultContent:(bool)_load_content
+                  panelFactory:(function<PanelController*()>)_panel_factory;
 
 - (void) loadDefaultPanelContent;
 

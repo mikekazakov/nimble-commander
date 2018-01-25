@@ -23,7 +23,7 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 
 @implementation NCAppDelegate(MainWindowCreation)
 
-+ (NCMainWindow*) allocateMainWindow
+- (NCMainWindow*) allocateMainWindow
 {
     auto window = [[NCMainWindow alloc] init];
     if( !window )
@@ -32,48 +32,65 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     return window;
 }
 
+- (PanelController*) allocatePanelController
+{
+    auto panel = [[PanelController alloc] initWithLayouts:self.panelLayouts];
+    
+    return panel;
+}
+
+static PanelController* PanelFactory()
+{
+    return [NCAppDelegate.me allocatePanelController];
+}
+
 - (MainWindowFilePanelState*)allocateFilePanelsWithFrame:(NSRect)_frame
                                                inContext:(CreationContext)_context
                                              withOpsPool:(nc::ops::Pool&)_operations_pool
 {
     if( _context == CreationContext::Default ) {
-        return [[MainWindowFilePanelState alloc]
-                initDefaultFileStateWithFrame:_frame
-                andPool:_operations_pool];
+        return [[MainWindowFilePanelState alloc] initWithFrame:_frame
+                                                       andPool:_operations_pool
+                                            loadDefaultContent:true
+                                                  panelFactory:PanelFactory];
     }
     else if( _context == CreationContext::ManualRestoration ) {
         if( MainWindowController.canRestoreDefaultWindowStateFromLastOpenedWindow ) {
-            auto state = [[MainWindowFilePanelState alloc]
-                          initEmptyFileStateWithFrame:_frame
-                          andPool:_operations_pool];
+            auto state = [[MainWindowFilePanelState alloc] initWithFrame:_frame
+                                                                 andPool:_operations_pool
+                                                      loadDefaultContent:false
+                                                            panelFactory:PanelFactory];
             RestoreFilePanelStateFromLastOpenedWindow(state);
             [state loadDefaultPanelContent];
             return state;
         }
         else if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) ) {
-            auto state = [[MainWindowFilePanelState alloc]
-                          initEmptyFileStateWithFrame:_frame
-                          andPool:_operations_pool];
+            auto state = [[MainWindowFilePanelState alloc] initWithFrame:_frame
+                                                                 andPool:_operations_pool
+                                                      loadDefaultContent:false
+                                                            panelFactory:PanelFactory];
             if( ![MainWindowController restoreDefaultWindowStateFromConfig:state] )
                 [state loadDefaultPanelContent];
             return state;
         }
         else
-            return [[MainWindowFilePanelState alloc]
-                    initDefaultFileStateWithFrame:_frame
-                    andPool:_operations_pool];
+            return [[MainWindowFilePanelState alloc] initWithFrame:_frame
+                                                           andPool:_operations_pool
+                                                loadDefaultContent:false
+                                                      panelFactory:PanelFactory];
     }
     else if( _context == CreationContext::SystemRestoration ) {
-        return [[MainWindowFilePanelState alloc]
-                initEmptyFileStateWithFrame:_frame
-                andPool:_operations_pool];
+        return [[MainWindowFilePanelState alloc] initWithFrame:_frame
+                                                       andPool:_operations_pool
+                                            loadDefaultContent:false
+                                                  panelFactory:PanelFactory];
     }
     return nil;
 }
 
 - (MainWindowController*)allocateMainWindowInContext:(CreationContext)_context
 {
-    const auto window = [self.class allocateMainWindow];
+    const auto window = [self allocateMainWindow];
     const auto frame = window.contentView.frame;
     const auto operations_pool =  nc::ops::Pool::Make();
     const auto window_controller = [[MainWindowController alloc] initWithWindow:window];

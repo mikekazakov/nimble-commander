@@ -230,7 +230,7 @@ static NCAppDelegate *g_Me = nil;
     };
     
     static auto layouts_delegate = [[PanelViewLayoutsMenuDelegate alloc]
-                                    initWithStorage:self.panelLayouts];
+                                    initWithStorage:*self.panelLayouts];
     item_for_action("menu.view.toggle_layout_1").menu.delegate = layouts_delegate;
 
     auto manage_fav_item = item_for_action("menu.go.favorites.manage");
@@ -708,10 +708,10 @@ static NCAppDelegate *g_Me = nil;
     return *i;
 }
 
-- (PanelViewLayoutsStorage&) panelLayouts
+- (const shared_ptr<nc::panel::PanelViewLayoutsStorage>&) panelLayouts
 {
-    static auto i = new PanelViewLayoutsStorage(g_ConfigLayoutsList);
-    return *i;
+    static auto i = make_shared<nc::panel::PanelViewLayoutsStorage>(g_ConfigLayoutsList);
+    return i;
 }
 
 - (ThemesManager&) themesManager

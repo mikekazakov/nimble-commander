@@ -249,6 +249,7 @@ static void HeatUpConfigValues()
     
     vector<GenericConfig::ObservationTicket> m_ConfigObservers;
 
+    shared_ptr<PanelViewLayoutsStorage> m_Layouts;
     int                                 m_ViewLayoutIndex;
     shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
     PanelViewLayoutsStorage::ObservationTicket m_LayoutsObservation;
@@ -260,20 +261,21 @@ static void HeatUpConfigValues()
 @synthesize layoutIndex = m_ViewLayoutIndex;
 @synthesize vfsFetchingFlags = m_VFSFetchingFlags;
 
-- (id) init
+- (id) initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
 {
     static once_flag once;
     call_once(once, HeatUpConfigValues);
 
     self = [super init];
     if(self) {
+        m_Layouts = move(_layouts);
         m_QuickSearchLastType = 0ns;
         m_QuickSearchOffset = 0;
         m_VFSFetchingFlags = 0;
         m_NextActivityTicket = 1;
         m_IsAnythingWorksInBackground = false;
-        m_ViewLayoutIndex = NCAppDelegate.me.panelLayouts.DefaultLayoutIndex();
-        m_AssignedViewLayout = NCAppDelegate.me.panelLayouts.DefaultLayout();
+        m_ViewLayoutIndex = m_Layouts->DefaultLayoutIndex();
+        m_AssignedViewLayout = m_Layouts->DefaultLayout();
         
         __weak PanelController* weakself = self;
         auto on_change = [=]{
@@ -301,7 +303,7 @@ static void HeatUpConfigValues()
         add_co(g_ConfigQuickSearchTypingView,   @selector(configQuickSearchSettingsChanged) );
         add_co(g_ConfigQuickSearchKeyOption,    @selector(configQuickSearchSettingsChanged) );
         
-        m_LayoutsObservation = NCAppDelegate.me.panelLayouts.
+        m_LayoutsObservation = m_Layouts->
             ObserveChanges( objc_callback(self, @selector(panelLayoutsChanged)) );
         
         // loading config via simulating it's change
@@ -892,7 +894,7 @@ static bool RouteKeyboardInputIntoTerminal()
 - (void) setLayoutIndex:(int)layoutIndex
 {
     if( m_ViewLayoutIndex != layoutIndex ) {
-        if( auto l = NCAppDelegate.me.panelLayouts.GetLayout(layoutIndex) )
+        if( auto l = m_Layouts->GetLayout(layoutIndex) )
             if( !l->is_disabled() ) {
                 m_ViewLayoutIndex = layoutIndex;
                 m_AssignedViewLayout = l;
@@ -904,7 +906,7 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (void) panelLayoutsChanged
 {
-    if( auto l = NCAppDelegate.me.panelLayouts.GetLayout(m_ViewLayoutIndex) ) {
+    if( auto l = m_Layouts->GetLayout(m_ViewLayoutIndex) ) {
         if( m_AssignedViewLayout && *m_AssignedViewLayout == *l )
             return;
         
@@ -913,7 +915,7 @@ static bool RouteKeyboardInputIntoTerminal()
             [m_View setPresentationLayout:*l];
         }
         else {
-            m_AssignedViewLayout = NCAppDelegate.me.panelLayouts.LastResortLayout();
+            m_AssignedViewLayout = m_Layouts->LastResortLayout();
             [m_View setPresentationLayout:*m_AssignedViewLayout];
         }
     }
@@ -926,7 +928,7 @@ static bool RouteKeyboardInputIntoTerminal()
     layout.layout = [m_View presentationLayout];
 
     if( layout != *m_AssignedViewLayout )
-        NCAppDelegate.me.panelLayouts.ReplaceLayout( move(layout), m_ViewLayoutIndex );
+        m_Layouts->ReplaceLayout( move(layout), m_ViewLayoutIndex );
 }
 
 - (void) commitCancelableLoadingTask:(function<void(const function<bool()> &_is_cancelled)>) _task

@@ -290,7 +290,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
                     autoDirectoryLoading:(bool)_load
                         activateNewPanel:(bool)_activate
 {
-    PanelController *pc = [PanelController new];
+    PanelController *pc = m_PanelFactory();
     pc.state = self;
     PanelController *source = nil;
     if( aTabView == m_SplitView.leftTabbedHolder.tabView ) {

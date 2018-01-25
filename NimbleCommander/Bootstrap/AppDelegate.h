@@ -9,7 +9,6 @@
 @class GenericConfigObjC;
 @class AppStoreHelper;
 class ExternalToolsStorage;
-class PanelViewLayoutsStorage;
 class ThemesManager;
 class ExternalEditorsStorage;
 class NetworkConnectionsManager;
@@ -19,6 +18,7 @@ namespace nc::ops {
 }
 
 namespace nc::panel {
+    class PanelViewLayoutsStorage;
     class FavoriteLocationsStorage;
     class ClosedPanelsHistory;
 }
@@ -71,14 +71,15 @@ namespace nc::panel {
 
 @property (nonatomic, readonly) ExternalToolsStorage& externalTools;
 
-@property (nonatomic, readonly) PanelViewLayoutsStorage& panelLayouts;
+@property (nonatomic, readonly)
+    const shared_ptr<nc::panel::PanelViewLayoutsStorage> &panelLayouts;
 
 @property (nonatomic, readonly) ThemesManager& themesManager;
 
 @property (nonatomic, readonly) ExternalEditorsStorage& externalEditorsStorage;
 
 @property (nonatomic, readonly)
-const shared_ptr<nc::panel::FavoriteLocationsStorage>& favoriteLocationsStorage;
+    const shared_ptr<nc::panel::FavoriteLocationsStorage>& favoriteLocationsStorage;
 
 @property (nonatomic, readonly) NetworkConnectionsManager &networkConnectionsManager;
 

@@ -7,6 +7,8 @@
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include <Utility/ByteCountFormatter.h>
 
+using namespace nc::panel;
+
 static const auto g_LayoutColumnsDDType = @"PreferencesWindowPanelsTabPrivateTableViewDataColumns";
 
 @interface PreferencesToNumberValueTransformer : NSValueTransformer
@@ -100,7 +102,7 @@ static const auto g_LayoutColumnsDDType = @"PreferencesWindowPanelsTabPrivateTab
 
 @implementation PreferencesWindowPanelsTab
 {
-    PanelViewLayoutsStorage *m_LayoutsStorage;
+    shared_ptr<PanelViewLayoutsStorage> m_LayoutsStorage;
     vector< pair<PanelListViewColumnsLayout::Column, bool> > m_LayoutListColumns;
 }
 
@@ -117,7 +119,7 @@ static const auto g_LayoutColumnsDDType = @"PreferencesWindowPanelsTabPrivateTab
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
         // Initialization code here.
-        m_LayoutsStorage = &NCAppDelegate.me.panelLayouts;
+        m_LayoutsStorage = NCAppDelegate.me.panelLayouts;
     }
     
     return self;

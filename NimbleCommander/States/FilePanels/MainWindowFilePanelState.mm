@@ -159,16 +159,20 @@ static NSString *TitleForData( const data::Model* _data );
 @synthesize closedPanelsHistory = m_ClosedPanelsHistory;
 @synthesize favoriteLocationsStorage = m_FavoriteLocationsStorage;
 
-- (instancetype) initBaseWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
+- (instancetype) initBaseWithFrame:(NSRect)frameRect
+                           andPool:(nc::ops::Pool&)_pool
+                      panelFactory:(function<PanelController*()>)_panel_factory
 {
+    assert( _panel_factory );
     if( self = [super initWithFrame:frameRect] ) {
+        m_PanelFactory = move(_panel_factory);
         m_ClosedPanelsHistory = nullptr;
         m_OperationsPool = _pool.shared_from_this();
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
         
-        m_LeftPanelControllers.emplace_back([PanelController new]);
-        m_RightPanelControllers.emplace_back([PanelController new]);
+        m_LeftPanelControllers.emplace_back(m_PanelFactory());
+        m_RightPanelControllers.emplace_back(m_PanelFactory());
         
         [self CreateControls];
         
@@ -183,18 +187,19 @@ static NSString *TitleForData( const data::Model* _data );
     return self;
 }
 
-- (instancetype) initDefaultFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
+- (instancetype) initWithFrame:(NSRect)frameRect
+                       andPool:(nc::ops::Pool&)_pool
+            loadDefaultContent:(bool)_load_content
+                  panelFactory:(function<PanelController*()>)_panel_factory
 {
-    if( self = [self initBaseWithFrame:frameRect andPool:_pool] ) {
-        [self restoreDefaultPanelOptions];
-        [self loadDefaultPanelContent];
-    }
-    return self;
-}
-
-- (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool
-{
-    if( self = [self initBaseWithFrame:frameRect andPool:_pool] ) {
+    self = [self initBaseWithFrame:frameRect
+                           andPool:_pool
+                      panelFactory:move(_panel_factory)];
+    if( self ) {
+        if( _load_content ) {
+            [self restoreDefaultPanelOptions];
+            [self loadDefaultPanelContent];
+        }
     }
     return self;
 }
@@ -622,7 +627,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
             if( left.IsArray() )
                 for( auto i = left.Begin(), e = left.End(); i != e; ++i ) {
                     if( i != left.Begin() ) {
-                        auto pc = [PanelController new];
+                        auto pc = m_PanelFactory();
                         pc.state = self;
                         [self addNewControllerOnLeftPane:pc];
                         ControllerStateJSONDecoder{pc}.Decode(*i);
@@ -635,7 +640,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
             if( right.IsArray() )
                 for( auto i = right.Begin(), e = right.End(); i != e; ++i ) {
                     if( i != right.Begin() ) {
-                        auto pc = [PanelController new];
+                        auto pc = m_PanelFactory();
                         pc.state = self;
                         [self addNewControllerOnRightPane:pc];
                         ControllerStateJSONDecoder{pc}.Decode(*i);

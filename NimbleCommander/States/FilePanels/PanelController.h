@@ -99,6 +99,7 @@ public:
 @property (nonatomic, readonly) unsigned long vfsFetchingFlags;
 @property (nonatomic) int layoutIndex;
 @property (nonatomic, readonly) NetworkConnectionsManager& networkConnectionsManager;
+@property (nonatomic, readonly) nc::panel::PanelViewLayoutsStorage& layoutStorage;
 
 - (instancetype)initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts;
 

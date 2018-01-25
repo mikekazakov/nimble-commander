@@ -1,5 +1,4 @@
 // Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "../PanelController.h"
 #include "../PanelViewLayoutSupport.h"
 #include "ToggleLayout.h"
@@ -13,8 +12,7 @@ ToggleLayout::ToggleLayout( int _layout_index ):
 
 bool ToggleLayout::Predicate( PanelController *_target ) const
 {
-    static const auto &storage = *NCAppDelegate.me.panelLayouts;
-    if( auto l = storage.GetLayout(m_Index) )
+    if( auto l = _target.layoutStorage.GetLayout(m_Index) )
         return !l->is_disabled();
     return false;
 }

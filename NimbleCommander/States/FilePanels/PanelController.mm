@@ -263,6 +263,8 @@ static void HeatUpConfigValues()
 
 - (id) initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
 {
+    assert( _layouts );
+    
     static once_flag once;
     call_once(once, HeatUpConfigValues);
 
@@ -1510,6 +1512,11 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
 {
     if(!m_QuickSearchIsSoftFiltering)
         [self QuickSearchHardUpdateTypingUI];
+}
+
+- (nc::panel::PanelViewLayoutsStorage&)layoutStorage
+{
+    return *m_Layouts;
 }
 
 @end

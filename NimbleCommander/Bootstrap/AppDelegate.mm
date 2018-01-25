@@ -44,6 +44,7 @@
 #include "VFSInit.h"
 #include "Interactions.h"
 #include <NimbleCommander/States/MainWindow.h>
+#include "AppDelegate+MainWindowCreation.h"
 
 using namespace nc::bootstrap;
 
@@ -55,7 +56,6 @@ static auto g_StateDirPostfix = @"/State/";
 static GenericConfig *g_Config = nullptr;
 static GenericConfig *g_State = nullptr;
 
-static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLastWindowState";
 static const auto g_ConfigForceFn = "general.alwaysUseFnKeysAsFunctional";
 static const auto g_ConfigExternalToolsList = "externalTools.tools_v1";
 static const auto g_ConfigLayoutsList = "filePanel.layout.layouts_v1";
@@ -198,8 +198,10 @@ static NCAppDelegate *g_Me = nil;
         if( sm.Empty() ) {
             sm.AskAccessForPathSync(CommonPaths::Home(), false);
             showed_modal_dialog = true;
-            if( self.mainWindowControllers.empty() )
-                [self allocateDefaultMainWindow];
+            if( self.mainWindowControllers.empty() ) {
+                auto ctrl = [self allocateDefaultMainWindow];
+                [ctrl showWindow:self];
+            }
         }
     }
     
@@ -417,39 +419,6 @@ static NCAppDelegate *g_Me = nil;
     return NO;
 }
 
-+ (NCMainWindow*) allocateMainWindow
-{
-    auto window = [[NCMainWindow alloc] init];
-    if( !window )
-        return nil;
-    window.restorationClass = self.class;
-    return window;
-}
-
-- (MainWindowController*)allocateDefaultMainWindow
-{
-    auto window = [self.class allocateMainWindow];
-    MainWindowController *mwc = [[MainWindowController alloc] initDefaultWindow:window];
-    [self addMainWindow:mwc];
-    [mwc showWindow:self];
-    return mwc;
-}
-
-- (MainWindowController*)allocateRestoredMainWindow
-{
-    auto window = [self.class allocateMainWindow];
-    MainWindowController *mwc;
-    if( MainWindowController.canRestoreDefaultWindowStateFromLastOpenedWindow )
-        mwc = [[MainWindowController alloc] initWithLastOpenedWindowOptions:window];
-    else if( GlobalConfig().GetBool(g_ConfigRestoreLastWindowState) )
-        mwc = [[MainWindowController alloc] initRestoringLastWindowFromConfig:window];
-    else
-        mwc = [[MainWindowController alloc] initDefaultWindow:window];
-    [self addMainWindow:mwc];
-    [mwc showWindow:self];
-    return mwc;
-}
-
 + (void)restoreWindowWithIdentifier:(NSString *)identifier
                               state:(NSCoder *)state
                   completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
@@ -460,18 +429,15 @@ static NCAppDelegate *g_Me = nil;
     }
 
     NSWindow *window = nil;
-    if( [identifier isEqualToString:NCMainWindow.defaultIdentifier] ) {
-        auto nc_mainwindow = [self allocateMainWindow];
-        auto ctrl = [[MainWindowController alloc] initForSystemRestoration:nc_mainwindow];
-        [g_Me addMainWindow:ctrl];
-        window = ctrl.window;
-    }
+    if( [identifier isEqualToString:NCMainWindow.defaultIdentifier] )
+        window = [g_Me allocateMainWindowRestoredBySystem].window;
     completionHandler(window, nil);
 }
 
 - (IBAction)onMainMenuNewWindow:(id)sender
 {
-    [self allocateRestoredMainWindow];
+    auto ctrl = [self allocateMainWindowRestoredManually];
+    [ctrl showWindow:self];
 }
 
 - (void) addMainWindow:(MainWindowController*) _wnd

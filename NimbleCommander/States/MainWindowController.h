@@ -16,10 +16,7 @@ namespace nc::ops {
 
 @interface MainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
 
-- (instancetype) initDefaultWindow:(NCMainWindow*)window;
-- (instancetype) initWithLastOpenedWindowOptions:(NCMainWindow*)window;
-- (instancetype) initRestoringLastWindowFromConfig:(NCMainWindow*)window;
-- (instancetype) initForSystemRestoration:(NCMainWindow*)window;
+- (instancetype) initWithWindow:(NCMainWindow*)window;
 
 // Window state manipulations
 - (void)ResignAsWindowState:(id)_state;
@@ -40,15 +37,17 @@ namespace nc::ops {
                                      fileTitle:(const string&)_file_title;
 
 - (bool)restoreDefaultWindowStateFromConfig;
++ (bool)restoreDefaultWindowStateFromConfig:(MainWindowFilePanelState*)_state;
 - (void)restoreDefaultWindowStateFromLastOpenedWindow;
 + (bool)canRestoreDefaultWindowStateFromLastOpenedWindow;
 
 // Access to states
-@property (nonatomic, readonly) MainWindowFilePanelState*   filePanelsState;  // one and only one per window
+@property (nonatomic, readwrite) MainWindowFilePanelState*  filePanelsState;  // one and only one per window
 @property (nonatomic, readonly) NCTermShellState*           terminalState;    // zero or one per window
 @property (nonatomic, readonly) id<NCMainWindowState>       topmostState;
 @property (nonatomic, readonly) nc::ops::Pool&              operationsPool;
 
+- (void)setOperationsPool:(nc::ops::Pool&)_pool;
 
 // Toolbar support
 - (void)OnShowToolbar:(id)sender;

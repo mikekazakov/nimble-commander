@@ -630,6 +630,10 @@
 		CFA1715E20174CA900F507D5 /* LocationFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1715C20174C9A00F507D5 /* LocationFormatter.mm */; };
 		CFA1715F20174CAA00F507D5 /* LocationFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1715C20174C9A00F507D5 /* LocationFormatter.mm */; };
 		CFA1716020174CAA00F507D5 /* LocationFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1715C20174C9A00F507D5 /* LocationFormatter.mm */; };
+		CFA1716320196CB400F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1716220196CB400F507D5 /* AppDelegate+MainWindowCreation.mm */; };
+		CFA171652019700000F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1716220196CB400F507D5 /* AppDelegate+MainWindowCreation.mm */; };
+		CFA171662019700000F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1716220196CB400F507D5 /* AppDelegate+MainWindowCreation.mm */; };
+		CFA171672019700100F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1716220196CB400F507D5 /* AppDelegate+MainWindowCreation.mm */; };
 		CFA183731CA0133600544633 /* libAquaticPrime.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFA183721CA0133600544633 /* libAquaticPrime.a */; };
 		CFA2D6041E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */; };
 		CFA2D6051E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */; };
@@ -1810,6 +1814,9 @@
 		CFA171452015DF3700F507D5 /* ClosedPanelsHistoryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClosedPanelsHistoryImpl.h; path = NimbleCommander/States/FilePanels/ClosedPanelsHistoryImpl.h; sourceTree = SOURCE_ROOT; };
 		CFA1715B20174C9A00F507D5 /* LocationFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocationFormatter.h; path = NimbleCommander/States/FilePanels/Helpers/LocationFormatter.h; sourceTree = SOURCE_ROOT; };
 		CFA1715C20174C9A00F507D5 /* LocationFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LocationFormatter.mm; path = NimbleCommander/States/FilePanels/Helpers/LocationFormatter.mm; sourceTree = SOURCE_ROOT; };
+		CFA1716120196CB400F507D5 /* AppDelegate+MainWindowCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+MainWindowCreation.h"; path = "NimbleCommander/Bootstrap/AppDelegate+MainWindowCreation.h"; sourceTree = SOURCE_ROOT; };
+		CFA1716220196CB400F507D5 /* AppDelegate+MainWindowCreation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "AppDelegate+MainWindowCreation.mm"; path = "NimbleCommander/Bootstrap/AppDelegate+MainWindowCreation.mm"; sourceTree = SOURCE_ROOT; };
+		CFA1716420196CF600F507D5 /* AppDelegate.Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.Private.h; path = NimbleCommander/Bootstrap/AppDelegate.Private.h; sourceTree = SOURCE_ROOT; };
 		CFA183721CA0133600544633 /* libAquaticPrime.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libAquaticPrime.a; path = 3rd_Party/AquaticPrime/built/libAquaticPrime.a; sourceTree = SOURCE_ROOT; };
 		CFA2D6011E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTabImportSheet.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTabImportSheet.h; sourceTree = SOURCE_ROOT; };
 		CFA2D6021E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTabImportSheet.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTabImportSheet.mm; sourceTree = SOURCE_ROOT; };
@@ -2715,6 +2722,9 @@
 				CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */,
 				CFDAC2371DFBDEBA0039A104 /* AppDelegate.h */,
 				CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */,
+				CFA1716420196CF600F507D5 /* AppDelegate.Private.h */,
+				CFA1716120196CB400F507D5 /* AppDelegate+MainWindowCreation.h */,
+				CFA1716220196CB400F507D5 /* AppDelegate+MainWindowCreation.mm */,
 				CFDAC2F11DFD16540039A104 /* AppDelegate+Migration.h */,
 				CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */,
 				CFDAC2391DFBDEBA0039A104 /* AppDelegateCPP.h */,
@@ -4004,6 +4014,7 @@
 				CFD7264A1E42E11B00603077 /* SearchInFile.cpp in Sources */,
 				CFD726051E42E06900603077 /* AppDelegate.mm in Sources */,
 				CF662AE31D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */,
+				CFA171662019700000F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
 				CFD726B41E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF6D9BD6196677CA0077B146 /* RHPreferencesWindowController.m in Sources */,
 				CF6D9BD7196677CA0077B146 /* NSFileManager+DirectoryLocations.m in Sources */,
@@ -4197,6 +4208,7 @@
 				CF04DDFC1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CFA53A091D433E2A00C562A7 /* PreferencesWindowToolsTab.mm in Sources */,
 				CFD726AC1E42E25100603077 /* PanelViewLayoutSupport.mm in Sources */,
+				CFA1716320196CB400F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
 				CF6237231EB4444300152B2B /* PanelDataExternalEntryKey.mm in Sources */,
 				CFD726211E42E0AD00603077 /* ActionShortcut.mm in Sources */,
 				CFFA95191F45A3400035E606 /* ConfigWiring.mm in Sources */,
@@ -4378,6 +4390,7 @@
 				CFA7DFF81EB6FD82001FE66C /* OpenNetworkConnection.mm in Sources */,
 				CFDAC2EF1DFD152C0039A104 /* FilePanelsTabbedHolder.mm in Sources */,
 				CF7A09D91EC44A2200533B07 /* NetworkConnectionIconProvider.mm in Sources */,
+				CFA171672019700100F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
 				CFDAC25B1DFBF0B30039A104 /* PanelController+DataAccess.mm in Sources */,
 				CFDAC23B1DFBDEBA0039A104 /* AppDelegate.mm in Sources */,
 				CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
@@ -4529,6 +4542,7 @@
 				CFB66F991D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
 				CFD7269A1E42E23500603077 /* PanelDataSortMode.mm in Sources */,
 				CFD8CDBB1E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
+				CFA171652019700000F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
 				CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */,
 				CFF6F2801A13567C00011177 /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CFD726A61E42E24800603077 /* PanelViewPresentationSettings.mm in Sources */,

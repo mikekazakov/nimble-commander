@@ -121,7 +121,7 @@ static unordered_map<string, string> GetAquaticLicenseInfo( const string& _path 
 
 static string InstalledAquaticLicensePath()
 {
-    return AppDelegateCPP::SupportDirectory() + g_LicenseFilename;
+    return nc::AppDelegate::SupportDirectory() + g_LicenseFilename;
 }
 
 static bool UserHasValidAquaticLicense()

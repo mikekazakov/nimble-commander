@@ -23,7 +23,7 @@
 #include <NimbleCommander/Bootstrap/AppDelegateCPP.h>
 static NetworkConnectionsManager &ConnectionsManager()
 {
-    return *AppDelegateCPP::NetworkConnectionsManager();
+    return *nc::AppDelegate::NetworkConnectionsManager();
 }
 
 namespace nc::panel {

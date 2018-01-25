@@ -1,9 +1,11 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 class NetworkConnectionsManager;
 
-class AppDelegateCPP
+namespace nc {
+
+class AppDelegate
 {
 public:
     static const string &ConfigDirectory();
@@ -12,3 +14,5 @@ public:
     static const shared_ptr<NetworkConnectionsManager> &NetworkConnectionsManager();
     
 };
+
+}

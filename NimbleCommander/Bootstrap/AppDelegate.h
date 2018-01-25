@@ -81,7 +81,8 @@ namespace nc::panel {
 @property (nonatomic, readonly)
     const shared_ptr<nc::panel::FavoriteLocationsStorage>& favoriteLocationsStorage;
 
-@property (nonatomic, readonly) NetworkConnectionsManager &networkConnectionsManager;
+@property (nonatomic, readonly)
+    const shared_ptr<NetworkConnectionsManager> &networkConnectionsManager;
 
 @property (nonatomic, readonly) AppStoreHelper *appStoreHelper;
 

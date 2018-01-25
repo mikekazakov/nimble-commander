@@ -247,7 +247,7 @@ static NCAppDelegate *g_Me = nil;
     const auto connections_menu_item = item_for_action("menu.go.connect.network_server");
     static const auto conn_delegate = [[ConnectionsMenuDelegate alloc] initWithManager:
         []()->NetworkConnectionsManager &{
-        return g_Me.networkConnectionsManager;
+        return *g_Me.networkConnectionsManager;
     }];
     connections_menu_item.menu.delegate = conn_delegate;
 }
@@ -803,9 +803,12 @@ static NCAppDelegate *g_Me = nil;
     }
 }
 
-- (NetworkConnectionsManager&)networkConnectionsManager
+- (const shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager
 {
-    return ConfigBackedNetworkConnectionsManager::Instance();
+    static const auto mgr = make_shared<ConfigBackedNetworkConnectionsManager>
+        (self.configDirectory);
+    static const shared_ptr<NetworkConnectionsManager> int_ptr = mgr;
+    return int_ptr;
 }
 
 - (nc::ops::AggregateProgressTracker&) operationsProgressTracker

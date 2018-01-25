@@ -101,7 +101,8 @@ public:
 @property (nonatomic, readonly) NetworkConnectionsManager& networkConnectionsManager;
 @property (nonatomic, readonly) nc::panel::PanelViewLayoutsStorage& layoutStorage;
 
-- (instancetype)initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts;
+- (instancetype)initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layout
+      networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr;
 
 - (void) refreshPanel; // reload panel contents
 - (void) forceRefreshPanel; // user pressed cmd+r by default

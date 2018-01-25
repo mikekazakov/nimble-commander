@@ -7,7 +7,7 @@
 class NetworkConnectionsManager
 {
 public:
-    virtual ~NetworkConnectionsManager() = 0;
+    virtual ~NetworkConnectionsManager() = default;
 
     class Connection;
     class BaseConnection;

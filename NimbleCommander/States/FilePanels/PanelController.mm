@@ -11,7 +11,6 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "PanelDataPersistency.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelViewLayoutSupport.h"
@@ -249,6 +248,7 @@ static void HeatUpConfigValues()
     
     vector<GenericConfig::ObservationTicket> m_ConfigObservers;
 
+    shared_ptr<NetworkConnectionsManager> m_NetworkConMgr;
     shared_ptr<PanelViewLayoutsStorage> m_Layouts;
     int                                 m_ViewLayoutIndex;
     shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
@@ -262,8 +262,10 @@ static void HeatUpConfigValues()
 @synthesize vfsFetchingFlags = m_VFSFetchingFlags;
 
 - (id) initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
+networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
 {
     assert( _layouts );
+    assert( _conn_mgr );
     
     static once_flag once;
     call_once(once, HeatUpConfigValues);
@@ -271,6 +273,7 @@ static void HeatUpConfigValues()
     self = [super init];
     if(self) {
         m_Layouts = move(_layouts);
+        m_NetworkConMgr = move(_conn_mgr);
         m_QuickSearchLastType = 0ns;
         m_QuickSearchOffset = 0;
         m_VFSFetchingFlags = 0;
@@ -943,7 +946,7 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (NetworkConnectionsManager&)networkConnectionsManager
 {
-    return NCAppDelegate.me.networkConnectionsManager;
+    return *m_NetworkConMgr;
 }
 
 - (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory

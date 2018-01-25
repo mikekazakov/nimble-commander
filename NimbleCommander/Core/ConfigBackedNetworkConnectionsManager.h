@@ -9,10 +9,9 @@
 
 class ConfigBackedNetworkConnectionsManager : public NetworkConnectionsManager
 {
-    ConfigBackedNetworkConnectionsManager();
-    ~ConfigBackedNetworkConnectionsManager();
 public:
-    static ConfigBackedNetworkConnectionsManager& Instance();
+    ConfigBackedNetworkConnectionsManager(const string &_config_directory);
+    ~ConfigBackedNetworkConnectionsManager();
 
     optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const override;
     optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const override;

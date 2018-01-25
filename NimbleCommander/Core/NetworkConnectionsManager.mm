@@ -80,11 +80,6 @@ string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)
         _conn.Title() + " - " + MakeConnectionPath(_conn);
 }
 
-NetworkConnectionsManager::~NetworkConnectionsManager()
-{
-}
-
-
 NetworkConnectionsManager::Connection::Connection() :
     m_Object{nullptr}
 {

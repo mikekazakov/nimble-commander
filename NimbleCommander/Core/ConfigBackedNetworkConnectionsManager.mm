@@ -15,7 +15,6 @@
 #include <VFS/NetSFTP.h>
 #include <VFS/NetDropbox.h>
 #include <VFS/NetWebDAV.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/rapidjson.h>
 
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
@@ -252,8 +251,9 @@ static string KeychainAccountFromConnection( const NetworkConnectionsManager::Co
     return "";
 }
 
-ConfigBackedNetworkConnectionsManager::ConfigBackedNetworkConnectionsManager():
-    m_Config("", NCAppDelegate.me.configDirectory + g_ConfigFilename),
+ConfigBackedNetworkConnectionsManager::
+ConfigBackedNetworkConnectionsManager(const string &_config_directory):
+    m_Config("", _config_directory + g_ConfigFilename),
     m_IsWritingConfig(false)
 {
     // Load current configuration
@@ -275,12 +275,6 @@ ConfigBackedNetworkConnectionsManager::ConfigBackedNetworkConnectionsManager():
 
 ConfigBackedNetworkConnectionsManager::~ConfigBackedNetworkConnectionsManager()
 {
-}
-
-ConfigBackedNetworkConnectionsManager& ConfigBackedNetworkConnectionsManager::Instance()
-{
-    static auto inst = new ConfigBackedNetworkConnectionsManager;
-    return *inst;
 }
 
 void ConfigBackedNetworkConnectionsManager::InsertConnection( const NetworkConnectionsManager::Connection &_conn )

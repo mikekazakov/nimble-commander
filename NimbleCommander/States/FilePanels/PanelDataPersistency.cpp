@@ -19,11 +19,11 @@
 #include <NimbleCommander/Core/rapidjson.h>
 #include "PanelDataPersistency.h"
 
-
-#include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
+// THIS IS TEMPORARY!!!
+#include <NimbleCommander/Bootstrap/AppDelegateCPP.h>
 static NetworkConnectionsManager &ConnectionsManager()
 {
-    return ConfigBackedNetworkConnectionsManager::Instance();
+    return *AppDelegateCPP::NetworkConnectionsManager();
 }
 
 namespace nc::panel {

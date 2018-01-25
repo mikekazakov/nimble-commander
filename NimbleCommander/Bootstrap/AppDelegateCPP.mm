@@ -22,3 +22,8 @@ const string &AppDelegateCPP::SupportDirectory()
     static string support_dir = EnsureTrailingSlash( NSFileManager.defaultManager.applicationSupportDirectory.fileSystemRepresentationSafe );
     return support_dir;
 }
+
+const shared_ptr<NetworkConnectionsManager> &AppDelegateCPP::NetworkConnectionsManager()
+{
+    return NCAppDelegate.me.networkConnectionsManager;
+}

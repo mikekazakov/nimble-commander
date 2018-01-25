@@ -34,8 +34,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 
 - (PanelController*) allocatePanelController
 {
-    auto panel = [[PanelController alloc] initWithLayouts:self.panelLayouts];
-    
+    auto panel = [[PanelController alloc] initWithLayouts:self.panelLayouts
+                                networkConnectionsManager:self.networkConnectionsManager];
     return panel;
 }
 

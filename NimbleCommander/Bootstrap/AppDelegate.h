@@ -12,7 +12,6 @@ class ExternalToolsStorage;
 class PanelViewLayoutsStorage;
 class ThemesManager;
 class ExternalEditorsStorage;
-class FavoriteLocationsStorage;
 class NetworkConnectionsManager;
 
 namespace nc::ops {
@@ -20,6 +19,7 @@ namespace nc::ops {
 }
 
 namespace nc::panel {
+    class FavoriteLocationsStorage;
     class ClosedPanelsHistory;
 }
 
@@ -77,7 +77,8 @@ namespace nc::panel {
 
 @property (nonatomic, readonly) ExternalEditorsStorage& externalEditorsStorage;
 
-@property (nonatomic, readonly)const shared_ptr<FavoriteLocationsStorage>& favoriteLocationsStorage;
+@property (nonatomic, readonly)
+const shared_ptr<nc::panel::FavoriteLocationsStorage>& favoriteLocationsStorage;
 
 @property (nonatomic, readonly) NetworkConnectionsManager &networkConnectionsManager;
 

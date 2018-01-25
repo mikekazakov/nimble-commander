@@ -13,6 +13,7 @@ namespace nc::ops {
 }
 
 namespace nc::panel {
+    class FavoriteLocationsStorage;
     class ClosedPanelsHistory;
     namespace data {
         class Model;
@@ -20,7 +21,6 @@ namespace nc::panel {
 }
 
 class ExternalToolsStorage;
-class FavoriteLocationsStorage;
 @class MainWindowController;
 @class Operation;
 @class PanelView;
@@ -53,7 +53,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     vector<GenericConfig::ObservationTicket> m_ConfigTickets;
     shared_ptr<nc::ops::Pool> m_OperationsPool;
     shared_ptr<nc::panel::ClosedPanelsHistory> m_ClosedPanelsHistory;
-    shared_ptr<FavoriteLocationsStorage> m_FavoriteLocationsStorage;
+    shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
 }
 
 @property (nonatomic, readonly) MainWindowController* mainWindowController;
@@ -62,8 +62,10 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) nc::ops::Pool& operationsPool;
 @property (nonatomic, readonly) bool isPanelActive;
 @property (nonatomic, readonly) bool goToForcesPanelActivation;
-@property (nonatomic, readwrite) shared_ptr<nc::panel::ClosedPanelsHistory> closedPanelsHistory;
-@property (nonatomic, readwrite) shared_ptr<FavoriteLocationsStorage> favoriteLocationsStorage;
+@property (nonatomic, readwrite)
+shared_ptr<nc::panel::ClosedPanelsHistory> closedPanelsHistory;
+@property (nonatomic, readwrite)
+shared_ptr<nc::panel::FavoriteLocationsStorage> favoriteLocationsStorage;
 
 - (instancetype) initDefaultFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool;
 - (instancetype) initEmptyFileStateWithFrame:(NSRect)frameRect andPool:(nc::ops::Pool&)_pool;

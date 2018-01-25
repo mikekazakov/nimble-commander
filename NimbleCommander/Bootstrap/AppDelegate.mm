@@ -26,7 +26,7 @@
 #include <NimbleCommander/States/FilePanels/ExternalToolsSupport.h>
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
-#include <NimbleCommander/States/FilePanels/Favorites.h>
+#include <NimbleCommander/States/FilePanels/FavoritesImpl.h>
 #include <NimbleCommander/States/FilePanels/FavoritesWindowController.h>
 #include <NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h>
 #include <NimbleCommander/Preferences/Preferences.h>
@@ -147,6 +147,7 @@ static NCAppDelegate *g_Me = nil;
     vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
     AppStoreHelper *m_AppStoreHelper;
     upward_flag         m_FinishedLaunching;
+    shared_ptr<nc::panel::FavoriteLocationsStorageImpl> m_Favorites;
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
@@ -488,7 +489,8 @@ static NCAppDelegate *g_Me = nil;
     }
     
     // last cleanup before shutting down here:
-    self.favoriteLocationsStorage->StoreData( StateConfig(), "filePanel.favorites" );
+    if( m_Favorites  )
+        m_Favorites->StoreData( StateConfig(), "filePanel.favorites" );
     
     return NSTerminateNow;
 }
@@ -724,11 +726,16 @@ static NCAppDelegate *g_Me = nil;
     return *i;
 }
 
-- (const shared_ptr<FavoriteLocationsStorage>&) favoriteLocationsStorage
+- (const shared_ptr<nc::panel::FavoriteLocationsStorage>&) favoriteLocationsStorage
 {
-    static const auto i = make_shared<FavoriteLocationsStorage>(StateConfig(),
-                                                                "filePanel.favorites");
-    return i;
+    static once_flag once;
+    call_once(once, [&]{
+        using t = nc::panel::FavoriteLocationsStorageImpl;
+        m_Favorites = make_shared<t>(StateConfig(), "filePanel.favorites");
+    });
+    
+    static const shared_ptr<nc::panel::FavoriteLocationsStorage> inst = m_Favorites;
+    return inst;
 }
 
 - (bool) askToResetDefaults
@@ -786,7 +793,7 @@ static NCAppDelegate *g_Me = nil;
     if( auto w = (FavoritesWindowController*)existing_window  )
         [w show];
     else {
-        auto storage = []()->FavoriteLocationsStorage& {
+        auto storage = []()->nc::panel::FavoriteLocationsStorage& {
             return *NCAppDelegate.me.favoriteLocationsStorage;
         };
         FavoritesWindowController *window = [[FavoritesWindowController alloc]

@@ -3,17 +3,24 @@
 
 #include "Favorites.h"
 
+namespace nc::panel {
+
 class FavoriteComposing
 {
 public:
+    FavoriteComposing(const FavoriteLocationsStorage& _storage);
     using Favorite = FavoriteLocationsStorage::Favorite;
 
 #ifdef __OBJC__
-    static optional<Favorite> FromURL( NSURL *_url );
+    optional<Favorite> FromURL( NSURL *_url );
 #endif
-    static optional<Favorite> FromListingItem( const VFSListingItem &_i );
+    optional<Favorite> FromListingItem( const VFSListingItem &_i );
 
-    static vector<Favorite> FinderFavorites();
-    static vector<Favorite> DefaultFavorites();
-
+    vector<Favorite> FinderFavorites();
+    vector<Favorite> DefaultFavorites();
+private:
+    const FavoriteLocationsStorage& m_Storage;
+    
 };
+
+}

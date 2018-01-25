@@ -19,6 +19,8 @@
 #include "../PanelView.h"
 #include "../Helpers/LocationFormatter.h"
 
+using namespace nc::panel;
+
 static const auto g_ConfigShowNetworkConnections = "filePanel.general.showNetworkConnectionsInGoToMenu";
 static const auto g_ConfigMaxNetworkConnections = "filePanel.general.maximumNetworkConnectionsInGoToMenu";
 static const auto g_ConfigShowOthersKey = "filePanel.general.appendOtherWindowsPathsToGoToMenu";

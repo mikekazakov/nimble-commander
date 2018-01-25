@@ -5,6 +5,8 @@
 #include "Favorites.h"
 #include "FavoritesMenuDelegate.h"
 
+using namespace nc::panel;
+
 static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Favorite &_favorite )
 {
     static const auto attributes = @{NSFontAttributeName:[NSFont menuFontOfSize:0]};

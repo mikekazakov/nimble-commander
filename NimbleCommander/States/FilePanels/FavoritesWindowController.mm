@@ -13,6 +13,8 @@
 #include "FavoriteComposing.h"
 #include "FilesDraggingSource.h"
 
+using namespace nc::panel;
+
 static const auto g_FavoritesWindowControllerDragDataType =
     @"FavoritesWindowControllerDragDataType";
 
@@ -222,11 +224,11 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     }
     else {
         vector<FavoriteLocationsStorage::Favorite> addition;
-        
+        auto &storage = m_Storage();
         if( auto source = objc_cast<FilesDraggingSource>(info.draggingSource) ) {
             // dragging from some NC panel
             for( PanelDraggingItem *item: source.items )
-                if( auto f = FavoriteComposing::FromListingItem(item.item) )
+                if( auto f = FavoriteComposing{storage}.FromListingItem(item.item) )
                     if( ![self hasFavorite:*f] )
                         addition.emplace_back( move(*f) );
         }
@@ -236,7 +238,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
             auto fileURLs = [pasteboard readObjectsForClasses:@[NSURL.class]
                                                       options:read_opts];
             for( NSURL *url in fileURLs )
-                if( auto f = FavoriteComposing::FromURL(url) )
+                if( auto f = FavoriteComposing{storage}.FromURL(url) )
                     if( ![self hasFavorite:*f] )
                         addition.emplace_back( move(*f) );
         }
@@ -317,8 +319,9 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     }
 
     unordered_map<size_t, FavoriteLocationsStorage::Favorite> proposed_favorites;
+    auto &storage = m_Storage();
     for( auto &p: panel_paths )
-        if( auto f = FavoriteLocationsStorage::ComposeFavoriteLocation(*get<1>(p), get<0>(p)) )
+        if( auto f = storage.ComposeFavoriteLocation(*get<1>(p), get<0>(p)) )
             if( ![self hasFavorite:*f] )
                 proposed_favorites[f->footprint] = *f;
 
@@ -357,7 +360,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 - (IBAction)onResetToFinderFavorites:(id)sender
 {
-    auto ff = FavoriteComposing::FinderFavorites();
+    auto ff = FavoriteComposing{m_Storage()}.FinderFavorites();
     if( ff.empty() ) {
         Alert *alert = [[Alert alloc] init];
         alert.messageText = NSLocalizedString(@"Failed to retreive Finder's Favorites",
@@ -374,7 +377,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 - (IBAction)onResetToDefaultFavorites:(id)sender
 {
-    m_Favorites = FavoriteComposing::DefaultFavorites();
+    m_Favorites = FavoriteComposing{m_Storage()}.DefaultFavorites();
     [self loadData];
     [self commit];
 }

@@ -5,9 +5,16 @@
 #include "FavoriteComposing.h"
 #include "PanelDataPersistency.h"
 
+namespace nc::panel {
+
 static vector<pair<string, string>> GetFindersFavorites();
 static vector<pair<string, string>> GetDefaultFavorites();
 
+FavoriteComposing::FavoriteComposing(const FavoriteLocationsStorage& _storage):
+    m_Storage(_storage)
+{
+}
+    
 optional< FavoriteLocationsStorage::Favorite > FavoriteComposing::
     FromURL( NSURL *_url )
 {
@@ -21,7 +28,7 @@ optional< FavoriteLocationsStorage::Favorite > FavoriteComposing::
     if( !path )
         return nullopt;
 
-    auto f = FavoriteLocationsStorage::ComposeFavoriteLocation(*VFSNativeHost::SharedHost(), path);
+    auto f = m_Storage.ComposeFavoriteLocation(*VFSNativeHost::SharedHost(), path);
     if( !f )
         return nullopt;
     
@@ -55,7 +62,7 @@ optional<FavoriteLocationsStorage::Favorite> FavoriteComposing::
         return nullopt;
 
     auto path = _i.IsDir() ? _i.Path() : _i.Directory();
-    auto f = FavoriteLocationsStorage::ComposeFavoriteLocation( *_i.Host(), path );
+    auto f = m_Storage.ComposeFavoriteLocation( *_i.Host(), path );
     if( !f )
         return nullopt;
 
@@ -71,7 +78,7 @@ vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::FinderFavorites()
     vector<FavoriteLocationsStorage::Favorite> favorites;
     auto &host = *VFSNativeHost::SharedHost();
     for( auto &f: ff) {
-        auto fl = FavoriteLocationsStorage::ComposeFavoriteLocation(
+        auto fl = m_Storage.ComposeFavoriteLocation(
             host,
             f.second,
             f.first);
@@ -89,7 +96,7 @@ vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::DefaultFavorites()
     vector<FavoriteLocationsStorage::Favorite> favorites;
     auto &host = *VFSNativeHost::SharedHost();
     for( auto &f: df) {
-        auto fl = FavoriteLocationsStorage::ComposeFavoriteLocation(
+        auto fl = m_Storage.ComposeFavoriteLocation(
             host,
             f.second,
             f.first);
@@ -212,4 +219,6 @@ static vector<pair<string, string>> GetDefaultFavorites()
         {TitleForPath(CommonPaths::Music()),        CommonPaths::Music()},
         {TitleForPath(CommonPaths::Pictures()),     CommonPaths::Pictures()}
     }};
+}
+
 }

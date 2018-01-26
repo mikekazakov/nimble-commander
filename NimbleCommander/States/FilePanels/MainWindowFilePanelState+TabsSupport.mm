@@ -12,27 +12,13 @@
 #include "PanelData.h"
 #include "TabContextMenu.h"
 #include <NimbleCommander/GeneralUI/FilterPopUpMenu.h>
-#include "ClosedPanelsHistory.h"
+#include "Helpers/ClosedPanelsHistory.h"
 #include "Helpers/LocationFormatter.h"
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "Actions/NavigateHistory.h"
+#include "Helpers/RecentlyClosedMenuDelegate.h"
 
 using namespace nc::panel;
-
-namespace nc::panel {
-    
-struct RestoreClosedTabRequest {
-    RestoreClosedTabRequest(FilePanelsTabbedHolder *_side, ListingPromise _promise):
-        side(_side),
-        promise(move(_promise))
-    {}
-    
-    FilePanelsTabbedHolder *side;
-    ListingPromise promise;
-};
-    
-}
-
 
 template <class _Cont, class _Tp>
 inline void erase_from(_Cont &__cont_, const _Tp& __value_)
@@ -229,6 +215,10 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         holder = m_SplitView.rightTabbedHolder;
     if( !holder )
         return;
+    
+    const auto side = holder == m_SplitView.leftTabbedHolder ?
+        RestoreClosedTabRequest::Side::Left :
+        RestoreClosedTabRequest::Side::Right;
 
     auto recents = [self filteredClosedPanelsHistory];
     for( auto &v: recents ) {
@@ -245,7 +235,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         item.target = self;
         item.action = @selector(respawnRecentlyClosedCallout:);
         item.representedObject = [[AnyHolder alloc] initWithAny:any{
-            RestoreClosedTabRequest(holder, v)
+            RestoreClosedTabRequest(side, v)
         }];
         [menu addItem:item];
     }
@@ -267,7 +257,10 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
             return;
         
         if( auto request = any_cast<RestoreClosedTabRequest>(&any_holder.any) ) {
-            [self spawnNewTabInTabView:request->side.tabView
+            const auto tab_view = request->side == RestoreClosedTabRequest::Side::Left ?
+                m_SplitView.leftTabbedHolder.tabView :
+                m_SplitView.rightTabbedHolder.tabView;
+            [self spawnNewTabInTabView:tab_view
                  loadingListingPromise:request->promise
                       activateNewPanel:true];
             if( m_ClosedPanelsHistory )

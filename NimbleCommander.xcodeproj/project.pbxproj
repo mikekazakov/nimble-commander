@@ -622,10 +622,6 @@
 		CF9F4B431ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9F4B461ECD81BC00E0AF82 /* NetworkShareSheetController.xib */; };
 		CF9F4B441ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF9F4B461ECD81BC00E0AF82 /* NetworkShareSheetController.xib */; };
 		CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */; };
-		CFA171412015D5D100F507D5 /* ClosedPanelsHistoryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1713F2015D5D100F507D5 /* ClosedPanelsHistoryImpl.cpp */; };
-		CFA171422015D67600F507D5 /* ClosedPanelsHistoryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1713F2015D5D100F507D5 /* ClosedPanelsHistoryImpl.cpp */; };
-		CFA171432015D67600F507D5 /* ClosedPanelsHistoryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1713F2015D5D100F507D5 /* ClosedPanelsHistoryImpl.cpp */; };
-		CFA171442015D67700F507D5 /* ClosedPanelsHistoryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFA1713F2015D5D100F507D5 /* ClosedPanelsHistoryImpl.cpp */; };
 		CFA1715D20174C9A00F507D5 /* LocationFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1715C20174C9A00F507D5 /* LocationFormatter.mm */; };
 		CFA1715E20174CA900F507D5 /* LocationFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1715C20174C9A00F507D5 /* LocationFormatter.mm */; };
 		CFA1715F20174CAA00F507D5 /* LocationFormatter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA1715C20174C9A00F507D5 /* LocationFormatter.mm */; };
@@ -732,6 +728,14 @@
 		CFB791841D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
 		CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */; };
+		CFB9F109201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB9F107201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.cpp */; };
+		CFB9F10A201AEDC400FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB9F107201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.cpp */; };
+		CFB9F10B201AEDC400FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB9F107201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.cpp */; };
+		CFB9F10C201AEDC500FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB9F107201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.cpp */; };
+		CFB9F10F201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB9F10E201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm */; };
+		CFB9F110201AEE8300FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB9F10E201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm */; };
+		CFB9F111201AEE8300FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB9F10E201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm */; };
+		CFB9F112201AEE8400FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB9F10E201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm */; };
 		CFBA63AB1FC1A4EB00077682 /* RevealInOppositePanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */; };
 		CFBA63AC1FC1A4EC00077682 /* RevealInOppositePanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */; };
 		CFBA63AD1FC1A4ED00077682 /* RevealInOppositePanel.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF197C4B1FB960CC009F6C59 /* RevealInOppositePanel.mm */; };
@@ -1809,9 +1813,6 @@
 		CF9F4B4A1ECD8A9900E0AF82 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ConnectToServer.strings; sourceTree = "<group>"; };
 		CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoToFolderSheetController.h; path = NimbleCommander/States/FilePanels/Views/GoToFolderSheetController.h; sourceTree = SOURCE_ROOT; };
 		CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = GoToFolderSheetController.mm; path = NimbleCommander/States/FilePanels/Views/GoToFolderSheetController.mm; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		CFA1713F2015D5D100F507D5 /* ClosedPanelsHistoryImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClosedPanelsHistoryImpl.cpp; path = NimbleCommander/States/FilePanels/ClosedPanelsHistoryImpl.cpp; sourceTree = SOURCE_ROOT; };
-		CFA171402015D5D100F507D5 /* ClosedPanelsHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClosedPanelsHistory.h; path = NimbleCommander/States/FilePanels/ClosedPanelsHistory.h; sourceTree = SOURCE_ROOT; };
-		CFA171452015DF3700F507D5 /* ClosedPanelsHistoryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClosedPanelsHistoryImpl.h; path = NimbleCommander/States/FilePanels/ClosedPanelsHistoryImpl.h; sourceTree = SOURCE_ROOT; };
 		CFA1715B20174C9A00F507D5 /* LocationFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocationFormatter.h; path = NimbleCommander/States/FilePanels/Helpers/LocationFormatter.h; sourceTree = SOURCE_ROOT; };
 		CFA1715C20174C9A00F507D5 /* LocationFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = LocationFormatter.mm; path = NimbleCommander/States/FilePanels/Helpers/LocationFormatter.mm; sourceTree = SOURCE_ROOT; };
 		CFA1716120196CB400F507D5 /* AppDelegate+MainWindowCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+MainWindowCreation.h"; path = "NimbleCommander/Bootstrap/AppDelegate+MainWindowCreation.h"; sourceTree = SOURCE_ROOT; };
@@ -1855,6 +1856,11 @@
 		CFB791811D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowToolsTab.h; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.h; sourceTree = SOURCE_ROOT; };
 		CFB791821D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowToolsTab.mm; path = NimbleCommander/Preferences/PreferencesWindowToolsTab.mm; sourceTree = SOURCE_ROOT; };
 		CFB8CDBC1D82BFAD007B1142 /* libssh2.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssh2.a; path = 3rd_party/built/lib/libssh2.a; sourceTree = "<group>"; };
+		CFB9F106201AEDB800FC65D8 /* ClosedPanelsHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClosedPanelsHistory.h; path = NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistory.h; sourceTree = SOURCE_ROOT; };
+		CFB9F107201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ClosedPanelsHistoryImpl.cpp; path = NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.cpp; sourceTree = SOURCE_ROOT; };
+		CFB9F108201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ClosedPanelsHistoryImpl.h; path = NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h; sourceTree = SOURCE_ROOT; };
+		CFB9F10D201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RecentlyClosedMenuDelegate.h; path = NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h; sourceTree = SOURCE_ROOT; };
+		CFB9F10E201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = RecentlyClosedMenuDelegate.mm; path = NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CFBE65AD17B66E9A00451AE7 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		CFBEF8F41F6781A100C63816 /* TextWidthsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextWidthsCache.mm; path = NimbleCommander/States/FilePanels/Brief/TextWidthsCache.mm; sourceTree = SOURCE_ROOT; };
 		CFBEF9001F6781A100C63816 /* TextWidthsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextWidthsCache.h; path = NimbleCommander/States/FilePanels/Brief/TextWidthsCache.h; sourceTree = SOURCE_ROOT; };
@@ -2305,9 +2311,6 @@
 		CF11762818F5124D0069C59D /* Core */ = {
 			isa = PBXGroup;
 			children = (
-				CFA171402015D5D100F507D5 /* ClosedPanelsHistory.h */,
-				CFA1713F2015D5D100F507D5 /* ClosedPanelsHistoryImpl.cpp */,
-				CFA171452015DF3700F507D5 /* ClosedPanelsHistoryImpl.h */,
 				CFDAC2641DFBF20F0039A104 /* ContextMenu.h */,
 				CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */,
 				CFFA95231F47CA760035E606 /* DragReceiver.h */,
@@ -2778,6 +2781,9 @@
 				CF2C4DEB1C57A00400DEC75A /* AskForPasswordWindowController.h */,
 				CF2C4DEC1C57A00400DEC75A /* AskForPasswordWindowController.mm */,
 				CF754D511C8FE23C00381260 /* AskForPasswordWindowController.xib */,
+				CFB9F106201AEDB800FC65D8 /* ClosedPanelsHistory.h */,
+				CFB9F107201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.cpp */,
+				CFB9F108201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.h */,
 				CF2F434F1EAF37E800AA031A /* ConfigBackedNetworkConnectionsManager.h */,
 				CFDAC2AD1DFD096E0039A104 /* ConfigBackedNetworkConnectionsManager.mm */,
 				CFDAC2AA1DFD096E0039A104 /* ConnectionsMenuDelegate.h */,
@@ -2800,6 +2806,8 @@
 				CF2F43551EAF395900AA031A /* NetworkConnectionsManager.mm */,
 				CF818B6F1EA07A5B00BC28E6 /* Pasteboard.h */,
 				CF818B701EA07A5B00BC28E6 /* Pasteboard.mm */,
+				CFB9F10D201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.h */,
+				CFB9F10E201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm */,
 				CFDAC2A71DFD093E0039A104 /* ToolsMenuDelegate.h */,
 				CFDAC2A81DFD093E0039A104 /* ToolsMenuDelegate.mm */,
 			);
@@ -3823,6 +3831,7 @@
 				CFBA63AC1FC1A4EC00077682 /* RevealInOppositePanel.mm in Sources */,
 				CFD726201E42E0AC00603077 /* ActionShortcut.mm in Sources */,
 				CF818B5A1EA0610D00BC28E6 /* ToggleSort.mm in Sources */,
+				CFB9F10B201AEDC400FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CFD7262B1E42E0BF00603077 /* QLThumbnailsCache.mm in Sources */,
 				CFD8CDBA1E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
 				CF5E9A4F1FCBDE2A005608F5 /* RefreshPanel.mm in Sources */,
@@ -3927,6 +3936,7 @@
 				CF818B6D1EA0615300BC28E6 /* FilterPopUpMenu.mm in Sources */,
 				CF75E88C1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
 				CF8B24411E6FC696008EB447 /* FavoritesImpl.cpp in Sources */,
+				CFB9F111201AEE8300FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CF36DBF41F6C18F4004A018E /* TextWidthsCache.mm in Sources */,
 				CFD726E11E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CF4E56D61D506B9700452912 /* FindFilesSheetController.mm in Sources */,
@@ -4006,7 +4016,6 @@
 				CFFED08D1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFDEB8291D2BB7F1009BCCBD /* ExternalToolsSupport.mm in Sources */,
 				CF4E569E1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
-				CFA171432015D67600F507D5 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CF818B6A1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
 				CF5E9A621FCD6AF4005608F5 /* QuickLookPanel.mm in Sources */,
 				CF1E3D2C1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
@@ -4084,7 +4093,6 @@
 				CFD726241E42E0B200603077 /* ActionsShortcutsManager.mm in Sources */,
 				CF662AE41D8A4E89008F9DD5 /* ActivationManager.cpp in Sources */,
 				CF818B471EA0610C00BC28E6 /* ChangeAttributes.mm in Sources */,
-				CFA171412015D5D100F507D5 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CFD726E91E42E2D200603077 /* PanelListViewGeometry.mm in Sources */,
 				CF9F4AF71ECC8DAB00E0AF82 /* Compress.mm in Sources */,
 				CFA539991D433E2A00C562A7 /* ExternalToolParameterValueSheetController.mm in Sources */,
@@ -4149,6 +4157,7 @@
 				CFB66FCB1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF56BF571D68129800A08D2B /* VFSInstanceManager.cpp in Sources */,
 				CFD726061E42E06900603077 /* AppDelegate.mm in Sources */,
+				CFB9F10F201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CFD726561E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFD7260C1E42E07400603077 /* Application.mm in Sources */,
 				CF818B4E1EA0610C00BC28E6 /* ShowGoToPopup.mm in Sources */,
@@ -4223,6 +4232,7 @@
 				CFD727191E42E32500603077 /* ToolsMenuDelegate.mm in Sources */,
 				CF876D511D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CFD7266C1E42E1ED00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
+				CFB9F109201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CF1FBF2A1E8F57E500D3569C /* OpenWithExternalEditor.mm in Sources */,
 				CFD7267A1E42E20300603077 /* PanelController.mm in Sources */,
 				CF04DDF61E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
@@ -4309,7 +4319,6 @@
 				CFDAC26E1DFBF20F0039A104 /* MainWindowFilePanelState.mm in Sources */,
 				CF0260D21E9F10060025B50F /* ToggleLayout.mm in Sources */,
 				CF0260C71E9DEC380025B50F /* CalculateSizes.mm in Sources */,
-				CFA171442015D67700F507D5 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CFDAC2701DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF876D271D51E04A009C0CCE /* BigFileViewHex.mm in Sources */,
 				CFD8CDB21E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
@@ -4374,6 +4383,7 @@
 				CF4135201F890709007429B6 /* SettingsAdaptor.mm in Sources */,
 				CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
+				CFB9F112201AEE8400FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CF0139B21E99EC4A00E44F2D /* DefaultAction.mm in Sources */,
 				CF197C431FB81ACB009F6C59 /* ToggleSingleOrDualMode.mm in Sources */,
 				CFB66FA11D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
@@ -4448,6 +4458,7 @@
 				CFDAC21B1DFBC6CB0039A104 /* PanelHistory.mm in Sources */,
 				CF31F66D1DFE6268005A1A40 /* PanelViewLayoutSupport.mm in Sources */,
 				CF876D2A1D51E04A009C0CCE /* BigFileViewText.mm in Sources */,
+				CFB9F10C201AEDC500FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CFDAC2711DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CFA0B23618693F1100501C35 /* GoToFolderSheetController.mm in Sources */,
 				CF197C4C1FB960CC009F6C59 /* RevealInOppositePanel.mm in Sources */,
@@ -4520,7 +4531,6 @@
 				CF876D3A1D51E0AF009C0CCE /* BigFileViewHex.mm in Sources */,
 				CFD726941E42E22A00603077 /* PanelDataItemVolatileData.cpp in Sources */,
 				CFA2D6071E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
-				CFA171422015D67600F507D5 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CF9F4AFA1ECC8DBC00E0AF82 /* OpenFile.mm in Sources */,
 				CF20DF451FC670100074ABB8 /* ShowTerminal.mm in Sources */,
 				CF9F4B081ECC919A00E0AF82 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */,
@@ -4547,6 +4557,7 @@
 				CFA171652019700000F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
 				CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */,
 				CFF6F2801A13567C00011177 /* DetailedVolumeInformationSheetController.mm in Sources */,
+				CFB9F10A201AEDC400FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CFD726A61E42E24800603077 /* PanelViewPresentationSettings.mm in Sources */,
 				CFD726581E42E1B300603077 /* MainWindow.mm in Sources */,
 				CF1FBF251E8F57CF00D3569C /* FavoriteComposing.mm in Sources */,
@@ -4616,6 +4627,7 @@
 				CFF6F2D61A13567C00011177 /* FTPConnectionSheetController.mm in Sources */,
 				CFD726E01E42E2C600603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CF2F43591EAF395900AA031A /* NetworkConnectionsManager.mm in Sources */,
+				CFB9F110201AEE8300FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CF36DBEA1F6C1806004A018E /* PanelViewFieldEditor.mm in Sources */,
 				CF7A09DA1EC44A3F00533B07 /* OpenNetworkConnection.mm in Sources */,
 				CFBA63AB1FC1A4EB00077682 /* RevealInOppositePanel.mm in Sources */,

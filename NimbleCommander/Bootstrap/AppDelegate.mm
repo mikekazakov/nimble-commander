@@ -45,7 +45,8 @@
 #include "Interactions.h"
 #include <NimbleCommander/States/MainWindow.h>
 #include "AppDelegate+MainWindowCreation.h"
-#include <NimbleCommander/States/FilePanels/ClosedPanelsHistoryImpl.h>
+#include <NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h>
+#include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
 
 using namespace nc::bootstrap;
 
@@ -132,6 +133,8 @@ static NCAppDelegate *g_Me = nil;
 @interface NCAppDelegate()
 
 @property (nonatomic, readonly) nc::core::Dock& dock;
+
+@property (nonatomic) IBOutlet NSMenu *recentlyClosedMenu;
 
 @end
 
@@ -250,6 +253,18 @@ static NCAppDelegate *g_Me = nil;
         return *g_Me.networkConnectionsManager;
     }];
     connections_menu_item.menu.delegate = conn_delegate;
+    
+    auto panels_locator = []() -> MainWindowFilePanelState* {
+        if( auto wnd = objc_cast<NCMainWindow>(NSApp.keyWindow) )
+            if( auto ctrl = objc_cast<MainWindowController>(wnd.delegate) )
+                return ctrl.filePanelsState;
+        return nil;
+    };
+    static const auto recently_closed_delegate = [[NCPanelsRecentlyClosedMenuDelegate alloc]
+                                                  initWithMenu:self.recentlyClosedMenu
+                                                  storage:self.closedPanelsHistory
+                                                  panelsLocator:panels_locator];
+    (void)recently_closed_delegate;
 }
 
 - (void)updateMainMenuFeaturesByVersionAndState

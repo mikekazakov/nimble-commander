@@ -32,7 +32,7 @@
 #include <Quartz/Quartz.h>
 #include "PanelAux.h"
 #include "PanelControllerPersistency.h"
-#include "ClosedPanelsHistory.h"
+#include "Helpers/ClosedPanelsHistory.h"
 #include "PanelHistory.h"
 
 using namespace nc::panel;
@@ -469,12 +469,12 @@ static NSString *TitleForData( const data::Model* _data );
     return objc_cast<PanelController>(m_SplitView.rightTabbedHolder.current.delegate);
 }
 
-- (vector<PanelController*>) leftControllers
+- (const vector<PanelController*>&)leftControllers
 {
     return m_LeftPanelControllers;
 }
 
-- (vector<PanelController*>) rightControllers
+- (const vector<PanelController*>&)rightControllers
 {
     return m_RightPanelControllers;
 }

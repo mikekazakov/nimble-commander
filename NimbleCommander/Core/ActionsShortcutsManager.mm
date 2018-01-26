@@ -107,6 +107,7 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.go.processes_list",                          14'120},
     {"menu.go.favorites.manage",                        14'210},
   /*{"menu.go.frequent.clear", NOT WIRED AT THE MOMENT  14'220},*/
+    {"menu.go.restore_last_closed",                     14'290},
     {"menu.go.to_folder",                               14'110},
     {"menu.go.connect.ftp",                             14'130},
     {"menu.go.connect.sftp",                            14'140},
@@ -296,6 +297,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.go.processes_list",                              u8"⌥⌘p"     }, // alt+cmd+p
     {"menu.go.favorites.manage",                            u8"^⌘b"     }, // ctrl+cmd+b
     {"menu.go.to_folder",                                   u8"⇧⌘g"     }, // shift+cmd+g
+    {"menu.go.restore_last_closed",                         u8"⇧⌘r"     }, // shift+cmd+R
     {"menu.go.connect.ftp",                                 u8""        },
     {"menu.go.connect.sftp",                                u8""        },
     {"menu.go.connect.webdav",                              u8""        },

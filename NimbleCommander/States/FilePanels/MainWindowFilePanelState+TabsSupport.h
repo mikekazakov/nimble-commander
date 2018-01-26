@@ -13,6 +13,7 @@
 - (void) closeOtherTabsForController:(PanelController*)_controller;
 - (void) updateTabBarsVisibility;
 - (void) updateTabBarButtons;
+- (void) respawnRecentlyClosedCallout:(id)sender;
 
 /**
  * if file panel is not active - return 0, otherwise return amount of tabs on active side

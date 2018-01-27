@@ -551,7 +551,8 @@ private:
                                                    nullptr,
                                                    [&]{ return m_FileSearch->IsStopped(); } );
     if( host )
-        nc::core::VFSInstanceManager::Instance().TameVFS(host);
+        if( self.vfsInstanceManager )
+            self.vfsInstanceManager->TameVFS(host);
     
     return host;
 }

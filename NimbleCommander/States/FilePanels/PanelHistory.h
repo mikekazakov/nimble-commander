@@ -4,6 +4,10 @@
 #include <VFS/VFS_fwd.h>
 #include "ListingPromise.h"
 
+namespace nc::core {
+    class VFSInstanceManager;
+}
+
 namespace nc::panel {
 
 /**
@@ -13,7 +17,6 @@ class History
 {
 public:
     using Path = ListingPromise;
-    
     
     bool IsRecording() const noexcept;
     unsigned Length() const noexcept;
@@ -58,6 +61,8 @@ public:
     vector<reference_wrapper<const Path>> All() const;
     
     const string &LastNativeDirectoryVisited() const noexcept;
+    
+    void SetVFSInstanceManager(core::VFSInstanceManager &_mgr);
 private:
     deque<Path>         m_History;
      // lesser the index - farther the history entry
@@ -66,6 +71,7 @@ private:
     bool                m_IsRecording = true;
     string              m_LastNativeDirectory;
     enum {              m_HistoryLength = 128 };
+    core::VFSInstanceManager *m_VFSMgr = nullptr;
 };
 
 }

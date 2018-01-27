@@ -46,7 +46,7 @@ void ListingPromiseLoader::Load( const ListingPromise &_promise, PanelController
 {
     auto task = [=]( const function<bool()> &_cancelled ) {
         const auto vfs_adapter = [&](const core::VFSInstancePromise& _promise){
-            return core::VFSInstanceManager::Instance().RetrieveVFS(_promise, _cancelled );
+            return _panel.vfsInstanceManager.RetrieveVFS(_promise, _cancelled );
         };
         
         try {

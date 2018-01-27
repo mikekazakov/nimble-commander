@@ -3,6 +3,7 @@
 
 #include <Utility/SheetController.h>
 #include <VFS/VFS.h>
+#include <NimbleCommander/Core/VFSInstanceManager.h>
 
 struct FindFilesSheetControllerFoundItem
 {
@@ -20,6 +21,7 @@ struct FindFilesSheetControllerFoundItem
 @property (nonatomic) VFSHostPtr host;
 @property (nonatomic) string path;
 @property (nonatomic) function<void(const vector<VFSPath> &_filepaths)> onPanelize;
+@property (nonatomic) nc::core::VFSInstanceManager *vfsInstanceManager;
 - (FindFilesSheetControllerFoundItem*) selectedItem; // may be nullptr
 
 @end

@@ -38,14 +38,9 @@ VFSInstanceManagerImpl::VFSInstanceManagerImpl()
     
 VFSInstanceManagerImpl::~VFSInstanceManagerImpl()
 {
+    cerr << "VFSInstanceManager instances must live forever!" << endl;
 }
     
-VFSInstanceManager& VFSInstanceManager::Instance()
-{
-    static auto inst = new VFSInstanceManagerImpl;
-    return *inst;
-}
-
 VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS( const VFSHostPtr& _instance )
 {
     if( !_instance )

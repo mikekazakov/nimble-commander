@@ -37,6 +37,7 @@ static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<VFSPath> 
 void FindFiles::Perform( PanelController *_target, id _sender ) const
 {
     FindFilesSheetController *sheet = [FindFilesSheetController new];
+    sheet.vfsInstanceManager = &_target.vfsInstanceManager;
     sheet.host = _target.isUniform ?
         _target.vfs :
         _target.view.item.Host();

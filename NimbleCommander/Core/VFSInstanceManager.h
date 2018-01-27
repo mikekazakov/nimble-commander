@@ -14,14 +14,14 @@ class VFSInstancePromise;
  * Keeps track of alive VFS in the system.
  * Can give promise to return an alive VFS or try to rebuilt an alive instance from saved VFSConfiguration.
  * All public API is thread-safe.
+ * Instances of this class are supposed to live forever, as spawned promises don't prolong the 
+ * lifetime of the manager object.
  */
 class VFSInstanceManager : protected ObservableBase
 {
 public:
     using ObservationTicket = ObservableBase::ObservationTicket;
     using Promise = VFSInstancePromise;
-
-    static VFSInstanceManager& Instance();
 
     virtual ~VFSInstanceManager() = default;
     

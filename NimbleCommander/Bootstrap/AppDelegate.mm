@@ -797,7 +797,7 @@ static NCAppDelegate *g_Me = nil;
     if( auto w = (VFSListWindowController*)existing_window  )
         [w show];
     else {
-        VFSListWindowController *window = [[VFSListWindowController alloc] init];
+        auto window = [[VFSListWindowController alloc] initWithVFSManager:self.vfsInstanceManager];
         [window show];
         existing_window = window;
     }

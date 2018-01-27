@@ -145,8 +145,9 @@ static vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_current )
     return other_paths;
 }
 
-static vector<pair<core::VFSInstancePromise, string>> ProduceLocationsForParentDirectories(
-    const VFSListing &_listing )
+static vector<pair<core::VFSInstancePromise, string>>
+    ProduceLocationsForParentDirectories(const VFSListing &_listing,
+                                         core::VFSInstanceManager &_vfs_mgr )
 {
     if( !_listing.IsUniform() )
         throw invalid_argument("ProduceLocationsForParentDirectories: _listing should be uniform");
@@ -164,7 +165,7 @@ static vector<pair<core::VFSInstancePromise, string>> ProduceLocationsForParentD
             if( dir == "/" )
                 brk = true;
             
-            result.emplace_back(core::VFSInstanceManager::Instance().TameVFS(host),
+            result.emplace_back(_vfs_mgr.TameVFS(host),
                                 dir == "/" ? dir.native() : dir.native() + "/");
             
             dir = dir.parent_path();
@@ -357,7 +358,8 @@ static NSMenu *BuildParentFoldersQuickList( PanelController *_panel )
 
     MenuItemBuilder builder{_panel.networkConnectionsManager, action_target};
 
-    for( auto &i: ProduceLocationsForParentDirectories(_panel.data.Listing()) )
+    for( auto &i: ProduceLocationsForParentDirectories(_panel.data.Listing(),
+                                                       _panel.vfsInstanceManager) )
         [menu addItem:builder.MenuItemForPromiseAndPath(i.first, i.second)];
 
     SetupHotkeys(menu);

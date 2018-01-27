@@ -249,6 +249,7 @@ static void HeatUpConfigValues()
     vector<GenericConfig::ObservationTicket> m_ConfigObservers;
 
     shared_ptr<NetworkConnectionsManager> m_NetworkConMgr;
+    nc::core::VFSInstanceManager       *m_VFSInstanceManager;
     shared_ptr<PanelViewLayoutsStorage> m_Layouts;
     int                                 m_ViewLayoutIndex;
     shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
@@ -263,6 +264,7 @@ static void HeatUpConfigValues()
 
 - (id) initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
 networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
+    vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
 {
     assert( _layouts );
     assert( _conn_mgr );
@@ -274,6 +276,8 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     if(self) {
         m_Layouts = move(_layouts);
         m_NetworkConMgr = move(_conn_mgr);
+        m_VFSInstanceManager = &_vfs_mgr;
+        m_History.SetVFSInstanceManager(_vfs_mgr);
         m_QuickSearchLastType = 0ns;
         m_QuickSearchOffset = 0;
         m_VFSFetchingFlags = 0;
@@ -955,9 +959,9 @@ static bool RouteKeyboardInputIntoTerminal()
     m_DirectoryLoadingQ.Run([=](){
         VFSHostPtr host;
         try {
-            host = VFSInstanceManager::Instance().RetrieveVFS(_promise,
-                                                              [&]{ return m_DirectoryLoadingQ.IsStopped(); }
-                                                              );
+            host = m_VFSInstanceManager->RetrieveVFS(_promise,
+                                                     [&]{ return m_DirectoryLoadingQ.IsStopped(); }
+                                                     );
         } catch (VFSErrorException &e) {
             return; // TODO: something
         }
@@ -977,7 +981,10 @@ static bool RouteKeyboardInputIntoTerminal()
 {
     m_DirectoryLoadingQ.Run([=]{
         VFSHostPtr host;
-        if( PanelDataPersisency::CreateVFSFromLocation(_location, host) == VFSError::Ok ) {
+        const auto rc = PanelDataPersisency::CreateVFSFromLocation(_location,
+                                                                   host,
+                                                                   *m_VFSInstanceManager);
+        if( rc == VFSError::Ok ) {
             string path = _location.path;
             dispatch_to_main_queue([=]{
                 auto context = make_shared<DirectoryChangeRequest>();
@@ -1520,6 +1527,11 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
 - (nc::panel::PanelViewLayoutsStorage&)layoutStorage
 {
     return *m_Layouts;
+}
+
+- (nc::core::VFSInstanceManager&) vfsInstanceManager
+{
+    return *m_VFSInstanceManager;
 }
 
 @end

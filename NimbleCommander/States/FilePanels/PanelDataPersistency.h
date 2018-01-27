@@ -8,7 +8,10 @@
 
 // these routines implicitly use the following components:
 // 1. NetworkConnectionsManager
-// 2. VFSInstanceManager
+
+namespace nc::core {
+    class VFSInstanceManager;
+}
 
 namespace nc::panel {
 
@@ -52,7 +55,9 @@ public:
     static int CreateVFSFromState( const json &_state, VFSHostPtr &_host );
     
     // uses current state to retrieve existing vfs if possible
-    static int CreateVFSFromLocation( const PersistentLocation &_state, VFSHostPtr &_host );
+    static int CreateVFSFromLocation( const PersistentLocation &_state,
+                                     VFSHostPtr &_host,
+                                     core::VFSInstanceManager &_inst_mgr);
     
     static string GetPathFromState( const json &_state );
     

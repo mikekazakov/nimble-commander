@@ -47,6 +47,7 @@
 #include "AppDelegate+MainWindowCreation.h"
 #include <NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h>
 #include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
+#include <NimbleCommander/Core/VFSInstanceManagerImpl.h>
 
 using namespace nc::bootstrap;
 
@@ -841,6 +842,12 @@ static NCAppDelegate *g_Me = nil;
 - (nc::core::Dock&) dock
 {
     static const auto instance = new nc::core::Dock;
+    return *instance;
+}
+
+- (nc::core::VFSInstanceManager&)vfsInstanceManager
+{
+    static const auto instance = new nc::core::VFSInstanceManagerImpl;
     return *instance;
 }
 

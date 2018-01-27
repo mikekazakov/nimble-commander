@@ -67,6 +67,10 @@ public:
     virtual ObservationTicket ObserveAliveVFSListChanged( function<void()> _callback ) = 0;
     virtual ObservationTicket ObserveKnownVFSListChanged( function<void()> _callback ) = 0;
     
+protected:
+    Promise SpawnPromise(uint64_t _inst_id);
+    VFSInstanceManager *InstanceFromPromise(const Promise& _promise);
+    
 private:
     virtual void IncPromiseCount(uint64_t _inst_id) = 0;
     virtual void DecPromiseCount(uint64_t _inst_id) = 0;

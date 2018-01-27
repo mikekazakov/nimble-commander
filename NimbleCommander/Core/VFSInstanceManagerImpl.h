@@ -12,6 +12,9 @@ public:
     using ObservationTicket = ObservableBase::ObservationTicket;
     using Promise = VFSInstancePromise;
     
+    VFSInstanceManagerImpl();
+    ~VFSInstanceManagerImpl();
+    
     /**
      * Will register information about the instance if not yet.
      * Returned promise may be used for later vfs restoration.

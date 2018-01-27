@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <VFS/VFS.h>
+#include <VFS/VFS_fwd.h>
 
 @class MainWindowController;
 @class InternalViewerWindowController;
@@ -13,14 +13,22 @@ class ThemesManager;
 class ExternalEditorsStorage;
 class NetworkConnectionsManager;
 
-namespace nc::ops {
-    class AggregateProgressTracker;
-}
+namespace nc {
+    
+    namespace core {
+        class VFSInstanceManager;
+    }
 
-namespace nc::panel {
-    class PanelViewLayoutsStorage;
-    class FavoriteLocationsStorage;
-    class ClosedPanelsHistory;
+    namespace ops {
+        class AggregateProgressTracker;
+    }
+    
+    namespace panel {
+        class PanelViewLayoutsStorage;
+        class FavoriteLocationsStorage;
+        class ClosedPanelsHistory;
+    }
+
 }
 
 @interface NCAppDelegate : NSObject <NSApplicationDelegate>
@@ -88,6 +96,10 @@ namespace nc::panel {
 
 @property (nonatomic, readonly) nc::ops::AggregateProgressTracker &operationsProgressTracker;
 
-@property (nonatomic,readonly)const shared_ptr<nc::panel::ClosedPanelsHistory> &closedPanelsHistory;
+@property (nonatomic, readonly)
+    const shared_ptr<nc::panel::ClosedPanelsHistory> &closedPanelsHistory;
+
+@property (nonatomic, readonly)
+    nc::core::VFSInstanceManager &vfsInstanceManager;
 
 @end

@@ -32,6 +32,14 @@ VFSInstanceManagerImpl::Info::Info(const VFSHostPtr& _host,
 {
 }
 
+VFSInstanceManagerImpl::VFSInstanceManagerImpl()
+{
+}
+    
+VFSInstanceManagerImpl::~VFSInstanceManagerImpl()
+{
+}
+    
 VFSInstanceManager& VFSInstanceManager::Instance()
 {
     static auto inst = new VFSInstanceManagerImpl;
@@ -271,10 +279,10 @@ VFSHostPtr VFSInstanceManagerImpl::RetrieveVFS( const Promise &_promise, functio
 {
     if( !_promise )
         return nullptr;
-    assert( _promise.manager == this );
+    assert(  InstanceFromPromise(_promise) == this );
     
     LOCK_GUARD(m_MemoryLock) {
-        auto info = InfoFromID_Unlocked( _promise.inst_id );
+        auto info = InfoFromID_Unlocked( _promise.id() );
         if( !info )
             return nullptr; // this should never happen!
         
@@ -303,11 +311,11 @@ VFSInstanceManager::Promise VFSInstanceManagerImpl::GetParentPromise( const Prom
 {
     if( !_promise )
         return {};
-    assert( _promise.manager == this );
+    assert( InstanceFromPromise(_promise) == this );
     
     
     LOCK_GUARD(m_MemoryLock) {
-        auto info = InfoFromID_Unlocked( _promise.inst_id );
+        auto info = InfoFromID_Unlocked( _promise.id() );
         if( !info || info->m_ParentVFSID == 0 )
             return {};
         
@@ -321,10 +329,10 @@ const char *VFSInstanceManagerImpl::GetTag( const Promise &_promise )
 {
     if( !_promise )
         return nullptr;
-    assert( _promise.manager == this );
+    assert( InstanceFromPromise(_promise) == this );
     
     LOCK_GUARD(m_MemoryLock) {
-        auto info = InfoFromID_Unlocked( _promise.inst_id );
+        auto info = InfoFromID_Unlocked( _promise.id() );
         if( !info )
             return nullptr; // this should never happen!
         
@@ -369,11 +377,11 @@ string VFSInstanceManagerImpl::GetVerboseVFSTitle( const Promise &_promise )
 {
     if( !_promise )
         return "";
-    assert( _promise.manager == this );
+    assert( InstanceFromPromise(_promise) == this );
     
     LOCK_GUARD(m_MemoryLock) {
         string title;
-        uint64_t next = _promise.inst_id;
+        uint64_t next = _promise.id();
         while( next > 0 ) {
             auto info = InfoFromID_Unlocked( next );
             if( !info )
@@ -411,7 +419,7 @@ vector<weak_ptr<VFSHost>> VFSInstanceManagerImpl::AliveHosts()
 VFSInstanceManager::Promise VFSInstanceManagerImpl::SpawnPromiseFromInfo_Unlocked( Info &_info )
 {
     _info.m_PromisesCount++;
-    return Promise{_info.m_ID, *this};
+    return SpawnPromise(_info.m_ID);
 }
 
 }

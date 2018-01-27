@@ -279,6 +279,10 @@
 		CF50926C201C30B1004D9CF5 /* VFSInstancePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */; };
 		CF50926D201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */; };
 		CF50926E201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */; };
+		CF509271201C3D9A004D9CF5 /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */; };
+		CF509272201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */; };
+		CF509273201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */; };
+		CF509274201C3DB7004D9CF5 /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */; };
 		CF56BEF61D5C26AE00A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
 		CF56BEFA1D5C26AF00A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
 		CF56BEFB1D5C26B000A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
@@ -1620,6 +1624,7 @@
 		CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstancePromise.cpp; path = NimbleCommander/Core/VFSInstancePromise.cpp; sourceTree = SOURCE_ROOT; };
 		CF50925B201C3025004D9CF5 /* VFSInstancePromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstancePromise.h; path = NimbleCommander/Core/VFSInstancePromise.h; sourceTree = SOURCE_ROOT; };
 		CF50926F201C3476004D9CF5 /* VFSInstanceManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstanceManagerImpl.h; path = NimbleCommander/Core/VFSInstanceManagerImpl.h; sourceTree = SOURCE_ROOT; };
+		CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstanceManager.cpp; path = NimbleCommander/Core/VFSInstanceManager.cpp; sourceTree = SOURCE_ROOT; };
 		CF51D11E1FD512A70026CC00 /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerHistory.h; path = NimbleCommander/Viewer/InternalViewerHistory.h; sourceTree = SOURCE_ROOT; };
@@ -2898,6 +2903,7 @@
 				CF5FE7FE1E149FF700CD83B4 /* Theming */,
 				CFB44F0A1F35F0B900E7555E /* UserNotificationsCenter.h */,
 				CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */,
+				CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */,
 				CF56BF521D68061600A08D2B /* VFSInstanceManager.h */,
 				CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */,
 				CF50926F201C3476004D9CF5 /* VFSInstanceManagerImpl.h */,
@@ -3949,6 +3955,7 @@
 				CFB9F111201AEE8300FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CF36DBF41F6C18F4004A018E /* TextWidthsCache.mm in Sources */,
 				CFD726E11E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
+				CF509272201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */,
 				CF4E56D61D506B9700452912 /* FindFilesSheetController.mm in Sources */,
 				CFD7266B1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFD726681E42E1E700603077 /* ContextMenu.mm in Sources */,
@@ -4155,6 +4162,7 @@
 				CFD726D91E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */,
 				CFD7263F1E42E0EE00603077 /* GoogleAnalytics.mm in Sources */,
 				CF4E56C51D50692000452912 /* PreferencesWindowTerminalTab.mm in Sources */,
+				CF509271201C3D9A004D9CF5 /* VFSInstanceManager.cpp in Sources */,
 				CFA539CD1D433E2A00C562A7 /* ProcessSheetController.mm in Sources */,
 				CF818B451EA0610C00BC28E6 /* Select.mm in Sources */,
 				CF818B491EA0610C00BC28E6 /* BatchRename.mm in Sources */,
@@ -4382,6 +4390,7 @@
 				CFA7E02D1EB97B60001FE66C /* Delete.mm in Sources */,
 				CF9F4AF01ECC015700E0AF82 /* ExecuteInTerminal.mm in Sources */,
 				CFA2D6041E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
+				CF509273201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */,
 				CF4E563F1D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,
 				CF876D251D51E04A009C0CCE /* BigFileView.mm in Sources */,
 				CFDAC20E1DF921E10039A104 /* PanelDataItemVolatileData.cpp in Sources */,
@@ -4625,6 +4634,7 @@
 				CF5E9A4E1FCBDE29005608F5 /* RefreshPanel.mm in Sources */,
 				CF1FBF2B1E8F57E800D3569C /* AddToFavorites.mm in Sources */,
 				CFFA951B1F45A3410035E606 /* ConfigWiring.mm in Sources */,
+				CF509274201C3DB7004D9CF5 /* VFSInstanceManager.cpp in Sources */,
 				CF818B611EA0610E00BC28E6 /* DefaultAction.mm in Sources */,
 				CFD8CDD91E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CF4E56A41D5068D200452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */,

@@ -80,7 +80,7 @@ static const auto g_MaxTextWidth = 600;
         nc::panel::actions::OpenExistingNetworkConnection().Perform(m_Panel, sender);
     else if( auto vfs_path = any_cast<VFSPath>(&_context) )
         [m_Panel GoToDir:vfs_path->Path() vfs:vfs_path->Host() select_entry:"" async:true];
-    else if( auto promise = any_cast<pair<VFSInstanceManager::Promise, string>>(&_context) )
+    else if( auto promise = any_cast<pair<nc::core::VFSInstanceManager::Promise, string>>(&_context) )
         [m_Panel GoToVFSPromise:promise->first onPath:promise->second];
     else if( auto listing_promise = any_cast<nc::panel::ListingPromise>(&_context) )
         nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
@@ -144,13 +144,13 @@ static vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_current )
     return other_paths;
 }
 
-static vector<pair<VFSInstanceManager::Promise, string>> ProduceLocationsForParentDirectories(
+static vector<pair<core::VFSInstanceManager::Promise, string>> ProduceLocationsForParentDirectories(
     const VFSListing &_listing )
 {
     if( !_listing.IsUniform() )
         throw invalid_argument("ProduceLocationsForParentDirectories: _listing should be uniform");
     
-    vector<pair<VFSInstanceManager::Promise, string>> result;
+    vector<pair<core::VFSInstanceManager::Promise, string>> result;
     
     auto host = _listing.Host();
     path dir = _listing.Directory();
@@ -163,7 +163,7 @@ static vector<pair<VFSInstanceManager::Promise, string>> ProduceLocationsForPare
             if( dir == "/" )
                 brk = true;
             
-            result.emplace_back(VFSInstanceManager::Instance().TameVFS(host),
+            result.emplace_back(core::VFSInstanceManager::Instance().TameVFS(host),
                                 dir == "/" ? dir.native() : dir.native() + "/");
             
             dir = dir.parent_path();
@@ -194,7 +194,7 @@ public:
     NSMenuItem *MenuItemForVolume( const NativeFileSystemInfo &_i );
     NSMenuItem *MenuItemForConnection( const NetworkConnectionsManager::Connection &_c );
     NSMenuItem *MenuItemForPath( const VFSPath &_p );
-    NSMenuItem *MenuItemForPromiseAndPath(const VFSInstanceManager::Promise &_promise,
+    NSMenuItem *MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
                                           const string &_path);
     NSMenuItem *MenuItemForListingPromise(const ListingPromise &_promise);
 
@@ -570,11 +570,11 @@ NSMenuItem *MenuItemBuilder::MenuItemForPath( const VFSPath &_p )
     return menu_item;
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForPromiseAndPath(const VFSInstanceManager::Promise &_promise,
+NSMenuItem *MenuItemBuilder::MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
                                       const string &_path)
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    auto data = pair<VFSInstanceManager::Promise, string>{_promise, _path};
+    auto data = pair<core::VFSInstanceManager::Promise, string>{_promise, _path};
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{move(data)}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);

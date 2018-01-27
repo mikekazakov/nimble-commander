@@ -15,7 +15,7 @@ class ListingPromise
 public:
     struct UniformListing
     {
-        VFSInstancePromise promise;
+        core::VFSInstancePromise promise;
         string directory;
     };
     
@@ -23,7 +23,7 @@ public:
     {
         struct PerVFS
         {
-            VFSInstancePromise promise;
+            core::VFSInstancePromise promise;
             vector<hbn::StringsBulk> entries;
         };
         vector<PerVFS> per_vfs;
@@ -32,8 +32,8 @@ public:
     };
     
     using StorageT = boost::variant<UniformListing, NonUniformListing>;
-    using VFSPromiseAdapter = function<VFSInstancePromise(const shared_ptr<VFSHost>&)>;
-    using PromiseVFSAdapter = function<shared_ptr<VFSHost>(const VFSInstancePromise&)>;
+    using VFSPromiseAdapter = function<core::VFSInstancePromise(const shared_ptr<VFSHost>&)>;
+    using PromiseVFSAdapter = function<shared_ptr<VFSHost>(const core::VFSInstancePromise&)>;
     
     ListingPromise( const VFSListing &_listing, const VFSPromiseAdapter &_adapter );
     ListingPromise( const ListingPromise&) = default;

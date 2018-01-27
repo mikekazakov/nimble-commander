@@ -4,29 +4,11 @@
 #include <VFS/VFS.h>
 #include <Habanero/Observable.h>
 
-class VFSConfiguration;
-class VFSInstanceManager;
+#include "VFSInstancePromise.h"
 
-struct VFSInstancePromise
-{
-    VFSInstancePromise();
-    VFSInstancePromise(VFSInstancePromise &&_rhs);
-    VFSInstancePromise(const VFSInstancePromise &_rhs);
-    ~VFSInstancePromise();
-    const VFSInstancePromise& operator=(const VFSInstancePromise &_rhs);
-    const VFSInstancePromise& operator=(VFSInstancePromise &&_rhs);
-    operator bool() const noexcept;
-    bool operator ==(const VFSInstancePromise &_rhs) const noexcept;
-    bool operator !=(const VFSInstancePromise &_rhs) const noexcept;
-    const char *tag() const; // may return ""
-    string verbose_title() const; // may return ""
-    uint64_t id() const;
-private:
-    VFSInstancePromise(uint64_t _inst_id, VFSInstanceManager &_manager);
-    uint64_t            inst_id;
-    VFSInstanceManager *manager;
-    friend class VFSInstanceManager;
-};
+class VFSConfiguration;
+
+namespace nc::core {
 
 /**
  * Keeps track of alive VFS in the system.
@@ -47,6 +29,9 @@ public:
      */
     Promise TameVFS( const shared_ptr<VFSHost>& _instance );
     
+    /**
+     * Returns a promise for specified vfs, if the information is available.
+     */
     Promise PreserveVFS( const weak_ptr<VFSHost>& _instance );
     
     /**
@@ -128,5 +113,7 @@ private:
     spinlock                    m_AliveHostsLock;
     
     
-    friend struct VFSInstancePromise;
+    friend VFSInstancePromise;
 };
+    
+}

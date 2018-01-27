@@ -13,7 +13,7 @@
 @implementation VFSListWindowController
 {
     VFSListWindowController *m_Self;
-    vector<VFSInstanceManager::ObservationTicket> m_Observations;
+    vector<nc::core::VFSInstanceManager::ObservationTicket> m_Observations;
 }
 
 - (id) init
@@ -36,8 +36,8 @@
                 [me updateData];
         });
     };
-    m_Observations.emplace_back( VFSInstanceManager::Instance().ObserveAliveVFSListChanged(cb));
-    m_Observations.emplace_back( VFSInstanceManager::Instance().ObserveKnownVFSListChanged(cb));
+    m_Observations.emplace_back( nc::core::VFSInstanceManager::Instance().ObserveAliveVFSListChanged(cb));
+    m_Observations.emplace_back( nc::core::VFSInstanceManager::Instance().ObserveKnownVFSListChanged(cb));
     
     [self updateData];
 }
@@ -57,22 +57,22 @@
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
 {
     if( self.listType.selectedSegment == 0 )
-        return VFSInstanceManager::Instance().AliveHosts().size();
+        return nc::core::VFSInstanceManager::Instance().AliveHosts().size();
     else
-        return VFSInstanceManager::Instance().KnownVFSCount();
+        return nc::core::VFSInstanceManager::Instance().KnownVFSCount();
 }
 
 - (nullable NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
 {
-    VFSInstanceManager::Promise info;
+    nc::core::VFSInstanceManager::Promise info;
     
     if( self.listType.selectedSegment == 0 ) {
-        auto snapshot = VFSInstanceManager::Instance().AliveHosts();
+        auto snapshot = nc::core::VFSInstanceManager::Instance().AliveHosts();
         if( row >= 0 && row < (int)snapshot.size() )
-            info = VFSInstanceManager::Instance().PreserveVFS( snapshot.at(row) );
+            info = nc::core::VFSInstanceManager::Instance().PreserveVFS( snapshot.at(row) );
     }
     else {
-        info = VFSInstanceManager::Instance().GetVFSPromiseByPosition((unsigned)row);
+        info = nc::core::VFSInstanceManager::Instance().GetVFSPromiseByPosition((unsigned)row);
     }
     
     if( !info )
@@ -96,7 +96,7 @@
     }
     if( [tableColumn.identifier isEqualToString:@"pid"] ) {
         NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-        if( auto parent_promise = VFSInstanceManager::Instance().GetParentPromise(info) )
+        if( auto parent_promise = nc::core::VFSInstanceManager::Instance().GetParentPromise(info) )
             tf.stringValue = [NSString stringWithFormat:@"%llu", parent_promise.id()];
         tf.bordered = false;
         tf.editable = false;

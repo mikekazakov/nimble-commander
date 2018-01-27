@@ -550,7 +550,7 @@ private:
                                                    nullptr,
                                                    [&]{ return m_FileSearch->IsStopped(); } );
     if( host )
-        VFSInstanceManager::Instance().TameVFS(host);
+        nc::core::VFSInstanceManager::Instance().TameVFS(host);
     
     return host;
 }

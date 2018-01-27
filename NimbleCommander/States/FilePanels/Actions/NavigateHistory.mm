@@ -45,8 +45,8 @@ namespace nc::panel {
 void ListingPromiseLoader::Load( const ListingPromise &_promise, PanelController *_panel )
 {
     auto task = [=]( const function<bool()> &_cancelled ) {
-        const auto vfs_adapter = [&](const VFSInstancePromise& _promise){
-            return VFSInstanceManager::Instance().RetrieveVFS(_promise, _cancelled );
+        const auto vfs_adapter = [&](const core::VFSInstancePromise& _promise){
+            return core::VFSInstanceManager::Instance().RetrieveVFS(_promise, _cancelled );
         };
         
         try {

@@ -623,7 +623,7 @@ int PanelDataPersisency::CreateVFSFromLocation( const PersistentLocation &_state
     }
 
     vector<VFSHostPtr> vfs;
-    auto alive_hosts = VFSInstanceManager::Instance().AliveHosts(); // make it optional perhaps?
+    auto alive_hosts = core::VFSInstanceManager::Instance().AliveHosts(); // make it optional perhaps?
     try {
         for( auto &h: _state.hosts) {
             const VFSHostPtr back = vfs.empty() ? nullptr : vfs.back();

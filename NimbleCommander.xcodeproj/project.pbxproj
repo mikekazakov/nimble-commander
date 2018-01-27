@@ -275,6 +275,10 @@
 		CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
 		CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
+		CF50925C201C3025004D9CF5 /* VFSInstancePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */; };
+		CF50926C201C30B1004D9CF5 /* VFSInstancePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */; };
+		CF50926D201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */; };
+		CF50926E201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */; };
 		CF56BEF61D5C26AE00A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
 		CF56BEFA1D5C26AF00A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
 		CF56BEFB1D5C26B000A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
@@ -1613,6 +1617,8 @@
 		CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileMask_Tests.mm; path = NimbleCommander/Core/FileMask_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"; sourceTree = SOURCE_ROOT; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.m"; sourceTree = SOURCE_ROOT; };
+		CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstancePromise.cpp; path = NimbleCommander/Core/VFSInstancePromise.cpp; sourceTree = SOURCE_ROOT; };
+		CF50925B201C3025004D9CF5 /* VFSInstancePromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstancePromise.h; path = NimbleCommander/Core/VFSInstancePromise.h; sourceTree = SOURCE_ROOT; };
 		CF51D11E1FD512A70026CC00 /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerHistory.h; path = NimbleCommander/Viewer/InternalViewerHistory.h; sourceTree = SOURCE_ROOT; };
@@ -2867,8 +2873,8 @@
 				CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */,
 				CF4E56E91D50712C00452912 /* FileMask.cpp */,
 				CF4E56E81D50712C00452912 /* FileMask.h */,
-				CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
+				CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */,
 				CFDAC2E01DFD142C0039A104 /* FileWindow.h */,
 				CFDAC2D61DFD11970039A104 /* LaunchServices.h */,
 				CFDAC2D71DFD11970039A104 /* LaunchServices.mm */,
@@ -2893,6 +2899,8 @@
 				CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */,
 				CF56BF531D68061600A08D2B /* VFSInstanceManager.cpp */,
 				CF56BF521D68061600A08D2B /* VFSInstanceManager.h */,
+				CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */,
+				CF50925B201C3025004D9CF5 /* VFSInstancePromise.h */,
 				CFD6DD141D6C229F006B94C2 /* VFSListWindowController.h */,
 				CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */,
 				CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */,
@@ -3942,6 +3950,7 @@
 				CF4E56D61D506B9700452912 /* FindFilesSheetController.mm in Sources */,
 				CFD7266B1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFD726681E42E1E700603077 /* ContextMenu.mm in Sources */,
+				CF50926D201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */,
 				CFD726F81E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF7C7CB51E5ACDD4002DB0E2 /* Alert.mm in Sources */,
 				CF2084251FF14E260014D6AD /* ListingPromise.cpp in Sources */,
@@ -4136,6 +4145,7 @@
 				CFB66FA21D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
 				CFA539BB1D433E2A00C562A7 /* ExternalToolsSupport.mm in Sources */,
 				CFD8CDD11E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,
+				CF50925C201C3025004D9CF5 /* VFSInstancePromise.cpp in Sources */,
 				CFA539BF1D433E2A00C562A7 /* FTPConnectionSheetController.mm in Sources */,
 				CF9F4B051ECC8DE300E0AF82 /* ExecuteInTerminal.mm in Sources */,
 				CFD8CDCB1E8CE65600E4DC53 /* OpenXAttr.mm in Sources */,
@@ -4362,6 +4372,7 @@
 				CF94CF941DD4418000EEA420 /* Layout.mm in Sources */,
 				CFC4F99F1F0F40430000B3EE /* Link.mm in Sources */,
 				CF9F4A921EC9442C00E0AF82 /* Compress.mm in Sources */,
+				CF50926E201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */,
 				CFDAC26F1DFBF20F0039A104 /* ContextMenu.mm in Sources */,
 				CF4E56EA1D50712C00452912 /* FileMask.cpp in Sources */,
 				CFDAC2481DFBEE340039A104 /* MainWindow.mm in Sources */,
@@ -4581,6 +4592,7 @@
 				CF36DBF81F6C1987004A018E /* VFSInit.mm in Sources */,
 				CFD6DD1A1D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
+				CF50926C201C30B1004D9CF5 /* VFSInstancePromise.cpp in Sources */,
 				CFD8CDB51E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
 				CF876D391D51E0AF009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF818B7B1EA4573400BC28E6 /* Pasteboard.mm in Sources */,

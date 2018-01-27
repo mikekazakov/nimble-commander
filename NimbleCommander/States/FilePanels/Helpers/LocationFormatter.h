@@ -91,7 +91,7 @@ class VFSPromiseFormatter : public Formatter {
 public:
     
     Representation Render(RenderOptions _options,
-                          const VFSInstanceManager::Promise &_promise,
+                          const core::VFSInstanceManager::Promise &_promise,
                           const string &_path);
     
 };

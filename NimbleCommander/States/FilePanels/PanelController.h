@@ -4,7 +4,6 @@
 #include "PanelViewDelegate.h"
 #include <VFS/VFS.h>
 
-struct VFSInstancePromise;
 class NetworkConnectionsManager;
 @class PanelController;
 @class PanelView;
@@ -12,17 +11,24 @@ class NetworkConnectionsManager;
 @class MainWindowFilePanelState;
 @class MainWindowController;
 
-namespace nc::panel {
+namespace nc {
 
-class History;
-struct PersistentLocation;
-class PanelViewLayoutsStorage;
-    
-namespace data {
-    struct SortMode;
-    struct HardFilter;
-    struct Model;
+    namespace core {
+        class VFSInstancePromise;
+    }
+    namespace panel {
+        class History;
+        struct PersistentLocation;
+        class PanelViewLayoutsStorage;
+        namespace data {
+            struct SortMode;
+            struct HardFilter;
+            struct Model;
+        }
+    }
 }
+    
+namespace nc::panel {
 
 class ActivityTicket
 {
@@ -161,7 +167,7 @@ loadPreviousState:(bool)_load_state
 - (void) loadListing:(const shared_ptr<VFSListing>&)_listing;
 
 // will load previous view state if any
-- (void) GoToVFSPromise:(const VFSInstancePromise&)_promise onPath:(const string&)_directory;
+- (void) GoToVFSPromise:(const nc::core::VFSInstancePromise&)_promise onPath:(const string&)_directory;
 // some params later
 
 - (void) goToPersistentLocation:(const nc::panel::PersistentLocation &)_location;

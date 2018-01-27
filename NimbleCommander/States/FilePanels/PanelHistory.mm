@@ -76,8 +76,8 @@ void History::Put(const VFSListing &_listing )
     if( _listing.IsUniform() && _listing.Host()->IsNativeFS() )
         m_LastNativeDirectory = _listing.Directory();
     
-    const auto adapter = [](const shared_ptr<VFSHost>&_host) -> VFSInstancePromise {
-        return VFSInstanceManager::Instance().TameVFS(_host);
+    const auto adapter = [](const shared_ptr<VFSHost>&_host) -> core::VFSInstancePromise {
+        return core::VFSInstanceManager::Instance().TameVFS(_host);
     };
     ListingPromise promise{_listing, adapter};
     

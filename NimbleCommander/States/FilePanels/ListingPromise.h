@@ -4,9 +4,7 @@
 #include <VFS/VFS_fwd.h>
 #include <Habanero/StringsBulk.h>
 #include <boost/variant.hpp>
-
-// TODO: break VFSInstanceManager.h into two headers to separate VFSInstancePromise
-#include "../../Core/VFSInstanceManager.h"
+#include <NimbleCommander/Core/VFSInstancePromise.h>
 
 namespace nc::panel {
     

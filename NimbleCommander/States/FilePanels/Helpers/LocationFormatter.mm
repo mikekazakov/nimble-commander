@@ -11,7 +11,7 @@ namespace nc::panel::loc_fmt {
 
 static const auto g_IconSize = NSMakeSize(16, 16);
     
-static NSImage *ImageForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
+static NSImage *ImageForPromiseAndPath(const core::VFSInstancePromise &_promise,
                                        const string& _path );
 static NSImage* ImageForLocation(const PersistentLocation &_location,
                                  const NetworkConnectionsManager &_conn_mgr);
@@ -160,7 +160,7 @@ VolumeFormatter::Render(RenderOptions _options,
 
 VFSPromiseFormatter::Representation
 VFSPromiseFormatter::Render(RenderOptions _options,
-                            const core::VFSInstanceManager::Promise &_promise,
+                            const core::VFSInstancePromise &_promise,
                             const string &_path)
 {
     Representation rep;
@@ -196,7 +196,7 @@ VFSPathFormatter::Render(RenderOptions _options,
     return rep;
 }
 
-static NSImage *ImageForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
+static NSImage *ImageForPromiseAndPath(const core::VFSInstancePromise &_promise,
                                        const string& _path )
 {
     if( _promise.tag() == VFSNativeHost::UniqueTag ) {

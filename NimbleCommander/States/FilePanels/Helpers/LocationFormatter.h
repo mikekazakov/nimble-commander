@@ -2,9 +2,7 @@
 #pragma once
 
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
-
-// TODO: split to extract the promise itself
-#include <NimbleCommander/Core/VFSInstanceManager.h>
+#include <NimbleCommander/Core/VFSInstancePromise.h>
 
 // TODO: extract favorite and location
 #include "../Favorites.h"
@@ -91,7 +89,7 @@ class VFSPromiseFormatter : public Formatter {
 public:
     
     Representation Render(RenderOptions _options,
-                          const core::VFSInstanceManager::Promise &_promise,
+                          const core::VFSInstancePromise &_promise,
                           const string &_path);
     
 };

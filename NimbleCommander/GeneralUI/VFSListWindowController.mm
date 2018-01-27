@@ -2,6 +2,7 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "../Core/VFSInstanceManager.h"
+#include "../Core/VFSInstancePromise.h"
 #include "VFSListWindowController.h"
 
 @interface VFSListWindowController ()

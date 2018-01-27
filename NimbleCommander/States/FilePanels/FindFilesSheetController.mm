@@ -16,6 +16,7 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
+#include <NimbleCommander/Core/VFSInstancePromise.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "FindFilesSheetController.h"
 

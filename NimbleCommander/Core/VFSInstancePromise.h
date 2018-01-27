@@ -24,7 +24,7 @@ private:
     VFSInstancePromise(uint64_t _inst_id, VFSInstanceManager &_manager);
     uint64_t            inst_id;
     VFSInstanceManager *manager; // non-owning pointer, promises must not outlive the manager
-    friend class VFSInstanceManager;
+    friend class VFSInstanceManagerImpl; // this is a bad hack
 };
 
 }

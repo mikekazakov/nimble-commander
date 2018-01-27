@@ -61,7 +61,7 @@ static NSImage *ImageFromTag( const char *_tag )
     return nil;
 }
 
-NSImage *NetworkConnectionIconProvider::Icon16px(const nc::core::VFSInstanceManager::Promise &_promise) const
+NSImage *NetworkConnectionIconProvider::Icon16px(const nc::core::VFSInstancePromise &_promise) const
 {
     return ImageFromTag(_promise.tag());
 }

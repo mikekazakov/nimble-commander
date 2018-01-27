@@ -1,8 +1,7 @@
 // Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <VFS/VFS.h>
-#include "../../Core/VFSInstanceManager.h"
+#include <VFS/VFS_fwd.h>
 #include "ListingPromise.h"
 
 namespace nc::panel {

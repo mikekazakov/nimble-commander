@@ -1,11 +1,11 @@
 // Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
-#include "VFSInstanceManager.h"
+#include "VFSInstanceManagerImpl.h"
 #include <VFS/VFS.h>
 
 namespace nc::core {
 
-struct VFSInstanceManager::Info
+struct VFSInstanceManagerImpl::Info
 {
     Info(const shared_ptr<VFSHost>& _host,
          uint64_t _id,
@@ -19,7 +19,7 @@ struct VFSInstanceManager::Info
     VFSConfiguration    m_Configuration;
 };
 
-VFSInstanceManager::Info::Info(const VFSHostPtr& _host,
+VFSInstanceManagerImpl::Info::Info(const VFSHostPtr& _host,
                                uint64_t _id,
                                uint64_t _parent_id,
                                VFSConfiguration _config
@@ -34,11 +34,11 @@ VFSInstanceManager::Info::Info(const VFSHostPtr& _host,
 
 VFSInstanceManager& VFSInstanceManager::Instance()
 {
-    static auto inst = new VFSInstanceManager;
+    static auto inst = new VFSInstanceManagerImpl;
     return *inst;
 }
 
-VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _instance )
+VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS( const VFSHostPtr& _instance )
 {
     if( !_instance )
         return {};
@@ -127,7 +127,7 @@ VFSInstanceManager::Promise VFSInstanceManager::TameVFS( const VFSHostPtr& _inst
     return result;
 }
 
-VFSInstanceManager::Promise VFSInstanceManager::PreserveVFS( const weak_ptr<VFSHost>& _instance )
+VFSInstanceManager::Promise VFSInstanceManagerImpl::PreserveVFS( const weak_ptr<VFSHost>& _instance )
 {
     LOCK_GUARD(m_MemoryLock) {
         // check if we have a weak_ptr to this instance
@@ -138,7 +138,7 @@ VFSInstanceManager::Promise VFSInstanceManager::PreserveVFS( const weak_ptr<VFSH
     return {};
 }
 
-void VFSInstanceManager::IncPromiseCount(uint64_t _inst_id)
+void VFSInstanceManagerImpl::IncPromiseCount(uint64_t _inst_id)
 {
     if( _inst_id == 0 )
         return;
@@ -148,7 +148,7 @@ void VFSInstanceManager::IncPromiseCount(uint64_t _inst_id)
             info->m_PromisesCount++;
 }
 
-void VFSInstanceManager::DecPromiseCount(uint64_t _inst_id)
+void VFSInstanceManagerImpl::DecPromiseCount(uint64_t _inst_id)
 {
     if( _inst_id == 0 )
         return;
@@ -182,7 +182,7 @@ void VFSInstanceManager::DecPromiseCount(uint64_t _inst_id)
         FireObservers( KnownVFSListObservation );
 }
 
-VFSInstanceManager::Info *VFSInstanceManager::InfoFromVFSWeakPtr_Unlocked(const weak_ptr<VFSHost> &_ptr)
+VFSInstanceManagerImpl::Info *VFSInstanceManagerImpl::InfoFromVFSWeakPtr_Unlocked(const weak_ptr<VFSHost> &_ptr)
 {
     for( auto &i: m_Memory )
         if( !i.m_WeakHost.owner_before(_ptr) && !_ptr.owner_before(i.m_WeakHost) )
@@ -190,7 +190,7 @@ VFSInstanceManager::Info *VFSInstanceManager::InfoFromVFSWeakPtr_Unlocked(const 
     return nullptr;
 }
 
-VFSInstanceManager::Info *VFSInstanceManager::InfoFromVFSPtr_Unlocked(const VFSHostPtr &_ptr)
+VFSInstanceManagerImpl::Info *VFSInstanceManagerImpl::InfoFromVFSPtr_Unlocked(const VFSHostPtr &_ptr)
 {
     if( !_ptr )
         return nullptr;
@@ -200,7 +200,7 @@ VFSInstanceManager::Info *VFSInstanceManager::InfoFromVFSPtr_Unlocked(const VFSH
     return nullptr;
 }
 
-VFSInstanceManager::Info *VFSInstanceManager::InfoFromID_Unlocked(uint64_t _inst_id)
+VFSInstanceManagerImpl::Info *VFSInstanceManagerImpl::InfoFromID_Unlocked(uint64_t _inst_id)
 {
     for( auto &i: m_Memory )
         if( i.m_ID == _inst_id )
@@ -211,7 +211,7 @@ VFSInstanceManager::Info *VFSInstanceManager::InfoFromID_Unlocked(uint64_t _inst
 // remove memory if:
 // 1. restoration promises count == 0
 // 2. there's no strong references to vfs instance
-void VFSInstanceManager::SweepDeadMemory()
+void VFSInstanceManagerImpl::SweepDeadMemory()
 {
     LOCK_GUARD(m_MemoryLock) {
         auto old_size = m_Memory.size();
@@ -232,7 +232,7 @@ void VFSInstanceManager::SweepDeadMemory()
     FireObservers( KnownVFSListObservation );
 }
 
-void VFSInstanceManager::EnrollAliveHost( const VFSHostPtr& _inst )
+void VFSInstanceManagerImpl::EnrollAliveHost( const VFSHostPtr& _inst )
 {
     if( !_inst )
         return;
@@ -252,7 +252,7 @@ void VFSInstanceManager::EnrollAliveHost( const VFSHostPtr& _inst )
     FireObservers( AliveVFSListObservation ); // tell that we have added a vfs to alive list
 }
 
-void VFSInstanceManager::SweepDeadReferences()
+void VFSInstanceManagerImpl::SweepDeadReferences()
 {
     LOCK_GUARD(m_AliveHostsLock) {
         auto old_size = m_AliveHosts.size();
@@ -267,7 +267,7 @@ void VFSInstanceManager::SweepDeadReferences()
     FireObservers( AliveVFSListObservation ); // tell that we have removed some vfs from alive list
 }
 
-VFSHostPtr VFSInstanceManager::RetrieveVFS( const Promise &_promise, function<bool()> _cancel_checker )
+VFSHostPtr VFSInstanceManagerImpl::RetrieveVFS( const Promise &_promise, function<bool()> _cancel_checker )
 {
     if( !_promise )
         return nullptr;
@@ -283,7 +283,7 @@ VFSHostPtr VFSInstanceManager::RetrieveVFS( const Promise &_promise, function<bo
     return nullptr;
 }
 
-unsigned VFSInstanceManager::KnownVFSCount()
+unsigned VFSInstanceManagerImpl::KnownVFSCount()
 {
     LOCK_GUARD(m_MemoryLock) {
         return (unsigned)m_Memory.size();
@@ -291,7 +291,7 @@ unsigned VFSInstanceManager::KnownVFSCount()
     return 0;
 }
 
-VFSInstanceManager::Promise VFSInstanceManager::GetVFSPromiseByPosition( unsigned _at )
+VFSInstanceManager::Promise VFSInstanceManagerImpl::GetVFSPromiseByPosition( unsigned _at )
 {
     LOCK_GUARD(m_MemoryLock)
         if( _at < m_Memory.size() )
@@ -299,7 +299,7 @@ VFSInstanceManager::Promise VFSInstanceManager::GetVFSPromiseByPosition( unsigne
     return {};
 }
 
-VFSInstanceManager::Promise VFSInstanceManager::GetParentPromise( const Promise &_promise )
+VFSInstanceManager::Promise VFSInstanceManagerImpl::GetParentPromise( const Promise &_promise )
 {
     if( !_promise )
         return {};
@@ -317,7 +317,7 @@ VFSInstanceManager::Promise VFSInstanceManager::GetParentPromise( const Promise 
     return {};
 }
 
-const char *VFSInstanceManager::GetTag( const Promise &_promise )
+const char *VFSInstanceManagerImpl::GetTag( const Promise &_promise )
 {
     if( !_promise )
         return nullptr;
@@ -334,7 +334,7 @@ const char *VFSInstanceManager::GetTag( const Promise &_promise )
 }
 
 // assumes that m_MemoryLock is aquired
-VFSHostPtr VFSInstanceManager::GetOrRestoreVFS_Unlocked( Info *_info, const function<bool()> &_cancel_checker )
+VFSHostPtr VFSInstanceManagerImpl::GetOrRestoreVFS_Unlocked( Info *_info, const function<bool()> &_cancel_checker )
 {
     // check if host is alive - in this case we can return it immediately
     if( auto host = _info->m_WeakHost.lock() )
@@ -365,7 +365,7 @@ VFSHostPtr VFSInstanceManager::GetOrRestoreVFS_Unlocked( Info *_info, const func
     return host;
 }
 
-string VFSInstanceManager::GetVerboseVFSTitle( const Promise &_promise )
+string VFSInstanceManagerImpl::GetVerboseVFSTitle( const Promise &_promise )
 {
     if( !_promise )
         return "";
@@ -388,17 +388,17 @@ string VFSInstanceManager::GetVerboseVFSTitle( const Promise &_promise )
     return "'";
 }
 
-VFSInstanceManager::ObservationTicket VFSInstanceManager::ObserveAliveVFSListChanged( function<void()> _callback )
+VFSInstanceManager::ObservationTicket VFSInstanceManagerImpl::ObserveAliveVFSListChanged( function<void()> _callback )
 {
     return AddObserver(move(_callback), AliveVFSListObservation);
 }
 
-VFSInstanceManager::ObservationTicket VFSInstanceManager::ObserveKnownVFSListChanged( function<void()> _callback )
+VFSInstanceManager::ObservationTicket VFSInstanceManagerImpl::ObserveKnownVFSListChanged( function<void()> _callback )
 {
     return AddObserver(move(_callback), KnownVFSListObservation);
 }
 
-vector<weak_ptr<VFSHost>> VFSInstanceManager::AliveHosts()
+vector<weak_ptr<VFSHost>> VFSInstanceManagerImpl::AliveHosts()
 {
     vector<weak_ptr<VFSHost>> list;
     LOCK_GUARD(m_AliveHostsLock) {
@@ -408,7 +408,7 @@ vector<weak_ptr<VFSHost>> VFSInstanceManager::AliveHosts()
 }
 
 // assumes that m_MemoryLock is aquired
-VFSInstanceManager::Promise VFSInstanceManager::SpawnPromiseFromInfo_Unlocked( Info &_info )
+VFSInstanceManager::Promise VFSInstanceManagerImpl::SpawnPromiseFromInfo_Unlocked( Info &_info )
 {
     _info.m_PromisesCount++;
     return Promise{_info.m_ID, *this};

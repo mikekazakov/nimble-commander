@@ -6,6 +6,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <NimbleCommander/Core/VFSInstanceManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include "../Favorites.h"
 #include "../MainWindowFilePanelState.h"
@@ -80,7 +81,7 @@ static const auto g_MaxTextWidth = 600;
         nc::panel::actions::OpenExistingNetworkConnection().Perform(m_Panel, sender);
     else if( auto vfs_path = any_cast<VFSPath>(&_context) )
         [m_Panel GoToDir:vfs_path->Path() vfs:vfs_path->Host() select_entry:"" async:true];
-    else if( auto promise = any_cast<pair<nc::core::VFSInstanceManager::Promise, string>>(&_context) )
+    else if( auto promise = any_cast<pair<nc::core::VFSInstancePromise, string>>(&_context) )
         [m_Panel GoToVFSPromise:promise->first onPath:promise->second];
     else if( auto listing_promise = any_cast<nc::panel::ListingPromise>(&_context) )
         nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
@@ -144,13 +145,13 @@ static vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_current )
     return other_paths;
 }
 
-static vector<pair<core::VFSInstanceManager::Promise, string>> ProduceLocationsForParentDirectories(
+static vector<pair<core::VFSInstancePromise, string>> ProduceLocationsForParentDirectories(
     const VFSListing &_listing )
 {
     if( !_listing.IsUniform() )
         throw invalid_argument("ProduceLocationsForParentDirectories: _listing should be uniform");
     
-    vector<pair<core::VFSInstanceManager::Promise, string>> result;
+    vector<pair<core::VFSInstancePromise, string>> result;
     
     auto host = _listing.Host();
     path dir = _listing.Directory();

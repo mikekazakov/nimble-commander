@@ -2,7 +2,6 @@
 #include <Carbon/Carbon.h>
 #include <Habanero/algo.h>
 #include <Utility/SheetWithHotkeys.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
@@ -35,6 +34,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
     
     FavoriteLocationsStorage::ObservationTicket m_ObservationTicket;
     bool m_IsCommitingFavorites;
+    function< vector<pair<VFSHostPtr, string>>() > m_ProvideCurrentUniformPaths;
 }
 
 - (id) initWithFavoritesStorage:(function<FavoriteLocationsStorage&()>)_favorites_storage
@@ -310,18 +310,14 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 - (void)showAvailableLocationsToAdd:(id)sender
 {
-    vector< tuple<string,VFSHostPtr> > panel_paths;
+    if( !m_ProvideCurrentUniformPaths )
+        return;
+    const auto panel_paths = m_ProvideCurrentUniformPaths();
     
-    for( auto ctr: NCAppDelegate.me.mainWindowControllers ) {
-        auto state = ctr.filePanelsState;
-        auto paths = state.filePanelsCurrentPaths;
-        panel_paths.insert( end(panel_paths), begin(paths), end(paths) );
-    }
-
     unordered_map<size_t, FavoriteLocationsStorage::Favorite> proposed_favorites;
     auto &storage = m_Storage();
     for( auto &p: panel_paths )
-        if( auto f = storage.ComposeFavoriteLocation(*get<1>(p), get<0>(p)) )
+        if( auto f = storage.ComposeFavoriteLocation(*p.first, p.second) )
             if( ![self hasFavorite:*f] )
                 proposed_favorites[f->footprint] = *f;
 
@@ -380,6 +376,17 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     m_Favorites = FavoriteComposing{m_Storage()}.DefaultFavorites();
     [self loadData];
     [self commit];
+}
+
+
+- (void)setProvideCurrentUniformPaths:(function<vector<pair<VFSHostPtr, string> > ()>)callback
+{
+    m_ProvideCurrentUniformPaths = move(callback);
+}
+
+- (function<vector<pair<VFSHostPtr, string> > ()>)provideCurrentUniformPaths
+{
+    return m_ProvideCurrentUniformPaths;
 }
 
 @end

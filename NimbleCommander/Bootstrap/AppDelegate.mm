@@ -805,18 +805,30 @@ static NCAppDelegate *g_Me = nil;
 
 - (IBAction)onMainMenuPerformShowFavorites:(id)sender
 {
-  static __weak FavoritesWindowController *existing_window = nil;
-    if( auto w = (FavoritesWindowController*)existing_window  )
+    static __weak FavoritesWindowController *existing_window = nil;
+    if( auto w = (FavoritesWindowController*)existing_window  ) {
         [w show];
-    else {
-        auto storage = []()->nc::panel::FavoriteLocationsStorage& {
-            return *NCAppDelegate.me.favoriteLocationsStorage;
-        };
-        FavoritesWindowController *window = [[FavoritesWindowController alloc]
-            initWithFavoritesStorage:storage];
-        [window show];
-        existing_window = window;
+        return ;
     }
+    auto storage = []()->nc::panel::FavoriteLocationsStorage& {
+        return *NCAppDelegate.me.favoriteLocationsStorage;
+    };
+    FavoritesWindowController *window = [[FavoritesWindowController alloc]
+                                         initWithFavoritesStorage:storage];
+    auto provide_panel = []() -> vector<pair<VFSHostPtr, string>> {
+        vector< pair<VFSHostPtr, string> > panel_paths;
+        for( const auto &ctr: NCAppDelegate.me.mainWindowControllers ) {
+            auto state = ctr.filePanelsState;
+            auto paths = state.filePanelsCurrentPaths;
+            for( const auto &p:paths )
+                panel_paths.emplace_back( get<1>(p), get<0>(p) );
+        }
+        return panel_paths;
+    };
+    window.provideCurrentUniformPaths = provide_panel;
+    
+    [window show];
+    existing_window = window;
 }
 
 - (const shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager

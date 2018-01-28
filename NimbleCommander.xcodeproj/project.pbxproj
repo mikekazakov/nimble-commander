@@ -2049,8 +2049,6 @@
 		CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilePanelsTabbedHolder.mm; path = NimbleCommander/States/FilePanels/Views/FilePanelsTabbedHolder.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2F11DFD16540039A104 /* AppDelegate+Migration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+Migration.h"; path = "NimbleCommander/Bootstrap/AppDelegate+Migration.h"; sourceTree = SOURCE_ROOT; };
 		CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "AppDelegate+Migration.mm"; path = "NimbleCommander/Bootstrap/AppDelegate+Migration.mm"; sourceTree = SOURCE_ROOT; };
-		CFDAC2F41DFD16DF0039A104 /* MainWndGoToButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWndGoToButton.h; path = NimbleCommander/States/FilePanels/Views/MainWndGoToButton.h; sourceTree = SOURCE_ROOT; };
-		CFDAC2F51DFD16DF0039A104 /* MainWndGoToButton.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWndGoToButton.mm; path = NimbleCommander/States/FilePanels/Views/MainWndGoToButton.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2F91DFD1C120039A104 /* TrialWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TrialWindowController.h; path = NimbleCommander/GeneralUI/TrialWindowController.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TrialWindowController.mm; path = NimbleCommander/GeneralUI/TrialWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2FB1DFD1C120039A104 /* TrialWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = TrialWindowController.xib; path = NimbleCommander/GeneralUI/TrialWindowController.xib; sourceTree = SOURCE_ROOT; };
@@ -2446,8 +2444,6 @@
 				CFA0B23318693F1100501C35 /* GoToFolderSheetController.h */,
 				CFA0B23418693F1100501C35 /* GoToFolderSheetController.mm */,
 				CFCCFBC61A5D7F0E00313845 /* GoToFolderSheetController.xib */,
-				CFDAC2F41DFD16DF0039A104 /* MainWndGoToButton.h */,
-				CFDAC2F51DFD16DF0039A104 /* MainWndGoToButton.mm */,
 				CFA7E0141EB83B8D001FE66C /* Network */,
 				CFDAC2DC1DFD137F0039A104 /* QuickLookOverlay.h */,
 				CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */,

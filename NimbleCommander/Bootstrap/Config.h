@@ -14,12 +14,16 @@ class GenericConfig;
 @end
 #endif
 
+// TODO: rebuild GenericConfig into an abstact interface and two implementations:
+// - files-backed config
+// - temporary config initialized from memory
 class GenericConfig
 {
 public:
     static rapidjson::CrtAllocator g_CrtAllocator;
     
-    GenericConfig(const string &_defaults, const string &_overwrites);
+    GenericConfig(const string &_initial_json_value);
+    GenericConfig(const string &_defaults_path, const string &_overwrites_path);
     ~GenericConfig();
     
     /**

@@ -329,16 +329,16 @@ static bool IsDark( NSColor *_color )
 {
     self.searchPrompt = nil;
     [self.window makeFirstResponder:m_PanelView];
-    [((PanelController*)m_PanelView.delegate) clearQuickSearchFiltering];
+//    [((PanelController*)m_PanelView.delegate) clearQuickSearchFiltering];
 }
 
 - (void) onSearchFieldAction:(id)sender
 {
-    NSString *v = m_SearchTextField.stringValue;
-    if( v.length > 0)
-        [((PanelController*)m_PanelView.delegate) QuickSearchSetCriteria:v];
-    else
-        [self onSearchFieldDiscardButton:sender];
+//    NSString *v = m_SearchTextField.stringValue;
+//    if( v.length > 0)
+//        [((PanelController*)m_PanelView.delegate) QuickSearchSetCriteria:v];
+//    else
+//        [self onSearchFieldDiscardButton:sender];
 }
 
 - (void) onSortButtonAction:(id)sender

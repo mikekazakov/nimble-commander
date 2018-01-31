@@ -516,12 +516,7 @@ using namespace nc::panel;
         [best_handler handleKeyDown:event forPanelView:self];
         return;
     }
-    
-//    if(id<PanelViewDelegate> del = self.delegate)
-//        if([del respondsToSelector:@selector(PanelViewProcessKeyDown:event:)])
-//            if([del PanelViewProcessKeyDown:self event:event])
-//                return;
-    
+        
     NSString* character = [event charactersIgnoringModifiers];
     if ( character.length != 1 ) {
         [super keyDown:event];

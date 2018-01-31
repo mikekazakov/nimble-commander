@@ -194,6 +194,25 @@ struct GenericConfig::State
     time_t                                                              m_OverwritesTime = 0;
 };
 
+static const auto g_ParseFlags = rapidjson::kParseCommentsFlag;
+
+GenericConfig::GenericConfig(const string &_initial_json_value):
+    I(new State)
+{
+    rapidjson::Document defaults;
+    rapidjson::ParseResult ok = defaults.Parse<g_ParseFlags>( _initial_json_value.c_str() );
+    if( !ok ) {
+        fprintf(stderr,
+                "Can't load main config. JSON parse error: %s (%zu)",
+                rapidjson::GetParseError_En(ok.Code()),
+                ok.Offset());
+        exit(EXIT_FAILURE);
+    }
+    
+    I->m_Defaults.CopyFrom(defaults, I->m_Defaults.GetAllocator());
+    I->m_Current.CopyFrom(defaults, I->m_Current.GetAllocator());
+}
+
 GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites):
     I(new State)
 {
@@ -203,10 +222,12 @@ GenericConfig::GenericConfig(const string &_defaults, const string &_overwrites)
     if( !I->m_DefaultsPath.empty() ) {
         string def = Load(I->m_DefaultsPath);
         rapidjson::Document defaults;
-        rapidjson::ParseResult ok = defaults.Parse<rapidjson::kParseCommentsFlag>( def.c_str() );
-        
-        if (!ok) {
-            fprintf(stderr, "Can't load main config. JSON parse error: %s (%zu)", rapidjson::GetParseError_En(ok.Code()), ok.Offset());
+        rapidjson::ParseResult ok = defaults.Parse<g_ParseFlags>( def.c_str() );
+        if( !ok ) {
+            fprintf(stderr,
+                    "Can't load main config. JSON parse error: %s (%zu)",
+                    rapidjson::GetParseError_En(ok.Code()),
+                    ok.Offset());
             exit(EXIT_FAILURE);
         }
         
@@ -645,6 +666,9 @@ void GenericConfig::RunOverwritesDumping()
 
 void GenericConfig::MarkDirty()
 {
+    if( I->m_OverwritesPath.empty() )
+        return;
+    
     if( !I->m_WriteScheduled.test_and_set() )
         dispatch_to_main_queue_after(g_WriteDelay, [=]{
             RunOverwritesDumping();
@@ -654,6 +678,9 @@ void GenericConfig::MarkDirty()
 
 void GenericConfig::Commit()
 {
+    if( I->m_OverwritesPath.empty() )
+        return;
+    
     if( I->m_WriteScheduled.test_and_set() ) {
         RunOverwritesDumping();
         I->m_IOQueue.Wait();

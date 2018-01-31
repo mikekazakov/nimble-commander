@@ -265,7 +265,7 @@ vector<shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::GetAllLayouts
     return m_Layouts;
 }
 
-const shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::LastResortLayout() const
+const shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::LastResortLayout()
 {
     static const shared_ptr<const PanelViewLayout> l = make_shared<PanelViewLayout>( L1() );
     return l;

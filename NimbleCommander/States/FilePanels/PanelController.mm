@@ -31,6 +31,8 @@
 #include "Actions/GoToFolder.h"
 #include "Actions/Enter.h"
 #include <Operations/Copying.h>
+#include "CursorBackup.h"
+#include "QuickSearch.h"
 
 using namespace nc;
 using namespace nc::core;
@@ -40,28 +42,30 @@ static const auto g_ConfigShowDotDotEntry                       = "filePanel.gen
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
 static const auto g_ConfigRouteKeyboardInputIntoTerminal        = "filePanel.general.routeKeyboardInputIntoTerminal";
-static const auto g_ConfigQuickSearchWhereToFind                = "filePanel.quickSearch.whereToFind";
-static const auto g_ConfigQuickSearchSoftFiltering              = "filePanel.quickSearch.softFiltering";
-static const auto g_ConfigQuickSearchTypingView                 = "filePanel.quickSearch.typingView";
-static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.quickSearch.keyOption";
+//static const auto g_ConfigQuickSearchWhereToFind                = "filePanel.quickSearch.whereToFind";
+//static const auto g_ConfigQuickSearchSoftFiltering              = "filePanel.quickSearch.softFiltering";
+//static const auto g_ConfigQuickSearchTypingView                 = "filePanel.quickSearch.typingView";
+//static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.quickSearch.keyOption";
 
-struct PanelQuickSearchMode
-{
-    enum KeyModif { // persistancy-bound values, don't change it
-        WithAlt         = 0,
-        WithCtrlAlt     = 1,
-        WithShiftAlt    = 2,
-        WithoutModif    = 3,
-        Disabled        = 4
-    };
-    
-    static KeyModif KeyModifFromInt(int _k)
-    {
-        if(_k >= 0 && _k <= Disabled)
-            return (KeyModif)_k;
-        return WithAlt;
-    }
-};
+//struct PanelQuickSearchMode
+//{
+//    enum KeyModif { // persistancy-bound values, don't change it
+//        WithAlt         = 0,
+//        WithCtrlAlt     = 1,
+//        WithShiftAlt    = 2,
+//        WithoutModif    = 3,
+//        Disabled        = 4
+//    };
+//    
+//    static KeyModif KeyModifFromInt(int _k)
+//    {
+//        if(_k >= 0 && _k <= Disabled)
+//            return (KeyModif)_k;
+//        return WithAlt;
+//    }
+//};
+
+using GenericCursorPersistance = CursorBackup;
 
 namespace nc::panel {
 
@@ -109,58 +113,6 @@ void ActivityTicket::Reset()
 }
 
 
-class GenericCursorPersistance
-{
-public:
-    GenericCursorPersistance(PanelView* _view, const data::Model &_data);
-    void Restore() const;
-    bool IsValid() const noexcept;
-private:
-    PanelView                  *m_View;
-    const data::Model          &m_Data;
-    string                      m_OldCursorName;
-    data::ExternalEntryKey      m_OldEntrySortKeys;
-};
-    
-GenericCursorPersistance::GenericCursorPersistance(PanelView* _view, const data::Model &_data):
-    m_View(_view),
-    m_Data(_data)
-{
-    auto cur_pos = _view.curpos;
-    if(cur_pos >= 0 && m_View.item ) {
-        m_OldCursorName = m_View.item.Filename();
-        m_OldEntrySortKeys = _data.EntrySortKeysAtSortPosition(cur_pos);
-    }
-}
-
-bool GenericCursorPersistance::IsValid() const noexcept
-{
-    return !m_OldCursorName.empty();
-}
-
-void GenericCursorPersistance::Restore() const
-{
-    if( m_OldCursorName.empty() )
-        return;
-
-    int newcursorrawpos = m_Data.RawIndexForName(m_OldCursorName.c_str());
-    if( newcursorrawpos >= 0 ) {
-        int newcursorsortpos = m_Data.SortedIndexForRawIndex(newcursorrawpos);
-        if(newcursorsortpos >= 0)
-            m_View.curpos = newcursorsortpos;
-        else
-            m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : 0;
-    }
-    else {
-        int lower_bound = m_Data.SortLowerBoundForEntrySortKeys(m_OldEntrySortKeys);
-        if( lower_bound >= 0) {
-            m_View.curpos = lower_bound;
-        }
-        else {
-            m_View.curpos = m_Data.SortedDirectoryEntries().empty() ? -1 : int(m_Data.SortedDirectoryEntries().size()) - 1;
-        }
-    }
-}
 
 }
 
@@ -199,19 +151,14 @@ static void HeatUpConfigValues()
     
     // VFS listing fetch flags
     unsigned long                       m_VFSFetchingFlags;
-    
-    // Quick searching section
-    bool                                m_QuickSearchIsSoftFiltering;
-    bool                                m_QuickSearchTypingView;
-    PanelQuickSearchMode::KeyModif      m_QuickSearchMode;
-    data::TextualFilter::Where          m_QuickSearchWhere;
-    nanoseconds                         m_QuickSearchLastType;
-    unsigned                            m_QuickSearchOffset;
-    
+        
     // background operations' queues
     SerialQueue m_DirectorySizeCountingQ;
     SerialQueue m_DirectoryLoadingQ;
     SerialQueue m_DirectoryReLoadingQ;
+    
+    
+    NCPanelQuickSearch *m_QuickSearch;
     
     // navigation support
     History m_History;
@@ -277,8 +224,8 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
         m_NetworkConMgr = move(_conn_mgr);
         m_VFSInstanceManager = &_vfs_mgr;
         m_History.SetVFSInstanceManager(_vfs_mgr);
-        m_QuickSearchLastType = 0ns;
-        m_QuickSearchOffset = 0;
+//        m_QuickSearchLastType = 0ns;
+//        m_QuickSearchOffset = 0;
         m_VFSFetchingFlags = 0;
         m_NextActivityTicket = 1;
         m_IsAnythingWorksInBackground = false;
@@ -306,17 +253,24 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
         };
         add_co(g_ConfigShowDotDotEntry,         @selector(configVFSFetchFlagsChanged) );
         add_co(g_ConfigShowLocalizedFilenames,  @selector(configVFSFetchFlagsChanged) );
-        add_co(g_ConfigQuickSearchWhereToFind,  @selector(configQuickSearchSettingsChanged) );
-        add_co(g_ConfigQuickSearchSoftFiltering,@selector(configQuickSearchSettingsChanged) );
-        add_co(g_ConfigQuickSearchTypingView,   @selector(configQuickSearchSettingsChanged) );
-        add_co(g_ConfigQuickSearchKeyOption,    @selector(configQuickSearchSettingsChanged) );
+//        add_co(g_ConfigQuickSearchWhereToFind,  @selector(configQuickSearchSettingsChanged) );
+//        add_co(g_ConfigQuickSearchSoftFiltering,@selector(configQuickSearchSettingsChanged) );
+//        add_co(g_ConfigQuickSearchTypingView,   @selector(configQuickSearchSettingsChanged) );
+//        add_co(g_ConfigQuickSearchKeyOption,    @selector(configQuickSearchSettingsChanged) );
         
         m_LayoutsObservation = m_Layouts->
             ObserveChanges( objc_callback(self, @selector(panelLayoutsChanged)) );
         
         // loading config via simulating it's change
         [self configVFSFetchFlagsChanged];
-        [self configQuickSearchSettingsChanged];
+//        [self configQuickSearchSettingsChanged];
+        
+        m_QuickSearch = [[NCPanelQuickSearch alloc] initWithView:m_View
+                                                            data:m_Data
+                                                          config:GlobalConfig()];
+
+        [m_View addKeystrokeSink:self withBasePriority:view::BiddingPriority::Default];
+        [m_View addKeystrokeSink:m_QuickSearch withBasePriority:view::BiddingPriority::High];
     }
 
     return self;
@@ -344,14 +298,14 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     [self refreshPanel];
 }
 
-- (void)configQuickSearchSettingsChanged
-{
-    m_QuickSearchWhere = data::TextualFilter::WhereFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchWhereToFind) );
-    m_QuickSearchIsSoftFiltering = GlobalConfig().GetBool( g_ConfigQuickSearchSoftFiltering );
-    m_QuickSearchTypingView = GlobalConfig().GetBool( g_ConfigQuickSearchTypingView );
-    m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchKeyOption) );
-    [self clearQuickSearchFiltering];
-}
+//- (void)configQuickSearchSettingsChanged
+//{
+//    m_QuickSearchWhere = data::TextualFilter::WhereFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchWhereToFind) );
+//    m_QuickSearchIsSoftFiltering = GlobalConfig().GetBool( g_ConfigQuickSearchSoftFiltering );
+//    m_QuickSearchTypingView = GlobalConfig().GetBool( g_ConfigQuickSearchTypingView );
+//    m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchKeyOption) );
+//    [self clearQuickSearchFiltering];
+//}
 
 - (void) setState:(MainWindowFilePanelState *)state
 {
@@ -445,7 +399,7 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
         pers.Restore();
     
     [self onCursorChanged];
-    [self QuickSearchUpdate];
+//    [self QuickSearchUpdate];
     [m_View setNeedsDisplay];
 }
 
@@ -567,7 +521,9 @@ static bool RouteKeyboardInputIntoTerminal()
     const auto keycode = _event.keyCode;
     if( keycode == 53 ) { // Esc button
         if( m_IsAnythingWorksInBackground )
-            return panel::view::BiddingPriority::Skip;
+            return panel::view::BiddingPriority::Default;
+        if( m_QuickSearch.searchCriteria != nil )
+            return panel::view::BiddingPriority::Default;
         
         
         
@@ -582,6 +538,10 @@ static bool RouteKeyboardInputIntoTerminal()
     if( keycode == 53 ) { // Esc button
         if( m_IsAnythingWorksInBackground ) {
             [self CancelBackgroundOperations];
+            return;
+        }
+        if( m_QuickSearch.searchCriteria != nil ) {
+            m_QuickSearch.searchCriteria = nil;
             return;
         }
     }
@@ -677,7 +637,9 @@ static bool RouteKeyboardInputIntoTerminal()
         });
     
     [self clearFocusingRequest];
-    [self clearQuickSearchFiltering];
+
+//    [self clearQuickSearchFiltering];
+    
     [self.state PanelPathChanged:self];
     [self onCursorChanged];
     [self updateAttachedBriefSystemOverview];
@@ -1184,322 +1146,6 @@ loadPreviousState:(bool)_load_state
 - (id<NCPanelPreview>)quickLook
 {
     return [self.state quickLookForPanel:self make:false];
-}
-
-static const nanoseconds g_FastSeachDelayTresh = 4s;
-
-static bool IsQuickSearchModifier(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
-{
-    // exclude CapsLock from our decision process
-    _modif &= ~NSAlphaShiftKeyMask;
-    
-    switch (_mode) {
-        case PanelQuickSearchMode::WithAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == NSAlternateKeyMask ||
-            (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
-        case PanelQuickSearchMode::WithCtrlAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask) ||
-            (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask);
-        case PanelQuickSearchMode::WithShiftAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
-        case PanelQuickSearchMode::WithoutModif:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == 0 ||
-            (_modif&NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask ;
-        default:
-            break;
-    }
-    return false;
-}
-
-static bool IsQuickSearchModifierForArrows(NSUInteger _modif, PanelQuickSearchMode::KeyModif _mode)
-{
-    // exclude CapsLock from our decision process
-    _modif &= ~NSAlphaShiftKeyMask;
-    
-    // arrow keydowns have NSNumericPadKeyMask and NSFunctionKeyMask flag raised
-    if((_modif & NSNumericPadKeyMask) == 0) return false;
-    if((_modif & NSFunctionKeyMask) == 0) return false;
-    _modif &= ~NSNumericPadKeyMask;
-    _modif &= ~NSFunctionKeyMask;
-    
-    switch (_mode) {
-        case PanelQuickSearchMode::WithAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == NSAlternateKeyMask ||
-            (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
-        case PanelQuickSearchMode::WithCtrlAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask) ||
-            (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask);
-        case PanelQuickSearchMode::WithShiftAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
-        default:
-            break;
-    }
-    return false;
-}
-
-static bool IsQuickSearchStringCharacter(NSString *_s)
-{
-    static NSCharacterSet *chars;
-    static once_flag once;
-    call_once(once, []{
-        NSMutableCharacterSet *un = [NSMutableCharacterSet new];
-        [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
-        [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];
-        [un formUnionWithCharacterSet:[NSCharacterSet symbolCharacterSet]];
-        [un removeCharactersInString:@"/"]; // such character simply can't appear in filename under unix
-        chars = un;
-    });
-    
-    if(_s.length == 0)
-        return false;
-    
-    unichar u = [_s characterAtIndex:0]; // consider uing UTF-32 here
-    return [chars characterIsMember:u];
-}
-
-static inline bool IsBackspace(NSString *_s)
-{
-    return _s.length == 1 && [_s characterAtIndex:0] == 0x7F;
-}
-
-static inline bool IsSpace(NSString *_s)
-{
-    return _s.length == 1 && [_s characterAtIndex:0] == 0x20;
-}
-
-static NSString *RemoveLastCharacterWithNormalization(NSString *_s)
-{
-    // remove last symbol. since strings are decomposed (as for file system interaction),
-    // it should be composed first and decomposed back after altering
-    assert(_s != nil);
-    assert(_s.length > 0);
-    NSString *s = _s.precomposedStringWithCanonicalMapping;
-    s = [s substringToIndex:s.length-1];
-    return s.decomposedStringWithCanonicalMapping;
-}
-
-static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
-{
-    if( !_key )
-        return _str;
-    
-    if( !IsBackspace(_key) )
-        _str = _str ? [_str stringByAppendingString:_key] : _key;
-    else
-        _str = _str.length > 0 ? RemoveLastCharacterWithNormalization(_str) : nil;
-    
-    return _str;
-}
-
-- (void) clearQuickSearchFiltering
-{
-    if( m_View == nil )
-        return;
-    
-    GenericCursorPersistance pers(m_View, m_Data);
-    const auto any_changed = m_Data.ClearTextFiltering();
-    [m_View setQuickSearchPrompt:nil withMatchesCount:0];
-    
-    if( any_changed ) {
-        [m_View dataUpdated];
-        if( pers.IsValid() )
-            pers.Restore();
-        else
-            m_View.curpos = m_Data.SortedEntriesCount() > 0 ? 0 : -1;
-    }
-}
-
-- (bool)HandleQuickSearchSoft: (NSString*) _key
-{
-    nanoseconds currenttime = machtime();
-
-    // update soft filtering
-    NSString *text = m_Data.SoftFiltering().text;
-    if( m_QuickSearchLastType + g_FastSeachDelayTresh < currenttime )
-        text = nil;
-    
-    text = ModifyStringByKeyDownString(text, _key);
-    if( !text  )
-        return false;
-    
-    if( text.length == 0 ) {
-        [self clearQuickSearchFiltering];
-        return true;
-    }
-    
-    [self SetQuickSearchSoft:text];
-
-    return true;
-}
-
-- (void)SetQuickSearchSoft:(NSString*) _text
-{
-    if( !_text )
-        return;
-    
-    nanoseconds currenttime = machtime();
-    
-    // update soft filtering
-    auto filtering = m_Data.SoftFiltering();
-    if( m_QuickSearchLastType + g_FastSeachDelayTresh < currenttime )
-        m_QuickSearchOffset = 0;
-    
-    filtering.text = _text;
-    filtering.type = m_QuickSearchWhere;
-    filtering.ignore_dot_dot = false;
-    filtering.hightlight_results = m_QuickSearchTypingView;
-    m_Data.SetSoftFiltering(filtering);
-    
-    m_QuickSearchLastType = currenttime;
-    
-    if( !m_Data.EntriesBySoftFiltering().empty() ) {
-        if(m_QuickSearchOffset >= m_Data.EntriesBySoftFiltering().size())
-            m_QuickSearchOffset = (unsigned)m_Data.EntriesBySoftFiltering().size() - 1;
-        m_View.curpos = m_Data.EntriesBySoftFiltering()[m_QuickSearchOffset];
-    }
-    
-    if( m_QuickSearchTypingView ) {
-        int total = (int)m_Data.EntriesBySoftFiltering().size();
-        [m_View setQuickSearchPrompt:m_Data.SoftFiltering().text withMatchesCount:total];
-        //        m_View.quickSearchPrompt = PromptForMatchesAndString(total, m_Data.SoftFiltering().text);
-        
-        // automatically remove prompt after g_FastSeachDelayTresh
-        __weak PanelController *wself = self;
-        dispatch_to_main_queue_after(g_FastSeachDelayTresh + 1000ns, [=]{
-            if(PanelController *sself = wself)
-                if( sself->m_QuickSearchLastType + g_FastSeachDelayTresh <= machtime() )
-                    [sself clearQuickSearchFiltering];
-        });
-        
-        [m_View volatileDataChanged];
-    }
-}
-
-- (void)QuickSearchHardUpdateTypingUI
-{
-    if(!m_QuickSearchTypingView)
-        return;
-    
-    auto filtering = m_Data.HardFiltering();
-    if(!filtering.text.text) {
-        [m_View setQuickSearchPrompt:nil withMatchesCount:0];
-    }
-    else {
-        int total = (int)m_Data.SortedDirectoryEntries().size();
-        if(total > 0 && m_Data.Listing().IsDotDot(0))
-            total--;
-        [m_View setQuickSearchPrompt:filtering.text.text withMatchesCount:total];
-    }
-}
-
-- (bool)HandleQuickSearchHard:(NSString*) _key
-{
-    NSString *text = m_Data.HardFiltering().text.text;
-    
-    text = ModifyStringByKeyDownString(text, _key);
-    if( text == nil )
-        return false;
-
-    if( text.length == 0 ) {
-        [self clearQuickSearchFiltering];
-        return true;
-    }
-
-    [self SetQuickSearchHard:text];
-    
-    return true;
-}
-
-- (void)SetQuickSearchHard:(NSString*)_text
-{
-    auto filtering = m_Data.HardFiltering();
-    filtering.text.text = _text;
-    if( filtering.text.text == nil )
-        return;
-    
-    GenericCursorPersistance pers(m_View, m_Data);
-    
-    filtering.text.type = m_QuickSearchWhere;
-    filtering.text.clear_on_new_listing = true;
-    filtering.text.hightlight_results = m_QuickSearchTypingView;
-    m_Data.SetHardFiltering(filtering);
-    
-    pers.Restore();
-    
-    [m_View dataUpdated];
-    [self QuickSearchHardUpdateTypingUI];
-    
-    // for convinience - if we have ".." and cursor is on it - move it to first element (if any)
-    if((m_VFSFetchingFlags & VFSFlags::F_NoDotDot) == 0 &&
-       m_View.curpos == 0 &&
-       m_Data.SortedDirectoryEntries().size() >= 2 &&
-       m_Data.EntryAtRawPosition(m_Data.SortedDirectoryEntries()[0]).IsDotDot() )
-        m_View.curpos = 1;
-    
-}
-
-- (void) QuickSearchSetCriteria:(NSString *)_text
-{
-    if( m_QuickSearchIsSoftFiltering )
-        [self SetQuickSearchSoft:_text];
-    else
-        [self SetQuickSearchHard:_text];
-}
-
-- (void)QuickSearchPrevious
-{
-    if(m_QuickSearchOffset > 0)
-        m_QuickSearchOffset--;
-    [self HandleQuickSearchSoft:nil];
-}
-
-- (void)QuickSearchNext
-{
-    m_QuickSearchOffset++;
-    [self HandleQuickSearchSoft:nil];
-}
-
-- (bool) QuickSearchProcessKeyDown:(NSEvent *)event
-{
-    NSString*  const character   = [event charactersIgnoringModifiers];
-    NSUInteger const modif       = [event modifierFlags];
-    
-    bool empty_text = m_QuickSearchIsSoftFiltering ?
-        m_Data.SoftFiltering().text.length == 0 :
-        m_Data.HardFiltering().text.text.length == 0;
-    
-    if( IsQuickSearchModifier(modif, m_QuickSearchMode) &&
-        ( IsQuickSearchStringCharacter(character) ||
-            ( !empty_text && IsSpace(character) ) ||
-            IsBackspace(character)
-         )
-       ) {
-        if(m_QuickSearchIsSoftFiltering)
-            return [self HandleQuickSearchSoft:character.decomposedStringWithCanonicalMapping];
-        else
-            return [self HandleQuickSearchHard:character.decomposedStringWithCanonicalMapping];
-    }
-    else if( character.length == 1 )
-        switch([character characterAtIndex:0]) {
-            case NSUpArrowFunctionKey:
-                if( IsQuickSearchModifierForArrows(modif, m_QuickSearchMode) ) {
-                    [self QuickSearchPrevious];
-                    return true;
-                }
-            case NSDownArrowFunctionKey:
-                if( IsQuickSearchModifierForArrows(modif, m_QuickSearchMode) ) {
-                    [self QuickSearchNext];
-                    return true;
-                }
-        }
-    
-    return false;
-}
-
-- (void) QuickSearchUpdate
-{
-    if(!m_QuickSearchIsSoftFiltering)
-        [self QuickSearchHardUpdateTypingUI];
 }
 
 - (nc::panel::PanelViewLayoutsStorage&)layoutStorage

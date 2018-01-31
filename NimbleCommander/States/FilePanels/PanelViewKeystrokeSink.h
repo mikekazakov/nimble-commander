@@ -12,14 +12,16 @@ constexpr int High      = 1000;
 }
 
 @protocol NCPanelViewKeystrokeSink <NSObject>
-
 @required
+
 /**
  * Return a positive value to participate in bidding.
  */
 - (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view;
 
-
+/**
+ * Do an actual keystroke processing.
+ */
 - (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view;
 
 @end

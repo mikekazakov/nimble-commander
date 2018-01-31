@@ -70,7 +70,7 @@ public:
     /**
      * Should be used when panel is forced to use a disabled layout.
      */
-    const shared_ptr<const PanelViewLayout> LastResortLayout() const;
+    static const shared_ptr<const PanelViewLayout> LastResortLayout();
     
     /**
      * Default layout that will be used by file panel upon initialization.

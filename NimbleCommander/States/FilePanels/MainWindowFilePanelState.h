@@ -5,7 +5,7 @@
 #import <MMTabBarView/MMTabBarView.h>
 #include "../MainWindowStateProtocol.h"
 #include "../../Bootstrap/Config.h"
-
+#include "PanelViewKeystrokeSink.h"
 #include "PanelPreview.h"
 
 namespace nc::ops {
@@ -33,7 +33,9 @@ class ExternalToolsStorage;
 
 struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
-@interface MainWindowFilePanelState : NSView<NCMainWindowState, MMTabBarViewDelegate>
+@interface MainWindowFilePanelState : NSView<NCMainWindowState,
+                                             NCPanelViewKeystrokeSink,
+                                             MMTabBarViewDelegate>
 {
     function<PanelController*()> m_PanelFactory;
     vector<PanelController*> m_LeftPanelControllers;
@@ -173,6 +175,9 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (void)addNewControllerOnLeftPane:(PanelController*)_pc;
 - (void)addNewControllerOnRightPane:(PanelController*)_pc;
 - (void)panelWillBeClosed:(PanelController*)_pc;
+
+- (void)attachPanel:(PanelController*)_pc; // +detach in the future
+
 
 @property (nonatomic) IBOutlet NSToolbar *filePanelsToolsbar;
 

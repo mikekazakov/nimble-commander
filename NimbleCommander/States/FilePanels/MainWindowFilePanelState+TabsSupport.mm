@@ -284,7 +284,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
                         activateNewPanel:(bool)_activate
 {
     PanelController *pc = m_PanelFactory();
-    pc.state = self;
+    [self attachPanel:pc];
     PanelController *source = nil;
     if( aTabView == m_SplitView.leftTabbedHolder.tabView ) {
         source = self.leftPanelController;

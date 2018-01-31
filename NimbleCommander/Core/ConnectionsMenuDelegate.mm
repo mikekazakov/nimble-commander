@@ -1,7 +1,7 @@
 // Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectionsMenuDelegate.h"
 #include <NimbleCommander/States/FilePanels/PanelController.h>
-#include <NimbleCommander/States/FilePanels/PanelController+Menu.h>
+#include <NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "NetworkConnectionsManager.h"
 

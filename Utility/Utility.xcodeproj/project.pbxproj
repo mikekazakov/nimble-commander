@@ -12,6 +12,8 @@
 		CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3847272010756800BAB3BE /* FilenameTextNavigation.h */; };
 		CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */; };
 		CF38472D2010780E00BAB3BE /* FilenameTextNavigation_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */; };
+		CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3B7F6A201F141C00BF2090 /* MIMResponder.h */; };
+		CF3B7F6D201F167200BF2090 /* MIMResponder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6C201F167200BF2090 /* MIMResponder.mm */; };
 		CF614AA21F9D86CC0005F2DB /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94631F453CB60035E606 /* libUtility.dylib */; };
 		CF614AAF1F9D87230005F2DB /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */; };
 		CF614AB01F9D87260005F2DB /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */; };
@@ -81,6 +83,8 @@
 		CF3847272010756800BAB3BE /* FilenameTextNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextNavigation.h; path = include/Utility/FilenameTextNavigation.h; sourceTree = "<group>"; };
 		CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextNavigation.mm; path = source/FilenameTextNavigation.mm; sourceTree = "<group>"; };
 		CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextNavigation_Tests.mm; path = tests/FilenameTextNavigation_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF3B7F6A201F141C00BF2090 /* MIMResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MIMResponder.h; path = include/Utility/MIMResponder.h; sourceTree = "<group>"; };
+		CF3B7F6C201F167200BF2090 /* MIMResponder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MIMResponder.mm; path = source/MIMResponder.mm; sourceTree = "<group>"; };
 		CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSEventModifierFlagsHolder.h; path = include/Utility/NSEventModifierFlagsHolder.h; sourceTree = "<group>"; };
 		CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ByteCountFormatter.h; path = include/Utility/ByteCountFormatter.h; sourceTree = "<group>"; };
 		CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter.mm; path = source/ByteCountFormatter.mm; sourceTree = "<group>"; };
@@ -212,6 +216,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF3B7F6A201F141C00BF2090 /* MIMResponder.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
 				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
@@ -253,6 +258,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF3B7F6C201F167200BF2090 /* MIMResponder.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
 				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
@@ -313,6 +319,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */,
+				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
 				CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */,
 			);
@@ -431,6 +438,7 @@
 				CFFA94701F453CC00035E606 /* FontCache.cpp in Sources */,
 				CFFA94801F453CC00035E606 /* SheetWithHotkeys.mm in Sources */,
 				CFFA946A1F453CC00035E606 /* ByteCountFormatter.mm in Sources */,
+				CF3B7F6D201F167200BF2090 /* MIMResponder.mm in Sources */,
 				CFFA947B1F453CC00035E606 /* NSObject+MassObserving.m in Sources */,
 				CFFA946F1F453CC00035E606 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFFA94811F453CC00035E606 /* StringExtras.mm in Sources */,

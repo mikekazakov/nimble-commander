@@ -5,6 +5,8 @@
 #include <NimbleCommander/States/MainWindow.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
+#include <NimbleCommander/States/FilePanels/PanelView.h>
+#include <NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h>
 #include <Operations/Pool.h>
 #include <Operations/AggregateProgressTracker.h>
 #include "Config.h"
@@ -37,6 +39,12 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     auto panel = [[PanelController alloc] initWithLayouts:self.panelLayouts
                                 networkConnectionsManager:self.networkConnectionsManager
                                        vfsInstanceManager:self.vfsInstanceManager];
+    
+    auto actions_dispatcher = [[NCPanelControllerActionsDispatcher alloc] initWithController:panel];
+    [panel setNextAttachedResponder:actions_dispatcher];
+    [panel.view addKeystrokeSink:actions_dispatcher
+                withBasePriority:nc::panel::view::BiddingPriority::Default];
+    
     return panel;
 }
 

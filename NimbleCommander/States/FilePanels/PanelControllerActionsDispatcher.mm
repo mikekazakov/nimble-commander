@@ -1,7 +1,8 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PanelControllerActionsDispatcher.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/Alert.h>
-#include "PanelController+Menu.h"
+#include <Utility/NSMenu+Hierarchical.h>
+#include "PanelController.h"
 #include "Actions/CopyFilePaths.h"
 #include "Actions/AddToFavorites.h"
 #include "Actions/GoToFolder.h"
@@ -39,19 +40,138 @@
 using namespace nc::core;
 using namespace nc::panel;
 namespace nc::panel {
+
 static const nc::panel::actions::PanelAction *ActionByTag(int _tag) noexcept;
 static const nc::panel::actions::PanelAction *ActionBySel(SEL _sel) noexcept;
 static void Perform(SEL _sel, PanelController *_target, id _sender);
+    
 }
 
-@implementation PanelController (Menu)
+@implementation NCPanelControllerActionsDispatcher
+{
+    __unsafe_unretained PanelController *m_PC;
+}
+
+- (instancetype)initWithController:(PanelController*)_controller
+{
+    if( self = [super init] ) {
+        m_PC = _controller;
+    }
+    return self;
+}
+
+- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+{
+    return [self bidForHandlingKeyDown:_event forPanelView:_panel_view andHandle:false];
+}
+
+- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+{
+    [self bidForHandlingKeyDown:_event forPanelView:_panel_view andHandle:true];
+}
+
+- (int)bidForHandlingKeyDown:(NSEvent *)_event
+                forPanelView:(PanelView*)_panel_view
+                   andHandle:(bool)_handle
+{
+    
+    NSString*  const character   = _event.charactersIgnoringModifiers;
+    if ( character.length == 0 )
+        return view::BiddingPriority::Skip;
+    
+    NSUInteger const modif       = _event.modifierFlags;
+    unichar const unicode        = [character characterAtIndex:0];
+    unsigned short const keycode = _event.keyCode;
+    
+    static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root,
+                                             hk_go_home, hk_preview, hk_go_into, kh_go_outside;
+    static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater(
+    {&hk_file_open, &hk_file_open_native, &hk_go_root, &hk_go_home,
+        &hk_preview, &hk_go_into, &kh_go_outside},
+    {"menu.file.enter", "menu.file.open", "panel.go_root", "panel.go_home",
+        "panel.show_preview", "panel.go_into_folder", "panel.go_into_enclosing_folder"});
+    
+    if( hk_preview.IsKeyDown(unicode, modif) ) {
+        if( _handle ) {
+            [self OnFileViewCommand:self];
+            return view::BiddingPriority::Default;
+        }
+        else
+            return [self validateActionBySelector:@selector(OnFileViewCommand:)] ?
+                view::BiddingPriority::Default :
+                view::BiddingPriority::Skip;
+    }
+    
+    if( hk_go_home.IsKeyDown(unicode, modif) ) {
+        if( _handle ) {
+            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
+            [[NSApp menu] performActionForItemWithTagHierarchical:tag];
+        }
+        return view::BiddingPriority::Default;
+    }
+    
+    if( hk_go_root.IsKeyDown(unicode, modif) ) {
+        if( _handle ) {
+            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.root");
+            [[NSApp menu] performActionForItemWithTagHierarchical:tag];
+        }
+        return view::BiddingPriority::Default;
+    }
+    
+    if( hk_go_into.IsKeyDown(unicode, modif) ) {
+        if( _handle ) {
+            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.into_folder");
+            [[NSApp menu] performActionForItemWithTagHierarchical:tag];
+        }
+        return view::BiddingPriority::Default;
+    }
+    
+    if( kh_go_outside.IsKeyDown(unicode, modif) ) {
+        if( _handle ) {
+            static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.enclosing_folder");
+            [[NSApp menu] performActionForItemWithTagHierarchical:tag];
+        }
+        return view::BiddingPriority::Default;
+    }
+    
+    if( hk_file_open.IsKeyDown(unicode, modif) ) {
+        if( _handle ) {
+            // we keep it here to avoid blinking on menu item
+            actions::Enter{}.Perform(m_PC, m_PC); // ????????????????????????????????????????????????????????????????????
+        }
+        return view::BiddingPriority::Default;
+    }
+    if( hk_file_open_native.IsKeyDown(unicode, modif) ) {
+        if( _handle ) {
+            // we keep it here to avoid blinking on menu item
+            actions::OpenFilesWithDefaultHandler{}.Perform(m_PC, m_PC); // ???????????????????????????????????????????
+        }
+        return view::BiddingPriority::Default;
+    }
+    
+
+    
+    
+    if(keycode == 51 && // backspace
+       (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 ) {
+        // treat not-processed by QuickSearch backspace as a GoToUpperLevel command
+        if( _handle ) {
+            actions::GoToEnclosingFolder{}.Perform(m_PC, m_PC);
+        }
+        return view::BiddingPriority::Low;
+//        return true;
+    }
+    
+    
+    return view::BiddingPriority::Skip;
+}
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item
 {
     try {
         const auto tag = (int)item.tag;
         if( const auto action = ActionByTag(tag) )
-            return action->ValidateMenuItem(self, item);
+            return action->ValidateMenuItem(m_PC, item);
         return true;
     }
     catch(exception &e) {
@@ -67,7 +187,7 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
 {
     if( const auto action = ActionBySel(_selector) ) {
         try {
-            return action->Predicate(self);
+            return action->Predicate(m_PC);
         }
         catch(exception &e) {
             cerr << "validateActionBySelector has caught an exception: " << e.what() << endl;
@@ -80,102 +200,105 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
     return false;
 }
 
-- (IBAction)OnBriefSystemOverviewCommand:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnRefreshPanel:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnFileInternalBigViewCommand:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnOpen:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoIntoDirectory:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToUpperDirectory:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnOpenNatively:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onOpenFileWith:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onAlwaysOpenFileWith:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onCompressItems:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onCompressItemsHere:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnDuplicate:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoBack:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoForward:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToFavoriteLocation:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnDeleteCommand:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnDeletePermanentlyCommand:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnMoveToTrash:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToSavedConnectionItem:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToFTP:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToSFTP:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onGoToWebDAV:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToNetworkShare:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToDropboxStorage:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnConnectToNetworkServer:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)copy:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnSelectByMask:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnDeselectByMask:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnQuickSelectByExtension:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnQuickDeselectByExtension:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)selectAll:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)deselectAll:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnMenuInvertSelection:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnRenameFileInPlace:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)paste:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)moveItemHere:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToHome:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToDocuments:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToDesktop:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToDownloads:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToApplications:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToUtilities:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToLibrary:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToRoot:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToProcessesList:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToFolder:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCreateDirectoryCommand:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCalculateChecksum:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnQuickNewFolder:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnQuickNewFolderWithSelection:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnQuickNewFile:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnBatchRename:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnOpenExtendedAttributes:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnAddToFavorites:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnSpotlightSearch:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnEjectVolume:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCopyCurrentFileName:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCopyCurrentFilePath:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCalculateSizes:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCalculateAllSizes:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleViewHiddenFiles:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleExtensionlessFolders:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleCaseSensitiveComparison:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleNumericComparison:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortByName:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortByExt:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortByMTime:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortBySize:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortByBTime:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)ToggleSortByATime:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout1:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout2:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout3:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout4:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout5:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout6:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout7:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout8:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout9:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onToggleViewLayout10:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnOpenWithExternalEditor:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnFileAttributes:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnDetailedVolumeInformation:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)onMainMenuPerformFindAction:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToQuickListsParents:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToQuickListsHistory:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToQuickListsVolumes:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToQuickListsFavorites:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnGoToQuickListsConnections:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCreateSymbolicLinkCommand:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnEditSymbolicLinkCommand:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnCreateHardLinkCommand:(id)sender { Perform(_cmd, self, sender); }
-- (IBAction)OnFileViewCommand:(id)sender { Perform(_cmd, self, sender); }
+- (IBAction)OnBriefSystemOverviewCommand:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnRefreshPanel:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnFileInternalBigViewCommand:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnOpen:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoIntoDirectory:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToUpperDirectory:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnOpenNatively:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onOpenFileWith:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onAlwaysOpenFileWith:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onCompressItems:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onCompressItemsHere:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnDuplicate:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoBack:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoForward:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToFavoriteLocation:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnDeleteCommand:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnDeletePermanentlyCommand:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnMoveToTrash:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToSavedConnectionItem:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToFTP:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToSFTP:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onGoToWebDAV:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToNetworkShare:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToDropboxStorage:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnConnectToNetworkServer:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)copy:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnSelectByMask:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnDeselectByMask:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnQuickSelectByExtension:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnQuickDeselectByExtension:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)selectAll:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)deselectAll:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnMenuInvertSelection:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnRenameFileInPlace:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)paste:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)moveItemHere:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToHome:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToDocuments:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToDesktop:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToDownloads:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToApplications:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToUtilities:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToLibrary:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToRoot:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToProcessesList:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToFolder:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnCreateDirectoryCommand:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnCalculateChecksum:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnQuickNewFolder:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnQuickNewFolderWithSelection:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnQuickNewFile:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnBatchRename:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnOpenExtendedAttributes:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnAddToFavorites:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnSpotlightSearch:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnEjectVolume:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnCopyCurrentFileName:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnCopyCurrentFilePath:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnCalculateSizes:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnCalculateAllSizes:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleViewHiddenFiles:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleSeparateFoldersFromFiles:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleExtensionlessFolders:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleCaseSensitiveComparison:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleNumericComparison:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleSortByName:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleSortByExt:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleSortByMTime:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleSortBySize:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleSortByBTime:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)ToggleSortByATime:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onToggleViewLayout1:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onToggleViewLayout2:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onToggleViewLayout3:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onToggleViewLayout4:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onToggleViewLayout5:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onToggleViewLayout6:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onToggleViewLayout7:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onToggleViewLayout8:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onToggleViewLayout9:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onToggleViewLayout10:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnOpenWithExternalEditor:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnFileAttributes:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnDetailedVolumeInformation:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)onMainMenuPerformFindAction:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToQuickListsParents:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToQuickListsHistory:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToQuickListsVolumes:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToQuickListsFavorites:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnGoToQuickListsConnections:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnCreateSymbolicLinkCommand:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnEditSymbolicLinkCommand:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnCreateHardLinkCommand:(id)sender { Perform(_cmd, m_PC, sender); }
+- (IBAction)OnFileViewCommand:(id)sender { Perform(_cmd, m_PC, sender); }
+
 
 @end
+
+
 
 using namespace nc::panel::actions;
 namespace nc::panel {

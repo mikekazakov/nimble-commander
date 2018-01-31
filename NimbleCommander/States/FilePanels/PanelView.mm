@@ -2,6 +2,7 @@
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
+#include <Utility/MIMResponder.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 #include "PanelData.h"
@@ -16,6 +17,7 @@
 #include "DragReceiver.h"
 #include "DragSender.h"
 #include "PanelViewFieldEditor.h"
+#include "PanelViewKeystrokeSink.h"
 
 enum class CursorSelectionType : int8_t
 {
@@ -40,6 +42,7 @@ using namespace nc::panel;
 @implementation PanelView
 {
     data::Model                *m_Data;
+    vector< pair<__weak id<NCPanelViewKeystrokeSink>, int > > m_KeystrokeSinks;
     
     unordered_map<uint64_t, PanelViewStateStorage> m_States;
     NSString                   *m_HeaderTitle;
@@ -133,6 +136,21 @@ using namespace nc::panel;
     return m_Delegate;
 }
 
+- (void)setNextResponder:(NSResponder *)newNextResponder
+{
+    if( auto r = objc_cast<AttachedResponder>(self.delegate) ) {
+        [r setNextResponder:newNextResponder];
+        return;
+    }
+//    if( auto ar = objc_cast<AttachedResponder>(self.nextResponder) ) {
+//        [ar setNextResponder:newNextResponder];
+//        return;
+//    }
+    
+    
+    [super setNextResponder:newNextResponder];
+}
+
 - (PanelListView*) spawnListView
 {
    PanelListView *v = [[PanelListView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
@@ -180,16 +198,6 @@ using namespace nc::panel;
         }
     });
     return YES;
-}
-
-- (void)setNextResponder:(NSResponder *)newNextResponder
-{
-    if( auto r = objc_cast<NSResponder>(self.delegate) ) {
-        r.nextResponder = newNextResponder;
-        return;
-    }
-    
-    [super setNextResponder:newNextResponder];
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
@@ -493,10 +501,26 @@ using namespace nc::panel;
 
 - (void)keyDown:(NSEvent *)event
 {
-    if(id<PanelViewDelegate> del = self.delegate)
-        if([del respondsToSelector:@selector(PanelViewProcessKeyDown:event:)])
-            if([del PanelViewProcessKeyDown:self event:event])
-                return;
+    id<NCPanelViewKeystrokeSink> best_handler = nil;
+    int best_bid = 0;
+    for( const auto &handler: m_KeystrokeSinks )
+        if( id<NCPanelViewKeystrokeSink> h = handler.first ) {
+            const auto bid = [h bidForHandlingKeyDown:event forPanelView:self];
+            if( bid > 0 && bid + handler.second > best_bid ) {
+                best_handler = h;
+                best_bid = bid + handler.second;
+            }
+        }
+
+    if( best_handler ) {
+        [best_handler handleKeyDown:event forPanelView:self];
+        return;
+    }
+    
+//    if(id<PanelViewDelegate> del = self.delegate)
+//        if([del respondsToSelector:@selector(PanelViewProcessKeyDown:event:)])
+//            if([del PanelViewProcessKeyDown:self event:event])
+//                return;
     
     NSString* character = [event charactersIgnoringModifiers];
     if ( character.length != 1 ) {
@@ -1039,6 +1063,19 @@ using namespace nc::panel;
 - (void)notifyAboutPresentationLayoutChange
 {
     [self.controller panelViewDidChangePresentationLayout];
+}
+
+- (void)addKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink withBasePriority:(int)_priority
+{
+    m_KeystrokeSinks.emplace_back( _sink, _priority );
+}
+
+- (void)removeKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink
+{
+    m_KeystrokeSinks.erase(remove_if(begin(m_KeystrokeSinks),
+                                     end(m_KeystrokeSinks),
+                                     [&](const auto &v) { return v.first == _sink; }),
+                           end(m_KeystrokeSinks) );
 }
 
 @end

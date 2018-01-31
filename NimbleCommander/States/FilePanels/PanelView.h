@@ -5,6 +5,7 @@
 #include "PanelViewTypes.h"
 
 @protocol PanelViewDelegate;
+@protocol NCPanelViewKeystrokeSink;
 @class PanelView;
 
 namespace nc::panel {
@@ -97,5 +98,8 @@ namespace nc::panel {
 - (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)_event;
 
 + (NSArray*) acceptedDragAndDropTypes;
+
+- (void)addKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink withBasePriority:(int)_priority;
+- (void)removeKeystrokeSink:(id<NCPanelViewKeystrokeSink>)_sink;
 
 @end

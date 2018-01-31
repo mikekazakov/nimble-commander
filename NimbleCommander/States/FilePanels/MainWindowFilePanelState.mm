@@ -172,12 +172,12 @@ static NSString *TitleForData( const data::Model* _data );
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
         
         m_LeftPanelControllers.emplace_back(m_PanelFactory());
+        [self attachPanel:m_LeftPanelControllers.front()];
+
         m_RightPanelControllers.emplace_back(m_PanelFactory());
+        [self attachPanel:m_RightPanelControllers.front()];
         
         [self CreateControls];
-        
-        m_LeftPanelControllers.front().state = self;
-        m_RightPanelControllers.front().state = self;
         
         [self updateTabBarsVisibility];
         [self loadOverlappedTerminalSettingsAndRunIfNecessary];
@@ -628,7 +628,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
                 for( auto i = left.Begin(), e = left.End(); i != e; ++i ) {
                     if( i != left.Begin() ) {
                         auto pc = m_PanelFactory();
-                        pc.state = self;
+                        [self attachPanel:pc];
                         [self addNewControllerOnLeftPane:pc];
                         ControllerStateJSONDecoder{pc}.Decode(*i);
                     }
@@ -641,7 +641,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
                 for( auto i = right.Begin(), e = right.End(); i != e; ++i ) {
                     if( i != right.Begin() ) {
                         auto pc = m_PanelFactory();
-                        pc.state = self;
+                        [self attachPanel:pc];
                         [self addNewControllerOnRightPane:pc];
                         ControllerStateJSONDecoder{pc}.Decode(*i);
                     }
@@ -1038,6 +1038,38 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 - (void)endPreviewPanelControl:(QLPreviewPanel *)panel
 {
     [NCPanelQLPanelAdaptor unregisterQuickLook:panel forState:self];
+}
+
+- (void)attachPanel:(PanelController*)_pc
+{
+    _pc.state = self;
+    [_pc.view addKeystrokeSink:self withBasePriority:nc::panel::view::BiddingPriority::Default];
+}
+
+- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+{
+    const auto character = _event.charactersIgnoringModifiers;
+    if ( character.length == 0 )
+        return nc::panel::view::BiddingPriority::Skip;
+    const auto unicode = [character characterAtIndex:0];
+    
+    if( unicode ==  NSTabCharacter ) {
+        return nc::panel::view::BiddingPriority::Default;
+    }
+    
+    return nc::panel::view::BiddingPriority::Skip;
+}
+
+- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+{
+    const auto character = _event.charactersIgnoringModifiers;
+    if ( character.length == 0 )
+        return;
+    const auto unicode = [character characterAtIndex:0];
+    
+    if( unicode ==  NSTabCharacter ) {
+        [self changeFocusedSide];
+    }
 }
 
 @end

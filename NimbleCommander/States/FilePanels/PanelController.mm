@@ -26,7 +26,6 @@
 #include "PanelDataExternalEntryKey.h"
 #include "PanelDataPersistency.h"
 #include <NimbleCommander/Core/VFSInstanceManager.h>
-#include "PanelController+Menu.h"
 #include "ContextMenu.h"
 #include "Actions/OpenFile.h"
 #include "Actions/GoToFolder.h"
@@ -517,6 +516,7 @@ static bool RouteKeyboardInputIntoTerminal()
     return route;
 }
 
+/*
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
 {
     [self clearFocusingRequest]; // on any key press we clear entry selection request if any
@@ -526,87 +526,65 @@ static bool RouteKeyboardInputIntoTerminal()
                                   [self.state overlappedTerminalWillEatKeyDown:event];
     
     NSString*  const character   = event.charactersIgnoringModifiers;
-    if ( character.length > 0 ) {
-        NSUInteger const modif       = event.modifierFlags;
-        unichar const unicode        = [character characterAtIndex:0];
-        unsigned short const keycode = event.keyCode;
-        
-        if( unicode == NSTabCharacter ) { // Tab button
-            [self.state changeFocusedSide];
-            return true;
-        }
-        if( keycode == 53 ) { // Esc button
-            [self CancelBackgroundOperations];
-            [self.state closeAttachedUI:self];
-            [self clearQuickSearchFiltering];
-            return true;
-        }
-        if( keycode == 36 ) { // Return button
-            if( self.state && [self.state handleReturnKeyWithOverlappedTerminal] )
-                return true;
-        }
-        
-        // handle some actions manually, to prevent annoying by menu highlighting by hotkey
-        static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root, hk_go_home, hk_preview, hk_go_into, kh_go_outside;
-        static ActionsShortcutsManager::ShortCutsUpdater hotkeys_updater({&hk_file_open, &hk_file_open_native, &hk_go_root, &hk_go_home, &hk_preview, &hk_go_into, &kh_go_outside}, {"menu.file.enter", "menu.file.open", "panel.go_root", "panel.go_home", "panel.show_preview", "panel.go_into_folder", "panel.go_into_enclosing_folder"});
-
-        if( !terminal_can_eat ) {
-            if( hk_preview.IsKeyDown(unicode, modif) ) {
-                if( [self validateActionBySelector:@selector(OnFileViewCommand:)] )
-                    [self OnFileViewCommand:self];
-                else
-                    NSBeep();
-                return true;
-            }
-            if( hk_go_home.IsKeyDown(unicode, modif) ) {
-                static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.home");
-                [[NSApp menu] performActionForItemWithTagHierarchical:tag];
-                return true;
-            }
-            if( hk_go_root.IsKeyDown(unicode, modif) ) {
-                static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.root");
-                [[NSApp menu] performActionForItemWithTagHierarchical:tag];
-                return true;
-            }
-            if( hk_go_into.IsKeyDown(unicode, modif) ) {
-                static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.into_folder");
-                [[NSApp menu] performActionForItemWithTagHierarchical:tag];
-                return true;
-            }
-            if( kh_go_outside.IsKeyDown(unicode, modif) ) {
-                static auto tag = ActionsShortcutsManager::Instance().TagFromAction("menu.go.enclosing_folder");
-                [[NSApp menu] performActionForItemWithTagHierarchical:tag];
-                return true;
-            }
-            if( hk_file_open.IsKeyDown(unicode, modif) ) {
-                // we keep it here to avoid blinking on menu item
-                actions::Enter{}.Perform(self, self);
-                return true;
-            }
-            if( hk_file_open_native.IsKeyDown(unicode, modif) ) {
-                // we keep it here to avoid blinking on menu item
-                actions::OpenFilesWithDefaultHandler{}.Perform(self, self);
-                return true;
-            }
-        }
-        
-        // try to process this keypress with QuickSearch
-        if( [self QuickSearchProcessKeyDown:event] )
-            return true;
-        
-        if(keycode == 51 && // backspace
-           (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 &&
-           !terminal_can_eat
-           ) { // treat not-processed by QuickSearch backspace as a GoToUpperLevel command
-            actions::GoToEnclosingFolder{}.Perform(self, self);
-            return true;
-        }
-        
-        if( terminal_can_eat && [self.state feedOverlappedTerminalWithKeyDown:event] )
+    if ( character.length == 0 )
+        return false;
+    
+    NSUInteger const modif       = event.modifierFlags;
+    unichar const unicode        = [character characterAtIndex:0];
+    unsigned short const keycode = event.keyCode;
+    
+    if( keycode == 53 ) { // Esc button
+        [self CancelBackgroundOperations];
+        [self.state closeAttachedUI:self];
+        [self clearQuickSearchFiltering];
+        return true;
+    }
+    if( keycode == 36 ) { // Return button
+        if( self.state && [self.state handleReturnKeyWithOverlappedTerminal] )
             return true;
     }
     
+    // handle some actions manually, to prevent annoying by menu highlighting by hotkey
+    
+    // try to process this keypress with QuickSearch
+    if( [self QuickSearchProcessKeyDown:event] )
+        return true;
+    
+    if( terminal_can_eat && [self.state feedOverlappedTerminalWithKeyDown:event] )
+        return true;
+    
     return false;
+}
+*/
+
+// - no Esc handling
+// - no QuickSearch
+// - no overlapped terminal redirection
+// - no clearing of focusing request
+
+- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+{
+    const auto keycode = _event.keyCode;
+    if( keycode == 53 ) { // Esc button
+        if( m_IsAnythingWorksInBackground )
+            return panel::view::BiddingPriority::Skip;
+        
+        
+        
+    }
+    
+    return panel::view::BiddingPriority::Skip;
+}
+
+- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+{
+    const auto keycode = _event.keyCode;
+    if( keycode == 53 ) { // Esc button
+        if( m_IsAnythingWorksInBackground ) {
+            [self CancelBackgroundOperations];
+            return;
+        }
+    }
 }
 
 - (void) calculateSizesOfItems:(const vector<VFSListingItem>&) _items

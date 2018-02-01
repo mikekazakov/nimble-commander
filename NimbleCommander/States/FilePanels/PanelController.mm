@@ -41,29 +41,7 @@ using namespace nc::panel;
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
-static const auto g_ConfigRouteKeyboardInputIntoTerminal        = "filePanel.general.routeKeyboardInputIntoTerminal";
-//static const auto g_ConfigQuickSearchWhereToFind                = "filePanel.quickSearch.whereToFind";
-//static const auto g_ConfigQuickSearchSoftFiltering              = "filePanel.quickSearch.softFiltering";
-//static const auto g_ConfigQuickSearchTypingView                 = "filePanel.quickSearch.typingView";
-//static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.quickSearch.keyOption";
-
-//struct PanelQuickSearchMode
-//{
-//    enum KeyModif { // persistancy-bound values, don't change it
-//        WithAlt         = 0,
-//        WithCtrlAlt     = 1,
-//        WithShiftAlt    = 2,
-//        WithoutModif    = 3,
-//        Disabled        = 4
-//    };
-//    
-//    static KeyModif KeyModifFromInt(int _k)
-//    {
-//        if(_k >= 0 && _k <= Disabled)
-//            return (KeyModif)_k;
-//        return WithAlt;
-//    }
-//};
+//static const auto g_ConfigRouteKeyboardInputIntoTerminal        = "filePanel.general.routeKeyboardInputIntoTerminal";
 
 using GenericCursorPersistance = CursorBackup;
 
@@ -111,8 +89,6 @@ void ActivityTicket::Reset()
     panel = nil;
     ticket = 0;
 }
-
-
 
 }
 
@@ -224,8 +200,6 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
         m_NetworkConMgr = move(_conn_mgr);
         m_VFSInstanceManager = &_vfs_mgr;
         m_History.SetVFSInstanceManager(_vfs_mgr);
-//        m_QuickSearchLastType = 0ns;
-//        m_QuickSearchOffset = 0;
         m_VFSFetchingFlags = 0;
         m_NextActivityTicket = 1;
         m_IsAnythingWorksInBackground = false;
@@ -253,17 +227,12 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
         };
         add_co(g_ConfigShowDotDotEntry,         @selector(configVFSFetchFlagsChanged) );
         add_co(g_ConfigShowLocalizedFilenames,  @selector(configVFSFetchFlagsChanged) );
-//        add_co(g_ConfigQuickSearchWhereToFind,  @selector(configQuickSearchSettingsChanged) );
-//        add_co(g_ConfigQuickSearchSoftFiltering,@selector(configQuickSearchSettingsChanged) );
-//        add_co(g_ConfigQuickSearchTypingView,   @selector(configQuickSearchSettingsChanged) );
-//        add_co(g_ConfigQuickSearchKeyOption,    @selector(configQuickSearchSettingsChanged) );
         
         m_LayoutsObservation = m_Layouts->
             ObserveChanges( objc_callback(self, @selector(panelLayoutsChanged)) );
         
         // loading config via simulating it's change
         [self configVFSFetchFlagsChanged];
-//        [self configQuickSearchSettingsChanged];
         
         m_QuickSearch = [[NCPanelQuickSearch alloc] initWithView:m_View
                                                             data:m_Data
@@ -297,15 +266,6 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     
     [self refreshPanel];
 }
-
-//- (void)configQuickSearchSettingsChanged
-//{
-//    m_QuickSearchWhere = data::TextualFilter::WhereFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchWhereToFind) );
-//    m_QuickSearchIsSoftFiltering = GlobalConfig().GetBool( g_ConfigQuickSearchSoftFiltering );
-//    m_QuickSearchTypingView = GlobalConfig().GetBool( g_ConfigQuickSearchTypingView );
-//    m_QuickSearchMode = PanelQuickSearchMode::KeyModifFromInt( GlobalConfig().GetInt(g_ConfigQuickSearchKeyOption) );
-//    [self clearQuickSearchFiltering];
-//}
 
 - (void) setState:(MainWindowFilePanelState *)state
 {
@@ -399,7 +359,7 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
         pers.Restore();
     
     [self onCursorChanged];
-//    [self QuickSearchUpdate];
+//    [self QuickSearchUpdate]; // ??????????
     [m_View setNeedsDisplay];
 }
 
@@ -461,6 +421,7 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     [self refreshPanelDiscardingCaches:true];
 }
 
+/*
 static bool RouteKeyboardInputIntoTerminal()
 {
     static bool route = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
@@ -470,7 +431,7 @@ static bool RouteKeyboardInputIntoTerminal()
     return route;
 }
 
-/*
+
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
 {
     [self clearFocusingRequest]; // on any key press we clear entry selection request if any
@@ -512,7 +473,6 @@ static bool RouteKeyboardInputIntoTerminal()
 */
 
 // - no Esc handling
-// - no QuickSearch
 // - no overlapped terminal redirection
 // - no clearing of focusing request
 
@@ -524,9 +484,6 @@ static bool RouteKeyboardInputIntoTerminal()
             return panel::view::BiddingPriority::Default;
         if( m_QuickSearch.searchCriteria != nil )
             return panel::view::BiddingPriority::Default;
-        
-        
-        
     }
     
     return panel::view::BiddingPriority::Skip;

@@ -624,7 +624,7 @@ static bool RouteKeyboardInputIntoTerminal()
         [m_View volatileDataChanged];
 }
 
-- (void) OnPathChanged
+- (void) onPathChanged
 {
     // update directory changes notification ticket
     __weak PanelController *weakself = self;
@@ -637,8 +637,7 @@ static bool RouteKeyboardInputIntoTerminal()
         });
     
     [self clearFocusingRequest];
-
-//    [self clearQuickSearchFiltering];
+    [m_QuickSearch setSearchCriteria:nil];
     
     [self.state PanelPathChanged:self];
     [self onCursorChanged];
@@ -1005,7 +1004,7 @@ loadPreviousState:(bool)_load_state
                 [m_View dataUpdated];
                 [m_View panelChangedWithFocusedFilename:c->RequestFocusedEntry
                                       loadPreviousState:c->LoadPreviousViewState];
-                [self OnPathChanged];
+                [self onPathChanged];
             });
         }
         catch(exception &e) {
@@ -1037,7 +1036,7 @@ loadPreviousState:(bool)_load_state
             m_Data.Load(_listing, data::Model::PanelType::Temporary);
         [m_View dataUpdated];
         [m_View panelChangedWithFocusedFilename:"" loadPreviousState:false];
-        [self OnPathChanged];
+        [self onPathChanged];
     });
 }
 

@@ -1,6 +1,7 @@
 #import <XCTest/XCTest.h>
 #include <VFS/VFSListingInput.h>
 #include "PanelData.h"
+#include "PanelDataItemVolatileData.h"
 #include "PanelView.h"
 #include "QuickSearch.h"
 #include "PanelViewLayoutSupport.h"
@@ -23,12 +24,6 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filena
 static shared_ptr<VFSListing> AppsListing();
 static NSEvent *KeyDown(NSString *_key, NSEventModifierFlags _flags);
 static NSString *SingleCharStr( unichar _c );
-
-//static const auto g_ConfigQuickSearchWhereToFind                = "filePanel.quickSearch.whereToFind";
-//static const auto g_ConfigQuickSearchSoftFiltering              = "filePanel.quickSearch.softFiltering";
-//static const auto g_ConfigQuickSearchTypingView                 = "filePanel.quickSearch.typingView";
-//static const auto g_ConfigQuickSearchKeyOption                  = "filePanel.quickSearch.keyOption";
-
 
 @interface QuickSearch_Tests : XCTestCase
 
@@ -65,8 +60,8 @@ static NSString *SingleCharStr( unichar _c );
     [qs setSearchCriteria:request];
     XCTAssert( [qs.searchCriteria isEqualToString:request] );
     XCTAssert( m_Data.SortedEntriesCount() == 2 );
-    XCTAssert( m_Data.EntryAtSortPosition(1).Filename() == "VirtualBox.app" );
     XCTAssert( m_Data.EntryAtSortPosition(0).Filename() == "Dropbox.app" );
+    XCTAssert( m_Data.EntryAtSortPosition(1).Filename() == "VirtualBox.app" );
     
     [qs setSearchCriteria:nil];
     XCTAssert( qs.searchCriteria == nil );
@@ -88,6 +83,7 @@ static NSString *SingleCharStr( unichar _c );
 {
     m_QSConfig->Set(g_ConfigQuickSearchSoftFiltering, false);
     m_QSConfig->Set(g_ConfigQuickSearchWhereToFind, data::TextualFilter::Where::Anywhere);
+    m_QSConfig->Set(g_ConfigQuickSearchKeyOption, (int)QuickSearch::KeyModif::WithoutModif);
     auto qs = [[NCPanelQuickSearch alloc] initWithView:m_View data:m_Data config:*m_QSConfig];
     NSEvent *e = nil;
     
@@ -122,6 +118,117 @@ static NSString *SingleCharStr( unichar _c );
     XCTAssert( [qs.searchCriteria isEqualToString:@"b"] );
     [qs handleKeyDown:e forPanelView:m_View];
     XCTAssert( qs.searchCriteria == nil );
+}
+
+- (void)testModifiersOption
+{
+    m_QSConfig->Set(g_ConfigQuickSearchKeyOption, (int)QuickSearch::KeyModif::WithoutModif);
+    auto qs = [[NCPanelQuickSearch alloc] initWithView:m_View data:m_Data config:*m_QSConfig];
+    const auto skip = view::BiddingPriority::Skip;
+    const auto caps = NSEventModifierFlagCapsLock;
+    const auto shift = NSEventModifierFlagShift;
+    const auto ctrl = NSEventModifierFlagControl;
+    const auto alt = NSEventModifierFlagOption;
+    const auto cmd = NSEventModifierFlagCommand;
+    
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:m_View] != skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", caps) forPanelView:m_View] != skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"A", caps|shift) forPanelView:m_View] != skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl|alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", shift|alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", cmd) forPanelView:m_View] == skip );
+ 
+    m_QSConfig->Set(g_ConfigQuickSearchKeyOption, (int)QuickSearch::KeyModif::WithAlt);
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", caps) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"A", caps|shift) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", alt) forPanelView:m_View] != skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl|alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", shift|alt) forPanelView:m_View] != skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", cmd) forPanelView:m_View] == skip );
+
+    m_QSConfig->Set(g_ConfigQuickSearchKeyOption, (int)QuickSearch::KeyModif::WithCtrlAlt);
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", caps) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"A", caps|shift) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl|alt) forPanelView:m_View] != skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", shift|alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", cmd) forPanelView:m_View] == skip );
+
+    m_QSConfig->Set(g_ConfigQuickSearchKeyOption, (int)QuickSearch::KeyModif::WithShiftAlt);
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", caps) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"A", caps|shift) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl|alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", shift|alt) forPanelView:m_View] != skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", cmd) forPanelView:m_View] == skip );
+
+    m_QSConfig->Set(g_ConfigQuickSearchKeyOption, (int)QuickSearch::KeyModif::Disabled);
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", 0) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", caps) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"A", caps|shift) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", ctrl|alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", shift|alt) forPanelView:m_View] == skip );
+    XCTAssert( [qs bidForHandlingKeyDown:KeyDown(@"a", cmd) forPanelView:m_View] == skip );
+}
+
+- (void)testUnderscoring
+{
+    m_QSConfig->Set(g_ConfigQuickSearchSoftFiltering, false);
+    m_QSConfig->Set(g_ConfigQuickSearchWhereToFind, data::TextualFilter::Where::Anywhere);
+    auto qs = [[NCPanelQuickSearch alloc] initWithView:m_View data:m_Data config:*m_QSConfig];
+
+    [qs setSearchCriteria:@"box"];
+    XCTAssert( m_Data.VolatileDataAtSortPosition(0).qs_highlight_begin == 4 );
+    XCTAssert( m_Data.VolatileDataAtSortPosition(0).qs_highlight_end == 7 );
+    XCTAssert( m_Data.VolatileDataAtSortPosition(1).qs_highlight_begin == 7 );
+    XCTAssert( m_Data.VolatileDataAtSortPosition(1).qs_highlight_end == 10 );
+}
+
+- (void)testBasicSoftFiltering
+{
+    m_QSConfig->Set(g_ConfigQuickSearchSoftFiltering, true);
+    m_QSConfig->Set(g_ConfigQuickSearchWhereToFind, data::TextualFilter::Where::Anywhere);
+    auto qs = [[NCPanelQuickSearch alloc] initWithView:m_View data:m_Data config:*m_QSConfig];
+    
+    [qs setSearchCriteria:@"player"];
+    
+    XCTAssert( m_Data.EntriesBySoftFiltering().size() == 2 );
+    XCTAssert( m_Data.EntriesBySoftFiltering()[0] == 15 );
+    XCTAssert( m_Data.EntriesBySoftFiltering()[1] == 45 );
+    
+    XCTAssert( m_View.curpos == 15 );
+}
+
+- (void)testSoftTyping
+{
+    m_QSConfig->Set(g_ConfigQuickSearchSoftFiltering, true);
+    m_QSConfig->Set(g_ConfigQuickSearchWhereToFind, data::TextualFilter::Where::Anywhere);
+    auto qs = [[NCPanelQuickSearch alloc] initWithView:m_View data:m_Data config:*m_QSConfig];
+    
+    [qs handleKeyDown:KeyDown(@"p", 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 0 );
+    
+    [qs handleKeyDown:KeyDown(@"l", 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 9 );
+
+    [qs handleKeyDown:KeyDown(@"a", 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 9 );
+    
+    [qs handleKeyDown:KeyDown(@"y", 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 15 );
+    
+    [qs handleKeyDown:KeyDown(SingleCharStr(NSDeleteCharacter), 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 9 );
 }
 
 @end

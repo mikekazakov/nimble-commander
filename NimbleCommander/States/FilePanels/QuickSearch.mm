@@ -9,14 +9,10 @@ using namespace nc::panel;
 using namespace nc::panel::QuickSearch;
 
 namespace nc::panel::QuickSearch {
-    
-static KeyModif KeyModifFromInt(int _k)
-{
-    if(_k >= 0 && _k <= (int)KeyModif::Disabled)
-        return (KeyModif)_k;
-    return KeyModif::WithAlt;
-}
 
+static const nanoseconds g_FastSeachDelayTresh = 4s;
+
+static KeyModif KeyModifFromInt(int _k);
 static bool IsQuickSearchModifier(NSUInteger _modif, KeyModif _mode);
 static bool IsQuickSearchStringCharacter(NSString *_s);
 static bool IsBackspace(NSString *_s);
@@ -35,8 +31,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     bool                                m_QuickSearchTypingView;
     KeyModif      m_QuickSearchMode;
     data::TextualFilter::Where          m_QuickSearchWhere;
-//    nanoseconds                         m_QuickSearchLastType;
-//    unsigned                            m_QuickSearchOffset;
+    nanoseconds                         m_QuickSearchLastAction;
+    int                                 m_QuickSearchOffset;
     
     
     GenericConfig *m_Config;
@@ -69,48 +65,37 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 - (void)configQuickSearchSettingsChanged
 {
-    m_QuickSearchWhere = data::TextualFilter::WhereFromInt( m_Config->GetInt(g_ConfigQuickSearchWhereToFind) );
+    m_QuickSearchWhere = data::TextualFilter::
+        WhereFromInt( m_Config->GetInt(g_ConfigQuickSearchWhereToFind) );
     m_QuickSearchIsSoftFiltering = m_Config->GetBool( g_ConfigQuickSearchSoftFiltering );
     m_QuickSearchTypingView = m_Config->GetBool( g_ConfigQuickSearchTypingView );
     m_QuickSearchMode = KeyModifFromInt( m_Config->GetInt(g_ConfigQuickSearchKeyOption) );
     [self discardFiltering];
 }
 
-
 - (void)setSearchCriteria:(NSString*)_request
 {
     if( _request == nil ) {
         [self discardFiltering];
+        return;
     }
     
-    if( m_QuickSearchIsSoftFiltering  ) {
-        
-        
-    }
-    else {
+    if( m_QuickSearchIsSoftFiltering )
+        [self setSoftFiltering:_request];
+    else
         [self setHardFiltering:_request];
-    }
 }
 
 - (NSString*)searchCriteria
 {
-    if( m_QuickSearchIsSoftFiltering  ) {
-        return nil;
-        
-    }
-    else {
-//        [self setHardFiltering:_request];
+    if( m_QuickSearchIsSoftFiltering )
+        return m_Data->SoftFiltering().text;
+    else
         return m_Data->HardFiltering().text.text;
-    }
-    
-//    return nil;
 }
-
 
 - (void)discardFiltering
 {
-//    if( m_View == nil )
-//        return;    
     CursorBackup pers(m_View, *m_Data);
     const auto any_changed = m_Data->ClearTextFiltering();
     [m_View setQuickSearchPrompt:nil withMatchesCount:0];
@@ -202,11 +187,10 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 - (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
 {
-    if( m_QuickSearchIsSoftFiltering  ) {
-    }
-    else {
+    if( m_QuickSearchIsSoftFiltering  )
+        [self eatKeydownForSoftFiltering:_event];
+    else
         [self eatKeydownForHardFiltering:_event];
-    }
 }
 
 /*
@@ -228,21 +212,34 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     return true;
 }
 */
+
 - (void)eatKeydownForHardFiltering:(NSEvent *)_event
 {
     const auto key = _event.charactersIgnoringModifiers.decomposedStringWithCanonicalMapping;
     const auto current = m_Data->HardFiltering().text.text;
     const auto replace = ModifyStringByKeyDownString(current, key);
     
-    if( replace == nil )
-        return;
-    
-    if( replace.length == 0 ) {
+    if( replace == nil || replace.length == 0 ) {
         [self discardFiltering];
         return;
     }
     
     [self setHardFiltering:replace];
+}
+
+- (void)eatKeydownForSoftFiltering:(NSEvent *)_event
+{
+    const auto key = _event.charactersIgnoringModifiers.decomposedStringWithCanonicalMapping;
+    const auto is_in_progress = m_QuickSearchLastAction + g_FastSeachDelayTresh >= machtime();
+    const auto current = is_in_progress ? m_Data->SoftFiltering().text : (NSString*)nil;
+    const auto replace = ModifyStringByKeyDownString(current, key);
+    
+    if( replace == nil || replace.length == 0 ) {
+        [self discardFiltering];
+        return;
+    }
+    
+    [self setSoftFiltering:replace];
 }
 
 - (void)setHardFiltering:(NSString*)_text
@@ -267,15 +264,59 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
     [m_View dataUpdated];
     [self updateTypingUIForHardFiltering];
-//
+
     // for convinience - if we have ".." and cursor is on it - move it to first element (if any)
-    if( //(m_VFSFetchingFlags & VFSFlags::F_NoDotDot) == 0 &&
-       m_View.curpos == 0 &&
+    if(m_View.curpos == 0 &&
        m_Data->SortedDirectoryEntries().size() >= 2 &&
        m_Data->EntryAtRawPosition(m_Data->SortedDirectoryEntries()[0]).IsDotDot() )
         m_View.curpos = 1;
 }
 
+
+- (void)setSoftFiltering:(NSString*)_text
+{
+    if( !_text )
+        return;
+    
+    const auto current_time = machtime();
+    
+    auto filtering = m_Data->SoftFiltering();
+    if( m_QuickSearchLastAction + g_FastSeachDelayTresh < current_time )
+        m_QuickSearchOffset = 0;
+    
+    filtering.text = _text;
+    filtering.type = m_QuickSearchWhere;
+    filtering.ignore_dot_dot = false;
+    filtering.hightlight_results = m_QuickSearchTypingView;
+    m_Data->SetSoftFiltering(filtering);
+    
+    m_QuickSearchLastAction = current_time;
+    
+    const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
+    
+    if( filtered_amount != 0 ) {
+        if( m_QuickSearchOffset >= filtered_amount )
+            m_QuickSearchOffset = filtered_amount - 1;
+        m_View.curpos = m_Data->EntriesBySoftFiltering()[m_QuickSearchOffset];
+    }
+    
+    if( m_QuickSearchTypingView ) {
+        [m_View setQuickSearchPrompt:m_Data->SoftFiltering().text
+                    withMatchesCount:filtered_amount];
+        
+        // automatically remove prompt after g_FastSeachDelayTresh
+        __weak NCPanelQuickSearch *weak_self = self;
+        auto clear_filtering = [=]{
+            if( NCPanelQuickSearch *strong_self = weak_self ) {
+                if( strong_self->m_QuickSearchLastAction + g_FastSeachDelayTresh <= machtime() )
+                    [strong_self setSearchCriteria:nil];
+            }
+        };
+        
+        dispatch_to_main_queue_after( g_FastSeachDelayTresh + 1000ns, move(clear_filtering) );
+        [m_View volatileDataChanged];
+    }
+}
 
 - (void)updateTypingUIForHardFiltering
 {
@@ -293,10 +334,6 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
         [m_View setQuickSearchPrompt:filtering.text.text withMatchesCount:total];
     }
 }
-
-
-//static const nanoseconds g_FastSeachDelayTresh = 4s;
-
 
 //static bool IsQuickSearchModifierForArrows(NSUInteger _modif, KeyModif _mode)
 //{
@@ -468,26 +505,26 @@ namespace nc::panel::QuickSearch {
 static bool IsQuickSearchModifier(NSUInteger _modif, KeyModif _mode)
 {
     // exclude CapsLock from our decision process
-    _modif &= ~NSAlphaShiftKeyMask;
-    
+    _modif &= (~NSAlphaShiftKeyMask) & (NSDeviceIndependentModifierFlagsMask);
+ 
+    const auto alt = NSAlternateKeyMask;
+    const auto shift = NSShiftKeyMask;
+    const auto ctrl = NSControlKeyMask;
+        
     switch (_mode) {
         case KeyModif::WithAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == NSAlternateKeyMask ||
-            (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
+            return _modif == alt || _modif == (alt|shift);
         case KeyModif::WithCtrlAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask) ||
-            (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSControlKeyMask|NSShiftKeyMask);
+            return _modif == (alt|ctrl) || _modif == (alt|ctrl|shift);
         case KeyModif::WithShiftAlt:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == (NSAlternateKeyMask|NSShiftKeyMask);
+            return _modif == (alt|shift);
         case KeyModif::WithoutModif:
-            return (_modif&NSDeviceIndependentModifierFlagsMask) == 0 ||
-            (_modif&NSDeviceIndependentModifierFlagsMask) == NSShiftKeyMask ;
+            return _modif == 0 || _modif == shift;
         default:
             break;
     }
     return false;
 }
-
 
 static bool IsQuickSearchStringCharacter(NSString *_s)
 {
@@ -541,6 +578,13 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key)
         _str = _str.length > 0 ? RemoveLastCharacterWithNormalization(_str) : nil;
     
     return _str;
+}
+    
+static KeyModif KeyModifFromInt(int _k)
+{
+    if(_k >= 0 && _k <= (int)KeyModif::Disabled)
+        return (KeyModif)_k;
+    return KeyModif::WithAlt;
 }
 
 }

@@ -19,10 +19,11 @@ enum class KeyModif { // persistancy-bound values, don't change it
     Disabled        = 4
 };
     
-constexpr auto g_ConfigQuickSearchWhereToFind   = "filePanel.quickSearch.whereToFind";
-constexpr auto g_ConfigQuickSearchSoftFiltering = "filePanel.quickSearch.softFiltering";
-constexpr auto g_ConfigQuickSearchTypingView    = "filePanel.quickSearch.typingView";
-constexpr auto g_ConfigQuickSearchKeyOption     = "filePanel.quickSearch.keyOption";
+constexpr auto g_ConfigWhereToFind      = "filePanel.quickSearch.whereToFind";
+constexpr auto g_ConfigIsSoftFiltering  = "filePanel.quickSearch.softFiltering";
+constexpr auto g_ConfigTypingView       = "filePanel.quickSearch.typingView";
+constexpr auto g_ConfigKeyOption        = "filePanel.quickSearch.keyOption";
+
 }
 }
 

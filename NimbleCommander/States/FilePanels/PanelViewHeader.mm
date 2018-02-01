@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/Layout.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
@@ -6,8 +6,8 @@
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "PanelView.h"
-#include "PanelController.h"
 #include "PanelViewHeader.h"
+#include "QuickSearch.h"
 
 using namespace nc::panel;
 
@@ -56,6 +56,7 @@ static bool IsDark( NSColor *_color )
     NSButton            *m_SortButton;
     NSProgressIndicator *m_BusyIndicator;
     __weak PanelView    *m_PanelView;
+    __weak NCPanelQuickSearch *m_QuickSearch;
     data::SortMode      m_SortMode;
     function<void(data::SortMode)> m_SortModeChangeCallback;
     ThemesManager::ObservationTicket    m_ThemeObservation;    
@@ -94,6 +95,7 @@ static bool IsDark( NSColor *_color )
         m_SearchTextField.drawsBackground = false;
         m_SearchTextField.focusRingType = NSFocusRingTypeNone;
         m_SearchTextField.alignment = NSTextAlignmentCenter;
+        m_SearchTextField.delegate = self;
         ((NSSearchFieldCell*)m_SearchTextField.cell).cancelButtonCell.target = self;
         ((NSSearchFieldCell*)m_SearchTextField.cell).cancelButtonCell.action = @selector(onSearchFieldDiscardButton:);
         [self addSubview:m_SearchTextField];
@@ -245,16 +247,17 @@ static bool IsDark( NSColor *_color )
 
 - (void)viewDidMoveToSuperview
 {
+    static const auto isnil = @{NSValueTransformerNameBindingOption:NSIsNilTransformerName};
+    static const auto isnotnil = @{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName};
     if( auto pv = objc_cast<PanelView>(self.superview) ) {
         m_PanelView = pv;
         [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
         [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
-        
-        [m_SearchTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNilTransformerName}];
-        [m_SearchMatchesField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNilTransformerName}];
-        [m_PathTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
-        [m_SortButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
-        [m_BusyIndicator bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
+        [m_SearchTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
+        [m_SearchMatchesField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnil];
+        [m_PathTextField bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
+        [m_SortButton bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
+        [m_BusyIndicator bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:isnotnil];
     }
     else {
         [m_PanelView removeObserver:self forKeyPath:@"active"];
@@ -262,7 +265,7 @@ static bool IsDark( NSColor *_color )
         [m_SearchMatchesField unbind:@"hidden"];
         [m_PathTextField unbind:@"hidden"];
         [m_SortButton unbind:@"hidden"];
-        [m_BusyIndicator bind:@"hidden" toObject:self withKeyPath:@"searchPrompt" options:@{NSValueTransformerNameBindingOption:NSIsNotNilTransformerName}];
+        [m_BusyIndicator unbind:@"hidden"];
     }
 }
 
@@ -292,6 +295,16 @@ static bool IsDark( NSColor *_color )
                            range:NSMakeRange(0, sort_title.length)];
         m_SortButton.attributedTitle = sort_title;
     }
+}
+
+- (void)setQuickSearch:(NCPanelQuickSearch *)quickSearch
+{
+    m_QuickSearch = quickSearch;
+}
+
+- (NCPanelQuickSearch*)quickSearch
+{
+    return m_QuickSearch;
 }
 
 - (NSString*) searchPrompt
@@ -329,16 +342,25 @@ static bool IsDark( NSColor *_color )
 {
     self.searchPrompt = nil;
     [self.window makeFirstResponder:m_PanelView];
-//    [((PanelController*)m_PanelView.delegate) clearQuickSearchFiltering];
+    if( NCPanelQuickSearch *qs = m_QuickSearch )
+        qs.searchCriteria = nil;
+}
+
+- (void)controlTextDidChange:(NSNotification *)obj;
+{
+    if( obj.object == m_SearchTextField ) {
+        NSString *v = m_SearchTextField.stringValue;
+        if( v.length > 0) {
+            if( NCPanelQuickSearch *qs = m_QuickSearch )
+                qs.searchCriteria = v;
+        }
+        else
+            [self onSearchFieldDiscardButton:m_SearchTextField];
+    }
 }
 
 - (void) onSearchFieldAction:(id)sender
 {
-//    NSString *v = m_SearchTextField.stringValue;
-//    if( v.length > 0)
-//        [((PanelController*)m_PanelView.delegate) QuickSearchSetCriteria:v];
-//    else
-//        [self onSearchFieldDiscardButton:sender];
 }
 
 - (void) onSortButtonAction:(id)sender

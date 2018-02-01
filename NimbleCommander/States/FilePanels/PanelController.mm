@@ -33,6 +33,7 @@
 #include <Operations/Copying.h>
 #include "CursorBackup.h"
 #include "QuickSearch.h"
+#include "PanelViewHeader.h"
 
 using namespace nc;
 using namespace nc::core;
@@ -42,8 +43,6 @@ static const auto g_ConfigShowDotDotEntry                       = "filePanel.gen
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
 //static const auto g_ConfigRouteKeyboardInputIntoTerminal        = "filePanel.general.routeKeyboardInputIntoTerminal";
-
-using GenericCursorPersistance = CursorBackup;
 
 namespace nc::panel {
 
@@ -240,6 +239,8 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
 
         [m_View addKeystrokeSink:self withBasePriority:view::BiddingPriority::Default];
         [m_View addKeystrokeSink:m_QuickSearch withBasePriority:view::BiddingPriority::High];
+        
+        m_View.headerView.quickSearch = m_QuickSearch;
     }
 
     return self;
@@ -321,7 +322,7 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
 - (void) changeSortingModeTo:(data::SortMode)_mode
 {
     if( _mode != m_Data.SortMode() ) {
-        GenericCursorPersistance pers(m_View, m_Data);
+        CursorBackup pers(m_View, m_Data);
         
         m_Data.SetSortMode(_mode);
         
@@ -336,7 +337,7 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
 - (void) changeHardFilteringTo:(data::HardFilter)_filter
 {
     if( _filter != m_Data.HardFiltering() ) {
-        GenericCursorPersistance pers(m_View, m_Data);
+        CursorBackup pers(m_View, m_Data);
         
         m_Data.SetHardFiltering(_filter);
         
@@ -350,7 +351,7 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
 {
     assert(dispatch_is_main_queue());
     
-    GenericCursorPersistance pers(m_View, m_Data);
+    CursorBackup pers(m_View, m_Data);
     
     m_Data.ReLoad(_ptr);
     [m_View dataUpdated];
@@ -521,7 +522,7 @@ static bool RouteKeyboardInputIntoTerminal()
                 );
             if( result >= 0 )
                 dispatch_to_main_queue([=]{
-                    GenericCursorPersistance pers(m_View, m_Data);
+                    CursorBackup pers(m_View, m_Data);
                     // may cause re-sorting if current sorting is by size
                     if( m_Data.SetCalculatedSizeForDirectory(i.FilenameC(), i.Directory().c_str(), result) ) {
                         [m_View dataUpdated];
@@ -741,7 +742,7 @@ static bool RouteKeyboardInputIntoTerminal()
     assert(dispatch_is_main_queue());    
     assert( _workload );
     
-    GenericCursorPersistance pers(m_View, m_Data);
+    CursorBackup pers(m_View, m_Data);
     
     _workload(m_Data);
     

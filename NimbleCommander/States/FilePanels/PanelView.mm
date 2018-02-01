@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
@@ -59,6 +59,8 @@ using namespace nc::panel;
     NSEventModifierFlagsHolder  m_KeyboardModifierFlags;
     CursorSelectionType         m_KeyboardCursorSelectionType;
 }
+
+@synthesize headerView = m_HeaderView;
 
 - (id)initWithFrame:(NSRect)frame layout:(const PanelViewLayout&)_layout
 {

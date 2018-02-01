@@ -230,6 +230,24 @@ static NSString *SingleCharStr( unichar _c );
     
     [qs handleKeyDown:KeyDown(SingleCharStr(NSDeleteCharacter), 0) forPanelView:m_View];
     XCTAssert( m_View.curpos == 9 );
+    
+    [qs handleKeyDown:KeyDown(SingleCharStr(0xF701), 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 15 );
+
+    [qs handleKeyDown:KeyDown(SingleCharStr(0xF701), 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 45 );
+    
+    [qs handleKeyDown:KeyDown(SingleCharStr(0xF702), 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 9 );
+    
+    [qs handleKeyDown:KeyDown(SingleCharStr(0xF703), 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 45 );
+
+    [qs handleKeyDown:KeyDown(SingleCharStr(0xF700), 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 15 );
+    
+    [qs handleKeyDown:KeyDown(SingleCharStr(0xF700), 0) forPanelView:m_View];
+    XCTAssert( m_View.curpos == 9 );
 }
 
 @end

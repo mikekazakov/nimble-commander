@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
 
 struct MainWindowFilePanelState_OverlappedTerminalSupport
@@ -26,19 +26,11 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport
 - (void) feedOverlappedTerminalWithCurrentFilename;
 - (void) feedOverlappedTerminalWithFilenamesMenu;
 
-/**
- * will handle it if:
- * 1) overlapped terminal is enabled and visible
- * 2) it is in Shell state
- * 3) Shell is not in Virgin state
- */
-- (bool) handleReturnKeyWithOverlappedTerminal;
-
 - (bool) executeInOverlappedTerminalIfPossible:(const string&)_filename at:(const string&)_path;
 
 - (bool) isAnythingRunningInOverlappedTerminal;
 
-- (bool) overlappedTerminalWillEatKeyDown:(NSEvent *)event;
-- (bool) feedOverlappedTerminalWithKeyDown:(NSEvent *)event;
+- (int)bidForHandlingRoutedIntoOTKeyDown:(NSEvent *)_event;
+- (void)handleRoutedIntoOTKeyDown:(NSEvent *)_event;
 
 @end

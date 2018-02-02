@@ -43,7 +43,7 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     auto actions_dispatcher = [[NCPanelControllerActionsDispatcher alloc] initWithController:panel];
     [panel setNextAttachedResponder:actions_dispatcher];
     [panel.view addKeystrokeSink:actions_dispatcher
-                withBasePriority:nc::panel::view::BiddingPriority::Default];
+                withBasePriority:nc::panel::view::BiddingPriority::Low];
     
     return panel;
 }

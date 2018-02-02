@@ -75,13 +75,13 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
                    andHandle:(bool)_handle
 {
     
-    NSString*  const character   = _event.charactersIgnoringModifiers;
-    if ( character.length == 0 )
+    const auto character   = _event.charactersIgnoringModifiers;
+    if( character.length == 0 )
         return view::BiddingPriority::Skip;
     
-    NSUInteger const modif       = _event.modifierFlags;
-    unichar const unicode        = [character characterAtIndex:0];
-    unsigned short const keycode = _event.keyCode;
+    const auto modif = _event.modifierFlags;
+    const auto unicode = [character characterAtIndex:0];
+    const auto keycode = _event.keyCode;
     
     static ActionsShortcutsManager::ShortCut hk_file_open, hk_file_open_native, hk_go_root,
                                              hk_go_home, hk_preview, hk_go_into, kh_go_outside;
@@ -149,19 +149,14 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         return view::BiddingPriority::Default;
     }
     
-
-    
-    
     if(keycode == 51 && // backspace
        (modif & (NSShiftKeyMask|NSControlKeyMask|NSAlternateKeyMask|NSCommandKeyMask)) == 0 ) {
         // treat not-processed by QuickSearch backspace as a GoToUpperLevel command
         if( _handle ) {
             actions::GoToEnclosingFolder{}.Perform(m_PC, m_PC);
         }
-        return view::BiddingPriority::Low;
-//        return true;
+        return view::BiddingPriority::Default;
     }
-    
     
     return view::BiddingPriority::Skip;
 }

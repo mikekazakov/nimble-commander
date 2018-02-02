@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
@@ -41,6 +41,7 @@ static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForce
 static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
 static const auto g_ConfigInitialRightPath  = "filePanel.general.initialRightPanelPath";
 static const auto g_ConfigGeneralShowTabs   = "general.showTabs";
+static const auto g_ConfigRouteKeyboardInputIntoTerminal = "filePanel.general.routeKeyboardInputIntoTerminal";
 static const auto g_ResorationPanelsKey     = "panels_v1";
 static const auto g_ResorationUIKey         = "uiState";
 static const auto g_ResorationUISelectedLeftTab = "selectedLeftTab";
@@ -1046,6 +1047,15 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     [_pc.view addKeystrokeSink:self withBasePriority:nc::panel::view::BiddingPriority::Default];
 }
 
+static bool RouteKeyboardInputIntoTerminal()
+{
+    static bool route = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
+    static auto observe_ticket = GlobalConfig().Observe(g_ConfigRouteKeyboardInputIntoTerminal, []{
+        route = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
+    });
+    return route;
+}
+
 - (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
 {
     const auto character = _event.charactersIgnoringModifiers;
@@ -1055,6 +1065,12 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     
     if( unicode ==  NSTabCharacter ) {
         return nc::panel::view::BiddingPriority::Default;
+    }
+    
+    if( RouteKeyboardInputIntoTerminal() ) {
+        const auto terminal_bid = [self bidForHandlingRoutedIntoOTKeyDown:_event];
+        if ( terminal_bid > nc::panel::view::BiddingPriority::Skip )
+            return terminal_bid;
     }
     
     return nc::panel::view::BiddingPriority::Skip;
@@ -1069,6 +1085,12 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     
     if( unicode ==  NSTabCharacter ) {
         [self changeFocusedSide];
+        return;
+    }
+    
+    if( RouteKeyboardInputIntoTerminal() ) {
+        [self handleRoutedIntoOTKeyDown:_event];
+        return;
     }
 }
 

@@ -1,10 +1,11 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include "Views/FilePanelOverlappedTerminal.h"
 #include "Views/FilePanelMainSplitView.h"
 #include "PanelView.h"
+#include "PanelViewKeystrokeSink.h"
 #include "PanelController.h"
 #include "PanelAux.h"
 #include "PanelHistory.h"
@@ -218,20 +219,6 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     }
 }
 
-- (bool) handleReturnKeyWithOverlappedTerminal
-{
-    if( self.overlappedTerminalVisible &&
-        m_OverlappedTerminal->terminal.state == ShellTask::TaskState::Shell &&
-        m_OverlappedTerminal->terminal.isShellVirgin == false ) {
-        // dirty, dirty shell... lets clear it all with Return key
-        [m_OverlappedTerminal->terminal commitShell];
-        return true;
-    }
-    
-    
-    return false;
-}
-
 - (bool) executeInOverlappedTerminalIfPossible:(const string&)_filename at:(const string&)_path
 {
     if( self.overlappedTerminalVisible &&
@@ -254,20 +241,39 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
            s == ShellTask::TaskState::ProgramExternal ;
 }
 
-- (bool) overlappedTerminalWillEatKeyDown:(NSEvent *)event
+- (int)bidForHandlingRoutedIntoOTKeyDown:(NSEvent *)_event;
 {
     if( !self.overlappedTerminalVisible )
-        return false;
+        return nc::panel::view::BiddingPriority::Skip;
     
-    return [m_OverlappedTerminal->terminal canFeedShellWithKeyDown:event];
+    const auto keycode = _event.keyCode;
+    if( keycode == 36 ) { // Return button
+        if( m_OverlappedTerminal->terminal.state == ShellTask::TaskState::Shell &&
+            m_OverlappedTerminal->terminal.isShellVirgin == false ) {
+            // if user has entered something in overlapped terminal, then executing this stuff
+            // via Enter should be in high priority
+            return nc::panel::view::BiddingPriority::High;
+        }
+    }
+    
+    if( [m_OverlappedTerminal->terminal canFeedShellWithKeyDown:_event] )
+        return nc::panel::view::BiddingPriority::Default;
+    
+    return nc::panel::view::BiddingPriority::Skip;
 }
 
-- (bool) feedOverlappedTerminalWithKeyDown:(NSEvent *)event
+- (void)handleRoutedIntoOTKeyDown:(NSEvent *)_event;
 {
-    if( !self.overlappedTerminalVisible )
-        return false;
+    const auto keycode = _event.keyCode;
+    if( keycode == 36 ) { // Return button
+        if( m_OverlappedTerminal->terminal.state == ShellTask::TaskState::Shell &&
+           m_OverlappedTerminal->terminal.isShellVirgin == false ) {
+            [m_OverlappedTerminal->terminal commitShell];
+            return;
+        }
+    }
     
-    return [m_OverlappedTerminal->terminal feedShellWithKeyDown:event];
+    [m_OverlappedTerminal->terminal feedShellWithKeyDown:_event];
 }
 
 - (void) saveOverlappedTerminalSettings

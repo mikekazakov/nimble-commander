@@ -42,7 +42,6 @@ using namespace nc::panel;
 static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
 static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
 static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
-//static const auto g_ConfigRouteKeyboardInputIntoTerminal        = "filePanel.general.routeKeyboardInputIntoTerminal";
 
 namespace nc::panel {
 
@@ -421,57 +420,6 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
 {
     [self refreshPanelDiscardingCaches:true];
 }
-
-/*
-static bool RouteKeyboardInputIntoTerminal()
-{
-    static bool route = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
-    static auto observe_ticket = GlobalConfig().Observe(g_ConfigRouteKeyboardInputIntoTerminal, []{
-        route = GlobalConfig().GetBool( g_ConfigRouteKeyboardInputIntoTerminal );
-    });
-    return route;
-}
-
-
-- (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
-{
-    const bool route_to_overlapped_terminal = RouteKeyboardInputIntoTerminal();
-    const bool terminal_can_eat = route_to_overlapped_terminal &&
-                                  [self.state overlappedTerminalWillEatKeyDown:event];
-    
-    NSString*  const character   = event.charactersIgnoringModifiers;
-    if ( character.length == 0 )
-        return false;
-    
-    NSUInteger const modif       = event.modifierFlags;
-    unichar const unicode        = [character characterAtIndex:0];
-    unsigned short const keycode = event.keyCode;
-    
-    if( keycode == 53 ) { // Esc button
-        [self CancelBackgroundOperations];
-        [self.state closeAttachedUI:self];
-        [self clearQuickSearchFiltering];
-        return true;
-    }
-    if( keycode == 36 ) { // Return button
-        if( self.state && [self.state handleReturnKeyWithOverlappedTerminal] )
-            return true;
-    }
-    
-    // handle some actions manually, to prevent annoying by menu highlighting by hotkey
-    
-    // try to process this keypress with QuickSearch
-    if( [self QuickSearchProcessKeyDown:event] )
-        return true;
-    
-    if( terminal_can_eat && [self.state feedOverlappedTerminalWithKeyDown:event] )
-        return true;
-    
-    return false;
-}
-*/
-
-// - no overlapped terminal redirection
 
 - (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
 {

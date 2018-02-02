@@ -38,9 +38,12 @@ using namespace nc;
 using namespace nc::core;
 using namespace nc::panel;
 
-static const auto g_ConfigShowDotDotEntry                       = "filePanel.general.showDotDotEntry";
-static const auto g_ConfigIgnoreDirectoriesOnMaskSelection      = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
-static const auto g_ConfigShowLocalizedFilenames                = "filePanel.general.showLocalizedFilenames";
+static const auto g_ConfigShowDotDotEntry
+    = "filePanel.general.showDotDotEntry";
+static const auto g_ConfigIgnoreDirectoriesOnMaskSelection
+    = "filePanel.general.ignoreDirectoriesOnSelectionWithMask";
+static const auto g_ConfigShowLocalizedFilenames
+    = "filePanel.general.showLocalizedFilenames";
 
 namespace nc::panel {
 
@@ -246,8 +249,9 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
 
 - (void) dealloc
 {
-    // we need to manually set data to nullptr, since PanelView can be destroyed a bit later due to other strong pointers.
-    // in that case view will contain a dangling pointer, which can lead to crash.
+    // we need to manually set data to nullptr, since PanelView can be destroyed a bit later due
+    // to other strong pointers. in that case view will contain a dangling pointer, which can lead
+    // to a crash.
     m_View.data = nullptr;
 }
 
@@ -472,16 +476,21 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
                 !i.IsDotDot() ? i.Path().c_str() : i.Directory().c_str(),
                 [=]{ return m_DirectorySizeCountingQ.IsStopped(); }
                 );
-            if( result >= 0 )
-                dispatch_to_main_queue([=]{
-                    CursorBackup pers(m_View, m_Data);
-                    // may cause re-sorting if current sorting is by size
-                    if( m_Data.SetCalculatedSizeForDirectory(i.FilenameC(), i.Directory().c_str(), result) ) {
-                        [m_View dataUpdated];
-                        [m_View volatileDataChanged];
-                        pers.Restore();
-                    }
-                });
+            if( result < 0 )
+                return;
+                
+            dispatch_to_main_queue([=]{
+                CursorBackup pers(m_View, m_Data);
+                // may cause re-sorting if current sorting is by size
+                const auto changed = m_Data.SetCalculatedSizeForDirectory(i.FilenameC(),
+                                                                          i.Directory().c_str(),
+                                                                          result);
+                if( changed ) {
+                    [m_View dataUpdated];
+                    [m_View volatileDataChanged];
+                    pers.Restore();
+                }
+            });
         }
     });
 }
@@ -539,12 +548,15 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     // update directory changes notification ticket
     __weak PanelController *weakself = self;
     m_UpdatesObservationTicket.reset();    
-    if( self.isUniform )
-        m_UpdatesObservationTicket = self.vfs->DirChangeObserve(self.currentDirectoryPath.c_str(), [=]{
+    if( self.isUniform ) {
+        auto dir_change_callback = [=]{
             dispatch_to_main_queue([=]{
                 [(PanelController *)weakself refreshPanel];
             });
-        });
+        };
+        m_UpdatesObservationTicket = self.vfs->DirChangeObserve(self.currentDirectoryPath.c_str(),
+                                                                move(dir_change_callback));
+    }
     
     [self clearFocusingRequest];
     [m_QuickSearch setSearchCriteria:nil];
@@ -622,6 +634,25 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     [m_View volatileDataChanged];
 }
 
+
+static void ShowAlertAboutInvalidFilename( const string &_filename )
+{
+    Alert *a = [[Alert alloc] init];
+    auto fn = [NSString stringWithUTF8StdString:_filename];
+    if( fn.length > 256 )
+        fn = [[fn substringToIndex:256] stringByAppendingString:@"..."];
+    
+    const auto msg = NSLocalizedString(@"The name “%@” can’t be used.",
+                                       "Message text when user is entering an invalid filename");
+    a.messageText = [NSString stringWithFormat:msg, fn];
+    const auto info = NSLocalizedString(
+        @"Try using a name with fewer characters or without punctuation marks.",
+        "Informative text when user is entering an invalid filename");
+    a.informativeText = info;
+    a.alertStyle = NSCriticalAlertStyle;
+    [a runModal];
+}
+
 - (void) requestQuickRenamingOfItem:(VFSListingItem)_item to:(const string&)_filename
 {
     if( _filename == "." ||
@@ -636,14 +667,7 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
  
     // checking for invalid symbols
     if( !_item.Host()->ValidateFilename(target_fn.c_str()) ) {
-        Alert *a = [[Alert alloc] init];
-        const auto fn = [NSString stringWithUTF8StdString:target_fn];
-        a.messageText = [NSString stringWithFormat:NSLocalizedString(@"The name “%@” can’t be used.", "Message text when user is entering an invalid filename"),
-                         fn.length <= 256 ? fn : [[fn substringToIndex:256] stringByAppendingString:@"..."]
-                         ];
-        a.informativeText = NSLocalizedString(@"Try using a name with fewer characters or without punctuation marks.", "Informative text when user is entering an invalid filename");
-        a.alertStyle = NSCriticalAlertStyle;
-        [a runModal];
+        ShowAlertAboutInvalidFilename(target_fn);
         return;
     }
     
@@ -783,7 +807,6 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
 
 - (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory
 {
-//    m_DirectoryLoadingQ->Run([=](const SerialQueue &_q){
     m_DirectoryLoadingQ.Run([=](){
         VFSHostPtr host;
         try {
@@ -988,36 +1011,33 @@ loadPreviousState:(bool)_load_state
 - (bool) checkAgainstRequestedFocusing
 {
     assert(dispatch_is_main_queue()); // to preserve against fancy threading stuff
-    if(m_DelayedSelection.filename.empty())
+    if( m_DelayedSelection.filename.empty() )
         return false;
     
-    if(machtime() > m_DelayedSelection.request_end) {
+    if( machtime() > m_DelayedSelection.request_end ) {
         m_DelayedSelection.filename.clear();
         m_DelayedSelection.done = nullptr;
         return false;
     }
     
     // now try to find it
-    int entryindex = m_Data.RawIndexForName(m_DelayedSelection.filename.c_str());
-    if( entryindex >= 0 )
-    {
-        // we found this entry. regardless of appearance of this entry in current directory presentation
-        // there's no reason to search for it again
-        auto done = m_DelayedSelection.done;
-        m_DelayedSelection.done = nullptr;
+    int raw_index = m_Data.RawIndexForName(m_DelayedSelection.filename.c_str());
+    if( raw_index < 0 )
+        return false;
         
-        int sortpos = m_Data.SortedIndexForRawIndex(entryindex);
-        if( sortpos >= 0 )
-        {
-            m_View.curpos = sortpos;
-            if( !self.isActive )
-                [self.state ActivatePanelByController:self];
-            if(done)
-                done();
-            return true;
-        }
+    // we found this entry. regardless of appearance of this entry in current directory presentation
+    // there's no reason to search for it again
+    auto done = move(m_DelayedSelection.done);
+    
+    int sort_index = m_Data.SortedIndexForRawIndex(raw_index);
+    if( sort_index >= 0 ) {
+        m_View.curpos = sort_index;
+        if( !self.isActive )
+            [self.state ActivatePanelByController:self];
+        if( done )
+            done();
     }
-    return false;
+    return true;
 }
 
 - (void) clearFocusingRequest

@@ -435,8 +435,6 @@ static bool RouteKeyboardInputIntoTerminal()
 
 - (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)event
 {
-    [self clearFocusingRequest]; // on any key press we clear entry selection request if any
- 
     const bool route_to_overlapped_terminal = RouteKeyboardInputIntoTerminal();
     const bool terminal_can_eat = route_to_overlapped_terminal &&
                                   [self.state overlappedTerminalWillEatKeyDown:event];
@@ -473,18 +471,21 @@ static bool RouteKeyboardInputIntoTerminal()
 }
 */
 
-// - no Esc handling
 // - no overlapped terminal redirection
-// - no clearing of focusing request
 
 - (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
 {
+    // this is doubtful, actually. need to figure out something clearer:
+    [self clearFocusingRequest]; // on any key press we clear entry selection request, if any
+    
     const auto keycode = _event.keyCode;
     if( keycode == 53 ) { // Esc button
         if( m_IsAnythingWorksInBackground )
             return panel::view::BiddingPriority::Default;
         if( m_QuickSearch.searchCriteria != nil )
             return panel::view::BiddingPriority::Default;
+        if( self.quickLook || self.briefSystemOverview )
+            return panel::view::BiddingPriority::Default;;
     }
     
     return panel::view::BiddingPriority::Skip;
@@ -500,6 +501,10 @@ static bool RouteKeyboardInputIntoTerminal()
         }
         if( m_QuickSearch.searchCriteria != nil ) {
             m_QuickSearch.searchCriteria = nil;
+            return;
+        }
+        if( self.quickLook || self.briefSystemOverview ) {
+            [self.state closeAttachedUI:self];
             return;
         }
     }

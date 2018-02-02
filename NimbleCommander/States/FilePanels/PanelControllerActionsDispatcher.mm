@@ -3,6 +3,7 @@
 #include <NimbleCommander/Core/Alert.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include "PanelController.h"
+#include "Helpers/Pasteboard.h"
 #include "Actions/CopyFilePaths.h"
 #include "Actions/AddToFavorites.h"
 #include "Actions/GoToFolder.h"
@@ -192,6 +193,27 @@ static void Perform(SEL _sel, PanelController *_target, id _sender);
         }
         return false;
     }
+    return false;
+}
+
+- (id)validRequestorForSendType:(NSString *)sendType
+                     returnType:(NSString *)returnType
+{
+    if(([sendType isEqualToString:NSFilenamesPboardType] ||
+        [sendType isEqualToString:(__bridge NSString *)kUTTypeFileURL]))
+        return self;
+    
+    return [super validRequestorForSendType:sendType returnType:returnType];
+}
+
+- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard types:(NSArray *)types
+{
+    if( [types containsObject:(__bridge NSString *)kUTTypeFileURL] )
+        return PasteboardSupport::WriteURLSPBoard(m_PC.selectedEntriesOrFocusedEntry,
+                                                  pboard);
+    if( [types containsObject:NSFilenamesPboardType] )
+        return PasteboardSupport::WriteFilesnamesPBoard(m_PC.selectedEntriesOrFocusedEntry,
+                                                        pboard);
     return false;
 }
 

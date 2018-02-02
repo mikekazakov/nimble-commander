@@ -14,7 +14,6 @@
 #include "PanelDataPersistency.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelViewLayoutSupport.h"
-#include "Helpers/Pasteboard.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataOptionsPersistence.h"
 #include <Habanero/CommonPaths.h>
@@ -704,27 +703,6 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     pers.Restore();
 }
 
-- (id)validRequestorForSendType:(NSString *)sendType
-                     returnType:(NSString *)returnType
-{
-    if(([sendType isEqualToString:NSFilenamesPboardType] ||
-        [sendType isEqualToString:(__bridge NSString *)kUTTypeFileURL]))
-        return self;
-    
-    return [super validRequestorForSendType:sendType returnType:returnType];
-}
-
-- (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pboard types:(NSArray *)types
-{
-    if( [types containsObject:(__bridge NSString *)kUTTypeFileURL] )
-        return PasteboardSupport::WriteURLSPBoard(self.selectedEntriesOrFocusedEntry,
-                                                         pboard);
-    if( [types containsObject:NSFilenamesPboardType] )
-        return PasteboardSupport::WriteFilesnamesPBoard(self.selectedEntriesOrFocusedEntry,
-                                                               pboard);
-    return false;
-}
-
 - (ActivityTicket) registerExtActivity
 {
     auto ticket = call_locked(m_ActivitiesTicketsLock, [&]{
@@ -1032,8 +1010,8 @@ loadPreviousState:(bool)_load_state
         if( sortpos >= 0 )
         {
             m_View.curpos = sortpos;
-            if(!self.isActive)
-                [(MainWindowFilePanelState*)self.state ActivatePanelByController:self];
+            if( !self.isActive )
+                [self.state ActivatePanelByController:self];
             if(done)
                 done();
             return true;

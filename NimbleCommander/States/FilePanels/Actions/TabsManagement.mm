@@ -2,6 +2,7 @@
 
 #include "TabsManagement.h"
 #include "../MainWindowFilePanelState.h"
+#include "../MainWindowFilePanelState+TabsSupport.h"
 #include "../Views/FilePanelMainSplitView.h"
 
 namespace nc::panel::actions {

@@ -182,9 +182,3 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic) IBOutlet NSToolbar *filePanelsToolsbar;
 
 @end
-
-#import "MainWindowFilePanelState+Menu.h"
-#import "MainWindowFilePanelState+TabsSupport.h"
-#import "MainWindowFilePanelState+OverlappedTerminalSupport.h"
-#import "MainWindowFilePanelState+Tools.h"
-

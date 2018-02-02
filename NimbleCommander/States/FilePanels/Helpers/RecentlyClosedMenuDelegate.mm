@@ -4,6 +4,7 @@
 #include "../PanelController.h"
 #include "../PanelHistory.h"
 #include "../MainWindowFilePanelState.h"
+#include "../MainWindowFilePanelState+TabsSupport.h"
 #include <NimbleCommander/Core/AnyHolder.h>
 
 using namespace nc::panel;

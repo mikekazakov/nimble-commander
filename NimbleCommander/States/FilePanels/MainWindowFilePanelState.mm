@@ -34,6 +34,8 @@
 #include "PanelControllerPersistency.h"
 #include "Helpers/ClosedPanelsHistory.h"
 #include "PanelHistory.h"
+#include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
+#include "MainWindowFilePanelState+TabsSupport.h"
 
 using namespace nc::panel;
 

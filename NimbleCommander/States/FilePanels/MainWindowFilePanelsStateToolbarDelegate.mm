@@ -1,5 +1,7 @@
 // Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
+#include "MainWindowFilePanelState+Menu.h"
+#include "MainWindowFilePanelState+Tools.h"
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include <Operations/PoolViewController.h>

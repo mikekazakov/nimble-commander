@@ -1,6 +1,7 @@
 // Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RevealInOppositePanel.h"
 #include "../MainWindowFilePanelState.h"
+#include "../MainWindowFilePanelState+TabsSupport.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include "../Views/FilePanelMainSplitView.h"

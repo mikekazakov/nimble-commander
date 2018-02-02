@@ -1,5 +1,7 @@
 // Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState+Menu.h"
+#include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
+#include "MainWindowFilePanelState+Tools.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/FilePanels/ToolsMenuDelegate.h>

@@ -431,8 +431,6 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     if( keycode == 53 ) { // Esc button
         if( m_IsAnythingWorksInBackground )
             return panel::view::BiddingPriority::Default;
-        if( m_QuickSearch.searchCriteria != nil )
-            return panel::view::BiddingPriority::Default;
         if( self.quickLook || self.briefSystemOverview )
             return panel::view::BiddingPriority::Default;;
     }
@@ -446,10 +444,6 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     if( keycode == 53 ) { // Esc button
         if( m_IsAnythingWorksInBackground ) {
             [self CancelBackgroundOperations];
-            return;
-        }
-        if( m_QuickSearch.searchCriteria != nil ) {
-            m_QuickSearch.searchCriteria = nil;
             return;
         }
         if( self.quickLook || self.briefSystemOverview ) {

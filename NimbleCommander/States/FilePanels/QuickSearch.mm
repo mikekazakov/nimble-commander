@@ -146,6 +146,9 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
             if( IsLeft(character) || IsRight(character) || IsUp(character) || IsDown(character) )
                 return view::BiddingPriority::Default;
         }
+        if( _event.keyCode == 53 ) { // Esc button
+            return view::BiddingPriority::Default;;
+        }
     }
     
     return view::BiddingPriority::Skip;
@@ -153,6 +156,11 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 - (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
 {
+    if( _event.keyCode == 53 ) { // Esc button
+        [self setSearchCriteria:nil];
+        return;
+    }
+    
     if( m_IsSoftFiltering  )
         [self eatKeydownForSoftFiltering:_event];
     else

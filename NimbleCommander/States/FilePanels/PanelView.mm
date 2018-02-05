@@ -895,15 +895,6 @@ using namespace nc::panel;
     [m_FooterView updateStatistics:m_Data->Stats()];
 }
 
-- (void) setQuickSearchPrompt:(NSString*)_text withMatchesCount:(int)_count
-{
-//    [self setHeaderTitle:_text != nil ? _text : self.headerTitleForPanel];
-//    [self setNeedsDisplay];
-    m_HeaderView.searchPrompt = _text;
-    m_HeaderView.searchMatches = _count;
-    
-}
-
 - (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options;
 {
     

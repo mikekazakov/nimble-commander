@@ -7,7 +7,6 @@
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "PanelView.h"
 #include "PanelViewHeader.h"
-#include "QuickSearch.h"
 
 using namespace nc::panel;
 
@@ -56,9 +55,9 @@ static bool IsDark( NSColor *_color )
     NSButton            *m_SortButton;
     NSProgressIndicator *m_BusyIndicator;
     __weak PanelView    *m_PanelView;
-    __weak NCPanelQuickSearch *m_QuickSearch;
     data::SortMode      m_SortMode;
     function<void(data::SortMode)> m_SortModeChangeCallback;
+    function<void(NSString*)> m_SearchRequestChangeCallback;
     ThemesManager::ObservationTicket    m_ThemeObservation;    
 }
 
@@ -297,14 +296,14 @@ static bool IsDark( NSColor *_color )
     }
 }
 
-- (void)setQuickSearch:(NCPanelQuickSearch *)quickSearch
+- (void)setSearchRequestChangeCallback:(function<void (NSString *)>)searchRequestChangeCallback
 {
-    m_QuickSearch = quickSearch;
+    m_SearchRequestChangeCallback = move(searchRequestChangeCallback);
 }
 
-- (NCPanelQuickSearch*)quickSearch
+- (function<void (NSString *)>)searchRequestChangeCallback
 {
-    return m_QuickSearch;
+    return m_SearchRequestChangeCallback;
 }
 
 - (NSString*) searchPrompt
@@ -342,8 +341,8 @@ static bool IsDark( NSColor *_color )
 {
     self.searchPrompt = nil;
     [self.window makeFirstResponder:m_PanelView];
-    if( NCPanelQuickSearch *qs = m_QuickSearch )
-        qs.searchCriteria = nil;
+    if( m_SearchRequestChangeCallback )
+        m_SearchRequestChangeCallback(nil);
 }
 
 - (void)controlTextDidChange:(NSNotification *)obj;
@@ -351,8 +350,8 @@ static bool IsDark( NSColor *_color )
     if( obj.object == m_SearchTextField ) {
         NSString *v = m_SearchTextField.stringValue;
         if( v.length > 0) {
-            if( NCPanelQuickSearch *qs = m_QuickSearch )
-                qs.searchCriteria = v;
+            if( m_SearchRequestChangeCallback )
+                m_SearchRequestChangeCallback(v);
         }
         else
             [self onSearchFieldDiscardButton:m_SearchTextField];

@@ -61,12 +61,6 @@ namespace nc::panel {
 - (void) loadPathState;
 
 /**
- * _text can be nil.
- */
-- (void) setQuickSearchPrompt:(NSString*)_text withMatchesCount:(int)_count;
-
-
-/**
  * Configure and bring the popover to the screen.
  */
 - (NSPopover*)showPopoverUnderPathBarWithView:(NSViewController*)_view

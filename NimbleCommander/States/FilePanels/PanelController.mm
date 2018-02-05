@@ -240,8 +240,6 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
 
         [m_View addKeystrokeSink:self withBasePriority:view::BiddingPriority::Default];
         [m_View addKeystrokeSink:m_QuickSearch withBasePriority:view::BiddingPriority::High];
-        
-        m_View.headerView.quickSearch = m_QuickSearch;
     }
 
     return self;

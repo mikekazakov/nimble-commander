@@ -3,8 +3,6 @@
 
 #include "PanelDataSortMode.h"
 
-@class NCPanelQuickSearch;
-
 @interface PanelViewHeader : NSView<NSSearchFieldDelegate>
 
 - (void) setPath:(NSString*)_path;
@@ -14,6 +12,10 @@
 @property (nonatomic) int       searchMatches;
 @property (nonatomic) nc::panel::data::SortMode sortMode;
 @property (nonatomic) function<void(nc::panel::data::SortMode)> sortModeChangeCallback;
-@property (nonatomic, weak) NCPanelQuickSearch *quickSearch;
+
+/**
+ * Calling with nil means discarding the search via (X) button.
+ */
+@property (nonatomic) function<void(NSString*)> searchRequestChangeCallback;
 
 @end

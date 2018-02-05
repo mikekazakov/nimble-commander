@@ -3,6 +3,7 @@
 #include "PanelDataFilter.h"
 #include "PanelData.h"
 #include "PanelView.h"
+#include "PanelViewHeader.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "CursorBackup.h"
 
@@ -52,6 +53,13 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     m_View = _view;
     m_Data = &_data;
     m_Config = &_config;
+    
+    __weak NCPanelQuickSearch *weak_self = self;
+    auto callback = [weak_self](NSString *_request){
+        if( NCPanelQuickSearch *strong_self = weak_self  )
+            strong_self.searchCriteria = _request;
+    };
+    _view.headerView.searchRequestChangeCallback = move(callback);
 
     // wire up config changing notifications
     auto add_co = [&](const char *_path, SEL _sel) { m_ConfigObservers.
@@ -101,7 +109,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 {
     CursorBackup pers(m_View, *m_Data);
     const auto any_changed = m_Data->ClearTextFiltering();
-    [m_View setQuickSearchPrompt:nil withMatchesCount:0];
+    [self setPanelHeaderPrompt:nil withMatchesCount:0];
     
     if( any_changed ) {
         [m_View dataUpdated];
@@ -256,8 +264,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     }
     
     if( m_ShowTyping ) {
-        [m_View setQuickSearchPrompt:m_Data->SoftFiltering().text
-                    withMatchesCount:filtered_amount];
+        [self setPanelHeaderPrompt:m_Data->SoftFiltering().text
+                  withMatchesCount:filtered_amount];
         [m_View volatileDataChanged];
     }
     
@@ -329,14 +337,20 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     
     auto filtering = m_Data->HardFiltering();
     if(!filtering.text.text) {
-        [m_View setQuickSearchPrompt:nil withMatchesCount:0];
+        [self setPanelHeaderPrompt:nil withMatchesCount:0];
     }
     else {
         int total = (int)m_Data->SortedDirectoryEntries().size();
         if(total > 0 && m_Data->Listing().IsDotDot(0))
             total--;
-        [m_View setQuickSearchPrompt:filtering.text.text withMatchesCount:total];
+        [self setPanelHeaderPrompt:filtering.text.text withMatchesCount:total];
     }
+}
+
+- (void) setPanelHeaderPrompt:(NSString*)_text withMatchesCount:(int)_count
+{
+    m_View.headerView.searchPrompt = _text;
+    m_View.headerView.searchMatches = _count;
 }
 
 @end

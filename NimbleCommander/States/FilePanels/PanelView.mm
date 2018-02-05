@@ -19,6 +19,10 @@
 #include "PanelViewFieldEditor.h"
 #include "PanelViewKeystrokeSink.h"
 
+using namespace nc::panel;
+
+namespace nc::panel {
+
 enum class CursorSelectionType : int8_t
 {
     No          = 0,
@@ -26,12 +30,12 @@ enum class CursorSelectionType : int8_t
     Unselection = 2
 };
 
-struct PanelViewStateStorage
+struct StateStorage
 {
     string focused_item;
 };
 
-using namespace nc::panel;
+}
 
 @interface PanelView()
 
@@ -44,13 +48,13 @@ using namespace nc::panel;
     data::Model                *m_Data;
     vector< pair<__weak id<NCPanelViewKeystrokeSink>, int > > m_KeystrokeSinks;
     
-    unordered_map<uint64_t, PanelViewStateStorage> m_States;
+    unordered_map<uint64_t, StateStorage> m_States;
     NSString                   *m_HeaderTitle;
     NCPanelViewFieldEditor     *m_RenamingEditor;
 
     __weak id<PanelViewDelegate> m_Delegate;
     NSView<PanelViewImplementationProtocol> *m_ItemsView;
-    PanelViewHeader            *m_HeaderView;
+    NCPanelViewHeader          *m_HeaderView;
     PanelViewFooter            *m_FooterView;
     
     IconsGenerator2             m_IconsGenerator;
@@ -73,7 +77,7 @@ using namespace nc::panel;
         m_ItemsView = [self spawnItemViewWithLayout:_layout];
         [self addSubview:m_ItemsView];
         
-        m_HeaderView = [[PanelViewHeader alloc] initWithFrame:frame];
+        m_HeaderView = [[NCPanelViewHeader alloc] initWithFrame:frame];
         m_HeaderView.translatesAutoresizingMaskIntoConstraints = false;
         __weak PanelView *weak_self = self;
         m_HeaderView.sortModeChangeCallback = [weak_self](data::SortMode _sm){
@@ -86,12 +90,7 @@ using namespace nc::panel;
         m_FooterView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_FooterView];
         
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
-
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_HeaderView(==20)]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_HeaderView]-(0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_ItemsView]-(0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_FooterView]-(0)-|" options:0 metrics:nil views:views]];
+        [self setupLayout];
     }
     
     return self;
@@ -101,6 +100,22 @@ using namespace nc::panel;
 {
     assert( "don't call [PanelView initWithFrame:(NSRect)frame]" == nullptr );
     return nil;
+}
+
+- (void)setupLayout
+{
+    const auto views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
+    const auto constraints = {
+        @"V:|-(==0)-[m_HeaderView(==20)]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|",
+        @"|-(0)-[m_HeaderView]-(0)-|",
+        @"|-(0)-[m_ItemsView]-(0)-|",
+        @"|-(0)-[m_FooterView]-(0)-|"
+    };
+    for( auto constraint: constraints )
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:constraint
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
 }
 
 - (NSView<PanelViewImplementationProtocol>*) spawnItemViewWithLayout:(const PanelViewLayout&)_layout
@@ -204,40 +219,32 @@ using namespace nc::panel;
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
 {
+    static const auto notify = NSNotificationCenter.defaultCenter;
     if( self.window ) {
-        [NSNotificationCenter.defaultCenter removeObserver:self
-                                                      name:NSWindowDidBecomeKeyNotification
-                                                    object:nil];
-        [NSNotificationCenter.defaultCenter removeObserver:self
-                                                      name:NSWindowDidResignKeyNotification
-                                                    object:nil];
-        [NSNotificationCenter.defaultCenter removeObserver:self
-                                                      name:NSWindowDidBecomeMainNotification
-                                                    object:nil];
-        [NSNotificationCenter.defaultCenter removeObserver:self
-                                                      name:NSWindowDidResignMainNotification
-                                                    object:nil];
+        [notify removeObserver:self name:NSWindowDidBecomeKeyNotification object:nil];
+        [notify removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
+        [notify removeObserver:self name:NSWindowDidBecomeMainNotification object:nil];
+        [notify removeObserver:self name:NSWindowDidResignMainNotification object:nil];
     }
-    
     if( _wnd ) {
-        m_IconsGenerator.SetHiDPI( _wnd.backingScaleFactor > 1.0 );
-    
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(windowStatusDidChange)
-                                                   name:NSWindowDidBecomeKeyNotification
-                                                 object:_wnd];
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(windowStatusDidChange)
-                                                   name:NSWindowDidResignKeyNotification
-                                                 object:_wnd];
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(windowStatusDidChange)
-                                                   name:NSWindowDidBecomeMainNotification
-                                                 object:_wnd];
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(windowStatusDidChange)
-                                                   name:NSWindowDidResignMainNotification
-                                                 object:_wnd];
+        const auto is_hidpi = _wnd.backingScaleFactor > 1.0;
+        m_IconsGenerator.SetHiDPI( is_hidpi );
+        [notify addObserver:self
+                   selector:@selector(windowStatusDidChange)
+                       name:NSWindowDidBecomeKeyNotification
+                     object:_wnd];
+        [notify addObserver:self
+                   selector:@selector(windowStatusDidChange)
+                       name:NSWindowDidResignKeyNotification
+                     object:_wnd];
+        [notify addObserver:self
+                   selector:@selector(windowStatusDidChange)
+                       name:NSWindowDidBecomeMainNotification
+                     object:_wnd];
+        [notify addObserver:self
+                   selector:@selector(windowStatusDidChange)
+                       name:NSWindowDidResignMainNotification
+                     object:_wnd];
     }
 }
 
@@ -257,11 +264,8 @@ using namespace nc::panel;
 
 - (void) setData:(data::Model *)data
 {
-//    self.needsDisplay = true;
     m_Data = data;
     
-//    if( data )
-
     if( data ) {
         [m_ItemsView setData:data];
         m_ItemsView.sortMode = data->SortMode();
@@ -270,9 +274,6 @@ using namespace nc::panel;
     
     if( !data ) {
         // we're in destruction phase
-        
-        // !!! this might be dangerous!
-        
         [m_ItemsView removeFromSuperview];
         m_ItemsView = nil;
         
@@ -281,8 +282,6 @@ using namespace nc::panel;
         
         [m_FooterView removeFromSuperview];
         m_FooterView = nil;
- 
-//        self.presentation = nullptr;
     }
 }
 
@@ -705,11 +704,6 @@ using namespace nc::panel;
         
         [self replaceSubview:m_ItemsView with:v];
         m_ItemsView = v;
-        
-//        NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
-        //        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_ItemsView]-(==0)-|" options:0 metrics:nil views:views]];
-//        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_HeaderView(==20)]-(==0)-[m_ItemsView]-(==0)-[m_FooterView(==20)]-(==0)-|" options:0 metrics:nil views:views]];
-        
         
         NSDictionary *views = NSDictionaryOfVariableBindings(m_ItemsView, m_HeaderView, m_FooterView);
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_HeaderView]-(==0)-[m_ItemsView]-(==0)-[m_FooterView]" options:0 metrics:nil views:views]];

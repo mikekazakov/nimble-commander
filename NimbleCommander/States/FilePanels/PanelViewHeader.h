@@ -3,7 +3,7 @@
 
 #include "PanelDataSortMode.h"
 
-@interface PanelViewHeader : NSView<NSSearchFieldDelegate>
+@interface NCPanelViewHeader : NSView<NSSearchFieldDelegate>
 
 - (void) setPath:(NSString*)_path;
 

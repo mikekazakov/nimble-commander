@@ -7,7 +7,7 @@
 @protocol PanelViewDelegate;
 @protocol NCPanelViewKeystrokeSink;
 @class PanelView;
-@class PanelViewHeader;
+@class NCPanelViewHeader;
 
 namespace nc::panel {
     struct PanelViewLayout;
@@ -31,7 +31,7 @@ namespace nc::panel {
 @property (nonatomic, readonly) NSString* headerTitle; // KVO-bound
 @property (nonatomic, readonly) int headerBarHeight;
 @property (nonatomic, readonly) NSProgressIndicator *busyIndicator;
-@property (nonatomic, readonly) PanelViewHeader *headerView;
+@property (nonatomic, readonly) NCPanelViewHeader *headerView;
 
 - (id)initWithFrame:(NSRect)frame layout:(const nc::panel::PanelViewLayout&)_layout;
 
@@ -51,11 +51,6 @@ namespace nc::panel {
 - (void) dataSortingHasChanged;
 
 - (void) volatileDataChanged;
-
-//- (void) modifierFlagsChanged:(unsigned long)_flags; // to know if shift or something else is pressed
-
-//- (rapidjson::StandaloneValue) encodeRestorableState;
-//- (void) loadRestorableState:(const rapidjson::StandaloneValue&)_state;
 
 - (void) savePathState;
 - (void) loadPathState;

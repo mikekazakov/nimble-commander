@@ -168,8 +168,8 @@ static void HeatUpConfigValues()
     
     __weak MainWindowFilePanelState* m_FilePanelState;
     
-    vector<GenericConfig::ObservationTicket> m_ConfigObservers;
-
+    boost::container::static_vector<
+        GenericConfig::ObservationTicket,2> m_ConfigObservers;
     shared_ptr<NetworkConnectionsManager> m_NetworkConMgr;
     nc::core::VFSInstanceManager       *m_VFSInstanceManager;
     shared_ptr<PanelViewLayoutsStorage> m_Layouts;

@@ -26,9 +26,7 @@ static NSEvent *KeyDown(NSString *_key, NSEventModifierFlags _flags);
 static NSString *SingleCharStr( unichar _c );
 
 @interface QuickSearch_Tests : XCTestCase
-
 @end
-
 
 @implementation QuickSearch_Tests
 {

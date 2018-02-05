@@ -40,11 +40,11 @@ static bool IsDark( NSColor *_color )
     return Brightness(_color) < 0.60;
 }
 
-@interface PanelViewHeader()
+@interface NCPanelViewHeader()
 @property (nonatomic) IBOutlet NSMenu *sortMenuPopup;
 @end
 
-@implementation PanelViewHeader
+@implementation NCPanelViewHeader
 {
     NSTextField         *m_PathTextField;
     NSSearchField       *m_SearchTextField;
@@ -142,7 +142,7 @@ static bool IsDark( NSColor *_color )
         [self setupAppearance];
         [self setupLayout];
         
-        __weak PanelViewHeader* weak_self = self;
+        __weak NCPanelViewHeader* weak_self = self;
         m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::FilePanelsHeader, [weak_self]{
             if( auto strong_self = weak_self ) {

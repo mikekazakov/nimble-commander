@@ -170,7 +170,6 @@ static void HeatUpConfigValues()
     
     boost::container::static_vector<
         GenericConfig::ObservationTicket,2> m_ConfigObservers;
-    shared_ptr<NetworkConnectionsManager> m_NetworkConMgr;
     nc::core::VFSInstanceManager       *m_VFSInstanceManager;
     shared_ptr<PanelViewLayoutsStorage> m_Layouts;
     int                                 m_ViewLayoutIndex;
@@ -185,11 +184,9 @@ static void HeatUpConfigValues()
 @synthesize vfsFetchingFlags = m_VFSFetchingFlags;
 
 - (id) initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
-networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
 {
     assert( _layouts );
-    assert( _conn_mgr );
     
     static once_flag once;
     call_once(once, HeatUpConfigValues);
@@ -197,7 +194,6 @@ networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
     self = [super init];
     if(self) {
         m_Layouts = move(_layouts);
-        m_NetworkConMgr = move(_conn_mgr);
         m_VFSInstanceManager = &_vfs_mgr;
         m_History.SetVFSInstanceManager(_vfs_mgr);
         m_VFSFetchingFlags = 0;
@@ -790,11 +786,6 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     m_DirectoryLoadingQ.Run([=]{
         _task( [sq]{ return sq->IsStopped(); } );
     });
-}
-
-- (NetworkConnectionsManager&)networkConnectionsManager
-{
-    return *m_NetworkConMgr;
 }
 
 - (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory

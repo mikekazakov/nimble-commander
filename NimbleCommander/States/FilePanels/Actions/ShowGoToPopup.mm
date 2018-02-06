@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include <NimbleCommander/GeneralUI/FilterPopUpMenu.h>
@@ -32,7 +32,8 @@ static const auto g_MaxTextWidth = 600;
 
 @interface GoToPopupListActionMediator : NSObject
 - (instancetype) initWithState:(MainWindowFilePanelState *)_state
-                      andPanel:(PanelController*)_panel;
+                      andPanel:(PanelController*)_panel
+                    networkMgr:(NetworkConnectionsManager&)_net_mgr;
 - (void)callout:(id)sender;
 @end
 
@@ -41,15 +42,18 @@ static const auto g_MaxTextWidth = 600;
 {
     MainWindowFilePanelState *m_State;
     PanelController *m_Panel;
+    NetworkConnectionsManager *m_NetMgr;
 }
 
 - (instancetype) initWithState:(MainWindowFilePanelState *)_state
                       andPanel:(PanelController*)_panel
+                    networkMgr:(NetworkConnectionsManager&)_net_mgr
 {
     self = [super init];
     if( self ) {
         m_State = _state;
         m_Panel = _panel;
+        m_NetMgr = &_net_mgr;
     }
     return self;
 }
@@ -78,7 +82,7 @@ static const auto g_MaxTextWidth = 600;
     else if( auto plain_path = any_cast<string>(&_context) )
         [m_Panel GoToDir:*plain_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
     else if( auto connection = any_cast<NetworkConnectionsManager::Connection>(&_context) )
-        nc::panel::actions::OpenExistingNetworkConnection().Perform(m_Panel, sender);
+        nc::panel::actions::OpenExistingNetworkConnection(*m_NetMgr).Perform(m_Panel, sender);
     else if( auto vfs_path = any_cast<VFSPath>(&_context) )
         [m_Panel GoToDir:vfs_path->Path() vfs:vfs_path->Host() select_entry:"" async:true];
     else if( auto promise = any_cast<pair<nc::core::VFSInstancePromise, string>>(&_context) )
@@ -104,7 +108,7 @@ static vector<shared_ptr<const NativeFileSystemInfo>> VolumesToShow()
 }
 
 static vector<NetworkConnectionsManager::Connection> LimitedRecentConnections(
-    NetworkConnectionsManager& _manager)
+    const NetworkConnectionsManager& _manager)
 {
     auto connections = _manager.AllConnectionsByMRU();
     
@@ -190,7 +194,7 @@ namespace {
 class MenuItemBuilder
 {
 public:
-    MenuItemBuilder( NetworkConnectionsManager &_conn_manager, id _action_target );
+    MenuItemBuilder( const NetworkConnectionsManager &_conn_manager, id _action_target );
     NSMenuItem *MenuItemForFavorite( const FavoriteLocationsStorage::Favorite &_f );
     NSMenuItem *MenuItemForLocation(const FavoriteLocationsStorage::Location &_f);
     NSMenuItem *MenuItemForVolume( const NativeFileSystemInfo &_i );
@@ -201,7 +205,7 @@ public:
     NSMenuItem *MenuItemForListingPromise(const ListingPromise &_promise);
 
 private:
-    NetworkConnectionsManager &m_ConnectionManager;
+    const NetworkConnectionsManager &m_ConnectionManager;
     id m_ActionTarget;
     loc_fmt::Formatter::RenderOptions m_FmtOpts = (loc_fmt::Formatter::RenderOptions)
                                                     (loc_fmt::Formatter::RenderMenuTitle |
@@ -243,27 +247,29 @@ static void SetupHotkeys( NSMenu *_menu )
         }
 }
 
-static tuple<NSMenu*, GoToPopupListActionMediator*> BuidInitialMenu(
+tuple<NSMenu*, GoToPopupListActionMediator*> GoToPopupsBase::BuidInitialMenu(
     MainWindowFilePanelState *_state,
     PanelController *_panel,
-    NSString *_title)
+    NSString *_title) const
 {
     FilterPopUpMenu *menu = [[FilterPopUpMenu alloc] initWithTitle:_title];
     menu.font = g_TextFont;
     
     auto mediator = [[GoToPopupListActionMediator alloc] initWithState:_state
-                                                              andPanel:_panel];
+                                                              andPanel:_panel
+                                                            networkMgr:m_NetMgr];
     [menu itemAtIndex:0].representedObject = mediator; // a hacky way to prolong longevity
     
     return {menu, mediator};
 }
 
-static NSMenu *BuildGoToMenu( MainWindowFilePanelState *_state, PanelController *_panel  )
+NSMenu *GoToPopupsBase::BuildGoToMenu(MainWindowFilePanelState *_state,
+                                      PanelController *_panel) const
 {
     const auto [menu, action_target] = BuidInitialMenu(_state, _panel,
         NSLocalizedString(@"Go to", "Goto popup menu title"));
     
-    MenuItemBuilder builder{_panel.networkConnectionsManager, action_target};
+    MenuItemBuilder builder{m_NetMgr, action_target};
     
     for( auto &f: NCAppDelegate.me.favoriteLocationsStorage->Favorites() )
         [menu addItem:builder.MenuItemForFavorite(f)];
@@ -274,7 +280,7 @@ static NSMenu *BuildGoToMenu( MainWindowFilePanelState *_state, PanelController 
         [menu addItem:builder.MenuItemForVolume(*i)];
 
     if( GlobalConfig().GetBool(g_ConfigShowNetworkConnections) )
-        if(auto connections = LimitedRecentConnections(_panel.networkConnectionsManager);
+        if(auto connections = LimitedRecentConnections(m_NetMgr);
            !connections.empty() ) {
             [menu addItem:NSMenuItem.separatorItem];
             for( auto &c: connections )
@@ -293,14 +299,14 @@ static NSMenu *BuildGoToMenu( MainWindowFilePanelState *_state, PanelController 
     return menu;
 }
 
-static NSMenu *BuildConnectionsQuickList( PanelController *_panel )
+NSMenu *GoToPopupsBase::BuildConnectionsQuickList(PanelController *_panel) const
 {
     const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
         NSLocalizedString(@"Connections", "Connections popup menu title in file panels"));
     
-    MenuItemBuilder builder{_panel.networkConnectionsManager, action_target};
+    MenuItemBuilder builder{m_NetMgr, action_target};
     
-    for( auto &c: _panel.networkConnectionsManager.AllConnectionsByMRU() )
+    for( auto &c: m_NetMgr.AllConnectionsByMRU() )
         [menu addItem:builder.MenuItemForConnection(c)];
 
     SetupHotkeys(menu);
@@ -308,12 +314,12 @@ static NSMenu *BuildConnectionsQuickList( PanelController *_panel )
     return menu;
 }
 
-static NSMenu *BuildFavoritesQuickList( PanelController *_panel )
+NSMenu *GoToPopupsBase::BuildFavoritesQuickList(PanelController *_panel) const
 {
     const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
         NSLocalizedString(@"Favorites", "Favorites popup menu subtitle in file panels"));
     
-    MenuItemBuilder builder{_panel.networkConnectionsManager, action_target};
+    MenuItemBuilder builder{m_NetMgr, action_target};
     
     for( auto &f: NCAppDelegate.me.favoriteLocationsStorage->Favorites() )
         [menu addItem:builder.MenuItemForFavorite(f)];
@@ -336,12 +342,12 @@ static NSMenu *BuildFavoritesQuickList( PanelController *_panel )
     return menu;
 }
 
-static NSMenu *BuildVolumesQuickList( PanelController *_panel )
+NSMenu *GoToPopupsBase::BuildVolumesQuickList(PanelController *_panel) const
 {
     const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
         NSLocalizedString(@"Volumes", "Volumes popup menu title in file panels"));
     
-    MenuItemBuilder builder{_panel.networkConnectionsManager, action_target};
+    MenuItemBuilder builder{m_NetMgr, action_target};
     
     for( auto &i: VolumesToShow() )
         [menu addItem:builder.MenuItemForVolume(*i)];
@@ -351,12 +357,12 @@ static NSMenu *BuildVolumesQuickList( PanelController *_panel )
     return menu;
 }
 
-static NSMenu *BuildParentFoldersQuickList( PanelController *_panel )
+NSMenu *GoToPopupsBase::BuildParentFoldersQuickList(PanelController *_panel) const
 {
     const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
         NSLocalizedString(@"Parent Folders", "Upper-dirs popup menu title in file panels"));
 
-    MenuItemBuilder builder{_panel.networkConnectionsManager, action_target};
+    MenuItemBuilder builder{m_NetMgr, action_target};
 
     for( auto &i: ProduceLocationsForParentDirectories(_panel.data.Listing(),
                                                        _panel.vfsInstanceManager) )
@@ -367,7 +373,7 @@ static NSMenu *BuildParentFoldersQuickList( PanelController *_panel )
     return menu;
 }
 
-static NSMenu *BuildHistoryQuickList( PanelController *_panel )
+NSMenu *GoToPopupsBase::BuildHistoryQuickList(PanelController *_panel) const
 {
     const auto [menu, action_target] = BuidInitialMenu(nil, _panel,
         NSLocalizedString(@"History", "History popup menu title in file panels"));
@@ -377,7 +383,7 @@ static NSMenu *BuildHistoryQuickList( PanelController *_panel )
         history.pop_back();
     reverse( begin(history), end(history) );
     
-    MenuItemBuilder builder{_panel.networkConnectionsManager, action_target};
+    MenuItemBuilder builder{m_NetMgr, action_target};
     
     for( auto &i: history )
         [menu addItem:builder.MenuItemForListingPromise(i.get())];
@@ -405,6 +411,11 @@ static bool RerouteGoToEventToLeftToolbarButton( MainWindowFilePanelState *_targ
     return true;
 }
 
+ShowLeftGoToPopup::ShowLeftGoToPopup(NetworkConnectionsManager&_net_mgr):
+    GoToPopupsBase(_net_mgr)
+{
+}
+    
 void ShowLeftGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender ) const
 {
     if( RerouteGoToEventToLeftToolbarButton(_target, _sender) )
@@ -441,6 +452,11 @@ static bool RerouteGoToEventToRightToolbarButton( MainWindowFilePanelState *_tar
     return true;
 }
 
+ShowRightGoToPopup::ShowRightGoToPopup(NetworkConnectionsManager&_net_mgr):
+    GoToPopupsBase(_net_mgr)
+{
+}
+
 void ShowRightGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender ) const
 {
     if( RerouteGoToEventToRightToolbarButton(_target, _sender) )
@@ -471,9 +487,19 @@ static void PopupQuickList( NSMenu *_menu, PanelController *_target )
                              inView:_target.view];
 }
 
+ShowConnectionsQuickList::ShowConnectionsQuickList(NetworkConnectionsManager&_net_mgr):
+    GoToPopupsBase(_net_mgr)
+{
+}
+    
 void ShowConnectionsQuickList::Perform( PanelController *_target, id _sender ) const
 {
     PopupQuickList( BuildConnectionsQuickList(_target), _target );
+}
+    
+ShowFavoritesQuickList::ShowFavoritesQuickList(NetworkConnectionsManager&_net_mgr):
+    nc::panel::actions::GoToPopupsBase(_net_mgr)
+{
 }
 
 void ShowFavoritesQuickList::Perform( PanelController *_target, id _sender ) const
@@ -481,9 +507,19 @@ void ShowFavoritesQuickList::Perform( PanelController *_target, id _sender ) con
     PopupQuickList( BuildFavoritesQuickList(_target), _target );
 }
 
+ShowVolumesQuickList::ShowVolumesQuickList(NetworkConnectionsManager&_net_mgr):
+    nc::panel::actions::GoToPopupsBase(_net_mgr)
+{
+}
+    
 void ShowVolumesQuickList::Perform( PanelController *_target, id _sender ) const
 {
     PopupQuickList( BuildVolumesQuickList(_target), _target );
+}
+
+ShowParentFoldersQuickList::ShowParentFoldersQuickList(NetworkConnectionsManager&_net_mgr):
+    GoToPopupsBase(_net_mgr)
+{
 }
 
 bool ShowParentFoldersQuickList::Predicate( PanelController *_target ) const
@@ -496,12 +532,23 @@ void ShowParentFoldersQuickList::Perform( PanelController *_target, id _sender )
     PopupQuickList( BuildParentFoldersQuickList(_target), _target );
 }
 
+ShowHistoryQuickList::ShowHistoryQuickList(NetworkConnectionsManager&_net_mgr):
+    nc::panel::actions::GoToPopupsBase(_net_mgr)
+{
+}
+    
 void ShowHistoryQuickList::Perform( PanelController *_target, id _sender ) const
 {
     PopupQuickList( BuildHistoryQuickList(_target), _target );
 };
+    
+GoToPopupsBase::GoToPopupsBase(NetworkConnectionsManager&_net_mgr):
+    m_NetMgr(_net_mgr)
+{
+}
 
-MenuItemBuilder::MenuItemBuilder( NetworkConnectionsManager &_conn_manager, id _action_target ):
+MenuItemBuilder::MenuItemBuilder(const NetworkConnectionsManager &_conn_manager,
+                                 id _action_target ):
     m_ConnectionManager(_conn_manager),
     m_ActionTarget(_action_target)
 {

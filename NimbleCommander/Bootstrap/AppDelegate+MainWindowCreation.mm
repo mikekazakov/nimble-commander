@@ -7,6 +7,7 @@
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h>
+#include <NimbleCommander/States/FilePanels/PanelControllerActions.h>
 #include <Operations/Pool.h>
 #include <Operations/AggregateProgressTracker.h>
 #include "Config.h"
@@ -34,13 +35,20 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     return window;
 }
 
+- (const nc::panel::PanelActionsMap &)panelActionsMap
+{
+    static auto actions_map = nc::panel::BuildPanelActionsMap( *self.networkConnectionsManager );
+    return actions_map;
+}
+
 - (PanelController*) allocatePanelController
 {
     auto panel = [[PanelController alloc] initWithLayouts:self.panelLayouts
-                                networkConnectionsManager:self.networkConnectionsManager
                                        vfsInstanceManager:self.vfsInstanceManager];
     
-    auto actions_dispatcher = [[NCPanelControllerActionsDispatcher alloc] initWithController:panel];
+    auto actions_dispatcher = [[NCPanelControllerActionsDispatcher alloc]
+                               initWithController:panel
+                               andActionsMap:self.panelActionsMap];
     [panel setNextAttachedResponder:actions_dispatcher];
     [panel.view addKeystrokeSink:actions_dispatcher
                 withBasePriority:nc::panel::view::BiddingPriority::Low];

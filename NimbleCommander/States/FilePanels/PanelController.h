@@ -7,7 +7,6 @@
 #include "PanelViewKeystrokeSink.h"
 #include <VFS/VFS.h>
 
-class NetworkConnectionsManager;
 @class PanelController;
 @class PanelView;
 @class BriefSystemOverview;
@@ -108,12 +107,10 @@ public:
 @property (nonatomic, readonly) bool ignoreDirectoriesOnSelectionByMask;
 @property (nonatomic, readonly) unsigned long vfsFetchingFlags;
 @property (nonatomic) int layoutIndex;
-@property (nonatomic, readonly) NetworkConnectionsManager& networkConnectionsManager;
 @property (nonatomic, readonly) nc::panel::PanelViewLayoutsStorage& layoutStorage;
 @property (nonatomic, readonly) nc::core::VFSInstanceManager& vfsInstanceManager;
 
 - (instancetype)initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layout
-      networkConnectionsManager:(shared_ptr<NetworkConnectionsManager>)_conn_mgr
              vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr;
 
 - (void) refreshPanel; // reload panel contents

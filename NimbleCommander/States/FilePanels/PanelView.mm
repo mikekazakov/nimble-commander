@@ -158,13 +158,7 @@ struct StateStorage
     if( auto r = objc_cast<AttachedResponder>(self.delegate) ) {
         [r setNextResponder:newNextResponder];
         return;
-    }
-//    if( auto ar = objc_cast<AttachedResponder>(self.nextResponder) ) {
-//        [ar setNextResponder:newNextResponder];
-//        return;
-//    }
-    
-    
+    }    
     [super setNextResponder:newNextResponder];
 }
 

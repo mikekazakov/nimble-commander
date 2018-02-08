@@ -7,6 +7,7 @@
 #include "../../Bootstrap/Config.h"
 #include "PanelViewKeystrokeSink.h"
 #include "PanelPreview.h"
+#include <Utility/MIMResponder.h>
 
 namespace nc::ops {
     class Pool;
@@ -42,6 +43,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     vector<PanelController*> m_RightPanelControllers;
     __weak PanelController*  m_LastFocusedPanelController;
     
+    AttachedResponder *m_AttachedResponder;
+    
     FilePanelMainSplitView *m_SplitView;
     NSLayoutConstraint     *m_MainSplitViewBottomConstraint;
 
@@ -69,6 +72,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     shared_ptr<nc::panel::ClosedPanelsHistory> closedPanelsHistory;
 @property (nonatomic, readwrite)
     shared_ptr<nc::panel::FavoriteLocationsStorage> favoriteLocationsStorage;
+@property (nonatomic, readwrite) AttachedResponder *attachedResponder;
 
 - (instancetype) initWithFrame:(NSRect)frameRect
                        andPool:(nc::ops::Pool&)_pool
@@ -164,6 +168,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  * Process Tab button - change focus from left panel to right and vice versa.
  */
 - (void) changeFocusedSide;
+
+- (IBAction)onExternMenuActionCalled:(id)sender;
 
 @end
 

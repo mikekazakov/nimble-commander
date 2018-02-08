@@ -8,9 +8,12 @@
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h>
 #include <NimbleCommander/States/FilePanels/PanelControllerActions.h>
+#include <NimbleCommander/States/FilePanels/StateActionsDispatcher.h>
+#include <NimbleCommander/States/FilePanels/StateActions.h>
 #include <Operations/Pool.h>
 #include <Operations/AggregateProgressTracker.h>
 #include "Config.h"
+#include "ActivationManager.h"
 
 static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLastWindowState";
 
@@ -38,6 +41,12 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 - (const nc::panel::PanelActionsMap &)panelActionsMap
 {
     static auto actions_map = nc::panel::BuildPanelActionsMap( *self.networkConnectionsManager );
+    return actions_map;
+}
+
+- (const nc::panel::StateActionsMap &)stateActionsMap
+{
+    static auto actions_map = nc::panel::BuildStateActionsMap( *self.networkConnectionsManager );
     return actions_map;
 }
 
@@ -117,6 +126,12 @@ static PanelController* PanelFactory()
     const auto file_state = [self allocateFilePanelsWithFrame:frame
                                                     inContext:_context
                                                   withOpsPool:*operations_pool];
+    auto actions_dispatcher = [[NCPanelsStateActionsDispatcher alloc]
+                               initWithState:file_state
+                               andActionsMap:self.stateActionsMap];
+    actions_dispatcher.hasTerminal = ActivationManager::Instance().HasTerminal();
+    file_state.attachedResponder = actions_dispatcher;
+    
     file_state.closedPanelsHistory = self.closedPanelsHistory;
     file_state.favoriteLocationsStorage = self.favoriteLocationsStorage;
     

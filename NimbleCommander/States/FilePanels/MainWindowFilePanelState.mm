@@ -36,6 +36,8 @@
 #include "PanelHistory.h"
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include "MainWindowFilePanelState+TabsSupport.h"
+#include "MainWindowFilePanelState+Tools.h"
+#include "ToolsMenuDelegate.h"
 
 using namespace nc::panel;
 
@@ -241,6 +243,33 @@ static NSString *TitleForData( const data::Model* _data );
 - (BOOL)acceptsFirstResponder
 {
     return true;
+}
+
+- (void)setNextResponder:(NSResponder *)newNextResponder
+{
+    if( self.attachedResponder ) {
+        [self.attachedResponder setNextResponder:newNextResponder];
+        return;
+    }
+    [super setNextResponder:newNextResponder];
+}
+
+- (void) setAttachedResponder:(AttachedResponder *)attachedResponder
+{
+    if( m_AttachedResponder == attachedResponder )
+        return;
+    m_AttachedResponder = attachedResponder;
+    
+    if( m_AttachedResponder ) {
+        auto current = self.nextResponder;
+        [super setNextResponder:m_AttachedResponder];
+        m_AttachedResponder.nextResponder = current;
+    }
+}
+
+- (AttachedResponder *)attachedResponder
+{
+    return m_AttachedResponder;
 }
 
 - (NSToolbar*)windowStateToolbar
@@ -1094,6 +1123,23 @@ static bool RouteKeyboardInputIntoTerminal()
         [self handleRoutedIntoOTKeyDown:_event];
         return;
     }
+}
+
+
+- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+{
+    if( m_AttachedResponder && [m_AttachedResponder performKeyEquivalent:theEvent] )
+        return true;
+    
+    return [super performKeyEquivalent:theEvent];
+}
+
+- (IBAction)onExternMenuActionCalled:(id)sender
+{
+    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
+        if( auto rep = objc_cast<ToolsMenuDelegateInfoWrapper>(menuitem.representedObject) )
+            if( auto t = rep.object )
+                [self runExtTool:t];
 }
 
 @end

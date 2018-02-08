@@ -1,9 +1,9 @@
 // Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
-#include "MainWindowFilePanelState+Menu.h"
 #include "MainWindowFilePanelState+Tools.h"
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
+#include "StateActionsDispatcher.h"
 #include <Operations/PoolViewController.h>
 
 // do not change these strings, they are used for persistency in NSUserDefaults
@@ -71,13 +71,12 @@ static const auto g_MaxPoolViewWith = 540.;
 
 - (void) buildBasicControls
 {
-    MainWindowFilePanelState* state = m_State;
     m_LeftPanelGoToButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
     m_LeftPanelGoToButton.bezelStyle = NSTexturedRoundedBezelStyle;
     m_LeftPanelGoToButton.refusesFirstResponder = true;
     m_LeftPanelGoToButton.title = @"";
     m_LeftPanelGoToButton.image = [NSImage imageNamed:NSImageNamePathTemplate];
-    m_LeftPanelGoToButton.target = state;
+    m_LeftPanelGoToButton.target = nil;
     m_LeftPanelGoToButton.action = @selector(onLeftPanelGoToButtonAction:);
     
     m_RightPanelGoToButton = [[NSButton alloc] initWithFrame:NSMakeRect(0, 0, 42, 27)];
@@ -85,7 +84,7 @@ static const auto g_MaxPoolViewWith = 540.;
     m_RightPanelGoToButton.refusesFirstResponder = true;
     m_RightPanelGoToButton.title = @"";
     m_RightPanelGoToButton.image = [NSImage imageNamed:NSImageNamePathTemplate];    
-    m_RightPanelGoToButton.target = state;
+    m_RightPanelGoToButton.target = nil;
     m_RightPanelGoToButton.action = @selector(onRightPanelGoToButtonAction:);
 }
 

@@ -210,6 +210,14 @@
 		CF4D98A82028500300ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
 		CF4D98A92028500400ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
 		CF4D98AA2028500400ECE06D /* PanelControllerActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */; };
+		CF4D98B5202BE89700ECE06D /* StateActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98B4202BE89700ECE06D /* StateActions.mm */; };
+		CF4D98C7202BEA2700ECE06D /* StateActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98C6202BEA2700ECE06D /* StateActionsDispatcher.mm */; };
+		CF4D98C8202BEC6700ECE06D /* StateActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98C6202BEA2700ECE06D /* StateActionsDispatcher.mm */; };
+		CF4D98C9202BEC6800ECE06D /* StateActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98C6202BEA2700ECE06D /* StateActionsDispatcher.mm */; };
+		CF4D98CA202BEC6900ECE06D /* StateActionsDispatcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98C6202BEA2700ECE06D /* StateActionsDispatcher.mm */; };
+		CF4D98CB202C205F00ECE06D /* StateActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98B4202BE89700ECE06D /* StateActions.mm */; };
+		CF4D98CC202C206000ECE06D /* StateActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98B4202BE89700ECE06D /* StateActions.mm */; };
+		CF4D98CD202C206000ECE06D /* StateActions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4D98B4202BE89700ECE06D /* StateActions.mm */; };
 		CF4E563E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */; };
 		CF4E563F1D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56311D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.mm */; };
 		CF4E56401D5064FE00452912 /* PreferencesWindowGeneralTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56331D5064FE00452912 /* PreferencesWindowGeneralTab.mm */; };
@@ -919,9 +927,6 @@
 		CFD726671E42E1E700603077 /* ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */; };
 		CFD726681E42E1E700603077 /* ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */; };
 		CFD726691E42E1E800603077 /* ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */; };
-		CFD7266A1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
-		CFD7266B1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
-		CFD7266C1E42E1ED00603077 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
 		CFD7266D1E42E1F000603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
 		CFD7266E1E42E1F100603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
 		CFD7266F1E42E1F200603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
@@ -1142,7 +1147,6 @@
 		CFDAC25B1DFBF0B30039A104 /* PanelController+DataAccess.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC24D1DFBF0B30039A104 /* PanelController+DataAccess.mm */; };
 		CFDAC26E1DFBF20F0039A104 /* MainWindowFilePanelState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */; };
 		CFDAC26F1DFBF20F0039A104 /* ContextMenu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */; };
-		CFDAC2701DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */; };
 		CFDAC2711DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */; };
 		CFDAC2721DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26B1DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm */; };
 		CFDAC2731DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC26D1DFBF20F0039A104 /* MainWindowFilePanelState+Tools.mm */; };
@@ -1600,6 +1604,10 @@
 		CF4840C81927C8E10066A235 /* FTPConnectionSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FTPConnectionSheetController.mm; path = NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF4D98A520284C1500ECE06D /* PanelControllerActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelControllerActions.h; path = NimbleCommander/States/FilePanels/PanelControllerActions.h; sourceTree = SOURCE_ROOT; };
 		CF4D98A620284C1500ECE06D /* PanelControllerActions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelControllerActions.mm; path = NimbleCommander/States/FilePanels/PanelControllerActions.mm; sourceTree = SOURCE_ROOT; };
+		CF4D98B3202BE89700ECE06D /* StateActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StateActions.h; path = NimbleCommander/States/FilePanels/StateActions.h; sourceTree = SOURCE_ROOT; };
+		CF4D98B4202BE89700ECE06D /* StateActions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StateActions.mm; path = NimbleCommander/States/FilePanels/StateActions.mm; sourceTree = SOURCE_ROOT; };
+		CF4D98C5202BEA2700ECE06D /* StateActionsDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StateActionsDispatcher.h; path = NimbleCommander/States/FilePanels/StateActionsDispatcher.h; sourceTree = SOURCE_ROOT; };
+		CF4D98C6202BEA2700ECE06D /* StateActionsDispatcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StateActionsDispatcher.mm; path = NimbleCommander/States/FilePanels/StateActionsDispatcher.mm; sourceTree = SOURCE_ROOT; };
 		CF4E562E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowExternalEditorsTab.h; path = NimbleCommander/Preferences/PreferencesWindowExternalEditorsTab.h; sourceTree = SOURCE_ROOT; };
 		CF4E562F1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowExternalEditorsTab.mm; path = NimbleCommander/Preferences/PreferencesWindowExternalEditorsTab.mm; sourceTree = SOURCE_ROOT; };
 		CF4E56301D5064FE00452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowExternalEditorsTabNewEditorSheet.h; path = NimbleCommander/Preferences/PreferencesWindowExternalEditorsTabNewEditorSheet.h; sourceTree = SOURCE_ROOT; };
@@ -2012,8 +2020,6 @@
 		CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowFilePanelState.mm; path = NimbleCommander/States/FilePanels/MainWindowFilePanelState.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2641DFBF20F0039A104 /* ContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ContextMenu.h; path = NimbleCommander/States/FilePanels/ContextMenu.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ContextMenu.mm; path = NimbleCommander/States/FilePanels/ContextMenu.mm; sourceTree = SOURCE_ROOT; };
-		CFDAC2661DFBF20F0039A104 /* MainWindowFilePanelState+Menu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MainWindowFilePanelState+Menu.h"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+Menu.h"; sourceTree = SOURCE_ROOT; };
-		CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "MainWindowFilePanelState+Menu.mm"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+Menu.mm"; sourceTree = SOURCE_ROOT; };
 		CFDAC2681DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MainWindowFilePanelState+OverlappedTerminalSupport.h"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+OverlappedTerminalSupport.h"; sourceTree = SOURCE_ROOT; };
 		CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "MainWindowFilePanelState+OverlappedTerminalSupport.mm"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+OverlappedTerminalSupport.mm"; sourceTree = SOURCE_ROOT; };
 		CFDAC26A1DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "MainWindowFilePanelState+TabsSupport.h"; path = "NimbleCommander/States/FilePanels/MainWindowFilePanelState+TabsSupport.h"; sourceTree = SOURCE_ROOT; };
@@ -2364,8 +2370,6 @@
 				CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */,
 				CFDAC2621DFBF20F0039A104 /* MainWindowFilePanelState.h */,
 				CFDAC2631DFBF20F0039A104 /* MainWindowFilePanelState.mm */,
-				CFDAC2661DFBF20F0039A104 /* MainWindowFilePanelState+Menu.h */,
-				CFDAC2671DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm */,
 				CFDAC2681DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.h */,
 				CFDAC2691DFBF20F0039A104 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm */,
 				CFDAC26A1DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.h */,
@@ -2426,6 +2430,10 @@
 				CF3B7F76202163BF00BF2090 /* QuickSearch.mm */,
 				CFDAC2C11DFD0DE40039A104 /* SharingService.h */,
 				CFDAC2C21DFD0DE40039A104 /* SharingService.mm */,
+				CF4D98B3202BE89700ECE06D /* StateActions.h */,
+				CF4D98B4202BE89700ECE06D /* StateActions.mm */,
+				CF4D98C5202BEA2700ECE06D /* StateActionsDispatcher.h */,
+				CF4D98C6202BEA2700ECE06D /* StateActionsDispatcher.mm */,
 				CF20DF161FC41CF90074ABB8 /* TabContextMenu.h */,
 				CF20DF171FC41CF90074ABB8 /* TabContextMenu.mm */,
 			);
@@ -3947,6 +3955,7 @@
 				CFD7267B1E42E20400603077 /* PanelController.mm in Sources */,
 				CFD726A41E42E24500603077 /* PanelView.mm in Sources */,
 				CFD726C91E42E2A100603077 /* PanelBriefView.mm in Sources */,
+				CF4D98CC202C206000ECE06D /* StateActions.mm in Sources */,
 				CFD727031E42E2FC00603077 /* FilePanelMainSplitView.mm in Sources */,
 				CF04DDFD1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CF818B501EA0610D00BC28E6 /* Select.mm in Sources */,
@@ -3984,7 +3993,6 @@
 				CFD726E11E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CF509272201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */,
 				CF4E56D61D506B9700452912 /* FindFilesSheetController.mm in Sources */,
-				CFD7266B1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFD726681E42E1E700603077 /* ContextMenu.mm in Sources */,
 				CF50926D201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */,
 				CFD726F81E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */,
@@ -4007,6 +4015,7 @@
 				CF9F4AFB1ECC8DBD00E0AF82 /* OpenFile.mm in Sources */,
 				CFFA95141F45A3050035E606 /* UserNotificationsCenter.mm in Sources */,
 				CF818B561EA0610D00BC28E6 /* DefaultAction.mm in Sources */,
+				CF4D98C9202BEC6800ECE06D /* StateActionsDispatcher.mm in Sources */,
 				CFD8CDB41E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
 				CF04DE081E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CFD7260E1E42E07900603077 /* main.cpp in Sources */,
@@ -4239,6 +4248,7 @@
 				CF9F4AFC1ECC8DBD00E0AF82 /* OpenFile.mm in Sources */,
 				CF2083EE1FEFAAA00014D6AD /* ListingPromise.cpp in Sources */,
 				CF5E9A381FCBC521005608F5 /* ViewFile.mm in Sources */,
+				CF4D98C7202BEA2700ECE06D /* StateActionsDispatcher.mm in Sources */,
 				CF7C7CB31E5ACDBE002DB0E2 /* TabsManagement.mm in Sources */,
 				CFD7264E1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFD726541E42E12800603077 /* TemporaryNativeFileStorage.cpp in Sources */,
@@ -4282,7 +4292,6 @@
 				CF818B4C1EA0610C00BC28E6 /* FindFiles.mm in Sources */,
 				CFD727191E42E32500603077 /* ToolsMenuDelegate.mm in Sources */,
 				CF876D511D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
-				CFD7266C1E42E1ED00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFB9F109201AEDB800FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CF1FBF2A1E8F57E500D3569C /* OpenWithExternalEditor.mm in Sources */,
 				CFD7267A1E42E20300603077 /* PanelController.mm in Sources */,
@@ -4297,6 +4306,7 @@
 				CFD726D31E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CFA1715D20174C9A00F507D5 /* LocationFormatter.mm in Sources */,
 				CFD7263C1E42E0E700603077 /* MASAppInstalledChecker.cpp in Sources */,
+				CF4D98B5202BE89700ECE06D /* StateActions.mm in Sources */,
 				CFD7270D1E42E30900603077 /* QuickLookOverlay.mm in Sources */,
 				CF5E9A661FCE735C005608F5 /* QuickLookVFSBridge.mm in Sources */,
 				CF36DBEC1F6C1807004A018E /* PanelViewFieldEditor.mm in Sources */,
@@ -4372,7 +4382,6 @@
 				CFDAC26E1DFBF20F0039A104 /* MainWindowFilePanelState.mm in Sources */,
 				CF0260D21E9F10060025B50F /* ToggleLayout.mm in Sources */,
 				CF0260C71E9DEC380025B50F /* CalculateSizes.mm in Sources */,
-				CFDAC2701DFBF20F0039A104 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CF876D271D51E04A009C0CCE /* BigFileViewHex.mm in Sources */,
 				CFD8CDB21E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
 				CF56C2B91DC1934D00F0DF0F /* PanelListViewRowView.mm in Sources */,
@@ -4385,6 +4394,7 @@
 				CFDAC2C41DFD0DE40039A104 /* SharingService.mm in Sources */,
 				CF27F9391E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CF4E56401D5064FE00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
+				CF4D98CD202C206000ECE06D /* StateActions.mm in Sources */,
 				CF5E9A561FCBF5BF005608F5 /* ShowQuickLook.mm in Sources */,
 				CF4D98AA2028500400ECE06D /* PanelControllerActions.mm in Sources */,
 				CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */,
@@ -4395,6 +4405,7 @@
 				CF04DDDD1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF0139A51E98BA6700E44F2D /* FilterPopUpMenu.mm in Sources */,
+				CF4D98CA202BEC6900ECE06D /* StateActionsDispatcher.mm in Sources */,
 				CF662AE11D8A4E83008F9DD5 /* ActivationManager.cpp in Sources */,
 				CFDAC2181DFBC2430039A104 /* rapidjson.cpp in Sources */,
 				CF0260CA1E9DF45D0025B50F /* BatchRename.mm in Sources */,
@@ -4547,7 +4558,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD7266A1E42E1EC00603077 /* MainWindowFilePanelState+Menu.mm in Sources */,
 				CFD726281E42E0BC00603077 /* QLThumbnailsCache.mm in Sources */,
 				CFD726921E42E22700603077 /* PanelData.mm in Sources */,
 				CFD726E61E42E2CE00603077 /* PanelListViewDateTimeView.mm in Sources */,
@@ -4669,6 +4679,7 @@
 				CF5E9A4E1FCBDE29005608F5 /* RefreshPanel.mm in Sources */,
 				CF1FBF2B1E8F57E800D3569C /* AddToFavorites.mm in Sources */,
 				CFFA951B1F45A3410035E606 /* ConfigWiring.mm in Sources */,
+				CF4D98C8202BEC6700ECE06D /* StateActionsDispatcher.mm in Sources */,
 				CF509274201C3DB7004D9CF5 /* VFSInstanceManager.cpp in Sources */,
 				CF818B611EA0610E00BC28E6 /* DefaultAction.mm in Sources */,
 				CFD8CDD91E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
@@ -4758,6 +4769,7 @@
 				CFFED08E1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFD727081E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */,
 				CFD726CB1E42E2A400603077 /* PanelBriefViewCollectionView.mm in Sources */,
+				CF4D98CB202C205F00ECE06D /* StateActions.mm in Sources */,
 				CF56BEF61D5C26AE00A08D2B /* InternalViewerController.mm in Sources */,
 				CF876D531D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */,
 				CFD726AD1E42E25500603077 /* SharingService.mm in Sources */,

@@ -37,5 +37,6 @@ namespace nc::panel {
 - (IBAction)OnFileRenameMoveAsCommand:(id)sender;
 - (IBAction)OnFileOpenInOppositePanel:(id)sender;
 - (IBAction)OnFileOpenInNewOppositePanelTab:(id)sender;
+- (IBAction)onExecuteExternalTool:(id)sender;
 
 @end

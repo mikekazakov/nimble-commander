@@ -8,6 +8,7 @@
 #include "Actions/RevealInOppositePanel.h"
 #include "Actions/ShowTerminal.h"
 #include "Actions/SyncPanels.h"
+#include "Actions/ExecuteExternalTool.h"
 #include "StateActionsDispatcher.h"
 
 namespace nc::panel {
@@ -39,7 +40,8 @@ StateActionsMap BuildStateActionsMap(NetworkConnectionsManager &_net_mgr)
     add(@selector(OnFileRenameMoveAsCommand:), new MoveAs);
     add(@selector(OnFileOpenInOppositePanel:), new RevealInOppositePanel);
     add(@selector(OnFileOpenInNewOppositePanelTab:), new RevealInOppositePanelTab);
-
+    add(@selector(onExecuteExternalTool:), new ExecuteExternalTool);
+    
     return m;
 }
     

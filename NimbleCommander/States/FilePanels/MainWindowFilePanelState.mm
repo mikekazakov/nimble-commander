@@ -36,7 +36,6 @@
 #include "PanelHistory.h"
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include "MainWindowFilePanelState+TabsSupport.h"
-#include "MainWindowFilePanelState+Tools.h"
 #include "ToolsMenuDelegate.h"
 
 using namespace nc::panel;
@@ -1132,14 +1131,6 @@ static bool RouteKeyboardInputIntoTerminal()
         return true;
     
     return [super performKeyEquivalent:theEvent];
-}
-
-- (IBAction)onExternMenuActionCalled:(id)sender
-{
-    if( auto menuitem = objc_cast<NSMenuItem>(sender) )
-        if( auto rep = objc_cast<ToolsMenuDelegateInfoWrapper>(menuitem.representedObject) )
-            if( auto t = rep.object )
-                [self runExtTool:t];
 }
 
 @end

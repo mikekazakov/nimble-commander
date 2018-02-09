@@ -169,8 +169,6 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  */
 - (void) changeFocusedSide;
 
-- (IBAction)onExternMenuActionCalled:(id)sender;
-
 @end
 
 

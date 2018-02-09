@@ -1,10 +1,13 @@
 // Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
-#include "MainWindowFilePanelState+Tools.h"
+#include "StateActionsDispatcher.h"
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
 #include "StateActionsDispatcher.h"
 #include <Operations/PoolViewController.h>
+#include "Actions/ExecuteExternalTool.h"
+#include <NimbleCommander/Core/AnyHolder.h>
+#include "ExternalToolsSupport.h"
 
 // do not change these strings, they are used for persistency in NSUserDefaults
 static auto g_ToolbarIdentifier = @"FilePanelsToolbar";
@@ -31,6 +34,8 @@ static const auto g_MaxPoolViewWith = 540.;
     ExternalToolsStorage::ObservationTicket m_ToolsChangesTicket;
     
     bool m_SetUpWindowSizeObservation;
+    
+    id                              m_RepresentedObject;
 }
 
 @synthesize toolbar = m_Toolbar;
@@ -191,11 +196,19 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     }
 }
 
+- (id)representedObject
+{
+    return m_RepresentedObject;
+}
+
 - (IBAction)onExternalToolAction:(id)sender
 {
     if( auto i = objc_cast<NSToolbarItem>(sender) )
-        if( auto tool = self.state.externalToolsStorage.GetTool(i.tag) )
-            [self.state runExtTool:tool];
+        if( auto tool = self.state.externalToolsStorage.GetTool(i.tag) ) {
+            m_RepresentedObject = [[AnyHolder alloc] initWithAny:any{tool}];
+            [NSApp sendAction:@selector(onExecuteExternalTool:) to:nil from:self];
+            m_RepresentedObject = nil;
+        }
 }
 
 - (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar

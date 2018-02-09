@@ -175,6 +175,7 @@ static void Perform(SEL _sel, const StateActionsMap &_map,
 - (IBAction)OnFileRenameMoveAsCommand:(id)sender { PERFORM; }
 - (IBAction)OnFileOpenInOppositePanel:(id)sender { PERFORM; }
 - (IBAction)OnFileOpenInNewOppositePanelTab:(id)sender { PERFORM; }
+- (IBAction)onExecuteExternalTool:(id)sender { PERFORM; }
 
 #undef PERFORM
 

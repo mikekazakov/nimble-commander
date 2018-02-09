@@ -1,16 +1,87 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "ExecuteExternalTool.h"
+#include "../ExternalToolsSupport.h"
 #include <boost/algorithm/string/replace.hpp>
-#include "ExternalToolsSupport.h"
+#include <VFS/VFS.h>
 #include <VFS/Native.h>
-#include "PanelController.h"
-#include "PanelView.h"
-#include "MainWindowFilePanelState+Tools.h"
+#include "../PanelController.h"
+#include "../PanelView.h"
+#include "../MainWindowFilePanelState.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
-#include <NimbleCommander/States/MainWindowController.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include "ExternalToolParameterValueSheetController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/States/MainWindowController.h>
+#include <NimbleCommander/Core/AnyHolder.h>
 #include <Term/Task.h>
+#include "../ExternalToolParameterValueSheetController.h"
+
+namespace nc::panel::actions {
+    
+static string EscapeSpaces(string _str);
+static string UnescapeSpaces(string _str);
+static vector<string> SplitByEscapedSpaces( const string &_str );
+static string ExtractParamInfoFromListingItem(ExternalToolsParameters::FileInfo _what,
+                                              const VFSListingItem &_i );
+static string ExtractParamInfoFromContext(ExternalToolsParameters::FileInfo _what,
+                                          PanelController *_pc );
+static string CombineStringsIntoEscapedSpaceSeparatedString( const vector<string> &_l );
+static string CombineStringsIntoNewlineSeparatedString( const vector<string> &_l );
+static bool IsBundle( const string& _path );
+static string GetExecutablePathForBundle( const string& _path );
+static vector<string> FindEnterValueParameters(const ExternalToolsParameters &_p);
+static PanelController *ExternalToolParametersContextFromLocation
+    (ExternalToolsParameters::Location _loc,
+     MainWindowFilePanelState *_target);
+static string BuildParametersStringForExternalTool(const ExternalToolsParameters&_par,
+                                                   const vector<string>& _entered_values,
+                                                   MainWindowFilePanelState *_target);
+static void RunExtTool(const ExternalTool &_tool,
+                       const string& _cooked_params,
+                       MainWindowFilePanelState *_target);
+    
+void ExecuteExternalTool::Perform( MainWindowFilePanelState *_target, id _sender ) const
+{
+    if( [_sender respondsToSelector:@selector(representedObject)] ) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wstrict-selector-match"
+        id rep_obj = [_sender representedObject];
+#pragma clang diagnostic pop
+        if( auto any_holder = objc_cast<AnyHolder>(rep_obj) )
+            if( auto tool = any_cast<shared_ptr<const ExternalTool>>(&any_holder.any) )
+                if( tool->get() )
+                    Execute(*tool->get(), _target);
+    }
+}
+    
+void ExecuteExternalTool::Execute(const ExternalTool &_tool,
+                                  MainWindowFilePanelState *_target) const
+{
+    dispatch_assert_main_queue();
+    
+    // do nothing for invalid tools
+    if( _tool.m_ExecutablePath.empty() )
+        return;
+    
+    auto parameters = ExternalToolsParametersParser().Parse(_tool.m_Parameters);
+    vector<string> enter_values_names = FindEnterValueParameters(parameters);
+    
+    if( enter_values_names.empty() ) {
+        string cooked_parameters = BuildParametersStringForExternalTool(parameters, {}, _target);
+        RunExtTool(_tool, cooked_parameters, _target);
+    }
+    else {
+        auto sheet = [[ExternalToolParameterValueSheetController alloc] initWithValueNames:enter_values_names];
+        [sheet beginSheetForWindow:_target.window completionHandler:^(NSModalResponse returnCode) {
+            if( returnCode == NSModalResponseOK ) {
+                string cooked_parameters = BuildParametersStringForExternalTool(parameters, sheet.values, _target);
+                RunExtTool(_tool, cooked_parameters, _target);
+            }
+        }];
+    }
+    
+        
+}
+
+    
 
 static string EscapeSpaces(string _str)
 {
@@ -52,7 +123,8 @@ static vector<string> SplitByEscapedSpaces( const string &_str )
     return results;
 }
 
-static string ExtractParamInfoFromListingItem( ExternalToolsParameters::FileInfo _what, const VFSListingItem &_i )
+static string ExtractParamInfoFromListingItem(ExternalToolsParameters::FileInfo _what,
+                                              const VFSListingItem &_i )
 {
     if( !_i )
         return {};
@@ -133,38 +205,6 @@ static vector<string> FindEnterValueParameters(const ExternalToolsParameters &_p
     return ev;
 }
 
-@implementation MainWindowFilePanelState (ToolsSupport)
-
-- (void) runExtTool:(shared_ptr<const ExternalTool>)_tool
-{
-    dispatch_assert_main_queue();
-    if( !_tool )
-        return;
-    
-    auto &et = *_tool;
-    
-    // do nothing for invalid tools
-    if( et.m_ExecutablePath.empty() )
-        return;
-    
-    auto parameters = ExternalToolsParametersParser().Parse(et.m_Parameters);
-    vector<string> enter_values_names = FindEnterValueParameters(parameters);
-    
-    if( enter_values_names.empty() ) {
-        string cooked_parameters = [self buildParametersStringForExternalTool:parameters userEnteredValues:{}];
-        [self runExtTool:_tool withCookedParameters:cooked_parameters];
-    }
-    else {
-        ExternalToolParameterValueSheetController *sheet = [[ExternalToolParameterValueSheetController alloc] initWithValueNames:enter_values_names];
-        [sheet beginSheetForWindow:self.window completionHandler:^(NSModalResponse returnCode) {
-            if( returnCode == NSModalResponseOK ) {
-                string cooked_parameters = [self buildParametersStringForExternalTool:parameters userEnteredValues:sheet.values];
-                [self runExtTool:_tool withCookedParameters:cooked_parameters];
-            }
-        }];
-    }
-}
-
 static bool IsRunnableExecutable( const string &_path )
 {
     VFSStat st;
@@ -174,12 +214,13 @@ static bool IsRunnableExecutable( const string &_path )
         st.mode_bits.xusr ;
 }
 
-- (void) runExtTool:(shared_ptr<const ExternalTool>)_tool withCookedParameters:(const string&)_cooked_params
+static void RunExtTool(const ExternalTool &_tool,
+                       const string& _cooked_params,
+                       MainWindowFilePanelState *_target)
 {
     dispatch_assert_main_queue();
-    auto &et = *_tool;
-    auto startup_mode = et.m_StartupMode;
-    const bool tool_is_bundle = IsBundle( et.m_ExecutablePath );
+    auto startup_mode = _tool.m_StartupMode;
+    const bool tool_is_bundle = IsBundle( _tool.m_ExecutablePath );
     
     if( startup_mode == ExternalTool::StartupMode::Automatic ) {
         if( tool_is_bundle )
@@ -194,16 +235,16 @@ static bool IsRunnableExecutable( const string &_path )
         
         if( tool_is_bundle ) {
             // bundled UI tool starting in terminal
-            string exec_path = et.m_ExecutablePath;
+            string exec_path = _tool.m_ExecutablePath;
             if( !IsRunnableExecutable(exec_path) )
-                exec_path = GetExecutablePathForBundle(et.m_ExecutablePath);
+                exec_path = GetExecutablePathForBundle(_tool.m_ExecutablePath);
 
-            [(MainWindowController*)self.window.delegate requestTerminalExecutionWithFullPath:exec_path.c_str()
+            [(MainWindowController*)_target.window.delegate requestTerminalExecutionWithFullPath:exec_path.c_str()
                                                                                withParameters:_cooked_params.c_str()];
         }
         else {
             // console tool starting in terminal
-            [(MainWindowController*)self.window.delegate requestTerminalExecutionWithFullPath:et.m_ExecutablePath.c_str()
+            [(MainWindowController*)_target.window.delegate requestTerminalExecutionWithFullPath:_tool.m_ExecutablePath.c_str()
                                                                                withParameters:_cooked_params.c_str()];
         }
     }
@@ -215,7 +256,7 @@ static bool IsRunnableExecutable( const string &_path )
         if( tool_is_bundle ) {
             // regular UI start
             
-            NSURL *app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:et.m_ExecutablePath]];
+            NSURL *app_url = [NSURL fileURLWithPath:[NSString stringWithUTF8StdString:_tool.m_ExecutablePath]];
             
             NSMutableArray *params_url = [NSMutableArray new];
             NSMutableArray *params_text = [NSMutableArray new];
@@ -236,26 +277,29 @@ static bool IsRunnableExecutable( const string &_path )
         }
         else {
             // need to start a console tool in background
-            nc::term::Task::RunDetachedProcess(et.m_ExecutablePath, pars);
+            nc::term::Task::RunDetachedProcess(_tool.m_ExecutablePath, pars);
         }
     }
 }
 
-- (PanelController *) externalToolParametersContextFromLocation:(ExternalToolsParameters::Location) _loc
+static PanelController *ExternalToolParametersContextFromLocation(ExternalToolsParameters::Location _loc,
+                                                                  MainWindowFilePanelState *_target)
 {
     dispatch_assert_main_queue();
     if( _loc == ExternalToolsParameters::Location::Left )
-        return self.leftPanelController;
+        return _target.leftPanelController;
     if( _loc == ExternalToolsParameters::Location::Right )
-        return self.rightPanelController;
+        return _target.rightPanelController;
     if( _loc == ExternalToolsParameters::Location::Source )
-        return self.activePanelController;
+        return _target.activePanelController;
     if( _loc == ExternalToolsParameters::Location::Target )
-        return self.oppositePanelController;
+        return _target.oppositePanelController;
     return nil;
 }
 
-- (string)buildParametersStringForExternalTool:(const ExternalToolsParameters&)_par userEnteredValues:(const vector<string>&)_entered_values
+static string BuildParametersStringForExternalTool(const ExternalToolsParameters&_par,
+                                                   const vector<string>& _entered_values,
+                                                   MainWindowFilePanelState *_target)
 {
     dispatch_assert_main_queue();
     
@@ -276,7 +320,7 @@ static bool IsRunnableExecutable( const string &_path )
         }
         else if( step.type == ExternalToolsParameters::ActionType::CurrentItem ) {
             auto &v = _par.GetCurrentItem(step.index);
-            if( PanelController *context = [self externalToolParametersContextFromLocation:v.location] )
+            if( PanelController *context = ExternalToolParametersContextFromLocation(v.location, _target) )
                 if( max_files_left > 0 ) {
                     if( auto entry = context.view.item )
                         params += EscapeSpaces( ExtractParamInfoFromListingItem( v.what, entry ) );
@@ -287,7 +331,7 @@ static bool IsRunnableExecutable( const string &_path )
         }
         else if( step.type == ExternalToolsParameters::ActionType::SelectedItems ) {
             auto &v = _par.GetSelectedItems(step.index);
-            if( PanelController *context = [self externalToolParametersContextFromLocation:v.location] ) {
+            if( PanelController *context = ExternalToolParametersContextFromLocation(v.location, _target) ) {
                 auto selected_items = context.selectedEntriesOrFocusedEntry;
                 if( v.max > 0 && v.max < (int)selected_items.size() )
                     selected_items.resize( v.max );
@@ -317,5 +361,5 @@ static bool IsRunnableExecutable( const string &_path )
 
     return params;
 }
-
-@end
+    
+}

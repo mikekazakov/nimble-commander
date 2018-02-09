@@ -1,25 +1,9 @@
 // Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ToolsMenuDelegate.h"
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
+#include <NimbleCommander/Core/AnyHolder.h>
 #include "MainWindowFilePanelState.h"
-
-@implementation ToolsMenuDelegateInfoWrapper
-{
-    shared_ptr<const ExternalTool> m_ET;
-}
-
-@synthesize object = m_ET;
-
-- (id) initWithTool:(shared_ptr<const ExternalTool>)_et
-{
-    self = [super init];
-    if(self)
-        m_ET = _et;
-
-    return self;
-}
-
-@end
+#include "StateActionsDispatcher.h"
 
 static NSMenuItem *ItemForTool( const shared_ptr<const ExternalTool> &_tool, int _ind )
 {
@@ -27,14 +11,11 @@ static NSMenuItem *ItemForTool( const shared_ptr<const ExternalTool> &_tool, int
     item.title = _tool->m_Title.empty() ?
         [NSString stringWithFormat:NSLocalizedString(@"Tool #%u", ""), _ind] :
         [NSString stringWithUTF8StdString:_tool->m_Title];
-    item.representedObject = [[ToolsMenuDelegateInfoWrapper alloc] initWithTool:_tool];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wselector"
+    item.representedObject = [[AnyHolder alloc] initWithAny:any{_tool}];
     if( !_tool->m_ExecutablePath.empty() )
-        item.action = @selector(onExternMenuActionCalled:);
+        item.action = @selector(onExecuteExternalTool:);
     else
         item.action = nil;
-#pragma clang diagnostic pop
     item.keyEquivalent = _tool->m_Shorcut.Key();
     item.keyEquivalentModifierMask = _tool->m_Shorcut.modifiers;
     return item;

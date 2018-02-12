@@ -15,7 +15,6 @@ using namespace nc::panel;
     NSMenuItem *m_RestoreLast;
     shared_ptr<nc::panel::ClosedPanelsHistory> m_Storage;
     function<MainWindowFilePanelState*()> m_Locator;
-    
 }
 
 - (instancetype) initWithMenu:(NSMenu*)_menu
@@ -71,24 +70,6 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     return item;
 }
 
-static vector<ListingPromise> Filter(vector<ListingPromise> _input,
-                                     MainWindowFilePanelState *_state)
-{
-    if( !_state )
-        return _input;
-    
-    auto remove_if_present = [&]( PanelController *_pc ) {
-        if( auto current = _pc.history.MostRecent() )
-            if( auto it = find( begin(_input), end(_input), *current ); it != end(_input) )
-                _input.erase(it);
-    };
-    
-    for( auto &pc: _state.leftControllers ) remove_if_present(pc);
-    for( auto &pc: _state.rightControllers ) remove_if_present(pc);
-    
-    return _input;
-}
-
 static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_state)
 {
     if( !_state )
@@ -111,7 +92,7 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
     auto current_state = m_Locator();
     auto side = CurrentSide(current_state);
     
-    auto records = Filter(m_Storage->FrontElements(m_Storage->Size()), current_state);
+    auto records = m_Storage->FrontElements( m_Storage->Size() );
     
     [self purgeMenu];
     
@@ -142,7 +123,7 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
         return;
     }
     
-    auto records = Filter(m_Storage->FrontElements(m_Storage->Size()), current_state);
+    auto records = m_Storage->FrontElements(1);
     if( records.empty() ) {
         NSBeep();
         return;
@@ -162,8 +143,7 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
         auto current_state = m_Locator();
         if( !current_state )
             return false;
-        auto records = Filter(m_Storage->FrontElements(m_Storage->Size()), current_state);
-        return !records.empty();
+        return m_Storage->Size() != 0;
     }
     
     return true;

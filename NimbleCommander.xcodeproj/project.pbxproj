@@ -2573,8 +2573,6 @@
 		CF5FE7D21E120A3100CD83B4 /* Actions */ = {
 			isa = PBXGroup;
 			children = (
-				CF44D329202D63100083FAF5 /* ExecuteExternalTool.h */,
-				CF44D32A202D63100083FAF5 /* ExecuteExternalTool.mm */,
 				CFD8CD5C1E7E390500E4DC53 /* AddToFavorites.h */,
 				CFD8CD5D1E7E390500E4DC53 /* AddToFavorites.mm */,
 				CF0260C81E9DF45D0025B50F /* BatchRename.h */,
@@ -2603,6 +2601,8 @@
 				CFD8CDB71E8CD37D00E4DC53 /* EjectVolume.mm */,
 				CF9F4AF11ECC114F00E0AF82 /* Enter.h */,
 				CF9F4AF21ECC114F00E0AF82 /* Enter.mm */,
+				CF44D329202D63100083FAF5 /* ExecuteExternalTool.h */,
+				CF44D32A202D63100083FAF5 /* ExecuteExternalTool.mm */,
 				CF9F4AEE1ECC015700E0AF82 /* ExecuteInTerminal.h */,
 				CF9F4AEF1ECC015700E0AF82 /* ExecuteInTerminal.mm */,
 				CF0139B31E99F7C200E44F2D /* FindFiles.h */,

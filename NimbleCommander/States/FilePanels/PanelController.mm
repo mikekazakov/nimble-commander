@@ -279,9 +279,9 @@ static void HeatUpConfigValues()
     return self.state.window;
 }
 
-- (MainWindowController *)mainWindowController
+- (NCMainWindowController *)mainWindowController
 {
-    return (MainWindowController*)self.window.delegate;
+    return (NCMainWindowController*)self.window.delegate;
 }
 
 - (bool) isUniform
@@ -559,7 +559,7 @@ static void HeatUpConfigValues()
 
 - (void) markRestorableStateAsInvalid
 {
-    if( auto wc = objc_cast<MainWindowController>(self.state.window.delegate) )
+    if( auto wc = objc_cast<NCMainWindowController>(self.state.window.delegate) )
         [wc invalidateRestorableState];
 }
 

@@ -81,7 +81,7 @@ static PanelController* PanelFactory()
                                                   panelFactory:PanelFactory];
     }
     else if( _context == CreationContext::ManualRestoration ) {
-        if( MainWindowController.canRestoreDefaultWindowStateFromLastOpenedWindow ) {
+        if( NCMainWindowController.canRestoreDefaultWindowStateFromLastOpenedWindow ) {
             auto state = [[MainWindowFilePanelState alloc] initWithFrame:_frame
                                                                  andPool:_operations_pool
                                                       loadDefaultContent:false
@@ -95,7 +95,7 @@ static PanelController* PanelFactory()
                                                                  andPool:_operations_pool
                                                       loadDefaultContent:false
                                                             panelFactory:PanelFactory];
-            if( ![MainWindowController restoreDefaultWindowStateFromConfig:state] )
+            if( ![NCMainWindowController restoreDefaultWindowStateFromConfig:state] )
                 [state loadDefaultPanelContent];
             return state;
         }
@@ -114,12 +114,12 @@ static PanelController* PanelFactory()
     return nil;
 }
 
-- (MainWindowController*)allocateMainWindowInContext:(CreationContext)_context
+- (NCMainWindowController*)allocateMainWindowInContext:(CreationContext)_context
 {
     const auto window = [self allocateMainWindow];
     const auto frame = window.contentView.frame;
     const auto operations_pool =  nc::ops::Pool::Make();
-    const auto window_controller = [[MainWindowController alloc] initWithWindow:window];
+    const auto window_controller = [[NCMainWindowController alloc] initWithWindow:window];
     window_controller.operationsPool = *operations_pool;
     self.operationsProgressTracker.AddPool(*operations_pool);
     
@@ -141,17 +141,17 @@ static PanelController* PanelFactory()
     return window_controller;
 }
 
-- (MainWindowController*)allocateDefaultMainWindow
+- (NCMainWindowController*)allocateDefaultMainWindow
 {
     return [self allocateMainWindowInContext:CreationContext::Default];
 }
 
-- (MainWindowController*)allocateMainWindowRestoredManually
+- (NCMainWindowController*)allocateMainWindowRestoredManually
 {
     return [self allocateMainWindowInContext:CreationContext::ManualRestoration];
 }
 
-- (MainWindowController*)allocateMainWindowRestoredBySystem
+- (NCMainWindowController*)allocateMainWindowRestoredBySystem
 {
     return [self allocateMainWindowInContext:CreationContext::SystemRestoration];
 }
@@ -160,7 +160,7 @@ static PanelController* PanelFactory()
 
 static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *_state)
 {
-    const auto last = MainWindowController.lastFocused;
+    const auto last = NCMainWindowController.lastFocused;
     if( !last )
         return  false;
     

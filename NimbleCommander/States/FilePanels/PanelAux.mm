@@ -63,12 +63,12 @@ static void RegisterRemoteFileUploading(const string& _original_path,
     if( !_original_vfs->IsWritable() )
         return; // no reason to watch file we can't upload then
 
-    __weak MainWindowController* origin_window = _origin.mainWindowController;
+    __weak NCMainWindowController* origin_window = _origin.mainWindowController;
     __weak PanelController* origin_controller = _origin;
     VFSHostWeakPtr weak_host(_original_vfs);
 
     auto on_file_change = [=]{
-        MainWindowController* window = origin_window;
+        NCMainWindowController* window = origin_window;
         if( !window )
             return;
         
@@ -248,7 +248,7 @@ void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
     assert( !_filepath.empty() && _host && _ext_ed && _panel );
     
     if( _host->IsNativeFS() ) {
-        if( MainWindowController* wnd = (MainWindowController*)_panel.window.delegate )
+        if( NCMainWindowController* wnd = (NCMainWindowController*)_panel.window.delegate )
             [wnd RequestExternalEditorTerminalExecution:_ext_ed->Path()
                                                  params:_ext_ed->SubstituteFileName(_filepath)
                                               fileTitle:_file_title];
@@ -276,7 +276,7 @@ void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
             if( auto tmp = TemporaryNativeFileStorage::Instance().CopySingleFile(_filepath, *_host) ) {
                 RegisterRemoteFileUploading( _filepath, _host, *tmp, _panel );
                 dispatch_to_main_queue([=]{ // when we sucessfuly download a file - request terminal execution in main thread
-                    if( MainWindowController* wnd = (MainWindowController*)_panel.window.delegate )
+                    if( NCMainWindowController* wnd = (NCMainWindowController*)_panel.window.delegate )
                         [wnd RequestExternalEditorTerminalExecution:_ext_ed->Path()
                                                              params:_ext_ed->SubstituteFileName(*tmp)
                                                           fileTitle:_file_title];

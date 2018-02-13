@@ -715,7 +715,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 
 - (void) markRestorableStateAsInvalid
 {
-    if( auto wc = objc_cast<MainWindowController>(self.window.delegate) )
+    if( auto wc = objc_cast<NCMainWindowController>(self.window.delegate) )
         [wc invalidateRestorableState];
 }
 
@@ -803,7 +803,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         [self panelWillBeClosed:pc];
 }
 
-- (bool)windowStateShouldClose:(MainWindowController*)sender
+- (bool)windowStateShouldClose:(NCMainWindowController*)sender
 {
     if( self.operationsPool.Empty() && !self.isAnythingRunningInOverlappedTerminal )
         return true;
@@ -959,7 +959,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd
 {
     if( ![self executeInOverlappedTerminalIfPossible:_filename at:_cwd] ) {
-        const auto ctrl = (MainWindowController*)self.window.delegate;
+        const auto ctrl = (NCMainWindowController*)self.window.delegate;
         [ctrl requestTerminalExecution:_filename.c_str()
                                     at:_cwd.c_str()];
     }
@@ -1016,9 +1016,9 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return *m_OperationsPool;
 }
 
-- (MainWindowController*) mainWindowController
+- (NCMainWindowController*) mainWindowController
 {
-    return (MainWindowController*)self.window.delegate;
+    return (NCMainWindowController*)self.window.delegate;
 }
 
 - (void) swapPanels

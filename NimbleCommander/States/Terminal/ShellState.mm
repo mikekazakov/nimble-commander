@@ -218,7 +218,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     m_Task->ExecuteWithFullPath(_path, _params);
 }
 
-- (bool)windowStateShouldClose:(MainWindowController*)sender
+- (bool)windowStateShouldClose:(NCMainWindowController*)sender
 {    
     if(m_Task->State() == ShellTask::TaskState::Dead ||
        m_Task->State() == ShellTask::TaskState::Inactive ||
@@ -273,7 +273,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
 - (IBAction)OnShowTerminal:(id)sender
 {
-    [(MainWindowController*)self.window.delegate ResignAsWindowState:self];
+    [(NCMainWindowController*)self.window.delegate ResignAsWindowState:self];
 }
 
 - (BOOL) validateMenuItem:(NSMenuItem *)item

@@ -40,7 +40,7 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
         
         // window placement logic below:
         // (it may be later overwritten by Cocoa's restoration mechanism)
-        if( auto mwc = MainWindowController.lastFocused ) {
+        if( auto mwc = NCMainWindowController.lastFocused ) {
             // if there's any previous main window alive - copy that frame initially
             [self setFrame:mwc.window.frame
                    display:false
@@ -112,7 +112,7 @@ static const auto g_CloseWindowTitle =
 
 - (IBAction)toggleToolbarShown:(id)sender
 {
-    if( auto wc = objc_cast<MainWindowController>(self.windowController) )
+    if( auto wc = objc_cast<NCMainWindowController>(self.windowController) )
         [wc OnShowToolbar:sender];
     else
         [super toggleToolbarShown:sender];

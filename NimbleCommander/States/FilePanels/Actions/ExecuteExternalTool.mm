@@ -239,12 +239,12 @@ static void RunExtTool(const ExternalTool &_tool,
             if( !IsRunnableExecutable(exec_path) )
                 exec_path = GetExecutablePathForBundle(_tool.m_ExecutablePath);
 
-            [(MainWindowController*)_target.window.delegate requestTerminalExecutionWithFullPath:exec_path.c_str()
+            [(NCMainWindowController*)_target.window.delegate requestTerminalExecutionWithFullPath:exec_path.c_str()
                                                                                withParameters:_cooked_params.c_str()];
         }
         else {
             // console tool starting in terminal
-            [(MainWindowController*)_target.window.delegate requestTerminalExecutionWithFullPath:_tool.m_ExecutablePath.c_str()
+            [(NCMainWindowController*)_target.window.delegate requestTerminalExecutionWithFullPath:_tool.m_ExecutablePath.c_str()
                                                                                withParameters:_cooked_params.c_str()];
         }
     }

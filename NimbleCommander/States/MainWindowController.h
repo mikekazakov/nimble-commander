@@ -14,7 +14,7 @@ namespace nc::ops {
     class Operation;
 }
 
-@interface MainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
+@interface NCMainWindowController : NSWindowController <NSWindowDelegate, NSWindowRestoration>
 
 - (instancetype) initWithWindow:(NCMainWindow*)window;
 
@@ -52,7 +52,7 @@ namespace nc::ops {
 // Toolbar support
 - (void)OnShowToolbar:(id)sender;
 
-+ (MainWindowController*)lastFocused;
++ (NCMainWindowController*)lastFocused;
 
 - (void)enqueueOperation:(const shared_ptr<nc::ops::Operation> &)_operation;
 - (void)beginSheet:(NSWindow *)sheetWindow completionHandler:(void (^)(NSModalResponse rc))handler;

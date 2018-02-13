@@ -5,7 +5,7 @@
 
 @interface NCAppDelegate()
 
-- (void) addMainWindow:(MainWindowController*) _wnd;
-- (void) removeMainWindow:(MainWindowController*) _wnd;
+- (void) addMainWindow:(NCMainWindowController*) _wnd;
+- (void) removeMainWindow:(NCMainWindowController*) _wnd;
 
 @end

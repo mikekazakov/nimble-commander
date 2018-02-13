@@ -32,15 +32,15 @@ static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
 
 static auto g_CocoaRestorationFilePanelsStateKey = @"filePanelsState";
 static const auto g_JSONRestorationFilePanelsStateKey = "filePanel.defaultState";
-static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
+static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
 
-@interface MainWindowController()
+@interface NCMainWindowController()
 
 @property (nonatomic, readonly) bool toolbarVisible;
 
 @end
 
-@implementation MainWindowController
+@implementation NCMainWindowController
 {
     vector<NSObject<NCMainWindowState> *> m_WindowState; // .back is current state
     MainWindowFilePanelState    *m_PanelState;
@@ -57,9 +57,9 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 @synthesize terminalState = m_Terminal;
 @synthesize toolbarVisible = m_ToolbarVisible;
 
-+ (MainWindowController*)lastFocused
++ (NCMainWindowController*)lastFocused
 {
-    return (MainWindowController*)g_LastFocusedMainWindowController;
+    return (NCMainWindowController*)g_LastFocusedNCMainWindowController;
 }
 
 - (instancetype) initWithWindow:(NCMainWindow*)window
@@ -139,7 +139,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 - (void)restoreDefaultWindowStateFromLastOpenedWindow
 {
     // supposed to be called when new window is allocated
-    MainWindowController *last = g_LastFocusedMainWindowController;
+    NCMainWindowController *last = g_LastFocusedNCMainWindowController;
     if( !last )
         return;
     
@@ -150,7 +150,7 @@ static __weak MainWindowController *g_LastFocusedMainWindowController = nil;
 
 + (bool)canRestoreDefaultWindowStateFromLastOpenedWindow
 {
-    return g_LastFocusedMainWindowController != nil;
+    return g_LastFocusedNCMainWindowController != nil;
 }
 
 - (void)restoreStateWithCoder:(NSCoder *)coder
@@ -245,7 +245,7 @@ static int CountMainWindows()
 
 - (void)didBecomeKeyWindow
 {
-    g_LastFocusedMainWindowController = self;
+    g_LastFocusedNCMainWindowController = self;
 }
 
 - (IBAction)OnShowToolbar:(id)sender
@@ -496,16 +496,16 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
     assert( m_OperationsPool == nullptr ); // at this moment we don't support overriding of a pool.
     m_OperationsPool = _pool.shared_from_this();
     
-    __weak MainWindowController *weak_self = self;
+    __weak NCMainWindowController *weak_self = self;
     auto dialog_callback = [weak_self](NSWindow *_dlg, function<void (NSModalResponse)> _cb) {
         NSBeep();
-        if( MainWindowController *wnd = weak_self)
+        if( NCMainWindowController *wnd = weak_self)
             [wnd beginSheet:_dlg completionHandler:^(NSModalResponse rc) { _cb(rc); }];
     };
     m_OperationsPool->SetDialogCallback( move(dialog_callback) );
     
     auto completion_callback = [weak_self] (const shared_ptr<nc::ops::Operation>& _op) {
-        if( MainWindowController *wnd = weak_self)
+        if( NCMainWindowController *wnd = weak_self)
             dispatch_to_main_queue([=]{
                 auto &center = core::UserNotificationsCenter::Instance();
                 center.ReportCompletedOperation(*_op, wnd.window);

@@ -4,7 +4,7 @@
 
 #include <VFS/VFS_fwd.h>
 
-@class MainWindowController;
+@class NCMainWindowController;
 @class InternalViewerWindowController;
 @class GenericConfigObjC;
 @class AppStoreHelper;
@@ -46,7 +46,7 @@ namespace nc {
 - (bool) askToResetDefaults;
 
 /** Returns all main windows currently present. */
-@property (nonatomic, readonly) const vector<MainWindowController*> &mainWindowControllers;
+@property (nonatomic, readonly) const vector<NCMainWindowController*> &mainWindowControllers;
 
 /**
  * Equal to (NCAppDelegate*) ((NSApplication*)NSApp).delegate.

@@ -8,8 +8,8 @@
 
 // these methods don't call showWindow, it's client's responsibility.
 
-- (MainWindowController*)allocateDefaultMainWindow;
-- (MainWindowController*)allocateMainWindowRestoredManually;
-- (MainWindowController*)allocateMainWindowRestoredBySystem;
+- (NCMainWindowController*)allocateDefaultMainWindow;
+- (NCMainWindowController*)allocateMainWindowRestoredManually;
+- (NCMainWindowController*)allocateMainWindowRestoredBySystem;
 
 @end

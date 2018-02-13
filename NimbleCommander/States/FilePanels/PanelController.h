@@ -11,7 +11,7 @@
 @class PanelView;
 @class BriefSystemOverview;
 @class MainWindowFilePanelState;
-@class MainWindowController;
+@class NCMainWindowController;
 
 namespace nc {
 
@@ -97,7 +97,7 @@ public:
 @interface PanelController : AttachedResponder<PanelViewDelegate, NCPanelViewKeystrokeSink>
 
 @property (nonatomic) MainWindowFilePanelState* state;
-@property (nonatomic, readonly) MainWindowController* mainWindowController;
+@property (nonatomic, readonly) NCMainWindowController* mainWindowController;
 @property (nonatomic, readonly) PanelView* view;
 @property (nonatomic, readonly) const nc::panel::data::Model& data;
 @property (nonatomic, readonly) nc::panel::History& history;

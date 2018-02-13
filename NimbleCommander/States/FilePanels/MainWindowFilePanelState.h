@@ -22,7 +22,7 @@ namespace nc::panel {
 }
 
 class ExternalToolsStorage;
-@class MainWindowController;
+@class NCMainWindowController;
 @class Operation;
 @class PanelView;
 @class PanelController;
@@ -62,7 +62,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
 }
 
-@property (nonatomic, readonly) MainWindowController* mainWindowController;
+@property (nonatomic, readonly) NCMainWindowController* mainWindowController;
 @property (nonatomic, readonly) FilePanelMainSplitView *splitView;
 @property (nonatomic, readonly) ExternalToolsStorage &externalToolsStorage;
 @property (nonatomic, readonly) nc::ops::Pool& operationsPool;

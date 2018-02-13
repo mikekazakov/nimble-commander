@@ -2,14 +2,14 @@
 
 #pragma once
 
-@class MainWindowController;
+@class NCMainWindowController;
 
 namespace nc::core {
 
 class ServicesHandler
 {
 public:
-    ServicesHandler( function<MainWindowController*()> _window_provider );
+    ServicesHandler( function<NCMainWindowController*()> _window_provider );
 
     // NSService
     void OpenFolder(NSPasteboard *_pboard, NSString *_user_data, __strong NSString **_error);
@@ -21,7 +21,7 @@ public:
 private:
     void RevealItems(const vector<string> &_paths);
     
-    function<MainWindowController*()> m_WindowProvider;
+    function<NCMainWindowController*()> m_WindowProvider;
 };
     
 }

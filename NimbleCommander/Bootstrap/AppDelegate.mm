@@ -142,7 +142,7 @@ static NCAppDelegate *g_Me = nil;
 
 @implementation NCAppDelegate
 {
-    vector<MainWindowController *>              m_MainWindows;
+    vector<NCMainWindowController *>            m_MainWindows;
     vector<InternalViewerWindowController*>     m_ViewerWindows;
     spinlock                                    m_ViewerWindowsLock;
     bool                m_IsRunningTests;
@@ -260,7 +260,7 @@ static NCAppDelegate *g_Me = nil;
     
     auto panels_locator = []() -> MainWindowFilePanelState* {
         if( auto wnd = objc_cast<NCMainWindow>(NSApp.keyWindow) )
-            if( auto ctrl = objc_cast<MainWindowController>(wnd.delegate) )
+            if( auto ctrl = objc_cast<NCMainWindowController>(wnd.delegate) )
                 return ctrl.filePanelsState;
         return nil;
     };
@@ -461,12 +461,12 @@ static NCAppDelegate *g_Me = nil;
     [ctrl showWindow:self];
 }
 
-- (void) addMainWindow:(MainWindowController*) _wnd
+- (void) addMainWindow:(NCMainWindowController*) _wnd
 {
     m_MainWindows.push_back(_wnd);
 }
 
-- (void) removeMainWindow:(MainWindowController*) _wnd
+- (void) removeMainWindow:(NCMainWindowController*) _wnd
 {
     auto it = find(begin(m_MainWindows), end(m_MainWindows), _wnd);
     if(it != end(m_MainWindows))
@@ -476,7 +476,7 @@ static NCAppDelegate *g_Me = nil;
 - (void)windowWillClose:(NSNotification*)aNotification
 {
     if( auto main_wnd = objc_cast<NCMainWindow>(aNotification.object) )
-        if( auto main_ctrl = objc_cast<MainWindowController>(main_wnd.delegate) ) {
+        if( auto main_ctrl = objc_cast<NCMainWindowController>(main_wnd.delegate) ) {
             dispatch_to_main_queue([=]{
                 [self removeMainWindow:main_ctrl];
             });
@@ -836,11 +836,11 @@ static NCAppDelegate *g_Me = nil;
     return history;
 }
 
-- (MainWindowController*)windowForExternalRevealRequest
+- (NCMainWindowController*)windowForExternalRevealRequest
 {
-    MainWindowController *target_window = nil;
+    NCMainWindowController *target_window = nil;
     for( NSWindow *wnd in NSApplication.sharedApplication.orderedWindows )
-        if( auto wc =  objc_cast<MainWindowController>(wnd.windowController) )
+        if( auto wc =  objc_cast<NCMainWindowController>(wnd.windowController) )
             if( [wc.topmostState isKindOfClass:MainWindowFilePanelState.class] ) {
                 target_window = wc;
                 break;

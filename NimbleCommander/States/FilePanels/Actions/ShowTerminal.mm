@@ -23,7 +23,7 @@ void ShowTerminal::Perform( MainWindowFilePanelState *_target, id _sender ) cons
         if(  pc.isUniform && pc.vfs->IsNativeFS() )
             path = pc.currentDirectoryPath;
     
-    if( const auto mwc = objc_cast<MainWindowController>(_target.window.delegate) )
+    if( const auto mwc = objc_cast<NCMainWindowController>(_target.window.delegate) )
         [mwc requestTerminal:path];
 }
 

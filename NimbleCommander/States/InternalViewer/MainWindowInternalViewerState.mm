@@ -129,7 +129,7 @@
     dispatch_assert_main_queue();
     [m_Controller saveFileState];
     [m_Controller clear];
-    [(MainWindowController*)self.view.window.delegate ResignAsWindowState:self];
+    [(NCMainWindowController*)self.view.window.delegate ResignAsWindowState:self];
 }
 
 - (IBAction)OnFileInternalBigViewCommand:(id)sender

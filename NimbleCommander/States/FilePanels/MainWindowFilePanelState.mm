@@ -352,10 +352,17 @@ static NSString *TitleForData( const data::Model* _data );
     
     m_ToolbarDelegate = [[MainWindowFilePanelsStateToolbarDelegate alloc] initWithFilePanelsState:self];
     
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_SplitView);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0@250)-[m_SeparatorLine(<=1)]-(==0)-[m_SplitView]" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[m_SplitView]-(0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_SeparatorLine]-(==0)-|" options:0 metrics:nil views:views]];
+    auto views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_SplitView);
+    auto contraints = {
+        @"V:|-(==0@250)-[m_SeparatorLine(<=1)]-(==0)-[m_SplitView]",
+        @"|-(0)-[m_SplitView]-(0)-|",
+        @"|-(==0)-[m_SeparatorLine]-(==0)-|"
+    };
+    for( auto vis_fmt: contraints )
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:vis_fmt
+                                                                     options:0
+                                                                     metrics:nil
+                                                                       views:views]];
     m_MainSplitViewBottomConstraint = [NSLayoutConstraint constraintWithItem:m_SplitView
                                                                    attribute:NSLayoutAttributeBottom
                                                                    relatedBy:NSLayoutRelationEqual
@@ -427,10 +434,6 @@ static NSString *TitleForData( const data::Model* _data );
     
     // think it's a bad idea to post messages on every new window created
     GA().PostScreenView("File Panels State");
-}
-
-- (void) windowStateDidResign
-{
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd

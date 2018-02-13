@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="16E195" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="17D47" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
@@ -22,7 +22,7 @@
             <rect key="contentRect" x="196" y="240" width="380" height="110"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="2">
-                <rect key="frame" x="0.0" y="0.0" width="380" height="110"/>
+                <rect key="frame" x="0.0" y="0.0" width="380" height="94"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="20">
@@ -43,7 +43,7 @@ Gw
                         </connections>
                     </button>
                     <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" allowsCharacterPickerTouchBarItem="NO" preferredMaxLayoutWidth="321" translatesAutoresizingMaskIntoConstraints="NO" id="26">
-                        <rect key="frame" x="18" y="73" width="344" height="17"/>
+                        <rect key="frame" x="18" y="57" width="344" height="17"/>
                         <textFieldCell key="cell" sendsActionOnEndEditing="YES" id="27">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -96,6 +96,7 @@ DQ
                     <constraint firstAttribute="bottom" secondItem="5JK-Gz-nyy" secondAttribute="bottom" constant="20" symbolic="YES" id="23u-DJ-agp"/>
                     <constraint firstAttribute="bottom" secondItem="CAY-6l-o48" secondAttribute="bottom" constant="20" symbolic="YES" id="9wa-yL-mDq"/>
                     <constraint firstAttribute="trailing" secondItem="5JK-Gz-nyy" secondAttribute="trailing" constant="20" symbolic="YES" id="Hvx-dw-Rfg"/>
+                    <constraint firstItem="CAY-6l-o48" firstAttribute="top" secondItem="26" secondAttribute="bottom" constant="16" id="S5J-od-ael"/>
                     <constraint firstItem="5JK-Gz-nyy" firstAttribute="leading" secondItem="CAY-6l-o48" secondAttribute="trailing" constant="-1" id="bcI-pU-6bf"/>
                     <constraint firstItem="CAY-6l-o48" firstAttribute="leading" secondItem="20" secondAttribute="trailing" constant="12" symbolic="YES" id="kSg-3O-bQq"/>
                     <constraint firstAttribute="bottom" secondItem="20" secondAttribute="bottom" constant="20" symbolic="YES" id="ruT-Fl-2jp"/>

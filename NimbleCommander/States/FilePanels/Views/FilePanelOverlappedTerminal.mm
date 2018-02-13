@@ -159,13 +159,10 @@ static const auto g_LongProcessDelay = 100ms;
 {
     if(_lines_amount < 1)
         return 0;
-    
-    const int lines_on_screen = m_TermScrollView.screen.Height();
-    if( _lines_amount >= lines_on_screen )
-        return self.bounds.size.height;
-    
-    int line_delta = lines_on_screen - _lines_amount;
-    return self.bounds.size.height - m_TermScrollView.view.fontCache.Height() * line_delta;
+    auto sz = [NCTermView insetSize:self.bounds.size];
+    auto font_height = m_TermScrollView.view.fontCache.Height();
+    auto residual = fmod(sz.height, font_height);
+    return font_height * _lines_amount + residual + NCTermView.insets.bottom;
 }
 
 - (int) totalScreenLines

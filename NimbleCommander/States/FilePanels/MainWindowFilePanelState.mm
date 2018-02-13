@@ -224,12 +224,7 @@ static NSString *TitleForData( const data::Model* _data );
 }
 
 - (void) setupNotificationsCallbacks
-{
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(frameDidChange)
-                                               name:NSViewFrameDidChangeNotification
-                                             object:self];
-    
+{    
     m_ConfigTickets.emplace_back( GlobalConfig().Observe(
         g_ConfigGeneralShowTabs, objc_callback(self, @selector(onShowTabsSettingChanged))));
 }
@@ -380,6 +375,12 @@ static NSString *TitleForData( const data::Model* _data );
         views = NSDictionaryOfVariableBindings(terminal, m_SeparatorLine);
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_SeparatorLine]-(0)-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[terminal]-(0)-|" options:0 metrics:nil views:views]];
+        
+        
+        [NSNotificationCenter.defaultCenter addObserver:self
+                                               selector:@selector(overlappedTerminalFrameDidChange)
+                                                   name:NSViewFrameDidChangeNotification
+                                                 object:m_OverlappedTerminal->terminal];
     }
     else {
         /* Fixing bugs in NSISEngine, kinda */
@@ -936,7 +937,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     m_MainSplitViewBottomConstraint.constant = -gap;
 }
 
-- (void)frameDidChange
+- (void)overlappedTerminalFrameDidChange
 {
     [self updateBottomConstraint];
 }

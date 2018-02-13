@@ -56,4 +56,6 @@ namespace nc::term {
  */
 + (NSSize) insetSize:(NSSize)_sz;
 
++ (NSEdgeInsets)insets;
+
 @end

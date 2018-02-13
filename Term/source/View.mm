@@ -167,6 +167,11 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     }
 }
 
++ (NSEdgeInsets) insets
+{
+    return g_Insets;
+}
+
 + (NSSize) insetSize:(NSSize)_sz
 {
     _sz.width -= g_Insets.left + g_Insets.right;

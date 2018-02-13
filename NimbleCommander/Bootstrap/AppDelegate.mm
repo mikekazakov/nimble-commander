@@ -17,6 +17,7 @@
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>
 #include <NimbleCommander/Core/Dock.h>
+#include <NimbleCommander/Core/ServicesHandler.h>
 #include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
@@ -152,6 +153,7 @@ static NCAppDelegate *g_Me = nil;
     AppStoreHelper *m_AppStoreHelper;
     upward_flag         m_FinishedLaunching;
     shared_ptr<nc::panel::FavoriteLocationsStorageImpl> m_Favorites;
+    NSMutableArray      *m_FilesToOpen;
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
@@ -167,6 +169,7 @@ static NCAppDelegate *g_Me = nil;
     if(self) {
         g_Me = self;
         m_IsRunningTests = NSClassFromString(@"XCTestCase") != nullptr;
+        m_FilesToOpen = [[NSMutableArray alloc] init];
         CheckMASReceipt();
         CheckDefaultsReset();
         m_SupportDirectory =
@@ -534,36 +537,52 @@ static NCAppDelegate *g_Me = nil;
     return true;
 }
 
+
+- (bool) processLicenseFileActivation:(NSArray<NSString *> *)_filenames
+{
+    static const auto nc_license_extension = "."s + ActivationManager::LicenseFileExtension();
+    
+    if( _filenames.count != 1)
+        return false;
+    
+    for( NSString *pathstring in _filenames )
+        if( auto fs = pathstring.fileSystemRepresentationSafe ) {
+            if constexpr( ActivationManager::Type() == ActivationManager::Distribution::Trial ) {
+                if( _filenames.count == 1 && path(fs).extension() == nc_license_extension ) {
+                    string p = fs;
+                    dispatch_to_main_queue([=]{
+                        [self processProvidedLicenseFile:p];
+                    });
+                    return true;
+                }
+            }
+        }
+    return false;
+}
+
+- (void)drainFilesToOpen
+{
+    if( m_FilesToOpen.count == 0 )
+        return;
+    
+    if( ![self processLicenseFileActivation:m_FilesToOpen] )
+        self.servicesHandler.OpenFiles(m_FilesToOpen);
+
+    [m_FilesToOpen removeAllObjects];
+}
+
 - (BOOL)application:(NSApplication *)sender openFile:(NSString *)filename
 {
-    [self application:sender openFiles:@[filename]];
+    [m_FilesToOpen addObjectsFromArray:@[filename]];
+    dispatch_to_main_queue_after(250ms, []{ [g_Me drainFilesToOpen]; });
     return true;
 }
 
 - (void)application:(NSApplication *)sender openFiles:(NSArray<NSString *> *)filenames
 {
-    static const auto nc_license_extension = "."s + ActivationManager::LicenseFileExtension();
-    
-    vector<string> paths;
-    for( NSString *pathstring in filenames )
-        if( auto fs = pathstring.fileSystemRepresentationSafe ) {
-            if constexpr( ActivationManager::Type() == ActivationManager::Distribution::Trial ) {
-                if( filenames.count == 1 && path(fs).extension() == nc_license_extension ) {
-                    string p = fs;
-                    dispatch_to_main_queue([=]{
-                        [self processProvidedLicenseFile:p];
-                    });
-                    return;
-                }
-            }
-            
-            // WTF Cocoa??
-            if( ![pathstring isEqualToString:@"YES"] )
-                paths.emplace_back( fs );
-        }
-    
-    if( !paths.empty() )
-        [self doRevealNativeItems:paths];
+    [m_FilesToOpen addObjectsFromArray:filenames];
+    dispatch_to_main_queue_after(250ms, []{ [g_Me drainFilesToOpen]; });
+    [NSApp replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 
 - (void) processProvidedLicenseFile:(const string&)_path
@@ -600,67 +619,14 @@ static NCAppDelegate *g_Me = nil;
     [m_AppStoreHelper askUserToRestorePurchases];
 }
 
-- (void) doRevealNativeItems:(const vector<string>&)_paths
+- (void)openFolderService:(NSPasteboard *)pboard userData:(NSString *)data error:(__strong NSString **)error
 {
-    // TODO: need to implement handling muliple directory paths in the future
-    // grab first common directory and all corresponding items in it.
-    string directory;
-    vector<string> filenames;
-    for( auto &i:_paths ) {
-        path p = i;
-        
-        if( directory.empty() ) {
-            directory = p.filename() == "." ?
-                p.parent_path().parent_path().native() : // .../abra/cadabra/ -> .../abra/cadabra
-                p.parent_path().native();                // .../abra/cadabra  -> .../abra
-        }
-        
-        if( !i.empty() &&
-            i.front() == '/' &&
-            i.back() != '/' &&
-            i != "/"
-           )
-            filenames.emplace_back( path(i).filename().native() );
-    }
-    
-    if( filenames.empty() && directory.empty() )
-        return;
-
-    // find window to ask
-    MainWindowController *target_window = nil;
-    for( NSWindow *wnd in NSApplication.sharedApplication.orderedWindows )
-        if( auto *wc =  objc_cast<MainWindowController>(wnd.windowController) ) {
-            target_window = wc;
-            break;
-        }
-    
-    if( !target_window )
-        target_window = [self allocateDefaultMainWindow];
-
-    if( target_window ) {
-        [target_window.window makeKeyAndOrderFront:self];
-        [target_window.filePanelsState revealEntries:filenames inDirectory:directory];
-    }
+    self.servicesHandler.OpenFolder(pboard, data, error);
 }
 
-- (void)IClicked:(NSPasteboard *)pboard userData:(NSString *)data error:(__strong NSString **)error
+- (void)revealItemService:(NSPasteboard *)pboard userData:(NSString *)data error:(__strong NSString **)error
 {
-    // extract file paths
-    vector<string> paths;
-    for( NSPasteboardItem *item in pboard.pasteboardItems )
-        if( NSString *urlstring = [item stringForType:@"public.file-url"] ) {
-            if( NSURL *url = [NSURL URLWithString:urlstring] )
-                if( NSString *unixpath = url.path )
-                    if( auto fs = unixpath.fileSystemRepresentation  )
-                        paths.emplace_back( fs );
-        }
-        else if( NSString *path_string = [item stringForType:@"NSFilenamesPboardType"]  ) {
-            if( auto fs = path_string.fileSystemRepresentation  )
-                paths.emplace_back( fs );
-        }
-
-    if( !paths.empty() )
-        [self doRevealNativeItems:paths];
+    self.servicesHandler.RevealItem(pboard, data, error);
 }
 
 - (void)OnPreferencesCommand:(id)sender
@@ -868,6 +834,34 @@ static NCAppDelegate *g_Me = nil;
     static const auto impl = make_shared<nc::panel::ClosedPanelsHistoryImpl>();
     static const shared_ptr<nc::panel::ClosedPanelsHistory> history = impl;
     return history;
+}
+
+- (MainWindowController*)windowForExternalRevealRequest
+{
+    MainWindowController *target_window = nil;
+    for( NSWindow *wnd in NSApplication.sharedApplication.orderedWindows )
+        if( auto wc =  objc_cast<MainWindowController>(wnd.windowController) )
+            if( [wc.topmostState isKindOfClass:MainWindowFilePanelState.class] ) {
+                target_window = wc;
+                break;
+            }
+    
+    if( !target_window )
+        target_window = [self allocateDefaultMainWindow];
+    
+    if( target_window )
+        [target_window.window makeKeyAndOrderFront:self];
+    
+    return target_window;
+}
+
+- (nc::core::ServicesHandler&)servicesHandler
+{
+    auto window_locator = []{
+        return [g_Me windowForExternalRevealRequest];
+    };
+    static nc::core::ServicesHandler handler(window_locator);
+    return handler;
 }
 
 @end

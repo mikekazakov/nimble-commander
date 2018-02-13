@@ -17,6 +17,7 @@ namespace nc {
     
     namespace core {
         class VFSInstanceManager;
+        class ServicesHandler;
     }
 
     namespace ops {
@@ -101,5 +102,8 @@ namespace nc {
 
 @property (nonatomic, readonly)
     nc::core::VFSInstanceManager &vfsInstanceManager;
+
+@property (nonatomic, readonly)
+    nc::core::ServicesHandler &servicesHandler;
 
 @end

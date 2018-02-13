@@ -896,6 +896,8 @@ loadPreviousState:(bool)_load_state
             dispatch_or_run_in_main_queue([=]{
                 [m_View savePathState];
                 m_Data.Load(listing, data::Model::PanelType::Directory);
+                for( auto &i: c->RequestSelectedEntries )
+                    m_Data.CustomFlagsSelectSorted( m_Data.SortedIndexForName(i.c_str()), true );
                 [m_View dataUpdated];
                 [m_View panelChangedWithFocusedFilename:c->RequestFocusedEntry
                                       loadPreviousState:c->LoadPreviousViewState];

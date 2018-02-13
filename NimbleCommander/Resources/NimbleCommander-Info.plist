@@ -61,7 +61,7 @@ All rights reserved.</string>
 				<string>Reveal in Nimble Commander</string>
 			</dict>
 			<key>NSMessage</key>
-			<string>IClicked</string>
+			<string>revealItemService</string>
 			<key>NSPortName</key>
 			<string>Nimble Commander</string>
 			<key>NSRequiredContext</key>
@@ -71,6 +71,23 @@ All rights reserved.</string>
 				<string>public.file-url</string>
 				<string>NSStringPboardType</string>
 			</array>
+		</dict>
+		<dict>
+			<key>NSSendFileTypes</key>
+			<array>
+				<string>public.directory</string>
+			</array>
+			<key>NSMenuItem</key>
+			<dict>
+				<key>default</key>
+				<string>Open Folder in Nimble Commander</string>
+			</dict>
+			<key>NSMessage</key>
+			<string>openFolderService</string>
+			<key>NSPortName</key>
+			<string>Nimble Commander</string>
+			<key>NSRequiredContext</key>
+			<dict/>
 		</dict>
 	</array>
 	<key>SMPrivilegedExecutables</key>

@@ -71,6 +71,7 @@ public:
     
     /* optional */
     string              RequestFocusedEntry     = "";
+    vector<string>      RequestSelectedEntries  = {};
     bool                PerformAsynchronous     = true;
     bool                LoadPreviousViewState   = false;
     

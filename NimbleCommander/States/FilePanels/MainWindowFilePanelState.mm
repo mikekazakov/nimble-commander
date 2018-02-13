@@ -822,29 +822,6 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return false;
 }
 
-- (void)revealEntries:(const vector<string>&)_filenames inDirectory:(const string&)_path
-{
-    assert( dispatch_is_main_queue() );
-    auto data = self.activePanelData;
-    if(!data)
-        return;
-    
-    auto panel = self.activePanelController;
-    if(!panel)
-        return;
-    
-    if( [panel GoToDir:_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok ) {
-        if( !_filenames.empty() ) {
-            nc::panel::DelayedFocusing req;
-            req.filename = _filenames.front();
-            [panel scheduleDelayedFocusing:req];
-        }
-        
-        if( _filenames.size() > 1 )
-            [panel selectEntriesWithFilenames:_filenames];
-    }
-}
-
 - (vector<tuple<string, VFSHostPtr> >)filePanelsCurrentPaths
 {
     vector<tuple<string, VFSHostPtr> > r;

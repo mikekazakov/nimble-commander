@@ -206,6 +206,10 @@
 		CF45CA2D1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
 		CF45CA2E1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
 		CF45CA2F1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF45CA311D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib */; };
+		CF46C23620317FD700A91E2F /* ServicesHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46C23520317FD700A91E2F /* ServicesHandler.mm */; };
+		CF46C24620317FEE00A91E2F /* ServicesHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46C23520317FD700A91E2F /* ServicesHandler.mm */; };
+		CF46C24720317FEF00A91E2F /* ServicesHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46C23520317FD700A91E2F /* ServicesHandler.mm */; };
+		CF46C24820317FEF00A91E2F /* ServicesHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF46C23520317FD700A91E2F /* ServicesHandler.mm */; };
 		CF46F77E19BAF47D00625563 /* libssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066B219AB51B3001DC687 /* libssl.dylib */; };
 		CF46F78019BAF48200625563 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF9066C319AB7928001DC687 /* libcrypto.dylib */; };
 		CF47A982186C607C00745C4C /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF47A981186C607C00745C4C /* XCTest.framework */; };
@@ -1600,6 +1604,8 @@
 		CF45CA301D3E3AA70074F04C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ExternalToolParameterValueSheetController.xib; sourceTree = "<group>"; };
 		CF45CA321D3E433B0074F04C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowToolsTab.strings; sourceTree = "<group>"; };
 		CF45CA381D3E433D0074F04C /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ExternalToolParameterValueSheetController.strings; sourceTree = "<group>"; };
+		CF46C23420317FD700A91E2F /* ServicesHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServicesHandler.h; path = NimbleCommander/Core/ServicesHandler.h; sourceTree = SOURCE_ROOT; };
+		CF46C23520317FD700A91E2F /* ServicesHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ServicesHandler.mm; path = NimbleCommander/Core/ServicesHandler.mm; sourceTree = SOURCE_ROOT; };
 		CF47A980186C607C00745C4C /* Nimble Commander.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Nimble Commander.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF47A981186C607C00745C4C /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		CF4840C71927C8E10066A235 /* FTPConnectionSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FTPConnectionSheetController.h; path = NimbleCommander/States/FilePanels/Views/FTPConnectionSheetController.h; sourceTree = SOURCE_ROOT; };
@@ -2898,6 +2904,8 @@
 		CFAC50D5171557E100A3E5C5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CF46C23420317FD700A91E2F /* ServicesHandler.h */,
+				CF46C23520317FD700A91E2F /* ServicesHandler.mm */,
 				CFDAC23D1DFBE18C0039A104 /* ActionShortcut.h */,
 				CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */,
 				CFDAC23F1DFBE18C0039A104 /* ActionsShortcutsManager.h */,
@@ -3975,6 +3983,7 @@
 				CFD7271E1E42E32F00603077 /* ShellState.mm in Sources */,
 				CFD726D21E42E2AD00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CFD726FD1E42E2F400603077 /* TabBarStyle.mm in Sources */,
+				CF46C24720317FEF00A91E2F /* ServicesHandler.mm in Sources */,
 				CF876D401D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
 				CF5E9A5C1FCBFED9005608F5 /* ShowSystemOverview.mm in Sources */,
 				CF4E56EF1D5072E500452912 /* FileMask.cpp in Sources */,
@@ -4158,6 +4167,7 @@
 				CFD726601E42E1D700603077 /* FilesDraggingSource.mm in Sources */,
 				CFD6DD181D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CF876D451D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */,
+				CF46C23620317FD700A91E2F /* ServicesHandler.mm in Sources */,
 				CFD726121E42E07E00603077 /* Config.cpp in Sources */,
 				CF4E56F01D5072E600452912 /* FileMask.cpp in Sources */,
 				CFD726071E42E06F00603077 /* AppDelegateCPP.mm in Sources */,
@@ -4390,6 +4400,7 @@
 				CF5FE80B1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CF4E563E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF5E9A691FCE738C005608F5 /* QuickLookVFSBridge.mm in Sources */,
+				CF46C24820317FEF00A91E2F /* ServicesHandler.mm in Sources */,
 				CFDAC2421DFBE18C0039A104 /* ActionsShortcutsManager.mm in Sources */,
 				CFDAC2C41DFD0DE40039A104 /* SharingService.mm in Sources */,
 				CF27F9391E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm in Sources */,
@@ -4593,6 +4604,7 @@
 				CF90C0BF1EC171FD0056E3B8 /* PanelDataFilter.mm in Sources */,
 				CFD7262F1E42E0C600603077 /* WorkspaceIconsCache.mm in Sources */,
 				CFD726791E42E20200603077 /* PanelController.mm in Sources */,
+				CF46C24620317FEE00A91E2F /* ServicesHandler.mm in Sources */,
 				CFD726701E42E1F500603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF876D3A1D51E0AF009C0CCE /* BigFileViewHex.mm in Sources */,
 				CFD726941E42E22A00603077 /* PanelDataItemVolatileData.cpp in Sources */,

@@ -807,23 +807,70 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         [self panelWillBeClosed:pc];
 }
 
+static void AskAboutClosingWindowWithExtraTabs(NSWindow *_window,
+                                               function<void(NSModalResponse)> _handler )
+{
+    assert(_window && _handler);
+    Alert *dialog = [[Alert alloc] init];
+    [dialog addButtonWithTitle:NSLocalizedString(@"Close", "User action to close a window")];
+    [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    auto msg = NSLocalizedString
+    (@"The window has more than 2 tabs. Are you sure you want to close this window?",
+     "Asking user to close window with additional tabs");
+    dialog.messageText = msg;
+    [dialog beginSheetModalForWindow:_window completionHandler:^(NSModalResponse result) {
+        _handler(result);
+    }];
+}
+
+static void AskAboutStoppingRunningOperations(NSWindow *_window,
+                                              function<void(NSModalResponse)> _handler )
+{
+    assert(_window && _handler);
+    Alert *dialog = [[Alert alloc] init];
+    [dialog addButtonWithTitle:NSLocalizedString
+     (@"Stop and Close",
+      "User action to stop running actions and close window")];
+    [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    dialog.messageText = NSLocalizedString
+    (@"The window has running operations. Do you want to stop them and close the window?",
+     "Asking user to close window with some operations running");
+    [dialog beginSheetModalForWindow:_window completionHandler:^(NSModalResponse result) {
+        _handler(result);
+    }];
+}
+
 - (bool)windowStateShouldClose:(NCMainWindowController*)sender
 {
-    if( self.operationsPool.Empty() && !self.isAnythingRunningInOverlappedTerminal )
-        return true;
+    const auto ops_pool_nonempty = !self.operationsPool.Empty();
+    const auto overlapped_term_busy = self.isAnythingRunningInOverlappedTerminal;
+    if( ops_pool_nonempty || overlapped_term_busy  ) {
+        auto ops_stop_callback = [=](NSModalResponse result) {
+            if (result != NSAlertFirstButtonReturn) return;
+            dispatch_to_main_queue([=]{
+                self.operationsPool.StopAndWaitForShutdown();
+                // reroute request again to trigger consequent checks
+                [self.window performClose:nil];
+            });
+        };
+        AskAboutStoppingRunningOperations( self.window, ops_stop_callback );
+        return false;
+    }
+
+    const auto have_extra_tabs = m_LeftPanelControllers.size() > 1 ||
+                                 m_RightPanelControllers.size() > 1;
+    if( have_extra_tabs ) {
+        auto close_callback = [=](NSModalResponse result) {
+            if (result != NSAlertFirstButtonReturn) return;
+            dispatch_to_main_queue([=]{
+                [self.window close];
+            });
+        };
+        AskAboutClosingWindowWithExtraTabs( self.window, close_callback );
+        return false;
+    }
     
-    Alert *dialog = [[Alert alloc] init];
-    [dialog addButtonWithTitle:NSLocalizedString(@"Stop and Close", "User action to stop running actions and close window")];
-    [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    dialog.messageText = NSLocalizedString(@"The window has running operations. Do you want to stop them and close the window?", "Asking user to close window with some operations running");
-    [dialog beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse result) {
-        if (result == NSAlertFirstButtonReturn) {
-            self.operationsPool.StopAndWaitForShutdown();
-            [self.window close];
-        }
-    }];
-    
-    return false;
+    return true;
 }
 
 - (vector<tuple<string, VFSHostPtr> >)filePanelsCurrentPaths

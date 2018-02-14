@@ -24,6 +24,7 @@
 {
     NSAlert                 *m_Alert;
     AlertWindowController   *m_Controller;
+    void                   (^m_Handler)(NSModalResponse);
 }
 
 + (Alert *)alertWithError:(NSError *)error
@@ -42,7 +43,7 @@
     if( self = [super init] ) {
         m_Alert = _alert;
 
-        // m_Alert.window has no controller set, at least in 10.12.
+        // m_Alert.window has no controller set, at least in 10.12/13.
         // use this fact to hijack the panel's window and move focus with arrow buttons:
         m_Controller = [[AlertWindowController alloc] initWithWindow:m_Alert.window];
         
@@ -126,9 +127,15 @@
     return [m_Alert runModal];
 }
 
-- (void)beginSheetModalForWindow:(NSWindow *)sheetWindow completionHandler:(void (^ __nullable)(NSModalResponse returnCode))handler
+- (void)beginSheetModalForWindow:(NSWindow *)sheetWindow
+               completionHandler:(void (^ __nullable)(NSModalResponse returnCode))handler
 {
-    [m_Alert beginSheetModalForWindow:sheetWindow completionHandler:handler];
+    // use this artifical retain cycle to ensure longlivety of Alert
+    m_Handler = handler;
+    [m_Alert beginSheetModalForWindow:sheetWindow completionHandler:^(NSModalResponse returnCode){
+        if(m_Handler)
+            m_Handler(returnCode);
+    }];
 }
 
 - (NSWindow*) window

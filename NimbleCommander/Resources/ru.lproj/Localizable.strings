@@ -40,6 +40,9 @@
 /* Asking the user to grant filesystem access for NC */
 "Click “Allow Access” to grant access to files in the selected directory" = "Нажмите “Разрешить доступ” чтобы позволить работать с файлами в выбранной директории";
 
+/* User action to close a window */
+"Close" = "Закрыть";
+
 /* No comment provided by engineer. */
 "Close Other Tabs" = "Закрыть другие вкладки";
 
@@ -358,6 +361,9 @@
 
 /* Message text when user is entering an invalid filename */
 "The name “%@” can’t be used." = "Имя “%@” не может быть использовано.";
+
+/* Asking user to close window with additional tabs */
+"The window has %@ tabs. Are you sure you want to close this window?" = "Это окно содежит %@ вкладок. Вы действительно хотите закрыть его?";
 
 /* Asking user to close window with some operations running */
 "The window has running operations. Do you want to stop them and close the window?" = "В окне имеются выполняющиеся операции. Остановить их и закрыть окно?";

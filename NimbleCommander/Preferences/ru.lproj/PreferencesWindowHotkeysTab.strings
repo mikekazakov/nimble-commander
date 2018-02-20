@@ -1,6 +1,9 @@
 /* Class = "NSButtonCell"; title = "All"; ObjectID = "2qF-P1-Qnm"; */
 "2qF-P1-Qnm.title" = "Все";
 
+/* Class = "NSTextFieldCell"; placeholderString = "Filter"; ObjectID = "5Ln-U1-GlS"; */
+"5Ln-U1-GlS.placeholderString" = "Фильтр";
+
 /* Class = "NSButtonCell"; title = "Always use the Fn buttons as F1 ... F19"; ObjectID = "17V-g8-fDY"; */
 "17V-g8-fDY.title" = "Всегда использовать Fn кнопки как F1..F19";
 

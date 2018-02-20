@@ -22,6 +22,9 @@
 /* Class = "NSMenuItem"; title = "New Folder"; ObjectID = "6A9-YW-RMg"; */
 "6A9-YW-RMg.title" = "Новая папка";
 
+/* Class = "NSMenu"; title = "Recently Closed"; ObjectID = "6KN-gZ-Ha0"; */
+"6KN-gZ-Ha0.title" = "Недавно закрытые";
+
 /* Class = "NSMenuItem"; title = "Back"; ObjectID = "6bU-dO-9Em"; */
 "6bU-dO-9Em.title" = "Назад";
 
@@ -322,6 +325,9 @@
 /* Class = "NSMenuItem"; title = "Move Right"; ObjectID = "LBa-B1-fXx"; */
 "LBa-B1-fXx.title" = "Сдвинуть вправо";
 
+/* Class = "NSMenuItem"; title = "Restore Last Closed Panel"; ObjectID = "M7w-84-o0Y"; */
+"M7w-84-o0Y.title" = "Восстановить последнюю закрытую панель";
+
 /* Class = "NSMenuItem"; title = "Move Item Here"; ObjectID = "Mkf-yJ-4e7"; */
 "Mkf-yJ-4e7.title" = "Переместить объект сюда";
 
@@ -546,6 +552,9 @@
 
 /* Class = "NSMenuItem"; title = "7"; ObjectID = "yBW-Py-y1e"; */
 "yBW-Py-y1e.title" = "7";
+
+/* Class = "NSMenuItem"; title = "Recently Closed"; ObjectID = "zG7-ZH-wWc"; */
+"zG7-ZH-wWc.title" = "Недавно закрытые";
 
 /* Class = "NSMenuItem"; title = "Show Hidden Files"; ObjectID = "zGu-Ls-RVD"; */
 "zGu-Ls-RVD.title" = "Показывать скрытые файлы";

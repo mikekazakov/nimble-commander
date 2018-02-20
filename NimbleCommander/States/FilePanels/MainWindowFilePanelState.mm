@@ -807,22 +807,6 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         [self panelWillBeClosed:pc];
 }
 
-static void AskAboutClosingWindowWithExtraTabs(NSWindow *_window,
-                                               function<void(NSModalResponse)> _handler )
-{
-    assert(_window && _handler);
-    Alert *dialog = [[Alert alloc] init];
-    [dialog addButtonWithTitle:NSLocalizedString(@"Close", "User action to close a window")];
-    [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
-    auto msg = NSLocalizedString
-    (@"The window has more than 2 tabs. Are you sure you want to close this window?",
-     "Asking user to close window with additional tabs");
-    dialog.messageText = msg;
-    [dialog beginSheetModalForWindow:_window completionHandler:^(NSModalResponse result) {
-        _handler(result);
-    }];
-}
-
 static void AskAboutStoppingRunningOperations(NSWindow *_window,
                                               function<void(NSModalResponse)> _handler )
 {
@@ -857,19 +841,6 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
         return false;
     }
 
-    const auto have_extra_tabs = m_LeftPanelControllers.size() > 1 ||
-                                 m_RightPanelControllers.size() > 1;
-    if( have_extra_tabs ) {
-        auto close_callback = [=](NSModalResponse result) {
-            if (result != NSAlertFirstButtonReturn) return;
-            dispatch_to_main_queue([=]{
-                [self.window close];
-            });
-        };
-        AskAboutClosingWindowWithExtraTabs( self.window, close_callback );
-        return false;
-    }
-    
     return true;
 }
 

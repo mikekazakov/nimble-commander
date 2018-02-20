@@ -4,6 +4,7 @@
 #include "../MainWindowFilePanelState.h"
 #include "../MainWindowFilePanelState+TabsSupport.h"
 #include "../Views/FilePanelMainSplitView.h"
+#include <NimbleCommander/Core/Alert.h>
 
 namespace nc::panel::actions {
 
@@ -58,19 +59,52 @@ bool CloseTab::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *
     return Predicate(_target);
 }
     
+static void AskAboutClosingWindowWithExtraTabs(int _amount,
+                                               NSWindow *_window,
+                                               function<void(NSModalResponse)> _handler )
+{
+    assert(_window && _handler);
+    Alert *dialog = [[Alert alloc] init];
+    [dialog addButtonWithTitle:NSLocalizedString(@"Close", "User action to close a window")];
+    [dialog addButtonWithTitle:NSLocalizedString(@"Cancel", "")];
+    auto fmt = NSLocalizedString
+    (@"The window has %@ tabs. Are you sure you want to close this window?",
+     "Asking user to close window with additional tabs");
+    auto msg = [NSString localizedStringWithFormat:fmt, [NSNumber numberWithInt:_amount]];
+    dialog.messageText = msg;
+    [dialog beginSheetModalForWindow:_window completionHandler:^(NSModalResponse result) {
+        _handler(result);
+    }];
+}
+    
 void CloseTab::Perform( MainWindowFilePanelState *_target, id _sender ) const
 {
     const auto act_pc = _target.activePanelController;
-    int tabs = 0;
+    int tabs_on_current_side = 0;
     if( [_target isLeftController:act_pc] )
-        tabs = _target.splitView.leftTabbedHolder.tabsCount;
+        tabs_on_current_side = _target.splitView.leftTabbedHolder.tabsCount;
     else if( [_target isRightController:act_pc] )
-        tabs = _target.splitView.rightTabbedHolder.tabsCount;
+        tabs_on_current_side = _target.splitView.rightTabbedHolder.tabsCount;
     
-    if( tabs > 1 )
+    if( tabs_on_current_side > 1 ) {
         [_target closeTabForController:act_pc];
-    else
-        [_target.window performClose:_sender];
+    }
+    else {
+        int total_tabs = (int)_target.leftControllers.size() + (int)_target.rightControllers.size();        
+        if( total_tabs > 2 ) {
+            auto window = _target.window;
+            auto close_callback = [=](NSModalResponse result) {
+                if (result != NSAlertFirstButtonReturn) return;
+                dispatch_to_main_queue([=]{
+                    [window close];
+                });
+            };
+            AskAboutClosingWindowWithExtraTabs( total_tabs, window, close_callback );
+        }
+        else {
+            [_target.window performClose:_sender];
+        }
+    }
 }
     
 bool CloseWindow::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const

@@ -19,6 +19,7 @@ public:
     void OpenFiles(NSArray<NSString *> *_paths);
     
 private:
+    void GoToFolder(const string &_path);
     void RevealItems(const vector<string> &_paths);
     
     function<NCMainWindowController*()> m_WindowProvider;

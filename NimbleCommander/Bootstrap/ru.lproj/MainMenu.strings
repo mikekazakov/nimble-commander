@@ -326,7 +326,7 @@
 "LBa-B1-fXx.title" = "Сдвинуть вправо";
 
 /* Class = "NSMenuItem"; title = "Restore Last Closed Panel"; ObjectID = "M7w-84-o0Y"; */
-"M7w-84-o0Y.title" = "Восстановить последнюю закрытую панель";
+"M7w-84-o0Y.title" = "Восстановить закрытую вкладку";
 
 /* Class = "NSMenuItem"; title = "Move Item Here"; ObjectID = "Mkf-yJ-4e7"; */
 "Mkf-yJ-4e7.title" = "Переместить объект сюда";

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="17C205" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12120" systemVersion="17D47" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12120"/>
@@ -677,7 +677,7 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Recently Closed" id="6KN-gZ-Ha0">
                                     <items>
-                                        <menuItem title="Restore Last Closed Panel" tag="14290" id="M7w-84-o0Y">
+                                        <menuItem title="Restore Closed Tab" tag="14290" id="M7w-84-o0Y">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="Unk-De-Xat"/>

@@ -87,7 +87,7 @@ void ServicesHandler::RevealItem(NSPasteboard *_pboard,
                 if( auto path = url.fileSystemRepresentation  )
                     paths.emplace_back( path );
         }
-        else if( NSString *path_string = [item stringForType:@"NSFilenamesPboardType"]  ) {
+        else if( auto path_string = [item stringForType:@"NSFilenamesPboardType"]  ) {
             if( auto fs = path_string.fileSystemRepresentation  )
                 paths.emplace_back( fs );
         }

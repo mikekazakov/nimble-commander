@@ -99,11 +99,11 @@ static PanelController* PanelFactory()
                 [state loadDefaultPanelContent];
             return state;
         }
-        else
-            return [[MainWindowFilePanelState alloc] initWithFrame:_frame
-                                                           andPool:_operations_pool
-                                                loadDefaultContent:false
-                                                      panelFactory:PanelFactory];
+        else { // if we can't restore a window - fall back into a default creation context
+            return [self allocateFilePanelsWithFrame:_frame
+                                           inContext:CreationContext::Default
+                                         withOpsPool:_operations_pool];
+        }
     }
     else if( _context == CreationContext::SystemRestoration ) {
         return [[MainWindowFilePanelState alloc] initWithFrame:_frame

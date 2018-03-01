@@ -39,7 +39,7 @@
                                              NSUnderlineStyleAttributeName: @1,
                                              NSCursorAttributeName:NSCursor.pointingHandCursor};
     
-    self.priceLabel.stringValue = AppDelegate.me.appStoreHelper.priceString;
+    self.priceLabel.stringValue = NCAppDelegate.me.appStoreHelper.priceString;
     self.dontShowAgainCheckbox.hidden = self.suppressDontShowAgain;
 }
 

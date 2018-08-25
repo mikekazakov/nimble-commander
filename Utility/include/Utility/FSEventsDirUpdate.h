@@ -15,7 +15,9 @@ public:
     uint64_t AddWatchPath(const char *_path, std::function<void()> _handler);
     
     // it's better to use this method
-    bool RemoveWatchPathWithTicket(uint64_t _ticket);
+    void RemoveWatchPathWithTicket(uint64_t _ticket);
+
+    static inline const uint64_t no_ticket = 0;
     
 private:
     friend class NativeFSManager;

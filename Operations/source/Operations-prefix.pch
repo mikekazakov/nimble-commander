@@ -54,16 +54,13 @@
     #include <random>
     #include <string_view>
     #include <optional>
+    #include <any>
     using namespace std;
     using namespace std::chrono;
 
     #include <Habanero/dispatch_cpp.h>
     #include <Habanero/mach_time.h>
     #include <Habanero/spinlock.h>
-
-    #include <any.hpp>
-    using linb::any;
-    using linb::any_cast;
 
     #include <boost/filesystem.hpp>
     using boost::filesystem::path;

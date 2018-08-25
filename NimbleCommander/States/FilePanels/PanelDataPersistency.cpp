@@ -148,7 +148,7 @@ optional<PersistentLocation> PanelDataPersisency::
 
         for( auto h: hosts ) {
             auto encoded = EncodeState(*h);
-            if( !encoded.empty() )
+            if( encoded.has_value() )
                 location.hosts.emplace_back( move(encoded) );
             else
                 return nullopt;

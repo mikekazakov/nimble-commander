@@ -57,7 +57,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 {
     [super loadView];
     
-    for(const auto i: encodings::LiteralEncodingsList())
+    for(const auto &i: encodings::LiteralEncodingsList())
         [self.DefaultEncoding addItemWithTitle: (__bridge NSString*)i.second];
     int default_encoding = encodings::EncodingFromName( GlobalConfig().GetString(g_ConfigDefaultEncoding).value_or("").c_str() );
     if(default_encoding == encodings::ENCODING_INVALID)

@@ -126,7 +126,7 @@ pair<NSDragOperation, int> DragReceiver::ScanLocalSource(FilesDraggingSource *_s
     // check that we dont drag a folder into itself
     if( operation != NSDragOperationNone && m_DraggingOverDirectory ) {
         // filenames are stored without trailing slashes, so have to add it
-        for( const auto item: _source.items )
+        for( const auto &item: _source.items )
             if( item.item.Host() == _dest.Host() &&
                item.item.IsDir() &&
                _dest.Path() == item.item.Path()+"/" ) {

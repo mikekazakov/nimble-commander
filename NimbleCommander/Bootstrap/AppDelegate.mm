@@ -487,7 +487,7 @@ static NCAppDelegate *g_Me = nil;
 {
     bool has_running_ops = false;
     auto controllers = self.mainWindowControllers;
-    for( const auto wincont: controllers )
+    for( const auto &wincont: controllers )
         if( !wincont.operationsPool.Empty() ) {
             has_running_ops = true;
             break;
@@ -501,7 +501,7 @@ static NCAppDelegate *g_Me = nil;
         if( !AskToExitWithRunningOperations() )
             return NSTerminateCancel;
 
-        for( const auto wincont : controllers ) {
+        for( const auto &wincont : controllers ) {
             wincont.operationsPool.StopAndWaitForShutdown();
             [wincont.terminalState terminate];
         }

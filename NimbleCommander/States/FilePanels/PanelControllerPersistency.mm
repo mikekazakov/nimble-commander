@@ -18,19 +18,20 @@ ControllerStateJSONEncoder::ControllerStateJSONEncoder(PanelController *_panel):
 {
 }
 
-optional<rapidjson::StandaloneValue>
+rapidjson::StandaloneValue
 ControllerStateJSONEncoder::Encode(ControllerStateEncoding::Options _options)
 {
     assert(dispatch_is_main_queue());
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
     
     if( _options & ControllerStateEncoding::EncodeContentState ) {
-        if( auto v = PanelDataPersisency::EncodeVFSPath(m_Panel.data.Listing()) )
+        if( auto v = PanelDataPersisency::EncodeVFSPath(m_Panel.data.Listing());
+           v.GetType() != rapidjson::kNullType )
             json.AddMember(rapidjson::MakeStandaloneString(g_RestorationDataKey),
-                           move(*v),
+                           move(v),
                            rapidjson::g_CrtAllocator );
         else
-            return nullopt;
+            return rapidjson::StandaloneValue{rapidjson::kNullType};
     }
     
     if( _options & ControllerStateEncoding::EncodeDataOptions ) {
@@ -43,7 +44,7 @@ ControllerStateJSONEncoder::Encode(ControllerStateEncoding::Options _options)
                        rapidjson::StandaloneValue(m_Panel.layoutIndex), rapidjson::g_CrtAllocator );
     }
     
-    return move(json);
+    return json;
 }
 
 ControllerStateJSONDecoder::ControllerStateJSONDecoder(PanelController *_panel):

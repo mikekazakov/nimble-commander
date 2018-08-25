@@ -32,7 +32,7 @@
     #include <vector>
     #include <array>
     #include <string>
-    #include <experimental/string_view>
+    #include <string_view>
     #include <list>
     #include <deque>
     #include <queue>
@@ -53,16 +53,13 @@
     #include <functional>
     #include <future>
     #include <random>
+    #include <optional>
+    using namespace std;
+    using namespace std::chrono;
 
     #include <Habanero/dispatch_cpp.h>
     #include <Habanero/mach_time.h>
     #include <Habanero/spinlock.h>
-
-    using namespace std;
-    using namespace std::chrono;
-
-    #include <experimental/optional>
-    using namespace std::experimental;
 
     #include <boost/filesystem.hpp>
     using boost::filesystem::path;

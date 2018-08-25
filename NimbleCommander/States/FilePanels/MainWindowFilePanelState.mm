@@ -601,12 +601,14 @@ static rapidjson::StandaloneValue EncodePanelsStates(
     const auto encoding_opts = ControllerStateEncoding::EncodeEverything;
     
     for( auto pc: _left )
-        if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts) )
-            left.PushBack( move(*v), g_CrtAllocator );
+        if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts);
+            v.GetType() != kNullType )
+            left.PushBack( move(v), g_CrtAllocator );
     
     for( auto pc: _right )
-        if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts) )
-            right.PushBack( move(*v), g_CrtAllocator );
+        if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts);
+            v.GetType() != kNullType )
+            right.PushBack( move(v), g_CrtAllocator );
     
     json.PushBack( move(left), g_CrtAllocator );
     json.PushBack( move(right), g_CrtAllocator );
@@ -635,7 +637,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return ui;
 }
 
-- (optional<rapidjson::StandaloneValue>) encodeRestorableState
+- (rapidjson::StandaloneValue) encodeRestorableState
 {
     using namespace rapidjson;
     StandaloneValue json{kObjectType};
@@ -647,7 +649,7 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
                    EncodeUIState(self),
                    g_CrtAllocator);
     
-    return move(json);
+    return json;
 }
 
 - (bool) decodeRestorableState:(const rapidjson::StandaloneValue&)_state
@@ -738,20 +740,20 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
                            ControllerStateEncoding::EncodeViewOptions);
     
     auto left_panel_options = ControllerStateJSONEncoder{left_panel}.Encode(to_encode);
-    if( !left_panel_options )
+    if( left_panel_options.GetType() == rapidjson::kNullType )
         return;
     
     auto right_panel_options = ControllerStateJSONEncoder{right_panel}.Encode(to_encode);
-    if( !right_panel_options )
+    if( right_panel_options.GetType() == rapidjson::kNullType )
         return;
     
     using namespace rapidjson;
     StandaloneValue json{kObjectType};
     json.AddMember(MakeStandaloneString(g_InitialStateLeftDefaults),
-                   move(*left_panel_options),
+                   move(left_panel_options),
                    g_CrtAllocator);
     json.AddMember(MakeStandaloneString(g_InitialStateRightDefaults),
-                   move(*right_panel_options),
+                   move(right_panel_options),
                    g_CrtAllocator);
 
     StateConfig().Set(g_InitialStatePath, json);

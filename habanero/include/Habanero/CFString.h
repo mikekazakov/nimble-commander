@@ -19,7 +19,7 @@
 #endif
 
 #include <string>
-#include <experimental/string_view>
+#include <string_view>
 
 class CFString
 {
@@ -47,7 +47,7 @@ private:
 
 std::string CFStringGetUTF8StdString(CFStringRef _str);
 CFStringRef CFStringCreateWithUTF8StdString(const std::string &_s) noexcept;
-CFStringRef CFStringCreateWithUTF8StringNoCopy(std::experimental::string_view _s) noexcept;
+CFStringRef CFStringCreateWithUTF8StringNoCopy(std::string_view _s) noexcept;
 CFStringRef CFStringCreateWithUTF8StdStringNoCopy(const std::string &_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s) noexcept;
 CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noexcept;

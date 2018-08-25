@@ -17,7 +17,7 @@
 #include <stdlib.h>
 #include <memory>
 #include <string>
-#include <experimental/string_view>
+#include <string_view>
 #include <vector>
 
 namespace hbn {
@@ -131,12 +131,12 @@ public:
     
     size_t Size() const noexcept;
     bool Empty() const noexcept;
-    void Add(std::experimental::string_view _s);
+    void Add(std::string_view _s);
     StringsBulk Build() const;
     
 private:
     size_t TotalBytesForChars() const noexcept;
-    std::vector<std::experimental::string_view> m_Strings;
+    std::vector<std::string_view> m_Strings;
 };
 
 }

@@ -42,12 +42,13 @@ public:
     optional<NetworkConnectionsManager::Connection>
      ExtractConnectionFromLocation( const PersistentLocation &_location );
     
+    // the following functions will return kNullType in case of error
     using json = rapidjson::StandaloneValue;
-    static optional<json> EncodeVFSPath( const VFSHost &_vfs, const string &_path );
-    static optional<json> EncodeVFSPath( const VFSListing &_listing );
+    static json EncodeVFSPath( const VFSHost &_vfs, const string &_path );
+    static json EncodeVFSPath( const VFSListing &_listing );
     
     static optional<PersistentLocation> JSONToLocation( const json &_json );
-    static optional<json> LocationToJSON( const PersistentLocation &_location );
+    static json LocationToJSON( const PersistentLocation &_location );
     
     // LocationToJSON( *EncodeLocation(host, path) ) == EncodeVFSPath(host, path)
     
@@ -68,7 +69,7 @@ public:
  path: "/erere/rere/trtr"
 }
 */
-    static optional<json> EncodeVFSHostInfo( const VFSHost& _host );
+    static json EncodeVFSHostInfo( const VFSHost& _host );
 
     
 /*

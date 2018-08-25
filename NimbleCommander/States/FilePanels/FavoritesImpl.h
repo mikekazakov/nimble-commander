@@ -49,10 +49,10 @@ private:
     
     void LoadData( GenericConfig &_config, const char *_path );
     
-    static optional<rapidjson::StandaloneValue> VisitToJSON(const Visit &_visit);
+    static rapidjson::StandaloneValue VisitToJSON(const Visit &_visit);
     static optional<Visit> JSONToVisit( const rapidjson::StandaloneValue& _json );
     
-    static optional<rapidjson::StandaloneValue> FavoriteToJSON(const Favorite &_favorite);
+    static rapidjson::StandaloneValue FavoriteToJSON(const Favorite &_favorite);
     static optional<Favorite> JSONToFavorite( const rapidjson::StandaloneValue& _json );
     
     

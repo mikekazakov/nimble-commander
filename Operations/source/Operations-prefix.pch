@@ -52,17 +52,14 @@
     #include <functional>
     #include <future>
     #include <random>
-    #include <experimental/string_view>
+    #include <string_view>
+    #include <optional>
+    using namespace std;
+    using namespace std::chrono;
 
     #include <Habanero/dispatch_cpp.h>
     #include <Habanero/mach_time.h>
     #include <Habanero/spinlock.h>
-
-    using namespace std;
-    using namespace std::chrono;
-
-    #include <experimental/optional>
-    using namespace std::experimental;
 
     #include <any.hpp>
     using linb::any;

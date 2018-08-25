@@ -25,7 +25,7 @@ class ControllerStateJSONEncoder
 public:
     ControllerStateJSONEncoder(PanelController *_panel);
     
-    optional<rapidjson::StandaloneValue> Encode(ControllerStateEncoding::Options _options);
+    rapidjson::StandaloneValue Encode(ControllerStateEncoding::Options _options);
     
 private:
     PanelController *m_Panel;

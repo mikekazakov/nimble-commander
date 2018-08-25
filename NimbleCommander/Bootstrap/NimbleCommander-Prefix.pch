@@ -18,7 +18,7 @@
     #include <vector>
     #include <array>
     #include <string>
-    #include <experimental/string_view>
+    #include <string_view>
     #include <list>
     #include <deque>
     #include <queue>
@@ -37,11 +37,9 @@
     #include <thread>
     #include <shared_mutex>
     #include <functional>
+    #include <optional>
     using namespace std;
     using namespace std::chrono;
-
-    #include <experimental/optional>
-    using namespace std::experimental;
 
     #include <any.hpp>
     using linb::any;

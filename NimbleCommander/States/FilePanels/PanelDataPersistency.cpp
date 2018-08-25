@@ -94,7 +94,7 @@ bool PersistentLocation::is_network() const noexcept
     return !hosts.empty() && any_cast<Network>(&hosts.front());
 }
 
-static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host );
+static rapidjson::StandaloneValue EncodeAny( const any& _host );
 
 static bool IsNetworkVFS( const VFSHost& _host )
 {
@@ -161,16 +161,16 @@ optional<PersistentLocation> PanelDataPersisency::
     return location;
 }
 
-optional<rapidjson::StandaloneValue> PanelDataPersisency::
+rapidjson::StandaloneValue PanelDataPersisency::
 EncodeVFSPath( const VFSListing &_listing )
 {
     if( !_listing.IsUniform() )
-        return nullopt;
+        return rapidjson::StandaloneValue{rapidjson::kNullType};
 
     return EncodeVFSPath( *_listing.Host(), _listing.Directory() );
 }
 
-optional<rapidjson::StandaloneValue> PanelDataPersisency::
+rapidjson::StandaloneValue PanelDataPersisency::
 EncodeVFSPath( const VFSHost &_vfs, const string &_path )
 {
     vector<const VFSHost*> hosts;
@@ -185,10 +185,10 @@ EncodeVFSPath( const VFSHost &_vfs, const string &_path )
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
     rapidjson::StandaloneValue json_hosts(rapidjson::kArrayType);
     for( auto h: hosts )
-        if( auto v = EncodeVFSHostInfo(*h) )
-            json_hosts.PushBack( move(*v), rapidjson::g_CrtAllocator );
+        if( auto v = EncodeVFSHostInfo(*h); v.GetType() != rapidjson::kNullType )
+            json_hosts.PushBack( move(v), rapidjson::g_CrtAllocator );
         else
-            return nullopt;
+            return rapidjson::StandaloneValue{rapidjson::kNullType};
     if( !json_hosts.Empty() )
         json.AddMember(rapidjson::StandaloneValue(g_StackHostsKey, rapidjson::g_CrtAllocator),
                        move(json_hosts),
@@ -198,19 +198,19 @@ EncodeVFSPath( const VFSHost &_vfs, const string &_path )
                    rapidjson::StandaloneValue(_path.c_str(), rapidjson::g_CrtAllocator),
                    rapidjson::g_CrtAllocator);
     
-    return move(json);
+    return json;
 }
 
-optional<rapidjson::StandaloneValue> PanelDataPersisency::
+rapidjson::StandaloneValue PanelDataPersisency::
 LocationToJSON( const PersistentLocation &_location )
 {
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
     rapidjson::StandaloneValue json_hosts(rapidjson::kArrayType);
     for( auto &h: _location.hosts )
-        if( auto v = EncodeAny(h) )
-            json_hosts.PushBack( move(*v), rapidjson::g_CrtAllocator );
+        if( auto v = EncodeAny(h); v.GetType() != rapidjson::kNullType )
+            json_hosts.PushBack( move(v), rapidjson::g_CrtAllocator );
         else
-            return nullopt;
+            return rapidjson::StandaloneValue{rapidjson::kNullType};
     if( !json_hosts.Empty() )
         json.AddMember(rapidjson::StandaloneValue(g_StackHostsKey, rapidjson::g_CrtAllocator),
                        move(json_hosts),
@@ -220,7 +220,7 @@ LocationToJSON( const PersistentLocation &_location )
                    rapidjson::StandaloneValue(_location.path, rapidjson::g_CrtAllocator),
                    rapidjson::g_CrtAllocator);
     
-    return move(json);
+    return json;
 }
 
 optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_json )
@@ -396,41 +396,41 @@ string PanelDataPersisency::MakeVerbosePathString( const VFSHost &_host, const s
     return s;
 }
 
-optional<rapidjson::StandaloneValue> PanelDataPersisency::EncodeVFSHostInfo( const VFSHost& _host )
+rapidjson::StandaloneValue PanelDataPersisency::EncodeVFSHostInfo( const VFSHost& _host )
 {
     using namespace rapidjson;
     auto tag = _host.Tag();
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
     if( tag == VFSNativeHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
-        return move(json);
+        return json;
     }
     else if( tag == vfs::PSHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
-        return move(json);
+        return json;
     }
     else if( tag == vfs::XAttrHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
         json.AddMember( MakeStandaloneString(g_HostInfoJunctionKey), MakeStandaloneString(_host.JunctionPath()), g_CrtAllocator );
-        return move(json);
+        return json;
     }
     else if( IsNetworkVFS(_host) ) {
         if( auto conn = ConnectionsManager().ConnectionForVFS(_host) )  {
             json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(g_HostInfoTypeNetworkValue), g_CrtAllocator );
             json.AddMember( MakeStandaloneString(g_HostInfoUuidKey), MakeStandaloneString(to_string(conn->Uuid()).c_str()), g_CrtAllocator );
-            return move(json);
+            return json;
         }
     }
     else if( tag == vfs::ArchiveHost::UniqueTag ||
              tag == vfs::UnRARHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
         json.AddMember( MakeStandaloneString(g_HostInfoJunctionKey), MakeStandaloneString(_host.JunctionPath()), g_CrtAllocator );
-        return move(json);
+        return json;
     }
-    return nullopt;
+    return rapidjson::StandaloneValue{kNullType};
 }
 
-static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
+static rapidjson::StandaloneValue EncodeAny( const any& _host )
 {
     using namespace rapidjson;
     rapidjson::StandaloneValue json(rapidjson::kObjectType);
@@ -438,13 +438,13 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
                        MakeStandaloneString(VFSNativeHost::UniqueTag),
                        g_CrtAllocator );
-        return move(json);
+        return json;
     }
     else if( auto psfs = any_cast<PSFS>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
                        MakeStandaloneString(vfs::PSHost::UniqueTag),
                        g_CrtAllocator );
-        return move(json);
+        return json;
     }
     else if( auto xattr = any_cast<XAttr>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
@@ -453,7 +453,7 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
         json.AddMember( MakeStandaloneString(g_HostInfoJunctionKey),
                        MakeStandaloneString(xattr->junction),
                        g_CrtAllocator );
-        return move(json);
+        return json;
     }
     else if( auto network = any_cast<Network>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
@@ -462,7 +462,7 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
         json.AddMember(MakeStandaloneString(g_HostInfoUuidKey),
                        MakeStandaloneString(to_string(network->connection)),
                        g_CrtAllocator );
-        return move(json);
+        return json;
     }
     else if( auto la = any_cast<ArcLA>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
@@ -471,7 +471,7 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
         json.AddMember(MakeStandaloneString(g_HostInfoJunctionKey),
                        MakeStandaloneString(la->junction),
                        g_CrtAllocator );
-        return move(json);
+        return json;
     }
     else if( auto rar = any_cast<ArcUnRAR>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
@@ -480,10 +480,10 @@ static optional<rapidjson::StandaloneValue> EncodeAny( const any& _host )
         json.AddMember(MakeStandaloneString(g_HostInfoJunctionKey),
                        MakeStandaloneString(rar->junction),
                        g_CrtAllocator );
-        return move(json);
+        return json;
     }
     
-    return nullopt;
+    return rapidjson::StandaloneValue{kNullType};
 }
 
 int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_state, VFSHostPtr &_host )

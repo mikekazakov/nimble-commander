@@ -3,7 +3,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <string>
-#include <experimental/string_view>
+#include <string_view>
 #include <Habanero/CFString.h>
 
 #ifdef __OBJC__
@@ -34,5 +34,5 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 
 #endif
 
-bool LowercaseEqual(std::experimental::string_view _s1,
-                    std::experimental::string_view _s2 ) noexcept;
+bool LowercaseEqual(std::string_view _s1,
+                    std::string_view _s2 ) noexcept;

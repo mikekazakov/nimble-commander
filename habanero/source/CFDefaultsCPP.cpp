@@ -17,7 +17,6 @@
 #include <Habanero/CFString.h>
 
 using namespace std;
-using namespace std::experimental;
 
 optional<int> CFDefaultsGetOptionalInt(CFStringRef _key)
 {

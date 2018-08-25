@@ -14,7 +14,6 @@
 #include <Habanero/CFString.h>
 
 using namespace std;
-using namespace std::experimental;
 
 CFStringRef CFStringCreateWithUTF8StdString(const std::string &_s) noexcept
 {

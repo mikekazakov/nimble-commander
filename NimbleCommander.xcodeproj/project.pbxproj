@@ -5360,6 +5360,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5369,7 +5370,6 @@
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE = "7305d5ad-6123-4d75-ba47-7756710e2edf";
 				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files Developer ID";
 			};
 			name = Debug;
@@ -5378,6 +5378,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5387,7 +5388,6 @@
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE = "7305d5ad-6123-4d75-ba47-7756710e2edf";
 				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files Developer ID";
 			};
 			name = Release;

@@ -110,10 +110,11 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
-    if( auto panels_state = [m_PanelState encodeRestorableState] ) {
+    if( auto panels_state = [m_PanelState encodeRestorableState];
+        panels_state.GetType() != rapidjson::kNullType) {
         rapidjson::StringBuffer buffer;
         rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
-        panels_state->Accept(writer);
+        panels_state.Accept(writer);
         [coder encodeObject:[NSString stringWithUTF8String:buffer.GetString()]
                      forKey:g_CocoaRestorationFilePanelsStateKey];
     }
@@ -206,8 +207,9 @@ static int CountMainWindows()
 {
     // the are the last main window - need to save current state as "default" in state config
     if( CountMainWindows() == 1 ) {
-        if( auto panels_state = [m_PanelState encodeRestorableState] )
-            StateConfig().Set(g_JSONRestorationFilePanelsStateKey, *panels_state);
+        if( auto panels_state = [m_PanelState encodeRestorableState];
+            panels_state.GetType() != rapidjson::kNullType )
+            StateConfig().Set(g_JSONRestorationFilePanelsStateKey, panels_state);
         [m_PanelState saveDefaultInitialState];
     }
     

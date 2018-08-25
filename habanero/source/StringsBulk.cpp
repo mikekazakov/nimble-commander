@@ -398,7 +398,7 @@ StringsBulk::NonOwningBuilder::~NonOwningBuilder()
 {
 }
             
-void StringsBulk::NonOwningBuilder::Add(std::experimental::string_view _s)
+void StringsBulk::NonOwningBuilder::Add(std::string_view _s)
 {
     m_Strings.emplace_back( _s );
 }

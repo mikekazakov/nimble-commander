@@ -15,7 +15,7 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 #include <string>
-#include <experimental/optional>
+#include <optional>
 
 bool        CFDefaultsGetBool(CFStringRef _key);
 int         CFDefaultsGetInt(CFStringRef _key);
@@ -23,11 +23,11 @@ long        CFDefaultsGetLong(CFStringRef _key);
 double      CFDefaultsGetDouble(CFStringRef _key);
 std::string CFDefaultsGetString(CFStringRef _key);
 
-std::experimental::optional<bool>           CFDefaultsGetOptionalBool(CFStringRef _key);
-std::experimental::optional<int>            CFDefaultsGetOptionalInt(CFStringRef _key);
-std::experimental::optional<long>           CFDefaultsGetOptionalLong(CFStringRef _key);
-std::experimental::optional<double>         CFDefaultsGetOptionalDouble(CFStringRef _key);
-std::experimental::optional<std::string>    CFDefaultsGetOptionalString(CFStringRef _key);
+std::optional<bool>           CFDefaultsGetOptionalBool(CFStringRef _key);
+std::optional<int>            CFDefaultsGetOptionalInt(CFStringRef _key);
+std::optional<long>           CFDefaultsGetOptionalLong(CFStringRef _key);
+std::optional<double>         CFDefaultsGetOptionalDouble(CFStringRef _key);
+std::optional<std::string>    CFDefaultsGetOptionalString(CFStringRef _key);
 
 void CFDefaultsSetBool(CFStringRef _key, bool _value);
 void CFDefaultsSetInt(CFStringRef _key, int _value);

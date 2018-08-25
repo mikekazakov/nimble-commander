@@ -16,6 +16,8 @@
 
 #define RAPIDJSON_HAS_STDSTRING 1
 
+#define RAPIDJSON_HAS_CXX11_RVALUE_REFS 1
+
 #include <rapidjson/fwd.h>
 
 namespace rapidjson

@@ -173,8 +173,8 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 
 @end
 
-bool LowercaseEqual(std::experimental::string_view _s1,
-                    std::experimental::string_view _s2 ) noexcept
+bool LowercaseEqual(std::string_view _s1,
+                    std::string_view _s2 ) noexcept
 {
     if( _s1.data() == nullptr && _s2.data() == nullptr )
         return true;

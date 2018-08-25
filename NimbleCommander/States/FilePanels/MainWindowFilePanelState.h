@@ -105,7 +105,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd;
 - (void)closeAttachedUI:(PanelController*)_panel;
 
-- (optional<rapidjson::StandaloneValue>) encodeRestorableState;
+- (rapidjson::StandaloneValue) encodeRestorableState;
 - (bool) decodeRestorableState:(const rapidjson::StandaloneValue&)_state;
 - (void) markRestorableStateAsInvalid;
 

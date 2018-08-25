@@ -178,17 +178,18 @@ FavoriteLocationsStorageImpl::Favorites( /*limit output later*/ ) const
     return m_Favorites;
 }
 
-optional<rapidjson::StandaloneValue> FavoriteLocationsStorageImpl::VisitToJSON(const Visit &_visit)
+rapidjson::StandaloneValue FavoriteLocationsStorageImpl::VisitToJSON(const Visit &_visit)
 {
     using namespace rapidjson;
     StandaloneValue json(kObjectType);
     
-    if( auto l = PanelDataPersisency::LocationToJSON(_visit.location->hosts_stack) )
+    if( auto l = PanelDataPersisency::LocationToJSON(_visit.location->hosts_stack);
+       l.GetType() != kNullType )
         json.AddMember(MakeStandaloneString("location"),
-                       move(*l),
+                       move(l),
                        g_CrtAllocator );
     else
-        return nullopt;
+        return rapidjson::StandaloneValue{kNullType};
     
     json.AddMember(MakeStandaloneString("visits_count"),
                    StandaloneValue{_visit.visits_count},
@@ -198,7 +199,7 @@ optional<rapidjson::StandaloneValue> FavoriteLocationsStorageImpl::VisitToJSON(c
                    StandaloneValue{(int64_t)_visit.last_visit},
                    g_CrtAllocator );
 
-    return move(json);
+    return json;
 }
 
 optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl::
@@ -231,25 +232,26 @@ optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl::
     return move(v);
 }
 
-optional<rapidjson::StandaloneValue> FavoriteLocationsStorageImpl::
+rapidjson::StandaloneValue FavoriteLocationsStorageImpl::
     FavoriteToJSON(const Favorite &_favorite)
 {
-  using namespace rapidjson;
+    using namespace rapidjson;
     StandaloneValue json(kObjectType);
     
-    if( auto l = PanelDataPersisency::LocationToJSON(_favorite.location->hosts_stack) )
+    if( auto l = PanelDataPersisency::LocationToJSON(_favorite.location->hosts_stack);
+       l.GetType()!=kNullType )
         json.AddMember(MakeStandaloneString("location"),
-                       move(*l),
+                       move(l),
                        g_CrtAllocator );
     else
-        return nullopt;
+        return StandaloneValue{kNullType};
     
     if( !_favorite.title.empty() )
         json.AddMember(MakeStandaloneString("title"),
                        MakeStandaloneString(_favorite.title),
                        g_CrtAllocator );
 
-    return move(json);
+    return json;
 }
 
 optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
@@ -288,8 +290,8 @@ void FavoriteLocationsStorageImpl::StoreData( GenericConfig &_config, const char
 
     StandaloneValue manual(kArrayType);
     for( auto &favorite: m_Favorites )
-        if( auto v = FavoriteToJSON(favorite) )
-            manual.PushBack( move(*v), rapidjson::g_CrtAllocator );
+        if( auto v = FavoriteToJSON(favorite); v.GetType() != kNullType )
+            manual.PushBack( move(v), rapidjson::g_CrtAllocator );
 
     json.AddMember(MakeStandaloneString("manual"),
                    move(manual),
@@ -298,8 +300,8 @@ void FavoriteLocationsStorageImpl::StoreData( GenericConfig &_config, const char
     StandaloneValue automatic(kArrayType);
     for( auto &visit: m_Visits )
         if( visit.second.last_visit + g_MaxTimeRange > now )
-            if( auto v = VisitToJSON(visit.second) )
-                automatic.PushBack( move(*v), rapidjson::g_CrtAllocator );
+            if( auto v = VisitToJSON(visit.second); v.GetType() != kNullType )
+                automatic.PushBack( std::move(v), rapidjson::g_CrtAllocator );
 
     json.AddMember(MakeStandaloneString("automatic"),
                    move(automatic),

@@ -114,7 +114,7 @@ static const char* g_Paths[] = {
         dispatch_apply( size(g_Paths),
                        dispatch_get_global_queue(QOS_CLASS_UTILITY, 0),
                        [](size_t index){
-                           auto &qlc = QLThumbnailsCache::Instance();
+                           auto &qlc = nc::core::QLThumbnailsCache::Instance();
                            qlc.ThumbnailIfHas(g_Paths[index], 32);
                            qlc.ProduceThumbnail(g_Paths[index], 32);
                        });

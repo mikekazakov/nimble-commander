@@ -411,26 +411,36 @@ void IconsGenerator2::DrainStash()
 
 void IconsGenerator2::BackgroundWork(const BuildRequest &_request)
 {
-    if( auto opt_res = Runner(_request) )
-        if( _request.generation == m_Generation &&
-           (opt_res->filetype || opt_res->thumbnail) )
-            dispatch_to_main_queue([=,res=opt_res.value()] {
-                // returned to main thread
+    dispatch_assert_background_queue();
+    if( auto opt_res = Runner(_request) ) {
+        if( _request.generation == m_Generation ) {
+            // it's possible that background "heavy" images fetching did bring the same set of
+            // images which were available initially with a shallow scan.
+            // in this case there's no need to fire any callbacks. 
+            const auto has_anything_to_commit =
+                (opt_res->filetype != nullptr && opt_res->filetype != _request.filetype) ||
+                (opt_res->thumbnail != nullptr && opt_res->thumbnail != _request.thumbnail);
+            if( has_anything_to_commit == false )
+                return;
                 
+            dispatch_to_main_queue([=,res=move(opt_res.value())] {
+                // returned to main thread
                 if( _request.generation != m_Generation )
                     return;
                 
                 const auto is_no = _request.icon_number;
                 assert( is_no < m_Icons.size() ); // consistancy check
-                
-                if( m_Icons[is_no] ) {
+                 
+                if( auto &storage = m_Icons[is_no]; storage ) {
                     if( res.filetype )
-                        m_Icons[is_no]->filetype = res.filetype;
+                        storage->filetype = res.filetype;
                     if( res.thumbnail )
-                        m_Icons[is_no]->thumbnail = res.thumbnail;
-                    m_UpdateCallback(is_no + 1, m_Icons[is_no]->Any());
+                        storage->thumbnail = res.thumbnail;
+                    m_UpdateCallback(is_no + 1, storage->Any());
                 }
             });
+        }
+    }
 }
 
 optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildRequest &_req)
@@ -447,17 +457,15 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         if( !_req.extension.empty() )
             WorkspaceExtensionIconsCache::Instance().IconForExtension( _req.extension );
         
-        if(_req.generation != m_Generation)
+        if( _req.generation != m_Generation )
             return nullopt;
         
         // 1st - try to built a real thumbnail
-        if((_req.unix_mode & S_IFMT) != S_IFDIR &&
-           _req.file_size > 0 &&
-           _req.file_size <= MaxFileSizeForThumbnailNative &&
-           CheckFileIsOK(_req.relative_path.c_str())
-           ) {
-            auto tn = QLThumbnailsCache::Instance().ProduceThumbnail(_req.relative_path,
-                                                                     IconSizeInPixels());
+        if( (_req.unix_mode & S_IFMT) != S_IFDIR &&
+            _req.file_size > 0 &&
+            _req.file_size <= MaxFileSizeForThumbnailNative ) {
+            auto &qlthumbnails_cache = QLThumbnailsCache::Instance(); 
+            auto tn = qlthumbnails_cache.ProduceThumbnail(_req.relative_path, IconSizeInPixels());
             if( tn )
                 result.thumbnail = tn;
         }

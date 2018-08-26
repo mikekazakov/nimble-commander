@@ -124,7 +124,9 @@ const noexcept
     data::Model                        *m_Data;
     vector<short>                       m_FilenamesPxWidths;
     short                               m_MaxFilenamePxWidth;
-    IconsGenerator2                    *m_IconsGenerator;
+    IconsGenerator2                    *m_IconsGenerator;    
+    unordered_map<decltype(nc::panel::data::ItemVolatileData::icon),
+                  PanelBriefViewItem *> m_IconNumberToItemMapping; 
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
     PanelBriefViewColumnsLayout         m_ColumnsLayout;
     __weak PanelView                   *m_PanelView;
@@ -231,12 +233,14 @@ static const auto g_ScrollingBackground =
     }    
 }
 
-- (NSInteger)collectionView:(NSCollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
+- (NSInteger)collectionView:(NSCollectionView *)collectionView
+     numberOfItemsInSection:(NSInteger)section
 {
     return m_Data ? m_Data->SortedDirectoryEntries().size() : 0;
 }
 
-- (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath
+- (NSCollectionViewItem *)collectionView:(NSCollectionView *)collectionView
+     itemForRepresentedObjectAtIndexPath:(NSIndexPath *)indexPath
 {
     PanelBriefViewItem *item = [collectionView makeItemWithIdentifier:@"A" forIndexPath:indexPath];
     assert(item);
@@ -248,18 +252,14 @@ static const auto g_ScrollingBackground =
             
             auto &vd = m_Data->VolatileDataAtSortPosition(index);
             
-            NSImage *icon = m_IconsGenerator->ImageFor(vfs_item, vd);
+            const auto icon = m_IconsGenerator->ImageFor(vfs_item, vd);
+            m_IconNumberToItemMapping[vd.icon] = item;            
             
             [item setVD:vd];
             [item setIcon:icon];
         }
         [item setPanelActive:m_PanelView.active];
     }
-    
-//    - (NSImageRep*) itemRequestsIcon:(PanelBriefViewItem*)_item;
-    
-
-//    mtb.ResetMicro("setting up PanelBriefViewItem ");
     
     return item;
 }
@@ -358,6 +358,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     dispatch_assert_main_queue();
     assert( m_Data );
     [self calculateFilenamesWidths];
+    m_IconNumberToItemMapping.clear();    
     m_IconsGenerator->SyncDiscardedAndOutdated( *m_Data );
     [m_CollectionView reloadData];
     [self syncVolatileData];
@@ -464,17 +465,10 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 - (void) onIconUpdated:(uint16_t)_icon_no image:(NSImage*)_image
 {
     dispatch_assert_main_queue();
-    for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
-        if( NSIndexPath *index_path = [m_CollectionView indexPathForItem:i]) {
-            const auto index = (int)index_path.item;
-            if( m_Data->IsValidSortPosition(index) ) {
-                auto &vd = m_Data->VolatileDataAtSortPosition(index);
-                if( vd.icon == _icon_no ) {
-                    [i setIcon:_image];
-                    break;
-                }
-            }
-        }
+    const auto it = m_IconNumberToItemMapping.find(_icon_no);
+    if( it != end(m_IconNumberToItemMapping) ) {
+        [it->second setIcon:_image];
+    }
 }
 
 - (void) updateFixedAmountLayout

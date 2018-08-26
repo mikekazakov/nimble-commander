@@ -34,7 +34,7 @@ public:
     
 private:
     enum {MaxIcons = 65535,
-        MaxStashedRequests = 100,
+        MaxStashedRequests = 256,
         MaxFileSizeForThumbnailNative = 256*1024*1024,
         MaxFileSizeForThumbnailNonNative = 1*1024*1024 // ?
     };

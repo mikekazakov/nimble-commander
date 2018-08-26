@@ -18,6 +18,10 @@ namespace nc::panel {
 using namespace nc::core;
 
 static const auto g_DummyImage = [[NSImage alloc] initWithSize:NSMakeSize(0,0)];
+static const auto g_GenericFolderIcon =
+    WorkspaceExtensionIconsCache::Instance().GenericFolderIcon(); 
+static const auto g_GenericFileIcon =
+    WorkspaceExtensionIconsCache::Instance().GenericFileIcon(); 
 
 // we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
 // and can hang in some cases with that ones
@@ -208,7 +212,6 @@ inline NSImage *IconsGenerator2::IconStorage::Any() const
 
 IconsGenerator2::IconsGenerator2()
 {
-    BuildGenericIcons();
     m_WorkGroup.SetOnDry([=]{
         DrainStash();
     });
@@ -222,10 +225,6 @@ IconsGenerator2::~IconsGenerator2()
     }
     m_WorkGroup.SetOnDry( nullptr );
     m_WorkGroup.Wait();
-}
-
-void IconsGenerator2::BuildGenericIcons()
-{
 }
 
 unsigned short IconsGenerator2::GetSuitablePositionForNewIcon()
@@ -250,9 +249,7 @@ unsigned short IconsGenerator2::GetSuitablePositionForNewIcon()
 
 NSImage *IconsGenerator2::GetGenericIcon( const VFSListingItem &_item ) const
 {
-    return _item.IsDir() ?
-        WorkspaceExtensionIconsCache::Instance().GenericFolderIcon():
-        WorkspaceExtensionIconsCache::Instance().GenericFileIcon();
+    return _item.IsDir() ? g_GenericFolderIcon : g_GenericFileIcon;
 }
 
 NSImage *IconsGenerator2::GetCachedExtensionIcon( const VFSListingItem &_item) const
@@ -329,7 +326,7 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolati
     if( is_native_fs )
         if( auto th = QLThumbnailsCache::Instance().ThumbnailIfHas(rel_path, IconSizeInPixels()) )
             is.thumbnail = th;
- 
+
     // check if we already have icon built
     if( is_native_fs )
         if( auto img = WorkspaceIconsCache::Instance().IconIfHas(rel_path) )
@@ -558,7 +555,7 @@ void IconsGenerator2::SetIconSize(int _size)
     if( m_IconSize == _size )
         return;
     m_IconSize = _size;
-    BuildGenericIcons();
+    m_IconSizePx = m_HiDPI ? m_IconSize * 2 : m_IconSize;
 }
 
 void IconsGenerator2::SetUpdateCallback(function<void(uint16_t, NSImage*)> _cb)
@@ -569,7 +566,7 @@ void IconsGenerator2::SetUpdateCallback(function<void(uint16_t, NSImage*)> _cb)
 
 int IconsGenerator2::IconSizeInPixels() const noexcept
 {
-    return m_HiDPI ? m_IconSize * 2 : m_IconSize;
+    return m_IconSizePx;
 }
 
 bool IconsGenerator2::HiDPI() const noexcept
@@ -579,9 +576,11 @@ bool IconsGenerator2::HiDPI() const noexcept
 
 void IconsGenerator2::SetHiDPI( bool _is_hi_dpi )
 {
+    assert(dispatch_is_main_queue()); // STA api design     
     if( m_HiDPI == _is_hi_dpi )
         return;
     m_HiDPI = _is_hi_dpi;
+    m_IconSizePx = m_HiDPI ? m_IconSize * 2 : m_IconSize;
 }
 
 int IconsGenerator2::IconSize() const noexcept

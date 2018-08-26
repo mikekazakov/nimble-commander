@@ -216,6 +216,7 @@ void GoIntoFolder::Perform( PanelController *_target, id _sender ) const
                      vfs:item.Host()
             select_entry:""
                    async:true];
+        return;
     }
     
     if( ActivationManager::Instance().HasArchivesBrowsing() ) {

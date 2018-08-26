@@ -76,9 +76,6 @@ private:
     bool IsRequestsStashFull() const;
     int IconSizeInPixels() const noexcept;
     
-    
-    void BuildGenericIcons();
-    
     void RunOrStash( BuildRequest _req );
     void DrainStash();
     void BackgroundWork(const BuildRequest &_req);
@@ -90,6 +87,7 @@ private:
     int                     m_IconsHoles = 0;
     
     int                     m_IconSize = 16;
+    int                     m_IconSizePx = 32;    
     bool                    m_HiDPI = true;
 
     atomic_ulong            m_Generation{0};

@@ -25,6 +25,9 @@
 		CF6E64ED1F62721C00BF986E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EC1F62721C00BF986E /* Security.framework */; };
 		CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */; };
 		CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */; };
+		CFE33EB821356ECE00C3902C /* QLThumbnailsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE33EB721356ECE00C3902C /* QLThumbnailsCache.h */; };
+		CFE33EBA21356ED900C3902C /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE33EB921356ED900C3902C /* QLThumbnailsCache.mm */; };
+		CFE33EBC2135708800C3902C /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE33EBB2135708800C3902C /* Quartz.framework */; };
 		CFFA94671F453CC00035E606 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFFA94681F453CC00035E606 /* BlinkingCaret.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */; };
 		CFFA94691F453CC00035E606 /* ButtonWithTextColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */; };
@@ -151,6 +154,9 @@
 		CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DataBlockAnalysis.mm; path = source/DataBlockAnalysis.mm; sourceTree = "<group>"; };
 		CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionLowercaseComparison.h; path = include/Utility/ExtensionLowercaseComparison.h; sourceTree = "<group>"; };
 		CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionLowercaseComparison.cpp; path = source/ExtensionLowercaseComparison.cpp; sourceTree = "<group>"; };
+		CFE33EB721356ECE00C3902C /* QLThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QLThumbnailsCache.h; path = include/Utility/QLThumbnailsCache.h; sourceTree = "<group>"; };
+		CFE33EB921356ED900C3902C /* QLThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCache.mm; path = source/QLThumbnailsCache.mm; sourceTree = "<group>"; };
+		CFE33EBB2135708800C3902C /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		CFFA94631F453CB60035E606 /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFFA948E1F453DF30035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -168,6 +174,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFE33EBC2135708800C3902C /* Quartz.framework in Frameworks */,
 				CF6E64ED1F62721C00BF986E /* Security.framework in Frameworks */,
 				CF6E64EB1F62721500BF986E /* AppKit.framework in Frameworks */,
 				CF6E64E91F6271F000BF986E /* DiskArbitration.framework in Frameworks */,
@@ -216,6 +223,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFE33EB721356ECE00C3902C /* QLThumbnailsCache.h */,
 				CF3B7F6A201F141C00BF2090 /* MIMResponder.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
@@ -258,6 +266,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFE33EB921356ED900C3902C /* QLThumbnailsCache.mm */,
 				CF3B7F6C201F167200BF2090 /* MIMResponder.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
@@ -300,6 +309,7 @@
 		CFFA948D1F453DF30035E606 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFE33EBB2135708800C3902C /* Quartz.framework */,
 				CF6E64EC1F62721C00BF986E /* Security.framework */,
 				CF6E64EA1F62721500BF986E /* AppKit.framework */,
 				CF6E64E81F6271F000BF986E /* DiskArbitration.framework */,
@@ -318,6 +328,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFE33EB821356ECE00C3902C /* QLThumbnailsCache.h in Headers */,
 				CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */,
 				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
@@ -445,6 +456,7 @@
 				CFFA947A1F453CC00035E606 /* NSMenu+Hierarchical.mm in Sources */,
 				CFFA94781F453CC00035E606 /* Layout.mm in Sources */,
 				CFFA94841F453CC00035E606 /* VerticallyCenteredTextFieldCell.mm in Sources */,
+				CFE33EBA21356ED900C3902C /* QLThumbnailsCache.mm in Sources */,
 				CFFA946B1F453CC00035E606 /* ColoredSeparatorLine.mm in Sources */,
 				CFFA947D1F453CC00035E606 /* NSView+Sugar.mm in Sources */,
 				CFFA94851F453CC00035E606 /* VolumeInformation.cpp in Sources */,

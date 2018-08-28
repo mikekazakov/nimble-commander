@@ -4,7 +4,7 @@
 #include <sys/types.h>
 #include <sys/dirent.h>
 #include <Habanero/CommonPaths.h>
-#include <NimbleCommander/Core/Caches/QLThumbnailsCache.h>
+#include <Utility/QLThumbnailsCache.h>
 #include <NimbleCommander/Core/Caches/QLVFSThumbnailsCache.h>
 #include <NimbleCommander/Core/Caches/WorkspaceIconsCache.h>
 #include <NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.h>
@@ -34,6 +34,12 @@ static bool CheckFileIsOK(const char* _s)
     return ((st.st_mode & S_IFMT) == S_IFDIR ||
             (st.st_mode & S_IFMT) == S_IFREG  ) &&
             st.st_size > 0;
+}
+
+static utility::QLThumbnailsCache &QLThumbnailsCacheSingleton()
+{
+    static utility::QLThumbnailsCache instance;
+    return instance;
 }
 
 static NSImage *ProduceThumbnailForVFS(const string &_path,
@@ -324,7 +330,7 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolati
     
     // check if we already have thumbnail built
     if( is_native_fs )
-        if( auto th = QLThumbnailsCache::Instance().ThumbnailIfHas(rel_path, IconSizeInPixels()) )
+        if( auto th = QLThumbnailsCacheSingleton().ThumbnailIfHas(rel_path, IconSizeInPixels()) )
             is.thumbnail = th;
 
     // check if we already have icon built
@@ -464,8 +470,8 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         if( (_req.unix_mode & S_IFMT) != S_IFDIR &&
             _req.file_size > 0 &&
             _req.file_size <= MaxFileSizeForThumbnailNative ) {
-            auto &cache = QLThumbnailsCache::Instance(); 
-            auto file_hint = QLThumbnailsCache::FileStateHint{};
+            auto &cache = QLThumbnailsCacheSingleton(); 
+            auto file_hint = utility::QLThumbnailsCache::FileStateHint{};
             file_hint.file_size = _req.file_size;
             file_hint.mtime = _req.mtime;
             auto tn = cache.ProduceThumbnail(_req.relative_path, IconSizeInPixels(), file_hint);

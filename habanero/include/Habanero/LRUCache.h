@@ -37,7 +37,19 @@ public:
     void insert( _Key _key, _Value _value );
 
     size_t count( const _Key &_key ) const noexcept;
+    
+    /**
+     * Checks whether there is a value corresponding to _key. If there is - makes it the most
+     * recent and returns a reference to the value. Otherwise, throws an exception.
+     */
     _Value &at( const _Key &_key );
+    
+    /**
+     * Checks whether there is a value corresponding to _key. If there is - makes it the most
+     * recent and returns a reference to the value. Otherwise, creates a (_key, Value{}) pair,
+     * inserts it to the front and returns a references to the value.
+     * May evict another value in the process if cache is already at max_size().
+     */
     _Value &operator[]( const _Key &_key );
     
     LRUCache &operator=(const LRUCache&);
@@ -107,7 +119,8 @@ void LRUCache<_Key, _Value, _Capacity, _Hash>::insert(_Key _key, _Value _value)
             evict();
         
         m_LRU.emplace_front( std::move(_key), std::move(_value) );
-        m_Map[m_LRU.front().first] = std::begin(m_LRU);
+        auto front = std::begin(m_LRU);
+        m_Map.emplace( std::make_pair(front->first, front) );
     }
 }
 

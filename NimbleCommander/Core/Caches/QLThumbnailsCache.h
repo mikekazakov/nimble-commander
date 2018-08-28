@@ -28,14 +28,26 @@ public:
 private:
     enum { m_CacheSize = 4096 };
     
+    /**
+     * This string_view/string abomination is used to mitigate the lack of heterogenious
+     * lookup in unordered_map and to remove allocation/deletions when performing a shallow lookup.
+     */
     struct Key
     {
+        static inline struct no_ownership_tag {} no_ownership;
         Key();
-        Key(const string& _p, int _s);
+        Key(const string& _path, int _px_size);
+        Key(string_view _path, int _px_size, no_ownership_tag);
+        Key(const Key&);
+        Key(Key&&) noexcept;
+        Key &operator=(const Key& _rhs);
+        Key &operator=(Key&& _rhs) noexcept = default;
         bool operator==(const Key& _rhs) const noexcept;
-        string path;
+        bool operator!=(const Key& _rhs) const noexcept;
+        string_view path;
+        size_t hash = 0;        
         int    px_size = 16;
-        size_t hash = 0;
+        string path_storage;        
     };
     struct KeyHash 
     {

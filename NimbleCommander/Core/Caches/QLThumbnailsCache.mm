@@ -139,13 +139,27 @@ static NSImage *BuildRep( const string &_filename, int _px_size )
 
 NSImage *QLThumbnailsCache::ProduceThumbnail(const string &_filename, int _px_size)
 {
+    return Produce(_filename, _px_size, nullopt);
+}
+    
+NSImage *QLThumbnailsCache::ProduceThumbnail(const string &_filename,
+                                             int _px_size,
+                                             const FileStateHint& _hint)
+{
+    return Produce(_filename, _px_size, _hint);
+}
+
+NSImage *QLThumbnailsCache::Produce(const string &_filename,
+                                    int _px_size,
+                                    const optional<FileStateHint> &_hint)
+{
     const auto temp_key = Key{string_view{_filename}, _px_size, Key::no_ownership};    
     auto lock = unique_lock{m_ItemsLock};
     if( m_Items.count(temp_key) ) {
         auto info = m_Items[temp_key]; // acquiring a copy of shared_ptr **by*value**!
         lock.unlock();
         assert( info != nullptr );        
-        CheckCacheAndUpdateIfNeeded(_filename, _px_size, *info);
+        CheckCacheAndUpdateIfNeeded(_filename, _px_size, *info, _hint);
         return info->image;
     }
     else {
@@ -161,28 +175,40 @@ NSImage *QLThumbnailsCache::ProduceThumbnail(const string &_filename, int _px_si
     }
 }
 
+static optional<QLThumbnailsCache::FileStateHint> ReadFileState(const string &_file_path)
+{
+    struct stat st;
+    if( stat(_file_path.c_str(), &st) != 0 )
+        return nullopt; // for some reason the file is not accessible - can't do anything
+    QLThumbnailsCache::FileStateHint hint;
+    hint.file_size = (uint64_t)st.st_size;
+    hint.mtime = (uint64_t)st.st_mtime;
+    return hint;
+}
+
 void QLThumbnailsCache::CheckCacheAndUpdateIfNeeded(const string &_filename,
                                                     int _px_size,
-                                                    Info &_info)
+                                                    Info &_info,
+                                                    const optional<FileStateHint> &_hint)
 {
     if( _info.is_in_work.test_and_set() == false ) {
         auto clear_lock = at_scope_end([&]{ _info.is_in_work.clear(); });
         // we're first to take control of this item
         
-        struct stat st;
-        if( stat(_filename.c_str(), &st) != 0 )
-            return; // for some reason the file is not accessible - can't do anything
+        const auto file_state_hint = _hint ? _hint : ReadFileState(_filename);
+        if( file_state_hint.has_value() == false )
+            return; // can't proceed without information about the file.
         
         // check if cache is up-to-date
-        if( _info.file_size == (uint64_t)st.st_size &&
-            _info.mtime == (uint64_t)st.st_mtime ) {
-            return; // up-to-date - nothing to do
+        if( _info.file_size == file_state_hint->file_size &&
+            _info.mtime == file_state_hint->mtime ) {
+            return; // is up-to-date => nothing to do
         }        
         
         if( auto img = BuildRep(_filename, _px_size) ) {
             _info.image = img;
-            _info.file_size = st.st_size;
-            _info.mtime = st.st_mtime;
+            _info.file_size = file_state_hint->file_size;
+            _info.mtime = file_state_hint->mtime;
         }
     }
     else {

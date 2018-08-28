@@ -464,8 +464,11 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         if( (_req.unix_mode & S_IFMT) != S_IFDIR &&
             _req.file_size > 0 &&
             _req.file_size <= MaxFileSizeForThumbnailNative ) {
-            auto &qlthumbnails_cache = QLThumbnailsCache::Instance(); 
-            auto tn = qlthumbnails_cache.ProduceThumbnail(_req.relative_path, IconSizeInPixels());
+            auto &cache = QLThumbnailsCache::Instance(); 
+            auto file_hint = QLThumbnailsCache::FileStateHint{};
+            file_hint.file_size = _req.file_size;
+            file_hint.mtime = _req.mtime;
+            auto tn = cache.ProduceThumbnail(_req.relative_path, IconSizeInPixels(), file_hint);
             if( tn )
                 result.thumbnail = tn;
         }

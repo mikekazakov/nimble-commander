@@ -19,11 +19,23 @@ public:
     
     /**
      * Will check for a presence of a thumbnail for _filename in cache.
-     * If it is, will check if file wasn't changed - in this case just return a thumbnail that we have.
-     * If file was changed or there's no thumbnail for this file - produce it with BuildRep() and return result.
+     * If it is, will check if file wasn't changed - in this case just return a thumbnail that we
+     * already have.
+     * If file was changed or there's no thumbnail for this file - will produce it with BuildRep()
+     * and will return the result.
      * May return nil.
      */
     NSImage *ProduceThumbnail(const string &_filename, int _px_size);
+    
+    struct FileStateHint {
+        uint64_t    file_size = 0;
+        uint64_t    mtime = 0;
+    };
+    /**
+     * Same as ProduceThumbnail(filename, px_size), but can use additional information available 
+     * for caller. It may decreate redundant I/O operations when checking for current file state.
+     */
+    NSImage *ProduceThumbnail(const string &_filename, int _px_size, const FileStateHint& _hint);
     
 private:
     enum { m_CacheSize = 4096 };
@@ -64,9 +76,11 @@ private:
     
     using Container = hbn::LRUCache<Key, shared_ptr<Info>, m_CacheSize, KeyHash>;
 
+    NSImage *Produce(const string &_filename, int _px_size, const optional<FileStateHint> &_hint);
     static void CheckCacheAndUpdateIfNeeded(const string &_filename,
                                             int _px_size,
-                                            Info &_info);
+                                            Info &_info,
+                                            const optional<FileStateHint> &_hint);
     static void ProduceNew(const string &_filename,
                            int _px_size,
                            Info &_info);    

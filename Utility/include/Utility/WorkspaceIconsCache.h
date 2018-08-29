@@ -6,6 +6,9 @@
 
 namespace nc::utility {
 
+/**
+ * All methods are thread-safe.
+ */
 class WorkspaceIconsCache
 {
 public:    

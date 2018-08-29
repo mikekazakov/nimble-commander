@@ -5,7 +5,7 @@
 #include <Utility/MIMResponder.h>
 #include <Utility/QLThumbnailsCacheImpl.h>
 #include <Utility/WorkspaceIconsCacheImpl.h>
-#include <Utility/WorkspaceExtensionIconsCache.h>
+#include <Utility/WorkspaceExtensionIconsCacheImpl.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 #include "PanelData.h"
@@ -1066,7 +1066,7 @@ static unique_ptr<IconsGenerator2> MakeIconsGenerator()
 {
     static const auto ql_cache = make_shared<nc::utility::QLThumbnailsCacheImpl>();
     static const auto ws_cache = make_shared<nc::utility::WorkspaceIconsCacheImpl>();
-    static const auto ext_cache = make_shared<nc::utility::WorkspaceExtensionIconsCache>();    
+    static const auto ext_cache = make_shared<nc::utility::WorkspaceExtensionIconsCacheImpl>();    
     return make_unique<IconsGenerator2>(ql_cache, ws_cache, ext_cache);
 }
 

@@ -1,33 +1,37 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
-#include <unordered_map>
-#include <Habanero/spinlock.h>
-
 @class NSImage;
 
 namespace nc::utility {
-
+    
+/**
+ * All methods are thread-safe.
+ */
 class WorkspaceExtensionIconsCache
 {
 public:
-//    static WorkspaceExtensionIconsCache& Instance();
-    WorkspaceExtensionIconsCache();
+    virtual ~WorkspaceExtensionIconsCache() = default;
     
-    NSImage *CachedIconForExtension( const std::string& _extension ) const;
-    NSImage *IconForExtension( const std::string& _extension );
-
-    NSImage *GenericFileIcon() const noexcept;
-    NSImage *GenericFolderIcon() const noexcept;
+    /**
+     * Returns an icon for the extension if the cache already contains it.
+     * Otherwise returns nil.
+     * Can return nil if the cache wasn't able to produce a corresponding image previously. 
+     */
+    virtual NSImage *CachedIconForExtension( const std::string& _extension ) const = 0;
     
-private:
-    NSImage *Find_Locked( const std::string &_extension ) const;
-    void Commit_Locked( const std::string &_extension, NSImage *_image);
-    mutable spinlock                m_Lock;
-    std::unordered_map<std::string, NSImage*> m_Icons;
-    NSImage *m_GenericFileIcon;
-    NSImage *m_GenericFolderIcon;
+    /**
+     * Checks whether the cache already contains an icon for the extension.
+     * If it does - returns it.
+     * Otherwise tries to produce a corresponding image.
+     * Can return nil.
+     */
+    virtual NSImage *IconForExtension( const std::string& _extension ) = 0;    
+    
+    virtual NSImage *GenericFileIcon() const = 0;
+    
+    virtual NSImage *GenericFolderIcon() const = 0;
 };
-
+    
 }

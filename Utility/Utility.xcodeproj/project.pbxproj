@@ -33,6 +33,8 @@
 		CFC54602213639AB00D288A4 /* WorkspaceIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC54601213639AB00D288A4 /* WorkspaceIconsCacheImpl.mm */; };
 		CFC5461C2136711E00D288A4 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5461B2136711E00D288A4 /* WorkspaceExtensionIconsCache.mm */; };
 		CFC5461E2136712700D288A4 /* WorkspaceExtensionIconsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC5461D2136712700D288A4 /* WorkspaceExtensionIconsCache.h */; };
+		CFC546202136812B00D288A4 /* WorkspaceExtensionIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5461F2136812B00D288A4 /* WorkspaceExtensionIconsCacheImpl.mm */; };
+		CFC546222136813400D288A4 /* WorkspaceExtensionIconsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC546212136813400D288A4 /* WorkspaceExtensionIconsCacheImpl.h */; };
 		CFE33EB821356ECE00C3902C /* QLThumbnailsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE33EB721356ECE00C3902C /* QLThumbnailsCache.h */; };
 		CFE33EBA21356ED900C3902C /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE33EB921356ED900C3902C /* QLThumbnailsCache.mm */; };
 		CFE33EBC2135708800C3902C /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE33EBB2135708800C3902C /* Quartz.framework */; };
@@ -135,6 +137,8 @@
 		CFC54601213639AB00D288A4 /* WorkspaceIconsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCacheImpl.mm; path = source/WorkspaceIconsCacheImpl.mm; sourceTree = "<group>"; };
 		CFC5461B2136711E00D288A4 /* WorkspaceExtensionIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCache.mm; path = source/WorkspaceExtensionIconsCache.mm; sourceTree = "<group>"; };
 		CFC5461D2136712700D288A4 /* WorkspaceExtensionIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceExtensionIconsCache.h; path = include/Utility/WorkspaceExtensionIconsCache.h; sourceTree = "<group>"; };
+		CFC5461F2136812B00D288A4 /* WorkspaceExtensionIconsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCacheImpl.mm; path = source/WorkspaceExtensionIconsCacheImpl.mm; sourceTree = "<group>"; };
+		CFC546212136813400D288A4 /* WorkspaceExtensionIconsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceExtensionIconsCacheImpl.h; path = include/Utility/WorkspaceExtensionIconsCacheImpl.h; sourceTree = "<group>"; };
 		CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeychainServices.h; path = include/Utility/KeychainServices.h; sourceTree = "<group>"; };
 		CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeychainServices.cpp; path = source/KeychainServices.cpp; sourceTree = "<group>"; };
 		CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+MassObserving.h"; path = "include/Utility/NSObject+MassObserving.h"; sourceTree = "<group>"; };
@@ -277,6 +281,7 @@
 				CF1846F51E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h */,
 				CF960E1C1C992F2C001D8B02 /* VolumeInformation.h */,
 				CFC5461D2136712700D288A4 /* WorkspaceExtensionIconsCache.h */,
+				CFC546212136813400D288A4 /* WorkspaceExtensionIconsCacheImpl.h */,
 				CFC545FB2136355F00D288A4 /* WorkspaceIconsCache.h */,
 				CFC545FF213639A100D288A4 /* WorkspaceIconsCacheImpl.h */,
 			);
@@ -324,6 +329,7 @@
 				CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */,
 				CF960E281C992F35001D8B02 /* VolumeInformation.cpp */,
 				CFC5461B2136711E00D288A4 /* WorkspaceExtensionIconsCache.mm */,
+				CFC5461F2136812B00D288A4 /* WorkspaceExtensionIconsCacheImpl.mm */,
 				CFC545FD2136356900D288A4 /* WorkspaceIconsCache.mm */,
 				CFC54601213639AB00D288A4 /* WorkspaceIconsCacheImpl.mm */,
 			);
@@ -360,6 +366,7 @@
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
 				CFC545FC2136355F00D288A4 /* WorkspaceIconsCache.h in Headers */,
 				CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */,
+				CFC546222136813400D288A4 /* WorkspaceExtensionIconsCacheImpl.h in Headers */,
 				CFC545E82135753900D288A4 /* QLThumbnailsCacheImpl.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -472,6 +479,7 @@
 				CFFA94671F453CC00035E606 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFFA946D1F453CC00035E606 /* Encodings.cpp in Sources */,
 				CFFA94771F453CC00035E606 /* KeychainServices.cpp in Sources */,
+				CFC546202136812B00D288A4 /* WorkspaceExtensionIconsCacheImpl.mm in Sources */,
 				CFFA94791F453CC00035E606 /* NativeFSManager.mm in Sources */,
 				CFFA94711F453CC00035E606 /* FontExtras.cpp in Sources */,
 				CFFA94701F453CC00035E606 /* FontCache.cpp in Sources */,

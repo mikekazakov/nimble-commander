@@ -1,5 +1,7 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
+
+#include <VFS/VFSDeclarations.h>
 
 @class PanelController;
 
@@ -8,18 +10,18 @@ namespace nc::panel {
 class DragSender
 {
 public:
-    DragSender( PanelController *_panel );
+    using IconCallback = function<NSImage*(const VFSListingItem &_item)>;
+    
+    DragSender(PanelController *_panel, IconCallback _icon_callback); 
     ~DragSender();
 
     void Start(NSView *_from_view,
                NSEvent *_via_event,
                int _dragged_panel_item_sorted_index );
 
-    void SetIconCallback( function<NSImage*(int _item_index)> _callback);
-
 private:
     PanelController *m_Panel;
-    function<NSImage*(int _item_index)> m_IconCallback;
+    IconCallback m_IconCallback;
 };
 
 }

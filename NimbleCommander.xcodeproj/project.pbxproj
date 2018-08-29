@@ -31,7 +31,6 @@
 		CF04DDD81E2775D70047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
 		CF04DDD91E2775D70047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
 		CF04DDDA1E2775D80047B1F9 /* AliasBadgeIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */; };
-		CF04DDDD1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */; };
 		CF04DDE61E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
 		CF04DDE71E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
 		CF04DDE81E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */; };
@@ -869,9 +868,6 @@
 		CFD726221E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
 		CFD726231E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
 		CFD726241E42E0B200603077 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
-		CFD726251E42E0B900603077 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */; };
-		CFD726261E42E0B900603077 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */; };
-		CFD726271E42E0BA00603077 /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */; };
 		CFD7262C1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */; };
 		CFD7262D1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */; };
 		CFD7262E1E42E0C300603077 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */; };
@@ -1482,8 +1478,6 @@
 		CF039EA41791112900DC85D6 /* RHPreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RHPreferencesWindowController.h; path = 3rd_Party/RHPreferences/RHPreferences/RHPreferencesWindowController.h; sourceTree = SOURCE_ROOT; };
 		CF039EA51791112900DC85D6 /* RHPreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RHPreferencesWindowController.m; path = 3rd_Party/RHPreferences/RHPreferences/RHPreferencesWindowController.m; sourceTree = SOURCE_ROOT; };
 		CF04DDD61E27743C0047B1F9 /* AliasBadgeIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = AliasBadgeIcon.icns; path = NimbleCommander/Resources/AliasBadgeIcon.icns; sourceTree = SOURCE_ROOT; };
-		CF04DDDB1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceExtensionIconsCache.h; path = NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.h; sourceTree = SOURCE_ROOT; };
-		CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCache.mm; path = NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.mm; sourceTree = SOURCE_ROOT; };
 		CF04DDE31E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PreferencesWindowThemesTab.h; path = NimbleCommander/Preferences/PreferencesWindowThemesTab.h; sourceTree = SOURCE_ROOT; };
 		CF04DDE41E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PreferencesWindowThemesTab.mm; path = NimbleCommander/Preferences/PreferencesWindowThemesTab.mm; sourceTree = SOURCE_ROOT; };
 		CF04DDF41E2DBF1D0047B1F9 /* Preferences.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Preferences.mm; path = NimbleCommander/Preferences/Preferences.mm; sourceTree = SOURCE_ROOT; };
@@ -3162,8 +3156,6 @@
 		CFDAC2C51DFD0F370039A104 /* Caches */ = {
 			isa = PBXGroup;
 			children = (
-				CF04DDDB1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.h */,
-				CF04DDDC1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm */,
 				CF6237061EB4436400152B2B /* QLThumbnailsCache_Tests.mm */,
 				CFDAC2C81DFD0F840039A104 /* QLVFSThumbnailsCache.h */,
 				CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */,
@@ -3917,7 +3909,6 @@
 				CF4E56B81D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFD726231E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */,
 				CFD726F11E42E2DD00603077 /* PanelListViewSizeView.mm in Sources */,
-				CFD726251E42E0B900603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
 				CF04DDE81E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CFDAC2B61DFD0B7D0039A104 /* AppStoreHelper.mm in Sources */,
 				CFD7260B1E42E07400603077 /* Application.mm in Sources */,
@@ -4292,7 +4283,6 @@
 				CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 				CF36DBF31F6C18F4004A018E /* TextWidthsCache.mm in Sources */,
 				CF818B6B1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
-				CFD726271E42E0BA00603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4377,7 +4367,6 @@
 				CF56C2B81DC1934D00F0DF0F /* PanelListViewNameView.mm in Sources */,
 				CF3B7F802021747100BF2090 /* CursorBackup.mm in Sources */,
 				CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */,
-				CF04DDDD1E28AE410047B1F9 /* WorkspaceExtensionIconsCache.mm in Sources */,
 				CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */,
 				CF0139A51E98BA6700E44F2D /* FilterPopUpMenu.mm in Sources */,
 				CF4D98CA202BEC6900ECE06D /* StateActionsDispatcher.mm in Sources */,
@@ -4708,7 +4697,6 @@
 				CFD726571E42E1A700603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
 				CF4E56F11D5072E900452912 /* SearchForFiles.cpp in Sources */,
-				CFD726261E42E0B900603077 /* WorkspaceExtensionIconsCache.mm in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
 				CF818B631EA0610E00BC28E6 /* MakeNew.mm in Sources */,
 				CF5E9A5A1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */,

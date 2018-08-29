@@ -3,6 +3,7 @@
 
 #include <Utility/QLThumbnailsCache.h>
 #include <Utility/WorkspaceIconsCache.h>
+#include <Utility/WorkspaceExtensionIconsCache.h>
 #include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
 
@@ -16,8 +17,10 @@ namespace data {
 class IconsGenerator2
 {
 public:
-    IconsGenerator2(const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache,
-                    const std::shared_ptr<utility::WorkspaceIconsCache> &_workspace_icons_cache);
+    IconsGenerator2
+        (const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache,
+         const std::shared_ptr<utility::WorkspaceIconsCache> &_workspace_icons_cache,
+         const std::shared_ptr<utility::WorkspaceExtensionIconsCache> &_extension_icons_cache);
     ~IconsGenerator2();
     
     // callback will be executed in main thread
@@ -31,7 +34,11 @@ public:
     
     // do not rely on .size of this image, it may not respect scale factor.
     NSImage *ImageFor( const VFSListingItem &_item, data::ItemVolatileData &_item_vd );
-    NSImage *AvailbleImageFor(const VFSListingItem &_item, data::ItemVolatileData _item_vd ) const;
+    
+    /**
+     * WRITE!!!!
+     */
+    NSImage *AvailableImageFor(const VFSListingItem &_item, data::ItemVolatileData _item_vd ) const;
 
     void SyncDiscardedAndOutdated( nc::panel::data::Model &_pd );
     
@@ -103,6 +110,7 @@ private:
     
     std::shared_ptr<utility::QLThumbnailsCache> m_QLThumbnailsCache;
     std::shared_ptr<utility::WorkspaceIconsCache> m_WorkspaceIconsCache;
+    std::shared_ptr<utility::WorkspaceExtensionIconsCache> m_WorkspaceExtensionIconsCache;
 };
 
 }

@@ -1,25 +1,18 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "IconsGenerator2.h"
 #include <Quartz/Quartz.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/dirent.h>
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/Caches/QLVFSThumbnailsCache.h>
-#include <NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
-#include "IconsGenerator2.h"
 
 namespace nc::panel {
 
-using namespace nc::core;
-
 static const auto g_DummyImage = [[NSImage alloc] initWithSize:NSMakeSize(0,0)];
-static const auto g_GenericFolderIcon =
-    WorkspaceExtensionIconsCache::Instance().GenericFolderIcon(); 
-static const auto g_GenericFileIcon =
-    WorkspaceExtensionIconsCache::Instance().GenericFileIcon(); 
 
 static NSImage *ProduceThumbnailForVFS(const string &_path,
                                    const string &_ext,
@@ -197,9 +190,11 @@ inline NSImage *IconsGenerator2::IconStorage::Any() const
 
 IconsGenerator2::IconsGenerator2
     (const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache,
-     const std::shared_ptr<utility::WorkspaceIconsCache> &_workspace_icons_cache):
+     const std::shared_ptr<utility::WorkspaceIconsCache> &_workspace_icons_cache,
+     const std::shared_ptr<utility::WorkspaceExtensionIconsCache> &_extension_icons_cache):
     m_QLThumbnailsCache(_ql_cache),
-    m_WorkspaceIconsCache(_workspace_icons_cache)
+    m_WorkspaceIconsCache(_workspace_icons_cache),
+    m_WorkspaceExtensionIconsCache(_extension_icons_cache)
 {
     m_WorkGroup.SetOnDry([=]{
         DrainStash();
@@ -238,7 +233,9 @@ unsigned short IconsGenerator2::GetSuitablePositionForNewIcon()
 
 NSImage *IconsGenerator2::GetGenericIcon( const VFSListingItem &_item ) const
 {
-    return _item.IsDir() ? g_GenericFolderIcon : g_GenericFileIcon;
+    return _item.IsDir() ? 
+        m_WorkspaceExtensionIconsCache->GenericFolderIcon() :
+        m_WorkspaceExtensionIconsCache->GenericFileIcon();
 }
 
 NSImage *IconsGenerator2::GetCachedExtensionIcon( const VFSListingItem &_item) const
@@ -246,7 +243,7 @@ NSImage *IconsGenerator2::GetCachedExtensionIcon( const VFSListingItem &_item) c
     if( !_item.HasExtension() )
         return nil;
 
-    return WorkspaceExtensionIconsCache::Instance().CachedIconForExtension( _item.Extension() );
+    return m_WorkspaceExtensionIconsCache->CachedIconForExtension( _item.Extension() );
 }
 
 bool IconsGenerator2::IsFull() const
@@ -341,8 +338,8 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolati
     return is.Any();
 }
 
-NSImage *IconsGenerator2::AvailbleImageFor(const VFSListingItem &_item,
-                                           data::ItemVolatileData _item_vd ) const
+NSImage *IconsGenerator2::AvailableImageFor(const VFSListingItem &_item,
+                                            data::ItemVolatileData _item_vd ) const
 {
     dispatch_assert_main_queue(); // STA api design
     
@@ -444,7 +441,7 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         
         // zero - if we haven't image for this extension - produce it
         if( !_req.extension.empty() )
-            WorkspaceExtensionIconsCache::Instance().IconForExtension( _req.extension );
+            m_WorkspaceExtensionIconsCache->IconForExtension( _req.extension );
         
         if( _req.generation != m_Generation )
             return nullopt;
@@ -496,7 +493,7 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         
         // produce extension icon for file
         if( !_req.thumbnail && !_req.filetype && !_req.extension.empty() )
-            if( auto i = WorkspaceExtensionIconsCache::Instance().IconForExtension(_req.extension) )
+            if( auto i = m_WorkspaceExtensionIconsCache->IconForExtension(_req.extension) )
                 result.filetype = i;
     }
     

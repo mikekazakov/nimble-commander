@@ -1,9 +1,11 @@
 // Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WorkspaceExtensionIconsCache.h"
+#include <Cocoa/Cocoa.h>
+#include <Utility/StringExtras.h>
 
-namespace nc::core {
+namespace nc::utility {
 
-static NSString *NonDynaticUTIForExtension( const string &_extension );
+static NSString *NonDynaticUTIForExtension( const std::string &_extension );
 
 WorkspaceExtensionIconsCache::WorkspaceExtensionIconsCache()
 {
@@ -12,18 +14,18 @@ WorkspaceExtensionIconsCache::WorkspaceExtensionIconsCache()
         NSFileTypeForHFSTypeCode(kGenericDocumentIcon)];
 }
 
-WorkspaceExtensionIconsCache& WorkspaceExtensionIconsCache::Instance()
-{
-    static const auto i = new WorkspaceExtensionIconsCache;
-    return *i;
-}
+//WorkspaceExtensionIconsCache& WorkspaceExtensionIconsCache::Instance()
+//{
+//    static const auto i = new WorkspaceExtensionIconsCache;
+//    return *i;
+//}
 
-NSImage *WorkspaceExtensionIconsCache::CachedIconForExtension( const string& _extension ) const
+NSImage *WorkspaceExtensionIconsCache::CachedIconForExtension( const std::string& _extension ) const
 {
     return Find_Locked(_extension);
 }
 
-NSImage *WorkspaceExtensionIconsCache::Find_Locked( const string &_extension ) const
+NSImage *WorkspaceExtensionIconsCache::Find_Locked( const std::string &_extension ) const
 {
     if( _extension.empty() )
         return nil;
@@ -35,14 +37,14 @@ NSImage *WorkspaceExtensionIconsCache::Find_Locked( const string &_extension ) c
     return nil;
 }
 
-void WorkspaceExtensionIconsCache::Commit_Locked( const string &_extension, NSImage *_image)
+void WorkspaceExtensionIconsCache::Commit_Locked( const std::string &_extension, NSImage *_image)
 {
     LOCK_GUARD(m_Lock) {
         m_Icons.emplace(_extension, _image);
     }
 }
 
-NSImage *WorkspaceExtensionIconsCache::IconForExtension( const string& _extension )
+NSImage *WorkspaceExtensionIconsCache::IconForExtension( const std::string& _extension )
 {
     if( _extension.empty() )
         return nil;
@@ -74,7 +76,7 @@ NSImage *WorkspaceExtensionIconsCache::GenericFolderIcon() const noexcept
 }
 
 static const auto g_DynamicUTIPrefix = @"dyn.a";
-static NSString *NonDynaticUTIForExtension( const string &_extension )
+static NSString *NonDynaticUTIForExtension( const std::string &_extension )
 {
     const auto extension = [NSString stringWithUTF8StdString:_extension];
     if( !extension )

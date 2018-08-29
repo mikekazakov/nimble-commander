@@ -5,6 +5,7 @@
 #include <Utility/MIMResponder.h>
 #include <Utility/QLThumbnailsCacheImpl.h>
 #include <Utility/WorkspaceIconsCacheImpl.h>
+#include <Utility/WorkspaceExtensionIconsCache.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 #include "PanelData.h"
@@ -976,15 +977,13 @@ static unique_ptr<IconsGenerator2> MakeIconsGenerator();
 
 - (void)panelItem:(int)_sorted_index mouseDragged:(NSEvent*)_event
 {
-    DragSender sender{self.controller};
-    sender.SetIconCallback([self](int _item_index) -> NSImage* {
-        if( const auto entry = m_Data->EntryAtSortPosition(_item_index) ) {
-            const auto vd = m_Data->VolatileDataAtSortPosition(_item_index);            
-            return m_IconsGenerator->AvailbleImageFor(entry, vd).copy;
-        }
-        return nil;
-    });
-    
+    auto icon_producer = DragSender::IconCallback{[self](const VFSListingItem &_item) -> NSImage* {
+        assert( m_Data->ListingPtr() == _item.Listing() );
+        const auto vd = m_Data->VolatileDataAtRawPosition(_item.Index());
+        return m_IconsGenerator->AvailableImageFor(_item, vd);        
+    }};
+
+    DragSender sender{self.controller, move(icon_producer)};
     sender.Start(self, _event, _sorted_index);
 }
 
@@ -1067,7 +1066,8 @@ static unique_ptr<IconsGenerator2> MakeIconsGenerator()
 {
     static const auto ql_cache = make_shared<nc::utility::QLThumbnailsCacheImpl>();
     static const auto ws_cache = make_shared<nc::utility::WorkspaceIconsCacheImpl>();
-    return make_unique<IconsGenerator2>(ql_cache, ws_cache);
+    static const auto ext_cache = make_shared<nc::utility::WorkspaceExtensionIconsCache>();    
+    return make_unique<IconsGenerator2>(ql_cache, ws_cache, ext_cache);
 }
 
 }

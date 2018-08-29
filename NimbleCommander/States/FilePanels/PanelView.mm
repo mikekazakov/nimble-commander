@@ -4,6 +4,7 @@
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <Utility/MIMResponder.h>
 #include <Utility/QLThumbnailsCacheImpl.h>
+#include <Utility/WorkspaceIconsCacheImpl.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 #include "PanelData.h"
@@ -1065,7 +1066,8 @@ namespace nc::panel {
 static unique_ptr<IconsGenerator2> MakeIconsGenerator()
 {
     static const auto ql_cache = make_shared<nc::utility::QLThumbnailsCacheImpl>();
-    return make_unique<IconsGenerator2>(ql_cache);
+    static const auto ws_cache = make_shared<nc::utility::WorkspaceIconsCacheImpl>();
+    return make_unique<IconsGenerator2>(ql_cache, ws_cache);
 }
 
 }

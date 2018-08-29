@@ -1,16 +1,23 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "WorkspaceIconsCacheImpl.h"
 #include <sys/stat.h>
-#include "WorkspaceIconsCache.h"
+#include <Cocoa/Cocoa.h>
+#include <Utility/StringExtras.h>
 
-WorkspaceIconsCache& WorkspaceIconsCache::Instance()
-{
-    static auto inst = new WorkspaceIconsCache;
-    return *inst;
+namespace nc::utility {
+
+WorkspaceIconsCacheImpl::WorkspaceIconsCacheImpl()
+{        
+}
+    
+WorkspaceIconsCacheImpl::~WorkspaceIconsCacheImpl()
+{        
 }
 
-NSImage *WorkspaceIconsCache::IconIfHas(const string &_filename)
+
+NSImage *WorkspaceIconsCacheImpl::IconIfHas(const std::string &_filename)
 {
-    shared_lock<shared_timed_mutex> lock(m_ItemsLock);
+    std::shared_lock<std::shared_timed_mutex> lock(m_ItemsLock);
     
     auto i = m_Items.find(_filename);
     if(i != end(m_Items))
@@ -18,12 +25,12 @@ NSImage *WorkspaceIconsCache::IconIfHas(const string &_filename)
     return nil;
 }
 
-static NSImage *BuildRep(const string &_filename)
+static NSImage *BuildRep(const std::string &_filename)
 {
     return [NSWorkspace.sharedWorkspace iconForFile:[NSString stringWithUTF8StdString:_filename]];
 }
 
-NSImage *WorkspaceIconsCache::ProduceIcon(const string &_filename)
+NSImage *WorkspaceIconsCacheImpl::ProduceIcon(const std::string &_filename)
 {
     m_ItemsLock.lock_shared();
     
@@ -57,7 +64,7 @@ NSImage *WorkspaceIconsCache::ProduceIcon(const string &_filename)
             m_ItemsLock.unlock_shared();
             
             // make this item MRU
-            lock_guard<mutex> mru_lock(m_MRULock);
+            std::lock_guard<std::mutex> mru_lock(m_MRULock);
             m_MRU.erase(find(begin(m_MRU), end(m_MRU), i));
             m_MRU.emplace_back(i);
         }
@@ -75,8 +82,8 @@ NSImage *WorkspaceIconsCache::ProduceIcon(const string &_filename)
         if(stat(_filename.c_str(), &st) == 0) // but file should exist and be accessible
         { // put in a cache
             
-            lock_guard<mutex> mru_lock(m_MRULock);
-            lock_guard<shared_timed_mutex> items_lock(m_ItemsLock);
+            std::lock_guard<std::mutex> mru_lock(m_MRULock);
+            std::lock_guard<std::shared_timed_mutex> items_lock(m_ItemsLock);
             
             while(m_MRU.size() >= m_CacheSize)
             { // wipe out old ones if cache is too fat
@@ -100,3 +107,6 @@ NSImage *WorkspaceIconsCache::ProduceIcon(const string &_filename)
     }
     return result;
 }
+
+}
+

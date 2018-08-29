@@ -879,9 +879,6 @@
 		CFD7262C1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */; };
 		CFD7262D1E42E0C200603077 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */; };
 		CFD7262E1E42E0C300603077 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */; };
-		CFD7262F1E42E0C600603077 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CB1DFD0F840039A104 /* WorkspaceIconsCache.mm */; };
-		CFD726301E42E0C600603077 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CB1DFD0F840039A104 /* WorkspaceIconsCache.mm */; };
-		CFD726311E42E0C700603077 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CB1DFD0F840039A104 /* WorkspaceIconsCache.mm */; };
 		CFD726351E42E0D400603077 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */; };
 		CFD726361E42E0D500603077 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */; };
 		CFD726371E42E0D500603077 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */; };
@@ -1164,7 +1161,6 @@
 		CFDAC2C31DFD0DE40039A104 /* PanelAux.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C01DFD0DE40039A104 /* PanelAux.mm */; };
 		CFDAC2C41DFD0DE40039A104 /* SharingService.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C21DFD0DE40039A104 /* SharingService.mm */; };
 		CFDAC2CD1DFD0F840039A104 /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */; };
-		CFDAC2CE1DFD0F840039A104 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CB1DFD0F840039A104 /* WorkspaceIconsCache.mm */; };
 		CFDAC2D11DFD105A0039A104 /* MASAppInstalledChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2CF1DFD105A0039A104 /* MASAppInstalledChecker.cpp */; };
 		CFDAC2D81DFD11970039A104 /* LaunchServices.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2D71DFD11970039A104 /* LaunchServices.mm */; };
 		CFDAC2DB1DFD12EF0039A104 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */; };
@@ -2054,8 +2050,6 @@
 		CFDAC2C21DFD0DE40039A104 /* SharingService.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SharingService.mm; path = NimbleCommander/States/FilePanels/SharingService.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2C81DFD0F840039A104 /* QLVFSThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QLVFSThumbnailsCache.h; path = NimbleCommander/Core/Caches/QLVFSThumbnailsCache.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLVFSThumbnailsCache.mm; path = NimbleCommander/Core/Caches/QLVFSThumbnailsCache.mm; sourceTree = SOURCE_ROOT; };
-		CFDAC2CA1DFD0F840039A104 /* WorkspaceIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceIconsCache.h; path = NimbleCommander/Core/Caches/WorkspaceIconsCache.h; sourceTree = SOURCE_ROOT; };
-		CFDAC2CB1DFD0F840039A104 /* WorkspaceIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCache.mm; path = NimbleCommander/Core/Caches/WorkspaceIconsCache.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2CF1DFD105A0039A104 /* MASAppInstalledChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MASAppInstalledChecker.cpp; path = NimbleCommander/Core/Marketing/MASAppInstalledChecker.cpp; sourceTree = SOURCE_ROOT; };
 		CFDAC2D01DFD105A0039A104 /* MASAppInstalledChecker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MASAppInstalledChecker.h; path = NimbleCommander/Core/Marketing/MASAppInstalledChecker.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2D61DFD11970039A104 /* LaunchServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LaunchServices.h; path = NimbleCommander/Core/LaunchServices.h; sourceTree = SOURCE_ROOT; };
@@ -3187,8 +3181,6 @@
 				CF6237061EB4436400152B2B /* QLThumbnailsCache_Tests.mm */,
 				CFDAC2C81DFD0F840039A104 /* QLVFSThumbnailsCache.h */,
 				CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */,
-				CFDAC2CA1DFD0F840039A104 /* WorkspaceIconsCache.h */,
-				CFDAC2CB1DFD0F840039A104 /* WorkspaceIconsCache.mm */,
 			);
 			name = Caches;
 			sourceTree = "<group>";
@@ -4085,7 +4077,6 @@
 				CFD726B41E42E27900603077 /* PanelViewPresentationItemsColoringFilter.mm in Sources */,
 				CF6D9BD6196677CA0077B146 /* RHPreferencesWindowController.m in Sources */,
 				CF6D9BD7196677CA0077B146 /* NSFileManager+DirectoryLocations.m in Sources */,
-				CFD726301E42E0C600603077 /* WorkspaceIconsCache.mm in Sources */,
 				CFB66F9A1D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -4102,7 +4093,6 @@
 				CF9F4B021ECC8DD000E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
 				CF818B4F1EA0610C00BC28E6 /* ToggleSort.mm in Sources */,
 				CF4E56D81D506B9800452912 /* FindFilesSheetController.mm in Sources */,
-				CFD726311E42E0C700603077 /* WorkspaceIconsCache.mm in Sources */,
 				CFD726F71E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */,
 				CFD726EC1E42E2D600603077 /* PanelListViewNameView.mm in Sources */,
 				CFA5396A1D433E2A00C562A7 /* SelectionWithMaskPopupViewController.mm in Sources */,
@@ -4424,7 +4414,6 @@
 				CF876D261D51E04A009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF4E56421D5064FE00452912 /* PreferencesWindowPanelsTab.mm in Sources */,
 				CFDAC2DE1DFD137F0039A104 /* QuickLookOverlay.mm in Sources */,
-				CFDAC2CE1DFD0F840039A104 /* WorkspaceIconsCache.mm in Sources */,
 				CFDAC2051DF921160039A104 /* PanelDataStatistics.cpp in Sources */,
 				CF94CF941DD4418000EEA420 /* Layout.mm in Sources */,
 				CFC4F99F1F0F40430000B3EE /* Link.mm in Sources */,
@@ -4590,7 +4579,6 @@
 				CFD727171E42E32400603077 /* ToolsMenuDelegate.mm in Sources */,
 				CFA1715E20174CA900F507D5 /* LocationFormatter.mm in Sources */,
 				CF90C0BF1EC171FD0056E3B8 /* PanelDataFilter.mm in Sources */,
-				CFD7262F1E42E0C600603077 /* WorkspaceIconsCache.mm in Sources */,
 				CFD726791E42E20200603077 /* PanelController.mm in Sources */,
 				CF46C24620317FEE00A91E2F /* ServicesHandler.mm in Sources */,
 				CFD726701E42E1F500603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,

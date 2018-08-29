@@ -36,11 +36,17 @@ public:
     void clear();
     void insert( _Key _key, _Value _value );
 
+    /**
+     * Returns 1 if there is a value associated with _key, or 0 otherwise.
+     * Does not change LRU order.
+     * O(1).
+     */
     size_t count( const _Key &_key ) const noexcept;
     
     /**
      * Checks whether there is a value corresponding to _key. If there is - makes it the most
      * recent and returns a reference to the value. Otherwise, throws an exception.
+     * O(1).
      */
     _Value &at( const _Key &_key );
     
@@ -49,6 +55,7 @@ public:
      * recent and returns a reference to the value. Otherwise, creates a (_key, Value{}) pair,
      * inserts it to the front and returns a references to the value.
      * May evict another value in the process if cache is already at max_size().
+     * O(1).
      */
     _Value &operator[]( const _Key &_key );
     

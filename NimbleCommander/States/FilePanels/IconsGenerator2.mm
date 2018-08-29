@@ -5,7 +5,6 @@
 #include <sys/dirent.h>
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/Caches/QLVFSThumbnailsCache.h>
-#include <NimbleCommander/Core/Caches/WorkspaceIconsCache.h>
 #include <NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelData.h"
@@ -209,8 +208,11 @@ inline NSImage *IconsGenerator2::IconStorage::Any() const
     return generic;
 }
 
-IconsGenerator2::IconsGenerator2(const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache):
-    m_QLThumbnailsCache(_ql_cache)
+IconsGenerator2::IconsGenerator2
+    (const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache,
+     const std::shared_ptr<utility::WorkspaceIconsCache> &_workspace_icons_cache):
+    m_QLThumbnailsCache(_ql_cache),
+    m_WorkspaceIconsCache(_workspace_icons_cache)
 {
     m_WorkGroup.SetOnDry([=]{
         DrainStash();
@@ -329,7 +331,7 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolati
 
     // check if we already have icon built
     if( is_native_fs )
-        if( auto img = WorkspaceIconsCache::Instance().IconIfHas(rel_path) )
+        if( auto img = m_WorkspaceIconsCache->IconIfHas(rel_path) )
                 is.filetype = img;
         
     _item_vd.icon = is_no+1;
@@ -479,7 +481,7 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         if(_req.thumbnail == nil &&
            CheckFileIsOK(_req.relative_path.c_str()) // possible redundant call here. not good.
            ) {
-            auto icon = WorkspaceIconsCache::Instance().ProduceIcon( _req.relative_path );
+            auto icon = m_WorkspaceIconsCache->ProduceIcon( _req.relative_path );
             if(icon != nil && icon != _req.filetype)
                 result.filetype = icon;
         }

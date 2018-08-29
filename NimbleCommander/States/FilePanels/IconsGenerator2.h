@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Utility/QLThumbnailsCache.h>
+#include <Utility/WorkspaceIconsCache.h>
 #include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
 
@@ -15,7 +16,8 @@ namespace data {
 class IconsGenerator2
 {
 public:
-    IconsGenerator2(const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache);
+    IconsGenerator2(const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache,
+                    const std::shared_ptr<utility::WorkspaceIconsCache> &_workspace_icons_cache);
     ~IconsGenerator2();
     
     // callback will be executed in main thread
@@ -100,6 +102,7 @@ private:
     queue<BuildRequest>     m_RequestsStash;
     
     std::shared_ptr<utility::QLThumbnailsCache> m_QLThumbnailsCache;
+    std::shared_ptr<utility::WorkspaceIconsCache> m_WorkspaceIconsCache;
 };
 
 }

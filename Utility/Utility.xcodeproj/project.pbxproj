@@ -27,6 +27,10 @@
 		CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */; };
 		CFC545E82135753900D288A4 /* QLThumbnailsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC545E72135753900D288A4 /* QLThumbnailsCacheImpl.h */; };
 		CFC545EA2135754200D288A4 /* QLThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC545E92135754200D288A4 /* QLThumbnailsCacheImpl.mm */; };
+		CFC545FC2136355F00D288A4 /* WorkspaceIconsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC545FB2136355F00D288A4 /* WorkspaceIconsCache.h */; };
+		CFC545FE2136356900D288A4 /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC545FD2136356900D288A4 /* WorkspaceIconsCache.mm */; };
+		CFC54600213639A100D288A4 /* WorkspaceIconsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC545FF213639A100D288A4 /* WorkspaceIconsCacheImpl.h */; };
+		CFC54602213639AB00D288A4 /* WorkspaceIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC54601213639AB00D288A4 /* WorkspaceIconsCacheImpl.mm */; };
 		CFE33EB821356ECE00C3902C /* QLThumbnailsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE33EB721356ECE00C3902C /* QLThumbnailsCache.h */; };
 		CFE33EBA21356ED900C3902C /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE33EB921356ED900C3902C /* QLThumbnailsCache.mm */; };
 		CFE33EBC2135708800C3902C /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE33EBB2135708800C3902C /* Quartz.framework */; };
@@ -123,6 +127,10 @@
 		CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SimpleComboBoxPersistentDataSource.mm; path = source/SimpleComboBoxPersistentDataSource.mm; sourceTree = "<group>"; };
 		CFC545E72135753900D288A4 /* QLThumbnailsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QLThumbnailsCacheImpl.h; path = include/Utility/QLThumbnailsCacheImpl.h; sourceTree = "<group>"; };
 		CFC545E92135754200D288A4 /* QLThumbnailsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCacheImpl.mm; path = source/QLThumbnailsCacheImpl.mm; sourceTree = "<group>"; };
+		CFC545FB2136355F00D288A4 /* WorkspaceIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceIconsCache.h; path = include/Utility/WorkspaceIconsCache.h; sourceTree = "<group>"; };
+		CFC545FD2136356900D288A4 /* WorkspaceIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCache.mm; path = source/WorkspaceIconsCache.mm; sourceTree = "<group>"; };
+		CFC545FF213639A100D288A4 /* WorkspaceIconsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceIconsCacheImpl.h; path = include/Utility/WorkspaceIconsCacheImpl.h; sourceTree = "<group>"; };
+		CFC54601213639AB00D288A4 /* WorkspaceIconsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCacheImpl.mm; path = source/WorkspaceIconsCacheImpl.mm; sourceTree = "<group>"; };
 		CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeychainServices.h; path = include/Utility/KeychainServices.h; sourceTree = "<group>"; };
 		CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeychainServices.cpp; path = source/KeychainServices.cpp; sourceTree = "<group>"; };
 		CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+MassObserving.h"; path = "include/Utility/NSObject+MassObserving.h"; sourceTree = "<group>"; };
@@ -264,6 +272,8 @@
 				CF960E1B1C992F2C001D8B02 /* SystemInformation.h */,
 				CF1846F51E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h */,
 				CF960E1C1C992F2C001D8B02 /* VolumeInformation.h */,
+				CFC545FB2136355F00D288A4 /* WorkspaceIconsCache.h */,
+				CFC545FF213639A100D288A4 /* WorkspaceIconsCacheImpl.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -308,6 +318,8 @@
 				CF960E271C992F35001D8B02 /* SystemInformation.mm */,
 				CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */,
 				CF960E281C992F35001D8B02 /* VolumeInformation.cpp */,
+				CFC545FD2136356900D288A4 /* WorkspaceIconsCache.mm */,
+				CFC54601213639AB00D288A4 /* WorkspaceIconsCacheImpl.mm */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -334,10 +346,12 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFC54600213639A100D288A4 /* WorkspaceIconsCacheImpl.h in Headers */,
 				CFE33EB821356ECE00C3902C /* QLThumbnailsCache.h in Headers */,
 				CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */,
 				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
+				CFC545FC2136355F00D288A4 /* WorkspaceIconsCache.h in Headers */,
 				CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */,
 				CFC545E82135753900D288A4 /* QLThumbnailsCacheImpl.h in Headers */,
 			);
@@ -459,6 +473,7 @@
 				CF3B7F6D201F167200BF2090 /* MIMResponder.mm in Sources */,
 				CFFA947B1F453CC00035E606 /* NSObject+MassObserving.m in Sources */,
 				CFFA946F1F453CC00035E606 /* ExtensionLowercaseComparison.cpp in Sources */,
+				CFC54602213639AB00D288A4 /* WorkspaceIconsCacheImpl.mm in Sources */,
 				CFFA94811F453CC00035E606 /* StringExtras.mm in Sources */,
 				CFFA947A1F453CC00035E606 /* NSMenu+Hierarchical.mm in Sources */,
 				CFC545EA2135754200D288A4 /* QLThumbnailsCacheImpl.mm in Sources */,
@@ -472,6 +487,7 @@
 				CFFA94831F453CC00035E606 /* SystemInformation.mm in Sources */,
 				CFFA94681F453CC00035E606 /* BlinkingCaret.mm in Sources */,
 				CFFA94821F453CC00035E606 /* SyncMessageBox.mm in Sources */,
+				CFC545FE2136356900D288A4 /* WorkspaceIconsCache.mm in Sources */,
 				CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */,
 				CFFA946E1F453CC00035E606 /* EncodingsAdditions.mm in Sources */,
 				CFFA94731F453CC00035E606 /* FPSLimitedDrawer.mm in Sources */,

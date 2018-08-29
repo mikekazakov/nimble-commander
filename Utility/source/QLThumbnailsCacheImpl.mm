@@ -157,8 +157,8 @@ NSImage *QLThumbnailsCacheImpl::Produce(const std::string &_filename,
 {
     const auto temp_key = Key{std::string_view{_filename}, _px_size, Key::no_ownership};    
     auto lock = std::unique_lock{m_ItemsLock};
-    if( m_Items.count(temp_key) ) {
-        auto info = m_Items[temp_key]; // acquiring a copy of shared_ptr **by*value**!
+    if( m_Items.count(temp_key) ) { // O(1)
+        auto info = m_Items[temp_key]; // acquiring a copy of shared_ptr **by*value**! O(1)
         lock.unlock();
         assert( info != nullptr );        
         CheckCacheAndUpdateIfNeeded(_filename, _px_size, *info, _hint);
@@ -170,7 +170,7 @@ NSImage *QLThumbnailsCacheImpl::Produce(const std::string &_filename,
         auto key = Key{_filename, _px_size};        
         auto info = std::make_shared<Info>();
         info->is_in_work.test_and_set();
-        m_Items.insert( std::move(key), info );
+        m_Items.insert( std::move(key), info ); // O(1)
         lock.unlock();
         ProduceNew(_filename, _px_size, *info);
         return info->image;
@@ -239,8 +239,8 @@ NSImage *QLThumbnailsCacheImpl::ThumbnailIfHas(const std::string &_filename, int
 {
     const auto temp_key = Key{std::string_view{_filename}, _px_size, Key::no_ownership};
     auto lock = std::lock_guard{m_ItemsLock};    
-    if( m_Items.count(temp_key) != 0 ) {
-        auto &info = m_Items[temp_key];
+    if( m_Items.count(temp_key) != 0 ) { // O(1)
+        auto &info = m_Items[temp_key]; // O(1)
         assert( info != nullptr );
         return info->image;
     }

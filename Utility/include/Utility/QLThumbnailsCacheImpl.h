@@ -17,27 +17,10 @@ public:
     QLThumbnailsCacheImpl();
     ~QLThumbnailsCacheImpl();
     
-    /**
-     * Returns cached QLThunmbnail for specified filename without any checking if it is outdated.
-     * Caller should call ProduceThumbnail if he wants to get an actual one.
-     * May return nil.
-     */
     NSImage *ThumbnailIfHas(const std::string &_filename, int _px_size) override;
     
-    /**
-     * Will check for a presence of a thumbnail for _filename in cache.
-     * If it is, will check if file wasn't changed - in this case just return a thumbnail that we
-     * already have.
-     * If file was changed or there's no thumbnail for this file - will produce it with BuildRep()
-     * and will return the result.
-     * May return nil.
-     */
     NSImage *ProduceThumbnail(const std::string &_filename, int _px_size) override;
-    
-    /**
-     * Same as ProduceThumbnail(filename, px_size), but can use additional information available 
-     * for caller. It may decreate redundant I/O operations when checking for current file state.
-     */
+
     NSImage *ProduceThumbnail(const std::string &_filename,
                               int _px_size,
                               const FileStateHint& _hint) override;

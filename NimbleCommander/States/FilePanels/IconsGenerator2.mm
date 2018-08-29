@@ -1,10 +1,9 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Quartz/Quartz.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/dirent.h>
 #include <Habanero/CommonPaths.h>
-#include <Utility/QLThumbnailsCache.h>
 #include <NimbleCommander/Core/Caches/QLVFSThumbnailsCache.h>
 #include <NimbleCommander/Core/Caches/WorkspaceIconsCache.h>
 #include <NimbleCommander/Core/Caches/WorkspaceExtensionIconsCache.h>
@@ -34,12 +33,6 @@ static bool CheckFileIsOK(const char* _s)
     return ((st.st_mode & S_IFMT) == S_IFDIR ||
             (st.st_mode & S_IFMT) == S_IFREG  ) &&
             st.st_size > 0;
-}
-
-static utility::QLThumbnailsCache &QLThumbnailsCacheSingleton()
-{
-    static utility::QLThumbnailsCache instance;
-    return instance;
 }
 
 static NSImage *ProduceThumbnailForVFS(const string &_path,
@@ -216,7 +209,8 @@ inline NSImage *IconsGenerator2::IconStorage::Any() const
     return generic;
 }
 
-IconsGenerator2::IconsGenerator2()
+IconsGenerator2::IconsGenerator2(const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache):
+    m_QLThumbnailsCache(_ql_cache)
 {
     m_WorkGroup.SetOnDry([=]{
         DrainStash();
@@ -330,7 +324,7 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolati
     
     // check if we already have thumbnail built
     if( is_native_fs )
-        if( auto th = QLThumbnailsCacheSingleton().ThumbnailIfHas(rel_path, IconSizeInPixels()) )
+        if( auto th = m_QLThumbnailsCache->ThumbnailIfHas(rel_path, IconSizeInPixels()) )
             is.thumbnail = th;
 
     // check if we already have icon built
@@ -467,14 +461,13 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
             return nullopt;
         
         // 1st - try to built a real thumbnail
-        if( (_req.unix_mode & S_IFMT) != S_IFDIR &&
-            _req.file_size > 0 &&
-            _req.file_size <= MaxFileSizeForThumbnailNative ) {
-            auto &cache = QLThumbnailsCacheSingleton(); 
+        if( ShouldTryProducingQLThumbnailOnNativeFS(_req) ) {
             auto file_hint = utility::QLThumbnailsCache::FileStateHint{};
             file_hint.file_size = _req.file_size;
             file_hint.mtime = _req.mtime;
-            auto tn = cache.ProduceThumbnail(_req.relative_path, IconSizeInPixels(), file_hint);
+            auto tn = m_QLThumbnailsCache->ProduceThumbnail(_req.relative_path,
+                                                            IconSizeInPixels(),
+                                                            file_hint);
             if( tn )
                 result.thumbnail = tn;
         }
@@ -519,6 +512,13 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
     return result;
 }
 
+bool IconsGenerator2::ShouldTryProducingQLThumbnailOnNativeFS(const BuildRequest &_request)
+{
+    return (_request.unix_mode & S_IFMT) != S_IFDIR &&
+        _request.file_size > 0 &&
+        _request.file_size <= MaxFileSizeForThumbnailNative;
+}
+    
 void IconsGenerator2::SyncDiscardedAndOutdated( nc::panel::data::Model &_pd )
 {
     assert(dispatch_is_main_queue()); // STA api design    

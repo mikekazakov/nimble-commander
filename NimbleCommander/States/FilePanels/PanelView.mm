@@ -3,6 +3,7 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <Utility/MIMResponder.h>
+#include <Utility/QLThumbnailsCacheImpl.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 #include "PanelData.h"
@@ -35,6 +36,8 @@ struct StateStorage
     string focused_item;
 };
 
+static unique_ptr<IconsGenerator2> MakeIconsGenerator();
+    
 }
 
 @interface PanelView()
@@ -57,7 +60,7 @@ struct StateStorage
     NCPanelViewHeader          *m_HeaderView;
     PanelViewFooter            *m_FooterView;
     
-    IconsGenerator2             m_IconsGenerator;
+    unique_ptr<IconsGenerator2> m_IconsGenerator;
     
     int                         m_CursorPos;
     NSEventModifierFlagsHolder  m_KeyboardModifierFlags;
@@ -73,6 +76,7 @@ struct StateStorage
         m_Data = nullptr;
         m_CursorPos = -1;
         m_HeaderTitle = @"";
+        m_IconsGenerator = MakeIconsGenerator();
 
         m_ItemsView = [self spawnItemViewWithLayout:_layout];
         [self addSubview:m_ItemsView];
@@ -164,7 +168,7 @@ struct StateStorage
 
 - (PanelListView*) spawnListView
 {
-   PanelListView *v = [[PanelListView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
+   PanelListView *v = [[PanelListView alloc] initWithFrame:self.bounds andIC:*m_IconsGenerator];
     v.translatesAutoresizingMaskIntoConstraints = false;
     __weak PanelView *weak_self = self;
     v.sortModeChangeCallback = [=](data::SortMode _sm){
@@ -176,7 +180,7 @@ struct StateStorage
 
 - (PanelBriefView*) spawnBriefView
 {
-    auto v = [[PanelBriefView alloc] initWithFrame:self.bounds andIC:m_IconsGenerator];
+    auto v = [[PanelBriefView alloc] initWithFrame:self.bounds andIC:*m_IconsGenerator];
     v.translatesAutoresizingMaskIntoConstraints = false;
     return v;
 }
@@ -222,7 +226,7 @@ struct StateStorage
     }
     if( _wnd ) {
         const auto is_hidpi = _wnd.backingScaleFactor > 1.0;
-        m_IconsGenerator.SetHiDPI( is_hidpi );
+        m_IconsGenerator->SetHiDPI( is_hidpi );
         [notify addObserver:self
                    selector:@selector(windowStatusDidChange)
                        name:NSWindowDidBecomeKeyNotification
@@ -975,7 +979,7 @@ struct StateStorage
     sender.SetIconCallback([self](int _item_index) -> NSImage* {
         if( const auto entry = m_Data->EntryAtSortPosition(_item_index) ) {
             const auto vd = m_Data->VolatileDataAtSortPosition(_item_index);            
-            return m_IconsGenerator.AvailbleImageFor(entry, vd).copy;
+            return m_IconsGenerator->AvailbleImageFor(entry, vd).copy;
         }
         return nil;
     });
@@ -1055,3 +1059,13 @@ struct StateStorage
 }
 
 @end
+
+namespace nc::panel {
+
+static unique_ptr<IconsGenerator2> MakeIconsGenerator()
+{
+    static const auto ql_cache = make_shared<nc::utility::QLThumbnailsCacheImpl>();
+    return make_unique<IconsGenerator2>(ql_cache);
+}
+
+}

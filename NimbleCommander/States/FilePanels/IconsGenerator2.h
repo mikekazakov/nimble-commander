@@ -1,6 +1,7 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <Utility/QLThumbnailsCache.h>
 #include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
 
@@ -14,7 +15,7 @@ namespace data {
 class IconsGenerator2
 {
 public:
-    IconsGenerator2();
+    IconsGenerator2(const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache);
     ~IconsGenerator2();
     
     // callback will be executed in main thread
@@ -75,6 +76,7 @@ private:
     bool IsFull() const;
     bool IsRequestsStashFull() const;
     int IconSizeInPixels() const noexcept;
+    static bool ShouldTryProducingQLThumbnailOnNativeFS(const BuildRequest &_request);    
     
     void RunOrStash( BuildRequest _req );
     void DrainStash();
@@ -96,6 +98,8 @@ private:
     
     mutable spinlock        m_RequestsStashLock;
     queue<BuildRequest>     m_RequestsStash;
+    
+    std::shared_ptr<utility::QLThumbnailsCache> m_QLThumbnailsCache;
 };
 
 }

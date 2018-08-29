@@ -1,21 +1,11 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-
-
-// need to fiddle with shared_mutex availability on 10.11, so using this hammer.
-#define _LIBCPP_DISABLE_AVAILABILITY 1
-
-
-#include <string>
-#include <map>
-#include <stdint.h>
-#include <mutex>
-#include <shared_mutex>
-#include <deque>
+#include <optional>
 #include "WorkspaceIconsCache.h"
-
-@class NSImage;
+#include <Habanero/LRUCache.h>
+#include <Habanero/spinlock.h>
+#include <Cocoa/Cocoa.h>
 
 namespace nc::utility {
 
@@ -25,26 +15,38 @@ public:
     WorkspaceIconsCacheImpl();
     ~WorkspaceIconsCacheImpl();
 
-    NSImage *IconIfHas(const std::string &_filename) override;
+    NSImage *IconIfHas(const std::string &_file_path) override;
 
-    NSImage *ProduceIcon(const std::string &_filename) override;
-private:
+    NSImage *ProduceIcon(const std::string &_file_path) override;
     
+    NSImage *ProduceIcon(const std::string &_file_path,
+                         const FileStateHint &_state_hint) override;
+    
+private:
     enum { m_CacheSize = 4096 };
     
     struct Info
     {
-        uint64_t    file_size;
-        uint64_t    mtime;
-        mode_t	 	mode;
-        NSImage *image;      // may be nil - it means that Workspace can't produce icon for this file
+        uint64_t    file_size = 0;
+        uint64_t    mtime = 0;
+        mode_t      mode = 0;
+        // 'image' may be nil, it means that Workspace can't produce icon for this file.
+        NSImage    *image = nil; 
+        std::atomic_flag is_in_work = {false}; // item is currenly updating its image        
     };
-    std::map<std::string, Info>                   m_Items;
-    std::shared_timed_mutex                  m_ItemsLock;
-    std::deque<typename std::map<std::string, Info>::iterator>  m_MRU;
-    std::mutex                               m_MRULock;
+    
+    using Container = hbn::LRUCache<std::string, std::shared_ptr<Info>, m_CacheSize>;    
+
+    NSImage *Produce(const std::string &_file_path,
+                     std::optional<FileStateHint> _state_hint);    
+    
+    void UpdateIfNeeded(const std::string &_file_path,
+                        const std::optional<FileStateHint> &_state_hint,
+                        Info &_info);
+    void ProduceNew(const std::string &_file_path, Info &_info);
+    
+    Container m_Items;
+    spinlock m_ItemsLock;
 };
 
 }
-
-

@@ -465,7 +465,7 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         // 1st - try to built a real thumbnail
         if( ShouldTryProducingQLThumbnailOnNativeFS(_req) ) {
             auto file_hint = utility::QLThumbnailsCache::FileStateHint{};
-            file_hint.file_size = _req.file_size;
+            file_hint.size = _req.file_size;
             file_hint.mtime = _req.mtime;
             auto tn = m_QLThumbnailsCache->ProduceThumbnail(_req.relative_path,
                                                             IconSizeInPixels(),
@@ -478,11 +478,13 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
             return nullopt;
         
         // 2nd - if we haven't built a real thumbnail - try an extension instead
-        if(_req.thumbnail == nil &&
-           CheckFileIsOK(_req.relative_path.c_str()) // possible redundant call here. not good.
-           ) {
-            auto icon = m_WorkspaceIconsCache->ProduceIcon( _req.relative_path );
-            if(icon != nil && icon != _req.filetype)
+        if( _req.thumbnail == nil ) {
+            auto file_hint = utility::WorkspaceIconsCache::FileStateHint{};
+            file_hint.mode = _req.unix_mode;
+            file_hint.mtime = _req.mtime;
+            file_hint.size = _req.file_size;
+            auto icon = m_WorkspaceIconsCache->ProduceIcon( _req.relative_path, file_hint );
+            if( icon != nil && icon != _req.filetype )
                 result.filetype = icon;
         }
     }

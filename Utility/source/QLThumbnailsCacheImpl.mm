@@ -183,7 +183,7 @@ static std::optional<QLThumbnailsCache::FileStateHint> ReadFileState(const std::
     if( stat(_file_path.c_str(), &st) != 0 )
         return std::nullopt; // for some reason the file is not accessible - can't do anything
     QLThumbnailsCache::FileStateHint hint;
-    hint.file_size = (uint64_t)st.st_size;
+    hint.size = (uint64_t)st.st_size;
     hint.mtime = (uint64_t)st.st_mtime;
     return hint;
 }
@@ -202,16 +202,18 @@ void QLThumbnailsCacheImpl::CheckCacheAndUpdateIfNeeded(const std::string &_file
             return; // can't proceed without information about the file.
         
         // check if cache is up-to-date
-        if( _info.file_size == file_state_hint->file_size &&
+        if( _info.file_size == file_state_hint->size &&
            _info.mtime == file_state_hint->mtime ) {
             return; // is up-to-date => nothing to do
         }        
+
+        _info.file_size = file_state_hint->size;
+        _info.mtime = file_state_hint->mtime;
         
-        if( auto img = BuildRep(_filename, _px_size) ) {
-            _info.image = img;
-            _info.file_size = file_state_hint->file_size;
-            _info.mtime = file_state_hint->mtime;
-        }
+        // we prefer to keep the previous version of a thumbnail in case if QL can't produce a new
+        // version for the changed file.
+        if( auto new_image = BuildRep(_filename, _px_size) )
+            _info.image = new_image;
     }
     else {
         // the item is currently in updating state, let's use the current image

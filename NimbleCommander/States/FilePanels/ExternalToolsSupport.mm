@@ -268,26 +268,26 @@ ExternalToolsParameters ExternalToolsParametersParser::Parse( const string &_sou
         range = NSMakeRange(range.location + res.second, length - range.location - res.second);
         
         if( res.first.type() == typeid(ExternalToolsParameters::UserDefined) ) {
-            auto &v = any_cast<ExternalToolsParameters::UserDefined&>(res.first);
+            auto &v = *any_cast<ExternalToolsParameters::UserDefined>(&res.first);
             result.InsertUserDefinedText( move(v) );
         }
         else if( res.first.type() == typeid(ExternalToolsParameters::EnterValue) ) {
-            auto &v = any_cast<ExternalToolsParameters::EnterValue&>(res.first);
+            auto &v = *any_cast<ExternalToolsParameters::EnterValue>(&res.first);
             result.InsertValueRequirement( move(v) );
         }
         else if( res.first.type() == typeid(ExternalToolsParameters::CurrentItem) ) {
-            auto &v = any_cast<ExternalToolsParameters::CurrentItem&>(res.first);
+            auto &v = *any_cast<ExternalToolsParameters::CurrentItem>(&res.first);
             result.InsertCurrentItem( move(v) );
         }
         else if( res.first.type() == typeid(ExternalToolsParameters::SelectedItems) ) {
-            auto &v = any_cast<ExternalToolsParameters::SelectedItems&>(res.first);
+            auto &v = *any_cast<ExternalToolsParameters::SelectedItems>(&res.first);
             result.InsertSelectedItem( move(v) );
         }
         else if( res.first.type() == typeid(InterpretInvertFlag) ) {
             invert_flag = !invert_flag;
         }
         else if( res.first.type() == typeid(SetMaximumFilesFlag) ) {
-            auto v = any_cast<SetMaximumFilesFlag>(res.first);
+            auto v = *any_cast<SetMaximumFilesFlag>(&res.first);
             result.m_MaximumTotalFiles = v.maximum;
         }
     }

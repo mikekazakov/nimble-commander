@@ -21,19 +21,6 @@ static const auto g_GenericFolderIcon =
 static const auto g_GenericFileIcon =
     WorkspaceExtensionIconsCache::Instance().GenericFileIcon(); 
 
-// we need to exclude special types of files, such as fifos, since QLThumbnailImageCreate is very fragile
-// and can hang in some cases with that ones
-static bool CheckFileIsOK(const char* _s)
-{
-    struct stat st;
-    if( stat(_s, &st) != 0 )
-        return false;
-    
-    return ((st.st_mode & S_IFMT) == S_IFDIR ||
-            (st.st_mode & S_IFMT) == S_IFREG  ) &&
-            st.st_size > 0;
-}
-
 static NSImage *ProduceThumbnailForVFS(const string &_path,
                                    const string &_ext,
                                    const VFSHostPtr &_host,
@@ -425,7 +412,7 @@ void IconsGenerator2::BackgroundWork(const BuildRequest &_request)
             if( has_anything_to_commit == false )
                 return;
                 
-            dispatch_to_main_queue([=,res=move(opt_res.value())] {
+            dispatch_to_main_queue([=,res=move(*opt_res)] {
                 // returned to main thread
                 if( _request.generation != m_Generation )
                     return;

@@ -1,8 +1,5 @@
 // Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 
-// need to fiddle with shared_mutex availability on 10.11, so using this hammer.
-#define _LIBCPP_DISABLE_AVAILABILITY 1
-
 // basic C defines
 #include <stddef.h>
 

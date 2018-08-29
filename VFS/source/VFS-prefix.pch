@@ -20,8 +20,6 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 
-#define _LIBCPP_DISABLE_AVAILABILITY 1
-
 #include <CoreFoundation/CoreFoundation.h>
 
 #ifdef __OBJC__

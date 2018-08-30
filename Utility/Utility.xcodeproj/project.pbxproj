@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */; };
 		CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */; };
+		CF308F11213781EE00915730 /* UnitTests_main.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F10213781ED00915730 /* UnitTests_main.h */; };
 		CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3847272010756800BAB3BE /* FilenameTextNavigation.h */; };
 		CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */; };
 		CF38472D2010780E00BAB3BE /* FilenameTextNavigation_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */; };
@@ -35,6 +36,9 @@
 		CFC5461E2136712700D288A4 /* WorkspaceExtensionIconsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC5461D2136712700D288A4 /* WorkspaceExtensionIconsCache.h */; };
 		CFC546202136812B00D288A4 /* WorkspaceExtensionIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC5461F2136812B00D288A4 /* WorkspaceExtensionIconsCacheImpl.mm */; };
 		CFC546222136813400D288A4 /* WorkspaceExtensionIconsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC546212136813400D288A4 /* WorkspaceExtensionIconsCacheImpl.h */; };
+		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
+		CFC546332136DBE300D288A4 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94631F453CB60035E606 /* libUtility.dylib */; };
+		CFC546362136DC6700D288A4 /* WorkspaceIconsCacheImpl_UnitTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC546342136DC6200D288A4 /* WorkspaceIconsCacheImpl_UnitTests.mm */; };
 		CFE33EB821356ECE00C3902C /* QLThumbnailsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE33EB721356ECE00C3902C /* QLThumbnailsCache.h */; };
 		CFE33EBA21356ED900C3902C /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE33EB921356ED900C3902C /* QLThumbnailsCache.mm */; };
 		CFE33EBC2135708800C3902C /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE33EBB2135708800C3902C /* Quartz.framework */; };
@@ -80,7 +84,26 @@
 			remoteGlobalIDString = CFFA94621F453CB60035E606;
 			remoteInfo = Utility;
 		};
+		CFC546312136DBDD00D288A4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF960DD21C97F833001D8B02 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CFFA94621F453CB60035E606;
+			remoteInfo = Utility;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CFC546252136DAC800D288A4 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		CF09392F1D10214200D67AC6 /* FunctionKeysPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FunctionKeysPass.h; path = include/Utility/FunctionKeysPass.h; sourceTree = "<group>"; };
@@ -91,6 +114,7 @@
 		CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OrthodoxMonospace.mm; path = source/OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ButtonWithTextColor.h; path = include/Utility/ButtonWithTextColor.h; sourceTree = "<group>"; };
 		CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ButtonWithTextColor.mm; path = source/ButtonWithTextColor.mm; sourceTree = "<group>"; };
+		CF308F10213781ED00915730 /* UnitTests_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnitTests_main.h; path = tests/UnitTests_main.h; sourceTree = SOURCE_ROOT; };
 		CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColoredSeparatorLine.h; path = include/Utility/ColoredSeparatorLine.h; sourceTree = "<group>"; };
 		CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ColoredSeparatorLine.mm; path = source/ColoredSeparatorLine.mm; sourceTree = "<group>"; };
 		CF3847272010756800BAB3BE /* FilenameTextNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextNavigation.h; path = include/Utility/FilenameTextNavigation.h; sourceTree = "<group>"; };
@@ -139,6 +163,9 @@
 		CFC5461D2136712700D288A4 /* WorkspaceExtensionIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceExtensionIconsCache.h; path = include/Utility/WorkspaceExtensionIconsCache.h; sourceTree = "<group>"; };
 		CFC5461F2136812B00D288A4 /* WorkspaceExtensionIconsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCacheImpl.mm; path = source/WorkspaceExtensionIconsCacheImpl.mm; sourceTree = "<group>"; };
 		CFC546212136813400D288A4 /* WorkspaceExtensionIconsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceExtensionIconsCacheImpl.h; path = include/Utility/WorkspaceExtensionIconsCacheImpl.h; sourceTree = "<group>"; };
+		CFC546272136DAC800D288A4 /* Utility Unit Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Utility Unit Tests"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnitTests_main.cpp; path = tests/UnitTests_main.cpp; sourceTree = SOURCE_ROOT; };
+		CFC546342136DC6200D288A4 /* WorkspaceIconsCacheImpl_UnitTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCacheImpl_UnitTests.mm; path = tests/WorkspaceIconsCacheImpl_UnitTests.mm; sourceTree = SOURCE_ROOT; };
 		CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeychainServices.h; path = include/Utility/KeychainServices.h; sourceTree = "<group>"; };
 		CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeychainServices.cpp; path = source/KeychainServices.cpp; sourceTree = "<group>"; };
 		CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+MassObserving.h"; path = "include/Utility/NSObject+MassObserving.h"; sourceTree = "<group>"; };
@@ -190,6 +217,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CFC546242136DAC800D288A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFC546332136DBE300D288A4 /* libUtility.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		CFFA94601F453CB60035E606 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -211,6 +246,9 @@
 		CF614A9E1F9D86CC0005F2DB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF308F10213781ED00915730 /* UnitTests_main.h */,
+				CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */,
+				CFC546342136DC6200D288A4 /* WorkspaceIconsCacheImpl_UnitTests.mm */,
 				CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */,
 				CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */,
 				CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */,
@@ -236,6 +274,7 @@
 			children = (
 				CFFA94631F453CB60035E606 /* libUtility.dylib */,
 				CF614A9D1F9D86CC0005F2DB /* Utility Tests.xctest */,
+				CFC546272136DAC800D288A4 /* Utility Unit Tests */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -364,6 +403,7 @@
 				CFC5461E2136712700D288A4 /* WorkspaceExtensionIconsCache.h in Headers */,
 				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
+				CF308F11213781EE00915730 /* UnitTests_main.h in Headers */,
 				CFC545FC2136355F00D288A4 /* WorkspaceIconsCache.h in Headers */,
 				CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */,
 				CFC546222136813400D288A4 /* WorkspaceExtensionIconsCacheImpl.h in Headers */,
@@ -391,6 +431,24 @@
 			productName = "Utility Tests";
 			productReference = CF614A9D1F9D86CC0005F2DB /* Utility Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CFC546262136DAC800D288A4 /* Utility Unit Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFC5462B2136DAC800D288A4 /* Build configuration list for PBXNativeTarget "Utility Unit Tests" */;
+			buildPhases = (
+				CFC546232136DAC800D288A4 /* Sources */,
+				CFC546242136DAC800D288A4 /* Frameworks */,
+				CFC546252136DAC800D288A4 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				CFC546322136DBDD00D288A4 /* PBXTargetDependency */,
+			);
+			name = "Utility Unit Tests";
+			productName = "Utility Unit Tests";
+			productReference = CFC546272136DAC800D288A4 /* Utility Unit Tests */;
+			productType = "com.apple.product-type.tool";
 		};
 		CFFA94621F453CB60035E606 /* Utility */ = {
 			isa = PBXNativeTarget;
@@ -422,6 +480,10 @@
 						CreatedOnToolsVersion = 8.3.2;
 						ProvisioningStyle = Automatic;
 					};
+					CFC546262136DAC800D288A4 = {
+						CreatedOnToolsVersion = 10.0;
+						ProvisioningStyle = Automatic;
+					};
 					CFFA94621F453CB60035E606 = {
 						CreatedOnToolsVersion = 8.3.2;
 						ProvisioningStyle = Automatic;
@@ -442,6 +504,7 @@
 			targets = (
 				CFFA94621F453CB60035E606 /* Utility */,
 				CF614A9C1F9D86CC0005F2DB /* Utility Tests */,
+				CFC546262136DAC800D288A4 /* Utility Unit Tests */,
 			);
 		};
 /* End PBXProject section */
@@ -464,6 +527,15 @@
 				CF614AB01F9D87260005F2DB /* Encodings_Tests.mm in Sources */,
 				CF614AAF1F9D87230005F2DB /* ByteCountFormatter_Tests.mm in Sources */,
 				CF38472D2010780E00BAB3BE /* FilenameTextNavigation_Tests.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFC546232136DAC800D288A4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFC546362136DC6700D288A4 /* WorkspaceIconsCacheImpl_UnitTests.mm in Sources */,
+				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -523,6 +595,11 @@
 			target = CFFA94621F453CB60035E606 /* Utility */;
 			targetProxy = CF614AA31F9D86CC0005F2DB /* PBXContainerItemProxy */;
 		};
+		CFC546322136DBDD00D288A4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CFFA94621F453CB60035E606 /* Utility */;
+			targetProxy = CFC546312136DBDD00D288A4 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -531,7 +608,6 @@
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -547,7 +623,6 @@
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -685,6 +760,57 @@
 			};
 			name = Release;
 		};
+		CFC5462C2136DAC800D288A4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",
+					"$(PROJECT_DIR)/../3rd_Party/googletest/include/",
+				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/googletest/built/";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lgmock",
+					"-lgtest",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CFC5462D2136DAC800D288A4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CODE_SIGN_STYLE = Automatic;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",
+					"$(PROJECT_DIR)/../3rd_Party/googletest/include/",
+				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/googletest/built/";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lgmock",
+					"-lgtest",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		CFFA94651F453CB60035E606 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -732,6 +858,15 @@
 			buildConfigurations = (
 				CF960DED1C97F833001D8B02 /* Debug */,
 				CF960DEE1C97F833001D8B02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFC5462B2136DAC800D288A4 /* Build configuration list for PBXNativeTarget "Utility Unit Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFC5462C2136DAC800D288A4 /* Debug */,
+				CFC5462D2136DAC800D288A4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

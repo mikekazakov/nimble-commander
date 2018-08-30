@@ -463,11 +463,7 @@ optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildReques
         
         // 2nd - if we haven't built a real thumbnail - try an extension instead
         if( _req.thumbnail == nil ) {
-            auto file_hint = utility::WorkspaceIconsCache::FileStateHint{};
-            file_hint.mode = _req.unix_mode;
-            file_hint.mtime = _req.mtime;
-            file_hint.size = _req.file_size;
-            auto icon = m_WorkspaceIconsCache->ProduceIcon( _req.relative_path, file_hint );
+            auto icon = m_WorkspaceIconsCache->ProduceIcon( _req.relative_path );
             if( icon != nil && icon != _req.filetype )
                 result.filetype = icon;
         }

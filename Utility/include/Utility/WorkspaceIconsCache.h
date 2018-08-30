@@ -20,15 +20,15 @@ public:
      */
     virtual NSImage *IconIfHas(const std::string &_file_path) = 0;
 
+    /**
+     * Will check if the cache has an appropriate icon for the path.
+     * If it does not - will build an icon from scratch.
+     * If it has - will check if the file changed and will rebuild the icon only if this is
+     * required.
+     * Will return nil for files inaccessible with regular rights.
+     */
     virtual NSImage *ProduceIcon(const std::string &_file_path) = 0;
-    
-    struct FileStateHint {
-        uint64_t    size = 0;
-        uint64_t    mtime = 0;
-        mode_t      mode = 0;
-    };
-    virtual NSImage *ProduceIcon(const std::string &_file_path,
-                                 const FileStateHint &_state_hint) = 0;
+
 };
 
 }

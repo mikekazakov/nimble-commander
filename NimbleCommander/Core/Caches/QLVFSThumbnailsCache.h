@@ -25,3 +25,4 @@ private:
     mutex       m_Lock;
     atomic_bool m_PurgeScheduled{false};
 };
+

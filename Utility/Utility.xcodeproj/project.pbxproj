@@ -10,6 +10,10 @@
 		CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */; };
 		CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */; };
 		CF308F11213781EE00915730 /* UnitTests_main.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F10213781ED00915730 /* UnitTests_main.h */; };
+		CF308F2D213ABFAA00915730 /* BriefOnDiskStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */; };
+		CF308F2F213ABFB300915730 /* BriefOnDiskStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */; };
+		CF308F31213ACD1900915730 /* BriefOnDiskStorageImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F30213ACD1900915730 /* BriefOnDiskStorageImpl.cpp */; };
+		CF308F33213ACD2500915730 /* BriefOnDiskStorageImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F32213ACD2500915730 /* BriefOnDiskStorageImpl.h */; };
 		CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3847272010756800BAB3BE /* FilenameTextNavigation.h */; };
 		CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */; };
 		CF38472D2010780E00BAB3BE /* FilenameTextNavigation_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */; };
@@ -115,6 +119,10 @@
 		CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ButtonWithTextColor.h; path = include/Utility/ButtonWithTextColor.h; sourceTree = "<group>"; };
 		CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ButtonWithTextColor.mm; path = source/ButtonWithTextColor.mm; sourceTree = "<group>"; };
 		CF308F10213781ED00915730 /* UnitTests_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnitTests_main.h; path = tests/UnitTests_main.h; sourceTree = SOURCE_ROOT; };
+		CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BriefOnDiskStorage.h; path = include/Utility/BriefOnDiskStorage.h; sourceTree = "<group>"; };
+		CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BriefOnDiskStorage.cpp; path = source/BriefOnDiskStorage.cpp; sourceTree = "<group>"; };
+		CF308F30213ACD1900915730 /* BriefOnDiskStorageImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BriefOnDiskStorageImpl.cpp; path = source/BriefOnDiskStorageImpl.cpp; sourceTree = "<group>"; };
+		CF308F32213ACD2500915730 /* BriefOnDiskStorageImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BriefOnDiskStorageImpl.h; path = include/Utility/BriefOnDiskStorageImpl.h; sourceTree = "<group>"; };
 		CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColoredSeparatorLine.h; path = include/Utility/ColoredSeparatorLine.h; sourceTree = "<group>"; };
 		CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ColoredSeparatorLine.mm; path = source/ColoredSeparatorLine.mm; sourceTree = "<group>"; };
 		CF3847272010756800BAB3BE /* FilenameTextNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextNavigation.h; path = include/Utility/FilenameTextNavigation.h; sourceTree = "<group>"; };
@@ -282,6 +290,8 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF308F32213ACD2500915730 /* BriefOnDiskStorageImpl.h */,
+				CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
 				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
@@ -330,6 +340,8 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF308F30213ACD1900915730 /* BriefOnDiskStorageImpl.cpp */,
+				CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
 				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
@@ -397,6 +409,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF308F33213ACD2500915730 /* BriefOnDiskStorageImpl.h in Headers */,
 				CFC54600213639A100D288A4 /* WorkspaceIconsCacheImpl.h in Headers */,
 				CFE33EB821356ECE00C3902C /* QLThumbnailsCache.h in Headers */,
 				CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */,
@@ -404,6 +417,7 @@
 				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
 				CF308F11213781EE00915730 /* UnitTests_main.h in Headers */,
+				CF308F2D213ABFAA00915730 /* BriefOnDiskStorage.h in Headers */,
 				CFC545FC2136355F00D288A4 /* WorkspaceIconsCache.h in Headers */,
 				CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */,
 				CFC546222136813400D288A4 /* WorkspaceExtensionIconsCacheImpl.h in Headers */,
@@ -557,6 +571,7 @@
 				CFFA94701F453CC00035E606 /* FontCache.cpp in Sources */,
 				CFFA94801F453CC00035E606 /* SheetWithHotkeys.mm in Sources */,
 				CFFA946A1F453CC00035E606 /* ByteCountFormatter.mm in Sources */,
+				CF308F31213ACD1900915730 /* BriefOnDiskStorageImpl.cpp in Sources */,
 				CF3B7F6D201F167200BF2090 /* MIMResponder.mm in Sources */,
 				CFFA947B1F453CC00035E606 /* NSObject+MassObserving.m in Sources */,
 				CFFA946F1F453CC00035E606 /* ExtensionLowercaseComparison.cpp in Sources */,
@@ -577,6 +592,7 @@
 				CFC545FE2136356900D288A4 /* WorkspaceIconsCache.mm in Sources */,
 				CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */,
 				CFFA946E1F453CC00035E606 /* EncodingsAdditions.mm in Sources */,
+				CF308F2F213ABFB300915730 /* BriefOnDiskStorage.cpp in Sources */,
 				CFFA94731F453CC00035E606 /* FPSLimitedDrawer.mm in Sources */,
 				CFFA947F1F453CC00035E606 /* SheetController.mm in Sources */,
 				CFC5461C2136711E00D288A4 /* WorkspaceExtensionIconsCache.mm in Sources */,

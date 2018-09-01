@@ -10,83 +10,66 @@
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
 
+// temp:
+#include <Utility/BriefOnDiskStorageImpl.h>
+
+
 namespace nc::panel {
 
 static const auto g_DummyImage = [[NSImage alloc] initWithSize:NSMakeSize(0,0)];
 
+static NSImage *ProduceThumbnailForTempFile(const string &_path, CGSize _px_size)
+{
+
+    CFURLRef url = CFURLCreateFromFileSystemRepresentation(nullptr,
+                                                           (const UInt8 *)_path.c_str(),
+                                                           _path.length(),
+                                                           false);
+    static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
+    static void *values[] = {(void*)kCFBooleanTrue};
+    static CFDictionaryRef dict = CFDictionaryCreate(0,
+                                                     (const void**)keys,
+                                                     (const void**)values, 1, 0, 0);
+    NSImage *result = 0;
+    if( CGImageRef thumbnail = QLThumbnailImageCreate(0, url, _px_size, dict) ) {
+        result = [[NSImage alloc] initWithCGImage:thumbnail size:_px_size];
+        CGImageRelease(thumbnail);
+    }
+    CFRelease(url);        
+    return result;
+}
+    
+static optional<vector<uint8_t>> ReadEntireVFSFile(const string &_path, const VFSHostPtr &_host)
+{
+    VFSFilePtr vfs_file;
+    
+    if( _host->CreateFile(_path.c_str(), vfs_file, 0) < 0 )
+        return nullopt;
+    
+    if( vfs_file->Open(VFSFlags::OF_Read) < 0)
+        return nullopt;
+    
+    return vfs_file->ReadFile(); 
+}
+    
 static NSImage *ProduceThumbnailForVFS(const string &_path,
                                    const string &_ext,
                                    const VFSHostPtr &_host,
                                    CGSize _sz)
-{
-    NSImage *result = 0;
-    VFSFilePtr vfs_file;
-    string filename_final;
-    if(_host->CreateFile(_path.c_str(), vfs_file, 0) < 0)
-        return 0;
+{    
+    auto data = ReadEntireVFSFile(_path, _host);
+    if( data.has_value() == false )
+        return nil;
+    
+    // remove this dependency:
+    utility::BriefOnDiskStorageImpl brief_storage(CommonPaths::AppTemporaryDirectory(),
+                                                  ActivationManager::BundleID() + ".ico");
+
+    auto placement_result = brief_storage.PlaceWithExtension(data->data(), data->size(), _ext);
+    if( placement_result.has_value() == false )
+        return nil;
         
-    if(vfs_file->Open(VFSFlags::OF_Read) < 0)
-        return 0;
-    
-    char filename_temp[MAXPATHLEN];
-    sprintf(filename_temp,
-        ("%s" + ActivationManager::BundleID() + ".ico.XXXXXX").c_str(),
-        CommonPaths::AppTemporaryDirectory().c_str());
-    
-    int fd = mkstemp(filename_temp);
-    if(fd < 0)
-        return 0;
-    
-    const size_t bufsz = 256*1024;
-    char buf[bufsz];
-    ssize_t res_read;
-    while( (res_read = vfs_file->Read(buf, bufsz)) > 0 )
-    {
-        ssize_t res_write;
-        while(res_read > 0)
-        {
-            res_write = write(fd, buf, res_read);
-            if(res_write >= 0)
-                res_read -= res_write;
-            else
-                goto cleanup;
-        }
-    }
-        
-    vfs_file->Close();
-    vfs_file.reset();
-    close(fd);
-    fd = -1;
-
-    filename_final = string(filename_temp) + "." + _ext;
-    if( rename(filename_temp, filename_final.c_str()) == 0 ) {
-        CFURLRef url = CFURLCreateFromFileSystemRepresentation(
-            nullptr,
-            (const UInt8 *)filename_final.c_str(),
-            filename_final.length(),
-            false);
-        static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
-        static void *values[] = {(void*)kCFBooleanTrue};
-        static CFDictionaryRef dict = CFDictionaryCreate(0, (const void**)keys, (const void**)values, 1, 0, 0);
-        if( CGImageRef thumbnail = QLThumbnailImageCreate(0, url, _sz, dict) ) {
-            result = [[NSImage alloc] initWithCGImage:thumbnail size:_sz];
-            CGImageRelease(thumbnail);
-        }
-
-        CFRelease(url);
-        unlink(filename_final.c_str());
-    }
-    else {
-        unlink(filename_temp);
-    }
-    
-cleanup:
-    if( fd >= 0 ) {
-        close(fd);
-        unlink(filename_temp);
-    }
-
-    return result;
+    return ProduceThumbnailForTempFile(placement_result->Path(), _sz);
 }
 
 static NSImage *ProduceThumbnailForVFS_Cached(const string &_path, const string &_ext, const VFSHostPtr &_host, CGSize _sz)

@@ -569,6 +569,14 @@
 		CF8B24401E6FC695008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
 		CF8B24411E6FC696008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
 		CF8B24421E6FC696008EB447 /* FavoritesImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */; };
+		CF8BDC77213B9AF500F14C3E /* IconBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC74213B9AF400F14C3E /* IconBuilder.mm */; };
+		CF8BDC78213B9AF500F14C3E /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */; };
+		CF8BDC7A213B9B0000F14C3E /* IconBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC74213B9AF400F14C3E /* IconBuilder.mm */; };
+		CF8BDC7B213B9B0000F14C3E /* IconBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC74213B9AF400F14C3E /* IconBuilder.mm */; };
+		CF8BDC7C213B9B0100F14C3E /* IconBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC74213B9AF400F14C3E /* IconBuilder.mm */; };
+		CF8BDC7D213B9B0400F14C3E /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */; };
+		CF8BDC7E213B9B0500F14C3E /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */; };
+		CF8BDC7F213B9B0500F14C3E /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */; };
 		CF8D0CE31D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
 		CF8D0CE41D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
 		CF8D0CE51D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
@@ -1797,6 +1805,10 @@
 		CF89533118795030001C0391 /* PanelData_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; name = PanelData_Tests.mm; path = NimbleCommander/States/FilePanels/PanelData_Tests.mm; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		CF8B24361E6FC68D008EB447 /* FavoritesImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FavoritesImpl.cpp; path = NimbleCommander/States/FilePanels/FavoritesImpl.cpp; sourceTree = SOURCE_ROOT; };
 		CF8B24371E6FC68D008EB447 /* Favorites.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Favorites.h; path = NimbleCommander/States/FilePanels/Favorites.h; sourceTree = SOURCE_ROOT; };
+		CF8BDC73213B9AF400F14C3E /* IconBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconBuilder.h; path = NimbleCommander/States/FilePanels/IconBuilder.h; sourceTree = "<group>"; };
+		CF8BDC74213B9AF400F14C3E /* IconBuilder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconBuilder.mm; path = NimbleCommander/States/FilePanels/IconBuilder.mm; sourceTree = "<group>"; };
+		CF8BDC75213B9AF500F14C3E /* IconBuilderImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconBuilderImpl.h; path = NimbleCommander/States/FilePanels/IconBuilderImpl.h; sourceTree = "<group>"; };
+		CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconBuilderImpl.mm; path = NimbleCommander/States/FilePanels/IconBuilderImpl.mm; sourceTree = "<group>"; };
 		CF8D0CE71D96234900ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FeedbackWindow.xib; sourceTree = "<group>"; };
 		CF8D0CED1D9623E000ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/RegistrationInfoWindow.xib; sourceTree = "<group>"; };
 		CF8D0CF01D96244900ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProFeaturesWindowController.xib; sourceTree = "<group>"; };
@@ -2255,20 +2267,24 @@
 		B52D9A81173D324600EC7154 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
-				CFDAC2221DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.h */,
-				CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */,
-				CFDAC20F1DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.h */,
-				CFDAC2101DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.mm */,
-				CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */,
+				CF5D25E31DB604060073156F /* Brief */,
+				CF8BDC73213B9AF400F14C3E /* IconBuilder.h */,
+				CF8BDC74213B9AF400F14C3E /* IconBuilder.mm */,
+				CF8BDC75213B9AF500F14C3E /* IconBuilderImpl.h */,
+				CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */,
 				CF44AACA1DAF32A30064D754 /* IconsGenerator2.h */,
 				CF44AACB1DAF32A30064D754 /* IconsGenerator2.mm */,
+				CF84C8EF1DBB2AA900B4E888 /* List */,
+				CF24376E1DEDF9B300245C14 /* PanelViewFooter.h */,
+				CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */,
+				CFDAC20F1DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.h */,
+				CFDAC2101DF95D370039A104 /* PanelViewFooterVolumeInfoFetcher.mm */,
 				CF84C8DD1DB74B3A00B4E888 /* PanelViewHeader.h */,
 				CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */,
 				CF7C7CC21E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib */,
-				CF24376E1DEDF9B300245C14 /* PanelViewFooter.h */,
-				CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */,
-				CF5D25E31DB604060073156F /* Brief */,
-				CF84C8EF1DBB2AA900B4E888 /* List */,
+				CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */,
+				CFDAC2221DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.h */,
+				CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */,
 			);
 			name = Presentation;
 			sourceTree = "<group>";
@@ -3886,6 +3902,7 @@
 				CFD726911E42E22600603077 /* PanelData.mm in Sources */,
 				CFD7264D1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
+				CF8BDC7E213B9B0500F14C3E /* IconBuilderImpl.mm in Sources */,
 				CF62371F1EB4443F00152B2B /* PanelDataEntriesComparator.mm in Sources */,
 				CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */,
@@ -3946,6 +3963,7 @@
 				CF36DBF91F6C1988004A018E /* VFSInit.mm in Sources */,
 				CF1863FB1D8B9224008628E4 /* ProFeaturesWindowController.mm in Sources */,
 				CF9F4AF81ECC8DAC00E0AF82 /* Compress.mm in Sources */,
+				CF8BDC7A213B9B0000F14C3E /* IconBuilder.mm in Sources */,
 				CF7A09AF1EC2DF5C00533B07 /* Delete.mm in Sources */,
 				CF1E3D141D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
 				CFD726BD1E42E28A00603077 /* IconsGenerator2.mm in Sources */,
@@ -4135,6 +4153,7 @@
 				CF56BF061D5C8F2500A08D2B /* InternalViewerHistory.mm in Sources */,
 				CFD726601E42E1D700603077 /* FilesDraggingSource.mm in Sources */,
 				CFD6DD181D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
+				CF8BDC77213B9AF500F14C3E /* IconBuilder.mm in Sources */,
 				CF876D451D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF46C23620317FD700A91E2F /* ServicesHandler.mm in Sources */,
 				CFD726121E42E07E00603077 /* Config.cpp in Sources */,
@@ -4261,6 +4280,7 @@
 				CFA53A091D433E2A00C562A7 /* PreferencesWindowToolsTab.mm in Sources */,
 				CFD726AC1E42E25100603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CFA1716320196CB400F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
+				CF8BDC78213B9AF500F14C3E /* IconBuilderImpl.mm in Sources */,
 				CF6237231EB4444300152B2B /* PanelDataExternalEntryKey.mm in Sources */,
 				CFD726211E42E0AD00603077 /* ActionShortcut.mm in Sources */,
 				CFFA95191F45A3400035E606 /* ConfigWiring.mm in Sources */,
@@ -4364,6 +4384,7 @@
 				CF56C2B91DC1934D00F0DF0F /* PanelListViewRowView.mm in Sources */,
 				CF1E3D1B1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
 				CF15D0831E8E1E7A00FEAA04 /* OpenWithExternalEditor.mm in Sources */,
+				CF8BDC7B213B9B0000F14C3E /* IconBuilder.mm in Sources */,
 				CF5FE80B1E163DD200CD83B4 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CF4E563E1D5064FE00452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CF5E9A691FCE738C005608F5 /* QuickLookVFSBridge.mm in Sources */,
@@ -4490,6 +4511,7 @@
 				CF039EA71791112900DC85D6 /* RHPreferencesWindowController.m in Sources */,
 				CF56C2CA1DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CF4E56411D5064FE00452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
+				CF8BDC7F213B9B0500F14C3E /* IconBuilderImpl.mm in Sources */,
 				CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFDAC2D11DFD105A0039A104 /* MASAppInstalledChecker.cpp in Sources */,
 				CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */,
@@ -4578,11 +4600,13 @@
 				CF818B641EA0610E00BC28E6 /* ShowGoToPopup.mm in Sources */,
 				CF36DBEF1F6C18DA004A018E /* DragSender.mm in Sources */,
 				CF4E56A01D5068C800452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
+				CF8BDC7C213B9B0100F14C3E /* IconBuilder.mm in Sources */,
 				CFD7270B1E42E30800603077 /* QuickLookOverlay.mm in Sources */,
 				CFD8CDC71E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
 				CFD727051E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFD726491E42E11B00603077 /* SearchInFile.cpp in Sources */,
 				CFD726D11E42E2AC00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
+				CF8BDC7D213B9B0400F14C3E /* IconBuilderImpl.mm in Sources */,
 				CFD727111E42E31C00603077 /* ConnectionsMenuDelegate.mm in Sources */,
 				CF4E56AA1D5068DC00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
 				CFD726221E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */,

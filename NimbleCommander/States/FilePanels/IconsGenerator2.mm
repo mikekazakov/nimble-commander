@@ -1,161 +1,11 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "IconsGenerator2.h"
-#include <Quartz/Quartz.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/dirent.h>
-#include <Habanero/CommonPaths.h>
-#include <NimbleCommander/Core/Caches/QLVFSThumbnailsCache.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
-
-// temp:
-#include <Utility/BriefOnDiskStorageImpl.h>
-
 
 namespace nc::panel {
 
 static const auto g_DummyImage = [[NSImage alloc] initWithSize:NSMakeSize(0,0)];
-
-static NSImage *ProduceThumbnailForTempFile(const string &_path, CGSize _px_size)
-{
-
-    CFURLRef url = CFURLCreateFromFileSystemRepresentation(nullptr,
-                                                           (const UInt8 *)_path.c_str(),
-                                                           _path.length(),
-                                                           false);
-    static void *keys[] = {(void*)kQLThumbnailOptionIconModeKey};
-    static void *values[] = {(void*)kCFBooleanTrue};
-    static CFDictionaryRef dict = CFDictionaryCreate(0,
-                                                     (const void**)keys,
-                                                     (const void**)values, 1, 0, 0);
-    NSImage *result = 0;
-    if( CGImageRef thumbnail = QLThumbnailImageCreate(0, url, _px_size, dict) ) {
-        result = [[NSImage alloc] initWithCGImage:thumbnail size:_px_size];
-        CGImageRelease(thumbnail);
-    }
-    CFRelease(url);        
-    return result;
-}
-    
-static optional<vector<uint8_t>> ReadEntireVFSFile(const string &_path, const VFSHostPtr &_host)
-{
-    VFSFilePtr vfs_file;
-    
-    if( _host->CreateFile(_path.c_str(), vfs_file, 0) < 0 )
-        return nullopt;
-    
-    if( vfs_file->Open(VFSFlags::OF_Read) < 0)
-        return nullopt;
-    
-    return vfs_file->ReadFile(); 
-}
-    
-static NSImage *ProduceThumbnailForVFS(const string &_path,
-                                   const string &_ext,
-                                   const VFSHostPtr &_host,
-                                   CGSize _sz)
-{    
-    auto data = ReadEntireVFSFile(_path, _host);
-    if( data.has_value() == false )
-        return nil;
-    
-    // remove this dependency:
-    utility::BriefOnDiskStorageImpl brief_storage(CommonPaths::AppTemporaryDirectory(),
-                                                  ActivationManager::BundleID() + ".ico");
-
-    auto placement_result = brief_storage.PlaceWithExtension(data->data(), data->size(), _ext);
-    if( placement_result.has_value() == false )
-        return nil;
-        
-    return ProduceThumbnailForTempFile(placement_result->Path(), _sz);
-}
-
-static NSImage *ProduceThumbnailForVFS_Cached(const string &_path, const string &_ext, const VFSHostPtr &_host, CGSize _sz)
-{
-    // for immutable vfs we can cache generated thumbnails for some time
-    pair<bool, NSImage *> thumbnail = {false, nil}; // found -> value
-    
-    if( _host->IsImmutableFS() )
-        thumbnail = QLVFSThumbnailsCache::Instance().Get(_path, _host);
-    
-    if( !thumbnail.first ) {
-        thumbnail.second = ProduceThumbnailForVFS(_path, _ext, _host, _sz);
-        if( _host->IsImmutableFS() )
-            QLVFSThumbnailsCache::Instance().Put(_path, _host, thumbnail.second);
-    }
-    
-    return thumbnail.second;
-}
-
-static NSDictionary *ReadDictionaryFromVFSFile(const char *_path, const VFSHostPtr &_host)
-{
-    VFSFilePtr vfs_file;
-    if(_host->CreateFile(_path, vfs_file, 0) < 0)
-        return 0;
-    if(vfs_file->Open(VFSFlags::OF_Read) < 0)
-        return 0;
-    NSData *data = vfs_file->ReadFileToNSData();
-    vfs_file.reset();
-    if(data == 0)
-        return 0;
-    
-    id obj = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:0 error:0];
-    return objc_cast<NSDictionary>(obj);
-}
-
-static NSImage *ReadImageFromVFSFile(const char *_path, const VFSHostPtr &_host)
-{
-    VFSFilePtr vfs_file;
-    if(_host->CreateFile(_path, vfs_file, 0) < 0)
-        return 0;
-    if(vfs_file->Open(VFSFlags::OF_Read) < 0)
-        return 0;
-    NSData *data = vfs_file->ReadFileToNSData();
-    vfs_file.reset();
-    if(data == 0)
-        return 0;
-    
-    return [[NSImage alloc] initWithData:data];
-}
-
-static NSImage *ProduceBundleThumbnailForVFS(const string &_path, const VFSHostPtr &_host)
-{
-    NSDictionary *plist = ReadDictionaryFromVFSFile((path(_path) / "Contents/Info.plist").c_str(), _host);
-    if(!plist)
-        return 0;
-    
-    auto icon_str = objc_cast<NSString>([plist objectForKey:@"CFBundleIconFile"]);
-    if(!icon_str)
-        return nil;
-    if(!icon_str.fileSystemRepresentation)
-        return nil;
-    
-    path img_path = path(_path) / "Contents/Resources/" / icon_str.fileSystemRepresentation;
-    NSImage *image = ReadImageFromVFSFile(img_path.c_str(), _host);
-    if(!image)
-        return 0;
-    
-    return image;
-}
-
-static NSImage *ProduceBundleThumbnailForVFS_Cached(const string &_path, const VFSHostPtr &_host)
-{
-    // for immutable vfs we can cache generated thumbnails for some time
-    pair<bool, NSImage*> thumbnail = {false, nil}; // found -> value
-    
-    if( _host->IsImmutableFS() )
-        thumbnail = QLVFSThumbnailsCache::Instance().Get(_path, _host);
-    
-    if( !thumbnail.first ) {
-        thumbnail.second = ProduceBundleThumbnailForVFS(_path, _host);
-        if( _host->IsImmutableFS() )
-            QLVFSThumbnailsCache::Instance().Put(_path, _host, thumbnail.second);
-    }
-    
-    return thumbnail.second;
-}
 
 inline static int MaximumConcurrentRunnersForVFS(const VFSHostPtr &_host)
 {
@@ -171,13 +21,8 @@ inline NSImage *IconsGenerator2::IconStorage::Any() const
     return generic;
 }
 
-IconsGenerator2::IconsGenerator2
-    (const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache,
-     const std::shared_ptr<utility::WorkspaceIconsCache> &_workspace_icons_cache,
-     const std::shared_ptr<utility::WorkspaceExtensionIconsCache> &_extension_icons_cache):
-    m_QLThumbnailsCache(_ql_cache),
-    m_WorkspaceIconsCache(_workspace_icons_cache),
-    m_WorkspaceExtensionIconsCache(_extension_icons_cache)
+IconsGenerator2::IconsGenerator2(const std::shared_ptr<IconBuilder> &_icon_builder):
+    m_IconBuilder(_icon_builder)
 {
     m_WorkGroup.SetOnDry([=]{
         DrainStash();
@@ -212,21 +57,6 @@ unsigned short IconsGenerator2::GetSuitablePositionForNewIcon()
         }
         assert( 0 );
     }
-}
-
-NSImage *IconsGenerator2::GetGenericIcon( const VFSListingItem &_item ) const
-{
-    return _item.IsDir() ? 
-        m_WorkspaceExtensionIconsCache->GenericFolderIcon() :
-        m_WorkspaceExtensionIconsCache->GenericFileIcon();
-}
-
-NSImage *IconsGenerator2::GetCachedExtensionIcon( const VFSListingItem &_item) const
-{
-    if( !_item.HasExtension() )
-        return nil;
-
-    return m_WorkspaceExtensionIconsCache->CachedIconForExtension( _item.Extension() );
 }
 
 bool IconsGenerator2::IsFull() const
@@ -267,16 +97,16 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolati
     
     // long path: no icon - first request for this entry (or mb entry changed)
     // need to collect the appropriate info and put request into generating queue
+
+    const auto lookup_result = m_IconBuilder->LookupExistingIcon(_item, IconSizeInPixels());
     
     if( IsFull() || IsRequestsStashFull() ) {
         // we're full - sorry
-        
-        // but we can try to quickly find an filetype icon
-        if( auto icon = GetCachedExtensionIcon(_item) )
-            return icon;
-        
-        // nope, just return a generic icons
-        return GetGenericIcon(_item);
+        if( lookup_result.thumbnail )
+            return lookup_result.thumbnail;
+        if( lookup_result.filetype )
+            return lookup_result.filetype;
+        return lookup_result.generic;
     }
 
     // build IconStorage
@@ -284,37 +114,20 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolati
     auto &is = *m_Icons[is_no];
     is.file_size = _item.Size();
     is.mtime = _item.MTime();
-    is.generic = GetGenericIcon(_item);
-    if( auto icon = GetCachedExtensionIcon(_item) )
-        is.filetype = icon;
-
-    auto rel_path = _item.IsDotDot() ? _item.Directory() : _item.Directory() + _item.Filename();
-    bool is_native_fs = _item.Host()->IsNativeFS();
-    
-    // check if we already have thumbnail built
-    if( is_native_fs )
-        if( auto th = m_QLThumbnailsCache->ThumbnailIfHas(rel_path, IconSizeInPixels()) )
-            is.thumbnail = th;
-
-    // check if we already have icon built
-    if( is_native_fs )
-        if( auto img = m_WorkspaceIconsCache->IconIfHas(rel_path) )
-                is.filetype = img;
+    is.thumbnail = lookup_result.thumbnail;
+    is.filetype = lookup_result.filetype;
+    is.generic = lookup_result.generic;
         
     _item_vd.icon = is_no+1;
     
 //  build BuildRequest
     BuildRequest br;
     br.generation = m_Generation;
-    br.file_size = is.file_size;
-    br.mtime = is.mtime;
-    br.unix_mode = _item.UnixMode();
-    br.host = _item.Host();
-    br.extension = _item.HasExtension() ? _item.Extension() : "";
-    br.relative_path = move(rel_path);
     br.filetype = is.filetype;
     br.thumbnail = is.thumbnail;
     br.icon_number = is_no;
+    
+    br.item = _item;
     
     RunOrStash( move(br) );
 
@@ -336,17 +149,19 @@ NSImage *IconsGenerator2::AvailableImageFor(const VFSListingItem &_item,
         return is->Any(); // short path - return a stored icon from stash
     }
     
-    if( const auto icon = GetCachedExtensionIcon(_item) )
-        return icon;
-    
-    return GetGenericIcon(_item);
+    const auto lookup_result = m_IconBuilder->LookupExistingIcon(_item, IconSizeInPixels());    
+    if( lookup_result.thumbnail )
+        return lookup_result.thumbnail;
+    if( lookup_result.filetype )
+        return lookup_result.filetype;
+    return lookup_result.generic;
 }
 
 void IconsGenerator2::RunOrStash( BuildRequest _req )
 {
     dispatch_assert_main_queue(); // STA api design
     
-    if( m_WorkGroup.Count() <= MaximumConcurrentRunnersForVFS( _req.host )  ) {
+    if( m_WorkGroup.Count() <= MaximumConcurrentRunnersForVFS( _req.item.Host() )  ) {
         // run task now
         m_WorkGroup.Run([=,request=move(_req)]{
             // went to background worker thread
@@ -366,7 +181,7 @@ void IconsGenerator2::DrainStash()
     // this is a background thread
     LOCK_GUARD( m_RequestsStashLock ) {
         while( !m_RequestsStash.empty() ) {
-            if( m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS( m_RequestsStash.front().host ) )
+            if( m_WorkGroup.Count() > MaximumConcurrentRunnersForVFS( m_RequestsStash.front().item.Host() ) )
                 break; // we load enough of workload
             
             m_WorkGroup.Run([=,request=move(m_RequestsStash.front())] {
@@ -381,109 +196,38 @@ void IconsGenerator2::DrainStash()
 void IconsGenerator2::BackgroundWork(const BuildRequest &_request)
 {
     dispatch_assert_background_queue();
-    if( auto opt_res = Runner(_request) ) {
-        if( _request.generation == m_Generation ) {
-            // it's possible that background "heavy" images fetching did bring the same set of
-            // images which were available initially with a shallow scan.
-            // in this case there's no need to fire any callbacks. 
-            const auto has_anything_to_commit =
-                (opt_res->filetype != nullptr && opt_res->filetype != _request.filetype) ||
-                (opt_res->thumbnail != nullptr && opt_res->thumbnail != _request.thumbnail);
-            if( has_anything_to_commit == false )
-                return;
-                
-            dispatch_to_main_queue([=,res=move(*opt_res)] {
-                // returned to main thread
-                if( _request.generation != m_Generation )
-                    return;
-                
-                const auto is_no = _request.icon_number;
-                assert( is_no < m_Icons.size() ); // consistancy check
-                 
-                if( auto &storage = m_Icons[is_no]; storage ) {
-                    if( res.filetype )
-                        storage->filetype = res.filetype;
-                    if( res.thumbnail )
-                        storage->thumbnail = res.thumbnail;
-                    m_UpdateCallback(is_no + 1, storage->Any());
-                }
-            });
-        }
-    }
-}
-
-optional<IconsGenerator2::BuildResult> IconsGenerator2::Runner(const BuildRequest &_req)
-{
-    if(_req.generation != m_Generation)
-        return nullopt;
+    auto checker = [this, generation=_request.generation] {
+        return generation != this->m_Generation;
+    };
+    auto build_result = m_IconBuilder->BuildRealIcon(_request.item, IconSizeInPixels(), checker);
+    if( _request.generation != m_Generation )
+        return;
     
-    BuildResult result;
+    // it's possible that background "heavy" images fetching did bring the same set of
+    // images which were available initially with a shallow scan.
+    // in this case there's no need to fire any callbacks. 
+    const auto has_anything_to_commit =
+        (build_result.thumbnail != nullptr && build_result.thumbnail != _request.thumbnail) ||
+        (build_result.filetype != nullptr && build_result.filetype != _request.filetype);
+    if( has_anything_to_commit == false )
+        return;
     
-    if( _req.host->IsNativeFS() ) {
-        // playing inside a real FS, that can be reached via QL framework
+    dispatch_to_main_queue([=,res=move(build_result)] {
+        // returned to main thread
+        if( _request.generation != m_Generation )
+            return;
         
-        // zero - if we haven't image for this extension - produce it
-        if( !_req.extension.empty() )
-            m_WorkspaceExtensionIconsCache->IconForExtension( _req.extension );
+        const auto is_no = _request.icon_number;
+        assert( is_no < m_Icons.size() ); // consistancy check
         
-        if( _req.generation != m_Generation )
-            return nullopt;
-        
-        // 1st - try to built a real thumbnail
-        if( ShouldTryProducingQLThumbnailOnNativeFS(_req) ) {
-            auto file_hint = utility::QLThumbnailsCache::FileStateHint{};
-            file_hint.size = _req.file_size;
-            file_hint.mtime = _req.mtime;
-            auto tn = m_QLThumbnailsCache->ProduceThumbnail(_req.relative_path,
-                                                            IconSizeInPixels(),
-                                                            file_hint);
-            if( tn )
-                result.thumbnail = tn;
+        if( auto &storage = m_Icons[is_no]; storage ) {
+            if( res.filetype )
+                storage->filetype = res.filetype;
+            if( res.thumbnail )
+                storage->thumbnail = res.thumbnail;
+            m_UpdateCallback(is_no + 1, storage->Any());
         }
-        
-        if(_req.generation != m_Generation)
-            return nullopt;
-        
-        // 2nd - if we haven't built a real thumbnail - try an extension instead
-        if( _req.thumbnail == nil ) {
-            auto icon = m_WorkspaceIconsCache->ProduceIcon( _req.relative_path );
-            if( icon != nil && icon != _req.filetype )
-                result.filetype = icon;
-        }
-    }
-    else {
-        // special case for for bundles
-        if( _req.extension == "app" && _req.host->ShouldProduceThumbnails() )
-            result.thumbnail = ProduceBundleThumbnailForVFS_Cached( _req.relative_path, _req.host );
-        
-        // produce QL icon for file
-        if(_req.thumbnail == nil &&
-           (_req.unix_mode & S_IFMT) != S_IFDIR &&
-           _req.file_size > 0 &&
-           _req.file_size <= MaxFileSizeForThumbnailNonNative &&
-           _req.host->ShouldProduceThumbnails() &&
-           !_req.extension.empty() ) {
-            const auto sz = NSMakeSize(IconSizeInPixels(), IconSizeInPixels());
-            result.thumbnail = ProduceThumbnailForVFS_Cached(_req.relative_path,
-                                                             _req.extension,
-                                                             _req.host,
-                                                             sz);
-        }
-        
-        // produce extension icon for file
-        if( !_req.thumbnail && !_req.filetype && !_req.extension.empty() )
-            if( auto i = m_WorkspaceExtensionIconsCache->IconForExtension(_req.extension) )
-                result.filetype = i;
-    }
-    
-    return result;
-}
-
-bool IconsGenerator2::ShouldTryProducingQLThumbnailOnNativeFS(const BuildRequest &_request)
-{
-    return (_request.unix_mode & S_IFMT) != S_IFDIR &&
-        _request.file_size > 0 &&
-        _request.file_size <= MaxFileSizeForThumbnailNative;
+    });
 }
     
 void IconsGenerator2::SyncDiscardedAndOutdated( nc::panel::data::Model &_pd )

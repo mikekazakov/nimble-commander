@@ -22,6 +22,8 @@
 #include "PanelViewFieldEditor.h"
 #include "PanelViewKeystrokeSink.h"
 
+#include "IconBuilderImpl.h"
+
 using namespace nc::panel;
 
 namespace nc::panel {
@@ -1066,8 +1068,11 @@ static unique_ptr<IconsGenerator2> MakeIconsGenerator()
 {
     static const auto ql_cache = make_shared<nc::utility::QLThumbnailsCacheImpl>();
     static const auto ws_cache = make_shared<nc::utility::WorkspaceIconsCacheImpl>();
-    static const auto ext_cache = make_shared<nc::utility::WorkspaceExtensionIconsCacheImpl>();    
-    return make_unique<IconsGenerator2>(ql_cache, ws_cache, ext_cache);
+    static const auto ext_cache = make_shared<nc::utility::WorkspaceExtensionIconsCacheImpl>();
+
+    static const auto icon_builder = make_shared<IconBuilderImpl>(ql_cache, ws_cache, ext_cache);
+    
+    return make_unique<IconsGenerator2>(icon_builder);
 }
 
 }

@@ -14,6 +14,7 @@
 		CF308F2F213ABFB300915730 /* BriefOnDiskStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */; };
 		CF308F31213ACD1900915730 /* BriefOnDiskStorageImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F30213ACD1900915730 /* BriefOnDiskStorageImpl.cpp */; };
 		CF308F33213ACD2500915730 /* BriefOnDiskStorageImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F32213ACD2500915730 /* BriefOnDiskStorageImpl.h */; };
+		CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */; };
 		CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3847272010756800BAB3BE /* FilenameTextNavigation.h */; };
 		CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */; };
 		CF38472D2010780E00BAB3BE /* FilenameTextNavigation_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */; };
@@ -123,6 +124,7 @@
 		CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BriefOnDiskStorage.cpp; path = source/BriefOnDiskStorage.cpp; sourceTree = "<group>"; };
 		CF308F30213ACD1900915730 /* BriefOnDiskStorageImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BriefOnDiskStorageImpl.cpp; path = source/BriefOnDiskStorageImpl.cpp; sourceTree = "<group>"; };
 		CF308F32213ACD2500915730 /* BriefOnDiskStorageImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BriefOnDiskStorageImpl.h; path = include/Utility/BriefOnDiskStorageImpl.h; sourceTree = "<group>"; };
+		CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BriefOnDiskStorageImpl_UnitTests.cpp; path = tests/BriefOnDiskStorageImpl_UnitTests.cpp; sourceTree = "<group>"; };
 		CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColoredSeparatorLine.h; path = include/Utility/ColoredSeparatorLine.h; sourceTree = "<group>"; };
 		CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ColoredSeparatorLine.mm; path = source/ColoredSeparatorLine.mm; sourceTree = "<group>"; };
 		CF3847272010756800BAB3BE /* FilenameTextNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextNavigation.h; path = include/Utility/FilenameTextNavigation.h; sourceTree = "<group>"; };
@@ -254,6 +256,7 @@
 		CF614A9E1F9D86CC0005F2DB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */,
 				CF308F10213781ED00915730 /* UnitTests_main.h */,
 				CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */,
 				CFC546342136DC6200D288A4 /* WorkspaceIconsCacheImpl_UnitTests.mm */,
@@ -263,7 +266,6 @@
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
 			);
 			name = Tests;
-			path = "Utility Tests";
 			sourceTree = "<group>";
 		};
 		CF960DD11C97F833001D8B02 = {
@@ -549,6 +551,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFC546362136DC6700D288A4 /* WorkspaceIconsCacheImpl_UnitTests.mm in Sources */,
+				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -779,6 +782,11 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CODE_SIGN_STYLE = Automatic;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"GTEST_DONT_DEFINE_FAIL=1",
+					"GTEST_DONT_DEFINE_SUCCEED=1",
+				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",

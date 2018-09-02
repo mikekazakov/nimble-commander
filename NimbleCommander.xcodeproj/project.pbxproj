@@ -2250,7 +2250,6 @@
 				CF3120C81A510F640062185A /* Localizable.strings */,
 			);
 			name = Resources;
-			path = Files;
 			sourceTree = "<group>";
 		};
 		B52D9A81173D324600EC7154 /* Presentation */ = {
@@ -3104,7 +3103,6 @@
 				CF876D171D51E00B009C0CCE /* States */,
 			);
 			name = Source;
-			path = Files;
 			sourceTree = "<group>";
 		};
 		CFC5121B16C4BD3D00D247EE /* Supporting Files */ = {
@@ -3158,8 +3156,8 @@
 				CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */,
 			);
 			name = 3rd_party;
-			path = Files;
-			sourceTree = "<group>";
+			path = 3rd_Party;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFDAC2C51DFD0F370039A104 /* Caches */ = {
 			isa = PBXGroup;
@@ -5095,8 +5093,8 @@
 				CF3120B31A507BFC0062185A /* Base */,
 			);
 			name = Credits.rtf;
-			path = ../NimbleCommander/Resources;
-			sourceTree = "<group>";
+			path = NimbleCommander/Resources;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFC5122916C4BD3D00D247EE /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;

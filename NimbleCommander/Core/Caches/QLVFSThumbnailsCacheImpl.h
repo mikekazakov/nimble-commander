@@ -3,6 +3,8 @@
 
 #include "QLVFSThumbnailsCache.h"
 #include <Utility/BriefOnDiskStorage.h>
+#include <Habanero/LRUCache.h>
+#include <Habanero/spinlock.h>
 
 namespace nc::utility {
     
@@ -12,21 +14,33 @@ public:
     QLVFSThumbnailsCacheImpl(const std::shared_ptr<BriefOnDiskStorage> &_temp_storage);
     ~QLVFSThumbnailsCacheImpl();
     
-    NSImage * ProduceFileThumbnail(const std::string &_file_path,
-                                  VFSHost &_host,
-                                  int _px_size) override;
+    NSImage *ThumbnailIfHas(const std::string &_file_path,
+                            VFSHost &_host,
+                            int _px_size) override;    
     
-    NSImage * ProduceBundleThumbnail(const std::string &_file_path,
-                                    VFSHost &_host,
-                                    int _px_size) override;
+    NSImage * ProduceThumbnail(const std::string &_file_path,
+                               VFSHost &_host,
+                               int _px_size) override;
 
 private:
+    // this is a lazy and far from ideal implementation
+    // it cheats in several ways:
+    // - it uses VFSHost's verbose path to make a unique path identifier
+    // - it pretends that file do not change on VFSes
+    // also, it's pretty inefficient in dealing with strings 
+
+    enum { m_CacheSize = 1024 };    
+    using Container = ::hbn::LRUCache<std::string, NSImage*, m_CacheSize>;    
+
     NSImage *ProduceThumbnail(const string &_path,
                               const string &_ext,
                               VFSHost &_host,
                               CGSize _sz);
+    static std::string MakeKey(const std::string &_file_path, VFSHost &_host, int _px_size);
 
-    std::shared_ptr<BriefOnDiskStorage> m_TempStorage;    
+    Container m_Thumbnails;
+    mutable spinlock m_Lock;
+    std::shared_ptr<BriefOnDiskStorage> m_TempStorage;
 };
     
 }

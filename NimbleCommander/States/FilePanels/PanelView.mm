@@ -8,6 +8,7 @@
 #include <Utility/WorkspaceExtensionIconsCacheImpl.h>
 #include <Utility/BriefOnDiskStorageImpl.h>
 #include <NimbleCommander/Core/Caches/QLVFSThumbnailsCacheImpl.h>
+#include <NimbleCommander/Core/Caches/VFSBundleIconsCacheImpl.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 #include "PanelData.h"
@@ -1078,10 +1079,13 @@ static unique_ptr<IconsGenerator2> MakeIconsGenerator()
         (CommonPaths::AppTemporaryDirectory(),
          ActivationManager::BundleID() + ".ico"); 
     static const auto vfs_cache = make_shared<nc::utility::QLVFSThumbnailsCacheImpl>(brief_storage);
+    static const auto vfs_bi_cache = make_shared<nc::utility::VFSBundleIconsCacheImpl>();
+    
     static const auto icon_builder = make_shared<IconBuilderImpl>(ql_cache,
                                                                   ws_cache,
                                                                   ext_cache,
-                                                                  vfs_cache);    
+                                                                  vfs_cache,
+                                                                  vfs_bi_cache);    
     return make_unique<IconsGenerator2>(icon_builder);
 }
 

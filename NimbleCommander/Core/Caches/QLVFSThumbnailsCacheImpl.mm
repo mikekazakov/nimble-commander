@@ -6,10 +6,6 @@ namespace nc::utility {
 
 static NSImage *ProduceThumbnailForTempFile(const string &_path, CGSize _px_size);
 static optional<vector<uint8_t>> ReadEntireFile(const string &_path, VFSHost &_host);
-static NSDictionary *ReadDictionary(const std::string &_path, VFSHost &_host);
-static NSData *ToTempNSData(const optional<vector<uint8_t>> &_data);
-static NSImage *ReadImageFromFile(const std::string &_path, VFSHost &_host);
-static NSImage *ProduceBundleIcon(const string &_path, VFSHost &_host);
     
 QLVFSThumbnailsCacheImpl::QLVFSThumbnailsCacheImpl
     (const std::shared_ptr<BriefOnDiskStorage> &_temp_storage):
@@ -20,22 +16,45 @@ QLVFSThumbnailsCacheImpl::QLVFSThumbnailsCacheImpl
 QLVFSThumbnailsCacheImpl::~QLVFSThumbnailsCacheImpl()
 {        
 }
-    
-NSImage *QLVFSThumbnailsCacheImpl::ProduceFileThumbnail(const std::string &_file_path,
-                                                        VFSHost &_host,
-                                                        int _px_size)
-{
-    return ProduceThumbnail(_file_path,
-                            path(_file_path).extension().native(),
-                            _host,
-                            CGSizeMake(double(_px_size), double(_px_size)));
-}
 
-NSImage *QLVFSThumbnailsCacheImpl::ProduceBundleThumbnail(const std::string &_file_path,
-                                                          VFSHost &_host,
-                                                          int _px_size)
+NSImage *QLVFSThumbnailsCacheImpl::ThumbnailIfHas(const std::string &_file_path,
+                                                  VFSHost &_host,
+                                                  int _px_size)
 {
-    return ProduceBundleIcon(_file_path, _host);
+    auto key = MakeKey(_file_path, _host, _px_size);
+    
+    {
+        auto lock = lock_guard{m_Lock};
+        if( m_Thumbnails.count(key) )
+            return m_Thumbnails.at(key);
+    }
+            
+    return nil;
+}
+    
+NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_file_path,
+                                                    VFSHost &_host,
+                                                    int _px_size)
+{
+    auto key = MakeKey(_file_path, _host, _px_size);
+    
+    {
+        auto lock = lock_guard{m_Lock};
+        if( m_Thumbnails.count(key) )
+            return m_Thumbnails.at(key);
+    }
+    
+    auto image = ProduceThumbnail(_file_path,
+                                  path(_file_path).extension().native(),
+                                  _host,
+                                  CGSizeMake(double(_px_size), double(_px_size))); 
+    
+    {
+        auto lock = lock_guard{m_Lock};
+        m_Thumbnails.insert(std::move(key), image);
+    }
+    
+    return image; 
 }
 
 NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const string &_path,
@@ -52,6 +71,16 @@ NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const string &_path,
         return nil;
         
     return ProduceThumbnailForTempFile(placement_result->Path(), _sz);
+}
+    
+std::string QLVFSThumbnailsCacheImpl::MakeKey(const std::string &_file_path,
+                                              VFSHost &_host,
+                                              int _px_size)
+{
+    auto key = _host.MakePathVerbose(_file_path.c_str());
+    key += "\x01";
+    key += std::to_string(_px_size);
+    return key;
 }
     
 static NSImage *ProduceThumbnailForTempFile(const string &_path, CGSize _px_size)
@@ -88,110 +117,4 @@ static optional<vector<uint8_t>> ReadEntireFile(const string &_path, VFSHost &_h
     return vfs_file->ReadFile(); 
 }
 
-static NSData *ToTempNSData(const optional<vector<uint8_t>> &_data)
-{
-    if( _data.has_value() == false )
-        return nil;        
-    return [NSData dataWithBytesNoCopy:(void*)_data->data()
-                                length:_data->size()
-                          freeWhenDone:false];
 }
-    
-static NSDictionary *ReadDictionary(const std::string &_path, VFSHost &_host)
-{
-    const auto data = ReadEntireFile(_path, _host);
-    if( data.has_value() == false )
-        return nil;
-    
-    const auto objc_data = ToTempNSData(data);
-    if( objc_data == nil )
-        return nil;
-
-    id dictionary = [NSPropertyListSerialization propertyListWithData:objc_data
-                                                              options:NSPropertyListImmutable
-                                                               format:nil
-                                                                error:nil];
-    return objc_cast<NSDictionary>(dictionary);
-}
-    
-static NSImage *ReadImageFromFile(const std::string &_path, VFSHost &_host)
-{
-    const auto data = ReadEntireFile(_path, _host);
-    if( data.has_value() == false )
-        return nil;
-    
-    const auto objc_data = ToTempNSData(data);
-    if( objc_data == nil )
-        return nil;
-    
-    return [[NSImage alloc] initWithData:objc_data];
-}
-    
-static NSImage *ProduceBundleIcon(const string &_path, VFSHost &_host)
-{
-    const auto info_plist_path = path(_path) / "Contents/Info.plist";
-    const auto plist = ReadDictionary(info_plist_path.native(), _host);
-    if(!plist)
-        return 0;
-    
-    auto icon_str = objc_cast<NSString>([plist objectForKey:@"CFBundleIconFile"]);
-    if( !icon_str )
-        return nil;
-    if( !icon_str.fileSystemRepresentation )
-        return nil;
-    
-    const auto img_path = path(_path) / "Contents/Resources/" / icon_str.fileSystemRepresentation;
-    return ReadImageFromFile(img_path.native(), _host);
-}
-
-}
-
-
-
-
-
-
-
-    
-
-    
-
-//
-//static NSImage *ProduceThumbnailForVFS_Cached(const string &_path, const string &_ext, const VFSHostPtr &_host, CGSize _sz)
-//{
-//    // for immutable vfs we can cache generated thumbnails for some time
-//    pair<bool, NSImage *> thumbnail = {false, nil}; // found -> value
-//    
-//    if( _host->IsImmutableFS() )
-//        thumbnail = QLVFSThumbnailsCache::Instance().Get(_path, _host);
-//    
-//    if( !thumbnail.first ) {
-//        thumbnail.second = ProduceThumbnailForVFS(_path, _ext, _host, _sz);
-//        if( _host->IsImmutableFS() )
-//            QLVFSThumbnailsCache::Instance().Put(_path, _host, thumbnail.second);
-//    }
-//    
-//    return thumbnail.second;
-//}
-//
-
-//
-
-
-//
-//static NSImage *ProduceBundleThumbnailForVFS_Cached(const string &_path, const VFSHostPtr &_host)
-//{
-//    // for immutable vfs we can cache generated thumbnails for some time
-//    pair<bool, NSImage*> thumbnail = {false, nil}; // found -> value
-//    
-//    if( _host->IsImmutableFS() )
-//        thumbnail = QLVFSThumbnailsCache::Instance().Get(_path, _host);
-//    
-//    if( !thumbnail.first ) {
-//        thumbnail.second = ProduceBundleThumbnailForVFS(_path, _host);
-//        if( _host->IsImmutableFS() )
-//            QLVFSThumbnailsCache::Instance().Put(_path, _host, thumbnail.second);
-//    }
-//    
-//    return thumbnail.second;
-//}

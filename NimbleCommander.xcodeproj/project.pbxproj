@@ -581,6 +581,14 @@
 		CF8BDC83213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
 		CF8BDC84213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
 		CF8BDC85213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
+		CF8BDCA2213D536B00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC8E213D536A00F14C3E /* VFSBundleIconsCacheImpl.mm */; };
+		CF8BDCA3213D536B00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC8E213D536A00F14C3E /* VFSBundleIconsCacheImpl.mm */; };
+		CF8BDCA4213D536B00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC8E213D536A00F14C3E /* VFSBundleIconsCacheImpl.mm */; };
+		CF8BDCA5213D536B00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC8E213D536A00F14C3E /* VFSBundleIconsCacheImpl.mm */; };
+		CF8BDCA6213D536B00F14C3E /* VFSBundleIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDCA0213D536B00F14C3E /* VFSBundleIconsCache.mm */; };
+		CF8BDCA7213D536B00F14C3E /* VFSBundleIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDCA0213D536B00F14C3E /* VFSBundleIconsCache.mm */; };
+		CF8BDCA8213D536B00F14C3E /* VFSBundleIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDCA0213D536B00F14C3E /* VFSBundleIconsCache.mm */; };
+		CF8BDCA9213D536B00F14C3E /* VFSBundleIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDCA0213D536B00F14C3E /* VFSBundleIconsCache.mm */; };
 		CF8D0CE31D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
 		CF8D0CE41D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
 		CF8D0CE51D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
@@ -1815,6 +1823,10 @@
 		CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconBuilderImpl.mm; path = NimbleCommander/States/FilePanels/IconBuilderImpl.mm; sourceTree = "<group>"; };
 		CF8BDC80213C162600F14C3E /* QLVFSThumbnailsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QLVFSThumbnailsCacheImpl.h; path = NimbleCommander/Core/Caches/QLVFSThumbnailsCacheImpl.h; sourceTree = "<group>"; };
 		CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLVFSThumbnailsCacheImpl.mm; path = NimbleCommander/Core/Caches/QLVFSThumbnailsCacheImpl.mm; sourceTree = "<group>"; };
+		CF8BDC8E213D536A00F14C3E /* VFSBundleIconsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSBundleIconsCacheImpl.mm; path = NimbleCommander/Core/Caches/VFSBundleIconsCacheImpl.mm; sourceTree = "<group>"; };
+		CF8BDC9F213D536B00F14C3E /* VFSBundleIconsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSBundleIconsCacheImpl.h; path = NimbleCommander/Core/Caches/VFSBundleIconsCacheImpl.h; sourceTree = "<group>"; };
+		CF8BDCA0213D536B00F14C3E /* VFSBundleIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSBundleIconsCache.mm; path = NimbleCommander/Core/Caches/VFSBundleIconsCache.mm; sourceTree = "<group>"; };
+		CF8BDCA1213D536B00F14C3E /* VFSBundleIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSBundleIconsCache.h; path = NimbleCommander/Core/Caches/VFSBundleIconsCache.h; sourceTree = "<group>"; };
 		CF8D0CE71D96234900ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FeedbackWindow.xib; sourceTree = "<group>"; };
 		CF8D0CED1D9623E000ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/RegistrationInfoWindow.xib; sourceTree = "<group>"; };
 		CF8D0CF01D96244900ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProFeaturesWindowController.xib; sourceTree = "<group>"; };
@@ -3189,6 +3201,10 @@
 				CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */,
 				CF8BDC80213C162600F14C3E /* QLVFSThumbnailsCacheImpl.h */,
 				CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */,
+				CF8BDCA1213D536B00F14C3E /* VFSBundleIconsCache.h */,
+				CF8BDCA0213D536B00F14C3E /* VFSBundleIconsCache.mm */,
+				CF8BDC9F213D536B00F14C3E /* VFSBundleIconsCacheImpl.h */,
+				CF8BDC8E213D536A00F14C3E /* VFSBundleIconsCacheImpl.mm */,
 			);
 			name = Caches;
 			sourceTree = "<group>";
@@ -3976,6 +3992,7 @@
 				CF7A09AF1EC2DF5C00533B07 /* Delete.mm in Sources */,
 				CF1E3D141D59A4A500609ADB /* InternalViewerViewPreviewMode.mm in Sources */,
 				CFD726BD1E42E28A00603077 /* IconsGenerator2.mm in Sources */,
+				CF8BDCA4213D536B00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */,
 				CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CFA2D6061E39D43C009DB708 /* PreferencesWindowThemesTabImportSheet.mm in Sources */,
 				CF818B521EA0610D00BC28E6 /* ChangeAttributes.mm in Sources */,
@@ -4006,6 +4023,7 @@
 				CF7C7CB51E5ACDD4002DB0E2 /* Alert.mm in Sources */,
 				CF2084251FF14E260014D6AD /* ListingPromise.cpp in Sources */,
 				CF4E56BE1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
+				CF8BDCA8213D536B00F14C3E /* VFSBundleIconsCache.mm in Sources */,
 				CF3B7F73201F213000BF2090 /* PanelControllerActionsDispatcher.mm in Sources */,
 				CFD8CD3D1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
 				CF876D3F1D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */,
@@ -4102,6 +4120,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF818B771EA4572E00BC28E6 /* CopyToPasteboard.mm in Sources */,
+				CF8BDCA2213D536B00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */,
 				CFD726E21E42E2C700603077 /* PanelListViewDateFormatting.mm in Sources */,
 				CFD727061E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */,
 				CFD8CDB91E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
@@ -4290,6 +4309,7 @@
 				CFD726AC1E42E25100603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CFA1716320196CB400F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
 				CF8BDC78213B9AF500F14C3E /* IconBuilderImpl.mm in Sources */,
+				CF8BDCA6213D536B00F14C3E /* VFSBundleIconsCache.mm in Sources */,
 				CF6237231EB4444300152B2B /* PanelDataExternalEntryKey.mm in Sources */,
 				CFD726211E42E0AD00603077 /* ActionShortcut.mm in Sources */,
 				CFFA95191F45A3400035E606 /* ConfigWiring.mm in Sources */,
@@ -4334,6 +4354,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFD8CDC41E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
+				CF8BDCA3213D536B00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */,
 				CF75E88A1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
 				CFDAC2E41DFD142C0039A104 /* SearchInFile.cpp in Sources */,
 				CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */,
@@ -4522,6 +4543,7 @@
 				CF56C2CA1DC358F200F0DF0F /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CF4E56411D5064FE00452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
 				CF8BDC7F213B9B0500F14C3E /* IconBuilderImpl.mm in Sources */,
+				CF8BDCA7213D536B00F14C3E /* VFSBundleIconsCache.mm in Sources */,
 				CFFED08C1CC0B41F0059611B /* SpotlightSearchPopupViewController.mm in Sources */,
 				CFDAC2D11DFD105A0039A104 /* MASAppInstalledChecker.cpp in Sources */,
 				CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */,
@@ -4588,6 +4610,7 @@
 				CF1FBF281E8F57E400D3569C /* OpenWithExternalEditor.mm in Sources */,
 				CF818B5E1EA0610E00BC28E6 /* ToggleLayout.mm in Sources */,
 				CF04DDF81E2DBF1D0047B1F9 /* Preferences.mm in Sources */,
+				CF8BDCA9213D536B00F14C3E /* VFSBundleIconsCache.mm in Sources */,
 				CF2F434A1EAF345400AA031A /* ConnectToServer.mm in Sources */,
 				CFD7271D1E42E32F00603077 /* ShellState.mm in Sources */,
 				CFD7265E1E42E1D600603077 /* FilesDraggingSource.mm in Sources */,
@@ -4600,6 +4623,7 @@
 				CF90C0BF1EC171FD0056E3B8 /* PanelDataFilter.mm in Sources */,
 				CFD726791E42E20200603077 /* PanelController.mm in Sources */,
 				CF46C24620317FEE00A91E2F /* ServicesHandler.mm in Sources */,
+				CF8BDCA5213D536B00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */,
 				CFD726701E42E1F500603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF876D3A1D51E0AF009C0CCE /* BigFileViewHex.mm in Sources */,
 				CFD726941E42E22A00603077 /* PanelDataItemVolatileData.cpp in Sources */,

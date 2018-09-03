@@ -7,6 +7,7 @@ IconBuilderImpl::IconBuilderImpl
      const std::shared_ptr<utility::WorkspaceIconsCache> &_workspace_icons_cache,
      const std::shared_ptr<utility::WorkspaceExtensionIconsCache> &_extension_icons_cache,
      const std::shared_ptr<utility::QLVFSThumbnailsCache> &_vfs_thumbnails_cache,     
+     const std::shared_ptr<utility::VFSBundleIconsCache> &_vfs_bundle_icons_cache,     
      long _max_filesize_for_thumbnails_on_native_fs, 
      long _max_filesize_for_thumbnails_on_vfs):
     m_QLThumbnailsCache(_ql_cache),
@@ -14,7 +15,8 @@ IconBuilderImpl::IconBuilderImpl
     m_ExtensionIconsCache(_extension_icons_cache),
     m_VFSThumbnailsCache(_vfs_thumbnails_cache),
     m_MaxFilesizeForThumbnailsOnNativeFS(_max_filesize_for_thumbnails_on_native_fs),
-    m_MaxFilesizeForThumbnailsOnVFS(_max_filesize_for_thumbnails_on_vfs)
+    m_MaxFilesizeForThumbnailsOnVFS(_max_filesize_for_thumbnails_on_vfs),
+    m_VFSBundleIconsCache(_vfs_bundle_icons_cache)
 {
 }
 
@@ -32,43 +34,41 @@ IconBuilder::LookupResult
     
     if( _item.Host()->IsNativeFS() ) {
         const auto path = _item.Path();
-        if( auto thumbnail = m_QLThumbnailsCache->ThumbnailIfHas(path, _icon_px_size) ) {
-            result.thumbnail = thumbnail;
-        }
-        else {
-            if( auto workspace_icon = m_WorkspaceIconsCache->IconIfHas(path) ) {
-                result.filetype = workspace_icon;
-            }
-            else {
-                if( _item.HasExtension() ) {
-                    if( auto extension_icon =
-                        m_ExtensionIconsCache->IconForExtension( _item.Extension() )){
-                        result.filetype = extension_icon;
-                    }
-                    else {
-                        result.generic = GetGenericIcon(_item);
-                    }
-                }
-                else {
-                    result.generic = GetGenericIcon(_item);
-                }
-            }
-        } 
+        
+        result.thumbnail = m_QLThumbnailsCache->ThumbnailIfHas(path, _icon_px_size);
+        if( result.thumbnail )
+            return result;
+        
+        result.filetype = m_WorkspaceIconsCache->IconIfHas(path);
+        if( result.filetype )
+            return result;
+        
+      
     }
     else {
-        if( _item.HasExtension() ) {
-            if( auto extension_icon =
-               m_ExtensionIconsCache->IconForExtension( _item.Extension() )){
-                result.filetype = extension_icon;
+        if( _item.Host()->ShouldProduceThumbnails() ) {
+            if( ShouldTryProducingBundleIconOnVFS(_item) ) {
+                result.thumbnail = m_VFSBundleIconsCache->IconIfHas(_item.Path(), *_item.Host());
+                if( result.thumbnail )
+                    return result;
             }
-            else {
-                result.generic = GetGenericIcon(_item);
+            if( ShouldTryProducingQLThumbnailOnNativeFS(_item) ) {
+                result.thumbnail = m_VFSThumbnailsCache->ThumbnailIfHas(_item.Path(),
+                                                                        *_item.Host(),
+                                                                        _icon_px_size);
+                if( result.thumbnail )
+                    return result;
             }
-        }
-        else {
-            result.generic = GetGenericIcon(_item);
         }        
     }
+    
+    if( _item.HasExtension() ) {
+        result.filetype = m_ExtensionIconsCache->IconForExtension(_item.Extension());
+        if( result.filetype )
+            return result;
+    }
+    
+    result.generic = GetGenericIcon(_item); 
     return result;
 }
     
@@ -114,10 +114,8 @@ IconBuilder::BuildResult
          
          // special case for for bundles
          if( ShouldTryProducingBundleIconOnVFS(_item) )
-             result.thumbnail = m_VFSThumbnailsCache->ProduceBundleThumbnail(path,
-                                                                             *_item.Host(),
-                                                                             _icon_px_size);
-         
+             result.thumbnail = m_VFSBundleIconsCache->ProduceIcon(path, *_item.Host()); 
+             
          if( result.thumbnail )
              return result;
          
@@ -126,9 +124,9 @@ IconBuilder::BuildResult
          
          // produce QL icon for file
          if( ShouldTryProducingQLThumbnailOnVFS(_item) ) {
-             result.thumbnail = m_VFSThumbnailsCache->ProduceFileThumbnail(path,
-                                                                           *_item.Host(),
-                                                                           _icon_px_size);
+             result.thumbnail = m_VFSThumbnailsCache->ProduceThumbnail(path,
+                                                                       *_item.Host(),
+                                                                       _icon_px_size);
 
              if( result.thumbnail )
                  return result;             

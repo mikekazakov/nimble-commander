@@ -6,6 +6,8 @@
 #include <Utility/QLThumbnailsCacheImpl.h>
 #include <Utility/WorkspaceIconsCacheImpl.h>
 #include <Utility/WorkspaceExtensionIconsCacheImpl.h>
+#include <Utility/BriefOnDiskStorageImpl.h>
+#include <NimbleCommander/Core/Caches/QLVFSThumbnailsCacheImpl.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 #include "PanelData.h"
@@ -21,8 +23,11 @@
 #include "DragSender.h"
 #include "PanelViewFieldEditor.h"
 #include "PanelViewKeystrokeSink.h"
-
 #include "IconBuilderImpl.h"
+
+// TODO: remove this crap
+#include <Habanero/CommonPaths.h>
+#include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 using namespace nc::panel;
 
@@ -1068,10 +1073,15 @@ static unique_ptr<IconsGenerator2> MakeIconsGenerator()
 {
     static const auto ql_cache = make_shared<nc::utility::QLThumbnailsCacheImpl>();
     static const auto ws_cache = make_shared<nc::utility::WorkspaceIconsCacheImpl>();
-    static const auto ext_cache = make_shared<nc::utility::WorkspaceExtensionIconsCacheImpl>();
-
-    static const auto icon_builder = make_shared<IconBuilderImpl>(ql_cache, ws_cache, ext_cache);
-    
+    static const auto ext_cache = make_shared<nc::utility::WorkspaceExtensionIconsCacheImpl>();    
+    static const auto brief_storage = make_shared<nc::utility::BriefOnDiskStorageImpl>
+        (CommonPaths::AppTemporaryDirectory(),
+         ActivationManager::BundleID() + ".ico"); 
+    static const auto vfs_cache = make_shared<nc::utility::QLVFSThumbnailsCacheImpl>(brief_storage);
+    static const auto icon_builder = make_shared<IconBuilderImpl>(ql_cache,
+                                                                  ws_cache,
+                                                                  ext_cache,
+                                                                  vfs_cache);    
     return make_unique<IconsGenerator2>(icon_builder);
 }
 

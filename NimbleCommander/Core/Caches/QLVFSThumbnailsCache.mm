@@ -1,5 +1,7 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QLVFSThumbnailsCache.h"
+
+/*
 
 static const nanoseconds g_PurgeDelay = 1min;
 
@@ -62,3 +64,4 @@ void QLVFSThumbnailsCache::Purge()
             Purge();
         });
 }
+*/

@@ -577,6 +577,10 @@
 		CF8BDC7D213B9B0400F14C3E /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */; };
 		CF8BDC7E213B9B0500F14C3E /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */; };
 		CF8BDC7F213B9B0500F14C3E /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */; };
+		CF8BDC82213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
+		CF8BDC83213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
+		CF8BDC84213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
+		CF8BDC85213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
 		CF8D0CE31D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
 		CF8D0CE41D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
 		CF8D0CE51D96234900ADFF14 /* FeedbackWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */; };
@@ -1809,6 +1813,8 @@
 		CF8BDC74213B9AF400F14C3E /* IconBuilder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconBuilder.mm; path = NimbleCommander/States/FilePanels/IconBuilder.mm; sourceTree = "<group>"; };
 		CF8BDC75213B9AF500F14C3E /* IconBuilderImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconBuilderImpl.h; path = NimbleCommander/States/FilePanels/IconBuilderImpl.h; sourceTree = "<group>"; };
 		CF8BDC76213B9AF500F14C3E /* IconBuilderImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconBuilderImpl.mm; path = NimbleCommander/States/FilePanels/IconBuilderImpl.mm; sourceTree = "<group>"; };
+		CF8BDC80213C162600F14C3E /* QLVFSThumbnailsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QLVFSThumbnailsCacheImpl.h; path = NimbleCommander/Core/Caches/QLVFSThumbnailsCacheImpl.h; sourceTree = "<group>"; };
+		CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLVFSThumbnailsCacheImpl.mm; path = NimbleCommander/Core/Caches/QLVFSThumbnailsCacheImpl.mm; sourceTree = "<group>"; };
 		CF8D0CE71D96234900ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FeedbackWindow.xib; sourceTree = "<group>"; };
 		CF8D0CED1D9623E000ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/RegistrationInfoWindow.xib; sourceTree = "<group>"; };
 		CF8D0CF01D96244900ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProFeaturesWindowController.xib; sourceTree = "<group>"; };
@@ -3181,6 +3187,8 @@
 				CF6237061EB4436400152B2B /* QLThumbnailsCache_Tests.mm */,
 				CFDAC2C81DFD0F840039A104 /* QLVFSThumbnailsCache.h */,
 				CFDAC2C91DFD0F840039A104 /* QLVFSThumbnailsCache.mm */,
+				CF8BDC80213C162600F14C3E /* QLVFSThumbnailsCacheImpl.h */,
+				CF8BDC81213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm */,
 			);
 			name = Caches;
 			sourceTree = "<group>";
@@ -3926,6 +3934,7 @@
 				CF7A09B21EC2DF6300533B07 /* Duplicate.mm in Sources */,
 				CFD726551E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFD726DE1E42E2C200603077 /* PanelListView.mm in Sources */,
+				CF8BDC84213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */,
 				CF818B551EA0610D00BC28E6 /* CalculateSizes.mm in Sources */,
 				CF1FBF291E8F57E500D3569C /* OpenWithExternalEditor.mm in Sources */,
 				CF1E3D1D1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */,
@@ -4313,6 +4322,7 @@
 				CF3B7F70201F20D300BF2090 /* PanelControllerActionsDispatcher.mm in Sources */,
 				CF75E88B1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
 				CF7A09B01EC2DF5D00533B07 /* Delete.mm in Sources */,
+				CF8BDC82213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */,
 				CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */,
 				CF36DBF31F6C18F4004A018E /* TextWidthsCache.mm in Sources */,
 				CF818B6B1EA0613D00BC28E6 /* AnyHolder.mm in Sources */,
@@ -4544,6 +4554,7 @@
 				CFBEF9011F6781A100C63816 /* TextWidthsCache.mm in Sources */,
 				CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */,
 				CFDAC2211DFBCA290039A104 /* PanelDataPersistency.cpp in Sources */,
+				CF8BDC83213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */,
 				CF6ECDA91E9F4776008FA79E /* ChangeAttributes.mm in Sources */,
 				CF2437701DEDF9B300245C14 /* PanelViewFooter.mm in Sources */,
 				CFDAC2A31DFBFBA10039A104 /* TemporaryNativeFileStorage.cpp in Sources */,
@@ -4566,6 +4577,7 @@
 				CFA6C86C20159C7000CD7681 /* PanelControllerPersistency.mm in Sources */,
 				CF9F4B031ECC8DE200E0AF82 /* ExecuteInTerminal.mm in Sources */,
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
+				CF8BDC85213C162600F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */,
 				CF818B621EA0610E00BC28E6 /* FindFiles.mm in Sources */,
 				CFD726131E42E08100603077 /* Config.mm in Sources */,
 				CFD726C51E42E29A00603077 /* Layout.mm in Sources */,

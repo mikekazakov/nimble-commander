@@ -1,14 +1,15 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
 
+/*
 class QLVFSThumbnailsCache
 {
 public:
     static QLVFSThumbnailsCache &Instance() noexcept;
     
-    /** return pair: <did found?, value> */
+    // return pair: <did found?, value>
     pair<bool, NSImage*> Get(const string& _path, const VFSHostPtr &_host);
     void        Put(const string& _path, const VFSHostPtr &_host, NSImage *_img);
     
@@ -26,3 +27,29 @@ private:
     atomic_bool m_PurgeScheduled{false};
 };
 
+
+*/
+
+
+namespace nc::utility {
+    
+class QLVFSThumbnailsCache
+{
+public:
+    virtual ~QLVFSThumbnailsCache() = default;
+    
+    virtual NSImage *ProduceFileThumbnail(const std::string &_file_path,
+                                          VFSHost &_host,
+                                          int _px_size) = 0;
+    
+    virtual NSImage *ProduceBundleThumbnail(const std::string &_file_path,
+                                            VFSHost &_host,
+                                            int _px_size) = 0;
+    
+
+//    virtual NSImage *ProduceThumbnail(const std::string &_file_path,
+//                                      int _px_size) = 0;    
+    
+};
+
+}

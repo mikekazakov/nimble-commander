@@ -23,7 +23,7 @@ struct ListingInput;
 class ListingItem;
 class WeakListingItem;
 
-class Listing : public enable_shared_from_this<Listing>
+class Listing : public std::enable_shared_from_this<Listing>
 {
 public:
     static const VFSListingPtr &EmptyListing() noexcept;
@@ -34,9 +34,9 @@ public:
      * it will contain only sparse-based variable containers.
      * will throw on errors
      */
-    static ListingInput Compose(const vector<shared_ptr<Listing>> &_listings);
-    static ListingInput Compose(const vector<shared_ptr<Listing>> &_listings,
-                                const vector< vector<unsigned> > &_items_indeces);
+    static ListingInput Compose(const std::vector<std::shared_ptr<Listing>> &_listings);
+    static ListingInput Compose(const std::vector<std::shared_ptr<Listing>> &_listings,
+                                const std::vector< std::vector<unsigned> > &_items_indeces);
     
     
     static VFSListingPtr ProduceUpdatedTemporaryPanelListing(const Listing& _original,
@@ -53,17 +53,17 @@ public:
 
     ListingItem         Item                (unsigned _ind) const;
 
-    const string&       Directory           () const; // will throw if there's no common directory
-    const string&       Directory           (unsigned _ind) const;
+    const std::string&  Directory           () const; // will throw if there's no common directory
+    const std::string&  Directory           (unsigned _ind) const;
     const VFSHostPtr&   Host                () const; // will throw if there's no common host
     const VFSHostPtr&   Host                (unsigned _ind) const;
     
     /**
      * Compose a path to specified listing item. Is case of ".." item will directory path itself.
      */
-    string              Path                (unsigned _ind) const;
+    std::string         Path                (unsigned _ind) const;
     
-    const string&       Filename            (unsigned _ind) const;
+    const std::string&  Filename            (unsigned _ind) const;
     CFStringRef         FilenameCF          (unsigned _ind) const;
 #ifdef __OBJC__
     NSString*           FilenameNS          (unsigned _ind) const;
@@ -76,7 +76,7 @@ public:
     uint16_t            ExtensionOffset     (unsigned _ind) const;
     const char*         Extension           (unsigned _ind) const;
     
-    string              FilenameWithoutExt  (unsigned _ind) const;
+    std::string         FilenameWithoutExt  (unsigned _ind) const;
     
     bool                HasSize             (unsigned _ind) const;
     uint64_t            Size                (unsigned _ind) const;
@@ -109,10 +109,10 @@ public:
     uint32_t            UnixFlags           (unsigned _ind) const;
     
     bool                HasSymlink          (unsigned _ind) const;
-    const string&       Symlink             (unsigned _ind) const;
+    const std::string&  Symlink             (unsigned _ind) const;
     
     bool                HasDisplayFilename  (unsigned _ind) const;
-    const string&       DisplayFilename     (unsigned _ind) const;
+    const std::string&  DisplayFilename     (unsigned _ind) const;
     CFStringRef         DisplayFilenameCF   (unsigned _ind) const;
 #ifdef __OBJC__
     inline NSString*    DisplayFilenameNS   (unsigned _ind) const;
@@ -131,18 +131,18 @@ public:
 private:
     Listing();
     ~Listing();
-    static shared_ptr<Listing> Alloc(); // fighting against c++...
+    static std::shared_ptr<Listing> Alloc(); // fighting against c++...
     void BuildFilenames();    
     
     unsigned                        m_ItemsCount;
     time_t                          m_CreationTime;
     variable_container<VFSHostPtr>  m_Hosts;
-    variable_container<string>      m_Directories;
-    vector<string>                  m_Filenames;
-    vector<CFString>                m_FilenamesCF;
-    vector<uint16_t>                m_ExtensionOffsets;
-    vector<mode_t>                  m_UnixModes;
-    vector<uint8_t>                 m_UnixTypes;
+    variable_container<std::string> m_Directories;
+    std::vector<std::string>        m_Filenames;
+    std::vector<CFString>           m_FilenamesCF;
+    std::vector<uint16_t>           m_ExtensionOffsets;
+    std::vector<mode_t>             m_UnixModes;
+    std::vector<uint8_t>            m_UnixTypes;
     variable_container<uint64_t>    m_Sizes;
     variable_container<uint64_t>    m_Inodes;
     variable_container<time_t>      m_ATimes;
@@ -153,8 +153,8 @@ private:
     variable_container<uid_t>       m_UIDS;
     variable_container<gid_t>       m_GIDS;
     variable_container<uint32_t>    m_UnixFlags;
-    variable_container<string>      m_Symlinks;
-    variable_container<string>      m_DisplayFilenames;
+    variable_container<std::string> m_Symlinks;
+    variable_container<std::string> m_DisplayFilenames;
     variable_container<CFString>    m_DisplayFilenamesCF;
 };
 
@@ -163,17 +163,17 @@ class ListingItem
 {
 public:
     ListingItem() noexcept;
-    ListingItem(const shared_ptr<const Listing>& _listing, unsigned _ind) noexcept;
+    ListingItem(const std::shared_ptr<const Listing>& _listing, unsigned _ind) noexcept;
     operator                                bool()              const noexcept;
-    const shared_ptr<const Listing>&        Listing()           const noexcept;
+    const std::shared_ptr<const Listing>&   Listing()           const noexcept;
     unsigned                                Index()             const noexcept;
     
-    string          Path()              const;
-    const VFSHostPtr& Host()            const;
-    const string&   Directory()         const;
+    std::string         Path()          const;
+    const VFSHostPtr&   Host()          const;
+    const std::string&  Directory()     const;
     
     // currently mimicking old VFSListingItem interface, may change methods names later
-    const string&   Filename()          const;
+    const std::string&  Filename()      const;
     const char     *FilenameC()         const;
     size_t          FilenameLen()       const;
     CFStringRef     FilenameCF()        const;
@@ -182,7 +182,7 @@ public:
 #endif
 
     bool            HasDisplayName()    const;
-    const string&   DisplayName()       const;
+    const std::string&  DisplayName()   const;
     CFStringRef     DisplayNameCF()     const;
 #ifdef __OBJC__
     NSString*       DisplayNameNS()     const;
@@ -192,7 +192,7 @@ public:
     uint16_t        ExtensionOffset()   const;
     const char*     Extension()         const; // unguarded calls whout HasExtension will yeild a whole filename as a result
     const char*     ExtensionIfAny()    const; // will return "" if there's no extension
-    string          FilenameWithoutExt()const;
+    std::string     FilenameWithoutExt()const;
     
     mode_t          UnixMode()          const; // resolved for symlinks
     uint8_t         UnixType()          const; // type is _original_ directory entry, without symlinks resolving
@@ -240,7 +240,7 @@ public:
     bool operator !=(const ListingItem&_) const noexcept;
     
 private:
-    shared_ptr<const class Listing> L;
+    std::shared_ptr<const class Listing> L;
     unsigned                        I;
     friend Listing::iterator;
     friend WeakListingItem;
@@ -266,7 +266,7 @@ public:
     bool operator !=(const ListingItem&) const noexcept;
     
 private:
-    weak_ptr<const Listing>  L;
+    std::weak_ptr<const Listing>  L;
     unsigned                    I;
 };
 

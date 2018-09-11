@@ -1,9 +1,9 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "WorkspaceExtensionIconsCacheImpl.h"
+#include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
 #include <Cocoa/Cocoa.h>
 #include <Utility/StringExtras.h>
 
-namespace nc::utility {
+namespace nc::vfsicon {
 
 static NSString *NonDynaticUTIForExtension( const std::string &_extension );
 

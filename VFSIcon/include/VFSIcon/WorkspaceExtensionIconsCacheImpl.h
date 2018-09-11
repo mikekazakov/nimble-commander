@@ -6,7 +6,7 @@
 #include <Habanero/spinlock.h>
 #include "WorkspaceExtensionIconsCache.h"
 
-namespace nc::utility {
+namespace nc::vfsicon {
 
 class WorkspaceExtensionIconsCacheImpl : public WorkspaceExtensionIconsCache 
 {

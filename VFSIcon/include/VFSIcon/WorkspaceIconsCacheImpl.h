@@ -10,7 +10,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wignored-qualifiers" // working around __strong and gmock
 
-namespace nc::utility {
+namespace nc::vfsicon {
 
 namespace detail {
 

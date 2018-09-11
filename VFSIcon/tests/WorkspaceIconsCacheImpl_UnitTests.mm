@@ -1,7 +1,7 @@
-#include "WorkspaceIconsCacheImpl.h"
+#include <VFSIcon/WorkspaceIconsCacheImpl.h>
 #include "UnitTests_main.h"
 
-using namespace nc::utility;
+using namespace nc::vfsicon;
 using ::testing::_;
 using ::testing::Return;
 using base = detail::WorkspaceIconsCacheImplBase;

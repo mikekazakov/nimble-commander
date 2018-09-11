@@ -4,7 +4,7 @@
 #include "VFSError.h"
 #include "VFSDeclarations.h"
 
-class VFSFile : public enable_shared_from_this<VFSFile>
+class VFSFile : public std::enable_shared_from_this<VFSFile>
 {
 public:
     enum class ReadParadigm {
@@ -127,7 +127,7 @@ public:
      * This function may cause blocking I/O.
      */
     virtual void XAttrIterateNames(
-                                   function<bool(const char* _xattr_name)> _handler // return true for allowing iteration, false to stop it
+                                   std::function<bool(const char* _xattr_name)> _handler // return true for allowing iteration, false to stop it
                                    ) const;
     
     /**
@@ -145,17 +145,17 @@ public:
      * Open status and file positions are not shared
      * Can return null pointer in some cases
      */
-    virtual shared_ptr<VFSFile> Clone() const;
+    virtual std::shared_ptr<VFSFile> Clone() const;
 
     /**
      * ComposeVerbosePath() relies solely on Host() and VerboseJunctionPath()
      */
-    string ComposeVerbosePath() const;
+    std::string ComposeVerbosePath() const;
     
     /**
      * ReadFile() return full file content in vector<uint8_t> or nullptr.
      */
-    optional<vector<uint8_t>> ReadFile();
+    std::optional<std::vector<uint8_t>> ReadFile();
     
     /**
      * Will call Write until data ends or an error occurs.
@@ -171,10 +171,10 @@ public:
     NSData *ReadFileToNSData();
 #endif
     
-    shared_ptr<VFSFile> SharedPtr();
-    shared_ptr<const VFSFile> SharedPtr() const;
+    std::shared_ptr<VFSFile> SharedPtr();
+    std::shared_ptr<const VFSFile> SharedPtr() const;
     const char* Path() const noexcept;
-    const shared_ptr<VFSHost> &Host() const;
+    const std::shared_ptr<VFSHost> &Host() const;
 protected:
     /**
      * Sets a new last error code and returns it for convenience.
@@ -182,14 +182,14 @@ protected:
     int SetLastError(int _error) const;
     
 private:
-    string m_RelativePath;
-    shared_ptr<VFSHost> m_Host;
+    std::string m_RelativePath;
+    std::shared_ptr<VFSHost> m_Host;
 
     /**
      * m_LastError should be set when any error occurs.
      * This storage is not per-thread - concurrent accesses may overwrite it.
      */
-    mutable atomic_int m_LastError;
+    mutable std::atomic_int m_LastError;
     
     // forbid copying
     VFSFile(const VFSFile&) = delete;

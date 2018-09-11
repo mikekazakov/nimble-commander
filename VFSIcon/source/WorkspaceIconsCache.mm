@@ -1,0 +1,1 @@
+#include <VFSIcon/WorkspaceIconsCache.h>

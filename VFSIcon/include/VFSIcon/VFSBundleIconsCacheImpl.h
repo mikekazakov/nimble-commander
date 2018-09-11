@@ -4,7 +4,7 @@
 #include <Habanero/LRUCache.h>
 #include <Habanero/spinlock.h>
 
-namespace nc::utility {
+namespace nc::vfsicon {
     
 class VFSBundleIconsCacheImpl : public VFSBundleIconsCache 
 {

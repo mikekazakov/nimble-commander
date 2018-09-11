@@ -1,0 +1,574 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CF8BDD132147D6F400F14C3E /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD122147D6F400F14C3E /* libUtility.dylib */; };
+		CF8BDD152147D6F400F14C3E /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD142147D6F400F14C3E /* libVFS.dylib */; };
+		CF8BDD1B2147D78A00F14C3E /* QLVFSThumbnailsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD192147D78A00F14C3E /* QLVFSThumbnailsCache.h */; };
+		CF8BDD1C2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD1A2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h */; };
+		CF8BDD1F2147D79400F14C3E /* QLVFSThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD1D2147D79400F14C3E /* QLVFSThumbnailsCache.mm */; };
+		CF8BDD202147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD1E2147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm */; };
+		CF8BDD222147DE1900F14C3E /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD212147DE1900F14C3E /* libHabanero.dylib */; };
+		CF8BDD242147DE3000F14C3E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD232147DE3000F14C3E /* Cocoa.framework */; };
+		CF8BDD262147DE4400F14C3E /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD252147DE4400F14C3E /* Quartz.framework */; };
+		CF8BDD2B2147E3E300F14C3E /* VFSBundleIconsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD292147E3E200F14C3E /* VFSBundleIconsCacheImpl.h */; };
+		CF8BDD2C2147E3E300F14C3E /* VFSBundleIconsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD2A2147E3E200F14C3E /* VFSBundleIconsCache.h */; };
+		CF8BDD2F2147E3EB00F14C3E /* VFSBundleIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD2D2147E3EA00F14C3E /* VFSBundleIconsCache.mm */; };
+		CF8BDD302147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD2E2147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm */; };
+		CF8BDD322147E4E900F14C3E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD312147E4E900F14C3E /* Foundation.framework */; };
+		CF8BDD352147E69F00F14C3E /* IconBuilderImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD332147E69F00F14C3E /* IconBuilderImpl.h */; };
+		CF8BDD362147E69F00F14C3E /* IconBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD342147E69F00F14C3E /* IconBuilder.h */; };
+		CF8BDD392147E6A700F14C3E /* IconBuilder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD372147E6A700F14C3E /* IconBuilder.mm */; };
+		CF8BDD3A2147E6A700F14C3E /* IconBuilderImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD382147E6A700F14C3E /* IconBuilderImpl.mm */; };
+		CF8BDD432147E8AB00F14C3E /* IconRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD3B2147E8AA00F14C3E /* IconRepository.h */; };
+		CF8BDD442147E8AB00F14C3E /* WorkspaceExtensionIconsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD3C2147E8AA00F14C3E /* WorkspaceExtensionIconsCacheImpl.h */; };
+		CF8BDD452147E8AB00F14C3E /* IconRepositoryImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD3D2147E8AA00F14C3E /* IconRepositoryImpl.h */; };
+		CF8BDD462147E8AB00F14C3E /* QLThumbnailsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD3E2147E8AA00F14C3E /* QLThumbnailsCacheImpl.h */; };
+		CF8BDD472147E8AB00F14C3E /* QLThumbnailsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD3F2147E8AA00F14C3E /* QLThumbnailsCache.h */; };
+		CF8BDD482147E8AB00F14C3E /* WorkspaceIconsCacheImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD402147E8AB00F14C3E /* WorkspaceIconsCacheImpl.h */; };
+		CF8BDD492147E8AB00F14C3E /* WorkspaceExtensionIconsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD412147E8AB00F14C3E /* WorkspaceExtensionIconsCache.h */; };
+		CF8BDD4A2147E8AB00F14C3E /* WorkspaceIconsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD422147E8AB00F14C3E /* WorkspaceIconsCache.h */; };
+		CF8BDD532147E8B600F14C3E /* IconRepositoryImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4B2147E8B600F14C3E /* IconRepositoryImpl.mm */; };
+		CF8BDD542147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4C2147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm */; };
+		CF8BDD552147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4D2147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm */; };
+		CF8BDD562147E8B600F14C3E /* QLThumbnailsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4E2147E8B600F14C3E /* QLThumbnailsCache.mm */; };
+		CF8BDD572147E8B600F14C3E /* WorkspaceIconsCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD4F2147E8B600F14C3E /* WorkspaceIconsCache.mm */; };
+		CF8BDD582147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD502147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm */; };
+		CF8BDD592147E8B600F14C3E /* QLThumbnailsCacheImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD512147E8B600F14C3E /* QLThumbnailsCacheImpl.mm */; };
+		CF8BDD5A2147E8B600F14C3E /* IconRepository.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD522147E8B600F14C3E /* IconRepository.mm */; };
+		CF8BDD692147EC7900F14C3E /* UnitTests_main.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD672147EC7900F14C3E /* UnitTests_main.h */; };
+		CF8BDD6A2147EC7D00F14C3E /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD662147EC7900F14C3E /* UnitTests_main.cpp */; };
+		CF8BDD6D2147ECD200F14C3E /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */; };
+		CF8BDD6E2147ED1400F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD6B2147ECA900F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CF8BDD5D2147EB3F00F14C3E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libVFSIcon.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF8BDD122147D6F400F14C3E /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF8BDD142147D6F400F14C3E /* libVFS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libVFS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF8BDD192147D78A00F14C3E /* QLVFSThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QLVFSThumbnailsCache.h; path = include/VFSIcon/QLVFSThumbnailsCache.h; sourceTree = "<group>"; };
+		CF8BDD1A2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QLVFSThumbnailsCacheImpl.h; path = include/VFSIcon/QLVFSThumbnailsCacheImpl.h; sourceTree = "<group>"; };
+		CF8BDD1D2147D79400F14C3E /* QLVFSThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLVFSThumbnailsCache.mm; path = source/QLVFSThumbnailsCache.mm; sourceTree = "<group>"; };
+		CF8BDD1E2147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLVFSThumbnailsCacheImpl.mm; path = source/QLVFSThumbnailsCacheImpl.mm; sourceTree = "<group>"; };
+		CF8BDD212147DE1900F14C3E /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF8BDD232147DE3000F14C3E /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		CF8BDD252147DE4400F14C3E /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
+		CF8BDD292147E3E200F14C3E /* VFSBundleIconsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSBundleIconsCacheImpl.h; path = include/VFSIcon/VFSBundleIconsCacheImpl.h; sourceTree = "<group>"; };
+		CF8BDD2A2147E3E200F14C3E /* VFSBundleIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSBundleIconsCache.h; path = include/VFSIcon/VFSBundleIconsCache.h; sourceTree = "<group>"; };
+		CF8BDD2D2147E3EA00F14C3E /* VFSBundleIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSBundleIconsCache.mm; path = source/VFSBundleIconsCache.mm; sourceTree = "<group>"; };
+		CF8BDD2E2147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSBundleIconsCacheImpl.mm; path = source/VFSBundleIconsCacheImpl.mm; sourceTree = "<group>"; };
+		CF8BDD312147E4E900F14C3E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		CF8BDD332147E69F00F14C3E /* IconBuilderImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconBuilderImpl.h; path = include/VFSIcon/IconBuilderImpl.h; sourceTree = "<group>"; };
+		CF8BDD342147E69F00F14C3E /* IconBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconBuilder.h; path = include/VFSIcon/IconBuilder.h; sourceTree = "<group>"; };
+		CF8BDD372147E6A700F14C3E /* IconBuilder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconBuilder.mm; path = source/IconBuilder.mm; sourceTree = "<group>"; };
+		CF8BDD382147E6A700F14C3E /* IconBuilderImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconBuilderImpl.mm; path = source/IconBuilderImpl.mm; sourceTree = "<group>"; };
+		CF8BDD3B2147E8AA00F14C3E /* IconRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconRepository.h; path = include/VFSIcon/IconRepository.h; sourceTree = "<group>"; };
+		CF8BDD3C2147E8AA00F14C3E /* WorkspaceExtensionIconsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceExtensionIconsCacheImpl.h; path = include/VFSIcon/WorkspaceExtensionIconsCacheImpl.h; sourceTree = "<group>"; };
+		CF8BDD3D2147E8AA00F14C3E /* IconRepositoryImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IconRepositoryImpl.h; path = include/VFSIcon/IconRepositoryImpl.h; sourceTree = "<group>"; };
+		CF8BDD3E2147E8AA00F14C3E /* QLThumbnailsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QLThumbnailsCacheImpl.h; path = include/VFSIcon/QLThumbnailsCacheImpl.h; sourceTree = "<group>"; };
+		CF8BDD3F2147E8AA00F14C3E /* QLThumbnailsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QLThumbnailsCache.h; path = include/VFSIcon/QLThumbnailsCache.h; sourceTree = "<group>"; };
+		CF8BDD402147E8AB00F14C3E /* WorkspaceIconsCacheImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceIconsCacheImpl.h; path = include/VFSIcon/WorkspaceIconsCacheImpl.h; sourceTree = "<group>"; };
+		CF8BDD412147E8AB00F14C3E /* WorkspaceExtensionIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceExtensionIconsCache.h; path = include/VFSIcon/WorkspaceExtensionIconsCache.h; sourceTree = "<group>"; };
+		CF8BDD422147E8AB00F14C3E /* WorkspaceIconsCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkspaceIconsCache.h; path = include/VFSIcon/WorkspaceIconsCache.h; sourceTree = "<group>"; };
+		CF8BDD4B2147E8B600F14C3E /* IconRepositoryImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconRepositoryImpl.mm; path = source/IconRepositoryImpl.mm; sourceTree = "<group>"; };
+		CF8BDD4C2147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCache.mm; path = source/WorkspaceExtensionIconsCache.mm; sourceTree = "<group>"; };
+		CF8BDD4D2147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCacheImpl.mm; path = source/WorkspaceExtensionIconsCacheImpl.mm; sourceTree = "<group>"; };
+		CF8BDD4E2147E8B600F14C3E /* QLThumbnailsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCache.mm; path = source/QLThumbnailsCache.mm; sourceTree = "<group>"; };
+		CF8BDD4F2147E8B600F14C3E /* WorkspaceIconsCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCache.mm; path = source/WorkspaceIconsCache.mm; sourceTree = "<group>"; };
+		CF8BDD502147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCacheImpl.mm; path = source/WorkspaceIconsCacheImpl.mm; sourceTree = "<group>"; };
+		CF8BDD512147E8B600F14C3E /* QLThumbnailsCacheImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCacheImpl.mm; path = source/QLThumbnailsCacheImpl.mm; sourceTree = "<group>"; };
+		CF8BDD522147E8B600F14C3E /* IconRepository.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconRepository.mm; path = source/IconRepository.mm; sourceTree = "<group>"; };
+		CF8BDD5F2147EB3F00F14C3E /* VFSIconUnitTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = VFSIconUnitTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF8BDD662147EC7900F14C3E /* UnitTests_main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnitTests_main.cpp; path = tests/UnitTests_main.cpp; sourceTree = "<group>"; };
+		CF8BDD672147EC7900F14C3E /* UnitTests_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnitTests_main.h; path = tests/UnitTests_main.h; sourceTree = "<group>"; };
+		CF8BDD6B2147ECA900F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceIconsCacheImpl_UnitTests.mm; path = tests/WorkspaceIconsCacheImpl_UnitTests.mm; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CF8BDCF72147D50300F14C3E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF8BDD322147E4E900F14C3E /* Foundation.framework in Frameworks */,
+				CF8BDD262147DE4400F14C3E /* Quartz.framework in Frameworks */,
+				CF8BDD242147DE3000F14C3E /* Cocoa.framework in Frameworks */,
+				CF8BDD222147DE1900F14C3E /* libHabanero.dylib in Frameworks */,
+				CF8BDD132147D6F400F14C3E /* libUtility.dylib in Frameworks */,
+				CF8BDD152147D6F400F14C3E /* libVFS.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF8BDD5C2147EB3F00F14C3E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF8BDD6D2147ECD200F14C3E /* libVFSIcon.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CF8BDCF02147D50300F14C3E = {
+			isa = PBXGroup;
+			children = (
+				CF8BDD162147D75000F14C3E /* Headers */,
+				CF8BDD172147D75A00F14C3E /* Source */,
+				CF8BDD182147D77B00F14C3E /* Tests */,
+				CF8BDCFA2147D50300F14C3E /* Products */,
+				CF8BDD112147D6F400F14C3E /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CF8BDCFA2147D50300F14C3E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */,
+				CF8BDD5F2147EB3F00F14C3E /* VFSIconUnitTests */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CF8BDD112147D6F400F14C3E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CF8BDD312147E4E900F14C3E /* Foundation.framework */,
+				CF8BDD252147DE4400F14C3E /* Quartz.framework */,
+				CF8BDD232147DE3000F14C3E /* Cocoa.framework */,
+				CF8BDD212147DE1900F14C3E /* libHabanero.dylib */,
+				CF8BDD122147D6F400F14C3E /* libUtility.dylib */,
+				CF8BDD142147D6F400F14C3E /* libVFS.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		CF8BDD162147D75000F14C3E /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				CF8BDD3B2147E8AA00F14C3E /* IconRepository.h */,
+				CF8BDD3D2147E8AA00F14C3E /* IconRepositoryImpl.h */,
+				CF8BDD3F2147E8AA00F14C3E /* QLThumbnailsCache.h */,
+				CF8BDD3E2147E8AA00F14C3E /* QLThumbnailsCacheImpl.h */,
+				CF8BDD412147E8AB00F14C3E /* WorkspaceExtensionIconsCache.h */,
+				CF8BDD3C2147E8AA00F14C3E /* WorkspaceExtensionIconsCacheImpl.h */,
+				CF8BDD422147E8AB00F14C3E /* WorkspaceIconsCache.h */,
+				CF8BDD402147E8AB00F14C3E /* WorkspaceIconsCacheImpl.h */,
+				CF8BDD342147E69F00F14C3E /* IconBuilder.h */,
+				CF8BDD332147E69F00F14C3E /* IconBuilderImpl.h */,
+				CF8BDD2A2147E3E200F14C3E /* VFSBundleIconsCache.h */,
+				CF8BDD292147E3E200F14C3E /* VFSBundleIconsCacheImpl.h */,
+				CF8BDD192147D78A00F14C3E /* QLVFSThumbnailsCache.h */,
+				CF8BDD1A2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		CF8BDD172147D75A00F14C3E /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				CF8BDD522147E8B600F14C3E /* IconRepository.mm */,
+				CF8BDD4B2147E8B600F14C3E /* IconRepositoryImpl.mm */,
+				CF8BDD4E2147E8B600F14C3E /* QLThumbnailsCache.mm */,
+				CF8BDD512147E8B600F14C3E /* QLThumbnailsCacheImpl.mm */,
+				CF8BDD4C2147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm */,
+				CF8BDD4D2147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm */,
+				CF8BDD4F2147E8B600F14C3E /* WorkspaceIconsCache.mm */,
+				CF8BDD502147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm */,
+				CF8BDD372147E6A700F14C3E /* IconBuilder.mm */,
+				CF8BDD382147E6A700F14C3E /* IconBuilderImpl.mm */,
+				CF8BDD2D2147E3EA00F14C3E /* VFSBundleIconsCache.mm */,
+				CF8BDD2E2147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm */,
+				CF8BDD1D2147D79400F14C3E /* QLVFSThumbnailsCache.mm */,
+				CF8BDD1E2147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		CF8BDD182147D77B00F14C3E /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				CF8BDD6B2147ECA900F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm */,
+				CF8BDD662147EC7900F14C3E /* UnitTests_main.cpp */,
+				CF8BDD672147EC7900F14C3E /* UnitTests_main.h */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CF8BDCF52147D50300F14C3E /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF8BDD352147E69F00F14C3E /* IconBuilderImpl.h in Headers */,
+				CF8BDD2C2147E3E300F14C3E /* VFSBundleIconsCache.h in Headers */,
+				CF8BDD692147EC7900F14C3E /* UnitTests_main.h in Headers */,
+				CF8BDD492147E8AB00F14C3E /* WorkspaceExtensionIconsCache.h in Headers */,
+				CF8BDD452147E8AB00F14C3E /* IconRepositoryImpl.h in Headers */,
+				CF8BDD4A2147E8AB00F14C3E /* WorkspaceIconsCache.h in Headers */,
+				CF8BDD2B2147E3E300F14C3E /* VFSBundleIconsCacheImpl.h in Headers */,
+				CF8BDD1B2147D78A00F14C3E /* QLVFSThumbnailsCache.h in Headers */,
+				CF8BDD472147E8AB00F14C3E /* QLThumbnailsCache.h in Headers */,
+				CF8BDD432147E8AB00F14C3E /* IconRepository.h in Headers */,
+				CF8BDD1C2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h in Headers */,
+				CF8BDD482147E8AB00F14C3E /* WorkspaceIconsCacheImpl.h in Headers */,
+				CF8BDD462147E8AB00F14C3E /* QLThumbnailsCacheImpl.h in Headers */,
+				CF8BDD442147E8AB00F14C3E /* WorkspaceExtensionIconsCacheImpl.h in Headers */,
+				CF8BDD362147E69F00F14C3E /* IconBuilder.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CF8BDCF82147D50300F14C3E /* VFSIcon */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF8BDD022147D50300F14C3E /* Build configuration list for PBXNativeTarget "VFSIcon" */;
+			buildPhases = (
+				CF8BDCF52147D50300F14C3E /* Headers */,
+				CF8BDCF62147D50300F14C3E /* Sources */,
+				CF8BDCF72147D50300F14C3E /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VFSIcon;
+			productName = VFSIcon;
+			productReference = CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		CF8BDD5E2147EB3F00F14C3E /* VFSIconUnitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF8BDD632147EB4000F14C3E /* Build configuration list for PBXNativeTarget "VFSIconUnitTests" */;
+			buildPhases = (
+				CF8BDD5B2147EB3F00F14C3E /* Sources */,
+				CF8BDD5C2147EB3F00F14C3E /* Frameworks */,
+				CF8BDD5D2147EB3F00F14C3E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VFSIconUnitTests;
+			productName = VFSIconUnitTests;
+			productReference = CF8BDD5F2147EB3F00F14C3E /* VFSIconUnitTests */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CF8BDCF12147D50300F14C3E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = "Magnum Bytes";
+				TargetAttributes = {
+					CF8BDCF82147D50300F14C3E = {
+						CreatedOnToolsVersion = 10.0;
+					};
+					CF8BDD5E2147EB3F00F14C3E = {
+						CreatedOnToolsVersion = 10.0;
+					};
+				};
+			};
+			buildConfigurationList = CF8BDCF42147D50300F14C3E /* Build configuration list for PBXProject "VFSIcon" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CF8BDCF02147D50300F14C3E;
+			productRefGroup = CF8BDCFA2147D50300F14C3E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CF8BDCF82147D50300F14C3E /* VFSIcon */,
+				CF8BDD5E2147EB3F00F14C3E /* VFSIconUnitTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CF8BDCF62147D50300F14C3E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF8BDD3A2147E6A700F14C3E /* IconBuilderImpl.mm in Sources */,
+				CF8BDD202147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */,
+				CF8BDD392147E6A700F14C3E /* IconBuilder.mm in Sources */,
+				CF8BDD542147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm in Sources */,
+				CF8BDD552147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm in Sources */,
+				CF8BDD302147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */,
+				CF8BDD532147E8B600F14C3E /* IconRepositoryImpl.mm in Sources */,
+				CF8BDD582147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm in Sources */,
+				CF8BDD2F2147E3EB00F14C3E /* VFSBundleIconsCache.mm in Sources */,
+				CF8BDD572147E8B600F14C3E /* WorkspaceIconsCache.mm in Sources */,
+				CF8BDD562147E8B600F14C3E /* QLThumbnailsCache.mm in Sources */,
+				CF8BDD592147E8B600F14C3E /* QLThumbnailsCacheImpl.mm in Sources */,
+				CF8BDD5A2147E8B600F14C3E /* IconRepository.mm in Sources */,
+				CF8BDD1F2147D79400F14C3E /* QLVFSThumbnailsCache.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF8BDD5B2147EB3F00F14C3E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF8BDD6A2147EC7D00F14C3E /* UnitTests_main.cpp in Sources */,
+				CF8BDD6E2147ED1400F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CF8BDD002147D50300F14C3E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include/",
+					"$(PROJECT_DIR)/../Utility/include",
+					"$(PROJECT_DIR)/../VFS/include",
+					"$(PROJECT_DIR)/../Habanero/include",
+					"$(PROJECT_DIR)/../3rd_Party/boost/include",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				USE_HEADERMAP = NO;
+			};
+			name = Debug;
+		};
+		CF8BDD012147D50300F14C3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/include/",
+					"$(PROJECT_DIR)/../Utility/include",
+					"$(PROJECT_DIR)/../VFS/include",
+					"$(PROJECT_DIR)/../Habanero/include",
+					"$(PROJECT_DIR)/../3rd_Party/boost/include",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
+		CF8BDD032147D50300F14C3E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/";
+				EXECUTABLE_PREFIX = lib;
+				INSTALL_PATH = "@executable_path/../Frameworks/";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		CF8BDD042147D50300F14C3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/";
+				EXECUTABLE_PREFIX = lib;
+				INSTALL_PATH = "@executable_path/../Frameworks/";
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		CF8BDD642147EB4000F14C3E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"GTEST_DONT_DEFINE_FAIL=1",
+					"GTEST_DONT_DEFINE_SUCCEED=1",
+				);
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",
+					"$(PROJECT_DIR)/../3rd_Party/googletest/include/",
+				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/googletest/built/";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lgmock",
+					"-lgtest",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		CF8BDD652147EB4000F14C3E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",
+					"$(PROJECT_DIR)/../3rd_Party/googletest/include/",
+				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/googletest/built/";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-lgmock",
+					"-lgtest",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CF8BDCF42147D50300F14C3E /* Build configuration list for PBXProject "VFSIcon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF8BDD002147D50300F14C3E /* Debug */,
+				CF8BDD012147D50300F14C3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF8BDD022147D50300F14C3E /* Build configuration list for PBXNativeTarget "VFSIcon" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF8BDD032147D50300F14C3E /* Debug */,
+				CF8BDD042147D50300F14C3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF8BDD632147EB4000F14C3E /* Build configuration list for PBXNativeTarget "VFSIconUnitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF8BDD642147EB4000F14C3E /* Debug */,
+				CF8BDD652147EB4000F14C3E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CF8BDCF12147D50300F14C3E /* Project object */;
+}

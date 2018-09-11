@@ -9,7 +9,7 @@
 #include <atomic>
 #include <optional>
 
-namespace nc::utility {
+namespace nc::vfsicon {
 
 class QLThumbnailsCacheImpl : public QLThumbnailsCache 
 {

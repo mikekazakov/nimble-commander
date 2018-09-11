@@ -2,7 +2,7 @@
 #pragma once
 
 #include <Habanero/DispatchGroup.h>
-#include "IconBuilder.h"
+#include <VFSIcon/IconBuilder.h>
 
 namespace nc::panel {
 
@@ -14,7 +14,7 @@ namespace data {
 class IconsGenerator2
 {
 public:
-    IconsGenerator2(const std::shared_ptr<IconBuilder> &_icon_builder);
+    IconsGenerator2(const std::shared_ptr<vfsicon::IconBuilder> &_icon_builder);
     ~IconsGenerator2();
     
     // callback will be executed in main thread
@@ -22,7 +22,8 @@ public:
 
     int IconSize() const noexcept;
     void SetIconSize( int _size );
-    
+        
+    // TODO: remove the DPI notion from this class
     bool HiDPI() const noexcept;
     void SetHiDPI( bool _is_hi_dpi );
     
@@ -35,7 +36,7 @@ public:
     NSImage *AvailableImageFor(const VFSListingItem &_item, data::ItemVolatileData _item_vd ) const;
 
     void SyncDiscardedAndOutdated( nc::panel::data::Model &_pd );
-    
+      
 private:
     enum {MaxIcons = 65535,
         MaxStashedRequests = 256
@@ -85,7 +86,7 @@ private:
     mutable spinlock        m_RequestsStashLock;
     queue<BuildRequest>     m_RequestsStash;
     
-    std::shared_ptr<IconBuilder> m_IconBuilder;    
+    std::shared_ptr<vfsicon::IconBuilder> m_IconBuilder;    
 };
 
 }

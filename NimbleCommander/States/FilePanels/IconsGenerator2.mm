@@ -21,7 +21,7 @@ inline NSImage *IconsGenerator2::IconStorage::Any() const
     return generic;
 }
 
-IconsGenerator2::IconsGenerator2(const std::shared_ptr<IconBuilder> &_icon_builder):
+IconsGenerator2::IconsGenerator2(const std::shared_ptr<vfsicon::IconBuilder> &_icon_builder):
     m_IconBuilder(_icon_builder)
 {
     m_WorkGroup.SetOnDry([=]{
@@ -126,7 +126,6 @@ NSImage *IconsGenerator2::ImageFor(const VFSListingItem &_item, data::ItemVolati
     br.filetype = is.filetype;
     br.thumbnail = is.thumbnail;
     br.icon_number = is_no;
-    
     br.item = _item;
     
     RunOrStash( move(br) );
@@ -272,8 +271,8 @@ void IconsGenerator2::SyncDiscardedAndOutdated( nc::panel::data::Model &_pd )
         m_Generation++;
     }
     else {    
-        for( auto i: entries_to_update )
-            ImageFor( _pd.EntryAtRawPosition(i), _pd.VolatileDataAtRawPosition(i) );
+//        for( auto i: entries_to_update )
+//            ImageFor( _pd.EntryAtRawPosition(i), _pd.VolatileDataAtRawPosition(i) );
     }
 }
 

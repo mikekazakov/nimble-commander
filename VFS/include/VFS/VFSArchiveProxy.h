@@ -13,9 +13,9 @@ public:
 //                                  shared_ptr<VFSHost> _parent
 //                                  );
 
-    static VFSHostPtr OpenFileAsArchive(const string &_path,
+    static VFSHostPtr OpenFileAsArchive(const std::string &_path,
                                         const VFSHostPtr &_parent,
-                                        function<string()> _passwd = nullptr,
+                                        std::function<std::string()> _passwd = nullptr,
                                         VFSCancelChecker _cancel_checker = nullptr
                                         );
 };

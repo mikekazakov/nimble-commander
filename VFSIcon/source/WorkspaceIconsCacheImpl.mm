@@ -1,10 +1,10 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "WorkspaceIconsCacheImpl.h"
+#include <VFSIcon/WorkspaceIconsCacheImpl.h>
 #include <sys/stat.h>
 #include <Utility/StringExtras.h>
 #include <Habanero/algo.h>
 
-namespace nc::utility {
+namespace nc::vfsicon {
 
 WorkspaceIconsCacheImpl::WorkspaceIconsCacheImpl(FileStateReader &_file_state_reader,
                                                  IconBuilder &_icon_builder):

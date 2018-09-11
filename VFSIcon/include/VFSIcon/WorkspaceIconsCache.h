@@ -4,7 +4,7 @@
 #include <string>
 @class NSImage;
 
-namespace nc::utility {
+namespace nc::vfsicon {
 
 /**
  * All methods are thread-safe.

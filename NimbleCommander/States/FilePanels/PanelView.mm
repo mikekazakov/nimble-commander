@@ -3,12 +3,12 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <Utility/MIMResponder.h>
-#include <Utility/QLThumbnailsCacheImpl.h>
-#include <Utility/WorkspaceIconsCacheImpl.h>
-#include <Utility/WorkspaceExtensionIconsCacheImpl.h>
+#include <VFSIcon/QLThumbnailsCacheImpl.h>
+#include <VFSIcon/WorkspaceIconsCacheImpl.h>
+#include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
 #include <Utility/BriefOnDiskStorageImpl.h>
-#include <NimbleCommander/Core/Caches/QLVFSThumbnailsCacheImpl.h>
-#include <NimbleCommander/Core/Caches/VFSBundleIconsCacheImpl.h>
+#include <VFSIcon/QLVFSThumbnailsCacheImpl.h>
+#include <VFSIcon/VFSBundleIconsCacheImpl.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 #include "PanelData.h"
@@ -24,7 +24,7 @@
 #include "DragSender.h"
 #include "PanelViewFieldEditor.h"
 #include "PanelViewKeystrokeSink.h"
-#include "IconBuilderImpl.h"
+#include <VFSIcon/IconBuilderImpl.h>
 
 // TODO: remove this crap
 #include <Habanero/CommonPaths.h>
@@ -1072,20 +1072,20 @@ namespace nc::panel {
 
 static unique_ptr<IconsGenerator2> MakeIconsGenerator()
 {
-    static const auto ql_cache = make_shared<nc::utility::QLThumbnailsCacheImpl>();
-    static const auto ws_cache = make_shared<nc::utility::WorkspaceIconsCacheImpl>();
-    static const auto ext_cache = make_shared<nc::utility::WorkspaceExtensionIconsCacheImpl>();    
-    static const auto brief_storage = make_shared<nc::utility::BriefOnDiskStorageImpl>
+    static const auto ql_cache = make_shared<vfsicon::QLThumbnailsCacheImpl>();
+    static const auto ws_cache = make_shared<vfsicon::WorkspaceIconsCacheImpl>();
+    static const auto ext_cache = make_shared<vfsicon::WorkspaceExtensionIconsCacheImpl>();    
+    static const auto brief_storage = make_shared<utility::BriefOnDiskStorageImpl>
         (CommonPaths::AppTemporaryDirectory(),
          ActivationManager::BundleID() + ".ico"); 
-    static const auto vfs_cache = make_shared<nc::utility::QLVFSThumbnailsCacheImpl>(brief_storage);
-    static const auto vfs_bi_cache = make_shared<nc::utility::VFSBundleIconsCacheImpl>();
+    static const auto vfs_cache = make_shared<vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
+    static const auto vfs_bi_cache = make_shared<vfsicon::VFSBundleIconsCacheImpl>();
     
-    static const auto icon_builder = make_shared<IconBuilderImpl>(ql_cache,
-                                                                  ws_cache,
-                                                                  ext_cache,
-                                                                  vfs_cache,
-                                                                  vfs_bi_cache);    
+    static const auto icon_builder = make_shared<vfsicon::IconBuilderImpl>(ql_cache,
+                                                                           ws_cache,
+                                                                           ext_cache,
+                                                                           vfs_cache,
+                                                                           vfs_bi_cache);    
     return make_unique<IconsGenerator2>(icon_builder);
 }
 

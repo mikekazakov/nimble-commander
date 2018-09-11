@@ -3,7 +3,7 @@
 
 #include <VFS/VFS.h>
 
-namespace nc::utility {
+namespace nc::vfsicon {
     
 class QLVFSThumbnailsCache
 {

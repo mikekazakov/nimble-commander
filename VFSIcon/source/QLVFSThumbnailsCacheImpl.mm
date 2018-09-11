@@ -1,14 +1,15 @@
 // Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "QLVFSThumbnailsCacheImpl.h"
+#include <VFSIcon/QLVFSThumbnailsCacheImpl.h>
 #include <Quartz/Quartz.h>
+#include <boost/filesystem/path.hpp>
 
-namespace nc::utility {
+namespace nc::vfsicon {
 
-static NSImage *ProduceThumbnailForTempFile(const string &_path, CGSize _px_size);
-static optional<vector<uint8_t>> ReadEntireFile(const string &_path, VFSHost &_host);
+static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px_size);
+static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_path, VFSHost &_host);
     
 QLVFSThumbnailsCacheImpl::QLVFSThumbnailsCacheImpl
-    (const std::shared_ptr<BriefOnDiskStorage> &_temp_storage):
+    (const std::shared_ptr<utility::BriefOnDiskStorage> &_temp_storage):
     m_TempStorage(_temp_storage)
 {
 }
@@ -24,7 +25,7 @@ NSImage *QLVFSThumbnailsCacheImpl::ThumbnailIfHas(const std::string &_file_path,
     auto key = MakeKey(_file_path, _host, _px_size);
     
     {
-        auto lock = lock_guard{m_Lock};
+        auto lock = std::lock_guard{m_Lock};
         if( m_Thumbnails.count(key) )
             return m_Thumbnails.at(key);
     }
@@ -39,26 +40,26 @@ NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_file_pat
     auto key = MakeKey(_file_path, _host, _px_size);
     
     {
-        auto lock = lock_guard{m_Lock};
+        auto lock = std::lock_guard{m_Lock};
         if( m_Thumbnails.count(key) )
             return m_Thumbnails.at(key);
     }
     
     auto image = ProduceThumbnail(_file_path,
-                                  path(_file_path).extension().native(),
+                                  boost::filesystem::path(_file_path).extension().native(),
                                   _host,
                                   CGSizeMake(double(_px_size), double(_px_size))); 
     
     {
-        auto lock = lock_guard{m_Lock};
+        auto lock = std::lock_guard{m_Lock};
         m_Thumbnails.insert(std::move(key), image);
     }
     
     return image; 
 }
 
-NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const string &_path,
-                                                    const string &_ext,
+NSImage *QLVFSThumbnailsCacheImpl::ProduceThumbnail(const std::string &_path,
+                                                    const std::string &_ext,
                                                     VFSHost &_host,
                                                     CGSize _sz)
 {    
@@ -83,7 +84,7 @@ std::string QLVFSThumbnailsCacheImpl::MakeKey(const std::string &_file_path,
     return key;
 }
     
-static NSImage *ProduceThumbnailForTempFile(const string &_path, CGSize _px_size)
+static NSImage *ProduceThumbnailForTempFile(const std::string &_path, CGSize _px_size)
 {
 
     CFURLRef url = CFURLCreateFromFileSystemRepresentation(nullptr,
@@ -104,15 +105,15 @@ static NSImage *ProduceThumbnailForTempFile(const string &_path, CGSize _px_size
     return result;
 }
 
-static optional<vector<uint8_t>> ReadEntireFile(const string &_path, VFSHost &_host)
+static std::optional<std::vector<uint8_t>> ReadEntireFile(const std::string &_path, VFSHost &_host)
 {
     VFSFilePtr vfs_file;
     
     if( _host.CreateFile(_path.c_str(), vfs_file, 0) < 0 )
-        return nullopt;
+        return std::nullopt;
     
     if( vfs_file->Open(VFSFlags::OF_Read) < 0)
-        return nullopt;
+        return std::nullopt;
     
     return vfs_file->ReadFile(); 
 }

@@ -3,7 +3,7 @@
 #include <Cocoa/Cocoa.h>
 #include <VFS/VFS.h>
 
-namespace nc::panel {
+namespace nc::vfsicon {
 
 /**
  * All methods are thread-safe.

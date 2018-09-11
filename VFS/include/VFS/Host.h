@@ -1,6 +1,7 @@
 // Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <optional>
 #include "VFSError.h"
 #include "VFSDeclarations.h"
 #include "VFSConfiguration.h"
@@ -13,7 +14,7 @@ class HostDirObservationTicket
 {
 public:
     HostDirObservationTicket() noexcept;
-    HostDirObservationTicket(unsigned long _ticket, weak_ptr<Host> _host) noexcept;
+    HostDirObservationTicket(unsigned long _ticket, std::weak_ptr<Host> _host) noexcept;
     HostDirObservationTicket(HostDirObservationTicket &&_rhs) noexcept;
     ~HostDirObservationTicket();
     
@@ -26,7 +27,7 @@ private:
     HostDirObservationTicket(const HostDirObservationTicket &_rhs) = delete;
     HostDirObservationTicket &operator=(const HostDirObservationTicket &_rhs) = delete;
     unsigned long       m_Ticket;
-    weak_ptr<Host>      m_Host;
+    std::weak_ptr<Host> m_Host;
 };
     
 struct HostFeatures
@@ -42,16 +43,16 @@ struct HostFeatures
     };
 };
     
-class Host : public enable_shared_from_this<Host>
+class Host : public std::enable_shared_from_this<Host>
 {
 public:
     static const char *UniqueTag;
-    static const shared_ptr<Host> &DummyHost();
+    static const std::shared_ptr<Host> &DummyHost();
     
     /**
      * junction path and parent can be nil
      */
-    Host(const char *_junction_path, const shared_ptr<Host> &_parent, const char *_fs_tag);
+    Host(const char *_junction_path, const std::shared_ptr<Host> &_parent, const char *_fs_tag);
     virtual ~Host();
     
     
@@ -59,8 +60,8 @@ public:
      * Configuration / meta data
      **********************************************************************************************/
 
-    shared_ptr<Host> SharedPtr();
-    shared_ptr<const Host> SharedPtr() const;
+    std::shared_ptr<Host> SharedPtr();
+    std::shared_ptr<const Host> SharedPtr() const;
 
     /**
      * Consequent calls should return the same object if no changes had occured.
@@ -107,7 +108,7 @@ public:
      * _callback will be exectuded in VFSHost dectructor, just before this instance will die.
      * Do not access VFSHost via pointer parameter, it should be used only for identification.
      */
-    void SetDesctructCallback( function<void(const VFSHost*)> _callback );
+    void SetDesctructCallback( std::function<void(const VFSHost*)> _callback );
     
     /**
      * Calculates a hash of a string representation of a hosts stack and the corresponding path.
@@ -115,7 +116,7 @@ public:
      */
     uint64_t FullHashForPath( const char *_path ) const noexcept;
     
-    string MakePathVerbose( const char *_path ) const;
+    std::string MakePathVerbose( const char *_path ) const;
     
     /***********************************************************************************************
      * Probing, information, lookup
@@ -194,7 +195,8 @@ public:
      * Returns a vector with all xattrs at _path, labeled with it's names.
      * On any error return negative value.
      */
-    virtual int GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs);
+    virtual int GetXAttrs(const char *_path,
+                          std::vector<std::pair<std::string, std::vector<uint8_t>>> &_xattrs);
     
     virtual ssize_t CalculateDirectorySize(const char *_path,
                                            const VFSCancelChecker &_cancel_checker = nullptr);
@@ -206,11 +208,11 @@ public:
                                    unsigned long _flags,
                                    const VFSCancelChecker &_cancel_checker = nullptr);
 
-    virtual int FetchUsers(vector<VFSUser> &_target,
-                                 const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int FetchUsers(std::vector<VFSUser> &_target,
+                           const VFSCancelChecker &_cancel_checker = nullptr);
 
-    virtual int FetchGroups(vector<VFSGroup> &_target,
-                                  const VFSCancelChecker &_cancel_checker = nullptr);
+    virtual int FetchGroups(std::vector<VFSGroup> &_target,
+                            const VFSCancelChecker &_cancel_checker = nullptr);
     
     /***********************************************************************************************
      * Directories iteration, listings fetching
@@ -220,7 +222,7 @@ public:
      * Produce a regular directory listing.
      */
     virtual int FetchDirectoryListing(const char *_path,
-                                      shared_ptr<VFSListing> &_target,
+                                      std::shared_ptr<VFSListing> &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker = nullptr);
     
@@ -230,7 +232,7 @@ public:
      * this listing with Stat().
      */
     virtual int FetchSingleItemListing(const char *_path_to_item,
-                                       shared_ptr<VFSListing> &_target,
+                                       std::shared_ptr<VFSListing> &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker = nullptr);
 
@@ -240,12 +242,12 @@ public:
      * _handler: return true to allow further iteration, false to stop it.
      */
     virtual int IterateDirectoryListing(const char *_path,
-                                        const function<bool(const VFSDirEnt &_dirent)> &_handler);
+                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler);
     
-    int FetchFlexibleListingItems(const string& _directory_path,
-                                  const vector<string> &_filenames,
+    int FetchFlexibleListingItems(const std::string& _directory_path,
+                                  const std::vector<std::string> &_filenames,
                                   unsigned long _flags,
-                                  vector<VFSListingItem> &_result,
+                                  std::vector<VFSListingItem> &_result,
                                   const VFSCancelChecker &_cancel_checker);
 
     
@@ -254,7 +256,7 @@ public:
      **********************************************************************************************/
     
     virtual int CreateFile(const char* _path,
-                           shared_ptr<VFSFile> &_target,
+                           std::shared_ptr<VFSFile> &_target,
                            const VFSCancelChecker &_cancel_checker = nullptr);
     
     virtual int CreateDirectory(const char* _path,
@@ -298,10 +300,10 @@ public:
      * NoFollow flag can be specified to alter symlink node itself.
      */
     virtual int SetTimes(const char *_path,
-                         optional<time_t> _birth_time,
-                         optional<time_t> _mod_time,
-                         optional<time_t> _chg_time,
-                         optional<time_t> _acc_time,
+                         std::optional<time_t> _birth_time,
+                         std::optional<time_t> _mod_time,
+                         std::optional<time_t> _chg_time,
+                         std::optional<time_t> _acc_time,
                          const VFSCancelChecker &_cancel_checker = nullptr);
     
     /**
@@ -339,7 +341,7 @@ public:
      * _handler can be called from any thread
      */
     virtual HostDirObservationTicket DirChangeObserve(const char *_path,
-                                                      function<void()> _handler);
+                                                      std::function<void()> _handler);
     
 protected:
     void SetFeatures( uint64_t _features_bitset );
@@ -349,11 +351,11 @@ protected:
     
 private:
 
-    const string                    m_JunctionPath; // path in Parent VFS, relative to it's root
-    const shared_ptr<Host>          m_Parent;
+    const std::string               m_JunctionPath; // path in Parent VFS, relative to it's root
+    const std::shared_ptr<Host>     m_Parent;
     const char*                     m_Tag;
     uint64_t                        m_Features;
-    function<void(const VFSHost*)>  m_OnDesctruct;
+    std::function<void(const VFSHost*)>m_OnDesctruct;
     
     // forbid copying
     Host(const Host& _r) = delete;

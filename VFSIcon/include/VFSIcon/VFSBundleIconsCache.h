@@ -2,8 +2,9 @@
 #pragma once
 
 #include <VFS/VFS.h>
+#include <Cocoa/Cocoa.h>
 
-namespace nc::utility {
+namespace nc::vfsicon {
     
 class VFSBundleIconsCache
 {

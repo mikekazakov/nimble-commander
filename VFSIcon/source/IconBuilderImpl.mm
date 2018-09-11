@@ -1,13 +1,13 @@
-#include "IconBuilderImpl.h"
+#include <VFSIcon/IconBuilderImpl.h>
 
-namespace nc::panel {
+namespace nc::vfsicon {
 
 IconBuilderImpl::IconBuilderImpl
-    (const std::shared_ptr<utility::QLThumbnailsCache> &_ql_cache,
-     const std::shared_ptr<utility::WorkspaceIconsCache> &_workspace_icons_cache,
-     const std::shared_ptr<utility::WorkspaceExtensionIconsCache> &_extension_icons_cache,
-     const std::shared_ptr<utility::QLVFSThumbnailsCache> &_vfs_thumbnails_cache,     
-     const std::shared_ptr<utility::VFSBundleIconsCache> &_vfs_bundle_icons_cache,     
+    (const std::shared_ptr<QLThumbnailsCache> &_ql_cache,
+     const std::shared_ptr<WorkspaceIconsCache> &_workspace_icons_cache,
+     const std::shared_ptr<WorkspaceExtensionIconsCache> &_extension_icons_cache,
+     const std::shared_ptr<QLVFSThumbnailsCache> &_vfs_thumbnails_cache,     
+     const std::shared_ptr<VFSBundleIconsCache> &_vfs_bundle_icons_cache,     
      long _max_filesize_for_thumbnails_on_native_fs, 
      long _max_filesize_for_thumbnails_on_vfs):
     m_QLThumbnailsCache(_ql_cache),
@@ -91,7 +91,7 @@ IconBuilder::BuildResult
          
         // 1st - try to built a real thumbnail
         if( ShouldTryProducingQLThumbnailOnNativeFS(_item) ) {
-            auto file_hint = utility::QLThumbnailsCache::FileStateHint{};
+            auto file_hint = QLThumbnailsCache::FileStateHint{};
             file_hint.size = _item.Size();
             file_hint.mtime = _item.MTime();
             result.thumbnail = m_QLThumbnailsCache->ProduceThumbnail(path,
@@ -164,6 +164,7 @@ static bool MightBeBundle(const VFSListingItem &_item)
         return false;
         
     const auto extension = _item.Extension();
+    using namespace std::string_view_literals;
     return "app"sv == extension; 
 }    
 

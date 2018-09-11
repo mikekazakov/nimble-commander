@@ -2,6 +2,7 @@
 #pragma once
 
 #include <string>
+#include <functional>
 
 struct stat;
 
@@ -31,7 +32,7 @@ struct StatFS
     uint64_t total_bytes = 0;
     uint64_t free_bytes  = 0;
     uint64_t avail_bytes = 0; // may be less than actuat free_bytes
-    string   volume_name;
+    std::string   volume_name;
     
     bool operator==(const StatFS& _r) const;
     bool operator!=(const StatFS& _r) const;
@@ -98,7 +99,7 @@ struct Stat
     inline static meaningT NoMeaning() { const uint64_t t = 0ull; return *(meaningT*)&t; }
 };
 
-class ErrorException : public exception
+class ErrorException : public std::exception
 {
 public:
     ErrorException( int _err );
@@ -106,21 +107,21 @@ public:
     int                 code() const noexcept;
 private:
     int     m_Code;
-    string  m_Verb;
+    std::string  m_Verb;
 };
 
 struct User
 {
     uint32_t uid;
-    string name;
-    string gecos;
+    std::string name;
+    std::string gecos;
 };
 
 struct Group
 {
     uint32_t gid;
-    string name;
-    string gecos;
+    std::string name;
+    std::string gecos;
 };
 
 struct Flags
@@ -171,12 +172,12 @@ class Host;
 }
 
 using VFSListing            = nc::vfs::Listing;
-using VFSListingPtr         = shared_ptr<nc::vfs::Listing>;
+using VFSListingPtr         = std::shared_ptr<nc::vfs::Listing>;
 using VFSListingItem        = nc::vfs::ListingItem;
 using VFSWeakListingItem    = nc::vfs::WeakListingItem;
 using VFSHost               = nc::vfs::Host;
-using VFSHostPtr            = shared_ptr<nc::vfs::Host>;
-using VFSHostWeakPtr        = weak_ptr<nc::vfs::Host>;
+using VFSHostPtr            = std::shared_ptr<nc::vfs::Host>;
+using VFSHostWeakPtr        = std::weak_ptr<nc::vfs::Host>;
 using VFSFlags              = nc::vfs::Flags;
 using VFSGroup              = nc::vfs::Group;
 using VFSUser               = nc::vfs::User;
@@ -188,5 +189,6 @@ using VFSDirEnt             = nc::vfs::DirEnt;
 class VFSFile;
 class VFSPath;
 class VFSConfiguration;
-typedef shared_ptr<VFSFile>         VFSFilePtr;
-typedef function<bool()>            VFSCancelChecker;
+
+using VFSFilePtr = std::shared_ptr<VFSFile>; 
+using VFSCancelChecker = std::function<bool()>; 

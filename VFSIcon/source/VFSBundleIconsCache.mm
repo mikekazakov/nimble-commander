@@ -1,0 +1,1 @@
+#include <VFSIcon/VFSBundleIconsCache.h>

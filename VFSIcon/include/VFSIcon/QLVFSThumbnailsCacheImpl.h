@@ -6,12 +6,12 @@
 #include <Habanero/LRUCache.h>
 #include <Habanero/spinlock.h>
 
-namespace nc::utility {
+namespace nc::vfsicon {
     
 class QLVFSThumbnailsCacheImpl : public QLVFSThumbnailsCache
 {
 public:
-    QLVFSThumbnailsCacheImpl(const std::shared_ptr<BriefOnDiskStorage> &_temp_storage);
+    QLVFSThumbnailsCacheImpl(const std::shared_ptr<utility::BriefOnDiskStorage> &_temp_storage);
     ~QLVFSThumbnailsCacheImpl();
     
     NSImage *ThumbnailIfHas(const std::string &_file_path,
@@ -32,15 +32,15 @@ private:
     enum { m_CacheSize = 1024 };    
     using Container = ::hbn::LRUCache<std::string, NSImage*, m_CacheSize>;    
 
-    NSImage *ProduceThumbnail(const string &_path,
-                              const string &_ext,
+    NSImage *ProduceThumbnail(const std::string &_path,
+                              const std::string &_ext,
                               VFSHost &_host,
                               CGSize _sz);
     static std::string MakeKey(const std::string &_file_path, VFSHost &_host, int _px_size);
 
     Container m_Thumbnails;
     mutable spinlock m_Lock;
-    std::shared_ptr<BriefOnDiskStorage> m_TempStorage;
+    std::shared_ptr<utility::BriefOnDiskStorage> m_TempStorage;
 };
     
 }

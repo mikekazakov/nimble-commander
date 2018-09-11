@@ -472,10 +472,10 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/";
+				DYLIB_INSTALL_NAME_BASE = "@rpath/";
 				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path/../Frameworks/";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
+				INSTALL_PATH = "@rpath/";
+				LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -486,10 +486,10 @@
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@executable_path/../Frameworks/";
+				DYLIB_INSTALL_NAME_BASE = "@rpath/";
 				EXECUTABLE_PREFIX = lib;
-				INSTALL_PATH = "@executable_path/../Frameworks/";
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../Frameworks/$(EXECUTABLE_PATH)";
+				INSTALL_PATH = "@rpath/";
+				LD_DYLIB_INSTALL_NAME = "@rpath/$(EXECUTABLE_PATH)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -508,6 +508,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",
 					"$(PROJECT_DIR)/../3rd_Party/googletest/include/",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/googletest/built/";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_LDFLAGS = (
@@ -527,6 +528,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",
 					"$(PROJECT_DIR)/../3rd_Party/googletest/include/",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/";
 				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/googletest/built/";
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_LDFLAGS = (

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		CF38BECA2148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */; };
 		CF38BECB2148AF9C005E336C /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD662147EC7900F14C3E /* Tests.cpp */; };
+		CF38BECD2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */; };
 		CF8BDD132147D6F400F14C3E /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD122147D6F400F14C3E /* libUtility.dylib */; };
 		CF8BDD152147D6F400F14C3E /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD142147D6F400F14C3E /* libVFS.dylib */; };
 		CF8BDD1B2147D78A00F14C3E /* QLVFSThumbnailsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD192147D78A00F14C3E /* QLVFSThumbnailsCache.h */; };
@@ -75,6 +76,7 @@
 		CF38BEBD2148AD64005E336C /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CF38BEC22148AE5D005E336C /* libVFSIconIntegrationTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libVFSIconIntegrationTests; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCacheImpl_IntegrationTests.mm; path = tests/QLThumbnailsCacheImpl_IntegrationTests.mm; sourceTree = "<group>"; };
+		CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm; path = tests/WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm; sourceTree = "<group>"; };
 		CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libVFSIcon.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF8BDD122147D6F400F14C3E /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF8BDD142147D6F400F14C3E /* libVFS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libVFS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -238,6 +240,7 @@
 		CF8BDD182147D77B00F14C3E /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */,
 				CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */,
 				CF8BDD6B2147ECA900F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm */,
 				CF8BDD662147EC7900F14C3E /* Tests.cpp */,
@@ -370,6 +373,7 @@
 			files = (
 				CF38BECA2148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm in Sources */,
 				CF38BECB2148AF9C005E336C /* Tests.cpp in Sources */,
+				CF38BECD2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,6 +1,7 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#import <XCTest/XCTest.h>
-#include <NimbleCommander/Core/Caches/QLThumbnailsCache.h>
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "Tests.h"
+#include <VFSIcon/QLThumbnailsCacheImpl.h>
+#include <Habanero/dispatch_cpp.h>
 
 static const char* g_Paths[] = {
 "/Library/Desktop Pictures/Abstract Shapes.jpg",
@@ -101,26 +102,24 @@ static const char* g_Paths[] = {
 "/Library/Screen Savers/Default Collections/4-Nature Patterns/NaturePatterns08.jpg"
 };
 
-@interface QLThumbnailsCache_Tests : XCTestCase
+using namespace nc::vfsicon;
 
-@end
-
-
-@implementation QLThumbnailsCache_Tests
-
-- (void)testConcurrentAccess
+// yes, that is quite silly.
+TEST_CASE("QLThumbnailsCacheImpl doesn't crash under a concurrent load")
 {
-    for( int i = 0; i < 10; ++i ) {
-        dispatch_apply( size(g_Paths),
-                       dispatch_get_global_queue(QOS_CLASS_UTILITY, 0),
-                       [](size_t index){
-                           auto &qlc = nc::core::QLThumbnailsCache::Instance();
-                           qlc.ThumbnailIfHas(g_Paths[index], 32);
-                           qlc.ProduceThumbnail(g_Paths[index], 32);
-                       });
-    }
-
-    XCTAssert( true );
+    QLThumbnailsCacheImpl cache{};
+    const auto runs = 10;
+    const auto queue = dispatch_get_global_queue(QOS_CLASS_UTILITY, 0);
+    auto m = std::mutex{};
+    for( int i = 0; i < runs; ++i )
+        dispatch_apply(std::size(g_Paths), queue, [&cache, &m](size_t index){
+        const auto px_size = 32;
+            const auto path = g_Paths[index];
+            cache.ThumbnailIfHas(path, px_size);
+            if( auto img = cache.ProduceThumbnail(path, px_size) ) {
+                auto lock = std::lock_guard{m}; // Catch is not thread-safe afaik
+                CHECK( int(img.size.width) == px_size );
+            }
+        });
+    CHECK(true);
 }
-
-@end

@@ -1,5 +1,5 @@
 #include <VFSIcon/WorkspaceIconsCacheImpl.h>
-#include "UnitTests_main.h"
+#include "Tests.h"
 
 using namespace nc::vfsicon;
 using ::testing::_;

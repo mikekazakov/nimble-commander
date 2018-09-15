@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF3736E22148EF1600C3EBDC /* IconRepositoryImplBase.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3736E12148EF1600C3EBDC /* IconRepositoryImplBase.mm */; };
+		CF3736E42149245400C3EBDC /* IconRepositoryImpl_UnitTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3736E32149245400C3EBDC /* IconRepositoryImpl_UnitTests.mm */; };
+		CF3736E52149378800C3EBDC /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */; };
+		CF3736E62149378E00C3EBDC /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */; };
 		CF38BECA2148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */; };
 		CF38BECB2148AF9C005E336C /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD662147EC7900F14C3E /* Tests.cpp */; };
 		CF38BECD2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */; };
@@ -70,6 +74,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CF3736E12148EF1600C3EBDC /* IconRepositoryImplBase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconRepositoryImplBase.mm; path = source/IconRepositoryImplBase.mm; sourceTree = "<group>"; };
+		CF3736E32149245400C3EBDC /* IconRepositoryImpl_UnitTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = IconRepositoryImpl_UnitTests.mm; path = tests/IconRepositoryImpl_UnitTests.mm; sourceTree = "<group>"; };
 		CF38BEBA2148AB1B005E336C /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF38BEBB2148AB1B005E336C /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CF38BEBC2148AB1B005E336C /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
@@ -123,6 +129,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF3736E62149378E00C3EBDC /* libVFSIcon.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +150,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF3736E52149378800C3EBDC /* libVFSIcon.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,20 +227,21 @@
 		CF8BDD172147D75A00F14C3E /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF8BDD372147E6A700F14C3E /* IconBuilder.mm */,
+				CF8BDD382147E6A700F14C3E /* IconBuilderImpl.mm */,
 				CF8BDD522147E8B600F14C3E /* IconRepository.mm */,
 				CF8BDD4B2147E8B600F14C3E /* IconRepositoryImpl.mm */,
+				CF3736E12148EF1600C3EBDC /* IconRepositoryImplBase.mm */,
 				CF8BDD4E2147E8B600F14C3E /* QLThumbnailsCache.mm */,
 				CF8BDD512147E8B600F14C3E /* QLThumbnailsCacheImpl.mm */,
+				CF8BDD1D2147D79400F14C3E /* QLVFSThumbnailsCache.mm */,
+				CF8BDD1E2147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm */,
+				CF8BDD2D2147E3EA00F14C3E /* VFSBundleIconsCache.mm */,
+				CF8BDD2E2147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm */,
 				CF8BDD4C2147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm */,
 				CF8BDD4D2147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm */,
 				CF8BDD4F2147E8B600F14C3E /* WorkspaceIconsCache.mm */,
 				CF8BDD502147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm */,
-				CF8BDD372147E6A700F14C3E /* IconBuilder.mm */,
-				CF8BDD382147E6A700F14C3E /* IconBuilderImpl.mm */,
-				CF8BDD2D2147E3EA00F14C3E /* VFSBundleIconsCache.mm */,
-				CF8BDD2E2147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm */,
-				CF8BDD1D2147D79400F14C3E /* QLVFSThumbnailsCache.mm */,
-				CF8BDD1E2147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -240,6 +249,7 @@
 		CF8BDD182147D77B00F14C3E /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF3736E32149245400C3EBDC /* IconRepositoryImpl_UnitTests.mm */,
 				CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */,
 				CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */,
 				CF8BDD6B2147ECA900F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm */,
@@ -383,6 +393,7 @@
 			files = (
 				CF8BDD3A2147E6A700F14C3E /* IconBuilderImpl.mm in Sources */,
 				CF8BDD202147D79400F14C3E /* QLVFSThumbnailsCacheImpl.mm in Sources */,
+				CF3736E22148EF1600C3EBDC /* IconRepositoryImplBase.mm in Sources */,
 				CF8BDD392147E6A700F14C3E /* IconBuilder.mm in Sources */,
 				CF8BDD542147E8B600F14C3E /* WorkspaceExtensionIconsCache.mm in Sources */,
 				CF8BDD552147E8B600F14C3E /* WorkspaceExtensionIconsCacheImpl.mm in Sources */,
@@ -404,6 +415,7 @@
 			files = (
 				CF8BDD6A2147EC7D00F14C3E /* Tests.cpp in Sources */,
 				CF8BDD6E2147ED1400F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm in Sources */,
+				CF3736E42149245400C3EBDC /* IconRepositoryImpl_UnitTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

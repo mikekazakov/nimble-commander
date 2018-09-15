@@ -10,7 +10,8 @@ class IconRepository
 public:
     virtual ~IconRepository() = default;
     
-    using SlotKey = uint16_t;     
+    using SlotKey = uint16_t;
+    static inline const SlotKey InvalidKey = SlotKey{0};   
     
     virtual bool IsValidSlot( SlotKey _key ) const = 0;
     virtual NSImage *AvailableIconForSlot( SlotKey _key ) const = 0;

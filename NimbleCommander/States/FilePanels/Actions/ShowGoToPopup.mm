@@ -77,8 +77,11 @@ static const auto g_MaxTextWidth = 600;
 
 - (void) performGoTo:(const any&)_context sender:(id)sender
 {
-    if( auto favorite = any_cast<shared_ptr<const FavoriteLocationsStorage::Location>>(&_context) )
-        [m_Panel goToPersistentLocation:(*favorite)->hosts_stack];
+    if( auto favorite_ptr =
+       any_cast<shared_ptr<const FavoriteLocationsStorage::Location>>(&_context) )
+        [m_Panel goToPersistentLocation:(*favorite_ptr)->hosts_stack];
+    else if( auto favorite = any_cast<FavoriteLocationsStorage::Location>(&_context) )
+        [m_Panel goToPersistentLocation:favorite->hosts_stack];     
     else if( auto plain_path = any_cast<string>(&_context) )
         [m_Panel GoToDir:*plain_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
     else if( auto connection = any_cast<NetworkConnectionsManager::Connection>(&_context) )
@@ -89,6 +92,8 @@ static const auto g_MaxTextWidth = 600;
         [m_Panel GoToVFSPromise:promise->first onPath:promise->second];
     else if( auto listing_promise = any_cast<nc::panel::ListingPromise>(&_context) )
         nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
+    else
+        std::cerr << "GoToPopupListActionMediator performGoTo: unknown context type." << std::endl;
 }
 
 @end

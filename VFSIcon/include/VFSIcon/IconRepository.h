@@ -1,3 +1,4 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -18,6 +19,11 @@ public:
     virtual NSImage *AvailableIconForListingItem( const VFSListingItem &_item ) const = 0;
     
     virtual SlotKey Register( const VFSListingItem &_item ) = 0;
+    
+    /**
+     * Returns a list of all used registered slots.
+     * The result will be sorted in ascending order.
+     */
     virtual std::vector<SlotKey> AllSlots() const = 0;     
     virtual void Unregister( SlotKey _key ) = 0;
     

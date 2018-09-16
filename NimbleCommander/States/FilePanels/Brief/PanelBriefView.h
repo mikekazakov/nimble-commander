@@ -1,6 +1,7 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <VFSIcon/IconRepository.h>
 #include "../PanelViewImplementationProtocol.h"
 
 #include "Layout.h"
@@ -31,7 +32,7 @@ struct PanelBriefViewItemLayoutConstants
 
 @interface PanelBriefView : NSView<PanelViewImplementationProtocol, NSCollectionViewDelegate, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout>
 
-- (id)initWithFrame:(NSRect)frameRect andIC:(nc::panel::IconsGenerator2&)_ic;
+- (id)initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository&)_ir;
 
 - (void) dataChanged;
 - (void) syncVolatileData;

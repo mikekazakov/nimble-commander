@@ -26,11 +26,14 @@
 #include "PanelViewKeystrokeSink.h"
 #include <VFSIcon/IconBuilderImpl.h>
 
+#include <VFSIcon/IconRepositoryImpl.h>
+
 // TODO: remove this crap
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 using namespace nc::panel;
+using nc::vfsicon::IconRepository;
 
 namespace nc::panel {
 
@@ -47,6 +50,7 @@ struct StateStorage
 };
 
 static unique_ptr<IconsGenerator2> MakeIconsGenerator();
+static unique_ptr<IconRepository> MakeIconRepository();    
     
 }
 
@@ -71,6 +75,7 @@ static unique_ptr<IconsGenerator2> MakeIconsGenerator();
     PanelViewFooter            *m_FooterView;
     
     unique_ptr<IconsGenerator2> m_IconsGenerator;
+    unique_ptr<IconRepository>  m_IconRepository;
     
     int                         m_CursorPos;
     NSEventModifierFlagsHolder  m_KeyboardModifierFlags;
@@ -86,7 +91,8 @@ static unique_ptr<IconsGenerator2> MakeIconsGenerator();
         m_Data = nullptr;
         m_CursorPos = -1;
         m_HeaderTitle = @"";
-        m_IconsGenerator = MakeIconsGenerator();
+        m_IconsGenerator = MakeIconsGenerator(); // TODO: remove
+        m_IconRepository = MakeIconRepository();
 
         m_ItemsView = [self spawnItemViewWithLayout:_layout];
         [self addSubview:m_ItemsView];
@@ -190,7 +196,7 @@ static unique_ptr<IconsGenerator2> MakeIconsGenerator();
 
 - (PanelBriefView*) spawnBriefView
 {
-    auto v = [[PanelBriefView alloc] initWithFrame:self.bounds andIC:*m_IconsGenerator];
+    auto v = [[PanelBriefView alloc] initWithFrame:self.bounds andIR:*m_IconRepository];
     v.translatesAutoresizingMaskIntoConstraints = false;
     return v;
 }
@@ -1087,6 +1093,29 @@ static unique_ptr<IconsGenerator2> MakeIconsGenerator()
                                                                            vfs_cache,
                                                                            vfs_bi_cache);    
     return make_unique<IconsGenerator2>(icon_builder);
+}
+
+static unique_ptr<IconRepository> MakeIconRepository()
+{
+    static const auto ql_cache = make_shared<vfsicon::QLThumbnailsCacheImpl>();
+    static const auto ws_cache = make_shared<vfsicon::WorkspaceIconsCacheImpl>();
+    static const auto ext_cache = make_shared<vfsicon::WorkspaceExtensionIconsCacheImpl>();    
+    static const auto brief_storage = make_shared<utility::BriefOnDiskStorageImpl>
+    (CommonPaths::AppTemporaryDirectory(),
+     ActivationManager::BundleID() + ".ico"); 
+    static const auto vfs_cache = make_shared<vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
+    static const auto vfs_bi_cache = make_shared<vfsicon::VFSBundleIconsCacheImpl>();
+    
+    static const auto icon_builder = make_shared<vfsicon::IconBuilderImpl>(ql_cache,
+                                                                           ws_cache,
+                                                                           ext_cache,
+                                                                           vfs_cache,
+                                                                           vfs_bi_cache);
+    const auto concurrency_per_repo = 4;
+    using Que = vfsicon::detail::IconRepositoryImplBase::GCDLimitedConcurrentQueue;
+    
+    return make_unique<nc::vfsicon::IconRepositoryImpl>(icon_builder,
+                                                        make_unique<Que>(concurrency_per_repo));
 }
 
 }

@@ -1,3 +1,4 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "IconRepository.h"
@@ -27,7 +28,7 @@ struct IconRepositoryImplBase
         virtual void Execute( std::function<void()> _block ) = 0;
         virtual int Length() const = 0;
     };
-    class GCDLimitedConcurrentQueue final : LimitedConcurrentQueue {
+    class GCDLimitedConcurrentQueue final : public LimitedConcurrentQueue {
     public:
         GCDLimitedConcurrentQueue( int _concurrency_limit );
         ~GCDLimitedConcurrentQueue();
@@ -86,22 +87,24 @@ private:
         Production  = 2
     };
     
-    // SlotKeys are slot indices offseted by 1: [0]->1, [1]->2 etc.    
+    // SlotKeys are slot indices offseted by 1: [0]->1, [1]->2 etc.
+    // TODO: leave only one final image for icon instead of storing three?    
     struct Slot {
         SlotState state = SlotState::Empty;
+        mode_t file_mode = 0;
+        uint64_t file_size = 0;
+        time_t file_mtime = 0;                
         NSImage *filetype = nil;
         NSImage *thumbnail = nil;
         NSImage *generic = nil;
         std::shared_ptr<WorkerContext> production;
-        uint64_t file_size = 0;
-        time_t file_mtime = 0;
-        mode_t file_mode = 0;
     };
     
     int NumberOfUsedSlots() const;
     int AllocateSlot();
     void ProduceRealIcon(WorkerContext &_ctx);
     void CommitProductionResult(int _slot_index, WorkerContext &_ctx);
+    static bool RefreshImages(Slot& _slot, const WorkerContext &_ctx);
     static bool HasFileChanged(const Slot& _slot, const VFSListingItem &_item);
     static NSImage* BestImageFromSlot(const Slot& _slot);
     static bool IsSlotUsed(const Slot& _slot);

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFS.h>
 #include <Habanero/algo.h>
 #include <Utility/FontExtras.h>
@@ -10,7 +10,6 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include "../IconsGenerator2.h"
 #include "PanelBriefView.h"
 #include "PanelBriefViewCollectionView.h"
 #include "PanelBriefViewCollectionViewLayout.h"
@@ -20,6 +19,7 @@
 
 using namespace ::nc::panel;
 using namespace ::nc::panel::brief;
+using ::nc::vfsicon::IconRepository;
 
 // font_size, double_icon, icon_size, line_height, text_baseline
 static const array< tuple<int8_t, int8_t, int8_t, int8_t, int8_t>, 21> g_FixedLayoutData = {{
@@ -124,9 +124,8 @@ const noexcept
     data::Model                        *m_Data;
     vector<short>                       m_FilenamesPxWidths;
     short                               m_MaxFilenamePxWidth;
-    IconsGenerator2                    *m_IconsGenerator;    
-    unordered_map<decltype(nc::panel::data::ItemVolatileData::icon),
-                  PanelBriefViewItem *> m_IconNumberToItemMapping; 
+    IconRepository                     *m_IconsRepository;
+    unordered_map<IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping; 
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
     PanelBriefViewColumnsLayout         m_ColumnsLayout;
     __weak PanelView                   *m_PanelView;
@@ -146,13 +145,13 @@ static const auto g_ScrollingBackground =
     [self dataChanged];
 }
 
-- (id)initWithFrame:(NSRect)frameRect andIC:(IconsGenerator2&)_ic
+- (id)initWithFrame:(NSRect)frameRect andIR:(IconRepository&)_ir
 {
     self = [super initWithFrame:frameRect];
     if( !self )
         return nil;
     
-    m_IconsGenerator = &_ic;
+    m_IconsRepository = &_ir;
     
     [self calculateItemLayout];
     
@@ -188,10 +187,11 @@ static const auto g_ScrollingBackground =
     m_ScrollView.documentView = m_CollectionView;
     
     __weak PanelBriefView* weak_self = self;
-    m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImage* _icon){
+    m_IconsRepository->SetUpdateCallback([=](IconRepository::SlotKey _icon_no,
+                                             NSImage* _icon){
         if( auto strong_self = weak_self )
             [strong_self onIconUpdated:_icon_no image:_icon];
-    });
+    });    
     m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
         ThemesManager::Notifications::FilePanelsBrief|
         ThemesManager::Notifications::FilePanelsGeneral,
@@ -252,11 +252,19 @@ static const auto g_ScrollingBackground =
             
             auto &vd = m_Data->VolatileDataAtSortPosition(index);
             
-            const auto icon = m_IconsGenerator->ImageFor(vfs_item, vd);
-            m_IconNumberToItemMapping[vd.icon] = item;            
-            
+            if( m_IconsRepository->IsValidSlot(vd.icon) == false )
+                vd.icon = m_IconsRepository->Register(vfs_item); 
+
+            if( m_IconsRepository->IsValidSlot(vd.icon) == true ) {
+                [item setIcon:m_IconsRepository->AvailableIconForSlot(vd.icon)];
+                m_IconsRepository->ScheduleIconProduction(vd.icon, vfs_item);
+                m_IconSlotToItemIndexMapping[vd.icon] = index;
+            }
+            else {
+                [item setIcon:m_IconsRepository->AvailableIconForListingItem(vfs_item)];
+            }
+                        
             [item setVD:vd];
-            [item setIcon:icon];
         }
         [item setPanelActive:m_PanelView.active];
     }
@@ -339,7 +347,12 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 - (void) calculateItemLayout
 {
     m_ItemLayout = BuildItemsLayout(CurrentTheme().FilePanelsBriefFont(), m_ColumnsLayout);
-    m_IconsGenerator->SetIconSize( m_ItemLayout.icon_size );
+    
+    m_IconsRepository->SetPxSize(m_ItemLayout.icon_size);
+    // DPI?????
+
+    
+//    m_IconsRepository->SetPxSize(m_ItemLayout.icon_size * (self.backingScaleFactor > 1.0 ? 2 : 1));
 
     if( m_Background )
         m_Background.rowHeight = m_ItemLayout.item_height;
@@ -353,13 +366,34 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     
 }
 
+static void RemoveUnusedIconRepositorySlots( IconRepository& _ir, const data::Model &_data )
+{
+    const auto used_slots = _ir.AllSlots();
+    auto still_in_use = vector<bool>(used_slots.size(), false);
+
+    for( auto i = 0, e = (int)_data.RawEntriesCount() ; i < e; ++i ) {
+        auto &vd = _data.VolatileDataAtRawPosition( i );
+        if( vd.icon != IconRepository::InvalidKey ) {
+            auto it = std::lower_bound(std::begin(used_slots), std::end(used_slots), vd.icon);
+            if( it != std::end(used_slots) && *it == vd.icon )
+                still_in_use[ std::distance(std::begin(used_slots), it) ] = true;
+        }
+    }
+    
+    for( int i = 0, e = (int)used_slots.size(); i < e; ++i )
+        if( still_in_use[i] == false ) {
+            _ir.Unregister(used_slots[i]);
+        }
+}
+
 - (void) dataChanged
 {
     dispatch_assert_main_queue();
     assert( m_Data );
     [self calculateFilenamesWidths];
-    m_IconNumberToItemMapping.clear();    
-    m_IconsGenerator->SyncDiscardedAndOutdated( *m_Data );
+    m_IconSlotToItemIndexMapping.clear();
+    RemoveUnusedIconRepositorySlots(*m_IconsRepository, *m_Data);    
+//    m_IconsGenerator->SyncDiscardedAndOutdated( *m_Data );
     [m_CollectionView reloadData];
     [self syncVolatileData];
     [m_Background setNeedsDisplay:true];
@@ -453,7 +487,8 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
         }
 }
 
-- (void)collectionView:(NSCollectionView *)collectionView didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
+- (void)collectionView:(NSCollectionView *)collectionView
+didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
 {
 }
 
@@ -462,12 +497,15 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     return m_ItemLayout;
 }
 
-- (void) onIconUpdated:(uint16_t)_icon_no image:(NSImage*)_image
+- (void) onIconUpdated:(IconRepository::SlotKey)_icon_no image:(NSImage*)_image
 {
     dispatch_assert_main_queue();
-    const auto it = m_IconNumberToItemMapping.find(_icon_no);
-    if( it != end(m_IconNumberToItemMapping) ) {
-        [it->second setIcon:_image];
+    const auto it = m_IconSlotToItemIndexMapping.find(_icon_no);
+    if( it != end(m_IconSlotToItemIndexMapping) ) {
+        const auto index = [NSIndexPath indexPathForItem:it->second inSection:0];        
+        if( auto item = objc_cast<PanelBriefViewItem>([m_CollectionView itemAtIndexPath:index]) ) {
+            [item setIcon:_image];
+        }
     }
 }
 

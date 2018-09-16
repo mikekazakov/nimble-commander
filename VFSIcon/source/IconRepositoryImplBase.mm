@@ -1,3 +1,4 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/IconRepositoryImpl.h>
 #include <Habanero/dispatch_cpp.h>
 
@@ -7,7 +8,6 @@ using Base = IconRepositoryImplBase;
     
 const std::shared_ptr<Base::Executor>
     Base::MainQueueExecutor::instance{ std::make_shared<Base::MainQueueExecutor>() };
-//static const std::shared_ptr<Executor> instance;
         
 void Base::MainQueueExecutor::Execute( std::function<void()> _block )
 {   

@@ -1,3 +1,4 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/IconRepositoryImpl.h>
 
 namespace nc::vfsicon {
@@ -11,6 +12,7 @@ IconRepositoryImpl::IconRepositoryImpl(const std::shared_ptr<IconBuilder> &_icon
     m_ClientExecutor(_client_executor),
     m_Capacity(_capacity)
 {
+    static_assert( sizeof(Slot) == 64 );
 }
     
 IconRepositoryImpl::~IconRepositoryImpl()
@@ -37,14 +39,19 @@ NSImage *IconRepositoryImpl::AvailableIconForSlot( SlotKey _key ) const
         return nil;
     
     const auto slot_index = ToIndex(_key); 
-    auto &slot = m_Slots[slot_index];
+    const auto &slot = m_Slots[slot_index];
     
     return BestImageFromSlot(slot);
 }
     
 NSImage *IconRepositoryImpl::AvailableIconForListingItem( const VFSListingItem &_item ) const
 {
-    return nil;
+    auto lr = m_IconBuilder->LookupExistingIcon(_item, m_IconPxSize);
+    if( lr.thumbnail != nil )
+        return lr.thumbnail;
+    if( lr.filetype != nil )
+        return lr.filetype;
+    return lr.generic;
 }
     
 IconRepositoryImpl::SlotKey IconRepositoryImpl::Register( const VFSListingItem &_item )
@@ -70,7 +77,8 @@ IconRepositoryImpl::SlotKey IconRepositoryImpl::Register( const VFSListingItem &
     
 std::vector<IconRepositoryImpl::SlotKey> IconRepositoryImpl::AllSlots() const
 {
-    std::vector<SlotKey> slot_keys;    
+    std::vector<SlotKey> slot_keys;
+    slot_keys.reserve(NumberOfUsedSlots());
     for( int i = 0, e = (int)m_Slots.size(); i != e; ++i )
         if( IsSlotUsed(m_Slots[i]) )
             slot_keys.emplace_back( FromIndex(i) );    
@@ -86,7 +94,7 @@ void IconRepositoryImpl::Unregister( SlotKey _key )
     if( slot.production )
         slot.production->must_stop = true;
     m_FreeSlotsIndices.push(index);
-    m_Slots[index] = Slot{};
+    slot = Slot{};
 }
     
 void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingItem &_item)
@@ -143,17 +151,8 @@ void IconRepositoryImpl::CommitProductionResult(int _slot_index, WorkerContext &
     auto &slot = m_Slots[_slot_index];     
     assert( slot.production.get() == &_ctx );
     
-    bool updated = false;
-    if( _ctx.result_thumbnail != nil && _ctx.result_thumbnail != slot.thumbnail ) {
-        slot.thumbnail = _ctx.result_thumbnail;
-        updated = true;
-    }
-    if( _ctx.result_filetype != nil && _ctx.result_filetype != slot.filetype ) {
-        slot.filetype = _ctx.result_filetype;
-        updated = true;
-    }
-    
-    slot.production.reset();
+    slot.production.reset();    
+    const bool updated = RefreshImages(slot, _ctx);
     
     if( updated == true ) {
         auto callback = m_IconUpdatedCallback;
@@ -203,6 +202,23 @@ NSImage* IconRepositoryImpl::BestImageFromSlot(const Slot& _slot)
     return _slot.generic;
 }
  
+bool IconRepositoryImpl::RefreshImages(Slot& _slot, const WorkerContext &_ctx)
+{
+    bool updated = false;
+    
+    if( _ctx.result_thumbnail != nil && _ctx.result_thumbnail != _slot.thumbnail ) {
+        _slot.thumbnail = _ctx.result_thumbnail;
+        updated = true;
+    }
+    
+    if( _ctx.result_filetype != nil && _ctx.result_filetype != _slot.filetype ) {
+        _slot.filetype = _ctx.result_filetype;
+        updated = true;
+    }        
+        
+    return updated;
+}
+    
 bool IconRepositoryImpl::IsSlotUsed(const Slot& _slot)
 {
     return _slot.state != SlotState::Empty;

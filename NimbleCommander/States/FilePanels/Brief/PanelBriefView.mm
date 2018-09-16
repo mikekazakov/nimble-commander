@@ -348,11 +348,7 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
 {
     m_ItemLayout = BuildItemsLayout(CurrentTheme().FilePanelsBriefFont(), m_ColumnsLayout);
     
-    m_IconsRepository->SetPxSize(m_ItemLayout.icon_size);
-    // DPI?????
-
-    
-//    m_IconsRepository->SetPxSize(m_ItemLayout.icon_size * (self.backingScaleFactor > 1.0 ? 2 : 1));
+    [self setupIconsPxSize];
 
     if( m_Background )
         m_Background.rowHeight = m_ItemLayout.item_height;
@@ -364,6 +360,23 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
         for( PanelBriefViewItem *i in m_CollectionView.visibleItems )
             [i updateItemLayout];
     
+}
+
+- (void) setupIconsPxSize
+{
+    if( self.window ) {
+        const auto px_size = int(m_ItemLayout.icon_size * self.window.backingScaleFactor);
+        m_IconsRepository->SetPxSize(px_size);
+    }
+    else {
+        m_IconsRepository->SetPxSize(m_ItemLayout.icon_size);
+    }
+}
+
+- (void)viewDidMoveToWindow
+{
+    [super viewDidMoveToWindow];
+    [self setupIconsPxSize]; // we call this here due to a possible DPI change
 }
 
 static void RemoveUnusedIconRepositorySlots( IconRepository& _ir, const data::Model &_data )
@@ -393,7 +406,6 @@ static void RemoveUnusedIconRepositorySlots( IconRepository& _ir, const data::Mo
     [self calculateFilenamesWidths];
     m_IconSlotToItemIndexMapping.clear();
     RemoveUnusedIconRepositorySlots(*m_IconsRepository, *m_Data);    
-//    m_IconsGenerator->SyncDiscardedAndOutdated( *m_Data );
     [m_CollectionView reloadData];
     [self syncVolatileData];
     [m_Background setNeedsDisplay:true];

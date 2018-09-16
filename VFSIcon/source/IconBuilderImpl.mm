@@ -28,8 +28,8 @@ IconBuilderImpl::~IconBuilderImpl()
 IconBuilder::LookupResult
     IconBuilderImpl::LookupExistingIcon( const VFSListingItem &_item, int _icon_px_size )
 {
-    assert( _item );
-    assert( _icon_px_size > 0 );
+    if( bool(_item) == false || _icon_px_size <= 0 )
+        return {};
     
     LookupResult result;
     
@@ -78,8 +78,8 @@ IconBuilder::BuildResult
                                    int _icon_px_size,
                                    const CancelChecker &_cancel_checker)
 {
-    assert( _item );
-    assert( _icon_px_size > 0 );
+    if( bool(_item) == false || _icon_px_size <= 0 )
+        return {};
     
     if( bool(_cancel_checker) && _cancel_checker() )
         return {};

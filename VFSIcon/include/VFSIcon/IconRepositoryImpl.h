@@ -26,22 +26,23 @@ struct IconRepositoryImplBase
     struct LimitedConcurrentQueue {
         virtual ~LimitedConcurrentQueue() = default;
         virtual void Execute( std::function<void()> _block ) = 0;
-        virtual int Length() const = 0;
+        virtual int QueueLength() const = 0;
     };
     class GCDLimitedConcurrentQueue final : public LimitedConcurrentQueue {
     public:
-        GCDLimitedConcurrentQueue( int _concurrency_limit );
+        GCDLimitedConcurrentQueue( short _concurrency_limit );
         ~GCDLimitedConcurrentQueue();
         void Execute( std::function<void()> _block ) override;
-        int Length() const override;
+        int QueueLength() const override;
     private:
-        void Block( const std::function<void()> &_client_block );
+        void RunBlock( const std::function<void()> &_client_block );
+        void DispatchForAsynExecution( std::function<void()> _client_block );
         std::atomic_int m_Scheduled{0};
+        mutable spinlock m_AwaitingLock;        
+        const short m_Concurrency;
         dispatch_group_t m_Group;
         dispatch_queue_t m_Queue;
         std::queue<std::function<void()>> m_Awaiting;
-        mutable spinlock m_AwaitingLock;
-        const int m_Concurrency;        
     };
 };
 
@@ -56,6 +57,7 @@ public:
     (const std::shared_ptr<IconBuilder> &_icon_builder,
      std::unique_ptr<LimitedConcurrentQueue> _production_queue,
      const std::shared_ptr<Executor> &_client_executor = MainQueueExecutor::instance,
+     int _max_prod_queue_length = 512,
      int _capacity = std::numeric_limits<SlotKey>::max());
     ~IconRepositoryImpl();
     
@@ -115,6 +117,7 @@ private:
     std::stack<int> m_FreeSlotsIndices;
     int m_IconPxSize = 32;
     const int m_Capacity;
+    const int m_MaxQueueLength;
     std::shared_ptr<IconBuilder> m_IconBuilder;
     std::shared_ptr<Executor> m_ClientExecutor;
     std::unique_ptr<LimitedConcurrentQueue> m_ProductionQueue;

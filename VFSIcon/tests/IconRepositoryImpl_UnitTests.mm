@@ -8,6 +8,7 @@ using ::testing::_;
 using ::testing::Return;
 using ::testing::AnyNumber;
 using ::testing::Invoke;
+using ::testing::NiceMock;
 using base = detail::IconRepositoryImplBase;
 
 namespace {
@@ -23,7 +24,7 @@ struct ExecutorMock : base::Executor {
 
 struct LimitedConcurrentQueueMock : base::LimitedConcurrentQueue {
     MOCK_METHOD1(Execute, void(std::function<void()>));    
-    MOCK_CONST_METHOD0(Length, int());
+    MOCK_CONST_METHOD0(QueueLength, int());
 };  
     
 }
@@ -36,7 +37,7 @@ TEST_CASE("IconRepositoryImpl allocates a valid slot")
 {
     auto icon_builder = std::make_shared<IconBuilderMock>();
     auto executor = std::make_shared<ExecutorMock>();
-    auto queue = std::make_unique<LimitedConcurrentQueueMock>();
+    auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*icon_builder, LookupExistingIcon);
     IconRepositoryImpl repository{icon_builder, std::move(queue), executor};
     
@@ -49,9 +50,10 @@ TEST_CASE("IconRepositoryImpl tracks its capacity")
 {
     auto icon_builder = std::make_shared<IconBuilderMock>();
     auto executor = std::make_shared<ExecutorMock>();
-    auto queue = std::make_unique<LimitedConcurrentQueueMock>();
+    auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*icon_builder, LookupExistingIcon);    
-    IconRepositoryImpl repository{icon_builder, std::move(queue), executor, 1};
+    auto some_big_max_length = 500;
+    IconRepositoryImpl repository{icon_builder, std::move(queue), executor, some_big_max_length, 1};
     
     auto item = CookListingItem();
     CHECK( repository.IsValidSlot(repository.Register(item)) == true );
@@ -206,7 +208,7 @@ TEST_CASE("IconRepositoryImpl uses a concurrent queue to produce real icons")
 {
     auto icon_builder = std::make_shared<IconBuilderMock>();
     auto executor = std::make_shared<ExecutorMock>();
-    auto queue = std::make_unique<LimitedConcurrentQueueMock>();
+    auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*icon_builder, LookupExistingIcon);
     EXPECT_CALL(*queue, Execute);    
     IconRepositoryImpl repository{icon_builder, std::move(queue), executor};
@@ -219,7 +221,7 @@ TEST_CASE("IconRepositoryImpl uses updated results from IconBuilder")
 {
     auto icon_builder = std::make_shared<IconBuilderMock>();
     auto executor = std::make_shared<ExecutorMock>();
-    auto queue = std::make_unique<LimitedConcurrentQueueMock>();
+    auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute)
         .WillRepeatedly(Invoke([](const std::function<void()> &f){ f(); }));    
     EXPECT_CALL(*executor, Execute)
@@ -260,7 +262,7 @@ TEST_CASE("IconRepositoryImpl doesn't call IconBuilder concurrently for a single
 {
     auto icon_builder = std::make_shared<IconBuilderMock>();
     auto executor = std::make_shared<ExecutorMock>();
-    auto queue = std::make_unique<LimitedConcurrentQueueMock>();
+    auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute)
         .WillRepeatedly(Invoke([](const std::function<void()> &f){ f(); }));    
     EXPECT_CALL(*executor, Execute)
@@ -283,7 +285,7 @@ TEST_CASE("IconRepositoryImpl doesn't call IconBuilder again if entry didn't cha
 {
     auto icon_builder = std::make_shared<IconBuilderMock>();
     auto executor = std::make_shared<ExecutorMock>();
-    auto queue = std::make_unique<LimitedConcurrentQueueMock>();
+    auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute)
         .WillRepeatedly(Invoke([](const std::function<void()> &f){ f(); }));    
     EXPECT_CALL(*executor, Execute)
@@ -306,7 +308,7 @@ TEST_CASE("IconRepositoryImpl call IconBuilder again if entry did change")
 {
     auto icon_builder = std::make_shared<IconBuilderMock>();
     auto executor = std::make_shared<ExecutorMock>();
-    auto queue = std::make_unique<LimitedConcurrentQueueMock>();
+    auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute)
         .WillRepeatedly(Invoke([](const std::function<void()> &f){ f(); }));    
     EXPECT_CALL(*executor, Execute)
@@ -340,7 +342,7 @@ TEST_CASE("IconRepositoryImpl calls a callback when icon changes")
 {
     auto icon_builder = std::make_shared<IconBuilderMock>();
     auto executor = std::make_shared<ExecutorMock>();
-    auto queue = std::make_unique<LimitedConcurrentQueueMock>();
+    auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute)
         .WillRepeatedly(Invoke([](const std::function<void()> &f){ f(); }));    
     EXPECT_CALL(*executor, Execute)
@@ -370,7 +372,7 @@ TEST_CASE("IconRepositoryImpl doesn't call a callback when icon is the same")
 {
     auto icon_builder = std::make_shared<IconBuilderMock>();
     auto executor = std::make_shared<ExecutorMock>();
-    auto queue = std::make_unique<LimitedConcurrentQueueMock>();
+    auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
     EXPECT_CALL(*queue, Execute)
         .WillRepeatedly(Invoke([](const std::function<void()> &f){ f(); }));    
     EXPECT_CALL(*executor, Execute)
@@ -396,6 +398,27 @@ TEST_CASE("IconRepositoryImpl doesn't call a callback when icon is the same")
     repository.SetUpdateCallback(callback);
     repository.ScheduleIconProduction(key, item);
     CHECK(called == false);
+}
+
+TEST_CASE("IconRepositoryImpl doesn't call IconBuilder concurrently when prod queue is too long")
+{
+    auto icon_builder = std::make_shared<IconBuilderMock>();
+    auto executor = std::make_shared<ExecutorMock>();
+    auto queue = std::make_unique<NiceMock<LimitedConcurrentQueueMock>>();
+    EXPECT_CALL(*queue, Execute)
+        .Times(1);
+    EXPECT_CALL(*queue, QueueLength)
+        .WillOnce(Return(0))
+        .WillOnce(Return(1));    
+    EXPECT_CALL(*icon_builder, LookupExistingIcon)
+        .Times(2);
+        
+    IconRepositoryImpl repository{icon_builder, std::move(queue), executor, 1};
+    const auto item = CookListingItem();
+    const auto key1 = repository.Register(item);
+    const auto key2 = repository.Register(item);
+    repository.ScheduleIconProduction(key1, item);
+    repository.ScheduleIconProduction(key2, item);
 }
 
 static IconBuilder::BuildResult CookSomeBuildResult()

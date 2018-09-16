@@ -6,13 +6,23 @@ namespace nc::vfsicon {
 IconRepositoryImpl::IconRepositoryImpl(const std::shared_ptr<IconBuilder> &_icon_builder,
                                        std::unique_ptr<LimitedConcurrentQueue> _production_queue,
                                        const std::shared_ptr<Executor> &_client_executor,
+                                       int _max_prod_queue_length,
                                        int _capacity):
     m_IconBuilder(_icon_builder),
     m_ProductionQueue(std::move(_production_queue)),
     m_ClientExecutor(_client_executor),
-    m_Capacity(_capacity)
+    m_Capacity(_capacity),
+    m_MaxQueueLength(_max_prod_queue_length)
 {
     static_assert( sizeof(Slot) == 64 );
+    if( _capacity < 0 || _capacity > std::numeric_limits<SlotKey>::max() ) {
+        auto msg = "IconRepositoryImpl: invalid capacity";
+        throw std::invalid_argument(msg);
+    }
+    if( _max_prod_queue_length < 0 ) {
+        auto msg = "IconRepositoryImpl: invalid max production queue length";
+        throw std::invalid_argument(msg);
+    }
 }
     
 IconRepositoryImpl::~IconRepositoryImpl()
@@ -106,11 +116,14 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
     auto &slot = m_Slots[slot_index];
   
     if( slot.production != nullptr )
-        return; // there is an already ongoing production
+        return; // there is an already ongoing production for this slot
         
     if( slot.state == SlotState::Production &&
         HasFileChanged(slot, _item) == false )
         return; // nothing to do
+    
+    if( m_ProductionQueue->QueueLength() >= m_MaxQueueLength )
+        return; // sorry, too busy atm 
     
     auto context = std::make_shared<WorkerContext>();
     context->item = _item;
@@ -122,9 +135,15 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
     slot.state = SlotState::Production;
     
     auto work_block = [this, slot_index, context] {
-        ProduceRealIcon(*context);
+        
         if( context->must_stop == true )
             return;
+        
+        ProduceRealIcon(*context);
+        
+        if( context->must_stop == true )
+            return;
+        
         auto commit_block = [this, slot_index, context] {
             CommitProductionResult(slot_index, *context);
         };
@@ -135,9 +154,6 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
 
 void IconRepositoryImpl::ProduceRealIcon(WorkerContext &_ctx)
 {
-    if( _ctx.must_stop == true )
-        return;
-    
     auto build_result = m_IconBuilder->BuildRealIcon(_ctx.item, m_IconPxSize);
     _ctx.result_filetype = build_result.filetype;
     _ctx.result_thumbnail = build_result.thumbnail;

@@ -16,6 +16,7 @@
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewCollectionViewBackground.h"
 #include "TextWidthsCache.h"
+#include "../Helpers/IconRepositoryCleaner.h"
 
 using namespace ::nc::panel;
 using namespace ::nc::panel::brief;
@@ -379,33 +380,13 @@ minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
     [self setupIconsPxSize]; // we call this here due to a possible DPI change
 }
 
-static void RemoveUnusedIconRepositorySlots( IconRepository& _ir, const data::Model &_data )
-{
-    const auto used_slots = _ir.AllSlots();
-    auto still_in_use = vector<bool>(used_slots.size(), false);
-
-    for( auto i = 0, e = (int)_data.RawEntriesCount() ; i < e; ++i ) {
-        auto &vd = _data.VolatileDataAtRawPosition( i );
-        if( vd.icon != IconRepository::InvalidKey ) {
-            auto it = std::lower_bound(std::begin(used_slots), std::end(used_slots), vd.icon);
-            if( it != std::end(used_slots) && *it == vd.icon )
-                still_in_use[ std::distance(std::begin(used_slots), it) ] = true;
-        }
-    }
-    
-    for( int i = 0, e = (int)used_slots.size(); i < e; ++i )
-        if( still_in_use[i] == false ) {
-            _ir.Unregister(used_slots[i]);
-        }
-}
-
 - (void) dataChanged
 {
     dispatch_assert_main_queue();
     assert( m_Data );
     [self calculateFilenamesWidths];
     m_IconSlotToItemIndexMapping.clear();
-    RemoveUnusedIconRepositorySlots(*m_IconsRepository, *m_Data);    
+    IconRepositoryCleaner{*m_IconsRepository, *m_Data}.SweepUnusedSlots();
     [m_CollectionView reloadData];
     [self syncVolatileData];
     [m_Background setNeedsDisplay:true];

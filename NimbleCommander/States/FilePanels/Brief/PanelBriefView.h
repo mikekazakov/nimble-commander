@@ -10,7 +10,6 @@ struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 
 namespace nc::panel {
-class IconsGenerator2;
 namespace data {
     class Model;
     struct SortMode;

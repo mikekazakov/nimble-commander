@@ -17,7 +17,6 @@
 #include "List/PanelListView.h"
 #include "PanelViewHeader.h"
 #include "PanelViewFooter.h"
-#include "IconsGenerator2.h"
 #include "PanelViewDelegate.h"
 #include "Actions/Enter.h"
 #include "DragReceiver.h"
@@ -49,7 +48,6 @@ struct StateStorage
     string focused_item;
 };
 
-static unique_ptr<IconsGenerator2> MakeIconsGenerator();
 static unique_ptr<IconRepository> MakeIconRepository();    
     
 }
@@ -74,7 +72,6 @@ static unique_ptr<IconRepository> MakeIconRepository();
     NCPanelViewHeader          *m_HeaderView;
     PanelViewFooter            *m_FooterView;
     
-    unique_ptr<IconsGenerator2> m_IconsGenerator;
     unique_ptr<IconRepository>  m_IconRepository;
     
     int                         m_CursorPos;
@@ -91,7 +88,6 @@ static unique_ptr<IconRepository> MakeIconRepository();
         m_Data = nullptr;
         m_CursorPos = -1;
         m_HeaderTitle = @"";
-        m_IconsGenerator = MakeIconsGenerator(); // TODO: remove
         m_IconRepository = MakeIconRepository();
 
         m_ItemsView = [self spawnItemViewWithLayout:_layout];
@@ -241,8 +237,6 @@ static unique_ptr<IconRepository> MakeIconRepository();
         [notify removeObserver:self name:NSWindowDidResignMainNotification object:nil];
     }
     if( _wnd ) {
-        const auto is_hidpi = _wnd.backingScaleFactor > 1.0;
-        m_IconsGenerator->SetHiDPI( is_hidpi );
         [notify addObserver:self
                    selector:@selector(windowStatusDidChange)
                        name:NSWindowDidBecomeKeyNotification
@@ -994,7 +988,10 @@ static unique_ptr<IconRepository> MakeIconRepository();
     auto icon_producer = DragSender::IconCallback{[self](const VFSListingItem &_item) -> NSImage* {
         assert( m_Data->ListingPtr() == _item.Listing() );
         const auto vd = m_Data->VolatileDataAtRawPosition(_item.Index());
-        return m_IconsGenerator->AvailableImageFor(_item, vd);        
+        if( m_IconRepository->IsValidSlot(vd.icon) )
+            return m_IconRepository->AvailableIconForSlot(vd.icon);
+        else
+            return m_IconRepository->AvailableIconForListingItem(_item);
     }};
 
     DragSender sender{self.controller, move(icon_producer)};
@@ -1075,25 +1072,6 @@ static unique_ptr<IconRepository> MakeIconRepository();
 @end
 
 namespace nc::panel {
-
-static unique_ptr<IconsGenerator2> MakeIconsGenerator()
-{
-    static const auto ql_cache = make_shared<vfsicon::QLThumbnailsCacheImpl>();
-    static const auto ws_cache = make_shared<vfsicon::WorkspaceIconsCacheImpl>();
-    static const auto ext_cache = make_shared<vfsicon::WorkspaceExtensionIconsCacheImpl>();    
-    static const auto brief_storage = make_shared<utility::BriefOnDiskStorageImpl>
-        (CommonPaths::AppTemporaryDirectory(),
-         ActivationManager::BundleID() + ".ico"); 
-    static const auto vfs_cache = make_shared<vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
-    static const auto vfs_bi_cache = make_shared<vfsicon::VFSBundleIconsCacheImpl>();
-    
-    static const auto icon_builder = make_shared<vfsicon::IconBuilderImpl>(ql_cache,
-                                                                           ws_cache,
-                                                                           ext_cache,
-                                                                           vfs_cache,
-                                                                           vfs_bi_cache);    
-    return make_unique<IconsGenerator2>(icon_builder);
-}
 
 static unique_ptr<IconRepository> MakeIconRepository()
 {

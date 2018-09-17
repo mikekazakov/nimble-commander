@@ -6,7 +6,6 @@
 #include "../PanelData.h"
 #include "../PanelDataSortMode.h"
 #include "../PanelView.h"
-#include "../IconsGenerator2.h"
 #include "Layout.h"
 #include "PanelListViewNameView.h"
 #include "PanelListViewRowView.h"
@@ -18,8 +17,10 @@
 #include "PanelListViewDateTimeView.h"
 #include "PanelListViewDateFormatting.h"
 #include "PanelListView.h"
+#include "../Helpers/IconRepositoryCleaner.h"
 
 using namespace nc::panel;
+using nc::vfsicon::IconRepository;
 
 static const auto g_MaxStashedRows              = 50;
 static const auto g_SortAscImage = [NSImage imageNamed:@"NSAscendingSortIndicator"];
@@ -73,7 +74,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     data::Model                        *m_Data;
     __weak PanelView                   *m_PanelView;
     PanelListViewGeometry               m_Geometry;
-    IconsGenerator2                    *m_IconsGenerator;
+    IconRepository                     *m_IconRepository;
     NSTableColumn                      *m_NameColumn;
     NSTableColumn                      *m_SizeColumn;
     NSTableColumn                      *m_DateCreatedColumn;
@@ -98,11 +99,11 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 @synthesize sortMode = m_SortMode;
 @synthesize sortModeChangeCallback = m_SortModeChangeCallback;
 
-- (id) initWithFrame:(NSRect)frameRect andIC:(IconsGenerator2&)_ic
+- (id) initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository&)_ir
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
-        m_IconsGenerator = &_ic;
+        m_IconRepository = &_ir;
         
         [self calculateItemLayout];
         
@@ -143,9 +144,9 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         m_ScrollView.documentView = m_TableView;
         
         __weak PanelListView* weak_self = self;
-        m_IconsGenerator->SetUpdateCallback([=](uint16_t _icon_no, NSImage* _icon){
+        m_IconRepository->SetUpdateCallback([=](IconRepository::SlotKey _slot, NSImage* _icon){
             if( auto strong_self = weak_self )
-                [strong_self onIconUpdated:_icon_no image:_icon];
+                [strong_self onIconUpdated:_slot image:_icon];
         });
         m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
             ThemesManager::Notifications::FilePanelsList |
@@ -299,10 +300,27 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     m_Geometry = PanelListViewGeometry( CurrentTheme().FilePanelsListFont(),
                                         m_AssignedLayout.icon_scale );
 
-    m_IconsGenerator->SetIconSize( m_Geometry.IconSize() );
+    [self setupIconsPxSize];
     
     if( m_TableView )
         m_TableView.rowHeight = m_Geometry.LineHeight();
+}
+
+- (void) setupIconsPxSize
+{
+    if( self.window ) {
+        const auto px_size = int(m_Geometry.IconSize() * self.window.backingScaleFactor);
+        m_IconRepository->SetPxSize( px_size );
+    }
+    else {
+        m_IconRepository->SetPxSize( m_Geometry.IconSize() );
+    }
+}
+
+- (void)viewDidMoveToWindow
+{
+    [super viewDidMoveToWindow];
+    [self setupIconsPxSize]; // we call this here due to a possible DPI change
 }
 
 template <typename View>
@@ -404,14 +422,27 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
                     withItem:(const VFSListingItem&)_item
                        andVD:(data::ItemVolatileData&)_vd
 {
-    NSImage* icon = m_IconsGenerator->ImageFor(_item, _vd);
     [_view setFilename:_item.DisplayNameNS()];
-    [_view setIcon:icon];
+
+    if( m_IconRepository->IsValidSlot(_vd.icon) == true ) {
+        [_view setIcon:m_IconRepository->AvailableIconForSlot(_vd.icon)];
+        m_IconRepository->ScheduleIconProduction(_vd.icon, _item);
+    }
+    else {
+        _vd.icon = m_IconRepository->Register(_item);        
+        if( m_IconRepository->IsValidSlot(_vd.icon) == true ) {
+            [_view setIcon:m_IconRepository->AvailableIconForSlot(_vd.icon)];
+            m_IconRepository->ScheduleIconProduction(_vd.icon, _item);
+        }
+        else {
+            [_view setIcon:m_IconRepository->AvailableIconForListingItem(_item)];            
+        }
+    }
 }
 
 - (void) fillDataForSizeView:(PanelListViewSizeView*)_view
                     withItem:(const VFSListingItem&)_item
-                       andVD:(data::ItemVolatileData&)_vd
+                       andVD:(const data::ItemVolatileData&)_vd
 {
     [_view setSizeWithItem:_item andVD:_vd];
 }
@@ -439,11 +470,10 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (void) dataChanged
 {
-//    MachTimeBenchmark mtb;
     const auto old_rows_count = (int)m_TableView.numberOfRows;
     const auto new_rows_count = m_Data->SortedEntriesCount();
 
-    m_IconsGenerator->SyncDiscardedAndOutdated( *m_Data );
+    IconRepositoryCleaner{*m_IconRepository, *m_Data}.SweepUnusedSlots();
     
     [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *row_view, NSInteger row) {
         if( row >= new_rows_count )
@@ -537,11 +567,10 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
 
 - (NSFont*) font
 {
-//    return [NSFont systemFontOfSize:13];
     return CurrentTheme().FilePanelsListFont();
 }
 
-- (void) onIconUpdated:(uint16_t)_icon_no image:(NSImage*)_image
+- (void) onIconUpdated:(IconRepository::SlotKey)_icon_no image:(NSImage*)_image
 {
     dispatch_assert_main_queue();
     [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
@@ -553,11 +582,6 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         }
     }];
 }
-
-//- (PanelListViewDateFormatting::Style) dateCreatedFormattingStyle
-//{
-//    return m_DateCreatedFormattingStyle;
-//}
 
 - (void) updateDateTimeViewAtColumn:(NSTableColumn*)_column withStyle:(PanelListViewDateFormatting::Style)_style
 {

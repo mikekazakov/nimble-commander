@@ -184,7 +184,7 @@ static unique_ptr<IconRepository> MakeIconRepository();
 
 - (PanelListView*) spawnListView
 {
-   PanelListView *v = [[PanelListView alloc] initWithFrame:self.bounds andIC:*m_IconsGenerator];
+   PanelListView *v = [[PanelListView alloc] initWithFrame:self.bounds andIR:*m_IconRepository];
     v.translatesAutoresizingMaskIntoConstraints = false;
     __weak PanelView *weak_self = self;
     v.sortModeChangeCallback = [=](data::SortMode _sm){

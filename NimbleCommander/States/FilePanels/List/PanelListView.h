@@ -2,9 +2,9 @@
 #pragma once
 
 #include "../PanelViewImplementationProtocol.h"
+#include <VFSIcon/IconRepository.h>
 
 namespace nc::panel {
-class IconsGenerator2;
 namespace data {
     class Model;
 }
@@ -18,7 +18,7 @@ struct PanelListViewColumnsLayout;
 
 @interface PanelListView: NSView<PanelViewImplementationProtocol, NSTableViewDataSource, NSTableViewDelegate>
 
-- (id) initWithFrame:(NSRect)frameRect andIC:(nc::panel::IconsGenerator2&)_ic;
+- (id) initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository&)_ir;
 
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;

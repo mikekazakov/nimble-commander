@@ -30,7 +30,14 @@ public:
     virtual void ScheduleIconProduction(SlotKey _key, const VFSListingItem &_item) = 0;
 
     virtual void SetUpdateCallback( std::function<void(SlotKey, NSImage*)> _on_icon_updated ) = 0;
-    virtual void SetPxSize( int _px_size ) = 0;    
+    
+    /**
+     * Sets a hint about physical pixel-wise dimensions of produced icons.
+     * This is not a request, only a hint.
+     * Also, the caller should not rely on .size property of returned images and it should do a
+     * copy and manually set a desired size of that copied image.  
+     */
+    virtual void SetPxSize( int _px_size ) = 0;
 };
     
 }

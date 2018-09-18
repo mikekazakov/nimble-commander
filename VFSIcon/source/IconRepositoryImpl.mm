@@ -14,7 +14,7 @@ IconRepositoryImpl::IconRepositoryImpl(const std::shared_ptr<IconBuilder> &_icon
     m_Capacity(_capacity),
     m_MaxQueueLength(_max_prod_queue_length)
 {
-    static_assert( sizeof(Slot) == 64 );
+    static_assert( sizeof(Slot) == 56 );
     if( _capacity < 0 || _capacity > std::numeric_limits<SlotKey>::max() ) {
         auto msg = "IconRepositoryImpl: invalid capacity";
         throw std::invalid_argument(msg);
@@ -125,7 +125,7 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
     if( m_ProductionQueue->QueueLength() >= m_MaxQueueLength )
         return; // sorry, too busy atm 
     
-    auto context = std::make_shared<WorkerContext>();
+    auto context = boost::intrusive_ptr{new WorkerContext};
     context->item = _item;
     
     slot.production = context;

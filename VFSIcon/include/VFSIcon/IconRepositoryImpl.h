@@ -91,16 +91,13 @@ private:
         Production  = 2
     };
     
-    // SlotKeys are slot indices offseted by 1: [0]->1, [1]->2 etc.
-    // TODO: leave only one final image for icon instead of storing three?    
+    // SlotKeys are slot indices offseted by 1: [0]->1, [1]->2 etc.    
     struct Slot {
         SlotState state = SlotState::Empty;
         mode_t file_mode = 0;
         uint64_t file_size = 0;
-        time_t file_mtime = 0;                
-        NSImage *filetype = nil;
-        NSImage *thumbnail = nil;
-        NSImage *generic = nil;
+        time_t file_mtime = 0;
+        NSImage *icon = nil;
         boost::intrusive_ptr<WorkerContext> production;
     };
     

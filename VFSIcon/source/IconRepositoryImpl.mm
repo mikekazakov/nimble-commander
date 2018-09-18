@@ -3,6 +3,8 @@
 
 namespace nc::vfsicon {
 
+static NSImage *BestFromLookupResult(const IconBuilder::LookupResult &_lr);
+    
 IconRepositoryImpl::IconRepositoryImpl(const std::shared_ptr<IconBuilder> &_icon_builder,
                                        std::unique_ptr<LimitedConcurrentQueue> _production_queue,
                                        const std::shared_ptr<Executor> &_client_executor,
@@ -14,7 +16,7 @@ IconRepositoryImpl::IconRepositoryImpl(const std::shared_ptr<IconBuilder> &_icon
     m_Capacity(_capacity),
     m_MaxQueueLength(_max_prod_queue_length)
 {
-    static_assert( sizeof(Slot) == 56 );
+    static_assert( sizeof(Slot) == 40 );
     if( _capacity < 0 || _capacity > std::numeric_limits<SlotKey>::max() ) {
         auto msg = "IconRepositoryImpl: invalid capacity";
         throw std::invalid_argument(msg);
@@ -50,18 +52,12 @@ NSImage *IconRepositoryImpl::AvailableIconForSlot( SlotKey _key ) const
     
     const auto slot_index = ToIndex(_key); 
     const auto &slot = m_Slots[slot_index];
-    
-    return BestImageFromSlot(slot);
+    return slot.icon;
 }
-    
+
 NSImage *IconRepositoryImpl::AvailableIconForListingItem( const VFSListingItem &_item ) const
 {
-    auto lr = m_IconBuilder->LookupExistingIcon(_item, m_IconPxSize);
-    if( lr.thumbnail != nil )
-        return lr.thumbnail;
-    if( lr.filetype != nil )
-        return lr.filetype;
-    return lr.generic;
+    return BestFromLookupResult( m_IconBuilder->LookupExistingIcon(_item, m_IconPxSize) );
 }
     
 IconRepositoryImpl::SlotKey IconRepositoryImpl::Register( const VFSListingItem &_item )
@@ -73,14 +69,9 @@ IconRepositoryImpl::SlotKey IconRepositoryImpl::Register( const VFSListingItem &
     if( new_slot_ind < 0 )
         return InvalidKey;
 
-    auto &slot = m_Slots[new_slot_ind]; 
-
-    auto lr = m_IconBuilder->LookupExistingIcon(_item, m_IconPxSize);
-    
+    auto &slot = m_Slots[new_slot_ind];
     slot.state = SlotState::Initial;
-    slot.thumbnail = lr.thumbnail;
-    slot.filetype = lr.filetype;
-    slot.generic = lr.generic;
+    slot.icon = BestFromLookupResult( m_IconBuilder->LookupExistingIcon(_item, m_IconPxSize) );
     
     return FromIndex(new_slot_ind);
 }
@@ -173,7 +164,7 @@ void IconRepositoryImpl::CommitProductionResult(int _slot_index, WorkerContext &
     if( updated == true ) {
         auto callback = m_IconUpdatedCallback;
         if( callback && *callback )
-            (*callback)(FromIndex(_slot_index), BestImageFromSlot(slot));
+            (*callback)(FromIndex(_slot_index), slot.icon);
     }
 }
     
@@ -208,31 +199,24 @@ int IconRepositoryImpl::AllocateSlot()
     else 
         return -1;
 }
-
-NSImage* IconRepositoryImpl::BestImageFromSlot(const Slot& _slot)
-{
-    if( _slot.thumbnail )
-        return _slot.thumbnail;
-    if( _slot.filetype )
-        return _slot.filetype;
-    return _slot.generic;
-}
  
 bool IconRepositoryImpl::RefreshImages(Slot& _slot, const WorkerContext &_ctx)
 {
-    bool updated = false;
-    
-    if( _ctx.result_thumbnail != nil && _ctx.result_thumbnail != _slot.thumbnail ) {
-        _slot.thumbnail = _ctx.result_thumbnail;
-        updated = true;
+    if( _ctx.result_thumbnail != nil ) {
+        if( _ctx.result_thumbnail != _slot.icon ) {
+            _slot.icon = _ctx.result_thumbnail;
+            return true;
+        }
     }
     
-    if( _ctx.result_filetype != nil && _ctx.result_filetype != _slot.filetype ) {
-        _slot.filetype = _ctx.result_filetype;
-        updated = true;
-    }        
-        
-    return updated;
+    if( _ctx.result_filetype != nil ) {
+        if( _ctx.result_filetype != _slot.icon ) {
+            _slot.icon = _ctx.result_filetype;
+            return true;
+        }
+    }
+    
+    return false;
 }
     
 bool IconRepositoryImpl::IsSlotUsed(const Slot& _slot)
@@ -257,5 +241,16 @@ bool IconRepositoryImpl::HasFileChanged(const Slot& _slot, const VFSListingItem 
            _slot.file_mtime != _item.MTime() ||
            _slot.file_mode != _item.UnixMode();
 }
+
+static NSImage *BestFromLookupResult(const IconBuilder::LookupResult &_lr)
+{
+    if( _lr.thumbnail != nil )
+        return _lr.thumbnail;
+    if( _lr.filetype != nil )
+        return _lr.filetype;
+    return _lr.generic;
+}
+
+    
     
 }

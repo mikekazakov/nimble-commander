@@ -8,8 +8,9 @@
 #include <vector>
 #include <stack>
 #include <Habanero/spinlock.h>
-#include <boost/smart_ptr/intrusive_ptr.hpp>
-#include <boost/smart_ptr/intrusive_ref_counter.hpp>
+#include <Habanero/intrusive_ptr.h>
+//#include <boost/smart_ptr/intrusive_ptr.hpp>
+//#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace nc::vfsicon {
 
@@ -78,7 +79,7 @@ public:
     
 private:
     
-    struct WorkerContext : boost::intrusive_ref_counter<WorkerContext> {
+    struct WorkerContext : hbn::intrusive_ref_counter<WorkerContext> {
         VFSListingItem item;
         std::atomic_bool must_stop{false};
         NSImage *result_filetype = nil;
@@ -98,7 +99,7 @@ private:
         uint64_t file_size = 0;
         time_t file_mtime = 0;
         NSImage *icon = nil;
-        boost::intrusive_ptr<WorkerContext> production;
+        hbn::intrusive_ptr<WorkerContext> production;
     };
     
     int NumberOfUsedSlots() const;

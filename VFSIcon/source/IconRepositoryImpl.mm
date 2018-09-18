@@ -116,7 +116,7 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
     if( m_ProductionQueue->QueueLength() >= m_MaxQueueLength )
         return; // sorry, too busy atm 
     
-    auto context = boost::intrusive_ptr{new WorkerContext};
+    auto context = hbn::intrusive_ptr{new WorkerContext};
     context->item = _item;
     
     slot.production = context;

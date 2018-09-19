@@ -1,3 +1,4 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <utility>
@@ -55,7 +56,7 @@ public:
         return *this;
     }    
     
-    intrusive_ptr& operator=( nullptr_t ) noexcept
+    intrusive_ptr& operator=( std::nullptr_t ) noexcept
     {
         reset();
         return *this;        

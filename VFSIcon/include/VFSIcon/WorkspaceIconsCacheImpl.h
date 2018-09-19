@@ -5,6 +5,7 @@
 #include "WorkspaceIconsCache.h"
 #include <Habanero/LRUCache.h>
 #include <Habanero/spinlock.h>
+#include <Habanero/intrusive_ptr.h>
 #include <Cocoa/Cocoa.h>
 
 #pragma clang diagnostic push
@@ -61,7 +62,7 @@ public:
 private:
     enum { m_CacheSize = 4096 };
     
-    struct Info
+    struct Info : hbn::intrusive_ref_counter<Info>
     {
         uint64_t    file_size = 0;
         uint64_t    mtime = 0;
@@ -71,7 +72,7 @@ private:
         std::atomic_flag is_in_work = {false}; // item is currenly updating its image        
     };
     
-    using Container = hbn::LRUCache<std::string, std::shared_ptr<Info>, m_CacheSize>;    
+    using Container = hbn::LRUCache<std::string, hbn::intrusive_ptr<Info>, m_CacheSize>;    
 
     NSImage *Produce(const std::string &_file_path,
                      std::optional<FileStateHint> _state_hint);    

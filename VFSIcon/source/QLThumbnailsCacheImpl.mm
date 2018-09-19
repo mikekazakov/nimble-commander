@@ -158,7 +158,7 @@ NSImage *QLThumbnailsCacheImpl::Produce(const std::string &_filename,
     const auto temp_key = Key{std::string_view{_filename}, _px_size, Key::no_ownership};    
     auto lock = std::unique_lock{m_ItemsLock};
     if( m_Items.count(temp_key) ) { // O(1)
-        auto info = m_Items[temp_key]; // acquiring a copy of shared_ptr **by*value**! O(1)
+        auto info = m_Items[temp_key]; // acquiring a copy of intrusive_ptr **by*value**! O(1)
         lock.unlock();
         assert( info != nullptr );        
         CheckCacheAndUpdateIfNeeded(_filename, _px_size, *info, _hint);
@@ -168,7 +168,7 @@ NSImage *QLThumbnailsCacheImpl::Produce(const std::string &_filename,
         // insert dummy info into the structure, so no one else can try producing it
         // concurrently - prohibit wasting of resources        
         auto key = Key{_filename, _px_size};        
-        auto info = std::make_shared<Info>();
+        auto info = hbn::intrusive_ptr{new Info};
         info->is_in_work.test_and_set();
         m_Items.insert( std::move(key), info ); // O(1)
         lock.unlock();

@@ -18,7 +18,7 @@
 #include <list>
 #include <assert.h>
 
-namespace hbn {
+namespace nc::hbn {
 
 template <class _Key, class _Value, size_t _Capacity, class _Hash = std::hash<_Key>>
 class LRUCache

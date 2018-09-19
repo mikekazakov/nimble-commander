@@ -32,7 +32,7 @@ NSImage *WorkspaceIconsCacheImpl::ProduceIcon(const std::string &_file_path)
 {
     auto lock = std::unique_lock{m_ItemsLock};
     if( m_Items.count(_file_path) ) { // O(1)
-        auto info = m_Items[_file_path]; // acquiring a copy of shared_ptr **by*value**! O(1)
+        auto info = m_Items[_file_path]; // acquiring a copy of intrusive_ptr **by*value**! O(1)
         lock.unlock();
         assert( info != nullptr );
         UpdateIfNeeded(_file_path, *info);
@@ -41,7 +41,7 @@ NSImage *WorkspaceIconsCacheImpl::ProduceIcon(const std::string &_file_path)
     else {
         // insert dummy info into the structure, so no one else can try producing it
         // concurrently - prohibit wasting of resources                
-        auto info = std::make_shared<Info>();
+        auto info = hbn::intrusive_ptr{new Info};
         info->is_in_work.test_and_set();
         m_Items.insert( _file_path, info ); // O(1)
         lock.unlock();

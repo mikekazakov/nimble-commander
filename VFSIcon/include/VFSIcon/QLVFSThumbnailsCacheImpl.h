@@ -30,7 +30,7 @@ private:
     // also, it's pretty inefficient in dealing with strings 
 
     enum { m_CacheSize = 1024 };    
-    using Container = ::hbn::LRUCache<std::string, NSImage*, m_CacheSize>;    
+    using Container = hbn::LRUCache<std::string, NSImage*, m_CacheSize>;    
 
     NSImage *ProduceThumbnail(const std::string &_path,
                               const std::string &_ext,

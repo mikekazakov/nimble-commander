@@ -5,6 +5,7 @@
 #include <Cocoa/Cocoa.h>
 #include <Habanero/LRUCache.h>
 #include <Habanero/spinlock.h>
+#include <Habanero/intrusive_ptr.h>
 #include <string>
 #include <atomic>
 #include <optional>
@@ -54,7 +55,7 @@ private:
         size_t operator()(const Key& c) const noexcept;
     };
     
-    struct Info
+    struct Info : hbn::intrusive_ref_counter<Info>
     {
         NSImage    *image = nil; // may be nil - it means that QL can't produce thumbnail for this file
         uint64_t    file_size = 0;
@@ -62,7 +63,7 @@ private:
         std::atomic_flag is_in_work = {false}; // item is currenly updating its image
     };
     
-    using Container = hbn::LRUCache<Key, std::shared_ptr<Info>, m_CacheSize, KeyHash>;
+    using Container = hbn::LRUCache<Key, hbn::intrusive_ptr<Info>, m_CacheSize, KeyHash>;
 
     NSImage *Produce(const std::string &_filename,
                      int _px_size,

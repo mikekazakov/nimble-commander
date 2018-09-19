@@ -25,7 +25,7 @@ private:
     // also, it's pretty inefficient in dealing with strings
     
     enum { m_CacheSize = 128 };    
-    using Container = ::hbn::LRUCache<std::string, NSImage*, m_CacheSize>;    
+    using Container = hbn::LRUCache<std::string, NSImage*, m_CacheSize>;    
 
     static std::string MakeKey(const std::string &_file_path, VFSHost &_host);
     

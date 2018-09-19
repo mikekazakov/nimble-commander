@@ -155,6 +155,19 @@
 		CFD62D921C9BC0540021EE7F /* filter_fork_windows.c in Sources */ = {isa = PBXBuildFile; fileRef = CFD62CF91C9BC0540021EE7F /* filter_fork_windows.c */; };
 		CFD62D931C9BC0540021EE7F /* filter_fork.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD62CFA1C9BC0540021EE7F /* filter_fork.h */; };
 		CFD62D941C9BC0540021EE7F /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = CFD62CFE1C9BC0540021EE7F /* xxhash.c */; };
+		CFDE715D21525CC3005449C8 /* archive_openssl_hmac_private.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDE714E21525CC0005449C8 /* archive_openssl_hmac_private.h */; };
+		CFDE715E21525CC3005449C8 /* archive_disk_acl_freebsd.c in Sources */ = {isa = PBXBuildFile; fileRef = CFDE714F21525CC1005449C8 /* archive_disk_acl_freebsd.c */; };
+		CFDE715F21525CC3005449C8 /* archive_getdate.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDE715021525CC1005449C8 /* archive_getdate.h */; };
+		CFDE716021525CC3005449C8 /* archive_platform_xattr.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDE715121525CC1005449C8 /* archive_platform_xattr.h */; };
+		CFDE716121525CC3005449C8 /* archive_read_support_filter_zstd.c in Sources */ = {isa = PBXBuildFile; fileRef = CFDE715221525CC1005449C8 /* archive_read_support_filter_zstd.c */; };
+		CFDE716221525CC3005449C8 /* archive_disk_acl_darwin.c in Sources */ = {isa = PBXBuildFile; fileRef = CFDE715321525CC1005449C8 /* archive_disk_acl_darwin.c */; };
+		CFDE716321525CC3005449C8 /* archive_disk_acl_linux.c in Sources */ = {isa = PBXBuildFile; fileRef = CFDE715421525CC1005449C8 /* archive_disk_acl_linux.c */; };
+		CFDE716421525CC3005449C8 /* archive_write_set_format_filter_by_ext.c in Sources */ = {isa = PBXBuildFile; fileRef = CFDE715521525CC2005449C8 /* archive_write_set_format_filter_by_ext.c */; };
+		CFDE716521525CC3005449C8 /* archive_version_details.c in Sources */ = {isa = PBXBuildFile; fileRef = CFDE715621525CC2005449C8 /* archive_version_details.c */; };
+		CFDE716721525CC3005449C8 /* archive_platform_acl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDE715821525CC2005449C8 /* archive_platform_acl.h */; };
+		CFDE716821525CC3005449C8 /* archive_openssl_evp_private.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDE715921525CC2005449C8 /* archive_openssl_evp_private.h */; };
+		CFDE716921525CC3005449C8 /* archive_disk_acl_sunos.c in Sources */ = {isa = PBXBuildFile; fileRef = CFDE715A21525CC2005449C8 /* archive_disk_acl_sunos.c */; };
+		CFDE716B21525CC3005449C8 /* archive_write_add_filter_zstd.c in Sources */ = {isa = PBXBuildFile; fileRef = CFDE715C21525CC2005449C8 /* archive_write_add_filter_zstd.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -307,6 +320,21 @@
 		CFD62CF91C9BC0540021EE7F /* filter_fork_windows.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = filter_fork_windows.c; path = source/filter_fork_windows.c; sourceTree = "<group>"; };
 		CFD62CFA1C9BC0540021EE7F /* filter_fork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = filter_fork.h; path = source/filter_fork.h; sourceTree = "<group>"; };
 		CFD62CFE1C9BC0540021EE7F /* xxhash.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = xxhash.c; path = source/xxhash.c; sourceTree = "<group>"; };
+		CFDE714E21525CC0005449C8 /* archive_openssl_hmac_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_openssl_hmac_private.h; path = source/archive_openssl_hmac_private.h; sourceTree = "<group>"; };
+		CFDE714F21525CC1005449C8 /* archive_disk_acl_freebsd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_disk_acl_freebsd.c; path = source/archive_disk_acl_freebsd.c; sourceTree = "<group>"; };
+		CFDE715021525CC1005449C8 /* archive_getdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_getdate.h; path = source/archive_getdate.h; sourceTree = "<group>"; };
+		CFDE715121525CC1005449C8 /* archive_platform_xattr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_platform_xattr.h; path = source/archive_platform_xattr.h; sourceTree = "<group>"; };
+		CFDE715221525CC1005449C8 /* archive_read_support_filter_zstd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_support_filter_zstd.c; path = source/archive_read_support_filter_zstd.c; sourceTree = "<group>"; };
+		CFDE715321525CC1005449C8 /* archive_disk_acl_darwin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_disk_acl_darwin.c; path = source/archive_disk_acl_darwin.c; sourceTree = "<group>"; };
+		CFDE715421525CC1005449C8 /* archive_disk_acl_linux.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_disk_acl_linux.c; path = source/archive_disk_acl_linux.c; sourceTree = "<group>"; };
+		CFDE715521525CC2005449C8 /* archive_write_set_format_filter_by_ext.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_set_format_filter_by_ext.c; path = source/archive_write_set_format_filter_by_ext.c; sourceTree = "<group>"; };
+		CFDE715621525CC2005449C8 /* archive_version_details.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_version_details.c; path = source/archive_version_details.c; sourceTree = "<group>"; };
+		CFDE715721525CC2005449C8 /* archive_read_disk_entry_from_file.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_read_disk_entry_from_file.c; path = source/archive_read_disk_entry_from_file.c; sourceTree = "<group>"; };
+		CFDE715821525CC2005449C8 /* archive_platform_acl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_platform_acl.h; path = source/archive_platform_acl.h; sourceTree = "<group>"; };
+		CFDE715921525CC2005449C8 /* archive_openssl_evp_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = archive_openssl_evp_private.h; path = source/archive_openssl_evp_private.h; sourceTree = "<group>"; };
+		CFDE715A21525CC2005449C8 /* archive_disk_acl_sunos.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_disk_acl_sunos.c; path = source/archive_disk_acl_sunos.c; sourceTree = "<group>"; };
+		CFDE715B21525CC2005449C8 /* archive_write_disk_acl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_disk_acl.c; path = source/archive_write_disk_acl.c; sourceTree = "<group>"; };
+		CFDE715C21525CC2005449C8 /* archive_write_add_filter_zstd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = archive_write_add_filter_zstd.c; path = source/archive_write_add_filter_zstd.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -347,6 +375,21 @@
 		CFD62C461C9BBFC20021EE7F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFDE715321525CC1005449C8 /* archive_disk_acl_darwin.c */,
+				CFDE714F21525CC1005449C8 /* archive_disk_acl_freebsd.c */,
+				CFDE715421525CC1005449C8 /* archive_disk_acl_linux.c */,
+				CFDE715A21525CC2005449C8 /* archive_disk_acl_sunos.c */,
+				CFDE715021525CC1005449C8 /* archive_getdate.h */,
+				CFDE715921525CC2005449C8 /* archive_openssl_evp_private.h */,
+				CFDE714E21525CC0005449C8 /* archive_openssl_hmac_private.h */,
+				CFDE715821525CC2005449C8 /* archive_platform_acl.h */,
+				CFDE715121525CC1005449C8 /* archive_platform_xattr.h */,
+				CFDE715721525CC2005449C8 /* archive_read_disk_entry_from_file.c */,
+				CFDE715221525CC1005449C8 /* archive_read_support_filter_zstd.c */,
+				CFDE715621525CC2005449C8 /* archive_version_details.c */,
+				CFDE715C21525CC2005449C8 /* archive_write_add_filter_zstd.c */,
+				CFDE715B21525CC2005449C8 /* archive_write_disk_acl.c */,
+				CFDE715521525CC2005449C8 /* archive_write_set_format_filter_by_ext.c */,
 				CFD62C471C9BC0530021EE7F /* archive_acl_private.h */,
 				CFD62C481C9BC0530021EE7F /* archive_acl.c */,
 				CFD62C491C9BC0530021EE7F /* archive_check_magic.c */,
@@ -515,6 +558,7 @@
 				CFD62D381C9BC0540021EE7F /* archive_read_private.h in Headers */,
 				CFD62D711C9BC0540021EE7F /* archive_write_disk_private.h in Headers */,
 				CFD62D5C1C9BC0540021EE7F /* archive_string.h in Headers */,
+				CFDE716821525CC3005449C8 /* archive_openssl_evp_private.h in Headers */,
 				CFD62D601C9BC0540021EE7F /* archive_windows.h in Headers */,
 				CFD62D2F1C9BC0540021EE7F /* archive_read_disk_private.h in Headers */,
 				CFD62D181C9BC0540021EE7F /* archive_hmac_private.h in Headers */,
@@ -524,15 +568,19 @@
 				CFD62D781C9BC0540021EE7F /* archive_write_private.h in Headers */,
 				CFD62D101C9BC0540021EE7F /* archive_entry_private.h in Headers */,
 				CFD62D231C9BC0540021EE7F /* archive_ppmd7_private.h in Headers */,
+				CFDE715D21525CC3005449C8 /* archive_openssl_hmac_private.h in Headers */,
 				CFD62D8E1C9BC0540021EE7F /* archive.h in Headers */,
 				CFD62D221C9BC0540021EE7F /* archive_ppmd_private.h in Headers */,
 				CFD62CFF1C9BC0540021EE7F /* archive_acl_private.h in Headers */,
 				CFD62D0F1C9BC0540021EE7F /* archive_entry_locale.h in Headers */,
 				CFD62D161C9BC0540021EE7F /* archive_entry.h in Headers */,
 				CFD62D1B1C9BC0540021EE7F /* archive_options_private.h in Headers */,
+				CFDE716721525CC3005449C8 /* archive_platform_acl.h in Headers */,
 				CFD62D091C9BC0540021EE7F /* archive_digest_private.h in Headers */,
 				CFD62D8D1C9BC0540021EE7F /* archive_xxhash.h in Headers */,
 				CFD62D931C9BC0540021EE7F /* filter_fork.h in Headers */,
+				CFDE715F21525CC3005449C8 /* archive_getdate.h in Headers */,
+				CFDE716021525CC3005449C8 /* archive_platform_xattr.h in Headers */,
 				CFD62D251C9BC0540021EE7F /* archive_private.h in Headers */,
 				CFD62D201C9BC0540021EE7F /* archive_pathmatch.h in Headers */,
 				CFD62D1E1C9BC0540021EE7F /* archive_pack_dev.h in Headers */,
@@ -600,6 +648,7 @@
 				CFD62D141C9BC0540021EE7F /* archive_entry_xattr.c in Sources */,
 				CFD62D4D1C9BC0540021EE7F /* archive_read_support_format_cpio.c in Sources */,
 				CFD62D031C9BC0540021EE7F /* archive_cmdline.c in Sources */,
+				CFDE716921525CC3005449C8 /* archive_disk_acl_sunos.c in Sources */,
 				CFD62D471C9BC0540021EE7F /* archive_read_support_filter_xz.c in Sources */,
 				CFD62D2B1C9BC0540021EE7F /* archive_read_append_filter.c in Sources */,
 				CFD62D1A1C9BC0540021EE7F /* archive_match.c in Sources */,
@@ -610,6 +659,7 @@
 				CFD62D831C9BC0540021EE7F /* archive_write_set_format_shar.c in Sources */,
 				CFD62D241C9BC0540021EE7F /* archive_ppmd7.c in Sources */,
 				CFD62D7F1C9BC0540021EE7F /* archive_write_set_format_iso9660.c in Sources */,
+				CFDE716121525CC3005449C8 /* archive_read_support_filter_zstd.c in Sources */,
 				CFD62D1C1C9BC0540021EE7F /* archive_options.c in Sources */,
 				CFD62D2C1C9BC0540021EE7F /* archive_read_data_into_fd.c in Sources */,
 				CFD62D171C9BC0540021EE7F /* archive_getdate.c in Sources */,
@@ -625,10 +675,12 @@
 				CFD62D321C9BC0540021EE7F /* archive_read_extract.c in Sources */,
 				CFD62D891C9BC0540021EE7F /* archive_write_set_format.c in Sources */,
 				CFD62D4A1C9BC0540021EE7F /* archive_read_support_format_ar.c in Sources */,
+				CFDE716221525CC3005449C8 /* archive_disk_acl_darwin.c in Sources */,
 				CFD62D0D1C9BC0540021EE7F /* archive_entry_copy_stat.c in Sources */,
 				CFD62D581C9BC0540021EE7F /* archive_read.c in Sources */,
 				CFD62D7C1C9BC0540021EE7F /* archive_write_set_format_cpio_newc.c in Sources */,
 				CFD62D791C9BC0540021EE7F /* archive_write_set_format_7zip.c in Sources */,
+				CFDE716421525CC3005449C8 /* archive_write_set_format_filter_by_ext.c in Sources */,
 				CFD62D6B1C9BC0540021EE7F /* archive_write_add_filter_program.c in Sources */,
 				CFD62D731C9BC0540021EE7F /* archive_write_disk_windows.c in Sources */,
 				CFD62D411C9BC0540021EE7F /* archive_read_support_filter_lz4.c in Sources */,
@@ -654,6 +706,7 @@
 				CFD62D4E1C9BC0540021EE7F /* archive_read_support_format_empty.c in Sources */,
 				CFD62D431C9BC0540021EE7F /* archive_read_support_filter_none.c in Sources */,
 				CFD62D871C9BC0540021EE7F /* archive_write_set_format_xar.c in Sources */,
+				CFDE716321525CC3005449C8 /* archive_disk_acl_linux.c in Sources */,
 				CFD62D2A1C9BC0540021EE7F /* archive_read_add_passphrase.c in Sources */,
 				CFD62D801C9BC0540021EE7F /* archive_write_set_format_mtree.c in Sources */,
 				CFD62D661C9BC0540021EE7F /* archive_write_add_filter_gzip.c in Sources */,
@@ -675,11 +728,13 @@
 				CFD62D3E1C9BC0540021EE7F /* archive_read_support_filter_grzip.c in Sources */,
 				CFD62D081C9BC0540021EE7F /* archive_cryptor.c in Sources */,
 				CFD62D5E1C9BC0540021EE7F /* archive_virtual.c in Sources */,
+				CFDE716521525CC3005449C8 /* archive_version_details.c in Sources */,
 				CFD62D5F1C9BC0540021EE7F /* archive_windows.c in Sources */,
 				CFD62D281C9BC0540021EE7F /* archive_rb.c in Sources */,
 				CFD62D301C9BC0540021EE7F /* archive_read_disk_set_standard_lookup.c in Sources */,
 				CFD62D481C9BC0540021EE7F /* archive_read_support_format_7zip.c in Sources */,
 				CFD62D7A1C9BC0540021EE7F /* archive_write_set_format_ar.c in Sources */,
+				CFDE715E21525CC3005449C8 /* archive_disk_acl_freebsd.c in Sources */,
 				CFD62D7D1C9BC0540021EE7F /* archive_write_set_format_cpio.c in Sources */,
 				CFD62D621C9BC0540021EE7F /* archive_write_add_filter_by_name.c in Sources */,
 				CFD62D0C1C9BC0540021EE7F /* archive_entry_copy_bhfi.c in Sources */,
@@ -703,6 +758,7 @@
 				CFD62D6E1C9BC0540021EE7F /* archive_write_add_filter.c in Sources */,
 				CFD62D841C9BC0540021EE7F /* archive_write_set_format_ustar.c in Sources */,
 				CFD62D271C9BC0540021EE7F /* archive_random.c in Sources */,
+				CFDE716B21525CC3005449C8 /* archive_write_add_filter_zstd.c in Sources */,
 				CFD62D651C9BC0540021EE7F /* archive_write_add_filter_grzip.c in Sources */,
 				CFD62D5B1C9BC0540021EE7F /* archive_string.c in Sources */,
 				CFD62D6D1C9BC0540021EE7F /* archive_write_add_filter_xz.c in Sources */,
@@ -756,10 +812,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../Files/3rd_party/built/include/",
+					"$(SRCROOT)/../lzma/include/",
 					"$(SRCROOT)/../liblzmadec/include/liblzmadec/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
@@ -798,10 +854,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					"$(SRCROOT)/../../Files/3rd_party/built/include/",
+					"$(SRCROOT)/../lzma/include/",
 					"$(SRCROOT)/../liblzmadec/include/liblzmadec/",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				USE_HEADERMAP = NO;

@@ -6,7 +6,7 @@
 #include <atomic>
 
 // this is an almost straight copy of boost::intrusive_ptr, mainly because I don't want
-// to have all this legacy support and preprocessor spaghetti.
+// to have all that legacy support and preprocessor spaghetti.
 
 namespace nc::hbn {
     

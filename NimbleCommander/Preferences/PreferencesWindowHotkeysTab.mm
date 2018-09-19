@@ -382,9 +382,9 @@ static NSImageView *SpawnCautionSign()
 - (IBAction)onForceFnChanged:(id)sender
 {
     if( self.forceFnButton.state == NSOnState )
-        FunctionalKeysPass::Instance().Enable();
+        nc::utility::FunctionalKeysPass::Instance().Enable();
     else
-        FunctionalKeysPass::Instance().Disable();
+        nc::utility::FunctionalKeysPass::Instance().Disable();
 }
 
 - (void)controlTextDidChange:(NSNotification *)obj

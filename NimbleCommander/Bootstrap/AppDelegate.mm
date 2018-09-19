@@ -386,7 +386,7 @@ static NCAppDelegate *g_Me = nil;
     // accessibility stuff for NonMAS version
     if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
         GlobalConfig().GetBool(g_ConfigForceFn) ) {
-        FunctionalKeysPass::Instance().Enable();
+        nc::utility::FunctionalKeysPass::Instance().Enable();
     }
     
     if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&

@@ -56,7 +56,7 @@ struct warc_s {
 	mode_t typ;
 	unsigned int rng;
 	/* populated size */
-	size_t populz;
+	uint64_t populz;
 };
 
 static const char warcinfo[] =
@@ -79,7 +79,7 @@ typedef enum {
 	WT_RVIS,
 	/* conversion, unsupported */
 	WT_CONV,
-	/* continutation, unsupported at the moment */
+	/* continuation, unsupported at the moment */
 	WT_CONT,
 	/* invalid type */
 	LAST_WT
@@ -92,7 +92,7 @@ typedef struct {
 	time_t rtime;
 	time_t mtime;
 	const char *cnttyp;
-	size_t cntlen;
+	uint64_t cntlen;
 } warc_essential_hdr_t;
 
 typedef struct {
@@ -186,16 +186,18 @@ _warc_header(struct archive_write *a, struct archive_entry *entry)
 
 	/* check whether warcinfo record needs outputting */
 	if (!w->omit_warcinfo) {
+		ssize_t r;
 		warc_essential_hdr_t wi = {
 			WT_INFO,
 			/*uri*/NULL,
 			/*urn*/NULL,
-			/*rtm*/w->now,
-			/*mtm*/w->now,
+			/*rtm*/0,
+			/*mtm*/0,
 			/*cty*/"application/warc-fields",
 			/*len*/sizeof(warcinfo) - 1U,
 		};
-		ssize_t r;
+		wi.rtime = w->now;
+		wi.mtime = w->now;
 
 		archive_string_init(&hdr);
 		r = _popul_ehdr(&hdr, MAX_HDR_SIZE, wi);
@@ -226,14 +228,18 @@ _warc_header(struct archive_write *a, struct archive_entry *entry)
 	if (w->typ == AE_IFREG) {
 		warc_essential_hdr_t rh = {
 			WT_RSRC,
-			/*uri*/archive_entry_pathname(entry),
+			/*uri*/NULL,
 			/*urn*/NULL,
-			/*rtm*/w->now,
-			/*mtm*/archive_entry_mtime(entry),
+			/*rtm*/0,
+			/*mtm*/0,
 			/*cty*/NULL,
-			/*len*/archive_entry_size(entry),
+			/*len*/0,
 		};
 		ssize_t r;
+		rh.tgturi = archive_entry_pathname(entry);
+		rh.rtime = w->now;
+		rh.mtime = archive_entry_mtime(entry);
+		rh.cntlen = (size_t)archive_entry_size(entry);
 
 		archive_string_init(&hdr);
 		r = _popul_ehdr(&hdr, MAX_HDR_SIZE, rh);
@@ -270,7 +276,7 @@ _warc_data(struct archive_write *a, const void *buf, size_t len)
 
 		/* never write more bytes than announced */
 		if (len > w->populz) {
-			len = w->populz;
+			len = (size_t)w->populz;
 		}
 
 		/* now then, out we put the whole shebang */
@@ -325,16 +331,16 @@ xstrftime(struct archive_string *as, const char *fmt, time_t t)
 /** like strftime(3) but for time_t objects */
 	struct tm *rt;
 #if defined(HAVE_GMTIME_R) || defined(HAVE__GMTIME64_S)
-	struct tm time;
+	struct tm timeHere;
 #endif
 	char strtime[100];
 	size_t len;
 
 #ifdef HAVE_GMTIME_R
-	if ((rt = gmtime_r(&t, &time)) == NULL)
+	if ((rt = gmtime_r(&t, &timeHere)) == NULL)
 		return;
 #elif defined(HAVE__GMTIME64_S)
-	_gmtime64_s(&time, &t);
+	_gmtime64_s(&timeHere, &t);
 #else
 	if ((rt = gmtime(&t)) == NULL)
 		return;
@@ -348,7 +354,7 @@ static ssize_t
 _popul_ehdr(struct archive_string *tgt, size_t tsz, warc_essential_hdr_t hdr)
 {
 	static const char _ver[] = "WARC/1.0\r\n";
-	static const char *_typ[LAST_WT] = {
+	static const char * const _typ[LAST_WT] = {
 		NULL, "warcinfo", "metadata", "resource", NULL
 	};
 	char std_uuid[48U];
@@ -382,10 +388,10 @@ _popul_ehdr(struct archive_string *tgt, size_t tsz, warc_essential_hdr_t hdr)
 
 	/* record time is usually when the http is sent off,
 	 * just treat the archive writing as such for a moment */
-	xstrftime(tgt, "WARC-Date: %FT%H:%M:%SZ\r\n", hdr.rtime);
+	xstrftime(tgt, "WARC-Date: %Y-%m-%dT%H:%M:%SZ\r\n", hdr.rtime);
 
 	/* while we're at it, record the mtime */
-	xstrftime(tgt, "Last-Modified: %FT%H:%M:%SZ\r\n", hdr.mtime);
+	xstrftime(tgt, "Last-Modified: %Y-%m-%dT%H:%M:%SZ\r\n", hdr.mtime);
 
 	if (hdr.recid == NULL) {
 		/* generate one, grrrr */
@@ -396,7 +402,7 @@ _popul_ehdr(struct archive_string *tgt, size_t tsz, warc_essential_hdr_t hdr)
 		 * handle the minimum number following '%'.
 		 * So we have to use snprintf function here instead
 		 * of archive_string_snprintf function. */
-#if defined(_WIN32) && !defined(__CYGWIN__)
+#if defined(_WIN32) && !defined(__CYGWIN__) && !( defined(_MSC_VER) && _MSC_VER >= 1900)
 #define snprintf _snprintf
 #endif
 		snprintf(
@@ -417,7 +423,7 @@ _popul_ehdr(struct archive_string *tgt, size_t tsz, warc_essential_hdr_t hdr)
 	}
 
 	/* next one is mandatory */
-	archive_string_sprintf(tgt, "Content-Length: %zu\r\n", hdr.cntlen);
+	archive_string_sprintf(tgt, "Content-Length: %ju\r\n", (uintmax_t)hdr.cntlen);
 	/**/
 	archive_strncat(tgt, "\r\n", 2);
 

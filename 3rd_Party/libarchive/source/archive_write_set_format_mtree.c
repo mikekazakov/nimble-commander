@@ -1115,7 +1115,7 @@ write_mtree_entry_tree(struct archive_write *a)
 	do {
 		if (mtree->output_global_set) {
 			/*
-			 * Collect attribute infomation to know which value
+			 * Collect attribute information to know which value
 			 * is frequently used among the children.
 			 */
 			attr_counter_set_reset(mtree);
@@ -1840,9 +1840,9 @@ mtree_entry_setup_filenames(struct archive_write *a, struct mtree_entry *file,
 	len = strlen(p);
 
 	/*
-	 * Add "./" prefiex.
+	 * Add "./" prefix.
 	 * NOTE: If the pathname does not have a path separator, we have
-	 * to add "./" to the head of the pathename because mtree reader
+	 * to add "./" to the head of the pathname because mtree reader
 	 * will suppose that it is v1(a.k.a classic) mtree format and
 	 * change the directory unexpectedly and so it will make a wrong
 	 * path.

@@ -14,6 +14,7 @@ SET(include_HEADERS
 # Sources and private headers
 SET(libarchive_SOURCES
   archive_acl.c
+  archive_acl_private.h
   archive_check_magic.c
   archive_cmdline.c
   archive_cmdline_private.h
@@ -34,9 +35,12 @@ SET(libarchive_SOURCES
   archive_entry_strmode.c
   archive_entry_xattr.c
   archive_getdate.c
+  archive_getdate.h
   archive_hmac.c
   archive_hmac_private.h
   archive_match.c
+  archive_openssl_evp_private.h
+  archive_openssl_hmac_private.h
   archive_options.c
   archive_options_private.h
   archive_pack_dev.h
@@ -44,6 +48,8 @@ SET(libarchive_SOURCES
   archive_pathmatch.c
   archive_pathmatch.h
   archive_platform.h
+  archive_platform_acl.h
+  archive_platform_xattr.h
   archive_ppmd_private.h
   archive_ppmd7.c
   archive_ppmd7_private.h
@@ -82,6 +88,7 @@ SET(libarchive_SOURCES
   archive_read_support_filter_rpm.c
   archive_read_support_filter_uu.c
   archive_read_support_filter_xz.c
+  archive_read_support_filter_zstd.c
   archive_read_support_format_7zip.c
   archive_read_support_format_all.c
   archive_read_support_format_ar.c
@@ -103,9 +110,9 @@ SET(libarchive_SOURCES
   archive_string_composition.h
   archive_string_sprintf.c
   archive_util.c
+  archive_version_details.c
   archive_virtual.c
   archive_write.c
-  archive_write_disk_acl.c
   archive_write_disk_posix.c
   archive_write_disk_private.h
   archive_write_disk_set_standard_lookup.c
@@ -128,12 +135,14 @@ SET(libarchive_SOURCES
   archive_write_add_filter_program.c
   archive_write_add_filter_uuencode.c
   archive_write_add_filter_xz.c
+  archive_write_add_filter_zstd.c
   archive_write_set_format.c
   archive_write_set_format_7zip.c
   archive_write_set_format_ar.c
   archive_write_set_format_by_name.c
   archive_write_set_format_cpio.c
   archive_write_set_format_cpio_newc.c
+  archive_write_set_format_filter_by_ext.c
   archive_write_set_format_gnutar.c
   archive_write_set_format_iso9660.c
   archive_write_set_format_mtree.c
@@ -164,15 +173,33 @@ SET(libarchive_MANS
   archive_entry_time.3
   archive_read.3
   archive_read_add_passphrase.3
+  archive_read_data.3
   archive_read_disk.3
+  archive_read_extract.3
+  archive_read_filter.3
+  archive_read_format.3
+  archive_read_free.3
+  archive_read_header.3
+  archive_read_new.3
+  archive_read_open.3
   archive_read_set_options.3
   archive_util.3
   archive_write.3
+  archive_write_blocksize.3
+  archive_write_data.3
   archive_write_disk.3
+  archive_write_filter.3
+  archive_write_finish_entry.3
+  archive_write_format.3
+  archive_write_free.3
+  archive_write_header.3
+  archive_write_new.3
+  archive_write_open.3
   archive_write_set_options.3
   archive_write_set_passphrase.3
   cpio.5
   libarchive.3
+  libarchive_changes.3
   libarchive_internals.3
   libarchive-formats.5
   mtree.5
@@ -187,6 +214,16 @@ IF(WIN32 AND NOT CYGWIN)
   LIST(APPEND libarchive_SOURCES archive_write_disk_windows.c)
   LIST(APPEND libarchive_SOURCES filter_fork_windows.c)
 ENDIF(WIN32 AND NOT CYGWIN)
+
+IF(ARCHIVE_ACL_DARWIN)
+  LIST(APPEND libarchive_SOURCES archive_disk_acl_darwin.c)
+ELSEIF(ARCHIVE_ACL_FREEBSD)
+  LIST(APPEND libarchive_SOURCES archive_disk_acl_freebsd.c)
+ELSEIF(ARCHIVE_ACL_LIBACL)
+  LIST(APPEND libarchive_SOURCES archive_disk_acl_linux.c)
+ELSEIF(ARCHIVE_ACL_SUNOS)
+  LIST(APPEND libarchive_SOURCES archive_disk_acl_sunos.c)
+ENDIF()
 
 # Libarchive is a shared library
 ADD_LIBRARY(archive SHARED ${libarchive_SOURCES} ${include_HEADERS})
@@ -203,12 +240,14 @@ IF(NOT WIN32 OR CYGWIN)
   SET_TARGET_PROPERTIES(archive_static PROPERTIES OUTPUT_NAME archive)
 ENDIF(NOT WIN32 OR CYGWIN)
 
-# How to install the libraries
-INSTALL(TARGETS archive archive_static
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        ARCHIVE DESTINATION lib)
-INSTALL_MAN(${libarchive_MANS})
-INSTALL(FILES ${include_HEADERS} DESTINATION include)
+IF(ENABLE_INSTALL)
+  # How to install the libraries
+  INSTALL(TARGETS archive archive_static
+          RUNTIME DESTINATION bin
+          LIBRARY DESTINATION lib
+          ARCHIVE DESTINATION lib)
+  INSTALL_MAN(${libarchive_MANS})
+  INSTALL(FILES ${include_HEADERS} DESTINATION include)
+ENDIF()
 
 add_subdirectory(test)

@@ -31,7 +31,21 @@
 #include "archive.h"
 #include "archive_hmac_private.h"
 
-#ifdef __APPLE__
+/*
+ * On systems that do not support any recognized crypto libraries,
+ * the archive_hmac.c file is expected to define no usable symbols.
+ *
+ * But some compilers and linkers choke on empty object files, so
+ * define a public symbol that will always exist.  This could
+ * be removed someday if this file gains another always-present
+ * symbol definition.
+ */
+int __libarchive_hmac_build_hack(void) {
+	return 0;
+}
+
+
+#ifdef ARCHIVE_HMAC_USE_Apple_CommonCrypto
 
 static int
 __hmac_sha1_init(archive_hmac_sha1_ctx *ctx, const uint8_t *key, size_t key_len)
@@ -61,6 +75,10 @@ __hmac_sha1_cleanup(archive_hmac_sha1_ctx *ctx)
 }
 
 #elif defined(_WIN32) && !defined(__CYGWIN__) && defined(HAVE_BCRYPT_H)
+
+#ifndef BCRYPT_HASH_REUSABLE_FLAG
+# define BCRYPT_HASH_REUSABLE_FLAG 0x00000020
+#endif
 
 static int
 __hmac_sha1_init(archive_hmac_sha1_ctx *ctx, const uint8_t *key, size_t key_len)
@@ -129,7 +147,7 @@ __hmac_sha1_cleanup(archive_hmac_sha1_ctx *ctx)
 	}
 }
 
-#elif defined(HAVE_LIBNETTLE)
+#elif defined(HAVE_LIBNETTLE) && defined(HAVE_NETTLE_HMAC_H)
 
 static int
 __hmac_sha1_init(archive_hmac_sha1_ctx *ctx, const uint8_t *key, size_t key_len)
@@ -162,8 +180,10 @@ __hmac_sha1_cleanup(archive_hmac_sha1_ctx *ctx)
 static int
 __hmac_sha1_init(archive_hmac_sha1_ctx *ctx, const uint8_t *key, size_t key_len)
 {
-	HMAC_CTX_init(ctx);
-	HMAC_Init(ctx, key, key_len, EVP_sha1());
+	*ctx = HMAC_CTX_new();
+	if (*ctx == NULL)
+		return -1;
+	HMAC_Init_ex(*ctx, key, key_len, EVP_sha1(), NULL);
 	return 0;
 }
 
@@ -171,22 +191,22 @@ static void
 __hmac_sha1_update(archive_hmac_sha1_ctx *ctx, const uint8_t *data,
     size_t data_len)
 {
-	HMAC_Update(ctx, data, data_len);
+	HMAC_Update(*ctx, data, data_len);
 }
 
 static void
 __hmac_sha1_final(archive_hmac_sha1_ctx *ctx, uint8_t *out, size_t *out_len)
 {
 	unsigned int len = (unsigned int)*out_len;
-	HMAC_Final(ctx, out, &len);
+	HMAC_Final(*ctx, out, &len);
 	*out_len = len;
 }
 
 static void
 __hmac_sha1_cleanup(archive_hmac_sha1_ctx *ctx)
 {
-	HMAC_CTX_cleanup(ctx);
-	memset(ctx, 0, sizeof(*ctx));
+	HMAC_CTX_free(*ctx);
+	*ctx = NULL;
 }
 
 #else

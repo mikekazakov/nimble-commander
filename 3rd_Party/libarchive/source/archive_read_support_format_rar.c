@@ -604,20 +604,6 @@ lzss_emit_match(struct rar *rar, int offset, int length)
   rar->lzss.position += length;
 }
 
-static void *
-ppmd_alloc(void *p, size_t size)
-{
-  (void)p;
-  return malloc(size);
-}
-static void
-ppmd_free(void *p, void *address)
-{
-  (void)p;
-  free(address);
-}
-static ISzAlloc g_szalloc = { ppmd_alloc, ppmd_free };
-
 static Byte
 ppmd_read(void *p)
 {
@@ -647,13 +633,12 @@ archive_read_support_format_rar(struct archive *_a)
   archive_check_magic(_a, ARCHIVE_READ_MAGIC, ARCHIVE_STATE_NEW,
                       "archive_read_support_format_rar");
 
-  rar = (struct rar *)malloc(sizeof(*rar));
+  rar = (struct rar *)calloc(sizeof(*rar), 1);
   if (rar == NULL)
   {
     archive_set_error(&a->archive, ENOMEM, "Can't allocate rar data");
     return (ARCHIVE_FATAL);
   }
-  memset(rar, 0, sizeof(*rar));
 
 	/*
 	 * Until enough data has been read, we cannot tell about
@@ -828,6 +813,7 @@ archive_read_format_rar_read_header(struct archive_read *a,
   char head_type;
   int ret;
   unsigned flags;
+  unsigned long crc32_expected;
 
   a->archive.archive_format = ARCHIVE_FORMAT_RAR;
   if (a->archive.archive_format_name == NULL)
@@ -906,7 +892,7 @@ archive_read_format_rar_read_header(struct archive_read *a,
                             sizeof(rar->reserved2));
       }
 
-      /* Main header is password encrytped, so we cannot read any
+      /* Main header is password encrypted, so we cannot read any
          file names or any other info about files from the header. */
       if (rar->main_flags & MHD_PASSWORD)
       {
@@ -940,36 +926,50 @@ archive_read_format_rar_read_header(struct archive_read *a,
       skip = archive_le16dec(p + 5);
       if (skip < 7) {
         archive_set_error(&a->archive, ARCHIVE_ERRNO_FILE_FORMAT,
-          "Invalid header size");
+          "Invalid header size too small");
         return (ARCHIVE_FATAL);
-      }
-      if (skip > 7) {
-        if ((h = __archive_read_ahead(a, skip, NULL)) == NULL)
-          return (ARCHIVE_FATAL);
-        p = h;
       }
       if (flags & HD_ADD_SIZE_PRESENT)
       {
         if (skip < 7 + 4) {
           archive_set_error(&a->archive, ARCHIVE_ERRNO_FILE_FORMAT,
-            "Invalid header size");
+            "Invalid header size too small");
           return (ARCHIVE_FATAL);
         }
-        skip += archive_le32dec(p + 7);
         if ((h = __archive_read_ahead(a, skip, NULL)) == NULL)
           return (ARCHIVE_FATAL);
         p = h;
+        skip += archive_le32dec(p + 7);
       }
 
-      crc32_val = crc32(0, (const unsigned char *)p + 2, (unsigned)skip - 2);
-      if ((crc32_val & 0xffff) != archive_le16dec(p)) {
-        archive_set_error(&a->archive, ARCHIVE_ERRNO_FILE_FORMAT,
-          "Header CRC error");
-        return (ARCHIVE_FATAL);
+      /* Skip over the 2-byte CRC at the beginning of the header. */
+      crc32_expected = archive_le16dec(p);
+      __archive_read_consume(a, 2);
+      skip -= 2;
+
+      /* Skim the entire header and compute the CRC. */
+      crc32_val = 0;
+      while (skip > 0) {
+	      size_t to_read = skip;
+	      ssize_t did_read;
+	      if (to_read > 32 * 1024) {
+		      to_read = 32 * 1024;
+	      }
+	      if ((h = __archive_read_ahead(a, to_read, &did_read)) == NULL) {
+		      return (ARCHIVE_FATAL);
+	      }
+	      p = h;
+	      crc32_val = crc32(crc32_val, (const unsigned char *)p, (unsigned)did_read);
+	      __archive_read_consume(a, did_read);
+	      skip -= did_read;
       }
-      __archive_read_consume(a, skip);
+      if ((crc32_val & 0xffff) != crc32_expected) {
+	      archive_set_error(&a->archive, ARCHIVE_ERRNO_FILE_FORMAT,
+		  "Header CRC error");
+	      return (ARCHIVE_FATAL);
+      }
       if (head_type == ENDARC_HEAD)
-        return (ARCHIVE_EOF);
+	      return (ARCHIVE_EOF);
       break;
 
     case NEWSUB_HEAD:
@@ -1002,8 +1002,8 @@ archive_read_format_rar_read_data(struct archive_read *a, const void **buff,
       rar->bytes_unconsumed = 0;
   }
 
+  *buff = NULL;
   if (rar->entry_eof || rar->offset_seek >= rar->unp_size) {
-    *buff = NULL;
     *size = 0;
     *offset = rar->offset;
     if (*offset < rar->unp_size)
@@ -1024,7 +1024,7 @@ archive_read_format_rar_read_data(struct archive_read *a, const void **buff,
   case COMPRESS_METHOD_BEST:
     ret = read_data_compressed(a, buff, size, offset);
     if (ret != ARCHIVE_OK && ret != ARCHIVE_WARN)
-      __archive_ppmd7_functions.Ppmd7_Free(&rar->ppmd7_context, &g_szalloc);
+      __archive_ppmd7_functions.Ppmd7_Free(&rar->ppmd7_context);
     break;
 
   default:
@@ -1203,10 +1203,8 @@ archive_read_format_rar_seek_data(struct archive_read *a, int64_t offset,
     ret -= rar->dbo[0].start_offset;
 
     /* Always restart reading the file after a seek */
-    a->read_data_block = NULL;
-    a->read_data_offset = 0;
-    a->read_data_output_offset = 0;
-    a->read_data_remaining = 0;
+    __archive_reset_read_data(&a->archive);
+
     rar->bytes_unconsumed = 0;
     rar->offset = 0;
 
@@ -1241,7 +1239,7 @@ archive_read_format_rar_cleanup(struct archive_read *a)
   free(rar->dbo);
   free(rar->unp_buffer);
   free(rar->lzss.window);
-  __archive_ppmd7_functions.Ppmd7_Free(&rar->ppmd7_context, &g_szalloc);
+  __archive_ppmd7_functions.Ppmd7_Free(&rar->ppmd7_context);
   free(rar);
   (a->format->data) = NULL;
   return (ARCHIVE_OK);
@@ -1484,7 +1482,11 @@ read_header(struct archive_read *a, struct archive_entry *entry,
         return (ARCHIVE_FATAL);
       }
       filename[filename_size++] = '\0';
-      filename[filename_size++] = '\0';
+      /*
+       * Do not increment filename_size here as the computations below
+       * add the space for the terminating NUL explicitly.
+       */
+      filename[filename_size] = '\0';
 
       /* Decoded unicode form is UTF-16BE, so we have to update a string
        * conversion object for it. */
@@ -1642,7 +1644,7 @@ read_header(struct archive_read *a, struct archive_entry *entry,
   rar->unp_offset = 0;
   rar->unp_buffer_size = UNP_BUFFER_SIZE;
   memset(rar->lengthtable, 0, sizeof(rar->lengthtable));
-  __archive_ppmd7_functions.Ppmd7_Free(&rar->ppmd7_context, &g_szalloc);
+  __archive_ppmd7_functions.Ppmd7_Free(&rar->ppmd7_context);
   rar->ppmd_valid = rar->ppmd_eod = 0;
 
   /* Don't set any archive entries for non-file header types */
@@ -1738,7 +1740,7 @@ read_exttime(const char *p, struct rar *rar, const char *endp)
         return (-1);
       for (j = 0; j < count; j++)
       {
-        rem = ((*p) << 16) | (rem >> 8);
+        rem = (((unsigned)(unsigned char)*p) << 16) | (rem >> 8);
         p++;
       }
       tm = localtime(&t);
@@ -2106,7 +2108,7 @@ parse_codes(struct archive_read *a)
 
       /* Make sure ppmd7_contest is freed before Ppmd7_Construct
        * because reading a broken file cause this abnormal sequence. */
-      __archive_ppmd7_functions.Ppmd7_Free(&rar->ppmd7_context, &g_szalloc);
+      __archive_ppmd7_functions.Ppmd7_Free(&rar->ppmd7_context);
 
       rar->bytein.a = a;
       rar->bytein.Read = &ppmd_read;
@@ -2114,8 +2116,14 @@ parse_codes(struct archive_read *a)
       rar->range_dec.Stream = &rar->bytein;
       __archive_ppmd7_functions.Ppmd7_Construct(&rar->ppmd7_context);
 
+      if (rar->dictionary_size == 0) {
+	      archive_set_error(&a->archive, ARCHIVE_ERRNO_FILE_FORMAT,
+                          "Invalid zero dictionary size");
+	      return (ARCHIVE_FATAL);
+      }
+
       if (!__archive_ppmd7_functions.Ppmd7_Alloc(&rar->ppmd7_context,
-        rar->dictionary_size, &g_szalloc))
+        rar->dictionary_size))
       {
         archive_set_error(&a->archive, ENOMEM,
                           "Out of memory");
@@ -2871,11 +2879,10 @@ copy_from_lzss_window(struct archive_read *a, const void **buffer,
   }
 
   windowoffs = lzss_offset_for_position(&rar->lzss, startpos);
-  if(windowoffs + length <= lzss_size(&rar->lzss))
+  if(windowoffs + length <= lzss_size(&rar->lzss)) {
     memcpy(&rar->unp_buffer[rar->unp_offset], &rar->lzss.window[windowoffs],
            length);
-  else
-  {
+  } else if (length <= lzss_size(&rar->lzss)) {
     firstpart = lzss_size(&rar->lzss) - windowoffs;
     if (firstpart < 0) {
       archive_set_error(&a->archive, ARCHIVE_ERRNO_FILE_FORMAT,
@@ -2887,9 +2894,14 @@ copy_from_lzss_window(struct archive_read *a, const void **buffer,
              &rar->lzss.window[windowoffs], firstpart);
       memcpy(&rar->unp_buffer[rar->unp_offset + firstpart],
              &rar->lzss.window[0], length - firstpart);
-    } else
+    } else {
       memcpy(&rar->unp_buffer[rar->unp_offset],
              &rar->lzss.window[windowoffs], length);
+    }
+  } else {
+      archive_set_error(&a->archive, ARCHIVE_ERRNO_FILE_FORMAT,
+                        "Bad RAR file data");
+      return (ARCHIVE_FATAL);
   }
   rar->unp_offset += length;
   if (rar->unp_offset >= rar->unp_buffer_size)
@@ -2907,8 +2919,8 @@ rar_read_ahead(struct archive_read *a, size_t min, ssize_t *avail)
   int ret;
   if (avail)
   {
-    if (a->read_data_is_posix_read && *avail > (ssize_t)a->read_data_requested)
-      *avail = a->read_data_requested;
+    if (a->archive.read_data_is_posix_read && *avail > (ssize_t)a->archive.read_data_requested)
+      *avail = a->archive.read_data_requested;
     if (*avail > rar->bytes_remaining)
       *avail = (ssize_t)rar->bytes_remaining;
     if (*avail < 0)

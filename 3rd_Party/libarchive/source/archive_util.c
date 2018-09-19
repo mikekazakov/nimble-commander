@@ -89,42 +89,6 @@ archive_version_string(void)
 	return (ARCHIVE_VERSION_STRING);
 }
 
-const char *
-archive_version_details(void)
-{
-	static struct archive_string str;
-	static int init = 0;
-
-	if (!init) {
-		archive_string_init(&str);
-
-		archive_strcat(&str, ARCHIVE_VERSION_STRING);
-#ifdef HAVE_ZLIB_H
-		archive_strcat(&str, " zlib/");
-		archive_strcat(&str, ZLIB_VERSION);
-#endif
-#ifdef HAVE_LZMA_H
-		archive_strcat(&str, " liblzma/");
-		archive_strcat(&str, LZMA_VERSION_STRING);
-#endif
-#ifdef HAVE_BZLIB_H
-		{
-			const char *p = BZ2_bzlibVersion();
-			const char *sep = strchr(p, ',');
-			if (sep == NULL)
-				sep = p + strlen(p);
-			archive_strcat(&str, " bz2lib/");
-			archive_strncat(&str, p, sep - p);
-		}
-#endif
-#if defined(HAVE_LZ4_H) && defined(HAVE_LIBLZ4)
-		archive_string_sprintf(&str, " liblz4/%d.%d.%d",
-		    LZ4_VERSION_MAJOR, LZ4_VERSION_MINOR, LZ4_VERSION_RELEASE);
-#endif
-	}
-	return str.s;
-}
-
 int
 archive_errno(struct archive *a)
 {
@@ -176,7 +140,7 @@ archive_compression_name(struct archive *a)
 /*
  * Return a count of the number of compressed bytes processed.
  */
-int64_t
+la_int64_t
 archive_position_compressed(struct archive *a)
 {
 	return archive_filter_bytes(a, -1);
@@ -185,7 +149,7 @@ archive_position_compressed(struct archive *a)
 /*
  * Return a count of the number of uncompressed bytes processed.
  */
-int64_t
+la_int64_t
 archive_position_uncompressed(struct archive *a)
 {
 	return archive_filter_bytes(a, 0);
@@ -229,7 +193,7 @@ archive_copy_error(struct archive *dest, struct archive *src)
 void
 __archive_errx(int retvalue, const char *msg)
 {
-	static const char *msg1 = "Fatal Internal Error in libarchive: ";
+	static const char msg1[] = "Fatal Internal Error in libarchive: ";
 	size_t s;
 
 	s = write(2, msg1, strlen(msg1));
@@ -257,8 +221,8 @@ __archive_errx(int retvalue, const char *msg)
 int
 __archive_mktemp(const char *tmpdir)
 {
-	static const wchar_t *prefix = L"libarchive_";
-	static const wchar_t *suffix = L"XXXXXXXXXX";
+	static const wchar_t prefix[] = L"libarchive_";
+	static const wchar_t suffix[] = L"XXXXXXXXXX";
 	static const wchar_t num[] = {
 		L'0', L'1', L'2', L'3', L'4', L'5', L'6', L'7',
 		L'8', L'9', L'A', L'B', L'C', L'D', L'E', L'F',
@@ -534,7 +498,7 @@ void
 __archive_ensure_cloexec_flag(int fd)
 {
 #if defined(_WIN32) && !defined(__CYGWIN__)
-	(void)fd; /* UNSED */
+	(void)fd; /* UNUSED */
 #else
 	int flags;
 

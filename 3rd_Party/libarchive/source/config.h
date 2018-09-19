@@ -90,6 +90,9 @@
 #define	HAVE_GETPWUID_R 1
 #define	HAVE_GRP_H 1
 #define	HAVE_INTTYPES_H 1
+#define HAVE_ICONV 1
+#define HAVE_ICONV_H 1
+#define ICONV_CONST const
 #define	HAVE_LCHFLAGS 1
 #define	HAVE_LCHMOD 1
 #define	HAVE_LCHOWN 1

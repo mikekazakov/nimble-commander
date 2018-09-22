@@ -18,4 +18,8 @@
  */
 @property (nonatomic) function<void(NSString*)> searchRequestChangeCallback;
 
+@property (nonatomic) bool active;
+
+@property (nonatomic, weak) NSResponder* defaultResponder;
+
 @end

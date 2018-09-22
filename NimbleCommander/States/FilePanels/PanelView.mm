@@ -83,6 +83,7 @@ struct StateStorage
         
         m_HeaderView = [[NCPanelViewHeader alloc] initWithFrame:frame];
         m_HeaderView.translatesAutoresizingMaskIntoConstraints = false;
+        m_HeaderView.defaultResponder = self;
         __weak PanelView *weak_self = self;
         m_HeaderView.sortModeChangeCallback = [weak_self](data::SortMode _sm){
             if( PanelView *strong_self = weak_self )
@@ -220,6 +221,7 @@ struct StateStorage
     [self didChangeValueForKey:@"active"];
     const auto active = self.active;
     m_FooterView.active = active;
+    m_HeaderView.active = active;
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd

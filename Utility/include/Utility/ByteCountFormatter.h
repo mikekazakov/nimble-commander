@@ -52,33 +52,33 @@ public:
         Adaptive8      = 3,
     };
     
-    unsigned ToUTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size, Type _type);
-    unsigned ToUTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size, Type _type);
+    unsigned ToUTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size, Type _type) const;
+    unsigned ToUTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size, Type _type) const;
 #ifdef __OBJC__
-    NSString* ToNSString(uint64_t _size, Type _type);
+    NSString* ToNSString(uint64_t _size, Type _type) const;
 #endif
     
 private:
-    unsigned Fixed6_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size);
-    unsigned Fixed6_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size);
-    unsigned SpaceSeparated_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size);
-    unsigned SpaceSeparated_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size);
-    unsigned Adaptive_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size);
-    unsigned Adaptive_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size);
-    unsigned Adaptive8_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size);
-    unsigned Adaptive8_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size);
+    unsigned Fixed6_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const;
+    unsigned Fixed6_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const;
+    unsigned SpaceSeparated_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const;
+    unsigned SpaceSeparated_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const;
+    unsigned Adaptive_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const;
+    unsigned Adaptive_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const;
+    unsigned Adaptive8_UTF8(uint64_t _size, unsigned char *_buf, size_t _buffer_size) const;
+    unsigned Adaptive8_UTF16(uint64_t _size, unsigned short *_buf, size_t _buffer_size) const;
 #ifdef __OBJC__
-    NSString* Fixed6_NSString(uint64_t _size);
-    NSString* SpaceSeparated_NSString(uint64_t _size);
-    NSString* Adaptive_NSString(uint64_t _size);
-    NSString* Adaptive8_NSString(uint64_t _size);
+    NSString* Fixed6_NSString(uint64_t _size) const;
+    NSString* SpaceSeparated_NSString(uint64_t _size) const;
+    NSString* Adaptive_NSString(uint64_t _size) const;
+    NSString* Adaptive8_NSString(uint64_t _size) const;
 #endif
     
-    int Fixed6_Impl(uint64_t _size, unsigned short _buf[6]);
-    int SpaceSeparated_Impl(uint64_t _size, unsigned short _buf[64]);
-    int Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]);
-    int Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]);
-    void MessWithSeparator(char *_s);
+    int Fixed6_Impl(uint64_t _size, unsigned short _buf[6]) const;
+    int SpaceSeparated_Impl(uint64_t _size, unsigned short _buf[64]) const;
+    int Adaptive6_Impl(uint64_t _size, unsigned short _buf[6]) const;
+    int Adaptive8_Impl(uint64_t _size, unsigned short _buf[8]) const;
+    void MessWithSeparator(char *_s) const;
     
     ByteCountFormatter(const ByteCountFormatter&) = delete;
     ByteCountFormatter& operator=(const ByteCountFormatter&) = delete;

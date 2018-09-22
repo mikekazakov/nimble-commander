@@ -244,47 +244,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
         [self addSubview:m_VSeparatorLine1];
         [self addSubview:m_VSeparatorLine2];
         
-        NSDictionary *views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_FilenameLabel, m_SizeLabel, m_ModTime, m_ItemsLabel, m_VolumeLabel, m_VSeparatorLine1, m_VSeparatorLine2);
-        NSDictionary *metrics = @{@"lm1":@400, @"lm2":@450};
-        
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"V:|-(0)-[m_SeparatorLine(==1)]-(==0)-[m_FilenameLabel]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"V:[m_SeparatorLine]-(==0)-[m_VSeparatorLine1]-(0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"V:[m_SeparatorLine]-(==0)-[m_VSeparatorLine2]-(0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"V:|-(0)-[m_SeparatorLine]-(==0)-[m_FilenameLabel]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"V:[m_SeparatorLine]-(==0)-[m_SizeLabel]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"V:[m_SeparatorLine]-(==0)-[m_ModTime]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"V:[m_SeparatorLine]-(==0)-[m_ItemsLabel]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"V:[m_SeparatorLine]-(==0)-[m_VolumeLabel]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"|-(0)-[m_SeparatorLine]-(0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"[m_ModTime]-(>=4@500)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:
-@"|-(7)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=140@500)]-(4@400)-\
-[m_VSeparatorLine1(<=1@300)]-(2@300)-[m_ItemsLabel(>=50@300)]-(4@300)-\
-[m_VSeparatorLine2(<=1@290)]-(2@300)-[m_VolumeLabel(>=120@290)]-(4@300)-|" options:0 metrics:metrics views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"|-(>=lm1@400)-[m_VSeparatorLine1]" options:0 metrics:metrics views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"|-(>=lm1@400)-[m_ItemsLabel]" options:0 metrics:metrics views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"|-(>=lm2@400)-[m_VSeparatorLine2]" options:0 metrics:metrics views:views]];
-        [self addConstraints:[NSLayoutConstraint
-                              constraintsWithVisualFormat:@"|-(>=lm2@400)-[m_VolumeLabel]" options:0 metrics:metrics views:views]];
-
-        [self addConstraint:[m_SelectionLabel.leadingAnchor constraintEqualToAnchor:m_FilenameLabel.leadingAnchor]];
-        [self addConstraint:[m_SelectionLabel.topAnchor constraintEqualToAnchor:m_FilenameLabel.topAnchor]];
-        [self addConstraint:[m_SelectionLabel.bottomAnchor constraintEqualToAnchor:m_FilenameLabel.bottomAnchor]];
-        [self addConstraint:[m_SelectionLabel.trailingAnchor constraintEqualToAnchor:m_ModTime.trailingAnchor]];
+        [self installConstraints];
         
         __weak NCPanelViewFooter *weak_self = self;
         m_VolumeInfoFetcher.SetCallback([=](const VFSStatFS &_st) {
@@ -303,10 +263,51 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
     return self;
 }
 
+- (void) installConstraints
+{
+    const auto views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_FilenameLabel,
+                                                      m_SizeLabel, m_ModTime, m_ItemsLabel,
+                                                      m_VolumeLabel, m_VSeparatorLine1,
+                                                      m_VSeparatorLine2);
+    const auto metrics = @{@"lm1":@400, @"lm2":@450};
+    const auto ac = [&](NSString *_vf) {
+        auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_vf
+                                                                   options:0
+                                                                   metrics:metrics
+                                                                     views:views];
+        [self addConstraints:constraints]; 
+    };
+    ac(@"V:|-(0)-[m_SeparatorLine(==1)]-(==0)-[m_FilenameLabel]-(==0)-|");
+    ac(@"V:[m_SeparatorLine]-(==0)-[m_VSeparatorLine1]-(0)-|");
+    ac(@"V:[m_SeparatorLine]-(==0)-[m_VSeparatorLine2]-(0)-|");
+    ac(@"V:|-(0)-[m_SeparatorLine]-(==0)-[m_FilenameLabel]-(==0)-|");
+    ac(@"V:[m_SeparatorLine]-(==0)-[m_SizeLabel]-(==0)-|");
+    ac(@"V:[m_SeparatorLine]-(==0)-[m_ModTime]-(==0)-|");
+    ac(@"V:[m_SeparatorLine]-(==0)-[m_ItemsLabel]-(==0)-|");
+    ac(@"V:[m_SeparatorLine]-(==0)-[m_VolumeLabel]-(==0)-|");
+    ac(@"|-(0)-[m_SeparatorLine]-(0)-|");
+    ac(@"[m_ModTime]-(>=4@500)-|");
+    ac(@"|-(7)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=140@500)]-(4@400)-"
+       "[m_VSeparatorLine1(<=1@300)]-(2@300)-[m_ItemsLabel(>=50@300)]-(4@300)-"
+       "[m_VSeparatorLine2(<=1@290)]-(2@300)-[m_VolumeLabel(>=120@290)]-(4@300)-|");
+    ac(@"|-(>=lm1@400)-[m_VSeparatorLine1]");
+    ac(@"|-(>=lm1@400)-[m_ItemsLabel]");
+    ac(@"|-(>=lm2@400)-[m_VSeparatorLine2]");
+    ac(@"|-(>=lm2@400)-[m_VolumeLabel]");
+    
+    const auto add = [&](NSLayoutConstraint *_lc) {
+        [self addConstraint:_lc];        
+    };    
+    add([m_SelectionLabel.leadingAnchor constraintEqualToAnchor:m_FilenameLabel.leadingAnchor]);
+    add([m_SelectionLabel.topAnchor constraintEqualToAnchor:m_FilenameLabel.topAnchor]);
+    add([m_SelectionLabel.bottomAnchor constraintEqualToAnchor:m_FilenameLabel.bottomAnchor]);
+    add([m_SelectionLabel.trailingAnchor constraintEqualToAnchor:m_ModTime.trailingAnchor]);    
+}
+
 static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 {
     // output is a direct filename or symlink path in ->filename form
-    if(!_dirent.IsSymlink()) {
+    if( !_dirent.IsSymlink() ) {
         if( _dirent.Listing()->IsUniform() ) // this looks like a hacky solution
             return _dirent.FilenameNS(); // we're on regular panel - just return filename
         
@@ -314,8 +315,8 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
         return [NSString stringWithUTF8StdString:_dirent.Path()];
     }
     else if(_dirent.Symlink() != 0) {
-        NSString *link = [NSString stringWithUTF8String:_dirent.Symlink()];
-        if(link != nil)
+        const auto link = [NSString stringWithUTF8String:_dirent.Symlink()];
+        if( link != nil )
             return [@"->" stringByAppendingString:link];
     }
     return @""; // fallback case
@@ -433,12 +434,16 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 
 - (void) updateVolumeInfo
 {
-    NSString *text = [NSString stringWithFormat:NSLocalizedString(@"%@ available",
-                                                                  "Panels bottom volume bar, showing amount of bytes available"),
-                             ByteCountFormatter::Instance().ToNSString(m_VolumeInfoFetcher.Current().avail_bytes,
-                                                                       ByteCountFormatter::Adaptive6)];
-    m_VolumeLabel.stringValue = text;
-    m_VolumeLabel.toolTip = [NSString stringWithUTF8StdString:m_VolumeInfoFetcher.Current().volume_name];
+    const auto fmt = NSLocalizedString
+    (@"%@ available",
+     "Panels bottom volume bar, showing amount of bytes available");
+    const auto &fmter = ByteCountFormatter::Instance();
+    const auto avail = fmter.ToNSString(m_VolumeInfoFetcher.Current().avail_bytes,
+                                        ByteCountFormatter::Adaptive6);
+    m_VolumeLabel.stringValue = [NSString stringWithFormat:fmt, avail];
+    
+    m_VolumeLabel.toolTip = 
+        [NSString stringWithUTF8StdString:m_VolumeInfoFetcher.Current().volume_name];
 }
 
 - (void)viewDidMoveToWindow

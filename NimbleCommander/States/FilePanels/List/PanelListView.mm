@@ -3,6 +3,7 @@
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
+#include <Utility/AdaptiveDateFormatting.h>
 #include "../PanelData.h"
 #include "../PanelDataSortMode.h"
 #include "../PanelView.h"
@@ -15,12 +16,12 @@
 #include "PanelListViewGeometry.h"
 #include "PanelListViewSizeView.h"
 #include "PanelListViewDateTimeView.h"
-#include "PanelListViewDateFormatting.h"
 #include "PanelListView.h"
 #include "../Helpers/IconRepositoryCleaner.h"
 
 using namespace nc::panel;
 using nc::vfsicon::IconRepository;
+using nc::utility::AdaptiveDateFormatting;
 
 static const auto g_MaxStashedRows              = 50;
 static const auto g_SortAscImage = [NSImage imageNamed:@"NSAscendingSortIndicator"];
@@ -59,9 +60,9 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 
 @interface PanelListView()
 
-@property (nonatomic) PanelListViewDateFormatting::Style dateCreatedFormattingStyle;
-@property (nonatomic) PanelListViewDateFormatting::Style dateAddedFormattingStyle;
-@property (nonatomic) PanelListViewDateFormatting::Style dateModifiedFormattingStyle;
+@property (nonatomic) AdaptiveDateFormatting::Style dateCreatedFormattingStyle;
+@property (nonatomic) AdaptiveDateFormatting::Style dateAddedFormattingStyle;
+@property (nonatomic) AdaptiveDateFormatting::Style dateModifiedFormattingStyle;
 
 
 @end
@@ -80,9 +81,9 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     NSTableColumn                      *m_DateCreatedColumn;
     NSTableColumn                      *m_DateAddedColumn;
     NSTableColumn                      *m_DateModifiedColumn;
-    PanelListViewDateFormatting::Style  m_DateCreatedFormattingStyle;
-    PanelListViewDateFormatting::Style  m_DateAddedFormattingStyle;
-    PanelListViewDateFormatting::Style  m_DateModifiedFormattingStyle;
+    AdaptiveDateFormatting::Style       m_DateCreatedFormattingStyle;
+    AdaptiveDateFormatting::Style       m_DateAddedFormattingStyle;
+    AdaptiveDateFormatting::Style       m_DateModifiedFormattingStyle;
     
     stack<PanelListViewRowView*>        m_RowsStash;
     
@@ -261,17 +262,17 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 
 - (void)widthDidChangeForColumn:(NSTableColumn*)_column
 {
-    using df = PanelListViewDateFormatting;
+    auto df = AdaptiveDateFormatting{};
     if( _column == m_DateCreatedColumn ) {
-        const auto style = df::SuitableStyleForWidth( (int)m_DateCreatedColumn.width, self.font );
+        const auto style = df.SuitableStyleForWidth( (int)m_DateCreatedColumn.width, self.font );
         self.dateCreatedFormattingStyle = style;
     }
     if( _column == m_DateAddedColumn ) {
-        const auto style = df::SuitableStyleForWidth( (int)m_DateAddedColumn.width, self.font );
+        const auto style = df.SuitableStyleForWidth( (int)m_DateAddedColumn.width, self.font );
         self.dateAddedFormattingStyle = style;
     }
     if( _column == m_DateModifiedColumn ) {
-        const auto style = df::SuitableStyleForWidth( (int)m_DateModifiedColumn.width, self.font );
+        const auto style = df.SuitableStyleForWidth( (int)m_DateModifiedColumn.width, self.font );
         self.dateModifiedFormattingStyle = style;
     }
     [self notifyLastColumnToRedraw];
@@ -583,7 +584,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     }];
 }
 
-- (void) updateDateTimeViewAtColumn:(NSTableColumn*)_column withStyle:(PanelListViewDateFormatting::Style)_style
+- (void) updateDateTimeViewAtColumn:(NSTableColumn*)_column withStyle:(AdaptiveDateFormatting::Style)_style
 {
 // use this!!!!
 //m_TableView viewAtColumn:<#(NSInteger)#> row:<#(NSInteger)#> makeIfNecessary:<#(BOOL)#>
@@ -596,7 +597,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         }];
 }
 
-- (void) setDateCreatedFormattingStyle:(PanelListViewDateFormatting::Style)dateCreatedFormattingStyle
+- (void) setDateCreatedFormattingStyle:(AdaptiveDateFormatting::Style)dateCreatedFormattingStyle
 {
     if( m_DateCreatedFormattingStyle != dateCreatedFormattingStyle ) {
         m_DateCreatedFormattingStyle = dateCreatedFormattingStyle;
@@ -604,7 +605,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     }
 }
 
-- (void) setDateAddedFormattingStyle:(PanelListViewDateFormatting::Style)dateAddedFormattingStyle
+- (void) setDateAddedFormattingStyle:(AdaptiveDateFormatting::Style)dateAddedFormattingStyle
 {
     if( m_DateAddedFormattingStyle != dateAddedFormattingStyle ) {
         m_DateAddedFormattingStyle = dateAddedFormattingStyle;
@@ -612,7 +613,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     }
 }
 
-- (void) setDateModifiedFormattingStyle:(PanelListViewDateFormatting::Style)dateModifiedFormattingStyle
+- (void) setDateModifiedFormattingStyle:(AdaptiveDateFormatting::Style)dateModifiedFormattingStyle
 {
     if( m_DateModifiedFormattingStyle != dateModifiedFormattingStyle ) {
         m_DateModifiedFormattingStyle = dateModifiedFormattingStyle;

@@ -6,7 +6,7 @@
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataStatistics.h"
 
-@interface PanelViewFooter : NSView
+@interface NCPanelViewFooter : NSView
 
 - (void) updateFocusedItem:(VFSListingItem)_item VD:(nc::panel::data::ItemVolatileData)_vd; // may be empty
 - (void) updateStatistics:(const nc::panel::data::Statistics&)_stats;

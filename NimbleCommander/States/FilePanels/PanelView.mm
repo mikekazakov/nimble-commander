@@ -55,7 +55,7 @@ struct StateStorage
     __weak id<PanelViewDelegate> m_Delegate;
     NSView<PanelViewImplementationProtocol> *m_ItemsView;
     NCPanelViewHeader          *m_HeaderView;
-    PanelViewFooter            *m_FooterView;
+    NCPanelViewFooter          *m_FooterView;
     
     unique_ptr<IconRepository>  m_IconRepository;
     
@@ -89,7 +89,7 @@ struct StateStorage
         };
         [self addSubview:m_HeaderView];
         
-        m_FooterView = [[PanelViewFooter alloc] initWithFrame:NSRect()];
+        m_FooterView = [[NCPanelViewFooter alloc] initWithFrame:NSRect()];
         m_FooterView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_FooterView];
         

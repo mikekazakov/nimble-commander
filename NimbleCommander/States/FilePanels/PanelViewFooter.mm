@@ -1,17 +1,18 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PanelViewFooter.h"
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
+#include <Utility/AdaptiveDateFormatting.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "PanelView.h"
 #include "PanelViewPresentationSettings.h"
-#include "List/PanelListViewDateFormatting.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
-#include "PanelViewFooter.h"
 
 using namespace nc::panel;
+using nc::utility::AdaptiveDateFormatting;
 
 static NSString* FileSizeToString(const VFSListingItem &_dirent, const data::ItemVolatileData &_vd, ByteCountFormatter::Type _format)
 {
@@ -77,7 +78,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
                 [NSNumber numberWithInt:_total_files]];
 }
 
-@implementation PanelViewFooter
+@implementation NCPanelViewFooter
 {
     NSColor             *m_Background;
     NSColor             *m_TextColor;
@@ -256,9 +257,9 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
         [self addConstraint:[m_SelectionLabel.bottomAnchor constraintEqualToAnchor:m_FilenameLabel.bottomAnchor]];
         [self addConstraint:[m_SelectionLabel.trailingAnchor constraintEqualToAnchor:m_ModTime.trailingAnchor]];
         
-        __weak PanelViewFooter *weak_self = self;
+        __weak NCPanelViewFooter *weak_self = self;
         m_VolumeInfoFetcher.SetCallback([=](const VFSStatFS &_st) {
-            if( PanelViewFooter *strong_self = weak_self )
+            if( NCPanelViewFooter *strong_self = weak_self )
                 [strong_self updateVolumeInfo];
         });
         m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
@@ -305,9 +306,8 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
                                                    _vd,
                                                    GetFileSizeFormat());
         
-        m_ModTime.stringValue = PanelListViewDateFormatting::Format(
-                                                                   PanelListViewDateFormatting::Style::Medium,
-                                                                   _item.MTime());
+        const auto style = AdaptiveDateFormatting::Style::Medium;
+        m_ModTime.stringValue = AdaptiveDateFormatting{}.Format(style, _item.MTime());
     }
     else {
         m_FilenameLabel.stringValue = @"";

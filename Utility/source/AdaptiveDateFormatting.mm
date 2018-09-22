@@ -1,5 +1,7 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "PanelListViewDateFormatting.h"
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "AdaptiveDateFormatting.h"
+#include <Cocoa/Cocoa.h>
+#include <Habanero/spinlock.h>
 
 // Finder (10.12) heuristics for min column width:
 // Font Size  Long  Medium  Short  Tiny
@@ -13,77 +15,80 @@
 // intepolation scale:
 //                 ~=/1.35 ~=/1.15
 
-static PanelListViewDateFormatting::Style StyleForWidthHardcodedLikeFinder( int _width, int _font_size )
+namespace nc::utility {
+
+AdaptiveDateFormatting::Style
+    AdaptiveDateFormatting::StyleForWidthHardcodedLikeFinder( int _width, int _font_size )
 {
     if( _font_size <= 10 ) {
         if( _width >= 166 )
-            return PanelListViewDateFormatting::Style::Long;
+            return Style::Long;
         else if( _width >= 124 )
-            return PanelListViewDateFormatting::Style::Medium;
+            return Style::Medium;
         else if( _width >= 108 )
-            return PanelListViewDateFormatting::Style::Short;
+            return Style::Short;
         else
-            return PanelListViewDateFormatting::Style::Tiny;
+            return Style::Tiny;
     }
     else if( _font_size == 11 ) {
         if( _width >= 179 )
-            return PanelListViewDateFormatting::Style::Long;
+            return Style::Long;
         else if( _width >= 132 )
-            return PanelListViewDateFormatting::Style::Medium;
+            return Style::Medium;
         else if( _width >= 116 )
-            return PanelListViewDateFormatting::Style::Short;
+            return Style::Short;
         else
-            return PanelListViewDateFormatting::Style::Tiny;
+            return Style::Tiny;
     }
     else if( _font_size == 12 ) {
         if( _width >= 190 )
-            return PanelListViewDateFormatting::Style::Long;
+            return Style::Long;
         else if( _width >= 141 )
-            return PanelListViewDateFormatting::Style::Medium;
+            return Style::Medium;
         else if( _width >= 122 )
-            return PanelListViewDateFormatting::Style::Short;
+            return Style::Short;
         else
-            return PanelListViewDateFormatting::Style::Tiny;
+            return Style::Tiny;
     }
     else if( _font_size == 13 ) {
         if( _width >= 202 )
-            return PanelListViewDateFormatting::Style::Long;
+            return Style::Long;
         else if( _width >= 148 )
-            return PanelListViewDateFormatting::Style::Medium;
+            return Style::Medium;
         else if( _width >= 129 )
-            return PanelListViewDateFormatting::Style::Short;
+            return Style::Short;
         else
-            return PanelListViewDateFormatting::Style::Tiny;
+            return Style::Tiny;
     }
     else if( _font_size == 14 ) {
         if( _width >= 213 )
-            return PanelListViewDateFormatting::Style::Long;
+            return Style::Long;
         else if( _width >= 156 )
-            return PanelListViewDateFormatting::Style::Medium;
+            return Style::Medium;
         else if( _width >= 136 )
-            return PanelListViewDateFormatting::Style::Short;
+            return Style::Short;
         else
-            return PanelListViewDateFormatting::Style::Tiny;
+            return Style::Tiny;
     }
     else if( _font_size == 15 ) {
         if( _width >= 225 )
-            return PanelListViewDateFormatting::Style::Long;
+            return Style::Long;
         else if( _width >= 165 )
-            return PanelListViewDateFormatting::Style::Medium;
+            return Style::Medium;
         else if( _width >= 143 )
-            return PanelListViewDateFormatting::Style::Short;
+            return Style::Short;
         else
-            return PanelListViewDateFormatting::Style::Tiny;
+            return Style::Tiny;
     }
     else if( _font_size == 16 ) {
         if( _width >= 236 )
-            return PanelListViewDateFormatting::Style::Long;
+            return Style::Long;
         else if( _width >= 172 )
-            return PanelListViewDateFormatting::Style::Medium;
+            return Style::Medium;
         else if( _width >= 150 )
-            return PanelListViewDateFormatting::Style::Short;
+            return Style::Short;
         else
-            return PanelListViewDateFormatting::Style::Tiny;
+            return Style::Tiny;
     }
     else {
         // do some magic calculations here...
@@ -95,13 +100,13 @@ static PanelListViewDateFormatting::Style StyleForWidthHardcodedLikeFinder( int 
         const auto s = 236. / 16.;
         const auto v = s * _font_size;
         if( _width >= v )
-            return PanelListViewDateFormatting::Style::Long;
+            return Style::Long;
         else if( _width >= v / 1.35 )
-            return PanelListViewDateFormatting::Style::Medium;
+            return Style::Medium;
         else if( _width >= v / (1.35 * 1.15) )
-            return PanelListViewDateFormatting::Style::Short;
+            return Style::Short;
         else
-            return PanelListViewDateFormatting::Style::Tiny;
+            return Style::Tiny;
     }
 }
 
@@ -109,7 +114,8 @@ static bool TimeFormatIsDayFirst()
 {
     // month is first overwise
     static const auto day_first = []{
-        // a very-very nasty code here - trying to parse Unicode Technical Standard #35 stuff in a quite naive way
+        // a very-very nasty code here - trying to parse 
+        // Unicode Technical Standard #35 stuff in a quite naive way
         NSDateFormatter *dateFormatter = [NSDateFormatter new];
         dateFormatter.dateStyle = NSDateFormatterShortStyle;
         
@@ -151,20 +157,20 @@ static NSString *Long( time_t _time )
 {
     static const auto formatter = []{
         auto l = CFLocaleCopyCurrent();
-        auto f =  CFDateFormatterCreate(kCFAllocatorDefault,
-                                        l,
-                                        kCFDateFormatterLongStyle,
-                                        kCFDateFormatterShortStyle);
+        auto f = CFDateFormatterCreate(kCFAllocatorDefault,
+                                       l,
+                                       kCFDateFormatterLongStyle,
+                                       kCFDateFormatterShortStyle);
         CFRelease(l);
         CFDateFormatterSetProperty(f,
                                    kCFDateFormatterDoesRelativeDateFormattingKey,
                                    kCFBooleanTrue);
-        
         return f;
     }();
+    const auto time = (double)_time - kCFAbsoluteTimeIntervalSince1970;    
     static spinlock formatter_lock;
-    lock_guard<spinlock> lock(formatter_lock);
-    CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, (double)_time - kCFAbsoluteTimeIntervalSince1970);
+    auto lock = std::lock_guard{formatter_lock};
+    CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
     return (NSString*)CFBridgingRelease(str);
 }
 
@@ -182,9 +188,10 @@ static NSString *Medium( time_t _time )
                                    kCFBooleanTrue);
         return f;
     }();
+    const auto time = (double)_time - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
-    lock_guard<spinlock> lock(formatter_lock);
-    CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, (double)_time - kCFAbsoluteTimeIntervalSince1970);
+    auto lock = std::lock_guard{formatter_lock};
+    CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
     return (NSString*)CFBridgingRelease(str);
 }
 
@@ -202,9 +209,10 @@ static NSString *Short( time_t _time )
                                    kCFBooleanTrue);
         return f;
     }();
+    const auto time = (double)_time - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
-    lock_guard<spinlock> lock(formatter_lock);
-    CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, (double)_time - kCFAbsoluteTimeIntervalSince1970);
+    auto lock = std::lock_guard{formatter_lock};
+    CFStringRef str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, formatter, time);
     return (NSString*)CFBridgingRelease(str);
 }
 
@@ -234,14 +242,18 @@ static NSString *Tiny( time_t _time )
                                    kCFBooleanTrue);
         return f;
     }();
-    const auto is_today = [NSCalendar.currentCalendar isDateInToday:[NSDate dateWithTimeIntervalSince1970:_time]];
+    const auto date = [NSDate dateWithTimeIntervalSince1970:_time];
+    const auto is_today = [NSCalendar.currentCalendar isDateInToday:date];
+    const auto time = (double)_time - kCFAbsoluteTimeIntervalSince1970;
     static spinlock formatter_lock;
-    lock_guard<spinlock> lock(formatter_lock);
-    auto str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr, is_today ? today : general, (double)_time - kCFAbsoluteTimeIntervalSince1970);
+    auto lock = std::lock_guard{formatter_lock};
+    auto str = CFDateFormatterCreateStringWithAbsoluteTime(nullptr,
+                                                           is_today ? today : general,
+                                                           time);
     return (NSString*)CFBridgingRelease(str);
 }
 
-NSString *PanelListViewDateFormatting::Format( Style _style, time_t _time )
+NSString *AdaptiveDateFormatting::Format( Style _style, time_t _time )
 {
     switch( _style ) {
         case Style::Long:   return Long( _time );
@@ -252,7 +264,10 @@ NSString *PanelListViewDateFormatting::Format( Style _style, time_t _time )
     }
 }
 
-PanelListViewDateFormatting::Style PanelListViewDateFormatting::SuitableStyleForWidth( int _width, NSFont *_font )
+AdaptiveDateFormatting::Style
+    AdaptiveDateFormatting::SuitableStyleForWidth( int _width, NSFont *_font )
 {
     return StyleForWidthHardcodedLikeFinder( _width, (int)_font.pointSize );
+}
+
 }

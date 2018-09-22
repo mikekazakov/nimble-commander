@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */; };
 		CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */; };
+		CF29FC602155D9A20040FF19 /* AdaptiveDateFormatting.h in Headers */ = {isa = PBXBuildFile; fileRef = CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */; };
+		CF29FC622155D9AB0040FF19 /* AdaptiveDateFormatting.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */; };
 		CF308F11213781EE00915730 /* UnitTests_main.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F10213781ED00915730 /* UnitTests_main.h */; };
 		CF308F2D213ABFAA00915730 /* BriefOnDiskStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */; };
 		CF308F2F213ABFB300915730 /* BriefOnDiskStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */; };
@@ -106,6 +108,8 @@
 		CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OrthodoxMonospace.mm; path = source/OrthodoxMonospace.mm; sourceTree = "<group>"; };
 		CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ButtonWithTextColor.h; path = include/Utility/ButtonWithTextColor.h; sourceTree = "<group>"; };
 		CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ButtonWithTextColor.mm; path = source/ButtonWithTextColor.mm; sourceTree = "<group>"; };
+		CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdaptiveDateFormatting.h; path = include/Utility/AdaptiveDateFormatting.h; sourceTree = "<group>"; };
+		CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AdaptiveDateFormatting.mm; path = source/AdaptiveDateFormatting.mm; sourceTree = "<group>"; };
 		CF308F10213781ED00915730 /* UnitTests_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnitTests_main.h; path = tests/UnitTests_main.h; sourceTree = SOURCE_ROOT; };
 		CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BriefOnDiskStorage.h; path = include/Utility/BriefOnDiskStorage.h; sourceTree = "<group>"; };
 		CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BriefOnDiskStorage.cpp; path = source/BriefOnDiskStorage.cpp; sourceTree = "<group>"; };
@@ -265,9 +269,10 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CF308F32213ACD2500915730 /* BriefOnDiskStorageImpl.h */,
-				CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */,
+				CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
+				CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */,
+				CF308F32213ACD2500915730 /* BriefOnDiskStorageImpl.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
 				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
 				CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */,
@@ -309,9 +314,10 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CF308F30213ACD1900915730 /* BriefOnDiskStorageImpl.cpp */,
-				CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */,
+				CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
+				CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */,
+				CF308F30213ACD1900915730 /* BriefOnDiskStorageImpl.cpp */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
 				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
 				CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */,
@@ -375,6 +381,7 @@
 				CF308F33213ACD2500915730 /* BriefOnDiskStorageImpl.h in Headers */,
 				CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */,
 				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
+				CF29FC602155D9A20040FF19 /* AdaptiveDateFormatting.h in Headers */,
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
 				CF308F11213781EE00915730 /* UnitTests_main.h in Headers */,
 				CF308F2D213ABFAA00915730 /* BriefOnDiskStorage.h in Headers */,
@@ -514,6 +521,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF29FC622155D9AB0040FF19 /* AdaptiveDateFormatting.mm in Sources */,
 				CFFA94691F453CC00035E606 /* ButtonWithTextColor.mm in Sources */,
 				CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */,
 				CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */,

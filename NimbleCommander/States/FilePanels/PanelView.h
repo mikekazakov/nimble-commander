@@ -2,6 +2,7 @@
 #pragma once
 
 #include <VFS/VFS.h>
+#include <VFSIcon/IconRepository.h>
 #include "PanelViewTypes.h"
 
 @protocol PanelViewDelegate;
@@ -33,7 +34,9 @@ namespace nc::panel {
 @property (nonatomic, readonly) NSProgressIndicator *busyIndicator;
 @property (nonatomic, readonly) NCPanelViewHeader *headerView;
 
-- (id)initWithFrame:(NSRect)frame layout:(const nc::panel::PanelViewLayout&)_layout;
+- (id)initWithFrame:(NSRect)frame
+             layout:(const nc::panel::PanelViewLayout&)_layout
+     iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository;
 
 /**
  * called by controlled when a directory has been entirely changed in PanelData.

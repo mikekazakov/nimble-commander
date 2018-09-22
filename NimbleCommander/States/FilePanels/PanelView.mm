@@ -3,12 +3,6 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <Utility/MIMResponder.h>
-#include <VFSIcon/QLThumbnailsCacheImpl.h>
-#include <VFSIcon/WorkspaceIconsCacheImpl.h>
-#include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
-#include <Utility/BriefOnDiskStorageImpl.h>
-#include <VFSIcon/QLVFSThumbnailsCacheImpl.h>
-#include <VFSIcon/VFSBundleIconsCacheImpl.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelView.h"
 #include "PanelData.h"
@@ -23,13 +17,6 @@
 #include "DragSender.h"
 #include "PanelViewFieldEditor.h"
 #include "PanelViewKeystrokeSink.h"
-#include <VFSIcon/IconBuilderImpl.h>
-
-#include <VFSIcon/IconRepositoryImpl.h>
-
-// TODO: remove this crap
-#include <Habanero/CommonPaths.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 
 using namespace nc::panel;
 using nc::vfsicon::IconRepository;
@@ -48,8 +35,6 @@ struct StateStorage
     string focused_item;
 };
 
-static unique_ptr<IconRepository> MakeIconRepository();    
-    
 }
 
 @interface PanelView()
@@ -81,14 +66,16 @@ static unique_ptr<IconRepository> MakeIconRepository();
 
 @synthesize headerView = m_HeaderView;
 
-- (id)initWithFrame:(NSRect)frame layout:(const PanelViewLayout&)_layout
+- (id)initWithFrame:(NSRect)frame
+             layout:(const PanelViewLayout&)_layout
+     iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository
 {
     self = [super initWithFrame:frame];
     if (self) {
         m_Data = nullptr;
         m_CursorPos = -1;
         m_HeaderTitle = @"";
-        m_IconRepository = MakeIconRepository();
+        m_IconRepository = std::move(_icon_repository);
 
         m_ItemsView = [self spawnItemViewWithLayout:_layout];
         [self addSubview:m_ItemsView];
@@ -1070,30 +1057,3 @@ static unique_ptr<IconRepository> MakeIconRepository();
 }
 
 @end
-
-namespace nc::panel {
-
-static unique_ptr<IconRepository> MakeIconRepository()
-{
-    static const auto ql_cache = make_shared<vfsicon::QLThumbnailsCacheImpl>();
-    static const auto ws_cache = make_shared<vfsicon::WorkspaceIconsCacheImpl>();
-    static const auto ext_cache = make_shared<vfsicon::WorkspaceExtensionIconsCacheImpl>();    
-    static const auto brief_storage = make_shared<utility::BriefOnDiskStorageImpl>
-    (CommonPaths::AppTemporaryDirectory(),
-     ActivationManager::BundleID() + ".ico"); 
-    static const auto vfs_cache = make_shared<vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
-    static const auto vfs_bi_cache = make_shared<vfsicon::VFSBundleIconsCacheImpl>();
-    
-    static const auto icon_builder = make_shared<vfsicon::IconBuilderImpl>(ql_cache,
-                                                                           ws_cache,
-                                                                           ext_cache,
-                                                                           vfs_cache,
-                                                                           vfs_bi_cache);
-    const auto concurrency_per_repo = 4;
-    using Que = vfsicon::detail::IconRepositoryImplBase::GCDLimitedConcurrentQueue;
-    
-    return make_unique<nc::vfsicon::IconRepositoryImpl>(icon_builder,
-                                                        make_unique<Que>(concurrency_per_repo));
-}
-
-}

@@ -7,75 +7,104 @@
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include "PanelView.h"
 #include "PanelViewPresentationSettings.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
 
 using namespace nc::panel;
 using nc::utility::AdaptiveDateFormatting;
 
-static NSString* FileSizeToString(const VFSListingItem &_dirent, const data::ItemVolatileData &_vd, ByteCountFormatter::Type _format)
+static NSString* FileSizeToString(const VFSListingItem &_dirent,
+                                  const data::ItemVolatileData &_vd,
+                                  ByteCountFormatter::Type _format,
+                                  ByteCountFormatter &_fmter)
 {
     if( _dirent.IsDir() ) {
         if( _vd.is_size_calculated() ) {
-            return ByteCountFormatter::Instance().ToNSString(_vd.size, _format);
+            return _fmter.ToNSString(_vd.size, _format);
         }
         else {
-            if(_dirent.IsDotDot())
-                return NSLocalizedString(@"__MODERNPRESENTATION_UP_WORD", "Upper-level in directory, for English is 'Up'");
-            else
-                return NSLocalizedString(@"__MODERNPRESENTATION_FOLDER_WORD", "Folders dummy string when size is not available, for English is 'Folder'");
+            if( _dirent.IsDotDot() ) {
+                return NSLocalizedString(@"__MODERNPRESENTATION_UP_WORD",
+                                         "Upper-level in directory, for English is 'Up'");
+            }
+            else {
+                return NSLocalizedString
+                (@"__MODERNPRESENTATION_FOLDER_WORD",
+                 "Folders dummy string when size is not available, for English is 'Folder'");
+            }
         }
     }
     else {
-        return ByteCountFormatter::Instance().ToNSString(_dirent.Size(), _format);
+        return _fmter.ToNSString(_dirent.Size(), _format);
     }
 }
 
-static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, ByteCountFormatter::Type _format)
+static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
+                                                int _total_files,
+                                                ByteCountFormatter::Type _format,
+                                                ByteCountFormatter &_fmter)
 {
-    NSString *bytes = ByteCountFormatter::Instance().ToNSString(_sz, _format);
-    if(_total_files == 1)
-        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 1 file",
-                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
-                bytes];
-    else if(_total_files == 2)
-        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 2 files",
-                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
-                bytes];
-    else if(_total_files == 3)
-        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 3 files",
-                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
-                bytes];
-    else if(_total_files == 4)
-        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 4 files",
-                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
-                bytes];
-    else if(_total_files == 5)
-        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 5 files",
-                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
-                bytes];
-    else if(_total_files == 6)
-        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 6 files",
-                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
-                bytes];
-    else if(_total_files == 7)
-        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 7 files",
-                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
-                bytes];
-    else if(_total_files == 8)
-        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 8 files",
-                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
-                bytes];
-    else if(_total_files == 9)
-        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in 9 files",
-                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
-                bytes];
-    else
-        return [NSString stringWithFormat:NSLocalizedString(@"Selected %@ in %@ files",
-                                                            "Informative text for a bottom information bar in panels, showing size of selection"),
-                bytes,
-                [NSNumber numberWithInt:_total_files]];
+    const auto bytes = _fmter.ToNSString(_sz, _format);
+    if(_total_files == 1) {
+        auto fmt = NSLocalizedString
+        (@"Selected %@ in 1 file",
+         "Informative text for a bottom information bar in panels, showing size of selection");
+        return [NSString stringWithFormat:fmt, bytes];
+    }
+    else if(_total_files == 2) {
+        auto fmt = NSLocalizedString
+        (@"Selected %@ in 2 files",
+         "Informative text for a bottom information bar in panels, showing size of selection");
+        return [NSString stringWithFormat:fmt, bytes];
+    }
+    else if(_total_files == 3) {
+        auto fmt = NSLocalizedString
+        (@"Selected %@ in 3 files",
+         "Informative text for a bottom information bar in panels, showing size of selection");
+        return [NSString stringWithFormat:fmt, bytes];
+    }
+    else if(_total_files == 4) {
+        auto fmt = NSLocalizedString
+        (@"Selected %@ in 4 files",
+         "Informative text for a bottom information bar in panels, showing size of selection");
+        return [NSString stringWithFormat:fmt, bytes];
+    }
+    else if(_total_files == 5) {
+        auto fmt = NSLocalizedString
+        (@"Selected %@ in 5 files",
+         "Informative text for a bottom information bar in panels, showing size of selection");
+        return [NSString stringWithFormat:fmt, bytes];
+    }
+    else if(_total_files == 6) {
+        auto fmt = NSLocalizedString
+        (@"Selected %@ in 6 files",
+         "Informative text for a bottom information bar in panels, showing size of selection");
+        return [NSString stringWithFormat:fmt, bytes];
+    }
+    else if(_total_files == 7) {
+        auto fmt = NSLocalizedString
+        (@"Selected %@ in 7 files",
+         "Informative text for a bottom information bar in panels, showing size of selection");
+        return [NSString stringWithFormat:fmt, bytes];
+    }
+    else if(_total_files == 8) {
+        auto fmt = NSLocalizedString
+        (@"Selected %@ in 8 files",
+         "Informative text for a bottom information bar in panels, showing size of selection");
+        return [NSString stringWithFormat:fmt, bytes];
+    }
+    else if(_total_files == 9) {
+        auto fmt = NSLocalizedString
+        (@"Selected %@ in 9 files",
+         "Informative text for a bottom information bar in panels, showing size of selection");
+        return [NSString stringWithFormat:fmt, bytes];
+    }
+    else {
+        auto fmt = NSLocalizedString
+        (@"Selected %@ in %@ files",
+         "Informative text for a bottom information bar in panels, showing size of selection");
+        return [NSString stringWithFormat:fmt, bytes, [NSNumber numberWithInt:_total_files]];
+    }
 }
 
 @implementation NCPanelViewFooter
@@ -92,18 +121,18 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
     NSTextField         *m_VolumeLabel;
     NSTextField         *m_SelectionLabel;
 
-    
-    __weak PanelView    *m_PanelView;
-    
     data::Statistics m_Stats;
     PanelViewFooterVolumeInfoFetcher m_VolumeInfoFetcher;
     ThemesManager::ObservationTicket    m_ThemeObservation;
+    
+    bool m_Active;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
+        m_Active = false;
         m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
         m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
         m_SeparatorLine.boxType = NSBoxSeparator;
@@ -274,10 +303,6 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz, int _total_files, 
     return self;
 }
 
--(void) dealloc
-{
-}
-
 static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 {
     // output is a direct filename or symlink path in ->filename form
@@ -296,16 +321,16 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     return @""; // fallback case
 }
 
-- (void) updateFocusedItem:(VFSListingItem)_item VD:(data::ItemVolatileData)_vd // may be empty
+- (void) updateFocusedItem:(const VFSListingItem&)_item
+                        VD:(data::ItemVolatileData)_vd // may be empty
 {
     if( _item ) {
         m_FilenameLabel.stringValue = ComposeFooterFileNameForEntry(_item);
         m_FilenameLabel.toolTip = [NSString stringWithUTF8StdString:_item.Path()];
-        
         m_SizeLabel.stringValue = FileSizeToString(_item,
                                                    _vd,
-                                                   GetFileSizeFormat());
-        
+                                                   GetFileSizeFormat(),
+                                                   ByteCountFormatter::Instance());        
         const auto style = AdaptiveDateFormatting::Style::Medium;
         m_ModTime.stringValue = AdaptiveDateFormatting{}.Format(style, _item.MTime());
     }
@@ -340,6 +365,14 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 
 - (void) setupPresentation
 {
+    const bool active = m_Active;
+    m_Background = active ?
+        CurrentTheme().FilePanelsFooterActiveBackgroundColor() :
+        CurrentTheme().FilePanelsFooterInactiveBackgroundColor();
+    m_TextColor = active ?
+        CurrentTheme().FilePanelsFooterActiveTextColor() :
+        CurrentTheme().FilePanelsFooterTextColor();    
+    
     auto f = CurrentTheme().FilePanelsFooterFont();
     m_FilenameLabel.font = f;
     m_SizeLabel.font = f;
@@ -359,60 +392,36 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     m_SeparatorLine.borderColor = s;
     m_VSeparatorLine1.borderColor = s;
     m_VSeparatorLine2.borderColor = s;
-}
-
-- (void)viewDidMoveToSuperview
-{
-    if( auto pv = objc_cast<PanelView>(self.superview) ) {
-        m_PanelView = pv;
-        [pv addObserver:self forKeyPath:@"active" options:0 context:NULL];
-        [self observeValueForKeyPath:@"active" ofObject:pv change:nil context:nil];
-    }
-    else {
-        [m_PanelView removeObserver:self forKeyPath:@"active"];
-    }
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if( !m_PanelView )
-        return;
-    if( [keyPath isEqualToString:@"active"] ) {
-        const bool active = m_PanelView.active;
-        m_Background = active ?
-            CurrentTheme().FilePanelsFooterActiveBackgroundColor() :
-            CurrentTheme().FilePanelsFooterInactiveBackgroundColor();
-        m_TextColor = active ?
-            CurrentTheme().FilePanelsFooterActiveTextColor() :
-            CurrentTheme().FilePanelsFooterTextColor();
-        [self setupPresentation];
-        [self setNeedsDisplay:true];
-    }
+    
+    [self setNeedsDisplay:true];    
 }
 
 - (void) updateStatistics:(const data::Statistics&)_stats
 {
-    if( m_Stats != _stats ) {
-        m_Stats = _stats;
+    if( m_Stats == _stats )
+        return;
+
+    m_Stats = _stats;
         
-        m_ItemsLabel.stringValue = [NSString stringWithFormat:@"(%d)", m_Stats.total_entries_amount];
-  
-        if( m_Stats.selected_entries_amount == 0 ) {
-            m_SelectionLabel.stringValue = @"";
-            m_SelectionLabel.hidden = true;
-            m_FilenameLabel.hidden = false;
-            m_SizeLabel.hidden = false;
-            m_ModTime.hidden = false;
-        }
-        else {
-            m_SelectionLabel.stringValue = FormHumanReadableBytesAndFiles(m_Stats.bytes_in_selected_entries,
-                                                                          m_Stats.selected_entries_amount,
-                                                                          GetSelectionSizeFormat());
-            m_SelectionLabel.hidden = false;
-            m_FilenameLabel.hidden = true;
-            m_SizeLabel.hidden = true;
-            m_ModTime.hidden = true;
-        }
+    m_ItemsLabel.stringValue = [NSString stringWithFormat:@"(%d)", m_Stats.total_entries_amount];
+    
+    if( m_Stats.selected_entries_amount == 0 ) {
+        m_SelectionLabel.stringValue = @"";
+        m_SelectionLabel.hidden = true;
+        m_FilenameLabel.hidden = false;
+        m_SizeLabel.hidden = false;
+        m_ModTime.hidden = false;
+    }
+    else {
+        const auto sel_str = FormHumanReadableBytesAndFiles(m_Stats.bytes_in_selected_entries,
+                                                            m_Stats.selected_entries_amount,
+                                                            GetSelectionSizeFormat(),
+                                                            ByteCountFormatter::Instance()); 
+        m_SelectionLabel.stringValue = sel_str; 
+        m_SelectionLabel.hidden = false;
+        m_FilenameLabel.hidden = true;
+        m_SizeLabel.hidden = true;
+        m_ModTime.hidden = true;
     }
 }
 
@@ -439,5 +448,20 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
     else
         m_VolumeInfoFetcher.PauseUpdates();
 }
+
+- (void) setActive:(bool)active
+{
+    if( m_Active == active )
+        return;
+    
+    m_Active = active;
+    [self setupPresentation];
+}
+
+- (bool) active
+{
+    return m_Active;
+}
+
 
 @end

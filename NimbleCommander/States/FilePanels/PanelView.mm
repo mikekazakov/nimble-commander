@@ -197,8 +197,7 @@ struct StateStorage
 - (BOOL)becomeFirstResponder
 {
     [self.controller panelViewDidBecomeFirstResponder];
-    [self willChangeValueForKey:@"active"];
-    [self didChangeValueForKey:@"active"];
+    [self refreshActiveStatus];
     return true;
 }
 
@@ -206,12 +205,18 @@ struct StateStorage
 {
     __weak PanelView* weak_self = self;
     dispatch_to_main_queue([=]{
-        if( PanelView* strong_self = weak_self ) {
-            [strong_self willChangeValueForKey:@"active"];
-            [strong_self didChangeValueForKey:@"active"];
-        }
+        if( PanelView* strong_self = weak_self )
+            [strong_self refreshActiveStatus];
     });
     return YES;
+}
+
+- (void) refreshActiveStatus
+{
+    [self willChangeValueForKey:@"active"];
+    [self didChangeValueForKey:@"active"];
+    const auto active = self.active;
+    m_FooterView.active = active;
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
@@ -894,8 +899,7 @@ struct StateStorage
 
 - (void) windowStatusDidChange
 {
-    [self willChangeValueForKey:@"active"];
-    [self didChangeValueForKey:@"active"];
+    [self refreshActiveStatus];
 }
 
 - (void) setHeaderTitle:(NSString *)headerTitle

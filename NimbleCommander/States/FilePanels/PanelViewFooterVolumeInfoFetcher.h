@@ -3,12 +3,14 @@
 
 #include <VFS/VFS.h>
 
+namespace nc::panel {
+
 // STA - main thread usage only
-class PanelViewFooterVolumeInfoFetcher
+class FooterVolumeInfoFetcher
 {
 public:
-    PanelViewFooterVolumeInfoFetcher();
-    ~PanelViewFooterVolumeInfoFetcher();
+    FooterVolumeInfoFetcher();
+    ~FooterVolumeInfoFetcher();
     
     void SetCallback( function<void(const VFSStatFS&)> _callback );
     void SetTarget( const VFSListingPtr &_listing );
@@ -26,7 +28,9 @@ private:
     bool      m_Active = false;
 
     void Accept( const VFSStatFS &_stat );
-    PanelViewFooterVolumeInfoFetcher( const PanelViewFooterVolumeInfoFetcher &_r ) = delete;
-    void operator=( const PanelViewFooterVolumeInfoFetcher &_r ) = delete;
+    FooterVolumeInfoFetcher( const FooterVolumeInfoFetcher &_r ) = delete;
+    void operator=( const FooterVolumeInfoFetcher &_r ) = delete;
     friend struct PanelViewFooterVolumeInfoFetcherInternals;
 };
+
+}

@@ -118,7 +118,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
     NSTextField             *m_SelectionLabel;
 
     data::Statistics m_Stats;
-    PanelViewFooterVolumeInfoFetcher m_VolumeInfoFetcher;
+    FooterVolumeInfoFetcher m_VolumeInfoFetcher;
     std::unique_ptr<nc::panel::FooterTheme> m_Theme;    
     
     bool m_Active;

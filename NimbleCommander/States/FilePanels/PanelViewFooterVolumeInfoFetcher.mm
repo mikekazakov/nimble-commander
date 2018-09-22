@@ -4,6 +4,8 @@
 #include <VFS/Native.h>
 #include "PanelViewFooterVolumeInfoFetcher.h"
 
+namespace nc::panel {
+
 template <typename T, typename U>
 inline bool equals(const std::weak_ptr<T>& t, const std::weak_ptr<U>& u)
 {
@@ -22,7 +24,7 @@ struct LookPath
 {
     VFSHostWeakPtr                              host;
     string                                      path;
-    vector<PanelViewFooterVolumeInfoFetcher*>   watchers;
+    vector<FooterVolumeInfoFetcher*>            watchers;
     optional<VFSStatFS>                         current;
     bool                                        scheduled = false;
 };
@@ -78,7 +80,7 @@ static void ScheduleIfNeed( LookPath &_lp, bool _hurry = false)
     _lp.scheduled = true;
 }
 
-static const VFSStatFS* RegisterWatcher( PanelViewFooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
+static const VFSStatFS* RegisterWatcher( FooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
 {
     dispatch_assert_main_queue();
     
@@ -102,7 +104,7 @@ static const VFSStatFS* RegisterWatcher( PanelViewFooterVolumeInfoFetcher* _w, c
     return nullptr;
 }
     
-static const VFSStatFS* Probe( PanelViewFooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
+static const VFSStatFS* Probe( FooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
 {
     dispatch_assert_main_queue();
     
@@ -117,7 +119,7 @@ static const VFSStatFS* Probe( PanelViewFooterVolumeInfoFetcher* _w, const VFSHo
     return nullptr;
 }
 
-static void RemoveWatcher( PanelViewFooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
+static void RemoveWatcher( FooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
 {
     dispatch_assert_main_queue();
     
@@ -136,24 +138,24 @@ static void RemoveWatcher( PanelViewFooterVolumeInfoFetcher* _w, const VFSHostWe
     
 };
 
-PanelViewFooterVolumeInfoFetcher::PanelViewFooterVolumeInfoFetcher()
+FooterVolumeInfoFetcher::FooterVolumeInfoFetcher()
 {
     dispatch_assert_main_queue();
     
 }
 
-PanelViewFooterVolumeInfoFetcher::~PanelViewFooterVolumeInfoFetcher()
+FooterVolumeInfoFetcher::~FooterVolumeInfoFetcher()
 {
     dispatch_assert_main_queue();
     PauseUpdates();
 }
 
-void PanelViewFooterVolumeInfoFetcher::SetCallback( function<void(const VFSStatFS&)> _callback )
+void FooterVolumeInfoFetcher::SetCallback( function<void(const VFSStatFS&)> _callback )
 {
-    m_Callback = _callback;
+    m_Callback = std::move(_callback);
 }
 
-void PanelViewFooterVolumeInfoFetcher::SetTarget( const VFSListingPtr &_listing )
+void FooterVolumeInfoFetcher::SetTarget( const VFSListingPtr &_listing )
 {
     VFSHostPtr current_host;
     string current_path;
@@ -195,17 +197,17 @@ void PanelViewFooterVolumeInfoFetcher::SetTarget( const VFSListingPtr &_listing 
     }
 }
 
-const VFSStatFS& PanelViewFooterVolumeInfoFetcher::Current() const
+const VFSStatFS& FooterVolumeInfoFetcher::Current() const
 {
     return m_Current;
 }
 
-bool PanelViewFooterVolumeInfoFetcher::IsActive() const
+bool FooterVolumeInfoFetcher::IsActive() const
 {
     return m_Active;
 }
 
-void PanelViewFooterVolumeInfoFetcher::PauseUpdates()
+void FooterVolumeInfoFetcher::PauseUpdates()
 {
     if( m_Active ) {
         PanelViewFooterVolumeInfoFetcherInternals::RemoveWatcher( this, m_Host, m_Path );
@@ -213,7 +215,7 @@ void PanelViewFooterVolumeInfoFetcher::PauseUpdates()
     }
 }
 
-void PanelViewFooterVolumeInfoFetcher::ResumeUpdates()
+void FooterVolumeInfoFetcher::ResumeUpdates()
 {
     if( !m_Active ) {
         auto st = PanelViewFooterVolumeInfoFetcherInternals::RegisterWatcher( this, m_Host, m_Path );
@@ -223,9 +225,11 @@ void PanelViewFooterVolumeInfoFetcher::ResumeUpdates()
     }
 }
 
-void PanelViewFooterVolumeInfoFetcher::Accept( const VFSStatFS &_stat )
+void FooterVolumeInfoFetcher::Accept( const VFSStatFS &_stat )
 {
     m_Current = _stat;
     if( m_Callback )
         m_Callback(m_Current);
+}
+
 }

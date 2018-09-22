@@ -5,8 +5,14 @@
 
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataStatistics.h"
+#include "PanelViewFooterTheme.h"
 
 @interface NCPanelViewFooter : NSView
+
+- (id) initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
+
+- (id) initWithFrame:(NSRect)frameRect
+               theme:(std::unique_ptr<nc::panel::FooterTheme>)_theme;
 
 - (void) updateFocusedItem:(const VFSListingItem &)_item
                         VD:(nc::panel::data::ItemVolatileData)_vd; // may be empty

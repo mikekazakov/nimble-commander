@@ -20,29 +20,6 @@ static inline unsigned chartouni(const char *_from, unsigned short *_to, unsigne
     return _amount;
 }
 
-
-//"__BYTECOUNTFORMATTER_BYTE_POSTFIX" = "B";
-//"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY" = " KMGTP";
-//"__BYTECOUNTFORMATTER_BYTES_WORD" = "bytes";
-/* Bytes count postfix, for English is 'bytes' */
-//"__BYTECOUNTFORMATTER_BYTES_WORD" = "байт";
-//
-///* One-letter byte postfix, for English is 'B' */
-//"__BYTECOUNTFORMATTER_BYTE_POSTFIX" = "б";
-//
-///* SI postfixes with first symbol empty, for English is ' KMGTP' */
-//"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY" = " КМГТП";
-
-
-
-//
-//"__BYTECOUNTFORMATTER_BYTE_POSTFIX" = "B";
-//"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY" = " KMGTP";
-//"__BYTECOUNTFORMATTER_BYTES_WORD" = "bytes";
-
-// NSArray<NSString *> *preferredLocalizations;
-
-
 constexpr uint64_t ByteCountFormatter::m_Exponent[];
 
 ByteCountFormatter::ByteCountFormatter(bool _localized)

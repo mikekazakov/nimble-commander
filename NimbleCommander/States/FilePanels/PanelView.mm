@@ -11,6 +11,7 @@
 #include "List/PanelListView.h"
 #include "PanelViewHeader.h"
 #include "PanelViewFooter.h"
+#include "PanelViewFooterThemeImpl.h"
 #include "PanelViewDelegate.h"
 #include "Actions/Enter.h"
 #include "DragReceiver.h"
@@ -89,7 +90,9 @@ struct StateStorage
         };
         [self addSubview:m_HeaderView];
         
-        m_FooterView = [[NCPanelViewFooter alloc] initWithFrame:NSRect()];
+        m_FooterView = [[NCPanelViewFooter alloc]
+                        initWithFrame:NSRect()
+                        theme:std::make_unique<FooterThemeImpl>(NCAppDelegate.me.themesManager)];
         m_FooterView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_FooterView];
         

@@ -4,6 +4,8 @@
 #include <Habanero/Observable.h>
 #include <NimbleCommander/Core/rapidjson_fwd.h>
 
+class Theme;
+
 /**
  * This class is not thread-safe yet!
  */
@@ -30,6 +32,8 @@ public:
      * Returns name of a currently selected user theme.
      */
     string SelectedThemeName() const;
+    
+    const Theme &SelectedTheme() const;
     
     /**
      * Changes currently selected name, updates config, updates current theme object and

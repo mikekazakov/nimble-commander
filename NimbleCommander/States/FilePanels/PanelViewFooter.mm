@@ -4,9 +4,6 @@
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <Utility/AdaptiveDateFormatting.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <NimbleCommander/Core/Theming/Theme.h>
-#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "PanelViewPresentationSettings.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
 
@@ -109,129 +106,33 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
 
 @implementation NCPanelViewFooter
 {
-    NSColor             *m_Background;
-    NSColor             *m_TextColor;
-    ColoredSeparatorLine               *m_SeparatorLine;
-    ColoredSeparatorLine               *m_VSeparatorLine1;
-    ColoredSeparatorLine               *m_VSeparatorLine2;
-    NSTextField         *m_FilenameLabel;
-    NSTextField         *m_SizeLabel;
-    NSTextField         *m_ModTime;
-    NSTextField         *m_ItemsLabel;
-    NSTextField         *m_VolumeLabel;
-    NSTextField         *m_SelectionLabel;
+    NSColor                 *m_Background;
+    ColoredSeparatorLine    *m_SeparatorLine;
+    ColoredSeparatorLine    *m_VSeparatorLine1;
+    ColoredSeparatorLine    *m_VSeparatorLine2;
+    NSTextField             *m_FilenameLabel;
+    NSTextField             *m_SizeLabel;
+    NSTextField             *m_ModTime;
+    NSTextField             *m_ItemsLabel;
+    NSTextField             *m_VolumeLabel;
+    NSTextField             *m_SelectionLabel;
 
     data::Statistics m_Stats;
     PanelViewFooterVolumeInfoFetcher m_VolumeInfoFetcher;
-    ThemesManager::ObservationTicket    m_ThemeObservation;
+    std::unique_ptr<nc::panel::FooterTheme> m_Theme;    
     
     bool m_Active;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
+               theme:(std::unique_ptr<nc::panel::FooterTheme>)_theme
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
         m_Active = false;
-        m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
-        m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
-        m_SeparatorLine.boxType = NSBoxSeparator;
-        
-        m_FilenameLabel = [[NSTextField alloc] initWithFrame:NSRect()];
-        m_FilenameLabel.translatesAutoresizingMaskIntoConstraints = false;
-        m_FilenameLabel.cell = [VerticallyCenteredTextFieldCell new];
-        m_FilenameLabel.stringValue = @"";
-        m_FilenameLabel.bordered = false;
-        m_FilenameLabel.editable = false;
-        m_FilenameLabel.selectable = false;
-        m_FilenameLabel.drawsBackground = false;
-        m_FilenameLabel.lineBreakMode = NSLineBreakByTruncatingHead;
-        m_FilenameLabel.usesSingleLineMode = true;
-        m_FilenameLabel.alignment = NSTextAlignmentLeft;
-        [m_FilenameLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow
-            forOrientation:NSLayoutConstraintOrientationHorizontal];
-        
-        m_SizeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
-        m_SizeLabel.translatesAutoresizingMaskIntoConstraints = false;
-        m_SizeLabel.cell = [VerticallyCenteredTextFieldCell new];
-        m_SizeLabel.stringValue = @"";
-        m_SizeLabel.bordered = false;
-        m_SizeLabel.editable = false;
-        m_SizeLabel.drawsBackground = false;
-        m_SizeLabel.lineBreakMode = NSLineBreakByTruncatingHead;
-        m_SizeLabel.usesSingleLineMode = true;
-        m_SizeLabel.alignment = NSTextAlignmentRight;
-        [m_SizeLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
-            forOrientation:NSLayoutConstraintOrientationHorizontal];
-        
-        m_ModTime = [[NSTextField alloc] initWithFrame:NSRect()];
-        m_ModTime.translatesAutoresizingMaskIntoConstraints = false;
-        m_ModTime.cell = [VerticallyCenteredTextFieldCell new];
-        m_ModTime.stringValue = @"";
-        m_ModTime.bordered = false;
-        m_ModTime.editable = false;
-        m_ModTime.drawsBackground = false;
-        m_ModTime.lineBreakMode = NSLineBreakByTruncatingHead;
-        m_ModTime.usesSingleLineMode = true;
-        m_ModTime.alignment = NSTextAlignmentRight;
-        [m_ModTime setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
-            forOrientation:NSLayoutConstraintOrientationHorizontal];
-        
-        m_SelectionLabel = [[NSTextField alloc] initWithFrame:NSRect()];
-        m_SelectionLabel.translatesAutoresizingMaskIntoConstraints = false;
-        m_SelectionLabel.cell = [VerticallyCenteredTextFieldCell new];
-        m_SelectionLabel.stringValue = @"";
-        m_SelectionLabel.bordered = false;
-        m_SelectionLabel.editable = false;
-        m_SelectionLabel.drawsBackground = false;
-        m_SelectionLabel.lineBreakMode = NSLineBreakByTruncatingHead;
-        m_SelectionLabel.usesSingleLineMode = true;
-        m_SelectionLabel.alignment = NSTextAlignmentCenter;
-        [m_SelectionLabel setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow
-            forOrientation:NSLayoutConstraintOrientationHorizontal];
-        [m_SelectionLabel setContentHuggingPriority:NSLayoutPriorityFittingSizeCompression
-            forOrientation:NSLayoutConstraintOrientationHorizontal];
-        
-        m_ItemsLabel = [[NSTextField alloc] initWithFrame:NSRect()];
-        m_ItemsLabel.translatesAutoresizingMaskIntoConstraints = false;
-        m_ItemsLabel.cell = [VerticallyCenteredTextFieldCell new];
-        m_ItemsLabel.stringValue = @"";
-        m_ItemsLabel.bordered = false;
-        m_ItemsLabel.editable = false;
-        m_ItemsLabel.drawsBackground = false;
-        m_ItemsLabel.lineBreakMode = NSLineBreakByClipping;
-        m_ItemsLabel.usesSingleLineMode = true;
-        m_ItemsLabel.alignment = NSTextAlignmentCenter;
-        [m_ItemsLabel setContentCompressionResistancePriority:40
-            forOrientation:NSLayoutConstraintOrientationHorizontal];
-        
-        m_VolumeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
-        m_VolumeLabel.translatesAutoresizingMaskIntoConstraints = false;
-        m_VolumeLabel.cell = [VerticallyCenteredTextFieldCell new];
-        m_VolumeLabel.stringValue = @"";
-        m_VolumeLabel.bordered = false;
-        m_VolumeLabel.editable = false;
-        m_VolumeLabel.drawsBackground = false;
-        m_VolumeLabel.lineBreakMode = NSLineBreakByTruncatingHead;
-        m_VolumeLabel.usesSingleLineMode = true;
-        m_VolumeLabel.alignment = NSTextAlignmentRight;
-        m_VolumeLabel.lineBreakMode = NSLineBreakByClipping;
-        [m_VolumeLabel setContentCompressionResistancePriority:40
-            forOrientation:NSLayoutConstraintOrientationHorizontal];
-        
-        m_VSeparatorLine1 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
-        m_VSeparatorLine1.translatesAutoresizingMaskIntoConstraints = NO;
-        m_VSeparatorLine1.boxType = NSBoxSeparator;
-        [m_VSeparatorLine1 setContentCompressionResistancePriority:40
-            forOrientation:NSLayoutConstraintOrientationHorizontal];
-        
-        m_VSeparatorLine2 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
-        m_VSeparatorLine2.translatesAutoresizingMaskIntoConstraints = NO;
-        m_VSeparatorLine2.boxType = NSBoxSeparator;
-        [m_VSeparatorLine2 setContentCompressionResistancePriority:40
-            forOrientation:NSLayoutConstraintOrientationHorizontal];
-        
-        
+        m_Theme = std::move(_theme);
+    
+        [self createControls];
         [self setupPresentation];
         
         [self addSubview:m_SeparatorLine];
@@ -251,16 +152,123 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
             if( NCPanelViewFooter *strong_self = weak_self )
                 [strong_self updateVolumeInfo];
         });
-        m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-            ThemesManager::Notifications::FilePanelsFooter, [weak_self]{
-            if( auto strong_self = weak_self ) {
+        m_Theme->ObserveChanges( [weak_self]{
+            if( auto strong_self = weak_self )
                 [strong_self setupPresentation];
-                [strong_self observeValueForKeyPath:@"active" ofObject:nil change:nil context:nil];
-            }
-        });
+        });        
     }
 
     return self;
+}
+
+- (void) createControls
+{
+    m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
+    m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
+    m_SeparatorLine.boxType = NSBoxSeparator;
+    
+    m_FilenameLabel = [[NSTextField alloc] initWithFrame:NSRect()];
+    m_FilenameLabel.translatesAutoresizingMaskIntoConstraints = false;
+    m_FilenameLabel.cell = [VerticallyCenteredTextFieldCell new];
+    m_FilenameLabel.stringValue = @"";
+    m_FilenameLabel.bordered = false;
+    m_FilenameLabel.editable = false;
+    m_FilenameLabel.selectable = false;
+    m_FilenameLabel.drawsBackground = false;
+    m_FilenameLabel.lineBreakMode = NSLineBreakByTruncatingHead;
+    m_FilenameLabel.usesSingleLineMode = true;
+    m_FilenameLabel.alignment = NSTextAlignmentLeft;
+    [m_FilenameLabel
+     setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow
+     forOrientation:NSLayoutConstraintOrientationHorizontal];
+    
+    m_SizeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
+    m_SizeLabel.translatesAutoresizingMaskIntoConstraints = false;
+    m_SizeLabel.cell = [VerticallyCenteredTextFieldCell new];
+    m_SizeLabel.stringValue = @"";
+    m_SizeLabel.bordered = false;
+    m_SizeLabel.editable = false;
+    m_SizeLabel.drawsBackground = false;
+    m_SizeLabel.lineBreakMode = NSLineBreakByTruncatingHead;
+    m_SizeLabel.usesSingleLineMode = true;
+    m_SizeLabel.alignment = NSTextAlignmentRight;
+    [m_SizeLabel
+     setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
+     forOrientation:NSLayoutConstraintOrientationHorizontal];
+    
+    m_ModTime = [[NSTextField alloc] initWithFrame:NSRect()];
+    m_ModTime.translatesAutoresizingMaskIntoConstraints = false;
+    m_ModTime.cell = [VerticallyCenteredTextFieldCell new];
+    m_ModTime.stringValue = @"";
+    m_ModTime.bordered = false;
+    m_ModTime.editable = false;
+    m_ModTime.drawsBackground = false;
+    m_ModTime.lineBreakMode = NSLineBreakByTruncatingHead;
+    m_ModTime.usesSingleLineMode = true;
+    m_ModTime.alignment = NSTextAlignmentRight;
+    [m_ModTime
+     setContentCompressionResistancePriority:NSLayoutPriorityDefaultHigh
+     forOrientation:NSLayoutConstraintOrientationHorizontal];
+    
+    m_SelectionLabel = [[NSTextField alloc] initWithFrame:NSRect()];
+    m_SelectionLabel.translatesAutoresizingMaskIntoConstraints = false;
+    m_SelectionLabel.cell = [VerticallyCenteredTextFieldCell new];
+    m_SelectionLabel.stringValue = @"";
+    m_SelectionLabel.bordered = false;
+    m_SelectionLabel.editable = false;
+    m_SelectionLabel.drawsBackground = false;
+    m_SelectionLabel.lineBreakMode = NSLineBreakByTruncatingHead;
+    m_SelectionLabel.usesSingleLineMode = true;
+    m_SelectionLabel.alignment = NSTextAlignmentCenter;
+    [m_SelectionLabel
+     setContentCompressionResistancePriority:NSLayoutPriorityDefaultLow
+     forOrientation:NSLayoutConstraintOrientationHorizontal];
+    [m_SelectionLabel
+     setContentHuggingPriority:NSLayoutPriorityFittingSizeCompression
+     forOrientation:NSLayoutConstraintOrientationHorizontal];
+    
+    m_ItemsLabel = [[NSTextField alloc] initWithFrame:NSRect()];
+    m_ItemsLabel.translatesAutoresizingMaskIntoConstraints = false;
+    m_ItemsLabel.cell = [VerticallyCenteredTextFieldCell new];
+    m_ItemsLabel.stringValue = @"";
+    m_ItemsLabel.bordered = false;
+    m_ItemsLabel.editable = false;
+    m_ItemsLabel.drawsBackground = false;
+    m_ItemsLabel.lineBreakMode = NSLineBreakByClipping;
+    m_ItemsLabel.usesSingleLineMode = true;
+    m_ItemsLabel.alignment = NSTextAlignmentCenter;
+    [m_ItemsLabel
+     setContentCompressionResistancePriority:40
+     forOrientation:NSLayoutConstraintOrientationHorizontal];
+    
+    m_VolumeLabel = [[NSTextField alloc] initWithFrame:NSRect()];
+    m_VolumeLabel.translatesAutoresizingMaskIntoConstraints = false;
+    m_VolumeLabel.cell = [VerticallyCenteredTextFieldCell new];
+    m_VolumeLabel.stringValue = @"";
+    m_VolumeLabel.bordered = false;
+    m_VolumeLabel.editable = false;
+    m_VolumeLabel.drawsBackground = false;
+    m_VolumeLabel.lineBreakMode = NSLineBreakByTruncatingHead;
+    m_VolumeLabel.usesSingleLineMode = true;
+    m_VolumeLabel.alignment = NSTextAlignmentRight;
+    m_VolumeLabel.lineBreakMode = NSLineBreakByClipping;
+    [m_VolumeLabel
+     setContentCompressionResistancePriority:40
+     forOrientation:NSLayoutConstraintOrientationHorizontal];
+    
+    m_VSeparatorLine1 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
+    m_VSeparatorLine1.translatesAutoresizingMaskIntoConstraints = NO;
+    m_VSeparatorLine1.boxType = NSBoxSeparator;
+    [m_VSeparatorLine1
+     setContentCompressionResistancePriority:40
+     forOrientation:NSLayoutConstraintOrientationHorizontal];
+    
+    m_VSeparatorLine2 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
+    m_VSeparatorLine2.translatesAutoresizingMaskIntoConstraints = NO;
+    m_VSeparatorLine2.boxType = NSBoxSeparator;
+    [m_VSeparatorLine2
+     setContentCompressionResistancePriority:40
+     forOrientation:NSLayoutConstraintOrientationHorizontal];    
 }
 
 - (void) installConstraints
@@ -367,32 +375,28 @@ static NSString *ComposeFooterFileNameForEntry(const VFSListingItem &_dirent)
 - (void) setupPresentation
 {
     const bool active = m_Active;
-    m_Background = active ?
-        CurrentTheme().FilePanelsFooterActiveBackgroundColor() :
-        CurrentTheme().FilePanelsFooterInactiveBackgroundColor();
-    m_TextColor = active ?
-        CurrentTheme().FilePanelsFooterActiveTextColor() :
-        CurrentTheme().FilePanelsFooterTextColor();    
+    m_Background = active ? m_Theme->ActiveBackgroundColor() : m_Theme->InactiveBackgroundColor();
     
-    auto f = CurrentTheme().FilePanelsFooterFont();
-    m_FilenameLabel.font = f;
-    m_SizeLabel.font = f;
-    m_ModTime.font = f;
-    m_ItemsLabel.font = f;
-    m_VolumeLabel.font = f;
-    m_SelectionLabel.font = f;
+    auto font = m_Theme->Font();    
+    m_FilenameLabel.font = font;
+    m_SizeLabel.font = font;
+    m_ModTime.font = font;
+    m_ItemsLabel.font = font;
+    m_VolumeLabel.font = font;
+    m_SelectionLabel.font = font;
 
-    m_FilenameLabel.textColor = m_TextColor;
-    m_SizeLabel.textColor = m_TextColor;
-    m_ModTime.textColor = m_TextColor;
-    m_ItemsLabel.textColor = m_TextColor;
-    m_VolumeLabel.textColor = m_TextColor;
-    m_SelectionLabel.textColor = m_TextColor;
+    const auto text_color = active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();    
+    m_FilenameLabel.textColor = text_color;
+    m_SizeLabel.textColor = text_color;
+    m_ModTime.textColor = text_color;
+    m_ItemsLabel.textColor = text_color;
+    m_VolumeLabel.textColor = text_color;
+    m_SelectionLabel.textColor = text_color;
     
-    auto s = CurrentTheme().FilePanelsFooterSeparatorsColor();
-    m_SeparatorLine.borderColor = s;
-    m_VSeparatorLine1.borderColor = s;
-    m_VSeparatorLine2.borderColor = s;
+    auto separator_color = m_Theme->SeparatorsColor();
+    m_SeparatorLine.borderColor = separator_color;
+    m_VSeparatorLine1.borderColor = separator_color;
+    m_VSeparatorLine2.borderColor = separator_color;
     
     [self setNeedsDisplay:true];    
 }

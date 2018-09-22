@@ -258,6 +258,12 @@ const Theme &CurrentTheme() noexcept
     return *g_CurrentTheme;
 }
 
+const Theme &ThemesManager::SelectedTheme() const
+{
+    assert( g_CurrentTheme != nullptr );
+    return *g_CurrentTheme;
+}
+
 vector<string> ThemesManager::ThemeNames() const
 {
     return m_OrderedThemeNames;

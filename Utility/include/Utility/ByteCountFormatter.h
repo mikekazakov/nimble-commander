@@ -3,8 +3,6 @@
 
 #include <vector>
 
-using namespace std;
-
 /**
  All _UTF8 methods forms a null-terminated string.
  All _UTF16 methods forms a string without null-terminator.
@@ -83,9 +81,9 @@ private:
     ByteCountFormatter(const ByteCountFormatter&) = delete;
     ByteCountFormatter& operator=(const ByteCountFormatter&) = delete;
     
-    vector<uint16_t> m_SI; // localizable
-    uint16_t         m_B;  // localizable
-    vector<uint16_t> m_Bytes; // localizable
+    std::vector<uint16_t> m_SI; // localizable
+    uint16_t              m_B;  // localizable
+    std::vector<uint16_t> m_Bytes; // localizable
     
     char             m_DecimalSeparator = '.';
     unsigned short   m_DecimalSeparatorUni = '.';

@@ -1,6 +1,14 @@
 // Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate.Private.h"
+#include <VFSIcon/IconRepositoryImpl.h>
+#include <VFSIcon/IconBuilderImpl.h>
+#include <VFSIcon/QLThumbnailsCacheImpl.h>
+#include <VFSIcon/WorkspaceIconsCacheImpl.h>
+#include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
+#include <Utility/BriefOnDiskStorageImpl.h>
+#include <VFSIcon/QLVFSThumbnailsCacheImpl.h>
+#include <VFSIcon/VFSBundleIconsCacheImpl.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/MainWindow.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
@@ -14,6 +22,7 @@
 #include <Operations/AggregateProgressTracker.h>
 #include "Config.h"
 #include "ActivationManager.h"
+#include <Habanero/CommonPaths.h>
 
 static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLastWindowState";
 
@@ -50,11 +59,41 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     return actions_map;
 }
 
+- (std::unique_ptr<nc::vfsicon::IconRepository>) allocateIconRepository
+{
+    static const auto ql_cache = make_shared<nc::vfsicon::QLThumbnailsCacheImpl>();
+    static const auto ws_cache = make_shared<nc::vfsicon::WorkspaceIconsCacheImpl>();
+    static const auto ext_cache = make_shared<nc::vfsicon::WorkspaceExtensionIconsCacheImpl>();    
+    static const auto brief_storage = make_shared<nc::utility::BriefOnDiskStorageImpl>
+        (CommonPaths::AppTemporaryDirectory(),
+         ActivationManager::BundleID() + ".ico"); 
+    static const auto vfs_cache = make_shared<nc::vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
+    static const auto vfs_bi_cache = make_shared<nc::vfsicon::VFSBundleIconsCacheImpl>();
+    
+    static const auto icon_builder = make_shared<nc::vfsicon::IconBuilderImpl>(ql_cache,
+                                                                           ws_cache,
+                                                                           ext_cache,
+                                                                           vfs_cache,
+                                                                           vfs_bi_cache);
+    const auto concurrency_per_repo = 4;
+    using Que = nc::vfsicon::detail::IconRepositoryImplBase::GCDLimitedConcurrentQueue;
+    
+    return make_unique<nc::vfsicon::IconRepositoryImpl>(icon_builder,
+                                                        make_unique<Que>(concurrency_per_repo));
+}
+
+- (PanelView*) allocatePanelView
+{    
+    const auto pv_rect = NSMakeRect(0, 0, 100, 100);
+    return [[PanelView alloc] initWithFrame:pv_rect
+                             iconRepository:[self allocateIconRepository]];
+}
+
 - (PanelController*) allocatePanelController
 {
-    auto panel = [[PanelController alloc] initWithLayouts:self.panelLayouts
-                                       vfsInstanceManager:self.vfsInstanceManager];
-    
+    auto panel = [[PanelController alloc] initWithView:[self allocatePanelView]
+                                               layouts:self.panelLayouts 
+                                    vfsInstanceManager:self.vfsInstanceManager];    
     auto actions_dispatcher = [[NCPanelControllerActionsDispatcher alloc]
                                initWithController:panel
                                andActionsMap:self.panelActionsMap];

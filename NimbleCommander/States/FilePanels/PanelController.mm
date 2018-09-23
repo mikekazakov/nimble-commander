@@ -34,18 +34,6 @@
 #include "QuickSearch.h"
 #include "PanelViewHeader.h"
 
-// TODO: remove this crap
-#include <Habanero/CommonPaths.h>
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include <VFSIcon/IconRepositoryImpl.h>
-#include <VFSIcon/IconBuilderImpl.h>
-#include <VFSIcon/QLThumbnailsCacheImpl.h>
-#include <VFSIcon/WorkspaceIconsCacheImpl.h>
-#include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
-#include <Utility/BriefOnDiskStorageImpl.h>
-#include <VFSIcon/QLVFSThumbnailsCacheImpl.h>
-#include <VFSIcon/VFSBundleIconsCacheImpl.h>
-
 using namespace nc;
 using namespace nc::core;
 using namespace nc::panel;
@@ -102,8 +90,6 @@ void ActivityTicket::Reset()
     ticket = 0;
 }
     
-static unique_ptr<nc::vfsicon::IconRepository> MakeIconRepository();
-
 }
 
 #define MAKE_AUTO_UPDATING_BOOL_CONFIG_VALUE( _name, _path )\
@@ -197,8 +183,9 @@ static void HeatUpConfigValues()
 @synthesize layoutIndex = m_ViewLayoutIndex;
 @synthesize vfsFetchingFlags = m_VFSFetchingFlags;
 
-- (id) initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
-    vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
+- (instancetype)initWithView:(PanelView*)_panel_view
+                     layouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
+          vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
 {
     assert( _layouts );
     
@@ -226,9 +213,7 @@ static void HeatUpConfigValues()
         m_DirectoryReLoadingQ.SetOnChange(on_change);
         m_DirectoryLoadingQ.SetOnChange(on_change);
         
-        static const auto pv_rect = NSMakeRect(0, 0, 100, 100);
-        m_View = [[PanelView alloc] initWithFrame:pv_rect
-                                   iconRepository:MakeIconRepository()];
+        m_View = _panel_view;
         m_View.delegate = self;
         m_View.data = &m_Data;
         [m_View setPresentationLayout:*m_AssignedViewLayout];
@@ -1068,31 +1053,3 @@ loadPreviousState:(bool)_load_state
 }
 
 @end
-
-
-namespace nc::panel {
-
-static unique_ptr<vfsicon::IconRepository> MakeIconRepository()
-{
-    static const auto ql_cache = make_shared<vfsicon::QLThumbnailsCacheImpl>();
-    static const auto ws_cache = make_shared<vfsicon::WorkspaceIconsCacheImpl>();
-    static const auto ext_cache = make_shared<vfsicon::WorkspaceExtensionIconsCacheImpl>();    
-    static const auto brief_storage = make_shared<utility::BriefOnDiskStorageImpl>
-    (CommonPaths::AppTemporaryDirectory(),
-     ActivationManager::BundleID() + ".ico"); 
-    static const auto vfs_cache = make_shared<vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
-    static const auto vfs_bi_cache = make_shared<vfsicon::VFSBundleIconsCacheImpl>();
-    
-    static const auto icon_builder = make_shared<vfsicon::IconBuilderImpl>(ql_cache,
-                                                                           ws_cache,
-                                                                           ext_cache,
-                                                                           vfs_cache,
-                                                                           vfs_bi_cache);
-    const auto concurrency_per_repo = 4;
-    using Que = vfsicon::detail::IconRepositoryImplBase::GCDLimitedConcurrentQueue;
-    
-    return make_unique<nc::vfsicon::IconRepositoryImpl>(icon_builder,
-                                                        make_unique<Que>(concurrency_per_repo));
-}
-
-}

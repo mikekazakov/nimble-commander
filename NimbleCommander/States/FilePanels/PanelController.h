@@ -111,7 +111,8 @@ public:
 @property (nonatomic, readonly) nc::panel::PanelViewLayoutsStorage& layoutStorage;
 @property (nonatomic, readonly) nc::core::VFSInstanceManager& vfsInstanceManager;
 
-- (instancetype)initWithLayouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layout
+- (instancetype)initWithView:(PanelView*)_panel_view
+                     layouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
              vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr;
 
 - (void) refreshPanel; // reload panel contents

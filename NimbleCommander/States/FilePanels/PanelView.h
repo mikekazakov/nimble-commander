@@ -35,7 +35,6 @@ namespace nc::panel {
 @property (nonatomic, readonly) NCPanelViewHeader *headerView;
 
 - (id)initWithFrame:(NSRect)frame
-             layout:(const nc::panel::PanelViewLayout&)_layout
      iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository;
 
 /**

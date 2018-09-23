@@ -228,10 +228,10 @@ static void HeatUpConfigValues()
         
         static const auto pv_rect = NSMakeRect(0, 0, 100, 100);
         m_View = [[PanelView alloc] initWithFrame:pv_rect
-                                           layout:*m_AssignedViewLayout
                                    iconRepository:MakeIconRepository()];
         m_View.delegate = self;
         m_View.data = &m_Data;
+        [m_View setPresentationLayout:*m_AssignedViewLayout];
         
         // wire up config changing notifications
         auto add_co = [&](const char *_path, SEL _sel) { m_ConfigObservers.

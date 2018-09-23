@@ -8,7 +8,7 @@ namespace nc::panel::data {
     class Model;
 }
 
-@protocol PanelViewImplementationProtocol <NSObject>
+@protocol NCPanelViewPresentationProtocol <NSObject>
 @required
 
 @property (nonatomic, readonly) int itemsInColumn;
@@ -28,7 +28,8 @@ namespace nc::panel::data {
 - (void) onPageUp:(NSEvent*)_event;
 - (void) onPageDown:(NSEvent*)_event;
 
-- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(nc::panel::PanelViewHitTest::Options)_options;
+- (int) sortedItemPosAtPoint:(NSPoint)_window_point
+               hitTestOption:(nc::panel::PanelViewHitTest::Options)_options;
 
 @end
 

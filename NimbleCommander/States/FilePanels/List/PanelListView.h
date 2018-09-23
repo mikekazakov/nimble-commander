@@ -16,7 +16,9 @@ class PanelListViewGeometry;
 
 struct PanelListViewColumnsLayout;
 
-@interface PanelListView: NSView<PanelViewImplementationProtocol, NSTableViewDataSource, NSTableViewDelegate>
+@interface PanelListView: NSView<NCPanelViewPresentationProtocol,
+                                 NSTableViewDataSource,
+                                 NSTableViewDelegate>
 
 - (id) initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository&)_ir;
 

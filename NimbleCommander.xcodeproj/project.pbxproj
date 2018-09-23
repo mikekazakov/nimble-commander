@@ -471,6 +471,10 @@
 		CF7C7CEB1E5D399F002DB0E2 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CF7C7CEC1E5D39AD002DB0E2 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD54FCF1A29CA480098A4A9 /* ServiceManagement.framework */; };
 		CF7D7A751C15AAC200ECEBA0 /* Config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF7D7A741C15AAC200ECEBA0 /* Config.json */; };
+		CF7D7D5B21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */; };
+		CF7D7D5C21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */; };
+		CF7D7D5D21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */; };
+		CF7D7D5E21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */; };
 		CF7E35781F6CAF2F009D15D9 /* SparkleDSA_Pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */; };
 		CF818B3D1EA05AC600BC28E6 /* PanelDataSelection.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF818B3C1EA05AC600BC28E6 /* PanelDataSelection.mm */; };
 		CF818B451EA0610C00BC28E6 /* Select.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6ECDB51E9F7353008FA79E /* Select.mm */; };
@@ -1783,6 +1787,8 @@
 		CF7C7CE31E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTab.strings; sourceTree = "<group>"; };
 		CF7C7CE41E5C4CD8002DB0E2 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/PreferencesWindowThemesTabColoringRulesControl.strings; sourceTree = "<group>"; };
 		CF7D7A741C15AAC200ECEBA0 /* Config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = Config.json; path = NimbleCommander/Resources/Config.json; sourceTree = SOURCE_ROOT; };
+		CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewDummyPresentation.mm; path = NimbleCommander/States/FilePanels/PanelViewDummyPresentation.mm; sourceTree = "<group>"; };
+		CF7D7D5A21576E0100DA1794 /* PanelViewDummyPresentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewDummyPresentation.h; path = NimbleCommander/States/FilePanels/PanelViewDummyPresentation.h; sourceTree = "<group>"; };
 		CF7E35771F6CAF2F009D15D9 /* SparkleDSA_Pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SparkleDSA_Pub.pem; path = NimbleCommander/Resources/SparkleDSA_Pub.pem; sourceTree = SOURCE_ROOT; };
 		CF811A901D8262BE001F9E7F /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = 3rd_Party/OpenSSL/built/libcrypto.a; sourceTree = SOURCE_ROOT; };
 		CF811A911D8262BE001F9E7F /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = 3rd_Party/OpenSSL/built/libssl.a; sourceTree = SOURCE_ROOT; };
@@ -2293,6 +2299,8 @@
 			children = (
 				CF5D25E31DB604060073156F /* Brief */,
 				CF84C8EF1DBB2AA900B4E888 /* List */,
+				CF7D7D5A21576E0100DA1794 /* PanelViewDummyPresentation.h */,
+				CF7D7D4621576E0100DA1794 /* PanelViewDummyPresentation.mm */,
 				CF24376E1DEDF9B300245C14 /* PanelViewFooter.h */,
 				CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */,
 				CFB2AB4721560CDB0009EB81 /* PanelViewFooterTheme.h */,
@@ -4096,6 +4104,7 @@
 				CFD726B11E42E26200603077 /* CopyFilePaths.mm in Sources */,
 				CF876D421D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CF44D33C202D632F0083FAF5 /* ExecuteExternalTool.mm in Sources */,
+				CF7D7D5D21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */,
 				CFD8CDD21E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,
 				CF9F4B011ECC8DD000E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
 				CFD726FA1E42E2E800603077 /* PanelListViewTableView.mm in Sources */,
@@ -4148,6 +4157,7 @@
 				CF44D32B202D63100083FAF5 /* ExecuteExternalTool.mm in Sources */,
 				CF9F4B021ECC8DD000E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
 				CF818B4F1EA0610C00BC28E6 /* ToggleSort.mm in Sources */,
+				CF7D7D5B21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */,
 				CF4E56D81D506B9800452912 /* FindFilesSheetController.mm in Sources */,
 				CFD726F71E42E2E500603077 /* PanelListViewTableHeaderView.mm in Sources */,
 				CFD726EC1E42E2D600603077 /* PanelListViewNameView.mm in Sources */,
@@ -4379,6 +4389,7 @@
 				CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */,
 				CF44D33D202D63300083FAF5 /* ExecuteExternalTool.mm in Sources */,
 				CFD8CD511E7A31A100E4DC53 /* FavoriteComposing.mm in Sources */,
+				CF7D7D5C21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */,
 				CFDAC25A1DFBF0B30039A104 /* PanelController.mm in Sources */,
 				CF90C0BC1EC171FD0056E3B8 /* PanelDataFilter.mm in Sources */,
 				CF56C2CF1DC35E8B00F0DF0F /* PanelListViewSizeView.mm in Sources */,
@@ -4660,6 +4671,7 @@
 				CF818B5D1EA0610E00BC28E6 /* ChangeAttributes.mm in Sources */,
 				CFF6F27B1A13567C00011177 /* GTMHotKeyTextField.mm in Sources */,
 				CF7A09AE1EC2DF5C00533B07 /* Delete.mm in Sources */,
+				CF7D7D5E21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */,
 				CF818B6C1EA0615300BC28E6 /* FilterPopUpMenu.mm in Sources */,
 				CFB66F991D853B1D0017D2A0 /* FeedbackManager.mm in Sources */,
 				CFD7269A1E42E23500603077 /* PanelDataSortMode.mm in Sources */,

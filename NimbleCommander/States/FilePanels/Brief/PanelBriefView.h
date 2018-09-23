@@ -29,7 +29,10 @@ struct PanelBriefViewItemLayoutConstants
     bool operator !=(const PanelBriefViewItemLayoutConstants &_rhs) const noexcept;
 };
 
-@interface PanelBriefView : NSView<PanelViewImplementationProtocol, NSCollectionViewDelegate, NSCollectionViewDataSource, NSCollectionViewDelegateFlowLayout>
+@interface PanelBriefView : NSView<NCPanelViewPresentationProtocol,
+                                   NSCollectionViewDelegate,
+                                   NSCollectionViewDataSource,
+                                   NSCollectionViewDelegateFlowLayout>
 
 - (id)initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository&)_ir;
 

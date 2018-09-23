@@ -19,6 +19,7 @@
 #include "DragSender.h"
 #include "PanelViewFieldEditor.h"
 #include "PanelViewKeystrokeSink.h"
+#include "PanelViewDummyPresentation.h"
 
 using namespace nc::panel;
 using nc::vfsicon::IconRepository;
@@ -55,7 +56,7 @@ struct StateStorage
     NCPanelViewFieldEditor     *m_RenamingEditor;
 
     __weak id<PanelViewDelegate> m_Delegate;
-    NSView<PanelViewImplementationProtocol> *m_ItemsView;
+    NSView<NCPanelViewPresentationProtocol> *m_ItemsView;
     NCPanelViewHeader          *m_HeaderView;
     NCPanelViewFooter          *m_FooterView;
     
@@ -69,7 +70,6 @@ struct StateStorage
 @synthesize headerView = m_HeaderView;
 
 - (id)initWithFrame:(NSRect)frame
-             layout:(const PanelViewLayout&)_layout
      iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository
 {
     self = [super initWithFrame:frame];
@@ -79,7 +79,8 @@ struct StateStorage
         m_HeaderTitle = @"";
         m_IconRepository = std::move(_icon_repository);
 
-        m_ItemsView = [self spawnItemViewWithLayout:_layout];
+        m_ItemsView = [[NCPanelViewDummyPresentation alloc]
+                       initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:m_ItemsView];
         
         m_HeaderView = [[NCPanelViewHeader alloc]
@@ -128,7 +129,7 @@ struct StateStorage
                                                                        views:views]];
 }
 
-- (NSView<PanelViewImplementationProtocol>*) spawnItemViewWithLayout:(const PanelViewLayout&)_layout
+- (NSView<NCPanelViewPresentationProtocol>*) spawnItemViewWithLayout:(const PanelViewLayout&)_layout
 {
     if( auto ll = any_cast<PanelListViewColumnsLayout>(&_layout.layout) ) {
         auto v = [self spawnListView];

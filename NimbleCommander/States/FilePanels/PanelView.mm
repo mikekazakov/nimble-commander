@@ -1,5 +1,4 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <Utility/MIMResponder.h>
@@ -10,9 +9,7 @@
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
 #include "PanelViewHeader.h"
-#include "PanelViewHeaderThemeImpl.h"
 #include "PanelViewFooter.h"
-#include "PanelViewFooterThemeImpl.h"
 #include "PanelViewDelegate.h"
 #include "Actions/Enter.h"
 #include "DragReceiver.h"
@@ -71,6 +68,8 @@ struct StateStorage
 
 - (id)initWithFrame:(NSRect)frame
      iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository
+             header:(NCPanelViewHeader*)_header
+             footer:(NCPanelViewFooter*)_footer
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -83,9 +82,7 @@ struct StateStorage
                        initWithFrame:NSMakeRect(0, 0, 100, 100)];
         [self addSubview:m_ItemsView];
         
-        m_HeaderView = [[NCPanelViewHeader alloc]
-                        initWithFrame:frame
-                        theme:std::make_unique<HeaderThemeImpl>(NCAppDelegate.me.themesManager)];
+        m_HeaderView = _header;
         m_HeaderView.translatesAutoresizingMaskIntoConstraints = false;
         m_HeaderView.defaultResponder = self;
         __weak PanelView *weak_self = self;
@@ -95,9 +92,7 @@ struct StateStorage
         };
         [self addSubview:m_HeaderView];
         
-        m_FooterView = [[NCPanelViewFooter alloc]
-                        initWithFrame:NSRect()
-                        theme:std::make_unique<FooterThemeImpl>(NCAppDelegate.me.themesManager)];
+        m_FooterView = _footer;
         m_FooterView.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_FooterView];
         

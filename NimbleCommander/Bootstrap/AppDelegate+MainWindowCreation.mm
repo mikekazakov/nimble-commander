@@ -14,6 +14,10 @@
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelView.h>
+#include <NimbleCommander/States/FilePanels/PanelViewHeader.h>
+#include <NimbleCommander/States/FilePanels/PanelViewHeaderThemeImpl.h>
+#include <NimbleCommander/States/FilePanels/PanelViewFooter.h>
+#include <NimbleCommander/States/FilePanels/PanelViewFooterThemeImpl.h>
 #include <NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h>
 #include <NimbleCommander/States/FilePanels/PanelControllerActions.h>
 #include <NimbleCommander/States/FilePanels/StateActionsDispatcher.h>
@@ -84,9 +88,18 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 
 - (PanelView*) allocatePanelView
 {    
+    const auto header = [[NCPanelViewHeader alloc]
+                         initWithFrame:NSRect()
+                         theme:std::make_unique<nc::panel::HeaderThemeImpl>(self.themesManager)];
+    const auto footer = [[NCPanelViewFooter alloc]
+                         initWithFrame:NSRect()
+                         theme:std::make_unique<nc::panel::FooterThemeImpl>(self.themesManager)];
+    
     const auto pv_rect = NSMakeRect(0, 0, 100, 100);
     return [[PanelView alloc] initWithFrame:pv_rect
-                             iconRepository:[self allocateIconRepository]];
+                             iconRepository:[self allocateIconRepository]
+                                     header:header
+                                     footer:footer];
 }
 
 - (PanelController*) allocatePanelController

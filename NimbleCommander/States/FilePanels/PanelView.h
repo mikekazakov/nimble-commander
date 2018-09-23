@@ -9,6 +9,7 @@
 @protocol NCPanelViewKeystrokeSink;
 @class PanelView;
 @class NCPanelViewHeader;
+@class NCPanelViewFooter;
 
 namespace nc::panel {
     struct PanelViewLayout;
@@ -35,7 +36,9 @@ namespace nc::panel {
 @property (nonatomic, readonly) NCPanelViewHeader *headerView;
 
 - (id)initWithFrame:(NSRect)frame
-     iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository;
+     iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository
+             header:(NCPanelViewHeader*)_header
+             footer:(NCPanelViewFooter*)_footer;
 
 /**
  * called by controlled when a directory has been entirely changed in PanelData.

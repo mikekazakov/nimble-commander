@@ -10,6 +10,7 @@
 #include "Brief/PanelBriefView.h"
 #include "List/PanelListView.h"
 #include "PanelViewHeader.h"
+#include "PanelViewHeaderThemeImpl.h"
 #include "PanelViewFooter.h"
 #include "PanelViewFooterThemeImpl.h"
 #include "PanelViewDelegate.h"
@@ -81,7 +82,9 @@ struct StateStorage
         m_ItemsView = [self spawnItemViewWithLayout:_layout];
         [self addSubview:m_ItemsView];
         
-        m_HeaderView = [[NCPanelViewHeader alloc] initWithFrame:frame];
+        m_HeaderView = [[NCPanelViewHeader alloc]
+                        initWithFrame:frame
+                        theme:std::make_unique<HeaderThemeImpl>(NCAppDelegate.me.themesManager)];
         m_HeaderView.translatesAutoresizingMaskIntoConstraints = false;
         m_HeaderView.defaultResponder = self;
         __weak PanelView *weak_self = self;

@@ -2,42 +2,14 @@
 #include <Utility/Layout.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <NimbleCommander/Core/Theming/Theme.h>
-#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "PanelViewHeader.h"
 
 using namespace nc::panel;
 
-static NSString *SortLetter(data::SortMode _mode)
-{
-    switch( _mode.sort ) {
-        case data::SortMode::SortByName:         return @"n";
-        case data::SortMode::SortByNameRev:      return @"N";
-        case data::SortMode::SortByExt:          return @"e";
-        case data::SortMode::SortByExtRev:       return @"E";
-        case data::SortMode::SortBySize:         return @"s";
-        case data::SortMode::SortBySizeRev:      return @"S";
-        case data::SortMode::SortByModTime:      return @"m";
-        case data::SortMode::SortByModTimeRev:   return @"M";
-        case data::SortMode::SortByBirthTime:    return @"b";
-        case data::SortMode::SortByBirthTimeRev: return @"B";
-        case data::SortMode::SortByAddTime:      return @"a";
-        case data::SortMode::SortByAddTimeRev:   return @"A";
-        default:                                 return @"?";
-    }
-}
-
-static float Brightness( NSColor *_color )
-{
-    const auto c = [_color colorUsingColorSpace:NSColorSpace.genericRGBColorSpace];
-    return (float)c.brightnessComponent;
-}
-
-static bool IsDark( NSColor *_color )
-{
-    return Brightness(_color) < 0.60;
-}
+static NSString *SortLetter(data::SortMode _mode) noexcept;
+static void ChangeForegroundColor(NSButton *_button, NSColor *_new_color);
+static void ChangeAttributedTitle(NSButton *_button, NSString *_new_text);
+static bool IsDark( NSColor *_color );
 
 @interface NCPanelViewHeader()
 @property (nonatomic) IBOutlet NSMenu *sortMenuPopup;
@@ -56,7 +28,7 @@ static bool IsDark( NSColor *_color )
     data::SortMode      m_SortMode;
     function<void(data::SortMode)> m_SortModeChangeCallback;
     function<void(NSString*)> m_SearchRequestChangeCallback;
-    ThemesManager::ObservationTicket    m_ThemeObservation;
+    std::unique_ptr<nc::panel::HeaderTheme> m_Theme;
     bool                m_Active;     
 }
 
@@ -64,9 +36,11 @@ static bool IsDark( NSColor *_color )
 @synthesize sortModeChangeCallback = m_SortModeChangeCallback;
 
 - (id) initWithFrame:(NSRect)frameRect
+               theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme
 {
     self = [super initWithFrame:frameRect];
     if( self ) {
+        m_Theme = std::move(_theme);
         m_SearchPrompt = nil;
         m_Active = false;
         
@@ -134,8 +108,7 @@ static bool IsDark( NSColor *_color )
         m_BusyIndicator.style = NSProgressIndicatorSpinningStyle;
         m_BusyIndicator.controlSize = NSSmallControlSize;
         m_BusyIndicator.displayedWhenStopped = false;
-        if( CurrentTheme().AppearanceType() == ThemeAppearance::Light &&
-           IsDark(CurrentTheme().FilePanelsHeaderActiveBackgroundColor()) )
+        if( IsDark(m_Theme->ActiveBackgroundColor()) )
             m_BusyIndicator.appearance = [NSAppearance appearanceNamed:NSAppearanceNameVibrantDark];        
         [self addSubview:m_BusyIndicator positioned:NSWindowAbove relativeTo:m_PathTextField];
         
@@ -143,8 +116,7 @@ static bool IsDark( NSColor *_color )
         [self setupLayout];
         
         __weak NCPanelViewHeader* weak_self = self;
-        m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-            ThemesManager::Notifications::FilePanelsHeader, [weak_self]{
+        m_Theme->ObserveChanges([weak_self]{
             if( auto strong_self = weak_self )
                 [strong_self setupAppearance];
         });
@@ -152,31 +124,18 @@ static bool IsDark( NSColor *_color )
     return self;
 }
 
-static void ChangeForegroundColor(NSButton *_button, NSColor *_new_color)
-{
-    const auto sort_title = [[NSMutableAttributedString alloc]
-                             initWithAttributedString:_button.attributedTitle];
-    [sort_title addAttribute:NSForegroundColorAttributeName
-                       value:_new_color
-                       range:NSMakeRange(0, sort_title.length)];
-    _button.attributedTitle = sort_title;        
-}
-
 - (void) setupAppearance
 {
-    m_PathTextField.font = CurrentTheme().FilePanelsHeaderFont();
-    m_SearchTextField.font = CurrentTheme().FilePanelsHeaderFont();
-    m_SeparatorLine.borderColor = CurrentTheme().FilePanelsHeaderSeparatorColor();
-    m_SortButton.font = CurrentTheme().FilePanelsHeaderFont();
+    const auto font = m_Theme->Font();
+    m_PathTextField.font = font;
+    m_SearchTextField.font = font;
+    m_SeparatorLine.borderColor = m_Theme->SeparatorColor();
+    m_SortButton.font = font;
     
     const bool active = m_Active;
-    m_Background = active ?
-        CurrentTheme().FilePanelsHeaderActiveBackgroundColor() :
-        CurrentTheme().FilePanelsHeaderInactiveBackgroundColor();
+    m_Background = active ? m_Theme->ActiveBackgroundColor() : m_Theme->InactiveBackgroundColor();
     
-    NSColor *text_color = active ?
-        CurrentTheme().FilePanelsHeaderActiveTextColor() :
-        CurrentTheme().FilePanelsHeaderTextColor();
+    const auto text_color = active ? m_Theme->ActiveTextColor() : m_Theme->TextColor();
     m_PathTextField.textColor = text_color;
     
     ChangeForegroundColor(m_SortButton, text_color);
@@ -386,15 +345,11 @@ static void ChangeForegroundColor(NSButton *_button, NSColor *_new_color)
 
 - (void) setSortMode:(data::SortMode)_mode
 {
-    if( m_SortMode != _mode ) {
-        m_SortMode = _mode;
+    if( m_SortMode == _mode )
+        return;
     
-        auto title = [[NSMutableAttributedString alloc]
-            initWithAttributedString:m_SortButton.attributedTitle];
-        [title replaceCharactersInRange:NSMakeRange(0, title.length)
-                             withString:SortLetter(_mode)];
-        m_SortButton.attributedTitle = title;
-    }
+    m_SortMode = _mode;    
+    ChangeAttributedTitle(m_SortButton, SortLetter(_mode));
 }
 
 - (IBAction)onSortPopupMenuSortByClicked:(id)sender
@@ -444,3 +399,52 @@ static void ChangeForegroundColor(NSButton *_button, NSColor *_new_color)
 }
 
 @end
+
+static void ChangeForegroundColor(NSButton *_button, NSColor *_new_color)
+{
+    const auto sort_title = [[NSMutableAttributedString alloc]
+                             initWithAttributedString:_button.attributedTitle];
+    [sort_title addAttribute:NSForegroundColorAttributeName
+                       value:_new_color
+                       range:NSMakeRange(0, sort_title.length)];
+    _button.attributedTitle = sort_title;        
+}
+
+static void ChangeAttributedTitle(NSButton *_button, NSString *_new_text)
+{
+    const auto title = [[NSMutableAttributedString alloc]
+                        initWithAttributedString:_button.attributedTitle];
+    [title replaceCharactersInRange:NSMakeRange(0, title.length)
+                         withString:_new_text];
+    _button.attributedTitle = title;    
+}
+
+static NSString *SortLetter(data::SortMode _mode) noexcept
+{
+    switch( _mode.sort ) {
+        case data::SortMode::SortByName:         return @"n";
+        case data::SortMode::SortByNameRev:      return @"N";
+        case data::SortMode::SortByExt:          return @"e";
+        case data::SortMode::SortByExtRev:       return @"E";
+        case data::SortMode::SortBySize:         return @"s";
+        case data::SortMode::SortBySizeRev:      return @"S";
+        case data::SortMode::SortByModTime:      return @"m";
+        case data::SortMode::SortByModTimeRev:   return @"M";
+        case data::SortMode::SortByBirthTime:    return @"b";
+        case data::SortMode::SortByBirthTimeRev: return @"B";
+        case data::SortMode::SortByAddTime:      return @"a";
+        case data::SortMode::SortByAddTimeRev:   return @"A";
+        default:                                 return @"?";
+    }
+}
+
+static float Brightness( NSColor *_color )
+{
+    const auto c = [_color colorUsingColorSpace:NSColorSpace.genericRGBColorSpace];
+    return (float)c.brightnessComponent;
+}
+
+static bool IsDark( NSColor *_color )
+{
+    return Brightness(_color) < 0.60;
+}

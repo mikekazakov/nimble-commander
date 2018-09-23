@@ -2,8 +2,13 @@
 #pragma once
 
 #include "PanelDataSortMode.h"
+#include "PanelViewHeaderTheme.h"
 
 @interface NCPanelViewHeader : NSView<NSSearchFieldDelegate>
+
+- (id) initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
+- (id) initWithFrame:(NSRect)frameRect
+               theme:(std::unique_ptr<nc::panel::HeaderTheme>)_theme;
 
 - (void) setPath:(NSString*)_path;
 

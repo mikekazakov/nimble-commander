@@ -753,6 +753,14 @@
 		CFB2AB6321560EA90009EB81 /* PanelViewFooterThemeImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB6021560EA90009EB81 /* PanelViewFooterThemeImpl.mm */; };
 		CFB2AB6421560EA90009EB81 /* PanelViewFooterThemeImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB6021560EA90009EB81 /* PanelViewFooterThemeImpl.mm */; };
 		CFB2AB6521560EA90009EB81 /* PanelViewFooterThemeImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB6021560EA90009EB81 /* PanelViewFooterThemeImpl.mm */; };
+		CFB2AB682157399E0009EB81 /* PanelViewHeaderTheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */; };
+		CFB2AB692157399E0009EB81 /* PanelViewHeaderTheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */; };
+		CFB2AB6A2157399E0009EB81 /* PanelViewHeaderTheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */; };
+		CFB2AB6B2157399E0009EB81 /* PanelViewHeaderTheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */; };
+		CFB2AB6E21573BE40009EB81 /* PanelViewHeaderThemeImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */; };
+		CFB2AB6F21573BE40009EB81 /* PanelViewHeaderThemeImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */; };
+		CFB2AB7021573BE40009EB81 /* PanelViewHeaderThemeImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */; };
+		CFB2AB7121573BE40009EB81 /* PanelViewHeaderThemeImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */; };
 		CFB44F0C1F35F0B900E7555E /* UserNotificationsCenter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */; };
 		CFB598C1196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
 		CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */ = {isa = PBXBuildFile; fileRef = CFB598C0196E3A1F00D4C108 /* Help.pdf */; };
@@ -1905,6 +1913,10 @@
 		CFB2AB5B21560CDB0009EB81 /* PanelViewFooterTheme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFooterTheme.mm; path = NimbleCommander/States/FilePanels/PanelViewFooterTheme.mm; sourceTree = "<group>"; };
 		CFB2AB6021560EA90009EB81 /* PanelViewFooterThemeImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFooterThemeImpl.mm; path = NimbleCommander/States/FilePanels/PanelViewFooterThemeImpl.mm; sourceTree = "<group>"; };
 		CFB2AB6121560EA90009EB81 /* PanelViewFooterThemeImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFooterThemeImpl.h; path = NimbleCommander/States/FilePanels/PanelViewFooterThemeImpl.h; sourceTree = "<group>"; };
+		CFB2AB662157399E0009EB81 /* PanelViewHeaderTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeaderTheme.h; path = NimbleCommander/States/FilePanels/PanelViewHeaderTheme.h; sourceTree = "<group>"; };
+		CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeaderTheme.mm; path = NimbleCommander/States/FilePanels/PanelViewHeaderTheme.mm; sourceTree = "<group>"; };
+		CFB2AB6C21573BE30009EB81 /* PanelViewHeaderThemeImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewHeaderThemeImpl.h; path = NimbleCommander/States/FilePanels/PanelViewHeaderThemeImpl.h; sourceTree = "<group>"; };
+		CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewHeaderThemeImpl.mm; path = NimbleCommander/States/FilePanels/PanelViewHeaderThemeImpl.mm; sourceTree = "<group>"; };
 		CFB44F0A1F35F0B900E7555E /* UserNotificationsCenter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserNotificationsCenter.h; path = NimbleCommander/Core/UserNotificationsCenter.h; sourceTree = SOURCE_ROOT; };
 		CFB44F0B1F35F0B900E7555E /* UserNotificationsCenter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = UserNotificationsCenter.mm; path = NimbleCommander/Core/UserNotificationsCenter.mm; sourceTree = SOURCE_ROOT; };
 		CFB598C0196E3A1F00D4C108 /* Help.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; name = Help.pdf; path = NimbleCommander/Resources/Help.pdf; sourceTree = SOURCE_ROOT; };
@@ -2292,6 +2304,10 @@
 				CF84C8DD1DB74B3A00B4E888 /* PanelViewHeader.h */,
 				CF84C8DE1DB74B3A00B4E888 /* PanelViewHeader.mm */,
 				CF7C7CC21E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib */,
+				CFB2AB662157399E0009EB81 /* PanelViewHeaderTheme.h */,
+				CFB2AB672157399E0009EB81 /* PanelViewHeaderTheme.mm */,
+				CFB2AB6C21573BE30009EB81 /* PanelViewHeaderThemeImpl.h */,
+				CFB2AB6D21573BE30009EB81 /* PanelViewHeaderThemeImpl.mm */,
 				CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */,
 				CFDAC2221DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.h */,
 				CFDAC2231DFBCAE20039A104 /* PanelViewPresentationItemsColoringFilter.mm */,
@@ -3932,6 +3948,7 @@
 				CF20DF4D1FC694B70074ABB8 /* SyncPanels.mm in Sources */,
 				CFD726981E42E23000603077 /* PanelDataPersistency.cpp in Sources */,
 				CFBA63B21FC1A50B00077682 /* ToggleSingleOrDualMode.mm in Sources */,
+				CFB2AB6A2157399E0009EB81 /* PanelViewHeaderTheme.mm in Sources */,
 				CFD726D51E42E2B100603077 /* PanelBriefViewCollectionViewLayout.mm in Sources */,
 				CFD726911E42E22600603077 /* PanelData.mm in Sources */,
 				CFD7264D1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
@@ -4092,6 +4109,7 @@
 				CFD726531E42E12800603077 /* TemporaryNativeFileStorage.cpp in Sources */,
 				CFD6DD271D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm in Sources */,
 				CFD726501E42E12400603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
+				CFB2AB7021573BE40009EB81 /* PanelViewHeaderThemeImpl.mm in Sources */,
 				CFD7263E1E42E0ED00603077 /* GoogleAnalytics.mm in Sources */,
 				CFD726CC1E42E2A500603077 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF5E9A681FCE738B005608F5 /* QuickLookVFSBridge.mm in Sources */,
@@ -4196,6 +4214,7 @@
 				CF4D98A720284C1500ECE06D /* PanelControllerActions.mm in Sources */,
 				CF5E9A591FCBFE77005608F5 /* ShowSystemOverview.mm in Sources */,
 				CFD8CDC51E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
+				CFB2AB682157399E0009EB81 /* PanelViewHeaderTheme.mm in Sources */,
 				CFD726371E42E0D500603077 /* FileWindow.cpp in Sources */,
 				CFD7260F1E42E07A00603077 /* main.cpp in Sources */,
 				CFD7263B1E42E0E100603077 /* TrialWindowController.mm in Sources */,
@@ -4247,6 +4266,7 @@
 				CF56BF571D68129800A08D2B /* VFSInstanceManagerImpl.cpp in Sources */,
 				CFD726061E42E06900603077 /* AppDelegate.mm in Sources */,
 				CFB9F10F201AEE6200FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
+				CFB2AB6E21573BE40009EB81 /* PanelViewHeaderThemeImpl.mm in Sources */,
 				CFD726561E42E1A600603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFD7260C1E42E07400603077 /* Application.mm in Sources */,
 				CF818B4E1EA0610C00BC28E6 /* ShowGoToPopup.mm in Sources */,
@@ -4425,6 +4445,7 @@
 				CF4D98AA2028500400ECE06D /* PanelControllerActions.mm in Sources */,
 				CFA3D7C719625F71006A30A1 /* GTMHotKeyTextField.mm in Sources */,
 				CF5E9A5B1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */,
+				CFB2AB692157399E0009EB81 /* PanelViewHeaderTheme.mm in Sources */,
 				CF56C2B81DC1934D00F0DF0F /* PanelListViewNameView.mm in Sources */,
 				CF3B7F802021747100BF2090 /* CursorBackup.mm in Sources */,
 				CFB66F921D8537A90017D2A0 /* FeedbackManager.mm in Sources */,
@@ -4476,6 +4497,7 @@
 				CF4135201F890709007429B6 /* SettingsAdaptor.mm in Sources */,
 				CF282ACA1E0A2D6300EC7F33 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF2C4DEE1C57A00400DEC75A /* AskForPasswordWindowController.mm in Sources */,
+				CFB2AB6F21573BE40009EB81 /* PanelViewHeaderThemeImpl.mm in Sources */,
 				CFB9F112201AEE8400FC65D8 /* RecentlyClosedMenuDelegate.mm in Sources */,
 				CF0139B21E99EC4A00E44F2D /* DefaultAction.mm in Sources */,
 				CF197C431FB81ACB009F6C59 /* ToggleSingleOrDualMode.mm in Sources */,
@@ -4681,6 +4703,7 @@
 				CFD7265B1E42E1B700603077 /* MainWindowController.mm in Sources */,
 				CFBA63B11FC1A50B00077682 /* ToggleSingleOrDualMode.mm in Sources */,
 				CFD726A01E42E23E00603077 /* PanelHistory.mm in Sources */,
+				CFB2AB7121573BE40009EB81 /* PanelViewHeaderThemeImpl.mm in Sources */,
 				CFA9DD9D1FD6694E0099DD91 /* Interactions.mm in Sources */,
 				CF6237241EB4444B00152B2B /* PanelDataOptionsPersistence.mm in Sources */,
 				CFD7260D1E42E07900603077 /* main.cpp in Sources */,
@@ -4776,6 +4799,7 @@
 				CFD726AA1E42E25000603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CF75E88D1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
 				CFD726BF1E42E28D00603077 /* PanelViewHeader.mm in Sources */,
+				CFB2AB6B2157399E0009EB81 /* PanelViewHeaderTheme.mm in Sources */,
 				CFF6F3361A13567C00011177 /* GoToFolderSheetController.mm in Sources */,
 				CFD726D71E42E2B600603077 /* PanelBriefViewItemCarrier.mm in Sources */,
 				CF7A09B11EC2DF6200533B07 /* Duplicate.mm in Sources */,

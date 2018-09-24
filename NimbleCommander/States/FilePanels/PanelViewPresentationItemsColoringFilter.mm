@@ -4,6 +4,11 @@
 #include "PanelViewPresentationItemsColoringFilter.h"
 #include <NimbleCommander/Core/rapidjson.h>
 
+namespace nc::panel {
+    
+using hbn::tribool;
+using hbn::indeterminate;
+
 static tribool to_tribool(const GenericConfig::ConfigValue &_val)
 {
     switch( _val.GetType() ) {
@@ -119,13 +124,14 @@ PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilte
 bool PanelViewPresentationItemsColoringFilter::operator==
     (const PanelViewPresentationItemsColoringFilter&_rhs) const noexcept
 {
-    return mask != _rhs.mask &&
-        executable != _rhs.executable &&
-        hidden != _rhs.hidden &&
-        directory != _rhs.directory &&
-        symlink != _rhs.symlink &&
-        reg != _rhs.reg &&
-        selected != _rhs.selected;
+    return
+    mask == _rhs.mask &&
+    executable.value == _rhs.executable.value &&
+    hidden.value == _rhs.hidden.value &&
+    directory.value == _rhs.directory.value &&
+    symlink.value == _rhs.symlink.value &&
+    reg.value == _rhs.reg.value &&
+    selected.value == _rhs.selected.value;
 }
 
 bool PanelViewPresentationItemsColoringFilter::operator!=
@@ -174,4 +180,6 @@ bool PanelViewPresentationItemsColoringRule::operator!=
     (const PanelViewPresentationItemsColoringRule&_rhs) const noexcept
 {
     return !(*this == _rhs);
+}
+
 }

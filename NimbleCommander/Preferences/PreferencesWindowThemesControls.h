@@ -13,7 +13,7 @@
 
 struct PanelViewPresentationItemsColoringRule;
 @interface PreferencesWindowThemesTabColoringRulesControl : NSControl<NSTextFieldDelegate>
-@property (nonatomic) vector<PanelViewPresentationItemsColoringRule> rules;
+@property (nonatomic) vector<nc::panel::PanelViewPresentationItemsColoringRule> rules;
 @end
 
 @interface PreferencesWindowThemesAppearanceControl : NSControl

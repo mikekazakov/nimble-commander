@@ -20,6 +20,7 @@
 		CF614AD31F9D8EFD0005F2DB /* chained_strings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AD11F9D8EF00005F2DB /* chained_strings_Tests.mm */; };
 		CF614AD41F9D8F000005F2DB /* Hash_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614ACD1F9D8EDC0005F2DB /* Hash_Tests.mm */; };
 		CF614AD51F9D8F030005F2DB /* VariableContainer_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614ACE1F9D8EDD0005F2DB /* VariableContainer_Tests.mm */; };
+		CF7D7D602158B2C000DA1794 /* tribool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7D7D5F2158B2C000DA1794 /* tribool.h */; };
 		CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD22CD32012DDDF00608DFE /* LRUCache.h */; };
 		CFD22CD72012DDFD00608DFE /* LRUCache_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD22CD52012DDF800608DFE /* LRUCache_Tests.mm */; };
 		CFFA94491F4535750035E606 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; };
@@ -72,6 +73,7 @@
 		CF614ACD1F9D8EDC0005F2DB /* Hash_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Hash_Tests.mm; path = ../habanero/tests/Hash_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF614ACE1F9D8EDD0005F2DB /* VariableContainer_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VariableContainer_Tests.mm; path = ../habanero/tests/VariableContainer_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF614AD11F9D8EF00005F2DB /* chained_strings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = chained_strings_Tests.mm; path = ../habanero/tests/chained_strings_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF7D7D5F2158B2C000DA1794 /* tribool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = tribool.h; path = include/Habanero/tribool.h; sourceTree = "<group>"; };
 		CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFStackAllocator.cpp; path = source/CFStackAllocator.cpp; sourceTree = "<group>"; };
 		CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = spinlock.cpp; path = ../habanero/source/spinlock.cpp; sourceTree = "<group>"; };
 		CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFDefaultsCPP.h; path = include/Habanero/CFDefaultsCPP.h; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 				CFD62B901C99C2A60021EE7F /* spinlock.h */,
 				CF2083FE1FEFACF30014D6AD /* StringsBulk.h */,
 				CFD62B911C99C2A60021EE7F /* tiny_string.h */,
+				CF7D7D5F2158B2C000DA1794 /* tribool.h */,
 				CFD62B921C99C2A60021EE7F /* variable_container.h */,
 			);
 			name = Headers;
@@ -239,6 +242,7 @@
 				CF308F4B213B772900915730 /* PosixFilesystemImpl.h in Headers */,
 				CF308F47213B755700915730 /* PosixFilesystem.h in Headers */,
 				CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */,
+				CF7D7D602158B2C000DA1794 /* tribool.h in Headers */,
 				CF308F4F213B7B3C00915730 /* PosixFilesystemMock.h in Headers */,
 				CF31851B2150BBA30012F5DD /* intrusive_ptr.h in Headers */,
 			);

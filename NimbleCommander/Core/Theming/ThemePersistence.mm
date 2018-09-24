@@ -27,15 +27,15 @@ NSFont *ThemePersistence::ExtractFont( v _doc, const char *_path)
     return [NSFont fontWithStringDescription:[NSString stringWithUTF8String:cr->value.GetString()]];
 }
 
-vector<PanelViewPresentationItemsColoringRule> ThemePersistence::
+vector<nc::panel::PanelViewPresentationItemsColoringRule> ThemePersistence::
     ExtractRules( v _doc, const char*_path )
 {
-    vector<PanelViewPresentationItemsColoringRule> r;
+    vector<nc::panel::PanelViewPresentationItemsColoringRule> r;
     auto cr = &_doc.FindMember(_path)->value;
     if( cr->IsArray() )
         for( auto i = cr->Begin(), e = cr->End(); i != e; ++i ) {
             auto v = GenericConfig::ConfigValue( *i, rapidjson::g_CrtAllocator );
-            r.emplace_back( PanelViewPresentationItemsColoringRule::FromJSON(v) );
+            r.emplace_back( nc::panel::PanelViewPresentationItemsColoringRule::FromJSON(v) );
         }
     return r;
 }
@@ -52,8 +52,8 @@ rapidjson::StandaloneValue ThemePersistence::EncodeFont( NSFont *_font )
                                       rapidjson::g_CrtAllocator);
 }
 
-rapidjson::StandaloneValue ThemePersistence::EncodeRules(
-        const vector<PanelViewPresentationItemsColoringRule> &_rules )
+rapidjson::StandaloneValue ThemePersistence::EncodeRules
+    (const vector<nc::panel::PanelViewPresentationItemsColoringRule> &_rules )
 {
     rapidjson::StandaloneValue cr(rapidjson::kArrayType);
     cr.Reserve((unsigned)_rules.size(), rapidjson::g_CrtAllocator);

@@ -278,7 +278,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 
 @implementation PreferencesWindowThemesTabColoringRulesControl
 {
-    vector<PanelViewPresentationItemsColoringRule> m_Rules;
+    vector<nc::panel::PanelViewPresentationItemsColoringRule> m_Rules;
 
 }
 
@@ -289,7 +289,6 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         NSNib *nib = [[NSNib alloc] initWithNibNamed:
                       @"PreferencesWindowThemesTabColoringRulesControl" bundle:nil];
         [nib instantiateWithOwner:self topLevelObjects:nil];
-//        int a = 10;
         
         auto v = self.carrier;
         v.translatesAutoresizingMaskIntoConstraints = false;
@@ -317,7 +316,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     return m_Rules.size();
 }
 
-- (void) setRules:(vector<PanelViewPresentationItemsColoringRule>)rules
+- (void) setRules:(vector<nc::panel::PanelViewPresentationItemsColoringRule>)rules
 {
     if( m_Rules != rules ) {
         m_Rules = rules;
@@ -325,7 +324,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     }
 }
 
-- (vector<PanelViewPresentationItemsColoringRule>)rules
+- (vector<nc::panel::PanelViewPresentationItemsColoringRule>)rules
 {
     return m_Rules;
 }

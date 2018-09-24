@@ -1,6 +1,9 @@
 // Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "PreferencesWindowPanelsTabColoringFilterSheet.h"
 
+using nc::hbn::tribool;
+using nc::hbn::indeterminate;
+
 static NSCellStateValue tribool_to_state(tribool _val)
 {
     if(_val == false)
@@ -23,11 +26,11 @@ static tribool state_to_tribool(NSCellStateValue _val)
 
 @implementation PreferencesWindowPanelsTabColoringFilterSheet
 {
-    PanelViewPresentationItemsColoringFilter m_Filter;
+    nc::panel::PanelViewPresentationItemsColoringFilter m_Filter;
     
 }
 
-- (id) initWithFilter:(PanelViewPresentationItemsColoringFilter)_filter
+- (id) initWithFilter:(nc::panel::PanelViewPresentationItemsColoringFilter)_filter
 {
     self = [super init];
     if(self) {
@@ -71,7 +74,7 @@ static tribool state_to_tribool(NSCellStateValue _val)
     [self endSheet:NSModalResponseOK];
 }
 
-- (PanelViewPresentationItemsColoringFilter) filter
+- (nc::panel::PanelViewPresentationItemsColoringFilter) filter
 {
     return m_Filter;
 }

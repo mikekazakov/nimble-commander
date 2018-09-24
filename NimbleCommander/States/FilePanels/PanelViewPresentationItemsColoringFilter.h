@@ -2,21 +2,24 @@
 #pragma once
 
 #include <VFS/VFS.h>
+#include <Habanero/tribool.h>
 #include "../../Core/FileMask.h"
 #include "PanelDataItemVolatileData.h"
 #include "../../Bootstrap/Config.h"
+
+namespace nc::panel {
 
 struct PanelViewPresentationItemsColoringFilter
 {
     // consider optimizing FileMask for trivial cases or write a different mech for extensions specifically,
     // since NSRegularExpression is too heavy mech for real-time(on draw) usage
     FileMask mask      = "";            // based on VFSListingItem.NSDisplayName
-    tribool executable = indeterminate; // based on unix exec flag
-    tribool hidden     = indeterminate; // based on VFSListingItem.IsHidden
-    tribool directory  = indeterminate; // based on VFSListingItem.IsDir
-    tribool symlink    = indeterminate; // based on VFSListingItem.IsSymlink
-    tribool reg        = indeterminate; // based on VFSListingItem.IsReg
-    tribool selected   = indeterminate; // based on VFSListingItem.CFIsSelected
+    hbn::tribool executable = hbn::indeterminate; // based on unix exec flag
+    hbn::tribool hidden     = hbn::indeterminate; // based on VFSListingItem.IsHidden
+    hbn::tribool directory  = hbn::indeterminate; // based on VFSListingItem.IsDir
+    hbn::tribool symlink    = hbn::indeterminate; // based on VFSListingItem.IsSymlink
+    hbn::tribool reg        = hbn::indeterminate; // based on VFSListingItem.IsReg
+    hbn::tribool selected   = hbn::indeterminate; // based on VFSListingItem.CFIsSelected
     
     /**
      * Return true if all filtering options are in non-set state.
@@ -56,3 +59,5 @@ struct PanelViewPresentationItemsColoringRule
     bool operator==(const PanelViewPresentationItemsColoringRule&_rhs) const noexcept;
     bool operator!=(const PanelViewPresentationItemsColoringRule&_rhs) const noexcept;
 };
+
+}

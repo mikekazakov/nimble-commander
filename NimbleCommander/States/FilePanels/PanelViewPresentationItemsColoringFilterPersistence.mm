@@ -68,7 +68,7 @@ PresentationItemsColoringFilterPersitence::FromJSON(const GenericConfig::ConfigV
     if( _v.HasMember("mask") && _v["mask"].IsString() ) {
         auto &m = _v["mask"];
         if( m.IsString() )
-            f.mask = FileMask( m.GetString() );
+            f.mask = nc::utility::FileMask( m.GetString() );
     }
     
     if( _v.HasMember("executable") )    f.executable    = to_tribool( _v["executable"] );

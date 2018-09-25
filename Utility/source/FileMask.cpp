@@ -1,4 +1,5 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "FileMask.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/param.h>
@@ -6,7 +7,8 @@
 #include <boost/algorithm/string/split.hpp>
 #include <regex>
 #include <Habanero/CFStackAllocator.h>
-#include "FileMask.h"
+
+namespace nc::utility {
 
 static inline bool
 strincmp2(const char *s1, const char *s2, size_t _n)
@@ -20,33 +22,33 @@ strincmp2(const char *s1, const char *s2, size_t _n)
     return true;
 }
 
-static string regex_escape(const string& string_to_escape)
+static std::string regex_escape(const std::string& string_to_escape)
 {
     // do not escape "?" and "*"
-    static const regex escape( "[.^$|()\\[\\]{}+\\\\]" );
-    static const string replace( "\\\\&" );
+    static const std::regex escape( "[.^$|()\\[\\]{}+\\\\]" );
+    static const std::string replace( "\\\\&" );
     return regex_replace(string_to_escape,
                          escape,
                          replace,
-                         regex_constants::match_default | regex_constants::format_sed);
+                         std::regex_constants::match_default | std::regex_constants::format_sed);
 }
 
-static void trim_leading_whitespaces(string& _str)
+static void trim_leading_whitespaces(std::string& _str)
 {
     auto first = _str.find_first_not_of(' ');
-    if( first == string::npos ) {
+    if( first == std::string::npos ) {
         _str.clear();
         return;
     }
     if( first == 0 )
         return;
     
-    _str.erase( begin(_str), next(begin(_str), first) );
+    _str.erase( std::begin(_str), std::next(std::begin(_str), first) );
 }
 
-static vector<string> sub_masks( const string &_source )
+static std::vector<std::string> sub_masks( const std::string &_source )
 {
-    vector<string> masks;
+    std::vector<std::string> masks;
     boost::split( masks, _source, [](char _c){ return _c == ',';} );
 
     for(auto &s: masks) {
@@ -59,7 +61,7 @@ static vector<string> sub_masks( const string &_source )
     return masks;
 }
 
-static bool MaskStringNeedsNormalization(string_view _string)
+static bool MaskStringNeedsNormalization(std::string_view _string)
 {
     for( unsigned char c: _string )
         if( c > 127 || ( c >= 0x41 && c <= 0x5A ) ) // >= 'A' && <= 'Z'
@@ -68,7 +70,7 @@ static bool MaskStringNeedsNormalization(string_view _string)
     return false;
 }
 
-static string ProduceFormCLowercase(string_view _string)
+static std::string ProduceFormCLowercase(std::string_view _string)
 {
     CFStackAllocator allocator;
     
@@ -106,7 +108,7 @@ static string ProduceFormCLowercase(string_view _string)
     return utf8;
 }
 
-static optional<string> GetSimpleMask( const string &_regexp )
+static std::optional<std::string> GetSimpleMask( const std::string &_regexp )
 {
     const char *str = _regexp.c_str();
     const int str_len = (int)_regexp.size();
@@ -123,17 +125,17 @@ static optional<string> GetSimpleMask( const string &_regexp )
     }
     
     if( !simple )
-        return nullopt;
+        return std::nullopt;
     
-    return string( str + 3 ); // store masks like .png if it is simple
+    return std::string( str + 3 ); // store masks like .png if it is simple
 }
 
 FileMask::FileMask(const char* _mask):
-    FileMask( _mask ? string(_mask) : ""s)
+    FileMask( _mask ? std::string(_mask) :std::string{})
 {
 }
 
-FileMask::FileMask(const string &_mask):
+FileMask::FileMask(const std::string &_mask):
     m_Mask(_mask)
 {
     if( _mask.empty() )
@@ -144,13 +146,15 @@ FileMask::FileMask(const string &_mask):
     for( auto &s: submasks )
         if( !s.empty() ) {
             if( auto sm = GetSimpleMask(s) ) {
-                m_Masks.emplace_back( nullopt, move(sm) );
+                m_Masks.emplace_back( std::nullopt, move(sm) );
             }
             else {
                 try {
                     m_Masks.emplace_back(
-                        regex( MaskStringNeedsNormalization(s) ? ProduceFormCLowercase(s) : s ),
-                        nullopt
+                                         std::regex( MaskStringNeedsNormalization(s) ?
+                                                    ProduceFormCLowercase(s) :
+                                                    s ),
+                                         std::nullopt
                         );
                 }
                 catch(...) {
@@ -159,7 +163,7 @@ FileMask::FileMask(const string &_mask):
         }
 }
 
-static bool CompareAgainstSimpleMask(const string& _mask, string_view _name) noexcept
+static bool CompareAgainstSimpleMask(const std::string& _mask, std::string_view _name) noexcept
 {
     if( _name.length() < _mask.length() )
         return false;
@@ -170,7 +174,7 @@ static bool CompareAgainstSimpleMask(const string& _mask, string_view _name) noe
     return strincmp2(_mask.c_str(), chars + chars_num - _mask.size(), _mask.size());
 }
 
-bool FileMask::MatchName(const string &_name) const
+bool FileMask::MatchName(const std::string &_name) const
 {
     return MatchName( _name.c_str() );
 }
@@ -180,7 +184,7 @@ bool FileMask::MatchName(const char *_name) const
     if( m_Masks.empty() || !_name )
         return false;
     
-    optional<string> normalized_name;
+    std::optional<std::string> normalized_name;
     for( auto &m: m_Masks )
         if( m.first ) {
             if( !normalized_name )
@@ -196,20 +200,22 @@ bool FileMask::MatchName(const char *_name) const
     return false;
 }
 
-bool FileMask::IsWildCard(const string &_mask)
+bool FileMask::IsWildCard(const std::string &_mask)
 {
-    return any_of( begin(_mask), end(_mask), [](char c){ return c == '*' || c == '?'; } );
+    return std::any_of(std::begin(_mask),
+                       std::end(_mask),
+                       [](char c){ return c == '*' || c == '?'; } );
 }
 
-static string ToWildCard(const string &_mask, const bool _for_extension)
+static std::string ToWildCard(const std::string &_mask, const bool _for_extension)
 {
     if( _mask.empty() )
         return "";
     
-    vector<string> sub_masks;
+    std::vector<std::string> sub_masks;
     boost::split( sub_masks, _mask, [](char _c){ return _c == ','; } );
     
-    string result;
+    std::string result;
     for( auto &s: sub_masks ) {
         trim_leading_whitespaces(s);
         
@@ -243,17 +249,17 @@ static string ToWildCard(const string &_mask, const bool _for_extension)
     
 }
 
-string FileMask::ToExtensionWildCard(const string& _mask)
+std::string FileMask::ToExtensionWildCard(const std::string& _mask)
 {
     return ToWildCard(_mask, true);
 }
 
-string FileMask::ToFilenameWildCard(const string& _mask)
+std::string FileMask::ToFilenameWildCard(const std::string& _mask)
 {
     return ToWildCard(_mask, false);
 }
 
-const string& FileMask::Mask() const
+const std::string& FileMask::Mask() const
 {
     return m_Mask;
 }
@@ -271,4 +277,6 @@ bool FileMask::operator ==(const FileMask&_rhs) const noexcept
 bool FileMask::operator !=(const FileMask&_rhs) const noexcept
 {
     return !(*this == _rhs);
+}
+
 }

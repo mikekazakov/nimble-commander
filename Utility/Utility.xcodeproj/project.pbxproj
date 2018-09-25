@@ -31,6 +31,9 @@
 		CF6E64E91F6271F000BF986E /* DiskArbitration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E81F6271F000BF986E /* DiskArbitration.framework */; };
 		CF6E64EB1F62721500BF986E /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
 		CF6E64ED1F62721C00BF986E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EC1F62721C00BF986E /* Security.framework */; };
+		CFB0F236215A076F0088C18E /* FileMask.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB0F235215A076F0088C18E /* FileMask.h */; };
+		CFB0F238215A07780088C18E /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB0F237215A07770088C18E /* FileMask.cpp */; };
+		CFB0F23A215A07830088C18E /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB0F239215A07830088C18E /* FileMask_Tests.mm */; };
 		CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */; };
 		CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */; };
 		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
@@ -150,6 +153,9 @@
 		CF960E261C992F35001D8B02 /* PathManip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PathManip.c; path = source/PathManip.c; sourceTree = "<group>"; };
 		CF960E271C992F35001D8B02 /* SystemInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation.mm; path = source/SystemInformation.mm; sourceTree = "<group>"; };
 		CF960E281C992F35001D8B02 /* VolumeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeInformation.cpp; path = source/VolumeInformation.cpp; sourceTree = "<group>"; };
+		CFB0F235215A076F0088C18E /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMask.h; path = include/Utility/FileMask.h; sourceTree = "<group>"; };
+		CFB0F237215A07770088C18E /* FileMask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask.cpp; path = source/FileMask.cpp; sourceTree = "<group>"; };
+		CFB0F239215A07830088C18E /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileMask_Tests.mm; path = tests/FileMask_Tests.mm; sourceTree = "<group>"; };
 		CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextControl.h; path = include/Utility/FilenameTextControl.h; sourceTree = "<group>"; };
 		CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextControl.mm; path = source/FilenameTextControl.mm; sourceTree = "<group>"; };
 		CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleComboBoxPersistentDataSource.h; path = include/Utility/SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
@@ -235,12 +241,13 @@
 			isa = PBXGroup;
 			children = (
 				CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */,
-				CF308F10213781ED00915730 /* UnitTests_main.h */,
-				CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */,
 				CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */,
 				CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */,
+				CFB0F239215A07830088C18E /* FileMask_Tests.mm */,
 				CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */,
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
+				CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */,
+				CF308F10213781ED00915730 /* UnitTests_main.h */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -279,6 +286,7 @@
 				CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */,
 				CF960E171C992F2C001D8B02 /* Encodings.h */,
 				CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */,
+				CFB0F235215A076F0088C18E /* FileMask.h */,
 				CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */,
 				CF3847272010756800BAB3BE /* FilenameTextNavigation.h */,
 				CFD62BD51C9A6B4B0021EE7F /* FontCache.h */,
@@ -325,6 +333,7 @@
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
 				CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */,
+				CFB0F237215A07770088C18E /* FileMask.cpp */,
 				CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */,
 				CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */,
 				CFD62BD71C9A6B630021EE7F /* FontCache.cpp */,
@@ -381,6 +390,7 @@
 				CF308F33213ACD2500915730 /* BriefOnDiskStorageImpl.h in Headers */,
 				CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */,
 				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
+				CFB0F236215A076F0088C18E /* FileMask.h in Headers */,
 				CF29FC602155D9A20040FF19 /* AdaptiveDateFormatting.h in Headers */,
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
 				CF308F11213781EE00915730 /* UnitTests_main.h in Headers */,
@@ -505,6 +515,7 @@
 				CF614AB01F9D87260005F2DB /* Encodings_Tests.mm in Sources */,
 				CF614AAF1F9D87230005F2DB /* ByteCountFormatter_Tests.mm in Sources */,
 				CF38472D2010780E00BAB3BE /* FilenameTextNavigation_Tests.mm in Sources */,
+				CFB0F23A215A07830088C18E /* FileMask_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -521,6 +532,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFB0F238215A07780088C18E /* FileMask.cpp in Sources */,
 				CF29FC622155D9AB0040FF19 /* AdaptiveDateFormatting.mm in Sources */,
 				CFFA94691F453CC00035E606 /* ButtonWithTextColor.mm in Sources */,
 				CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */,
@@ -654,6 +666,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../Habanero/include",
+					"$(PROJECT_DIR)/../3rd_Party/boost/include",
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/include/Utility",
 				);
@@ -712,6 +725,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"$(PROJECT_DIR)/../Habanero/include",
+					"$(PROJECT_DIR)/../3rd_Party/boost/include",
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/include/Utility",
 				);

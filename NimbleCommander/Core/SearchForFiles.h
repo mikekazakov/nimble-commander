@@ -3,8 +3,8 @@
 
 #include <Habanero/SerialQueue.h>
 #include <Utility/Encodings.h>
+#include <Utility/FileMask.h>
 #include <VFS/VFS.h>
-#include "FileMask.h"
 
 class SearchForFiles
 {
@@ -120,7 +120,7 @@ private:
     
     SerialQueue                 m_Queue;
     optional<FilterName>        m_FilterName;
-    optional<FileMask>          m_FilterNameMask;
+    optional<nc::utility::FileMask>m_FilterNameMask;
     optional<FilterContent>     m_FilterContent;
     optional<FilterSize>        m_FilterSize;
     

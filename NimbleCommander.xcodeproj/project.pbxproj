@@ -297,11 +297,6 @@
 		CF4E56DC1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DD1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
-		CF4E56EA1D50712C00452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
-		CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */; };
-		CF4E56EE1D5072E500452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
-		CF4E56EF1D5072E500452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
-		CF4E56F01D5072E600452912 /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E91D50712C00452912 /* FileMask.cpp */; };
 		CF4E56F11D5072E900452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
 		CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
 		CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
@@ -1682,9 +1677,6 @@
 		CF4E56E11D506BA700452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FindFilesSheetController.strings; sourceTree = "<group>"; };
 		CF4E56E51D506EB100452912 /* SearchForFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchForFiles.h; path = NimbleCommander/Core/SearchForFiles.h; sourceTree = SOURCE_ROOT; };
 		CF4E56E61D506EB100452912 /* SearchForFiles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchForFiles.cpp; path = NimbleCommander/Core/SearchForFiles.cpp; sourceTree = SOURCE_ROOT; };
-		CF4E56E81D50712C00452912 /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMask.h; path = NimbleCommander/Core/FileMask.h; sourceTree = SOURCE_ROOT; };
-		CF4E56E91D50712C00452912 /* FileMask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask.cpp; path = NimbleCommander/Core/FileMask.cpp; sourceTree = SOURCE_ROOT; };
-		CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileMask_Tests.mm; path = NimbleCommander/Core/FileMask_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"; sourceTree = SOURCE_ROOT; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.m"; sourceTree = SOURCE_ROOT; };
 		CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstancePromise.cpp; path = NimbleCommander/Core/VFSInstancePromise.cpp; sourceTree = SOURCE_ROOT; };
@@ -2970,9 +2962,6 @@
 				CF0139BA1E9B1B8E00E44F2D /* AnyHolder.mm */,
 				CFFA942C1F3DBF790035E606 /* Dock.h */,
 				CFFA942D1F3DBF790035E606 /* Dock.mm */,
-				CF4E56EB1D50727F00452912 /* FileMask_Tests.mm */,
-				CF4E56E91D50712C00452912 /* FileMask.cpp */,
-				CF4E56E81D50712C00452912 /* FileMask.h */,
 				CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */,
 				CFDAC2DF1DFD142C0039A104 /* FileWindow.cpp */,
 				CFDAC2E01DFD142C0039A104 /* FileWindow.h */,
@@ -3916,7 +3905,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF4E56ED1D50728400452912 /* FileMask_Tests.mm in Sources */,
 				CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */,
 				CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */,
 				CF09393F1D12786300D67AC6 /* ExternalToolsSupport_Tests.mm in Sources */,
@@ -4042,7 +4030,6 @@
 				CF46C24720317FEF00A91E2F /* ServicesHandler.mm in Sources */,
 				CF876D401D51E0B0009C0CCE /* BigFileViewHex.mm in Sources */,
 				CF5E9A5C1FCBFED9005608F5 /* ShowSystemOverview.mm in Sources */,
-				CF4E56EF1D5072E500452912 /* FileMask.cpp in Sources */,
 				CFD726441E42E10700603077 /* rapidjson.cpp in Sources */,
 				CFD726D81E42E2B700603077 /* PanelBriefViewItemCarrier.mm in Sources */,
 				CF818B581EA0610D00BC28E6 /* MakeNew.mm in Sources */,
@@ -4226,7 +4213,6 @@
 				CF876D451D51E0B0009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF46C23620317FD700A91E2F /* ServicesHandler.mm in Sources */,
 				CFD726121E42E07E00603077 /* Config.cpp in Sources */,
-				CF4E56F01D5072E600452912 /* FileMask.cpp in Sources */,
 				CFD726071E42E06F00603077 /* AppDelegateCPP.mm in Sources */,
 				CFD726961E42E22C00603077 /* PanelDataItemVolatileData.cpp in Sources */,
 				CF4E56B91D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
@@ -4498,7 +4484,6 @@
 				CF9F4A921EC9442C00E0AF82 /* Compress.mm in Sources */,
 				CF50926E201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */,
 				CFDAC26F1DFBF20F0039A104 /* ContextMenu.mm in Sources */,
-				CF4E56EA1D50712C00452912 /* FileMask.cpp in Sources */,
 				CFDAC2481DFBEE340039A104 /* MainWindow.mm in Sources */,
 				CFD8CDBE1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
 				CFA7E02D1EB97B60001FE66C /* Delete.mm in Sources */,
@@ -4721,7 +4706,6 @@
 				CFD8CDB51E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
 				CF876D391D51E0AF009C0CCE /* BigFileViewDataBackend.mm in Sources */,
 				CF818B7B1EA4573400BC28E6 /* Pasteboard.mm in Sources */,
-				CF4E56EE1D5072E500452912 /* FileMask.cpp in Sources */,
 				CFD726F31E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */,
 				CF5E9A481FCBC66A005608F5 /* ViewFile.mm in Sources */,
 				CF4E56B61D5068F000452912 /* PreferencesWindowPanelsTab.mm in Sources */,

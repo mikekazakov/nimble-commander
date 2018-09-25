@@ -1,5 +1,5 @@
 // Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "../Core/FileMask.h"
+#include <Utility/FileMask.h>
 #include "../Bootstrap/ActivationManager.h"
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 
@@ -38,9 +38,11 @@
 
 - (IBAction)OnOK:(id)sender
 {
-    if( !FileMask::IsWildCard(self.Info.mask.UTF8String) )
-        if(NSString *replace =  [NSString stringWithUTF8StdString:FileMask::ToExtensionWildCard(self.Info.mask.UTF8String)])
+    if( !nc::utility::FileMask::IsWildCard(self.Info.mask.UTF8String) ) {
+        auto ewc = nc::utility::FileMask::ToExtensionWildCard(self.Info.mask.UTF8String);
+        if(NSString *replace =  [NSString stringWithUTF8StdString:ewc])
             self.Info.mask = replace;
+    }
     
     [self endSheet:NSModalResponseOK];
 }

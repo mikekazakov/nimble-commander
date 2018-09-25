@@ -1,6 +1,6 @@
 // Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ExtensionLowercaseComparison.h>
-#include <NimbleCommander/Core/FileMask.h>
+#include <Utility/FileMask.h>
 #include "PanelDataSelection.h"
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
@@ -48,7 +48,7 @@ vector<bool> SelectionBuilder::SelectionByExtension(const string &_extension,
 vector<bool> SelectionBuilder::SelectionByMask(const string &_mask,
                                                  bool _result_selection ) const
 {
-    FileMask mask(_mask);
+    utility::FileMask mask(_mask);
     const auto count = m_Data.SortedEntriesCount();
     vector<bool> selection(count);
     const auto &listing = m_Data.Listing();

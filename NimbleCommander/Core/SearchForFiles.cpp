@@ -39,10 +39,10 @@ void SearchForFiles::SetFilterName(const FilterName &_filter)
         throw logic_error("Filters can't be changed during background search process");
     m_FilterName = _filter;
     // substitute simple requests, like "system" with "*system*":
-    if( !FileMask::IsWildCard(m_FilterName->mask) )
-        m_FilterName->mask = FileMask::ToFilenameWildCard(m_FilterName->mask);
+    if( !nc::utility::FileMask::IsWildCard(m_FilterName->mask) )
+        m_FilterName->mask = nc::utility::FileMask::ToFilenameWildCard(m_FilterName->mask);
     
-    m_FilterNameMask = FileMask(m_FilterName->mask);
+    m_FilterNameMask = nc::utility::FileMask(m_FilterName->mask);
 }
 
 void SearchForFiles::SetFilterContent(const FilterContent &_filter)

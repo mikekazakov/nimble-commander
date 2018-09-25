@@ -2,7 +2,7 @@
 #include "../../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <VFS/VFS.h>
 #include <Term/SingleTask.h>
-#include <NimbleCommander/Core/FileMask.h>
+#include <Utility/FileMask.h>
 #include <NimbleCommander/Core/rapidjson.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
@@ -253,7 +253,7 @@ bool ExternalEditorStartupInfo::IsValidForItem(const VFSListingItem&_item) const
         return false;
     
     if( m_Mask != "*" ) {
-        FileMask mask{ m_Mask };
+        nc::utility::FileMask mask{ m_Mask };
         if( !mask.MatchName(_item.Filename()) )
             return false;
     }

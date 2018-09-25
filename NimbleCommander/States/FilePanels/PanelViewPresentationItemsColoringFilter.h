@@ -3,14 +3,14 @@
 
 #include <VFS/VFS.h>
 #include <Habanero/tribool.h>
-#include "../../Core/FileMask.h"
+#include <Utility/FileMask.h>
 #include "PanelDataItemVolatileData.h"
 
 namespace nc::panel {
 
 struct PresentationItemsColoringFilter
 {
-    FileMask mask           = "";                 // based on VFSListingItem.NSDisplayName
+    utility::FileMask mask  = "";                 // based on VFSListingItem.NSDisplayName
     hbn::tribool executable = hbn::indeterminate; // based on unix exec flag
     hbn::tribool hidden     = hbn::indeterminate; // based on VFSListingItem.IsHidden
     hbn::tribool directory  = hbn::indeterminate; // based on VFSListingItem.IsDir

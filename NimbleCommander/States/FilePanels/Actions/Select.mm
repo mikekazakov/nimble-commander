@@ -1,6 +1,6 @@
 // Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Select.h"
-#include <NimbleCommander/Core/FileMask.h>
+#include <Utility/FileMask.h>
 #include "../Views/SelectionWithMaskPopupViewController.h"
 #include "../PanelDataSelection.h"
 #include "../PanelController.h"
@@ -62,8 +62,8 @@ void SelectAllByMask::Perform( PanelController *_target, id _sender ) const
     view.handler = [wp, this](NSString *_mask) {
         if( PanelController *panel = wp ) {
             string mask = _mask.fileSystemRepresentationSafe;
-            if( !FileMask::IsWildCard(mask) )
-                mask = FileMask::ToExtensionWildCard(mask);
+            if( !utility::FileMask::IsWildCard(mask) )
+                mask = utility::FileMask::ToExtensionWildCard(mask);
             
             auto selector = data::SelectionBuilder(panel.data,
                                                    panel.ignoreDirectoriesOnSelectionByMask);

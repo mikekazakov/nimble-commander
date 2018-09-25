@@ -231,10 +231,16 @@ static void HeatUpConfigValues()
         // loading config via simulating it's change
         [self configVFSFetchFlagsChanged];
         
-        m_QuickSearch = [[NCPanelQuickSearch alloc] initWithView:m_View
-                                                            data:m_Data
+        m_QuickSearch = [[NCPanelQuickSearch alloc] initWithData:m_Data
+                                                        delegate:self
                                                           config:GlobalConfig()];
-
+        __weak NCPanelQuickSearch *weak_qs = m_QuickSearch;
+        auto callback = [weak_qs](NSString *_request){
+            if( NCPanelQuickSearch *strong_qs = weak_qs  )
+                strong_qs.searchCriteria = _request;
+        };
+        m_View.headerView.searchRequestChangeCallback = move(callback);
+        
         [m_View addKeystrokeSink:self withBasePriority:view::BiddingPriority::Default];
         [m_View addKeystrokeSink:m_QuickSearch withBasePriority:view::BiddingPriority::High];
     }
@@ -1050,6 +1056,34 @@ loadPreviousState:(bool)_load_state
 - (nc::core::VFSInstanceManager&) vfsInstanceManager
 {
     return *m_VFSInstanceManager;
+}
+
+- (int) quickSearchNeedsCursorPosition:(NCPanelQuickSearch*)_qs
+{
+    return m_View.curpos;     
+}
+
+- (void) quickSearch:(NCPanelQuickSearch*)_qs wantsToSetCursorPosition:(int)_cursor_position
+{
+    m_View.curpos = _cursor_position;    
+}
+
+- (void) quickSearchHasChangedVolatileData:(NCPanelQuickSearch*)_qs
+{
+    [m_View volatileDataChanged];
+}
+
+- (void) quickSearchHasUpdatedData:(NCPanelQuickSearch*)_qs
+{
+    [m_View dataUpdated];    
+}
+
+- (void) quickSearch:(NCPanelQuickSearch*)_qs
+wantsToSetSearchPrompt:(NSString*)_prompt
+    withMatchesCount:(int)_count
+{    
+    m_View.headerView.searchPrompt = _prompt;
+    m_View.headerView.searchMatches = _count;
 }
 
 @end

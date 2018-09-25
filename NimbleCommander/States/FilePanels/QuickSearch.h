@@ -1,3 +1,4 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "PanelViewKeystrokeSink.h"
@@ -27,10 +28,25 @@ constexpr auto g_ConfigKeyOption        = "filePanel.quickSearch.keyOption";
 }
 }
 
+@class NCPanelQuickSearch;
+
+@protocol NCPanelQuickSearchDelegate<NSObject>
+@required
+
+- (int) quickSearchNeedsCursorPosition:(NCPanelQuickSearch*)_qs;
+- (void) quickSearch:(NCPanelQuickSearch*)_qs wantsToSetCursorPosition:(int)_cursor_position;
+- (void) quickSearchHasChangedVolatileData:(NCPanelQuickSearch*)_qs;
+- (void) quickSearchHasUpdatedData:(NCPanelQuickSearch*)_qs;
+- (void) quickSearch:(NCPanelQuickSearch*)_qs
+wantsToSetSearchPrompt:(NSString*)_prompt
+    withMatchesCount:(int)_count;
+
+@end
+
 @interface NCPanelQuickSearch : NSObject<NCPanelViewKeystrokeSink>
 
-- (instancetype)initWithView:(PanelView*)_view
-                        data:(nc::panel::data::Model&)_data
+- (instancetype)initWithData:(nc::panel::data::Model&)_data
+                    delegate:(NSObject<NCPanelQuickSearchDelegate>*)_delegate
                       config:(GenericConfig&)_config;
 
 - (void)setSearchCriteria:(NSString*)_request; // pass nil to discard filtering

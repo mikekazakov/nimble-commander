@@ -1,9 +1,8 @@
-#include <boost/container/static_vector.hpp>
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickSearch.h"
+#include <boost/container/static_vector.hpp>
 #include "PanelDataFilter.h"
 #include "PanelData.h"
-#include "PanelView.h"
-#include "PanelViewHeader.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "CursorBackup.h"
 
@@ -30,7 +29,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 @implementation NCPanelQuickSearch
 {
-    PanelView                              *m_View;
+    __weak NSObject<NCPanelQuickSearchDelegate>* m_Delegate;
     data::Model                            *m_Data;
     bool                                    m_IsSoftFiltering;
     bool                                    m_ShowTyping;
@@ -44,23 +43,16 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     
 }
 
-- (instancetype)initWithView:(PanelView*)_view
-                        data:(nc::panel::data::Model&)_data
+- (instancetype)initWithData:(nc::panel::data::Model&)_data
+                    delegate:(NSObject<NCPanelQuickSearchDelegate>*)_delegate
                       config:(GenericConfig&)_config
 {
     if( !(self = [super init]) )
         return nil;
-    m_View = _view;
+    m_Delegate = _delegate;
     m_Data = &_data;
     m_Config = &_config;
     
-    __weak NCPanelQuickSearch *weak_self = self;
-    auto callback = [weak_self](NSString *_request){
-        if( NCPanelQuickSearch *strong_self = weak_self  )
-            strong_self.searchCriteria = _request;
-    };
-    _view.headerView.searchRequestChangeCallback = move(callback);
-
     // wire up config changing notifications
     auto add_co = [&](const char *_path, SEL _sel) { m_ConfigObservers.
         emplace_back( m_Config->Observe(_path, objc_callback(self, _sel)) );
@@ -107,12 +99,12 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 - (void)discardFiltering
 {
-    const auto pers = CursorBackup{m_View.curpos, *m_Data};
+    const auto pers = CursorBackup{[m_Delegate quickSearchNeedsCursorPosition:self], *m_Data};
     const auto any_changed = m_Data->ClearTextFiltering();
     [self setPanelHeaderPrompt:nil withMatchesCount:0];
     if( any_changed ) {
-        [m_View dataUpdated];
-        m_View.curpos = pers.RestoredCursorPosition();
+        [m_Delegate quickSearchHasUpdatedData:self];
+        [m_Delegate quickSearch:self wantsToSetCursorPosition:pers.RestoredCursorPosition()];
     }
 }
 
@@ -220,23 +212,23 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     if( filtering.text.text == nil )
         return;
 
-    const auto pers = CursorBackup{m_View.curpos, *m_Data};
+    const auto pers = CursorBackup{[m_Delegate quickSearchNeedsCursorPosition:self], *m_Data};
 
     filtering.text.type = m_WhereToSearch;
     filtering.text.clear_on_new_listing = true;
     filtering.text.hightlight_results = m_ShowTyping;
     m_Data->SetHardFiltering(filtering);
 
-    m_View.curpos = pers.RestoredCursorPosition();
+    [m_Delegate quickSearch:self wantsToSetCursorPosition:pers.RestoredCursorPosition()];
 
-    [m_View dataUpdated];
+    [m_Delegate quickSearchHasUpdatedData:self];
     [self updateTypingUIForHardFiltering];
 
     // for convinience - if we have ".." and cursor is on it - move it to the first element after
-    if(m_View.curpos == 0 &&
+    if( [m_Delegate quickSearchNeedsCursorPosition:self] == 0 &&
        m_Data->SortedDirectoryEntries().size() >= 2 &&
        m_Data->EntryAtRawPosition(m_Data->SortedDirectoryEntries()[0]).IsDotDot() )
-        m_View.curpos = 1;
+        [m_Delegate quickSearch:self wantsToSetCursorPosition:1]; 
 }
 
 
@@ -264,13 +256,14 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     if( filtered_amount != 0 ) {
         if( m_SoftFilteringOffset >= filtered_amount )
             m_SoftFilteringOffset = filtered_amount - 1;
-        m_View.curpos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
+        const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
+        [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];
     }
     
     if( m_ShowTyping ) {
         [self setPanelHeaderPrompt:m_Data->SoftFiltering().text
                   withMatchesCount:filtered_amount];
-        [m_View volatileDataChanged];
+        [m_Delegate quickSearchHasChangedVolatileData:self];
     }
     
     [self scheduleSoftFilteringCleanup];
@@ -282,7 +275,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
     if( filtered_amount != 0 ) {
         m_SoftFilteringOffset = 0;
-        m_View.curpos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
+        const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset]; 
+        [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];
         m_SoftFilteringLastAction = machtime();
         [self scheduleSoftFilteringCleanup];
     }
@@ -293,7 +287,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
     if( filtered_amount != 0 ) {
         m_SoftFilteringOffset = filtered_amount - 1;
-        m_View.curpos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
+        const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset]; 
+        [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];        
         m_SoftFilteringLastAction = machtime();
         [self scheduleSoftFilteringCleanup];
     }
@@ -304,7 +299,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
     if( filtered_amount != 0 ) {
         m_SoftFilteringOffset = max( 0, m_SoftFilteringOffset - 1 );
-        m_View.curpos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
+        const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset]; 
+        [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];
         m_SoftFilteringLastAction = machtime();
         [self scheduleSoftFilteringCleanup];
     }
@@ -315,7 +311,8 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
     if( filtered_amount != 0 ) {
         m_SoftFilteringOffset = min( filtered_amount - 1, m_SoftFilteringOffset + 1 );
-        m_View.curpos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset];
+        const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset]; 
+        [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];
         m_SoftFilteringLastAction = machtime();
         [self scheduleSoftFilteringCleanup];
     }
@@ -353,8 +350,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 - (void) setPanelHeaderPrompt:(NSString*)_text withMatchesCount:(int)_count
 {
-    m_View.headerView.searchPrompt = _text;
-    m_View.headerView.searchMatches = _count;
+    [m_Delegate quickSearch:self wantsToSetSearchPrompt:_text withMatchesCount:_count];
 }
 
 @end

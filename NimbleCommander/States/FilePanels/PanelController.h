@@ -5,6 +5,7 @@
 
 #include "PanelViewDelegate.h"
 #include "PanelViewKeystrokeSink.h"
+#include "QuickSearch.h"
 #include <VFS/VFS.h>
 
 @class PanelController;
@@ -94,7 +95,9 @@ public:
 /**
  * PanelController is reponder to enable menu events processing
  */
-@interface PanelController : AttachedResponder<PanelViewDelegate, NCPanelViewKeystrokeSink>
+@interface PanelController : AttachedResponder<PanelViewDelegate,
+                                               NCPanelViewKeystrokeSink,
+                                               NCPanelQuickSearchDelegate>
 
 @property (nonatomic) MainWindowFilePanelState* state;
 @property (nonatomic, readonly) NCMainWindowController* mainWindowController;

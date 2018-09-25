@@ -11,9 +11,11 @@
 @property (nonatomic) NSFont *font;
 @end
 
-struct PanelViewPresentationItemsColoringRule;
+namespace nc::panel {
+    struct PresentationItemsColoringRule;
+}
 @interface PreferencesWindowThemesTabColoringRulesControl : NSControl<NSTextFieldDelegate>
-@property (nonatomic) vector<nc::panel::PanelViewPresentationItemsColoringRule> rules;
+@property (nonatomic) vector<nc::panel::PresentationItemsColoringRule> rules;
 @end
 
 @interface PreferencesWindowThemesAppearanceControl : NSControl

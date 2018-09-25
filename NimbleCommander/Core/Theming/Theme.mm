@@ -13,7 +13,7 @@ struct Theme::Internals
     ThemeAppearance m_ThemeAppearanceType;
     NSAppearance *m_Appearance;
 
-    vector<nc::panel::PanelViewPresentationItemsColoringRule> m_ColoringRules;
+    vector<nc::panel::PresentationItemsColoringRule> m_ColoringRules;
     NSColor *m_FilePanelsGeneralDropBorderColor;
     NSColor *m_FilePanelsGeneralOverlayColor;
     NSColor *m_FilePanelsGeneralSplitterColor;
@@ -135,7 +135,7 @@ Theme::Theme( const void *_theme_data, const void *_backup_theme_data ):
     if( cr->IsArray() )
         for( auto i = cr->Begin(), e = cr->End(); i != e; ++i ) {
             auto v = GenericConfig::ConfigValue( *i, rapidjson::g_CrtAllocator );
-            I->m_ColoringRules.emplace_back( nc::panel::PanelViewPresentationItemsColoringRule::FromJSON(v) );
+            I->m_ColoringRules.emplace_back( nc::panel::PresentationItemsColoringRule::FromJSON(v));
         }
     // always have a default ("others") non-filtering filter at the back
     I->m_ColoringRules.emplace_back();

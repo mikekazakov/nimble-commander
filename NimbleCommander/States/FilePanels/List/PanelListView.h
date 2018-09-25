@@ -5,12 +5,12 @@
 #include <VFSIcon/IconRepository.h>
 
 namespace nc::panel {
+struct PresentationItemsColoringRule;
 namespace data {
     class Model;
 }
 }
 
-struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 class PanelListViewGeometry;
 

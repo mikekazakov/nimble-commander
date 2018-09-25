@@ -6,7 +6,6 @@
 
 #include "Layout.h"
 
-struct PanelViewPresentationItemsColoringRule;
 @class PanelView;
 
 namespace nc::panel {

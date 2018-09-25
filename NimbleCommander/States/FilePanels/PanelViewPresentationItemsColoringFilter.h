@@ -9,7 +9,7 @@
 
 namespace nc::panel {
 
-struct PanelViewPresentationItemsColoringFilter
+struct PresentationItemsColoringFilter
 {
     // consider optimizing FileMask for trivial cases or write a different mech for extensions specifically,
     // since NSRegularExpression is too heavy mech for real-time(on draw) usage
@@ -41,23 +41,23 @@ struct PanelViewPresentationItemsColoringFilter
     /**
      * Persistance support - build filter from a dictionary.
      */
-    static PanelViewPresentationItemsColoringFilter FromJSON(const GenericConfig::ConfigValue& _v);
+    static PresentationItemsColoringFilter FromJSON(const GenericConfig::ConfigValue& _v);
     
-    bool operator==(const PanelViewPresentationItemsColoringFilter&_rhs) const noexcept;
-    bool operator!=(const PanelViewPresentationItemsColoringFilter&_rhs) const noexcept;
+    bool operator==(const PresentationItemsColoringFilter&_rhs) const noexcept;
+    bool operator!=(const PresentationItemsColoringFilter&_rhs) const noexcept;
 };
 
-struct PanelViewPresentationItemsColoringRule
+struct PresentationItemsColoringRule
 {
     string                                      name;
     NSColor                                     *regular = NSColor.blackColor; // all others state text color
     NSColor                                     *focused = NSColor.blackColor; // focused text color
-    PanelViewPresentationItemsColoringFilter    filter;
+    PresentationItemsColoringFilter             filter;
     
     GenericConfig::ConfigValue ToJSON() const;
-    static PanelViewPresentationItemsColoringRule FromJSON(const GenericConfig::ConfigValue& _v);
-    bool operator==(const PanelViewPresentationItemsColoringRule&_rhs) const noexcept;
-    bool operator!=(const PanelViewPresentationItemsColoringRule&_rhs) const noexcept;
+    static PresentationItemsColoringRule FromJSON(const GenericConfig::ConfigValue& _v);
+    bool operator==(const PresentationItemsColoringRule&_rhs) const noexcept;
+    bool operator!=(const PresentationItemsColoringRule&_rhs) const noexcept;
 };
 
 }

@@ -22,9 +22,9 @@ struct ThemePersistence
     static NSFont *ExtractFont( v _doc, const char *_path );
     static rapidjson::StandaloneValue EncodeFont( NSFont *_font );
     
-    static vector<nc::panel::PanelViewPresentationItemsColoringRule> ExtractRules( v _doc, const char *_path );
+    static vector<nc::panel::PresentationItemsColoringRule> ExtractRules( v _doc, const char *_path );
     static rapidjson::StandaloneValue EncodeRules(
-                                                  const vector<nc::panel::PanelViewPresentationItemsColoringRule> &_rules );
+                                                  const vector<nc::panel::PresentationItemsColoringRule> &_rules );
     
     static ThemeAppearance ExtractAppearance( v _doc, const char *_path  );
     static rapidjson::StandaloneValue EncodeAppearance(

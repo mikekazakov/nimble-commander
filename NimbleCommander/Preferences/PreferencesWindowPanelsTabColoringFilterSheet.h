@@ -4,10 +4,10 @@
 
 @interface PreferencesWindowPanelsTabColoringFilterSheet : SheetController
 
-- (id) initWithFilter:(nc::panel::PanelViewPresentationItemsColoringFilter)_filter;
+- (id) initWithFilter:(nc::panel::PresentationItemsColoringFilter)_filter;
 - (IBAction)OnOK:(id)sender;
 
-@property (nonatomic, readonly) nc::panel::PanelViewPresentationItemsColoringFilter filter;
+@property (nonatomic, readonly) nc::panel::PresentationItemsColoringFilter filter;
 @property (nonatomic) IBOutlet NSButton *executable;
 @property (nonatomic) IBOutlet NSButton *hidden;
 @property (nonatomic) IBOutlet NSButton *directory;

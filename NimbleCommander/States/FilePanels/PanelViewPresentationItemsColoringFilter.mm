@@ -33,7 +33,7 @@ static NSColor *ColorFromJSON(const GenericConfig::ConfigValue& _v)
     return [NSColor colorWithHexStdString:_v.IsString() ? _v.GetString() : ""];
 }
 
-bool PanelViewPresentationItemsColoringFilter::IsEmpty() const
+bool PresentationItemsColoringFilter::IsEmpty() const
 {
     return
         mask.IsEmpty() &&
@@ -45,7 +45,7 @@ bool PanelViewPresentationItemsColoringFilter::IsEmpty() const
         indeterminate(selected);
 }
 
-bool PanelViewPresentationItemsColoringFilter::Filter(const VFSListingItem& _item, const nc::panel::data::ItemVolatileData &_item_vd) const
+bool PresentationItemsColoringFilter::Filter(const VFSListingItem& _item, const nc::panel::data::ItemVolatileData &_item_vd) const
 {
     if( !mask.IsEmpty() &&
         !mask.MatchName(_item.DisplayName()) )
@@ -79,7 +79,7 @@ bool PanelViewPresentationItemsColoringFilter::Filter(const VFSListingItem& _ite
 }
 
 
-GenericConfig::ConfigValue PanelViewPresentationItemsColoringFilter::ToJSON() const
+GenericConfig::ConfigValue PresentationItemsColoringFilter::ToJSON() const
 {
     GenericConfig::ConfigValue v( rapidjson::kObjectType );
     if( !mask.Mask().empty() )
@@ -99,9 +99,9 @@ GenericConfig::ConfigValue PanelViewPresentationItemsColoringFilter::ToJSON() co
     return v;
 }
 
-PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilter::FromJSON(const GenericConfig::ConfigValue& _v)
+PresentationItemsColoringFilter PresentationItemsColoringFilter::FromJSON(const GenericConfig::ConfigValue& _v)
 {
-    PanelViewPresentationItemsColoringFilter f;
+    PresentationItemsColoringFilter f;
 
     if( _v.GetType() != rapidjson::kObjectType )
         return f;
@@ -121,8 +121,8 @@ PanelViewPresentationItemsColoringFilter PanelViewPresentationItemsColoringFilte
     return f;
 }
 
-bool PanelViewPresentationItemsColoringFilter::operator==
-    (const PanelViewPresentationItemsColoringFilter&_rhs) const noexcept
+bool PresentationItemsColoringFilter::operator==
+    (const PresentationItemsColoringFilter&_rhs) const noexcept
 {
     return
     mask == _rhs.mask &&
@@ -134,13 +134,13 @@ bool PanelViewPresentationItemsColoringFilter::operator==
     selected.value == _rhs.selected.value;
 }
 
-bool PanelViewPresentationItemsColoringFilter::operator!=
-    (const PanelViewPresentationItemsColoringFilter&_rhs) const noexcept
+bool PresentationItemsColoringFilter::operator!=
+    (const PresentationItemsColoringFilter&_rhs) const noexcept
 {
     return !(*this == _rhs);
 }
 
-GenericConfig::ConfigValue PanelViewPresentationItemsColoringRule::ToJSON() const
+GenericConfig::ConfigValue PresentationItemsColoringRule::ToJSON() const
 {
     GenericConfig::ConfigValue v( rapidjson::kObjectType );
     v.AddMember("name", GenericConfig::ConfigValue(name.c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
@@ -152,14 +152,14 @@ GenericConfig::ConfigValue PanelViewPresentationItemsColoringRule::ToJSON() cons
     return v;
 }
 
-PanelViewPresentationItemsColoringRule PanelViewPresentationItemsColoringRule::FromJSON(const GenericConfig::ConfigValue& _v)
+PresentationItemsColoringRule PresentationItemsColoringRule::FromJSON(const GenericConfig::ConfigValue& _v)
 {
-    PanelViewPresentationItemsColoringRule f;
+    PresentationItemsColoringRule f;
     
     if( _v.GetType() != rapidjson::kObjectType )
         return f;
     
-    if( _v.HasMember("filter") ) f.filter = PanelViewPresentationItemsColoringFilter::FromJSON( _v["filter"] );
+    if( _v.HasMember("filter") ) f.filter = PresentationItemsColoringFilter::FromJSON( _v["filter"] );
     if( _v.HasMember("name") && _v["name"].IsString() ) f.name = _v["name"].GetString();
     if( _v.HasMember("regular") ) f.regular = ColorFromJSON( _v["regular"] );
     if( _v.HasMember("focused") ) f.focused = ColorFromJSON( _v["focused"] );
@@ -167,8 +167,8 @@ PanelViewPresentationItemsColoringRule PanelViewPresentationItemsColoringRule::F
     return f;
 }
 
-bool PanelViewPresentationItemsColoringRule::operator==
-    (const PanelViewPresentationItemsColoringRule&_rhs) const noexcept
+bool PresentationItemsColoringRule::operator==
+    (const PresentationItemsColoringRule&_rhs) const noexcept
 {
     return name == _rhs.name &&
         regular == _rhs.regular &&
@@ -176,8 +176,8 @@ bool PanelViewPresentationItemsColoringRule::operator==
         filter == _rhs.filter;
 }
 
-bool PanelViewPresentationItemsColoringRule::operator!=
-    (const PanelViewPresentationItemsColoringRule&_rhs) const noexcept
+bool PresentationItemsColoringRule::operator!=
+    (const PresentationItemsColoringRule&_rhs) const noexcept
 {
     return !(*this == _rhs);
 }

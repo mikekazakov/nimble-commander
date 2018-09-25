@@ -26,11 +26,11 @@ static tribool state_to_tribool(NSCellStateValue _val)
 
 @implementation PreferencesWindowPanelsTabColoringFilterSheet
 {
-    nc::panel::PanelViewPresentationItemsColoringFilter m_Filter;
+    nc::panel::PresentationItemsColoringFilter m_Filter;
     
 }
 
-- (id) initWithFilter:(nc::panel::PanelViewPresentationItemsColoringFilter)_filter
+- (id) initWithFilter:(nc::panel::PresentationItemsColoringFilter)_filter
 {
     self = [super init];
     if(self) {
@@ -74,7 +74,7 @@ static tribool state_to_tribool(NSCellStateValue _val)
     [self endSheet:NSModalResponseOK];
 }
 
-- (nc::panel::PanelViewPresentationItemsColoringFilter) filter
+- (nc::panel::PresentationItemsColoringFilter) filter
 {
     return m_Filter;
 }

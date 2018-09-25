@@ -4,7 +4,7 @@
 class Theme;
 class ThemesManager;
 namespace nc::panel {
-    struct PanelViewPresentationItemsColoringRule;
+    struct PresentationItemsColoringRule;
 }
 
 enum class ThemeAppearance : int8_t
@@ -39,7 +39,7 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////
     
     // File Panels --> General appearance //////////////////////////////////////////////////////////
-    using ColoringRule = nc::panel::PanelViewPresentationItemsColoringRule;
+    using ColoringRule = nc::panel::PresentationItemsColoringRule;
     const vector<ColoringRule>& FilePanelsItemsColoringRules() const noexcept;
     NSColor *FilePanelsGeneralDropBorderColor() const noexcept;
     NSColor *FilePanelsGeneralOverlayColor() const noexcept;

@@ -5,7 +5,6 @@
 #include "PanelDataItemVolatileData.h"
 #include "PanelView.h"
 #include "QuickSearch.h"
-#include "PanelViewLayoutSupport.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 
 using namespace nc::panel;

@@ -107,16 +107,12 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 
 - (void)discardFiltering
 {
-    CursorBackup pers(m_View, *m_Data);
+    const auto pers = CursorBackup{m_View.curpos, *m_Data};
     const auto any_changed = m_Data->ClearTextFiltering();
     [self setPanelHeaderPrompt:nil withMatchesCount:0];
-    
     if( any_changed ) {
         [m_View dataUpdated];
-        if( pers.IsValid() )
-            pers.Restore();
-        else
-            m_View.curpos = m_Data->SortedEntriesCount() > 0 ? 0 : -1;
+        m_View.curpos = pers.RestoredCursorPosition();
     }
 }
 
@@ -224,14 +220,14 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     if( filtering.text.text == nil )
         return;
 
-    CursorBackup pers(m_View, *m_Data);
+    const auto pers = CursorBackup{m_View.curpos, *m_Data};
 
     filtering.text.type = m_WhereToSearch;
     filtering.text.clear_on_new_listing = true;
     filtering.text.hightlight_results = m_ShowTyping;
     m_Data->SetHardFiltering(filtering);
 
-    pers.Restore();
+    m_View.curpos = pers.RestoredCursorPosition();
 
     [m_View dataUpdated];
     [self updateTypingUIForHardFiltering];

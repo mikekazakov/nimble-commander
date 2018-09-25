@@ -319,11 +319,11 @@ static void HeatUpConfigValues()
 - (void) changeSortingModeTo:(data::SortMode)_mode
 {
     if( _mode != m_Data.SortMode() ) {
-        CursorBackup pers(m_View, m_Data);
+        const auto pers = CursorBackup{m_View.curpos, m_Data};
         
         m_Data.SetSortMode(_mode);
         
-        pers.Restore();
+        m_View.curpos = pers.RestoredCursorPosition();
         
         [m_View dataSortingHasChanged];
         [m_View dataUpdated];
@@ -334,11 +334,11 @@ static void HeatUpConfigValues()
 - (void) changeHardFilteringTo:(data::HardFilter)_filter
 {
     if( _filter != m_Data.HardFiltering() ) {
-        CursorBackup pers(m_View, m_Data);
+        const auto pers = CursorBackup{m_View.curpos, m_Data};
         
         m_Data.SetHardFiltering(_filter);
         
-        pers.Restore();
+        m_View.curpos = pers.RestoredCursorPosition();
         [m_View dataUpdated];
         [self markRestorableStateAsInvalid];
     }
@@ -348,13 +348,13 @@ static void HeatUpConfigValues()
 {
     assert(dispatch_is_main_queue());
     
-    CursorBackup pers(m_View, m_Data);
+    const auto pers = CursorBackup{m_View.curpos, m_Data};
     
     m_Data.ReLoad(_ptr);
     [m_View dataUpdated];
     
     if(![self checkAgainstRequestedFocusing])
-        pers.Restore();
+        m_View.curpos = pers.RestoredCursorPosition();
     
     [self onCursorChanged];
 //    [self QuickSearchUpdate]; // ??????????
@@ -469,7 +469,7 @@ static void HeatUpConfigValues()
                 return;
                 
             dispatch_to_main_queue([=]{
-                CursorBackup pers(m_View, m_Data);
+                const auto pers = CursorBackup{m_View.curpos, m_Data};
                 // may cause re-sorting if current sorting is by size
                 const auto changed = m_Data.SetCalculatedSizeForDirectory(i.FilenameC(),
                                                                           i.Directory().c_str(),
@@ -477,7 +477,7 @@ static void HeatUpConfigValues()
                 if( changed ) {
                     [m_View dataUpdated];
                     [m_View volatileDataChanged];
-                    pers.Restore();
+                    m_View.curpos = pers.RestoredCursorPosition();
                 }
             });
         }
@@ -707,13 +707,13 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     assert(dispatch_is_main_queue());    
     assert( _workload );
     
-    CursorBackup pers(m_View, m_Data);
+    const auto pers = CursorBackup{m_View.curpos, m_Data};
     
     _workload(m_Data);
     
     [m_View dataUpdated];
     [m_View dataSortingHasChanged];
-    pers.Restore();
+    m_View.curpos = pers.RestoredCursorPosition();
 }
 
 - (ActivityTicket) registerExtActivity

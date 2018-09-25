@@ -1181,6 +1181,7 @@
 		CFDAC3001DFD1D7C0039A104 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */; };
 		CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
+		CFDC07B72158F6430069D364 /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; };
 		CFDEB8281D2BB7F0009BCCBD /* ExternalToolsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */; };
 		CFDEB8291D2BB7F1009BCCBD /* ExternalToolsSupport.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF0939381D11986D00D67AC6 /* ExternalToolsSupport.mm */; };
 		CFDF44A01D2B990A0062F7AD /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CFDF449F1D2B990A0062F7AD /* Media.xcassets */; };
@@ -2194,6 +2195,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFDC07B72158F6430069D364 /* libVFSIcon.dylib in Frameworks */,
 				CF36DBED1F6C184D004A018E /* Sparkle.framework in Frameworks */,
 				CFFA95121F45A2EB0035E606 /* Operations.framework in Frameworks */,
 				CF90C02C1EBB04960056E3B8 /* LetsMove.framework in Frameworks */,

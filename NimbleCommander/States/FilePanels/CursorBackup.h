@@ -1,8 +1,7 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "PanelDataExternalEntryKey.h"
-
-@class PanelView;
 
 namespace nc::panel {
 
@@ -13,11 +12,11 @@ class Model;
 class CursorBackup
 {
 public:
-    CursorBackup(PanelView* _view, const data::Model &_data);
-    void Restore() const;
-    bool IsValid() const noexcept;
+    CursorBackup(int _current_cursor_pos, const data::Model &_data);
+
+    int RestoredCursorPosition() const;
 private:
-    PanelView                  *m_View;
+    int                         m_OldCursorPosition;
     const data::Model          &m_Data;
     string                      m_OldCursorName;
     data::ExternalEntryKey      m_OldEntrySortKeys;

@@ -1,5 +1,5 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilterPersistence.h>
 #include "ThemePersistence.h"
 #include "Theme.h"
 
@@ -135,7 +135,8 @@ Theme::Theme( const void *_theme_data, const void *_backup_theme_data ):
     if( cr->IsArray() )
         for( auto i = cr->Begin(), e = cr->End(); i != e; ++i ) {
             auto v = GenericConfig::ConfigValue( *i, rapidjson::g_CrtAllocator );
-            I->m_ColoringRules.emplace_back( nc::panel::PresentationItemsColoringRule::FromJSON(v));
+            auto rule = nc::panel::PresentationItemsColoringRulePersistence{}.FromJSON(v);
+            I->m_ColoringRules.emplace_back( std::move(rule) );
         }
     // always have a default ("others") non-filtering filter at the back
     I->m_ColoringRules.emplace_back();

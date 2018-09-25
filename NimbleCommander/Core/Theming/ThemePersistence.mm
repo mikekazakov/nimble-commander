@@ -2,6 +2,7 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
 #include "ThemePersistence.h"
+#include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilterPersistence.h>
 
 NSColor *ThemePersistence::ExtractColor( v _doc, const char *_path)
 {
@@ -35,7 +36,7 @@ vector<nc::panel::PresentationItemsColoringRule> ThemePersistence::
     if( cr->IsArray() )
         for( auto i = cr->Begin(), e = cr->End(); i != e; ++i ) {
             auto v = GenericConfig::ConfigValue( *i, rapidjson::g_CrtAllocator );
-            r.emplace_back( nc::panel::PresentationItemsColoringRule::FromJSON(v) );
+            r.emplace_back( nc::panel::PresentationItemsColoringRulePersistence{}.FromJSON(v) );
         }
     return r;
 }
@@ -58,7 +59,8 @@ rapidjson::StandaloneValue ThemePersistence::EncodeRules
     rapidjson::StandaloneValue cr(rapidjson::kArrayType);
     cr.Reserve((unsigned)_rules.size(), rapidjson::g_CrtAllocator);
     for( const auto &r: _rules )
-        cr.PushBack( r.ToJSON(), rapidjson::g_CrtAllocator );
+        cr.PushBack(nc::panel::PresentationItemsColoringRulePersistence{}.ToJSON(r),
+                    rapidjson::g_CrtAllocator );
     return cr;
 }
 

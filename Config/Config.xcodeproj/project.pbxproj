@@ -1,0 +1,356 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CF20CC0C215A2666006716F6 /* Config.h in Headers */ = {isa = PBXBuildFile; fileRef = CF20CC0B215A2666006716F6 /* Config.h */; };
+		CF20CC0E215A267B006716F6 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC0D215A267B006716F6 /* Config.cpp */; };
+		CF20CC14215B524C006716F6 /* RapidJSON_fwd.h in Headers */ = {isa = PBXBuildFile; fileRef = CF20CC12215B524C006716F6 /* RapidJSON_fwd.h */; };
+		CF20CC15215B524C006716F6 /* RapidJSON.h in Headers */ = {isa = PBXBuildFile; fileRef = CF20CC13215B524C006716F6 /* RapidJSON.h */; };
+		CF20CC17215B5253006716F6 /* RapidJSON.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC16215B5253006716F6 /* RapidJSON.cpp */; };
+		CF20CC19215B9B1A006716F6 /* ConfigImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF20CC18215B9B1A006716F6 /* ConfigImpl.h */; };
+		CF20CC1B215B9B45006716F6 /* ConfigImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC1A215B9B45006716F6 /* ConfigImpl.cpp */; };
+		CF20CC29215BB15A006716F6 /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CBDC215A2526006716F6 /* libConfig.dylib */; };
+		CF20CC2D215BB19C006716F6 /* ConfigImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC2A215BB19C006716F6 /* ConfigImpl_UT.cpp */; };
+		CF20CC2E215BB19C006716F6 /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC2B215BB19C006716F6 /* Tests.cpp */; };
+		CF20CC31215BBEF8006716F6 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC2F215BBEB0006716F6 /* libHabanero.dylib */; };
+		CF2E7A21215CB5400002E46C /* OverwritesStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2E7A20215CB5400002E46C /* OverwritesStorage.h */; };
+		CF2E7A23215CB5470002E46C /* OverwritesStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A22215CB5470002E46C /* OverwritesStorage.cpp */; };
+		CF2E7A25215CBFC60002E46C /* NonPersistentOverwritesStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2E7A24215CBFC60002E46C /* NonPersistentOverwritesStorage.h */; };
+		CF2E7A27215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A26215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CF20CC1E215BB0CE006716F6 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		CF20CBDC215A2526006716F6 /* libConfig.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libConfig.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF20CC0B215A2666006716F6 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = include/Config/Config.h; sourceTree = "<group>"; };
+		CF20CC0D215A267B006716F6 /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Config.cpp; path = source/Config.cpp; sourceTree = "<group>"; };
+		CF20CC0F215A2701006716F6 /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
+		CF20CC10215A2701006716F6 /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
+		CF20CC11215A2701006716F6 /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
+		CF20CC12215B524C006716F6 /* RapidJSON_fwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RapidJSON_fwd.h; path = include/Config/RapidJSON_fwd.h; sourceTree = "<group>"; };
+		CF20CC13215B524C006716F6 /* RapidJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RapidJSON.h; path = include/Config/RapidJSON.h; sourceTree = "<group>"; };
+		CF20CC16215B5253006716F6 /* RapidJSON.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RapidJSON.cpp; path = source/RapidJSON.cpp; sourceTree = "<group>"; };
+		CF20CC18215B9B1A006716F6 /* ConfigImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConfigImpl.h; path = include/Config/ConfigImpl.h; sourceTree = "<group>"; };
+		CF20CC1A215B9B45006716F6 /* ConfigImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConfigImpl.cpp; path = source/ConfigImpl.cpp; sourceTree = "<group>"; };
+		CF20CC20215BB0CE006716F6 /* libConfigUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libConfigUT; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF20CC27215BB10A006716F6 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
+		CF20CC2A215BB19C006716F6 /* ConfigImpl_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConfigImpl_UT.cpp; path = tests/ConfigImpl_UT.cpp; sourceTree = "<group>"; };
+		CF20CC2B215BB19C006716F6 /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
+		CF20CC2C215BB19C006716F6 /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
+		CF20CC2F215BBEB0006716F6 /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF2E7A20215CB5400002E46C /* OverwritesStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OverwritesStorage.h; path = include/Config/OverwritesStorage.h; sourceTree = "<group>"; };
+		CF2E7A22215CB5470002E46C /* OverwritesStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OverwritesStorage.cpp; path = source/OverwritesStorage.cpp; sourceTree = "<group>"; };
+		CF2E7A24215CBFC60002E46C /* NonPersistentOverwritesStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NonPersistentOverwritesStorage.h; path = include/Config/NonPersistentOverwritesStorage.h; sourceTree = "<group>"; };
+		CF2E7A26215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NonPersistentOverwritesStorage.cpp; path = source/NonPersistentOverwritesStorage.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CF20CBDA215A2526006716F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF20CC31215BBEF8006716F6 /* libHabanero.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF20CC1D215BB0CE006716F6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF20CC29215BB15A006716F6 /* libConfig.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CF20CBD3215A2525006716F6 = {
+			isa = PBXGroup;
+			children = (
+				CF20CC07215A259C006716F6 /* Config */,
+				CF20CC08215A25A6006716F6 /* Headers */,
+				CF20CC09215A25AB006716F6 /* Source */,
+				CF20CC0A215A25B2006716F6 /* Tests */,
+				CF20CBDD215A2526006716F6 /* Products */,
+				CF20CC28215BB15A006716F6 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CF20CBDD215A2526006716F6 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CF20CBDC215A2526006716F6 /* libConfig.dylib */,
+				CF20CC20215BB0CE006716F6 /* libConfigUT */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CF20CC07215A259C006716F6 /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CF20CC27215BB10A006716F6 /* tests.xcconfig */,
+				CF20CC10215A2701006716F6 /* debug.xcconfig */,
+				CF20CC0F215A2701006716F6 /* default.xcconfig */,
+				CF20CC11215A2701006716F6 /* release.xcconfig */,
+			);
+			name = Config;
+			sourceTree = "<group>";
+		};
+		CF20CC08215A25A6006716F6 /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				CF20CC0B215A2666006716F6 /* Config.h */,
+				CF20CC18215B9B1A006716F6 /* ConfigImpl.h */,
+				CF2E7A24215CBFC60002E46C /* NonPersistentOverwritesStorage.h */,
+				CF2E7A20215CB5400002E46C /* OverwritesStorage.h */,
+				CF20CC12215B524C006716F6 /* RapidJSON_fwd.h */,
+				CF20CC13215B524C006716F6 /* RapidJSON.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		CF20CC09215A25AB006716F6 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				CF2E7A26215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp */,
+				CF2E7A22215CB5470002E46C /* OverwritesStorage.cpp */,
+				CF20CC0D215A267B006716F6 /* Config.cpp */,
+				CF20CC1A215B9B45006716F6 /* ConfigImpl.cpp */,
+				CF20CC16215B5253006716F6 /* RapidJSON.cpp */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		CF20CC0A215A25B2006716F6 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				CF20CC2A215BB19C006716F6 /* ConfigImpl_UT.cpp */,
+				CF20CC2B215BB19C006716F6 /* Tests.cpp */,
+				CF20CC2C215BB19C006716F6 /* Tests.h */,
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
+		CF20CC28215BB15A006716F6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CF20CC2F215BBEB0006716F6 /* libHabanero.dylib */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CF20CBD8215A2526006716F6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF20CC15215B524C006716F6 /* RapidJSON.h in Headers */,
+				CF2E7A21215CB5400002E46C /* OverwritesStorage.h in Headers */,
+				CF2E7A25215CBFC60002E46C /* NonPersistentOverwritesStorage.h in Headers */,
+				CF20CC0C215A2666006716F6 /* Config.h in Headers */,
+				CF20CC19215B9B1A006716F6 /* ConfigImpl.h in Headers */,
+				CF20CC14215B524C006716F6 /* RapidJSON_fwd.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CF20CBDB215A2526006716F6 /* Config */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF20CBE5215A2526006716F6 /* Build configuration list for PBXNativeTarget "Config" */;
+			buildPhases = (
+				CF20CBD8215A2526006716F6 /* Headers */,
+				CF20CBD9215A2526006716F6 /* Sources */,
+				CF20CBDA215A2526006716F6 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Config;
+			productName = Config;
+			productReference = CF20CBDC215A2526006716F6 /* libConfig.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		CF20CC1F215BB0CE006716F6 /* ConfigUT */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF20CC24215BB0CE006716F6 /* Build configuration list for PBXNativeTarget "ConfigUT" */;
+			buildPhases = (
+				CF20CC1C215BB0CE006716F6 /* Sources */,
+				CF20CC1D215BB0CE006716F6 /* Frameworks */,
+				CF20CC1E215BB0CE006716F6 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ConfigUT;
+			productName = ConfigUT;
+			productReference = CF20CC20215BB0CE006716F6 /* libConfigUT */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CF20CBD4215A2525006716F6 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = "Magnum Bytes";
+				TargetAttributes = {
+					CF20CBDB215A2526006716F6 = {
+						CreatedOnToolsVersion = 10.0;
+					};
+					CF20CC1F215BB0CE006716F6 = {
+						CreatedOnToolsVersion = 10.0;
+					};
+				};
+			};
+			buildConfigurationList = CF20CBD7215A2525006716F6 /* Build configuration list for PBXProject "Config" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = CF20CBD3215A2525006716F6;
+			productRefGroup = CF20CBDD215A2526006716F6 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CF20CBDB215A2526006716F6 /* Config */,
+				CF20CC1F215BB0CE006716F6 /* ConfigUT */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CF20CBD9215A2526006716F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF2E7A27215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp in Sources */,
+				CF20CC17215B5253006716F6 /* RapidJSON.cpp in Sources */,
+				CF2E7A23215CB5470002E46C /* OverwritesStorage.cpp in Sources */,
+				CF20CC0E215A267B006716F6 /* Config.cpp in Sources */,
+				CF20CC1B215B9B45006716F6 /* ConfigImpl.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CF20CC1C215BB0CE006716F6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF20CC2D215BB19C006716F6 /* ConfigImpl_UT.cpp in Sources */,
+				CF20CC2E215BB19C006716F6 /* Tests.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		CF20CBE3215A2526006716F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF20CC10215A2701006716F6 /* debug.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		CF20CBE4215A2526006716F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF20CC11215A2701006716F6 /* release.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		CF20CBE6215A2526006716F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		CF20CBE7215A2526006716F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		CF20CC25215BB0CE006716F6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF20CC27215BB10A006716F6 /* tests.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		CF20CC26215BB0CE006716F6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF20CC27215BB10A006716F6 /* tests.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CF20CBD7215A2525006716F6 /* Build configuration list for PBXProject "Config" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF20CBE3215A2526006716F6 /* Debug */,
+				CF20CBE4215A2526006716F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF20CBE5215A2526006716F6 /* Build configuration list for PBXNativeTarget "Config" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF20CBE6215A2526006716F6 /* Debug */,
+				CF20CBE7215A2526006716F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CF20CC24215BB0CE006716F6 /* Build configuration list for PBXNativeTarget "ConfigUT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CF20CC25215BB0CE006716F6 /* Debug */,
+				CF20CC26215BB0CE006716F6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CF20CBD4215A2525006716F6 /* Project object */;
+}

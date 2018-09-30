@@ -1,0 +1,561 @@
+#include "ConfigImpl.h"
+#include <rapidjson/error/en.h>
+
+namespace nc::config {
+
+static rapidjson::Document ParseDefaultsOrThrow(std::string_view _default_document);
+static rapidjson::Document ParseOverwritesOrReturnNull(std::string_view _overwrites_document);
+    
+static const rapidjson::Value *
+    FindNode(std::string_view _path, const rapidjson::Value &_root) noexcept;
+static std::pair<const rapidjson::Value *, std::string_view>
+    FindParentNode(std::string_view _path, const rapidjson::Value &_root) noexcept;
+static std::pair<rapidjson::Document, std::vector<std::string>>
+    MergeDocuments( const rapidjson::Document &_main, const rapidjson::Document &_overwrites );
+    
+static const auto g_ParseFlags = rapidjson::kParseCommentsFlag;
+
+ConfigImpl::ConfigImpl(std::string_view _default_document,
+                       std::shared_ptr<OverwritesStorage> _storage):
+    m_OverwritesStorage(_storage)
+{
+    static_assert( sizeof(Observer) == 128 );
+    static_assert( sizeof(Observers) == 32 );
+    assert(_storage);
+    
+    
+    if( _storage == nullptr )
+        throw std::invalid_argument("ConfigImpl::ConfigImpl: overwrites storage can't be nullptr");
+    
+    const auto defaults = ParseDefaultsOrThrow(_default_document);
+    m_Defaults.CopyFrom(defaults, m_Defaults.GetAllocator());
+
+    m_Document.CopyFrom(defaults, m_Document.GetAllocator());
+    
+    if( auto overwrites_text = m_OverwritesStorage->Read() ) {
+        auto overwrites_document = ParseOverwritesOrReturnNull(*overwrites_text);
+        if( overwrites_document.GetType() != rapidjson::Type::kNullType ) {
+            auto [new_doc, changes] = MergeDocuments(m_Document, overwrites_document);
+            std::swap( m_Document, new_doc );
+        }
+    }
+}
+    
+ConfigImpl::~ConfigImpl()
+{
+}
+    
+bool ConfigImpl::Has(std::string_view _path) const
+{
+    const auto lock = std::lock_guard{m_DocumentLock};
+    return FindInDocument_Unlocked(_path) != nullptr;
+}
+    
+const rapidjson::Value *ConfigImpl::FindInDocument_Unlocked(std::string_view _path) const
+{
+    return FindNode(_path, m_Document);
+}
+    
+const rapidjson::Value *ConfigImpl::FindInDefaults_Unlocked(std::string_view _path) const
+{
+    return FindNode(_path, m_Defaults);        
+}
+    
+Value ConfigImpl::Get(std::string_view _path) const
+{
+    const auto lock = std::lock_guard{m_DocumentLock};
+    if( const auto value = FindInDocument_Unlocked(_path) )
+        return Value{*value, g_CrtAllocator};
+    return Value{rapidjson::kNullType};
+}
+    
+Value ConfigImpl::GetDefault(std::string_view _path) const
+{        
+    return Value{rapidjson::kNullType};
+}    
+
+std::string ConfigImpl::GetString(std::string_view _path) const
+{
+    const auto lock = std::lock_guard{m_DocumentLock};
+    if( const auto value = FindInDocument_Unlocked(_path) )
+        if( value->GetType() == rapidjson::kStringType )
+            return std::string{value->GetString(), value->GetStringLength()};
+    return {};
+}
+    
+bool ConfigImpl::GetBool(std::string_view _path) const
+{        
+    const auto lock = std::lock_guard{m_DocumentLock};
+    if( const auto value = FindInDocument_Unlocked(_path) )
+        return value->GetType() == rapidjson::kTrueType;
+    return false;
+}
+
+int ConfigImpl::GetInt(std::string_view _path) const
+{        
+    const auto lock = std::lock_guard{m_DocumentLock};
+    if( const auto value = FindInDocument_Unlocked(_path) ) {
+        if( value->GetType() == rapidjson::kNumberType ) {
+            if( value->IsInt() )            return value->GetInt();
+            else if( value->IsUint() )      return (int)value->GetUint();
+            else if( value->IsInt64() )     return (int)value->GetInt64();
+            else if( value->IsUint64() )    return (int)value->GetUint64();
+            else if( value->IsDouble() )    return (int)value->GetDouble();
+        }
+    }
+    return 0;
+}
+
+void ConfigImpl::Set(std::string_view _path, const Value &_value)
+{
+    SetInternal(_path, _value);
+}
+    
+void ConfigImpl::Set(std::string_view _path, int _value)
+{   
+    SetInternal(_path, Value(_value));
+}
+    
+void ConfigImpl::Set(std::string_view _path, unsigned int _value)
+{
+    SetInternal(_path, Value(_value));
+}
+    
+void ConfigImpl::Set(std::string_view _path, long _value)
+{
+    SetInternal(_path, Value((int64_t)_value));
+}
+    
+void ConfigImpl::Set(std::string_view _path, unsigned long _value)
+{
+    SetInternal(_path, Value((uint64_t)_value));
+}
+    
+void ConfigImpl::Set(std::string_view _path, double _value)
+{
+    SetInternal(_path, Value(_value));
+}
+    
+void ConfigImpl::Set(std::string_view _path, bool _value)
+{
+    SetInternal(_path, Value(_value));
+}
+ 
+void ConfigImpl::Set(std::string_view _path, const char *_value)
+{
+    if( _value == nullptr )
+        return;
+    Set(_path, std::string_view{_value});
+}
+    
+void ConfigImpl::Set(std::string_view _path, std::string_view _value)
+{
+    SetInternal(_path, Value(_value.data(), (unsigned)_value.length(), g_CrtAllocator));
+}
+    
+void ConfigImpl::SetInternal(std::string_view _path, const Value &_value)
+{
+    if( ReplaceOrInsert(_path, _value) == true ) {
+        FireObservers(_path);
+        //    MarkDirty();
+    }
+}
+
+bool ConfigImpl::ReplaceOrInsert(std::string_view _path, const Value &_value)
+{
+    const auto lock = std::lock_guard{m_DocumentLock};
+    
+    const auto [const_node, path_left] = FindParentNode(_path, m_Document);
+    if( const_node == nullptr || path_left.empty() )
+        return false;
+    
+    const auto node = const_cast<rapidjson::Value *>(const_node);
+    const auto leaf_name = rapidjson::Value{
+        rapidjson::StringRef(path_left.data(), path_left.length()) };
+    
+    if( const auto member_it = node->FindMember(leaf_name); member_it != node->MemberEnd() ) {
+        if( member_it->value == _value )
+            return false;
+        
+        member_it->value.CopyFrom( _value, m_Document.GetAllocator() );
+    }
+    else {
+        auto key = rapidjson::Value{path_left.data(),
+                                    (unsigned)path_left.length(),
+                                    m_Document.GetAllocator() };                        
+        auto value = rapidjson::Value{_value,
+                                      m_Document.GetAllocator() };
+        node->AddMember( key, value, m_Document.GetAllocator() );
+    }
+    return true;
+}
+  
+Token ConfigImpl::Observe(std::string_view _path, std::function<void()> _on_change)
+{
+    if( !_on_change || _path.empty() )
+        return CreateToken(0);
+    
+    const auto token = m_ObservationToken++;
+    auto observer = hbn::intrusive_ptr{ new Observer{token, std::move(_on_change)} }; 
+    
+    InsertObserver(_path, std::move(observer));
+    
+    return CreateToken(token);
+}
+    
+void ConfigImpl::ObserveForever(std::string_view _path, std::function<void()> _on_change)
+{        
+    if( !_on_change || _path.empty() )
+        return;
+    
+    auto observer = hbn::intrusive_ptr{ new Observer{0, std::move(_on_change)} }; 
+    InsertObserver(_path, std::move(observer));
+}
+    
+void ConfigImpl::InsertObserver(std::string_view _path,
+                                hbn::intrusive_ptr<const Observer> _observer)
+{
+    const auto path = std::string{_path};
+    const auto lock = std::lock_guard{m_ObserversLock};
+    if( auto current_observers_it = m_Observers.find(path);
+        current_observers_it != std::end(m_Observers)  ) {
+        // somebody is already watching this path        
+        auto new_observers = hbn::intrusive_ptr{ new Observers };
+        new_observers->observers.reserve( current_observers_it->second->observers.size() + 1 );
+        new_observers->observers = current_observers_it->second->observers;
+        new_observers->observers.emplace_back( std::move(_observer) );
+        current_observers_it->second = new_observers;
+    }
+    else {
+        // it's the first request to observe this path
+        auto new_observers = hbn::intrusive_ptr{ new Observers };
+        new_observers->observers.emplace_back( std::move(_observer) );
+        m_Observers.emplace( std::move(path), std::move(new_observers) );
+    }        
+}
+    
+void ConfigImpl::DropToken(unsigned long _number)
+{
+    if( _number == 0 )
+        return;
+    
+    const auto lock = std::lock_guard{m_ObserversLock};
+    for( auto observers_it = m_Observers.begin(), observers_end = m_Observers.end();
+        observers_it != observers_end;
+        ++observers_it ) {
+        auto &path = *observers_it;
+        auto &observers = path.second->observers;
+        
+        const auto to_drop_it = std::find_if(begin(observers),
+                                             end(observers),
+                                             [_number](auto &observer){
+            return observer->token == _number;
+        });
+        if( to_drop_it != end(observers) ) {
+            const auto observer = *to_drop_it; // holding by a *strong* shared pointer
+            
+            // We need to guarantee that the callback will not be called after the token is
+            // destroyed. To achieve this, the callback calls are guared by a *recursive* mutex
+            // and its removal from the list is guarded by the same mutex.
+            // Once the observer was marked as 'removed', the FireObservers method will not 
+            // fire it even if it still has a version of observers list with this observer.
+            // The mutex is recursive becase the callback might want to delete its own
+            // observation token and we don't want to deadlock in this case.
+            const auto lock = std::lock_guard{observer->lock};
+            observer->was_removed = true;
+            
+            if( observers.size() > 1 ) {
+                auto new_observers = hbn::intrusive_ptr{ new Observers };
+                new_observers->observers.reserve( observers.size() - 1 );
+                std::copy(observers.begin(),
+                          to_drop_it,
+                          std::back_inserter(new_observers->observers));
+                std::copy(std::next(to_drop_it),
+                          observers.end(),
+                          std::back_inserter(new_observers->observers));
+                path.second = std::move(new_observers);
+            }
+            else {
+                m_Observers.erase(observers_it);
+            }
+            break;
+        }
+    }
+}
+    
+void ConfigImpl::FireObservers(std::string_view _path) const
+{
+    if( const auto observers = FindObservers(_path) ) {
+        for( const auto &observer: observers->observers ) {
+            const auto lock = std::lock_guard{observer->lock};
+            if( observer->was_removed == false ) {
+                observer->callback();
+            }
+        }
+    }
+}
+
+hbn::intrusive_ptr<const ConfigImpl::Observers>
+    ConfigImpl::FindObservers(std::string_view _path) const
+{
+    const auto path = std::string{_path};
+    const auto lock = std::lock_guard{m_ObserversLock};
+    if( auto observers_it = m_Observers.find(path); observers_it != std::end(m_Observers) )
+        return  observers_it->second;
+    return nullptr;        
+}
+
+ConfigImpl::Observer::Observer(unsigned long _token, std::function<void()> _callback) noexcept:
+    token{_token},
+    callback{std::move(_callback)}
+{
+}
+
+static rapidjson::Document ParseDefaultsOrThrow(std::string_view _default_document)
+{
+    if( _default_document.empty() ) {
+        return rapidjson::Document{rapidjson::kObjectType};
+    }
+    
+    rapidjson::Document defaults;
+    rapidjson::ParseResult ok = defaults.Parse<g_ParseFlags>(_default_document.data(),
+                                                             _default_document.length());
+    if( !ok ) {
+        throw std::invalid_argument{ rapidjson::GetParseError_En(ok.Code()) };
+    }
+    
+    return defaults;
+}
+
+static rapidjson::Document ParseOverwritesOrReturnNull(std::string_view _overwrites_document)
+{
+    if( _overwrites_document.empty() )
+        return rapidjson::Document{rapidjson::kNullType};
+    
+    rapidjson::Document overwrites;
+    rapidjson::ParseResult ok = overwrites.Parse<g_ParseFlags>(_overwrites_document.data(),
+                                                               _overwrites_document.length());
+    if( !ok )
+        return rapidjson::Document{rapidjson::kNullType};
+    
+    if( overwrites.GetType() != rapidjson::Type::kObjectType )
+        return rapidjson::Document{rapidjson::kNullType};
+    
+    return overwrites;
+}
+    
+static const rapidjson::Value *
+    FindNode(const std::string_view _path, const rapidjson::Value &_root) noexcept
+{
+    auto root = &_root;
+    auto path = _path;
+    size_t p;
+    
+    while( (p = path.find_first_of(".")) != std::string_view::npos ) {   
+        const auto part_name = rapidjson::Value{ rapidjson::StringRef(path.data(), p) };
+        const auto member_it = root->FindMember(part_name);
+        if( member_it == root->MemberEnd() )
+            return nullptr;
+        
+        root = &(*member_it).value;
+        if( root->GetType() != rapidjson::kObjectType )
+            return nullptr;
+        
+        path = p+1 < path.length() ? path.substr( p+1 ) : std::string_view{};
+    }
+    
+    const auto leaf_name = rapidjson::Value{ rapidjson::StringRef(path.data(), path.length()) };
+    const auto leaf_it = root->FindMember(leaf_name);
+    if( leaf_it == root->MemberEnd() )
+        return nullptr;
+    
+    return &(*leaf_it).value;
+}
+
+static std::pair<const rapidjson::Value *, std::string_view>
+    FindParentNode(std::string_view _path, const rapidjson::Value &_root) noexcept
+{
+    auto root = &_root;
+    auto path = _path;
+    size_t p;
+    
+    while( (p = path.find_first_of(".")) != std::string_view::npos ) {   
+        const auto part_name = rapidjson::Value{ rapidjson::StringRef(path.data(), p) };
+        const auto member_it = root->FindMember(part_name);
+        if( member_it == root->MemberEnd() )
+            return {nullptr, ""};
+        
+        root = &(*member_it).value;
+        if( root->GetType() != rapidjson::kObjectType )
+            return {nullptr, ""};
+        
+        path = p+1 < path.length() ? path.substr( p+1 ) : std::string_view{};
+    }    
+    return {root, path};
+}
+
+static void TraverseRecursivelyAndMarkEachMember(const rapidjson::Value &_object,
+                                                 const std::string &_path_prefix,
+                                                 std::vector<std::string> &_changes_list)
+{
+    assert(_object.GetType() == rapidjson::kObjectType);
+    
+    for( auto i = _object.MemberBegin(), e = _object.MemberEnd(); i != e; ++i ) {        
+        _changes_list.emplace_back( _path_prefix + i->name.GetString() );
+        
+        if( i->value.GetType() == rapidjson::Type::kObjectType ) {
+            auto prefix = _path_prefix + i->name.GetString() + ".";
+            TraverseRecursivelyAndMarkEachMember(i->value, prefix, _changes_list);
+        }
+    }
+}    
+
+static void MergeObjectsRecursively(rapidjson::Value &_target,
+                                    rapidjson::Document::AllocatorType &_allocator,
+                                    const rapidjson::Value &_main,
+                                    const rapidjson::Value &_overwrites,
+                                    const std::string &_path_prefix,
+                                    std::vector<std::string> &_changes_list)
+{
+    assert(_target.GetType() == rapidjson::kObjectType);
+    assert(_main.GetType() == rapidjson::kObjectType);
+    assert(_overwrites.GetType() == rapidjson::kObjectType);
+    
+    for(auto main_it = _main.MemberBegin(), main_e = _main.MemberEnd();
+        main_it != main_e;
+        ++main_it ) {
+        const auto &member_name = main_it->name;
+        rapidjson::Value key( member_name, _allocator );
+        
+        auto overwrite_it = _overwrites.FindMember(member_name);
+        if( overwrite_it == _overwrites.MemberEnd() ) {
+            // this entry is absent in the 'overwrites' document
+            // => just copy the value from the 'main' document and be done with it.
+            rapidjson::Value value( main_it->value, _allocator );
+            _target.AddMember(key, value, _allocator);            
+        }
+        else {
+            // we have an overwrite for this member
+            if( main_it->value.GetType() == overwrite_it->value.GetType() ) {
+                // ... and the overwrite has the same type
+                const auto common_type = main_it->value.GetType(); 
+                if( common_type == rapidjson::kObjectType ) {
+                    // .. which is an object => add an empty object and go into it recursively.
+                    rapidjson::Value value( rapidjson::Type::kObjectType );
+                    auto &added_member = _target.AddMember( key, value, _allocator );
+                    
+                    MergeObjectsRecursively(added_member,
+                                            _allocator, main_it->value,
+                                            overwrite_it->value,
+                                            _path_prefix + member_name.GetString() + ".",
+                                            _changes_list);
+                }
+                else {
+                    // .. which is not an object => copy the value from the overwrite 
+                    // and mark this path as changed if the overwrite value differs from 
+                    // the original value.
+                    rapidjson::Value value( overwrite_it->value, _allocator );
+                    _target.AddMember( key, value, _allocator );
+                    
+                    if( main_it->value != overwrite_it->value )
+                        _changes_list.emplace_back( _path_prefix + member_name.GetString() );                        
+                }
+            }
+            else {
+                // ... which has a diffent type => copy the value from the overwrite
+                // and mark this path as changed. In case if the overwrite value is an object we 
+                // need to traverse this object and mark everything inside as changed too.
+                rapidjson::Value value( overwrite_it->value, _allocator );
+                auto &added_member = _target.AddMember( key, value, _allocator );
+                _changes_list.emplace_back( _path_prefix + member_name.GetString() );
+            
+                if( added_member.GetType() == rapidjson::Type::kObjectType ) {
+                    auto prefix = _path_prefix + member_name.GetString() + ".";
+                    TraverseRecursivelyAndMarkEachMember(added_member, prefix, _changes_list);
+                }
+            }
+        }
+    }
+    
+    // now we iterate overwrites instead of the main document and everything which was
+    // missed during the previous iteration, i.e. values which are absent in the original document.
+    for(auto overwrites_it = _overwrites.MemberBegin(), overwrites_e = _overwrites.MemberEnd();
+        overwrites_it != overwrites_e;
+        ++overwrites_it ) {
+        const auto &member_name = overwrites_it->name;
+         
+        if( _main.FindMember(member_name) != _main.MemberEnd() )
+            continue;
+            
+        rapidjson::Value key( member_name, _allocator );        
+        rapidjson::Value value( overwrites_it->value, _allocator );        
+        auto &added_member = _target.AddMember( key, value, _allocator );
+        _changes_list.emplace_back( _path_prefix + member_name.GetString() );
+        
+        if( added_member.GetType() == rapidjson::Type::kObjectType ) {
+            auto prefix = _path_prefix + member_name.GetString() + ".";
+            TraverseRecursivelyAndMarkEachMember(added_member, prefix, _changes_list);
+        }
+    }        
+}
+
+static std::pair<rapidjson::Document, std::vector<std::string>>
+    MergeDocuments( const rapidjson::Document &_main, const rapidjson::Document &_overwrites )
+{
+    assert(_main.GetType() == rapidjson::kObjectType);
+    assert(_overwrites.GetType() == rapidjson::kObjectType);
+        
+    rapidjson::Document new_document( rapidjson::Type::kObjectType );
+    std::vector<std::string> changed_paths;
+
+    MergeObjectsRecursively(new_document,
+                            new_document.GetAllocator(),
+                            _main,
+                            _overwrites,
+                            "",
+                            changed_paths);
+    
+    return std::make_pair( std::move(new_document), std::move(changed_paths) );
+}
+
+    
+//    static void MergeObject( rapidjson::Value &_target, rapidjson::Document &_target_document, const rapidjson::Value &_overwrites )
+//    {
+//        for( auto i = _overwrites.MemberBegin(), e = _overwrites.MemberEnd(); i != e; ++i ) {
+//            auto &over_name = i->name;
+//            auto &over_val = i->value;
+//            
+//            auto cur_it = _target.FindMember(over_name);
+//            if( cur_it ==  _target.MemberEnd() ) {
+//                // there's no such value in current config tree - just add it at once
+//                rapidjson::Value key( over_name, _target_document.GetAllocator() );
+//                rapidjson::Value val( over_val, _target_document.GetAllocator() );
+//                _target.AddMember( key, val, _target_document.GetAllocator() );
+//            }
+//            else {
+//                auto &cur_val = cur_it->value;
+//                if( cur_val.GetType() == over_val.GetType() ) {
+//                    if( cur_val.GetType() == rapidjson::kObjectType ) {
+//                        MergeObject( cur_val, _target_document, over_val );
+//                    }
+//                    else if( cur_val != over_val ) {
+//                        // overwriting itself is here:
+//                        cur_val.CopyFrom( over_val, _target_document.GetAllocator() );
+//                    }
+//                }
+//                else {
+//                    cur_val.CopyFrom( over_val, _target_document.GetAllocator() );
+//                }
+//            }
+//        }
+//    }
+//    
+//    static void MergeDocument( rapidjson::Document &_target, const rapidjson::Document &_overwrites)
+//    {
+//        if( _target.GetType() != rapidjson::kObjectType || _overwrites.GetType() != rapidjson::kObjectType )
+//            return;
+//        
+//        MergeObject(_target, _target, _overwrites);
+//    }
+    
+}

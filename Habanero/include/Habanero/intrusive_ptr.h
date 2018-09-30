@@ -32,10 +32,26 @@ public:
     {
         if(p) intrusive_ptr_add_refcount( p );
     }
+    
+    template <typename U>
+    intrusive_ptr(const intrusive_ptr<U> &_rhs,
+                  std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr) noexcept :
+        p(_rhs.get())
+    {
+        if(p) intrusive_ptr_add_refcount( p );
+    }
 
     intrusive_ptr(intrusive_ptr &&_rhs) noexcept : p(_rhs.p)
     {
         _rhs.p = nullptr;
+    }    
+    
+    template <typename U>
+    intrusive_ptr(intrusive_ptr<U> &&_rhs,
+                  std::enable_if_t<std::is_convertible_v<U*, T*>>* = nullptr) noexcept :
+        p(_rhs.get())
+    {
+        _rhs.release();
     }    
     
     ~intrusive_ptr() noexcept

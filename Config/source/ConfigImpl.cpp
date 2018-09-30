@@ -1,5 +1,9 @@
 #include "ConfigImpl.h"
 #include <rapidjson/error/en.h>
+#include <rapidjson/memorystream.h>
+#include <rapidjson/stringbuffer.h>
+#include <rapidjson/prettywriter.h>
+#include <Habanero/algo.h>
 
 namespace nc::config {
 
@@ -12,20 +16,29 @@ static std::pair<const rapidjson::Value *, std::string_view>
     FindParentNode(std::string_view _path, const rapidjson::Value &_root) noexcept;
 static std::pair<rapidjson::Document, std::vector<std::string>>
     MergeDocuments( const rapidjson::Document &_main, const rapidjson::Document &_overwrites );
+rapidjson::Document BuildOverwrites(const rapidjson::Document &_defaults,
+                                    const rapidjson::Document &_staging);
+static std::string Serialize(const rapidjson::Document &_document);
     
 static const auto g_ParseFlags = rapidjson::kParseCommentsFlag;
 
 ConfigImpl::ConfigImpl(std::string_view _default_document,
-                       std::shared_ptr<OverwritesStorage> _storage):
-    m_OverwritesStorage(_storage)
+                       std::shared_ptr<OverwritesStorage> _storage,
+                       std::shared_ptr<Executor> _overwrites_dump_executor,
+                       std::shared_ptr<Executor> _overwrites_reload_executor):
+    m_OverwritesStorage(_storage),
+    m_OverwritesDumpExecutor(_overwrites_reload_executor),
+    m_OverwritesReloadExecutor(_overwrites_dump_executor)
 {
     static_assert( sizeof(Observer) == 128 );
     static_assert( sizeof(Observers) == 32 );
-    assert(_storage);
-    
     
     if( _storage == nullptr )
         throw std::invalid_argument("ConfigImpl::ConfigImpl: overwrites storage can't be nullptr");
+    
+    if( _overwrites_dump_executor == nullptr || _overwrites_reload_executor == nullptr )
+        throw std::invalid_argument("ConfigImpl::ConfigImpl: executor can't be nullptr");
+
     
     const auto defaults = ParseDefaultsOrThrow(_default_document);
     m_Defaults.CopyFrom(defaults, m_Defaults.GetAllocator());
@@ -157,7 +170,7 @@ void ConfigImpl::SetInternal(std::string_view _path, const Value &_value)
 {
     if( ReplaceOrInsert(_path, _value) == true ) {
         FireObservers(_path);
-        //    MarkDirty();
+        MarkDirty();
     }
 }
 
@@ -278,6 +291,7 @@ void ConfigImpl::DropToken(unsigned long _number)
             else {
                 m_Observers.erase(observers_it);
             }
+            
             break;
         }
     }
@@ -303,6 +317,29 @@ hbn::intrusive_ptr<const ConfigImpl::Observers>
     if( auto observers_it = m_Observers.find(path); observers_it != std::end(m_Observers) )
         return  observers_it->second;
     return nullptr;        
+}
+    
+void ConfigImpl::MarkDirty()
+{
+    if( m_WriteScheduled.test_and_set() == false ) {
+        m_OverwritesDumpExecutor->Execute([this]{
+            WriteOverwrites();   
+        });
+    }
+}   
+
+void ConfigImpl::WriteOverwrites()
+{
+    auto clear_write_flag = at_scope_end([this]{ m_WriteScheduled.clear(); });
+    
+    rapidjson::Document overwrites_document;
+    {
+        auto lock = std::lock_guard{m_DocumentLock};
+        overwrites_document = BuildOverwrites(m_Defaults, m_Document);
+    }
+    
+    const auto overwrites_json = Serialize(overwrites_document);
+    m_OverwritesStorage->Write(overwrites_json);
 }
 
 ConfigImpl::Observer::Observer(unsigned long _token, std::function<void()> _callback) noexcept:
@@ -409,7 +446,7 @@ static void TraverseRecursivelyAndMarkEachMember(const rapidjson::Value &_object
         }
     }
 }    
-
+    
 static void MergeObjectsRecursively(rapidjson::Value &_target,
                                     rapidjson::Document::AllocatorType &_allocator,
                                     const rapidjson::Value &_main,
@@ -442,10 +479,12 @@ static void MergeObjectsRecursively(rapidjson::Value &_target,
                 if( common_type == rapidjson::kObjectType ) {
                     // .. which is an object => add an empty object and go into it recursively.
                     rapidjson::Value value( rapidjson::Type::kObjectType );
-                    auto &added_member = _target.AddMember( key, value, _allocator );
+                    _target.AddMember( key, value, _allocator );
+                    auto &added_member = _target[member_name];
                     
                     MergeObjectsRecursively(added_member,
-                                            _allocator, main_it->value,
+                                            _allocator,
+                                            main_it->value,
                                             overwrite_it->value,
                                             _path_prefix + member_name.GetString() + ".",
                                             _changes_list);
@@ -466,7 +505,8 @@ static void MergeObjectsRecursively(rapidjson::Value &_target,
                 // and mark this path as changed. In case if the overwrite value is an object we 
                 // need to traverse this object and mark everything inside as changed too.
                 rapidjson::Value value( overwrite_it->value, _allocator );
-                auto &added_member = _target.AddMember( key, value, _allocator );
+                _target.AddMember( key, value, _allocator );
+                auto &added_member = _target[member_name];
                 _changes_list.emplace_back( _path_prefix + member_name.GetString() );
             
                 if( added_member.GetType() == rapidjson::Type::kObjectType ) {
@@ -518,44 +558,66 @@ static std::pair<rapidjson::Document, std::vector<std::string>>
     return std::make_pair( std::move(new_document), std::move(changed_paths) );
 }
 
+
+// _staging = _defaults + _overwrites =>
+// _overwrites = _staging - _defaults
+static void BuildOverwritesRecursive(const rapidjson::Value &_defaults,
+                                     const rapidjson::Value &_staging,
+                                     rapidjson::Value &_overwrites,
+                                     rapidjson::Document::AllocatorType &_allocator)
+{
+    for( auto i = _staging.MemberBegin(), e = _staging.MemberEnd(); i != e; ++i ) {
+        auto &staging_name = i->name;
+        auto &staging_val = i->value;
+     
+        auto defaults_it = _defaults.FindMember(staging_name);
+        if( defaults_it == _defaults.MemberEnd() ) {
+            // no such item in defaults -> should be placed in overwrites
+            rapidjson::Value key( staging_name, _allocator );
+            rapidjson::Value val( staging_val, _allocator );
+            _overwrites.AddMember( key, val, _allocator );
+        }
+        else {
+            auto &defaults_val = defaults_it->value;
+            if( defaults_val.GetType() == staging_val.GetType() &&
+                defaults_val.GetType() == rapidjson::kObjectType ) {
+                // adding an empty object.
+                rapidjson::Value key( staging_name, _allocator );
+                rapidjson::Value val( rapidjson::kObjectType );
+                _overwrites.AddMember( key, val, _allocator );
+                
+                BuildOverwritesRecursive(defaults_val,
+                                         staging_val,
+                                         _overwrites[staging_name],
+                                         _allocator);
+            }
+            else if( defaults_val != staging_val ) {
+                rapidjson::Value key( staging_name, _allocator );
+                rapidjson::Value val( staging_val, _allocator );
+                _overwrites.AddMember( key, val, _allocator );
+            }   
+        }
+    }
+}
+
+rapidjson::Document BuildOverwrites(const rapidjson::Document &_defaults,
+                                    const rapidjson::Document &_staging)
+{
+    if( _defaults.GetType() != rapidjson::kObjectType ||
+       _staging.GetType() != rapidjson::kObjectType )
+        return rapidjson::Document{rapidjson::Type::kObjectType};
     
-//    static void MergeObject( rapidjson::Value &_target, rapidjson::Document &_target_document, const rapidjson::Value &_overwrites )
-//    {
-//        for( auto i = _overwrites.MemberBegin(), e = _overwrites.MemberEnd(); i != e; ++i ) {
-//            auto &over_name = i->name;
-//            auto &over_val = i->value;
-//            
-//            auto cur_it = _target.FindMember(over_name);
-//            if( cur_it ==  _target.MemberEnd() ) {
-//                // there's no such value in current config tree - just add it at once
-//                rapidjson::Value key( over_name, _target_document.GetAllocator() );
-//                rapidjson::Value val( over_val, _target_document.GetAllocator() );
-//                _target.AddMember( key, val, _target_document.GetAllocator() );
-//            }
-//            else {
-//                auto &cur_val = cur_it->value;
-//                if( cur_val.GetType() == over_val.GetType() ) {
-//                    if( cur_val.GetType() == rapidjson::kObjectType ) {
-//                        MergeObject( cur_val, _target_document, over_val );
-//                    }
-//                    else if( cur_val != over_val ) {
-//                        // overwriting itself is here:
-//                        cur_val.CopyFrom( over_val, _target_document.GetAllocator() );
-//                    }
-//                }
-//                else {
-//                    cur_val.CopyFrom( over_val, _target_document.GetAllocator() );
-//                }
-//            }
-//        }
-//    }
-//    
-//    static void MergeDocument( rapidjson::Document &_target, const rapidjson::Document &_overwrites)
-//    {
-//        if( _target.GetType() != rapidjson::kObjectType || _overwrites.GetType() != rapidjson::kObjectType )
-//            return;
-//        
-//        MergeObject(_target, _target, _overwrites);
-//    }
+    auto overwrites = rapidjson::Document{rapidjson::Type::kObjectType};
+    BuildOverwritesRecursive( _defaults, _staging, overwrites, overwrites.GetAllocator() );
+    return overwrites;
+}
+
+static std::string Serialize(const rapidjson::Document &_document)
+{
+    rapidjson::StringBuffer buffer;
+    rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+    _document.Accept(writer);
+    return std::string(buffer.GetString());
+}
     
 }

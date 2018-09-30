@@ -3,10 +3,12 @@
 #include "ConfigImpl.h"
 #include "NonPersistentOverwritesStorage.h"
 
+using nc::config::Token;
 using nc::config::ConfigImpl;
 using nc::config::NonPersistentOverwritesStorage;
 
 static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage();
+static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage(std::string_view _value);
 
 TEST_CASE("Config accepts an empty defaults document")
 {
@@ -212,7 +214,108 @@ TEST_CASE("Config does stop notifying when observation token dies")
     CHECK( num_called == 1 );
 }
 
+TEST_CASE("Config can remove an obsever from its own execution")
+{
+    auto json = "{\"abra\": 42}";
+    ConfigImpl config{json, MakeDummyStorage()};
+    Token *token = new Token( config.Observe("abra", [&]{ delete token; }) );  
+    config.Set("abra", 17);
+}
+
+TEST_CASE("Config returns overwritten values")
+{
+    auto json1 = "{\"abra\": 42}";
+    auto json2 = "{\"abra\": 80}";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    CHECK( config.GetInt("abra") == 80 );
+}
+
+TEST_CASE("Config returns overwritten nested values")
+{
+    auto json1 = "{\"abra\": {\"cadabra\": {\"alakazam\": 42} } }";
+    auto json2 = "{\"abra\": {\"cadabra\": {\"alakazam\": 17} } }";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    CHECK( config.GetInt("abra.cadabra.alakazam") == 17 );
+}
+
+TEST_CASE("Config overwrites can add a new entry")
+{
+    auto json1 = "{\"abra\": 42}";
+    auto json2 = "{\"abra1\": 80}";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    CHECK( config.GetInt("abra") == 42 );
+    CHECK( config.GetInt("abra1") == 80 );
+}
+
+TEST_CASE("Config overwrites can add a new nested entry")
+{
+    auto json1 = "{\"abra\": 42}";
+    auto json2 = "{\"abra1\": {\"cadabra\": {\"alakazam\": 90} } }";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    CHECK( config.GetInt("abra1.cadabra.alakazam") == 90 );
+}
+
+TEST_CASE("Config overwrites can change an entry type")
+{
+    auto json1 = "{\"abra\": 42}";
+    auto json2 = "{\"abra\": \"ttt\"}";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    CHECK( config.GetString("abra") == "ttt" );
+}
+
+TEST_CASE("Config overwrites can change an entry type even to object type")
+{
+    auto json1 = "{\"abra\": 42}";
+    auto json2 = "{\"abra\": {\"cadabra\": {\"alakazam\": 90} } }";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    CHECK( config.GetInt("abra.cadabra.alakazam") == 90 );
+}
+
+TEST_CASE("Config ignores broken overwrites data")
+{
+    auto json1 = "{\"abra\": 42}";
+    auto json2 = "sodfbjosbfljsegfogw!@@#%$**&(";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    CHECK( config.GetInt("abra") == 42 );
+}
+
+TEST_CASE("Config saves overwrites")
+{
+    auto json = "{\"abra\": {\"cadabra\": {\"alakazam\": 42} } }";    
+    auto storage = std::make_shared<NonPersistentOverwritesStorage>("");
+    
+    {
+        ConfigImpl config{json, storage};
+        config.Set("abra.cadabra.alakazam", 17);
+    }
+    {
+        ConfigImpl config{json, storage};
+        CHECK( config.GetInt("abra.cadabra.alakazam") == 17 );        
+    }    
+}
+
+TEST_CASE("Config saves overwritten entries which are absent in defaults")
+{
+    auto json1 = "{\"abra\": {\"cadabra\": {\"alakazam\": 42} } }";
+    auto json2 = "{\"abra2\": {\"cadabra\": {\"alakazam\": 50} } }";    
+    auto storage = std::make_shared<NonPersistentOverwritesStorage>(json2);
+    
+    {
+        ConfigImpl config{json1, storage};
+        config.Set("abra2.cadabra.alakazam", 17);
+    }
+    {
+        ConfigImpl config{json1, storage};
+        CHECK( config.GetInt("abra2.cadabra.alakazam") == 17 );        
+    }    
+}
+
 static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage()
 {
-    return std::make_shared<NonPersistentOverwritesStorage>("");
+    return MakeDummyStorage("");
+}
+
+static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage(std::string_view _value)
+{
+    return std::make_shared<NonPersistentOverwritesStorage>(_value);
 }

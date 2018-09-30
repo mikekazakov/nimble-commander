@@ -23,7 +23,7 @@ std::optional<std::string> NonPersistentOverwritesStorage::Read() const
     return std::make_optional(m_Data);
 }
     
-void NonPersistentOverwritesStorage::Write(const std::string &_overwrites_json)
+void NonPersistentOverwritesStorage::Write(std::string_view _overwrites_json)
 {
     m_Data = _overwrites_json;
 }

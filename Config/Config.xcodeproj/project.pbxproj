@@ -22,6 +22,8 @@
 		CF2E7A23215CB5470002E46C /* OverwritesStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A22215CB5470002E46C /* OverwritesStorage.cpp */; };
 		CF2E7A25215CBFC60002E46C /* NonPersistentOverwritesStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2E7A24215CBFC60002E46C /* NonPersistentOverwritesStorage.h */; };
 		CF2E7A27215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A26215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp */; };
+		CF2E7A292160E25F0002E46C /* Executor.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2E7A282160E25F0002E46C /* Executor.h */; };
+		CF2E7A2B2160E2660002E46C /* Executor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A2A2160E2660002E46C /* Executor.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -58,6 +60,8 @@
 		CF2E7A22215CB5470002E46C /* OverwritesStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OverwritesStorage.cpp; path = source/OverwritesStorage.cpp; sourceTree = "<group>"; };
 		CF2E7A24215CBFC60002E46C /* NonPersistentOverwritesStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NonPersistentOverwritesStorage.h; path = include/Config/NonPersistentOverwritesStorage.h; sourceTree = "<group>"; };
 		CF2E7A26215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NonPersistentOverwritesStorage.cpp; path = source/NonPersistentOverwritesStorage.cpp; sourceTree = "<group>"; };
+		CF2E7A282160E25F0002E46C /* Executor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Executor.h; path = include/Config/Executor.h; sourceTree = "<group>"; };
+		CF2E7A2A2160E2660002E46C /* Executor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Executor.cpp; path = source/Executor.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,6 +121,7 @@
 			children = (
 				CF20CC0B215A2666006716F6 /* Config.h */,
 				CF20CC18215B9B1A006716F6 /* ConfigImpl.h */,
+				CF2E7A282160E25F0002E46C /* Executor.h */,
 				CF2E7A24215CBFC60002E46C /* NonPersistentOverwritesStorage.h */,
 				CF2E7A20215CB5400002E46C /* OverwritesStorage.h */,
 				CF20CC12215B524C006716F6 /* RapidJSON_fwd.h */,
@@ -128,10 +133,11 @@
 		CF20CC09215A25AB006716F6 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CF2E7A26215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp */,
-				CF2E7A22215CB5470002E46C /* OverwritesStorage.cpp */,
 				CF20CC0D215A267B006716F6 /* Config.cpp */,
 				CF20CC1A215B9B45006716F6 /* ConfigImpl.cpp */,
+				CF2E7A2A2160E2660002E46C /* Executor.cpp */,
+				CF2E7A26215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp */,
+				CF2E7A22215CB5470002E46C /* OverwritesStorage.cpp */,
 				CF20CC16215B5253006716F6 /* RapidJSON.cpp */,
 			);
 			name = Source;
@@ -166,6 +172,7 @@
 				CF2E7A21215CB5400002E46C /* OverwritesStorage.h in Headers */,
 				CF2E7A25215CBFC60002E46C /* NonPersistentOverwritesStorage.h in Headers */,
 				CF20CC0C215A2666006716F6 /* Config.h in Headers */,
+				CF2E7A292160E25F0002E46C /* Executor.h in Headers */,
 				CF20CC19215B9B1A006716F6 /* ConfigImpl.h in Headers */,
 				CF20CC14215B524C006716F6 /* RapidJSON_fwd.h in Headers */,
 			);
@@ -252,6 +259,7 @@
 				CF20CC17215B5253006716F6 /* RapidJSON.cpp in Sources */,
 				CF2E7A23215CB5470002E46C /* OverwritesStorage.cpp in Sources */,
 				CF20CC0E215A267B006716F6 /* Config.cpp in Sources */,
+				CF2E7A2B2160E2660002E46C /* Executor.cpp in Sources */,
 				CF20CC1B215B9B45006716F6 /* ConfigImpl.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

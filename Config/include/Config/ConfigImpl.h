@@ -7,13 +7,18 @@
 #include <vector>
 #include <unordered_map>
 #include "OverwritesStorage.h"
+#include "Executor.h"
 
 namespace nc::config {
     
 class ConfigImpl : public Config
 {
 public:
-    ConfigImpl(std::string_view _default_document, std::shared_ptr<OverwritesStorage> _storage );
+    ConfigImpl
+    (std::string_view _default_document,
+     std::shared_ptr<OverwritesStorage> _storage,
+     std::shared_ptr<Executor> _overwrites_dump_executor = std::make_shared<ImmediateExecutor>(),
+     std::shared_ptr<Executor> _overwrites_reload_executor = std::make_shared<ImmediateExecutor>());
     virtual ~ConfigImpl();
     
     bool Has(std::string_view _path) const override;
@@ -63,23 +68,26 @@ private:
     void InsertObserver(std::string_view _path, ObserverPtr _observer);
     void FireObservers(std::string_view _path) const;
     ObserversPtr FindObservers(std::string_view _path) const;
+    void MarkDirty();
+    void WriteOverwrites();
     
-    mutable spinlock                                m_DocumentLock;
-    rapidjson::Document                             m_Document;    
-    rapidjson::Document                             m_Defaults;
+    rapidjson::Document                             m_Defaults;    
+    
+    rapidjson::Document                             m_Document;
+    mutable spinlock                                m_DocumentLock;    
     
     std::unordered_map<std::string, ObserversPtr>   m_Observers;
     mutable spinlock                                m_ObserversLock;
     
-//    string                                                              m_DefaultsPath;
-//    string                                                              m_OverwritesPath;
     std::atomic_ullong                                                  m_ObservationToken{ 1 };
 //    SerialQueue                                                         m_IOQueue{"GenericConfig input/output queue"};
-//    atomic_flag                                                         m_WriteScheduled{ false };
+    std::atomic_flag                                                    m_WriteScheduled{ false };
 //    atomic_flag                                                         m_ReadScheduled{ false };
 //    time_t                                                              m_OverwritesTime = 0;    
     
     std::shared_ptr<OverwritesStorage>              m_OverwritesStorage;
+    std::shared_ptr<Executor>                       m_OverwritesDumpExecutor;
+    std::shared_ptr<Executor>                       m_OverwritesReloadExecutor;    
 };
     
 }

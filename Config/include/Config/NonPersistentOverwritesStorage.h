@@ -15,7 +15,7 @@ public:
     
 private:
     std::optional<std::string> Read() const override;
-    void Write(const std::string &_overwrites_json) override;
+    void Write(std::string_view _overwrites_json) override;
     void SetExternalChangeCallback( std::function<void()> ) override;
     
     std::string m_Data;

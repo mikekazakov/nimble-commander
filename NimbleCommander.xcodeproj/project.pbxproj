@@ -1859,7 +1859,6 @@
 		CF90C0BA1EC171FD0056E3B8 /* PanelDataFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDataFilter.h; path = NimbleCommander/States/FilePanels/PanelDataFilter.h; sourceTree = SOURCE_ROOT; };
 		CF90C0BB1EC171FD0056E3B8 /* PanelDataFilter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelDataFilter.mm; path = NimbleCommander/States/FilePanels/PanelDataFilter.mm; sourceTree = SOURCE_ROOT; };
 		CF90C0C01EC174470056E3B8 /* PanelViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewDelegate.h; path = NimbleCommander/States/FilePanels/PanelViewDelegate.h; sourceTree = SOURCE_ROOT; };
-		CF90C0C31EC1B6E70056E3B8 /* rapidjson_fwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rapidjson_fwd.h; path = NimbleCommander/Core/rapidjson_fwd.h; sourceTree = SOURCE_ROOT; };
 		CF94CF921DD4418000EEA420 /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Layout.h; path = NimbleCommander/States/FilePanels/List/Layout.h; sourceTree = SOURCE_ROOT; };
 		CF94CF931DD4418000EEA420 /* Layout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Layout.mm; path = NimbleCommander/States/FilePanels/List/Layout.mm; sourceTree = SOURCE_ROOT; };
 		CF94CF9B1DD4A09A00EEA420 /* PanelViewImplementationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewImplementationProtocol.h; path = NimbleCommander/States/FilePanels/PanelViewImplementationProtocol.h; sourceTree = SOURCE_ROOT; };
@@ -2022,8 +2021,6 @@
 		CFDAC2121DFBBD110039A104 /* PanelView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelView.h; path = NimbleCommander/States/FilePanels/PanelView.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2131DFBBD110039A104 /* PanelView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelView.mm; path = NimbleCommander/States/FilePanels/PanelView.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2151DFBBD3D0039A104 /* PanelViewTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewTypes.h; path = NimbleCommander/States/FilePanels/PanelViewTypes.h; sourceTree = SOURCE_ROOT; };
-		CFDAC2161DFBC2430039A104 /* rapidjson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = rapidjson.cpp; path = NimbleCommander/Core/rapidjson.cpp; sourceTree = SOURCE_ROOT; };
-		CFDAC2171DFBC2430039A104 /* rapidjson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = rapidjson.h; path = NimbleCommander/Core/rapidjson.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2191DFBC6CB0039A104 /* PanelHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelHistory.h; path = NimbleCommander/States/FilePanels/PanelHistory.h; sourceTree = SOURCE_ROOT; };
 		CFDAC21A1DFBC6CB0039A104 /* PanelHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelHistory.mm; path = NimbleCommander/States/FilePanels/PanelHistory.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC21C1DFBC9080039A104 /* SandboxManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SandboxManager.h; path = NimbleCommander/Core/SandboxManager.h; sourceTree = SOURCE_ROOT; };
@@ -2984,9 +2981,6 @@
 				CFDAC2D61DFD11970039A104 /* LaunchServices.h */,
 				CFDAC2D71DFD11970039A104 /* LaunchServices.mm */,
 				CFB66F9D1D863E5B0017D2A0 /* Marketing */,
-				CF90C0C31EC1B6E70056E3B8 /* rapidjson_fwd.h */,
-				CFDAC2161DFBC2430039A104 /* rapidjson.cpp */,
-				CFDAC2171DFBC2430039A104 /* rapidjson.h */,
 				CFDAC21C1DFBC9080039A104 /* SandboxManager.h */,
 				CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */,
 				CF4E56E61D506EB100452912 /* SearchForFiles.cpp */,

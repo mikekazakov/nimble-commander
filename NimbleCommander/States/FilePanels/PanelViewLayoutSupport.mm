@@ -1,7 +1,6 @@
 // Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewLayoutSupport.h"
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Core/rapidjson.h>
 #include <Config/RapidJSON.h>
 
 //struct PanelViewLayout

@@ -2,7 +2,6 @@
 #pragma once
 
 #include <Habanero/Observable.h>
-#include <NimbleCommander/Core/rapidjson_fwd.h>
 #include <Config/RapidJSON_fwd.h>
 
 class Theme;

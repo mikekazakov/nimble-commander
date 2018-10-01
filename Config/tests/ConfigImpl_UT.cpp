@@ -230,6 +230,15 @@ TEST_CASE("Config returns overwritten values")
     CHECK( config.GetInt("abra") == 80 );
 }
 
+TEST_CASE("Config can returns default values when an overwrite exists")
+{
+    auto json1 = "{\"abra\": 42}";
+    auto json2 = "{\"abra\": 80}";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    REQUIRE( config.GetDefault("abra").GetType() == rapidjson::Type::kNumberType );
+    CHECK( config.GetDefault("abra").GetInt() == 42 );
+}
+
 TEST_CASE("Config returns overwritten nested values")
 {
     auto json1 = "{\"abra\": {\"cadabra\": {\"alakazam\": 42} } }";

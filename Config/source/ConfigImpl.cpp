@@ -84,6 +84,9 @@ Value ConfigImpl::Get(std::string_view _path) const
     
 Value ConfigImpl::GetDefault(std::string_view _path) const
 {        
+    const auto lock = std::lock_guard{m_DocumentLock};
+    if( const auto value = FindInDefaults_Unlocked(_path) )
+        return Value{*value, g_CrtAllocator};
     return Value{rapidjson::kNullType};
 }    
 
@@ -384,6 +387,14 @@ void ConfigImpl::WriteOverwrites()
     
     const auto overwrites_json = Serialize(overwrites_document);
     m_OverwritesStorage->Write(overwrites_json);
+}
+    
+void ConfigImpl::ResetToDefaults()
+{        
+}
+    
+void ConfigImpl::Commit()
+{        
 }
 
 ConfigImpl::Observer::Observer(unsigned long _token, std::function<void()> _callback) noexcept:

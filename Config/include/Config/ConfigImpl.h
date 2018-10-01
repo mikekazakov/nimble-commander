@@ -11,6 +11,12 @@
 
 namespace nc::config {
     
+/*
+ TODO: 
+ - reload changes on-the-fly
+ - reset to defaults
+ - commit changes immediately
+ */
 class ConfigImpl : public Config
 {
 public:
@@ -46,6 +52,9 @@ public:
   
     Token Observe(std::string_view _path, std::function<void()> _on_change) override;
     void ObserveForever(std::string_view _path, std::function<void()> _on_change) override;
+    
+    void ResetToDefaults();
+    void Commit();    
     
 private:
     struct Observer : hbn::intrusive_ref_counter<Observer>

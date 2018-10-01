@@ -29,6 +29,10 @@ public:
     std::string GetString(std::string_view _path) const override;
     bool GetBool(std::string_view _path) const override;
     int GetInt(std::string_view _path) const override;
+    unsigned int GetUInt(std::string_view _path) const override;
+    long GetLong(std::string_view _path) const override;
+    unsigned long GetULong(std::string_view _path) const override;
+    double GetDouble(std::string_view _path) const override;
 
     void Set(std::string_view _path, const Value &_value) override;
     void Set(std::string_view _path, int _value) override;
@@ -80,10 +84,8 @@ private:
     mutable spinlock                                m_ObserversLock;
     
     std::atomic_ullong                                                  m_ObservationToken{ 1 };
-//    SerialQueue                                                         m_IOQueue{"GenericConfig input/output queue"};
     std::atomic_flag                                                    m_WriteScheduled{ false };
-//    atomic_flag                                                         m_ReadScheduled{ false };
-//    time_t                                                              m_OverwritesTime = 0;    
+//    atomic_flag                                                         m_ReadScheduled{ false };    
     
     std::shared_ptr<OverwritesStorage>              m_OverwritesStorage;
     std::shared_ptr<Executor>                       m_OverwritesDumpExecutor;

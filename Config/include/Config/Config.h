@@ -14,40 +14,55 @@ class Config
 public:
     virtual ~Config() = default;
     
+    /**
+     * Returns true if the config contains a value at the specified path.
+     */
     virtual bool Has(std::string_view _path) const = 0;
     
     /**
-     * Return null when a value can't be found.
+     * Returns null when a value can't be found.
      */
     virtual Value Get(std::string_view _path) const = 0;
 
     /**
-     * Return null when a value can't be found.
+     * Returns null when a value can't be found.
      */    
     virtual Value GetDefault(std::string_view _path) const = 0;
     
     /**
-     * Return "" when a value can't be found.
+     * Returns "" when a value can't be found.
      */    
     virtual std::string GetString(std::string_view _path) const = 0;
     
     /**
-     * Return false when a value can't be found.
+     * Returns false when a value can't be found.
      */
     virtual bool GetBool(std::string_view _path) const = 0;
     
     /**
-     * Return 0 when a value can't be found.
+     * Returns 0 when a value can't be found.
      */
     virtual int GetInt(std::string_view _path) const = 0;
 
     /**
-     * TODO:
-     * virtual unsigned int GetUInt(std::string_view _path) const = 0;
-     * virtual long GetLong(std::string_view _path) const = 0;
-     * virtual unsigned long GetULong(std::string_view _path) const = 0;
-     * virtual double GetDouble(std::string_view _path) const = 0;
+     * Returns 0 when a value can't be found.
+     */
+    virtual unsigned int GetUInt(std::string_view _path) const = 0;
+    
+    /**
+     * Returns 0 when a value can't be found.
      */    
+    virtual long GetLong(std::string_view _path) const = 0;
+
+    /**
+     * Returns 0 when a value can't be found.
+     */
+    virtual unsigned long GetULong(std::string_view _path) const = 0;
+    
+    /**
+     * Returns 0. when a value can't be found.
+     */     
+    virtual double GetDouble(std::string_view _path) const = 0;
 
     virtual void Set(std::string_view _path, const Value &_value) = 0;
     virtual void Set(std::string_view _path, int _value) = 0;

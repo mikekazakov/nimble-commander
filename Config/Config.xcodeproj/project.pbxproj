@@ -27,6 +27,8 @@
 		CF2E7A2D2161ACFF0002E46C /* ObjCBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2E7A2C2161ACFF0002E46C /* ObjCBridge.h */; };
 		CF2E7A2F2161AD090002E46C /* ObjCBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A2E2161AD090002E46C /* ObjCBridge.mm */; };
 		CF2E7A322161B2CB0002E46C /* ObjCBridge_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2E7A302161B2370002E46C /* ObjCBridge_UT.mm */; };
+		CF84A7922161BB2E00E03CB1 /* FileOverwritesStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CF84A7912161BB2E00E03CB1 /* FileOverwritesStorage.h */; };
+		CF84A7942161BB3500E03CB1 /* FileOverwritesStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF84A7932161BB3500E03CB1 /* FileOverwritesStorage.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -68,6 +70,8 @@
 		CF2E7A2C2161ACFF0002E46C /* ObjCBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjCBridge.h; path = include/Config/ObjCBridge.h; sourceTree = "<group>"; };
 		CF2E7A2E2161AD090002E46C /* ObjCBridge.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ObjCBridge.mm; path = source/ObjCBridge.mm; sourceTree = "<group>"; };
 		CF2E7A302161B2370002E46C /* ObjCBridge_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ObjCBridge_UT.mm; path = tests/ObjCBridge_UT.mm; sourceTree = "<group>"; };
+		CF84A7912161BB2E00E03CB1 /* FileOverwritesStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileOverwritesStorage.h; path = include/Config/FileOverwritesStorage.h; sourceTree = "<group>"; };
+		CF84A7932161BB3500E03CB1 /* FileOverwritesStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileOverwritesStorage.cpp; path = source/FileOverwritesStorage.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +132,7 @@
 				CF20CC0B215A2666006716F6 /* Config.h */,
 				CF20CC18215B9B1A006716F6 /* ConfigImpl.h */,
 				CF2E7A282160E25F0002E46C /* Executor.h */,
+				CF84A7912161BB2E00E03CB1 /* FileOverwritesStorage.h */,
 				CF2E7A24215CBFC60002E46C /* NonPersistentOverwritesStorage.h */,
 				CF2E7A2C2161ACFF0002E46C /* ObjCBridge.h */,
 				CF2E7A20215CB5400002E46C /* OverwritesStorage.h */,
@@ -143,6 +148,7 @@
 				CF20CC0D215A267B006716F6 /* Config.cpp */,
 				CF20CC1A215B9B45006716F6 /* ConfigImpl.cpp */,
 				CF2E7A2A2160E2660002E46C /* Executor.cpp */,
+				CF84A7932161BB3500E03CB1 /* FileOverwritesStorage.cpp */,
 				CF2E7A26215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp */,
 				CF2E7A2E2161AD090002E46C /* ObjCBridge.mm */,
 				CF2E7A22215CB5470002E46C /* OverwritesStorage.cpp */,
@@ -179,6 +185,7 @@
 			files = (
 				CF20CC15215B524C006716F6 /* RapidJSON.h in Headers */,
 				CF2E7A21215CB5400002E46C /* OverwritesStorage.h in Headers */,
+				CF84A7922161BB2E00E03CB1 /* FileOverwritesStorage.h in Headers */,
 				CF2E7A25215CBFC60002E46C /* NonPersistentOverwritesStorage.h in Headers */,
 				CF20CC0C215A2666006716F6 /* Config.h in Headers */,
 				CF2E7A292160E25F0002E46C /* Executor.h in Headers */,
@@ -266,6 +273,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF2E7A27215CBFCD0002E46C /* NonPersistentOverwritesStorage.cpp in Sources */,
+				CF84A7942161BB3500E03CB1 /* FileOverwritesStorage.cpp in Sources */,
 				CF20CC17215B5253006716F6 /* RapidJSON.cpp in Sources */,
 				CF2E7A2F2161AD090002E46C /* ObjCBridge.mm in Sources */,
 				CF2E7A23215CB5470002E46C /* OverwritesStorage.cpp in Sources */,

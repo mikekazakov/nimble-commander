@@ -5,6 +5,13 @@
 #include <functional>
 #include "RapidJSON_fwd.h"
 
+/*
+ TODO: 
+ - reload changes on-the-fly
+ - reset to defaults
+ - commit changes immediately
+ */
+
 namespace nc::config {
 
 class Token;    

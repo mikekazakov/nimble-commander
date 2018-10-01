@@ -13,11 +13,11 @@ public:
 
     void ExternalWrite( const std::string &_new_value );
     
-private:
     std::optional<std::string> Read() const override;
     void Write(std::string_view _overwrites_json) override;
     void SetExternalChangeCallback( std::function<void()> ) override;
     
+private:
     std::string m_Data;
     std::function<void()> m_Callback;
 };

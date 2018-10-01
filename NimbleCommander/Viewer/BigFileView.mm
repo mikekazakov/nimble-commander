@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
@@ -232,7 +232,7 @@ const static double g_BorderWidth = 1.0;
 
 - (void) SetFile:(FileWindow*) _file
 {
-    int encoding = encodings::EncodingFromName(GlobalConfig().GetString(g_ConfigDefaultEncoding).value_or("").c_str());
+    int encoding = encodings::EncodingFromName(GlobalConfig().GetString(g_ConfigDefaultEncoding).c_str());
     if(encoding == encodings::ENCODING_INVALID)
         encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 

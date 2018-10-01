@@ -6,6 +6,7 @@
 #include "PanelDataPersistency.h"
 #include <VFS/Native.h>
 #include <Habanero/CommonPaths.h>
+#include <Config/RapidJSON.h>
 
 namespace nc::panel {
 
@@ -18,30 +19,30 @@ ControllerStateJSONEncoder::ControllerStateJSONEncoder(PanelController *_panel):
 {
 }
 
-rapidjson::StandaloneValue
+config::Value
 ControllerStateJSONEncoder::Encode(ControllerStateEncoding::Options _options)
 {
     assert(dispatch_is_main_queue());
-    rapidjson::StandaloneValue json(rapidjson::kObjectType);
+    config::Value json(rapidjson::kObjectType);
     
     if( _options & ControllerStateEncoding::EncodeContentState ) {
         if( auto v = PanelDataPersisency::EncodeVFSPath(m_Panel.data.Listing());
            v.GetType() != rapidjson::kNullType )
-            json.AddMember(rapidjson::MakeStandaloneString(g_RestorationDataKey),
+            json.AddMember(config::MakeStandaloneString(g_RestorationDataKey),
                            move(v),
-                           rapidjson::g_CrtAllocator );
+                           config::g_CrtAllocator );
         else
-            return rapidjson::StandaloneValue{rapidjson::kNullType};
+            return config::Value{rapidjson::kNullType};
     }
     
     if( _options & ControllerStateEncoding::EncodeDataOptions ) {
-        json.AddMember(rapidjson::MakeStandaloneString(g_RestorationSortingKey),
-                       data::OptionsExporter{m_Panel.data}.Export(), rapidjson::g_CrtAllocator );
+        json.AddMember(config::MakeStandaloneString(g_RestorationSortingKey),
+                       data::OptionsExporter{m_Panel.data}.Export(), config::g_CrtAllocator );
     }
     
     if( _options & ControllerStateEncoding::EncodeViewOptions ) {
-        json.AddMember(rapidjson::MakeStandaloneString(g_RestorationLayoutKey),
-                       rapidjson::StandaloneValue(m_Panel.layoutIndex), rapidjson::g_CrtAllocator );
+        json.AddMember(config::MakeStandaloneString(g_RestorationLayoutKey),
+                       config::Value(m_Panel.layoutIndex), config::g_CrtAllocator );
     }
     
     return json;
@@ -96,7 +97,7 @@ static void RecoverSavedPathAtVFS(const VFSHostPtr &_host,
 }
 
 // will go async
-static void RecoverSavedContent(shared_ptr<rapidjson::StandaloneValue> _saved_state,
+static void RecoverSavedContent(shared_ptr<config::Value> _saved_state,
                                 PanelController *_panel )
 {
     auto workload = [_panel, _saved_state](const function<bool()> &_cancel_checker){
@@ -122,7 +123,7 @@ static void RecoverSavedContent(shared_ptr<rapidjson::StandaloneValue> _saved_st
     [_panel commitCancelableLoadingTask:move(workload)];
 }
 
-void ControllerStateJSONDecoder::Decode(const rapidjson::StandaloneValue &_state)
+void ControllerStateJSONDecoder::Decode(const config::Value &_state)
 {
     assert(dispatch_is_main_queue());
     
@@ -134,12 +135,12 @@ void ControllerStateJSONDecoder::Decode(const rapidjson::StandaloneValue &_state
             data::OptionsImporter{_data}.Import( _state[g_RestorationSortingKey] );
         }];
     
-    if( auto layout_index = GetOptionalIntFromObject(_state, g_RestorationLayoutKey) )
+    if( auto layout_index = config::GetOptionalIntFromObject(_state, g_RestorationLayoutKey) )
         m_Panel.layoutIndex = *layout_index;
     
     if( _state.HasMember(g_RestorationDataKey) ) {
-        auto data = make_shared<rapidjson::StandaloneValue>();
-        data->CopyFrom(_state[g_RestorationDataKey], rapidjson::g_CrtAllocator);
+        auto data = make_shared<config::Value>();
+        data->CopyFrom(_state[g_RestorationDataKey], config::g_CrtAllocator);
         RecoverSavedContent(data, m_Panel);
     }
 }

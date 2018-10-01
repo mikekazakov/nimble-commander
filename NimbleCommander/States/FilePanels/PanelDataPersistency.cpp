@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
 #include <boost/uuid/uuid_io.hpp>
@@ -16,7 +16,7 @@
 #include <VFS/NetWebDAV.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
-#include <NimbleCommander/Core/rapidjson.h>
+#include <Config/RapidJSON.h>
 #include "PanelDataPersistency.h"
 
 // THIS IS TEMPORARY!!!
@@ -27,6 +27,8 @@ static NetworkConnectionsManager &ConnectionsManager()
 }
 
 namespace nc::panel {
+    
+using nc::config::Value; 
 
 //type: "type", // VFSNativeHost::Tag, VFSPSHost::Tag, VFSArchiveHost::Tag, VFSArchiveUnRARHost::Tag, VFSXAttrHost::Tag, "network"
 // perhaps "archive" in the future, when more of them will come and some dedicated "ArchiveManager" will appear
@@ -94,7 +96,7 @@ bool PersistentLocation::is_network() const noexcept
     return !hosts.empty() && any_cast<Network>(&hosts.front());
 }
 
-static rapidjson::StandaloneValue EncodeAny( const any& _host );
+static nc::config::Value EncodeAny( const any& _host );
 
 static bool IsNetworkVFS( const VFSHost& _host )
 {
@@ -161,17 +163,15 @@ optional<PersistentLocation> PanelDataPersisency::
     return location;
 }
 
-rapidjson::StandaloneValue PanelDataPersisency::
-EncodeVFSPath( const VFSListing &_listing )
+Value PanelDataPersisency::EncodeVFSPath( const VFSListing &_listing )
 {
     if( !_listing.IsUniform() )
-        return rapidjson::StandaloneValue{rapidjson::kNullType};
+        return nc::config::Value{rapidjson::kNullType};
 
     return EncodeVFSPath( *_listing.Host(), _listing.Directory() );
 }
 
-rapidjson::StandaloneValue PanelDataPersisency::
-EncodeVFSPath( const VFSHost &_vfs, const string &_path )
+Value PanelDataPersisency::EncodeVFSPath( const VFSHost &_vfs, const string &_path )
 {
     vector<const VFSHost*> hosts;
     auto host_rec = &_vfs;
@@ -182,43 +182,42 @@ EncodeVFSPath( const VFSHost &_vfs, const string &_path )
     
     reverse( begin(hosts), end(hosts) );
     
-    rapidjson::StandaloneValue json(rapidjson::kObjectType);
-    rapidjson::StandaloneValue json_hosts(rapidjson::kArrayType);
+    Value json(rapidjson::kObjectType);
+    Value json_hosts(rapidjson::kArrayType);
     for( auto h: hosts )
         if( auto v = EncodeVFSHostInfo(*h); v.GetType() != rapidjson::kNullType )
-            json_hosts.PushBack( move(v), rapidjson::g_CrtAllocator );
+            json_hosts.PushBack( move(v), nc::config::g_CrtAllocator );
         else
-            return rapidjson::StandaloneValue{rapidjson::kNullType};
+            return Value{rapidjson::kNullType};
     if( !json_hosts.Empty() )
-        json.AddMember(rapidjson::StandaloneValue(g_StackHostsKey, rapidjson::g_CrtAllocator),
+        json.AddMember(Value(g_StackHostsKey, nc::config::g_CrtAllocator),
                        move(json_hosts),
-                       rapidjson::g_CrtAllocator);
+                       nc::config::g_CrtAllocator);
     
-    json.AddMember(rapidjson::StandaloneValue(g_StackPathKey, rapidjson::g_CrtAllocator),
-                   rapidjson::StandaloneValue(_path.c_str(), rapidjson::g_CrtAllocator),
-                   rapidjson::g_CrtAllocator);
+    json.AddMember(Value(g_StackPathKey, nc::config::g_CrtAllocator),
+                   Value(_path.c_str(), nc::config::g_CrtAllocator),
+                   nc::config::g_CrtAllocator);
     
     return json;
 }
 
-rapidjson::StandaloneValue PanelDataPersisency::
-LocationToJSON( const PersistentLocation &_location )
+Value PanelDataPersisency::LocationToJSON( const PersistentLocation &_location )
 {
-    rapidjson::StandaloneValue json(rapidjson::kObjectType);
-    rapidjson::StandaloneValue json_hosts(rapidjson::kArrayType);
+    Value json(rapidjson::kObjectType);
+    Value json_hosts(rapidjson::kArrayType);
     for( auto &h: _location.hosts )
         if( auto v = EncodeAny(h); v.GetType() != rapidjson::kNullType )
-            json_hosts.PushBack( move(v), rapidjson::g_CrtAllocator );
+            json_hosts.PushBack( move(v), nc::config::g_CrtAllocator );
         else
-            return rapidjson::StandaloneValue{rapidjson::kNullType};
+            return Value{rapidjson::kNullType};
     if( !json_hosts.Empty() )
-        json.AddMember(rapidjson::StandaloneValue(g_StackHostsKey, rapidjson::g_CrtAllocator),
+        json.AddMember(Value(g_StackHostsKey, nc::config::g_CrtAllocator),
                        move(json_hosts),
-                       rapidjson::g_CrtAllocator);
+                       nc::config::g_CrtAllocator);
     
-    json.AddMember(rapidjson::StandaloneValue(g_StackPathKey, rapidjson::g_CrtAllocator),
-                   rapidjson::StandaloneValue(_location.path, rapidjson::g_CrtAllocator),
-                   rapidjson::g_CrtAllocator);
+    json.AddMember(Value(g_StackPathKey, nc::config::g_CrtAllocator),
+                   Value(_location.path, nc::config::g_CrtAllocator),
+                   nc::config::g_CrtAllocator);
     
     return json;
 }
@@ -396,11 +395,12 @@ string PanelDataPersisency::MakeVerbosePathString( const VFSHost &_host, const s
     return s;
 }
 
-rapidjson::StandaloneValue PanelDataPersisency::EncodeVFSHostInfo( const VFSHost& _host )
+Value PanelDataPersisency::EncodeVFSHostInfo( const VFSHost& _host )
 {
     using namespace rapidjson;
+    using namespace nc::config;
     auto tag = _host.Tag();
-    rapidjson::StandaloneValue json(rapidjson::kObjectType);
+    Value json(rapidjson::kObjectType);
     if( tag == VFSNativeHost::UniqueTag ) {
         json.AddMember( MakeStandaloneString(g_HostInfoTypeKey), MakeStandaloneString(tag), g_CrtAllocator );
         return json;
@@ -427,13 +427,14 @@ rapidjson::StandaloneValue PanelDataPersisency::EncodeVFSHostInfo( const VFSHost
         json.AddMember( MakeStandaloneString(g_HostInfoJunctionKey), MakeStandaloneString(_host.JunctionPath()), g_CrtAllocator );
         return json;
     }
-    return rapidjson::StandaloneValue{kNullType};
+    return Value{kNullType};
 }
 
-static rapidjson::StandaloneValue EncodeAny( const any& _host )
+static Value EncodeAny( const any& _host )
 {
     using namespace rapidjson;
-    rapidjson::StandaloneValue json(rapidjson::kObjectType);
+    using namespace nc::config;
+    Value json(rapidjson::kObjectType);
     if( auto native = any_cast<Native>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
                        MakeStandaloneString(VFSNativeHost::UniqueTag),
@@ -483,10 +484,10 @@ static rapidjson::StandaloneValue EncodeAny( const any& _host )
         return json;
     }
     
-    return rapidjson::StandaloneValue{kNullType};
+    return Value{kNullType};
 }
 
-int PanelDataPersisency::CreateVFSFromState( const rapidjson::StandaloneValue &_state, VFSHostPtr &_host )
+int PanelDataPersisency::CreateVFSFromState( const Value &_state, VFSHostPtr &_host )
 {
     if( _state.IsObject() && !_state.HasMember(g_StackHostsKey) && _state.HasMember(g_StackPathKey) ) {
         _host = VFSNativeHost::SharedHost();
@@ -688,7 +689,7 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
         return VFSError::GenericError;
 }
 
-string PanelDataPersisency::GetPathFromState( const rapidjson::StandaloneValue &_state )
+string PanelDataPersisency::GetPathFromState( const Value &_state )
 {
     if( _state.IsObject() && _state.HasMember(g_StackPathKey) && _state[g_StackPathKey].IsString() )
         return _state[g_StackPathKey].GetString();

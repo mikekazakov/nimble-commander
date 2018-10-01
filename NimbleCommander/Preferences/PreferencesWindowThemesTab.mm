@@ -1,6 +1,7 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PreferencesWindowThemesTab.h"
+#include <Config/RapidJSON.h>
 #include <fstream>
-#include <NimbleCommander/Core/rapidjson.h>
 #include <rapidjson/error/en.h>
 #include <rapidjson/memorystream.h>
 #include <rapidjson/stringbuffer.h>
@@ -11,7 +12,6 @@
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include <NimbleCommander/Core/Theming/ThemePersistence.h>
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
-#include "PreferencesWindowThemesTab.h"
 #include "PreferencesWindowThemesControls.h"
 #include "PreferencesWindowThemesTabModel.h"
 #include "PreferencesWindowThemesTabImportSheet.h"
@@ -51,7 +51,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 @implementation PreferencesWindowThemesTab
 {
     NSArray *m_Nodes;
-    rapidjson::StandaloneDocument m_Doc;
+    nc::config::Document m_Doc;
     ThemesManager *m_Manager;
     vector<string> m_ThemeNames;
     int m_SelectedTheme;
@@ -255,13 +255,13 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     }
 }
 
-- (const rapidjson::StandaloneDocument &) selectedThemeFrontend
+- (const nc::config::Document &) selectedThemeFrontend
 {
     return m_Doc; // possibly some more logic here
 }
 /* also theme backend if any */
 
-- (void) commitChangedValue:(const rapidjson::StandaloneValue&)_value forKey:(const string&)_key
+- (void) commitChangedValue:(const nc::config::Value&)_value forKey:(const string&)_key
 {
     // CHECKS!!!
     const auto &theme_name = m_ThemeNames[m_SelectedTheme];
@@ -292,7 +292,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 {
     // CHECKS!!!
     const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
-    m_Doc.CopyFrom( *m_Manager->ThemeData(theme_name), rapidjson::g_CrtAllocator );
+    m_Doc.CopyFrom( *m_Manager->ThemeData(theme_name), nc::config::g_CrtAllocator );
     
     
     self.selectedThemeCanBeRemoved = m_Manager->CanBeRemoved(theme_name);
@@ -357,8 +357,8 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
                         m_ThemeNames[m_SelectedTheme] :
                         sheet.importAsName.UTF8String ;
                      
-                     rapidjson::StandaloneDocument sdoc;
-                     sdoc.CopyFrom(*doc, rapidjson::g_CrtAllocator);
+                     nc::config::Document sdoc;
+                     sdoc.CopyFrom(*doc, nc::config::g_CrtAllocator);
                      bool result = sheet.overwriteCurrentTheme ?
                         m_Manager->ImportThemeData( name, sdoc ) :
                         m_Manager->AddTheme(name, sdoc);

@@ -38,7 +38,9 @@
 #include <Operations/Pool.h>
 #include <Operations/AggregateProgressTracker.h>
 #include "AppDelegate.h"
-#include "Config.h"
+#include <Config/ConfigImpl.h>
+#include <Config/FileOverwritesStorage.h>
+#include <Config/Executor.h>
 #include "AppDelegate+Migration.h"
 #include "ActivationManager.h"
 #include "ConfigWiring.h"
@@ -52,13 +54,16 @@
 
 using namespace nc::bootstrap;
 
+static std::optional<std::string> Load(const std::string &_filepath);
+
 static SUUpdater *g_Sparkle = nil;
 
 static auto g_ConfigDirPostfix = @"/Config/";
 static auto g_StateDirPostfix = @"/State/";
 
-static GenericConfig *g_Config = nullptr;
-static GenericConfig *g_State = nullptr;
+static nc::config::ConfigImpl *g_Config = nullptr;
+static nc::config::ConfigImpl *g_State = nullptr;
+static nc::config::ConfigImpl *g_NetworkConnectionsConfig = nullptr;
 
 static const auto g_ConfigForceFn = "general.alwaysUseFnKeysAsFunctional";
 static const auto g_ConfigExternalToolsList = "externalTools.tools_v1";
@@ -84,10 +89,10 @@ static void ResetDefaults()
     const auto bundle_id = NSBundle.mainBundle.bundleIdentifier;
     [NSUserDefaults.standardUserDefaults removePersistentDomainForName:bundle_id];
     [NSUserDefaults.standardUserDefaults synchronize];
-    GlobalConfig().ResetToDefaults();
-    StateConfig().ResetToDefaults();
-    GlobalConfig().Commit();
-    StateConfig().Commit();
+    g_Config->ResetToDefaults();
+    g_State->ResetToDefaults();
+    g_Config->Commit();
+    g_State->Commit();
 }
 
 static void UpdateMenuItemsPlaceholders( int _tag )
@@ -149,7 +154,7 @@ static NCAppDelegate *g_Me = nil;
     string              m_SupportDirectory;
     string              m_ConfigDirectory;
     string              m_StateDirectory;
-    vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
+    vector<nc::config::Token> m_ConfigObservationTickets;
     AppStoreHelper *m_AppStoreHelper;
     upward_flag         m_FinishedLaunching;
     shared_ptr<nc::panel::FavoriteLocationsStorageImpl> m_Favorites;
@@ -423,15 +428,47 @@ static NCAppDelegate *g_Me = nil;
     const auto bundle = NSBundle.mainBundle;
     const auto config_defaults_path = [bundle pathForResource:@"Config"
                                                        ofType:@"json"].fileSystemRepresentationSafe;
+    const auto config_defaults = Load(config_defaults_path);
+    if( config_defaults == std::nullopt ) {
+        std::cerr << "Failed to read the main config file: " << config_defaults_path << std::endl;
+        exit(0);
+    }
+        
     const auto state_defaults_path = [bundle pathForResource:@"State"
                                                       ofType:@"json"].fileSystemRepresentationSafe;
-    g_Config = new GenericConfig(config_defaults_path, self.configDirectory + "Config.json");
-    g_State  = new GenericConfig(state_defaults_path, self.stateDirectory + "State.json");
+    const auto state_defaults = Load(state_defaults_path);
+    if( state_defaults == std::nullopt ) {
+        std::cerr << "Failed to read the state config file: " << state_defaults_path << std::endl;
+        exit(0);
+    }
     
+    const auto write_delay = std::chrono::seconds{30};
+    const auto reload_delay = std::chrono::seconds{1};
+    
+    g_Config = new nc::config::ConfigImpl
+    (*config_defaults,
+     std::make_shared<nc::config::FileOverwritesStorage>(self.configDirectory + "Config.json"),
+     std::make_shared<nc::config::DelayedAsyncExecutor>(write_delay),
+     std::make_shared<nc::config::DelayedAsyncExecutor>(reload_delay));
+    
+    g_State = new nc::config::ConfigImpl
+    (*state_defaults,
+     std::make_shared<nc::config::FileOverwritesStorage>(self.stateDirectory + "State.json"),
+     std::make_shared<nc::config::DelayedAsyncExecutor>(write_delay),
+     std::make_shared<nc::config::DelayedAsyncExecutor>(reload_delay));    
+
+    g_NetworkConnectionsConfig = new nc::config::ConfigImpl
+    ("",
+     std::make_shared<nc::config::FileOverwritesStorage>(self.configDirectory + 
+                                                         "NetworkConnections.json"),
+     std::make_shared<nc::config::DelayedAsyncExecutor>(write_delay),
+     std::make_shared<nc::config::DelayedAsyncExecutor>(reload_delay));    
+        
     atexit([]{
         // this callback is quite brutal, but works well. may need to find some more gentle approach
-        GlobalConfig().Commit();
-        StateConfig().Commit();
+        g_Config->Commit();
+        g_State->Commit();
+        g_NetworkConnectionsConfig->Commit();
     });
 }
 
@@ -678,9 +715,9 @@ static NCAppDelegate *g_Me = nil;
     return true;
 }
 
-- (GenericConfigObjC*) config
+- (NCConfigObjCBridge*) config
 {
-    static auto global_config_bridge = [[GenericConfigObjC alloc] initWithConfig:g_Config];
+    static auto global_config_bridge = [[NCConfigObjCBridge alloc] initWithConfig:*g_Config];
     return global_config_bridge;
 }
 
@@ -800,7 +837,7 @@ static NCAppDelegate *g_Me = nil;
 - (const shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager
 {
     static const auto mgr = make_shared<ConfigBackedNetworkConnectionsManager>
-        (self.configDirectory);
+        (*g_NetworkConnectionsConfig);
     static const shared_ptr<NetworkConnectionsManager> int_ptr = mgr;
     return int_ptr;
 }
@@ -865,3 +902,18 @@ static NCAppDelegate *g_Me = nil;
 }
 
 @end
+
+static std::optional<std::string> Load(const std::string &_filepath)
+{
+    std::ifstream in( _filepath, std::ios::in | std::ios::binary);
+    if( !in )
+        return std::nullopt;        
+    
+    std::string contents;
+    in.seekg( 0, std::ios::end );
+    contents.resize( in.tellg() );
+    in.seekg( 0, std::ios::beg );
+    in.read( &contents[0], contents.size() );
+    in.close();
+    return contents;
+}

@@ -1,13 +1,15 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <VFS/VFS.h>
 #include <Term/SingleTask.h>
 #include <Utility/FileMask.h>
-#include <NimbleCommander/Core/rapidjson.h>
+#include <Config/RapidJSON.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "ExternalEditorInfo.h"
 #include "ExternalEditorInfoPrivate.h"
+
+using namespace nc::config;
 
 struct ExternalEditorsPersistence
 {
@@ -19,7 +21,7 @@ struct ExternalEditorsPersistence
     constexpr static const auto onlyfiles = "onlyFiles";
     constexpr static const auto terminal = "openInTerminal";
 
-    static optional<ExternalEditorStartupInfo> LoadFromJSON( const GenericConfig::ConfigValue &_v )
+    static optional<ExternalEditorStartupInfo> LoadFromJSON( const Value &_v )
     {
         if( !_v.IsObject() )
             return nullopt;
@@ -71,10 +73,10 @@ struct ExternalEditorsPersistence
         return ed;
     }
     
-    static GenericConfig::ConfigValue SaveToJSON( const ExternalEditorStartupInfo& _ed )
+    static Value SaveToJSON( const ExternalEditorStartupInfo& _ed )
     {
         using namespace rapidjson;
-        GenericConfig::ConfigValue v {kObjectType};
+        nc::config::Value v {kObjectType};
         v.AddMember(MakeStandaloneString(name),
                     MakeStandaloneString(_ed.Name()),
                     g_CrtAllocator);
@@ -88,13 +90,13 @@ struct ExternalEditorsPersistence
                     MakeStandaloneString(_ed.Mask()),
                     g_CrtAllocator);
         v.AddMember(MakeStandaloneString(maxfilesize),
-                    GenericConfig::ConfigValue {_ed.MaxFileSize()},
+                    nc::config::Value {_ed.MaxFileSize()},
                     g_CrtAllocator);
         v.AddMember(MakeStandaloneString(onlyfiles),
-                    GenericConfig::ConfigValue {_ed.OnlyFiles()},
+                    nc::config::Value {_ed.OnlyFiles()},
                     g_CrtAllocator);
         v.AddMember(MakeStandaloneString(terminal),
-                    GenericConfig::ConfigValue {_ed.OpenInTerminal()},
+                    nc::config::Value {_ed.OpenInTerminal()},
                     g_CrtAllocator);
         return v;
     }
@@ -305,7 +307,7 @@ void ExternalEditorsStorage::LoadFromConfig()
 void ExternalEditorsStorage::SaveToConfig()
 {
     using namespace rapidjson;
-    GenericConfig::ConfigValue v{kArrayType};
+    nc::config::Value v{kArrayType};
     for( auto &ed: m_ExternalEditors)
         v.PushBack( ExternalEditorsPersistence::SaveToJSON(*ed),
                    g_CrtAllocator);

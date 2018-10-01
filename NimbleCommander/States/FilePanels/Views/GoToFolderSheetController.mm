@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFS.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
@@ -68,8 +68,10 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
     [super windowDidLoad];
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
-    if( auto last = StateConfig().GetString(g_StateGoToKey) )
-        self.Text.stringValue = [NSString stringWithUTF8StdString:*last];
+    if( StateConfig().Has(g_StateGoToKey) ) {
+        auto path = StateConfig().GetString(g_StateGoToKey);
+        self.Text.stringValue = [NSString stringWithUTF8StdString:path];
+    }
     
     self.Text.delegate = self;
     [self controlTextDidChange:[NSNotification notificationWithName:@"" object:nil]];

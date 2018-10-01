@@ -1,21 +1,21 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-class GenericConfig;
+#include <Config/Config.h>
 
 namespace nc::bootstrap {
 
 class ConfigWiring
 {
 public:
-    ConfigWiring(GenericConfig &_config);
+    ConfigWiring(config::Config &_config);
     void Wire();
 
 private:
     void SetupOperationsPool();
     void SetupNotification();
     
-    GenericConfig &m_Config;    
+    config::Config &m_Config;    
 };
 
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/DispatchGroup.h>
 #include <Utility/NSTimer+Tolerance.h>
@@ -10,9 +10,9 @@
 #include <NimbleCommander/Core/SearchForFiles.h>
 #include <Utility/ByteCountFormatter.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/rapidjson.h>
 #include <NimbleCommander/States/FilePanels/PanelAux.h>
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <Config/RapidJSON.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
@@ -73,10 +73,10 @@ public:
     
     ~FindFilesSheetComboHistory()
     {
-        GenericConfig::ConfigValue arr(rapidjson::kArrayType);
+        nc::config::Value arr(rapidjson::kArrayType);
         for( auto &s: *this )
-            arr.PushBack(GenericConfig::ConfigValue(s.c_str(), GenericConfig::g_CrtAllocator),
-                         GenericConfig::g_CrtAllocator );
+            arr.PushBack(nc::config::Value(s.c_str(), nc::config::g_CrtAllocator),
+                         nc::config::g_CrtAllocator );
         StateConfig().Set(m_Path, arr);
     }
     

@@ -3,7 +3,6 @@
 #include <boost/container/static_vector.hpp>
 #include "PanelDataFilter.h"
 #include "PanelData.h"
-#include <NimbleCommander/Bootstrap/Config.h>
 #include "CursorBackup.h"
 
 using namespace nc::panel;
@@ -37,15 +36,13 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     nanoseconds                             m_SoftFilteringLastAction;
     KeyModif                                m_Modifier;
     data::TextualFilter::Where              m_WhereToSearch;
-    GenericConfig                          *m_Config;
-    boost::container::static_vector<
-        GenericConfig::ObservationTicket,4> m_ConfigObservers;
-    
+    nc::config::Config                     *m_Config;
+    boost::container::static_vector<nc::config::Token,4> m_ConfigObservers;
 }
 
 - (instancetype)initWithData:(nc::panel::data::Model&)_data
                     delegate:(NSObject<NCPanelQuickSearchDelegate>*)_delegate
-                      config:(GenericConfig&)_config
+                      config:(nc::config::Config&)_config
 {
     if( !(self = [super init]) )
         return nil;

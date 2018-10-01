@@ -23,8 +23,8 @@ class Theme
 {
 public:
     // workaround to exclude rapidjson from header
-    Theme(const /*rapidjson::StandaloneValue*/ void *_1,
-          const /*rapidjson::StandaloneValue*/ void *_2);
+    Theme(const /*nc::config::Value*/ void *_1,
+          const /*nc::config::Value*/ void *_2);
     ~Theme();
 
     // General info querying ///////////////////////////////////////////////////////////////////////

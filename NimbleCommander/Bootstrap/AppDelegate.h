@@ -1,12 +1,12 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #pragma once
 
 #include <VFS/VFS_fwd.h>
+#include <Config/ObjCBridge.h>
 
 @class NCMainWindowController;
 @class InternalViewerWindowController;
-@class GenericConfigObjC;
 @class AppStoreHelper;
 class ExternalToolsStorage;
 class ThemesManager;
@@ -76,7 +76,7 @@ namespace nc {
  */
 @property (nonatomic, readonly) const string& stateDirectory;
 
-@property (nonatomic, readonly) GenericConfigObjC *config;
+@property (nonatomic, readonly) NCConfigObjCBridge *config;
 
 @property (nonatomic, readonly) ExternalToolsStorage& externalTools;
 

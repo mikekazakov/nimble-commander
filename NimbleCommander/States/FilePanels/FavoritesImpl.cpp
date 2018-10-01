@@ -6,7 +6,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Core/rapidjson.h>
+#include <Config/RapidJSON.h>
 #include "FavoriteComposing.h"
 
 namespace nc::panel {
@@ -178,10 +178,12 @@ FavoriteLocationsStorageImpl::Favorites( /*limit output later*/ ) const
     return m_Favorites;
 }
 
-rapidjson::StandaloneValue FavoriteLocationsStorageImpl::VisitToJSON(const Visit &_visit)
+config::Value FavoriteLocationsStorageImpl::VisitToJSON(const Visit &_visit)
 {
     using namespace rapidjson;
-    StandaloneValue json(kObjectType);
+    using namespace nc::config;
+    
+    Value json(kObjectType);
     
     if( auto l = PanelDataPersisency::LocationToJSON(_visit.location->hosts_stack);
        l.GetType() != kNullType )
@@ -189,21 +191,21 @@ rapidjson::StandaloneValue FavoriteLocationsStorageImpl::VisitToJSON(const Visit
                        move(l),
                        g_CrtAllocator );
     else
-        return rapidjson::StandaloneValue{kNullType};
+        return Value{kNullType};
     
     json.AddMember(MakeStandaloneString("visits_count"),
-                   StandaloneValue{_visit.visits_count},
+                   Value{_visit.visits_count},
                    g_CrtAllocator );
 
     json.AddMember(MakeStandaloneString("last_visit"),
-                   StandaloneValue{(int64_t)_visit.last_visit},
+                   Value{(int64_t)_visit.last_visit},
                    g_CrtAllocator );
 
     return json;
 }
 
 optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl::
-    JSONToVisit( const rapidjson::StandaloneValue& _json )
+    JSONToVisit( const config::Value& _json )
 {
     if( !_json.IsObject() )
         return nullopt;
@@ -232,11 +234,11 @@ optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl::
     return move(v);
 }
 
-rapidjson::StandaloneValue FavoriteLocationsStorageImpl::
-    FavoriteToJSON(const Favorite &_favorite)
+config::Value FavoriteLocationsStorageImpl::FavoriteToJSON(const Favorite &_favorite)
 {
     using namespace rapidjson;
-    StandaloneValue json(kObjectType);
+    using namespace nc::config;
+    Value json(kObjectType);
     
     if( auto l = PanelDataPersisency::LocationToJSON(_favorite.location->hosts_stack);
        l.GetType()!=kNullType )
@@ -244,7 +246,7 @@ rapidjson::StandaloneValue FavoriteLocationsStorageImpl::
                        move(l),
                        g_CrtAllocator );
     else
-        return StandaloneValue{kNullType};
+        return Value{kNullType};
     
     if( !_favorite.title.empty() )
         json.AddMember(MakeStandaloneString("title"),
@@ -255,7 +257,7 @@ rapidjson::StandaloneValue FavoriteLocationsStorageImpl::
 }
 
 optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
-    JSONToFavorite( const rapidjson::StandaloneValue& _json )
+    JSONToFavorite( const config::Value& _json )
 {
     if( !_json.IsObject() )
         return nullopt;
@@ -285,23 +287,24 @@ void FavoriteLocationsStorageImpl::StoreData( GenericConfig &_config, const char
 {
     dispatch_assert_main_queue();
     using namespace rapidjson;
-    StandaloneValue json(kObjectType);
+    using namespace nc::config;
+    Value json(kObjectType);
     const auto now = time(nullptr);
 
-    StandaloneValue manual(kArrayType);
+    Value manual(kArrayType);
     for( auto &favorite: m_Favorites )
         if( auto v = FavoriteToJSON(favorite); v.GetType() != kNullType )
-            manual.PushBack( move(v), rapidjson::g_CrtAllocator );
+            manual.PushBack( move(v), g_CrtAllocator );
 
     json.AddMember(MakeStandaloneString("manual"),
                    move(manual),
                    g_CrtAllocator );
 
-    StandaloneValue automatic(kArrayType);
+    Value automatic(kArrayType);
     for( auto &visit: m_Visits )
         if( visit.second.last_visit + g_MaxTimeRange > now )
             if( auto v = VisitToJSON(visit.second); v.GetType() != kNullType )
-                automatic.PushBack( std::move(v), rapidjson::g_CrtAllocator );
+                automatic.PushBack( std::move(v), g_CrtAllocator );
 
     json.AddMember(MakeStandaloneString("automatic"),
                    move(automatic),

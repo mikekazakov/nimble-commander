@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <Habanero/algo.h>
@@ -55,8 +55,11 @@ static string CookSpotlightSearchQuery( const string& _format, const string &_in
 
 static vector<string> FetchSpotlightResults(const string& _query)
 {
-    string format = CookSpotlightSearchQuery( GlobalConfig().GetString(g_ConfigSpotlightFormat).value_or("kMDItemFSName == '*#{query}*'cd"),
-                                              _query );
+    auto fmt = GlobalConfig().Has(g_ConfigSpotlightFormat) ? 
+        GlobalConfig().GetString(g_ConfigSpotlightFormat) : 
+        "kMDItemFSName == '*#{query}*'cd";
+    
+    string format = CookSpotlightSearchQuery( fmt, _query );
     
     MDQueryRef query = MDQueryCreate( nullptr, (CFStringRef)[NSString stringWithUTF8StdString:format], nullptr, nullptr );
     if( !query )

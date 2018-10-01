@@ -1,6 +1,6 @@
 // Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/debug.h>
-#include <NimbleCommander/Core/rapidjson.h>
+#include <Config/RapidJSON.h>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/prettywriter.h>
@@ -19,6 +19,7 @@
 #include "FilePanels/PanelController.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/Bootstrap/Config.h>
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
@@ -49,7 +50,7 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
     
     SerialQueue                  m_BigFileViewLoadingQ;
     bool                         m_ToolbarVisible;
-    vector<GenericConfig::ObservationTicket> m_ConfigTickets;
+    vector<config::Token>        m_ConfigTickets;
     
     shared_ptr<nc::ops::Pool>    m_OperationsPool;
 }
@@ -158,7 +159,7 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
 {
     const id encoded_state = [coder decodeObjectForKey:g_CocoaRestorationFilePanelsStateKey];
     if( auto json = objc_cast<NSString>(encoded_state) ) {
-        rapidjson::StandaloneDocument state;
+        nc::config::Document state;
         rapidjson::ParseResult ok = state.Parse<rapidjson::kParseCommentsFlag>( json.UTF8String );
         if( ok )
             [m_PanelState decodeRestorableState:state];

@@ -1,6 +1,6 @@
 // Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Core/rapidjson.h>
+#include <Config/RapidJSON.h>
 #include "Theme.h"
 #include "CocoaAppearanceManager.h"
 #include "ThemesManager.h"
@@ -93,7 +93,9 @@ ThemesManager::ThemesManager( const char *_current_theme_path, const char *_them
 {
     LoadDefaultThemes();
     LoadThemes();
-    m_SelectedThemeName = GlobalConfig().GetString(m_CurrentThemePath).value_or("Modern");
+    m_SelectedThemeName = GlobalConfig().Has(m_CurrentThemePath) ?  
+        GlobalConfig().GetString(m_CurrentThemePath) :
+        "Modern"; 
     
     UpdateCurrentTheme();
     
@@ -121,10 +123,10 @@ void ThemesManager::LoadThemes()
         if( m_Themes.count(name) )
             continue; // broken config - duplicate theme declaration, prohibit such stuff
         
-        rapidjson::StandaloneDocument doc;
-        doc.CopyFrom(*i, rapidjson::g_CrtAllocator);
+        nc::config::Document doc;
+        doc.CopyFrom(*i, nc::config::g_CrtAllocator);
         
-        m_Themes.emplace( name, make_shared<rapidjson::StandaloneDocument>( move(doc) ) );
+        m_Themes.emplace( name, make_shared<nc::config::Document>( move(doc) ) );
         m_OrderedThemeNames.emplace_back( name );
     }
 }
@@ -146,10 +148,10 @@ void ThemesManager::LoadDefaultThemes()
         if( name.empty() )
             continue;
         
-        rapidjson::StandaloneDocument doc;
-        doc.CopyFrom(*i, rapidjson::g_CrtAllocator);
+        nc::config::Document doc;
+        doc.CopyFrom(*i, nc::config::g_CrtAllocator);
         
-        m_DefaultThemes.emplace( name, make_shared<rapidjson::StandaloneDocument>( move(doc) ) );
+        m_DefaultThemes.emplace( name, make_shared<nc::config::Document>( move(doc) ) );
         m_OrderedDefaultThemeNames.emplace_back( name );
     }
 }
@@ -159,7 +161,7 @@ string ThemesManager::SelectedThemeName() const
     return m_SelectedThemeName;
 }
 
-shared_ptr<const rapidjson::StandaloneValue> ThemesManager::SelectedThemeData() const
+shared_ptr<const nc::config::Value> ThemesManager::SelectedThemeData() const
 {
     auto i = ThemeData( m_SelectedThemeName );
     if( i->GetType() == rapidjson::kObjectType )
@@ -169,18 +171,18 @@ shared_ptr<const rapidjson::StandaloneValue> ThemesManager::SelectedThemeData() 
     return BackupThemeData( "Modern" );
 }
 
-shared_ptr<const rapidjson::StandaloneValue> ThemesManager::
+shared_ptr<const nc::config::Value> ThemesManager::
     ThemeData( const string &_theme_name ) const
 {
     auto it = m_Themes.find( _theme_name );
     if( it != end(m_Themes) )
         return it->second;
 
-    static const auto dummy = make_shared<rapidjson::StandaloneValue>(rapidjson::kNullType);
+    static const auto dummy = make_shared<nc::config::Value>(rapidjson::kNullType);
     return dummy;
 }
 
-shared_ptr<const rapidjson::StandaloneValue> ThemesManager::
+shared_ptr<const nc::config::Value> ThemesManager::
     BackupThemeData(const string &_theme_name) const
 {
     auto i = m_DefaultThemes.find( _theme_name );
@@ -202,7 +204,7 @@ static uint64_t NotificationMaskForKey( const string &_key )
 
 bool ThemesManager::SetThemeValue(const string &_theme_name,
                                   const string &_key,
-                                  const rapidjson::StandaloneValue &_value)
+                                  const nc::config::Value &_value)
 {
     auto it = m_Themes.find( _theme_name );
     if( it == end(m_Themes) )
@@ -214,14 +216,14 @@ bool ThemesManager::SetThemeValue(const string &_theme_name,
         if( d[_key.c_str()] == _value )
             return true;
     
-    rapidjson::StandaloneDocument new_doc;
-    new_doc.CopyFrom( d, rapidjson::g_CrtAllocator );
+    nc::config::Document new_doc;
+    new_doc.CopyFrom( d, nc::config::g_CrtAllocator );
     new_doc.RemoveMember( _key.c_str() );
-    new_doc.AddMember(rapidjson::MakeStandaloneString(_key),
-                      rapidjson::StandaloneValue(_value, rapidjson::g_CrtAllocator),
-                      rapidjson::g_CrtAllocator);
+    new_doc.AddMember(nc::config::MakeStandaloneString(_key),
+                      nc::config::Value(_value, nc::config::g_CrtAllocator),
+                      nc::config::g_CrtAllocator);
     
-    it->second = make_shared<rapidjson::StandaloneDocument>( move(new_doc) );
+    it->second = make_shared<nc::config::Document>( move(new_doc) );
     
     // if this is a selected theme
     if( _theme_name == m_SelectedThemeName ) {
@@ -272,14 +274,14 @@ vector<string> ThemesManager::ThemeNames() const
 // todo: move to background, need to be thread-safe
 void ThemesManager::WriteThemes() const
 {
-    GenericConfig::ConfigValue json_themes{ rapidjson::kArrayType };
+    nc::config::Value json_themes{ rapidjson::kArrayType };
     for( auto &tn: m_OrderedThemeNames ) {
         auto i = m_Themes.find(tn);
         assert( i != end(m_Themes) );
         
-        GenericConfig::ConfigValue theme{ rapidjson::kObjectType };
-        theme.CopyFrom( *i->second, rapidjson::g_CrtAllocator );
-        json_themes.PushBack( move(theme), rapidjson::g_CrtAllocator);
+        nc::config::Value theme{ rapidjson::kObjectType };
+        theme.CopyFrom( *i->second, nc::config::g_CrtAllocator );
+        json_themes.PushBack( move(theme), nc::config::g_CrtAllocator);
     }
     GlobalConfig().Set( m_ThemesStoragePath, json_themes );
 }
@@ -343,7 +345,7 @@ bool ThemesManager::DiscardThemeChanges( const string &_theme_name )
 }
 
 bool ThemesManager::ImportThemeData(const string &_theme_name,
-                                    const rapidjson::StandaloneValue &_data)
+                                    const nc::config::Value &_data)
 {
     if( _data.GetType() != rapidjson::kObjectType )
         return false;
@@ -354,8 +356,8 @@ bool ThemesManager::ImportThemeData(const string &_theme_name,
     
     auto &old_doc = *it->second;
     
-    rapidjson::StandaloneDocument new_doc;
-    new_doc.CopyFrom( old_doc, rapidjson::g_CrtAllocator );
+    nc::config::Document new_doc;
+    new_doc.CopyFrom( old_doc, nc::config::g_CrtAllocator );
     
     bool any = false;
     uint64_t changes_mask = 0;
@@ -368,9 +370,9 @@ bool ThemesManager::ImportThemeData(const string &_theme_name,
                 continue;
         
         new_doc.RemoveMember( i->name );
-        new_doc.AddMember(rapidjson::MakeStandaloneString(i->name.GetString()),
-                          rapidjson::StandaloneValue(i->value, rapidjson::g_CrtAllocator),
-                          rapidjson::g_CrtAllocator);
+        new_doc.AddMember(nc::config::MakeStandaloneString(i->name.GetString()),
+                          nc::config::Value(i->value, nc::config::g_CrtAllocator),
+                          nc::config::g_CrtAllocator);
         changes_mask |= NotificationMaskForKey( i->name.GetString() );
         any = true;
     }
@@ -379,7 +381,7 @@ bool ThemesManager::ImportThemeData(const string &_theme_name,
         return false;
     
     // put new data into our working dictionary
-    it->second = make_shared<rapidjson::StandaloneDocument>( move(new_doc) );
+    it->second = make_shared<nc::config::Document>( move(new_doc) );
     
     // if this is a selected theme
     if( _theme_name == m_SelectedThemeName ) {
@@ -394,20 +396,20 @@ bool ThemesManager::ImportThemeData(const string &_theme_name,
 }
 
 bool ThemesManager::AddTheme(const string &_theme_name,
-                             const rapidjson::StandaloneValue &_data)
+                             const nc::config::Value &_data)
 {
     if( _theme_name.empty() || m_Themes.count(_theme_name) )
         return false;
     
-    rapidjson::StandaloneDocument doc;
-    doc.CopyFrom(_data, rapidjson::g_CrtAllocator);
+    nc::config::Document doc;
+    doc.CopyFrom(_data, nc::config::g_CrtAllocator);
     
     doc.RemoveMember( g_NameKey );
-    doc.AddMember(rapidjson::MakeStandaloneString(g_NameKey),
-                  rapidjson::MakeStandaloneString(_theme_name),
-                  rapidjson::g_CrtAllocator);
+    doc.AddMember(nc::config::MakeStandaloneString(g_NameKey),
+                  nc::config::MakeStandaloneString(_theme_name),
+                  nc::config::g_CrtAllocator);
     
-    m_Themes.emplace( _theme_name, make_shared<rapidjson::StandaloneDocument>( move(doc) ) );
+    m_Themes.emplace( _theme_name, make_shared<nc::config::Document>( move(doc) ) );
     m_OrderedThemeNames.emplace_back( _theme_name );
 
     // TODO: move to background thread, delay execution
@@ -473,16 +475,16 @@ bool ThemesManager::RenameTheme( const string &_theme_name, const string &_to_na
     if( !old_doc || old_doc->GetType() != rapidjson::kObjectType )
         return false;
     
-    rapidjson::StandaloneDocument doc;
-    doc.CopyFrom(*old_doc, rapidjson::g_CrtAllocator);
+    nc::config::Document doc;
+    doc.CopyFrom(*old_doc, nc::config::g_CrtAllocator);
     
     doc.RemoveMember( g_NameKey );
-    doc.AddMember(rapidjson::MakeStandaloneString(g_NameKey),
-                  rapidjson::MakeStandaloneString(_to_name),
-                  rapidjson::g_CrtAllocator);
+    doc.AddMember(nc::config::MakeStandaloneString(g_NameKey),
+                  nc::config::MakeStandaloneString(_to_name),
+                  nc::config::g_CrtAllocator);
     
     m_Themes.erase(_theme_name);
-    m_Themes.emplace( _to_name, make_shared<rapidjson::StandaloneDocument>( move(doc) ) );
+    m_Themes.emplace( _to_name, make_shared<nc::config::Document>( move(doc) ) );
     replace( begin(m_OrderedThemeNames), end(m_OrderedThemeNames), _theme_name, _to_name );
     
 

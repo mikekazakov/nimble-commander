@@ -1,7 +1,10 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataOptionsPersistence.h"
 #include "PanelData.h"
 #include "PanelDataSortMode.h"
+#include <Config/RapidJSON.h>
+
+namespace nc::panel::data {
 
 static const auto g_RestorationSepDirsKey = "separateDirectories";
 static const auto g_RestorationExtlessDirsKey = "extensionlessDirectories";
@@ -10,22 +13,21 @@ static const auto g_RestorationCaseSensKey = "caseSensitive";
 static const auto g_RestorationNumericSortKey = "numericSort";
 static const auto g_RestorationSortModeKey = "sortMode";
 
-namespace nc::panel::data {
+using nc::config::Value;
+using nc::config::g_CrtAllocator;
 
 OptionsExporter::OptionsExporter(const Model &_data):
     m_Data(_data)
 {
 }
 
-rapidjson::StandaloneValue OptionsExporter::Export() const
+Value OptionsExporter::Export() const
 {
-    rapidjson::StandaloneValue json(rapidjson::kObjectType);
+    Value json(rapidjson::kObjectType);
     auto add_bool = [&](const char*_name, bool _v) {
-        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator),
-                       rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
+        json.AddMember(Value(_name, g_CrtAllocator), Value(_v), g_CrtAllocator); };
     auto add_int = [&](const char*_name, int _v) {
-        json.AddMember(rapidjson::StandaloneValue(_name, rapidjson::g_CrtAllocator),
-                       rapidjson::StandaloneValue(_v), rapidjson::g_CrtAllocator); };
+        json.AddMember(Value(_name, g_CrtAllocator), Value(_v), g_CrtAllocator); };
     auto sort_mode = m_Data.SortMode();
     add_bool(g_RestorationSepDirsKey, sort_mode.sep_dirs);
     add_bool(g_RestorationExtlessDirsKey, sort_mode.extensionless_dirs);
@@ -41,9 +43,10 @@ OptionsImporter::OptionsImporter(Model &_data):
 {
 }
     
-void OptionsImporter::Import(const rapidjson::StandaloneValue& _options)
+void OptionsImporter::Import(const Value& _options)
 {
-  using namespace rapidjson;
+    using namespace rapidjson;
+    using namespace nc::config;
     if( !_options.IsObject() )
         return;
     

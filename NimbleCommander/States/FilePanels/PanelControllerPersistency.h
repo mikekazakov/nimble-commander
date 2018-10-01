@@ -1,7 +1,8 @@
 // Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <NimbleCommander/Core/rapidjson_fwd.h>
+#include <Config/RapidJSON_fwd.h>
+
 @class PanelController;
 
 namespace nc::panel {
@@ -25,7 +26,7 @@ class ControllerStateJSONEncoder
 public:
     ControllerStateJSONEncoder(PanelController *_panel);
     
-    rapidjson::StandaloneValue Encode(ControllerStateEncoding::Options _options);
+    config::Value Encode(ControllerStateEncoding::Options _options);
     
 private:
     PanelController *m_Panel;
@@ -36,7 +37,7 @@ class ControllerStateJSONDecoder
 public:
     ControllerStateJSONDecoder(PanelController *_panel);
     
-    void Decode(const rapidjson::StandaloneValue &_state);
+    void Decode(const config::Value &_state);
     
 private:
     PanelController *m_Panel;

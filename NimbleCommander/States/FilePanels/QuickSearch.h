@@ -1,9 +1,9 @@
 // Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <Config/Config.h>
 #include "PanelViewKeystrokeSink.h"
 
-class GenericConfig;
 
 namespace nc::panel {
 namespace data {
@@ -47,7 +47,7 @@ wantsToSetSearchPrompt:(NSString*)_prompt
 
 - (instancetype)initWithData:(nc::panel::data::Model&)_data
                     delegate:(NSObject<NCPanelQuickSearchDelegate>*)_delegate
-                      config:(GenericConfig&)_config;
+                      config:(nc::config::Config&)_config;
 
 - (void)setSearchCriteria:(NSString*)_request; // pass nil to discard filtering
 - (NSString*)searchCriteria; // will return nil if there's no filtering

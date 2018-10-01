@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SettingsAdaptor.h"
 #include <Term/Settings.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -15,7 +15,7 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
 class SettingsImpl : public DefaultSettings
 {
     ThemesManager::ObservationTicket m_ThemeObservation;
-    vector<GenericConfig::ObservationTicket> m_ConfigObservationTickets;
+    vector<config::Token> m_ConfigObservationTickets;
     vector<pair<int, function<void()>>> m_Callbacks;
     int m_LastTicket = 1;
 public:

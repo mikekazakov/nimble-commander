@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include "../Bootstrap/ActivationManager.h"
 #include "../Viewer/InternalViewerHistory.h"
@@ -59,7 +59,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
     
     for(const auto &i: encodings::LiteralEncodingsList())
         [self.DefaultEncoding addItemWithTitle: (__bridge NSString*)i.second];
-    int default_encoding = encodings::EncodingFromName( GlobalConfig().GetString(g_ConfigDefaultEncoding).value_or("").c_str() );
+    int default_encoding = encodings::EncodingFromName( GlobalConfig().GetString(g_ConfigDefaultEncoding).c_str() );
     if(default_encoding == encodings::ENCODING_INVALID)
         default_encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
-#include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include "Views/FilePanelOverlappedTerminal.h"
 #include "Views/FilePanelMainSplitView.h"
 #include "PanelView.h"
@@ -9,6 +9,7 @@
 #include "PanelController.h"
 #include "PanelAux.h"
 #include "PanelHistory.h"
+#include <NimbleCommander/Bootstrap/Config.h>
 
 using namespace nc::panel;
 using namespace nc::term;

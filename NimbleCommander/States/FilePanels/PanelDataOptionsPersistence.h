@@ -1,7 +1,7 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <NimbleCommander/Core/rapidjson.h>
+#include <Config/RapidJSON_fwd.h>
 
 namespace nc::panel::data {
 
@@ -11,7 +11,7 @@ class OptionsExporter
 {
 public:
     OptionsExporter(const Model &_data);
-    rapidjson::StandaloneValue Export() const;
+    nc::config::Value Export() const;
 private:
     const Model &m_Data;
 };
@@ -20,7 +20,7 @@ class OptionsImporter
 {
 public:
     OptionsImporter(Model &_data);
-    void Import(const rapidjson::StandaloneValue& _options);
+    void Import(const nc::config::Value& _options);
 private:
     Model &m_Data;
 };

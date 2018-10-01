@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "../PanelController.h"
 #include "../PanelView.h"
@@ -10,7 +10,7 @@ namespace nc::panel::actions {
 static const char* Separator()
 {
     static const auto config_path = "filePanel.general.separatorForCopyingMultipleFilenames";
-    static const auto s = *GlobalConfig().GetString(config_path);
+    static const auto s = GlobalConfig().GetString(config_path);
     return s.c_str();
 }
 

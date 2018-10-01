@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigBackedNetworkConnectionsManager.h"
 #include <dirent.h>
 #include <NetFS/NetFS.h>
@@ -15,13 +15,11 @@
 #include <VFS/NetSFTP.h>
 #include <VFS/NetDropbox.h>
 #include <VFS/NetWebDAV.h>
-#include <NimbleCommander/Core/rapidjson.h>
-
+#include <Config/RapidJSON.h>
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 
 using namespace nc;
 
-static const auto g_ConfigFilename = "NetworkConnections.json";
 static const auto g_ConnectionsKey = "connections";
 static const auto g_MRUKey = "mostRecentlyUsed";
 
@@ -39,23 +37,23 @@ static void SortByMRU(vector<NetworkConnectionsManager::Connection> &_values, co
         _values[i] = move( v[i].first );
 }
 
-static GenericConfig::ConfigValue FillBasicConnectionInfoInJSONObject(
+static config::Value FillBasicConnectionInfoInJSONObject(
     const char *_type,
     const NetworkConnectionsManager::BaseConnection &_bc)
 {
-    auto &alloc = GenericConfig::g_CrtAllocator;
-    GenericConfig::ConfigValue cv(rapidjson::kObjectType);
+    auto &alloc = config::g_CrtAllocator;
+    config::Value cv(rapidjson::kObjectType);
 
-    cv.AddMember("type", GenericConfig::ConfigValue(_type, alloc), alloc);
-    cv.AddMember("title", GenericConfig::ConfigValue(_bc.title.c_str(), alloc), alloc);
-    cv.AddMember("uuid", GenericConfig::ConfigValue(to_string(_bc.uuid).c_str(), alloc), alloc);
+    cv.AddMember("type", config::Value(_type, alloc), alloc);
+    cv.AddMember("title", config::Value(_bc.title.c_str(), alloc), alloc);
+    cv.AddMember("uuid", config::Value(to_string(_bc.uuid).c_str(), alloc), alloc);
     return cv;
 }
 
-static GenericConfig::ConfigValue ConnectionToJSONObject( NetworkConnectionsManager::Connection _c )
+static config::Value ConnectionToJSONObject( NetworkConnectionsManager::Connection _c )
 {
-    auto &alloc = GenericConfig::g_CrtAllocator;
-    using value = GenericConfig::ConfigValue;
+    auto &alloc = config::g_CrtAllocator;
+    using value = config::Value;
     
     if( _c.IsType<NetworkConnectionsManager::FTP>() ) {
         auto &c = _c.Get<NetworkConnectionsManager::FTP>();
@@ -103,10 +101,11 @@ static GenericConfig::ConfigValue ConnectionToJSONObject( NetworkConnectionsMana
         return o;
     }
     
-    return GenericConfig::ConfigValue(rapidjson::kNullType);
+    return value(rapidjson::kNullType);
 }
 
-static optional<NetworkConnectionsManager::Connection> JSONObjectToConnection( const GenericConfig::ConfigValue &_object )
+static optional<NetworkConnectionsManager::Connection>
+    JSONObjectToConnection( const config::Value &_object )
 {
     static const boost::uuids::string_generator uuid_gen{};
     using namespace rapidjson;
@@ -252,8 +251,8 @@ static string KeychainAccountFromConnection( const NetworkConnectionsManager::Co
 }
 
 ConfigBackedNetworkConnectionsManager::
-ConfigBackedNetworkConnectionsManager(const string &_config_directory):
-    m_Config("", _config_directory + g_ConfigFilename),
+ConfigBackedNetworkConnectionsManager(nc::config::Config &_config):
+    m_Config(_config),
     m_IsWritingConfig(false)
 {
     // Load current configuration
@@ -263,14 +262,6 @@ ConfigBackedNetworkConnectionsManager(const string &_config_directory):
     m_Config.ObserveMany(m_ConfigObservations, [=]{ if(!m_IsWritingConfig) Load(); },
                          initializer_list<const char*>{g_ConnectionsKey, g_MRUKey}
                          );
-
-    // Wire up notification about application shutdown
-    [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
-                                                    object:nil
-                                                     queue:nil
-                                                usingBlock:^(NSNotification * _Nonnull note) {
-                                                    m_Config.Commit();
-                                                }];
 }
 
 ConfigBackedNetworkConnectionsManager::~ConfigBackedNetworkConnectionsManager()
@@ -314,16 +305,18 @@ optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMa
 
 void ConfigBackedNetworkConnectionsManager::Save()
 {
-    GenericConfig::ConfigValue connections(rapidjson::kArrayType);
-    GenericConfig::ConfigValue mru(rapidjson::kArrayType);
+    using Value = config::Value;
+    auto &allocator = config::g_CrtAllocator;
+    Value connections(rapidjson::kArrayType);
+    Value mru(rapidjson::kArrayType);
     LOCK_GUARD(m_Lock) {
         for( auto &c: m_Connections ) {
             auto o = ConnectionToJSONObject(c);
             if( o.GetType() != rapidjson::kNullType )
-                connections.PushBack( move(o), GenericConfig::g_CrtAllocator );
+                connections.PushBack( move(o), allocator );
         }
         for( auto &u: m_MRU )
-            mru.PushBack( GenericConfig::ConfigValue(to_string(u).c_str(), GenericConfig::g_CrtAllocator), GenericConfig::g_CrtAllocator );
+            mru.PushBack( Value(to_string(u).c_str(), allocator), allocator );
     }
 
     m_IsWritingConfig = true;

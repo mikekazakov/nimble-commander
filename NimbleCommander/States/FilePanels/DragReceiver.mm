@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DragReceiver.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
@@ -409,7 +409,7 @@ static bool DraggingIntoFoldersAllowed()
         return GlobalConfig().GetBool( path );
     };
     static bool value = []{
-        GlobalConfig().ObserveUnticketed(path, []{ value = fetch(); });
+        GlobalConfig().ObserveForever(path, []{ value = fetch(); });
         return fetch();
     }();
     return value;

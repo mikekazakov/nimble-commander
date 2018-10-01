@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShellState.h"
 #include <Habanero/CommonPaths.h>
 #include <Utility/NativeFSManager.h>
@@ -57,8 +57,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
 
         m_Task = make_unique<ShellTask>();
         if( !GlobalConfig().GetBool(g_UseDefault) )
-            if( auto s = GlobalConfig().GetString(g_CustomPath) )
-                m_Task->SetShellPath(*s);
+            if( GlobalConfig().Has(g_CustomPath) )
+                m_Task->SetShellPath(GlobalConfig().GetString(g_CustomPath));
         auto task_ptr = m_Task.get();
         m_Parser = make_unique<Parser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){

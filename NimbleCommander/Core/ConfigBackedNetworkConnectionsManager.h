@@ -1,16 +1,16 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "NetworkConnectionsManager.h"
 #include <boost/uuid/uuid.hpp>
 #include <boost/functional/hash.hpp>
 #include <VFS/VFS.h>
-#include <NimbleCommander/Bootstrap/Config.h>
+#include <Config/Config.h>
 
 class ConfigBackedNetworkConnectionsManager : public NetworkConnectionsManager
 {
 public:
-    ConfigBackedNetworkConnectionsManager(const string &_config_directory);
+    ConfigBackedNetworkConnectionsManager(nc::config::Config &_config);
     ~ConfigBackedNetworkConnectionsManager();
 
     optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const override;
@@ -54,8 +54,8 @@ private:
     vector<Connection>                              m_Connections;
     vector<boost::uuids::uuid>                      m_MRU;
     mutable mutex                                   m_Lock;
-    GenericConfig                                   m_Config;
-    vector<GenericConfig::ObservationTicket>        m_ConfigObservations;
+    nc::config::Config                             &m_Config;
+    vector<nc::config::Token>                       m_ConfigObservations;
     bool                                            m_IsWritingConfig;
     
     mutable mutex                                   m_PendingMountRequestsLock;

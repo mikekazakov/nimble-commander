@@ -33,6 +33,7 @@
 #include "CursorBackup.h"
 #include "QuickSearch.h"
 #include "PanelViewHeader.h"
+#include <Config/RapidJSON.h>
 
 using namespace nc;
 using namespace nc::core;
@@ -99,7 +100,7 @@ static bool _name()\
         return GlobalConfig().GetBool((_path));\
     };\
     static bool value = []{\
-        GlobalConfig().ObserveUnticketed((_path), []{\
+        GlobalConfig().ObserveForever((_path), []{\
             value = fetch();\
         });\
         return fetch();\
@@ -168,8 +169,7 @@ static void HeatUpConfigValues()
     
     __weak MainWindowFilePanelState* m_FilePanelState;
     
-    boost::container::static_vector<
-        GenericConfig::ObservationTicket,2> m_ConfigObservers;
+    boost::container::static_vector<nc::config::Token,2> m_ConfigObservers;
     nc::core::VFSInstanceManager       *m_VFSInstanceManager;
     shared_ptr<PanelViewLayoutsStorage> m_Layouts;
     int                                 m_ViewLayoutIndex;

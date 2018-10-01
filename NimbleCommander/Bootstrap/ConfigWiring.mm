@@ -1,12 +1,11 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigWiring.h"
-#include "Config.h"
 #include <Operations/Pool.h>
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 
 namespace nc::bootstrap {
 
-ConfigWiring::ConfigWiring(GenericConfig &_config):
+ConfigWiring::ConfigWiring(config::Config &_config):
     m_Config(_config)
 {
 }
@@ -25,7 +24,7 @@ void ConfigWiring::SetupOperationsPool()
         ops::Pool::SetConcurrencyPerPool(config->GetInt(path));
     };
     update();
-    m_Config.ObserveUnticketed(path, update);
+    m_Config.ObserveForever(path, update);
 }
 
 void ConfigWiring::SetupNotification()
@@ -39,13 +38,13 @@ void ConfigWiring::SetupNotification()
         unc::Instance().SetShowWhenActive( config->GetBool(path_show_active) );
     };
     update_show_active();
-    m_Config.ObserveUnticketed(path_show_active, update_show_active);
+    m_Config.ObserveForever(path_show_active, update_show_active);
     
     const auto update_min_op_time = [config]{
         unc::Instance().SetMinElapsedOperationTime( seconds{config->GetInt(path_min_op_time)} );
     };
     update_min_op_time();
-    m_Config.ObserveUnticketed(path_min_op_time, update_min_op_time);
+    m_Config.ObserveForever(path_min_op_time, update_min_op_time);
 }
 
 }

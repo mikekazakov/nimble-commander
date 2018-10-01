@@ -2,8 +2,7 @@
 #pragma once
 
 #include "Favorites.h"
-
-class GenericConfig;
+#include <Config/Config.h>
 
 namespace nc::panel {
     
@@ -12,8 +11,8 @@ class FavoriteLocationsStorageImpl : public FavoriteLocationsStorage
 {
 public:
 
-    FavoriteLocationsStorageImpl( GenericConfig &_config, const char *_path );
-    void StoreData( GenericConfig &_config, const char *_path );
+    FavoriteLocationsStorageImpl( config::Config &_config, const char *_path );
+    void StoreData( config::Config &_config, const char *_path );
     
     void AddFavoriteLocation( Favorite _favorite ) override;
     
@@ -47,13 +46,13 @@ private:
                                                     VFSHost &_host,
                                                     const string &_directory);
     
-    void LoadData( GenericConfig &_config, const char *_path );
+    void LoadData( config::Config &_config, const char *_path );
     
-    static rapidjson::StandaloneValue VisitToJSON(const Visit &_visit);
-    static optional<Visit> JSONToVisit( const rapidjson::StandaloneValue& _json );
+    static nc::config::Value VisitToJSON(const Visit &_visit);
+    static optional<Visit> JSONToVisit( const nc::config::Value& _json );
     
-    static rapidjson::StandaloneValue FavoriteToJSON(const Favorite &_favorite);
-    static optional<Favorite> JSONToFavorite( const rapidjson::StandaloneValue& _json );
+    static nc::config::Value FavoriteToJSON(const Favorite &_favorite);
+    static optional<Favorite> JSONToFavorite( const nc::config::Value& _json );
     
     
     unordered_map<size_t, Visit>    m_Visits;

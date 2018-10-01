@@ -1,7 +1,8 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PanelViewLayoutSupport.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/rapidjson.h>
-#include "PanelViewLayoutSupport.h"
+#include <Config/RapidJSON.h>
 
 //struct PanelViewLayout
 //{
@@ -80,31 +81,32 @@ static const auto g_ListColumMinWidth = "min_width";
 static const auto g_ListIconScale = "icon_scale";
 static const auto g_DisabledKey = "disabled";
 
-static GenericConfig::ConfigValue SaveLayout( const PanelViewLayout& _l )
+static config::Value SaveLayout( const PanelViewLayout& _l )
 {
     using namespace rapidjson;
-    GenericConfig::ConfigValue v{kObjectType};
+    using namespace nc::config;
+    config::Value v{kObjectType};
     
     v.AddMember( MakeStandaloneString(g_TitleKey), MakeStandaloneString(_l.name), g_CrtAllocator );
     if( auto list = _l.list() ) {
-        GenericConfig::ConfigValue d{kObjectType};
-        GenericConfig::ConfigValue columns{ rapidjson::kArrayType };
+        config::Value d{kObjectType};
+        config::Value columns{ rapidjson::kArrayType };
         for( auto &c: list->columns ) {
-            GenericConfig::ConfigValue col{kObjectType};
+            config::Value col{kObjectType};
             col.AddMember(MakeStandaloneString(g_ListColumKind),
-                          StandaloneValue((int)c.kind),
+                          config::Value((int)c.kind),
                           g_CrtAllocator);
             if( c.width >= 0 )
                 col.AddMember(MakeStandaloneString(g_ListColumWidth),
-                              StandaloneValue(c.width),
+                              config::Value(c.width),
                               g_CrtAllocator);
             if( c.min_width >= 0 )
                 col.AddMember(MakeStandaloneString(g_ListColumMinWidth),
-                              StandaloneValue(c.min_width),
+                              config::Value(c.min_width),
                               g_CrtAllocator);
             if( c.max_width >= 0 )
                 col.AddMember(MakeStandaloneString(g_ListColumMaxWidth),
-                              StandaloneValue(c.max_width),
+                              config::Value(c.max_width),
                               g_CrtAllocator);
             columns.PushBack( move(col), g_CrtAllocator );
         }
@@ -112,45 +114,45 @@ static GenericConfig::ConfigValue SaveLayout( const PanelViewLayout& _l )
                     move(columns),
                     g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_ListIconScale),
-                    StandaloneValue(list->icon_scale),
+                    config::Value(list->icon_scale),
                     g_CrtAllocator);
         v.AddMember( MakeStandaloneString(g_ListKey), move(d), g_CrtAllocator );
     }
     else if( auto brief = _l.brief() ) {
-        GenericConfig::ConfigValue d{kObjectType};
+        config::Value d{kObjectType};
         d.AddMember(MakeStandaloneString(g_BriefModeKey),
-                    StandaloneValue((int)brief->mode),
+                    config::Value((int)brief->mode),
                     g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_BriefFixedModeWidthKey),
-                    StandaloneValue(brief->fixed_mode_width),
+                    config::Value(brief->fixed_mode_width),
                     g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_BriefFixedAmountValueKey),
-                    StandaloneValue(brief->fixed_amount_value),
+                    config::Value(brief->fixed_amount_value),
                     g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_BriefDynamicWidthMinKey),
-                    StandaloneValue(brief->dynamic_width_min),
+                    config::Value(brief->dynamic_width_min),
                     g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_BriefDynamicWidthMaxKey),
-                    StandaloneValue(brief->dynamic_width_max),
+                    config::Value(brief->dynamic_width_max),
                     g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_BriefDynamicWidthEqualKey),
-                    StandaloneValue(brief->dynamic_width_equal),
+                    config::Value(brief->dynamic_width_equal),
                     g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_BriefIconScale),
-                    StandaloneValue(brief->icon_scale),
+                    config::Value(brief->icon_scale),
                     g_CrtAllocator);
         v.AddMember( MakeStandaloneString(g_BriefKey), move(d), g_CrtAllocator );
     }
     else if( _l.is_disabled() ) {
         v.AddMember(MakeStandaloneString(g_DisabledKey),
-                    GenericConfig::ConfigValue{kNullType},
+                    config::Value{kNullType},
                     g_CrtAllocator);
     }
     
     return v;
 }
 
-static optional<PanelViewLayout> LoadLayout( const GenericConfig::ConfigValue& _from )
+static optional<PanelViewLayout> LoadLayout( const config::Value& _from )
 {
     using namespace rapidjson;
     if( !_from.IsObject() )
@@ -340,9 +342,9 @@ void PanelViewLayoutsStorage::WriteLayoutsToConfig() const
     LOCK_GUARD(m_LayoutsLock)
         layouts = m_Layouts;
     
-    GenericConfig::ConfigValue json_layouts{ rapidjson::kArrayType };
+    config::Value json_layouts{ rapidjson::kArrayType };
     for( auto &l: layouts )
-        json_layouts.PushBack( SaveLayout(*l), rapidjson::g_CrtAllocator );
+        json_layouts.PushBack( SaveLayout(*l), config::g_CrtAllocator );
     GlobalConfig().Set( m_ConfigPath, json_layouts );
 }
 

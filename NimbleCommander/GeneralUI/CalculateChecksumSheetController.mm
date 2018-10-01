@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/Hash.h>
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -144,8 +144,8 @@ const static vector<pair<NSString*,int>> g_Algos = {
         [self.HashMethod addItemWithTitle:i.first];
     
     NSString *def_algo = @"MD5";
-    if( auto k = GlobalConfig().GetString(g_ConfigAlgo) )
-        def_algo = [NSString stringWithUTF8String:k->c_str()];
+    if( GlobalConfig().Has(g_ConfigAlgo) )
+        def_algo = [NSString stringWithUTF8String:GlobalConfig().GetString(g_ConfigAlgo).c_str()];
     [self.HashMethod selectItemWithTitle:def_algo];
     
     self.Table.delegate = self;

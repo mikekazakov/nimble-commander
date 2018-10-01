@@ -1,10 +1,9 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
-#include "../../Core/rapidjson_fwd.h"
-
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
+#include <Config/RapidJSON_fwd.h>
 
 // these routines implicitly use the following components:
 // 1. NetworkConnectionsManager
@@ -43,7 +42,7 @@ public:
      ExtractConnectionFromLocation( const PersistentLocation &_location );
     
     // the following functions will return kNullType in case of error
-    using json = rapidjson::StandaloneValue;
+    using json = nc::config::Value;
     static json EncodeVFSPath( const VFSHost &_vfs, const string &_path );
     static json EncodeVFSPath( const VFSListing &_listing );
     

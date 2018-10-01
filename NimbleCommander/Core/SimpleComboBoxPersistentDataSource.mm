@@ -1,6 +1,6 @@
 // Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Core/rapidjson.h>
+#include <Config/RapidJSON.h>
 #include "SimpleComboBoxPersistentDataSource.h"
 
 
@@ -31,14 +31,16 @@
 
 - (void)dealloc
 {
+    using namespace nc::config;
+    
     if( m_Clean )
         return;
     
     if( !m_ConfigPath.empty() ) {
-        GenericConfig::ConfigValue arr(rapidjson::kArrayType);
+        Value arr(rapidjson::kArrayType);
         for( auto &s: m_Items )
-            arr.PushBack(GenericConfig::ConfigValue(s.UTF8String, GenericConfig::g_CrtAllocator),
-                         GenericConfig::g_CrtAllocator );
+            arr.PushBack(Value(s.UTF8String, g_CrtAllocator),
+                         g_CrtAllocator );
         StateConfig().Set(m_ConfigPath.c_str(), arr);
     }
 }

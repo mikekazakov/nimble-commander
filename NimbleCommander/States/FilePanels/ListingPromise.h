@@ -22,7 +22,7 @@ public:
         struct PerVFS
         {
             core::VFSInstancePromise promise;
-            vector<hbn::StringsBulk> entries;
+            vector<::hbn::StringsBulk> entries;
         };
         vector<PerVFS> per_vfs;
         

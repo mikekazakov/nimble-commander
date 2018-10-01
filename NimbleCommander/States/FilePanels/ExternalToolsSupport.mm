@@ -2,6 +2,7 @@
 #include "ExternalToolsSupport.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/rapidjson.h>
+#include <Config/RapidJSON.h>
 
 ExternalToolsParameters::Step::Step(ActionType t, uint16_t i):
     type(t),
@@ -316,21 +317,23 @@ static const auto g_ParametersKey = "parameters";
 static const auto g_ShortcutKey = "shortcut";
 static const auto g_StartupKey = "startup";
 
-static GenericConfig::ConfigValue SaveTool( const ExternalTool& _et )
+static nc::config::Value SaveTool( const ExternalTool& _et )
 {
     using namespace rapidjson;
-    GenericConfig::ConfigValue v(kObjectType);
+    using nc::config::MakeStandaloneString;
+    using nc::config::g_CrtAllocator;
+    nc::config::Value v(kObjectType);
     
     v.AddMember( MakeStandaloneString(g_TitleKey), MakeStandaloneString(_et.m_Title), g_CrtAllocator );
     v.AddMember( MakeStandaloneString(g_PathKey), MakeStandaloneString(_et.m_ExecutablePath), g_CrtAllocator );
     v.AddMember( MakeStandaloneString(g_ParametersKey), MakeStandaloneString(_et.m_Parameters), g_CrtAllocator );
     v.AddMember( MakeStandaloneString(g_ShortcutKey), MakeStandaloneString(_et.m_Shorcut.ToPersString()), g_CrtAllocator );
-    v.AddMember( MakeStandaloneString(g_StartupKey), StandaloneValue((int)_et.m_StartupMode), g_CrtAllocator );
+    v.AddMember( MakeStandaloneString(g_StartupKey), nc::config::Value((int)_et.m_StartupMode), g_CrtAllocator );
     
     return v;
 }
 
-static optional<ExternalTool> LoadTool( const GenericConfig::ConfigValue& _from )
+static optional<ExternalTool> LoadTool( const nc::config::Value& _from )
 {
     using namespace rapidjson;
     if( !_from.IsObject() )
@@ -411,9 +414,9 @@ void ExternalToolsStorage::WriteToolsToConfig() const
     LOCK_GUARD(m_ToolsLock)
         tools = m_Tools;
 
-    GenericConfig::ConfigValue json_tools{ rapidjson::kArrayType };
+    nc::config::Value json_tools{ rapidjson::kArrayType };
     for( auto &t: tools )
-        json_tools.PushBack( SaveTool(*t), rapidjson::g_CrtAllocator );
+        json_tools.PushBack( SaveTool(*t), nc::config::g_CrtAllocator );
     GlobalConfig().Set( m_ConfigPath, json_tools );
 }
 

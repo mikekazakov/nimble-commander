@@ -1,8 +1,9 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/Observable.h>
 #include <NimbleCommander/Core/rapidjson_fwd.h>
+#include <Config/RapidJSON_fwd.h>
 
 class Theme;
 
@@ -59,26 +60,26 @@ public:
     /**
      * Effectively returns ThemeData( SelectedThemeName() ).
      */
-    shared_ptr<const rapidjson::StandaloneValue> SelectedThemeData() const;
+    shared_ptr<const nc::config::Value> SelectedThemeData() const;
     
     /**
      * Returns current json document for specified theme.
      * May return shared ptr to kNullType.
      */
-    shared_ptr<const rapidjson::StandaloneValue> ThemeData( const string &_theme_name ) const;
+    shared_ptr<const nc::config::Value> ThemeData( const string &_theme_name ) const;
     
     /**
      * Tries to find a default value for this theme.
      * If there's no - returns a value for Modern theme.
      */
-    shared_ptr<const rapidjson::StandaloneValue> BackupThemeData( const string &_theme_name ) const;    
+    shared_ptr<const nc::config::Value> BackupThemeData( const string &_theme_name ) const;    
     
     /**
      * Changes a theme value, if theme can't be found or value is the same - returns false.
      */
     bool SetThemeValue(const string &_theme_name,
                        const string &_key,
-                       const rapidjson::StandaloneValue &_value);
+                       const nc::config::Value &_value);
     
     /**
      * Performs per-element document merge, replacing values in theme named _theme_name with
@@ -86,13 +87,13 @@ public:
      * Theme called _theme_name must exist upon this request.
      */
     bool ImportThemeData(const string &_theme_name,
-                         const rapidjson::StandaloneValue &_data);
+                         const nc::config::Value &_data);
     
     /**
      * Insert new theme. There must be no _theme_name prior this call.
      */
     bool AddTheme(const string &_theme_name,
-                  const rapidjson::StandaloneValue &_data);
+                  const nc::config::Value &_data);
     
     /**
      * Check for existing themes and tries to find a suitable name for suggested name, 
@@ -135,9 +136,9 @@ private:
     void UpdateCurrentTheme();
 
     string m_SelectedThemeName;
-    unordered_map< string, shared_ptr<const rapidjson::StandaloneDocument> > m_Themes;
+    unordered_map< string, shared_ptr<const nc::config::Document> > m_Themes;
     vector<string> m_OrderedThemeNames;
-    unordered_map< string, shared_ptr<const rapidjson::StandaloneDocument> > m_DefaultThemes;
+    unordered_map< string, shared_ptr<const nc::config::Document> > m_DefaultThemes;
     vector<string> m_OrderedDefaultThemeNames;
     ObservationTicket m_AppearanceObservation;
 };

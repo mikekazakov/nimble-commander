@@ -6,7 +6,7 @@
 #include <VFS/Native.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include <NimbleCommander/Core/rapidjson.h>
+#include <Config/RapidJSON.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
@@ -300,10 +300,8 @@ static NSString *TitleForData( const data::Model* _data );
     vector<string> left_panel_desired_paths, right_panel_desired_paths;
     
     // 1st attempt - load editable default path from config
-    if( auto v = GlobalConfig().GetString(g_ConfigInitialLeftPath) )
-        left_panel_desired_paths.emplace_back( ExpandPath(*v) );
-    if( auto v = GlobalConfig().GetString(g_ConfigInitialRightPath) )
-        right_panel_desired_paths.emplace_back( ExpandPath(*v) );
+    left_panel_desired_paths.emplace_back( ExpandPath(GlobalConfig().GetString(g_ConfigInitialLeftPath)) );
+    right_panel_desired_paths.emplace_back( ExpandPath(GlobalConfig().GetString(g_ConfigInitialRightPath)) );
     
     // 2nd attempt - load home path
     left_panel_desired_paths.emplace_back( CommonPaths::Home() );
@@ -589,44 +587,45 @@ static bool Has(const vector<PanelController*> &_c, PanelController* _p) noexcep
     self.window.title = TrimmedTitleForWindow(TitleForData(self.activePanelData), self.window);
 }
 
-static rapidjson::StandaloneValue EncodePanelsStates(
+static nc::config::Value EncodePanelsStates(
     const vector<PanelController*> &_left,
     const vector<PanelController*> &_right)
 {
     using namespace rapidjson;
-    StandaloneValue json{kArrayType};
-    StandaloneValue left{kArrayType};
-    StandaloneValue right{kArrayType};
+    nc::config::Value json{kArrayType};
+    nc::config::Value left{kArrayType};
+    nc::config::Value right{kArrayType};
     
     const auto encoding_opts = ControllerStateEncoding::EncodeEverything;
     
     for( auto pc: _left )
         if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts);
             v.GetType() != kNullType )
-            left.PushBack( move(v), g_CrtAllocator );
+            left.PushBack( move(v), nc::config::g_CrtAllocator );
     
     for( auto pc: _right )
         if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts);
             v.GetType() != kNullType )
-            right.PushBack( move(v), g_CrtAllocator );
+            right.PushBack( move(v), nc::config::g_CrtAllocator );
     
-    json.PushBack( move(left), g_CrtAllocator );
-    json.PushBack( move(right), g_CrtAllocator );
+    json.PushBack( move(left), nc::config::g_CrtAllocator );
+    json.PushBack( move(right), nc::config::g_CrtAllocator );
     
     return json;
 }
 
-static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state)
+static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
 {
     using namespace rapidjson;
-    StandaloneValue ui{kObjectType};
+    using namespace nc::config;
+    nc::config::Value ui{kObjectType};
     
     ui.AddMember(MakeStandaloneString( g_ResorationUISelectedLeftTab ),
-                 StandaloneValue( _state.leftTabbedHolder.selectedIndex ),
+                 nc::config::Value( _state.leftTabbedHolder.selectedIndex ),
                  g_CrtAllocator);
     
     ui.AddMember(MakeStandaloneString( g_ResorationUISelectedRightTab ),
-                 StandaloneValue( _state.rightTabbedHolder.selectedIndex ),
+                 nc::config::Value( _state.rightTabbedHolder.selectedIndex ),
                  g_CrtAllocator);
 
     const auto right_side_selected = [_state isRightController:_state.activePanelController];
@@ -637,23 +636,25 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
     return ui;
 }
 
-- (rapidjson::StandaloneValue) encodeRestorableState
+- (nc::config::Value) encodeRestorableState
 {
     using namespace rapidjson;
-    StandaloneValue json{kObjectType};
+    nc::config::Value json{kObjectType};
     
-    json.AddMember(MakeStandaloneString(g_ResorationPanelsKey),
+    json.AddMember(nc::config::MakeStandaloneString(g_ResorationPanelsKey),
                    EncodePanelsStates( m_LeftPanelControllers, m_RightPanelControllers ),
-                   g_CrtAllocator);
-    json.AddMember(MakeStandaloneString(g_ResorationUIKey),
+                   nc::config::g_CrtAllocator);
+    json.AddMember(nc::config::MakeStandaloneString(g_ResorationUIKey),
                    EncodeUIState(self),
-                   g_CrtAllocator);
+                   nc::config::g_CrtAllocator);
     
     return json;
 }
 
-- (bool) decodeRestorableState:(const rapidjson::StandaloneValue&)_state
+- (bool) decodeRestorableState:(const nc::config::Value&)_state
 {
+    using namespace nc::config;
+    
     if( !_state.IsObject() )
         return false;
     
@@ -748,7 +749,8 @@ static rapidjson::StandaloneValue EncodeUIState(MainWindowFilePanelState *_state
         return;
     
     using namespace rapidjson;
-    StandaloneValue json{kObjectType};
+    using namespace nc::config;
+    nc::config::Value json{kObjectType};
     json.AddMember(MakeStandaloneString(g_InitialStateLeftDefaults),
                    move(left_panel_options),
                    g_CrtAllocator);

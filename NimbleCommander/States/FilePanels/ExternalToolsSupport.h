@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 /**
@@ -161,6 +161,6 @@ private:
     mutable spinlock                                m_ToolsLock;
     vector<shared_ptr<const ExternalTool>>          m_Tools;
     const char*                                     m_ConfigPath;
-    vector<GenericConfig::ObservationTicket>        m_ConfigObservations;
+    vector<nc::config::Token>                       m_ConfigObservations;
 };
 

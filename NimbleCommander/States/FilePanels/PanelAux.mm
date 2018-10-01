@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -27,7 +27,9 @@ static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
 static milliseconds UploadingCheckDelay()
 {
     static const auto fetch = []{
-        return milliseconds(GlobalConfig().GetIntOr(g_CheckDelay, 5000));
+        const auto value = GlobalConfig().Has(g_CheckDelay) ?
+            GlobalConfig().GetInt(g_CheckDelay) : 5000;
+        return milliseconds(value);
     };
     static milliseconds delay = []{
         static auto ticket = GlobalConfig().Observe(g_CheckDelay, []{
@@ -41,7 +43,9 @@ static milliseconds UploadingCheckDelay()
 static milliseconds UploadingDropDelay()
 {
     static const auto fetch = []{
-        return milliseconds(GlobalConfig().GetIntOr(g_DropDelay, 3600000));
+        const auto value = GlobalConfig().Has(g_DropDelay) ?
+            GlobalConfig().GetInt(g_DropDelay) : 3600000;         
+        return milliseconds(value);
     };
     static milliseconds delay = []{
         static auto ticket = GlobalConfig().Observe(g_DropDelay, []{
@@ -289,17 +293,13 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
     static const vector<string> extensions = []{
         vector<string> v;
-        if( auto exts_string = GlobalConfig().GetString(g_ConfigExecutableExtensionsWhitelist) ) {
-            // load from config
-            if( auto extensions_array = [[NSString stringWithUTF8StdString:*exts_string] componentsSeparatedByString:@","] )
-                for( NSString *s: extensions_array )
-                    if( s != nil && s.length > 0 )
-                        if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )
-                            if( auto utf8 = trimmed.UTF8String )
-                                v.emplace_back( ExtensionLowercaseComparison::Instance().ExtensionToLowercase(utf8) );
-        }
-        else // hardcoded fallback case if something went wrong
-            v = {"sh", "pl", "rb", "py"};
+        auto exts_string = GlobalConfig().GetString(g_ConfigExecutableExtensionsWhitelist);
+        if( auto extensions_array = [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","] )
+            for( NSString *s: extensions_array )
+                if( s != nil && s.length > 0 )
+                    if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )
+                        if( auto utf8 = trimmed.UTF8String )
+                            v.emplace_back( ExtensionLowercaseComparison::Instance().ExtensionToLowercase(utf8) );
         return v;
     }();
     
@@ -363,17 +363,13 @@ bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept
         return false;
     static const vector<string> archive_extensions = []{
         vector<string> v;
-        if( auto exts_string = GlobalConfig().GetString(g_ConfigArchivesExtensionsWhieList) ) {
-            // load extensions list from defaults
-            if( auto extensions_array = [[NSString stringWithUTF8StdString:*exts_string] componentsSeparatedByString:@","] )
-                for( NSString *s: extensions_array )
-                    if( s != nil && s.length > 0 )
-                        if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )
-                            if( auto utf8 = trimmed.UTF8String)
-                                v.emplace_back( ExtensionLowercaseComparison::Instance().ExtensionToLowercase(utf8) );
-        }
-        else // hardcoded fallback data
-            v = { "zip", "tar", "pax", "cpio", "xar", "lha", "ar", "cab", "mtree", "iso", "bz2", "gz", "bzip2", "gzip", "7z", "xz", "rar" };
+        auto exts_string = GlobalConfig().GetString(g_ConfigArchivesExtensionsWhieList);
+        if( auto extensions_array = [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","] )
+            for( NSString *s: extensions_array )
+                if( s != nil && s.length > 0 )
+                    if( auto trimmed = [s stringByTrimmingCharactersInSet:NSCharacterSet.whitespaceAndNewlineCharacterSet] )
+                        if( auto utf8 = trimmed.UTF8String)
+                            v.emplace_back( ExtensionLowercaseComparison::Instance().ExtensionToLowercase(utf8) );
         return v;
     }();
     
@@ -388,7 +384,7 @@ bool ShowQuickLookAsFloatingPanel() noexcept
         return GlobalConfig().GetBool(g_QLPanel);
     };
     static bool value = []{
-        GlobalConfig().ObserveUnticketed(g_QLPanel, []{
+        GlobalConfig().ObserveForever(g_QLPanel, []{
             value = fetch();
         });
         return fetch();

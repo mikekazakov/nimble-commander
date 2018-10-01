@@ -1,6 +1,6 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Core/rapidjson.h>
+#include <Config/RapidJSON.h>
 #include "ActionsShortcutsManager.h"
 
 // this key should not exist in config defaults
@@ -569,15 +569,15 @@ void ActionsShortcutsManager::RevertToDefaults()
 void ActionsShortcutsManager::WriteOverridesToConfig() const
 {
     using namespace rapidjson;
-    GenericConfig::ConfigValue overrides{ kObjectType };
+    nc::config::Value overrides{ kObjectType };
     
     for( auto &i: g_ActionsTags ) {
         auto scover = m_ShortCutsOverrides.find(i.second);
         if( scover != end(m_ShortCutsOverrides) )
             overrides.AddMember(
-                                MakeStandaloneString(i.first),
-                                MakeStandaloneString(scover->second.ToPersString()),
-                                g_CrtAllocator);
+                                nc::config::MakeStandaloneString(i.first),
+                                nc::config::MakeStandaloneString(scover->second.ToPersString()),
+                                nc::config::g_CrtAllocator);
     }
     
     GlobalConfig().Set( g_OverridesConfigPath, overrides );

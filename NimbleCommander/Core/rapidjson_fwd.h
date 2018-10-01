@@ -1,4 +1,7 @@
 // Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+
+/*
+
 #pragma once
 
 #ifdef RAPIDJSON_RAPIDJSON_H_
@@ -37,3 +40,5 @@ optional<bool> GetOptionalBoolFromObject( const StandaloneValue& _value, const c
 optional<int> GetOptionalIntFromObject( const StandaloneValue& _value, const char *_name );
 optional<const char*> GetOptionalStringFromObject( const StandaloneValue& _value, const char *_name );
 }
+
+*/

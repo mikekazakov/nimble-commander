@@ -1,10 +1,10 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
 #import <MMTabBarView/MMTabBarView.h>
 #include "../MainWindowStateProtocol.h"
-#include "../../Bootstrap/Config.h"
+#include <Config/Config.h>
 #include "PanelViewKeystrokeSink.h"
 #include "PanelPreview.h"
 #include <Utility/MIMResponder.h>
@@ -56,7 +56,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     
     bool                m_ShowTabs;
     
-    vector<GenericConfig::ObservationTicket> m_ConfigTickets;
+    vector<nc::config::Token> m_ConfigTickets;
     shared_ptr<nc::ops::Pool> m_OperationsPool;
     shared_ptr<nc::panel::ClosedPanelsHistory> m_ClosedPanelsHistory;
     shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
@@ -105,8 +105,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd;
 - (void)closeAttachedUI:(PanelController*)_panel;
 
-- (rapidjson::StandaloneValue) encodeRestorableState;
-- (bool) decodeRestorableState:(const rapidjson::StandaloneValue&)_state;
+- (nc::config::Value) encodeRestorableState;
+- (bool) decodeRestorableState:(const nc::config::Value&)_state;
 - (void) markRestorableStateAsInvalid;
 
 - (void) saveDefaultInitialState;

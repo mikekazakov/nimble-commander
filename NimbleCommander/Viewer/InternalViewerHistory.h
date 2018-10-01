@@ -1,7 +1,7 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include "../Bootstrap/Config.h"
+#include <Config/Config.h>
 #include "BigFileView.h"
 
 class InternalViewerHistory
@@ -26,7 +26,7 @@ public:
         CFRange             selection = {-1, 0};
     };
     
-    InternalViewerHistory( GenericConfig &_state_config, const char *_config_path );
+    InternalViewerHistory( nc::config::Config &_state_config, const char *_config_path );
     
     static InternalViewerHistory& Instance();
 
@@ -65,9 +65,9 @@ private:
     deque<Entry>                                m_History;
     mutable spinlock                            m_HistoryLock;
 
-    vector<GenericConfig::ObservationTicket>    m_ConfigObservations;
+    vector<nc::config::Token>                   m_ConfigObservations;
     SaveOptions                                 m_Options;
     const size_t                                m_Limit;
-    GenericConfig&                              m_StateConfig;
+    nc::config::Config&                         m_StateConfig;
     const char *const                           m_StateConfigPath;
 };

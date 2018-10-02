@@ -13,7 +13,7 @@ static const auto g_ConfigFont = "terminal.font";
 class ConfigBinder
 {
 public:
-    ConfigBinder( GenericConfig &_config, const char *_config_path, id _object, NSString *_object_key ):
+    ConfigBinder( nc::config::Config &_config, const char *_config_path, id _object, NSString *_object_key ):
         m_Config(_config),
         m_Object(_object),
         m_ConfigPath(_config_path),
@@ -35,7 +35,7 @@ private:
             [m_Object setValue:v forKey:m_ObjectKey];
     }
 
-    GenericConfig &m_Config;
+    nc::config::Config &m_Config;
     const char *m_ConfigPath;
     nc::config::Token m_Ticket;
     

@@ -111,10 +111,10 @@
 //    friend struct ObservationTicket;
 //};
 
-using GenericConfig = nc::config::Config;
+//using GenericConfig = nc::config::Config;
 
-GenericConfig &GlobalConfig() noexcept;
-GenericConfig &StateConfig() noexcept;
+nc::config::Config &GlobalConfig() noexcept;
+nc::config::Config &StateConfig() noexcept;
 
 //struct GenericConfig::ObservationTicket
 //{

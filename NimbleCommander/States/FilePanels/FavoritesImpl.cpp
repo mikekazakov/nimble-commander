@@ -28,7 +28,7 @@ Encode( const VFSHost &_host, const string &_directory )
 }
 
 FavoriteLocationsStorageImpl::
-    FavoriteLocationsStorageImpl( GenericConfig &_config, const char *_path )
+    FavoriteLocationsStorageImpl( config::Config &_config, const char *_path )
 {
     LoadData( _config, _path );
 
@@ -283,7 +283,7 @@ optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
     return move(f);
 }
 
-void FavoriteLocationsStorageImpl::StoreData( GenericConfig &_config, const char *_path )
+void FavoriteLocationsStorageImpl::StoreData( config::Config &_config, const char *_path )
 {
     dispatch_assert_main_queue();
     using namespace rapidjson;
@@ -313,7 +313,7 @@ void FavoriteLocationsStorageImpl::StoreData( GenericConfig &_config, const char
     _config.Set(_path, json);
 }
 
-void FavoriteLocationsStorageImpl::LoadData( GenericConfig &_config, const char *_path )
+void FavoriteLocationsStorageImpl::LoadData( config::Config &_config, const char *_path )
 {
     dispatch_assert_main_queue();
     auto json = _config.Get(_path);

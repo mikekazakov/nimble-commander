@@ -2034,7 +2034,6 @@
 		CFDAC22C1DFBDA640039A104 /* NimbleCommander-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NimbleCommander-Prefix.pch"; path = "NimbleCommander/Bootstrap/NimbleCommander-Prefix.pch"; sourceTree = SOURCE_ROOT; };
 		CFDAC22D1DFBDBCB0039A104 /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Config.cpp; path = NimbleCommander/Bootstrap/Config.cpp; sourceTree = SOURCE_ROOT; };
 		CFDAC22E1DFBDBCB0039A104 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = NimbleCommander/Bootstrap/Config.h; sourceTree = SOURCE_ROOT; };
-		CFDAC22F1DFBDBCB0039A104 /* Config.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Config.mm; path = NimbleCommander/Bootstrap/Config.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2321DFBDE2B0039A104 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = NimbleCommander/Bootstrap/main.cpp; sourceTree = SOURCE_ROOT; };
 		CFDAC2341DFBDE560039A104 /* Application.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Application.h; path = NimbleCommander/Bootstrap/Application.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2351DFBDE560039A104 /* Application.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Application.mm; path = NimbleCommander/Bootstrap/Application.mm; sourceTree = SOURCE_ROOT; };
@@ -2835,7 +2834,6 @@
 				CFDAC2351DFBDE560039A104 /* Application.mm */,
 				CFDAC22D1DFBDBCB0039A104 /* Config.cpp */,
 				CFDAC22E1DFBDBCB0039A104 /* Config.h */,
-				CFDAC22F1DFBDBCB0039A104 /* Config.mm */,
 				CFFA943A1F3E9C4D0035E606 /* ConfigWiring.h */,
 				CFFA943B1F3E9C4D0035E606 /* ConfigWiring.mm */,
 				CFA9DD8B1FD668370099DD91 /* Interactions.h */,

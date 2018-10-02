@@ -72,13 +72,13 @@ static const auto g_ConfigSelectedThemes = "general.theme";
 static const auto g_ConfigThemesList = "themes.themes_v1";
 static const auto g_ConfigExtEditorsList = "externalEditors.editors_v1";
 
-GenericConfig &GlobalConfig() noexcept
+nc::config::Config &GlobalConfig() noexcept
 {
     assert(g_Config);
     return *g_Config;
 }
 
-GenericConfig &StateConfig() noexcept
+nc::config::Config &StateConfig() noexcept
 {
     assert(g_State);
     return *g_State;

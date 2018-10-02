@@ -18,6 +18,8 @@ static rapidjson::Document
     MergeDocuments( const rapidjson::Document &_main, const rapidjson::Document &_overwrites );
 rapidjson::Document BuildOverwrites(const rapidjson::Document &_defaults,
                                     const rapidjson::Document &_staging);
+static std::vector<std::string> ListDifferences(const rapidjson::Document &_original_document,
+                                                const rapidjson::Document &_new_document);
 static std::string Serialize(const rapidjson::Document &_document);
     
 static const auto g_ParseFlags = rapidjson::kParseCommentsFlag;
@@ -387,7 +389,20 @@ void ConfigImpl::WriteOverwrites()
 }
     
 void ConfigImpl::ResetToDefaults()
-{        
+{   
+    std::vector<std::string> diffs;
+    {
+        auto lock = std::lock_guard{m_DocumentLock};
+        diffs = ListDifferences(m_Document, m_Defaults);
+        m_Document.CopyFrom(m_Defaults, m_Document.GetAllocator());
+    }
+    if( diffs.empty() )
+        return;
+    
+    WriteOverwrites();
+    
+    for( auto &path: diffs )
+        FireObservers(path);
 }
 
 void ConfigImpl::Commit()
@@ -588,7 +603,6 @@ static rapidjson::Document
     return new_document;
 }
 
-
 // _staging = _defaults + _overwrites =>
 // _overwrites = _staging - _defaults
 static void BuildOverwritesRecursive(const rapidjson::Value &_defaults,
@@ -640,6 +654,83 @@ rapidjson::Document BuildOverwrites(const rapidjson::Document &_defaults,
     auto overwrites = rapidjson::Document{rapidjson::Type::kObjectType};
     BuildOverwritesRecursive( _defaults, _staging, overwrites, overwrites.GetAllocator() );
     return overwrites;
+}
+
+static void ListDifferencesRecursively(const rapidjson::Value &_original,
+                                       const rapidjson::Value &_new,
+                                       const std::string &_path_prefix,
+                                       std::vector<std::string> &_changes)
+{
+    assert(_original.GetType() == rapidjson::kObjectType);
+    assert(_new.GetType() == rapidjson::kObjectType);
+    
+    for(auto original_it = _original.MemberBegin(), original_e = _original.MemberEnd();
+        original_it != original_e;
+        ++original_it ) {
+        const auto &name = original_it->name;
+        
+        auto new_it = _new.FindMember(name);
+        if( new_it == _new.MemberEnd() ) {
+            _changes.emplace_back( _path_prefix + name.GetString() );
+            
+            if( original_it->value.GetType() == rapidjson::Type::kObjectType )
+                TraverseRecursivelyAndMarkEachMember(original_it->value,
+                                                     _path_prefix + name.GetString() + ".",
+                                                     _changes);                
+        }
+        else {
+            if( original_it->value.GetType() == new_it->value.GetType() ) {
+                const auto common_type = original_it->value.GetType(); 
+                if( common_type == rapidjson::kObjectType ) {
+                    ListDifferencesRecursively(original_it->value,
+                                               new_it->value,
+                                               _path_prefix + name.GetString() + ".",
+                                               _changes);
+                }
+                else {
+                    if( original_it->value != new_it->value )
+                        _changes.emplace_back( _path_prefix + name.GetString() );
+                }
+            }
+            else {
+                _changes.emplace_back( _path_prefix + name.GetString() );
+                
+                if( original_it->value.GetType() == rapidjson::Type::kObjectType )
+                    TraverseRecursivelyAndMarkEachMember(original_it->value,
+                                                         _path_prefix + name.GetString() + ".",
+                                                         _changes);
+                else if( new_it->value.GetType() == rapidjson::Type::kObjectType )
+                    TraverseRecursivelyAndMarkEachMember(new_it->value,
+                                                         _path_prefix + name.GetString() + ".",
+                                                         _changes);
+            }
+        }
+    }
+    
+    for(auto new_it = _new.MemberBegin(), new_e = _new.MemberEnd(); new_it != new_e; ++new_it ) {
+        const auto &name = new_it->name;
+         
+        if( _original.FindMember(name) != _original.MemberEnd() )
+            continue;
+        
+        _changes.emplace_back( _path_prefix + name.GetString() );
+        if( new_it->value.GetType() == rapidjson::Type::kObjectType )
+            TraverseRecursivelyAndMarkEachMember(new_it->value,
+                                                 _path_prefix + name.GetString() + ".",
+                                                 _changes);        
+    }        
+}    
+
+static std::vector<std::string> ListDifferences(const rapidjson::Document &_original_document,
+                                                const rapidjson::Document &_new_document)
+{
+    if( _original_document.GetType() != rapidjson::kObjectType ||
+       _original_document.GetType() != rapidjson::kObjectType )
+        return {};
+    
+    std::vector<std::string> diffs;
+    ListDifferencesRecursively(_original_document, _new_document, "", diffs);
+    return diffs;
 }
 
 static std::string Serialize(const rapidjson::Document &_document)

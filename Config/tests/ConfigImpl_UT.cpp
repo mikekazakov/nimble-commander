@@ -319,6 +319,51 @@ TEST_CASE("Config saves overwritten entries which are absent in defaults")
     }    
 }
 
+TEST_CASE("Config can revert to default values")
+{
+    auto json1 = "{\"abra\": {\"cadabra\": {\"alakazam\": 42} } }";
+    auto json2 = "{\"abra\": {\"cadabra\": {\"alakazam\": 17} } }";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    CHECK( config.GetInt("abra.cadabra.alakazam") == 17 );
+    config.ResetToDefaults();
+    CHECK( config.GetInt("abra.cadabra.alakazam") == 42 );
+}
+
+TEST_CASE("Config calls observers when reverting to default values")
+{
+    auto json1 = "{\"abra\": {\"cadabra\": {\"alakazam\": 42} } }";
+    auto json2 = "{\"abra\": {\"cadabra\": {\"alakazam\": 17} } }";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    int num_called = 0;
+    config.ObserveForever("abra.cadabra.alakazam", [&]{ num_called++; });
+    config.ResetToDefaults();
+    CHECK( num_called == 1 );
+}
+
+TEST_CASE("Config calls observers for absent entries when reverting to default values")
+{
+    auto json1 = "{}";
+    auto json2 = "{\"abra\": {\"cadabra\": {\"alakazam\": 17} } }";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    int num_called = 0;
+    config.ObserveForever("abra.cadabra.alakazam", [&]{ num_called++; });
+    config.ResetToDefaults();
+    CHECK( num_called == 1 );
+}
+
+TEST_CASE("Config calls observers for added entries when reverting to default values")
+{
+    auto json1 = "{\"abra\": {\"cadabra\": {\"alakazam\": 17} } }";
+    auto json2 = "{\"abra\": 42}";
+    ConfigImpl config{json1, MakeDummyStorage(json2)};
+    int num_called = 0;
+    config.ObserveForever("abra", [&]{ num_called++; });
+    config.ObserveForever("abra.cadabra", [&]{ num_called++; });
+    config.ObserveForever("abra.cadabra.alakazam", [&]{ num_called++; });
+    config.ResetToDefaults();
+    CHECK( num_called == 3 );
+}
+
 static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage()
 {
     return MakeDummyStorage("");

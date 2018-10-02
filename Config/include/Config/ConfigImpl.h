@@ -15,7 +15,6 @@ namespace nc::config {
  TODO: 
  - reload changes on-the-fly
  - reset to defaults
- - commit changes immediately
  */
 class ConfigImpl : public Config
 {
@@ -65,13 +64,15 @@ private:
         std::function<void()> callback;
         mutable std::recursive_mutex lock;
     };
+    static_assert( sizeof(Observer) == 128 );    
     using ObserverPtr = hbn::intrusive_ptr<const Observer>; 
     
     struct Observers : hbn::intrusive_ref_counter<Observers>
     {
         std::vector<ObserverPtr> observers;
     };
-    using ObserversPtr = hbn::intrusive_ptr<const Observers>; 
+    static_assert( sizeof(Observers) == 32 );
+    using ObserversPtr = hbn::intrusive_ptr<const Observers>;
     
     void DropToken(unsigned long _number) override;
     const rapidjson::Value *FindInDocument_Unlocked(std::string_view _path) const;

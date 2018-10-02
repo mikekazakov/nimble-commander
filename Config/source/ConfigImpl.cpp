@@ -27,12 +27,9 @@ ConfigImpl::ConfigImpl(std::string_view _default_document,
                        std::shared_ptr<Executor> _overwrites_dump_executor,
                        std::shared_ptr<Executor> _overwrites_reload_executor):
     m_OverwritesStorage(_storage),
-    m_OverwritesDumpExecutor(_overwrites_reload_executor),
-    m_OverwritesReloadExecutor(_overwrites_dump_executor)
+    m_OverwritesDumpExecutor(_overwrites_dump_executor),
+    m_OverwritesReloadExecutor(_overwrites_reload_executor)
 {
-    static_assert( sizeof(Observer) == 128 );
-    static_assert( sizeof(Observers) == 32 );
-    
     if( _storage == nullptr )
         throw std::invalid_argument("ConfigImpl::ConfigImpl: overwrites storage can't be nullptr");
     
@@ -392,9 +389,12 @@ void ConfigImpl::WriteOverwrites()
 void ConfigImpl::ResetToDefaults()
 {        
 }
-    
+
 void ConfigImpl::Commit()
 {        
+    if( m_WriteScheduled.test_and_set() == true ) {
+        WriteOverwrites();
+    }
 }
 
 ConfigImpl::Observer::Observer(unsigned long _token, std::function<void()> _callback) noexcept:

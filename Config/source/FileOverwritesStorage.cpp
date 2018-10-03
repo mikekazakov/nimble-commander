@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <fstream>
 #include <Habanero/CommonPaths.h>
+#include <Utility/FSEventsDirUpdate.h>
+#include <boost/filesystem.hpp>
 
 namespace nc::config {
 
@@ -13,21 +15,48 @@ static bool AtomicallyWriteToFile(const std::string &_file_pathname, std::string
 FileOverwritesStorage::FileOverwritesStorage(std::string_view _file_path):
     m_Path(_file_path)
 {
+    auto parent_path = boost::filesystem::path{std::string{_file_path}}.parent_path();
+    m_DirObservationTicket = FSEventsDirUpdate::Instance().AddWatchPath(parent_path.c_str(),
+                                                                        [this]{
+        OverwritesDirChanged(); 
+    });
+}
+
+FileOverwritesStorage::~FileOverwritesStorage()
+{
+    FSEventsDirUpdate::Instance().RemoveWatchPathWithTicket(m_DirObservationTicket);
 }
     
 std::optional<std::string> FileOverwritesStorage::Read() const
 {
-    return Load(m_Path);
+    auto file_contents = Load(m_Path); 
+    if( file_contents ) {
+        m_OverwritesTime = ModificationTime(m_Path);
+    }
+    
+    return file_contents;
 }
 
 void FileOverwritesStorage::Write(std::string_view _overwrites_json)
 {        
-    AtomicallyWriteToFile(m_Path, _overwrites_json);
+    if( AtomicallyWriteToFile(m_Path, _overwrites_json) ) {
+        m_OverwritesTime = ModificationTime(m_Path);
+    }
 }
 
 void FileOverwritesStorage::SetExternalChangeCallback( std::function<void()> _callback )
 {
-        
+    m_OnChange = std::move(_callback);
+}
+    
+void FileOverwritesStorage::OverwritesDirChanged()
+{
+    const auto current_time = ModificationTime(m_Path);
+    if( current_time != m_OverwritesTime ) {
+        m_OverwritesTime = current_time;
+        if( m_OnChange )
+            m_OnChange();
+    }
 }
 
 static std::optional<std::string> Load(const std::string &_filepath)
@@ -45,7 +74,7 @@ static std::optional<std::string> Load(const std::string &_filepath)
     return contents;
 }
 
-[[maybe_unused]] static time_t ModificationTime( const std::string &_filepath )
+static time_t ModificationTime( const std::string &_filepath )
 {
     struct stat st;
     if( stat( _filepath.c_str(), &st ) == 0 )
@@ -58,10 +87,9 @@ static bool AtomicallyWriteToFile( const std::string &_file_pathname, std::strin
     if( _file_pathname.empty() )
         return false;
 
-    char filename_temp[1024]; // this will not crash, right?
-    sprintf(filename_temp, "%sXXXXXX", CommonPaths::AppTemporaryDirectory().c_str());
-    
-    const auto fd = mkstemp(filename_temp);
+    auto filename_temp = CommonPaths::AppTemporaryDirectory() + "XXXXXX"; 
+        
+    const auto fd = mkstemp(filename_temp.data());
     if( fd < 0 )
         return false;
     
@@ -71,15 +99,15 @@ static bool AtomicallyWriteToFile( const std::string &_file_pathname, std::strin
     fclose(file);
 
     if( !successful ) {
-        unlink(filename_temp);
+        unlink(filename_temp.c_str());
         return false;
     }
     
-    if( rename(filename_temp, _file_pathname.c_str()) == 0 ) {
+    if( rename(filename_temp.c_str(), _file_pathname.c_str()) == 0 ) {
         return true;
     }
     else {
-        unlink(filename_temp);
+        unlink(filename_temp.c_str());
         return false;        
     }
 }

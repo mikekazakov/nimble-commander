@@ -15,7 +15,10 @@ class intrusive_ptr
 {
 public:
     using element_type = T;
-    using pointer = T*;    
+    using pointer = T*;
+
+    static_assert( std::is_same_v<decltype(intrusive_ptr_add_refcount((const T*)nullptr)), void> );
+    static_assert( std::is_same_v<decltype(intrusive_ptr_dec_refcount((const T*)nullptr)), void> );
     
     constexpr intrusive_ptr() noexcept : p(nullptr)
     {} 

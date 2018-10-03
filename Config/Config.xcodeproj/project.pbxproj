@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF0F9D0A216459FB00DB48F1 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF0F9D09216459FB00DB48F1 /* libUtility.dylib */; };
 		CF20CC0C215A2666006716F6 /* Config.h in Headers */ = {isa = PBXBuildFile; fileRef = CF20CC0B215A2666006716F6 /* Config.h */; };
 		CF20CC0E215A267B006716F6 /* Config.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF20CC0D215A267B006716F6 /* Config.cpp */; };
 		CF20CC14215B524C006716F6 /* RapidJSON_fwd.h in Headers */ = {isa = PBXBuildFile; fileRef = CF20CC12215B524C006716F6 /* RapidJSON_fwd.h */; };
@@ -44,6 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CF0F9D09216459FB00DB48F1 /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF20CBDC215A2526006716F6 /* libConfig.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libConfig.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF20CC0B215A2666006716F6 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = include/Config/Config.h; sourceTree = "<group>"; };
 		CF20CC0D215A267B006716F6 /* Config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Config.cpp; path = source/Config.cpp; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF0F9D0A216459FB00DB48F1 /* libUtility.dylib in Frameworks */,
 				CF20CC31215BBEF8006716F6 /* libHabanero.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -171,6 +174,7 @@
 		CF20CC28215BB15A006716F6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CF0F9D09216459FB00DB48F1 /* libUtility.dylib */,
 				CF20CC2F215BBEB0006716F6 /* libHabanero.dylib */,
 			);
 			name = Frameworks;

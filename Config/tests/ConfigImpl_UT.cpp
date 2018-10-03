@@ -364,6 +364,21 @@ TEST_CASE("Config calls observers for added entries when reverting to default va
     CHECK( num_called == 3 );
 }
 
+
+TEST_CASE("Config reloads externally changed overwrites")
+{
+    auto json1 = "{\"abra\": {\"cadabra\": {\"alakazam\": 42} } }";
+    auto json2 = "{\"abra\": {\"cadabra\": {\"alakazam\": 17} } }";
+    auto storage = std::make_shared<NonPersistentOverwritesStorage>(json2);    
+    ConfigImpl config{json1, storage};
+    int num_called = 0;
+    config.ObserveForever("abra.cadabra.alakazam", [&]{ num_called++; });
+    auto json3 = "{\"abra\": {\"cadabra\": {\"alakazam\": 55} } }";
+    storage->ExternalWrite(json3);
+    CHECK( num_called == 1 );
+    CHECK( config.GetInt("abra.cadabra.alakazam") == 55 );    
+}
+
 static std::shared_ptr<NonPersistentOverwritesStorage> MakeDummyStorage()
 {
     return MakeDummyStorage("");

@@ -38,7 +38,6 @@ ConfigImpl::ConfigImpl(std::string_view _default_document,
     if( _overwrites_dump_executor == nullptr || _overwrites_reload_executor == nullptr )
         throw std::invalid_argument("ConfigImpl::ConfigImpl: executor can't be nullptr");
 
-    
     const auto defaults = ParseDefaultsOrThrow(_default_document);
     m_Defaults.CopyFrom(defaults, m_Defaults.GetAllocator());
 
@@ -51,10 +50,15 @@ ConfigImpl::ConfigImpl(std::string_view _default_document,
             std::swap( m_Document, new_doc );
         }
     }
+    
+    m_OverwritesStorage->SetExternalChangeCallback([this]{
+        OverwritesDidChange();
+    });    
 }
 
 ConfigImpl::~ConfigImpl()
 {
+    m_OverwritesStorage->SetExternalChangeCallback(nullptr);
 }
     
 bool ConfigImpl::Has(std::string_view _path) const
@@ -401,8 +405,7 @@ void ConfigImpl::ResetToDefaults()
     
     WriteOverwrites();
     
-    for( auto &path: diffs )
-        FireObservers(path);
+    FireObservers( begin(diffs), end(diffs) );
 }
 
 void ConfigImpl::Commit()
@@ -410,6 +413,39 @@ void ConfigImpl::Commit()
     if( m_WriteScheduled.test_and_set() == true ) {
         WriteOverwrites();
     }
+}
+    
+void ConfigImpl::OverwritesDidChange()
+{
+    if( m_ReadScheduled.test_and_set() == false ) {
+        m_OverwritesReloadExecutor->Execute([this]{
+            ReloadOverwrites();
+        });
+    }
+}
+    
+void ConfigImpl::ReloadOverwrites()
+{
+    auto clear_read_flag = at_scope_end([this]{ m_ReadScheduled.clear(); });
+
+    auto new_overwrites_text = m_OverwritesStorage->Read();
+    if( new_overwrites_text == std::nullopt )
+        return;
+    
+    auto new_overwrites_document = ParseOverwritesOrReturnNull(*new_overwrites_text);
+    if( new_overwrites_document.GetType() == rapidjson::Type::kNullType )
+        return;
+    
+    auto new_document = MergeDocuments(m_Defaults, new_overwrites_document);
+
+    std::vector<std::string> diffs;    
+    {
+        auto lock = std::lock_guard{m_DocumentLock};
+        diffs = ListDifferences(m_Document, new_document);
+        m_Document.CopyFrom(new_document, m_Document.GetAllocator());
+    }
+    
+    FireObservers( begin(diffs), end(diffs) );
 }
 
 ConfigImpl::Observer::Observer(unsigned long _token, std::function<void()> _callback) noexcept:

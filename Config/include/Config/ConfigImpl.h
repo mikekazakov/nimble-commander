@@ -14,7 +14,6 @@ namespace nc::config {
 /*
  TODO: 
  - reload changes on-the-fly
- - reset to defaults
  */
 class ConfigImpl : public Config
 {
@@ -52,8 +51,17 @@ public:
     Token Observe(std::string_view _path, std::function<void()> _on_change) override;
     void ObserveForever(std::string_view _path, std::function<void()> _on_change) override;
     
+    /**
+     * Discards any overwrites and reverts the state of the config to the 'defaults' state.
+     * Immediate writes the updated (i.e. empty) overwrites). 
+     */
     void ResetToDefaults();
-    void Commit();    
+    
+    /**
+     * Forces the config to write pending overwrites immmediately, bypassing the executor provided
+     * upoon construction. If there are no pending changes to be written - does nothing.
+     */
+    void Commit();
     
 private:
     struct Observer : hbn::intrusive_ref_counter<Observer>
@@ -81,9 +89,15 @@ private:
     bool ReplaceOrInsert(std::string_view _path, const Value &_value);
     void InsertObserver(std::string_view _path, ObserverPtr _observer);
     void FireObservers(std::string_view _path) const;
+    template <typename Iterator>
+    void FireObservers(Iterator _first, Iterator _last) const {
+        std::for_each(_first, _last, [this](auto &_v){ FireObservers(_v); });
+    }    
     ObserversPtr FindObservers(std::string_view _path) const;
     void MarkDirty();
     void WriteOverwrites();
+    void OverwritesDidChange();
+    void ReloadOverwrites();
     
     rapidjson::Document                             m_Defaults;    
     
@@ -95,7 +109,7 @@ private:
     
     std::atomic_ullong                                                  m_ObservationToken{ 1 };
     std::atomic_flag                                                    m_WriteScheduled{ false };
-//    atomic_flag                                                         m_ReadScheduled{ false };    
+    std::atomic_flag                                                    m_ReadScheduled{ false };    
     
     std::shared_ptr<OverwritesStorage>              m_OverwritesStorage;
     std::shared_ptr<Executor>                       m_OverwritesDumpExecutor;

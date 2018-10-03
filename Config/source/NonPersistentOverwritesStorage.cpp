@@ -13,6 +13,8 @@ NonPersistentOverwritesStorage::~NonPersistentOverwritesStorage()
     
 void NonPersistentOverwritesStorage::ExternalWrite( const std::string &_new_value )
 {
+    if( m_Data == _new_value )
+        return;
     m_Data = _new_value;
     if( m_Callback )
         m_Callback();

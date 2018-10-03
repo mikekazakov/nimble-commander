@@ -165,7 +165,6 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
 {
     m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
     m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
-    m_SeparatorLine.boxType = NSBoxSeparator;
     
     m_FilenameLabel = [[NSTextField alloc] initWithFrame:NSRect()];
     m_FilenameLabel.translatesAutoresizingMaskIntoConstraints = false;
@@ -258,14 +257,12 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
     
     m_VSeparatorLine1 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
     m_VSeparatorLine1.translatesAutoresizingMaskIntoConstraints = NO;
-    m_VSeparatorLine1.boxType = NSBoxSeparator;
     [m_VSeparatorLine1
      setContentCompressionResistancePriority:40
      forOrientation:NSLayoutConstraintOrientationHorizontal];
     
     m_VSeparatorLine2 = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
     m_VSeparatorLine2.translatesAutoresizingMaskIntoConstraints = NO;
-    m_VSeparatorLine2.boxType = NSBoxSeparator;
     [m_VSeparatorLine2
      setContentCompressionResistancePriority:40
      forOrientation:NSLayoutConstraintOrientationHorizontal];    
@@ -296,8 +293,8 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
     ac(@"|-(0)-[m_SeparatorLine]-(0)-|");
     ac(@"[m_ModTime]-(>=4@500)-|");
     ac(@"|-(7)-[m_FilenameLabel]-(>=4)-[m_SizeLabel]-(4)-[m_ModTime(>=140@500)]-(4@400)-"
-       "[m_VSeparatorLine1(<=1@300)]-(2@300)-[m_ItemsLabel(>=50@300)]-(4@300)-"
-       "[m_VSeparatorLine2(<=1@290)]-(2@300)-[m_VolumeLabel(>=120@290)]-(4@300)-|");
+       "[m_VSeparatorLine1(==1@300)]-(2@300)-[m_ItemsLabel(>=50@300)]-(4@300)-"
+       "[m_VSeparatorLine2(==1@290)]-(2@300)-[m_VolumeLabel(>=120@280)]-(4@300)-|");
     ac(@"|-(>=lm1@400)-[m_VSeparatorLine1]");
     ac(@"|-(>=lm1@400)-[m_ItemsLabel]");
     ac(@"|-(>=lm2@400)-[m_VSeparatorLine2]");

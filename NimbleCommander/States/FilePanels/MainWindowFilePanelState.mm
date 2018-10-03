@@ -344,7 +344,6 @@ static NSString *TitleForData( const data::Model* _data );
     
     m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
     m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = NO;
-    m_SeparatorLine.boxType = NSBoxSeparator;
     m_SeparatorLine.borderColor = CurrentTheme().FilePanelsGeneralTopSeparatorColor();
     [self addSubview:m_SeparatorLine];
     
@@ -352,7 +351,7 @@ static NSString *TitleForData( const data::Model* _data );
     
     auto views = NSDictionaryOfVariableBindings(m_SeparatorLine, m_SplitView);
     auto contraints = {
-        @"V:|-(==0@250)-[m_SeparatorLine(<=1)]-(==0)-[m_SplitView]",
+        @"V:|-(==0@250)-[m_SeparatorLine(==1)]-(==0)-[m_SplitView]",
         @"|-(0)-[m_SplitView]-(0)-|",
         @"|-(==0)-[m_SeparatorLine]-(==0)-|"
     };

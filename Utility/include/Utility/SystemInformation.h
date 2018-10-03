@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -45,6 +45,7 @@ enum class OSXVersion
     OSX_11      = 1110,
     OSX_12      = 1120,
     OSX_13      = 1130,
+    OSX_14      = 1140,
     OSX_Unknown = 100500
 };
     

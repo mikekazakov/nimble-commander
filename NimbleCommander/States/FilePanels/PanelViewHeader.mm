@@ -88,8 +88,7 @@ static bool IsDark( NSColor *_color );
         [self addSubview:m_SearchMatchesField];
         
         m_SeparatorLine = [[ColoredSeparatorLine alloc] initWithFrame:NSRect()];
-        m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = false;
-        m_SeparatorLine.boxType = NSBoxSeparator;
+        m_SeparatorLine.translatesAutoresizingMaskIntoConstraints = false; 
         [self addSubview:m_SeparatorLine];
    
         m_SortButton = [[NSButton alloc] initWithFrame:NSRect()];
@@ -152,7 +151,7 @@ static bool IsDark( NSColor *_color );
                                                          m_SortButton,
                                                          m_BusyIndicator);
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-        @"V:|-(==0)-[m_PathTextField]-(==0)-[m_SeparatorLine(<=1)]-(==0)-|"
+        @"V:|-(==0)-[m_PathTextField]-(==0)-[m_SeparatorLine(==1)]-(==0)-|"
         options:0 metrics:nil views:views]];
     [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
         @"V:|-(==0)-[m_SortButton]-(==0)-|" options:0 metrics:nil views:views]];

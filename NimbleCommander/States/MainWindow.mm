@@ -24,9 +24,21 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 
 - (instancetype) init
 {
-    static const auto flags =
-        NSResizableWindowMask|NSTitledWindowMask|NSClosableWindowMask|NSMiniaturizableWindowMask|
-        NSTexturedBackgroundWindowMask|NSWindowStyleMaskFullSizeContentView;
+    static const auto flags = []{
+        auto f = 
+            NSResizableWindowMask |
+            NSTitledWindowMask |
+            NSClosableWindowMask |
+            NSMiniaturizableWindowMask |
+            NSTexturedBackgroundWindowMask |
+            NSWindowStyleMaskFullSizeContentView;
+        if( sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_14 ) {
+            // on Mojave the header bar looks like shit with the textured window background,
+            // thus turning it off.
+            f &= ~NSTexturedBackgroundWindowMask;
+        }
+        return f;
+    }();
     
     if( self = [super initWithContentRect:g_InitialWindowContentRect
                                 styleMask:flags

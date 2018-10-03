@@ -1,3 +1,4 @@
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigImpl.h"
 #include <rapidjson/error/en.h>
 #include <rapidjson/memorystream.h>

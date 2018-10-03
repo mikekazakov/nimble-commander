@@ -1,3 +1,4 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string_view>
@@ -73,14 +74,22 @@ public:
     virtual void Set(std::string_view _path, bool _value) = 0;
     virtual void Set(std::string_view _path, const char *_value) = 0;
     virtual void Set(std::string_view _path, std::string_view _value) = 0;
-  
-    // _on_change can be fired from any thread
+   
+    /**
+     * Sets an observation for changes on the specified path.
+     * _on_change callback can be fired from any thread.
+     * _on_change can be called only while the returned token object is alive.
+     * it's guaranteed that _on_change will not be called after the returned token was destroyed.
+     * It is safe to destroy the token (i.e. unregister) from the callback itself.
+     */
     virtual Token Observe(std::string_view _path, std::function<void()> _on_change) = 0;
 
     template <typename C, typename T>
     void ObserveMany(C &_storage, std::function<void()> _on_change, const T &_paths);
-    
-    // _on_change can be fired from any thread    
+        
+    /**
+     * Like Observe, but does not provide a way to unregister the observation callback.
+     */
     virtual void ObserveForever(std::string_view _path, std::function<void()> _on_change) = 0;
     
 protected:    

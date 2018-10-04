@@ -19,6 +19,14 @@ static const double g_LongPressDelay = 0.33;
     self.highlighted = YES;
 }
 
+- (void)rightMouseDown:(NSEvent *)event {
+    if( self.longPressAction == nil || self.target == nil ) {
+        [super rightMouseDown:event];
+        return;
+    }
+    [self sendAction:self.longPressAction to:self.target];
+}
+
 - (void)fireLongPress {
     if( _long_press_scheduled == NO )
         return;

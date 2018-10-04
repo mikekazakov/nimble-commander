@@ -24,6 +24,7 @@ namespace nc::panel {
 - (IBAction)OnShowTerminal:(id)sender;
 - (IBAction)performClose:(id)sender;
 - (IBAction)OnFileCloseWindow:(id)sender;
+- (IBAction)onFileCloseOtherTabs:(id)sender;
 - (IBAction)OnFileNewTab:(id)sender;
 - (IBAction)onSwitchDualSinglePaneMode:(id)sender;
 - (IBAction)onLeftPanelGoToButtonAction:(id)sender;

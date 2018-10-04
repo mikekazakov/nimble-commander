@@ -41,6 +41,7 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
     {"menu.file.add_to_favorites",                      11'140},
     {"menu.file.close_window",                          11'041},
     {"menu.file.close",                                 11'040},
+    {"menu.file.close_other_tabs",                      11'180},        
     {"menu.file.find",                                  11'050},
     {"menu.file.find_next",                             11'051},
     {"menu.file.find_with_spotlight",                   11'130},
@@ -232,6 +233,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.file.add_to_favorites",                          u8"⌘b"      }, // cmd+b
     {"menu.file.close_window",                              u8"⇧⌘w"     }, // shift+cmd+w
     {"menu.file.close",                                     u8"⌘w"      }, // cmd+w
+    {"menu.file.close_other_tabs",                          u8"⌥⌘w"     }, // alt+cmd+w   
     {"menu.file.find",                                      u8"⌘f"      }, // cmd+f
     {"menu.file.find_next",                                 u8"⌘g"      }, // cmd+g
     {"menu.file.find_with_spotlight",                       u8"⌥⌘f"     }, // alt+cmd+f
@@ -338,7 +340,7 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.command.link_create_soft",                       u8""        },
     {"menu.command.link_create_hard",                       u8""        },
     {"menu.command.link_edit",                              u8""        },
-    {"menu.command.open_xattr",                             u8"⌥⌘x"     }, // // alt+cmd+x
+    {"menu.command.open_xattr",                             u8"⌥⌘x"     }, // alt+cmd+x
 
     {"menu.window.minimize",                                u8"⌘m"      }, // cmd+m
     {"menu.window.fullscreen",                              u8"^⌘f"     }, // ctrl+cmd+f

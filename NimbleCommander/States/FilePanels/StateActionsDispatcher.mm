@@ -161,6 +161,7 @@ static void Perform(SEL _sel, const StateActionsMap &_map,
 - (IBAction)OnSyncPanels:(id)sender { PERFORM; }
 - (IBAction)OnShowTerminal:(id)sender { PERFORM; }
 - (IBAction)performClose:(id)sender { PERFORM; }
+- (IBAction)onFileCloseOtherTabs:(id)sender { PERFORM; }
 - (IBAction)OnFileCloseWindow:(id)sender { PERFORM; }
 - (IBAction)OnFileNewTab:(id)sender { PERFORM; }
 - (IBAction)onSwitchDualSinglePaneMode:(id)sender { PERFORM; }

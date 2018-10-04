@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "TabsManagement.h"
 #include "../MainWindowFilePanelState.h"
@@ -107,6 +107,30 @@ void CloseTab::Perform( MainWindowFilePanelState *_target, id _sender ) const
     }
 }
     
+bool CloseOtherTabs::Predicate( MainWindowFilePanelState *_target ) const
+{        
+    const auto active_controller = _target.activePanelController;
+    if( active_controller == nil )
+        return false;
+
+    const auto amount_of_tab_on_this_side = [&]{
+        if( [_target isLeftController:active_controller] )
+            return (int)_target.leftControllers.size();
+        if( [_target isRightController:active_controller] )
+            return (int)_target.rightControllers.size();        
+        return 0;
+    }();
+    
+    return amount_of_tab_on_this_side > 1;
+}
+    
+void CloseOtherTabs::Perform( MainWindowFilePanelState *_target, id _sender ) const
+{
+    if( !Predicate(_target) )
+        return;
+    [_target closeOtherTabsForController:_target.activePanelController]; 
+}
+
 bool CloseWindow::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const
 {
     _item.hidden = _target.currentSideTabsCount < 2;

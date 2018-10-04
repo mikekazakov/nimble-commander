@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -27,6 +27,12 @@ struct AddNewTab final : StateAction
 struct CloseTab final : StateAction
 {
     bool ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *_item ) const override;    
+    void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
+};
+
+struct CloseOtherTabs final : StateAction
+{
+    bool Predicate( MainWindowFilePanelState *_target ) const override;    
     void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
 };
     

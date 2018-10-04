@@ -24,6 +24,7 @@ StateActionsMap BuildStateActionsMap(NetworkConnectionsManager &_net_mgr)
     
     add(@selector(OnFileNewTab:), new AddNewTab);
     add(@selector(performClose:), new CloseTab);
+    add(@selector(onFileCloseOtherTabs:), new CloseOtherTabs);    
     add(@selector(OnFileCloseWindow:), new CloseWindow);
     add(@selector(onLeftPanelGoToButtonAction:), new ShowLeftGoToPopup{_net_mgr});
     add(@selector(onRightPanelGoToButtonAction:), new ShowRightGoToPopup{_net_mgr});

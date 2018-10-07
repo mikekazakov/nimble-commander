@@ -31,7 +31,7 @@ struct NativeFileSystemInfo
     /**
      * Name or which from this volume was mounted. Can be device name, network path or internal driver name.
      */
-    string mounted_from_name;
+    std::string mounted_from_name;
 
     struct
     {
@@ -496,6 +496,11 @@ struct NativeFileSystemInfo
         bool clone = false;
 
         /**
+         * When set, the volume supports snapshots.
+         */
+        bool snapshot = false;
+        
+        /**
          * When set, the volume supports swapping file system objects.
          */
         bool rename_swap = false;
@@ -560,7 +565,7 @@ public:
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */
-    Info VolumeFromPath(const string &_path) const;
+    Info VolumeFromPath(const std::string &_path) const;
     
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
@@ -573,13 +578,13 @@ public:
      * It don't take into consideration invalid paths or symlinks following somewhere in _path,
      * so should be used very carefully only time-critical paths (this method dont make any syscalls).
      */
-    Info VolumeFromPathFast(const string &_path) const;
+    Info VolumeFromPathFast(const std::string &_path) const;
     
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
      * Is fast, since dont make any syscalls.
      */
-    Info VolumeFromMountPoint(const string &_mount_point) const;
+    Info VolumeFromMountPoint(const std::string &_mount_point) const;
 
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
@@ -613,8 +618,11 @@ private:
     void OnDidRename(const std::string &_old_path, const std::string &_new_path);
     Info VolumeFromDevID_Unlocked(dev_t _dev_id) const;
     Info VolumeFromMountPoint_Unlocked(const char *_mount_point) const;
-    Info VolumeFromPathFast_Unlocked(const string &_path) const;
-    void InsertNewVolume_Unlocked( const shared_ptr<NativeFileSystemInfo> &_volume );
+    Info VolumeFromPathFast_Unlocked(const std::string &_path) const;
+    void InsertNewVolume_Unlocked( const std::shared_ptr<NativeFileSystemInfo> &_volume );
+    void PerformUnmounting(const Info &_volume);
+    void PerformGenericUnmounting(const Info &_volume);    
+    void PerformAPFSUnmounting(const Info &_volume);
     
     mutable std::mutex m_Lock;
     std::vector<std::shared_ptr<NativeFileSystemInfo>> m_Volumes;

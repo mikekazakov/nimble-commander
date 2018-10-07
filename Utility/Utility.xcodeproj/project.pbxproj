@@ -38,6 +38,9 @@
 		CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */; };
 		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
 		CFC546332136DBE300D288A4 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94631F453CB60035E606 /* libUtility.dylib */; };
+		CFDAC82B2168E1C000DEBA2A /* DiskUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDAC82A2168E1C000DEBA2A /* DiskUtility.h */; };
+		CFDAC82D2168E1CC00DEBA2A /* DiskUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82C2168E1CC00DEBA2A /* DiskUtility.mm */; };
+		CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */; };
 		CFE33EBC2135708800C3902C /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE33EBB2135708800C3902C /* Quartz.framework */; };
 		CFFA94671F453CC00035E606 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFFA94681F453CC00035E606 /* BlinkingCaret.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */; };
@@ -197,6 +200,9 @@
 		CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DataBlockAnalysis.mm; path = source/DataBlockAnalysis.mm; sourceTree = "<group>"; };
 		CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionLowercaseComparison.h; path = include/Utility/ExtensionLowercaseComparison.h; sourceTree = "<group>"; };
 		CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionLowercaseComparison.cpp; path = source/ExtensionLowercaseComparison.cpp; sourceTree = "<group>"; };
+		CFDAC82A2168E1C000DEBA2A /* DiskUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiskUtility.h; path = include/Utility/DiskUtility.h; sourceTree = "<group>"; };
+		CFDAC82C2168E1CC00DEBA2A /* DiskUtility.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DiskUtility.mm; path = source/DiskUtility.mm; sourceTree = "<group>"; };
+		CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DiskUtility_UT.mm; path = tests/DiskUtility_UT.mm; sourceTree = "<group>"; };
 		CFE33EBB2135708800C3902C /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		CFFA94631F453CB60035E606 /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFFA948E1F453DF30035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
@@ -242,6 +248,7 @@
 			children = (
 				CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */,
 				CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */,
+				CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */,
 				CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */,
 				CFB0F239215A07830088C18E /* FileMask_Tests.mm */,
 				CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */,
@@ -284,6 +291,7 @@
 				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
 				CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */,
 				CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */,
+				CFDAC82A2168E1C000DEBA2A /* DiskUtility.h */,
 				CF960E171C992F2C001D8B02 /* Encodings.h */,
 				CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */,
 				CFB0F235215A076F0088C18E /* FileMask.h */,
@@ -330,6 +338,7 @@
 				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
 				CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */,
 				CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */,
+				CFDAC82C2168E1CC00DEBA2A /* DiskUtility.mm */,
 				CF960E231C992F35001D8B02 /* Encodings.cpp */,
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
 				CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */,
@@ -388,6 +397,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF308F33213ACD2500915730 /* BriefOnDiskStorageImpl.h in Headers */,
+				CFDAC82B2168E1C000DEBA2A /* DiskUtility.h in Headers */,
 				CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */,
 				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
 				CFB0F236215A076F0088C18E /* FileMask.h in Headers */,
@@ -523,6 +533,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */,
 				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
 			);
@@ -552,6 +563,7 @@
 				CFFA947B1F453CC00035E606 /* NSObject+MassObserving.m in Sources */,
 				CFFA946F1F453CC00035E606 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFFA94811F453CC00035E606 /* StringExtras.mm in Sources */,
+				CFDAC82D2168E1CC00DEBA2A /* DiskUtility.mm in Sources */,
 				CFFA947A1F453CC00035E606 /* NSMenu+Hierarchical.mm in Sources */,
 				CFFA94781F453CC00035E606 /* Layout.mm in Sources */,
 				CFFA94841F453CC00035E606 /* VerticallyCenteredTextFieldCell.mm in Sources */,
@@ -670,12 +682,14 @@
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/include/Utility",
 				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/boost/built";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SystemConfiguration,
+					"-lboost_system-mt",
 				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -729,11 +743,13 @@
 					"$(PROJECT_DIR)/include",
 					"$(PROJECT_DIR)/include/Utility",
 				);
+				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/boost/built";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_LDFLAGS = (
 					"-framework",
 					SystemConfiguration,
+					"-lboost_system-mt",
 				);
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
@@ -762,7 +778,10 @@
 					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",
 					"$(PROJECT_DIR)/../3rd_Party/googletest/include/",
 				);
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/googletest/built/";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../3rd_Party/googletest/built/",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				OTHER_LDFLAGS = (
@@ -788,7 +807,10 @@
 					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",
 					"$(PROJECT_DIR)/../3rd_Party/googletest/include/",
 				);
-				LIBRARY_SEARCH_PATHS = "$(PROJECT_DIR)/../3rd_Party/googletest/built/";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../3rd_Party/googletest/built/",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				OTHER_LDFLAGS = (
 					"$(inherited)",

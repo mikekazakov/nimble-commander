@@ -1,4 +1,5 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "NativeFSManager.h"
 #include <AppKit/AppKit.h>
 #include <DiskArbitration/DiskArbitration.h>
 #include <sys/param.h>
@@ -7,10 +8,11 @@
 #include <sys/stat.h>
 #include <Utility/SystemInformation.h>
 #include <Utility/FSEventsDirUpdate.h>
-#include <Utility/NativeFSManager.h>
 #include <Utility/StringExtras.h>
 #include <Habanero/dispatch_cpp.h>
+#include <Habanero/algo.h>
 #include <iostream>
+#include "DiskUtility.h"
 
 using namespace std;
 
@@ -23,7 +25,9 @@ static bool GetInterfacesInfo(NativeFileSystemInfo &_volume);
 static bool GetVerboseInfo(NativeFileSystemInfo &_volume);
 static bool UpdateSpaceInfo(const NativeFileSystemInfo &_volume);
 static bool VolumeHasTrash(const std::string &_volume_path);
+static std::optional<std::string> GetBSDName(const NativeFileSystemInfo &_volume);
 static vector<string> GetFullFSList();
+static DASessionRef DASessionForMainThread();
 
 struct NativeFSManagerProxy2 // this proxy is needed only for private methods access
 {
@@ -244,6 +248,7 @@ static bool GetInterfacesInfo(NativeFileSystemInfo &_v)
     _v.interfaces.extended_attr     = volume_interfaces & VOL_CAP_INT_EXTENDED_ATTR;
     _v.interfaces.named_streams     = volume_interfaces & VOL_CAP_INT_NAMEDSTREAMS;
     _v.interfaces.clone             = volume_interfaces & VOL_CAP_INT_CLONE;
+    _v.interfaces.snapshot          = volume_interfaces & VOL_CAP_INT_SNAPSHOT;
     _v.interfaces.rename_swap       = volume_interfaces & VOL_CAP_INT_RENAME_SWAP;
     _v.interfaces.rename_excl       = volume_interfaces & VOL_CAP_INT_RENAME_EXCL;
     _v.interfaces.has_trash         = VolumeHasTrash(_v.mounted_at_path);
@@ -515,32 +520,131 @@ bool NativeFSManager::IsVolumeContainingPathEjectable(const string &_path)
             volume->mount_flags.local       == false ;
 }
 
-static void EjectOnUnmount( DADiskRef disk, DADissenterRef dissenter, void *context )
-{
-    if( dissenter == nullptr )
-        if( DADiskRef disk2 = DADiskCopyWholeDisk(disk) ) {
-            DADiskEject(disk2, kDADiskEjectOptionDefault, nullptr, nullptr);
-            CFRelease(disk2);
-        }
-}
-
 void NativeFSManager::EjectVolumeContainingPath(const string &_path)
 {
     dispatch_to_main_queue([=]{
-        if( const auto volume = VolumeFromPath(_path) ) {
-            const auto session = DASessionCreate(kCFAllocatorDefault);
-            DASessionScheduleWithRunLoop(session, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);
-            const auto url = (__bridge CFURLRef)volume->verbose.url;
-            if( const auto disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url) ) {
-                DADiskUnmount(disk,
-                              kDADiskUnmountOptionForce,
-                              EjectOnUnmount,
-                              nullptr);
-                CFRelease(disk);
-            }
-            CFRelease(session);
-        }
+        if( const auto volume = VolumeFromPath(_path) )
+            PerformUnmounting(volume);
     });
+}
+
+void NativeFSManager::PerformUnmounting(const Info &_volume)
+{
+    dispatch_assert_main_queue();
+    
+    if( _volume->fs_type_name == "apfs" ) {
+        PerformAPFSUnmounting(_volume);
+    }
+    else {
+        PerformGenericUnmounting(_volume);
+    }    
+}
+
+static void GenericDiskUnmountCallback( DADiskRef _disk, DADissenterRef _dissenter, void *_context )
+{
+    if( _dissenter != nullptr )
+        return;
+        
+    const auto whole_disk = DADiskCopyWholeDisk(_disk);
+    if( whole_disk == nullptr )
+        return;
+    auto release_disk = at_scope_end([=]{ CFRelease(whole_disk); });    
+    
+    DADiskEject(whole_disk, kDADiskEjectOptionDefault, nullptr, nullptr);
+}
+
+void NativeFSManager::PerformGenericUnmounting(const Info &_volume)
+{
+    const auto session = DASessionForMainThread();
+    
+    const auto url = (__bridge CFURLRef)_volume->verbose.url;
+    const auto disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, session, url);
+    if( disk == nullptr )
+        return;
+    auto release_disk = at_scope_end([=]{ CFRelease(disk); });
+        
+    if( _volume->mount_flags.ejectable ) {
+        DADiskUnmount(disk, kDADiskUnmountOptionForce, GenericDiskUnmountCallback, nullptr);
+    }
+    else {
+        DADiskUnmount(disk, kDADiskUnmountOptionForce, nullptr, nullptr);            
+    }
+}
+
+struct APFSUnmountingContext
+{
+    APFSUnmountingContext(nc::utility::APFSTree _tree,
+                          const NativeFSManager::Info &_unmounted_volume ):
+        apfs_tree(std::move(_tree)),
+        unmounted_volume(_unmounted_volume)
+    {
+    }
+    
+    nc::utility::APFSTree apfs_tree;
+    NativeFSManager::Info unmounted_volume;
+};
+
+static void APFSUnmountCallback( DADiskRef _disk, DADissenterRef _dissenter, void *_context )
+{
+    const auto context = std::unique_ptr<APFSUnmountingContext>{(APFSUnmountingContext*)_context};
+    
+    if( _dissenter != nullptr )
+        return;
+    
+    const auto volume_bsd_name = GetBSDName(*context->unmounted_volume);
+    if( volume_bsd_name == std::nullopt )
+        return;
+    
+    const auto apfs_container = context->apfs_tree.FindContainerOfVolume(*volume_bsd_name);
+    if( apfs_container == std::nullopt )
+        return;
+    
+    // TODO:
+    // do we need to check whether other volumes in this container are not mounted at the moment?
+    // is it guaranteed that the disk will not be ejected while there is still some mounted volume?
+    
+    const auto stores = context->apfs_tree.FindPhysicalStoresOfContainer(*apfs_container);
+    if( stores == std::nullopt )
+        return;
+    
+    for( const auto &store: *stores ) {
+        const auto store_partition = DADiskCreateFromBSDName(kCFAllocatorDefault,
+                                                             DASessionForMainThread(),
+                                                             store.c_str());
+        if( store_partition == nullptr )
+            continue;
+        auto release_disk = at_scope_end([=]{ CFRelease(store_partition); });        
+        
+        const auto whole_disk = DADiskCopyWholeDisk(store_partition);
+        if( whole_disk == nullptr )
+            continue;
+        auto release_whole_disk = at_scope_end([=]{ CFRelease(whole_disk); });        
+           
+        DADiskEject(whole_disk, kDADiskEjectOptionDefault, nullptr, nullptr);
+    }    
+}
+
+void NativeFSManager::PerformAPFSUnmounting(const Info &_volume)
+{    
+    const auto url = (__bridge CFURLRef)_volume->verbose.url;
+    const auto disk = DADiskCreateFromVolumePath(kCFAllocatorDefault, DASessionForMainThread(),url);
+    if( disk == nullptr )
+        return;
+    auto release_disk = at_scope_end([=]{ CFRelease(disk); }); 
+    
+    if( _volume->mount_flags.ejectable ) {
+        const auto apfs_plist = nc::utility::DiskUtility{}.ListAPFSObjects();
+        if( apfs_plist == nil )
+            return;
+        
+        auto context = std::make_unique<APFSUnmountingContext>(nc::utility::APFSTree{apfs_plist},
+                                                               _volume);
+        
+        DADiskUnmount(disk, kDADiskUnmountOptionForce, APFSUnmountCallback, context.release());
+    }
+    else {
+        DADiskUnmount(disk, kDADiskUnmountOptionForce, nullptr, nullptr);            
+    }    
 }
 
 static bool VolumeHasTrash(const string &_volume_path)
@@ -572,4 +676,25 @@ static vector<string> GetFullFSList()
             result.emplace_back(mounts[i].f_mntonname);
             
             return result;
+}
+
+static DASessionRef DASessionForMainThread()
+{
+    dispatch_assert_main_queue();
+    static const auto session = []{
+        const auto s = DASessionCreate(kCFAllocatorDefault);
+        DASessionScheduleWithRunLoop(s, CFRunLoopGetCurrent(), kCFRunLoopDefaultMode);        
+        return s;
+    }();
+    return session;
+}
+
+static std::optional<std::string> GetBSDName(const NativeFileSystemInfo &_volume)
+{
+    const auto &source = _volume.mounted_from_name;
+    const auto prefix = std::string_view{"/dev/"};
+    if( source.length() <= prefix.length() || source.compare(0, prefix.length(), prefix) != 0 )
+        return {};
+    
+    return source.substr( prefix.length() );
 }

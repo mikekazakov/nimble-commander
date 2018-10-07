@@ -113,112 +113,112 @@ struct NativeFileSystemInfo
         /**
          * A read-only filesystem.
          */
-        bool read_only = false;
+        bool read_only: 1 = false;
         
         /**
          * File system is written to synchronously.
          */
-        bool synchronous = false;
+        bool synchronous: 1 = false;
         
         /**
          * Can't exec from filesystem.
          */
-        bool no_exec = false;
+        bool no_exec: 1 = false;
         
         /**
          * Setuid bits are not honored on this filesystem.
          */
-        bool no_suid = false;
+        bool no_suid: 1 = false;
         
         /**
          * Don't interpret special files.
          */
-        bool no_dev = false;
+        bool no_dev: 1 = false;
         
         /**
          * Union with underlying filesystem.
          */
-        bool f_union = false;
+        bool f_union: 1 = false;
   
         /**
          * File system written to asynchronously.
          */
-        bool asynchronous = false;
+        bool asynchronous: 1 = false;
   
         /**
          * File system is exported.
          */
-        bool exported = false;
+        bool exported: 1 = false;
         
         /**
          * File system is stored locally.
          */
-        bool local = false;
+        bool local: 1 = false;
         
         /**
          * Quotas are enabled on this file system.
          */
-        bool quota = false;
+        bool quota: 1 = false;
   
         /**
          * This file system is the root of the file system.
          */
-        bool root = false;
+        bool root: 1 = false;
   
         /**
          * File system supports volfs.
          */
-        bool vol_fs = false;
+        bool vol_fs: 1 = false;
         
         /**
          * File system is not appropriate path to user data.
          */
-        bool dont_browse = false;
+        bool dont_browse: 1 = false;
         
         /**
          * VFS will ignore ownership information on filesystem objects.
          */
-        bool unknown_permissions = false;
+        bool unknown_permissions: 1 = false;
         
         /**
          * File system was mounted by automounter.
          */
-        bool auto_mounted = false;
+        bool auto_mounted: 1 = false;
   
         /**
          * File system is journaled.
          */
-        bool journaled = false;
+        bool journaled: 1 = false;
   
         /**
          * File system should defer writes.
          */
-        bool defer_writes = false;
+        bool defer_writes: 1 = false;
         
         /**
          * MAC support for individual labels.
          */
-        bool multi_label = false;
+        bool multi_label: 1 = false;
         
         /**
          * File system supports per-file encrypted data protection.
          */
-        bool cprotect = false;
+        bool cprotect: 1 = false;
         
         /**
          * True if the volume's media is ejectable from the drive mechanism under software control.
          */
-        bool ejectable = false;
+        bool ejectable: 1 = false;
         
         /**
          * True if the volume's media is removable from the drive mechanism.
          */
-        bool removable = false;
+        bool removable: 1 = false;
         
         /**
          * True if the volume's device is connected to an internal bus, false if connected to an external bus.
          */
-        bool internal = false;
+        bool internal: 1 = false;
         
     } mount_flags;
 
@@ -229,38 +229,38 @@ struct NativeFileSystemInfo
          * unmounted and remounted), and a file or directory can be looked up by ID.  Volumes that support VolFS
          * and can support Carbon File ID references should set this field.
          */
-        bool persistent_objects_ids = false;
+        bool persistent_objects_ids: 1 = false;
         
         /**
          * When set, the volume supports symbolic links.  The symlink(), readlink(), and lstat()
          * calls all use this symbolic link.
          */
-        bool symbolic_links = false;
+        bool symbolic_links: 1 = false;
         
         /**
          * When set, the volume supports hard links.
          * The link() call creates hard links.
          */
-        bool hard_links = false;
+        bool hard_links: 1 = false;
         
         /** 
          * When set, the volume is capable of supporting a journal used to speed recovery in
          * case of unplanned shutdown (such as a power outage or crash).  This bit does not necessarily
          * mean the volume is actively using a journal for recovery.
          */
-        bool journal = false;
+        bool journal: 1 = false;
         
         /** 
          * When set, the volume is currently using a journal for use in speeding recovery after an
          * unplanned shutdown. This bit can be set only if "journal" is also set.
          */
-        bool journal_active = false;
+        bool journal_active: 1 = false;
         
         /**
          * When set, the volume format does not store reliable times for the root directory,
          * so you should not depend on them to detect changes, etc.
          */
-        bool no_root_times = false;
+        bool no_root_times: 1 = false;
         
         /**
          * When set, the volume supports sparse files.
@@ -268,7 +268,7 @@ struct NativeFileSystemInfo
          * to, and are not allocated on disk.  Sparse files may have an
          * allocated size that is less than the file's logical length.
          */
-        bool sparse_files = false;
+        bool sparse_files: 1 = false;
         
         /** 
          * For security reasons, parts of a file (runs)
@@ -278,7 +278,7 @@ struct NativeFileSystemInfo
          * writing zeroes to the media.  This provides performance similar to
          * sparse files, but not the space savings.
          */
-        bool zero_runs = false;
+        bool zero_runs: 1 = false;
         
         /**
          * When set, file and directory names are
@@ -287,7 +287,7 @@ struct NativeFileSystemInfo
          * and you can't have two names that differ solely in the case of
          * the characters.
          */
-        bool case_sensitive = false;
+        bool case_sensitive: 1 = false;
         
         /**
          * When set, file and directory names
@@ -296,7 +296,7 @@ struct NativeFileSystemInfo
          * making them all upper or all lower case).  A volume that sets
          * "case_sensitive" should also set "case_preserving".
          */
-        bool case_preserving = false;
+        bool case_preserving: 1 = false;
         
         /**
          * This bit is used as a hint to upper layers
@@ -306,21 +306,21 @@ struct NativeFileSystemInfo
          * A volume that must always read from disk or always perform a network
          * transaction should not set this bit.
          */
-        bool fast_statfs = false;
+        bool fast_statfs: 1 = false;
         
         /**
          * If this bit is set the volume format supports
          * file sizes larger than 4GB, and potentially up to 2TB; it does not
          * indicate whether the filesystem supports files larger than that.
          */
-        bool filesize_2tb = false;
+        bool filesize_2tb: 1 = false;
         
         /**
          * When set, the volume supports open deny
          * modes (e.g. "open for read write, deny write"; effectively, mandatory
          * file locking based on open modes).
          */
-        bool open_deny_modes = false;
+        bool open_deny_modes: 1 = false;
         
         /**
          * When set, the volume supports the UF_HIDDEN
@@ -328,7 +328,7 @@ struct NativeFileSystemInfo
          * "hidden" or "invisible" bit (which may be the invisible bit from the
          * Finder Info extended attribute).
          */
-        bool hidden_files = false;
+        bool hidden_files: 1 = false;
         
         /**
          * When set, the volume supports the ability
@@ -338,7 +338,7 @@ struct NativeFileSystemInfo
          * capability and it is assumed that most file systems will not support
          * it.  Its use is for legacy non-posix APIs like ResolveFileIDRef.
          */
-        bool path_from_id = false;
+        bool path_from_id: 1 = false;
         
         /**
          * When set, the volume does not support
@@ -346,13 +346,13 @@ struct NativeFileSystemInfo
          * (as in f_blocks, f_bavail, or f_bfree in "struct statfs").  Historically,
          * those values were set to 0xFFFFFFFF for volumes that did not support them.
          */
-        bool no_volume_sizes = false;
+        bool no_volume_sizes: 1 = false;
         
         /**
          * When set, the volume supports transparent
          * decompression of compressed files using decmpfs.
          */
-        bool decmpfs_compression = false;
+        bool decmpfs_compression: 1 = false;
         
         /**
          * When set, the volume uses object IDs that
@@ -361,37 +361,37 @@ struct NativeFileSystemInfo
          * 32-bit fid_objno fields of the fsobj_id_t returned by ATTR_CMN_OBJID,
          * ATTR_CMN_OBJPERMID, and ATTR_CMN_PAROBJID are undefined
          */
-        bool object_ids_64bit = false;
+        bool object_ids_64bit: 1 = false;
         
 
         /**
          * When set, the volume supports directory hard links.
          */
-        bool dir_hardlinks = false;
+        bool dir_hardlinks: 1 = false;
 
         /**
          * When set, the volume supports document IDs (an ID which persists across object ID
          * changes) for document revisions.
          */
-        bool document_id = false;
+        bool document_id: 1 = false;
         
         
         /**
          * When set, the volume supports write generation counts (a count of how many times
          * an object has been modified)
          */
-        bool write_generation_count = false;
+        bool write_generation_count: 1 = false;
         
 
         /**
          * When set, the volume does not support setting the UF_IMMUTABLE flag.
          */
-        bool no_immutable_files = false;
+        bool no_immutable_files: 1 = false;
         
         /**
          * When set, the volume does not support setting permissions.
          */
-        bool no_permissions = false;
+        bool no_permissions: 1 = false;
     } format;
     
     struct
@@ -400,7 +400,7 @@ struct NativeFileSystemInfo
          * When set, the volume implements the
          * searchfs() system call (the vnop_searchfs vnode operation).
          */
-        bool search_fs = false;
+        bool search_fs: 1 = false;
         
         /**
          * When set, the volume implements the
@@ -412,112 +412,111 @@ struct NativeFileSystemInfo
          * set of supported attributes, get the ATTR_VOL_ATTRIBUTES
          * attribute of the volume.
          */
-        bool attr_list = false;
+        bool attr_list: 1 = false;
         
         /**
          * When set, the volume implements exporting of NFS volumes.
          */
-        bool nfs_export = false;
+        bool nfs_export: 1 = false;
         
         /**
          * When set, the volume implements the
          * readdirattr() system call (vnop_readdirattr vnode operation)
          */
-        bool read_dir_attr = false;
+        bool read_dir_attr: 1 = false;
         
         /**
          * When set, the volume implements the
          * exchangedata() system call (VNOP_EXCHANGE vnode operation)
          */
-        bool exchange_data = false;
+        bool exchange_data: 1 = false;
         
         /**
          * When set, the volume implements the
          * VOP_COPYFILE vnode operation.  (XXX There should be a copyfile()
          * system call in <unistd.h>.)
          */
-        bool copy_file = false;
+        bool copy_file: 1 = false;
         
         /**
          * When set, the volume implements the
          * VNOP_ALLOCATE vnode operation, which means it implements the
          * F_PREALLOCATE selector of fcntl(2).
          */
-        bool allocate = false;
+        bool allocate: 1 = false;
         
         /**
          * When set, the volume implements the
          * ATTR_VOL_NAME attribute for both getattrlist() and setattrlist().
          * The volume can be renamed by setting ATTR_VOL_NAME with setattrlist().
          */
-        bool vol_rename = false;
+        bool vol_rename: 1 = false;
 
         /**
          * When set, the volume implements POSIX style
          * byte range locks via vnop_advlock (accessible from fcntl(2)).
          */
-        bool adv_lock = false;
+        bool adv_lock: 1 = false;
         
         /**
          * When set, the volume implements whole-file flock(2)
          * style locks via vnop_advlock.  This includes the O_EXLOCK and O_SHLOCK
          * flags of the open(2) call.
          */
-        bool file_lock = false;
+        bool file_lock: 1 = false;
         
         /**
          * When set, the volume implements extended security (ACLs).
          */
-        bool extended_security = false;
+        bool extended_security: 1 = false;
         
         /**
          * When set, the volume supports the ATTR_CMN_USERACCESS attribute
          * (used to get the user's access mode to the file).
          * Obsolete(?).
          */
-        bool user_access = false;
+        bool user_access: 1 = false;
         
         /**
          * When set, the volume supports AFP-style mandatory byte range locks via an ioctl().
          */
-        bool mandatory_lock = false;
+        bool mandatory_lock: 1 = false;
         
         /**
          * When set, the volume implements native extended attribues.
          */
-        bool extended_attr = false;
+        bool extended_attr: 1 = false;
         
         /**
          * When set, the volume supports native named streams.
          */
-        bool named_streams = false;
+        bool named_streams: 1 = false;
 
         /**
          * When set, the volume supports clones.
          */
-        bool clone = false;
+        bool clone: 1 = false;
 
         /**
          * When set, the volume supports snapshots.
          */
-        bool snapshot = false;
+        bool snapshot: 1 = false;
         
         /**
          * When set, the volume supports swapping file system objects.
          */
-        bool rename_swap = false;
+        bool rename_swap: 1 = false;
         
         /**
          * When set, the volume supports an exclusive rename operation.
          */
-        bool rename_excl = false;
+        bool rename_excl: 1 = false;
         
         /**
          * True if system can move files to trash for this volume for this user.
          */
-        bool has_trash = false;
+        bool has_trash: 1 = false;
     } interfaces;
-
     
     struct {
         /**

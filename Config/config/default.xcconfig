@@ -8,6 +8,7 @@ ALWAYS_SEARCH_USER_PATHS = NO
 HEADER_SEARCH_PATHS = $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Config $(PROJECT_DIR)/../3rd_Party/rapidjson/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../3rd_Party/boost/include
 LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/boost/built
 OTHER_LDFLAGS = $(OTHER_LDFLAGS) -ObjC -lboost_system-mt -lboost_filesystem-mt
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a
 
 // library settings
 DYLIB_COMPATIBILITY_VERSION = 1

@@ -7,7 +7,7 @@ USE_HEADERMAP = NO
 GCC_PREFIX_HEADER = source/Term-prefix.pch
 
 // c++
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++1z
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a
 
 // objective-c
 CLANG_ENABLE_OBJC_ARC = YES

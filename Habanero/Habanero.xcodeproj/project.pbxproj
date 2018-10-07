@@ -472,7 +472,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
-					"-std=c++1z",
+					"-std=c++2a",
 				);
 				OTHER_LDFLAGS = (
 					"-lz",
@@ -530,7 +530,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
-					"-std=c++1z",
+					"-std=c++2a",
 				);
 				OTHER_LDFLAGS = (
 					"-lz",

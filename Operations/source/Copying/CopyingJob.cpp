@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -32,7 +32,7 @@ CopyingJob::CopyingJob(vector<VFSListingItem> _source_items,
     m_VFSListingItems(move(_source_items)),
     m_DestinationHost(_dest_host),
     m_IsDestinationHostNative(_dest_host->IsNativeFS()),
-    m_NativeFSManager(NativeFSManager::Instance())
+    m_NativeFSManager(utility::NativeFSManager::Instance())
 {
     if( m_InitialDestinationPath.empty() || m_InitialDestinationPath.front() != '/' ) {
         const auto msg = "CopyingJob::CopyingJob(): destination path should be an absolute path";

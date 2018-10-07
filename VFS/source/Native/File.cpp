@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include <Utility/NativeFSManager.h>
 #include <RoutedIO/RoutedIO.h>
@@ -23,7 +23,7 @@ File::~File()
 int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     auto &io = RoutedIO::Default;
-    auto fs_info = NativeFSManager::Instance().VolumeFromPath(Path());
+    auto fs_info = utility::NativeFSManager::Instance().VolumeFromPath(Path());
     
     int openflags = O_NONBLOCK;
     

@@ -138,7 +138,7 @@ NetworkConnectionFormatter::Render(RenderOptions _options,
     
 VolumeFormatter::Representation
 VolumeFormatter::Render(RenderOptions _options,
-                        const NativeFileSystemInfo &_volume )
+                        const utility::NativeFileSystemInfo &_volume )
 {
     Representation rep;
     

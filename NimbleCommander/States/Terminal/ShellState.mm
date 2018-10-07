@@ -293,8 +293,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
     if( NSString *path = notification.userInfo[@"NSDevicePath"] ) {
         auto state = self.task.State();
         if( state == ShellTask::TaskState::Shell ) {
-            auto cwd_volume = NativeFSManager::Instance().VolumeFromPath( self.cwd );
-            auto unmounting_volume = NativeFSManager::Instance().VolumeFromPath(
+            auto cwd_volume = nc::utility::NativeFSManager::Instance().VolumeFromPath( self.cwd );
+            auto unmounting_volume = nc::utility::NativeFSManager::Instance().VolumeFromPath(
                 path.fileSystemRepresentationSafe );
             if( cwd_volume == unmounting_volume )
                 [self chDir:"/Volumes/"]; // TODO: need to do something more elegant

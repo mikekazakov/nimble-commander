@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Delete.h"
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
@@ -160,7 +160,7 @@ static bool AllHaveTrash(const vector<VFSListingItem>& _c)
 {
     const auto directories = ExtractDirectories(_c);
     return all_of(begin(directories), end(directories), [](auto &i){
-        if( auto vol = NativeFSManager::Instance().VolumeFromPath(i) )
+        if( auto vol = utility::NativeFSManager::Instance().VolumeFromPath(i) )
             if( vol->interfaces.has_trash )
                 return true;
         return false;

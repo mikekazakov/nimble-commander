@@ -1164,6 +1164,10 @@
 		CFDAC2FC1DFD1C120039A104 /* TrialWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FA1DFD1C120039A104 /* TrialWindowController.mm */; };
 		CFDAC2FD1DFD1C120039A104 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFDAC2FB1DFD1C120039A104 /* TrialWindowController.xib */; };
 		CFDAC3001DFD1D7C0039A104 /* ExternalEditorInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2FF1DFD1D7C0039A104 /* ExternalEditorInfo.mm */; };
+		CFDAC8452169D31300DEBA2A /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
+		CFDAC8462169D31600DEBA2A /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; };
+		CFDAC8472169D32400DEBA2A /* libConfig.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CFDAC84A2169D32A00DEBA2A /* libVFSIcon.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDB17C519B3075000781976 /* SFTPConnectionSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDB17C219B3075000781976 /* SFTPConnectionSheetController.mm */; };
 		CFDC07B72158F6430069D364 /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; };
@@ -1389,6 +1393,20 @@
 			remoteGlobalIDString = CF1846FE1E41C86D008B7C9F;
 			remoteInfo = "VFS Tests";
 		};
+		CFDAC8482169D32400DEBA2A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF20CC01215A258F006716F6 /* Config.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF20CBDB215A2526006716F6;
+			remoteInfo = Config;
+		};
+		CFDAC84B2169D32A00DEBA2A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CF8BDD0B2147D60800F14C3E /* VFSIcon.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = CF8BDCF82147D50300F14C3E;
+			remoteInfo = VFSIcon;
+		};
 		CFF53B601EDD19A400F567C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CFF53B5B1EDD19A400F567C4 /* Operations.xcodeproj */;
@@ -1432,6 +1450,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CFDAC8472169D32400DEBA2A /* libConfig.dylib in CopyFiles */,
+				CFDAC84A2169D32A00DEBA2A /* libVFSIcon.dylib in CopyFiles */,
 				CF65729C1FA6D0AA00ABF85F /* libTerm.dylib in CopyFiles */,
 				CF39A0E41F70C20C005A4583 /* libHabanero.dylib in CopyFiles */,
 				CF39A0E51F70C20C005A4583 /* libUtility.dylib in CopyFiles */,
@@ -2250,6 +2270,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFDAC8462169D31600DEBA2A /* libVFSIcon.dylib in Frameworks */,
+				CFDAC8452169D31300DEBA2A /* libConfig.dylib in Frameworks */,
 				CF65729B1FA6D08F00ABF85F /* libTerm.dylib in Frameworks */,
 				CF39A0E21F70C1E1005A4583 /* Operations.framework in Frameworks */,
 				CF9F4AF61ECC8D9500E0AF82 /* NetFS.framework in Frameworks */,
@@ -3355,6 +3377,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				CFDAC8492169D32400DEBA2A /* PBXTargetDependency */,
+				CFDAC84C2169D32A00DEBA2A /* PBXTargetDependency */,
 			);
 			name = "NimbleCommander-MAS-Paid";
 			productName = Directories;
@@ -3397,7 +3421,7 @@
 					};
 					CFF6F2391A13567C00011177 = {
 						DevelopmentTeam = AC5SJT236H;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -4861,6 +4885,16 @@
 			target = CFA539591D433E2A00C562A7 /* NimbleCommander-Unsigned */;
 			targetProxy = CFA53A721D433F8A00C562A7 /* PBXContainerItemProxy */;
 		};
+		CFDAC8492169D32400DEBA2A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = Config;
+			targetProxy = CFDAC8482169D32400DEBA2A /* PBXContainerItemProxy */;
+		};
+		CFDAC84C2169D32A00DEBA2A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = VFSIcon;
+			targetProxy = CFDAC84B2169D32A00DEBA2A /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -5453,6 +5487,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/Files-Pro.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5462,8 +5497,7 @@
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Pro-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";
-				PROVISIONING_PROFILE = "74a49677-3296-4445-9568-47a2f63c32f2";
-				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files-Pro Development";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -5472,14 +5506,14 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/Files-Pro.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_PAID__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Pro-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";
-				PROVISIONING_PROFILE = "74a49677-3296-4445-9568-47a2f63c32f2";
-				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files-Pro Development";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};

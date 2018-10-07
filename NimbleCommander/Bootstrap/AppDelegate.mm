@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Sparkle/Sparkle.h>
 #include <LetsMove/PFMoveApplication.h>
 #include <Habanero/CommonPaths.h>
@@ -194,7 +194,7 @@ static NCAppDelegate *g_Me = nil;
 {
     RegisterAvailableVFS();
     
-    NativeFSManager::Instance();
+    nc::utility::NativeFSManager::Instance();
     FeedbackManager::Instance();
     [self themesManager];
     [self favoriteLocationsStorage];

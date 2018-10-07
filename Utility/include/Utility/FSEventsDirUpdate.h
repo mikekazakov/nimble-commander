@@ -1,10 +1,14 @@
-// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
 #include <string>
 #include <functional>
 #include <memory>
+
+namespace nc::utility {
+    class NativeFSManager;
+}
 
 class FSEventsDirUpdate
 {
@@ -20,7 +24,7 @@ public:
     static inline const uint64_t no_ticket = 0;
     
 private:
-    friend class NativeFSManager;
+    friend class nc::utility::NativeFSManager;
     
     // called exclusevily by NativeFSManager
     void OnVolumeDidUnmount(const std::string &_on_path);

@@ -209,7 +209,7 @@ NSDragOperation DragReceiver::BuildOperationForLocal(FilesDraggingSource *_sourc
             return NSDragOperationMove;
         
         if( m_DraggingOperationsMask & NSDragOperationGeneric ) {
-            const auto &fs_man = NativeFSManager::Instance();
+            const auto &fs_man = utility::NativeFSManager::Instance();
             const auto v1 = fs_man.VolumeFromPathFast( _destination.Path() );
             const auto v2 = fs_man.VolumeFromPathFast( _source.items.front().item.Directory() );
             const auto same_native_fs = (v1 != nullptr && v1 == v2);
@@ -249,7 +249,7 @@ NSDragOperation DragReceiver::BuildOperationForURLs(NSArray<NSURL*> *_source,
             return NSDragOperationLink;
         
         if( m_DraggingOperationsMask & NSDragOperationGeneric ) {
-            const auto &fs_man = NativeFSManager::Instance();
+            const auto &fs_man = utility::NativeFSManager::Instance();
             const auto v1 = fs_man.VolumeFromPathFast( _destination.Path() );
             const auto v2 = fs_man.VolumeFromPathFast(_source.firstObject.fileSystemRepresentation);
             const auto same_native_fs = (v1 != nullptr && v1 == v2);

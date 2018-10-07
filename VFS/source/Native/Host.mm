@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <OpenDirectory/OpenDirectory.h>
 #include <sys/attr.h>
 #include <sys/errno.h>
@@ -515,11 +515,11 @@ int NativeHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelCheck
     if(statfs(_path, &info) < 0)
         return VFSError::FromErrno();
 
-    auto volume = NativeFSManager::Instance().VolumeFromMountPoint(info.f_mntonname);
+    auto volume = utility::NativeFSManager::Instance().VolumeFromMountPoint(info.f_mntonname);
     if(!volume)
         return VFSError::GenericError;
     
-    NativeFSManager::Instance().UpdateSpaceInformation(volume);
+    utility::NativeFSManager::Instance().UpdateSpaceInformation(volume);
     
     _stat.volume_name   = volume->verbose.name.UTF8String;
     _stat.total_bytes   = volume->basic.total_bytes;
@@ -816,7 +816,7 @@ bool NativeHost::IsCaseSensitiveAtPath(const char *_dir) const
 {
     if( !_dir || _dir[0] != '/' )
         return true;
-    if( const auto fs_info = NativeFSManager::Instance().VolumeFromMountPoint( _dir ) )
+    if( const auto fs_info = utility::NativeFSManager::Instance().VolumeFromMountPoint( _dir ) )
         return fs_info->format.case_sensitive;
     return true;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/algo.h>
@@ -235,11 +235,11 @@ private:
     vector<unsigned>                            m_SourceItemsToDelete;
     const VFSHostPtr                            m_DestinationHost;
     const bool                                  m_IsDestinationHostNative;
-    shared_ptr<const NativeFileSystemInfo>      m_DestinationNativeFSInfo; // used only for native vfs
+    shared_ptr<const utility::NativeFileSystemInfo>m_DestinationNativeFSInfo; // used only for native vfs
     const string                                m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
     string                                      m_DestinationPath;
     PathCompositionType                         m_PathCompositionType;
-    class NativeFSManager                      &m_NativeFSManager;
+    class nc::utility::NativeFSManager         &m_NativeFSManager;
     
     // buffers are allocated once in job init and are used to manupulate files' bytes.
     // thus no parallel routines should run using these buffers

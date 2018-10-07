@@ -16,6 +16,8 @@ typedef void *NSImage;
 #include <Foundation/Foundation.h>
 #endif
 
+namespace nc::utility {
+
 struct NativeFileSystemInfo
 {
     /**
@@ -629,3 +631,5 @@ private:
     
     friend struct NativeFSManagerProxy2;
 };
+
+}

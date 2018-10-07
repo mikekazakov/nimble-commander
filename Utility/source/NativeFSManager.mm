@@ -16,6 +16,8 @@
 
 using namespace std;
 
+namespace nc::utility {
+
 static NativeFSManager *g_SharedFSManager;
 
 static void GetAllInfos(NativeFileSystemInfo &_volume);
@@ -44,6 +46,8 @@ struct NativeFSManagerProxy2 // this proxy is needed only for private methods ac
         g_SharedFSManager->OnDidRename(_old_path, _new_path);
     }
 };
+    
+}
 
 @interface NativeFSManagerProxy : NSObject
 @end
@@ -51,29 +55,31 @@ struct NativeFSManagerProxy2 // this proxy is needed only for private methods ac
 + (void) volumeDidMount:(NSNotification *)aNotification
 {
     if( NSString *path = aNotification.userInfo[@"NSDevicePath"] )
-        NativeFSManagerProxy2::OnDidMount(path.fileSystemRepresentationSafe);
+        nc::utility::NativeFSManagerProxy2::OnDidMount(path.fileSystemRepresentationSafe);
 }
 
 + (void) volumeDidRename:(NSNotification *)aNotification
 {
     if( NSURL *new_path = aNotification.userInfo[NSWorkspaceVolumeURLKey] )
         if( NSURL *old_path = aNotification.userInfo[NSWorkspaceVolumeOldURLKey] )
-            NativeFSManagerProxy2::OnDidRename(old_path.path.fileSystemRepresentationSafe,
+            nc::utility::NativeFSManagerProxy2::OnDidRename(old_path.path.fileSystemRepresentationSafe,
                                                new_path.path.fileSystemRepresentationSafe);
 }
 
 + (void) volumeWillUnmount:(NSNotification *)aNotification
 {
     if( NSString *path = aNotification.userInfo[@"NSDevicePath"] )
-        NativeFSManagerProxy2::OnWillUnmount(path.fileSystemRepresentationSafe);
+        nc::utility::NativeFSManagerProxy2::OnWillUnmount(path.fileSystemRepresentationSafe);
 }
 
 + (void) volumeDidUnmount:(NSNotification *)aNotification
 {
     if( NSString *path = aNotification.userInfo[@"NSDevicePath"] )
-        NativeFSManagerProxy2::OnDidUnmount(path.fileSystemRepresentationSafe);
+        nc::utility::NativeFSManagerProxy2::OnDidUnmount(path.fileSystemRepresentationSafe);
 }
 @end
+
+namespace nc::utility {
 
 NativeFSManager::NativeFSManager()
 {
@@ -697,4 +703,6 @@ static std::optional<std::string> GetBSDName(const NativeFileSystemInfo &_volume
         return {};
     
     return source.substr( prefix.length() );
+}
+
 }

@@ -103,10 +103,10 @@ namespace nc::panel::actions {
 static NSString *ShrinkMenuItemTitle(NSString *_title);
 
     
-static vector<shared_ptr<const NativeFileSystemInfo>> VolumesToShow()
+static vector<shared_ptr<const utility::NativeFileSystemInfo>> VolumesToShow()
 {
-    vector<shared_ptr<const NativeFileSystemInfo>> volumes;
-    for( auto &i: NativeFSManager::Instance().Volumes() )
+    vector<shared_ptr<const utility::NativeFileSystemInfo>> volumes;
+    for( auto &i: utility::NativeFSManager::Instance().Volumes() )
         if( i->mount_flags.dont_browse == false )
             volumes.emplace_back(i);
     return volumes;
@@ -202,7 +202,7 @@ public:
     MenuItemBuilder( const NetworkConnectionsManager &_conn_manager, id _action_target );
     NSMenuItem *MenuItemForFavorite( const FavoriteLocationsStorage::Favorite &_f );
     NSMenuItem *MenuItemForLocation(const FavoriteLocationsStorage::Location &_f);
-    NSMenuItem *MenuItemForVolume( const NativeFileSystemInfo &_i );
+    NSMenuItem *MenuItemForVolume( const utility::NativeFileSystemInfo &_i );
     NSMenuItem *MenuItemForConnection( const NetworkConnectionsManager::Connection &_c );
     NSMenuItem *MenuItemForPath( const VFSPath &_p );
     NSMenuItem *MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
@@ -586,7 +586,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForLocation(
     return menu_item;
 }
 
-NSMenuItem *MenuItemBuilder::MenuItemForVolume( const NativeFileSystemInfo &_volume )
+NSMenuItem *MenuItemBuilder::MenuItemForVolume( const utility::NativeFileSystemInfo &_volume )
 {
     auto menu_item = [[NSMenuItem alloc] init];
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_volume.mounted_at_path}];

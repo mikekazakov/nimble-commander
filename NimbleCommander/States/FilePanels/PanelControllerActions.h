@@ -2,12 +2,14 @@
 #pragma once
 
 #include "Actions/DefaultAction.h"
+#include <Utility/NativeFSManager.h>
 
 class NetworkConnectionsManager;
 
 namespace nc::panel {
 
 using PanelActionsMap = unordered_map<SEL, unique_ptr<const actions::PanelAction> >;
-PanelActionsMap BuildPanelActionsMap(NetworkConnectionsManager& _net_mgr);
+PanelActionsMap BuildPanelActionsMap(NetworkConnectionsManager& _net_mgr,
+                                     utility::NativeFSManager& _native_fs_mgr);
     
 }

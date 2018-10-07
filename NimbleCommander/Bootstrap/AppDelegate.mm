@@ -901,6 +901,12 @@ static NCAppDelegate *g_Me = nil;
     return handler;
 }
 
+- (nc::utility::NativeFSManager &)nativeFSManager
+{
+    // temporary solution:
+    return nc::utility::NativeFSManager::Instance();
+}
+
 @end
 
 static std::optional<std::string> Load(const std::string &_filepath)

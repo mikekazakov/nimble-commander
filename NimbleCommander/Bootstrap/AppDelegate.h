@@ -15,6 +15,10 @@ class NetworkConnectionsManager;
 
 namespace nc {
     
+    namespace utility {
+        class NativeFSManager;
+    }
+    
     namespace core {
         class VFSInstanceManager;
         class ServicesHandler;
@@ -105,5 +109,8 @@ namespace nc {
 
 @property (nonatomic, readonly)
     nc::core::ServicesHandler &servicesHandler;
+
+@property (nonatomic, readonly)
+    nc::utility::NativeFSManager &nativeFSManager;
 
 @end

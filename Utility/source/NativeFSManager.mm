@@ -513,13 +513,12 @@ bool NativeFSManager::IsVolumeContainingPathEjectable(const string &_path)
     if(!volume)
         return false;
     
-    static string net("/net"), dev("/dev"), home("/home");
-    
-    if(volume->mounted_at_path == net ||
-       volume->mounted_at_path == dev ||
-       volume->mounted_at_path == home )
+    using namespace std::string_literals;
+    static const auto excl_list = {"/net"sv, "/dev"sv, "/home"sv};
+
+    if( std::find(excl_list.begin(), excl_list.end(), volume->mounted_at_path) != excl_list.end() )
         return false;
-    
+        
     return  volume->mount_flags.ejectable   == true  ||
             volume->mount_flags.removable   == true  ||
             volume->mount_flags.internal    == false ||

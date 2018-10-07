@@ -39,7 +39,8 @@ namespace nc::panel {
 
 using namespace actions;
 
-PanelActionsMap BuildPanelActionsMap(NetworkConnectionsManager& _net_mgr)
+PanelActionsMap BuildPanelActionsMap(NetworkConnectionsManager& _net_mgr,
+                                     utility::NativeFSManager& _native_fs_mgr)
 {
     PanelActionsMap m;
     auto add = [&](SEL _sel, actions::PanelAction *_action) {
@@ -125,7 +126,7 @@ PanelActionsMap BuildPanelActionsMap(NetworkConnectionsManager& _net_mgr)
     add( @selector(OnDetailedVolumeInformation:),new ShowVolumeInformation);
     add( @selector(OnFileAttributes:),           new ChangeAttributes);
     add( @selector(OnOpenWithExternalEditor:),   new OpenWithExternalEditor);
-    add( @selector(OnEjectVolume:),              new EjectVolume);
+    add( @selector(OnEjectVolume:),              new EjectVolume{_native_fs_mgr});
     add( @selector(OnCopyCurrentFileName:),      new CopyFileName);
     add( @selector(OnCopyCurrentFilePath:),      new CopyFilePath);
     add( @selector(OnCreateDirectoryCommand:),   new MakeNewNamedFolder);

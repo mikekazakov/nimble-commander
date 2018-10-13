@@ -219,7 +219,6 @@ struct NativeFileSystemInfo
          * True if the volume's device is connected to an internal bus, false if connected to an external bus.
          */
         bool internal: 1 = false;
-        
     } mount_flags;
 
     struct
@@ -363,7 +362,6 @@ struct NativeFileSystemInfo
          */
         bool object_ids_64bit: 1 = false;
         
-
         /**
          * When set, the volume supports directory hard links.
          */
@@ -375,14 +373,12 @@ struct NativeFileSystemInfo
          */
         bool document_id: 1 = false;
         
-        
         /**
          * When set, the volume supports write generation counts (a count of how many times
          * an object has been modified)
          */
         bool write_generation_count: 1 = false;
         
-
         /**
          * When set, the volume does not support setting the UF_IMMUTABLE flag.
          */

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/FPSLimitedDrawer.h>
@@ -51,11 +51,6 @@ namespace nc::term {
 - (void) adjustSizes:(bool)_mandatory; // implicitly calls scrollToBottom when full height changes
 - (void) scrollToBottom;
 
-/**
- * Decrease _sz in dimensions of View insets.
- */
-+ (NSSize) insetSize:(NSSize)_sz;
-
-+ (NSEdgeInsets)insets;
+- (NSPoint)beginningOfScreenLine:(int)_line_number;
 
 @end

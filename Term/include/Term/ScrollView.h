@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 @class NCTermView;
@@ -17,5 +17,6 @@ namespace nc::term {
 
 @property (nonatomic, readonly) NCTermView          *view;
 @property (nonatomic, readonly) nc::term::Screen    &screen;
+@property (nonatomic, readonly) NSEdgeInsets         viewInsets;
 
 @end

@@ -157,12 +157,21 @@ static const auto g_LongProcessDelay = 100ms;
 
 - (double) bottomGapForLines:(int)_lines_amount
 {
-    if(_lines_amount < 1)
+    if( _lines_amount < 1 )
         return 0;
-    auto sz = [NCTermView insetSize:self.bounds.size];
-    auto font_height = m_TermScrollView.view.fontCache.Height();
-    auto residual = fmod(sz.height, font_height);
-    return font_height * _lines_amount + residual + NCTermView.insets.bottom;
+  
+    const auto screen_lines_amount = m_TermScrollView.screen.Height();
+    const auto screen_line_index = screen_lines_amount - _lines_amount;
+    if( screen_line_index < 0 )
+        return m_TermScrollView.bounds.size.height;
+    
+    auto view_pt = [m_TermScrollView.view beginningOfScreenLine:screen_line_index];
+    const auto local_pt = NSMakePoint(view_pt.x,
+                                      self.frame.size.height -
+                                        view_pt.y -
+                                        m_TermScrollView.viewInsets.top);
+    const auto gap = local_pt.y;
+    return clamp(gap, 0., self.bounds.size.height);    
 }
 
 - (int) totalScreenLines
@@ -173,6 +182,11 @@ static const auto g_LongProcessDelay = 100ms;
 - (ShellTask::TaskState) state
 {
     return m_Task->State();
+}
+
+- (NCTermView *) termView
+{
+    return m_TermScrollView.view;
 }
 
 - (void) runShell:(const string&)_initial_wd;

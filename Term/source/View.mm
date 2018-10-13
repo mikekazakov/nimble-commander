@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontCache.h>
 #include <Utility/FontExtras.h>
@@ -13,8 +13,6 @@
 
 using namespace nc;
 using namespace nc::term;
-
-static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 
 using SelPoint = term::ScreenPoint;
 
@@ -167,24 +165,6 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     }
 }
 
-+ (NSEdgeInsets) insets
-{
-    return g_Insets;
-}
-
-+ (NSSize) insetSize:(NSSize)_sz
-{
-    _sz.width -= g_Insets.left + g_Insets.right;
-    if( _sz.width < 0 )
-        _sz.width = 0;
-    
-    _sz.height -= g_Insets.top + g_Insets.bottom;
-    if( _sz.height < 0 )
-        _sz.height = 0;
-    
-    return _sz;
-}
-
 - (void)adjustSizes:(bool)_mandatory
 {
     const int full_lines_height = self.fullScreenLinesHeight;
@@ -192,13 +172,8 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
         return;
     
     m_LastScreenFullHeight = full_lines_height;
-    
-    const auto clipview = self.enclosingScrollView.contentView;
-    const auto size_without_insets = [NCTermView insetSize:NSMakeSize(self.frame.size.width, clipview.frame.size.height)];
-    const auto full_lines_height_px = full_lines_height * m_FontCache->Height(); // full content height
-    const auto rest = size_without_insets.height - floor(size_without_insets.height / m_FontCache->Height()) * m_FontCache->Height();
-
-    m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, full_lines_height_px + rest + g_Insets.top + g_Insets.bottom);
+    const auto full_lines_height_px = full_lines_height * m_FontCache->Height();
+    m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, full_lines_height_px);    
     [self invalidateIntrinsicContentSize];
     [self.enclosingScrollView layoutSubtreeIfNeeded];
     [self scrollToBottom];
@@ -211,11 +186,10 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     auto h1 = self.frame.size.height;
     auto h2 = scrollview.contentSize.height;
-    if( h1 > h2 ) {
+    if( h1 > h2 ) {        
         auto p = NSMakePoint(0,
                              self.superview.isFlipped ?
-                                (self.frame.size.height - scrollview.contentSize.height) :
-                                0
+                                (self.frame.size.height - scrollview.contentSize.height) : 0
                              );
         [clipview scrollToPoint:p];
         [scrollview reflectScrolledClipView:clipview];
@@ -235,21 +209,10 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     if( !m_Screen )
         return;
-    
-    CGContextTranslateCTM(context, g_Insets.left, g_Insets.top);
 
-    int line_start=0, line_end=0;
-    const auto clipviewbounds = self.enclosingScrollView.contentView.bounds;
-    const auto effective_height = [NCTermView insetSize:NSMakeSize(0, clipviewbounds.size.height)].height;
-    if( self.superview.isFlipped ) { // regular terminal
-        line_start = floor( (clipviewbounds.origin.y + g_Insets.top ) / m_FontCache->Height());
-        line_end   = line_start + ceil(effective_height / m_FontCache->Height());
-    }
-    else {  // overlapped terminal
-        line_end = ceil( (self.bounds.size.height - clipviewbounds.origin.y) / m_FontCache->Height());
-        line_start = line_end - ceil(effective_height / m_FontCache->Height());
-    }
-    
+    const auto font_height = m_FontCache->Height();
+    const auto line_start= (int)floor( dirtyRect.origin.y / font_height );
+    const auto line_end = (int)ceil( (dirtyRect.origin.y + dirtyRect.size.height) / font_height );
     
     auto lock = m_Screen->AcquireLock();
     
@@ -473,13 +436,13 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
  */
 - (SelPoint)projectPoint:(NSPoint)_point
 {
-    auto y_pos = _point.y - g_Insets.top;
+    auto y_pos = _point.y;
     if( y_pos < 0 )
         y_pos = 0;
     
     int line_predict = floor(y_pos / m_FontCache->Height()) - m_Screen->Buffer().BackScreenLines();
     
-    auto x_pos = _point.x - g_Insets.left;
+    auto x_pos = _point.x;
     if( x_pos < 0 )
         x_pos = 0;
     int col_predict = floor(x_pos / m_FontCache->Width());
@@ -837,5 +800,12 @@ ANSI_COLOR(ansiColorE, setAnsiColorE, 14);
 ANSI_COLOR(ansiColorF, setAnsiColorF, 15);
 
 #undef ANSI_COLOR
+
+- (NSPoint)beginningOfScreenLine:(int)_line_number
+{
+    if( _line_number <= 0 )
+        return NSMakePoint(0., 0.);
+    return NSMakePoint(0., _line_number * m_FontCache->Height());
+}
 
 @end

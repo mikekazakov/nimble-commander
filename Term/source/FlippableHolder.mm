@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FlippableHolder.h"
 
 @implementation NCTermFlippableHolder
@@ -33,6 +33,11 @@
 - (BOOL) isFlipped
 {
     return m_Flipped;
+}
+
+-(BOOL) isOpaque
+{
+    return YES;
 }
 
 - (NSRect)adjustScroll:(NSRect)proposedVisibleRect

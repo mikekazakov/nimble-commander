@@ -160,8 +160,8 @@
 				CF4135241F891165007429B6 /* View.mm */,
 			);
 			name = Source;
-			path = Term;
-			sourceTree = "<group>";
+			path = source;
+			sourceTree = SOURCE_ROOT;
 		};
 		CF1ADE2A1F7E6C3F003E9B76 /* Headers */ = {
 			isa = PBXGroup;

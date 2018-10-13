@@ -1,7 +1,8 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Term/ShellTask.h>
+#include <Term/View.h>
 
 @interface FilePanelOverlappedTerminal : NSView
 
@@ -18,6 +19,7 @@
 - (bool) feedShellWithKeyDown:(NSEvent *)event;
 
 @property (nonatomic, readonly) nc::term::ShellTask::TaskState state;
+@property (nonatomic, readonly) NCTermView *termView;
 
 /**
  * tries to understand if Bash shell has something entered awaiting for Enter hit.

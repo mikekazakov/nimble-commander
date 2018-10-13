@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include "Parser.h"
 #include "View.h"
@@ -9,6 +9,8 @@
 
 using namespace nc;
 using namespace nc::term;
+
+static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 
 @implementation NCTermScrollView
 {
@@ -53,12 +55,6 @@ using namespace nc::term;
         
         [self addConstraints:
          [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-0-[m_ViewHolder(>=100)]-0-|"
-                                                 options:0
-                                                 metrics:nil
-                                                   views:NSDictionaryOfVariableBindings(m_ViewHolder)]];
-        [self addConstraints:
-         [NSLayoutConstraint constraintsWithVisualFormat:top ? @"V:|-0-[m_ViewHolder]" :
-                                                               @"V:[m_ViewHolder]-0-|"
                                                  options:0
                                                  metrics:nil
                                                    views:NSDictionaryOfVariableBindings(m_ViewHolder)]];
@@ -108,11 +104,10 @@ using namespace nc::term;
 
 - (void)frameDidChange
 {
-    const auto full_size = NSMakeSize(m_View.frame.size.width, self.contentView.frame.size.height);
-    const auto sz = [NCTermView insetSize:full_size];
+    const auto full_size = self.contentView.frame.size;     
     
-    int sy = floor(sz.height / m_View.fontCache.Height());
-    int sx = floor(sz.width / m_View.fontCache.Width());
+    int sy = floor(full_size.height / m_View.fontCache.Height());
+    int sx = floor(full_size.width / m_View.fontCache.Width());
 
     if(sx != m_Screen->Width() || sy != m_Screen->Height()) {
         auto lock = m_Screen->AcquireLock();
@@ -128,10 +123,8 @@ using namespace nc::term;
     // is this code necessary?
     NSRect scrollRect;
     scrollRect = [self documentVisibleRect];
-//    cout << theEvent.deltaY << endl;
     scrollRect.origin.y +=  floor(theEvent.deltaY) *
                             self.verticalLineScroll *
-//                            m_View.fontCache.Height() *
                             (m_ViewHolder.isFlipped ? -1 : 1);
     [(NSView *)self.documentView scrollRectToVisible:scrollRect];
 }
@@ -140,6 +133,28 @@ using namespace nc::term;
 {
     [super setScrollerStyle:scrollerStyle];
     [self frameDidChange];
+}
+
+- (void) tile
+{
+    [super tile];
+    
+    auto rc = self.contentView.frame;
+    rc.origin.y += g_Insets.top;
+    rc.origin.x += g_Insets.left;
+    rc.size.height -= g_Insets.top + g_Insets.bottom;
+    rc.size.width -= g_Insets.left + g_Insets.right;
+    
+    const auto rest = rc.size.height -
+        floor(rc.size.height / m_View.fontCache.Height()) * m_View.fontCache.Height();
+    rc.size.height -= rest;
+    
+    self.contentView.frame = rc;
+}
+
+- (NSEdgeInsets) viewInsets
+{
+    return g_Insets;
 }
 
 @end

@@ -49,10 +49,15 @@ bool CloseTab::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *
     if( tabs == 0 ) {
         // in this case (no other adequate responders) - pass validation  up
         NSResponder *resp = _target;
-        while( (resp = resp.nextResponder) )
+        if( resp.nextResponder == resp )
+            return false;
+        while( (resp = resp.nextResponder) ) {
             if( [resp respondsToSelector:_item.action] &&
                 [resp respondsToSelector:@selector(validateMenuItem:)] )
                 return [resp validateMenuItem:_item];
+            if( resp.nextResponder == resp )
+                return false;            
+        }
         return true;
     }
     _item.title = tabs > 1 ? g_CloseTab : g_CloseWindow;

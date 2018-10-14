@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewCollectionViewLayout.h"
 
 @implementation PanelBriefViewCollectionViewLayout
@@ -20,7 +20,8 @@
 
 - (int) rowsCount
 {
-    const double view_height = self.collectionView.bounds.size.height;
+    const auto enclosing_scrollview = self.collectionView.enclosingScrollView;
+    const auto view_height = enclosing_scrollview.contentView.frame.size.height;
     const double item_height = self.itemSize.height;
     const double n = floor(view_height / item_height);
     return int(n);

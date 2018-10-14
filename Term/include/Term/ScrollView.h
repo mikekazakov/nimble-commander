@@ -18,5 +18,6 @@ namespace nc::term {
 @property (nonatomic, readonly) NCTermView          *view;
 @property (nonatomic, readonly) nc::term::Screen    &screen;
 @property (nonatomic, readonly) NSEdgeInsets         viewInsets;
+@property (nonatomic, readwrite) NSCursor           *customCursor;
 
 @end

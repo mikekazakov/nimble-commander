@@ -19,6 +19,7 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     unique_ptr<term::Screen>        m_Screen;
     shared_ptr<nc::term::Settings>  m_Settings;
     int                             m_SettingsNotificationTicket;
+    bool                            m_MouseInsideNonOverlappedArea;
 }
 
 @synthesize view = m_View;
@@ -30,6 +31,9 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     assert(settings);
     self = [super initWithFrame:frameRect];
     if(self) {
+        m_MouseInsideNonOverlappedArea = false;
+        self.customCursor = NSCursor.IBeamCursor;
+        
         auto rc = self.contentView.bounds;
         m_Settings = settings;
         m_View = [[NCTermView alloc] initWithFrame:rc];
@@ -71,6 +75,17 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
         });
         
         [self frameDidChange];
+        
+        const auto tracking_flags =
+            NSTrackingActiveInKeyWindow |
+            NSTrackingMouseMoved |
+            NSTrackingMouseEnteredAndExited |
+            NSTrackingInVisibleRect;
+        const auto tracking = [[NSTrackingArea alloc] initWithRect:NSRect()
+                                                           options:tracking_flags                          
+                                                             owner:self
+                                                          userInfo:nil];
+        [self addTrackingArea:tracking];         
     }
     return self;
 }
@@ -85,6 +100,59 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 - (void) dealloc
 {
     [NSNotificationCenter.defaultCenter removeObserver:self];
+}
+
+- (void) mouseMoved:(NSEvent *)event
+{    
+    const auto hit_view = [self.window.contentView hitTest:event.locationInWindow];
+    const auto inside = (bool)[hit_view isDescendantOf:self]; 
+    if( inside ) {        
+        if( m_MouseInsideNonOverlappedArea == false ) {
+            m_MouseInsideNonOverlappedArea = true;
+            [self mouseEnteredNonOverlappedArea];
+        }
+    }
+    else {
+        if( m_MouseInsideNonOverlappedArea == true ) {
+            m_MouseInsideNonOverlappedArea = false;
+            [self mouseExitedNonOverlappedArea];
+        }
+    }
+}
+
+- (void) mouseEntered:(NSEvent *)event
+{
+    [self mouseMoved:event];
+}
+
+- (void) mouseExited:(NSEvent *)event
+{
+    if( m_MouseInsideNonOverlappedArea == true ) {
+        m_MouseInsideNonOverlappedArea = false;
+        [self mouseExitedNonOverlappedArea];
+    }
+}
+
+- (void)cursorUpdate:(NSEvent *)event
+{
+}
+
+- (void) mouseEnteredNonOverlappedArea
+{
+    [self.customCursor push];    
+}
+
+- (void) mouseExitedNonOverlappedArea
+{
+    [self.customCursor pop];
+}
+
+- (void)viewDidMoveToWindow
+{
+    if( self.window == nil && m_MouseInsideNonOverlappedArea ) {
+        m_MouseInsideNonOverlappedArea = false;
+        [self mouseExitedNonOverlappedArea];
+    }
 }
 
 - (term::Screen&) screen

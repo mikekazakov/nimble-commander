@@ -157,4 +157,9 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     return g_Insets;
 }
 
+- (void) mouseDown:(NSEvent *)_event
+{
+    [m_View mouseDown:_event];
+}
+
 @end

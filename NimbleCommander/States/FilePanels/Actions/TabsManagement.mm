@@ -48,15 +48,14 @@ bool CloseTab::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *
     const auto tabs = _target.currentSideTabsCount;
     if( tabs == 0 ) {
         // in this case (no other adequate responders) - pass validation  up
-        NSResponder *resp = _target;
-        if( resp.nextResponder == resp )
-            return false;
-        while( (resp = resp.nextResponder) ) {
+        NSResponder *resp = _target.nextResponder;
+        while( objc_cast<AttachedResponder>(resp) != nil )
+            resp = resp.nextResponder;
+        while( resp != nil ) {
             if( [resp respondsToSelector:_item.action] &&
                 [resp respondsToSelector:@selector(validateMenuItem:)] )
                 return [resp validateMenuItem:_item];
-            if( resp.nextResponder == resp )
-                return false;            
+            resp = resp.nextResponder;            
         }
         return true;
     }

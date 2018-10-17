@@ -378,13 +378,7 @@ static NSString *TitleForData( const data::Model* _data );
         auto terminal = m_OverlappedTerminal->terminal;
         views = NSDictionaryOfVariableBindings(terminal, m_SeparatorLine);
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:[m_SeparatorLine]-(0)-[terminal]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[terminal]-(0)-|" options:0 metrics:nil views:views]];
-        
-        
-        [NSNotificationCenter.defaultCenter addObserver:self
-                                               selector:@selector(overlappedTerminalFrameDidChange)
-                                                   name:NSViewFrameDidChangeNotification
-                                                 object:m_OverlappedTerminal->terminal];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(0)-[terminal]-(0)-|" options:0 metrics:nil views:views]];        
     }
     else {
         /* Fixing bugs in NSISEngine, kinda */
@@ -413,7 +407,6 @@ static NSString *TitleForData( const data::Model* _data );
                                                         multiplier:1
                                                           constant:0];
     c.active = true;
-//    [self layoutSubtreeIfNeeded];
 
     if( m_LastResponder ) {
         // if we already were active and have some focused view - restore it
@@ -431,6 +424,16 @@ static NSString *TitleForData( const data::Model* _data );
     
     // think it's a bad idea to post messages on every new window created
     GA().PostScreenView("File Panels State");
+}
+
+- (void) layout
+{ 
+    [super layout];    
+    if( m_OverlappedTerminal->terminal ) {
+        [m_OverlappedTerminal->terminal layout];
+        [self updateBottomConstraint];
+        [super layout];
+    }  
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)_wnd
@@ -959,11 +962,6 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
 {
     auto gap = [m_OverlappedTerminal->terminal bottomGapForLines:m_OverlappedTerminal->bottom_gap];
     m_MainSplitViewBottomConstraint.constant = -gap;
-}
-
-- (void)overlappedTerminalFrameDidChange
-{
-    [self updateBottomConstraint];
 }
 
 - (bool)isPanelsSplitViewHidden

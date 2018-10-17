@@ -74,8 +74,6 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
                 [strong_self onSettingsChanged];
         });
         
-        [self frameDidChange];
-        
         const auto tracking_flags =
             NSTrackingActiveInKeyWindow |
             NSTrackingMouseMoved |
@@ -172,6 +170,9 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 
 - (void)frameDidChange
 {
+    if( m_Screen == nullptr )
+        return;
+    
     const auto full_size = self.contentView.frame.size;     
     
     int sy = floor(full_size.height / m_View.fontCache.Height());

@@ -166,6 +166,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     const auto full_lines_height_px = full_lines_height * m_FontCache->Height();
     m_IntrinsicSize = NSMakeSize(NSViewNoInstrinsicMetric, full_lines_height_px);    
     [self invalidateIntrinsicContentSize];
+    [self.enclosingScrollView.contentView layoutSubtreeIfNeeded];
     [self scrollToBottom];
 }
 

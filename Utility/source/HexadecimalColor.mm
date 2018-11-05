@@ -172,10 +172,10 @@ static const std::unordered_map< std::string, NSColor * > g_SystemColors14Plus =
 
 static const std::unordered_map< std::string, NSColor * > g_SystemColors = []{
     auto base = g_SystemColors11Plus;
-    const auto system_version = sysinfo::GetOSXVersion();
-    if( system_version >= sysinfo::OSXVersion::OSX_13 )
+    const auto system_version = nc::utility::GetOSXVersion();
+    if( system_version >= nc::utility::OSXVersion::OSX_13 )
         base.insert( std::begin(g_SystemColors13Plus), std::end(g_SystemColors13Plus) );
-    if( system_version >= sysinfo::OSXVersion::OSX_14 )
+    if( system_version >= nc::utility::OSXVersion::OSX_14 )
         base.insert( std::begin(g_SystemColors14Plus), std::end(g_SystemColors14Plus) );
     return base;
 }();

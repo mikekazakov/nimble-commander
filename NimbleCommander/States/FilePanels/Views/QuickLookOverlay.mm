@@ -113,7 +113,7 @@ static const nanoseconds g_Delay = 100ms;
 
 - (void)frameDidChange
 {
-    if( sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_13 ) {
+    if( nc::utility::GetOSXVersion() < nc::utility::OSXVersion::OSX_13 ) {
         NSView *subview = self.subviews[0];
         [subview setFrameSize:self.frame.size];
     }

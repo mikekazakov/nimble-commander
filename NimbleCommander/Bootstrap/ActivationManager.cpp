@@ -202,7 +202,7 @@ ActivationManager::ActivationManager()
 
 const string& ActivationManager::BundleID()
 {
-    return sysinfo::GetBundleID();
+    return nc::utility::GetBundleID();
 }
 
 const string& ActivationManager::AppStoreID() const

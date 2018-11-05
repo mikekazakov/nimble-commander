@@ -13,7 +13,7 @@ static std::string Execute(const std::string &_command);
 
 NSDictionary *DiskUtility::ListAPFSObjects()
 {
-    if( sysinfo::GetOSXVersion() < sysinfo::OSXVersion::OSX_12 )
+    if( GetOSXVersion() < OSXVersion::OSX_12 )
         return nil;
 
     const auto plist = Execute(g_APFSListCommand);

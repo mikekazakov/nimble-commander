@@ -512,7 +512,7 @@ vector<string> ShellTask::ChildrenList() const
     
     size_t proc_cnt = 0;
     kinfo_proc *proc_list;
-    if( sysinfo::GetBSDProcessList(&proc_list, &proc_cnt) != 0 )
+    if( nc::utility::GetBSDProcessList(&proc_list, &proc_cnt) != 0 )
         return {};
 
     vector<string> result;
@@ -544,7 +544,7 @@ int ShellTask::ShellChildPID() const
     
     size_t proc_cnt = 0;
     kinfo_proc *proc_list;
-    if(sysinfo::GetBSDProcessList(&proc_list, &proc_cnt) != 0)
+    if(nc::utility::GetBSDProcessList(&proc_list, &proc_cnt) != 0)
         return -1;
     
     int child_pid = -1;

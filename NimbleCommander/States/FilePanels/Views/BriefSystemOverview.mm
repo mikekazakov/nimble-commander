@@ -17,9 +17,9 @@ static NSTextField *CreateStockTF()
 
 @implementation BriefSystemOverview
 {
-    sysinfo::MemoryInfo m_MemoryInfo;
-    sysinfo::CPULoad    m_CPULoad;
-    sysinfo::SystemOverview m_Overview;
+    nc::utility::MemoryInfo m_MemoryInfo;
+    nc::utility::CPULoad    m_CPULoad;
+    nc::utility::SystemOverview m_Overview;
     VFSStatFS           m_StatFS;
     
     // controls
@@ -443,9 +443,9 @@ static NSTextField *CreateStockTF()
 
 - (void) UpdateData
 {
-    sysinfo::GetMemoryInfo(m_MemoryInfo);
-    sysinfo::GetCPULoad(m_CPULoad);
-    sysinfo::GetSystemOverview(m_Overview);
+    nc::utility::GetMemoryInfo(m_MemoryInfo);
+    nc::utility::GetCPULoad(m_CPULoad);
+    nc::utility::GetSystemOverview(m_Overview);
 
     m_StatFS = {};
     if(!m_TargetVFSPath.empty() && m_TargetVFSHost.get())

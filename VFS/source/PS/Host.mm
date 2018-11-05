@@ -306,7 +306,7 @@ vector<PSHost::ProcInfo> PSHost::GetProcs()
 {
     size_t proc_cnt = 0;
     kinfo_proc *proc_list = 0;
-    sysinfo::GetBSDProcessList(&proc_list, &proc_cnt);
+    nc::utility::GetBSDProcessList(&proc_list, &proc_cnt);
     
     vector<ProcInfo> procs(proc_cnt);
     for( size_t kip_i = 0; kip_i < proc_cnt; ++kip_i ) {

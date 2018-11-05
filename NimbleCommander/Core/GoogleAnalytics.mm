@@ -5,8 +5,8 @@
 
 static void PostStartupInfo()
 {
-    sysinfo::SystemOverview so;
-    if( sysinfo::GetSystemOverview(so) )
+    nc::utility::SystemOverview so;
+    if( nc::utility::GetSystemOverview(so) )
         GA().PostEvent("Init info", "Hardware", so.coded_model.c_str());
     
     NSString* lang = [NSLocale.autoupdatingCurrentLocale objectForKey:NSLocaleLanguageCode];

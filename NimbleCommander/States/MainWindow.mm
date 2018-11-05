@@ -32,7 +32,7 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
             NSMiniaturizableWindowMask |
             NSTexturedBackgroundWindowMask |
             NSWindowStyleMaskFullSizeContentView;
-        if( sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_14 ) {
+        if( nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_14 ) {
             // on Mojave the header bar looks like shit with the textured window background,
             // thus turning it off.
             f &= ~NSTexturedBackgroundWindowMask;
@@ -70,7 +70,7 @@ static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
             }
         }
 
-        if( sysinfo::GetOSXVersion() >= sysinfo::OSXVersion::OSX_12 )
+        if( nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_12 )
             self.tabbingMode = NSWindowTabbingModeDisallowed;
         
         [self setAutorecalculatesContentBorderThickness:false

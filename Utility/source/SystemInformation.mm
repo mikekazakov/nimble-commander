@@ -9,8 +9,7 @@
 #include <Utility/SystemInformation.h>
 #include <Habanero/CFString.h>
 
-namespace sysinfo
-{
+namespace nc::utility {
 
 //CPU_STATE_USER
 //processor_info_array_t
@@ -108,7 +107,7 @@ bool GetMemoryInfo(MemoryInfo &_mem) noexcept
     static uint64_t memsize = 0;
     
     // get page size and hardware memory size (only once)
-    static once_flag once;
+    static std::once_flag once;
     call_once(once, []{
         int psmib[2] = {CTL_HW, HW_PAGESIZE};
         size_t length = sizeof (pagesize);
@@ -233,9 +232,9 @@ bool GetSystemOverview(SystemOverview &_overview)
     _overview.user_full_name = NSFullUserName().UTF8String;
     
     // get machine model once
-    static string coded_model = "unknown";
+    static std::string coded_model = "unknown";
     static NSString *human_model = @"N/A";
-    static once_flag once;
+    static std::once_flag once;
     call_once(once, []{
         char model[256];
         size_t len = 256;
@@ -281,9 +280,10 @@ bool IsThisProcessSandboxed() noexcept
     return is_sandboxed;
 }
     
-const string& GetBundleID() noexcept
+const std::string& GetBundleID() noexcept
 {
-    static const string bundle_id = []{
+    using namespace std::string_literals;
+    static const std::string bundle_id = []{
         if( CFStringRef bid = CFBundleGetIdentifier(CFBundleGetMainBundle()) )
             return CFStringGetUTF8StdString(bid);
         else

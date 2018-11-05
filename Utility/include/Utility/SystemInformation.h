@@ -3,12 +3,9 @@
 
 #include <string>
 
-using namespace std;
-
 typedef struct kinfo_proc kinfo_proc;
 
-namespace sysinfo
-{
+namespace nc::utility {
     
 struct MemoryInfo
 {
@@ -32,10 +29,10 @@ struct CPULoad
     
 struct SystemOverview
 {
-    string computer_name;
-    string user_full_name;
-    string human_model; // like MacBook Pro (mid 2012), or MacBook Air (early 2013), localizable
-    string coded_model; // like "Macmini6,2"
+    std::string computer_name;
+    std::string user_full_name;
+    std::string human_model; // like MacBook Pro (mid 2012), or MacBook Air (early 2013),localizable
+    std::string coded_model; // like "Macmini6,2"
 };
 
 enum class OSXVersion
@@ -84,6 +81,6 @@ int GetBSDProcessList(kinfo_proc **procList, size_t *procCount);
 
 bool IsThisProcessSandboxed() noexcept;
 
-const string& GetBundleID() noexcept;
+const std::string& GetBundleID() noexcept;
     
 }

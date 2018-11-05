@@ -1,14 +1,14 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <Utility/HexadecimalColor.h>
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include "PreferencesWindowThemesControls.h"
 
-@interface AlphaColorWell : NSColorWell
+@interface NCPreferencesAlphaColorWell : NSColorWell
 @end
 
-@implementation AlphaColorWell
+@implementation NCPreferencesAlphaColorWell
 
 - (void)activate:(BOOL)exclusive
 {
@@ -24,12 +24,19 @@
 
 @end
 
+@implementation NCPreferencesActionTableCellView
 
+- (BOOL)sendAction:(SEL)action to:(id)target
+{
+    return [NSApp sendAction:action to:target from:self];
+}
+
+@end
 
 @implementation PreferencesWindowThemesTabColorControl
 {
     NSColor         *m_Color;
-    AlphaColorWell  *m_ColorWell;
+    NCPreferencesAlphaColorWell  *m_ColorWell;
     NSTextField     *m_Description;
 }
 
@@ -38,7 +45,7 @@
     if( self = [super initWithFrame:frameRect] ) {
         m_Color = NSColor.blackColor;
     
-        m_ColorWell = [[AlphaColorWell alloc] initWithFrame:NSRect()];
+        m_ColorWell = [[NCPreferencesAlphaColorWell alloc] initWithFrame:NSRect()];
         m_ColorWell.translatesAutoresizingMaskIntoConstraints = false;
         m_ColorWell.color = m_Color;
         m_ColorWell.target = self;
@@ -51,23 +58,20 @@
         m_Description.editable = false;
         m_Description.drawsBackground = false;
         m_Description.font = [NSFont labelFontOfSize:11];
-        m_Description.stringValue = [m_Color toHexString];
+        m_Description.stringValue = [m_Color toHexString];        
         [self addSubview:m_Description];
         
         auto views = NSDictionaryOfVariableBindings(m_ColorWell, m_Description);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|[m_ColorWell(==40)]-[m_Description]-(>=0)-|"
-                                                                     options:0
-                                                                     metrics:nil
-                                                                       views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(>=0@250)-[m_ColorWell(==18)]-(>=0@250)-|"
-                                                                     options:0
-                                                                     metrics:nil
-                                                                       views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_Description]-(==0)-|"
-                                                                     options:0
-                                                                     metrics:nil
-                                                                       views:views]];
-        
+        auto add_visfmt = [&](NSString *_layout) {
+            auto constraints = [NSLayoutConstraint constraintsWithVisualFormat:_layout
+                                                                       options:0
+                                                                       metrics:nil
+                                                                         views:views];
+            [self addConstraints:constraints];
+        };
+        add_visfmt(@"|[m_ColorWell(==40)]-[m_Description]-(>=0)-|");
+        add_visfmt(@"V:|-(>=0@250)-[m_ColorWell(==18)]-(>=0@250)-|");
+        add_visfmt(@"V:|-(==0)-[m_Description]-(==0)-|");
     }
     return self;
 }

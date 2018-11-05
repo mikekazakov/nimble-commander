@@ -1,23 +1,43 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <NimbleCommander/Core/Theming/Theme.h>
 
-@interface PreferencesWindowThemesTabColorControl : NSControl
-@property (nonatomic) NSColor *color;
+@interface NCPreferencesActionTableCellView : NSTableCellView
+
+@property (nonatomic, nullable, weak) id target;
+@property (nonatomic, nullable) SEL action;
+
+- (BOOL)sendAction:(nullable SEL)action to:(nullable id)target;
+
 @end
 
-@interface PreferencesWindowThemesTabFontControl : NSControl
-@property (nonatomic) NSFont *font;
+@interface PreferencesWindowThemesTabColorControl : 
+    NCPreferencesActionTableCellView
+
+@property (nonnull, nonatomic) NSColor *color;
+
+@end
+
+@interface PreferencesWindowThemesTabFontControl : NCPreferencesActionTableCellView
+
+@property (nonnull, nonatomic) NSFont *font;
+
 @end
 
 namespace nc::panel {
     struct PresentationItemsColoringRule;
 }
-@interface PreferencesWindowThemesTabColoringRulesControl : NSControl<NSTextFieldDelegate>
+@interface PreferencesWindowThemesTabColoringRulesControl : 
+    NCPreferencesActionTableCellView<NSTextFieldDelegate>
+
 @property (nonatomic) vector<nc::panel::PresentationItemsColoringRule> rules;
+
 @end
 
-@interface PreferencesWindowThemesAppearanceControl : NSControl
+@interface PreferencesWindowThemesAppearanceControl : 
+    NCPreferencesActionTableCellView
+
 @property (nonatomic) ThemeAppearance themeAppearance;
+
 @end

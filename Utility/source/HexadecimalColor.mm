@@ -1,6 +1,7 @@
 // Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <unordered_map>
 #include <Utility/HexadecimalColor.h>
+#include <Utility/SystemInformation.h>
 
 //In some contexts, primarily OpenGL, the term "RGBA" actually means the colors are stored in memory such that R is at the lowest address,
 //G after it, B after that, and A last.
@@ -88,7 +89,7 @@ void HexadecimalColorRGBAToString( uint32_t _rgba, char _string[10] ) noexcept
     }
 }
 
-static const std::unordered_map< std::string, NSColor * > g_SystemColors = {
+static const std::unordered_map< std::string, NSColor * > g_SystemColors11Plus = {
     { "@blackColor",                             NSColor.blackColor                               },
     { "@darkGrayColor",                          NSColor.darkGrayColor                            },
     { "@lightGrayColor",                         NSColor.lightGrayColor                           },
@@ -140,8 +141,44 @@ static const std::unordered_map< std::string, NSColor * > g_SystemColors = {
     { "@alternateSelectedControlColor",          NSColor.alternateSelectedControlColor            },
     { "@alternateSelectedControlTextColor",      NSColor.alternateSelectedControlTextColor        },    
     { "@controlAlternatingRowBackgroundColors0", NSColor.controlAlternatingRowBackgroundColors[0] },
-    { "@controlAlternatingRowBackgroundColors1", NSColor.controlAlternatingRowBackgroundColors[1] }
+    { "@controlAlternatingRowBackgroundColors1", NSColor.controlAlternatingRowBackgroundColors[1] },
+    { "@linkColor",                              NSColor.linkColor                                },
+    { "@placeholderTextColor",                   NSColor.placeholderTextColor                     },
+    { "@systemRedColor",                         NSColor.systemRedColor                           },    
+    { "@systemGreenColor",                       NSColor.systemGreenColor                         },
+    { "@systemBlueColor",                        NSColor.systemBlueColor                          },    
+    { "@systemOrangeColor",                      NSColor.systemOrangeColor                        },
+    { "@systemYellowColor",                      NSColor.systemYellowColor                        },
+    { "@systemBrownColor",                       NSColor.systemBrownColor                         },
+    { "@systemPinkColor",                        NSColor.systemPinkColor                          },
+    { "@systemPurpleColor",                      NSColor.systemPurpleColor                        },
+    { "@systemGrayColor",                        NSColor.systemGrayColor                          }    
 };
+
+static const std::unordered_map< std::string, NSColor * > g_SystemColors13Plus = {
+    { "@findHighlightColor",                     NSColor.findHighlightColor                       }
+};
+
+static const std::unordered_map< std::string, NSColor * > g_SystemColors14Plus = {
+    { "@separatorColor",                         NSColor.separatorColor                           },
+    { "@selectedContentBackgroundColor",         NSColor.selectedContentBackgroundColor           }, 
+{"@unemphasizedSelectedContentBackgroundColor", NSColor.unemphasizedSelectedContentBackgroundColor},
+    { "@alternatingContentBackgroundColors0",    NSColor.alternatingContentBackgroundColors[0]    },
+    { "@alternatingContentBackgroundColors1",    NSColor.alternatingContentBackgroundColors[1]    },
+    { "@unemphasizedSelectedTextBackgroundColor",NSColor.unemphasizedSelectedTextBackgroundColor  },
+    { "@unemphasizedSelectedTextColor",          NSColor.unemphasizedSelectedTextColor            },    
+    { "@controlAccentColor",                     NSColor.controlAccentColor                       }
+};
+
+static const std::unordered_map< std::string, NSColor * > g_SystemColors = []{
+    auto base = g_SystemColors11Plus;
+    const auto system_version = sysinfo::GetOSXVersion();
+    if( system_version >= sysinfo::OSXVersion::OSX_13 )
+        base.insert( std::begin(g_SystemColors13Plus), std::end(g_SystemColors13Plus) );
+    if( system_version >= sysinfo::OSXVersion::OSX_14 )
+        base.insert( std::begin(g_SystemColors14Plus), std::end(g_SystemColors14Plus) );
+    return base;
+}();
 
 static NSColor *DecodeSystemColor( const string &_color )
 {
@@ -207,7 +244,6 @@ static NSColor *DecodeSystemColor( const string &_color )
         });
         if( i != end(g_SystemColors) )
             return [NSString stringWithUTF8String:i->first.c_str()];
-//        NSLog(@"%@", self);
     }
     
     char buf[16];

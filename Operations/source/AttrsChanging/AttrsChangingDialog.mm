@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingDialog.h"
 #include <VFS/VFS.h>
 #include <Habanero/algo.h>
@@ -41,6 +41,7 @@ using namespace nc::ops;
 @property (strong) IBOutlet NSButton *flagUOpaque;
 @property (strong) IBOutlet NSButton *flagUTracked;
 @property (strong) IBOutlet NSButton *flagUCompressed;
+@property (strong) IBOutlet NSButton *flagUDataVault;
 @property (strong) IBOutlet NSButton *flagSAppend;
 @property (strong) IBOutlet NSButton *flagSImmutable;
 @property (strong) IBOutlet NSButton *flagSArchived;
@@ -212,6 +213,7 @@ static NSString *Title( const vector<VFSListingItem> &_items );
     m( self.flagUOpaque,    f.u_opaque );
     m( self.flagUTracked,   f.u_tracked );
     m( self.flagUCompressed,f.u_compressed );
+    m( self.flagUDataVault, f.u_datavault );
     m( self.flagSAppend,    f.s_append );
     m( self.flagSImmutable, f.s_immutable );
     m( self.flagSArchived,  f.s_archived );
@@ -537,6 +539,7 @@ static const auto g_MixedOwnageTitle = @"[???]";
     m( self.flagUOpaque,    f.u_opaque );
     m( self.flagUTracked,   f.u_tracked );
     m( self.flagUCompressed,f.u_compressed );
+    m( self.flagUDataVault, f.u_datavault );
     m( self.flagSAppend,    f.s_append );
     m( self.flagSImmutable, f.s_immutable );
     m( self.flagSArchived,  f.s_archived );
@@ -545,7 +548,7 @@ static const auto g_MixedOwnageTitle = @"[???]";
     
     if( !f.u_append && !f.u_immutable && !f.u_hidden && !f.u_nodump && !f.u_opaque &&
         !f.u_tracked && !f.u_compressed && !f.s_append && !f.s_immutable && !f.s_archived &&
-        !f.s_nounlink && !f.s_restricted )
+        !f.s_nounlink && !f.s_restricted && !f.u_datavault )
         return nullopt;
 
     const auto &common = m_CommonItemsFlags;
@@ -557,6 +560,7 @@ static const auto g_MixedOwnageTitle = @"[???]";
         f.u_opaque      == common.u_opaque &&
         f.u_tracked     == common.u_tracked &&
         f.u_compressed  == common.u_compressed &&
+        f.u_datavault   == common.u_datavault &&
         f.s_append      == common.s_append &&
         f.s_immutable   == common.s_immutable &&
         f.s_archived    == common.s_archived &&
@@ -729,6 +733,7 @@ static AttrsChangingCommand::Flags ExtractCommonFlags( const vector<VFSListingIt
     f.u_tracked    = optional_common_value( b, e, [](auto m)->bool{ return m & UF_TRACKED; });
     f.u_hidden     = optional_common_value( b, e, [](auto m)->bool{ return m & UF_HIDDEN; });
     f.u_compressed = optional_common_value( b, e, [](auto m)->bool{ return m & UF_COMPRESSED; });
+    f.u_datavault  = optional_common_value( b, e, [](auto m)->bool{ return m & UF_DATAVAULT; });
     f.s_archived   = optional_common_value( b, e, [](auto m)->bool{ return m & SF_ARCHIVED; });
     f.s_immutable  = optional_common_value( b, e, [](auto m)->bool{ return m & SF_IMMUTABLE; });
     f.s_append     = optional_common_value( b, e, [](auto m)->bool{ return m & SF_APPEND; });

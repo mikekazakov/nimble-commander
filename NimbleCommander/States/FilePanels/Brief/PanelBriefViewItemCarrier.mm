@@ -1,7 +1,6 @@
 // Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
-#include <NimbleCommander/Bootstrap/Config.h>
 #include "../PanelView.h"
 #include "../PanelViewPresentationSettings.h"
 #include "PanelBriefView.h"

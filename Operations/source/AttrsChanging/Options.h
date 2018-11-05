@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -37,6 +37,7 @@ struct AttrsChangingCommand
         optional<bool> u_tracked;
         optional<bool> u_hidden;
         optional<bool> u_compressed;
+        optional<bool> u_datavault;
         optional<bool> s_archived;
         optional<bool> s_immutable;
         optional<bool> s_append;

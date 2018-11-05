@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingJob.h"
 #include <Utility/PathManip.h>
 
@@ -328,6 +328,7 @@ static pair<uint32_t,uint32_t> FlagsValueAndMask(const AttrsChangingCommand::Fla
     m( _f.u_tracked, UF_TRACKED );
     m( _f.u_hidden, UF_HIDDEN );
     m( _f.u_compressed, UF_COMPRESSED );
+    m( _f.u_datavault, UF_DATAVAULT );
     m( _f.s_archived, SF_ARCHIVED );
     m( _f.s_immutable, SF_IMMUTABLE );
     m( _f.s_append,  SF_APPEND );

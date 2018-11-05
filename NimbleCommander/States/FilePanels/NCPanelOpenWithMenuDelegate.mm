@@ -2,6 +2,7 @@
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
 #include <Sparkle/Sparkle.h>
+#include <Utility/SystemInformation.h>
 #include <VFS/VFS.h>
 #include "PanelAux.h"
 #include "PanelController.h"
@@ -202,8 +203,12 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
         [menu addItem:NSMenuItem.separatorItem];
     }
     
-    if( !m_ItemsUTI.empty() )
-        [menu addItem:[self makeSearchInMASItem]];
+    if( nc::utility::GetOSXVersion() < nc::utility::OSXVersion::OSX_14 ) {
+        // After the MAS redisign the old way for querying with UTI doesn't work anymore.
+        // No substitute was found so far.
+        if( !m_ItemsUTI.empty() )
+            [menu addItem:[self makeSearchInMASItem]];
+    }
     
     [menu addItem:[self makeOpenWithOtherItem]];
 }

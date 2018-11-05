@@ -274,6 +274,13 @@ static NCAppDelegate *g_Me = nil;
                                                   storage:self.closedPanelsHistory
                                                   panelsLocator:panels_locator];
     (void)recently_closed_delegate;
+
+    // These menus will have a submenu generated on the fly by according actions.
+    // However, it's required for these menu items to always have submenus so that 
+    // Preferences can detect it and mark its hotkeys as readonly.
+    // This solution is horrible but I can find a better one right now.
+    item_for_action("menu.file.open_with_submenu").submenu = [NSMenu new];
+    item_for_action("menu.file.always_open_with_submenu").submenu = [NSMenu new];
 }
 
 - (void)updateMainMenuFeaturesByVersionAndState

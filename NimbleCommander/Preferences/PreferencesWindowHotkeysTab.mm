@@ -19,10 +19,11 @@ struct ActionShortcutNode
     pair<string,int> tag;
     ActionShortcut  current_shortcut;
     ActionShortcut  default_shortcut;
-    NSString *label;
-    bool is_menu_action;
-    bool is_customized;
-    bool is_conflicted;
+    NSString *label = @"";
+    bool is_menu_action = false;
+    bool has_submenu = false;
+    bool is_customized = false;
+    bool is_conflicted = false;
 };
 
 struct ToolShortcutNode
@@ -115,6 +116,7 @@ enum class SourceType
         shortcut.default_shortcut = sm.DefaultShortCutFromTag(v.second);
         shortcut.is_menu_action = v.first.find_first_of("menu.") == 0;
         shortcut.is_customized = shortcut.current_shortcut != shortcut.default_shortcut;
+        shortcut.has_submenu = menu_item != nil && menu_item.hasSubmenu;
         m_AllNodes.emplace_back( move(shortcut) );
         counts[shortcut.current_shortcut]++;
     }
@@ -284,6 +286,8 @@ static NSImageView *SpawnCautionSign()
             
                 if( node->is_customized )
                     field_cell.font = [NSFont boldSystemFontOfSize:field_cell.font.pointSize];
+                if( node->has_submenu )
+                    key_text_field.enabled = false;
                 
                 return key_text_field;
             }

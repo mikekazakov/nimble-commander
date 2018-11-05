@@ -27,6 +27,12 @@ static bool CommonPredicate( PanelController *_target )
     return !i.IsDotDot() || _target.data.Stats().selected_entries_amount > 0;
 }
 
+static bool ShouldRebuildSubmenu(NSMenuItem *_item) noexcept
+{
+    return _item.hasSubmenu == false ||
+        objc_cast<NCPanelOpenWithMenuDelegate>(_item.submenu.delegate) == nil;    
+}
+    
 bool OpenFileWithSubmenu::Predicate( PanelController *_target ) const
 {
     return CommonPredicate(_target);
@@ -34,7 +40,7 @@ bool OpenFileWithSubmenu::Predicate( PanelController *_target ) const
 
 bool OpenFileWithSubmenu::ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const
 {
-    if( !_item.hasSubmenu ) {
+    if( ShouldRebuildSubmenu(_item) ) {
         NSMenu *menu = [[NSMenu alloc] init];
         menu.identifier = NCPanelOpenWithMenuDelegate.regularMenuIdentifier;
         menu.delegate = Delegate();
@@ -54,7 +60,7 @@ bool AlwaysOpenFileWithSubmenu::Predicate( PanelController *_target ) const
 
 bool AlwaysOpenFileWithSubmenu::ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const
 {
-    if( !_item.hasSubmenu ) {
+    if( ShouldRebuildSubmenu(_item) ) {
         NSMenu *menu = [[NSMenu alloc] init];
         menu.identifier = NCPanelOpenWithMenuDelegate.alwaysOpenWithMenuIdentifier;
         menu.delegate = Delegate();

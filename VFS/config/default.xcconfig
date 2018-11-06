@@ -1,7 +1,7 @@
-HEADER_SEARCH_PATHS = $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../RoutedIO/include $(PROJECT_DIR)/../3rd_Party/libarchive/include $(PROJECT_DIR)/../3rd_Party/unrar/include $(PROJECT_DIR)/../3rd_Party/libssh2/include $(PROJECT_DIR)/../3rd_Party/OpenSSL/include $(PROJECT_DIR)/../3rd_Party/rapidjson/include $(PROJECT_DIR)/../3rd_Party/pugixml/include $(PROJECT_DIR)/../3rd_Party/libcurl/include $(PROJECT_DIR)/../3rd_Party/lzma/include $(PROJECT_DIR)/../3rd_Party/boost/include $(PROJECT_DIR)/include $(HOME)
+HEADER_SEARCH_PATHS = $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../RoutedIO/include $(PROJECT_DIR)/../3rd_Party/unrar/include $(PROJECT_DIR)/../3rd_Party/libssh2/include $(PROJECT_DIR)/../3rd_Party/OpenSSL/include $(PROJECT_DIR)/../3rd_Party/rapidjson/include $(PROJECT_DIR)/../3rd_Party/pugixml/include $(PROJECT_DIR)/../3rd_Party/libcurl/include $(PROJECT_DIR)/../3rd_Party/lzma/include $(PROJECT_DIR)/../3rd_Party/boost/include $(PROJECT_DIR)/include $(HOME)
 LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/OpenSSL/built $(PROJECT_DIR)/../3rd_Party/libarchive/built $(PROJECT_DIR)/../3rd_Party/libssh2/built $(PROJECT_DIR)/../3rd_Party/unrar/built $(PROJECT_DIR)/../3rd_Party/pugixml/built $(PROJECT_DIR)/../3rd_Party/libcurl/built $(PROJECT_DIR)/../3rd_Party/boost/built $(PROJECT_DIR)/../3rd_Party/lzma/built $(PROJECT_DIR)/../3rd_Party/bz2/built $(PROJECT_DIR)/../3rd_Party/z/built
 OTHER_LDFLAGS = -larchive -lboost_system-mt -lboost_filesystem-mt -lz -lssl -lcrypto -llzma -lbz2 -lssh2 -lunrar -lcurl -lpugixml -framework Kerberos -lHabanero -liconv
-OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a
+OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -isystem$(PROJECT_DIR)/../3rd_Party/libarchive/include
 ALWAYS_SEARCH_USER_PATHS = NO
 USE_HEADERMAP = NO
 GCC_PRECOMPILE_PREFIX_HEADER = YES

@@ -116,7 +116,7 @@ static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const da
 }
 
 static NSDraggingImageComponent *BuildIconComponent(PanelDraggingItem* _item,
-                                                    const FontGeometryInfo &_fi )
+                                                    const utility::FontGeometryInfo &_fi )
 {
     if( _item.icon == nil )
         return nil;
@@ -143,7 +143,7 @@ static void DrawRoundedRect( NSImage *_context )
 
 static NSDraggingImageComponent *BuildLabelComponent(PanelDraggingItem* _item,
                                                      NSFont *_font,
-                                                     const FontGeometryInfo &_fi )
+                                                     const utility::FontGeometryInfo &_fi )
 {
     const auto key = NSDraggingImageComponentLabelKey;
     const auto max_label_width = 250.;
@@ -184,7 +184,7 @@ static NSDraggingImageComponent *BuildLabelComponent(PanelDraggingItem* _item,
 static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
 {
     static const auto font = [NSFont systemFontOfSize:13];
-    static FontGeometryInfo font_info{ (__bridge CTFontRef) font };
+    static utility::FontGeometryInfo font_info{ (__bridge CTFontRef) font };
 
     if( _item == nil || ! _item.item )
         return nil;

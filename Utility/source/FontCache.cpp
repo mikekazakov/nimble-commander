@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <CoreText/CoreText.h>
 #include <stdlib.h>
 #include <memory.h>
@@ -7,6 +7,8 @@
 #include <math.h>
 #include <vector>
 #include <Utility/FontCache.h>
+
+namespace nc::utility {
 
 static std::vector<std::weak_ptr<FontCache>> g_Caches;
 
@@ -348,3 +350,4 @@ FontCache::Pair FontCache::Get(uint32_t _c)
     return _c < 0x10000 ? DoGetBMP(_c) : DoGetNonBMP(_c);
 }
 
+}

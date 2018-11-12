@@ -1,4 +1,4 @@
-/* Copyright (c) 2014-2016 Michael G. Kazakov
+/* Copyright (c) 2014-2018 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -42,7 +42,10 @@ template <class T>
 void dispatch_sync( dispatch_queue_t queue, T f );
 
 template <class T>
-void dispatch_apply( size_t iterations, dispatch_queue_t queue, T f );
+void dispatch_apply( size_t iterations, dispatch_queue_t queue, const T &f );
+
+template <class T>
+void dispatch_apply( size_t iterations, const T &f );
 
 template <class T>
 void dispatch_after( std::chrono::nanoseconds when, dispatch_queue_t queue, T f );
@@ -144,13 +147,25 @@ inline void dispatch_sync( dispatch_queue_t _queue, T _f )
 }
 
 template <class T>
-inline void dispatch_apply( size_t _iterations, dispatch_queue_t _queue, T _f )
+inline void dispatch_apply( size_t _iterations, dispatch_queue_t _queue, const T &_f )
 {
     dispatch_apply_f(_iterations,
                      _queue,
-                     &_f,
+                     (void*)&_f,
                      [](void *_p, size_t _it) {
-                         auto f = static_cast<T*>(_p);
+                         auto f = static_cast<const T*>(_p);
+                         (*f)(_it);
+                     });
+}
+
+template <class T>
+inline void dispatch_apply( size_t _iterations, const T &_f )
+{
+    dispatch_apply_f(_iterations,
+                     DISPATCH_APPLY_AUTO,
+                     (void*)&_f,
+                     [](void *_p, size_t _it) {
+                         auto f = static_cast<const T*>(_p);
                          (*f)(_it);
                      });
 }

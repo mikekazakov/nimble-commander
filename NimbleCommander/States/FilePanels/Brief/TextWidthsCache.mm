@@ -1,8 +1,10 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextWidthsCache.h"
 #include <Utility/FontExtras.h>
 
 namespace nc::panel::brief {
+    
+using nc::utility::FontGeometryInfo;
 
 // it was deliberately chosen to use the most dumb method to purge the cache.
 // assuming that one record on average taken about 100bytes, 10'000 would take around 1Mb of memory.

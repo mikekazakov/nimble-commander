@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include "BigFileViewProtocol.h"
 
@@ -77,8 +77,8 @@ private:
     size_t                      m_StringBufferSize = 0;
     
     // layout stuff
-    FontGeometryInfo            m_FontInfo;
-    double                      m_LeftInset = 5;
+    nc::utility::FontGeometryInfo m_FontInfo;
+    double                       m_LeftInset = 5;
     CFMutableAttributedStringRef m_AttrString = nullptr;
     vector<TextLine>             m_Lines;
     unsigned                     m_VerticalOffset = 0; // offset in lines number within text lines

@@ -2,10 +2,9 @@
 #pragma once
 
 #include <Utility/Encodings.h>
+#include "FontCache.h"
 
 #include <string>
-
-class FontCache;
 
 struct DoubleColor
 {
@@ -49,6 +48,8 @@ struct DoubleColor
 namespace oms
 {
 
+using nc::utility::FontCache;
+    
 struct range
 {
     int loc;

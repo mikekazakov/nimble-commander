@@ -1,8 +1,10 @@
-// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <assert.h>
 #include <math.h>
 #include <stdexcept>
 #include <Utility/FontExtras.h>
+
+namespace nc::utility {
 
 /**
  * Grabs geometry information from given font and returns it's line height.
@@ -73,4 +75,6 @@ FontGeometryInfo::FontGeometryInfo(CTFontRef _font)
     m_LineHeight = GetLineHeightForFont(_font, &m_Ascent, &m_Descent, &m_Leading);
     m_MonospaceWidth = GetMonospaceFontCharWidth(_font);
     m_Size = CTFontGetSize(_font);
+}
+
 }

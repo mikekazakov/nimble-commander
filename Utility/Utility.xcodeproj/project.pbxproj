@@ -25,6 +25,7 @@
 		CF614AA21F9D86CC0005F2DB /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94631F453CB60035E606 /* libUtility.dylib */; };
 		CF614AAF1F9D87230005F2DB /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */; };
 		CF614AB01F9D87260005F2DB /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */; };
+		CF6BF87721993B580017CECB /* FontGeometryInfo_PT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */; };
 		CF6E64E31F6271BF00BF986E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E21F6271BF00BF986E /* CoreText.framework */; };
 		CF6E64E51F6271CF00BF986E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E41F6271CF00BF986E /* Foundation.framework */; };
 		CF6E64E71F6271DA00BF986E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E61F6271DA00BF986E /* CoreGraphics.framework */; };
@@ -34,6 +35,8 @@
 		CFB0F236215A076F0088C18E /* FileMask.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB0F235215A076F0088C18E /* FileMask.h */; };
 		CFB0F238215A07780088C18E /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB0F237215A07770088C18E /* FileMask.cpp */; };
 		CFB0F23A215A07830088C18E /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB0F239215A07830088C18E /* FileMask_Tests.mm */; };
+		CFB4B68E219944470097E4B4 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA948E1F453DF30035E606 /* libHabanero.dylib */; };
+		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
 		CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */; };
 		CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */; };
 		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
@@ -136,6 +139,7 @@
 		CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter_Tests.mm; path = tests/ByteCountFormatter_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Encodings_Tests.mm; path = tests/Encodings_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF614AAA1F9D871D0005F2DB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = tests/Info.plist; sourceTree = SOURCE_ROOT; };
+		CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FontGeometryInfo_PT.mm; path = tests/FontGeometryInfo_PT.mm; sourceTree = "<group>"; };
 		CF6E64E21F6271BF00BF986E /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		CF6E64E41F6271CF00BF986E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CF6E64E61F6271DA00BF986E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -221,6 +225,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */,
+				CFB4B68E219944470097E4B4 /* libHabanero.dylib in Frameworks */,
 				CFC546332136DBE300D288A4 /* libUtility.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -252,6 +258,7 @@
 				CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */,
 				CFB0F239215A07830088C18E /* FileMask_Tests.mm */,
 				CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */,
+				CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */,
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
 				CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */,
 				CF308F10213781ED00915730 /* UnitTests_main.h */,
@@ -533,6 +540,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF6BF87721993B580017CECB /* FontGeometryInfo_PT.mm in Sources */,
 				CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */,
 				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
@@ -788,6 +796,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",
 					"$(PROJECT_DIR)/../3rd_Party/googletest/include/",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../3rd_Party/googletest/built/",
@@ -817,6 +826,7 @@
 					"$(PROJECT_DIR)/../3rd_Party/Catch2/single_include/",
 					"$(PROJECT_DIR)/../3rd_Party/googletest/include/",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../3rd_Party/googletest/built/",

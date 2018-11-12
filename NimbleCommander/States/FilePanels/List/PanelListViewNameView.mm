@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include "../PanelView.h"
 #include "../PanelViewPresentationSettings.h"
@@ -8,6 +8,7 @@
 #include "PanelListViewNameView.h"
 
 using namespace nc::panel;
+using nc::utility::FontGeometryInfo;
 
 static const auto g_SymlinkArrowImage = [NSImage imageNamed:@"AliasBadgeIcon"];
 

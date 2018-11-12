@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
 #include "BigFileViewText.h"
@@ -208,7 +208,7 @@ BigFileViewText::~BigFileViewText()
 
 void BigFileViewText::GrabFontGeometry()
 {
-    m_FontInfo = FontGeometryInfo( [m_View TextFont] );
+    m_FontInfo = nc::utility::FontGeometryInfo( [m_View TextFont] );
 }
 
 void BigFileViewText::OnBufferDecoded()

@@ -388,7 +388,7 @@ static bool HasNoModifiers( NSEvent *_event )
     const auto bounds = self.bounds;
     auto text_segment_rect = [self calculateTextSegmentFromBounds:bounds];
     
-    auto fi = FontGeometryInfo(CurrentTheme().FilePanelsBriefFont());
+    auto fi = nc::utility::FontGeometryInfo(CurrentTheme().FilePanelsBriefFont());
     
     text_segment_rect.size.height = fi.LineHeight();
     text_segment_rect.origin.y = m_LayoutConstants.font_baseline - fi.Descent();

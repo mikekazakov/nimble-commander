@@ -75,7 +75,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
     }
     else {
         // try to calculate something by ourselves
-        auto font_info = FontGeometryInfo( (__bridge CTFontRef)_font );
+        auto font_info = nc::utility::FontGeometryInfo( (__bridge CTFontRef)_font );
         line_height = short(font_info.LineHeight()) + insets[1] + insets[3];
         if( _layout.icon_scale == 1 && line_height < 17 )
             line_height = 17;

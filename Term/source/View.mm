@@ -13,6 +13,7 @@
 
 using namespace nc;
 using namespace nc::term;
+using nc::utility::FontCache;
 
 using SelPoint = term::ScreenPoint;
 

@@ -49,7 +49,7 @@ private:
     unsigned                        m_RowsOffset  = 0;
     CGPoint                         m_SmoothOffset = {0, 0};
     int                             m_FrameLines  = 0; // amount of lines in our frame size ( +1 to fit cutted line also)
-    FontGeometryInfo                m_FontInfo;
+    nc::utility::FontGeometryInfo   m_FontInfo;
     double                          m_LeftInset   = 0;
     vector<TextLine>                m_Lines;
 };

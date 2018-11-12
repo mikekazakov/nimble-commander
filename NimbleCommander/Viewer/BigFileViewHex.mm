@@ -88,7 +88,7 @@ BigFileViewHex::~BigFileViewHex()
 
 void BigFileViewHex::GrabFontGeometry()
 {
-    m_FontInfo = FontGeometryInfo([m_View TextFont]);
+    m_FontInfo = nc::utility::FontGeometryInfo([m_View TextFont]);
     m_FrameLines = (int)floor(m_View.contentBounds.height / m_FontInfo.LineHeight() );
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
@@ -72,7 +72,8 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     if( self ) {
         self.autoresizingMask = NSViewNotSizable;
         self.autoresizesSubviews = false;
-        self.translatesAutoresizingMaskIntoConstraints = false;
+        self.postsFrameChangedNotifications = false;
+        self.postsBoundsChangedNotifications = false;
         m_TextColor = NSColor.blackColor;
         m_Filename = @"";
         m_QSHighlight = {0, 0};
@@ -81,7 +82,8 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
         m_IsDropTarget = false;
         m_IsSymlink = false;
         m_AttrString = [[NSMutableAttributedString alloc] initWithString:@"" attributes:nil];
-        [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];        
+        
+        [self registerForDraggedTypes:PanelView.acceptedDragAndDropTypes];
     }
     return self;
 }
@@ -96,15 +98,27 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     return false;
 }
 
-- (void)setFrameSize:(NSSize)newSize
+- (void)setFrameOrigin:(NSPoint)_new_origin
 {
-    [super setFrameSize:newSize];
+    if( NSEqualPoints(_new_origin, self.frame.origin) )
+        return;
+    [super setFrameOrigin:_new_origin];
     [self setNeedsDisplay:true];
 }
 
-- (void) setFrame:(NSRect)frame
+- (void)setFrameSize:(NSSize)_new_size
 {
-    [super setFrame:frame];
+    if( NSEqualSizes(_new_size, self.frame.size) )
+        return;
+    [super setFrameSize:_new_size];
+    [self setNeedsDisplay:true];
+}
+
+- (void) setFrame:(NSRect)_new_frame
+{
+    if( NSEqualRects(_new_frame, self.frame) )
+        return;
+    [super setFrame:_new_frame];
     [self setNeedsDisplay:true];
 }
 
@@ -508,6 +522,40 @@ static bool HasNoModifiers( NSEvent *_event )
         m_IsSymlink = isSymlink;
         [self setNeedsDisplay:true];
     }
+}
+
+// The dummies below are here to shut down as much of NSView layout machinery as possible:
+- (void)setNeedsUpdateConstraints:(BOOL)needsUpdateConstraints
+{
+}
+
+- (BOOL)translatesAutoresizingMaskIntoConstraints
+{
+    return false;
+}
+
+- (void)setTranslatesAutoresizingMaskIntoConstraints:(BOOL)translatesAutoresizingMaskIntoConstraints
+{
+}
+
+- (void)invalidateIntrinsicContentSize
+{
+}
+
+- (void)layoutSubtreeIfNeeded
+{
+}
+- (void)layout
+{
+}
+
+- (void) setNeedsLayout:(BOOL)needsLayout
+{
+}
+
+- (BOOL)needsLayout
+{
+    return false;
 }
 
 @end

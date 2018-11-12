@@ -1,7 +1,7 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "PanelBriefViewCollectionViewBackground.h"
-#include "PanelBriefViewCollectionViewLayout.h"
+#include "PanelBriefViewLayoutProtocol.h"
 #include "PanelBriefView.h"
 
 @implementation PanelBriefViewCollectionViewBackground
@@ -45,9 +45,10 @@
     return objc_cast<PanelBriefView>(self.collectionView.delegate);
 }
 
-- (PanelBriefViewCollectionViewLayout*)viewLayout
+- (NSCollectionViewLayout<NCPanelBriefViewLayoutProtocol>*)viewLayout
 {
-    return objc_cast<PanelBriefViewCollectionViewLayout>(self.collectionView.collectionViewLayout);
+    auto layout = self.collectionView.collectionViewLayout;
+    return objc_cast<NSCollectionViewLayout<NCPanelBriefViewLayoutProtocol>>(layout);
 }
 
 - (void)drawRect:(NSRect)dirtyRect
@@ -87,7 +88,7 @@
                 const auto color = CurrentTheme().FilePanelsBriefGridColor();
                 CGContextSetFillColorWithColor(context, color.CGColor);
                 
-                const auto &column_origins = layout.columnPositions;
+                const auto &column_origins = layout.columnsPositions;
                 const auto valid_columns = brief.columns;
                 const auto dirty_start = (int)dirtyRect.origin.x;
                 const auto dirty_end = dirty_start + (int)dirtyRect.size.width;
@@ -110,7 +111,7 @@
                 }
                 
                 if( valid_columns > 0 ) {
-                    const auto &column_widths = layout.columnWidths;
+                    const auto &column_widths = layout.columnsWidths;
                     const auto origin = column_origins[valid_columns - 1];
                     const auto width = column_widths[valid_columns - 1];
                     if( origin != numeric_limits<int>::max() &&

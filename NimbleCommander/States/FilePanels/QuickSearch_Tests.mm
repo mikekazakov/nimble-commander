@@ -5,7 +5,8 @@
 #include "PanelDataItemVolatileData.h"
 #include "PanelView.h"
 #include "QuickSearch.h"
-#include <NimbleCommander/Bootstrap/Config.h>
+#include <Config/ConfigImpl.h>
+#include <Config/NonPersistentOverwritesStorage.h>
 
 using namespace nc::panel;
 using namespace nc::panel::QuickSearch;
@@ -58,14 +59,15 @@ wantsToSetSearchPrompt:(NSString*)_prompt
 {
     QuickSearch_MockDelegate *m_Delegate;
     data::Model m_Data;
-    unique_ptr<GenericConfig> m_QSConfig;
+    unique_ptr<nc::config::Config> m_QSConfig;
 }
 
 - (void)setUp
 {
     m_Data.Load(AppsListing(), data::Model::PanelType::Directory);
     m_Delegate = [[QuickSearch_MockDelegate alloc] init];
-    m_QSConfig = make_unique<GenericConfig>( g_ConfigJSON );
+    auto storage = make_shared<nc::config::NonPersistentOverwritesStorage>("");
+    m_QSConfig = make_unique<nc::config::ConfigImpl>( g_ConfigJSON, storage );    
 }
 
 - (void)tearDown

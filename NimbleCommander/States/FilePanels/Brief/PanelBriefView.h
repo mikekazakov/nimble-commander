@@ -3,8 +3,8 @@
 
 #include <VFSIcon/IconRepository.h>
 #include "../PanelViewImplementationProtocol.h"
-
 #include "Layout.h"
+#include "PanelBriefViewLayoutProtocol.h"
 
 @class PanelView;
 
@@ -15,6 +15,9 @@ namespace data {
 }
 }
 
+/**
+ *  [inset_left|icon|inset_left|...text...|inset_right] 
+ */
 struct PanelBriefViewItemLayoutConstants
 {
     int8_t  inset_left;
@@ -29,9 +32,9 @@ struct PanelBriefViewItemLayoutConstants
 };
 
 @interface PanelBriefView : NSView<NCPanelViewPresentationProtocol,
+                                   NCPanelBriefViewLayoutDelegate,
                                    NSCollectionViewDelegate,
-                                   NSCollectionViewDataSource,
-                                   NSCollectionViewDelegateFlowLayout>
+                                   NSCollectionViewDataSource>
 
 - (id)initWithFrame:(NSRect)frameRect andIR:(nc::vfsicon::IconRepository&)_ir;
 

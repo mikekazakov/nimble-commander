@@ -57,8 +57,9 @@ void DynamicWidthLayoutEngine::PerformNormalLayout( const Params &_params )
                                                  items_intrinsic_widths.begin() + last_index);
         const auto column_width = std::clamp((int)max_width, m_ItemMinWidth, m_ItemMaxWidth);
         
-        for( int index = first_index; index < last_index; ++index ) {
-            const auto row_number = index % rows_number;
+        for( int index = first_index, row_number = first_index % rows_number;
+            index < last_index;
+            ++index, ++row_number ) {
             const auto origin = NSMakePoint(current_column_position, row_number * item_height);            
             const auto index_path = [NSIndexPath indexPathForItem:index inSection:0];
             const auto attributes =

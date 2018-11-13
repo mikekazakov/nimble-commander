@@ -126,11 +126,7 @@ const noexcept
     
     PanelBriefViewCollectionViewBackground *m_Background;
     data::Model                        *m_Data;
-    vector<short>                       m_FilenamesPxWidths;
-    
-    vector<short>                       m_IntrinsicItemsSizes;
-    
-    short                               m_MaxFilenamePxWidth;
+    vector<short>                       m_IntrinsicItemsWidths;
     IconRepository                     *m_IconsRepository;
     unordered_map<IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping; 
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
@@ -281,51 +277,50 @@ static const auto g_ScrollingBackground =
     return item;
 }
 
-- (void) calculateFilenamesWidths
+static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
 {
-    // TODO: rewrite! this is a garbage implemntation!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if( _data == nullptr )
+        return {};
     
-    const auto min_width = 50;
-
-    const auto count = m_Data ? (int)m_Data->SortedDirectoryEntries().size() : 0;
-    vector<CFStringRef> strings;
+    const auto count = (int)_data->SortedDirectoryEntries().size();
+    std::vector<CFStringRef> strings;
     strings.reserve(count);
     for( auto i = 0; i < count; ++i )
-        strings.emplace_back( m_Data->EntryAtSortPosition(i).DisplayNameCF() );
+        strings.emplace_back( _data->EntryAtSortPosition(i).DisplayNameCF() );
+    return strings;
+}
+
+- (void) calculateFilenamesWidths
+{
+    const auto strings = GatherDisplayFilenames(m_Data);
+    const auto count = (int)strings.size();
     
-    MachTimeBenchmark mtb;
+    if( count == 0 ) {
+        m_IntrinsicItemsWidths.clear();
+        return;
+    }
     
-    m_FilenamesPxWidths = TextWidthsCache::Instance().Widths(strings,
-                                                             CurrentTheme().FilePanelsBriefFont());
-    
-    mtb.ResetMicro();
-    
-    auto max_it = max_element( begin(m_FilenamesPxWidths), end(m_FilenamesPxWidths) );
-    m_MaxFilenamePxWidth = max_it != end(m_FilenamesPxWidths) ? *max_it : min_width;
-    
-    
-    
-    m_IntrinsicItemsSizes.resize(count);    
+    const auto font = CurrentTheme().FilePanelsBriefFont();
+    auto widths = TextWidthsCache::Instance().Widths(strings, font);
+    assert( (int)widths.size() == count );
     
     const auto &layout = m_ItemLayout;
-    const short width_addition = 2 * layout.inset_left +  layout.icon_size + layout.inset_right; 
+    const short width_addition = 2 * layout.inset_left +  layout.icon_size + layout.inset_right;     
     if( m_ColumnsLayout.dynamic_width_equal ) {
-        short width =  m_MaxFilenamePxWidth + width_addition;
-        std::fill(m_IntrinsicItemsSizes.begin(), m_IntrinsicItemsSizes.end(), width);
+        const auto max_width = *std::max_element( widths.begin(), widths.begin() );
+        const short width =  max_width + width_addition;
+        std::fill(widths.begin(), widths.end(), width);
     }
     else {
-        for( int i = 0; i < count; ++i ) {
-            short width = m_FilenamesPxWidths[i] + width_addition;
-            m_IntrinsicItemsSizes[i] = width;
-        }
+        std::for_each(widths.begin(), widths.begin(),
+                      [width_addition](auto &width){ width += width_addition; } );        
     }
+    m_IntrinsicItemsWidths = std::move(widths);
 }
 
 - (std::vector<short>&)collectionViewProvideIntrinsicItemsWidths:(NSCollectionView *)collectionView
 {
-    return m_IntrinsicItemsSizes;
+    return m_IntrinsicItemsWidths;
 }
 
 - (void) updateItemsLayoutEngine
@@ -622,19 +617,7 @@ didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
 }
 
 - (void)collectionViewDidLayoutItems:(NSCollectionView *)collectionView
-{
-//    NSLog(@"collectionViewDidLayoutItems");
-//    static nanoseconds last_layout = machtime();
-//    static int layouts = 0;
-//    layouts++;
-//    if( machtime() > last_layout + 1s ) {
-//        auto diff = machtime() - last_layout;
-//        const auto aa = duration<double>(diff).count();
-//        cout << "layouts per second: " << (layouts / aa) << endl;
-//        layouts = 0;
-//        last_layout = machtime();
-//    }    
-    
+{    
     static const bool draws_grid =
         [m_CollectionView respondsToSelector:@selector(setBackgroundViewScrollsWithContent:)];
     if( draws_grid )

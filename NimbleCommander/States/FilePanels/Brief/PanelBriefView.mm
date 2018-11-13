@@ -290,13 +290,17 @@ static const auto g_ScrollingBackground =
     const auto min_width = 50;
 
     const auto count = m_Data ? (int)m_Data->SortedDirectoryEntries().size() : 0;
-    vector<reference_wrapper<const string>> strings;
+    vector<CFStringRef> strings;
     strings.reserve(count);
     for( auto i = 0; i < count; ++i )
-        strings.emplace_back( ref(m_Data->EntryAtSortPosition(i).DisplayName()) );
+        strings.emplace_back( m_Data->EntryAtSortPosition(i).DisplayNameCF() );
+    
+    MachTimeBenchmark mtb;
     
     m_FilenamesPxWidths = TextWidthsCache::Instance().Widths(strings,
                                                              CurrentTheme().FilePanelsBriefFont());
+    
+    mtb.ResetMicro();
     
     auto max_it = max_element( begin(m_FilenamesPxWidths), end(m_FilenamesPxWidths) );
     m_MaxFilenamePxWidth = max_it != end(m_FilenamesPxWidths) ? *max_it : min_width;

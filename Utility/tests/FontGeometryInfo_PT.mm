@@ -35,6 +35,12 @@ static std::vector<CFStringRef> MakeRandomStrings(int _amount, int _length)
     return strings;
 }
 
+static void Free(const std::vector<CFStringRef> &_strings)
+{
+    for( auto &string: _strings )
+        CFRelease(string);
+}
+
 TEST_CASE("FontGeometryInfo::CalculateStringsWidths perf test", "[!benchmark]")
 {
     const auto font = [NSFont systemFontOfSize:12.0];    
@@ -45,17 +51,48 @@ TEST_CASE("FontGeometryInfo::CalculateStringsWidths perf test", "[!benchmark]")
         BENCHMARK( "100 strings" ) {
             FontGeometryInfo::CalculateStringsWidths(strings, font);
         }
-    }        
+        Free(strings);
+    }
+    {
+        const auto strings = MakeRandomStrings(200, length);
+        BENCHMARK( "200 strings" ) {
+            FontGeometryInfo::CalculateStringsWidths(strings, font);
+        }
+        Free(strings);
+    }
+    {
+        const auto strings = MakeRandomStrings(300, length);
+        BENCHMARK( "300 strings" ) {
+            FontGeometryInfo::CalculateStringsWidths(strings, font);
+        }
+        Free(strings);
+    }    
+    {
+        const auto strings = MakeRandomStrings(400, length);
+        BENCHMARK( "400 strings" ) {
+            FontGeometryInfo::CalculateStringsWidths(strings, font);
+        }
+        Free(strings);
+    }    
+    {
+        const auto strings = MakeRandomStrings(500, length);
+        BENCHMARK( "500 strings" ) {
+            FontGeometryInfo::CalculateStringsWidths(strings, font);
+        }
+        Free(strings);
+    }    
     {
         const auto strings = MakeRandomStrings(1000, length);
         BENCHMARK( "1000 strings" ) {
             FontGeometryInfo::CalculateStringsWidths(strings, font);
         }
+        Free(strings);
     }
     {
         const auto strings = MakeRandomStrings(10000, length);
         BENCHMARK( "10000 strings" ) {
             FontGeometryInfo::CalculateStringsWidths(strings, font);
-        }            
+        }
+        Free(strings); 
     }
 }

@@ -127,8 +127,16 @@ static void CalculateWidthsOfStringsBulk(CFStringRef const *_str_first,
 std::vector<short> FontGeometryInfo::
     CalculateStringsWidths(const std::vector<CFStringRef> &_strings, NSFont *_font )
 {
-    static const auto items_per_chunk = 300;        
     const auto count = (int)_strings.size();
+    if( count == 0 )
+        return {};
+
+    const auto items_per_chunk = [&]{
+        if( count <= 512 )          return 128; 
+        else if( count <= 2048 )    return 256;
+        else                        return 512; 
+    }();
+    
     std::vector<short> widths( count );
     
     const auto attributes = @{NSFontAttributeName:_font};    

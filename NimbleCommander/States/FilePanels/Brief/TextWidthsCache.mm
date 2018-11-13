@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextWidthsCache.h"
 #include <Utility/FontExtras.h>
 
@@ -28,47 +28,59 @@ TextWidthsCache& TextWidthsCache::Instance()
     return *inst;
 }
 
-vector<short> TextWidthsCache::Widths(const vector<reference_wrapper<const string>> &_strings,
-                                      NSFont *_font )
+vector<short> TextWidthsCache::Widths( const vector<CFStringRef> &_strings, NSFont *_font )
 {
     assert( _font != nullptr );
     auto &cache = ForFont(_font);
-
+    
     vector<short> widths(_strings.size(), 0);
-    vector<int> indx;
+    vector<int> result_indices;
     vector<CFStringRef> cf_strings;
 
     LOCK_GUARD(cache.lock) {
-        int index = 0;
-        for( const auto &str: _strings ) {
-            const auto it = cache.widthds.find(str.get());
-            if( it != end(cache.widthds) ) {
-                widths[index] = it->second;
+        int result_index = 0;
+        for( const auto string: _strings ) {
+            const auto it = cache.widths.find( CFString{string} );
+            if( it != end(cache.widths) ) {
+                widths[result_index] = it->second;
             }
-            else if( const auto cf_str = CFStringCreateWithUTF8StdString( str.get() ) ) {
-                cf_strings.emplace_back(cf_str);
-                indx.emplace_back(index);
+            else {
+                cf_strings.emplace_back(string);
+                result_indices.emplace_back(result_index);
             }
-            ++index;
+            
+            ++result_index;
         }
     }
     
-    if( !indx.empty() ) {
+    if( !result_indices.empty() ) {
         PurgeIfNeeded(cache);
-        const auto new_widthds = FontGeometryInfo::CalculateStringsWidths( cf_strings, _font );
-        assert( new_widthds.size() == indx.size() );
-        int index = 0;
-        LOCK_GUARD(cache.lock) {
-            for( auto w: new_widthds ) {
-                widths[ indx[index] ] = w;
-                cache.widthds[ _strings[ indx[index] ].get() ] = w;
-                ++index;
+        auto new_widths = FontGeometryInfo::CalculateStringsWidths( cf_strings, _font );
+        assert( new_widths.size() == result_indices.size() );
+        if( result_indices.size() == _strings.size() ) {
+            // we're building the entire set => can just snatch the result vector without copying
+            LOCK_GUARD(cache.lock) {
+                int index = 0;
+                for( auto w: new_widths ) {
+                    const auto result_index = result_indices[index]; 
+                    cache.widths[ CFString{_strings[result_index]} ] = w;
+                    ++index;
+                }
             }
+            widths = std::move(new_widths);
         }
-        for( auto cf_str: cf_strings )
-            CFRelease(cf_str);
+        else {
+            LOCK_GUARD(cache.lock) {
+                int index = 0;
+                for( auto w: new_widths ) {
+                    const auto result_index = result_indices[index]; 
+                    widths[ result_index ] = w;
+                    cache.widths[ CFString{_strings[result_index]} ] = w;
+                    ++index;
+                }
+            }    
+        }
     }
-    
     return widths;
 }
 
@@ -87,7 +99,7 @@ TextWidthsCache::Cache &TextWidthsCache::ForFont(NSFont *_font)
 void TextWidthsCache::PurgeIfNeeded(Cache &_cache)
 {
     LOCK_GUARD(_cache.lock) {
-        if( _cache.widthds.size() >= g_MaxStrings && !_cache.purge_scheduled ) {
+        if( _cache.widths.size() >= g_MaxStrings && !_cache.purge_scheduled ) {
             _cache.purge_scheduled = true;
             dispatch_to_background_after(g_PurgeDelay, [&]{
                 Purge(_cache);
@@ -99,9 +111,20 @@ void TextWidthsCache::PurgeIfNeeded(Cache &_cache)
 void TextWidthsCache::Purge(Cache &_cache)
 {
     LOCK_GUARD(_cache.lock) {
-        _cache.widthds.clear();
+        _cache.widths.clear();
     }
     _cache.purge_scheduled = false;
 }
 
+std::size_t TextWidthsCache::CFStringHash::operator()(const CFString & _string) const noexcept
+{
+    return CFHash(*_string);
+}
+    
+bool TextWidthsCache::CFStringEqual::operator()(const CFString & _lhs,
+                                                const CFString & _rhs) const noexcept
+{ 
+    return *_lhs == *_rhs || CFStringCompare(*_lhs, *_rhs, 0) == kCFCompareEqualTo;
+}
+    
 }

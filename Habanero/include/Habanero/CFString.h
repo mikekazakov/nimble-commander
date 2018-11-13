@@ -1,4 +1,4 @@
-/* Copyright (c) 2015-2016 Michael G. Kazakov
+/* Copyright (c) 2015-2018 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -24,25 +24,26 @@
 class CFString
 {
 public:
-    CFString();
-    CFString(const std::string &_str);
-    CFString(const std::string &_str, CFStringEncoding _encoding);
-    CFString(const char *_str);
-    CFString(const CFString &_rhs);
-    CFString(CFString &&_rhs);
+    CFString() noexcept = default;
+    CFString(CFStringRef _str) noexcept;
+    CFString(const std::string &_str) noexcept;
+    CFString(const std::string &_str, CFStringEncoding _encoding) noexcept;
+    CFString(const char *_str) noexcept;
+    CFString(const CFString &_rhs) noexcept;
+    CFString(CFString &&_rhs) noexcept;
     ~CFString();
     
     const CFString &operator=(const CFString &_rhs) noexcept;
     const CFString &operator=(CFString &&_rhs) noexcept;
     
-    inline              operator bool() const noexcept { return p != nullptr; }
-    inline CFStringRef  operator    *() const noexcept { return p; }
+    operator bool() const noexcept;
+    CFStringRef operator *() const noexcept;
 #ifdef __OBJC__
-    inline NSString               *ns() const noexcept { return (__bridge NSString*)p; }
+    NSString *ns() const noexcept;
 #endif
 
 private:
-    CFStringRef p;
+    CFStringRef p = nullptr;
 };
 
 std::string CFStringGetUTF8StdString(CFStringRef _str);
@@ -54,3 +55,69 @@ CFStringRef CFStringCreateWithUTF8StringNoCopy(const char *_s, size_t _len) noex
 CFStringRef CFStringCreateWithMacOSRomanStdStringNoCopy(const std::string &_s) noexcept;
 CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s) noexcept;
 CFStringRef CFStringCreateWithMacOSRomanStringNoCopy(const char *_s, size_t _len) noexcept;
+
+inline CFString::operator bool() const noexcept
+{
+    return p != nullptr;
+}
+
+inline CFStringRef CFString::operator *() const noexcept
+{
+    return p;
+}
+
+#ifdef __OBJC__
+inline NSString *CFString::ns() const noexcept
+{
+    return (__bridge NSString*)p;
+}
+#endif
+
+inline CFString::CFString(CFStringRef _str) noexcept:
+    p(_str)
+{
+    if( p != nullptr )
+        CFRetain(p);
+}
+
+inline CFString::CFString(const CFString &_rhs) noexcept:
+    p( _rhs.p )
+{
+    if( p )
+        CFRetain(p);
+}
+
+inline CFString::CFString(CFString &&_rhs) noexcept:
+    p( _rhs.p )
+{
+    _rhs.p = nullptr;
+}
+
+inline CFString::~CFString()
+{
+    if(p)
+        CFRelease(p);
+}
+
+inline const CFString &CFString::operator=(const CFString &_rhs) noexcept
+{
+    if( &_rhs == this )
+        return *this;
+    if( p )
+        CFRelease(p);
+    p = _rhs.p;
+    if( p )
+        CFRetain(p);
+    return *this;
+}
+
+inline const CFString &CFString::operator=(CFString &&_rhs) noexcept
+{
+    if( &_rhs == this )
+        return *this;    
+    if( p )
+        CFRelease(p);
+    p = _rhs.p;
+    _rhs.p = nullptr;
+    return *this;
+}

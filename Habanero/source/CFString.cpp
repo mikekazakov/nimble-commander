@@ -1,4 +1,4 @@
-/* Copyright (c) 2015-2016 Michael G. Kazakov
+/* Copyright (c) 2015-2018 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -109,12 +109,7 @@ string CFStringGetUTF8StdString(CFStringRef _str)
     return "";
 }
 
-CFString::CFString():
-    p(nullptr)
-{
-}
-
-CFString::CFString(const std::string &_str):
+CFString::CFString(const std::string &_str) noexcept:
     p(CFStringCreateWithBytes(0,
                             (UInt8*)_str.c_str(),
                               _str.length(),
@@ -123,7 +118,7 @@ CFString::CFString(const std::string &_str):
 {
 }
 
-CFString::CFString(const std::string &_str, CFStringEncoding _encoding):
+CFString::CFString(const std::string &_str, CFStringEncoding _encoding) noexcept:
     p( CFStringCreateWithBytes(0,
                                (UInt8*)_str.c_str(),
                                _str.length(),
@@ -132,7 +127,7 @@ CFString::CFString(const std::string &_str, CFStringEncoding _encoding):
 {
 }
 
-CFString::CFString(const char *_str):
+CFString::CFString(const char *_str) noexcept:
     p( _str ? CFStringCreateWithBytes(0,
                                       (UInt8*)_str,
                                       strlen(_str),
@@ -140,42 +135,4 @@ CFString::CFString(const char *_str):
                                       false) :
               nullptr)
 {
-}
-
-CFString::CFString(const CFString &_rhs):
-    p( _rhs.p )
-{
-    if( p )
-        CFRetain(p);
-}
-
-CFString::CFString(CFString &&_rhs):
-    p( _rhs.p )
-{
-    _rhs.p = nullptr;
-}
-
-CFString::~CFString()
-{
-    if(p)
-        CFRelease(p);
-}
-
-const CFString &CFString::operator=(const CFString &_rhs) noexcept
-{
-    if( p )
-        CFRelease(p);
-    p = _rhs.p;
-    if( p )
-        CFRetain(p);
-    return *this;
-}
-
-const CFString &CFString::operator=(CFString &&_rhs) noexcept
-{
-    if( p )
-        CFRelease(p);
-    p = _rhs.p;
-    _rhs.p = nullptr;
-    return *this;
 }

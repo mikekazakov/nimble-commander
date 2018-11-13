@@ -1,5 +1,7 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
+
+#include <Habanero/CFString.h>
 
 namespace nc::panel::brief {
 
@@ -8,11 +10,17 @@ class TextWidthsCache
 public:
     static TextWidthsCache& Instance();
 
-    vector<short> Widths( const vector<reference_wrapper<const string>> &_strings, NSFont *_font );
+    vector<short> Widths( const vector<CFStringRef> &_strings, NSFont *_font );
 
 private:
+    struct CFStringHash {
+        std::size_t operator()(const CFString &_string) const noexcept;
+    };
+    struct CFStringEqual {
+        bool operator()(const CFString &_lhs, const CFString &_rhs) const noexcept;
+    };
     struct Cache {
-        unordered_map<string, short> widthds;
+        unordered_map<CFString, short, CFStringHash, CFStringEqual> widths;
         spinlock lock;
         atomic_bool purge_scheduled{false};
     };

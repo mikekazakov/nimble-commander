@@ -480,17 +480,6 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     return m_Layout.rowsNumber;
 }
 
-- (int) columns
-{
-    if( !m_Data )
-        return 1;
-    
-    const auto items_total = m_Data->SortedDirectoryEntries().size();
-    const auto items_in_column = self.itemsInColumn;
-    
-    return (int)(items_total/items_in_column) + (items_total % items_in_column ? 1 : 0);
-}
-
 - (void) syncVolatileData
 {
     dispatch_assert_main_queue();

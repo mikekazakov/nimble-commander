@@ -43,7 +43,6 @@ struct PanelBriefViewItemLayoutConstants
 - (void) setData:(nc::panel::data::Model*)_data;
 
 @property (nonatomic, readonly) int itemsInColumn;
-@property (nonatomic, readonly) int columns;
 @property (nonatomic) int cursorPosition;
 @property (nonatomic) nc::panel::data::SortMode sortMode;
 

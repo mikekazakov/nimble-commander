@@ -282,11 +282,12 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     if( _data == nullptr )
         return {};
     
-    const auto count = (int)_data->SortedDirectoryEntries().size();
-    std::vector<CFStringRef> strings;
-    strings.reserve(count);
-    for( auto i = 0; i < count; ++i )
-        strings.emplace_back( _data->EntryAtSortPosition(i).DisplayNameCF() );
+    const auto &sorted_idices = _data->SortedDirectoryEntries();
+    const auto &listing = _data->Listing();
+    const auto count = (int)sorted_idices.size();
+    auto strings = std::vector<CFStringRef>(count, nullptr);
+    for( int i = 0; i < count; ++i )
+        strings[i] = listing.DisplayFilenameCF(i);
     return strings;
 }
 
@@ -312,8 +313,8 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
         std::fill(widths.begin(), widths.end(), width);
     }
     else {
-        std::for_each(widths.begin(), widths.begin(),
-                      [width_addition](auto &width){ width += width_addition; } );        
+        std::for_each(widths.begin(), widths.end(),
+                      [width_addition](auto &width){ width += width_addition; } );
     }
     m_IntrinsicItemsWidths = std::move(widths);
 }

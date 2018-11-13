@@ -297,6 +297,7 @@ static const auto g_ResizingGran = 14.;
 
     v1.frame = left;
     v2.frame = right;
+    [self setNeedsLayout:true];
 }
 
 - (IBAction)OnViewPanelsPositionMoveRight:(id)sender
@@ -335,6 +336,7 @@ static const auto g_ResizingGran = 14.;
     
     v1.frame = left;
     v2.frame = right;
+    [self setNeedsLayout:true];
 }
 
 - (void) collapseLeftView

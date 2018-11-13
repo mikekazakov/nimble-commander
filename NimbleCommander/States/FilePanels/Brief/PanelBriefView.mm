@@ -287,7 +287,7 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     const auto count = (int)sorted_idices.size();
     auto strings = std::vector<CFStringRef>(count, nullptr);
     for( int i = 0; i < count; ++i )
-        strings[i] = listing.DisplayFilenameCF(i);
+        strings[i] = listing.DisplayFilenameCF( sorted_idices[i] );
     return strings;
 }
 

@@ -282,7 +282,7 @@ static bool HasNoModifiers( NSEvent *_event )
 
 - (void) mouseDragged:(NSEvent *)event
 {
-    const auto max_drag_dist = 5.;
+    const auto max_drag_dist = 10.;
     if( g_RowReadyToDrag &&  g_MouseDownCarrier == (__bridge void*)self ) {
         const auto lp = [self convertPoint:event.locationInWindow fromView:nil];
         const auto dist = hypot(lp.x - g_LastMouseDownPos.x, lp.y - g_LastMouseDownPos.y);

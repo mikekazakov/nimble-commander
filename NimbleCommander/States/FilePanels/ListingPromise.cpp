@@ -72,9 +72,9 @@ VFSListingPtr ListingPromise::Restore(unsigned long _fetch_flags,
 {
     assert(_adapter);
  
-    if( boost::get<UniformListing>(&Storage()) )
+    if( std::get_if<UniformListing>(&Storage()) )
         return RestoreUniform(_fetch_flags, _adapter, _cancel_checker);
-    else if( boost::get<NonUniformListing>(&Storage()) )
+    else if( std::get_if<NonUniformListing>(&Storage()) )
         return RestoreNonUniform(_fetch_flags, _adapter, _cancel_checker);
     else
         return nullptr;
@@ -84,13 +84,14 @@ VFSListingPtr ListingPromise::RestoreUniform(unsigned long _fetch_flags,
                                              const PromiseVFSAdapter &_adapter,
                                              const function<bool()> &_cancel_checker) const
 {
-    const auto &info = boost::get<UniformListing>(Storage());
-    const auto host = _adapter(info.promise);
+    const auto info = std::get_if<UniformListing>(&Storage());
+    assert(info);
+    const auto host = _adapter(info->promise);
     if( !host )
         return nullptr;
     
     VFSListingPtr listing;
-    const auto rc = host->FetchDirectoryListing(info.directory.c_str(),
+    const auto rc = host->FetchDirectoryListing(info->directory.c_str(),
                                                 listing,
                                                 _fetch_flags,
                                                 _cancel_checker);
@@ -104,10 +105,11 @@ VFSListingPtr ListingPromise::RestoreNonUniform(unsigned long _fetch_flags,
                                                 const PromiseVFSAdapter &_adapter,
                                                 const function<bool()> &_cancel_checker) const
 {
-    const auto &info = boost::get<NonUniformListing>(Storage());
+    const auto info = std::get_if<NonUniformListing>(&Storage());
+    assert(info);
 
     vector<VFSListingPtr> listings;
-    for( const auto &per_vfs: info.per_vfs ) {
+    for( const auto &per_vfs: info->per_vfs ) {
         if( _cancel_checker && _cancel_checker() )
             return nullptr;
         

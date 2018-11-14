@@ -23,10 +23,9 @@ ListingPromiseFormatter::Representation
 ListingPromiseFormatter::Render( RenderOptions _options, const ListingPromise &_promise )
 {
     Representation rep;
-    
-    const auto visitor = compose_visitors
-    (
-     [&](const ListingPromise::UniformListing &l) {
+ 
+    // yes, i know about std::visit, but libc++ on macOS requires 10.14+ to use it.
+    auto visit_uniform_listing = [&](const ListingPromise::UniformListing &l) {
          if( (_options & RenderMenuTitle) || (_options & RenderMenuTooltip) ) {
              const auto title = l.promise.verbose_title() + l.directory;
              rep.menu_title = NonNull([NSString stringWithUTF8StdString:title]);
@@ -34,26 +33,31 @@ ListingPromiseFormatter::Render( RenderOptions _options, const ListingPromise &_
          }
          if( _options & RenderMenuIcon )
              rep.menu_icon = ImageForPromiseAndPath(l.promise, l.directory);
-     },
-     [&](const ListingPromise::NonUniformListing &l)
-     {
-         if( (_options & RenderMenuTitle) || (_options & RenderMenuTooltip) ) {
-             static const auto formatter = []{
-                 auto fmt = [[NSNumberFormatter alloc] init];
-                 fmt.usesGroupingSeparator = true;
-                 fmt.groupingSize = 3;
-                 return fmt;
-             }();
-             
-             const auto count = [NSNumber numberWithUnsignedInteger:l.EntriesCount()];
-             rep.menu_title = [NSString stringWithFormat:@"Temporary Panel (%@)",
-                               [formatter stringFromNumber:count]];
-             rep.menu_tooltip = rep.menu_title;
-         }
-     }
-     );
-    boost::apply_visitor(visitor, _promise.Description());
+    };
+    auto visit_nonuniform_listing = [&](const ListingPromise::NonUniformListing &l) {
+        if( (_options & RenderMenuTitle) || (_options & RenderMenuTooltip) ) {
+            static const auto formatter = []{
+                auto fmt = [[NSNumberFormatter alloc] init];
+                fmt.usesGroupingSeparator = true;
+                fmt.groupingSize = 3;
+                return fmt;
+            }();
+            
+            const auto count = [NSNumber numberWithUnsignedInteger:l.EntriesCount()];
+            rep.menu_title = [NSString stringWithFormat:@"Temporary Panel (%@)",
+                              [formatter stringFromNumber:count]];
+            rep.menu_tooltip = rep.menu_title;
+        }
+    };
 
+    auto description = &_promise.Description();
+    if( auto uniform = std::get_if<ListingPromise::UniformListing>(description) )
+        visit_uniform_listing(*uniform);
+    else if( auto nonuniform = std::get_if<ListingPromise::NonUniformListing>(description) )
+        visit_nonuniform_listing(*nonuniform);
+    else
+        std::cerr << "ListingPromiseFormatter::Render: unhandled case" << std::endl;
+    
     return rep;
 }
 

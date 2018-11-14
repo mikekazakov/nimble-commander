@@ -3,8 +3,8 @@
 
 #include <VFS/VFS_fwd.h>
 #include <Habanero/StringsBulk.h>
-#include <boost/variant.hpp>
 #include <NimbleCommander/Core/VFSInstancePromise.h>
+#include <variant>
 
 namespace nc::panel {
     
@@ -29,7 +29,7 @@ public:
         size_t EntriesCount() const noexcept;
     };
     
-    using StorageT = boost::variant<UniformListing, NonUniformListing>;
+    using StorageT = std::variant<UniformListing, NonUniformListing>;
     using VFSPromiseAdapter = function<core::VFSInstancePromise(const shared_ptr<VFSHost>&)>;
     using PromiseVFSAdapter = function<shared_ptr<VFSHost>(const core::VFSInstancePromise&)>;
     

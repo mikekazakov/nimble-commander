@@ -41,6 +41,7 @@ static bool GoToFTP(PanelController *_target,
             request->RequestedDirectory = info.path;
             request->VFS = host;
             request->PerformAsynchronous = true;
+            request->InitiatedByUser = true;
             [_target GoToDirWithContext:request];
         });
         
@@ -79,6 +80,7 @@ static bool GoToSFTP(PanelController *_target,
             request->RequestedDirectory = host->HomeDir();
             request->VFS = host;
             request->PerformAsynchronous = true;
+            request->InitiatedByUser = true;
             [_target GoToDirWithContext:request];
         });
         
@@ -118,6 +120,7 @@ static bool GoToWebDAV(PanelController *_target,
             request->RequestedDirectory = "/";
             request->VFS = host;
             request->PerformAsynchronous = true;
+            request->InitiatedByUser = true;
             [_target GoToDirWithContext:request];
         });
         
@@ -151,6 +154,7 @@ static void GoToDropboxStorage(PanelController *_target,
             request->RequestedDirectory = "/";
             request->VFS = host;
             request->PerformAsynchronous = true;
+            request->InitiatedByUser = true;
             [_target GoToDirWithContext:request];
         });
         
@@ -183,6 +187,7 @@ static void GoToLANShare(PanelController *_target,
                 request->RequestedDirectory = _path;
                 request->VFS = VFSNativeHost::SharedHost();
                 request->PerformAsynchronous = true;
+                request->InitiatedByUser = true;
                 [panel GoToDirWithContext:request];
                 
                 // save successful connection to history

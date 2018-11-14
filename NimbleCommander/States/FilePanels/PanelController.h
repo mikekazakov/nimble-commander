@@ -16,24 +16,45 @@
 
 namespace nc {
 
-    namespace core {
-        class VFSInstancePromise;
-        class VFSInstanceManager;
-    }
-    namespace panel {
-        class History;
-        struct PersistentLocation;
-        class PanelViewLayoutsStorage;
-        namespace data {
-            struct SortMode;
-            struct HardFilter;
-            struct Model;
-        }
-    }
+namespace core {
+    class VFSInstancePromise;
+    class VFSInstanceManager;
+}
+
+namespace panel {
+
+namespace data {
+    struct SortMode;
+    struct HardFilter;
+    class Model;
 }
     
-namespace nc::panel {
+class History;
+struct PersistentLocation;
+class PanelViewLayoutsStorage;
 
+class DirectoryAccessProvider
+{
+public:
+    virtual ~DirectoryAccessProvider() = default;
+    
+    /**
+     * Checks whether an additional permission is required to access the specified directory.
+     */ 
+    virtual bool HasAccess(PanelController *_panel,
+                           const std::string &_directory_path,
+                           VFSHost &_host) = 0;
+    
+    /**
+     * Requests a permission to access the specified directory.
+     * May block the calling thread to show some modal UI. 
+     * Should be called only as a reaction to an action started by the user.
+     */
+    virtual bool RequestAccessSync(PanelController *_panel,
+                                   const std::string &_directory_path,
+                                   VFSHost &_host) = 0;
+};
+  
 class ActivityTicket
 {
 public:
@@ -74,6 +95,7 @@ struct DirectoryChangeRequest
     vector<string>      RequestSelectedEntries  = {};
     bool                PerformAsynchronous     = true;
     bool                LoadPreviousViewState   = false;
+    bool                InitiatedByUser         = false;
     
     /**
      * This will be called from a thread which is loading a vfs listing with
@@ -89,7 +111,8 @@ struct DirectoryChangeRequest
     int                 LoadingResultCode        = 0;
 };
 
-}
+} // namespace panel
+} // namespace nc
 
 /**
  * PanelController is reponder to enable menu events processing
@@ -115,7 +138,8 @@ struct DirectoryChangeRequest
 
 - (instancetype)initWithView:(PanelView*)_panel_view
                      layouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
-             vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr;
+          vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
+     directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider;
 
 - (void) refreshPanel; // reload panel contents
 - (void) forceRefreshPanel; // user pressed cmd+r by default
@@ -151,19 +175,19 @@ struct DirectoryChangeRequest
 
 - (void) calculateSizesOfItems:(const vector<VFSListingItem>&)_items;
 
-
+/**
+ * This is the main directory loading facility for an external code, 
+ * which also works as a sync for other loading methods. 
+ * It can work either synchronously or asynchronously depending on the request.
+ * A calling code can also set intended outcomes like focus, selection, view state restoration
+ * and a completion callback.
+ */
 - (int) GoToDirWithContext:(shared_ptr<nc::panel::DirectoryChangeRequest>)_context;
 
 /**
  * Loads existing listing into the panel. Save to call from any thread.
  */
 - (void) loadListing:(const shared_ptr<VFSListing>&)_listing;
-
-// will load previous view state if any
-- (void) GoToVFSPromise:(const nc::core::VFSInstancePromise&)_promise onPath:(const string&)_directory;
-// some params later
-
-- (void) goToPersistentLocation:(const nc::panel::PersistentLocation &)_location;
 
 /** 
  * Delayed entry selection change - panel controller will memorize such request.

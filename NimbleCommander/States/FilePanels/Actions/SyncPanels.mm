@@ -35,6 +35,7 @@ void SyncPanels::Perform( MainWindowFilePanelState *_target, id _sender ) const
         request->RequestedDirectory = current.currentDirectoryPath;
         request->VFS = current.vfs;
         request->PerformAsynchronous = true;
+        request->InitiatedByUser = true;
         [opposite GoToDirWithContext:request];
     }
     else {

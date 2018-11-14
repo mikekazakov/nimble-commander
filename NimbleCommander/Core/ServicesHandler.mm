@@ -45,6 +45,7 @@ void ServicesHandler::GoToFolder(const string &_path)
         auto ctx = make_shared<panel::DirectoryChangeRequest>();
         ctx->RequestedDirectory = _path;
         ctx->VFS = host;
+        ctx->InitiatedByUser = true;
         [wnd.filePanelsState.activePanelController GoToDirWithContext:ctx];
     }
 }
@@ -125,6 +126,7 @@ void ServicesHandler::RevealItems(const vector<string> &_paths)
         ctx->RequestFocusedEntry = filenames.front();
         if( filenames.size() > 1 )
             ctx->RequestSelectedEntries = filenames;
+        ctx->InitiatedByUser = true;
         [wnd.filePanelsState.activePanelController GoToDirWithContext:ctx];
     }
 }

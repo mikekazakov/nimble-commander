@@ -3,7 +3,6 @@
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
 #include <VFS/PS.h>
-#include <NimbleCommander/Core/SandboxManager.h>
 #include "../Views/GoToFolderSheetController.h"
 #include "../PanelController.h"
 #include "../PanelData.h"
@@ -13,6 +12,7 @@
 #include "../PanelView.h"
 #include "../PanelAux.h"
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
+#include "Helpers.h"
 
 namespace nc::panel::actions {
 
@@ -28,28 +28,24 @@ void GoToFolder::Perform( PanelController *_target, id _sender ) const
             _target.vfs :
             VFSNativeHost::SharedHost();
         c->PerformAsynchronous = true;
+        c->InitiatedByUser = true;
         c->LoadingResultCallback = [=](int _code) {
             dispatch_to_main_queue( [=]{
                 [sheet tellLoadingResult:_code];
             });
         };
-
-        bool access_allowed = !c->VFS->IsNativeFS() ||
-                                SandboxManager::EnsurePathAccess(c->RequestedDirectory);
-        if( access_allowed )
-            [_target GoToDirWithContext:c];
+        [_target GoToDirWithContext:c];
     }];
 }
 
 static void GoToNativeDir( const string& _path, PanelController *_target )
 {
-    if( SandboxManager::EnsurePathAccess(_path) ) {
-        auto request = std::make_shared<DirectoryChangeRequest>();
-        request->RequestedDirectory = _path;
-        request->VFS = VFSNativeHost::SharedHost();
-        request->PerformAsynchronous = true;
-        [_target GoToDirWithContext:request];        
-    }
+    auto request = std::make_shared<DirectoryChangeRequest>();
+    request->RequestedDirectory = _path;
+    request->VFS = VFSNativeHost::SharedHost();
+    request->PerformAsynchronous = true;
+    request->InitiatedByUser = true;
+    [_target GoToDirWithContext:request];
 }
 
 void GoToHomeFolder::Perform( PanelController *_target, id _sender ) const
@@ -98,15 +94,34 @@ void GoToProcessesList::Perform( PanelController *_target, id _sender ) const
     request->RequestedDirectory = "/";
     request->VFS = vfs::PSHost::GetSharedOrNew();
     request->PerformAsynchronous = true;
+    request->InitiatedByUser = true;
     [_target GoToDirWithContext:request];
 }
 
 void GoToFavoriteLocation::Perform( PanelController *_target, id _sender ) const
 {
-    if( auto menuitem = objc_cast<NSMenuItem>(_sender) )
-        if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
-            if( auto location = any_cast<PersistentLocation>(&holder.any) )
-                [_target goToPersistentLocation:*location];
+    auto menuitem = objc_cast<NSMenuItem>(_sender);
+    if( menuitem == nil )
+        return;    
+    auto holder = objc_cast<AnyHolder>(menuitem.representedObject);
+    if( holder == nil )
+        return;
+    auto location = any_cast<PersistentLocation>(&holder.any);
+    if( location == nil )
+        return;
+    
+    auto restorer = AsyncPersistentLocationRestorer(_target, _target.vfsInstanceManager);
+    auto handler = [path = location->path, panel = _target](VFSHostPtr _host) {
+        dispatch_to_main_queue([=]{            
+            auto request = make_shared<DirectoryChangeRequest>();
+            request->RequestedDirectory = path;
+            request->VFS = _host;
+            request->PerformAsynchronous = true;
+            request->InitiatedByUser = true;
+            [panel GoToDirWithContext:request];
+        });          
+    };
+    restorer.Restore(*location, std::move(handler), nullptr);    
 }
 
 bool GoToEnclosingFolder::Predicate( PanelController *_target ) const
@@ -121,11 +136,6 @@ bool GoToEnclosingFolder::Predicate( PanelController *_target ) const
     }
     else
         return GoBack{}.Predicate(_target);
-}
-
-static bool SandboxAccessDenied( const VFSHost &_host, const string &_path )
-{
-    return _host.IsNativeFS() && !SandboxManager::EnsurePathAccess(_path);
 }
 
 void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
@@ -143,16 +153,14 @@ void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
                 assert(!junct.empty());
                 string dir = junct.parent_path().native();
                 string sel_fn = junct.filename().native();
-                
-                if( SandboxAccessDenied(*parent_vfs, dir) )
-                    return; // silently reap this command, since user refuses to grant an access
-                
+                                
                 auto request = std::make_shared<DirectoryChangeRequest>();
                 request->RequestedDirectory = dir;
                 request->VFS = parent_vfs;
                 request->RequestFocusedEntry = sel_fn;
                 request->LoadPreviousViewState = true;
                 request->PerformAsynchronous = true;
+                request->InitiatedByUser = true;
                 [_target GoToDirWithContext:request];                
             }
         }
@@ -160,15 +168,13 @@ void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
             string dir = cur.parent_path().remove_filename().native();
             string sel_fn = cur.parent_path().filename().native();
             
-            if( SandboxAccessDenied(*vfs, dir) )
-                return;
-            
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = dir;
             request->VFS = vfs;
             request->RequestFocusedEntry = sel_fn;
             request->LoadPreviousViewState = true;
             request->PerformAsynchronous = true;
+            request->InitiatedByUser = true;
             [_target GoToDirWithContext:request];
         }
     }
@@ -221,14 +227,12 @@ void GoIntoFolder::Perform( PanelController *_target, id _sender ) const
     if( item.IsDir() ) {
         if( item.IsDotDot() )
             actions::GoToEnclosingFolder{}.Perform(_target, _target);
-        
-        if( SandboxAccessDenied(*item.Host(), item.Path()) )
-            return;
-        
+            
         auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = item.Path();
         request->VFS = item.Host();
         request->PerformAsynchronous = true;
+        request->InitiatedByUser = true;
         [_target GoToDirWithContext:request];        
         return;
     }
@@ -254,6 +258,7 @@ void GoIntoFolder::Perform( PanelController *_target, id _sender ) const
                     request->RequestedDirectory = "/";
                     request->VFS = arhost;
                     request->PerformAsynchronous = true;
+                    request->InitiatedByUser = true;
                     dispatch_to_main_queue([request, _target]{
                         [_target GoToDirWithContext:request];
                     });

@@ -9,10 +9,7 @@
 #include "Views/BriefSystemOverview.h"
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
-#include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Bootstrap/Config.h>
-#include "PanelDataPersistency.h"
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "PanelViewLayoutSupport.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataOptionsPersistence.h"
@@ -171,6 +168,7 @@ static void HeatUpConfigValues()
     
     boost::container::static_vector<nc::config::Token,2> m_ConfigObservers;
     nc::core::VFSInstanceManager       *m_VFSInstanceManager;
+    nc::panel::DirectoryAccessProvider *m_DirectoryAccessProvider;
     shared_ptr<PanelViewLayoutsStorage> m_Layouts;
     int                                 m_ViewLayoutIndex;
     shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
@@ -186,6 +184,7 @@ static void HeatUpConfigValues()
 - (instancetype)initWithView:(PanelView*)_panel_view
                      layouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
           vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
+     directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider
 {
     assert( _layouts );
     
@@ -196,6 +195,7 @@ static void HeatUpConfigValues()
     if(self) {
         m_Layouts = move(_layouts);
         m_VFSInstanceManager = &_vfs_mgr;
+        m_DirectoryAccessProvider = &_directory_access_provider;
         m_History.SetVFSInstanceManager(_vfs_mgr);
         m_VFSFetchingFlags = 0;
         m_NextActivityTicket = 1;
@@ -698,16 +698,6 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     [self updateAttachedBriefSystemOverview];
 }
 
-+ (bool) ensureCanGoToNativeFolderSync:(const string&)_path
-{
-    return SandboxManager::EnsurePathAccess(_path);
-}
-
-- (bool)ensureCanGoToNativeFolderSync:(const string&)_path
-{
-    return [PanelController ensureCanGoToNativeFolderSync:_path];
-}
-
 - (void)changeDataOptions:(const function<void(nc::panel::data::Model& _data)>&)_workload
 {
     assert(dispatch_is_main_queue());    
@@ -795,137 +785,92 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     });
 }
 
-- (void) GoToVFSPromise:(const VFSInstanceManager::Promise&)_promise onPath:(const string&)_directory
+- (bool) probeDirectoryAccessForRequest:(DirectoryChangeRequest&)_request
 {
-    m_DirectoryLoadingQ.Run([=](){
-        VFSHostPtr host;
-        try {
-            host = m_VFSInstanceManager->RetrieveVFS(_promise,
-                                                     [&]{ return m_DirectoryLoadingQ.IsStopped(); }
-                                                     );
-        } catch (VFSErrorException &e) {
-            return; // TODO: something
+    const auto &directory = _request.RequestedDirectory;
+    auto &vfs = *_request.VFS;
+    auto &access_provider = *m_DirectoryAccessProvider;
+    const auto has_access = access_provider.HasAccess(self, directory, vfs);
+    if( has_access == true ) {
+        return true;
+    }
+    else {
+        if( _request.InitiatedByUser == true )
+            return access_provider.RequestAccessSync(self, directory, vfs);
+        else
+            return false;
+    }    
+}
+
+- (void) doGoToDirWithContext:(shared_ptr<DirectoryChangeRequest>)_request
+{
+    try {
+        if( [self probeDirectoryAccessForRequest:*_request] == false ) {
+            _request->LoadingResultCode = VFSError::FromErrno(EPERM);
+            return;
         }
         
+        auto directory = _request->RequestedDirectory;
+        auto &vfs = *_request->VFS;        
+        const auto canceller = VFSCancelChecker( [&]{ return m_DirectoryLoadingQ.IsStopped(); } );
+        shared_ptr<VFSListing> listing;
+        const auto fetch_result = vfs.FetchDirectoryListing(directory.c_str(),
+                                                            listing,
+                                                            m_VFSFetchingFlags,
+                                                            canceller); 
+        _request->LoadingResultCode = fetch_result;
+        if( _request->LoadingResultCallback )
+            _request->LoadingResultCallback( fetch_result );
+        
+        if( fetch_result < 0 )
+            return;
+        
         // TODO: need an ability to show errors at least
-        dispatch_to_main_queue([=]{
-            [self GoToDir:_directory
-                      vfs:host
-             select_entry:""
-        loadPreviousState:true
-                    async:true];
+        
+        [self CancelBackgroundOperations]; // clean running operations if any
+        dispatch_or_run_in_main_queue([=]{
+            [m_View savePathState];
+            m_Data.Load(listing, data::Model::PanelType::Directory);
+            for( auto &i: _request->RequestSelectedEntries )
+                m_Data.CustomFlagsSelectSorted( m_Data.SortedIndexForName(i.c_str()), true );
+            [m_View dataUpdated];
+            [m_View panelChangedWithFocusedFilename:_request->RequestFocusedEntry
+                                  loadPreviousState:_request->LoadPreviousViewState];
+            [self onPathChanged];
         });
-    });
+    }
+    catch(exception &e) {
+        ShowExceptionAlert(e);
+    }
+    catch(...){
+        ShowExceptionAlert();
+    }    
 }
 
-- (void) goToPersistentLocation:(const PersistentLocation &)_location
+- (int) GoToDirWithContext:(shared_ptr<DirectoryChangeRequest>)_request
 {
-    m_DirectoryLoadingQ.Run([=]{
-        VFSHostPtr host;
-        const auto rc = PanelDataPersisency::CreateVFSFromLocation(_location,
-                                                                   host,
-                                                                   *m_VFSInstanceManager);
-        if( rc == VFSError::Ok ) {
-            string path = _location.path;
-            dispatch_to_main_queue([=]{
-                auto context = make_shared<DirectoryChangeRequest>();
-                context->VFS = host;
-                context->PerformAsynchronous = true;
-                context->RequestedDirectory = path;
-                [self GoToDirWithContext:context];
-            });
-        }
-    });
-}
-
-- (int) GoToDir:(const string&)_dir
-            vfs:(VFSHostPtr)_vfs
-   select_entry:(const string&)_filename
-          async:(bool)_asynchronous
-{
-    return [self GoToDir:_dir
-                     vfs:_vfs
-            select_entry:_filename
-       loadPreviousState:false
-                   async:_asynchronous];
-}
-
-- (int) GoToDir:(const string&)_dir
-            vfs:(VFSHostPtr)_vfs
-   select_entry:(const string&)_filename
-loadPreviousState:(bool)_load_state
-          async:(bool)_asynchronous
-{
-    auto c = make_shared<DirectoryChangeRequest>();
-    c->RequestedDirectory = _dir;
-    c->VFS = _vfs;
-    c->RequestFocusedEntry = _filename;
-    c->LoadPreviousViewState = _load_state;
-    c->PerformAsynchronous = _asynchronous;
-    
-    return [self GoToDirWithContext:c];
-}
-
-- (int) GoToDirWithContext:(shared_ptr<DirectoryChangeRequest>)_context
-{
-    auto &c = _context;
-    if(c->RequestedDirectory.empty() ||
-       c->RequestedDirectory.front() != '/' ||
-       !c->VFS)
+    if( _request == nullptr )
         return VFSError::InvalidCall;
     
-    if(c->PerformAsynchronous == false) {
+    if( _request->RequestedDirectory.empty() ||
+        _request->RequestedDirectory.front() != '/' ||
+        _request->VFS == nullptr )
+        return VFSError::InvalidCall;
+    
+    if( _request->PerformAsynchronous == false ) {
         assert(dispatch_is_main_queue());
         m_DirectoryLoadingQ.Stop();
         m_DirectoryLoadingQ.Wait();
+
+        [self doGoToDirWithContext:_request];
+        return _request->LoadingResultCode;        
     }
     else {
-        if(!m_DirectoryLoadingQ.Empty())
+        if( !m_DirectoryLoadingQ.Empty() )
             return 0;
-    }
-    
-    auto workblock = [=]() {
-        try {
-            shared_ptr<VFSListing> listing;
-            c->LoadingResultCode = c->VFS->FetchDirectoryListing(
-                c->RequestedDirectory.c_str(),
-                listing,
-                m_VFSFetchingFlags,
-                [&] { return m_DirectoryLoadingQ.IsStopped(); });
-            if( c->LoadingResultCallback )
-                c->LoadingResultCallback( c->LoadingResultCode );
-            
-            if( c->LoadingResultCode < 0 )
-                return;
-            // TODO: need an ability to show errors at least
-            
-            [self CancelBackgroundOperations]; // clean running operations if any
-            dispatch_or_run_in_main_queue([=]{
-                [m_View savePathState];
-                m_Data.Load(listing, data::Model::PanelType::Directory);
-                for( auto &i: c->RequestSelectedEntries )
-                    m_Data.CustomFlagsSelectSorted( m_Data.SortedIndexForName(i.c_str()), true );
-                [m_View dataUpdated];
-                [m_View panelChangedWithFocusedFilename:c->RequestFocusedEntry
-                                      loadPreviousState:c->LoadPreviousViewState];
-                [self onPathChanged];
-            });
-        }
-        catch(exception &e) {
-            ShowExceptionAlert(e);
-        }
-        catch(...){
-            ShowExceptionAlert();
-        }
-    };
-    
-    if( c->PerformAsynchronous == false ) {
-        workblock();
-        return c->LoadingResultCode;
-    }
-    else {
-        m_DirectoryLoadingQ.Run(workblock);
-        return 0;
+        
+        m_DirectoryLoadingQ.Run( [=]{ [self doGoToDirWithContext:_request]; });
+        return 0;        
     }
 }
 

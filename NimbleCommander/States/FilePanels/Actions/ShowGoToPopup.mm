@@ -19,6 +19,7 @@
 #include "../PanelData.h"
 #include "../PanelView.h"
 #include "../Helpers/LocationFormatter.h"
+#include "Helpers.h"
 
 using namespace nc::panel;
 
@@ -79,14 +80,15 @@ static const auto g_MaxTextWidth = 600;
 {
     if( auto favorite_ptr =
        any_cast<shared_ptr<const FavoriteLocationsStorage::Location>>(&_context) )
-        [m_Panel goToPersistentLocation:(*favorite_ptr)->hosts_stack];
+        [self handlePersistentLocation:(*favorite_ptr)->hosts_stack];
     else if( auto favorite = any_cast<FavoriteLocationsStorage::Location>(&_context) )
-        [m_Panel goToPersistentLocation:favorite->hosts_stack];     
+        [self handlePersistentLocation:favorite->hosts_stack];     
     else if( auto plain_path = any_cast<string>(&_context) ) {
         auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = *plain_path;
         request->VFS = VFSNativeHost::SharedHost();
         request->PerformAsynchronous = true;
+        request->InitiatedByUser = true;
         [m_Panel GoToDirWithContext:request];
     }
     else if( auto connection = any_cast<NetworkConnectionsManager::Connection>(&_context) )
@@ -96,14 +98,50 @@ static const auto g_MaxTextWidth = 600;
         request->RequestedDirectory = vfs_path->Path();
         request->VFS = vfs_path->Host();
         request->PerformAsynchronous = true;
+        request->InitiatedByUser = true;
         [m_Panel GoToDirWithContext:request];
     }
     else if( auto promise = any_cast<pair<nc::core::VFSInstancePromise, string>>(&_context) )
-        [m_Panel GoToVFSPromise:promise->first onPath:promise->second];
+        [self handleVFSPromiseInstance:promise->first path:promise->second];
     else if( auto listing_promise = any_cast<nc::panel::ListingPromise>(&_context) )
         nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
     else
         std::cerr << "GoToPopupListActionMediator performGoTo: unknown context type." << std::endl;
+}
+
+- (void) handlePersistentLocation:(const PersistentLocation&)_location
+{
+    using nc::panel::actions::AsyncPersistentLocationRestorer;
+    auto restorer = AsyncPersistentLocationRestorer(m_Panel, m_Panel.vfsInstanceManager);
+    auto handler = [path = _location.path, panel = m_Panel](VFSHostPtr _host) {
+        dispatch_to_main_queue([=]{            
+            auto request = make_shared<DirectoryChangeRequest>();
+            request->RequestedDirectory = path;
+            request->VFS = _host;
+            request->PerformAsynchronous = true;
+            request->InitiatedByUser = true;
+            [panel GoToDirWithContext:request];
+        });          
+    };
+    restorer.Restore(_location, std::move(handler), nullptr);
+}
+
+- (void) handleVFSPromiseInstance:(const nc::core::VFSInstancePromise&)_promise
+                             path:(const std::string&)_path
+{
+    using nc::panel::actions::AsyncVFSPromiseRestorer;
+    auto restorer = AsyncVFSPromiseRestorer(m_Panel, m_Panel.vfsInstanceManager);
+    auto handler = [path = _path, panel = m_Panel](VFSHostPtr _host) {
+        dispatch_to_main_queue([=]{            
+            auto request = make_shared<DirectoryChangeRequest>();
+            request->RequestedDirectory = path;
+            request->VFS = _host;
+            request->PerformAsynchronous = true;
+            request->InitiatedByUser = true;
+            [panel GoToDirWithContext:request];
+        });          
+    };
+    restorer.Restore(_promise, std::move(handler), nullptr);
 }
 
 @end

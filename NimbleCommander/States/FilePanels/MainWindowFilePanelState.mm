@@ -319,8 +319,6 @@ static NSString *TitleForData( const data::Model* _data );
     
     const auto try_to_load = [&](const vector<string> &_paths_to_try, PanelController *_panel) {        
         for( auto &p: _paths_to_try ) {
-            if( am.Sandboxed() && !SandboxManager::Instance().CanAccessFolder(p) )
-                continue;
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = p;
             request->VFS = VFSNativeHost::SharedHost();

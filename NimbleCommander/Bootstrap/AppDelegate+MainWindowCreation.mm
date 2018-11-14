@@ -27,15 +27,30 @@
 #include "Config.h"
 #include "ActivationManager.h"
 #include <Habanero/CommonPaths.h>
+#include <NimbleCommander/Core/SandboxManager.h>
 
 static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLastWindowState";
 
 namespace  {
-    enum class CreationContext {
-        Default,
-        ManualRestoration,
-        SystemRestoration
-    };
+
+enum class CreationContext {
+    Default,
+    ManualRestoration,
+    SystemRestoration
+};
+    
+
+class DirectoryAccessProviderImpl : public nc::panel::DirectoryAccessProvider
+{
+public:
+    bool HasAccess(PanelController *_panel,
+                   const std::string &_directory_path,
+                   VFSHost &_host) override;
+    bool RequestAccessSync(PanelController *_panel,
+                           const std::string &_directory_path,
+                           VFSHost &_host) override;
+};
+
 }
 
 static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *_state);
@@ -87,6 +102,12 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
                                                         make_unique<Que>(concurrency_per_repo));
 }
 
+- (nc::panel::DirectoryAccessProvider&)directoryAccessProvider
+{
+    static auto provider = DirectoryAccessProviderImpl{};
+    return provider;
+}
+
 - (PanelView*) allocatePanelView
 {    
     const auto header = [[NCPanelViewHeader alloc]
@@ -107,7 +128,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 {
     auto panel = [[PanelController alloc] initWithView:[self allocatePanelView]
                                                layouts:self.panelLayouts 
-                                    vfsInstanceManager:self.vfsInstanceManager];    
+                                    vfsInstanceManager:self.vfsInstanceManager
+                               directoryAccessProvider:self.directoryAccessProvider];    
     auto actions_dispatcher = [[NCPanelControllerActionsDispatcher alloc]
                                initWithController:panel
                                andActionsMap:self.panelActionsMap];
@@ -221,5 +243,34 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     const auto source_state = last.filePanelsState;
     [_state.leftPanelController copyOptionsFromController:source_state.leftPanelController];
     [_state.rightPanelController copyOptionsFromController:source_state.rightPanelController];
+    return true;
+}
+
+bool DirectoryAccessProviderImpl::HasAccess(PanelController *_panel,
+                                            const std::string &_directory_path,
+                                            VFSHost &_host)
+{
+    // at this moment we (thankfully) care only about sanboxed versions 
+    if constexpr ( ActivationManager::Sandboxed() == false )
+        return true;
+    
+    if( _host.IsNativeFS() )
+        return SandboxManager::Instance().CanAccessFolder(_directory_path);            
+    else
+        return true;
+}
+    
+bool DirectoryAccessProviderImpl::RequestAccessSync(PanelController *_panel,
+                                                    const std::string &_directory_path,
+                                                    VFSHost &_host)
+{
+    if constexpr ( ActivationManager::Sandboxed() == false )
+        return true;        
+    
+    if( _host.IsNativeFS() )
+        return SandboxManager::EnsurePathAccess(_directory_path); // <-- the code smell see I here!        
+    else
+        return true;
+    
     return true;
 }

@@ -109,6 +109,14 @@
 		CF20DF4E1FC694B80074ABB8 /* SyncPanels.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF20DF4A1FC693440074ABB8 /* SyncPanels.mm */; };
 		CF23294D1BDCD0C70092BCAD /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFCD3B6E18AA5CEE00028B41 /* FileWindow_Tests.mm */; };
 		CF2329531BDCD0F10092BCAD /* PanelData_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF89533118795030001C0391 /* PanelData_Tests.mm */; };
+		CF233AD1219C110A00693E1A /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
+		CF233AD2219C110D00693E1A /* libVFSIcon.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; };
+		CF233AD3219C112400693E1A /* libConfig.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF233AD4219C112C00693E1A /* libVFSIcon.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF233AD7219C34F900693E1A /* Helpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF233AD6219C34F900693E1A /* Helpers.mm */; };
+		CF233AD8219C34F900693E1A /* Helpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF233AD6219C34F900693E1A /* Helpers.mm */; };
+		CF233AD9219C34F900693E1A /* Helpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF233AD6219C34F900693E1A /* Helpers.mm */; };
+		CF233ADA219C34F900693E1A /* Helpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF233AD6219C34F900693E1A /* Helpers.mm */; };
 		CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */; };
 		CF2437701DEDF9B300245C14 /* PanelViewFooter.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24376F1DEDF9B300245C14 /* PanelViewFooter.mm */; };
 		CF2740841E57F5DD000D4365 /* Alert.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2740831E57F5DD000D4365 /* Alert.mm */; };
@@ -1512,6 +1520,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CF233AD4219C112C00693E1A /* libVFSIcon.dylib in CopyFiles */,
+				CF233AD3219C112400693E1A /* libConfig.dylib in CopyFiles */,
 				CFBA63B81FC1A5AD00077682 /* libTerm.dylib in CopyFiles */,
 				CF39A0E91F70C5CA005A4583 /* libHabanero.dylib in CopyFiles */,
 				CF39A0EA1F70C5CA005A4583 /* libUtility.dylib in CopyFiles */,
@@ -1636,6 +1646,8 @@
 		CF20DF341FC66E5F0074ABB8 /* ShowTerminal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ShowTerminal.mm; path = NimbleCommander/States/FilePanels/Actions/ShowTerminal.mm; sourceTree = SOURCE_ROOT; };
 		CF20DF491FC693440074ABB8 /* SyncPanels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SyncPanels.h; path = NimbleCommander/States/FilePanels/Actions/SyncPanels.h; sourceTree = SOURCE_ROOT; };
 		CF20DF4A1FC693440074ABB8 /* SyncPanels.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SyncPanels.mm; path = NimbleCommander/States/FilePanels/Actions/SyncPanels.mm; sourceTree = SOURCE_ROOT; };
+		CF233AD5219C34F900693E1A /* Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Helpers.h; path = NimbleCommander/States/FilePanels/Actions/Helpers.h; sourceTree = "<group>"; };
+		CF233AD6219C34F900693E1A /* Helpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Helpers.mm; path = NimbleCommander/States/FilePanels/Actions/Helpers.mm; sourceTree = "<group>"; };
 		CF2437651DEC268A00245C14 /* PanelBriefViewItemCarrier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelBriefViewItemCarrier.h; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewItemCarrier.h; sourceTree = SOURCE_ROOT; };
 		CF2437661DEC268A00245C14 /* PanelBriefViewItemCarrier.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewItemCarrier.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewItemCarrier.mm; sourceTree = SOURCE_ROOT; };
 		CF24376E1DEDF9B300245C14 /* PanelViewFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFooter.h; path = NimbleCommander/States/FilePanels/PanelViewFooter.h; sourceTree = SOURCE_ROOT; };
@@ -2240,6 +2252,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF233AD2219C110D00693E1A /* libVFSIcon.dylib in Frameworks */,
+				CF233AD1219C110A00693E1A /* libConfig.dylib in Frameworks */,
 				CFBA63B71FC1A5A200077682 /* libTerm.dylib in Frameworks */,
 				CFF53B641EDD1A6100F567C4 /* Operations.framework in Frameworks */,
 				CF1FBF1A1E8F57B700D3569C /* NetFS.framework in Frameworks */,
@@ -2764,6 +2778,8 @@
 				CF0139B41E99F7C200E44F2D /* FindFiles.mm */,
 				CFD8CDB01E8CCD0A00E4DC53 /* GoToFolder.h */,
 				CFD8CDB11E8CCD0A00E4DC53 /* GoToFolder.mm */,
+				CF233AD5219C34F900693E1A /* Helpers.h */,
+				CF233AD6219C34F900693E1A /* Helpers.mm */,
 				CFD8CDC21E8CDBFA00E4DC53 /* InsertFromPasteboard.h */,
 				CFD8CDC31E8CDBFA00E4DC53 /* InsertFromPasteboard.mm */,
 				CFC4F99D1F0F40430000B3EE /* Link.h */,
@@ -4256,6 +4272,7 @@
 				CF5E9A681FCE738B005608F5 /* QuickLookVFSBridge.mm in Sources */,
 				CFD726391E42E0D900603077 /* LaunchServices.mm in Sources */,
 				CF6D9C68196678010077B146 /* DetailedVolumeInformationSheetController.mm in Sources */,
+				CF233AD9219C34F900693E1A /* Helpers.mm in Sources */,
 				CFD726E81E42E2D200603077 /* PanelListViewGeometry.mm in Sources */,
 				CF5E9A4A1FCBC66B005608F5 /* ViewFile.mm in Sources */,
 				CF6D9C6B196678010077B146 /* ProcessSheetController.mm in Sources */,
@@ -4353,6 +4370,7 @@
 				CFD726071E42E06F00603077 /* AppDelegateCPP.mm in Sources */,
 				CFD726961E42E22C00603077 /* PanelDataItemVolatileData.cpp in Sources */,
 				CF4E56B91D5068F200452912 /* PreferencesWindowPanelsTab.mm in Sources */,
+				CF233AD7219C34F900693E1A /* Helpers.mm in Sources */,
 				CF5E9A531FCBF57A005608F5 /* ShowQuickLook.mm in Sources */,
 				CFFA951E1F45A3580035E606 /* Link.mm in Sources */,
 				CF4D98A720284C1500ECE06D /* PanelControllerActions.mm in Sources */,
@@ -4588,6 +4606,7 @@
 				CFDAC2C41DFD0DE40039A104 /* SharingService.mm in Sources */,
 				CF27F9391E31B366009A3ACF /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CF4E56401D5064FE00452912 /* PreferencesWindowGeneralTab.mm in Sources */,
+				CF233AD8219C34F900693E1A /* Helpers.mm in Sources */,
 				CF4D98CD202C206000ECE06D /* StateActions.mm in Sources */,
 				CF5E9A561FCBF5BF005608F5 /* ShowQuickLook.mm in Sources */,
 				CF4D98AA2028500400ECE06D /* PanelControllerActions.mm in Sources */,
@@ -4770,6 +4789,7 @@
 				CFF6F2451A13567C00011177 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CF818B621EA0610E00BC28E6 /* FindFiles.mm in Sources */,
 				CFD726C51E42E29A00603077 /* Layout.mm in Sources */,
+				CF233ADA219C34F900693E1A /* Helpers.mm in Sources */,
 				CFD7266D1E42E1F000603077 /* MainWindowFilePanelState+OverlappedTerminalSupport.mm in Sources */,
 				CF614AEA1F9D92A20005F2DB /* SettingsAdaptor.mm in Sources */,
 				CF0939571D1BC4DF00D67AC6 /* ExternalToolParameterValueSheetController.mm in Sources */,
@@ -5497,6 +5517,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/Files-Lite.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5506,8 +5527,7 @@
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Free-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE = "2bd0fb03-b8f2-4d67-baaa-60aed9dd8f5d";
-				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files-Lite Development";
+				PROVISIONING_PROFILE_SPECIFIER = "NC MAS Free Development";
 			};
 			name = Debug;
 		};
@@ -5515,15 +5535,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/Files-Lite.entitlements";
-				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Free";
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_FREE__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-MAS-Free-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Lite";
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE = "2bd0fb03-b8f2-4d67-baaa-60aed9dd8f5d";
-				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files-Lite Development";
+				PROVISIONING_PROFILE_SPECIFIER = "NC MAS Free Distribution";
 			};
 			name = Release;
 		};

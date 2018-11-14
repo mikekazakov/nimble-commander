@@ -35,6 +35,7 @@ static void RevealItem(const VFSListingItem &_item, PanelController *_panel)
         request->RequestFocusedEntry = _item.Filename();
     }
     request->PerformAsynchronous = true;
+    request->InitiatedByUser = true;
     [_panel GoToDirWithContext:request];
 }
 

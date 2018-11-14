@@ -68,6 +68,7 @@ void FindFiles::Perform( PanelController *_target, id _sender ) const
             request->VFS = item->host;
             request->RequestFocusedEntry = item->filename; 
             request->PerformAsynchronous = true;
+            request->InitiatedByUser = true;
             [_target GoToDirWithContext:request];
         }
     };

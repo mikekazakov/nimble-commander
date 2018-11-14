@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSListingInput.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
 #include "../PanelController.h"
@@ -61,14 +61,17 @@ void FindFiles::Perform( PanelController *_target, id _sender ) const
         }
     };
     
-    [sheet beginSheetForWindow:_target.window
-             completionHandler:^(NSModalResponse returnCode) {
-                 if(auto item = sheet.selectedItem)
-                     [_target GoToDir:item->dir_path
-                                  vfs:item->host
-                         select_entry:item->filename
-                                async:true];
-    }];
+    auto handler = ^(NSModalResponse returnCode) {
+        if( auto item = sheet.selectedItem ) {
+            auto request = std::make_shared<DirectoryChangeRequest>();
+            request->RequestedDirectory = item->dir_path;
+            request->VFS = item->host;
+            request->RequestFocusedEntry = item->filename; 
+            request->PerformAsynchronous = true;
+            [_target GoToDirWithContext:request];
+        }
+    };
+    [sheet beginSheetForWindow:_target.window completionHandler:handler];
 }
 
 };

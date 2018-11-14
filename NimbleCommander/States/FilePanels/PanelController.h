@@ -63,9 +63,8 @@ struct DelayedFocusing
     function<void()> done;
 };
 
-class DirectoryChangeRequest
+struct DirectoryChangeRequest
 {
-public:
     /* required */
     string              RequestedDirectory      = "";
     shared_ptr<VFSHost> VFS                     = nullptr;

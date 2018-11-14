@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RevealInOppositePanel.h"
 #include "../MainWindowFilePanelState.h"
 #include "../MainWindowFilePanelState+TabsSupport.h"
@@ -22,6 +22,21 @@ bool RevealInOppositePanel::Predicate( MainWindowFilePanelState *_target ) const
     
     return true;
 }
+    
+static void RevealItem(const VFSListingItem &_item, PanelController *_panel)
+{
+    auto request = std::make_shared<DirectoryChangeRequest>();
+    request->VFS = _item.Host();
+    if( _item.IsDir() ) {
+        request->RequestedDirectory = _item.Path();
+    }
+    else {
+        request->RequestedDirectory = _item.Directory();
+        request->RequestFocusedEntry = _item.Filename();
+    }
+    request->PerformAsynchronous = true;
+    [_panel GoToDirWithContext:request];
+}
 
 void RevealInOppositePanel::Perform( MainWindowFilePanelState *_target, id _sender ) const
 {
@@ -33,17 +48,8 @@ void RevealInOppositePanel::Perform( MainWindowFilePanelState *_target, id _send
     const auto item = current.view.item;
     if( !item )
         return;
-    
-    if( item.IsDir() )
-        [opposite GoToDir:item.Path()
-                      vfs:item.Host()
-             select_entry:""
-                    async:true];
-    else
-        [opposite GoToDir:item.Directory()
-                      vfs:item.Host()
-             select_entry:item.Filename()
-                    async:true];
+
+    RevealItem(item, opposite);
 }
 
 bool RevealInOppositePanelTab::Predicate( MainWindowFilePanelState *_target ) const
@@ -88,17 +94,8 @@ void RevealInOppositePanelTab::Perform( MainWindowFilePanelState *_target, id _s
     const auto opposite = SpawnOppositeTab(_target, current);
     if( !opposite )
         return;
-    
-    if( item.IsDir() )
-        [opposite GoToDir:item.Path()
-                      vfs:item.Host()
-             select_entry:""
-                    async:true];
-    else
-        [opposite GoToDir:item.Directory()
-                      vfs:item.Host()
-             select_entry:item.Filename()
-                    async:true];
+
+    RevealItem(item, opposite);
 }
 
 }

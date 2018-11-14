@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -7,7 +7,7 @@
 
 namespace nc::panel::actions {
 
-// external dependency - SanboxManager and ActivationManager
+// external dependency - SanboxManager
 
 struct GoToFolder final : PanelAction
 {
@@ -72,12 +72,13 @@ struct GoToEnclosingFolder final : PanelAction
 
 struct GoIntoFolder final : PanelAction
 {
-    GoIntoFolder( bool _force_checking_for_archive = false );
+    GoIntoFolder(bool _support_archives = false, 
+                 bool _force_checking_for_archive = false );
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 private:
+    const bool m_SupportArchives;    
     const bool m_ForceArchivesChecking;
 };
-
 
 };

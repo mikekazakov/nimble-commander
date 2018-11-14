@@ -82,12 +82,22 @@ static const auto g_MaxTextWidth = 600;
         [m_Panel goToPersistentLocation:(*favorite_ptr)->hosts_stack];
     else if( auto favorite = any_cast<FavoriteLocationsStorage::Location>(&_context) )
         [m_Panel goToPersistentLocation:favorite->hosts_stack];     
-    else if( auto plain_path = any_cast<string>(&_context) )
-        [m_Panel GoToDir:*plain_path vfs:VFSNativeHost::SharedHost() select_entry:"" async:true];
+    else if( auto plain_path = any_cast<string>(&_context) ) {
+        auto request = std::make_shared<DirectoryChangeRequest>();
+        request->RequestedDirectory = *plain_path;
+        request->VFS = VFSNativeHost::SharedHost();
+        request->PerformAsynchronous = true;
+        [m_Panel GoToDirWithContext:request];
+    }
     else if( auto connection = any_cast<NetworkConnectionsManager::Connection>(&_context) )
         nc::panel::actions::OpenExistingNetworkConnection(*m_NetMgr).Perform(m_Panel, sender);
-    else if( auto vfs_path = any_cast<VFSPath>(&_context) )
-        [m_Panel GoToDir:vfs_path->Path() vfs:vfs_path->Host() select_entry:"" async:true];
+    else if( auto vfs_path = any_cast<VFSPath>(&_context) ) {
+        auto request = std::make_shared<DirectoryChangeRequest>();
+        request->RequestedDirectory = vfs_path->Path();
+        request->VFS = vfs_path->Host();
+        request->PerformAsynchronous = true;
+        [m_Panel GoToDirWithContext:request];
+    }
     else if( auto promise = any_cast<pair<nc::core::VFSInstancePromise, string>>(&_context) )
         [m_Panel GoToVFSPromise:promise->first onPath:promise->second];
     else if( auto listing_promise = any_cast<nc::panel::ListingPromise>(&_context) )

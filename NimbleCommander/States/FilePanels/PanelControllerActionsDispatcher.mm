@@ -1,3 +1,4 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActionsDispatcher.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/Alert.h>
@@ -110,7 +111,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
     if( hk_file_open.IsKeyDown(unicode, modif) ) {
         if( _handle ) {
             // we keep it here to avoid blinking on menu item
-            actions::Enter{}.Perform(m_PC, m_PC); // ????????????????????????????????????????????????????????????????????
+            [self OnOpen:nil];
         }
         return view::BiddingPriority::Default;
     }

@@ -7,6 +7,7 @@
 
 @protocol PanelViewDelegate;
 @protocol NCPanelViewKeystrokeSink;
+@class NCPanelControllerActionsDispatcher;
 @class PanelView;
 @class NCPanelViewHeader;
 @class NCPanelViewFooter;
@@ -34,6 +35,7 @@ namespace nc::panel {
 @property (nonatomic, readonly) int headerBarHeight;
 @property (nonatomic, readonly) NSProgressIndicator *busyIndicator;
 @property (nonatomic, readonly) NCPanelViewHeader *headerView;
+@property (nonatomic, weak) NCPanelControllerActionsDispatcher* actionsDispatcher;
 
 - (id)initWithFrame:(NSRect)frame
      iconRepository:(std::unique_ptr<nc::vfsicon::IconRepository>)_icon_repository

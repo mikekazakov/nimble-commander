@@ -11,12 +11,12 @@
 #include "PanelViewHeader.h"
 #include "PanelViewFooter.h"
 #include "PanelViewDelegate.h"
-#include "Actions/Enter.h"
 #include "DragReceiver.h"
 #include "DragSender.h"
 #include "PanelViewFieldEditor.h"
 #include "PanelViewKeystrokeSink.h"
 #include "PanelViewDummyPresentation.h"
+#include "PanelControllerActionsDispatcher.h"
 
 using namespace nc::panel;
 using nc::vfsicon::IconRepository;
@@ -974,8 +974,10 @@ struct StateStorage
 
 - (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)_event
 {
-    if( _sorted_index >= 0 && _sorted_index == m_CursorPos )
-        actions::Enter{}.Perform(self.controller, self);
+    if( _sorted_index >= 0 && _sorted_index == m_CursorPos ) {
+        if( auto action_dispatcher = self.actionsDispatcher )
+           [action_dispatcher OnOpen:self];      
+    }
 }
 
 - (void)panelItem:(int)_sorted_index mouseDragged:(NSEvent*)_event

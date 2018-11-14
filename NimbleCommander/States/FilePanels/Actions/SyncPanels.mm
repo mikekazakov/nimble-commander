@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SyncPanels.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
@@ -24,20 +24,21 @@ void SyncPanels::Perform( MainWindowFilePanelState *_target, id _sender ) const
     if( _target.splitView.anyCollapsedOrOverlayed )
         return;
     
-    const auto cur = _target.activePanelController;
-    const auto opp = _target.oppositePanelController;
+    const auto current = _target.activePanelController;
+    const auto opposite = _target.oppositePanelController;
     
-    if( !cur || !opp )
+    if( !current || !opposite )
         return;
     
-    if( cur.isUniform ) {
-        [opp GoToDir:cur.currentDirectoryPath
-                 vfs:cur.vfs
-        select_entry:""
-               async:true];
+    if( current.isUniform ) {
+        auto request = std::make_shared<DirectoryChangeRequest>();
+        request->RequestedDirectory = current.currentDirectoryPath;
+        request->VFS = current.vfs;
+        request->PerformAsynchronous = true;
+        [opposite GoToDirWithContext:request];
     }
     else {
-        [opp loadListing:cur.data.ListingPtr()];
+        [opposite loadListing:current.data.ListingPtr()];
     }
 }
 

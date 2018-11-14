@@ -114,6 +114,7 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     [panel setNextAttachedResponder:actions_dispatcher];
     [panel.view addKeystrokeSink:actions_dispatcher
                 withBasePriority:nc::panel::view::BiddingPriority::Low];
+    panel.view.actionsDispatcher = actions_dispatcher;
     
     return panel;
 }

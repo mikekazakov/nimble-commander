@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GoToFolder.h"
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
@@ -12,7 +12,6 @@
 #include "NavigateHistory.h"
 #include "../PanelView.h"
 #include "../PanelAux.h"
-#include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 
 namespace nc::panel::actions {
@@ -165,7 +164,8 @@ void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
     }
 }
 
-GoIntoFolder::GoIntoFolder( bool _force_checking_for_archive ) :
+GoIntoFolder::GoIntoFolder(bool _support_archives, bool _force_checking_for_archive ) :
+    m_SupportArchives(_support_archives),
     m_ForceArchivesChecking(_force_checking_for_archive)
 {
 }
@@ -190,7 +190,7 @@ bool GoIntoFolder::Predicate( PanelController *_target ) const
     if( item.IsDir() )
         return true;
     
-    if( !ActivationManager::Instance().HasArchivesBrowsing() )
+    if( m_SupportArchives == false )
         return false;
     
     if( m_ForceArchivesChecking )
@@ -212,14 +212,15 @@ void GoIntoFolder::Perform( PanelController *_target, id _sender ) const
         if( SandboxAccessDenied(*item.Host(), item.Path()) )
             return;
         
-        [_target GoToDir:item.Path()
-                     vfs:item.Host()
-            select_entry:""
-                   async:true];
+        auto request = std::make_shared<DirectoryChangeRequest>();
+        request->RequestedDirectory = item.Path();
+        request->VFS = item.Host();
+        request->PerformAsynchronous = true;
+        [_target GoToDirWithContext:request];        
         return;
     }
     
-    if( ActivationManager::Instance().HasArchivesBrowsing() ) {
+    if( m_SupportArchives ) {
         const auto eligible_to_check = m_ForceArchivesChecking || IsItemInArchivesWhitelist(item);
         if( eligible_to_check ) {
             
@@ -235,13 +236,15 @@ void GoIntoFolder::Perform( PanelController *_target, id _sender ) const
                                                                  _cancelled
                                                                  );
                 
-                if( arhost )
-                    dispatch_to_main_queue([=]{
-                        [_target GoToDir:"/"
-                                     vfs:arhost
-                            select_entry:""
-                                   async:true];
+                if( arhost ) {
+                    auto request = std::make_shared<DirectoryChangeRequest>();
+                    request->RequestedDirectory = "/";
+                    request->VFS = arhost;
+                    request->PerformAsynchronous = true;
+                    dispatch_to_main_queue([request, _target]{
+                        [_target GoToDirWithContext:request];
                     });
+                }
             };
             
             [_target commitCancelableLoadingTask:move(task)];

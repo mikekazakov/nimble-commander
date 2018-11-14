@@ -154,20 +154,6 @@ struct DirectoryChangeRequest
 
 - (int) GoToDirWithContext:(shared_ptr<nc::panel::DirectoryChangeRequest>)_context;
 
-
-// will not load previous view state if any
-// don't use the following methds. use GoToDirWithContext instead.
-- (int) GoToDir:(const string&)_dir
-            vfs:(shared_ptr<VFSHost>)_vfs
-   select_entry:(const string&)_filename
-          async:(bool)_asynchronous;
-
-- (int) GoToDir:(const string&)_dir
-            vfs:(shared_ptr<VFSHost>)_vfs
-   select_entry:(const string&)_filename
-loadPreviousState:(bool)_load_state
-          async:(bool)_asynchronous;
-
 /**
  * Loads existing listing into the panel. Save to call from any thread.
  */
@@ -178,8 +164,6 @@ loadPreviousState:(bool)_load_state
 // some params later
 
 - (void) goToPersistentLocation:(const nc::panel::PersistentLocation &)_location;
-
-- (void) RecoverFromInvalidDirectory;
 
 /** 
  * Delayed entry selection change - panel controller will memorize such request.

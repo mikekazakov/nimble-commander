@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OpenNetworkConnection.h"
 #include "../PanelController.h"
 #include "../Views/FTPConnectionSheetController.h"
@@ -37,9 +37,11 @@ static bool GoToFTP(PanelController *_target,
                                               info.port
                                               );
         dispatch_to_main_queue([=]{
-//            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-
-            [_target GoToDir:info.path vfs:host select_entry:"" async:true];
+            auto request = std::make_shared<DirectoryChangeRequest>();
+            request->RequestedDirectory = info.path;
+            request->VFS = host;
+            request->PerformAsynchronous = true;
+            [_target GoToDirWithContext:request];
         });
         
         // save successful connection usage to history
@@ -73,8 +75,11 @@ static bool GoToSFTP(PanelController *_target,
                                                 info.port
                                                 );
         dispatch_to_main_queue([=]{
-//            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-            [_target GoToDir:host->HomeDir() vfs:host select_entry:"" async:true];
+            auto request = std::make_shared<DirectoryChangeRequest>();
+            request->RequestedDirectory = host->HomeDir();
+            request->VFS = host;
+            request->PerformAsynchronous = true;
+            [_target GoToDirWithContext:request];
         });
         
         // save successful connection to history
@@ -109,7 +114,11 @@ static bool GoToWebDAV(PanelController *_target,
                                                 info.port
                                                 );
         dispatch_to_main_queue([=]{
-            [_target GoToDir:"/" vfs:host select_entry:"" async:true];
+            auto request = std::make_shared<DirectoryChangeRequest>();
+            request->RequestedDirectory = "/";
+            request->VFS = host;
+            request->PerformAsynchronous = true;
+            [_target GoToDirWithContext:request];
         });
         
         // save successful connection to history
@@ -138,8 +147,11 @@ static void GoToDropboxStorage(PanelController *_target,
     try {
         auto host = make_shared<vfs::DropboxHost>(info.account, _passwd);
         dispatch_to_main_queue([=]{
-//            m_DirectoryLoadingQ.Wait(); // just to be sure that GoToDir will not exit immed due to non-empty loading que
-            [_target GoToDir:"/" vfs:host select_entry:"" async:true];
+            auto request = std::make_shared<DirectoryChangeRequest>();
+            request->RequestedDirectory = "/";
+            request->VFS = host;
+            request->PerformAsynchronous = true;
+            [_target GoToDirWithContext:request];
         });
         
         // save successful connection to history
@@ -167,10 +179,11 @@ static void GoToLANShare(PanelController *_target,
         (const string &_path, const string &_err) {
         if( PanelController *panel = weak_panel ) {
             if( !_path.empty() ) {
-                [panel GoToDir:_path
-                           vfs:VFSNativeHost::SharedHost()
-                  select_entry:""
-                         async:true];
+                auto request = std::make_shared<DirectoryChangeRequest>();
+                request->RequestedDirectory = _path;
+                request->VFS = VFSNativeHost::SharedHost();
+                request->PerformAsynchronous = true;
+                [panel GoToDirWithContext:request];
                 
                 // save successful connection to history
                 _net_mgr.ReportUsage(_connection);

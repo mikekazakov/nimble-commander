@@ -317,19 +317,22 @@ static NSString *TitleForData( const data::Model* _data );
     left_panel_desired_paths.emplace_back( CommonPaths::StartupCWD() );
     right_panel_desired_paths.emplace_back( CommonPaths::StartupCWD() );
     
-    for( auto &p: left_panel_desired_paths ) {
-        if( am.Sandboxed() && !SandboxManager::Instance().CanAccessFolder(p) )
-            continue;
-        if( [left_controller GoToDir:p vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok )
-            break;
-    }
-
-    for( auto &p: right_panel_desired_paths ) {
-        if( am.Sandboxed() && !SandboxManager::Instance().CanAccessFolder(p) )
-            continue;
-        if( [right_controller GoToDir:p vfs:VFSNativeHost::SharedHost() select_entry:"" async:false] == VFSError::Ok )
-            break;
-    }
+    const auto try_to_load = [&](const vector<string> &_paths_to_try, PanelController *_panel) {        
+        for( auto &p: _paths_to_try ) {
+            if( am.Sandboxed() && !SandboxManager::Instance().CanAccessFolder(p) )
+                continue;
+            auto request = std::make_shared<DirectoryChangeRequest>();
+            request->RequestedDirectory = p;
+            request->VFS = VFSNativeHost::SharedHost();
+            request->PerformAsynchronous = false;
+            const auto result = [_panel GoToDirWithContext:request];
+            if( result == VFSError::Ok )
+                break;
+        }
+    };
+    
+    try_to_load(left_panel_desired_paths, left_controller);
+    try_to_load(right_panel_desired_paths, right_controller);
 }
 
 - (void) CreateControls

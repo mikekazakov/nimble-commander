@@ -397,7 +397,7 @@ static void HeatUpConfigValues()
                 });
             else
                 dispatch_to_main_queue( [=]{
-                    [self RecoverFromInvalidDirectory];
+                    [self recoverFromInvalidDirectory];
                 });
         });
     }
@@ -944,7 +944,7 @@ loadPreviousState:(bool)_load_state
     });
 }
 
-- (void) RecoverFromInvalidDirectory
+- (void) recoverFromInvalidDirectory
 {
     path initial_path = self.currentDirectoryPath;
     auto initial_vfs = self.vfs;
@@ -959,10 +959,11 @@ loadPreviousState:(bool)_load_state
                     return false;
                 }) >= 0) {
                 dispatch_to_main_queue([=]{
-                    [self GoToDir:path.native()
-                              vfs:vfs
-                     select_entry:""
-                            async:true];
+                    auto request = std::make_shared<DirectoryChangeRequest>();
+                    request->RequestedDirectory = path.native();
+                    request->VFS = vfs;
+                    request->PerformAsynchronous = true;
+                    [self GoToDirWithContext:request];
                 });
                 break;
             }
@@ -975,12 +976,11 @@ loadPreviousState:(bool)_load_state
         }
         
         // we can't work on this vfs. currently for simplicity - just go home
-        dispatch_to_main_queue([=]{
-            [self GoToDir:CommonPaths::Home()
-                      vfs:VFSNativeHost::SharedHost()
-             select_entry:""
-                    async:true];
-        });
+        auto request = std::make_shared<DirectoryChangeRequest>();
+        request->RequestedDirectory = CommonPaths::Home();
+        request->VFS = VFSNativeHost::SharedHost();
+        request->PerformAsynchronous = true;
+        [self GoToDirWithContext:request];
     });
 }
 

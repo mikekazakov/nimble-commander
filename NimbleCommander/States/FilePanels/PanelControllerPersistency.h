@@ -2,10 +2,14 @@
 #pragma once
 
 #include <Config/RapidJSON_fwd.h>
+#include <Utility/NativeFSManager.h>
+#include <NimbleCommander/Core/VFSInstanceManager.h>
 
 @class PanelController;
 
 namespace nc::panel {
+    
+struct PersistentLocation;
     
 struct ControllerStateEncoding
 {
@@ -35,12 +39,22 @@ private:
 class ControllerStateJSONDecoder
 {
 public:
-    ControllerStateJSONDecoder(PanelController *_panel);
+    ControllerStateJSONDecoder(const utility::NativeFSManager &_fs_manager,
+                               nc::core::VFSInstanceManager &_vfs_instance_manager);
     
-    void Decode(const config::Value &_state);
+    void Decode(const config::Value &_state, PanelController *_panel);
     
 private:
-    PanelController *m_Panel;
+    void RecoverSavedContentAsync(PersistentLocation _location,
+                                  PanelController *_panel );    
+    void RecoverSavedContentSync(const PersistentLocation &_location,
+                                 PanelController *_panel );    
+    void RecoverSavedContent(const config::Value &_saved_state,
+                                    PanelController *_panel );    
+    bool AllowSyncRecovery(const PersistentLocation &_location) const;    
+    
+    const utility::NativeFSManager &m_NativeFSManager;    
+    nc::core::VFSInstanceManager &m_VFSInstanceManager;
 };
     
 }

@@ -135,6 +135,7 @@ struct DirectoryChangeRequest
 @property (nonatomic) int layoutIndex;
 @property (nonatomic, readonly) nc::panel::PanelViewLayoutsStorage& layoutStorage;
 @property (nonatomic, readonly) nc::core::VFSInstanceManager& vfsInstanceManager;
+@property (nonatomic, readonly) bool isDoingBackgroundLoading;
 
 - (instancetype)initWithView:(PanelView*)_panel_view
                      layouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts

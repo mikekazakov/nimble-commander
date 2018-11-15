@@ -166,10 +166,12 @@ static NSString *TitleForData( const data::Model* _data );
 - (instancetype) initBaseWithFrame:(NSRect)frameRect
                            andPool:(nc::ops::Pool&)_pool
                       panelFactory:(function<PanelController*()>)_panel_factory
+        controllerStateJSONDecoder:(ControllerStateJSONDecoder&)_controller_json_decoder
 {
     assert( _panel_factory );
     if( self = [super initWithFrame:frameRect] ) {
         m_PanelFactory = move(_panel_factory);
+        m_ControllerStateJSONDecoder = &_controller_json_decoder;
         m_ClosedPanelsHistory = nullptr;
         m_OperationsPool = _pool.shared_from_this();
         m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
@@ -195,10 +197,12 @@ static NSString *TitleForData( const data::Model* _data );
                        andPool:(nc::ops::Pool&)_pool
             loadDefaultContent:(bool)_load_content
                   panelFactory:(function<PanelController*()>)_panel_factory
+    controllerStateJSONDecoder:(ControllerStateJSONDecoder&)_controller_json_decoder
 {
     self = [self initBaseWithFrame:frameRect
                            andPool:_pool
-                      panelFactory:move(_panel_factory)];
+                      panelFactory:move(_panel_factory)
+        controllerStateJSONDecoder:_controller_json_decoder];
     if( self ) {
         if( _load_content ) {
             [self restoreDefaultPanelOptions];
@@ -216,11 +220,11 @@ static NSString *TitleForData( const data::Model* _data );
     
     const auto left_it = defaults.FindMember(g_InitialStateLeftDefaults);
     if( left_it != defaults.MemberEnd() )
-        ControllerStateJSONDecoder{m_LeftPanelControllers.front()}.Decode(left_it->value);
+        m_ControllerStateJSONDecoder->Decode(left_it->value, m_LeftPanelControllers.front());
     
     const auto right_it = defaults.FindMember(g_InitialStateRightDefaults);
     if( right_it != defaults.MemberEnd() )
-        ControllerStateJSONDecoder{m_RightPanelControllers.front()}.Decode(right_it->value);
+        m_ControllerStateJSONDecoder->Decode(right_it->value, m_RightPanelControllers.front());
 }
 
 - (void) setupNotificationsCallbacks
@@ -671,10 +675,10 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
                         auto pc = m_PanelFactory();
                         [self attachPanel:pc];
                         [self addNewControllerOnLeftPane:pc];
-                        ControllerStateJSONDecoder{pc}.Decode(*i);
+                        m_ControllerStateJSONDecoder->Decode(*i, pc);
                     }
                     else
-                        ControllerStateJSONDecoder{m_LeftPanelControllers.front()}.Decode(*i);
+                        m_ControllerStateJSONDecoder->Decode(*i, m_LeftPanelControllers.front());
                 }
             
             const auto &right = json_panels[1];
@@ -684,10 +688,10 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
                         auto pc = m_PanelFactory();
                         [self attachPanel:pc];
                         [self addNewControllerOnRightPane:pc];
-                        ControllerStateJSONDecoder{pc}.Decode(*i);
+                        m_ControllerStateJSONDecoder->Decode(*i, pc);
                     }
                     else
-                        ControllerStateJSONDecoder{m_RightPanelControllers.front()}.Decode(*i);
+                        m_ControllerStateJSONDecoder->Decode(*i, m_RightPanelControllers.front());
                 }
         }
     }
@@ -719,8 +723,10 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
         }
     }
     
-    return m_LeftPanelControllers.front().data.IsLoaded() &&
-           m_RightPanelControllers.front().data.IsLoaded();
+    return (m_LeftPanelControllers.front().data.IsLoaded() ||
+            m_LeftPanelControllers.front().isDoingBackgroundLoading) &&
+           (m_RightPanelControllers.front().data.IsLoaded() ||
+            m_RightPanelControllers.front().isDoingBackgroundLoading);
 }
 
 - (void) markRestorableStateAsInvalid

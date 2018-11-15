@@ -779,9 +779,8 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
 
 - (void) commitCancelableLoadingTask:(function<void(const function<bool()> &_is_cancelled)>) _task
 {
-    auto sq = &m_DirectoryLoadingQ;
-    m_DirectoryLoadingQ.Run([=]{
-        _task( [sq]{ return sq->IsStopped(); } );
+    m_DirectoryLoadingQ.Run([task=std::move(_task), sq = &m_DirectoryLoadingQ]{
+        task( [sq]{ return sq->IsStopped(); } );
     });
 }
 
@@ -1029,6 +1028,11 @@ wantsToSetSearchPrompt:(NSString*)_prompt
 {    
     m_View.headerView.searchPrompt = _prompt;
     m_View.headerView.searchMatches = _count;
+}
+
+- (bool) isDoingBackgroundLoading
+{
+    return m_DirectoryLoadingQ.Empty() == false;
 }
 
 @end

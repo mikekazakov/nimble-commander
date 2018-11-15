@@ -108,6 +108,13 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     return provider;
 }
 
+- (nc::panel::ControllerStateJSONDecoder&)controllerStateJSONDecoder
+{
+    static auto decoder = nc::panel::ControllerStateJSONDecoder
+        (self.nativeFSManager, self.vfsInstanceManager); 
+    return decoder;
+}
+
 - (PanelView*) allocatePanelView
 {    
     const auto header = [[NCPanelViewHeader alloc]
@@ -150,18 +157,21 @@ static PanelController* PanelFactory()
                                                inContext:(CreationContext)_context
                                              withOpsPool:(nc::ops::Pool&)_operations_pool
 {
+    auto &ctrl_state_json_decoder = self.controllerStateJSONDecoder;
     if( _context == CreationContext::Default ) {
         return [[MainWindowFilePanelState alloc] initWithFrame:_frame
                                                        andPool:_operations_pool
                                             loadDefaultContent:true
-                                                  panelFactory:PanelFactory];
+                                                  panelFactory:PanelFactory
+                                    controllerStateJSONDecoder:ctrl_state_json_decoder];
     }
     else if( _context == CreationContext::ManualRestoration ) {
         if( NCMainWindowController.canRestoreDefaultWindowStateFromLastOpenedWindow ) {
             auto state = [[MainWindowFilePanelState alloc] initWithFrame:_frame
                                                                  andPool:_operations_pool
                                                       loadDefaultContent:false
-                                                            panelFactory:PanelFactory];
+                                                            panelFactory:PanelFactory
+                                              controllerStateJSONDecoder:ctrl_state_json_decoder];
             RestoreFilePanelStateFromLastOpenedWindow(state);
             [state loadDefaultPanelContent];
             return state;
@@ -170,7 +180,8 @@ static PanelController* PanelFactory()
             auto state = [[MainWindowFilePanelState alloc] initWithFrame:_frame
                                                                  andPool:_operations_pool
                                                       loadDefaultContent:false
-                                                            panelFactory:PanelFactory];
+                                                            panelFactory:PanelFactory
+                                              controllerStateJSONDecoder:ctrl_state_json_decoder];
             if( ![NCMainWindowController restoreDefaultWindowStateFromConfig:state] )
                 [state loadDefaultPanelContent];
             return state;
@@ -185,7 +196,8 @@ static PanelController* PanelFactory()
         return [[MainWindowFilePanelState alloc] initWithFrame:_frame
                                                        andPool:_operations_pool
                                             loadDefaultContent:false
-                                                  panelFactory:PanelFactory];
+                                                  panelFactory:PanelFactory
+                                    controllerStateJSONDecoder:ctrl_state_json_decoder];
     }
     return nil;
 }

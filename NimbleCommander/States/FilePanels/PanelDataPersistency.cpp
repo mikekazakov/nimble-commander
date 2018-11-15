@@ -88,7 +88,13 @@ PanelDataPersisency::PanelDataPersisency( const NetworkConnectionsManager &_conn
 
 bool PersistentLocation::is_native() const noexcept
 {
-    return hosts.empty();
+    if( hosts.empty() )
+        return true;
+    
+    if( hosts.size() == 1 && any_cast<Native>(&hosts.front()) != nullptr )
+        return true;
+        
+    return false;
 }
 
 bool PersistentLocation::is_network() const noexcept
@@ -485,88 +491,6 @@ static Value EncodeAny( const any& _host )
     }
     
     return Value{kNullType};
-}
-
-int PanelDataPersisency::CreateVFSFromState( const Value &_state, VFSHostPtr &_host )
-{
-    if( _state.IsObject() && !_state.HasMember(g_StackHostsKey) && _state.HasMember(g_StackPathKey) ) {
-        _host = VFSNativeHost::SharedHost();
-        return 0;
-    }
-
-    if( _state.IsObject() && _state.HasMember(g_StackHostsKey) && _state[g_StackHostsKey].IsArray() ) {
-        auto &hosts = _state[g_StackHostsKey];
-        vector<VFSHostPtr> vfs;
-        
-        try {
-            for( auto i = hosts.Begin(), e = hosts.End(); i != e; ++i ) {
-                auto &h = *i;
-                const auto has_string = [&h](const char *_key) { return h.HasMember(_key) && h[_key].IsString(); };
-                
-                if( !has_string(g_HostInfoTypeKey) )
-                    return VFSError::GenericError; // invalid data
-                const auto tag = string_view{ h[g_HostInfoTypeKey].GetString() };
-                
-                if( tag == VFSNativeHost::UniqueTag ) {
-                    vfs.emplace_back( VFSNativeHost::SharedHost() );
-                }
-                else if( tag == vfs::PSHost::UniqueTag ) {
-                    vfs.emplace_back( vfs::PSHost::GetSharedOrNew() );
-                }
-                else if( tag == vfs::XAttrHost::UniqueTag ) {
-                    if( !has_string(g_HostInfoJunctionKey) )
-                        return VFSError::GenericError; // invalid data
-                    if( vfs.size() < 1 )
-                        return VFSError::GenericError; // invalid data
-                    
-                    auto xattr_vfs = make_shared<vfs::XAttrHost>( h[g_HostInfoJunctionKey].GetString(), vfs.back() );
-                    vfs.emplace_back( xattr_vfs );
-                }
-                else if( tag == g_HostInfoTypeNetworkValue ) {
-                    if( !has_string(g_HostInfoUuidKey) )
-                        return VFSError::GenericError; // invalid data
-
-                    static const boost::uuids::string_generator uuid_gen{};
-                    const auto uuid = uuid_gen( h[g_HostInfoUuidKey].GetString() );
-                    if( auto connection = ConnectionsManager().ConnectionByUUID( uuid ) ) {
-                        if ( auto host = ConnectionsManager().SpawnHostFromConnection(*connection) )
-                            vfs.emplace_back( host );
-                        else
-                            return VFSError::GenericError; // failed to spawn connection
-                    }
-                    else
-                        return VFSError::GenericError; // failed to find connection by uuid
-                }
-                else if( tag == vfs::ArchiveHost::UniqueTag ) {
-                    if( !has_string(g_HostInfoJunctionKey) )
-                        return VFSError::GenericError; // invalid data
-                    if( vfs.size() < 1 )
-                        return VFSError::GenericError; // invalid data
-                    
-                    auto host = make_shared<vfs::ArchiveHost>( h[g_HostInfoJunctionKey].GetString(), vfs.back() );
-                    vfs.emplace_back( host );
-                }
-                else if( tag == vfs::UnRARHost::UniqueTag ) {
-                    if( !has_string(g_HostInfoJunctionKey) )
-                        return VFSError::GenericError; // invalid data
-                    if( vfs.size() < 1 || !vfs.back()->IsNativeFS() )
-                        return VFSError::GenericError; // invalid data
-                    
-                    auto host = make_shared<vfs::UnRARHost>( h[g_HostInfoJunctionKey].GetString() );
-                    vfs.emplace_back( host );
-                }
-                // ...
-            }
-        }
-        catch(VFSErrorException &ee) {
-            return ee.code();
-        }
-        if( !vfs.empty() )
-            _host = vfs.back();
-        return VFSError::Ok;
-    }
-    
-    return VFSError::GenericError;
 }
 
 static bool Fits( VFSHost& _alive, const any &_encoded )

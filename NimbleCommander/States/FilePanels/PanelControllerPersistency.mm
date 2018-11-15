@@ -48,8 +48,11 @@ ControllerStateJSONEncoder::Encode(ControllerStateEncoding::Options _options)
     return json;
 }
 
-ControllerStateJSONDecoder::ControllerStateJSONDecoder(PanelController *_panel):
-    m_Panel(_panel)
+ControllerStateJSONDecoder::ControllerStateJSONDecoder
+    (const utility::NativeFSManager &_fs_manager,
+     nc::core::VFSInstanceManager &_vfs_instance_manager):
+    m_NativeFSManager(_fs_manager),
+    m_VFSInstanceManager(_vfs_instance_manager)
 {
 }
     
@@ -62,9 +65,21 @@ static void LoadHomeDirectory(PanelController *_panel)
     [_panel GoToDirWithContext:context];
 }
     
-static void RecoverSavedPathAtVFS(const VFSHostPtr &_host,
-                                 const string &_path,
-                                 PanelController *_panel)
+static void EnsureNonEmptyStateAsync(PanelController *_panel)
+{
+    if( !_panel.data.IsLoaded() ) {
+        // the VFS was not recovered.
+        // we should not leave panel in empty/dummy state,
+        // lets go to home directory as a fallback path
+        dispatch_to_main_queue([=]{
+            LoadHomeDirectory(_panel);
+        });
+    }
+}
+    
+static void RecoverSavedPathAtVFSAsync(const VFSHostPtr &_host,
+                                       const string &_path,
+                                       PanelController *_panel)
 {
     auto shared_request = make_shared<DirectoryChangeRequest>();
     auto &ctx = *shared_request;
@@ -83,7 +98,7 @@ static void RecoverSavedPathAtVFS(const VFSHostPtr &_host,
             if( fs_path.has_parent_path() ) {
                 auto upper_dir = fs_path.parent_path().native();
                 dispatch_to_main_queue([=]{
-                    RecoverSavedPathAtVFS(_host, upper_dir, _panel);
+                    RecoverSavedPathAtVFSAsync(_host, upper_dir, _panel);
                 });
             }
             else {
@@ -96,34 +111,114 @@ static void RecoverSavedPathAtVFS(const VFSHostPtr &_host,
     [_panel GoToDirWithContext:shared_request];
 }
 
-// will go async
-static void RecoverSavedContent(shared_ptr<config::Value> _saved_state,
-                                PanelController *_panel )
+/**
+ * This is a pessimistic procedure which task is to allow synchronous panel loading only when 
+ * following is true:
+ *   - the FS is Native
+ *   - Native FS description can be retrieved 
+ *   - the volume is attached directly and isn't removable
+ */
+bool ControllerStateJSONDecoder::AllowSyncRecovery(const PersistentLocation &_location) const
 {
-    auto workload = [_panel, _saved_state](const function<bool()> &_cancel_checker){
-        VFSHostPtr host;
-        const auto rc = PanelDataPersisency::CreateVFSFromState(*_saved_state, host);
-        if( rc == VFSError::Ok ) {
-            // the VFS was recovered, lets go inside it.
-            string path = PanelDataPersisency::GetPathFromState(*_saved_state);
-            dispatch_to_main_queue([=]{
-                RecoverSavedPathAtVFS(host, path, _panel);
-            });
-        }
-        else if( !_panel.data.IsLoaded() ) {
-            // the VFS was not recovered.
-            // we should not leave panel in empty/dummy state,
-            // lets go to home directory as a fallback path
-            dispatch_to_main_queue([=]{
-                LoadHomeDirectory(_panel);
-            });
+    if( _location.is_native() == false )
+        return false;
+    
+    const auto &path = _location.path;
+    const auto fs_info = m_NativeFSManager.VolumeFromPathFast(path);
+    if( fs_info == nullptr )
+        return false;
+    
+    const auto mount_flags = fs_info->mount_flags;
+    if( mount_flags.ejectable == false &&
+        mount_flags.removable == false &&
+        mount_flags.local == true &&
+        mount_flags.internal == true )
+        return true;
+    
+    return false;
+}    
+
+void ControllerStateJSONDecoder::RecoverSavedContentSync(const PersistentLocation &_location,
+                                                         PanelController *_panel )
+{
+    VFSHostPtr host;        
+    const auto rc = PanelDataPersisency::CreateVFSFromLocation(_location,
+                                                               host,
+                                                               m_VFSInstanceManager);
+    if( rc != VFSError::Ok ) {
+        EnsureNonEmptyStateAsync(_panel);
+        return;
+    }
+    
+    auto &path = _location.path;
+    auto request = make_shared<DirectoryChangeRequest>();
+    request->VFS = host;
+    request->PerformAsynchronous = false;
+    request->RequestedDirectory = _location.path;
+    request->LoadingResultCallback = [host, path, _panel](int _rc){
+        if( _rc != VFSError::Ok && !_panel.data.IsLoaded() ) {
+            // failed to load a listing on this VFS on specified path
+            // will try upper directories on this VFS up to the root,
+            // in case if everyone fails we will fallback to Home Directory on native VFS.
+            auto fs_path = boost::filesystem::path{path};
+            if( fs_path.filename() == "." )
+                fs_path.remove_filename();
+            
+            if( fs_path.has_parent_path() ) {
+                auto upper_dir = fs_path.parent_path().native();
+                dispatch_to_main_queue([=]{
+                    RecoverSavedPathAtVFSAsync(host, upper_dir, _panel);
+                });
+            }
+            else {
+                dispatch_to_main_queue([=]{
+                    LoadHomeDirectory(_panel);
+                });
+            }
         }
     };
-    
-    [_panel commitCancelableLoadingTask:move(workload)];
+    [_panel GoToDirWithContext:request];
 }
 
-void ControllerStateJSONDecoder::Decode(const config::Value &_state)
+void ControllerStateJSONDecoder::RecoverSavedContentAsync(PersistentLocation _location,
+                                                          PanelController *_panel )
+{
+    auto workload = [this, _panel, location=std::move(_location)]
+        (const function<bool()> &_cancel_checker)
+    {        
+        VFSHostPtr host;        
+        const auto rc = PanelDataPersisency::CreateVFSFromLocation(location,
+                                                                   host,
+                                                                   m_VFSInstanceManager);
+        if( rc == VFSError::Ok && host != nullptr) {
+            // the VFS was recovered, lets go inside it.
+            auto path = location.path;
+            dispatch_to_main_queue([=]{
+                RecoverSavedPathAtVFSAsync(host, path, _panel);
+            });
+        }
+        else {
+            EnsureNonEmptyStateAsync(_panel);
+            return;            
+        }        
+    };
+    [_panel commitCancelableLoadingTask:move(workload)]; 
+}
+
+void ControllerStateJSONDecoder::RecoverSavedContent(const config::Value &_saved_state,
+                                                     PanelController *_panel )
+{
+    auto location = PanelDataPersisency::JSONToLocation(_saved_state);
+    if( location == std::nullopt )
+        return;
+    
+    if( AllowSyncRecovery(*location) )
+        RecoverSavedContentSync(*location, _panel);
+    else
+        RecoverSavedContentAsync( std::move(*location), _panel);
+}
+
+void ControllerStateJSONDecoder::Decode(const config::Value &_state, PanelController *_panel)
 {
     assert(dispatch_is_main_queue());
     
@@ -131,17 +226,15 @@ void ControllerStateJSONDecoder::Decode(const config::Value &_state)
         return;
         
     if( _state.HasMember(g_RestorationSortingKey) )
-        [m_Panel changeDataOptions:[&](data::Model &_data){
+        [_panel changeDataOptions:[&](data::Model &_data){
             data::OptionsImporter{_data}.Import( _state[g_RestorationSortingKey] );
         }];
     
     if( auto layout_index = config::GetOptionalIntFromObject(_state, g_RestorationLayoutKey) )
-        m_Panel.layoutIndex = *layout_index;
-    
-    if( _state.HasMember(g_RestorationDataKey) ) {
-        auto data = make_shared<config::Value>();
-        data->CopyFrom(_state[g_RestorationDataKey], config::g_CrtAllocator);
-        RecoverSavedContent(data, m_Panel);
+        _panel.layoutIndex = *layout_index;
+
+    if( auto it = _state.FindMember(g_RestorationDataKey); it != _state.MemberEnd() ) {
+        RecoverSavedContent(it->value, _panel);        
     }
 }
 

@@ -45,14 +45,13 @@ public:
     using json = nc::config::Value;
     static json EncodeVFSPath( const VFSHost &_vfs, const string &_path );
     static json EncodeVFSPath( const VFSListing &_listing );
+    // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ these functions should be replaced by the following chain:
+    // VFSHost+Path or VFSListing => PersistentLocation => JSON representation
     
     static optional<PersistentLocation> JSONToLocation( const json &_json );
     static json LocationToJSON( const PersistentLocation &_location );
     
     // LocationToJSON( *EncodeLocation(host, path) ) == EncodeVFSPath(host, path)
-    
-    // always creates vfses from scratch
-    static int CreateVFSFromState( const json &_state, VFSHostPtr &_host );
     
     // uses current state to retrieve existing vfs if possible
     static int CreateVFSFromLocation( const PersistentLocation &_state,

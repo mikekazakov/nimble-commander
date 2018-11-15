@@ -7,6 +7,7 @@
 #include <Config/Config.h>
 #include "PanelViewKeystrokeSink.h"
 #include "PanelPreview.h"
+#include "PanelControllerPersistency.h"
 #include <Utility/MIMResponder.h>
 
 namespace nc::ops {
@@ -60,6 +61,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     shared_ptr<nc::ops::Pool> m_OperationsPool;
     shared_ptr<nc::panel::ClosedPanelsHistory> m_ClosedPanelsHistory;
     shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
+    nc::panel::ControllerStateJSONDecoder *m_ControllerStateJSONDecoder;    
 }
 
 @property (nonatomic, readonly) NCMainWindowController* mainWindowController;
@@ -77,7 +79,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (instancetype) initWithFrame:(NSRect)frameRect
                        andPool:(nc::ops::Pool&)_pool
             loadDefaultContent:(bool)_load_content
-                  panelFactory:(function<PanelController*()>)_panel_factory;
+                  panelFactory:(function<PanelController*()>)_panel_factory
+    controllerStateJSONDecoder:(nc::panel::ControllerStateJSONDecoder&)_controller_json_decoder;
 
 - (void) loadDefaultPanelContent;
 

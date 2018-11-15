@@ -370,31 +370,7 @@
         "saveFilePosition":     true,
         "saveFileWrapping":     true,
         "saveFileSelection":    true,
-        "maximumHistoryEntries": 256,
-        
-        /**
-         * Appearance options for modern presentation mode
-         */
-        "modern": {
-            "font": "Menlo-Regular, 13",
-            "shouldAntialiasText": true,
-            "shouldSmoothText": true,
-            "textColor":        "#000000",
-            "selectionColor":   "#B4D6FC",
-            "backgroundColor":  "#FFFFFF"
-        },
-
-        /**
-         * Appearance options for classic presentation mode
-         */
-        "classic": {
-            "font": "Menlo-Regular, 13",
-            "shouldAntialiasText": true,
-            "shouldSmoothText": true,
-            "textColor":        "#00FFFF",
-            "selectionColor":   "#008080",
-            "backgroundColor":  "#000080"
-        }
+        "maximumHistoryEntries": 256
     },
     
     /**
@@ -759,7 +735,7 @@
                       "filePanelsHeaderFont": "@labelFont, 13",
                       "filePanelsHeaderTextColor": "#777777",
                       "filePanelsHeaderActiveTextColor": "@labelColor",
-                      "filePanelsHeaderActiveBackgroundColor": "#383838",
+                      "filePanelsHeaderActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsHeaderInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsHeaderSeparatorColor": "#8080806B",
                       
@@ -768,7 +744,7 @@
                       "filePanelsFooterTextColor" : "#777777",
                       "filePanelsFooterActiveTextColor" : "@labelColor",
                       "filePanelsFooterSeparatorsColor": "#282828",
-                      "filePanelsFooterActiveBackgroundColor": "#383838",
+                      "filePanelsFooterActiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       "filePanelsFooterInactiveBackgroundColor": "@controlAlternatingRowBackgroundColors0",
                       
                       /* File Panels -> List settings */

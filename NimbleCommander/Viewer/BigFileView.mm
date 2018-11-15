@@ -16,18 +16,6 @@
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";
-/*static const auto g_ConfigModernShouldAntialias = "viewer.modern.shouldAntialiasText";
-static const auto g_ConfigModernShouldSmooth    = "viewer.modern.shouldSmoothText";
-static const auto g_ConfigModernTextColor       = "viewer.modern.textColor";
-static const auto g_ConfigModernSelectionColor  = "viewer.modern.selectionColor";
-static const auto g_ConfigModernBackgroundColor = "viewer.modern.backgroundColor";
-static const auto g_ConfigModernFont            = "viewer.modern.font";
-static const auto g_ConfigClassicShouldAntialias= "viewer.classic.shouldAntialiasText";
-static const auto g_ConfigClassicShouldSmooth   = "viewer.classic.shouldSmoothText";
-static const auto g_ConfigClassicTextColor      = "viewer.classic.textColor";
-static const auto g_ConfigClassicSelectionColor = "viewer.classic.selectionColor";
-static const auto g_ConfigClassicBackgroundColor= "viewer.classic.backgroundColor";
-static const auto g_ConfigClassicFont           = "viewer.classic.font";*/
 
 const static double g_BorderWidth = 1.0;
 

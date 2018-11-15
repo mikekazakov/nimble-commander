@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Application.h"
 
 @implementation Application
@@ -21,10 +21,6 @@
     {
         cerr << "Exception caught: " << e.what() << endl;
     }
-    catch(exception *e)
-    {
-        cerr << "Exception caught: " << e->what() << endl;
-    }
     catch(...)
     {
         cerr << "Caught an unhandled exception!" << endl;
@@ -43,10 +39,6 @@
     catch(exception &e)
     {
         cerr << "Exception caught: " << e.what() << endl;
-    }
-    catch(exception *e)
-    {
-        cerr << "Exception caught: " << e->what() << endl;
     }
     catch(...)
     {

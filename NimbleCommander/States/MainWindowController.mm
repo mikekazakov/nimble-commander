@@ -517,4 +517,18 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
     m_OperationsPool->SetOperationCompletionCallback( move(completion_callback) );
 }
 
+- (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect
+{
+    /**
+     * At this moment the file panels state uses a horizontal separator line to place its content.
+     * As a consequence, its toolbar doesn't have a bottom separator.
+     * This leads to situation when dialogs look weird - like thay are placed wrongly.
+     * To fix it - just offset the opening dialog window by 1px down.
+     */
+    if( self.window.toolbar != nil && self.window.toolbar.visible == true ) {
+        rect.origin.y -= 1.;
+    }
+    return rect;
+}
+
 @end

@@ -434,7 +434,9 @@ static int InvertBitFlag( int _value, int _flag )
         if( m_SearchInFile->IsEOF() )
             m_SearchInFile->MoveCurrentPosition(0);
         
-        auto result = m_SearchInFile->Search(&offset, &len, ^{return m_SearchInFileQueue.IsStopped();});
+        auto result = m_SearchInFile->Search(&offset,
+                                             &len,
+                                             [self]{return m_SearchInFileQueue.IsStopped();});
         
         if(result == SearchInFile::Result::Found)
             dispatch_to_main_queue( [=]{

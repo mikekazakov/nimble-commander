@@ -55,7 +55,7 @@ static void CommonPerform(PanelController *_target, const vector<VFSListingItem>
         if( &item == &_items.front() ) {
             const bool force_refresh = !_target.receivesUpdateNotifications;
             __weak PanelController *weak_panel = _target;
-            auto finish_handler = ^{
+            auto finish_handler = [weak_panel, duplicate, force_refresh]{
                 dispatch_to_main_queue( [weak_panel, duplicate, force_refresh]{
                     if( PanelController *panel = weak_panel) {
                         nc::panel::DelayedFocusing req;
@@ -66,7 +66,8 @@ static void CommonPerform(PanelController *_target, const vector<VFSListingItem>
                     }
                 });
             };
-            op->ObserveUnticketed(ops::Operation::NotifyAboutCompletion, finish_handler);
+            op->ObserveUnticketed(ops::Operation::NotifyAboutCompletion, 
+                                  std::move(finish_handler));
          }
         [_target.mainWindowController enqueueOperation:op];
     }

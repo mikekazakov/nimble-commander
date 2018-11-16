@@ -54,13 +54,13 @@ const static vector<pair<NSString*,int>> g_Algos = {
         self.sumsAvailable = false;
         self.didSaved = false;
         m_WorkQue.SetOnWet([=]{
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue([self]{
                 self.isWorking = true;
                 self.sumsAvailable = false;
             });
         });
         m_WorkQue.SetOnDry([=]{
-            dispatch_async(dispatch_get_main_queue(), ^{
+            dispatch_to_main_queue([self]{
                 self.isWorking = false;
                 self.sumsAvailable = count_if(begin(m_Checksums), end(m_Checksums), [](auto &i){return !i.empty();}) > 0;
             });
@@ -81,28 +81,30 @@ const static vector<pair<NSString*,int>> g_Algos = {
     int method = g_Algos[self.HashMethod.indexOfSelectedItem].second;
     self.Progress.doubleValue = 0;
     
-//    m_WorkQue->Run([=](auto &_q) {
     m_WorkQue.Run([=]{
         auto buf = make_unique<uint8_t[]>(chunk_sz);
         uint64_t total_fed = 0;
         for(auto &i:m_Filenames) {
             if( m_WorkQue.IsStopped() )
                 break;
+            const auto item_index = int(&i - &m_Filenames[0]); 
             
             VFSFilePtr file;
-            int rc = m_Host->CreateFile((path(m_Path) / i).c_str(), file, ^{ return m_WorkQue.IsStopped(); } );
+            int rc = m_Host->CreateFile((path(m_Path) / i).c_str(),
+                                        file,
+                                        [self]{ return m_WorkQue.IsStopped(); } );
             if(rc != 0) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self reportError:rc forFilenameAtIndex:int(&i-&m_Filenames[0])];
+                dispatch_to_main_queue([self, rc, item_index]{
+                    [self reportError:rc forFilenameAtIndex:item_index];
                 });
                 continue;
             }
             
             rc = file->Open( VFSFlags::OF_Read | VFSFlags::OF_ShLock | VFSFlags::OF_NoCache,
-                            ^{ return m_WorkQue.IsStopped(); } );
+                            [self]{ return m_WorkQue.IsStopped(); } );
             if(rc != 0) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self reportError:rc forFilenameAtIndex:int(&i-&m_Filenames[0])];
+                dispatch_to_main_queue([self, rc, item_index]{
+                    [self reportError:rc forFilenameAtIndex:item_index];
                 });
                 continue;
             }
@@ -115,20 +117,22 @@ const static vector<pair<NSString*,int>> g_Algos = {
                     break;
                 h.Feed(buf.get(), rn);
                 total_fed += rn;
-                self.Progress.doubleValue = double(total_fed);
+                dispatch_to_main_queue([self, progress = double(total_fed)]{                
+                    self.Progress.doubleValue = progress;
+                });
             }
             
             if( rn < 0 ) {
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [self reportError:(int)rn forFilenameAtIndex:int(&i-&m_Filenames[0])];
+                dispatch_to_main_queue([self, rn, item_index]{
+                    [self reportError:(int)rn forFilenameAtIndex:item_index];
                 });
                 continue;
             }
         
             auto result = h.Final();
             
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [self reportChecksum:Hash::Hex(result) forFilenameAtIndex:int(&i-&m_Filenames[0])];
+            dispatch_to_main_queue([self, result=std::move(result), item_index]{
+                [self reportChecksum:Hash::Hex(result) forFilenameAtIndex:item_index];
             });
         }
     });

@@ -84,7 +84,7 @@ using namespace nc::term;
                 });
             }
         });
-        m_Task->SetOnChildDied(^{
+        m_Task->SetOnChildDied([weakself]{
             dispatch_to_main_queue( [=]{
                 if( auto strongself = weakself )
                     [(NCMainWindowController*)strongself.window.delegate ResignAsWindowState:strongself];

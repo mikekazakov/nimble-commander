@@ -196,7 +196,7 @@ void SingleTask::ReadChildOutput()
     }
 end_of_all:
 
-    if(m_OnChildDied)
+    if( m_OnChildDied != nullptr )
         m_OnChildDied();
     CleanUp();
 }

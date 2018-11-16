@@ -155,6 +155,9 @@ static const std::unordered_map< std::string, NSColor * > g_SystemColors11Plus =
     { "@systemGrayColor",                        NSColor.systemGrayColor                          }    
 };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+
 static const std::unordered_map< std::string, NSColor * > g_SystemColors13Plus = {
     { "@findHighlightColor",                     NSColor.findHighlightColor                       }
 };
@@ -169,6 +172,8 @@ static const std::unordered_map< std::string, NSColor * > g_SystemColors14Plus =
     { "@unemphasizedSelectedTextColor",          NSColor.unemphasizedSelectedTextColor            },    
     { "@controlAccentColor",                     NSColor.controlAccentColor                       }
 };
+
+#pragma clang diagnostic pop
 
 static const std::unordered_map< std::string, NSColor * > g_SystemColors = []{
     auto base = g_SystemColors11Plus;

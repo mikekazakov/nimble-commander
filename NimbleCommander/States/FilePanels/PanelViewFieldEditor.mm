@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewFieldEditor.h"
 #include <Utility/FilenameTextControl.h>
 
@@ -11,7 +11,6 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     VFSListingItem   m_OriginalItem;
 }
 
-@synthesize textView = m_TextView;
 @synthesize originalItem = m_OriginalItem;
 
 - (instancetype)initWithItem:(VFSListingItem)_item
@@ -58,9 +57,9 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     tv.automaticLinkDetectionEnabled = false;
     tv.continuousSpellCheckingEnabled = false;
     tv.grammarCheckingEnabled = false;
-    tv.insertionPointColor = NSColor.blackColor;
-    tv.backgroundColor = NSColor.whiteColor;
-    tv.textColor = NSColor.blackColor;
+    tv.insertionPointColor = NSColor.textColor;
+    tv.backgroundColor = NSColor.textBackgroundColor;
+    tv.textColor = NSColor.textColor;
     tv.defaultParagraphStyle = ps;
     tv.textContainer.widthTracksTextView = tv.textContainer.heightTracksTextView = false;
     tv.textContainer.containerSize = CGSizeMake(FLT_MAX, FLT_MAX);
@@ -75,17 +74,13 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 
 - (BOOL)textShouldEndEditing:(NSText *)textObject
 {
-    if( m_TextView.string && m_TextView.string.length > 0)
-        if( const auto utf8 = m_TextView.string.fileSystemRepresentation )
-            if( self.onTextEntered )
-                self.onTextEntered(utf8);
+    [self finishEditing];
     return true;
 }
 
 - (void)textDidEndEditing:(NSNotification *)notification
 {
-    if( self.onEditingFinished )
-        self.onEditingFinished();
+    [self cancelEditing];
 }
 
 - (NSArray *)textView:(NSTextView *)textView
@@ -100,17 +95,67 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
 {
     static const auto cancel = NSSelectorFromString(@"cancelOperation:");
     if( commandSelector == cancel ) {
-        self.onTextEntered = nil;
-        if( self.onEditingFinished )
-            self.onEditingFinished();
+        [self cancelEditing];
         return true;
     }
     return false;
 }
 
+- (void) finishEditing
+{
+    if( m_TextView.string && m_TextView.string.length > 0)
+        if( const auto utf8 = m_TextView.string.fileSystemRepresentation ) {
+            auto enter_handler = self.onTextEntered;
+            self.onTextEntered = nil;
+            if( enter_handler ) {
+                enter_handler(utf8);
+            }
+        }
+
+    auto finish_handler = self.onEditingFinished;
+    self.onEditingFinished = nil;
+    if( finish_handler ) {
+        finish_handler();
+    }
+}
+
+- (void) cancelEditing
+{
+    self.onTextEntered = nil;
+    auto finish_handler = self.onEditingFinished;
+    self.onEditingFinished = nil;
+    if( finish_handler ) {
+        finish_handler();
+    }
+}
+
 - (nullable NSUndoManager *)undoManagerForTextView:(NSTextView *)view
 {
     return m_UndoManager;
+}
+
+- (void)viewWillMoveToWindow:(NSWindow *)_wnd
+{
+    const auto notify_center = NSNotificationCenter.defaultCenter;
+    if( self.window ) {
+        [notify_center removeObserver:self name:NSWindowDidResignKeyNotification object:nil];
+        [notify_center removeObserver:self name:NSWindowDidResignMainNotification object:nil];
+    }    
+    if( _wnd ) {
+        [notify_center addObserver:self
+                   selector:@selector(windowStatusDidChange)
+                       name:NSWindowDidResignKeyNotification
+                     object:_wnd];
+        [notify_center addObserver:self
+                   selector:@selector(windowStatusDidChange)
+                       name:NSWindowDidResignMainNotification
+                     object:_wnd];
+    } 
+}
+
+- (void) windowStatusDidChange
+{
+    [self finishEditing];
 }
 
 static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_selection )

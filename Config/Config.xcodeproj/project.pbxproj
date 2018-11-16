@@ -63,6 +63,7 @@
 		CF20CC2B215BB19C006716F6 /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
 		CF20CC2C215BB19C006716F6 /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
 		CF20CC2F215BBEB0006716F6 /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CF233B11219E8F2300693E1A /* PrecompiledHeaders.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PrecompiledHeaders.pch; path = source/PrecompiledHeaders.pch; sourceTree = "<group>"; };
 		CF2E7A20215CB5400002E46C /* OverwritesStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OverwritesStorage.h; path = include/Config/OverwritesStorage.h; sourceTree = "<group>"; };
 		CF2E7A22215CB5470002E46C /* OverwritesStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OverwritesStorage.cpp; path = source/OverwritesStorage.cpp; sourceTree = "<group>"; };
 		CF2E7A24215CBFC60002E46C /* NonPersistentOverwritesStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NonPersistentOverwritesStorage.h; path = include/Config/NonPersistentOverwritesStorage.h; sourceTree = "<group>"; };
@@ -148,6 +149,7 @@
 		CF20CC09215A25AB006716F6 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF233B11219E8F2300693E1A /* PrecompiledHeaders.pch */,
 				CF20CC0D215A267B006716F6 /* Config.cpp */,
 				CF20CC1A215B9B45006716F6 /* ConfigImpl.cpp */,
 				CF2E7A2A2160E2660002E46C /* Executor.cpp */,

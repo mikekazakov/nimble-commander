@@ -1,0 +1,20 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+
+#include <string_view>
+#include <string>
+#include <functional>
+#include <vector>
+#include <unordered_map>
+#include <chrono>
+#include <time.h>
+#include <optional>
+
+#ifdef __OBJC__
+    #include <Foundation/Foundation.h>
+#endif
+
+#include <Habanero/spinlock.h>
+#include <Habanero/intrusive_ptr.h>
+#include <Habanero/dispatch_cpp.h>
+
+#include "RapidJSON.h"

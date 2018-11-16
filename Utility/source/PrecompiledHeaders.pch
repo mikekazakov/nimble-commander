@@ -1,0 +1,45 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+
+#include <string_view>
+#include <string>
+#include <functional>
+#include <vector>
+#include <unordered_map>
+#include <chrono>
+#include <regex>
+#include <optional>
+#include <array>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <atomic>
+#include <stdexcept>
+#include <iostream>
+
+#include <time.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <memory.h>
+#include <assert.h>
+#include <stdlib.h>
+#include <wchar.h>
+#include <math.h>
+
+#include <sys/param.h>
+#include <sys/mount.h>
+#include <mach/mach.h>
+#include <objc/runtime.h>
+
+#include <CoreFoundation/CoreFoundation.h>
+#include <CoreText/CoreText.h>
+#include <CoreGraphics/CoreGraphics.h>
+#ifdef __OBJC__
+    #include <Foundation/Foundation.h>
+    #include <Cocoa/Cocoa.h>
+    #include <AppKit/AppKit.h>
+#endif
+
+#include <Habanero/spinlock.h>
+#include <Habanero/dispatch_cpp.h>
+#include <Habanero/mach_time.h>

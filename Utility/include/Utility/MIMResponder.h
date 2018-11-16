@@ -1,18 +1,6 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <Cocoa/Cocoa.h>
-
-//@protocol AttachableResponder<NSObject>
-
-//@required
-
-//- (void) setNextAttachedResponder:(NSResponder<NextAttachedResponder>*)_next_mim;
-
-
-//@required 
-
-
-//@end
-
 
 @interface AttachedResponder : NSResponder
 
@@ -23,11 +11,3 @@
 - (void)setNextAttachedResponder:(AttachedResponder *)nextAttachedResponder;
 
 @end
-
-//@interface MIMResponder : NSObject
-//
-//+ (void) setNextResponder:(NSResponder*)_next_responder
-//                forObject:(NSResponder<MIMResponder>*)_obj;
-////+ (void) setNextMIMResponder:(id<MIMResponder>)_next_mim_responder forObject:(id)_obj;
-//
-//@end

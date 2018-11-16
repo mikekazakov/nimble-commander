@@ -2,11 +2,7 @@
 #pragma once
 
 #include <stdbool.h>
-
-#ifdef __cplusplus
 #include <string>
-extern "C" {
-#endif
 
 /**
  * Converts path like "/Dir/Abra/" to "/Dir/Abra".
@@ -68,9 +64,6 @@ inline bool IsPathWithTrailingSlash(const char* _path)
         
     return _path[ strlen(_path) - 1 ] == '/';
 }
- 
-#ifdef __cplusplus
-}
 
 inline bool strisdot(const char *s) noexcept { return s && s[0] == '.' && s[1] == 0; }
 inline bool strisdotdot(const char *s) noexcept { return s && s[0] == '.' && s[1] == '.' && s[2] == 0; }
@@ -90,10 +83,7 @@ inline std::string EnsureNoTrailingSlash(std::string _s)
     return _s;
 }
 
-inline bool IsPathWithTrailingSlash(const string &_path)
+inline bool IsPathWithTrailingSlash(const std::string &_path)
 {
     return !_path.empty() && _path.back() == '/';
 }
-
-
-#endif

@@ -65,10 +65,10 @@
 		CFFA94781F453CC00035E606 /* Layout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF84C8E81DB867FC00B4E888 /* Layout.mm */; };
 		CFFA94791F453CC00035E606 /* NativeFSManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */; };
 		CFFA947A1F453CC00035E606 /* NSMenu+Hierarchical.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */; };
-		CFFA947B1F453CC00035E606 /* NSObject+MassObserving.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */; };
-		CFFA947C1F453CC00035E606 /* NSTimer+Tolerance.m in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */; };
+		CFFA947B1F453CC00035E606 /* NSObject+MassObserving.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.mm */; };
+		CFFA947C1F453CC00035E606 /* NSTimer+Tolerance.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.mm */; };
 		CFFA947D1F453CC00035E606 /* NSView+Sugar.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */; };
-		CFFA947E1F453CC00035E606 /* PathManip.c in Sources */ = {isa = PBXBuildFile; fileRef = CF960E261C992F35001D8B02 /* PathManip.c */; };
+		CFFA947E1F453CC00035E606 /* PathManip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF960E261C992F35001D8B02 /* PathManip.cpp */; };
 		CFFA947F1F453CC00035E606 /* SheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1B1C9AFF280021EE7F /* SheetController.mm */; };
 		CFFA94801F453CC00035E606 /* SheetWithHotkeys.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */; };
 		CFFA94811F453CC00035E606 /* StringExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BFE1C9A84570021EE7F /* StringExtras.mm */; };
@@ -121,6 +121,7 @@
 		CF233AF1219E7E9600693E1A /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CF233AF2219E7E9600693E1A /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CF233AF3219E7E9600693E1A /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
+		CF233B13219E94B300693E1A /* PrecompiledHeaders.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PrecompiledHeaders.pch; path = source/PrecompiledHeaders.pch; sourceTree = "<group>"; };
 		CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdaptiveDateFormatting.h; path = include/Utility/AdaptiveDateFormatting.h; sourceTree = "<group>"; };
 		CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AdaptiveDateFormatting.mm; path = source/AdaptiveDateFormatting.mm; sourceTree = "<group>"; };
 		CF308F10213781ED00915730 /* UnitTests_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnitTests_main.h; path = tests/UnitTests_main.h; sourceTree = SOURCE_ROOT; };
@@ -161,7 +162,7 @@
 		CF960E231C992F35001D8B02 /* Encodings.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Encodings.cpp; path = source/Encodings.cpp; sourceTree = "<group>"; };
 		CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EncodingsAdditions.mm; path = source/EncodingsAdditions.mm; sourceTree = "<group>"; };
 		CF960E251C992F35001D8B02 /* HexadecimalColor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HexadecimalColor.mm; path = source/HexadecimalColor.mm; sourceTree = "<group>"; };
-		CF960E261C992F35001D8B02 /* PathManip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = PathManip.c; path = source/PathManip.c; sourceTree = "<group>"; };
+		CF960E261C992F35001D8B02 /* PathManip.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PathManip.cpp; path = source/PathManip.cpp; sourceTree = "<group>"; };
 		CF960E271C992F35001D8B02 /* SystemInformation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SystemInformation.mm; path = source/SystemInformation.mm; sourceTree = "<group>"; };
 		CF960E281C992F35001D8B02 /* VolumeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeInformation.cpp; path = source/VolumeInformation.cpp; sourceTree = "<group>"; };
 		CFB0F235215A076F0088C18E /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMask.h; path = include/Utility/FileMask.h; sourceTree = "<group>"; };
@@ -176,7 +177,7 @@
 		CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeychainServices.h; path = include/Utility/KeychainServices.h; sourceTree = "<group>"; };
 		CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeychainServices.cpp; path = source/KeychainServices.cpp; sourceTree = "<group>"; };
 		CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+MassObserving.h"; path = "include/Utility/NSObject+MassObserving.h"; sourceTree = "<group>"; };
-		CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+MassObserving.m"; path = "source/NSObject+MassObserving.m"; sourceTree = "<group>"; };
+		CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "NSObject+MassObserving.mm"; path = "source/NSObject+MassObserving.mm"; sourceTree = "<group>"; };
 		CFD62BD51C9A6B4B0021EE7F /* FontCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontCache.h; path = include/Utility/FontCache.h; sourceTree = "<group>"; };
 		CFD62BD71C9A6B630021EE7F /* FontCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontCache.cpp; path = source/FontCache.cpp; sourceTree = "<group>"; };
 		CFD62BD91C9A6BE30021EE7F /* FontExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontExtras.h; path = include/Utility/FontExtras.h; sourceTree = "<group>"; };
@@ -186,7 +187,7 @@
 		CFD62BF41C9A79910021EE7F /* NSView+Sugar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSView+Sugar.h"; path = "include/Utility/NSView+Sugar.h"; sourceTree = "<group>"; };
 		CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "NSView+Sugar.mm"; path = "source/NSView+Sugar.mm"; sourceTree = "<group>"; };
 		CFD62BF81C9A7A860021EE7F /* NSTimer+Tolerance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSTimer+Tolerance.h"; path = "include/Utility/NSTimer+Tolerance.h"; sourceTree = "<group>"; };
-		CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSTimer+Tolerance.m"; path = "source/NSTimer+Tolerance.m"; sourceTree = "<group>"; };
+		CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "NSTimer+Tolerance.mm"; path = "source/NSTimer+Tolerance.mm"; sourceTree = "<group>"; };
 		CFD62BFC1C9A84500021EE7F /* StringExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringExtras.h; path = include/Utility/StringExtras.h; sourceTree = "<group>"; };
 		CFD62BFE1C9A84570021EE7F /* StringExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = StringExtras.mm; path = source/StringExtras.mm; sourceTree = "<group>"; };
 		CFD62C001C9A87170021EE7F /* FontExtras.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FontExtras.mm; path = source/FontExtras.mm; sourceTree = "<group>"; };
@@ -353,6 +354,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF233B13219E94B300693E1A /* PrecompiledHeaders.pch */,
 				CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */,
@@ -380,11 +382,11 @@
 				CF3B7F6C201F167200BF2090 /* MIMResponder.mm */,
 				CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */,
 				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
-				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.m */,
-				CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.m */,
+				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.mm */,
+				CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.mm */,
 				CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */,
 				CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */,
-				CF960E261C992F35001D8B02 /* PathManip.c */,
+				CF960E261C992F35001D8B02 /* PathManip.cpp */,
 				CFD62C1B1C9AFF280021EE7F /* SheetController.mm */,
 				CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */,
 				CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */,
@@ -573,7 +575,7 @@
 				CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */,
 				CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */,
 				CFFA94751F453CC00035E606 /* FunctionKeysPass.mm in Sources */,
-				CFFA947C1F453CC00035E606 /* NSTimer+Tolerance.m in Sources */,
+				CFFA947C1F453CC00035E606 /* NSTimer+Tolerance.mm in Sources */,
 				CFFA94671F453CC00035E606 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFFA946D1F453CC00035E606 /* Encodings.cpp in Sources */,
 				CFFA94771F453CC00035E606 /* KeychainServices.cpp in Sources */,
@@ -584,7 +586,7 @@
 				CFFA946A1F453CC00035E606 /* ByteCountFormatter.mm in Sources */,
 				CF308F31213ACD1900915730 /* BriefOnDiskStorageImpl.cpp in Sources */,
 				CF3B7F6D201F167200BF2090 /* MIMResponder.mm in Sources */,
-				CFFA947B1F453CC00035E606 /* NSObject+MassObserving.m in Sources */,
+				CFFA947B1F453CC00035E606 /* NSObject+MassObserving.mm in Sources */,
 				CFFA946F1F453CC00035E606 /* ExtensionLowercaseComparison.cpp in Sources */,
 				CFFA94811F453CC00035E606 /* StringExtras.mm in Sources */,
 				CFDAC82D2168E1CC00DEBA2A /* DiskUtility.mm in Sources */,
@@ -605,7 +607,7 @@
 				CFFA947F1F453CC00035E606 /* SheetController.mm in Sources */,
 				CFFA946C1F453CC00035E606 /* DataBlockAnalysis.mm in Sources */,
 				CFFA94721F453CC00035E606 /* FontExtras.mm in Sources */,
-				CFFA947E1F453CC00035E606 /* PathManip.c in Sources */,
+				CFFA947E1F453CC00035E606 /* PathManip.cpp in Sources */,
 				CFFA94761F453CC00035E606 /* HexadecimalColor.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

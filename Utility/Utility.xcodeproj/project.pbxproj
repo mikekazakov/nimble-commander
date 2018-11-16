@@ -354,7 +354,6 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CF233B13219E94B300693E1A /* PrecompiledHeaders.pch */,
 				CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */,
@@ -387,6 +386,7 @@
 				CFD62BF61C9A799B0021EE7F /* NSView+Sugar.mm */,
 				CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */,
 				CF960E261C992F35001D8B02 /* PathManip.cpp */,
+				CF233B13219E94B300693E1A /* PrecompiledHeaders.pch */,
 				CFD62C1B1C9AFF280021EE7F /* SheetController.mm */,
 				CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */,
 				CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */,

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "CursorMode.h"
@@ -43,7 +43,7 @@ public:
     virtual enum CursorMode CursorMode() const = 0;
     virtual bool HideScrollbar() const = 0;
     
-    virtual int StartChangesObserving( function<void()> _callback ) = 0;
+    virtual int StartChangesObserving( std::function<void()> _callback ) = 0;
     virtual void StopChangesObserving( int _ticket ) = 0;
 };
 
@@ -51,7 +51,7 @@ public:
 class DefaultSettings : public Settings
 {
 public:
-    static shared_ptr<Settings> SharedDefaultSettings();
+    static std::shared_ptr<Settings> SharedDefaultSettings();
     NSFont  *Font() const override;
     NSColor *ForegroundColor() const override;
     NSColor *BoldForegroundColor() const override;
@@ -78,7 +78,7 @@ public:
     enum CursorMode CursorMode() const override;
     bool HideScrollbar() const override;
     
-    int StartChangesObserving( function<void()> _callback ) override;
+    int StartChangesObserving( std::function<void()> _callback ) override;
     void StopChangesObserving( int _ticket ) override;
 };
 

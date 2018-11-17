@@ -43,7 +43,7 @@ namespace nc::term {
 @property (nonatomic) NSColor *ansiColorF;
 @property (nonatomic) nc::term::CursorMode cursorMode;
 
-@property (nonatomic) shared_ptr<nc::term::Settings> settings;
+@property (nonatomic) std::shared_ptr<nc::term::Settings> settings;
 
 - (void) AttachToScreen:(nc::term::Screen*)_scr;
 - (void) AttachToParser:(nc::term::Parser*)_par;

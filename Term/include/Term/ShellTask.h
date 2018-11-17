@@ -1,6 +1,8 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <functional>
+#include <string>
 #include "Task.h"
 
 namespace nc::term {
@@ -36,15 +38,15 @@ public:
         TCSH        =  2
     };
 
-    void SetOnPwdPrompt( function<void(const char *_cwd, bool _changed)> _callback );
-    void SetOnStateChange( function<void(TaskState _new_state)> _callback );
+    void SetOnPwdPrompt( std::function<void(const char *_cwd, bool _changed)> _callback );
+    void SetOnStateChange( std::function<void(TaskState _new_state)> _callback );
     
     /**
      * Sets the desired custom shell path.
      * If none was specified - default login shell will be used.
      * Should be called before Launch().
      */
-    void SetShellPath(const string &_path);
+    void SetShellPath(const std::string &_path);
     
     // launches /bin/bash actually (hardcoded now)
     bool Launch(const char *_work_dir);
@@ -82,7 +84,7 @@ public:
      * Task state should not be Inactive or Dead.
      * Thread-safe.
      */
-    void WriteChildInput( string_view _data );
+    void WriteChildInput( std::string_view _data );
     
     /**
     * Returns the current shell task state.
@@ -95,13 +97,13 @@ public:
      * Return string by value to minimize potential chance to get race condition.
      * Thread-safe.
      */
-    string CWD() const;
+    std::string CWD() const;
     
     /**
      * returns a list of children excluding topmost shell (ie bash).
      * Thread-safe.
      */
-    vector<string> ChildrenList() const;
+    std::vector<std::string> ChildrenList() const;
     
     /**
      * Will return -1 if there's no children on shell or on any errors.
@@ -121,23 +123,23 @@ private:
     
     void DoOnPwdPromptCallout( const char *_cwd, bool _changed ) const;
 
-    shared_ptr<function<void(const char *_cwd, bool _changed)>> m_OnPwdPrompt;
+    std::shared_ptr<std::function<void(const char *_cwd, bool _changed)>> m_OnPwdPrompt;
     mutable spinlock                                            m_OnPwdPromptLock;
-    function<void(TaskState _new_state)> m_OnStateChanged;
+    std::function<void(TaskState _new_state)> m_OnStateChanged;
     volatile TaskState m_State = TaskState::Inactive;
     volatile int m_MasterFD = -1;
     spinlock     m_MasterWriteLock;
     volatile int m_ShellPID = -1;
     int m_CwdPipe[2] = {-1, -1};
-    string m_TCSH_FifoPath;
-    atomic_bool m_TemporarySuppressed{ false }; // will give no output until the next bash prompt will show m_RequestedCWD path
+    std::string m_TCSH_FifoPath;
+    std::atomic_bool m_TemporarySuppressed{ false }; // will give no output until the next bash prompt will show m_RequestedCWD path
     int m_TermSX = 80;
     int m_TermSY = 25;
-    thread m_InputThread;
-    string m_RequestedCWD = "";
-    string m_CWD = "";
+    std::thread m_InputThread;
+    std::string m_RequestedCWD = "";
+    std::string m_CWD = "";
     ShellType m_ShellType = ShellType::Unknown;
-    string m_ShellPath = "";
+    std::string m_ShellPath = "";
     volatile bool m_IsShuttingDown = false;
 };
 

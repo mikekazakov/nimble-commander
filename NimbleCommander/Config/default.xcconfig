@@ -1,4 +1,4 @@
-HEADER_SEARCH_PATHS = 3rd_Party/c++/include 3rd_Party/libarchive/include 3rd_Party/unrar/include 3rd_Party/AquaticPrime/include 3rd_Party/rapidjson/include 3rd_Party/boost/include 3rd_Party/AppAuth/AppAuth-iOS/Source/** 3rd_Party/LetsMove 3rd_Party/MMTabBarView 3rd_Party Habanero/include Utility/include RoutedIO/include VFS/include VFSIcon/include Config/include Operations/include Term/include . $(HOME)
+HEADER_SEARCH_PATHS = $(PROJECT_DIR)/3rd_Party/libarchive/include/ $(PROJECT_DIR)/3rd_Party/unrar/include/ $(PROJECT_DIR)/3rd_Party/AquaticPrime/include/ $(PROJECT_DIR)/3rd_Party/rapidjson/include/ $(PROJECT_DIR)/3rd_Party/boost/include/ $(PROJECT_DIR)/3rd_Party/AppAuth/AppAuth-iOS/Source/** $(PROJECT_DIR)/3rd_Party/LetsMove/ $(PROJECT_DIR)/3rd_Party/MMTabBarView/ $(PROJECT_DIR)/3rd_Party/ $(PROJECT_DIR)/Habanero/include Utility/include/ $(PROJECT_DIR)/RoutedIO/include/ $(PROJECT_DIR)/VFS/include/ $(PROJECT_DIR)/VFSIcon/include/ $(PROJECT_DIR)/Config/include/ $(PROJECT_DIR)/Operations/include/ $(PROJECT_DIR)/Term/include/ $(PROJECT_DIR)/ $(HOME)
 
 OTHER_LDFLAGS = $(OTHER_LDFLAGS) -ObjC -lAppAuth-macOS -lboost_system-mt -lboost_filesystem-mt
 

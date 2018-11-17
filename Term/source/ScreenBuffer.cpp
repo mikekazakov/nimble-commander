@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ScreenBuffer.h"
 
 namespace nc::term {
@@ -14,23 +14,23 @@ ScreenBuffer::ScreenBuffer(unsigned _width, unsigned _height):
     FixupOnScreenLinesIndeces(begin(m_OnScreenLines), end(m_OnScreenLines), m_Width);
 }
 
-unique_ptr<ScreenBuffer::Space[]>ScreenBuffer::ProduceRectangularSpaces(unsigned _width,
-                                                                        unsigned _height)
+std::unique_ptr<ScreenBuffer::Space[]>ScreenBuffer::ProduceRectangularSpaces(unsigned _width,
+                                                                             unsigned _height)
 {
-    return make_unique<Space[]>(_width*_height);
+    return std::make_unique<Space[]>(_width*_height);
 }
 
-unique_ptr<ScreenBuffer::Space[]> ScreenBuffer::ProduceRectangularSpaces(unsigned _width,
-                                                                         unsigned _height,
-                                                                         Space _initial_char)
+std::unique_ptr<ScreenBuffer::Space[]> ScreenBuffer::ProduceRectangularSpaces(unsigned _width,
+                                                                              unsigned _height,
+                                                                              Space _initial_char)
 {
     auto p = ProduceRectangularSpaces(_width, _height);
-    fill( &p[0], &p[_width*_height], _initial_char );
+    std::fill( &p[0], &p[_width*_height], _initial_char );
     return p;
 }
 
-void ScreenBuffer::FixupOnScreenLinesIndeces(vector<LineMeta>::iterator _i,
-                                             vector<LineMeta>::iterator _e,
+void ScreenBuffer::FixupOnScreenLinesIndeces(std::vector<LineMeta>::iterator _i,
+                                             std::vector<LineMeta>::iterator _e,
                                              unsigned _width)
 {
     unsigned start = 0;
@@ -103,13 +103,13 @@ const ScreenBuffer::LineMeta *ScreenBuffer::MetaFromLineNo( int _line_number ) c
         return nullptr;
 }
 
-vector<uint32_t> ScreenBuffer::DumpUnicodeString(const ScreenPoint _begin,
-                                                 const ScreenPoint _end ) const
+std::vector<uint32_t> ScreenBuffer::DumpUnicodeString(const ScreenPoint _begin,
+                                                      const ScreenPoint _end ) const
 {
     if( _begin >= _end )
         return {};
     
-    vector<uint32_t> unicode;
+    std::vector<uint32_t> unicode;
     auto curr = _begin;
     while( curr < _end ) {
         auto line = LineFromNo( curr.y );
@@ -144,15 +144,15 @@ vector<uint32_t> ScreenBuffer::DumpUnicodeString(const ScreenPoint _begin,
     return unicode;
 }
 
-pair<vector<uint16_t>, vector<ScreenPoint>>
+std::pair<std::vector<uint16_t>, std::vector<ScreenPoint>>
     ScreenBuffer::DumpUTF16StringWithLayout(ScreenPoint _begin,
                                             ScreenPoint _end ) const
 {
     if( _begin >= _end )
         return {};
     
-    vector<uint16_t> unichars;
-    vector<ScreenPoint> positions;
+    std::vector<uint16_t> unichars;
+    std::vector<ScreenPoint> positions;
     
     auto curr = _begin;
     
@@ -200,21 +200,21 @@ pair<vector<uint16_t>, vector<ScreenPoint>>
         curr.x = 0;
     }
     
-    return pair<vector<uint16_t>, vector<ScreenPoint>>( move(unichars), move(positions) );
+    return {std::move(unichars), std::move(positions)};
 }
 
-string ScreenBuffer::DumpScreenAsANSI() const
+std::string ScreenBuffer::DumpScreenAsANSI() const
 {
-    string result;
+    std::string result;
     for( auto &l:m_OnScreenLines )
         for(auto *i = &m_OnScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i)
             result += ( ( i->l >= 32 && i->l <= 127 ) ? (char)i->l : ' ');
     return result;
 }
 
-string ScreenBuffer::DumpScreenAsANSIBreaked() const
+std::string ScreenBuffer::DumpScreenAsANSIBreaked() const
 {
-    string result;
+    std::string result;
     for( auto &l:m_OnScreenLines ) {
         for(auto *i = &m_OnScreenSpaces[l.start_index], *e = i + l.line_length; i != e; ++i)
             result += ( ( i->l >= 32 && i->l <= 127 ) ? (char)i->l : ' ');
@@ -265,28 +265,28 @@ ScreenBuffer::Space ScreenBuffer::DefaultEraseChar()
 void ScreenBuffer::ResizeScreen(unsigned _new_sx, unsigned _new_sy, bool _merge_with_backscreen)
 {
     if( _new_sx == 0 || _new_sy == 0)
-        throw out_of_range("TermScreenBuffer::ResizeScreen - screen sizes can't be zero");
+        throw std::out_of_range("TermScreenBuffer::ResizeScreen - screen sizes can't be zero");
 
-    
-    auto fill_scr_from_declines = [=](vector< tuple<vector<Space>, bool> >::const_iterator _i,
-                                      vector< tuple<vector<Space>, bool> >::const_iterator _e,
-                                      size_t _l = 0){
+    using ConstIt = std::vector< std::tuple<std::vector<Space>, bool> >::const_iterator;
+    auto fill_scr_from_declines = [=](ConstIt _i, ConstIt _e, size_t _l = 0){
         for( ; _i != _e; ++_i, ++_l ) {
-            copy(begin(get<0>(*_i)),
-                 end(get<0>(*_i)),
-                 &m_OnScreenSpaces[ m_OnScreenLines[_l].start_index ] );
-            m_OnScreenLines[_l].is_wrapped = get<1>(*_i);
+            std::copy(std::begin(std::get<0>(*_i)),
+                      std::end(std::get<0>(*_i)),
+                      &m_OnScreenSpaces[ m_OnScreenLines[_l].start_index ] );
+            m_OnScreenLines[_l].is_wrapped = std::get<1>(*_i);
         }
     };
-    auto fill_bkscr_from_declines = [=](vector< tuple<vector<Space>, bool> >::const_iterator _i,
-                                        vector< tuple<vector<Space>, bool> >::const_iterator _e){
+    auto fill_bkscr_from_declines = [=](ConstIt _i,
+                                        ConstIt _e){
         for( ; _i != _e; ++_i ) {
             LineMeta lm;
             lm.start_index = (int)m_BackScreenSpaces.size();
-            lm.line_length = (int)get<0>(*_i).size();
-            lm.is_wrapped = get<1>(*_i);
+            lm.line_length = (int)std::get<0>(*_i).size();
+            lm.is_wrapped = std::get<1>(*_i);
             m_BackScreenLines.emplace_back(lm);
-            m_BackScreenSpaces.insert(end(m_BackScreenSpaces), begin(get<0>(*_i)), end(get<0>(*_i)) );
+            m_BackScreenSpaces.insert(std::end(m_BackScreenSpaces),
+                                      std::begin(std::get<0>(*_i)),
+                                      std::end(std::get<0>(*_i)) );
         }
     };
     
@@ -336,13 +336,13 @@ void ScreenBuffer::FeedBackscreen( const Space* _from, const Space* _to, bool _w
 {
     // TODO: trimming and empty lines ?
     while( _from < _to ) {
-        unsigned line_len = min( m_Width, unsigned(_to - _from) );
+        unsigned line_len = std::min( m_Width, unsigned(_to - _from) );
         
         m_BackScreenLines.emplace_back();
         m_BackScreenLines.back().start_index = (unsigned)m_BackScreenSpaces.size();
         m_BackScreenLines.back().line_length = line_len;
         m_BackScreenLines.back().is_wrapped = _wrapped ? true : (m_Width < _to - _from);
-        m_BackScreenSpaces.insert(end(m_BackScreenSpaces),
+        m_BackScreenSpaces.insert(std::end(m_BackScreenSpaces),
                                   _from,
                                   _from + line_len);
 
@@ -399,14 +399,15 @@ bool ScreenBuffer::HasOccupiedChars( int _line_no ) const
     return false;
 }
 
-vector<vector<ScreenBuffer::Space>> ScreenBuffer::ComposeContinuousLines(int _from, int _to) const
+std::vector<std::vector<ScreenBuffer::Space>>
+    ScreenBuffer::ComposeContinuousLines(int _from, int _to) const
 {
-    vector<vector<Space>> lines;
+    std::vector<std::vector<Space>> lines;
 
     for( bool continue_prev = false; _from < _to; ++_from) {
         auto source = LineFromNo(_from);
         if(!source)
-            throw out_of_range("invalid bounds in TermScreen::Buffer::ComposeContinuousLines");
+            throw std::out_of_range("invalid bounds in TermScreen::Buffer::ComposeContinuousLines");
         
         if(!continue_prev)
             lines.emplace_back();
@@ -423,26 +424,29 @@ vector<vector<ScreenBuffer::Space>> ScreenBuffer::ComposeContinuousLines(int _fr
     return lines;
 }
 
-vector< tuple<vector<ScreenBuffer::Space>, bool> >
-    ScreenBuffer::DecomposeContinuousLines( const vector<vector<Space>>& _src, unsigned _width )
+std::vector< std::tuple<std::vector<ScreenBuffer::Space>, bool> >
+    ScreenBuffer::DecomposeContinuousLines(const std::vector<std::vector<Space>>& _src,
+                                           unsigned _width )
 {
-    if( _width == 0)
-        throw invalid_argument("TermScreenBuffer::DecomposeContinuousLines width can't be zero");
+    if( _width == 0) {
+        auto msg = "TermScreenBuffer::DecomposeContinuousLines width can't be zero";
+        throw std::invalid_argument(msg);
+    }
 
-    vector< tuple<vector<Space>, bool> > result;
+    std::vector< std::tuple<std::vector<Space>, bool> > result;
     
     for( auto &l: _src ) {
         if( l.empty() ) // special case for CRLF-only lines
-            result.emplace_back( make_tuple<vector<Space>, bool>({}, false) );
+            result.emplace_back( std::make_tuple<std::vector<Space>, bool>({}, false) );
 
         for( size_t i = 0, e = l.size(); i < e; i += _width ) {
-            auto t = make_tuple<vector<Space>, bool>({}, false);
+            auto t = std::make_tuple<std::vector<Space>, bool>({}, false);
             if( i + _width < e ) {
-                get<0>(t).assign( begin(l) + i, begin(l) + i + _width );
-                get<1>(t) = true;
+                std::get<0>(t).assign( begin(l) + i, begin(l) + i + _width );
+                std::get<1>(t) = true;
             }
             else {
-                get<0>(t).assign( begin(l) + i, end(l) );
+                std::get<0>(t).assign( begin(l) + i, end(l) );
             }
             result.emplace_back( move(t) );
         }
@@ -453,15 +457,15 @@ vector< tuple<vector<ScreenBuffer::Space>, bool> >
 ScreenBuffer::Snapshot::Snapshot(unsigned _w, unsigned _h):
     width(_w),
     height(_h),
-    chars(make_unique<Space[]>( _w*_h))
+    chars(std::make_unique<Space[]>( _w*_h))
 {
 }
 
 void ScreenBuffer::MakeSnapshot()
 {
     if( !m_Snapshot || m_Snapshot->width != m_Width || m_Snapshot->height != m_Height )
-        m_Snapshot = make_unique<Snapshot>( m_Width, m_Height );
-    copy_n( m_OnScreenSpaces.get(), m_Width*m_Height, m_Snapshot->chars.get() );
+        m_Snapshot = std::make_unique<Snapshot>( m_Width, m_Height );
+    std::copy_n( m_OnScreenSpaces.get(), m_Width*m_Height, m_Snapshot->chars.get() );
 }
 
 void ScreenBuffer::RevertToSnapshot()
@@ -470,14 +474,14 @@ void ScreenBuffer::RevertToSnapshot()
         return;
     
     if( m_Height == m_Snapshot->height && m_Width == m_Snapshot->width ) {
-        copy_n( m_Snapshot->chars.get(), m_Width*m_Height, m_OnScreenSpaces.get() );
+        std::copy_n( m_Snapshot->chars.get(), m_Width*m_Height, m_OnScreenSpaces.get() );
     }
     else { // TODO: anchor?
-        fill_n( m_OnScreenSpaces.get(), m_Width*m_Height, m_EraseChar );
-        for( int y = 0, e = min(m_Snapshot->height, m_Height); y != e; ++y ) {
-            copy_n( m_Snapshot->chars.get() + y*m_Snapshot->width,
-                   min(m_Snapshot->width, m_Width),
-                   m_OnScreenSpaces.get() + y*m_Width);
+        std::fill_n( m_OnScreenSpaces.get(), m_Width*m_Height, m_EraseChar );
+        for( int y = 0, e = std::min(m_Snapshot->height, m_Height); y != e; ++y ) {
+            std::copy_n( m_Snapshot->chars.get() + y*m_Snapshot->width,
+                        std::min(m_Snapshot->width, m_Width),
+                        m_OnScreenSpaces.get() + y*m_Width);
         }
     }
 }
@@ -487,20 +491,20 @@ void ScreenBuffer::DropSnapshot()
     m_Snapshot.reset();
 }
 
-optional<pair<int, int>> ScreenBuffer::OccupiedOnScreenLines() const
+std::optional<std::pair<int, int>> ScreenBuffer::OccupiedOnScreenLines() const
 {
-    int first = numeric_limits<int>::max(),
-         last = numeric_limits<int>::min();
+    int first = std::numeric_limits<int>::max(),
+    last = std::numeric_limits<int>::min();
     for( int i = 0, e = Height(); i < e; ++i )
         if( HasOccupiedChars(i) ) {
-            first = min(first, i);
-            last = max(last, i);
+            first = std::min(first, i);
+            last = std::max(last, i);
         }
     
     if( first > last )
-        return nullopt;
+        return std::nullopt;
     
-    return make_pair(first, last + 1);
+    return std::make_pair(first, last + 1);
 }
 
 }

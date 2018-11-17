@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
 
@@ -21,9 +21,9 @@
 
 namespace nc::term {
 
-static vector<string> SplitArgs(const char *_args)
+static std::vector<std::string> SplitArgs(const char *_args)
 {
-    vector<string> vec;
+    std::vector<std::string> vec;
     
     char *args = strdup(_args);
     int sz = (int)strlen(args);
@@ -124,7 +124,7 @@ void SingleTask::Launch(const char *_full_binary_path, const char *_params, int 
         CloseAllFDAbove3();
         
         // split _params into an array of argv[1], argv[2] etc
-        vector<string> args = SplitArgs(_params);
+        std::vector<std::string> args = SplitArgs(_params);
         char **argvs = (char**) malloc(sizeof(char*) * (args.size() + 2));
         argvs[0] = strdup(img_name);
         for(int i = 0; i < args.size(); ++i)
@@ -144,7 +144,7 @@ void SingleTask::WriteChildInput(const void *_d, size_t _sz)
     if(m_MasterFD < 0 || m_TaskPID < 0 || _sz == 0)
         return;
     
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(m_Lock);
     write(m_MasterFD, _d, _sz);
 }
 
@@ -181,7 +181,7 @@ void SingleTask::ReadChildOutput()
                 DoCalloutOnChildOutput(input, rc);
             }
             else if(rc < 0) {
-                cerr << "Error " << errno << " on read master PTY" << endl;
+                std::cerr << "Error " << errno << " on read master PTY" << std::endl;
                 goto end_of_all;
             }
         }
@@ -222,7 +222,7 @@ void SingleTask::ResizeWindow(int _sx, int _sy)
     if(m_TermSX == _sx && m_TermSY == _sy)
         return;
     
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(m_Lock);
     
     m_TermSX = _sx;
     m_TermSY = _sy;
@@ -232,7 +232,7 @@ void SingleTask::ResizeWindow(int _sx, int _sy)
 
 void SingleTask::CleanUp()
 {
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(m_Lock);
     
     if(m_TaskPID > 0)
     {

@@ -1,5 +1,9 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
+
+#include <optional>
+#include <vector>
+#include <memory>
 
 namespace nc::term {
 
@@ -70,9 +74,9 @@ public:
     // -1 is the last (most recent) backscreen line
     // return an iterator pair [i,e)
     // on invalid input parameters return [nullptr,nullptr)
-    template <class T> struct RangePair : public pair<T*,T*>
+    template <class T> struct RangePair : public std::pair<T*,T*>
     {
-        using pair<T*,T*>::pair;
+        using std::pair<T*,T*>::pair;
         operator bool() const { return this->first != nullptr && this->second != nullptr; };
     };
     RangePair<const Space> LineFromNo(int _line_number) const;
@@ -94,15 +98,16 @@ public:
      * lines should have any non-zero symbol, including space (32).
      * if screen is absolutely clean it will return nullopt
      */
-    optional<pair<int, int>> OccupiedOnScreenLines() const;
+    std::optional<std::pair<int, int>> OccupiedOnScreenLines() const;
     
-    vector<uint32_t> DumpUnicodeString( ScreenPoint _begin, ScreenPoint _end ) const;
-    pair<vector<uint16_t>, vector<ScreenPoint>> DumpUTF16StringWithLayout(ScreenPoint _begin,
-                                                                          ScreenPoint _end ) const;
+    std::vector<uint32_t> DumpUnicodeString( ScreenPoint _begin, ScreenPoint _end ) const;
+    
+    using LayedOutUTF16Dump = std::pair<std::vector<uint16_t>, std::vector<ScreenPoint>>;  
+    LayedOutUTF16Dump DumpUTF16StringWithLayout(ScreenPoint _begin, ScreenPoint _end ) const;
     
     // use for diagnose and test purposes only
-    string DumpScreenAsANSI() const;
-    string DumpScreenAsANSIBreaked() const;
+    std::string DumpScreenAsANSI() const;
+    std::string DumpScreenAsANSIBreaked() const;
     
     inline bool HasSnapshot() const { return (bool)m_Snapshot; }
     void MakeSnapshot();
@@ -128,52 +133,58 @@ private:
         Snapshot(unsigned _w, unsigned _h);
         const unsigned            width;
         const unsigned            height;
-        const unique_ptr<Space[]> chars;
+        const std::unique_ptr<Space[]> chars;
     };
     
     LineMeta *MetaFromLineNo( int _line_number );
     const LineMeta *MetaFromLineNo( int _line_number ) const;
     
-    static void FixupOnScreenLinesIndeces(vector<LineMeta>::iterator _i, vector<LineMeta>::iterator _e, unsigned _width);
-    static unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height);
-    static unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width, unsigned _height, Space _initial_char);
-    vector<vector<Space>> ComposeContinuousLines(int _from, int _to) const; // [_from, _to), _from is less than _to
-    static vector< tuple<vector<Space>, bool> > DecomposeContinuousLines( const vector<vector<Space>>& _scr, unsigned _width ); // <spaces, is wrapped>
+    static void FixupOnScreenLinesIndeces(std::vector<LineMeta>::iterator _i,
+                                          std::vector<LineMeta>::iterator _e,
+                                          unsigned _width);
+    static std::unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width,
+                                                             unsigned _height);
+    static std::unique_ptr<Space[]> ProduceRectangularSpaces(unsigned _width,
+                                                             unsigned _height,
+                                                             Space _initial_char);
+    std::vector<std::vector<Space>> ComposeContinuousLines(int _from, int _to) const; // [_from, _to), _from is less than _to
+    static std::vector<std::tuple<std::vector<Space>, bool> >
+        DecomposeContinuousLines(const std::vector<std::vector<Space>>& _scr,
+                                 unsigned _width ); // <spaces, is wrapped>
     
     
     unsigned            m_Width    = 0; // onscreen and backscreen width
     unsigned            m_Height   = 0; // onscreen height, backscreen has arbitrary height
-    vector<LineMeta>    m_OnScreenLines;
-    vector<LineMeta>    m_BackScreenLines;
-    unique_ptr<Space[]> m_OnScreenSpaces; // rebuilt on screeen size change
-    vector<Space>       m_BackScreenSpaces; // will be growing
+    std::vector<LineMeta>    m_OnScreenLines;
+    std::vector<LineMeta>    m_BackScreenLines;
+    std::unique_ptr<Space[]> m_OnScreenSpaces; // rebuilt on screeen size change
+    std::vector<Space>       m_BackScreenSpaces; // will be growing
     
     Space               m_EraseChar = DefaultEraseChar();
 
-    unique_ptr<Snapshot>m_Snapshot;
+    std::unique_ptr<Snapshot>m_Snapshot;
 };
 
-// auto ?
 inline const ScreenBuffer::Space*
-begin( const pair<const ScreenBuffer::Space*, const ScreenBuffer::Space*> &_p )
+begin( const std::pair<const ScreenBuffer::Space*, const ScreenBuffer::Space*> &_p )
 {
     return _p.first;
 }
 
 inline ScreenBuffer::Space*
-begin( const pair<ScreenBuffer::Space*, ScreenBuffer::Space*> &_p )
+begin( const std::pair<ScreenBuffer::Space*, ScreenBuffer::Space*> &_p )
 {
     return _p.first;
 }
 
 inline const ScreenBuffer::Space*
-end( const pair<const ScreenBuffer::Space*, const ScreenBuffer::Space*> &_p )
+end( const std::pair<const ScreenBuffer::Space*, const ScreenBuffer::Space*> &_p )
 {
     return _p.second;
 }
 
 inline ScreenBuffer::Space*
-end( const pair<ScreenBuffer::Space*, ScreenBuffer::Space*> &_p )
+end( const std::pair<ScreenBuffer::Space*, ScreenBuffer::Space*> &_p )
 {
     return _p.second;
 }

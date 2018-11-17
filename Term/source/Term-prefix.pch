@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 
 // basic C facilities
 #include <assert.h>
@@ -12,13 +12,6 @@
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <sys/mount.h>
-
-// networking stuff
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
-#include <netdb.h>
 
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -52,15 +45,10 @@
     #include <future>
     #include <random>
     #include <optional>
-    using namespace std;
-    using namespace std::chrono;
 
     #include <Habanero/dispatch_cpp.h>
     #include <Habanero/mach_time.h>
     #include <Habanero/spinlock.h>
-
-    #include <boost/filesystem.hpp>
-    using boost::filesystem::path;
 
     #include <Utility/StringExtras.h>
 

@@ -16,8 +16,8 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 {
     NCTermView                     *m_View;
     NCTermFlippableHolder          *m_ViewHolder;
-    unique_ptr<term::Screen>        m_Screen;
-    shared_ptr<nc::term::Settings>  m_Settings;
+    std::unique_ptr<term::Screen>   m_Screen;
+    std::shared_ptr<nc::term::Settings>m_Settings;
     int                             m_SettingsNotificationTicket;
     bool                            m_MouseInsideNonOverlappedArea;
 }
@@ -26,7 +26,7 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 
 - (id)initWithFrame:(NSRect)frameRect
         attachToTop:(bool)top
-        settings:(shared_ptr<nc::term::Settings>)settings
+           settings:(std::shared_ptr<nc::term::Settings>)settings
 {
     assert(settings);
     self = [super initWithFrame:frameRect];
@@ -52,8 +52,8 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
         self.contentView.backgroundColor = m_Settings->BackgroundColor();
         self.verticalLineScroll = m_View.fontCache.Height();
         
-        m_Screen = make_unique<term::Screen>(floor(rc.size.width / m_View.fontCache.Width()),
-                                             floor(rc.size.height / m_View.fontCache.Height()));
+        m_Screen = std::make_unique<term::Screen>(floor(rc.size.width / m_View.fontCache.Width()),
+                                                  floor(rc.size.height / m_View.fontCache.Height()));
         
         [m_View AttachToScreen:m_Screen.get()];
         

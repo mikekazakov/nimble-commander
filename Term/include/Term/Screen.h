@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "ScreenBuffer.h"
@@ -13,7 +13,7 @@ public:
     
     Screen(unsigned _width, unsigned _height);
     
-    unique_lock<mutex>              AcquireLock()    const { return unique_lock<mutex>(m_Lock); }
+    std::unique_lock<std::mutex>    AcquireLock()    const { return std::unique_lock{m_Lock}; }
     inline const ScreenBuffer      &Buffer()  const { return m_Buffer;          }
     inline int                      Width()   const { return m_Buffer.Width();  }
     inline int                      Height()  const { return m_Buffer.Height(); }
@@ -23,7 +23,7 @@ public:
     void ResizeScreen(unsigned _new_sx, unsigned _new_sy);
     
     void PutCh(uint32_t _char);
-    void PutString(const string &_str);
+    void PutString(const std::string &_str);
     
     /**
      * Marks current screen line as wrapped. That means that the next line is continuation of current line.
@@ -79,18 +79,18 @@ public:
     void DoShiftRowRight(int _chars);    
     
     void SetTitle(const char *_t);
-    const string& Title() const;
+    const std::string& Title() const;
     
 private:
     void CopyLineChars(int _from, int _to);
     void ClearLine(int _ind);
     
-    mutable mutex                 m_Lock;
+    mutable std::mutex            m_Lock;
     int                           m_PosX = 0;
     int                           m_PosY = 0;
     Space                         m_EraseChar = ScreenBuffer::DefaultEraseChar();
     ScreenBuffer                  m_Buffer;
-    string                        m_Title;
+    std::string                   m_Title;
     bool                          m_AlternateScreen = false;
 };
 

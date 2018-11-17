@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/select.h>
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
@@ -21,10 +21,10 @@ Task::~Task()
 {
 }
 
-void Task::SetOnChildOutput( function<void(const void *_d, size_t _sz)> _callback )
+void Task::SetOnChildOutput( std::function<void(const void *_d, size_t _sz)> _callback )
 {
-    lock_guard<mutex> lock(m_OnChildOutputLock);
-    m_OnChildOutput = make_shared<decltype(_callback)>(move(_callback));
+    auto local = std::lock_guard{m_OnChildOutputLock};
+    m_OnChildOutput = std::make_shared<decltype(_callback)>(std::move(_callback));
 }
 
 void Task::DoCalloutOnChildOutput( const void *_d, size_t _sz  )
@@ -87,13 +87,13 @@ void Task::SetupHandlesAndSID(int _slave_fd)
     ioctl(0, TIOCSCTTY, 1);
 }
 
-static string GetLocale()
+static std::string GetLocale()
 {
     // Keep a copy of the current locale setting for this process
     char* backupLocale = setlocale(LC_CTYPE, NULL);
     
     // Start with the locale
-    string locale = "en"; // en as a backup for any possible error
+    std::string locale = "en"; // en as a backup for any possible error
     
     CFLocaleRef loc = CFLocaleCopyCurrent();
     CFStringRef ident = CFLocaleGetIdentifier( loc );
@@ -107,10 +107,10 @@ static string GetLocale()
     }
     CFRelease(loc);
     
-    string encoding = "UTF-8"; // hardcoded now. but how uses non-UTF8 nowdays?
+    std::string encoding = "UTF-8"; // hardcoded now. but how uses non-UTF8 nowdays?
     
     // check if locale + encoding is valid
-    string test = locale + '.' + encoding;
+    std::string test = locale + '.' + encoding;
     if(NULL != setlocale(LC_CTYPE, test.c_str()))
         locale = test;
     
@@ -123,13 +123,13 @@ static string GetLocale()
     return locale;
 }
 
-const map<string, string> &Task::BuildEnv()
+const std::map<std::string, std::string> &Task::BuildEnv()
 {
-    static map<string, string> env;
-    static once_flag once;
-    call_once(once, []{
+    static std::map<std::string, std::string> env;
+    static std::once_flag once;
+    std::call_once(once, []{
         // do it once per app run
-        string locale = GetLocale();
+        std::string locale = GetLocale();
         if(!locale.empty()) {
             env.emplace("LANG", locale);
             env.emplace("LC_COLLATE", locale);
@@ -150,7 +150,7 @@ const map<string, string> &Task::BuildEnv()
     return env;
 }
 
-void Task::SetEnv(const map<string, string>& _env)
+void Task::SetEnv(const std::map<std::string, std::string>& _env)
 {
     for(auto &i: _env)
         setenv(i.first.c_str(), i.second.c_str(), 1);
@@ -179,13 +179,14 @@ unsigned Task::ReadInputAsMuchAsAvailable(int _fd, void *_buf, unsigned _buf_sz,
     return already_read;
 }
 
-string Task::EscapeShellFeed(const string &_feed)
+std::string Task::EscapeShellFeed(const std::string &_feed)
 {
-    static const char to_esc[] = {'|', '&', ';', '<', '>', '(', ')', '$', '\'', '\\', '\"', '`', ' ', '\t' };
-    string result;
+    static const char to_esc[] = {'|', '&', ';', '<', '>', '(', ')', '$', '\'', '\\',
+        '\"', '`', ' ', '\t' };
+    std::string result;
     result.reserve( _feed.length() );
     for( auto c: _feed ) {
-        if( any_of( begin(to_esc), end(to_esc), [=](auto e){ return c == e; } ) )
+        if( std::any_of( std::begin(to_esc), std::end(to_esc), [=](auto e){ return c == e; } ) )
             result += '\\';
         result += c;
     }
@@ -211,7 +212,8 @@ void Task::CloseAllFDAbove3()
         close(fd);
 }
 
-int Task::RunDetachedProcess(const string &_process_path, const vector<string> &_args)
+int Task::RunDetachedProcess(const std::string &_process_path,
+                             const std::vector<std::string> &_args)
 {
     const int rc = fork();
     if( rc == 0 ) {

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "CursorMode.h"
+#include <functional>
 
 #ifdef __OBJC__
 @class NSFont;

@@ -1,4 +1,5 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "Task.h"
 #include <sys/select.h>
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
@@ -9,7 +10,8 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <termios.h>
-#include "Task.h"
+#include <locale.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 namespace nc::term {
 

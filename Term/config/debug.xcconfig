@@ -1,0 +1,11 @@
+#include "default.xcconfig"
+
+GCC_OPTIMIZATION_LEVEL = 0
+COPY_PHASE_STRIP = NO
+ENABLE_TESTABILITY = YES
+DEBUG_INFORMATION_FORMAT = dwarf
+GCC_PREPROCESSOR_DEFINITIONS = DEBUG=1 $(inherited)
+
+// PCH showed a marginal increase in build time - thus it's not enabled now 
+//GCC_PRECOMPILE_PREFIX_HEADER = YES
+//GCC_PREFIX_HEADER = $(PROJECT_DIR)/source/PrecompiledHeaders.pch

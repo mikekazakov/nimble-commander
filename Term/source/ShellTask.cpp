@@ -16,6 +16,9 @@
 #include <Utility/PathManip.h>
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
+#include <Habanero/dispatch_cpp.h>
+#include <iostream>
+#include <signal.h>
 #include "ShellTask.h"
 
 namespace nc::term {

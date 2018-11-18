@@ -3,6 +3,8 @@
 
 #include <functional>
 #include <string>
+#include <Habanero/spinlock.h>
+#include <thread>
 #include "Task.h"
 
 namespace nc::term {

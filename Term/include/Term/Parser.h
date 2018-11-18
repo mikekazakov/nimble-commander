@@ -1,6 +1,8 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <string>
+
 // RTFM:
 // http://ascii-table.com/ansi-escape-sequences.php
 // http://en.wikipedia.org/wiki/ANSI_escape_code

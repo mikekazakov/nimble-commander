@@ -16,6 +16,8 @@
 #include <unistd.h>
 #include <util.h>
 #include <syslog.h>
+#include <signal.h>
+#include <Habanero/dispatch_cpp.h>
 
 #include "SingleTask.h"
 

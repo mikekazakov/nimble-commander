@@ -1,5 +1,6 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
+#include <Habanero/dispatch_cpp.h>
 #import <XCTest/XCTest.h>
 #include "ShellTask.h"
 #include "Screen.h"

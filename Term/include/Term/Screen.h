@@ -2,6 +2,7 @@
 #pragma once
 
 #include "ScreenBuffer.h"
+#include <mutex>
 
 namespace nc::term {
 

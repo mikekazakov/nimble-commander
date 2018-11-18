@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <mutex>
 
 namespace nc::term {
 

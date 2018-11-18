@@ -1,10 +1,16 @@
+#include "warnings.xcconfig"
+
 VALID_ARCHS = x86_64
+SDKROOT = macosx
+ONLY_ACTIVE_ARCH = YES
+ENABLE_TESTABILITY = YES
+COPY_PHASE_STRIP = NO
+MACOSX_DEPLOYMENT_TARGET = 10.11
 
 // paths
 HEADER_SEARCH_PATHS = $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../3rd_Party/boost/include $(PROJECT_DIR)/include/Term
 LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/boost/built
 USE_HEADERMAP = NO
-GCC_PREFIX_HEADER = source/Term-prefix.pch
 
 // c++
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a

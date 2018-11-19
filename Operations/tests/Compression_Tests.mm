@@ -92,7 +92,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 - (void)testCompressingBinUtilities
 {
     const vector<string> filenames = { "[", "bash", "cat", "chmod", "cp", "csh", "date", "dd", "df",
-        "domainname", "echo", "ed", "expr", "hostname", "kill", "ksh", "launchctl", "link",
+        "echo", "ed", "expr", "hostname", "kill", "ksh", "launchctl", "link",
         "ln", "ls", "mkdir", "mv", "pax", "ps", "pwd", "rm", "rmdir", "sh", "sleep", "stty",
         "sync", "tcsh", "test", "unlink", "wait4path", "zsh" };
 

@@ -81,6 +81,17 @@
         handler();
 }
 
+- (IBAction)OnActivate:(id)sender
+{
+    auto handler = self.onActivate;
+    if( handler != nullptr ) {
+        const auto activated = handler();
+        if( activated == true ) {
+            [self.window close];
+        }
+    }
+}
+
 - (void)windowWillClose:(NSNotification *)notification
 {
     self.window.delegate = nil;    

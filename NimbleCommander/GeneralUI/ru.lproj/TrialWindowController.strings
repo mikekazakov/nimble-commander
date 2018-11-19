@@ -4,6 +4,9 @@
 /* Class = "NSTextFieldCell"; title = "Nimble Commander"; ObjectID = "fpl-43-RtI"; */
 "fpl-43-RtI.title" = "Nimble Commander";
 
+/* Class = "NSButtonCell"; title = "Activate"; ObjectID = "KDn-F2-9ri"; */
+"KDn-F2-9ri.title" = "Активировать";
+
 /* Class = "NSButtonCell"; alternateTitle = "Quit"; ObjectID = "NB6-jk-aPh"; */
 "NB6-jk-aPh.alternateTitle" = "Завершить";
 

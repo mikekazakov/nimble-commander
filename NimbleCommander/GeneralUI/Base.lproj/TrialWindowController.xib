@@ -18,7 +18,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="TrialWindow">
             <rect key="contentRect" x="428" y="248" width="522" height="317"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="522" height="317"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -115,8 +115,22 @@ DQ
                             <action selector="OnBuy:" target="-2" id="C8P-xn-wFN"/>
                         </connections>
                     </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="d0v-6F-EVN">
+                        <rect key="frame" x="232" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="Mp9-hS-HZT"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Activate" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KDn-F2-9ri">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnActivate:" target="-2" id="jbw-lb-IA4"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="wIF-bq-df4" firstAttribute="firstBaseline" secondItem="d0v-6F-EVN" secondAttribute="firstBaseline" id="0VL-Ov-qTa"/>
                     <constraint firstAttribute="trailing" secondItem="Ckk-CU-kCd" secondAttribute="trailing" constant="20" symbolic="YES" id="0ZD-uY-Sbk"/>
                     <constraint firstItem="Ckk-CU-kCd" firstAttribute="top" secondItem="Wal-LD-WNK" secondAttribute="bottom" constant="8" id="80f-AV-oOV"/>
                     <constraint firstAttribute="trailing" secondItem="Wal-LD-WNK" secondAttribute="trailing" constant="20" symbolic="YES" id="Aq8-aI-2Ar"/>
@@ -126,6 +140,7 @@ DQ
                     <constraint firstItem="Wal-LD-WNK" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="PZm-uj-OR8"/>
                     <constraint firstAttribute="bottom" secondItem="7Q3-xP-mIJ" secondAttribute="bottom" constant="20" symbolic="YES" id="SW5-6S-A3H"/>
                     <constraint firstItem="Wal-LD-WNK" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Std-pt-O5j"/>
+                    <constraint firstItem="wIF-bq-df4" firstAttribute="leading" secondItem="d0v-6F-EVN" secondAttribute="trailing" constant="12" symbolic="YES" id="VjM-Qb-njG"/>
                     <constraint firstItem="7Q3-xP-mIJ" firstAttribute="firstBaseline" secondItem="wIF-bq-df4" secondAttribute="firstBaseline" id="ZYn-rB-KtL"/>
                     <constraint firstItem="wjy-q3-RkT" firstAttribute="top" secondItem="Wal-LD-WNK" secondAttribute="bottom" id="c6b-zd-kit"/>
                     <constraint firstItem="7Q3-xP-mIJ" firstAttribute="leading" secondItem="wIF-bq-df4" secondAttribute="trailing" constant="12" symbolic="YES" id="duc-YZ-ucK"/>

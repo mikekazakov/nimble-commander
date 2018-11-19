@@ -581,7 +581,6 @@ static NCAppDelegate *g_Me = nil;
     return true;
 }
 
-
 - (bool) processLicenseFileActivation:(NSArray<NSString *> *)_filenames
 {
     static const auto nc_license_extension = "."s + ActivationManager::LicenseFileExtension();
@@ -928,8 +927,19 @@ static NCAppDelegate *g_Me = nil;
             [self OnPurchaseExternalLicense:self];
         }  
     };
-    window.onQuit = [weak_self, expired]{
+    window.onActivate = [weak_self]{
         if( auto self = weak_self ) {
+            [self OnActivateExternalLicense:self];
+            if( ActivationManager::Instance().UserHadRegistered() == true )
+                return true;
+        }
+        return false;
+    };
+    window.onQuit = [weak_self]{
+        if( auto self = weak_self ) {
+            const auto expired =
+                (ActivationManager::Instance().UserHadRegistered() == false) &&
+                (ActivationManager::Instance().IsTrialPeriod() == false);            
             if( expired == true )
                 dispatch_to_main_queue([]{ [NSApp terminate:nil]; });
         }

@@ -15,7 +15,7 @@
 #include <string>
 #import <XCTest/XCTest.h>
 
-using namespace hbn;
+using namespace nc::hbn;
 using namespace std;
 
 @interface LRUCache_Tests : XCTestCase

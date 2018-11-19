@@ -23,6 +23,7 @@
 		CF7D7D602158B2C000DA1794 /* tribool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7D7D5F2158B2C000DA1794 /* tribool.h */; };
 		CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD22CD32012DDDF00608DFE /* LRUCache.h */; };
 		CFD22CD72012DDFD00608DFE /* LRUCache_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD22CD52012DDF800608DFE /* LRUCache_Tests.mm */; };
+		CFE8F90421A27F3100300019 /* spinlock_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE8F90321A27F3000300019 /* spinlock_Tests.mm */; };
 		CFFA94491F4535750035E606 /* CFDefaultsCPP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */; };
 		CFFA944A1F4535750035E606 /* CFStackAllocator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8D0D161D98EA4300ADFF14 /* CFStackAllocator.cpp */; };
 		CFFA944B1F4535750035E606 /* CFString.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BA01C99C2AE0021EE7F /* CFString.cpp */; };
@@ -110,6 +111,7 @@
 		CFD6DD1F1D6C44B8006B94C2 /* Observable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Observable.h; path = include/Habanero/Observable.h; sourceTree = "<group>"; };
 		CFD6DD211D6C44C1006B94C2 /* Observable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Observable.cpp; path = source/Observable.cpp; sourceTree = "<group>"; };
 		CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFStackAllocator.h; path = include/Habanero/CFStackAllocator.h; sourceTree = "<group>"; };
+		CFE8F90321A27F3000300019 /* spinlock_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = spinlock_Tests.mm; sourceTree = "<group>"; };
 		CFF53BD71EF7995700F567C4 /* ScopedObservable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScopedObservable.h; path = ../habanero/include/Habanero/ScopedObservable.h; sourceTree = "<group>"; };
 		CFF53BD91EF7995E00F567C4 /* ScopedObservable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScopedObservable.cpp; path = ../habanero/source/ScopedObservable.cpp; sourceTree = "<group>"; };
 		CFFA94411F45322E0035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -137,6 +139,7 @@
 		CF614ABF1F9D8E6E0005F2DB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CFE8F90321A27F3000300019 /* spinlock_Tests.mm */,
 				CFD22CD52012DDF800608DFE /* LRUCache_Tests.mm */,
 				CF2084021FEFB2F70014D6AD /* StringsBulk_Tests.mm */,
 				CF614AD11F9D8EF00005F2DB /* chained_strings_Tests.mm */,
@@ -145,8 +148,8 @@
 				CF614ACA1F9D8E950005F2DB /* Info.plist */,
 			);
 			name = Tests;
-			path = "Habanero Tests";
-			sourceTree = "<group>";
+			path = tests;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFD62B691C99C19A0021EE7F = {
 			isa = PBXGroup;
@@ -342,6 +345,7 @@
 				CF614AD51F9D8F030005F2DB /* VariableContainer_Tests.mm in Sources */,
 				CF2084041FEFB2FA0014D6AD /* StringsBulk_Tests.mm in Sources */,
 				CFD22CD72012DDFD00608DFE /* LRUCache_Tests.mm in Sources */,
+				CFE8F90421A27F3100300019 /* spinlock_Tests.mm in Sources */,
 				CF614AD31F9D8EFD0005F2DB /* chained_strings_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

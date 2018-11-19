@@ -524,38 +524,4 @@ static bool HasNoModifiers( NSEvent *_event )
     }
 }
 
-// The dummies below are here to shut down as much of NSView layout machinery as possible:
-- (void)setNeedsUpdateConstraints:(BOOL)needsUpdateConstraints
-{
-}
-
-- (BOOL)translatesAutoresizingMaskIntoConstraints
-{
-    return false;
-}
-
-- (void)setTranslatesAutoresizingMaskIntoConstraints:(BOOL)translatesAutoresizingMaskIntoConstraints
-{
-}
-
-- (void)invalidateIntrinsicContentSize
-{
-}
-
-- (void)layoutSubtreeIfNeeded
-{
-}
-- (void)layout
-{
-}
-
-- (void) setNeedsLayout:(BOOL)needsLayout
-{
-}
-
-- (BOOL)needsLayout
-{
-    return false;
-}
-
 @end

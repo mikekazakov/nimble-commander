@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <unordered_map>
 #include <Utility/HexadecimalColor.h>
 #include <Utility/SystemInformation.h>
@@ -158,11 +158,16 @@ static const std::unordered_map< std::string, NSColor * > g_SystemColors11Plus =
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunguarded-availability-new"
 
-static const std::unordered_map< std::string, NSColor * > g_SystemColors13Plus = {
+static const std::unordered_map< std::string, NSColor * > g_SystemColors13Plus()
+{
+    return  {
     { "@findHighlightColor",                     NSColor.findHighlightColor                       }
-};
+    };
+}
 
-static const std::unordered_map< std::string, NSColor * > g_SystemColors14Plus = {
+static const std::unordered_map< std::string, NSColor * > SystemColors14Plus()
+{
+    return {
     { "@separatorColor",                         NSColor.separatorColor                           },
     { "@selectedContentBackgroundColor",         NSColor.selectedContentBackgroundColor           }, 
 {"@unemphasizedSelectedContentBackgroundColor", NSColor.unemphasizedSelectedContentBackgroundColor},
@@ -170,18 +175,23 @@ static const std::unordered_map< std::string, NSColor * > g_SystemColors14Plus =
     { "@alternatingContentBackgroundColors1",    NSColor.alternatingContentBackgroundColors[1]    },
     { "@unemphasizedSelectedTextBackgroundColor",NSColor.unemphasizedSelectedTextBackgroundColor  },
     { "@unemphasizedSelectedTextColor",          NSColor.unemphasizedSelectedTextColor            },    
-    { "@controlAccentColor",                     NSColor.controlAccentColor                       }
-};
+    { "@controlAccentColor",                     NSColor.controlAccentColor                      }
+    };
+}
 
 #pragma clang diagnostic pop
 
 static const std::unordered_map< std::string, NSColor * > g_SystemColors = []{
     auto base = g_SystemColors11Plus;
     const auto system_version = nc::utility::GetOSXVersion();
-    if( system_version >= nc::utility::OSXVersion::OSX_13 )
-        base.insert( std::begin(g_SystemColors13Plus), std::end(g_SystemColors13Plus) );
-    if( system_version >= nc::utility::OSXVersion::OSX_14 )
-        base.insert( std::begin(g_SystemColors14Plus), std::end(g_SystemColors14Plus) );
+    if( system_version >= nc::utility::OSXVersion::OSX_13 ) {
+        const auto colors = g_SystemColors13Plus();
+        base.insert( std::begin(colors), std::end(colors) );
+    }
+    if( system_version >= nc::utility::OSXVersion::OSX_14 ) {
+        const auto colors = SystemColors14Plus();
+        base.insert( std::begin(colors), std::end(colors) );
+    }
     return base;
 }();
 

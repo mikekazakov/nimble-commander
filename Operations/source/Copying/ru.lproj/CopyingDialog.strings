@@ -10,11 +10,20 @@
 /* Class = "NSButtonCell"; title = "Copy UNIX flags"; ObjectID = "AJ8-VF-u7U"; */
 "AJ8-VF-u7U.title" = "Копировать флаги UNIX";
 
+/* Class = "NSButtonCell"; title = "Copy extended attributes"; ObjectID = "bVV-Mm-AAW"; */
+"bVV-Mm-AAW.title" = "Копировать расширенные атрибуты";
+
 /* Class = "NSViewController"; title = "Advanced options"; ObjectID = "E1e-vG-fVc"; */
 "E1e-vG-fVc.title" = "Расширенные настройки";
 
 /* Class = "NSMenuItem"; title = "Never"; ObjectID = "GuV-mI-Jt1"; */
 "GuV-mI-Jt1.title" = "Никогда";
+
+/* Class = "NSButtonCell"; title = "Preserve symbolic links"; ObjectID = "j2d-E0-qK6"; */
+"j2d-E0-qK6.title" = "Сохранять символические ссылки";
+
+/* Class = "NSViewController"; title = "Advanced options"; ObjectID = "jQo-c7-41i"; */
+"jQo-c7-41i.title" = "Расширенные настройки";
 
 /* Class = "NSMenuItem"; title = "When moving"; ObjectID = "SJz-Fu-krG"; */
 "SJz-Fu-krG.title" = "При перемещении";
@@ -24,15 +33,6 @@
 
 /* Class = "NSButtonCell"; title = "Rename"; ObjectID = "X52-kY-B6Q"; */
 "X52-kY-B6Q.title" = "Переименовать";
-
-/* Class = "NSButtonCell"; title = "Copy extended attributes"; ObjectID = "bVV-Mm-AAW"; */
-"bVV-Mm-AAW.title" = "Копировать расширенные атрибуты";
-
-/* Class = "NSButtonCell"; title = "Preserve symbolic links"; ObjectID = "j2d-E0-qK6"; */
-"j2d-E0-qK6.title" = "Сохранять символические ссылки";
-
-/* Class = "NSViewController"; title = "Advanced options"; ObjectID = "jQo-c7-41i"; */
-"jQo-c7-41i.title" = "Расширенные настройки";
 
 /* Class = "NSMenuItem"; title = "Always"; ObjectID = "xmS-ea-Z0v"; */
 "xmS-ea-Z0v.title" = "Всегда";

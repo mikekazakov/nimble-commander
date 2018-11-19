@@ -7,6 +7,9 @@
 /* Class = "NSMenuItem"; title = "Overwrite Older"; ObjectID = "2O5-JQ-7Zs"; */
 "2O5-JQ-7Zs.title" = "Заменить старый";
 
+/* Class = "NSButtonCell"; title = "Keep Both"; ObjectID = "4JC-am-dBk"; */
+"4JC-am-dBk.title" = "Оставить оба";
+
 /* Class = "NSButtonCell"; title = "Overwrite"; ObjectID = "8Xz-24-O4V"; */
 "8Xz-24-O4V.title" = "Заменить";
 

@@ -4,62 +4,14 @@
 /* Class = "NSTextFieldCell"; title = "Additional access rights"; ObjectID = "5pT-eE-xwu"; */
 "5pT-eE-xwu.title" = "Дополнительные права";
 
-/* Class = "NSButtonCell"; title = "Process subfolders"; ObjectID = "8Wh-3d-3ib"; */
-"8Wh-3d-3ib.title" = "Обрабатывать подпапки";
-
 /* Class = "NSButtonCell"; title = "Tracked"; ObjectID = "8ox-Pt-X4E"; */
 "8ox-Pt-X4E.title" = "Tracked";
 
+/* Class = "NSButtonCell"; title = "Process subfolders"; ObjectID = "8Wh-3d-3ib"; */
+"8Wh-3d-3ib.title" = "Обрабатывать подпапки";
+
 /* Class = "NSButton"; ibShadowedToolTip = "SF_IMMUTABLE"; ObjectID = "9SC-Qg-1em"; */
 "9SC-Qg-1em.ibShadowedToolTip" = "SF_IMMUTABLE";
-
-/* Class = "NSButtonCell"; title = "Ok"; ObjectID = "CWm-5R-XNs"; */
-"CWm-5R-XNs.title" = "ОК";
-
-/* Class = "NSButtonCell"; title = "Restricted"; ObjectID = "EGh-WB-sVg"; */
-"EGh-WB-sVg.title" = "Restricted";
-
-/* Class = "NSButtonCell"; title = "Compressed"; ObjectID = "FCy-Ag-Z5y"; */
-"FCy-Ag-Z5y.title" = "Compressed";
-
-/* Class = "NSButtonCell"; title = "Sticky bit"; ObjectID = "Jb7-Hf-wOj"; */
-"Jb7-Hf-wOj.title" = "Sticky bit";
-
-/* Class = "NSButton"; ibShadowedToolTip = "SF_RESTRICTED"; ObjectID = "Jys-di-ICO"; */
-"Jys-di-ICO.ibShadowedToolTip" = "SF_RESTRICTED";
-
-/* Class = "NSButtonCell"; title = "Append-only"; ObjectID = "LMi-ZL-eVF"; */
-"LMi-ZL-eVF.title" = "Append-only";
-
-/* Class = "NSButtonCell"; title = "Opaque"; ObjectID = "MMx-Ge-OWl"; */
-"MMx-Ge-OWl.title" = "Opaque";
-
-/* Class = "NSTextFieldCell"; title = "User flags"; ObjectID = "Mmj-o0-eh9"; */
-"Mmj-o0-eh9.title" = "Флаги пользователя";
-
-/* Class = "NSTextFieldCell"; title = "Exec"; ObjectID = "OBJ-Xy-ICR"; */
-"OBJ-Xy-ICR.title" = "Выполнение";
-
-/* Class = "NSTextFieldCell"; title = "Change time:"; ObjectID = "OKd-mQ-diJ"; */
-"OKd-mQ-diJ.title" = "Время изменения:";
-
-/* Class = "NSTextFieldCell"; title = "Owner:"; ObjectID = "SGG-aH-Bq0"; */
-"SGG-aH-Bq0.title" = "Владелец:";
-
-/* Class = "NSButton"; ibShadowedToolTip = "SF_ARCHIVED"; ObjectID = "VOs-FJ-EDs"; */
-"VOs-FJ-EDs.ibShadowedToolTip" = "SF_ARCHIVED";
-
-/* Class = "NSButtonCell"; title = "Append-only"; ObjectID = "X7X-OH-fez"; */
-"X7X-OH-fez.title" = "Append-only";
-
-/* Class = "NSTextFieldCell"; title = "System flags"; ObjectID = "XNl-lf-aey"; */
-"XNl-lf-aey.title" = "Флаги системы";
-
-/* Class = "NSButtonCell"; title = "No unlink"; ObjectID = "Xai-hV-qE1"; */
-"Xai-hV-qE1.title" = "No unlink";
-
-/* Class = "NSButton"; ibShadowedToolTip = "UF_COMPRESSED"; ObjectID = "Y9a-4A-CuB"; */
-"Y9a-4A-CuB.ibShadowedToolTip" = "UF_COMPRESSED";
 
 /* Class = "NSButtonCell"; title = "Set UID on execution"; ObjectID = "adJ-Cc-COj"; */
 "adJ-Cc-COj.title" = "Set UID on execution";
@@ -67,11 +19,20 @@
 /* Class = "NSButtonCell"; title = "←"; ObjectID = "bEE-2e-LTs"; */
 "bEE-2e-LTs.title" = "←";
 
+/* Class = "NSButtonCell"; title = "Ok"; ObjectID = "CWm-5R-XNs"; */
+"CWm-5R-XNs.title" = "ОК";
+
 /* Class = "NSButtonCell"; title = "Archived"; ObjectID = "e0p-Oq-9AE"; */
 "e0p-Oq-9AE.title" = "Archived";
 
+/* Class = "NSButtonCell"; title = "Restricted"; ObjectID = "EGh-WB-sVg"; */
+"EGh-WB-sVg.title" = "Restricted";
+
 /* Class = "NSButtonCell"; title = "Hidden"; ObjectID = "eOe-bE-of9"; */
 "eOe-bE-of9.title" = "Hidden";
+
+/* Class = "NSButtonCell"; title = "Compressed"; ObjectID = "FCy-Ag-Z5y"; */
+"FCy-Ag-Z5y.title" = "Compressed";
 
 /* Class = "NSTextFieldCell"; title = "Group:"; ObjectID = "fQz-0J-h6g"; */
 "fQz-0J-h6g.title" = "Группа:";
@@ -88,8 +49,20 @@
 /* Class = "NSTextFieldCell"; title = "Modify time:"; ObjectID = "itv-6O-TUZ"; */
 "itv-6O-TUZ.title" = "Время модификации:";
 
+/* Class = "NSButtonCell"; title = "Sticky bit"; ObjectID = "Jb7-Hf-wOj"; */
+"Jb7-Hf-wOj.title" = "Sticky bit";
+
+/* Class = "NSButton"; ibShadowedToolTip = "UF_DATAVAULT"; ObjectID = "job-7D-4QV"; */
+"job-7D-4QV.ibShadowedToolTip" = "UF_DATAVAULT";
+
+/* Class = "NSButton"; ibShadowedToolTip = "SF_RESTRICTED"; ObjectID = "Jys-di-ICO"; */
+"Jys-di-ICO.ibShadowedToolTip" = "SF_RESTRICTED";
+
 /* Class = "NSButtonCell"; title = "Set GID on execution"; ObjectID = "lIH-Jg-d6l"; */
 "lIH-Jg-d6l.title" = "Set GID on execution";
+
+/* Class = "NSButtonCell"; title = "Append-only"; ObjectID = "LMi-ZL-eVF"; */
+"LMi-ZL-eVF.title" = "Append-only";
 
 /* Class = "NSButton"; ibShadowedToolTip = "UF_NODUMP"; ObjectID = "lX1-iy-fbk"; */
 "lX1-iy-fbk.ibShadowedToolTip" = "UF_NODUMP";
@@ -97,20 +70,38 @@
 /* Class = "NSButtonCell"; title = "Immutable"; ObjectID = "m3i-mO-e5Z"; */
 "m3i-mO-e5Z.title" = "Immutable";
 
+/* Class = "NSTextFieldCell"; title = "User flags"; ObjectID = "Mmj-o0-eh9"; */
+"Mmj-o0-eh9.title" = "Флаги пользователя";
+
+/* Class = "NSButtonCell"; title = "Opaque"; ObjectID = "MMx-Ge-OWl"; */
+"MMx-Ge-OWl.title" = "Opaque";
+
 /* Class = "NSTextFieldCell"; title = "Create time:"; ObjectID = "mYf-AR-6rd"; */
 "mYf-AR-6rd.title" = "Время создания:";
 
 /* Class = "NSButton"; ibShadowedToolTip = "UF_TRACKED"; ObjectID = "nuy-AP-3IJ"; */
 "nuy-AP-3IJ.ibShadowedToolTip" = "UF_TRACKED";
 
+/* Class = "NSTextFieldCell"; title = "Exec"; ObjectID = "OBJ-Xy-ICR"; */
+"OBJ-Xy-ICR.title" = "Выполнение";
+
+/* Class = "NSTextFieldCell"; title = "Change time:"; ObjectID = "OKd-mQ-diJ"; */
+"OKd-mQ-diJ.title" = "Время изменения:";
+
+/* Class = "NSButtonCell"; title = "Data vault"; ObjectID = "pCY-Oi-ik9"; */
+"pCY-Oi-ik9.title" = "Data vault";
+
 /* Class = "NSTextFieldCell"; title = "Others:"; ObjectID = "rTI-SZ-mID"; */
 "rTI-SZ-mID.title" = "Остальные:";
 
-/* Class = "NSTextFieldCell"; title = "Write"; ObjectID = "sMS-nE-WFJ"; */
-"sMS-nE-WFJ.title" = "Запись";
+/* Class = "NSTextFieldCell"; title = "Owner:"; ObjectID = "SGG-aH-Bq0"; */
+"SGG-aH-Bq0.title" = "Владелец:";
 
 /* Class = "NSButton"; ibShadowedToolTip = "UF_HIDDEN"; ObjectID = "sgu-2L-K7W"; */
 "sgu-2L-K7W.ibShadowedToolTip" = "UF_HIDDEN";
+
+/* Class = "NSTextFieldCell"; title = "Write"; ObjectID = "sMS-nE-WFJ"; */
+"sMS-nE-WFJ.title" = "Запись";
 
 /* Class = "NSButton"; ibShadowedToolTip = "UF_OPAQUE"; ObjectID = "tJw-H2-oKI"; */
 "tJw-H2-oKI.ibShadowedToolTip" = "UF_OPAQUE";
@@ -127,6 +118,9 @@
 /* Class = "NSButton"; ibShadowedToolTip = "UF_IMMUTABLE"; ObjectID = "v4g-jY-FRk"; */
 "v4g-jY-FRk.ibShadowedToolTip" = "UF_IMMUTABLE";
 
+/* Class = "NSButton"; ibShadowedToolTip = "SF_ARCHIVED"; ObjectID = "VOs-FJ-EDs"; */
+"VOs-FJ-EDs.ibShadowedToolTip" = "SF_ARCHIVED";
+
 /* Class = "NSTextFieldCell"; title = "Group:"; ObjectID = "w1W-MU-8Jb"; */
 "w1W-MU-8Jb.title" = "Группа:";
 
@@ -136,8 +130,20 @@
 /* Class = "NSButtonCell"; title = "←"; ObjectID = "wXc-gm-PBz"; */
 "wXc-gm-PBz.title" = "←";
 
+/* Class = "NSButtonCell"; title = "Append-only"; ObjectID = "X7X-OH-fez"; */
+"X7X-OH-fez.title" = "Append-only";
+
+/* Class = "NSButtonCell"; title = "No unlink"; ObjectID = "Xai-hV-qE1"; */
+"Xai-hV-qE1.title" = "No unlink";
+
 /* Class = "NSButton"; ibShadowedToolTip = "SF_APPEND"; ObjectID = "xEP-6h-nrz"; */
 "xEP-6h-nrz.ibShadowedToolTip" = "SF_APPEND";
+
+/* Class = "NSTextFieldCell"; title = "System flags"; ObjectID = "XNl-lf-aey"; */
+"XNl-lf-aey.title" = "Флаги системы";
+
+/* Class = "NSButton"; ibShadowedToolTip = "UF_COMPRESSED"; ObjectID = "Y9a-4A-CuB"; */
+"Y9a-4A-CuB.ibShadowedToolTip" = "UF_COMPRESSED";
 
 /* Class = "NSButtonCell"; title = "←"; ObjectID = "z2l-Jo-i8h"; */
 "z2l-Jo-i8h.title" = "←";

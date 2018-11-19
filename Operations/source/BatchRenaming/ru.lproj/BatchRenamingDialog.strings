@@ -1,11 +1,11 @@
 /* Class = "NSMenuItem"; title = "7"; ObjectID = "0HA-bL-31h"; */
 "0HA-bL-31h.title" = "7";
 
-/* Class = "NSMenuItem"; title = "[Nx-y] Characters from the xth to the yth"; ObjectID = "0ZZ-ek-ffd"; */
-"0ZZ-ek-ffd.title" = "[Nx-y] Символы с x по y";
-
 /* Class = "NSButton"; ibShadowedToolTip = "^O"; ObjectID = "0yW-rZ-IWN"; */
 "0yW-rZ-IWN.ibShadowedToolTip" = "^O";
+
+/* Class = "NSMenuItem"; title = "[Nx-y] Characters from the xth to the yth"; ObjectID = "0ZZ-ek-ffd"; */
+"0ZZ-ek-ffd.title" = "[Nx-y] Символы с x по y";
 
 /* Class = "NSMenuItem"; title = "[E0x-y] Characters from the xth to the yth, padded with zeros"; ObjectID = "5OS-Hh-oit"; */
 "5OS-Hh-oit.title" = "[E0x-y] Символы x-y, отступ нулями";
@@ -16,14 +16,14 @@
 /* Class = "NSMenu"; title = "Insert Extension"; ObjectID = "6UV-CG-7gE"; */
 "6UV-CG-7gE.title" = "Вставить расширение";
 
-/* Class = "NSMenuItem"; title = "4"; ObjectID = "7WM-H3-fMK"; */
-"7WM-H3-fMK.title" = "4";
-
 /* Class = "NSMenuItem"; title = "[s] Seconds in 2-digit format"; ObjectID = "7gT-UX-y3n"; */
 "7gT-UX-y3n.title" = "[s] Секунды в 2-значном формате";
 
 /* Class = "NSButton"; ibShadowedToolTip = "⌘↩"; ObjectID = "7gw-eT-fiP"; */
 "7gw-eT-fiP.ibShadowedToolTip" = "⌘↩";
+
+/* Class = "NSMenuItem"; title = "4"; ObjectID = "7WM-H3-fMK"; */
+"7WM-H3-fMK.title" = "4";
 
 /* Class = "NSMenuItem"; title = "[N-x-] Characters starting from the xth-last"; ObjectID = "7zz-h6-nzq"; */
 "7zz-h6-nzq.title" = "[N-x-] Символы с x-последнего символа";
@@ -46,8 +46,14 @@
 /* Class = "NSButtonCell"; title = "[YMD] Date"; ObjectID = "A21-Ij-cvY"; */
 "A21-Ij-cvY.title" = "[YMD] Дата";
 
+/* Class = "NSMenuItem"; title = "[m] Minutes in 2-digit format"; ObjectID = "aDt-Fx-JbE"; */
+"aDt-Fx-JbE.title" = "[m] Минуты в 2-значном формате";
+
 /* Class = "NSButton"; ibShadowedToolTip = "^D"; ObjectID = "AKG-zR-ewH"; */
 "AKG-zR-ewH.ibShadowedToolTip" = "^D";
+
+/* Class = "NSMenuItem"; title = "Unchanged"; ObjectID = "ars-b9-93l"; */
+"ars-b9-93l.title" = "Без изменений";
 
 /* Class = "NSMenuItem"; title = "Insert Name"; ObjectID = "ASO-kr-YQ9"; */
 "ASO-kr-YQ9.title" = "Вставить имя";
@@ -58,23 +64,59 @@
 /* Class = "NSMenuItem"; title = "5"; ObjectID = "BF2-Vd-5NW"; */
 "BF2-Vd-5NW.title" = "5";
 
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "BUk-IP-bgH"; */
-"BUk-IP-bgH.title" = "Отмена";
+/* Class = "NSMenuItem"; title = "Change Case"; ObjectID = "bGP-Wa-nkX"; */
+"bGP-Wa-nkX.title" = "Изменить регистр";
 
 /* Class = "NSMenuItem"; title = "8"; ObjectID = "Blp-cK-Usi"; */
 "Blp-cK-Usi.title" = "8";
 
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "BUk-IP-bgH"; */
+"BUk-IP-bgH.title" = "Отмена";
+
+/* Class = "NSMenuItem"; title = "[Nx,y] y characters starting from the xth"; ObjectID = "c6B-wg-whY"; */
+"c6B-wg-whY.title" = "[Nx,y] y символов начиная с символа x";
+
+/* Class = "NSMenuItem"; title = "[Cx+y/z:w] -\"\"-, with width w"; ObjectID = "cc4-5O-bUq"; */
+"cc4-5O-bUq.title" = "[Cx+y/z:w] -\"\"-, с шириной w";
+
+/* Class = "NSButton"; ibShadowedToolTip = "^A"; ObjectID = "cgN-Ss-qHc"; */
+"cgN-Ss-qHc.ibShadowedToolTip" = "^A";
+
 /* Class = "NSTextFieldCell"; title = "Step by:"; ObjectID = "CJg-T2-ViQ"; */
 "CJg-T2-ViQ.title" = "Шаг:";
+
+/* Class = "NSMenuItem"; title = "[E] Extension"; ObjectID = "cq6-JT-R4R"; */
+"cq6-JT-R4R.title" = "[E] Расширение";
+
+/* Class = "NSMenuItem"; title = "[]] Closing square bracket"; ObjectID = "cS1-vL-FvU"; */
+"cS1-vL-FvU.title" = "[]] Закрывающая квадратная скобка";
+
+/* Class = "NSTableColumn"; headerCell.title = "Renamed"; ObjectID = "cxN-S7-SiU"; */
+"cxN-S7-SiU.headerCell.title" = "Переименованный";
 
 /* Class = "NSTextFieldCell"; title = "Start at:"; ObjectID = "DHj-ql-rAa"; */
 "DHj-ql-rAa.title" = "Начать с:";
 
+/* Class = "NSMenuItem"; title = "[U] UPPERCASE"; ObjectID = "dZA-6P-0fW"; */
+"dZA-6P-0fW.title" = "[U] ВЕРХНИЙ РЕГИСТР";
+
 /* Class = "NSButton"; ibShadowedToolTip = "^R"; ObjectID = "E2t-ZL-Mbg"; */
 "E2t-ZL-Mbg.ibShadowedToolTip" = "^R";
 
+/* Class = "NSMenuItem"; title = "Remove Item"; ObjectID = "e6p-dl-Cvn"; */
+"e6p-dl-Cvn.title" = "Удалить объект";
+
+/* Class = "NSMenuItem"; title = "[A] Full name"; ObjectID = "ecy-XB-j1i"; */
+"ecy-XB-j1i.title" = "[A] Полное имя";
+
 /* Class = "NSButton"; ibShadowedToolTip = "^N"; ObjectID = "EKb-UU-Za4"; */
 "EKb-UU-Za4.ibShadowedToolTip" = "^N";
+
+/* Class = "NSMenuItem"; title = "[E-x-] Characters starting from the xth-last"; ObjectID = "ekj-0V-KuY"; */
+"ekj-0V-KuY.title" = "[E-x-] Символы с x-последнего символа";
+
+/* Class = "NSMenuItem"; title = "Insert Extension"; ObjectID = "elx-8C-kN3"; */
+"elx-8C-kN3.title" = "Вставить расширение";
 
 /* Class = "NSMenuItem"; title = "[y] Year in 2-digit format"; ObjectID = "EzQ-Su-4rt"; */
 "EzQ-Su-4rt.title" = "[y] Год в 2-значной форме";
@@ -82,23 +124,38 @@
 /* Class = "NSButtonCell"; title = "[E] Extension"; ObjectID = "Fkf-IO-A7D"; */
 "Fkf-IO-A7D.title" = "[E] Расширение";
 
+/* Class = "NSMenu"; title = "Insert Counter"; ObjectID = "fuD-37-ihS"; */
+"fuD-37-ihS.title" = "Вставить счетчик";
+
 /* Class = "NSMenuItem"; title = "[Ex-] Characters starting from the xth"; ObjectID = "G5S-W3-9F5"; */
 "G5S-W3-9F5.title" = "[Ex-] Символы начиная с символа x";
-
-/* Class = "NSTextFieldCell"; title = "Digits:"; ObjectID = "GXj-Bq-G3p"; */
-"GXj-Bq-G3p.title" = "Цифр:";
 
 /* Class = "NSMenuItem"; title = "[F] Capitalize Each Word"; ObjectID = "GtS-TG-NfX"; */
 "GtS-TG-NfX.title" = "[F] С Заглавных Букв";
 
-/* Class = "NSTextFieldCell"; title = "Rename pattern"; ObjectID = "HSQ-qr-5xS"; */
-"HSQ-qr-5xS.title" = "Маска переименования";
+/* Class = "NSMenuItem"; title = "[N x-y] Characters from the xth to the yth, padded with spaces"; ObjectID = "gxe-Qo-9SB"; */
+"gxe-Qo-9SB.title" = "[N x-y] Символы x-y, отступ пробелами";
+
+/* Class = "NSTextFieldCell"; title = "Digits:"; ObjectID = "GXj-Bq-G3p"; */
+"GXj-Bq-G3p.title" = "Цифр:";
+
+/* Class = "NSTableColumn"; headerCell.title = "Original"; ObjectID = "h8h-hP-2GO"; */
+"h8h-hP-2GO.headerCell.title" = "Исходный";
 
 /* Class = "NSButtonCell"; title = "1x"; ObjectID = "Hbd-mI-Y1C"; */
 "Hbd-mI-Y1C.title" = "1x";
 
 /* Class = "NSMenuItem"; title = "1"; ObjectID = "Hk3-Jj-TuN"; */
 "Hk3-Jj-TuN.title" = "1";
+
+/* Class = "NSTextFieldCell"; title = "Search for:"; ObjectID = "hnA-ag-UoB"; */
+"hnA-ag-UoB.title" = "Найти:";
+
+/* Class = "NSTextFieldCell"; title = "Rename pattern"; ObjectID = "HSQ-qr-5xS"; */
+"HSQ-qr-5xS.title" = "Маска переименования";
+
+/* Class = "NSMenuItem"; title = "[n] Original case"; ObjectID = "ih7-k0-Ocn"; */
+"ih7-k0-Ocn.title" = "[n] Исходный регистр";
 
 /* Class = "NSMenuItem"; title = "[N-x-y] Characters from the x-last to the y-last character"; ObjectID = "IYS-tn-zus"; */
 "IYS-tn-zus.title" = "[N-x-y] Символы с x-последнего по y-последний символ";
@@ -112,134 +169,17 @@
 /* Class = "NSMenuItem"; title = "[d] Localized date"; ObjectID = "Jak-d8-5mU"; */
 "Jak-d8-5mU.title" = "[d] Локализованная дата";
 
-/* Class = "NSButtonCell"; title = "[hms] Time"; ObjectID = "KEf-5O-PLS"; */
-"KEf-5O-PLS.title" = "[hms] Время";
+/* Class = "NSTextFieldCell"; title = "Uppercase/lowercase"; ObjectID = "jv3-c3-JIM"; */
+"jv3-c3-JIM.title" = "Верхний/нижний регистр";
 
 /* Class = "NSButtonCell"; title = "Aa"; ObjectID = "KaF-N0-6UU"; */
 "KaF-N0-6UU.title" = "Аа";
 
-/* Class = "NSButton"; ibShadowedToolTip = "^L"; ObjectID = "LEA-CX-gfa"; */
-"LEA-CX-gfa.ibShadowedToolTip" = "^L";
-
-/* Class = "NSMenuItem"; title = "[N-x,y] y characters starting from the xth-last"; ObjectID = "M2c-fE-A0U"; */
-"M2c-fE-A0U.title" = "[N-x,y] y символов начиная с x-последнего символа";
-
-/* Class = "NSMenuItem"; title = "2"; ObjectID = "MEn-IK-r9c"; */
-"MEn-IK-r9c.title" = "2";
-
-/* Class = "NSMenuItem"; title = "[N] Name"; ObjectID = "MaD-CZ-ZOf"; */
-"MaD-CZ-ZOf.title" = "[N] Имя";
-
-/* Class = "NSMenuItem"; title = "[D] Day in 2-digit format"; ObjectID = "Mli-E6-Dh0"; */
-"Mli-E6-Dh0.title" = "[D] День в 2-значной форме";
-
-/* Class = "NSMenuItem"; title = "UPPERCASE"; ObjectID = "NeK-ph-pA8"; */
-"NeK-ph-pA8.title" = "ВЕРХНИЙ РЕГИСТР";
-
-/* Class = "NSMenuItem"; title = "6"; ObjectID = "Pm1-6F-fNU"; */
-"Pm1-6F-fNU.title" = "6";
-
-/* Class = "NSMenuItem"; title = "[Cx+y/z] -\"\"-, every z files"; ObjectID = "Pt4-fB-yzE"; */
-"Pt4-fB-yzE.title" = "[Cx+y/z] -\"\"-, каждые z файлов";
-
-/* Class = "NSMenuItem"; title = "Insert Time"; ObjectID = "QeP-e1-ydC"; */
-"QeP-e1-ydC.title" = "Вставить время";
-
-/* Class = "NSComboBox"; ibShadowedToolTip = "^W"; ObjectID = "RBI-rU-SES"; */
-"RBI-rU-SES.ibShadowedToolTip" = "^W";
-
-/* Class = "NSScrollView"; ibShadowedToolTip = "^I"; ObjectID = "RV2-6w-I75"; */
-"RV2-6w-I75.ibShadowedToolTip" = "^I";
-
-/* Class = "NSMenuItem"; title = "[h] Hours in 2-digit, 24-hour format"; ObjectID = "Rke-70-QSJ"; */
-"Rke-70-QSJ.title" = "[h] Часы в 2-значном форме, 24 часа";
-
-/* Class = "NSComboBox"; ibShadowedToolTip = "^S"; ObjectID = "SI4-vS-Egd"; */
-"SI4-vS-Egd.ibShadowedToolTip" = "^S";
-
-/* Class = "NSMenuItem"; title = "[Y] Year in 4-digit format"; ObjectID = "SsN-Yk-hdY"; */
-"SsN-Yk-hdY.title" = "[Y] Год в 4-значном формате";
-
-/* Class = "NSMenuItem"; title = "3"; ObjectID = "Udy-gX-Ick"; */
-"Udy-gX-Ick.title" = "3";
-
-/* Class = "NSMenu"; title = "Other"; ObjectID = "WWQ-5i-QHP"; */
-"WWQ-5i-QHP.title" = "Прочее";
-
-/* Class = "NSMenuItem"; title = "[t] Localized time"; ObjectID = "X2x-oo-kdd"; */
-"X2x-oo-kdd.title" = "[t] Локализованное время";
-
-/* Class = "NSMenuItem"; title = "[Cx] Counter starting at x"; ObjectID = "X4f-xK-DKi"; */
-"X4f-xK-DKi.title" = "[Cx] Счетчик начиная с x";
-
-/* Class = "NSMenuItem"; title = "Other"; ObjectID = "XRV-Nj-PD1"; */
-"XRV-Nj-PD1.title" = "Прочее";
-
-/* Class = "NSMenuItem"; title = "[Ex-y] Characters from the xth to the yth"; ObjectID = "Zbw-tQ-Old"; */
-"Zbw-tQ-Old.title" = "[Ex-y] Символы x по y";
-
-/* Class = "NSMenuItem"; title = "[m] Minutes in 2-digit format"; ObjectID = "aDt-Fx-JbE"; */
-"aDt-Fx-JbE.title" = "[m] Минуты в 2-значном формате";
-
-/* Class = "NSMenuItem"; title = "Unchanged"; ObjectID = "ars-b9-93l"; */
-"ars-b9-93l.title" = "Без изменений";
-
-/* Class = "NSMenuItem"; title = "Change Case"; ObjectID = "bGP-Wa-nkX"; */
-"bGP-Wa-nkX.title" = "Изменить регистр";
-
-/* Class = "NSMenuItem"; title = "[Nx,y] y characters starting from the xth"; ObjectID = "c6B-wg-whY"; */
-"c6B-wg-whY.title" = "[Nx,y] y символов начиная с символа x";
-
-/* Class = "NSMenuItem"; title = "[]] Closing square bracket"; ObjectID = "cS1-vL-FvU"; */
-"cS1-vL-FvU.title" = "[]] Закрывающая квадратная скобка";
-
-/* Class = "NSMenuItem"; title = "[Cx+y/z:w] -\"\"-, with width w"; ObjectID = "cc4-5O-bUq"; */
-"cc4-5O-bUq.title" = "[Cx+y/z:w] -\"\"-, с шириной w";
-
-/* Class = "NSButton"; ibShadowedToolTip = "^A"; ObjectID = "cgN-Ss-qHc"; */
-"cgN-Ss-qHc.ibShadowedToolTip" = "^A";
-
-/* Class = "NSMenuItem"; title = "[E] Extension"; ObjectID = "cq6-JT-R4R"; */
-"cq6-JT-R4R.title" = "[E] Расширение";
-
-/* Class = "NSTableColumn"; headerCell.title = "Renamed"; ObjectID = "cxN-S7-SiU"; */
-"cxN-S7-SiU.headerCell.title" = "Переименованный";
-
-/* Class = "NSMenuItem"; title = "[U] UPPERCASE"; ObjectID = "dZA-6P-0fW"; */
-"dZA-6P-0fW.title" = "[U] ВЕРХНИЙ РЕГИСТР";
-
-/* Class = "NSMenuItem"; title = "Remove Item"; ObjectID = "e6p-dl-Cvn"; */
-"e6p-dl-Cvn.title" = "Удалить объект";
-
-/* Class = "NSMenuItem"; title = "[A] Full name"; ObjectID = "ecy-XB-j1i"; */
-"ecy-XB-j1i.title" = "[A] Полное имя";
-
-/* Class = "NSMenuItem"; title = "[E-x-] Characters starting from the xth-last"; ObjectID = "ekj-0V-KuY"; */
-"ekj-0V-KuY.title" = "[E-x-] Символы с x-последнего символа";
-
-/* Class = "NSMenuItem"; title = "Insert Extension"; ObjectID = "elx-8C-kN3"; */
-"elx-8C-kN3.title" = "Вставить расширение";
-
-/* Class = "NSMenu"; title = "Insert Counter"; ObjectID = "fuD-37-ihS"; */
-"fuD-37-ihS.title" = "Вставить счетчик";
-
-/* Class = "NSMenuItem"; title = "[N x-y] Characters from the xth to the yth, padded with spaces"; ObjectID = "gxe-Qo-9SB"; */
-"gxe-Qo-9SB.title" = "[N x-y] Символы x-y, отступ пробелами";
-
-/* Class = "NSTableColumn"; headerCell.title = "Original"; ObjectID = "h8h-hP-2GO"; */
-"h8h-hP-2GO.headerCell.title" = "Исходный";
-
-/* Class = "NSTextFieldCell"; title = "Search for:"; ObjectID = "hnA-ag-UoB"; */
-"hnA-ag-UoB.title" = "Найти:";
-
-/* Class = "NSMenuItem"; title = "[n] Original case"; ObjectID = "ih7-k0-Ocn"; */
-"ih7-k0-Ocn.title" = "[n] Исходный регистр";
-
-/* Class = "NSTextFieldCell"; title = "Uppercase/lowercase"; ObjectID = "jv3-c3-JIM"; */
-"jv3-c3-JIM.title" = "Верхний/нижний регистр";
-
 /* Class = "NSMenuItem"; title = "[E-x-y] Characters from the xth-last to the yth-last"; ObjectID = "kay-ak-msL"; */
 "kay-ak-msL.title" = "[E-x-y] Символы с x-последнего по y-последний символ";
+
+/* Class = "NSButtonCell"; title = "[hms] Time"; ObjectID = "KEf-5O-PLS"; */
+"KEf-5O-PLS.title" = "[hms] Время";
 
 /* Class = "NSMenuItem"; title = "[Nx] The xth character of the name"; ObjectID = "kfE-p8-aQp"; */
 "kfE-p8-aQp.title" = "[Nx] x-ый символ имени";
@@ -247,20 +187,38 @@
 /* Class = "NSMenuItem"; title = "Insert Counter"; ObjectID = "kuO-PY-Bmo"; */
 "kuO-PY-Bmo.title" = "Вставить счетчик";
 
+/* Class = "NSButton"; ibShadowedToolTip = "^L"; ObjectID = "LEA-CX-gfa"; */
+"LEA-CX-gfa.ibShadowedToolTip" = "^L";
+
+/* Class = "NSMenuItem"; title = "[Cx+y] -\"\"-, stepping by y "; ObjectID = "liV-eL-4oU"; */
+"liV-eL-4oU.title" = "[Cx+y] -\"\"-, шаг по y ";
+
 /* Class = "NSTextFieldCell"; title = "Define counter"; ObjectID = "lPY-kx-ngy"; */
 "lPY-kx-ngy.title" = "Задать счетчик";
 
 /* Class = "NSMenu"; title = "Insert Time"; ObjectID = "lQb-OZ-81W"; */
 "lQb-OZ-81W.title" = "Вставить время";
 
-/* Class = "NSMenuItem"; title = "[Cx+y] -\"\"-, stepping by y "; ObjectID = "liV-eL-4oU"; */
-"liV-eL-4oU.title" = "[Cx+y] -\"\"-, шаг по y ";
+/* Class = "NSMenuItem"; title = "[N-x,y] y characters starting from the xth-last"; ObjectID = "M2c-fE-A0U"; */
+"M2c-fE-A0U.title" = "[N-x,y] y символов начиная с x-последнего символа";
+
+/* Class = "NSMenuItem"; title = "[N] Name"; ObjectID = "MaD-CZ-ZOf"; */
+"MaD-CZ-ZOf.title" = "[N] Имя";
+
+/* Class = "NSMenuItem"; title = "2"; ObjectID = "MEn-IK-r9c"; */
+"MEn-IK-r9c.title" = "2";
+
+/* Class = "NSMenuItem"; title = "[D] Day in 2-digit format"; ObjectID = "Mli-E6-Dh0"; */
+"Mli-E6-Dh0.title" = "[D] День в 2-значной форме";
 
 /* Class = "NSMenuItem"; title = "9"; ObjectID = "n1o-LN-TRC"; */
 "n1o-LN-TRC.title" = "9";
 
 /* Class = "NSMenu"; title = "Insert Name"; ObjectID = "n9d-vl-7sS"; */
 "n9d-vl-7sS.title" = "Вставить время";
+
+/* Class = "NSMenuItem"; title = "UPPERCASE"; ObjectID = "NeK-ph-pA8"; */
+"NeK-ph-pA8.title" = "ВЕРХНИЙ РЕГИСТР";
 
 /* Class = "NSButton"; ibShadowedToolTip = "^E"; ObjectID = "nQr-DT-yTz"; */
 "nQr-DT-yTz.ibShadowedToolTip" = "^E";
@@ -271,8 +229,17 @@
 /* Class = "NSComboBox"; ibShadowedToolTip = "^P"; ObjectID = "p5V-M1-8GC"; */
 "p5V-M1-8GC.ibShadowedToolTip" = "^P";
 
+/* Class = "NSMenuItem"; title = "6"; ObjectID = "Pm1-6F-fNU"; */
+"Pm1-6F-fNU.title" = "6";
+
+/* Class = "NSMenuItem"; title = "[Cx+y/z] -\"\"-, every z files"; ObjectID = "Pt4-fB-yzE"; */
+"Pt4-fB-yzE.title" = "[Cx+y/z] -\"\"-, каждые z файлов";
+
 /* Class = "NSTextFieldCell"; title = "Replace with:"; ObjectID = "q54-cJ-xHR"; */
 "q54-cJ-xHR.title" = "Заменить на:";
+
+/* Class = "NSMenuItem"; title = "Insert Time"; ObjectID = "QeP-e1-ydC"; */
+"QeP-e1-ydC.title" = "Вставить время";
 
 /* Class = "NSButtonCell"; title = "[E]"; ObjectID = "ql9-1w-xJV"; */
 "ql9-1w-xJV.title" = "[E]";
@@ -280,8 +247,17 @@
 /* Class = "NSButtonCell"; title = "RegEx"; ObjectID = "r4R-K5-WtL"; */
 "r4R-K5-WtL.title" = "RegExp";
 
+/* Class = "NSComboBox"; ibShadowedToolTip = "^W"; ObjectID = "RBI-rU-SES"; */
+"RBI-rU-SES.ibShadowedToolTip" = "^W";
+
 /* Class = "NSMenuItem"; title = "lowercase"; ObjectID = "riM-Tn-gc8"; */
 "riM-Tn-gc8.title" = "нижний регистр";
+
+/* Class = "NSMenuItem"; title = "[h] Hours in 2-digit, 24-hour format"; ObjectID = "Rke-70-QSJ"; */
+"Rke-70-QSJ.title" = "[h] Часы в 2-значном форме, 24 часа";
+
+/* Class = "NSScrollView"; ibShadowedToolTip = "^I"; ObjectID = "RV2-6w-I75"; */
+"RV2-6w-I75.ibShadowedToolTip" = "^I";
 
 /* Class = "NSMenuItem"; title = "[E-x,y] y characters starting from the xth-last"; ObjectID = "s97-nv-BwD"; */
 "s97-nv-BwD.title" = "[E-x,y] y символов начиная с x-последнего символа";
@@ -289,8 +265,14 @@
 /* Class = "NSMenuItem"; title = "[E x-y] Characters from the xth to the yth, padded with spaces"; ObjectID = "sCN-Ho-nlG"; */
 "sCN-Ho-nlG.title" = "[E x-y] Символы x-y, отступ пробелами";
 
+/* Class = "NSComboBox"; ibShadowedToolTip = "^S"; ObjectID = "SI4-vS-Egd"; */
+"SI4-vS-Egd.ibShadowedToolTip" = "^S";
+
 /* Class = "NSMenuItem"; title = "[Ex] xth character of the extension"; ObjectID = "soN-u5-8B9"; */
 "soN-u5-8B9.title" = "[Ex] x-ый символ расширения";
+
+/* Class = "NSMenuItem"; title = "[Y] Year in 4-digit format"; ObjectID = "SsN-Yk-hdY"; */
+"SsN-Yk-hdY.title" = "[Y] Год в 4-значном формате";
 
 /* Class = "NSButton"; ibShadowedToolTip = "^C"; ObjectID = "stf-ED-JLt"; */
 "stf-ED-JLt.ibShadowedToolTip" = "^C";
@@ -304,6 +286,9 @@
 /* Class = "NSMenuItem"; title = "[[] Opening square bracket"; ObjectID = "twO-ES-XWZ"; */
 "twO-ES-XWZ.title" = "[[] Открывающая квадратная скобка";
 
+/* Class = "NSMenuItem"; title = "3"; ObjectID = "Udy-gX-Ick"; */
+"Udy-gX-Ick.title" = "3";
+
 /* Class = "NSPopUpButton"; ibShadowedToolTip = "^U"; ObjectID = "uwD-i0-8RE"; */
 "uwD-i0-8RE.ibShadowedToolTip" = "^U";
 
@@ -316,12 +301,27 @@
 /* Class = "NSMenuItem"; title = "10"; ObjectID = "wKV-er-3v5"; */
 "wKV-er-3v5.title" = "10";
 
+/* Class = "NSMenu"; title = "Other"; ObjectID = "WWQ-5i-QHP"; */
+"WWQ-5i-QHP.title" = "Прочее";
+
+/* Class = "NSMenuItem"; title = "[t] Localized time"; ObjectID = "X2x-oo-kdd"; */
+"X2x-oo-kdd.title" = "[t] Локализованное время";
+
+/* Class = "NSMenuItem"; title = "[Cx] Counter starting at x"; ObjectID = "X4f-xK-DKi"; */
+"X4f-xK-DKi.title" = "[Cx] Счетчик начиная с x";
+
 /* Class = "NSMenu"; title = "Change Case"; ObjectID = "xj4-zP-B43"; */
 "xj4-zP-B43.title" = "Изменить регистр";
 
-/* Class = "NSButtonCell"; title = "[N] Name"; ObjectID = "zO9-kl-5aA"; */
-"zO9-kl-5aA.title" = "[N] Имя";
+/* Class = "NSMenuItem"; title = "Other"; ObjectID = "XRV-Nj-PD1"; */
+"XRV-Nj-PD1.title" = "Прочее";
+
+/* Class = "NSMenuItem"; title = "[Ex-y] Characters from the xth to the yth"; ObjectID = "Zbw-tQ-Old"; */
+"Zbw-tQ-Old.title" = "[Ex-y] Символы x по y";
 
 /* Class = "NSButtonCell"; title = "[N#-#] Range"; ObjectID = "zck-cy-kSi"; */
 "zck-cy-kSi.title" = "[N#-#] Диапазон";
+
+/* Class = "NSButtonCell"; title = "[N] Name"; ObjectID = "zO9-kl-5aA"; */
+"zO9-kl-5aA.title" = "[N] Имя";
 

@@ -1,4 +1,7 @@
 /* No comment provided by engineer. */
+"%@ “%@” to “%@”" = "%1$@ “%2$@” в “%3$@”";
+
+/* No comment provided by engineer. */
 "%@ %@ items to “%@”" = "%1$@ %2$@ объектов в “%3$@”";
 
 /* No comment provided by engineer. */
@@ -20,9 +23,6 @@
 "%@ to “%@”" = "%1$@ в “%2$@”";
 
 /* No comment provided by engineer. */
-"%@ “%@” to “%@”" = "%1$@ “%2$@” в “%3$@”";
-
-/* No comment provided by engineer. */
 "Abort" = "Прервать";
 
 /* No comment provided by engineer. */
@@ -34,11 +34,11 @@
 /* Operation title batch renaming */
 "Batch renaming %@ items" = "Групповое переименование %@ объектов";
 
-/* Title for file attributes sheet, multiple items */
-"Change file attributes for %@ selected items" = "Изменить файловые атрибуты для %@ объектов";
-
 /* Title for file attributes sheet, single item */
 "Change file attributes for “%@”" = "Изменить файловые атрибуты для “%@”";
+
+/* Title for file attributes sheet, multiple items */
+"Change file attributes for %@ selected items" = "Изменить файловые атрибуты для %@ объектов";
 
 /* No comment provided by engineer. */
 "Checksum verification failed" = "Ошибка верификации контрольной суммы";
@@ -49,20 +49,20 @@
 /* No comment provided by engineer. */
 "Close" = "Закрыть";
 
-/* Compressing %d items */
-"Compressing %d items" = "Сжатие %d объектов";
-
 /* Compressing “%@” */
 "Compressing “%@”" = "Сжатите “%@”";
+
+/* Compressing %d items */
+"Compressing %d items" = "Сжатие %d объектов";
 
 /* No comment provided by engineer. */
 "Continue" = "Продолжить";
 
-/* Copy files sheet prompt, copying many files */
-"Copy %@ items to:" = "Скопировать %@ объектов в:";
-
 /* Copy files sheet prompt, copying single file */
 "Copy “%@” to:" = "Скопировать “%@” в:";
+
+/* Copy files sheet prompt, copying many files */
+"Copy %@ items to:" = "Скопировать %@ объектов в:";
 
 /* Prefix of a file operation */
 "Copying" = "Копирование";
@@ -82,17 +82,17 @@
 /* Menu item title in file deletion sheet */
 "Delete Permanently" = "Удалить необратимо";
 
-/* Operation title for multiple items deletion */
-"Deleting %@ items" = "Удаление %@ объектов";
-
 /* Operation title for single item deletion */
 "Deleting “%@”" = "Удаление “%@”";
 
-/* Asking user to delete multiple files */
-"Do you want to delete %@ items?" = "Вы ходите удалить %@ объектов?";
+/* Operation title for multiple items deletion */
+"Deleting %@ items" = "Удаление %@ объектов";
 
 /* Asking user to delete a file */
 "Do you want to delete “%@”?" = "Вы ходите удалить “%@”?";
+
+/* Asking user to delete multiple files */
+"Do you want to delete %@ items?" = "Вы ходите удалить %@ объектов?";
 
 /* No comment provided by engineer. */
 "Failed to access a directory" = "Отсутствует доступ к папке";
@@ -163,6 +163,9 @@
 /* No comment provided by engineer. */
 "Failed to write an archive" = "Не удалось записать архив";
 
+/* No comment provided by engineer. */
+"Item is not a directory" = "Объект не явлется папкой";
+
 /* Menu item title in file deletion sheet */
 "Move to Trash" = "Переместить в Корзину";
 
@@ -170,22 +173,25 @@
 "Moving" = "Перенос";
 
 /* No comment provided by engineer. */
-"Preparing to copy %@ items" = "Подготовка к копированию %@ объектов";
+"Overwrite" = "Заменить";
 
 /* No comment provided by engineer. */
 "Preparing to copy “%@”" = "Подготовка к копированию “%@”";
 
 /* No comment provided by engineer. */
-"Preparing to move %@ items" = "Подготовка к перемещению %@ объектов";
+"Preparing to copy %@ items" = "Подготовка к копированию %@ объектов";
 
 /* No comment provided by engineer. */
 "Preparing to move “%@”" = "Подготовка к перемещению “%@”";
 
-/* Move files sheet prompt, moving many files */
-"Rename/move %@ items to:" = "Переименовать/переместить %@ объектов в:";
+/* No comment provided by engineer. */
+"Preparing to move %@ items" = "Подготовка к перемещению %@ объектов";
 
 /* Move files sheet prompt, moving single file */
 "Rename/move “%@” to:" = "Переименовать/переместить “%@” в:";
+
+/* Move files sheet prompt, moving many files */
+"Rename/move %@ items to:" = "Переименовать/переместить %@ объектов в:";
 
 /* No comment provided by engineer. */
 "Retry" = "Повторить";

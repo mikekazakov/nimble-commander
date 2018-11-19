@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		CF197C251FB4381E009F6C59 /* CopyingDialogDisclosedView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF197C271FB4381E009F6C59 /* CopyingDialogDisclosedView.xib */; };
+		CF238E1021A1948800569809 /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF238E0E21A1948800569809 /* Helpers.cpp */; };
+		CF238E1121A1948800569809 /* Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = CF238E0F21A1948800569809 /* Helpers.h */; };
 		CF36DBE91F6BF3FB004A018E /* Archive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */; };
 		CF4BCEE91F1D9CAA005F8414 /* CopyingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */; };
 		CF4BCEEA1F1D9CAA005F8414 /* CopyingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */; };
@@ -171,6 +173,8 @@
 /* Begin PBXFileReference section */
 		CF197C261FB4381E009F6C59 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CopyingDialogDisclosedView.xib; sourceTree = "<group>"; };
 		CF197C291FB43825009F6C59 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/CopyingDialogDisclosedView.strings; sourceTree = "<group>"; };
+		CF238E0E21A1948800569809 /* Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Helpers.cpp; path = source/Copying/Helpers.cpp; sourceTree = "<group>"; };
+		CF238E0F21A1948800569809 /* Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Helpers.h; path = source/Copying/Helpers.h; sourceTree = "<group>"; };
 		CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Archive_Tests.mm; path = tests/Archive_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CopyingJob.cpp; path = source/Copying/CopyingJob.cpp; sourceTree = "<group>"; };
 		CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingJob.h; path = source/Copying/CopyingJob.h; sourceTree = "<group>"; };
@@ -369,8 +373,6 @@
 		CF4BCEE21F1D9C9A005F8414 /* Copying */ = {
 			isa = PBXGroup;
 			children = (
-				CFAAF0721FA9D8B8009230B3 /* CopyingTitleBuilder.h */,
-				CFAAF0731FA9D8B8009230B3 /* CopyingTitleBuilder.mm */,
 				CF4BCF3D1F29A326005F8414 /* ChecksumExpectation.cpp */,
 				CF4BCF3E1F29A326005F8414 /* ChecksumExpectation.h */,
 				CF4BCEED1F1DA207005F8414 /* Copying.h */,
@@ -381,11 +383,15 @@
 				CF197C271FB4381E009F6C59 /* CopyingDialogDisclosedView.xib */,
 				CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */,
 				CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */,
+				CFAAF0721FA9D8B8009230B3 /* CopyingTitleBuilder.h */,
+				CFAAF0731FA9D8B8009230B3 /* CopyingTitleBuilder.mm */,
 				CF4BCF561F2F1508005F8414 /* DisclosureViewController.h */,
 				CF4BCF571F2F1508005F8414 /* DisclosureViewController.m */,
 				CF4BCF0A1F1EF579005F8414 /* FileAlreadyExistDialog.h */,
 				CF4BCF0B1F1EF579005F8414 /* FileAlreadyExistDialog.mm */,
 				CF4BCF081F1EF579005F8414 /* FileAlreadyExistDialog.xib */,
+				CF238E0E21A1948800569809 /* Helpers.cpp */,
+				CF238E0F21A1948800569809 /* Helpers.h */,
 				CF4BCF001F1EEFCE005F8414 /* NativeFSHelpers.cpp */,
 				CF4BCF011F1EEFCE005F8414 /* NativeFSHelpers.h */,
 				CF4BCEE71F1D9CAA005F8414 /* Options.h */,
@@ -594,8 +600,8 @@
 				CFC4F9981F0F271E0000B3EE /* Linkage_Tests.mm */,
 			);
 			name = Tests;
-			path = OperationsTests;
-			sourceTree = "<group>";
+			path = tests;
+			sourceTree = SOURCE_ROOT;
 		};
 		CFF53B711EDD401900F567C4 /* Frameworks */ = {
 			isa = PBXGroup;
@@ -689,6 +695,7 @@
 				CFC4F8D01EFA07F00000B3EE /* PoolViewController.h in Headers */,
 				CFC4F9511F0CA84D0000B3EE /* DirectoryCreationDialog.h in Headers */,
 				CF4BCF5C1F301303005F8414 /* AggregateProgressTracker.h in Headers */,
+				CF238E1121A1948800569809 /* Helpers.h in Headers */,
 				CFC4F8D71EFB5F780000B3EE /* BriefOperationViewController.h in Headers */,
 				CFF53BAE1EEA840600F567C4 /* Statistics.h in Headers */,
 				CFC4F8F31F0243D30000B3EE /* GenericErrorDialog.h in Headers */,
@@ -874,6 +881,7 @@
 				CFC4F95E1F0CB07A0000B3EE /* DeletionDialog.mm in Sources */,
 				CF4BCF531F2F07DB005F8414 /* CopyingDialog.mm in Sources */,
 				CFC4F9D31F14C4030000B3EE /* AttrsChangingJob.cpp in Sources */,
+				CF238E1021A1948800569809 /* Helpers.cpp in Sources */,
 				CF4BCF021F1EEFCE005F8414 /* NativeFSHelpers.cpp in Sources */,
 				CFC4F9801F0DEC280000B3EE /* BatchRenamingDialog.mm in Sources */,
 				CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */,

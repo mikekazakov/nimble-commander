@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 namespace nc::ops {
@@ -15,5 +15,6 @@ inline constexpr long NSModalResponseOverwrite          = -10'003;
 inline constexpr long NSModalResponseOverwriteOld       = -10'004;
 inline constexpr long NSModalResponseAppend             = -10'005;
 inline constexpr long NSModalResponseRetry              = -10'006;
-
+inline constexpr long NSModalResponseKeepBoth           = -10'007;
+    
 }

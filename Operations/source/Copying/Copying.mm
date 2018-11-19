@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Copying.h"
 #include "CopyingJob.h"
 #include "../AsyncDialogResponse.h"
@@ -98,6 +98,8 @@ int Copying::OnCopyDestExists(const struct stat &_src, const struct stat &_dst, 
             return (int)Callbacks::CopyDestExistsResolution::Overwrite;
         case CopyingOptions::ExistBehavior::OverwriteOld:
             return (int)Callbacks::CopyDestExistsResolution::OverwriteOld;
+        case CopyingOptions::ExistBehavior::KeepBoth:
+            return (int)Callbacks::CopyDestExistsResolution::KeepBoth;
         default:
             break;
     }
@@ -129,6 +131,11 @@ int Copying::OnCopyDestExists(const struct stat &_src, const struct stat &_dst, 
             m_ExistBehavior = CopyingOptions::ExistBehavior::OverwriteOld;
         return (int)Callbacks::CopyDestExistsResolution::OverwriteOld;
     }
+    if( ctx->response == NSModalResponseKeepBoth ) {
+        if( ctx->IsApplyToAllSet() )
+            m_ExistBehavior = CopyingOptions::ExistBehavior::KeepBoth;
+        return (int)Callbacks::CopyDestExistsResolution::KeepBoth;
+    }    
     return (int)Callbacks::CopyDestExistsResolution::Stop;
 }
 
@@ -139,6 +146,8 @@ void Copying::OnCopyDestExistsUI(const struct stat &_src, const struct stat &_ds
                                                               withSourceStat:_src
                                                          withDestinationStat:_dst
                                                                   andContext:_ctx];
+    sheet.allowAppending = true;
+    sheet.allowKeepingBoth = true;
     sheet.singleItem = m_Job->IsSingleScannedItemProcessing();
     Show(sheet.window, _ctx);
 }
@@ -155,6 +164,8 @@ int Copying::OnRenameDestExists(const struct stat &_src, const struct stat &_dst
             return (int)Callbacks::RenameDestExistsResolution::Overwrite;
         case CopyingOptions::ExistBehavior::OverwriteOld:
             return (int)Callbacks::RenameDestExistsResolution::OverwriteOld;
+        case CopyingOptions::ExistBehavior::KeepBoth:
+            return (int)Callbacks::RenameDestExistsResolution::KeepBoth;
         default:
             break;
     }
@@ -181,6 +192,11 @@ int Copying::OnRenameDestExists(const struct stat &_src, const struct stat &_dst
             m_ExistBehavior = CopyingOptions::ExistBehavior::OverwriteOld;
         return (int)Callbacks::RenameDestExistsResolution::OverwriteOld;
     }
+    if( ctx->response == NSModalResponseKeepBoth ) {
+        if( ctx->IsApplyToAllSet() )
+            m_ExistBehavior = CopyingOptions::ExistBehavior::KeepBoth;
+        return (int)Callbacks::RenameDestExistsResolution::KeepBoth;
+    }        
     return (int)Callbacks::RenameDestExistsResolution::Stop;
 }
 
@@ -193,6 +209,7 @@ void Copying::OnRenameDestExistsUI(const struct stat &_src, const struct stat &_
                                                                   andContext:_ctx];
     sheet.singleItem = m_Job->IsSingleScannedItemProcessing();
     sheet.allowAppending = false;
+    sheet.allowKeepingBoth = true;
     Show(sheet.window, _ctx);
 }
 

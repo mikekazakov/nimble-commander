@@ -21,13 +21,13 @@ struct CopyingJobCallbacks
     = [](int _vfs_error, const string &_path, VFSHost &_vfs)
     { return CantAccessSourceItemResolution::Stop; };
 
-    enum class CopyDestExistsResolution { Stop, Skip, Overwrite, OverwriteOld, Append };
+    enum class CopyDestExistsResolution { Stop, Skip, Overwrite, OverwriteOld, Append, KeepBoth };
     function<CopyDestExistsResolution(const struct stat &_src, const struct stat &_dst, const string &_path)>
     m_OnCopyDestinationAlreadyExists
     = [](const struct stat &_src, const struct stat &_dst, const string &_path)
     { return CopyDestExistsResolution::Stop; };
     
-    enum class RenameDestExistsResolution { Stop, Skip, Overwrite, OverwriteOld };
+    enum class RenameDestExistsResolution { Stop, Skip, Overwrite, OverwriteOld, KeepBoth };
     function<RenameDestExistsResolution(const struct stat &_src, const struct stat &_dst, const string &_path)>
     m_OnRenameDestinationAlreadyExists
     = [](const struct stat &_src_stat, const struct stat &_dst_stat, const string &_path)
@@ -153,10 +153,14 @@ private:
         NeedsToBeDeleted
     };
     
+    using RequestNonexistentDst = std::function<void()>;    
+    
     void        ProcessItems();
+    StepResult  ProcessItemNo(int _item_number);
     StepResult  ProcessSymlinkItem(VFSHost& _source_host,
                                    const string &_source_path,
-                                   const string &_destination_path);
+                                   const string &_destination_path,
+                                   const RequestNonexistentDst &_new_dst_callback);
     StepResult  ProcessDirectoryItem(VFSHost& _source_host,
                                      const string &_source_path,
                                      int _source_index,
@@ -169,21 +173,23 @@ private:
     string ComposeDestinationNameForItemInDB(int _src_item_index,
                                              const copying::SourceItems &_db ) const;
     
-    // + stats callback
+    // will be used for checksum calculation when copying verifiyng is enabled
+    using SourceDataFeedback = std::function<void(const void *_data, unsigned _sz)>;
+     
     StepResult CopyNativeFileToNativeFile(const string& _src_path,
                                           const string& _dst_path,
-                                          function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
-                                          );
+                                          const SourceDataFeedback &_source_data_feedback,
+                                          const RequestNonexistentDst &_new_dst_callback);
     StepResult CopyVFSFileToNativeFile(VFSHost &_src_vfs,
                                        const string& _src_path,
                                        const string& _dst_path,
-                                       function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
-                                        );
+                                       const SourceDataFeedback &_source_data_feedback,
+                                       const RequestNonexistentDst &_new_dst_callback);
     StepResult CopyVFSFileToVFSFile(VFSHost &_src_vfs,
                                     const string& _src_path,
                                     const string& _dst_path,
-                                    function<void(const void *_data, unsigned _sz)> _source_data_feedback // will be used for checksum calculation for copying verifiyng
-                                    );
+                                    const SourceDataFeedback &_source_data_feedback,
+                                    const RequestNonexistentDst &_new_dst_callback);
 
     StepResult CopyNativeDirectoryToNativeDirectory(const string& _src_path,
                                                     const string& _dst_path) const;
@@ -194,18 +200,20 @@ private:
                                               const string& _src_path,
                                               const string& _dst_path) const;
     StepResult CopyNativeSymlinkToNative(const string& _src_path,
-                                 const string& _dst_path) const;
+                                         const string& _dst_path,
+                                         const RequestNonexistentDst &_new_dst_callback) const;
     StepResult CopyVFSSymlinkToNative(VFSHost &_src_vfs,
                                       const string& _src_path,
-                                      const string& _dst_path) const;
+                                      const string& _dst_path,
+                                      const RequestNonexistentDst &_new_dst_callback) const;
     StepResult CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
                                    const string& _src_path,
-                                   const string& _dst_path) const;
-    StepResult RenameNativeSymlinkToNative(const string& _src_path,
-                                           const string& _dst_path) const;
+                                   const string& _dst_path,
+                                   const RequestNonexistentDst &_new_dst_callback) const;
     
     StepResult RenameNativeFile(const string& _src_path,
-                                const string& _dst_path) const;
+                                const string& _dst_path,
+                                const RequestNonexistentDst &_new_dst_callback) const;
 
     pair<StepResult, SourceItemAftermath> RenameNativeDirectory(const string& _src_path,
                                                                 const string& _dst_path) const;
@@ -216,7 +224,8 @@ private:
     
     StepResult RenameVFSFile(VFSHost &_common_host,
                              const string& _src_path,
-                             const string& _dst_path) const;
+                             const string& _dst_path,
+                             const RequestNonexistentDst &_new_dst_callback) const;
     StepResult VerifyCopiedFile(const copying::ChecksumExpectation& _exp, bool &_matched);
     void        ClearSourceItems();
     void        ClearSourceItem( const string &_path, mode_t _mode, VFSHost &_host );

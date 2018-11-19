@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <sys/stat.h>
 #include <VFS/Native.h>
@@ -6,6 +6,7 @@
 #include <VFS/ArcUnRAR.h>
 #include <VFS/XAttr.h>
 #include "../source/Copying/Copying.h"
+#include "../source/Copying/Helpers.h"
 
 using namespace nc::ops;
 using namespace nc::vfs;
@@ -725,6 +726,230 @@ static int VFSCompareEntries(const path& _file1_full_path,
         });
     }
     return 0;
+}
+
+- (void)testCopyingToExistingItemWithKeepingBothResultsInOrigWithCopiedWithAnotherName
+{
+    using namespace boost::filesystem;
+    // DirA/item (file)
+    // DirB/item (file)
+    mkdir( (m_TmpDir / "DirA").c_str(), 0755 );
+    close( open((m_TmpDir / "DirA" / "item").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    mkdir( (m_TmpDir / "DirB").c_str(), 0755 );
+    close( open((m_TmpDir / "DirB" / "item").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    
+    CopyingOptions opts;
+    opts.docopy = true;
+    opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
+               (m_TmpDir/"DirA").c_str(),
+               host,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    XCTAssert( op.State() == OperationState::Completed );
+    XCTAssert( status(m_TmpDir / "DirA" / "item 2").type() == file_type::regular_file );
+}
+
+- (void)testRenamingToExistingItemWithKeepingBothResultsInOrigRenamedWithAnotherName
+{
+    using namespace boost::filesystem;
+    // DirA/item (file)
+    // DirB/item (file)
+    mkdir( (m_TmpDir / "DirA").c_str(), 0755 );
+    close( open((m_TmpDir / "DirA" / "item").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    mkdir( (m_TmpDir / "DirB").c_str(), 0755 );
+    close( open((m_TmpDir / "DirB" / "item").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    
+    CopyingOptions opts;
+    opts.docopy = false;
+    opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
+               (m_TmpDir/"DirA").c_str(),
+               host,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    XCTAssert( op.State() == OperationState::Completed );
+    XCTAssert(status(m_TmpDir / "DirA" / "item 2").type() == file_type::regular_file );
+    XCTAssert(status(m_TmpDir / "DirB" / "item").type() == file_type::file_not_found );    
+}
+
+- (void)testCopyingSymlinkToExistingItemWithKeepingBothResultsInOrigCopiedWithAnotherName
+{
+    using namespace boost::filesystem;
+    // DirA/item (file)
+    // DirB/item (file)
+    mkdir( (m_TmpDir / "DirA").c_str(), 0755 );
+    close( open((m_TmpDir / "DirA" / "item").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    mkdir( (m_TmpDir / "DirB").c_str(), 0755 );
+    symlink("something", (m_TmpDir / "DirB" / "item").c_str());
+    
+    CopyingOptions opts;
+    opts.docopy = true;
+    opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
+               (m_TmpDir/"DirA").c_str(),
+               host,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    XCTAssert( op.State() == OperationState::Completed );
+    XCTAssert( symlink_status(m_TmpDir / "DirA" / "item 2").type() == file_type::symlink_file );        
+}
+
+- (void)testRenamingSymlinkToExistingItemWithKeepingBothResultsInOrigRenamedWithAnotherName
+{
+    using namespace boost::filesystem;
+    // DirA/item (file)
+    // DirB/item (file)
+    mkdir( (m_TmpDir / "DirA").c_str(), 0755 );
+    close( open((m_TmpDir / "DirA" / "item").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    mkdir( (m_TmpDir / "DirB").c_str(), 0755 );
+    symlink("something", (m_TmpDir / "DirB" / "item").c_str());
+    
+    CopyingOptions opts;
+    opts.docopy = false;
+    opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
+               (m_TmpDir/"DirA").c_str(),
+               host,
+               opts);
+    
+    op.Start();
+    op.Wait();
+    XCTAssert( op.State() == OperationState::Completed );
+    XCTAssert( symlink_status(m_TmpDir / "DirA" / "item 2").type() == file_type::symlink_file ); 
+    XCTAssert( status(m_TmpDir / "DirB" / "item").type() == file_type::file_not_found );    
+}
+
+@end
+
+
+@interface Copying_FindNonExistingItemPath_Tests : XCTestCase
+@end
+
+@implementation Copying_FindNonExistingItemPath_Tests
+{
+    path m_TmpDir;
+    shared_ptr<VFSHost> m_NativeHost;
+}
+
+- (void)setUp
+{
+    [super setUp];
+    m_NativeHost = VFSNativeHost::SharedHost();
+    char dir[MAXPATHLEN];
+    sprintf(dir,
+            "%s" "info.filesmanager.files" ".tmp.XXXXXX",
+            NSTemporaryDirectory().fileSystemRepresentation);
+    XCTAssert( mkdtemp(dir) != nullptr );
+    m_TmpDir = dir;
+}
+
+- (void)tearDown
+{
+    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    [super tearDown];
+}
+
+- (void) testRegularFileWithoutExtension
+{
+    auto orig_path = m_TmpDir / "item"; 
+    close( open((orig_path / "item").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );    
+    
+    auto proposed_path = copying::FindNonExistingItemPath(orig_path.native(), *m_NativeHost); 
+    
+    XCTAssert( proposed_path == (m_TmpDir / "item 2").native() );
+}
+
+- (void) testDoesntCheckTheInitialPath
+{
+    auto orig_path = m_TmpDir / "item";     
+
+    auto proposed_path = copying::FindNonExistingItemPath(orig_path.native(), *m_NativeHost); 
+    
+    XCTAssert( proposed_path == (m_TmpDir / "item 2").native() );
+}
+
+- (void) testRegularFileWithoutExtensionWhenPossibleTargetsAlreadyExist
+{
+    auto orig_path = m_TmpDir / "item"; 
+    close( open((m_TmpDir / "item").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    close( open((m_TmpDir / "item 2").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );    
+    close( open((m_TmpDir / "item 3").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    close( open((m_TmpDir / "item 4").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    
+    auto proposed_path = copying::FindNonExistingItemPath(orig_path.native(), *m_NativeHost); 
+    
+    XCTAssert( proposed_path == (m_TmpDir / "item 5").native() );
+}
+
+- (void) testRegularFileWithExtension
+{
+    auto orig_path = m_TmpDir / "item.zip";
+    
+    auto proposed_path = copying::FindNonExistingItemPath(orig_path.native(), *m_NativeHost); 
+    
+    XCTAssert( proposed_path == (m_TmpDir / "item 2.zip").native() );
+}
+
+- (void) testRegularFileWithExtensionWhenPossibleTargetsAlreadyExist
+{
+    auto orig_path = m_TmpDir / "item.zip"; 
+    close( open((m_TmpDir / "item.zip").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    close( open((m_TmpDir / "item 2.zip").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );    
+    close( open((m_TmpDir / "item 3.zip").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    close( open((m_TmpDir / "item 4.zip").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    
+    auto proposed_path = copying::FindNonExistingItemPath(orig_path.native(), *m_NativeHost); 
+    
+    XCTAssert( proposed_path == (m_TmpDir / "item 5.zip").native() );
+}
+
+- (void) testChecksMagnitudesOfTens
+{
+    auto orig_path = m_TmpDir / "item.zip"; 
+    close( open((m_TmpDir / "item.zip").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    for( int i = 2; i <= 9; ++i )
+        close( open((m_TmpDir / ("item " + std::to_string(i) + ".zip")).c_str(),
+                     O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );    
+    
+    auto proposed_path = copying::FindNonExistingItemPath(orig_path.native(), *m_NativeHost); 
+    
+    XCTAssert( proposed_path == (m_TmpDir / "item 10.zip").native() );
+}
+
+- (void) testChecksMagnitudesOfHundreds
+{
+    auto orig_path = m_TmpDir / "item.zip"; 
+    close( open((m_TmpDir / "item.zip").c_str(), O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );
+    for( int i = 2; i <= 99; ++i )
+        close( open((m_TmpDir / ("item " + std::to_string(i) + ".zip")).c_str(),
+                    O_WRONLY|O_CREAT, S_IWUSR | S_IRUSR) );    
+    
+    auto proposed_path = copying::FindNonExistingItemPath(orig_path.native(), *m_NativeHost); 
+    
+    XCTAssert( proposed_path == (m_TmpDir / "item 100.zip").native() );
+}
+
+- (void) testReturnsEmptyStringOnCancellation
+{
+    auto orig_path = m_TmpDir / "item.zip";
+    auto cancel = []{ return true; };
+    
+    auto proposed_path = copying::FindNonExistingItemPath(orig_path.native(),
+                                                          *m_NativeHost,
+                                                          cancel); 
+    
+    XCTAssert( proposed_path == "" );
 }
 
 @end

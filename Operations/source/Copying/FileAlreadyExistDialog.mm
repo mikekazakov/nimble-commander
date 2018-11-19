@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Carbon/Carbon.h>
 #include "FileAlreadyExistDialog.h"
@@ -69,6 +69,7 @@ static bool IsShiftPressed()
         m_DestinationStat = _dst_stat;
         m_Ctx = _ctx;
         self.allowAppending = true;
+        self.allowKeepingBoth = false;
         self.singleItem = false;
     }
     return self;
@@ -116,7 +117,12 @@ static bool IsShiftPressed()
 
 - (IBAction)OnCancel:(id)sender
 {
-    [self endDialogWithReturnCode: ::NSModalResponseStop];
+    [self endDialogWithReturnCode:nc::ops::NSModalResponseStop];
+}
+
+- (IBAction)OnKeepBoth:(id)sender
+{
+    [self endDialogWithReturnCode:NSModalResponseKeepBoth];
 }
 
 - (void)endDialogWithReturnCode:(NSInteger)_returnCode

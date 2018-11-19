@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 namespace nc::ops {
@@ -19,7 +19,8 @@ struct CopyingOptions
         OverwriteAll    = 2, // overwrites existings target
         OverwriteOld    = 3, // overwrites existings target only if date is less, skip otherwise
         AppendAll       = 4, // appends to target
-        Stop            = 5  // abort entire operation
+        Stop            = 5, // abort entire operation
+        KeepBoth        = 6  // always use a different name to keep both items 
     };
     
     bool docopy = true;      // it it false then operation will do renaming/moving

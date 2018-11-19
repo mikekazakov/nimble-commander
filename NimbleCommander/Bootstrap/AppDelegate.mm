@@ -369,7 +369,7 @@ static NCAppDelegate *g_Me = nil;
     // Non-MAS version stuff below:
     if( !ActivationManager::ForAppStore() && !self.isRunningTests ) {
         if( am.ShouldShowTrialNagScreen() ) // check if we should show a nag screen
-            dispatch_to_main_queue_after(500ms, []{ [TrialWindowController showTrialWindow]; });
+            dispatch_to_main_queue_after(500ms, [self]{ [self showTrialWindow]; });
 
         // setup Sparkle updater stuff
         g_Sparkle = [SUUpdater sharedUpdater];
@@ -912,6 +912,18 @@ static NCAppDelegate *g_Me = nil;
 {
     // temporary solution:
     return nc::utility::NativeFSManager::Instance();
+}
+
+- (void) showTrialWindow
+{
+    auto window = [[TrialWindowController alloc] init];
+    __weak NCAppDelegate *weak_self = self;
+    window.onBuyLicense = [weak_self]{
+        if( auto self = weak_self ) {
+            [self OnPurchaseExternalLicense:self];
+        }  
+    };
+    [window show];
 }
 
 @end

@@ -1,7 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="TrialWindowController">
@@ -13,17 +15,17 @@
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="TrialWindow">
-            <rect key="contentRect" x="428" y="248" width="522" height="305"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="TrialWindow">
+            <rect key="contentRect" x="428" y="248" width="522" height="317"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="522" height="305"/>
+                <rect key="frame" x="0.0" y="0.0" width="522" height="317"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7Q3-xP-mIJ">
                         <rect key="frame" x="416" y="13" width="92" height="32"/>
                         <constraints>
-                            <constraint firstAttribute="width" constant="80" id="9fF-ZU-1md"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="9fF-ZU-1md"/>
                         </constraints>
                         <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NB6-jk-aPh">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -37,7 +39,7 @@ DQ
                         </connections>
                     </button>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Wal-LD-WNK">
-                        <rect key="frame" x="18" y="234" width="486" height="51"/>
+                        <rect key="frame" x="18" y="246" width="486" height="51"/>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Nimble Commander" id="fpl-43-RtI">
                             <font key="font" metaFont="system" size="42"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -45,18 +47,18 @@ DQ
                         </textFieldCell>
                     </textField>
                     <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ckk-CU-kCd">
-                        <rect key="frame" x="226" y="186" width="278" height="40"/>
+                        <rect key="frame" x="226" y="198" width="278" height="40"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="40" id="rOl-93-fHq"/>
                         </constraints>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="VGa-jK-riq">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" id="VGa-jK-riq">
                             <font key="font" metaFont="label"/>
                             <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                     </textField>
                     <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wjy-q3-RkT">
-                        <rect key="frame" x="20" y="34" width="200" height="200"/>
+                        <rect key="frame" x="20" y="46" width="200" height="200"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="200" id="MUB-tZ-0cm"/>
                             <constraint firstAttribute="width" constant="200" id="Tce-qy-uJD"/>
@@ -64,34 +66,57 @@ DQ
                         <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" image="main_icon" id="wYh-n7-GW3"/>
                     </imageView>
                     <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" horizontalScrollElasticity="none" verticalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="tmN-Hh-L92">
-                        <rect key="frame" x="228" y="51" width="274" height="127"/>
-                        <clipView key="contentView" id="mJN-Ms-CBn">
-                            <rect key="frame" x="0.0" y="0.0" width="274" height="127"/>
+                        <rect key="frame" x="228" y="51" width="274" height="139"/>
+                        <clipView key="contentView" drawsBackground="NO" id="mJN-Ms-CBn">
+                            <rect key="frame" x="0.0" y="0.0" width="274" height="139"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
-                                <textView editable="NO" drawsBackground="NO" importsGraphics="NO" horizontallyResizable="YES" selectionGranularity="paragraph" continuousSpellChecking="YES" usesRuler="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="E46-IW-Itr">
-                                    <rect key="frame" x="0.0" y="0.0" width="274" height="127"/>
+                                <textView editable="NO" selectable="NO" drawsBackground="NO" importsGraphics="NO" horizontallyResizable="YES" verticallyResizable="YES" continuousSpellChecking="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="E46-IW-Itr">
+                                    <rect key="frame" x="0.0" y="0.0" width="274" height="139"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                    <size key="minSize" width="274" height="127"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <size key="minSize" width="274" height="139"/>
                                     <size key="maxSize" width="463" height="10000000"/>
+                                    <attributedString key="textStorage">
+                                        <fragment>
+                                            <string key="content">This is a trial version of Nimble Commander.
+To continue using this software after the 30-day trial period, you have to either buy a license or install the paid version from Mac App Store.
+This window appears only in the trial version.</string>
+                                            <attributes>
+                                                <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                                <font key="NSFont" metaFont="system"/>
+                                                <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
+                                            </attributes>
+                                        </fragment>
+                                    </attributedString>
                                     <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                    <size key="minSize" width="274" height="127"/>
-                                    <size key="maxSize" width="463" height="10000000"/>
                                 </textView>
                             </subviews>
-                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         </clipView>
                         <edgeInsets key="contentInsets" left="0.0" right="0.0" top="0.0" bottom="0.0"/>
-                        <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="itY-ok-2O3">
+                        <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="itY-ok-2O3">
                             <rect key="frame" x="-100" y="-100" width="87" height="18"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
-                        <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="jPP-Nc-wlK">
+                        <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="jPP-Nc-wlK">
                             <rect key="frame" x="223" y="1" width="16" height="133"/>
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="wIF-bq-df4">
+                        <rect key="frame" x="324" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="6Pe-LT-bzx"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Buy" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="7e7-ZU-bNL">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="OnBuy:" target="-2" id="C8P-xn-wFN"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="Ckk-CU-kCd" secondAttribute="trailing" constant="20" symbolic="YES" id="0ZD-uY-Sbk"/>
@@ -103,7 +128,9 @@ DQ
                     <constraint firstItem="Wal-LD-WNK" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="PZm-uj-OR8"/>
                     <constraint firstAttribute="bottom" secondItem="7Q3-xP-mIJ" secondAttribute="bottom" constant="20" symbolic="YES" id="SW5-6S-A3H"/>
                     <constraint firstItem="Wal-LD-WNK" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="Std-pt-O5j"/>
+                    <constraint firstItem="7Q3-xP-mIJ" firstAttribute="firstBaseline" secondItem="wIF-bq-df4" secondAttribute="firstBaseline" id="ZYn-rB-KtL"/>
                     <constraint firstItem="wjy-q3-RkT" firstAttribute="top" secondItem="Wal-LD-WNK" secondAttribute="bottom" id="c6b-zd-kit"/>
+                    <constraint firstItem="7Q3-xP-mIJ" firstAttribute="leading" secondItem="wIF-bq-df4" secondAttribute="trailing" constant="12" symbolic="YES" id="duc-YZ-ucK"/>
                     <constraint firstAttribute="trailing" secondItem="7Q3-xP-mIJ" secondAttribute="trailing" constant="20" symbolic="YES" id="fV1-au-RpA"/>
                     <constraint firstItem="tmN-Hh-L92" firstAttribute="leading" secondItem="wjy-q3-RkT" secondAttribute="trailing" constant="8" id="ktl-cK-CqJ"/>
                     <constraint firstItem="7Q3-xP-mIJ" firstAttribute="top" secondItem="tmN-Hh-L92" secondAttribute="bottom" constant="10" id="uc0-Xd-U3d"/>
@@ -114,7 +141,7 @@ DQ
                 <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
                 <outlet property="initialFirstResponder" destination="7Q3-xP-mIJ" id="wnv-17-EMh"/>
             </connections>
-            <point key="canvasLocation" x="107" y="452.5"/>
+            <point key="canvasLocation" x="238" y="498.5"/>
         </window>
     </objects>
     <resources>

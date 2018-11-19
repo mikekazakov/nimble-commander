@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "TrialWindowController.h"
 
@@ -34,7 +34,6 @@
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if(self) {
         self.window.delegate = self;
-        self.window.backgroundColor = NSColor.whiteColor;
         self.window.movableByWindowBackground = true;
         self.window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
         m_Self = self;
@@ -45,19 +44,18 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    
-    NSString *html = [@"<style>body { font-family: Helvetica; font-size: 10pt }</style>" stringByAppendingString:
-                      NSLocalizedString(@"__TRIAL_WINDOW_NOTE", "Nag screen text about test period")];
-    self.messageTextView.textStorage.attributedString = [[NSAttributedString alloc] initWithHTML:[html dataUsingEncoding:NSUTF8StringEncoding]
-                                                                                         options:@{ NSCharacterEncodingDocumentAttribute: @(NSUTF8StringEncoding) }
-                                                                              documentAttributes:nil];
+    auto text = NSLocalizedString(@"__TRIAL_WINDOW_NOTE", "Nag screen text about test period");
+    auto text_storage = self.messageTextView.textStorage; 
+    [text_storage replaceCharactersInRange:NSMakeRange(0, text_storage.length) withString:text];
     self.messageTextView.textContainer.lineFragmentPadding = 0;
     
-    self.versionTextField.stringValue = [NSString stringWithFormat:@"Version %@ (%@)\n%@",
-                                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleShortVersionString"],
-                                         [NSBundle.mainBundle.infoDictionary objectForKey:@"CFBundleVersion"],
-                                         [NSBundle.mainBundle.infoDictionary objectForKey:@"NSHumanReadableCopyright"]
-                                         ];
+    auto info = NSBundle.mainBundle.infoDictionary;
+    auto ver_fmt = NSLocalizedString(@"Version %@ (%@)\n%@", "Version info");
+    auto version = [NSString stringWithFormat:ver_fmt,
+                    info[@"CFBundleShortVersionString"],
+                    info[@"CFBundleVersion"],
+                    info[@"NSHumanReadableCopyright"]];
+    self.versionTextField.stringValue = version;
     
     GA().PostScreenView("Trial Nag Screen");
 }
@@ -65,6 +63,13 @@
 - (IBAction)OnClose:(id)sender
 {
     [self.window close];
+}
+
+- (IBAction)OnBuy:(id)sender
+{
+    auto handler = self.onBuyLicense;
+    if( handler != nullptr )
+        handler();
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -75,15 +80,10 @@
     });
 }
 
-- (void) doShow
+- (void) show
 {
     [self.window makeKeyAndOrderFront:self];
     [self.window makeMainWindow];
-}
-
-+ (void) showTrialWindow
-{
-    [[[TrialWindowController alloc] init] doShow];
 }
 
 @end

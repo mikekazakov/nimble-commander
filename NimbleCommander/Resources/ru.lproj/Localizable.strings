@@ -26,7 +26,9 @@
 "__THANKS_FOR_REGISTER_MESSAGE" = "Успешная активация";
 
 /* Nag screen text about test period */
-"__TRIAL_WINDOW_NOTE" = "Это пробная версия Nimble Commander.<br>Чтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно <a href=\"http://magnumbytes.com/redirectlinks/buy_license\">купить лицензию</a> или <a href=\"macappstore://itunes.apple.com/app/id942443942\">установить платную версию</a> из Mac App Store.<br>Это окно появляется только в пробной версии.";
+"__TRIAL_WINDOW_NOTE" = "Это пробная версия Nimble Commander.
+Чтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно купить лицензию или установить платную версию из Mac App Store.
+Это окно появляется только в пробной версии.";
 
 /* Panels bottom volume bar, showing amount of bytes available */
 "%@ available" = "%@ доступно";

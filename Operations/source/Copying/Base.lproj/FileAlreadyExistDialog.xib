@@ -23,7 +23,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="529" height="202"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="529" height="202"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -278,6 +278,7 @@ Gw
                     <constraint firstItem="112" firstAttribute="top" secondItem="119" secondAttribute="bottom" constant="8" symbolic="YES" id="sro-GF-jVA"/>
                     <constraint firstItem="JQp-jj-wv1" firstAttribute="leading" secondItem="B89-N8-gQP" secondAttribute="trailing" constant="-1" id="t56-gU-f3L"/>
                     <constraint firstAttribute="trailing" secondItem="119" secondAttribute="trailing" constant="20" symbolic="YES" id="wiG-HL-nKq"/>
+                    <constraint firstItem="30" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="yA8-k7-dlI"/>
                     <constraint firstItem="37" firstAttribute="leading" secondItem="2" secondAttribute="leading" constant="20" symbolic="YES" id="zxW-7I-AcK"/>
                 </constraints>
             </view>

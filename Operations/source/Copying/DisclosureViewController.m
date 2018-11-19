@@ -154,10 +154,10 @@
                 context.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
                 // Animate the closing constraint to 0, causing the bottom of the header to be flush with the bottom of the overall disclosure view.
                 self.closingConstraint.animator.constant = 0;
-                self.disclosureButton.title = _showTitle;
+                self.disclosureButton.title = self->_showTitle;
             } completionHandler:^{
-                _disclosureIsClosed = YES;
-                _disclosedView.hidden = YES;
+                self->_disclosureIsClosed = YES;
+                self->_disclosedView.hidden = YES;
             }];
         else {
             self.closingConstraint.constant = 0;
@@ -173,12 +173,12 @@
                 context.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
                 // Animate the constraint to fit the disclosed view again
                 self.closingConstraint.animator.constant -= self.disclosedView.frame.size.height;
-                self.disclosureButton.title = _hideTitle;
-                _disclosedView.hidden = NO;
+                self.disclosureButton.title = self->_hideTitle;
+                self->_disclosedView.hidden = NO;
             } completionHandler:^{
                 // The constraint is no longer needed, we can remove it.
                 [self.view removeConstraint:self.closingConstraint];
-                _disclosureIsClosed = NO;
+                self->_disclosureIsClosed = NO;
             }];
         else {
             self.disclosureButton.title = _hideTitle;

@@ -9,6 +9,7 @@
         <customObject id="-2" userLabel="File's Owner" customClass="TrialWindowController">
             <connections>
                 <outlet property="messageTextView" destination="E46-IW-Itr" id="lJw-pv-UHo"/>
+                <outlet property="okButton" destination="7Q3-xP-mIJ" id="4Mu-ka-4uS"/>
                 <outlet property="versionTextField" destination="Ckk-CU-kCd" id="RZu-5g-1MB"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
             </connections>
@@ -17,7 +18,7 @@
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" restorable="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="TrialWindow">
             <rect key="contentRect" x="428" y="248" width="522" height="317"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1057"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="522" height="317"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -27,7 +28,7 @@
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="9fF-ZU-1md"/>
                         </constraints>
-                        <buttonCell key="cell" type="push" title="OK" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NB6-jk-aPh">
+                        <buttonCell key="cell" type="push" title="OK" alternateTitle="Quit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="NB6-jk-aPh">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
                             <string key="keyEquivalent" base64-UTF8="YES">
@@ -79,10 +80,7 @@ DQ
                                     <size key="minSize" width="274" height="139"/>
                                     <size key="maxSize" width="463" height="10000000"/>
                                     <attributedString key="textStorage">
-                                        <fragment>
-                                            <string key="content">This is a trial version of Nimble Commander.
-To continue using this software after the 30-day trial period, you have to either buy a license or install the paid version from Mac App Store.
-This window appears only in the trial version.</string>
+                                        <fragment content=" ">
                                             <attributes>
                                                 <color key="NSColor" name="textColor" catalog="System" colorSpace="catalog"/>
                                                 <font key="NSFont" metaFont="system"/>

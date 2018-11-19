@@ -21,6 +21,7 @@
 
 @property (nonatomic) IBOutlet NSTextField *versionTextField;
 @property (nonatomic) IBOutlet NSTextView *messageTextView;
+@property (nonatomic) IBOutlet NSButton *okButton;
 
 @end
 
@@ -36,14 +37,15 @@
         self.window.delegate = self;
         self.window.movableByWindowBackground = true;
         self.window.collectionBehavior = NSWindowCollectionBehaviorFullScreenPrimary;
+        self.window.backgroundColor = NSColor.textBackgroundColor;
         m_Self = self;
+        GA().PostScreenView("Trial Nag Screen");
     }
     return self;
 }
 
-- (void)windowDidLoad
+- (void) setupControls
 {
-    [super windowDidLoad];
     auto text = NSLocalizedString(@"__TRIAL_WINDOW_NOTE", "Nag screen text about test period");
     auto text_storage = self.messageTextView.textStorage; 
     [text_storage replaceCharactersInRange:NSMakeRange(0, text_storage.length) withString:text];
@@ -57,11 +59,18 @@
                     info[@"NSHumanReadableCopyright"]];
     self.versionTextField.stringValue = version;
     
-    GA().PostScreenView("Trial Nag Screen");
+    if( self.isExpired ) {
+        self.okButton.title = self.okButton.alternateTitle;
+    }
 }
 
 - (IBAction)OnClose:(id)sender
 {
+    if( self.isExpired ) {
+        auto handler = self.onQuit;
+        if( handler != nullptr )
+            handler();
+    }
     [self.window close];
 }
 
@@ -82,6 +91,7 @@
 
 - (void) show
 {
+    [self setupControls];
     [self.window makeKeyAndOrderFront:self];
     [self.window makeMainWindow];
 }

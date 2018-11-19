@@ -917,11 +917,18 @@ static NCAppDelegate *g_Me = nil;
 - (void) showTrialWindow
 {
     auto window = [[TrialWindowController alloc] init];
+    window.isExpired = (ActivationManager::Instance().IsTrialPeriod() == false);
     __weak NCAppDelegate *weak_self = self;
     window.onBuyLicense = [weak_self]{
         if( auto self = weak_self ) {
             [self OnPurchaseExternalLicense:self];
         }  
+    };
+    window.onQuit = [weak_self]{
+        if( auto self = weak_self ) {
+            if( ActivationManager::Instance().IsTrialPeriod() == false )
+                dispatch_to_main_queue([]{ [NSApp terminate:nil]; });
+        }
     };
     [window show];
 }

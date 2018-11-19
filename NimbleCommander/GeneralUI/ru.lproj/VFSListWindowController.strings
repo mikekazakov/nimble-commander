@@ -4,9 +4,6 @@
 /* Class = "NSWindow"; title = "Virtual File Systems List"; ObjectID = "F0z-JX-Cv5"; */
 "F0z-JX-Cv5.title" = "Список виртуальных файловых систем";
 
-/* Class = "NSTableColumn"; headerCell.title = "Junction"; ObjectID = "SaW-Om-fgN"; */
-"SaW-Om-fgN.headerCell.title" = "Путь";
-
 /* Class = "NSTableColumn"; headerCell.title = "P#"; ObjectID = "jeT-jQ-tUY"; */
 "jeT-jQ-tUY.headerCell.title" = "P#";
 
@@ -18,4 +15,7 @@
 
 /* Class = "NSTableColumn"; headerCell.title = "#"; ObjectID = "nEc-4I-bvG"; */
 "nEc-4I-bvG.headerCell.title" = "#";
+
+/* Class = "NSTableColumn"; headerCell.title = "Junction"; ObjectID = "SaW-Om-fgN"; */
+"SaW-Om-fgN.headerCell.title" = "Путь";
 

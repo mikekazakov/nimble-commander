@@ -4,6 +4,12 @@
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "4HY-xK-hIq"; */
 "4HY-xK-hIq.title" = "ОК";
 
+/* Class = "NSTextFieldCell"; title = "Product:"; ObjectID = "ba2-yh-CfS"; */
+"ba2-yh-CfS.title" = "Продукт:";
+
+/* Class = "NSTextFieldCell"; title = "This is an unregistered copy"; ObjectID = "biY-Fz-POj"; */
+"biY-Fz-POj.title" = "Это незарегистрированная копия";
+
 /* Class = "NSTextFieldCell"; title = "Registration Info"; ObjectID = "D5Z-0n-EV1"; */
 "D5Z-0n-EV1.title" = "Информация о лицензии";
 
@@ -15,10 +21,4 @@
 
 /* Class = "NSTextFieldCell"; title = "Email:"; ObjectID = "XN8-NS-QEw"; */
 "XN8-NS-QEw.title" = "Email:";
-
-/* Class = "NSTextFieldCell"; title = "Product:"; ObjectID = "ba2-yh-CfS"; */
-"ba2-yh-CfS.title" = "Продукт:";
-
-/* Class = "NSTextFieldCell"; title = "This is an unregistered copy"; ObjectID = "biY-Fz-POj"; */
-"biY-Fz-POj.title" = "Это незарегистрированная копия";
 

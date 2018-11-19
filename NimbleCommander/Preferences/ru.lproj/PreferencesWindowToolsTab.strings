@@ -22,68 +22,32 @@
 /* Class = "NSMenu"; title = "Insert Current Item"; ObjectID = "81Y-Cg-sSQ"; */
 "81Y-Cg-sSQ.title" = "Вставить текущий объект";
 
-/* Class = "NSMenuItem"; title = "%10F\tSource filenames as parameters, limited"; ObjectID = "DYH-oC-XxH"; */
-"DYH-oC-XxH.title" = "%10F	Имена исходных объектов как параметры, ограниченно";
-
-/* Class = "NSMenuItem"; title = "%-P \tTarget filepaths as parameters"; ObjectID = "E5p-BD-CuB"; */
-"E5p-BD-CuB.title" = "%-P 	Пути целевых объектов как параметры";
-
-/* Class = "NSMenuItem"; title = "%10P\tSource filepaths as parameters, limited"; ObjectID = "EL5-2T-5M1"; */
-"EL5-2T-5M1.title" = "%10P	Пути исходных объектов как параметры, ограниченно";
-
-/* Class = "NSTextFieldCell"; title = "Application:"; ObjectID = "GbL-vv-Nbz"; */
-"GbL-vv-Nbz.title" = "Приложение:";
-
-/* Class = "NSMenuItem"; title = "%p\tSource item path"; ObjectID = "II6-Wo-q1C"; */
-"II6-Wo-q1C.title" = "%p	Путь исходного объекта";
-
-/* Class = "NSMenuItem"; title = "%10LF \tSource filenames in a text file, limited"; ObjectID = "JUW-5J-iZz"; */
-"JUW-5J-iZz.title" = "%10LF 	Имена исходных объектов в текстовом файле, ограниченно";
-
-/* Class = "NSMenuItem"; title = "%\"Option name\"? Enter the value of the parameter named"; ObjectID = "L1y-lC-7iH"; */
-"L1y-lC-7iH.title" = "%\"Название параметра\"? Ввести значение параметра, с названием";
-
-/* Class = "NSMenuItem"; title = "Insert Selected Items"; ObjectID = "LrK-w4-iDz"; */
-"LrK-w4-iDz.title" = "Вставить выбранные объекты";
-
-/* Class = "NSMenuItem"; title = "Other"; ObjectID = "NVF-cl-n3F"; */
-"NVF-cl-n3F.title" = "Прочее";
-
-/* Class = "NSMenuItem"; title = "%-10LP \tTarget filepaths in a text file, limited"; ObjectID = "PeS-us-ncF"; */
-"PeS-us-ncF.title" = "%-10LP 	Пути целевых объектов в текстовом файле, ограниченно";
-
-/* Class = "NSMenuItem"; title = "%LP\t\tSource filepaths in a text file"; ObjectID = "Uut-qc-UcK"; */
-"Uut-qc-UcK.title" = "%LP		Пути исходных объектов в текстовом файле";
-
-/* Class = "NSMenuItem"; title = "%r\tSource panel path"; ObjectID = "X8z-91-qc7"; */
-"X8z-91-qc7.title" = "%r	Путь исходной панели";
-
-/* Class = "NSMenuItem"; title = "%? Enter the value of the parameter"; ObjectID = "XHU-jz-vdf"; */
-"XHU-jz-vdf.title" = "%? Ввести значение параметра";
-
-/* Class = "NSMenuItem"; title = "%-LP \tTarget filepaths in a text file"; ObjectID = "XJk-yw-oD6"; */
-"XJk-yw-oD6.title" = "%-LP 	Пути целевых объектов в текстовом файле";
-
-/* Class = "NSMenu"; title = "Ask For Value"; ObjectID = "XZ4-7A-fGc"; */
-"XZ4-7A-fGc.title" = "Спросить значение";
-
-/* Class = "NSMenuItem"; title = "%-10P \tTarget filepaths as parameters, limited"; ObjectID = "ZgB-uv-ecs"; */
-"ZgB-uv-ecs.title" = "%-10P 	Пути целевых объектов как параметры, ограниченно";
-
 /* Class = "NSMenuItem"; title = "%-F \tTarget filenames as parameters"; ObjectID = "bBK-C9-eQV"; */
 "bBK-C9-eQV.title" = "%-F 	Имена целевых объектов как параметры";
 
 /* Class = "NSMenuItem"; title = "%f\tSource item filename"; ObjectID = "dmv-sq-9J8"; */
 "dmv-sq-9J8.title" = "%f	Имя исходного объекта";
 
+/* Class = "NSMenuItem"; title = "%10F\tSource filenames as parameters, limited"; ObjectID = "DYH-oC-XxH"; */
+"DYH-oC-XxH.title" = "%10F	Имена исходных объектов как параметры, ограниченно";
+
+/* Class = "NSMenuItem"; title = "%-P \tTarget filepaths as parameters"; ObjectID = "E5p-BD-CuB"; */
+"E5p-BD-CuB.title" = "%-P 	Пути целевых объектов как параметры";
+
 /* Class = "NSMenuItem"; title = "Automatic"; ObjectID = "eeB-tN-Fpd"; */
 "eeB-tN-Fpd.title" = "Автоматически";
+
+/* Class = "NSMenuItem"; title = "%10P\tSource filepaths as parameters, limited"; ObjectID = "EL5-2T-5M1"; */
+"EL5-2T-5M1.title" = "%10P	Пути исходных объектов как параметры, ограниченно";
 
 /* Class = "NSMenu"; title = "Other"; ObjectID = "ezB-E1-baW"; */
 "ezB-E1-baW.title" = "Прочее";
 
 /* Class = "NSMenuItem"; title = "%5T Limit the total number of output files"; ObjectID = "f5c-Cv-ZFZ"; */
 "f5c-Cv-ZFZ.title" = "%5T Ограничить общее число объектов";
+
+/* Class = "NSTextFieldCell"; title = "Application:"; ObjectID = "GbL-vv-Nbz"; */
+"GbL-vv-Nbz.title" = "Приложение:";
 
 /* Class = "NSMenuItem"; title = "%-e\tTarget item extension"; ObjectID = "hhv-Ii-7Ia"; */
 "hhv-Ii-7Ia.title" = "%-e	Расширение целевого объекта";
@@ -94,14 +58,26 @@
 /* Class = "NSMenuItem"; title = "Insert Current Item"; ObjectID = "hv1-vC-dN8"; */
 "hv1-vC-dN8.title" = "Вставить текущий объект";
 
+/* Class = "NSMenuItem"; title = "%p\tSource item path"; ObjectID = "II6-Wo-q1C"; */
+"II6-Wo-q1C.title" = "%p	Путь исходного объекта";
+
 /* Class = "NSTextFieldCell"; title = "Startup Mode:"; ObjectID = "iVQ-ca-93Q"; */
 "iVQ-ca-93Q.title" = "Тип запуска:";
+
+/* Class = "NSMenuItem"; title = "%10LF \tSource filenames in a text file, limited"; ObjectID = "JUW-5J-iZz"; */
+"JUW-5J-iZz.title" = "%10LF 	Имена исходных объектов в текстовом файле, ограниченно";
 
 /* Class = "NSMenuItem"; title = "Ask For Value"; ObjectID = "kbC-Ac-yjQ"; */
 "kbC-Ac-yjQ.title" = "Спросить значение";
 
+/* Class = "NSMenuItem"; title = "%\"Option name\"? Enter the value of the parameter named"; ObjectID = "L1y-lC-7iH"; */
+"L1y-lC-7iH.title" = "%\"Название параметра\"? Ввести значение параметра, с названием";
+
 /* Class = "NSMenuItem"; title = "%% Insert the % character"; ObjectID = "l99-bl-ad0"; */
 "l99-bl-ad0.title" = "%% Вставить символ %";
+
+/* Class = "NSMenuItem"; title = "Insert Selected Items"; ObjectID = "LrK-w4-iDz"; */
+"LrK-w4-iDz.title" = "Вставить выбранные объекты";
 
 /* Class = "NSMenuItem"; title = "%-f\tTarget item filename"; ObjectID = "lrv-hw-UfE"; */
 "lrv-hw-UfE.title" = "%-f	Имя целевого объекта";
@@ -112,11 +88,17 @@
 /* Class = "NSMenuItem"; title = "%10LP \tSource filepaths in a text file, limited"; ObjectID = "n7P-7k-Ogp"; */
 "n7P-7k-Ogp.title" = "%10LP 	Пути исходных объектов в текстовом файле, ограниченно";
 
+/* Class = "NSMenuItem"; title = "Other"; ObjectID = "NVF-cl-n3F"; */
+"NVF-cl-n3F.title" = "Прочее";
+
 /* Class = "NSMenu"; title = "Insert Selected Items"; ObjectID = "o8G-ZY-8l8"; */
 "o8G-ZY-8l8.title" = "Вставить выбранные объекты";
 
 /* Class = "NSMenuItem"; title = "%P\t\tSource filepaths as parameters"; ObjectID = "oxh-ez-aQd"; */
 "oxh-ez-aQd.title" = "%P		Пути исходных объектов как параметры";
+
+/* Class = "NSMenuItem"; title = "%-10LP \tTarget filepaths in a text file, limited"; ObjectID = "PeS-us-ncF"; */
+"PeS-us-ncF.title" = "%-10LP 	Пути целевых объектов в текстовом файле, ограниченно";
 
 /* Class = "NSMenuItem"; title = "%e\tSource item extension"; ObjectID = "pOe-HA-s3m"; */
 "pOe-HA-s3m.title" = "%e	Расширение исходного объекта";
@@ -127,18 +109,36 @@
 /* Class = "NSMenuItem"; title = "%-n\tTarget item filename without extension"; ObjectID = "t7c-uZ-Wyx"; */
 "t7c-uZ-Wyx.title" = "%-n	Имя целевого объекта без расширения";
 
+/* Class = "NSMenuItem"; title = "%LP\t\tSource filepaths in a text file"; ObjectID = "Uut-qc-UcK"; */
+"Uut-qc-UcK.title" = "%LP		Пути исходных объектов в текстовом файле";
+
 /* Class = "NSMenuItem"; title = "%- Use left/right panels instead of source/target"; ObjectID = "w1u-x0-TD2"; */
 "w1u-x0-TD2.title" = "%- Использовать левую/правую панель вместо исходной/целевой";
 
 /* Class = "NSMenuItem"; title = "%n\tSource item filename without extension"; ObjectID = "wfS-Ll-F4V"; */
 "wfS-Ll-F4V.title" = "%n	Имя исходного объекта без расширения";
 
+/* Class = "NSMenuItem"; title = "%r\tSource panel path"; ObjectID = "X8z-91-qc7"; */
+"X8z-91-qc7.title" = "%r	Путь исходной панели";
+
 /* Class = "NSMenuItem"; title = "%-10F \tTarget filenames as parameters, limited"; ObjectID = "xbW-7L-Eo6"; */
 "xbW-7L-Eo6.title" = "%-10F 	Имена целевых объектов как параметры, ограниченно";
+
+/* Class = "NSMenuItem"; title = "%? Enter the value of the parameter"; ObjectID = "XHU-jz-vdf"; */
+"XHU-jz-vdf.title" = "%? Ввести значение параметра";
+
+/* Class = "NSMenuItem"; title = "%-LP \tTarget filepaths in a text file"; ObjectID = "XJk-yw-oD6"; */
+"XJk-yw-oD6.title" = "%-LP 	Пути целевых объектов в текстовом файле";
 
 /* Class = "NSMenuItem"; title = "%-LF \tTarget filenames in a text file"; ObjectID = "xqa-ff-fmA"; */
 "xqa-ff-fmA.title" = "%-LF 	Имена целевых объектов в текстовом файле";
 
+/* Class = "NSMenu"; title = "Ask For Value"; ObjectID = "XZ4-7A-fGc"; */
+"XZ4-7A-fGc.title" = "Спросить значение";
+
 /* Class = "NSMenuItem"; title = "%-10LF \tTarget filenames in a text file, limited"; ObjectID = "yBx-gj-ydb"; */
 "yBx-gj-ydb.title" = "%-10LF 	Имена целевых объектов в текстовом файле, ограниченно";
+
+/* Class = "NSMenuItem"; title = "%-10P \tTarget filepaths as parameters, limited"; ObjectID = "ZgB-uv-ecs"; */
+"ZgB-uv-ecs.title" = "%-10P 	Пути целевых объектов как параметры, ограниченно";
 

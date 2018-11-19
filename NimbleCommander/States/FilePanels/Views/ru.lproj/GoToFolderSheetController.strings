@@ -1,12 +1,12 @@
 /* Class = "NSWindow"; title = "Window"; ObjectID = "1"; */
 "1.title" = "";
 
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "dOM-to-sC6"; */
+"dOM-to-sC6.title" = "Отмена";
+
 /* Class = "NSButtonCell"; title = "Go"; ObjectID = "DTg-xe-1S8"; */
 "DTg-xe-1S8.title" = "Перейти";
 
 /* Class = "NSTextFieldCell"; title = "Go to the folder:"; ObjectID = "VhM-Z6-zaU"; */
 "VhM-Z6-zaU.title" = "Перейти к папке:";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "dOM-to-sC6"; */
-"dOM-to-sC6.title" = "Отмена";
 

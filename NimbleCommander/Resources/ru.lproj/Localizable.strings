@@ -1,3 +1,33 @@
+/* Folders dummy string when size is not available, for English is 'Folder' */
+"__MODERNPRESENTATION_FOLDER_WORD" = "Папка";
+
+/* Upper-level in directory, for English is 'Up' */
+"__MODERNPRESENTATION_UP_WORD" = "Наверх";
+
+/* (No Comment) */
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED" = "Дата добавления";
+
+/* (No Comment) */
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED" = "Дата создания";
+
+/* (No Comment) */
+"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" = "Дата изменения";
+
+/* (No Comment) */
+"__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Имя";
+
+/* (No Comment) */
+"__PANELVIEW_LIST_COLUMN_TITLE_SIZE" = "Размер";
+
+/* Informative text to thank user for buying */
+"__THANKS_FOR_REGISTER_INFORMATIVE" = "Спасибо за использование зарегистрированной копии Nimble Commander!";
+
+/* Message to thank user for buying */
+"__THANKS_FOR_REGISTER_MESSAGE" = "Успешная активация";
+
+/* Nag screen text about test period */
+"__TRIAL_WINDOW_NOTE" = "Это пробная версия Nimble Commander.<br>Чтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно <a href=\"http://magnumbytes.com/redirectlinks/buy_license\">купить лицензию</a> или <a href=\"macappstore://itunes.apple.com/app/id942443942\">установить платную версию</a> из Mac App Store.<br>Это окно появляется только в пробной версии.";
+
 /* Panels bottom volume bar, showing amount of bytes available */
 "%@ available" = "%@ доступно";
 
@@ -21,9 +51,6 @@
 
 /* Brief System Information overlay title */
 "Brief System Information" = "Краткий обзор системы";
-
-/* Brief System Information cpu box title */
-"CPU" = "ЦП";
 
 /* No comment provided by engineer. */
 "Cancel" = "Отмена";
@@ -68,6 +95,9 @@
 /* Connections popup menu title in file panels */
 "Connections" = "Соединения";
 
+/* Brief System Information cpu box title */
+"CPU" = "ЦП";
+
 /* Title for deselection by mask popup */
 "Deselect files by mask:" = "Снять выделение по маске:";
 
@@ -85,9 +115,6 @@
 
 /* Menu item title for enabling an admin mode */
 "Enable Admin Mode" = "Включить режим администратора";
-
-/* Showing error when connecting to FTP server */
-"FTP connection error:" = "Ошибка подключения FTP:";
 
 /* Information that toggling admin mode on has failed */
 "Failed to access the privileged helper." = "Не удалось связаться с привилегированным помощником.";
@@ -126,9 +153,6 @@
 "File Panels ▶ Move Right" = "Файловые панели ▶ Переместиться вправо";
 
 /* No comment provided by engineer. */
-"File Panels ▶ Move Up" = "Файловые панели ▶ Переместиться вверх";
-
-/* No comment provided by engineer. */
 "File Panels ▶ Move to the First Element" = "Файловые панели ▶ Переместиться к первому элементу";
 
 /* No comment provided by engineer. */
@@ -139,6 +163,9 @@
 
 /* No comment provided by engineer. */
 "File Panels ▶ Move to the Previous Page" = "Файловые панели ▶ Переместиться на предыдущую страницу";
+
+/* No comment provided by engineer. */
+"File Panels ▶ Move Up" = "Файловые панели ▶ Переместиться вверх";
 
 /* No comment provided by engineer. */
 "File Panels ▶ Scroll to the First Element" = "Файловые панели ▶ Прокрутить к первому элементу";
@@ -208,6 +235,9 @@
 
 /* Frequently Visited popup menu subtitle in file panels */
 "Frequently Visited" = "Часто посещаемое";
+
+/* Showing error when connecting to FTP server */
+"FTP connection error:" = "Ошибка подключения FTP:";
 
 /* Brief System Information general box title */
 "General" = "Основное";
@@ -281,14 +311,14 @@
 /* Menu item title in internal viewer search */
 "Recent Searches" = "Недавние поиски";
 
+/* No comment provided by engineer. */
+"Recently Closed" = "Недавно закрытые";
+
 /* Menu item title in internal viewer search */
 "Recents" = "Последние";
 
 /* Toolbar palette */
 "Right GoTo" = "Правый Переход";
-
-/* Showing error when connecting to SFTP server */
-"SFTP connection error:" = "Ошибка подключения SFTP:";
 
 /* Placeholder for search text field in internal viewer */
 "Search in file" = "Искать в файле";
@@ -328,6 +358,9 @@
 
 /* No comment provided by engineer. */
 "Send" = "Отправлять";
+
+/* Showing error when connecting to SFTP server */
+"SFTP connection error:" = "Ошибка подключения SFTP:";
 
 /* Menu item title for showing tab bar */
 "Show Tab Bar" = "Показать панель вкладок";
@@ -402,6 +435,12 @@
 /* Informing a user that NC can't connect to network share */
 "Unable to connect to a network share" = "Не удалось подключиться к сетевой папке";
 
+/* Name for freshly create folder by hotkey */
+"untitled folder" = "Новая папка";
+
+/* Name for freshly created file by hotkey */
+"untitled.txt" = "новый файл.txt";
+
 /* Brief System Information used label title */
 "Used:" = "Используемая:";
 
@@ -428,40 +467,4 @@
 
 /* Asking user for confirmation on erasing custom theme - informative text */
 "You can’t undo this action." = "Вы не сможете отменить эту операцию.";
-
-/* Folders dummy string when size is not available, for English is 'Folder' */
-"__MODERNPRESENTATION_FOLDER_WORD" = "Папка";
-
-/* Upper-level in directory, for English is 'Up' */
-"__MODERNPRESENTATION_UP_WORD" = "Наверх";
-
-/* No comment provided by engineer. */
-"__PANELVIEW_LIST_COLUMN_TITLE_DATE_ADDED" = "Дата добавления";
-
-/* No comment provided by engineer. */
-"__PANELVIEW_LIST_COLUMN_TITLE_DATE_CREATED" = "Дата создания";
-
-/* No comment provided by engineer. */
-"__PANELVIEW_LIST_COLUMN_TITLE_DATE_MODIFIED" = "Дата изменения";
-
-/* No comment provided by engineer. */
-"__PANELVIEW_LIST_COLUMN_TITLE_NAME" = "Имя";
-
-/* No comment provided by engineer. */
-"__PANELVIEW_LIST_COLUMN_TITLE_SIZE" = "Размер";
-
-/* Informative text to thank user for buying */
-"__THANKS_FOR_REGISTER_INFORMATIVE" = "Спасибо за использование зарегистрированной копии Nimble Commander!";
-
-/* Message to thank user for buying */
-"__THANKS_FOR_REGISTER_MESSAGE" = "Успешная активация";
-
-/* Nag screen text about test period */
-"__TRIAL_WINDOW_NOTE" = "Это пробная версия Nimble Commander.<br>Чтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно <a href=\"http://magnumbytes.com/redirectlinks/buy_license\">купить лицензию</a> или <a href=\"macappstore://itunes.apple.com/app/id942443942\">установить платную версию</a> из Mac App Store.<br>Это окно появляется только в пробной версии.";
-
-/* Name for freshly create folder by hotkey */
-"untitled folder" = "Новая папка";
-
-/* Name for freshly created file by hotkey */
-"untitled.txt" = "новый файл.txt";
 

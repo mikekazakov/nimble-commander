@@ -1,6 +1,6 @@
-/* Class = "NSButtonCell"; title = "OK"; ObjectID = "UCC-jD-l4L"; */
-"UCC-jD-l4L.title" = "ОК";
-
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "nmJ-Rp-lH7"; */
 "nmJ-Rp-lH7.title" = "Отмена";
+
+/* Class = "NSButtonCell"; title = "OK"; ObjectID = "UCC-jD-l4L"; */
+"UCC-jD-l4L.title" = "ОК";
 

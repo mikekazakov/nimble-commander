@@ -4,11 +4,20 @@
 /* Class = "NSTextFieldCell"; placeholderString = "anonymous@domain.com"; ObjectID = "255-mx-b6a"; */
 "255-mx-b6a.placeholderString" = "anonymous@domain.com";
 
+/* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "dA5-HK-3gm"; */
+"dA5-HK-3gm.title" = "Название:";
+
 /* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "EJR-gc-SwI"; */
 "EJR-gc-SwI.title" = "Удаленный порт:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "ftp.example.com"; ObjectID = "FdQ-zx-5B7"; */
 "FdQ-zx-5B7.placeholderString" = "ftp.example.com";
+
+/* Class = "NSTextFieldCell"; title = "Remote path:"; ObjectID = "hUY-J5-Twm"; */
+"hUY-J5-Twm.title" = "Удаленный путь:";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "j8e-Wn-3Fa"; */
+"j8e-Wn-3Fa.title" = "Закрыть";
 
 /* Class = "NSTextFieldCell"; placeholderString = "/"; ObjectID = "KlY-P2-CgM"; */
 "KlY-P2-CgM.placeholderString" = "/";
@@ -16,11 +25,17 @@
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "anonymous@domain.com"; ObjectID = "MG5-t4-OT6"; */
 "MG5-t4-OT6.ibShadowedIsNilPlaceholder" = "anonymous@domain.com";
 
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "/"; ObjectID = "mnE-WW-WZY"; */
+"mnE-WW-WZY.ibShadowedIsNilPlaceholder" = "/";
+
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "anonymous"; ObjectID = "O5E-rL-Xtf"; */
 "O5E-rL-Xtf.ibShadowedIsNilPlaceholder" = "anonymous";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "21"; ObjectID = "Oei-y6-cIo"; */
 "Oei-y6-cIo.ibShadowedIsNilPlaceholder" = "21";
+
+/* Class = "NSTextFieldCell"; placeholderString = "anonymous"; ObjectID = "p3m-p9-Z9X"; */
+"p3m-p9-Z9X.placeholderString" = "anonymous";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "ftp.example.com"; ObjectID = "P18-Nd-gLg"; */
 "P18-Nd-gLg.ibShadowedIsNilPlaceholder" = "ftp.example.com";
@@ -31,33 +46,18 @@
 /* Class = "NSTextFieldCell"; title = "Username:"; ObjectID = "Spe-8u-71A"; */
 "Spe-8u-71A.title" = "Логин:";
 
-/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "arbitrary title"; ObjectID = "Xwj-Vw-t6b"; */
-"Xwj-Vw-t6b.ibShadowedIsNilPlaceholder" = "произвольное название";
-
-/* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "Z0v-Pw-m6u"; */
-"Z0v-Pw-m6u.title" = "Сервер:";
-
-/* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "dA5-HK-3gm"; */
-"dA5-HK-3gm.title" = "Название:";
-
-/* Class = "NSTextFieldCell"; title = "Remote path:"; ObjectID = "hUY-J5-Twm"; */
-"hUY-J5-Twm.title" = "Удаленный путь:";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "j8e-Wn-3Fa"; */
-"j8e-Wn-3Fa.title" = "Закрыть";
-
-/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "/"; ObjectID = "mnE-WW-WZY"; */
-"mnE-WW-WZY.ibShadowedIsNilPlaceholder" = "/";
-
-/* Class = "NSTextFieldCell"; placeholderString = "anonymous"; ObjectID = "p3m-p9-Z9X"; */
-"p3m-p9-Z9X.placeholderString" = "anonymous";
-
 /* Class = "NSButtonCell"; alternateTitle = "Save"; ObjectID = "xIA-lj-ojE"; */
 "xIA-lj-ojE.alternateTitle" = "Сохранить";
 
 /* Class = "NSButtonCell"; title = "Connect"; ObjectID = "xIA-lj-ojE"; */
 "xIA-lj-ojE.title" = "Подключиться";
 
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "arbitrary title"; ObjectID = "Xwj-Vw-t6b"; */
+"Xwj-Vw-t6b.ibShadowedIsNilPlaceholder" = "произвольное название";
+
 /* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "ybn-fX-OGa"; */
 "ybn-fX-OGa.title" = "Пароль:";
+
+/* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "Z0v-Pw-m6u"; */
+"Z0v-Pw-m6u.title" = "Сервер:";
 

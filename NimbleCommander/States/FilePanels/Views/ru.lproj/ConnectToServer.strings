@@ -7,8 +7,17 @@
 /* Class = "NSMenuItem"; title = "SFTP Server"; ObjectID = "Ckr-jX-yb4"; */
 "Ckr-jX-yb4.title" = "SFTP сервер";
 
+/* Class = "NSMenuItem"; title = "FTP Server"; ObjectID = "f3W-UC-2ji"; */
+"f3W-UC-2ji.title" = "FTP сервер";
+
+/* Class = "NSMenuItem"; title = "WebDAV Server"; ObjectID = "gyF-1f-E8G"; */
+"gyF-1f-E8G.title" = "WebDAV сервер";
+
 /* Class = "NSMenuItem"; title = "Network Share"; ObjectID = "K8I-rQ-jcd"; */
 "K8I-rQ-jcd.title" = "Сетевая папка";
+
+/* Class = "NSMenuItem"; title = "Dropbox Account"; ObjectID = "ltj-qY-kNR"; */
+"ltj-qY-kNR.title" = "Учетная запись Dropbox";
 
 /* Class = "NSTableColumn"; headerCell.title = "Title"; ObjectID = "Nyu-es-qd5"; */
 "Nyu-es-qd5.headerCell.title" = "Название";
@@ -21,15 +30,6 @@
 
 /* Class = "NSSegmentedCell"; T1K-Qg-QUI.ibShadowedToolTips[2] = "^E"; ObjectID = "T1K-Qg-QUI"; */
 "T1K-Qg-QUI.ibShadowedToolTips[2]" = "^E";
-
-/* Class = "NSMenuItem"; title = "FTP Server"; ObjectID = "f3W-UC-2ji"; */
-"f3W-UC-2ji.title" = "FTP сервер";
-
-/* Class = "NSMenuItem"; title = "WebDAV Server"; ObjectID = "gyF-1f-E8G"; */
-"gyF-1f-E8G.title" = "WebDAV сервер";
-
-/* Class = "NSMenuItem"; title = "Dropbox Account"; ObjectID = "ltj-qY-kNR"; */
-"ltj-qY-kNR.title" = "Учетная запись Dropbox";
 
 /* Class = "NSButtonCell"; title = "Close"; ObjectID = "wk0-oi-k9z"; */
 "wk0-oi-k9z.title" = "Закрыть";

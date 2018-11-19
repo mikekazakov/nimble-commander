@@ -4,35 +4,11 @@
 /* Class = "NSTextFieldCell"; placeholderString = "Default"; ObjectID = "9GC-kO-Qzl"; */
 "9GC-kO-Qzl.placeholderString" = "авто";
 
-/* Class = "NSTextFieldCell"; placeholderString = "e.g. \"dav\", or leave it blank"; ObjectID = "B2t-My-jEr"; */
-"B2t-My-jEr.placeholderString" = "напр. \"dav\", или оставить пустым";
-
-/* Class = "NSMenuItem"; title = "http://"; ObjectID = "Ep8-GA-vNO"; */
-"Ep8-GA-vNO.title" = "http://";
-
-/* Class = "NSTextFieldCell"; placeholderString = "anonymous"; ObjectID = "GUX-BP-Egc"; */
-"GUX-BP-Egc.placeholderString" = "anonymous";
-
-/* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "I4u-d6-5w1"; */
-"I4u-d6-5w1.title" = "Удаленный порт:";
-
-/* Class = "NSTextFieldCell"; placeholderString = "arbitrary title"; ObjectID = "RLB-gE-9sF"; */
-"RLB-gE-9sF.placeholderString" = "произвольное название";
-
-/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "TZ6-Jn-QNP"; */
-"TZ6-Jn-QNP.title" = "Отмена";
-
-/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "Tc8-ck-w7G"; */
-"Tc8-ck-w7G.title" = "Пароль:";
-
-/* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "WKP-im-MqU"; */
-"WKP-im-MqU.title" = "Сервер:";
-
-/* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "YiH-ay-HUt"; */
-"YiH-ay-HUt.title" = "Название:";
-
 /* Class = "NSTextFieldCell"; placeholderString = "passwd"; ObjectID = "afZ-pr-a7Q"; */
 "afZ-pr-a7Q.placeholderString" = "passwd";
+
+/* Class = "NSTextFieldCell"; placeholderString = "e.g. \"dav\", or leave it blank"; ObjectID = "B2t-My-jEr"; */
+"B2t-My-jEr.placeholderString" = "напр. \"dav\", или оставить пустым";
 
 /* Class = "NSTextFieldCell"; title = "Username:"; ObjectID = "bmN-il-FjS"; */
 "bmN-il-FjS.title" = "Логин:";
@@ -43,8 +19,17 @@
 /* Class = "NSButtonCell"; title = "Connect"; ObjectID = "enT-ai-K9k"; */
 "enT-ai-K9k.title" = "Подключиться";
 
+/* Class = "NSMenuItem"; title = "http://"; ObjectID = "Ep8-GA-vNO"; */
+"Ep8-GA-vNO.title" = "http://";
+
 /* Class = "NSTextFieldCell"; placeholderString = "webdav.example.com"; ObjectID = "fbJ-q3-INF"; */
 "fbJ-q3-INF.placeholderString" = "webdav.example.com";
+
+/* Class = "NSTextFieldCell"; placeholderString = "anonymous"; ObjectID = "GUX-BP-Egc"; */
+"GUX-BP-Egc.placeholderString" = "anonymous";
+
+/* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "I4u-d6-5w1"; */
+"I4u-d6-5w1.title" = "Удаленный порт:";
 
 /* Class = "NSTextFieldCell"; title = "Connect to WebDAV server:"; ObjectID = "i9i-lt-BeK"; */
 "i9i-lt-BeK.title" = "Подключиться к WebDAV серверу:";
@@ -52,6 +37,21 @@
 /* Class = "NSMenuItem"; title = "https://"; ObjectID = "p6q-8a-DGB"; */
 "p6q-8a-DGB.title" = "https://";
 
+/* Class = "NSTextFieldCell"; placeholderString = "arbitrary title"; ObjectID = "RLB-gE-9sF"; */
+"RLB-gE-9sF.placeholderString" = "произвольное название";
+
+/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "Tc8-ck-w7G"; */
+"Tc8-ck-w7G.title" = "Пароль:";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "TZ6-Jn-QNP"; */
+"TZ6-Jn-QNP.title" = "Отмена";
+
+/* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "WKP-im-MqU"; */
+"WKP-im-MqU.title" = "Сервер:";
+
 /* Class = "NSTextFieldCell"; title = "Protocol:"; ObjectID = "xn6-Gp-4hn"; */
 "xn6-Gp-4hn.title" = "Протокол:";
+
+/* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "YiH-ay-HUt"; */
+"YiH-ay-HUt.title" = "Название:";
 

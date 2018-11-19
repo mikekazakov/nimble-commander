@@ -10,9 +10,6 @@
 /* Class = "NSButtonCell"; title = "OK"; ObjectID = "DPm-wa-ccm"; */
 "DPm-wa-ccm.title" = "ОК";
 
-/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "J19-J3-pgq"; */
-"J19-J3-pgq.title" = "Имя:";
-
 /* Class = "NSTextFieldCell"; title = "File mask:"; ObjectID = "eP4-pl-vw3"; */
 "eP4-pl-vw3.title" = "Маска файлов:";
 
@@ -24,6 +21,9 @@
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "*, *.*, *.cpp, *.*m, etc."; ObjectID = "hau-43-Cpg"; */
 "hau-43-Cpg.ibShadowedIsNilPlaceholder" = "*, *.*, *.cpp, *.*m и т.д.";
+
+/* Class = "NSTextFieldCell"; title = "Name:"; ObjectID = "J19-J3-pgq"; */
+"J19-J3-pgq.title" = "Имя:";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "%%"; ObjectID = "mi2-sj-UPs"; */
 "mi2-sj-UPs.ibShadowedIsNilPlaceholder" = "%%";

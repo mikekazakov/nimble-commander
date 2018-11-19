@@ -1,11 +1,11 @@
 /* Class = "NSButtonCell"; title = "Close"; ObjectID = "5rO-0k-5gI"; */
 "5rO-0k-5gI.title" = "Закрыть";
 
-/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
-"F0z-JX-Cv5.title" = "Окно";
-
 /* Class = "NSButtonCell"; title = "Word Wrap"; ObjectID = "e2e-I5-ELa"; */
 "e2e-I5-ELa.title" = "Перенос по словам";
+
+/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Окно";
 
 /* Class = "NSTextFieldCell"; title = "Encoding:"; ObjectID = "kyl-qY-jvY"; */
 "kyl-qY-jvY.title" = "Кодировка:";

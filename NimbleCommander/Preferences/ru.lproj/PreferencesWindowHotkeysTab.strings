@@ -7,24 +7,24 @@
 /* Class = "NSButtonCell"; title = "Always use the Fn buttons as F1 ... F19"; ObjectID = "17V-g8-fDY"; */
 "17V-g8-fDY.title" = "Всегда использовать Fn кнопки как F1..F19";
 
+/* Class = "NSButtonCell"; title = "Defaults"; ObjectID = "aLv-eW-18q"; */
+"aLv-eW-18q.title" = "По умолчанию";
+
 /* Class = "NSButtonCell"; title = "Customized"; ObjectID = "IVh-ax-KPY"; */
 "IVh-ax-KPY.title" = "Переопределённые";
 
 /* Class = "NSTableColumn"; headerCell.title = "Action"; ObjectID = "KvV-0v-Gl2"; */
 "KvV-0v-Gl2.headerCell.title" = "Действие";
 
-/* Class = "NSTableColumn"; headerCell.title = "Hotkey"; ObjectID = "SJn-Me-IpN"; */
-"SJn-Me-IpN.headerCell.title" = "Хоткей";
-
-/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Yun-5T-3Fx"; */
-"Yun-5T-3Fx.title" = "";
-
-/* Class = "NSButtonCell"; title = "Defaults"; ObjectID = "aLv-eW-18q"; */
-"aLv-eW-18q.title" = "По умолчанию";
-
 /* Class = "NSButtonCell"; alternateTitle = "Conflicts"; ObjectID = "nL2-XV-AC2"; */
 "nL2-XV-AC2.alternateTitle" = "Конфликты";
 
 /* Class = "NSButtonCell"; title = "Conflicts"; ObjectID = "nL2-XV-AC2"; */
 "nL2-XV-AC2.title" = "Конфликты";
+
+/* Class = "NSTableColumn"; headerCell.title = "Hotkey"; ObjectID = "SJn-Me-IpN"; */
+"SJn-Me-IpN.headerCell.title" = "Хоткей";
+
+/* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "Yun-5T-3Fx"; */
+"Yun-5T-3Fx.title" = "";
 

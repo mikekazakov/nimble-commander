@@ -1,32 +1,15 @@
-/* Class = "NSTextFieldCell"; title = "We strive to make the best software possible, and sharing your positive experience is helpful to us and to other customers."; ObjectID = "2LV-5v-Msp"; */
-"2LV-5v-Msp.title" = "Вы поставили нам высокую оценку – покажите её другим пользователям. Это займёт несколько секунд.\r\rСпасибо ещё раз!";
+/* Class = "NSTextFieldCell"; title = "We strive to make the best software possible. We would appreciate it if you could share your positive experience with us and other users."; ObjectID = "2LV-5v-Msp"; */
+"2LV-5v-Msp.title" = "Вы поставили нам высокую оценку – покажите её другим пользователям. Это займёт несколько секунд.
 
-/* Class = "NSTextFieldCell"; title = "We strive to make the best software possible, and sharing your positive experience is helpful to us and to other customers."; ObjectID = "6XR-CU-qa6"; */
-"6XR-CU-qa6.title" = "И Вы можете повлиять на это! Всё просто. Вы только что поставили нам высокую оценку – покажите её друзьям и коллегам. Это займёт несколько секунд.\r\rСпасибо ещё раз!";
+Спасибо ещё раз!";
 
-/* Class = "NSTextFieldCell"; title = "If you could take a moment to rate Nimble Commander at the Mac App Store, we'd really appreciate it."; ObjectID = "21T-EA-38h"; */
+/* Class = "NSTextFieldCell"; title = "We strive to make the best software possible. We would appreciate it if you could share your positive experience with us and other users."; ObjectID = "6XR-CU-qa6"; */
+"6XR-CU-qa6.title" = "И Вы можете повлиять на это! Всё просто. Вы только что поставили нам высокую оценку – покажите её друзьям и коллегам. Это займёт несколько секунд.
+
+Спасибо ещё раз!";
+
+/* Class = "NSTextFieldCell"; title = "If you could take a moment to rate Nimble Commander on the Mac App Store, we’d really appreciate it."; ObjectID = "21T-EA-38h"; */
 "21T-EA-38h.title" = "Ресурсы, выделяемые на разработку Nimble Commander, зависят от оценки в MAS. Чем она выше – тем больше функций мы добавляем и быстрей обновляемся.";
-
-/* Class = "NSWindow"; title = "Feedback"; ObjectID = "F0z-JX-Cv5"; */
-"F0z-JX-Cv5.title" = "Обратная связь";
-
-/* Class = "NSTextFieldCell"; title = "If you could take a moment to post a note about Nimble Commander on any social network, we’d really appreciate it."; ObjectID = "J7M-Hl-Cyp"; */
-"J7M-Hl-Cyp.title" = "Развитие Nimble Commander и увеличение числа функций напрямую зависит от количества пользователей.";
-
-/* Class = "NSTextFieldCell"; title = "We’d like to hear from you."; ObjectID = "O76-JY-rBG"; */
-"O76-JY-rBG.title" = "Oops…";
-
-/* Class = "NSButtonCell"; title = "Rate on App Store"; ObjectID = "Wbr-8X-Iyc"; */
-"Wbr-8X-Iyc.title" = "Оценить в App Store";
-
-/* Class = "NSTextFieldCell"; title = "We are glad you are enjoying our app!"; ObjectID = "WxI-Pi-SpO"; */
-"WxI-Pi-SpO.title" = "Спасибо! Но мы можем стать ещё лучше!";
-
-/* Class = "NSTextFieldCell"; title = "We are glad you are enjoying our app!"; ObjectID = "XhC-3W-CjC"; */
-"XhC-3W-CjC.title" = "Спасибо! Но мы можем стать ещё лучше!";
-
-/* Class = "NSTextFieldCell"; title = "Listening to your feedback is how we keep improving our software."; ObjectID = "ZOg-yO-bAY"; */
-"ZOg-yO-bAY.title" = "Если нет, то, пожалуйста, напишите, почему Вы поставили Nimble Commander 1 звезду, каких функций Вам не хватает? Мы немедленно возьмём задачу в разработку.";
 
 /* Class = "NSButtonCell"; title = "Email Feedback"; ObjectID = "aMn-8e-VEV"; */
 "aMn-8e-VEV.title" = "Написать пожелание";
@@ -37,15 +20,36 @@
 /* Class = "NSTextFieldCell"; title = "Click the “Get Help” button and describe the issues you’ve encountered, or send us an email with any feedback you want to share. Thanks, we’re listening!"; ObjectID = "el2-0A-aKl"; */
 "el2-0A-aKl.title" = "Мы можем стать лучше. Но только с Вашей помощью. Пожалуйста, напишите, какие функции Вам нужны, чтобы Вы поставили Nimble Commander 5 звёзд.";
 
+/* Class = "NSWindow"; title = "Feedback"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Обратная связь";
+
+/* Class = "NSTextFieldCell"; title = "If you could take a moment to post a note about Nimble Commander on any social network, we’d really appreciate it."; ObjectID = "J7M-Hl-Cyp"; */
+"J7M-Hl-Cyp.title" = "Развитие Nimble Commander и увеличение числа функций напрямую зависит от количества пользователей.";
+
 /* Class = "NSTextFieldCell"; title = "We strive to create the best-in-class software. Please take this opportunity to let us know how we can assist you better."; ObjectID = "kMv-Qv-KdY"; */
 "kMv-Qv-KdY.title" = "Но Вы всё-таки с нами – и это многое значит для нас.";
 
 /* Class = "NSTextFieldCell"; title = "Please tell us more about your experience with Nimble Commander, especially if you feel that a specific function is missing, could be improved, or doesn’t work correctly. We’d like to know about that."; ObjectID = "nqC-L8-L0Y"; */
 "nqC-L8-L0Y.title" = "Надеемся, Вы нажали 1 звезду для проверки.";
 
+/* Class = "NSTextFieldCell"; title = "We’d like to hear from you."; ObjectID = "O76-JY-rBG"; */
+"O76-JY-rBG.title" = "Oops…";
+
 /* Class = "NSTextFieldCell"; title = "We’d like to improve your experience with Nimble Commander!"; ObjectID = "sVB-UR-1so"; */
 "sVB-UR-1so.title" = "Вы правы – мы не идеальны.";
 
+/* Class = "NSButtonCell"; title = "Rate on App Store"; ObjectID = "Wbr-8X-Iyc"; */
+"Wbr-8X-Iyc.title" = "Оценить в App Store";
+
+/* Class = "NSTextFieldCell"; title = "We are glad you are enjoying our app!"; ObjectID = "WxI-Pi-SpO"; */
+"WxI-Pi-SpO.title" = "Спасибо! Но мы можем стать ещё лучше!";
+
+/* Class = "NSTextFieldCell"; title = "We are glad you are enjoying our app!"; ObjectID = "XhC-3W-CjC"; */
+"XhC-3W-CjC.title" = "Спасибо! Но мы можем стать ещё лучше!";
+
 /* Class = "NSButtonCell"; title = "Get Help"; ObjectID = "xzC-7m-M6s"; */
 "xzC-7m-M6s.title" = "Сообщить о проблеме";
+
+/* Class = "NSTextFieldCell"; title = "Listening to your feedback is how we keep improving our software."; ObjectID = "ZOg-yO-bAY"; */
+"ZOg-yO-bAY.title" = "Если нет, то, пожалуйста, напишите, почему Вы поставили Nimble Commander 1 звезду, каких функций Вам не хватает? Мы немедленно возьмём задачу в разработку.";
 

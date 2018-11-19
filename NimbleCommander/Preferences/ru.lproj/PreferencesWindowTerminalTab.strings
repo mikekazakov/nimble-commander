@@ -1,17 +1,11 @@
 /* Class = "NSTextFieldCell"; title = "Supported shells: bash, zsh and [t]csh"; ObjectID = "9D7-aw-d5c"; */
 "9D7-aw-d5c.title" = "Поддерживаемые shell: bash, zsh и [t]csh";
 
-/* Class = "NSButtonCell"; title = "▁ Underline"; ObjectID = "Hi6-HH-WxJ"; */
-"Hi6-HH-WxJ.title" = "▁ Подчеркивание";
-
-/* Class = "NSButtonCell"; title = " ▏Vertical Bar"; ObjectID = "OJo-EQ-cnc"; */
-"OJo-EQ-cnc.title" = " ▏Вертикальная полоса";
-
-/* Class = "NSButtonCell"; title = "Command (complete path):"; ObjectID = "ZFM-pn-oBo"; */
-"ZFM-pn-oBo.title" = "Команда (полный путь)";
-
 /* Class = "NSButtonCell"; title = "Default login shell"; ObjectID = "dru-f9-fCV"; */
 "dru-f9-fCV.title" = "Shell входа по умолчанию";
+
+/* Class = "NSButtonCell"; title = "▁ Underline"; ObjectID = "Hi6-HH-WxJ"; */
+"Hi6-HH-WxJ.title" = "▁ Подчеркивание";
 
 /* Class = "NSButtonCell"; title = "█ Block"; ObjectID = "lmd-o1-1kc"; */
 "lmd-o1-1kc.title" = "█ Блок";
@@ -22,6 +16,12 @@
 /* Class = "NSTextFieldCell"; title = "Open shell with: "; ObjectID = "nWF-WN-ul0"; */
 "nWF-WN-ul0.title" = "Запускать терминал с:";
 
+/* Class = "NSButtonCell"; title = " ▏Vertical Bar"; ObjectID = "OJo-EQ-cnc"; */
+"OJo-EQ-cnc.title" = " ▏Вертикальная полоса";
+
 /* Class = "NSButtonCell"; title = "Hide scrollbar"; ObjectID = "zcL-oM-aS5"; */
 "zcL-oM-aS5.title" = "Скрыть полосу прокрутки";
+
+/* Class = "NSButtonCell"; title = "Command (complete path):"; ObjectID = "ZFM-pn-oBo"; */
+"ZFM-pn-oBo.title" = "Команда (полный путь)";
 

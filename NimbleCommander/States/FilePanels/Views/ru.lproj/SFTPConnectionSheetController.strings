@@ -10,14 +10,23 @@
 /* Class = "NSTextFieldCell"; title = "Connect to SFTP server:"; ObjectID = "096-ee-9Lb"; */
 "096-ee-9Lb.title" = "Подключиться к SFTP серверу:";
 
+/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "dGI-nd-Ybu"; */
+"dGI-nd-Ybu.title" = "Пароль:";
+
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "example.com"; ObjectID = "F0g-IE-q0P"; */
 "F0g-IE-q0P.ibShadowedIsNilPlaceholder" = "example.com";
+
+/* Class = "NSTextFieldCell"; placeholderString = "example.com"; ObjectID = "gyX-qm-mJx"; */
+"gyX-qm-mJx.placeholderString" = "example.com";
+
+/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "path"; ObjectID = "Kba-yc-QkI"; */
+"Kba-yc-QkI.ibShadowedIsNilPlaceholder" = "path";
 
 /* Class = "NSTextFieldCell"; placeholderString = "path"; ObjectID = "KZu-2u-jyV"; */
 "KZu-2u-jyV.placeholderString" = "path";
 
-/* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "path"; ObjectID = "Kba-yc-QkI"; */
-"Kba-yc-QkI.ibShadowedIsNilPlaceholder" = "path";
+/* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "ngl-N8-zRx"; */
+"ngl-N8-zRx.title" = "Удаленный порт:";
 
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "22"; ObjectID = "OFd-Oy-lpd"; */
 "OFd-Oy-lpd.ibShadowedIsNilPlaceholder" = "22";
@@ -37,30 +46,21 @@
 /* Class = "CocoaBindingsConnection"; ibShadowedIsNilPlaceholder = "arbitrary title"; ObjectID = "TCG-Oh-q7e"; */
 "TCG-Oh-q7e.ibShadowedIsNilPlaceholder" = "произвольное название";
 
-/* Class = "NSButtonCell"; title = "🔑"; ObjectID = "Vpg-ZM-qSO"; */
-"Vpg-ZM-qSO.title" = "🔑";
-
-/* Class = "NSTextFieldCell"; title = "Key file:"; ObjectID = "XOW-Nv-JRE"; */
-"XOW-Nv-JRE.title" = "Путь к ключу:";
-
-/* Class = "NSTextFieldCell"; placeholderString = "passwd"; ObjectID = "Xfi-d5-khm"; */
-"Xfi-d5-khm.placeholderString" = "passwd";
-
-/* Class = "NSTextFieldCell"; title = "Password:"; ObjectID = "dGI-nd-Ybu"; */
-"dGI-nd-Ybu.title" = "Пароль:";
-
-/* Class = "NSTextFieldCell"; placeholderString = "example.com"; ObjectID = "gyX-qm-mJx"; */
-"gyX-qm-mJx.placeholderString" = "example.com";
-
-/* Class = "NSTextFieldCell"; title = "Remote port:"; ObjectID = "ngl-N8-zRx"; */
-"ngl-N8-zRx.title" = "Удаленный порт:";
-
 /* Class = "NSTextFieldCell"; title = "Title:"; ObjectID = "tlj-88-5gd"; */
 "tlj-88-5gd.title" = "Название:";
 
 /* Class = "NSTextFieldCell"; placeholderString = "root"; ObjectID = "vmN-6P-k8r"; */
 "vmN-6P-k8r.placeholderString" = "root";
 
+/* Class = "NSButtonCell"; title = "🔑"; ObjectID = "Vpg-ZM-qSO"; */
+"Vpg-ZM-qSO.title" = "🔑";
+
 /* Class = "NSTextFieldCell"; title = "Server:"; ObjectID = "wlG-DB-jLP"; */
 "wlG-DB-jLP.title" = "Сервер:";
+
+/* Class = "NSTextFieldCell"; placeholderString = "passwd"; ObjectID = "Xfi-d5-khm"; */
+"Xfi-d5-khm.placeholderString" = "passwd";
+
+/* Class = "NSTextFieldCell"; title = "Key file:"; ObjectID = "XOW-Nv-JRE"; */
+"XOW-Nv-JRE.title" = "Путь к ключу:";
 

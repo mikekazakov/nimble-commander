@@ -1,9 +1,6 @@
 /* Class = "NSTextFieldCell"; title = "How do you wish to import this theme?"; ObjectID = "2Fl-xL-9fp"; */
 "2Fl-xL-9fp.title" = "Как вы хотели бы импортировать данную тему?";
 
-/* Class = "NSButtonCell"; title = "Import"; ObjectID = "NQq-tq-S68"; */
-"NQq-tq-S68.title" = "Импорт";
-
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "cbI-8M-hIM"; */
 "cbI-8M-hIM.title" = "Отмена";
 
@@ -12,4 +9,7 @@
 
 /* Class = "NSButtonCell"; title = "Import as a new theme:"; ObjectID = "g9Q-gY-8zD"; */
 "g9Q-gY-8zD.title" = "Импортировать как новую тему:";
+
+/* Class = "NSButtonCell"; title = "Import"; ObjectID = "NQq-tq-S68"; */
+"NQq-tq-S68.title" = "Импорт";
 

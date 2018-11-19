@@ -7,6 +7,9 @@
 /* Message text asking if user really wants to reset hotkeys to defaults */
 "Are you sure you want to reset hotkeys to defaults?" = "Вы действительно хотите установить горячие клавиши по умолчанию? ";
 
+/* Coloring rules edit button title */
+"edit" = "ред.";
+
 /* General preferences tab title */
 "Editors" = "Редакторы";
 
@@ -39,7 +42,4 @@
 
 /* General preferences tab title */
 "Viewer" = "Просмотрщик";
-
-/* Coloring rules edit button title */
-"edit" = "ред.";
 

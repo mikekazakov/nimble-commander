@@ -4,14 +4,14 @@
 /* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "9Dn-1I-JSI"; */
 "9Dn-1I-JSI.title" = "Отменить";
 
+/* Class = "NSButtonCell"; title = "Grant access"; ObjectID = "coa-l1-7eB"; */
+"coa-l1-7eB.title" = "Предоставить доступ";
+
 /* Class = "NSButtonCell"; alternateTitle = "Save"; ObjectID = "DhC-ep-E42"; */
 "DhC-ep-E42.alternateTitle" = "Сохранить";
 
 /* Class = "NSButtonCell"; title = "Connect"; ObjectID = "DhC-ep-E42"; */
 "DhC-ep-E42.title" = "Подключиться";
-
-/* Class = "NSButtonCell"; title = "Grant access"; ObjectID = "coa-l1-7eB"; */
-"coa-l1-7eB.title" = "Предоставить доступ";
 
 /* Class = "NSTextFieldCell"; title = "Account:"; ObjectID = "fpO-ZD-wds"; */
 "fpO-ZD-wds.title" = "Учетная запись:";

@@ -7,21 +7,6 @@
 /* Class = "NSMenuItem"; title = "Added Time ↑"; ObjectID = "9QW-2S-sOs"; */
 "9QW-2S-sOs.title" = "Времени добавления ↓";
 
-/* Class = "NSMenuItem"; title = "Modified Time ↑"; ObjectID = "Nl7-FN-dds"; */
-"Nl7-FN-dds.title" = "Времени модификации ↑";
-
-/* Class = "NSMenuItem"; title = "Separate Folders from Files"; ObjectID = "RYi-mW-ybA"; */
-"RYi-mW-ybA.title" = "Отделять папки от файлов";
-
-/* Class = "NSMenuItem"; title = "Added Time ↓"; ObjectID = "UsI-k2-dKl"; */
-"UsI-k2-dKl.title" = "Времени добавления ↑";
-
-/* Class = "NSMenuItem"; title = "Name ↓"; ObjectID = "VRa-0i-JUb"; */
-"VRa-0i-JUb.title" = "Имени ↓";
-
-/* Class = "NSMenuItem"; title = "Extensionless Folders"; ObjectID = "Zk6-zX-sSG"; */
-"Zk6-zX-sSG.title" = "Папки без расширения";
-
 /* Class = "NSMenuItem"; title = "Options"; ObjectID = "cz9-Bn-pwk"; */
 "cz9-Bn-pwk.title" = "Настройки";
 
@@ -43,12 +28,27 @@
 /* Class = "NSMenuItem"; title = "Numeric Comparison"; ObjectID = "mJ3-ls-nKo"; */
 "mJ3-ls-nKo.title" = "Численное сравнение";
 
+/* Class = "NSMenuItem"; title = "Modified Time ↑"; ObjectID = "Nl7-FN-dds"; */
+"Nl7-FN-dds.title" = "Времени модификации ↑";
+
 /* Class = "NSMenuItem"; title = "Name ↑"; ObjectID = "prK-sX-wWv"; */
 "prK-sX-wWv.title" = "Имени ↑";
+
+/* Class = "NSMenuItem"; title = "Separate Folders from Files"; ObjectID = "RYi-mW-ybA"; */
+"RYi-mW-ybA.title" = "Отделять папки от файлов";
 
 /* Class = "NSMenuItem"; title = "Extension ↑"; ObjectID = "tzp-Uh-dub"; */
 "tzp-Uh-dub.title" = "Расширению ↑";
 
 /* Class = "NSMenuItem"; title = "Sort by"; ObjectID = "uNn-d9-xaM"; */
 "uNn-d9-xaM.title" = "Сортировать по";
+
+/* Class = "NSMenuItem"; title = "Added Time ↓"; ObjectID = "UsI-k2-dKl"; */
+"UsI-k2-dKl.title" = "Времени добавления ↑";
+
+/* Class = "NSMenuItem"; title = "Name ↓"; ObjectID = "VRa-0i-JUb"; */
+"VRa-0i-JUb.title" = "Имени ↓";
+
+/* Class = "NSMenuItem"; title = "Extensionless Folders"; ObjectID = "Zk6-zX-sSG"; */
+"Zk6-zX-sSG.title" = "Папки без расширения";
 

@@ -4,18 +4,18 @@
 /* Class = "NSButtonCell"; title = "Save"; ObjectID = "33R-U6-GxT"; */
 "33R-U6-GxT.title" = "Сохранить";
 
-/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
-"F0z-JX-Cv5.title" = "Окно";
-
-/* Class = "NSButtonCell"; title = "Close"; ObjectID = "Vmd-i3-ebR"; */
-"Vmd-i3-ebR.title" = "Закрыть";
-
 /* Class = "NSButtonCell"; title = "Calculate"; ObjectID = "agr-rn-xaZ"; */
 "agr-rn-xaZ.title" = "Вычислить";
+
+/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Окно";
 
 /* Class = "NSTextFieldCell"; title = "Checksum algorithm:"; ObjectID = "mBW-fO-4XM"; */
 "mBW-fO-4XM.title" = "Алгоритм контрольной суммы:";
 
 /* Class = "NSTableColumn"; headerCell.title = "Filename"; ObjectID = "mhj-G6-Q4D"; */
 "mhj-G6-Q4D.headerCell.title" = "Имя файла";
+
+/* Class = "NSButtonCell"; title = "Close"; ObjectID = "Vmd-i3-ebR"; */
+"Vmd-i3-ebR.title" = "Закрыть";
 

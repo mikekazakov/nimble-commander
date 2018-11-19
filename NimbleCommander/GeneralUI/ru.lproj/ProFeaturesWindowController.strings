@@ -13,6 +13,9 @@
 /* Class = "NSTextFieldCell"; title = "System information"; ObjectID = "Bds-RP-yAL"; */
 "Bds-RP-yAL.title" = "Информация о системе";
 
+/* Class = "NSTextFieldCell"; title = "Enjoying Nimble Commander but wanting more?"; ObjectID = "btc-5J-oEi"; */
+"btc-5J-oEi.title" = "Пользуетесь Nimble Commander, но хотите большего?";
+
 /* Class = "NSTextFieldCell"; title = "Archives handling"; ObjectID = "CEU-rk-oDM"; */
 "CEU-rk-oDM.title" = "Работа с архивами";
 
@@ -25,17 +28,14 @@
 /* Class = "NSTextFieldCell"; title = "File viewer"; ObjectID = "J8g-fm-fPd"; */
 "J8g-fm-fPd.title" = "Встроенный просмотрщик";
 
-/* Class = "NSTextFieldCell"; title = "Custom file search"; ObjectID = "XYy-Fk-2EL"; */
-"XYy-Fk-2EL.title" = "Расширенный поиск";
-
-/* Class = "NSTextFieldCell"; title = "Enjoying Nimble Commander but wanting more?"; ObjectID = "btc-5J-oEi"; */
-"btc-5J-oEi.title" = "Пользуетесь Nimble Commander, но хотите большего?";
-
 /* Class = "NSTextFieldCell"; title = "Attributes editor"; ObjectID = "lwf-Ux-yiP"; */
 "lwf-Ux-yiP.title" = "Редактор атрибутов";
 
 /* Class = "NSTextFieldCell"; title = "FTP, SFTP, WebDAV, Dropbox"; ObjectID = "v7q-uc-sjB"; */
 "v7q-uc-sjB.title" = "FTP, SFTP, WebDAV, Dropbox";
+
+/* Class = "NSTextFieldCell"; title = "Custom file search"; ObjectID = "XYy-Fk-2EL"; */
+"XYy-Fk-2EL.title" = "Расширенный поиск";
 
 /* Class = "NSTextFieldCell"; title = "External tools integration"; ObjectID = "y8W-w4-V0a"; */
 "y8W-w4-V0a.title" = "Внешние инструменты";

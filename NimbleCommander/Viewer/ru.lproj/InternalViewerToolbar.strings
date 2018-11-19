@@ -4,6 +4,12 @@
 /* Class = "NSToolbarItem"; paletteLabel = "File Size"; ObjectID = "Erp-uX-pUl"; */
 "Erp-uX-pUl.paletteLabel" = "Размер файла";
 
+/* Class = "NSToolbarItem"; label = "Settings"; ObjectID = "k70-wQ-ZQN"; */
+"k70-wQ-ZQN.label" = "Настройки";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Settings"; ObjectID = "k70-wQ-ZQN"; */
+"k70-wQ-ZQN.paletteLabel" = "Настройки";
+
 /* Class = "NSTextFieldCell"; title = "Encoding:"; ObjectID = "Nh3-yd-fW8"; */
 "Nh3-yd-fW8.title" = "Кодировка:";
 
@@ -12,6 +18,9 @@
 
 /* Class = "NSToolbarItem"; paletteLabel = "Search In File"; ObjectID = "Qk3-zV-KEt"; */
 "Qk3-zV-KEt.paletteLabel" = "Поиск в файле";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Search Indicator"; ObjectID = "r4X-h2-aDN"; */
+"r4X-h2-aDN.paletteLabel" = "Индикатор поиска";
 
 /* Class = "NSToolbarItem"; label = "Position"; ObjectID = "RcC-bj-Zj1"; */
 "RcC-bj-Zj1.label" = "Позиция";
@@ -24,15 +33,6 @@
 
 /* Class = "NSToolbarItem"; paletteLabel = "Mode"; ObjectID = "WQ7-Gl-Tam"; */
 "WQ7-Gl-Tam.paletteLabel" = "Режим";
-
-/* Class = "NSToolbarItem"; label = "Settings"; ObjectID = "k70-wQ-ZQN"; */
-"k70-wQ-ZQN.label" = "Настройки";
-
-/* Class = "NSToolbarItem"; paletteLabel = "Settings"; ObjectID = "k70-wQ-ZQN"; */
-"k70-wQ-ZQN.paletteLabel" = "Настройки";
-
-/* Class = "NSToolbarItem"; paletteLabel = "Search Indicator"; ObjectID = "r4X-h2-aDN"; */
-"r4X-h2-aDN.paletteLabel" = "Индикатор поиска";
 
 /* Class = "NSButtonCell"; title = "Word Wrap"; ObjectID = "xtS-o9-gcA"; */
 "xtS-o9-gcA.title" = "Перенос по словам";

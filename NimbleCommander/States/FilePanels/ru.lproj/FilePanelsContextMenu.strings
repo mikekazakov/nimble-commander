@@ -10,6 +10,12 @@
 /* Compress some items here */
 "Compress" = "Сжать";
 
+/* Compress one item here */
+"Compress “%@”" = "Сжать “%@”";
+
+/* Compress one item */
+"Compress “%@” in Opposite Panel" = "Сжать “%@” в противоположной панели";
+
 /* Compress some items here */
 "Compress %lu Items" = "Сжать %lu объектов";
 
@@ -19,17 +25,14 @@
 /* Compress some items */
 "Compress in Opposite Panel" = "Сжать в противоположной панели";
 
-/* Compress one item here */
-"Compress “%@”" = "Сжать “%@”";
-
-/* Compress one item */
-"Compress “%@” in Opposite Panel" = "Сжать “%@” в противоположной панели";
+/* Copy one item */
+"Copy “%@”" = "Копировать “%@”";
 
 /* Copy many items */
 "Copy %lu Items" = "Копировать %lu объектов";
 
-/* Copy one item */
-"Copy “%@”" = "Копировать “%@”";
+/* Menu item postfix marker for default apps to open with, for English is 'default' */
+"default" = "по умолчанию";
 
 /* Menu item title to delete file, for English is 'Delete Permanently' */
 "Delete Permanently" = "Удалить необратимо";
@@ -54,7 +57,4 @@
 
 /* Share submenu title */
 "Share" = "Поделиться";
-
-/* Menu item postfix marker for default apps to open with, for English is 'default' */
-"default" = "по умолчанию";
 

@@ -52,12 +52,12 @@
 /* Class = "NSMenuItem"; title = "1024 Kb"; ObjectID = "638"; */
 "638.title" = "1024 Кб";
 
+/* Class = "NSButtonCell"; title = "Check com.apple.TextEncoding"; ObjectID = "dec-0H-tCg"; */
+"dec-0H-tCg.title" = "Проверять com.apple.TextEncoding";
+
 /* Class = "NSMenuItem"; title = "Separate window"; ObjectID = "Mav-lu-obi"; */
 "Mav-lu-obi.title" = "Отдельном окне";
 
 /* Class = "NSTextFieldCell"; title = "Show viewer in:"; ObjectID = "R3d-db-TY3"; */
 "R3d-db-TY3.title" = "Показывать просмотрщик в:";
-
-/* Class = "NSButtonCell"; title = "Check com.apple.TextEncoding"; ObjectID = "dec-0H-tCg"; */
-"dec-0H-tCg.title" = "Проверять com.apple.TextEncoding";
 

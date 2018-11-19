@@ -184,7 +184,8 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     if( !m_ClosedPanelsHistory )
         return;
     
-    FilterPopUpMenu *menu = [[FilterPopUpMenu alloc] initWithTitle:@"Recently Closed"];
+    auto title = NSLocalizedString(@"Recently Closed", "");
+    FilterPopUpMenu *menu = [[FilterPopUpMenu alloc] initWithTitle:title];
     
     FilePanelsTabbedHolder *holder = nil;
     if( aTabView == m_SplitView.leftTabbedHolder.tabView )

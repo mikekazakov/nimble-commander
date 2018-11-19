@@ -307,6 +307,9 @@
 /* Asking user to provide anonymous usage information - message */
 "Please help us to improve the product" = "Помогите нам улучшить продукт";
 
+/* No comment provided by engineer. */
+"Please select your license file (.nimblecommanderlicense)" = "Пожалуйста, выберите Ваш файл лицензии (.nimblecommanderlicense)";
+
 /* Brief System Information ram box title */
 "RAM" = "Память";
 

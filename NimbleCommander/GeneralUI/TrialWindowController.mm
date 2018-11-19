@@ -87,7 +87,9 @@
     if( handler != nullptr ) {
         const auto activated = handler();
         if( activated == true ) {
-            [self.window close];
+            dispatch_to_main_queue_after(200ms, [=]{
+                [self.window close];
+            });
         }
     }
 }

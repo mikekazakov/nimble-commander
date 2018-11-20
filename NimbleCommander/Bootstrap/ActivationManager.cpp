@@ -288,7 +288,12 @@ bool ActivationManager::ProcessLicenseFile( const string& _path )
     if( m_ExtLicenseSupport.InstallNewLicenseWithData(*license_data) == false )
         return false;
     
-    m_UserHadRegistered = m_ExtLicenseSupport.HasValidInstalledLicense();
+    const auto valid = m_ExtLicenseSupport.HasValidInstalledLicense();
+    if( valid ) {
+        m_UserHadRegistered = true; 
+        m_LicenseInfo = m_ExtLicenseSupport.ExtractInfoFromInstalledLicense();
+    }
+    
     return m_UserHadRegistered;
 }
 

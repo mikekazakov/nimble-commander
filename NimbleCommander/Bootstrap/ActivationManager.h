@@ -66,7 +66,7 @@ public:
     bool IsTrialPeriod() const noexcept;
     int TrialDaysLeft() const noexcept; // zero means that trial has expired
     bool ShouldShowTrialNagScreen() const noexcept;
-    static const string &LicenseFileExtension() noexcept; // currently it's "nimblecommanderlicence"
+    static const string &LicenseFileExtension() noexcept; // currently it's "nimblecommanderlicense"
     bool ProcessLicenseFile(const string& _path );
     const unordered_map<string, string> &LicenseInformation() const noexcept;
     

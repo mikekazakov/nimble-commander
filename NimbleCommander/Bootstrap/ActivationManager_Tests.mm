@@ -3,11 +3,13 @@
 #include "ActivationManager.h"
 #include <VFS/Native.h>
 #include <Habanero/CFDefaultsCPP.h>
+#include <Habanero/GoogleAnalytics.h>
 
 // TODO: move this from XCTest to Catch2
 
 using ExternalLicenseSupport = nc::bootstrap::ActivationManagerBase::ExternalLicenseSupport;
 using TrialPeriodSupport = nc::bootstrap::ActivationManagerBase::TrialPeriodSupport;
+using nc::bootstrap::ActivationManager;
 
 static const auto g_TestPublicKey = 
 "0xBA14D0390842EA0FCFCDED81EA64456F2B6C255241B1FF6E46E303823824B1E0C28F4031330EB03E1DAA7C1E2620A7BF"
@@ -174,6 +176,12 @@ static std::string MakeTmpDir();
     XCTAssert( info["Timestamp"] == "Tue, 20 Nov 2018 12:37:19 +0700" );
 }
 
+- (void)testDoesntExtractInfoFromInvalidLicense
+{
+    auto info = m_SUT->ExtractLicenseInfo(g_LicenseWithBrokenSignature);
+    XCTAssert( info.empty() == true );
+}
+
 - (void)testReportsNoValidLicenseWhenNoneIsInstalled
 {
     XCTAssert( m_SUT->HasValidInstalledLicense() == false );
@@ -240,7 +248,7 @@ public:
 
 @implementation ActivationManager_TrialPeriodSupport_Tests
 {
-    std::unique_ptr<TrialPeriodSupportWithFakeTime> m_SUT;     
+    std::unique_ptr<TrialPeriodSupportWithFakeTime> m_SUT;
 }
 
 static double Y2015()
@@ -351,20 +359,255 @@ static double Y2018()
     std::string m_TmpDir;
     std::string m_InstalledLicensePath;
     std::string m_TempLicensePath;
+    std::unique_ptr<ExternalLicenseSupport> m_License;
+    std::unique_ptr<TrialPeriodSupportWithFakeTime> m_Trial;
+    std::unique_ptr<GoogleAnalytics> m_GA;
 }
 
 - (void) setUp
 {
     [super setUp];
     m_TmpDir = MakeTmpDir();
+    CFDefaultsRemoveValue( g_DefaultsTrialExpireDate );
     m_InstalledLicensePath = m_TmpDir + "registration.nimblecommanderlicense";
     m_TempLicensePath = m_TmpDir + "test.nimblecommanderlicense";
+    m_License = std::make_unique<ExternalLicenseSupport>(g_TestPublicKey, m_InstalledLicensePath);
+    m_Trial = std::make_unique<TrialPeriodSupportWithFakeTime>( g_DefaultsTrialExpireDate );
+    m_Trial->m_Time = Y2018();    
+    m_GA = std::make_unique<GoogleAnalytics>();
 }
 
 - (void)tearDown
 {
     VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    CFDefaultsRemoveValue( g_DefaultsTrialExpireDate );
     [super tearDown];
+}
+
+- (void)testIsCheckingTrialBuild
+{
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};    
+    XCTAssert( sut.Type() == ActivationManager::Distribution::Trial );
+    XCTAssert( sut.Sandboxed() == false );
+}
+
+- (void)testByDefaultUsesDidntRegister
+{
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+    
+    XCTAssert( sut.UserHadRegistered() == false );
+    
+    // this can be an environment side effect not being DIed at the moment 
+    XCTAssert( sut.UserHasProVersionInstalled() == false );
+}
+
+- (void)testByDefaultStartsTrialPeriod
+{
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+    
+    XCTAssert( m_Trial->IsTrialStarted() == true );    
+    XCTAssert( sut.IsTrialPeriod() == true );
+    XCTAssert( sut.TrialDaysLeft() == 30 );    
+}
+
+- (void)testByDefaultShouldntShowNagScreen
+{
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+    
+    XCTAssert( sut.ShouldShowTrialNagScreen() == false );
+}
+
+- (void)testReportsUserHadRegisteredWhenAValidLicenseFileIsInstalled
+{
+    Save(m_InstalledLicensePath, g_ValidLicense);
+    
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+    
+    XCTAssert( sut.UserHadRegistered() == true );
+    XCTAssert( sut.IsTrialPeriod() == false );
+    XCTAssert( sut.TrialDaysLeft() == 0 );
+}
+
+- (void)testIgnoresAnInvalidInstalledLicense
+{
+    Save(m_InstalledLicensePath, g_LicenseWithBrokenSignature);    
+    
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+    
+    XCTAssert( m_Trial->IsTrialStarted() == true );    
+    XCTAssert( sut.IsTrialPeriod() == true );
+    XCTAssert( sut.TrialDaysLeft() == 30 );        
+}
+
+- (void)testShowsNagScreenWhenLessThan15DaysIsLeft
+{
+    {
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.ShouldShowTrialNagScreen() == false );
+    }
+    
+    {
+        m_Trial->m_Time += 14. * 24. * 60. * 60.;  
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.ShouldShowTrialNagScreen() == false );
+    }
+
+    {
+        m_Trial->m_Time += 1. * 24. * 60. * 60.;  
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.ShouldShowTrialNagScreen() == true );
+    }
+    
+    {
+        m_Trial->m_Time += 1. * 24. * 60. * 60.;  
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.ShouldShowTrialNagScreen() == true );
+    }    
+}
+
+- (void)testDontShowNagScreenWhenLicenseFileIsInstalled
+{
+    Save(m_InstalledLicensePath, g_ValidLicense);    
+    {
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.ShouldShowTrialNagScreen() == false );
+    }
+    {
+        m_Trial->m_Time += 100. * 24. * 60. * 60.;  
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.ShouldShowTrialNagScreen() == false );
+    }
+}
+
+- (void)testDontShowNagScreenWhenLicenseFileIsInstalledAndTrialIsExpired
+{
+    {
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.ShouldShowTrialNagScreen() == false );
+    }
+    {
+        m_Trial->m_Time += 20 * 24. * 60. * 60.;
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.ShouldShowTrialNagScreen() == true );
+    }
+    Save(m_InstalledLicensePath, g_ValidLicense);
+    {
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.ShouldShowTrialNagScreen() == false );
+    }
+    {
+        m_Trial->m_Time += 100. * 24. * 60. * 60.;  
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.ShouldShowTrialNagScreen() == false );
+    }
+}
+
+- (void)testFinishesTrialPeriodAfter30Days
+{
+    {
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.UserHadRegistered() == false );
+        XCTAssert( sut.IsTrialPeriod() == true );
+        XCTAssert( sut.TrialDaysLeft() == 30 );
+    }
+    
+    {
+        m_Trial->m_Time += 14. * 24. * 60. * 60.;  
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.UserHadRegistered() == false );
+        XCTAssert( sut.IsTrialPeriod() == true );
+        XCTAssert( sut.TrialDaysLeft() == 16 );
+    }
+    
+    {
+        m_Trial->m_Time += 15. * 24. * 60. * 60.;  
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.UserHadRegistered() == false );
+        XCTAssert( sut.IsTrialPeriod() == true );
+        XCTAssert( sut.TrialDaysLeft() == 1 );
+    }
+    
+    {
+        m_Trial->m_Time += 1. * 24. * 60. * 60.;
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.UserHadRegistered() == false );
+        XCTAssert( sut.IsTrialPeriod() == false );
+        XCTAssert( sut.TrialDaysLeft() == 0 );
+    }
+
+    {
+        m_Trial->m_Time += 5. * 24. * 60. * 60.;
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+        XCTAssert( sut.UserHadRegistered() == false );
+        XCTAssert( sut.IsTrialPeriod() == false );
+        XCTAssert( sut.TrialDaysLeft() == 0 );
+    }
+}
+
+- (void)testByDefaultReportsAnEmptyLicenseInfo
+{
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};    
+    XCTAssert( sut.LicenseInformation().empty() == true );
+}
+
+- (void)testReportsProperInfoWhenLicenseFileIsInstalled
+{
+    Save(m_InstalledLicensePath, g_ValidLicense);
+    
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+    auto info = sut.LicenseInformation();
+    XCTAssert( info["Name"] == "Test User" );
+}
+
+- (void)testAfterProcessingAValidLicenseFileTheUserIsRegistered
+{
+    Save(m_TempLicensePath, g_ValidLicense);
+
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};    
+    XCTAssert( sut.UserHadRegistered() == false );
+    
+    XCTAssert( sut.ProcessLicenseFile(m_TempLicensePath) == true );
+    XCTAssert( sut.UserHadRegistered() == true );
+    
+    auto info = sut.LicenseInformation();
+    XCTAssert( info["Name"] == "Test User" );    
+}
+
+- (void)testIgnoresProcessingInvalidLicenseFile
+{
+    Save(m_TempLicensePath, g_LicenseWithBrokenSignature);
+    
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};    
+    XCTAssert( sut.UserHadRegistered() == false );
+    
+    XCTAssert( sut.ProcessLicenseFile(m_TempLicensePath) == false );
+    XCTAssert( sut.UserHadRegistered() == false );    
+}
+
+- (void)testIgnoresProcessingInvalidLicenseFilePath
+{
+    auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};    
+    XCTAssert( sut.UserHadRegistered() == false );
+    
+    XCTAssert( sut.ProcessLicenseFile("/some/abra/cadabra/alakazam/aaa.txt") == false );
+    XCTAssert( sut.UserHadRegistered() == false );    
+
+    XCTAssert( sut.ProcessLicenseFile("/Applications/") == false );
+    XCTAssert( sut.UserHadRegistered() == false );
+
+    XCTAssert( sut.ProcessLicenseFile("/private/var/root/.forward") == false );
+    XCTAssert( sut.UserHadRegistered() == false );
+    
+    XCTAssert( sut.ProcessLicenseFile("odufhpshfpsdhfhusdf!@#$%^&*()±_+-=") == false );
+    XCTAssert( sut.UserHadRegistered() == false );
+
+    XCTAssert( sut.ProcessLicenseFile("") == false );
+    XCTAssert( sut.UserHadRegistered() == false );
+}
+
+- (void)testReportsProperLicenseFileExtension
+{
+    XCTAssert( ActivationManager::LicenseFileExtension() == "nimblecommanderlicense" );
 }
 
 @end

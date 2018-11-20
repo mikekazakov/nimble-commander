@@ -87,7 +87,7 @@ private:
     NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:self.identifier];
     item.image = self.toolbarItemImage;
     item.label = self.toolbarItemLabel;
-    item.enabled = ActivationManager::Instance().HasTerminal();
+    item.enabled = nc::core::ActivationManager::Instance().HasTerminal();
     return item;
 }
 

@@ -244,7 +244,7 @@ bool ExternalEditorStartupInfo::OpenInTerminal() const noexcept
 
 bool ExternalEditorStartupInfo::IsValidForItem(const VFSListingItem&_item) const
 {
-    if( !ActivationManager::Instance().HasTerminal() &&
+    if( !nc::core::ActivationManager::Instance().HasTerminal() &&
         m_OpenInTerminal )
         return false;
 

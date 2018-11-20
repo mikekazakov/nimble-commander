@@ -297,7 +297,7 @@ static NSString *TitleForData( const data::Model* _data );
 
 - (void) loadDefaultPanelContent
 {
-    auto &am = ActivationManager::Instance();
+    auto &am = nc::core::ActivationManager::Instance();
     auto left_controller = m_LeftPanelControllers.front();
     auto right_controller = m_RightPanelControllers.front();
     
@@ -375,7 +375,7 @@ static NSString *TitleForData( const data::Model* _data );
     m_MainSplitViewBottomConstraint.priority = NSLayoutPriorityDragThatCannotResizeWindow;
     [self addConstraint:m_MainSplitViewBottomConstraint];
     
-    if( ActivationManager::Instance().HasTerminal() ) {
+    if( nc::core::ActivationManager::Instance().HasTerminal() ) {
         m_OverlappedTerminal->terminal = [[FilePanelOverlappedTerminal alloc] initWithFrame:self.bounds];
         m_OverlappedTerminal->terminal.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_OverlappedTerminal->terminal positioned:NSWindowBelow relativeTo:nil];
@@ -397,8 +397,8 @@ static NSString *TitleForData( const data::Model* _data );
     
     if( FeedbackManager::Instance().ShouldShowRatingOverlayView() )
         SetupRatingOverlay( m_ToolbarDelegate.operationsPoolViewController.idleView );
-    else if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
-            !ActivationManager::Instance().UserHadRegistered() )
+    else if( nc::core::ActivationManager::Type() == nc::core::ActivationManager::Distribution::Trial &&
+            !nc::core::ActivationManager::Instance().UserHadRegistered() )
         SetupUnregisteredLabel( m_ToolbarDelegate.operationsPoolViewController.idleView );
 }
 

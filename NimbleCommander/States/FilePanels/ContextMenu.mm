@@ -126,7 +126,7 @@ using namespace nc::panel;
     
     //////////////////////////////////////////////////////////////////////
     // Compression stuff
-    const auto compression_enabled = ActivationManager::Instance().HasCompressionOperation();
+    const auto compression_enabled = nc::core::ActivationManager::Instance().HasCompressionOperation();
    
     const auto compress_here_item = [NSMenuItem new];
     compress_here_item.title = NSLocalizedStringFromTable(@"Compress", @"FilePanelsContextMenu", "Compress some items here");

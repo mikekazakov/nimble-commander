@@ -328,7 +328,7 @@ bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 
 static ops::CopyingOptions::ChecksumVerification DefaultChecksumVerificationSetting()
 {
-    if( !ActivationManager::Instance().HasCopyVerification() )
+    if( !core::ActivationManager::Instance().HasCopyVerification() )
         return ops::CopyingOptions::ChecksumVerification::Never;
     int v = GlobalConfig().GetInt(g_ConfigDefaultVerificationSetting);
     if( v == (int)ops::CopyingOptions::ChecksumVerification::Always )

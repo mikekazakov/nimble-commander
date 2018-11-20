@@ -222,7 +222,7 @@ void FeedbackManager::RateOnAppStore()
 {
     GA().PostEvent("Feedback", "Action", "Rate on AppStore");
     NSString *mas_url = [NSString stringWithFormat:@"macappstore://itunes.apple.com/app/id%s",
-                                 ActivationManager::Instance().AppStoreID().c_str()];
+                                                nc::core::ActivationManager::Instance().AppStoreID().c_str()];
     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:mas_url]];
 }
 

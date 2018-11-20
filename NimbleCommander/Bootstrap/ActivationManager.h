@@ -1,5 +1,7 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
+
+namespace nc::core {
 
 class ActivationManager
 {
@@ -91,3 +93,5 @@ private:
     bool    m_UserHasProVersionInstalled = false;
     unordered_map<string, string> m_LicenseInfo;
 };
+
+}

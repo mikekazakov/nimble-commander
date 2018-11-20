@@ -358,7 +358,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 
 - (bool) LANSharesEnabled
 {
-    return ActivationManager::Instance().HasLANSharesMounting();
+    return nc::core::ActivationManager::Instance().HasLANSharesMounting();
 }
 
 @end

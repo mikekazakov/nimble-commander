@@ -281,7 +281,7 @@ void SandboxManager::StopUsingBookmarks()
 
 bool SandboxManager::EnsurePathAccess(const string& _path)
 {
-    if( ActivationManager::Instance().Sandboxed() &&
+    if( nc::core::ActivationManager::Instance().Sandboxed() &&
         !SandboxManager::Instance().CanAccessFolder(_path) &&
         !SandboxManager::Instance().AskAccessForPathSync(_path) )
         return false;

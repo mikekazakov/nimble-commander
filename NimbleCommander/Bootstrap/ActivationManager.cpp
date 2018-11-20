@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <AquaticPrime/AquaticPrime.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <Utility/SystemInformation.h>
@@ -9,6 +9,8 @@
 #include "AppDelegateCPP.h"
 #include <NimbleCommander/Core/AppStoreHelper.h>
 #include "ActivationManager.h"
+
+namespace nc::core {
 
 // trial non-mas version setup
 static const auto g_LicenseExtension = "nimblecommanderlicense"s;
@@ -183,7 +185,7 @@ ActivationManager::ActivationManager()
             if( !TrialStarted() )
                 SetupTrialPeriod();
 
-            m_TrialDaysLeft = ::TrialDaysLeft();
+            m_TrialDaysLeft = nc::core::TrialDaysLeft();
             
             if( m_TrialDaysLeft > 0 ) {
                 m_IsTrialPeriod = true;
@@ -409,4 +411,6 @@ const unordered_map<string, string> &ActivationManager::LicenseInformation() con
 bool ActivationManager::UserHasProVersionInstalled() const noexcept
 {
     return m_UserHasProVersionInstalled;
+}
+
 }

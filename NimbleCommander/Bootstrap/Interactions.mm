@@ -14,7 +14,7 @@ optional<string> AskUserForLicenseFile()
     panel.canChooseFiles = true;
     panel.allowsMultipleSelection = false;
     panel.showsHiddenFiles = true;
-    const auto extension = ActivationManager::LicenseFileExtension();
+    const auto extension = core::ActivationManager::LicenseFileExtension();
     panel.allowedFileTypes = @[ [NSString stringWithUTF8StdString:extension] ];
     panel.allowsOtherFileTypes = false;
     const auto downloads_path = [NSString stringWithUTF8StdString:CommonPaths::Downloads()];

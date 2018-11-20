@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Michael G. Kazakov
+/* Copyright (c) 2016-2018 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -17,22 +17,23 @@
 #include <string>
 #include <optional>
 
-bool        CFDefaultsGetBool(CFStringRef _key);
-int         CFDefaultsGetInt(CFStringRef _key);
-long        CFDefaultsGetLong(CFStringRef _key);
-double      CFDefaultsGetDouble(CFStringRef _key);
+bool        CFDefaultsGetBool(CFStringRef _key) noexcept;
+int         CFDefaultsGetInt(CFStringRef _key) noexcept;
+long        CFDefaultsGetLong(CFStringRef _key) noexcept;
+double      CFDefaultsGetDouble(CFStringRef _key) noexcept;
 std::string CFDefaultsGetString(CFStringRef _key);
 
-std::optional<bool>           CFDefaultsGetOptionalBool(CFStringRef _key);
-std::optional<int>            CFDefaultsGetOptionalInt(CFStringRef _key);
-std::optional<long>           CFDefaultsGetOptionalLong(CFStringRef _key);
-std::optional<double>         CFDefaultsGetOptionalDouble(CFStringRef _key);
+std::optional<bool>           CFDefaultsGetOptionalBool(CFStringRef _key) noexcept;
+std::optional<int>            CFDefaultsGetOptionalInt(CFStringRef _key) noexcept;
+std::optional<long>           CFDefaultsGetOptionalLong(CFStringRef _key) noexcept;
+std::optional<double>         CFDefaultsGetOptionalDouble(CFStringRef _key) noexcept;
 std::optional<std::string>    CFDefaultsGetOptionalString(CFStringRef _key);
 
-void CFDefaultsSetBool(CFStringRef _key, bool _value);
-void CFDefaultsSetInt(CFStringRef _key, int _value);
-void CFDefaultsSetLong(CFStringRef _key, long _value);
-void CFDefaultsSetDouble(CFStringRef _key, double _value);
-void CFDefaultsSetString(CFStringRef _key, const std::string &_value);
+void CFDefaultsSetBool(CFStringRef _key, bool _value) noexcept;
+void CFDefaultsSetInt(CFStringRef _key, int _value) noexcept;
+void CFDefaultsSetLong(CFStringRef _key, long _value) noexcept;
+void CFDefaultsSetDouble(CFStringRef _key, double _value) noexcept;
+void CFDefaultsSetString(CFStringRef _key, const std::string &_value) noexcept;
 
-void CFDefaultsRemoveValue(CFStringRef _key);
+bool CFDefaultsHasValue(CFStringRef _key) noexcept;
+void CFDefaultsRemoveValue(CFStringRef _key) noexcept;

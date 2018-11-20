@@ -1,8 +1,5 @@
 // Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <AquaticPrime/AquaticPrime.h>
-#include <Habanero/CFDefaultsCPP.h>
 #include <Utility/SystemInformation.h>
-#include <copyfile.h>
 #include <VFS/Native.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
@@ -22,7 +19,8 @@ static const double g_TrialPeriodTimeInterval = 60.*60.*24.*g_TrialPeriodDays; /
 
 // free mas version setup
 static const auto g_ProFeaturesInAppID = "com.magnumbytes.nimblecommander.paid_features"s;
-
+static std::optional<std::string> Load(const std::string &_filepath);
+    
 static bool UserHasPaidVersionInstalled()
 {
     return MASAppInstalledChecker::Instance().Has("Files Pro.app",            "info.filesmanager.Files-Pro") ||
@@ -49,9 +47,14 @@ static bool AppStoreReceiptContainsProFeaturesInApp()
     return memmem( data->data(), data->size(), g_ProFeaturesInAppID.data(), g_ProFeaturesInAppID.length() ) != 0;
 }
 
-static bool CheckAquaticLicense( const string& _path )
+static string InstalledAquaticLicensePath()
 {
-    string key;
+    return nc::AppDelegate::SupportDirectory() + g_LicenseFilename;
+}
+
+static std::string AquaticPrimePublicKey()
+{
+    std::string key;
     key += NCE(nc::env::aqp_pk_00);
     key += NCE(nc::env::aqp_pk_01);
     key += NCE(nc::env::aqp_pk_02);
@@ -85,84 +88,27 @@ static bool CheckAquaticLicense( const string& _path )
     key += NCE(nc::env::aqp_pk_30);
     key += NCE(nc::env::aqp_pk_31);
     key += NCE(nc::env::aqp_pk_32);
-
-    const auto cf_key = CFStringCreateWithUTF8StdString(key);
-    APSetKey(cf_key);
+    return key;
+}
     
-    bool result = false;    
-    if( CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)_path.c_str(), _path.length(), false) ) {
-        if( APVerifyLicenseFile(url) )
-            result = true;
-        CFRelease(url);
-    }
-    
-	CFRelease(cf_key);
-    
-    return result;
-}
-
-static unordered_map<string, string> GetAquaticLicenseInfo( const string& _path )
-{
-    unordered_map<string, string> result;
-    if( CFURLRef url = CFURLCreateFromFileSystemRepresentation(NULL, (UInt8*)_path.c_str(), _path.length(), false) ) {
-        if( CFDictionaryRef d = APCreateDictionaryForLicenseFile(url) ) {
-            CFDictionaryApplyFunction(d,
-                                      [](const void *_key, const void *_value, void *_context){
-                                          if( CFGetTypeID(_key) == CFStringGetTypeID() && CFGetTypeID(_value) == CFStringGetTypeID() )
-                                              ((unordered_map<string, string>*)_context)->insert_or_assign( CFStringGetUTF8StdString( (CFStringRef) _key),
-                                                                                                            CFStringGetUTF8StdString( (CFStringRef) _value) );
-                                      },
-                                      &result);
-            CFRelease(d);
-        }
-        CFRelease(url);
-    }
-    
-    return result;
-}
-
-static string InstalledAquaticLicensePath()
-{
-    return nc::AppDelegate::SupportDirectory() + g_LicenseFilename;
-}
-
-static bool UserHasValidAquaticLicense()
-{
-    return CheckAquaticLicense( InstalledAquaticLicensePath() );
-}
-
-static bool TrialStarted()
-{
-    static const double y2016 = 60.*60.*24.*365.*15.;
-    return CFDefaultsGetDouble(g_DefaultsTrialExpireDate) > y2016;
-}
-
-static void SetupTrialPeriod()
-{
-    CFDefaultsSetDouble( g_DefaultsTrialExpireDate, CFAbsoluteTimeGetCurrent() + g_TrialPeriodTimeInterval );
-}
-
-[[maybe_unused]] static void DeleteTrialPeriodInfo()
-{
-    CFDefaultsRemoveValue( g_DefaultsTrialExpireDate );
-}
-
-static int TrialDaysLeft()
-{
-    double v = CFDefaultsGetDouble(g_DefaultsTrialExpireDate) - CFAbsoluteTimeGetCurrent();
-    v = ceil( v / (60.*60.*24.) );
-    if( v < 0 )
-        return 0;
-    return (int) v;
-}
-
 ActivationManager &ActivationManager::Instance()
 {
-    static auto inst = new ActivationManager;
-    return *inst;
+    static auto ext_license_support =
+        ActivationManagerBase::ExternalLicenseSupport{ AquaticPrimePublicKey(),
+                InstalledAquaticLicensePath() };
+    static auto trial_period_support = 
+        ActivationManagerBase::TrialPeriodSupport{ g_DefaultsTrialExpireDate };
+    static auto inst = ActivationManager{ ext_license_support, trial_period_support, GA() };
+    return inst;
 }
 
-ActivationManager::ActivationManager()
+ActivationManager::ActivationManager
+    ( ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
+     ActivationManagerBase::TrialPeriodSupport &_trial_period_support,
+      GoogleAnalytics &_ga):
+    m_ExtLicenseSupport(_ext_license_support),
+    m_TrialPeriodSupport(_trial_period_support),
+    m_GA(_ga)
 {
     if( m_Type == Distribution::Paid ) {
         m_IsActivated = true;
@@ -170,11 +116,11 @@ ActivationManager::ActivationManager()
     else if( m_Type == Distribution::Trial ) {
         const bool has_mas_paid_version = UserHasPaidVersionInstalled();
         if(has_mas_paid_version)
-            GA().PostEvent("Licensing", "Activated Startup", "MAS Installed");
-        const bool has_valid_license = UserHasValidAquaticLicense();
+            m_GA.PostEvent("Licensing", "Activated Startup", "MAS Installed");
+        const bool has_valid_license = m_ExtLicenseSupport.HasValidInstalledLicense();
         if( has_valid_license ) {
-            m_LicenseInfo = GetAquaticLicenseInfo( InstalledAquaticLicensePath() );
-            GA().PostEvent("Licensing", "Activated Startup", "License Installed");
+            m_LicenseInfo = m_ExtLicenseSupport.ExtractInfoFromInstalledLicense();            
+            m_GA.PostEvent("Licensing", "Activated Startup", "License Installed");
         }
         
         m_UserHadRegistered = has_mas_paid_version || has_valid_license;
@@ -182,18 +128,18 @@ ActivationManager::ActivationManager()
         m_IsActivated = true /*has_mas_paid_version || has_valid_license*/;
         
         if( !m_UserHadRegistered ) {
-            if( !TrialStarted() )
-                SetupTrialPeriod();
+            if( m_TrialPeriodSupport.IsTrialStarted() == false )
+                m_TrialPeriodSupport.SetupTrialPeriod( g_TrialPeriodTimeInterval );
 
-            m_TrialDaysLeft = nc::bootstrap::TrialDaysLeft();
+            m_TrialDaysLeft = m_TrialPeriodSupport.TrialDaysLeft();
             
             if( m_TrialDaysLeft > 0 ) {
                 m_IsTrialPeriod = true;
-                GA().PostEvent("Licensing", "Trial Startup", "Trial valid", m_TrialDaysLeft);
+                m_GA.PostEvent("Licensing", "Trial Startup", "Trial valid", m_TrialDaysLeft);
             }
             else {
-                GA().PostEvent("Licensing", "Trial Startup", "Trial exceeded", -m_TrialDaysLeft);
                 m_IsTrialPeriod = false;
+                m_GA.PostEvent("Licensing", "Trial Startup", "Trial exceeded", 0);
             }
         }
     }
@@ -327,54 +273,23 @@ const string &ActivationManager::LicenseFileExtension() noexcept
     return g_LicenseExtension;
 }
 
-static bool CopyLicenseFile( const string& _source_path, const string &_dest_path )
-{
-    if( _source_path == _dest_path )
-        return false;
-    
-    VFSFilePtr source;
-    auto host = VFSNativeHost::SharedHost();
-    if( host->CreateFile(_source_path.c_str(), source, nullptr) != VFSError::Ok )
-        return false;
-    
-    if( source->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock) != VFSError::Ok )
-        return false;
-    
-    auto data = source->ReadFile();
-    if( !data )
-        return false;
-    
-    source->Close();
-    
-    VFSFilePtr destination;
-    if( host->CreateFile(_dest_path.c_str(), destination, nullptr) != VFSError::Ok )
-        return false;
-    
-    const auto flags = VFSFlags::OF_Create | VFSFlags::OF_Write | VFSFlags::OF_Truncate |
-                        VFSFlags::OF_IWUsr | VFSFlags::OF_IRUsr;
-    if( destination->Open(flags) != VFSError::Ok )
-        return false;
-    
-    if( destination->WriteFile(data->data(), data->size()) != VFSError::Ok )
-        return false;
-    
-    return true;
-}
-
 bool ActivationManager::ProcessLicenseFile( const string& _path )
 {
     if( Type() != ActivationManager::Distribution::Trial )
         return false;
         
-    if( !CheckAquaticLicense(_path) )
+    const auto license_data = Load(_path);
+    if( license_data == std::nullopt )
+        return false;
+
+    if( m_ExtLicenseSupport.CheckLicenseValidity(*license_data) == false )
         return false;
     
-    if( !CopyLicenseFile( _path, InstalledAquaticLicensePath() ) )
+    if( m_ExtLicenseSupport.InstallNewLicenseWithData(*license_data) == false )
         return false;
     
-    m_UserHadRegistered = true;
-    
-    return true;;
+    m_UserHadRegistered = m_ExtLicenseSupport.HasValidInstalledLicense();
+    return m_UserHadRegistered;
 }
 
 bool ActivationManager::UserHadRegistered() const noexcept
@@ -411,6 +326,21 @@ const unordered_map<string, string> &ActivationManager::LicenseInformation() con
 bool ActivationManager::UserHasProVersionInstalled() const noexcept
 {
     return m_UserHasProVersionInstalled;
+}
+
+static std::optional<std::string> Load(const std::string &_filepath)
+{
+    std::ifstream in( _filepath, std::ios::in | std::ios::binary );
+    if( !in )
+        return std::nullopt;        
+    
+    std::string contents;
+    in.seekg( 0, std::ios::end );
+    contents.resize( in.tellg() );
+    in.seekg( 0, std::ios::beg );
+    in.read( &contents[0], contents.size() );
+    in.close();
+    return contents;
 }
 
 }

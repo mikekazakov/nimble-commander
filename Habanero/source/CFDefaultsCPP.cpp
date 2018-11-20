@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Michael G. Kazakov
+/* Copyright (c) 2016-2018 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -18,7 +18,16 @@
 
 using namespace std;
 
-optional<int> CFDefaultsGetOptionalInt(CFStringRef _key)
+bool CFDefaultsHasValue(CFStringRef _key) noexcept
+{
+    CFPropertyListRef val = CFPreferencesCopyAppValue(_key, kCFPreferencesCurrentApplication);
+    if( val == nullptr )
+        return false;
+    CFRelease(val);
+    return true;
+}
+
+optional<int> CFDefaultsGetOptionalInt(CFStringRef _key) noexcept
 {
     int result = 0;
     
@@ -35,7 +44,7 @@ optional<int> CFDefaultsGetOptionalInt(CFStringRef _key)
     return result;
 }
 
-optional<long> CFDefaultsGetOptionalLong(CFStringRef _key)
+optional<long> CFDefaultsGetOptionalLong(CFStringRef _key) noexcept
 {
     long result = 0;
     
@@ -52,7 +61,7 @@ optional<long> CFDefaultsGetOptionalLong(CFStringRef _key)
     return result;
 }
 
-optional<double> CFDefaultsGetOptionalDouble(CFStringRef _key)
+optional<double> CFDefaultsGetOptionalDouble(CFStringRef _key) noexcept
 {
     double result = 0;
     
@@ -69,12 +78,12 @@ optional<double> CFDefaultsGetOptionalDouble(CFStringRef _key)
     return result;
 }
 
-bool CFDefaultsGetBool(CFStringRef _key)
+bool CFDefaultsGetBool(CFStringRef _key) noexcept
 {
     return CFPreferencesGetAppBooleanValue(_key, kCFPreferencesCurrentApplication, nullptr);
 }
 
-optional<bool> CFDefaultsGetOptionalBool(CFStringRef _key)
+optional<bool> CFDefaultsGetOptionalBool(CFStringRef _key) noexcept
 {
     Boolean has = false;
     Boolean v = CFPreferencesGetAppBooleanValue(_key, kCFPreferencesCurrentApplication, &has);
@@ -83,12 +92,12 @@ optional<bool> CFDefaultsGetOptionalBool(CFStringRef _key)
     return v ? true : false;
 }
 
-void CFDefaultsSetBool(CFStringRef _key, bool _value)
+void CFDefaultsSetBool(CFStringRef _key, bool _value) noexcept
 {
     CFPreferencesSetAppValue(_key, _value ? kCFBooleanTrue : kCFBooleanFalse, kCFPreferencesCurrentApplication);
 }
 
-double CFDefaultsGetDouble(CFStringRef _key)
+double CFDefaultsGetDouble(CFStringRef _key) noexcept
 {
     double result = 0.;
     
@@ -105,7 +114,7 @@ double CFDefaultsGetDouble(CFStringRef _key)
     return result;
 }
 
-int CFDefaultsGetInt(CFStringRef _key)
+int CFDefaultsGetInt(CFStringRef _key) noexcept
 {
     int result = 0.;
     
@@ -122,7 +131,7 @@ int CFDefaultsGetInt(CFStringRef _key)
     return result;
 }
 
-long CFDefaultsGetLong(CFStringRef _key)
+long CFDefaultsGetLong(CFStringRef _key) noexcept
 {
     long result = 0.;
     
@@ -139,7 +148,7 @@ long CFDefaultsGetLong(CFStringRef _key)
     return result;
 }
 
-void CFDefaultsSetDouble(CFStringRef _key, double _value)
+void CFDefaultsSetDouble(CFStringRef _key, double _value) noexcept
 {
     CFNumberRef num = CFNumberCreate(NULL, kCFNumberDoubleType, &_value);
     if( num == nullptr )
@@ -148,7 +157,7 @@ void CFDefaultsSetDouble(CFStringRef _key, double _value)
     CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
 }
 
-void CFDefaultsSetInt(CFStringRef _key, int _value)
+void CFDefaultsSetInt(CFStringRef _key, int _value) noexcept
 {
     CFNumberRef num = CFNumberCreate(NULL, kCFNumberIntType, &_value);
     if( num == nullptr )
@@ -157,7 +166,7 @@ void CFDefaultsSetInt(CFStringRef _key, int _value)
     CFPreferencesSetAppValue(_key, num, kCFPreferencesCurrentApplication);
 }
 
-void CFDefaultsSetLong(CFStringRef _key, long _value)
+void CFDefaultsSetLong(CFStringRef _key, long _value) noexcept
 {
     CFNumberRef num = CFNumberCreate(NULL, kCFNumberLongType, &_value);
     if( num == nullptr )
@@ -192,7 +201,7 @@ optional<string> CFDefaultsGetOptionalString(CFStringRef _key)
     return nullopt;
 }
 
-void CFDefaultsSetString(CFStringRef _key, const std::string &_value)
+void CFDefaultsSetString(CFStringRef _key, const std::string &_value) noexcept
 {
     CFStringRef str = CFStringCreateWithUTF8StdString(_value);
     if( !str )
@@ -201,7 +210,7 @@ void CFDefaultsSetString(CFStringRef _key, const std::string &_value)
     CFPreferencesSetAppValue(_key, str, kCFPreferencesCurrentApplication);
 }
 
-void CFDefaultsRemoveValue(CFStringRef _key)
+void CFDefaultsRemoveValue(CFStringRef _key) noexcept
 {
     CFPreferencesSetAppValue(_key, nullptr, kCFPreferencesCurrentApplication);
 }

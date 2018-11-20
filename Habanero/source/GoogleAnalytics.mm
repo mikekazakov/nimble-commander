@@ -121,6 +121,10 @@ static NSURLSession *GetPostingSession()
     return session;
 }
 
+GoogleAnalytics::GoogleAnalytics( /* disabled */ )
+{
+}
+
 GoogleAnalytics::GoogleAnalytics(const char *_tracking_id,
                                  bool _use_https,
                                  bool _filter_redundant_messages):

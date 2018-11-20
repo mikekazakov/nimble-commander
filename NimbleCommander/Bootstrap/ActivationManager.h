@@ -3,6 +3,8 @@
 
 #include "ActivationManagerBase.h"
 
+class GoogleAnalytics;
+
 namespace nc::bootstrap {
     
 class ActivationManager
@@ -28,6 +30,9 @@ public:
         Trial
     };
 
+    ActivationManager( ActivationManagerBase::ExternalLicenseSupport &_ext_license_support,
+                       ActivationManagerBase::TrialPeriodSupport &_trial_period_support, 
+                       GoogleAnalytics &_ga);
     static ActivationManager &Instance();
     static constexpr Distribution   Type()          { return m_Type; }
     static constexpr bool           Sandboxed()     { return m_IsSandBoxed; }
@@ -70,8 +75,6 @@ public:
     bool UsedHadPurchasedProFeatures() const noexcept;
     
 private:
-    ActivationManager();
-  
 #if   defined(__NC_VERSION_FREE__)
     static const Distribution m_Type = Distribution::Free;
     static const bool m_IsSandBoxed = true;
@@ -94,6 +97,9 @@ private:
     bool    m_IsTrialPeriod = false;
     bool    m_UserHasProVersionInstalled = false;
     unordered_map<string, string> m_LicenseInfo;
+    ActivationManagerBase::ExternalLicenseSupport &m_ExtLicenseSupport;
+    ActivationManagerBase::TrialPeriodSupport &m_TrialPeriodSupport;     
+    GoogleAnalytics &m_GA;
 };
 
 }

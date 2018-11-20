@@ -22,6 +22,7 @@
 class GoogleAnalytics
 {
 public:
+    GoogleAnalytics( /* disabled */ ); 
     GoogleAnalytics(const char *_tracking_id,
                     bool _use_https = true,
                     bool _filter_redundant_messages = true

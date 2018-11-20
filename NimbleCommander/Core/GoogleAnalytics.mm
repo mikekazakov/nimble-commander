@@ -15,12 +15,12 @@ static void PostStartupInfo()
 
 static const char *TrackingID()
 {
-    switch( nc::core::ActivationManager::Type() ) {
-        case nc::core::ActivationManager::Distribution::Trial:
+    switch( nc::bootstrap::ActivationManager::Type() ) {
+        case nc::bootstrap::ActivationManager::Distribution::Trial:
             return NCE(nc::env::ga_nonmas_trial);
-        case nc::core::ActivationManager::Distribution::Free:
+        case nc::bootstrap::ActivationManager::Distribution::Free:
             return NCE(nc::env::ga_mas_free);
-        case nc::core::ActivationManager::Distribution::Paid:
+        case nc::bootstrap::ActivationManager::Distribution::Paid:
             return NCE(nc::env::ga_mas_paid);
         default:
             return "";

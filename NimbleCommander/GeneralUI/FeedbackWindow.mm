@@ -32,7 +32,7 @@
     
     if( self.rating == 5 || self.rating == 4) {
         // positive branch
-        if( nc::core::ActivationManager::ForAppStore() )
+        if( nc::bootstrap::ActivationManager::ForAppStore() )
             [self.tabView selectTabViewItemAtIndex:0];
         else
             [self.tabView selectTabViewItemAtIndex:1];

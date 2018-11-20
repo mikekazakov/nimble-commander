@@ -11,7 +11,7 @@ namespace nc::panel::actions {
 
 bool ExecuteInTerminal::Predicate( PanelController *_target ) const
 {
-    if( !core::ActivationManager::Instance().HasTerminal() )
+    if( !bootstrap::ActivationManager::Instance().HasTerminal() )
         return false;
 
     const auto item = _target.view.item;

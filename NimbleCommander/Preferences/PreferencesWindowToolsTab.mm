@@ -57,7 +57,7 @@ static bool AskUserToDeleteTool()
     NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:self.identifier];
     item.image = self.toolbarItemImage;
     item.label = self.toolbarItemLabel;
-    item.enabled = nc::core::ActivationManager::Instance().HasExternalTools();
+    item.enabled = nc::bootstrap::ActivationManager::Instance().HasExternalTools();
     return item;
 }
 
@@ -363,7 +363,7 @@ static bool AskUserToDeleteTool()
 
 - (bool) haveCommandLineTools
 {
-    return nc::core::ActivationManager::Instance().HasTerminal();
+    return nc::bootstrap::ActivationManager::Instance().HasTerminal();
 }
 
 @end

@@ -191,7 +191,7 @@ enum class SourceType
     [super loadView];
     m_Tools = m_ToolsStorage().GetAllTools();
     
-    if( nc::core::ActivationManager::Instance().Sandboxed() )
+    if( nc::bootstrap::ActivationManager::Instance().Sandboxed() )
         self.forceFnButton.hidden = true;
     
     m_ToolsObserver = m_ToolsStorage().ObserveChanges([=]{

@@ -230,7 +230,7 @@ static void RunExtTool(const ExternalTool &_tool,
     }
     
     if( startup_mode == ExternalTool::StartupMode::RunInTerminal ) {
-        if( !core::ActivationManager::Instance().HasTerminal() )
+        if( !bootstrap::ActivationManager::Instance().HasTerminal() )
             return;
         
         if( tool_is_bundle ) {

@@ -77,7 +77,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
     NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:self.identifier];
     item.image = self.toolbarItemImage;
     item.label = self.toolbarItemLabel;
-    item.enabled = nc::core::ActivationManager::Instance().HasInternalViewer();
+    item.enabled = nc::bootstrap::ActivationManager::Instance().HasInternalViewer();
     return item;
 }
 

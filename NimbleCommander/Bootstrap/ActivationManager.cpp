@@ -10,7 +10,7 @@
 #include <NimbleCommander/Core/AppStoreHelper.h>
 #include "ActivationManager.h"
 
-namespace nc::core {
+namespace nc::bootstrap {
 
 // trial non-mas version setup
 static const auto g_LicenseExtension = "nimblecommanderlicense"s;
@@ -185,7 +185,7 @@ ActivationManager::ActivationManager()
             if( !TrialStarted() )
                 SetupTrialPeriod();
 
-            m_TrialDaysLeft = nc::core::TrialDaysLeft();
+            m_TrialDaysLeft = nc::bootstrap::TrialDaysLeft();
             
             if( m_TrialDaysLeft > 0 ) {
                 m_IsTrialPeriod = true;

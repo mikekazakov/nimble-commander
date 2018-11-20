@@ -27,9 +27,8 @@
 - (void)loadView
 {
     [super loadView];
-    if( !nc::core::ActivationManager::Instance().Sandboxed() ) {
+    if( !nc::bootstrap::ActivationManager::Instance().Sandboxed() ) {
         self.FSAccessResetButton.enabled = false;
-//        self.FSAccessLabel.enabled = true;
     }
     [self.view layoutSubtreeIfNeeded];    
 }

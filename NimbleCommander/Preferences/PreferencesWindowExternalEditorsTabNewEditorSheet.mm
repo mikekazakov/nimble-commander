@@ -28,7 +28,7 @@
 
 - (bool) hasTerminal
 {
-    return nc::core::ActivationManager::Instance().HasTerminal();
+    return nc::bootstrap::ActivationManager::Instance().HasTerminal();
 }
 
 - (IBAction)OnClose:(id)sender

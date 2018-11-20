@@ -31,17 +31,17 @@
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     m_Self = self;
     
-    if( nc::core::ActivationManager::ForAppStore() ) { // MAS version
+    if( nc::bootstrap::ActivationManager::ForAppStore() ) { // MAS version
         [self.tabView selectTabViewItemAtIndex:0];
     }
     else { // standalone version
-        if( nc::core::ActivationManager::Instance().UserHadRegistered() ) {
-            if( nc::core::ActivationManager::Instance().UserHasProVersionInstalled() ) { // Pro version
+        if( nc::bootstrap::ActivationManager::Instance().UserHadRegistered() ) {
+            if( nc::bootstrap::ActivationManager::Instance().UserHasProVersionInstalled() ) { // Pro version
                 [self.tabView selectTabViewItemAtIndex:0];
             }
             else { // License
                 [self.tabView selectTabViewItemAtIndex:1];
-                auto &info = nc::core::ActivationManager::Instance().LicenseInformation();
+                auto &info = nc::bootstrap::ActivationManager::Instance().LicenseInformation();
                 if( info.count("Company") )
                     self.apCompany.stringValue = [NSString stringWithUTF8StdString:info.at("Company")];
                 if( info.count("Email") )

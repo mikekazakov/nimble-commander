@@ -50,7 +50,7 @@ PanelActionsMap BuildPanelActionsMap(NetworkConnectionsManager& _net_mgr,
         m[_sel].reset( _action );
     };
 
-    const auto has_archive_support = core::ActivationManager::Instance().HasArchivesBrowsing();
+    const auto has_archive_support = bootstrap::ActivationManager::Instance().HasArchivesBrowsing();
     
     add( @selector(OnOpen:), new Enter{has_archive_support} );
     add( @selector(OnOpenNatively:),                 new OpenFilesWithDefaultHandler);

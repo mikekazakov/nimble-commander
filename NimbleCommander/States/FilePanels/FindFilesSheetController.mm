@@ -290,16 +290,16 @@ private:
     sheet.onCtrlG = [sheet makeClickHotkey:self.GoToButton];
     sheet.onCtrlV = [sheet makeClickHotkey:self.ViewButton];
     
-    if( !nc::core::ActivationManager::Instance().HasTemporaryPanels() ) {
+    if( !nc::bootstrap::ActivationManager::Instance().HasTemporaryPanels() ) {
         [self.PanelButton unbind:@"enabled2"];
         [self.PanelButton unbind:@"enabled"];
         self.PanelButton.enabled = false;
     }
-    if( !nc::core::ActivationManager::Instance().HasInternalViewer() ) {
+    if( !nc::bootstrap::ActivationManager::Instance().HasInternalViewer() ) {
         [self.ViewButton unbind:@"enabled"];
         self.ViewButton.enabled = false;
     }
-    if( !nc::core::ActivationManager::Instance().HasArchivesBrowsing() ) {
+    if( !nc::bootstrap::ActivationManager::Instance().HasArchivesBrowsing() ) {
         [self.SearchInArchivesButton  unbind:@"enabled"];
         self.SearchInArchivesButton.enabled = false;
     }
@@ -536,7 +536,7 @@ private:
 
 - (VFSHostPtr)spawnArchiveFromPath:(const char*)_path inVFS:(const VFSHostPtr&)_host
 {
-    if( !nc::core::ActivationManager::Instance().HasArchivesBrowsing() )
+    if( !nc::bootstrap::ActivationManager::Instance().HasArchivesBrowsing() )
         return nullptr;
     
     char extension[MAXPATHLEN];

@@ -86,7 +86,7 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     static const auto ext_cache = make_shared<nc::vfsicon::WorkspaceExtensionIconsCacheImpl>();    
     static const auto brief_storage = make_shared<nc::utility::BriefOnDiskStorageImpl>
         (CommonPaths::AppTemporaryDirectory(),
-         nc::core::ActivationManager::BundleID() + ".ico"); 
+         nc::bootstrap::ActivationManager::BundleID() + ".ico"); 
     static const auto vfs_cache = make_shared<nc::vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
     static const auto vfs_bi_cache = make_shared<nc::vfsicon::VFSBundleIconsCacheImpl>();
     
@@ -217,7 +217,7 @@ static PanelController* PanelFactory()
     auto actions_dispatcher = [[NCPanelsStateActionsDispatcher alloc]
                                initWithState:file_state
                                andActionsMap:self.stateActionsMap];
-    actions_dispatcher.hasTerminal = nc::core::ActivationManager::Instance().HasTerminal();
+    actions_dispatcher.hasTerminal = nc::bootstrap::ActivationManager::Instance().HasTerminal();
     file_state.attachedResponder = actions_dispatcher;
     
     file_state.closedPanelsHistory = self.closedPanelsHistory;
@@ -263,7 +263,7 @@ bool DirectoryAccessProviderImpl::HasAccess(PanelController *_panel,
                                             VFSHost &_host)
 {
     // at this moment we (thankfully) care only about sanboxed versions 
-    if constexpr ( nc::core::ActivationManager::Sandboxed() == false )
+    if constexpr ( nc::bootstrap::ActivationManager::Sandboxed() == false )
         return true;
     
     if( _host.IsNativeFS() )
@@ -276,7 +276,7 @@ bool DirectoryAccessProviderImpl::RequestAccessSync(PanelController *_panel,
                                                     const std::string &_directory_path,
                                                     VFSHost &_host)
 {
-    if constexpr ( nc::core::ActivationManager::Sandboxed() == false )
+    if constexpr ( nc::bootstrap::ActivationManager::Sandboxed() == false )
         return true;        
     
     if( _host.IsNativeFS() )

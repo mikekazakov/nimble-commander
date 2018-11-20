@@ -53,7 +53,7 @@
 #include <NimbleCommander/Core/VFSInstanceManagerImpl.h>
 
 using namespace nc::bootstrap;
-using nc::core::ActivationManager;
+using nc::bootstrap::ActivationManager;
 
 static std::optional<std::string> Load(const std::string &_filepath);
 
@@ -115,7 +115,7 @@ static void UpdateMenuItemsPlaceholders( const char *_action )
 
 static void CheckMASReceipt()
 {
-    if constexpr ( nc::core::ActivationManager::ForAppStore() ) {
+    if constexpr ( ActivationManager::ForAppStore() ) {
         const auto path = NSBundle.mainBundle.appStoreReceiptURL.path;
         const auto exists = [NSFileManager.defaultManager fileExistsAtPath:path];
         if( !exists ) {
@@ -208,7 +208,7 @@ static NCAppDelegate *g_Me = nil;
     [self wireMenuDelegates];
  
     bool showed_modal_dialog = false;
-    if( nc::core::ActivationManager::Instance().Sandboxed() ) {
+    if( ActivationManager::Instance().Sandboxed() ) {
         auto &sm = SandboxManager::Instance();
         if( sm.Empty() ) {
             sm.AskAccessForPathSync(CommonPaths::Home(), false);
@@ -300,7 +300,7 @@ static NCAppDelegate *g_Me = nil;
     auto enable             = [&](const char *_action, bool _enabled) {
         current_menuitem(_action).action = _enabled ? initial_menuitem(_action).action : nil;
     };
-    auto &am = nc::core::ActivationManager::Instance();
+    auto &am = ActivationManager::Instance();
     
     // one-way items hiding
     if( !am.HasTerminal() ) {                   hide("menu.view.show_terminal");
@@ -312,10 +312,10 @@ static NCAppDelegate *g_Me = nil;
                                                 hide("menu.file.feed_filenames_to_terminal"); }
     if( am.ForAppStore() ) {                    hide("menu.nimble_commander.active_license_file");
                                                 hide("menu.nimble_commander.purchase_license"); }
-    if( am.Type() != nc::core::ActivationManager::Distribution::Free || am.UsedHadPurchasedProFeatures() ) {
+    if( am.Type() != ActivationManager::Distribution::Free || am.UsedHadPurchasedProFeatures() ) {
                                                 hide("menu.nimble_commander.purchase_pro_features");
                                                 hide("menu.nimble_commander.restore_purchases"); }
-    if( am.Type() != nc::core::ActivationManager::Distribution::Trial || am.UserHadRegistered() ) {
+    if( am.Type() != ActivationManager::Distribution::Trial || am.UserHadRegistered() ) {
                                                 hide("menu.nimble_commander.active_license_file");
                                                 hide("menu.nimble_commander.purchase_license"); }
     if( !am.HasRoutedIO() )                     hide("menu.nimble_commander.toggle_admin_mode");
@@ -365,10 +365,10 @@ static NCAppDelegate *g_Me = nil;
     // calling modules running in background
     TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
     
-    auto &am = nc::core::ActivationManager::Instance();
+    auto &am = ActivationManager::Instance();
     
     // Non-MAS version stuff below:
-    if( !nc::core::ActivationManager::ForAppStore() && !self.isRunningTests ) {
+    if( !ActivationManager::ForAppStore() && !self.isRunningTests ) {
         if( am.ShouldShowTrialNagScreen() ) // check if we should show a nag screen
             dispatch_to_main_queue_after(500ms, [self]{ [self showTrialWindow]; });
 
@@ -385,10 +385,10 @@ static NCAppDelegate *g_Me = nil;
     }
     
     // initialize stuff related with in-app purchases
-    if( nc::core::ActivationManager::Type() == ActivationManager::Distribution::Free ) {
+    if( ActivationManager::Type() == ActivationManager::Distribution::Free ) {
         m_AppStoreHelper = [AppStoreHelper new];
         m_AppStoreHelper.onProductPurchased = [=](const string &_id){
-            if( nc::core::ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() ) {
+            if( ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() ) {
                 [self updateMainMenuFeaturesByVersionAndState];
                 GA().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
             }
@@ -397,17 +397,17 @@ static NCAppDelegate *g_Me = nil;
     }
     
     // accessibility stuff for NonMAS version
-    if( nc::core::ActivationManager::Type() == ActivationManager::Distribution::Trial &&
+    if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
         GlobalConfig().GetBool(g_ConfigForceFn) ) {
         nc::utility::FunctionalKeysPass::Instance().Enable();
     }
     
-    if( nc::core::ActivationManager::Type() == ActivationManager::Distribution::Trial &&
+    if( ActivationManager::Type() == ActivationManager::Distribution::Trial &&
         am.UserHadRegistered() == false &&
         am.IsTrialPeriod() == false )
         self.dock.SetUnregisteredBadge( true );
 
-    if( !nc::core::ActivationManager::ForAppStore() && !self.isRunningTests )
+    if( !ActivationManager::ForAppStore() && !self.isRunningTests )
         PFMoveToApplicationsFolderIfNecessary();
     
     ConfigWiring{GlobalConfig()}.Wire();
@@ -584,14 +584,14 @@ static NCAppDelegate *g_Me = nil;
 
 - (bool) processLicenseFileActivation:(NSArray<NSString *> *)_filenames
 {
-    static const auto nc_license_extension = "."s + nc::core::ActivationManager::LicenseFileExtension();
+    static const auto nc_license_extension = "."s + ActivationManager::LicenseFileExtension();
     
     if( _filenames.count != 1)
         return false;
     
     for( NSString *pathstring in _filenames )
         if( auto fs = pathstring.fileSystemRepresentationSafe ) {
-            if constexpr( nc::core::ActivationManager::Type() == ActivationManager::Distribution::Trial ) {
+            if constexpr( ActivationManager::Type() == ActivationManager::Distribution::Trial ) {
                 if( _filenames.count == 1 && path(fs).extension() == nc_license_extension ) {
                     string p = fs;
                     dispatch_to_main_queue([=]{
@@ -631,7 +631,7 @@ static NCAppDelegate *g_Me = nil;
 
 - (void) processProvidedLicenseFile:(const string&)_path
 {
-    const bool valid_and_installed = nc::core::ActivationManager::Instance().ProcessLicenseFile(_path);
+    const bool valid_and_installed = ActivationManager::Instance().ProcessLicenseFile(_path);
     if( valid_and_installed ) {
         ThankUserForBuyingALicense();
         [self updateMainMenuFeaturesByVersionAndState];

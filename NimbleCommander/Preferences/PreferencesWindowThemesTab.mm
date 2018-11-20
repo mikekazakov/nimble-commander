@@ -98,8 +98,8 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 {
     [super viewDidLoad];
     // Do view setup here.
-    self.importButton.enabled = nc::core::ActivationManager::Instance().HasThemesManipulation();
-    self.exportButton.enabled = nc::core::ActivationManager::Instance().HasThemesManipulation();
+    self.importButton.enabled = nc::bootstrap::ActivationManager::Instance().HasThemesManipulation();
+    self.exportButton.enabled = nc::bootstrap::ActivationManager::Instance().HasThemesManipulation();
         
     [self buildThemeNamesPopup];
     [self.outlineView expandItem:nil expandChildren:true];

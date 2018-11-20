@@ -410,6 +410,20 @@ static double Y2018()
     XCTAssert( sut.TrialDaysLeft() == 30 );    
 }
 
+- (void)testDoesntOverwriteExistingTrialPeriod
+{
+    {
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+    }    
+    const auto time_stamp_before = CFDefaultsGetDouble(g_DefaultsTrialExpireDate);
+    m_Trial->m_Time += 1. * 24. * 60. * 60.;
+    {
+        auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};
+    }    
+    const auto time_stamp_after = CFDefaultsGetDouble(g_DefaultsTrialExpireDate);
+    XCTAssert( time_stamp_before == time_stamp_after );
+}
+
 - (void)testByDefaultShouldntShowNagScreen
 {
     auto sut = ActivationManager{*m_License, *m_Trial, *m_GA};

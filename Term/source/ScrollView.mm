@@ -50,6 +50,8 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
         self.contentView.canDrawConcurrently = false;
         self.contentView.drawsBackground = true;
         self.contentView.backgroundColor = m_Settings->BackgroundColor();
+        self.drawsBackground = true;
+        self.backgroundColor = m_Settings->BackgroundColor();
         self.verticalLineScroll = m_View.fontCache.Height();
         
         m_Screen = std::make_unique<term::Screen>(floor(rc.size.width / m_View.fontCache.Width()),
@@ -162,10 +164,18 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
 - (void)onSettingsChanged
 {
     self.contentView.backgroundColor = m_Settings->BackgroundColor();
+    self.backgroundColor = m_Settings->BackgroundColor();
     if( m_View.font != m_Settings->Font() ) {
         m_View.font = m_Settings->Font();
         [self frameDidChange]; // handle with care - it will cause geometry recalculating
     }
+}
+
+- (void)drawRect:(NSRect)dirtyRect
+{
+    const auto context = NSGraphicsContext.currentContext.CGContext;
+    CGContextSetFillColorWithColor(context, m_Settings->BackgroundColor().CGColor);
+    CGContextFillRect(context, NSRectToCGRect(dirtyRect));
 }
 
 - (void)frameDidChange

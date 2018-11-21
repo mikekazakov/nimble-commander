@@ -34,7 +34,7 @@ public:
 private:
     struct Directory
     {
-        nanoseconds fetch_time = 0ns;
+        std::chrono::nanoseconds fetch_time = std::chrono::nanoseconds{0};
         bool has_dirty_items = false;
         
         vector<PropFindResponse> items; // sorted by .path

@@ -66,8 +66,8 @@ public:
 
     void MakeDirectoryStructureDirty(const char *_path);
     
-    unique_ptr<ftp::CURLInstance> InstanceForIOAtDir(const path &_dir);
-    void CommitIOInstanceAtDir(const path &_dir, unique_ptr<ftp::CURLInstance> _i);
+    unique_ptr<ftp::CURLInstance> InstanceForIOAtDir(const boost::filesystem::path &_dir);
+    void CommitIOInstanceAtDir(const boost::filesystem::path &_dir, unique_ptr<ftp::CURLInstance> _i);
     
     
     inline ftp::Cache &Cache() const { return *m_Cache.get(); };
@@ -102,7 +102,7 @@ private:
     unique_ptr<ftp::Cache>        m_Cache;
     unique_ptr<ftp::CURLInstance> m_ListingInstance;
     
-    map<path, unique_ptr<ftp::CURLInstance>>  m_IOIntances;
+    map<boost::filesystem::path, unique_ptr<ftp::CURLInstance>>  m_IOIntances;
     mutex                                           m_IOIntancesLock;
     
     struct UpdateHandler

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 
 // basic C facilities
 #include <assert.h>
@@ -60,7 +60,6 @@
     #include <Habanero/spinlock.h>
 
     #include <boost/filesystem.hpp>
-    using boost::filesystem::path;
 
     #include <Utility/StringExtras.h>
 

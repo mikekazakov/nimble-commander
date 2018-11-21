@@ -216,7 +216,7 @@ int FTPHost::Stat(const char *_path,
     if(_path == nullptr || _path[0] != '/' )
         return VFSError::InvalidCall;
 
-    path path = _path;
+    boost::filesystem::path path = _path;
     if(path == "/")
     {
         // special case for root path
@@ -373,7 +373,7 @@ int FTPHost::CreateFile(const char* _path,
 
 int FTPHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
-    path path = _path;
+    boost::filesystem::path path = _path;
     if(path.is_absolute() == false || path.filename() == ".")
         return VFSError::InvalidCall;
     
@@ -414,7 +414,7 @@ int FTPHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
 // _mode is ignored, since we can't specify any access mode from ftp
 int FTPHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
 {
-    path path = _path;
+    boost::filesystem::path path = _path;
     if(path.is_absolute() == false)
         return VFSError::InvalidCall;
 
@@ -458,7 +458,7 @@ int FTPHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecke
 
 int FTPHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
 {
-    path path = _path;
+    boost::filesystem::path path = _path;
     if(path.is_absolute() == false)
         return VFSError::InvalidCall;
     
@@ -500,7 +500,7 @@ int FTPHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_
 
 int FTPHost::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
 {
-    path old_path = _old_path, new_path = _new_path;
+    boost::filesystem::path old_path = _old_path, new_path = _new_path;
     if(old_path.is_absolute() == false || new_path.is_absolute() == false)
         return VFSError::InvalidCall;
     
@@ -618,7 +618,7 @@ int FTPHost::IterateDirectoryListing(const char *_path, const function<bool(cons
     return 0;
 }
 
-unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const path &_dir)
+unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const boost::filesystem::path &_dir)
 {
     assert(_dir.filename() != ".");
     lock_guard<mutex> lock(m_IOIntancesLock);
@@ -649,7 +649,7 @@ unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const path &_dir)
     return inst;
 }
 
-void FTPHost::CommitIOInstanceAtDir(const path &_dir, unique_ptr<CURLInstance> _i)
+void FTPHost::CommitIOInstanceAtDir(const boost::filesystem::path &_dir, unique_ptr<CURLInstance> _i)
 {
     assert(_dir.filename() != ".");
     lock_guard<mutex> lock(m_IOIntancesLock);

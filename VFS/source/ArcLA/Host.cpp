@@ -704,10 +704,10 @@ int ArchiveHost::ResolvePath(const char *_path, char *_resolved_path)
     if(!_path || _path[0] != '/')
         return VFSError::NotFound;
     
-    path p = _path;
+    boost::filesystem::path p = _path;
     p = p.relative_path();
     if(p.filename() == ".") p.remove_filename();
-    path result_path = "/";
+    boost::filesystem::path result_path = "/";
     
     uint32_t result_uid = 0;
     for( auto &i: p ) {
@@ -916,9 +916,9 @@ void ArchiveHost::ResolveSymlink(uint32_t _uid)
         return;
     }
         
-    const path dir_path = m_EntryByUID[_uid].first->full_path;
-    const path symlink_path = symlink.value;
-    path result_path;
+    const boost::filesystem::path dir_path = m_EntryByUID[_uid].first->full_path;
+    const boost::filesystem::path symlink_path = symlink.value;
+    boost::filesystem::path result_path;
     if( symlink_path.is_relative() ) {
         result_path = dir_path;
 //        printf("%s\n", result_path.c_str());

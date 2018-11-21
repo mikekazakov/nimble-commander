@@ -122,10 +122,10 @@ void Cache::InsertLISTDirectory(const char *_path, shared_ptr<Directory> _direct
 
 void Cache::CommitNewFile(const string &_path)
 {
-    path p = _path;
+    boost::filesystem::path p = _path;
     assert(p.is_absolute());
     
-    path dir_path = p.parent_path();
+    boost::filesystem::path dir_path = p.parent_path();
     if(dir_path != "/")
         dir_path /= "/";
     
@@ -153,10 +153,10 @@ void Cache::CommitNewFile(const string &_path)
 
 void Cache::MakeEntryDirty(const string &_path)
 {
-    path p = _path;
+    boost::filesystem::path p = _path;
     assert(p.is_absolute());
     
-    path dir_path = p.parent_path();
+    boost::filesystem::path dir_path = p.parent_path();
     if(dir_path != "/")
         dir_path / "/";
     
@@ -179,7 +179,7 @@ void Cache::CommitRMD(const string &_path)
     
     EraseEntryInt(_path);
     
-    path p = _path;
+    boost::filesystem::path p = _path;
     p /= "/";
     
     auto i = m_Directories.find(p.native());
@@ -195,10 +195,10 @@ void Cache::CommitUnlink(const string &_path)
 
 void Cache::CommitMKD(const string &_path)
 {
-    path p = _path;
+    boost::filesystem::path p = _path;
     assert(p.is_absolute());
     
-    path dir_path = p.parent_path();
+    boost::filesystem::path dir_path = p.parent_path();
     if(dir_path != "/")
         dir_path /= "/";
     
@@ -219,14 +219,14 @@ void Cache::CommitMKD(const string &_path)
 
 void Cache::CommitRename(const string &_old_path, const string &_new_path)
 {
-    path old_path = _old_path, new_path = _new_path;
+    boost::filesystem::path old_path = _old_path, new_path = _new_path;
     assert(old_path.is_absolute() && new_path.is_absolute());
     
     lock_guard<mutex> lock(m_CacheLock);
     
-    path old_par_path = old_path.parent_path();
+    boost::filesystem::path old_par_path = old_path.parent_path();
     if(old_par_path != "/") old_par_path /= "/";
-    path new_par_path = new_path.parent_path();
+    boost::filesystem::path new_par_path = new_path.parent_path();
     if(new_par_path != "/") new_par_path /= "/";
     
     
@@ -293,12 +293,12 @@ void Cache::CommitRename(const string &_old_path, const string &_new_path)
 
 void Cache::EraseEntryInt(const string &_path)
 {
-    path p = _path;
+    boost::filesystem::path p = _path;
     assert(p.filename() != "."); // _path with no trailing slashes
     assert(p.is_absolute());
     
     // find and erase entry of this dir in parent dir if any
-    path dir_path = p.parent_path();
+    boost::filesystem::path dir_path = p.parent_path();
     if(dir_path != "/")
         dir_path /= "/";
     

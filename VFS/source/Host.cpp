@@ -202,7 +202,7 @@ ssize_t Host::CalculateDirectorySize(const char *_path,
     if(_path == 0 || _path[0] != '/')
         return VFSError::InvalidCall;
     
-    queue<path> look_paths;
+    queue<boost::filesystem::path> look_paths;
     int64_t total_size = 0;
     
     look_paths.emplace(_path);
@@ -211,7 +211,7 @@ ssize_t Host::CalculateDirectorySize(const char *_path,
             return VFSError::Cancelled;
         
         IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt& _dirent){
-            path full_path = look_paths.front() / _dirent.name;
+            boost::filesystem::path full_path = look_paths.front() / _dirent.name;
             if(_dirent.type == VFSDirEnt::Dir)
                 look_paths.emplace(move(full_path));
             else {

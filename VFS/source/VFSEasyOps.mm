@@ -371,7 +371,7 @@ int VFSEasyDelete(const char *_full_path, const shared_ptr<VFSHost> &_host)
     if((st.mode & S_IFMT) == S_IFDIR) {
         if( !(_host->Features() & HostFeatures::NonEmptyRmDir) )
             _host->IterateDirectoryListing(_full_path, [&](const VFSDirEnt &_dirent) {
-                path p = _full_path;
+                boost::filesystem::path p = _full_path;
                 p /= _dirent.name;
                 VFSEasyDelete(p.native().c_str(), _host);
                 return true;
@@ -400,9 +400,9 @@ int VFSEasyCreateEmptyFile(const char *_path, const VFSHostPtr & _vfs)
     return file->Close();
 }
 
-int VFSCompareNodes(const path& _file1_full_path,
+int VFSCompareNodes(const boost::filesystem::path& _file1_full_path,
                     const VFSHostPtr& _file1_host,
-                    const path& _file2_full_path,
+                    const boost::filesystem::path& _file2_full_path,
                     const VFSHostPtr& _file2_host,
                     int &_result)
 {

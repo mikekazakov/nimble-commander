@@ -40,7 +40,7 @@ private:
                       VFSCancelChecker _cancel_checker
                       );
     
-    path DirName() const;
+    boost::filesystem::path DirName() const;
     void FinishWriting();
     void FinishReading();
     

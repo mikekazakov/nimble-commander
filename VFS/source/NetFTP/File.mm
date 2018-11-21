@@ -53,9 +53,9 @@ int File::Close()
     return 0;
 }
 
-path File::DirName() const
+boost::filesystem::path File::DirName() const
 {
-    return path(Path()).parent_path();
+    return boost::filesystem::path(Path()).parent_path();
 }
 
 int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)

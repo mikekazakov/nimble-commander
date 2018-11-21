@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ReadBuffer.h"
 
 namespace nc::vfs::webdav {
@@ -26,7 +26,7 @@ size_t ReadBuffer::Size() const noexcept
 
 void ReadBuffer::Grow(int _new_size) noexcept
 {
-    _new_size = max(_new_size, g_DefaultCapacity);
+    _new_size = std::max(_new_size, g_DefaultCapacity);
     assert( m_Size < _new_size );
     m_Capacity = _new_size;
     m_Bytes = (uint8_t*)realloc(m_Bytes, m_Capacity);
@@ -51,7 +51,7 @@ size_t ReadBuffer::Write(void *_buffer, size_t _size, size_t _nmemb, void *_user
 
 size_t ReadBuffer::Read(void* _buffer, size_t _bytes) noexcept
 {
-    const auto to_read = min( size_t(m_Size), _bytes );
+    const auto to_read = std::min( size_t(m_Size), _bytes );
     if( to_read == 0 )
         return 0;
     memcpy( _buffer, m_Bytes, to_read );
@@ -68,7 +68,7 @@ void ReadBuffer::PopFront(int _size) noexcept
 
 size_t ReadBuffer::Discard(size_t _bytes) noexcept
 {
-    const auto to_discard = min( size_t(m_Size), _bytes );
+    const auto to_discard = std::min( size_t(m_Size), _bytes );
     PopFront((int)to_discard);
     return to_discard;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DisplayNamesCache.h"
 
 namespace nc::vfs::native {
@@ -9,53 +9,55 @@ DisplayNamesCache& DisplayNamesCache::Instance()
     return *inst;
 }
 
-static bool is_same_filename( const char *_filename, const string &_path )
+static bool is_same_filename( const char *_filename, const std::string &_path )
 {
     const auto p = _path.rfind('/');
-    return p != string::npos && strcmp( _filename, _path.c_str() + p + 1 ) == 0;
+    return p != std::string::npos && strcmp( _filename, _path.c_str() + p + 1 ) == 0;
 }
 
-optional<const char*> DisplayNamesCache::Fast_Unlocked( ino_t _ino, dev_t _dev, const string &_path ) const noexcept
+std::optional<const char*> DisplayNamesCache::Fast_Unlocked(ino_t _ino,
+                                                            dev_t _dev,
+                                                            const std::string &_path ) const noexcept
 {
     const auto inodes = m_Devices.find(_dev);
     if( inodes == end(m_Devices) )
-        return nullopt;
+        return std::nullopt;
 
     const auto range = inodes->second.equal_range(_ino);
     for( auto i = range.first; i != range.second; ++i )
         if( is_same_filename( i->second.fs_filename, _path) )
             return i->second.display_filename;
 
-    return nullopt;
+    return std::nullopt;
 }
 
-static const char *filename_dup( const string &_path )
+static const char *filename_dup( const std::string &_path )
 {
     auto i = _path.rfind('/');
-    if( i == string::npos )
+    if( i == std::string::npos )
         return "";
     return strdup( _path.c_str() + i + 1 );
 }
 
 void DisplayNamesCache::Commit_Locked(ino_t _ino,
                                       dev_t _dev,
-                                      const string &_path,
+                                      const std::string &_path,
                                       const char *_dispay_name )
 {
     Filename f;
     f.fs_filename = filename_dup(_path);
     f.display_filename = _dispay_name;
-    lock_guard<spinlock> guard(m_WriteLock);
-    m_Devices[_dev].insert( make_pair(_ino, f) );
+    std::lock_guard<spinlock> guard(m_WriteLock);
+    m_Devices[_dev].insert( std::make_pair(_ino, f) );
 }
 
-const char* DisplayNamesCache::DisplayName( const struct stat &_st, const string &_path )
+const char* DisplayNamesCache::DisplayName( const struct stat &_st, const std::string &_path )
 {
     return DisplayName( _st.st_ino, _st.st_dev, _path );
 }
 
 static NSFileManager *filemanager = NSFileManager.defaultManager;
-static const char* Slow( const string &_path )
+static const char* Slow( const std::string &_path )
 {
     NSString *path = [NSString stringWithUTF8StdStringNoCopy:_path];
     if( path == nil )
@@ -74,7 +76,7 @@ static const char* Slow( const string &_path )
     return strdup( display_utf8_name );
 }
 
-const char* DisplayNamesCache::DisplayName( ino_t _ino, dev_t _dev, const string &_path )
+const char* DisplayNamesCache::DisplayName( ino_t _ino, dev_t _dev, const std::string &_path )
 {
     // many readers, one writer | readers preference, based on atomic spinlocks
     

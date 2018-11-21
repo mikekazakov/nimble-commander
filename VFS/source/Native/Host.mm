@@ -74,9 +74,9 @@ bool NativeHost::ShouldProduceThumbnails() const
 }
 
 int NativeHost::FetchDirectoryListing(const char *_path,
-                                         shared_ptr<VFSListing> &_target,
-                                         unsigned long _flags,
-                                         const VFSCancelChecker &_cancel_checker)
+                                      std::shared_ptr<VFSListing> &_target,
+                                      unsigned long _flags,
+                                      const VFSCancelChecker &_cancel_checker)
 {
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
@@ -226,17 +226,15 @@ int NativeHost::FetchDirectoryListing(const char *_path,
             }
         }
 
-    _target = VFSListing::Build(move(listing_source));
-    
-//    mtb.ResetMicro();
-    
+    _target = VFSListing::Build(std::move(listing_source));
+        
     return 0;
 }
 
 int NativeHost::FetchSingleItemListing(const char *_path,
-                                          shared_ptr<VFSListing> &_target,
-                                          unsigned long _flags,
-                                          const VFSCancelChecker &_cancel_checker)
+                                       std::shared_ptr<VFSListing> &_target,
+                                       unsigned long _flags,
+                                       const VFSCancelChecker &_cancel_checker)
 {
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
@@ -328,25 +326,25 @@ int NativeHost::FetchSingleItemListing(const char *_path,
         }
     }
     
-    _target = VFSListing::Build( move(listing_source) );
+    _target = VFSListing::Build( std::move(listing_source) );
     
     return 0;
 }
 
 int NativeHost::CreateFile(const char* _path,
-                              shared_ptr<VFSFile> &_target,
-                              const VFSCancelChecker &_cancel_checker)
+                           std::shared_ptr<VFSFile> &_target,
+                           const VFSCancelChecker &_cancel_checker)
 {
-    auto file = make_shared<File>(_path, SharedPtr());
+    auto file = std::make_shared<File>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
 }
 
-const shared_ptr<NativeHost> &NativeHost::SharedHost() noexcept
+const std::shared_ptr<NativeHost> &NativeHost::SharedHost() noexcept
 {
-    static auto host = make_shared<NativeHost>();
+    static auto host = std::make_shared<NativeHost>();
     return host;
 }
 
@@ -401,7 +399,7 @@ static int CalculateDirectoriesSizesHelper(char *_path,
                 goto cleanup;
         }
         else if( entp->d_type == DT_REG || entp->d_type == DT_LNK ) {
-            string full_path = _path;
+            std::string full_path = _path;
             _stat_queue.async([&,full_path = move(full_path)]{
                 if( _iscancelling )
                     return;
@@ -452,9 +450,10 @@ bool NativeHost::IsDirChangeObservingAvailable(const char *_path)
     return access(_path, R_OK) == 0; // should use _not_ routed I/O here!
 }
 
-HostDirObservationTicket NativeHost::DirChangeObserve(const char *_path, function<void()> _handler)
+HostDirObservationTicket NativeHost::DirChangeObserve(const char *_path,
+                                                      std::function<void()> _handler)
 {
-    uint64_t t = FSEventsDirUpdate::Instance().AddWatchPath(_path, _handler);
+    uint64_t t = FSEventsDirUpdate::Instance().AddWatchPath(_path, std::move(_handler));
     return t ? HostDirObservationTicket(t, shared_from_this()) : HostDirObservationTicket();
 }
 
@@ -480,7 +479,8 @@ int NativeHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, cons
     return VFSError::FromErrno();
 }
 
-int NativeHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
+int NativeHost::IterateDirectoryListing(const char *_path,
+                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
     
@@ -588,10 +588,10 @@ int NativeHost::CreateSymlink(const char *_symlink_path,
 }
 
 int NativeHost::SetTimes(const char *_path,
-                         optional<time_t> _birth_time,
-                         optional<time_t> _mod_time,
-                         optional<time_t> _chg_time,
-                         optional<time_t> _acc_time,
+                         std::optional<time_t> _birth_time,
+                         std::optional<time_t> _mod_time,
+                         std::optional<time_t> _chg_time,
+                         std::optional<time_t> _acc_time,
                          const VFSCancelChecker &_cancel_checker
                          )
 {
@@ -697,7 +697,7 @@ int NativeHost::SetOwnership(const char *_path,
     return VFSError::FromErrno();
 }
 
-int NativeHost::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
+int NativeHost::FetchUsers(std::vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
 {
     _target.clear();
 
@@ -740,7 +740,7 @@ int NativeHost::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_ca
         user.uid = uid;
         user.name = record.recordName.UTF8String;
         user.gecos = gecos;
-        _target.emplace_back( move(user) );
+        _target.emplace_back( std::move(user) );
     }
     
     sort(begin(_target),
@@ -754,7 +754,7 @@ int NativeHost::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_ca
     return VFSError::Ok;
 }
 
-int NativeHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
+int NativeHost::FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
 {
     _target.clear();
 
@@ -798,7 +798,7 @@ int NativeHost::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_
         group.gid = gid;
         group.name = record.recordName.UTF8String;
         group.gecos = gecos;
-        _target.emplace_back( move(group) );
+        _target.emplace_back( std::move(group) );
     }
     
     sort(begin(_target),

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/Host.h>
@@ -15,7 +15,7 @@ class DropboxHost final : public Host
 public:
     static const char *UniqueTag;
 
-    DropboxHost( const string &_account, const string &_access_token );
+    DropboxHost( const std::string &_account, const std::string &_access_token );
     DropboxHost( const VFSConfiguration &_config );
     ~DropboxHost();
 
@@ -40,16 +40,16 @@ public:
                                 const VFSCancelChecker &_cancel_checker ) override;
 
     virtual int IterateDirectoryListing(const char *_path,
-                                        const function<bool(const VFSDirEnt &_dirent)> &_handler)
+                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
                                         override;
 
     virtual int FetchDirectoryListing(const char *_path,
-                                      shared_ptr<VFSListing> &_target,
+                                      std::shared_ptr<VFSListing> &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker) override;
 
     virtual int CreateFile(const char* _path,
-                           shared_ptr<VFSFile> &_target,
+                           std::shared_ptr<VFSFile> &_target,
                            const VFSCancelChecker &_cancel_checker) override;
     
     virtual int CreateDirectory(const char* _path,
@@ -60,11 +60,11 @@ public:
                        const char *_new_path,
                        const VFSCancelChecker &_cancel_checker ) override;
 
-    shared_ptr<const DropboxHost> SharedPtr() const {return static_pointer_cast<const DropboxHost>(Host::SharedPtr());}
-    shared_ptr<DropboxHost> SharedPtr() {return static_pointer_cast<DropboxHost>(Host::SharedPtr());}
+    std::shared_ptr<const DropboxHost> SharedPtr() const {return std::static_pointer_cast<const DropboxHost>(Host::SharedPtr());}
+    std::shared_ptr<DropboxHost> SharedPtr() {return std::static_pointer_cast<DropboxHost>(Host::SharedPtr());}
 
-    const string &Account() const;
-    const string &Token() const;
+    const std::string &Account() const;
+    const std::string &Token() const;
 
 #ifdef __OBJC__
     void FillAuth( NSMutableURLRequest *_request ) const;
@@ -72,15 +72,15 @@ public:
     NSURLSessionConfiguration *GenericConfiguration() const;
 #endif
 
-    static pair<int, string> CheckTokenAndRetrieveAccountEmail( const string &_token );
+    static std::pair<int, std::string> CheckTokenAndRetrieveAccountEmail( const std::string &_token );
 private:
     void Init();
-    void Construct(const string &_account, const string &_access_token);
+    void Construct(const std::string &_account, const std::string &_access_token);
     void InitialAccountLookup(); // will throw on invalid account / connectivity issues
     const class VFSNetDropboxHostConfiguration &Config() const;
 
     struct State;
-    unique_ptr<State> I;
+    std::unique_ptr<State> I;
     VFSConfiguration m_Config;    
 };
 

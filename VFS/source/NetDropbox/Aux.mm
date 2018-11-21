@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <VFS/VFSError.h>
 #include "Aux.h"
@@ -40,18 +40,20 @@ const char *GetString( const rapidjson::Value &_doc, const char *_key )
     return i->value.GetString();
 }
 
-optional<long> GetLong( const rapidjson::Value &_doc, const char *_key )
+std::optional<long> GetLong( const rapidjson::Value &_doc, const char *_key )
 {
     auto i = _doc.FindMember(_key);
     if( i == _doc.MemberEnd() )
-        return nullopt;
+        return std::nullopt;
     if( !i->value.IsInt() )
-        return nullopt;
+        return std::nullopt;
     return i->value.GetInt64();
 }
 
 static int ExtractVFSErrorFromObject( const rapidjson::Value &_object )
 {
+    using namespace std::literals;
+    
     auto tag = GetString(_object, ".tag" );
     if( !tag )
         return VFSError::GenericError;
@@ -116,8 +118,8 @@ int VFSErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response
     return vfs_error;
 }
 
-static pair<int, NSData *> SendInifiniteSynchronousRequest(NSURLSession *_session,
-                                                           NSURLRequest *_request)
+static std::pair<int, NSData *> SendInifiniteSynchronousRequest(NSURLSession *_session,
+                                                                NSURLRequest *_request)
 {
     dispatch_semaphore_t    sem = dispatch_semaphore_create(0);
     __block NSData *        data = nil;
@@ -146,9 +148,9 @@ static pair<int, NSData *> SendInifiniteSynchronousRequest(NSURLSession *_sessio
     return { VFSErrorFromErrorAndReponseAndData(error, response, data), nil };
 }
 
-pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
-                                           NSURLRequest *_request,
-                                           const VFSCancelChecker &_cancel_checker)
+std::pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
+                                                NSURLRequest *_request,
+                                                const VFSCancelChecker &_cancel_checker)
 {
     if( !_cancel_checker )
         return SendInifiniteSynchronousRequest(_session, _request);
@@ -186,6 +188,7 @@ pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
 
 Metadata ParseMetadata( const rapidjson::Value &_value )
 {
+    using namespace std::literals;
     static const auto file_type = "file"s, folder_type = "folder"s;
     static const auto date_formatter = []{
         NSDateFormatter * df = [[NSDateFormatter alloc] init];
@@ -223,12 +226,12 @@ Metadata ParseMetadata( const rapidjson::Value &_value )
     return m;
 }
 
-vector<Metadata> ExtractMetadataEntries( const rapidjson::Value &_value )
+std::vector<Metadata> ExtractMetadataEntries( const rapidjson::Value &_value )
 {
     if( !_value.IsObject() )
         return {};
 
-    vector<Metadata> result;
+    std::vector<Metadata> result;
 
     auto entries = _value.FindMember("entries");
     if( entries != _value.MemberEnd() )
@@ -236,15 +239,15 @@ vector<Metadata> ExtractMetadataEntries( const rapidjson::Value &_value )
             auto &entry = entries->value[i];
             auto metadata = ParseMetadata(entry);
             if( !metadata.name.empty() )
-                result.emplace_back( move(metadata) );
+                result.emplace_back( std::move(metadata) );
         }
     return result;
 }
 
 
-string EscapeString(const string &_original)
+std::string EscapeString(const std::string &_original)
 {
-    string after;
+    std::string after;
     after.reserve(_original.length() + 4);
     for( auto c: _original ) {
         switch( c ) {
@@ -258,13 +261,13 @@ string EscapeString(const string &_original)
     return after;
 }
 
-string EscapeStringForJSONInHTTPHeader(const string &_original)
+std::string EscapeStringForJSONInHTTPHeader(const std::string &_original)
 {
     NSString *str = [NSString stringWithUTF8String:_original.c_str()];
     if( !str )
         return {};
     
-    string after;
+    std::string after;
     after.reserve(str.length + 4);
     char hex[16];
     for( int i = 0, e = (int)str.length; i != e; ++i ) {
@@ -300,7 +303,7 @@ void WarnAboutUsingInMainThread()
     auto msg = "usage of the net_dropbox vfs in the main thread may reduce responsiveness "
                "and should be avoided!";
     if( dispatch_is_main_queue() )
-        cout << msg << endl;
+        std::cout << msg << std::endl;
 }
 
 AccountInfo ParseAccountInfo( const rapidjson::Value &_value )
@@ -323,30 +326,30 @@ AccountInfo ParseAccountInfo( const rapidjson::Value &_value )
     return ai;
 }
 
-optional<rapidjson::Document> ParseJSON( NSData *_data )
+std::optional<rapidjson::Document> ParseJSON( NSData *_data )
 {
     if( !_data )
-        return nullopt;
+        return std::nullopt;
     
     using namespace rapidjson;
     Document json;
     ParseResult ok = json.Parse<kParseNoFlags>( (const char *)_data.bytes, _data.length );
     if( !ok )
-        return nullopt;
-    return move(json);
+        return std::nullopt;
+    return std::move(json);
 }
 
-void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const string &_path)
+void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const std::string &_path)
 {
     [_request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    const string path_spec = "{ \"path\": \"" + EscapeString(_path) + "\" }";
+    const std::string path_spec = "{ \"path\": \"" + EscapeString(_path) + "\" }";
     [_request setHTTPBody:[NSData dataWithBytes:data(path_spec)
         length:size(path_spec)]];
 }
 
-void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const string &_path)
+void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const std::string &_path)
 {
-    const string path_spec = "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(_path) + "\" }";
+    const std::string path_spec = "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(_path) + "\" }";
     [_request setValue:[NSString stringWithUTF8String:path_spec.c_str()]
         forHTTPHeaderField:@"Dropbox-API-Arg"];
 }

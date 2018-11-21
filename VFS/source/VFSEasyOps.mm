@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <sys/dirent.h>
 #include <Habanero/SerialQueue.h>
@@ -9,9 +9,9 @@
 using namespace nc::vfs;
 
 static int CopyNodeAttrs(const char *_src_full_path,
-                         shared_ptr<VFSHost> _src_host,
+                         std::shared_ptr<VFSHost> _src_host,
                          const char *_dst_full_path,
-                         shared_ptr<VFSHost> _dst_host)
+                         std::shared_ptr<VFSHost> _dst_host)
 {
     /* copy permissions,
      owners,
@@ -37,7 +37,7 @@ static int CopyNodeAttrs(const char *_src_full_path,
     return 0;
 }
 
-static int CopyFileContentsSmall(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _dst)
+static int CopyFileContentsSmall(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
 {
     uint64_t bufsz = 256*1024;
     char buf[bufsz];
@@ -45,7 +45,7 @@ static int CopyFileContentsSmall(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _
     uint64_t left_read = src_size;
     ssize_t res_read = 0, total_wrote = 0;
     
-    while ( (res_read = _src->Read(buf, min(bufsz, left_read))) > 0 )
+    while ( (res_read = _src->Read(buf, std::min(bufsz, left_read))) > 0 )
     {
         ssize_t res_write = 0;
         while(res_read > 0)
@@ -70,14 +70,14 @@ static int CopyFileContentsSmall(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _
     return 0;
 }
 
-static int CopyFileContentsLarge(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _dst)
+static int CopyFileContentsLarge(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
 {
     DispatchGroup io;
   
     // consider using variable-sized buffers depending on underlying media
     const int buffer_size = 1024*1024; // 1Mb
-    auto buffer_read  = make_unique<uint8_t[]>(buffer_size);
-    auto buffer_write = make_unique<uint8_t[]>(buffer_size);
+    auto buffer_read  = std::make_unique<uint8_t[]>(buffer_size);
+    auto buffer_write = std::make_unique<uint8_t[]>(buffer_size);
 
     const uint64_t src_size = _src->Size();
     uint64_t total_read = 0;
@@ -128,7 +128,7 @@ static int CopyFileContentsLarge(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _
     }
 }
 
-static int CopyFileContents(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _dst)
+static int CopyFileContents(std::shared_ptr<VFSFile> _src, std::shared_ptr<VFSFile> _dst)
 {
     const ssize_t small_large_tresh = 16*1024*1024; // 16mb
     
@@ -139,9 +139,9 @@ static int CopyFileContents(shared_ptr<VFSFile> _src, shared_ptr<VFSFile> _dst)
 }
 
 int VFSEasyCopyFile(const char *_src_full_path,
-                    shared_ptr<VFSHost> _src_host,
+                    std::shared_ptr<VFSHost> _src_host,
                     const char *_dst_full_path,
-                    shared_ptr<VFSHost> _dst_host
+                    std::shared_ptr<VFSHost> _dst_host
                     )
 {
     if(_src_full_path == nullptr    ||
@@ -189,9 +189,9 @@ int VFSEasyCopyFile(const char *_src_full_path,
 }
 
 int VFSEasyCopyDirectory(const char *_src_full_path,
-                         shared_ptr<VFSHost> _src_host,
+                         std::shared_ptr<VFSHost> _src_host,
                          const char *_dst_full_path,
-                         shared_ptr<VFSHost> _dst_host
+                         std::shared_ptr<VFSHost> _dst_host
                          )
 {
     int result = 0;
@@ -218,11 +218,11 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
     
     result = _src_host->IterateDirectoryListing(_src_full_path, [&](const VFSDirEnt &_dirent)
     {
-        string source(_src_full_path);
+        std::string source(_src_full_path);
         source += '/';
         source += _dirent.name;
         
-        string destination(_dst_full_path);
+        std::string destination(_dst_full_path);
         destination += '/';
         destination += _dirent.name;
 
@@ -241,9 +241,9 @@ int VFSEasyCopyDirectory(const char *_src_full_path,
 }
 
 int VFSEasyCopySymlink(const char *_src_full_path,
-                       shared_ptr<VFSHost> _src_host,
+                       std::shared_ptr<VFSHost> _src_host,
                        const char *_dst_full_path,
-                       shared_ptr<VFSHost> _dst_host
+                       std::shared_ptr<VFSHost> _dst_host
                        )
 {
     int result = 0;
@@ -275,9 +275,9 @@ int VFSEasyCopySymlink(const char *_src_full_path,
 }
 
 int VFSEasyCopyNode(const char *_src_full_path,
-                    shared_ptr<VFSHost> _src_host,
+                    std::shared_ptr<VFSHost> _src_host,
                     const char *_dst_full_path,
-                    shared_ptr<VFSHost> _dst_host
+                    std::shared_ptr<VFSHost> _dst_host
                     )
 {
     if(_src_full_path == nullptr    ||
@@ -311,9 +311,9 @@ int VFSEasyCopyNode(const char *_src_full_path,
 }
 
 int VFSEasyCompareFiles(const char *_file1_full_path,
-                        shared_ptr<VFSHost> _file1_host,
+                        std::shared_ptr<VFSHost> _file1_host,
                         const char *_file2_full_path,
-                        shared_ptr<VFSHost> _file2_host,
+                        std::shared_ptr<VFSHost> _file2_host,
                         int &_result
                         )
 {
@@ -328,7 +328,7 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
     
     int ret;
     VFSFilePtr file1, file2;
-    optional<vector<uint8_t>> data1, data2;
+    std::optional<std::vector<uint8_t>> data1, data2;
     
     if( (ret = _file1_host->CreateFile(_file1_full_path, file1, 0)) != 0 )
         return ret;
@@ -359,7 +359,7 @@ int VFSEasyCompareFiles(const char *_file1_full_path,
     return 0;
 }
 
-int VFSEasyDelete(const char *_full_path, const shared_ptr<VFSHost> &_host)
+int VFSEasyDelete(const char *_full_path, const std::shared_ptr<VFSHost> &_host)
 {
     VFSStat st;
     int result;

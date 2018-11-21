@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSFactory.h"
 
 VFSFactory& VFSFactory::Instance()
@@ -9,10 +9,10 @@ VFSFactory& VFSFactory::Instance()
 
 void VFSFactory::RegisterVFS(VFSMeta _meta)
 {
-    m_Metas.emplace_back( move(_meta) );
+    m_Metas.emplace_back( std::move(_meta) );
 }
 
-const VFSMeta* VFSFactory::Find(const string &_tag) const
+const VFSMeta* VFSFactory::Find(const std::string &_tag) const
 {
     for(auto &i: m_Metas)
         if( i.Tag == _tag )

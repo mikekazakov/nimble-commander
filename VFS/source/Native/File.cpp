@@ -7,7 +7,7 @@
 
 namespace nc::vfs::native {
 
-File::File(const char* _relative_path, const shared_ptr<NativeHost> &_host):
+File::File(const char* _relative_path, const std::shared_ptr<NativeHost> &_host):
     VFSFile(_relative_path, _host),
     m_FD(-1),
     m_Position(0),
@@ -175,10 +175,10 @@ bool File::Eof() const
     return m_Position >= m_Size;
 }
 
-shared_ptr<VFSFile> File::Clone() const
+std::shared_ptr<VFSFile> File::Clone() const
 {
-    return make_shared<File>(Path(),
-                             dynamic_pointer_cast<VFSNativeHost>(Host()));
+    return std::make_shared<File>(Path(),
+                                  std::dynamic_pointer_cast<VFSNativeHost>(Host()));
 }
 
 unsigned File::XAttrCount() const
@@ -206,7 +206,7 @@ unsigned File::XAttrCount() const
     return count;
 }
 
-void File::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
+void File::XAttrIterateNames( std::function<bool(const char* _xattr_name)> _handler ) const
 {
     if(m_FD < 0 || !_handler)
         return;

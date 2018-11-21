@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/attr.h>
 #include <sys/errno.h>
 #include <sys/vnode.h>
@@ -199,11 +199,11 @@ int Fetching::ReadSingleEntryAttributesByPath(
 int Fetching::ReadDirAttributesStat(
     const int _dir_fd,
     const char *_dir_path,
-    const function<void(int _fetched_now)> &_cb_fetch,
+    const std::function<void(int _fetched_now)> &_cb_fetch,
     const Callback &_cb_param)
 {
     // initial directory lookup
-    vector< tuple<string, uint64_t, uint8_t > > dirents; // name, inode, entry_type
+    std::vector< std::tuple<std::string, uint64_t, uint8_t > > dirents; // name, inode, entry_type
     if( auto dirp = fdopendir( dup(_dir_fd) ) ) {
         auto close_dir = at_scope_end([=]{ closedir(dirp); });
         static const auto dirents_reserve_amount = 64;
@@ -214,7 +214,9 @@ int Fetching::ReadDirAttributesStat(
                strisdotdot(entp->d_name) )  // do not process parent entry
                 continue;
             
-            dirents.emplace_back(string(entp->d_name, entp->d_namlen), entp->d_ino, entp->d_type);
+            dirents.emplace_back(std::string(entp->d_name, entp->d_namlen),
+                                 entp->d_ino,
+                                 entp->d_type);
         }
     }
     else
@@ -224,13 +226,13 @@ int Fetching::ReadDirAttributesStat(
     auto &io = RoutedIO::Default;
     for( auto &e: dirents ) {
         // need absolute paths
-        const string entry_path = _dir_path + get<0>(e);
+        const std::string entry_path = _dir_path + std::get<0>(e);
         
         // stat the file
         struct stat stat_buffer;
         if( io.lstat(entry_path.c_str(), &stat_buffer) == 0 ) {
             CallbackParams params;
-            params.filename = get<0>(e).c_str();
+            params.filename = std::get<0>(e).c_str();
             params.crt_time = stat_buffer.st_birthtimespec.tv_sec;
             params.mod_time = stat_buffer.st_mtimespec.tv_sec;
             params.chg_time = stat_buffer.st_mtimespec.tv_sec;
@@ -256,7 +258,7 @@ int Fetching::ReadDirAttributesStat(
 
 int Fetching::ReadDirAttributesBulk(
     const int _dir_fd,
-    const function<void(int _fetched_now)> &_cb_fetch,
+    const std::function<void(int _fetched_now)> &_cb_fetch,
     const Callback &_cb_param)
 {
     struct Attrs {

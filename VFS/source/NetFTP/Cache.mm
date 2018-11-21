@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Cache.h"
 
 namespace nc::vfs::ftp {
@@ -7,7 +7,7 @@ Entry::Entry()
 {
 }
 
-Entry::Entry(const string &_name):
+Entry::Entry(const std::string &_name):
     name(_name),
     cfname(CFStringCreateWithUTF8StdStringNoCopy(name))
 {
@@ -44,23 +44,23 @@ void Entry::ToStat(VFSStat &_stat) const
     _stat.meaning.mtime = _stat.meaning.ctime = _stat.meaning.btime = _stat.meaning.atime = 1;
 }
 
-const Entry* Directory::EntryByName(const string &_name) const
+const Entry* Directory::EntryByName(const std::string &_name) const
 {
     auto i = find_if(begin(entries), end(entries), [&](auto &_e) { return _e.name == _name; });
     return i != end(entries) ? &(*i) : nullptr;
 }
 
-shared_ptr<Directory> Cache::FindDirectory(const char *_path) const
+std::shared_ptr<Directory> Cache::FindDirectory(const char *_path) const
 {
     if(_path == 0 ||
        _path[0] != '/')
         return nullptr;
     
-    string dir = _path;
+    std::string dir = _path;
     if(dir.back() != '/')
         dir.push_back('/');
     
-    lock_guard<mutex> lock(m_CacheLock);
+    std::lock_guard<std::mutex> lock(m_CacheLock);
     
     auto i = m_Directories.find(dir);
     if(i != m_Directories.end())
@@ -69,21 +69,21 @@ shared_ptr<Directory> Cache::FindDirectory(const char *_path) const
     return nullptr;
 }
 
-shared_ptr<Directory> Cache::FindDirectory(const string &_path) const
+std::shared_ptr<Directory> Cache::FindDirectory(const std::string &_path) const
 {
-    lock_guard<mutex> lock(m_CacheLock);
+    std::lock_guard<std::mutex> lock(m_CacheLock);
     
     return FindDirectoryInt(_path);
 }
 
-void Cache::MarkDirectoryDirty( const string &_path )
+void Cache::MarkDirectoryDirty( const std::string &_path )
 {
-    lock_guard<mutex> lock(m_CacheLock);
+    std::lock_guard<std::mutex> lock(m_CacheLock);
     if( auto d = FindDirectoryInt(_path) )
         d->dirty_structure = true;
 }
 
-shared_ptr<Directory> Cache::FindDirectoryInt(const string &_path) const
+std::shared_ptr<Directory> Cache::FindDirectoryInt(const std::string &_path) const
 {
     if(_path.empty() ||
        _path.front() != '/')
@@ -96,7 +96,7 @@ shared_ptr<Directory> Cache::FindDirectoryInt(const string &_path) const
     return nullptr;
 }
 
-void Cache::InsertLISTDirectory(const char *_path, shared_ptr<Directory> _directory)
+void Cache::InsertLISTDirectory(const char *_path, std::shared_ptr<Directory> _directory)
 {
     // TODO: also update ->parent_dir here
     
@@ -105,13 +105,13 @@ void Cache::InsertLISTDirectory(const char *_path, shared_ptr<Directory> _direct
        !_directory )
         return;
     
-    string dir = _path;
+    std::string dir = _path;
     if(dir.back() != '/')
         dir.push_back('/');
     
     _directory->path = dir;
     
-    lock_guard<mutex> lock(m_CacheLock);
+    std::lock_guard<std::mutex> lock(m_CacheLock);
     
     auto i = m_Directories.find(dir);
     if(i != m_Directories.end())
@@ -120,7 +120,7 @@ void Cache::InsertLISTDirectory(const char *_path, shared_ptr<Directory> _direct
         m_Directories.emplace(dir, _directory);
 }
 
-void Cache::CommitNewFile(const string &_path)
+void Cache::CommitNewFile(const std::string &_path)
 {
     boost::filesystem::path p = _path;
     assert(p.is_absolute());
@@ -129,7 +129,7 @@ void Cache::CommitNewFile(const string &_path)
     if(dir_path != "/")
         dir_path /= "/";
     
-    lock_guard<mutex> lock(m_CacheLock);
+    std::lock_guard<std::mutex> lock(m_CacheLock);
     auto dir = FindDirectoryInt(dir_path.native());
     if(dir != nullptr)
     {
@@ -140,7 +140,7 @@ void Cache::CommitNewFile(const string &_path)
             return;
         }
         
-        auto copy = make_shared<Directory>(*dir);
+        auto copy = std::make_shared<Directory>(*dir);
         copy->entries.emplace_back(p.filename().native());
         copy->entries.back().mode = S_IFREG;
         copy->entries.back().dirty = true;
@@ -151,7 +151,7 @@ void Cache::CommitNewFile(const string &_path)
     }
 }
 
-void Cache::MakeEntryDirty(const string &_path)
+void Cache::MakeEntryDirty(const std::string &_path)
 {
     boost::filesystem::path p = _path;
     assert(p.is_absolute());
@@ -160,7 +160,7 @@ void Cache::MakeEntryDirty(const string &_path)
     if(dir_path != "/")
         dir_path / "/";
     
-    lock_guard<mutex> lock(m_CacheLock);
+    std::lock_guard<std::mutex> lock(m_CacheLock);
     auto dir = FindDirectoryInt(dir_path.native());
     if(dir)
     {
@@ -173,9 +173,9 @@ void Cache::MakeEntryDirty(const string &_path)
     }
 }
 
-void Cache::CommitRMD(const string &_path)
+void Cache::CommitRMD(const std::string &_path)
 {
-    lock_guard<mutex> lock(m_CacheLock);
+    std::lock_guard<std::mutex> lock(m_CacheLock);
     
     EraseEntryInt(_path);
     
@@ -187,13 +187,13 @@ void Cache::CommitRMD(const string &_path)
         m_Directories.erase(i);
 }
 
-void Cache::CommitUnlink(const string &_path)
+void Cache::CommitUnlink(const std::string &_path)
 {
-    lock_guard<mutex> lock(m_CacheLock);
+    std::lock_guard<std::mutex> lock(m_CacheLock);
     EraseEntryInt(_path);
 }
 
-void Cache::CommitMKD(const string &_path)
+void Cache::CommitMKD(const std::string &_path)
 {
     boost::filesystem::path p = _path;
     assert(p.is_absolute());
@@ -202,11 +202,11 @@ void Cache::CommitMKD(const string &_path)
     if(dir_path != "/")
         dir_path /= "/";
     
-    lock_guard<mutex> lock(m_CacheLock);
+    std::lock_guard<std::mutex> lock(m_CacheLock);
     auto dir = FindDirectoryInt(dir_path.native());
     if(dir != nullptr)
     {
-        auto copy = make_shared<Directory>(*dir);
+        auto copy = std::make_shared<Directory>(*dir);
         copy->entries.emplace_back(p.filename().native());
         copy->entries.back().mode = S_IFDIR;
         copy->entries.back().dirty = true;
@@ -217,12 +217,12 @@ void Cache::CommitMKD(const string &_path)
     m_Callback(dir_path.native());
 }
 
-void Cache::CommitRename(const string &_old_path, const string &_new_path)
+void Cache::CommitRename(const std::string &_old_path, const std::string &_new_path)
 {
     boost::filesystem::path old_path = _old_path, new_path = _new_path;
     assert(old_path.is_absolute() && new_path.is_absolute());
     
-    lock_guard<mutex> lock(m_CacheLock);
+    std::lock_guard<std::mutex> lock(m_CacheLock);
     
     boost::filesystem::path old_par_path = old_path.parent_path();
     if(old_par_path != "/") old_par_path /= "/";
@@ -236,7 +236,7 @@ void Cache::CommitRename(const string &_old_path, const string &_new_path)
     auto dir = FindDirectoryInt(old_par_path.native());
     if(dir)
     {
-        auto copy = make_shared<Directory>();
+        auto copy = std::make_shared<Directory>();
         copy->path = dir->path;
         copy->dirty_structure = dir->dirty_structure;
         copy->has_dirty_items = dir->has_dirty_items;
@@ -266,7 +266,7 @@ void Cache::CommitRename(const string &_old_path, const string &_new_path)
         dir = FindDirectoryInt(new_par_path.native());
         if(dir)
         {
-            auto copy = make_shared<Directory>(*dir);
+            auto copy = std::make_shared<Directory>(*dir);
             
             Entry e(new_path.filename().native());
             e.size  = old_entry->size;
@@ -291,7 +291,7 @@ void Cache::CommitRename(const string &_old_path, const string &_new_path)
     }
 }
 
-void Cache::EraseEntryInt(const string &_path)
+void Cache::EraseEntryInt(const std::string &_path)
 {
     boost::filesystem::path p = _path;
     assert(p.filename() != "."); // _path with no trailing slashes
@@ -305,7 +305,7 @@ void Cache::EraseEntryInt(const string &_path)
     auto dir = FindDirectoryInt(dir_path.native());
     if(dir)
     {
-        auto copy = make_shared<Directory>();
+        auto copy = std::make_shared<Directory>();
         copy->path = dir->path;
         copy->dirty_structure = dir->dirty_structure;
         copy->has_dirty_items = dir->has_dirty_items;
@@ -318,7 +318,7 @@ void Cache::EraseEntryInt(const string &_path)
     m_Callback(dir_path.native());
 }
 
-void Cache::SetChangesCallback(void (^_handler)(const string& _at_dir))
+void Cache::SetChangesCallback(void (^_handler)(const std::string& _at_dir))
 {
     m_Callback = _handler;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectionsPool.h"
 #include "Internal.h"
 
@@ -8,7 +8,7 @@ static CURL *SpawnOrThrow()
 {
     const auto curl = curl_easy_init();
     if( !curl )
-        throw runtime_error("curl_easy_init() has returned NULL");
+        throw std::runtime_error("curl_easy_init() has returned NULL");
     return curl;
 }
 
@@ -125,33 +125,33 @@ ConnectionsPool::~ConnectionsPool()
 ConnectionsPool::AR ConnectionsPool::Get()
 {
     if( m_Connections.empty() ) {
-        return AR{make_unique<Connection>(m_Config), *this};
+        return AR{std::make_unique<Connection>(m_Config), *this};
     }
     else {
-        unique_ptr<Connection> c = move(m_Connections.back());
+        std::unique_ptr<Connection> c = std::move(m_Connections.back());
         m_Connections.pop_back();
-        return AR{move(c), *this};
+        return AR{std::move(c), *this};
     }
 }
 
-unique_ptr<Connection> ConnectionsPool::GetRaw()
+std::unique_ptr<Connection> ConnectionsPool::GetRaw()
 {
     auto ar = Get();
-    auto c = move(ar.connection);
+    auto c = std::move(ar.connection);
     return c;
 }
 
-void ConnectionsPool::Return(unique_ptr<Connection> _connection)
+void ConnectionsPool::Return(std::unique_ptr<Connection> _connection)
 {
     if( !_connection )
-        throw invalid_argument("ConnectionsPool::Return accepts only valid connections");
+        throw std::invalid_argument("ConnectionsPool::Return accepts only valid connections");
 
     _connection->Clear();
-    m_Connections.emplace_back( move(_connection) );
+    m_Connections.emplace_back( std::move(_connection) );
 }
 
-ConnectionsPool::AR::AR(unique_ptr<Connection> _c, ConnectionsPool& _p):
-    connection( move(_c) ),
+ConnectionsPool::AR::AR(std::unique_ptr<Connection> _c, ConnectionsPool& _p):
+    connection( std::move(_c) ),
     pool(_p)
 {
 }
@@ -159,7 +159,7 @@ ConnectionsPool::AR::AR(unique_ptr<Connection> _c, ConnectionsPool& _p):
 ConnectionsPool::AR::~AR()
 {
     if( connection )
-        pool.Return( move(connection) );
+        pool.Return( std::move(connection) );
 }
 
 }

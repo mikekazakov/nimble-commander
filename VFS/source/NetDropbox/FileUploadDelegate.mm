@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSError.h>
 #include "FileUploadDelegate.h"
 #include "Aux.h"
@@ -9,9 +9,9 @@ using namespace nc::vfs::dropbox;
 @implementation NCVFSDropboxFileUploadDelegate
 {
     NSInputStream  *m_Stream;
-    mutex                           m_CallbacksLock;
-    function<void(int _vfs_error)>  m_HandleFinished;
-    function<void(NSData *_data)>   m_HandleReceivedData;
+    std::mutex                           m_CallbacksLock;
+    std::function<void(int _vfs_error)>  m_HandleFinished;
+    std::function<void(NSData *_data)>   m_HandleReceivedData;
 }
 
 - (instancetype)initWithStream:(NSInputStream*)_stream
@@ -23,27 +23,27 @@ using namespace nc::vfs::dropbox;
     return self;
 }
 
-- (void)setHandleReceivedData:(function<void (NSData *)>)handleReceivedData
+- (void)setHandleReceivedData:(std::function<void (NSData *)>)handleReceivedData
 {
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_HandleReceivedData = handleReceivedData;
 }
 
-- (function<void (NSData *)>)handleReceivedData
+- (std::function<void (NSData *)>)handleReceivedData
 {
-   lock_guard<mutex> lock{m_CallbacksLock};
+   std::lock_guard<std::mutex> lock{m_CallbacksLock};
    return m_HandleReceivedData;
 }
 
-- (void) setHandleFinished:(function<void(int)>)handleFinished
+- (void) setHandleFinished:(std::function<void(int)>)handleFinished
 {
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_HandleFinished = handleFinished;
 }
 
-- (function<void(int)>)handleFinished
+- (std::function<void(int)>)handleFinished
 {
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     return m_HandleFinished;
 }
 
@@ -57,7 +57,7 @@ using namespace nc::vfs::dropbox;
 - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)_error
 {
     auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     if( m_HandleFinished )
         m_HandleFinished(error);
 }
@@ -75,13 +75,13 @@ static bool HasNoError(NSURLResponse *_response)
     didCompleteWithError:(nullable NSError *)_error
 {
     if( !_error && HasNoError(_task.response) ) {
-        lock_guard<mutex> lock{m_CallbacksLock};
+        std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_HandleFinished )
             m_HandleFinished(VFSError::Ok);
     }
     else {
         auto error = VFSErrorFromErrorAndReponseAndData(_error, _task.response, nil);
-        lock_guard<mutex> lock{m_CallbacksLock};
+        std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_HandleFinished )
             m_HandleFinished(error);
     }
@@ -92,13 +92,13 @@ static bool HasNoError(NSURLResponse *_response)
     didReceiveData:(NSData *)_data
 {
     if( HasNoError(_task.response) ) {
-        lock_guard<mutex> lock{m_CallbacksLock};
+        std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_HandleReceivedData )
             m_HandleReceivedData(_data);
     }
     else {
         auto error = VFSErrorFromErrorAndReponseAndData(nil, _task.response, _data);
-        lock_guard<mutex> lock{m_CallbacksLock};
+        std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_HandleFinished )
             m_HandleFinished(error);
     }

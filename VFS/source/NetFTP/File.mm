@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Host.h"
 #include "Internals.h"
@@ -6,10 +6,10 @@
 
 namespace nc::vfs::ftp {
 
-File::File(const char* _relative_path, shared_ptr<FTPHost> _host):
+File::File(const char* _relative_path, std::shared_ptr<FTPHost> _host):
     VFSFile(_relative_path, _host),
-    m_ReadBuf(make_unique<ReadBuffer>()),
-    m_WriteBuf(make_unique<WriteBuffer>())
+    m_ReadBuf(std::make_unique<ReadBuffer>()),
+    m_WriteBuf(std::make_unique<WriteBuffer>())
 {
 }
 
@@ -29,7 +29,7 @@ int File::Close()
     {
         // if we're still writing - finish it and tell cache about changes
         FinishWriting();
-        dynamic_pointer_cast<FTPHost>(Host())->Cache().CommitNewFile(Path());
+        std::dynamic_pointer_cast<FTPHost>(Host())->Cache().CommitNewFile(Path());
     }
     if(m_CURL && m_Mode == Mode::Read)
     {
@@ -39,7 +39,7 @@ int File::Close()
     
     if(m_CURL)
     {
-        auto host = dynamic_pointer_cast<FTPHost>(Host());
+        auto host = std::dynamic_pointer_cast<FTPHost>(Host());
         host->CommitIOInstanceAtDir(DirName().c_str(), move(m_CURL));
     }
 
@@ -60,7 +60,7 @@ boost::filesystem::path File::DirName() const
 
 int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
-    auto ftp_host = dynamic_pointer_cast<FTPHost>(Host());
+    auto ftp_host = std::dynamic_pointer_cast<FTPHost>(Host());
     VFSStat stat;
     int stat_ret = ftp_host->Stat(Path(), stat, 0, _cancel_checker);
     

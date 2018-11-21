@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #ifdef RAPIDJSON_RAPIDJSON_H_
@@ -44,43 +44,43 @@ struct api
 constexpr uint16_t DirectoryAccessMode = S_IRUSR | S_IWUSR | S_IFDIR | S_IXUSR;
 constexpr uint16_t RegularFileAccessMode = S_IRUSR | S_IWUSR | S_IFREG;
     
-void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const string &_path);
-void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const string &_path);
+void InsetHTTPBodyPathspec(NSMutableURLRequest *_request, const std::string &_path);
+void InsetHTTPHeaderPathspec(NSMutableURLRequest *_request, const std::string &_path);
     
 int ExtractVFSErrorFromJSON( NSData *_response_data );
 int VFSErrorFromErrorAndReponseAndData(NSError *_error, NSURLResponse *_response, NSData*_data);
     
 // returns VFSError and NSData, if VFSError is Ok
-pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
-                                           NSURLRequest *_request,
-                                           const VFSCancelChecker &_cancel_checker = nullptr);
+std::pair<int, NSData *> SendSynchronousRequest(NSURLSession *_session,
+                                                NSURLRequest *_request,
+                                                const VFSCancelChecker &_cancel_checker = nullptr);
     
 struct Metadata
 {
-    string name = ""; // will be empty on errors
+    std::string name = ""; // will be empty on errors
     bool is_directory = false;
     int64_t size = -1;
     int64_t chg_time = -1;
 };
 Metadata ParseMetadata( const rapidjson::Value &_value );
-vector<Metadata> ExtractMetadataEntries( const rapidjson::Value &_value );
+std::vector<Metadata> ExtractMetadataEntries( const rapidjson::Value &_value );
     
 struct AccountInfo
 {
-    string accountid;
-    string email;
+    std::string accountid;
+    std::string email;
     /* others later */
 };
 AccountInfo ParseAccountInfo( const rapidjson::Value &_value );
     
 const char *GetString( const rapidjson::Value &_doc, const char *_key );
-optional<long> GetLong( const rapidjson::Value &_doc, const char *_key );
+std::optional<long> GetLong( const rapidjson::Value &_doc, const char *_key );
     
-string EscapeString(const string &_original);
-string EscapeStringForJSONInHTTPHeader(const string &_original);
+std::string EscapeString(const std::string &_original);
+std::string EscapeStringForJSONInHTTPHeader(const std::string &_original);
     
     
-optional<rapidjson::Document> ParseJSON( NSData *_data );
+std::optional<rapidjson::Document> ParseJSON( NSData *_data );
     
 bool IsNormalJSONResponse( NSURLResponse *_response );
     

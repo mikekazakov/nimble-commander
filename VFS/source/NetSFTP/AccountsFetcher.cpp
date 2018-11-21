@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AccountsFetcher.h"
 #include <VFS/VFSError.h>
 #include <boost/algorithm/string/split.hpp>
@@ -13,7 +13,7 @@ AccountsFetcher::AccountsFetcher
 {
 }
 
-int AccountsFetcher::FetchUsers( vector<VFSUser> &_target )
+int AccountsFetcher::FetchUsers( std::vector<VFSUser> &_target )
 {
     _target.clear();
     
@@ -28,18 +28,18 @@ int AccountsFetcher::FetchUsers( vector<VFSUser> &_target )
     if( rc != VFSError::Ok )
         return rc;
 
-    sort(begin(_target),
-         end(_target),
-         [](const auto &_1, const auto &_2){ return (signed)_1.uid < (signed)_2.uid; });
-    _target.erase(unique(begin(_target),
-                         end(_target),
-                         [](const auto &_1, const auto &_2){ return _1.uid == _2.uid; }),
-                  end(_target));
+    std::sort(std::begin(_target),
+              std::end(_target),
+              [](const auto &_1, const auto &_2){ return (signed)_1.uid < (signed)_2.uid; });
+    _target.erase(std::unique(std::begin(_target),
+                              std::end(_target),
+                              [](const auto &_1, const auto &_2){ return _1.uid == _2.uid; }),
+                  std::end(_target));
 
     return VFSError::Ok;
 }
 
-int AccountsFetcher::FetchGroups(vector<VFSGroup> &_target)
+int AccountsFetcher::FetchGroups(std::vector<VFSGroup> &_target)
 {
     _target.clear();
     
@@ -54,28 +54,28 @@ int AccountsFetcher::FetchGroups(vector<VFSGroup> &_target)
     if( rc != VFSError::Ok )
         return rc;
     
-    sort(begin(_target),
-         end(_target),
-         [](const auto &_1, const auto &_2){ return (signed)_1.gid < (signed)_2.gid; });
-    _target.erase(unique(begin(_target),
-                          end(_target),
-                          [](const auto &_1, const auto &_2){ return _1.gid == _2.gid; }),
-                  end(_target));
+    std::sort(std::begin(_target),
+              std::end(_target),
+              [](const auto &_1, const auto &_2){ return (signed)_1.gid < (signed)_2.gid; });
+    _target.erase(std::unique(std::begin(_target),
+                              std::end(_target),
+                              [](const auto &_1, const auto &_2){ return _1.gid == _2.gid; }),
+                  std::end(_target));
     
     return VFSError::Ok;
 }
 
-int AccountsFetcher::GetUsersViaGetent( vector<VFSUser> &_target )
+int AccountsFetcher::GetUsersViaGetent( std::vector<VFSUser> &_target )
 {
     const auto getent = Execute("getent passwd");
     if( !getent )
         return VFSError::FromErrno(ENODEV);
     
-    vector<string> entries;
+    std::vector<std::string> entries;
     boost::algorithm::split(entries, *getent, [](auto c){ return c == '\n'; });
 
     for( const auto &e: entries ) {
-        vector<string> fields;
+        std::vector<std::string> fields;
         boost::algorithm::split(fields, e, [](auto c){ return c == ':'; });
         const auto passwd_fields = 7;
         if( fields.size() == passwd_fields ) {
@@ -84,38 +84,38 @@ int AccountsFetcher::GetUsersViaGetent( vector<VFSUser> &_target )
             user.gecos = fields[4];
             boost::algorithm::trim_right_if(user.gecos, [](auto c){ return c == ','; });
             user.uid = (unsigned)atoi(fields[2].c_str());
-            _target.emplace_back( move(user) );
+            _target.emplace_back( std::move(user) );
         }
     }
 
     return VFSError::Ok;
 }
 
-int AccountsFetcher::GetGroupsViaGetent( vector<VFSGroup> &_target )
+int AccountsFetcher::GetGroupsViaGetent( std::vector<VFSGroup> &_target )
 {
     const auto getent = Execute("getent group");
     if( !getent )
         return VFSError::FromErrno(ENODEV);
     
-    vector<string> entries;
+    std::vector<std::string> entries;
     boost::algorithm::split(entries, *getent, [](auto c){ return c == '\n'; });
 
     for( const auto &e: entries ) {
-        vector<string> fields;
+        std::vector<std::string> fields;
         boost::algorithm::split(fields, e, [](auto c){ return c == ':'; });
         const auto group_fields_at_least = 3;
         if( fields.size() >= group_fields_at_least ) {
             VFSGroup group;
             group.name = fields[0];
             group.gid = (unsigned)atoi(fields[2].c_str());
-            _target.emplace_back( move(group) );
+            _target.emplace_back( std::move(group) );
         }
     }
 
     return VFSError::Ok;
 }
 
-int AccountsFetcher::GetUsersViaOpenDirectory( vector<VFSUser> &_target )
+int AccountsFetcher::GetUsersViaOpenDirectory( std::vector<VFSUser> &_target )
 {
     const auto ds_ids = Execute("dscl . -list /Users UniqueID");
     if( !ds_ids )
@@ -125,12 +125,12 @@ int AccountsFetcher::GetUsersViaOpenDirectory( vector<VFSUser> &_target )
     if( !ds_gecos )
         return VFSError::FromErrno(ENODEV);
 
-    unordered_map<string, pair<uint32_t, string>> users; // user -> uid, gecos
-    vector<string> entries;
+    std::unordered_map<std::string, std::pair<uint32_t, std::string>> users; // user -> uid, gecos
+    std::vector<std::string> entries;
     
     boost::algorithm::split(entries, *ds_ids, [](auto c){ return c == '\n'; });
     for( const auto &e: entries )
-        if( const auto fs = e.find(' '); fs != string::npos ) {
+        if( const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
             auto uid_str = e.substr(fs);
             boost::algorithm::trim_left(uid_str);
@@ -139,7 +139,7 @@ int AccountsFetcher::GetUsersViaOpenDirectory( vector<VFSUser> &_target )
 
     boost::algorithm::split(entries, *ds_gecos, [](auto c){ return c == '\n'; });
     for( const auto &e: entries )
-        if(const auto fs = e.find(' '); fs != string::npos ) {
+        if(const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
             auto gecos = e.substr(fs);
             boost::algorithm::trim_left(gecos);
@@ -151,13 +151,13 @@ int AccountsFetcher::GetUsersViaOpenDirectory( vector<VFSUser> &_target )
         user.name = u.first;
         user.uid = u.second.first;
         user.gecos = u.second.second;
-        _target.emplace_back( move(user) );
+        _target.emplace_back( std::move(user) );
     }
 
     return VFSError::Ok;
 }
 
-int AccountsFetcher::GetGroupsViaOpenDirectory( vector<VFSGroup> &_target )
+int AccountsFetcher::GetGroupsViaOpenDirectory( std::vector<VFSGroup> &_target )
 {
     const auto ds_ids = Execute("dscl . -list /Groups PrimaryGroupID");
     if( !ds_ids )
@@ -167,12 +167,12 @@ int AccountsFetcher::GetGroupsViaOpenDirectory( vector<VFSGroup> &_target )
     if( !ds_gecos )
         return VFSError::FromErrno(ENODEV);
 
-    unordered_map<string, pair<uint32_t, string>> groups; // group -> gid, gecos
-    vector<string> entries;
+    std::unordered_map<std::string, std::pair<uint32_t, std::string>> groups; // group -> gid, gecos
+    std::vector<std::string> entries;
     
     boost::algorithm::split(entries, *ds_ids, [](auto c){ return c == '\n'; });
     for( const auto &e: entries )
-        if( const auto fs = e.find(' '); fs != string::npos ) {
+        if( const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
             auto gid_str = e.substr(fs);
             boost::algorithm::trim_left(gid_str);
@@ -181,7 +181,7 @@ int AccountsFetcher::GetGroupsViaOpenDirectory( vector<VFSGroup> &_target )
 
     boost::algorithm::split(entries, *ds_gecos, [](auto c){ return c == '\n'; });
     for( const auto &e: entries )
-        if(const auto fs = e.find(' '); fs != string::npos ) {
+        if(const auto fs = e.find(' '); fs != std::string::npos ) {
             const auto name = e.substr(0, fs);
             auto gecos = e.substr(fs);
             boost::algorithm::trim_left(gecos);
@@ -193,26 +193,26 @@ int AccountsFetcher::GetGroupsViaOpenDirectory( vector<VFSGroup> &_target )
         group.name = g.first;
         group.gid = g.second.first;
         group.gecos = g.second.second;
-        _target.emplace_back( move(group) );
+        _target.emplace_back( std::move(group) );
     }
 
     return VFSError::Ok;
 }
 
-optional<string> AccountsFetcher::Execute( const string &_command )
+std::optional<std::string> AccountsFetcher::Execute( const std::string &_command )
 {
     LIBSSH2_CHANNEL *channel = libssh2_channel_open_session(m_Session);
     if( channel == nullptr )
-        return nullopt;
+        return std::nullopt;
     
     int rc = libssh2_channel_exec(channel, _command.c_str());
     if( rc < 0 ) {
         libssh2_channel_close(channel);
         libssh2_channel_free(channel);
-        return nullopt;
+        return std::nullopt;
     }
 
-    string response;
+    std::string response;
 
     char buffer[4096];
     while( (rc = (int)libssh2_channel_read(channel, buffer, sizeof(buffer)-1)) > 0 ) {
@@ -224,9 +224,9 @@ optional<string> AccountsFetcher::Execute( const string &_command )
     libssh2_channel_free(channel);
 
     if( rc < 0 )
-        return nullopt;
+        return std::nullopt;
     
-    return move(response);
+    return std::move(response);
 }
 
 }

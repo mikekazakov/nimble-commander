@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include "Internals.h"
 #include "Host.h"
@@ -14,7 +14,7 @@ size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *us
     
     //    printf("%s", tmp);
 
-    string *str = (string*)userp;
+    std::string *str = (std::string*)userp;
     (*str) += tmp;
     
     return sz;
@@ -165,7 +165,7 @@ static int parse_dir_win(const char *line,
 }
 
     
-shared_ptr<Directory> ParseListing(const char *_str)
+std::shared_ptr<Directory> ParseListing(const char *_str)
 {
     if(_str == nullptr)
         return nullptr;
@@ -173,7 +173,7 @@ shared_ptr<Directory> ParseListing(const char *_str)
     const char *line_start = _str;
     const char *line_end = nullptr;
     
-    auto directory = make_shared<Directory>();
+    auto directory = std::make_shared<Directory>();
     auto &entries = directory->entries;
     
     static const auto current_line_sz = 4096;

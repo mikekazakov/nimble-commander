@@ -1,11 +1,11 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Host.h"
 #include "Internals.h"
 
 namespace nc::vfs::unrar {
 
-File::File(const char* _relative_path, shared_ptr<UnRARHost> _host):
+File::File(const char* _relative_path, std::shared_ptr<UnRARHost> _host):
     VFSFile(_relative_path, _host),
     m_UnpackThread(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)),
     m_UnpackBuffer(new uint8_t[m_UnpackBufferDefaultCapacity]),
@@ -27,7 +27,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     if(_open_flags & VFSFlags::OF_Write)
         return SetLastError(VFSError::NotSupported); // UnRAR is Read-Only
     
-    auto rar_host = dynamic_pointer_cast<UnRARHost>(Host());
+    auto rar_host = std::dynamic_pointer_cast<UnRARHost>(Host());
     auto entry = rar_host->FindEntry(Path());
     if(entry == 0)
         return SetLastError(VFSError::NotFound);
@@ -71,7 +71,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
          RARSetCallback(m_Archive->rar_handle, ProcessRAR, (long)this);
          m_RarError = RARProcessFile(m_Archive->rar_handle, RAR_TEST, NULL, NULL);
         if(m_RarError != 0)
-             cerr << "RARProcessFile returned " << m_RarError << endl;
+             std::cerr << "RARProcessFile returned " << m_RarError << std::endl;
 
          m_ExtractionRunning = false;
          dispatch_semaphore_signal(m_FinishUnpackSemaphore);
@@ -100,7 +100,7 @@ int File::Close()
     
     if(m_Archive)
     {
-        auto rar_host = dynamic_pointer_cast<UnRARHost>(Host());
+        auto rar_host = std::dynamic_pointer_cast<UnRARHost>(Host());
         if(m_Entry->uuid < rar_host->LastItemUUID())
         {
             m_Archive->uid = m_Entry->uuid;
@@ -155,7 +155,7 @@ int File::ProcessRAR(unsigned int _msg, long _user_data, long _p1, long _p2)
             {
                 // grow buffer accordingly
                 unsigned new_capacity = _this->m_UnpackBufferSize + (unsigned)_p2;
-                unique_ptr<uint8_t[]> buf(new uint8_t[new_capacity]);
+                std::unique_ptr<uint8_t[]> buf(new uint8_t[new_capacity]);
                 memcpy(buf.get(),
                        _this->m_UnpackBuffer.get(),
                        _this->m_UnpackBufferSize);
@@ -205,7 +205,7 @@ ssize_t File::Read(void *_buf, const size_t _size)
     }
         
     // just give unpacked data away, don't unpack any more now
-    ssize_t sz = min(ssize_t(_size), ssize_t(m_UnpackBufferSize));
+    ssize_t sz = std::min(ssize_t(_size), ssize_t(m_UnpackBufferSize));
     assert(sz + m_Position <= (long)m_Entry->unpacked_size);
         
     memcpy(_buf,

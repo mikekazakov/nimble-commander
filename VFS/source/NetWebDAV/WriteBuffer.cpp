@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WriteBuffer.h"
 
 namespace nc::vfs::webdav {
@@ -26,7 +26,7 @@ size_t WriteBuffer::Size() const noexcept
 
 void WriteBuffer::Grow(int _new_size) noexcept
 {
-    _new_size = max(_new_size, g_DefaultCapacity);
+    _new_size = std::max(_new_size, g_DefaultCapacity);
     assert( m_Size < _new_size );
     m_Capacity = _new_size;
     m_Bytes = (uint8_t*)realloc(m_Bytes, m_Capacity);
@@ -63,7 +63,7 @@ void WriteBuffer::Write(const void* _buffer, size_t _bytes) noexcept
 
 size_t WriteBuffer::Discard(size_t _bytes) noexcept
 {
-    const auto to_discard = min( size_t(m_Size), _bytes );
+    const auto to_discard = std::min( size_t(m_Size), _bytes );
     PopFront((int)to_discard);
     return to_discard;
 }
@@ -73,7 +73,7 @@ size_t WriteBuffer::Read(void *_ptr, size_t _size, size_t _nmemb, void *_userp)
     WriteBuffer &buffer = *(WriteBuffer*)_userp;
 
     const auto total_bytes = _size * _nmemb;
-    const auto to_read = min( size_t(buffer.m_Size), total_bytes );
+    const auto to_read = std::min( size_t(buffer.m_Size), total_bytes );
     if( to_read == 0 )
         return 0;
     

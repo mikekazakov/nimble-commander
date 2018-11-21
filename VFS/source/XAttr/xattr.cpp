@@ -1,15 +1,17 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include "xattr.h"
 #include <VFS/VFSFile.h>
 #include "../ListingInput.h"
+
+using namespace std::literals;
 
 namespace nc::vfs {
 
 class XAttrFile final: public VFSFile
 {
 public:
-    XAttrFile( const string &_xattr_path, const shared_ptr<XAttrHost> &_parent, int _fd );
+    XAttrFile( const std::string &_xattr_path, const std::shared_ptr<XAttrHost> &_parent, int _fd );
     virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker = nullptr) override;
     virtual int  Close() override;
     virtual bool IsOpened() const override;
@@ -31,7 +33,7 @@ private:
     
     const int               m_FD; // non-owning
     unsigned long           m_OpenFlags = 0;
-    unique_ptr<uint8_t[]>   m_FileBuf;
+    std::unique_ptr<uint8_t[]>m_FileBuf;
     ssize_t                 m_Position = 0;
     ssize_t                 m_Size = 0;
     ssize_t                 m_UploadSize = -1;
@@ -55,7 +57,7 @@ static bool TurnOffBlockingMode( int _fd ) noexcept
     return true;
 }
 
-static int EnumerateAttrs( int _fd, vector<pair<string, unsigned>> &_attrs )
+static int EnumerateAttrs( int _fd, std::vector<std::pair<std::string, unsigned>> &_attrs )
 {
     const auto buf_sz = 65536;
     char buf[buf_sz];
@@ -79,14 +81,14 @@ static const mode_t g_RootMode = S_IRUSR | S_IXUSR | S_IFDIR;
 class VFSXAttrHostConfiguration
 {
 public:
-    VFSXAttrHostConfiguration(const string &_path):
+    VFSXAttrHostConfiguration(const std::string &_path):
         path(_path),
         verbose_junction("[xattr]:"s + _path)
     {
     }
     
-    const string path;
-    const string verbose_junction;
+    const std::string path;
+    const std::string verbose_junction;
     
     const char *Tag() const
     {
@@ -109,7 +111,7 @@ public:
     }
 };
 
-XAttrHost::XAttrHost( const string &_file_path, const VFSHostPtr& _host ):
+XAttrHost::XAttrHost( const std::string &_file_path, const VFSHostPtr& _host ):
     XAttrHost( _host,
                  VFSConfiguration( VFSXAttrHostConfiguration(_file_path) )
                  )
@@ -164,7 +166,7 @@ VFSMeta XAttrHost::Meta()
     VFSMeta m;
     m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
-        return make_shared<XAttrHost>(_parent, _config);
+        return std::make_shared<XAttrHost>(_parent, _config);
     };
     return m;
 }
@@ -176,22 +178,22 @@ bool XAttrHost::IsWritable() const
 
 int XAttrHost::Fetch()
 {
-    vector<pair<string, unsigned>> info;
+    std::vector<std::pair<std::string, unsigned>> info;
     int ret = EnumerateAttrs(m_FD, info);
     if( ret != 0)
         return ret;
     
-    lock_guard<spinlock> lock(m_AttrsLock);
+    std::lock_guard<spinlock> lock(m_AttrsLock);
     m_Attrs = move(info);
     return VFSError::Ok;
 }
 
 int XAttrHost::FetchDirectoryListing(const char *_path,
-                                        shared_ptr<VFSListing> &_target,
-                                        unsigned long _flags,
-                                        const VFSCancelChecker &_cancel_checker)
+                                     std::shared_ptr<VFSListing> &_target,
+                                     unsigned long _flags,
+                                     const VFSCancelChecker &_cancel_checker)
 {
-    if( !_path || _path != string_view("/") )
+    if( !_path || _path != std::string_view("/") )
         return VFSError::InvalidCall;
     
     // set up or listing structure
@@ -209,7 +211,7 @@ int XAttrHost::FetchDirectoryListing(const char *_path,
     listing_source.mtimes[0] = m_Stat.st_mtime;
     
     {
-        lock_guard<spinlock> lock(m_AttrsLock);
+        std::lock_guard<spinlock> lock(m_AttrsLock);
         
         if( !(_flags & VFSFlags::F_NoDotDot) ) {
             listing_source.filenames.emplace_back( ".." );
@@ -226,7 +228,7 @@ int XAttrHost::FetchDirectoryListing(const char *_path,
         }
     }
     
-    _target = VFSListing::Build(move(listing_source));
+    _target = VFSListing::Build(std::move(listing_source));
     return VFSError::Ok;
 }
 
@@ -247,7 +249,7 @@ int XAttrHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const
     _st.btime = m_Stat.st_birthtimespec;
     _st.ctime = m_Stat.st_ctimespec;
     
-    auto path = string_view(_path);
+    auto path = std::string_view(_path);
     if( path == "/" ) {
         _st.mode = g_RootMode;
         _st.size = 0;
@@ -267,10 +269,11 @@ int XAttrHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const
 }
 
 int XAttrHost::CreateFile(const char* _path,
-                             shared_ptr<VFSFile> &_target,
-                             const VFSCancelChecker &_cancel_checker)
+                          std::shared_ptr<VFSFile> &_target,
+                          const VFSCancelChecker &_cancel_checker)
 {
-    auto file = make_shared<XAttrFile>(_path, static_pointer_cast<XAttrHost>(shared_from_this()), m_FD);
+    auto file = std::make_shared<XAttrFile>(_path,
+                                            std::static_pointer_cast<XAttrHost>(shared_from_this()), m_FD);
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
@@ -303,7 +306,7 @@ int XAttrHost::Rename(const char *_old_path, const char *_new_path, const VFSCan
     if( xattr_size < 0 )
         return VFSError::FromErrno();
     
-    const auto buf = make_unique<uint8_t[]>(xattr_size);
+    const auto buf = std::make_unique<uint8_t[]>(xattr_size);
     if( fgetxattr(m_FD, old_path, buf.get(), xattr_size, 0, 0) < 0 )
         return VFSError::FromErrno();
     
@@ -329,7 +332,9 @@ void XAttrHost::ReportChange()
 //bool VFSHost::ValidateFilename(const char *_filename) const
 
 
-XAttrFile::XAttrFile( const string &_xattr_path, const shared_ptr<XAttrHost> &_parent, int _fd ):
+XAttrFile::XAttrFile(const std::string &_xattr_path,
+                     const std::shared_ptr<XAttrHost> &_parent,
+                     int _fd ):
     VFSFile(_xattr_path.c_str(), _parent),
     m_FD(_fd)
 {
@@ -358,7 +363,7 @@ int XAttrFile::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_c
         if( xattr_size < 0 )
             return VFSError::FromErrno(ENOENT);
     
-        m_FileBuf = make_unique<uint8_t[]>(xattr_size);
+        m_FileBuf = std::make_unique<uint8_t[]>(xattr_size);
         if( fgetxattr(m_FD, path, m_FileBuf.get(), xattr_size, 0, 0) < 0 )
             return VFSError::FromErrno();
         
@@ -444,7 +449,7 @@ ssize_t XAttrFile::Read(void *_buf, size_t _size)
     if( m_Position == m_Size )
         return 0;
     
-    ssize_t to_read = min( m_Size - m_Position, ssize_t(_size) );
+    ssize_t to_read = std::min( m_Size - m_Position, ssize_t(_size) );
     if( to_read <= 0 )
         return 0;
     
@@ -462,7 +467,7 @@ ssize_t XAttrFile::ReadAt(off_t _pos, void *_buf, size_t _size)
     if( _pos < 0 || _pos > m_Size )
         return SetLastError( VFSError::FromErrno(EINVAL) );
     
-    auto sz = min( m_Size - _pos, off_t(_size) );
+    auto sz = std::min( m_Size - _pos, off_t(_size) );
     memcpy(_buf, m_FileBuf.get() + _pos, sz );
     return sz;
 }
@@ -488,7 +493,7 @@ int XAttrFile::SetUploadSize(size_t _size)
     // TODO: check max xattr size and reject huge ones
 
     m_UploadSize = _size;
-    m_FileBuf = make_unique<uint8_t[]>(_size);
+    m_FileBuf = std::make_unique<uint8_t[]>(_size);
     
     if( _size == 0 ) {
         // for zero-size uploading - do it right here        
@@ -496,7 +501,7 @@ int XAttrFile::SetUploadSize(size_t _size)
         if( fsetxattr(m_FD, XAttrName(), buf, 0, 0, 0) != 0 )
             return VFSError::FromErrno();
         
-        dynamic_pointer_cast<XAttrHost>(Host())->ReportChange();
+        std::dynamic_pointer_cast<XAttrHost>(Host())->ReportChange();
     }
     
     return 0;
@@ -509,7 +514,7 @@ ssize_t XAttrFile::Write(const void *_buf, size_t _size)
         return VFSError::FromErrno(EIO);
     
     if( m_Position < m_UploadSize ) {
-        ssize_t to_write = min( m_UploadSize - m_Position, (ssize_t)_size );
+        ssize_t to_write = std::min( m_UploadSize - m_Position, (ssize_t)_size );
         memcpy( m_FileBuf.get() + m_Position, _buf, to_write );
         m_Position += to_write;
         
@@ -519,7 +524,7 @@ ssize_t XAttrFile::Write(const void *_buf, size_t _size)
             if( fsetxattr(m_FD, XAttrName(), m_FileBuf.get(), m_UploadSize, 0, 0) != 0 )
                 return VFSError::FromErrno();
             
-            dynamic_pointer_cast<XAttrHost>(Host())->ReportChange();
+            std::dynamic_pointer_cast<XAttrHost>(Host())->ReportChange();
         }
         return to_write;
     }

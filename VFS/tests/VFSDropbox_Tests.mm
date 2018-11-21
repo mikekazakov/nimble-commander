@@ -1,9 +1,10 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "tests_common.h"
 #include <VFS/NetDropbox.h>
 #include <VFS/../../source/NetDropbox/File.h>
 
 using namespace nc::vfs;
+using namespace std;
 
 static const auto g_Account = NCE(nc::env::test::dropbox_account);
 static const auto g_Token = NCE(nc::env::test::dropbox_token);

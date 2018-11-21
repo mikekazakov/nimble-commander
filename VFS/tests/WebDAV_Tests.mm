@@ -1,10 +1,11 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "tests_common.h"
 #include "../source/NetWebDAV/WebDAVHost.h"
 #include <VFS/VFSEasyOps.h>
 #include <VFS/Native.h>
 
 using namespace nc::vfs;
+using namespace std;
 
 static const auto g_NASHost = NCE(nc::env::test::webdav_nas_host);
 static const auto g_NASUsername = NCE(nc::env::test::webdav_nas_username);

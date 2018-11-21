@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libproc.h>
 #include <sys/resource.h>
 #include <sys/proc_info.h>
@@ -11,13 +11,14 @@
 #include "File.h"
 
 namespace nc::vfs {
-
+    using namespace std::literals;
+    
 const char *PSHost::UniqueTag = "psfs";
 
 static NSDateFormatter *ProcDateFormatter()
 {
     static NSDateFormatter *formatter = nil;
-    once_flag flag;
+    std::once_flag flag;
     call_once(flag, []{
         auto fmt = [[NSDateFormatter alloc] init];
         [fmt setTimeStyle:NSDateFormatterShortStyle];
@@ -27,9 +28,9 @@ static NSDateFormatter *ProcDateFormatter()
     return formatter;
 }
 
-static const string& ProcStatus(int _st)
+static const std::string& ProcStatus(int _st)
 {
-    static const string strings[] = {
+    static const std::string strings[] = {
         "",
         "SIDL (process being created by fork)",
         "SRUN (currently runnable)",
@@ -69,11 +70,11 @@ static cpu_type_t ArchTypeFromPID(pid_t _pid)
     return 0;
 }
 
-static const string& ArchType(int _type)
+static const std::string& ArchType(int _type)
 {
-    static const string x86 = "x86";
-    static const string x86_64 = "x86-64";
-    static const string na = "N/A";
+    static const std::string x86 = "x86";
+    static const std::string x86_64 = "x86-64";
+    static const std::string na = "N/A";
     
     if(_type == CPU_TYPE_X86_64)    return x86_64;
     else if(_type == CPU_TYPE_X86)  return x86;
@@ -81,7 +82,7 @@ static const string& ArchType(int _type)
 }
 
 // from https://gist.github.com/nonowarn/770696
-static void print_argv_of_pid(int pid, string &_out)
+static void print_argv_of_pid(int pid, std::string &_out)
 {
     int    mib[3], argmax, nargs, c = 0;
     size_t    size;
@@ -261,7 +262,7 @@ public:
 };
 
 PSHost::PSHost():
-    Host("", shared_ptr<Host>(0), UniqueTag),
+    Host("", std::shared_ptr<Host>(0), UniqueTag),
     m_UpdateQ("PSHost")
 {
     CommitProcs(GetProcs());
@@ -288,27 +289,27 @@ VFSMeta PSHost::Meta()
     return m;
 }
 
-shared_ptr<PSHost> PSHost::GetSharedOrNew()
+std::shared_ptr<PSHost> PSHost::GetSharedOrNew()
 {
-    static mutex mt;
-    static weak_ptr<PSHost> cache;
+    static std::mutex mt;
+    static std::weak_ptr<PSHost> cache;
     
-    lock_guard<mutex> lock(mt);
+    std::lock_guard<std::mutex> lock(mt);
     if(auto host = cache.lock())
         return host;
     
-    auto host = make_shared<PSHost>();
+    auto host = std::make_shared<PSHost>();
     cache = host;
     return host;
 }
 
-vector<PSHost::ProcInfo> PSHost::GetProcs()
+std::vector<PSHost::ProcInfo> PSHost::GetProcs()
 {
     size_t proc_cnt = 0;
     kinfo_proc *proc_list = 0;
     nc::utility::GetBSDProcessList(&proc_list, &proc_cnt);
     
-    vector<ProcInfo> procs(proc_cnt);
+    std::vector<ProcInfo> procs(proc_cnt);
     for( size_t kip_i = 0; kip_i < proc_cnt; ++kip_i ) {
         const kinfo_proc &kip = proc_list[kip_i];
         
@@ -353,7 +354,7 @@ vector<PSHost::ProcInfo> PSHost::GetProcs()
 
 void PSHost::UpdateCycle()
 {
-    auto weak_this = weak_ptr<PSHost>(SharedPtr());
+    auto weak_this = std::weak_ptr<PSHost>(SharedPtr());
     m_UpdateQ.Run([=]{
         if(m_UpdateQ.IsStopped())
             return;
@@ -384,11 +385,11 @@ void PSHost::EnsureUpdateRunning()
     }
 }
 
-void PSHost::CommitProcs(vector<ProcInfo> _procs)
+void PSHost::CommitProcs(std::vector<ProcInfo> _procs)
 {
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(m_Lock);
 
-    auto newdata = make_shared<Snapshot>();
+    auto newdata = std::make_shared<Snapshot>();
     
     newdata->taken_time = time_t(NSDate.date.timeIntervalSince1970);
     newdata->procs.swap(_procs);
@@ -412,9 +413,10 @@ void PSHost::CommitProcs(vector<ProcInfo> _procs)
         i.second();
 }
 
-string PSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _data)
+std::string PSHost::ProcInfoIntoFile(const ProcInfo& _info, std::shared_ptr<Snapshot> _data)
 {
-    string result;
+    using std::to_string;
+    std::string result;
     
     const char * parent_name = "N/A";
     {
@@ -449,8 +451,8 @@ string PSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _dat
         auto bread = to_string(_info.rusage.ri_diskio_bytesread);
         auto bwritten = to_string(_info.rusage.ri_diskio_byteswritten);
         (bread.length() < bwritten.length() ? bread : bwritten).insert(0,
-                                                                       max(bread.length(), bwritten.length()) -
-                                                                        min(bread.length(), bwritten.length()),
+                                                                       std::max(bread.length(), bwritten.length()) -
+                                                                        std::min(bread.length(), bwritten.length()),
                                                                        ' '); // right align
         result += "Disk I/O bytes read:    "s + bread + "\n";
         result += "Disk I/O bytes written: "s + bwritten + "\n";
@@ -462,7 +464,7 @@ string PSHost::ProcInfoIntoFile(const ProcInfo& _info, shared_ptr<Snapshot> _dat
 }
 
 int PSHost::FetchDirectoryListing(const char *_path,
-                                     shared_ptr<VFSListing> &_target,
+                                     std::shared_ptr<VFSListing> &_target,
                                      unsigned long _flags,
                                      const VFSCancelChecker &_cancel_checker)
 {
@@ -494,7 +496,7 @@ int PSHost::FetchDirectoryListing(const char *_path,
         listing_source.sizes.insert( index, data->files[index].size() );
     }
     
-    _target = VFSListing::Build(move(listing_source));
+    _target = VFSListing::Build(std::move(listing_source));
     return 0;
 }
 
@@ -509,10 +511,10 @@ bool PSHost::IsDirectory(const char *_path,
 }
 
 int PSHost::CreateFile(const char* _path,
-                          shared_ptr<VFSFile> &_target,
+                          std::shared_ptr<VFSFile> &_target,
                           const VFSCancelChecker &_cancel_checker)
 {
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(m_Lock);
     
     if(_path == nullptr)
         return VFSError::InvalidCall;
@@ -522,7 +524,7 @@ int PSHost::CreateFile(const char* _path,
     if(index < 0)
         return VFSError::NotFound;
     
-    auto file = make_shared<PSFile>(_path, SharedPtr(), m_Data->files[index]);
+    auto file = std::make_shared<PSFile>(_path, SharedPtr(), m_Data->files[index]);
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
@@ -532,7 +534,7 @@ int PSHost::CreateFile(const char* _path,
 int PSHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
 {
     static VFSStat::meaningT m;
-    static once_flag once;
+    static std::once_flag once;
     call_once(once, []{
         memset(&m, sizeof(m), 0);
         m.size = 1;
@@ -543,7 +545,7 @@ int PSHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VF
         m.btime = 1;
     });
     
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(m_Lock);
     
     if(_path == nullptr)
         return VFSError::InvalidCall;
@@ -589,7 +591,7 @@ bool PSHost::IsDirChangeObservingAvailable(const char *_path)
     return true;
 }
 
-HostDirObservationTicket PSHost::DirChangeObserve(const char *_path, function<void()> _handler)
+HostDirObservationTicket PSHost::DirChangeObserve(const char *_path, std::function<void()> _handler)
 {
     // currently we don't care about _path, since this fs has only one directory - root
     auto ticket = m_LastTicket++;
@@ -606,7 +608,7 @@ void PSHost::StopDirChangeObserving(unsigned long _ticket)
         m_UpdateHandlers.erase(it);
 }
 
-int PSHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
+int PSHost::IterateDirectoryListing(const char *_path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     assert(_path != 0);
     if(_path[0] != '/' || _path[1] != 0)
@@ -638,7 +640,7 @@ int PSHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &
     _stat.volume_name = "Processes List";
     _stat.avail_bytes = _stat.free_bytes = 0;
     
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(m_Lock);
     int total_size = 0;
     for_each( begin(m_Data->files), end(m_Data->files), [&](auto &i){ total_size += i.length(); } );
     _stat.total_bytes = total_size;
@@ -647,18 +649,18 @@ int PSHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &
 
 // return true if process has died, if it didn't on timeout - returns false
 // on any errors returns nullopt
-static optional<bool> WaitForProcessToDie( int pid )
+static std::optional<bool> WaitForProcessToDie( int pid )
 {
     int kq = kqueue();
     if( kq == -1 )
-        return nullopt;
+        return std::nullopt;
     
     struct kevent ke;
     EV_SET(&ke, pid, EVFILT_PROC, EV_ADD, NOTE_EXIT, 0, NULL);
     
     int i = kevent(kq, &ke, 1, NULL, 0, NULL);
     if( i == -1 )
-        return nullopt;
+        return std::nullopt;
     
     memset(&ke, 0x00, sizeof(struct kevent));
     struct timespec tm;
@@ -666,7 +668,7 @@ static optional<bool> WaitForProcessToDie( int pid )
     tm.tv_nsec = 0;
     i = kevent(kq, NULL, 0, &ke, 1, &tm);
     if( i == -1 )
-        return nullopt;
+        return std::nullopt;
     
     if( ke.fflags & NOTE_EXIT )
         return true;
@@ -682,7 +684,7 @@ int PSHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
     int gid = -1;
     int pid = -1;
     {
-        lock_guard<mutex> lock(m_Lock);
+        std::lock_guard<std::mutex> lock(m_Lock);
         
         auto index = ProcIndexFromFilepath_Unlocked(_path);
         if(index < 0)

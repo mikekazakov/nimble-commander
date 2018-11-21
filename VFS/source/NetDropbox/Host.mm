@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "../ListingInput.h"
 #include "Aux.h"
@@ -8,15 +8,16 @@
 namespace nc::vfs {
 
 using namespace dropbox;
+using namespace std::literals;
 
 const char *DropboxHost::UniqueTag = "net_dropbox";
 
 class VFSNetDropboxHostConfiguration
 {
 public:
-    string account;
-    string token;
-    string verbose;
+    std::string account;
+    std::string token;
+    std::string verbose;
     
     const char *Tag() const
     {
@@ -39,7 +40,8 @@ public:
     }
 };
 
-static VFSNetDropboxHostConfiguration Compose(const string &_account, const string &_token)
+static VFSNetDropboxHostConfiguration Compose(const std::string &_account,
+                                              const std::string &_token)
 {
     VFSNetDropboxHostConfiguration config;
     config.account = _account;
@@ -50,16 +52,16 @@ static VFSNetDropboxHostConfiguration Compose(const string &_account, const stri
 
 struct DropboxHost::State
 {
-    string          m_Account;
-    string          m_Token;
+    std::string     m_Account;
+    std::string     m_Token;
     NSString       *m_AuthString;
     NSURLSession   *m_GenericSession;
     AccountInfo     m_AccountInfo;
 };
 
-DropboxHost::DropboxHost( const string &_account, const string &_access_token ):
+DropboxHost::DropboxHost( const std::string &_account, const std::string &_access_token ):
     Host("", nullptr, DropboxHost::UniqueTag),
-    I(make_unique<State>()),
+    I(std::make_unique<State>()),
     m_Config{Compose(_account, _access_token)}
 {
     Init();
@@ -67,7 +69,7 @@ DropboxHost::DropboxHost( const string &_account, const string &_access_token ):
 
 DropboxHost::DropboxHost( const VFSConfiguration &_config ):
     Host("", nullptr, DropboxHost::UniqueTag),
-    I(make_unique<State>()),
+    I(std::make_unique<State>()),
     m_Config(_config)
 {
     Init();
@@ -80,7 +82,7 @@ void DropboxHost::Init()
     AddFeatures( HostFeatures::NonEmptyRmDir );
 }
 
-void DropboxHost::Construct(const string &_account, const string &_access_token)
+void DropboxHost::Construct(const std::string &_account, const std::string &_access_token)
 {
     I->m_Account = _account;
     I->m_Token = _access_token;
@@ -118,7 +120,8 @@ void DropboxHost::InitialAccountLookup()
         throw VFSErrorException( rc );
 }
 
-pair<int, string> DropboxHost::CheckTokenAndRetrieveAccountEmail( const string &_token )
+std::pair<int, std::string> DropboxHost::
+    CheckTokenAndRetrieveAccountEmail( const std::string &_token )
 {
     const auto config = NSURLSessionConfiguration.defaultSessionConfiguration;
     const auto session = [NSURLSession sessionWithConfiguration:config];
@@ -145,7 +148,7 @@ VFSMeta DropboxHost::Meta()
     m.SpawnWithConfig = [](const VFSHostPtr &_parent,
                            const VFSConfiguration& _config,
                            VFSCancelChecker _cancel_checker) {
-        return make_shared<DropboxHost>(_config);
+        return std::make_shared<DropboxHost>(_config);
     };
     return m;
 }
@@ -220,7 +223,7 @@ int DropboxHost::Stat(const char *_path,
         return 0;
     }
     
-    string path = _path;
+    std::string path = _path;
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
@@ -259,14 +262,14 @@ int DropboxHost::Stat(const char *_path,
 }
 
 int DropboxHost::IterateDirectoryListing(const char *_path,
-                                               const function<bool(const VFSDirEnt &_dirent)> &_handler)
+                                         const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 { // TODO: process ListFolderResult.has_more
     WarnAboutUsingInMainThread();
 
   if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
-    string path = _path;
+    std::string path = _path;
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
@@ -306,16 +309,16 @@ int DropboxHost::IterateDirectoryListing(const char *_path,
 }
 
 int DropboxHost::FetchDirectoryListing(const char *_path,
-                                             shared_ptr<VFSListing> &_target,
-                                             unsigned long _flags,
-                                             const VFSCancelChecker &_cancel_checker)
+                                       std::shared_ptr<VFSListing> &_target,
+                                       unsigned long _flags,
+                                       const VFSCancelChecker &_cancel_checker)
 { // TODO: process ListFolderResult.has_more
     WarnAboutUsingInMainThread();
 
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
-    string path = _path;
+    std::string path = _path;
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
 
@@ -366,23 +369,23 @@ int DropboxHost::FetchDirectoryListing(const char *_path,
             index++;
         }
     
-        _target = VFSListing::Build(move(listing_source));
+        _target = VFSListing::Build(std::move(listing_source));
     }
     return rc;
 }
 
 int DropboxHost::CreateFile(const char* _path,
-                                  shared_ptr<VFSFile> &_target,
-                                  const VFSCancelChecker &_cancel_checker)
+                            std::shared_ptr<VFSFile> &_target,
+                            const VFSCancelChecker &_cancel_checker)
 {
-    auto file = make_shared<File>(_path, SharedPtr());
+    auto file = std::make_shared<File>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
 }
 
-const string &DropboxHost::Token() const
+const std::string &DropboxHost::Token() const
 {
     return I->m_Token;
 }
@@ -410,7 +413,7 @@ int DropboxHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_can
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
-    string path = _path;
+    std::string path = _path;
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
     
@@ -432,7 +435,7 @@ int DropboxHost::CreateDirectory(const char* _path,
     if( !_path || _path[0] != '/' )
         return VFSError::InvalidCall;
     
-    string path = _path;
+    std::string path = _path;
     if( path.back() == '/' ) // dropbox doesn't like trailing slashes
         path.pop_back();
     
@@ -459,14 +462,14 @@ int DropboxHost::Rename(const char *_old_path,
     if( !_old_path || _old_path[0] != '/' || !_new_path || _new_path[0] != '/' )
         return VFSError::InvalidCall;
     
-    const string old_path = EnsureNoTrailingSlash(_old_path);
-    const string new_path = EnsureNoTrailingSlash(_new_path);
+    const std::string old_path = EnsureNoTrailingSlash(_old_path);
+    const std::string new_path = EnsureNoTrailingSlash(_new_path);
 
     NSMutableURLRequest *req = [[NSMutableURLRequest alloc] initWithURL:api::Move];
     req.HTTPMethod = @"POST";
     FillAuth(req);
     [req setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    const string path_spec = "{ "s +
+    const std::string path_spec = "{ "s +
         "\"from_path\": \"" + EscapeString(old_path) + "\", " +
         "\"to_path\": \"" + EscapeString(new_path) + "\"" +
          " }";
@@ -476,7 +479,7 @@ int DropboxHost::Rename(const char *_old_path,
     return rc;
 }
 
-const string &DropboxHost::Account() const
+const std::string &DropboxHost::Account() const
 {
     return I->m_Account;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Host.h"
@@ -12,7 +12,7 @@ namespace nc::vfs::dropbox {
 class File final : public VFSFile
 {
 public:
-    File(const char* _relative_path, const shared_ptr<class DropboxHost> &_host);
+    File(const char* _relative_path, const std::shared_ptr<class DropboxHost> &_host);
     ~File();
 
     virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
@@ -60,7 +60,7 @@ private:
     NSURLRequest *BuildRequestForUploadSessionInit() const;
     NSURLRequest *BuildRequestForUploadSessionAppend() const;
     NSURLRequest *BuildRequestForUploadSessionFinish() const;
-    string BuildUploadPathspec() const;
+    std::string BuildUploadPathspec() const;
     const DropboxHost &DropboxHost() const;
     ssize_t WaitForUploadBufferConsumption() const;
     void PushUploadDataIntoFIFOAndNotifyStream( const void *_buf, size_t _size );
@@ -70,14 +70,14 @@ private:
     void WaitForAppendToComplete() const;
 
     struct Download {
-        deque<uint8_t>          fifo;
+        std::deque<uint8_t>     fifo;
         long                    fifo_offset = 0; // is it always equal to m_FilePos???
         NSURLSessionDataTask   *task;
         NCVFSDropboxFileDownloadDelegate *delegate = nil;
     };
     struct Upload {
-        deque<uint8_t>                  fifo;
-        atomic_long                     fifo_offset {0};
+        std::deque<uint8_t>             fifo;
+        std::atomic_long                fifo_offset {0};
         long                            upload_size = -1;
         bool                            partitioned = false;
         int                             part_no = 0;
@@ -85,8 +85,8 @@ private:
         NSURLSessionUploadTask         *task = nil;
         NCVFSDropboxFileUploadDelegate *delegate = nil;
         NCVFSDropboxFileUploadStream   *stream = nil;
-        string                          session_id;
-        atomic_bool                     append_accepted{false};
+        std::string                     session_id;
+        std::atomic_bool                append_accepted{false};
     };
 
     unsigned long       m_OpenFlags = 0;
@@ -94,14 +94,14 @@ private:
     long                m_FileSize = -1;
     long                m_ChunkSize = 150 * 1000 * 1000; // 150Mb according to dropbox docs
 
-    atomic<State>       m_State { Cold };
+    std::atomic<State>  m_State { Cold };
 
-    mutable mutex               m_SignalLock;
-    mutable condition_variable  m_Signal;
+    mutable std::mutex               m_SignalLock;
+    mutable std::condition_variable  m_Signal;
     
-    mutable mutex       m_DataLock; // any access to m_Download/m_Upload must be guarded
-    unique_ptr<Download>m_Download; // exists only on reading
-    unique_ptr<Upload>  m_Upload;   // exists only on writing    
+    mutable std::mutex       m_DataLock; // any access to m_Download/m_Upload must be guarded
+    std::unique_ptr<Download>m_Download; // exists only on reading
+    std::unique_ptr<Upload>  m_Upload;   // exists only on writing    
 };
 
 }

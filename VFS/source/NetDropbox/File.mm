@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Aux.h"
 #include "FileUploadStream.h"
@@ -7,8 +7,10 @@
 
 namespace nc::vfs::dropbox {
 
+using namespace std::literals;
+    
 File::File(const char* _relative_path,
-           const shared_ptr<class DropboxHost> &_host):
+           const std::shared_ptr<class DropboxHost> &_host):
     VFSFile(_relative_path, _host)
 {
 }
@@ -33,7 +35,7 @@ int File::Close()
             }
             
             // need to wait for response from server before returning from Close();
-            unique_lock<mutex> lk(m_SignalLock);
+            std::unique_lock<std::mutex> lk(m_SignalLock);
             m_Signal.wait(lk, [&]{ return m_State == Completed || m_State == Canceled; } );
         }
     }
@@ -94,7 +96,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
                                                 delegateQueue:nil];
         auto task = [session dataTaskWithRequest:request];
         
-        m_Download = make_unique<Download>();
+        m_Download = std::make_unique<Download>();
         m_Download->delegate = delegate;
         m_Download->task = task;
         m_OpenFlags = _open_flags;
@@ -109,7 +111,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     if( (_open_flags & VFSFlags::OF_Write) == VFSFlags::OF_Write ) {
         m_OpenFlags = _open_flags;
         SwitchToState(Initiated);
-        m_Upload = make_unique<Upload>();
+        m_Upload = std::make_unique<Upload>();
         // at this point we need to wait for SetUploadSize() call to build of a request
         // and to actually start it
         return VFSError::Ok;
@@ -120,7 +122,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
 
 void File::WaitForDownloadResponse() const
 {
-    unique_lock<mutex> lk(m_SignalLock);
+    std::unique_lock<std::mutex> lk(m_SignalLock);
     m_Signal.wait(lk, [=]{
         return m_State != Initiated;
     } );
@@ -158,7 +160,7 @@ void File::AppendDownloadedDataAsync( NSData *_data )
     if( !_data || _data.length == 0 || m_State != Downloading || !m_Download || m_FileSize < 0 )
         return;
 
-    lock_guard<mutex> lock{m_DataLock};
+    std::lock_guard<std::mutex> lock{m_DataLock};
     [_data enumerateByteRangesUsingBlock:[this](const void *bytes, NSRange byteRange, BOOL *stop) {
         m_Download->fifo.insert(end(m_Download->fifo),
                                 (const uint8_t*)bytes,
@@ -194,7 +196,7 @@ ssize_t File::Read(void *_buf, size_t _size)
     do {
         LOCK_GUARD(m_DataLock) {
             if( !m_Download->fifo.empty() ) {
-                const ssize_t sz = min( _size, m_Download->fifo.size() );
+                const ssize_t sz = std::min( _size, m_Download->fifo.size() );
                 copy_n( begin(m_Download->fifo), sz, (uint8_t*)_buf );
                 m_Download->fifo.erase( begin(m_Download->fifo), begin(m_Download->fifo) + sz );
                 m_Download->fifo_offset += sz;
@@ -205,7 +207,7 @@ ssize_t File::Read(void *_buf, size_t _size)
             }
         }
     
-        unique_lock<mutex> lk(m_SignalLock);
+        std::unique_lock<std::mutex> lk(m_SignalLock);
         m_Signal.wait(lk);
     } while( m_State == Downloading );
     return LastError();
@@ -224,9 +226,9 @@ int File::PreferredIOSize() const
     return 32768; // packets are usually 16384 bytes long, use IO twice as long
 }
 
-string File::BuildUploadPathspec() const
+std::string File::BuildUploadPathspec() const
 {
-    string spec =
+    std::string spec =
         "{ \"path\": \"" + EscapeStringForJSONInHTTPHeader(Path()) + "\" ";
     if( m_OpenFlags & VFSFlags::OF_Truncate )
         spec += ", \"mode\": { \".tag\": \"overwrite\" } ";
@@ -242,7 +244,7 @@ NSURLRequest *File::BuildRequestForSinglePartUpload() const
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     [request setValue:[NSString stringWithUTF8String:BuildUploadPathspec().c_str()]
              forHTTPHeaderField:@"Dropbox-API-Arg"];
-    [request setValue:[NSString stringWithUTF8String:to_string(m_Upload->upload_size).c_str()]
+    [request setValue:[NSString stringWithUTF8String:std::to_string(m_Upload->upload_size).c_str()]
              forHTTPHeaderField:@"Content-Length"];
     return request;
 }
@@ -297,7 +299,7 @@ NSURLRequest *File::BuildRequestForUploadSessionInit() const
     DropboxHost().FillAuth(request);
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     [request setValue:@"{}" forHTTPHeaderField:@"Dropbox-API-Arg"];
-    [request setValue:[NSString stringWithUTF8String:to_string(m_ChunkSize).c_str()]
+    [request setValue:[NSString stringWithUTF8String:std::to_string(m_ChunkSize).c_str()]
              forHTTPHeaderField:@"Content-Length"];
     return request;
 }
@@ -350,16 +352,16 @@ NSURLRequest *File::BuildRequestForUploadSessionAppend() const
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     
-    const string header =
+    const std::string header =
         "{\"cursor\": {"s +
             "\"session_id\": \"" + m_Upload->session_id + "\", " +
-            "\"offset\": " + to_string(m_FilePos) +
+            "\"offset\": " + std::to_string(m_FilePos) +
         "}}";
     [request setValue:[NSString stringWithUTF8String:header.c_str()]
              forHTTPHeaderField:@"Dropbox-API-Arg"];
     
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithUTF8String:to_string(m_ChunkSize).c_str()]
+    [request setValue:[NSString stringWithUTF8String:std::to_string(m_ChunkSize).c_str()]
              forHTTPHeaderField:@"Content-Length"];
 
     return request;
@@ -414,10 +416,10 @@ NSURLRequest *File::BuildRequestForUploadSessionFinish() const
     request.HTTPMethod = @"POST";
     DropboxHost().FillAuth(request);
     
-    const string header =
+    const std::string header =
         "{\"cursor\": {"s +
             "\"session_id\": \"" + m_Upload->session_id + "\", " +
-            "\"offset\": " + to_string(m_FilePos) +
+            "\"offset\": " + std::to_string(m_FilePos) +
         "}, " +
         "\"commit\": " + BuildUploadPathspec() +
         " }";
@@ -426,7 +428,7 @@ NSURLRequest *File::BuildRequestForUploadSessionFinish() const
              forHTTPHeaderField:@"Dropbox-API-Arg"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-Type"];
     const long content_length = m_Upload->upload_size - m_FilePos;
-    [request setValue:[NSString stringWithUTF8String:to_string(content_length).c_str()]
+    [request setValue:[NSString stringWithUTF8String:std::to_string(content_length).c_str()]
              forHTTPHeaderField:@"Content-Length"];
 
     return request;
@@ -501,10 +503,10 @@ ssize_t File::WaitForUploadBufferConsumption() const
     const ssize_t to_eat = m_Upload->fifo.size();
     ssize_t eaten = 0;
     while ( eaten < to_eat && m_State != Canceled ) {
-        unique_lock<mutex> signal_lock(m_SignalLock);
+        std::unique_lock<std::mutex> signal_lock(m_SignalLock);
         m_Signal.wait(signal_lock);
         
-        lock_guard<mutex> lock{m_DataLock};
+        std::lock_guard<std::mutex> lock{m_DataLock};
         eaten = to_eat - m_Upload->fifo.size();
     }
     return eaten;
@@ -512,7 +514,7 @@ ssize_t File::WaitForUploadBufferConsumption() const
 
 void File::PushUploadDataIntoFIFOAndNotifyStream( const void *_buf, size_t _size )
 {
-    lock_guard<mutex> lock{m_DataLock};
+    std::lock_guard<std::mutex> lock{m_DataLock};
     m_Upload->fifo.insert(end(m_Upload->fifo),
                           (const uint8_t*)_buf,
                           (const uint8_t*)_buf + _size);
@@ -539,22 +541,22 @@ void File::ExtractSessionIdOrCancelUploadAsync( NSData *_data )
 
 void File::WaitForSessionIdOrError() const
 {
-    unique_lock<mutex> lock(m_SignalLock);
+    std::unique_lock<std::mutex> lock(m_SignalLock);
     m_Signal.wait(lock, [this]{
         if( m_State != Uploading )
             return true;
-        lock_guard<mutex> lock{m_DataLock};
+        std::lock_guard<std::mutex> lock{m_DataLock};
         return !m_Upload->session_id.empty();
     });
 }
 
 void File::WaitForAppendToComplete() const
 {
-    unique_lock<mutex> lock(m_SignalLock);
+    std::unique_lock<std::mutex> lock(m_SignalLock);
     m_Signal.wait(lock, [this]{
         if( m_State != Uploading )
             return true;
-        lock_guard<mutex> lock{m_DataLock};
+        std::lock_guard<std::mutex> lock{m_DataLock};
         return bool(m_Upload->append_accepted);
     });
 }
@@ -571,7 +573,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
     
     // figure out amount of information we can consume this call
     const size_t left_of_this_chunk = m_ChunkSize - m_Upload->fifo_offset;
-    const size_t to_write = min(_size, left_of_this_chunk);
+    const size_t to_write = std::min(_size, left_of_this_chunk);
     
     PushUploadDataIntoFIFOAndNotifyStream(_buf, to_write);
     const auto eaten = WaitForUploadBufferConsumption();
@@ -633,7 +635,7 @@ ssize_t File::FeedUploadTaskAsync( uint8_t *_buffer, size_t _sz )
     ssize_t sz = 0;
     
     LOCK_GUARD(m_DataLock) {
-        sz = min( _sz, m_Upload->fifo.size() );
+        sz = std::min( _sz, m_Upload->fifo.size() );
         copy_n( begin(m_Upload->fifo), sz, _buffer );
         m_Upload->fifo.erase( begin(m_Upload->fifo), begin(m_Upload->fifo) + sz );
         m_Upload->fifo_offset += sz;
@@ -648,7 +650,7 @@ bool File::HasDataToFeedUploadTaskAsync() const
 {
     if( m_State != Uploading )
         return false;
-    lock_guard<mutex> lock{m_DataLock};
+    std::lock_guard<std::mutex> lock{m_DataLock};
     return !m_Upload->fifo.empty();
 }
 
@@ -675,7 +677,7 @@ void File::CheckStateTransition( State _new_state ) const
 /*Canceled*/    { 1,      0,         0,        0,         0,       0    },
 /*Completed*/   { 1,      0,         0,        0,         0,       0   }};
     if( !valid_flow[m_State][_new_state] )
-        cerr << "suspicious state change: " << m_State << " to " << _new_state << endl;
+        std::cerr << "suspicious state change: " << m_State << " to " << _new_state << std::endl;
 }
 
 void File::SwitchToState( State _new_state )

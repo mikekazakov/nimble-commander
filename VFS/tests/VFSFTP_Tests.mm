@@ -1,10 +1,12 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "tests_common.h"
 #include <VFS/VFS.h>
 #include <VFS/NetFTP.h>
 #include <VFS/Native.h>
 
 using namespace nc::vfs;
+using namespace std;
+using boost::filesystem::path;
 
 static string g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
 static string g_LocalTestPath = "/Public/!FilesTesting/";
@@ -243,6 +245,7 @@ static string UUID()
 
 - (void) waitUntilFinish:(volatile bool&)_finished
 {
+    using namespace std::chrono;
     microseconds sleeped = 0us, sleep_tresh = 60s;
     while (!_finished)
     {

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Michael G. Kazakov
+/* Copyright (c) 2015-2018 Michael G. Kazakov
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
  * and associated documentation files (the "Software"), to deal in the Software without restriction,
  * including without limitation the rights to use, copy, modify, merge, publish, distribute,
@@ -158,7 +158,7 @@ template <class T>
 variable_container<T>::variable_container( variable_container<T>&& _rhs ):
     m_Type(_rhs.m_Type)
 {
-    ConstructMove(move(_rhs));
+    ConstructMove(std::move(_rhs));
 }
 
 template <class T>
@@ -218,15 +218,15 @@ const variable_container<T> &variable_container<T>::operator =(variable_containe
     if( m_Type != _rhs.m_Type ) {
         Destruct();
         m_Type = _rhs.m_Type;
-        ConstructMove(move(_rhs));
+        ConstructMove(std::move(_rhs));
     }
     else {
         if( m_Type == type::common )
-            Common() = move(_rhs.Common());
+            Common() = std::move(_rhs.Common());
         else if( m_Type == type::sparse )
-            Sparse() = move(_rhs.Sparse());
+            Sparse() = std::move(_rhs.Sparse());
         else if( m_Type == type::dense )
-            Dense() = move(_rhs.Dense());
+            Dense() = std::move(_rhs.Dense());
     }
     return *this;    
 }
@@ -287,11 +287,11 @@ void variable_container<T>::ConstructMove(variable_container<T>&& _rhs)
     assert( m_Type == _rhs.m_Type );
     
     if( m_Type == type::common )
-        new (&Common()) common_type( move(_rhs.Common()) );
+        new (&Common()) common_type( std::move(_rhs.Common()) );
     else if( m_Type == type::sparse )
-        new (&Sparse()) sparse_type( move(_rhs.Sparse()) );
+        new (&Sparse()) sparse_type( std::move(_rhs.Sparse()) );
     else if( m_Type == type::dense )
-        new (&Dense()) dense_type( move(_rhs.Dense()) );
+        new (&Dense()) dense_type( std::move(_rhs.Dense()) );
 }
 
 template <class T>
@@ -374,19 +374,19 @@ template <class T>
 void variable_container<T>::insert( size_t _at, T&& _value )
 {
     if( m_Type == type::common ) {
-        Common() = move(_value);
+        Common() = std::move(_value);
     }
     else if( m_Type == type::dense ) {
         if( Dense().size() <= _at  )
             Dense().resize( _at + 1 );
-        Dense()[_at] = move(_value);
+        Dense()[_at] = std::move(_value);
     }
     else if( m_Type == type::sparse ) {
         auto i = Sparse().find( (unsigned)_at );
         if( i == end(Sparse()) )
-            Sparse().insert( typename sparse_type::value_type( (unsigned)_at, move(_value) ) );
+            Sparse().insert( typename sparse_type::value_type( (unsigned)_at, std::move(_value) ) );
         else
-            i->second = move(_value);
+            i->second = std::move(_value);
     }
     else
         throw std::logic_error("invalid type in variable_container<T>::insert");
@@ -451,7 +451,7 @@ void variable_container<T>::compress_contiguous()
     
     auto &sparse = Sparse();
     for(; i != e; ++i  )
-        dense.emplace_back( move(sparse.at(i)) );
+        dense.emplace_back( std::move(sparse.at(i)) );
     
-    *this = move(new_dense);
+    *this = std::move(new_dense);
 }

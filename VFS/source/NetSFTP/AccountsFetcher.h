@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <libssh2.h>
@@ -12,15 +12,15 @@ class AccountsFetcher
 public:
     AccountsFetcher( LIBSSH2_SESSION *_session, OSType _os_type );
 
-    int FetchUsers(vector<VFSUser> &_target);
-    int FetchGroups(vector<VFSGroup> &_target);
+    int FetchUsers(std::vector<VFSUser> &_target);
+    int FetchGroups(std::vector<VFSGroup> &_target);
 
 private:
-    int GetUsersViaGetent( vector<VFSUser> &_target );
-    int GetGroupsViaGetent( vector<VFSGroup> &_target );
-    int GetUsersViaOpenDirectory( vector<VFSUser> &_target );
-    int GetGroupsViaOpenDirectory( vector<VFSGroup> &_target );
-    optional<string> Execute( const string &_command );
+    int GetUsersViaGetent( std::vector<VFSUser> &_target );
+    int GetGroupsViaGetent( std::vector<VFSGroup> &_target );
+    int GetUsersViaOpenDirectory( std::vector<VFSUser> &_target );
+    int GetGroupsViaOpenDirectory( std::vector<VFSGroup> &_target );
+    std::optional<std::string> Execute( const std::string &_command );
 
     LIBSSH2_SESSION *const m_Session;
     const OSType m_OSType;

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSFile.h"
 #include "../include/VFS/VFSError.h"
 #include "../include/VFS/Host.h"
@@ -14,12 +14,12 @@ VFSFile::~VFSFile()
 {
 }
 
-shared_ptr<VFSFile> VFSFile::SharedPtr()
+std::shared_ptr<VFSFile> VFSFile::SharedPtr()
 {
     return shared_from_this();
 }
 
-shared_ptr<const VFSFile> VFSFile::SharedPtr() const
+std::shared_ptr<const VFSFile> VFSFile::SharedPtr() const
 {
     return shared_from_this();
 }
@@ -29,7 +29,7 @@ const char* VFSFile::Path() const noexcept
     return m_RelativePath.c_str();
 }
 
-const shared_ptr<VFSHost> &VFSFile::Host() const
+const std::shared_ptr<VFSHost> &VFSFile::Host() const
 {
     return m_Host;
 }
@@ -70,11 +70,11 @@ off_t   VFSFile::Seek(off_t, int)    { return SetLastError(VFSError::NotSupporte
 ssize_t VFSFile::Pos() const         { return SetLastError(VFSError::NotSupported); }
 ssize_t VFSFile::Size() const        { return SetLastError(VFSError::NotSupported); }
 bool    VFSFile::Eof() const         { return true; }
-shared_ptr<VFSFile> VFSFile::Clone() const { return 0; }
+std::shared_ptr<VFSFile> VFSFile::Clone() const { return 0; }
 
-string VFSFile::ComposeVerbosePath() const
+std::string VFSFile::ComposeVerbosePath() const
 {
-    array<VFSHost*, 32> hosts;
+    std::array<VFSHost*, 32> hosts;
     int hosts_n = 0;
 
     VFSHost *cur = m_Host.get();
@@ -84,7 +84,7 @@ string VFSFile::ComposeVerbosePath() const
         cur = cur->Parent().get();
     }
     
-    string s;
+    std::string s;
     while(hosts_n > 0)
         s += hosts[--hosts_n]->Configuration().VerboseJunction();
     s += m_RelativePath;
@@ -96,35 +96,35 @@ unsigned VFSFile::XAttrCount() const
     return 0;
 }
 
-void VFSFile::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
+void VFSFile::XAttrIterateNames( std::function<bool(const char* _xattr_name)> _handler ) const
 {
 }
 
-optional<vector<uint8_t>> VFSFile::ReadFile()
+std::optional<std::vector<uint8_t>> VFSFile::ReadFile()
 {
     if(!IsOpened())
-        return nullopt;
+        return std::nullopt;
     
     if(GetReadParadigm() < ReadParadigm::Seek && Pos() != 0)
-        return nullopt;
+        return std::nullopt;
     
     if(Pos() != 0 && Seek(Seek_Set, 0) < 0)
-        return nullopt; // can't rewind file
+        return std::nullopt; // can't rewind file
     
     uint64_t sz = Size();
-    auto buf = vector<uint8_t>(sz);
+    auto buf = std::vector<uint8_t>(sz);
     
     uint8_t *buftmp = buf.data();
     uint64_t szleft = sz;
     while(szleft) {
         ssize_t r = Read(buftmp, szleft);
         if(r < 0)
-            return nullopt;
+            return std::nullopt;
         szleft -= r;
         buftmp += r;
     }
     
-    return move(buf);
+    return std::move(buf);
 }
 
 int VFSFile::WriteFile(const void *_d, size_t _sz)
@@ -158,7 +158,7 @@ ssize_t VFSFile::Skip(size_t _size)
     size_t skipped = 0;
     
     while(_size > 0) {
-        ssize_t r = Read(trash, min(_size, trash_size));
+        ssize_t r = Read(trash, std::min(_size, trash_size));
         if(r < 0)
             return r;
         if(r == 0)

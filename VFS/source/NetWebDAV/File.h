@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "WebDAVHost.h"
@@ -12,7 +12,7 @@ namespace nc::vfs::webdav {
 class File final : public VFSFile
 {
 public:
-    File(const char* _relative_path, const shared_ptr<WebDAVHost> &_host);
+    File(const char* _relative_path, const std::shared_ptr<WebDAVHost> &_host);
     ~File();
 
     int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
@@ -35,7 +35,7 @@ private:
     WebDAVHost &m_Host;
     ReadBuffer  m_ReadBuffer;
     WriteBuffer m_WriteBuffer;
-    unique_ptr<Connection> m_Conn;
+    std::unique_ptr<Connection> m_Conn;
     unsigned long m_OpenFlags = 0;
     long        m_Pos = 0;
     long        m_Size = -1;

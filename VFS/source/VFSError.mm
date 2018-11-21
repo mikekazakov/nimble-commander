@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/errno.h>
 #include <libarchive/archive_platform.h>
 #include "../include/VFS/VFSError.h"
@@ -18,10 +18,12 @@ layout:
 
 namespace nc::vfs {
 
+using namespace std::literals;
+    
 ErrorException::ErrorException( int _err ) :
     m_Code(_err)
 {
-    m_Verb = "vfs exception code #"s + to_string(_err);
+    m_Verb = "vfs exception code #"s + std::to_string(_err);
     if( const auto e = VFSError::ToNSError(_err) )
         if( const auto d = e.description )
             m_Verb = d.UTF8String;

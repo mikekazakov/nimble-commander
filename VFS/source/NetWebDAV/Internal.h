@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <curl/curl.h>
@@ -11,12 +11,12 @@ class Connection;
 class HostConfiguration
 {
 public:
-    string  server_url;
-    string  user;
-    string  passwd;
-    string  path;
-    string  verbose; // cached only. not counted in operator ==
-    string  full_url; // http[s]://server:port/base_path/
+    std::string  server_url;
+    std::string  user;
+    std::string  passwd;
+    std::string  path;
+    std::string  verbose; // cached only. not counted in operator ==
+    std::string  full_url; // http[s]://server:port/base_path/
     bool    https;
     int     port;
     
@@ -56,7 +56,7 @@ namespace HTTPRequests {
 
 struct PropFindResponse
 {
-    string filename;
+    std::string filename;
     long size = -1;
     time_t creation_date = -1;
     time_t modification_date = -1;

@@ -19,7 +19,7 @@ class VFSConfiguration
 public:
     template <class T>
     VFSConfiguration(T _t):
-        m_Object( std::make_shared<Model<T>>( move(_t) ) )
+        m_Object( std::make_shared<Model<T>>( std::move(_t) ) )
     {
         static_assert( std::is_class<T>::value, "configuration should be a class/struct" );
     }
@@ -77,7 +77,7 @@ private:
         T obj;
         
         Model(T _t):
-            obj( move(_t) )
+            obj( std::move(_t) )
         {};
         
         virtual const char *Tag() const

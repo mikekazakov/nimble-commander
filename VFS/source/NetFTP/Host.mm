@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "../ListingInput.h"
 #include "Host.h"
@@ -9,17 +9,18 @@
 namespace nc::vfs {
 
 using namespace ftp;
+using namespace std::literals;
 
 const char *FTPHost::UniqueTag = "net_ftp";
 
 class VFSNetFTPHostConfiguration
 {
 public:
-    string server_url;
-    string user;
-    string passwd;
-    string start_dir;
-    string verbose; // cached only. not counted in operator ==
+    std::string server_url;
+    std::string user;
+    std::string passwd;
+    std::string start_dir;
+    std::string verbose; // cached only. not counted in operator ==
     long   port;
     
     const char *Tag() const
@@ -53,10 +54,10 @@ FTPHost::~FTPHost()
     // this dummy destructor is here due to forwarded types
 }
 
-static VFSConfiguration ComposeConfiguration(const string &_serv_url,
-                                             const string &_user,
-                                             const string &_passwd,
-                                             const string &_start_dir,
+static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
+                                             const std::string &_user,
+                                             const std::string &_passwd,
+                                             const std::string &_start_dir,
                                              long   _port)
 {
     VFSNetFTPHostConfiguration config;
@@ -66,17 +67,17 @@ static VFSConfiguration ComposeConfiguration(const string &_serv_url,
     config.start_dir = _start_dir;
     config.port = _port;
     config.verbose = "ftp://"s + (config.user.empty() ? "" : config.user + "@" ) + config.server_url;
-    return VFSConfiguration( move(config) );
+    return VFSConfiguration( std::move(config) );
 }
 
-FTPHost::FTPHost(const string &_serv_url,
-                 const string &_user,
-                 const string &_passwd,
-                 const string &_start_dir,
+FTPHost::FTPHost(const std::string &_serv_url,
+                 const std::string &_user,
+                 const std::string &_passwd,
+                 const std::string &_start_dir,
                  long   _port):
     Host(_serv_url.c_str(), nullptr, UniqueTag),
     m_Configuration( ComposeConfiguration(_serv_url, _user, _passwd, _start_dir, _port) ),
-    m_Cache(make_unique<ftp::Cache>())
+    m_Cache(std::make_unique<ftp::Cache>())
 {
     int rc = DoInit();
     if(rc < 0)
@@ -85,7 +86,7 @@ FTPHost::FTPHost(const string &_serv_url,
 
 FTPHost::FTPHost(const VFSConfiguration &_config):
     Host( _config.Get<VFSNetFTPHostConfiguration>().server_url.c_str(), nullptr, UniqueTag),
-    m_Cache(make_unique<ftp::Cache>()),
+    m_Cache(std::make_unique<ftp::Cache>()),
     m_Configuration(_config)
 {
     int rc = DoInit();
@@ -103,7 +104,7 @@ VFSMeta FTPHost::Meta()
     VFSMeta m;
     m.Tag = UniqueTag;
     m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
-        return make_shared<FTPHost>(_config);
+        return std::make_shared<FTPHost>(_config);
     };
     return m;
 }
@@ -115,7 +116,7 @@ VFSConfiguration FTPHost::Configuration() const
 
 int FTPHost::DoInit()
 {
-    m_Cache->SetChangesCallback(^(const string &_at_dir) {
+    m_Cache->SetChangesCallback(^(const std::string &_at_dir) {
         InformDirectoryChanged(_at_dir.back() == '/' ? _at_dir : _at_dir + "/" );
     });
     
@@ -132,20 +133,20 @@ int FTPHost::DoInit()
 
 int FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
                                      const char *_path,
-                                     shared_ptr<Directory> *_cached_dir,
+                                     std::shared_ptr<Directory> *_cached_dir,
                                      VFSCancelChecker _cancel_checker)
 {
     if(_inst == nullptr || _path == nullptr)
         return VFSError::InvalidCall;
     
-    string listing_data;
+    std::string listing_data;
     int result = DownloadListing(_inst, _path, listing_data, _cancel_checker);
     if( result != 0 )
         return result;
     
     auto dir = ParseListing(listing_data.c_str());
     m_Cache->InsertLISTDirectory(_path, dir);
-    string path = _path;
+    std::string path = _path;
     InformDirectoryChanged(path.back() == '/' ? path : path + "/");
     
     if(_cached_dir)
@@ -156,19 +157,19 @@ int FTPHost::DownloadAndCacheListing(CURLInstance *_inst,
 
 int FTPHost::DownloadListing(CURLInstance *_inst,
                              const char *_path,
-                             string &_buffer,
+                             std::string &_buffer,
                              VFSCancelChecker _cancel_checker)
 {
     if(_path == nullptr ||
        _path[0] != '/')
         return VFSError::InvalidCall;
     
-    string path = _path;
+    std::string path = _path;
     if(path.back() != '/')
         path += '/';
     
-    string request = BuildFullURLString(path.c_str());
-    string response;
+    std::string request = BuildFullURLString(path.c_str());
+    std::string response;
     
     _inst->call_lock.lock();
     _inst->EasySetOpt(CURLOPT_URL, request.c_str());
@@ -195,14 +196,14 @@ int FTPHost::DownloadListing(CURLInstance *_inst,
     return 0;
 }
 
-string FTPHost::BuildFullURLString(const char *_path) const
+std::string FTPHost::BuildFullURLString(const char *_path) const
 {
     return "ftp://"s + JunctionPath() + _path; // naive implementation
 }
 
-unique_ptr<CURLInstance> FTPHost::SpawnCURL()
+std::unique_ptr<CURLInstance> FTPHost::SpawnCURL()
 {
-    auto inst = make_unique<CURLInstance>();
+    auto inst = std::make_unique<CURLInstance>();
     inst->curl = curl_easy_init();
     BasicOptsSetup(inst.get());
     return inst;
@@ -234,8 +235,8 @@ int FTPHost::Stat(const char *_path,
     if(path.filename() == ".")
         path.remove_filename();
     
-    string parent_dir = path.parent_path().native();
-    string filename = path.filename().native();
+    std::string parent_dir = path.parent_path().native();
+    std::string filename = path.filename().native();
     
     // try to find dir from cache
     auto dir = m_Cache->FindDirectory(parent_dir);
@@ -277,14 +278,14 @@ int FTPHost::Stat(const char *_path,
 }
 
 int FTPHost::FetchDirectoryListing(const char *_path,
-                                   shared_ptr<VFSListing> &_target,
+                                   std::shared_ptr<VFSListing> &_target,
                                    unsigned long _flags,
                                    const VFSCancelChecker &_cancel_checker)
 {
     if( _flags & VFSFlags::F_ForceRefresh )
         m_Cache->MarkDirectoryDirty( _path );
 
-    shared_ptr<Directory> dir;
+    std::shared_ptr<Directory> dir;
     int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, _cancel_checker);
     if(result != 0)
         return result;
@@ -329,14 +330,14 @@ int FTPHost::FetchDirectoryListing(const char *_path,
         listing_source.mtimes.insert(index, entry.time );
     }
     
-    _target = VFSListing::Build(move(listing_source));
+    _target = VFSListing::Build(std::move(listing_source));
     
     return 0;
 }
 
 int FTPHost::GetListingForFetching(CURLInstance *_inst,
                                    const char *_path,
-                                   shared_ptr<Directory> *_cached_dir,
+                                   std::shared_ptr<Directory> *_cached_dir,
                                    VFSCancelChecker _cancel_checker)
 {
     if(_path == nullptr || _path[0] != '/' )
@@ -361,10 +362,10 @@ int FTPHost::GetListingForFetching(CURLInstance *_inst,
 }
 
 int FTPHost::CreateFile(const char* _path,
-                        shared_ptr<VFSFile> &_target,
+                        std::shared_ptr<VFSFile> &_target,
                         const VFSCancelChecker &_cancel_checker)
 {
-    auto file = make_shared<File>(_path, SharedPtr());
+    auto file = std::make_shared<File>(_path, SharedPtr());
     if(_cancel_checker && _cancel_checker())
         return VFSError::Cancelled;
     _target = file;
@@ -377,8 +378,8 @@ int FTPHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
     if(path.is_absolute() == false || path.filename() == ".")
         return VFSError::InvalidCall;
     
-    string cmd = "DELE " + path.filename().native();
-    string url = BuildFullURLString((path.parent_path() / "/").c_str());
+    std::string cmd = "DELE " + path.filename().native();
+    std::string url = BuildFullURLString((path.parent_path() / "/").c_str());
     
     CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir( path.parent_path() );
@@ -421,8 +422,8 @@ int FTPHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecke
     if(*--path.end() == ".") // remove trailing slash if any
         path.remove_filename();
     
-    string cmd = "MKD " + path.filename().native();
-    string url = BuildFullURLString((path.parent_path() / "/").c_str());
+    std::string cmd = "MKD " + path.filename().native();
+    std::string url = BuildFullURLString((path.parent_path() / "/").c_str());
     
     CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir( path.parent_path() );
@@ -465,8 +466,8 @@ int FTPHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_
     if(path.filename() == ".") // remove trailing slash if any
         path.remove_filename();
     
-    string cmd = "RMD " + path.filename().native();
-    string url = BuildFullURLString((path.parent_path() / "/").c_str());
+    std::string cmd = "RMD " + path.filename().native();
+    std::string url = BuildFullURLString((path.parent_path() / "/").c_str());
     
     CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir( path.parent_path() );
@@ -509,9 +510,9 @@ int FTPHost::Rename(const char *_old_path, const char *_new_path, const VFSCance
     if(new_path.filename() == ".") // remove trailing slash if any
         new_path.remove_filename();
     
-    string url = BuildFullURLString((old_path.parent_path() / "/").c_str());
-    string cmd1 = "RNFR "s + old_path.native();
-    string cmd2 = "RNTO "s + new_path.native();
+    std::string url = BuildFullURLString((old_path.parent_path() / "/").c_str());
+    std::string cmd1 = "RNFR "s + old_path.native();
+    std::string cmd2 = "RNTO "s + new_path.native();
     
     CURLMcode curlm_e;
     auto curl = InstanceForIOAtDir( old_path.parent_path() );
@@ -558,12 +559,13 @@ bool FTPHost::IsDirChangeObservingAvailable(const char *_path)
     return true;
 }
 
-HostDirObservationTicket FTPHost::DirChangeObserve(const char *_path, function<void()> _handler)
+HostDirObservationTicket FTPHost::DirChangeObserve(const char *_path,
+                                                   std::function<void()> _handler)
 {
     if(_path == 0 || _path[0] != '/')
         return {};
 
-    lock_guard<mutex> lock(m_UpdateHandlersLock);
+    std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
     
     m_UpdateHandlers.emplace_back();
     auto &h = m_UpdateHandlers.back();
@@ -577,17 +579,17 @@ HostDirObservationTicket FTPHost::DirChangeObserve(const char *_path, function<v
 
 void FTPHost::StopDirChangeObserving(unsigned long _ticket)
 {
-    lock_guard<mutex> lock(m_UpdateHandlersLock);
+    std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
     m_UpdateHandlers.erase(remove_if(begin(m_UpdateHandlers),
                                      end(m_UpdateHandlers),
                                      [=](auto &_h) {return _h.ticket == _ticket;}),
                            m_UpdateHandlers.end());
 }
 
-void FTPHost::InformDirectoryChanged(const string &_dir_wth_sl)
+void FTPHost::InformDirectoryChanged(const std::string &_dir_wth_sl)
 {
     assert(_dir_wth_sl.back() == '/');
-    lock_guard<mutex> lock(m_UpdateHandlersLock);
+    std::lock_guard<std::mutex> lock(m_UpdateHandlersLock);
     for(auto &i: m_UpdateHandlers)
         if(i.path == _dir_wth_sl)
             i.handler();
@@ -598,9 +600,10 @@ bool FTPHost::IsWritable() const
     return true;
 }
 
-int FTPHost::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
+int FTPHost::IterateDirectoryListing(const char *_path,
+                                     const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
-    shared_ptr<Directory> dir;
+    std::shared_ptr<Directory> dir;
     int result = GetListingForFetching(m_ListingInstance.get(), _path, &dir, nullptr);
     if(result != 0)
         return result;
@@ -618,10 +621,10 @@ int FTPHost::IterateDirectoryListing(const char *_path, const function<bool(cons
     return 0;
 }
 
-unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const boost::filesystem::path &_dir)
+std::unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const boost::filesystem::path &_dir)
 {
     assert(_dir.filename() != ".");
-    lock_guard<mutex> lock(m_IOIntancesLock);
+    std::lock_guard<std::mutex> lock(m_IOIntancesLock);
     
     // try to find cached inst in exact this directory
     auto i = m_IOIntances.find(_dir);
@@ -649,10 +652,11 @@ unique_ptr<CURLInstance> FTPHost::InstanceForIOAtDir(const boost::filesystem::pa
     return inst;
 }
 
-void FTPHost::CommitIOInstanceAtDir(const boost::filesystem::path &_dir, unique_ptr<CURLInstance> _i)
+void FTPHost::CommitIOInstanceAtDir(const boost::filesystem::path &_dir,
+                                    std::unique_ptr<CURLInstance> _i)
 {
     assert(_dir.filename() != ".");
-    lock_guard<mutex> lock(m_IOIntancesLock);
+    std::lock_guard<std::mutex> lock(m_IOIntancesLock);
     
     _i->EasyReset();
     BasicOptsSetup(_i.get());
@@ -684,12 +688,12 @@ int FTPHost::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker 
     return 0;
 }
 
-const string &FTPHost::ServerUrl() const noexcept
+const std::string &FTPHost::ServerUrl() const noexcept
 {
     return Config().server_url;
 }
 
-const string &FTPHost::User() const noexcept
+const std::string &FTPHost::User() const noexcept
 {
     return Config().user;
 }

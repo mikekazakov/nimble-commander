@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 #include <VFS/AppleDoubleEA.h>
@@ -7,7 +7,7 @@
 
 namespace nc::vfs::arc {
 
-File::File(const char* _relative_path, const shared_ptr<ArchiveHost> &_host):
+File::File(const char* _relative_path, const std::shared_ptr<ArchiveHost> &_host):
     VFSFile(_relative_path, _host)
 {
 }
@@ -26,7 +26,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
         return SetLastError(VFSError::NotSupported); // ArchiveFile is Read-Only
 
     int res;
-    auto host = dynamic_pointer_cast<ArchiveHost>(Host());
+    auto host = std::dynamic_pointer_cast<ArchiveHost>(Host());
 
     char file_path[MAXPATHLEN*2];
     res = host->ResolvePathIfNeeded(Path(), file_path, _open_flags);
@@ -37,7 +37,7 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
       !(_open_flags & VFSFlags::OF_Directory) )
         return VFSError::FromErrno(EISDIR);
     
-    unique_ptr<State> state;
+    std::unique_ptr<State> state;
     res = host->ArchiveStateForItem(file_path, state);
     if(res < 0)
         return res;
@@ -62,7 +62,7 @@ bool File::IsOpened() const
 
 int File::Close()
 {
-    dynamic_pointer_cast<ArchiveHost>(Host())->CommitState( move(m_State) );
+    std::dynamic_pointer_cast<ArchiveHost>(Host())->CommitState( move(m_State) );
     m_State.reset();
     return VFSError::Ok;
 }
@@ -119,7 +119,7 @@ unsigned File::XAttrCount() const
     return (unsigned)m_EA.size();
 }
 
-void File::XAttrIterateNames( function<bool(const char* _xattr_name)> _handler ) const
+void File::XAttrIterateNames( std::function<bool(const char* _xattr_name)> _handler ) const
 {
     if(!_handler || m_EA.empty())
         return;
@@ -139,7 +139,7 @@ ssize_t File::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size)
             if(_buffer == 0)
                 return i.data_sz;
     
-            size_t sz = min(i.data_sz, (uint32_t)_buf_size);
+            size_t sz = std::min(i.data_sz, (uint32_t)_buf_size);
             memcpy(_buffer, i.data, sz);
             return sz;
         }

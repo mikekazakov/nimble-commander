@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Internal.h"
 #include "WebDAVHost.h"
 #include <CFNetwork/CFNetworkErrors.h>
@@ -34,22 +34,22 @@ void HTTPRequests::Print( const Mask _mask )
     if( _mask == 0 )
         return;
 
-    if( _mask & HTTPRequests::Get )         cout << "GET ";
-    if( _mask & HTTPRequests::Head )        cout << "HEAD ";
-    if( _mask & HTTPRequests::Post )        cout << "POST ";
-    if( _mask & HTTPRequests::Put )         cout << "PUT ";
-    if( _mask & HTTPRequests::Delete )      cout << "DELETE ";
-    if( _mask & HTTPRequests::Connect )     cout << "CONNECT ";
-    if( _mask & HTTPRequests::Options )     cout << "OPTIONS ";
-    if( _mask & HTTPRequests::Trace )       cout << "TRACE " ;
-    if( _mask & HTTPRequests::Copy )        cout << "COPY ";
-    if( _mask & HTTPRequests::Lock )        cout << "LOCK ";
-    if( _mask & HTTPRequests::Mkcol )       cout << "MKCOL ";
-    if( _mask & HTTPRequests::Move )        cout << "MOVE ";
-    if( _mask & HTTPRequests::PropFind )    cout << "PROPFIND ";
-    if( _mask & HTTPRequests::PropPatch )   cout << "PROPPATCH ";
-    if( _mask & HTTPRequests::Unlock )      cout << "UNLOCK ";
-    cout << endl;
+    if( _mask & HTTPRequests::Get )         std::cout << "GET ";
+    if( _mask & HTTPRequests::Head )        std::cout << "HEAD ";
+    if( _mask & HTTPRequests::Post )        std::cout << "POST ";
+    if( _mask & HTTPRequests::Put )         std::cout << "PUT ";
+    if( _mask & HTTPRequests::Delete )      std::cout << "DELETE ";
+    if( _mask & HTTPRequests::Connect )     std::cout << "CONNECT ";
+    if( _mask & HTTPRequests::Options )     std::cout << "OPTIONS ";
+    if( _mask & HTTPRequests::Trace )       std::cout << "TRACE " ;
+    if( _mask & HTTPRequests::Copy )        std::cout << "COPY ";
+    if( _mask & HTTPRequests::Lock )        std::cout << "LOCK ";
+    if( _mask & HTTPRequests::Mkcol )       std::cout << "MKCOL ";
+    if( _mask & HTTPRequests::Move )        std::cout << "MOVE ";
+    if( _mask & HTTPRequests::PropFind )    std::cout << "PROPFIND ";
+    if( _mask & HTTPRequests::PropPatch )   std::cout << "PROPPATCH ";
+    if( _mask & HTTPRequests::Unlock )      std::cout << "UNLOCK ";
+    std::cout << std::endl;
 }
 
 static bool IsOkHTTPRC( const int _rc )

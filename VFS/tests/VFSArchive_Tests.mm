@@ -1,10 +1,12 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "tests_common.h"
 #include <VFS/VFS.h>
 #include <VFS/ArcLA.h>
 #include <VFS/Native.h>
 
 using namespace nc::vfs;
+using namespace std;
+using boost::filesystem::path;
 
 static const auto g_Preffix = string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
 static const auto g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
@@ -410,6 +412,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 - (void) waitUntilFinish:(volatile bool&)_finished
 {
+    using namespace std::chrono;
     microseconds sleeped = 0us, sleep_tresh = 60s;
     while (!_finished)
     {

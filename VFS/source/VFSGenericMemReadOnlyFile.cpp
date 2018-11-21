@@ -1,8 +1,8 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSGenericMemReadOnlyFile.h"
 
 VFSGenericMemReadOnlyFile::VFSGenericMemReadOnlyFile(const char* _relative_path,
-                                                     shared_ptr<VFSHost> _host,
+                                                     std::shared_ptr<VFSHost> _host,
                                                      const void *_memory,
                                                      uint64_t _mem_size):
     VFSFile(_relative_path, _host),

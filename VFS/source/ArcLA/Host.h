@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -16,8 +16,13 @@ struct State;
 class ArchiveHost final : public Host
 {
 public:
-    ArchiveHost(const string &_path, const VFSHostPtr &_parent, optional<string> _password = nullopt, VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
-    ArchiveHost(const VFSHostPtr &_parent, const VFSConfiguration &_config, VFSCancelChecker _cancel_checker = nullptr);
+    ArchiveHost(const std::string &_path,
+                const VFSHostPtr &_parent,
+                std::optional<std::string> _password = std::nullopt,
+                VFSCancelChecker _cancel_checker = nullptr); // flags will be added later
+    ArchiveHost(const VFSHostPtr &_parent,
+                const VFSConfiguration &_config,
+                VFSCancelChecker _cancel_checker = nullptr);
     ~ArchiveHost();
     
     static const char *UniqueTag;
@@ -35,15 +40,16 @@ public:
     virtual int Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
     
     virtual int CreateFile(const char* _path,
-                           shared_ptr<VFSFile> &_target,
+                           std::shared_ptr<VFSFile> &_target,
                            const VFSCancelChecker &_cancel_checker) override;
     
     virtual int FetchDirectoryListing(const char *_path,
-                                      shared_ptr<VFSListing> &_target,
+                                      std::shared_ptr<VFSListing> &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker) override;
     
-    virtual int IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler) override;
+    virtual int IterateDirectoryListing(const char *_path,
+                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
     
     virtual int ReadSymlink(const char *_symlink_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker) override;
     
@@ -58,14 +64,14 @@ public:
     // return zero on not found
     uint32_t ItemUID(const char* _filename);
     
-    unique_ptr<arc::State> ClosestState(uint32_t _requested_item);
-    void CommitState(unique_ptr<arc::State> _state);
+    std::unique_ptr<arc::State> ClosestState(uint32_t _requested_item);
+    void CommitState(std::unique_ptr<arc::State> _state);
     
     // use SeekCache or open a new file and seeks to requested item
-    int ArchiveStateForItem(const char *_filename, unique_ptr<arc::State> &_target);
+    int ArchiveStateForItem(const char *_filename, std::unique_ptr<arc::State> &_target);
     
-    shared_ptr<const ArchiveHost> SharedPtr() const {return static_pointer_cast<const ArchiveHost>(Host::SharedPtr());}
-    shared_ptr<ArchiveHost> SharedPtr() {return static_pointer_cast<ArchiveHost>(Host::SharedPtr());}
+    std::shared_ptr<const ArchiveHost> SharedPtr() const {return std::static_pointer_cast<const ArchiveHost>(Host::SharedPtr());}
+    std::shared_ptr<ArchiveHost> SharedPtr() {return std::static_pointer_cast<ArchiveHost>(Host::SharedPtr());}
     
     /** return VFSError, not uids returned */
     int ResolvePathIfNeeded(const char *_path, char *_resolved_path, unsigned long _flags);
@@ -85,10 +91,10 @@ public:
     struct Symlink
     {
         SymlinkState state  = SymlinkState::Unresolved;
-        string       value  = "";
+        std::string  value  = "";
         uint32_t     uid    = 0; // uid of symlink entry itself
         uint32_t     target_uid = 0;   // meaningful only if state == SymlinkState::Resolved
-        string       target_path = ""; // meaningful only if state == SymlinkState::Resolved
+        std::string  target_path = ""; // meaningful only if state == SymlinkState::Resolved
     };
     
     /** searches for entry in archive without any path resolving */
@@ -105,7 +111,7 @@ private:
     const class VFSArchiveHostConfiguration &Config() const;
     
     int ReadArchiveListing();
-    uint64_t UpdateDirectorySize( arc::Dir &_directory, const string &_path );
+    uint64_t UpdateDirectorySize( arc::Dir &_directory, const std::string &_path );
     arc::Dir* FindOrBuildDir(const char* _path_with_tr_sl);
     
     
@@ -121,10 +127,10 @@ private:
     void ResolveSymlink(uint32_t _uid);
     
     VFSConfiguration                        m_Configuration;
-    shared_ptr<VFSFile>                     m_ArFile;
-    shared_ptr<arc::Mediator>               m_Mediator;
+    std::shared_ptr<VFSFile>                m_ArFile;
+    std::shared_ptr<arc::Mediator>          m_Mediator;
     struct archive                         *m_Arc = nullptr;
-    map<string, arc::Dir>                   m_PathToDir;
+    std::map<std::string, arc::Dir>         m_PathToDir;
     uint32_t                                m_TotalFiles = 0;
     uint32_t                                m_TotalDirs = 0;
     uint32_t                                m_TotalRegs = 0;
@@ -133,12 +139,12 @@ private:
     uint32_t                                m_LastItemUID = 0;
 
     bool                                    m_NeedsPathResolving = false; // true if there are any symlinks present in archive
-    map<uint32_t, Symlink>                  m_Symlinks;
-    recursive_mutex                         m_SymlinksResolveLock;
+    std::map<uint32_t, Symlink>             m_Symlinks;
+    std::recursive_mutex                    m_SymlinksResolveLock;
     
-    vector<pair<arc::Dir*, uint32_t>>       m_EntryByUID; // points to directory and entry No inside it
-    vector<unique_ptr<arc::State>>          m_States;
-    mutex                                   m_StatesLock;
+    std::vector<std::pair<arc::Dir*, uint32_t>>m_EntryByUID; // points to directory and entry No inside it
+    std::vector<std::unique_ptr<arc::State>>m_States;
+    std::mutex                              m_StatesLock;
 };
 
 }

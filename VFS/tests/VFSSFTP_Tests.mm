@@ -1,10 +1,12 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "tests_common.h"
 #include <VFS/NetSFTP.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/DispatchGroup.h>
 
 using namespace nc::vfs;
+using namespace std;
+using boost::filesystem::path;
 
 static const path g_Keys = path(NCE(nc::env::test::ext_data_prefix)) / "sftp";
 static const auto g_QNAPNAS                     = NCE(nc::env::test::sftp_qnap_nas_host);

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include <libssh2.h>
 #include <libssh2_sftp.h>
@@ -6,7 +6,7 @@
 
 namespace nc::vfs::sftp {
 
-File::File(const char* _relative_path, shared_ptr<SFTPHost> _host):
+File::File(const char* _relative_path, std::shared_ptr<SFTPHost> _host):
     VFSFile(_relative_path, _host)
 {
 }
@@ -21,8 +21,8 @@ int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checke
     if(IsOpened())
         Close();
     
-    auto sftp_host = dynamic_pointer_cast<SFTPHost>(Host());
-    unique_ptr<SFTPHost::Connection> conn;
+    auto sftp_host = std::dynamic_pointer_cast<SFTPHost>(Host());
+    std::unique_ptr<SFTPHost::Connection> conn;
     int rc;
     if( (rc = sftp_host->GetConnection(conn)) != 0 )
         return rc;
@@ -76,7 +76,7 @@ int File::Close()
     }
     
     if( m_Connection )
-        dynamic_pointer_cast<SFTPHost>(Host())->ReturnConnection(move(m_Connection));
+        std::dynamic_pointer_cast<SFTPHost>(Host())->ReturnConnection(std::move(m_Connection));
 
     m_Position = 0;
     m_Size     = 0;
@@ -122,7 +122,7 @@ ssize_t File::Read(void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(dynamic_pointer_cast<SFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
+        return SetLastError(std::dynamic_pointer_cast<SFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
 }
 
 ssize_t File::Write(const void *_buf, size_t _size)
@@ -139,7 +139,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         return rc;
     }
     else
-        return SetLastError(dynamic_pointer_cast<SFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
+        return SetLastError(std::dynamic_pointer_cast<SFTPHost>(Host())->VFSErrorForConnection(*m_Connection));
 }
 
 ssize_t File::Pos() const

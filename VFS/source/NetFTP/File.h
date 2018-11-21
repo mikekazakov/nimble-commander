@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSFile.h>
@@ -9,7 +9,7 @@ namespace nc::vfs::ftp {
 class File final : public VFSFile
 {
 public:
-    File(const char* _relative_path, shared_ptr<FTPHost> _host);
+    File(const char* _relative_path, std::shared_ptr<FTPHost> _host);
     ~File();
     
 //        OF_Truncate is implicitly added to VFSFile when OF_Append is not used - FTP specific
@@ -44,12 +44,12 @@ private:
     void FinishWriting();
     void FinishReading();
     
-    unique_ptr<CURLInstance>             m_CURL;
-    unique_ptr<ReadBuffer>               m_ReadBuf;
+    std::unique_ptr<CURLInstance>        m_CURL;
+    std::unique_ptr<ReadBuffer>          m_ReadBuf;
     uint64_t                             m_BufFileOffset = 0;
-    unique_ptr<WriteBuffer>              m_WriteBuf;
+    std::unique_ptr<WriteBuffer>         m_WriteBuf;
     Mode                                 m_Mode = Mode::Closed;
-    string                               m_URLRequest;
+    std::string                          m_URLRequest;
     uint64_t                             m_FileSize = 0;
     uint64_t                             m_FilePos = 0;
     constexpr static const struct timeval m_SelectTimeout = {0, 10000};

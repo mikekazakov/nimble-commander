@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #pragma once
 
@@ -20,7 +20,7 @@ struct AppleDoubleEA
   * Return NULL or array of AppleDoubleEA (number of _ea_count) allocated with malloc.
   * Caller is responsible for deallocating this memory.
   */
-vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _memory_size);
+std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _memory_size);
 
 void *BuildAppleDoubleFromEA(VFSFile &_file,
                              size_t *_buf_sz);

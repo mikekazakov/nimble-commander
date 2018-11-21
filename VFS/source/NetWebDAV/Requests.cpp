@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Requests.h"
 #include "WebDAVHost.h"
 #include <boost/algorithm/string/split.hpp>
@@ -10,20 +10,22 @@
 #include <CFNetwork/CFNetworkErrors.h>
 
 namespace nc::vfs::webdav {
-
+    
+using namespace std::literals;
+    
 struct CURLInputStringContext
 {
     CURLInputStringContext(){};
-    CURLInputStringContext(const string &_str):data(_str){};
+    CURLInputStringContext(const std::string &_str):data(_str){};
     CURLInputStringContext(const char   *_str):data(_str){};
 
-    string_view data;
+    std::string_view data;
     ssize_t offset = 0;
     
     static size_t Read(void *_buf, size_t _size, size_t _nmemb, void *_userp)
     {
         auto &context = *(CURLInputStringContext*)_userp;
-        const auto to_read = min( context.data.size() - context.offset, _size * _nmemb );
+        const auto to_read = std::min( context.data.size() - context.offset, _size * _nmemb );
         memcpy( _buf, context.data.data() + context.offset, to_read );
         context.offset += to_read;
         return to_read;
@@ -64,14 +66,14 @@ static bool IsOkHTTPRC( const int _rc )
 static size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp)
 {
     const auto sz = size * nmemb;
-    auto &str = *(string*)userp;
+    auto &str = *(std::string*)userp;
     str.insert( str.size(), (const char *)buffer, sz );
     return sz;
 }
 
-static HTTPRequests::Mask ParseSupportedRequests( const string &_options_response_header )
+static HTTPRequests::Mask ParseSupportedRequests( const std::string &_options_response_header )
 {
-    vector<string> lines;
+    std::vector<std::string> lines;
     boost::split(lines, _options_response_header,
                  [](char _c){ return _c == '\r' || _c == '\n'; }, boost::token_compress_on);
 
@@ -83,8 +85,7 @@ static HTTPRequests::Mask ParseSupportedRequests( const string &_options_respons
     });
     if( allowed != end(lines) ) {
         const auto requests_set = allowed->substr( allowed_prefix.size() );
-//        cout << requests_set << endl;
-        vector<string> requests;
+        std::vector<std::string> requests;
         boost::split(requests, requests_set,
                      [](char _c){ return _c == ',' || _c == ' '; },
                      boost::token_compress_on);
@@ -110,17 +111,17 @@ static HTTPRequests::Mask ParseSupportedRequests( const string &_options_respons
     return mask;
 }
 
-pair<int, HTTPRequests::Mask> RequestServerOptions(const HostConfiguration& _options,
-                                                   Connection &_connection )
+std::pair<int, HTTPRequests::Mask> RequestServerOptions(const HostConfiguration& _options,
+                                                        Connection &_connection )
 {
     const auto curl = _connection.EasyHandle();
     
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "OPTIONS");
     curl_easy_setopt(curl, CURLOPT_URL, _options.full_url.c_str());
-    string response;
+    std::string response;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
-    string headers;
+    std::string headers;
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &headers);
 
@@ -144,7 +145,7 @@ static time_t ParseModDate( const char *_date_time )
     return DateTimeFromASCTime(_date_time);
 }
 
-static optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
+static std::optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
 {
     using namespace pugi;
     static const auto href_query    = xpath_query{ "./*[local-name()='href']" };
@@ -160,7 +161,7 @@ static optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
             if( const auto v = c.value() )
                 response.filename = URIUnescape(v);
     if( response.filename.empty() )
-        return nullopt;
+        return std::nullopt;
 
     if( const auto len = _node.select_node(len_query) )
         if( const auto c = len.node().first_child() )
@@ -184,10 +185,10 @@ static optional<PropFindResponse> ParseResponseNode( pugi::xml_node _node )
                 if(const auto t = ParseModDate(v);  t >= 0 )
                     response.modification_date = t;
 
-    return optional<PropFindResponse>{ move(response) };
+    return std::optional<PropFindResponse>{ std::move(response) };
 }
 
-static vector<PropFindResponse> ParseDAVListing( const string &_xml_listing )
+static std::vector<PropFindResponse> ParseDAVListing( const std::string &_xml_listing )
 {
     using namespace pugi;
 
@@ -196,20 +197,20 @@ static vector<PropFindResponse> ParseDAVListing( const string &_xml_listing )
     if( !result )
         return {};
 
-    vector<PropFindResponse> items;
+    std::vector<PropFindResponse> items;
     const auto response_nodes = doc.select_nodes("/*/*[local-name()='response']");
     for( const auto &response: response_nodes )
         if( auto item = ParseResponseNode(response.node()) )
-            items.emplace_back( move(*item) );
+            items.emplace_back( std::move(*item) );
     
     return items;
 }
 
-static vector<PropFindResponse> PruneFilepaths(vector<PropFindResponse> _items,
-                                               const string &_base_path)
+static std::vector<PropFindResponse> PruneFilepaths(std::vector<PropFindResponse> _items,
+                                                    const std::string &_base_path)
 {
     if( _base_path.front() != '/' || _base_path.back() != '/' )
-        throw invalid_argument("PruneFilepaths need a path with heading and trailing slashes");
+        throw std::invalid_argument("PruneFilepaths need a path with heading and trailing slashes");
     
     const auto base_path_len = _base_path.length();
     _items.erase(remove_if(begin(_items), end(_items), [&](auto &_item){
@@ -237,7 +238,8 @@ static vector<PropFindResponse> PruneFilepaths(vector<PropFindResponse> _items,
 [[maybe_unused]]
 // macOS server doesn't prefix filepaths with "webdav" prefix, but I didn't manage to get it
 // to work properly anyway. Maybe later.
-static bool FilepathsHavePathPrefix(const vector<PropFindResponse> &_items, const string &_path)
+static bool FilepathsHavePathPrefix(const std::vector<PropFindResponse> &_items,
+                                    const std::string &_path)
 {
     if( _path.empty() )
         return false;
@@ -249,12 +251,12 @@ static bool FilepathsHavePathPrefix(const vector<PropFindResponse> &_items, cons
     return server_uses_prefixes;
 }
 
-pair<int, vector<PropFindResponse>> RequestDAVListing(const HostConfiguration& _options,
-                                                      Connection &_connection,
-                                                      const string &_path )
+std::pair<int, std::vector<PropFindResponse>> RequestDAVListing(const HostConfiguration& _options,
+                                                                Connection &_connection,
+                                                                const std::string &_path )
 {
     if( _path.back() != '/' )
-        throw invalid_argument("FetchDAVListing: path must contain a trailing slash");
+        throw std::invalid_argument("FetchDAVListing: path must contain a trailing slash");
 
     const auto curl = _connection.EasyHandle();
     
@@ -290,7 +292,7 @@ pair<int, vector<PropFindResponse>> RequestDAVListing(const HostConfiguration& _
     curl_easy_setopt(curl, CURLOPT_SEEKDATA, &context);
     curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, context.data.size());
     
-    string response;
+    std::string response;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
     
@@ -318,7 +320,7 @@ pair<int, vector<PropFindResponse>> RequestDAVListing(const HostConfiguration& _
 }
 
 // free space, used space
-static pair<long, long> ParseSpaceQouta( const string &_xml )
+static std::pair<long, long> ParseSpaceQouta( const std::string &_xml )
 {
     using namespace pugi;
 
@@ -344,8 +346,8 @@ static pair<long, long> ParseSpaceQouta( const string &_xml )
     return {free, used};
 }
 
-tuple<int, long, long> RequestSpaceQuota(const HostConfiguration& _options,
-                                         Connection &_connection )
+std::tuple<int, long, long> RequestSpaceQuota(const HostConfiguration& _options,
+                                              Connection &_connection )
 {
     const auto g_QuotaMessage =
         "<?xml version=\"1.0\"?>"
@@ -377,7 +379,7 @@ tuple<int, long, long> RequestSpaceQuota(const HostConfiguration& _options,
     curl_easy_setopt(curl, CURLOPT_SEEKDATA, &context);
     curl_easy_setopt(curl, CURLOPT_INFILESIZE_LARGE, context.data.size());
     
-    string response;
+    std::string response;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
@@ -393,10 +395,10 @@ tuple<int, long, long> RequestSpaceQuota(const HostConfiguration& _options,
 
 int RequestMKCOL(const HostConfiguration& _options,
                  Connection &_connection,
-                 const string &_path )
+                 const std::string &_path )
 {
     if( _path.back() != '/' )
-        throw invalid_argument("RequestMKCOL: path must contain a trailing slash");
+        throw std::invalid_argument("RequestMKCOL: path must contain a trailing slash");
 
     const auto curl = _connection.EasyHandle();
     
@@ -410,7 +412,7 @@ int RequestMKCOL(const HostConfiguration& _options,
     const auto url = URIForPath(_options, _path);
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     
-    string response;
+    std::string response;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
@@ -424,7 +426,7 @@ int RequestMKCOL(const HostConfiguration& _options,
 
 int RequestDelete(const HostConfiguration& _options,
                   Connection &_connection,
-                  const string &_path )
+                  const std::string &_path )
 {
     if( _path == "/" )
         return VFSError::FromErrno(EPERM);
@@ -440,7 +442,7 @@ int RequestDelete(const HostConfiguration& _options,
     const auto url = URIForPath(_options, _path);
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     
-    string response;
+    std::string response;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
@@ -454,8 +456,8 @@ int RequestDelete(const HostConfiguration& _options,
 
 int RequestMove(const HostConfiguration& _options,
                 Connection &_connection,
-                const string &_src,
-                const string &_dst )
+                const std::string &_src,
+                const std::string &_dst )
 {
     if( _src == "/" )
         return VFSError::FromErrno(EPERM);
@@ -472,7 +474,7 @@ int RequestMove(const HostConfiguration& _options,
     const auto url = URIForPath(_options, _src);
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 
-    string response;
+    std::string response;
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, CURLWriteDataIntoString);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 

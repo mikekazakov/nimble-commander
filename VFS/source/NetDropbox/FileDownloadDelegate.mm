@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileDownloadDelegate.h"
 #include <VFS/VFSError.h>
 #include "Aux.h"
@@ -8,52 +8,52 @@ using namespace nc::vfs::dropbox;
 
 @implementation NCVFSDropboxFileDownloadDelegate
 {
-    mutex                                   m_CallbacksLock;
-    function<void(ssize_t _size_or_error)>  m_ResponseHandler;
-    function<void(NSData*)>                 m_DataHandler;
-    function<void(int)>                     m_ErrorHandler;
+    std::mutex                                   m_CallbacksLock;
+    std::function<void(ssize_t _size_or_error)>  m_ResponseHandler;
+    std::function<void(NSData*)>                 m_DataHandler;
+    std::function<void(int)>                     m_ErrorHandler;
 }
 
-- (void)setHandleError:(function<void (int)>)handleError
+- (void)setHandleError:(std::function<void (int)>)handleError
 {
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_ErrorHandler = handleError;
 }
 
-- (function<void (int)>)handleError
+- (std::function<void (int)>)handleError
 {
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     return m_ErrorHandler;
 }
 
-- (void)setHandleResponse:(function<void(ssize_t)>)handleResponse
+- (void)setHandleResponse:(std::function<void(ssize_t)>)handleResponse
 {
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_ResponseHandler = handleResponse;
 }
 
-- (function<void(ssize_t)>)handleResponse
+- (std::function<void(ssize_t)>)handleResponse
 {
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     return m_ResponseHandler;
 }
 
-- (void) setHandleData:(function<void (NSData *)>)handleData
+- (void) setHandleData:(std::function<void (NSData *)>)handleData
 {
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     m_DataHandler = handleData;
 }
 
-- (function<void (NSData *)>)handleData
+- (std::function<void (NSData *)>)handleData
 {
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     return m_DataHandler;
 }
 
 - (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)_error
 {
     auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     if( m_ErrorHandler )
         m_ErrorHandler(error);
 }
@@ -63,7 +63,7 @@ using namespace nc::vfs::dropbox;
 {
     if( _error ) {
         auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
-        lock_guard<mutex> lock{m_CallbacksLock};
+        std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_ErrorHandler )
             m_ErrorHandler(error);
     }
@@ -74,14 +74,14 @@ using namespace nc::vfs::dropbox;
 {
     if( auto response = objc_cast<NSHTTPURLResponse>(task.response) )
         if( response.statusCode == 200 ) {
-            lock_guard<mutex> lock{m_CallbacksLock};
+            std::lock_guard<std::mutex> lock{m_CallbacksLock};
             if( m_DataHandler )
                 m_DataHandler(data);
             return;
         }
     
     auto error = VFSErrorFromErrorAndReponseAndData(nil, task.response, data);
-    lock_guard<mutex> lock{m_CallbacksLock};
+    std::lock_guard<std::mutex> lock{m_CallbacksLock};
     if( m_ErrorHandler )
         m_ErrorHandler(error);
 }
@@ -109,7 +109,7 @@ static long ExtractContentLengthFromResponse(NSURLResponse *_response)
     completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {
     if( auto l = ExtractContentLengthFromResponse(response); l >= 0 ) {
-        lock_guard<mutex> lock{m_CallbacksLock};
+        std::lock_guard<std::mutex> lock{m_CallbacksLock};
         if( m_ResponseHandler )
             m_ResponseHandler(l);
     }

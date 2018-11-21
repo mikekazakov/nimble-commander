@@ -1,10 +1,10 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PathRoutines.h"
 #include "Internal.h"
 
 namespace nc::vfs::webdav {
 
-pair<string, string> DeconstructPath(const string &_path)
+std::pair<std::string, std::string> DeconstructPath(const std::string &_path)
 {
     if( _path.empty() )
         return {};
@@ -13,19 +13,19 @@ pair<string, string> DeconstructPath(const string &_path)
     
     if( _path.back() == '/' ) {
         const auto ls = _path.find_last_of('/', _path.length() - 2);
-        if( ls == string::npos )
+        if( ls == std::string::npos )
             return {};
         return { _path.substr(0, ls+1), _path.substr(ls+1, _path.length() - ls - 2) };
     }
     else {
         const auto ls = _path.find_last_of('/');
-        if( ls == string::npos )
+        if( ls == std::string::npos )
             return {};
         return { _path.substr(0, ls+1), _path.substr(ls+1) };
     }
 }
 
-string URIEscape( const string &_unescaped )
+std::string URIEscape( const std::string &_unescaped )
 {
     static const auto acs = NSCharacterSet.URLPathAllowedCharacterSet;
     if( auto str = [NSString stringWithUTF8StdString:_unescaped] )
@@ -35,7 +35,7 @@ string URIEscape( const string &_unescaped )
     return {};
 }
 
-string URIUnescape( const string &_escaped )
+std::string URIUnescape( const std::string &_escaped )
 {
     if( auto str = [NSString stringWithUTF8StdString:_escaped] )
         if( auto stripped = [str stringByRemovingPercentEncoding] )
@@ -44,7 +44,7 @@ string URIUnescape( const string &_escaped )
     return {};
 }
 
-string URIForPath(const HostConfiguration& _options, const string &_path)
+std::string URIForPath(const HostConfiguration& _options, const std::string &_path)
 {
     auto uri = _options.full_url;
     if( _path != "/" ) {

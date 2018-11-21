@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Internal.h"
 #include "Cache.h"
@@ -8,7 +8,7 @@ namespace nc::vfs::webdav {
 
 constexpr static const struct timeval g_SelectTimeout = {0, 10000};
 
-File::File(const char* _relative_path, const shared_ptr<WebDAVHost> &_host):
+File::File(const char* _relative_path, const std::shared_ptr<WebDAVHost> &_host):
     VFSFile(_relative_path, _host),
     m_Host(*_host)
 {

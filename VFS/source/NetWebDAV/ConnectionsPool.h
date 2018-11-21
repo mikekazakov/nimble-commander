@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <curl/curl.h>
@@ -20,7 +20,7 @@ public:
     void AttachMultiHandle();
     void DetachMultiHandle();
 
-    using ProgressCallback = function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
+    using ProgressCallback = std::function<bool(long _dltotal, long _dlnow, long _ultotal, long _ulnow)>;
     void SetProgreessCallback( ProgressCallback _callback );
     void Clear();
 
@@ -45,20 +45,20 @@ public:
 
     struct AR;
     AR Get();
-    unique_ptr<Connection> GetRaw();
-    void Return(unique_ptr<Connection> _connection);
+    std::unique_ptr<Connection> GetRaw();
+    void Return(std::unique_ptr<Connection> _connection);
 
 private:
-    vector< unique_ptr<Connection> > m_Connections;
+    std::vector< std::unique_ptr<Connection> > m_Connections;
     const HostConfiguration &m_Config;
 };
 
 struct ConnectionsPool::AR
 {
-    AR( unique_ptr<Connection> _c, ConnectionsPool& _p );
+    AR( std::unique_ptr<Connection> _c, ConnectionsPool& _p );
     AR( AR && ) = default;
     ~AR();
-    unique_ptr<Connection> connection;
+    std::unique_ptr<Connection> connection;
     ConnectionsPool& pool;
 };
 

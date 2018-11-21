@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/Host.h"
 #include "../include/VFS/VFSPath.h"
 
@@ -6,13 +6,13 @@ VFSPath::VFSPath()
 {
 }
 
-VFSPath::VFSPath(const VFSHostPtr &_host, string _path):
+VFSPath::VFSPath(const VFSHostPtr &_host, std::string _path):
     m_Host(_host),
     m_Path(move(_path))
 {
 }
 
-VFSPath::VFSPath(VFSHost &_host, string _path):
+VFSPath::VFSPath(VFSHost &_host, std::string _path):
     VFSPath(_host.shared_from_this(), move(_path))
 {
 }
@@ -21,7 +21,7 @@ const VFSHostPtr& VFSPath::Host() const noexcept
 {
     return m_Host;
 }
-const string& VFSPath::Path() const noexcept
+const std::string& VFSPath::Path() const noexcept
 {
     return m_Path;
 }
@@ -91,7 +91,7 @@ VFSPathStack::VFSPathStack()
 {
 }
 
-VFSPathStack::VFSPathStack(const VFSHostPtr &_vfs, const string &_path):
+VFSPathStack::VFSPathStack(const VFSHostPtr &_vfs, const std::string &_path):
     m_Path(_path)
 {
     auto curr_host = _vfs.get();
@@ -113,44 +113,15 @@ bool VFSPathStack::weak_equal(const VFSPathStack&_r) const
     return true;
 }
 
-string VFSPathStack::verbose_string() const
+std::string VFSPathStack::verbose_string() const
 {
-    string res;
+    std::string res;
     for( auto &i: m_Stack )
         res += i.configuration.VerboseJunction();
     res += m_Path;
     return res;
 }
 
-
-//class VFSPathStack
-//{
-//public:
-//    struct Part
-//    {
-//        Part() = default;
-//        Part(VFSHost &_host);
-//        
-//        const char* fs_tag; // this tag is redundant since configuration already able to provide it
-//        string junction;
-//        weak_ptr<VFSHost> host;
-//        VFSConfiguration configuration;
-//        
-//        /**
-//         * operation== performs fast comparison by ptrs.
-//         */
-//        bool operator==(const Part&_r) const;
-//        inline bool operator!=(const Part&_r) const { return !(*this == _r); }
-//        
-//        /**
-//         * Will compare parts without respect to host ptr and will compare options by it's content.
-//         */
-//        bool weak_equal(const Part&_r) const;
-//    };
-//    
-//    VFSPathStack();
-//    VFSPathStack(const VFSHostPtr &_vfs, const string &_path);
-//
 bool VFSPathStack::operator==(const VFSPathStack& _r) const
 {
     return m_Stack == _r.m_Stack && m_Path == _r.m_Path;
@@ -181,14 +152,15 @@ const VFSPathStack::Part& VFSPathStack::back() const
     return m_Stack.back();
 }
 
-const string& VFSPathStack::path() const
+const std::string& VFSPathStack::path() const
 {
     return m_Path;
 }
 
-hash<VFSPathStack>::value_type hash<VFSPathStack>::operator()(hash<VFSPathStack>::argument_type const& _v) const
+std::hash<VFSPathStack>::value_type std::hash<VFSPathStack>::
+    operator()(hash<VFSPathStack>::argument_type const& _v) const
 {
-    string str;
+    std::string str;
     for(auto &i:_v.m_Stack)
     {
         str += i.fs_tag;
@@ -197,5 +169,5 @@ hash<VFSPathStack>::value_type hash<VFSPathStack>::operator()(hash<VFSPathStack>
         str += "|"; // really need this?
     }
     str += _v.m_Path;
-    return hash<string>()(str);
+    return std::hash<std::string>()(str);
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <unrar/raros.hpp>
 #include <unrar/dll.hpp>
@@ -7,8 +7,8 @@ namespace nc::vfs::unrar {
 
 struct Entry
 {
-    string      rar_name;       // original full name in rar archive, for search and comparisons
-    string      name;           // utf-8
+    std::string rar_name;       // original full name in rar archive, for search and comparisons
+    std::string name;           // utf-8
     uint64_t    packed_size = 0;
     uint64_t    unpacked_size = 0;
     time_t      time = 0;
@@ -18,9 +18,9 @@ struct Entry
 
 struct Directory
 {
-    string full_path; // full path to directory including trailing slash
+    std::string full_path; // full path to directory including trailing slash
     time_t time = 0;
-    deque<Entry> entries;
+    std::deque<Entry> entries;
 };
 
 struct SeekCache

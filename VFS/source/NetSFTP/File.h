@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSFile.h>
@@ -10,7 +10,7 @@ namespace nc::vfs::sftp {
 class File : public VFSFile
 {
 public:
-    File(const char* _relative_path, shared_ptr<SFTPHost> _host);
+    File(const char* _relative_path, std::shared_ptr<SFTPHost> _host);
     ~File();
     
     virtual int Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker) override;
@@ -26,7 +26,7 @@ public:
     virtual bool Eof() const override;
 
 private:
-    unique_ptr<SFTPHost::Connection> m_Connection;
+    std::unique_ptr<SFTPHost::Connection> m_Connection;
     LIBSSH2_SFTP_HANDLE *m_Handle = nullptr;
     ssize_t m_Position = 0;
     ssize_t m_Size     = 0;    

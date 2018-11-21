@@ -1,8 +1,9 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "tests_common.h"
 #include <VFS/PS.h>
 
 using namespace nc::vfs;
+using namespace std;
 
 @interface VFSPS_Tests : XCTestCase
 @end

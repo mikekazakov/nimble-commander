@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -16,10 +16,10 @@ class WebDAVHost final : public Host
 public:
     static const char *UniqueTag;
 
-    WebDAVHost(const string &_serv_url,
-               const string &_user,
-               const string &_passwd,
-               const string &_path,
+    WebDAVHost(const std::string &_serv_url,
+               const std::string &_user,
+               const std::string &_passwd,
+               const std::string &_path,
                bool _https = false,
                int _port = -1);
     WebDAVHost( const VFSConfiguration &_config );               
@@ -32,12 +32,12 @@ public:
     bool IsWritable() const override;
     
     int FetchDirectoryListing(const char *_path,
-                              shared_ptr<VFSListing> &_target,
+                              std::shared_ptr<VFSListing> &_target,
                               unsigned long _flags,
                               const VFSCancelChecker &_cancel_checker) override;
     
     int IterateDirectoryListing(const char *_path,
-                                const function<bool(const VFSDirEnt &_dirent)> &_handler) override;
+                                const std::function<bool(const VFSDirEnt &_dirent)> &_handler) override;
     int Stat(const char *_path,
              VFSStat &_st,
              unsigned long _flags,
@@ -57,7 +57,7 @@ public:
                const VFSCancelChecker &_cancel_checker ) override;
     
     int CreateFile(const char* _path,
-                   shared_ptr<VFSFile> &_target,
+                   std::shared_ptr<VFSFile> &_target,
                    const VFSCancelChecker &_cancel_checker) override;
     
     int Rename(const char *_old_path,
@@ -67,11 +67,11 @@ public:
     bool IsDirChangeObservingAvailable(const char *_path) override;
     
     HostDirObservationTicket DirChangeObserve(const char *_path,
-                                              function<void()> _handler) override;
+                                              std::function<void()> _handler) override;
     
-    const string &Host() const noexcept;
-    const string &Path() const noexcept;
-    const string Username() const noexcept;
+    const std::string &Host() const noexcept;
+    const std::string &Path() const noexcept;
+    const std::string Username() const noexcept;
     const int Port() const noexcept;
     
     const webdav::HostConfiguration &Config() const noexcept;
@@ -81,11 +81,11 @@ public:
 private:
     void Init();
     void StopDirChangeObserving(unsigned long _ticket) override;
-    int RefreshListingAtPath( const string &_path, const VFSCancelChecker &_cancel_checker );
+    int RefreshListingAtPath( const std::string &_path, const VFSCancelChecker &_cancel_checker );
 
 
     struct State;
-    unique_ptr<State> I;
+    std::unique_ptr<State> I;
     VFSConfiguration m_Configuration;
 };
 

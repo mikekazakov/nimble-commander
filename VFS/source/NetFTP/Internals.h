@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <curl/curl.h>
@@ -40,7 +40,7 @@ struct CURLInstance
     CURLM *curlm = nullptr;
     bool attached = false;
     int (^prog_func)(double dltotal, double dlnow, double ultotal, double ulnow) = nil;
-    mutex call_lock;
+    std::mutex call_lock;
     
 private:
     static int ProgressCallback(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
@@ -176,7 +176,7 @@ struct WriteBuffer
  */
 size_t CURLWriteDataIntoString(void *buffer, size_t size, size_t nmemb, void *userp);
  
-shared_ptr<Directory> ParseListing(const char *_str);
+std::shared_ptr<Directory> ParseListing(const char *_str);
     
 int CURLErrorToVFSError(CURLcode _curle);
     

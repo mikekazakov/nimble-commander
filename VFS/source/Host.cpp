@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "ListingInput.h"
 #include "../include/VFS/Host.h"
@@ -11,7 +11,7 @@ HostDirObservationTicket::HostDirObservationTicket() noexcept:
 {
 }
 
-HostDirObservationTicket::HostDirObservationTicket(unsigned long _ticket, weak_ptr<VFSHost> _host) noexcept:
+HostDirObservationTicket::HostDirObservationTicket(unsigned long _ticket, std::weak_ptr<VFSHost> _host) noexcept:
     m_Ticket(_ticket),
     m_Host(_host)
 {
@@ -81,7 +81,7 @@ public:
 };
     
 Host::Host(const char *_junction_path,
-           const shared_ptr<Host> &_parent,
+           const std::shared_ptr<Host> &_parent,
            const char *_fs_tag):
     m_JunctionPath(_junction_path ? _junction_path : ""),
     m_Parent(_parent),
@@ -96,12 +96,12 @@ Host::~Host()
         m_OnDesctruct( this );
 }
 
-shared_ptr<VFSHost> Host::SharedPtr()
+std::shared_ptr<VFSHost> Host::SharedPtr()
 {
     return shared_from_this();
 }
 
-shared_ptr<const VFSHost> Host::SharedPtr() const
+std::shared_ptr<const VFSHost> Host::SharedPtr() const
 {
     return shared_from_this();
 }
@@ -132,7 +132,7 @@ bool Host::IsWritableAtPath(const char *_dir) const
 }
 
 int Host::CreateFile(const char* _path,
-                     shared_ptr<VFSFile> &_target,
+                     std::shared_ptr<VFSFile> &_target,
                      const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
@@ -202,7 +202,7 @@ ssize_t Host::CalculateDirectorySize(const char *_path,
     if(_path == 0 || _path[0] != '/')
         return VFSError::InvalidCall;
     
-    queue<boost::filesystem::path> look_paths;
+    std::queue<boost::filesystem::path> look_paths;
     int64_t total_size = 0;
     
     look_paths.emplace(_path);
@@ -213,7 +213,7 @@ ssize_t Host::CalculateDirectorySize(const char *_path,
         IterateDirectoryListing(look_paths.front().c_str(), [&](const VFSDirEnt& _dirent){
             boost::filesystem::path full_path = look_paths.front() / _dirent.name;
             if(_dirent.type == VFSDirEnt::Dir)
-                look_paths.emplace(move(full_path));
+                look_paths.emplace(std::move(full_path));
             else {
                 VFSStat stat;
                 if(Stat(full_path.c_str(), stat, VFSFlags::F_NoFollow, 0) == 0)
@@ -232,7 +232,7 @@ bool Host::IsDirChangeObservingAvailable(const char *_path)
     return false;
 }
 
-HostDirObservationTicket Host::DirChangeObserve(const char *_path, function<void()> _handler)
+HostDirObservationTicket Host::DirChangeObserve(const char *_path, std::function<void()> _handler)
 {
     return {};
 }
@@ -246,7 +246,7 @@ int Host::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSC
     return VFSError::NotSupported;
 }
 
-int Host::IterateDirectoryListing(const char *_path, const function<bool(const VFSDirEnt &_dirent)> &_handler)
+int Host::IterateDirectoryListing(const char *_path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     // TODO: write a default implementation using listing fetching.
     // it will be less efficient, but for some FS like PS it will be ok
@@ -284,10 +284,10 @@ int Host::CreateSymlink(const char *_symlink_path, const char *_symlink_value, c
 }
 
 int Host::SetTimes(const char *_path,
-                   optional<time_t> _birth_time,
-                   optional<time_t> _mod_time,
-                   optional<time_t> _chg_time,
-                   optional<time_t> _acc_time,
+                   std::optional<time_t> _birth_time,
+                   std::optional<time_t> _mod_time,
+                   std::optional<time_t> _chg_time,
+                   std::optional<time_t> _acc_time,
                    const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
@@ -313,14 +313,14 @@ int Host::SetPermissions(const char *_path, uint16_t _mode, const VFSCancelCheck
     return VFSError::NotSupported;
 }
 
-int Host::GetXAttrs(const char *_path, vector< pair<string, vector<uint8_t>>> &_xattrs)
+int Host::GetXAttrs(const char *_path, std::vector< std::pair<std::string, std::vector<uint8_t>>> &_xattrs)
 {
     return VFSError::NotSupported;
 }
 
-const shared_ptr<Host> &Host::DummyHost()
+const std::shared_ptr<Host> &Host::DummyHost()
 {
-    static auto host = make_shared<Host>("", nullptr, Host::UniqueTag);
+    static auto host = std::make_shared<Host>("", nullptr, Host::UniqueTag);
     return host;
 }
 
@@ -357,11 +357,11 @@ bool Host::ValidateFilename(const char *_filename) const
         return false;
 
     static const char invalid_chars[] = ":\\/\r\t\n";
-    return find_first_of(i, e, begin(invalid_chars), end(invalid_chars)) == e;
+    return std::find_first_of(i, e, std::begin(invalid_chars), std::end(invalid_chars)) == e;
 }
 
 int Host::FetchDirectoryListing(const char *_path,
-                                shared_ptr<Listing> &_target,
+                                std::shared_ptr<Listing> &_target,
                                 unsigned long _flags,
                                 const VFSCancelChecker &_cancel_checker)
 {
@@ -369,7 +369,7 @@ int Host::FetchDirectoryListing(const char *_path,
 }
 
 int Host::FetchSingleItemListing(const char *_path,
-                                 shared_ptr<Listing> &_target,
+                                 std::shared_ptr<Listing> &_target,
                                  unsigned long _flags,
                                  const VFSCancelChecker &_cancel_checker)
 {
@@ -445,18 +445,18 @@ int Host::FetchSingleItemListing(const char *_path,
         }
     }
 
-    _target = VFSListing::Build( move(listing_source) );
+    _target = VFSListing::Build( std::move(listing_source) );
     
     return 0;
 }
 
-int Host::FetchFlexibleListingItems(const string& _directory_path,
-                                    const vector<string> &_filenames,
+int Host::FetchFlexibleListingItems(const std::string& _directory_path,
+                                    const std::vector<std::string> &_filenames,
                                     unsigned long _flags,
-                                    vector<VFSListingItem> &_result,
+                                    std::vector<VFSListingItem> &_result,
                                     const VFSCancelChecker &_cancel_checker)
 {
-    shared_ptr<VFSListing> listing;
+    std::shared_ptr<VFSListing> listing;
     int ret = FetchDirectoryListing(_directory_path.c_str(), listing, _flags, _cancel_checker);
     if( ret != 0 )
         return ret;
@@ -473,7 +473,7 @@ int Host::FetchFlexibleListingItems(const string& _directory_path,
     return 0;
 }
 
-void Host::SetDesctructCallback( function<void(const VFSHost*)> _callback )
+void Host::SetDesctructCallback( std::function<void(const VFSHost*)> _callback )
 {
     m_OnDesctruct = _callback;
 }
@@ -486,12 +486,12 @@ int Host::SetOwnership(const char *_path,
     return VFSError::NotSupported;
 }
 
-int Host::FetchUsers(vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
+int Host::FetchUsers(std::vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::FetchGroups(vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
+int Host::FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -522,7 +522,7 @@ uint64_t Host::FullHashForPath( const char *_path ) const noexcept
         return 0;
 
     const auto max_hosts = 8;
-    array<const VFSHost*, max_hosts> hosts;
+    std::array<const VFSHost*, max_hosts> hosts;
     int hosts_n = 0;
     
     auto cur = this;
@@ -544,12 +544,12 @@ uint64_t Host::FullHashForPath( const char *_path ) const noexcept
     }
     p = stpcpy(p, _path);
     
-    return hash<string_view>()( string_view(&buf[0], p - &buf[0]) );
+    return std::hash<std::string_view>()( std::string_view(&buf[0], p - &buf[0]) );
 }
 
-string Host::MakePathVerbose( const char *_path ) const
+std::string Host::MakePathVerbose( const char *_path ) const
 {
-    array<const Host*, 8> hosts;
+    std::array<const Host*, 8> hosts;
     int hosts_n = 0;
     
     auto cur = this;
@@ -558,7 +558,7 @@ string Host::MakePathVerbose( const char *_path ) const
         cur = cur->Parent().get();
     }
     
-    string verbose_path;
+    std::string verbose_path;
     while( hosts_n > 0 )
         verbose_path += hosts[--hosts_n]->Configuration().VerboseJunction();
     

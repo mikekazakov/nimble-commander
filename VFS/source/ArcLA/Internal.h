@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <libarchive/archive.h>
@@ -9,7 +9,7 @@ namespace nc::vfs::arc {
 
 struct Mediator
 {
-    shared_ptr<VFSFile> file;
+    std::shared_ptr<VFSFile> file;
     enum {bufsz = 65536 * 4};
     char buf[bufsz];
     
@@ -56,17 +56,17 @@ private:
 
 struct DirEntry
 {
-    string name; // optimize
+    std::string name; // optimize
     struct stat st;
     uint32_t aruid; // unique number inside archive in same order as appearance in archive
 };
 
 struct Dir
 {
-    string full_path;          // should alway be with trailing slash
-    string name_in_parent;     // can be "" only for root directory, full_path will be "/"
+    std::string full_path;          // should alway be with trailing slash
+    std::string name_in_parent;     // can be "" only for root directory, full_path will be "/"
     uint64_t content_size = 0;
-    deque<DirEntry> entries;
+    std::deque<DirEntry> entries;
 };
 
 }

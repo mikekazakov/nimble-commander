@@ -52,7 +52,6 @@
     #include <future>
     #include <random>
     #include <optional>
-    using namespace std;
 
     #include <Habanero/dispatch_cpp.h>
     #include <Habanero/mach_time.h>

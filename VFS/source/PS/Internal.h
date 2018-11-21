@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #import <libproc.h>
 #import <sys/sysctl.h>
@@ -21,13 +21,13 @@ struct PSHost::ProcInfo
     uid_t   p_uid; // process uid;
     uid_t   c_uid; // current (effective) uid;
     
-    string  name;
+    std::string  name;
     
     // path to running binary
-    string bin_path;
+    std::string bin_path;
     
     // arguments to binary if available
-    string arguments;
+    std::string arguments;
     
     time_t start_time;
     
@@ -46,16 +46,16 @@ struct PSHost::ProcInfo
 
 struct PSHost::Snapshot
 {
-    time_t                  taken_time;
-    vector<ProcInfo>        procs;
+    time_t                      taken_time;
+    std::vector<ProcInfo>       procs;
 
-    map<pid_t, unsigned>    pid_to_index;
+    std::map<pid_t, unsigned>   pid_to_index;
     
     // content itself
-    vector<string>          files;
+    std::vector<std::string>    files;
     
     // like "75 - KernelEventAgent.txt"
-    vector<string>          plain_filenames;
+    std::vector<std::string>    plain_filenames;
 };
 
 }

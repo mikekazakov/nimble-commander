@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -212,20 +212,20 @@ static bool IsAppleDouble(const void *_memory_buf, size_t _memory_size)
     return true;
 }
 
-vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _memory_size)
+std::vector<AppleDoubleEA> ExtractEAFromAppleDouble(const void *_memory_buf, size_t _memory_size)
 {
     if(!_memory_buf || !_memory_size)
-        return vector<AppleDoubleEA>();
+        return {};
 
     if(!IsAppleDouble(_memory_buf, _memory_size))
-        return vector<AppleDoubleEA>();
+        return {};
     
     apple_double_header_t adhdr = *(const apple_double_header_t *) _memory_buf;
     swap_adhdr(&adhdr);
   
     bool has_finfo = memcmp(adhdr.finfo, emptyfinfo, sizeof(emptyfinfo)) != 0;
     
-    vector<AppleDoubleEA> eas;
+    std::vector<AppleDoubleEA> eas;
     int eas_last = 0;
     
     if(adhdr.entries[0].length > FINDERINFOSIZE)
@@ -295,7 +295,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file,
     struct {
         char name[256];
         int name_len;
-        unique_ptr<char[]> data;
+        std::unique_ptr<char[]> data;
         unsigned data_sz;
         bool isfinfo;
         unsigned attr_hdr_offset;
@@ -326,7 +326,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file,
     for(int i = 0; i < eas_count; ++i) {
         ssize_t sz = _file.XAttrGet(file_eas[i].name, 0, 0);
         if(sz > 0) {
-            file_eas[i].data = make_unique<char[]>(sz);
+            file_eas[i].data = std::make_unique<char[]>(sz);
             assert(file_eas[i].data);
             file_eas[i].data_sz = (unsigned)sz;
             _file.XAttrGet(file_eas[i].name, file_eas[i].data.get(), file_eas[i].data_sz);
@@ -385,7 +385,7 @@ void *BuildAppleDoubleFromEA(VFSFile &_file,
         else {
             memcpy(&attr_header_p->appledouble.finfo[0],
                    ea.data.get(),
-                   min(32u, ea.data_sz)
+                   std::min(32u, ea.data_sz)
                    );
         }
     }

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WebDAVHost.h"
 #include "Internal.h"
 #include <Utility/PathManip.h>
@@ -25,18 +25,18 @@ struct WebDAVHost::State
     class Cache           m_Cache;
 };
 
-static VFSConfiguration ComposeConfiguration(const string &_serv_url,
-                                             const string &_user,
-                                             const string &_passwd,
-                                             const string &_path,
+static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
+                                             const std::string &_user,
+                                             const std::string &_passwd,
+                                             const std::string &_path,
                                              bool _https,
                                              int _port);
 static bool IsValidInputPath(const char *_path);
 
-WebDAVHost::WebDAVHost(const string &_serv_url,
-                       const string &_user,
-                       const string &_passwd,
-                       const string &_path,
+WebDAVHost::WebDAVHost(const std::string &_serv_url,
+                       const std::string &_user,
+                       const std::string &_passwd,
+                       const std::string &_path,
                        bool _https,
                        int _port):
     VFSHost(_serv_url.c_str(), nullptr, UniqueTag),
@@ -92,7 +92,7 @@ bool WebDAVHost::IsWritable() const
 }
 
 int WebDAVHost::FetchDirectoryListing(const char *_path,
-                                      shared_ptr<VFSListing> &_target,
+                                      std::shared_ptr<VFSListing> &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker)
 {
@@ -104,7 +104,7 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
     if( _flags & VFSFlags::F_ForceRefresh )
         I->m_Cache.DiscardListing(path);
     
-    vector<PropFindResponse> items;
+    std::vector<PropFindResponse> items;
     if( auto cached = I->m_Cache.Listing(path) ) {
         items = move( *cached );
     }
@@ -152,19 +152,19 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
         index++;
     }
 
-    _target = VFSListing::Build(move(listing_source));
+    _target = VFSListing::Build(std::move(listing_source));
     return VFSError::Ok;
 }
 
 int WebDAVHost::IterateDirectoryListing(const char *_path,
-                                        const function<bool(const VFSDirEnt &_dirent)> &_handler)
+                                        const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
 {
     if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
     const auto path =  EnsureTrailingSlash(_path);
 
-    vector<PropFindResponse> items;
+    std::vector<PropFindResponse> items;
     if( auto cached = I->m_Cache.Listing(path) ) {
         items = move( *cached );
     }
@@ -206,7 +206,7 @@ int WebDAVHost::Stat(const char *_path,
     PropFindResponse item;
     auto [cached_1st, cached_1st_res] = I->m_Cache.Item(_path);
     if( cached_1st ) {
-        item = move(*cached_1st);
+        item = std::move(*cached_1st);
     }
     else {
         if( cached_1st_res == Cache::E::NonExist )
@@ -221,7 +221,7 @@ int WebDAVHost::Stat(const char *_path,
     
         auto [cached_2nd, cached_2nd_res] = I->m_Cache.Item(_path);
         if( cached_2nd )
-            item = move(*cached_2nd);
+            item = std::move(*cached_2nd);
         else
             return VFSError::FromErrno(ENOENT);
     }
@@ -244,10 +244,11 @@ int WebDAVHost::Stat(const char *_path,
     return VFSError::Ok;
 }
 
-int WebDAVHost::RefreshListingAtPath( const string &_path, const VFSCancelChecker &_cancel_checker )
+int WebDAVHost::RefreshListingAtPath(const std::string &_path,
+                                     const VFSCancelChecker &_cancel_checker )
 {
     if( _path.back() != '/' )
-        throw invalid_argument("RefreshListingAtPath requires a path with a trailing slash");
+        throw std::invalid_argument("RefreshListingAtPath requires a path with a trailing slash");
     
     auto ar = I->m_Pool.Get();
     auto [rc, items] = RequestDAVListing(Config(), *ar.connection, _path);
@@ -332,13 +333,13 @@ int WebDAVHost::Unlink(const char *_path,
 }
 
 int WebDAVHost::CreateFile(const char* _path,
-                           shared_ptr<VFSFile> &_target,
+                           std::shared_ptr<VFSFile> &_target,
                            const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
 
-    _target = make_shared<File>(_path, dynamic_pointer_cast<WebDAVHost>(shared_from_this()));
+    _target = std::make_shared<File>(_path, std::dynamic_pointer_cast<WebDAVHost>(shared_from_this()));
 
     return VFSError::Ok;
 }
@@ -376,7 +377,7 @@ bool WebDAVHost::IsDirChangeObservingAvailable(const char *_path)
 }
 
 HostDirObservationTicket WebDAVHost::DirChangeObserve(const char *_path,
-                                                         function<void()> _handler)
+                                                      std::function<void()> _handler)
 {
     if( !IsValidInputPath(_path) )
         return {};
@@ -396,22 +397,22 @@ VFSMeta WebDAVHost::Meta()
     m.SpawnWithConfig = [](const VFSHostPtr &_parent,
                            const VFSConfiguration& _config,
                            VFSCancelChecker _cancel_checker) {
-        return make_shared<WebDAVHost>(_config);
+        return std::make_shared<WebDAVHost>(_config);
     };
     return m;
 }
 
-const string &WebDAVHost::Host() const noexcept
+const std::string &WebDAVHost::Host() const noexcept
 {
     return Config().server_url;
 }
 
-const string &WebDAVHost::Path() const noexcept
+const std::string &WebDAVHost::Path() const noexcept
 {
     return Config().path;
 }
 
-const string WebDAVHost::Username() const noexcept
+const std::string WebDAVHost::Username() const noexcept
 {
     return Config().user;
 }
@@ -421,10 +422,10 @@ const int WebDAVHost::Port() const noexcept
     return Config().port;
 }
 
-static VFSConfiguration ComposeConfiguration(const string &_serv_url,
-                                             const string &_user,
-                                             const string &_passwd,
-                                             const string &_path,
+static VFSConfiguration ComposeConfiguration(const std::string &_serv_url,
+                                             const std::string &_user,
+                                             const std::string &_passwd,
+                                             const std::string &_path,
                                              bool _https,
                                              int    _port)
 {
@@ -446,7 +447,7 @@ static VFSConfiguration ComposeConfiguration(const string &_serv_url,
                       _serv_url + "/" +
                       (_path.empty() ? "" :  _path + "/");
 
-    return VFSConfiguration( move(config) );
+    return VFSConfiguration( std::move(config) );
 }
 
 static bool IsValidInputPath(const char *_path)

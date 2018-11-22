@@ -172,7 +172,7 @@
 		CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextControl.mm; path = source/FilenameTextControl.mm; sourceTree = "<group>"; };
 		CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleComboBoxPersistentDataSource.h; path = include/Utility/SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
 		CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SimpleComboBoxPersistentDataSource.mm; path = source/SimpleComboBoxPersistentDataSource.mm; sourceTree = "<group>"; };
-		CFC546272136DAC800D288A4 /* Utility Unit Tests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Utility Unit Tests"; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFC546272136DAC800D288A4 /* UtilityUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UtilityUT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UnitTests_main.cpp; path = tests/UnitTests_main.cpp; sourceTree = SOURCE_ROOT; };
 		CFD3CAF01DA4AD2A006DA143 /* KeychainServices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeychainServices.h; path = include/Utility/KeychainServices.h; sourceTree = "<group>"; };
 		CFD3CAF21DA4AD32006DA143 /* KeychainServices.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeychainServices.cpp; path = source/KeychainServices.cpp; sourceTree = "<group>"; };
@@ -299,7 +299,7 @@
 			children = (
 				CFFA94631F453CB60035E606 /* libUtility.dylib */,
 				CF614A9D1F9D86CC0005F2DB /* Utility Tests.xctest */,
-				CFC546272136DAC800D288A4 /* Utility Unit Tests */,
+				CFC546272136DAC800D288A4 /* UtilityUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -455,9 +455,9 @@
 			productReference = CF614A9D1F9D86CC0005F2DB /* Utility Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		CFC546262136DAC800D288A4 /* Utility Unit Tests */ = {
+		CFC546262136DAC800D288A4 /* UtilityUT */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = CFC5462B2136DAC800D288A4 /* Build configuration list for PBXNativeTarget "Utility Unit Tests" */;
+			buildConfigurationList = CFC5462B2136DAC800D288A4 /* Build configuration list for PBXNativeTarget "UtilityUT" */;
 			buildPhases = (
 				CFC546232136DAC800D288A4 /* Sources */,
 				CFC546242136DAC800D288A4 /* Frameworks */,
@@ -468,9 +468,9 @@
 			dependencies = (
 				CFC546322136DBDD00D288A4 /* PBXTargetDependency */,
 			);
-			name = "Utility Unit Tests";
+			name = UtilityUT;
 			productName = "Utility Unit Tests";
-			productReference = CFC546272136DAC800D288A4 /* Utility Unit Tests */;
+			productReference = CFC546272136DAC800D288A4 /* UtilityUT */;
 			productType = "com.apple.product-type.tool";
 		};
 		CFFA94621F453CB60035E606 /* Utility */ = {
@@ -527,7 +527,7 @@
 			targets = (
 				CFFA94621F453CB60035E606 /* Utility */,
 				CF614A9C1F9D86CC0005F2DB /* Utility Tests */,
-				CFC546262136DAC800D288A4 /* Utility Unit Tests */,
+				CFC546262136DAC800D288A4 /* UtilityUT */,
 			);
 		};
 /* End PBXProject section */
@@ -739,7 +739,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		CFC5462B2136DAC800D288A4 /* Build configuration list for PBXNativeTarget "Utility Unit Tests" */ = {
+		CFC5462B2136DAC800D288A4 /* Build configuration list for PBXNativeTarget "UtilityUT" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				CFC5462C2136DAC800D288A4 /* Debug */,

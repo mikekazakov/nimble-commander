@@ -1,5 +1,8 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileUploadStream.h"
+#include <mutex>
+#include <deque>
+#include <Habanero/spinlock.h>
 
 @implementation NCVFSDropboxFileUploadStream
 {

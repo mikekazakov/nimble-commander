@@ -4,6 +4,8 @@
 #include "FileUploadStream.h"
 #include "FileUploadDelegate.h"
 #include "FileDownloadDelegate.h"
+#include <Habanero/spinlock.h>
+#include <iostream>
 
 namespace nc::vfs::dropbox {
 

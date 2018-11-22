@@ -3,6 +3,8 @@
 
 #include "../../include/VFS/Host.h"
 #include "../../include/VFS/VFSFile.h"
+#include <map>
+#include <mutex>
 
 namespace nc::vfs {
 

@@ -2,6 +2,7 @@
 #pragma once
 
 #include <VFS/Host.h>
+#include <mutex>
 
 typedef struct _LIBSSH2_SFTP    LIBSSH2_SFTP;
 typedef struct _LIBSSH2_SESSION LIBSSH2_SESSION;

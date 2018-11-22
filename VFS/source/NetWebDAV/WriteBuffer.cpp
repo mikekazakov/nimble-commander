@@ -1,5 +1,8 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WriteBuffer.h"
+#include <stdlib.h>
+#include <algorithm>
+#include <assert.h>
 
 namespace nc::vfs::webdav {
 

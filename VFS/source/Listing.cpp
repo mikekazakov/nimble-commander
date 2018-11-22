@@ -2,6 +2,7 @@
 #include "Listing.h"
 #include "../include/VFS/Host.h"
 #include "ListingInput.h"
+#include <sys/param.h>
 
 namespace nc::vfs {
 

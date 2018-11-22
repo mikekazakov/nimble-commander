@@ -2,6 +2,9 @@
 #pragma once
 
 #include "Host.h"
+#include <deque>
+#include <mutex>
+#include <condition_variable>
 
 @class NCVFSDropboxFileDownloadDelegate;
 @class NCVFSDropboxFileUploadStream;

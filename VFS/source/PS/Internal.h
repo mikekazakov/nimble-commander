@@ -1,9 +1,9 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
-#import <libproc.h>
-#import <sys/sysctl.h>
-
-#import "Host.h"
+#include <libproc.h>
+#include <sys/sysctl.h>
+#include <map>
+#include "Host.h"
 
 namespace nc::vfs {
 

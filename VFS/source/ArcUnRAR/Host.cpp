@@ -5,6 +5,8 @@
 #include "Host.h"
 #include "Internals.h"
 #include "File.h"
+#include <sys/dirent.h>
+#include <sys/param.h>
 
 namespace nc::vfs {
 

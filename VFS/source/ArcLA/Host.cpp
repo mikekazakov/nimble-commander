@@ -11,6 +11,7 @@
 #include "Internal.h"
 #include "File.h"
 #include "EncodingDetection.h"
+#include <sys/param.h>
 
 namespace nc::vfs {
 

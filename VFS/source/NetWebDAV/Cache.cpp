@@ -3,6 +3,8 @@
 #include <Utility/PathManip.h>
 #include "Internal.h"
 #include "PathRoutines.h"
+#include <Habanero/mach_time.h>
+#include <Habanero/spinlock.h>
 
 namespace nc::vfs::webdav {
 

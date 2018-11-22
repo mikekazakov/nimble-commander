@@ -8,6 +8,7 @@
 #include "File.h"
 #include "PathRoutines.h"
 #include "Requests.h"
+#include <sys/dirent.h>
 
 namespace nc::vfs {
 

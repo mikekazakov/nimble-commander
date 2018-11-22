@@ -8,6 +8,12 @@
 #include "File.h"
 #include "OSDetector.h"
 #include "AccountsFetcher.h"
+#include <sys/socket.h>
+#include <sys/param.h>
+#include <netdb.h>
+#include <thread>
+#include <Habanero/spinlock.h>
+#include <sys/dirent.h>
 
 namespace nc::vfs {
     

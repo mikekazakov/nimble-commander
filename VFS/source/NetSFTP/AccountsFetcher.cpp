@@ -3,6 +3,7 @@
 #include <VFS/VFSError.h>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/trim.hpp>
+#include <unordered_map>
 
 namespace nc::vfs::sftp {
 

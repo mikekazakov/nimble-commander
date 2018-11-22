@@ -1,4 +1,5 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "Fetching.h"
 #include <sys/attr.h>
 #include <sys/errno.h>
 #include <sys/vnode.h>
@@ -6,7 +7,8 @@
 #include <RoutedIO/RoutedIO.h>
 #include <Utility/PathManip.h>
 #include <VFS/VFSError.h>
-#include "Fetching.h"
+#include <sys/stat.h>
+#include <vector>
 
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking

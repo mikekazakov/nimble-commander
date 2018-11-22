@@ -3,6 +3,7 @@
 
 #include <VFS/VFSFile.h>
 #include "InternalsForward.h"
+#include <boost/filesystem.hpp>
 
 namespace nc::vfs::ftp {
 

@@ -4,6 +4,7 @@
 #include <libssh2.h>
 #include "OSType.h"
 #include <VFS/VFSDeclarations.h>
+#include <optional>
 
 namespace nc::vfs::sftp {
 

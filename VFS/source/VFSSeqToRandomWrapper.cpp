@@ -4,6 +4,13 @@
 #include <Utility/SystemInformation.h>
 #include "../include/VFS/VFSSeqToRandomWrapper.h"
 #include "../include/VFS/VFSError.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <limits.h>
+#include <stddef.h>
+#include <sys/param.h>
+#include <sys/fcntl.h>
+#include <errno.h>
 
 VFSSeqToRandomROWrapperFile::Backend::~Backend()
 {

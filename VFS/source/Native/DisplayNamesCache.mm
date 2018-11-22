@@ -1,5 +1,7 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DisplayNamesCache.h"
+#include <Foundation/Foundation.h>
+#include <Utility/StringExtras.h>
 
 namespace nc::vfs::native {
 

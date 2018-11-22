@@ -4,6 +4,7 @@
 #include "Aux.h"
 #include "Host.h"
 #include "File.h"
+#include <sys/dirent.h>
 
 namespace nc::vfs {
 

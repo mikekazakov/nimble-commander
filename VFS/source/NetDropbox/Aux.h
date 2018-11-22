@@ -15,12 +15,15 @@
 #include <rapidjson/memorystream.h>
 #include <rapidjson/stringbuffer.h>
 #include <VFS/VFSDeclarations.h>
+#include <optional>
+#include <sys/stat.h>
 
 @class NSData;
 @class NSURL;
 @class NSURLSession;
 @class NSURLRequest;
 @class NSURLResponse;
+@class NSMutableURLRequest;
 @class NSError;
 
 namespace nc::vfs::dropbox {

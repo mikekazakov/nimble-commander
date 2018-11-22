@@ -3,6 +3,7 @@
 #include "xattr.h"
 #include <VFS/VFSFile.h>
 #include "../ListingInput.h"
+#include <dirent.h>
 
 using namespace std::literals;
 

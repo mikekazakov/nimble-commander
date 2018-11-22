@@ -2,6 +2,7 @@
 #pragma once
 
 #include <VFS/VFSFile.h>
+#include <dispatch/dispatch.h>
 
 namespace nc::vfs {
 class UnRARHost;

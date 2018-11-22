@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include <memory>
+
 /** 
  * Configuration requirements synopsis
  *

@@ -2,6 +2,8 @@
 #include <Cocoa/Cocoa.h>
 #include <VFS/VFSError.h>
 #include "Aux.h"
+#include <Utility/ObjCpp.h>
+#include <vector>
 
 namespace nc::vfs::dropbox {
 

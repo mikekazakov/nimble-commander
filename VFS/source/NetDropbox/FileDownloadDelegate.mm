@@ -2,6 +2,8 @@
 #include "FileDownloadDelegate.h"
 #include <VFS/VFSError.h>
 #include "Aux.h"
+#include <mutex>
+#include <Utility/ObjCpp.h>
 
 using namespace nc::vfs;
 using namespace nc::vfs::dropbox;

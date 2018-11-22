@@ -3,6 +3,7 @@
 #include <libarchive/archive_platform.h>
 #include "../include/VFS/VFSError.h"
 #include "../include/VFS/VFSDeclarations.h"
+#include <Foundation/Foundation.h>
 
 static NSString *const g_Domain = @"vfs";
 

@@ -14,7 +14,9 @@
 #include <VFS/VFSError.h>
 #include "../ListingInput.h"
 #include "Fetching.h"
-
+#include <Habanero/DispatchGroup.h>
+#include <Utility/ObjCpp.h>
+#include <sys/mount.h>
 
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking

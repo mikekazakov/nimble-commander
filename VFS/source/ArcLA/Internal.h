@@ -4,6 +4,7 @@
 #include <libarchive/archive.h>
 #include <libarchive/archive_entry.h>
 #include <VFS/VFSFile.h>
+#include <deque>
 
 namespace nc::vfs::arc {
 
@@ -47,8 +48,8 @@ private:
 
     enum {BufferSize = 65536 * 4};
     VFSFilePtr              m_File;
-    struct archive         *m_Archive = nil;
-    struct archive_entry   *m_Entry = nil; // entry for current archive state
+    struct archive         *m_Archive = nullptr;
+    struct archive_entry   *m_Entry = nullptr; // entry for current archive state
     uint32_t                m_UID = 0;
     bool                    m_Consumed = false;
     char                    m_Buf[BufferSize];

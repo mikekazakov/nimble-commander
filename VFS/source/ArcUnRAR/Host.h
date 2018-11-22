@@ -1,10 +1,12 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <sys/stat.h>
 #include <Habanero/SerialQueue.h>
 #include "../../include/VFS/Host.h"
 #include "../../include/VFS/VFSFile.h"
+#include <map>
+#include <list>
 
 namespace nc::vfs {
 

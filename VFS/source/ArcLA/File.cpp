@@ -4,6 +4,7 @@
 #include <VFS/AppleDoubleEA.h>
 #include "File.h"
 #include "Internal.h"
+#include <sys/param.h>
 
 namespace nc::vfs::arc {
 

@@ -1,6 +1,8 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PathRoutines.h"
 #include "Internal.h"
+#include <Foundation/Foundation.h>
+#include <Utility/StringExtras.h>
 
 namespace nc::vfs::webdav {
 

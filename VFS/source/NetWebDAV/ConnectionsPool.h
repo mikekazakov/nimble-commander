@@ -2,6 +2,9 @@
 #pragma once
 
 #include <curl/curl.h>
+#include <functional>
+#include <vector>
+#include <memory>
 
 namespace nc::vfs::webdav {
 

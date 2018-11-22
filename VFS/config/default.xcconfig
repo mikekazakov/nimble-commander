@@ -4,8 +4,6 @@ OTHER_LDFLAGS = -larchive -lboost_system-mt -lboost_filesystem-mt -lz -lssl -lcr
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -isystem$(PROJECT_DIR)/../3rd_Party/libarchive/include
 ALWAYS_SEARCH_USER_PATHS = NO
 USE_HEADERMAP = NO
-GCC_PRECOMPILE_PREFIX_HEADER = YES
-GCC_PREFIX_HEADER = source/VFS-prefix.pch
 GCC_DYNAMIC_NO_PIC = NO
 GCC_INLINES_ARE_PRIVATE_EXTERN = YES
 GCC_NO_COMMON_BLOCKS = YES

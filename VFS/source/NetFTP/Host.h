@@ -2,6 +2,8 @@
 #pragma once
 #include <VFS/Host.h>
 #include "InternalsForward.h"
+#include <boost/filesystem.hpp>
+#include <map>
 
 // RTFM: http://www.ietf.org/rfc/rfc959.txt
 

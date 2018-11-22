@@ -1,6 +1,9 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <Foundation/Foundation.h>
+#include <functional>
+
 @interface NCVFSDropboxFileDownloadDelegate : NSObject<NSURLSessionDelegate>
 
 // non-reentrant callbacks, don't change them when upon execution

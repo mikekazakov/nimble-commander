@@ -1,6 +1,12 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <sys/stat.h>
+#include <optional>
+#include <unordered_map>
+#include <atomic>
+#include <Habanero/spinlock.h>
+
 namespace nc::vfs::native {
 
 /**

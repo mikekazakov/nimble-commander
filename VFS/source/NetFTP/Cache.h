@@ -3,6 +3,9 @@
 
 #include <curl/curl.h>
 #include <VFS/Host.h>
+#include <deque>
+#include <map>
+#include <mutex>
 
 namespace nc::vfs::ftp {
 

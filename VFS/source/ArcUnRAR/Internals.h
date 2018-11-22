@@ -2,6 +2,10 @@
 #pragma once
 #include <unrar/raros.hpp>
 #include <unrar/dll.hpp>
+#include <string>
+#include <stdint.h>
+#include <deque>
+#include <time.h>
 
 namespace nc::vfs::unrar {
 

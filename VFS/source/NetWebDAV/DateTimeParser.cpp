@@ -1,6 +1,7 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DateTimeParser.h"
 #include <Habanero/CFStackAllocator.h>
+#include <Habanero/spinlock.h>
 
 namespace nc::vfs::webdav {
 

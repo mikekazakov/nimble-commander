@@ -2,6 +2,11 @@
 #include <Utility/PathManip.h>
 #include "ListingInput.h"
 #include "../include/VFS/Host.h"
+#include <sys/param.h>
+#include <queue>
+#include <boost/filesystem.hpp>
+#include <sys/dirent.h>
+#include <sys/stat.h>
 
 namespace nc::vfs {
 

@@ -2,6 +2,7 @@
 #include "Internal.h"
 #include "WebDAVHost.h"
 #include <CFNetwork/CFNetworkErrors.h>
+#include <iostream>
 
 namespace nc::vfs::webdav {
     

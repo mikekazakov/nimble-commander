@@ -7,7 +7,9 @@
 
 static const auto g_Identifier = @"MainWindow";
 static const auto g_FrameIdentifier = @"MainWindow";
-static const auto g_MinWindowSize = NSMakeSize(640, 480);
+static const auto g_MinWindowSize = NSMakeSize(640, 481);
+// ^^^^ this additional pixel (481 instead of 480) appeared to have an even amount of rows
+// for the Brief presentation with a default row height (i.e. 19 px)
 static const auto g_InitialWindowContentRect = NSMakeRect(100, 100, 1000, 600);
 
 @implementation NCMainWindow

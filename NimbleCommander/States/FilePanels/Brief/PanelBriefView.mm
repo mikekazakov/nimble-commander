@@ -423,37 +423,56 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
          return -1;
 }
 
-- (void) setCursorPosition:(int)cursorPosition
+- (void) ensureItemIsVisible:(int)_item_index
 {
-    if( self.cursorPosition == cursorPosition )
+    if( _item_index < 0 )
+        return;
+    
+    const auto visible_rect = m_ScrollView.documentVisibleRect;
+    const auto item_rect = [m_CollectionView frameForItemAtIndex:_item_index];
+    if( !NSContainsRect(visible_rect, item_rect) ) {
+        const auto index_path = [NSIndexPath indexPathForItem:_item_index inSection:0];
+        const auto indices = [NSSet setWithObject:index_path];
+        if( visible_rect.size.width >= item_rect.size.width ) {
+            const auto scroll_mode = [&]{
+                if( item_rect.origin.x < visible_rect.origin.x )
+                    return NSCollectionViewScrollPositionLeft;
+                if( NSMaxX(item_rect) > NSMaxX(visible_rect) )
+                    return NSCollectionViewScrollPositionRight;
+                return NSCollectionViewScrollPositionCenteredHorizontally;
+            }();
+            [m_CollectionView scrollToItemsAtIndexPaths:indices
+                                         scrollPosition:scroll_mode];
+        }
+        else {
+            // TODO: this call can be redundant.
+            // Need to check whether the scroll position is already optimal
+            [m_CollectionView scrollToItemsAtIndexPaths:indices
+                                         scrollPosition:NSCollectionViewScrollPositionLeft];
+        }
+    }
+}
+
+- (void) setCursorPosition:(int)_cursor_position
+{
+    if( self.cursorPosition == _cursor_position )
         return;
     
     const auto entries_count = [m_CollectionView numberOfItemsInSection:0];
     
-    if( cursorPosition >= 0 && cursorPosition >= entries_count ) {
+    if( _cursor_position >= 0 && _cursor_position >= entries_count ) {
         // currently data<->cursor invariant is temporary broken => skipping this request
         return;
     }
     
-    if( cursorPosition < 0 )
+    if( _cursor_position < 0 ) {
         m_CollectionView.selectionIndexPaths = [NSSet set];
+    }
     else {
-        const auto ind = [NSSet setWithObject:[NSIndexPath indexPathForItem:cursorPosition
-                                                                  inSection:0]];
-        m_CollectionView.selectionIndexPaths = ind;
-        
-        const auto vis_rect = m_ScrollView.documentVisibleRect;
-        const auto item_rect = [m_CollectionView frameForItemAtIndex:cursorPosition];
-        if( !NSContainsRect(vis_rect, item_rect) ) {
-            const auto scroll_mode = [&]{
-                if( item_rect.origin.x < vis_rect.origin.x )
-                    return NSCollectionViewScrollPositionLeft;
-                if( NSMaxX(item_rect) > NSMaxX(vis_rect) )
-                    return NSCollectionViewScrollPositionRight;
-                return NSCollectionViewScrollPositionCenteredHorizontally;
-            }();
-            [m_CollectionView scrollToItemsAtIndexPaths:ind scrollPosition:scroll_mode];
-        }
+        const auto index_path = [NSIndexPath indexPathForItem:_cursor_position inSection:0];
+        const auto indices = [NSSet setWithObject:index_path];
+        m_CollectionView.selectionIndexPaths = indices;
+        [self ensureItemIsVisible:_cursor_position];
     }
 }
 

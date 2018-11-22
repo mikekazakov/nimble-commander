@@ -140,7 +140,7 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
     const auto min_runs = 10;
     const auto next_show_delay = 60l * 60l* 24l * 14l; // every 14 days
 
-    if( ActivationManager::Instance().UsedHadPurchasedProFeatures() ||      // don't show nag screen if user has already bought pro features
+    if( nc::bootstrap::ActivationManager::Instance().UsedHadPurchasedProFeatures() ||      // don't show nag screen if user has already bought pro features
         FeedbackManager::Instance().ApplicationRunsCount() < min_runs ||    // don't show nag screen if user didn't use software for long enough
         CFDefaultsGetBool(g_PrefsPFDontShow) )                              // don't show nag screen it user has opted to
         return;

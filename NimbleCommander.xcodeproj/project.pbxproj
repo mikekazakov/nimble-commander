@@ -2903,7 +2903,7 @@
 			children = (
 				CF768DF51C99C0F4002748BC /* libUtility.dylib */,
 				CF614AE61F9D91F10005F2DB /* Utility Tests.xctest */,
-				CF308F43213ADAD800915730 /* Utility Unit Tests */,
+				CF308F43213ADAD800915730 /* UtilityUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3536,7 +3536,7 @@
 					};
 					CFF6F2391A13567C00011177 = {
 						DevelopmentTeam = AC5SJT236H;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -3625,10 +3625,10 @@
 			remoteRef = CF20CC05215A258F006716F6 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF308F43213ADAD800915730 /* Utility Unit Tests */ = {
+		CF308F43213ADAD800915730 /* UtilityUT */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.executable";
-			path = "Utility Unit Tests";
+			path = UtilityUT;
 			remoteRef = CF308F42213ADAD800915730 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -5633,7 +5633,7 @@
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files Developer ID";
+				PROVISIONING_PROFILE_SPECIFIER = "NC NonMAS Developer ID";
 			};
 			name = Debug;
 		};
@@ -5651,7 +5651,7 @@
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = info.filesmanager.Files;
 				PRODUCT_NAME = "Nimble Commander";
-				PROVISIONING_PROFILE_SPECIFIER = "XC OSX: info.filesmanager.Files Developer ID";
+				PROVISIONING_PROFILE_SPECIFIER = "NC NonMAS Developer ID";
 			};
 			name = Release;
 		};
@@ -5660,7 +5660,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/Files-Pro.entitlements";
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -5670,7 +5670,7 @@
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Pro-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "NC MAS Paid Development";
 			};
 			name = Debug;
 		};
@@ -5678,15 +5678,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "NimbleCommander/Resources/Files-Pro.entitlements";
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_MAS_Paid";
 				DEVELOPMENT_TEAM = AC5SJT236H;
 				GCC_PREPROCESSOR_DEFINITIONS = "__NC_VERSION_PAID__=1";
 				INFOPLIST_FILE = "NimbleCommander/Resources/NimbleCommander-Pro-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "info.filesmanager.Files-Pro";
 				PRODUCT_NAME = "Nimble Commander Pro";
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "NC MAS Paid Distribution";
 			};
 			name = Release;
 		};

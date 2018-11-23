@@ -3,6 +3,8 @@ set -o pipefail
 
 XC="xcodebuild -project ../NimbleCommander.xcodeproj"
 
+$XC clean
+
 SCHEMES="NimbleCommander-Unsigned NimbleCommander-NonMAS NimbleCommander-MAS-Free NimbleCommander-MAS-Paid"
 CONFIGURATIONS="Debug Release"
 for SCHEME in $SCHEMES
@@ -11,7 +13,6 @@ do
     do
         CMD="$XC -scheme $SCHEME -configuration $CONFIGURATION"
         echo "Command: $CMD"
-        $CMD clean
         $CMD build | xcpretty
         if [ $? -ne 0 ]
         then

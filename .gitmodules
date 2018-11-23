@@ -4,9 +4,9 @@
 [submodule "3rd_Party/AppAuth/AppAuth-iOS"]
 	path = 3rd_Party/AppAuth/AppAuth-iOS
 	url = https://github.com/openid/AppAuth-iOS.git
-[submodule "3rd_Party/LetsMove/LetsMove"]
-	path = 3rd_Party/LetsMove/LetsMove
-	url = https://github.com/potionfactory/LetsMove.git
 [submodule "3rd_Party/Catch2"]
 	path = 3rd_Party/Catch2
 	url = https://github.com/catchorg/Catch2
+[submodule "3rd_Party/LetsMove/LetsMove"]
+	path = 3rd_Party/LetsMove/LetsMove
+	url = https://github.com/mikekazakov/LetsMove.git

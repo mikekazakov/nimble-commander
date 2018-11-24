@@ -1,4 +1,6 @@
 #!/bin/sh
+set -o pipefail
+
 XC="xcodebuild \
      -project ../NimbleCommander.xcodeproj \
      -scheme NimbleCommander-NonMAS \

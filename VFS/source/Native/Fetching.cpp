@@ -185,10 +185,8 @@ int Fetching::ReadSingleEntryAttributesByPath(
     else
         params.add_time = -1;
     
-    if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH ) {
+    if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH )
         params.size = *reinterpret_cast<const off_t*>(field);
-        field += sizeof(off_t);
-    }
     else
         params.size = -1;
     
@@ -395,10 +393,8 @@ int Fetching::ReadDirAttributesBulk(
             else
                 params.add_time = -1;
             
-            if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH ) {
+            if( attrs.returned.fileattr & ATTR_FILE_DATALENGTH )
                 params.size = *reinterpret_cast<const off_t*>(field);
-                field += sizeof(off_t);
-            }
             else
                 params.size = -1;
             

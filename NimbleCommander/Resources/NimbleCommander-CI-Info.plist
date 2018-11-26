@@ -97,5 +97,7 @@ All rights reserved.</string>
 			<dict/>
 		</dict>
 	</array>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>An application in Nimble Commander wants to use AppleScript.</string>
 </dict>
 </plist>

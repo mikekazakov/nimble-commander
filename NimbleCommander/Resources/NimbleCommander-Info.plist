@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>An application in Nimble Commander wants to use AppleScript.</string>
 	<key>NSAppleScriptEnabled</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>

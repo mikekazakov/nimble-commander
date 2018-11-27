@@ -1,14 +1,20 @@
-// Copyright (C) 2014-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "ProcessSheetController.h"
 
 static const nanoseconds g_ShowDelay = 150ms;
+
+@interface ProcessSheetController()
+@property (nonatomic) IBOutlet NSTextField *titleTextField;
+@property (nonatomic) IBOutlet NSProgressIndicator *progressIndicator;
+@end
 
 @implementation ProcessSheetController
 {
     bool m_Running;
     bool m_UserCancelled;
     bool m_ClientClosed;
+    double m_Progress;
 }
 
 @synthesize userCancelled = m_UserCancelled;
@@ -28,8 +34,8 @@ static const nanoseconds g_ShowDelay = 150ms;
         });
         self = me;
     }
-    
     if(self) {
+        m_Progress = 0.;
         self.window.movableByWindowBackground = true;
         m_Running = false;
         m_UserCancelled = false;
@@ -85,12 +91,48 @@ static const nanoseconds g_ShowDelay = 150ms;
 
 - (void) setTitle:(NSString *)title
 {
-    ((NSTextField*)[self.window.contentView viewWithTag:777]).stringValue = title;
+    if( dispatch_is_main_queue() ) {
+        self.titleTextField.stringValue = title;
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), [=]{
+            self.titleTextField.stringValue = title;    
+        });
+    }
 }
 
 - (NSString*) title
 {
-    return ((NSTextField*)[self.window.contentView viewWithTag:777]).stringValue;
+    if( dispatch_is_main_queue() ) {
+        return self.titleTextField.stringValue;
+    }
+    else {
+        NSString *result = nil;
+        dispatch_sync(dispatch_get_main_queue(), [=, &result]{
+            result = self.titleTextField.stringValue; 
+        });        
+        return result;
+    }
+}
+
+- (void)setProgress:(double)progress
+{
+    if( progress == m_Progress )
+        return;
+    m_Progress = progress; 
+    if( dispatch_is_main_queue() ) {
+        self.progressIndicator.doubleValue = m_Progress; 
+    }
+    else {
+        dispatch_async(dispatch_get_main_queue(), [=]{
+            self.progressIndicator.doubleValue = m_Progress;    
+        });
+    }
+}
+
+- (double)progress
+{
+    return m_Progress;
 }
 
 @end

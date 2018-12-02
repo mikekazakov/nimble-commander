@@ -38,6 +38,8 @@
 		CF4BCF5C1F301303005F8414 /* AggregateProgressTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF5A1F301303005F8414 /* AggregateProgressTracker.h */; };
 		CF4BCF5D1F301303005F8414 /* AggregateProgressTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCF5B1F301303005F8414 /* AggregateProgressTracker.mm */; };
 		CF4BCF5F1F30130B005F8414 /* CopyingDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCF5E1F30130B005F8414 /* CopyingDialog.h */; };
+		CF62B7C321B3D703009972DE /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CF62B7C121B3D703009972DE /* debug.xcconfig */; };
+		CF62B7C421B3D703009972DE /* release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CF62B7C221B3D703009972DE /* release.xcconfig */; };
 		CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084D61EF7CC770072F0F6 /* Pool.h */; };
 		CF7084D91EF7CC770072F0F6 /* Pool.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF7084D71EF7CC770072F0F6 /* Pool.mm */; };
 		CF7084DB1EF7CCB00072F0F6 /* Pool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7084DA1EF7CCB00072F0F6 /* Pool.h */; };
@@ -206,6 +208,8 @@
 		CF4BCF5B1F301303005F8414 /* AggregateProgressTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AggregateProgressTracker.mm; path = source/AggregateProgressTracker.mm; sourceTree = "<group>"; };
 		CF4BCF5E1F30130B005F8414 /* CopyingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingDialog.h; path = include/Operations/CopyingDialog.h; sourceTree = "<group>"; };
 		CF5FD93E1FA2D3B400752E59 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = config.xcconfig; path = config/config.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
+		CF62B7C121B3D703009972DE /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
+		CF62B7C221B3D703009972DE /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF7084D61EF7CC770072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = source/Pool.h; sourceTree = "<group>"; };
 		CF7084D71EF7CC770072F0F6 /* Pool.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Pool.mm; path = source/Pool.mm; sourceTree = "<group>"; };
 		CF7084DA1EF7CCB00072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = include/Operations/Pool.h; sourceTree = "<group>"; };
@@ -404,6 +408,8 @@
 		CF5FD93D1FA2D39F00752E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				CF62B7C121B3D703009972DE /* debug.xcconfig */,
+				CF62B7C221B3D703009972DE /* release.xcconfig */,
 				CF5FD93E1FA2D3B400752E59 /* config.xcconfig */,
 			);
 			name = Config;
@@ -837,6 +843,8 @@
 				CFFA954E1F4C17CE0035E606 /* Localizable.strings in Resources */,
 				CFC4F8DA1EFB5FAB0000B3EE /* BriefOperationViewController.xib in Resources */,
 				CFC4F8F51F0243D30000B3EE /* GenericErrorDialog.xib in Resources */,
+				CF62B7C321B3D703009972DE /* debug.xcconfig in Resources */,
+				CF62B7C421B3D703009972DE /* release.xcconfig in Resources */,
 				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
 				CFC4F9C11F108CD60000B3EE /* AlterSymlinkDialog.xib in Resources */,
 				CFC4F97D1F0DEC280000B3EE /* BatchRenamingDialog.xib in Resources */,
@@ -1076,192 +1084,15 @@
 /* Begin XCBuildConfiguration section */
 		CFF53B411EDD197300F567C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF5FD93E1FA2D3B400752E59 /* config.xcconfig */;
+			baseConfigurationReference = CF62B7C121B3D703009972DE /* debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "source/Operations-prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
-					"$(PROJECT_DIR)/../3rd_Party/boost/built",
-					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = (
-					"-larchive",
-					"-lboost_system-mt",
-					"-lboost_filesystem-mt",
-					"-lz",
-					"-lssl",
-					"-lcrypto",
-					"-llzma",
-					"-lbz2",
-					"-framework",
-					AppKit,
-					"-framework",
-					DiskArbitration,
-					"-framework",
-					Foundation,
-					"-framework",
-					SystemConfiguration,
-					"-framework",
-					ServiceManagement,
-					"-framework",
-					Security,
-					"-framework",
-					Cocoa,
-					"-framework",
-					OpenDirectory,
-					"-framework",
-					QuartzCore,
-					"-framework",
-					IOKit,
-					"-lVFS",
-				);
-				SDKROOT = macosx;
-				STRIP_INSTALLED_PRODUCT = NO;
-				USE_HEADERMAP = NO;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
 		CFF53B421EDD197300F567C4 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF5FD93E1FA2D3B400752E59 /* config.xcconfig */;
+			baseConfigurationReference = CF62B7C221B3D703009972DE /* release.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "source/Operations-prefix.pch";
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				LIBRARY_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../3rd_Party/libarchive/built",
-					"$(PROJECT_DIR)/../3rd_Party/boost/built",
-					"$(PROJECT_DIR)/../3rd_Party/OpenSSL/built",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"-larchive",
-					"-lboost_system-mt",
-					"-lboost_filesystem-mt",
-					"-lz",
-					"-lssl",
-					"-lcrypto",
-					"-llzma",
-					"-lbz2",
-					"-framework",
-					AppKit,
-					"-framework",
-					DiskArbitration,
-					"-framework",
-					Foundation,
-					"-framework",
-					SystemConfiguration,
-					"-framework",
-					ServiceManagement,
-					"-framework",
-					Security,
-					"-framework",
-					Cocoa,
-					"-framework",
-					OpenDirectory,
-					"-framework",
-					QuartzCore,
-					"-framework",
-					IOKit,
-					"-lVFS",
-				);
-				SDKROOT = macosx;
-				STRIP_INSTALLED_PRODUCT = NO;
-				USE_HEADERMAP = NO;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};

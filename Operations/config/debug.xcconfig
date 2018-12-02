@@ -1,4 +1,4 @@
-#include "config.xcconfig"
+#include "default.xcconfig"
 
 GCC_OPTIMIZATION_LEVEL = 0
 DEBUG_INFORMATION_FORMAT = dwarf

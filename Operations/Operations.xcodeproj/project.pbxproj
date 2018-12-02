@@ -207,7 +207,7 @@
 		CF4BCF5A1F301303005F8414 /* AggregateProgressTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AggregateProgressTracker.h; path = source/AggregateProgressTracker.h; sourceTree = "<group>"; };
 		CF4BCF5B1F301303005F8414 /* AggregateProgressTracker.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AggregateProgressTracker.mm; path = source/AggregateProgressTracker.mm; sourceTree = "<group>"; };
 		CF4BCF5E1F30130B005F8414 /* CopyingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingDialog.h; path = include/Operations/CopyingDialog.h; sourceTree = "<group>"; };
-		CF5FD93E1FA2D3B400752E59 /* config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = config.xcconfig; path = config/config.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
+		CF5FD93E1FA2D3B400752E59 /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF62B7C121B3D703009972DE /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CF62B7C221B3D703009972DE /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF7084D61EF7CC770072F0F6 /* Pool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Pool.h; path = source/Pool.h; sourceTree = "<group>"; };
@@ -410,7 +410,7 @@
 			children = (
 				CF62B7C121B3D703009972DE /* debug.xcconfig */,
 				CF62B7C221B3D703009972DE /* release.xcconfig */,
-				CF5FD93E1FA2D3B400752E59 /* config.xcconfig */,
+				CF5FD93E1FA2D3B400752E59 /* default.xcconfig */,
 			);
 			name = Config;
 			sourceTree = "<group>";

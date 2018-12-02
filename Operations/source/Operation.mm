@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Operation.h"
 #include "Job.h"
 #include "AsyncDialogResponse.h"
@@ -19,15 +19,15 @@ Operation::Operation()
 Operation::~Operation()
 {
     if( IsWaitingForUIResponse() )
-        cerr << "Warning: an operation at address " << (void*)this <<
-            " was destroyed while it was waiting for a UI response!" << endl;
+        std::cerr << "Warning: an operation at address " << (void*)this <<
+            " was destroyed while it was waiting for a UI response!" << std::endl;
 }
 
 Job *Operation::GetJob() noexcept
 {
     if( typeid(*this) != typeid(Operation) )
-        cerr << "Warning: operation's implementation class " << typeid(*this).name() <<
-            " has no GetJob() overload!" << endl;
+        std::cerr << "Warning: operation's implementation class " << typeid(*this).name() <<
+            " has no GetJob() overload!" << std::endl;
     return nullptr;
 }
 
@@ -40,7 +40,7 @@ const class Statistics &Operation::Statistics() const
 {
     if( auto job = GetJob() )
         return job->Statistics();
-    throw logic_error("Operation::Statistics(): no valid Job object to access to");
+    throw std::logic_error("Operation::Statistics(): no valid Job object to access to");
 }
 
 OperationState Operation::State() const
@@ -98,10 +98,10 @@ void Operation::Stop()
 
 void Operation::Wait() const
 {
-    Wait( nanoseconds::max() );
+    Wait( std::chrono::nanoseconds::max() );
 }
 
-bool Operation::Wait( nanoseconds _wait_for_time ) const
+bool Operation::Wait( std::chrono::nanoseconds _wait_for_time ) const
 {
     const auto pred = [this]{
         const auto s = State();
@@ -112,7 +112,7 @@ bool Operation::Wait( nanoseconds _wait_for_time ) const
     
     static std::mutex m;
     std::unique_lock<std::mutex> lock{m};
-    if( _wait_for_time == nanoseconds::max() ) {
+    if( _wait_for_time == std::chrono::nanoseconds::max() ) {
         m_FinishCV.wait(lock, pred);
         return true;
     }
@@ -159,18 +159,18 @@ void Operation::OnJobResumed()
 }
 
 Operation::ObservationTicket Operation::Observe
-    ( uint64_t _notification_mask, function<void()> _callback )
+    ( uint64_t _notification_mask, std::function<void()> _callback )
 {
     return AddTicketedObserver(move(_callback), _notification_mask);
 }
 
-void Operation::ObserveUnticketed( uint64_t _notification_mask, function<void()> _callback )
+void Operation::ObserveUnticketed( uint64_t _notification_mask, std::function<void()> _callback )
 {
     return AddUnticketedObserver(move(_callback), _notification_mask);
 }
 
 void Operation::SetDialogCallback
-    (function<bool(NSWindow *, function<void(NSModalResponse)>)> _callback)
+    (std::function<bool(NSWindow *, std::function<void(NSModalResponse)>)> _callback)
 {
     LOCK_GUARD(m_DialogCallbackLock)
         m_DialogCallback = move(_callback);
@@ -182,7 +182,7 @@ bool Operation::IsInteractive() const noexcept
         return m_DialogCallback != nullptr;
 }
 
-void Operation::Show( NSWindow *_dialog, shared_ptr<AsyncDialogResponse> _response )
+void Operation::Show( NSWindow *_dialog, std::shared_ptr<AsyncDialogResponse> _response )
 {
     dispatch_assert_main_queue();
     if( !_dialog || !_response )
@@ -249,7 +249,7 @@ void Operation::ShowGenericDialog(GenericDialog _dialog_type,
                                   NSString *_message,
                                   int _err,
                                   VFSPath _path,
-                                  shared_ptr<AsyncDialogResponse> _ctx)
+                                  std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     if( !dispatch_is_main_queue() )
         return dispatch_to_main_queue([=]{
@@ -265,7 +265,7 @@ void Operation::ShowGenericDialog(GenericDialog _dialog_type,
     Show(sheet.window, _ctx);
 }
 
-void Operation::WaitForDialogResponse( shared_ptr<AsyncDialogResponse> _response )
+void Operation::WaitForDialogResponse( std::shared_ptr<AsyncDialogResponse> _response )
 {
     dispatch_assert_background_queue();
     if( !_response )
@@ -296,12 +296,12 @@ void Operation::AbortUIWaiting() noexcept
             r->Abort();
 }
 
-void Operation::ReportHaltReason( NSString *_message, int _error, const string &_path, VFSHost &_vfs )
+void Operation::ReportHaltReason( NSString *_message, int _error, const std::string &_path, VFSHost &_vfs )
 {
     dispatch_assert_background_queue();
     if( !IsInteractive() )
         return;
-    const auto ctx = make_shared<AsyncDialogResponse>();
+    const auto ctx = std::make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue([=]{
         const auto sheet = [[NCOpsHaltReasonDialog alloc] init];
         sheet.message = _message;
@@ -312,18 +312,18 @@ void Operation::ReportHaltReason( NSString *_message, int _error, const string &
     WaitForDialogResponse(ctx);
 }
 
-string Operation::Title() const
+std::string Operation::Title() const
 {
     LOCK_GUARD(m_TitleLock)
         return m_Title;
 }
 
-void Operation::SetTitle( string _title )
+void Operation::SetTitle( std::string _title )
 {
     LOCK_GUARD(m_TitleLock) {
         if( m_Title == _title )
             return;
-        m_Title = move(_title);
+        m_Title = std::move(_title);
     }
     FireObservers(NotifyAboutTitleChange);
 }

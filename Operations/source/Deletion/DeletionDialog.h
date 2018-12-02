@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -11,6 +11,6 @@
 @property (nonatomic)           nc::ops::DeletionType defaultType;
 @property (nonatomic, readonly) nc::ops::DeletionType resultType;
 
-- (id)initWithItems:(const shared_ptr<vector<VFSListingItem>>&)_items;
+- (id)initWithItems:(const std::shared_ptr<std::vector<VFSListingItem>>&)_items;
 
 @end

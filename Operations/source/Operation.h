@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/ScopedObservable.h>
@@ -34,7 +34,7 @@ public:
     void Resume();
     void Stop();
     
-    string Title() const;
+    std::string Title() const;
     OperationState State() const;
     const class Statistics &Statistics() const;
 
@@ -53,10 +53,10 @@ public:
                                   NotifyAboutStop | NotifyAboutCompletion
     };
     using ObservationTicket = ScopedObservableBase::ObservationTicket;
-    ObservationTicket Observe( uint64_t _notification_mask, function<void()> _callback );
-    void ObserveUnticketed( uint64_t _notification_mask, function<void()> _callback );
+    ObservationTicket Observe( uint64_t _notification_mask, std::function<void()> _callback );
+    void ObserveUnticketed( uint64_t _notification_mask, std::function<void()> _callback );
 
-    void SetDialogCallback( function<bool(NSWindow *, function<void(long)>)> _callback );
+    void SetDialogCallback( std::function<bool(NSWindow *, std::function<void(long)>)> _callback );
     bool IsWaitingForUIResponse() const noexcept;
     void AbortUIWaiting() noexcept;
     
@@ -75,17 +75,17 @@ protected:
     virtual void OnJobPaused();
     virtual void OnJobResumed();
     bool IsInteractive() const noexcept;
-    void Show( NSWindow *_dialog, shared_ptr<AsyncDialogResponse> _response );
+    void Show( NSWindow *_dialog, std::shared_ptr<AsyncDialogResponse> _response );
     static void AddButtonsForGenericDialog(GenericDialog _dialog_type,
                                            NCOpsGenericErrorDialog *_dialog);
     void ShowGenericDialog(GenericDialog _dialog_type,
                            NSString *_message,
                            int _err,
                            VFSPath _path,                           
-                           shared_ptr<AsyncDialogResponse> _ctx);
-    void WaitForDialogResponse( shared_ptr<AsyncDialogResponse> _response );
-    void ReportHaltReason( NSString *_message, int _error, const string &_path, VFSHost &_vfs );
-    void SetTitle( string _title );
+                           std::shared_ptr<AsyncDialogResponse> _ctx);
+    void WaitForDialogResponse( std::shared_ptr<AsyncDialogResponse> _response );
+    void ReportHaltReason( NSString *_message, int _error, const std::string &_path, VFSHost &_vfs );
+    void SetTitle( std::string _title );
 
 private:
     Operation(const Operation&) = delete;
@@ -97,13 +97,13 @@ private:
     
     mutable std::condition_variable m_FinishCV;
     
-    function<bool(NSWindow *dialog, function<void(long response)>)> m_DialogCallback;
+    std::function<bool(NSWindow *dialog, std::function<void(long response)>)> m_DialogCallback;
     mutable spinlock m_DialogCallbackLock;
     
-    weak_ptr<AsyncDialogResponse> m_PendingResponse;
+    std::weak_ptr<AsyncDialogResponse> m_PendingResponse;
     mutable spinlock m_PendingResponseLock;
     
-    string m_Title;
+    std::string m_Title;
     mutable spinlock m_TitleLock;
 };
 

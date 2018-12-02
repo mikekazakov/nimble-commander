@@ -51,16 +51,16 @@ static bool IsShiftPressed()
 
 @implementation NCOpsFileAlreadyExistDialog
 {
-    string m_DestPath;
+    std::string m_DestPath;
     struct stat m_SourceStat;
     struct stat m_DestinationStat;
-    shared_ptr<AsyncDialogResponse> m_Ctx;
+    std::shared_ptr<AsyncDialogResponse> m_Ctx;
 }
 
-- (id)initWithDestPath:(const string&)_path
+- (id)initWithDestPath:(const std::string&)_path
         withSourceStat:(const struct stat &)_src_stat
    withDestinationStat:(const struct stat &)_dst_stat
-            andContext:(shared_ptr<AsyncDialogResponse>)_ctx
+            andContext:(std::shared_ptr<AsyncDialogResponse>)_ctx
 {
     self = [super initWithWindowNibName:@"FileAlreadyExistDialog"];
     if(self) {

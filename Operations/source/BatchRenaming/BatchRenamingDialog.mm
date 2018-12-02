@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 #include "BatchRenamingDialog.h"
@@ -67,17 +67,17 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 
 @implementation NCOpsBatchRenamingDialog
 {
-    vector<BatchRenamingScheme::FileInfo>   m_FileInfos;
+    std::vector<BatchRenamingScheme::FileInfo>   m_FileInfos;
     
-    vector<NSTextField*>            m_LabelsBefore;
-    vector<NSTextField*>            m_LabelsAfter;
+    std::vector<NSTextField*>            m_LabelsBefore;
+    std::vector<NSTextField*>            m_LabelsAfter;
     
     NSPopover                      *m_Popover;
     int                             m_CounterStartsAt;
     int                             m_CounterStepsBy;
     
-    vector<string>                  m_ResultSource;
-    vector<string>                  m_ResultDestination;
+    std::vector<std::string>                  m_ResultSource;
+    std::vector<std::string>                  m_ResultDestination;
     
     NCUtilSimpleComboBoxPersistentDataSource *m_RenamePatternDataSource;
     NCUtilSimpleComboBoxPersistentDataSource *m_SearchForDataSource;
@@ -92,12 +92,12 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 @synthesize searchForDataSource = m_SearchForDataSource;
 @synthesize replaceWithDataSource = m_ReplaceWithDataSource;
 
-- (instancetype) initWithItems:(vector<VFSListingItem>)_items
+- (instancetype) initWithItems:(std::vector<VFSListingItem>)_items
 {
     self = [super initWithWindowNibName:@"BatchRenamingDialog"];
     if(self) {
         if(_items.empty())
-            throw logic_error("empty files list");
+            throw std::logic_error("empty files list");
         
         for( auto &e: _items ) {
             
@@ -119,7 +119,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
                 fi.extension = @"";
             }
             
-            m_FileInfos.emplace_back( move(fi) );
+            m_FileInfos.emplace_back( std::move(fi) );
             m_ResultSource.emplace_back( e.Directory() + e.Filename() );
         }
         
@@ -260,7 +260,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
         return;
     }
     else {
-        vector<NSString*> newnames;
+        std::vector<NSString*> newnames;
         
 //        MachTimeBenchmark mtb;
         for(size_t i = 0, e = m_FileInfos.size(); i!=e; ++i)
@@ -533,10 +533,10 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
         return false;
     
     // don't forget to swap items in ALL containers!
-    swap(m_FileInfos[drag_to],          m_FileInfos[drag_from]);
-    swap(m_LabelsBefore[drag_to],       m_LabelsBefore[drag_from]);
-    swap(m_LabelsAfter[drag_to],        m_LabelsAfter[drag_from]);
-    swap(m_ResultSource[drag_to],       m_ResultSource[drag_from]);
+    std::swap(m_FileInfos[drag_to],          m_FileInfos[drag_from]);
+    std::swap(m_LabelsBefore[drag_to],       m_LabelsBefore[drag_from]);
+    std::swap(m_LabelsAfter[drag_to],        m_LabelsAfter[drag_from]);
+    std::swap(m_ResultSource[drag_to],       m_ResultSource[drag_from]);
     
     [self.FilenamesTable reloadData];
     

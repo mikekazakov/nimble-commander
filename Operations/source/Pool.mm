@@ -1,10 +1,10 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Pool.h"
 #include "Operation.h"
 
 namespace nc::ops {
 
-atomic_int Pool::m_ConcurrencyPerPool{5};
+std::atomic_int Pool::m_ConcurrencyPerPool{5};
 
 template <class C, class T>
 void erase_from(C &_c, const T& _t)
@@ -12,9 +12,9 @@ void erase_from(C &_c, const T& _t)
     _c.erase( remove( begin(_c), end(_c), _t ), end(_c) );
 }
 
-shared_ptr<Pool> Pool::Make()
+std::shared_ptr<Pool> Pool::Make()
 {
-    return shared_ptr<Pool>{new Pool};
+    return std::shared_ptr<Pool>{new Pool};
 }
 
 Pool::Pool()
@@ -25,13 +25,13 @@ Pool::~Pool()
 {
 }
 
-void Pool::Enqueue( shared_ptr<Operation> _operation )
+void Pool::Enqueue( std::shared_ptr<Operation> _operation )
 {
     if( !_operation || _operation->State() != OperationState::Cold )
         return;
 
-    const auto weak_this = weak_ptr<Pool>{shared_from_this()};
-    const auto weak_operation = weak_ptr<Operation>{_operation};
+    const auto weak_this = std::weak_ptr<Pool>{shared_from_this()};
+    const auto weak_operation = std::weak_ptr<Operation>{_operation};
     _operation->ObserveUnticketed(Operation::NotifyAboutFinish, [weak_this, weak_operation]{
         const auto pool = weak_this.lock();
         const auto op = weak_operation.lock();
@@ -44,7 +44,7 @@ void Pool::Enqueue( shared_ptr<Operation> _operation )
         if( pool && op )
             pool->OperationDidStart(op);
     });
-    _operation->SetDialogCallback([weak_this](NSWindow* _dlg, function<void(NSModalResponse)>_cb){
+    _operation->SetDialogCallback([weak_this](NSWindow* _dlg, std::function<void(NSModalResponse)>_cb){
         if( const auto pool = weak_this.lock() )
             return pool->ShowDialog(_dlg, _cb);
         return false;
@@ -57,11 +57,11 @@ void Pool::Enqueue( shared_ptr<Operation> _operation )
     StartPendingOperations();
 }
 
-void Pool::OperationDidStart( const shared_ptr<Operation> &_operation )
+void Pool::OperationDidStart( const std::shared_ptr<Operation> &_operation )
 {
 }
 
-void Pool::OperationDidFinish( const shared_ptr<Operation> &_operation )
+void Pool::OperationDidFinish( const std::shared_ptr<Operation> &_operation )
 {
     LOCK_GUARD(m_Lock) {
         erase_from(m_RunningOperations, _operation);
@@ -76,7 +76,7 @@ void Pool::OperationDidFinish( const shared_ptr<Operation> &_operation )
 
 void Pool::StartPendingOperations()
 {
-    vector<shared_ptr<Operation>> to_start;
+    std::vector<std::shared_ptr<Operation>> to_start;
 
     LOCK_GUARD(m_Lock) {
         const auto running_now = m_RunningOperations.size();
@@ -93,12 +93,12 @@ void Pool::StartPendingOperations()
         op->Start();
 }
 
-Pool::ObservationTicket Pool::Observe( uint64_t _notification_mask, function<void()> _callback )
+Pool::ObservationTicket Pool::Observe( uint64_t _notification_mask, std::function<void()> _callback )
 {
     return AddTicketedObserver( move(_callback), _notification_mask );
 }
 
-void Pool::ObserveUnticketed( uint64_t _notification_mask, function<void()> _callback )
+void Pool::ObserveUnticketed( uint64_t _notification_mask, std::function<void()> _callback )
 {
     AddUnticketedObserver( move(_callback), _notification_mask );
 }
@@ -115,7 +115,7 @@ int Pool::OperationsCount() const
         return (int)m_RunningOperations.size() + (int)m_PendingOperations.size();
 }
 
-vector<shared_ptr<Operation>> Pool::Operations() const
+std::vector<std::shared_ptr<Operation>> Pool::Operations() const
 {
     LOCK_GUARD(m_Lock) {
         auto v = m_RunningOperations;
@@ -124,20 +124,20 @@ vector<shared_ptr<Operation>> Pool::Operations() const
     }
 }
 
-vector<shared_ptr<Operation>> Pool::RunningOperations() const
+std::vector<std::shared_ptr<Operation>> Pool::RunningOperations() const
 {
     LOCK_GUARD(m_Lock)
         return m_RunningOperations;
 }
 
-void Pool::SetDialogCallback(function<void(NSWindow*, function<void(NSModalResponse)>)> _callback)
+void Pool::SetDialogCallback(std::function<void(NSWindow*, std::function<void(NSModalResponse)>)> _callback)
 {
-    m_DialogPresentation = move(_callback);
+    m_DialogPresentation = std::move(_callback);
 }
 
-void Pool::SetOperationCompletionCallback(function<void(const shared_ptr<Operation>&)> _callback)
+void Pool::SetOperationCompletionCallback(std::function<void(const std::shared_ptr<Operation>&)> _callback)
 {
-    m_OperationCompletionCallback = move(_callback);
+    m_OperationCompletionCallback = std::move(_callback);
 }
 
 bool Pool::IsInteractive() const
@@ -145,7 +145,7 @@ bool Pool::IsInteractive() const
     return m_DialogPresentation != nullptr;
 }
 
-bool Pool::ShowDialog(NSWindow *_dialog, function<void (NSModalResponse)> _callback)
+bool Pool::ShowDialog(NSWindow *_dialog, std::function<void (NSModalResponse)> _callback)
 {
     dispatch_assert_main_queue();
     if( !m_DialogPresentation  )
@@ -181,8 +181,9 @@ void Pool::StopAndWaitForShutdown()
             o->Stop();
     }
 
+    using namespace std::literals;
     while( !Empty() )
-        this_thread::sleep_for(10ms);
+        std::this_thread::sleep_for(10ms);
 }
 
 }

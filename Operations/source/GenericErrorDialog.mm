@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GenericErrorDialog.h"
 #include <VFS/VFS.h>
 #include "Internal.h"
@@ -25,8 +25,8 @@ using namespace nc::ops;
     NSString* m_Error;
     int m_ErrorNo;
     bool m_ShowApplyToAll;
-    vector<pair<NSString*,NSModalResponse>> m_Buttons;
-    shared_ptr<nc::ops::AsyncDialogResponse> m_Context;
+    std::vector<std::pair<NSString*,NSModalResponse>> m_Buttons;
+    std::shared_ptr<nc::ops::AsyncDialogResponse> m_Context;
 }
 
 @synthesize escapeButtonResponse = m_EscapeButtonResponse;
@@ -35,7 +35,7 @@ using namespace nc::ops;
 @synthesize error = m_Error;
 @synthesize showApplyToAll = m_ShowApplyToAll;
 
-- (instancetype)initWithContext:(shared_ptr<nc::ops::AsyncDialogResponse>)_context
+- (instancetype)initWithContext:(std::shared_ptr<nc::ops::AsyncDialogResponse>)_context
 {
     dispatch_assert_main_queue();
     self = [super initWithWindowNibName:@"GenericErrorDialog"];
@@ -75,7 +75,7 @@ using namespace nc::ops;
 {
     if( m_Buttons.empty() ) {
         auto title = NSLocalizedString(@"Close", "");
-        m_Buttons.emplace_back(make_pair(title, m_EscapeButtonResponse));
+        m_Buttons.emplace_back(std::make_pair(title, m_EscapeButtonResponse));
     }
 
     NSButton *last = nil;
@@ -152,7 +152,7 @@ using namespace nc::ops;
 
 - (void) addButtonWithTitle:(NSString*)_title responseCode:(NSModalResponse)_response
 {
-    m_Buttons.emplace_back(make_pair(_title, _response));
+    m_Buttons.emplace_back(std::make_pair(_title, _response));
 }
 
 - (void)moveRight:(id)sender

@@ -1,16 +1,16 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingScheme.h"
 
 namespace nc::ops {
 
-optional<vector<BatchRenamingScheme::MaskDecomposition>>
+std::optional<std::vector<BatchRenamingScheme::MaskDecomposition>>
 BatchRenamingScheme::DecomposeMaskIntoPlaceholders(NSString *_mask)
 {
     static NSCharacterSet *open_br = [NSCharacterSet characterSetWithCharactersInString:@"["];
     static NSCharacterSet *close_br = [NSCharacterSet characterSetWithCharactersInString:@"]"];
     assert(_mask != nil);
     
-    vector<BatchRenamingScheme::MaskDecomposition> result;
+    std::vector<BatchRenamingScheme::MaskDecomposition> result;
     auto length = _mask.length;
     auto range = NSMakeRange(0, length);
     while( range.length > 0 ) {
@@ -20,7 +20,7 @@ BatchRenamingScheme::DecomposeMaskIntoPlaceholders(NSString *_mask)
             // this part starts with placeholder
             auto close_r = [_mask rangeOfCharacterFromSet:close_br options:0 range:NSMakeRange(range.location+1, range.length-1)];
             if( close_r.location == NSNotFound )
-                return nullopt; // invalid mask
+                return std::nullopt; // invalid mask
             while( close_r.location < length - 1 &&
                   [_mask characterAtIndex:close_r.location+1] == ']')
                 close_r.location++;
@@ -35,7 +35,7 @@ BatchRenamingScheme::DecomposeMaskIntoPlaceholders(NSString *_mask)
             // have have no more placeholders
             auto close_r = [_mask rangeOfCharacterFromSet:close_br options:0 range:range];
             if(close_r.location != NSNotFound)
-                return nullopt; // invalid mask
+                return std::nullopt; // invalid mask
             result.emplace_back( [_mask substringWithRange:range], false );
             break;
         }
@@ -44,7 +44,7 @@ BatchRenamingScheme::DecomposeMaskIntoPlaceholders(NSString *_mask)
             auto close_r = [_mask rangeOfCharacterFromSet:close_br options:0 range:range];
             if( close_r.location == NSNotFound ||
                close_r.location < open_r.location )
-                return nullopt; // invalid mask
+                return std::nullopt; // invalid mask
             auto l = open_r.location-range.location;
             result.emplace_back( [_mask substringWithRange:NSMakeRange(range.location,l)], false );
             range.location += l;
@@ -200,15 +200,15 @@ bool BatchRenamingScheme::ParsePlaceholder( NSString *_ph )
 }
 
 // parsed short -> characters consumed
-static optional<pair<unsigned short, short>> EatUShort( NSString *s, const unsigned long pos )
+static std::optional<std::pair<unsigned short, short>> EatUShort( NSString *s, const unsigned long pos )
 {
     const auto l = s.length;
     if( pos == l )
-        return nullopt;
+        return std::nullopt;
     auto n = 0ul;
     auto c = [s characterAtIndex:pos+n];
     if(c < '0' || c > '9')
-        return nullopt;
+        return std::nullopt;
     
     unsigned short r = 0;
     do {
@@ -219,15 +219,15 @@ static optional<pair<unsigned short, short>> EatUShort( NSString *s, const unsig
         n++;
     } while( pos+n < l );
     
-    return make_pair(r, short(n));
+    return std::make_pair(r, short(n));
 }
 
 // parsed short -> characters consumed
-static optional<pair<int, short>> EatInt( NSString *s, const unsigned long pos )
+static std::optional<std::pair<int, short>> EatInt( NSString *s, const unsigned long pos )
 {
     const auto l = s.length;
     if( pos == l )
-        return nullopt;
+        return std::nullopt;
 
     auto n = 0ul;
     bool minus = false;
@@ -239,11 +239,11 @@ static optional<pair<int, short>> EatInt( NSString *s, const unsigned long pos )
     }
 
     if( pos+n == l )
-        return nullopt;
+        return std::nullopt;
     
     c = [s characterAtIndex:pos+n];
     if(c < '0' || c > '9')
-        return nullopt;
+        return std::nullopt;
     
     int r = 0;
     do {
@@ -254,26 +254,26 @@ static optional<pair<int, short>> EatInt( NSString *s, const unsigned long pos )
         n++;
     } while( pos+n < l );
     
-    return make_pair(r * (minus ? -1 : 1), short(n));
+    return std::make_pair(r * (minus ? -1 : 1), short(n));
 }
 
-static optional<pair<int, short>> EatIntWithPreffix( NSString *s, const unsigned long pos, char prefix )
+static std::optional<std::pair<int, short>> EatIntWithPreffix( NSString *s, const unsigned long pos, char prefix )
 {
     const auto l = s.length;
     auto n = 0;
     if( n+pos == l )
-        return nullopt;
+        return std::nullopt;
     
     auto c = [s characterAtIndex:pos + n];
     if( c != prefix )
-        return nullopt;
+        return std::nullopt;
     
     n++;
     auto num_if = EatInt( s, pos + n );
     if(!num_if)
-        return nullopt;
+        return std::nullopt;
     
-    return make_pair(num_if->first, short(num_if->second+1));
+    return std::make_pair(num_if->first, short(num_if->second+1));
 }
 
 
@@ -288,12 +288,12 @@ static optional<pair<int, short>> EatIntWithPreffix( NSString *s, const unsigned
 //[N-8-5] Characters from the 8th-last to the 5th-last character
 //[N-5-] Characters from the 5th-last character to the end of the name
 //[N2--5] Characters from the 2nd to the 5th-last character
-optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::ParsePlaceholder_TextExtraction( NSString *_ph, unsigned long _pos )
+std::optional<std::pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::ParsePlaceholder_TextExtraction( NSString *_ph, unsigned long _pos )
 {
 //    static NSCharacterSet *myc = [NSCharacterSet characterSetWithCharactersInString:@"0123456789,- "];
     const auto l = _ph.length;
     if( l == _pos ) // [N]
-        return make_pair( TextExtraction(), 0);
+        return std::make_pair( TextExtraction(), 0);
     
     auto zero_flag = false, minus_flag = false, space_flag = false;
     
@@ -316,20 +316,20 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
     auto num_if = EatUShort( _ph, _pos + n );
     if( !num_if ) {
         if( n!=0 )
-            return nullopt;
-        return make_pair( TextExtraction(), n); // [N
+            return std::nullopt;
+        return std::make_pair( TextExtraction(), n); // [N
     }
     else { // [N123....
         auto first_num = num_if->first;
         if(first_num < 1)
-            return nullopt;
+            return std::nullopt;
         first_num--;
         n += num_if->second;
 
         if( _pos+n == l ) { //  [N567]
             TextExtraction ins;
             ins.direct_range = Range(first_num, 1);
-            return make_pair( ins, n);
+            return std::make_pair( ins, n);
         }
 
         c = [_ph characterAtIndex:_pos + n];
@@ -341,7 +341,7 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
                 if( num_if ) { // [N5-10
                     auto second_num = num_if->first;
                     if(second_num < 1)
-                        return nullopt;
+                        return std::nullopt;
                     second_num--;
                     n += num_if->second;
                     ins.zero_flag = zero_flag;
@@ -361,28 +361,28 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
                             n++;
                             num_if = EatUShort( _ph, _pos + n );
                             if( !num_if )
-                                return nullopt; // [N5--something <- invalid
+                                return std::nullopt; // [N5--something <- invalid
                             
                             auto second_num = num_if->first; // [N5--3
                             if(second_num < 1)
-                                return nullopt;
+                                return std::nullopt;
                             --second_num;
                             n += num_if->second;
                             
-                            ins.direct_range = nullopt;
+                            ins.direct_range = std::nullopt;
                             ins.from_first = first_num;
                             ins.to_last = second_num;
                         }
                     }
                 }
-                return make_pair( ins, n);
+                return std::make_pair( ins, n);
             }
             else if( c == ',' ) {
                 n++;
                 num_if = EatUShort( _ph, _pos + n );
                 
                 if(!num_if)  // [N5,  <- invalid
-                    return nullopt;
+                    return std::nullopt;
                 
                 auto second_num = num_if->first; // [N5,10
                 n += num_if->second;
@@ -390,19 +390,19 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
                 ins.zero_flag = zero_flag;
                 ins.space_flag = space_flag;
                 ins.direct_range = Range(first_num, second_num);
-                return make_pair( ins, n);
+                return std::make_pair( ins, n);
             }
             else { // [N123something
                 TextExtraction ins;
                 ins.direct_range = Range(first_num, 1);
-                return make_pair( ins, n);
+                return std::make_pair( ins, n);
             }
         }
         else { // [N-5....
             if( c == '-' ) { // [N-5-...
                 n++;
                 TextExtraction ins;
-                ins.direct_range = nullopt;
+                ins.direct_range = std::nullopt;
                 
                 num_if = EatUShort( _ph, _pos + n );
                 if( !num_if ){ // [N-5-something
@@ -411,32 +411,32 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
                 else { // [N-5-2
                     auto second_num = num_if->first;
                     if(second_num < 1)
-                        return nullopt;
+                        return std::nullopt;
                     second_num--;
                     n += num_if->second;
                     ins.reverse_range = Range(first_num, second_num <= first_num ? first_num - second_num + 1 : 0);
                 }
-                return make_pair( ins, n);
+                return std::make_pair( ins, n);
             }
             else if( c == ',' ) { // [N-5,...
                 n++;
                 num_if = EatUShort( _ph, _pos + n );
                 if(!num_if)
-                    return nullopt; // [N-5,something <- invalid
+                    return std::nullopt; // [N-5,something <- invalid
                 
                 auto second_num = num_if->first; // [N-5,4
                 n += num_if->second;
                 
                 TextExtraction ins;
-                ins.direct_range = nullopt;
+                ins.direct_range = std::nullopt;
                 ins.reverse_range = Range(first_num, second_num);
-                return make_pair( ins, n);
+                return std::make_pair( ins, n);
             }
         }
     }
     
     
-    return nullopt;
+    return std::nullopt;
 }
 
 // maximum possible construction: [C10+1/15:5]
@@ -450,7 +450,7 @@ optional<pair<BatchRenamingScheme::TextExtraction, int>> BatchRenamingScheme::Pa
 // not yet:
 //[Caa+1] Paste counter, define counter settings directly. In this example, start at aa, step 1 letter, use 2 digits (defined by 'aa' width)
 //[C:a] Paste counter, determine digits width automatically, depending on the number of files. Combinations like [C10+10:a] are also allowed.
-optional<pair<BatchRenamingScheme::Counter, int>> BatchRenamingScheme::ParsePlaceholder_Counter( NSString *_ph, unsigned long _pos,
+std::optional<std::pair<BatchRenamingScheme::Counter, int>> BatchRenamingScheme::ParsePlaceholder_Counter( NSString *_ph, unsigned long _pos,
                                                                                 long _default_start, long _default_step, int _default_width, unsigned _default_stripe)
 {
     Counter counter;
@@ -461,7 +461,7 @@ optional<pair<BatchRenamingScheme::Counter, int>> BatchRenamingScheme::ParsePlac
     
     const auto l = _ph.length;
     if( l == _pos ) // [C]
-        return make_pair( counter, 0);
+        return std::make_pair( counter, 0);
     
     auto n = 0;
     if( auto start = EatInt(_ph, _pos+n) ) {
@@ -483,7 +483,7 @@ optional<pair<BatchRenamingScheme::Counter, int>> BatchRenamingScheme::ParsePlac
         n += width->second;
     }
     
-    return make_pair(counter, n);
+    return std::make_pair(counter, n);
 }
 
 NSString *BatchRenamingScheme::ExtractText(NSString *_from, const TextExtraction &_te)

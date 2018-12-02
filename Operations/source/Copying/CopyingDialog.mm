@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include "../Internal.h"
@@ -10,8 +10,10 @@ using namespace nc::ops;
 
 // removes entries of ".." and "."
 // quite a bad implementation with O(n^2) complexity and possibly some allocations
-static string MakeCanonicPath(string _input)
+static std::string MakeCanonicPath(std::string _input)
 {
+    using namespace std::literals;
+    
     static const auto dotdot = "/../"s;
     auto pos = _input.find(dotdot);
     if( pos != _input.npos && pos > 0 ) {
@@ -55,14 +57,14 @@ static string MakeCanonicPath(string _input)
 
 @implementation NCOpsCopyingDialog
 {
-    vector<VFSListingItem>          m_SourceItems;
+    std::vector<VFSListingItem>     m_SourceItems;
     VFSHostPtr                      m_SourceHost; // can be nullptr in case of non-uniform listing
-    string                          m_SourceDirectory; // may be "" if SourceHost is nullptr
-    string                          m_InitialDestination;
+    std::string                     m_SourceDirectory; // may be "" if SourceHost is nullptr
+    std::string                     m_InitialDestination;
     VFSHostPtr                      m_DestinationHost; // can be nullptr in case of non-uniform listing
     CopyingOptions                  m_Options;
     
-    string                          m_ResultDestination;
+    std::string                     m_ResultDestination;
     VFSHostPtr                      m_ResultHost;
 }
 
@@ -70,10 +72,10 @@ static string MakeCanonicPath(string _input)
 @synthesize resultHost = m_ResultHost;
 @synthesize resultOptions = m_Options;
 
-- (instancetype) initWithItems:(vector<VFSListingItem>)_source_items
+- (instancetype) initWithItems:(std::vector<VFSListingItem>)_source_items
                      sourceVFS:(const VFSHostPtr&)_source_host
-               sourceDirectory:(const string&)_source_directory
-            initialDestination:(const string&)_initial_destination
+               sourceDirectory:(const std::string&)_source_directory
+            initialDestination:(const std::string&)_initial_destination
                 destinationVFS:(const VFSHostPtr&)_destination_host
               operationOptions:(const CopyingOptions&)_options
 {
@@ -147,7 +149,7 @@ static string MakeCanonicPath(string _input)
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }
 
-- (bool)validateInput:(const string&)_input
+- (bool)validateInput:(const std::string&)_input
 {
     auto not_valid = [self]{
         m_ResultDestination = "";
@@ -159,7 +161,7 @@ static string MakeCanonicPath(string _input)
         return not_valid();
     
     
-    string input = _input;
+    std::string input = _input;
     
     if( input.front() == '/' ) {
         if( !m_DestinationHost )

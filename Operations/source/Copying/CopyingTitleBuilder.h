@@ -1,3 +1,4 @@
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -8,18 +9,18 @@ namespace nc::ops {
 class CopyingTitleBuilder
 {
 public:
-    CopyingTitleBuilder(const vector<VFSListingItem> &_source_files,
-                        const string& _destination_path,
+    CopyingTitleBuilder(const std::vector<VFSListingItem> &_source_files,
+                        const std::string& _destination_path,
                         const CopyingOptions &_options);
 
-    string TitleForPreparing() const;
-    string TitleForProcessing() const;
-    string TitleForVerifying() const;
-    string TitleForCleanup() const;
+    std::string TitleForPreparing() const;
+    std::string TitleForProcessing() const;
+    std::string TitleForVerifying() const;
+    std::string TitleForCleanup() const;
 
 private:
-    const vector<VFSListingItem> &m_SourceFiles;
-    const string& m_DestinationPath;
+    const std::vector<VFSListingItem> &m_SourceFiles;
+    const std::string& m_DestinationPath;
     const CopyingOptions &m_Options;
 };
 

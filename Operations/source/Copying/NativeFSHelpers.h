@@ -18,8 +18,8 @@ void AdjustFileTimesForNativeFD(int _target_fd, struct stat &_with_times);
 void AdjustFileTimesForNativeFD(int _target_fd, const VFSStat &_with_times);
     
 bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
-                                          const string &_path,
-                                          const string& _item_name,
+                                          const std::string &_path,
+                                          const std::string &_item_name,
                                           const VFSStat &_st );
 
 };

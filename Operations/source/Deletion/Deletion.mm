@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Deletion.h"
 #include "DeletionJob.h"
 #include "../Internal.h"
@@ -8,25 +8,25 @@
 
 namespace nc::ops {
 
-static NSString *Caption(const vector<VFSListingItem> &_files);
+static NSString *Caption(const std::vector<VFSListingItem> &_files);
 
 using Callbacks = DeletionJobCallbacks;
 
-Deletion::Deletion( vector<VFSListingItem> _items, DeletionType _type )
+Deletion::Deletion( std::vector<VFSListingItem> _items, DeletionType _type )
 {
     SetTitle(Caption(_items).UTF8String);
     
     m_Job.reset( new DeletionJob(move(_items), _type) );
-    m_Job->m_OnReadDirError = [this](int _err, const string &_path, VFSHost &_vfs){
+    m_Job->m_OnReadDirError = [this](int _err, const std::string &_path, VFSHost &_vfs){
         return (Callbacks::ReadDirErrorResolution)OnReadDirError(_err, _path, _vfs);
     };
-    m_Job->m_OnUnlinkError = [this](int _err, const string &_path, VFSHost &_vfs){
+    m_Job->m_OnUnlinkError = [this](int _err, const std::string &_path, VFSHost &_vfs){
         return (Callbacks::UnlinkErrorResolution)OnUnlinkError(_err, _path, _vfs);
     };
-    m_Job->m_OnRmdirError = [this](int _err, const string &_path, VFSHost &_vfs){
+    m_Job->m_OnRmdirError = [this](int _err, const std::string &_path, VFSHost &_vfs){
         return (Callbacks::RmdirErrorResolution)OnRmdirError(_err, _path, _vfs);
     };
-    m_Job->m_OnTrashError = [this](int _err, const string &_path, VFSHost &_vfs){
+    m_Job->m_OnTrashError = [this](int _err, const std::string &_path, VFSHost &_vfs){
         return (Callbacks::TrashErrorResolution)OnTrashError(_err, _path, _vfs);
     };
 }
@@ -40,14 +40,14 @@ Job *Deletion::GetJob() noexcept
     return m_Job.get();
 }
 
-int Deletion::OnReadDirError(int _err, const string &_path, VFSHost &_vfs)
+int Deletion::OnReadDirError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ?
             (int)Callbacks::ReadDirErrorResolution::Skip :
             (int)Callbacks::ReadDirErrorResolution::Stop;
     
-    const auto ctx = make_shared<AsyncDialogResponse>();
+    const auto ctx = std::make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
         OnReadDirErrorUI(_err, _path, vfs, ctx);
     });
@@ -65,8 +65,8 @@ int Deletion::OnReadDirError(int _err, const string &_path, VFSHost &_vfs)
         return (int)Callbacks::ReadDirErrorResolution::Stop;
 }
 
-void Deletion::OnReadDirErrorUI(int _err, const string &_path, shared_ptr<VFSHost> _vfs,
-                                shared_ptr<AsyncDialogResponse> _ctx)
+void Deletion::OnReadDirErrorUI(int _err, const std::string &_path, std::shared_ptr<VFSHost> _vfs,
+                                std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
@@ -87,14 +87,14 @@ void Deletion::OnReadDirErrorUI(int _err, const string &_path, shared_ptr<VFSHos
     Show(sheet.window, _ctx);
 }
 
-int Deletion::OnUnlinkError(int _err, const string &_path, VFSHost &_vfs)
+int Deletion::OnUnlinkError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ?
             (int)Callbacks::UnlinkErrorResolution::Skip :
             (int)Callbacks::UnlinkErrorResolution::Stop;
     
-    const auto ctx = make_shared<AsyncDialogResponse>();
+    const auto ctx = std::make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
         OnUnlinkErrorUI(_err, _path, vfs, ctx);
     });
@@ -112,8 +112,8 @@ int Deletion::OnUnlinkError(int _err, const string &_path, VFSHost &_vfs)
         return (int)Callbacks::UnlinkErrorResolution::Stop;
 }
 
-void Deletion::OnUnlinkErrorUI(int _err, const string &_path, shared_ptr<VFSHost> _vfs,
-                               shared_ptr<AsyncDialogResponse> _ctx)
+void Deletion::OnUnlinkErrorUI(int _err, const std::string &_path, std::shared_ptr<VFSHost> _vfs,
+                               std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
@@ -134,14 +134,14 @@ void Deletion::OnUnlinkErrorUI(int _err, const string &_path, shared_ptr<VFSHost
     Show(sheet.window, _ctx);                     
 }
 
-int Deletion::OnRmdirError(int _err, const string &_path, VFSHost &_vfs)
+int Deletion::OnRmdirError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_SkipAll || !IsInteractive() )
         return m_SkipAll ?
             (int)Callbacks::RmdirErrorResolution::Skip :
             (int)Callbacks::RmdirErrorResolution::Stop;
     
-    const auto ctx = make_shared<AsyncDialogResponse>();
+    const auto ctx = std::make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
         OnRmdirErrorUI(_err, _path, vfs, ctx);
     });
@@ -159,8 +159,8 @@ int Deletion::OnRmdirError(int _err, const string &_path, VFSHost &_vfs)
         return (int)Callbacks::RmdirErrorResolution::Stop;
 }
 
-void Deletion::OnRmdirErrorUI(int _err, const string &_path, shared_ptr<VFSHost> _vfs,
-                        shared_ptr<AsyncDialogResponse> _ctx)
+void Deletion::OnRmdirErrorUI(int _err, const std::string &_path, std::shared_ptr<VFSHost> _vfs,
+                        std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
@@ -181,7 +181,7 @@ void Deletion::OnRmdirErrorUI(int _err, const string &_path, shared_ptr<VFSHost>
     Show(sheet.window, _ctx);
 }
 
-int Deletion::OnTrashError(int _err, const string &_path, VFSHost &_vfs)
+int Deletion::OnTrashError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( m_DeleteAllOnTrashError )
         return (int)Callbacks::TrashErrorResolution::DeletePermanently;
@@ -191,7 +191,7 @@ int Deletion::OnTrashError(int _err, const string &_path, VFSHost &_vfs)
             (int)Callbacks::TrashErrorResolution::Skip :
             (int)Callbacks::TrashErrorResolution::Stop;
     
-    const auto ctx = make_shared<AsyncDialogResponse>();
+    const auto ctx = std::make_shared<AsyncDialogResponse>();
     dispatch_to_main_queue([=,vfs=_vfs.shared_from_this()]{
         OnTrashErrorUI(_err, _path, vfs, ctx);
     });
@@ -213,8 +213,8 @@ int Deletion::OnTrashError(int _err, const string &_path, VFSHost &_vfs)
         return (int)Callbacks::TrashErrorResolution::Stop;
 }
 
-void Deletion::OnTrashErrorUI(int _err, const string &_path, shared_ptr<VFSHost> _vfs,
-                              shared_ptr<AsyncDialogResponse> _ctx)
+void Deletion::OnTrashErrorUI(int _err, const std::string &_path, std::shared_ptr<VFSHost> _vfs,
+                              std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     const auto sheet = [[NCOpsGenericErrorDialog alloc] initWithContext:_ctx];
 
@@ -234,7 +234,7 @@ void Deletion::OnTrashErrorUI(int _err, const string &_path, shared_ptr<VFSHost>
     Show(sheet.window, _ctx);
 }
 
-static NSString *Caption(const vector<VFSListingItem> &_files)
+static NSString *Caption(const std::vector<VFSListingItem> &_files)
 {
     if( _files.size() == 1 )
         return  [NSString localizedStringWithFormat:

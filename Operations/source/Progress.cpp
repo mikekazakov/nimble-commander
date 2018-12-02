@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Progress.h"
 
 namespace nc::ops {
@@ -23,8 +23,8 @@ void Progress::CommitEstimated( uint64_t _delta )
 void Progress::CommitSkipped( uint64_t _delta )
 {
     if( _delta + m_Processed > m_Estimated ) {
-        cerr << "Progress::CommitSkipped: supicious argument: "
-            "_delta + m_Processed > m_Estimated" << endl;
+        std::cerr << "Progress::CommitSkipped: supicious argument: "
+            "_delta + m_Processed > m_Estimated" << std::endl;
         m_Estimated = m_Processed.load();
     }
     else {
@@ -46,7 +46,7 @@ void Progress::CommitProcessed( uint64_t _delta )
     auto fp_left_delta_time = fp_delta_time;
     if( !m_Timeline.empty() && m_Timeline.back().fraction < 1. ) {
         auto &last = m_Timeline.back();
-        const auto dt = min( 1. - last.fraction, fp_left_delta_time );
+        const auto dt = std::min( 1. - last.fraction, fp_left_delta_time );
         const auto db = fp_bytes * dt / fp_delta_time;
         last.value += db;
         last.fraction += dt;
@@ -54,7 +54,7 @@ void Progress::CommitProcessed( uint64_t _delta )
     }
     
     while( fp_left_delta_time > 0. ) {
-        const auto dt = min( 1., fp_left_delta_time );
+        const auto dt = std::min( 1., fp_left_delta_time );
         const auto db = fp_bytes * dt / fp_delta_time;
         fp_left_delta_time -= dt;
         TimePoint sp;
@@ -64,7 +64,7 @@ void Progress::CommitProcessed( uint64_t _delta )
     }
 }
 
-void Progress::ReportSleptDelta( nanoseconds _delta )
+void Progress::ReportSleptDelta( std::chrono::nanoseconds _delta )
 {
     LOCK_GUARD(m_TimepointsLock) {
         m_LastCommitTimePoint += _delta;
@@ -115,19 +115,20 @@ double Progress::DoneFraction() const noexcept
     return double(m_Processed) / (double)m_Estimated;
 }
 
-optional<nanoseconds> Progress::ETA() const noexcept
+std::optional<std::chrono::nanoseconds> Progress::ETA() const noexcept
 {
+    using namespace std::literals;
     const auto speed = VolumePerSecondDirect();
     if( speed == 0. )
-        return nullopt;
+        return std::nullopt;
     if( m_Processed >= m_Estimated )
         return 0ns;
     const auto left = double(m_Estimated - m_Processed);
     const auto eta = left / double(speed);
-    return nanoseconds{(long long)(eta*1000000000.)};
+    return std::chrono::nanoseconds{(long long)(eta*1000000000.)};
 }
 
-const vector<Progress::TimePoint>& Progress::Data() const
+const std::vector<Progress::TimePoint>& Progress::Data() const
 {
     return m_Timeline;
 }

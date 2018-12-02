@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/Operations/Job.h"
 #include <Habanero/IdleSleepPreventer.h>
 #include <boost/core/demangle.hpp>
@@ -43,14 +43,14 @@ void Job::Execute()
     try {
         Perform();
     }
-    catch( exception &e ) {
-        cerr << "Error: operation " << typeid(*this).name() <<
-            " has thrown an exeption: " << e.what() << "." << endl;
+    catch( std::exception &e ) {
+        std::cerr << "Error: operation " << typeid(*this).name() <<
+            " has thrown an exeption: " << e.what() << "." << std::endl;
         Stop();
     }
     catch(...){
-        cerr << "Error: operation " << typeid(*this).name() <<
-            " has thrown an unknown exeption."<< endl;
+        std::cerr << "Error: operation " << typeid(*this).name() <<
+            " has thrown an unknown exeption."<< std::endl;
         Stop();
     }
     
@@ -156,8 +156,8 @@ bool Job::IsPaused() const noexcept
 void Job::BlockIfPaused()
 {
     if( m_IsPaused && !m_IsStopped ) {
-        static mutex mutex;
-        unique_lock<std::mutex> lock{mutex};
+        static std::mutex mutex;
+        std::unique_lock<std::mutex> lock{mutex};
         const auto predicate = [this]{ return !m_IsPaused; };
         
         m_Stats.PauseTiming();

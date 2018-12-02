@@ -61,21 +61,21 @@ using namespace nc::ops;
 @end
 
 static AttrsChangingCommand::Permissions
-    ExtractCommonPermissions( const vector<VFSListingItem> &_items );
+    ExtractCommonPermissions( const std::vector<VFSListingItem> &_items );
 static AttrsChangingCommand::Ownage
-    ExtractCommonOwnage( const vector<VFSListingItem> &_items );
+    ExtractCommonOwnage( const std::vector<VFSListingItem> &_items );
 static AttrsChangingCommand::Flags
-    ExtractCommonFlags( const vector<VFSListingItem> &_items );
+    ExtractCommonFlags( const std::vector<VFSListingItem> &_items );
 static AttrsChangingCommand::Times
-    ExtractCommonTimes( const vector<VFSListingItem> &_items );
+    ExtractCommonTimes( const std::vector<VFSListingItem> &_items );
 
 static NSString *UserToString( const VFSUser &_user );
 static NSString *GroupToString( const VFSGroup &_group );
-static NSString *Title( const vector<VFSListingItem> &_items );
+static NSString *Title( const std::vector<VFSListingItem> &_items );
 
 @implementation NCOpsAttrsChangingDialog
 {
-    vector<VFSListingItem> m_Items;
+    std::vector<VFSListingItem> m_Items;
     bool m_ItemsHaveDirectories;
     AttrsChangingCommand::Permissions m_CommonItemsPermissions;
     AttrsChangingCommand::Ownage m_CommonItemsOwnage;
@@ -90,18 +90,18 @@ static NSString *Title( const vector<VFSListingItem> &_items );
     bool m_TimesBlockShown;
     
     AttrsChangingCommand m_Command;
-    vector<VFSUser> m_Users;
-    vector<VFSGroup> m_Groups;
+    std::vector<VFSUser> m_Users;
+    std::vector<VFSGroup> m_Groups;
 }
 
 @synthesize command = m_Command;
 
-- (instancetype) initWithItems:(vector<VFSListingItem>)_items
+- (instancetype) initWithItems:(std::vector<VFSListingItem>)_items
 {
     if( _items.empty() )
-        throw invalid_argument("NCOpsAttrsChangingDialog: input array can't be empty");
+        throw std::invalid_argument("NCOpsAttrsChangingDialog: input array can't be empty");
     if( !all_equal(begin(_items), end(_items), [](auto &i){ return i.Host(); }) )
-        throw invalid_argument("NCOpsAttrsChangingDialog: input items must have a same vfs host");
+        throw std::invalid_argument("NCOpsAttrsChangingDialog: input items must have a same vfs host");
     
     self = [super initWithWindowNibName:@"AttrsChangingDialog"];
     if( !self )
@@ -180,7 +180,7 @@ static NSString *Title( const vector<VFSListingItem> &_items );
 - (void)fillFlags
 {
     const auto f = m_CommonItemsFlags;
-    const auto m = [=](NSButton *_b, optional<bool> _v) {
+    const auto m = [=](NSButton *_b, std::optional<bool> _v) {
         const auto has_user_input = _b.tag > 0;
         if( m_ProcessSubfolders ) {
             _b.allowsMixedState = true;
@@ -223,7 +223,9 @@ static NSString *Title( const vector<VFSListingItem> &_items );
     [self.window makeFirstResponder:fr];
 }
 
-- (void)fillTimepicker:(NSDatePicker*)_dp andCheckbox:(NSButton*)_b withTime:(optional<time_t>)_t
+- (void)fillTimepicker:(NSDatePicker*)_dp
+           andCheckbox:(NSButton*)_b
+              withTime:(std::optional<time_t>)_t
 {
     const auto user_has_entered_date = _dp.tag > 0;
     const auto user_has_toggled_applying = _b.tag > 0;
@@ -320,7 +322,7 @@ static NSString *Title( const vector<VFSListingItem> &_items );
 
 - (void)fillPermUIWithPermissions:(const AttrsChangingCommand::Permissions&)_p
 {
-    const auto m = [=](NSButton *_b, optional<bool> _v) {
+    const auto m = [=](NSButton *_b, std::optional<bool> _v) {
         const auto has_user_input = _b.tag > 0;
         if( m_ProcessSubfolders ) {
             _b.allowsMixedState = true;
@@ -416,8 +418,8 @@ static const auto g_MixedOwnageTitle = @"[???]";
 {
     const auto popup = self.userPopup;
     const auto previous_selection = popup.tag > 0 ?
-        optional<long>{popup.selectedTag} :
-        optional<long>{};
+        std::optional<long>{popup.selectedTag} :
+        std::optional<long>{};
     [popup removeAllItems];
     for( const auto &i: m_Users ) {
         const auto entry = UserToString(i);
@@ -440,8 +442,8 @@ static const auto g_MixedOwnageTitle = @"[???]";
 {
     const auto popup = self.groupPopup;
     const auto previous_selection = popup.tag > 0 ?
-        optional<long>{self.groupPopup.selectedTag} :
-        optional<long>{};
+        std::optional<long>{self.groupPopup.selectedTag} :
+        std::optional<long>{};
     
     [popup removeAllItems];
     for( const auto &i: m_Groups ) {
@@ -466,14 +468,14 @@ static const auto g_MixedOwnageTitle = @"[???]";
     [self fillGroup:_o];
 }
 
-- (optional<AttrsChangingCommand::Permissions>) extractPermissionsFromUI
+- (std::optional<AttrsChangingCommand::Permissions>) extractPermissionsFromUI
 {
     if( !m_AccessRightsBlockShown )
-        return nullopt;
+        return std::nullopt;
 
     AttrsChangingCommand::Permissions p;
 
-    auto m = [](NSButton *_b, optional<bool> &_v) {
+    auto m = [](NSButton *_b, std::optional<bool> &_v) {
         const auto state = _b.state;
         if( state == NSOnState )
             _v = true;
@@ -496,7 +498,7 @@ static const auto g_MixedOwnageTitle = @"[???]";
 
     if( !p.usr_r && !p.usr_w && !p.usr_x && !p.grp_r && !p.grp_w && !p.grp_x &&
         !p.oth_r && !p.oth_w && !p.oth_x && !p.suid  && !p.sgid  && !p.sticky )
-        return nullopt;
+        return std::nullopt;
 
     const auto &common = m_CommonItemsPermissions;
     if( !m_ProcessSubfolders &&
@@ -512,19 +514,19 @@ static const auto g_MixedOwnageTitle = @"[???]";
         p.suid  == common.suid  &&
         p.sgid  == common.sgid  &&
         p.sticky== common.sticky )
-        return nullopt;
+        return std::nullopt;
     
     return p;
 }
 
-- (optional<AttrsChangingCommand::Flags>) extractFlagsFromUI
+- (std::optional<AttrsChangingCommand::Flags>) extractFlagsFromUI
 {
     if( !m_FlagsBlockShown )
-        return nullopt;
+        return std::nullopt;
     
     AttrsChangingCommand::Flags f;
     
-    auto m = [](NSButton *_b, optional<bool> &_v) {
+    auto m = [](NSButton *_b, std::optional<bool> &_v) {
         const auto state = _b.state;
         if( state == NSOnState )
             _v = true;
@@ -549,7 +551,7 @@ static const auto g_MixedOwnageTitle = @"[???]";
     if( !f.u_append && !f.u_immutable && !f.u_hidden && !f.u_nodump && !f.u_opaque &&
         !f.u_tracked && !f.u_compressed && !f.s_append && !f.s_immutable && !f.s_archived &&
         !f.s_nounlink && !f.s_restricted && !f.u_datavault )
-        return nullopt;
+        return std::nullopt;
 
     const auto &common = m_CommonItemsFlags;
     if( !m_ProcessSubfolders &&
@@ -566,15 +568,15 @@ static const auto g_MixedOwnageTitle = @"[???]";
         f.s_archived    == common.s_archived &&
         f.s_nounlink    == common.s_nounlink &&
         f.s_restricted  == common.s_restricted )
-       return nullopt;
+       return std::nullopt;
 
     return f;
 }
 
-- (optional<AttrsChangingCommand::Ownage>) extractOwnageFromUI
+- (std::optional<AttrsChangingCommand::Ownage>) extractOwnageFromUI
 {
     if( !m_OwnageBlockShown )
-        return nullopt;
+        return std::nullopt;
     
    AttrsChangingCommand::Ownage o;
    if( const auto u = self.userPopup.selectedTag; u >= 0 )
@@ -583,21 +585,21 @@ static const auto g_MixedOwnageTitle = @"[???]";
        o.gid = (uint32_t)g;
    
     if( !o.uid && !o.gid )
-        return nullopt;
+        return std::nullopt;
    
     const auto &common = m_CommonItemsOwnage;
     if( !m_ProcessSubfolders &&
         o.uid == common.uid  &&
         o.gid == common.gid   )
-        return nullopt;
+        return std::nullopt;
     
     return o;
 }
 
-- (optional<AttrsChangingCommand::Times>) extractTimesFromUI
+- (std::optional<AttrsChangingCommand::Times>) extractTimesFromUI
 {
     if( !m_TimesBlockShown )
-        return nullopt;
+        return std::nullopt;
     
     AttrsChangingCommand::Times t;
     if( self.timesATimeCheckbox.state == NSOnState )
@@ -611,16 +613,16 @@ static const auto g_MixedOwnageTitle = @"[???]";
 
     const auto &common = m_CommonItemsTimes;
     if( !m_ProcessSubfolders && t.atime == common.atime )
-        t.atime = nullopt;
+        t.atime = std::nullopt;
     if( !m_ProcessSubfolders && t.mtime == common.mtime )
-        t.mtime = nullopt;
+        t.mtime = std::nullopt;
     if( !m_ProcessSubfolders && t.ctime == common.ctime )
-        t.ctime = nullopt;
+        t.ctime = std::nullopt;
     if( !m_ProcessSubfolders && t.btime == common.btime )
-        t.btime = nullopt;
+        t.btime = std::nullopt;
 
     if( !t.atime && !t.mtime && !t.ctime && !t.btime )
-        return nullopt;
+        return std::nullopt;
     
 
     return t;
@@ -650,7 +652,7 @@ static const auto g_MixedOwnageTitle = @"[???]";
         b.tag++;
 }
 
-+ (bool)canEditAnythingInItems:(const vector<VFSListingItem>&)_items
++ (bool)canEditAnythingInItems:(const std::vector<VFSListingItem>&)_items
 {
     if( _items.empty() )
         return false;
@@ -672,22 +674,22 @@ template <class _InputIterator, class _Predicate>
 static auto optional_common_value(_InputIterator _first,
                                   _InputIterator _last,
                                   _Predicate _pred)
--> optional<decay_t<decltype(_pred(*_first))>>
+-> std::optional<std::decay_t<decltype(_pred(*_first))>>
 {
     if( _first == _last )
-        return nullopt;
+        return std::nullopt;
     
-    const optional<decay_t<decltype(_pred(*_first))>> value = _pred(*(_first++));
+    const std::optional<std::decay_t<decltype(_pred(*_first))>> value = _pred(*(_first++));
     for(; _first != _last; ++_first )
         if( _pred(*_first) != *value )
-            return nullopt;
+            return std::nullopt;
     return value;
 }
 
 static AttrsChangingCommand::Permissions ExtractCommonPermissions
-( const vector<VFSListingItem> &_items )
+( const std::vector<VFSListingItem> &_items )
 {
-    vector<uint16_t> modes;
+    std::vector<uint16_t> modes;
     for( const auto &i: _items )
         modes.emplace_back( i.UnixMode() );
 
@@ -710,7 +712,7 @@ static AttrsChangingCommand::Permissions ExtractCommonPermissions
     return p;
 }
 
-static AttrsChangingCommand::Ownage ExtractCommonOwnage( const vector<VFSListingItem> &_items )
+static AttrsChangingCommand::Ownage ExtractCommonOwnage( const std::vector<VFSListingItem> &_items )
 {
     AttrsChangingCommand::Ownage o;
     o.uid = optional_common_value(begin(_items), end(_items), [](auto &i){ return i.UnixUID(); });
@@ -718,9 +720,9 @@ static AttrsChangingCommand::Ownage ExtractCommonOwnage( const vector<VFSListing
     return o;
 }
 
-static AttrsChangingCommand::Flags ExtractCommonFlags( const vector<VFSListingItem> &_items )
+static AttrsChangingCommand::Flags ExtractCommonFlags( const std::vector<VFSListingItem> &_items )
 {
-    vector<uint32_t> flags;
+    std::vector<uint32_t> flags;
     for( const auto &i: _items )
         flags.emplace_back( i.UnixFlags() );
 
@@ -743,7 +745,7 @@ static AttrsChangingCommand::Flags ExtractCommonFlags( const vector<VFSListingIt
     return f;
 }
 
-static AttrsChangingCommand::Times ExtractCommonTimes( const vector<VFSListingItem> &_items )
+static AttrsChangingCommand::Times ExtractCommonTimes( const std::vector<VFSListingItem> &_items )
 {
     AttrsChangingCommand::Times t;
    
@@ -782,7 +784,7 @@ static NSString *GroupToString( const VFSGroup &_group )
                 [NSString stringWithUTF8StdString:_group.gecos]];
 }
 
-static NSString *Title( const vector<VFSListingItem> &_items )
+static NSString *Title( const std::vector<VFSListingItem> &_items )
 {
     if( _items.size() == 1 )
         return [NSString stringWithFormat:NSLocalizedString(@"Change file attributes for \u201c%@\u201d",

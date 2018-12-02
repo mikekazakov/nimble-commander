@@ -1,18 +1,18 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "LinkageJob.h"
 #include <RoutedIO/RoutedIO.h>
 
 namespace nc::ops {
 
-LinkageJob::LinkageJob(const string& _link_path, const string &_link_value,
-                       const shared_ptr<VFSHost> &_vfs, LinkageType _type):
+LinkageJob::LinkageJob(const std::string& _link_path, const std::string &_link_value,
+                       const std::shared_ptr<VFSHost> &_vfs, LinkageType _type):
     m_LinkPath(_link_path),
     m_LinkValue(_link_value),
     m_VFS(_vfs),
     m_Type(_type)
 {
     if( _link_path.empty() || _vfs == nullptr )
-        throw invalid_argument("LinkageJob: invalid argument");
+        throw std::invalid_argument("LinkageJob: invalid argument");
 
     Statistics().SetPreferredSource(Statistics::SourceType::Items);
     Statistics().CommitEstimated(Statistics::SourceType::Items, 1);

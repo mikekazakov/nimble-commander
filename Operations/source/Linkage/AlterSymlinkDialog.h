@@ -1,12 +1,13 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
 
 @interface NCOpsAlterSymlinkDialog : NSWindowController
 
-- (instancetype)initWithSourcePath:(const string&)_src_path andLinkName:(const string&)_link_name;
+- (instancetype)initWithSourcePath:(const std::string&)_src_path
+                       andLinkName:(const std::string&)_link_name;
 
-@property (readonly) const string& sourcePath;
+@property (readonly) const std::string& sourcePath;
 
 @end

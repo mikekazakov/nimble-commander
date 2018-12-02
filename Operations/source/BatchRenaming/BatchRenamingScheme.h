@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -24,8 +24,8 @@ public:
     
     struct TextExtraction
     {
-        optional<Range> direct_range = Range{0, Range::max_length()};   // 1st priority
-        optional<Range> reverse_range = nullopt;                        // 2nd priority
+        std::optional<Range> direct_range = Range{0, Range::max_length()};   // 1st priority
+        std::optional<Range> reverse_range = std::nullopt;                        // 2nd priority
         unsigned short from_first = 0;
         unsigned short to_last    = 0;
         
@@ -68,9 +68,9 @@ public:
         Capitalized = 3
     };
     
-    static optional<vector<MaskDecomposition>> DecomposeMaskIntoPlaceholders(NSString *_mask);
-    static optional<pair<TextExtraction, int>> ParsePlaceholder_TextExtraction( NSString *_ph, unsigned long _pos ); // action and number of chars eaten if no errors
-    static optional<pair<Counter, int>> ParsePlaceholder_Counter( NSString *_ph, unsigned long _pos,
+    static std::optional<std::vector<MaskDecomposition>> DecomposeMaskIntoPlaceholders(NSString *_mask);
+    static std::optional<std::pair<TextExtraction, int>> ParsePlaceholder_TextExtraction( NSString *_ph, unsigned long _pos ); // action and number of chars eaten if no errors
+    static std::optional<std::pair<Counter, int>> ParsePlaceholder_Counter( NSString *_ph, unsigned long _pos,
                                                                  long _default_start, long _default_step, int _default_width, unsigned _default_stripe); // action and number of chars eaten if no errors
     static NSString *ExtractText(NSString *_from, const TextExtraction &_te);
     static NSString *FormatCounter(const Counter &_c, int _file_number);
@@ -152,11 +152,11 @@ private:
     bool ParsePlaceholder( NSString *_ph );
 
     
-    vector<Step>            m_Steps;
-    vector<NSString*>       m_ActionsStatic;
-    vector<TextExtraction>  m_ActionsName;
-    vector<TextExtraction>  m_ActionsExtension;
-    vector<Counter>         m_ActionsCounter;
+    std::vector<Step>            m_Steps;
+    std::vector<NSString*>       m_ActionsStatic;
+    std::vector<TextExtraction>  m_ActionsName;
+    std::vector<TextExtraction>  m_ActionsExtension;
+    std::vector<Counter>         m_ActionsCounter;
 
     struct ReplaceOptions {
         NSString           *search_for = @"";
@@ -190,7 +190,7 @@ inline BatchRenamingScheme::Range::Range(unsigned short loc, unsigned short len)
 
 inline constexpr unsigned short BatchRenamingScheme::Range::max_length()
 {
-    return numeric_limits<unsigned short>::max();
+    return std::numeric_limits<unsigned short>::max();
 }
 
 inline NSRange BatchRenamingScheme::Range::toNSRange() const
@@ -200,8 +200,8 @@ inline NSRange BatchRenamingScheme::Range::toNSRange() const
 
 inline BatchRenamingScheme::Range BatchRenamingScheme::Range::intersection(const Range _rhs) const
 {
-    unsigned short min_v = ::max(location, _rhs.location);
-    unsigned max_v = ::min(max(), _rhs.max());
+    unsigned short min_v = std::max(location, _rhs.location);
+    unsigned max_v = std::min(max(), _rhs.max());
     if( max_v < min_v)
         return {0, 0};
     max_v -= min_v;

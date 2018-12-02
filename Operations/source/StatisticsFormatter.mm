@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StatisticsFormatter.h"
 #include <Utility/ByteCountFormatter.h>
 #include "Statistics.h"
@@ -6,7 +6,7 @@
 
 namespace nc::ops {
 
-static NSString *FormatETAString( nanoseconds _eta );
+static NSString *FormatETAString( std::chrono::nanoseconds _eta );
   
 StatisticsFormatter::StatisticsFormatter(const Statistics&_stats) noexcept:
     m_Stats(_stats)
@@ -102,7 +102,7 @@ NSString *StatisticsFormatter::WithBytes() const
     }
 }
 
-static NSString *FormatETAString( nanoseconds _eta )
+static NSString *FormatETAString( std::chrono::nanoseconds _eta )
 {
     static const auto fmt = []{
         NSDateComponentsFormatter *fmt = [[NSDateComponentsFormatter alloc] init];

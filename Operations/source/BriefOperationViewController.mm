@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOperationViewController.h"
 #include "Internal.h"
 #include "Operation.h"
@@ -8,6 +8,8 @@
 #include "Internal.h"
 
 using namespace nc::ops;
+
+using namespace std::literals;
 
 static const auto g_ViewAppearTimeout = 100ms;
 static const auto g_RapidUpdateFreq = 30.0;
@@ -26,7 +28,7 @@ static const auto g_SlowUpdateFreq = 1.0;
 
 @implementation NCOpsBriefOperationViewController
 {
-    shared_ptr<nc::ops::Operation> m_Operation;
+    std::shared_ptr<nc::ops::Operation> m_Operation;
     NSTimer *m_RapidTimer;
     NSTimer *m_SlowTimer;
     NSString *m_ETA;
@@ -35,7 +37,7 @@ static const auto g_SlowUpdateFreq = 1.0;
 
 @synthesize shouldDelayAppearance = m_ShouldDelayAppearance;
 
-- (instancetype)initWithOperation:(const shared_ptr<nc::ops::Operation>&)_operation
+- (instancetype)initWithOperation:(const std::shared_ptr<nc::ops::Operation>&)_operation
 {
     dispatch_assert_main_queue();
     assert(_operation);
@@ -57,7 +59,7 @@ static const auto g_SlowUpdateFreq = 1.0;
     return self;
 }
 
-- (const shared_ptr<nc::ops::Operation>&) operation
+- (const std::shared_ptr<nc::ops::Operation>&) operation
 {
     return m_Operation;
 }

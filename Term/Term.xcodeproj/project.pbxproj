@@ -205,8 +205,8 @@
 				CF50997B1F948E7C000AFDE7 /* Info.plist */,
 			);
 			name = Tests;
-			path = "Term Tests";
-			sourceTree = "<group>";
+			path = tests;
+			sourceTree = SOURCE_ROOT;
 		};
 		CF5FD9291FA1AC1200752E59 /* Config */ = {
 			isa = PBXGroup;

@@ -1,10 +1,11 @@
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyingTitleBuilder.h"
 #include <Utility/PathManip.h>
 #include "../Internal.h"
 
 namespace nc::ops {
 
-static NSString *ExtractCopyToName(const string&_s)
+static NSString *ExtractCopyToName(const std::string&_s)
 {
     char buff[MAXPATHLEN] = {0};
     bool use_buff = GetDirectoryNameFromPath(_s.c_str(), buff, MAXPATHLEN);
@@ -37,8 +38,8 @@ static NSString *OpTitleForMultipleItems(bool _copying, int _items, NSString *_t
             _to];
 }
 
-CopyingTitleBuilder::CopyingTitleBuilder(const vector<VFSListingItem> &_source_files,
-                                         const string& _destination_path,
+CopyingTitleBuilder::CopyingTitleBuilder(const std::vector<VFSListingItem> &_source_files,
+                                         const std::string& _destination_path,
                                          const CopyingOptions &_options):
     m_SourceFiles(_source_files),
     m_DestinationPath(_destination_path),
@@ -46,7 +47,7 @@ CopyingTitleBuilder::CopyingTitleBuilder(const vector<VFSListingItem> &_source_f
 {
 }
 
-string CopyingTitleBuilder::TitleForPreparing() const
+std::string CopyingTitleBuilder::TitleForPreparing() const
 {
     if( m_SourceFiles.size() == 1) {
         auto name = m_SourceFiles.front().FilenameNS();
@@ -64,7 +65,7 @@ string CopyingTitleBuilder::TitleForPreparing() const
     }
 }
 
-string CopyingTitleBuilder::TitleForProcessing() const
+std::string CopyingTitleBuilder::TitleForProcessing() const
 {
     if ( m_SourceFiles.size() == 1)
         return OpTitleForSingleItem(m_Options.docopy,
@@ -76,12 +77,12 @@ string CopyingTitleBuilder::TitleForProcessing() const
                                        ExtractCopyToName(m_DestinationPath)).UTF8String;
 }
 
-string CopyingTitleBuilder::TitleForVerifying() const
+std::string CopyingTitleBuilder::TitleForVerifying() const
 {
     return NSLocalizedString(@"Verifying operation result..", "").UTF8String;
 }
 
-string CopyingTitleBuilder::TitleForCleanup() const
+std::string CopyingTitleBuilder::TitleForCleanup() const
 {
     return NSLocalizedString(@"Cleaning up..", "").UTF8String;
 }

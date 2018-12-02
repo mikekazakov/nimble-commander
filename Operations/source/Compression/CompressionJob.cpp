@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressionJob.h"
 #include <Habanero/algo.h>
 #include <libarchive/archive.h>
@@ -29,17 +29,17 @@ struct CompressionJob::Source
         uint16_t    flags;
     };
 
-    chained_strings     filenames;
-    vector<ItemMeta>    metas;
-    vector<VFSHostPtr>  base_hosts;
-    vector<string>      base_paths;
+    chained_strings             filenames;
+    std::vector<ItemMeta>       metas;
+    std::vector<VFSHostPtr>     base_hosts;
+    std::vector<std::string>    base_paths;
     
     uint16_t FindOrInsertHost(const VFSHostPtr &_h)
     {
         return (uint16_t)linear_find_or_insert( base_hosts, _h );
     }
 
-    unsigned FindOrInsertBasePath(const string &_path)
+    unsigned FindOrInsertBasePath(const std::string &_path)
     {
         return (unsigned)linear_find_or_insert( base_paths, _path );
     }
@@ -49,12 +49,12 @@ static void WriteEmptyArchiveEntry(struct ::archive *_archive);
 static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source_fn);
 static void	archive_entry_copy_stat(struct archive_entry *_ae, const VFSStat &_vfs_stat);
 
-CompressionJob::CompressionJob(vector<VFSListingItem> _src_files,
-                   string _dst_root,
-                   VFSHostPtr _dst_vfs):
-    m_InitialListingItems{ move(_src_files) },
-    m_DstRoot{ move(_dst_root) },
-    m_DstVFS{ move(_dst_vfs) }
+CompressionJob::CompressionJob(std::vector<VFSListingItem> _src_files,
+                               std::string _dst_root,
+                               VFSHostPtr _dst_vfs):
+    m_InitialListingItems{ std::move(_src_files) },
+    m_DstRoot{ std::move(_dst_root) },
+    m_DstVFS{ std::move(_dst_vfs) }
 {
     if( m_DstRoot.empty() || m_DstRoot.back() != '/' )
         m_DstRoot += '/';
@@ -66,7 +66,8 @@ CompressionJob::~CompressionJob()
     
 void CompressionJob::Perform()
 {
-    string proposed_arcname = m_InitialListingItems.size() == 1 ?
+    using namespace std::literals;
+    std::string proposed_arcname = m_InitialListingItems.size() == 1 ?
         m_InitialListingItems.front().Filename() :
         "Archive"s;  // Localize!
     
@@ -79,7 +80,7 @@ void CompressionJob::Perform()
     m_TargetPathDefined();
     
     if( auto source = ScanItems()  )
-        m_Source = make_unique<Source>( move(*source) );
+        m_Source = std::make_unique<Source>( std::move(*source) );
     else
         return;
 
@@ -219,7 +220,7 @@ void CompressionJob::ProcessDirectoryItem(const chained_strings::node &_node, in
     VFSFilePtr src_file;
     vfs.CreateFile(source_path.c_str(), src_file);
     if( src_file->Open(VFSFlags::OF_Read) ==  VFSError::Ok ) {
-        string name_wo_slash = {begin(itemname), end(itemname)-1};
+        std::string name_wo_slash = {std::begin(itemname), std::end(itemname)-1};
         WriteEAsIfAny(*src_file, m_Archive, name_wo_slash.c_str());
     }
 }
@@ -306,7 +307,7 @@ void CompressionJob::ProcessRegularItem(const chained_strings::node &_node, int 
     WriteEAsIfAny(*src_file, m_Archive, itemname.c_str());
 }
 
-string CompressionJob::FindSuitableFilename(const string& _proposed_arcname) const
+std::string CompressionJob::FindSuitableFilename(const std::string& _proposed_arcname) const
 {
     char fn[MAXPATHLEN];
     
@@ -323,19 +324,19 @@ string CompressionJob::FindSuitableFilename(const string& _proposed_arcname) con
     return "";
 }
 
-const string &CompressionJob::TargetArchivePath() const
+const std::string &CompressionJob::TargetArchivePath() const
 {
     return m_TargetArchivePath;
 }
   
-optional<CompressionJob::Source> CompressionJob::ScanItems()
+std::optional<CompressionJob::Source> CompressionJob::ScanItems()
 {
     Source source;
     for( const auto &item: m_InitialListingItems)
         if( !ScanItem(item, source) )
-            return nullopt;
+            return std::nullopt;
 
-    return move(source);
+    return std::move(source);
 }
 
 bool CompressionJob::ScanItem(const VFSListingItem &_item,
@@ -368,7 +369,7 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item,
         _ctx.filenames.push_back( _item.Filename()+"/", nullptr );
         auto &host = *_item.Host();
         
-        vector<string> directory_entries;
+        std::vector<std::string> directory_entries;
         while( true) {
             const auto callback = [&](const VFSDirEnt &_dirent){
                 directory_entries.emplace_back(_dirent.name);
@@ -385,7 +386,7 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item,
         }
         
         const auto directory_node = &_ctx.filenames.back();
-        for( const string &filename: directory_entries ) {
+        for( const std::string &filename: directory_entries ) {
             const auto scan_ok = ScanItem(_item.Path() + "/" + filename,
                                           filename,
                                           meta.base_vfs_indx,
@@ -399,8 +400,8 @@ bool CompressionJob::ScanItem(const VFSListingItem &_item,
     return true;
 }
 
-bool CompressionJob::ScanItem(const string &_full_path,
-                              const string &_filename,
+bool CompressionJob::ScanItem(const std::string &_full_path,
+                              const std::string &_filename,
                               unsigned _vfs_no,
                               unsigned _basepath_no,
                               const chained_strings::node *_prefix,
@@ -447,7 +448,7 @@ bool CompressionJob::ScanItem(const string &_full_path,
         _ctx.metas.emplace_back( meta );
         _ctx.filenames.push_back( _filename+"/", _prefix );
     
-        vector<string> directory_entries;
+        std::vector<std::string> directory_entries;
         while( true ) {
             const auto callback = [&](const VFSDirEnt &_dirent){
                 directory_entries.emplace_back(_dirent.name);
@@ -464,7 +465,7 @@ bool CompressionJob::ScanItem(const string &_full_path,
         }
         
         const auto directory_node = &_ctx.filenames.back();
-        for( const string &filename: directory_entries )
+        for( const std::string &filename: directory_entries )
             if(!ScanItem(_full_path + "/" + filename,
                          filename,
                          meta.base_vfs_indx,

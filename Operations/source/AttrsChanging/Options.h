@@ -8,53 +8,53 @@ namespace nc::ops {
 struct AttrsChangingCommand
 {
     struct Permissions {
-        optional<bool> usr_r;
-        optional<bool> usr_w;
-        optional<bool> usr_x;
-        optional<bool> grp_r;
-        optional<bool> grp_w;
-        optional<bool> grp_x;
-        optional<bool> oth_r;
-        optional<bool> oth_w;
-        optional<bool> oth_x;
-        optional<bool> suid;
-        optional<bool> sgid;
-        optional<bool> sticky;
+        std::optional<bool> usr_r;
+        std::optional<bool> usr_w;
+        std::optional<bool> usr_x;
+        std::optional<bool> grp_r;
+        std::optional<bool> grp_w;
+        std::optional<bool> grp_x;
+        std::optional<bool> oth_r;
+        std::optional<bool> oth_w;
+        std::optional<bool> oth_x;
+        std::optional<bool> suid;
+        std::optional<bool> sgid;
+        std::optional<bool> sticky;
     };
-    optional<Permissions> permissions;
+    std::optional<Permissions> permissions;
     
     struct Ownage {
-        optional<unsigned> uid;
-        optional<unsigned> gid;
+        std::optional<unsigned> uid;
+        std::optional<unsigned> gid;
     };
-    optional<Ownage> ownage;
+    std::optional<Ownage> ownage;
 
     struct Flags { // currently assumes only a native MacOSX interface, not a Posix/VFS layer
-        optional<bool> u_nodump;
-        optional<bool> u_immutable;
-        optional<bool> u_append;
-        optional<bool> u_opaque;
-        optional<bool> u_tracked;
-        optional<bool> u_hidden;
-        optional<bool> u_compressed;
-        optional<bool> u_datavault;
-        optional<bool> s_archived;
-        optional<bool> s_immutable;
-        optional<bool> s_append;
-        optional<bool> s_restricted;
-        optional<bool> s_nounlink;
+        std::optional<bool> u_nodump;
+        std::optional<bool> u_immutable;
+        std::optional<bool> u_append;
+        std::optional<bool> u_opaque;
+        std::optional<bool> u_tracked;
+        std::optional<bool> u_hidden;
+        std::optional<bool> u_compressed;
+        std::optional<bool> u_datavault;
+        std::optional<bool> s_archived;
+        std::optional<bool> s_immutable;
+        std::optional<bool> s_append;
+        std::optional<bool> s_restricted;
+        std::optional<bool> s_nounlink;
     };
-    optional<Flags> flags;
+    std::optional<Flags> flags;
 
     struct Times {
-        optional<long> atime;
-        optional<long> mtime;
-        optional<long> ctime;
-        optional<long> btime;
+        std::optional<long> atime;
+        std::optional<long> mtime;
+        std::optional<long> ctime;
+        std::optional<long> btime;
     };
-    optional<Times> times;
+    std::optional<Times> times;
     
-    vector<VFSListingItem> items;
+    std::vector<VFSListingItem> items;
     bool apply_to_subdirs = false;
 };
 

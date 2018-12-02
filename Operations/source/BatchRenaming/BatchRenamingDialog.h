@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Cocoa/Cocoa.h>
@@ -12,13 +12,13 @@
 
 
 
-@property (readonly) vector<string> &filenamesSource;       // full path
-@property (readonly) vector<string> &filenamesDestination;
+@property (readonly) std::vector<std::string> &filenamesSource;       // full path
+@property (readonly) std::vector<std::string> &filenamesDestination;
 @property bool isValidRenaming;
 @property (nonatomic) NCUtilSimpleComboBoxPersistentDataSource *renamePatternDataSource;
 @property (nonatomic) NCUtilSimpleComboBoxPersistentDataSource *searchForDataSource;
 @property (nonatomic) NCUtilSimpleComboBoxPersistentDataSource *replaceWithDataSource;
 
-- (instancetype) initWithItems:(vector<VFSListingItem>)_items;
+- (instancetype) initWithItems:(std::vector<VFSListingItem>)_items;
 
 @end

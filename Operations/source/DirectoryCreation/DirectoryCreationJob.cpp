@@ -1,12 +1,12 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreationJob.h"
 
 namespace nc::ops {
 
 static const auto g_CreateMode = 0755;
 
-DirectoryCreationJob::DirectoryCreationJob( const vector<string> &_directories_chain,
-                                           const string &_root_folder,
+DirectoryCreationJob::DirectoryCreationJob( const std::vector<std::string> &_directories_chain,
+                                           const std::string &_root_folder,
                                            const VFSHostPtr &_vfs ):
     m_DirectoriesChain(_directories_chain),
     m_RootFolder(_root_folder),
@@ -23,7 +23,7 @@ void DirectoryCreationJob::Perform()
 {
     Statistics().CommitEstimated( Statistics::SourceType::Items, m_DirectoriesChain.size() );
 
-    path p = m_RootFolder;
+    boost::filesystem::path p = m_RootFolder;
     for( auto &s: m_DirectoriesChain ) {
         if( BlockIfPaused(); IsStopped() )
             return;
@@ -36,7 +36,7 @@ void DirectoryCreationJob::Perform()
     }
 }
 
-bool DirectoryCreationJob::MakeDir(const string &_path)
+bool DirectoryCreationJob::MakeDir(const std::string &_path)
 {
     while(true) {
         VFSStat st;

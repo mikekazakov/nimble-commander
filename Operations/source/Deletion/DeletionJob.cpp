@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionJob.h"
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>
@@ -6,17 +6,17 @@
 namespace nc::ops {
 
 static bool IsEAStorage(VFSHost &_host,
-                        const string &_directory,
+                        const std::string &_directory,
                         const char *_filename,
                         uint8_t _unix_type);
 
-DeletionJob::DeletionJob( vector<VFSListingItem> _items, DeletionType _type )
+DeletionJob::DeletionJob( std::vector<VFSListingItem> _items, DeletionType _type )
 {
     m_SourceItems = move(_items);
     m_Type = _type;
     if( _type == DeletionType::Trash && !all_of(begin(m_SourceItems), end(m_SourceItems),
         [](auto &i) { return i.Host()->IsNativeFS(); } ) )
-        throw invalid_argument("DeletionJob: invalid work mode for the provided items");
+        throw std::invalid_argument("DeletionJob: invalid work mode for the provided items");
     Statistics().SetPreferredSource( Statistics::SourceType::Items );
 }
 
@@ -73,13 +73,13 @@ void DeletionJob::DoScan()
     }
 }
 
-void DeletionJob::ScanDirectory(const string &_path,
+void DeletionJob::ScanDirectory(const std::string &_path,
                                 int _listing_item_index,
                                 const chained_strings::node *_prefix)
 {
     auto &vfs = *m_SourceItems[_listing_item_index].Host();
 
-    vector<VFSDirEnt> dir_entries;
+    std::vector<VFSDirEnt> dir_entries;
     const auto it_callback = [&](const VFSDirEnt &_entry){
         dir_entries.emplace_back(_entry);
         return true;
@@ -146,7 +146,7 @@ void DeletionJob::DoDelete()
     }
 }
 
-void DeletionJob::DoUnlink( const string &_path, VFSHost &_vfs )
+void DeletionJob::DoUnlink( const std::string &_path, VFSHost &_vfs )
 {
     while( true ) {
         const auto rc = _vfs.Unlink( _path.c_str() );
@@ -163,7 +163,7 @@ void DeletionJob::DoUnlink( const string &_path, VFSHost &_vfs )
     }
 }
 
-void DeletionJob::DoRmDir( const string &_path, VFSHost &_vfs )
+void DeletionJob::DoRmDir( const std::string &_path, VFSHost &_vfs )
 {
     while( true ) {
         const auto rc = _vfs.RemoveDirectory( _path.c_str() );
@@ -180,7 +180,7 @@ void DeletionJob::DoRmDir( const string &_path, VFSHost &_vfs )
     }
 }
 
-void DeletionJob::DoTrash( const string &_path, VFSHost &_vfs, SourceItem _src )
+void DeletionJob::DoTrash( const std::string &_path, VFSHost &_vfs, SourceItem _src )
 {
     while( true ) {
         const auto rc = _vfs.Trash( _path.c_str() );
@@ -216,7 +216,7 @@ int DeletionJob::ItemsInScript() const
     return (int)m_Script.size();
 }
 
-static bool IsEAStorage(VFSHost &_host, const string &_directory, const char *_filename,
+static bool IsEAStorage(VFSHost &_host, const std::string &_directory, const char *_filename,
                         uint8_t _unix_type )
 {
     if( _unix_type != DT_REG ||

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Statistics.h"
 
 namespace nc::ops {
@@ -68,7 +68,7 @@ void Statistics::StopTiming() noexcept
     }
 }
 
-nanoseconds Statistics::ElapsedTime() const noexcept
+std::chrono::nanoseconds Statistics::ElapsedTime() const noexcept
 {
     if( m_IsTiming ) {
         if( m_PauseCount )
@@ -96,7 +96,7 @@ void Statistics::CommitSkipped( SourceType _type, uint64_t _delta )
     Timeline(_type).CommitSkipped(_delta);
 }
 
-vector<Progress::TimePoint> Statistics::BytesPerSecond() const
+std::vector<Progress::TimePoint> Statistics::BytesPerSecond() const
 {
     return m_BytesTimeline.Data();
 }
@@ -111,7 +111,7 @@ double Statistics::SpeedPerSecondAverage(SourceType _type) const
     return Timeline(_type).VolumePerSecondAverage();
 }
 
-optional<nanoseconds> Statistics::ETA(SourceType _type) const noexcept
+std::optional<std::chrono::nanoseconds> Statistics::ETA(SourceType _type) const noexcept
 {
     return Timeline(_type).ETA();
 }

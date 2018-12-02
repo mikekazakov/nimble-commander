@@ -1,10 +1,11 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PoolViewController.h"
 #include "Pool.h"
 #include "Internal.h"
 #include "BriefOperationViewController.h"
 
 using namespace nc::ops;
+using namespace std::literals;
 
 static const auto g_ViewAppearTimeout = 100ms;
 
@@ -19,10 +20,10 @@ static const auto g_ViewAppearTimeout = 100ms;
 
 @implementation NCOpsPoolViewController
 {
-    shared_ptr<Pool> m_Pool;
-    vector<NCOpsBriefOperationViewController*> m_BriefViews;
+    std::shared_ptr<Pool> m_Pool;
+    std::vector<NCOpsBriefOperationViewController*> m_BriefViews;
     int m_IndexToShow;
-    shared_ptr<Operation> m_ShownOperation;
+    std::shared_ptr<Operation> m_ShownOperation;
 }
 
 - (instancetype) initWithPool:(Pool&)_pool
@@ -51,16 +52,18 @@ static const auto g_ViewAppearTimeout = 100ms;
     [self updateButtonsState];
 }
 
-- (void)syncWithOperations:(const vector<shared_ptr<Operation>>&)_operations
+- (void)syncWithOperations:(const std::vector<std::shared_ptr<Operation>>&)_operations
 {
-    const auto find_existing = [=](const shared_ptr<Operation>&_op){
-        const auto existing = find_if( begin(m_BriefViews), end(m_BriefViews), [_op](auto &v){
+    const auto find_existing = [=](const std::shared_ptr<Operation>&_op){
+        const auto existing = std::find_if(std::begin(m_BriefViews),
+                                           std::end(m_BriefViews),
+                                           [_op](auto &v){
             return v.operation == _op;
         });
         return existing != end(m_BriefViews) ? *existing : nullptr;
     };
     
-    vector<NCOpsBriefOperationViewController*> new_views;
+    std::vector<NCOpsBriefOperationViewController*> new_views;
     new_views.reserve(_operations.size());
     for( auto o: _operations )
         if( const auto existing = find_existing(o) ) {
@@ -71,8 +74,10 @@ static const auto g_ViewAppearTimeout = 100ms;
             new_views.back().shouldDelayAppearance = _operations.size() == 1;
         }
  
-    const auto index_of = [=](const shared_ptr<Operation>&_op)->int{
-        const auto it = find_if( begin(m_BriefViews), end(m_BriefViews), [_op](auto &v){
+    const auto index_of = [=](const std::shared_ptr<Operation>&_op)->int{
+        const auto it = std::find_if(std::begin(m_BriefViews),
+                                     end(m_BriefViews),
+                                     [_op](auto &v){
             return v.operation == _op;
         });
         return it != end(m_BriefViews) ? (int)distance(begin(m_BriefViews), it) : -1;
@@ -88,7 +93,7 @@ static const auto g_ViewAppearTimeout = 100ms;
     }
 
     if( !m_ShownOperation ) {
-        m_IndexToShow = min(max(m_IndexToShow, 0), (int)m_BriefViews.size() - 1);
+        m_IndexToShow = std::min(std::max(m_IndexToShow, 0), (int)m_BriefViews.size() - 1);
         if( m_IndexToShow >= 0 )
             m_ShownOperation = m_BriefViews[m_IndexToShow].operation;
     }

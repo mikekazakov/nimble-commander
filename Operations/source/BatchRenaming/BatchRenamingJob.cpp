@@ -1,14 +1,14 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BatchRenamingJob.h"
 #include <Utility/StringExtras.h>
 
 namespace nc::ops {
 
-BatchRenamingJob::BatchRenamingJob(vector<string> _src_paths,
-                                   vector<string> _dst_paths,
-                                   shared_ptr<VFSHost> _vfs):
-    m_Source( move(_src_paths) ),
-    m_Destination( move(_dst_paths) ),
+BatchRenamingJob::BatchRenamingJob(std::vector<std::string> _src_paths,
+                                   std::vector<std::string> _dst_paths,
+                                   std::shared_ptr<VFSHost> _vfs):
+    m_Source( std::move(_src_paths) ),
+    m_Destination( std::move(_dst_paths) ),
     m_VFS( _vfs )
 {
     assert( m_Source.size() == m_Destination.size() );
@@ -31,7 +31,7 @@ void BatchRenamingJob::Perform()
     }
 }
 
-void BatchRenamingJob::Rename( const string &_src, const string &_dst )
+void BatchRenamingJob::Rename( const std::string &_src, const std::string &_dst )
 {
     if( _src == _dst ) {
         Statistics().CommitProcessed(Statistics::SourceType::Items, 1);    

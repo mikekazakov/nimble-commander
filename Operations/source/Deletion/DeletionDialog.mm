@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionDialog.h"
 #include "../Internal.h"
 #include <VFS/VFS.h>
@@ -18,7 +18,7 @@ using namespace nc::ops;
     DeletionType m_DefaultType;
     DeletionType m_ResultType;
 
-    shared_ptr<vector<VFSListingItem>> m_Items;
+    std::shared_ptr<std::vector<VFSListingItem>> m_Items;
     bool                        m_AllowMoveToTrash;
 }
 
@@ -26,7 +26,7 @@ using namespace nc::ops;
 @synthesize resultType = m_ResultType;
 @synthesize defaultType = m_DefaultType;
 
-- (id)initWithItems:(const shared_ptr<vector<VFSListingItem>>&)_items
+- (id)initWithItems:(const std::shared_ptr<std::vector<VFSListingItem>>&)_items
 {
    self = [super initWithWindowNibName:@"DeletionDialog"];
     if (self) {

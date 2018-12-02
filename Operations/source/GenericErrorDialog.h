@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #import <Cocoa/Cocoa.h>
 
@@ -17,7 +17,7 @@ enum class GenericErrorDialogStyle
 @interface NCOpsGenericErrorDialog : NSWindowController
 
 - (instancetype)init;
-- (instancetype)initWithContext:(shared_ptr<nc::ops::AsyncDialogResponse>)_context;
+- (instancetype)initWithContext:(std::shared_ptr<nc::ops::AsyncDialogResponse>)_context;
 
 @property (nonatomic) nc::ops::GenericErrorDialogStyle style;
 @property (nonatomic) NSModalResponse escapeButtonResponse;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #import <Cocoa/Cocoa.h>
 #include <VFS/VFS.h>
@@ -6,9 +6,9 @@
 
 @interface NCOpsAttrsChangingDialog : NSWindowController
 
-- (instancetype) initWithItems:(vector<VFSListingItem>)_items;
+- (instancetype) initWithItems:(std::vector<VFSListingItem>)_items;
 
-+ (bool)canEditAnythingInItems:(const vector<VFSListingItem>&)_items;
++ (bool)canEditAnythingInItems:(const std::vector<VFSListingItem>&)_items;
 
 @property (readonly) const nc::ops::AttrsChangingCommand &command;
 

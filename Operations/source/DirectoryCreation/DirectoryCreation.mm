@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreation.h"
 #include "DirectoryCreationJob.h"
 #include <boost/algorithm/string/split.hpp>
@@ -7,16 +7,18 @@
 
 namespace nc::ops {
 
-static vector<string> Split( const string &_directory );
+static std::vector<std::string> Split( const std::string &_directory );
 
 using Callbacks = DirectoryCreationJobCallbacks;
 
-DirectoryCreation::DirectoryCreation( string _directory_name, string _root_folder, VFSHost &_vfs )
+DirectoryCreation::DirectoryCreation(std::string _directory_name,
+                                     std::string _root_folder,
+                                     VFSHost &_vfs )
 {
     m_Directories = Split(_directory_name);
 
     m_Job.reset( new DirectoryCreationJob{m_Directories, _root_folder, _vfs.shared_from_this()} );
-    m_Job->m_OnError = [this](int _err, const string &_path, VFSHost &_vfs) {
+    m_Job->m_OnError = [this](int _err, const std::string &_path, VFSHost &_vfs) {
         return (Callbacks::ErrorResolution)OnError(_err, _path, _vfs);
     };
 
@@ -37,17 +39,17 @@ Job *DirectoryCreation::GetJob() noexcept
     return m_Job.get();
 }
 
-const vector<string> &DirectoryCreation::DirectoryNames() const
+const std::vector<std::string> &DirectoryCreation::DirectoryNames() const
 {
     return m_Directories;
 }
 
-int DirectoryCreation::OnError(int _err, const string &_path, VFSHost &_vfs)
+int DirectoryCreation::OnError(int _err, const std::string &_path, VFSHost &_vfs)
 {
     if( !IsInteractive() )
         return (int)Callbacks::ErrorResolution::Stop;
 
-    const auto ctx = make_shared<AsyncDialogResponse>();
+    const auto ctx = std::make_shared<AsyncDialogResponse>();
     ShowGenericDialog(GenericDialog::AbortRetry,
                       NSLocalizedString(@"Failed to create a directory", ""),
                       _err, {_vfs, _path}, ctx);
@@ -59,9 +61,10 @@ int DirectoryCreation::OnError(int _err, const string &_path, VFSHost &_vfs)
         return (int)Callbacks::ErrorResolution::Stop;
 }
 
-static vector<string> Split( const string &_directory )
+static std::vector<std::string> Split( const std::string &_directory )
 {
-    vector<string> parts;
+    using namespace std::literals;
+    std::vector<std::string> parts;
     boost::split( parts, _directory, [](char _c){ return _c == '/';}, boost::token_compress_on );
     parts.erase( remove( begin(parts), end(parts), ""s), end(parts) );
     return parts;

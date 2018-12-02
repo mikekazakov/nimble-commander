@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -9,26 +9,26 @@ namespace nc::ops {
 struct BatchRenamingJobCallbacks
 {
     enum class RenameErrorResolution { Stop, Skip, Retry };
-    function< RenameErrorResolution(int _err, const string &_path, VFSHost &_vfs) >
+    std::function< RenameErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnRenameError =
-    [](int _err, const string &_path, VFSHost &_vfs){ return RenameErrorResolution::Stop; };
+    [](int _err, const std::string &_path, VFSHost &_vfs){ return RenameErrorResolution::Stop; };
 };
 
 class BatchRenamingJob final : public Job, public BatchRenamingJobCallbacks
 {
 public:
-    BatchRenamingJob(vector<string> _src_paths,
-                     vector<string> _dst_paths,
-                     shared_ptr<VFSHost> _vfs);
+    BatchRenamingJob(std::vector<std::string> _src_paths,
+                     std::vector<std::string> _dst_paths,
+                     std::shared_ptr<VFSHost> _vfs);
     ~BatchRenamingJob();
     
 private:
     virtual void Perform() override;
-    void Rename( const string &_src, const string &_dst );
+    void Rename( const std::string &_src, const std::string &_dst );
 
-    vector<string> m_Source;
-    vector<string> m_Destination;
-    shared_ptr<VFSHost> m_VFS;
+    std::vector<std::string> m_Source;
+    std::vector<std::string> m_Destination;
+    std::shared_ptr<VFSHost> m_VFS;
 };
 
 }

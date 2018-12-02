@@ -5,6 +5,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "../Internal.h"
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 
 using namespace nc::ops;
 

@@ -2,6 +2,8 @@
 #import <XCTest/XCTest.h>
 #include "../source/AttrsChanging/AttrsChanging.h"
 #include <VFS/Native.h>
+#include <boost/filesystem.hpp>
+#include <sys/stat.h>
 
 using namespace nc::ops;
 
@@ -11,8 +13,8 @@ using namespace nc::ops;
 
 @implementation AttrsChanging_Tests
 {
-    path m_TmpDir;
-    shared_ptr<VFSHost> m_NativeHost;
+    boost::filesystem::path m_TmpDir;
+    std::shared_ptr<VFSHost> m_NativeHost;
 }
 
 - (void)setUp
@@ -146,7 +148,7 @@ using namespace nc::ops;
     XCTAssert( st.mtime.tv_sec == mtime );
 }
 
-- (path)makeTmpDir
+- (boost::filesystem::path)makeTmpDir
 {
     char dir[MAXPATHLEN];
     sprintf(dir, "%s" "com.magnumbytes.nimblecommander" ".tmp.XXXXXX",
@@ -155,10 +157,10 @@ using namespace nc::ops;
     return dir;
 }
 
-- (vector<VFSListingItem>) fetchItems:(const vector<string> &)_filenames
-                        fromDirectory:(const string&)_directory_path
+- (std::vector<VFSListingItem>) fetchItems:(const std::vector<std::string> &)_filenames
+                             fromDirectory:(const std::string&)_directory_path
 {
-    vector<VFSListingItem> items;
+    std::vector<VFSListingItem> items;
     m_NativeHost->FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
     return items;
 }

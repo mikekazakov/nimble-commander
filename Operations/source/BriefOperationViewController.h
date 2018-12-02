@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Cocoa/Cocoa.h>
+#include <memory>
 
 namespace nc::ops {
     class Operation;

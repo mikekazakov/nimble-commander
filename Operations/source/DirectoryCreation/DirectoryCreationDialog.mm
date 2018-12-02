@@ -1,5 +1,7 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreationDialog.h"
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 @interface NCOpsDirectoryCreationDialog()
 

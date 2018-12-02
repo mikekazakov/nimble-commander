@@ -5,6 +5,7 @@
 #include "../AsyncDialogResponse.h"
 #include "../ModalDialogResponses.h"
 #include "../GenericErrorDialog.h"
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::ops {
 

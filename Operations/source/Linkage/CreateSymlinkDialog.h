@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Cocoa/Cocoa.h>
+#include <string>
 
 @interface NCOpsCreateSymlinkDialog : NSWindowController<NSTextFieldDelegate>
 

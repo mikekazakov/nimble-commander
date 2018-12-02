@@ -1,5 +1,7 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Progress.h"
+#include <iostream>
+#include <Habanero/mach_time.h>
 
 namespace nc::ops {
 

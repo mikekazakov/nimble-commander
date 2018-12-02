@@ -1,6 +1,7 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingJob.h"
 #include <Utility/PathManip.h>
+#include <sys/stat.h>
 
 namespace nc::ops {
 

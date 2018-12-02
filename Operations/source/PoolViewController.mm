@@ -3,6 +3,8 @@
 #include "Pool.h"
 #include "Internal.h"
 #include "BriefOperationViewController.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/ObjCpp.h>
 
 using namespace nc::ops;
 using namespace std::literals;

@@ -7,25 +7,28 @@
 #include <VFS/XAttr.h>
 #include "../source/Copying/Copying.h"
 #include "../source/Copying/Helpers.h"
+#include "Environment.h"
+#include <boost/filesystem.hpp>
 
 using namespace nc::ops;
 using namespace nc::vfs;
-static const path g_DataPref = NCE(nc::env::test::ext_data_prefix);
-static const path g_PhotosRAR = g_DataPref / "archives" / "photos.rar";
+using namespace std::literals;
+static const boost::filesystem::path g_DataPref = NCE(nc::env::test::ext_data_prefix);
+static const boost::filesystem::path g_PhotosRAR = g_DataPref / "archives" / "photos.rar";
 static const auto g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
 
-static vector<VFSListingItem> FetchItems(const string& _directory_path,
-                                                 const vector<string> &_filenames,
-                                                 VFSHost &_host)
+static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path,
+                                              const std::vector<std::string> &_filenames,
+                                              VFSHost &_host)
 {
-    vector<VFSListingItem> items;
+    std::vector<VFSListingItem> items;
     _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
     return items;
 }
 
-static int VFSCompareEntries(const path& _file1_full_path,
+static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
-                             const path& _file2_full_path,
+                             const boost::filesystem::path& _file2_full_path,
                              const VFSHostPtr& _file2_host,
                              int &_result);
 
@@ -34,8 +37,8 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 @implementation CopyingTests
 {
-    path m_TmpDir;
-    shared_ptr<VFSHost> m_NativeHost;
+    boost::filesystem::path m_TmpDir;
+    std::shared_ptr<VFSHost> m_NativeHost;
 }
 
 - (void)setUp
@@ -179,7 +182,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
+        host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -210,7 +213,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
+        host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -246,7 +249,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
+        host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -286,7 +289,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     op.Wait();
 
     int result = 0;
-    XCTAssert( VFSCompareEntries(path("/Applications") / "Mail.app",
+    XCTAssert( VFSCompareEntries(boost::filesystem::path("/Applications") / "Mail.app",
                                  VFSNativeHost::SharedHost(),
                                  m_TmpDir / "Mail.app",
                                  VFSNativeHost::SharedHost(),
@@ -297,7 +300,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 - (void)testCopyGenericToGeneric_Modes_CopyToPrefix_WithAbsentDirectoriesInPath
 {
     // just like testCopyGenericToGeneric_Modes_CopyToPrefix but file copy operation should build a destination path
-    path dst_dir = m_TmpDir / "Some" / "Absent" / "Dir" / "Is" / "Here/";
+    boost::filesystem::path dst_dir = m_TmpDir / "Some" / "Absent" / "Dir" / "Is" / "Here/";
     
     CopyingOptions opts;
     Copying op(FetchItems("/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost()),
@@ -309,7 +312,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     op.Wait();
     
     int result = 0;
-    XCTAssert( VFSCompareEntries(path("/Applications") / "Mail.app",
+    XCTAssert( VFSCompareEntries(boost::filesystem::path("/Applications") / "Mail.app",
                                  VFSNativeHost::SharedHost(),
                                  dst_dir / "Mail.app",
                                  VFSNativeHost::SharedHost(),
@@ -351,7 +354,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     
     XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",
                                host,
-                               (path(m_TmpDir) / "Mail.app").c_str(),
+                               (boost::filesystem::path(m_TmpDir) / "Mail.app").c_str(),
                                host) == 0);
     
     Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *VFSNativeHost::SharedHost()),
@@ -371,7 +374,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
+        host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -463,7 +466,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
 {
     VFSHostPtr host_src;
     try {
-        host_src = make_shared<UnRARHost>(g_PhotosRAR.c_str());
+        host_src = std::make_shared<UnRARHost>(g_PhotosRAR.c_str());
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -474,7 +477,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
     
     VFSHostPtr host_dst;
     try {
-        host_dst = make_shared<XAttrHost>(file.c_str(), VFSNativeHost::SharedHost());
+        host_dst = std::make_shared<XAttrHost>(file.c_str(), VFSNativeHost::SharedHost());
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -668,7 +671,7 @@ static uint32_t FileFlags(const char *path)
     XCTAssert( system( command.c_str() ) == 0);
 }
 
-- (path)makeTmpDir
+- (boost::filesystem::path)makeTmpDir
 {
     char dir[MAXPATHLEN];
     sprintf(dir,
@@ -678,16 +681,16 @@ static uint32_t FileFlags(const char *path)
     return dir;
 }
 
-- (void) EnsureClean:(const string&)_fn at:(const VFSHostPtr&)_h
+- (void) EnsureClean:(const std::string&)_fn at:(const VFSHostPtr&)_h
 {
     VFSStat stat;
     if( _h->Stat(_fn.c_str(), stat, 0, 0) == 0)
         XCTAssert( VFSEasyDelete(_fn.c_str(), _h) == 0);
 }
 
-static int VFSCompareEntries(const path& _file1_full_path,
+static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
-                             const path& _file2_full_path,
+                             const boost::filesystem::path& _file2_full_path,
                              const VFSHostPtr& _file2_host,
                              int &_result)
 {
@@ -838,8 +841,8 @@ static int VFSCompareEntries(const path& _file1_full_path,
 
 @implementation Copying_FindNonExistingItemPath_Tests
 {
-    path m_TmpDir;
-    shared_ptr<VFSHost> m_NativeHost;
+    boost::filesystem::path m_TmpDir;
+    std::shared_ptr<VFSHost> m_NativeHost;
 }
 
 - (void)setUp

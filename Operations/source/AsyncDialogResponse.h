@@ -2,6 +2,11 @@
 #pragma once
 
 #include "ModalDialogResponses.h"
+#include <any>
+#include <unordered_map>
+#include <mutex>
+#include <condition_variable>
+#include <optional>
 
 namespace nc::ops {
 

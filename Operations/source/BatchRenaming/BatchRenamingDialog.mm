@@ -4,6 +4,9 @@
 #include "BatchRenamingDialog.h"
 #include "BatchRenamingRangeSelectionPopover.h"
 #include "BatchRenamingScheme.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 
 using namespace nc::ops;
 

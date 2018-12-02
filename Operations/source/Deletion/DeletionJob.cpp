@@ -2,6 +2,8 @@
 #include "DeletionJob.h"
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>
+#include <dirent.h>
+#include <sys/param.h>
 
 namespace nc::ops {
 

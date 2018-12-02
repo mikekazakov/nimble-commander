@@ -1,6 +1,8 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CreateHardlinkDialog.h"
 #include "../Internal.h"
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 using namespace nc::ops;
 

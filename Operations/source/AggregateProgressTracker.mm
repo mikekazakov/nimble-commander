@@ -1,6 +1,8 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AggregateProgressTracker.h"
 #include "Statistics.h"
+#include <iostream>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::ops {
 

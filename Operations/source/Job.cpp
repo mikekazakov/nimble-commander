@@ -2,6 +2,8 @@
 #include "../include/Operations/Job.h"
 #include <Habanero/IdleSleepPreventer.h>
 #include <boost/core/demangle.hpp>
+#include <thread>
+#include <iostream>
 
 namespace nc::ops
 {

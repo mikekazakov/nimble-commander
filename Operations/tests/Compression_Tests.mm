@@ -1,6 +1,8 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <thread>
+#include <boost/filesystem.hpp>
+#include <sys/stat.h>
 
 #include "../source/Compression/Compression.h"
 #include "../source/Statistics.h"
@@ -11,24 +13,25 @@
 
 using namespace nc;
 using namespace nc::ops;
+using namespace std::literals;
 
 @interface CompressionTests : XCTestCase
 @end
 
-static int VFSCompareEntries(const path& _file1_full_path,
+static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
-                             const path& _file2_full_path,
+                             const boost::filesystem::path& _file2_full_path,
                              const VFSHostPtr& _file2_host,
                              int &_result);
 
-static vector<VFSListingItem> FetchItems(const string& _directory_path,
-                                         const vector<string> &_filenames,
-                                         VFSHost &_host);
+static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path,
+                                              const std::vector<std::string> &_filenames,
+                                              VFSHost &_host);
 
 @implementation CompressionTests
 {
-    path m_TmpDir;
-    shared_ptr<VFSHost> m_NativeHost;
+    boost::filesystem::path m_TmpDir;
+    std::shared_ptr<VFSHost> m_NativeHost;
 }
 
 - (void)setUp
@@ -46,7 +49,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 
 - (void)testEmptyArchiveBuilding
 {
-    Compression operation{vector<VFSListingItem>{}, m_TmpDir.native(), m_NativeHost };
+    Compression operation{std::vector<VFSListingItem>{}, m_TmpDir.native(), m_NativeHost };
     operation.Start();
     operation.Wait();
 
@@ -54,7 +57,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     
     try {
-        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         XCTAssert( arc_host->StatTotalFiles() == 0 );
     }
     catch (VFSErrorException &e) {
@@ -76,7 +79,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
                operation.Statistics().ElapsedTime() < 1s );
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     try {
-        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         XCTAssert( arc_host->StatTotalFiles() == 1 );
         int cmp_result = 0;
         const auto cmp_rc =  VFSEasyCompareFiles("/System/Library/Kernels/kernel", m_NativeHost,
@@ -91,7 +94,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 
 - (void)testCompressingBinUtilities
 {
-    const vector<string> filenames = { "[", "bash", "cat", "chmod", "cp", "csh", "date", "dd", "df",
+    const std::vector<std::string> filenames = { "[", "bash", "cat", "chmod", "cp", "csh", "date", "dd", "df",
         "echo", "ed", "expr", "hostname", "kill", "ksh", "launchctl", "link",
         "ln", "ls", "mkdir", "mv", "pax", "ps", "pwd", "rm", "rmdir", "sh", "sleep", "stty",
         "sync", "tcsh", "test", "unlink", "wait4path", "zsh" };
@@ -107,7 +110,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     
     try {
-        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         XCTAssert( arc_host->StatTotalFiles() == filenames.size() );
         
         for( auto &fn: filenames) {
@@ -136,7 +139,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     
     try {
-        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         int cmp_result = 0;
         const auto cmp_rc = VFSCompareEntries("/bin/",
                                               m_NativeHost,
@@ -163,7 +166,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
 
     try {
-        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         int cmp_result = 0;
         const auto cmp_rc = VFSCompareEntries("/Applications/Chess.app",
                                               m_NativeHost,
@@ -198,7 +201,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
 
     try {
-        auto arc_host = make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
         int cmp_result = 0;
         const auto cmp_rc = VFSCompareEntries("/Applications/iTunes.app",
                                               m_NativeHost,
@@ -212,7 +215,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     }
 }
 
-- (path)makeTmpDir
+- (boost::filesystem::path)makeTmpDir
 {
     char dir[MAXPATHLEN];
     sprintf(dir, "%s" "info.filesmanager.files" ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
@@ -224,9 +227,9 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 
 
 
-static int VFSCompareEntries(const path& _file1_full_path,
+static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
-                             const path& _file2_full_path,
+                             const boost::filesystem::path& _file2_full_path,
                              const VFSHostPtr& _file2_host,
                              int &_result)
 {
@@ -273,11 +276,11 @@ static int VFSCompareEntries(const path& _file1_full_path,
     return 0;
 }
 
-static vector<VFSListingItem> FetchItems(const string& _directory_path,
-                                         const vector<string> &_filenames,
-                                         VFSHost &_host)
+static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path,
+                                              const std::vector<std::string> &_filenames,
+                                              VFSHost &_host)
 {
-    vector<VFSListingItem> items;
+    std::vector<VFSListingItem> items;
     _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
     return items;
 }

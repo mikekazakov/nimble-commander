@@ -4,6 +4,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include "../Internal.h"
 #include "../AsyncDialogResponse.h"
+#include <Utility/StringExtras.h>
 
 namespace nc::ops {
 

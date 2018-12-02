@@ -4,6 +4,9 @@
 #include <VFS/Native.h>
 #include <VFS/NetFTP.h>
 #include "../source/Deletion/Deletion.h"
+#include "Environment.h"
+#include <boost/filesystem.hpp>
+#include <sys/stat.h>
 
 using namespace nc;
 using namespace nc::ops;
@@ -13,14 +16,14 @@ static const auto g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
 @interface DeletionTests : XCTestCase
 @end
 
-static vector<VFSListingItem> FetchItems(const string& _directory_path,
-                                         const vector<string> &_filenames,
-                                         VFSHost &_host);
+static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path,
+                                              const std::vector<std::string> &_filenames,
+                                              VFSHost &_host);
 
 @implementation DeletionTests
 {
-    path m_TmpDir;
-    shared_ptr<VFSHost> m_NativeHost;
+    boost::filesystem::path m_TmpDir;
+    std::shared_ptr<VFSHost> m_NativeHost;
 }
 
 - (void)setUp
@@ -120,7 +123,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 {
     XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",
                                m_NativeHost,
-                               (path(m_TmpDir) / "Mail.app").c_str(),
+                               (boost::filesystem::path(m_TmpDir) / "Mail.app").c_str(),
                                m_NativeHost) == 0);
     
     Deletion operation{ FetchItems(m_TmpDir.native(),
@@ -131,13 +134,13 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     operation.Wait();
     XCTAssert( operation.State() == OperationState::Completed );
     
-    XCTAssert( !m_NativeHost->Exists((path(m_TmpDir) / "Mail.app").c_str()) );
+    XCTAssert( !m_NativeHost->Exists((boost::filesystem::path(m_TmpDir) / "Mail.app").c_str()) );
 }
 
 - (void)testSimpleDeleteFromFTP
 {
     try {
-        auto host = make_shared<vfs::FTPHost>(g_LocalFTP, "", "", "/");
+        auto host = std::make_shared<vfs::FTPHost>(g_LocalFTP, "", "", "/");
         
         const char *fn1 = "/System/Library/Kernels/kernel", *fn2 = "/Public/!FilesTesting/mach_kernel";
         VFSStat stat;
@@ -162,7 +165,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 - (void)testDeletingFromFTPDirectory
 {
     try {
-        auto host = make_shared<vfs::FTPHost>(g_LocalFTP, "", "", "/");
+        auto host = std::make_shared<vfs::FTPHost>(g_LocalFTP, "", "", "/");
         
         const char *fn1 = "/bin", *fn2 = "/Public/!FilesTesting/bin";
         VFSStat stat;
@@ -185,7 +188,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     }
 }
 
-- (path)makeTmpDir
+- (boost::filesystem::path)makeTmpDir
 {
     char dir[MAXPATHLEN];
     sprintf(dir,
@@ -197,11 +200,11 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 
 @end
 
-static vector<VFSListingItem> FetchItems(const string& _directory_path,
-                                         const vector<string> &_filenames,
-                                         VFSHost &_host)
+static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path,
+                                              const std::vector<std::string> &_filenames,
+                                              VFSHost &_host)
 {
-    vector<VFSListingItem> items;
+    std::vector<VFSListingItem> items;
     _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
     return items;
 }

@@ -5,6 +5,7 @@
 #include "../Internal.h"
 #include "FileAlreadyExistDialog.h"
 #include "CopyingTitleBuilder.h"
+#include <sys/stat.h>
 
 namespace nc::ops {
 

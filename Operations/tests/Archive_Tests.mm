@@ -4,41 +4,45 @@
 #include <VFS/ArcLA.h>
 #include "../source/Copying/Copying.h"
 #include "../source/Compression/Compression.h"
+#include <boost/filesystem.hpp>
+#include "Environment.h"
+#include <sys/stat.h>
 
 using namespace nc;
 using namespace nc::ops;
+using namespace std::literals;
 
-static const string g_Preffix = string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
-static const string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
-static const string g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
-static const string g_Adium = g_Preffix + "adium.app.zip";
-static const string g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
-static const string g_Files = g_Preffix + "files-1.1.0(1341).zip";
-static const string g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
-static const string g_FileWithXAttr = "Leopard WaR3z.icns";
+static const std::string g_Preffix = std::string(NCE(nc::env::test::ext_data_prefix)) + "archives/";
+static const std::string g_XNU   = g_Preffix + "xnu-2050.18.24.tar";
+static const std::string g_XNU2  = g_Preffix + "xnu-3248.20.55.tar";
+static const std::string g_Adium = g_Preffix + "adium.app.zip";
+static const std::string g_Angular = g_Preffix + "angular-1.4.0-beta.4.zip";
+static const std::string g_Files = g_Preffix + "files-1.1.0(1341).zip";
+static const std::string g_Encrypted = g_Preffix + "encrypted_archive_pass1.zip";
+static const std::string g_FileWithXAttr = "Leopard WaR3z.icns";
 
 @interface Archive_Tests : XCTestCase
 @end
 
-static int VFSCompareEntries(const path& _file1_full_path,
+static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
-                             const path& _file2_full_path,
+                             const boost::filesystem::path& _file2_full_path,
                              const VFSHostPtr& _file2_host,
                              int &_result);
 
-static vector<VFSListingItem> FetchItems(const string& _directory_path,
-                                         const vector<string> &_filenames,
-                                         VFSHost &_host)
+static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path,
+                                              const std::vector<std::string> &_filenames,
+                                              VFSHost &_host)
 {
-    vector<VFSListingItem> items;
+    std::vector<VFSListingItem> items;
     _host.FetchFlexibleListingItems(_directory_path, _filenames, 0, items, nullptr);
     return items;
 }
 
 @implementation Archive_Tests
 {
-    path m_TmpDir;
-    shared_ptr<VFSHost> m_NativeHost;
+    boost::filesystem::path m_TmpDir;
+    std::shared_ptr<VFSHost> m_NativeHost;
 }
 
 - (void)setUp
@@ -56,9 +60,9 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 
 - (void)testAdiumZip_CopyFromVFS
 {
-    shared_ptr<vfs::ArchiveHost> host;
+    std::shared_ptr<vfs::ArchiveHost> host;
     try {
-        host = make_shared<vfs::ArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
+        host = std::make_shared<vfs::ArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -79,9 +83,9 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 
 - (void)testExtractedFilesSignature
 {
-    shared_ptr<vfs::ArchiveHost> host;
+    std::shared_ptr<vfs::ArchiveHost> host;
     try {
-        host = make_shared<vfs::ArchiveHost>(g_Files.c_str(), VFSNativeHost::SharedHost());
+        host = std::make_shared<vfs::ArchiveHost>(g_Files.c_str(), VFSNativeHost::SharedHost());
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -107,9 +111,9 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     operation.Start();
     operation.Wait();
 
-    shared_ptr<vfs::ArchiveHost> host;
+    std::shared_ptr<vfs::ArchiveHost> host;
     try {
-        host = make_shared<vfs::ArchiveHost>( operation.ArchivePath().c_str(), m_NativeHost);
+        host = std::make_shared<vfs::ArchiveHost>( operation.ArchivePath().c_str(), m_NativeHost);
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -123,7 +127,7 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
     XCTAssert( result == 0 );
 }
 
-- (path)makeTmpDir
+- (boost::filesystem::path)makeTmpDir
 {
     char dir[MAXPATHLEN];
     sprintf(dir, "%s" "info.filesmanager.files" ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
@@ -134,9 +138,9 @@ static vector<VFSListingItem> FetchItems(const string& _directory_path,
 @end
 
 
-static int VFSCompareEntries(const path& _file1_full_path,
+static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
-                             const path& _file2_full_path,
+                             const boost::filesystem::path& _file2_full_path,
                              const VFSHostPtr& _file2_host,
                              int &_result)
 {

@@ -5,6 +5,8 @@
 #include "DisclosureViewController.h"
 #include "CopyingDialog.h"
 #include "Copying.h"
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 using namespace nc::ops;
 

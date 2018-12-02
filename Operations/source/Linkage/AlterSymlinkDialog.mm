@@ -1,6 +1,7 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AlterSymlinkDialog.h"
 #include "../Internal.h"
+#include <Utility/StringExtras.h>
 
 using namespace nc::ops;
 

@@ -4,6 +4,9 @@
 #include <VFS/Native.h>
 #include <VFS/NetFTP.h>
 #include "../source/DirectoryCreation/DirectoryCreation.h"
+#include <boost/filesystem.hpp>
+#include "Environment.h"
+#include <sys/stat.h>
 
 static const auto g_LocalFTP =  NCE(nc::env::test::ftp_qnap_nas_host);
 
@@ -16,8 +19,8 @@ using namespace nc::vfs;
 
 @implementation DirectoryCreationTests
 {
-    path m_TmpDir;
-    shared_ptr<VFSHost> m_NativeHost;
+    boost::filesystem::path m_TmpDir;
+    std::shared_ptr<VFSHost> m_NativeHost;
 }
 
 - (void)setUp
@@ -118,7 +121,7 @@ using namespace nc::vfs;
 {
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>(g_LocalFTP, "", "", "/");
+        host = std::make_shared<FTPHost>(g_LocalFTP, "", "", "/");
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -149,7 +152,7 @@ using namespace nc::vfs;
 }
 
 
-- (path)makeTmpDir
+- (boost::filesystem::path)makeTmpDir
 {
     char dir[MAXPATHLEN];
     sprintf(dir,

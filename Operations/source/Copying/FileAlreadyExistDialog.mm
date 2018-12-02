@@ -3,6 +3,7 @@
 #include <Carbon/Carbon.h>
 #include "FileAlreadyExistDialog.h"
 #include "../ModalDialogResponses.h"
+#include <Utility/StringExtras.h>
 
 using namespace nc::ops;
 

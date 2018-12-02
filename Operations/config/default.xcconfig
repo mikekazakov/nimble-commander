@@ -13,13 +13,6 @@ USE_HEADERMAP = NO
 
 CLANG_ENABLE_OBJC_ARC = YES
 
-// move into debug:
-GCC_PRECOMPILE_PREFIX_HEADER = YES
-GCC_PREFIX_HEADER = source/Operations-prefix.pch
-
-
-
-
 ENABLE_STRICT_OBJC_MSGSEND = YES
 
 // warnings

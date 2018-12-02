@@ -241,42 +241,42 @@ using namespace nc::ops;
     }
 
     {   BatchRenamingScheme::TextExtraction te;
-        te.direct_range = nullopt;
+        te.direct_range = std::nullopt;
         te.reverse_range = BatchRenamingScheme::Range(0,1);
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"c"] );
     }
 
     {   BatchRenamingScheme::TextExtraction te;
-        te.direct_range = nullopt;
+        te.direct_range = std::nullopt;
         te.reverse_range = BatchRenamingScheme::Range(0, BatchRenamingScheme::Range::max_length());
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"c"] );
     }
 
     {   BatchRenamingScheme::TextExtraction te;
-        te.direct_range = nullopt;
+        te.direct_range = std::nullopt;
         te.reverse_range = BatchRenamingScheme::Range(100, BatchRenamingScheme::Range::max_length());
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"abc"] );
     }
 
     {   BatchRenamingScheme::TextExtraction te;
-        te.direct_range = nullopt;
+        te.direct_range = std::nullopt;
         te.reverse_range = BatchRenamingScheme::Range(2, 3);
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@"abc"] );
     }
 
     {   BatchRenamingScheme::TextExtraction te;
-        te.direct_range = nullopt;
+        te.direct_range = std::nullopt;
         te.reverse_range = BatchRenamingScheme::Range(2, 0);
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
         XCTAssert( [r isEqualToString:@""] );
     }
 
     {   BatchRenamingScheme::TextExtraction te;
-        te.direct_range = nullopt;
+        te.direct_range = std::nullopt;
         te.from_first = 0;
         te.to_last = 0;
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
@@ -284,7 +284,7 @@ using namespace nc::ops;
     }
     
     {   BatchRenamingScheme::TextExtraction te;
-        te.direct_range = nullopt;
+        te.direct_range = std::nullopt;
         te.from_first = 2;
         te.to_last = 0;
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
@@ -292,7 +292,7 @@ using namespace nc::ops;
     }
 
     {   BatchRenamingScheme::TextExtraction te;
-        te.direct_range = nullopt;
+        te.direct_range = std::nullopt;
         te.from_first = 3;
         te.to_last = 0;
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
@@ -300,7 +300,7 @@ using namespace nc::ops;
     }
 
     {   BatchRenamingScheme::TextExtraction te;
-        te.direct_range = nullopt;
+        te.direct_range = std::nullopt;
         te.from_first = 0;
         te.to_last = 5;
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);
@@ -308,7 +308,7 @@ using namespace nc::ops;
     }
     
     {   BatchRenamingScheme::TextExtraction te;
-        te.direct_range = nullopt;
+        te.direct_range = std::nullopt;
         te.from_first = 100;
         te.to_last = 100;
         auto r = BatchRenamingScheme::ExtractText(@"abc", te);

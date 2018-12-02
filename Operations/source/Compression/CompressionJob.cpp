@@ -5,6 +5,7 @@
 #include <libarchive/archive_entry.h>
 #include <Utility/PathManip.h>
 #include <VFS/AppleDoubleEA.h>
+#include <sys/param.h>
 
 namespace nc::ops
 {

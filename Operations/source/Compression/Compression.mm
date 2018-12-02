@@ -6,6 +6,7 @@
 #include "../AsyncDialogResponse.h"
 #include "../Internal.h"
 #include "../ModalDialogResponses.h"
+#include <Utility/StringExtras.h>
 
 namespace nc::ops
 {

@@ -2,8 +2,10 @@
 #import <XCTest/XCTest.h>
 #include "../source/Linkage/Linkage.h"
 #include <VFS/Native.h>
+#include <boost/filesystem.hpp>
 
 using namespace nc::ops;
+using namespace std::literals;
 
 @interface Linkage_Tests : XCTestCase
 
@@ -11,8 +13,8 @@ using namespace nc::ops;
 
 @implementation Linkage_Tests
 {
-    path m_TmpDir;
-    shared_ptr<VFSHost> m_NativeHost;
+    boost::filesystem::path m_TmpDir;
+    std::shared_ptr<VFSHost> m_NativeHost;
 }
 
 - (void)setUp
@@ -95,7 +97,7 @@ using namespace nc::ops;
     XCTAssert( st1.inode == st2.inode );
 }
 
-- (path)makeTmpDir
+- (boost::filesystem::path)makeTmpDir
 {
     char dir[MAXPATHLEN];
     sprintf(dir, "%s" "com.magnumbytes.nimblecommander" ".tmp.XXXXXX",

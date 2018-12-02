@@ -2,6 +2,8 @@
 #pragma once
 
 #include <Cocoa/Cocoa.h>
+#include <string>
+#include <functional>
 
 @interface NCOpsDirectoryCreationDialog : NSWindowController<NSTextFieldDelegate>
 

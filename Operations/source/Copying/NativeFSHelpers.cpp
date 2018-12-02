@@ -1,5 +1,8 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NativeFSHelpers.h"
+#include <sys/stat.h>
+#include <sys/param.h>
+#include <sys/mount.h>
 
 namespace nc::ops::copying {
 

@@ -37,7 +37,6 @@
     #include <optional>
     #include <any>
     using namespace std;
-    using namespace std::chrono;
 
 
     // low-level facilities from Habanero

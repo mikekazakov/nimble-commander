@@ -41,7 +41,8 @@ void ConfigWiring::SetupNotification()
     m_Config.ObserveForever(path_show_active, update_show_active);
     
     const auto update_min_op_time = [config]{
-        unc::Instance().SetMinElapsedOperationTime( seconds{config->GetInt(path_min_op_time)} );
+        const auto min_time = std::chrono::seconds{config->GetInt(path_min_op_time)};
+        unc::Instance().SetMinElapsedOperationTime(min_time);
     };
     update_min_op_time();
     m_Config.ObserveForever(path_min_op_time, update_min_op_time);

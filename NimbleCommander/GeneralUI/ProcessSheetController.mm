@@ -2,7 +2,7 @@
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "ProcessSheetController.h"
 
-static const nanoseconds g_ShowDelay = 150ms;
+static const std::chrono::nanoseconds g_ShowDelay = std::chrono::milliseconds{150};
 
 @interface ProcessSheetController()
 @property (nonatomic) IBOutlet NSTextField *titleTextField;

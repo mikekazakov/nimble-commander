@@ -10,7 +10,7 @@ using namespace nc::panel::QuickSearch;
 
 namespace nc::panel::QuickSearch {
 
-static const nanoseconds g_SoftFilteringTimeout = 4s;
+static const std::chrono::nanoseconds g_SoftFilteringTimeout = std::chrono::seconds{4};
 
 static KeyModif KeyModifFromInt(int _k);
 static bool IsQuickSearchModifier(NSUInteger _modif, KeyModif _mode);
@@ -33,7 +33,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     bool                                    m_IsSoftFiltering;
     bool                                    m_ShowTyping;
     int                                     m_SoftFilteringOffset;
-    nanoseconds                             m_SoftFilteringLastAction;
+    std::chrono::nanoseconds                m_SoftFilteringLastAction;
     KeyModif                                m_Modifier;
     data::TextualFilter::Where              m_WhereToSearch;
     nc::config::Config                     *m_Config;

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "TabBarStyle.h"
 #import <MMTabBarView/MMTabStyle.h>
 #import <MMTabBarView/MMAttachedTabBarButton.h>
@@ -162,7 +162,7 @@ static auto g_TabAddPressedImage = MakeTabAddPressedImage();
     return true;
 }
 
-static nanoseconds g_LastImagesRebuildTime = 0ns;
+static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
 - (NSSize)intrinsicContentSizeOfTabBarView:(MMTabBarView *)tabBarView
 {
     if( !m_Observation ) {

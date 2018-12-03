@@ -36,7 +36,10 @@ TemporaryNativeFileChangesSentinel &TemporaryNativeFileChangesSentinel::Instance
     return *inst;
 }
 
-bool TemporaryNativeFileChangesSentinel::WatchFile( const string& _path, function<void()> _on_file_changed, milliseconds _check_delay, milliseconds _drop_delay )
+bool TemporaryNativeFileChangesSentinel::WatchFile( const string& _path,
+                                                   function<void()> _on_file_changed,
+                                                   std::chrono::milliseconds _check_delay,
+                                                   std::chrono::milliseconds _drop_delay )
 {
     // 1st - read current file and it's MD5 hash
     auto file_hash = CalculateFileHash( _path );
@@ -70,6 +73,7 @@ bool TemporaryNativeFileChangesSentinel::WatchFile( const string& _path, functio
 
 void TemporaryNativeFileChangesSentinel::ScheduleItemDrop( const shared_ptr<Meta> &_meta )
 {
+    using namespace std::chrono;
     static const auto safety_backlash = 100ms;
     _meta->drop_time =  duration_cast<milliseconds>(machtime() + _meta->drop_delay);
     dispatch_to_background_after(_meta->drop_delay + safety_backlash, [=]{

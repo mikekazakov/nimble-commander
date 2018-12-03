@@ -156,7 +156,7 @@ static void HeatUpConfigValues()
         /**
          * Time after which request is meaningless and should be removed
          */
-        nanoseconds    request_end;
+        std::chrono::nanoseconds    request_end;
 
         /**
          * Called when changed a cursor position

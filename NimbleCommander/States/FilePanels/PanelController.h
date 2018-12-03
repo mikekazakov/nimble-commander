@@ -75,7 +75,7 @@ private:
 struct DelayedFocusing
 {
     string          filename;
-    milliseconds    timeout = 500ms;
+    std::chrono::milliseconds timeout = std::chrono::milliseconds{500};
     bool            check_now = true;
 
     /**

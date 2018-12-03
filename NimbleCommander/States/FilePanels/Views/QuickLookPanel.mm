@@ -1,10 +1,10 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickLookPanel.h"
 #include <Quartz/Quartz.h>
 #include "../MainWindowFilePanelState.h"
 #include "QuickLookVFSBridge.h"
 
-static const nanoseconds g_Delay = 100ms;
+static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
 
 @class NCPanelQLPanelProxy;
 static NCPanelQLPanelProxy *Proxy();

@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 
@@ -15,7 +15,10 @@ public:
      * @param _check_delay delay on FSEvent after which background content checking should start
      * @param _drop_delay time threshold after which file watch should drop if no file changes occured in that time
      */
-    bool WatchFile( const string& _path, function<void()> _on_file_changed, milliseconds _check_delay = 5s, milliseconds _drop_delay = 1h );
+    bool WatchFile(const string& _path,
+                   function<void()> _on_file_changed,
+                   std::chrono::milliseconds _check_delay = std::chrono::seconds{5},
+                   std::chrono::milliseconds _drop_delay = std::chrono::hours{1} );
     
     /**
      * Stops file watching. If background checking currently goes on then one more callback event may occur.
@@ -30,9 +33,9 @@ private:
         shared_ptr<function<void()>>    callback;
         uint64_t                        fswatch_ticket = 0;
         vector<uint8_t>                 last_md5_hash;
-        milliseconds                    drop_time;
-        milliseconds                    check_delay;
-        milliseconds                    drop_delay;
+        std::chrono::milliseconds       drop_time;
+        std::chrono::milliseconds       check_delay;
+        std::chrono::milliseconds       drop_delay;
         atomic_bool                     checking_now;
     };
     

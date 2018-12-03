@@ -24,14 +24,14 @@ static const auto g_DropDelay = "filePanel.operations.vfsShadowUploadObservation
 static const auto g_QLPanel = "filePanel.presentation.showQuickLookAsFloatingPanel";
 static const uint64_t g_MaxFileSizeForVFSOpen = 64*1024*1024; // 64mb
 
-static milliseconds UploadingCheckDelay()
+static std::chrono::milliseconds UploadingCheckDelay()
 {
     static const auto fetch = []{
         const auto value = GlobalConfig().Has(g_CheckDelay) ?
             GlobalConfig().GetInt(g_CheckDelay) : 5000;
-        return milliseconds(value);
+        return std::chrono::milliseconds(value);
     };
-    static milliseconds delay = []{
+    static std::chrono::milliseconds delay = []{
         static auto ticket = GlobalConfig().Observe(g_CheckDelay, []{
             delay = fetch();
         });
@@ -40,14 +40,14 @@ static milliseconds UploadingCheckDelay()
     return delay;
 }
 
-static milliseconds UploadingDropDelay()
+static std::chrono::milliseconds UploadingDropDelay()
 {
     static const auto fetch = []{
         const auto value = GlobalConfig().Has(g_DropDelay) ?
             GlobalConfig().GetInt(g_DropDelay) : 3600000;         
-        return milliseconds(value);
+        return std::chrono::milliseconds(value);
     };
-    static milliseconds delay = []{
+    static std::chrono::milliseconds delay = []{
         static auto ticket = GlobalConfig().Observe(g_DropDelay, []{
             delay = fetch();
         });

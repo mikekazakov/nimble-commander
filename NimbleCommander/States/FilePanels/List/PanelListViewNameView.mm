@@ -253,7 +253,8 @@ static bool HasNoModifiers( NSEvent *_event )
 {
 //    used for delayed action to ensure that click was single, not double or more
     static atomic_ullong current_ticket = {0};
-    static const nanoseconds delay = milliseconds( int(NSEvent.doubleClickInterval*1000) );
+    static const std::chrono::nanoseconds delay =
+        std::chrono::milliseconds( int(NSEvent.doubleClickInterval*1000) );
     
     const auto my_index = self.row.itemIndex;
     if( my_index < 0 )

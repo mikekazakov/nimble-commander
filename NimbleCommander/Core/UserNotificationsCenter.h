@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 namespace nc::ops {
@@ -19,8 +19,8 @@ public:
     bool ShowWhenActive() const noexcept;
     void SetShowWhenActive( bool _value );
 
-    nanoseconds MinElapsedOperationTime() const noexcept;
-    void SetMinElapsedOperationTime( nanoseconds _value );
+    std::chrono::nanoseconds MinElapsedOperationTime() const noexcept;
+    void SetMinElapsedOperationTime( std::chrono::nanoseconds _value );
 
 private:
     UserNotificationsCenter();
@@ -28,7 +28,7 @@ private:
     ~UserNotificationsCenter();
     void operator=(const UserNotificationsCenter&) = delete;
     bool m_ShowWhenActive;
-    nanoseconds m_MinElapsedOperationTime;
+    std::chrono::nanoseconds m_MinElapsedOperationTime;
 };
 
 }

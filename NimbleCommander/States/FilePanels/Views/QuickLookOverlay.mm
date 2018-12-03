@@ -1,10 +1,10 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Quartz/Quartz.h>
 #include "QuickLookOverlay.h"
 #include <Utility/SystemInformation.h>
 #include "QuickLookVFSBridge.h"
 
-static const nanoseconds g_Delay = 100ms;
+static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
 
 @interface NCPanelQLOverlayWrapper : QLPreviewView
 

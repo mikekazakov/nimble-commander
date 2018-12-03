@@ -189,7 +189,7 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
     operation.Start();
     operation.Wait( 5000ms );
     const auto eta = operation.Statistics().ETA( Statistics::SourceType::Bytes );
-    XCTAssert( double(eta->count()) / 1000000000. > 5. );
+    XCTAssert( double(eta->count()) / 1000000000. > 4.9 );
     
     operation.Pause();
     XCTAssert( operation.State() == OperationState::Paused );

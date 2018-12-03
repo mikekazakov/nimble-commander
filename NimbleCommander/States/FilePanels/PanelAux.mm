@@ -82,8 +82,8 @@ static void RegisterRemoteFileUploading(const string& _original_path,
         
         vector<VFSListingItem> listing_items;
         auto &storage_host = *VFSNativeHost::SharedHost();
-        const auto changed_item_directory = path(_native_path).parent_path().native();
-        const auto changed_item_filename = path(_native_path).filename().native();
+        const auto changed_item_directory = boost::filesystem::path(_native_path).parent_path().native();
+        const auto changed_item_filename = boost::filesystem::path(_native_path).filename().native();
         const auto ret = storage_host.FetchFlexibleListingItems(changed_item_directory,
                                                                 {1, changed_item_filename},
                                                                 0,

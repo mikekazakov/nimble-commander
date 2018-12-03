@@ -141,7 +141,7 @@ bool GoToEnclosingFolder::Predicate( PanelController *_target ) const
 void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
 {
     if( _target.isUniform  ) {
-        path cur = path(_target.data.DirectoryPathWithTrailingSlash());
+        auto cur = boost::filesystem::path(_target.data.DirectoryPathWithTrailingSlash());
         if( cur.empty() )
             return;
         
@@ -149,7 +149,7 @@ void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
         
         if( cur == "/" ) {
             if( const auto parent_vfs = vfs->Parent() ) {
-                path junct = vfs->JunctionPath();
+                boost::filesystem::path junct = vfs->JunctionPath();
                 assert(!junct.empty());
                 string dir = junct.parent_path().native();
                 string sel_fn = junct.filename().native();

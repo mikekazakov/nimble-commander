@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/types.h>
 #include <sys/dirent.h>
 #include <sys/stat.h>
@@ -277,17 +277,19 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
     uint64_t total_size = 0;
     
     struct S {
-        inline S(const path &_src_path, const path &_rel_path, const VFSStat& _st):
+        inline S(const boost::filesystem::path &_src_path,
+                 const boost::filesystem::path &_rel_path,
+                 const VFSStat& _st):
             src_path(_src_path),
             rel_path(_rel_path),
             st(_st)
         {}
-        path src_path;
-        path rel_path;
+        boost::filesystem::path src_path;
+        boost::filesystem::path rel_path;
         VFSStat st;
     };
     
-    path vfs_dirpath = _vfs_dirpath;
+    boost::filesystem::path vfs_dirpath = _vfs_dirpath;
     string top_level_name = vfs_dirpath.filename() == "." ?
         vfs_dirpath.parent_path().filename().native() :
         vfs_dirpath.filename().native();
@@ -301,14 +303,14 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
     traverse_log.push(src.back());
     while( !traverse_log.empty() ) {
         auto last = traverse_log.top();
-        path dir_path = last.src_path;
+        boost::filesystem::path dir_path = last.src_path;
         traverse_log.pop();
         
         int res = _host->IterateDirectoryListing(dir_path.c_str(), [&](const VFSDirEnt &_dirent) {
             if( _cancel_checker && _cancel_checker() )
                 return false;
             
-            path cur = dir_path / _dirent.name;
+            boost::filesystem::path cur = dir_path / _dirent.name;
             VFSStat st;
             if( _host->Stat(cur.c_str(), st, 0, 0) != 0 )
                 return false; // break directory iterating on any error
@@ -339,7 +341,7 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
         if( _cancel_checker && _cancel_checker() )
             return false;
         
-        path p = path(native_path) / i.rel_path;
+        auto p = boost::filesystem::path(native_path) / i.rel_path;
         
         if( i.st.mode_bits.dir ) {
             if(mkdir(p.c_str(), 0700) != 0)
@@ -357,7 +359,7 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
         }
     }
     
-    _tmp_dirpath = (path(native_path) / top_level_name).native();
+    _tmp_dirpath = (boost::filesystem::path(native_path) / top_level_name).native();
     
     return true;
 }

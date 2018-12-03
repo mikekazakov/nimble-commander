@@ -592,7 +592,8 @@ static NCAppDelegate *g_Me = nil;
     for( NSString *pathstring in _filenames )
         if( auto fs = pathstring.fileSystemRepresentationSafe ) {
             if constexpr( ActivationManager::Type() == ActivationManager::Distribution::Trial ) {
-                if( _filenames.count == 1 && path(fs).extension() == nc_license_extension ) {
+                if( _filenames.count == 1 &&
+                    boost::filesystem::path(fs).extension() == nc_license_extension ) {
                     string p = fs;
                     dispatch_to_main_queue([=]{
                         [self processProvidedLicenseFile:p];

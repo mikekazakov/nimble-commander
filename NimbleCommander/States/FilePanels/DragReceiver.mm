@@ -176,7 +176,7 @@ VFSPath DragReceiver::ComposeDestination() const
         if( m_ItemUnderDrag.IsDotDot() ) {
             if( !m_Target.isUniform )
                 return {};
-            path p = m_Target.currentDirectoryPath;
+            boost::filesystem::path p = m_Target.currentDirectoryPath;
             p.remove_filename();
             if( p.empty() )
                 p = "/";
@@ -297,7 +297,8 @@ bool DragReceiver::PerformWithLocalSource(FilesDraggingSource *_source,
             _destination.Host()->IsNativeFS() ) {
         for( const auto &file: files ) {
             const auto source_path = file.Path();
-            const auto dest_path = (path(_destination.Path()) / file.Filename()).native();
+            const auto dest_path = (boost::filesystem::path(_destination.Path()) /
+                                    file.Filename()).native();
             const auto op = make_shared<nc::ops::Linkage>(dest_path,
                                                           source_path,
                                                           _destination.Host(),
@@ -348,7 +349,8 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL*> *_source,
     if( operation == NSDragOperationLink ) {
         for( const auto &file: source_items ) {
             const auto source_path = file.Path();
-            const auto dest_path = (path(_destination.Path()) / file.Filename()).native();
+            const auto dest_path = (boost::filesystem::path(_destination.Path()) /
+                                    file.Filename()).native();
             const auto op = make_shared<nc::ops::Linkage>(dest_path,
                                                           source_path,
                                                           _destination.Host(),
@@ -469,7 +471,7 @@ static map<string, vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_fil
     map<string, vector<string>> files; // directory/ -> [filename1, filename2, ...]
     for(NSURL *url in _file_urls) {
         if( !objc_cast<NSURL>(url) ) continue; // guard agains malformed input data
-        path source_path = url.path.fileSystemRepresentation;
+        boost::filesystem::path source_path = url.path.fileSystemRepresentation;
         string root = source_path.parent_path().native() + "/";
         files[root].emplace_back(source_path.filename().native());
     }

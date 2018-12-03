@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include <Habanero/Hash.h>
 #include <Utility/FSEventsDirUpdate.h>
@@ -44,7 +44,9 @@ bool TemporaryNativeFileChangesSentinel::WatchFile( const string& _path, functio
         return false;
 
     auto current = make_shared<Meta>();
-    uint64_t watch_ticket = FSEventsDirUpdate::Instance().AddWatchPath( path(_path).parent_path().c_str(), [current]{
+    auto &dir_update = FSEventsDirUpdate::Instance();
+    const auto path = boost::filesystem::path(_path).parent_path();
+    uint64_t watch_ticket = dir_update.AddWatchPath( path.c_str(), [current]{
         TemporaryNativeFileChangesSentinel::Instance().FSEventCallback(current);
     });
     if( !watch_ticket )

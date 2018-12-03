@@ -199,7 +199,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 
 - (void) updateUserInputWithAutocompetion:(const string&)_dir_name
 {
-    path curr = self.Text.stringValue.fileSystemRepresentationSafe;
+    boost::filesystem::path curr = self.Text.stringValue.fileSystemRepresentationSafe;
     
     if( curr != "/" && curr.has_filename() )
         curr.remove_filename();
@@ -212,7 +212,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 
 - (string) currentDirectory
 {
-    path path = [self.panel expandPath:self.Text.stringValue.fileSystemRepresentationSafe];
+    boost::filesystem::path path = [self.panel expandPath:self.Text.stringValue.fileSystemRepresentationSafe];
     
     if( path == "/" )
         return path.native();
@@ -225,7 +225,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 
 - (string) currentFilename
 {
-    path path = [self.panel expandPath:self.Text.stringValue.fileSystemRepresentationSafe];
+    boost::filesystem::path path = [self.panel expandPath:self.Text.stringValue.fileSystemRepresentationSafe];
     
     if( path.has_filename() )
         if( path.native().back() != '/' )

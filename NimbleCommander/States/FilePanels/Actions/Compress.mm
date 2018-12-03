@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Compress.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
@@ -200,7 +200,7 @@ static void FocusResult( PanelController *_target, const shared_ptr<nc::ops::Com
         return;
     
     if( dispatch_is_main_queue() ) {
-        const auto result_path = path(_op->ArchivePath());
+        const auto result_path = boost::filesystem::path(_op->ArchivePath());
         const auto directory =  EnsureTrailingSlash(result_path.parent_path().native());
         const auto filename = result_path.filename().native();
         if( _target.isUniform && _target.currentDirectoryPath == directory ) {

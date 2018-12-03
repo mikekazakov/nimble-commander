@@ -59,14 +59,14 @@ static pair<string, vector<string>>
         if( i.empty() )
             continue;
         
-        path p = i;
+        boost::filesystem::path p = i;
         if( directory.empty() ) {
             directory = p.filename() == "." ?
                 p.parent_path().parent_path().native() : // .../abra/cadabra/ -> .../abra/cadabra
                 p.parent_path().native();                // .../abra/cadabra  -> .../abra
         }
         if( i.front() == '/' && i.back() != '/' && i != "/" )
-            filenames.emplace_back( path(i).filename().native() );
+            filenames.emplace_back( boost::filesystem::path(i).filename().native() );
     }
 
     return make_pair(move(directory), move(filenames));

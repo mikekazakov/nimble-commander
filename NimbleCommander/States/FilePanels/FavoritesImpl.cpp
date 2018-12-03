@@ -84,7 +84,7 @@ optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
     f.location = location;
     f.footprint = _host.FullHashForPath( _directory.c_str() );
     if( _title.empty() ) {
-        auto p = path( _directory );
+        auto p = boost::filesystem::path( _directory );
         if( p.filename() == "." )
             f.title = p.parent_path().filename().native();
         else

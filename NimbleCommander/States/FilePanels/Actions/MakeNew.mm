@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"
@@ -42,7 +42,7 @@ static const auto g_InitialFolderWithItemsName = []() -> string {
 
 static string NextName( const string& _initial, int _index )
 {
-    path p = _initial;
+    boost::filesystem::path p = _initial;
     if( p.has_extension() ) {
         auto ext = p.extension();
         p.replace_extension();
@@ -106,7 +106,7 @@ bool MakeNewFile::Predicate( PanelController *_target ) const
 
 void MakeNewFile::Perform( PanelController *_target, id _sender ) const
 {
-    const path dir = _target.currentDirectoryPath;
+    const boost::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
     const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
@@ -147,7 +147,7 @@ bool MakeNewFolder::Predicate( PanelController *_target ) const
 
 void MakeNewFolder::Perform( PanelController *_target, id _sender ) const
 {
-    const path dir = _target.currentDirectoryPath;
+    const boost::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
     const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
@@ -182,7 +182,7 @@ bool MakeNewFolderWithSelection::Predicate( PanelController *_target ) const
 
 void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender ) const
 {
-    const path dir = _target.currentDirectoryPath;
+    const boost::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
     const VFSListingPtr listing = _target.data.ListingPtr();
     const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
@@ -196,7 +196,7 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
     if( name.empty() )
         return;
     
-    const path destination = dir / name / "/";
+    const boost::filesystem::path destination = dir / name / "/";
     
     const auto options = MakeDefaultFileMoveOptions();
     const auto op = make_shared<nc::ops::Copying>(files, destination.native(), vfs, options);

@@ -90,7 +90,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
             const auto item_index = int(&i - &m_Filenames[0]); 
             
             VFSFilePtr file;
-            int rc = m_Host->CreateFile((path(m_Path) / i).c_str(),
+            int rc = m_Host->CreateFile((boost::filesystem::path(m_Path) / i).c_str(),
                                         file,
                                         [self]{ return m_WorkQue.IsStopped(); } );
             if(rc != 0) {
@@ -248,7 +248,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
         return;
     
     VFSFilePtr file;
-    m_Host->CreateFile( (path(m_Path) / g_SumsFilename).c_str(), file);
+    m_Host->CreateFile( (boost::filesystem::path(m_Path) / g_SumsFilename).c_str(), file);
     int rc = file->Open(VFSFlags::OF_Write | VFSFlags::OF_NoExist | VFSFlags::OF_Create | S_IWUSR | S_IRUSR | S_IRGRP );
     if(rc < 0) {
         [[Alert alertWithError:VFSError::ToNSError(rc)] runModal];

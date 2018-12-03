@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include "PanelController+DataAccess.h"
 #include "PanelDataItemVolatileData.h"
@@ -134,7 +134,7 @@
     if( self.vfs->IsNativeFS() &&
        _ref.front() == '~' ) { // relative to home
         auto ref = _ref.substr(1);
-        path p = path(CommonPaths::Home());
+        auto p = boost::filesystem::path(CommonPaths::Home());
         if(!ref.empty())
             p.remove_filename();
         p /= ref;
@@ -142,7 +142,7 @@
     }
 
     // sub-dir
-    path p = self.currentDirectoryPath;
+    boost::filesystem::path p = self.currentDirectoryPath;
     if( p.empty() )
         return {};
 

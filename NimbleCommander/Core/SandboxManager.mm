@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
@@ -15,7 +15,7 @@ static const auto g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 
 @implementation SandboxManagerPanelDelegate
 {
-    path m_Path;
+    boost::filesystem::path m_Path;
     bool m_Mandatory;
 }
 
@@ -43,7 +43,7 @@ static const auto g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
     if(!m_Mandatory)
         return true;
     
-    path p = _url.path.fileSystemRepresentation;
+    boost::filesystem::path p = _url.path.fileSystemRepresentation;
     if(p.filename() == ".")
         p.remove_filename();
     

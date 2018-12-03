@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMAttachedTabBarButton.h>
 #include <Habanero/CommonPaths.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
@@ -131,11 +131,11 @@ didDropTabViewItem:(NSTabViewItem *)tabViewItem
 
 static string TabNameForController( PanelController* _controller )
 {
-    path p = _controller.currentDirectoryPath;
+    boost::filesystem::path p = _controller.currentDirectoryPath;
     string name = p == "/" ? p.native() : p.parent_path().filename().native();
     if( name == "/" && _controller.isUniform && _controller.vfs->Parent() ) {
         // source file name for vfs like archives and xattr
-        name = path(_controller.vfs->JunctionPath()).filename().native();
+        name = boost::filesystem::path(_controller.vfs->JunctionPath()).filename().native();
     }
     return name;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include "../../../NimbleCommander/States/MainWindowController.h"
 #include <Term/SingleTask.h>
@@ -17,14 +17,14 @@ using namespace nc::term;
     unique_ptr<SingleTask>  m_Task;
     unique_ptr<Parser>          m_Parser;
     NCTermScrollView           *m_TermScrollView;
-    path                        m_BinaryPath;
+    boost::filesystem::path     m_BinaryPath;
     string                      m_Params;
     string                      m_FileTitle;
     NSLayoutConstraint         *m_TopLayoutConstraint;
 }
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
-                      binary:(const path&)_binary_path
+                      binary:(const boost::filesystem::path&)_binary_path
                       params:(const string&)_params
                    fileTitle:(const string&)_file_title
 {

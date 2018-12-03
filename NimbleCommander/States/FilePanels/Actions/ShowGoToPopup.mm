@@ -212,7 +212,7 @@ static vector<pair<core::VFSInstancePromise, string>>
     vector<pair<core::VFSInstancePromise, string>> result;
     
     auto host = _listing.Host();
-    path dir = _listing.Directory();
+    boost::filesystem::path dir = _listing.Directory();
     if(dir.filename() == ".")
         dir.remove_filename();
     while( host ) {

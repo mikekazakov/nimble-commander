@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 
 // basic C defines
 #include <stddef.h>
@@ -47,7 +47,6 @@
     #include <Habanero/fixed_eytzinger_map.h>
 
     #include <boost/filesystem.hpp>
-    using boost::filesystem::path;
 
     #include <Utility/StringExtras.h>
 

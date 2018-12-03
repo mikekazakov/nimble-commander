@@ -91,7 +91,7 @@ static void RecoverSavedPathAtVFSAsync(const VFSHostPtr &_host,
             // failed to load a listing on this VFS on specified path
             // will try upper directories on this VFS up to the root,
             // in case if everyone fails we will fallback to Home Directory on native VFS.
-            auto fs_path = path{_path};
+            auto fs_path = boost::filesystem::path{_path};
             if( fs_path.filename() == "." )
                 fs_path.remove_filename();
             

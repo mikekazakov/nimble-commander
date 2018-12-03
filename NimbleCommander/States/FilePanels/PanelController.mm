@@ -890,11 +890,11 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
 
 - (void) recoverFromInvalidDirectory
 {
-    path initial_path = self.currentDirectoryPath;
+    boost::filesystem::path initial_path = self.currentDirectoryPath;
     auto initial_vfs = self.vfs;
     m_DirectoryLoadingQ.Run([=]{
         // 1st - try to locate a valid dir in current host
-        path path = initial_path;
+        boost::filesystem::path path = initial_path;
         auto vfs = initial_vfs;
         
         while(true)

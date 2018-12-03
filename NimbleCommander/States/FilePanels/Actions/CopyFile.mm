@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyFile.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
@@ -139,9 +139,9 @@ void CopyAs::Perform( MainWindowFilePanelState *_target, id _sender ) const
             dispatch_to_main_queue( [=]{
                 if( PanelController *panel = weak_panel ) {
                     if( panel.isUniform &&
-                        panel.currentDirectoryPath == ::path(path).parent_path().native()+"/" ) {
+                        panel.currentDirectoryPath == boost::filesystem::path(path).parent_path().native()+"/" ) {
                        nc::panel::DelayedFocusing req;
-                       req.filename = ::path(path).filename().native();
+                       req.filename = boost::filesystem::path(path).filename().native();
                        [(PanelController*)panel scheduleDelayedFocusing:req];
                     }
                 }
@@ -279,7 +279,7 @@ void MoveAs::Perform( MainWindowFilePanelState *_target, id _sender ) const
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
             dispatch_to_main_queue( [=]{
                 nc::panel::DelayedFocusing req;
-                req.filename = ::path(path).filename().native();
+                req.filename = boost::filesystem::path(path).filename().native();
                 [(PanelController*)cur scheduleDelayedFocusing:req];
             });
         });

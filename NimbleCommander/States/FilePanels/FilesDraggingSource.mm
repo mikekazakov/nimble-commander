@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
 #include "FilesDraggingSource.h"
 
@@ -157,7 +157,8 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
 - (void)provideURLPromisePasteboard:(NSPasteboard *)sender item:(PanelDraggingItem *)item
 {
     if( auto drop_url = ExtractPromiseDropLocation(sender) ) {
-        const auto dest = path(drop_url.path.fileSystemRepresentation) / item.item.Filename();
+        const auto dest = boost::filesystem::path(drop_url.path.fileSystemRepresentation)
+            / item.item.Filename();
 
         // retrieve item itself
         const auto  ret = VFSEasyCopyNode(item.item.Path().c_str(), item.item.Host(),

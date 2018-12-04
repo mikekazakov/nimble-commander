@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
 #include "StateActionsDispatcher.h"
 #include "../../Core/ActionsShortcutsManager.h"
@@ -189,8 +189,8 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     
     if( const auto wnd = m_PoolViewController.view.window ) {
         const auto sz = m_PoolViewController.view.window.frame.size;
-        const auto max_width = min(sz.width / 2.4, g_MaxPoolViewWith);
-        const auto clipped_max_wdith = max(m_PoolViewToolbarItem.minSize.width, max_width);
+        const auto max_width = std::min(sz.width / 2.4, g_MaxPoolViewWith);
+        const auto clipped_max_wdith = std::max(m_PoolViewToolbarItem.minSize.width, max_width);
         m_PoolViewToolbarItem.maxSize = NSMakeSize(clipped_max_wdith,
                                                    m_PoolViewToolbarItem.maxSize.height );
     }

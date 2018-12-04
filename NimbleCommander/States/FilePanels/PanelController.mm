@@ -35,6 +35,7 @@
 using namespace nc;
 using namespace nc::core;
 using namespace nc::panel;
+using namespace std::literals;
 
 static const auto g_ConfigShowDotDotEntry
     = "filePanel.general.showDotDotEntry";
@@ -188,8 +189,8 @@ static void HeatUpConfigValues()
 {
     assert( _layouts );
     
-    static once_flag once;
-    call_once(once, HeatUpConfigValues);
+    static std::once_flag once;
+    std::call_once(once, HeatUpConfigValues);
 
     self = [super init];
     if(self) {
@@ -838,7 +839,7 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
             [self onPathChanged];
         });
     }
-    catch(exception &e) {
+    catch(std::exception &e) {
         ShowExceptionAlert(e);
     }
     catch(...){

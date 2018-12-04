@@ -7,6 +7,7 @@
 
 using namespace nc::panel;
 using namespace nc::panel::QuickSearch;
+using namespace std::literals;
 
 namespace nc::panel::QuickSearch {
 
@@ -295,7 +296,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 {
     const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
     if( filtered_amount != 0 ) {
-        m_SoftFilteringOffset = max( 0, m_SoftFilteringOffset - 1 );
+        m_SoftFilteringOffset = std::max( 0, m_SoftFilteringOffset - 1 );
         const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset]; 
         [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];
         m_SoftFilteringLastAction = machtime();
@@ -307,7 +308,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
 {
     const auto filtered_amount = (int)m_Data->EntriesBySoftFiltering().size();
     if( filtered_amount != 0 ) {
-        m_SoftFilteringOffset = min( filtered_amount - 1, m_SoftFilteringOffset + 1 );
+        m_SoftFilteringOffset = std::min( filtered_amount - 1, m_SoftFilteringOffset + 1 );
         const auto new_cur_pos = m_Data->EntriesBySoftFiltering()[m_SoftFilteringOffset]; 
         [m_Delegate quickSearch:self wantsToSetCursorPosition:new_cur_pos];
         m_SoftFilteringLastAction = machtime();

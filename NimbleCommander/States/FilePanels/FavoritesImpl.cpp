@@ -148,7 +148,7 @@ FavoriteLocationsStorageImpl::FrecentlyUsed( int _amount ) const
 
     const auto max_visits_it = max_element(begin(recent_visits),
                                          end(recent_visits),
-                                         [](auto &l, auto &r){ return max(get<1>(l), get<1>(r)); }
+                                           [](auto &l, auto &r){ return std::max(get<1>(l), get<1>(r)); }
                                          );
     const auto max_visits = float(get<1>(*max_visits_it));
     
@@ -165,7 +165,7 @@ FavoriteLocationsStorageImpl::FrecentlyUsed( int _amount ) const
     });
     
     vector< shared_ptr<const FavoriteLocationsStorage::Location> > result;
-    for( int i = 0, e = min(_amount, (int)recent_visits.size()); i != e; ++i )
+    for( int i = 0, e = std::min(_amount, (int)recent_visits.size()); i != e; ++i )
         result.emplace_back( m_Visits.at(get<0>(recent_visits[i])).location );
 
     return result;

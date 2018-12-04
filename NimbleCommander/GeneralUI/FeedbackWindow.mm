@@ -1,7 +1,9 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../Bootstrap/ActivationManager.h"
 #include "../Core/FeedbackManager.h"
 #include "FeedbackWindow.h"
+
+using namespace std::literals;
 
 @interface FeedbackWindow ()
 @property (nonatomic) IBOutlet NSTabView *tabView;

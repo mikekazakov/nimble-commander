@@ -10,6 +10,7 @@
 #include "ExternalEditorInfoPrivate.h"
 
 using namespace nc::config;
+using namespace std::literals;
 
 struct ExternalEditorsPersistence
 {

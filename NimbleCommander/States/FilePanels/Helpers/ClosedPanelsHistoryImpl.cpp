@@ -1,3 +1,4 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ClosedPanelsHistoryImpl.h"
 
 namespace nc::panel {
@@ -37,7 +38,7 @@ vector<ListingPromise> ClosedPanelsHistoryImpl::FrontElements( int _count ) cons
 {
     if( _count <= 0 )
         return {};
-    _count = min( _count, Size() );
+    _count = std::min( _count, Size() );
     return { begin(m_Entries), next(begin(m_Entries), _count) };
 }
     

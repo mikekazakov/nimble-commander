@@ -12,6 +12,8 @@
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "TemporaryNativeFileStorage.h"
 
+using namespace std::literals;
+
 // hack to access function from libc implementation directly.
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
@@ -296,7 +298,7 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
     
     // traverse source structure
     vector< S > src;
-    stack< S > traverse_log;
+    std::stack< S > traverse_log;
     
     src.emplace_back(_vfs_dirpath, top_level_name, st_src_dir);
     

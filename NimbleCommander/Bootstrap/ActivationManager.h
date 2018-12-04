@@ -78,15 +78,15 @@ private:
 #if   defined(__NC_VERSION_FREE__)
     static const Distribution m_Type = Distribution::Free;
     static const bool m_IsSandBoxed = true;
-    const string m_AppStoreIdentifier = "905202937"s;
+    const string m_AppStoreIdentifier = "905202937";
 #elif defined(__NC_VERSION_PAID__)
     static const Distribution m_Type = Distribution::Paid;
     static const bool m_IsSandBoxed = true;
-    const string m_AppStoreIdentifier = "942443942"s;
+    const string m_AppStoreIdentifier = "942443942";
 #elif defined(__NC_VERSION_TRIAL__)
     static const Distribution m_Type = Distribution::Trial;
     static const bool m_IsSandBoxed = false;
-    const string m_AppStoreIdentifier = ""s;
+    const string m_AppStoreIdentifier = "";
 #else
     #error Invalid build configuration - no version type specified
 #endif

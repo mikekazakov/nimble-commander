@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include "VFSInstanceManagerImpl.h"
 #include <VFS/VFS.h>
@@ -38,7 +38,7 @@ VFSInstanceManagerImpl::VFSInstanceManagerImpl()
     
 VFSInstanceManagerImpl::~VFSInstanceManagerImpl()
 {
-    cerr << "VFSInstanceManager instances must live forever!" << endl;
+    std::cerr << "VFSInstanceManager instances must live forever!" << std::endl;
 }
     
 VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS( const VFSHostPtr& _instance )

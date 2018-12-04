@@ -1,9 +1,11 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "../Core/VFSInstanceManager.h"
 #include "../Core/VFSInstancePromise.h"
 #include "VFSListWindowController.h"
+
+using namespace std::literals;
 
 @interface VFSListWindowController ()
 @property (nonatomic) IBOutlet NSTableView *vfsTable;

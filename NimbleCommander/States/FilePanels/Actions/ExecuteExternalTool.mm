@@ -16,6 +16,8 @@
 
 namespace nc::panel::actions {
     
+using namespace std::literals;
+    
 static string EscapeSpaces(string _str);
 static string UnescapeSpaces(string _str);
 static vector<string> SplitByEscapedSpaces( const string &_str );
@@ -306,7 +308,9 @@ static string BuildParametersStringForExternalTool(const ExternalToolsParameters
     // TODO: there's no VFS files fetching currently.
     // this should be async!
     string params;
-    int max_files_left = _par.GetMaximumTotalFiles() ? _par.GetMaximumTotalFiles() : numeric_limits<int>::max();
+    int max_files_left = _par.GetMaximumTotalFiles() ?
+        _par.GetMaximumTotalFiles() :
+        std::numeric_limits<int>::max();
     
     for( unsigned n = 0; n < _par.StepsAmount(); ++n ) {
         auto step = _par.StepNo(n);

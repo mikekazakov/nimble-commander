@@ -335,7 +335,7 @@ struct StateStorage
         return;
     
     const auto items_per_screen = m_ItemsView.maxNumberOfVisibleItems;
-    const auto new_pos = max( orig_pos - items_per_screen, 0 );
+    const auto new_pos = std::max( orig_pos - items_per_screen, 0 );
     
     if( new_pos == orig_pos )
         return;
@@ -356,7 +356,7 @@ struct StateStorage
         return;
     const auto orig_pos = m_CursorPos;
     const auto items_per_screen = m_ItemsView.maxNumberOfVisibleItems;
-    const auto new_pos = min( orig_pos + items_per_screen, total_items - 1 );
+    const auto new_pos = std::min( orig_pos + items_per_screen, total_items - 1 );
     
     if( new_pos == orig_pos )
         return;
@@ -375,7 +375,7 @@ struct StateStorage
     
     if( m_Data->SortedDirectoryEntries().empty() ) return;
     const auto items_per_column = m_ItemsView.itemsInColumn;
-    const auto new_pos = max( orig_pos - items_per_column, 0 );
+    const auto new_pos = std::max( orig_pos - items_per_column, 0 );
     
     if( new_pos == orig_pos )
         return;
@@ -395,7 +395,7 @@ struct StateStorage
     if( m_Data->SortedDirectoryEntries().empty() ) return;
     const auto total_items = (int)m_Data->SortedDirectoryEntries().size();
     const auto items_per_column = m_ItemsView.itemsInColumn;
-    const auto new_pos = min( orig_pos + items_per_column, total_items - 1 );
+    const auto new_pos = std::min( orig_pos + items_per_column, total_items - 1 );
     
     if( new_pos == orig_pos )
         return;
@@ -644,7 +644,7 @@ struct StateStorage
     }
     
     if(_start > _end)
-        swap(_start, _end);
+        std::swap(_start, _end);
     
     // we never want to select a first (dotdot) entry
     if( auto i = m_Data->EntryAtSortPosition(_start) )

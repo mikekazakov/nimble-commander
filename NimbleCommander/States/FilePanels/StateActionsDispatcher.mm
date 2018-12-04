@@ -39,11 +39,11 @@ static void Perform(SEL _sel, const StateActionsMap &_map,
             return action->ValidateMenuItem(m_FS, item);
         return true;
     }
-    catch(exception &e) {
-        cerr << "validateMenuItem has caught an exception: " << e.what() << endl;
+    catch(std::exception &e) {
+        std::cerr << "validateMenuItem has caught an exception: " << e.what() << std::endl;
     }
     catch(...) {
-        cerr << "validateMenuItem has caught an unknown exception!" << endl;
+        std::cerr << "validateMenuItem has caught an unknown exception!" << std::endl;
     }
     return false;
 }
@@ -54,11 +54,12 @@ static void Perform(SEL _sel, const StateActionsMap &_map,
         try {
             return action->Predicate(m_FS);
         }
-        catch(exception &e) {
-            cerr << "validateActionBySelector has caught an exception: " << e.what() << endl;
+        catch(std::exception &e) {
+            std::cerr << "validateActionBySelector has caught an exception: " << e.what()
+            << std::endl;
         }
         catch(...) {
-            cerr << "validateActionBySelector has caught an unknown exception!" << endl;
+            std::cerr << "validateActionBySelector has caught an unknown exception!" << std::endl;
         }
         return false;
     }
@@ -198,7 +199,7 @@ static void Perform(SEL _sel, const StateActionsMap &_map,
         try {
             action->Perform(_target, _sender);
         }
-        catch( exception &e ) {
+        catch( std::exception &e ) {
             ShowExceptionAlert(e);
         }
         catch(...){
@@ -206,8 +207,8 @@ static void Perform(SEL _sel, const StateActionsMap &_map,
         }
     }
     else {
-        cerr << "warning - unrecognized selector: " <<
-            NSStringFromSelector(_sel).UTF8String << endl;
+        std::cerr << "warning - unrecognized selector: " <<
+            NSStringFromSelector(_sel).UTF8String << std::endl;
     }
 }
     

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ContextMenu.h"
 #include "PanelController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
@@ -31,7 +31,7 @@ using namespace nc::panel;
                        ofPanel:(PanelController*)_panel
 {
     if( _items.empty() )
-        throw invalid_argument("NCPanelContextMenu.initWithData - there's no items");
+        throw std::invalid_argument("NCPanelContextMenu.initWithData - there's no items");
     self = [super init];
     if(self) {
         m_Panel = _panel;

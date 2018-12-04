@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMTabBarView.h>
 #import <MMTabBarView/MMTabBarItem.h>
 #include "FilePanelsTabbedHolder.h"
@@ -35,8 +35,8 @@
 
 - (id) initWithFrame:(NSRect)frameRect
 {
-    static once_flag once;
-    call_once(once, []{
+    static std::once_flag once;
+    std::call_once(once, []{
         [MMTabBarView registerTabStyleClass:TabBarStyle.class];
     });
     

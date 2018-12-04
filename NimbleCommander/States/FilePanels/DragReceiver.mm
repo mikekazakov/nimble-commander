@@ -13,6 +13,8 @@
 
 namespace nc::panel {
 
+using namespace std::literals;
+
 static void UpdateValidDropNumber(id <NSDraggingInfo> _dragging,
                                   int _valid_number,
                                   NSDragOperation _operation );
@@ -40,7 +42,7 @@ DragReceiver::DragReceiver(PanelController *_target,
     m_DraggingOverIndex(_dragging_over_index)
 {
     if( !m_Target || !m_Dragging )
-        throw invalid_argument("DragReceiver can't accept nil arguments");
+        throw std::invalid_argument("DragReceiver can't accept nil arguments");
 
     m_DraggingOperationsMask = m_Dragging.draggingSourceOperationMask;
     m_ItemUnderDrag = m_Target.data.EntryAtSortPosition(m_DraggingOverIndex);
@@ -65,12 +67,12 @@ NSDragOperation DragReceiver::Validate()
     const auto destination = ComposeDestination();
     if( destination && destination.Host()->IsWritable() ) {
         if( const auto source = objc_cast<FilesDraggingSource>(m_Dragging.draggingSource) )
-            tie(operation, valid_items) = ScanLocalSource(source, destination);
+            std::tie(operation, valid_items) = ScanLocalSource(source, destination);
         else if( [m_Dragging.draggingPasteboard.types containsObject:URLs_UTI()] )
-            tie(operation, valid_items) = ScanURLsSource(ExtractURLs(m_Dragging.draggingPasteboard),
+            std::tie(operation, valid_items) = ScanURLsSource(ExtractURLs(m_Dragging.draggingPasteboard),
                                                          destination);
         else if( [m_Dragging.draggingPasteboard.types containsObject:URLs_Promise_UTI()] )
-            tie(operation, valid_items) = ScanURLsPromiseSource(destination);
+            std::tie(operation, valid_items) = ScanURLsPromiseSource(destination);
     }
 
    if( valid_items == 0 ) {
@@ -420,19 +422,19 @@ static bool DraggingIntoFoldersAllowed()
 [[maybe_unused]] static void PrintDragOperations(NSDragOperation _op)
 {
     if( _op == NSDragOperationNone ) {
-        cout << "NSDragOperationNone" << endl;
+        std::cout << "NSDragOperationNone" << std::endl;
     }
     else if( _op == NSDragOperationEvery ) {
-        cout << "NSDragOperationEvery" << endl;
+        std::cout << "NSDragOperationEvery" << std::endl;
     }
     else {
-        if( _op & NSDragOperationCopy )     cout << "NSDragOperationCopy ";
-        if( _op & NSDragOperationLink )     cout << "NSDragOperationLink ";
-        if( _op & NSDragOperationGeneric )  cout << "NSDragOperationGeneric ";
-        if( _op & NSDragOperationPrivate )  cout << "NSDragOperationPrivate ";
-        if( _op & NSDragOperationMove )     cout << "NSDragOperationMove ";
-        if( _op & NSDragOperationDelete )   cout << "NSDragOperationDelete ";
-        cout << endl;
+        if( _op & NSDragOperationCopy )     std::cout << "NSDragOperationCopy ";
+        if( _op & NSDragOperationLink )     std::cout << "NSDragOperationLink ";
+        if( _op & NSDragOperationGeneric )  std::cout << "NSDragOperationGeneric ";
+        if( _op & NSDragOperationPrivate )  std::cout << "NSDragOperationPrivate ";
+        if( _op & NSDragOperationMove )     std::cout << "NSDragOperationMove ";
+        if( _op & NSDragOperationDelete )   std::cout << "NSDragOperationDelete ";
+        std::cout << std::endl;
     }
 }
 

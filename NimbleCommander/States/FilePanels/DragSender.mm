@@ -77,7 +77,7 @@ void DragSender::Start(NSView *_from_view, NSEvent *_via_event, int _dragged_pan
     
         // visual appearance of a dragging item
         auto drag_item = [[NSDraggingItem alloc] initWithPasteboardWriter:pasterboard_item];
-        drag_item.draggingFrame = NSMakeRect(floor(position.x), floor(position.y), 32, 32);
+        drag_item.draggingFrame = NSMakeRect(std::floor(position.x), std::floor(position.y), 32, 32);
 
         __weak PanelDraggingItem *weak_pb_item = pasterboard_item;
         drag_item.imageComponentsProvider = ^{
@@ -134,7 +134,7 @@ static NSDraggingImageComponent *BuildIconComponent(PanelDraggingItem* _item,
 static void DrawRoundedRect( NSImage *_context )
 {
     const auto sz = _context.size;
-    const auto r = floor(sz.height/2);
+    const auto r = std::floor(sz.height/2);
     const auto rect = NSMakeRect(0, 0, sz.width, sz.height);
     const auto bezier_path = [NSBezierPath bezierPathWithRoundedRect:rect xRadius:r yRadius:r];
     [NSColor.blueColor set];
@@ -163,13 +163,13 @@ static NSDraggingImageComponent *BuildLabelComponent(PanelDraggingItem* _item,
     const auto estimated_label_bounds = [filename boundingRectWithSize:NSMakeSize(max_label_width,0)
                                                                options:0
                                                             attributes:attributes];
-    const auto label_width = min(max_label_width, ceil(estimated_label_bounds.size.width)) + height;
+    const auto label_width = std::min(max_label_width, std::ceil(estimated_label_bounds.size.width)) + height;
     
     const auto label_image = [[NSImage alloc] initWithSize:CGSizeMake(label_width, height)];
    
     [label_image lockFocus];
     DrawRoundedRect(label_image);
-    [filename drawWithRect:NSMakeRect(floor(height/2), _fi.Descent(), label_width-height, 0)
+    [filename drawWithRect:NSMakeRect(std::floor(height/2), _fi.Descent(), label_width-height, 0)
                    options:0
                 attributes:attributes];
     [label_image unlockFocus];

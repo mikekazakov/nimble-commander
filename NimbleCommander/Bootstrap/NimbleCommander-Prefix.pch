@@ -36,8 +36,37 @@
     #include <functional>
     #include <optional>
     #include <any>
-    using namespace std;
-
+    using std::array;
+    using std::string;
+    using std::string_view;
+    using std::list;
+    using std::deque;
+    using std::queue;
+    using std::map;
+    using std::vector;
+    using std::set;
+    using std::unordered_map;
+    using std::unordered_set;
+    using std::optional;
+    using std::nullopt;
+    using std::any;
+    using std::any_cast;
+    using std::function;
+    using std::shared_ptr;
+    using std::weak_ptr;
+    using std::unique_ptr;
+    using std::make_unique;
+    using std::make_shared;
+    using std::thread;
+    using std::mutex;
+    using std::lock_guard;
+    using std::move;
+    using std::pair;
+    using std::hash;
+    using std::tuple;
+    using std::make_tuple;
+    using std::to_string;
+    using std::get;
 
     // low-level facilities from Habanero
     #include <Habanero/dispatch_cpp.h>

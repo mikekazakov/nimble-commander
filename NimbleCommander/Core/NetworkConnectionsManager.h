@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <boost/uuid/uuid.hpp>
@@ -91,27 +91,27 @@ public:
     explicit Connection(T _t):
         m_Object( make_shared<Model<T>>( move(_t) ) )
     {
-        static_assert( is_class<T>::value, "connection should be a class/struct" );
+        static_assert( std::is_class<T>::value, "connection should be a class/struct" );
     }
     
     template <class T>
     bool IsType() const noexcept
     {
-        return dynamic_pointer_cast<const Model<T>>( m_Object ) != nullptr;
+        return std::dynamic_pointer_cast<const Model<T>>( m_Object ) != nullptr;
     }
     
     template <class T>
     const T &Get() const
     {
-        if( auto p = dynamic_pointer_cast<const Model<T>>( m_Object ) )
+        if( auto p = std::dynamic_pointer_cast<const Model<T>>( m_Object ) )
             return p->obj;
-        throw domain_error("invalid cast request");
+        throw std::domain_error("invalid cast request");
     }
     
     template <class T>
     const T* Cast() const noexcept
     {
-        if( auto p = dynamic_pointer_cast<const Model<T>>( m_Object ) )
+        if( auto p = std::dynamic_pointer_cast<const Model<T>>( m_Object ) )
             return &p->obj;
         return nullptr;
     }
@@ -197,7 +197,7 @@ struct NetworkConnectionsManager::Connection::Concept
     virtual const string& Title() const noexcept = 0;
     virtual const boost::uuids::uuid& Uuid() const noexcept = 0;
     virtual void Accept( NetworkConnectionsManager::ConnectionVisitor &_visitor ) const = 0;
-    virtual const type_info &TypeID() const noexcept = 0;
+    virtual const std::type_info &TypeID() const noexcept = 0;
     virtual bool Equal( const Concept &_rhs ) const noexcept = 0;
 };
 
@@ -226,7 +226,7 @@ struct NetworkConnectionsManager::Connection::Model final :
         _visitor.Visit(obj);
     }
     
-    virtual const type_info &TypeID() const noexcept override
+    virtual const std::type_info &TypeID() const noexcept override
     {
         return typeid( T );
     }

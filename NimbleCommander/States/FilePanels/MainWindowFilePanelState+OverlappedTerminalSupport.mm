@@ -13,6 +13,7 @@
 
 using namespace nc::panel;
 using namespace nc::term;
+using namespace std::literals;
 
 static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTerminal";
 
@@ -49,7 +50,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     if( !m_OverlappedTerminal->terminal || self.isPanelsSplitViewHidden )
         return;
     m_OverlappedTerminal->bottom_gap++;
-    m_OverlappedTerminal->bottom_gap = min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
+    m_OverlappedTerminal->bottom_gap = std::min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
     [self updateBottomConstraint];
     [self activateOverlappedTerminal];
     if(m_OverlappedTerminal->bottom_gap == 1) {
@@ -63,7 +64,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
         return;
     if( m_OverlappedTerminal->bottom_gap == 0 )
         return;
-    m_OverlappedTerminal->bottom_gap = min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
+    m_OverlappedTerminal->bottom_gap = std::min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
     if( m_OverlappedTerminal->bottom_gap > 0 )
         m_OverlappedTerminal->bottom_gap--;
     [self updateBottomConstraint];
@@ -292,7 +293,8 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     int gap = GlobalConfig().GetInt( g_ConfigGapPath );
     if( gap > 0 ) {
         m_OverlappedTerminal->bottom_gap = gap;
-        m_OverlappedTerminal->bottom_gap = min(m_OverlappedTerminal->bottom_gap, m_OverlappedTerminal->terminal.totalScreenLines);
+        m_OverlappedTerminal->bottom_gap = std::min(m_OverlappedTerminal->bottom_gap,
+                                                    m_OverlappedTerminal->terminal.totalScreenLines);
         [self updateBottomConstraint];
         [self activateOverlappedTerminal];
     }

@@ -60,7 +60,7 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
     short icon_size = 16;
     short line_height = 20;
     short text_baseline = 4;
-    const int font_size = (int)floor(_font.pointSize+0.5);
+    const int font_size = (int)std::floor(_font.pointSize+0.5);
     
     // check predefined values
     auto pit = find_if(begin(g_FixedLayoutData), end(g_FixedLayoutData), [&](auto &l) {

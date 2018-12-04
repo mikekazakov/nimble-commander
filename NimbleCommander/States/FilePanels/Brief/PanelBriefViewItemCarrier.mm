@@ -14,8 +14,8 @@ static const auto g_SymlinkArrowImage = [NSImage imageNamed:@"AliasBadgeIcon"];
 static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
 {
     static NSParagraphStyle *styles[3];
-    static once_flag once;
-    call_once(once, []{
+    static std::once_flag once;
+    std::call_once(once, []{
         NSMutableParagraphStyle *p0 = [NSMutableParagraphStyle new];
         p0.alignment = NSLeftTextAlignment;
         p0.lineBreakMode = NSLineBreakByTruncatingHead;
@@ -253,7 +253,7 @@ static bool HasNoModifiers( NSEvent *_event )
 - (void)mouseUp:(NSEvent *)event
 {
     // used for delayed action to ensure that click was single, not double or more
-    static atomic_ullong current_ticket = {0};
+    static std::atomic_ullong current_ticket = {0};
     static const std::chrono::nanoseconds delay =
         std::chrono::milliseconds( int(NSEvent.doubleClickInterval*1000) );
     
@@ -423,7 +423,7 @@ static bool HasNoModifiers( NSEvent *_event )
                                       0);
     const auto rc = [m_AttrString boundingRectWithSize:text_rect.size options:0 context:nil];
     const auto position = [self convertPoint:sender.draggingLocation fromView:nil];
-    return position.x < text_rect.origin.x + max( rc.size.width, 32. );
+    return position.x < text_rect.origin.x + std::max( rc.size.width, 32. );
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender

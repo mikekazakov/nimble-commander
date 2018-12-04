@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/SerialQueue.h>
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
@@ -6,6 +6,8 @@
 
 namespace nc::panel {
 
+using namespace std::literals;
+    
 template <typename T, typename U>
 inline bool equals(const std::weak_ptr<T>& t, const std::weak_ptr<U>& u)
 {

@@ -3,7 +3,8 @@
 #include <Utility/FontExtras.h>
 
 namespace nc::panel::brief {
-    
+
+using namespace std::literals;
 using nc::utility::FontGeometryInfo;
 
 // it was deliberately chosen to use the most dumb method to purge the cache.
@@ -88,7 +89,7 @@ TextWidthsCache::Cache &TextWidthsCache::ForFont(NSFont *_font)
 {
     char buf[1024];
     const auto name = _font.fontName.UTF8String;
-    const auto size = (int)floor(_font.pointSize + 0.5);
+    const auto size = (int)std::floor(_font.pointSize + 0.5);
     snprintf(buf, sizeof(buf), "%s%d", name, size);
 
     LOCK_GUARD(m_Lock) {

@@ -1,7 +1,9 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowToolsTab.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
+
+using namespace std::literals;
 
 @interface PreferencesWindowToolsTab ()
 

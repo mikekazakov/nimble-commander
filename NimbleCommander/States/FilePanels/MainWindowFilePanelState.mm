@@ -39,6 +39,7 @@
 #include "ToolsMenuDelegate.h"
 
 using namespace nc::panel;
+using namespace std::literals;
 
 static const auto g_ConfigGoToActivation    = "filePanel.general.goToButtonForcesPanelActivation";
 static const auto g_ConfigInitialLeftPath   = "filePanel.general.initialLeftPanelPath";
@@ -527,7 +528,7 @@ static bool Has(const vector<PanelController*> &_c, PanelController* _p) noexcep
     const void** first  = (const void**)(const void*)_c.data();
     const void** last   = first + _c.size();
     const void*  value  = (__bridge const void*)_p;
-    return find( first, last, value ) != last;
+    return std::find( first, last, value ) != last;
 }
 
 - (bool) isLeftController:(PanelController*)_controller

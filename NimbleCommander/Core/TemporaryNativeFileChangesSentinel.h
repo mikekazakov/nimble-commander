@@ -36,7 +36,7 @@ private:
         std::chrono::milliseconds       drop_time;
         std::chrono::milliseconds       check_delay;
         std::chrono::milliseconds       drop_delay;
-        atomic_bool                     checking_now;
+        std::atomic_bool                checking_now;
     };
     
     void FSEventCallback( shared_ptr<Meta> _meta );

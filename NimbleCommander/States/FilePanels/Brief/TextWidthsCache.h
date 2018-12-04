@@ -22,7 +22,7 @@ private:
     struct Cache {
         unordered_map<CFString, short, CFStringHash, CFStringEqual> widths;
         spinlock lock;
-        atomic_bool purge_scheduled{false};
+        std::atomic_bool purge_scheduled{false};
     };
     
     TextWidthsCache();

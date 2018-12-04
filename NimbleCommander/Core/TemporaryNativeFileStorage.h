@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -34,6 +34,6 @@ private:
     string NewTempDir(); // can run from any thread
     bool GetSubDirForFilename(const char *_filename, char *_full_path); // can run from any thread
     
-    mutex           m_SubDirsLock;
+    std::mutex      m_SubDirsLock;
     vector<string>  m_SubDirs; // modifications should be guarded with m_ControlQueue
 };

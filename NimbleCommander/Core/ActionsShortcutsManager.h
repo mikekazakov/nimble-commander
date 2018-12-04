@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 // ⇧ - NSShiftKeyMask
@@ -74,7 +74,8 @@ private:
 class ActionsShortcutsManager::ShortCutsUpdater
 {
 public:
-    ShortCutsUpdater( initializer_list<ShortCut*> _hotkeys, initializer_list<const char*> _actions );
+    ShortCutsUpdater(std::initializer_list<ShortCut*> _hotkeys,
+                     std::initializer_list<const char*> _actions );
 private:
     void CheckAndUpdate() const;
     vector< pair<ShortCut*, int> >  m_Pets;

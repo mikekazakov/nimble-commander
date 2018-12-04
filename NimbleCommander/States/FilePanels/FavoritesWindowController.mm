@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Habanero/algo.h>
 #include <Utility/SheetWithHotkeys.h>
@@ -13,6 +13,7 @@
 #include "FilesDraggingSource.h"
 
 using namespace nc::panel;
+using namespace std::literals;
 
 static const auto g_FavoritesWindowControllerDragDataType =
     @"FavoritesWindowControllerDragDataType";

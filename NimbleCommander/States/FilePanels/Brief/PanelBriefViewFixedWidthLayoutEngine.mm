@@ -102,11 +102,11 @@ bool FixedWidthLayoutEngine::
 NSArray<NSCollectionViewLayoutAttributes*> *
     FixedWidthLayoutEngine::AttributesForItemsInRect(NSRect _rect) const noexcept
 {
-    const auto first_column = (int)floor(_rect.origin.x / m_ItemWidth);
-    const auto last_column = min((int)ceil((_rect.origin.x + _rect.size.width) / m_ItemWidth),
+    const auto first_column = (int)std::floor(_rect.origin.x / m_ItemWidth);
+    const auto last_column = std::min((int)std::ceil((_rect.origin.x + _rect.size.width) / m_ItemWidth),
                                  m_ColumnsNumber);
-    const auto first_row = (int)floor(_rect.origin.y / m_ItemHeight);
-    const auto last_row = min((int)ceil( (_rect.origin.y + _rect.size.height) / m_ItemHeight ),
+    const auto first_row = (int)std::floor(_rect.origin.y / m_ItemHeight);
+    const auto last_row = std::min((int)std::ceil( (_rect.origin.y + _rect.size.height) / m_ItemHeight ),
                               m_RowsNumber);
     NSMutableArray *array = [[NSMutableArray alloc] init];
     for( int column = first_column; column < last_column; ++column )

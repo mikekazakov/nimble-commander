@@ -384,11 +384,12 @@ static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
     
 };
 
-ActionsShortcutsManager::ShortCutsUpdater::ShortCutsUpdater(initializer_list<ShortCut*> _hotkeys,
-                                                            initializer_list<const char*> _actions )
+ActionsShortcutsManager::ShortCutsUpdater::
+        ShortCutsUpdater(std::initializer_list<ShortCut*> _hotkeys,
+                         std::initializer_list<const char*> _actions )
 {
     if( _hotkeys.size() != _actions.size() )
-        throw logic_error("_hotkeys.size() != _actions.size()");
+        throw std::logic_error("_hotkeys.size() != _actions.size()");
     
     auto &am = ActionsShortcutsManager::Instance();
     for( int i = 0, e = (int)_hotkeys.size(); i != e; ++i )

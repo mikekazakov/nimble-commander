@@ -245,7 +245,7 @@
         item.tag = s;
         item.target = self;
         item.action = @selector(standardFontClicked:);
-        if( (int)floor(m_Font.pointSize+0.5) == s )
+        if( (int)std::floor(m_Font.pointSize+0.5) == s )
             item.state = NSOnState;
         [menu addItem:item];
     }

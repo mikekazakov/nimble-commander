@@ -18,7 +18,7 @@ static NCPanelQLPanelProxy *Proxy();
 {
     string          m_CurrentPath;
     VFSHostWeakPtr  m_CurrentHost;
-    atomic_ullong   m_CurrentTicket;
+    std::atomic_ullong m_CurrentTicket;
 }
 
 - (instancetype)init

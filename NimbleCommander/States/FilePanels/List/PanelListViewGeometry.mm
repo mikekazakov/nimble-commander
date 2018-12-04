@@ -38,7 +38,7 @@ static tuple<short, short, short> GrabGeometryFromSystemFont( NSFont *_font, int
     short icon_size = 16;
     short line_height = 20;
     short text_baseline = 4;
-    const int font_size = (int)floor(_font.pointSize+0.5);
+    const int font_size = (int)std::floor(_font.pointSize+0.5);
     
     // check predefined values
     auto pit = find_if(begin(g_FixedLayoutData), end(g_FixedLayoutData), [&](auto &l) {
@@ -72,5 +72,5 @@ PanelListViewGeometry::PanelListViewGeometry():
 
 PanelListViewGeometry::PanelListViewGeometry( NSFont* _font, int _icon_scale)
 {
-    tie(m_LineHeight, m_TextBaseLine, m_IconSize) = GrabGeometryFromSystemFont(_font, _icon_scale);
+    std::tie(m_LineHeight, m_TextBaseLine, m_IconSize) = GrabGeometryFromSystemFont(_font, _icon_scale);
 }

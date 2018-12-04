@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelHistory.h"
 #include "../../Core/VFSInstanceManager.h"
 
@@ -30,7 +30,7 @@ bool History::CanMoveBack() const noexcept
 void History::MoveForth()
 {
     if( !CanMoveForth() )
-        throw logic_error("PanelHistory::MoveForth called when CanMoveForth()==false");
+        throw std::logic_error("PanelHistory::MoveForth called when CanMoveForth()==false");
     
     if(m_IsRecording) return;
     if(m_History.size() < 2) return;
@@ -41,7 +41,7 @@ void History::MoveForth()
 void History::MoveBack()
 {
     if( !CanMoveBack() )
-        throw logic_error("PanelHistory::MoveBack called when CanMoveBack()==false");
+        throw std::logic_error("PanelHistory::MoveBack called when CanMoveBack()==false");
     
     if(m_IsRecording) {
         m_IsRecording = false;
@@ -114,11 +114,11 @@ bool History::Empty() const noexcept
     return m_History.empty();
 }
     
-vector<reference_wrapper<const History::Path>> History::All() const
+vector<std::reference_wrapper<const History::Path>> History::All() const
 {
-    vector<reference_wrapper<const Path>> res;
+    vector<std::reference_wrapper<const Path>> res;
     for( auto &i:m_History )
-        res.emplace_back( cref(i) );
+        res.emplace_back( std::cref(i) );
     return res;
 }
 

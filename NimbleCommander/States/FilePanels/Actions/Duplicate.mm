@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Duplicate.h"
 #include "../PanelController.h"
 #include <VFS/VFS.h>
@@ -11,6 +11,8 @@
 #include <Operations/Copying.h>
 
 namespace nc::panel::actions {
+    
+using namespace std::literals;
 
 static const auto g_Suffix = "copy"s; // TODO: localize
 

@@ -513,7 +513,7 @@ static NSImage *ResizeImage( NSImage* _img, NSSize _new_size)
     [image addRepresentation:bitmap];
     
     const auto max_dim = 320.;
-    const auto scale = max( bitmap.size.width, bitmap.size.height ) / max_dim;
+    const auto scale = std::max( bitmap.size.width, bitmap.size.height ) / max_dim;
     if( scale > 1 )
         image = ResizeImage(image, NSMakeSize(bitmap.size.width / scale,
                                               bitmap.size.height / scale));

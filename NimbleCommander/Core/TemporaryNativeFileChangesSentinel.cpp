@@ -17,7 +17,7 @@ static optional<vector<uint8_t>> CalculateFileHash(const string &_path)
     if(rc != 0)
         return nullopt;
     
-    auto buf = make_unique<uint8_t[]>(chunk_sz);
+    auto buf = std::make_unique<uint8_t[]>(chunk_sz);
     Hash h(Hash::MD5);
     
     ssize_t rn = 0;
@@ -46,7 +46,7 @@ bool TemporaryNativeFileChangesSentinel::WatchFile( const string& _path,
     if( !file_hash )
         return false;
 
-    auto current = make_shared<Meta>();
+    auto current = std::make_shared<Meta>();
     auto &dir_update = FSEventsDirUpdate::Instance();
     const auto path = boost::filesystem::path(_path).parent_path();
     uint64_t watch_ticket = dir_update.AddWatchPath( path.c_str(), [current]{

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <locale>
 #include <codecvt>
 #include <Carbon/Carbon.h>
@@ -20,9 +20,9 @@ ActionShortcut::ActionShortcut(const string& _from):
 ActionShortcut::ActionShortcut(const char* _from): // construct from persistency string
     ActionShortcut()
 {
-    wstring_convert<codecvt_utf8_utf16<char16_t>, char16_t> convert;
-    u16string utf16 = convert.from_bytes(_from);
-    u16string_view v(utf16);
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
+    std::u16string utf16 = convert.from_bytes(_from);
+    std::u16string_view v(utf16);
     uint64_t mod_flags = 0;
     while( !v.empty() ) {
         auto c = v.front();
@@ -82,9 +82,9 @@ string ActionShortcut::ToPersString() const
     else if( unicode == '\t' )
         result += "\\t";
     else {
-        u16string key_utf16;
+        std::u16string key_utf16;
         key_utf16.push_back(unicode);
-        wstring_convert<codecvt_utf8_utf16<char16_t>,char16_t> convert;
+        std::wstring_convert<std::codecvt_utf8_utf16<char16_t>,char16_t> convert;
         result += convert.to_bytes(key_utf16);
     }
     

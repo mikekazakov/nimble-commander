@@ -16,6 +16,8 @@
 #include "PreferencesWindowThemesTabModel.h"
 #include "PreferencesWindowThemesTabImportSheet.h"
 
+using namespace std::literals;
+
 static NSTextField *SpawnSectionTitle( NSString *_title )
 {
     NSTextField *tf = [[NSTextField alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];

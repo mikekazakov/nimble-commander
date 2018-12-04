@@ -165,7 +165,7 @@ static vector<NetworkConnectionsManager::Connection> LimitedRecentConnections(
 {
     auto connections = _manager.AllConnectionsByMRU();
     
-    auto limit = max( GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
+    auto limit = std::max( GlobalConfig().GetInt(g_ConfigMaxNetworkConnections), 0);
     if( (int)connections.size() > limit )
         connections.resize(limit);
     
@@ -206,8 +206,10 @@ static vector<pair<core::VFSInstancePromise, string>>
     ProduceLocationsForParentDirectories(const VFSListing &_listing,
                                          core::VFSInstanceManager &_vfs_mgr )
 {
-    if( !_listing.IsUniform() )
-        throw invalid_argument("ProduceLocationsForParentDirectories: _listing should be uniform");
+    if( !_listing.IsUniform() ) {
+        auto msg = "ProduceLocationsForParentDirectories: _listing should be uniform";
+        throw std::invalid_argument(msg);
+    }
     
     vector<pair<core::VFSInstancePromise, string>> result;
     

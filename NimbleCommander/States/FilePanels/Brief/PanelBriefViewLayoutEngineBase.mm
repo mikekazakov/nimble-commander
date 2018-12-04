@@ -6,7 +6,7 @@ namespace nc::panel::view::brief {
 int LayoutEngineBase::NumberOfRowsForViewHeight(double _view_height, int _item_height) noexcept
 {
     if( _item_height > 0  && _view_height >= 0.0 )
-        return (int)floor(_view_height / _item_height);
+        return (int)std::floor(_view_height / _item_height);
     else
         return 0;
 }    
@@ -43,8 +43,8 @@ NSArray<NSCollectionViewLayoutAttributes*> *
                                                    m_ColumnsPositions.end(),
                                                    _rect);
     
-    const auto first_row_index = (int)floor(_rect.origin.y / m_ItemHeight);
-    const auto last_row_index = min((int)ceil( (_rect.origin.y + _rect.size.height) / m_ItemHeight),
+    const auto first_row_index = (int)std::floor(_rect.origin.y / m_ItemHeight);
+    const auto last_row_index = std::min((int)std::ceil( (_rect.origin.y + _rect.size.height) / m_ItemHeight),
                                     m_RowsNumber);
     const auto first_col_index = (int)std::distance(m_ColumnsPositions.begin(), first_col);
     const auto last_col_index = (int)std::distance(m_ColumnsPositions.begin(), last_col);

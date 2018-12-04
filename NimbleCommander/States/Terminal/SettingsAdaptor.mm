@@ -28,7 +28,7 @@ public:
         GlobalConfig().ObserveMany(
             m_ConfigObservationTickets,
             []{ DispatchNotification(); },
-            initializer_list<const char*>{g_ConfigCursorMode}
+            std::initializer_list<const char*>{g_ConfigCursorMode}
         );
     }
     
@@ -66,10 +66,10 @@ public:
     static void DispatchNotification()
     {
         if( dispatch_is_main_queue() )
-            dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification();
+            std::dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification();
         else
             dispatch_to_main_queue([]{
-                dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification();
+                std::dynamic_pointer_cast<SettingsImpl>(TerminalSettings())->FireNotification();
             });
     }
     

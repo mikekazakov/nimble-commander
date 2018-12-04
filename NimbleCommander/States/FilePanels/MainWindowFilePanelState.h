@@ -99,7 +99,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  */
 - (void)PanelPathChanged:(PanelController*)_panel;
 
-@property (nonatomic, readonly) vector< tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
+@property (nonatomic, readonly) vector< std::tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
 
 
 - (id<NCPanelPreview>)quickLookForPanel:(PanelController*)_panel make:(bool)_make_if_absent;

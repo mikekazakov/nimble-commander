@@ -4,6 +4,8 @@
 #include <Operations/Statistics.h>
 #include <Operations/Operation.h>
 
+using namespace std::literals;
+
 static const auto g_DefaultMinElapsedOperationTime = 30s;
 static const auto g_Window = @"window";
 

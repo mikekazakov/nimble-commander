@@ -12,6 +12,7 @@
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 
 static const auto g_TabCloseSize = NSMakeSize(12, 12);
+using namespace std::literals;
 
 static NSImage *MakeTabCloseFreeImage()
 {

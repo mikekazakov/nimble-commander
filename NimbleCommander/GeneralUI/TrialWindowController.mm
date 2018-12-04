@@ -2,6 +2,8 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "TrialWindowController.h"
 
+using namespace std::literals;
+
 @interface TrialWindow : NSWindow
 @end
 @implementation TrialWindow

@@ -1,11 +1,11 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "SharingService.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 
 static const uint64_t g_MaxFileSizeForVFSShare = 64*1024*1024; // 64mb
-static atomic<int> g_IsCurrentlySharing(0);
+static std::atomic<int> g_IsCurrentlySharing(0);
 
 @implementation SharingService
 {

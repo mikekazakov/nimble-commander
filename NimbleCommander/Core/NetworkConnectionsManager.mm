@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkConnectionsManager.h"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
@@ -6,6 +6,8 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #pragma clang diagnostic pop
+
+using namespace std::literals;
 
 boost::uuids::uuid NetworkConnectionsManager::MakeUUID()
 {
@@ -83,7 +85,7 @@ string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)
 NetworkConnectionsManager::Connection::Connection() :
     m_Object{nullptr}
 {
-    throw domain_error("invalid connection construction");
+    throw std::domain_error("invalid connection construction");
 }
 
 const string& NetworkConnectionsManager::Connection::Title() const noexcept

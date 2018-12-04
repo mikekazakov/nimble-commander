@@ -12,6 +12,7 @@
 
 using namespace nc;
 using namespace nc::term;
+using namespace std::literals;
 
 static const auto g_UseDefault = "terminal.useDefaultLoginShell";
 static const auto g_CustomPath = "terminal.customShellPath";
@@ -42,7 +43,7 @@ static const auto g_LongProcessDelay = 100ms;
     self = [super initWithFrame:frameRect];
     if(self)
     {
-        m_BashCommandStartX = m_BashCommandStartY = numeric_limits<int>::max();
+        m_BashCommandStartX = m_BashCommandStartY = std::numeric_limits<int>::max();
         m_RunningLongTask = false;
         m_InitalWD = CommonPaths::Home();
         
@@ -171,7 +172,7 @@ static const auto g_LongProcessDelay = 100ms;
                                         view_pt.y -
                                         m_TermScrollView.viewInsets.top);
     const auto gap = local_pt.y;
-    return clamp(gap, 0., self.bounds.size.height);    
+    return std::clamp(gap, 0., self.bounds.size.height);
 }
 
 - (int) totalScreenLines
@@ -245,7 +246,7 @@ static const auto g_LongProcessDelay = 100ms;
     auto lock = m_TermScrollView.screen.AcquireLock();
 //    m_TermScrollView.screen.Lock();
     if( auto line = m_TermScrollView.screen.Buffer().LineFromNo( m_BashCommandStartY ) ) {
-        auto i = min( max(begin(line), begin(line)+m_BashCommandStartX), end(line) );
+        auto i = std::min( std::max(begin(line), begin(line)+m_BashCommandStartX), end(line) );
         auto e = end( line );
         if( !ScreenBuffer::HasOccupiedChars(i, e) )
             virgin = true;
@@ -284,8 +285,8 @@ static const auto g_LongProcessDelay = 100ms;
         return false;
     
     static NSCharacterSet *chars;
-    static once_flag once;
-    call_once(once, []{
+    static std::once_flag once;
+    std::call_once(once, []{
         NSMutableCharacterSet *un = [NSMutableCharacterSet new];
         [un formUnionWithCharacterSet:[NSCharacterSet alphanumericCharacterSet]];
         [un formUnionWithCharacterSet:[NSCharacterSet punctuationCharacterSet]];

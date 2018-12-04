@@ -9,6 +9,8 @@
 
 namespace nc::bootstrap {
 
+using namespace std::literals;
+    
 // trial non-mas version setup
 static const auto g_LicenseExtension = "nimblecommanderlicense"s;
 static const auto g_LicenseFilename = "registration."s + g_LicenseExtension;

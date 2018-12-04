@@ -1,9 +1,11 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "LaunchServices.h"
 #include <sys/stat.h>
 #include <VFS/VFS.h>
 
 namespace nc::core {
+
+using namespace std::literals;
 
 /**
  * If container is not empty and has only the equal elements - return it.
@@ -222,15 +224,15 @@ private:
     {
         NSString *path = [NSString stringWithUTF8StdString:_handler_path];
         if( !path )
-            throw domain_error("malformed path");
+            throw std::domain_error("malformed path");
         
         NSBundle *handler_bundle = [NSBundle bundleWithPath:path];
         if( handler_bundle == nil )
-            throw domain_error("can't open NSBundle");
+            throw std::domain_error("can't open NSBundle");
         
         struct stat st;
         if( stat(_handler_path.c_str(), &st) != 0 )
-            throw domain_error("stat() failed");
+            throw std::domain_error("stat() failed");
         
         CachedLaunchServiceHandler h;
         h.path = _handler_path;

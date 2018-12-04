@@ -1,9 +1,11 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "Theme.h"
 #include "CocoaAppearanceManager.h"
 #include "ThemesManager.h"
+
+using namespace std::literals;
 
 static const auto g_NameKey = "themeName";
 

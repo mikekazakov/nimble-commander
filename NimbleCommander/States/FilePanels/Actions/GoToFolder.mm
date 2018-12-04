@@ -16,6 +16,8 @@
 
 namespace nc::panel::actions {
 
+using namespace std::literals;
+    
 void GoToFolder::Perform( PanelController *_target, id _sender ) const
 {
     GoToFolderSheetController *sheet = [GoToFolderSheetController new];

@@ -16,8 +16,8 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
 {
     string              m_CurrentPath;
     VFSHostWeakPtr      m_CurrentHost;
-    atomic_bool         m_Closed;
-    atomic_ullong       m_CurrentTicket;
+    std::atomic_bool    m_Closed;
+    std::atomic_ullong  m_CurrentTicket;
 }
 
 - (id) initWithFrame:(NSRect)frameRect

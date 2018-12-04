@@ -8,9 +8,9 @@ ListingPromise::ListingPromise( const VFSListing &_listing, const VFSPromiseAdap
 {
     assert( _adapter );
     if( _listing.IsUniform() )
-        m_Storage = make_shared<StorageT>( FromUniformListing(_listing, _adapter) );
+        m_Storage = std::make_shared<StorageT>( FromUniformListing(_listing, _adapter) );
     else
-        m_Storage = make_shared<StorageT>( FromNonUniformListing(_listing, _adapter) );
+        m_Storage = std::make_shared<StorageT>( FromNonUniformListing(_listing, _adapter) );
 }
     
 ListingPromise::UniformListing ListingPromise::FromUniformListing(const VFSListing &_listing,

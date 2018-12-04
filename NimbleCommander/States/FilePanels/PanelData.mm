@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataEntriesComparator.h"
@@ -34,7 +34,7 @@ static string LongEntryKey(const VFSListing& _l, unsigned _i)
     
     string key;
     key.reserve( sizeof(host_addr) + directory.size() + filename.size() + 1 );
-    key.append( begin(host_addr.b), end(host_addr.b) );
+    key.append( std::begin(host_addr.b), std::end(host_addr.b) );
     key.append( directory );
     key.append( filename );
     return key;
@@ -82,7 +82,7 @@ static void InitVolatileDataWithListing( vector<ItemVolatileData> &_vd, const VF
         if( _listing.IsDir(i) ) {
             if( _listing.HasSize(i) ) {
                 const auto sz = _listing.Size(i);
-                if( sz != numeric_limits<uint64_t>::max() )
+                if( sz != std::numeric_limits<uint64_t>::max() )
                     _vd[i].size = sz;
             }
         }
@@ -97,7 +97,7 @@ void Model::Load(const shared_ptr<VFSListing> &_listing, PanelType _type)
     assert(dispatch_is_main_queue()); // STA api design
     
     if( !_listing )
-        throw logic_error("PanelData::Load: listing can't be nullptr");
+        throw std::logic_error("PanelData::Load: listing can't be nullptr");
     
     m_Listing = _listing;
     m_Type = _type;
@@ -190,7 +190,7 @@ void Model::ReLoad(const shared_ptr<VFSListing> &_listing)
         }
     }
     else
-        throw invalid_argument("PanelData::ReLoad: incompatible listing type!");
+        throw std::invalid_argument("PanelData::ReLoad: incompatible listing type!");
     
     // put a new data in a place
     m_Listing = move(_listing);
@@ -206,7 +206,7 @@ void Model::ReLoad(const shared_ptr<VFSListing> &_listing)
 const shared_ptr<VFSHost> &Model::Host() const
 {
     if( !m_Listing->HasCommonHost() )
-        throw logic_error("PanelData::Host was called with no common host in listing");
+        throw std::logic_error("PanelData::Host was called with no common host in listing");
     return m_Listing->Host(0);
 }
 
@@ -233,7 +233,7 @@ const vector<unsigned>& Model::SortedDirectoryEntries() const noexcept
 ItemVolatileData& Model::VolatileDataAtRawPosition( int _pos )
 {
     if( _pos < 0 || _pos >= (int)m_VolatileData.size() )
-        throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
+        throw std::out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
     
     return m_VolatileData[_pos];
 }
@@ -241,7 +241,7 @@ ItemVolatileData& Model::VolatileDataAtRawPosition( int _pos )
 const ItemVolatileData& Model::VolatileDataAtRawPosition( int _pos ) const
 {
     if( _pos < 0 || _pos >= (int)m_VolatileData.size() )
-        throw out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
+        throw std::out_of_range("PanelData::VolatileDataAtRawPosition: index can't be out of range");
     
     return m_VolatileData[_pos];
 }
@@ -522,7 +522,7 @@ void Model::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
 bool Model::CustomFlagsSelectSorted(const vector<bool>& _is_selected)
 {
     bool changed = false;
-    for( int i = 0, e = (int)min(_is_selected.size(), m_EntriesByCustomSort.size()); i != e; ++i ) {
+    for( int i = 0, e = (int)std::min(_is_selected.size(), m_EntriesByCustomSort.size()); i != e; ++i ) {
         const auto raw_pos = m_EntriesByCustomSort[i];
         if( !m_Listing->IsDotDot(raw_pos) ) {
             if( !changed ) {
@@ -765,7 +765,7 @@ ExternalEntryKey Model::EntrySortKeysAtSortPosition(int _pos) const
 {
     auto item = EntryAtSortPosition(_pos);
     if( !item )
-        throw invalid_argument("PanelData::EntrySortKeysAtSortPosition: invalid item position");
+        throw std::invalid_argument("PanelData::EntrySortKeysAtSortPosition: invalid item position");
     return ExternalEntryKey{item, VolatileDataAtSortPosition(_pos)};
 }
 

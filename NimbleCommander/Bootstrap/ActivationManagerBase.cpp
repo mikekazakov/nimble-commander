@@ -131,7 +131,7 @@ int AMB::TrialPeriodSupport::TrialDaysLeft() const
     const auto now = SecondsSinceMacEpoch();
     const auto diff = expire_time_point - now; 
     const auto seconds_in_day = 60. * 60. * 24.;
-    const auto days = ceil(diff / seconds_in_day);
+    const auto days = std::ceil(diff / seconds_in_day);
     if( days < 0. )
         return 0;
     return (int)days;

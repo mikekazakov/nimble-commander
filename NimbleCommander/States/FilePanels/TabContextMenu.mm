@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include "TabContextMenu.h"
 #include "Actions/TabsManagement.h"
@@ -79,11 +79,11 @@ static void Perform(const ActionsT &_actions,
             return action->ValidateMenuItem(m_State, item);
         return true;
     }
-    catch(exception &e) {
-        cout << "Exception caught: " << e.what() << endl;
+    catch(std::exception &e) {
+        std::cout << "Exception caught: " << e.what() << std::endl;
     }
     catch(...) {
-        cout << "Caught an unhandled exception!" << endl;
+        std::cout << "Caught an unhandled exception!" << std::endl;
     }
     return false;
 }
@@ -107,7 +107,7 @@ static void Perform(const ActionsT &_actions,
         try {
             action->second->Perform(_target, _sender);
         }
-        catch( exception &e ) {
+        catch( std::exception &e ) {
             nc::core::ShowExceptionAlert(e);
         }
         catch(...){
@@ -115,7 +115,7 @@ static void Perform(const ActionsT &_actions,
         }
     }
     else {
-        cerr << "warning - unrecognized selector: " <<
-            NSStringFromSelector(_sel).UTF8String << endl;
+        std::cerr << "warning - unrecognized selector: " <<
+        NSStringFromSelector(_sel).UTF8String << std::endl;
     }
 }

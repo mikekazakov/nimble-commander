@@ -13,6 +13,8 @@
 
 namespace nc::panel::actions {
 
+using namespace std::literals;
+
 static const auto g_InitialFileName = []() -> string {
     NSString *stub = NSLocalizedString(@"untitled.txt",
                                        "Name for freshly created file by hotkey");

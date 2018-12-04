@@ -19,6 +19,7 @@
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 
 using namespace nc;
+using namespace std::literals;
 
 static const auto g_ConnectionsKey = "connections";
 static const auto g_MRUKey = "mostRecentlyUsed";
@@ -260,7 +261,7 @@ ConfigBackedNetworkConnectionsManager(nc::config::Config &_config):
     
     // Wire up on-the-fly loading of externally changed config
     m_Config.ObserveMany(m_ConfigObservations, [=]{ if(!m_IsWritingConfig) Load(); },
-                         initializer_list<const char*>{g_ConnectionsKey, g_MRUKey}
+                         std::initializer_list<const char*>{g_ConnectionsKey, g_MRUKey}
                          );
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -42,7 +42,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
         if( t.gridStyleMask & NSTableViewSolidVerticalGridLineMask ) {
             if( t.gridColor && t.gridColor != NSColor.clearColor ) {
                 const auto bounds = v.bounds;
-                const auto rc = NSMakeRect(ceil(bounds.size.width)-1,
+                const auto rc = NSMakeRect(std::ceil(bounds.size.width)-1,
                                            0,
                                            1,
                                            bounds.size.height);
@@ -85,7 +85,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     AdaptiveDateFormatting::Style       m_DateAddedFormattingStyle;
     AdaptiveDateFormatting::Style       m_DateModifiedFormattingStyle;
     
-    stack<PanelListViewRowView*>        m_RowsStash;
+    std::stack<PanelListViewRowView*>   m_RowsStash;
     
     data::SortMode                      m_SortMode;
     function<void(data::SortMode)>      m_SortModeChangeCallback;
@@ -707,7 +707,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
             case _::SortByModTimeRev:   return {g_SortAscImage,     m_DateModifiedColumn};
             case _::SortByAddTime:      return {g_SortDescImage,    m_DateAddedColumn};
             case _::SortByAddTimeRev:   return {g_SortAscImage,     m_DateAddedColumn};
-            default: return make_pair(nil, nil);
+            default: return std::make_pair(nil, nil);
         }
     }();
     
@@ -860,11 +860,11 @@ shouldReorderColumn:(NSInteger)columnIndex
         
         auto layout = self.columnsLayout;
         
-        const auto t = find_if(begin(layout.columns),
-                               end(layout.columns),
-                               [&](const auto &_i){ return _i.kind == kind;});
+        const auto t = std::find_if(std::begin(layout.columns),
+                                    std::end(layout.columns),
+                                    [&](const auto &_i){ return _i.kind == kind;});
 
-        if( t != end(layout.columns) ) {
+        if( t != std::end(layout.columns) ) {
             layout.columns.erase(t);
         }
         else {

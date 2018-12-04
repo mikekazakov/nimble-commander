@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "VFS/VFSFile.h"
@@ -61,6 +61,6 @@ private:
 
     shared_ptr<VFSFile> m_File;
     unique_ptr<uint8_t[]> m_Window;
-    size_t m_WindowSize = numeric_limits<size_t>::max();
-    size_t m_WindowPos = numeric_limits<size_t>::max();
+    size_t m_WindowSize = std::numeric_limits<size_t>::max();
+    size_t m_WindowPos = std::numeric_limits<size_t>::max();
 };

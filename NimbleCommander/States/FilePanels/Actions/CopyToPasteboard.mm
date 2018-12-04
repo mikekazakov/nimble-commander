@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyToPasteboard.h"
 #include "../PanelController.h"
 #include "../Helpers/Pasteboard.h"
@@ -57,7 +57,7 @@ context::CopyToPasteboard::CopyToPasteboard(const vector<VFSListingItem> &_items
     m_Items(_items)
 {
     if( _items.empty() )
-        throw invalid_argument("CopyToPasteboard was made with empty items set");
+        throw std::invalid_argument("CopyToPasteboard was made with empty items set");
 }
 
 bool context::CopyToPasteboard::Predicate( PanelController *_target ) const

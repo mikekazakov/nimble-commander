@@ -14,7 +14,7 @@ boost::uuids::uuid NetworkConnectionsManager::MakeUUID()
     static spinlock lock;
     static boost::uuids::basic_random_generator<boost::mt19937> gen;
 
-    lock_guard<spinlock> guard(lock);
+    std::lock_guard<spinlock> guard(lock);
     return gen();
 }
 

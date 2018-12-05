@@ -36,7 +36,7 @@ static string UTIForExtenstion(const string& _extension)
     static std::mutex guard;
     static unordered_map<string, string> extension_to_uti_mapping;
     
-    lock_guard<std::mutex> lock(guard);
+    std::lock_guard<std::mutex> lock(guard);
     if( auto i = extension_to_uti_mapping.find(_extension); i != end(extension_to_uti_mapping) )
         return i->second;
     
@@ -207,7 +207,7 @@ struct CachedLaunchServiceHandler
     
     static CachedLaunchServiceHandler GetLaunchHandlerInfo( const string &_handler_path )
     {
-        lock_guard<std::mutex> lock{g_HandlersByPathLock};
+        std::lock_guard<std::mutex> lock{g_HandlersByPathLock};
         if( auto i = g_HandlersByPath.find(_handler_path);
            i != end(g_HandlersByPath) && !IsOutdated(i->second.path, i->second.mtime) ) {
             return i->second;

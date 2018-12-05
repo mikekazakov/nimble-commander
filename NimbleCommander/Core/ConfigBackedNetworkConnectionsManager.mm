@@ -297,7 +297,7 @@ void ConfigBackedNetworkConnectionsManager::RemoveConnection( const Connection &
 
 optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::ConnectionByUUID(const boost::uuids::uuid& _uuid) const
 {
-    lock_guard<std::mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(m_Lock);
     auto t = find_if(begin(m_Connections), end(m_Connections), [&](auto &_c){ return _c.Uuid() == _uuid; } );
     if( t != end(m_Connections) )
         return *t;

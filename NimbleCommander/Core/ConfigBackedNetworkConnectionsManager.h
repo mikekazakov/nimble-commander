@@ -53,11 +53,11 @@ private:
     
     vector<Connection>                              m_Connections;
     vector<boost::uuids::uuid>                      m_MRU;
-    mutable mutex                                   m_Lock;
+    mutable std::mutex                              m_Lock;
     nc::config::Config                             &m_Config;
     vector<nc::config::Token>                       m_ConfigObservations;
     bool                                            m_IsWritingConfig;
     
-    mutable mutex                                   m_PendingMountRequestsLock;
+    mutable std::mutex                              m_PendingMountRequestsLock;
     vector< pair<void*, MountShareCallback> >       m_PendingMountRequests;
 };

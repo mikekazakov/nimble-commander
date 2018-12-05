@@ -33,10 +33,10 @@ inline T all_equal_or_default(InputIterator _first,
 
 static string UTIForExtenstion(const string& _extension)
 {
-    static mutex guard;
+    static std::mutex guard;
     static unordered_map<string, string> extension_to_uti_mapping;
     
-    lock_guard<mutex> lock(guard);
+    lock_guard<std::mutex> lock(guard);
     if( auto i = extension_to_uti_mapping.find(_extension); i != end(extension_to_uti_mapping) )
         return i->second;
     
@@ -207,7 +207,7 @@ struct CachedLaunchServiceHandler
     
     static CachedLaunchServiceHandler GetLaunchHandlerInfo( const string &_handler_path )
     {
-        lock_guard<mutex> lock{g_HandlersByPathLock};
+        lock_guard<std::mutex> lock{g_HandlersByPathLock};
         if( auto i = g_HandlersByPath.find(_handler_path);
            i != end(g_HandlersByPath) && !IsOutdated(i->second.path, i->second.mtime) ) {
             return i->second;
@@ -266,11 +266,11 @@ private:
     }
 
     static unordered_map<string, CachedLaunchServiceHandler> g_HandlersByPath;
-    static mutex g_HandlersByPathLock;
+    static std::mutex g_HandlersByPathLock;
 };
 
 unordered_map<string, CachedLaunchServiceHandler> CachedLaunchServiceHandler::g_HandlersByPath;
-mutex CachedLaunchServiceHandler::g_HandlersByPathLock;
+std::mutex CachedLaunchServiceHandler::g_HandlersByPathLock;
 
 LaunchServiceHandler::LaunchServiceHandler( const string &_handler_path )
 {

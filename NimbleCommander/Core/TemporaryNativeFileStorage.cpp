@@ -129,7 +129,7 @@ string TemporaryNativeFileStorage::NewTempDir()
 bool TemporaryNativeFileStorage::GetSubDirForFilename(const char *_filename, char *_full_path)
 {
     // check currently owned directories for being able to hold such filename (no collisions)
-    lock_guard<mutex> lock(m_SubDirsLock);
+    lock_guard<std::mutex> lock(m_SubDirsLock);
     bool found = false;
     retry:
     for(auto i = begin(m_SubDirs), e = end(m_SubDirs); i != e; ++i) {

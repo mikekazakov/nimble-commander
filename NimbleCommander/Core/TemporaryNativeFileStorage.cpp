@@ -98,7 +98,7 @@ static int rmrf(char *path)
 
 TemporaryNativeFileStorage::TemporaryNativeFileStorage()
 {
-    thread(DoTempPurge).detach();
+    std::thread(DoTempPurge).detach();
     
     auto tmp_1st = NewTempDir();
     if(!tmp_1st.empty())

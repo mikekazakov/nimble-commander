@@ -279,7 +279,7 @@ optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
         f.title = _json["title"].GetString();
     
     auto fp_string = PanelDataPersisency::MakeFootprintString(f.location->hosts_stack);
-    f.footprint = hash<string>()(fp_string);
+    f.footprint = std::hash<string>()(fp_string);
     return move(f);
 }
 
@@ -328,7 +328,7 @@ void FavoriteLocationsStorageImpl::LoadData( config::Config &_config, const char
         for( int i = 0, e = automatic.Size(); i != e; ++i )
             if( auto v = JSONToVisit(automatic[i]) ) {
                 auto fp_string = PanelDataPersisency::MakeFootprintString(v->location->hosts_stack);
-                auto fp = hash<string>()(fp_string);                
+                auto fp = std::hash<string>()(fp_string);                
                 m_Visits[fp] = move( *v );
             }
     }

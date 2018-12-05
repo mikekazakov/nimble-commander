@@ -356,7 +356,7 @@ string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc 
 
 size_t PanelDataPersisency::MakeFootprintStringHash( const PersistentLocation &_loc )
 {
-    return hash<string>()( MakeFootprintString(_loc) );
+    return std::hash<string>()( MakeFootprintString(_loc) );
 }
 
 string PanelDataPersisency::MakeVerbosePathString( const PersistentLocation &_loc )

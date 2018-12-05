@@ -48,10 +48,10 @@ static string NextName( const string& _initial, int _index )
     if( p.has_extension() ) {
         auto ext = p.extension();
         p.replace_extension();
-        return p.native() + " " + to_string(_index) + ext.native();
+        return p.native() + " " + std::to_string(_index) + ext.native();
     }
     else
-        return p.native() + " " + to_string(_index);
+        return p.native() + " " + std::to_string(_index);
 }
 
 static bool HasEntry( const string &_name, const VFSListing &_listing )

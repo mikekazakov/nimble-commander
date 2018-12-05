@@ -126,13 +126,16 @@ static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
     
     if( duplicate_index < 0 )
         for(int i = 1; i < max_duplicates; ++i) {
-            auto target = filename + " " + g_Suffix + (i == 1 ? "" : " "+to_string(i)) + extension;
+            const auto target = filename + " " +
+                                g_Suffix +
+                                ( i == 1 ? "" : " " + std::to_string(i) ) +
+                                extension;
             if( _filenames.count(ProduceFormCLowercase(target)) == 0 )
                 return target;
         }
     else
         for(int i = duplicate_index + 1; i < max_duplicates; ++i) {
-            auto target = filename_wo_index + " " + to_string(i) + extension;
+            auto target = filename_wo_index + " " + std::to_string(i) + extension;
             if( _filenames.count(ProduceFormCLowercase(target)) == 0 )
                 return target;
         }

@@ -425,7 +425,10 @@ string ThemesManager::SuitableNameForNewTheme( const string &_current_theme_name
     const auto themes = ThemeNames();
     
     for( int i = 1; i < 99; ++i ) {
-        const auto v = i == 1 ? _current_theme_name : _current_theme_name + " " + to_string(i);
+        const auto v =
+            (i == 1 ?
+             _current_theme_name :
+             _current_theme_name + " " + std::to_string(i));
         if( find(begin(themes), end(themes), v) == end(themes) )
             return v;
     }

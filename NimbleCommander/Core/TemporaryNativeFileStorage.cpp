@@ -63,7 +63,7 @@ static int Extract(
     }
     
     { // xattrs stuff
-        vfs_file->XAttrIterateNames(^bool(const char *name){
+        vfs_file->XAttrIterateNames([&](const char *name) -> bool{
             ssize_t res = vfs_file->XAttrGet(name, bufp, bufsz);
             if(res >= 0)
                 fsetxattr(fd, name, bufp, res, 0, 0);

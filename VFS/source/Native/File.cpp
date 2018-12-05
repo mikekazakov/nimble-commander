@@ -206,7 +206,7 @@ unsigned File::XAttrCount() const
     return count;
 }
 
-void File::XAttrIterateNames( std::function<bool(const char* _xattr_name)> _handler ) const
+void File::XAttrIterateNames( const XAttrIterateNamesCallback &_handler ) const
 {
     if(m_FD < 0 || !_handler)
         return;

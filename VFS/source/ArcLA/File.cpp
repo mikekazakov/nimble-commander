@@ -120,7 +120,7 @@ unsigned File::XAttrCount() const
     return (unsigned)m_EA.size();
 }
 
-void File::XAttrIterateNames( std::function<bool(const char* _xattr_name)> _handler ) const
+void File::XAttrIterateNames( const XAttrIterateNamesCallback &_handler ) const
 {
     if(!_handler || m_EA.empty())
         return;

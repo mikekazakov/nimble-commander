@@ -25,7 +25,7 @@ public:
     virtual ssize_t Size() const override;
     virtual bool Eof() const override;
     virtual unsigned XAttrCount() const override;
-    virtual void XAttrIterateNames( std::function<bool(const char* _xattr_name)> _handler ) const override;
+    virtual void XAttrIterateNames( const XAttrIterateNamesCallback &_handler ) const override;
     virtual ssize_t XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const override;
 private:
     std::unique_ptr<State> m_State;

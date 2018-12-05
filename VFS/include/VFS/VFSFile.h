@@ -130,12 +130,16 @@ public:
     virtual unsigned XAttrCount() const;
     
     /**
+     * return true to allow further iteration, false to stop it.
+     */
+    using XAttrIterateNamesCallback = std::function<bool(const char* _xattr_name)>;
+    
+    /**
      * XAttrIterateNames() will call block with every xattr name for this file while handler returns true.
      * This function may cause blocking I/O.
+     *
      */
-    virtual void XAttrIterateNames(
-                                   std::function<bool(const char* _xattr_name)> _handler // return true for allowing iteration, false to stop it
-                                   ) const;
+    virtual void XAttrIterateNames(const XAttrIterateNamesCallback& _handler) const;
     
     /**
      * XAttrGet copies an extended attribute value named _xattr_name into buffer _buffer limited with _buf_size.

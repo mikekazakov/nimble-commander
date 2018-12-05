@@ -36,7 +36,6 @@
     #include <functional>
     #include <optional>
     #include <any>
-    using std::array;
     using std::string;
     using std::string_view;
     using std::list;

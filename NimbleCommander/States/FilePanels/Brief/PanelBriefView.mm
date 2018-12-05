@@ -25,7 +25,7 @@ using namespace ::nc::panel::brief;
 using ::nc::vfsicon::IconRepository;
 
 // font_size, double_icon, icon_size, line_height, text_baseline
-static const array< tuple<int8_t, int8_t, int8_t, int8_t, int8_t>, 21> g_FixedLayoutData = {{
+static const std::array< tuple<int8_t, int8_t, int8_t, int8_t, int8_t>, 21> g_FixedLayoutData = {{
     make_tuple(10, 0,  0, 17, 5),
     make_tuple(10, 1, 16, 17, 5),
     make_tuple(10, 2, 32, 35, 14),

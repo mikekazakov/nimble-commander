@@ -384,7 +384,7 @@ string PanelDataPersisency::MakeVerbosePathString( const PersistentLocation &_lo
 
 string PanelDataPersisency::MakeVerbosePathString( const VFSHost &_host, const string &_directory )
 {
-    array<const VFSHost*, 32> hosts;
+    std::array<const VFSHost*, 32> hosts;
     int hosts_n = 0;
 
     auto cur = &_host;

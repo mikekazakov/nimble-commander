@@ -348,7 +348,7 @@ string Model::VerboseDirectoryFullPath() const
 {
     if( !m_Listing || !m_Listing->IsUniform())
         return "";
-    array<VFSHost*, 32> hosts;
+    std::array<VFSHost*, 32> hosts;
     int hosts_n = 0;
 
     VFSHost *cur = m_Listing->Host().get();

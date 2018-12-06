@@ -50,7 +50,7 @@ void ServicesHandler::GoToFolder(const string &_path)
     }
 }
 
-static pair<string, vector<string>>
+static std::pair<string, vector<string>>
     ExtractFirstDirectoryAndFilenamesInside(const vector<string>&_paths)
 {
     string directory;

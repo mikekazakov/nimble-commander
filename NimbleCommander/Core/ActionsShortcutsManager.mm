@@ -7,7 +7,7 @@
 static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
 
  // the persistance holy grail is below, change ids only in emergency case:
-static const vector<pair<const char*,int>> g_ActionsTags = {
+static const vector<std::pair<const char*,int>> g_ActionsTags = {
     {"menu.nimble_commander.about",                     10'000},
     {"menu.nimble_commander.preferences",               10'010},
     {"menu.nimble_commander.hide",                      10'020},
@@ -199,7 +199,7 @@ static const vector<pair<const char*,int>> g_ActionsTags = {
 };
 
 
-static const vector<pair<const char*, const char*>> g_DefaultShortcuts = {
+static const vector<std::pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.nimble_commander.about",                         u8""        },
     {"menu.nimble_commander.preferences",                   u8"⌘,"      }, // cmd+,
     {"menu.nimble_commander.toggle_admin_mode",             u8""        },
@@ -586,7 +586,7 @@ void ActionsShortcutsManager::WriteOverridesToConfig() const
     GlobalConfig().Set( g_OverridesConfigPath, overrides );
 }
 
-const vector<pair<const char*,int>>& ActionsShortcutsManager::AllShortcuts() const
+const vector<std::pair<const char*,int>>& ActionsShortcutsManager::AllShortcuts() const
 {
     return g_ActionsTags;
 }

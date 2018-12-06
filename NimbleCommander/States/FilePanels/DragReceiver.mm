@@ -106,7 +106,7 @@ bool DragReceiver::Receive()
     return false;
 }
 
-pair<NSDragOperation, int> DragReceiver::ScanLocalSource(FilesDraggingSource *_source,
+std::pair<NSDragOperation, int> DragReceiver::ScanLocalSource(FilesDraggingSource *_source,
                                                          const VFSPath& _dest) const
 {
     const auto valid_items = (int)_source.items.size();
@@ -140,7 +140,7 @@ pair<NSDragOperation, int> DragReceiver::ScanLocalSource(FilesDraggingSource *_s
     return {operation, valid_items};
 }
 
-pair<NSDragOperation, int> DragReceiver::ScanURLsSource(NSArray<NSURL*> *_urls,
+std::pair<NSDragOperation, int> DragReceiver::ScanURLsSource(NSArray<NSURL*> *_urls,
                                                         const VFSPath& _destination) const
 {
     if( !_urls )
@@ -161,7 +161,7 @@ pair<NSDragOperation, int> DragReceiver::ScanURLsSource(NSArray<NSURL*> *_urls,
     return {operation, valid_items};
 }
 
-pair<NSDragOperation, int> DragReceiver::ScanURLsPromiseSource(const VFSPath& _dest) const
+std::pair<NSDragOperation, int> DragReceiver::ScanURLsPromiseSource(const VFSPath& _dest) const
 {
     if( !_dest.Host()->IsNativeFS() )
         return {NSDragOperationNone, 0};

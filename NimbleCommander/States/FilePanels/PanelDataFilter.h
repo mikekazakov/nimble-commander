@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -15,7 +15,7 @@ struct TextualFilter
         BeginningOrEnding   = 3
     };
     
-    using FoundRange = pair<int16_t, int16_t>; // begin-end indeces range in DispayName string, {0,0} mean empty
+    using FoundRange = std::pair<int16_t, int16_t>; // begin-end indeces range in DispayName string, {0,0} mean empty
     
     NSString *text;
     Where     type;

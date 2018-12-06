@@ -35,7 +35,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
     
     FavoriteLocationsStorage::ObservationTicket m_ObservationTicket;
     bool m_IsCommitingFavorites;
-    function< vector<pair<VFSHostPtr, string>>() > m_ProvideCurrentUniformPaths;
+    function< vector<std::pair<VFSHostPtr, string>>() > m_ProvideCurrentUniformPaths;
 }
 
 - (id) initWithFavoritesStorage:(function<FavoriteLocationsStorage&()>)_favorites_storage
@@ -380,12 +380,12 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 }
 
 
-- (void)setProvideCurrentUniformPaths:(function<vector<pair<VFSHostPtr, string> > ()>)callback
+- (void)setProvideCurrentUniformPaths:(function<vector<std::pair<VFSHostPtr, string> > ()>)callback
 {
     m_ProvideCurrentUniformPaths = move(callback);
 }
 
-- (function<vector<pair<VFSHostPtr, string> > ()>)provideCurrentUniformPaths
+- (function<vector<std::pair<VFSHostPtr, string> > ()>)provideCurrentUniformPaths
 {
     return m_ProvideCurrentUniformPaths;
 }

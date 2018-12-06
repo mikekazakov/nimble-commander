@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <VFS/VFS_fwd.h>
 
@@ -13,7 +13,7 @@ namespace nc::panel {
     (function<nc::panel::FavoriteLocationsStorage&()>)_favorites_storage;
 
 @property (nonatomic)
-    function< vector<pair<VFSHostPtr, string>>() > provideCurrentUniformPaths;
+    function< vector<std::pair<VFSHostPtr, string>>() > provideCurrentUniformPaths;
 
 - (void) show;
 

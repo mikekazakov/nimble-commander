@@ -101,7 +101,7 @@ static const auto g_MaxTextWidth = 600;
         request->InitiatedByUser = true;
         [m_Panel GoToDirWithContext:request];
     }
-    else if( auto promise = std::any_cast<pair<nc::core::VFSInstancePromise, string>>(&_context) )
+    else if( auto promise = std::any_cast<std::pair<nc::core::VFSInstancePromise, string>>(&_context) )
         [self handleVFSPromiseInstance:promise->first path:promise->second];
     else if( auto listing_promise = std::any_cast<nc::panel::ListingPromise>(&_context) )
         nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
@@ -176,13 +176,13 @@ static vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_current )
 {
     vector<VFSPath> current_paths;
     for( auto &p: _current.filePanelsCurrentPaths )
-        current_paths.emplace_back( get<1>(p), get<0>(p) );
+        current_paths.emplace_back( std::get<1>(p), std::get<0>(p) );
     
     vector<VFSPath> other_paths;
     for( auto ctr: NCAppDelegate.me.mainWindowControllers )
         if( auto state = ctr.filePanelsState; state != _current)
             for( auto &p: state.filePanelsCurrentPaths )
-                other_paths.emplace_back( get<1>(p), get<0>(p) );
+                other_paths.emplace_back( std::get<1>(p), std::get<0>(p) );
     
     other_paths.erase(remove_if(begin(other_paths),
                                 end(other_paths),
@@ -202,7 +202,7 @@ static vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_current )
     return other_paths;
 }
 
-static vector<pair<core::VFSInstancePromise, string>>
+static vector<std::pair<core::VFSInstancePromise, string>>
     ProduceLocationsForParentDirectories(const VFSListing &_listing,
                                          core::VFSInstanceManager &_vfs_mgr )
 {
@@ -211,7 +211,7 @@ static vector<pair<core::VFSInstancePromise, string>>
         throw std::invalid_argument(msg);
     }
     
-    vector<pair<core::VFSInstancePromise, string>> result;
+    vector<std::pair<core::VFSInstancePromise, string>> result;
     
     auto host = _listing.Host();
     boost::filesystem::path dir = _listing.Directory();
@@ -302,7 +302,7 @@ static void SetupHotkeys( NSMenu *_menu )
         }
 }
 
-tuple<NSMenu*, GoToPopupListActionMediator*> GoToPopupsBase::BuidInitialMenu(
+std::tuple<NSMenu*, GoToPopupListActionMediator*> GoToPopupsBase::BuidInitialMenu(
     MainWindowFilePanelState *_state,
     PanelController *_panel,
     NSString *_title) const
@@ -679,7 +679,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForPromiseAndPath(const core::VFSInstanceMa
                                       const string &_path)
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    auto data = pair<core::VFSInstanceManager::Promise, string>{_promise, _path};
+    auto data = std::pair<core::VFSInstanceManager::Promise, string>{_promise, _path};
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{move(data)}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);

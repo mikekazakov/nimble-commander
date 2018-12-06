@@ -25,28 +25,29 @@ using namespace ::nc::panel::brief;
 using ::nc::vfsicon::IconRepository;
 
 // font_size, double_icon, icon_size, line_height, text_baseline
-static const std::array< tuple<int8_t, int8_t, int8_t, int8_t, int8_t>, 21> g_FixedLayoutData = {{
-    make_tuple(10, 0,  0, 17, 5),
-    make_tuple(10, 1, 16, 17, 5),
-    make_tuple(10, 2, 32, 35, 14),
-    make_tuple(11, 0,  0, 17, 5),
-    make_tuple(11, 1, 16, 17, 5),
-    make_tuple(11, 2, 32, 35, 14),
-    make_tuple(12, 0,  9, 19, 5),
-    make_tuple(12, 1, 16, 19, 5),
-    make_tuple(12, 2, 32, 35, 13),
-    make_tuple(13, 0,  0, 19, 4),
-    make_tuple(13, 1, 16, 19, 4),
-    make_tuple(13, 2, 32, 35, 12),
-    make_tuple(14, 0,  0, 19, 4),
-    make_tuple(14, 1, 16, 19, 4),
-    make_tuple(14, 2, 32, 35, 12),
-    make_tuple(15, 0,  0, 21, 6),
-    make_tuple(15, 1, 16, 21, 6),
-    make_tuple(15, 2, 32, 35, 12),
-    make_tuple(16, 0,  0, 22, 6),
-    make_tuple(16, 1, 16, 22, 6),
-    make_tuple(16, 2, 32, 35, 12)
+using LayoutDataT = std::tuple<int8_t, int8_t, int8_t, int8_t, int8_t>;
+static const std::array<LayoutDataT, 21> g_FixedLayoutData = {{
+    std::make_tuple(10, 0,  0, 17, 5),
+    std::make_tuple(10, 1, 16, 17, 5),
+    std::make_tuple(10, 2, 32, 35, 14),
+    std::make_tuple(11, 0,  0, 17, 5),
+    std::make_tuple(11, 1, 16, 17, 5),
+    std::make_tuple(11, 2, 32, 35, 14),
+    std::make_tuple(12, 0,  9, 19, 5),
+    std::make_tuple(12, 1, 16, 19, 5),
+    std::make_tuple(12, 2, 32, 35, 13),
+    std::make_tuple(13, 0,  0, 19, 4),
+    std::make_tuple(13, 1, 16, 19, 4),
+    std::make_tuple(13, 2, 32, 35, 12),
+    std::make_tuple(14, 0,  0, 19, 4),
+    std::make_tuple(14, 1, 16, 19, 4),
+    std::make_tuple(14, 2, 32, 35, 12),
+    std::make_tuple(15, 0,  0, 21, 6),
+    std::make_tuple(15, 1, 16, 21, 6),
+    std::make_tuple(15, 2, 32, 35, 12),
+    std::make_tuple(16, 0,  0, 22, 6),
+    std::make_tuple(16, 1, 16, 22, 6),
+    std::make_tuple(16, 2, 32, 35, 12)
 }};
 
 static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
@@ -64,14 +65,14 @@ static PanelBriefViewItemLayoutConstants BuildItemsLayout(NSFont *_font,
     
     // check predefined values
     auto pit = find_if(begin(g_FixedLayoutData), end(g_FixedLayoutData), [&](auto &l) {
-        return get<0>(l) == font_size && get<1>(l) == _layout.icon_scale;
+        return std::get<0>(l) == font_size && std::get<1>(l) == _layout.icon_scale;
     });
     
     if( pit != end(g_FixedLayoutData) ) {
         // use hardcoded stuff to mimic Finder's layout
-        icon_size = get<2>(*pit);
-        line_height = get<3>(*pit);
-        text_baseline = get<4>(*pit);
+        icon_size = std::get<2>(*pit);
+        line_height = std::get<3>(*pit);
+        text_baseline = std::get<4>(*pit);
     }
     else {
         // try to calculate something by ourselves

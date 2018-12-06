@@ -59,5 +59,5 @@ private:
     bool                                            m_IsWritingConfig;
     
     mutable std::mutex                              m_PendingMountRequestsLock;
-    vector< pair<void*, MountShareCallback> >       m_PendingMountRequests;
+    vector< std::pair<void*, MountShareCallback> >  m_PendingMountRequests;
 };

@@ -858,9 +858,9 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
     return true;
 }
 
-- (vector<tuple<string, VFSHostPtr> >)filePanelsCurrentPaths
+- (vector<std::tuple<string, VFSHostPtr> >)filePanelsCurrentPaths
 {
-    vector<tuple<string, VFSHostPtr> > r;
+    vector<std::tuple<string, VFSHostPtr> > r;
     for( auto c: {&m_LeftPanelControllers, &m_RightPanelControllers} )
         for( auto p: *c )
             if( p.isUniform )

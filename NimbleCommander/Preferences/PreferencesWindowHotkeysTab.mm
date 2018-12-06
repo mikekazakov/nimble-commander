@@ -16,7 +16,7 @@ namespace {
 
 struct ActionShortcutNode
 {
-    pair<string,int> tag;
+    std::pair<string,int> tag;
     ActionShortcut  current_shortcut;
     ActionShortcut  default_shortcut;
     NSString *label = @"";
@@ -60,7 +60,7 @@ enum class SourceType
 
 @implementation PreferencesWindowHotkeysTab
 {
-    vector<pair<string,int>>                m_Shortcuts;
+    vector<std::pair<string,int>>           m_Shortcuts;
     function<ExternalToolsStorage&()>       m_ToolsStorage;
     ExternalToolsStorage::ObservationTicket m_ToolsObserver;
     vector<shared_ptr<const ExternalTool>>  m_Tools;
@@ -509,7 +509,7 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 
 static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 {
-    static const vector< pair<const char *, NSString *> > titles = {
+    static const vector< std::pair<const char *, NSString *> > titles = {
         {"panel.move_up",                       NSLocalizedString(@"File Panels ▶ Move Up", "")},
         {"panel.move_down",                     NSLocalizedString(@"File Panels ▶ Move Down", "")},
         {"panel.move_left",                     NSLocalizedString(@"File Panels ▶ Move Left", "")},

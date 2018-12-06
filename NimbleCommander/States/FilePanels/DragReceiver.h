@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <VFS/VFS.h>
 
@@ -22,11 +22,11 @@ public:
 
 private:
     VFSPath ComposeDestination() const;
-    pair<NSDragOperation, int> ScanLocalSource(FilesDraggingSource *_source,
+    std::pair<NSDragOperation, int> ScanLocalSource(FilesDraggingSource *_source,
                                                 const VFSPath& _dest) const;
-    pair<NSDragOperation, int> ScanURLsSource(NSArray<NSURL*> *_source,
+    std::pair<NSDragOperation, int> ScanURLsSource(NSArray<NSURL*> *_source,
                                               const VFSPath& _dest) const;
-    pair<NSDragOperation, int> ScanURLsPromiseSource(const VFSPath& _dest) const;
+    std::pair<NSDragOperation, int> ScanURLsPromiseSource(const VFSPath& _dest) const;
     NSDragOperation BuildOperationForLocal(FilesDraggingSource *_source,
                                            const VFSPath &_destination ) const;
     NSDragOperation BuildOperationForURLs(NSArray<NSURL*> *_source,

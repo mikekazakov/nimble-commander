@@ -10,7 +10,7 @@
 static const auto g_ConfigAlgo = "filePanel.general.checksumCalculationAlgorithm";
 const static string g_SumsFilename = "checksums.txt";
 
-const static vector<pair<NSString*,int>> g_Algos = {
+const static vector<std::pair<NSString*,int>> g_Algos = {
     {@"Adler32",     Hash::Adler32},
     {@"CRC32",       Hash::CRC32},
     {@"MD2",         Hash::MD2},

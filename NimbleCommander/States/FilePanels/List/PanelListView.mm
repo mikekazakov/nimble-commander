@@ -694,7 +694,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     for( NSTableColumn *c in m_TableView.tableColumns )
         [m_TableView setIndicatorImage:nil inTableColumn:c];
     
-    auto set = [&]()->pair<NSImage*,NSTableColumn*>{
+    auto set = [&]()->std::pair<NSImage*,NSTableColumn*>{
         using _ = data::SortMode;
         switch( m_SortMode.sort ) {
             case _::SortByName:         return {g_SortAscImage,     m_NameColumn};

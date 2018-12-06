@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 @class PanelBriefViewItem;
@@ -13,7 +13,7 @@ struct PanelBriefViewItemLayoutConstants;
 @property (nonatomic)       NSImage                            *icon;
 @property (nonatomic)       bool                                isSymlink;
 @property (nonatomic)       PanelBriefViewItemLayoutConstants   layoutConstants;
-@property (nonatomic)       pair<int16_t, int16_t>              qsHighlight;
+@property (nonatomic)       std::pair<int16_t, int16_t>         qsHighlight;
 @property (nonatomic)       bool                                highlighted;
 
 - (void) setupFieldEditor:(NSScrollView*)_editor;

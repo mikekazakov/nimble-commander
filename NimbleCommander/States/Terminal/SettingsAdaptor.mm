@@ -16,7 +16,7 @@ class SettingsImpl : public DefaultSettings
 {
     ThemesManager::ObservationTicket m_ThemeObservation;
     vector<config::Token> m_ConfigObservationTickets;
-    vector<pair<int, function<void()>>> m_Callbacks;
+    vector<std::pair<int, function<void()>>> m_Callbacks;
     int m_LastTicket = 1;
 public:
     SettingsImpl()

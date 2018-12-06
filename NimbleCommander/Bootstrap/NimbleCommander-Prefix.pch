@@ -43,10 +43,6 @@
     using std::shared_ptr;
     using std::make_shared;
     using std::move;
-    using std::pair;
-    using std::tuple;
-    using std::make_tuple;
-    using std::get;
 
     // low-level facilities from Habanero
     #include <Habanero/dispatch_cpp.h>

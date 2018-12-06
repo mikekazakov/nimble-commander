@@ -17,7 +17,7 @@ struct GoToPopupsBase
 {
     GoToPopupsBase(NetworkConnectionsManager&_net_mgr);
 protected:
-    tuple<NSMenu*, GoToPopupListActionMediator*> BuidInitialMenu(MainWindowFilePanelState *_state,
+    std::tuple<NSMenu*, GoToPopupListActionMediator*> BuidInitialMenu(MainWindowFilePanelState *_state,
                                                                  PanelController *_panel,
                                                                  NSString *_title) const;
     NSMenu *BuildConnectionsQuickList(PanelController *_panel) const;

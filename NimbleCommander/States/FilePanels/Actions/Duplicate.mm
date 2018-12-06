@@ -98,7 +98,7 @@ void context::Duplicate::Perform( PanelController *_target, id _sender ) const
     CommonPerform(_target, m_Items);
 }
 
-static pair<int, string> ExtractExistingDuplicateInfo( const string &_filename )
+static std::pair<int, string> ExtractExistingDuplicateInfo( const string &_filename )
 {
     const auto suffix_pos = _filename.rfind(g_Suffix);
     if( suffix_pos == string::npos )

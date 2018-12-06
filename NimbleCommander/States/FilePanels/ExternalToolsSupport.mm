@@ -76,7 +76,7 @@ struct SetMaximumFilesFlag{ unsigned maximum; };
     
 }
 
-static pair<std::any, unsigned> Eat( NSString *_source, NSRange _range, bool _invert_flag )
+static std::pair<std::any, unsigned> Eat( NSString *_source, NSRange _range, bool _invert_flag )
 {
     assert( _source && _source.length == _range.location + _range.length );
     assert( _range.length > 0 );

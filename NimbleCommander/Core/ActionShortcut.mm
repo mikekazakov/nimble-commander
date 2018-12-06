@@ -117,7 +117,7 @@ static NSString *StringForModifierFlags(uint64_t flags)
 
 NSString *ActionShortcut::PrettyString() const
 {
-    static const vector< pair<uint16_t, NSString*> > unicode_to_nice_string = {
+    static const vector< std::pair<uint16_t, NSString*> > unicode_to_nice_string = {
             {NSLeftArrowFunctionKey,     @"←"},
             {NSRightArrowFunctionKey,    @"→"},
             {NSDownArrowFunctionKey,     @"↓"},

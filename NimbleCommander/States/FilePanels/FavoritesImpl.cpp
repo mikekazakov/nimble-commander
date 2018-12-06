@@ -135,7 +135,7 @@ FavoriteLocationsStorageImpl::FrecentlyUsed( int _amount ) const
     };
     
     // visit #, visits count, last visit, frecency score
-    vector< tuple<size_t, int, time_t, float> > recent_visits;
+    vector< std::tuple<size_t, int, time_t, float> > recent_visits;
     for( auto &v: m_Visits )
         if( v.second.last_visit > last_date && v.second.visits_count > 0 && !is_favorite(v.first) )
             recent_visits.emplace_back(v.first,
@@ -146,27 +146,27 @@ FavoriteLocationsStorageImpl::FrecentlyUsed( int _amount ) const
     if( recent_visits.empty() )
         return {};
 
-    const auto max_visits_it = max_element(begin(recent_visits),
-                                         end(recent_visits),
-                                           [](auto &l, auto &r){ return std::max(get<1>(l), get<1>(r)); }
-                                         );
-    const auto max_visits = float(get<1>(*max_visits_it));
+    const auto max_visits_it = std::max_element
+    (std::begin(recent_visits),
+     std::end(recent_visits),
+     [](auto &l, auto &r){ return std::max(std::get<1>(l), std::get<1>(r)); } );
+    const auto max_visits = float(std::get<1>(*max_visits_it));
     
     for( auto &v: recent_visits ) {
         // this is actually not a real frequency, but a normalized value of a visits count.
-        const auto frequency = get<1>(v) / max_visits; // [0..1]
-        const auto recency = 1. - float(now - get<2>(v)) / float(g_MaxTimeRange); // [0..1]
+        const auto frequency = std::get<1>(v) / max_visits; // [0..1]
+        const auto recency = 1. - float(now - std::get<2>(v)) / float(g_MaxTimeRange); // [0..1]
         const auto score = frequency + recency; // [0..2]
-        get<3>(v) = (float)score;
+        std::get<3>(v) = (float)score;
     }
 
-    sort( begin(recent_visits), end(recent_visits), [](auto &_1, auto _2){
-        return get<3>(_1) > get<3>(_2); // sorting in descending order
+    std::sort( std::begin(recent_visits), std::end(recent_visits), [](auto &_1, auto _2){
+        return std::get<3>(_1) > std::get<3>(_2); // sorting in descending order
     });
     
     vector< shared_ptr<const FavoriteLocationsStorage::Location> > result;
     for( int i = 0, e = std::min(_amount, (int)recent_visits.size()); i != e; ++i )
-        result.emplace_back( m_Visits.at(get<0>(recent_visits[i])).location );
+        result.emplace_back( m_Visits.at(std::get<0>(recent_visits[i])).location );
 
     return result;
 }

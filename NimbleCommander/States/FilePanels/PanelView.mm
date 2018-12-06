@@ -46,7 +46,7 @@ struct StateStorage
 @implementation PanelView
 {
     data::Model                *m_Data;
-    vector< pair<__weak id<NCPanelViewKeystrokeSink>, int > > m_KeystrokeSinks;
+    vector< std::pair<__weak id<NCPanelViewKeystrokeSink>, int > > m_KeystrokeSinks;
     
     std::unordered_map<uint64_t, StateStorage> m_States;
     NSString                   *m_HeaderTitle;

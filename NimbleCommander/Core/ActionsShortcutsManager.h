@@ -53,7 +53,7 @@ public:
     
     void SetMenuShortCuts(NSMenu *_menu) const;
     
-    const vector<pair<const char*,int>>& AllShortcuts() const;
+    const vector<std::pair<const char*,int>>& AllShortcuts() const;
     
     using ObservationTicket = ObservableBase::ObservationTicket;
     ObservationTicket ObserveChanges(function<void()> _callback);
@@ -78,7 +78,7 @@ public:
                      std::initializer_list<const char*> _actions );
 private:
     void CheckAndUpdate() const;
-    vector< pair<ShortCut*, int> >  m_Pets;
+    vector< std::pair<ShortCut*, int> >  m_Pets;
     ObservationTicket               m_Ticket;
 };
 

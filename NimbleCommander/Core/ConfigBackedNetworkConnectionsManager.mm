@@ -26,7 +26,7 @@ static const auto g_MRUKey = "mostRecentlyUsed";
 
 static void SortByMRU(vector<NetworkConnectionsManager::Connection> &_values, const vector<boost::uuids::uuid>& _mru)
 {
-    vector< pair<NetworkConnectionsManager::Connection, decltype(begin(_mru))> > v;
+    vector< std::pair<NetworkConnectionsManager::Connection, decltype(begin(_mru))> > v;
     for( auto &i: _values ) {
         auto it = find( begin(_mru), end(_mru), i.Uuid() );
         v.emplace_back( move(i), it );

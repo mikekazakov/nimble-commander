@@ -52,7 +52,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     NSMutableAttributedString          *m_AttrString;
     PanelBriefViewItemLayoutConstants   m_LayoutConstants;
     __weak PanelBriefViewItem          *m_Controller;
-    pair<int16_t, int16_t>              m_QSHighlight;
+    std::pair<int16_t, int16_t>         m_QSHighlight;
     bool                                m_Highlighted;
     bool                                m_PermitFieldRenaming;
     bool                                m_IsDropTarget;
@@ -365,7 +365,7 @@ static bool HasNoModifiers( NSEvent *_event )
     [self setNeedsDisplay:true];
 }
 
-- (void) setQsHighlight:(pair<int16_t, int16_t>)qsHighlight
+- (void) setQsHighlight:(std::pair<int16_t, int16_t>)qsHighlight
 {
     if( m_QSHighlight != qsHighlight ) {
         m_QSHighlight = qsHighlight;

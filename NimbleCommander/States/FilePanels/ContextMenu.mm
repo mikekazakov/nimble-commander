@@ -18,13 +18,13 @@ using namespace nc::panel;
     PanelController                    *m_Panel;
     NSMutableArray                     *m_ShareItemsURLs;
     NCPanelOpenWithMenuDelegate        *m_OpenWithDelegate;
-    unique_ptr<actions::PanelAction>    m_CopyAction;
-    unique_ptr<actions::PanelAction>    m_MoveToTrashAction;
-    unique_ptr<actions::PanelAction>    m_DeletePermanentlyAction;
-    unique_ptr<actions::PanelAction>    m_DuplicateAction;
-    unique_ptr<actions::PanelAction>    m_CompressHereAction;
-    unique_ptr<actions::PanelAction>    m_CompressToOppositeAction;
-    unique_ptr<actions::PanelAction>    m_OpenFileAction;
+    std::unique_ptr<actions::PanelAction>   m_CopyAction;
+    std::unique_ptr<actions::PanelAction>   m_MoveToTrashAction;
+    std::unique_ptr<actions::PanelAction>   m_DeletePermanentlyAction;
+    std::unique_ptr<actions::PanelAction>   m_DuplicateAction;
+    std::unique_ptr<actions::PanelAction>   m_CompressHereAction;
+    std::unique_ptr<actions::PanelAction>   m_CompressToOppositeAction;
+    std::unique_ptr<actions::PanelAction>   m_OpenFileAction;
 }
 
 - (instancetype) initWithItems:(vector<VFSListingItem>)_items

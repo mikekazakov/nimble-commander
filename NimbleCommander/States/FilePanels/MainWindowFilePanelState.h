@@ -49,7 +49,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     FilePanelMainSplitView *m_SplitView;
     NSLayoutConstraint     *m_MainSplitViewBottomConstraint;
 
-    unique_ptr<MainWindowFilePanelState_OverlappedTerminalSupport> m_OverlappedTerminal;
+    std::unique_ptr<MainWindowFilePanelState_OverlappedTerminalSupport> m_OverlappedTerminal;
     
     ColoredSeparatorLine *m_SeparatorLine;
     MainWindowFilePanelsStateToolbarDelegate *m_ToolbarDelegate;

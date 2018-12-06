@@ -9,7 +9,7 @@ MASAppInstalledChecker::MASAppInstalledChecker()
 
 MASAppInstalledChecker &MASAppInstalledChecker::Instance()
 {
-    static auto inst = make_unique<MASAppInstalledChecker>();
+    static auto inst = std::make_unique<MASAppInstalledChecker>();
     return *inst;
 }
 

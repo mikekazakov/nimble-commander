@@ -98,8 +98,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     const auto concurrency_per_repo = 4;
     using Que = nc::vfsicon::detail::IconRepositoryImplBase::GCDLimitedConcurrentQueue;
     
-    return make_unique<nc::vfsicon::IconRepositoryImpl>(icon_builder,
-                                                        make_unique<Que>(concurrency_per_repo));
+    return std::make_unique<nc::vfsicon::IconRepositoryImpl>
+    (icon_builder, std::make_unique<Que>(concurrency_per_repo));
 }
 
 - (nc::panel::DirectoryAccessProvider&)directoryAccessProvider

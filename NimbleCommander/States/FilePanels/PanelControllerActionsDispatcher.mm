@@ -21,7 +21,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 @implementation NCPanelControllerActionsDispatcher
 {
     __unsafe_unretained PanelController *m_PC;
-    const unordered_map<SEL, unique_ptr<const actions::PanelAction> > *m_AM;
+    const unordered_map<SEL, std::unique_ptr<const actions::PanelAction> > *m_AM;
 }
 
 - (instancetype)initWithController:(PanelController*)_controller

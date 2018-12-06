@@ -23,8 +23,8 @@ static const auto g_LongProcessDelay = 100ms;
 @implementation FilePanelOverlappedTerminal
 {
     NCTermScrollView           *m_TermScrollView;
-    unique_ptr<ShellTask>       m_Task;
-    unique_ptr<Parser>          m_Parser;
+    std::unique_ptr<ShellTask>  m_Task;
+    std::unique_ptr<Parser>     m_Parser;
     string                      m_InitalWD;
     function<void()>            m_OnShellCWDChanged;
     function<void()>            m_OnLongTaskStarted;
@@ -56,13 +56,13 @@ static const auto g_LongProcessDelay = 100ms;
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
         [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:@"V:|-(==0)-[m_TermScrollView]-(==0)-|" options:0 metrics:nil views:NSDictionaryOfVariableBindings(m_TermScrollView)]];
         
-        m_Task = make_unique<ShellTask>();
+        m_Task = std::make_unique<ShellTask>();
         if( !GlobalConfig().GetBool(g_UseDefault) )
             if( GlobalConfig().Has(g_CustomPath) )
                 m_Task->SetShellPath(GlobalConfig().GetString(g_CustomPath));
         
         auto task_ptr = m_Task.get();
-        m_Parser = make_unique<Parser>(m_TermScrollView.screen,
+        m_Parser = std::make_unique<Parser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){
                                                task_ptr->WriteChildInput( string_view((const char*)_d, _sz) );
                                            });

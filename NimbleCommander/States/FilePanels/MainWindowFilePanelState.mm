@@ -175,7 +175,7 @@ static NSString *TitleForData( const data::Model* _data );
         m_ControllerStateJSONDecoder = &_controller_json_decoder;
         m_ClosedPanelsHistory = nullptr;
         m_OperationsPool = _pool.shared_from_this();
-        m_OverlappedTerminal = make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
+        m_OverlappedTerminal = std::make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
         
         m_LeftPanelControllers.emplace_back(m_PanelFactory());

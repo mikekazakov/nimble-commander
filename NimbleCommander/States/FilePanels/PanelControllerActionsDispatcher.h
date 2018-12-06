@@ -10,7 +10,7 @@ namespace actions{
     class PanelAction;
 }
     
-using PanelActionsMap = unordered_map<SEL, unique_ptr<const actions::PanelAction> >;
+using PanelActionsMap = unordered_map<SEL, std::unique_ptr<const actions::PanelAction> >;
 }
 
 @interface NCPanelControllerActionsDispatcher : AttachedResponder<NCPanelViewKeystrokeSink>

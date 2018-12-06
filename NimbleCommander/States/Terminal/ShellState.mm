@@ -25,8 +25,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
 @implementation NCTermShellState
 {
     NCTermScrollView           *m_TermScrollView;
-    unique_ptr<ShellTask>       m_Task;
-    unique_ptr<Parser>          m_Parser;
+    std::unique_ptr<ShellTask>  m_Task;
+    std::unique_ptr<Parser>     m_Parser;
     string                      m_InitalWD;
     NSLayoutConstraint         *m_TopLayoutConstraint;
 }
@@ -55,12 +55,12 @@ static const auto g_CustomPath = "terminal.customShellPath";
                                                     metrics:nil
                                                     views:views]];
 
-        m_Task = make_unique<ShellTask>();
+        m_Task = std::make_unique<ShellTask>();
         if( !GlobalConfig().GetBool(g_UseDefault) )
             if( GlobalConfig().Has(g_CustomPath) )
                 m_Task->SetShellPath(GlobalConfig().GetString(g_CustomPath));
         auto task_ptr = m_Task.get();
-        m_Parser = make_unique<Parser>(m_TermScrollView.screen,
+        m_Parser = std::make_unique<Parser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){
                                                task_ptr->WriteChildInput( string_view((const char*)_d, _sz) );
                                            });

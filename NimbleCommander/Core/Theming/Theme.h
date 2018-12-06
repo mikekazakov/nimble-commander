@@ -139,5 +139,5 @@ public:
     
 private:
     struct Internals;
-    unique_ptr<Internals> I;
+    std::unique_ptr<Internals> I;
 };

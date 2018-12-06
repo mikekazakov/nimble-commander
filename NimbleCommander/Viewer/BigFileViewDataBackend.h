@@ -61,10 +61,10 @@ private:
     int         m_Encoding;
     void        (^m_OnDecoded)() = nullptr;
 
-    unique_ptr<UniChar[]> m_DecodeBuffer;   // decoded buffer with unichars
+    std::unique_ptr<UniChar[]> m_DecodeBuffer;   // decoded buffer with unichars
                                             // useful size of m_DecodedBufferSize
 
-    unique_ptr<uint32_t[]> m_DecodeBufferIndx;    // array indexing every m_DecodeBuffer unicode character into a
+    std::unique_ptr<uint32_t[]> m_DecodeBufferIndx;    // array indexing every m_DecodeBuffer unicode character into a
                                             // byte offset within original file window
                                             // useful size of m_DecodedBufferSize
     

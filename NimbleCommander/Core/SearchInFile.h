@@ -68,8 +68,8 @@ private:
     CFStringRef m_RequestedTextSearch;
     int         m_TextSearchEncoding;
     
-    unique_ptr<uint16_t[]> m_DecodedBuffer;
-    unique_ptr<uint32_t[]> m_DecodedBufferIndx;
+    std::unique_ptr<uint16_t[]> m_DecodedBuffer;
+    std::unique_ptr<uint32_t[]> m_DecodedBufferIndx;
     
     size_t      m_DecodedBufferSize;
     CFStringRef m_DecodedBufferString;

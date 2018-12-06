@@ -60,7 +60,7 @@ private:
     int ReadFileWindowSeqPart(size_t _offset, size_t _len);
 
     shared_ptr<VFSFile> m_File;
-    unique_ptr<uint8_t[]> m_Window;
+    std::unique_ptr<uint8_t[]> m_Window;
     size_t m_WindowSize = std::numeric_limits<size_t>::max();
     size_t m_WindowPos = std::numeric_limits<size_t>::max();
 };

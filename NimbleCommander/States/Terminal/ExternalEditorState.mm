@@ -14,8 +14,8 @@ using namespace nc::term;
 
 @implementation NCTermExternalEditorState
 {
-    unique_ptr<SingleTask>  m_Task;
-    unique_ptr<Parser>          m_Parser;
+    std::unique_ptr<SingleTask> m_Task;
+    std::unique_ptr<Parser>     m_Parser;
     NCTermScrollView           *m_TermScrollView;
     boost::filesystem::path     m_BinaryPath;
     string                      m_Params;
@@ -53,9 +53,9 @@ using namespace nc::term;
         
         __weak NCTermExternalEditorState *weakself = self;
         
-        m_Task = make_unique<SingleTask>();
+        m_Task = std::make_unique<SingleTask>();
         auto task_raw_ptr = m_Task.get();
-        m_Parser = make_unique<Parser>(m_TermScrollView.screen,
+        m_Parser = std::make_unique<Parser>(m_TermScrollView.screen,
                                        [=](const void* _d, int _sz){
                                            task_raw_ptr->WriteChildInput(_d, _sz);
                                        });

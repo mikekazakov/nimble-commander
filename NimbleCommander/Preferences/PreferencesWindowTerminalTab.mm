@@ -55,14 +55,14 @@ private:
 @implementation PreferencesWindowTerminalTab
 {
     NSFont *m_Font;
-    unique_ptr<ConfigBinder> m_B1;
+    std::unique_ptr<ConfigBinder> m_B1;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
-        m_B1 = make_unique<ConfigBinder>( GlobalConfig(), "terminal.useDefaultLoginShell", self, @"usesDefaultLoginShell" );
+        m_B1 = std::make_unique<ConfigBinder>( GlobalConfig(), "terminal.useDefaultLoginShell", self, @"usesDefaultLoginShell" );
     }
     return self;
 }

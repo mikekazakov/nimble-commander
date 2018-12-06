@@ -82,7 +82,7 @@ const static vector<pair<NSString*,int>> g_Algos = {
     self.Progress.doubleValue = 0;
     
     m_WorkQue.Run([=]{
-        auto buf = make_unique<uint8_t[]>(chunk_sz);
+        auto buf = std::make_unique<uint8_t[]>(chunk_sz);
         uint64_t total_fed = 0;
         for(auto &i:m_Filenames) {
             if( m_WorkQue.IsStopped() )

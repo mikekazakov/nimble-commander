@@ -57,7 +57,7 @@ struct StateStorage
     NCPanelViewHeader          *m_HeaderView;
     NCPanelViewFooter          *m_FooterView;
     
-    unique_ptr<IconRepository>  m_IconRepository;
+    std::unique_ptr<IconRepository> m_IconRepository;
     
     int                         m_CursorPos;
     NSEventModifierFlagsHolder  m_KeyboardModifierFlags;

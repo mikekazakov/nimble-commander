@@ -126,12 +126,12 @@ struct StateStorage
 
 - (NSView<NCPanelViewPresentationProtocol>*) spawnItemViewWithLayout:(const PanelViewLayout&)_layout
 {
-    if( auto ll = any_cast<PanelListViewColumnsLayout>(&_layout.layout) ) {
+    if( auto ll = std::any_cast<PanelListViewColumnsLayout>(&_layout.layout) ) {
         auto v = [self spawnListView];
         v.columnsLayout = *ll;
         return v;
     }
-    else if( auto bl = any_cast<PanelBriefViewColumnsLayout>(&_layout.layout) ) {
+    else if( auto bl = std::any_cast<PanelBriefViewColumnsLayout>(&_layout.layout) ) {
         auto v = [self spawnBriefView];
         v.columnsLayout = *bl;
         return v;
@@ -728,21 +728,21 @@ struct StateStorage
     }
 }
 
-- (any) presentationLayout
+- (std::any) presentationLayout
 {
     if( auto v = objc_cast<PanelBriefView>(m_ItemsView) )
-        return any{[v columnsLayout]};
+        return std::any{[v columnsLayout]};
     if( auto v = objc_cast<PanelListView>(m_ItemsView) )
-        return any{[v columnsLayout]};
-    return any{PanelViewDisabledLayout{}};
+        return std::any{[v columnsLayout]};
+    return std::any{PanelViewDisabledLayout{}};
 }
 
 - (void) setPresentationLayout:(const PanelViewLayout&)_layout
 {
-    if( auto ll = any_cast<PanelListViewColumnsLayout>(&_layout.layout) ) {
+    if( auto ll = std::any_cast<PanelListViewColumnsLayout>(&_layout.layout) ) {
         [self setupListPresentationWithLayout:*ll];
     }
-    else if( auto bl = any_cast<PanelBriefViewColumnsLayout>(&_layout.layout) ) {
+    else if( auto bl = std::any_cast<PanelBriefViewColumnsLayout>(&_layout.layout) ) {
         [self setupBriefPresentationWithLayout:*bl];
         
     }

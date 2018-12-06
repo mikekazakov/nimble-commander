@@ -1,3 +1,4 @@
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RecentlyClosedMenuDelegate.h"
 #include "../ListingPromise.h"
 #include "LocationFormatter.h"
@@ -101,7 +102,7 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
         if( current_state ) {
             item.target = current_state;
             item.action = @selector(respawnRecentlyClosedCallout:);
-            item.representedObject = [[AnyHolder alloc] initWithAny:any{
+            item.representedObject = [[AnyHolder alloc] initWithAny:std::any{
                 RestoreClosedTabRequest(side, listing_promise)
             }];
         }
@@ -129,7 +130,7 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
         return;
     }
     
-    auto payload = [[AnyHolder alloc] initWithAny:any{
+    auto payload = [[AnyHolder alloc] initWithAny:std::any{
         RestoreClosedTabRequest(CurrentSide(current_state), records.front())
     }];
     objc_cast<NSMenuItem>(_sender).representedObject = payload;

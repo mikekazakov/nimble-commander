@@ -214,7 +214,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         item.image = rep.menu_icon;
         item.target = self;
         item.action = @selector(respawnRecentlyClosedCallout:);
-        item.representedObject = [[AnyHolder alloc] initWithAny:any{
+        item.representedObject = [[AnyHolder alloc] initWithAny:std::any{
             RestoreClosedTabRequest(side, v)
         }];
         [menu addItem:item];
@@ -236,7 +236,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
         if( !any_holder )
             return;
         
-        if( auto request = any_cast<RestoreClosedTabRequest>(&any_holder.any) ) {
+        if( auto request = std::any_cast<RestoreClosedTabRequest>(&any_holder.any) ) {
             const auto tab_view = request->side == RestoreClosedTabRequest::Side::Left ?
                 m_SplitView.leftTabbedHolder.tabView :
                 m_SplitView.rightTabbedHolder.tabView;

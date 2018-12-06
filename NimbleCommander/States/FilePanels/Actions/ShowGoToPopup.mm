@@ -76,14 +76,14 @@ static const auto g_MaxTextWidth = 600;
     }
 }
 
-- (void) performGoTo:(const any&)_context sender:(id)sender
+- (void) performGoTo:(const std::any&)_context sender:(id)sender
 {
     if( auto favorite_ptr =
-       any_cast<shared_ptr<const FavoriteLocationsStorage::Location>>(&_context) )
+       std::any_cast<shared_ptr<const FavoriteLocationsStorage::Location>>(&_context) )
         [self handlePersistentLocation:(*favorite_ptr)->hosts_stack];
-    else if( auto favorite = any_cast<FavoriteLocationsStorage::Location>(&_context) )
+    else if( auto favorite = std::any_cast<FavoriteLocationsStorage::Location>(&_context) )
         [self handlePersistentLocation:favorite->hosts_stack];     
-    else if( auto plain_path = any_cast<string>(&_context) ) {
+    else if( auto plain_path = std::any_cast<string>(&_context) ) {
         auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = *plain_path;
         request->VFS = VFSNativeHost::SharedHost();
@@ -91,9 +91,9 @@ static const auto g_MaxTextWidth = 600;
         request->InitiatedByUser = true;
         [m_Panel GoToDirWithContext:request];
     }
-    else if( auto connection = any_cast<NetworkConnectionsManager::Connection>(&_context) )
+    else if( auto connection = std::any_cast<NetworkConnectionsManager::Connection>(&_context) )
         nc::panel::actions::OpenExistingNetworkConnection(*m_NetMgr).Perform(m_Panel, sender);
-    else if( auto vfs_path = any_cast<VFSPath>(&_context) ) {
+    else if( auto vfs_path = std::any_cast<VFSPath>(&_context) ) {
         auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = vfs_path->Path();
         request->VFS = vfs_path->Host();
@@ -101,9 +101,9 @@ static const auto g_MaxTextWidth = 600;
         request->InitiatedByUser = true;
         [m_Panel GoToDirWithContext:request];
     }
-    else if( auto promise = any_cast<pair<nc::core::VFSInstancePromise, string>>(&_context) )
+    else if( auto promise = std::any_cast<pair<nc::core::VFSInstancePromise, string>>(&_context) )
         [self handleVFSPromiseInstance:promise->first path:promise->second];
-    else if( auto listing_promise = any_cast<nc::panel::ListingPromise>(&_context) )
+    else if( auto listing_promise = std::any_cast<nc::panel::ListingPromise>(&_context) )
         nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
     else
         std::cerr << "GoToPopupListActionMediator performGoTo: unknown context type." << std::endl;
@@ -614,7 +614,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForFavorite( const FavoriteLocationsStorage
     auto menu_item = [[NSMenuItem alloc] init];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_f.location}];
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_f.location}];
     auto rep = loc_fmt::FavoriteFormatter{m_ConnectionManager}.Render(m_FmtOpts, _f);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
@@ -628,7 +628,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForLocation(
     auto menu_item = [[NSMenuItem alloc] init];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
-    menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_f}];
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_f}];
     auto rep = loc_fmt::FavoriteLocationFormatter{m_ConnectionManager}.Render(m_FmtOpts, _f);
     menu_item.title = ShrinkMenuItemTitle(rep.menu_title);
     menu_item.toolTip = rep.menu_tooltip;
@@ -639,7 +639,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForLocation(
 NSMenuItem *MenuItemBuilder::MenuItemForVolume( const utility::NativeFileSystemInfo &_volume )
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_volume.mounted_at_path}];
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_volume.mounted_at_path}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     auto rep = loc_fmt::VolumeFormatter{}.Render(m_FmtOpts, _volume);
@@ -652,7 +652,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForVolume( const utility::NativeFileSystemI
 NSMenuItem *MenuItemBuilder::MenuItemForConnection(const NetworkConnectionsManager::Connection &_c )
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_c}];
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_c}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     auto rep = loc_fmt::NetworkConnectionFormatter{}.Render(m_FmtOpts, _c);
@@ -665,7 +665,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForConnection(const NetworkConnectionsManag
 NSMenuItem *MenuItemBuilder::MenuItemForPath( const VFSPath &_p )
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_p}];
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_p}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     auto rep = loc_fmt::VFSPathFormatter{}.Render(m_FmtOpts, *_p.Host(), _p.Path());
@@ -680,7 +680,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForPromiseAndPath(const core::VFSInstanceMa
 {
     auto menu_item = [[NSMenuItem alloc] init];
     auto data = pair<core::VFSInstanceManager::Promise, string>{_promise, _path};
-    menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{move(data)}];
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{move(data)}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     auto rep = loc_fmt::VFSPromiseFormatter{}.Render(m_FmtOpts, _promise, _path);
@@ -693,7 +693,7 @@ NSMenuItem *MenuItemBuilder::MenuItemForPromiseAndPath(const core::VFSInstanceMa
 NSMenuItem *MenuItemBuilder::MenuItemForListingPromise(const ListingPromise &_promise)
 {
     const auto menu_item = [[NSMenuItem alloc] init];
-    menu_item.representedObject = [[AnyHolder alloc] initWithAny:any{_promise}];
+    menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{_promise}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);
     auto rep = loc_fmt::ListingPromiseFormatter{}.Render(m_FmtOpts, _promise);

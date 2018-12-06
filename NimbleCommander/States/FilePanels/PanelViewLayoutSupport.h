@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/Observable.h>
@@ -23,7 +23,7 @@ struct PanelViewLayout
     };
     
     string name;
-    any layout; // perhaps switch to variant?
+    std::any layout; // perhaps switch to variant?
     // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout or
     // PanelViewDisabledLayout at the moment.
     bool is_disabled() const;

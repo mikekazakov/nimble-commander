@@ -108,7 +108,7 @@ void GoToFavoriteLocation::Perform( PanelController *_target, id _sender ) const
     auto holder = objc_cast<AnyHolder>(menuitem.representedObject);
     if( holder == nil )
         return;
-    auto location = any_cast<PersistentLocation>(&holder.any);
+    auto location = std::any_cast<PersistentLocation>(&holder.any);
     if( location == nil )
         return;
     

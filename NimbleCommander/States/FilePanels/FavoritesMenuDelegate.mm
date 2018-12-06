@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "PanelDataPersistency.h"
 #include "PanelControllerActionsDispatcher.h"
@@ -22,7 +22,7 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Favorite &_fav
     
     it.target = nil;
     it.action = @selector(OnGoToFavoriteLocation:);
-    it.representedObject = [[AnyHolder alloc] initWithAny:any(_favorite.location->hosts_stack)];
+    it.representedObject = [[AnyHolder alloc] initWithAny:std::any(_favorite.location->hosts_stack)];
     return it;
 }
 
@@ -33,7 +33,7 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
         it.title = title;
     it.target = nil;
     it.action = @selector(OnGoToFavoriteLocation:);
-    it.representedObject = [[AnyHolder alloc] initWithAny:any(_location.hosts_stack)];
+    it.representedObject = [[AnyHolder alloc] initWithAny:std::any(_location.hosts_stack)];
     return it;
 }
 

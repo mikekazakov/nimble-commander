@@ -77,7 +77,7 @@ namespace nc::panel {
 - (void) startFieldEditorRenaming;
 
 //PanelViewLayout
-- (any) presentationLayout;
+- (std::any) presentationLayout;
 - (void) setPresentationLayout:(const nc::panel::PanelViewLayout&)_layout;
 
 /*

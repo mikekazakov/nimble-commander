@@ -18,7 +18,7 @@ struct PersistentLocation
 {
     bool is_native() const noexcept;
     bool is_network() const noexcept;
-    vector<any> hosts;  // .front() is a deepest host, .back() is topmost
+    vector<std::any> hosts;  // .front() is a deepest host, .back() is topmost
                         // empty hosts means using native vfs
     string path;
 };

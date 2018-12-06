@@ -405,7 +405,7 @@ void OpenExistingNetworkConnection::Perform(PanelController *_target, id _sender
 {
     if( auto menuitem = objc_cast<NSMenuItem>(_sender) )
         if( auto holder = objc_cast<AnyHolder>(menuitem.representedObject) )
-            if( auto conn = any_cast<NetworkConnectionsManager::Connection>(&holder.any) )
+            if( auto conn = std::any_cast<NetworkConnectionsManager::Connection>(&holder.any) )
                 GoToConnection(_target, *conn, m_NetMgr);
 }
 

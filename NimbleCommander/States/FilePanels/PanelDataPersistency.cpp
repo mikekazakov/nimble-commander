@@ -91,7 +91,7 @@ bool PersistentLocation::is_native() const noexcept
     if( hosts.empty() )
         return true;
     
-    if( hosts.size() == 1 && any_cast<Native>(&hosts.front()) != nullptr )
+    if( hosts.size() == 1 && std::any_cast<Native>(&hosts.front()) != nullptr )
         return true;
         
     return false;
@@ -99,10 +99,10 @@ bool PersistentLocation::is_native() const noexcept
 
 bool PersistentLocation::is_network() const noexcept
 {
-    return !hosts.empty() && any_cast<Network>(&hosts.front());
+    return !hosts.empty() && std::any_cast<Network>(&hosts.front());
 }
 
-static nc::config::Value EncodeAny( const any& _host );
+static nc::config::Value EncodeAny( const std::any& _host );
 
 static bool IsNetworkVFS( const VFSHost& _host )
 {
@@ -113,7 +113,7 @@ static bool IsNetworkVFS( const VFSHost& _host )
            tag == vfs::WebDAVHost::UniqueTag;
 }
 
-static any EncodeState( const VFSHost& _host )
+static std::any EncodeState( const VFSHost& _host )
 {
     auto tag = _host.Tag();
     if( tag == VFSNativeHost::UniqueTag ) {
@@ -283,7 +283,7 @@ std::optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const jso
             else if( tag == vfs::UnRARHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
                     return std::nullopt; // invalid data
-                if( result.hosts.size() < 1 || !any_cast<Native>(&result.hosts.back()) )
+                if( result.hosts.size() < 1 || !std::any_cast<Native>(&result.hosts.back()) )
                     return std::nullopt; // invalid data
                 
                 result.hosts.emplace_back( ArcUnRAR{ h[g_HostInfoJunctionKey].GetString() } );
@@ -316,20 +316,20 @@ string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc 
         footprint += "||";
     }
     for( auto &h: _loc.hosts ) {
-        if( auto native = any_cast<Native>(&h) ) {
+        if( auto native = std::any_cast<Native>(&h) ) {
             footprint += VFSNativeHost::UniqueTag;
             footprint += "|";
         }
-        else if( auto psfs = any_cast<PSFS>(&h) ) {
+        else if( auto psfs = std::any_cast<PSFS>(&h) ) {
             footprint += vfs::PSHost::UniqueTag;
             footprint += "|[psfs]:";
         }
-        else if( auto xattr = any_cast<XAttr>(&h) ) {
+        else if( auto xattr = std::any_cast<XAttr>(&h) ) {
             footprint += vfs::XAttrHost::UniqueTag;
             footprint += "|";
             footprint += xattr->junction;
         }
-        else if( auto network = any_cast<Network>(&h) ) {
+        else if( auto network = std::any_cast<Network>(&h) ) {
             const auto &mgr = ConnectionsManager();
             if( auto conn = mgr.ConnectionByUUID(network->connection) ) {
                 footprint += VFSTagForNetworkConnection(*conn);
@@ -337,12 +337,12 @@ string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc 
                 footprint += NetworkConnectionsManager::MakeConnectionPath(*conn);
             }
         }
-        else if( auto la = any_cast<ArcLA>(&h) ) {
+        else if( auto la = std::any_cast<ArcLA>(&h) ) {
             footprint += vfs::ArchiveHost::UniqueTag;
             footprint += "|";
             footprint += la->junction;
         }
-        else if( auto rar = any_cast<ArcUnRAR>(&h) ) {
+        else if( auto rar = std::any_cast<ArcUnRAR>(&h) ) {
             footprint += vfs::UnRARHost::UniqueTag;
             footprint += "|";
             footprint += rar->junction;
@@ -363,18 +363,18 @@ string PanelDataPersisency::MakeVerbosePathString( const PersistentLocation &_lo
 {
     string verbose;
     for( auto &h: _loc.hosts ) {
-        if( auto psfs = any_cast<PSFS>(&h) )
+        if( auto psfs = std::any_cast<PSFS>(&h) )
             verbose += "[psfs]:";
-        else if( auto xattr = any_cast<XAttr>(&h) )
+        else if( auto xattr = std::any_cast<XAttr>(&h) )
             verbose += xattr->junction;
-        else if( auto network = any_cast<Network>(&h) ) {
+        else if( auto network = std::any_cast<Network>(&h) ) {
             const auto &mgr = ConnectionsManager();
             if( auto conn = mgr.ConnectionByUUID(network->connection) )
                 verbose += NetworkConnectionsManager::MakeConnectionPath(*conn);
         }
-        else if( auto la = any_cast<ArcLA>(&h) )
+        else if( auto la = std::any_cast<ArcLA>(&h) )
             verbose += la->junction;
-        else if( auto rar = any_cast<ArcUnRAR>(&h) )
+        else if( auto rar = std::any_cast<ArcUnRAR>(&h) )
             verbose += rar->junction;
     }
     
@@ -436,24 +436,24 @@ Value PanelDataPersisency::EncodeVFSHostInfo( const VFSHost& _host )
     return Value{kNullType};
 }
 
-static Value EncodeAny( const any& _host )
+static Value EncodeAny( const std::any& _host )
 {
     using namespace rapidjson;
     using namespace nc::config;
     Value json(rapidjson::kObjectType);
-    if( auto native = any_cast<Native>(&_host) ) {
+    if( auto native = std::any_cast<Native>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
                        MakeStandaloneString(VFSNativeHost::UniqueTag),
                        g_CrtAllocator );
         return json;
     }
-    else if( auto psfs = any_cast<PSFS>(&_host) ) {
+    else if( auto psfs = std::any_cast<PSFS>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
                        MakeStandaloneString(vfs::PSHost::UniqueTag),
                        g_CrtAllocator );
         return json;
     }
-    else if( auto xattr = any_cast<XAttr>(&_host) ) {
+    else if( auto xattr = std::any_cast<XAttr>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
                        MakeStandaloneString(vfs::XAttrHost::UniqueTag),
                        g_CrtAllocator );
@@ -462,7 +462,7 @@ static Value EncodeAny( const any& _host )
                        g_CrtAllocator );
         return json;
     }
-    else if( auto network = any_cast<Network>(&_host) ) {
+    else if( auto network = std::any_cast<Network>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
                        MakeStandaloneString(g_HostInfoTypeNetworkValue),
                        g_CrtAllocator );
@@ -471,7 +471,7 @@ static Value EncodeAny( const any& _host )
                        g_CrtAllocator );
         return json;
     }
-    else if( auto la = any_cast<ArcLA>(&_host) ) {
+    else if( auto la = std::any_cast<ArcLA>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
                        MakeStandaloneString(vfs::ArchiveHost::UniqueTag),
                        g_CrtAllocator );
@@ -480,7 +480,7 @@ static Value EncodeAny( const any& _host )
                        g_CrtAllocator );
         return json;
     }
-    else if( auto rar = any_cast<ArcUnRAR>(&_host) ) {
+    else if( auto rar = std::any_cast<ArcUnRAR>(&_host) ) {
         json.AddMember(MakeStandaloneString(g_HostInfoTypeKey),
                        MakeStandaloneString(vfs::UnRARHost::UniqueTag),
                        g_CrtAllocator );
@@ -493,34 +493,34 @@ static Value EncodeAny( const any& _host )
     return Value{kNullType};
 }
 
-static bool Fits( VFSHost& _alive, const any &_encoded )
+static bool Fits( VFSHost& _alive, const std::any &_encoded )
 {
     const auto tag = _alive.Tag();
     const auto encoded = &_encoded;
 
     if( tag == VFSNativeHost::UniqueTag ) {
-        if( any_cast<Native>(encoded) )
+        if( std::any_cast<Native>(encoded) )
             return true;
     }
     else if( tag == vfs::PSHost::UniqueTag ) {
-        if( any_cast<PSFS>(encoded) )
+        if( std::any_cast<PSFS>(encoded) )
             return true;
     }
     else if( tag == vfs::XAttrHost::UniqueTag ) {
-        if( auto xattr = any_cast<XAttr>(encoded) )
+        if( auto xattr = std::any_cast<XAttr>(encoded) )
             return xattr->junction == _alive.JunctionPath();
     }
     else if( IsNetworkVFS(_alive) ) {
-        if( auto network = any_cast<Network>(encoded) )
+        if( auto network = std::any_cast<Network>(encoded) )
             if( auto conn = ConnectionsManager().ConnectionForVFS( _alive ) )
                 return network->connection == conn->Uuid();
     }
     else if( tag == vfs::ArchiveHost::UniqueTag ) {
-        if( auto la = any_cast<ArcLA>(encoded) )
+        if( auto la = std::any_cast<ArcLA>(encoded) )
             return la->junction == _alive.JunctionPath();
     }
     else if( tag == vfs::UnRARHost::UniqueTag ) {
-        if( auto unrar = any_cast<ArcUnRAR>(encoded) )
+        if( auto unrar = std::any_cast<ArcUnRAR>(encoded) )
             return unrar->junction == _alive.JunctionPath();
     }
     return false;
@@ -528,7 +528,7 @@ static bool Fits( VFSHost& _alive, const any &_encoded )
 
 static VFSHostPtr FindFitting(
     const vector<std::weak_ptr<VFSHost>> &_hosts,
-    const any &_encoded,
+    const std::any &_encoded,
     const VFSHost *_parent /* may be nullptr */ )
 {
     for( auto &weak_host: _hosts )
@@ -561,20 +561,20 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
             }
             // no luck - have to build this layer from scratch
             
-            if( auto native = any_cast<Native>(&h) ) {
+            if( auto native = std::any_cast<Native>(&h) ) {
                 vfs.emplace_back( VFSNativeHost::SharedHost() );
             }
-            else if( auto psfs = any_cast<PSFS>(&h) ) {
+            else if( auto psfs = std::any_cast<PSFS>(&h) ) {
                 vfs.emplace_back( vfs::PSHost::GetSharedOrNew() );
             }
-            else if( auto xattr = any_cast<XAttr>(&h) ) {
+            else if( auto xattr = std::any_cast<XAttr>(&h) ) {
                 if( vfs.size() < 1 )
                     return VFSError::GenericError; // invalid data
                 
                 auto xattr_vfs = make_shared<vfs::XAttrHost>( xattr->junction.c_str(), vfs.back() );
                 vfs.emplace_back( xattr_vfs );
             }
-            else if( auto network = any_cast<Network>(&h) ) {
+            else if( auto network = std::any_cast<Network>(&h) ) {
                 auto &mgr = ConnectionsManager();
                 if( auto conn = mgr.ConnectionByUUID(network->connection) ) {
                     if ( auto host = mgr.SpawnHostFromConnection(*conn) )
@@ -585,14 +585,14 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
                 else
                     return VFSError::GenericError; // failed to find connection by uuid
             }
-            else if( auto la = any_cast<ArcLA>(&h) ) {
+            else if( auto la = std::any_cast<ArcLA>(&h) ) {
                 if( vfs.size() < 1 )
                     return VFSError::GenericError; // invalid data
                 
                 auto host = make_shared<vfs::ArchiveHost>( la->junction.c_str(), vfs.back() );
                 vfs.emplace_back( host );
             }
-            else if( auto rar = any_cast<ArcUnRAR>(&h) ) {
+            else if( auto rar = std::any_cast<ArcUnRAR>(&h) ) {
                 if( vfs.size() < 1 || !vfs.back()->IsNativeFS() )
                     return VFSError::GenericError; // invalid data
                 
@@ -627,7 +627,7 @@ std::optional<NetworkConnectionsManager::Connection> PanelDataPersisency::
     if( _location.hosts.empty() )
         return std::nullopt;
     
-    if( auto network = any_cast<Network>(&_location.hosts.front()) )
+    if( auto network = std::any_cast<Network>(&_location.hosts.front()) )
         if( auto conn = m_ConnectionsManager.ConnectionByUUID(network->connection) )
             return conn;
     

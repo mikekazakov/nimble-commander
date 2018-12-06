@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/FunctionKeysPass.h>
 #import <3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.h>
@@ -64,9 +64,9 @@ enum class SourceType
     function<ExternalToolsStorage&()>       m_ToolsStorage;
     ExternalToolsStorage::ObservationTicket m_ToolsObserver;
     vector<shared_ptr<const ExternalTool>>  m_Tools;
-    vector<any>                             m_AllNodes;
-    vector<any>                             m_SourceNodes;
-    vector<any>                             m_FilteredNodes;
+    vector<std::any>                        m_AllNodes;
+    vector<std::any>                        m_SourceNodes;
+    vector<std::any>                        m_FilteredNodes;
     SourceType                              m_SourceType;
 }
 
@@ -133,13 +133,13 @@ enum class SourceType
     
     int conflicts_amount = 0;
     for( auto &v: m_AllNodes ) {
-        if( auto node = any_cast<ActionShortcutNode>(&v) ) {
+        if( auto node = std::any_cast<ActionShortcutNode>(&v) ) {
             node->is_conflicted = node->current_shortcut &&
                                     counts[node->current_shortcut] > 1;
             if( node->is_conflicted )
                 conflicts_amount++;
         }
-        if( auto node = any_cast<ToolShortcutNode>(&v) ) {
+        if( auto node = std::any_cast<ToolShortcutNode>(&v) ) {
             node->is_conflicted = node->tool->m_Shorcut &&
                                     counts[node->tool->m_Shorcut] > 1;
             if( node->is_conflicted )
@@ -165,10 +165,10 @@ enum class SourceType
     if( m_SourceType == SourceType::Customized ) {
         m_SourceNodes.clear();
         for( auto &v: m_AllNodes ) {
-            if( auto node = any_cast<ActionShortcutNode>(&v) )
+            if( auto node = std::any_cast<ActionShortcutNode>(&v) )
                 if( node->is_customized )
                     m_SourceNodes.emplace_back(v);
-            if( auto node = any_cast<ToolShortcutNode>(&v) )
+            if( auto node = std::any_cast<ToolShortcutNode>(&v) )
                 if( node->is_customized )
                     m_SourceNodes.emplace_back(v);
         }
@@ -176,10 +176,10 @@ enum class SourceType
     if( m_SourceType == SourceType::Conflicts ) {
         m_SourceNodes.clear();
         for( auto &v: m_AllNodes ) {
-            if( auto node = any_cast<ActionShortcutNode>(&v) )
+            if( auto node = std::any_cast<ActionShortcutNode>(&v) )
                 if( node->is_conflicted )
                     m_SourceNodes.emplace_back(v);
-            if( auto node = any_cast<ToolShortcutNode>(&v) )
+            if( auto node = std::any_cast<ToolShortcutNode>(&v) )
                 if( node->is_conflicted )
                     m_SourceNodes.emplace_back(v);
         }
@@ -267,7 +267,7 @@ static NSImageView *SpawnCautionSign()
                   row:(NSInteger)row
 {
     if( row >= 0 && row < (int)m_FilteredNodes.size() ) {
-        if( auto node = any_cast<ActionShortcutNode>(&m_FilteredNodes[row]) ) {
+        if( auto node = std::any_cast<ActionShortcutNode>(&m_FilteredNodes[row]) ) {
             if( [tableColumn.identifier isEqualToString:@"action"] ) {
                 return SpawnLabelForAction(*node);
             }
@@ -295,7 +295,7 @@ static NSImageView *SpawnCautionSign()
                 return node->is_conflicted ? SpawnCautionSign() : nil;
             }
         }
-        if( auto node = any_cast<ToolShortcutNode>(&m_FilteredNodes[row]) ) {
+        if( auto node = std::any_cast<ToolShortcutNode>(&m_FilteredNodes[row]) ) {
             if( [tableColumn.identifier isEqualToString:@"action"] ) {
                 return SpawnLabelForTool(*node);
             }
@@ -397,9 +397,9 @@ static NSImageView *SpawnCautionSign()
     [self.Table reloadData];    
 }
 
-static bool ValidateNodeForFilter( const any& _node, NSString *_filter )
+static bool ValidateNodeForFilter( const std::any& _node, NSString *_filter )
 {
-    if( auto node = any_cast<ActionShortcutNode>(&_node) ) {
+    if( auto node = std::any_cast<ActionShortcutNode>(&_node) ) {
         const auto label = node->label;
         if( [label rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
             return true;
@@ -414,7 +414,7 @@ static bool ValidateNodeForFilter( const any& _node, NSString *_filter )
 
         return false;
     }
-    if( auto node = any_cast<ToolShortcutNode>(&_node) ) {
+    if( auto node = std::any_cast<ToolShortcutNode>(&_node) ) {
         const auto label = node->label;
         if( [label rangeOfString:_filter options:NSCaseInsensitiveSearch].length != 0 )
             return true;

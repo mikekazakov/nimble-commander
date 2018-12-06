@@ -16,26 +16,26 @@ namespace nc::panel {
 
 bool PanelViewLayout::is_disabled() const
 {
-    return  any_cast<PanelViewDisabledLayout>(&layout) != nullptr;
+    return std::any_cast<PanelViewDisabledLayout>(&layout) != nullptr;
 }
 
 PanelViewLayout::Type PanelViewLayout::type() const
 {
-    if( any_cast<PanelListViewColumnsLayout>(&layout) )
+    if( std::any_cast<PanelListViewColumnsLayout>(&layout) )
         return Type::List;
-    if( any_cast<PanelBriefViewColumnsLayout>(&layout) )
+    if( std::any_cast<PanelBriefViewColumnsLayout>(&layout) )
         return Type::Brief;
     return Type::Disabled;
 }
 
 const PanelBriefViewColumnsLayout *PanelViewLayout::brief() const
 {
-    return any_cast<PanelBriefViewColumnsLayout>(&layout);
+    return std::any_cast<PanelBriefViewColumnsLayout>(&layout);
 }
 
 const PanelListViewColumnsLayout *PanelViewLayout::list() const
 {
-    return any_cast<PanelListViewColumnsLayout>(&layout);
+    return std::any_cast<PanelListViewColumnsLayout>(&layout);
 }
 
 bool PanelViewLayout::operator==(const PanelViewLayout& _rhs) const

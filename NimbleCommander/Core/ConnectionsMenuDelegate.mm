@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectionsMenuDelegate.h"
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h>
@@ -48,7 +48,7 @@
         for( auto &c: m_Connections ) {
             NSMenuItem *regular_item = [[NSMenuItem alloc] init];
             regular_item.title = [NSString stringWithUTF8StdString:ncm.TitleForConnection(c)];
-            regular_item.representedObject = [[AnyHolder alloc] initWithAny:any{c}];
+            regular_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{c}];
             regular_item.action = @selector(OnGoToSavedConnectionItem:);
             [menu addItem:regular_item];
         }

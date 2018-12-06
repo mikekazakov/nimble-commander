@@ -36,8 +36,8 @@ public:
      */
     static string TitleForConnection(const Connection &_conn);
 
-    virtual optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const = 0;
-    virtual optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const = 0 ;
+    virtual std::optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const = 0;
+    virtual std::optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const = 0 ;
     
     virtual void InsertConnection( const Connection &_connection ) = 0;
     virtual void RemoveConnection( const Connection &_connection ) = 0;

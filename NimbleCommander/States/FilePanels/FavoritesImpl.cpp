@@ -71,14 +71,14 @@ void FavoriteLocationsStorageImpl::AddFavoriteLocation( Favorite _favorite )
     FireObservers( FavoritesChanged );
 }
 
-optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
+std::optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
     ComposeFavoriteLocation(VFSHost &_host,
                             const string &_directory,
                             const string &_title) const
 {
     const auto location = Encode(_host, _directory);
     if( !location )
-        return nullopt;
+        return std::nullopt;
     
     Favorite f;
     f.location = location;
@@ -204,16 +204,16 @@ config::Value FavoriteLocationsStorageImpl::VisitToJSON(const Visit &_visit)
     return json;
 }
 
-optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl::
+std::optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl::
     JSONToVisit( const config::Value& _json )
 {
     if( !_json.IsObject() )
-        return nullopt;
+        return std::nullopt;
     
     Visit v;
     
     if( !_json.HasMember("location") )
-        return nullopt;
+        return std::nullopt;
     if( auto l = PanelDataPersisency::JSONToLocation(_json["location"]) ) {
         auto location = make_shared<Location>();
         location->verbose_path = PanelDataPersisency::MakeVerbosePathString(*l);
@@ -221,14 +221,14 @@ optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl::
         v.location = location;
     }
     else
-        return nullopt;
+        return std::nullopt;
     
     if( !_json.HasMember("visits_count") || !_json["visits_count"].IsInt() )
-        return nullopt;
+        return std::nullopt;
     v.visits_count = _json["visits_count"].GetInt();
     
     if( !_json.HasMember("last_visit") || !_json["last_visit"].IsInt64() )
-        return nullopt;
+        return std::nullopt;
     v.last_visit = _json["last_visit"].GetInt64();
     
     return move(v);
@@ -256,16 +256,16 @@ config::Value FavoriteLocationsStorageImpl::FavoriteToJSON(const Favorite &_favo
     return json;
 }
 
-optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
+std::optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
     JSONToFavorite( const config::Value& _json )
 {
     if( !_json.IsObject() )
-        return nullopt;
+        return std::nullopt;
     
     Favorite f;
     
     if( !_json.HasMember("location") )
-        return nullopt;
+        return std::nullopt;
     if( auto l = PanelDataPersisency::JSONToLocation(_json["location"]) ) {
         auto location = make_shared<Location>();
         location->verbose_path = PanelDataPersisency::MakeVerbosePathString(*l);
@@ -273,7 +273,7 @@ optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
         f.location = location;
     }
     else
-        return nullopt;
+        return std::nullopt;
 
     if( _json.HasMember("title") && _json["title"].IsString() )
         f.title = _json["title"].GetString();

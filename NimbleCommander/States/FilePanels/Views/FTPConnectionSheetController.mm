@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
@@ -18,7 +18,7 @@
 
 @implementation FTPConnectionSheetController
 {
-    optional<NetworkConnectionsManager::Connection> m_Original;
+    std::optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::FTP m_Connection;
 }
 

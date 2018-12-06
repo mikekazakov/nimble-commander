@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DropboxAccountSheetController.h"
 #import <AppAuth.h>
 #include "OIDRedirectHTTPHandler+FixedPort.h"
@@ -49,7 +49,7 @@ enum class State
 {
     OIDRedirectHTTPHandler *m_RedirectHTTPHandler;
     string m_Token;
-    optional<NetworkConnectionsManager::Connection> m_Original;
+    std::optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::Dropbox m_Connection;
     State m_State;
 }

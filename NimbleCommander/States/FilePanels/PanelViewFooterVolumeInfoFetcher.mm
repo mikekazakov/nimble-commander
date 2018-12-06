@@ -27,7 +27,7 @@ struct LookPath
     VFSHostWeakPtr                              host;
     string                                      path;
     vector<FooterVolumeInfoFetcher*>            watchers;
-    optional<VFSStatFS>                         current;
+    std::optional<VFSStatFS>                    current;
     bool                                        scheduled = false;
 };
 }
@@ -39,7 +39,7 @@ static const auto g_Delay = 5s;
 struct PanelViewFooterVolumeInfoFetcherInternals
 {
 
-static void AcceptResult( VFSHostWeakPtr _host, string _path, optional<VFSStatFS> _stat )
+static void AcceptResult( VFSHostWeakPtr _host, string _path, std::optional<VFSStatFS> _stat )
 {
     dispatch_assert_main_queue();
     
@@ -75,7 +75,7 @@ static void ScheduleIfNeed( LookPath &_lp, bool _hurry = false)
         if( auto h = host.lock() )
             result = h->StatFS(path.c_str(), stat, 0);
         dispatch_to_main_queue([=]{
-            AcceptResult( host, path, result == 0 ? optional<VFSStatFS>{stat} : nullopt );
+            AcceptResult( host, path, result == 0 ? std::optional<VFSStatFS>{stat} : std::nullopt );
         });
     });
     

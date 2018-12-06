@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkShareSheetController.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
@@ -20,7 +20,7 @@
 
 @implementation NetworkShareSheetController
 {
-    optional<NetworkConnectionsManager::Connection> m_Original;
+    std::optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::LANShare m_Connection;    
 }
 

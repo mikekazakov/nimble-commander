@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
@@ -28,7 +28,7 @@ static bool ValidateFileExistence( const string &_filepath )
 
 @implementation SFTPConnectionSheetController
 {
-    optional<NetworkConnectionsManager::Connection> m_Original;
+    std::optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::SFTP m_Connection;
 }
 

@@ -138,7 +138,7 @@ static any EncodeState( const VFSHost& _host )
     return {};
 }
 
-optional<PersistentLocation> PanelDataPersisency::
+std::optional<PersistentLocation> PanelDataPersisency::
     EncodeLocation( const VFSHost &_vfs, const string &_path )
 {
     PersistentLocation location;
@@ -159,7 +159,7 @@ optional<PersistentLocation> PanelDataPersisency::
             if( encoded.has_value() )
                 location.hosts.emplace_back( move(encoded) );
             else
-                return nullopt;
+                return std::nullopt;
         }
     }
     location.path = _path;
@@ -228,10 +228,10 @@ Value PanelDataPersisency::LocationToJSON( const PersistentLocation &_location )
     return json;
 }
 
-optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_json )
+std::optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_json )
 {
     if( !_json.IsObject() || !_json.HasMember(g_StackPathKey) || !_json[g_StackPathKey].IsString() )
-        return nullopt;
+        return std::nullopt;
 
     PersistentLocation result;
     result.path = _json[g_StackPathKey].GetString();
@@ -246,7 +246,7 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
             const auto has_string = [&h](const char *_key) { return h.HasMember(_key) && h[_key].IsString(); };
             
             if( !has_string(g_HostInfoTypeKey) )
-                return nullopt; // invalid data
+                return std::nullopt; // invalid data
             const auto tag = string_view{ h[g_HostInfoTypeKey].GetString() };
             
             if( tag == VFSNativeHost::UniqueTag ) {
@@ -257,15 +257,15 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
             }
             else if( tag == vfs::XAttrHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
-                    return nullopt; // invalid data
+                    return std::nullopt; // invalid data
                 if( result.hosts.size() < 1 )
-                    return nullopt; // invalid data
+                    return std::nullopt; // invalid data
                 
                 result.hosts.emplace_back( XAttr{  h[g_HostInfoJunctionKey].GetString() } );
             }
             else if( tag == g_HostInfoTypeNetworkValue ) {
                 if( !has_string(g_HostInfoUuidKey) )
-                    return nullopt; // invalid data
+                    return std::nullopt; // invalid data
                 
                 static const boost::uuids::string_generator uuid_gen{};
                 const auto uuid = uuid_gen( h[g_HostInfoUuidKey].GetString() );
@@ -274,17 +274,17 @@ optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const json &_j
             }
             else if( tag == vfs::ArchiveHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
-                    return nullopt; // invalid data
+                    return std::nullopt; // invalid data
                 if( result.hosts.size() < 1 )
-                    return nullopt; // invalid data
+                    return std::nullopt; // invalid data
                 
                 result.hosts.emplace_back( ArcLA{ h[g_HostInfoJunctionKey].GetString() } );
             }
             else if( tag == vfs::UnRARHost::UniqueTag ) {
                 if( !has_string(g_HostInfoJunctionKey) )
-                    return nullopt; // invalid data
+                    return std::nullopt; // invalid data
                 if( result.hosts.size() < 1 || !any_cast<Native>(&result.hosts.back()) )
-                    return nullopt; // invalid data
+                    return std::nullopt; // invalid data
                 
                 result.hosts.emplace_back( ArcUnRAR{ h[g_HostInfoJunctionKey].GetString() } );
             }
@@ -621,17 +621,17 @@ string PanelDataPersisency::GetPathFromState( const Value &_state )
     return "";
 }
 
-optional<NetworkConnectionsManager::Connection> PanelDataPersisency::
+std::optional<NetworkConnectionsManager::Connection> PanelDataPersisency::
     ExtractConnectionFromLocation( const PersistentLocation &_location )
 {
     if( _location.hosts.empty() )
-        return nullopt;
+        return std::nullopt;
     
     if( auto network = any_cast<Network>(&_location.hosts.front()) )
         if( auto conn = m_ConnectionsManager.ConnectionByUUID(network->connection) )
             return conn;
     
-    return nullopt;
+    return std::nullopt;
 }
 
 }

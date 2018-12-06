@@ -164,7 +164,7 @@ bool TemporaryNativeFileStorage::GetSubDirForFilename(const char *_filename, cha
     return false; // something is very bad with whole system
 }
 
-optional<string> TemporaryNativeFileStorage::WriteStringIntoTempFile( const string& _source)
+std::optional<string> TemporaryNativeFileStorage::WriteStringIntoTempFile( const string& _source)
 {
     string filename;
     for(int i = 0; i < 6; ++i)
@@ -172,12 +172,12 @@ optional<string> TemporaryNativeFileStorage::WriteStringIntoTempFile( const stri
     
     char path[MAXPATHLEN];
     if( !GetSubDirForFilename(filename.c_str(), path) )
-        return nullopt;
+        return std::nullopt;
     strcat(path, filename.c_str());
     
     int fd = open(path, O_EXLOCK|O_NONBLOCK|O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
     if(fd < 0)
-        return nullopt;
+        return std::nullopt;
     auto close_fd = at_scope_end([=]{ close(fd); });
     
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
@@ -192,34 +192,35 @@ optional<string> TemporaryNativeFileStorage::WriteStringIntoTempFile( const stri
         }
         else {
             unlink(path);
-            return nullopt;
+            return std::nullopt;
         }
     }
    
     return string(path);
 }
 
-optional<string> TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath, VFSHost &_host)
+std::optional<string> TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath,
+                                                                 VFSHost &_host)
 {
     VFSFilePtr vfs_file;
     if( _host.CreateFile(_vfs_filepath.c_str(), vfs_file, 0) < 0 )
-        return nullopt;
+        return std::nullopt;
 
     if( vfs_file->Open(VFSFlags::OF_Read) < 0 )
-        return nullopt;
+        return std::nullopt;
     
     char name[MAXPATHLEN];
     if( !GetFilenameFromPath(_vfs_filepath.c_str(), name) )
-        return nullopt;
+        return std::nullopt;
     
     char native_path[MAXPATHLEN];
     if( !GetSubDirForFilename(name, native_path) )
-       return nullopt;
+       return std::nullopt;
     strcat(native_path, name);
     
     int fd = open(native_path, O_EXLOCK|O_NONBLOCK|O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
     if( fd < 0 )
-        return nullopt;
+        return std::nullopt;
     
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
     
@@ -257,7 +258,7 @@ optional<string> TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_f
 error:
     close(fd);
     unlink(native_path);
-    return nullopt;
+    return std::nullopt;
 }
 
 bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,

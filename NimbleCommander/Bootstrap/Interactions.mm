@@ -6,7 +6,7 @@
 
 namespace nc::bootstrap {
 
-optional<string> AskUserForLicenseFile()
+std::optional<string> AskUserForLicenseFile()
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.resolvesAliases = true;
@@ -25,7 +25,7 @@ optional<string> AskUserForLicenseFile()
             string path = panel.URL.path.fileSystemRepresentationSafe;
             return path;
         }
-    return nullopt;
+    return std::nullopt;
 }
 
 bool AskUserToResetDefaults()

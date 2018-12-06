@@ -13,8 +13,8 @@ public:
     ConfigBackedNetworkConnectionsManager(nc::config::Config &_config);
     ~ConfigBackedNetworkConnectionsManager();
 
-    optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const override;
-    optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const override;
+    std::optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const override;
+    std::optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const override;
     
     void InsertConnection( const Connection &_connection ) override;
     void RemoveConnection( const Connection &_connection ) override;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
@@ -15,22 +15,22 @@ FavoriteComposing::FavoriteComposing(const FavoriteLocationsStorage& _storage):
 {
 }
     
-optional< FavoriteLocationsStorage::Favorite > FavoriteComposing::
+std::optional< FavoriteLocationsStorage::Favorite > FavoriteComposing::
     FromURL( NSURL *_url )
 {
     if( !_url || !_url.fileURL )
-        return nullopt;
+        return std::nullopt;
     
     if( !_url.hasDirectoryPath )
         return FromURL( _url.URLByDeletingLastPathComponent );
 
     auto path = _url.fileSystemRepresentation;
     if( !path )
-        return nullopt;
+        return std::nullopt;
 
     auto f = m_Storage.ComposeFavoriteLocation(*VFSNativeHost::SharedHost(), path);
     if( !f )
-        return nullopt;
+        return std::nullopt;
     
 
     NSString *title;
@@ -55,16 +55,16 @@ static string TitleForItem( const VFSListingItem &_i )
     return boost::filesystem::path(_i.Directory()).parent_path().filename().native();
 }
 
-optional<FavoriteLocationsStorage::Favorite> FavoriteComposing::
+std::optional<FavoriteLocationsStorage::Favorite> FavoriteComposing::
     FromListingItem( const VFSListingItem &_i )
 {
     if( !_i )
-        return nullopt;
+        return std::nullopt;
 
     auto path = _i.IsDir() ? _i.Path() : _i.Directory();
     auto f = m_Storage.ComposeFavoriteLocation( *_i.Host(), path );
     if( !f )
-        return nullopt;
+        return std::nullopt;
 
     f->title = TitleForItem(_i);
 

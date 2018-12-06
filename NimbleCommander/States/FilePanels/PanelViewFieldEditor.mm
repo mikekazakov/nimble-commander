@@ -166,7 +166,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     const auto length = _string.length;
     const NSRange whole = NSMakeRange(0, length);
     NSRange name;
-    optional<NSRange> extension;
+    std::optional<NSRange> extension;
     
     const NSRange r = [_string rangeOfCharacterFromSet:dot options:NSBackwardsSearch];
     if( r.location > 0 && r.location < length - 1) { // has extension

@@ -16,9 +16,9 @@ public:
     
     void AddFavoriteLocation( Favorite _favorite ) override;
     
-    optional<Favorite> ComposeFavoriteLocation(VFSHost &_host,
-                                               const string &_directory,
-                                               const string &_title = "" ) const override;
+    std::optional<Favorite> ComposeFavoriteLocation(VFSHost &_host,
+                                                    const string &_directory,
+                                                    const string &_title = "" ) const override;
     
     void SetFavorites( const vector<Favorite> &_new_favorites ) override;
     vector<Favorite> Favorites( /*limit output later?*/ ) const override;
@@ -49,10 +49,10 @@ private:
     void LoadData( config::Config &_config, const char *_path );
     
     static nc::config::Value VisitToJSON(const Visit &_visit);
-    static optional<Visit> JSONToVisit( const nc::config::Value& _json );
+    static std::optional<Visit> JSONToVisit( const nc::config::Value& _json );
     
     static nc::config::Value FavoriteToJSON(const Favorite &_favorite);
-    static optional<Favorite> JSONToFavorite( const nc::config::Value& _json );
+    static std::optional<Favorite> JSONToFavorite( const nc::config::Value& _json );
     
     
     std::unordered_map<size_t, Visit> m_Visits;

@@ -105,7 +105,7 @@ static config::Value ConnectionToJSONObject( NetworkConnectionsManager::Connecti
     return value(rapidjson::kNullType);
 }
 
-static optional<NetworkConnectionsManager::Connection>
+static std::optional<NetworkConnectionsManager::Connection>
     JSONObjectToConnection( const config::Value &_object )
 {
     static const boost::uuids::string_generator uuid_gen{};
@@ -127,16 +127,16 @@ static optional<NetworkConnectionsManager::Connection>
     };
 
     if( _object.GetType() != kObjectType )
-        return nullopt;
+        return std::nullopt;
     
     if( !has_string("type") || !has_string("title") || !has_string("uuid") )
-        return nullopt;
+        return std::nullopt;
 
     string type = _object["type"].GetString();
     if( type == "ftp" ) {
         if( !has_string("user") || !has_string("host") ||
             !has_string("path") || !has_number("port") )
-            return nullopt;
+            return std::nullopt;
 
         NetworkConnectionsManager::FTP c;
         c.uuid = uuid_gen( _object["uuid"].GetString() );
@@ -151,7 +151,7 @@ static optional<NetworkConnectionsManager::Connection>
     else if( type == "sftp" ) {
         if( !has_string("user") || !has_string("host") ||
             !has_string("keypath") || !has_number("port") )
-            return nullopt;
+            return std::nullopt;
         
         NetworkConnectionsManager::SFTP c;
         c.uuid = uuid_gen( _object["uuid"].GetString() );
@@ -166,7 +166,7 @@ static optional<NetworkConnectionsManager::Connection>
     else if( type == "lanshare" ) {
         if( !has_string("user") || !has_string("host") ||
             !has_string("share") || !has_string("mountpoint") || !has_number("proto") )
-            return nullopt;
+            return std::nullopt;
     
         NetworkConnectionsManager::LANShare c;
         c.uuid = uuid_gen( _object["uuid"].GetString() );
@@ -181,7 +181,7 @@ static optional<NetworkConnectionsManager::Connection>
     }
     else if( type == "dropbox" ) {
         if( !has_string("account") )
-            return nullopt;
+            return std::nullopt;
 
         NetworkConnectionsManager::Dropbox c;
         c.uuid = uuid_gen( _object["uuid"].GetString() );
@@ -193,7 +193,7 @@ static optional<NetworkConnectionsManager::Connection>
     else if( type == "webdav" ) {
         if( !has_string("user") || !has_string("host") || !has_string("path") ||
             !has_number("port") || !has_bool("https") )
-                return nullopt;
+                return std::nullopt;
         
         NetworkConnectionsManager::WebDAV c;
         c.uuid = uuid_gen( _object["uuid"].GetString() );
@@ -207,7 +207,7 @@ static optional<NetworkConnectionsManager::Connection>
         return NetworkConnectionsManager::Connection( move(c) );
     }
 
-    return nullopt;
+    return std::nullopt;
 }
 
 static const string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
@@ -295,13 +295,13 @@ void ConfigBackedNetworkConnectionsManager::RemoveConnection( const Connection &
     dispatch_to_background([=]{ Save(); });
 }
 
-optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::ConnectionByUUID(const boost::uuids::uuid& _uuid) const
+std::optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::ConnectionByUUID(const boost::uuids::uuid& _uuid) const
 {
     std::lock_guard<std::mutex> lock(m_Lock);
     auto t = find_if(begin(m_Connections), end(m_Connections), [&](auto &_c){ return _c.Uuid() == _uuid; } );
     if( t != end(m_Connections) )
         return *t;
-    return nullopt;
+    return std::nullopt;
 }
 
 void ConfigBackedNetworkConnectionsManager::Save()
@@ -431,7 +431,7 @@ bool ConfigBackedNetworkConnectionsManager::AskForPassword(const Connection &_co
     return RunAskForPasswordModalWindow( TitleForConnection(_conn), _password );
 }
 
-optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::
+std::optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::
     ConnectionForVFS(const VFSHost& _vfs) const
 {
     function<bool(const Connection &)> pred;
@@ -469,7 +469,7 @@ optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMa
         };
     
     if( !pred )
-        return nullopt;
+        return std::nullopt;
     
     LOCK_GUARD(m_Lock) {
         const auto it = find_if( begin(m_Connections), end(m_Connections), pred );
@@ -477,7 +477,7 @@ optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMa
             return *it;
     }
     
-    return nullopt;
+    return std::nullopt;
 }
 
 VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection

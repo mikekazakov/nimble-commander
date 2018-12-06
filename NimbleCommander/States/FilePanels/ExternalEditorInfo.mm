@@ -22,32 +22,32 @@ struct ExternalEditorsPersistence
     constexpr static const auto onlyfiles = "onlyFiles";
     constexpr static const auto terminal = "openInTerminal";
 
-    static optional<ExternalEditorStartupInfo> LoadFromJSON( const Value &_v )
+    static std::optional<ExternalEditorStartupInfo> LoadFromJSON( const Value &_v )
     {
         if( !_v.IsObject() )
-            return nullopt;
+            return std::nullopt;
     
         ExternalEditorStartupInfo ed;
         
         if( _v.HasMember(name) && _v[name].IsString() )
             ed.m_Name = _v[name].GetString();
         else
-            return nullopt;
+            return std::nullopt;
         
         if( _v.HasMember(path) && _v[path].IsString() )
             ed.m_Path = _v[path].GetString();
         else
-            return nullopt;
+            return std::nullopt;
 
         if( _v.HasMember(args) && _v[args].IsString() )
             ed.m_Arguments = _v[args].GetString();
         else
-            return nullopt;
+            return std::nullopt;
 
         if( _v.HasMember(mask) && _v[mask].IsString() )
             ed.m_Mask = _v[mask].GetString();
         else
-            return nullopt;
+            return std::nullopt;
 
         if( _v.HasMember(maxfilesize) && _v[maxfilesize].IsInt() )
             ed.m_MaxFileSize = _v[maxfilesize].GetInt();

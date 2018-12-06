@@ -36,9 +36,10 @@ public:
     static string MakeVerbosePathString( const PersistentLocation &_loc );
     static string MakeVerbosePathString( const VFSHost &_host, const string &_directory );
 
-    static optional<PersistentLocation> EncodeLocation( const VFSHost &_vfs, const string &_path );
+    static std::optional<PersistentLocation> EncodeLocation(const VFSHost &_vfs,
+                                                            const string &_path );
  
-    optional<NetworkConnectionsManager::Connection>
+    std::optional<NetworkConnectionsManager::Connection>
      ExtractConnectionFromLocation( const PersistentLocation &_location );
     
     // the following functions will return kNullType in case of error
@@ -48,7 +49,7 @@ public:
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ these functions should be replaced by the following chain:
     // VFSHost+Path or VFSListing => PersistentLocation => JSON representation
     
-    static optional<PersistentLocation> JSONToLocation( const json &_json );
+    static std::optional<PersistentLocation> JSONToLocation( const json &_json );
     static json LocationToJSON( const PersistentLocation &_location );
     
     // LocationToJSON( *EncodeLocation(host, path) ) == EncodeVFSPath(host, path)

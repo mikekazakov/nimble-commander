@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectToServer.h"
 #include "FTPConnectionSheetController.h"
 #include "SFTPConnectionSheetController.h"
@@ -83,7 +83,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 {
     NetworkConnectionsManager                       *m_Manager;
     vector<NetworkConnectionsManager::Connection>   m_Connections;
-    optional<NetworkConnectionsManager::Connection> m_OutputConnection;
+    std::optional<NetworkConnectionsManager::Connection> m_OutputConnection;
     bool                                            m_Shown;
 }
 

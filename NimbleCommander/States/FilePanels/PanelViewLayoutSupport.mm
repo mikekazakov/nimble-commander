@@ -151,17 +151,17 @@ static config::Value SaveLayout( const PanelViewLayout& _l )
     return v;
 }
 
-static optional<PanelViewLayout> LoadLayout( const config::Value& _from )
+static std::optional<PanelViewLayout> LoadLayout( const config::Value& _from )
 {
     using namespace rapidjson;
     if( !_from.IsObject() )
-        return nullopt;
+        return std::nullopt;
 
     PanelViewLayout l;
     if( _from.HasMember(g_TitleKey) && _from[g_TitleKey].IsString() )
         l.name = _from[g_TitleKey].GetString();
     else
-        return nullopt;
+        return std::nullopt;
     
     if( _from.HasMember(g_BriefKey) && _from[g_BriefKey].IsObject() ) {
         auto &o = _from[g_BriefKey];
@@ -186,10 +186,10 @@ static optional<PanelViewLayout> LoadLayout( const config::Value& _from )
         auto &o = _from[g_ListKey];
         PanelListViewColumnsLayout list;
         if( !o.HasMember(g_ListColumns) || !o[g_ListColumns].IsArray() )
-            return nullopt;
+            return std::nullopt;
         for( auto i = o[g_ListColumns].Begin(), e = o[g_ListColumns].End(); i != e; ++i ) {
             if( !i->IsObject()  )
-                return nullopt;
+                return std::nullopt;
             PanelListViewColumnsLayout::Column col;
             if( i->HasMember(g_ListColumKind) && (*i)[g_ListColumKind].IsNumber() )
                 col.kind = (PanelListViewColumns)(*i)[g_ListColumKind].GetInt();
@@ -208,7 +208,7 @@ static optional<PanelViewLayout> LoadLayout( const config::Value& _from )
     else if( _from.HasMember(g_DisabledKey) )
         l.layout = PanelViewDisabledLayout{};
     else
-        return nullopt;
+        return std::nullopt;
     
     return l;
 }

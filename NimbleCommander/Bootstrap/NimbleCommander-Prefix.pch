@@ -39,8 +39,6 @@
     using std::string;
     using std::string_view;
     using std::vector;
-    using std::optional;
-    using std::nullopt;
     using std::any;
     using std::any_cast;
     using std::function;

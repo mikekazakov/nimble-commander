@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WebDAVConnectionSheetController.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
@@ -19,8 +19,8 @@
 
 @implementation WebDAVConnectionSheetController
 {
-    optional<NetworkConnectionsManager::Connection> m_Original;
-    optional<string> m_Password;
+    std::optional<NetworkConnectionsManager::Connection> m_Original;
+    std::optional<string> m_Password;
     NetworkConnectionsManager::WebDAV m_Connection;
 }
 

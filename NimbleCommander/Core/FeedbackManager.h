@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 class FeedbackManager
@@ -44,6 +44,6 @@ private:
     const time_t    m_FirstRunTime;
     bool            m_ShownRatingOverlay = false;
     
-    optional<int>   m_LastRating; // 0 - discarded, [1-5] - rating
-    optional<time_t>m_LastRatingTime;
+    std::optional<int>   m_LastRating; // 0 - discarded, [1-5] - rating
+    std::optional<time_t>m_LastRatingTime;
 };

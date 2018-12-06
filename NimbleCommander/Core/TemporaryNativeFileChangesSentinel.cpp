@@ -5,17 +5,17 @@
 #include <VFS/Native.h>
 #include "TemporaryNativeFileChangesSentinel.h"
 
-static optional<vector<uint8_t>> CalculateFileHash(const string &_path)
+static std::optional<vector<uint8_t>> CalculateFileHash(const string &_path)
 {
     const int chunk_sz = 1*1024*1024;
     VFSFilePtr file;
     int rc = VFSNativeHost::SharedHost()->CreateFile(_path.c_str(), file, nullptr );
     if( rc != 0 )
-        return nullopt;
+        return std::nullopt;
     
     rc = file->Open( VFSFlags::OF_Read | VFSFlags::OF_ShLock, nullptr );
     if(rc != 0)
-        return nullopt;
+        return std::nullopt;
     
     auto buf = std::make_unique<uint8_t[]>(chunk_sz);
     Hash h(Hash::MD5);
@@ -25,7 +25,7 @@ static optional<vector<uint8_t>> CalculateFileHash(const string &_path)
         h.Feed(buf.get(), rn);
     
     if( rn < 0 )
-        return nullopt;
+        return std::nullopt;
     
     return h.Final();
 }

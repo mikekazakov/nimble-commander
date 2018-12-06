@@ -11,7 +11,7 @@ public:
     /**
      * Thread-safe.
      */
-    optional<string> CopySingleFile( const string &_vfs_filepath, VFSHost &_host );
+    std::optional<string> CopySingleFile( const string &_vfs_filepath, VFSHost &_host );
 
     // _vfs_dirpath may be with trailing slash or without
     bool CopyDirectory(const string &_vfs_dirpath,
@@ -20,7 +20,7 @@ public:
                        function<bool()> _cancel_checker,
                        string &_tmp_dirpath);
     
-    optional<string> WriteStringIntoTempFile( const string& _source);
+    std::optional<string> WriteStringIntoTempFile( const string& _source);
     
                        
     static TemporaryNativeFileStorage &Instance();

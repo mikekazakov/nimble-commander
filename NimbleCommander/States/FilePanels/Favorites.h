@@ -27,9 +27,9 @@ public:
     virtual ~FavoriteLocationsStorage() = default;
 
     // Favorite locations management
-    virtual optional<Favorite> ComposeFavoriteLocation(VFSHost &_host,
-                                                       const string &_directory,
-                                                       const string &_title = "" ) const = 0;
+    virtual std::optional<Favorite> ComposeFavoriteLocation(VFSHost &_host,
+                                                            const string &_directory,
+                                                            const string &_title = "" ) const = 0;
     virtual void AddFavoriteLocation( Favorite _favorite ) = 0;
     virtual void SetFavorites( const vector<Favorite> &_new_favorites ) = 0;
     virtual vector<Favorite> Favorites( /*limit output later?*/ ) const = 0;

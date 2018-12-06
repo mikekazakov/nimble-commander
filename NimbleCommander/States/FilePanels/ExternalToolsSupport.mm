@@ -334,17 +334,17 @@ static nc::config::Value SaveTool( const ExternalTool& _et )
     return v;
 }
 
-static optional<ExternalTool> LoadTool( const nc::config::Value& _from )
+static std::optional<ExternalTool> LoadTool( const nc::config::Value& _from )
 {
     using namespace rapidjson;
     if( !_from.IsObject() )
-        return nullopt;
+        return std::nullopt;
     
     ExternalTool et;
     if( _from.HasMember(g_PathKey) && _from[g_PathKey].IsString() )
         et.m_ExecutablePath = _from[g_PathKey].GetString();
     else
-        return nullopt;
+        return std::nullopt;
 
     if( _from.HasMember(g_TitleKey) && _from[g_TitleKey].IsString() )
         et.m_Title = _from[g_TitleKey].GetString();

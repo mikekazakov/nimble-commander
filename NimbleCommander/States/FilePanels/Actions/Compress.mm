@@ -39,7 +39,7 @@ void CompressHere::Perform( PanelController *_target, id _sender ) const
     auto op = make_shared<nc::ops::Compression>(move(entries),
                                                 _target.currentDirectoryPath,
                                                 _target.vfs);
-    const auto weak_op = weak_ptr<nc::ops::Compression>{op};
+    const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = _target;
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
         FocusResult((PanelController*)weak_target, weak_op.lock());
@@ -76,7 +76,7 @@ void CompressToOpposite::Perform( PanelController *_target, id _sender ) const
     auto op = make_shared<nc::ops::Compression>(move(entries),
                                                 opposite_panel.currentDirectoryPath,
                                                 opposite_panel.vfs);
-    const auto weak_op = weak_ptr<nc::ops::Compression>{op};
+    const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = opposite_panel;
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
         FocusResult((PanelController*)weak_target, weak_op.lock());
@@ -120,7 +120,7 @@ void context::CompressHere::Perform( PanelController *_target, id _sender ) cons
                                                 _target.currentDirectoryPath,
                                                 _target.vfs);
 
-    const auto weak_op = weak_ptr<nc::ops::Compression>{op};
+    const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = _target;
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
         FocusResult((PanelController*)weak_target, weak_op.lock());
@@ -173,7 +173,7 @@ void context::CompressToOpposite::Perform( PanelController *_target, id _sender 
     auto op = make_shared<nc::ops::Compression>(move(entries),
                                                 opposite_panel.currentDirectoryPath,
                                                 opposite_panel.vfs);
-    const auto weak_op = weak_ptr<nc::ops::Compression>{op};
+    const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = opposite_panel;
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
         FocusResult((PanelController*)weak_target, weak_op.lock());

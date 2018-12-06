@@ -64,7 +64,7 @@ public:
     
     void SetVFSInstanceManager(core::VFSInstanceManager &_mgr);
 private:
-    deque<Path>         m_History;
+    std::deque<Path>    m_History;
      // lesser the index - farther the history entry
      // most recent entry is at .size()-1
     unsigned            m_PlayingPosition = 0; // have meaningful value only when m_IsRecording==false

@@ -249,7 +249,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
 - (void) externalToolsChanged
 {
     dispatch_assert_main_queue();
-    deque<int> to_remove;
+    std::deque<int> to_remove;
     for( NSToolbarItem *i in m_Toolbar.items ) {
         if( [i.itemIdentifier hasPrefix:g_ExternalToolsIdentifiersPrefix] ) {
             const int n = atoi( i.itemIdentifier.UTF8String + g_ExternalToolsIdentifiersPrefix.length );

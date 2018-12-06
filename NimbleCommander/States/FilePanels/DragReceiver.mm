@@ -25,8 +25,8 @@ static NSArray<NSURL*> *ExtractURLs(NSPasteboard *_source);
 static int CountItemsWithType( id<NSDraggingInfo> _sender, NSString *_type );
 static NSString *URLs_Promise_UTI();
 static NSString *URLs_UTI();
-static map<string, vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls);
-static vector<VFSListingItem> FetchDirectoriesItems(const map<string, vector<string>>& _input,
+static std::map<string, vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls);
+static vector<VFSListingItem> FetchDirectoriesItems(const std::map<string, vector<string>>& _input,
                                                     VFSHost& _host);
 static void AddPanelRefreshIfNecessary(PanelController *_target,
                                        ops::Operation &_operation);
@@ -466,11 +466,11 @@ static NSString *URLs_UTI()
     return uti;
 }
 
-static map<string, vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls)
+static std::map<string, vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls)
 {
     if(!_file_urls)
         return {};
-    map<string, vector<string>> files; // directory/ -> [filename1, filename2, ...]
+    std::map<string, vector<string>> files; // directory/ -> [filename1, filename2, ...]
     for(NSURL *url in _file_urls) {
         if( !objc_cast<NSURL>(url) ) continue; // guard agains malformed input data
         boost::filesystem::path source_path = url.path.fileSystemRepresentation;
@@ -480,7 +480,7 @@ static map<string, vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_fil
     return files;
 }
 
-static vector<VFSListingItem> FetchDirectoriesItems(const map<string, vector<string>>& _input,
+static vector<VFSListingItem> FetchDirectoriesItems(const std::map<string, vector<string>>& _input,
                                                     VFSHost& _host)
 {
     vector<VFSListingItem> source_items;

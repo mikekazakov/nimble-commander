@@ -527,7 +527,7 @@ static bool Fits( VFSHost& _alive, const any &_encoded )
 }
 
 static VFSHostPtr FindFitting(
-    const vector<weak_ptr<VFSHost>> &_hosts,
+    const vector<std::weak_ptr<VFSHost>> &_hosts,
     const any &_encoded,
     const VFSHost *_parent /* may be nullptr */ )
 {

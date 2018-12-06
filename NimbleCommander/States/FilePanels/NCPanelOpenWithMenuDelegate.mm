@@ -86,7 +86,7 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
     string                          m_DefaultHandlerPath;
     string                          m_ItemsUTI;
     SerialQueue                     m_FetchQueue;
-    set<NSMenu*>                    m_ManagedMenus;
+    std::set<NSMenu*>               m_ManagedMenus;
 }
 
 + (NSString*) regularMenuIdentifier

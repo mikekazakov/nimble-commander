@@ -34,7 +34,7 @@ public:
     /**
      * Returns a promise for specified vfs, if the information is available.
      */
-    virtual Promise PreserveVFS( const weak_ptr<VFSHost>& _instance ) = 0;
+    virtual Promise PreserveVFS( const std::weak_ptr<VFSHost>& _instance ) = 0;
     
     /**
      * Will return and alive instance if it's alive, will try to recreate it (will all upchain) if otherwise.
@@ -59,7 +59,7 @@ public:
      */
     virtual string GetVerboseVFSTitle( const Promise &_promise ) = 0;
     
-    virtual vector<weak_ptr<VFSHost>> AliveHosts() = 0;
+    virtual vector<std::weak_ptr<VFSHost>> AliveHosts() = 0;
     
     virtual unsigned KnownVFSCount() = 0;
     virtual Promise GetVFSPromiseByPosition( unsigned _at) = 0;

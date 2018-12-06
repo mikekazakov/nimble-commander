@@ -24,7 +24,7 @@ public:
     /**
      * Returns a promise for specified vfs, if the information is available.
      */
-    Promise PreserveVFS( const weak_ptr<VFSHost>& _instance );
+    Promise PreserveVFS( const std::weak_ptr<VFSHost>& _instance );
     
     /**
      * Will return and alive instance if it's alive, will try to recreate it (will all upchain) if otherwise.
@@ -48,7 +48,7 @@ public:
      */
     string GetVerboseVFSTitle( const Promise &_promise );
     
-    vector<weak_ptr<VFSHost>> AliveHosts();
+    vector<std::weak_ptr<VFSHost>> AliveHosts();
     
     unsigned KnownVFSCount();
     Promise GetVFSPromiseByPosition( unsigned _at);
@@ -90,7 +90,7 @@ private:
     void SweepDeadMemory();
     
     Promise SpawnPromiseFromInfo_Unlocked( Info &_info );
-    Info *InfoFromVFSWeakPtr_Unlocked(const weak_ptr<VFSHost> &_ptr);
+    Info *InfoFromVFSWeakPtr_Unlocked(const std::weak_ptr<VFSHost> &_ptr);
     Info *InfoFromVFSPtr_Unlocked(const shared_ptr<VFSHost> &_ptr);
     Info *InfoFromID_Unlocked(uint64_t _inst_id);
     
@@ -101,7 +101,7 @@ private:
     uint64_t                    m_MemoryNextID = 1;
     spinlock                    m_MemoryLock;
     
-    vector<weak_ptr<VFSHost>>   m_AliveHosts;
+    vector<std::weak_ptr<VFSHost>>   m_AliveHosts;
     spinlock                    m_AliveHostsLock;
 };
 

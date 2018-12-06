@@ -249,7 +249,7 @@ void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
             __weak PanelController *weak_panel = _target;
             
             const auto op = make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
-            const auto weak_op = weak_ptr<nc::ops::DirectoryCreation>{op};
+            const auto weak_op = std::weak_ptr<nc::ops::DirectoryCreation>{op};
             op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
                 const auto &dir_names = weak_op.lock()->DirectoryNames();
                 const string to_focus = dir_names.empty() ? ""s : dir_names.front();

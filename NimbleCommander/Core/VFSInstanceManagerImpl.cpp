@@ -15,7 +15,7 @@ struct VFSInstanceManagerImpl::Info
     uint64_t            m_ID;
     uint64_t            m_PromisesCount; // combined from Promise instances and links via .m_ParentVFSID
     uint64_t            m_ParentVFSID; // zero means no parent vfs info
-    weak_ptr<VFSHost>   m_WeakHost; // need to think about clearing this weak_ptr, so host's memory can be freed
+    std::weak_ptr<VFSHost> m_WeakHost; // need to think about clearing this weak_ptr, so host's memory can be freed
     VFSConfiguration    m_Configuration;
 };
 
@@ -130,7 +130,8 @@ VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS( const VFSHostPtr& _
     return result;
 }
 
-VFSInstanceManager::Promise VFSInstanceManagerImpl::PreserveVFS( const weak_ptr<VFSHost>& _instance )
+VFSInstanceManager::Promise VFSInstanceManagerImpl::
+    PreserveVFS( const std::weak_ptr<VFSHost>& _instance )
 {
     LOCK_GUARD(m_MemoryLock) {
         // check if we have a weak_ptr to this instance
@@ -185,7 +186,8 @@ void VFSInstanceManagerImpl::DecPromiseCount(uint64_t _inst_id)
         FireObservers( KnownVFSListObservation );
 }
 
-VFSInstanceManagerImpl::Info *VFSInstanceManagerImpl::InfoFromVFSWeakPtr_Unlocked(const weak_ptr<VFSHost> &_ptr)
+VFSInstanceManagerImpl::Info *VFSInstanceManagerImpl::
+    InfoFromVFSWeakPtr_Unlocked(const std::weak_ptr<VFSHost> &_ptr)
 {
     for( auto &i: m_Memory )
         if( !i.m_WeakHost.owner_before(_ptr) && !_ptr.owner_before(i.m_WeakHost) )
@@ -401,9 +403,9 @@ VFSInstanceManager::ObservationTicket VFSInstanceManagerImpl::ObserveKnownVFSLis
     return AddObserver(move(_callback), KnownVFSListObservation);
 }
 
-vector<weak_ptr<VFSHost>> VFSInstanceManagerImpl::AliveHosts()
+vector<std::weak_ptr<VFSHost>> VFSInstanceManagerImpl::AliveHosts()
 {
-    vector<weak_ptr<VFSHost>> list;
+    vector<std::weak_ptr<VFSHost>> list;
     LOCK_GUARD(m_AliveHostsLock) {
         list = m_AliveHosts;
     }

@@ -38,12 +38,7 @@
     #include <any>
     using std::string;
     using std::string_view;
-    using std::list;
-    using std::deque;
-    using std::queue;
-    using std::map;
     using std::vector;
-    using std::set;
     using std::unordered_map;
     using std::unordered_set;
     using std::optional;
@@ -52,7 +47,6 @@
     using std::any_cast;
     using std::function;
     using std::shared_ptr;
-    using std::weak_ptr;
     using std::unique_ptr;
     using std::make_unique;
     using std::make_shared;

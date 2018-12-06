@@ -7,7 +7,7 @@ class NetworkConnectionsManager;
 
 namespace nc::panel {
     
-using StateActionsMap = unordered_map<SEL, std::unique_ptr<const actions::StateAction> >;
+using StateActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::StateAction> >;
 StateActionsMap BuildStateActionsMap(NetworkConnectionsManager &_net_mgr);
     
 }

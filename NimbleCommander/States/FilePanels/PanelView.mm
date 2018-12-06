@@ -48,7 +48,7 @@ struct StateStorage
     data::Model                *m_Data;
     vector< pair<__weak id<NCPanelViewKeystrokeSink>, int > > m_KeystrokeSinks;
     
-    unordered_map<uint64_t, StateStorage> m_States;
+    std::unordered_map<uint64_t, StateStorage> m_States;
     NSString                   *m_HeaderTitle;
     NCPanelViewFieldEditor     *m_RenamingEditor;
 

@@ -135,9 +135,9 @@ private:
     void UpdateCurrentTheme();
 
     string m_SelectedThemeName;
-    unordered_map< string, shared_ptr<const nc::config::Document> > m_Themes;
+    std::unordered_map< string, shared_ptr<const nc::config::Document> > m_Themes;
     vector<string> m_OrderedThemeNames;
-    unordered_map< string, shared_ptr<const nc::config::Document> > m_DefaultThemes;
+    std::unordered_map< string, shared_ptr<const nc::config::Document> > m_DefaultThemes;
     vector<string> m_OrderedDefaultThemeNames;
     ObservationTicket m_AppearanceObservation;
 };

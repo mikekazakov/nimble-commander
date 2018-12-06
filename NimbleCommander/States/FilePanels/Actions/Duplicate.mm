@@ -16,10 +16,10 @@ using namespace std::literals;
 
 static const auto g_Suffix = "copy"s; // TODO: localize
 
-static unordered_set<string> ExtractFilenames( const VFSListing &_listing );
+static std::unordered_set<string> ExtractFilenames( const VFSListing &_listing );
 static string ProduceFormCLowercase(string_view _string);
 static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
-                                            const unordered_set<string> &_filenames);
+                                            const std::unordered_set<string> &_filenames);
 static void CommonPerform(PanelController *_target, const vector<VFSListingItem> &_items);
 
 bool Duplicate::Predicate( PanelController *_target ) const
@@ -117,7 +117,7 @@ static pair<int, string> ExtractExistingDuplicateInfo( const string &_filename )
 }
 
 static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
-                                            const unordered_set<string> &_filenames)
+                                            const std::unordered_set<string> &_filenames)
 {
     const auto max_duplicates = 100;
     const auto filename = _item.FilenameWithoutExt();
@@ -143,9 +143,9 @@ static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
     return "";
 }
 
-static unordered_set<string> ExtractFilenames( const VFSListing &_listing )
+static std::unordered_set<string> ExtractFilenames( const VFSListing &_listing )
 {
-    unordered_set<string> filenames;
+    std::unordered_set<string> filenames;
     for( int i = 0, e = _listing.Count(); i != e; ++i )
         filenames.emplace( ProduceFormCLowercase(_listing.Filename(i)) );
     return filenames;

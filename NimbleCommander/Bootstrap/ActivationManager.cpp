@@ -325,7 +325,7 @@ bool ActivationManager::UsedHadPurchasedProFeatures() const noexcept
            m_IsActivated == true;
 }
 
-const unordered_map<string, string> &ActivationManager::LicenseInformation() const noexcept
+const std::unordered_map<string, string> &ActivationManager::LicenseInformation() const noexcept
 {
     return m_LicenseInfo;
 }

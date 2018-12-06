@@ -4,7 +4,7 @@
 #include "SelectionWithMaskPopupViewController.h"
 
 static const auto                       g_ConfigHistoryPath = "filePanel.selectWithMaskPopup.masks";
-static unordered_map<void*, NSString*>  g_InitialMask;
+static std::unordered_map<void*, NSString*> g_InitialMask;
 static spinlock                         g_InitialMaskLock;
 
 @interface SelectionWithMaskPopupViewController()

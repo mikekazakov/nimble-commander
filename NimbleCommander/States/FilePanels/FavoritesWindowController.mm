@@ -315,7 +315,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         return;
     const auto panel_paths = m_ProvideCurrentUniformPaths();
     
-    unordered_map<size_t, FavoriteLocationsStorage::Favorite> proposed_favorites;
+    std::unordered_map<size_t, FavoriteLocationsStorage::Favorite> proposed_favorites;
     auto &storage = m_Storage();
     for( auto &p: panel_paths )
         if( auto f = storage.ComposeFavoriteLocation(*p.first, p.second) )

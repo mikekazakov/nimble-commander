@@ -45,7 +45,7 @@ private:
     // basic stuff
     __unsafe_unretained BigFileView *m_View = nil;
     BigFileViewDataBackend          *m_Data = nullptr;
-    unique_ptr<UniChar[]>           m_FixupWindow;
+    std::unique_ptr<UniChar[]>      m_FixupWindow;
     unsigned                        m_RowsOffset  = 0;
     CGPoint                         m_SmoothOffset = {0, 0};
     int                             m_FrameLines  = 0; // amount of lines in our frame size ( +1 to fit cutted line also)

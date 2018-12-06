@@ -10,7 +10,7 @@ namespace nc::panel {
         class StateAction;
     }
     
-    using StateActionsMap = unordered_map<SEL, std::unique_ptr<const actions::StateAction> >;
+    using StateActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::StateAction> >;
 }
 
 @interface NCPanelsStateActionsDispatcher : AttachedResponder

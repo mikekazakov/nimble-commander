@@ -128,7 +128,7 @@ const noexcept
     data::Model                        *m_Data;
     vector<short>                       m_IntrinsicItemsWidths;
     IconRepository                     *m_IconsRepository;
-    unordered_map<IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping; 
+    std::unordered_map<IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping; 
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
     PanelBriefViewColumnsLayout         m_ColumnsLayout;
     __weak PanelView                   *m_PanelView;

@@ -55,7 +55,7 @@ private:
     static optional<Favorite> JSONToFavorite( const nc::config::Value& _json );
     
     
-    unordered_map<size_t, Visit>    m_Visits;
+    std::unordered_map<size_t, Visit> m_Visits;
     vector<Favorite>                m_Favorites;
 };
     

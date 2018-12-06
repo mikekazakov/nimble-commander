@@ -34,7 +34,7 @@ inline T all_equal_or_default(InputIterator _first,
 static string UTIForExtenstion(const string& _extension)
 {
     static std::mutex guard;
-    static unordered_map<string, string> extension_to_uti_mapping;
+    static std::unordered_map<string, string> extension_to_uti_mapping;
     
     std::lock_guard<std::mutex> lock(guard);
     if( auto i = extension_to_uti_mapping.find(_extension); i != end(extension_to_uti_mapping) )
@@ -161,10 +161,10 @@ LauchServicesHandlers::LauchServicesHandlers
     
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)
-    unordered_map<string, int> handlers_count;
+    std::unordered_map<string, int> handlers_count;
     for( auto &i:_handlers_to_merge ) {
         // a very inefficient approach, should be rewritten if will cause lags on UI
-        unordered_set<string> inserted;
+        std::unordered_set<string> inserted;
         for( auto &p:i.m_Paths )
             // here we exclude multiple counting for repeating handlers for one content type
             if( !inserted.count(p) ) {
@@ -265,11 +265,11 @@ private:
         return _image;
     }
 
-    static unordered_map<string, CachedLaunchServiceHandler> g_HandlersByPath;
+    static std::unordered_map<string, CachedLaunchServiceHandler> g_HandlersByPath;
     static std::mutex g_HandlersByPathLock;
 };
 
-unordered_map<string, CachedLaunchServiceHandler> CachedLaunchServiceHandler::g_HandlersByPath;
+std::unordered_map<string, CachedLaunchServiceHandler> CachedLaunchServiceHandler::g_HandlersByPath;
 std::mutex CachedLaunchServiceHandler::g_HandlersByPathLock;
 
 LaunchServiceHandler::LaunchServiceHandler( const string &_handler_path )

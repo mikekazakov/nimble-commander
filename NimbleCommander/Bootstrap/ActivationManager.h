@@ -68,7 +68,7 @@ public:
     bool ShouldShowTrialNagScreen() const noexcept;
     static const string &LicenseFileExtension() noexcept; // currently it's "nimblecommanderlicense"
     bool ProcessLicenseFile(const string& _path );
-    const unordered_map<string, string> &LicenseInformation() const noexcept;
+    const std::unordered_map<string, string> &LicenseInformation() const noexcept;
     
     // Free MAS version stuff
     bool ReCheckProFeaturesInAppPurchased(); // will recheck receipt file and return true if in-app was purchased
@@ -96,7 +96,7 @@ private:
     int     m_TrialDaysLeft = 0;
     bool    m_IsTrialPeriod = false;
     bool    m_UserHasProVersionInstalled = false;
-    unordered_map<string, string> m_LicenseInfo;
+    std::unordered_map<string, string> m_LicenseInfo;
     ActivationManagerBase::ExternalLicenseSupport &m_ExtLicenseSupport;
     ActivationManagerBase::TrialPeriodSupport &m_TrialPeriodSupport;     
     GoogleAnalytics &m_GA;

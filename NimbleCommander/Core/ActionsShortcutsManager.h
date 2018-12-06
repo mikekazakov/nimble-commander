@@ -65,10 +65,10 @@ private:
     void ReadOverrideFromConfig();
     void WriteOverridesToConfig() const;
     
-    unordered_map<int, const char*> m_TagToAction;
-    unordered_map<string, int>      m_ActionToTag;
-    unordered_map<int, ShortCut>    m_ShortCutsDefaults;
-    unordered_map<int, ShortCut>    m_ShortCutsOverrides;
+    std::unordered_map<int, const char*> m_TagToAction;
+    std::unordered_map<string, int>      m_ActionToTag;
+    std::unordered_map<int, ShortCut>    m_ShortCutsDefaults;
+    std::unordered_map<int, ShortCut>    m_ShortCutsOverrides;
 };
 
 class ActionsShortcutsManager::ShortCutsUpdater

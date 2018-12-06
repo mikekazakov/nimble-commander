@@ -20,7 +20,7 @@ private:
         bool operator()(const CFString &_lhs, const CFString &_rhs) const noexcept;
     };
     struct Cache {
-        unordered_map<CFString, short, CFStringHash, CFStringEqual> widths;
+        std::unordered_map<CFString, short, CFStringHash, CFStringEqual> widths;
         spinlock lock;
         std::atomic_bool purge_scheduled{false};
     };
@@ -31,7 +31,7 @@ private:
     void PurgeIfNeeded(Cache &_cache);
     static void Purge(Cache &_cache);
     
-    unordered_map<string, Cache> m_CachesPerFont;
+    std::unordered_map<string, Cache> m_CachesPerFont;
     spinlock m_Lock;
 };
 

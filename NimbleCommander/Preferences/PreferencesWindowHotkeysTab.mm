@@ -106,7 +106,7 @@ enum class SourceType
 {
     const auto &sm = ActionsShortcutsManager::Instance();
     m_AllNodes.clear();
-    unordered_map<ActionShortcut, int> counts;
+    std::unordered_map<ActionShortcut, int> counts;
     for( auto &v: m_Shortcuts ) {
         const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:v.second];
         ActionShortcutNode shortcut;

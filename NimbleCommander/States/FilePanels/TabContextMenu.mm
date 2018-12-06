@@ -5,7 +5,7 @@
 #include <NimbleCommander/Core/Alert.h>
 
 using namespace nc::panel;
-using ActionsT = unordered_map<SEL, std::unique_ptr<actions::StateAction>>;
+using ActionsT = std::unordered_map<SEL, std::unique_ptr<actions::StateAction>>;
 
 static const actions::StateAction* ActionBySelector(const ActionsT &_actions, SEL _sel);
 static void Perform(const ActionsT &_actions,

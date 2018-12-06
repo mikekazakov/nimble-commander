@@ -72,7 +72,7 @@ private:
     BigFileViewDataBackend  *m_Data = nullptr;
     
     // data stuff
-    unique_ptr<UniChar[]>       m_FixupWindow;
+    std::unique_ptr<UniChar[]>  m_FixupWindow;
     CFStringRef                 m_StringBuffer = nullptr;
     size_t                      m_StringBufferSize = 0;
     

@@ -30,12 +30,12 @@ static bool GoToFTP(PanelController *_target,
     dispatch_assert_background_queue();    
     auto &info = _connection.Get<NetworkConnectionsManager::FTP>();
     try {
-        auto host = make_shared<vfs::FTPHost>(info.host,
-                                              info.user,
-                                              _passwd,
-                                              info.path,
-                                              info.port
-                                              );
+        auto host = std::make_shared<vfs::FTPHost>(info.host,
+                                                   info.user,
+                                                   _passwd,
+                                                   info.path,
+                                                   info.port
+                                                   );
         dispatch_to_main_queue([=]{
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = info.path;
@@ -69,12 +69,12 @@ static bool GoToSFTP(PanelController *_target,
     dispatch_assert_background_queue();
     auto &info = _connection.Get<NetworkConnectionsManager::SFTP>();
     try {
-        auto host = make_shared<vfs::SFTPHost>(info.host,
-                                                info.user,
-                                                _passwd,
-                                                info.keypath,
-                                                info.port
-                                                );
+        auto host = std::make_shared<vfs::SFTPHost>(info.host,
+                                                    info.user,
+                                                    _passwd,
+                                                    info.keypath,
+                                                    info.port
+                                                    );
         dispatch_to_main_queue([=]{
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = host->HomeDir();
@@ -108,13 +108,13 @@ static bool GoToWebDAV(PanelController *_target,
     dispatch_assert_background_queue();
     auto &info = _connection.Get<NetworkConnectionsManager::WebDAV>();
     try {
-        auto host = make_shared<vfs::WebDAVHost>(info.host,
-                                                info.user,
-                                                _passwd,
-                                                info.path,
-                                                info.https,
-                                                info.port
-                                                );
+        auto host = std::make_shared<vfs::WebDAVHost>(info.host,
+                                                      info.user,
+                                                      _passwd,
+                                                      info.path,
+                                                      info.https,
+                                                      info.port
+                                                      );
         dispatch_to_main_queue([=]{
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = "/";
@@ -148,7 +148,7 @@ static void GoToDropboxStorage(PanelController *_target,
     dispatch_assert_background_queue();
     auto &info = _connection.Get<NetworkConnectionsManager::Dropbox>();
     try {
-        auto host = make_shared<vfs::DropboxHost>(info.account, _passwd);
+        auto host = std::make_shared<vfs::DropboxHost>(info.account, _passwd);
         dispatch_to_main_queue([=]{
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = "/";
@@ -177,7 +177,7 @@ static void GoToLANShare(PanelController *_target,
                          bool _save_password_on_success,
                          NetworkConnectionsManager &_net_mgr)
 {
-    auto activity = make_shared<nc::panel::ActivityTicket>();
+    auto activity = std::make_shared<nc::panel::ActivityTicket>();
     __weak PanelController *weak_panel = _target;
     auto cb = [weak_panel, activity, _connection, _passwd, _save_password_on_success, &_net_mgr]
         (const string &_path, const string &_err) {

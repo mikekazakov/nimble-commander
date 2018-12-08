@@ -341,7 +341,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     if( auto d = [NSData dataWithContentsOfURL:url] ) {
         string str { (const char*)d.bytes, d.length };
         
-        auto doc = make_shared<rapidjson::Document>();
+        auto doc = std::make_shared<rapidjson::Document>();
         rapidjson::ParseResult ok = doc->Parse<rapidjson::kParseCommentsFlag>( str.c_str() );
         if( !ok )
             return;

@@ -68,7 +68,7 @@ void CreateSymlink::Perform( PanelController *_target, id _sender ) const
             item.Directory() + sheet.linkPath;
         const auto focus_opposite = sheet.linkPath.front() == '/';
         const auto value = sheet.sourcePath;
-        const auto operation = make_shared<nc::ops::Linkage>(dest, value, vfs,
+        const auto operation = std::make_shared<nc::ops::Linkage>(dest, value, vfs,
                                                              nc::ops::LinkageType::CreateSymlink);
         __weak PanelController *weak_panel = focus_opposite ? opposite : _target;
         const bool force_refresh = !weak_panel.receivesUpdateNotifications;
@@ -101,7 +101,7 @@ void AlterSymlink::Perform( PanelController *_target, id _sender ) const
             return;
         const auto dest = item.Path();
         const auto value = sheet.sourcePath;
-        const auto operation = make_shared<nc::ops::Linkage>(dest, value, item.Host(),
+        const auto operation = std::make_shared<nc::ops::Linkage>(dest, value, item.Host(),
                                                              nc::ops::LinkageType::AlterSymlink);
         const bool force_refresh = !_target.receivesUpdateNotifications;
         if( force_refresh ) {
@@ -141,7 +141,7 @@ void CreateHardlink::Perform( PanelController *_target, id _sender ) const
         
         const auto dest = path;
         const auto value = item.Path();
-        const auto operation = make_shared<nc::ops::Linkage>(dest, value, item.Host(),
+        const auto operation = std::make_shared<nc::ops::Linkage>(dest, value, item.Host(),
                                                              nc::ops::LinkageType::CreateHardlink);
         const bool force_refresh = !_target.receivesUpdateNotifications;
         __weak PanelController *weak_panel = _target;

@@ -115,7 +115,7 @@ static const auto g_MaxTextWidth = 600;
     auto restorer = AsyncPersistentLocationRestorer(m_Panel, m_Panel.vfsInstanceManager);
     auto handler = [path = _location.path, panel = m_Panel](VFSHostPtr _host) {
         dispatch_to_main_queue([=]{            
-            auto request = make_shared<DirectoryChangeRequest>();
+            auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = path;
             request->VFS = _host;
             request->PerformAsynchronous = true;
@@ -133,7 +133,7 @@ static const auto g_MaxTextWidth = 600;
     auto restorer = AsyncVFSPromiseRestorer(m_Panel, m_Panel.vfsInstanceManager);
     auto handler = [path = _path, panel = m_Panel](VFSHostPtr _host) {
         dispatch_to_main_queue([=]{            
-            auto request = make_shared<DirectoryChangeRequest>();
+            auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = path;
             request->VFS = _host;
             request->PerformAsynchronous = true;

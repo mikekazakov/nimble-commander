@@ -128,7 +128,7 @@ void ThemesManager::LoadThemes()
         nc::config::Document doc;
         doc.CopyFrom(*i, nc::config::g_CrtAllocator);
         
-        m_Themes.emplace( name, make_shared<nc::config::Document>( move(doc) ) );
+        m_Themes.emplace( name, std::make_shared<nc::config::Document>( move(doc) ) );
         m_OrderedThemeNames.emplace_back( name );
     }
 }
@@ -153,7 +153,7 @@ void ThemesManager::LoadDefaultThemes()
         nc::config::Document doc;
         doc.CopyFrom(*i, nc::config::g_CrtAllocator);
         
-        m_DefaultThemes.emplace( name, make_shared<nc::config::Document>( move(doc) ) );
+        m_DefaultThemes.emplace( name, std::make_shared<nc::config::Document>( move(doc) ) );
         m_OrderedDefaultThemeNames.emplace_back( name );
     }
 }
@@ -180,7 +180,7 @@ shared_ptr<const nc::config::Value> ThemesManager::
     if( it != end(m_Themes) )
         return it->second;
 
-    static const auto dummy = make_shared<nc::config::Value>(rapidjson::kNullType);
+    static const auto dummy = std::make_shared<nc::config::Value>(rapidjson::kNullType);
     return dummy;
 }
 
@@ -225,7 +225,7 @@ bool ThemesManager::SetThemeValue(const string &_theme_name,
                       nc::config::Value(_value, nc::config::g_CrtAllocator),
                       nc::config::g_CrtAllocator);
     
-    it->second = make_shared<nc::config::Document>( move(new_doc) );
+    it->second = std::make_shared<nc::config::Document>( move(new_doc) );
     
     // if this is a selected theme
     if( _theme_name == m_SelectedThemeName ) {
@@ -243,7 +243,7 @@ void ThemesManager::UpdateCurrentTheme()
 {
     // comprose new theme object
     auto theme_data = SelectedThemeData();
-    auto new_theme = make_shared<Theme>((const void*)theme_data.get(),
+    auto new_theme = std::make_shared<Theme>((const void*)theme_data.get(),
                                         (const void*)BackupThemeData(m_SelectedThemeName).get());
 
     // release current theme some time after - dispatch release with 10s delay
@@ -383,7 +383,7 @@ bool ThemesManager::ImportThemeData(const string &_theme_name,
         return false;
     
     // put new data into our working dictionary
-    it->second = make_shared<nc::config::Document>( move(new_doc) );
+    it->second = std::make_shared<nc::config::Document>( move(new_doc) );
     
     // if this is a selected theme
     if( _theme_name == m_SelectedThemeName ) {
@@ -411,7 +411,7 @@ bool ThemesManager::AddTheme(const string &_theme_name,
                   nc::config::MakeStandaloneString(_theme_name),
                   nc::config::g_CrtAllocator);
     
-    m_Themes.emplace( _theme_name, make_shared<nc::config::Document>( move(doc) ) );
+    m_Themes.emplace( _theme_name, std::make_shared<nc::config::Document>( move(doc) ) );
     m_OrderedThemeNames.emplace_back( _theme_name );
 
     // TODO: move to background thread, delay execution
@@ -489,7 +489,7 @@ bool ThemesManager::RenameTheme( const string &_theme_name, const string &_to_na
                   nc::config::g_CrtAllocator);
     
     m_Themes.erase(_theme_name);
-    m_Themes.emplace( _to_name, make_shared<nc::config::Document>( move(doc) ) );
+    m_Themes.emplace( _to_name, std::make_shared<nc::config::Document>( move(doc) ) );
     replace( begin(m_OrderedThemeNames), end(m_OrderedThemeNames), _theme_name, _to_name );
     
 

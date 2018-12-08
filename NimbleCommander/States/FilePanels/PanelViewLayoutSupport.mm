@@ -268,7 +268,7 @@ vector<shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::GetAllLayouts
 
 const shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::LastResortLayout()
 {
-    static const shared_ptr<const PanelViewLayout> l = make_shared<PanelViewLayout>( L1() );
+    static const shared_ptr<const PanelViewLayout> l = std::make_shared<PanelViewLayout>( L1() );
     return l;
 }
 
@@ -308,7 +308,7 @@ void PanelViewLayoutsStorage::ReplaceLayout(PanelViewLayout _layout, int _at_ind
             return;
         if( *m_Layouts[_at_index] == _layout )
             return; // nothing to do - equal layouts
-        m_Layouts[_at_index] = make_shared<PanelViewLayout>( move(_layout) );
+        m_Layouts[_at_index] = std::make_shared<PanelViewLayout>( move(_layout) );
     }
     
     CommitChanges(_mandatory);
@@ -329,7 +329,7 @@ void PanelViewLayoutsStorage::LoadLayoutsFromConfig()
         m_Layouts.clear();
         for( auto i = layouts.Begin(), e = layouts.End(); i != e; ++i )
             if( auto l = LoadLayout( *i ) )
-                m_Layouts.emplace_back( make_shared<PanelViewLayout>(move(*l)) );
+                m_Layouts.emplace_back( std::make_shared<PanelViewLayout>(move(*l)) );
             else
                 m_Layouts.emplace_back( LastResortLayout() );
     }

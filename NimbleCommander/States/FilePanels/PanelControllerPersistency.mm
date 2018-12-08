@@ -58,7 +58,7 @@ ControllerStateJSONDecoder::ControllerStateJSONDecoder
     
 static void LoadHomeDirectory(PanelController *_panel)
 {
-    auto context = make_shared<DirectoryChangeRequest>();
+    auto context = std::make_shared<DirectoryChangeRequest>();
     context->VFS = VFSNativeHost::SharedHost();
     context->PerformAsynchronous = true;
     context->RequestedDirectory = CommonPaths::Home();
@@ -81,7 +81,7 @@ static void RecoverSavedPathAtVFSAsync(const VFSHostPtr &_host,
                                        const string &_path,
                                        PanelController *_panel)
 {
-    auto shared_request = make_shared<DirectoryChangeRequest>();
+    auto shared_request = std::make_shared<DirectoryChangeRequest>();
     auto &ctx = *shared_request;
     ctx.VFS = _host;
     ctx.PerformAsynchronous = true;
@@ -151,7 +151,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentSync(const PersistentLocatio
     }
     
     auto &path = _location.path;
-    auto request = make_shared<DirectoryChangeRequest>();
+    auto request = std::make_shared<DirectoryChangeRequest>();
     request->VFS = host;
     request->PerformAsynchronous = false;
     request->RequestedDirectory = _location.path;

@@ -89,7 +89,7 @@ public:
     
     template <class T>
     explicit Connection(T _t):
-        m_Object( make_shared<Model<T>>( move(_t) ) )
+        m_Object( std::make_shared<Model<T>>( std::move(_t) ) )
     {
         static_assert( std::is_class<T>::value, "connection should be a class/struct" );
     }

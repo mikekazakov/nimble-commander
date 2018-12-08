@@ -36,9 +36,9 @@ void CompressHere::Perform( PanelController *_target, id _sender ) const
         return;
     
 
-    auto op = make_shared<nc::ops::Compression>(move(entries),
-                                                _target.currentDirectoryPath,
-                                                _target.vfs);
+    auto op = std::make_shared<nc::ops::Compression>(std::move(entries),
+                                                     _target.currentDirectoryPath,
+                                                     _target.vfs);
     const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = _target;
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
@@ -73,9 +73,9 @@ void CompressToOpposite::Perform( PanelController *_target, id _sender ) const
     if(entries.empty())
         return;
 
-    auto op = make_shared<nc::ops::Compression>(move(entries),
-                                                opposite_panel.currentDirectoryPath,
-                                                opposite_panel.vfs);
+    auto op = std::make_shared<nc::ops::Compression>(std::move(entries),
+                                                     opposite_panel.currentDirectoryPath,
+                                                     opposite_panel.vfs);
     const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = opposite_panel;
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {
@@ -116,9 +116,9 @@ bool context::CompressHere::ValidateMenuItem( PanelController *_target, NSMenuIt
 void context::CompressHere::Perform( PanelController *_target, id _sender ) const
 {
     auto entries = m_Items;
-    auto op = make_shared<nc::ops::Compression>(move(entries),
-                                                _target.currentDirectoryPath,
-                                                _target.vfs);
+    auto op = std::make_shared<nc::ops::Compression>(std::move(entries),
+                                                     _target.currentDirectoryPath,
+                                                     _target.vfs);
 
     const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = _target;
@@ -170,9 +170,9 @@ void context::CompressToOpposite::Perform( PanelController *_target, id _sender 
         return;
     
     auto entries = m_Items;
-    auto op = make_shared<nc::ops::Compression>(move(entries),
-                                                opposite_panel.currentDirectoryPath,
-                                                opposite_panel.vfs);
+    auto op = std::make_shared<nc::ops::Compression>(std::move(entries),
+                                                     opposite_panel.currentDirectoryPath,
+                                                     opposite_panel.vfs);
     const auto weak_op = std::weak_ptr<nc::ops::Compression>{op};
     __weak PanelController *weak_target = opposite_panel;
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [weak_target, weak_op] {

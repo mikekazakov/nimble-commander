@@ -52,7 +52,7 @@ void Delete::Perform( PanelController *_target, id _sender ) const
 
     auto sheet_handler = ^(NSModalResponse returnCode) {
         if( returnCode == NSModalResponseOK ){
-            const auto operation = make_shared<nc::ops::Deletion>(
+            const auto operation = std::make_shared<nc::ops::Deletion>(
                 move(*items),
                 sheet.resultType);
             AddPanelRefreshEpilogIfNeeded(_target, operation);
@@ -87,7 +87,7 @@ void MoveToTrash::Perform( PanelController *_target, id _sender ) const
         return;
     }
 
-    const auto operation = make_shared<nc::ops::Deletion>(move(items),
+    const auto operation = std::make_shared<nc::ops::Deletion>(move(items),
                                                           nc::ops::DeletionType::Trash);
     AddPanelRefreshEpilogIfNeeded(_target, operation);
     [_target.mainWindowController enqueueOperation:operation];
@@ -106,7 +106,7 @@ bool context::MoveToTrash::Predicate( PanelController *_target ) const
 
 void context::MoveToTrash::Perform( PanelController *_target, id _sender ) const
 {
-    const auto operation = make_shared<nc::ops::Deletion>(m_Items,
+    const auto operation = std::make_shared<nc::ops::Deletion>(m_Items,
                                                           nc::ops::DeletionType::Trash);
     AddPanelRefreshEpilogIfNeeded(_target, operation);
     [_target.mainWindowController enqueueOperation:operation];
@@ -127,7 +127,7 @@ bool context::DeletePermanently::Predicate( PanelController *_target ) const
 
 void context::DeletePermanently::Perform( PanelController *_target, id _sender ) const
 {
-    const auto operation = make_shared<nc::ops::Deletion>(m_Items,
+    const auto operation = std::make_shared<nc::ops::Deletion>(m_Items,
                                                           nc::ops::DeletionType::Permanent);
     AddPanelRefreshEpilogIfNeeded(_target, operation);
     [_target.mainWindowController enqueueOperation:operation];

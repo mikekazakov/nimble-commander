@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
 #include <Sparkle/Sparkle.h>
@@ -118,11 +118,11 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
         return;
 
     auto source_items = m_ContextItems.empty() && self.target != nil ?
-        make_shared<vector<VFSListingItem>>(self.target.selectedEntriesOrFocusedEntry) :
-        make_shared<vector<VFSListingItem>>(m_ContextItems);
+        std::make_shared<vector<VFSListingItem>>(self.target.selectedEntriesOrFocusedEntry) :
+        std::make_shared<vector<VFSListingItem>>(m_ContextItems);
     
     m_FetchQueue.Run([source_items, self]{
-        auto f = make_shared<FetchResult>(FetchHandlers(*source_items));
+        auto f = std::make_shared<FetchResult>(FetchHandlers(*source_items));
         dispatch_to_main_queue([f, self]{
             [self acceptFetchResult:f];
         });

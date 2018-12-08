@@ -493,13 +493,13 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection
     
     VFSHostPtr host;
     if( auto ftp = _connection.Cast<FTP>() )
-        host = make_shared<vfs::FTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port );
+        host = std::make_shared<vfs::FTPHost>( ftp->host, ftp->user, passwd, ftp->path, ftp->port );
     else if( auto sftp = _connection.Cast<SFTP>() )
-        host = make_shared<vfs::SFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
+        host = std::make_shared<vfs::SFTPHost>( sftp->host, sftp->user, passwd, sftp->keypath, sftp->port );
     else if( auto dropbox = _connection.Cast<Dropbox>() )
-        host = make_shared<vfs::DropboxHost>( dropbox->account, passwd );
+        host = std::make_shared<vfs::DropboxHost>( dropbox->account, passwd );
     else if( auto w = _connection.Cast<WebDAV>() )
-        host = make_shared<vfs::WebDAVHost>( w->host, w->user, passwd, w->path, w->https, w->port );
+        host = std::make_shared<vfs::WebDAVHost>( w->host, w->user, passwd, w->path, w->https, w->port );
     
     if( host ) {
         ReportUsage(_connection);

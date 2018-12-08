@@ -19,8 +19,9 @@ void OpenXAttr::Perform( PanelController *_target, id _sender ) const
         return;
     
     try {
-        auto host = make_shared<vfs::XAttrHost>( _target.view.item.Path(), _target.view.item.Host() );
-        auto context = make_shared<DirectoryChangeRequest>();
+        auto host = std::make_shared<vfs::XAttrHost>(_target.view.item.Path(),
+                                                     _target.view.item.Host() );
+        auto context = std::make_shared<DirectoryChangeRequest>();
         context->VFS = host;
         context->RequestedDirectory = "/";
         context->InitiatedByUser = true;

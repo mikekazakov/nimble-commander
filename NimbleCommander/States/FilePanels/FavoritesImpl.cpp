@@ -20,7 +20,7 @@ Encode( const VFSHost &_host, const string &_directory )
     if( !location )
         return nullptr;
 
-    auto v = make_shared<FavoriteLocationsStorage::Location>();
+    auto v = std::make_shared<FavoriteLocationsStorage::Location>();
     v->hosts_stack = move(*location);
     v->verbose_path = PanelDataPersisency::MakeVerbosePathString( _host, _directory );
 
@@ -215,7 +215,7 @@ std::optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl:
     if( !_json.HasMember("location") )
         return std::nullopt;
     if( auto l = PanelDataPersisency::JSONToLocation(_json["location"]) ) {
-        auto location = make_shared<Location>();
+        auto location = std::make_shared<Location>();
         location->verbose_path = PanelDataPersisency::MakeVerbosePathString(*l);
         location->hosts_stack = move(*l);
         v.location = location;
@@ -267,7 +267,7 @@ std::optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
     if( !_json.HasMember("location") )
         return std::nullopt;
     if( auto l = PanelDataPersisency::JSONToLocation(_json["location"]) ) {
-        auto location = make_shared<Location>();
+        auto location = std::make_shared<Location>();
         location->verbose_path = PanelDataPersisency::MakeVerbosePathString(*l);
         location->hosts_stack = move(*l);
         f.location = location;

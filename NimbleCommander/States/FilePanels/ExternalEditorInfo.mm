@@ -194,7 +194,7 @@ struct ExternalEditorsPersistence
 
 - (shared_ptr<ExternalEditorStartupInfo>) toStartupInfo
 {
-    return make_shared<ExternalEditorStartupInfo>(
+    return std::make_shared<ExternalEditorStartupInfo>(
         ExternalEditorsPersistence::LoadFromLegacyObjC( self )
     );
 }
@@ -302,7 +302,7 @@ void ExternalEditorsStorage::LoadFromConfig()
     if( v.IsArray() )
         for( auto i = v.Begin(), e = v.End(); i != e; ++i )
             if( auto ed = ExternalEditorsPersistence::LoadFromJSON(*i) )
-                m_ExternalEditors.emplace_back( make_shared<ExternalEditorStartupInfo>(move(*ed)) );
+                m_ExternalEditors.emplace_back( std::make_shared<ExternalEditorStartupInfo>(move(*ed)) );
 }
 
 void ExternalEditorsStorage::SaveToConfig()

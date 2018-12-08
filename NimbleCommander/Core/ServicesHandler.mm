@@ -42,7 +42,7 @@ void ServicesHandler::GoToFolder(const string &_path)
 {
     auto host = VFSNativeHost::SharedHost();
     if( auto wnd = m_WindowProvider() ) {
-        auto ctx = make_shared<panel::DirectoryChangeRequest>();
+        auto ctx = std::make_shared<panel::DirectoryChangeRequest>();
         ctx->RequestedDirectory = _path;
         ctx->VFS = host;
         ctx->InitiatedByUser = true;
@@ -120,7 +120,7 @@ void ServicesHandler::RevealItems(const vector<string> &_paths)
         return;
     
     if( auto wnd = m_WindowProvider() ) {
-        auto ctx = make_shared<panel::DirectoryChangeRequest>();
+        auto ctx = std::make_shared<panel::DirectoryChangeRequest>();
         ctx->RequestedDirectory = directory;
         ctx->VFS = VFSNativeHost::SharedHost();
         ctx->RequestFocusedEntry = filenames.front();

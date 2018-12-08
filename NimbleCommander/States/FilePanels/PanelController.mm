@@ -670,10 +670,10 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     nc::ops::CopyingOptions opts;
     opts.docopy = false;
 
-    const auto op = make_shared<nc::ops::Copying>(vector<VFSListingItem>{_item},
-                                                  _item.Directory() + target_fn,
-                                                  _item.Host(),
-                                                  opts);
+    const auto op = std::make_shared<nc::ops::Copying>(vector<VFSListingItem>{_item},
+                                                       _item.Directory() + target_fn,
+                                                       _item.Host(),
+                                                       opts);
 
     if( self.isUniform && m_View.item && m_View.item.Filename() == _item.Filename() ) {
         string curr_path = self.currentDirectoryPath;

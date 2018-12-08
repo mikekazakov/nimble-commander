@@ -159,7 +159,7 @@ void MakeNewFolder::Perform( PanelController *_target, id _sender ) const
     if( name.empty() )
         return;
 
-    const auto op = make_shared<nc::ops::DirectoryCreation>(name, dir.native(), *vfs);
+    const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir.native(), *vfs);
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
         dispatch_to_main_queue([=]{
             if( PanelController *panel = weak_panel ) {
@@ -201,7 +201,7 @@ void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender )
     const boost::filesystem::path destination = dir / name / "/";
     
     const auto options = MakeDefaultFileMoveOptions();
-    const auto op = make_shared<nc::ops::Copying>(files, destination.native(), vfs, options);
+    const auto op = std::make_shared<nc::ops::Copying>(files, destination.native(), vfs, options);
     op->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=]{
         dispatch_to_main_queue([=]{
             if( PanelController *panel = weak_panel ) {
@@ -248,7 +248,7 @@ void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
             const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
             __weak PanelController *weak_panel = _target;
             
-            const auto op = make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
+            const auto op = std::make_shared<nc::ops::DirectoryCreation>(name, dir, *vfs);
             const auto weak_op = std::weak_ptr<nc::ops::DirectoryCreation>{op};
             op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
                 const auto &dir_names = weak_op.lock()->DirectoryNames();

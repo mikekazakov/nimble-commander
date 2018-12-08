@@ -81,16 +81,16 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 
 - (std::unique_ptr<nc::vfsicon::IconRepository>) allocateIconRepository
 {
-    static const auto ql_cache = make_shared<nc::vfsicon::QLThumbnailsCacheImpl>();
-    static const auto ws_cache = make_shared<nc::vfsicon::WorkspaceIconsCacheImpl>();
-    static const auto ext_cache = make_shared<nc::vfsicon::WorkspaceExtensionIconsCacheImpl>();    
-    static const auto brief_storage = make_shared<nc::utility::BriefOnDiskStorageImpl>
+    static const auto ql_cache = std::make_shared<nc::vfsicon::QLThumbnailsCacheImpl>();
+    static const auto ws_cache = std::make_shared<nc::vfsicon::WorkspaceIconsCacheImpl>();
+    static const auto ext_cache = std::make_shared<nc::vfsicon::WorkspaceExtensionIconsCacheImpl>();
+    static const auto brief_storage = std::make_shared<nc::utility::BriefOnDiskStorageImpl>
         (CommonPaths::AppTemporaryDirectory(),
          nc::bootstrap::ActivationManager::BundleID() + ".ico"); 
-    static const auto vfs_cache = make_shared<nc::vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
-    static const auto vfs_bi_cache = make_shared<nc::vfsicon::VFSBundleIconsCacheImpl>();
+    static const auto vfs_cache = std::make_shared<nc::vfsicon::QLVFSThumbnailsCacheImpl>(brief_storage);
+    static const auto vfs_bi_cache = std::make_shared<nc::vfsicon::VFSBundleIconsCacheImpl>();
     
-    static const auto icon_builder = make_shared<nc::vfsicon::IconBuilderImpl>(ql_cache,
+    static const auto icon_builder = std::make_shared<nc::vfsicon::IconBuilderImpl>(ql_cache,
                                                                            ws_cache,
                                                                            ext_cache,
                                                                            vfs_cache,

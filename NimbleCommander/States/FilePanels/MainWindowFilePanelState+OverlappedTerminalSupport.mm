@@ -106,7 +106,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     if( pc ) {
         auto cwd = m_OverlappedTerminal->terminal.cwd;
         if( cwd != pc.currentDirectoryPath || !pc.vfs->IsNativeFS() ) {
-            auto r = make_shared<nc::panel::DirectoryChangeRequest>();
+            auto r = std::make_shared<nc::panel::DirectoryChangeRequest>();
             r->RequestedDirectory = cwd;
             r->VFS = VFSNativeHost::SharedHost();
             [pc GoToDirWithContext:r];

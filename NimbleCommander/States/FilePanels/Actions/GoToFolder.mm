@@ -24,7 +24,7 @@ void GoToFolder::Perform( PanelController *_target, id _sender ) const
     sheet.panel = _target;
     [sheet showSheetWithParentWindow:_target.window handler:[=]{
         
-        auto c = make_shared<DirectoryChangeRequest>();
+        auto c = std::make_shared<DirectoryChangeRequest>();
         c->RequestedDirectory = [_target expandPath:sheet.requestedPath];
         c->VFS = _target.isUniform ?
             _target.vfs :
@@ -115,7 +115,7 @@ void GoToFavoriteLocation::Perform( PanelController *_target, id _sender ) const
     auto restorer = AsyncPersistentLocationRestorer(_target, _target.vfsInstanceManager);
     auto handler = [path = location->path, panel = _target](VFSHostPtr _host) {
         dispatch_to_main_queue([=]{            
-            auto request = make_shared<DirectoryChangeRequest>();
+            auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = path;
             request->VFS = _host;
             request->PerformAsynchronous = true;

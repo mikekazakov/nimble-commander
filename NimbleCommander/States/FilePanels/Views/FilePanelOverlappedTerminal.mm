@@ -64,7 +64,7 @@ static const auto g_LongProcessDelay = 100ms;
         auto task_ptr = m_Task.get();
         m_Parser = std::make_unique<Parser>(m_TermScrollView.screen,
                                            [=](const void* _d, int _sz){
-                                               task_ptr->WriteChildInput( string_view((const char*)_d, _sz) );
+                                               task_ptr->WriteChildInput( std::string_view((const char*)_d, _sz) );
                                            });
         m_Parser->SetTaskScreenResize([=](int sx, int sy) {
             task_ptr->ResizeWindow(sx, sy);

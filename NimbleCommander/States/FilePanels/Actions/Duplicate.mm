@@ -17,7 +17,7 @@ using namespace std::literals;
 static const auto g_Suffix = "copy"s; // TODO: localize
 
 static std::unordered_set<string> ExtractFilenames( const VFSListing &_listing );
-static string ProduceFormCLowercase(string_view _string);
+static string ProduceFormCLowercase(std::string_view _string);
 static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
                                             const std::unordered_set<string> &_filenames);
 static void CommonPerform(PanelController *_target, const vector<VFSListingItem> &_items);
@@ -49,10 +49,10 @@ static void CommonPerform(PanelController *_target, const vector<VFSListingItem>
         
         const auto options = MakeDefaultFileCopyOptions();
         
-        const auto op = make_shared<ops::Copying>(vector<VFSListingItem>{item},
-                                                      item.Directory() + duplicate,
-                                                      item.Host(),
-                                                      options);
+        const auto op = std::make_shared<ops::Copying>(vector<VFSListingItem>{item},
+                                                       item.Directory() + duplicate,
+                                                       item.Host(),
+                                                       options);
 
         if( &item == &_items.front() ) {
             const bool force_refresh = !_target.receivesUpdateNotifications;
@@ -151,7 +151,7 @@ static std::unordered_set<string> ExtractFilenames( const VFSListing &_listing )
     return filenames;
 }
 
-static string ProduceFormCLowercase(string_view _string)
+static string ProduceFormCLowercase(std::string_view _string)
 {
     CFStackAllocator allocator;
 

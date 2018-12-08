@@ -276,20 +276,20 @@ bool DragReceiver::PerformWithLocalSource(FilesDraggingSource *_source,
     const auto operation = BuildOperationForLocal(_source, _destination);
     if( operation == NSDragOperationCopy ) {
         const auto opts = MakeDefaultFileCopyOptions();
-        const auto op = make_shared<ops::Copying>(move(files),
-                                                  _destination.Path(),
-                                                  _destination.Host(),
-                                                  opts);
+        const auto op = std::make_shared<ops::Copying>(std::move(files),
+                                                       _destination.Path(),
+                                                       _destination.Host(),
+                                                       opts);
         AddPanelRefreshIfNecessary(m_Target, *op);
         [m_Target.mainWindowController enqueueOperation:op];
         return true;
     }
     else if( operation == NSDragOperationMove ) {
         const auto opts = MakeDefaultFileMoveOptions();
-        const auto op = make_shared<ops::Copying>(move(files),
-                                                  _destination.Path(),
-                                                  _destination.Host(),
-                                                  opts);
+        const auto op = std::make_shared<ops::Copying>(std::move(files),
+                                                       _destination.Path(),
+                                                       _destination.Host(),
+                                                       opts);
         AddPanelRefreshIfNecessary(m_Target, _source.sourceController, *op);
         [m_Target.mainWindowController enqueueOperation:op];
         return true;
@@ -301,10 +301,10 @@ bool DragReceiver::PerformWithLocalSource(FilesDraggingSource *_source,
             const auto source_path = file.Path();
             const auto dest_path = (boost::filesystem::path(_destination.Path()) /
                                     file.Filename()).native();
-            const auto op = make_shared<nc::ops::Linkage>(dest_path,
-                                                          source_path,
-                                                          _destination.Host(),
-                                                          nc::ops::LinkageType::CreateSymlink);
+            const auto op = std::make_shared<nc::ops::Linkage>(dest_path,
+                                                               source_path,
+                                                               _destination.Host(),
+                                                               nc::ops::LinkageType::CreateSymlink);
             AddPanelRefreshIfNecessary(m_Target, *op);
             [m_Target.mainWindowController enqueueOperation:op];
         }
@@ -330,20 +330,20 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL*> *_source,
     
     if( operation == NSDragOperationCopy ) {
         const auto opts = MakeDefaultFileCopyOptions();
-        const auto op = make_shared<nc::ops::Copying>(move(source_items),
-                                                      _destination.Path(),
-                                                      _destination.Host(),
-                                                      opts);        
+        const auto op = std::make_shared<nc::ops::Copying>(std::move(source_items),
+                                                           _destination.Path(),
+                                                           _destination.Host(),
+                                                           opts);
         AddPanelRefreshIfNecessary(m_Target, *op);
         [m_Target.mainWindowController enqueueOperation:op];
         return true;
     }
     if( operation == NSDragOperationMove ) {
         const auto opts = MakeDefaultFileMoveOptions();
-        const auto op = make_shared<nc::ops::Copying>(move(source_items),
-                                                      _destination.Path(),
-                                                      _destination.Host(),
-                                                      opts);
+        const auto op = std::make_shared<nc::ops::Copying>(std::move(source_items),
+                                                           _destination.Path(),
+                                                           _destination.Host(),
+                                                           opts);
         AddPanelRefreshIfNecessary(m_Target, *op);
         [m_Target.mainWindowController enqueueOperation:op];
         return true;
@@ -353,10 +353,10 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL*> *_source,
             const auto source_path = file.Path();
             const auto dest_path = (boost::filesystem::path(_destination.Path()) /
                                     file.Filename()).native();
-            const auto op = make_shared<nc::ops::Linkage>(dest_path,
-                                                          source_path,
-                                                          _destination.Host(),
-                                                          nc::ops::LinkageType::CreateSymlink);
+            const auto op = std::make_shared<nc::ops::Linkage>(dest_path,
+                                                               source_path,
+                                                               _destination.Host(),
+                                                               nc::ops::LinkageType::CreateSymlink);
             AddPanelRefreshIfNecessary(m_Target, *op);
             [m_Target.mainWindowController enqueueOperation:op];
         }

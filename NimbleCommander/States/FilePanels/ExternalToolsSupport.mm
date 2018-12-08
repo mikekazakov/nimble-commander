@@ -382,7 +382,7 @@ void ExternalToolsStorage::LoadToolsFromConfig()
         m_Tools.clear();
         for( auto i = tools.Begin(), e = tools.End(); i != e; ++i )
             if( auto et = LoadTool( *i ) )
-                m_Tools.emplace_back( make_shared<ExternalTool>(move(*et)) );
+                m_Tools.emplace_back( std::make_shared<ExternalTool>(std::move(*et)) );
     }
 }
 
@@ -434,7 +434,7 @@ void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index )
             return;
         if( *m_Tools[_at_index] == _tool )
             return; // do nothing if _tool is equal
-        m_Tools[_at_index] = make_shared<ExternalTool>( move(_tool) );
+        m_Tools[_at_index] = std::make_shared<ExternalTool>( move(_tool) );
     }
     CommitChanges();
 }
@@ -442,7 +442,7 @@ void ExternalToolsStorage::ReplaceTool(ExternalTool _tool, size_t _at_index )
 void ExternalToolsStorage::InsertTool( ExternalTool _tool )
 {
     LOCK_GUARD(m_ToolsLock)
-        m_Tools.emplace_back( make_shared<ExternalTool>(move(_tool)) );
+        m_Tools.emplace_back( std::make_shared<ExternalTool>(move(_tool)) );
     CommitChanges();
 }
 

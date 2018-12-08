@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
 #include <Utility/PathManip.h>
 #include "../PanelController.h"
@@ -62,7 +62,7 @@ static void PasteOrMove( PanelController *_target, bool _paste)
     auto opts = MakeDefaultFileCopyOptions();
     opts.docopy = _paste;
     __weak PanelController *wpc = _target;
-    const auto op = make_shared<nc::ops::Copying>(move(source_items),
+    const auto op = std::make_shared<nc::ops::Copying>(move(source_items),
                                                   _target.currentDirectoryPath,
                                                   _target.vfs,
                                                   opts

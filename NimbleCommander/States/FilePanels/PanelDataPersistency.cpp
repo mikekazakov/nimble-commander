@@ -247,7 +247,7 @@ std::optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const jso
             
             if( !has_string(g_HostInfoTypeKey) )
                 return std::nullopt; // invalid data
-            const auto tag = string_view{ h[g_HostInfoTypeKey].GetString() };
+            const auto tag = std::string_view{ h[g_HostInfoTypeKey].GetString() };
             
             if( tag == VFSNativeHost::UniqueTag ) {
                 result.hosts.emplace_back( Native{} );
@@ -571,7 +571,8 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
                 if( vfs.size() < 1 )
                     return VFSError::GenericError; // invalid data
                 
-                auto xattr_vfs = make_shared<vfs::XAttrHost>( xattr->junction.c_str(), vfs.back() );
+                auto xattr_vfs = std::make_shared<vfs::XAttrHost>(xattr->junction.c_str(),
+                                                                  vfs.back() );
                 vfs.emplace_back( xattr_vfs );
             }
             else if( auto network = std::any_cast<Network>(&h) ) {
@@ -589,14 +590,14 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
                 if( vfs.size() < 1 )
                     return VFSError::GenericError; // invalid data
                 
-                auto host = make_shared<vfs::ArchiveHost>( la->junction.c_str(), vfs.back() );
+                auto host = std::make_shared<vfs::ArchiveHost>( la->junction.c_str(), vfs.back() );
                 vfs.emplace_back( host );
             }
             else if( auto rar = std::any_cast<ArcUnRAR>(&h) ) {
                 if( vfs.size() < 1 || !vfs.back()->IsNativeFS() )
                     return VFSError::GenericError; // invalid data
                 
-                auto host = make_shared<vfs::UnRARHost>( rar->junction.c_str() );
+                auto host = std::make_shared<vfs::UnRARHost>( rar->junction.c_str() );
                 vfs.emplace_back( host );
             }
         }

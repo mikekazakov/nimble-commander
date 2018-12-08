@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
 #include "BatchRename.h"
@@ -49,9 +49,9 @@ void BatchRename::Perform( PanelController *_target, id _sender ) const
             auto dst_paths = sheet.filenamesDestination;
 
 
-            const auto operation = make_shared<nc::ops::BatchRenaming>(move(src_paths),
-                                                                       move(dst_paths),
-                                                                       host);
+            const auto operation = std::make_shared<nc::ops::BatchRenaming>(move(src_paths),
+                                                                            move(dst_paths),
+                                                                            host);
             if( !_target.receivesUpdateNotifications ) {
                 __weak PanelController *weak_panel = _target;
                 operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish,[=]{

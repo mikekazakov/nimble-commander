@@ -106,7 +106,7 @@ public:
     
 shared_ptr<Settings> TerminalSettings()
 {
-    static const auto settings = make_shared<SettingsImpl>();
+    static const auto settings = std::make_shared<SettingsImpl>();
     return settings;
 }
 

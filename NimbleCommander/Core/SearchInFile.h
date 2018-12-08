@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 class FileWindow;
@@ -39,7 +39,7 @@ public:
         OptionFindWholePhrase   = 1 << 1
     };
     
-    using CancelChecker = function<bool()>;
+    using CancelChecker = std::function<bool()>;
     Result Search(uint64_t *_offset/*out*/,
                   uint64_t *_bytes_len/*out*/,
                   CancelChecker _checker); // checker can be nil

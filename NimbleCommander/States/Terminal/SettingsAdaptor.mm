@@ -16,7 +16,7 @@ class SettingsImpl : public DefaultSettings
 {
     ThemesManager::ObservationTicket m_ThemeObservation;
     vector<config::Token> m_ConfigObservationTickets;
-    vector<std::pair<int, function<void()>>> m_Callbacks;
+    vector<std::pair<int, std::function<void()>>> m_Callbacks;
     int m_LastTicket = 1;
 public:
     SettingsImpl()
@@ -32,7 +32,7 @@ public:
         );
     }
     
-    int StartChangesObserving( function<void()> _callback ) override
+    int StartChangesObserving( std::function<void()> _callback ) override
     {
         dispatch_assert_main_queue();
         if( !_callback )

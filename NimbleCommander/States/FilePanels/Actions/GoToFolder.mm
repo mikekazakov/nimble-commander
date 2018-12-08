@@ -243,7 +243,7 @@ void GoIntoFolder::Perform( PanelController *_target, id _sender ) const
         const auto eligible_to_check = m_ForceArchivesChecking || IsItemInArchivesWhitelist(item);
         if( eligible_to_check ) {
             
-            auto task = [item, _target]( const function<bool()> &_cancelled ) {
+            auto task = [item, _target]( const std::function<bool()> &_cancelled ) {
                 auto pwd_ask = [=]{
                     string p;
                     return RunAskForPasswordModalWindow(item.Filename(), p) ? p : "";
@@ -267,7 +267,7 @@ void GoIntoFolder::Perform( PanelController *_target, id _sender ) const
                 }
             };
             
-            [_target commitCancelableLoadingTask:move(task)];
+            [_target commitCancelableLoadingTask:std::move(task)];
         }
     }
 }

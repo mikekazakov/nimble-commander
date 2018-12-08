@@ -29,13 +29,13 @@ static void SortByMRU(vector<NetworkConnectionsManager::Connection> &_values, co
     vector< std::pair<NetworkConnectionsManager::Connection, decltype(begin(_mru))> > v;
     for( auto &i: _values ) {
         auto it = find( begin(_mru), end(_mru), i.Uuid() );
-        v.emplace_back( move(i), it );
+        v.emplace_back( std::move(i), it );
     }
     
     sort( begin(v), end(v), [](auto &_1st, auto &_2nd){ return _1st.second < _2nd.second; } );
   
     for( size_t i = 0, e = v.size(); i != e; ++i )
-        _values[i] = move( v[i].first );
+        _values[i] = std::move( v[i].first );
 }
 
 static config::Value FillBasicConnectionInfoInJSONObject(
@@ -146,7 +146,7 @@ static std::optional<NetworkConnectionsManager::Connection>
         c.path = _object["path"].GetString();
         c.port = _object["port"].GetInt();
         
-        return NetworkConnectionsManager::Connection( move(c) );
+        return NetworkConnectionsManager::Connection( std::move(c) );
     }
     else if( type == "sftp" ) {
         if( !has_string("user") || !has_string("host") ||
@@ -161,7 +161,7 @@ static std::optional<NetworkConnectionsManager::Connection>
         c.keypath = _object["keypath"].GetString();
         c.port = _object["port"].GetInt();
         
-        return NetworkConnectionsManager::Connection( move(c) );
+        return NetworkConnectionsManager::Connection( std::move(c) );
     }
     else if( type == "lanshare" ) {
         if( !has_string("user") || !has_string("host") ||
@@ -177,7 +177,7 @@ static std::optional<NetworkConnectionsManager::Connection>
         c.mountpoint = _object["mountpoint"].GetString();
         c.proto = (NetworkConnectionsManager::LANShare::Protocol)_object["proto"].GetInt();
 
-        return NetworkConnectionsManager::Connection( move(c) );
+        return NetworkConnectionsManager::Connection( std::move(c) );
     }
     else if( type == "dropbox" ) {
         if( !has_string("account") )
@@ -188,7 +188,7 @@ static std::optional<NetworkConnectionsManager::Connection>
         c.title = _object["title"].GetString();
         c.account = _object["account"].GetString();
         
-        return NetworkConnectionsManager::Connection( move(c) );
+        return NetworkConnectionsManager::Connection( std::move(c) );
     }
     else if( type == "webdav" ) {
         if( !has_string("user") || !has_string("host") || !has_string("path") ||
@@ -204,7 +204,7 @@ static std::optional<NetworkConnectionsManager::Connection>
         c.https = _object["https"].GetBool();
         c.port = _object["port"].GetInt();
      
-        return NetworkConnectionsManager::Connection( move(c) );
+        return NetworkConnectionsManager::Connection( std::move(c) );
     }
 
     return std::nullopt;
@@ -314,7 +314,7 @@ void ConfigBackedNetworkConnectionsManager::Save()
         for( auto &c: m_Connections ) {
             auto o = ConnectionToJSONObject(c);
             if( o.GetType() != rapidjson::kNullType )
-                connections.PushBack( move(o), allocator );
+                connections.PushBack( std::move(o), allocator );
         }
         for( auto &u: m_MRU )
             mru.PushBack( Value(to_string(u).c_str(), allocator), allocator );
@@ -434,7 +434,7 @@ bool ConfigBackedNetworkConnectionsManager::AskForPassword(const Connection &_co
 std::optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::
     ConnectionForVFS(const VFSHost& _vfs) const
 {
-    function<bool(const Connection &)> pred;
+    std::function<bool(const Connection &)> pred;
 
     if( auto ftp = dynamic_cast<const vfs::FTPHost*>(&_vfs) )
         pred = [ftp](const Connection &i){
@@ -531,7 +531,7 @@ static string NetFSErrorString( int _code )
 void ConfigBackedNetworkConnectionsManager::NetFSCallback
     (int _status, void *_requestID, CFArrayRef _mountpoints)
 {
-    function<void(const string&_mounted_path, const string&_error)> cb;
+    std::function<void(const string&_mounted_path, const string&_error)> cb;
     LOCK_GUARD(m_PendingMountRequestsLock) {
         auto i = find_if(begin(m_PendingMountRequests), end(m_PendingMountRequests), [=](auto &_v){
             return _v.first == _requestID;
@@ -697,7 +697,7 @@ static std::shared_ptr<const nc::utility::NativeFileSystemInfo> FindExistingMoun
 bool ConfigBackedNetworkConnectionsManager::MountShareAsync(
     const Connection &_conn,
     const string &_password,
-    function<void(const string&_mounted_path, const string&_error)> _callback)
+    std::function<void(const string&_mounted_path, const string&_error)> _callback)
 {
     if( !_conn.IsType<LANShare>() )
         return false;

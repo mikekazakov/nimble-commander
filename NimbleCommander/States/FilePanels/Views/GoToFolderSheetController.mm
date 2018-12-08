@@ -49,9 +49,9 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 
 @implementation GoToFolderSheetController
 {
-    function<void()>        m_Handler; // return VFS error code
-    std::shared_ptr<VFSListing>m_LastListing;
-    string                  m_RequestedPath;
+    std::function<void()>       m_Handler; // return VFS error code
+    std::shared_ptr<VFSListing> m_LastListing;
+    string                      m_RequestedPath;
 }
 @synthesize requestedPath = m_RequestedPath;
 
@@ -78,7 +78,8 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
     GA().PostScreenView("Go To Folder");
 }
 
-- (void)showSheetWithParentWindow:(NSWindow *)_window handler:(function<void()>)_handler
+- (void)showSheetWithParentWindow:(NSWindow *)_window
+                          handler:(std::function<void()>)_handler
 {
     m_Handler = _handler;
     [_window beginSheet:self.window

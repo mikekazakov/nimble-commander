@@ -12,7 +12,7 @@ public:
     FooterVolumeInfoFetcher();
     ~FooterVolumeInfoFetcher();
     
-    void SetCallback( function<void(const VFSStatFS&)> _callback );
+    void SetCallback( std::function<void(const VFSStatFS&)> _callback );
     void SetTarget( const VFSListingPtr &_listing );
     const VFSStatFS& Current() const;
     
@@ -24,7 +24,7 @@ private:
     VFSHostWeakPtr m_Host;
     string         m_Path;
     VFSStatFS m_Current;
-    function<void(const VFSStatFS&)> m_Callback;
+    std::function<void(const VFSStatFS&)> m_Callback;
     bool      m_Active = false;
 
     void Accept( const VFSStatFS &_stat );

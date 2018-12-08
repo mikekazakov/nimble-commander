@@ -38,8 +38,6 @@
     #include <any>
     using std::string;
     using std::vector;
-    using std::function;
-    using std::move;
 
     // low-level facilities from Habanero
     #include <Habanero/dispatch_cpp.h>

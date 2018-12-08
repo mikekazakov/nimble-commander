@@ -113,7 +113,7 @@ void SpotlightSearch::Perform( PanelController *_target, id _sender ) const
     __weak PanelController *wp = _target;
     view.handler = [wp](const string& _query){
         if( PanelController *panel = wp ) {
-            auto task = [=]( const function<bool()> &_cancelled ) {
+            auto task = [=]( const std::function<bool()> &_cancelled ) {
                 if( auto l = FetchSearchResultsAsListing(FetchSpotlightResults(_query),
                                                          *VFSNativeHost::SharedHost(),
                                                          panel.vfsFetchingFlags,
@@ -123,7 +123,7 @@ void SpotlightSearch::Perform( PanelController *_target, id _sender ) const
                         [panel loadListing:l];
                     });
             };
-            [panel commitCancelableLoadingTask:move(task)];
+            [panel commitCancelableLoadingTask:std::move(task)];
         }
     };
     

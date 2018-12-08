@@ -192,12 +192,12 @@ Value PanelDataPersisency::EncodeVFSPath( const VFSHost &_vfs, const string &_pa
     Value json_hosts(rapidjson::kArrayType);
     for( auto h: hosts )
         if( auto v = EncodeVFSHostInfo(*h); v.GetType() != rapidjson::kNullType )
-            json_hosts.PushBack( move(v), nc::config::g_CrtAllocator );
+            json_hosts.PushBack( std::move(v), nc::config::g_CrtAllocator );
         else
             return Value{rapidjson::kNullType};
     if( !json_hosts.Empty() )
         json.AddMember(Value(g_StackHostsKey, nc::config::g_CrtAllocator),
-                       move(json_hosts),
+                       std::move(json_hosts),
                        nc::config::g_CrtAllocator);
     
     json.AddMember(Value(g_StackPathKey, nc::config::g_CrtAllocator),
@@ -213,12 +213,12 @@ Value PanelDataPersisency::LocationToJSON( const PersistentLocation &_location )
     Value json_hosts(rapidjson::kArrayType);
     for( auto &h: _location.hosts )
         if( auto v = EncodeAny(h); v.GetType() != rapidjson::kNullType )
-            json_hosts.PushBack( move(v), nc::config::g_CrtAllocator );
+            json_hosts.PushBack( std::move(v), nc::config::g_CrtAllocator );
         else
             return Value{rapidjson::kNullType};
     if( !json_hosts.Empty() )
         json.AddMember(Value(g_StackHostsKey, nc::config::g_CrtAllocator),
-                       move(json_hosts),
+                       std::move(json_hosts),
                        nc::config::g_CrtAllocator);
     
     json.AddMember(Value(g_StackPathKey, nc::config::g_CrtAllocator),
@@ -237,7 +237,7 @@ std::optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const jso
     result.path = _json[g_StackPathKey].GetString();
     
     if( !_json.HasMember(g_StackHostsKey) )
-        return move(result);
+        return std::move(result);
     
     if( _json.HasMember(g_StackHostsKey) && _json[g_StackHostsKey].IsArray() ) {
         auto &hosts = _json[g_StackHostsKey];
@@ -291,7 +291,7 @@ std::optional<PersistentLocation> PanelDataPersisency::JSONToLocation( const jso
         }
     }
 
-    return move(result);
+    return std::move(result);
 }
 
 static const char *VFSTagForNetworkConnection( const NetworkConnectionsManager::Connection &_conn )

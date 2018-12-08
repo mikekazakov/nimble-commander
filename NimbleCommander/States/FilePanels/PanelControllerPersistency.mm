@@ -29,7 +29,7 @@ ControllerStateJSONEncoder::Encode(ControllerStateEncoding::Options _options)
         if( auto v = PanelDataPersisency::EncodeVFSPath(m_Panel.data.Listing());
            v.GetType() != rapidjson::kNullType )
             json.AddMember(config::MakeStandaloneString(g_RestorationDataKey),
-                           move(v),
+                           std::move(v),
                            config::g_CrtAllocator );
         else
             return config::Value{rapidjson::kNullType};
@@ -184,7 +184,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentAsync(PersistentLocation _lo
                                                           PanelController *_panel )
 {
     auto workload = [this, _panel, location=std::move(_location)]
-        (const function<bool()> &_cancel_checker)
+        (const std::function<bool()> &_cancel_checker)
     {        
         VFSHostPtr host;        
         const auto rc = PanelDataPersisency::CreateVFSFromLocation(location,
@@ -202,7 +202,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentAsync(PersistentLocation _lo
             return;            
         }        
     };
-    [_panel commitCancelableLoadingTask:move(workload)]; 
+    [_panel commitCancelableLoadingTask:std::move(workload)]; 
 }
 
 void ControllerStateJSONDecoder::RecoverSavedContent(const config::Value &_saved_state,

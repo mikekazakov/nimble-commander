@@ -298,7 +298,7 @@ static NSOpenPanel* BuildAppChoose()
 
 static void ShowOpenPanel(NSOpenPanel *_panel,
                           NSWindow *_window,
-                          function<void(const string&_path)> _on_ok )
+                          std::function<void(const string&_path)> _on_ok )
 {
     [_panel beginSheetModalForWindow:_window
                   completionHandler:^(NSInteger result) {

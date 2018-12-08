@@ -16,7 +16,7 @@ public:
      * @param _drop_delay time threshold after which file watch should drop if no file changes occured in that time
      */
     bool WatchFile(const string& _path,
-                   function<void()> _on_file_changed,
+                   std::function<void()> _on_file_changed,
                    std::chrono::milliseconds _check_delay = std::chrono::seconds{5},
                    std::chrono::milliseconds _drop_delay = std::chrono::hours{1} );
     
@@ -30,7 +30,7 @@ public:
 private:
     struct Meta {
         string                          path;
-        std::shared_ptr<function<void()>>callback;
+        std::shared_ptr<std::function<void()>>callback;
         uint64_t                        fswatch_ticket = 0;
         vector<uint8_t>                 last_md5_hash;
         std::chrono::milliseconds       drop_time;

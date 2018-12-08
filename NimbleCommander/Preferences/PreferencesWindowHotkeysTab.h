@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <3rd_Party/RHPreferences/RHPreferences/RHPreferences.h>
 
 class ExternalToolsStorage;
@@ -8,6 +8,6 @@ class ExternalToolsStorage;
                                                             NSTableViewDelegate,
                                                             NSTextFieldDelegate>
 
-- (id) initWithToolsStorage:(function<ExternalToolsStorage&()>)_tool_storage;
+- (id) initWithToolsStorage:(std::function<ExternalToolsStorage&()>)_tool_storage;
 
 @end

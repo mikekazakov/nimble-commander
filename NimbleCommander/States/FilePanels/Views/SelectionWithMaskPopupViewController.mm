@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
 #include "SelectionWithMaskPopupViewController.h"
@@ -18,7 +18,7 @@ static spinlock                         g_InitialMaskLock;
 {
     void                               *m_TargetWnd;
     SimpleComboBoxPersistentDataSource *m_MaskHistory;
-    function<void(NSString *mask)>      m_Handler;
+    std::function<void(NSString *mask)> m_Handler;
     bool                                m_DoesSelect;
 }
 

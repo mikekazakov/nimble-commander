@@ -10,7 +10,7 @@ namespace nc::panel {
 class DragSender
 {
 public:
-    using IconCallback = function<NSImage*(const VFSListingItem &_item)>;
+    using IconCallback = std::function<NSImage*(const VFSListingItem &_item)>;
     
     DragSender(PanelController *_panel, IconCallback _icon_callback); 
     ~DragSender();

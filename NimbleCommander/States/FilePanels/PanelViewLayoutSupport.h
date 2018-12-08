@@ -79,7 +79,7 @@ public:
     int DefaultLayoutIndex() const;
     
     using ObservationTicket = ObservableBase::ObservationTicket;
-    ObservationTicket ObserveChanges( function<void()> _callback );
+    ObservationTicket ObserveChanges( std::function<void()> _callback );
     
 private:
     void ReplaceLayout(PanelViewLayout _layout, int _at_index, bool _mandatory);

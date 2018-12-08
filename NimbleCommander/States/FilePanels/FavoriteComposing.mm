@@ -84,7 +84,7 @@ vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::FinderFavorites()
             f.first);
 
         if( fl )
-            favorites.emplace_back( move(*fl) );
+            favorites.emplace_back( std::move(*fl) );
     }
     return favorites;
 }
@@ -102,7 +102,7 @@ vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::DefaultFavorites()
             f.first);
 
         if( fl )
-            favorites.emplace_back( move(*fl) );
+            favorites.emplace_back( std::move(*fl) );
     }
     return favorites;
 }

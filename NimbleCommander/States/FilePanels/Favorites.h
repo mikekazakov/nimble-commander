@@ -41,7 +41,7 @@ public:
 
     // Changes observation
     using ObservationTicket = ObservableBase::ObservationTicket;
-    virtual ObservationTicket ObserveFavoritesChanges( function<void()> _callback ) = 0;
+    virtual ObservationTicket ObserveFavoritesChanges( std::function<void()> _callback ) = 0;
 };
     
 // https://wiki.mozilla.org/User:Jesse/NewFrecency

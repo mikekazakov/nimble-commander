@@ -10,10 +10,10 @@ namespace nc::panel {
     <NSTableViewDataSource, NSTableViewDelegate, NSTextFieldDelegate>
 
 - (id) initWithFavoritesStorage:
-    (function<nc::panel::FavoriteLocationsStorage&()>)_favorites_storage;
+    (std::function<nc::panel::FavoriteLocationsStorage&()>)_favorites_storage;
 
 @property (nonatomic)
-    function< vector<std::pair<VFSHostPtr, string>>() > provideCurrentUniformPaths;
+    std::function< vector<std::pair<VFSHostPtr, string>>() > provideCurrentUniformPaths;
 
 - (void) show;
 

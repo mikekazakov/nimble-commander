@@ -16,7 +16,7 @@ namespace nc::panel {
         
         inline RestoreClosedTabRequest(Side _side, ListingPromise _promise):
             side(_side),
-            promise(move(_promise))
+            promise(std::move(_promise))
         {}
         
         Side side;
@@ -28,7 +28,7 @@ namespace nc::panel {
 
 - (instancetype) initWithMenu:(NSMenu*)_menu
                       storage:(std::shared_ptr<nc::panel::ClosedPanelsHistory>)_storage
-                panelsLocator:(function<MainWindowFilePanelState*()>)_locator;
+                panelsLocator:(std::function<MainWindowFilePanelState*()>)_locator;
 
 
 @end

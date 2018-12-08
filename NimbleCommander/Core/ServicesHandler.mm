@@ -7,7 +7,7 @@
 
 namespace nc::core {
 
-ServicesHandler::ServicesHandler( function<NCMainWindowController*()> _window_provider ):
+ServicesHandler::ServicesHandler( std::function<NCMainWindowController*()> _window_provider ):
     m_WindowProvider( move(_window_provider) )
 {
     assert( m_WindowProvider );

@@ -21,7 +21,7 @@ Encode( const VFSHost &_host, const string &_directory )
         return nullptr;
 
     auto v = std::make_shared<FavoriteLocationsStorage::Location>();
-    v->hosts_stack = move(*location);
+    v->hosts_stack = std::move(*location);
     v->verbose_path = PanelDataPersisency::MakeVerbosePathString( _host, _directory );
 
     return v;
@@ -67,7 +67,7 @@ void FavoriteLocationsStorageImpl::AddFavoriteLocation( Favorite _favorite )
     if( has_already )
         return;
 
-    m_Favorites.emplace_back( move(_favorite) );
+    m_Favorites.emplace_back( std::move(_favorite) );
     FireObservers( FavoritesChanged );
 }
 
@@ -93,7 +93,7 @@ std::optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
     else {
         f.title = _title;
     }
-    return move(f);
+    return std::move(f);
 }
 
 void FavoriteLocationsStorageImpl::ReportLocationVisit( VFSHost &_host, const string &_directory )
@@ -114,7 +114,7 @@ void FavoriteLocationsStorageImpl::ReportLocationVisit( VFSHost &_host, const st
         v.location = move(location);
         v.last_visit = timestamp;
         v.visits_count = 1;
-        m_Visits[footprint] = move(v);
+        m_Visits[footprint] = std::move(v);
     }
 }
 
@@ -188,7 +188,7 @@ config::Value FavoriteLocationsStorageImpl::VisitToJSON(const Visit &_visit)
     if( auto l = PanelDataPersisency::LocationToJSON(_visit.location->hosts_stack);
        l.GetType() != kNullType )
         json.AddMember(MakeStandaloneString("location"),
-                       move(l),
+                       std::move(l),
                        g_CrtAllocator );
     else
         return Value{kNullType};
@@ -217,7 +217,7 @@ std::optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl:
     if( auto l = PanelDataPersisency::JSONToLocation(_json["location"]) ) {
         auto location = std::make_shared<Location>();
         location->verbose_path = PanelDataPersisency::MakeVerbosePathString(*l);
-        location->hosts_stack = move(*l);
+        location->hosts_stack = std::move(*l);
         v.location = location;
     }
     else
@@ -231,7 +231,7 @@ std::optional<FavoriteLocationsStorageImpl::Visit> FavoriteLocationsStorageImpl:
         return std::nullopt;
     v.last_visit = _json["last_visit"].GetInt64();
     
-    return move(v);
+    return std::move(v);
 }
 
 config::Value FavoriteLocationsStorageImpl::FavoriteToJSON(const Favorite &_favorite)
@@ -243,7 +243,7 @@ config::Value FavoriteLocationsStorageImpl::FavoriteToJSON(const Favorite &_favo
     if( auto l = PanelDataPersisency::LocationToJSON(_favorite.location->hosts_stack);
        l.GetType()!=kNullType )
         json.AddMember(MakeStandaloneString("location"),
-                       move(l),
+                       std::move(l),
                        g_CrtAllocator );
     else
         return Value{kNullType};
@@ -269,7 +269,7 @@ std::optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
     if( auto l = PanelDataPersisency::JSONToLocation(_json["location"]) ) {
         auto location = std::make_shared<Location>();
         location->verbose_path = PanelDataPersisency::MakeVerbosePathString(*l);
-        location->hosts_stack = move(*l);
+        location->hosts_stack = std::move(*l);
         f.location = location;
     }
     else
@@ -280,7 +280,7 @@ std::optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
     
     auto fp_string = PanelDataPersisency::MakeFootprintString(f.location->hosts_stack);
     f.footprint = std::hash<string>()(fp_string);
-    return move(f);
+    return std::move(f);
 }
 
 void FavoriteLocationsStorageImpl::StoreData( config::Config &_config, const char *_path )
@@ -294,10 +294,10 @@ void FavoriteLocationsStorageImpl::StoreData( config::Config &_config, const cha
     Value manual(kArrayType);
     for( auto &favorite: m_Favorites )
         if( auto v = FavoriteToJSON(favorite); v.GetType() != kNullType )
-            manual.PushBack( move(v), g_CrtAllocator );
+            manual.PushBack( std::move(v), g_CrtAllocator );
 
     json.AddMember(MakeStandaloneString("manual"),
-                   move(manual),
+                   std::move(manual),
                    g_CrtAllocator );
 
     Value automatic(kArrayType);
@@ -307,7 +307,7 @@ void FavoriteLocationsStorageImpl::StoreData( config::Config &_config, const cha
                 automatic.PushBack( std::move(v), g_CrtAllocator );
 
     json.AddMember(MakeStandaloneString("automatic"),
-                   move(automatic),
+                   std::move(automatic),
                    g_CrtAllocator );
     
     _config.Set(_path, json);
@@ -329,7 +329,7 @@ void FavoriteLocationsStorageImpl::LoadData( config::Config &_config, const char
             if( auto v = JSONToVisit(automatic[i]) ) {
                 auto fp_string = PanelDataPersisency::MakeFootprintString(v->location->hosts_stack);
                 auto fp = std::hash<string>()(fp_string);                
-                m_Visits[fp] = move( *v );
+                m_Visits[fp] = std::move( *v );
             }
     }
 
@@ -337,7 +337,7 @@ void FavoriteLocationsStorageImpl::LoadData( config::Config &_config, const char
         auto &manual = json["manual"];
         for( int i = 0, e = manual.Size(); i != e; ++i ) {
             if( auto f = JSONToFavorite(manual[i]) )
-               m_Favorites.emplace_back( move(*f) );
+               m_Favorites.emplace_back( std::move(*f) );
         }
     }
 }
@@ -353,16 +353,16 @@ void FavoriteLocationsStorageImpl::SetFavorites( const vector<Favorite> &_new_fa
         Favorite new_favorite = f;
         new_favorite.footprint = PanelDataPersisency::
             MakeFootprintStringHash( new_favorite.location->hosts_stack );
-        m_Favorites.emplace_back( move(new_favorite) );
+        m_Favorites.emplace_back( std::move(new_favorite) );
     }
     
     FireObservers( FavoritesChanged );
 }
 
 FavoriteLocationsStorageImpl::ObservationTicket FavoriteLocationsStorageImpl::
-    ObserveFavoritesChanges( function<void()> _callback )
+    ObserveFavoritesChanges( std::function<void()> _callback )
 {
-    return AddObserver( move(_callback), FavoritesChanged );
+    return AddObserver( std::move(_callback), FavoritesChanged );
 }
 
 void FavoriteLocationsStorageImpl::ClearVisitedLocations()

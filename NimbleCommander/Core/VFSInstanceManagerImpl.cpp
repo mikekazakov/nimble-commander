@@ -272,7 +272,8 @@ void VFSInstanceManagerImpl::SweepDeadReferences()
     FireObservers( AliveVFSListObservation ); // tell that we have removed some vfs from alive list
 }
 
-VFSHostPtr VFSInstanceManagerImpl::RetrieveVFS( const Promise &_promise, function<bool()> _cancel_checker )
+VFSHostPtr VFSInstanceManagerImpl::RetrieveVFS(const Promise &_promise,
+                                               std::function<bool()> _cancel_checker )
 {
     if( !_promise )
         return nullptr;
@@ -339,7 +340,8 @@ const char *VFSInstanceManagerImpl::GetTag( const Promise &_promise )
 }
 
 // assumes that m_MemoryLock is aquired
-VFSHostPtr VFSInstanceManagerImpl::GetOrRestoreVFS_Unlocked( Info *_info, const function<bool()> &_cancel_checker )
+VFSHostPtr VFSInstanceManagerImpl::
+    GetOrRestoreVFS_Unlocked( Info *_info, const std::function<bool()> &_cancel_checker )
 {
     // check if host is alive - in this case we can return it immediately
     if( auto host = _info->m_WeakHost.lock() )
@@ -393,12 +395,14 @@ string VFSInstanceManagerImpl::GetVerboseVFSTitle( const Promise &_promise )
     return "'";
 }
 
-VFSInstanceManager::ObservationTicket VFSInstanceManagerImpl::ObserveAliveVFSListChanged( function<void()> _callback )
+VFSInstanceManager::ObservationTicket VFSInstanceManagerImpl::
+    ObserveAliveVFSListChanged( std::function<void()> _callback )
 {
     return AddObserver(move(_callback), AliveVFSListObservation);
 }
 
-VFSInstanceManager::ObservationTicket VFSInstanceManagerImpl::ObserveKnownVFSListChanged( function<void()> _callback )
+VFSInstanceManager::ObservationTicket VFSInstanceManagerImpl::
+    ObserveKnownVFSListChanged( std::function<void()> _callback )
 {
     return AddObserver(move(_callback), KnownVFSListObservation);
 }

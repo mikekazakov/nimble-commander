@@ -128,7 +128,7 @@ void ThemesManager::LoadThemes()
         nc::config::Document doc;
         doc.CopyFrom(*i, nc::config::g_CrtAllocator);
         
-        m_Themes.emplace( name, std::make_shared<nc::config::Document>( move(doc) ) );
+        m_Themes.emplace( name, std::make_shared<nc::config::Document>( std::move(doc) ) );
         m_OrderedThemeNames.emplace_back( name );
     }
 }
@@ -153,7 +153,7 @@ void ThemesManager::LoadDefaultThemes()
         nc::config::Document doc;
         doc.CopyFrom(*i, nc::config::g_CrtAllocator);
         
-        m_DefaultThemes.emplace( name, std::make_shared<nc::config::Document>( move(doc) ) );
+        m_DefaultThemes.emplace( name, std::make_shared<nc::config::Document>( std::move(doc) ) );
         m_OrderedDefaultThemeNames.emplace_back( name );
     }
 }
@@ -225,7 +225,7 @@ bool ThemesManager::SetThemeValue(const string &_theme_name,
                       nc::config::Value(_value, nc::config::g_CrtAllocator),
                       nc::config::g_CrtAllocator);
     
-    it->second = std::make_shared<nc::config::Document>( move(new_doc) );
+    it->second = std::make_shared<nc::config::Document>( std::move(new_doc) );
     
     // if this is a selected theme
     if( _theme_name == m_SelectedThemeName ) {
@@ -283,7 +283,7 @@ void ThemesManager::WriteThemes() const
         
         nc::config::Value theme{ rapidjson::kObjectType };
         theme.CopyFrom( *i->second, nc::config::g_CrtAllocator );
-        json_themes.PushBack( move(theme), nc::config::g_CrtAllocator);
+        json_themes.PushBack( std::move(theme), nc::config::g_CrtAllocator);
     }
     GlobalConfig().Set( m_ThemesStoragePath, json_themes );
 }
@@ -310,7 +310,7 @@ bool ThemesManager::SelectTheme( const string &_theme_name )
 }
 
 ThemesManager::ObservationTicket ThemesManager::
-    ObserveChanges( uint64_t _notification_mask, function<void()> _callback )
+    ObserveChanges( uint64_t _notification_mask, std::function<void()> _callback )
 {
     return AddObserver( move(_callback), _notification_mask );
 }
@@ -383,7 +383,7 @@ bool ThemesManager::ImportThemeData(const string &_theme_name,
         return false;
     
     // put new data into our working dictionary
-    it->second = std::make_shared<nc::config::Document>( move(new_doc) );
+    it->second = std::make_shared<nc::config::Document>( std::move(new_doc) );
     
     // if this is a selected theme
     if( _theme_name == m_SelectedThemeName ) {
@@ -411,7 +411,7 @@ bool ThemesManager::AddTheme(const string &_theme_name,
                   nc::config::MakeStandaloneString(_theme_name),
                   nc::config::g_CrtAllocator);
     
-    m_Themes.emplace( _theme_name, std::make_shared<nc::config::Document>( move(doc) ) );
+    m_Themes.emplace( _theme_name, std::make_shared<nc::config::Document>( std::move(doc) ) );
     m_OrderedThemeNames.emplace_back( _theme_name );
 
     // TODO: move to background thread, delay execution
@@ -489,7 +489,7 @@ bool ThemesManager::RenameTheme( const string &_theme_name, const string &_to_na
                   nc::config::g_CrtAllocator);
     
     m_Themes.erase(_theme_name);
-    m_Themes.emplace( _to_name, std::make_shared<nc::config::Document>( move(doc) ) );
+    m_Themes.emplace( _to_name, std::make_shared<nc::config::Document>( std::move(doc) ) );
     replace( begin(m_OrderedThemeNames), end(m_OrderedThemeNames), _theme_name, _to_name );
     
 

@@ -123,7 +123,8 @@ public:
     bool RenameTheme( const string &_theme_name, const string &_to_name );
 
     using ObservationTicket = ObservableBase::ObservationTicket;
-    ObservationTicket ObserveChanges( uint64_t _notification_mask, function<void()> _callback );
+    ObservationTicket ObserveChanges(uint64_t _notification_mask,
+                                     std::function<void()> _callback );
 
 private:
     const char * const m_CurrentThemePath;

@@ -56,7 +56,7 @@ public:
     const vector<std::pair<const char*,int>>& AllShortcuts() const;
     
     using ObservationTicket = ObservableBase::ObservationTicket;
-    ObservationTicket ObserveChanges(function<void()> _callback);
+    ObservationTicket ObserveChanges(std::function<void()> _callback);
     
 private:
     ActionsShortcutsManager();

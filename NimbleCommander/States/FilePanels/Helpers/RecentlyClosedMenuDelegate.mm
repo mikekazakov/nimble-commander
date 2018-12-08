@@ -15,12 +15,12 @@ using namespace nc::panel;
     NSMenu *m_Menu;
     NSMenuItem *m_RestoreLast;
     std::shared_ptr<nc::panel::ClosedPanelsHistory> m_Storage;
-    function<MainWindowFilePanelState*()> m_Locator;
+    std::function<MainWindowFilePanelState*()> m_Locator;
 }
 
 - (instancetype) initWithMenu:(NSMenu*)_menu
                       storage:(std::shared_ptr<nc::panel::ClosedPanelsHistory>)_storage
-                panelsLocator:(function<MainWindowFilePanelState*()>)_locator
+                panelsLocator:(std::function<MainWindowFilePanelState*()>)_locator
 {
     assert( _menu );
     assert( _storage );

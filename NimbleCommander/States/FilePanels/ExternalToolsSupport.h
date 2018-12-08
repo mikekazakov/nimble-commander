@@ -106,7 +106,8 @@ private:
 class ExternalToolsParametersParser
 {
 public:
-    ExternalToolsParameters Parse( const string &_source, function<void(string)> _parse_error = nullptr );
+    ExternalToolsParameters Parse(const string &_source,
+                                  std::function<void(string)> _parse_error = nullptr );
     
 private:
 };
@@ -151,7 +152,7 @@ public:
     void                                    MoveTool( size_t _at_index, size_t _to_index );
     
     using ObservationTicket = ObservableBase::ObservationTicket;
-    ObservationTicket ObserveChanges( function<void()> _callback );
+    ObservationTicket ObserveChanges( std::function<void()> _callback );
     
 private:
     void LoadToolsFromConfig();

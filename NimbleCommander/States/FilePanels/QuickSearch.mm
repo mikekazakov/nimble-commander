@@ -326,7 +326,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
         }
     };
     
-    dispatch_to_main_queue_after( g_SoftFilteringTimeout + 1000ns, move(clear_filtering) );
+    dispatch_to_main_queue_after( g_SoftFilteringTimeout + 1000ns, std::move(clear_filtering) );
 }
 
 - (void)updateTypingUIForHardFiltering

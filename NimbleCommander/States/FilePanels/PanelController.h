@@ -81,7 +81,7 @@ struct DelayedFocusing
     /**
      * called by PanelController when succesfully changed the cursor position regarding this request.
      */
-    function<void()> done;
+    std::function<void()> done;
 };
 
 struct DirectoryChangeRequest
@@ -103,7 +103,7 @@ struct DirectoryChangeRequest
      * This thread may be main or background depending on PerformAsynchronous.
      * Will be called on any error canceling process or with 0 on successful loading.
      */
-    function<void(int)> LoadingResultCallback    = nullptr;
+    std::function<void(int)> LoadingResultCallback= nullptr;
     
     /**
      * Return code of a VFS->FetchDirectoryListing will be placed here.
@@ -146,7 +146,8 @@ struct DirectoryChangeRequest
 - (void) forceRefreshPanel; // user pressed cmd+r by default
 - (void) markRestorableStateAsInvalid; // will actually call window controller's invalidateRestorableState
 
-- (void) commitCancelableLoadingTask:(function<void(const function<bool()> &_is_cancelled)>) _task;
+- (void) commitCancelableLoadingTask:
+    (std::function<void(const std::function<bool()> &_is_cancelled)>) _task;
 
 
 /**
@@ -210,7 +211,7 @@ struct DirectoryChangeRequest
 /**
  * Allows changing Data options and ensures consitency with View afterwards.
  */
-- (void)changeDataOptions:(const function<void(nc::panel::data::Model& _data)>&)_workload;
+- (void)changeDataOptions:(const std::function<void(nc::panel::data::Model& _data)>&)_workload;
 
 @end
 

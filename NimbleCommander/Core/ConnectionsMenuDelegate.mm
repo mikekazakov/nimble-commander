@@ -12,11 +12,11 @@
 @implementation ConnectionsMenuDelegate
 {
     vector<NetworkConnectionsManager::Connection> m_Connections;
-    function<NetworkConnectionsManager&()> m_Manager;
+    std::function<NetworkConnectionsManager&()> m_Manager;
     int m_InitialElementsCount;
 }
 
-- (instancetype) initWithManager:(function<NetworkConnectionsManager&()>)_callback
+- (instancetype) initWithManager:(std::function<NetworkConnectionsManager&()>)_callback
 {
     self = [super init];
     if( self ) {

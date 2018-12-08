@@ -592,7 +592,7 @@ const vector<std::pair<const char*,int>>& ActionsShortcutsManager::AllShortcuts(
 }
 
 ActionsShortcutsManager::ObservationTicket ActionsShortcutsManager::
-    ObserveChanges(function<void()> _callback)
+    ObserveChanges(std::function<void()> _callback)
 {
     return ObservableBase::AddObserver(_callback);
 }

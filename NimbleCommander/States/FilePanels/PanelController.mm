@@ -162,7 +162,7 @@ static void HeatUpConfigValues()
         /**
          * Called when changed a cursor position
          */
-        function<void()> done;
+        std::function<void()> done;
     } m_DelayedSelection;
     
     __weak MainWindowFilePanelState* m_FilePanelState;
@@ -240,7 +240,7 @@ static void HeatUpConfigValues()
             if( NCPanelQuickSearch *strong_qs = weak_qs  )
                 strong_qs.searchCriteria = _request;
         };
-        m_View.headerView.searchRequestChangeCallback = move(callback);
+        m_View.headerView.searchRequestChangeCallback = std::move(callback);
         
         [m_View addKeystrokeSink:self withBasePriority:view::BiddingPriority::Default];
         [m_View addKeystrokeSink:m_QuickSearch withBasePriority:view::BiddingPriority::High];
@@ -551,7 +551,7 @@ static void HeatUpConfigValues()
             });
         };
         m_UpdatesObservationTicket = self.vfs->DirChangeObserve(self.currentDirectoryPath.c_str(),
-                                                                move(dir_change_callback));
+                                                                std::move(dir_change_callback));
     }
     
     [self clearFocusingRequest];
@@ -699,7 +699,7 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     [self updateAttachedBriefSystemOverview];
 }
 
-- (void)changeDataOptions:(const function<void(nc::panel::data::Model& _data)>&)_workload
+- (void)changeDataOptions:(const std::function<void(nc::panel::data::Model& _data)>&)_workload
 {
     assert(dispatch_is_main_queue());    
     assert( _workload );
@@ -775,10 +775,11 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     layout.layout = [m_View presentationLayout];
 
     if( layout != *m_AssignedViewLayout )
-        m_Layouts->ReplaceLayout( move(layout), m_ViewLayoutIndex );
+        m_Layouts->ReplaceLayout( std:: move(layout), m_ViewLayoutIndex );
 }
 
-- (void) commitCancelableLoadingTask:(function<void(const function<bool()> &_is_cancelled)>) _task
+- (void) commitCancelableLoadingTask:
+    (std::function<void(const std::function<bool()> &_is_cancelled)>) _task
 {
     m_DirectoryLoadingQ.Run([task=std::move(_task), sq = &m_DirectoryLoadingQ]{
         task( [sq]{ return sq->IsStopped(); } );

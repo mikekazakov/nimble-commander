@@ -61,7 +61,7 @@ enum class SourceType
 @implementation PreferencesWindowHotkeysTab
 {
     vector<std::pair<string,int>>           m_Shortcuts;
-    function<ExternalToolsStorage&()>       m_ToolsStorage;
+    std::function<ExternalToolsStorage&()>  m_ToolsStorage;
     ExternalToolsStorage::ObservationTicket m_ToolsObserver;
     vector<std::shared_ptr<const ExternalTool>>  m_Tools;
     vector<std::any>                        m_AllNodes;
@@ -72,7 +72,7 @@ enum class SourceType
 
 @synthesize sourceType = m_SourceType;
 
-- (id) initWithToolsStorage:(function<ExternalToolsStorage&()>)_tool_storage
+- (id) initWithToolsStorage:(std::function<ExternalToolsStorage&()>)_tool_storage
 {
     self = [super init];
     if (self) {
@@ -117,7 +117,7 @@ enum class SourceType
         shortcut.is_menu_action = v.first.find_first_of("menu.") == 0;
         shortcut.is_customized = shortcut.current_shortcut != shortcut.default_shortcut;
         shortcut.has_submenu = menu_item != nil && menu_item.hasSubmenu;
-        m_AllNodes.emplace_back( move(shortcut) );
+        m_AllNodes.emplace_back( std::move(shortcut) );
         counts[shortcut.current_shortcut]++;
     }
     for( int i = 0, e = (int)m_Tools.size(); i != e; ++i ) {
@@ -127,7 +127,7 @@ enum class SourceType
         shortcut.tool_index = i;
         shortcut.label = ComposeExternalToolTitle(*v, i);
         shortcut.is_customized = bool(v->m_Shorcut);
-        m_AllNodes.emplace_back( move(shortcut) );
+        m_AllNodes.emplace_back( std::move(shortcut) );
         counts[v->m_Shorcut]++;
     }
     

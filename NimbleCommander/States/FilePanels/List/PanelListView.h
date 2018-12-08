@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../PanelViewImplementationProtocol.h"
@@ -25,7 +25,7 @@ struct PanelListViewColumnsLayout;
 @property (nonatomic, readonly) int itemsInColumn;
 @property (nonatomic) int cursorPosition;
 @property (nonatomic) nc::panel::data::SortMode sortMode;
-@property (nonatomic) function<void(nc::panel::data::SortMode)> sortModeChangeCallback;
+@property (nonatomic) std::function<void(nc::panel::data::SortMode)> sortModeChangeCallback;
 @property (nonatomic) PanelView *panelView;
 
 - (void) dataChanged;

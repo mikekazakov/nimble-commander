@@ -107,15 +107,15 @@ static config::Value SaveLayout( const PanelViewLayout& _l )
                 col.AddMember(MakeStandaloneString(g_ListColumMaxWidth),
                               config::Value(c.max_width),
                               g_CrtAllocator);
-            columns.PushBack( move(col), g_CrtAllocator );
+            columns.PushBack( std::move(col), g_CrtAllocator );
         }
         d.AddMember(MakeStandaloneString(g_ListColumns),
-                    move(columns),
+                    std::move(columns),
                     g_CrtAllocator);
         d.AddMember(MakeStandaloneString(g_ListIconScale),
                     config::Value(list->icon_scale),
                     g_CrtAllocator);
-        v.AddMember( MakeStandaloneString(g_ListKey), move(d), g_CrtAllocator );
+        v.AddMember( MakeStandaloneString(g_ListKey), std::move(d), g_CrtAllocator );
     }
     else if( auto brief = _l.brief() ) {
         config::Value d{kObjectType};
@@ -140,7 +140,7 @@ static config::Value SaveLayout( const PanelViewLayout& _l )
         d.AddMember(MakeStandaloneString(g_BriefIconScale),
                     config::Value(brief->icon_scale),
                     g_CrtAllocator);
-        v.AddMember( MakeStandaloneString(g_BriefKey), move(d), g_CrtAllocator );
+        v.AddMember( MakeStandaloneString(g_BriefKey), std::move(d), g_CrtAllocator );
     }
     else if( _l.is_disabled() ) {
         v.AddMember(MakeStandaloneString(g_DisabledKey),
@@ -292,13 +292,13 @@ int PanelViewLayoutsStorage::DefaultLayoutIndex() const
 
 void PanelViewLayoutsStorage::ReplaceLayout( PanelViewLayout _layout, int _at_index )
 {
-    ReplaceLayout( move(_layout), _at_index, false );
+    ReplaceLayout( std::move(_layout), _at_index, false );
 }
 
 void PanelViewLayoutsStorage::ReplaceLayoutWithMandatoryNotification
     (PanelViewLayout _layout, int _at_index)
 {
-    ReplaceLayout( move(_layout), _at_index, true );
+    ReplaceLayout( std::move(_layout), _at_index, true );
 }
 
 void PanelViewLayoutsStorage::ReplaceLayout(PanelViewLayout _layout, int _at_index, bool _mandatory)
@@ -308,13 +308,14 @@ void PanelViewLayoutsStorage::ReplaceLayout(PanelViewLayout _layout, int _at_ind
             return;
         if( *m_Layouts[_at_index] == _layout )
             return; // nothing to do - equal layouts
-        m_Layouts[_at_index] = std::make_shared<PanelViewLayout>( move(_layout) );
+        m_Layouts[_at_index] = std::make_shared<PanelViewLayout>( std::move(_layout) );
     }
     
     CommitChanges(_mandatory);
 }
 
-PanelViewLayoutsStorage::ObservationTicket PanelViewLayoutsStorage::ObserveChanges( function<void()> _callback )
+PanelViewLayoutsStorage::ObservationTicket
+    PanelViewLayoutsStorage::ObserveChanges( std::function<void()> _callback )
 {
     return AddObserver( move(_callback) );
 }
@@ -329,7 +330,7 @@ void PanelViewLayoutsStorage::LoadLayoutsFromConfig()
         m_Layouts.clear();
         for( auto i = layouts.Begin(), e = layouts.End(); i != e; ++i )
             if( auto l = LoadLayout( *i ) )
-                m_Layouts.emplace_back( std::make_shared<PanelViewLayout>(move(*l)) );
+                m_Layouts.emplace_back( std::make_shared<PanelViewLayout>(std::move(*l)) );
             else
                 m_Layouts.emplace_back( LastResortLayout() );
     }

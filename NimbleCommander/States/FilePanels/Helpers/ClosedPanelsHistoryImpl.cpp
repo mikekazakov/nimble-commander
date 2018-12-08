@@ -18,7 +18,7 @@ void ClosedPanelsHistoryImpl::AddListing( ListingPromise _listing )
     else {
         if( m_Entries.size() == m_MaxCapacity )
             m_Entries.pop_back();
-        m_Entries.emplace(begin(m_Entries), move(_listing) );
+        m_Entries.emplace(begin(m_Entries), std::move(_listing) );
     }
 }
     

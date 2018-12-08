@@ -28,17 +28,17 @@ static const auto g_FavoritesWindowControllerDragDataType =
 @implementation FavoritesWindowController
 {
     FavoritesWindowController *m_Self;
-    function<FavoriteLocationsStorage&()> m_Storage;
+    std::function<FavoriteLocationsStorage&()> m_Storage;
     
     vector<FavoriteLocationsStorage::Favorite> m_Favorites;
     vector<FavoriteLocationsStorage::Favorite> m_PopupMenuFavorites;
     
     FavoriteLocationsStorage::ObservationTicket m_ObservationTicket;
     bool m_IsCommitingFavorites;
-    function< vector<std::pair<VFSHostPtr, string>>() > m_ProvideCurrentUniformPaths;
+    std::function< vector<std::pair<VFSHostPtr, string>>() > m_ProvideCurrentUniformPaths;
 }
 
-- (id) initWithFavoritesStorage:(function<FavoriteLocationsStorage&()>)_favorites_storage
+- (id) initWithFavoritesStorage:(std::function<FavoriteLocationsStorage&()>)_favorites_storage
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if( self ) {
@@ -231,7 +231,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
             for( PanelDraggingItem *item: source.items )
                 if( auto f = FavoriteComposing{storage}.FromListingItem(item.item) )
                     if( ![self hasFavorite:*f] )
-                        addition.emplace_back( move(*f) );
+                        addition.emplace_back( std::move(*f) );
         }
         else if( [pasteboard.types containsObject:FilesDraggingSource.fileURLsDragUTI] ) {
             // dragging from outside
@@ -241,7 +241,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
             for( NSURL *url in fileURLs )
                 if( auto f = FavoriteComposing{storage}.FromURL(url) )
                     if( ![self hasFavorite:*f] )
-                        addition.emplace_back( move(*f) );
+                        addition.emplace_back( std::move(*f) );
         }
         
         if( !addition.empty() ) {
@@ -380,12 +380,13 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 }
 
 
-- (void)setProvideCurrentUniformPaths:(function<vector<std::pair<VFSHostPtr, string> > ()>)callback
+- (void)setProvideCurrentUniformPaths:
+    (std::function<vector<std::pair<VFSHostPtr, string> > ()>)callback
 {
     m_ProvideCurrentUniformPaths = move(callback);
 }
 
-- (function<vector<std::pair<VFSHostPtr, string> > ()>)provideCurrentUniformPaths
+- (std::function<vector<std::pair<VFSHostPtr, string> > ()>)provideCurrentUniformPaths
 {
     return m_ProvideCurrentUniformPaths;
 }

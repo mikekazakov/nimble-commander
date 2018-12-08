@@ -75,12 +75,12 @@
     for( auto ind: d.SortedDirectoryEntries() )
         if( d.VolatileDataAtRawPosition(ind).is_selected() )
             if( auto e = d.EntryAtRawPosition(ind) )
-                    items.emplace_back( move(e) );
+                    items.emplace_back( std::move(e) );
     
     if( items.empty() )
         if( auto e = d.EntryAtSortPosition(self.view.curpos) )
             if( !e.IsDotDot() )
-                items.emplace_back( move(e) );
+                items.emplace_back( std::move(e) );
     return items;
 }
 
@@ -91,11 +91,11 @@
     for( auto ind: d.SortedDirectoryEntries() )
         if( d.VolatileDataAtRawPosition(ind).is_selected() )
             if( auto e = d.EntryAtRawPosition(ind) )
-                    items.emplace_back( move(e) );
+                    items.emplace_back( std::move(e) );
     
     if( items.empty() )
         if( auto e = d.EntryAtSortPosition(self.view.curpos) )
-                items.emplace_back( move(e) );
+                items.emplace_back( std:: move(e) );
     return items;
 }
 

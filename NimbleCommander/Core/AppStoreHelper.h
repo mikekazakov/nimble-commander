@@ -7,7 +7,7 @@
 
 @interface AppStoreHelper : NSObject<SKProductsRequestDelegate, SKPaymentTransactionObserver>
 
-@property (nonatomic) function<void(const string &_id)> onProductPurchased;
+@property (nonatomic) std::function<void(const string &_id)> onProductPurchased;
 @property (nonatomic, readonly) NSString *priceString;
 @property (nonatomic, readonly) SKProduct *proFeaturesProduct;
 

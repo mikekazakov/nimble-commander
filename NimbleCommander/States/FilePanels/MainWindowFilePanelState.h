@@ -39,7 +39,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
                                              NCPanelViewKeystrokeSink,
                                              MMTabBarViewDelegate>
 {
-    function<PanelController*()> m_PanelFactory;
+    std::function<PanelController*()> m_PanelFactory;
     vector<PanelController*> m_LeftPanelControllers;
     vector<PanelController*> m_RightPanelControllers;
     __weak PanelController*  m_LastFocusedPanelController;
@@ -79,7 +79,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 - (instancetype) initWithFrame:(NSRect)frameRect
                        andPool:(nc::ops::Pool&)_pool
             loadDefaultContent:(bool)_load_content
-                  panelFactory:(function<PanelController*()>)_panel_factory
+                  panelFactory:(std::function<PanelController*()>)_panel_factory
     controllerStateJSONDecoder:(nc::panel::ControllerStateJSONDecoder&)_controller_json_decoder;
 
 - (void) loadDefaultPanelContent;

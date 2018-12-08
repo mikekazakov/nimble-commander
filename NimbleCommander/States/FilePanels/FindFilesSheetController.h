@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/SheetController.h>
@@ -20,7 +20,7 @@ struct FindFilesSheetControllerFoundItem
 
 @property (nonatomic) VFSHostPtr host;
 @property (nonatomic) string path;
-@property (nonatomic) function<void(const vector<VFSPath> &_filepaths)> onPanelize;
+@property (nonatomic) std::function<void(const vector<VFSPath> &_filepaths)> onPanelize;
 @property (nonatomic) nc::core::VFSInstanceManager *vfsInstanceManager;
 - (FindFilesSheetControllerFoundItem*) selectedItem; // may be nullptr
 

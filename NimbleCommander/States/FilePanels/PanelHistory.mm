@@ -87,7 +87,7 @@ void History::Put(const VFSListing &_listing )
     if( m_IsRecording ) {
         if( !m_History.empty() && m_History.back() == promise )
             return;
-        m_History.emplace_back( move(promise) );
+        m_History.emplace_back( std::move(promise) );
         if( m_History.size() > m_HistoryLength )
             m_History.pop_front();
     }
@@ -99,7 +99,7 @@ void History::Put(const VFSListing &_listing )
             m_IsRecording = true;
             while( m_History.size() > m_PlayingPosition + 1 )
                 m_History.pop_back();
-            m_History.emplace_back( move(promise) );
+            m_History.emplace_back( std:: move(promise) );
         }
     }
 }

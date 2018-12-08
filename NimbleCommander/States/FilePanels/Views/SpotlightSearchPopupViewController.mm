@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/SimpleComboBoxPersistentDataSource.h>
 #include "SpotlightSearchPopupViewController.h"
@@ -14,7 +14,7 @@ static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.querie
 @implementation SpotlightSearchPopupViewController
 {
     SimpleComboBoxPersistentDataSource *m_QueryHistory;
-    function<void(const string&)> m_Handler;
+    std::function<void(const string&)> m_Handler;
 }
 
 @synthesize handler = m_Handler;

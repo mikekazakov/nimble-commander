@@ -28,7 +28,7 @@ public:
     vector< std::shared_ptr<const Location> > FrecentlyUsed( int _amount ) const override;
     void ClearVisitedLocations() override;
     
-    ObservationTicket ObserveFavoritesChanges( function<void()> _callback ) override;
+    ObservationTicket ObserveFavoritesChanges( std::function<void()> _callback ) override;
     
 private:
     enum ObservationEvents : uint64_t {

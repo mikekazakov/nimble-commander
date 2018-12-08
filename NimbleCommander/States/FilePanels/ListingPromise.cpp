@@ -60,7 +60,7 @@ ListingPromise::NonUniformListing ListingPromise::FromNonUniformListing
             per_vfs.entries.emplace_back( directory.second.Build() );
         sort( begin(per_vfs.entries), end(per_vfs.entries) );
         
-        info.per_vfs.emplace_back( move(per_vfs) );
+        info.per_vfs.emplace_back( std::move(per_vfs) );
     }
     
     return info;
@@ -68,7 +68,7 @@ ListingPromise::NonUniformListing ListingPromise::FromNonUniformListing
 
 VFSListingPtr ListingPromise::Restore(unsigned long _fetch_flags,
                                       const PromiseVFSAdapter &_adapter,
-                                      const function<bool()> &_cancel_checker ) const
+                                      const std::function<bool()> &_cancel_checker ) const
 {
     assert(_adapter);
  
@@ -82,7 +82,7 @@ VFSListingPtr ListingPromise::Restore(unsigned long _fetch_flags,
 
 VFSListingPtr ListingPromise::RestoreUniform(unsigned long _fetch_flags,
                                              const PromiseVFSAdapter &_adapter,
-                                             const function<bool()> &_cancel_checker) const
+                                             const std::function<bool()> &_cancel_checker) const
 {
     const auto info = std::get_if<UniformListing>(&Storage());
     assert(info);
@@ -103,7 +103,7 @@ VFSListingPtr ListingPromise::RestoreUniform(unsigned long _fetch_flags,
     
 VFSListingPtr ListingPromise::RestoreNonUniform(unsigned long _fetch_flags,
                                                 const PromiseVFSAdapter &_adapter,
-                                                const function<bool()> &_cancel_checker) const
+                                                const std::function<bool()> &_cancel_checker) const
 {
     const auto info = std::get_if<NonUniformListing>(&Storage());
     assert(info);

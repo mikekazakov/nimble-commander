@@ -17,7 +17,7 @@ public:
     bool CopyDirectory(const string &_vfs_dirpath,
                        const VFSHostPtr &_host,
                        uint64_t _max_total_size,
-                       function<bool()> _cancel_checker,
+                       std::function<bool()> _cancel_checker,
                        string &_tmp_dirpath);
     
     std::optional<string> WriteStringIntoTempFile( const string& _source);

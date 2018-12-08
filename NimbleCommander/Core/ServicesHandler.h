@@ -9,7 +9,7 @@ namespace nc::core {
 class ServicesHandler
 {
 public:
-    ServicesHandler( function<NCMainWindowController*()> _window_provider );
+    ServicesHandler( std::function<NCMainWindowController*()> _window_provider );
 
     // NSService
     void OpenFolder(NSPasteboard *_pboard, NSString *_user_data, __strong NSString **_error);
@@ -22,7 +22,7 @@ private:
     void GoToFolder(const string &_path);
     void RevealItems(const vector<string> &_paths);
     
-    function<NCMainWindowController*()> m_WindowProvider;
+    std::function<NCMainWindowController*()> m_WindowProvider;
 };
     
 }

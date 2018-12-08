@@ -13,8 +13,10 @@
 
 namespace nc::panel::actions {
 
-static function<void()> RefreshCurrentActiveControllerLambda( MainWindowFilePanelState *_target );
-static function<void()> RefreshBothCurrentControllersLambda( MainWindowFilePanelState *_target );
+static std::function<void()>
+    RefreshCurrentActiveControllerLambda( MainWindowFilePanelState *_target );
+static std::function<void()>
+    RefreshBothCurrentControllersLambda( MainWindowFilePanelState *_target );
 
 bool CopyTo::Predicate( MainWindowFilePanelState *_target ) const
 {
@@ -290,7 +292,8 @@ void MoveAs::Perform( MainWindowFilePanelState *_target, id _sender ) const
     [_target.mainWindowController beginSheet:cd.window completionHandler:handler];
 }
 
-static function<void()> RefreshCurrentActiveControllerLambda( MainWindowFilePanelState *_target )
+static std::function<void()>
+    RefreshCurrentActiveControllerLambda( MainWindowFilePanelState *_target )
 {
     __weak PanelController *cur = _target.activePanelController;
     auto update_current = [=] {
@@ -301,7 +304,8 @@ static function<void()> RefreshCurrentActiveControllerLambda( MainWindowFilePane
     return update_current;
 }
 
-static function<void()> RefreshBothCurrentControllersLambda( MainWindowFilePanelState *_target )
+static std::function<void()>
+    RefreshBothCurrentControllersLambda( MainWindowFilePanelState *_target )
 {
     __weak PanelController *cur = _target.activePanelController;
     __weak PanelController * opp = _target.oppositePanelController;

@@ -166,7 +166,7 @@ static NSString *TitleForData( const data::Model* _data );
 
 - (instancetype) initBaseWithFrame:(NSRect)frameRect
                            andPool:(nc::ops::Pool&)_pool
-                      panelFactory:(function<PanelController*()>)_panel_factory
+                      panelFactory:(std::function<PanelController*()>)_panel_factory
         controllerStateJSONDecoder:(ControllerStateJSONDecoder&)_controller_json_decoder
 {
     assert( _panel_factory );
@@ -197,7 +197,7 @@ static NSString *TitleForData( const data::Model* _data );
 - (instancetype) initWithFrame:(NSRect)frameRect
                        andPool:(nc::ops::Pool&)_pool
             loadDefaultContent:(bool)_load_content
-                  panelFactory:(function<PanelController*()>)_panel_factory
+                  panelFactory:(std::function<PanelController*()>)_panel_factory
     controllerStateJSONDecoder:(ControllerStateJSONDecoder&)_controller_json_decoder
 {
     self = [self initBaseWithFrame:frameRect
@@ -609,15 +609,15 @@ static nc::config::Value EncodePanelsStates(
     for( auto pc: _left )
         if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts);
             v.GetType() != kNullType )
-            left.PushBack( move(v), nc::config::g_CrtAllocator );
+            left.PushBack( std::move(v), nc::config::g_CrtAllocator );
     
     for( auto pc: _right )
         if( auto v = ControllerStateJSONEncoder{pc}.Encode(encoding_opts);
             v.GetType() != kNullType )
-            right.PushBack( move(v), nc::config::g_CrtAllocator );
+            right.PushBack( std::move(v), nc::config::g_CrtAllocator );
     
-    json.PushBack( move(left), nc::config::g_CrtAllocator );
-    json.PushBack( move(right), nc::config::g_CrtAllocator );
+    json.PushBack( std::move(left), nc::config::g_CrtAllocator );
+    json.PushBack( std::move(right), nc::config::g_CrtAllocator );
     
     return json;
 }
@@ -762,10 +762,10 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
     using namespace nc::config;
     nc::config::Value json{kObjectType};
     json.AddMember(MakeStandaloneString(g_InitialStateLeftDefaults),
-                   move(left_panel_options),
+                   std::move(left_panel_options),
                    g_CrtAllocator);
     json.AddMember(MakeStandaloneString(g_InitialStateRightDefaults),
-                   move(right_panel_options),
+                   std::move(right_panel_options),
                    g_CrtAllocator);
 
     StateConfig().Set(g_InitialStatePath, json);
@@ -822,7 +822,7 @@ static nc::config::Value EncodeUIState(MainWindowFilePanelState *_state)
 }
 
 static void AskAboutStoppingRunningOperations(NSWindow *_window,
-                                              function<void(NSModalResponse)> _handler )
+                                              std::function<void(NSModalResponse)> _handler )
 {
     assert(_window && _handler);
     Alert *dialog = [[Alert alloc] init];

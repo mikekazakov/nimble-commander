@@ -30,8 +30,10 @@ public:
     };
     
     using StorageT = std::variant<UniformListing, NonUniformListing>;
-    using VFSPromiseAdapter = function<core::VFSInstancePromise(const std::shared_ptr<VFSHost>&)>;
-    using PromiseVFSAdapter = function<std::shared_ptr<VFSHost>(const core::VFSInstancePromise&)>;
+    using VFSPromiseAdapter =
+        std::function<core::VFSInstancePromise(const std::shared_ptr<VFSHost>&)>;
+    using PromiseVFSAdapter =
+        std::function<std::shared_ptr<VFSHost>(const core::VFSInstancePromise&)>;
     
     ListingPromise( const VFSListing &_listing, const VFSPromiseAdapter &_adapter );
     ListingPromise( const ListingPromise&) = default;
@@ -43,7 +45,7 @@ public:
     // may throw VFSErrorException or return nullptr
     VFSListingPtr Restore(unsigned long _fetch_flags,
                           const PromiseVFSAdapter &_adapter,
-                          const function<bool()> &_cancel_checker) const;
+                          const std::function<bool()> &_cancel_checker) const;
 
     const StorageT &Description() const noexcept;
     
@@ -52,10 +54,10 @@ private:
     
     VFSListingPtr RestoreUniform(unsigned long _fetch_flags,
                                  const PromiseVFSAdapter &_adapter,
-                                 const function<bool()> &_cancel_checker) const;
+                                 const std::function<bool()> &_cancel_checker) const;
     VFSListingPtr RestoreNonUniform(unsigned long _fetch_flags,
                                     const PromiseVFSAdapter &_adapter,
-                                    const function<bool()> &_cancel_checker) const;
+                                    const std::function<bool()> &_cancel_checker) const;
     static NonUniformListing FromNonUniformListing(const VFSListing &_listing,
                                                    const VFSPromiseAdapter &_adapter);
     static UniformListing FromUniformListing(const VFSListing &_listing,

@@ -301,8 +301,10 @@ void ExternalEditorsStorage::LoadFromConfig()
     auto v = GlobalConfig().Get(m_ConfigPath);
     if( v.IsArray() )
         for( auto i = v.Begin(), e = v.End(); i != e; ++i )
-            if( auto ed = ExternalEditorsPersistence::LoadFromJSON(*i) )
-                m_ExternalEditors.emplace_back( std::make_shared<ExternalEditorStartupInfo>(move(*ed)) );
+            if( auto ed = ExternalEditorsPersistence::LoadFromJSON(*i) ) {
+                auto shared_ed = std::make_shared<ExternalEditorStartupInfo>(std::move(*ed));
+                m_ExternalEditors.emplace_back( std::move(shared_ed) );
+            }
 }
 
 void ExternalEditorsStorage::SaveToConfig()

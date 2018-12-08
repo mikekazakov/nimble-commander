@@ -88,7 +88,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     std::stack<PanelListViewRowView*>   m_RowsStash;
     
     data::SortMode                      m_SortMode;
-    function<void(data::SortMode)>      m_SortModeChangeCallback;
+    std::function<void(data::SortMode)> m_SortModeChangeCallback;
     
     PanelListViewColumnsLayout          m_AssignedLayout;
     ThemesManager::ObservationTicket    m_ThemeObservation;

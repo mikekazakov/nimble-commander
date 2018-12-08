@@ -32,7 +32,7 @@ public:
      * May return nullptr on failure.
      */
     std::shared_ptr<VFSHost> RetrieveVFS( const Promise &_promise,
-                                         function<bool()> _cancel_checker = nullptr );
+                                         std::function<bool()> _cancel_checker = nullptr );
     
     /**
      * Will find an info for promise and return a corresponding vfs tag.
@@ -54,8 +54,8 @@ public:
     unsigned KnownVFSCount();
     Promise GetVFSPromiseByPosition( unsigned _at);
     
-    ObservationTicket ObserveAliveVFSListChanged( function<void()> _callback );
-    ObservationTicket ObserveKnownVFSListChanged( function<void()> _callback );
+    ObservationTicket ObserveAliveVFSListChanged( std::function<void()> _callback );
+    ObservationTicket ObserveKnownVFSListChanged( std::function<void()> _callback );
     
 private:
     enum : uint64_t {
@@ -96,7 +96,7 @@ private:
     Info *InfoFromID_Unlocked(uint64_t _inst_id);
     
     std::shared_ptr<VFSHost> GetOrRestoreVFS_Unlocked( Info *_info,
-                                                      const function<bool()> &_cancel_checker );
+                                                      const std::function<bool()> &_cancel_checker );
     
     
     vector<Info>                m_Memory;

@@ -41,8 +41,8 @@ public:
      * May throw vfs exceptions on vfs rebuilding.
      * May return nullptr on failure.
      */
-    virtual std::shared_ptr<VFSHost> RetrieveVFS( const Promise &_promise,
-                                            function<bool()> _cancel_checker = nullptr ) = 0;
+    virtual std::shared_ptr<VFSHost> RetrieveVFS
+        ( const Promise &_promise, std::function<bool()> _cancel_checker = nullptr ) = 0;
     
     /**
      * Will find an info for promise and return a corresponding vfs tag.
@@ -64,8 +64,8 @@ public:
     virtual unsigned KnownVFSCount() = 0;
     virtual Promise GetVFSPromiseByPosition( unsigned _at) = 0;
     
-    virtual ObservationTicket ObserveAliveVFSListChanged( function<void()> _callback ) = 0;
-    virtual ObservationTicket ObserveKnownVFSListChanged( function<void()> _callback ) = 0;
+    virtual ObservationTicket ObserveAliveVFSListChanged( std::function<void()> _callback ) = 0;
+    virtual ObservationTicket ObserveKnownVFSListChanged( std::function<void()> _callback ) = 0;
     
 protected:
     Promise SpawnPromise(uint64_t _inst_id);

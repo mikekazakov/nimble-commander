@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "../Favorites.h"
 #include "../FavoriteComposing.h"
@@ -19,12 +19,12 @@ void AddToFavorites::Perform( PanelController *_target, id _sender ) const
     auto &favorites = NCAppDelegate.me.favoriteLocationsStorage;
     if( auto item = _target.view.item ) {
         if( auto favorite = FavoriteComposing{*favorites}.FromListingItem(item) )
-            favorites->AddFavoriteLocation( move(*favorite) );
+            favorites->AddFavoriteLocation( std::move(*favorite) );
     }
     else if( _target.isUniform ) {
         if( auto favorite = favorites->ComposeFavoriteLocation(*_target.vfs,
                                                               _target.currentDirectoryPath) ) {
-            favorites->AddFavoriteLocation(move(*favorite));
+            favorites->AddFavoriteLocation(std::move(*favorite));
         }
     }
 }

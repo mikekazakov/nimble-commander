@@ -101,7 +101,7 @@ static const VFSStatFS* RegisterWatcher( FooterVolumeInfoFetcher* _w, const VFSH
     lp.host = _host;
     lp.path = _path;
     lp.watchers.emplace_back(_w);
-    g_Context.emplace_back( move(lp) );
+    g_Context.emplace_back( std::move(lp) );
     ScheduleIfNeed( g_Context.back(), true );
     return nullptr;
 }
@@ -152,7 +152,7 @@ FooterVolumeInfoFetcher::~FooterVolumeInfoFetcher()
     PauseUpdates();
 }
 
-void FooterVolumeInfoFetcher::SetCallback( function<void(const VFSStatFS&)> _callback )
+void FooterVolumeInfoFetcher::SetCallback( std::function<void(const VFSStatFS&)> _callback )
 {
     m_Callback = std::move(_callback);
 }

@@ -60,7 +60,7 @@ public:
     virtual std::shared_ptr<VFSHost> SpawnHostFromConnection(const Connection &_conn,
                                                         bool _allow_password_ui = true) = 0;
 
-    using MountShareCallback = function<void(const string&_mounted_path, const string&_error)>;
+    using MountShareCallback = std::function<void(const string&_mounted_path, const string&_error)>;
     /**
      * MountShareAsync assumes that _conn is a Network share, exits immediately otherwise.
      * _callback will be called in the future, either with a string containing a mount path, or
@@ -207,7 +207,7 @@ struct NetworkConnectionsManager::Connection::Model final :
 {
     const T obj;
     
-    Model(T _t): obj( move(_t) )
+    Model(T _t): obj( std::move(_t) )
     {
     }
     

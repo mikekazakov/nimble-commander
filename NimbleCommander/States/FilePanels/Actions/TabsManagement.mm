@@ -65,7 +65,7 @@ bool CloseTab::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *
     
 static void AskAboutClosingWindowWithExtraTabs(int _amount,
                                                NSWindow *_window,
-                                               function<void(NSModalResponse)> _handler )
+                                               std::function<void(NSModalResponse)> _handler )
 {
     assert(_window && _handler);
     Alert *dialog = [[Alert alloc] init];

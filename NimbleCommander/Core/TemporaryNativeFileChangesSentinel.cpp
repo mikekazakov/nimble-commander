@@ -36,8 +36,8 @@ TemporaryNativeFileChangesSentinel &TemporaryNativeFileChangesSentinel::Instance
     return *inst;
 }
 
-bool TemporaryNativeFileChangesSentinel::WatchFile( const string& _path,
-                                                   function<void()> _on_file_changed,
+bool TemporaryNativeFileChangesSentinel::WatchFile(const string& _path,
+                                                   std::function<void()> _on_file_changed,
                                                    std::chrono::milliseconds _check_delay,
                                                    std::chrono::milliseconds _drop_delay )
 {

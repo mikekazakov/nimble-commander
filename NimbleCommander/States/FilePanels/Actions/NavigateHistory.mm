@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NavigateHistory.h"
 #include "../PanelController.h"
 #include "../PanelHistory.h"
@@ -44,7 +44,7 @@ namespace nc::panel {
 
 void ListingPromiseLoader::Load( const ListingPromise &_promise, PanelController *_panel )
 {
-    auto task = [=]( const function<bool()> &_cancelled ) {
+    auto task = [=]( const std::function<bool()> &_cancelled ) {
         const auto vfs_adapter = [&](const core::VFSInstancePromise& _promise){
             return _panel.vfsInstanceManager.RetrieveVFS(_promise, _cancelled );
         };
@@ -62,7 +62,7 @@ void ListingPromiseLoader::Load( const ListingPromise &_promise, PanelController
             //...
         }
     };
-    [_panel commitCancelableLoadingTask:move(task)];
+    [_panel commitCancelableLoadingTask:std::move(task)];
 }
 
 }

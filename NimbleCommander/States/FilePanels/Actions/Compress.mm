@@ -12,7 +12,8 @@
 namespace nc::panel::actions {
 
 static PanelController *FindVisibleOppositeController( PanelController *_source );
-static void FocusResult( PanelController *_target, const shared_ptr<nc::ops::Compression>& _op );
+static void FocusResult(PanelController *_target,
+                        const std::shared_ptr<nc::ops::Compression>& _op );
 
 bool CompressHere::Predicate( PanelController *_target ) const
 {
@@ -194,7 +195,8 @@ static PanelController *FindVisibleOppositeController( PanelController *_source 
     return nil;
 }
 
-static void FocusResult( PanelController *_target, const shared_ptr<nc::ops::Compression>& _op )
+static void FocusResult(PanelController *_target,
+                        const std::shared_ptr<nc::ops::Compression>& _op )
 {
     if( !_target || !_op )
         return;

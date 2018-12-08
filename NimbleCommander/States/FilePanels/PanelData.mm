@@ -92,7 +92,7 @@ static void InitVolatileDataWithListing( vector<ItemVolatileData> &_vd, const VF
     }
 }
 
-void Model::Load(const shared_ptr<VFSListing> &_listing, PanelType _type)
+void Model::Load(const std::shared_ptr<VFSListing> &_listing, PanelType _type)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
@@ -128,7 +128,7 @@ static void UpdateWithExisingVD( ItemVolatileData &_new_vd, const ItemVolatileDa
     }
 }
 
-void Model::ReLoad(const shared_ptr<VFSListing> &_listing)
+void Model::ReLoad(const std::shared_ptr<VFSListing> &_listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
@@ -203,7 +203,7 @@ void Model::ReLoad(const shared_ptr<VFSListing> &_listing)
     UpdateStatictics();
 }
 
-const shared_ptr<VFSHost> &Model::Host() const
+const std::shared_ptr<VFSHost> &Model::Host() const
 {
     if( !m_Listing->HasCommonHost() )
         throw std::logic_error("PanelData::Host was called with no common host in listing");

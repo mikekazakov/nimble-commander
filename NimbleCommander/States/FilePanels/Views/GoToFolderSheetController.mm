@@ -50,7 +50,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
 @implementation GoToFolderSheetController
 {
     function<void()>        m_Handler; // return VFS error code
-    shared_ptr<VFSListing>  m_LastListing;
+    std::shared_ptr<VFSListing>m_LastListing;
     string                  m_RequestedPath;
 }
 @synthesize requestedPath = m_RequestedPath;
@@ -251,7 +251,7 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
         return nullptr;
     auto vfs = self.panel.vfs;
     
-    shared_ptr<VFSListing> listing;
+    std::shared_ptr<VFSListing> listing;
     int ret = vfs->FetchDirectoryListing(path.c_str(),
                                          listing,
                                          VFSFlags::F_NoDotDot,

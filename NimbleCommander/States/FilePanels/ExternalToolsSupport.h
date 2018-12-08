@@ -142,8 +142,8 @@ public:
     ExternalToolsStorage(const char*_config_path);
     
     size_t                                  ToolsCount() const;
-    shared_ptr<const ExternalTool>          GetTool(size_t _no) const; // will return nullptr on invalid index
-    vector<shared_ptr<const ExternalTool>>  GetAllTools() const;
+    std::shared_ptr<const ExternalTool>     GetTool(size_t _no) const; // will return nullptr on invalid index
+    vector<std::shared_ptr<const ExternalTool>>GetAllTools() const;
     
     void                                    ReplaceTool( ExternalTool _tool, size_t _at_index );
     void                                    InsertTool( ExternalTool _tool ); // adds tool at the end
@@ -159,7 +159,7 @@ private:
     void CommitChanges();
     
     mutable spinlock                                m_ToolsLock;
-    vector<shared_ptr<const ExternalTool>>          m_Tools;
+    vector<std::shared_ptr<const ExternalTool>>     m_Tools;
     const char*                                     m_ConfigPath;
     vector<nc::config::Token>                       m_ConfigObservations;
 };

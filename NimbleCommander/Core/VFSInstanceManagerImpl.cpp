@@ -7,7 +7,7 @@ namespace nc::core {
 
 struct VFSInstanceManagerImpl::Info
 {
-    Info(const shared_ptr<VFSHost>& _host,
+    Info(const std::shared_ptr<VFSHost>& _host,
          uint64_t _id,
          uint64_t _parent_id,
          VFSConfiguration _config

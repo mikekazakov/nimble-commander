@@ -392,13 +392,13 @@ size_t ExternalToolsStorage::ToolsCount() const
     return m_Tools.size();
 }
 
-shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(size_t _no) const
+std::shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(size_t _no) const
 {
     std::lock_guard<spinlock> guard(m_ToolsLock);
     return _no < m_Tools.size() ? m_Tools[_no] : nullptr;
 }
 
-vector<shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
+vector<std::shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
 {
     std::lock_guard<spinlock> guard(m_ToolsLock);
     return m_Tools;
@@ -411,7 +411,7 @@ ExternalToolsStorage::ObservationTicket ExternalToolsStorage::ObserveChanges( fu
 
 void ExternalToolsStorage::WriteToolsToConfig() const
 {
-    vector<shared_ptr<const ExternalTool>> tools;
+    vector<std::shared_ptr<const ExternalTool>> tools;
     LOCK_GUARD(m_ToolsLock)
         tools = m_Tools;
 

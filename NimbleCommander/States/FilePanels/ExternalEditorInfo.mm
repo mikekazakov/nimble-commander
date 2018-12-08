@@ -192,7 +192,7 @@ struct ExternalEditorsPersistence
     [encoder encodeBool:self.terminal forKey:@"terminal"];
 }
 
-- (shared_ptr<ExternalEditorStartupInfo>) toStartupInfo
+- (std::shared_ptr<ExternalEditorStartupInfo>) toStartupInfo
 {
     return std::make_shared<ExternalEditorStartupInfo>(
         ExternalEditorsPersistence::LoadFromLegacyObjC( self )
@@ -315,7 +315,7 @@ void ExternalEditorsStorage::SaveToConfig()
     GlobalConfig().Set(m_ConfigPath, v);
 }
 
-shared_ptr<ExternalEditorStartupInfo> ExternalEditorsStorage::
+std::shared_ptr<ExternalEditorStartupInfo> ExternalEditorsStorage::
     ViableEditorForItem(const VFSListingItem&_item) const
 {
     for( auto &ed: m_ExternalEditors )
@@ -324,13 +324,13 @@ shared_ptr<ExternalEditorStartupInfo> ExternalEditorsStorage::
     return nullptr;
 }
 
-vector<shared_ptr<ExternalEditorStartupInfo>> ExternalEditorsStorage::AllExternalEditors() const
+vector<std::shared_ptr<ExternalEditorStartupInfo>> ExternalEditorsStorage::AllExternalEditors() const
 {
     return m_ExternalEditors;
 }
 
 void ExternalEditorsStorage::
-    SetExternalEditors( const vector<shared_ptr<ExternalEditorStartupInfo>>& _editors )
+    SetExternalEditors( const vector<std::shared_ptr<ExternalEditorStartupInfo>>& _editors )
 {
     m_ExternalEditors = _editors;
     SaveToConfig();

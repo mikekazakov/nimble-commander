@@ -634,10 +634,10 @@ static bool TearDownNFSMountName( const string &_name, string &_host, string &_s
     return true;
 }
 
-static vector<shared_ptr<const nc::utility::NativeFileSystemInfo>> GetMountedRemoteFilesystems()
+static vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>> GetMountedRemoteFilesystems()
 {
     static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
-    vector<shared_ptr<const nc::utility::NativeFileSystemInfo>> remotes;
+    vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>> remotes;
     
     for( const auto &v: nc::utility::NativeFSManager::Instance().Volumes() ) {
         const auto &volume = *v;
@@ -685,7 +685,7 @@ static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo& _volum
     return false;
 }
 
-static shared_ptr<const nc::utility::NativeFileSystemInfo> FindExistingMountedShare
+static std::shared_ptr<const nc::utility::NativeFileSystemInfo> FindExistingMountedShare
     (const NetworkConnectionsManager::LANShare &_share)
 {
     for( auto &v: GetMountedRemoteFilesystems() )

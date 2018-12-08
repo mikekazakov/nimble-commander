@@ -21,7 +21,7 @@ namespace nc::ops {
 // Window state manipulations
 - (void)ResignAsWindowState:(id)_state;
 
-- (void)requestViewerFor:(string)_filepath at:(shared_ptr<VFSHost>) _host;
+- (void)requestViewerFor:(string)_filepath at:(std::shared_ptr<VFSHost>) _host;
 
 - (void)requestTerminal:(const string&)_cwd;
 - (void)requestTerminalExecution:(const char*)_filename
@@ -54,7 +54,7 @@ namespace nc::ops {
 
 + (NCMainWindowController*)lastFocused;
 
-- (void)enqueueOperation:(const shared_ptr<nc::ops::Operation> &)_operation;
+- (void)enqueueOperation:(const std::shared_ptr<nc::ops::Operation> &)_operation;
 - (void)beginSheet:(NSWindow *)sheetWindow completionHandler:(void (^)(NSModalResponse rc))handler;
 
 @end

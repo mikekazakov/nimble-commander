@@ -170,9 +170,9 @@ static void HeatUpConfigValues()
     boost::container::static_vector<nc::config::Token,2> m_ConfigObservers;
     nc::core::VFSInstanceManager       *m_VFSInstanceManager;
     nc::panel::DirectoryAccessProvider *m_DirectoryAccessProvider;
-    shared_ptr<PanelViewLayoutsStorage> m_Layouts;
+    std::shared_ptr<PanelViewLayoutsStorage> m_Layouts;
     int                                 m_ViewLayoutIndex;
-    shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
+    std::shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
     PanelViewLayoutsStorage::ObservationTicket m_LayoutsObservation;
 }
 
@@ -183,7 +183,7 @@ static void HeatUpConfigValues()
 @synthesize vfsFetchingFlags = m_VFSFetchingFlags;
 
 - (instancetype)initWithView:(PanelView*)_panel_view
-                     layouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
+                     layouts:(std::shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
           vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
      directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider
 {
@@ -802,7 +802,7 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     }    
 }
 
-- (void) doGoToDirWithContext:(shared_ptr<DirectoryChangeRequest>)_request
+- (void) doGoToDirWithContext:(std::shared_ptr<DirectoryChangeRequest>)_request
 {
     try {
         if( [self probeDirectoryAccessForRequest:*_request] == false ) {
@@ -813,7 +813,7 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
         auto directory = _request->RequestedDirectory;
         auto &vfs = *_request->VFS;        
         const auto canceller = VFSCancelChecker( [&]{ return m_DirectoryLoadingQ.IsStopped(); } );
-        shared_ptr<VFSListing> listing;
+        std::shared_ptr<VFSListing> listing;
         const auto fetch_result = vfs.FetchDirectoryListing(directory.c_str(),
                                                             listing,
                                                             m_VFSFetchingFlags,
@@ -847,7 +847,7 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     }    
 }
 
-- (int) GoToDirWithContext:(shared_ptr<DirectoryChangeRequest>)_request
+- (int) GoToDirWithContext:(std::shared_ptr<DirectoryChangeRequest>)_request
 {
     if( _request == nullptr )
         return VFSError::InvalidCall;
@@ -874,7 +874,7 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     }
 }
 
-- (void) loadListing:(const shared_ptr<VFSListing>&)_listing
+- (void) loadListing:(const std::shared_ptr<VFSListing>&)_listing
 {
     [self CancelBackgroundOperations]; // clean running operations if any
     dispatch_or_run_in_main_queue([=]{

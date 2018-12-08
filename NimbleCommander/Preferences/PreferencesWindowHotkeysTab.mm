@@ -28,7 +28,7 @@ struct ActionShortcutNode
 
 struct ToolShortcutNode
 {
-    shared_ptr<const ExternalTool> tool;
+    std::shared_ptr<const ExternalTool> tool;
     NSString *label;
     int tool_index;
     bool is_customized;
@@ -63,7 +63,7 @@ enum class SourceType
     vector<std::pair<string,int>>           m_Shortcuts;
     function<ExternalToolsStorage&()>       m_ToolsStorage;
     ExternalToolsStorage::ObservationTicket m_ToolsObserver;
-    vector<shared_ptr<const ExternalTool>>  m_Tools;
+    vector<std::shared_ptr<const ExternalTool>>  m_Tools;
     vector<std::any>                        m_AllNodes;
     vector<std::any>                        m_SourceNodes;
     vector<std::any>                        m_FilteredNodes;

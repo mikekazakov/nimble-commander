@@ -5,7 +5,7 @@
 #include "MainWindowFilePanelState.h"
 #include "StateActionsDispatcher.h"
 
-static NSMenuItem *ItemForTool( const shared_ptr<const ExternalTool> &_tool, int _ind )
+static NSMenuItem *ItemForTool( const std::shared_ptr<const ExternalTool> &_tool, int _ind )
 {
     NSMenuItem *item = [[NSMenuItem alloc] init];
     item.title = _tool->m_Title.empty() ?

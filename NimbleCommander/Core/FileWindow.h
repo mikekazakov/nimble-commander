@@ -15,7 +15,7 @@ public:
      * For files with Sequential and Seek read paradigms, FileWindow need exclusive access to VFSFile,
      * so that no one else can touch it's seek pointers.
      */
-    int OpenFile(const shared_ptr<VFSFile> &_file, int _window_size = DefaultWindowSize);
+    int OpenFile(const std::shared_ptr<VFSFile> &_file, int _window_size = DefaultWindowSize);
 
     int CloseFile();
     bool FileOpened() const;
@@ -59,7 +59,7 @@ private:
     int ReadFileWindowRandomPart(size_t _offset, size_t _len);
     int ReadFileWindowSeqPart(size_t _offset, size_t _len);
 
-    shared_ptr<VFSFile> m_File;
+    std::shared_ptr<VFSFile> m_File;
     std::unique_ptr<uint8_t[]> m_Window;
     size_t m_WindowSize = std::numeric_limits<size_t>::max();
     size_t m_WindowPos = std::numeric_limits<size_t>::max();

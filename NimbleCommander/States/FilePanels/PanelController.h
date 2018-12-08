@@ -88,7 +88,7 @@ struct DirectoryChangeRequest
 {
     /* required */
     string              RequestedDirectory      = "";
-    shared_ptr<VFSHost> VFS                     = nullptr;
+    std::shared_ptr<VFSHost> VFS                = nullptr;
     
     /* optional */
     string              RequestFocusedEntry     = "";
@@ -138,7 +138,7 @@ struct DirectoryChangeRequest
 @property (nonatomic, readonly) bool isDoingBackgroundLoading;
 
 - (instancetype)initWithView:(PanelView*)_panel_view
-                     layouts:(shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
+                     layouts:(std::shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
           vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
      directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider;
 
@@ -183,12 +183,12 @@ struct DirectoryChangeRequest
  * A calling code can also set intended outcomes like focus, selection, view state restoration
  * and a completion callback.
  */
-- (int) GoToDirWithContext:(shared_ptr<nc::panel::DirectoryChangeRequest>)_context;
+- (int) GoToDirWithContext:(std::shared_ptr<nc::panel::DirectoryChangeRequest>)_context;
 
 /**
  * Loads existing listing into the panel. Save to call from any thread.
  */
-- (void) loadListing:(const shared_ptr<VFSListing>&)_listing;
+- (void) loadListing:(const std::shared_ptr<VFSListing>&)_listing;
 
 /** 
  * Delayed entry selection change - panel controller will memorize such request.

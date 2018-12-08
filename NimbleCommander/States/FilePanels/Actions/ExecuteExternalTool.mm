@@ -48,7 +48,7 @@ void ExecuteExternalTool::Perform( MainWindowFilePanelState *_target, id _sender
         id rep_obj = [_sender representedObject];
 #pragma clang diagnostic pop
         if( auto any_holder = objc_cast<AnyHolder>(rep_obj) )
-            if( auto tool = std::any_cast<shared_ptr<const ExternalTool>>(&any_holder.any) )
+            if( auto tool = std::any_cast<std::shared_ptr<const ExternalTool>>(&any_holder.any) )
                 if( tool->get() )
                     Execute(*tool->get(), _target);
     }

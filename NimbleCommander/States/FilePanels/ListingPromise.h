@@ -30,8 +30,8 @@ public:
     };
     
     using StorageT = std::variant<UniformListing, NonUniformListing>;
-    using VFSPromiseAdapter = function<core::VFSInstancePromise(const shared_ptr<VFSHost>&)>;
-    using PromiseVFSAdapter = function<shared_ptr<VFSHost>(const core::VFSInstancePromise&)>;
+    using VFSPromiseAdapter = function<core::VFSInstancePromise(const std::shared_ptr<VFSHost>&)>;
+    using PromiseVFSAdapter = function<std::shared_ptr<VFSHost>(const core::VFSInstancePromise&)>;
     
     ListingPromise( const VFSListing &_listing, const VFSPromiseAdapter &_adapter );
     ListingPromise( const ListingPromise&) = default;
@@ -62,7 +62,7 @@ private:
                                              const VFSPromiseAdapter &_adapter);
     const StorageT &Storage() const noexcept;
 
-    shared_ptr<const StorageT> m_Storage;
+    std::shared_ptr<const StorageT> m_Storage;
 };
 
 bool operator==(const ListingPromise::UniformListing &_lhs,

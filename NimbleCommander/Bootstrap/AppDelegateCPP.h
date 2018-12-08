@@ -11,7 +11,7 @@ public:
     static const string &ConfigDirectory();
     static const string &StateDirectory();
     static const string &SupportDirectory();
-    static const shared_ptr<NetworkConnectionsManager> &NetworkConnectionsManager();
+    static const std::shared_ptr<NetworkConnectionsManager> &NetworkConnectionsManager();
     
 };
 

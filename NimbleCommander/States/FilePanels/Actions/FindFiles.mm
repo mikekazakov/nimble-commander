@@ -12,7 +12,7 @@ bool FindFiles::Predicate( PanelController *_target ) const
     return _target.isUniform || _target.view.item;
 }
 
-static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<VFSPath> &_filepaths,
+static std::shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<VFSPath> &_filepaths,
                                                           unsigned long _fetch_flags,
                                                           const VFSCancelChecker &_cancel_checker)
 {

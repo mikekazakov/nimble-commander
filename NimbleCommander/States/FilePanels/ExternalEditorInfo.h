@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -43,15 +43,15 @@ class ExternalEditorsStorage
 public:
     ExternalEditorsStorage(const char* _config_path);
 
-    shared_ptr<ExternalEditorStartupInfo> ViableEditorForItem(const VFSListingItem&_item) const;
-    vector<shared_ptr<ExternalEditorStartupInfo>> AllExternalEditors() const;
+    std::shared_ptr<ExternalEditorStartupInfo> ViableEditorForItem(const VFSListingItem&_item) const;
+    vector<std::shared_ptr<ExternalEditorStartupInfo>> AllExternalEditors() const;
     
-    void SetExternalEditors( const vector<shared_ptr<ExternalEditorStartupInfo>>& _editors );
+    void SetExternalEditors( const vector<std::shared_ptr<ExternalEditorStartupInfo>>& _editors );
 
 private:
     void LoadFromConfig();
     void SaveToConfig();
 
-    vector<shared_ptr<ExternalEditorStartupInfo>> m_ExternalEditors;
+    vector<std::shared_ptr<ExternalEditorStartupInfo>> m_ExternalEditors;
     const char* const m_ConfigPath;
 };

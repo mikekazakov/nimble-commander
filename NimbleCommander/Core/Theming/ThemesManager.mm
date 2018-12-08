@@ -9,7 +9,7 @@ using namespace std::literals;
 
 static const auto g_NameKey = "themeName";
 
-static shared_ptr<Theme> g_CurrentTheme;
+static std::shared_ptr<Theme> g_CurrentTheme;
 
 using TMN = ThemesManager::Notifications;
 static const fixed_eytzinger_map<string, uint64_t> g_EntryToNotificationMapping = {
@@ -163,7 +163,7 @@ string ThemesManager::SelectedThemeName() const
     return m_SelectedThemeName;
 }
 
-shared_ptr<const nc::config::Value> ThemesManager::SelectedThemeData() const
+std::shared_ptr<const nc::config::Value> ThemesManager::SelectedThemeData() const
 {
     auto i = ThemeData( m_SelectedThemeName );
     if( i->GetType() == rapidjson::kObjectType )
@@ -173,7 +173,7 @@ shared_ptr<const nc::config::Value> ThemesManager::SelectedThemeData() const
     return BackupThemeData( "Modern" );
 }
 
-shared_ptr<const nc::config::Value> ThemesManager::
+std::shared_ptr<const nc::config::Value> ThemesManager::
     ThemeData( const string &_theme_name ) const
 {
     auto it = m_Themes.find( _theme_name );
@@ -184,7 +184,7 @@ shared_ptr<const nc::config::Value> ThemesManager::
     return dummy;
 }
 
-shared_ptr<const nc::config::Value> ThemesManager::
+std::shared_ptr<const nc::config::Value> ThemesManager::
     BackupThemeData(const string &_theme_name) const
 {
     auto i = m_DefaultThemes.find( _theme_name );

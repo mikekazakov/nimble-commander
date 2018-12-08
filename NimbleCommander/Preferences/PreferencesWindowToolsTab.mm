@@ -17,7 +17,7 @@ using namespace std::literals;
 @property (nonatomic) IBOutlet NSButton                               *addParameterButton;
 @property (nonatomic) bool                                             anySelected;
 @property (readonly, nonatomic) bool                                haveCommandLineTools;
-@property (readonly, nonatomic) shared_ptr<const ExternalTool>      selectedTool;
+@property (readonly, nonatomic) std::shared_ptr<const ExternalTool>    selectedTool;
 
 @end
 
@@ -39,7 +39,7 @@ static bool AskUserToDeleteTool()
 @implementation PreferencesWindowToolsTab
 {
     function<ExternalToolsStorage&()>                   m_ToolsStorage;
-    vector<shared_ptr<const ExternalTool>>              m_Tools;
+    vector<std::shared_ptr<const ExternalTool>>         m_Tools;
     ExternalToolsStorage::ObservationTicket             m_ToolsObserver;
 }
 
@@ -150,7 +150,7 @@ static bool AskUserToDeleteTool()
     [self.toolStartupMode selectItemWithTag:(int)ExternalTool::StartupMode::Automatic];
 }
 
-- (shared_ptr<const ExternalTool>) selectedTool
+- (std::shared_ptr<const ExternalTool>) selectedTool
 {
     NSInteger row = self.toolsTable.selectedRow;
     return row < (long)m_Tools.size() ? m_Tools[row] : nullptr;

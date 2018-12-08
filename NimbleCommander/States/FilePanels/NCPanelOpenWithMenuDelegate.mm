@@ -129,7 +129,7 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
     });
 }
 
-- (void)acceptFetchResult:(shared_ptr<FetchResult>)_result
+- (void)acceptFetchResult:(std::shared_ptr<FetchResult>)_result
 {
     m_OpenWithHandlers = move(_result->handlers);
     m_DefaultHandlerPath = move(_result->default_handler_path);

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -7,7 +7,7 @@
 
 - (void) ShowItems:(const vector<string>&)_entries
              InDir:(string)_dir
-             InVFS:(shared_ptr<VFSHost>)_host
+             InVFS:(std::shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
             OfView:(NSView*)_view
      PreferredEdge:(NSRectEdge)_preferredEdge;

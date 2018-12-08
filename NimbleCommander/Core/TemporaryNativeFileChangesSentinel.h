@@ -30,7 +30,7 @@ public:
 private:
     struct Meta {
         string                          path;
-        shared_ptr<function<void()>>    callback;
+        std::shared_ptr<function<void()>>callback;
         uint64_t                        fswatch_ticket = 0;
         vector<uint8_t>                 last_md5_hash;
         std::chrono::milliseconds       drop_time;
@@ -39,10 +39,10 @@ private:
         std::atomic_bool                checking_now;
     };
     
-    void FSEventCallback( shared_ptr<Meta> _meta );
-    void BackgroundItemCheck( shared_ptr<Meta> _meta );
-    void ScheduleItemDrop( const shared_ptr<Meta> &_meta );
+    void FSEventCallback( std::shared_ptr<Meta> _meta );
+    void BackgroundItemCheck( std::shared_ptr<Meta> _meta );
+    void ScheduleItemDrop( const std::shared_ptr<Meta> &_meta );
 
     spinlock                    m_WatchesLock;
-    vector<shared_ptr<Meta>>    m_Watches;
+    vector<std::shared_ptr<Meta>> m_Watches;
 };

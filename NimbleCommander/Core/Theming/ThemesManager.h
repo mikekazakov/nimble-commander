@@ -59,19 +59,19 @@ public:
     /**
      * Effectively returns ThemeData( SelectedThemeName() ).
      */
-    shared_ptr<const nc::config::Value> SelectedThemeData() const;
+    std::shared_ptr<const nc::config::Value> SelectedThemeData() const;
     
     /**
      * Returns current json document for specified theme.
      * May return shared ptr to kNullType.
      */
-    shared_ptr<const nc::config::Value> ThemeData( const string &_theme_name ) const;
+    std::shared_ptr<const nc::config::Value> ThemeData( const string &_theme_name ) const;
     
     /**
      * Tries to find a default value for this theme.
      * If there's no - returns a value for Modern theme.
      */
-    shared_ptr<const nc::config::Value> BackupThemeData( const string &_theme_name ) const;    
+    std::shared_ptr<const nc::config::Value> BackupThemeData( const string &_theme_name ) const;
     
     /**
      * Changes a theme value, if theme can't be found or value is the same - returns false.
@@ -135,9 +135,9 @@ private:
     void UpdateCurrentTheme();
 
     string m_SelectedThemeName;
-    std::unordered_map< string, shared_ptr<const nc::config::Document> > m_Themes;
+    std::unordered_map< string, std::shared_ptr<const nc::config::Document> > m_Themes;
     vector<string> m_OrderedThemeNames;
-    std::unordered_map< string, shared_ptr<const nc::config::Document> > m_DefaultThemes;
+    std::unordered_map< string, std::shared_ptr<const nc::config::Document> > m_DefaultThemes;
     vector<string> m_OrderedDefaultThemeNames;
     ObservationTicket m_AppearanceObservation;
 };

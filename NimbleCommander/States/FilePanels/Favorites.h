@@ -19,7 +19,7 @@ public:
     
     struct Favorite
     {
-        shared_ptr<const Location> location;
+        std::shared_ptr<const Location> location;
         size_t footprint = 0;
         string title;
     };
@@ -36,7 +36,7 @@ public:
     
     // Recent locations management
     virtual void ReportLocationVisit( VFSHost &_host, const string &_directory ) = 0;
-    virtual vector< shared_ptr<const Location> > FrecentlyUsed( int _amount ) const = 0;
+    virtual vector< std::shared_ptr<const Location> > FrecentlyUsed( int _amount ) const = 0;
     virtual void ClearVisitedLocations() = 0;
 
     // Changes observation

@@ -1,3 +1,4 @@
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "ClosedPanelsHistory.h"
@@ -26,7 +27,7 @@ namespace nc::panel {
 @interface NCPanelsRecentlyClosedMenuDelegate : NSObject<NSMenuDelegate>
 
 - (instancetype) initWithMenu:(NSMenu*)_menu
-                      storage:(shared_ptr<nc::panel::ClosedPanelsHistory>)_storage
+                      storage:(std::shared_ptr<nc::panel::ClosedPanelsHistory>)_storage
                 panelsLocator:(function<MainWindowFilePanelState*()>)_locator;
 
 

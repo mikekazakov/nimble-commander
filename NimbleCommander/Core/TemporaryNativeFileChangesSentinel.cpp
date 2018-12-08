@@ -71,7 +71,7 @@ bool TemporaryNativeFileChangesSentinel::WatchFile( const string& _path,
     return true;
 }
 
-void TemporaryNativeFileChangesSentinel::ScheduleItemDrop( const shared_ptr<Meta> &_meta )
+void TemporaryNativeFileChangesSentinel::ScheduleItemDrop( const std::shared_ptr<Meta> &_meta )
 {
     using namespace std::chrono;
     static const auto safety_backlash = 100ms;
@@ -100,7 +100,7 @@ bool TemporaryNativeFileChangesSentinel::StopFileWatch( const string& _path )
     return true;
 }
 
-void TemporaryNativeFileChangesSentinel::FSEventCallback( shared_ptr<Meta> _meta )
+void TemporaryNativeFileChangesSentinel::FSEventCallback( std::shared_ptr<Meta> _meta )
 {
     dispatch_assert_main_queue();
     
@@ -114,7 +114,7 @@ void TemporaryNativeFileChangesSentinel::FSEventCallback( shared_ptr<Meta> _meta
 //    cout << "fsevent on " << _meta->path << endl;
 }
 
-void TemporaryNativeFileChangesSentinel::BackgroundItemCheck( shared_ptr<Meta> _meta )
+void TemporaryNativeFileChangesSentinel::BackgroundItemCheck( std::shared_ptr<Meta> _meta )
 {
     dispatch_assert_background_queue();
     auto clear_flag = at_scope_end([&]{ _meta->checking_now = false; });

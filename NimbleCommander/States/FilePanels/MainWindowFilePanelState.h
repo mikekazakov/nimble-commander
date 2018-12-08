@@ -58,9 +58,9 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     bool                m_ShowTabs;
     
     vector<nc::config::Token> m_ConfigTickets;
-    shared_ptr<nc::ops::Pool> m_OperationsPool;
-    shared_ptr<nc::panel::ClosedPanelsHistory> m_ClosedPanelsHistory;
-    shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
+    std::shared_ptr<nc::ops::Pool> m_OperationsPool;
+    std::shared_ptr<nc::panel::ClosedPanelsHistory> m_ClosedPanelsHistory;
+    std::shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
     nc::panel::ControllerStateJSONDecoder *m_ControllerStateJSONDecoder;    
 }
 
@@ -71,9 +71,9 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
 @property (nonatomic, readonly) bool isPanelActive;
 @property (nonatomic, readonly) bool goToForcesPanelActivation;
 @property (nonatomic, readwrite)
-    shared_ptr<nc::panel::ClosedPanelsHistory> closedPanelsHistory;
+    std::shared_ptr<nc::panel::ClosedPanelsHistory> closedPanelsHistory;
 @property (nonatomic, readwrite)
-    shared_ptr<nc::panel::FavoriteLocationsStorage> favoriteLocationsStorage;
+    std::shared_ptr<nc::panel::FavoriteLocationsStorage> favoriteLocationsStorage;
 @property (nonatomic, readwrite) AttachedResponder *attachedResponder;
 
 - (instancetype) initWithFrame:(NSRect)frameRect

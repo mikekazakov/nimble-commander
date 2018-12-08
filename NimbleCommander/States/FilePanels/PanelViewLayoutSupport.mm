@@ -252,7 +252,7 @@ int PanelViewLayoutsStorage::LayoutsCount() const
     return (int)m_Layouts.size();
 }
 
-shared_ptr<const PanelViewLayout>  PanelViewLayoutsStorage::GetLayout( int _index ) const
+std::shared_ptr<const PanelViewLayout>  PanelViewLayoutsStorage::GetLayout( int _index ) const
 {
     std::lock_guard<spinlock> lock(m_LayoutsLock);
     return (_index >= 0 && _index < (int)m_Layouts.size()) ?
@@ -260,19 +260,19 @@ shared_ptr<const PanelViewLayout>  PanelViewLayoutsStorage::GetLayout( int _inde
         nullptr;
 }
 
-vector<shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::GetAllLayouts() const
+vector<std::shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::GetAllLayouts() const
 {
     std::lock_guard<spinlock> lock(m_LayoutsLock);
     return m_Layouts;
 }
 
-const shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::LastResortLayout()
+const std::shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::LastResortLayout()
 {
-    static const shared_ptr<const PanelViewLayout> l = std::make_shared<PanelViewLayout>( L1() );
+    static const std::shared_ptr<const PanelViewLayout> l = std::make_shared<PanelViewLayout>( L1() );
     return l;
 }
 
-const shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::DefaultLayout() const
+const std::shared_ptr<const PanelViewLayout> PanelViewLayoutsStorage::DefaultLayout() const
 {
     for( int i = 1; i >= 0; --i )
         if( auto l = GetLayout(i) )
@@ -337,7 +337,7 @@ void PanelViewLayoutsStorage::LoadLayoutsFromConfig()
 
 void PanelViewLayoutsStorage::WriteLayoutsToConfig() const
 {
-    vector<shared_ptr<const PanelViewLayout>> layouts;
+    vector<std::shared_ptr<const PanelViewLayout>> layouts;
     LOCK_GUARD(m_LayoutsLock)
         layouts = m_Layouts;
     

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #import "PanelController.h"
 
@@ -46,7 +46,7 @@
  * Return current (topmost in vfs stack) VFS Host.
  * If current listing is non-uniform - will throw an exception.
  */
-@property (nonatomic, readonly) const shared_ptr<VFSHost>& vfs;
+@property (nonatomic, readonly) const std::shared_ptr<VFSHost>& vfs;
 
 /**
  * Expands path with replacting ./ or ~/

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -36,8 +36,8 @@ public:
     // PanelData is solely sync class - it does not know about concurrency,
     // any parallelism should be done by callers (i.e. controller)
     // just like Metallica:
-    void Load  (const shared_ptr<VFSListing> &_listing, PanelType _type);
-    void ReLoad(const shared_ptr<VFSListing> &_listing);
+    void Load  (const std::shared_ptr<VFSListing> &_listing, PanelType _type);
+    void ReLoad(const std::shared_ptr<VFSListing> &_listing);
 
     /**
      * Tells whether Model was provided with a valid listing object.  
@@ -47,9 +47,9 @@ public:
     /**
      * Will throw logic_error if called on listing with no common host.
      */
-    const shared_ptr<VFSHost>&      Host() const;
+    const std::shared_ptr<VFSHost>& Host() const;
     const VFSListing&               Listing() const;
-    const shared_ptr<VFSListing>&   ListingPtr() const;
+    const std::shared_ptr<VFSListing>&ListingPtr() const;
     PanelType                       Type() const noexcept;
     
     int RawEntriesCount() const noexcept;
@@ -195,7 +195,7 @@ private:
     
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
-    shared_ptr<VFSListing>      m_Listing;
+    std::shared_ptr<VFSListing> m_Listing;
     vector<ItemVolatileData>    m_VolatileData;
     vector<unsigned>            m_EntriesByRawName;    // sorted with raw strcmp comparison
     vector<unsigned>            m_EntriesByCustomSort; // custom defined sort

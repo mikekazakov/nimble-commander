@@ -57,7 +57,7 @@ public:
     /**
      * May throw VFSErrorException on error.
      */
-    virtual shared_ptr<VFSHost> SpawnHostFromConnection(const Connection &_conn,
+    virtual std::shared_ptr<VFSHost> SpawnHostFromConnection(const Connection &_conn,
                                                         bool _allow_password_ui = true) = 0;
 
     using MountShareCallback = function<void(const string&_mounted_path, const string&_error)>;
@@ -126,7 +126,7 @@ public:
 private:
     struct Concept;
     template <class T> struct Model;
-    shared_ptr<const Concept> m_Object;
+    std::shared_ptr<const Concept> m_Object;
 };
 
 class NetworkConnectionsManager::BaseConnection

@@ -13,7 +13,7 @@ namespace nc::panel {
 
 static const auto g_MaxTimeRange = 60 * 60 * 24 * 14; // 14 days range for bothering with visits
 
-static shared_ptr<const FavoriteLocationsStorage::Location>
+static std::shared_ptr<const FavoriteLocationsStorage::Location>
 Encode( const VFSHost &_host, const string &_directory )
 {
     auto location = PanelDataPersisency::EncodeLocation( _host, _directory );
@@ -41,7 +41,7 @@ FavoriteLocationsStorageImpl::
     }
 }
 
-shared_ptr<const FavoriteLocationsStorage::Location> FavoriteLocationsStorageImpl::
+std::shared_ptr<const FavoriteLocationsStorage::Location> FavoriteLocationsStorageImpl::
 FindInVisitsOrEncode(size_t _footprint,
                      VFSHost &_host,
                      const string &_directory)
@@ -118,7 +118,7 @@ void FavoriteLocationsStorageImpl::ReportLocationVisit( VFSHost &_host, const st
     }
 }
 
-vector< shared_ptr<const FavoriteLocationsStorage::Location> >
+vector< std::shared_ptr<const FavoriteLocationsStorage::Location> >
 FavoriteLocationsStorageImpl::FrecentlyUsed( int _amount ) const
 {
     dispatch_assert_main_queue();
@@ -164,7 +164,7 @@ FavoriteLocationsStorageImpl::FrecentlyUsed( int _amount ) const
         return std::get<3>(_1) > std::get<3>(_2); // sorting in descending order
     });
     
-    vector< shared_ptr<const FavoriteLocationsStorage::Location> > result;
+    vector< std::shared_ptr<const FavoriteLocationsStorage::Location> > result;
     for( int i = 0, e = std::min(_amount, (int)recent_visits.size()); i != e; ++i )
         result.emplace_back( m_Visits.at(std::get<0>(recent_visits[i])).location );
 

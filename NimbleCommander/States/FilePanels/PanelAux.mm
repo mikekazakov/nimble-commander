@@ -116,7 +116,7 @@ static void RegisterRemoteFileUploading(const string& _original_path,
 }
 
 void PanelVFSFileWorkspaceOpener::Open(string _filename,
-                                       shared_ptr<VFSHost> _host,
+                                       std::shared_ptr<VFSHost> _host,
                                        PanelController *_panel
                                        )
 {
@@ -124,7 +124,7 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
 }
 
 void PanelVFSFileWorkspaceOpener::Open(string _filename,
-                                       shared_ptr<VFSHost> _host,
+                                       std::shared_ptr<VFSHost> _host,
                                        string _with_app_path,
                                        PanelController *_panel
                                        )
@@ -190,7 +190,7 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
 
 // TODO: write version with FlexListingItem as an input - it would be much simplier
 void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
-                                       shared_ptr<VFSHost> _host,
+                                       std::shared_ptr<VFSHost> _host,
                                        NSString *_with_app_bundle, // can be nil, use default app in such case
                                        PanelController *_panel
                                        )
@@ -245,7 +245,7 @@ void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
 
 void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
                                                                VFSHostPtr _host,
-                                                               shared_ptr<ExternalEditorStartupInfo> _ext_ed,
+                                                               std::shared_ptr<ExternalEditorStartupInfo> _ext_ed,
                                                                string _file_title,
                                                                PanelController *_panel)
 {

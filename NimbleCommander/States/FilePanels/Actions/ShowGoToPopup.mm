@@ -79,7 +79,7 @@ static const auto g_MaxTextWidth = 600;
 - (void) performGoTo:(const std::any&)_context sender:(id)sender
 {
     if( auto favorite_ptr =
-       std::any_cast<shared_ptr<const FavoriteLocationsStorage::Location>>(&_context) )
+       std::any_cast<std::shared_ptr<const FavoriteLocationsStorage::Location>>(&_context) )
         [self handlePersistentLocation:(*favorite_ptr)->hosts_stack];
     else if( auto favorite = std::any_cast<FavoriteLocationsStorage::Location>(&_context) )
         [self handlePersistentLocation:favorite->hosts_stack];     
@@ -151,9 +151,9 @@ namespace nc::panel::actions {
 static NSString *ShrinkMenuItemTitle(NSString *_title);
 
     
-static vector<shared_ptr<const utility::NativeFileSystemInfo>> VolumesToShow()
+static vector<std::shared_ptr<const utility::NativeFileSystemInfo>> VolumesToShow()
 {
-    vector<shared_ptr<const utility::NativeFileSystemInfo>> volumes;
+    vector<std::shared_ptr<const utility::NativeFileSystemInfo>> volumes;
     for( auto &i: utility::NativeFSManager::Instance().Volumes() )
         if( i->mount_flags.dont_browse == false )
             volumes.emplace_back(i);

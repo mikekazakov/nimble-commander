@@ -39,7 +39,6 @@
     using std::string;
     using std::vector;
     using std::function;
-    using std::shared_ptr;
     using std::move;
 
     // low-level facilities from Habanero

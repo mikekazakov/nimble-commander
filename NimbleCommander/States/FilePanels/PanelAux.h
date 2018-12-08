@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFS.h>
 #include <Operations/CopyingOptions.h>
 
@@ -33,7 +33,7 @@ public:
     
     static void OpenInExternalEditorTerminal(string _filepath,
                                              VFSHostPtr _host,
-                                             shared_ptr<ExternalEditorStartupInfo> _ext_ed,
+                                             std::shared_ptr<ExternalEditorStartupInfo> _ext_ed,
                                              string _file_title,
                                              PanelController *_panel);
 };

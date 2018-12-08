@@ -49,12 +49,12 @@ public:
     /**
      * Will return nullptr on invalid index.
      */
-    shared_ptr<const PanelViewLayout> GetLayout( int _index ) const;
+    std::shared_ptr<const PanelViewLayout> GetLayout( int _index ) const;
     
     /**
      * Get all layouts this storage has.
      */
-    vector<shared_ptr<const PanelViewLayout>> GetAllLayouts() const;
+    vector<std::shared_ptr<const PanelViewLayout>> GetAllLayouts() const;
 
     /**
      * Will ignore requests on invalid index.
@@ -70,12 +70,12 @@ public:
     /**
      * Should be used when panel is forced to use a disabled layout.
      */
-    static const shared_ptr<const PanelViewLayout> LastResortLayout();
+    static const std::shared_ptr<const PanelViewLayout> LastResortLayout();
     
     /**
      * Default layout that will be used by file panel upon initialization.
      */
-    const shared_ptr<const PanelViewLayout> DefaultLayout() const;
+    const std::shared_ptr<const PanelViewLayout> DefaultLayout() const;
     int DefaultLayoutIndex() const;
     
     using ObservationTicket = ObservableBase::ObservationTicket;
@@ -88,7 +88,7 @@ private:
     void CommitChanges( bool _fire_observers );
         
     mutable spinlock                            m_LayoutsLock;
-    vector<shared_ptr<const PanelViewLayout>>   m_Layouts;
+    vector<std::shared_ptr<const PanelViewLayout>>   m_Layouts;
     const char*                                 m_ConfigPath;    
 };
 

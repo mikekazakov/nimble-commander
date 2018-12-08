@@ -59,7 +59,7 @@ static std::atomic<int> g_IsCurrentlySharing(0);
 
 - (void) ShowItems:(const vector<string>&)_entries
              InDir:(string)_dir
-             InVFS:(shared_ptr<VFSHost>)_host
+             InVFS:(std::shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
             OfView:(NSView*)_view
      PreferredEdge:(NSRectEdge)_preferredEdge

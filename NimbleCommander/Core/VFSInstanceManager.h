@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS_fwd.h>
@@ -29,7 +29,7 @@ public:
      * Will register information about the instance if not yet.
      * Returned promise may be used for later vfs restoration.
      */
-    virtual Promise TameVFS( const shared_ptr<VFSHost>& _instance ) = 0;
+    virtual Promise TameVFS( const std::shared_ptr<VFSHost>& _instance ) = 0;
     
     /**
      * Returns a promise for specified vfs, if the information is available.
@@ -41,7 +41,7 @@ public:
      * May throw vfs exceptions on vfs rebuilding.
      * May return nullptr on failure.
      */
-    virtual shared_ptr<VFSHost> RetrieveVFS( const Promise &_promise,
+    virtual std::shared_ptr<VFSHost> RetrieveVFS( const Promise &_promise,
                                             function<bool()> _cancel_checker = nullptr ) = 0;
     
     /**

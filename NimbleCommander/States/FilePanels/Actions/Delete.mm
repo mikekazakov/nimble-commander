@@ -17,7 +17,7 @@ static bool AllAreNative(const vector<VFSListingItem>& _c);
 static std::unordered_set<string> ExtractDirectories(const vector<VFSListingItem>& _c);
 static bool AllHaveTrash(const vector<VFSListingItem>& _c);
 static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
-                                          const shared_ptr<nc::ops::Operation> &_operation );
+                                          const std::shared_ptr<nc::ops::Operation> &_operation );
 
 Delete::Delete( bool _permanently ):
     m_Permanently(_permanently)
@@ -169,7 +169,7 @@ static bool AllHaveTrash(const vector<VFSListingItem>& _c)
 
 
 static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
-                                          const shared_ptr<nc::ops::Operation> &_operation )
+                                          const std::shared_ptr<nc::ops::Operation> &_operation )
 {
     if( !_target.receivesUpdateNotifications ) {
         __weak PanelController *weak_panel = _target;

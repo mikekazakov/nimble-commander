@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/SystemInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NSView+Sugar.h>
@@ -40,7 +40,7 @@ static NSTextField *CreateStockTF()
     NSTextField *m_TextVolumeAvailBytes;
     
     string m_TargetVFSPath;
-    shared_ptr<VFSHost> m_TargetVFSHost;
+    std::shared_ptr<VFSHost> m_TargetVFSHost;
     bool m_IsRight;
     NSTimer                      *m_UpdateTimer;
     NSNumberFormatter            *m_BytesFormatter;
@@ -473,7 +473,7 @@ static NSTextField *CreateStockTF()
     m_TextVolumeAvailBytes.stringValue = [m_BytesFormatter stringFromNumber:[NSNumber numberWithLong:m_StatFS.avail_bytes]];
 }
 
-- (void) UpdateVFSTarget:(const string&)_path host:(shared_ptr<VFSHost>)_host
+- (void) UpdateVFSTarget:(const string&)_path host:(std::shared_ptr<VFSHost>)_host
 {
     if( m_TargetVFSHost == _host && m_TargetVFSPath == _path )
         return;

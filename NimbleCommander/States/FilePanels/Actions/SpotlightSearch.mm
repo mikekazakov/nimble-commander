@@ -90,7 +90,7 @@ static vector<string> FetchSpotlightResults(const string& _query)
     return result;
 }
 
-static shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &_file_paths,
+static std::shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &_file_paths,
                                                           VFSHost &_vfs,
                                                           unsigned long _fetch_flags,
                                                           const VFSCancelChecker &_cancel_checker)

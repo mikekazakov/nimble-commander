@@ -19,7 +19,7 @@ public:
      * Will register information about the instance if not yet.
      * Returned promise may be used for later vfs restoration.
      */
-    Promise TameVFS( const shared_ptr<VFSHost>& _instance );
+    Promise TameVFS( const std::shared_ptr<VFSHost>& _instance );
     
     /**
      * Returns a promise for specified vfs, if the information is available.
@@ -31,7 +31,8 @@ public:
      * May throw vfs exceptions on vfs rebuilding.
      * May return nullptr on failure.
      */
-    shared_ptr<VFSHost> RetrieveVFS( const Promise &_promise, function<bool()> _cancel_checker = nullptr );
+    std::shared_ptr<VFSHost> RetrieveVFS( const Promise &_promise,
+                                         function<bool()> _cancel_checker = nullptr );
     
     /**
      * Will find an info for promise and return a corresponding vfs tag.
@@ -77,7 +78,7 @@ private:
     /**
      * Thread-safe.
      */
-    void EnrollAliveHost( const shared_ptr<VFSHost>& _inst );
+    void EnrollAliveHost( const std::shared_ptr<VFSHost>& _inst );
     
     /**
      * Thread-safe.
@@ -91,10 +92,11 @@ private:
     
     Promise SpawnPromiseFromInfo_Unlocked( Info &_info );
     Info *InfoFromVFSWeakPtr_Unlocked(const std::weak_ptr<VFSHost> &_ptr);
-    Info *InfoFromVFSPtr_Unlocked(const shared_ptr<VFSHost> &_ptr);
+    Info *InfoFromVFSPtr_Unlocked(const std::shared_ptr<VFSHost> &_ptr);
     Info *InfoFromID_Unlocked(uint64_t _inst_id);
     
-    shared_ptr<VFSHost> GetOrRestoreVFS_Unlocked( Info *_info, const function<bool()> &_cancel_checker );
+    std::shared_ptr<VFSHost> GetOrRestoreVFS_Unlocked( Info *_info,
+                                                      const function<bool()> &_cancel_checker );
     
     
     vector<Info>                m_Memory;

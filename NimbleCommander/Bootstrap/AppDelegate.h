@@ -41,7 +41,7 @@ namespace nc {
 - (void) addInternalViewerWindow:(InternalViewerWindowController*) _wnd;
 - (void) removeInternalViewerWindow:(InternalViewerWindowController*) _wnd;
 - (InternalViewerWindowController*) findInternalViewerWindowForPath:(const string&)_path
-                                                              onVFS:(const shared_ptr<VFSHost>&)_vfs;
+                                                              onVFS:(const std::shared_ptr<VFSHost>&)_vfs;
 
 /**
  * Runs a modal dialog window, which asks user if he wants to reset app settings.
@@ -85,24 +85,24 @@ namespace nc {
 @property (nonatomic, readonly) ExternalToolsStorage& externalTools;
 
 @property (nonatomic, readonly)
-    const shared_ptr<nc::panel::PanelViewLayoutsStorage> &panelLayouts;
+    const std::shared_ptr<nc::panel::PanelViewLayoutsStorage> &panelLayouts;
 
 @property (nonatomic, readonly) ThemesManager& themesManager;
 
 @property (nonatomic, readonly) ExternalEditorsStorage& externalEditorsStorage;
 
 @property (nonatomic, readonly)
-    const shared_ptr<nc::panel::FavoriteLocationsStorage>& favoriteLocationsStorage;
+    const std::shared_ptr<nc::panel::FavoriteLocationsStorage>& favoriteLocationsStorage;
 
 @property (nonatomic, readonly)
-    const shared_ptr<NetworkConnectionsManager> &networkConnectionsManager;
+    const std::shared_ptr<NetworkConnectionsManager> &networkConnectionsManager;
 
 @property (nonatomic, readonly) AppStoreHelper *appStoreHelper;
 
 @property (nonatomic, readonly) nc::ops::AggregateProgressTracker &operationsProgressTracker;
 
 @property (nonatomic, readonly)
-    const shared_ptr<nc::panel::ClosedPanelsHistory> &closedPanelsHistory;
+    const std::shared_ptr<nc::panel::ClosedPanelsHistory> &closedPanelsHistory;
 
 @property (nonatomic, readonly)
     nc::core::VFSInstanceManager &vfsInstanceManager;

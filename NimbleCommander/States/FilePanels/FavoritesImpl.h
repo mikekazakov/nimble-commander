@@ -25,7 +25,7 @@ public:
     
     // Recent locations management
     void ReportLocationVisit( VFSHost &_host, const string &_directory ) override;
-    vector< shared_ptr<const Location> > FrecentlyUsed( int _amount ) const override;
+    vector< std::shared_ptr<const Location> > FrecentlyUsed( int _amount ) const override;
     void ClearVisitedLocations() override;
     
     ObservationTicket ObserveFavoritesChanges( function<void()> _callback ) override;
@@ -37,12 +37,12 @@ private:
     
     struct Visit
     {
-        shared_ptr<const Location>  location;
+        std::shared_ptr<const Location>  location;
         int                         visits_count = 0;
         time_t                      last_visit = 0;
     };
     
-    shared_ptr<const Location> FindInVisitsOrEncode(size_t _footprint,
+    std::shared_ptr<const Location> FindInVisitsOrEncode(size_t _footprint,
                                                     VFSHost &_host,
                                                     const string &_directory);
     

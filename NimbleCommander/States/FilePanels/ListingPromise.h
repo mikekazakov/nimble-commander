@@ -22,9 +22,9 @@ public:
         struct PerVFS
         {
             core::VFSInstancePromise promise;
-            vector<::hbn::StringsBulk> entries;
+            std::vector<::hbn::StringsBulk> entries;
         };
-        vector<PerVFS> per_vfs;
+        std::vector<PerVFS> per_vfs;
         
         size_t EntriesCount() const noexcept;
     };

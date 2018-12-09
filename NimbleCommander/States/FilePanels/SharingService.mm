@@ -9,22 +9,22 @@ static std::atomic<int> g_IsCurrentlySharing(0);
 
 @implementation SharingService
 {
-    bool                        m_DidShared;
-    vector<string>    m_TmpFilepaths;
+    bool                   m_DidShare;
+    std::vector<string>    m_TmpFilepaths;
 }
 
 - (id) init
 {
     self = [super init];
     if(self) {
-        m_DidShared = false;
+        m_DidShare = false;
     }
     return self;
 }
 
 - (void)dealloc
 {
-    if(!m_DidShared && !m_TmpFilepaths.empty())
+    if(!m_DidShare && !m_TmpFilepaths.empty())
     {
         // we have some temp file copied from VFS which was not shared by user (didn't choose any sharing)
         // it's better to remove them now, to reduce hard drive wasting
@@ -57,7 +57,7 @@ static std::atomic<int> g_IsCurrentlySharing(0);
     return g_IsCurrentlySharing > 0;
 }
 
-- (void) ShowItems:(const vector<string>&)_entries
+- (void) ShowItems:(const std::vector<string>&)_entries
              InDir:(string)_dir
              InVFS:(std::shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
@@ -129,7 +129,7 @@ static std::atomic<int> g_IsCurrentlySharing(0);
 - (void)sharingServicePicker:(NSSharingServicePicker *)sharingServicePicker didChooseSharingService:(NSSharingService *)service
 {
     if(service != nil)
-        m_DidShared = true;
+        m_DidShare = true;
 }
 
 @end

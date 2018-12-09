@@ -16,7 +16,7 @@ using namespace std::literals;
 @implementation VFSListWindowController
 {
     VFSListWindowController *m_Self;
-    vector<nc::core::VFSInstanceManager::ObservationTicket> m_Observations;
+    std::vector<nc::core::VFSInstanceManager::ObservationTicket> m_Observations;
     nc::core::VFSInstanceManager *m_Manager;
 }
 
@@ -67,7 +67,9 @@ using namespace std::literals;
         return m_Manager->KnownVFSCount();
 }
 
-- (nullable NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(nullable NSTableColumn *)tableColumn row:(NSInteger)row
+- (nullable NSView *)tableView:(NSTableView *)tableView
+            viewForTableColumn:(nullable NSTableColumn *)tableColumn
+                           row:(NSInteger)row
 {
     nc::core::VFSInstanceManager::Promise info;
     

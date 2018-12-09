@@ -93,12 +93,12 @@ atIndexPath:(NSIndexPath *)indexPath
     return m_Engine.ColumnsNumber();
 }
 
-- (const vector<int>&) columnsPositions
+- (const std::vector<int>&) columnsPositions
 {
     return m_Engine.ColumnsPositions();
 }
 
-- (const vector<int>&) columnsWidths
+- (const std::vector<int>&) columnsWidths
 {
     return m_Engine.ColumnsWidths();
 }

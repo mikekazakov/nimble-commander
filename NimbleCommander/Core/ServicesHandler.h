@@ -20,7 +20,7 @@ public:
     
 private:
     void GoToFolder(const string &_path);
-    void RevealItems(const vector<string> &_paths);
+    void RevealItems(const std::vector<string> &_paths);
     
     std::function<NCMainWindowController*()> m_WindowProvider;
 };

@@ -25,7 +25,7 @@ void CalculateSizes::Perform( PanelController *_target, id _sender ) const
 
 void CalculateAllSizes::Perform( PanelController *_target, id _sender ) const
 {
-    vector<VFSListingItem> items;
+    std::vector<VFSListingItem> items;
     auto &data = _target.data;
     for( auto ind: data.SortedDirectoryEntries() )
         if( auto e = data.EntryAtRawPosition(ind) )

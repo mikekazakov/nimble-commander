@@ -143,7 +143,7 @@ static void HeatUpConfigValues()
     
     // Tickets to show some external activities on this panel
     uint64_t            m_NextActivityTicket;
-    vector<uint64_t>    m_ActivitiesTickets;
+    std::vector<uint64_t>m_ActivitiesTickets;
     spinlock            m_ActivitiesTicketsLock;
     
     // delayed entry selection support
@@ -457,7 +457,7 @@ static void HeatUpConfigValues()
     }
 }
 
-- (void) calculateSizesOfItems:(const vector<VFSListingItem>&) _items
+- (void) calculateSizesOfItems:(const std::vector<VFSListingItem>&) _items
 {
     if( _items.empty() )
         return;
@@ -526,14 +526,14 @@ static void HeatUpConfigValues()
     m_IsAnythingWorksInBackground = is_anything_working;
 }
 
-- (void) selectEntriesWithFilenames:(const vector<string>&)_filenames
+- (void) selectEntriesWithFilenames:(const std::vector<string>&)_filenames
 {
     for( auto &i: _filenames )
         m_Data.CustomFlagsSelectSorted( m_Data.SortedIndexForName(i.c_str()), true );
     [m_View volatileDataChanged];
 }
 
-- (void) setEntriesSelection:(const vector<bool>&)_selection
+- (void) setEntriesSelection:(const std::vector<bool>&)_selection
 {
     if( m_Data.CustomFlagsSelectSorted(_selection) )
         [m_View volatileDataChanged];
@@ -609,7 +609,7 @@ static void HeatUpConfigValues()
     
     const auto clicked_item_vd = m_Data.VolatileDataAtSortPosition(_sort_pos);
     
-    vector<VFSListingItem> vfs_items;
+    std::vector<VFSListingItem> vfs_items;
     if( clicked_item_vd.is_selected() == false)
         vfs_items.emplace_back(clicked_item); // only clicked item
     else
@@ -670,7 +670,7 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     nc::ops::CopyingOptions opts;
     opts.docopy = false;
 
-    const auto op = std::make_shared<nc::ops::Copying>(vector<VFSListingItem>{_item},
+    const auto op = std::make_shared<nc::ops::Copying>(std::vector<VFSListingItem>{_item},
                                                        _item.Directory() + target_fn,
                                                        _item.Host(),
                                                        opts);

@@ -5,7 +5,7 @@
 #include <VFS/Native.h>
 #include "TemporaryNativeFileChangesSentinel.h"
 
-static std::optional<vector<uint8_t>> CalculateFileHash(const string &_path)
+static std::optional<std::vector<uint8_t>> CalculateFileHash(const string &_path)
 {
     const int chunk_sz = 1*1024*1024;
     VFSFilePtr file;

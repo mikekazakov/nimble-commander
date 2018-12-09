@@ -50,11 +50,11 @@ void ServicesHandler::GoToFolder(const string &_path)
     }
 }
 
-static std::pair<string, vector<string>>
-    ExtractFirstDirectoryAndFilenamesInside(const vector<string>&_paths)
+static std::pair<string, std::vector<string>>
+    ExtractFirstDirectoryAndFilenamesInside(const std::vector<string>&_paths)
 {
     string directory;
-    vector<string> filenames;
+    std::vector<string> filenames;
     for( auto &i:_paths ) {
         if( i.empty() )
             continue;
@@ -72,7 +72,7 @@ static std::pair<string, vector<string>>
     return make_pair(move(directory), move(filenames));
 }
 
-static bool IsASingleDirectoryPath(const vector<string>&_paths)
+static bool IsASingleDirectoryPath(const std::vector<string>&_paths)
 {
     return _paths.size() == 1 && VFSNativeHost::SharedHost()->IsDirectory(_paths[0].c_str(), 0);
 }
@@ -81,7 +81,7 @@ void ServicesHandler::RevealItem(NSPasteboard *_pboard,
                                  NSString *_user_data,
                                  __strong NSString **_error)
 {
-    vector<string> paths;
+    std::vector<string> paths;
     for( NSPasteboardItem *item in _pboard.pasteboardItems ) {
         if( auto url_string = [item stringForType:@"public.file-url"] ) {
             if( auto url = [NSURL URLWithString:url_string] )
@@ -98,7 +98,7 @@ void ServicesHandler::RevealItem(NSPasteboard *_pboard,
     
 void ServicesHandler::OpenFiles(NSArray<NSString *> *_paths)
 {
-    vector<string> paths;
+    std::vector<string> paths;
     for( NSString *path_string in _paths ) {
         // WTF Cocoa??
         if( [path_string isEqualToString:@"YES"] )
@@ -113,7 +113,7 @@ void ServicesHandler::OpenFiles(NSArray<NSString *> *_paths)
         RevealItems(paths);
 }
     
-void ServicesHandler::RevealItems(const vector<string> &_paths)
+void ServicesHandler::RevealItems(const std::vector<string> &_paths)
 {
     auto [directory, filenames] = ExtractFirstDirectoryAndFilenamesInside(_paths);
     if( directory.empty() || filenames.empty() )

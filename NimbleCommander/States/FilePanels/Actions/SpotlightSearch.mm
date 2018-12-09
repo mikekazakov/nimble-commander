@@ -31,7 +31,7 @@ static string CookSpotlightSearchQuery( const string& _format, const string &_in
     if( !should_split )
         return boost::replace_all_copy( _format, "#{query}", _input );
 
-    vector<string> words;
+    std::vector<string> words;
     boost::split(words,
                  _input,
                  [](char _c){ return _c == ' ';},
@@ -53,7 +53,7 @@ static string CookSpotlightSearchQuery( const string& _format, const string &_in
     return result;
 }
 
-static vector<string> FetchSpotlightResults(const string& _query)
+static std::vector<string> FetchSpotlightResults(const string& _query)
 {
     auto fmt = GlobalConfig().Has(g_ConfigSpotlightFormat) ? 
         GlobalConfig().GetString(g_ConfigSpotlightFormat) : 
@@ -72,7 +72,7 @@ static vector<string> FetchSpotlightResults(const string& _query)
     if( !query_result)
         return {};
     
-    vector<string> result;
+    std::vector<string> result;
     for( long i = 0, e = MDQueryGetResultCount( query ); i < e; ++i ) {
 
         MDItemRef item = (MDItemRef)MDQueryGetResultAtIndex( query, i );
@@ -90,12 +90,12 @@ static vector<string> FetchSpotlightResults(const string& _query)
     return result;
 }
 
-static std::shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<string> &_file_paths,
+static std::shared_ptr<VFSListing> FetchSearchResultsAsListing(const std::vector<string> &_file_paths,
                                                           VFSHost &_vfs,
                                                           unsigned long _fetch_flags,
                                                           const VFSCancelChecker &_cancel_checker)
 {
-    vector<VFSListingPtr> listings;
+    std::vector<VFSListingPtr> listings;
     
     for( auto &p: _file_paths ) {
         VFSListingPtr listing;

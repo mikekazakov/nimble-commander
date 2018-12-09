@@ -268,7 +268,7 @@ const Theme &ThemesManager::SelectedTheme() const
     return *g_CurrentTheme;
 }
 
-vector<string> ThemesManager::ThemeNames() const
+std::vector<string> ThemesManager::ThemeNames() const
 {
     return m_OrderedThemeNames;
 }

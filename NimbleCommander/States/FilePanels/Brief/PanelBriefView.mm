@@ -127,7 +127,7 @@ const noexcept
     
     PanelBriefViewCollectionViewBackground *m_Background;
     data::Model                        *m_Data;
-    vector<short>                       m_IntrinsicItemsWidths;
+    std::vector<short>                  m_IntrinsicItemsWidths;
     IconRepository                     *m_IconsRepository;
     std::unordered_map<IconRepository::SlotKey, int> m_IconSlotToItemIndexMapping; 
     PanelBriefViewItemLayoutConstants   m_ItemLayout;
@@ -597,7 +597,7 @@ didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
         const auto items_per_column = m_Layout.rowsNumber;
         const auto prob_vis_items = ( NSArray<PanelBriefViewItem*> *) m_CollectionView.visibleItems;
         const auto vis_rect = m_ScrollView.documentVisibleRect;
-        vector<int> visible_item_columns;
+        std::vector<int> visible_item_columns;
         
         for( PanelBriefViewItem* i in prob_vis_items ) {
             const auto item_rect = i.view.frame;

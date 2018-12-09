@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include "FilterPopUpMenu.h"
 
@@ -17,7 +17,7 @@
 @implementation FilterPopUpMenu
 {
     NSString           *m_Filter;
-    vector<NSString*>   m_KeyEquivalents;
+    std::vector<NSString*>m_KeyEquivalents;
     bool                m_KeyEquivalentsHidden;
 }
 
@@ -199,8 +199,8 @@ static OSStatus CarbonCallback(EventHandlerCallRef _handler,
         return noErr;
 }
 
-static const vector<bool> g_PassthruTable = []{
-    vector<bool> table(256, false);
+static const std::vector<bool> g_PassthruTable = []{
+    std::vector<bool> table(256, false);
     table[115] = true; // Home
     table[117] = true; // Delete
     table[116] = true; // PgUp

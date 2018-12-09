@@ -31,7 +31,7 @@ namespace nc::panel {
 @interface PreferencesWindowThemesTabColoringRulesControl : 
     NCPreferencesActionTableCellView<NSTextFieldDelegate>
 
-@property (nonatomic) vector<nc::panel::PresentationItemsColoringRule> rules;
+@property (nonatomic) std::vector<nc::panel::PresentationItemsColoringRule> rules;
 
 @end
 

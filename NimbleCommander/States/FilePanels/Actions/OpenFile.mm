@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OpenFile.h"
 #include "../NCPanelOpenWithMenuDelegate.h"
 #include "../PanelController.h"
@@ -15,7 +15,7 @@ static NCPanelOpenWithMenuDelegate *Delegate()
     return instance;
 }
 
-static void PerformOpeningFilesWithDefaultHandler(const vector<VFSListingItem>& _items,
+static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingItem>& _items,
                                                   PanelController* _target);
 
 static bool CommonPredicate( PanelController *_target )
@@ -101,11 +101,11 @@ void OpenFocusedFileWithDefaultHandler::Perform( PanelController *_target, id _s
         return;
     }
 
-    auto entries = vector<VFSListingItem>{1, _target.view.item};
+    auto entries = std::vector<VFSListingItem>{1, _target.view.item};
     PerformOpeningFilesWithDefaultHandler(entries, _target);
 }
 
-static void PerformOpeningFilesWithDefaultHandler(const vector<VFSListingItem>& _items,
+static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingItem>& _items,
                                                   PanelController* _target)
 {
     if( _items.empty() )
@@ -116,7 +116,7 @@ static void PerformOpeningFilesWithDefaultHandler(const vector<VFSListingItem>& 
             return i.Host() == _items.front().Host();
           });
         if( same_host ) {
-            vector<string> items;
+            std::vector<string> items;
             for(auto &i: _items)
                 items.emplace_back( i.Path() );
             PanelVFSFileWorkspaceOpener::Open(items,
@@ -133,7 +133,7 @@ static void PerformOpeningFilesWithDefaultHandler(const vector<VFSListingItem>& 
 }
 
 context::OpenFileWithDefaultHandler::
-    OpenFileWithDefaultHandler(const vector<VFSListingItem>& _items):
+    OpenFileWithDefaultHandler(const std::vector<VFSListingItem>& _items):
         m_Items(_items)
 {
 }

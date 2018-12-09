@@ -32,7 +32,7 @@ private:
         string                          path;
         std::shared_ptr<std::function<void()>>callback;
         uint64_t                        fswatch_ticket = 0;
-        vector<uint8_t>                 last_md5_hash;
+        std::vector<uint8_t>            last_md5_hash;
         std::chrono::milliseconds       drop_time;
         std::chrono::milliseconds       check_delay;
         std::chrono::milliseconds       drop_delay;
@@ -44,5 +44,5 @@ private:
     void ScheduleItemDrop( const std::shared_ptr<Meta> &_meta );
 
     spinlock                    m_WatchesLock;
-    vector<std::shared_ptr<Meta>> m_Watches;
+    std::vector<std::shared_ptr<Meta>> m_Watches;
 };

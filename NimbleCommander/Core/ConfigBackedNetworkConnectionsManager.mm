@@ -24,15 +24,18 @@ using namespace std::literals;
 static const auto g_ConnectionsKey = "connections";
 static const auto g_MRUKey = "mostRecentlyUsed";
 
-static void SortByMRU(vector<NetworkConnectionsManager::Connection> &_values, const vector<boost::uuids::uuid>& _mru)
+static void SortByMRU(std::vector<NetworkConnectionsManager::Connection> &_values,
+                      const std::vector<boost::uuids::uuid>& _mru)
 {
-    vector< std::pair<NetworkConnectionsManager::Connection, decltype(begin(_mru))> > v;
+    std::vector< std::pair<NetworkConnectionsManager::Connection, decltype(begin(_mru))> > v;
     for( auto &i: _values ) {
         auto it = find( begin(_mru), end(_mru), i.Uuid() );
         v.emplace_back( std::move(i), it );
     }
     
-    sort( begin(v), end(v), [](auto &_1st, auto &_2nd){ return _1st.second < _2nd.second; } );
+    std::sort(std::begin(v),
+              std::end(v),
+              [](auto &_1st, auto &_2nd){ return _1st.second < _2nd.second; } );
   
     for( size_t i = 0, e = v.size(); i != e; ++i )
         _values[i] = std::move( v[i].first );
@@ -361,9 +364,10 @@ void ConfigBackedNetworkConnectionsManager::ReportUsage( const Connection &_conn
     dispatch_to_background([=]{ Save(); });
 }
 
-vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::FTPConnectionsByMRU() const
+std::vector<NetworkConnectionsManager::Connection>
+    ConfigBackedNetworkConnectionsManager::FTPConnectionsByMRU() const
 {
-    vector<Connection> c;
+    std::vector<Connection> c;
     LOCK_GUARD(m_Lock) {
         for(auto &i: m_Connections)
             if( i.IsType<FTP>() )
@@ -373,9 +377,10 @@ vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMana
     return c;
 }
 
-vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::SFTPConnectionsByMRU() const
+std::vector<NetworkConnectionsManager::Connection>
+    ConfigBackedNetworkConnectionsManager::SFTPConnectionsByMRU() const
 {
-    vector<Connection> c;
+    std::vector<Connection> c;
     LOCK_GUARD(m_Lock) {
         for(auto &i: m_Connections)
             if( i.IsType<SFTP>() )
@@ -385,10 +390,10 @@ vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMana
     return c;
 }
 
-vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::
-    LANShareConnectionsByMRU() const
+std::vector<NetworkConnectionsManager::Connection>
+    ConfigBackedNetworkConnectionsManager::LANShareConnectionsByMRU() const
 {
-    vector<Connection> c;
+    std::vector<Connection> c;
     LOCK_GUARD(m_Lock) {
         for(auto &i: m_Connections)
             if( i.IsType<LANShare>() )
@@ -398,10 +403,10 @@ vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsMana
     return c;
 }
 
-vector<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnectionsManager::
-    AllConnectionsByMRU() const
+std::vector<NetworkConnectionsManager::Connection>
+    ConfigBackedNetworkConnectionsManager::AllConnectionsByMRU() const
 {
-    vector<Connection> c;
+    std::vector<Connection> c;
     LOCK_GUARD(m_Lock) {
         c = m_Connections;
         SortByMRU(c, m_MRU);
@@ -634,10 +639,11 @@ static bool TearDownNFSMountName( const string &_name, string &_host, string &_s
     return true;
 }
 
-static vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>> GetMountedRemoteFilesystems()
+static std::vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>>
+    GetMountedRemoteFilesystems()
 {
     static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
-    vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>> remotes;
+    std::vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>> remotes;
     
     for( const auto &v: nc::utility::NativeFSManager::Instance().Volumes() ) {
         const auto &volume = *v;

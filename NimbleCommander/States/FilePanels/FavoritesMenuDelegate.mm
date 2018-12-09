@@ -39,7 +39,7 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
 
 @implementation FavoriteLocationsMenuDelegate
 {
-    vector<NSMenuItem*> m_MenuItems;
+    std::vector<NSMenuItem*> m_MenuItems;
     bool m_MenuIsDirty;
     FavoriteLocationsStorage *m_Storage;
     NSMenuItem* m_ManageItem;

@@ -31,12 +31,12 @@ public:
                                                             const string &_directory,
                                                             const string &_title = "" ) const = 0;
     virtual void AddFavoriteLocation( Favorite _favorite ) = 0;
-    virtual void SetFavorites( const vector<Favorite> &_new_favorites ) = 0;
-    virtual vector<Favorite> Favorites( /*limit output later?*/ ) const = 0;
+    virtual void SetFavorites( const std::vector<Favorite> &_new_favorites ) = 0;
+    virtual std::vector<Favorite> Favorites( /*limit output later?*/ ) const = 0;
     
     // Recent locations management
     virtual void ReportLocationVisit( VFSHost &_host, const string &_directory ) = 0;
-    virtual vector< std::shared_ptr<const Location> > FrecentlyUsed( int _amount ) const = 0;
+    virtual std::vector< std::shared_ptr<const Location> > FrecentlyUsed( int _amount ) const = 0;
     virtual void ClearVisitedLocations() = 0;
 
     // Changes observation

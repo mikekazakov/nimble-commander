@@ -55,13 +55,13 @@ public:
     int RawEntriesCount() const noexcept;
     int SortedEntriesCount() const noexcept;
     
-    const vector<unsigned>& SortedDirectoryEntries() const noexcept;
+    const std::vector<unsigned>& SortedDirectoryEntries() const noexcept;
     
     
     /**
      * EntriesBySoftFiltering return a vector of filtered indeces of sorted entries (not raw ones)
      */
-    const vector<unsigned>& EntriesBySoftFiltering() const noexcept;
+    const std::vector<unsigned>& EntriesBySoftFiltering() const noexcept;
     
     VFSListingItem   EntryAtRawPosition(int _pos) const noexcept; // will return an "empty" item upon invalid index
     ItemVolatileData&       VolatileDataAtRawPosition( int _pos ); // will throw an exception upon invalid index
@@ -72,8 +72,8 @@ public:
     ItemVolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
     const ItemVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
     
-    vector<string>          SelectedEntriesFilenames() const;
-    vector<VFSListingItem> SelectedEntries() const;
+    std::vector<string>          SelectedEntriesFilenames() const;
+    std::vector<VFSListingItem> SelectedEntries() const;
     
     /**
      * Will throw an invalid_argument on invalid _pos.
@@ -166,7 +166,7 @@ public:
     // TODO: bool results?????
     
     void CustomFlagsSelectSorted(int _at_sorted_pos, bool _is_selected);
-    bool CustomFlagsSelectSorted(const vector<bool>& _is_selected);
+    bool CustomFlagsSelectSorted(const std::vector<bool>& _is_selected);
     
     void CustomIconClearAll();
     void CustomFlagsClearHighlights();
@@ -196,10 +196,10 @@ private:
     // m_Listing container will change every time directory change/reloads,
     // while the following sort-indeces(except for m_EntriesByRawName) will be permanent with it's content changing
     std::shared_ptr<VFSListing> m_Listing;
-    vector<ItemVolatileData>    m_VolatileData;
-    vector<unsigned>            m_EntriesByRawName;    // sorted with raw strcmp comparison
-    vector<unsigned>            m_EntriesByCustomSort; // custom defined sort
-    vector<unsigned>            m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
+    std::vector<ItemVolatileData>m_VolatileData;
+    std::vector<unsigned>       m_EntriesByRawName;    // sorted with raw strcmp comparison
+    std::vector<unsigned>       m_EntriesByCustomSort; // custom defined sort
+    std::vector<unsigned>       m_EntriesBySoftFiltering; // points at m_EntriesByCustomSort indeces, not raw ones
     struct SortMode             m_CustomSortMode;
     HardFilter                  m_HardFiltering;
     TextualFilter               m_SoftFiltering;

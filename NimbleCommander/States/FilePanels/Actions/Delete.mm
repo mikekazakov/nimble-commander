@@ -13,9 +13,9 @@
 namespace nc::panel::actions {
 
 static bool CommonDeletePredicate( PanelController *_target );
-static bool AllAreNative(const vector<VFSListingItem>& _c);
-static std::unordered_set<string> ExtractDirectories(const vector<VFSListingItem>& _c);
-static bool AllHaveTrash(const vector<VFSListingItem>& _c);
+static bool AllAreNative(const std::vector<VFSListingItem>& _c);
+static std::unordered_set<string> ExtractDirectories(const std::vector<VFSListingItem>& _c);
+static bool AllHaveTrash(const std::vector<VFSListingItem>& _c);
 static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
                                           const std::shared_ptr<nc::ops::Operation> &_operation );
 
@@ -93,7 +93,7 @@ void MoveToTrash::Perform( PanelController *_target, id _sender ) const
     [_target.mainWindowController enqueueOperation:operation];
 }
 
-context::MoveToTrash::MoveToTrash(const vector<VFSListingItem> &_items):
+context::MoveToTrash::MoveToTrash(const std::vector<VFSListingItem> &_items):
     m_Items(_items)
 {
     m_AllAreNative = AllAreNative(m_Items);
@@ -112,7 +112,7 @@ void context::MoveToTrash::Perform( PanelController *_target, id _sender ) const
     [_target.mainWindowController enqueueOperation:operation];
 }
 
-context::DeletePermanently::DeletePermanently(const vector<VFSListingItem> &_items):
+context::DeletePermanently::DeletePermanently(const std::vector<VFSListingItem> &_items):
     m_Items(_items)
 {
     m_AllWriteable = all_of(begin(m_Items), end(m_Items), [](const auto &i){
@@ -141,14 +141,14 @@ static bool CommonDeletePredicate( PanelController *_target )
     return !i.IsDotDot() || _target.data.Stats().selected_entries_amount > 0;
 }
 
-static bool AllAreNative(const vector<VFSListingItem>& _c)
+static bool AllAreNative(const std::vector<VFSListingItem>& _c)
 {
     return all_of(begin(_c), end(_c), [&](auto &i){
         return i.Host()->IsNativeFS();
     });
 }
 
-static std::unordered_set<string> ExtractDirectories(const vector<VFSListingItem>& _c)
+static std::unordered_set<string> ExtractDirectories(const std::vector<VFSListingItem>& _c)
 {
     std::unordered_set<string> directories;
     for(const auto &i: _c)
@@ -156,7 +156,7 @@ static std::unordered_set<string> ExtractDirectories(const vector<VFSListingItem
     return directories;
 }
 
-static bool AllHaveTrash(const vector<VFSListingItem>& _c)
+static bool AllHaveTrash(const std::vector<VFSListingItem>& _c)
 {
     const auto directories = ExtractDirectories(_c);
     return all_of(begin(directories), end(directories), [](auto &i){

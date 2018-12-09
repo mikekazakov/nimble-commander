@@ -10,7 +10,7 @@
 static const auto g_ConfigAlgo = "filePanel.general.checksumCalculationAlgorithm";
 const static string g_SumsFilename = "checksums.txt";
 
-const static vector<std::pair<NSString*,int>> g_Algos = {
+const static std::vector<std::pair<NSString*,int>> g_Algos = {
     {@"Adler32",     Hash::Adler32},
     {@"CRC32",       Hash::CRC32},
     {@"MD2",         Hash::MD2},
@@ -26,17 +26,17 @@ const static vector<std::pair<NSString*,int>> g_Algos = {
 @implementation CalculateChecksumSheetController
 {
     VFSHostPtr          m_Host;
-    vector<string>      m_Filenames;
-    vector<uint64_t>    m_Sizes;
-    vector<string>      m_Checksums;
-    vector<string>      m_Errors;
+    std::vector<string> m_Filenames;
+    std::vector<uint64_t>m_Sizes;
+    std::vector<string> m_Checksums;
+    std::vector<string> m_Errors;
     string              m_Path;
     SerialQueue         m_WorkQue;
     uint64_t            m_TotalSize;
 }
 
-- (id)initWithFiles:(vector<string>)files
-          withSizes:(vector<uint64_t>)sizes
+- (id)initWithFiles:(std::vector<string>)files
+          withSizes:(std::vector<uint64_t>)sizes
              atHost:(const VFSHostPtr&)host
              atPath:(string)path
 {

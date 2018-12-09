@@ -34,7 +34,7 @@ int ClosedPanelsHistoryImpl::Size() const
     return (int)m_Entries.size();
 }
     
-vector<ListingPromise> ClosedPanelsHistoryImpl::FrontElements( int _count ) const
+std::vector<ListingPromise> ClosedPanelsHistoryImpl::FrontElements( int _count ) const
 {
     if( _count <= 0 )
         return {};

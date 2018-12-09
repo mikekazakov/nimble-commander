@@ -54,7 +54,7 @@ public:
     /**
      * Get all layouts this storage has.
      */
-    vector<std::shared_ptr<const PanelViewLayout>> GetAllLayouts() const;
+    std::vector<std::shared_ptr<const PanelViewLayout>> GetAllLayouts() const;
 
     /**
      * Will ignore requests on invalid index.
@@ -88,7 +88,7 @@ private:
     void CommitChanges( bool _fire_observers );
         
     mutable spinlock                            m_LayoutsLock;
-    vector<std::shared_ptr<const PanelViewLayout>>   m_Layouts;
+    std::vector<std::shared_ptr<const PanelViewLayout>>   m_Layouts;
     const char*                                 m_ConfigPath;    
 };
 

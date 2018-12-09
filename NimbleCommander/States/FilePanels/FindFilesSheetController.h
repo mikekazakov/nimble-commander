@@ -20,7 +20,7 @@ struct FindFilesSheetControllerFoundItem
 
 @property (nonatomic) VFSHostPtr host;
 @property (nonatomic) string path;
-@property (nonatomic) std::function<void(const vector<VFSPath> &_filepaths)> onPanelize;
+@property (nonatomic) std::function<void(const std::vector<VFSPath> &_filepaths)> onPanelize;
 @property (nonatomic) nc::core::VFSInstanceManager *vfsInstanceManager;
 - (FindFilesSheetControllerFoundItem*) selectedItem; // may be nullptr
 

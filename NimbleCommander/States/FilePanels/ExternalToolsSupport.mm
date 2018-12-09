@@ -399,7 +399,7 @@ std::shared_ptr<const ExternalTool> ExternalToolsStorage::GetTool(size_t _no) co
     return _no < m_Tools.size() ? m_Tools[_no] : nullptr;
 }
 
-vector<std::shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
+std::vector<std::shared_ptr<const ExternalTool>> ExternalToolsStorage::GetAllTools() const
 {
     std::lock_guard<spinlock> guard(m_ToolsLock);
     return m_Tools;
@@ -413,7 +413,7 @@ ExternalToolsStorage::ObservationTicket
 
 void ExternalToolsStorage::WriteToolsToConfig() const
 {
-    vector<std::shared_ptr<const ExternalTool>> tools;
+    std::vector<std::shared_ptr<const ExternalTool>> tools;
     LOCK_GUARD(m_ToolsLock)
         tools = m_Tools;
 

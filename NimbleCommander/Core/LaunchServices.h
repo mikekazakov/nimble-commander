@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -10,14 +10,14 @@ class LauchServicesHandlers
 public:
     LauchServicesHandlers( );
     LauchServicesHandlers( const VFSListingItem &_item );
-    LauchServicesHandlers( const vector<LauchServicesHandlers>& _handlers_to_merge );
+    LauchServicesHandlers( const std::vector<LauchServicesHandlers>& _handlers_to_merge );
 
-    const vector<string> &HandlersPaths() const noexcept;
+    const std::vector<string> &HandlersPaths() const noexcept;
     const string &DefaultHandlerPath() const noexcept; // may be empty after merge
     const string &CommonUTI() const noexcept; // may be empty after merge
 
 private:
-    vector<string>  m_Paths;
+    std::vector<string>  m_Paths;
     string          m_UTI;
     string          m_DefaultHandlerPath;
 };

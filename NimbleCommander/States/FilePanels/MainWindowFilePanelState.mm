@@ -302,7 +302,7 @@ static NSString *TitleForData( const data::Model* _data );
     auto left_controller = m_LeftPanelControllers.front();
     auto right_controller = m_RightPanelControllers.front();
     
-    vector<string> left_panel_desired_paths, right_panel_desired_paths;
+    std::vector<string> left_panel_desired_paths, right_panel_desired_paths;
     
     // 1st attempt - load editable default path from config
     left_panel_desired_paths.emplace_back( ExpandPath(GlobalConfig().GetString(g_ConfigInitialLeftPath)) );
@@ -322,7 +322,7 @@ static NSString *TitleForData( const data::Model* _data );
     left_panel_desired_paths.emplace_back( CommonPaths::StartupCWD() );
     right_panel_desired_paths.emplace_back( CommonPaths::StartupCWD() );
     
-    const auto try_to_load = [&](const vector<string> &_paths_to_try, PanelController *_panel) {        
+    const auto try_to_load = [&](const std::vector<string> &_paths_to_try, PanelController *_panel) {        
         for( auto &p: _paths_to_try ) {
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = p;
@@ -510,17 +510,17 @@ static NSString *TitleForData( const data::Model* _data );
     return objc_cast<PanelController>(m_SplitView.rightTabbedHolder.current.delegate);
 }
 
-- (const vector<PanelController*>&)leftControllers
+- (const std::vector<PanelController*>&)leftControllers
 {
     return m_LeftPanelControllers;
 }
 
-- (const vector<PanelController*>&)rightControllers
+- (const std::vector<PanelController*>&)rightControllers
 {
     return m_RightPanelControllers;
 }
 
-static bool Has(const vector<PanelController*> &_c, PanelController* _p) noexcept
+static bool Has(const std::vector<PanelController*> &_c, PanelController* _p) noexcept
 {
     // this is called very often, so in order to help optimizer I manually removed all
     // Objective-C / ARC related semantics by casting everything to raw void*.
@@ -596,8 +596,8 @@ static bool Has(const vector<PanelController*> &_c, PanelController* _p) noexcep
 }
 
 static nc::config::Value EncodePanelsStates(
-    const vector<PanelController*> &_left,
-    const vector<PanelController*> &_right)
+    const std::vector<PanelController*> &_left,
+    const std::vector<PanelController*> &_right)
 {
     using namespace rapidjson;
     nc::config::Value json{kArrayType};
@@ -858,9 +858,9 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
     return true;
 }
 
-- (vector<std::tuple<string, VFSHostPtr> >)filePanelsCurrentPaths
+- (std::vector<std::tuple<string, VFSHostPtr> >)filePanelsCurrentPaths
 {
-    vector<std::tuple<string, VFSHostPtr> > r;
+    std::vector<std::tuple<string, VFSHostPtr> > r;
     for( auto c: {&m_LeftPanelControllers, &m_RightPanelControllers} )
         for( auto p: *c )
             if( p.isUniform )

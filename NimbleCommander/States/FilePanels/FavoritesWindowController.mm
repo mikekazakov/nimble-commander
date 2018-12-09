@@ -30,12 +30,12 @@ static const auto g_FavoritesWindowControllerDragDataType =
     FavoritesWindowController *m_Self;
     std::function<FavoriteLocationsStorage&()> m_Storage;
     
-    vector<FavoriteLocationsStorage::Favorite> m_Favorites;
-    vector<FavoriteLocationsStorage::Favorite> m_PopupMenuFavorites;
+    std::vector<FavoriteLocationsStorage::Favorite> m_Favorites;
+    std::vector<FavoriteLocationsStorage::Favorite> m_PopupMenuFavorites;
     
     FavoriteLocationsStorage::ObservationTicket m_ObservationTicket;
     bool m_IsCommitingFavorites;
-    std::function< vector<std::pair<VFSHostPtr, string>>() > m_ProvideCurrentUniformPaths;
+    std::function< std::vector<std::pair<VFSHostPtr, string>>() > m_ProvideCurrentUniformPaths;
 }
 
 - (id) initWithFavoritesStorage:(std::function<FavoriteLocationsStorage&()>)_favorites_storage
@@ -224,7 +224,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         [self commit];
     }
     else {
-        vector<FavoriteLocationsStorage::Favorite> addition;
+        std::vector<FavoriteLocationsStorage::Favorite> addition;
         auto &storage = m_Storage();
         if( auto source = objc_cast<FilesDraggingSource>(info.draggingSource) ) {
             // dragging from some NC panel
@@ -381,12 +381,12 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
 
 
 - (void)setProvideCurrentUniformPaths:
-    (std::function<vector<std::pair<VFSHostPtr, string> > ()>)callback
+    (std::function<std::vector<std::pair<VFSHostPtr, string> > ()>)callback
 {
     m_ProvideCurrentUniformPaths = move(callback);
 }
 
-- (std::function<vector<std::pair<VFSHostPtr, string> > ()>)provideCurrentUniformPaths
+- (std::function<std::vector<std::pair<VFSHostPtr, string> > ()>)provideCurrentUniformPaths
 {
     return m_ProvideCurrentUniformPaths;
 }

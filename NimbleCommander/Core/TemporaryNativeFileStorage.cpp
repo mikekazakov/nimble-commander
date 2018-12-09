@@ -298,7 +298,7 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
         vfs_dirpath.filename().native();
     
     // traverse source structure
-    vector< S > src;
+    std::vector< S > src;
     std::stack< S > traverse_log;
     
     src.emplace_back(_vfs_dirpath, top_level_name, st_src_dir);

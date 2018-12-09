@@ -54,7 +54,7 @@ VFSInstanceManager::Promise VFSInstanceManagerImpl::TameVFS( const VFSHostPtr& _
       
         // check if we have this vfs before, but it was destroyed.
         // in this case we can just update an existing information, so all previous promises will point at a new _instance
-        vector<Info*> existing_match;
+        std::vector<Info*> existing_match;
         uint64_t info_id_request = 0;
         VFSHostPtr instance_recursive = _instance;
         while( instance_recursive  ) {
@@ -407,9 +407,9 @@ VFSInstanceManager::ObservationTicket VFSInstanceManagerImpl::
     return AddObserver(move(_callback), KnownVFSListObservation);
 }
 
-vector<std::weak_ptr<VFSHost>> VFSInstanceManagerImpl::AliveHosts()
+std::vector<std::weak_ptr<VFSHost>> VFSInstanceManagerImpl::AliveHosts()
 {
-    vector<std::weak_ptr<VFSHost>> list;
+    std::vector<std::weak_ptr<VFSHost>> list;
     LOCK_GUARD(m_AliveHostsLock) {
         list = m_AliveHosts;
     }

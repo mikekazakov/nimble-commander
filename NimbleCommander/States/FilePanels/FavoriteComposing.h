@@ -16,8 +16,8 @@ public:
 #endif
     std::optional<Favorite> FromListingItem( const VFSListingItem &_i );
 
-    vector<Favorite> FinderFavorites();
-    vector<Favorite> DefaultFavorites();
+    std::vector<Favorite> FinderFavorites();
+    std::vector<Favorite> DefaultFavorites();
 private:
     const FavoriteLocationsStorage& m_Storage;
     

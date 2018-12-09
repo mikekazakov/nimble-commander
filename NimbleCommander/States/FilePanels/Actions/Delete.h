@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -27,21 +27,21 @@ namespace context {
 
 struct DeletePermanently final : PanelAction
 {
-   DeletePermanently(const vector<VFSListingItem> &_items);
+   DeletePermanently(const std::vector<VFSListingItem> &_items);
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 private:
-    const vector<VFSListingItem> &m_Items;
+    const std::vector<VFSListingItem> &m_Items;
     bool m_AllWriteable;
 };
 
 struct MoveToTrash final : PanelAction
 {
-    MoveToTrash(const vector<VFSListingItem> &_items);
+    MoveToTrash(const std::vector<VFSListingItem> &_items);
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 private:
-    const vector<VFSListingItem> &m_Items;
+    const std::vector<VFSListingItem> &m_Items;
     bool m_AllAreNative;
 };
 

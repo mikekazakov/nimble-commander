@@ -93,11 +93,11 @@ private:
     void    InsertCurrentItem(CurrentItem _ci);
     void    InsertSelectedItem(SelectedItems _si);
     
-    vector<Step>            m_Steps;
-    vector<UserDefined>     m_UserDefined;
-    vector<EnterValue>      m_EnterValues;
-    vector<CurrentItem>     m_CurrentItems;
-    vector<SelectedItems>   m_SelectedItems;
+    std::vector<Step>           m_Steps;
+    std::vector<UserDefined>    m_UserDefined;
+    std::vector<EnterValue>     m_EnterValues;
+    std::vector<CurrentItem>    m_CurrentItems;
+    std::vector<SelectedItems>  m_SelectedItems;
     unsigned                m_MaximumTotalFiles = 0;
     
     friend class ExternalToolsParametersParser;
@@ -144,7 +144,7 @@ public:
     
     size_t                                  ToolsCount() const;
     std::shared_ptr<const ExternalTool>     GetTool(size_t _no) const; // will return nullptr on invalid index
-    vector<std::shared_ptr<const ExternalTool>>GetAllTools() const;
+    std::vector<std::shared_ptr<const ExternalTool>>GetAllTools() const;
     
     void                                    ReplaceTool( ExternalTool _tool, size_t _at_index );
     void                                    InsertTool( ExternalTool _tool ); // adds tool at the end
@@ -160,8 +160,8 @@ private:
     void CommitChanges();
     
     mutable spinlock                                m_ToolsLock;
-    vector<std::shared_ptr<const ExternalTool>>     m_Tools;
+    std::vector<std::shared_ptr<const ExternalTool>>m_Tools;
     const char*                                     m_ConfigPath;
-    vector<nc::config::Token>                       m_ConfigObservations;
+    std::vector<nc::config::Token>                  m_ConfigObservations;
 };
 

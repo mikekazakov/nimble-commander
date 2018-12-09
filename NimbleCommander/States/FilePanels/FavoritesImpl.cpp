@@ -118,7 +118,7 @@ void FavoriteLocationsStorageImpl::ReportLocationVisit( VFSHost &_host, const st
     }
 }
 
-vector< std::shared_ptr<const FavoriteLocationsStorage::Location> >
+std::vector< std::shared_ptr<const FavoriteLocationsStorage::Location> >
 FavoriteLocationsStorageImpl::FrecentlyUsed( int _amount ) const
 {
     dispatch_assert_main_queue();
@@ -135,7 +135,7 @@ FavoriteLocationsStorageImpl::FrecentlyUsed( int _amount ) const
     };
     
     // visit #, visits count, last visit, frecency score
-    vector< std::tuple<size_t, int, time_t, float> > recent_visits;
+    std::vector< std::tuple<size_t, int, time_t, float> > recent_visits;
     for( auto &v: m_Visits )
         if( v.second.last_visit > last_date && v.second.visits_count > 0 && !is_favorite(v.first) )
             recent_visits.emplace_back(v.first,
@@ -164,14 +164,14 @@ FavoriteLocationsStorageImpl::FrecentlyUsed( int _amount ) const
         return std::get<3>(_1) > std::get<3>(_2); // sorting in descending order
     });
     
-    vector< std::shared_ptr<const FavoriteLocationsStorage::Location> > result;
+    std::vector< std::shared_ptr<const FavoriteLocationsStorage::Location> > result;
     for( int i = 0, e = std::min(_amount, (int)recent_visits.size()); i != e; ++i )
         result.emplace_back( m_Visits.at(std::get<0>(recent_visits[i])).location );
 
     return result;
 }
 
-vector<FavoriteLocationsStorage::Favorite>
+std::vector<FavoriteLocationsStorage::Favorite>
 FavoriteLocationsStorageImpl::Favorites( /*limit output later*/ ) const
 {
     dispatch_assert_main_queue();
@@ -342,7 +342,7 @@ void FavoriteLocationsStorageImpl::LoadData( config::Config &_config, const char
     }
 }
 
-void FavoriteLocationsStorageImpl::SetFavorites( const vector<Favorite> &_new_favorites )
+void FavoriteLocationsStorageImpl::SetFavorites( const std::vector<Favorite> &_new_favorites )
 {
     dispatch_assert_main_queue();
     m_Favorites.clear();

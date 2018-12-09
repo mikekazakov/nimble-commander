@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataEntriesComparator.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataExternalEntryKey.h"
@@ -6,7 +6,7 @@
 namespace nc::panel::data {
 
 ListingComparatorBase::ListingComparatorBase(const VFSListing &_items,
-                                             const vector<ItemVolatileData>& _vd,
+                                             const std::vector<ItemVolatileData>& _vd,
                                              SortMode _sort_mode):
     l{ _items },
     vd{ _vd },
@@ -29,7 +29,7 @@ int ListingComparatorBase::Compare( const char *_1st, const char *_2nd ) const n
 
 IndirectListingComparator::IndirectListingComparator(
     const VFSListing &_items,
-    const vector<ItemVolatileData>& _vd,
+    const std::vector<ItemVolatileData>& _vd,
     SortMode sort_mode):
         ListingComparatorBase(_items, _vd, sort_mode)
 {
@@ -212,7 +212,7 @@ int IndirectListingComparator::CompareNames(unsigned _1, unsigned _2) const
 
 
 ExternalListingComparator::ExternalListingComparator(const VFSListing &_items,
-                                                     const vector<ItemVolatileData>& _vd,
+                                                     const std::vector<ItemVolatileData>& _vd,
                                                      SortMode sort_mode):
     ListingComparatorBase(_items, _vd, sort_mode)
 {}

@@ -1,10 +1,10 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Pasteboard.h"
 #include <VFS/VFS.h>
 
 namespace nc::panel {
 
-bool PasteboardSupport::WriteFilesnamesPBoard(const vector<VFSListingItem> &_items,
+bool PasteboardSupport::WriteFilesnamesPBoard(const std::vector<VFSListingItem> &_items,
                                              NSPasteboard *_pasteboard )
 {
     if( !_pasteboard )
@@ -26,7 +26,7 @@ bool PasteboardSupport::WriteFilesnamesPBoard(const vector<VFSListingItem> &_ite
                                 forType:NSFilenamesPboardType];
 }
 
-bool PasteboardSupport::WriteURLSPBoard(const vector<VFSListingItem> &_items,
+bool PasteboardSupport::WriteURLSPBoard(const std::vector<VFSListingItem> &_items,
                                        NSPasteboard *_pasteboard )
 {
     if( !_pasteboard )

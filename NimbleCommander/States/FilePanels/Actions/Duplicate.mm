@@ -20,7 +20,7 @@ static std::unordered_set<string> ExtractFilenames( const VFSListing &_listing )
 static string ProduceFormCLowercase(std::string_view _string);
 static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
                                             const std::unordered_set<string> &_filenames);
-static void CommonPerform(PanelController *_target, const vector<VFSListingItem> &_items);
+static void CommonPerform(PanelController *_target, const std::vector<VFSListingItem> &_items);
 
 bool Duplicate::Predicate( PanelController *_target ) const
 {
@@ -37,7 +37,7 @@ bool Duplicate::Predicate( PanelController *_target ) const
     return !i.IsDotDot() || _target.data.Stats().selected_entries_amount > 0;
 }
 
-static void CommonPerform(PanelController *_target, const vector<VFSListingItem> &_items)
+static void CommonPerform(PanelController *_target, const std::vector<VFSListingItem> &_items)
 {
     auto directory_filenames = ExtractFilenames(_target.data.Listing());
 
@@ -49,7 +49,7 @@ static void CommonPerform(PanelController *_target, const vector<VFSListingItem>
         
         const auto options = MakeDefaultFileCopyOptions();
         
-        const auto op = std::make_shared<ops::Copying>(vector<VFSListingItem>{item},
+        const auto op = std::make_shared<ops::Copying>(std::vector<VFSListingItem>{item},
                                                        item.Directory() + duplicate,
                                                        item.Host(),
                                                        options);
@@ -80,7 +80,7 @@ void Duplicate::Perform( PanelController *_target, id _sender ) const
     CommonPerform(_target, _target.selectedEntriesOrFocusedEntry);
 }
 
-context::Duplicate::Duplicate(const vector<VFSListingItem> &_items):
+context::Duplicate::Duplicate(const std::vector<VFSListingItem> &_items):
     m_Items(_items)
 {
 }

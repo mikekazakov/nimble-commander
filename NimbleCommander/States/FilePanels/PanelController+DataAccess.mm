@@ -27,7 +27,7 @@
     return self.data.FullPathForEntry(self.data.RawIndexForSortIndex(self.view.curpos));
 }
 
-- (vector<string>) selectedEntriesOrFocusedEntryFilenames
+- (std::vector<string>) selectedEntriesOrFocusedEntryFilenames
 {
     if(!self.view)
         return {};
@@ -37,14 +37,14 @@
     
     auto item = self.view.item;
     if(item && !item.IsDotDot())
-        return vector<string>{ item.Filename() };
+        return std::vector<string>{ item.Filename() };
     
     return {};
 }
 
-- (vector<unsigned>) selectedEntriesOrFocusedEntryIndeces
+- (std::vector<unsigned>) selectedEntriesOrFocusedEntryIndeces
 {
-    vector<unsigned> inds;
+    std::vector<unsigned> inds;
     auto &d = self.data;
     for( auto ind: d.SortedDirectoryEntries() ) {
         auto e = d.EntryAtRawPosition(ind);
@@ -68,9 +68,9 @@
     return inds;
 }
 
-- (vector<VFSListingItem>)selectedEntriesOrFocusedEntry
+- (std::vector<VFSListingItem>)selectedEntriesOrFocusedEntry
 {
-    vector<VFSListingItem> items;
+    std::vector<VFSListingItem> items;
     auto &d = self.data;
     for( auto ind: d.SortedDirectoryEntries() )
         if( d.VolatileDataAtRawPosition(ind).is_selected() )
@@ -84,9 +84,9 @@
     return items;
 }
 
-- (vector<VFSListingItem>) selectedEntriesOrFocusedEntryWithDotDot
+- (std::vector<VFSListingItem>) selectedEntriesOrFocusedEntryWithDotDot
 {
-    vector<VFSListingItem> items;
+    std::vector<VFSListingItem> items;
     auto &d = self.data;
     for( auto ind: d.SortedDirectoryEntries() )
         if( d.VolatileDataAtRawPosition(ind).is_selected() )
@@ -99,7 +99,7 @@
     return items;
 }
 
-- (vector<string>) selectedEntriesOrFocusedEntryFilenamesWithDotDot
+- (std::vector<string>) selectedEntriesOrFocusedEntryFilenamesWithDotDot
 {
     if(!self.view)
         return {};
@@ -108,7 +108,7 @@
         return self.data.SelectedEntriesFilenames();
     
     if(auto item = self.view.item)
-        return vector<string>{ item.Filename() };
+        return std::vector<string>{ item.Filename() };
     
     return {};
 }

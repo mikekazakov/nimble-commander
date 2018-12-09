@@ -375,7 +375,7 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
     if( !bar )
         return;
     
-    vector<NSTabViewItem *> items;
+    std::vector<NSTabViewItem *> items;
     for( NSTabViewItem *it in bar.tabView.tabViewItems )
         if( it.view != _controller.view )
             items.emplace_back(it);

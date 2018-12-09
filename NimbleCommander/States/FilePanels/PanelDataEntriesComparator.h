@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -13,14 +13,14 @@ class ListingComparatorBase
 {
 public:
     ListingComparatorBase(const VFSListing &_items,
-                          const vector<ItemVolatileData>& _vd,
+                          const std::vector<ItemVolatileData>& _vd,
                           SortMode _sort_mode);
     
 protected:
     int Compare( CFStringRef _1st, CFStringRef _2nd ) const noexcept;
     int Compare( const char *_1st, const char *_2nd ) const noexcept;
     const VFSListing&                       l;
-    const vector<ItemVolatileData>&vd;
+    const std::vector<ItemVolatileData>&vd;
     const SortMode                 sort_mode;
 
 private:
@@ -33,7 +33,7 @@ class IndirectListingComparator : public ListingComparatorBase
 {
 public:
     IndirectListingComparator(const VFSListing &_items,
-                              const vector<ItemVolatileData>& _vd,
+                              const std::vector<ItemVolatileData>& _vd,
                               SortMode sort_mode);
     bool operator()(unsigned _1, unsigned _2) const;
 private:
@@ -56,7 +56,7 @@ private:
 struct ExternalListingComparator : public ListingComparatorBase
 {
     ExternalListingComparator(const VFSListing &_items,
-                              const vector<ItemVolatileData>& _vd,
+                              const std::vector<ItemVolatileData>& _vd,
                               SortMode sort_mode);
     bool operator()(unsigned _1, const ExternalEntryKey &_val2) const;
 };

@@ -38,7 +38,8 @@ Check table:
 namespace nc::panel {
 
 static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item);
-static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const data::Model &_data );
+static std::vector<VFSListingItem> ComposeItemsForDragging(int _sorted_pos,
+                                                           const data::Model &_data );
 
 DragSender::DragSender( PanelController *_panel, IconCallback _icon_callback ):
     m_Panel(_panel),
@@ -97,7 +98,8 @@ void DragSender::Start(NSView *_from_view, NSEvent *_via_event, int _dragged_pan
     }
 }
 
-static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const data::Model &_data )
+static std::vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos,
+                                                           const data::Model &_data )
 {
     const auto dragged_item = _data.EntryAtSortPosition(_sorted_pos);
     if( !dragged_item || dragged_item.IsDotDot() )
@@ -105,7 +107,7 @@ static vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos, const da
     
     const auto dragged_item_vd = _data.VolatileDataAtSortPosition(_sorted_pos);
     
-    vector<VFSListingItem> items;
+    std::vector<VFSListingItem> items;
     
     if( dragged_item_vd.is_selected() == false)
         items.emplace_back(dragged_item); // drag only clicked item

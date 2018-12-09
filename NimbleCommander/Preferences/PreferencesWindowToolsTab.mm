@@ -39,7 +39,7 @@ static bool AskUserToDeleteTool()
 @implementation PreferencesWindowToolsTab
 {
     std::function<ExternalToolsStorage&()>              m_ToolsStorage;
-    vector<std::shared_ptr<const ExternalTool>>         m_Tools;
+    std::vector<std::shared_ptr<const ExternalTool>>    m_Tools;
     ExternalToolsStorage::ObservationTicket             m_ToolsObserver;
 }
 

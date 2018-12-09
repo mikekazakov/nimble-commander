@@ -58,7 +58,7 @@ public:
      */
     const Path* MostRecent() const;
     
-    vector<std::reference_wrapper<const Path>> All() const;
+    std::vector<std::reference_wrapper<const Path>> All() const;
     
     const string &LastNativeDirectoryVisited() const noexcept;
     

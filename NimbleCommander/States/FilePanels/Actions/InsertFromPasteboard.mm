@@ -14,9 +14,9 @@ namespace nc::panel::actions {
 // perhaps it would be good to add support of URLS at least.
 // or even with custom NC's structures used in drag&drop system
 
-static vector<VFSListingItem> FetchVFSListingsItemsFromPaths( NSArray *_input )
+static std::vector<VFSListingItem> FetchVFSListingsItemsFromPaths( NSArray *_input )
 {
-    vector<VFSListingItem> result;
+    std::vector<VFSListingItem> result;
     auto &host = VFSNativeHost::SharedHost();
     for( NSString *ns_filepath in _input ) {
         if( !objc_cast<NSString>(ns_filepath) )
@@ -32,7 +32,7 @@ static vector<VFSListingItem> FetchVFSListingsItemsFromPaths( NSArray *_input )
     return result;
 }
 
-static vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
+static std::vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
 {
     // check what's inside pasteboard
     NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;

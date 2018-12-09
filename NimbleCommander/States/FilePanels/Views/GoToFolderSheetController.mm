@@ -8,9 +8,9 @@
 
 static const auto g_StateGoToKey = "filePanel.goToSheetLastPath";
 
-static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const string& _prefix)
+static std::vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const string& _prefix)
 {
-    vector<unsigned> result;
+    std::vector<unsigned> result;
     
     NSString *prefix = [NSString stringWithUTF8StdString:_prefix];
     NSRange range = NSMakeRange(0, prefix.length);
@@ -154,14 +154,16 @@ static vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const str
     return false;
 }
 
-- (NSMenu*) buildMenuWithElements:(const vector<unsigned>&)_inds ofListing:(const VFSListing&)_listing
+- (NSMenu*) buildMenuWithElements:(const std::vector<unsigned>&)_inds
+                        ofListing:(const VFSListing&)_listing
 {
-    vector<NSString *> filenames;
+    std::vector<NSString *> filenames;
     for(auto i:_inds)
         filenames.emplace_back( _listing.FilenameNS(i) );
 
     sort( begin(filenames), end(filenames), [](auto _1st, auto _2nd) {
-        static auto opts = NSCaseInsensitiveSearch | NSNumericSearch | NSWidthInsensitiveSearch | NSForcedOrderingSearch;
+        static auto opts = NSCaseInsensitiveSearch | NSNumericSearch |
+                           NSWidthInsensitiveSearch | NSForcedOrderingSearch;
         return [_1st compare:_2nd options:opts] < 0;
     });
     

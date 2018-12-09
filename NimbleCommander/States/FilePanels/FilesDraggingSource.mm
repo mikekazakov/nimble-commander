@@ -44,7 +44,7 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(
 
 @implementation FilesDraggingSource
 {
-    vector<PanelDraggingItem*>  m_Items;
+    std::vector<PanelDraggingItem*>m_Items;
     __weak PanelController*     m_SourceController;
     VFSHostPtr                  m_CommonHost;
     bool                        m_AreAllHostsWriteable;

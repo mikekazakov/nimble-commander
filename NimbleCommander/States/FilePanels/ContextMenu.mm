@@ -14,7 +14,7 @@ using namespace nc::panel;
 
 @implementation NCPanelContextMenu
 {
-    vector<VFSListingItem>              m_Items;
+    std::vector<VFSListingItem>         m_Items;
     PanelController                    *m_Panel;
     NSMutableArray                     *m_ShareItemsURLs;
     NCPanelOpenWithMenuDelegate        *m_OpenWithDelegate;
@@ -27,7 +27,7 @@ using namespace nc::panel;
     std::unique_ptr<actions::PanelAction>   m_OpenFileAction;
 }
 
-- (instancetype) initWithItems:(vector<VFSListingItem>)_items
+- (instancetype) initWithItems:(std::vector<VFSListingItem>)_items
                        ofPanel:(PanelController*)_panel
 {
     if( _items.empty() )

@@ -215,7 +215,7 @@ bool SandboxManager::HasAccessToFolder_Unlocked(const string &_p) const
     
     // look in built-in r/o access
     // also we can do stuff in dedicated temporary directory and in sandbox container
-    static const vector<string> granted_ro = {
+    static const std::vector<string> granted_ro = {
         "/bin",
         "/sbin",
         "/usr/bin",

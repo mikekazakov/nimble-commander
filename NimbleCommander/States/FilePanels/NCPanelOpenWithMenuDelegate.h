@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -7,7 +7,7 @@
 
 @interface NCPanelOpenWithMenuDelegate : NSObject<NSMenuDelegate>
 
-- (void) setContextSource:(const vector<VFSListingItem>)_items;
+- (void) setContextSource:(const std::vector<VFSListingItem>)_items;
 - (void) addManagedMenu:(NSMenu*)_menu;
 
 @property (weak, nonatomic) PanelController *target;

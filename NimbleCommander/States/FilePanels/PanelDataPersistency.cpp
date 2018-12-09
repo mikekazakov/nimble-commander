@@ -179,7 +179,7 @@ Value PanelDataPersisency::EncodeVFSPath( const VFSListing &_listing )
 
 Value PanelDataPersisency::EncodeVFSPath( const VFSHost &_vfs, const string &_path )
 {
-    vector<const VFSHost*> hosts;
+    std::vector<const VFSHost*> hosts;
     auto host_rec = &_vfs;
     while( host_rec ) {
         hosts.emplace_back( host_rec );
@@ -527,7 +527,7 @@ static bool Fits( VFSHost& _alive, const std::any &_encoded )
 }
 
 static VFSHostPtr FindFitting(
-    const vector<std::weak_ptr<VFSHost>> &_hosts,
+    const std::vector<std::weak_ptr<VFSHost>> &_hosts,
     const std::any &_encoded,
     const VFSHost *_parent /* may be nullptr */ )
 {
@@ -549,7 +549,7 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
         return 0;
     }
 
-    vector<VFSHostPtr> vfs;
+    std::vector<VFSHostPtr> vfs;
     auto alive_hosts = _inst_mgr.AliveHosts(); // make it optional perhaps?
     try {
         for( auto &h: _state.hosts) {

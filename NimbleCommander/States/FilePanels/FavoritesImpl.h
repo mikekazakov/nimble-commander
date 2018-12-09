@@ -20,12 +20,12 @@ public:
                                                     const string &_directory,
                                                     const string &_title = "" ) const override;
     
-    void SetFavorites( const vector<Favorite> &_new_favorites ) override;
-    vector<Favorite> Favorites( /*limit output later?*/ ) const override;
+    void SetFavorites( const std::vector<Favorite> &_new_favorites ) override;
+    std::vector<Favorite> Favorites( /*limit output later?*/ ) const override;
     
     // Recent locations management
     void ReportLocationVisit( VFSHost &_host, const string &_directory ) override;
-    vector< std::shared_ptr<const Location> > FrecentlyUsed( int _amount ) const override;
+    std::vector< std::shared_ptr<const Location> > FrecentlyUsed( int _amount ) const override;
     void ClearVisitedLocations() override;
     
     ObservationTicket ObserveFavoritesChanges( std::function<void()> _callback ) override;
@@ -56,7 +56,7 @@ private:
     
     
     std::unordered_map<size_t, Visit> m_Visits;
-    vector<Favorite>                m_Favorites;
+    std::vector<Favorite>             m_Favorites;
 };
     
 }

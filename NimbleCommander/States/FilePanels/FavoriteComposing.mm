@@ -7,8 +7,8 @@
 
 namespace nc::panel {
 
-static vector<std::pair<string, string>> GetFindersFavorites();
-static vector<std::pair<string, string>> GetDefaultFavorites();
+static std::vector<std::pair<string, string>> GetFindersFavorites();
+static std::vector<std::pair<string, string>> GetDefaultFavorites();
 
 FavoriteComposing::FavoriteComposing(const FavoriteLocationsStorage& _storage):
     m_Storage(_storage)
@@ -71,11 +71,11 @@ std::optional<FavoriteLocationsStorage::Favorite> FavoriteComposing::
     return f;
 }
 
-vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::FinderFavorites()
+std::vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::FinderFavorites()
 {
     auto ff = GetFindersFavorites();
 
-    vector<FavoriteLocationsStorage::Favorite> favorites;
+    std::vector<FavoriteLocationsStorage::Favorite> favorites;
     auto &host = *VFSNativeHost::SharedHost();
     for( auto &f: ff) {
         auto fl = m_Storage.ComposeFavoriteLocation(
@@ -89,11 +89,11 @@ vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::FinderFavorites()
     return favorites;
 }
 
-vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::DefaultFavorites()
+std::vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::DefaultFavorites()
 {
     auto df = GetDefaultFavorites();
 
-    vector<FavoriteLocationsStorage::Favorite> favorites;
+    std::vector<FavoriteLocationsStorage::Favorite> favorites;
     auto &host = *VFSNativeHost::SharedHost();
     for( auto &f: df) {
         auto fl = m_Storage.ComposeFavoriteLocation(
@@ -159,12 +159,12 @@ static string ensure_tr_slash( string _str )
     return _str;
 }
 
-static vector<std::pair<string, string>> GetFindersFavorites() // title, path
+static std::vector<std::pair<string, string>> GetFindersFavorites() // title, path
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     const auto flags = kLSSharedFileListNoUserInteraction|kLSSharedFileListDoNotMountVolumes;
-    vector<std::pair<string, string>> paths;
+    std::vector<std::pair<string, string>> paths;
     
     UInt32 seed;
     LSSharedFileListRef list = LSSharedFileListCreate(NULL, kLSSharedFileListFavoriteItems, NULL);
@@ -208,7 +208,7 @@ static vector<std::pair<string, string>> GetFindersFavorites() // title, path
 #pragma clang diagnostic pop
 }
 
-static vector<std::pair<string, string>> GetDefaultFavorites()
+static std::vector<std::pair<string, string>> GetDefaultFavorites()
 {
     return {{
         {TitleForPath(CommonPaths::Home()),         CommonPaths::Home()},

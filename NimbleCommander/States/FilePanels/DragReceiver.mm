@@ -20,14 +20,14 @@ static void UpdateValidDropNumber(id <NSDraggingInfo> _dragging,
                                   NSDragOperation _operation );
 static bool DraggingIntoFoldersAllowed();
 static void PrintDragOperations(NSDragOperation _op);
-static vector<VFSListingItem> ExtractListingItems(FilesDraggingSource *_source);
+static std::vector<VFSListingItem> ExtractListingItems(FilesDraggingSource *_source);
 static NSArray<NSURL*> *ExtractURLs(NSPasteboard *_source);
 static int CountItemsWithType( id<NSDraggingInfo> _sender, NSString *_type );
 static NSString *URLs_Promise_UTI();
 static NSString *URLs_UTI();
-static std::map<string, vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls);
-static vector<VFSListingItem> FetchDirectoriesItems(const std::map<string, vector<string>>& _input,
-                                                    VFSHost& _host);
+static std::map<string, std::vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls);
+static std::vector<VFSListingItem>
+    FetchDirectoriesItems(const std::map<string, std::vector<string>>& _input, VFSHost& _host);
 static void AddPanelRefreshIfNecessary(PanelController *_target,
                                        ops::Operation &_operation);
 static void AddPanelRefreshIfNecessary(PanelController *_target,
@@ -438,9 +438,9 @@ static bool DraggingIntoFoldersAllowed()
     }
 }
 
-static vector<VFSListingItem> ExtractListingItems(FilesDraggingSource *_source)
+static std::vector<VFSListingItem> ExtractListingItems(FilesDraggingSource *_source)
 {
-    vector<VFSListingItem> files;
+    std::vector<VFSListingItem> files;
     for( PanelDraggingItem *item: _source.items )
         files.emplace_back( item.item );
     return files;
@@ -466,11 +466,11 @@ static NSString *URLs_UTI()
     return uti;
 }
 
-static std::map<string, vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls)
+static std::map<string, std::vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls)
 {
     if(!_file_urls)
         return {};
-    std::map<string, vector<string>> files; // directory/ -> [filename1, filename2, ...]
+    std::map<string, std::vector<string>> files; // directory/ -> [filename1, filename2, ...]
     for(NSURL *url in _file_urls) {
         if( !objc_cast<NSURL>(url) ) continue; // guard agains malformed input data
         boost::filesystem::path source_path = url.path.fileSystemRepresentation;
@@ -480,12 +480,12 @@ static std::map<string, vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> 
     return files;
 }
 
-static vector<VFSListingItem> FetchDirectoriesItems(const std::map<string, vector<string>>& _input,
-                                                    VFSHost& _host)
+static std::vector<VFSListingItem>
+    FetchDirectoriesItems(const std::map<string, std::vector<string>>& _input, VFSHost& _host)
 {
-    vector<VFSListingItem> source_items;
+    std::vector<VFSListingItem> source_items;
     for( const auto &dir: _input ) {
-        vector<VFSListingItem> items_for_dir;
+        std::vector<VFSListingItem> items_for_dir;
         const auto rc = _host.FetchFlexibleListingItems(dir.first,
                                                         dir.second,
                                                         0,

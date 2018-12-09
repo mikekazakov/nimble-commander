@@ -59,7 +59,7 @@ public:
      */
     virtual string GetVerboseVFSTitle( const Promise &_promise ) = 0;
     
-    virtual vector<std::weak_ptr<VFSHost>> AliveHosts() = 0;
+    virtual std::vector<std::weak_ptr<VFSHost>> AliveHosts() = 0;
     
     virtual unsigned KnownVFSCount() = 0;
     virtual Promise GetVFSPromiseByPosition( unsigned _at) = 0;

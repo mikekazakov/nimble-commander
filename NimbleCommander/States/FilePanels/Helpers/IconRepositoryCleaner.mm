@@ -1,3 +1,4 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "IconRepositoryCleaner.h"
 #include "../PanelDataItemVolatileData.h"
 
@@ -13,7 +14,7 @@ IconRepositoryCleaner::IconRepositoryCleaner(vfsicon::IconRepository &_repositor
 void IconRepositoryCleaner::SweepUnusedSlots()
 {
     const auto used_slots = m_Repository.AllSlots();
-    auto still_in_use = vector<bool>(used_slots.size(), false);
+    auto still_in_use = std::vector<bool>(used_slots.size(), false);
     
     for( auto i = 0, e = (int)m_Data.RawEntriesCount() ; i < e; ++i ) {
         auto &vd = m_Data.VolatileDataAtRawPosition( i );

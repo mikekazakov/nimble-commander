@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "SimpleComboBoxPersistentDataSource.h"
@@ -6,7 +6,7 @@
 
 @implementation SimpleComboBoxPersistentDataSource
 {
-    vector<NSString *>  m_Items;
+    std::vector<NSString *>  m_Items;
     int                 m_MaxItems;
     string              m_ConfigPath;
     bool                m_Clean;

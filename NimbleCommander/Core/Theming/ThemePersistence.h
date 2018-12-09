@@ -22,9 +22,9 @@ struct ThemePersistence
     static NSFont *ExtractFont( const Value &_doc, const char *_path );
     static Value EncodeFont( NSFont *_font );
     
-    static vector<nc::panel::PresentationItemsColoringRule> ExtractRules(const Value& _doc,
-                                                                         const char *_path );
-    static Value EncodeRules( const vector<nc::panel::PresentationItemsColoringRule> &_rules );
+    using ColoringRulesT = std::vector<nc::panel::PresentationItemsColoringRule>;
+    static ColoringRulesT ExtractRules(const Value& _doc, const char *_path );
+    static Value EncodeRules( const ColoringRulesT &_rules );
     
     static ThemeAppearance ExtractAppearance( const Value &_doc, const char *_path  );
     static Value EncodeAppearance( ThemeAppearance _appearance );

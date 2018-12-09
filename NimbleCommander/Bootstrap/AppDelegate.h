@@ -50,7 +50,7 @@ namespace nc {
 - (bool) askToResetDefaults;
 
 /** Returns all main windows currently present. */
-@property (nonatomic, readonly) const vector<NCMainWindowController*> &mainWindowControllers;
+@property (nonatomic, readonly) const std::vector<NCMainWindowController*> &mainWindowControllers;
 
 /**
  * Equal to (NCAppDelegate*) ((NSApplication*)NSApp).delegate.

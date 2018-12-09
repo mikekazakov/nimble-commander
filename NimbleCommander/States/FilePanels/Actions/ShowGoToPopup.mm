@@ -151,16 +151,16 @@ namespace nc::panel::actions {
 static NSString *ShrinkMenuItemTitle(NSString *_title);
 
     
-static vector<std::shared_ptr<const utility::NativeFileSystemInfo>> VolumesToShow()
+static std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>> VolumesToShow()
 {
-    vector<std::shared_ptr<const utility::NativeFileSystemInfo>> volumes;
+    std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>> volumes;
     for( auto &i: utility::NativeFSManager::Instance().Volumes() )
         if( i->mount_flags.dont_browse == false )
             volumes.emplace_back(i);
     return volumes;
 }
 
-static vector<NetworkConnectionsManager::Connection> LimitedRecentConnections(
+static std::vector<NetworkConnectionsManager::Connection> LimitedRecentConnections(
     const NetworkConnectionsManager& _manager)
 {
     auto connections = _manager.AllConnectionsByMRU();
@@ -172,13 +172,13 @@ static vector<NetworkConnectionsManager::Connection> LimitedRecentConnections(
     return connections;
 }
 
-static vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_current )
+static std::vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_current )
 {
-    vector<VFSPath> current_paths;
+    std::vector<VFSPath> current_paths;
     for( auto &p: _current.filePanelsCurrentPaths )
         current_paths.emplace_back( std::get<1>(p), std::get<0>(p) );
     
-    vector<VFSPath> other_paths;
+    std::vector<VFSPath> other_paths;
     for( auto ctr: NCAppDelegate.me.mainWindowControllers )
         if( auto state = ctr.filePanelsState; state != _current)
             for( auto &p: state.filePanelsCurrentPaths )
@@ -202,7 +202,7 @@ static vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_current )
     return other_paths;
 }
 
-static vector<std::pair<core::VFSInstancePromise, string>>
+static std::vector<std::pair<core::VFSInstancePromise, string>>
     ProduceLocationsForParentDirectories(const VFSListing &_listing,
                                          core::VFSInstanceManager &_vfs_mgr )
 {
@@ -211,7 +211,7 @@ static vector<std::pair<core::VFSInstancePromise, string>>
         throw std::invalid_argument(msg);
     }
     
-    vector<std::pair<core::VFSInstancePromise, string>> result;
+    std::vector<std::pair<core::VFSInstancePromise, string>> result;
     
     auto host = _listing.Host();
     boost::filesystem::path dir = _listing.Directory();

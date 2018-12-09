@@ -60,14 +60,14 @@ enum class SourceType
 
 @implementation PreferencesWindowHotkeysTab
 {
-    vector<std::pair<string,int>>           m_Shortcuts;
-    std::function<ExternalToolsStorage&()>  m_ToolsStorage;
-    ExternalToolsStorage::ObservationTicket m_ToolsObserver;
-    vector<std::shared_ptr<const ExternalTool>>  m_Tools;
-    vector<std::any>                        m_AllNodes;
-    vector<std::any>                        m_SourceNodes;
-    vector<std::any>                        m_FilteredNodes;
-    SourceType                              m_SourceType;
+    std::vector<std::pair<string,int>>                  m_Shortcuts;
+    std::function<ExternalToolsStorage&()>              m_ToolsStorage;
+    ExternalToolsStorage::ObservationTicket             m_ToolsObserver;
+    std::vector<std::shared_ptr<const ExternalTool>>    m_Tools;
+    std::vector<std::any>                               m_AllNodes;
+    std::vector<std::any>                               m_SourceNodes;
+    std::vector<std::any>                               m_FilteredNodes;
+    SourceType                                          m_SourceType;
 }
 
 @synthesize sourceType = m_SourceType;
@@ -509,7 +509,7 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
 
 static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
 {
-    static const vector< std::pair<const char *, NSString *> > titles = {
+    static const std::vector< std::pair<const char *, NSString *> > titles = {
         {"panel.move_up",                       NSLocalizedString(@"File Panels ▶ Move Up", "")},
         {"panel.move_down",                     NSLocalizedString(@"File Panels ▶ Move Down", "")},
         {"panel.move_left",                     NSLocalizedString(@"File Panels ▶ Move Left", "")},

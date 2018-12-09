@@ -86,7 +86,7 @@ void CompressToOpposite::Perform( PanelController *_target, id _sender ) const
     [_target.mainWindowController enqueueOperation:op];
 }
 
-context::CompressHere::CompressHere(const vector<VFSListingItem>&_items):
+context::CompressHere::CompressHere(const std::vector<VFSListingItem>&_items):
     m_Items(_items)
 {
 }
@@ -131,7 +131,7 @@ void context::CompressHere::Perform( PanelController *_target, id _sender ) cons
 
 }
 
-context::CompressToOpposite::CompressToOpposite(const vector<VFSListingItem>&_items):
+context::CompressToOpposite::CompressToOpposite(const std::vector<VFSListingItem>&_items):
     m_Items(_items)
 {
 }

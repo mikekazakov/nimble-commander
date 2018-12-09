@@ -11,7 +11,7 @@
 
 @implementation ConnectionsMenuDelegate
 {
-    vector<NetworkConnectionsManager::Connection> m_Connections;
+    std::vector<NetworkConnectionsManager::Connection> m_Connections;
     std::function<NetworkConnectionsManager&()> m_Manager;
     int m_InitialElementsCount;
 }

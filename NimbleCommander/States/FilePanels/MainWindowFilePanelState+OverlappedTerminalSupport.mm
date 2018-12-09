@@ -201,7 +201,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     if( cpc ) {
         auto opc = cpc == self.leftPanelController ? self.rightPanelController : self.leftPanelController;
         
-        vector<string> strings;
+        std::vector<string> strings;
         auto add = [&](const string &_s) {
             if(!_s.empty())
                 strings.emplace_back(_s);

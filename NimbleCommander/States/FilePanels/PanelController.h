@@ -92,7 +92,7 @@ struct DirectoryChangeRequest
     
     /* optional */
     string              RequestFocusedEntry     = "";
-    vector<string>      RequestSelectedEntries  = {};
+    std::vector<string> RequestSelectedEntries  = {};
     bool                PerformAsynchronous     = true;
     bool                LoadPreviousViewState   = false;
     bool                InitiatedByUser         = false;
@@ -171,11 +171,11 @@ struct DirectoryChangeRequest
 - (void) panelViewDidChangePresentationLayout;
 
 // managing entries selection
-- (void) selectEntriesWithFilenames:(const vector<string>&)_filenames;
-- (void) setEntriesSelection:(const vector<bool>&)_selection;
+- (void) selectEntriesWithFilenames:(const std::vector<string>&)_filenames;
+- (void) setEntriesSelection:(const std::vector<bool>&)_selection;
 
 
-- (void) calculateSizesOfItems:(const vector<VFSListingItem>&)_items;
+- (void) calculateSizesOfItems:(const std::vector<VFSListingItem>&)_items;
 
 /**
  * This is the main directory loading facility for an external code, 

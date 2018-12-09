@@ -108,7 +108,7 @@ VFSListingPtr ListingPromise::RestoreNonUniform(unsigned long _fetch_flags,
     const auto info = std::get_if<NonUniformListing>(&Storage());
     assert(info);
 
-    vector<VFSListingPtr> listings;
+    std::vector<VFSListingPtr> listings;
     for( const auto &per_vfs: info->per_vfs ) {
         if( _cancel_checker && _cancel_checker() )
             return nullptr;

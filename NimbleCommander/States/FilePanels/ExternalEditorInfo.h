@@ -44,14 +44,14 @@ public:
     ExternalEditorsStorage(const char* _config_path);
 
     std::shared_ptr<ExternalEditorStartupInfo> ViableEditorForItem(const VFSListingItem&_item) const;
-    vector<std::shared_ptr<ExternalEditorStartupInfo>> AllExternalEditors() const;
+    std::vector<std::shared_ptr<ExternalEditorStartupInfo>> AllExternalEditors() const;
     
-    void SetExternalEditors( const vector<std::shared_ptr<ExternalEditorStartupInfo>>& _editors );
+    void SetExternalEditors( const std::vector<std::shared_ptr<ExternalEditorStartupInfo>>& _editors );
 
 private:
     void LoadFromConfig();
     void SaveToConfig();
 
-    vector<std::shared_ptr<ExternalEditorStartupInfo>> m_ExternalEditors;
+    std::vector<std::shared_ptr<ExternalEditorStartupInfo>> m_ExternalEditors;
     const char* const m_ConfigPath;
 };

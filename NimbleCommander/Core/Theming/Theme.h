@@ -40,7 +40,7 @@ public:
     
     // File Panels --> General appearance //////////////////////////////////////////////////////////
     using ColoringRule = nc::panel::PresentationItemsColoringRule;
-    const vector<ColoringRule>& FilePanelsItemsColoringRules() const noexcept;
+    const std::vector<ColoringRule>& FilePanelsItemsColoringRules() const noexcept;
     NSColor *FilePanelsGeneralDropBorderColor() const noexcept;
     NSColor *FilePanelsGeneralOverlayColor() const noexcept;
     NSColor *FilePanelsGeneralSplitterColor() const noexcept;

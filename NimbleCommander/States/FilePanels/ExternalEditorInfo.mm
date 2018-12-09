@@ -326,13 +326,14 @@ std::shared_ptr<ExternalEditorStartupInfo> ExternalEditorsStorage::
     return nullptr;
 }
 
-vector<std::shared_ptr<ExternalEditorStartupInfo>> ExternalEditorsStorage::AllExternalEditors() const
+std::vector<std::shared_ptr<ExternalEditorStartupInfo>>
+ExternalEditorsStorage::AllExternalEditors() const
 {
     return m_ExternalEditors;
 }
 
 void ExternalEditorsStorage::
-    SetExternalEditors( const vector<std::shared_ptr<ExternalEditorStartupInfo>>& _editors )
+    SetExternalEditors( const std::vector<std::shared_ptr<ExternalEditorStartupInfo>>& _editors )
 {
     m_ExternalEditors = _editors;
     SaveToConfig();

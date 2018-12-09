@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/GeneralUI/CalculateChecksumSheetController.h>
 #include "../PanelController.h"
 #include "CalculateChecksum.h"
@@ -18,8 +18,8 @@ bool CalculateChecksum::Predicate( PanelController *_target ) const
 
 void CalculateChecksum::Perform( PanelController *_target, id _sender ) const
 {
-    vector<string> filenames;
-    vector<uint64_t> sizes;
+    std::vector<string> filenames;
+    std::vector<uint64_t> sizes;
     
     auto selected_entries = _target.selectedEntriesOrFocusedEntry;
     for( auto &i: selected_entries )

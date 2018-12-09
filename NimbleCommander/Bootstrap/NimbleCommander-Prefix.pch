@@ -37,7 +37,6 @@
     #include <optional>
     #include <any>
     using std::string;
-    using std::vector;
 
     // low-level facilities from Habanero
     #include <Habanero/dispatch_cpp.h>

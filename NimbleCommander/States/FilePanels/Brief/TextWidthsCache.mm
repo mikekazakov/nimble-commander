@@ -29,14 +29,15 @@ TextWidthsCache& TextWidthsCache::Instance()
     return *inst;
 }
 
-vector<short> TextWidthsCache::Widths( const vector<CFStringRef> &_strings, NSFont *_font )
+std::vector<short> TextWidthsCache::Widths( const std::vector<CFStringRef> &_strings,
+                                           NSFont *_font )
 {
     assert( _font != nullptr );
     auto &cache = ForFont(_font);
     
-    vector<short> widths(_strings.size(), 0);
-    vector<int> result_indices;
-    vector<CFStringRef> cf_strings;
+    std::vector<short> widths(_strings.size(), 0);
+    std::vector<int> result_indices;
+    std::vector<CFStringRef> cf_strings;
 
     LOCK_GUARD(cache.lock) {
         int result_index = 0;

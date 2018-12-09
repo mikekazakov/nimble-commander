@@ -21,10 +21,10 @@ public:
     
     void ReportUsage( const Connection &_connection ) override;
     
-    vector<Connection> AllConnectionsByMRU() const override;
-    vector<Connection> FTPConnectionsByMRU() const override;
-    vector<Connection> SFTPConnectionsByMRU() const override;
-    vector<Connection> LANShareConnectionsByMRU() const override;
+    std::vector<Connection> AllConnectionsByMRU() const override;
+    std::vector<Connection> FTPConnectionsByMRU() const override;
+    std::vector<Connection> SFTPConnectionsByMRU() const override;
+    std::vector<Connection> LANShareConnectionsByMRU() const override;
     
     bool SetPassword(const Connection &_conn, const string& _password) override;
     
@@ -51,13 +51,13 @@ private:
     void Load();
     void NetFSCallback(int _status, void *_requestID, CFArrayRef _mountpoints);
     
-    vector<Connection>                              m_Connections;
-    vector<boost::uuids::uuid>                      m_MRU;
+    std::vector<Connection>                         m_Connections;
+    std::vector<boost::uuids::uuid>                 m_MRU;
     mutable std::mutex                              m_Lock;
     nc::config::Config                             &m_Config;
-    vector<nc::config::Token>                       m_ConfigObservations;
+    std::vector<nc::config::Token>                  m_ConfigObservations;
     bool                                            m_IsWritingConfig;
     
     mutable std::mutex                              m_PendingMountRequestsLock;
-    vector< std::pair<void*, MountShareCallback> >  m_PendingMountRequests;
+    std::vector< std::pair<void*, MountShareCallback> >  m_PendingMountRequests;
 };

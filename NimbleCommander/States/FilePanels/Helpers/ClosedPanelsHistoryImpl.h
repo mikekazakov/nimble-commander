@@ -13,11 +13,11 @@ public:
     void AddListing( ListingPromise _listing ) override;
     void RemoveListing( ListingPromise _listing ) override;
     int Size() const override;
-    vector<ListingPromise> FrontElements( int _count ) const override;
+    std::vector<ListingPromise> FrontElements( int _count ) const override;
 
 private:
     size_t m_MaxCapacity;
-    vector<ListingPromise> m_Entries;
+    std::vector<ListingPromise> m_Entries;
 };
     
 }

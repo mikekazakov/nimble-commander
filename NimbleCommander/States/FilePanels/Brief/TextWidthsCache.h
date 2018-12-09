@@ -10,7 +10,7 @@ class TextWidthsCache
 public:
     static TextWidthsCache& Instance();
 
-    vector<short> Widths( const vector<CFStringRef> &_strings, NSFont *_font );
+    std::vector<short> Widths( const std::vector<CFStringRef> &_strings, NSFont *_font );
 
 private:
     struct CFStringHash {

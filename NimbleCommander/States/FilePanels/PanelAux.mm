@@ -80,7 +80,7 @@ static void RegisterRemoteFileUploading(const string& _original_path,
         if( !vfs )
             return;
         
-        vector<VFSListingItem> listing_items;
+        std::vector<VFSListingItem> listing_items;
         auto &storage_host = *VFSNativeHost::SharedHost();
         const auto changed_item_directory = boost::filesystem::path(_native_path).parent_path().native();
         const auto changed_item_filename = boost::filesystem::path(_native_path).filename().native();
@@ -189,7 +189,7 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
 }
 
 // TODO: write version with FlexListingItem as an input - it would be much simplier
-void PanelVFSFileWorkspaceOpener::Open(vector<string> _filenames,
+void PanelVFSFileWorkspaceOpener::Open(std::vector<string> _filenames,
                                        std::shared_ptr<VFSHost> _host,
                                        NSString *_with_app_bundle, // can be nil, use default app in such case
                                        PanelController *_panel
@@ -291,8 +291,8 @@ void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
-    static const vector<string> extensions = []{
-        vector<string> v;
+    static const std::vector<string> extensions = []{
+        std::vector<string> v;
         auto exts_string = GlobalConfig().GetString(g_ConfigExecutableExtensionsWhitelist);
         if( auto extensions_array = [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","] )
             for( NSString *s: extensions_array )
@@ -361,8 +361,8 @@ bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept
 {
     if( !_ext )
         return false;
-    static const vector<string> archive_extensions = []{
-        vector<string> v;
+    static const std::vector<string> archive_extensions = []{
+        std::vector<string> v;
         auto exts_string = GlobalConfig().GetString(g_ConfigArchivesExtensionsWhieList);
         if( auto extensions_array = [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","] )
             for( NSString *s: extensions_array )

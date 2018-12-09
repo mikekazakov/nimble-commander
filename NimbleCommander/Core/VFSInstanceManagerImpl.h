@@ -49,7 +49,7 @@ public:
      */
     string GetVerboseVFSTitle( const Promise &_promise );
     
-    vector<std::weak_ptr<VFSHost>> AliveHosts();
+    std::vector<std::weak_ptr<VFSHost>> AliveHosts();
     
     unsigned KnownVFSCount();
     Promise GetVFSPromiseByPosition( unsigned _at);
@@ -99,11 +99,11 @@ private:
                                                       const std::function<bool()> &_cancel_checker );
     
     
-    vector<Info>                m_Memory;
+    std::vector<Info>                m_Memory;
     uint64_t                    m_MemoryNextID = 1;
     spinlock                    m_MemoryLock;
     
-    vector<std::weak_ptr<VFSHost>>   m_AliveHosts;
+    std::vector<std::weak_ptr<VFSHost>>   m_AliveHosts;
     spinlock                    m_AliveHostsLock;
 };
 

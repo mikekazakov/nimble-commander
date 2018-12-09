@@ -12,11 +12,12 @@ bool FindFiles::Predicate( PanelController *_target ) const
     return _target.isUniform || _target.view.item;
 }
 
-static std::shared_ptr<VFSListing> FetchSearchResultsAsListing(const vector<VFSPath> &_filepaths,
-                                                          unsigned long _fetch_flags,
-                                                          const VFSCancelChecker &_cancel_checker)
+static std::shared_ptr<VFSListing>
+    FetchSearchResultsAsListing(const std::vector<VFSPath> &_filepaths,
+                                unsigned long _fetch_flags,
+                                const VFSCancelChecker &_cancel_checker)
 {
-    vector<VFSListingPtr> listings;
+    std::vector<VFSListingPtr> listings;
     
     for( auto &p: _filepaths ) {
         VFSListingPtr listing;
@@ -45,7 +46,7 @@ void FindFiles::Perform( PanelController *_target, id _sender ) const
         _target.currentDirectoryPath :
         _target.view.item.Directory();
     __weak PanelController *wp = _target;
-    sheet.onPanelize = [wp](const vector<VFSPath> &_paths) {
+    sheet.onPanelize = [wp](const std::vector<VFSPath> &_paths) {
         if( PanelController *panel = wp ) {
             auto task = [=]( const std::function<bool()> &_cancelled ) {
                 auto l = FetchSearchResultsAsListing(_paths,

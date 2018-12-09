@@ -15,12 +15,12 @@ namespace {
 
 struct FetchResult
 {
-    vector<LaunchServiceHandler>    handlers;
+    std::vector<LaunchServiceHandler>handlers;
     string                          default_handler_path;
     string                          uti;
 };
 
-static void SortAndPurgeDuplicateHandlers(vector<LaunchServiceHandler> &_handlers)
+static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_handlers)
 {
     sort(begin(_handlers), end(_handlers), [](const auto &_1st, const auto &_2nd){
         return [_1st.Name() localizedCompare:_2nd.Name()] < 0;
@@ -47,15 +47,15 @@ static void SortAndPurgeDuplicateHandlers(vector<LaunchServiceHandler> &_handler
     }
 }
 
-static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
+static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items)
 {
-    vector<LauchServicesHandlers> per_item_handlers;
+    std::vector<LauchServicesHandlers> per_item_handlers;
     for( auto &i: _items )
         per_item_handlers.emplace_back( LauchServicesHandlers{i} );
     
     LauchServicesHandlers items_handlers{per_item_handlers};
     
-    vector<LaunchServiceHandler> handlers;
+    std::vector<LaunchServiceHandler> handlers;
     for( const auto &path: items_handlers.HandlersPaths() )
         try {
             handlers.emplace_back( LaunchServiceHandler(path) );
@@ -81,8 +81,8 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
 
 @implementation NCPanelOpenWithMenuDelegate
 {
-    vector<VFSListingItem>          m_ContextItems;
-    vector<LaunchServiceHandler>    m_OpenWithHandlers;
+    std::vector<VFSListingItem>      m_ContextItems;
+    std::vector<LaunchServiceHandler>m_OpenWithHandlers;
     string                          m_DefaultHandlerPath;
     string                          m_ItemsUTI;
     SerialQueue                     m_FetchQueue;
@@ -99,7 +99,7 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
     return @"always";
 }
 
-- (void) setContextSource:(const vector<VFSListingItem>)_items
+- (void) setContextSource:(const std::vector<VFSListingItem>)_items
 {
     m_ContextItems = move(_items);
 }
@@ -118,8 +118,8 @@ static FetchResult FetchHandlers(const vector<VFSListingItem> &_items)
         return;
 
     auto source_items = m_ContextItems.empty() && self.target != nil ?
-        std::make_shared<vector<VFSListingItem>>(self.target.selectedEntriesOrFocusedEntry) :
-        std::make_shared<vector<VFSListingItem>>(m_ContextItems);
+        std::make_shared<std::vector<VFSListingItem>>(self.target.selectedEntriesOrFocusedEntry) :
+        std::make_shared<std::vector<VFSListingItem>>(m_ContextItems);
     
     m_FetchQueue.Run([source_items, self]{
         auto f = std::make_shared<FetchResult>(FetchHandlers(*source_items));
@@ -334,7 +334,7 @@ static void ShowOpenPanel(NSOpenPanel *_panel,
             return i.Host() == source_items.front().Host();
           });
         if( same_host ) {
-            vector<string> items;
+            std::vector<string> items;
             for(auto &i: source_items)
                 items.emplace_back( i.Path() );
             PanelVFSFileWorkspaceOpener::Open(items,

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include "BigFileViewProtocol.h"
 
@@ -51,5 +51,5 @@ private:
     int                             m_FrameLines  = 0; // amount of lines in our frame size ( +1 to fit cutted line also)
     nc::utility::FontGeometryInfo   m_FontInfo;
     double                          m_LeftInset   = 0;
-    vector<TextLine>                m_Lines;
+    std::vector<TextLine>           m_Lines;
 };

@@ -8,7 +8,7 @@
 
 namespace nc::panel::data {
 
-static void DoRawSort(const VFSListing &_from, vector<unsigned> &_to);
+static void DoRawSort(const VFSListing &_from, std::vector<unsigned> &_to);
 
 static inline SortMode DefaultSortMode()
 {
@@ -40,18 +40,19 @@ static string LongEntryKey(const VFSListing& _l, unsigned _i)
     return key;
 }
 
-static vector<string> ProduceLongKeysForListing( const VFSListing& _l )
+static std::vector<string> ProduceLongKeysForListing( const VFSListing& _l )
 {
-    vector<string> keys;
+    std::vector<string> keys;
     keys.reserve( _l.Count() );
     for( unsigned i = 0, e = _l.Count(); i != e; ++i )
         keys.emplace_back( LongEntryKey(_l, i) );
     return keys;
 }
 
-static vector<unsigned> ProduceSortedIndirectIndecesForLongKeys(const vector<string>& _keys)
+static std::vector<unsigned>
+    ProduceSortedIndirectIndecesForLongKeys(const std::vector<string>& _keys)
 {
-    vector<unsigned> src_keys_ind( _keys.size() );
+    std::vector<unsigned> src_keys_ind( _keys.size() );
     iota( begin(src_keys_ind), end(src_keys_ind), 0 );
     sort( begin(src_keys_ind),
           end(src_keys_ind),
@@ -74,7 +75,8 @@ bool Model::IsLoaded() const noexcept
     return m_Listing != VFSListing::EmptyListing();
 }
 
-static void InitVolatileDataWithListing( vector<ItemVolatileData> &_vd, const VFSListing &_listing)
+static void InitVolatileDataWithListing(std::vector<ItemVolatileData> &_vd,
+                                        const VFSListing &_listing)
 {
     _vd.clear();
     _vd.resize(_listing.Count());
@@ -133,10 +135,10 @@ void Model::ReLoad(const std::shared_ptr<VFSListing> &_listing)
     assert(dispatch_is_main_queue()); // STA api design
     
     // sort new entries by raw c name for sync-swapping needs
-    vector<unsigned> dirbyrawcname;
+    std::vector<unsigned> dirbyrawcname;
     DoRawSort(*_listing, dirbyrawcname);
     
-    vector<ItemVolatileData> new_vd;
+    std::vector<ItemVolatileData> new_vd;
     InitVolatileDataWithListing(new_vd, *_listing);
     
     if( _listing->IsUniform() && m_Listing->IsUniform() ) {
@@ -225,7 +227,7 @@ Model::PanelType Model::Type() const noexcept
     return m_Type;
 }
 
-const vector<unsigned>& Model::SortedDirectoryEntries() const noexcept
+const std::vector<unsigned>& Model::SortedDirectoryEntries() const noexcept
 {
     return m_EntriesByCustomSort;
 }
@@ -366,7 +368,7 @@ string Model::VerboseDirectoryFullPath() const
     return s;
 }
 
-static void DoRawSort(const VFSListing &_from, vector<unsigned> &_to)
+static void DoRawSort(const VFSListing &_from, std::vector<unsigned> &_to)
 {
     _to.resize(_from.Count());
     iota(begin(_to), end(_to), 0);
@@ -519,7 +521,7 @@ void Model::CustomFlagsSelectSorted(int _at_pos, bool _is_selected)
     CustomFlagsSelectRaw(m_EntriesByCustomSort[_at_pos], _is_selected);
 }
 
-bool Model::CustomFlagsSelectSorted(const vector<bool>& _is_selected)
+bool Model::CustomFlagsSelectSorted(const std::vector<bool>& _is_selected)
 {
     bool changed = false;
     for( int i = 0, e = (int)std::min(_is_selected.size(), m_EntriesByCustomSort.size()); i != e; ++i ) {
@@ -541,18 +543,18 @@ bool Model::CustomFlagsSelectSorted(const vector<bool>& _is_selected)
     return changed;
 }
 
-vector<string> Model::SelectedEntriesFilenames() const
+std::vector<string> Model::SelectedEntriesFilenames() const
 {
-    vector<string> list;
+    std::vector<string> list;
     for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
         if( m_VolatileData[i].is_selected() )
             list.emplace_back( m_Listing->Filename(i) );
     return list;
 }
 
-vector<VFSListingItem> Model::SelectedEntries() const
+std::vector<VFSListingItem> Model::SelectedEntries() const
 {
-    vector<VFSListingItem> list;
+    std::vector<VFSListingItem> list;
     for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
         if( m_VolatileData[i].is_selected() )
             list.emplace_back( m_Listing->Item(i) );
@@ -731,7 +733,7 @@ TextualFilter Model::SoftFiltering() const
     return m_SoftFiltering;
 }
 
-const vector<unsigned>& Model::EntriesBySoftFiltering() const noexcept
+const std::vector<unsigned>& Model::EntriesBySoftFiltering() const noexcept
 {
     return m_EntriesBySoftFiltering;
 }

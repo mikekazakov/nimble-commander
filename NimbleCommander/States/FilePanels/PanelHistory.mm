@@ -114,9 +114,9 @@ bool History::Empty() const noexcept
     return m_History.empty();
 }
     
-vector<std::reference_wrapper<const History::Path>> History::All() const
+std::vector<std::reference_wrapper<const History::Path>> History::All() const
 {
-    vector<std::reference_wrapper<const Path>> res;
+    std::vector<std::reference_wrapper<const Path>> res;
     for( auto &i:m_History )
         res.emplace_back( std::cref(i) );
     return res;

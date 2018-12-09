@@ -13,7 +13,7 @@
 - (void) changeWorkingDirectory:(const string&)_new_dir;
 - (void) feedShellWithInput:(const string&)_input;
 - (void) commitShell;
-- (void) runPasteMenu:(const vector<string>&)_strings;
+- (void) runPasteMenu:(const std::vector<string>&)_strings;
 
 - (bool) canFeedShellWithKeyDown:(NSEvent *)event;
 - (bool) feedShellWithKeyDown:(NSEvent *)event;

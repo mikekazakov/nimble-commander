@@ -44,7 +44,7 @@ public:
     /**
      * Returns a list of theme names currently installed for this user.
      */
-    vector<string> ThemeNames() const;
+    std::vector<string> ThemeNames() const;
     
     /**
      * Check if this theme is one of default themes.
@@ -137,8 +137,8 @@ private:
 
     string m_SelectedThemeName;
     std::unordered_map< string, std::shared_ptr<const nc::config::Document> > m_Themes;
-    vector<string> m_OrderedThemeNames;
+    std::vector<string> m_OrderedThemeNames;
     std::unordered_map< string, std::shared_ptr<const nc::config::Document> > m_DefaultThemes;
-    vector<string> m_OrderedDefaultThemeNames;
+    std::vector<string> m_OrderedDefaultThemeNames;
     ObservationTicket m_AppearanceObservation;
 };

@@ -110,7 +110,7 @@ void CopyAs::Perform( MainWindowFilePanelState *_target, id _sender ) const
     if( !item || item.IsDotDot() )
         return;
 
-    const auto entries = vector<VFSListingItem>({item});
+    const auto entries = std::vector<VFSListingItem>({item});
     
     const auto cd = [[NCOpsCopyingDialog alloc]
                      initWithItems:entries
@@ -251,7 +251,7 @@ void MoveAs::Perform( MainWindowFilePanelState *_target, id _sender ) const
     if( !item || item.IsDotDot() || !item.Host()->IsWritable() )
         return;
     
-    const auto entries = vector<VFSListingItem>({item});
+    const auto entries = std::vector<VFSListingItem>({item});
 
     const auto cd = [[NCOpsCopyingDialog alloc]
                      initWithItems:entries

@@ -25,7 +25,7 @@ public:
                      PanelController *_panel
                      );
     
-    static void Open(vector<string> _filepaths,
+    static void Open(std::vector<string> _filepaths,
                      VFSHostPtr _host,
                      NSString *_with_app_bundle, // can be nil, use default app in such case
                      PanelController *_panel

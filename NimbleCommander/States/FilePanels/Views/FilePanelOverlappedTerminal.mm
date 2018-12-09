@@ -256,7 +256,7 @@ static const auto g_LongProcessDelay = 100ms;
     return virgin;
 }
 
-- (void) runPasteMenu:(const vector<string>&)_strings
+- (void) runPasteMenu:(const std::vector<string>&)_strings
 {
     NSMenu *menu = [[NSMenu alloc] init];
     

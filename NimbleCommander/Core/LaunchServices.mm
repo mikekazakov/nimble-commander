@@ -75,9 +75,9 @@ static string GetDefaultHandlerPathForNativeItem( const string &_path )
     return result;
 }
 
-static vector<string> GetHandlersPathsForNativeItem( const string &_path )
+static std::vector<string> GetHandlersPathsForNativeItem( const std::string &_path )
 {
-    vector<string> result;
+    std::vector<std::string> result;
     const auto url = CFURLCreateFromFileSystemRepresentation(0,
                                                              (const UInt8*)_path.c_str(),
                                                              _path.length(),
@@ -106,7 +106,7 @@ static string GetDefaultHandlerPathForUTI( const string &_uti )
     return "";
 }
 
-static vector<string> GetHandlersPathsForUTI( const string &_uti )
+static std::vector<string> GetHandlersPathsForUTI( const string &_uti )
 {
     NSString *uti = [NSString stringWithUTF8StdString:_uti];
     if( !uti )
@@ -116,7 +116,7 @@ static vector<string> GetHandlersPathsForUTI( const string &_uti )
         LSCopyAllRoleHandlersForContentType((__bridge CFStringRef)uti,
                                             kLSRolesAll);
     
-    vector<string> result;
+    std::vector<string> result;
     for( NSString* bundle in bundles )
         if( auto path = [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle] )
             result.emplace_back( path.fileSystemRepresentation );
@@ -144,7 +144,7 @@ LauchServicesHandlers::LauchServicesHandlers( const VFSListingItem &_item )
 }
 
 LauchServicesHandlers::LauchServicesHandlers
-    ( const vector<LauchServicesHandlers>& _handlers_to_merge )
+    ( const std::vector<LauchServicesHandlers>& _handlers_to_merge )
 {
     // empty handler path means that there's no default handler available
     const auto default_handler = all_equal_or_default(
@@ -181,7 +181,7 @@ LauchServicesHandlers::LauchServicesHandlers
         }
 }
 
-const vector<string> &LauchServicesHandlers::HandlersPaths() const noexcept
+const std::vector<string> &LauchServicesHandlers::HandlersPaths() const noexcept
 {
     return m_Paths;
 }
@@ -256,7 +256,7 @@ private:
     static NSImage *CropHiResRepresentations( NSImage *_image )
     {
         const auto representations = _image.representations;
-        vector<NSImageRep*> to_remove;
+        std::vector<NSImageRep*> to_remove;
         for( NSImageRep *representation in representations )
             if( representation.pixelsHigh > 32 && representation.pixelsWide > 32 )
                 to_remove.emplace_back(representation);

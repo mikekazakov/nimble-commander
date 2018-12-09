@@ -44,10 +44,10 @@ public:
     
     virtual void ReportUsage( const Connection &_connection ) = 0;
     
-    virtual vector<Connection> AllConnectionsByMRU() const = 0;
-    virtual vector<Connection> FTPConnectionsByMRU() const = 0;
-    virtual vector<Connection> SFTPConnectionsByMRU() const = 0;
-    virtual vector<Connection> LANShareConnectionsByMRU() const = 0;
+    virtual std::vector<Connection> AllConnectionsByMRU() const = 0;
+    virtual std::vector<Connection> FTPConnectionsByMRU() const = 0;
+    virtual std::vector<Connection> SFTPConnectionsByMRU() const = 0;
+    virtual std::vector<Connection> LANShareConnectionsByMRU() const = 0;
     
     virtual bool SetPassword(const Connection &_conn, const string& _password) = 0;
     virtual bool GetPassword(const Connection &_conn, string& _password) = 0;

@@ -82,7 +82,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 @implementation ConnectToServer
 {
     NetworkConnectionsManager                       *m_Manager;
-    vector<NetworkConnectionsManager::Connection>   m_Connections;
+    std::vector<NetworkConnectionsManager::Connection>   m_Connections;
     std::optional<NetworkConnectionsManager::Connection> m_OutputConnection;
     bool                                            m_Shown;
 }

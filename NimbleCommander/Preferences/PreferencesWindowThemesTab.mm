@@ -55,7 +55,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     NSArray *m_Nodes;
     nc::config::Document m_Doc;
     ThemesManager *m_Manager;
-    vector<string> m_ThemeNames;
+    std::vector<string> m_ThemeNames;
     int m_SelectedTheme;
     
 }

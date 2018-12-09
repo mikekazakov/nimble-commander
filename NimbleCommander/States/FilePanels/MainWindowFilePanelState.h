@@ -40,8 +40,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
                                              MMTabBarViewDelegate>
 {
     std::function<PanelController*()> m_PanelFactory;
-    vector<PanelController*> m_LeftPanelControllers;
-    vector<PanelController*> m_RightPanelControllers;
+    std::vector<PanelController*> m_LeftPanelControllers;
+    std::vector<PanelController*> m_RightPanelControllers;
     __weak PanelController*  m_LastFocusedPanelController;
     
     AttachedResponder *m_AttachedResponder;
@@ -57,7 +57,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     
     bool                m_ShowTabs;
     
-    vector<nc::config::Token> m_ConfigTickets;
+    std::vector<nc::config::Token> m_ConfigTickets;
     std::shared_ptr<nc::ops::Pool> m_OperationsPool;
     std::shared_ptr<nc::panel::ClosedPanelsHistory> m_ClosedPanelsHistory;
     std::shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
@@ -99,7 +99,7 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  */
 - (void)PanelPathChanged:(PanelController*)_panel;
 
-@property (nonatomic, readonly) vector< std::tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
+@property (nonatomic, readonly) std::vector< std::tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
 
 
 - (id<NCPanelPreview>)quickLookForPanel:(PanelController*)_panel make:(bool)_make_if_absent;
@@ -138,14 +138,14 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  * May return nil in init/shutdown period or in invalid state.
  */
 @property (nonatomic, readonly) PanelController *leftPanelController;
-@property (nonatomic, readonly) const vector<PanelController*> &leftControllers;
+@property (nonatomic, readonly) const std::vector<PanelController*> &leftControllers;
 
 /**
  * Pick one of a controllers in right side tabbed bar, which is currently selected (regardless if it is active or not).
  * May return nil in init/shutdown period or in invalid state.
  */
 @property (nonatomic, readonly) PanelController *rightPanelController;
-@property (nonatomic, readonly) const vector<PanelController*> &rightControllers;
+@property (nonatomic, readonly) const std::vector<PanelController*> &rightControllers;
 
 /**
  * Checks if this controller is one of a state's left-side controllers set.

@@ -42,7 +42,7 @@ bool CopyToPasteboard::ValidateMenuItem( PanelController *_target, NSMenuItem *_
     return Predicate(_target);
 }
 
-void CopyToPasteboard::PerformWithItems( const vector<VFSListingItem> &_items ) const
+void CopyToPasteboard::PerformWithItems( const std::vector<VFSListingItem> &_items ) const
 {
     if( !PasteboardSupport::WriteFilesnamesPBoard(_items, NSPasteboard.generalPasteboard) )
         NSBeep();
@@ -53,7 +53,7 @@ void CopyToPasteboard::Perform( PanelController *_target, id _sender ) const
     PerformWithItems( _target.selectedEntriesOrFocusedEntryWithDotDot );
 }
 
-context::CopyToPasteboard::CopyToPasteboard(const vector<VFSListingItem> &_items):
+context::CopyToPasteboard::CopyToPasteboard(const std::vector<VFSListingItem> &_items):
     m_Items(_items)
 {
     if( _items.empty() )

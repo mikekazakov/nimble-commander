@@ -80,7 +80,7 @@ private:
     nc::utility::FontGeometryInfo m_FontInfo;
     double                       m_LeftInset = 5;
     CFMutableAttributedStringRef m_AttrString = nullptr;
-    vector<TextLine>             m_Lines;
+    std::vector<TextLine>        m_Lines;
     unsigned                     m_VerticalOffset = 0; // offset in lines number within text lines
     unsigned                     m_HorizontalOffset = 0; // offset in characters from the left window edge
     

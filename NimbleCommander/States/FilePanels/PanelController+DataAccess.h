@@ -24,23 +24,23 @@
  * If no entries is selected - return currently focused element filename.
  * On case of only focused dot-dot entry return an empty list.
  */
-@property (nonatomic, readonly) vector<string> selectedEntriesOrFocusedEntryFilenames;
+@property (nonatomic, readonly) std::vector<string> selectedEntriesOrFocusedEntryFilenames;
 
 /**
  * Like previous, but returns indeces in listing.
  * Order of items will obey current sorting.
  */
-@property (nonatomic, readonly) vector<unsigned> selectedEntriesOrFocusedEntryIndeces;
+@property (nonatomic, readonly) std::vector<unsigned> selectedEntriesOrFocusedEntryIndeces;
 
 /**
  * Return a list of selected entries filenames if any.
  * If no entries is selected - return currently focused element filename, including case of dot-dot.
  */
-@property (nonatomic, readonly) vector<string> selectedEntriesOrFocusedEntryFilenamesWithDotDot;
+@property (nonatomic, readonly) std::vector<string> selectedEntriesOrFocusedEntryFilenamesWithDotDot;
 
-@property (nonatomic, readonly) vector<VFSListingItem> selectedEntriesOrFocusedEntry;
+@property (nonatomic, readonly) std::vector<VFSListingItem> selectedEntriesOrFocusedEntry;
 
-@property (nonatomic, readonly) vector<VFSListingItem> selectedEntriesOrFocusedEntryWithDotDot;
+@property (nonatomic, readonly) std::vector<VFSListingItem> selectedEntriesOrFocusedEntryWithDotDot;
 
 /**
  * Return current (topmost in vfs stack) VFS Host.

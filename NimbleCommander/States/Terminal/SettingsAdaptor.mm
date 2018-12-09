@@ -15,8 +15,8 @@ static const auto g_ConfigHideScrollbar = "terminal.hideVerticalScrollbar";
 class SettingsImpl : public DefaultSettings
 {
     ThemesManager::ObservationTicket m_ThemeObservation;
-    vector<config::Token> m_ConfigObservationTickets;
-    vector<std::pair<int, std::function<void()>>> m_Callbacks;
+    std::vector<config::Token> m_ConfigObservationTickets;
+    std::vector<std::pair<int, std::function<void()>>> m_Callbacks;
     int m_LastTicket = 1;
 public:
     SettingsImpl()

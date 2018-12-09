@@ -260,7 +260,7 @@ std::shared_ptr<const PanelViewLayout>  PanelViewLayoutsStorage::GetLayout( int 
         nullptr;
 }
 
-vector<std::shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::GetAllLayouts() const
+std::vector<std::shared_ptr<const PanelViewLayout>> PanelViewLayoutsStorage::GetAllLayouts() const
 {
     std::lock_guard<spinlock> lock(m_LayoutsLock);
     return m_Layouts;
@@ -338,7 +338,7 @@ void PanelViewLayoutsStorage::LoadLayoutsFromConfig()
 
 void PanelViewLayoutsStorage::WriteLayoutsToConfig() const
 {
-    vector<std::shared_ptr<const PanelViewLayout>> layouts;
+    std::vector<std::shared_ptr<const PanelViewLayout>> layouts;
     LOCK_GUARD(m_LayoutsLock)
         layouts = m_Layouts;
     

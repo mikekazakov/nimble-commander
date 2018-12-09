@@ -89,7 +89,7 @@ static bool AskUserToDeleteEditor()
 - (void) setExtEditors:(NSMutableArray *)ExtEditors
 {
     m_Editors = ExtEditors;
-    vector< std::shared_ptr<ExternalEditorStartupInfo> > eds;
+    std::vector< std::shared_ptr<ExternalEditorStartupInfo> > eds;
     for( ExternalEditorInfo *i in m_Editors )
         eds.emplace_back( [i toStartupInfo] );
     

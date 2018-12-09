@@ -14,7 +14,7 @@ SelectionBuilder::SelectionBuilder(const Model &_pd, bool _ignore_dirs_on_mask):
 {
 }
 
-std::vector<bool> SelectionBuilder::SelectionByExtension(const string &_extension,
+std::vector<bool> SelectionBuilder::SelectionByExtension(const std::string &_extension,
                                                          bool _result_selection ) const
 {
     auto &comparison = ExtensionLowercaseComparison::Instance();
@@ -45,7 +45,7 @@ std::vector<bool> SelectionBuilder::SelectionByExtension(const string &_extensio
     return selection;
 }
 
-std::vector<bool> SelectionBuilder::SelectionByMask(const string &_mask,
+std::vector<bool> SelectionBuilder::SelectionByMask(const std::string &_mask,
                                                     bool _result_selection ) const
 {
     utility::FileMask mask(_mask);

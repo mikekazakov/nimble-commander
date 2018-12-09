@@ -47,7 +47,7 @@ public:
     /**
      * Will return empty string on any errors.
      */
-    string GetVerboseVFSTitle( const Promise &_promise );
+    std::string GetVerboseVFSTitle( const Promise &_promise );
     
     std::vector<std::weak_ptr<VFSHost>> AliveHosts();
     
@@ -99,7 +99,7 @@ private:
                                                       const std::function<bool()> &_cancel_checker );
     
     
-    std::vector<Info>                m_Memory;
+    std::vector<Info>           m_Memory;
     uint64_t                    m_MemoryNextID = 1;
     spinlock                    m_MemoryLock;
     

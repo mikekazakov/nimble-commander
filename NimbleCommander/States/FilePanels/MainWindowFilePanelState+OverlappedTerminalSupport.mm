@@ -76,7 +76,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
 {
     auto s = m_OverlappedTerminal->terminal.state;
     if( s == ShellTask::TaskState::Inactive || s == ShellTask::TaskState::Dead ) {
-        string wd;
+        std::string wd;
         if( auto p = self.activePanelController )
             wd = p.history.LastNativeDirectoryVisited();
         
@@ -201,8 +201,8 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     if( cpc ) {
         auto opc = cpc == self.leftPanelController ? self.rightPanelController : self.leftPanelController;
         
-        std::vector<string> strings;
-        auto add = [&](const string &_s) {
+        std::vector<std::string> strings;
+        auto add = [&](const std::string &_s) {
             if(!_s.empty())
                 strings.emplace_back(_s);
         };
@@ -221,7 +221,8 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     }
 }
 
-- (bool) executeInOverlappedTerminalIfPossible:(const string&)_filename at:(const string&)_path
+- (bool) executeInOverlappedTerminalIfPossible:(const std::string&)_filename
+                                            at:(const std::string&)_path
 {
     if( self.overlappedTerminalVisible &&
        m_OverlappedTerminal->terminal.state == ShellTask::TaskState::Shell &&

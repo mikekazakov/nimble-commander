@@ -14,7 +14,7 @@ static const auto g_ConfigHistoryPath = "filePanel.findWithSpotlightPopup.querie
 @implementation SpotlightSearchPopupViewController
 {
     SimpleComboBoxPersistentDataSource *m_QueryHistory;
-    std::function<void(const string&)> m_Handler;
+    std::function<void(const std::string&)> m_Handler;
 }
 
 @synthesize handler = m_Handler;

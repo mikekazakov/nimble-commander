@@ -27,7 +27,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     NCTermScrollView           *m_TermScrollView;
     std::unique_ptr<ShellTask>  m_Task;
     std::unique_ptr<Parser>     m_Parser;
-    string                      m_InitalWD;
+    std::string                 m_InitalWD;
     NSLayoutConstraint         *m_TopLayoutConstraint;
 }
 
@@ -116,12 +116,12 @@ static const auto g_CustomPath = "terminal.customShellPath";
     return *m_Task;
 }
 
-- (string) initialWD
+- (std::string) initialWD
 {
     return m_InitalWD;
 }
 
-- (void) setInitialWD:(const string&)_wd
+- (void) setInitialWD:(const std::string&)_wd
 {
     if( !_wd.empty() )
         m_InitalWD = _wd;
@@ -195,7 +195,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     });
 }
 
-- (void) chDir:(const string&)_new_dir
+- (void) chDir:(const std::string&)_new_dir
 {
     m_Task->ChDir(_new_dir.c_str());
 }
@@ -262,7 +262,7 @@ static const auto g_CustomPath = "terminal.customShellPath";
     m_Task->Terminate();
 }
 
-- (string)cwd
+- (std::string)cwd
 {
     if(m_Task->State() == ShellTask::TaskState::Inactive ||
        m_Task->State() == ShellTask::TaskState::Dead)

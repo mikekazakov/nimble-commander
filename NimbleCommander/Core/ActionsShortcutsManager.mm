@@ -428,7 +428,7 @@ ActionsShortcutsManager &ActionsShortcutsManager::Instance()
     return *manager;
 }
 
-int ActionsShortcutsManager::TagFromAction(const string &_action) const
+int ActionsShortcutsManager::TagFromAction(const std::string &_action) const
 {
     auto it = m_ActionToTag.find(_action);
     if( it != end(m_ActionToTag) )
@@ -444,7 +444,7 @@ int ActionsShortcutsManager::TagFromAction(const char *_action) const
     return -1;
 }
 
-string ActionsShortcutsManager::ActionFromTag(int _tag) const
+std::string ActionsShortcutsManager::ActionFromTag(int _tag) const
 {
     auto it = m_TagToAction.find(_tag);
     if( it != end(m_TagToAction) )
@@ -499,7 +499,8 @@ void ActionsShortcutsManager::ReadOverrideFromConfig()
         }
 }
 
-ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction(const string &_action) const
+ActionsShortcutsManager::ShortCut ActionsShortcutsManager::ShortCutFromAction
+        (const std::string &_action) const
 {
     int tag = TagFromAction(_action);
     if(tag <= 0)
@@ -529,7 +530,7 @@ ActionsShortcutsManager::ShortCut ActionsShortcutsManager::DefaultShortCutFromTa
     return {};
 }
 
-bool ActionsShortcutsManager::SetShortCutOverride(const string &_action, const ShortCut& _sc)
+bool ActionsShortcutsManager::SetShortCutOverride(const std::string &_action, const ShortCut& _sc)
 {
     const auto tag = TagFromAction(_action);
     if( tag <= 0 )

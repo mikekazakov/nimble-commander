@@ -21,7 +21,7 @@ static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 
 @end
 
-static bool ValidateFileExistence( const string &_filepath )
+static bool ValidateFileExistence( const std::string &_filepath )
 {
     return access(_filepath.c_str(), R_OK) == 0;
 }
@@ -37,8 +37,8 @@ static bool ValidateFileExistence( const string &_filepath )
     self = [super init];
     if(self) {
         
-        string rsa_path = g_SSHdir + "id_rsa";
-        string dsa_path = g_SSHdir + "id_dsa";
+        std::string rsa_path = g_SSHdir + "id_rsa";
+        std::string dsa_path = g_SSHdir + "id_dsa";
         
         if( ValidateFileExistence(rsa_path) )
             self.keypath = [NSString stringWithUTF8StdString:rsa_path];
@@ -126,12 +126,12 @@ static bool ValidateFileExistence( const string &_filepath )
     return NetworkConnectionsManager::Connection( m_Connection );
 }
 
-- (void) setPassword:(string)password
+- (void) setPassword:(std::string)password
 {
     self.passwordEntered = [NSString stringWithUTF8StdString:password];
 }
 
-- (string)password
+- (std::string)password
 {
     return self.passwordEntered ? self.passwordEntered.UTF8String : "";
 }

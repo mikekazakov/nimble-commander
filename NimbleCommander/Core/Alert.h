@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 // this class has two purposes:
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_END
 
 namespace nc::core {
 
-void ShowExceptionAlert( const string &_message = "" );
+void ShowExceptionAlert( const std::string &_message = "" );
 void ShowExceptionAlert( const std::exception &_exception );
 
 }

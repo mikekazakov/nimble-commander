@@ -12,7 +12,7 @@ ActionShortcut::ActionShortcut():
 {
 }
 
-ActionShortcut::ActionShortcut(const string& _from):
+ActionShortcut::ActionShortcut(const std::string& _from):
     ActionShortcut(_from.c_str())
 {
 }
@@ -65,9 +65,9 @@ ActionShortcut::operator bool() const
     return unicode != 0;
 }
 
-string ActionShortcut::ToPersString() const
+std::string ActionShortcut::ToPersString() const
 {
-    string result;
+    std::string result;
     if( modifiers & NSShiftKeyMask )
         result += u8"⇧";
     if( modifiers & NSControlKeyMask )

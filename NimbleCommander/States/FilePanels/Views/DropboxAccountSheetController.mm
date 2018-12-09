@@ -48,7 +48,7 @@ enum class State
 @implementation DropboxAccountSheetController
 {
     OIDRedirectHTTPHandler *m_RedirectHTTPHandler;
-    string m_Token;
+    std::string m_Token;
     std::optional<NetworkConnectionsManager::Connection> m_Original;
     NetworkConnectionsManager::Dropbox m_Connection;
     State m_State;
@@ -170,12 +170,12 @@ enum class State
     });
 }
 
-- (void)setPassword:(string)password
+- (void)setPassword:(std::string)password
 {
     m_Token = password;
 }
 
-- (string)password
+- (std::string)password
 {
     return m_Token;
 }

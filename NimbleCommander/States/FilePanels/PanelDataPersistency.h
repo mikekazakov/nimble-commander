@@ -20,7 +20,7 @@ struct PersistentLocation
     bool is_network() const noexcept;
     std::vector<std::any> hosts;  // .front() is a deepest host, .back() is topmost
                         // empty hosts means using native vfs
-    string path;
+    std::string path;
 };
 
 class PanelDataPersisency
@@ -28,23 +28,23 @@ class PanelDataPersisency
 public:
     PanelDataPersisency( const NetworkConnectionsManager &_conn_manager );
 
-    static string MakeFootprintString( const PersistentLocation &_loc );
+    static std::string MakeFootprintString( const PersistentLocation &_loc );
     static size_t MakeFootprintStringHash( const PersistentLocation &PersistentLocation );
     
     // NB! these functions theat paths as a directory regardless, and resulting path will
     // containt a trailing slash.
-    static string MakeVerbosePathString( const PersistentLocation &_loc );
-    static string MakeVerbosePathString( const VFSHost &_host, const string &_directory );
+    static std::string MakeVerbosePathString( const PersistentLocation &_loc );
+    static std::string MakeVerbosePathString( const VFSHost &_host, const std::string &_directory );
 
     static std::optional<PersistentLocation> EncodeLocation(const VFSHost &_vfs,
-                                                            const string &_path );
+                                                            const std::string &_path );
  
     std::optional<NetworkConnectionsManager::Connection>
      ExtractConnectionFromLocation( const PersistentLocation &_location );
     
     // the following functions will return kNullType in case of error
     using json = nc::config::Value;
-    static json EncodeVFSPath( const VFSHost &_vfs, const string &_path );
+    static json EncodeVFSPath( const VFSHost &_vfs, const std::string &_path );
     static json EncodeVFSPath( const VFSListing &_listing );
     // ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ these functions should be replaced by the following chain:
     // VFSHost+Path or VFSListing => PersistentLocation => JSON representation
@@ -59,7 +59,7 @@ public:
                                      VFSHostPtr &_host,
                                      core::VFSInstanceManager &_inst_mgr);
     
-    static string GetPathFromState( const json &_state );
+    static std::string GetPathFromState( const json &_state );
     
     
 /**

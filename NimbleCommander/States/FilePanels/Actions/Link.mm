@@ -14,7 +14,7 @@
 namespace nc::panel::actions {
 
 static PanelController *FindVisibleOppositeController( PanelController *_source );
-static void FocusResult( PanelController *_target, const string &_path, bool _refresh );
+static void FocusResult( PanelController *_target, const std::string &_path, bool _refresh );
 static void Refresh( PanelController *_target );
 
 bool CreateSymlink::Predicate( PanelController *_target ) const
@@ -132,7 +132,7 @@ void CreateHardlink::Perform( PanelController *_target, id _sender ) const
         if( returnCode != NSModalResponseOK )
             return;
 
-        string path = sheet.result;
+        std::string path = sheet.result;
         if( path.empty() )
             return;
         
@@ -167,7 +167,7 @@ static PanelController *FindVisibleOppositeController( PanelController *_source 
     return nil;
 }
 
-static void FocusResult( PanelController *_target, const string &_path, bool _refresh )
+static void FocusResult( PanelController *_target, const std::string &_path, bool _refresh )
 {
     if( !_target  )
         return;

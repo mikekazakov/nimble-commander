@@ -8,7 +8,7 @@
 
 @implementation PanelController (DataAccess)
 
-- (string) currentFocusedEntryFilename
+- (std::string) currentFocusedEntryFilename
 {
     if(!self.view)
         return "";
@@ -19,7 +19,7 @@
     return "";
 }
 
-- (string) currentFocusedEntryPath
+- (std::string) currentFocusedEntryPath
 {
     if(!self.view)
         return "";
@@ -27,7 +27,7 @@
     return self.data.FullPathForEntry(self.data.RawIndexForSortIndex(self.view.curpos));
 }
 
-- (std::vector<string>) selectedEntriesOrFocusedEntryFilenames
+- (std::vector<std::string>) selectedEntriesOrFocusedEntryFilenames
 {
     if(!self.view)
         return {};
@@ -37,7 +37,7 @@
     
     auto item = self.view.item;
     if(item && !item.IsDotDot())
-        return std::vector<string>{ item.Filename() };
+        return std::vector<std::string>{ item.Filename() };
     
     return {};
 }
@@ -99,7 +99,7 @@
     return items;
 }
 
-- (std::vector<string>) selectedEntriesOrFocusedEntryFilenamesWithDotDot
+- (std::vector<std::string>) selectedEntriesOrFocusedEntryFilenamesWithDotDot
 {
     if(!self.view)
         return {};
@@ -108,12 +108,12 @@
         return self.data.SelectedEntriesFilenames();
     
     if(auto item = self.view.item)
-        return std::vector<string>{ item.Filename() };
+        return std::vector<std::string>{ item.Filename() };
     
     return {};
 }
 
-- (string) currentDirectoryPath
+- (std::string) currentDirectoryPath
 {
     return self.data.DirectoryPathWithTrailingSlash();
 }
@@ -123,7 +123,7 @@
     return self.data.Host();
 }
 
-- (string) expandPath:(const string&)_ref
+- (std::string) expandPath:(const std::string&)_ref
 {
     if( _ref.empty() )
         return {};

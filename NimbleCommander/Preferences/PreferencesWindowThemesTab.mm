@@ -55,7 +55,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     NSArray *m_Nodes;
     nc::config::Document m_Doc;
     ThemesManager *m_Manager;
-    std::vector<string> m_ThemeNames;
+    std::vector<std::string> m_ThemeNames;
     int m_SelectedTheme;
     
 }
@@ -263,7 +263,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 }
 /* also theme backend if any */
 
-- (void) commitChangedValue:(const nc::config::Value&)_value forKey:(const string&)_key
+- (void) commitChangedValue:(const nc::config::Value&)_value forKey:(const std::string&)_key
 {
     // CHECKS!!!
     const auto &theme_name = m_ThemeNames[m_SelectedTheme];
@@ -339,7 +339,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 - (void) importThemeWithURL:(NSURL*)url
 {
     if( auto d = [NSData dataWithContentsOfURL:url] ) {
-        string str { (const char*)d.bytes, d.length };
+        std::string str { (const char*)d.bytes, d.length };
         
         auto doc = std::make_shared<rapidjson::Document>();
         rapidjson::ParseResult ok = doc->Parse<rapidjson::kParseCommentsFlag>( str.c_str() );

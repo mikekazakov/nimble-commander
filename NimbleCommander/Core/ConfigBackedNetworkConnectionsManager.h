@@ -26,24 +26,24 @@ public:
     std::vector<Connection> SFTPConnectionsByMRU() const override;
     std::vector<Connection> LANShareConnectionsByMRU() const override;
     
-    bool SetPassword(const Connection &_conn, const string& _password) override;
+    bool SetPassword(const Connection &_conn, const std::string& _password) override;
     
     /**
      * Retrieves password stored in Keychain and returns it.
      */
-    bool GetPassword(const Connection &_conn, string& _password) override;
+    bool GetPassword(const Connection &_conn, std::string& _password) override;
     
     /**
      * Runs modal UI Dialog and asks user to enter an appropriate password
      */
-    bool AskForPassword(const Connection &_conn, string& _password) override;
+    bool AskForPassword(const Connection &_conn, std::string& _password) override;
     
     
     VFSHostPtr SpawnHostFromConnection(const Connection &_conn,
                                        bool _allow_password_ui = true) override;
 
     bool MountShareAsync(const Connection &_conn,
-                         const string &_password,
+                         const std::string &_password,
                          MountShareCallback _callback) override;
     
 private:

@@ -120,7 +120,7 @@ VFSListingPtr ListingPromise::RestoreNonUniform(unsigned long _fetch_flags,
         for( const auto &entries: per_vfs.entries ) {
             assert( entries.size() > 1 );
             
-            const auto directory = string(entries.front());
+            const auto directory = std::string(entries.front());
             for( size_t i = 1; i < entries.size(); ++i ) {
                 if( _cancel_checker && _cancel_checker() )
                     return nullptr;

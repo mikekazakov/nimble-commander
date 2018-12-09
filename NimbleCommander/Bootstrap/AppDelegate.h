@@ -40,7 +40,7 @@ namespace nc {
 
 - (void) addInternalViewerWindow:(InternalViewerWindowController*) _wnd;
 - (void) removeInternalViewerWindow:(InternalViewerWindowController*) _wnd;
-- (InternalViewerWindowController*) findInternalViewerWindowForPath:(const string&)_path
+- (InternalViewerWindowController*) findInternalViewerWindowForPath:(const std::string&)_path
                                                               onVFS:(const std::shared_ptr<VFSHost>&)_vfs;
 
 /**
@@ -67,18 +67,18 @@ namespace nc {
  * Support dir, ~/Library/Application Support/Nimble Commander/.
  * Is in Containers for Sandboxes versions
  */
-@property (nonatomic, readonly) const string& supportDirectory;
+@property (nonatomic, readonly) const std::string& supportDirectory;
 
 /**
  * By default this dir is ~/Library/Application Support/Nimble Commander/Config/.
  * May change in the future.
  */
-@property (nonatomic, readonly) const string& configDirectory;
+@property (nonatomic, readonly) const std::string& configDirectory;
 
 /**
  * This dir is ~/Library/Application Support/Nimble Commander/State/.
  */
-@property (nonatomic, readonly) const string& stateDirectory;
+@property (nonatomic, readonly) const std::string& stateDirectory;
 
 @property (nonatomic, readonly) NCConfigObjCBridge *config;
 

@@ -18,7 +18,7 @@ public:
     bool operator ==(const VFSInstancePromise &_rhs) const noexcept;
     bool operator !=(const VFSInstancePromise &_rhs) const noexcept;
     const char *tag() const; // may return ""
-    string verbose_title() const; // may return ""
+    std::string verbose_title() const; // may return ""
     uint64_t id() const;
 private:
     VFSInstancePromise(uint64_t _inst_id, VFSInstanceManager &_manager);

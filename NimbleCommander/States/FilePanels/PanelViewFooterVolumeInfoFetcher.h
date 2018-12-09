@@ -1,4 +1,4 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -22,7 +22,7 @@ public:
 
 private:
     VFSHostWeakPtr m_Host;
-    string         m_Path;
+    std::string    m_Path;
     VFSStatFS m_Current;
     std::function<void(const VFSStatFS&)> m_Callback;
     bool      m_Active = false;

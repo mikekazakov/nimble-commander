@@ -152,12 +152,12 @@ static void HeatUpConfigValues()
         /**
          * Requested item name to select. Empty filename means that request is invalid.
          */
-        string      filename;
+        std::string filename;
         
         /**
          * Time after which request is meaningless and should be removed
          */
-        std::chrono::nanoseconds    request_end;
+        std::chrono::nanoseconds request_end;
 
         /**
          * Called when changed a cursor position
@@ -526,7 +526,7 @@ static void HeatUpConfigValues()
     m_IsAnythingWorksInBackground = is_anything_working;
 }
 
-- (void) selectEntriesWithFilenames:(const std::vector<string>&)_filenames
+- (void) selectEntriesWithFilenames:(const std::vector<std::string>&)_filenames
 {
     for( auto &i: _filenames )
         m_Data.CustomFlagsSelectSorted( m_Data.SortedIndexForName(i.c_str()), true );
@@ -631,7 +631,7 @@ static void HeatUpConfigValues()
 }
 
 
-static void ShowAlertAboutInvalidFilename( const string &_filename )
+static void ShowAlertAboutInvalidFilename( const std::string &_filename )
 {
     Alert *a = [[Alert alloc] init];
     auto fn = [NSString stringWithUTF8StdString:_filename];
@@ -649,7 +649,7 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
     [a runModal];
 }
 
-- (void) requestQuickRenamingOfItem:(VFSListingItem)_item to:(const string&)_filename
+- (void) requestQuickRenamingOfItem:(VFSListingItem)_item to:(const std::string&)_filename
 {
     if( _filename == "." ||
         _filename == ".." ||
@@ -676,7 +676,7 @@ static void ShowAlertAboutInvalidFilename( const string &_filename )
                                                        opts);
 
     if( self.isUniform && m_View.item && m_View.item.Filename() == _item.Filename() ) {
-        string curr_path = self.currentDirectoryPath;
+        std::string curr_path = self.currentDirectoryPath;
         auto curr_vfs = self.vfs;
         op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
             if(self.currentDirectoryPath == curr_path && self.vfs == curr_vfs)

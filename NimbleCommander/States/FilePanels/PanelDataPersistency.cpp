@@ -61,7 +61,7 @@ struct PSFS
 
 struct XAttr
 {
-    string junction;
+    std::string junction;
 };
 
 struct Network
@@ -71,12 +71,12 @@ struct Network
 
 struct ArcLA
 {
-    string junction;
+    std::string junction;
 };
 
 struct ArcUnRAR
 {
-    string junction;
+    std::string junction;
 };
 
 };
@@ -139,7 +139,7 @@ static std::any EncodeState( const VFSHost& _host )
 }
 
 std::optional<PersistentLocation> PanelDataPersisency::
-    EncodeLocation( const VFSHost &_vfs, const string &_path )
+    EncodeLocation( const VFSHost &_vfs, const std::string &_path )
 {
     PersistentLocation location;
 
@@ -177,7 +177,7 @@ Value PanelDataPersisency::EncodeVFSPath( const VFSListing &_listing )
     return EncodeVFSPath( *_listing.Host(), _listing.Directory() );
 }
 
-Value PanelDataPersisency::EncodeVFSPath( const VFSHost &_vfs, const string &_path )
+Value PanelDataPersisency::EncodeVFSPath( const VFSHost &_vfs, const std::string &_path )
 {
     std::vector<const VFSHost*> hosts;
     auto host_rec = &_vfs;
@@ -308,9 +308,9 @@ static const char *VFSTagForNetworkConnection( const NetworkConnectionsManager::
         return "<unknown_vfs>";
 }
 
-string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc )
+std::string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc )
 {
-    string footprint;
+    std::string footprint;
     if( _loc.hosts.empty() ) {
         footprint += VFSNativeHost::UniqueTag;
         footprint += "||";
@@ -356,12 +356,12 @@ string PanelDataPersisency::MakeFootprintString( const PersistentLocation &_loc 
 
 size_t PanelDataPersisency::MakeFootprintStringHash( const PersistentLocation &_loc )
 {
-    return std::hash<string>()( MakeFootprintString(_loc) );
+    return std::hash<std::string>()( MakeFootprintString(_loc) );
 }
 
-string PanelDataPersisency::MakeVerbosePathString( const PersistentLocation &_loc )
+std::string PanelDataPersisency::MakeVerbosePathString( const PersistentLocation &_loc )
 {
-    string verbose;
+    std::string verbose;
     for( auto &h: _loc.hosts ) {
         if( auto psfs = std::any_cast<PSFS>(&h) )
             verbose += "[psfs]:";
@@ -382,7 +382,8 @@ string PanelDataPersisency::MakeVerbosePathString( const PersistentLocation &_lo
     return verbose;
 }
 
-string PanelDataPersisency::MakeVerbosePathString( const VFSHost &_host, const string &_directory )
+std::string PanelDataPersisency::
+    MakeVerbosePathString( const VFSHost &_host, const std::string &_directory )
 {
     std::array<const VFSHost*, 32> hosts;
     int hosts_n = 0;
@@ -393,7 +394,7 @@ string PanelDataPersisency::MakeVerbosePathString( const VFSHost &_host, const s
         cur = cur->Parent().get();
     }
     
-    string s;
+    std::string s;
     while(hosts_n > 0)
         s += hosts[--hosts_n]->Configuration().VerboseJunction();
     s += _directory;
@@ -614,7 +615,7 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
         return VFSError::GenericError;
 }
 
-string PanelDataPersisency::GetPathFromState( const Value &_state )
+std::string PanelDataPersisency::GetPathFromState( const Value &_state )
 {
     if( _state.IsObject() && _state.HasMember(g_StackPathKey) && _state[g_StackPathKey].IsString() )
         return _state[g_StackPathKey].GetString();

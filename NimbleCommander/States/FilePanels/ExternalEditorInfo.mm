@@ -208,22 +208,22 @@ ExternalEditorStartupInfo::ExternalEditorStartupInfo() noexcept :
 {
 }
 
-const string &ExternalEditorStartupInfo::Name() const noexcept
+const std::string &ExternalEditorStartupInfo::Name() const noexcept
 {
     return m_Name;
 }
 
-const string &ExternalEditorStartupInfo::Path() const noexcept
+const std::string &ExternalEditorStartupInfo::Path() const noexcept
 {
     return m_Path;
 }
 
-const string &ExternalEditorStartupInfo::Arguments() const noexcept
+const std::string &ExternalEditorStartupInfo::Arguments() const noexcept
 {
     return m_Arguments;
 }
 
-const string &ExternalEditorStartupInfo::Mask() const noexcept
+const std::string &ExternalEditorStartupInfo::Mask() const noexcept
 {
     return m_Mask;
 }
@@ -269,7 +269,7 @@ bool ExternalEditorStartupInfo::IsValidForItem(const VFSListingItem&_item) const
     return true;
 }
 
-string ExternalEditorStartupInfo::SubstituteFileName(const string &_path) const
+std::string ExternalEditorStartupInfo::SubstituteFileName(const std::string &_path) const
 {
     char esc_buf[MAXPATHLEN];
     strcpy(esc_buf, _path.c_str());
@@ -278,8 +278,8 @@ string ExternalEditorStartupInfo::SubstituteFileName(const string &_path) const
     if( m_Arguments.empty() )
         return esc_buf; // just return escaped file path
     
-    string args = m_Arguments;
-    string path = " "s + esc_buf + " ";
+    std::string args = m_Arguments;
+    std::string path = " "s + esc_buf + " ";
     
     size_t start_pos;
     if((start_pos = args.find("%%")) != std::string::npos)

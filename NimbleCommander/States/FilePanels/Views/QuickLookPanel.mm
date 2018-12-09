@@ -16,7 +16,7 @@ static NCPanelQLPanelProxy *Proxy();
 
 @implementation NCPanelQLPanelAdaptor
 {
-    string          m_CurrentPath;
+    std::string     m_CurrentPath;
     VFSHostWeakPtr  m_CurrentHost;
     std::atomic_ullong m_CurrentTicket;
 }
@@ -56,13 +56,15 @@ static NCPanelQLPanelProxy *Proxy();
         [self doVFSPreview:_path.Path() host:_path.Host() ticket:m_CurrentTicket];
 }
 
-- (void)doNativePreview:(const string&)_path
+- (void)doNativePreview:(const std::string&)_path
 {
     if( const auto path = [NSString stringWithUTF8StdString:_path] )
         [Proxy() setPreviewURL:[NSURL fileURLWithPath:path]];
 }
 
-- (void)doVFSPreview:(const string&)_path host:(const VFSHostPtr&)_host ticket:(uint64_t)_ticket
+- (void)doVFSPreview:(const std::string&)_path
+                host:(const VFSHostPtr&)_host
+              ticket:(uint64_t)_ticket
 {
     dispatch_after(g_Delay,
                    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),

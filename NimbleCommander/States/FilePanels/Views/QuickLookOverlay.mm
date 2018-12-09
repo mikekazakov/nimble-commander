@@ -8,13 +8,13 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
 
 @interface NCPanelQLOverlayWrapper : QLPreviewView
 
-- (void)previewItem:(const string&)_path at:(const VFSHostPtr&)_host;
+- (void)previewItem:(const std::string&)_path at:(const VFSHostPtr&)_host;
 
 @end
 
 @implementation NCPanelQLOverlayWrapper
 {
-    string              m_CurrentPath;
+    std::string         m_CurrentPath;
     VFSHostWeakPtr      m_CurrentHost;
     std::atomic_bool    m_Closed;
     std::atomic_ullong  m_CurrentTicket;
@@ -59,7 +59,7 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
         [self close];
 }
 
-- (void)previewItem:(const string&)_path at:(const VFSHostPtr&)_host
+- (void)previewItem:(const std::string&)_path at:(const VFSHostPtr&)_host
 {
     dispatch_assert_main_queue();
     
@@ -82,15 +82,17 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
         [self doVFSPreview:_path host:_host ticket:m_CurrentTicket];
 }
 
-- (void) doNativeNative:(const string&)_path
+- (void) doNativeNative:(const std::string&)_path
 {
     if( const auto path = [NSString stringWithUTF8StdString:_path] )
         self.previewItem = [NSURL fileURLWithPath:path];
 }
 
-- (void)doVFSPreview:(const string&)_path host:(const VFSHostPtr&)_host ticket:(uint64_t)_ticket
+- (void)doVFSPreview:(const std::string&)_path
+                host:(const VFSHostPtr&)_host
+              ticket:(uint64_t)_ticket
 {
-    string path = _path;
+    std::string path = _path;
     VFSHostPtr host = _host;
     dispatch_after(g_Delay,
                    dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),

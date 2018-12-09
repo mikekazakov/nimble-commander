@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 class MASAppInstalledChecker
@@ -13,8 +13,8 @@ public:
      * _app_id - id like "info.filesmanager.Files-Pro"
      *
      */
-    bool Has(const string &_app_name,
-             const string &_app_id);
+    bool Has(const std::string &_app_name,
+             const std::string &_app_id);
     
 private:
     MASAppInstalledChecker(const MASAppInstalledChecker&) = delete;

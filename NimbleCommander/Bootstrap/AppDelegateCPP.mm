@@ -6,22 +6,22 @@
 
 namespace nc {
 
-const string &AppDelegate::ConfigDirectory()
+const std::string &AppDelegate::ConfigDirectory()
 {
     return NCAppDelegate.me.configDirectory;
 }
 
-const string &AppDelegate::StateDirectory()
+const std::string &AppDelegate::StateDirectory()
 {
     return NCAppDelegate.me.stateDirectory;
 }
 
-const string &AppDelegate::SupportDirectory()
+const std::string &AppDelegate::SupportDirectory()
 {
     if( NCAppDelegate.me )
         return NCAppDelegate.me.supportDirectory;
     
-    static string support_dir = []{
+    static std::string support_dir = []{
         auto path = NSFileManager.defaultManager.applicationSupportDirectory;
         return EnsureTrailingSlash( path.fileSystemRepresentationSafe );
     }();

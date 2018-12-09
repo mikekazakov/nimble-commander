@@ -233,7 +233,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 
     sheet.setupMode = true;
 
-    string password;
+    std::string password;
     if( m_Manager->GetPassword(connection, password) )
         sheet.password = password;
     
@@ -263,7 +263,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 }
 
 - (void)insertCreatedConnection:(NetworkConnectionsManager::Connection)_connection
-                   withPassword:(const string&)_password
+                   withPassword:(const std::string&)_password
 {
     m_Manager->InsertConnection(_connection);
     m_Manager->SetPassword(_connection, _password);

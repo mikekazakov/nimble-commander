@@ -32,7 +32,7 @@ enum class CursorSelectionType : int8_t
 
 struct StateStorage
 {
-    string focused_item;
+    std::string focused_item;
 };
 
 }
@@ -787,7 +787,8 @@ struct StateStorage
     [self OnCursorPositionChanged];
 }
 
-- (void)panelChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load
+- (void)panelChangedWithFocusedFilename:(const std::string&)_focused_filename
+                      loadPreviousState:(bool)_load
 {
     assert( dispatch_is_main_queue() );
     m_CursorPos = -1;
@@ -828,7 +829,7 @@ struct StateStorage
   
     m_RenamingEditor = [[NCPanelViewFieldEditor alloc] initWithItem:item];
     __weak PanelView *weak_self = self;
-    m_RenamingEditor.onTextEntered = ^(const string &_new_filename){
+    m_RenamingEditor.onTextEntered = ^(const std::string &_new_filename){
         if( auto sself = weak_self ) {
             if( !sself->m_RenamingEditor )
                 return;

@@ -19,8 +19,8 @@ public:
     void OpenFiles(NSArray<NSString *> *_paths);
     
 private:
-    void GoToFolder(const string &_path);
-    void RevealItems(const std::vector<string> &_paths);
+    void GoToFolder(const std::string &_path);
+    void RevealItems(const std::vector<std::string> &_paths);
     
     std::function<NCMainWindowController*()> m_WindowProvider;
 };

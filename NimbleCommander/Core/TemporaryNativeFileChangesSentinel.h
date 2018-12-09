@@ -15,7 +15,7 @@ public:
      * @param _check_delay delay on FSEvent after which background content checking should start
      * @param _drop_delay time threshold after which file watch should drop if no file changes occured in that time
      */
-    bool WatchFile(const string& _path,
+    bool WatchFile(const std::string& _path,
                    std::function<void()> _on_file_changed,
                    std::chrono::milliseconds _check_delay = std::chrono::seconds{5},
                    std::chrono::milliseconds _drop_delay = std::chrono::hours{1} );
@@ -25,11 +25,11 @@ public:
      * This method is thread-safe.
      * @param _path filepath to stop watching at
      */
-    bool StopFileWatch( const string& _path );
+    bool StopFileWatch( const std::string& _path );
     
 private:
     struct Meta {
-        string                          path;
+        std::string                     path;
         std::shared_ptr<std::function<void()>>callback;
         uint64_t                        fswatch_ticket = 0;
         std::vector<uint8_t>            last_md5_hash;

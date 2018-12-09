@@ -42,12 +42,12 @@ public:
     
     struct UserDefined
     {
-        string text;
+        std::string text;
     };
     
     struct EnterValue
     {
-        string name;
+        std::string name;
     };
     
     struct CurrentItem
@@ -106,8 +106,8 @@ private:
 class ExternalToolsParametersParser
 {
 public:
-    ExternalToolsParameters Parse(const string &_source,
-                                  std::function<void(string)> _parse_error = nullptr );
+    ExternalToolsParameters Parse(const std::string &_source,
+                                  std::function<void(std::string)> _parse_error = nullptr );
     
 private:
 };
@@ -122,9 +122,9 @@ public:
         RunDeatached    = 2
     };
     
-    string          m_Title;
-    string          m_ExecutablePath; // app by bundle?
-    string          m_Parameters;
+    std::string     m_Title;
+    std::string     m_ExecutablePath; // app by bundle?
+    std::string     m_Parameters;
     ActionShortcut  m_Shorcut;
     StartupMode     m_StartupMode = StartupMode::Automatic;
     

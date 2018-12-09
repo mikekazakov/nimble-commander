@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -12,9 +12,9 @@ struct ExternalEntryKey
     ExternalEntryKey();
     ExternalEntryKey(const VFSListingItem& _item, const ItemVolatileData &_item_vd);
     
-    string      name;
+    std::string name;
     NSString   *display_name;
-    string      extension;
+    std::string extension;
     uint64_t    size;
     time_t      mtime;
     time_t      btime;

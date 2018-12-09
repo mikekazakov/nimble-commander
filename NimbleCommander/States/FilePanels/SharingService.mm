@@ -10,7 +10,7 @@ static std::atomic<int> g_IsCurrentlySharing(0);
 @implementation SharingService
 {
     bool                   m_DidShare;
-    std::vector<string>    m_TmpFilepaths;
+    std::vector<std::string>    m_TmpFilepaths;
 }
 
 - (id) init
@@ -57,8 +57,8 @@ static std::atomic<int> g_IsCurrentlySharing(0);
     return g_IsCurrentlySharing > 0;
 }
 
-- (void) ShowItems:(const std::vector<string>&)_entries
-             InDir:(string)_dir
+- (void) ShowItems:(const std::vector<std::string>&)_entries
+             InDir:(std::string)_dir
              InVFS:(std::shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
             OfView:(NSView*)_view
@@ -70,7 +70,7 @@ static std::atomic<int> g_IsCurrentlySharing(0);
         NSMutableArray *items = [NSMutableArray new];
         for(auto &i:_entries)
         {
-            string path = _dir + i;
+            std::string path = _dir + i;
             NSString *s = [NSString stringWithUTF8String:path.c_str()];
             if(s)
             {
@@ -94,7 +94,7 @@ static std::atomic<int> g_IsCurrentlySharing(0);
         dispatch_to_default([=]{
             for(auto &i:_entries)
             {
-                string path = _dir + i;
+                std::string path = _dir + i;
                 VFSStat st;
                 if(_host->IsDirectory(path.c_str(), 0, 0)) continue; // will skip any directories here
                 if(_host->Stat(path.c_str(), st, 0, 0) < 0) continue;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "Alert.h"
 
@@ -147,7 +147,7 @@
 
 namespace nc::core {
 
-void ShowExceptionAlert( const string &_message )
+void ShowExceptionAlert( const std::string &_message )
 {
     if( dispatch_is_main_queue() ) {
         auto alert = [[Alert alloc] init];

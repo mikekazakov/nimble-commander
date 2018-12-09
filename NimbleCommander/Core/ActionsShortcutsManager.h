@@ -22,19 +22,19 @@ public:
     /**
      * Return -1 on if tag corresponing _action wasn't found.
      */
-    int TagFromAction(const string &_action) const;
+    int TagFromAction(const std::string &_action) const;
     int TagFromAction(const char *_action) const;
     
     /**
      * return "" on if action corresponing _tag wasn't found.
      */
-    string ActionFromTag(int _tag) const;
+    std::string ActionFromTag(int _tag) const;
     
     /**
      * Return default if can't be found.
      * Overrides has priority over defaults.
      */
-    ShortCut ShortCutFromAction(const string &_action) const;
+    ShortCut ShortCutFromAction(const std::string &_action) const;
 
     /**
      * Return default if can't be found.
@@ -49,7 +49,7 @@ public:
     
     void RevertToDefaults();
     
-    bool SetShortCutOverride(const string &_action, const ShortCut& _sc);
+    bool SetShortCutOverride(const std::string &_action, const ShortCut& _sc);
     
     void SetMenuShortCuts(NSMenu *_menu) const;
     
@@ -66,7 +66,7 @@ private:
     void WriteOverridesToConfig() const;
     
     std::unordered_map<int, const char*> m_TagToAction;
-    std::unordered_map<string, int>      m_ActionToTag;
+    std::unordered_map<std::string, int>      m_ActionToTag;
     std::unordered_map<int, ShortCut>    m_ShortCutsDefaults;
     std::unordered_map<int, ShortCut>    m_ShortCutsOverrides;
 };

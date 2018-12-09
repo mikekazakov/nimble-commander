@@ -24,7 +24,7 @@ OpenConnectionBase::OpenConnectionBase( NetworkConnectionsManager &_net_mgr ):
 
 static bool GoToFTP(PanelController *_target,
                     const NetworkConnectionsManager::Connection &_connection,
-                    const string& _passwd,
+                    const std::string& _passwd,
                     NetworkConnectionsManager &_net_mgr)
 {
     dispatch_assert_background_queue();    
@@ -63,7 +63,7 @@ static bool GoToFTP(PanelController *_target,
 
 static bool GoToSFTP(PanelController *_target,
                      const NetworkConnectionsManager::Connection &_connection,
-                     const string& _passwd,
+                     const std::string& _passwd,
                      NetworkConnectionsManager &_net_mgr)
 {
     dispatch_assert_background_queue();
@@ -102,7 +102,7 @@ static bool GoToSFTP(PanelController *_target,
 
 static bool GoToWebDAV(PanelController *_target,
                        const NetworkConnectionsManager::Connection &_connection,
-                       const string& _passwd,
+                       const std::string& _passwd,
                        NetworkConnectionsManager &_net_mgr)
 {
     dispatch_assert_background_queue();
@@ -142,7 +142,7 @@ static bool GoToWebDAV(PanelController *_target,
 
 static void GoToDropboxStorage(PanelController *_target,
                                const NetworkConnectionsManager::Connection &_connection,
-                               const string&_passwd,
+                               const std::string&_passwd,
                                NetworkConnectionsManager &_net_mgr)
 {
     dispatch_assert_background_queue();
@@ -173,14 +173,14 @@ static void GoToDropboxStorage(PanelController *_target,
 
 static void GoToLANShare(PanelController *_target,
                          const NetworkConnectionsManager::Connection &_connection,
-                         const string& _passwd,
+                         const std::string& _passwd,
                          bool _save_password_on_success,
                          NetworkConnectionsManager &_net_mgr)
 {
     auto activity = std::make_shared<nc::panel::ActivityTicket>();
     __weak PanelController *weak_panel = _target;
     auto cb = [weak_panel, activity, _connection, _passwd, _save_password_on_success, &_net_mgr]
-        (const string &_path, const string &_err) {
+        (const std::string &_path, const std::string &_err) {
         if( PanelController *panel = weak_panel ) {
             if( !_path.empty() ) {
                 auto request = std::make_shared<DirectoryChangeRequest>();
@@ -226,7 +226,7 @@ void OpenNewFTPConnection::Perform(PanelController *_target, id _sender) const
             return;
         
         auto connection = sheet.connection;
-        string password = sheet.password;
+        std::string password = sheet.password;
         
         m_NetMgr.InsertConnection(connection);
         m_NetMgr.SetPassword(connection, password);
@@ -252,7 +252,7 @@ void OpenNewSFTPConnection::Perform(PanelController *_target, id _sender) const
             return;
             
         auto connection = sheet.connection;
-        string password = sheet.password;
+        std::string password = sheet.password;
         
         m_NetMgr.InsertConnection(connection);
         m_NetMgr.SetPassword(connection, password);
@@ -277,7 +277,7 @@ void OpenNewDropboxStorage::Perform(PanelController *_target, id _sender) const
             return;
             
         auto connection = sheet.connection;
-        string password = sheet.password;
+        std::string password = sheet.password;
         
         m_NetMgr.InsertConnection(connection);
         m_NetMgr.SetPassword(connection, password);
@@ -324,7 +324,7 @@ void OpenNewWebDAVConnection::Perform( PanelController *_target, id _sender ) co
             return;
             
         auto connection = sheet.connection;
-        string password = sheet.password;
+        std::string password = sheet.password;
         
         m_NetMgr.InsertConnection(connection);
         m_NetMgr.SetPassword(connection, password);
@@ -339,7 +339,7 @@ static void GoToConnection(PanelController *_target,
                            const NetworkConnectionsManager::Connection &connection,
                            NetworkConnectionsManager &_net_mgr)
 {
-    string passwd;
+    std::string passwd;
     bool should_save_passwd = false;
     if( !_net_mgr.GetPassword(connection, passwd) ) {
         if( !_net_mgr.AskForPassword(connection, passwd) )

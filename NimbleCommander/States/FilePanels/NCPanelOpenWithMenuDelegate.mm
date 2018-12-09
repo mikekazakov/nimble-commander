@@ -16,8 +16,8 @@ namespace {
 struct FetchResult
 {
     std::vector<LaunchServiceHandler>handlers;
-    string                          default_handler_path;
-    string                          uti;
+    std::string default_handler_path;
+    std::string uti;
 };
 
 static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_handlers)
@@ -83,8 +83,8 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items)
 {
     std::vector<VFSListingItem>      m_ContextItems;
     std::vector<LaunchServiceHandler>m_OpenWithHandlers;
-    string                          m_DefaultHandlerPath;
-    string                          m_ItemsUTI;
+    std::string m_DefaultHandlerPath;
+    std::string m_ItemsUTI;
     SerialQueue                     m_FetchQueue;
     std::set<NSMenu*>               m_ManagedMenus;
 }
@@ -298,7 +298,7 @@ static NSOpenPanel* BuildAppChoose()
 
 static void ShowOpenPanel(NSOpenPanel *_panel,
                           NSWindow *_window,
-                          std::function<void(const string&_path)> _on_ok )
+                          std::function<void(const std::string&_path)> _on_ok )
 {
     [_panel beginSheetModalForWindow:_window
                   completionHandler:^(NSInteger result) {
@@ -334,7 +334,7 @@ static void ShowOpenPanel(NSOpenPanel *_panel,
             return i.Host() == source_items.front().Host();
           });
         if( same_host ) {
-            std::vector<string> items;
+            std::vector<std::string> items;
             for(auto &i: source_items)
                 items.emplace_back( i.Path() );
             PanelVFSFileWorkspaceOpener::Open(items,

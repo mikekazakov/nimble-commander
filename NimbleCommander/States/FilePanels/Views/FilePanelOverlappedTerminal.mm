@@ -25,7 +25,7 @@ static const auto g_LongProcessDelay = 100ms;
     NCTermScrollView           *m_TermScrollView;
     std::unique_ptr<ShellTask>  m_Task;
     std::unique_ptr<Parser>     m_Parser;
-    string                      m_InitalWD;
+    std::string                 m_InitalWD;
     std::function<void()>       m_OnShellCWDChanged;
     std::function<void()>       m_OnLongTaskStarted;
     std::function<void()>       m_OnLongTaskFinished;
@@ -190,7 +190,7 @@ static const auto g_LongProcessDelay = 100ms;
     return m_TermScrollView.view;
 }
 
-- (void) runShell:(const string&)_initial_wd;
+- (void) runShell:(const std::string&)_initial_wd;
 {
     if( !_initial_wd.empty() )
         m_InitalWD = _initial_wd;
@@ -203,7 +203,7 @@ static const auto g_LongProcessDelay = 100ms;
     }
 }
 
-- (void) changeWorkingDirectory:(const string&)_new_dir
+- (void) changeWorkingDirectory:(const std::string&)_new_dir
 {
     m_Task->ChDir(_new_dir.c_str());
 }
@@ -213,12 +213,12 @@ static const auto g_LongProcessDelay = 100ms;
     [self.window makeFirstResponder:m_TermScrollView.view];
 }
 
-- (string) cwd
+- (std::string) cwd
 {
     return m_Task->CWD();
 }
 
-- (void) feedShellWithInput:(const string&)_input
+- (void) feedShellWithInput:(const std::string&)_input
 {
     if( self.state != ShellTask::TaskState::Shell )
         return;
@@ -256,7 +256,7 @@ static const auto g_LongProcessDelay = 100ms;
     return virgin;
 }
 
-- (void) runPasteMenu:(const std::vector<string>&)_strings
+- (void) runPasteMenu:(const std::vector<std::string>&)_strings
 {
     NSMenu *menu = [[NSMenu alloc] init];
     

@@ -31,7 +31,7 @@ static bool UserHasPaidVersionInstalled()
 
 static bool AppStoreReceiptContainsProFeaturesInApp()
 {
-    string receipt_path = CFBundleGetAppStoreReceiptPath( CFBundleGetMainBundle() );
+    std::string receipt_path = CFBundleGetAppStoreReceiptPath( CFBundleGetMainBundle() );
     
     VFSFilePtr source;
     if( VFSNativeHost::SharedHost()->CreateFile(receipt_path.c_str(), source, nullptr) != VFSError::Ok )
@@ -49,7 +49,7 @@ static bool AppStoreReceiptContainsProFeaturesInApp()
     return memmem( data->data(), data->size(), g_ProFeaturesInAppID.data(), g_ProFeaturesInAppID.length() ) != 0;
 }
 
-static string InstalledAquaticLicensePath()
+static std::string InstalledAquaticLicensePath()
 {
     return nc::AppDelegate::SupportDirectory() + g_LicenseFilename;
 }
@@ -150,12 +150,12 @@ ActivationManager::ActivationManager
     }
 }
 
-const string& ActivationManager::BundleID()
+const std::string& ActivationManager::BundleID()
 {
     return nc::utility::GetBundleID();
 }
 
-const string& ActivationManager::AppStoreID() const
+const std::string& ActivationManager::AppStoreID() const
 {
     return m_AppStoreIdentifier;
 }
@@ -270,12 +270,12 @@ int ActivationManager::TrialDaysLeft() const noexcept
     return m_TrialDaysLeft;
 }
 
-const string &ActivationManager::LicenseFileExtension() noexcept
+const std::string &ActivationManager::LicenseFileExtension() noexcept
 {
     return g_LicenseExtension;
 }
 
-bool ActivationManager::ProcessLicenseFile( const string& _path )
+bool ActivationManager::ProcessLicenseFile( const std::string& _path )
 {
     if( Type() != ActivationManager::Distribution::Trial )
         return false;
@@ -325,7 +325,8 @@ bool ActivationManager::UsedHadPurchasedProFeatures() const noexcept
            m_IsActivated == true;
 }
 
-const std::unordered_map<string, string> &ActivationManager::LicenseInformation() const noexcept
+const std::unordered_map<std::string, std::string> &
+    ActivationManager::LicenseInformation() const noexcept
 {
     return m_LicenseInfo;
 }

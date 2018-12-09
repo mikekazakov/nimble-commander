@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 enum class PreferencesWindowThemesTabItemType
@@ -21,10 +21,10 @@ enum class PreferencesWindowThemesTabItemType
 
 @interface PreferencesWindowThemesTabItemNode : NSObject
 @property (nonatomic, readonly) NSString *title;
-@property (nonatomic, readonly) const string &entry;
+@property (nonatomic, readonly) const std::string &entry;
 @property (nonatomic, readonly) PreferencesWindowThemesTabItemType type;
 - (instancetype) initWithTitle:(NSString*)title
-                      forEntry:(const string&)entry
+                      forEntry:(const std::string&)entry
                         ofType:(PreferencesWindowThemesTabItemType)type;
 @end
 

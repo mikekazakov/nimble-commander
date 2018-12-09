@@ -18,7 +18,7 @@ bool CalculateChecksum::Predicate( PanelController *_target ) const
 
 void CalculateChecksum::Perform( PanelController *_target, id _sender ) const
 {
-    std::vector<string> filenames;
+    std::vector<std::string> filenames;
     std::vector<uint64_t> sizes;
     
     auto selected_entries = _target.selectedEntriesOrFocusedEntry;

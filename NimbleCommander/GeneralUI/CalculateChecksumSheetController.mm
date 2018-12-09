@@ -8,7 +8,7 @@
 #include "CalculateChecksumSheetController.h"
 
 static const auto g_ConfigAlgo = "filePanel.general.checksumCalculationAlgorithm";
-const static string g_SumsFilename = "checksums.txt";
+const static std::string g_SumsFilename = "checksums.txt";
 
 const static std::vector<std::pair<NSString*,int>> g_Algos = {
     {@"Adler32",     Hash::Adler32},
@@ -26,19 +26,19 @@ const static std::vector<std::pair<NSString*,int>> g_Algos = {
 @implementation CalculateChecksumSheetController
 {
     VFSHostPtr          m_Host;
-    std::vector<string> m_Filenames;
+    std::vector<std::string> m_Filenames;
     std::vector<uint64_t>m_Sizes;
-    std::vector<string> m_Checksums;
-    std::vector<string> m_Errors;
-    string              m_Path;
+    std::vector<std::string> m_Checksums;
+    std::vector<std::string> m_Errors;
+    std::string              m_Path;
     SerialQueue         m_WorkQue;
     uint64_t            m_TotalSize;
 }
 
-- (id)initWithFiles:(std::vector<string>)files
+- (id)initWithFiles:(std::vector<std::string>)files
           withSizes:(std::vector<uint64_t>)sizes
              atHost:(const VFSHostPtr&)host
-             atPath:(string)path
+             atPath:(std::string)path
 {
     self = [super init];
     if(self) {
@@ -184,7 +184,7 @@ const static std::vector<std::pair<NSString*,int>> g_Algos = {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (void)reportChecksum:(string)checksum forFilenameAtIndex:(int)ind
+- (void)reportChecksum:(std::string)checksum forFilenameAtIndex:(int)ind
 {
     m_Checksums[ind] = checksum;
     [self.Table reloadDataForRowIndexes:[NSIndexSet indexSetWithIndex:ind]
@@ -239,7 +239,7 @@ const static std::vector<std::pair<NSString*,int>> g_Algos = {
 - (IBAction)OnSave:(id)sender
 {
     // currently doing all stuff on main thread synchronously. may be bad for some vfs like ftp
-    string str;
+    std::string str;
     for(auto &i: m_Checksums)
         if(!i.empty())
             str += i + "  " + m_Filenames[ &i-&m_Checksums[0] ] + "\n";
@@ -262,7 +262,7 @@ const static std::vector<std::pair<NSString*,int>> g_Algos = {
     self.didSaved = true;
 }
 
-- (string) savedFilename
+- (std::string) savedFilename
 {
     return g_SumsFilename;
 }

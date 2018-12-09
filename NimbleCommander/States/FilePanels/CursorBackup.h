@@ -18,7 +18,7 @@ public:
 private:
     int                         m_OldCursorPosition;
     const data::Model          &m_Data;
-    string                      m_OldCursorName;
+    std::string                 m_OldCursorName;
     data::ExternalEntryKey      m_OldEntrySortKeys;
 };
 

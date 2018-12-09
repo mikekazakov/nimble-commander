@@ -3,6 +3,6 @@
 
 @interface SpotlightSearchPopupViewController : NSViewController<NSPopoverDelegate>
 
-@property (nonatomic) std::function<void(const string&)> handler;
+@property (nonatomic) std::function<void(const std::string&)> handler;
 
 @end

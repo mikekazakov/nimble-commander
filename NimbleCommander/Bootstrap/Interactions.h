@@ -3,7 +3,7 @@
 
 namespace nc::bootstrap {
 
-std::optional<string> AskUserForLicenseFile();
+std::optional<std::string> AskUserForLicenseFile();
 bool AskUserToResetDefaults();
 bool AskUserToProvideUsageStatistics();
 bool AskToExitWithRunningOperations();

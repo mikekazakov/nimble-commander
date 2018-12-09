@@ -18,7 +18,7 @@ using namespace std::literals;
 // this func does readdir but without mutex locking
 struct dirent	*_readdir_unlocked(DIR *, int) __DARWIN_INODE64(_readdir_unlocked);
 
-static const string g_Pref = nc::bootstrap::ActivationManager::BundleID() + ".tmp.";
+static const std::string g_Pref = nc::bootstrap::ActivationManager::BundleID() + ".tmp.";
 
 static void DoTempPurge();
 
@@ -114,7 +114,7 @@ TemporaryNativeFileStorage &TemporaryNativeFileStorage::Instance()
     return *g_SharedInstance;
 }
 
-string TemporaryNativeFileStorage::NewTempDir()
+std::string TemporaryNativeFileStorage::NewTempDir()
 {
     char pattern_buf[MAXPATHLEN];
     sprintf(pattern_buf, "%s%sXXXXXX", CommonPaths::AppTemporaryDirectory().c_str(), g_Pref.c_str());
@@ -164,9 +164,10 @@ bool TemporaryNativeFileStorage::GetSubDirForFilename(const char *_filename, cha
     return false; // something is very bad with whole system
 }
 
-std::optional<string> TemporaryNativeFileStorage::WriteStringIntoTempFile( const string& _source)
+std::optional<std::string>
+    TemporaryNativeFileStorage::WriteStringIntoTempFile( const std::string& _source)
 {
-    string filename;
+    std::string filename;
     for(int i = 0; i < 6; ++i)
         filename += 'A' + rand() % ('Z'-'A');
     
@@ -196,11 +197,11 @@ std::optional<string> TemporaryNativeFileStorage::WriteStringIntoTempFile( const
         }
     }
    
-    return string(path);
+    return std::string(path);
 }
 
-std::optional<string> TemporaryNativeFileStorage::CopySingleFile(const string &_vfs_filepath,
-                                                                 VFSHost &_host)
+std::optional<std::string>
+    TemporaryNativeFileStorage::CopySingleFile(const std::string &_vfs_filepath, VFSHost &_host)
 {
     VFSFilePtr vfs_file;
     if( _host.CreateFile(_vfs_filepath.c_str(), vfs_file, 0) < 0 )
@@ -253,7 +254,7 @@ std::optional<string> TemporaryNativeFileStorage::CopySingleFile(const string &_
     }
     
     close(fd);
-    return string(native_path);
+    return std::string(native_path);
     
 error:
     close(fd);
@@ -261,11 +262,11 @@ error:
     return std::nullopt;
 }
 
-bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
+bool TemporaryNativeFileStorage::CopyDirectory(const std::string &_vfs_dirpath,
                                                const VFSHostPtr &_host,
                                                uint64_t _max_total_size,
                                                std::function<bool()> _cancel_checker,
-                                               string &_tmp_dirpath)
+                                               std::string &_tmp_dirpath)
 {
     // this is not a-best-of-all implementation.
     // supposed that temp extraction of dirs would be rare thus with much less pressure that extracting of single files
@@ -293,7 +294,7 @@ bool TemporaryNativeFileStorage::CopyDirectory(const string &_vfs_dirpath,
     };
     
     boost::filesystem::path vfs_dirpath = _vfs_dirpath;
-    string top_level_name = vfs_dirpath.filename() == "." ?
+    std::string top_level_name = vfs_dirpath.filename() == "." ?
         vfs_dirpath.parent_path().filename().native() :
         vfs_dirpath.filename().native();
     

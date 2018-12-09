@@ -135,7 +135,7 @@ static std::optional<NetworkConnectionsManager::Connection>
     if( !has_string("type") || !has_string("title") || !has_string("uuid") )
         return std::nullopt;
 
-    string type = _object["type"].GetString();
+    std::string type = _object["type"].GetString();
     if( type == "ftp" ) {
         if( !has_string("user") || !has_string("host") ||
             !has_string("path") || !has_number("port") )
@@ -213,7 +213,7 @@ static std::optional<NetworkConnectionsManager::Connection>
     return std::nullopt;
 }
 
-static const string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
+static const std::string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
 {
     static const auto smb = "smb"s, afp = "afp"s, nfs = "nfs"s, unknown = ""s;
     if( p == NetworkConnectionsManager::LANShare::Protocol::SMB ) return smb;
@@ -222,7 +222,7 @@ static const string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare
     return unknown;
 }
 
-static string KeychainWhereFromConnection( const NetworkConnectionsManager::Connection& _c )
+static std::string KeychainWhereFromConnection( const NetworkConnectionsManager::Connection& _c )
 {
     if( auto c = _c.Cast<NetworkConnectionsManager::FTP>() )
         return "ftp://" + c->host;
@@ -239,7 +239,7 @@ static string KeychainWhereFromConnection( const NetworkConnectionsManager::Conn
     return "";
 }
 
-static string KeychainAccountFromConnection( const NetworkConnectionsManager::Connection& _c )
+static std::string KeychainAccountFromConnection( const NetworkConnectionsManager::Connection& _c )
 {
     if( auto c = _c.Cast<NetworkConnectionsManager::FTP>() )
         return c->user;
@@ -415,7 +415,7 @@ std::vector<NetworkConnectionsManager::Connection>
 }
 
 bool ConfigBackedNetworkConnectionsManager::SetPassword(const Connection &_conn,
-                                                        const string& _password)
+                                                        const std::string& _password)
 {
     return KeychainServices::Instance().SetPassword(KeychainWhereFromConnection(_conn),
                                                     KeychainAccountFromConnection(_conn),
@@ -423,7 +423,7 @@ bool ConfigBackedNetworkConnectionsManager::SetPassword(const Connection &_conn,
 }
 
 bool ConfigBackedNetworkConnectionsManager::GetPassword(const Connection &_conn,
-                                                        string& _password)
+                                                        std::string& _password)
 {
     return KeychainServices::Instance().GetPassword(KeychainWhereFromConnection(_conn),
                                                     KeychainAccountFromConnection(_conn),
@@ -431,7 +431,7 @@ bool ConfigBackedNetworkConnectionsManager::GetPassword(const Connection &_conn,
 }
 
 bool ConfigBackedNetworkConnectionsManager::AskForPassword(const Connection &_conn,
-                                                           string& _password)
+                                                           std::string& _password)
 {
     return RunAskForPasswordModalWindow( TitleForConnection(_conn), _password );
 }
@@ -488,7 +488,7 @@ std::optional<NetworkConnectionsManager::Connection> ConfigBackedNetworkConnecti
 VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection
     (const Connection &_connection, bool _allow_password_ui)
 {
-    string passwd;
+    std::string passwd;
     bool shoud_save_passwd = false;
     if( !GetPassword(_connection, passwd) ) {
         if( !_allow_password_ui || !AskForPassword(_connection, passwd) )
@@ -514,7 +514,7 @@ VFSHostPtr ConfigBackedNetworkConnectionsManager::SpawnHostFromConnection
     return host;
 }
 
-static string NetFSErrorString( int _code )
+static std::string NetFSErrorString( int _code )
 {
     if( _code > 0 ) {
         NSError *err = [NSError errorWithDomain:NSPOSIXErrorDomain code:_code userInfo:nil];
@@ -536,7 +536,7 @@ static string NetFSErrorString( int _code )
 void ConfigBackedNetworkConnectionsManager::NetFSCallback
     (int _status, void *_requestID, CFArrayRef _mountpoints)
 {
-    std::function<void(const string&_mounted_path, const string&_error)> cb;
+    std::function<void(const std::string&_mounted_path, const std::string&_error)> cb;
     LOCK_GUARD(m_PendingMountRequestsLock) {
         auto i = find_if(begin(m_PendingMountRequests), end(m_PendingMountRequests), [=](auto &_v){
             return _v.first == _requestID;
@@ -551,7 +551,7 @@ void ConfigBackedNetworkConnectionsManager::NetFSCallback
         // _mountpoints can contain a valid mounted path even if _status is not equal to zero
         if( _mountpoints != nullptr && CFArrayGetCount(_mountpoints) != 0 )
             if( auto str = objc_cast<NSString>(((__bridge NSArray*)_mountpoints).firstObject) ){
-                string path = str.fileSystemRepresentationSafe;
+                std::string path = str.fileSystemRepresentationSafe;
                 if( !path.empty() ) {
                     cb(path, "");
                     return;
@@ -589,7 +589,7 @@ static NSURL* CookMountPointForLANShare( const NetworkConnectionsManager::LANSha
 /**
  * Return true if _path is a directory and it is empty.
  */
-static bool IsEmptyDirectory(const string &_path)
+static bool IsEmptyDirectory(const std::string &_path)
 {
     if( DIR *dir = opendir( _path.c_str() ) ) {
         int n = 0;
@@ -603,7 +603,7 @@ static bool IsEmptyDirectory(const string &_path)
 }
 
 static bool TearDownSMBOrAFPMountName
-    ( const string &_name, string &_user, string &_host, string &_share )
+    ( const std::string &_name, std::string &_user, std::string &_host, std::string &_share )
 {
     auto url_string = [NSString stringWithUTF8StdString:_name];
     if( !url_string )
@@ -628,7 +628,8 @@ static bool TearDownSMBOrAFPMountName
     return true;
 }
 
-static bool TearDownNFSMountName( const string &_name, string &_host, string &_share )
+static bool TearDownNFSMountName
+    ( const std::string &_name, std::string &_host, std::string &_share )
 {
     static const auto delimiter = ":/"s;
     auto pos = _name.find( delimiter );
@@ -670,7 +671,7 @@ static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo& _volum
     using protocols = NetworkConnectionsManager::LANShare::Protocol;
     if( (_share.proto == protocols::SMB && _volume.fs_type_name == smb) ||
         (_share.proto == protocols::AFP && _volume.fs_type_name == afp) ) {
-        string user, host, share;
+        std::string user, host, share;
         if( TearDownSMBOrAFPMountName(_volume.mounted_from_name, user, host, share) ) {
             auto same_host =  strcasecmp( host.c_str(),  _share.host.c_str() ) == 0;
             auto same_share = strcasecmp( share.c_str(), _share.share.c_str()) == 0;
@@ -681,7 +682,7 @@ static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo& _volum
         }
     }
     else if( _share.proto == protocols::NFS && _volume.fs_type_name == nfs ) {
-        string host, share;
+        std::string host, share;
         if( TearDownNFSMountName(_volume.mounted_from_name, host, share ) ) {
             auto same_host =  strcasecmp( host.c_str(),  _share.host.c_str() ) == 0;
             auto same_share = strcasecmp( share.c_str(), _share.share.c_str()) == 0;
@@ -702,8 +703,8 @@ static std::shared_ptr<const nc::utility::NativeFileSystemInfo> FindExistingMoun
 
 bool ConfigBackedNetworkConnectionsManager::MountShareAsync(
     const Connection &_conn,
-    const string &_password,
-    std::function<void(const string&_mounted_path, const string&_error)> _callback)
+    const std::string &_password,
+    std::function<void(const std::string&_mounted_path, const std::string&_error)> _callback)
 {
     if( !_conn.IsType<LANShare>() )
         return false;

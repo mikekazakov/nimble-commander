@@ -105,7 +105,7 @@ static std::pair<std::any, unsigned> Eat( NSString *_source, NSRange _range, boo
             };
             bool list_flag = false;
             int number = 0;
-            string prompt_text;
+            std::string prompt_text;
             unsigned long position = r.location + 1;
             do {
                 if( position >= _range.location + _range.length ) {
@@ -247,8 +247,9 @@ static std::pair<std::any, unsigned> Eat( NSString *_source, NSRange _range, boo
     return make_pair( std::any(), 0 );
 }
 
-ExternalToolsParameters ExternalToolsParametersParser::Parse(const string &_source,
-                                                             std::function<void(string)> _parse_error )
+ExternalToolsParameters ExternalToolsParametersParser::Parse
+    (const std::string &_source,
+     std::function<void(std::string)> _parse_error )
 {
     ExternalToolsParameters result;
     
@@ -262,7 +263,7 @@ ExternalToolsParameters ExternalToolsParametersParser::Parse(const string &_sour
         if( res.second == 0 ) {
             if( _parse_error ) {
                 NSString *left = [source substringFromIndex:range.location];
-                string error = "Parse error nearby following symbols:\n"s + left.UTF8String;
+                std::string error = "Parse error nearby following symbols:\n"s + left.UTF8String;
                 _parse_error( move(error) );
             }
             break;

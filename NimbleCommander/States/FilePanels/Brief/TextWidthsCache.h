@@ -31,7 +31,7 @@ private:
     void PurgeIfNeeded(Cache &_cache);
     static void Purge(Cache &_cache);
     
-    std::unordered_map<string, Cache> m_CachesPerFont;
+    std::unordered_map<std::string, Cache> m_CachesPerFont;
     spinlock m_Lock;
 };
 

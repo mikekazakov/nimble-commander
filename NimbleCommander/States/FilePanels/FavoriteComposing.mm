@@ -7,8 +7,8 @@
 
 namespace nc::panel {
 
-static std::vector<std::pair<string, string>> GetFindersFavorites();
-static std::vector<std::pair<string, string>> GetDefaultFavorites();
+static std::vector<std::pair<std::string, std::string>> GetFindersFavorites();
+static std::vector<std::pair<std::string, std::string>> GetDefaultFavorites();
 
 FavoriteComposing::FavoriteComposing(const FavoriteLocationsStorage& _storage):
     m_Storage(_storage)
@@ -47,7 +47,7 @@ std::optional< FavoriteLocationsStorage::Favorite > FavoriteComposing::
     return f;
 }
 
-static string TitleForItem( const VFSListingItem &_i )
+static std::string TitleForItem( const VFSListingItem &_i )
 {
     if( _i.IsDir() )
         if( !_i.IsDotDot() )
@@ -107,7 +107,7 @@ std::vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::DefaultFavori
     return favorites;
 }
 
-static string StringFromURL( CFURLRef _url )
+static std::string StringFromURL( CFURLRef _url )
 {
     char path_buf[MAXPATHLEN];
     if( CFURLGetFileSystemRepresentation(_url, true, (UInt8*)path_buf, MAXPATHLEN) )
@@ -115,7 +115,7 @@ static string StringFromURL( CFURLRef _url )
     return {};
 }
 
-static string TitleForURL( CFURLRef _url )
+static std::string TitleForURL( CFURLRef _url )
 {
     if( auto url = (__bridge NSURL*)_url ) {
         NSString *title;
@@ -132,7 +132,7 @@ static string TitleForURL( CFURLRef _url )
     return {};
 }
 
-static string TitleForPath( const string &_path )
+static std::string TitleForPath( const std::string &_path )
 {
     auto url = [[NSURL alloc] initFileURLWithFileSystemRepresentation:_path.c_str()
                                                           isDirectory:true
@@ -152,19 +152,19 @@ static string TitleForPath( const string &_path )
     return {};
 }
 
-static string ensure_tr_slash( string _str )
+static std::string ensure_tr_slash( std::string _str )
 {
     if( _str.empty() || _str.back() != '/' )
         _str += '/';
     return _str;
 }
 
-static std::vector<std::pair<string, string>> GetFindersFavorites() // title, path
+static std::vector<std::pair<std::string, std::string>> GetFindersFavorites() // title, path
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     const auto flags = kLSSharedFileListNoUserInteraction|kLSSharedFileListDoNotMountVolumes;
-    std::vector<std::pair<string, string>> paths;
+    std::vector<std::pair<std::string, std::string>> paths;
     
     UInt32 seed;
     LSSharedFileListRef list = LSSharedFileListCreate(NULL, kLSSharedFileListFavoriteItems, NULL);
@@ -208,7 +208,7 @@ static std::vector<std::pair<string, string>> GetFindersFavorites() // title, pa
 #pragma clang diagnostic pop
 }
 
-static std::vector<std::pair<string, string>> GetDefaultFavorites()
+static std::vector<std::pair<std::string, std::string>> GetDefaultFavorites()
 {
     return {{
         {TitleForPath(CommonPaths::Home()),         CommonPaths::Home()},

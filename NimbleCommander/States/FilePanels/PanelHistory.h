@@ -60,7 +60,7 @@ public:
     
     std::vector<std::reference_wrapper<const Path>> All() const;
     
-    const string &LastNativeDirectoryVisited() const noexcept;
+    const std::string &LastNativeDirectoryVisited() const noexcept;
     
     void SetVFSInstanceManager(core::VFSInstanceManager &_mgr);
 private:
@@ -69,7 +69,7 @@ private:
      // most recent entry is at .size()-1
     unsigned            m_PlayingPosition = 0; // have meaningful value only when m_IsRecording==false
     bool                m_IsRecording = true;
-    string              m_LastNativeDirectory;
+    std::string         m_LastNativeDirectory;
     enum {              m_HistoryLength = 128 };
     core::VFSInstanceManager *m_VFSMgr = nullptr;
 };

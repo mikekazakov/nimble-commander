@@ -8,9 +8,9 @@ namespace nc {
 class AppDelegate
 {
 public:
-    static const string &ConfigDirectory();
-    static const string &StateDirectory();
-    static const string &SupportDirectory();
+    static const std::string &ConfigDirectory();
+    static const std::string &StateDirectory();
+    static const std::string &SupportDirectory();
     static const std::shared_ptr<NetworkConnectionsManager> &NetworkConnectionsManager();
     
 };

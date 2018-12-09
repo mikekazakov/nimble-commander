@@ -1,15 +1,15 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowThemesTabModel.h"
 
 @implementation PreferencesWindowThemesTabItemNode
 {
-    string m_Entry;
+    std::string m_Entry;
 }
 
 @synthesize entry = m_Entry;
 
 - (instancetype) initWithTitle:(NSString*)title
-                      forEntry:(const string&)entry
+                      forEntry:(const std::string&)entry
                         ofType:(PreferencesWindowThemesTabItemType)type
 {
     if( self = [super init] ) {
@@ -36,7 +36,7 @@
 @end
 
 static PreferencesWindowThemesTabItemNode* SpawnColorNode(NSString *_description,
-                                                          const string& _entry)
+                                                          const std::string& _entry)
 {
     return [[PreferencesWindowThemesTabItemNode alloc]
             initWithTitle:_description
@@ -45,7 +45,7 @@ static PreferencesWindowThemesTabItemNode* SpawnColorNode(NSString *_description
 }
 
 static PreferencesWindowThemesTabItemNode* SpawnFontNode(NSString *_description,
-                                                          const string& _entry)
+                                                          const std::string& _entry)
 {
     return [[PreferencesWindowThemesTabItemNode alloc]
             initWithTitle:_description
@@ -54,7 +54,7 @@ static PreferencesWindowThemesTabItemNode* SpawnFontNode(NSString *_description,
 }
 
 static PreferencesWindowThemesTabItemNode* SpawnColoringRulesNode(NSString *_description,
-                                                                  const string& _entry)
+                                                                  const std::string& _entry)
 {
     return [[PreferencesWindowThemesTabItemNode alloc]
             initWithTitle:_description
@@ -63,7 +63,7 @@ static PreferencesWindowThemesTabItemNode* SpawnColoringRulesNode(NSString *_des
 }
 
 static PreferencesWindowThemesTabItemNode* SpawnAppearanceNode(NSString *_description,
-                                                               const string& _entry)
+                                                               const std::string& _entry)
 {
     return [[PreferencesWindowThemesTabItemNode alloc]
             initWithTitle:_description

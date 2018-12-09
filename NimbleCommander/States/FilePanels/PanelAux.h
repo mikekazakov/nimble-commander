@@ -14,27 +14,27 @@ class PanelVFSFileWorkspaceOpener
 {
 public:
     // can be called from main thread - it will execute it's job in background
-    static void Open(string _filepath,
+    static void Open(std::string _filepath,
                      VFSHostPtr _host,
                      PanelController *_panel
                      );
     
-    static void Open(string _filepath,
+    static void Open(std::string _filepath,
                      VFSHostPtr _host,
-                     string _with_app_path, // can be "", use default app in such case
+                     std::string _with_app_path, // can be "", use default app in such case
                      PanelController *_panel
                      );
     
-    static void Open(std::vector<string> _filepaths,
+    static void Open(std::vector<std::string> _filepaths,
                      VFSHostPtr _host,
                      NSString *_with_app_bundle, // can be nil, use default app in such case
                      PanelController *_panel
                      );
     
-    static void OpenInExternalEditorTerminal(string _filepath,
+    static void OpenInExternalEditorTerminal(std::string _filepath,
                                              VFSHostPtr _host,
                                              std::shared_ptr<ExternalEditorStartupInfo> _ext_ed,
-                                             string _file_title,
+                                             std::string _file_title,
                                              PanelController *_panel);
 };
 

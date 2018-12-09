@@ -14,7 +14,7 @@ namespace nc::panel {
 static const auto g_MaxTimeRange = 60 * 60 * 24 * 14; // 14 days range for bothering with visits
 
 static std::shared_ptr<const FavoriteLocationsStorage::Location>
-Encode( const VFSHost &_host, const string &_directory )
+Encode( const VFSHost &_host, const std::string &_directory )
 {
     auto location = PanelDataPersisency::EncodeLocation( _host, _directory );
     if( !location )
@@ -44,7 +44,7 @@ FavoriteLocationsStorageImpl::
 std::shared_ptr<const FavoriteLocationsStorage::Location> FavoriteLocationsStorageImpl::
 FindInVisitsOrEncode(size_t _footprint,
                      VFSHost &_host,
-                     const string &_directory)
+                     const std::string &_directory)
 {
     const auto visit = m_Visits.find(_footprint);
     if( visit != end(m_Visits) )
@@ -73,8 +73,8 @@ void FavoriteLocationsStorageImpl::AddFavoriteLocation( Favorite _favorite )
 
 std::optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
     ComposeFavoriteLocation(VFSHost &_host,
-                            const string &_directory,
-                            const string &_title) const
+                            const std::string &_directory,
+                            const std::string &_title) const
 {
     const auto location = Encode(_host, _directory);
     if( !location )
@@ -96,7 +96,8 @@ std::optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
     return std::move(f);
 }
 
-void FavoriteLocationsStorageImpl::ReportLocationVisit( VFSHost &_host, const string &_directory )
+void FavoriteLocationsStorageImpl::
+    ReportLocationVisit( VFSHost &_host, const std::string &_directory )
 {
     dispatch_assert_main_queue();
     const auto timestamp = time(nullptr);
@@ -279,7 +280,7 @@ std::optional<FavoriteLocationsStorage::Favorite> FavoriteLocationsStorageImpl::
         f.title = _json["title"].GetString();
     
     auto fp_string = PanelDataPersisency::MakeFootprintString(f.location->hosts_stack);
-    f.footprint = std::hash<string>()(fp_string);
+    f.footprint = std::hash<std::string>()(fp_string);
     return std::move(f);
 }
 
@@ -328,7 +329,7 @@ void FavoriteLocationsStorageImpl::LoadData( config::Config &_config, const char
         for( int i = 0, e = automatic.Size(); i != e; ++i )
             if( auto v = JSONToVisit(automatic[i]) ) {
                 auto fp_string = PanelDataPersisency::MakeFootprintString(v->location->hosts_stack);
-                auto fp = std::hash<string>()(fp_string);                
+                auto fp = std::hash<std::string>()(fp_string);                
                 m_Visits[fp] = std::move( *v );
             }
     }

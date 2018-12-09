@@ -18,7 +18,7 @@ boost::uuids::uuid NetworkConnectionsManager::MakeUUID()
     return gen();
 }
 
-static const string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
+static const std::string& PrefixForShareProtocol( NetworkConnectionsManager::LANShare::Protocol p )
 {
     static const auto smb = "smb"s, afp = "afp"s, nfs = "nfs"s, unknown = ""s;
     if( p == NetworkConnectionsManager::LANShare::Protocol::SMB ) return smb;
@@ -34,7 +34,7 @@ struct ConnectionPathBuilder : public NetworkConnectionsManager::ConnectionVisit
     {
         connection.Accept(*this);
     }
-    string Path()
+    std::string Path()
     {
         return move(path);
     }
@@ -66,16 +66,16 @@ private:
             (webdav.path.empty() ? "" :  "/" + webdav.path );
     }
     
-    string path;
+    std::string path;
     const NetworkConnectionsManager::Connection &connection;
 };
 
-string NetworkConnectionsManager::MakeConnectionPath(const Connection &_connection)
+std::string NetworkConnectionsManager::MakeConnectionPath(const Connection &_connection)
 {
     return ConnectionPathBuilder{_connection}.Path();
 }
 
-string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)
+std::string NetworkConnectionsManager::TitleForConnection(const Connection &_conn)
 {
     return _conn.Title().empty() ?
         MakeConnectionPath(_conn) :
@@ -88,7 +88,7 @@ NetworkConnectionsManager::Connection::Connection() :
     throw std::domain_error("invalid connection construction");
 }
 
-const string& NetworkConnectionsManager::Connection::Title() const noexcept
+const std::string& NetworkConnectionsManager::Connection::Title() const noexcept
 {
     return m_Object->Title();
 }

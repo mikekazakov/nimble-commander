@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -40,7 +40,7 @@ bool operator!=(const PresentationItemsColoringFilter&_lhs,
 
 struct PresentationItemsColoringRule
 {
-    string                          name;
+    std::string                     name;
     NSColor                        *regular = NSColor.blackColor; // all others state text color
     NSColor                        *focused = NSColor.blackColor; // focused text color
     PresentationItemsColoringFilter filter;    

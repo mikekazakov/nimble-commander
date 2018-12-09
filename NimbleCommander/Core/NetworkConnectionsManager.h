@@ -26,7 +26,7 @@ public:
      * e.g. sftp://migun@192.168.2.1, dropbox://mike.kazakov@gmail.com,
      * sftp://migun@magnumbytes.com.
      */
-    static string MakeConnectionPath(const Connection &_conn);
+    static std::string MakeConnectionPath(const Connection &_conn);
     
     /**
      * Returns a verbose title for connections with the following format:
@@ -34,7 +34,7 @@ public:
      * or when there's no title:
      * path
      */
-    static string TitleForConnection(const Connection &_conn);
+    static std::string TitleForConnection(const Connection &_conn);
 
     virtual std::optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const = 0;
     virtual std::optional<Connection> ConnectionForVFS(const VFSHost& _vfs) const = 0 ;
@@ -49,10 +49,10 @@ public:
     virtual std::vector<Connection> SFTPConnectionsByMRU() const = 0;
     virtual std::vector<Connection> LANShareConnectionsByMRU() const = 0;
     
-    virtual bool SetPassword(const Connection &_conn, const string& _password) = 0;
-    virtual bool GetPassword(const Connection &_conn, string& _password) = 0;
+    virtual bool SetPassword(const Connection &_conn, const std::string& _password) = 0;
+    virtual bool GetPassword(const Connection &_conn, std::string& _password) = 0;
     
-    virtual bool AskForPassword(const Connection &_conn, string& _password) = 0;
+    virtual bool AskForPassword(const Connection &_conn, std::string& _password) = 0;
     
     /**
      * May throw VFSErrorException on error.
@@ -60,14 +60,15 @@ public:
     virtual std::shared_ptr<VFSHost> SpawnHostFromConnection(const Connection &_conn,
                                                         bool _allow_password_ui = true) = 0;
 
-    using MountShareCallback = std::function<void(const string&_mounted_path, const string&_error)>;
+    using MountShareCallback = std::function<void(const std::string&_mounted_path,
+                                                  const std::string&_error)>;
     /**
      * MountShareAsync assumes that _conn is a Network share, exits immediately otherwise.
      * _callback will be called in the future, either with a string containing a mount path, or
      * with reason of failure.
      */
     virtual bool MountShareAsync(const Connection &_conn,
-                                 const string &_password,
+                                 const std::string &_password,
                                  MountShareCallback _callback) = 0;
 };
 
@@ -118,7 +119,7 @@ public:
     
     void Accept( NetworkConnectionsManager::ConnectionVisitor &_visitor ) const;
 
-    const string& Title() const noexcept;
+    const std::string& Title() const noexcept;
     const boost::uuids::uuid& Uuid() const noexcept;
 
     bool operator==(const Connection&_rhs) const noexcept;
@@ -132,7 +133,7 @@ private:
 class NetworkConnectionsManager::BaseConnection
 {
 public:
-    string              title; // arbitrary user-defined title
+    std::string         title; // arbitrary user-defined title
     boost::uuids::uuid  uuid;
     bool operator==(const BaseConnection&_rhs) const noexcept;
 };
@@ -140,9 +141,9 @@ public:
 class NetworkConnectionsManager::FTP : public NetworkConnectionsManager::BaseConnection
 {
 public:
-    string user;
-    string host;
-    string path;
+    std::string user;
+    std::string host;
+    std::string path;
     long   port;
     bool operator==(const FTP&_rhs) const noexcept;
 };
@@ -150,9 +151,9 @@ public:
 class NetworkConnectionsManager::SFTP : public NetworkConnectionsManager::BaseConnection
 {
 public:
-    string user;
-    string host;
-    string keypath;
+    std::string user;
+    std::string host;
+    std::string keypath;
     long   port;
     bool operator==(const SFTP&_rhs) const noexcept;
 };
@@ -165,10 +166,10 @@ public:
         AFP = 1,
         NFS = 2
     };
-    string host; // host adress in ip or network name form. should not have protocol specification.
-    string user; // empty user means 'guest'
-    string share; // must be not empty at the time, to eliminate a need for UI upon connection
-    string mountpoint; // empty mountpoint means that system will decide it itself
+    std::string host; // host adress in ip or network name form. should not have protocol specification.
+    std::string user; // empty user means 'guest'
+    std::string share; // must be not empty at the time, to eliminate a need for UI upon connection
+    std::string mountpoint; // empty mountpoint means that system will decide it itself
     Protocol proto;
     bool operator==(const LANShare&_rhs) const noexcept;
 };
@@ -176,16 +177,16 @@ public:
 class NetworkConnectionsManager::Dropbox : public NetworkConnectionsManager::BaseConnection
 {
 public:
-    string account;
+    std::string account;
     bool operator==(const Dropbox&_rhs) const noexcept;
 };
 
 class NetworkConnectionsManager::WebDAV : public NetworkConnectionsManager::BaseConnection
 {
 public:
-    string host;
-    string path;
-    string user;
+    std::string host;
+    std::string path;
+    std::string user;
     int port;
     bool https;
     bool operator==(const WebDAV&_rhs) const noexcept;
@@ -194,7 +195,7 @@ public:
 struct NetworkConnectionsManager::Connection::Concept
 {
     virtual ~Concept() = default;
-    virtual const string& Title() const noexcept = 0;
+    virtual const std::string& Title() const noexcept = 0;
     virtual const boost::uuids::uuid& Uuid() const noexcept = 0;
     virtual void Accept( NetworkConnectionsManager::ConnectionVisitor &_visitor ) const = 0;
     virtual const std::type_info &TypeID() const noexcept = 0;
@@ -211,7 +212,7 @@ struct NetworkConnectionsManager::Connection::Model final :
     {
     }
     
-    virtual const string& Title() const noexcept override
+    virtual const std::string& Title() const noexcept override
     {
         return obj.title;
     }

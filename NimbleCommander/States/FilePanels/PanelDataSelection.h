@@ -13,9 +13,9 @@ public:
     // it would be good to transform these methods into something like this:
     // pair<vector<unsigned>,vector<bool>> to reduce redundant operations.
      
-    std::vector<bool> SelectionByExtension(const string &_extension,
+    std::vector<bool> SelectionByExtension(const std::string &_extension,
                                            bool _result_selection = true ) const;
-    std::vector<bool> SelectionByMask(const string &_mask,
+    std::vector<bool> SelectionByMask(const std::string &_mask,
                                       bool _result_selection = true ) const;
     
     std::vector<bool> InvertSelection() const;

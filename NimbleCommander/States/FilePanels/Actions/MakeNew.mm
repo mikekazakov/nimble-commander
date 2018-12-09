@@ -15,7 +15,7 @@ namespace nc::panel::actions {
 
 using namespace std::literals;
 
-static const auto g_InitialFileName = []() -> string {
+static const auto g_InitialFileName = []() -> std::string {
     NSString *stub = NSLocalizedString(@"untitled.txt",
                                        "Name for freshly created file by hotkey");
     if( stub && stub.length  )
@@ -24,7 +24,7 @@ static const auto g_InitialFileName = []() -> string {
     return "untitled.txt";
 }();
 
-static const auto g_InitialFolderName = []() -> string {
+static const auto g_InitialFolderName = []() -> std::string {
     NSString *stub = NSLocalizedString(@"untitled folder",
                                        "Name for freshly create folder by hotkey");
     if( stub && stub.length  )
@@ -33,7 +33,7 @@ static const auto g_InitialFolderName = []() -> string {
     return "untitled folder";
 }();
 
-static const auto g_InitialFolderWithItemsName = []() -> string {
+static const auto g_InitialFolderWithItemsName = []() -> std::string {
     NSString *stub = NSLocalizedString(@"New Folder with Items",
                                        "Name for freshly created folder by hotkey with items");
     if( stub && stub.length  )
@@ -42,7 +42,7 @@ static const auto g_InitialFolderWithItemsName = []() -> string {
     return "New Folder with Items";
 }();
 
-static string NextName( const string& _initial, int _index )
+static std::string NextName( const std::string& _initial, int _index )
 {
     boost::filesystem::path p = _initial;
     if( p.has_extension() ) {
@@ -54,7 +54,7 @@ static string NextName( const string& _initial, int _index )
         return p.native() + " " + std::to_string(_index);
 }
 
-static bool HasEntry( const string &_name, const VFSListing &_listing )
+static bool HasEntry( const std::string &_name, const VFSListing &_listing )
 {
     // naive O(n) implementation, may cause troubles on huge listings
     for( int i = 0, e = _listing.Count(); i != e; ++i )
@@ -63,7 +63,7 @@ static bool HasEntry( const string &_name, const VFSListing &_listing )
     return false;
 }
 
-static string FindSuitableName( const string& _initial, const VFSListing &_listing )
+static std::string FindSuitableName( const std::string& _initial, const VFSListing &_listing )
 {
     auto name = _initial;
     if( !HasEntry(name, _listing) )
@@ -79,7 +79,7 @@ static string FindSuitableName( const string& _initial, const VFSListing &_listi
     return name;
 }
 
-static void ScheduleRenaming( const string& _filename, PanelController *_panel )
+static void ScheduleRenaming( const std::string& _filename, PanelController *_panel )
 {
     __weak PanelController *weak_panel = _panel;
     DelayedFocusing req;
@@ -93,7 +93,7 @@ static void ScheduleRenaming( const string& _filename, PanelController *_panel )
     [_panel scheduleDelayedFocusing:req];
 }
 
-static void ScheduleFocus( const string& _filename, PanelController *_panel )
+static void ScheduleFocus( const std::string& _filename, PanelController *_panel )
 {
     DelayedFocusing req;
     req.filename = _filename;
@@ -221,13 +221,13 @@ bool MakeNewNamedFolder::Predicate( PanelController *_target ) const
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
-static bool ValidateDirectoryInput(const string &_text)
+static bool ValidateDirectoryInput(const std::string &_text)
 {
     const auto max_len = 256;
     if( _text.empty() || _text.length() > max_len )
         return false;
     static const auto invalid_chars = ":\\\r\t\n";
-    return _text.find_first_of(invalid_chars) == string::npos;
+    return _text.find_first_of(invalid_chars) == std::string::npos;
 }
     
 void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
@@ -242,8 +242,8 @@ void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
     [_target.mainWindowController beginSheet:cd.window
                            completionHandler:^(NSModalResponse returnCode) {
         if( returnCode == NSModalResponseOK && !cd.result.empty() ) {
-            const string name = cd.result;
-            const string dir = _target.currentDirectoryPath;
+            const std::string name = cd.result;
+            const std::string dir = _target.currentDirectoryPath;
             const auto vfs = _target.vfs;
             const bool force_reload = vfs->IsDirChangeObservingAvailable(dir.c_str()) == false;
             __weak PanelController *weak_panel = _target;
@@ -252,7 +252,7 @@ void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
             const auto weak_op = std::weak_ptr<nc::ops::DirectoryCreation>{op};
             op->ObserveUnticketed(nc::ops::Operation::NotifyAboutCompletion, [=]{
                 const auto &dir_names = weak_op.lock()->DirectoryNames();
-                const string to_focus = dir_names.empty() ? ""s : dir_names.front();
+                const std::string to_focus = dir_names.empty() ? ""s : dir_names.front();
                 dispatch_to_main_queue([=]{
                     if( PanelController *panel = weak_panel ) {
                         if( force_reload )

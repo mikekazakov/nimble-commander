@@ -16,10 +16,10 @@ using namespace std::literals;
 
 static const auto g_Suffix = "copy"s; // TODO: localize
 
-static std::unordered_set<string> ExtractFilenames( const VFSListing &_listing );
-static string ProduceFormCLowercase(std::string_view _string);
-static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
-                                            const std::unordered_set<string> &_filenames);
+static std::unordered_set<std::string> ExtractFilenames( const VFSListing &_listing );
+static std::string ProduceFormCLowercase(std::string_view _string);
+static std::string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
+                                                 const std::unordered_set<std::string> &_filenames);
 static void CommonPerform(PanelController *_target, const std::vector<VFSListingItem> &_items);
 
 bool Duplicate::Predicate( PanelController *_target ) const
@@ -98,10 +98,10 @@ void context::Duplicate::Perform( PanelController *_target, id _sender ) const
     CommonPerform(_target, m_Items);
 }
 
-static std::pair<int, string> ExtractExistingDuplicateInfo( const string &_filename )
+static std::pair<int, std::string> ExtractExistingDuplicateInfo( const std::string &_filename )
 {
     const auto suffix_pos = _filename.rfind(g_Suffix);
-    if( suffix_pos == string::npos )
+    if( suffix_pos == std::string::npos )
         return {-1, {}};
     
     if( suffix_pos + g_Suffix.length() >= _filename.length() - 1 )
@@ -116,8 +116,9 @@ static std::pair<int, string> ExtractExistingDuplicateInfo( const string &_filen
     }
 }
 
-static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
-                                            const std::unordered_set<string> &_filenames)
+static std::string FindFreeFilenameToDuplicateIn
+    (const VFSListingItem& _item,
+     const std::unordered_set<std::string> &_filenames)
 {
     const auto max_duplicates = 100;
     const auto filename = _item.FilenameWithoutExt();
@@ -143,15 +144,15 @@ static string FindFreeFilenameToDuplicateIn(const VFSListingItem& _item,
     return "";
 }
 
-static std::unordered_set<string> ExtractFilenames( const VFSListing &_listing )
+static std::unordered_set<std::string> ExtractFilenames( const VFSListing &_listing )
 {
-    std::unordered_set<string> filenames;
+    std::unordered_set<std::string> filenames;
     for( int i = 0, e = _listing.Count(); i != e; ++i )
         filenames.emplace( ProduceFormCLowercase(_listing.Filename(i)) );
     return filenames;
 }
 
-static string ProduceFormCLowercase(std::string_view _string)
+static std::string ProduceFormCLowercase(std::string_view _string)
 {
     CFStackAllocator allocator;
 

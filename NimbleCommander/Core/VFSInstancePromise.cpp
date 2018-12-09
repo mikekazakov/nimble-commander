@@ -86,7 +86,7 @@ uint64_t VFSInstancePromise::id() const
     return inst_id;
 }
 
-string VFSInstancePromise::verbose_title() const
+std::string VFSInstancePromise::verbose_title() const
 {
     return manager ? manager->GetVerboseVFSTitle(*this) : "";
 }

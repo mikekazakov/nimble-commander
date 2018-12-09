@@ -13,7 +13,7 @@ namespace nc::panel {
     (std::function<nc::panel::FavoriteLocationsStorage&()>)_favorites_storage;
 
 @property (nonatomic)
-    std::function< std::vector<std::pair<VFSHostPtr, string>>() > provideCurrentUniformPaths;
+    std::function< std::vector<std::pair<VFSHostPtr, std::string>>() > provideCurrentUniformPaths;
 
 - (void) show;
 

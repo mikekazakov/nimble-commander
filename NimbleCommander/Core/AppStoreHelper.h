@@ -7,7 +7,7 @@
 
 @interface AppStoreHelper : NSObject<SKProductsRequestDelegate, SKPaymentTransactionObserver>
 
-@property (nonatomic) std::function<void(const string &_id)> onProductPurchased;
+@property (nonatomic) std::function<void(const std::string &_id)> onProductPurchased;
 @property (nonatomic, readonly) NSString *priceString;
 @property (nonatomic, readonly) SKProduct *proFeaturesProduct;
 
@@ -20,4 +20,4 @@
 
 #endif
 
-string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle );
+std::string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle );

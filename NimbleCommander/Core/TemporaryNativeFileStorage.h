@@ -11,16 +11,16 @@ public:
     /**
      * Thread-safe.
      */
-    std::optional<string> CopySingleFile( const string &_vfs_filepath, VFSHost &_host );
+    std::optional<std::string> CopySingleFile( const std::string &_vfs_filepath, VFSHost &_host );
 
     // _vfs_dirpath may be with trailing slash or without
-    bool CopyDirectory(const string &_vfs_dirpath,
+    bool CopyDirectory(const std::string &_vfs_dirpath,
                        const VFSHostPtr &_host,
                        uint64_t _max_total_size,
                        std::function<bool()> _cancel_checker,
-                       string &_tmp_dirpath);
+                       std::string &_tmp_dirpath);
     
-    std::optional<string> WriteStringIntoTempFile( const string& _source);
+    std::optional<std::string> WriteStringIntoTempFile( const std::string& _source);
     
                        
     static TemporaryNativeFileStorage &Instance();
@@ -31,9 +31,9 @@ private:
     TemporaryNativeFileStorage(const TemporaryNativeFileStorage&) = delete;
     void operator =(const TemporaryNativeFileStorage&) = delete;
   
-    string NewTempDir(); // can run from any thread
+    std::string NewTempDir(); // can run from any thread
     bool GetSubDirForFilename(const char *_filename, char *_full_path); // can run from any thread
     
     std::mutex      m_SubDirsLock;
-    std::vector<string>  m_SubDirs; // modifications should be guarded with m_ControlQueue
+    std::vector<std::string>  m_SubDirs; // modifications should be guarded with m_ControlQueue
 };

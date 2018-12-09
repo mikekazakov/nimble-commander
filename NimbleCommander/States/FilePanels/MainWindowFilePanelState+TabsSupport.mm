@@ -129,10 +129,10 @@ didDropTabViewItem:(NSTabViewItem *)tabViewItem
     // empty or unselected tab view?
 }
 
-static string TabNameForController( PanelController* _controller )
+static std::string TabNameForController( PanelController* _controller )
 {
     boost::filesystem::path p = _controller.currentDirectoryPath;
-    string name = p == "/" ? p.native() : p.parent_path().filename().native();
+    std::string name = p == "/" ? p.native() : p.parent_path().filename().native();
     if( name == "/" && _controller.isUniform && _controller.vfs->Parent() ) {
         // source file name for vfs like archives and xattr
         name = boost::filesystem::path(_controller.vfs->JunctionPath()).filename().native();

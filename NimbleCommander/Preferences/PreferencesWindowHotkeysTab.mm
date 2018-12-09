@@ -8,15 +8,15 @@
 #include "PreferencesWindowHotkeysTab.h"
 
 static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item);
-static NSString *ComposeVerboseNonMenuActionTitle(const string &_action);
+static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action);
 static NSString *ComposeExternalToolTitle( const ExternalTool& _et, unsigned _index);
-static NSString *LabelTitleForAction( const string &_action, NSMenuItem *_item_for_tag );
+static NSString *LabelTitleForAction( const std::string &_action, NSMenuItem *_item_for_tag );
 
 namespace {
 
 struct ActionShortcutNode
 {
-    std::pair<string,int> tag;
+    std::pair<std::string,int> tag;
     ActionShortcut  current_shortcut;
     ActionShortcut  default_shortcut;
     NSString *label = @"";
@@ -60,7 +60,7 @@ enum class SourceType
 
 @implementation PreferencesWindowHotkeysTab
 {
-    std::vector<std::pair<string,int>>                  m_Shortcuts;
+    std::vector<std::pair<std::string,int>>                  m_Shortcuts;
     std::function<ExternalToolsStorage&()>              m_ToolsStorage;
     ExternalToolsStorage::ObservationTicket             m_ToolsObserver;
     std::vector<std::shared_ptr<const ExternalTool>>    m_Tools;
@@ -481,7 +481,7 @@ static bool ValidateNodeForFilter( const std::any& _node, NSString *_filter )
 
 @end
 
-static NSString *LabelTitleForAction( const string &_action, NSMenuItem *_item_for_tag )
+static NSString *LabelTitleForAction( const std::string &_action, NSMenuItem *_item_for_tag )
 {
     if( auto menu_item_title = ComposeVerboseMenuItemTitle(_item_for_tag) )
         return menu_item_title;
@@ -507,7 +507,7 @@ static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item)
     return title;
 }
 
-static NSString *ComposeVerboseNonMenuActionTitle(const string &_action)
+static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action)
 {
     static const std::vector< std::pair<const char *, NSString *> > titles = {
         {"panel.move_up",                       NSLocalizedString(@"File Panels ▶ Move Up", "")},

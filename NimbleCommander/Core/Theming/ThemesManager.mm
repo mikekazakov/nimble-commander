@@ -12,7 +12,7 @@ static const auto g_NameKey = "themeName";
 static std::shared_ptr<Theme> g_CurrentTheme;
 
 using TMN = ThemesManager::Notifications;
-static const fixed_eytzinger_map<string, uint64_t> g_EntryToNotificationMapping = {
+static const fixed_eytzinger_map<std::string, uint64_t> g_EntryToNotificationMapping = {
 {"themeAppearance", TMN::Appearance },
 {"filePanelsColoringRules_v1",          TMN::FilePanelsGeneral },
 {"filePanelsGeneralDropBorderColor",    TMN::FilePanelsGeneral },
@@ -115,7 +115,7 @@ void ThemesManager::LoadThemes()
     for( auto i = themes.Begin(), e = themes.End(); i != e; ++i ) {
         if( !i->IsObject() )
             continue;
-        const string name = [&]()->string{
+        const std::string name = [&]()->std::string{
             if( !i->HasMember(g_NameKey) || !(*i)[g_NameKey].IsString() )
                 return "";
             return (*i)[g_NameKey].GetString();
@@ -142,7 +142,7 @@ void ThemesManager::LoadDefaultThemes()
     for( auto i = themes.Begin(), e = themes.End(); i != e; ++i ) {
         if( !i->IsObject() )
             continue;
-        const string name = [&]()->string{
+        const std::string name = [&]()->std::string{
             if( !i->HasMember(g_NameKey) || !(*i)[g_NameKey].IsString() )
                 return "";
             return (*i)[g_NameKey].GetString();
@@ -158,7 +158,7 @@ void ThemesManager::LoadDefaultThemes()
     }
 }
 
-string ThemesManager::SelectedThemeName() const
+std::string ThemesManager::SelectedThemeName() const
 {
     return m_SelectedThemeName;
 }
@@ -174,7 +174,7 @@ std::shared_ptr<const nc::config::Value> ThemesManager::SelectedThemeData() cons
 }
 
 std::shared_ptr<const nc::config::Value> ThemesManager::
-    ThemeData( const string &_theme_name ) const
+    ThemeData( const std::string &_theme_name ) const
 {
     auto it = m_Themes.find( _theme_name );
     if( it != end(m_Themes) )
@@ -185,7 +185,7 @@ std::shared_ptr<const nc::config::Value> ThemesManager::
 }
 
 std::shared_ptr<const nc::config::Value> ThemesManager::
-    BackupThemeData(const string &_theme_name) const
+    BackupThemeData(const std::string &_theme_name) const
 {
     auto i = m_DefaultThemes.find( _theme_name );
     if( i != end(m_DefaultThemes) )
@@ -198,14 +198,14 @@ std::shared_ptr<const nc::config::Value> ThemesManager::
     assert( "default config is corrupted, there's no Modern theme" == nullptr );
 }
 
-static uint64_t NotificationMaskForKey( const string &_key )
+static uint64_t NotificationMaskForKey( const std::string &_key )
 {
     const auto it = g_EntryToNotificationMapping.find( _key );
     return it != end(g_EntryToNotificationMapping) ? it->second : 0;
 }
 
-bool ThemesManager::SetThemeValue(const string &_theme_name,
-                                  const string &_key,
+bool ThemesManager::SetThemeValue(const std::string &_theme_name,
+                                  const std::string &_key,
                                   const nc::config::Value &_value)
 {
     auto it = m_Themes.find( _theme_name );
@@ -268,7 +268,7 @@ const Theme &ThemesManager::SelectedTheme() const
     return *g_CurrentTheme;
 }
 
-std::vector<string> ThemesManager::ThemeNames() const
+std::vector<std::string> ThemesManager::ThemeNames() const
 {
     return m_OrderedThemeNames;
 }
@@ -288,7 +288,7 @@ void ThemesManager::WriteThemes() const
     GlobalConfig().Set( m_ThemesStoragePath, json_themes );
 }
 
-bool ThemesManager::SelectTheme( const string &_theme_name )
+bool ThemesManager::SelectTheme( const std::string &_theme_name )
 {
     if( m_SelectedThemeName == _theme_name )
         return true;
@@ -315,12 +315,12 @@ ThemesManager::ObservationTicket ThemesManager::
     return AddObserver( move(_callback), _notification_mask );
 }
 
-bool ThemesManager::HasDefaultSettings( const string &_theme_name ) const
+bool ThemesManager::HasDefaultSettings( const std::string &_theme_name ) const
 {
     return m_DefaultThemes.count(_theme_name) != 0;
 }
 
-bool ThemesManager::DiscardThemeChanges( const string &_theme_name )
+bool ThemesManager::DiscardThemeChanges( const std::string &_theme_name )
 {
     auto ci = m_Themes.find(_theme_name);
     if( ci == end(m_Themes) )
@@ -346,7 +346,7 @@ bool ThemesManager::DiscardThemeChanges( const string &_theme_name )
     return true;
 }
 
-bool ThemesManager::ImportThemeData(const string &_theme_name,
+bool ThemesManager::ImportThemeData(const std::string &_theme_name,
                                     const nc::config::Value &_data)
 {
     if( _data.GetType() != rapidjson::kObjectType )
@@ -397,7 +397,7 @@ bool ThemesManager::ImportThemeData(const string &_theme_name,
     return true;
 }
 
-bool ThemesManager::AddTheme(const string &_theme_name,
+bool ThemesManager::AddTheme(const std::string &_theme_name,
                              const nc::config::Value &_data)
 {
     if( _theme_name.empty() || m_Themes.count(_theme_name) )
@@ -420,7 +420,7 @@ bool ThemesManager::AddTheme(const string &_theme_name,
     return true;
 }
 
-string ThemesManager::SuitableNameForNewTheme( const string &_current_theme_name ) const
+std::string ThemesManager::SuitableNameForNewTheme( const std::string &_current_theme_name ) const
 {
     const auto themes = ThemeNames();
     
@@ -435,12 +435,12 @@ string ThemesManager::SuitableNameForNewTheme( const string &_current_theme_name
     return "";
 }
 
-bool ThemesManager::CanBeRemoved( const string &_theme_name ) const
+bool ThemesManager::CanBeRemoved( const std::string &_theme_name ) const
 {
     return m_Themes.count(_theme_name) && !HasDefaultSettings( _theme_name );
 }
 
-bool ThemesManager::RemoveTheme( const string &_theme_name )
+bool ThemesManager::RemoveTheme( const std::string &_theme_name )
 {
     if( !CanBeRemoved(_theme_name) )
         return false;
@@ -460,12 +460,12 @@ bool ThemesManager::RemoveTheme( const string &_theme_name )
     return true;
 }
 
-bool ThemesManager::CanBeRenamed( const string &_theme_name ) const
+bool ThemesManager::CanBeRenamed( const std::string &_theme_name ) const
 {
     return m_Themes.count(_theme_name) && !HasDefaultSettings( _theme_name );
 }
 
-bool ThemesManager::RenameTheme( const string &_theme_name, const string &_to_name )
+bool ThemesManager::RenameTheme( const std::string &_theme_name, const std::string &_to_name )
 {
     if( _theme_name == _to_name )
         return false;

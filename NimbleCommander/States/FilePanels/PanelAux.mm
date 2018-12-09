@@ -56,9 +56,9 @@ static std::chrono::milliseconds UploadingDropDelay()
     return delay;
 }
 
-static void RegisterRemoteFileUploading(const string& _original_path,
+static void RegisterRemoteFileUploading(const std::string& _original_path,
                                         const VFSHostPtr& _original_vfs,
-                                        const string &_native_path,
+                                        const std::string &_native_path,
                                         PanelController *_origin )
 {
     if( _original_vfs->IsNativeFS() )
@@ -115,7 +115,7 @@ static void RegisterRemoteFileUploading(const string& _original_path,
                        UploadingDropDelay());
 }
 
-void PanelVFSFileWorkspaceOpener::Open(string _filename,
+void PanelVFSFileWorkspaceOpener::Open(std::string _filename,
                                        std::shared_ptr<VFSHost> _host,
                                        PanelController *_panel
                                        )
@@ -123,9 +123,9 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
     Open(_filename, _host, "", _panel);
 }
 
-void PanelVFSFileWorkspaceOpener::Open(string _filename,
+void PanelVFSFileWorkspaceOpener::Open(std::string _filename,
                                        std::shared_ptr<VFSHost> _host,
-                                       string _with_app_path,
+                                       std::string _with_app_path,
                                        PanelController *_panel
                                        )
 {
@@ -189,7 +189,7 @@ void PanelVFSFileWorkspaceOpener::Open(string _filename,
 }
 
 // TODO: write version with FlexListingItem as an input - it would be much simplier
-void PanelVFSFileWorkspaceOpener::Open(std::vector<string> _filenames,
+void PanelVFSFileWorkspaceOpener::Open(std::vector<std::string> _filenames,
                                        std::shared_ptr<VFSHost> _host,
                                        NSString *_with_app_bundle, // can be nil, use default app in such case
                                        PanelController *_panel
@@ -243,10 +243,10 @@ void PanelVFSFileWorkspaceOpener::Open(std::vector<string> _filenames,
     });
 }
 
-void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
+void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(std::string _filepath,
                                                                VFSHostPtr _host,
                                                                std::shared_ptr<ExternalEditorStartupInfo> _ext_ed,
-                                                               string _file_title,
+                                                               std::string _file_title,
                                                                PanelController *_panel)
 {
     assert( !_filepath.empty() && _host && _ext_ed && _panel );
@@ -291,8 +291,8 @@ void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(string _filepath,
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item)
 {
-    static const std::vector<string> extensions = []{
-        std::vector<string> v;
+    static const std::vector<std::string> extensions = []{
+        std::vector<std::string> v;
         auto exts_string = GlobalConfig().GetString(g_ConfigExecutableExtensionsWhitelist);
         if( auto extensions_array = [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","] )
             for( NSString *s: extensions_array )
@@ -361,8 +361,8 @@ bool IsExtensionInArchivesWhitelist( const char *_ext ) noexcept
 {
     if( !_ext )
         return false;
-    static const std::vector<string> archive_extensions = []{
-        std::vector<string> v;
+    static const std::vector<std::string> archive_extensions = []{
+        std::vector<std::string> v;
         auto exts_string = GlobalConfig().GetString(g_ConfigArchivesExtensionsWhieList);
         if( auto extensions_array = [[NSString stringWithUTF8StdString:exts_string] componentsSeparatedByString:@","] )
             for( NSString *s: extensions_array )

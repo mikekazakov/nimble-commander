@@ -40,7 +40,7 @@ void GoToFolder::Perform( PanelController *_target, id _sender ) const
     }];
 }
 
-static void GoToNativeDir( const string& _path, PanelController *_target )
+static void GoToNativeDir( const std::string& _path, PanelController *_target )
 {
     auto request = std::make_shared<DirectoryChangeRequest>();
     request->RequestedDirectory = _path;
@@ -153,8 +153,8 @@ void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
             if( const auto parent_vfs = vfs->Parent() ) {
                 boost::filesystem::path junct = vfs->JunctionPath();
                 assert(!junct.empty());
-                string dir = junct.parent_path().native();
-                string sel_fn = junct.filename().native();
+                std::string dir = junct.parent_path().native();
+                std::string sel_fn = junct.filename().native();
                                 
                 auto request = std::make_shared<DirectoryChangeRequest>();
                 request->RequestedDirectory = dir;
@@ -167,8 +167,8 @@ void GoToEnclosingFolder::Perform( PanelController *_target, id _sender ) const
             }
         }
         else {
-            string dir = cur.parent_path().remove_filename().native();
-            string sel_fn = cur.parent_path().filename().native();
+            std::string dir = cur.parent_path().remove_filename().native();
+            std::string sel_fn = cur.parent_path().filename().native();
             
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = dir;
@@ -245,7 +245,7 @@ void GoIntoFolder::Perform( PanelController *_target, id _sender ) const
             
             auto task = [item, _target]( const std::function<bool()> &_cancelled ) {
                 auto pwd_ask = [=]{
-                    string p;
+                    std::string p;
                     return RunAskForPasswordModalWindow(item.Filename(), p) ? p : "";
                 };
                 

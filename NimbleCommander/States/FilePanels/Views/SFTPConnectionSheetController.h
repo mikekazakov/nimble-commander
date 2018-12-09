@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/SheetController.h>
@@ -9,7 +9,7 @@
                                                             NSTextFieldDelegate>
 
 @property (nonatomic) NetworkConnectionsManager::Connection connection;
-@property (nonatomic) string password;
+@property (nonatomic) std::string password;
 @property (nonatomic) bool setupMode;
 
 @end

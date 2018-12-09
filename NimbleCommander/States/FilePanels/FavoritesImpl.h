@@ -17,14 +17,14 @@ public:
     void AddFavoriteLocation( Favorite _favorite ) override;
     
     std::optional<Favorite> ComposeFavoriteLocation(VFSHost &_host,
-                                                    const string &_directory,
-                                                    const string &_title = "" ) const override;
+                                                    const std::string &_directory,
+                                                    const std::string &_title = "" ) const override;
     
     void SetFavorites( const std::vector<Favorite> &_new_favorites ) override;
     std::vector<Favorite> Favorites( /*limit output later?*/ ) const override;
     
     // Recent locations management
-    void ReportLocationVisit( VFSHost &_host, const string &_directory ) override;
+    void ReportLocationVisit( VFSHost &_host, const std::string &_directory ) override;
     std::vector< std::shared_ptr<const Location> > FrecentlyUsed( int _amount ) const override;
     void ClearVisitedLocations() override;
     
@@ -44,7 +44,7 @@ private:
     
     std::shared_ptr<const Location> FindInVisitsOrEncode(size_t _footprint,
                                                     VFSHost &_host,
-                                                    const string &_directory);
+                                                    const std::string &_directory);
     
     void LoadData( config::Config &_config, const char *_path );
     

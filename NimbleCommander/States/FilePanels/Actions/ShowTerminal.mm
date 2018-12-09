@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShowTerminal.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
@@ -17,7 +17,7 @@ bool ShowTerminal::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuIt
     
 void ShowTerminal::Perform( MainWindowFilePanelState *_target, id _sender ) const
 {
-    string path = "";
+    std::string path = "";
     
     if( auto pc = _target.activePanelController )
         if(  pc.isUniform && pc.vfs->IsNativeFS() )

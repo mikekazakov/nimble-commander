@@ -372,14 +372,14 @@ VFSHostPtr VFSInstanceManagerImpl::
     return host;
 }
 
-string VFSInstanceManagerImpl::GetVerboseVFSTitle( const Promise &_promise )
+std::string VFSInstanceManagerImpl::GetVerboseVFSTitle( const Promise &_promise )
 {
     if( !_promise )
         return "";
     assert( InstanceFromPromise(_promise) == this );
     
     LOCK_GUARD(m_MemoryLock) {
-        string title;
+        std::string title;
         uint64_t next = _promise.id();
         while( next > 0 ) {
             auto info = InfoFromID_Unlocked( next );

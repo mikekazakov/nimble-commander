@@ -8,11 +8,11 @@
 {
     std::vector<NSString *>  m_Items;
     int                 m_MaxItems;
-    string              m_ConfigPath;
+    std::string         m_ConfigPath;
     bool                m_Clean;
 }
 
-- (instancetype)initWithStateConfigPath:(const string&)path
+- (instancetype)initWithStateConfigPath:(const std::string&)path
 {
     self = [super init];
     if(self) {

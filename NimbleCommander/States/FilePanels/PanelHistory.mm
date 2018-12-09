@@ -133,7 +133,7 @@ const History::Path* History::RewindAt(size_t _indx)
     return CurrentPlaying();
 }
 
-const string &History::LastNativeDirectoryVisited() const noexcept
+const std::string &History::LastNativeDirectoryVisited() const noexcept
 {
     return m_LastNativeDirectory;
 }

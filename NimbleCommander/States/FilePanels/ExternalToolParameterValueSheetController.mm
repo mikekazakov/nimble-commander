@@ -12,13 +12,13 @@
 
 @implementation ExternalToolParameterValueSheetController
 {
-    std::vector<string> m_ValueNames;
-    std::vector<string> m_Values;
+    std::vector<std::string> m_ValueNames;
+    std::vector<std::string> m_Values;
 }
 
 @synthesize values = m_Values;
 
-- (id) initWithValueNames:(std::vector<string>)_names
+- (id) initWithValueNames:(std::vector<std::string>)_names
 {
     self = [super init];
     if( self ) {

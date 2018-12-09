@@ -12,14 +12,14 @@
 @property (nonatomic) bool isWorking;
 @property (nonatomic) bool sumsAvailable;
 @property (nonatomic) bool didSaved;
-@property (nonatomic, readonly) string savedFilename;
+@property (nonatomic, readonly) std::string savedFilename;
 @property (nonatomic) IBOutlet NSTableColumn *filenameTableColumn;
 @property (nonatomic) IBOutlet NSTableColumn *checksumTableColumn;
 
-- (id)initWithFiles:(std::vector<string>)files
+- (id)initWithFiles:(std::vector<std::string>)files
           withSizes:(std::vector<uint64_t>)sizes
              atHost:(const VFSHostPtr&)host
-             atPath:(string)path;
+             atPath:(std::string)path;
 
 - (IBAction)OnClose:(id)sender;
 - (IBAction)OnCalc:(id)sender;

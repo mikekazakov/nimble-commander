@@ -42,7 +42,7 @@ void SelectAllByExtension::Perform( PanelController *_target, id _sender ) const
     if( !item )
         return;
     
-    const string extension = item.HasExtension() ? item.Extension() : "";
+    const std::string extension = item.HasExtension() ? item.Extension() : "";
     auto selector = data::SelectionBuilder(_target.data,
                                            _target.ignoreDirectoriesOnSelectionByMask);
     auto selection = selector.SelectionByExtension(extension, m_ResultSelection);
@@ -61,7 +61,7 @@ void SelectAllByMask::Perform( PanelController *_target, id _sender ) const
     __weak PanelController *wp = _target;
     view.handler = [wp, this](NSString *_mask) {
         if( PanelController *panel = wp ) {
-            string mask = _mask.fileSystemRepresentationSafe;
+            std::string mask = _mask.fileSystemRepresentationSafe;
             if( !utility::FileMask::IsWildCard(mask) )
                 mask = utility::FileMask::ToExtensionWildCard(mask);
             

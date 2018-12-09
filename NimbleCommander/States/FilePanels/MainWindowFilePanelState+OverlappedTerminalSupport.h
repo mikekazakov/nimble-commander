@@ -27,7 +27,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport
 - (void) feedOverlappedTerminalWithCurrentFilename;
 - (void) feedOverlappedTerminalWithFilenamesMenu;
 
-- (bool) executeInOverlappedTerminalIfPossible:(const string&)_filename at:(const string&)_path;
+- (bool) executeInOverlappedTerminalIfPossible:(const std::string&)_filename
+                                            at:(const std::string&)_path;
 
 - (bool) isAnythingRunningInOverlappedTerminal;
 

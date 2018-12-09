@@ -83,7 +83,7 @@ static const auto g_MaxTextWidth = 600;
         [self handlePersistentLocation:(*favorite_ptr)->hosts_stack];
     else if( auto favorite = std::any_cast<FavoriteLocationsStorage::Location>(&_context) )
         [self handlePersistentLocation:favorite->hosts_stack];     
-    else if( auto plain_path = std::any_cast<string>(&_context) ) {
+    else if( auto plain_path = std::any_cast<std::string>(&_context) ) {
         auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = *plain_path;
         request->VFS = VFSNativeHost::SharedHost();
@@ -101,7 +101,7 @@ static const auto g_MaxTextWidth = 600;
         request->InitiatedByUser = true;
         [m_Panel GoToDirWithContext:request];
     }
-    else if( auto promise = std::any_cast<std::pair<nc::core::VFSInstancePromise, string>>(&_context) )
+    else if( auto promise = std::any_cast<std::pair<nc::core::VFSInstancePromise, std::string>>(&_context) )
         [self handleVFSPromiseInstance:promise->first path:promise->second];
     else if( auto listing_promise = std::any_cast<nc::panel::ListingPromise>(&_context) )
         nc::panel::ListingPromiseLoader{}.Load(*listing_promise, m_Panel);
@@ -202,7 +202,7 @@ static std::vector<VFSPath> OtherWindowsPaths( MainWindowFilePanelState *_curren
     return other_paths;
 }
 
-static std::vector<std::pair<core::VFSInstancePromise, string>>
+static std::vector<std::pair<core::VFSInstancePromise, std::string>>
     ProduceLocationsForParentDirectories(const VFSListing &_listing,
                                          core::VFSInstanceManager &_vfs_mgr )
 {
@@ -211,7 +211,7 @@ static std::vector<std::pair<core::VFSInstancePromise, string>>
         throw std::invalid_argument(msg);
     }
     
-    std::vector<std::pair<core::VFSInstancePromise, string>> result;
+    std::vector<std::pair<core::VFSInstancePromise, std::string>> result;
     
     auto host = _listing.Host();
     boost::filesystem::path dir = _listing.Directory();
@@ -256,7 +256,7 @@ public:
     NSMenuItem *MenuItemForConnection( const NetworkConnectionsManager::Connection &_c );
     NSMenuItem *MenuItemForPath( const VFSPath &_p );
     NSMenuItem *MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
-                                          const string &_path);
+                                          const std::string &_path);
     NSMenuItem *MenuItemForListingPromise(const ListingPromise &_promise);
 
 private:
@@ -676,10 +676,10 @@ NSMenuItem *MenuItemBuilder::MenuItemForPath( const VFSPath &_p )
 }
 
 NSMenuItem *MenuItemBuilder::MenuItemForPromiseAndPath(const core::VFSInstanceManager::Promise &_promise,
-                                      const string &_path)
+                                      const std::string &_path)
 {
     auto menu_item = [[NSMenuItem alloc] init];
-    auto data = std::pair<core::VFSInstanceManager::Promise, string>{_promise, _path};
+    auto data = std::pair<core::VFSInstanceManager::Promise, std::string>{_promise, _path};
     menu_item.representedObject = [[AnyHolder alloc] initWithAny:std::any{move(data)}];
     menu_item.target = m_ActionTarget;
     menu_item.action = @selector(callout:);

@@ -22,7 +22,7 @@ struct PanelViewLayout
         /*Thumbs = 2 */
     };
     
-    string name;
+    std::string name;
     std::any layout; // perhaps switch to variant?
     // may be PanelListViewColumnsLayout, PanelBriefViewColumnsLayout or
     // PanelViewDisabledLayout at the moment.

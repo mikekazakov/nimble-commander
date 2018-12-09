@@ -9,7 +9,7 @@
 - (void)markNextFilenamePart;
 
 @property (nonatomic, readonly) VFSListingItem originalItem;
-@property (nonatomic) void (^onTextEntered)(const string &_new_filename);
+@property (nonatomic) void (^onTextEntered)(const std::string &_new_filename);
 @property (nonatomic) void (^onEditingFinished)();
 
 @end

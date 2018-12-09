@@ -39,7 +39,7 @@ static NSTextField *CreateStockTF()
     NSTextField *m_TextVolumeTotalBytes;
     NSTextField *m_TextVolumeAvailBytes;
     
-    string m_TargetVFSPath;
+    std::string m_TargetVFSPath;
     std::shared_ptr<VFSHost> m_TargetVFSHost;
     bool m_IsRight;
     NSTimer                      *m_UpdateTimer;
@@ -473,7 +473,7 @@ static NSTextField *CreateStockTF()
     m_TextVolumeAvailBytes.stringValue = [m_BytesFormatter stringFromNumber:[NSNumber numberWithLong:m_StatFS.avail_bytes]];
 }
 
-- (void) UpdateVFSTarget:(const string&)_path host:(std::shared_ptr<VFSHost>)_host
+- (void) UpdateVFSTarget:(const std::string&)_path host:(std::shared_ptr<VFSHost>)_host
 {
     if( m_TargetVFSHost == _host && m_TargetVFSPath == _path )
         return;

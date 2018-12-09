@@ -116,7 +116,7 @@ static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingIt
             return i.Host() == _items.front().Host();
           });
         if( same_host ) {
-            std::vector<string> items;
+            std::vector<std::string> items;
             for(auto &i: _items)
                 items.emplace_back( i.Path() );
             PanelVFSFileWorkspaceOpener::Open(items,
@@ -127,7 +127,7 @@ static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingIt
     }
     else if( _items.size() == 1 ) {
         auto &item = _items.front();
-        string path = item.IsDotDot() ? item.Directory() : item.Path();
+        std::string path = item.IsDotDot() ? item.Directory() : item.Path();
         PanelVFSFileWorkspaceOpener::Open(path, item.Host(), _target);
     }
 }

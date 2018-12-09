@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "MainWindowStateProtocol.h"
@@ -21,9 +21,9 @@ namespace nc::ops {
 // Window state manipulations
 - (void)ResignAsWindowState:(id)_state;
 
-- (void)requestViewerFor:(string)_filepath at:(std::shared_ptr<VFSHost>) _host;
+- (void)requestViewerFor:(std::string)_filepath at:(std::shared_ptr<VFSHost>) _host;
 
-- (void)requestTerminal:(const string&)_cwd;
+- (void)requestTerminal:(const std::string&)_cwd;
 - (void)requestTerminalExecution:(const char*)_filename
                               at:(const char*)_cwd;
 - (void)requestTerminalExecution:(const char*)_filename
@@ -32,9 +32,9 @@ namespace nc::ops {
 - (void)requestTerminalExecutionWithFullPath:(const char*)_binary_path
                               withParameters:(const char*)_params;
 
-- (void)RequestExternalEditorTerminalExecution:(const string&)_full_app_path
-                                        params:(const string&)_params
-                                     fileTitle:(const string&)_file_title;
+- (void)RequestExternalEditorTerminalExecution:(const std::string&)_full_app_path
+                                        params:(const std::string&)_params
+                                     fileTitle:(const std::string&)_file_title;
 
 - (bool)restoreDefaultWindowStateFromConfig;
 + (bool)restoreDefaultWindowStateFromConfig:(MainWindowFilePanelState*)_state;

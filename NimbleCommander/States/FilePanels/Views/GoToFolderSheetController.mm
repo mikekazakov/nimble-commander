@@ -8,7 +8,8 @@
 
 static const auto g_StateGoToKey = "filePanel.goToSheetLastPath";
 
-static std::vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, const string& _prefix)
+static std::vector<unsigned> ListDirsWithPrefix
+    (const VFSListing& _listing, const std::string& _prefix)
 {
     std::vector<unsigned> result;
     
@@ -36,8 +37,8 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, cons
 
 @interface GoToFolderSheetController()
 
-@property (nonatomic, readonly) string currentDirectory; // return expanded value
-@property (nonatomic, readonly) string currentFilename;
+@property (nonatomic, readonly) std::string currentDirectory; // return expanded value
+@property (nonatomic, readonly) std::string currentFilename;
 @property (nonatomic) IBOutlet NSTextField *Text;
 @property (nonatomic) IBOutlet NSTextField *Error;
 @property (nonatomic) IBOutlet NSButton *GoButton;
@@ -51,7 +52,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, cons
 {
     std::function<void()>       m_Handler; // return VFS error code
     std::shared_ptr<VFSListing> m_LastListing;
-    string                      m_RequestedPath;
+    std::string                 m_RequestedPath;
 }
 @synthesize requestedPath = m_RequestedPath;
 
@@ -200,7 +201,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, cons
             [self updateUserInputWithAutocompetion:dir.fileSystemRepresentationSafe];
 }
 
-- (void) updateUserInputWithAutocompetion:(const string&)_dir_name
+- (void) updateUserInputWithAutocompetion:(const std::string&)_dir_name
 {
     boost::filesystem::path curr = self.Text.stringValue.fileSystemRepresentationSafe;
     
@@ -213,7 +214,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, cons
     self.Text.stringValue = [NSString stringWithUTF8StdString:curr.native()];
 }
 
-- (string) currentDirectory
+- (std::string) currentDirectory
 {
     boost::filesystem::path path = [self.panel expandPath:self.Text.stringValue.fileSystemRepresentationSafe];
     
@@ -226,7 +227,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, cons
     return path.native();
 }
 
-- (string) currentFilename
+- (std::string) currentFilename
 {
     boost::filesystem::path path = [self.panel expandPath:self.Text.stringValue.fileSystemRepresentationSafe];
     
@@ -237,7 +238,7 @@ static std::vector<unsigned> ListDirsWithPrefix(const VFSListing& _listing, cons
 }
 
 // sync operation with simple caching
-- (VFSListing*) listingFromDir:(const string&)_path
+- (VFSListing*) listingFromDir:(const std::string&)_path
 {
     if( _path.empty() )
         return nullptr;

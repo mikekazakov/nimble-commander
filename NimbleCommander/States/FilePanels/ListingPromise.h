@@ -14,7 +14,7 @@ public:
     struct UniformListing
     {
         core::VFSInstancePromise promise;
-        string directory;
+        std::string directory;
     };
     
     struct NonUniformListing

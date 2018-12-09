@@ -99,13 +99,18 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
  */
 - (void)PanelPathChanged:(PanelController*)_panel;
 
-@property (nonatomic, readonly) std::vector< std::tuple<string,VFSHostPtr> > filePanelsCurrentPaths; // result may contain duplicates
+/**
+ * result may contain duplicates
+ */
+@property (nonatomic, readonly)
+    std::vector< std::tuple<std::string,VFSHostPtr> > filePanelsCurrentPaths;
 
 
 - (id<NCPanelPreview>)quickLookForPanel:(PanelController*)_panel make:(bool)_make_if_absent;
 - (BriefSystemOverview*)briefSystemOverviewForPanel:(PanelController*)_panel make:(bool)_make_if_absent;
 
-- (void)requestTerminalExecution:(const string&)_filename at:(const string&)_cwd;
+- (void)requestTerminalExecution:(const std::string&)_filename
+                              at:(const std::string&)_cwd;
 - (void)closeAttachedUI:(PanelController*)_panel;
 
 - (nc::config::Value) encodeRestorableState;

@@ -14,7 +14,7 @@ namespace nc::panel::actions {
 
 static bool CommonDeletePredicate( PanelController *_target );
 static bool AllAreNative(const std::vector<VFSListingItem>& _c);
-static std::unordered_set<string> ExtractDirectories(const std::vector<VFSListingItem>& _c);
+static std::unordered_set<std::string> ExtractDirectories(const std::vector<VFSListingItem>& _c);
 static bool AllHaveTrash(const std::vector<VFSListingItem>& _c);
 static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
                                           const std::shared_ptr<nc::ops::Operation> &_operation );
@@ -148,9 +148,9 @@ static bool AllAreNative(const std::vector<VFSListingItem>& _c)
     });
 }
 
-static std::unordered_set<string> ExtractDirectories(const std::vector<VFSListingItem>& _c)
+static std::unordered_set<std::string> ExtractDirectories(const std::vector<VFSListingItem>& _c)
 {
-    std::unordered_set<string> directories;
+    std::unordered_set<std::string> directories;
     for(const auto &i: _c)
         directories.emplace( i.Directory() );
     return directories;

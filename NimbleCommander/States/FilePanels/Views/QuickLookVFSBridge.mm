@@ -6,7 +6,7 @@ namespace nc::panel {
 
 static const uint64_t g_MaxSize = 64*1024*1024; // 64mb
     
-NSURL *QuickLookVFSBridge::FetchItem( const string& _path, VFSHost &_host )
+NSURL *QuickLookVFSBridge::FetchItem( const std::string& _path, VFSHost &_host )
 {
     auto &storage = TemporaryNativeFileStorage::Instance();
     const auto is_dir = _host.IsDirectory(_path.c_str(), 0);
@@ -34,7 +34,7 @@ NSURL *QuickLookVFSBridge::FetchItem( const string& _path, VFSHost &_host )
             boost::filesystem::path(_path).filename() == boost::filesystem::path(_path).extension() )
             return nil;
         
-        string copied_path;
+        std::string copied_path;
         if( !storage.CopyDirectory(_path, _host.shared_from_this(), g_MaxSize, nullptr, copied_path) )
             return nil;
         

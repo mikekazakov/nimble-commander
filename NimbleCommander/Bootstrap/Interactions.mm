@@ -6,7 +6,7 @@
 
 namespace nc::bootstrap {
 
-std::optional<string> AskUserForLicenseFile()
+std::optional<std::string> AskUserForLicenseFile()
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.resolvesAliases = true;
@@ -22,7 +22,7 @@ std::optional<string> AskUserForLicenseFile()
     panel.message = NSLocalizedString(@"Please select your license file (.nimblecommanderlicense)", "");
     if( [panel runModal] == NSFileHandlingPanelOKButton )
         if(panel.URL != nil) {
-            string path = panel.URL.path.fileSystemRepresentationSafe;
+            std::string path = panel.URL.path.fileSystemRepresentationSafe;
             return path;
         }
     return std::nullopt;

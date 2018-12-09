@@ -18,15 +18,15 @@ using namespace nc::term;
     std::unique_ptr<Parser>     m_Parser;
     NCTermScrollView           *m_TermScrollView;
     boost::filesystem::path     m_BinaryPath;
-    string                      m_Params;
-    string                      m_FileTitle;
+    std::string                 m_Params;
+    std::string                 m_FileTitle;
     NSLayoutConstraint         *m_TopLayoutConstraint;
 }
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
                       binary:(const boost::filesystem::path&)_binary_path
-                      params:(const string&)_params
-                   fileTitle:(const string&)_file_title
+                      params:(const std::string&)_params
+                   fileTitle:(const std::string&)_file_title
 {
     self = [super initWithFrame:frameRect];
     if (self) {

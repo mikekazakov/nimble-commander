@@ -8,23 +8,24 @@
  * Copies currently focused entry name.
  * Return "" if there's no focused entry (invalid state).
  */
-@property (nonatomic, readonly) string currentFocusedEntryFilename;
+@property (nonatomic, readonly) std::string currentFocusedEntryFilename;
 
 /**
  * Copies currently focused item's full path relating to it's host.
  * Return "" if there's no focused entry (invalid state).
  */
-@property (nonatomic, readonly) string currentFocusedEntryPath;
+@property (nonatomic, readonly) std::string currentFocusedEntryPath;
 
 /** Copies current directory path with trailing slash relating to it's host. */
-@property (nonatomic, readonly) string currentDirectoryPath;
+@property (nonatomic, readonly) std::string currentDirectoryPath;
 
 /**
  * Return a list of selected entries filenames if any.
  * If no entries is selected - return currently focused element filename.
  * On case of only focused dot-dot entry return an empty list.
  */
-@property (nonatomic, readonly) std::vector<string> selectedEntriesOrFocusedEntryFilenames;
+@property (nonatomic, readonly)
+    std::vector<std::string> selectedEntriesOrFocusedEntryFilenames;
 
 /**
  * Like previous, but returns indeces in listing.
@@ -36,7 +37,8 @@
  * Return a list of selected entries filenames if any.
  * If no entries is selected - return currently focused element filename, including case of dot-dot.
  */
-@property (nonatomic, readonly) std::vector<string> selectedEntriesOrFocusedEntryFilenamesWithDotDot;
+@property (nonatomic, readonly)
+    std::vector<std::string> selectedEntriesOrFocusedEntryFilenamesWithDotDot;
 
 @property (nonatomic, readonly) std::vector<VFSListingItem> selectedEntriesOrFocusedEntry;
 
@@ -51,6 +53,6 @@
 /**
  * Expands path with replacting ./ or ~/
  */
-- (string) expandPath:(const string&)_ref;
+- (std::string) expandPath:(const std::string&)_ref;
 
 @end

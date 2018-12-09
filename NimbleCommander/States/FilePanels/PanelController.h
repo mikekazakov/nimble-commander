@@ -74,9 +74,9 @@ private:
 
 struct DelayedFocusing
 {
-    string          filename;
+    std::string filename;
     std::chrono::milliseconds timeout = std::chrono::milliseconds{500};
-    bool            check_now = true;
+    bool check_now = true;
 
     /**
      * called by PanelController when succesfully changed the cursor position regarding this request.
@@ -87,15 +87,15 @@ struct DelayedFocusing
 struct DirectoryChangeRequest
 {
     /* required */
-    string              RequestedDirectory      = "";
-    std::shared_ptr<VFSHost> VFS                = nullptr;
+    std::string RequestedDirectory = "";
+    std::shared_ptr<VFSHost> VFS = nullptr;
     
     /* optional */
-    string              RequestFocusedEntry     = "";
-    std::vector<string> RequestSelectedEntries  = {};
-    bool                PerformAsynchronous     = true;
-    bool                LoadPreviousViewState   = false;
-    bool                InitiatedByUser         = false;
+    std::string RequestFocusedEntry = "";
+    std::vector<std::string> RequestSelectedEntries = {};
+    bool PerformAsynchronous = true;
+    bool LoadPreviousViewState = false;
+    bool InitiatedByUser = false;
     
     /**
      * This will be called from a thread which is loading a vfs listing with
@@ -171,7 +171,7 @@ struct DirectoryChangeRequest
 - (void) panelViewDidChangePresentationLayout;
 
 // managing entries selection
-- (void) selectEntriesWithFilenames:(const std::vector<string>&)_filenames;
+- (void) selectEntriesWithFilenames:(const std::vector<std::string>&)_filenames;
 - (void) setEntriesSelection:(const std::vector<bool>&)_selection;
 
 
@@ -203,7 +203,8 @@ struct DirectoryChangeRequest
  */
 - (void) scheduleDelayedFocusing:(nc::panel::DelayedFocusing)request;
 
-- (void) requestQuickRenamingOfItem:(VFSListingItem)_item to:(const string&)_new_filename;
+- (void) requestQuickRenamingOfItem:(VFSListingItem)_item
+                                 to:(const std::string&)_new_filename;
 
 - (void)updateAttachedQuickLook;
 - (void)updateAttachedBriefSystemOverview;

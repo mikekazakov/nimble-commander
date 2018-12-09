@@ -57,7 +57,7 @@ public:
     /**
      * Will return empty string on any errors.
      */
-    virtual string GetVerboseVFSTitle( const Promise &_promise ) = 0;
+    virtual std::string GetVerboseVFSTitle( const Promise &_promise ) = 0;
     
     virtual std::vector<std::weak_ptr<VFSHost>> AliveHosts() = 0;
     

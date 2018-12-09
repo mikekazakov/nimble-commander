@@ -25,7 +25,7 @@ namespace {
 struct LookPath
 {
     VFSHostWeakPtr                              host;
-    string                                      path;
+    std::string                                 path;
     std::vector<FooterVolumeInfoFetcher*>       watchers;
     std::optional<VFSStatFS>                    current;
     bool                                        scheduled = false;
@@ -39,7 +39,9 @@ static const auto g_Delay = 5s;
 struct PanelViewFooterVolumeInfoFetcherInternals
 {
 
-static void AcceptResult( VFSHostWeakPtr _host, string _path, std::optional<VFSStatFS> _stat )
+static void AcceptResult(VFSHostWeakPtr _host,
+                         std::string _path,
+                         std::optional<VFSStatFS> _stat )
 {
     dispatch_assert_main_queue();
     
@@ -67,7 +69,7 @@ static void ScheduleIfNeed( LookPath &_lp, bool _hurry = false)
         return;
     
     VFSHostWeakPtr host = _lp.host;
-    string path = _lp.path;
+    std::string path = _lp.path;
     
     g_Queue.after( _hurry ? 0s : g_Delay, [=]{
         VFSStatFS stat;
@@ -82,7 +84,9 @@ static void ScheduleIfNeed( LookPath &_lp, bool _hurry = false)
     _lp.scheduled = true;
 }
 
-static const VFSStatFS* RegisterWatcher( FooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
+static const VFSStatFS* RegisterWatcher(FooterVolumeInfoFetcher* _w,
+                                        const VFSHostWeakPtr &_host,
+                                        const std::string& _path )
 {
     dispatch_assert_main_queue();
     
@@ -106,7 +110,9 @@ static const VFSStatFS* RegisterWatcher( FooterVolumeInfoFetcher* _w, const VFSH
     return nullptr;
 }
     
-static const VFSStatFS* Probe( FooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
+static const VFSStatFS* Probe(FooterVolumeInfoFetcher* _w,
+                              const VFSHostWeakPtr &_host,
+                              const std::string& _path )
 {
     dispatch_assert_main_queue();
     
@@ -121,7 +127,9 @@ static const VFSStatFS* Probe( FooterVolumeInfoFetcher* _w, const VFSHostWeakPtr
     return nullptr;
 }
 
-static void RemoveWatcher( FooterVolumeInfoFetcher* _w, const VFSHostWeakPtr &_host, const string& _path )
+static void RemoveWatcher(FooterVolumeInfoFetcher* _w,
+                          const VFSHostWeakPtr &_host,
+                          const std::string& _path )
 {
     dispatch_assert_main_queue();
     
@@ -160,7 +168,7 @@ void FooterVolumeInfoFetcher::SetCallback( std::function<void(const VFSStatFS&)>
 void FooterVolumeInfoFetcher::SetTarget( const VFSListingPtr &_listing )
 {
     VFSHostPtr current_host;
-    string current_path;
+    std::string current_path;
     if( _listing->IsUniform()  ) {
         // we're in regular directory somewhere
         current_host = _listing->Host();

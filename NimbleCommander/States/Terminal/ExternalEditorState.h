@@ -7,8 +7,8 @@
 
 - (id)initWithFrameAndParams:(NSRect)frameRect
                       binary:(const boost::filesystem::path&)_binary_path
-                      params:(const string&)_params
-                   fileTitle:(const string&)_file_title; // _file_title is used only for window title
+                      params:(const std::string&)_params
+                   fileTitle:(const std::string&)_file_title; // _file_title is used only for window title
 
 @end
 

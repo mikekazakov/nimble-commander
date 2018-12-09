@@ -194,8 +194,9 @@ static bool AskUserToDeleteTool()
             changed_tool.m_Parameters = self.toolParameters.stringValue.UTF8String;
             [self commitToolChanges:changed_tool];
             
-            string error;
-            ExternalToolsParametersParser().Parse(changed_tool.m_Parameters, [&](string _err){ error = _err; });
+            std::string error;
+            ExternalToolsParametersParser().Parse(changed_tool.m_Parameters,
+                                                  [&](std::string _err){ error = _err; });
             if( !error.empty() ) {
                 NSHelpManager *helpManager = [NSHelpManager sharedHelpManager];
                 [helpManager setContextHelp:[[NSAttributedString alloc] initWithString:[NSString stringWithUTF8StdString:error]]

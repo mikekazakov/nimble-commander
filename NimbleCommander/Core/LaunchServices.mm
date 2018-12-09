@@ -31,16 +31,16 @@ inline T all_equal_or_default(InputIterator _first,
     return val;
 }
 
-static string UTIForExtenstion(const string& _extension)
+static std::string UTIForExtenstion(const std::string& _extension)
 {
     static std::mutex guard;
-    static std::unordered_map<string, string> extension_to_uti_mapping;
+    static std::unordered_map<std::string, std::string> extension_to_uti_mapping;
     
     std::lock_guard<std::mutex> lock(guard);
     if( auto i = extension_to_uti_mapping.find(_extension); i != end(extension_to_uti_mapping) )
         return i->second;
     
-    string uti;
+    std::string uti;
     if( const auto ext = CFStringCreateWithUTF8StdStringNoCopy( _extension ) ) {
         const auto cf_uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
                                                                   ext,
@@ -56,9 +56,9 @@ static string UTIForExtenstion(const string& _extension)
     return uti;
 }
 
-static string GetDefaultHandlerPathForNativeItem( const string &_path )
+static std::string GetDefaultHandlerPathForNativeItem( const std::string &_path )
 {
-    string result;
+    std::string result;
     const auto url = CFURLCreateFromFileSystemRepresentation(0,
                                                              (const UInt8*)_path.c_str(),
                                                              _path.length(),
@@ -75,7 +75,7 @@ static string GetDefaultHandlerPathForNativeItem( const string &_path )
     return result;
 }
 
-static std::vector<string> GetHandlersPathsForNativeItem( const std::string &_path )
+static std::vector<std::string> GetHandlersPathsForNativeItem( const std::string &_path )
 {
     std::vector<std::string> result;
     const auto url = CFURLCreateFromFileSystemRepresentation(0,
@@ -91,7 +91,7 @@ static std::vector<string> GetHandlersPathsForNativeItem( const std::string &_pa
     return result;
 }
 
-static string GetDefaultHandlerPathForUTI( const string &_uti )
+static std::string GetDefaultHandlerPathForUTI( const std::string &_uti )
 {
     NSString *uti = [NSString stringWithUTF8StdString:_uti];
     if( !uti )
@@ -106,7 +106,7 @@ static string GetDefaultHandlerPathForUTI( const string &_uti )
     return "";
 }
 
-static std::vector<string> GetHandlersPathsForUTI( const string &_uti )
+static std::vector<std::string> GetHandlersPathsForUTI( const std::string &_uti )
 {
     NSString *uti = [NSString stringWithUTF8StdString:_uti];
     if( !uti )
@@ -116,7 +116,7 @@ static std::vector<string> GetHandlersPathsForUTI( const string &_uti )
         LSCopyAllRoleHandlersForContentType((__bridge CFStringRef)uti,
                                             kLSRolesAll);
     
-    std::vector<string> result;
+    std::vector<std::string> result;
     for( NSString* bundle in bundles )
         if( auto path = [NSWorkspace.sharedWorkspace absolutePathForAppBundleWithIdentifier:bundle] )
             result.emplace_back( path.fileSystemRepresentation );
@@ -161,10 +161,10 @@ LauchServicesHandlers::LauchServicesHandlers
     
     // maps handler path to usage amount
     // then use only handlers with usage amount == _input.size() (or common ones)
-    std::unordered_map<string, int> handlers_count;
+    std::unordered_map<std::string, int> handlers_count;
     for( auto &i:_handlers_to_merge ) {
         // a very inefficient approach, should be rewritten if will cause lags on UI
-        std::unordered_set<string> inserted;
+        std::unordered_set<std::string> inserted;
         for( auto &p:i.m_Paths )
             // here we exclude multiple counting for repeating handlers for one content type
             if( !inserted.count(p) ) {
@@ -181,31 +181,31 @@ LauchServicesHandlers::LauchServicesHandlers
         }
 }
 
-const std::vector<string> &LauchServicesHandlers::HandlersPaths() const noexcept
+const std::vector<std::string> &LauchServicesHandlers::HandlersPaths() const noexcept
 {
     return m_Paths;
 }
 
-const string &LauchServicesHandlers::DefaultHandlerPath() const noexcept
+const std::string &LauchServicesHandlers::DefaultHandlerPath() const noexcept
 {
     return m_DefaultHandlerPath;
 }
 
-const string &LauchServicesHandlers::CommonUTI() const noexcept
+const std::string &LauchServicesHandlers::CommonUTI() const noexcept
 {
     return m_UTI;
 }
 
 struct CachedLaunchServiceHandler
 {
-    string      path;
+    std::string path;
     time_t      mtime;
     NSString   *name;
     NSImage    *icon;
     NSString   *version;
     NSString   *identifier;
     
-    static CachedLaunchServiceHandler GetLaunchHandlerInfo( const string &_handler_path )
+    static CachedLaunchServiceHandler GetLaunchHandlerInfo( const std::string &_handler_path )
     {
         std::lock_guard<std::mutex> lock{g_HandlersByPathLock};
         if( auto i = g_HandlersByPath.find(_handler_path);
@@ -220,7 +220,7 @@ struct CachedLaunchServiceHandler
     }
 
 private:
-    static CachedLaunchServiceHandler BuildLaunchHandler( const string &_handler_path )
+    static CachedLaunchServiceHandler BuildLaunchHandler( const std::string &_handler_path )
     {
         NSString *path = [NSString stringWithUTF8StdString:_handler_path];
         if( !path )
@@ -245,7 +245,7 @@ private:
         return h;
     }
 
-    static bool IsOutdated( const string &_path, time_t _mtime )
+    static bool IsOutdated( const std::string &_path, time_t _mtime )
     {
         struct stat st;
         if( stat(_path.c_str(), &st) != 0 )
@@ -265,14 +265,14 @@ private:
         return _image;
     }
 
-    static std::unordered_map<string, CachedLaunchServiceHandler> g_HandlersByPath;
+    static std::unordered_map<std::string, CachedLaunchServiceHandler> g_HandlersByPath;
     static std::mutex g_HandlersByPathLock;
 };
 
-std::unordered_map<string, CachedLaunchServiceHandler> CachedLaunchServiceHandler::g_HandlersByPath;
+std::unordered_map<std::string, CachedLaunchServiceHandler> CachedLaunchServiceHandler::g_HandlersByPath;
 std::mutex CachedLaunchServiceHandler::g_HandlersByPathLock;
 
-LaunchServiceHandler::LaunchServiceHandler( const string &_handler_path )
+LaunchServiceHandler::LaunchServiceHandler( const std::string &_handler_path )
 {
     auto handler = CachedLaunchServiceHandler::GetLaunchHandlerInfo(_handler_path);
     m_AppID = handler.identifier;
@@ -282,7 +282,7 @@ LaunchServiceHandler::LaunchServiceHandler( const string &_handler_path )
     m_Path = _handler_path;
 }
 
-const string &LaunchServiceHandler::Path() const noexcept
+const std::string &LaunchServiceHandler::Path() const noexcept
 {
     return m_Path;
 }
@@ -307,7 +307,7 @@ NSString *LaunchServiceHandler::Identifier() const noexcept
     return m_AppID;
 }
 
-bool LaunchServiceHandler::SetAsDefaultHandlerForUTI(const string &_uti) const
+bool LaunchServiceHandler::SetAsDefaultHandlerForUTI(const std::string &_uti) const
 {
     if( _uti.empty() )
         return false;

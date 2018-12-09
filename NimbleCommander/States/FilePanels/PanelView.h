@@ -46,7 +46,8 @@ namespace nc::panel {
  * called by controlled when a directory has been entirely changed in PanelData.
  * possibly focusing some file, may be "".
  */
-- (void) panelChangedWithFocusedFilename:(const string&)_focused_filename loadPreviousState:(bool)_load;
+- (void) panelChangedWithFocusedFilename:(const std::string&)_focused_filename
+                       loadPreviousState:(bool)_load;
 
 /**
  * called by controller to inform that internals of panel data object has changed (possibly reloaded).

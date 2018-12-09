@@ -8,12 +8,12 @@
 
 - (double) bottomGapForLines:(int)_lines_amount;
 - (int) totalScreenLines;
-- (void) runShell:(const string&)_initial_wd; // if _initital_wd is empty - use home directory
+- (void) runShell:(const std::string&)_initial_wd; // if _initital_wd is empty - use home directory
 - (void) focusTerminal;
-- (void) changeWorkingDirectory:(const string&)_new_dir;
-- (void) feedShellWithInput:(const string&)_input;
+- (void) changeWorkingDirectory:(const std::string&)_new_dir;
+- (void) feedShellWithInput:(const std::string&)_input;
 - (void) commitShell;
-- (void) runPasteMenu:(const std::vector<string>&)_strings;
+- (void) runPasteMenu:(const std::vector<std::string>&)_strings;
 
 - (bool) canFeedShellWithKeyDown:(NSEvent *)event;
 - (bool) feedShellWithKeyDown:(NSEvent *)event;
@@ -29,6 +29,6 @@
 @property (nonatomic) std::function<void()> onShellCWDChanged;
 @property (nonatomic) std::function<void()> onLongTaskStarted;
 @property (nonatomic) std::function<void()> onLongTaskFinished;
-@property (nonatomic, readonly) string cwd;
+@property (nonatomic, readonly) std::string cwd;
 
 @end

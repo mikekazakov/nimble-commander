@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.h>
 #include "../PanelController.h"
 #include "ShowVolumeInformation.h"
@@ -14,7 +14,7 @@ bool ShowVolumeInformation::Predicate( PanelController *_target ) const
 
 void ShowVolumeInformation::Perform( PanelController *_target, id _sender ) const
 {
-    string path;
+    std::string path;
     if( auto i = _target.view.item ) {
         if( !i.Host()->IsNativeFS() )
             return;

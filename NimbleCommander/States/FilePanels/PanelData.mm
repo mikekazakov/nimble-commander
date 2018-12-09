@@ -20,7 +20,7 @@ static inline SortMode DefaultSortMode()
 
 // returned string IS NOT NULL TERMINATED and MAY CONTAIN ZEROES INSIDE
 // a bit overkill, need to consider some simplier kind of keys
-static string LongEntryKey(const VFSListing& _l, unsigned _i)
+static std::string LongEntryKey(const VFSListing& _l, unsigned _i)
 {
     // host + dir + filename
     union {
@@ -32,7 +32,7 @@ static string LongEntryKey(const VFSListing& _l, unsigned _i)
     auto &directory = _l.Directory(_i);
     auto &filename = _l.Filename(_i);
     
-    string key;
+    std::string key;
     key.reserve( sizeof(host_addr) + directory.size() + filename.size() + 1 );
     key.append( std::begin(host_addr.b), std::end(host_addr.b) );
     key.append( directory );
@@ -40,9 +40,9 @@ static string LongEntryKey(const VFSListing& _l, unsigned _i)
     return key;
 }
 
-static std::vector<string> ProduceLongKeysForListing( const VFSListing& _l )
+static std::vector<std::string> ProduceLongKeysForListing( const VFSListing& _l )
 {
-    std::vector<string> keys;
+    std::vector<std::string> keys;
     keys.reserve( _l.Count() );
     for( unsigned i = 0, e = _l.Count(); i != e; ++i )
         keys.emplace_back( LongEntryKey(_l, i) );
@@ -50,7 +50,7 @@ static std::vector<string> ProduceLongKeysForListing( const VFSListing& _l )
 }
 
 static std::vector<unsigned>
-    ProduceSortedIndirectIndecesForLongKeys(const std::vector<string>& _keys)
+    ProduceSortedIndirectIndecesForLongKeys(const std::vector<std::string>& _keys)
 {
     std::vector<unsigned> src_keys_ind( _keys.size() );
     iota( begin(src_keys_ind), end(src_keys_ind), 0 );
@@ -258,7 +258,7 @@ const ItemVolatileData& Model::VolatileDataAtSortPosition( int _pos ) const
     return VolatileDataAtRawPosition( RawIndexForSortIndex(_pos) );
 }
 
-string Model::FullPathForEntry(int _raw_index) const
+std::string Model::FullPathForEntry(int _raw_index) const
 {
     if(_raw_index < 0 || _raw_index >= (int)m_Listing->Count())
         return "";
@@ -271,7 +271,7 @@ string Model::FullPathForEntry(int _raw_index) const
         auto i = t.rfind('/');
         if(i == 0)
             t.resize(i+1);
-        else if(i != string::npos)
+        else if(i != std::string::npos)
             t.resize(i);
         return t;
     }
@@ -318,35 +318,35 @@ int Model::SortedIndexForRawIndex(int _desired_raw_index) const
     return -1;
 }
 
-string Model::DirectoryPathWithoutTrailingSlash() const
+std::string Model::DirectoryPathWithoutTrailingSlash() const
 {
     if( !m_Listing->HasCommonDirectory() )
         return "";
 
-    string path = m_Listing->Directory(0);
+    std::string path = m_Listing->Directory(0);
     if( path.size() > 1 )
         path.pop_back();
     
     return path;
 }
 
-string Model::DirectoryPathWithTrailingSlash() const
+std::string Model::DirectoryPathWithTrailingSlash() const
 {
     if(!m_Listing->HasCommonDirectory())
         return "";
     return m_Listing->Directory();
 }
 
-string Model::DirectoryPathShort() const
+std::string Model::DirectoryPathShort() const
 {    
-    string tmp = DirectoryPathWithoutTrailingSlash();
+    std::string tmp = DirectoryPathWithoutTrailingSlash();
     auto i = tmp.rfind('/');
-    if(i != string::npos)
+    if(i != std::string::npos)
         return tmp.c_str() + i + 1;
     return "";
 }
 
-string Model::VerboseDirectoryFullPath() const
+std::string Model::VerboseDirectoryFullPath() const
 {
     if( !m_Listing || !m_Listing->IsUniform())
         return "";
@@ -360,7 +360,7 @@ string Model::VerboseDirectoryFullPath() const
         cur = cur->Parent().get();
     }
     
-    string s;
+    std::string s;
     while(hosts_n > 0)
         s += hosts[--hosts_n]->Configuration().VerboseJunction();
     s += m_Listing->Directory();
@@ -543,9 +543,9 @@ bool Model::CustomFlagsSelectSorted(const std::vector<bool>& _is_selected)
     return changed;
 }
 
-std::vector<string> Model::SelectedEntriesFilenames() const
+std::vector<std::string> Model::SelectedEntriesFilenames() const
 {
-    std::vector<string> list;
+    std::vector<std::string> list;
     for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
         if( m_VolatileData[i].is_selected() )
             list.emplace_back( m_Listing->Filename(i) );

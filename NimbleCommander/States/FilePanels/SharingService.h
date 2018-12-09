@@ -5,8 +5,8 @@
 
 @interface SharingService : NSObject<NSSharingServicePickerDelegate>
 
-- (void) ShowItems:(const std::vector<string>&)_entries
-             InDir:(string)_dir
+- (void) ShowItems:(const std::vector<std::string>&)_entries
+             InDir:(std::string)_dir
              InVFS:(std::shared_ptr<VFSHost>)_host
     RelativeToRect:(NSRect)_rect
             OfView:(NSView*)_view

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/NSEventModifierFlagsHolder.h>
@@ -6,7 +6,7 @@
 struct ActionShortcut
 {
     ActionShortcut();
-    ActionShortcut(const string& _from); // construct from persistency string, utf8
+    ActionShortcut(const std::string& _from); // construct from persistency string, utf8
     ActionShortcut(const char* _from); // construct from persistency string
     ActionShortcut(uint16_t  _unicode, unsigned long _modif); // construct from straight data
     
@@ -18,7 +18,7 @@ struct ActionShortcut
     NSString   *Key() const;
     NSString   *PrettyString() const;
 #endif
-    string      ToPersString() const;
+    std::string ToPersString() const;
     bool        IsKeyDown(uint16_t _unicode, uint64_t _modifiers) const noexcept;
     
     uint16_t                    unicode;

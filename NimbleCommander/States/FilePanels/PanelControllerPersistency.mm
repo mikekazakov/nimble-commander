@@ -78,7 +78,7 @@ static void EnsureNonEmptyStateAsync(PanelController *_panel)
 }
     
 static void RecoverSavedPathAtVFSAsync(const VFSHostPtr &_host,
-                                       const string &_path,
+                                       const std::string &_path,
                                        PanelController *_panel)
 {
     auto shared_request = std::make_shared<DirectoryChangeRequest>();

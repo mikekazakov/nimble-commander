@@ -25,9 +25,10 @@ static NSArray<NSURL*> *ExtractURLs(NSPasteboard *_source);
 static int CountItemsWithType( id<NSDraggingInfo> _sender, NSString *_type );
 static NSString *URLs_Promise_UTI();
 static NSString *URLs_UTI();
-static std::map<string, std::vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls);
+static std::map<std::string, std::vector<std::string>>
+    LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls);
 static std::vector<VFSListingItem>
-    FetchDirectoriesItems(const std::map<string, std::vector<string>>& _input, VFSHost& _host);
+    FetchDirectoriesItems(const std::map<std::string, std::vector<std::string>>& _input, VFSHost& _host);
 static void AddPanelRefreshIfNecessary(PanelController *_target,
                                        ops::Operation &_operation);
 static void AddPanelRefreshIfNecessary(PanelController *_target,
@@ -466,22 +467,23 @@ static NSString *URLs_UTI()
     return uti;
 }
 
-static std::map<string, std::vector<string>> LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls)
+static std::map<std::string, std::vector<std::string>>
+    LayoutURLsByDirectories(NSArray<NSURL*> *_file_urls)
 {
     if(!_file_urls)
         return {};
-    std::map<string, std::vector<string>> files; // directory/ -> [filename1, filename2, ...]
+    std::map<std::string, std::vector<std::string>> files; // directory/ -> [filename1, filename2, ...]
     for(NSURL *url in _file_urls) {
         if( !objc_cast<NSURL>(url) ) continue; // guard agains malformed input data
         boost::filesystem::path source_path = url.path.fileSystemRepresentation;
-        string root = source_path.parent_path().native() + "/";
+        std::string root = source_path.parent_path().native() + "/";
         files[root].emplace_back(source_path.filename().native());
     }
     return files;
 }
 
-static std::vector<VFSListingItem>
-    FetchDirectoriesItems(const std::map<string, std::vector<string>>& _input, VFSHost& _host)
+static std::vector<VFSListingItem> FetchDirectoriesItems
+    (const std::map<std::string, std::vector<std::string>>& _input, VFSHost& _host)
 {
     std::vector<VFSListingItem> source_items;
     for( const auto &dir: _input ) {

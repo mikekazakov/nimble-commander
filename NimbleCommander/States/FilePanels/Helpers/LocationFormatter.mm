@@ -12,11 +12,11 @@ namespace nc::panel::loc_fmt {
 static const auto g_IconSize = NSMakeSize(16, 16);
     
 static NSImage *ImageForPromiseAndPath(const core::VFSInstancePromise &_promise,
-                                       const string& _path );
+                                       const std::string& _path );
 static NSImage* ImageForLocation(const PersistentLocation &_location,
                                  const NetworkConnectionsManager &_conn_mgr);
 static NSImage* ImageForVFSPath(const VFSHost &_vfs,
-                                const string &_path);
+                                const std::string &_path);
 static NSString *NonNull(NSString *_string);
     
 ListingPromiseFormatter::Representation
@@ -165,7 +165,7 @@ VolumeFormatter::Render(RenderOptions _options,
 VFSPromiseFormatter::Representation
 VFSPromiseFormatter::Render(RenderOptions _options,
                             const core::VFSInstancePromise &_promise,
-                            const string &_path)
+                            const std::string &_path)
 {
     Representation rep;
     
@@ -184,7 +184,7 @@ VFSPromiseFormatter::Render(RenderOptions _options,
 VFSPathFormatter::Representation
 VFSPathFormatter::Render(RenderOptions _options,
                          const VFSHost &_vfs,
-                         const string &_path)
+                         const std::string &_path)
 {
     Representation rep;
     
@@ -201,7 +201,7 @@ VFSPathFormatter::Render(RenderOptions _options,
 }
 
 static NSImage *ImageForPromiseAndPath(const core::VFSInstancePromise &_promise,
-                                       const string& _path )
+                                       const std::string& _path )
 {
     if( _promise.tag() == VFSNativeHost::UniqueTag ) {
         static const auto workspace = NSWorkspace.sharedWorkspace;
@@ -223,7 +223,7 @@ static NSImage *ImageForPromiseAndPath(const core::VFSInstancePromise &_promise,
 }
     
 static NSImage* ImageForVFSPath(const VFSHost &_vfs,
-                                const string &_path)
+                                const std::string &_path)
 {
     if( _vfs.IsNativeFS() ) {
         static const auto workspace = NSWorkspace.sharedWorkspace;

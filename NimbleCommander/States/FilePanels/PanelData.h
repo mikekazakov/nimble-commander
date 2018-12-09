@@ -72,7 +72,7 @@ public:
     ItemVolatileData&       VolatileDataAtSortPosition( int _pos ); // will throw an exception upon invalid index
     const ItemVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
     
-    std::vector<string>          SelectedEntriesFilenames() const;
+    std::vector<std::string> SelectedEntriesFilenames() const;
     std::vector<VFSListingItem> SelectedEntries() const;
     
     /**
@@ -83,7 +83,7 @@ public:
     /**
      * will redirect ".." upwards
      */
-    string FullPathForEntry(int _raw_index) const;
+    std::string FullPathForEntry(int _raw_index) const;
     
     /**
      * Return _item position in sorted array, -1 if not found.
@@ -125,21 +125,21 @@ public:
     /**
      * return current directory in long variant starting from /
      */
-    string DirectoryPathWithoutTrailingSlash() const;
+    std::string DirectoryPathWithoutTrailingSlash() const;
 
     /**
      * same as DirectoryPathWithoutTrailingSlash() but path will ends with slash
      */
-    string DirectoryPathWithTrailingSlash() const;
+    std::string DirectoryPathWithTrailingSlash() const;
     
     /**
      * return name of a current directory in a parent directory.
      * returns a zero string for a root dir.
      */
-    string DirectoryPathShort() const;
+    std::string DirectoryPathShort() const;
     
     
-    string VerboseDirectoryFullPath() const;
+    std::string VerboseDirectoryFullPath() const;
     
     // sorting
     void SetSortMode(SortMode _mode);

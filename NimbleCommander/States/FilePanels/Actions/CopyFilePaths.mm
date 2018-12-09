@@ -14,7 +14,7 @@ static const char* Separator()
     return s.c_str();
 }
 
-static void WriteSingleStringToClipboard(const string &_s)
+static void WriteSingleStringToClipboard(const std::string &_s)
 {
     NSPasteboard *pb = NSPasteboard.generalPasteboard;
     [pb declareTypes:@[NSStringPboardType]
@@ -36,7 +36,10 @@ bool CopyFilePath::Predicate( PanelController *_source ) const
 void CopyFileName::Perform( PanelController *_source, id _sender ) const
 {
     const auto entries = _source.selectedEntriesOrFocusedEntry;
-    const auto result = accumulate( begin(entries), end(entries), string{}, [](auto &a, auto &b){
+    const auto result = std::accumulate(std::begin(entries),
+                                        std::end(entries),
+                                        std::string{},
+                                        [](auto &a, auto &b){
         return a + (a.empty() ? "" : Separator()) + b.Filename();
     });
     WriteSingleStringToClipboard( result );
@@ -45,7 +48,10 @@ void CopyFileName::Perform( PanelController *_source, id _sender ) const
 void CopyFilePath::Perform( PanelController *_source, id _sender ) const
 {
     const auto entries = _source.selectedEntriesOrFocusedEntry;
-    const auto result = accumulate( begin(entries), end(entries), string{}, [](auto &a, auto &b){
+    const auto result = std::accumulate(std::begin(entries),
+                                        end(entries),
+                                        std::string{},
+                                        [](auto &a, auto &b){
         return a + (a.empty() ? "" : Separator()) + b.Path();
     });
     WriteSingleStringToClipboard( result );

@@ -104,12 +104,12 @@
     return self.passwordEntered ? self.passwordEntered : @"";
 }
 
-- (string)password
+- (std::string)password
 {
     return self.passwordEntered ? self.passwordEntered.UTF8String : "";
 }
 
-- (void)setPassword:(string)password
+- (void)setPassword:(std::string)password
 {
     self.passwordEntered = [NSString stringWithUTF8StdString:password];
 }

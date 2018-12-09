@@ -5,7 +5,7 @@
 #include <VFS/Native.h>
 #include "TemporaryNativeFileChangesSentinel.h"
 
-static std::optional<std::vector<uint8_t>> CalculateFileHash(const string &_path)
+static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &_path)
 {
     const int chunk_sz = 1*1024*1024;
     VFSFilePtr file;
@@ -36,7 +36,7 @@ TemporaryNativeFileChangesSentinel &TemporaryNativeFileChangesSentinel::Instance
     return *inst;
 }
 
-bool TemporaryNativeFileChangesSentinel::WatchFile(const string& _path,
+bool TemporaryNativeFileChangesSentinel::WatchFile(const std::string& _path,
                                                    std::function<void()> _on_file_changed,
                                                    std::chrono::milliseconds _check_delay,
                                                    std::chrono::milliseconds _drop_delay )
@@ -82,7 +82,7 @@ void TemporaryNativeFileChangesSentinel::ScheduleItemDrop( const std::shared_ptr
     });
 }
 
-bool TemporaryNativeFileChangesSentinel::StopFileWatch( const string& _path )
+bool TemporaryNativeFileChangesSentinel::StopFileWatch( const std::string& _path )
 {
 //    cout << "stopping file watch: " << _path << endl;
 

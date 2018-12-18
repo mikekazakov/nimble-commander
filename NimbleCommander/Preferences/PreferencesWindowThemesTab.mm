@@ -193,6 +193,13 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
                                                                         i.entry.c_str());
                 v.action = @selector(onAppearanceChanged:);
                 v.target = self;
+                /* due to a issue with MAS review proccess the following compromise decision was
+                 made: let choosing UI appearance only for *non* standard themes.
+                 It (hopefuly) will reduce astonishment when user changes UI appearance of *current*
+                 theme instead of choosing a needed theme instead.
+                 */
+                v.enabled = self.selectedThemeCanBeReverted == false;
+                
                 return v;
             }
             if( i.type == PreferencesWindowThemesTabItemType::ThemeTitle ) {

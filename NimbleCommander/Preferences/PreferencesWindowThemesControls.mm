@@ -577,5 +577,15 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     return m_ThemeAppearance;
 }
 
+- (void)setEnabled:(bool)enabled
+{
+    m_Button.enabled = enabled;
+}
+
+- (bool)enabled
+{
+    return m_Button.enabled;
+}
+
 @end
 

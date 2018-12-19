@@ -39,5 +39,6 @@ namespace nc::panel {
     NCPreferencesActionTableCellView
 
 @property (nonatomic) ThemeAppearance themeAppearance;
+@property (nonatomic) bool enabled;
 
 @end

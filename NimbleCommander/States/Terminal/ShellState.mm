@@ -15,6 +15,8 @@
 #include <Term/View.h>
 #include <Term/ScrollView.h>
 #include "SettingsAdaptor.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/StringExtras.h>
 
 using namespace nc;
 using namespace nc::term;

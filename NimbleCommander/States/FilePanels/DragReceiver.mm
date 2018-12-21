@@ -5,11 +5,13 @@
 #include "PanelData.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Utility/NativeFSManager.h>
+#include <Utility/ObjCpp.h>
 #include "PanelAux.h"
 #include <Operations/Linkage.h>
 #include <Operations/Copying.h>
 #include "../MainWindowController.h"
 #include <VFS/Native.h>
+#include <map>
 
 namespace nc::panel {
 

@@ -4,6 +4,7 @@
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "FTPConnectionSheetController.h"
+#include <Utility/StringExtras.h>
 
 @interface FTPConnectionSheetController()
 @property (nonatomic) NSString *title;

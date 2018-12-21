@@ -278,11 +278,11 @@ int FromCFStringEncoding(int _encoding)
     }
 }
     
-const vector< pair<int, CFStringRef> >& LiteralEncodingsList()
+const std::vector< std::pair<int, CFStringRef> >& LiteralEncodingsList()
 {
-    static vector< pair<int, CFStringRef> > encodings;
-    static once_flag token;
-    call_once(token, []{
+    static std::vector< std::pair<int, CFStringRef> > encodings;
+    static std::once_flag token;
+    std::call_once(token, []{
 #define _(a) encodings.emplace_back(a, (CFStringRef)CFBridgingRetain(\
     [NSString localizedNameOfStringEncoding:CFStringConvertEncodingToNSStringEncoding(ToCFStringEncoding(a))]))
         _(ENCODING_MACOS_ROMAN_WESTERN);
@@ -347,7 +347,7 @@ int FromComAppleTextEncodingXAttr(const char *_xattr_value)
     if(*p == 0)
         return ENCODING_INVALID;
   
-    return FromCFStringEncoding(stoi(p));
+    return FromCFStringEncoding(std::stoi(p));
 }
     
 }

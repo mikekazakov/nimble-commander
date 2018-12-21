@@ -1,5 +1,6 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerToolbarProtocol.h"
+#include <Utility/ObjCpp.h>
 
 // this NSToolbarItem descent ensures that it's size is always in-sync with inlayed NSTextField's content width.
 // It changes it's .minSize and .maxSize as inserted view notifies that it's stringValue changes

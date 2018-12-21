@@ -1,9 +1,10 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkConnectionIconProvider.h"
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
 #include <VFS/NetDropbox.h>
 #include <VFS/NetWebDAV.h>
+#include <Cocoa/Cocoa.h>
 
 static const auto g_16px = NSMakeSize(16, 16);
 

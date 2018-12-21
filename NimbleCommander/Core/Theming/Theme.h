@@ -1,6 +1,11 @@
 // Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <stdint.h>
+#include <memory>
+#include <vector>
+#include <Cocoa/Cocoa.h>
+
 class Theme;
 class ThemesManager;
 namespace nc::panel {

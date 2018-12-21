@@ -4,6 +4,7 @@
 
 #include <VFS/VFS_fwd.h>
 #include <Config/ObjCBridge.h>
+#include <Cocoa/Cocoa.h>
 
 @class NCMainWindowController;
 @class InternalViewerWindowController;

@@ -6,6 +6,8 @@
 #include "DropboxAccountSheetController.h"
 #include "WebDAVConnectionSheetController.h"
 #include <Utility/SheetWithHotkeys.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>

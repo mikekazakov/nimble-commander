@@ -2,6 +2,8 @@
 #include <Habanero/algo.h>
 #include "VFSInstanceManagerImpl.h"
 #include <VFS/VFS.h>
+#include <iostream>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::core {
 

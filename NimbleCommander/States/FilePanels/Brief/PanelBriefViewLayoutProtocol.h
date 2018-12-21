@@ -2,6 +2,7 @@
 #pragma once
 
 #include <vector>
+#include <Cocoa/Cocoa.h>
 
 @protocol NCPanelBriefViewLayoutDelegate<NSObject>
 

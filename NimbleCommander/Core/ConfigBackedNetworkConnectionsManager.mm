@@ -10,6 +10,8 @@
 #pragma clang diagnostic pop
 #include <Habanero/algo.h>
 #include <Utility/KeychainServices.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 #include <Utility/NativeFSManager.h>
 #include <VFS/NetFTP.h>
 #include <VFS/NetSFTP.h>
@@ -17,6 +19,8 @@
 #include <VFS/NetWebDAV.h>
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
+#include <Habanero/spinlock.h>
+#include <Habanero/dispatch_cpp.h>
 
 using namespace nc;
 using namespace std::literals;

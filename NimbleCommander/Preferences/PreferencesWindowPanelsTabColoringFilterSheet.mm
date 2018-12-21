@@ -1,5 +1,6 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "PreferencesWindowPanelsTabColoringFilterSheet.h"
+#include <Utility/StringExtras.h>
 
 using nc::hbn::tribool;
 using nc::hbn::indeterminate;

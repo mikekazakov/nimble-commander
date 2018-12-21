@@ -3,6 +3,8 @@
 #include "QuickLookOverlay.h"
 #include <Utility/SystemInformation.h>
 #include "QuickLookVFSBridge.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/StringExtras.h>
 
 static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
 

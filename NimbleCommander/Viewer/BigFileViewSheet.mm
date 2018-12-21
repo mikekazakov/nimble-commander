@@ -1,8 +1,10 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "BigFileViewSheet.h"
 #include "InternalViewerController.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/ObjCpp.h>
 
 @interface BigFileViewSheet ()
 
@@ -25,13 +27,13 @@
 @implementation BigFileViewSheet
 {
     VFSHostPtr              m_VFS;
-    string                  m_Path;
-    unique_ptr<FileWindow>  m_FileWindow;
+    std::string             m_Path;
+    std::unique_ptr<FileWindow> m_FileWindow;
     
     InternalViewerController *m_Controller;
 }
 
-- (id) initWithFilepath:(string)path
+- (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
 {
     assert( dispatch_is_main_queue() );
@@ -94,7 +96,7 @@
     [self OnClose:self];
 }
 
-- (void)markInitialSelection:(CFRange)_selection searchTerm:(string)_request
+- (void)markInitialSelection:(CFRange)_selection searchTerm:(std::string)_request
 {
     [m_Controller markSelection:_selection forSearchTerm:_request];
 }

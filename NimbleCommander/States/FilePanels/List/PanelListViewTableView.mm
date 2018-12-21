@@ -5,6 +5,7 @@
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "../PanelView.h"
 #include "PanelListViewTableView.h"
+#include <Utility/ObjCpp.h>
 
 @interface PanelListViewTableView()
 

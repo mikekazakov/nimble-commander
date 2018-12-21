@@ -9,6 +9,8 @@
 #include "../MainWindowFilePanelState.h"
 #include "../../MainWindowController.h"
 #include <Operations/Copying.h>
+#include <unordered_set>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel::actions {
     

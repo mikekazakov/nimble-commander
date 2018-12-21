@@ -3,6 +3,7 @@
 #include <Utility/NSView+Sugar.h>
 #include "BigFileViewHex.h"
 #include "BigFileView.h"
+#include <cmath>
 
 static const int g_BytesPerHexLine = 16;
 static const int g_RowOffsetSymbs = 10;
@@ -68,7 +69,7 @@ BigFileViewHex::BigFileViewHex(BigFileViewDataBackend* _data, BigFileView* _view
 {
     m_View = _view;
     m_Data = _data;
-    m_FixupWindow = make_unique<UniChar[]>(m_Data->RawSize());
+    m_FixupWindow = std::make_unique<UniChar[]>(m_Data->RawSize());
     m_LeftInset = 5;
     
     GrabFontGeometry();
@@ -719,12 +720,12 @@ void BigFileViewHex::HandleSelectionWithMouseDragging(NSEvent* event)
     {
         CFRange orig_sel = [m_View SelectionWithinWindow];        
         uint64_t window_size = m_Data->RawSize();
-        int first_byte = clamp(ByteIndexFromHitTest(first_down), 0, (int)window_size);
+        int first_byte = std::clamp(ByteIndexFromHitTest(first_down), 0, (int)window_size);
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_byte = clamp(ByteIndexFromHitTest(loc), 0, (int)window_size);
+            int curr_byte = std::clamp(ByteIndexFromHitTest(loc), 0, (int)window_size);
 
             int base_byte = first_byte;
             if(modifying_existing_selection && orig_sel.length > 0)
@@ -753,12 +754,12 @@ void BigFileViewHex::HandleSelectionWithMouseDragging(NSEvent* event)
     else if(hit_part == HitPart::Text)
     {
         CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
-        int first_char = clamp(CharIndexFromHitTest(first_down), 0, (int)m_Data->UniCharsSize());
+        int first_char = std::clamp(CharIndexFromHitTest(first_down), 0, (int)m_Data->UniCharsSize());
         
         while ([event type]!=NSLeftMouseUp)
         {
             NSPoint loc = [m_View convertPoint:[event locationInWindow] fromView:nil];
-            int curr_char = clamp(CharIndexFromHitTest(loc), 0, (int)m_Data->UniCharsSize());
+            int curr_char = std::clamp(CharIndexFromHitTest(loc), 0, (int)m_Data->UniCharsSize());
             
             int base_char = first_char;
             if(modifying_existing_selection && orig_sel.length > 0)

@@ -2,6 +2,8 @@
 #pragma once
 
 #include <Utility/NSEventModifierFlagsHolder.h>
+#include <string>
+#include <stdint.h>
 
 struct ActionShortcut
 {

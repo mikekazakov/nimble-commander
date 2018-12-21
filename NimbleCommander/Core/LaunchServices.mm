@@ -2,6 +2,10 @@
 #include "LaunchServices.h"
 #include <sys/stat.h>
 #include <VFS/VFS.h>
+#include <Utility/StringExtras.h>
+#include <Cocoa/Cocoa.h>
+#include <unordered_map>
+#include <unordered_set>
 
 namespace nc::core {
 

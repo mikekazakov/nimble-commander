@@ -3,6 +3,7 @@
 #include "ActivationManager.h"
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/Alert.h>
+#include <Utility/StringExtras.h>
 
 namespace nc::bootstrap {
 

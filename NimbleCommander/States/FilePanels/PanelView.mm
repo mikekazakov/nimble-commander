@@ -1,9 +1,11 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PanelView.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
 #include <Utility/MIMResponder.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 #include "PanelViewLayoutSupport.h"
-#include "PanelView.h"
 #include "PanelData.h"
 #include "PanelController.h"
 #include "Brief/PanelBriefView.h"

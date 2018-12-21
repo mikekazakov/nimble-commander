@@ -1,6 +1,11 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <CoreFoundation/CoreFoundation.h>
+#include <stdint.h>
+#include <memory>
+#include <functional>
+
 class FileWindow;
 
 class SearchInFile

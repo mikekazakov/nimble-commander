@@ -3,6 +3,7 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include <boost/algorithm/string.hpp>
+#include <Utility/StringExtras.h>
 
 @interface WebDAVConnectionSheetController()
 @property (nonatomic) bool isValid;

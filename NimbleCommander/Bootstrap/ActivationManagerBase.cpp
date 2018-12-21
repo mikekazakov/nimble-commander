@@ -3,6 +3,7 @@
 #include <Habanero/algo.h>
 #include <AquaticPrime/AquaticPrime.h>
 #include <Habanero/CFDefaultsCPP.h>
+#include <fstream>
 
 namespace nc::bootstrap {
 

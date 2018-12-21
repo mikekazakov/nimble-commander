@@ -6,6 +6,9 @@
 #include <NimbleCommander/Core/NetworkConnectionIconProvider.h>
 #include "../PanelDataPersistency.h"
 #include <Utility/NativeFSManager.h>
+#include <Utility/StringExtras.h>
+#include <iostream>
+#include <Cocoa/Cocoa.h>
 
 namespace nc::panel::loc_fmt {
 

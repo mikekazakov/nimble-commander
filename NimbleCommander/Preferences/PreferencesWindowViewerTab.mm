@@ -1,10 +1,11 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PreferencesWindowViewerTab.h"
 #include <Utility/FontExtras.h>
 #include "../Bootstrap/ActivationManager.h"
 #include "../Viewer/InternalViewerHistory.h"
 #include "Utility/Encodings.h"
-#include "PreferencesWindowViewerTab.h"
 #include "../Bootstrap/Config.h"
+#include <Utility/ObjCpp.h>
 
 static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 

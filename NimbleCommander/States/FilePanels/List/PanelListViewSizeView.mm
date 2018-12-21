@@ -1,10 +1,11 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ByteCountFormatter.h>
 #include "../PanelViewPresentationSettings.h"
 #include "PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewSizeView.h"
+#include <Utility/ObjCpp.h>
 
 using namespace nc::panel;
 
@@ -32,9 +33,13 @@ static NSString *SizeStringFromEncodedSize( uint64_t _sz )
     if( _sz == g_InvalidSize )
         return @"";
     if( _sz == g_NonCalculatedSizeForDir )
-        return NSLocalizedString(@"__MODERNPRESENTATION_FOLDER_WORD", "Folders dummy string when size is not available, for English is 'Folder'");
+        return NSLocalizedString
+        (@"__MODERNPRESENTATION_FOLDER_WORD",
+         "Folders dummy string when size is not available, for English is 'Folder'");
     if( _sz == g_NonCalculatedSizeForDotDot )
-        return NSLocalizedString(@"__MODERNPRESENTATION_UP_WORD", "Upper-level in directory, for English is 'Up'");
+        return NSLocalizedString
+        (@"__MODERNPRESENTATION_UP_WORD",
+         "Upper-level in directory, for English is 'Up'");
 
     return ByteCountFormatter::Instance().ToNSString( _sz, GetFileSizeFormat() );
 }

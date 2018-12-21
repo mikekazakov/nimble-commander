@@ -1,7 +1,8 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include <Utility/FileMask.h>
 #include "../Bootstrap/ActivationManager.h"
-#include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
+#include <Utility/StringExtras.h>
 
 @interface PreferencesWindowExternalEditorsTabNewEditorSheetStringNotEmpty : NSValueTransformer
 @end

@@ -13,6 +13,7 @@
 #include "BigFileViewHex.h"
 #include "InternalViewerViewPreviewMode.h"
 #include "BigFileViewDataBackend.h"
+#include <Habanero/dispatch_cpp.h>
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";

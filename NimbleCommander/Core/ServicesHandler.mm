@@ -4,6 +4,7 @@
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
+#include <Utility/StringExtras.h>
 
 namespace nc::core {
 

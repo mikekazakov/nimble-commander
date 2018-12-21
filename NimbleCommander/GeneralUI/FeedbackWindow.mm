@@ -2,6 +2,8 @@
 #include "../Bootstrap/ActivationManager.h"
 #include "../Core/FeedbackManager.h"
 #include "FeedbackWindow.h"
+#include <chrono>
+#include <Habanero/dispatch_cpp.h>
 
 using namespace std::literals;
 

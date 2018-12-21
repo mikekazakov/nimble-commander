@@ -7,6 +7,7 @@
 #include "../PanelData.h"
 #include "../PanelView.h"
 #include <VFS/VFS.h>
+#include <Utility/StringExtras.h>
 
 namespace nc::panel::actions {
 

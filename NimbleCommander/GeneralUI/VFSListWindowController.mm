@@ -4,6 +4,8 @@
 #include "../Core/VFSInstanceManager.h"
 #include "../Core/VFSInstancePromise.h"
 #include "VFSListWindowController.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/StringExtras.h>
 
 using namespace std::literals;
 

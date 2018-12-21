@@ -1,7 +1,8 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "Alert.h"
-
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/StringExtras.h>
 
 @interface AlertWindowController : NSWindowController
 @end

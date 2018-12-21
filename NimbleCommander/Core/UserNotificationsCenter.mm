@@ -3,6 +3,8 @@
 #include <Cocoa/Cocoa.h>
 #include <Operations/Statistics.h>
 #include <Operations/Operation.h>
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 using namespace std::literals;
 

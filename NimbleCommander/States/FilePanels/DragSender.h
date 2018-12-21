@@ -2,6 +2,8 @@
 #pragma once
 
 #include <VFS/VFSDeclarations.h>
+#include <Cocoa/Cocoa.h>
+#include <functional>
 
 @class PanelController;
 

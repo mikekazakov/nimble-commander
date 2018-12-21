@@ -4,6 +4,8 @@
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "MainWindowFilePanelState.h"
 #include "StateActionsDispatcher.h"
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 static NSMenuItem *ItemForTool( const std::shared_ptr<const ExternalTool> &_tool, int _ind )
 {

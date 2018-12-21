@@ -3,7 +3,7 @@
 
 #include <sys/param.h>
 #include <sys/mount.h>
-
+#include <unistd.h>
 
 // see getattrlist function documentation to get info about values
 struct VolumeCapabilitiesInformation

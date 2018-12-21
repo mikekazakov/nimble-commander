@@ -1,4 +1,5 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "SpotlightSearch.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <Habanero/algo.h>
@@ -6,9 +7,10 @@
 #include <VFS/VFSListingInput.h>
 #include "../PanelController.h"
 #include "../Views/SpotlightSearchPopupViewController.h"
-#include "SpotlightSearch.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include "../PanelView.h"
+#include <Utility/StringExtras.h>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 

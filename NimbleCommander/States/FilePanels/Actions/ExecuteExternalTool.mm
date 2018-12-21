@@ -13,6 +13,9 @@
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <Term/Task.h>
 #include "../ExternalToolParameterValueSheetController.h"
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel::actions {
     

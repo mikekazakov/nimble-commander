@@ -6,6 +6,7 @@
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include "TabBarStyle.h"
+#include <Utility/ObjCpp.h>
 
 @interface FilePanelsTabbedBarItem : NSObject <MMTabBarItem>
 

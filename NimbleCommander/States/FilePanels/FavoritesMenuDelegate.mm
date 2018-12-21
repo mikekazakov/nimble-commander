@@ -4,6 +4,8 @@
 #include "PanelControllerActionsDispatcher.h"
 #include "Favorites.h"
 #include "FavoritesMenuDelegate.h"
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 using namespace nc::panel;
 

@@ -4,6 +4,8 @@
 #include <VFS/VFS.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <Config/RapidJSON_fwd.h>
+#include <any>
+#include <vector>
 
 // these routines implicitly use the following components:
 // 1. NetworkConnectionsManager

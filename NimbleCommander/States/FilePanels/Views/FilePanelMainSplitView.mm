@@ -6,6 +6,8 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include "FilePanelsTabbedHolder.h"
 #include "FilePanelMainSplitView.h"
+#include <Utility/ObjCpp.h>
+#include <Habanero/dispatch_cpp.h>
 
 static const auto g_MidGuideGap = 24.;
 static const auto g_MinPanelWidth = 120;

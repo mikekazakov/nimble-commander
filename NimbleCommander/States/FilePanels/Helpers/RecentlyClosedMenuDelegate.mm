@@ -7,6 +7,8 @@
 #include "../MainWindowFilePanelState.h"
 #include "../MainWindowFilePanelState+TabsSupport.h"
 #include <NimbleCommander/Core/AnyHolder.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 
 using namespace nc::panel;
 

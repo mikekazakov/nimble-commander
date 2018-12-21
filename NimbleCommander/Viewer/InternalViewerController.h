@@ -17,10 +17,10 @@
 
 // Useful information
 @property (nonatomic, readonly) NSString           *verboseTitle;
-@property (nonatomic, readonly) const string&       filePath;
+@property (nonatomic, readonly) const std::string&  filePath;
 @property (nonatomic, readonly) const VFSHostPtr&   fileVFS;
 
-- (void) setFile:(string)path at:(VFSHostPtr)vfs;
+- (void) setFile:(std::string)path at:(VFSHostPtr)vfs;
 - (bool) performBackgroundOpening;
 
 - (bool) performSyncOpening;
@@ -29,7 +29,7 @@
 - (void) clear;
 - (void) saveFileState;
 
-- (void)markSelection:(CFRange)_selection forSearchTerm:(string)_request;
+- (void)markSelection:(CFRange)_selection forSearchTerm:(std::string)_request;
 
 + (unsigned) fileWindowSize;
 

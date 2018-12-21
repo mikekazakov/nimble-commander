@@ -4,6 +4,7 @@
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "MainWindow.h"
 #include "MainWindowController.h"
+#include <Utility/ObjCpp.h>
 
 static const auto g_Identifier = @"MainWindow";
 static const auto g_FrameIdentifier = @"MainWindow";

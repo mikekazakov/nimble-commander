@@ -1,5 +1,6 @@
 // Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/Layout.h>
+#include <Utility/ObjCpp.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
 #include "PanelViewHeader.h"

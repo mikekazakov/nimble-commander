@@ -19,6 +19,7 @@
 #include "PanelBriefViewFixedWidthLayout.h"
 #include "PanelBriefViewDynamicWidthLayout.h"
 #include "PanelBriefViewFixedNumberLayout.h"
+#include <Utility/ObjCpp.h>
 
 using namespace ::nc::panel;
 using namespace ::nc::panel::brief;

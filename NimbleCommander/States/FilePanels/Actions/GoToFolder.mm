@@ -13,6 +13,7 @@
 #include "../PanelAux.h"
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 #include "Helpers.h"
+#include <Utility/ObjCpp.h>
 
 namespace nc::panel::actions {
 

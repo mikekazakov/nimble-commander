@@ -6,6 +6,7 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "CalculateChecksumSheetController.h"
+#include <numeric>
 
 static const auto g_ConfigAlgo = "filePanel.general.checksumCalculationAlgorithm";
 const static std::string g_SumsFilename = "checksums.txt";
@@ -45,7 +46,7 @@ const static std::vector<std::pair<NSString*,int>> g_Algos = {
         m_Host = host;
         m_Filenames = files;
         m_Sizes = sizes;
-        m_TotalSize = accumulate(begin(m_Sizes), end(m_Sizes), 0ull);
+        m_TotalSize = std::accumulate(begin(m_Sizes), end(m_Sizes), 0ull);
         assert(files.size() == sizes.size());
         m_Checksums.resize(m_Filenames.size());
         m_Errors.resize(m_Filenames.size());

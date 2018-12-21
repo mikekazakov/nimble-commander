@@ -6,6 +6,7 @@
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewNameView.h"
+#include <Utility/ObjCpp.h>
 
 using namespace nc::panel;
 using nc::utility::FontGeometryInfo;

@@ -27,7 +27,7 @@ struct DoubleColor
     {
         static const auto generic_rgb = NSColorSpace.genericRGBColorSpace;
         if( _c == nil )
-            throw invalid_argument( "_c==nil" );
+            throw std::invalid_argument( "_c==nil" );
         [[_c colorUsingColorSpace:generic_rgb] getRed:&r green:&g blue:&b alpha:&a];
     }
     inline NSColor* ToNSColor() const {
@@ -200,7 +200,7 @@ public:
     inline uint16_t *Chars() { return m_Buff; }    
     inline const uint16_t *Chars() const { return m_Buff; }
   
-    inline void FromUTF8(const string &_utf8)
+    inline void FromUTF8(const std::string &_utf8)
     {
         FromUTF8(_utf8.c_str(), _utf8.length());
     }

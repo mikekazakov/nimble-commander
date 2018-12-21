@@ -1,11 +1,13 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PreferencesWindowPanelsTab.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
-#include "PreferencesWindowPanelsTab.h"
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/States/FilePanels/PanelViewLayoutSupport.h>
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include <Utility/ByteCountFormatter.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 
 using namespace nc::panel;
 

@@ -3,6 +3,8 @@
 
 #include <Config/Config.h>
 #include "BigFileView.h"
+#include <Habanero/spinlock.h>
+#include <deque>
 
 class InternalViewerHistory
 {
@@ -18,7 +20,7 @@ public:
     
     struct Entry
     {
-        string              path; // works as a access key
+        std::string         path; // works as a access key
         uint64_t            position = 0;
         bool                wrapping = false;
         BigFileViewModes    view_mode = BigFileViewModes::Text;
@@ -38,7 +40,7 @@ public:
     /**
      * Thread-safe.
      */
-    optional<Entry> EntryByPath( const string &_path ) const;
+    std::optional<Entry> EntryByPath( const std::string &_path ) const;
 
     /**
      * Thread-safe.
@@ -62,10 +64,10 @@ private:
     void LoadFromStateConfig();
     void SaveToStateConfig() const;
     
-    deque<Entry>                                m_History;
+    std::deque<Entry>                           m_History;
     mutable spinlock                            m_HistoryLock;
 
-    vector<nc::config::Token>                   m_ConfigObservations;
+    std::vector<nc::config::Token>              m_ConfigObservations;
     SaveOptions                                 m_Options;
     const size_t                                m_Limit;
     nc::config::Config&                         m_StateConfig;

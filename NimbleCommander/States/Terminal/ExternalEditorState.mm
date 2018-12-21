@@ -1,4 +1,5 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "ExternalEditorState.h"
 #include <Utility/FontCache.h>
 #include "../../../NimbleCommander/States/MainWindowController.h"
 #include <Term/SingleTask.h>
@@ -7,7 +8,8 @@
 #include <Term/View.h>
 #include <Term/ScrollView.h>
 #include "SettingsAdaptor.h"
-#include "ExternalEditorState.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/StringExtras.h>
 
 using namespace nc;
 using namespace nc::term;

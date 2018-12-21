@@ -1,6 +1,7 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextWidthsCache.h"
 #include <Utility/FontExtras.h>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel::brief {
 

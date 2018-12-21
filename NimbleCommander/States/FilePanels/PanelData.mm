@@ -5,6 +5,7 @@
 #include <Habanero/DispatchGroup.h>
 #include <VFS/VFS.h>
 #include "PanelDataExternalEntryKey.h"
+#include <numeric>
 
 namespace nc::panel::data {
 
@@ -53,8 +54,8 @@ static std::vector<unsigned>
     ProduceSortedIndirectIndecesForLongKeys(const std::vector<std::string>& _keys)
 {
     std::vector<unsigned> src_keys_ind( _keys.size() );
-    iota( begin(src_keys_ind), end(src_keys_ind), 0 );
-    sort( begin(src_keys_ind),
+    std::iota( begin(src_keys_ind), end(src_keys_ind), 0 );
+    std::sort( begin(src_keys_ind),
           end(src_keys_ind),
           [&_keys](auto _1, auto _2) { return _keys[_1] < _keys[_2]; } );
     return src_keys_ind;

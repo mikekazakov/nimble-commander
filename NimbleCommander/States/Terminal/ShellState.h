@@ -3,6 +3,8 @@
 
 #include <NimbleCommander/States/MainWindowStateProtocol.h>
 
+#include <string>
+
 namespace nc::term {
     class ShellTask;
 }

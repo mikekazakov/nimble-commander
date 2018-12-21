@@ -1,6 +1,10 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <string>
+#include <exception>
+#include <Cocoa/Cocoa.h>
+
 // this class has two purposes:
 // 1. it allows focus movement via arrow keys
 // 2. it sets an appropriate appearance

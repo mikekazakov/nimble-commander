@@ -2,6 +2,7 @@
 #pragma once
 
 #include <Utility/SheetController.h>
+#include <string>
 
 @interface DetailedVolumeInformationSheetController : SheetController
 

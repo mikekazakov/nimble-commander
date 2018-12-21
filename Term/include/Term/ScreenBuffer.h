@@ -166,28 +166,36 @@ private:
     std::unique_ptr<Snapshot>m_Snapshot;
 };
 
-inline const ScreenBuffer::Space*
-begin( const std::pair<const ScreenBuffer::Space*, const ScreenBuffer::Space*> &_p )
+}
+
+namespace std {
+    
+inline const nc::term::ScreenBuffer::Space*
+begin( const std::pair<const nc::term::ScreenBuffer::Space*,
+                       const nc::term::ScreenBuffer::Space*> &_p )
 {
     return _p.first;
 }
 
-inline ScreenBuffer::Space*
-begin( const std::pair<ScreenBuffer::Space*, ScreenBuffer::Space*> &_p )
+inline nc::term::ScreenBuffer::Space*
+begin( const std::pair<nc::term::ScreenBuffer::Space*,
+                       nc::term::ScreenBuffer::Space*> &_p )
 {
     return _p.first;
 }
 
-inline const ScreenBuffer::Space*
-end( const std::pair<const ScreenBuffer::Space*, const ScreenBuffer::Space*> &_p )
+inline const nc::term::ScreenBuffer::Space*
+end( const std::pair<const nc::term::ScreenBuffer::Space*,
+                     const nc::term::ScreenBuffer::Space*> &_p )
 {
     return _p.second;
 }
 
-inline ScreenBuffer::Space*
-end( const std::pair<ScreenBuffer::Space*, ScreenBuffer::Space*> &_p )
+inline nc::term::ScreenBuffer::Space*
+end( const std::pair<nc::term::ScreenBuffer::Space*,
+                     nc::term::ScreenBuffer::Space*> &_p )
 {
     return _p.second;
 }
-
+    
 }

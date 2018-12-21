@@ -4,6 +4,7 @@
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <Utility/AdaptiveDateFormatting.h>
+#include <Utility/StringExtras.h>
 #include "PanelViewPresentationSettings.h"
 #include "PanelViewFooterVolumeInfoFetcher.h"
 

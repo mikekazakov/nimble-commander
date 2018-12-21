@@ -2,6 +2,9 @@
 #pragma once
 
 #include <Habanero/CFString.h>
+#include <unordered_map>
+#include <string>
+#include <Habanero/spinlock.h>
 
 namespace nc::panel::brief {
 

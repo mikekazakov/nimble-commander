@@ -11,6 +11,9 @@
 #include "Favorites.h"
 #include "FavoriteComposing.h"
 #include "FilesDraggingSource.h"
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
+#include <Habanero/dispatch_cpp.h>
 
 using namespace nc::panel;
 using namespace std::literals;

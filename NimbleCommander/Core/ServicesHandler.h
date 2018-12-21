@@ -2,6 +2,11 @@
 
 #pragma once
 
+#include <functional>
+#include <string>
+#include <vector>
+#include <Cocoa/Cocoa.h>
+
 @class NCMainWindowController;
 
 namespace nc::core {

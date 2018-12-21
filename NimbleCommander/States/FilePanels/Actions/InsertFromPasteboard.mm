@@ -7,6 +7,7 @@
 #include "InsertFromPasteboard.h"
 #include <Operations/Copying.h>
 #include "../../MainWindowController.h"
+#include <Utility/ObjCpp.h>
 
 namespace nc::panel::actions {
 

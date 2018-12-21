@@ -9,6 +9,9 @@
 
 #include <Habanero/Observable.h>
 #include "ActionShortcut.h"
+#include <unordered_map>
+#include <vector>
+#include <Cocoa/Cocoa.h>
 
 class ActionsShortcutsManager : ObservableBase
 {

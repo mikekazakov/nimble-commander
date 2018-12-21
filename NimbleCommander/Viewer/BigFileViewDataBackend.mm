@@ -1,12 +1,12 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Utility/Encodings.h>
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BigFileViewDataBackend.h"
+#include <Utility/Encodings.h>
 
 BigFileViewDataBackend::BigFileViewDataBackend(FileWindow &_fw, int _encoding):
     m_FileWindow(_fw),
     m_Encoding(_encoding),
-    m_DecodeBuffer(make_unique<UniChar[]>(m_FileWindow.WindowSize())),
-    m_DecodeBufferIndx(make_unique<uint32_t[]>(m_FileWindow.WindowSize()))
+    m_DecodeBuffer(std::make_unique<UniChar[]>(m_FileWindow.WindowSize())),
+    m_DecodeBufferIndx(std::make_unique<uint32_t[]>(m_FileWindow.WindowSize()))
 {
     assert(encodings::IsValidEncoding(_encoding));
     DecodeBuffer();

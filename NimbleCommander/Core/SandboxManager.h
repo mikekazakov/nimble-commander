@@ -1,6 +1,11 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <string>
+#include <vector>
+#include <Habanero/spinlock.h>
+#include <Cocoa/Cocoa.h>
+
 /**
  * SandboxManager has tread-safe public interface.
  */

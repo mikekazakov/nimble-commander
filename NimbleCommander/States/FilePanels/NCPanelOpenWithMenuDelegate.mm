@@ -3,10 +3,12 @@
 #include <NimbleCommander/Core/LaunchServices.h>
 #include <Sparkle/Sparkle.h>
 #include <Utility/SystemInformation.h>
+#include <Utility/ObjCpp.h>
 #include <VFS/VFS.h>
 #include "PanelAux.h"
 #include "PanelController.h"
 #include <Habanero/SerialQueue.h>
+#include <set>
 
 using namespace nc::core;
 using namespace nc::panel;

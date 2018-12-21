@@ -10,6 +10,7 @@
 #include <Operations/AlterSymlinkDialog.h>
 #include <Operations/CreateHardlinkDialog.h>
 #include <Utility/PathManip.h>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 

@@ -1,4 +1,5 @@
 // Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+#include <Utility/VolumeInformation.h>
 #include <sys/attr.h>
 #include <sys/vnode.h>
 #include <sys/param.h>
@@ -7,7 +8,6 @@
 #include <memory.h>
 #include <errno.h>
 #include <CoreFoundation/CoreFoundation.h>
-#include <Utility/VolumeInformation.h>
 
 int FetchVolumeCapabilitiesInformation(const char *_path, VolumeCapabilitiesInformation *_c)
 {

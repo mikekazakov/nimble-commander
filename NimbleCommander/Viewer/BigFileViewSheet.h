@@ -8,10 +8,10 @@
 // make sure to destroy instances of BigFileViewSheet in main queue!
 @interface BigFileViewSheet : SheetController
 
-- (id) initWithFilepath:(string)path
+- (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs;
 
 - (bool) open; // call it from bg thread!
-- (void)markInitialSelection:(CFRange)_selection searchTerm:(string)_request;
+- (void)markInitialSelection:(CFRange)_selection searchTerm:(std::string)_request;
 
 @end

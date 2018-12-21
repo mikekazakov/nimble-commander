@@ -25,7 +25,8 @@ static nc::config::Value EntryToJSONObject( const InternalViewerHistory::Entry &
     return o;
 }
 
-static optional<InternalViewerHistory::Entry> JSONObjectToEntry( const nc::config::Value &_object )
+static std::optional<InternalViewerHistory::Entry>
+    JSONObjectToEntry( const nc::config::Value &_object )
 {
     using namespace rapidjson;    
     auto has_string = [&](const char *_key){ return _object.HasMember(_key) && _object[_key].IsString(); };
@@ -35,10 +36,10 @@ static optional<InternalViewerHistory::Entry> JSONObjectToEntry( const nc::confi
     InternalViewerHistory::Entry e;
     
     if( _object.GetType() != kObjectType )
-        return nullopt;
+        return std::nullopt;
     
     if( !has_string("path") )
-        return nullopt;
+        return std::nullopt;
     
     e.path = _object["path"].GetString();
     
@@ -65,7 +66,7 @@ static optional<InternalViewerHistory::Entry> JSONObjectToEntry( const nc::confi
 InternalViewerHistory::InternalViewerHistory( nc::config::Config &_state_config, const char *_config_path ):
     m_StateConfig(_state_config),
     m_StateConfigPath(_config_path),
-    m_Limit( max(0, min(GlobalConfig().GetInt(g_ConfigMaximumHistoryEntries), 4096)) )
+    m_Limit( std::max(0, std::min(GlobalConfig().GetInt(g_ConfigMaximumHistoryEntries), 4096)) )
 {
     // Wire up notification about application shutdown
     [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
@@ -77,7 +78,7 @@ InternalViewerHistory::InternalViewerHistory( nc::config::Config &_state_config,
     LoadSaveOptions();
     GlobalConfig().ObserveMany(m_ConfigObservations,
                                [=]{ LoadSaveOptions(); },
-                               initializer_list<const char *>{
+                               std::initializer_list<const char *>{
                                    g_ConfigSaveFileEnconding,
                                    g_ConfigSaveFileMode,
                                    g_ConfigSaveFilePosition,
@@ -101,14 +102,15 @@ void InternalViewerHistory::AddEntry( Entry _entry )
         });
         if( it != end(m_History) )
             m_History.erase(it);
-        m_History.push_front( move(_entry) );
+        m_History.push_front( std::move(_entry) );
         
         while( m_History.size() >= m_Limit )
             m_History.pop_back();
     }
 }
 
-optional<InternalViewerHistory::Entry> InternalViewerHistory::EntryByPath( const string &_path ) const
+std::optional<InternalViewerHistory::Entry> InternalViewerHistory::
+    EntryByPath( const std::string &_path ) const
 {
     LOCK_GUARD(m_HistoryLock) {
         auto it = find_if( begin(m_History), end(m_History), [&](auto &_i){
@@ -117,7 +119,7 @@ optional<InternalViewerHistory::Entry> InternalViewerHistory::EntryByPath( const
         if( it != end(m_History) )
             return *it;
     }
-    return nullopt;
+    return std::nullopt;
 }
 
 void InternalViewerHistory::LoadSaveOptions()
@@ -147,7 +149,7 @@ void InternalViewerHistory::SaveToStateConfig() const
         for(auto &e: m_History) {
             auto o = EntryToJSONObject(e);
             if( o.GetType() != rapidjson::kNullType )
-                entries.PushBack( move(o), nc::config::g_CrtAllocator );
+                entries.PushBack( std::move(o), nc::config::g_CrtAllocator );
         }
     }
     m_StateConfig.Set(m_StateConfigPath, entries);

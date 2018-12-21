@@ -1,6 +1,8 @@
+// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
+#include <unordered_map>
 #include "PanelViewKeystrokeSink.h"
 
 @class PanelController;

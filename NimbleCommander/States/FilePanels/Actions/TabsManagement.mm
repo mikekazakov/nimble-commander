@@ -5,6 +5,7 @@
 #include "../MainWindowFilePanelState+TabsSupport.h"
 #include "../Views/FilePanelMainSplitView.h"
 #include <NimbleCommander/Core/Alert.h>
+#include <Utility/ObjCpp.h>
 
 namespace nc::panel::actions {
 

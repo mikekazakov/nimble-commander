@@ -5,6 +5,7 @@
 #include <NimbleCommander/Core/Alert.h>
 #include "MainWindowFilePanelState.h"
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
+#include <iostream>
 
 using namespace nc::core;
 using namespace nc::panel;

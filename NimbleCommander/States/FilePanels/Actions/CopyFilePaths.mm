@@ -4,6 +4,8 @@
 #include "../PanelView.h"
 #include "CopyFilePaths.h"
 #include <VFS/VFS.h>
+#include <Utility/StringExtras.h>
+#include <numeric>
 
 namespace nc::panel::actions {
 

@@ -5,6 +5,11 @@
 #include <VFSIcon/IconRepository.h>
 #include "PanelViewTypes.h"
 
+#include <any>
+#include <memory>
+#include <Cocoa/Cocoa.h>
+
+
 @protocol PanelViewDelegate;
 @protocol NCPanelViewKeystrokeSink;
 @class NCPanelControllerActionsDispatcher;

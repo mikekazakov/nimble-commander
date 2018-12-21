@@ -4,6 +4,7 @@
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include <VFS/NetSFTP.h>
 #include "SFTPConnectionSheetController.h"
+#include <Utility/StringExtras.h>
 
 static const auto g_SSHdir = CommonPaths::Home() + ".ssh/";
 

@@ -10,6 +10,7 @@
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
+#include <Habanero/mach_time.h>
 
 static const auto g_TabCloseSize = NSMakeSize(12, 12);
 using namespace std::literals;

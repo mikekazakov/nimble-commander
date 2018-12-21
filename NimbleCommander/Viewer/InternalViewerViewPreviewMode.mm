@@ -1,8 +1,11 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "BigFileView.h"
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerViewPreviewMode.h"
+#include "BigFileView.h"
+#include <Utility/StringExtras.h>
 
-InternalViewerViewPreviewMode::InternalViewerViewPreviewMode(const string &_native_path, BigFileView* _view):
+
+InternalViewerViewPreviewMode::InternalViewerViewPreviewMode(const std::string &_native_path,
+                                                             BigFileView* _view):
     m_NativePath(_native_path),
     m_View(_view),
     m_Preview([[QLPreviewView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)])

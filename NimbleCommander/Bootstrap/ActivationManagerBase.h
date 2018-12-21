@@ -2,6 +2,8 @@
 #pragma once
 
 #include <Habanero/CFString.h>
+#include <unordered_map>
+#include <string>
 
 namespace nc::bootstrap {
     

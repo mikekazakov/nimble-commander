@@ -1,7 +1,9 @@
 // Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/SystemInformation.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/Bootstrap/NCE.h>
 #include "GoogleAnalytics.h"
+#include <Habanero/dispatch_cpp.h>
 
 static void PostStartupInfo()
 {

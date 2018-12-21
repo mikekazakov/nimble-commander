@@ -2,7 +2,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "SimpleComboBoxPersistentDataSource.h"
-
+#include <vector>
 
 @implementation SimpleComboBoxPersistentDataSource
 {

@@ -5,6 +5,7 @@
 #include <VFS/Native.h>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
+#include <Habanero/dispatch_cpp.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "FavoriteComposing.h"

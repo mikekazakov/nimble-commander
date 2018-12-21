@@ -31,6 +31,9 @@
 #include "QuickSearch.h"
 #include "PanelViewHeader.h"
 #include <Config/RapidJSON.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
+#include <Habanero/mach_time.h>
 
 using namespace nc;
 using namespace nc::core;

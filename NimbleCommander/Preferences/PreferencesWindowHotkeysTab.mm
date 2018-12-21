@@ -1,11 +1,15 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PreferencesWindowHotkeysTab.h"
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/FunctionKeysPass.h>
 #import <3rd_Party/GTMHotKeyTextField/GTMHotKeyTextField.h>
 #include "../Core/ActionsShortcutsManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
 #include "../Bootstrap/ActivationManager.h"
-#include "PreferencesWindowHotkeysTab.h"
+#include <any>
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 
 static NSString *ComposeVerboseMenuItemTitle(NSMenuItem *_item);
 static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action);

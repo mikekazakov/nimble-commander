@@ -1,10 +1,12 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "GoToFolderSheetController.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
-#include "GoToFolderSheetController.h"
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 static const auto g_StateGoToKey = "filePanel.goToSheetLastPath";
 

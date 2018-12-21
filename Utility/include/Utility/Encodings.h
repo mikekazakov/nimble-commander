@@ -4,8 +4,6 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <vector>
 
-using namespace std;
-
 unsigned short SingleByteIntoUniCharUsingCodepage(
                                                     unsigned char _input,
                                                     int _codepage
@@ -180,7 +178,7 @@ namespace encodings
      */
     int FromComAppleTextEncodingXAttr(const char *_xattr_value);
     
-    const vector< pair<int, CFStringRef> >& LiteralEncodingsList();
+    const std::vector< std::pair<int, CFStringRef> >& LiteralEncodingsList();
     
     int BytesForCodeUnit(int _encoding);
     void InterpretAsUnichar(

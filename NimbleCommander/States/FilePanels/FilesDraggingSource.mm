@@ -1,6 +1,7 @@
 // Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <VFS/Native.h>
 #include "FilesDraggingSource.h"
+#include <VFS/Native.h>
+#include <Utility/StringExtras.h>
 
 static const auto g_PrivateDragUTI = @"com.magnumbytes.nimblecommander.filespanelsdraganddrop";
 

@@ -3,8 +3,9 @@
 #include <VFS/Native.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
-#include "AppDelegateCPP.h"
 #include <NimbleCommander/Core/AppStoreHelper.h>
+#include <NimbleCommander/Bootstrap/NCE.h>
+#include "AppDelegateCPP.h"
 #include "ActivationManager.h"
 
 namespace nc::bootstrap {

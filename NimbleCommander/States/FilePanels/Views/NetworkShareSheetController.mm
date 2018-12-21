@@ -2,6 +2,7 @@
 #include "NetworkShareSheetController.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/StringExtras.h>
 
 @interface NetworkShareSheetController ()
 

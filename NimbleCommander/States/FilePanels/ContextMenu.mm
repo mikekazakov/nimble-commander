@@ -9,6 +9,7 @@
 #include "Actions/OpenFile.h"
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <VFS/VFS.h>
+#include <Utility/StringExtras.h>
 
 using namespace nc::panel;
 

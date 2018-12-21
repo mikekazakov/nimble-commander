@@ -3,6 +3,8 @@
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/ByteCountFormatter.h>
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 #include "BriefSystemOverview.h"
 
 static NSTextField *CreateStockTF()

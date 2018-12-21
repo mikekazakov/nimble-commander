@@ -2,6 +2,9 @@
 #include "PanelViewLayoutSupport.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 
 //struct PanelViewLayout
 //{

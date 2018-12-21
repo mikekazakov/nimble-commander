@@ -7,6 +7,7 @@
 #include <VFS/Native.h>
 #include <Habanero/CommonPaths.h>
 #include <Config/RapidJSON.h>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel {
 

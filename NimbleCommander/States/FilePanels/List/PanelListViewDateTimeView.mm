@@ -1,9 +1,10 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
 #include "PanelListViewDateTimeView.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <Utility/ObjCpp.h>
 
 using nc::utility::AdaptiveDateFormatting;
 

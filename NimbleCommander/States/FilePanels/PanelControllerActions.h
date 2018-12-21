@@ -3,6 +3,7 @@
 
 #include "Actions/DefaultAction.h"
 #include <Utility/NativeFSManager.h>
+#include <unordered_map>
 
 class NetworkConnectionsManager;
 

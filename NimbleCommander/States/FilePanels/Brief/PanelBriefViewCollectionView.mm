@@ -1,7 +1,8 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PanelBriefViewCollectionView.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
-#include "PanelBriefViewCollectionView.h"
+#include <Utility/ObjCpp.h>
 
 @implementation PanelBriefViewCollectionView
 {

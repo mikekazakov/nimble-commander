@@ -3,6 +3,7 @@
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include "PreferencesWindowExternalEditorsTab.h"
+#include <Utility/StringExtras.h>
 
 #define MyPrivateTableViewDataType @"PreferencesWindowExternalEditorsTabPrivateTableViewDataType"
 

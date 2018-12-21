@@ -6,6 +6,7 @@
 #include "../PanelData.h"
 #include "../PanelAux.h"
 #include <VFS/VFS.h>
+#include <Utility/ObjCpp.h>
 
 namespace nc::panel::actions {
 

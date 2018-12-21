@@ -11,6 +11,8 @@
 #include <Utility/PathManip.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include "TemporaryNativeFileStorage.h"
+#include <thread>
+#include <Habanero/dispatch_cpp.h>
 
 using namespace std::literals;
 

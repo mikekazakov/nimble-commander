@@ -4,6 +4,7 @@
 #include "../PanelController.h"
 #include "FindFiles.h"
 #include "../PanelView.h"
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 

@@ -4,6 +4,8 @@
 #include "Theme.h"
 #include "CocoaAppearanceManager.h"
 #include "ThemesManager.h"
+#include <Habanero/fixed_eytzinger_map.h>
+#include <Habanero/dispatch_cpp.h>
 
 using namespace std::literals;
 

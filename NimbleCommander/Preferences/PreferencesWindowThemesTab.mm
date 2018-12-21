@@ -15,6 +15,8 @@
 #include "PreferencesWindowThemesControls.h"
 #include "PreferencesWindowThemesTabModel.h"
 #include "PreferencesWindowThemesTabImportSheet.h"
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 using namespace std::literals;
 

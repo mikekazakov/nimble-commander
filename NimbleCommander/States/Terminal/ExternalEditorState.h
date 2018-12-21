@@ -2,6 +2,8 @@
 #pragma once
 
 #include <NimbleCommander/States/MainWindowStateProtocol.h>
+#include <boost/filesystem.hpp>
+#include <string>
 
 @interface NCTermExternalEditorState : NSView<NCMainWindowState>
 

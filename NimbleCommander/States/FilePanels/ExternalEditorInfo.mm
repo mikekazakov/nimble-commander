@@ -1,12 +1,13 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "ExternalEditorInfo.h"
 #include "../../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <VFS/VFS.h>
 #include <Term/SingleTask.h>
 #include <Utility/FileMask.h>
+#include <Utility/StringExtras.h>
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include "ExternalEditorInfo.h"
 #include "ExternalEditorInfoPrivate.h"
 
 using namespace nc::config;

@@ -4,6 +4,8 @@
 #include "PanelDataFilter.h"
 #include "PanelData.h"
 #include "CursorBackup.h"
+#include <Utility/ObjCpp.h>
+#include <Habanero/mach_time.h>
 
 using namespace nc::panel;
 using namespace nc::panel::QuickSearch;

@@ -8,6 +8,7 @@
 #include <Utility/NativeFSManager.h>
 #include <Utility/PathManip.h>
 #include <Utility/FunctionKeysPass.h>
+#include <Utility/StringExtras.h>
 #include <RoutedIO/RoutedIO.h>
 #include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
@@ -51,7 +52,9 @@
 #include <NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h>
 #include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
 #include <NimbleCommander/Core/VFSInstanceManagerImpl.h>
+#include <Utility/ObjCpp.h>
 
+using namespace std::literals;
 using namespace nc::bootstrap;
 using nc::bootstrap::ActivationManager;
 
@@ -119,7 +122,7 @@ static void CheckMASReceipt()
         const auto path = NSBundle.mainBundle.appStoreReceiptURL.path;
         const auto exists = [NSFileManager.defaultManager fileExistsAtPath:path];
         if( !exists ) {
-            cerr << "No receipt - exit the app with code 173" << endl;
+            std::cerr << "No receipt - exit the app with code 173" << std::endl;
             exit(173);
         }
     }
@@ -148,17 +151,17 @@ static NCAppDelegate *g_Me = nil;
 
 @implementation NCAppDelegate
 {
-    vector<NCMainWindowController *>            m_MainWindows;
-    vector<InternalViewerWindowController*>     m_ViewerWindows;
+    std::vector<NCMainWindowController *>       m_MainWindows;
+    std::vector<InternalViewerWindowController*>m_ViewerWindows;
     spinlock                                    m_ViewerWindowsLock;
     bool                m_IsRunningTests;
-    string              m_SupportDirectory;
-    string              m_ConfigDirectory;
-    string              m_StateDirectory;
-    vector<nc::config::Token> m_ConfigObservationTickets;
+    std::string         m_SupportDirectory;
+    std::string         m_ConfigDirectory;
+    std::string         m_StateDirectory;
+    std::vector<nc::config::Token> m_ConfigObservationTickets;
     AppStoreHelper *m_AppStoreHelper;
     upward_flag         m_FinishedLaunching;
-    shared_ptr<nc::panel::FavoriteLocationsStorageImpl> m_Favorites;
+    std::shared_ptr<nc::panel::FavoriteLocationsStorageImpl> m_Favorites;
     NSMutableArray      *m_FilesToOpen;
 }
 
@@ -387,7 +390,7 @@ static NCAppDelegate *g_Me = nil;
     // initialize stuff related with in-app purchases
     if( ActivationManager::Type() == ActivationManager::Distribution::Free ) {
         m_AppStoreHelper = [AppStoreHelper new];
-        m_AppStoreHelper.onProductPurchased = [=](const string &_id){
+        m_AppStoreHelper.onProductPurchased = [=](const std::string &_id){
             if( ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() ) {
                 [self updateMainMenuFeaturesByVersionAndState];
                 GA().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
@@ -594,7 +597,7 @@ static NCAppDelegate *g_Me = nil;
             if constexpr( ActivationManager::Type() == ActivationManager::Distribution::Trial ) {
                 if( _filenames.count == 1 &&
                     boost::filesystem::path(fs).extension() == nc_license_extension ) {
-                    string p = fs;
+                    std::string p = fs;
                     dispatch_to_main_queue([=]{
                         [self processProvidedLicenseFile:p];
                     });
@@ -630,7 +633,7 @@ static NCAppDelegate *g_Me = nil;
     [NSApp replyToOpenOrPrint:NSApplicationDelegateReplySuccess];
 }
 
-- (void) processProvidedLicenseFile:(const string&)_path
+- (void) processProvidedLicenseFile:(const std::string&)_path
 {
     const bool valid_and_installed = ActivationManager::Instance().ProcessLicenseFile(_path);
     if( valid_and_installed ) {
@@ -735,9 +738,9 @@ static NCAppDelegate *g_Me = nil;
     return *i;
 }
 
-- (const shared_ptr<nc::panel::PanelViewLayoutsStorage>&) panelLayouts
+- (const std::shared_ptr<nc::panel::PanelViewLayoutsStorage>&) panelLayouts
 {
-    static auto i = make_shared<nc::panel::PanelViewLayoutsStorage>(g_ConfigLayoutsList);
+    static auto i = std::make_shared<nc::panel::PanelViewLayoutsStorage>(g_ConfigLayoutsList);
     return i;
 }
 
@@ -753,15 +756,15 @@ static NCAppDelegate *g_Me = nil;
     return *i;
 }
 
-- (const shared_ptr<nc::panel::FavoriteLocationsStorage>&) favoriteLocationsStorage
+- (const std::shared_ptr<nc::panel::FavoriteLocationsStorage>&) favoriteLocationsStorage
 {
-    static once_flag once;
-    call_once(once, [&]{
+    static std::once_flag once;
+    std::call_once(once, [&]{
         using t = nc::panel::FavoriteLocationsStorageImpl;
-        m_Favorites = make_shared<t>(StateConfig(), "filePanel.favorites");
+        m_Favorites = std::make_shared<t>(StateConfig(), "filePanel.favorites");
     });
     
-    static const shared_ptr<nc::panel::FavoriteLocationsStorage> inst = m_Favorites;
+    static const std::shared_ptr<nc::panel::FavoriteLocationsStorage> inst = m_Favorites;
     return inst;
 }
 
@@ -790,7 +793,8 @@ static NCAppDelegate *g_Me = nil;
     }
 }
 
-- (InternalViewerWindowController*) findInternalViewerWindowForPath:(const string&)_path onVFS:(const VFSHostPtr&)_vfs
+- (InternalViewerWindowController*) findInternalViewerWindowForPath:(const std::string&)_path
+                                                              onVFS:(const VFSHostPtr&)_vfs
 {
     LOCK_GUARD(m_ViewerWindowsLock) {
         auto i = find_if(begin(m_ViewerWindows), end(m_ViewerWindows), [&](auto v){
@@ -826,13 +830,13 @@ static NCAppDelegate *g_Me = nil;
     };
     FavoritesWindowController *window = [[FavoritesWindowController alloc]
                                          initWithFavoritesStorage:storage];
-    auto provide_panel = []() -> vector<pair<VFSHostPtr, string>> {
-        vector< pair<VFSHostPtr, string> > panel_paths;
+    auto provide_panel = []() -> std::vector<std::pair<VFSHostPtr, std::string>> {
+        std::vector< std::pair<VFSHostPtr, std::string> > panel_paths;
         for( const auto &ctr: NCAppDelegate.me.mainWindowControllers ) {
             auto state = ctr.filePanelsState;
             auto paths = state.filePanelsCurrentPaths;
             for( const auto &p:paths )
-                panel_paths.emplace_back( get<1>(p), get<0>(p) );
+                panel_paths.emplace_back( std::get<1>(p), std::get<0>(p) );
         }
         return panel_paths;
     };
@@ -842,18 +846,18 @@ static NCAppDelegate *g_Me = nil;
     existing_window = window;
 }
 
-- (const shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager
+- (const std::shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager
 {
-    static const auto mgr = make_shared<ConfigBackedNetworkConnectionsManager>
+    static const auto mgr = std::make_shared<ConfigBackedNetworkConnectionsManager>
         (*g_NetworkConnectionsConfig);
-    static const shared_ptr<NetworkConnectionsManager> int_ptr = mgr;
+    static const std::shared_ptr<NetworkConnectionsManager> int_ptr = mgr;
     return int_ptr;
 }
 
 - (nc::ops::AggregateProgressTracker&) operationsProgressTracker
 {
     static const auto apt = [self]{
-        const auto apt = make_shared<nc::ops::AggregateProgressTracker>();
+        const auto apt = std::make_shared<nc::ops::AggregateProgressTracker>();
         apt->SetProgressCallback([](double _progress){
             g_Me.dock.SetProgress( _progress );
         });
@@ -874,10 +878,10 @@ static NCAppDelegate *g_Me = nil;
     return *instance;
 }
 
-- (const shared_ptr<nc::panel::ClosedPanelsHistory>&)closedPanelsHistory
+- (const std::shared_ptr<nc::panel::ClosedPanelsHistory>&)closedPanelsHistory
 {
-    static const auto impl = make_shared<nc::panel::ClosedPanelsHistoryImpl>();
-    static const shared_ptr<nc::panel::ClosedPanelsHistory> history = impl;
+    static const auto impl = std::make_shared<nc::panel::ClosedPanelsHistoryImpl>();
+    static const std::shared_ptr<nc::panel::ClosedPanelsHistory> history = impl;
     return history;
 }
 

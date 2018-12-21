@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/FontCache.h>
 #include <Utility/OrthodoxMonospace.h>
@@ -8,7 +8,7 @@
 
 namespace nc::term {
 
-Parser::Parser(Screen &_scr, function<void(const void* _d, int _sz)> _task_input):
+Parser::Parser(Screen &_scr, std::function<void(const void* _d, int _sz)> _task_input):
     m_Scr(_scr),
     m_TaskInput( move(_task_input) )
 {
@@ -60,9 +60,9 @@ void Parser::Reset()
         m_TabStop[i] = 0x01010101;
 }
 
-void Parser::SetTaskScreenResize( function<void(int,int)> _callback )
+void Parser::SetTaskScreenResize( std::function<void(int,int)> _callback )
 {
-    m_TaskScreenResizeCallback = _callback;
+    m_TaskScreenResizeCallback = std::move(_callback);
 }
 
 void Parser::Flush()

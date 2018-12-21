@@ -6,6 +6,7 @@
 #include <boost/uuid/string_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #pragma clang diagnostic pop
+#include <Habanero/spinlock.h>
 
 using namespace std::literals;
 

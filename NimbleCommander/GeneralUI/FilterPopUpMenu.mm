@@ -1,6 +1,8 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include "FilterPopUpMenu.h"
+#include <vector>
+#include <Utility/ObjCpp.h>
 
 @interface FilterPopUpMenu()
 

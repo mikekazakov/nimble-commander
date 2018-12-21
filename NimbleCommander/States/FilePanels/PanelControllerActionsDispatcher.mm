@@ -8,6 +8,7 @@
 #include "Actions/GoToFolder.h"
 #include "Actions/OpenFile.h"
 #include "Actions/Enter.h"
+#include <iostream>
 
 using namespace nc::core;
 using namespace nc::panel;

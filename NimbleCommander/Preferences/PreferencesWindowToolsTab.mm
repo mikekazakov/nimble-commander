@@ -2,6 +2,9 @@
 #include "PreferencesWindowToolsTab.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 using namespace std::literals;
 

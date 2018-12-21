@@ -7,13 +7,13 @@
 
 @interface InternalViewerWindowController : NSWindowController
 
-- (id) initWithFilepath:(string)path
+- (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs;
 
 - (bool) performBackgrounOpening; // call it from bg thread!
 
 - (void)showAsFloatingWindow;
-- (void)markInitialSelection:(CFRange)_selection searchTerm:(string)_request;
+- (void)markInitialSelection:(CFRange)_selection searchTerm:(std::string)_request;
 
 
 @property (nonatomic, readonly) InternalViewerController *internalViewerController;

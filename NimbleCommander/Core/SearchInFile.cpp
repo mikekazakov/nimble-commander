@@ -1,7 +1,8 @@
-// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "SearchInFile.h"
 #include <Utility/Encodings.h>
 #include "FileWindow.h"
-#include "SearchInFile.h"
+#include <exception>
 
 static const unsigned g_MaximumCodeUnit = 2;
 
@@ -32,10 +33,10 @@ SearchInFile::SearchInFile(FileWindow &_file):
     m_SearchOptions(0)
 {
     if( !m_File.FileOpened() )
-        throw invalid_argument("FileWindow should be opened");
+        throw std::invalid_argument("FileWindow should be opened");
     m_Position = _file.WindowPos();
-    m_DecodedBuffer = make_unique<uint16_t[]>(_file.WindowSize());
-    m_DecodedBufferIndx = make_unique<uint32_t[]>(_file.WindowSize());
+    m_DecodedBuffer = std::make_unique<uint16_t[]>(_file.WindowSize());
+    m_DecodedBufferIndx = std::make_unique<uint32_t[]>(_file.WindowSize());
 }
 
 SearchInFile::~SearchInFile()

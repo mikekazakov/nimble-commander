@@ -1,6 +1,7 @@
 // Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Dock.h"
 #include <Utility/VerticallyCenteredTextFieldCell.h>
+#include <cmath>
 
 @interface NCCoreDockProgressIndicator : NSProgressIndicator
 @end

@@ -1,7 +1,7 @@
 // Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+#include <Utility/ByteCountFormatter.h>
 #include <Foundation/Foundation.h>
 #include <Utility/Encodings.h>
-#include <Utility/ByteCountFormatter.h>
 #include <string>
 
 static inline void strsubst(char *_s, char _what, char _to)
@@ -29,7 +29,8 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
     m_Bytes = {'b', 'y', 't', 'e', 's'};
 
     if(_localized) {
-        auto language = string(NSBundle.mainBundle.preferredLocalizations.firstObject.UTF8String);
+        auto bundle = NSBundle.mainBundle;
+        auto language = std::string(bundle.preferredLocalizations.firstObject.UTF8String);
     
         NSNumberFormatter *def_formatter = [NSNumberFormatter new];
         NSString *decimal_symbol = [def_formatter decimalSeparator];

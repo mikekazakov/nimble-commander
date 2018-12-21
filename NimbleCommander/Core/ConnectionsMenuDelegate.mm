@@ -4,6 +4,7 @@
 #include <NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "NetworkConnectionsManager.h"
+#include <Utility/StringExtras.h>
 
 @interface ConnectionsMenuDelegate()
 

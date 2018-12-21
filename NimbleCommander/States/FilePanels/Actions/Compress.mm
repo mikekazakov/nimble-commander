@@ -8,6 +8,7 @@
 #include <VFS/VFS.h>
 #include <Utility/PathManip.h>
 #include <Operations/Compression.h>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 

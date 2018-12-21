@@ -25,6 +25,7 @@
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <Operations/Pool.h>
+#include <Utility/ObjCpp.h>
 
 using namespace nc;
 
@@ -43,16 +44,16 @@ static __weak NCMainWindowController *g_LastFocusedNCMainWindowController = nil;
 
 @implementation NCMainWindowController
 {
-    vector<NSObject<NCMainWindowState> *> m_WindowState; // .back is current state
+    std::vector<NSObject<NCMainWindowState> *> m_WindowState; // .back is current state
     MainWindowFilePanelState    *m_PanelState;
     NCTermShellState     *m_Terminal;
     MainWindowInternalViewerState *m_Viewer;
     
     SerialQueue                  m_BigFileViewLoadingQ;
     bool                         m_ToolbarVisible;
-    vector<config::Token>        m_ConfigTickets;
+    std::vector<config::Token>   m_ConfigTickets;
     
-    shared_ptr<nc::ops::Pool>    m_OperationsPool;
+    std::shared_ptr<nc::ops::Pool> m_OperationsPool;
 }
 
 @synthesize terminalState = m_Terminal;
@@ -288,7 +289,7 @@ static int CountMainWindows()
         if( auto pc = m_PanelState.activePanelController ){
             auto cwd = m_Terminal.cwd;
             if( pc.isUniform && (!pc.vfs->IsNativeFS() || pc.currentDirectoryPath != cwd) ) {
-                auto cnt = make_shared<nc::panel::DirectoryChangeRequest>();
+                auto cnt = std::make_shared<nc::panel::DirectoryChangeRequest>();
                 cnt->VFS = VFSNativeHost::SharedHost();
                 cnt->RequestedDirectory = cwd;
                 [pc GoToDirWithContext:cnt];
@@ -317,7 +318,7 @@ static int CountMainWindows()
         [self.topmostState windowStateDidBecomeAssigned];
 }
 
-- (void)requestViewerFor:(string)_filepath at:(shared_ptr<VFSHost>) _host
+- (void)requestViewerFor:(std::string)_filepath at:(std::shared_ptr<VFSHost>) _host
 {
     dispatch_assert_main_queue();
     
@@ -365,7 +366,7 @@ static int CountMainWindows()
     });
 }
 
-- (void)requestTerminal:(const string&)_cwd;
+- (void)requestTerminal:(const std::string&)_cwd;
 {
     if( m_Terminal == nil ) {
         const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame];
@@ -390,7 +391,7 @@ static int CountMainWindows()
 {
     if( m_Terminal == nil ) {
         const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame];
-        state.initialWD = string(_cwd);
+        state.initialWD = std::string(_cwd);
         [self pushState:state];
         m_Terminal = state;
     }
@@ -419,9 +420,9 @@ static int CountMainWindows()
     [m_Terminal executeWithFullPath:_binary_path parameters:_params];
 }
 
-- (void)RequestExternalEditorTerminalExecution:(const string&)_full_app_path
-                                        params:(const string&)_params
-                                     fileTitle:(const string&)_file_title
+- (void)RequestExternalEditorTerminalExecution:(const std::string&)_full_app_path
+                                        params:(const std::string&)_params
+                                     fileTitle:(const std::string&)_file_title
 {
     const auto frame = self.window.contentView.frame;
     const auto state = [[NCTermExternalEditorState alloc] initWithFrameAndParams:frame
@@ -454,7 +455,7 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
     [self.window beginSheet:w.window completionHandler:^(NSModalResponse){}];    
 }
 
-- (void)enqueueOperation:(const shared_ptr<nc::ops::Operation> &)_operation
+- (void)enqueueOperation:(const std::shared_ptr<nc::ops::Operation> &)_operation
 {
     m_OperationsPool->Enqueue(_operation);
 }
@@ -500,21 +501,21 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
     m_OperationsPool = _pool.shared_from_this();
     
     __weak NCMainWindowController *weak_self = self;
-    auto dialog_callback = [weak_self](NSWindow *_dlg, function<void (NSModalResponse)> _cb) {
+    auto dialog_callback = [weak_self](NSWindow *_dlg, std::function<void (NSModalResponse)> _cb) {
         NSBeep();
         if( NCMainWindowController *wnd = weak_self)
             [wnd beginSheet:_dlg completionHandler:^(NSModalResponse rc) { _cb(rc); }];
     };
-    m_OperationsPool->SetDialogCallback( move(dialog_callback) );
+    m_OperationsPool->SetDialogCallback( std::move(dialog_callback) );
     
-    auto completion_callback = [weak_self] (const shared_ptr<nc::ops::Operation>& _op) {
+    auto completion_callback = [weak_self] (const std::shared_ptr<nc::ops::Operation>& _op) {
         if( NCMainWindowController *wnd = weak_self)
             dispatch_to_main_queue([=]{
                 auto &center = core::UserNotificationsCenter::Instance();
                 center.ReportCompletedOperation(*_op, wnd.window);
             });
     };
-    m_OperationsPool->SetOperationCompletionCallback( move(completion_callback) );
+    m_OperationsPool->SetOperationCompletionCallback( std::move(completion_callback) );
 }
 
 - (NSRect)window:(NSWindow *)window willPositionSheet:(NSWindow *)sheet usingRect:(NSRect)rect

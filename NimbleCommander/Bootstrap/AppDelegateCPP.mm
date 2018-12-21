@@ -1,8 +1,9 @@
 // Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "AppDelegateCPP.h"
 #include <Utility/PathManip.h>
+#include <Utility/StringExtras.h>
 #include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include "AppDelegate.h"
-#include "AppDelegateCPP.h"
 
 namespace nc {
 

@@ -1,5 +1,7 @@
 // Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Application.h"
+#include <exception>
+#include <iostream>
 
 @implementation Application
 

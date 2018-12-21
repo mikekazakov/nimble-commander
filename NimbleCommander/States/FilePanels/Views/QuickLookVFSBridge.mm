@@ -1,6 +1,7 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickLookVFSBridge.h"
 #include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
+#include <Utility/StringExtras.h>
 
 namespace nc::panel {
 

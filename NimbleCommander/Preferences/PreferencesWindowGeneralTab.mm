@@ -4,6 +4,7 @@
 #include "../Bootstrap/AppDelegate.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "PreferencesWindowGeneralTab.h"
+#include <Habanero/dispatch_cpp.h>
 
 using namespace std::literals;
 

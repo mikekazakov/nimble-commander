@@ -4,6 +4,10 @@
 #include <Habanero/Observable.h>
 #include <Config/RapidJSON_fwd.h>
 
+#include <unordered_map>
+#include <vector>
+#include <string>
+
 class Theme;
 
 /**

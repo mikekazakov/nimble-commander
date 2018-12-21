@@ -8,6 +8,9 @@
 #include "Actions/ExecuteExternalTool.h"
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "ExternalToolsSupport.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 // do not change these strings, they are used for persistency in NSUserDefaults
 static auto g_ToolbarIdentifier = @"FilePanelsToolbar";

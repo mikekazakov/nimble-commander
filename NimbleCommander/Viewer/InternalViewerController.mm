@@ -1,12 +1,16 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFS.h>
 #include <NimbleCommander/GeneralUI/ProcessSheetController.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/SearchInFile.h>
 #include <Utility/ByteCountFormatter.h>
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 #include "InternalViewerHistory.h"
 #include "InternalViewerController.h"
 #include <Habanero/SerialQueue.h>
+
+using namespace std::literals;
 
 static const auto g_ConfigRespectComAppleTextEncoding   = "viewer.respectComAppleTextEncoding";
 static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSensitive";
@@ -50,15 +54,15 @@ static int InvertBitFlag( int _value, int _flag )
 
 @implementation InternalViewerController
 {
-    string                          m_Path;
-    string                          m_GlobalFilePath;    
+    std::string                     m_Path;
+    std::string                     m_GlobalFilePath;
     VFSHostPtr                      m_VFS;
     VFSFilePtr                      m_OriginalFile; // may be not opened if SeqWrapper is used
     VFSSeqToRandomROWrapperFilePtr  m_SeqWrapper; // may be nullptr if underlying VFS supports ReadAt
     VFSFilePtr                      m_WorkFile; // the one actually used
-    unique_ptr<FileWindow>          m_ViewerFileWindow;
-    unique_ptr<FileWindow>          m_SearchFileWindow;
-    unique_ptr<SearchInFile>        m_SearchInFile;
+    std::unique_ptr<FileWindow>     m_ViewerFileWindow;
+    std::unique_ptr<FileWindow>     m_SearchFileWindow;
+    std::unique_ptr<SearchInFile>   m_SearchInFile;
     SerialQueue                     m_SearchInFileQueue;
     
     // UI
@@ -124,13 +128,13 @@ static int InvertBitFlag( int _value, int _flag )
     m_GlobalFilePath.clear();
 }
 
-- (void) setFile:(string)path at:(VFSHostPtr)vfs
+- (void) setFile:(std::string)path at:(VFSHostPtr)vfs
 {
 //    dispatch_assert_main_queue();
     // current state checking?
     
     if( path.empty() || !vfs )
-        throw logic_error("invalid args for - (void) setFile:(string)path at:(VFSHostPtr)vfs");
+        throw std::logic_error("invalid args for - (void) setFile:(string)path at:(VFSHostPtr)vfs");
     
     m_Path = path;
     m_VFS = vfs;
@@ -152,7 +156,7 @@ static int InvertBitFlag( int _value, int _flag )
         proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
         [proc Show];
         
-        auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origin_file);
+        auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(origin_file);
         int res = wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock,
                                 [=]{ return proc.userCancelled; },
                                 [=](uint64_t _bytes, uint64_t _total) {
@@ -174,17 +178,17 @@ static int InvertBitFlag( int _value, int _flag )
     m_WorkFile = work_file;
     m_GlobalFilePath = work_file->ComposeVerbosePath();
     
-    auto window = make_unique<FileWindow>();
+    auto window = std::make_unique<FileWindow>();
     if( window->OpenFile(work_file, InternalViewerController.fileWindowSize) != 0 )
         return false;
-    m_ViewerFileWindow = move(window);
+    m_ViewerFileWindow = std::move(window);
     
-    window = make_unique<FileWindow>();
+    window = std::make_unique<FileWindow>();
     if( window->OpenFile(work_file) != 0 )
         return false;
     m_SearchFileWindow = move(window);
     
-    m_SearchInFile = make_unique<SearchInFile>(*m_SearchFileWindow);
+    m_SearchInFile = std::make_unique<SearchInFile>(*m_SearchFileWindow);
     m_SearchInFile->SetSearchOptions((GlobalConfig().GetBool(g_ConfigSearchCaseSensitive)  ? SearchInFile::OptionCaseSensitive   : 0) |
                                      (GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ? SearchInFile::OptionFindWholePhrase : 0) );
     
@@ -208,7 +212,7 @@ static int InvertBitFlag( int _value, int _flag )
         proc.title = NSLocalizedString(@"Opening file...", "Title for process sheet when opening a vfs file");
         [proc Show];
         
-        auto wrapper = make_shared<VFSSeqToRandomROWrapperFile>(origin_file);
+        auto wrapper = std::make_shared<VFSSeqToRandomROWrapperFile>(origin_file);
         int res = wrapper->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock,
                                 [=]{ return proc.userCancelled; },
                                 [=](uint64_t _bytes, uint64_t _total) {
@@ -230,17 +234,17 @@ static int InvertBitFlag( int _value, int _flag )
     m_WorkFile = work_file;
     m_GlobalFilePath = work_file->ComposeVerbosePath();
     
-    auto window = make_unique<FileWindow>();
+    auto window = std::make_unique<FileWindow>();
     if( window->OpenFile(work_file, InternalViewerController.fileWindowSize) != 0 )
         return false;
     m_ViewerFileWindow = move(window);
     
-    window = make_unique<FileWindow>();
+    window = std::make_unique<FileWindow>();
     if( window->OpenFile(work_file) != 0 )
         return false;
     m_SearchFileWindow = move(window);
     
-    m_SearchInFile = make_unique<SearchInFile>(*m_SearchFileWindow);
+    m_SearchInFile = std::make_unique<SearchInFile>(*m_SearchFileWindow);
     m_SearchInFile->SetSearchOptions((GlobalConfig().GetBool(g_ConfigSearchCaseSensitive)  ? SearchInFile::OptionCaseSensitive   : 0) |
                                      (GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ? SearchInFile::OptionFindWholePhrase : 0) );
     
@@ -298,7 +302,7 @@ static int InvertBitFlag( int _value, int _flag )
     info.view_mode = m_View.mode;
     info.encoding = m_View.encoding;
     info.selection = m_View.selectionInFile;
-    InternalViewerHistory::Instance().AddEntry( move(info) );
+    InternalViewerHistory::Instance().AddEntry( std::move(info) );
 }
 
 + (unsigned) fileWindowSize
@@ -569,7 +573,7 @@ static int InvertBitFlag( int _value, int _flag )
     [self.goToPositionPopover close];
     
     double pos = self.goToPositionValueTextField.stringValue.doubleValue / 100.;
-    pos = min( max(pos, 0.), 1. );
+    pos = std::min( std::max(pos, 0.), 1. );
     [m_View scrollToVerticalPosition:pos];
 }
 
@@ -593,7 +597,7 @@ static int InvertBitFlag( int _value, int _flag )
     [self didChangeValueForKey:@"verboseTitle"];
 }
 
-- (void)markSelection:(CFRange)_selection forSearchTerm:(string)_request
+- (void)markSelection:(CFRange)_selection forSearchTerm:(std::string)_request
 {
     dispatch_assert_main_queue();
     

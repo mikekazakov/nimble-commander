@@ -4,6 +4,10 @@
 #include <Habanero/CommonPaths.h>
 #include "SandboxManager.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <boost/filesystem.hpp>
+#include <Utility/ObjCpp.h>
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/StringExtras.h>
 
 static const auto g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
 

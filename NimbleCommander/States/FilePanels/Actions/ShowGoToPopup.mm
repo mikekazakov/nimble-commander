@@ -20,6 +20,9 @@
 #include "../PanelView.h"
 #include "../Helpers/LocationFormatter.h"
 #include "Helpers.h"
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
+#include <Habanero/dispatch_cpp.h>
 
 using namespace nc::panel;
 

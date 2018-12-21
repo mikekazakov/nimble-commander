@@ -2,6 +2,7 @@
 #pragma once
 
 #import <3rd_Party/RHPreferences/RHPreferences/RHPreferences.h>
+#include <functional>
 
 class ExternalToolsStorage;
 

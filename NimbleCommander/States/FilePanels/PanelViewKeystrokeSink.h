@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Cocoa/Cocoa.h>
+
 @class PanelView;
 
 namespace nc::panel::view::BiddingPriority {

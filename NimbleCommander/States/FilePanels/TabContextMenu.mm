@@ -3,6 +3,8 @@
 #include "TabContextMenu.h"
 #include "Actions/TabsManagement.h"
 #include <NimbleCommander/Core/Alert.h>
+#include <unordered_map>
+#include <iostream>
 
 using namespace nc::panel;
 using ActionsT = std::unordered_map<SEL, std::unique_ptr<actions::StateAction>>;

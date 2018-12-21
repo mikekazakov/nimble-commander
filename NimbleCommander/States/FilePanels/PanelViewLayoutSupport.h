@@ -4,6 +4,11 @@
 #include <Habanero/Observable.h>
 #include "Brief/Layout.h"
 #include "List/Layout.h"
+#include <any>
+#include <string>
+#include <vector>
+#include <memory>
+#include <Cocoa/Cocoa.h>
 
 namespace nc::panel {
 

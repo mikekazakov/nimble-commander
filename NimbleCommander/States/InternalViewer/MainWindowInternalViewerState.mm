@@ -1,10 +1,12 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../MainWindowController.h"
 #include "../../Viewer/InternalViewerController.h"
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowInternalViewerState.h"
+#include <Habanero/dispatch_cpp.h>
+#include <Utility/ObjCpp.h>
 
 @interface MainWindowInternalViewerBackground : NSView
 @end
@@ -86,7 +88,7 @@
     return true;
 }
 
-- (bool)openFile:(const string&)_path atVFS:(const VFSHostPtr&)_host;
+- (bool)openFile:(const std::string&)_path atVFS:(const VFSHostPtr&)_host;
 {
     [m_Controller setFile:_path at:_host];
     return [m_Controller performBackgroundOpening];

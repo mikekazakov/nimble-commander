@@ -3,6 +3,7 @@
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
 #include "../../MainWindowController.h"
+#include <Utility/ObjCpp.h>
 
 namespace nc::panel::actions {
 

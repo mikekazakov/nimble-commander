@@ -6,6 +6,7 @@
 #include "PanelListViewNameView.h"
 #include "PanelListViewSizeView.h"
 #include "PanelListViewRowView.h"
+#include <Utility/ObjCpp.h>
 
 using namespace nc::panel;
 

@@ -8,6 +8,7 @@
 
 @interface MainWindowInternalViewerState : NSViewController<NCMainWindowState>
 
-- (bool)openFile:(const string&)_path atVFS:(const VFSHostPtr&)_host;
+- (bool)openFile:(const std::string&)_path
+           atVFS:(const VFSHostPtr&)_host;
 
 @end

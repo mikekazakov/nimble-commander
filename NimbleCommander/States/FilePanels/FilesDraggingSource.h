@@ -2,6 +2,7 @@
 #pragma once
 
 #include <VFS/VFS.h>
+#include <Cocoa/Cocoa.h>
 @class PanelController;
 
 @interface PanelDraggingItem : NSPasteboardItem

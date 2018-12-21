@@ -5,6 +5,7 @@
 #include <Habanero/tribool.h>
 #include <Utility/FileMask.h>
 #include "PanelDataItemVolatileData.h"
+#include <Cocoa/Cocoa.h>
 
 namespace nc::panel {
 

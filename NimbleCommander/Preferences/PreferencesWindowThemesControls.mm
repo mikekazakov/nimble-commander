@@ -4,6 +4,8 @@
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
 #include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include "PreferencesWindowThemesControls.h"
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 
 @interface NCPreferencesAlphaColorWell : NSColorWell
 @end

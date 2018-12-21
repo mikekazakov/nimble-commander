@@ -17,6 +17,8 @@
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "Actions/NavigateHistory.h"
 #include "Helpers/RecentlyClosedMenuDelegate.h"
+#include <Utility/ObjCpp.h>
+#include <Utility/StringExtras.h>
 
 using namespace nc::panel;
 

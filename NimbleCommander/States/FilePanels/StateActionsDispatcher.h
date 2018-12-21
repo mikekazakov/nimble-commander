@@ -2,6 +2,8 @@
 #pragma once
 
 #include <Utility/MIMResponder.h>
+#include <unordered_map>
+#include <memory>
 
 @class MainWindowFilePanelState;
 
@@ -17,7 +19,7 @@ namespace nc::panel {
 @property (nonatomic, readwrite) bool hasTerminal;
 
 - (instancetype)initWithState:(MainWindowFilePanelState*)_state
-                     andActionsMap:(const nc::panel::StateActionsMap&)_actions_map;
+                andActionsMap:(const nc::panel::StateActionsMap&)_actions_map;
 
 - (IBAction)OnSwapPanels:(id)sender;
 - (IBAction)OnSyncPanels:(id)sender;

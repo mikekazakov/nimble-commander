@@ -2,6 +2,7 @@
 #include "PanelBriefViewCollectionViewBackground.h"
 #include "PanelBriefViewLayoutProtocol.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
+#include <Utility/ObjCpp.h>
 
 @implementation PanelBriefViewCollectionViewBackground
 {

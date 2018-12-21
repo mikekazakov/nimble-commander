@@ -11,7 +11,7 @@ Screen::Screen(unsigned _w, unsigned _h):
     GoToDefaultPosition();
 }
 
-void Screen::PutString(const string &_str)
+void Screen::PutString(const std::string &_str)
 {
     for(auto c:_str)
         PutCh(c);
@@ -74,9 +74,11 @@ void Screen::DoEraseScreen(int _mode)
         for(int i = 0; i < Height(); ++i) {
             auto l = m_Buffer.LineFromNo(i);
             if(i != m_PosY)
-                fill(begin(l), end(l), m_EraseChar);
+                std::fill(begin(l), end(l), m_EraseChar);
             else {
-                fill(begin(l), min( begin(l)+m_PosX, end(l) ), m_EraseChar);
+                std::fill(begin(l),
+                          std::min( std::begin(l)+m_PosX, std::end(l) ),
+                          m_EraseChar);
                 return;
             }
             m_Buffer.SetLineWrapped(i, false);
@@ -85,7 +87,7 @@ void Screen::DoEraseScreen(int _mode)
     { // clear all screen
         for(int i = 0; i < Height(); ++i) {
             auto l = m_Buffer.LineFromNo(i);
-            fill(begin(l), end(l), m_EraseChar);
+            std::fill(begin(l), end(l), m_EraseChar);
             m_Buffer.SetLineWrapped(i, false);
         }
     } else {
@@ -171,10 +173,10 @@ void Screen::EraseInLine(int _mode)
     auto i = begin(line);
     auto e = end(line);
     if(_mode == 0)
-        i = min( i + m_PosX, e );
+        i = std::min( i + m_PosX, e );
     else if(_mode == 1)
-        e = min( i + m_PosX + 1, e );
-    fill(i, e, m_EraseChar);
+        e = std::min( i + m_PosX + 1, e );
+    std::fill(i, e, m_EraseChar);
 }
 
 void Screen::EraseInLineCount(unsigned _n)
@@ -182,9 +184,9 @@ void Screen::EraseInLineCount(unsigned _n)
     auto line = m_Buffer.LineFromNo(m_PosY);
     if(!line)
         return;
-    auto i = begin(line) + m_PosX;
-    auto e = min( i + _n, end(line) );
-    fill(i, e, m_EraseChar);
+    auto i = std::begin(line) + m_PosX;
+    auto e = std::min( i + _n, std::end(line) );
+    std::fill(i, e, m_EraseChar);
 }
 
 void Screen::SetFgColor(int _color)
@@ -258,9 +260,9 @@ void Screen::DoShiftRowRight(int _chars)
 void Screen::EraseAt(unsigned _x, unsigned _y, unsigned _count)
 {
     if( auto line = m_Buffer.LineFromNo(_y) ) {
-        auto i = begin(line) + _x;
-        auto e = min( i + _count, end(line) );
-        fill(i, e, m_EraseChar);
+        auto i = std::begin(line) + _x;
+        auto e = std::min( i + _count, std::end(line) );
+        std::fill(i, e, m_EraseChar);
     }
 }
 
@@ -269,15 +271,15 @@ void Screen::CopyLineChars(int _from, int _to)
     auto src = m_Buffer.LineFromNo(_from);
     auto dst = m_Buffer.LineFromNo(_to);
     if(src && dst)
-        copy_n(begin(src),
-               min(end(src) - begin(src), end(dst) - begin(dst)),
-               begin(dst));
+        std::copy_n(begin(src),
+                    std::min(std::end(src) - std::begin(src), std::end(dst) - std::begin(dst)),
+                    std::begin(dst));
 }
 
 void Screen::ClearLine(int _ind)
 {
     if( auto line = m_Buffer.LineFromNo(_ind) ) {
-        fill( begin(line), end(line), m_EraseChar );
+        std::fill( std::begin(line), std::end(line), m_EraseChar );
         m_Buffer.SetLineWrapped(_ind, false);
     }
 }
@@ -300,7 +302,7 @@ void Screen::ScrollDown(unsigned _top, unsigned _bottom, unsigned _lines)
         m_Buffer.SetLineWrapped(n_dst, m_Buffer.LineWrapped(n_src));        
     }
     
-    for(int i = _top; i < min(_top + _lines, _bottom); ++i)
+    for(int i = _top; i < std::min(_top + _lines, _bottom); ++i)
         ClearLine(i);
 }
 
@@ -316,7 +318,7 @@ void Screen::DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines)
         return;
 
     if(_top == 0 && _bottom == Height() && !m_AlternateScreen)
-        for(int i = 0; i < min(_lines, (unsigned)Height()); ++i) {
+        for(int i = 0; i < std::min(_lines, (unsigned)Height()); ++i) {
             // we're scrolling up the whole screen - let's feed scrollback with leftover
             auto line = m_Buffer.LineFromNo(i);
             assert(line);
@@ -332,7 +334,7 @@ void Screen::DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines)
         m_Buffer.SetLineWrapped(n_dst, m_Buffer.LineWrapped(n_src));
     }
     
-    for( int i = _bottom - 1; i >= max( (int)_bottom-(int)_lines, 0); --i)
+    for( int i = _bottom - 1; i >= std::max( (int)_bottom-(int)_lines, 0); --i)
         ClearLine(i);
 }
 
@@ -351,7 +353,7 @@ void Screen::ResizeScreen(unsigned _new_sx, unsigned _new_sy)
     if(Width() == _new_sx && Height() == _new_sy)
         return;
     if( _new_sx == 0 || _new_sy == 0 )
-        throw invalid_argument("Screen::ResizeScreen sizes can't be zero");
+        throw std::invalid_argument("Screen::ResizeScreen sizes can't be zero");
     
     bool feed_from_bs = m_PosY == Height() - 1; // questionable!
     
@@ -371,7 +373,7 @@ void Screen::GoToDefaultPosition()
     GoTo(0, 0);
 }
 
-const string& Screen::Title() const
+const std::string& Screen::Title() const
 {
     return m_Title;
 }

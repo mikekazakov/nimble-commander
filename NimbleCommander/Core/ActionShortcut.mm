@@ -1,8 +1,9 @@
 // Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "ActionShortcut.h"
 #include <locale>
+#include <vector>
 #include <codecvt>
 #include <Carbon/Carbon.h>
-#include "ActionShortcut.h"
 
 static_assert( sizeof(ActionShortcut) == 4 );
 

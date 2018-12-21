@@ -4,6 +4,7 @@
 #include <Config/ObjCBridge.h>
 #include "../Bootstrap/Config.h"
 #include "../Bootstrap/ActivationManager.h"
+#include <Utility/StringExtras.h>
 
 static const auto g_ConfigFont = "terminal.font";
 

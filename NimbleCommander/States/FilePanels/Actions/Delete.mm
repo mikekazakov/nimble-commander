@@ -9,6 +9,8 @@
 #include <Operations/Deletion.h>
 #include <Operations/DeletionDialog.h>
 #include "../../MainWindowController.h"
+#include <unordered_set>
+#include <Habanero/dispatch_cpp.h>
 
 namespace nc::panel::actions {
 

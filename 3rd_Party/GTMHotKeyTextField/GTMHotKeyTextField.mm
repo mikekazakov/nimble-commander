@@ -17,6 +17,7 @@
 
 #import "GTMHotKeyTextField.h"
 #import <Carbon/Carbon.h>
+#include <vector>
 
 struct KeycodesHardcode
 {

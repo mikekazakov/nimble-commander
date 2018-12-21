@@ -36,7 +36,7 @@ SearchForFiles::~SearchForFiles()
 void SearchForFiles::SetFilterName(const FilterName &_filter)
 {
     if( IsRunning() )
-        throw logic_error("Filters can't be changed during background search process");
+        throw std::logic_error("Filters can't be changed during background search process");
     m_FilterName = _filter;
     // substitute simple requests, like "system" with "*system*":
     if( !nc::utility::FileMask::IsWildCard(m_FilterName->mask) )
@@ -48,16 +48,16 @@ void SearchForFiles::SetFilterName(const FilterName &_filter)
 void SearchForFiles::SetFilterContent(const FilterContent &_filter)
 {
     if( IsRunning() )
-        throw logic_error("Filters can't be changed during background search process");
+        throw std::logic_error("Filters can't be changed during background search process");
     m_FilterContent = _filter;
 }
 
 void SearchForFiles::SetFilterSize(const FilterSize &_filter)
 {
     if( IsRunning() )
-        throw logic_error("Filters can't be changed during background search process");
+        throw std::logic_error("Filters can't be changed during background search process");
     if( _filter.min == 0 &&
-        _filter.max == numeric_limits<uint64_t>::max())
+       _filter.max == std::numeric_limits<uint64_t>::max())
         return;
     m_FilterSize = _filter;
 }
@@ -65,18 +65,18 @@ void SearchForFiles::SetFilterSize(const FilterSize &_filter)
 void SearchForFiles::ClearFilters()
 {
     if( IsRunning() )
-        throw logic_error("Filters can't be changed during background search process");
-    m_FilterName = nullopt;
-    m_FilterNameMask = nullopt;
-    m_FilterContent = nullopt;
-    m_FilterSize = nullopt;
+        throw std::logic_error("Filters can't be changed during background search process");
+    m_FilterName = std::nullopt;
+    m_FilterNameMask = std::nullopt;
+    m_FilterContent = std::nullopt;
+    m_FilterSize = std::nullopt;
 }
 
-bool SearchForFiles::Go(const string &_from_path,
+bool SearchForFiles::Go(const std::string &_from_path,
                         const VFSHostPtr &_in_host,
                         int _options,
                         FoundCallback _found_callback,
-                        function<void()> _finish_callback,
+                        std::function<void()> _finish_callback,
                         LookingInCallback _looking_in_callback,
                         SpawnArchiveCallback _spawn_archive_callback
                         )
@@ -129,7 +129,7 @@ void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
         if( m_Queue.IsStopped() )
             break;
         
-        auto path = move( m_DirsFIFO.front() );
+        auto path = std::move( m_DirsFIFO.front() );
         m_DirsFIFO.pop();
         
         NotifyLookingIn( path.Path().c_str(), *path.Host() );
@@ -140,7 +140,7 @@ void SearchForFiles::AsyncProc(const char *_from_path, VFSHost &_in_host)
                                           if(m_Queue.IsStopped())
                                               return false;
                                           
-                                          string full_path = path.Path();
+                                          std::string full_path = path.Path();
                                           if(full_path.back() != '/') full_path += '/';
                                           full_path += _dirent.name;
                                           

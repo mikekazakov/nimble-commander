@@ -2,6 +2,8 @@
 #pragma once
 
 #include "Actions/DefaultAction.h"
+#include <unordered_map>
+#include <memory>
 
 class NetworkConnectionsManager;
 

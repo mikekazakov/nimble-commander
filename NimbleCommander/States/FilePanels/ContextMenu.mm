@@ -13,6 +13,10 @@
 
 using namespace nc::panel;
 
+@interface NCPanelContextMenuSharingDelegate :NSObject<NSSharingServiceDelegate>
+@property (nonatomic, weak) NSWindow *sourceWindow;
+@end
+
 @implementation NCPanelContextMenu
 {
     std::vector<VFSListingItem>         m_Items;
@@ -252,13 +256,52 @@ using namespace nc::panel;
 
 - (void)OnShareWithService:(id)sender
 {
+    auto delegate = [[NCPanelContextMenuSharingDelegate alloc] init];
+    delegate.sourceWindow = m_Panel.window;
+    
     NSSharingService *service = ((NSMenuItem*)sender).representedObject;
+    service.delegate = delegate;
     [service performWithItems:m_ShareItemsURLs];
 }
 
 - (void)OnDuplicateItem:(id)sender
 {
     m_DuplicateAction->Perform(m_Panel, sender);
+}
+
+@end
+
+@implementation NCPanelContextMenuSharingDelegate
+{
+    NCPanelContextMenuSharingDelegate *m_Self;
+}
+
+- (instancetype)init
+{
+    if( self = [super init] ) {
+        m_Self = self;
+    }
+    return self;
+}
+
+- (void)sharingService:(NSSharingService *)sharingService
+   didFailToShareItems:(NSArray *)items
+                 error:(NSError *)error
+{
+    m_Self = nil;
+}
+
+- (void)sharingService:(NSSharingService *)sharingService
+         didShareItems:(NSArray *)items
+{
+    m_Self = nil;
+}
+
+- (nullable NSWindow *)sharingService:(NSSharingService *)sharingService
+            sourceWindowForShareItems:(NSArray *)items
+                  sharingContentScope:(NSSharingContentScope *)sharingContentScope
+{
+    return self.sourceWindow;
 }
 
 @end

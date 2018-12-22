@@ -7,6 +7,7 @@
 #include "QuickSearch.h"
 #include <Config/ConfigImpl.h>
 #include <Config/NonPersistentOverwritesStorage.h>
+#include <memory>
 
 using namespace nc::panel;
 using namespace nc::panel::QuickSearch;
@@ -21,8 +22,9 @@ static const auto g_ConfigJSON =
     \"keyOption\": 3\
 }}}";
 
-static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filenames );
-static shared_ptr<VFSListing> AppsListing();
+static std::shared_ptr<VFSListing> ProduceDummyListing
+    ( const std::vector<std::string> &_filenames );
+static std::shared_ptr<VFSListing> AppsListing();
 static NSEvent *KeyDown(NSString *_key, NSEventModifierFlags _flags);
 static NSString *SingleCharStr( unichar _c );
 
@@ -59,15 +61,15 @@ wantsToSetSearchPrompt:(NSString*)_prompt
 {
     QuickSearch_MockDelegate *m_Delegate;
     data::Model m_Data;
-    unique_ptr<nc::config::Config> m_QSConfig;
+    std::unique_ptr<nc::config::Config> m_QSConfig;
 }
 
 - (void)setUp
 {
     m_Data.Load(AppsListing(), data::Model::PanelType::Directory);
     m_Delegate = [[QuickSearch_MockDelegate alloc] init];
-    auto storage = make_shared<nc::config::NonPersistentOverwritesStorage>("");
-    m_QSConfig = make_unique<nc::config::ConfigImpl>( g_ConfigJSON, storage );    
+    auto storage = std::make_shared<nc::config::NonPersistentOverwritesStorage>("");
+    m_QSConfig = std::make_unique<nc::config::ConfigImpl>( g_ConfigJSON, storage );
 }
 
 - (void)tearDown
@@ -307,7 +309,7 @@ static NSString *SingleCharStr( unichar _c )
     return [NSString stringWithCharacters:&_c length:1];
 }
 
-static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filenames )
+static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<std::string> &_filenames )
 {
     nc::vfs::ListingInput l;
     
@@ -323,10 +325,10 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filena
         l.unix_types.emplace_back(0);
     }
     
-    return VFSListing::Build(move(l));
+    return VFSListing::Build(std::move(l));
 }
 
-static shared_ptr<VFSListing> AppsListing()
+static std::shared_ptr<VFSListing> AppsListing()
 {
     return ProduceDummyListing({
     "App Store.app",

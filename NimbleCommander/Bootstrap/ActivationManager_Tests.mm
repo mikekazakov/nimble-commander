@@ -659,5 +659,5 @@ static std::string MakeTmpDir()
             NSTemporaryDirectory().fileSystemRepresentation);
     const auto res = mkdtemp(dir); 
     assert( res != nullptr );
-    return string{dir} + "/";
+    return std::string{dir} + "/";
 }

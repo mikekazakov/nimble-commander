@@ -1,6 +1,7 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include "ExternalToolsSupport.h"
+#include <iostream>
 
 @interface ExternalToolsSupport_Tests : XCTestCase
 
@@ -12,8 +13,8 @@
 - (void)testParsing
 {
     ExternalToolsParametersParser p;
-    auto unexpected_error_callback = [=](string e) {
-        cout << e << endl;
+    auto unexpected_error_callback = [=](std::string e) {
+        std::cout << e << std::endl;
         XCTAssert( false );
     };
     

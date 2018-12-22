@@ -9,7 +9,7 @@ class TestGenericMemReadOnlyFile : public VFSFile
 {
 public:
     TestGenericMemReadOnlyFile(const char* _relative_path,
-                              shared_ptr<VFSHost> _host,
+                               std::shared_ptr<VFSHost> _host,
                               const void *_memory,
                               uint64_t _mem_size,
                               ReadParadigm _behave_as);
@@ -37,7 +37,7 @@ private:
 
 
 TestGenericMemReadOnlyFile::TestGenericMemReadOnlyFile(const char* _relative_path,
-                                                     shared_ptr<VFSHost> _host,
+                                                       std::shared_ptr<VFSHost> _host,
                                                      const void *_memory,
                                                      uint64_t _mem_size,
                                                      ReadParadigm _behave_as):
@@ -161,11 +161,11 @@ int TestGenericMemReadOnlyFile::Close()
 - (void)testRandomAccess
 {
     const size_t data_size = 1024*1024;
-    unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
+    std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for(int i = 0; i < data_size; ++i)
         data[i] = rand() % 256;
     
-    auto vfs_file = make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
+    auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
                                                             data.get(), data_size,
                                                             VFSFile::ReadParadigm::Random);
     vfs_file->Open(0, 0);
@@ -174,8 +174,8 @@ int TestGenericMemReadOnlyFile::Close()
     int ret = fw.OpenFile(vfs_file);
     XCTAssert(ret == 0);
 
-    mt19937 mt((random_device())());
-    uniform_int_distribution<size_t> dist(0, fw.FileSize() - fw.WindowSize());
+    std::mt19937 mt((std::random_device())());
+    std::uniform_int_distribution<size_t> dist(0, fw.FileSize() - fw.WindowSize());
 
     for(int i = 0; i < 10000; ++i)
     {
@@ -191,11 +191,11 @@ int TestGenericMemReadOnlyFile::Close()
 - (void)testSequentialAccess
 {
     const size_t data_size = 100*1024*1024;
-    unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
+    std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for(int i = 0; i < data_size; ++i)
         data[i] = rand() % 256;
     
-    auto vfs_file = make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
+    auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
                                                             data.get(), data_size,
                                                             VFSFile::ReadParadigm::Sequential);
     vfs_file->Open(0, 0);
@@ -204,8 +204,8 @@ int TestGenericMemReadOnlyFile::Close()
     int ret = fw.OpenFile(vfs_file);
     XCTAssert(ret == 0);
     
-    mt19937 mt((random_device())());
-    uniform_int_distribution<size_t> dist(0, fw.WindowSize()*10);
+    std::mt19937 mt((std::random_device())());
+    std::uniform_int_distribution<size_t> dist(0, fw.WindowSize()*10);
 
     while(true) {
         int cmp = memcmp(fw.Window(),
@@ -225,11 +225,11 @@ int TestGenericMemReadOnlyFile::Close()
 - (void)testSeekAccess
 {
     const size_t data_size = 10*1024*1024;
-    unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
+    std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for(int i = 0; i < data_size; ++i)
         data[i] = rand() % 256;
     
-    auto vfs_file = make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
+    auto vfs_file = std::make_shared<TestGenericMemReadOnlyFile>(nullptr, nullptr,
                                                             data.get(), data_size,
                                                             VFSFile::ReadParadigm::Seek);
     vfs_file->Open(0, 0);
@@ -238,8 +238,8 @@ int TestGenericMemReadOnlyFile::Close()
     int ret = fw.OpenFile(vfs_file);
     XCTAssert(ret == 0);
     
-    mt19937 mt((random_device())());
-    uniform_int_distribution<size_t> dist(0, fw.FileSize() - fw.WindowSize());
+    std::mt19937 mt((std::random_device())());
+    std::uniform_int_distribution<size_t> dist(0, fw.FileSize() - fw.WindowSize());
     
     for(int i = 0; i < 10000; ++i)
     {

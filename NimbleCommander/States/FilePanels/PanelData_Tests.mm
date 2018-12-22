@@ -6,11 +6,12 @@
 #include <VFS/VFSListingInput.h>
 #include <NimbleCommander/States/FilePanels/PanelData.h>
 #include <NimbleCommander/States/FilePanels/PanelDataSelection.h>
+#include <memory>
 
 using namespace nc;
 using namespace nc::panel;
 
-static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filenames )
+static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<std::string> &_filenames )
 {
     vfs::ListingInput l;
     
@@ -26,11 +27,12 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<string> &_filena
         l.unix_types.emplace_back(0);
     }
     
-    return VFSListing::Build(move(l));
+    return VFSListing::Build(std::move(l));
 }
 
 // filename, is_directory
-static shared_ptr<VFSListing> ProduceDummyListing( const vector<tuple<string,bool>> &_entries )
+static std::shared_ptr<VFSListing> ProduceDummyListing
+    (const std::vector<std::tuple<std::string,bool>> &_entries )
 {
     vfs::ListingInput l;
     
@@ -41,21 +43,21 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<tuple<string,boo
     l.hosts[0] = VFSHost::DummyHost();
     
     for(auto &i: _entries) {
-        const auto &filename = get<0>(i);
-        const auto is_directory = get<1>(i);
+        const auto &filename = std::get<0>(i);
+        const auto is_directory = std::get<1>(i);
         l.filenames.emplace_back(filename);
         l.unix_modes.emplace_back(is_directory ?
                                   (S_IRUSR | S_IWUSR | S_IFDIR) :
                                   (S_IRUSR | S_IWUSR | S_IFREG));
         l.unix_types.emplace_back(is_directory ? DT_DIR : DT_REG);
     }
-    return VFSListing::Build(move(l));
+    return VFSListing::Build(std::move(l));
 }
 
 
-static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_filenames )
+static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<NSString*> &_filenames )
 {
-    vector<string> t;
+    std::vector<std::string> t;
     for( auto &i: _filenames )
         t.emplace_back( i.fileSystemRepresentation );
     
@@ -75,7 +77,8 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
                             @"some filename",
                             @"another filename",
                             @"even written with какие-то буквы" };
-    auto listing = ProduceDummyListing(vector<NSString*>(begin(strings), end(strings)));
+    auto listing = ProduceDummyListing(std::vector<NSString*>(std::begin(strings),
+                                                              std::end(strings)));
     
     data::Model data;
     data.Load(listing, data::Model::PanelType::Directory);
@@ -101,7 +104,8 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
                             @"бббб",
                             @"АААА",
                             @"ББББ" };
-    auto listing = ProduceDummyListing(vector<NSString*>(begin(strings), end(strings)));
+    auto listing = ProduceDummyListing(std::vector<NSString*>(std::begin(strings),
+                                                              std::end(strings)));
 
     data::Model data;
     auto sorting = data.SortMode();
@@ -156,11 +160,12 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
         @"Pictures",
         @"Public"
     };
-    auto listing = ProduceDummyListing(vector<NSString*>(begin(strings), end(strings)));
+    auto listing = ProduceDummyListing(std::vector<NSString*>(std::begin(strings),
+                                                              std::end(strings)));
     
     auto empty_listing = VFSListing::EmptyListing();
     
-    auto almost_empty_listing = ProduceDummyListing(vector<NSString*>(1, @"какой-то файл"));
+    auto almost_empty_listing = ProduceDummyListing(std::vector<NSString*>(1, @"какой-то файл"));
     
     data::Model data;
     auto sorting = data.SortMode();
@@ -291,7 +296,7 @@ static shared_ptr<VFSListing> ProduceDummyListing( const vector<NSString*> &_fil
 
 - (void) testDirectorySorting
 {
-    const vector<tuple<string,bool>> entries = {{
+    const std::vector<std::tuple<std::string,bool>> entries = {{
         {"Alpha.2", true},
         {"Bravo.1", true},
         {"Charlie.3", true}

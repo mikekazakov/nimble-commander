@@ -4,6 +4,8 @@
 #include <VFS/FileWindow.h>
 #include <random>
 
+using nc::vfs::FileWindow;
+
 class TestGenericMemReadOnlyFile : public VFSFile
 {
 public:

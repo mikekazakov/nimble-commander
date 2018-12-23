@@ -14,8 +14,10 @@ enum class BigFileViewModes : int
 
 @interface BigFileView : NSView
 
-- (void) SetFile:(FileWindow*) _file;
-- (void) SetKnownFile:(FileWindow*) _file encoding:(int)_encoding mode:(BigFileViewModes)_mode;
+- (void) SetFile:(nc::vfs::FileWindow*) _file;
+- (void) SetKnownFile:(nc::vfs::FileWindow*) _file
+             encoding:(int)_encoding
+                 mode:(BigFileViewModes)_mode;
 
 /**
  * This will reset the current viewer state.

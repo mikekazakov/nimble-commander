@@ -23,7 +23,7 @@ static bool IsWholePhrase(CFStringRef _string, CFRange _range)
     return true;
 }
 
-SearchInFile::SearchInFile(FileWindow &_file):
+SearchInFile::SearchInFile(nc::vfs::FileWindow &_file):
     m_File(_file),
     m_Position(0),
     m_WorkMode(WorkMode::NotSet),

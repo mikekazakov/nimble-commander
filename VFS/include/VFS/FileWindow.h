@@ -3,6 +3,8 @@
 
 #include "VFSFile.h"
 
+namespace nc::vfs {
+
 class FileWindow
 {
 public:
@@ -65,3 +67,5 @@ private:
     size_t m_WindowSize = std::numeric_limits<size_t>::max();
     size_t m_WindowPos = std::numeric_limits<size_t>::max();
 };
+
+}

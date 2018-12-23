@@ -10,7 +10,7 @@
 class BigFileViewDataBackend
 {
 public:
-    BigFileViewDataBackend(FileWindow &_fw, int _encoding);
+    BigFileViewDataBackend(nc::vfs::FileWindow &_fw, int _encoding);
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // settings
@@ -57,7 +57,7 @@ public:
 private:
     void DecodeBuffer(); // called by internal update logic
     
-    FileWindow &m_FileWindow;
+    nc::vfs::FileWindow &m_FileWindow;
     int         m_Encoding;
     void        (^m_OnDecoded)() = nullptr;
 

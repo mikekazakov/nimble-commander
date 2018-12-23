@@ -1,6 +1,8 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/FileWindow.h>
 
+namespace nc::vfs {
+
 bool FileWindow::FileOpened() const
 {
     return m_Window.get() != nullptr;
@@ -207,4 +209,6 @@ int FileWindow::MoveWindow(size_t _offset)
 const VFSFilePtr& FileWindow::File() const
 {
     return m_File;
+}
+
 }

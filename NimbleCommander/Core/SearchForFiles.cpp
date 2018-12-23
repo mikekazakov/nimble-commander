@@ -229,7 +229,7 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
     
     NotifyLookingIn( _full_path, _in_host );
     
-    FileWindow fw;
+    nc::vfs::FileWindow fw;
     if(fw.OpenFile(file) != 0 )
         return false;
     

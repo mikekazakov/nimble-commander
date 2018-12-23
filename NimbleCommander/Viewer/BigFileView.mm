@@ -22,7 +22,7 @@ const static double g_BorderWidth = 1.0;
 
 @implementation BigFileView
 {
-    FileWindow     *m_File; // may be nullptr
+    nc::vfs::FileWindow *m_File; // may be nullptr
     unique_ptr<BigFileViewDataBackend> m_Data; // may be nullptr
 
     optional<string> m_NativeStoredFile;
@@ -219,7 +219,7 @@ const static double g_BorderWidth = 1.0;
     [self addCursorRect:self.frame cursor:NSCursor.IBeamCursor];
 }
 
-- (void) SetFile:(FileWindow*) _file
+- (void) SetFile:(nc::vfs::FileWindow*) _file
 {
     int encoding = encodings::EncodingFromName(GlobalConfig().GetString(g_ConfigDefaultEncoding).c_str());
     if(encoding == encodings::ENCODING_INVALID)
@@ -239,7 +239,9 @@ const static double g_BorderWidth = 1.0;
     [self SetKnownFile:_file encoding:encoding mode:mode];
 }
 
-- (void) SetKnownFile:(FileWindow*) _file encoding:(int)_encoding mode:(BigFileViewModes)_mode
+- (void) SetKnownFile:(nc::vfs::FileWindow*) _file
+             encoding:(int)_encoding
+                 mode:(BigFileViewModes)_mode
 {
     assert(_encoding != encodings::ENCODING_INVALID);
     

@@ -5,15 +5,14 @@
 #include <stdint.h>
 #include <memory>
 #include <functional>
-
-class FileWindow;
+#include <VFS/FileWindow.h>
 
 class SearchInFile
 {
 public:
     // will not own _file, caller need to close it after work
     // assumes that _file is in exclusive use in SearchInFile - that no one else will alter it
-    SearchInFile(FileWindow &_file);
+    SearchInFile(nc::vfs::FileWindow &_file);
     ~SearchInFile();
     
     void MoveCurrentPosition(uint64_t _pos);
@@ -62,7 +61,7 @@ private:
         /* binary(hex) and regexp(tempates) later */
     };
     
-    FileWindow &m_File;
+    nc::vfs::FileWindow &m_File;
     uint64_t    m_Position; // position where next search attempt should start
                             // in bytes, should be inside file + 1 byte
                             // need this because it can point behind end of file to signal that search is ended

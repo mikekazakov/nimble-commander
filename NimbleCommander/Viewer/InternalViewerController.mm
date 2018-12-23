@@ -60,8 +60,8 @@ static int InvertBitFlag( int _value, int _flag )
     VFSFilePtr                      m_OriginalFile; // may be not opened if SeqWrapper is used
     VFSSeqToRandomROWrapperFilePtr  m_SeqWrapper; // may be nullptr if underlying VFS supports ReadAt
     VFSFilePtr                      m_WorkFile; // the one actually used
-    std::unique_ptr<FileWindow>     m_ViewerFileWindow;
-    std::unique_ptr<FileWindow>     m_SearchFileWindow;
+    std::unique_ptr<nc::vfs::FileWindow> m_ViewerFileWindow;
+    std::unique_ptr<nc::vfs::FileWindow> m_SearchFileWindow;
     std::unique_ptr<SearchInFile>   m_SearchInFile;
     SerialQueue                     m_SearchInFileQueue;
     
@@ -178,12 +178,12 @@ static int InvertBitFlag( int _value, int _flag )
     m_WorkFile = work_file;
     m_GlobalFilePath = work_file->ComposeVerbosePath();
     
-    auto window = std::make_unique<FileWindow>();
+    auto window = std::make_unique<nc::vfs::FileWindow>();
     if( window->OpenFile(work_file, InternalViewerController.fileWindowSize) != 0 )
         return false;
     m_ViewerFileWindow = std::move(window);
     
-    window = std::make_unique<FileWindow>();
+    window = std::make_unique<nc::vfs::FileWindow>();
     if( window->OpenFile(work_file) != 0 )
         return false;
     m_SearchFileWindow = move(window);
@@ -234,12 +234,12 @@ static int InvertBitFlag( int _value, int _flag )
     m_WorkFile = work_file;
     m_GlobalFilePath = work_file->ComposeVerbosePath();
     
-    auto window = std::make_unique<FileWindow>();
+    auto window = std::make_unique<nc::vfs::FileWindow>();
     if( window->OpenFile(work_file, InternalViewerController.fileWindowSize) != 0 )
         return false;
     m_ViewerFileWindow = move(window);
     
-    window = std::make_unique<FileWindow>();
+    window = std::make_unique<nc::vfs::FileWindow>();
     if( window->OpenFile(work_file) != 0 )
         return false;
     m_SearchFileWindow = move(window);
@@ -307,7 +307,7 @@ static int InvertBitFlag( int _value, int _flag )
 
 + (unsigned) fileWindowSize
 {
-    unsigned file_window_size = FileWindow::DefaultWindowSize;
+    unsigned file_window_size = nc::vfs::FileWindow::DefaultWindowSize;
     unsigned file_window_pow2x = GlobalConfig().GetInt(g_ConfigWindowSize);
     if( file_window_pow2x <= 5 )
         file_window_size *= 1 << file_window_pow2x;

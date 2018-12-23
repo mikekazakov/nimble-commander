@@ -2,7 +2,8 @@
 #include "BigFileViewDataBackend.h"
 #include <Utility/Encodings.h>
 
-BigFileViewDataBackend::BigFileViewDataBackend(FileWindow &_fw, int _encoding):
+BigFileViewDataBackend::BigFileViewDataBackend(nc::vfs::FileWindow &_fw,
+                                               int _encoding):
     m_FileWindow(_fw),
     m_Encoding(_encoding),
     m_DecodeBuffer(std::make_unique<UniChar[]>(m_FileWindow.WindowSize())),

@@ -28,7 +28,7 @@
 {
     VFSHostPtr              m_VFS;
     std::string             m_Path;
-    std::unique_ptr<FileWindow> m_FileWindow;
+    std::unique_ptr<nc::vfs::FileWindow> m_FileWindow;
     
     InternalViewerController *m_Controller;
 }

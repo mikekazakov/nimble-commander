@@ -1,7 +1,7 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchInFile.h"
 #include <Utility/Encodings.h>
-#include "FileWindow.h"
+#include <VFS/FileWindow.h>
 #include <exception>
 
 static const unsigned g_MaximumCodeUnit = 2;

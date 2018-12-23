@@ -1,9 +1,9 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/Encodings.h>
 #include <Utility/OrthodoxMonospace.h>
-#include <NimbleCommander/Core/FileWindow.h>
+#include <VFS/FileWindow.h>
 
 enum class BigFileViewModes : int
 { // changing this values may cause stored history corruption

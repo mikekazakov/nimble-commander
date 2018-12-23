@@ -1,8 +1,7 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <VFS/VFS.h>
-#include <NimbleCommander/States/FilePanels/PanelData.h>
-#include <NimbleCommander/Core/FileWindow.h>
+#include <VFS/FileWindow.h>
 #include <random>
 
 class TestGenericMemReadOnlyFile : public VFSFile

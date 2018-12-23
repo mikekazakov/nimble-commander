@@ -1,7 +1,7 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <NimbleCommander/Core/FileWindow.h>
+#include <VFS/FileWindow.h>
 
 /**
  * This class encapsulates working with file windows and decoding raw data into UniChars.

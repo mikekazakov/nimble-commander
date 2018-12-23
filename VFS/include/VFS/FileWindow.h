@@ -1,7 +1,7 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include "VFS/VFSFile.h"
+#include "VFSFile.h"
 
 class FileWindow
 {
@@ -15,7 +15,8 @@ public:
      * For files with Sequential and Seek read paradigms, FileWindow need exclusive access to VFSFile,
      * so that no one else can touch it's seek pointers.
      */
-    int OpenFile(const std::shared_ptr<VFSFile> &_file, int _window_size = DefaultWindowSize);
+    int OpenFile(const std::shared_ptr<VFSFile> &_file,
+                 int _window_size = DefaultWindowSize);
 
     int CloseFile();
     bool FileOpened() const;

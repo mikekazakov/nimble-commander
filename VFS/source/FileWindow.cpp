@@ -1,5 +1,5 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "FileWindow.h"
+#include <VFS/FileWindow.h>
 
 bool FileWindow::FileOpened() const
 {

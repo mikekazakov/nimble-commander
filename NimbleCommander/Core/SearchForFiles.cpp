@@ -1,8 +1,8 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <sys/stat.h>
-#include "FileWindow.h"
-#include "SearchInFile.h"
+// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchForFiles.h"
+#include <sys/stat.h>
+#include <VFS/FileWindow.h>
+#include "SearchInFile.h"
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {

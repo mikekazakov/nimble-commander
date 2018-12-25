@@ -62,7 +62,7 @@ static int InvertBitFlag( int _value, int _flag )
     VFSFilePtr                      m_WorkFile; // the one actually used
     std::unique_ptr<nc::vfs::FileWindow> m_ViewerFileWindow;
     std::unique_ptr<nc::vfs::FileWindow> m_SearchFileWindow;
-    std::unique_ptr<SearchInFile>   m_SearchInFile;
+    std::unique_ptr<nc::vfs::SearchInFile> m_SearchInFile;
     SerialQueue                     m_SearchInFileQueue;
     
     // UI
@@ -188,6 +188,7 @@ static int InvertBitFlag( int _value, int _flag )
         return false;
     m_SearchFileWindow = move(window);
     
+    using nc::vfs::SearchInFile;
     m_SearchInFile = std::make_unique<SearchInFile>(*m_SearchFileWindow);
     m_SearchInFile->SetSearchOptions((GlobalConfig().GetBool(g_ConfigSearchCaseSensitive)  ? SearchInFile::OptionCaseSensitive   : 0) |
                                      (GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ? SearchInFile::OptionFindWholePhrase : 0) );
@@ -244,6 +245,7 @@ static int InvertBitFlag( int _value, int _flag )
         return false;
     m_SearchFileWindow = move(window);
     
+    using nc::vfs::SearchInFile;
     m_SearchInFile = std::make_unique<SearchInFile>(*m_SearchFileWindow);
     m_SearchInFile->SetSearchOptions((GlobalConfig().GetBool(g_ConfigSearchCaseSensitive)  ? SearchInFile::OptionCaseSensitive   : 0) |
                                      (GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ? SearchInFile::OptionFindWholePhrase : 0) );
@@ -442,7 +444,7 @@ static int InvertBitFlag( int _value, int _flag )
                                              &len,
                                              [self]{return m_SearchInFileQueue.IsStopped();});
         
-        if(result == SearchInFile::Result::Found)
+        if(result == nc::vfs::SearchInFile::Result::Found)
             dispatch_to_main_queue( [=]{
                 m_View.selectionInFile = CFRangeMake(offset, len);
                 [m_View ScrollToSelection];
@@ -467,7 +469,9 @@ static int InvertBitFlag( int _value, int _flag )
 
 - (void)onSearchFieldMenuCaseSensitiveAction:(id)sender
 {
-    const auto options = InvertBitFlag( m_SearchInFile->SearchOptions(), SearchInFile::OptionCaseSensitive );
+    using nc::vfs::SearchInFile;
+    const auto options = InvertBitFlag(m_SearchInFile->SearchOptions(),
+                                       SearchInFile::OptionCaseSensitive );
     m_SearchInFile->SetSearchOptions(options);
     
     NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
@@ -478,7 +482,9 @@ static int InvertBitFlag( int _value, int _flag )
 
 - (void)onSearchFiledMenuWholePhraseSearch:(id)sender
 {
-    const auto options = InvertBitFlag( m_SearchInFile->SearchOptions(), SearchInFile::OptionFindWholePhrase );
+    using nc::vfs::SearchInFile;
+    const auto options = InvertBitFlag(m_SearchInFile->SearchOptions(),
+                                       SearchInFile::OptionFindWholePhrase );
     m_SearchInFile->SetSearchOptions(options);
     
     NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;

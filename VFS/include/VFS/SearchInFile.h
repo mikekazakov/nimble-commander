@@ -7,6 +7,8 @@
 #include <functional>
 #include <VFS/FileWindow.h>
 
+namespace nc::vfs {
+
 class SearchInFile
 {
 public:
@@ -80,3 +82,5 @@ private:
     
     WorkMode    m_WorkMode;
 };
+
+}

@@ -237,6 +237,7 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
     if(int xattr_enc = EncodingFromXAttr(file))
         encoding = xattr_enc;
     
+    using nc::vfs::SearchInFile;
     SearchInFile sif(fw);
     
     CFStringRef request = CFStringCreateWithUTF8StdString(m_FilterContent->text);

@@ -4,6 +4,8 @@
 #include <VFS/FileWindow.h>
 #include <exception>
 
+namespace nc::vfs {
+
 static const unsigned g_MaximumCodeUnit = 2;
 
 static bool IsWholePhrase(CFStringRef _string, CFRange _range)
@@ -201,4 +203,6 @@ void SearchInFile::SetSearchOptions(int _options)
 int SearchInFile::SearchOptions()
 {
     return m_SearchOptions;
+}
+
 }

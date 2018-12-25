@@ -179,12 +179,12 @@ static int InvertBitFlag( int _value, int _flag )
     m_GlobalFilePath = work_file->ComposeVerbosePath();
     
     auto window = std::make_unique<nc::vfs::FileWindow>();
-    if( window->OpenFile(work_file, InternalViewerController.fileWindowSize) != 0 )
+    if( window->Attach(work_file, InternalViewerController.fileWindowSize) != 0 )
         return false;
     m_ViewerFileWindow = std::move(window);
     
     window = std::make_unique<nc::vfs::FileWindow>();
-    if( window->OpenFile(work_file) != 0 )
+    if( window->Attach(work_file) != 0 )
         return false;
     m_SearchFileWindow = move(window);
     
@@ -236,12 +236,12 @@ static int InvertBitFlag( int _value, int _flag )
     m_GlobalFilePath = work_file->ComposeVerbosePath();
     
     auto window = std::make_unique<nc::vfs::FileWindow>();
-    if( window->OpenFile(work_file, InternalViewerController.fileWindowSize) != 0 )
+    if( window->Attach(work_file, InternalViewerController.fileWindowSize) != 0 )
         return false;
     m_ViewerFileWindow = move(window);
     
     window = std::make_unique<nc::vfs::FileWindow>();
-    if( window->OpenFile(work_file) != 0 )
+    if( window->Attach(work_file) != 0 )
         return false;
     m_SearchFileWindow = move(window);
     
@@ -444,7 +444,7 @@ static int InvertBitFlag( int _value, int _flag )
                                              &len,
                                              [self]{return m_SearchInFileQueue.IsStopped();});
         
-        if(result == nc::vfs::SearchInFile::Result::Found)
+        if(result == nc::vfs::SearchInFile::Response::Found)
             dispatch_to_main_queue( [=]{
                 m_View.selectionInFile = CFRangeMake(offset, len);
                 [m_View ScrollToSelection];

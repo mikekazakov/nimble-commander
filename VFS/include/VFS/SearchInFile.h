@@ -5,10 +5,16 @@
 #include <stdint.h>
 #include <memory>
 #include <functional>
+#include <optional>
 #include <VFS/FileWindow.h>
 
 namespace nc::vfs {
 
+/**
+ * Provides a *stateful* searching facilty to find text in VFS file accessible through
+ * a FileWindow object.
+ * Is thread agnostic.
+ */
 class SearchInFile
 {
 public:
@@ -28,7 +34,16 @@ public:
     CFStringRef TextSearchString(); // may be NULL. don't alter it. don't release it
     int TextSearchEncoding(); // may be ENCODING_INVALID
 
-    enum class Result : int;
+    enum class Response : int;
+    struct Location {
+        uint64_t offset;
+        uint64_t bytes_len;
+    };
+    
+    struct Result {
+        Response response;
+        std::optional<Location> location;
+    };
     
     enum
     {
@@ -37,15 +52,17 @@ public:
     };
     
     using CancelChecker = std::function<bool()>;
-    Result Search(uint64_t *_offset/*out*/,
+    Response Search(uint64_t *_offset/*out*/,
                   uint64_t *_bytes_len/*out*/,
-                  const CancelChecker &_checker = CancelChecker{}); // checker can be nil
+                  const CancelChecker &_checker = {}); // checker can be nullptr
+    
+    Result Search( const CancelChecker &_checker = {} );
     
 private:
     SearchInFile(const SearchInFile&); // forbid
     void operator=(const SearchInFile&); // forbid
     
-    Result SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker);
+    Response SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker);
     
     enum class WorkMode
     {
@@ -74,7 +91,7 @@ private:
     WorkMode    m_WorkMode;
 };
 
-enum class SearchInFile::Result : int
+enum class SearchInFile::Response : int
 {
     // Invalid search request
     Invalid,

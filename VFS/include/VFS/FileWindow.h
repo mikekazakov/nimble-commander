@@ -5,6 +5,11 @@
 
 namespace nc::vfs {
 
+/**
+ * TODO: write description
+ * ....
+ * Holds a strong owning reference to a VFS file.
+ */
 class FileWindow
 {
 public:
@@ -12,13 +17,20 @@ public:
     {
         DefaultWindowSize = 32768
     };
+    
+    FileWindow() = default;
+    
+    /**
+     * Creates a default objects and calls Attach(). Will throw VFSErrorExpection on error.
+     */
+    FileWindow(const std::shared_ptr<VFSFile> &_file, int _window_size = DefaultWindowSize);
 
     /**
      * For files with Sequential and Seek read paradigms, FileWindow needs exclusive access to
      * VFSFile, so that no one else can touch it's seek pointers.
      * Returns VFSError.
      */
-    int OpenFile(const std::shared_ptr<VFSFile> &_file,
+    int Attach(const std::shared_ptr<VFSFile> &_file,
                  int _window_size = DefaultWindowSize);
 
     /**

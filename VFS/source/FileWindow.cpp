@@ -3,12 +3,20 @@
 
 namespace nc::vfs {
 
+FileWindow::FileWindow(const std::shared_ptr<VFSFile> &_file,
+                       int _window_size)
+{
+    const auto rc = Attach(_file, _window_size);
+    if( rc != VFSError::Ok )
+        throw VFSErrorException{rc};
+}
+    
 bool FileWindow::FileOpened() const
 {
     return m_Window.get() != nullptr;
 }
 
-int FileWindow::OpenFile(const std::shared_ptr<VFSFile> &_file, int _window_size)
+int FileWindow::Attach(const std::shared_ptr<VFSFile> &_file, int _window_size)
 {
     if(!_file->IsOpened())
         return VFSError::InvalidCall;

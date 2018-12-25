@@ -172,7 +172,7 @@ int TestGenericMemReadOnlyFile::Close()
     vfs_file->Open(0, 0);
     
     FileWindow fw;
-    int ret = fw.OpenFile(vfs_file);
+    int ret = fw.Attach(vfs_file);
     XCTAssert(ret == 0);
 
     std::mt19937 mt((std::random_device())());
@@ -202,7 +202,7 @@ int TestGenericMemReadOnlyFile::Close()
     vfs_file->Open(0, 0);
     
     FileWindow fw;
-    int ret = fw.OpenFile(vfs_file);
+    int ret = fw.Attach(vfs_file);
     XCTAssert(ret == 0);
     
     std::mt19937 mt((std::random_device())());
@@ -236,7 +236,7 @@ int TestGenericMemReadOnlyFile::Close()
     vfs_file->Open(0, 0);
     
     FileWindow fw;
-    int ret = fw.OpenFile(vfs_file);
+    int ret = fw.Attach(vfs_file);
     XCTAssert(ret == 0);
     
     std::mt19937 mt((std::random_device())());

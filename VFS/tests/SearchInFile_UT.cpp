@@ -2,11 +2,15 @@
 #include "SearchInFile.h"
 #include "VFSGenericMemReadOnlyFile.h"
 #include <Utility/Encodings.h>
+#include <Utility/StringExtras.h>
+#include <Habanero/CFString.h>
 
 using nc::vfs::FileWindow;
 using nc::vfs::SearchInFile;
 using nc::vfs::GenericMemReadOnlyFile;
 #define PREFIX "[nc::vfs::SearchInFile] "
+
+static FileWindow MakeFileWindow(std::string_view _data);
 
 TEST_CASE(PREFIX "Throws if FileWindow is not open")
 {
@@ -14,23 +18,124 @@ TEST_CASE(PREFIX "Throws if FileWindow is not open")
     CHECK_THROWS( SearchInFile{fw} );
 }
 
+TEST_CASE(PREFIX "Doesn't search for empty strings")
+{
+    auto fw = MakeFileWindow("some string data");
+    auto search = SearchInFile{fw};
+    search.ToggleTextSearch(CFSTR(""), encodings::ENCODING_UTF8);
+    const auto result = search.Search();
+    CHECK( result.response != SearchInFile::Response::Found );
+}
+
 TEST_CASE(PREFIX "Does simple search")
 {
-    std::string memory = "0123456789hello56789";
-    auto mem_file = std::make_shared<GenericMemReadOnlyFile>(nullptr, nullptr, memory);
-    mem_file->Open(VFSFlags::OF_Read);
-    FileWindow fw;
-    fw.OpenFile(mem_file);
+    auto fw = MakeFileWindow("0123456789hello56789");
     auto search = SearchInFile{fw};
     
     SECTION("Search for 0123") {
         search.ToggleTextSearch(CFSTR("0123"), encodings::ENCODING_UTF8);
         
-        uint64_t offset, bytes_len;
-        auto result = search.Search(&offset, &bytes_len);
-        CHECK( result == SearchInFile::Result::Found );
-        CHECK( offset == 0 );
-        CHECK( bytes_len == 4 );
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::Found );
+        CHECK( result.location->offset == 0 );
+        CHECK( result.location->bytes_len == 4 );
+    }
+    SECTION("Search for hello") {
+        search.ToggleTextSearch(CFSTR("hello"), encodings::ENCODING_UTF8);
+        
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::Found );
+        CHECK( result.location->offset == 10 );
+        CHECK( result.location->bytes_len == 5 );
+    }
+    SECTION("Search for 56789 twice") {
+        search.ToggleTextSearch(CFSTR("56789"), encodings::ENCODING_UTF8);
+        
+        const auto result1 = search.Search();
+        REQUIRE( result1.response == SearchInFile::Response::Found );
+        CHECK( result1.location->offset == 5 );
+        CHECK( result1.location->bytes_len == 5 );
+        
+        const auto result2 = search.Search();
+        REQUIRE( result2.response == SearchInFile::Response::Found );
+        CHECK( result2.location->offset == 15 );
+        CHECK( result2.location->bytes_len == 5 );
+    }
+    SECTION("Search for 9 twice") {
+        search.ToggleTextSearch(CFSTR("9"), encodings::ENCODING_UTF8);
+        
+        const auto result1 = search.Search();
+        REQUIRE( result1.response == SearchInFile::Response::Found );
+        CHECK( result1.location->offset == 9 );
+        CHECK( result1.location->bytes_len == 1 );
+        
+        const auto result2 = search.Search();
+        REQUIRE( result2.response == SearchInFile::Response::Found );
+        CHECK( result2.location->offset == 19 );
+        CHECK( result2.location->bytes_len == 1 );
     }
 }
 
+TEST_CASE(PREFIX "Does search for text which is outside of file window size")
+{
+    const auto window_size = FileWindow::DefaultWindowSize;
+    const auto hello_offset = 10 * window_size;
+    std::string memory;
+    memory.resize( hello_offset, ' ' );
+    memory += "hello";
+    
+    auto fw = MakeFileWindow(memory);
+    auto search = SearchInFile{fw};
+    search.ToggleTextSearch(CFSTR("hello"), encodings::ENCODING_UTF8);
+    
+    const auto result = search.Search();
+    REQUIRE( result.response == SearchInFile::Response::Found );
+    CHECK( result.location->offset == hello_offset );
+    CHECK( result.location->bytes_len == 5 );
+}
+
+TEST_CASE(PREFIX "Can search for non-ANSI characters")
+{
+    SECTION("Aligned (even) position") {
+        auto fw = MakeFileWindow(u8"0123456789привет");
+        auto search = SearchInFile{fw};
+        const auto cf_string = CFString(u8"привет");
+        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::Found );
+        CHECK( result.location->offset == 10 );
+        CHECK( result.location->bytes_len == 12 );
+    }
+    SECTION("Random (non-even) position") {
+        auto fw = MakeFileWindow(u8"01234567890привет");
+        auto search = SearchInFile{fw};
+        const auto cf_string = CFString(u8"привет");
+        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::Found );
+        CHECK( result.location->offset == 11 );
+        CHECK( result.location->bytes_len == 12 );
+    }
+}
+
+TEST_CASE(PREFIX "Can search for text located beyond 32bit boundary")
+{
+    const auto hello_offset = uint64_t{std::numeric_limits<int>::max()} + 4242;
+    const auto memory = std::string(hello_offset, ' ') + "hello";
+    auto fw = MakeFileWindow(memory);
+    auto search = SearchInFile{fw};
+    search.MoveCurrentPosition(hello_offset - 100);
+    search.ToggleTextSearch(CFSTR("hello"), encodings::ENCODING_MACOS_ROMAN_WESTERN);
+    const auto result = search.Search();
+    REQUIRE( result.response == SearchInFile::Response::Found );
+    CHECK( result.location->offset == hello_offset );
+    CHECK( result.location->bytes_len == 5 );
+}
+
+static FileWindow MakeFileWindow(std::string_view _data)
+{
+    assert(_data.data() != nullptr);
+    auto mem_file = std::make_shared<GenericMemReadOnlyFile>(nullptr, nullptr, _data);
+    mem_file->Open(VFSFlags::OF_Read);
+    return FileWindow{mem_file};
+}

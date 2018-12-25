@@ -51,7 +51,10 @@ SearchInFile::~SearchInFile()
 
 void SearchInFile::MoveCurrentPosition(uint64_t _pos)
 {
-    assert( (m_File.FileSize() > 0 && _pos < m_File.FileSize()) || _pos == 0 );
+    const auto is_valid = (m_File.FileSize() > 0 && _pos < m_File.FileSize()) || _pos == 0;
+    if( is_valid == false )
+        throw std::out_of_range("SearchInFile::MoveCurrentPosition: invalid index");;
+    
     m_Position = _pos;
 
     if(m_File.WindowSize() + m_Position > m_File.FileSize())
@@ -70,14 +73,32 @@ void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding)
     m_WorkMode = WorkMode::Text;
 }
 
-SearchInFile::Result SearchInFile::Search(uint64_t *_offset,
+SearchInFile::Response SearchInFile::Search(uint64_t *_offset,
                                           uint64_t *_bytes_len,
                                           const CancelChecker &_checker)
 {
     if(m_WorkMode == WorkMode::Text)
         return SearchText(_offset, _bytes_len, _checker);
     
-    return Result::NotFound;
+    return Response::NotFound;
+}
+
+SearchInFile::Result SearchInFile::Search( const CancelChecker &_checker )
+{
+    if( m_WorkMode == WorkMode::Text ) {
+        uint64_t offset = 0;
+        uint64_t bytes_len = 0;
+        Result result;
+        result.response = SearchText(&offset, &bytes_len, _checker);
+        if( result.response == Response::Found )
+            result.location = {offset, bytes_len};
+        return result;
+    }
+    else {
+        Result result;
+        result.response = Response::NotFound;
+        return result;
+    }
 }
 
 bool SearchInFile::IsEOF() const
@@ -85,21 +106,21 @@ bool SearchInFile::IsEOF() const
     return m_Position >= m_File.FileSize();
 }
 
-SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset,
+SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset,
                                               uint64_t *_bytes_len,
                                               CancelChecker _checker)
 {
     if(m_File.FileSize() == 0)
-        return Result::NotFound; // for singular case
+        return Response::NotFound; // for singular case
     
     if(m_File.FileSize() < (size_t)encodings::BytesForCodeUnit(m_TextSearchEncoding))
-        return Result::NotFound; // for singular case
+        return Response::NotFound; // for singular case
     
     if(m_Position >= m_File.FileSize())
-        return Result::EndOfFile; // when finished searching
+        return Response::EndOfFile; // when finished searching
     
     if(CFStringGetLength(m_RequestedTextSearch) <= 0)
-        return Result::Invalid;
+        return Response::Invalid;
 
     while(true)
     {
@@ -107,7 +128,7 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset,
             break; // when finished searching
 
         if(_checker && _checker())
-            return Result::Canceled;
+            return Response::Canceled;
         
         // move our load window inside a file
         size_t window_pos = m_Position;
@@ -182,11 +203,11 @@ SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset,
                                m_File.WindowSize() - left_window_gap )
                                 - m_DecodedBufferIndx[result.location];
             m_Position = m_Position + m_DecodedBufferIndx[result.location+result.length];
-            return Result::Found;
+            return Response::Found;
         }
     }
     
-    return Result::NotFound;
+    return Response::NotFound;
 }
 
 CFStringRef SearchInFile::TextSearchString()

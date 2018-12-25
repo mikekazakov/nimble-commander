@@ -2,7 +2,7 @@
 #include "SearchForFiles.h"
 #include <sys/stat.h>
 #include <VFS/FileWindow.h>
-#include "SearchInFile.h"
+#include <VFS/SearchInFile.h>
 
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {

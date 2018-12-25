@@ -24,6 +24,7 @@
 		CF26DE0B21CFA2AE003F0E93 /* FileWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CF26DE0821CFA2AE003F0E93 /* FileWindow.h */; };
 		CF26DE0D21CFA2C0003F0E93 /* FileWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE0C21CFA2BF003F0E93 /* FileWindow.cpp */; };
 		CF26DE0F21CFA2CC003F0E93 /* FileWindow_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE0E21CFA2CC003F0E93 /* FileWindow_Tests.mm */; };
+		CF26DE1321D26B07003F0E93 /* SearchInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE1121D266EA003F0E93 /* SearchInFile.cpp */; };
 		CF3E2F861F60DF08001BFFCE /* Requests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F841F60DF08001BFFCE /* Requests.cpp */; };
 		CF3E2F871F60DF08001BFFCE /* Requests.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3E2F851F60DF08001BFFCE /* Requests.h */; };
 		CF5099951F95C881000AFDE7 /* EncodingDetection.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5099931F95C881000AFDE7 /* EncodingDetection.h */; };
@@ -138,6 +139,8 @@
 		CF26DE0821CFA2AE003F0E93 /* FileWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWindow.h; path = include/VFS/FileWindow.h; sourceTree = "<group>"; };
 		CF26DE0C21CFA2BF003F0E93 /* FileWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileWindow.cpp; path = source/FileWindow.cpp; sourceTree = "<group>"; };
 		CF26DE0E21CFA2CC003F0E93 /* FileWindow_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileWindow_Tests.mm; path = tests/FileWindow_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF26DE1021D266E0003F0E93 /* SearchInFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchInFile.h; path = include/VFS/SearchInFile.h; sourceTree = "<group>"; };
+		CF26DE1121D266EA003F0E93 /* SearchInFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchInFile.cpp; path = source/SearchInFile.cpp; sourceTree = "<group>"; };
 		CF3E2F841F60DF08001BFFCE /* Requests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Requests.cpp; path = source/NetWebDAV/Requests.cpp; sourceTree = "<group>"; };
 		CF3E2F851F60DF08001BFFCE /* Requests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Requests.h; path = source/NetWebDAV/Requests.h; sourceTree = "<group>"; };
 		CF5099931F95C881000AFDE7 /* EncodingDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EncodingDetection.h; path = source/ArcLA/EncodingDetection.h; sourceTree = "<group>"; };
@@ -402,6 +405,7 @@
 				CF69CFE41DA227E400992B84 /* NetSFTP.h */,
 				CF26DE0621CFA2AD003F0E93 /* NetWebDAV.h */,
 				CF69CFE51DA227E400992B84 /* PS.h */,
+				CF26DE1021D266E0003F0E93 /* SearchInFile.h */,
 				CF26DE0721CFA2AE003F0E93 /* VFS_fwd.h */,
 				CF69CFE71DA227E400992B84 /* VFS.h */,
 				CF69CFE81DA227E400992B84 /* VFSArchiveProxy.h */,
@@ -423,6 +427,7 @@
 		CF69CFDF1DA227C100992B84 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF26DE1121D266EA003F0E93 /* SearchInFile.cpp */,
 				CF26DE0C21CFA2BF003F0E93 /* FileWindow.cpp */,
 				CF69D0501DA2335700992B84 /* ArcLA */,
 				CF69D0611DA2343700992B84 /* ArcUnRAR */,
@@ -748,6 +753,7 @@
 				CF26DE0D21CFA2C0003F0E93 /* FileWindow.cpp in Sources */,
 				CF3E2F861F60DF08001BFFCE /* Requests.cpp in Sources */,
 				CFFA94D01F4543ED0035E606 /* VFSArchiveProxy.mm in Sources */,
+				CF26DE1321D26B07003F0E93 /* SearchInFile.cpp in Sources */,
 				CFFA94C21F4543AB0035E606 /* Host.mm in Sources */,
 				CFFA94C41F4543B30035E606 /* File.mm in Sources */,
 				CFFA94C51F4543B30035E606 /* Host.mm in Sources */,

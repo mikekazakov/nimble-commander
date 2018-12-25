@@ -1,13 +1,13 @@
 // Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "InternalViewerController.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/GeneralUI/ProcessSheetController.h>
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Core/SearchInFile.h>
+#include <VFS/SearchInFile.h>
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include "InternalViewerHistory.h"
-#include "InternalViewerController.h"
 #include <Habanero/SerialQueue.h>
 
 using namespace std::literals;

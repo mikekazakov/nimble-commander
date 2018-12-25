@@ -943,9 +943,6 @@
 		CFD726461E42E11100603077 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */; };
 		CFD726471E42E11300603077 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */; };
 		CFD726481E42E11300603077 /* SandboxManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */; };
-		CFD726491E42E11B00603077 /* SearchInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */; };
-		CFD7264A1E42E11B00603077 /* SearchInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */; };
-		CFD7264B1E42E11C00603077 /* SearchInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */; };
 		CFD7264C1E42E11F00603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFD7264D1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFD7264E1E42E12000603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */; };
@@ -1199,7 +1196,6 @@
 		CFDAC2D81DFD11970039A104 /* LaunchServices.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2D71DFD11970039A104 /* LaunchServices.mm */; };
 		CFDAC2DB1DFD12EF0039A104 /* BriefSystemOverview.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */; };
 		CFDAC2DE1DFD137F0039A104 /* QuickLookOverlay.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */; };
-		CFDAC2E41DFD142C0039A104 /* SearchInFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */; };
 		CFDAC2ED1DFD152C0039A104 /* FilePanelMainSplitView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E61DFD152C0039A104 /* FilePanelMainSplitView.mm */; };
 		CFDAC2EE1DFD152C0039A104 /* FilePanelOverlappedTerminal.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2E81DFD152C0039A104 /* FilePanelOverlappedTerminal.mm */; };
 		CFDAC2EF1DFD152C0039A104 /* FilePanelsTabbedHolder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2EA1DFD152C0039A104 /* FilePanelsTabbedHolder.mm */; };
@@ -2195,8 +2191,6 @@
 		CFDAC2DA1DFD12EF0039A104 /* BriefSystemOverview.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BriefSystemOverview.mm; path = NimbleCommander/States/FilePanels/Views/BriefSystemOverview.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2DC1DFD137F0039A104 /* QuickLookOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickLookOverlay.h; path = NimbleCommander/States/FilePanels/Views/QuickLookOverlay.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2DD1DFD137F0039A104 /* QuickLookOverlay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QuickLookOverlay.mm; path = NimbleCommander/States/FilePanels/Views/QuickLookOverlay.mm; sourceTree = SOURCE_ROOT; };
-		CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchInFile.cpp; path = NimbleCommander/Core/SearchInFile.cpp; sourceTree = SOURCE_ROOT; };
-		CFDAC2E21DFD142C0039A104 /* SearchInFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchInFile.h; path = NimbleCommander/Core/SearchInFile.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2E51DFD152C0039A104 /* FilePanelMainSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilePanelMainSplitView.h; path = NimbleCommander/States/FilePanels/Views/FilePanelMainSplitView.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2E61DFD152C0039A104 /* FilePanelMainSplitView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilePanelMainSplitView.mm; path = NimbleCommander/States/FilePanels/Views/FilePanelMainSplitView.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2E71DFD152C0039A104 /* FilePanelOverlappedTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilePanelOverlappedTerminal.h; path = NimbleCommander/States/FilePanels/Views/FilePanelOverlappedTerminal.h; sourceTree = SOURCE_ROOT; };
@@ -3105,8 +3099,6 @@
 				CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */,
 				CF4E56E61D506EB100452912 /* SearchForFiles.cpp */,
 				CF4E56E51D506EB100452912 /* SearchForFiles.h */,
-				CFDAC2E11DFD142C0039A104 /* SearchInFile.cpp */,
-				CFDAC2E21DFD142C0039A104 /* SearchInFile.h */,
 				CFDAC2B01DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.h */,
 				CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */,
 				CFDAC29E1DFBFBA10039A104 /* TemporaryNativeFileChangesSentinel.cpp */,
@@ -4294,7 +4286,6 @@
 				CFB791851D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
 				CFD726AE1E42E25600603077 /* SharingService.mm in Sources */,
 				CF90C0BE1EC171FD0056E3B8 /* PanelDataFilter.mm in Sources */,
-				CFD7264A1E42E11B00603077 /* SearchInFile.cpp in Sources */,
 				CFD726051E42E06900603077 /* AppDelegate.mm in Sources */,
 				CF662AE31D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */,
 				CFA171662019700000F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
@@ -4493,7 +4484,6 @@
 				CF876D491D51E0B0009C0CCE /* BigFileViewText.mm in Sources */,
 				CF5E9A4D1FCBDD37005608F5 /* RefreshPanel.mm in Sources */,
 				CFD726721E42E1F600603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
-				CFD7264B1E42E11C00603077 /* SearchInFile.cpp in Sources */,
 				CFD726931E42E22700603077 /* PanelData.mm in Sources */,
 				CFA53A081D433E2A00C562A7 /* GoToFolderSheetController.mm in Sources */,
 				CF04DDFC1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
@@ -4548,7 +4538,6 @@
 			files = (
 				CFD8CDC41E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
 				CF75E88A1EB0EFDC0028C108 /* DropboxAccountSheetController.mm in Sources */,
-				CFDAC2E41DFD142C0039A104 /* SearchInFile.cpp in Sources */,
 				CF2437671DEC268A00245C14 /* PanelBriefViewItemCarrier.mm in Sources */,
 				CF44D33D202D63300083FAF5 /* ExecuteExternalTool.mm in Sources */,
 				CFD8CD511E7A31A100E4DC53 /* FavoriteComposing.mm in Sources */,
@@ -4831,7 +4820,6 @@
 				CFD7270B1E42E30800603077 /* QuickLookOverlay.mm in Sources */,
 				CFD8CDC71E8CDBFA00E4DC53 /* InsertFromPasteboard.mm in Sources */,
 				CFD727051E42E30000603077 /* FilePanelOverlappedTerminal.mm in Sources */,
-				CFD726491E42E11B00603077 /* SearchInFile.cpp in Sources */,
 				CFD726D11E42E2AC00603077 /* PanelBriefViewCollectionViewItem.mm in Sources */,
 				CFD727111E42E31C00603077 /* ConnectionsMenuDelegate.mm in Sources */,
 				CF4E56AA1D5068DC00452912 /* PreferencesWindowGeneralTab.mm in Sources */,

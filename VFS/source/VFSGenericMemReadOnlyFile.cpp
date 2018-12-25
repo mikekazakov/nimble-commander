@@ -1,18 +1,33 @@
 // Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "../include/VFS/VFSGenericMemReadOnlyFile.h"
+#include "VFSGenericMemReadOnlyFile.h"
 #include <algorithm>
 
-VFSGenericMemReadOnlyFile::VFSGenericMemReadOnlyFile(const char* _relative_path,
-                                                     std::shared_ptr<VFSHost> _host,
-                                                     const void *_memory,
-                                                     uint64_t _mem_size):
+namespace nc::vfs {
+
+GenericMemReadOnlyFile::GenericMemReadOnlyFile(const char* _relative_path,
+                                               const std::shared_ptr<VFSHost> &_host,
+                                               const void *_memory,
+                                               uint64_t _mem_size):
     VFSFile(_relative_path, _host),
     m_Mem(_memory),
     m_Size(_mem_size)
 {
+    if( m_Mem == nullptr )
+        throw std::invalid_argument("GenericMemReadOnlyFile expects a valid memory pointer");
+}
+    
+GenericMemReadOnlyFile::GenericMemReadOnlyFile(const char* _relative_path,
+                                               const std::shared_ptr<VFSHost> &_host,
+                                               std::string_view _memory):
+    VFSFile(_relative_path, _host),
+    m_Mem((const void *)_memory.data()),
+    m_Size(_memory.size())
+{
+    if( m_Mem == nullptr )
+        throw std::invalid_argument("GenericMemReadOnlyFile expects a valid memory pointer");
 }
 
-ssize_t VFSGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
+ssize_t GenericMemReadOnlyFile::Read(void *_buf, size_t _size)
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
@@ -35,7 +50,7 @@ ssize_t VFSGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
     return to_read;
 }
 
-ssize_t VFSGenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+ssize_t GenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
@@ -49,7 +64,7 @@ ssize_t VFSGenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
     return toread;
 }
 
-off_t VFSGenericMemReadOnlyFile::Seek(off_t _off, int _basis)
+off_t GenericMemReadOnlyFile::Seek(off_t _off, int _basis)
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
@@ -73,43 +88,45 @@ off_t VFSGenericMemReadOnlyFile::Seek(off_t _off, int _basis)
     return m_Pos;
 }
 
-VFSFile::ReadParadigm VFSGenericMemReadOnlyFile::GetReadParadigm() const
+VFSFile::ReadParadigm GenericMemReadOnlyFile::GetReadParadigm() const
 {
     return VFSFile::ReadParadigm::Random;
 }
 
-ssize_t VFSGenericMemReadOnlyFile::Pos() const
+ssize_t GenericMemReadOnlyFile::Pos() const
 {
     if(!IsOpened())
         return VFSError::InvalidCall;
     return m_Pos;
 }
 
-ssize_t VFSGenericMemReadOnlyFile::Size() const
+ssize_t GenericMemReadOnlyFile::Size() const
 {
     return m_Size;    
 }
 
-bool VFSGenericMemReadOnlyFile::Eof() const
+bool GenericMemReadOnlyFile::Eof() const
 {
     if(!IsOpened())
         return true;
     return m_Pos == (long)m_Size;
 }
 
-int VFSGenericMemReadOnlyFile::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
+int GenericMemReadOnlyFile::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
 {
     m_Opened = true;
     return 0;
 }
 
-bool VFSGenericMemReadOnlyFile::IsOpened() const
+bool GenericMemReadOnlyFile::IsOpened() const
 {
     return m_Opened;
 }
 
-int VFSGenericMemReadOnlyFile::Close()
+int GenericMemReadOnlyFile::Close()
 {
     m_Opened = false;
     return 0;
+}
+
 }

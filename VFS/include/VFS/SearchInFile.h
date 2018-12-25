@@ -24,20 +24,11 @@ public:
     
     bool IsEOF() const;
     
-    // passing ownage of _string to SearchInFile
     void ToggleTextSearch(CFStringRef _string, int _encoding);
     CFStringRef TextSearchString(); // may be NULL. don't alter it. don't release it
     int TextSearchEncoding(); // may be ENCODING_INVALID
 
-    enum class Result
-    {
-        Invalid,    // invalid search request
-        IOErr,      // I/O error on underlying VFS
-        Found,      // searched performed successfuly, found one and returning addresses
-        NotFound,   // searched performed successfully, didn't found
-        EndOfFile,  // can't seach since current position is already at the end of file
-        Canceled    // user did canceled the search. search position will remain at the place when cancelation happen
-    };
+    enum class Result : int;
     
     enum
     {
@@ -48,7 +39,7 @@ public:
     using CancelChecker = std::function<bool()>;
     Result Search(uint64_t *_offset/*out*/,
                   uint64_t *_bytes_len/*out*/,
-                  CancelChecker _checker); // checker can be nil
+                  const CancelChecker &_checker = CancelChecker{}); // checker can be nil
     
 private:
     SearchInFile(const SearchInFile&); // forbid
@@ -81,6 +72,28 @@ private:
     CFStringRef m_DecodedBufferString;
     
     WorkMode    m_WorkMode;
+};
+
+enum class SearchInFile::Result : int
+{
+    // Invalid search request
+    Invalid,
+        
+    // I/O error on the underlying VFS file
+    IOErr,
+
+    // Search performed successfuly, found one entry and returning its address
+    Found,
+    
+    // Search performed successfully, didn't found
+    NotFound,
+    
+    // Can't search since current position is already at the end of the file
+    EndOfFile,
+    
+    // User did cancel the search. The search position will remain at the
+    // place when cancellation happened
+    Canceled
 };
 
 }

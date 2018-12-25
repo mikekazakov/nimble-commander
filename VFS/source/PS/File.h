@@ -6,7 +6,7 @@
 
 namespace nc::vfs {
 
-class PSFile : public VFSGenericMemReadOnlyFile
+class PSFile : public GenericMemReadOnlyFile
 {
 public:
     PSFile(const char* _relative_path, std::shared_ptr<class Host> _host, const std::string &_file);

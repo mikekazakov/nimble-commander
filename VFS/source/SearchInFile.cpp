@@ -35,7 +35,7 @@ SearchInFile::SearchInFile(nc::vfs::FileWindow &_file):
     m_SearchOptions(0)
 {
     if( !m_File.FileOpened() )
-        throw std::invalid_argument("FileWindow should be opened");
+        throw std::invalid_argument("SearchInFile: FileWindow should be opened");
     m_Position = _file.WindowPos();
     m_DecodedBuffer = std::make_unique<uint16_t[]>(_file.WindowSize());
     m_DecodedBufferIndx = std::make_unique<uint32_t[]>(_file.WindowSize());
@@ -70,7 +70,9 @@ void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding)
     m_WorkMode = WorkMode::Text;
 }
 
-SearchInFile::Result SearchInFile::Search(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker)
+SearchInFile::Result SearchInFile::Search(uint64_t *_offset,
+                                          uint64_t *_bytes_len,
+                                          const CancelChecker &_checker)
 {
     if(m_WorkMode == WorkMode::Text)
         return SearchText(_offset, _bytes_len, _checker);
@@ -83,7 +85,9 @@ bool SearchInFile::IsEOF() const
     return m_Position >= m_File.FileSize();
 }
 
-SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset, uint64_t *_bytes_len, CancelChecker _checker)
+SearchInFile::Result SearchInFile::SearchText(uint64_t *_offset,
+                                              uint64_t *_bytes_len,
+                                              CancelChecker _checker)
 {
     if(m_File.FileSize() == 0)
         return Result::NotFound; // for singular case

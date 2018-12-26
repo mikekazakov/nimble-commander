@@ -190,8 +190,15 @@ static int InvertBitFlag( int _value, int _flag )
     
     using nc::vfs::SearchInFile;
     m_SearchInFile = std::make_unique<SearchInFile>(*m_SearchFileWindow);
-    m_SearchInFile->SetSearchOptions((GlobalConfig().GetBool(g_ConfigSearchCaseSensitive)  ? SearchInFile::OptionCaseSensitive   : 0) |
-                                     (GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ? SearchInFile::OptionFindWholePhrase : 0) );
+    
+    const auto search_options = [&]{
+        using Options = SearchInFile::Options;
+        auto opts = Options::None;
+        if( GlobalConfig().GetBool(g_ConfigSearchCaseSensitive) ) opts |= Options::CaseSensitive;
+        if( GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ) opts |= Options::FindWholePhrase;
+        return opts;
+    }();
+    m_SearchInFile->SetSearchOptions( search_options );
     
     [self buildTitle];
     
@@ -247,8 +254,15 @@ static int InvertBitFlag( int _value, int _flag )
     
     using nc::vfs::SearchInFile;
     m_SearchInFile = std::make_unique<SearchInFile>(*m_SearchFileWindow);
-    m_SearchInFile->SetSearchOptions((GlobalConfig().GetBool(g_ConfigSearchCaseSensitive)  ? SearchInFile::OptionCaseSensitive   : 0) |
-                                     (GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ? SearchInFile::OptionFindWholePhrase : 0) );
+    
+    const auto search_options = [&]{
+        using Options = SearchInFile::Options;
+        auto opts = Options::None;
+        if( GlobalConfig().GetBool(g_ConfigSearchCaseSensitive) ) opts |= Options::CaseSensitive;
+        if( GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ) opts |= Options::FindWholePhrase;
+        return opts;
+    }();
+    m_SearchInFile->SetSearchOptions( search_options );
     
     [self buildTitle];
     
@@ -470,27 +484,29 @@ static int InvertBitFlag( int _value, int _flag )
 - (void)onSearchFieldMenuCaseSensitiveAction:(id)sender
 {
     using nc::vfs::SearchInFile;
-    const auto options = InvertBitFlag(m_SearchInFile->SearchOptions(),
-                                       SearchInFile::OptionCaseSensitive );
+    using Options = SearchInFile::Options;
+    const auto options = (Options)InvertBitFlag( (int)m_SearchInFile->SearchOptions(),
+                                                 (int)Options::CaseSensitive );
     m_SearchInFile->SetSearchOptions(options);
     
     NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
-    [menu itemAtIndex:0].state = (options & SearchInFile::OptionCaseSensitive) != 0;
+    [menu itemAtIndex:0].state = (options & Options::CaseSensitive) != Options::None;
     ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = menu;
-    GlobalConfig().Set( g_ConfigSearchCaseSensitive, bool(options & SearchInFile::OptionCaseSensitive) );
+    GlobalConfig().Set( g_ConfigSearchCaseSensitive, bool(options & Options::CaseSensitive) );
 }
 
 - (void)onSearchFiledMenuWholePhraseSearch:(id)sender
 {
     using nc::vfs::SearchInFile;
-    const auto options = InvertBitFlag(m_SearchInFile->SearchOptions(),
-                                       SearchInFile::OptionFindWholePhrase );
+    using Options = SearchInFile::Options;
+    const auto options = (Options)InvertBitFlag( (int)m_SearchInFile->SearchOptions(),
+                                                 (int)Options::FindWholePhrase );
     m_SearchInFile->SetSearchOptions(options);
     
     NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
-    [menu itemAtIndex:1].state = (options & SearchInFile::OptionFindWholePhrase) != 0;
+    [menu itemAtIndex:1].state = (options & Options::FindWholePhrase) != Options::None;
     ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = menu;
-    GlobalConfig().Set( g_ConfigSearchForWholePhrase, bool(options & SearchInFile::OptionFindWholePhrase) );
+    GlobalConfig().Set( g_ConfigSearchForWholePhrase, bool(options & Options::FindWholePhrase) );
 }
 
 - (void)setSearchProgressIndicator:(NSProgressIndicator *)searchProgressIndicator

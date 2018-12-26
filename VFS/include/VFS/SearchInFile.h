@@ -18,23 +18,10 @@ namespace nc::vfs {
 class SearchInFile
 {
 public:
-    // will not own _file, caller need to close it after work
-    // assumes that _file is in exclusive use in SearchInFile - that no one else will alter it
-    SearchInFile(nc::vfs::FileWindow &_file);
-    ~SearchInFile();
-    
-    void MoveCurrentPosition(uint64_t _pos);
-
-    void SetSearchOptions(int _options);
-    int SearchOptions();
-    
-    bool IsEOF() const;
-    
-    void ToggleTextSearch(CFStringRef _string, int _encoding);
-    CFStringRef TextSearchString(); // may be NULL. don't alter it. don't release it
-    int TextSearchEncoding(); // may be ENCODING_INVALID
-
     enum class Response : int;
+    
+    enum class Options : int;
+    
     struct Location {
         uint64_t offset;
         uint64_t bytes_len;
@@ -44,12 +31,22 @@ public:
         Response response;
         std::optional<Location> location;
     };
+
+    // will not own _file, caller need to close it after work
+    // assumes that _file is in exclusive use in SearchInFile - that no one else will alter it
+    SearchInFile(nc::vfs::FileWindow &_file);
+    ~SearchInFile();
     
-    enum
-    {
-        OptionCaseSensitive     = 1 << 0,   // default search option is case _insensitive_
-        OptionFindWholePhrase   = 1 << 1
-    };
+    void MoveCurrentPosition(uint64_t _pos);
+
+    void SetSearchOptions(Options _options);
+    Options SearchOptions();
+    
+    bool IsEOF() const;
+    
+    void ToggleTextSearch(CFStringRef _string, int _encoding);
+    CFStringRef TextSearchString(); // may be NULL. don't alter it. don't release it
+    int TextSearchEncoding(); // may be ENCODING_INVALID
     
     using CancelChecker = std::function<bool()>;
     Response Search(uint64_t *_offset/*out*/,
@@ -72,23 +69,31 @@ private:
     };
     
     nc::vfs::FileWindow &m_File;
-    uint64_t    m_Position; // position where next search attempt should start
-                            // in bytes, should be inside file + 1 byte
-                            // need this because it can point behind end of file to signal that search is ended
+    
+    // position where next search attempt should start
+    // in bytes, should be inside file + 1 byte
+    // need this because it can point behind end of file to signal that search is ended
+    uint64_t    m_Position = 0;
 
-    int         m_SearchOptions;    
+    union {
+        Options     m_SearchOptions = (Options)0;
+        struct {
+            bool case_sensitive    :1;
+            bool find_whole_phrase :1;
+        } m_SearchOptionsBits;
+    };
     
     // text search related stuff
-    CFStringRef m_RequestedTextSearch;
+    CFStringRef m_RequestedTextSearch = nullptr;
     int         m_TextSearchEncoding;
     
     std::unique_ptr<uint16_t[]> m_DecodedBuffer;
     std::unique_ptr<uint32_t[]> m_DecodedBufferIndx;
     
-    size_t      m_DecodedBufferSize;
-    CFStringRef m_DecodedBufferString;
+    size_t      m_DecodedBufferSize = 0;
+    CFStringRef m_DecodedBufferString = nullptr;
     
-    WorkMode    m_WorkMode;
+    WorkMode    m_WorkMode = WorkMode::NotSet;
 };
 
 enum class SearchInFile::Response : int
@@ -112,5 +117,29 @@ enum class SearchInFile::Response : int
     // place when cancellation happened
     Canceled
 };
-
+    
+enum class SearchInFile::Options : int
+{
+    None              = 0,
+    
+    // default search option is case _insensitive_
+    CaseSensitive     = 1 << 0,
+    
+    // default search option is to search regardless of surroundings
+    FindWholePhrase   = 1 << 1
+};
+    
+inline SearchInFile::Options operator|(SearchInFile::Options _lhs, SearchInFile::Options _rhs) {
+    return SearchInFile::Options{ ((int)_lhs) | ((int)_rhs) };
+}
+inline SearchInFile::Options operator&(SearchInFile::Options _lhs, SearchInFile::Options _rhs) {
+    return SearchInFile::Options{ ((int)_lhs) & ((int)_rhs) };
+}
+inline SearchInFile::Options& operator|=(SearchInFile::Options &_lhs, SearchInFile::Options _rhs) {
+    return (_lhs = (_lhs | _rhs));
+}
+inline SearchInFile::Options& operator&=(SearchInFile::Options &_lhs, SearchInFile::Options _rhs) {
+    return (_lhs = (_lhs & _rhs));
+}
+    
 }

@@ -243,9 +243,13 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
     CFStringRef request = CFStringCreateWithUTF8StdString(m_FilterContent->text);
     sif.ToggleTextSearch(request, encoding);
     CFRelease(request);
-    sif.SetSearchOptions((m_FilterContent->case_sensitive  ? SearchInFile::OptionCaseSensitive   : 0) |
-                         (m_FilterContent->whole_phrase    ? SearchInFile::OptionFindWholePhrase : 0) );
-    
+    const auto search_options = [&]{
+        auto options = SearchInFile::Options::None;
+        if( m_FilterContent->case_sensitive ) options |= SearchInFile::Options::CaseSensitive;
+        if( m_FilterContent->whole_phrase )   options |= SearchInFile::Options::FindWholePhrase;
+        return options;
+    }();
+    sif.SetSearchOptions( search_options );
     
     uint64_t found_pos;
     uint64_t found_len;

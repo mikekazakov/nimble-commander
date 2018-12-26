@@ -48,6 +48,14 @@ TEST_CASE(PREFIX "Does simple search")
         CHECK( result.location->offset == 10 );
         CHECK( result.location->bytes_len == 5 );
     }
+    SECTION("Search for HELLO") {
+        search.ToggleTextSearch(CFSTR("HELLO"), encodings::ENCODING_UTF8);
+        
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::Found );
+        CHECK( result.location->offset == 10 );
+        CHECK( result.location->bytes_len == 5 );
+    }
     SECTION("Search for 56789 twice") {
         search.ToggleTextSearch(CFSTR("56789"), encodings::ENCODING_UTF8);
         
@@ -118,6 +126,7 @@ TEST_CASE(PREFIX "Can search for non-ANSI characters")
     }
 }
 
+// TODO: mock a vfs file instead?
 TEST_CASE(PREFIX "Can search for text located beyond 32bit boundary")
 {
     const auto hello_offset = uint64_t{std::numeric_limits<int>::max()} + 4242;
@@ -130,6 +139,62 @@ TEST_CASE(PREFIX "Can search for text located beyond 32bit boundary")
     REQUIRE( result.response == SearchInFile::Response::Found );
     CHECK( result.location->offset == hello_offset );
     CHECK( result.location->bytes_len == 5 );
+}
+
+TEST_CASE(PREFIX "Handles case the sensitivity flag")
+{
+    auto fw = MakeFileWindow(u8"0123456789привет");
+    auto search = SearchInFile{fw};
+
+    SECTION("case insensitive - match") { // default option
+        const auto cf_string = CFString(u8"привет");
+        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::Found );
+    }
+    SECTION("case insensitive - match") { // default option
+        const auto cf_string = CFString(u8"ПРИВЕТ");
+        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::Found );
+    }
+    SECTION("case sensitive - match") {
+        const auto cf_string = CFString(u8"привет");
+        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.SetSearchOptions(SearchInFile::Options::CaseSensitive);
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::Found );
+    }
+    SECTION("case sensitive - no match") {
+        const auto cf_string = CFString(u8"ПРИВЕТ");
+        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.SetSearchOptions(SearchInFile::Options::CaseSensitive);
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::NotFound );
+    }
+}
+
+TEST_CASE(PREFIX "Handles case the whole phrase flag")
+{
+    auto fw = MakeFileWindow(u8"0123456789hello, hello");
+    auto search = SearchInFile{fw};
+    SECTION("regardless") { // default option
+        const auto cf_string = CFString(u8"hello");
+        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::Found );
+        CHECK( result.location->offset == 10 );
+        CHECK( result.location->bytes_len == 5 );
+    }
+    SECTION("whole phrase") {
+        const auto cf_string = CFString(u8"hello");
+        search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
+        search.SetSearchOptions(SearchInFile::Options::FindWholePhrase);
+        const auto result = search.Search();
+        REQUIRE( result.response == SearchInFile::Response::Found );
+        CHECK( result.location->offset == 17 );
+        CHECK( result.location->bytes_len == 5 );
+    }
 }
 
 static FileWindow MakeFileWindow(std::string_view _data)

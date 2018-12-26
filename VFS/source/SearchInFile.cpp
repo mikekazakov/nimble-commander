@@ -8,31 +8,11 @@ namespace nc::vfs {
 
 static const unsigned g_MaximumCodeUnit = 2;
 
-static bool IsWholePhrase(CFStringRef _string, CFRange _range)
-{
-    static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric);
-    assert( _range.length > 0 );
-    assert( _range.location >= 0 );
-
-    if(_range.location > 0)
-        if( CFCharacterSetIsCharacterMember(set, CFStringGetCharacterAtIndex(_string, _range.location - 1)) )
-            return false;
-
-    if(_range.location + _range.length < CFStringGetLength(_string))
-        if( CFCharacterSetIsCharacterMember(set, CFStringGetCharacterAtIndex(_string, _range.location + _range.length)) )
-            return false;
-
-    return true;
-}
+static bool IsWholePhrase(CFStringRef _string, CFRange _range);
 
 SearchInFile::SearchInFile(nc::vfs::FileWindow &_file):
     m_File(_file),
-    m_Position(0),
-    m_WorkMode(WorkMode::NotSet),
-    m_RequestedTextSearch(0),
-    m_DecodedBufferString(0),
-    m_TextSearchEncoding(encodings::ENCODING_INVALID),
-    m_SearchOptions(0)
+    m_TextSearchEncoding(encodings::ENCODING_INVALID)
 {
     if( !m_File.FileOpened() )
         throw std::invalid_argument("SearchInFile: FileWindow should be opened");
@@ -162,11 +142,8 @@ SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset,
                                                                    m_DecodedBufferSize,
                                                                    kCFAllocatorNull);
 
-        CFRange result = CFStringFind (
-                                       m_DecodedBufferString,
-                                       m_RequestedTextSearch,
-                                       (m_SearchOptions & OptionCaseSensitive) ? 0 : kCFCompareCaseInsensitive
-                                       );
+        const auto find_flags = m_SearchOptionsBits.case_sensitive ? 0 : kCFCompareCaseInsensitive;
+        CFRange result = CFStringFind( m_DecodedBufferString, m_RequestedTextSearch, find_flags );
 
         if(result.location == kCFNotFound)
         {
@@ -187,7 +164,8 @@ SearchInFile::Response SearchInFile::SearchText(uint64_t *_offset,
         {
             assert(size_t(result.location + result.length) <= m_DecodedBufferSize); // sanity check
             // check for whole phrase is this option is set
-            if( (m_SearchOptions & OptionFindWholePhrase) && !IsWholePhrase(m_DecodedBufferString, result) )
+            if( m_SearchOptionsBits.find_whole_phrase &&
+                !IsWholePhrase(m_DecodedBufferString, result) )
             {
                 // false alarm - just move position beyond found part ang go on
                 m_Position = m_Position + m_DecodedBufferIndx[result.location+result.length];
@@ -220,14 +198,37 @@ int SearchInFile::TextSearchEncoding()
     return m_TextSearchEncoding;
 }
 
-void SearchInFile::SetSearchOptions(int _options)
+void SearchInFile::SetSearchOptions(Options _options)
 {
     m_SearchOptions = _options;
 }
 
-int SearchInFile::SearchOptions()
+SearchInFile::Options SearchInFile::SearchOptions()
 {
     return m_SearchOptions;
 }
+
+static bool IsWholePhrase(CFStringRef _string, CFRange _range)
+{
+    static const auto alphanumeric = CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric);
+    assert( _range.length > 0 );
+    assert( _range.location >= 0 );
+    
+    if( _range.location > 0 ) {
+        const auto character = CFStringGetCharacterAtIndex(_string, _range.location - 1);
+        if( CFCharacterSetIsCharacterMember(alphanumeric, character) )
+            return false;
+    }
+    
+    if( _range.location + _range.length < CFStringGetLength(_string) ) {
+        const auto character = CFStringGetCharacterAtIndex(_string,
+                                                           _range.location + _range.length);
+        if( CFCharacterSetIsCharacterMember(alphanumeric, character) )
+            return false;
+    }
+    
+    return true;
+}
+
 
 }

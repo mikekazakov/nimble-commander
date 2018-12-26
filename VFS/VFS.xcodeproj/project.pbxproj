@@ -354,9 +354,9 @@
 		CF1846FF1E41C86D008B7C9F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF26DE2321D28754003F0E93 /* SearchInFile_UT.cpp */,
 				CF26DE0E21CFA2CC003F0E93 /* FileWindow_Tests.mm */,
 				CF1847021E41C86D008B7C9F /* Info.plist */,
+				CF26DE2321D28754003F0E93 /* SearchInFile_UT.cpp */,
 				CF1847091E41C8A5008B7C9F /* tests_common.h */,
 				CF26DE2021D2864D003F0E93 /* Tests.cpp */,
 				CF26DE1F21D2864D003F0E93 /* Tests.h */,

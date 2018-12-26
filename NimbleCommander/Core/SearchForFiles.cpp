@@ -251,14 +251,9 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
     }();
     sif.SetSearchOptions( search_options );
     
-    uint64_t found_pos;
-    uint64_t found_len;
-    auto result = sif.Search(&found_pos,
-                             &found_len,
-                             [=]{ return m_Queue.IsStopped(); }
-                             );
-    if(result == SearchInFile::Response::Found) {
-        _r = CFRangeMake(found_pos, found_len);
+    const auto result = sif.Search( [=]{ return m_Queue.IsStopped(); } );
+    if( result.response == SearchInFile::Response::Found ) {
+        _r = CFRangeMake(result.location->offset, result.location->bytes_len);
         return true;
     }
     return false;

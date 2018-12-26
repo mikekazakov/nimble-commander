@@ -49,10 +49,6 @@ public:
     int TextSearchEncoding(); // may be ENCODING_INVALID
     
     using CancelChecker = std::function<bool()>;
-    Response Search(uint64_t *_offset/*out*/,
-                  uint64_t *_bytes_len/*out*/,
-                  const CancelChecker &_checker = {}); // checker can be nullptr
-    
     Result Search( const CancelChecker &_checker = {} );
     
 private:

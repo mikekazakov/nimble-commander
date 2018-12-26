@@ -53,16 +53,6 @@ void SearchInFile::ToggleTextSearch(CFStringRef _string, int _encoding)
     m_WorkMode = WorkMode::Text;
 }
 
-SearchInFile::Response SearchInFile::Search(uint64_t *_offset,
-                                          uint64_t *_bytes_len,
-                                          const CancelChecker &_checker)
-{
-    if(m_WorkMode == WorkMode::Text)
-        return SearchText(_offset, _bytes_len, _checker);
-    
-    return Response::NotFound;
-}
-
 SearchInFile::Result SearchInFile::Search( const CancelChecker &_checker )
 {
     if( m_WorkMode == WorkMode::Text ) {

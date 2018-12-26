@@ -449,20 +449,20 @@ static int InvertBitFlag( int _value, int _flag )
     }
     
     m_SearchInFileQueue.Run([=]{
-        uint64_t offset, len;
         
         if( m_SearchInFile->IsEOF() )
             m_SearchInFile->MoveCurrentPosition(0);
         
-        auto result = m_SearchInFile->Search(&offset,
-                                             &len,
-                                             [self]{return m_SearchInFileQueue.IsStopped();});
+        const auto result = m_SearchInFile->Search
+            ([self]{return m_SearchInFileQueue.IsStopped();});
         
-        if(result == nc::vfs::SearchInFile::Response::Found)
+        if( result.response == nc::vfs::SearchInFile::Response::Found ) {
+            const auto range = CFRangeMake(result.location->offset, result.location->bytes_len);
             dispatch_to_main_queue( [=]{
-                m_View.selectionInFile = CFRangeMake(offset, len);
+                m_View.selectionInFile = range;
                 [m_View ScrollToSelection];
             });
+        }
     });
 }
 

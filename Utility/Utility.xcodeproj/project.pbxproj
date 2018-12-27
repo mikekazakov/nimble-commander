@@ -9,6 +9,11 @@
 /* Begin PBXBuildFile section */
 		CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1ADE2F1F7E71D3003E9B76 /* OrthodoxMonospace.h */; };
 		CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */; };
+		CF26DE2A21D3EFEE003F0E93 /* TemporaryFileStorageImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF26DE2821D3EFEE003F0E93 /* TemporaryFileStorageImpl.h */; };
+		CF26DE2B21D3EFEE003F0E93 /* TemporaryFileStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CF26DE2921D3EFEE003F0E93 /* TemporaryFileStorage.h */; };
+		CF26DE2E21D3F033003F0E93 /* TemporaryFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE2C21D3F033003F0E93 /* TemporaryFileStorage.cpp */; };
+		CF26DE2F21D3F033003F0E93 /* TemporaryFileStorageImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE2D21D3F033003F0E93 /* TemporaryFileStorageImpl.cpp */; };
+		CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE3021D5685A003F0E93 /* TemporaryFileStorageImpl_UT.mm */; };
 		CF29FC602155D9A20040FF19 /* AdaptiveDateFormatting.h in Headers */ = {isa = PBXBuildFile; fileRef = CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */; };
 		CF29FC622155D9AB0040FF19 /* AdaptiveDateFormatting.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */; };
 		CF308F11213781EE00915730 /* UnitTests_main.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F10213781ED00915730 /* UnitTests_main.h */; };
@@ -122,6 +127,11 @@
 		CF233AF2219E7E9600693E1A /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
 		CF233AF3219E7E9600693E1A /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CF233B13219E94B300693E1A /* PrecompiledHeaders.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PrecompiledHeaders.pch; path = source/PrecompiledHeaders.pch; sourceTree = "<group>"; };
+		CF26DE2821D3EFEE003F0E93 /* TemporaryFileStorageImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TemporaryFileStorageImpl.h; path = include/Utility/TemporaryFileStorageImpl.h; sourceTree = "<group>"; };
+		CF26DE2921D3EFEE003F0E93 /* TemporaryFileStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TemporaryFileStorage.h; path = include/Utility/TemporaryFileStorage.h; sourceTree = "<group>"; };
+		CF26DE2C21D3F033003F0E93 /* TemporaryFileStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemporaryFileStorage.cpp; path = source/TemporaryFileStorage.cpp; sourceTree = "<group>"; };
+		CF26DE2D21D3F033003F0E93 /* TemporaryFileStorageImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemporaryFileStorageImpl.cpp; path = source/TemporaryFileStorageImpl.cpp; sourceTree = "<group>"; };
+		CF26DE3021D5685A003F0E93 /* TemporaryFileStorageImpl_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TemporaryFileStorageImpl_UT.mm; path = tests/TemporaryFileStorageImpl_UT.mm; sourceTree = "<group>"; };
 		CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdaptiveDateFormatting.h; path = include/Utility/AdaptiveDateFormatting.h; sourceTree = "<group>"; };
 		CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AdaptiveDateFormatting.mm; path = source/AdaptiveDateFormatting.mm; sourceTree = "<group>"; };
 		CF308F10213781ED00915730 /* UnitTests_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UnitTests_main.h; path = tests/UnitTests_main.h; sourceTree = SOURCE_ROOT; };
@@ -276,6 +286,7 @@
 				CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */,
 				CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */,
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
+				CF26DE3021D5685A003F0E93 /* TemporaryFileStorageImpl_UT.mm */,
 				CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */,
 				CF308F10213781ED00915730 /* UnitTests_main.h */,
 			);
@@ -345,6 +356,8 @@
 				CFD62BFC1C9A84500021EE7F /* StringExtras.h */,
 				CFD62C061C9A95240021EE7F /* SyncMessageBox.h */,
 				CF960E1B1C992F2C001D8B02 /* SystemInformation.h */,
+				CF26DE2921D3EFEE003F0E93 /* TemporaryFileStorage.h */,
+				CF26DE2821D3EFEE003F0E93 /* TemporaryFileStorageImpl.h */,
 				CF1846F51E3F1FC8008B7C9F /* VerticallyCenteredTextFieldCell.h */,
 				CF960E1C1C992F2C001D8B02 /* VolumeInformation.h */,
 			);
@@ -393,6 +406,8 @@
 				CFD62BFE1C9A84570021EE7F /* StringExtras.mm */,
 				CFD62C081C9A952C0021EE7F /* SyncMessageBox.mm */,
 				CF960E271C992F35001D8B02 /* SystemInformation.mm */,
+				CF26DE2C21D3F033003F0E93 /* TemporaryFileStorage.cpp */,
+				CF26DE2D21D3F033003F0E93 /* TemporaryFileStorageImpl.cpp */,
 				CF1846F71E3F1FD1008B7C9F /* VerticallyCenteredTextFieldCell.mm */,
 				CF960E281C992F35001D8B02 /* VolumeInformation.cpp */,
 			);
@@ -425,8 +440,10 @@
 				CFDAC82B2168E1C000DEBA2A /* DiskUtility.h in Headers */,
 				CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */,
 				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
+				CF26DE2B21D3EFEE003F0E93 /* TemporaryFileStorage.h in Headers */,
 				CFB0F236215A076F0088C18E /* FileMask.h in Headers */,
 				CF29FC602155D9A20040FF19 /* AdaptiveDateFormatting.h in Headers */,
+				CF26DE2A21D3EFEE003F0E93 /* TemporaryFileStorageImpl.h in Headers */,
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
 				CF308F11213781EE00915730 /* UnitTests_main.h in Headers */,
 				CF308F2D213ABFAA00915730 /* BriefOnDiskStorage.h in Headers */,
@@ -562,6 +579,7 @@
 				CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */,
 				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
+				CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -595,6 +613,7 @@
 				CFFA94841F453CC00035E606 /* VerticallyCenteredTextFieldCell.mm in Sources */,
 				CFFA946B1F453CC00035E606 /* ColoredSeparatorLine.mm in Sources */,
 				CFFA947D1F453CC00035E606 /* NSView+Sugar.mm in Sources */,
+				CF26DE2E21D3F033003F0E93 /* TemporaryFileStorage.cpp in Sources */,
 				CFFA94851F453CC00035E606 /* VolumeInformation.cpp in Sources */,
 				CFFA94741F453CC00035E606 /* FSEventsDirUpdate.cpp in Sources */,
 				CFFA94831F453CC00035E606 /* SystemInformation.mm in Sources */,
@@ -607,6 +626,7 @@
 				CFFA947F1F453CC00035E606 /* SheetController.mm in Sources */,
 				CFFA946C1F453CC00035E606 /* DataBlockAnalysis.mm in Sources */,
 				CFFA94721F453CC00035E606 /* FontExtras.mm in Sources */,
+				CF26DE2F21D3F033003F0E93 /* TemporaryFileStorageImpl.cpp in Sources */,
 				CFFA947E1F453CC00035E606 /* PathManip.cpp in Sources */,
 				CFFA94761F453CC00035E606 /* HexadecimalColor.mm in Sources */,
 			);

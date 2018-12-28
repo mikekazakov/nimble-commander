@@ -7,7 +7,7 @@
 
 namespace nc::utility {
     
-class TemporaryFileStorageImpl : TemporaryFileStorage
+class TemporaryFileStorageImpl : public TemporaryFileStorage
 {
 public:
     TemporaryFileStorageImpl(std::string_view _base_directory,

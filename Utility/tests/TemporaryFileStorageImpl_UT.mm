@@ -4,12 +4,14 @@
 #include "PathManip.h"
 #include <Habanero/algo.h>
 #include <ftw.h>
+#include <fstream>
 
 using nc::utility::TemporaryFileStorageImpl;
 
 static auto g_TestDirPrefix = "_nc__utility__temporary_file_storage__test_";
 static int RMRF(const std::string& _path);
 static std::string MakeTempFilesStorage();
+static std::optional<std::string> Load(const std::string &_filepath);
 
 #define PREFIX "[nc::utility::TemporaryFileStorageImpl] "
 
@@ -91,10 +93,38 @@ TEST_CASE(PREFIX "Creates a new path on filenames collision ")
     CHECK( S_ISDIR(st.st_mode) != 0 );
 }
 
+
+TEST_CASE(PREFIX "Creates a temp file with a provided data")
+{
+    const auto base_dir = MakeTempFilesStorage();
+    const auto remove_base_dir = at_scope_end([&]{ RMRF(base_dir); });
+    const auto prefix = "some_prefix";
+    const auto full_path_prefix = base_dir + prefix;
+    auto storage = TemporaryFileStorageImpl{base_dir, prefix};
+    const auto memory = std::string(1000000, 'Z');
+    
+    SECTION("Without a filename") {
+        const auto tmp_file = storage.MakeFileFromMemory(memory);
+        
+        REQUIRE( tmp_file != std::nullopt );
+        CHECK( Load(*tmp_file) == memory );
+    }
+    SECTION("With a filename") {
+        const auto filename = std::string{"some filename.txt"};
+        const auto tmp_file = storage.MakeFileFromMemory(memory, filename);
+        
+        REQUIRE( tmp_file != std::nullopt );
+        CHECK( tmp_file->substr(tmp_file->length() - filename.length()) == filename );
+        CHECK( Load(*tmp_file) == memory );
+    }
+}
+
 static std::string MakeTempFilesStorage()
 {
     const auto base_path = EnsureTrailingSlash( NSTemporaryDirectory().fileSystemRepresentation );
     const auto tmp_path = base_path + g_TestDirPrefix + "/";
+    if( access(tmp_path.c_str(), F_OK) == 0 )
+        RMRF(tmp_path);
     if( mkdir(tmp_path.c_str(), S_IRWXU) != 0 )
         throw std::runtime_error("mkdir failed");
     return tmp_path;
@@ -115,4 +145,19 @@ static int RMRF(const std::string& _path)
         return 0;
     };
     return nftw(_path.c_str(), unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
+}
+
+static std::optional<std::string> Load(const std::string &_filepath)
+{
+    std::ifstream in( _filepath, std::ios::in | std::ios::binary );
+    if( !in )
+        return std::nullopt;
+    
+    std::string contents;
+    in.seekg( 0, std::ios::end );
+    contents.resize( in.tellg() );
+    in.seekg( 0, std::ios::beg );
+    in.read( &contents[0], contents.size() );
+    in.close();
+    return contents;
 }

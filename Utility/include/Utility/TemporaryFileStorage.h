@@ -55,7 +55,8 @@ public :
 };
         
 inline TemporaryFileStorage::OpenedFile::OpenedFile(OpenedFile&& _rhs):
-    file_descriptor{_rhs.file_descriptor}
+    file_descriptor{_rhs.file_descriptor},
+    path{std::move(_rhs.path)}
 {
     _rhs.file_descriptor = -1;
 }
@@ -74,6 +75,7 @@ inline TemporaryFileStorage::OpenedFile &
             close(file_descriptor);
         file_descriptor = _rhs.file_descriptor;
         _rhs.file_descriptor = -1;
+        path = std::move(_rhs.path);
     }
     return *this;
 }

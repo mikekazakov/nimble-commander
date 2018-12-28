@@ -1,4 +1,4 @@
-#include "default.xcconfig"
+#include "debug.xcconfig"
 
 MACOSX_DEPLOYMENT_TARGET = 10.13
 OTHER_LDFLAGS = $(inherited) -lgmock -lgtest

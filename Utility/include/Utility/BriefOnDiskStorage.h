@@ -7,7 +7,13 @@
 
 namespace nc::utility
 {
-    
+
+/**
+ * The difference between BriefOnDiskStorage and TemporaryFileStorage is that the latter
+ * doesn't control life of entries precisely.
+ * BriefOnDiskStorage cleans files immediately in RAII-style, while TemporaryFileStorage
+ * uses a cleanup strategy based on timestamps.
+ */
 class BriefOnDiskStorage
 {
 public:    

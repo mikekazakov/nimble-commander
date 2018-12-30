@@ -5,6 +5,7 @@
 #include <Habanero/algo.h>
 #include <ftw.h>
 #include <fstream>
+#include <stdio.h>
 
 using nc::utility::TemporaryFileStorageImpl;
 
@@ -71,7 +72,7 @@ TEST_CASE(PREFIX "Creates a temp directory ")
     }
 }
 
-TEST_CASE(PREFIX "Creates a new path on filenames collision ")
+TEST_CASE(PREFIX "Creates a new path on filenames collision for directories")
 {
     const auto base_dir = MakeTempFilesStorage();
     const auto remove_base_dir = at_scope_end([&]{ RMRF(base_dir); });
@@ -93,6 +94,27 @@ TEST_CASE(PREFIX "Creates a new path on filenames collision ")
     CHECK( S_ISDIR(st.st_mode) != 0 );
 }
 
+TEST_CASE(PREFIX "Creates a new path on filenames collision for files")
+{
+    const auto base_dir = MakeTempFilesStorage();
+    const auto remove_base_dir = at_scope_end([&]{ RMRF(base_dir); });
+    const auto prefix = "some_prefix";
+    auto storage = TemporaryFileStorageImpl{base_dir, prefix};
+    const auto filename = std::string{"filename.txt"};
+    
+    const auto tmp_file1 = storage.MakeFile(filename);
+    const auto tmp_file2 = storage.MakeFile(filename);
+    
+    REQUIRE( tmp_file1 != std::nullopt );
+    REQUIRE( tmp_file2 != std::nullopt );
+    CHECK( tmp_file1 != tmp_file2 );
+    
+    struct stat st;
+    CHECK( lstat(tmp_file1->c_str(), &st) == 0 );
+    CHECK( S_ISREG(st.st_mode) != 0 );
+    CHECK( lstat(tmp_file2->c_str(), &st) == 0 );
+    CHECK( S_ISREG(st.st_mode) != 0 );
+}
 
 TEST_CASE(PREFIX "Creates a temp file with a provided data")
 {
@@ -116,6 +138,36 @@ TEST_CASE(PREFIX "Creates a temp file with a provided data")
         REQUIRE( tmp_file != std::nullopt );
         CHECK( tmp_file->substr(tmp_file->length() - filename.length()) == filename );
         CHECK( Load(*tmp_file) == memory );
+    }
+}
+
+TEST_CASE(PREFIX "Opens a temp file")
+{
+    const auto base_dir = MakeTempFilesStorage();
+    const auto remove_base_dir = at_scope_end([&]{ RMRF(base_dir); });
+    const auto prefix = "some_prefix";
+    const auto full_path_prefix = base_dir + prefix;
+    auto storage = TemporaryFileStorageImpl{base_dir, prefix};
+    const auto memory = std::string(1000000, 'Z');
+    SECTION("Without a filename") {
+        auto tmp_file = storage.OpenFile();
+        REQUIRE( tmp_file != std::nullopt );
+        write(tmp_file->file_descriptor, memory.data(), memory.size());
+        close(tmp_file->file_descriptor);
+        tmp_file->file_descriptor = -1;
+        
+        CHECK( Load(tmp_file->path) == memory );
+    }
+    SECTION("With a filename") {
+        const auto filename = std::string{"some filename.txt"};
+        auto tmp_file = storage.OpenFile(filename);
+        REQUIRE( tmp_file != std::nullopt );
+        write(tmp_file->file_descriptor, memory.data(), memory.size());
+        close(tmp_file->file_descriptor);
+        tmp_file->file_descriptor = -1;
+
+        CHECK( tmp_file->path.substr(tmp_file->path.length() - filename.length()) == filename );
+        CHECK( Load(tmp_file->path) == memory );
     }
 }
 

@@ -184,47 +184,57 @@ TEST_CASE(PREFIX "Purge remove old entries")
     auto storage = TemporaryFileStorageImpl{base_dir, prefix};
     
     SECTION("Removes old regular files") {
-        const auto future = time(nullptr) + 60; // 1 minute ahead of the current time
         storage.MakeFile();
         
-        storage.Purge(future);
+        storage.Purge( time(nullptr) + 60 );
         
         CHECK( IsEmptyDir(base_dir) );
     }
     SECTION("Leaves fresh regular files") {
-        const auto now = time(nullptr);
         storage.MakeFile();
-        storage.Purge(now);
+        storage.Purge( time(nullptr) );
         
         CHECK( IsEmptyDir(base_dir) == false );
     }
     SECTION("Removes old directories") {
-        const auto future = time(nullptr) + 60; // 1 minute ahead of the current time
         storage.MakeDirectory();
         
-        storage.Purge(future);
+        storage.Purge( time(nullptr) + 60 );
         
         CHECK( IsEmptyDir(base_dir) );
     }
     SECTION("Removes fresh directories") {
-        const auto now = time(nullptr);
         storage.MakeDirectory();
         
-        storage.Purge(now);
+        storage.Purge( time(nullptr) );
         
         CHECK( IsEmptyDir(base_dir) == false);
     }
     SECTION("Removes all old directories") {
-        const auto future = time(nullptr) + 60; // 1 minute ahead of the current time
         storage.MakeDirectory("dir");
         storage.MakeDirectory("dir");
         storage.MakeDirectory("dir");
         storage.MakeDirectory("dir");
         
-        storage.Purge(future);
+        storage.Purge( time(nullptr) + 60 );
         
         CHECK( IsEmptyDir(base_dir) );
     }
+}
+
+TEST_CASE(PREFIX "Makes a new dir after purging")
+{
+    const auto base_dir = MakeTempFilesStorage();
+    const auto remove_base_dir = at_scope_end([&]{ RMRF(base_dir); });
+    const auto prefix = "some_prefix";
+    const auto full_path_prefix = base_dir + prefix;
+    auto storage = TemporaryFileStorageImpl{base_dir, prefix};
+    
+    const auto path1 = storage.MakeDirectory("dir");
+    storage.Purge( time(nullptr) + 60 );
+    const auto path2 = storage.MakeDirectory("dir");
+
+    CHECK( path1 != path2 );  
 }
 
 static std::string MakeTempFilesStorage()

@@ -6,12 +6,12 @@
 #include <Habanero/algo.h>
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/NativeFSManager.h>
+#include <Utility/TemporaryFileStorageImpl.h>
 #include <Utility/PathManip.h>
 #include <Utility/FunctionKeysPass.h>
 #include <Utility/StringExtras.h>
 #include <RoutedIO/RoutedIO.h>
 #include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
-#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
@@ -68,6 +68,7 @@ static auto g_StateDirPostfix = @"/State/";
 static nc::config::ConfigImpl *g_Config = nullptr;
 static nc::config::ConfigImpl *g_State = nullptr;
 static nc::config::ConfigImpl *g_NetworkConnectionsConfig = nullptr;
+static nc::utility::TemporaryFileStorageImpl *g_TemporaryFileStorage = nullptr;
 
 static const auto g_ConfigForceFn = "general.alwaysUseFnKeysAsFunctional";
 static const auto g_ConfigExternalToolsList = "externalTools.tools_v1";
@@ -365,8 +366,7 @@ static NCAppDelegate *g_Me = nil;
     UpdateMenuItemsPlaceholders( "menu.nimble_commander.quit" );
     UpdateMenuItemsPlaceholders( 17000 ); // Menu->Help
     
-    // calling modules running in background
-    TemporaryNativeFileStorage::Instance(); // starting background purging implicitly
+    [self temporaryFileStorage]; // implicitly runs the background temp storage purging
     
     auto &am = ActivationManager::Instance();
     
@@ -951,6 +951,30 @@ static NCAppDelegate *g_Me = nil;
         }
     };
     [window show];
+}
+
+static void DoTemporaryFileStoragePurge()
+{
+    assert( g_TemporaryFileStorage != nullptr );
+    const auto deadline = time(nullptr) - 60 * 60 * 24; // 24 hours back
+    g_TemporaryFileStorage->Purge(deadline);
+    
+    dispatch_after(6h,
+                   dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
+                   DoTemporaryFileStoragePurge);
+}
+
+- (nc::utility::TemporaryFileStorage &)temporaryFileStorage
+{
+    const auto instance = []{
+        const auto base_dir = CommonPaths::AppTemporaryDirectory();
+        const auto prefix = ActivationManager::BundleID() + ".tmp.";
+        g_TemporaryFileStorage = new nc::utility::TemporaryFileStorageImpl(base_dir, prefix);
+        dispatch_to_background(DoTemporaryFileStoragePurge);
+        return g_TemporaryFileStorage;
+    }();
+    
+    return *instance;
 }
 
 @end

@@ -1,8 +1,11 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <sys/dirent.h>
+#include <sys/xattr.h>
 #include <Habanero/SerialQueue.h>
 #include <Habanero/DispatchGroup.h>
+#include <Habanero/algo.h>
+#include <Utility/PathManip.h>
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
 
@@ -447,4 +450,58 @@ int VFSCompareNodes(const boost::filesystem::path& _file1_full_path,
         });
     }
     return 0;
+}
+
+namespace nc::vfs::easy {
+
+std::optional<std::string> CopyFileToTempStorage( const std::string &_vfs_filepath,
+                                                  VFSHost &_host,
+                                                  nc::utility::TemporaryFileStorage &_temp_storage)
+{
+    VFSFilePtr vfs_file;
+    if( _host.CreateFile(_vfs_filepath.c_str(), vfs_file, 0) < 0 )
+        return std::nullopt;
+    
+    if( vfs_file->Open(VFSFlags::OF_Read) < 0 )
+        return std::nullopt;
+    
+    char name[MAXPATHLEN];
+    if( !GetFilenameFromPath(_vfs_filepath.c_str(), name) )
+        return std::nullopt;
+    
+    auto native_file = _temp_storage.OpenFile(name);
+    if( native_file == std::nullopt )
+        return std::nullopt;
+    auto do_unlink = at_scope_end([&]{ unlink(native_file->path.c_str()); });
+    
+    const size_t bufsz = 256*1024;
+    char buf[bufsz];
+    ssize_t res_read;
+    while( (res_read = vfs_file->Read(buf, bufsz)) > 0 ) {
+        ssize_t res_write;
+        auto bufp = &buf[0];
+        while(res_read > 0) {
+            res_write = write( native_file->file_descriptor, bufp, res_read);
+            if( res_write >= 0 ) {
+                res_read -= res_write;
+                bufp += res_write;
+            }
+            else
+                return std::nullopt;
+        }
+    }
+    if( res_read < 0 )
+        return std::nullopt;
+    
+    vfs_file->XAttrIterateNames([&](const char *_name){
+        ssize_t res = vfs_file->XAttrGet(_name, buf, bufsz);
+        if( res >= 0 )
+            fsetxattr(native_file->file_descriptor, _name, buf, res, 0, 0);
+        return true;
+    });
+    
+    do_unlink.disengage();
+    return std::move(native_file->path);
+}
+    
 }

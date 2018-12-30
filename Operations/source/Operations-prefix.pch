@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <sys/mount.h>
+#include <sys/xattr.h>
 
 // networking stuff
 #include <sys/socket.h>
@@ -54,13 +55,21 @@
     #include <optional>
     #include <any>
 
+    #include <boost/filesystem.hpp>
+
     #include <Habanero/dispatch_cpp.h>
     #include <Habanero/mach_time.h>
     #include <Habanero/spinlock.h>
+    #include <Habanero/algo.h>
+    #include <Habanero/Hash.h>
+    #include <Habanero/ScopedObservable.h>
 
-    #include <boost/filesystem.hpp>
-
+    #include <Utility/PathManip.h>
     #include <Utility/StringExtras.h>
+
+    #include <VFS/VFS.h>
+
+    #include <RoutedIO/RoutedIO.h>
 
     #ifdef __OBJC__
         #include <Utility/ObjCpp.h>

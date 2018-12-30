@@ -18,6 +18,7 @@ namespace nc {
     
     namespace utility {
         class NativeFSManager;
+        class TemporaryFileStorage;
     }
     
     namespace core {
@@ -113,5 +114,8 @@ namespace nc {
 
 @property (nonatomic, readonly)
     nc::utility::NativeFSManager &nativeFSManager;
+
+@property (nonatomic, readonly)
+    nc::utility::TemporaryFileStorage &temporaryFileStorage;
 
 @end

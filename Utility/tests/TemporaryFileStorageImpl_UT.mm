@@ -3,16 +3,20 @@
 #include "TemporaryFileStorageImpl.h"
 #include "PathManip.h"
 #include <Habanero/algo.h>
+#include <sys/dirent.h>
+#include <dirent.h>
 #include <ftw.h>
 #include <fstream>
 #include <stdio.h>
 
+using namespace std::literals;
 using nc::utility::TemporaryFileStorageImpl;
 
 static auto g_TestDirPrefix = "_nc__utility__temporary_file_storage__test_";
 static int RMRF(const std::string& _path);
 static std::string MakeTempFilesStorage();
 static std::optional<std::string> Load(const std::string &_filepath);
+static bool IsEmptyDir(const std::string &_dir_path);
 
 #define PREFIX "[nc::utility::TemporaryFileStorageImpl] "
 
@@ -171,6 +175,58 @@ TEST_CASE(PREFIX "Opens a temp file")
     }
 }
 
+TEST_CASE(PREFIX "Purge remove old entries")
+{
+    const auto base_dir = MakeTempFilesStorage();
+    const auto remove_base_dir = at_scope_end([&]{ RMRF(base_dir); });
+    const auto prefix = "some_prefix";
+    const auto full_path_prefix = base_dir + prefix;
+    auto storage = TemporaryFileStorageImpl{base_dir, prefix};
+    
+    SECTION("Removes old regular files") {
+        const auto future = time(nullptr) + 60; // 1 minute ahead of the current time
+        storage.MakeFile();
+        
+        storage.Purge(future);
+        
+        CHECK( IsEmptyDir(base_dir) );
+    }
+    SECTION("Leaves fresh regular files") {
+        const auto now = time(nullptr);
+        storage.MakeFile();
+        storage.Purge(now);
+        
+        CHECK( IsEmptyDir(base_dir) == false );
+    }
+    SECTION("Removes old directories") {
+        const auto future = time(nullptr) + 60; // 1 minute ahead of the current time
+        storage.MakeDirectory();
+        
+        storage.Purge(future);
+        
+        CHECK( IsEmptyDir(base_dir) );
+    }
+    SECTION("Removes fresh directories") {
+        const auto now = time(nullptr);
+        storage.MakeDirectory();
+        
+        storage.Purge(now);
+        
+        CHECK( IsEmptyDir(base_dir) == false);
+    }
+    SECTION("Removes all old directories") {
+        const auto future = time(nullptr) + 60; // 1 minute ahead of the current time
+        storage.MakeDirectory("dir");
+        storage.MakeDirectory("dir");
+        storage.MakeDirectory("dir");
+        storage.MakeDirectory("dir");
+        
+        storage.Purge(future);
+        
+        CHECK( IsEmptyDir(base_dir) );
+    }
+}
+
 static std::string MakeTempFilesStorage()
 {
     const auto base_path = EnsureTrailingSlash( NSTemporaryDirectory().fileSystemRepresentation );
@@ -212,4 +268,20 @@ static std::optional<std::string> Load(const std::string &_filepath)
     in.read( &contents[0], contents.size() );
     in.close();
     return contents;
+}
+
+static bool IsEmptyDir(const std::string &_dir_path)
+{
+    const auto directory = opendir( _dir_path.c_str() );
+    if( directory == nullptr )
+        return true;
+    const auto close_directory = at_scope_end([=]{ closedir(directory); });
+    
+    dirent *entry = nullptr;
+    while( (entry = readdir(directory)) != nullptr ) {
+        if( entry->d_name == "."sv  || entry->d_name ==  ".."sv )
+            continue;
+        return false;
+    }
+    return true;
 }

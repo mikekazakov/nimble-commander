@@ -1,15 +1,22 @@
 // Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryFileStorageImpl.h"
 #include <Utility/PathManip.h>
+#include <Habanero/algo.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/dirent.h>
+#include <dirent.h>
 #include <exception>
+#include <ftw.h>
 
 namespace nc::utility {
+    
+using namespace std::literals;
 
 static bool CheckRWAccess(const std::string &_path);
 static bool CheckExistence(const std::string &_path);
 static std::string MakeRandomFilename();
+static int RMRF(const std::string& _path);
 
 TemporaryFileStorageImpl::TemporaryFileStorageImpl(std::string_view _base_directory,
                                                    std::string_view _sub_directories_prefix):
@@ -134,7 +141,75 @@ std::optional<std::string> TemporaryFileStorageImpl::FindTempDir( std::string_vi
     
     return new_dir;
 }
+    
+void TemporaryFileStorageImpl::Purge( time_t _older_than )
+{
+    const auto directories = FindExistingTempDirectories();
+    for( const auto &directory: directories ) {
+        if( PurgeSubDirectory(directory, _older_than) == true )
+            RMRF(directory);
+    }
+}
+    
+std::vector<std::string> TemporaryFileStorageImpl::FindExistingTempDirectories() const
+{
+    const auto directory = opendir( m_BaseDirectory.c_str() );
+    if( directory == nullptr )
+        return {};
+    const auto close_directory = at_scope_end([=]{ closedir(directory); });
 
+    std::vector<std::string> directories;
+    const auto &prefix = m_SubDirectoriesPrefix;
+    dirent *entry = nullptr;
+    while( (entry = readdir(directory)) != nullptr ) {
+        if( entry->d_type != DT_DIR )
+            continue;
+        if( entry->d_namlen <= prefix.length() ||
+            strncmp(entry->d_name, prefix.c_str(), prefix.length()) != 0 )
+            continue;
+        
+        directories.emplace_back( m_BaseDirectory + entry->d_name + "/" );
+    }
+    
+    return directories;
+}
+    
+bool TemporaryFileStorageImpl::PurgeSubDirectory(const std::string &_path, time_t _older_than)
+{
+    const auto directory = opendir( _path.c_str() );
+    if( directory == nullptr )
+        return true;
+    const auto close_directory = at_scope_end([=]{ closedir(directory); });
+
+    dirent *entry = nullptr;
+    auto entries_left = 0;
+    while( (entry = readdir(directory)) != nullptr ) {
+        if( entry->d_name == "."sv  || entry->d_name ==  ".."sv )
+            continue;
+     
+        ++entries_left;
+        
+        const auto entry_path = _path + entry->d_name;
+        struct stat st;
+        if( lstat(entry_path.c_str(), &st) != 0 )
+            continue;
+            
+        if( st.st_mtime >= _older_than )
+            continue;
+        
+        if( S_ISREG(st.st_mode) ) {
+            if( unlink(entry_path.c_str()) == 0 )
+                --entries_left;
+        }
+        else if( S_ISDIR(st.st_mode) ) {
+            if( RMRF(entry_path) == 0 )
+                --entries_left;
+        }
+    }
+    
+    return entries_left == 0;
+}
+    
 static bool CheckRWAccess(const std::string &_path)
 {
     return access(_path.c_str(), R_OK|W_OK) == 0;
@@ -152,6 +227,25 @@ static std::string MakeRandomFilename()
     for(int i = 0; i < 6; ++i)
         filename += 'A' + rand() % ('Z'-'A');
     return filename;
+}
+    
+static int RMRF(const std::string& _path)
+{
+    auto unlink_cb = [](const char *fpath,
+                        const struct stat *sb,
+                        int typeflag,
+                        struct FTW *ftwbuf) {
+        if( typeflag == FTW_F ||
+            typeflag == FTW_SL ||
+            typeflag == FTW_SLN )
+            return unlink(fpath);
+        else if( typeflag == FTW_D   ||
+                 typeflag == FTW_DNR ||
+                 typeflag == FTW_DP   )
+            return rmdir(fpath);
+        return -1;
+    };
+    return nftw(_path.c_str(), unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
 }
     
 }

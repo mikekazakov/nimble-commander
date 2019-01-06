@@ -6,6 +6,7 @@
 #include <Habanero/DispatchGroup.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
+#include <Utility/TemporaryFileStorage.h>
 #include "../include/VFS/VFSEasyOps.h"
 #include "../include/VFS/VFSError.h"
 
@@ -456,13 +457,14 @@ namespace nc::vfs::easy {
 
 std::optional<std::string> CopyFileToTempStorage( const std::string &_vfs_filepath,
                                                   VFSHost &_host,
-                                                  nc::utility::TemporaryFileStorage &_temp_storage)
+                                                  nc::utility::TemporaryFileStorage &_temp_storage,
+                                                  const std::function<bool()> &_cancel_checker)
 {
     VFSFilePtr vfs_file;
-    if( _host.CreateFile(_vfs_filepath.c_str(), vfs_file, 0) < 0 )
+    if( _host.CreateFile(_vfs_filepath.c_str(), vfs_file, _cancel_checker) < 0 )
         return std::nullopt;
     
-    if( vfs_file->Open(VFSFlags::OF_Read) < 0 )
+    if( vfs_file->Open(VFSFlags::OF_Read, _cancel_checker) < 0 )
         return std::nullopt;
     
     char name[MAXPATHLEN];
@@ -504,4 +506,202 @@ std::optional<std::string> CopyFileToTempStorage( const std::string &_vfs_filepa
     return std::move(native_file->path);
 }
     
+namespace {
+
+struct TraversedFSEntry {
+    std::string src_full_path;
+    std::string rel_path;
+    VFSStat st;
+};
+    
+}
+
+static std::optional<std::vector<TraversedFSEntry>> Traverse
+    (const std::string &_vfs_dirpath,
+     VFSHost &_host,
+     const std::function<bool()> &_cancel_checker)
+{
+    auto vfs_dirpath = EnsureNoTrailingSlash(_vfs_dirpath);
+    
+    VFSStat st_src_dir;
+    const auto src_dir_stat_rc = _host.Stat(vfs_dirpath.c_str(),
+                                            st_src_dir,
+                                            VFSFlags::F_NoFollow,
+                                            _cancel_checker);
+    if( src_dir_stat_rc != VFSError::Ok )
+        return {};
+    
+    if( !st_src_dir.mode_bits.dir )
+        return {};
+    
+    const auto top_level_name = boost::filesystem::path{vfs_dirpath}.filename().native();
+
+    std::vector<TraversedFSEntry> result;
+    std::stack<TraversedFSEntry> traverse;
+    
+    result.emplace_back(TraversedFSEntry{vfs_dirpath, top_level_name, st_src_dir});
+    traverse.push(result.back());
+
+    while( !traverse.empty() ) {
+        auto current = std::move( traverse.top() );
+        traverse.pop();
+        
+        const auto block = [&](const VFSDirEnt &_dirent) -> bool {
+            if( _cancel_checker && _cancel_checker() )
+                return false;
+            
+            auto full_entry_path = current.src_full_path + "/" + _dirent.name;
+            VFSStat st;
+            const auto stat_rc = _host.Stat(full_entry_path.c_str(),
+                                            st,
+                                            VFSFlags::F_NoFollow,
+                                            _cancel_checker);
+            if( stat_rc != VFSError::Ok )
+                return false;
+            
+            result.emplace_back(TraversedFSEntry{
+                full_entry_path,
+                current.rel_path + "/" + _dirent.name,
+                st});
+            if( st.mode_bits.dir )
+                traverse.push(result.back());
+            
+            return true;
+        };
+        
+        const auto rc = _host.IterateDirectoryListing(current.src_full_path.c_str(), block);
+        if( rc != VFSError::Ok )
+            return {};
+    }
+    
+    return result;
+}
+    
+static size_t CalculateSumOfRegEntriesSizes( const std::vector<TraversedFSEntry> &_entries )
+{
+    return std::accumulate(_entries.begin(),
+                           _entries.end(),
+                           size_t(0),
+                           [](const auto &lhs, const auto &rhs) {
+                               return S_ISREG(rhs.st.mode) ? (rhs.st.size + lhs) : lhs;
+                           });
+}
+
+
+static int ExtractRegFile(const std::string &_vfs_path,
+                          VFSHost &_host,
+                          const std::string &_native_path,
+                          const std::function<bool()> &_cancel_checker)
+{
+    VFSFilePtr vfs_file;
+    const auto create_file_rc = _host.CreateFile(_vfs_path.c_str(), vfs_file, _cancel_checker);
+    if( create_file_rc != VFSError::Ok )
+        return create_file_rc;
+    
+    const auto open_file_rc = vfs_file->Open(VFSFlags::OF_Read, _cancel_checker);
+    if( open_file_rc != VFSError::Ok )
+        return open_file_rc;
+    
+    const auto fd = open(_native_path.c_str(), O_EXLOCK|O_NONBLOCK|O_RDWR|O_CREAT, S_IRUSR|S_IWUSR);
+    if( fd < 0)
+        return VFSError::FromErrno();
+    const auto close_fd = at_scope_end([&]{ close(fd); });
+    
+    auto unlink_file = at_scope_end([&]{ unlink(_native_path.c_str()); });
+    
+    fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
+    
+    const size_t bufsz = 256*1024;
+    char buf[bufsz];
+    ssize_t res_read;
+    while( (res_read = vfs_file->Read(buf, bufsz)) > 0 ) {
+        while( res_read > 0 ) {
+            ssize_t res_write = write(fd, buf, res_read);
+            if( res_write >= 0 )
+                res_read -= res_write;
+            else {
+                return (int)res_write;
+            }
+        }
+    }
+    if( res_read < 0 ) {
+        return (int)res_read;
+    }
+    
+    vfs_file->XAttrIterateNames([&](const char *name) -> bool{
+        ssize_t res = vfs_file->XAttrGet(name, buf, bufsz);
+        if( res >= 0 )
+            fsetxattr(fd, name, buf, res, 0, 0);
+        return true;
+    });
+    
+    unlink_file.disengage();    
+    return VFSError::Ok;
+}
+    
+static bool ExtractEntry( const TraversedFSEntry& _entry,
+                          VFSHost &_host,
+                          const std::string& _base_path,
+                          const std::function<bool()> &_cancel_checker )
+{
+    assert( IsPathWithTrailingSlash(_base_path) );
+    
+    const auto target_tmp_path = _base_path + _entry.rel_path;
+    
+    if( _entry.st.mode_bits.dir ) {
+        // directory
+        if( mkdir(target_tmp_path.c_str(), 0700) != 0 )
+            return false;
+    }
+    else {
+        // reg file
+        const auto rc = ExtractRegFile(_entry.src_full_path,
+                                       _host,
+                                       target_tmp_path,
+                                       _cancel_checker);
+        if( rc != VFSError::Ok )
+            return false;
+        
+    }
+    // NB! no special types like symlinks are processed at the moment
+    return true;
+}
+
+std::optional<std::string> CopyDirectoryToTempStorage
+    (const std::string &_vfs_dirpath,
+     VFSHost &_host,
+     uint64_t _max_total_size,
+     nc::utility::TemporaryFileStorage &_temp_storage,
+     const std::function<bool()> &_cancel_checker)
+{
+    const auto traversed = Traverse(_vfs_dirpath, _host, _cancel_checker);
+    if( traversed == std::nullopt )
+        return {};
+    
+    const auto total_size = CalculateSumOfRegEntriesSizes(*traversed);
+    if( total_size > _max_total_size )
+        return {};
+    
+    assert( traversed->empty() == false );
+    
+    auto tmp_dir = _temp_storage.MakeDirectory( traversed->front().rel_path );
+    if( tmp_dir == std::nullopt )
+        return {};
+    
+    const auto base_path = EnsureTrailingSlash( boost::filesystem::path{*tmp_dir}.
+                                                parent_path().parent_path().native() );
+    
+    for( auto i = std::next(traversed->begin()), e = traversed->end(); i != e; ++i ) {
+        if( _cancel_checker && _cancel_checker() )
+            return {};
+        
+        const auto &entry = *i;
+        
+        if( ExtractEntry( entry, _host, base_path, _cancel_checker ) != true )
+            return {};
+    }
+    
+    return tmp_dir;
+}
+
 }

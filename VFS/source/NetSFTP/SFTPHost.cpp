@@ -553,6 +553,7 @@ int SFTPHost::IterateDirectoryListing(const char *_path,
     if (!sftp_handle) {
         return VFSErrorForConnection(*conn);
     }
+    const auto close_sftp_handle = at_scope_end([&]{ libssh2_sftp_closedir(sftp_handle); });
     
     VFSDirEnt e;
     while (true) {
@@ -577,8 +578,6 @@ int SFTPHost::IterateDirectoryListing(const char *_path,
         if( !_handler(e) )
             break;
     }
-
-    libssh2_sftp_closedir(sftp_handle);
     
     return 0;
 }

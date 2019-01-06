@@ -30,6 +30,7 @@
 		CF26DE2521D2A260003F0E93 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E71F4544FB0035E606 /* libHabanero.dylib */; };
 		CF26DE2621D2A265003F0E93 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94AF1F4543840035E606 /* libVFS.dylib */; };
 		CF26DE2721D2A268003F0E93 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E51F4544F90035E606 /* libUtility.dylib */; };
+		CF26DE3621E297AE003F0E93 /* EasyOps_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE3521E297AE003F0E93 /* EasyOps_UT.mm */; };
 		CF3E2F861F60DF08001BFFCE /* Requests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3E2F841F60DF08001BFFCE /* Requests.cpp */; };
 		CF3E2F871F60DF08001BFFCE /* Requests.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3E2F851F60DF08001BFFCE /* Requests.h */; };
 		CF5099951F95C881000AFDE7 /* EncodingDetection.h in Headers */ = {isa = PBXBuildFile; fileRef = CF5099931F95C881000AFDE7 /* EncodingDetection.h */; };
@@ -163,6 +164,7 @@
 		CF26DE2021D2864D003F0E93 /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = SOURCE_ROOT; };
 		CF26DE2221D28699003F0E93 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
 		CF26DE2321D28754003F0E93 /* SearchInFile_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchInFile_UT.cpp; path = tests/SearchInFile_UT.cpp; sourceTree = SOURCE_ROOT; };
+		CF26DE3521E297AE003F0E93 /* EasyOps_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = EasyOps_UT.mm; path = tests/EasyOps_UT.mm; sourceTree = SOURCE_ROOT; };
 		CF3E2F841F60DF08001BFFCE /* Requests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Requests.cpp; path = source/NetWebDAV/Requests.cpp; sourceTree = "<group>"; };
 		CF3E2F851F60DF08001BFFCE /* Requests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Requests.h; path = source/NetWebDAV/Requests.h; sourceTree = "<group>"; };
 		CF5099931F95C881000AFDE7 /* EncodingDetection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EncodingDetection.h; path = source/ArcLA/EncodingDetection.h; sourceTree = "<group>"; };
@@ -354,6 +356,7 @@
 		CF1846FF1E41C86D008B7C9F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF26DE3521E297AE003F0E93 /* EasyOps_UT.mm */,
 				CF26DE0E21CFA2CC003F0E93 /* FileWindow_Tests.mm */,
 				CF1847021E41C86D008B7C9F /* Info.plist */,
 				CF26DE2321D28754003F0E93 /* SearchInFile_UT.cpp */,
@@ -764,6 +767,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF26DE3621E297AE003F0E93 /* EasyOps_UT.mm in Sources */,
 				CF26DE2421D28754003F0E93 /* SearchInFile_UT.cpp in Sources */,
 				CF26DE2121D2864D003F0E93 /* Tests.cpp in Sources */,
 			);

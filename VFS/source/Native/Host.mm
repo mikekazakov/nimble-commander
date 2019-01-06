@@ -489,6 +489,7 @@ int NativeHost::IterateDirectoryListing(const char *_path,
     DIR *dirp = io.opendir(_path);
     if(dirp == 0)
         return VFSError::FromErrno();
+    const auto close_dirp = at_scope_end([&]{ io.closedir(dirp); });
         
     dirent *entp;
     VFSDirEnt vfs_dirent;
@@ -506,7 +507,6 @@ int NativeHost::IterateDirectoryListing(const char *_path,
             break;
     }
     
-    io.closedir(dirp);
     
     return VFSError::Ok;
 }

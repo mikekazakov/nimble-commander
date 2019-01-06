@@ -1,10 +1,14 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <boost/filesystem.hpp>
-#include <Utility/TemporaryFileStorage.h>
 #include "VFSFile.h"
 #include "Host.h"
 #include <optional>
+
+namespace nc::utility {
+    class TemporaryFileStorage;
+};
+    
 
 int VFSEasyCopyFile(const char *_src_full_path,
                     std::shared_ptr<VFSHost> _src_host,
@@ -59,11 +63,18 @@ int VFSCompareNodes(const boost::filesystem::path& _file1_full_path,
                     int &_result);
 
 namespace nc::vfs::easy {
-    
-    
-std::optional<std::string> CopyFileToTempStorage( const std::string &_vfs_filepath,
-                                                  VFSHost &_host,
-                                                  nc::utility::TemporaryFileStorage &_temp_storage);
 
+std::optional<std::string> CopyFileToTempStorage
+    (const std::string &_vfs_filepath,
+     VFSHost &_host,
+     nc::utility::TemporaryFileStorage &_temp_storage,
+     const std::function<bool()> &_cancel_checker = {});
+    
+std::optional<std::string> CopyDirectoryToTempStorage
+    (const std::string &_vfs_dirpath,
+     VFSHost &_host,
+     uint64_t _max_total_size,
+     nc::utility::TemporaryFileStorage &_temp_storage,
+     const std::function<bool()> &_cancel_checker = {});
 
 }

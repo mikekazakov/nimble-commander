@@ -1,0 +1,93 @@
+#include "Tests.h"
+#include <VFS/VFS.h>
+#include <VFS/Native.h>
+#include <Habanero/algo.h>
+#include <Utility/TemporaryFileStorageImpl.h>
+#include <Utility/PathManip.h>
+
+static int RMRF(const std::string& _path);
+static auto g_TestDirPrefix = "_nc__vfs__easy_ops__test_";
+static bool Save(const std::string &_filepath, const std::string &_content);
+static std::string MakeTempFilesStorage();
+#define PREFIX "[nc::vfs::easy] "
+
+using nc::vfs::easy::CopyDirectoryToTempStorage;
+
+TEST_CASE(PREFIX "adsasdasd")
+{
+    const auto base_dir = MakeTempFilesStorage();
+    const auto remove_base_dir = at_scope_end([&]{ RMRF(base_dir); });
+    auto storage = nc::utility::TemporaryFileStorageImpl{base_dir, "some_prefix"};
+    mkdir((base_dir + "A").c_str(), 0700);
+    mkdir((base_dir + "A/B").c_str(), 0700);
+    mkdir((base_dir + "A/C").c_str(), 0700);
+    const auto content1 = "Hello, world!";
+    const auto content2 = "Goodbye, world!";
+    Save(base_dir + "A/B/aaa.txt", content1);
+    Save(base_dir + "A/C/bbb.txt", content2);
+    auto host = VFSNativeHost::SharedHost();
+    
+    const auto copied_path = CopyDirectoryToTempStorage(base_dir + "A",
+                                                        *host,
+                                                        std::numeric_limits<uint64_t>::max(),
+                                                        storage);
+
+    REQUIRE( copied_path != std::nullopt );
+
+    int compare_result1 = 0;
+    const auto compare_errc1 = VFSEasyCompareFiles((base_dir + "A/B/aaa.txt").c_str(),
+                                                   host,
+                                                   (*copied_path + "B/aaa.txt").c_str(),
+                                                   host,
+                                                   compare_result1);
+    CHECK( compare_errc1 == VFSError::Ok );
+    CHECK( compare_result1 == 0 );
+
+    int compare_result2 = 0;
+    const auto compare_errc2 = VFSEasyCompareFiles((base_dir + "A/C/bbb.txt").c_str(),
+                                                   host,
+                                                   (*copied_path + "C/bbb.txt").c_str(),
+                                                   host,
+                                                   compare_result2);
+    CHECK( compare_errc2 == VFSError::Ok );
+    CHECK( compare_result2 == 0 );
+}
+    
+
+static int RMRF(const std::string& _path)
+{
+    auto unlink_cb = [](const char *fpath,
+                        const struct stat *sb,
+                        int typeflag,
+                        struct FTW *ftwbuf) {
+        if( typeflag == FTW_F)
+            unlink(fpath);
+        else if( typeflag == FTW_D   ||
+                typeflag == FTW_DNR ||
+                typeflag == FTW_DP   )
+            rmdir(fpath);
+        return 0;
+    };
+    return nftw(_path.c_str(), unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
+}
+
+static std::string MakeTempFilesStorage()
+{
+    const auto base_path = EnsureTrailingSlash( NSTemporaryDirectory().fileSystemRepresentation );
+    const auto tmp_path = base_path + g_TestDirPrefix + "/";
+    if( access(tmp_path.c_str(), F_OK) == 0 )
+        RMRF(tmp_path);
+    if( mkdir(tmp_path.c_str(), S_IRWXU) != 0 )
+        throw std::runtime_error("mkdir failed");
+    return tmp_path;
+}
+
+static bool Save(const std::string &_filepath, const std::string &_content)
+{
+    std::ofstream out( _filepath, std::ios::out | std::ios::binary );
+    if( !out )
+        return false;
+    out << _content;
+    out.close();
+    return true;
+}

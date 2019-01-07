@@ -12,8 +12,32 @@ static std::string MakeTempFilesStorage();
 #define PREFIX "[nc::vfs::easy] "
 
 using nc::vfs::easy::CopyDirectoryToTempStorage;
+using nc::vfs::easy::CopyFileToTempStorage;
 
-TEST_CASE(PREFIX "adsasdasd")
+TEST_CASE(PREFIX "CopyFileToTempStorage works")
+{
+    const auto base_dir = MakeTempFilesStorage();
+    const auto remove_base_dir = at_scope_end([&]{ RMRF(base_dir); });
+    auto storage = nc::utility::TemporaryFileStorageImpl{base_dir, "some_prefix"};
+    const auto content = "Hello, world!";
+    Save(base_dir + "aaa.txt", content);
+    auto host = VFSNativeHost::SharedHost();
+    
+    const auto copied_path = CopyFileToTempStorage(base_dir + "aaa.txt", *host, storage);
+    REQUIRE( copied_path != std::nullopt );
+    CHECK( boost::filesystem::path(*copied_path).filename()  == "aaa.txt" );
+    
+    int compare_result = 0;
+    const auto compare_errc = VFSEasyCompareFiles((base_dir + "aaa.txt").c_str(),
+                                                   host,
+                                                   (*copied_path).c_str(),
+                                                   host,
+                                                   compare_result);
+    CHECK( compare_errc == VFSError::Ok );
+    CHECK( compare_result == 0 );
+}
+
+TEST_CASE(PREFIX "CopyDirectoryToTempStorage works")
 {
     const auto base_dir = MakeTempFilesStorage();
     const auto remove_base_dir = at_scope_end([&]{ RMRF(base_dir); });
@@ -33,6 +57,7 @@ TEST_CASE(PREFIX "adsasdasd")
                                                         storage);
 
     REQUIRE( copied_path != std::nullopt );
+    CHECK( boost::filesystem::path(*copied_path).parent_path().filename()  == "A" );
 
     int compare_result1 = 0;
     const auto compare_errc1 = VFSEasyCompareFiles((base_dir + "A/B/aaa.txt").c_str(),

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
@@ -171,6 +171,7 @@ static NSString *TitleForData( const data::Model* _data );
                            andPool:(nc::ops::Pool&)_pool
                       panelFactory:(std::function<PanelController*()>)_panel_factory
         controllerStateJSONDecoder:(ControllerStateJSONDecoder&)_controller_json_decoder
+                    QLPanelAdaptor:(NCPanelQLPanelAdaptor*)_ql_panel_adaptor
 {
     assert( _panel_factory );
     if( self = [super initWithFrame:frameRect] ) {
@@ -180,6 +181,7 @@ static NSString *TitleForData( const data::Model* _data );
         m_OperationsPool = _pool.shared_from_this();
         m_OverlappedTerminal = std::make_unique<MainWindowFilePanelState_OverlappedTerminalSupport>();
         m_ShowTabs = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
+        m_QLPanelAdaptor = _ql_panel_adaptor;
         
         m_LeftPanelControllers.emplace_back(m_PanelFactory());
         [self attachPanel:m_LeftPanelControllers.front()];
@@ -202,11 +204,13 @@ static NSString *TitleForData( const data::Model* _data );
             loadDefaultContent:(bool)_load_content
                   panelFactory:(std::function<PanelController*()>)_panel_factory
     controllerStateJSONDecoder:(ControllerStateJSONDecoder&)_controller_json_decoder
+                QLPanelAdaptor:(NCPanelQLPanelAdaptor*)_ql_panel_adaptor
 {
     self = [self initBaseWithFrame:frameRect
                            andPool:_pool
                       panelFactory:move(_panel_factory)
-        controllerStateJSONDecoder:_controller_json_decoder];
+        controllerStateJSONDecoder:_controller_json_decoder
+                    QLPanelAdaptor:_ql_panel_adaptor];
     if( self ) {
         if( _load_content ) {
             [self restoreDefaultPanelOptions];
@@ -879,14 +883,17 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
         if( !_panel.isActive )
             return nil;
         
-        if( QLPreviewPanel.sharedPreviewPanelExists && QLPreviewPanel.sharedPreviewPanel.isVisible )
-            return [NCPanelQLPanelAdaptor adaptorForState:self];
+        if( QLPreviewPanel.sharedPreviewPanelExists &&
+            QLPreviewPanel.sharedPreviewPanel.isVisible ) {
+            if( m_QLPanelAdaptor.owner == self )
+                return m_QLPanelAdaptor;
+        }
         
         if( !_make_if_absent )
             return nil;
         
         [QLPreviewPanel.sharedPreviewPanel makeKeyAndOrderFront:nil];
-        return [NCPanelQLPanelAdaptor adaptorForState:self];
+        return m_QLPanelAdaptor.owner == self ? m_QLPanelAdaptor : nil;
     }
     else {
         if( [self isLeftController:_panel] )
@@ -902,7 +909,8 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
                 return nil;
             
             const auto rc = NSMakeRect(0, 0, 100, 100);
-            const auto view = [[NCPanelQLOverlay alloc] initWithFrame:rc];
+            const auto view = [[NCPanelQLOverlay alloc] initWithFrame:rc
+                                                               bridge:m_QLPanelAdaptor.bridge];
             
             if( [self isLeftController:_panel] )
                 m_SplitView.rightOverlay = view;
@@ -1082,14 +1090,15 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
 
 - (void)beginPreviewPanelControl:(QLPreviewPanel *)panel
 {
-    [NCPanelQLPanelAdaptor registerQuickLook:panel forState:self];
-    if( auto pc = self.activePanelController )
-        [pc updateAttachedQuickLook];
+    if( [m_QLPanelAdaptor registerExistingQLPreviewPanelFor:self] ) {
+        if( auto pc = self.activePanelController )
+            [pc updateAttachedQuickLook];
+    }
 }
 
 - (void)endPreviewPanelControl:(QLPreviewPanel *)panel
 {
-    [NCPanelQLPanelAdaptor unregisterQuickLook:panel forState:self];
+    [m_QLPanelAdaptor unregisterExistingQLPreviewPanelFor:self];
 }
 
 - (void)attachPanel:(PanelController*)_pc

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate.Private.h"
 #include <VFSIcon/IconRepositoryImpl.h>
@@ -22,6 +22,8 @@
 #include <NimbleCommander/States/FilePanels/PanelControllerActions.h>
 #include <NimbleCommander/States/FilePanels/StateActionsDispatcher.h>
 #include <NimbleCommander/States/FilePanels/StateActions.h>
+#include <NimbleCommander/States/FilePanels/Views/QuickLookPanel.h>
+#include <NimbleCommander/States/FilePanels/Views/QuickLookVFSBridge.h>
 #include <Operations/Pool.h>
 #include <Operations/AggregateProgressTracker.h>
 #include "Config.h"
@@ -153,6 +155,18 @@ static PanelController* PanelFactory()
     return [NCAppDelegate.me allocatePanelController];
 }
 
+- (nc::panel::QuickLookVFSBridge&)QLVFSBridge
+{
+    static const auto instance = new nc::panel::QuickLookVFSBridge(self.temporaryFileStorage);
+    return *instance;
+}
+
+- (NCPanelQLPanelAdaptor*)QLPanelAdaptor
+{
+    static const auto instance = [[NCPanelQLPanelAdaptor alloc] initWithBridge:[self QLVFSBridge]];
+    return instance;
+}
+
 - (MainWindowFilePanelState*)allocateFilePanelsWithFrame:(NSRect)_frame
                                                inContext:(CreationContext)_context
                                              withOpsPool:(nc::ops::Pool&)_operations_pool
@@ -163,7 +177,8 @@ static PanelController* PanelFactory()
                                                        andPool:_operations_pool
                                             loadDefaultContent:true
                                                   panelFactory:PanelFactory
-                                    controllerStateJSONDecoder:ctrl_state_json_decoder];
+                                    controllerStateJSONDecoder:ctrl_state_json_decoder
+                                                QLPanelAdaptor:[self QLPanelAdaptor]];
     }
     else if( _context == CreationContext::ManualRestoration ) {
         if( NCMainWindowController.canRestoreDefaultWindowStateFromLastOpenedWindow ) {
@@ -171,7 +186,8 @@ static PanelController* PanelFactory()
                                                                  andPool:_operations_pool
                                                       loadDefaultContent:false
                                                             panelFactory:PanelFactory
-                                              controllerStateJSONDecoder:ctrl_state_json_decoder];
+                                              controllerStateJSONDecoder:ctrl_state_json_decoder
+                                                          QLPanelAdaptor:[self QLPanelAdaptor]];
             RestoreFilePanelStateFromLastOpenedWindow(state);
             [state loadDefaultPanelContent];
             return state;
@@ -181,7 +197,8 @@ static PanelController* PanelFactory()
                                                                  andPool:_operations_pool
                                                       loadDefaultContent:false
                                                             panelFactory:PanelFactory
-                                              controllerStateJSONDecoder:ctrl_state_json_decoder];
+                                              controllerStateJSONDecoder:ctrl_state_json_decoder
+                                                          QLPanelAdaptor:[self QLPanelAdaptor]];
             if( ![NCMainWindowController restoreDefaultWindowStateFromConfig:state] )
                 [state loadDefaultPanelContent];
             return state;
@@ -197,7 +214,8 @@ static PanelController* PanelFactory()
                                                        andPool:_operations_pool
                                             loadDefaultContent:false
                                                   panelFactory:PanelFactory
-                                    controllerStateJSONDecoder:ctrl_state_json_decoder];
+                                    controllerStateJSONDecoder:ctrl_state_json_decoder
+                                                QLPanelAdaptor:[self QLPanelAdaptor]];
     }
     return nil;
 }

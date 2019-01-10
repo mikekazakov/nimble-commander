@@ -1,10 +1,10 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Quartz/Quartz.h>
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickLookOverlay.h"
+#include <Quartz/Quartz.h>
 #include <Utility/SystemInformation.h>
-#include "QuickLookVFSBridge.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
+#include "QuickLookVFSBridge.h"
 
 static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
 
@@ -20,12 +20,15 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
     VFSHostWeakPtr      m_CurrentHost;
     std::atomic_bool    m_Closed;
     std::atomic_ullong  m_CurrentTicket;
+    nc::panel::QuickLookVFSBridge *m_Bridge;
 }
 
 - (id) initWithFrame:(NSRect)frameRect
+              bridge:(nc::panel::QuickLookVFSBridge&)_vfs_bridge
 {
     self = [super initWithFrame:frameRect style:QLPreviewViewStyleNormal];
     if (self) {
+        m_Bridge = &_vfs_bridge;
         m_Closed = false;
         m_CurrentTicket = 0;
         self.shouldCloseWithWindow = false;
@@ -101,12 +104,12 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
                    [=]{
                        if( _ticket != m_CurrentTicket || m_Closed )
                            return;
-
-                       const auto url = nc::panel::QuickLookVFSBridge{}.FetchItem(path, *host);
+                       
+                       const auto url = m_Bridge->FetchItem(path, *host);
                        
                        if( _ticket != m_CurrentTicket || m_Closed )
                            return;
-
+                       
                        dispatch_to_main_queue([=]{
                            if( _ticket != m_CurrentTicket || m_Closed )
                                return;
@@ -130,11 +133,12 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
     NCPanelQLOverlayWrapper *m_QL;
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (instancetype) initWithFrame:(NSRect)frameRect
+                        bridge:(nc::panel::QuickLookVFSBridge&)_vfs_bridge
 {
     self = [super initWithFrame:frameRect];
     if (self) {
-        m_QL = [[NCPanelQLOverlayWrapper alloc] initWithFrame:self.frame];
+        m_QL = [[NCPanelQLOverlayWrapper alloc] initWithFrame:self.frame bridge:_vfs_bridge];
         m_QL.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:m_QL];
 
@@ -151,6 +155,12 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
                                                       views:views]];
     }
     return self;
+}
+
+- (id) initWithFrame:(NSRect)frameRect
+{
+    assert(0);
+    return nil;
 }
 
 - (void) dealloc

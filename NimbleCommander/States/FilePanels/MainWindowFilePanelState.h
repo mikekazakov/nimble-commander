@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -32,6 +32,7 @@ class ExternalToolsStorage;
 @class FilePanelOverlappedTerminal;
 @class MainWindowFilePanelsStateToolbarDelegate;
 @class ColoredSeparatorLine;
+@class NCPanelQLPanelAdaptor;
 
 struct MainWindowFilePanelState_OverlappedTerminalSupport;
 
@@ -61,7 +62,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
     std::shared_ptr<nc::ops::Pool> m_OperationsPool;
     std::shared_ptr<nc::panel::ClosedPanelsHistory> m_ClosedPanelsHistory;
     std::shared_ptr<nc::panel::FavoriteLocationsStorage> m_FavoriteLocationsStorage;
-    nc::panel::ControllerStateJSONDecoder *m_ControllerStateJSONDecoder;    
+    nc::panel::ControllerStateJSONDecoder *m_ControllerStateJSONDecoder;
+    NCPanelQLPanelAdaptor *m_QLPanelAdaptor;
 }
 
 @property (nonatomic, readonly) NCMainWindowController* mainWindowController;
@@ -80,7 +82,8 @@ struct MainWindowFilePanelState_OverlappedTerminalSupport;
                        andPool:(nc::ops::Pool&)_pool
             loadDefaultContent:(bool)_load_content
                   panelFactory:(std::function<PanelController*()>)_panel_factory
-    controllerStateJSONDecoder:(nc::panel::ControllerStateJSONDecoder&)_controller_json_decoder;
+    controllerStateJSONDecoder:(nc::panel::ControllerStateJSONDecoder&)_controller_json_decoder
+                QLPanelAdaptor:(NCPanelQLPanelAdaptor*)_ql_panel_adaptor;
 
 - (void) loadDefaultPanelContent;
 

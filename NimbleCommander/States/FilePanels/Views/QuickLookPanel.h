@@ -1,15 +1,23 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include <Quartz/Quartz.h>
 #include "../PanelPreview.h"
 
-@class QLPreviewPanel;
-@class MainWindowFilePanelState;
+namespace nc::panel {
+    class QuickLookVFSBridge;
+}
 
-@interface NCPanelQLPanelAdaptor : NSObject<NCPanelPreview>
+@interface NCPanelQLPanelAdaptor : NSObject<NCPanelPreview,
+                                            QLPreviewPanelDataSource,
+                                            QLPreviewPanelDelegate>
 
-+ (NCPanelQLPanelAdaptor*) adaptorForState:(MainWindowFilePanelState*)_state;
-+ (void)registerQuickLook:(QLPreviewPanel *)_ql_panel forState:(MainWindowFilePanelState*)_state;
-+ (void)unregisterQuickLook:(QLPreviewPanel *)_ql_panel forState:(MainWindowFilePanelState*)_state;
+- (instancetype) initWithBridge:(nc::panel::QuickLookVFSBridge&)_vfs_bridge;
+
+- (bool)registerExistingQLPreviewPanelFor:(id)_controller;
+- (bool)unregisterExistingQLPreviewPanelFor:(id)_controller;
+
+@property (readonly, nonatomic, weak) id owner;
+@property (readonly, nonatomic) nc::panel::QuickLookVFSBridge &bridge;
 
 @end

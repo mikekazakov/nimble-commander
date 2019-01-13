@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StateActions.h"
 #include "Actions/TabsManagement.h"
 #include "Actions/ShowGoToPopup.h"
@@ -15,7 +15,9 @@ namespace nc::panel {
 
 using namespace actions;
     
-StateActionsMap BuildStateActionsMap(NetworkConnectionsManager &_net_mgr)
+StateActionsMap BuildStateActionsMap
+    (NetworkConnectionsManager &_net_mgr,
+     nc::utility::TemporaryFileStorage &_temp_file_storage)
 {
     StateActionsMap m;
     auto add = [&](SEL _sel, actions::StateAction *_action) {
@@ -41,7 +43,7 @@ StateActionsMap BuildStateActionsMap(NetworkConnectionsManager &_net_mgr)
     add(@selector(OnFileRenameMoveAsCommand:), new MoveAs);
     add(@selector(OnFileOpenInOppositePanel:), new RevealInOppositePanel);
     add(@selector(OnFileOpenInNewOppositePanelTab:), new RevealInOppositePanelTab);
-    add(@selector(onExecuteExternalTool:), new ExecuteExternalTool);
+    add(@selector(onExecuteExternalTool:), new ExecuteExternalTool{_temp_file_storage});
     
     return m;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExecuteExternalTool.h"
 #include "../ExternalToolsSupport.h"
 #include <boost/algorithm/string/replace.hpp>
@@ -7,7 +7,7 @@
 #include "../PanelController.h"
 #include "../PanelView.h"
 #include "../MainWindowFilePanelState.h"
-#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
+#include <Utility/TemporaryFileStorage.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Core/AnyHolder.h>
@@ -40,11 +40,17 @@ static PanelController *ExternalToolParametersContextFromLocation
 static std::string BuildParametersStringForExternalTool
     (const ExternalToolsParameters&_par,
      const std::vector<std::string>& _entered_values,
-     MainWindowFilePanelState *_target);
+     MainWindowFilePanelState *_target,
+     nc::utility::TemporaryFileStorage &_temp_storage);
 static void RunExtTool(const ExternalTool &_tool,
                        const std::string& _cooked_params,
                        MainWindowFilePanelState *_target);
-    
+
+ExecuteExternalTool::ExecuteExternalTool(nc::utility::TemporaryFileStorage &_temp_storage):
+    m_TempFileStorage{_temp_storage}
+{
+}
+
 void ExecuteExternalTool::Perform( MainWindowFilePanelState *_target, id _sender ) const
 {
     if( [_sender respondsToSelector:@selector(representedObject)] ) {
@@ -74,7 +80,8 @@ void ExecuteExternalTool::Execute(const ExternalTool &_tool,
     if( enter_values_names.empty() ) {
         std::string cooked_parameters = BuildParametersStringForExternalTool(parameters,
                                                                              {},
-                                                                             _target);
+                                                                             _target,
+                                                                             m_TempFileStorage);
         RunExtTool(_tool, cooked_parameters, _target);
     }
     else {
@@ -84,7 +91,8 @@ void ExecuteExternalTool::Execute(const ExternalTool &_tool,
             if( returnCode == NSModalResponseOK ) {
                 auto cooked_parameters = BuildParametersStringForExternalTool(parameters,
                                                                               sheet.values,
-                                                                              _target);
+                                                                              _target,
+                                                                              m_TempFileStorage);
                 RunExtTool(_tool, cooked_parameters, _target);
             }
         }];
@@ -313,7 +321,8 @@ static PanelController *ExternalToolParametersContextFromLocation(ExternalToolsP
 static std::string BuildParametersStringForExternalTool
     (const ExternalToolsParameters&_par,
      const std::vector<std::string>& _entered_values,
-     MainWindowFilePanelState *_target)
+     MainWindowFilePanelState *_target,
+     nc::utility::TemporaryFileStorage &_temp_storage)
 {
     dispatch_assert_main_queue();
     
@@ -365,7 +374,7 @@ static std::string BuildParametersStringForExternalTool
                     }
                     else {
                         std::string file = CombineStringsIntoNewlineSeparatedString(selected_info);
-                        if( auto list_name = TemporaryNativeFileStorage::Instance().WriteStringIntoTempFile(file) )
+                        if( auto list_name = _temp_storage.MakeFileFromMemory(file) )
                             params += *list_name;
                     }
                     

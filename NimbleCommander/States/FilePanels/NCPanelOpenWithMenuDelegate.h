@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -6,7 +6,14 @@
 
 @class PanelController;
 
+namespace nc::panel {
+    class FileOpener;
+}
+
 @interface NCPanelOpenWithMenuDelegate : NSObject<NSMenuDelegate>
+
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithFileOpener:(nc::panel::FileOpener&)_file_opener;
 
 - (void) setContextSource:(const std::vector<VFSListingItem>)_items;
 - (void) addManagedMenu:(NSMenu*)_menu;

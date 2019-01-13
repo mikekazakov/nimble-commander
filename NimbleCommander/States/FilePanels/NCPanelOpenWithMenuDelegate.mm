@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NCPanelOpenWithMenuDelegate.h"
 #include <NimbleCommander/Core/LaunchServices.h>
 #include <Sparkle/Sparkle.h>
@@ -89,6 +89,15 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items)
     std::string m_ItemsUTI;
     SerialQueue                     m_FetchQueue;
     std::set<NSMenu*>               m_ManagedMenus;
+    FileOpener                     *m_FileOpener;
+}
+
+- (instancetype)initWithFileOpener:(nc::panel::FileOpener&)_file_opener
+{
+    if( self = [super init] ) {
+        m_FileOpener = &_file_opener;
+    }
+    return self;
 }
 
 + (NSString*) regularMenuIdentifier
@@ -339,17 +348,17 @@ static void ShowOpenPanel(NSOpenPanel *_panel,
             std::vector<std::string> items;
             for(auto &i: source_items)
                 items.emplace_back( i.Path() );
-            PanelVFSFileWorkspaceOpener::Open(items,
-                                              source_items.front().Host(),
-                                              _handler.Identifier(),
-                                              self.target);
+            m_FileOpener->Open(items,
+                               source_items.front().Host(),
+                               _handler.Identifier(),
+                               self.target);
         }
     }
     else if( source_items.size() == 1 ) {
-        PanelVFSFileWorkspaceOpener::Open(source_items.front().Path(),
-                                          source_items.front().Host(),
-                                          _handler.Path(),
-                                          self.target);
+        m_FileOpener->Open(source_items.front().Path(),
+                           source_items.front().Host(),
+                           _handler.Path(),
+                           self.target);
     }
 }
 

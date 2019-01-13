@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelController.h"
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
@@ -22,7 +22,6 @@
 #include "PanelDataExternalEntryKey.h"
 #include "PanelDataPersistency.h"
 #include <NimbleCommander/Core/VFSInstanceManager.h>
-#include "ContextMenu.h"
 #include "Actions/OpenFile.h"
 #include "Actions/GoToFolder.h"
 #include "Actions/Enter.h"
@@ -177,6 +176,7 @@ static void HeatUpConfigValues()
     int                                 m_ViewLayoutIndex;
     std::shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
     PanelViewLayoutsStorage::ObservationTicket m_LayoutsObservation;
+    ContextMenuProvider m_ContextMenuProvider;
 }
 
 @synthesize view = m_View;
@@ -189,8 +189,10 @@ static void HeatUpConfigValues()
                      layouts:(std::shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
           vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
      directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider
+         contextMenuProvider:(nc::panel::ContextMenuProvider)_context_menu_provider;
 {
     assert( _layouts );
+    assert( _context_menu_provider );
     
     static std::once_flag once;
     std::call_once(once, HeatUpConfigValues);
@@ -200,6 +202,7 @@ static void HeatUpConfigValues()
         m_Layouts = move(_layouts);
         m_VFSInstanceManager = &_vfs_mgr;
         m_DirectoryAccessProvider = &_directory_access_provider;
+        m_ContextMenuProvider = std::move(_context_menu_provider);
         m_History.SetVFSInstanceManager(_vfs_mgr);
         m_VFSFetchingFlags = 0;
         m_NextActivityTicket = 1;
@@ -622,8 +625,7 @@ static void HeatUpConfigValues()
         m_Data.VolatileDataAtRawPosition(i.Index()).toggle_highlight(true);
     [_view volatileDataChanged];
     
-    const auto menu = [[NCPanelContextMenu alloc] initWithItems:move(vfs_items)
-                                                        ofPanel:self];
+    const auto menu = m_ContextMenuProvider( std::move(vfs_items), self );
     return menu;
 }
 

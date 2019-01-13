@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "../PanelView.h"
 #include "../PanelController.h"
@@ -8,6 +8,11 @@
 
 namespace nc::panel::actions {
 
+OpenWithExternalEditor::OpenWithExternalEditor(FileOpener &_file_opener):
+    m_FileOpener(_file_opener)
+{
+}
+    
 bool OpenWithExternalEditor::Predicate( PanelController *_target ) const
 {
     auto i = _target.view.item;
@@ -27,16 +32,16 @@ void OpenWithExternalEditor::Perform( PanelController *_target, id _sender ) con
     }
     
     if( ed->OpenInTerminal() == false )
-        PanelVFSFileWorkspaceOpener::Open(item.Path(),
-                                          item.Host(),
-                                          ed->Path(),
-                                          _target);
+        m_FileOpener.Open(item.Path(),
+                          item.Host(),
+                          ed->Path(),
+                          _target);
     else
-        PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(item.Path(),
-                                                                  item.Host(),
-                                                                  ed,
-                                                                  item.Filename(),
-                                                                  _target);
+        m_FileOpener.OpenInExternalEditorTerminal(item.Path(),
+                                                  item.Host(),
+                                                  ed,
+                                                  item.Filename(),
+                                                  _target);
 }
 
 };

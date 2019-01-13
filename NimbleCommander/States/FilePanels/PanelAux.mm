@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -117,7 +117,7 @@ static void RegisterRemoteFileUploading(const std::string& _original_path,
                        UploadingDropDelay());
 }
 
-void PanelVFSFileWorkspaceOpener::Open(std::string _filename,
+void FileOpener::Open(std::string _filename,
                                        std::shared_ptr<VFSHost> _host,
                                        PanelController *_panel
                                        )
@@ -125,7 +125,7 @@ void PanelVFSFileWorkspaceOpener::Open(std::string _filename,
     Open(_filename, _host, "", _panel);
 }
 
-void PanelVFSFileWorkspaceOpener::Open(std::string _filename,
+void FileOpener::Open(std::string _filename,
                                        std::shared_ptr<VFSHost> _host,
                                        std::string _with_app_path,
                                        PanelController *_panel
@@ -191,7 +191,7 @@ void PanelVFSFileWorkspaceOpener::Open(std::string _filename,
 }
 
 // TODO: write version with FlexListingItem as an input - it would be much simplier
-void PanelVFSFileWorkspaceOpener::Open(std::vector<std::string> _filenames,
+void FileOpener::Open(std::vector<std::string> _filenames,
                                        std::shared_ptr<VFSHost> _host,
                                        NSString *_with_app_bundle, // can be nil, use default app in such case
                                        PanelController *_panel
@@ -245,7 +245,7 @@ void PanelVFSFileWorkspaceOpener::Open(std::vector<std::string> _filenames,
     });
 }
 
-void PanelVFSFileWorkspaceOpener::OpenInExternalEditorTerminal(std::string _filepath,
+void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
                                                                VFSHostPtr _host,
                                                                std::shared_ptr<ExternalEditorStartupInfo> _ext_ed,
                                                                std::string _file_title,

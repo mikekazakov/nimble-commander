@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OpenFile.h"
 #include "../NCPanelOpenWithMenuDelegate.h"
 #include "../PanelController.h"
@@ -10,14 +10,9 @@
 
 namespace nc::panel::actions {
 
-static NCPanelOpenWithMenuDelegate *Delegate()
-{
-    static NCPanelOpenWithMenuDelegate *instance = [[NCPanelOpenWithMenuDelegate alloc] init];
-    return instance;
-}
-
 static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingItem>& _items,
-                                                  PanelController* _target);
+                                                  PanelController* _target,
+                                                  FileOpener &_file_opener);
 
 static bool CommonPredicate( PanelController *_target )
 {
@@ -34,6 +29,11 @@ static bool ShouldRebuildSubmenu(NSMenuItem *_item) noexcept
         objc_cast<NCPanelOpenWithMenuDelegate>(_item.submenu.delegate) == nil;    
 }
     
+OpenFileWithSubmenu::OpenFileWithSubmenu(NCPanelOpenWithMenuDelegate *_menu_delegate):
+    m_MenuDelegate(_menu_delegate)
+{
+}
+
 bool OpenFileWithSubmenu::Predicate( PanelController *_target ) const
 {
     return CommonPredicate(_target);
@@ -44,36 +44,46 @@ bool OpenFileWithSubmenu::ValidateMenuItem( PanelController *_target, NSMenuItem
     if( ShouldRebuildSubmenu(_item) ) {
         NSMenu *menu = [[NSMenu alloc] init];
         menu.identifier = NCPanelOpenWithMenuDelegate.regularMenuIdentifier;
-        menu.delegate = Delegate();
-        [Delegate() addManagedMenu:menu];
+        menu.delegate = m_MenuDelegate;
+        [m_MenuDelegate addManagedMenu:menu];
         _item.submenu = menu;
     }
     
-    Delegate().target = _target;
+    m_MenuDelegate.target = _target;
 
     return Predicate(_target);
 }
 
+AlwaysOpenFileWithSubmenu::AlwaysOpenFileWithSubmenu(NCPanelOpenWithMenuDelegate *_menu_delegate):
+    m_MenuDelegate(_menu_delegate)
+{
+}
+    
 bool AlwaysOpenFileWithSubmenu::Predicate( PanelController *_target ) const
 {
     return CommonPredicate(_target);
 }
 
-bool AlwaysOpenFileWithSubmenu::ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const
+bool AlwaysOpenFileWithSubmenu::ValidateMenuItem( PanelController *_target, NSMenuItem *_item )const
 {
     if( ShouldRebuildSubmenu(_item) ) {
         NSMenu *menu = [[NSMenu alloc] init];
         menu.identifier = NCPanelOpenWithMenuDelegate.alwaysOpenWithMenuIdentifier;
-        menu.delegate = Delegate();
-        [Delegate() addManagedMenu:menu];
+        menu.delegate = m_MenuDelegate;
+        [m_MenuDelegate addManagedMenu:menu];
         _item.submenu = menu;
     }
     
-    Delegate().target = _target;
+    m_MenuDelegate.target = _target;
 
     return Predicate(_target);
 }
 
+OpenFilesWithDefaultHandler::OpenFilesWithDefaultHandler(FileOpener &_file_opener):
+    m_FileOpener(_file_opener)
+{
+}
+    
 bool OpenFilesWithDefaultHandler::Predicate( PanelController *_target ) const
 {
     return (bool)_target.view.item;
@@ -87,27 +97,12 @@ void OpenFilesWithDefaultHandler::Perform( PanelController *_target, id _sender 
     }
 
     auto entries = _target.selectedEntriesOrFocusedEntryWithDotDot;
-    PerformOpeningFilesWithDefaultHandler(entries, _target);
-}
-
-bool OpenFocusedFileWithDefaultHandler::Predicate( PanelController *_target ) const
-{
-    return (bool)_target.view.item;
-}
-
-void OpenFocusedFileWithDefaultHandler::Perform( PanelController *_target, id _sender ) const
-{
-    if( !Predicate(_target) ) {
-        NSBeep();
-        return;
-    }
-
-    auto entries = std::vector<VFSListingItem>{1, _target.view.item};
-    PerformOpeningFilesWithDefaultHandler(entries, _target);
+    PerformOpeningFilesWithDefaultHandler(entries, _target, m_FileOpener);
 }
 
 static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingItem>& _items,
-                                                  PanelController* _target)
+                                                  PanelController* _target,
+                                                  FileOpener &_file_opener)
 {
     if( _items.empty() )
         return;
@@ -120,22 +115,21 @@ static void PerformOpeningFilesWithDefaultHandler(const std::vector<VFSListingIt
             std::vector<std::string> items;
             for(auto &i: _items)
                 items.emplace_back( i.Path() );
-            PanelVFSFileWorkspaceOpener::Open(items,
-                                              _items.front().Host(),
-                                              nil,
-                                              _target);
+            _file_opener.Open(items, _items.front().Host(), nil, _target);
         }
     }
     else if( _items.size() == 1 ) {
         auto &item = _items.front();
         std::string path = item.IsDotDot() ? item.Directory() : item.Path();
-        PanelVFSFileWorkspaceOpener::Open(path, item.Host(), _target);
+        _file_opener.Open(path, item.Host(), _target);
     }
 }
 
 context::OpenFileWithDefaultHandler::
-    OpenFileWithDefaultHandler(const std::vector<VFSListingItem>& _items):
-        m_Items(_items)
+    OpenFileWithDefaultHandler(const std::vector<VFSListingItem>& _items,
+                               FileOpener &_file_opener):
+        m_Items(_items),
+        m_FileOpener(_file_opener)
 {
 }
 
@@ -155,7 +149,7 @@ bool context::OpenFileWithDefaultHandler::Predicate( PanelController *_target ) 
 
 void context::OpenFileWithDefaultHandler::Perform( PanelController *_target, id _sender ) const
 {
-    PerformOpeningFilesWithDefaultHandler(m_Items, _target);
+    PerformOpeningFilesWithDefaultHandler(m_Items, _target, m_FileOpener);
 }
 
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
@@ -110,6 +110,9 @@ struct DirectoryChangeRequest
      */
     int                 LoadingResultCode        = 0;
 };
+    
+using ContextMenuProvider =
+    std::function<NSMenu*(std::vector<VFSListingItem> _items, PanelController *_panel)>;
 
 } // namespace panel
 } // namespace nc
@@ -140,7 +143,8 @@ struct DirectoryChangeRequest
 - (instancetype)initWithView:(PanelView*)_panel_view
                      layouts:(std::shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
           vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
-     directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider;
+     directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider
+         contextMenuProvider:(nc::panel::ContextMenuProvider)_context_menu_provider;
 
 - (void) refreshPanel; // reload panel contents
 - (void) forceRefreshPanel; // user pressed cmd+r by default

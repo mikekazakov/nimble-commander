@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActions.h"
 #include "PanelControllerActionsDispatcher.h"
 #include "Actions/CopyFilePaths.h"
@@ -42,8 +42,11 @@ namespace nc::panel {
 
 using namespace actions;
 
-PanelActionsMap BuildPanelActionsMap(NetworkConnectionsManager& _net_mgr,
-                                     utility::NativeFSManager& _native_fs_mgr)
+PanelActionsMap BuildPanelActionsMap
+    (NetworkConnectionsManager& _net_mgr,
+     utility::NativeFSManager& _native_fs_mgr,
+     FileOpener &_file_opener,
+     NCPanelOpenWithMenuDelegate *_open_with_menu_delegate)
 {
     PanelActionsMap m;
     auto add = [&](SEL _sel, actions::PanelAction *_action) {
@@ -51,11 +54,14 @@ PanelActionsMap BuildPanelActionsMap(NetworkConnectionsManager& _net_mgr,
     };
 
     const auto has_archive_support = bootstrap::ActivationManager::Instance().HasArchivesBrowsing();
-    
-    add( @selector(OnOpen:), new Enter{has_archive_support} );
-    add( @selector(OnOpenNatively:),                 new OpenFilesWithDefaultHandler);
-    add( @selector(onOpenFileWith:),                 new OpenFileWithSubmenu);
-    add( @selector(onAlwaysOpenFileWith:),           new AlwaysOpenFileWithSubmenu);
+
+    add(@selector(OnOpenNatively:),
+        new OpenFilesWithDefaultHandler{_file_opener});
+    add(@selector(onOpenFileWith:),
+        new OpenFileWithSubmenu{_open_with_menu_delegate});
+    add(@selector(OnOpen:),
+        new Enter{has_archive_support, *m[@selector(OnOpenNatively:)]} );
+    add( @selector(onAlwaysOpenFileWith:),           new AlwaysOpenFileWithSubmenu{_open_with_menu_delegate});
     add( @selector(onMainMenuPerformFindAction:),    new FindFiles);
     add( @selector(OnSpotlightSearch:),              new SpotlightSearch);
     add( @selector(OnDuplicate:),                    new Duplicate);
@@ -130,7 +136,7 @@ PanelActionsMap BuildPanelActionsMap(NetworkConnectionsManager& _net_mgr,
     add( @selector(OnQuickDeselectByExtension:), new SelectAllByExtension{false});
     add( @selector(OnDetailedVolumeInformation:),new ShowVolumeInformation);
     add( @selector(OnFileAttributes:),           new ChangeAttributes);
-    add( @selector(OnOpenWithExternalEditor:),   new OpenWithExternalEditor);
+    add( @selector(OnOpenWithExternalEditor:),   new OpenWithExternalEditor{_file_opener});
     add( @selector(OnEjectVolume:),              new EjectVolume{_native_fs_mgr});
     add( @selector(OnCopyCurrentFileName:),      new CopyFileName);
     add( @selector(OnCopyCurrentFilePath:),      new CopyFilePath);

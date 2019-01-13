@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ContextMenu.h"
 #include "PanelController.h"
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
@@ -34,6 +34,7 @@ using namespace nc::panel;
 
 - (instancetype) initWithItems:(std::vector<VFSListingItem>)_items
                        ofPanel:(PanelController*)_panel
+                withFileOpener:(nc::panel::FileOpener&)_file_opener
 {
     if( _items.empty() )
         throw std::invalid_argument("NCPanelContextMenu.initWithData - there's no items");
@@ -51,9 +52,9 @@ using namespace nc::panel;
         m_DuplicateAction.reset( new actions::context::Duplicate{m_Items} );
         m_CompressHereAction.reset( new actions::context::CompressHere{m_Items} );
         m_CompressToOppositeAction.reset( new actions::context::CompressToOpposite{m_Items} );
-        m_OpenFileAction.reset( new actions::context::OpenFileWithDefaultHandler{m_Items} );
-        
-        m_OpenWithDelegate = [[NCPanelOpenWithMenuDelegate alloc] init];
+        m_OpenFileAction.reset
+            ( new actions::context::OpenFileWithDefaultHandler{m_Items, _file_opener} );
+        m_OpenWithDelegate = [[NCPanelOpenWithMenuDelegate alloc] initWithFileOpener:_file_opener];
         [m_OpenWithDelegate setContextSource:m_Items];
         m_OpenWithDelegate.target = m_Panel;
         

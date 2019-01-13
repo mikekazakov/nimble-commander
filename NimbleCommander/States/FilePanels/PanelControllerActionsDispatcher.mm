@@ -118,8 +118,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
     }
     if( hk_file_open_native.IsKeyDown(unicode, modif) ) {
         if( _handle ) {
-            // we keep it here to avoid blinking on menu item
-            actions::OpenFilesWithDefaultHandler{}.Perform(m_PC, m_PC); // ???????????????????????????????????????????
+            [self executeBySelectorIfValidOrBeep:@selector(OnOpenNatively:) withSender:self];
         }
         return view::BiddingPriority::Default;
     }
@@ -167,6 +166,15 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
         return false;
     }
     return false;
+}
+
+- (void)executeBySelectorIfValidOrBeep:(SEL)_selector withSender:(id)_sender
+{
+    const auto is_valid = [self validateActionBySelector:_selector];
+    if( is_valid )
+        Perform(_selector, *m_AM, m_PC, _sender);
+    else
+        NSBeep();
 }
 
 - (id)validRequestorForSendType:(NSString *)sendType

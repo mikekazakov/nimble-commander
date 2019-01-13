@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Actions/DefaultAction.h"
@@ -6,11 +6,15 @@
 #include <unordered_map>
 
 class NetworkConnectionsManager;
-
+@class NCPanelOpenWithMenuDelegate;
 namespace nc::panel {
+class FileOpener;
 
 using PanelActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::PanelAction> >;
-PanelActionsMap BuildPanelActionsMap(NetworkConnectionsManager& _net_mgr,
-                                     utility::NativeFSManager& _native_fs_mgr);
+PanelActionsMap BuildPanelActionsMap
+    (NetworkConnectionsManager& _net_mgr,
+     utility::NativeFSManager& _native_fs_mgr,
+     FileOpener &_file_opener,
+     NCPanelOpenWithMenuDelegate *_open_with_menu_delegate);
     
 }

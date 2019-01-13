@@ -20,6 +20,9 @@
 #include <NimbleCommander/States/FilePanels/PanelViewFooterThemeImpl.h>
 #include <NimbleCommander/States/FilePanels/PanelControllerActionsDispatcher.h>
 #include <NimbleCommander/States/FilePanels/PanelControllerActions.h>
+#include <NimbleCommander/States/FilePanels/PanelAux.h>
+#include <NimbleCommander/States/FilePanels/ContextMenu.h>
+#include <NimbleCommander/States/FilePanels/NCPanelOpenWithMenuDelegate.h>
 #include <NimbleCommander/States/FilePanels/StateActionsDispatcher.h>
 #include <NimbleCommander/States/FilePanels/StateActions.h>
 #include <NimbleCommander/States/FilePanels/Views/QuickLookPanel.h>
@@ -70,8 +73,11 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 
 - (const nc::panel::PanelActionsMap &)panelActionsMap
 {
-    static auto actions_map = nc::panel::BuildPanelActionsMap(*self.networkConnectionsManager,
-                                                              self.nativeFSManager);
+    static auto actions_map = nc::panel::BuildPanelActionsMap
+    (*self.networkConnectionsManager,
+     self.nativeFSManager,
+     self.fileOpener,
+     self.panelOpenWithMenuDelegate);
     return actions_map;
 }
 
@@ -138,7 +144,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     auto panel = [[PanelController alloc] initWithView:[self allocatePanelView]
                                                layouts:self.panelLayouts 
                                     vfsInstanceManager:self.vfsInstanceManager
-                               directoryAccessProvider:self.directoryAccessProvider];    
+                               directoryAccessProvider:self.directoryAccessProvider
+                                   contextMenuProvider:[self makePanelContextMenuProvider]];
     auto actions_dispatcher = [[NCPanelControllerActionsDispatcher alloc]
                                initWithController:panel
                                andActionsMap:self.panelActionsMap];
@@ -153,18 +160,6 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 static PanelController* PanelFactory()
 {
     return [NCAppDelegate.me allocatePanelController];
-}
-
-- (nc::panel::QuickLookVFSBridge&)QLVFSBridge
-{
-    static const auto instance = new nc::panel::QuickLookVFSBridge(self.temporaryFileStorage);
-    return *instance;
-}
-
-- (NCPanelQLPanelAdaptor*)QLPanelAdaptor
-{
-    static const auto instance = [[NCPanelQLPanelAdaptor alloc] initWithBridge:[self QLVFSBridge]];
-    return instance;
 }
 
 - (MainWindowFilePanelState*)allocateFilePanelsWithFrame:(NSRect)_frame
@@ -260,6 +255,41 @@ static PanelController* PanelFactory()
 - (NCMainWindowController*)allocateMainWindowRestoredBySystem
 {
     return [self allocateMainWindowInContext:CreationContext::SystemRestoration];
+}
+
+- (nc::panel::QuickLookVFSBridge&)QLVFSBridge
+{
+    static const auto instance = new nc::panel::QuickLookVFSBridge(self.temporaryFileStorage);
+    return *instance;
+}
+
+- (NCPanelQLPanelAdaptor*)QLPanelAdaptor
+{
+    static const auto instance = [[NCPanelQLPanelAdaptor alloc] initWithBridge:[self QLVFSBridge]];
+    return instance;
+}
+
+- (nc::panel::FileOpener&)fileOpener
+{
+    static auto instance = nc::panel::FileOpener{};
+    return instance;
+}
+
+- (NCPanelOpenWithMenuDelegate*)panelOpenWithMenuDelegate
+{
+    static const auto delegate = [[NCPanelOpenWithMenuDelegate alloc]
+                                  initWithFileOpener:self.fileOpener];
+    return delegate;
+}
+
+- (nc::panel::ContextMenuProvider)makePanelContextMenuProvider
+{
+    auto provider = [self](std::vector<VFSListingItem> _items, PanelController *_panel) -> NSMenu* {
+        return [[NCPanelContextMenu alloc] initWithItems:std::move(_items)
+                                                 ofPanel:_panel
+                                          withFileOpener:self.fileOpener];
+    };
+    return nc::panel::ContextMenuProvider{ std::move(provider) };
 }
 
 @end

@@ -5,6 +5,10 @@
 @class PanelController;
 class ExternalEditorStartupInfo;
 
+namespace nc::utility {
+    class TemporaryFileStorage;
+}
+
 namespace nc::panel {
 
 // this class allows opening file in VFS with regular [NSWorkspace open]
@@ -13,6 +17,8 @@ namespace nc::panel {
 class FileOpener
 {
 public:
+    FileOpener(nc::utility::TemporaryFileStorage &_temp_storage);
+    
     // can be called from main thread - it will execute it's job in background
     void Open(std::string _filepath,
               VFSHostPtr _host,
@@ -36,6 +42,8 @@ public:
                                       std::shared_ptr<ExternalEditorStartupInfo> _ext_ed,
                                       std::string _file_title,
                                       PanelController *_panel);
+private:
+    nc::utility::TemporaryFileStorage &m_TemporaryFileStorage;
 };
 
 bool IsEligbleToTryToExecuteInConsole(const VFSListingItem& _item);

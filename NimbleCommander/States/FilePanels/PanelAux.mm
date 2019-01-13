@@ -4,7 +4,7 @@
 #include <dirent.h>
 #include <VFS/Native.h>
 #include <Utility/ExtensionLowercaseComparison.h>
-#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
+#include <Utility/TemporaryFileStorage.h>
 #include <NimbleCommander/Core/TemporaryNativeFileChangesSentinel.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
@@ -15,6 +15,8 @@
 #include <Operations/Copying.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
+
+using nc::vfs::easy::CopyFileToTempStorage;
 
 namespace nc::panel {
 
@@ -117,6 +119,11 @@ static void RegisterRemoteFileUploading(const std::string& _original_path,
                        UploadingDropDelay());
 }
 
+FileOpener::FileOpener(nc::utility::TemporaryFileStorage &_temp_storage):
+    m_TemporaryFileStorage{_temp_storage}
+{
+}
+
 void FileOpener::Open(std::string _filename,
                                        std::shared_ptr<VFSHost> _host,
                                        PanelController *_panel
@@ -168,7 +175,7 @@ void FileOpener::Open(std::string _filename,
             return;
         }
         
-        if( auto tmp_path = TemporaryNativeFileStorage::Instance().CopySingleFile(_filename, *_host) ) {
+        if( auto tmp_path = CopyFileToTempStorage(_filename, *_host, m_TemporaryFileStorage) ) {
             RegisterRemoteFileUploading( _filename, _host, *tmp_path, _panel );
             
             NSString *fn = [NSString stringWithUTF8StdString:*tmp_path];
@@ -229,9 +236,9 @@ void FileOpener::Open(std::vector<std::string> _filenames,
             if(st.size > g_MaxFileSizeForVFSOpen)
                 continue;
             
-            if( auto tmp = TemporaryNativeFileStorage::Instance().CopySingleFile(i, *_host) ) {
-                RegisterRemoteFileUploading( i, _host, *tmp, _panel );
-                if( NSString *s = [NSString stringWithUTF8StdString:*tmp] )
+            if( auto tmp_path = CopyFileToTempStorage(i, *_host, m_TemporaryFileStorage) ) {
+                RegisterRemoteFileUploading( i, _host, *tmp_path, _panel );
+                if( NSString *s = [NSString stringWithUTF8StdString:*tmp_path] )
                     [arr addObject: [[NSURL alloc] initFileURLWithPath:s] ];
             }
         }
@@ -279,12 +286,12 @@ void FileOpener::OpenInExternalEditorTerminal(std::string _filepath,
                 return;
             }
             
-            if( auto tmp = TemporaryNativeFileStorage::Instance().CopySingleFile(_filepath, *_host) ) {
-                RegisterRemoteFileUploading( _filepath, _host, *tmp, _panel );
+            if( auto tmp_path = CopyFileToTempStorage(_filepath, *_host, m_TemporaryFileStorage) ) {
+                RegisterRemoteFileUploading( _filepath, _host, *tmp_path, _panel );
                 dispatch_to_main_queue([=]{ // when we sucessfuly download a file - request terminal execution in main thread
                     if( NCMainWindowController* wnd = (NCMainWindowController*)_panel.window.delegate )
                         [wnd RequestExternalEditorTerminalExecution:_ext_ed->Path()
-                                                             params:_ext_ed->SubstituteFileName(*tmp)
+                                                             params:_ext_ed->SubstituteFileName(*tmp_path)
                                                           fileTitle:_file_title];
                 });
             }

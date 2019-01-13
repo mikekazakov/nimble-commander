@@ -271,7 +271,7 @@ static PanelController* PanelFactory()
 
 - (nc::panel::FileOpener&)fileOpener
 {
-    static auto instance = nc::panel::FileOpener{};
+    static auto instance = nc::panel::FileOpener{self.temporaryFileStorage};
     return instance;
 }
 

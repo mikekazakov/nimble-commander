@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowToolsTab.h"
 #include "../Bootstrap/ActivationManager.h"
 #include "../States/FilePanels/ExternalToolsSupport.h"
@@ -236,10 +236,11 @@ static bool AskUserToDeleteTool()
 
 - (IBAction)onAddParameter:(id)sender
 {
-    NSRect r = [self.view.window convertRectToScreen:self.addParameterButton.frame];
+    const auto rect = self.addParameterButton.bounds;
     [self.parametersMenu popUpMenuPositioningItem:nil
-                                       atLocation:NSMakePoint(NSMinX(r), NSMinY(r))
-                                           inView:nil];
+                                       atLocation:NSMakePoint(NSMinX(rect), NSMaxY(rect) + 4.0)
+                                           inView:self.addParameterButton];
+
 }
 
 - (IBAction)onAddParametersMenuItemClicked:(id)sender

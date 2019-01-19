@@ -104,14 +104,14 @@ static const auto g_LayoutColumnsDDType = @"PreferencesWindowPanelsTabPrivateTab
 
 @implementation PreferencesWindowPanelsTab
 {
-    shared_ptr<PanelViewLayoutsStorage> m_LayoutsStorage;
-    vector< pair<PanelListViewColumnsLayout::Column, bool> > m_LayoutListColumns;
+    std::shared_ptr<PanelViewLayoutsStorage> m_LayoutsStorage;
+    std::vector< std::pair<PanelListViewColumnsLayout::Column, bool> > m_LayoutListColumns;
 }
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    static once_flag once;
-    call_once(once, []{
+    static std::once_flag once;
+    std::call_once(once, []{
         NSImage *image = [[NSImage alloc] initWithContentsOfFile:
 @"/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/GenericApplicationIcon.icns"];
         if( image )
@@ -268,7 +268,7 @@ static NSString* PanelListColumnTypeToString( PanelListViewColumns _c )
     return false;
 }
 
-- (shared_ptr<const PanelViewLayout>) selectedLayout
+- (std::shared_ptr<const PanelViewLayout>) selectedLayout
 {
     const auto row = self.layoutsTable.selectedRow;
     return m_LayoutsStorage->GetLayout((int)row);
@@ -314,7 +314,7 @@ static NSString* PanelListColumnTypeToString( PanelListViewColumns _c )
 
         if( new_layout != *l ) {
             const auto row = (int)self.layoutsTable.selectedRow;
-            m_LayoutsStorage->ReplaceLayoutWithMandatoryNotification( move(new_layout), row );
+            m_LayoutsStorage->ReplaceLayoutWithMandatoryNotification( std::move(new_layout), row );
             [self fillLayoutFields];
         }
     }
@@ -470,7 +470,7 @@ static NSString *LayoutTypeToTabIdentifier( PanelViewLayout::Type _t )
         
         if( new_layout != *l ) {
             const auto row = (int)self.layoutsTable.selectedRow;
-            m_LayoutsStorage->ReplaceLayoutWithMandatoryNotification( move(new_layout), row );
+            m_LayoutsStorage->ReplaceLayoutWithMandatoryNotification( std::move(new_layout), row );
         }
     }
 }

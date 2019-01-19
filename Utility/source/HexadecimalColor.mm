@@ -1,7 +1,9 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <unordered_map>
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/HexadecimalColor.h>
+#include <unordered_map>
 #include <Utility/SystemInformation.h>
+
+using namespace std;
 
 //In some contexts, primarily OpenGL, the term "RGBA" actually means the colors are stored in memory such that R is at the lowest address,
 //G after it, B after that, and A last.

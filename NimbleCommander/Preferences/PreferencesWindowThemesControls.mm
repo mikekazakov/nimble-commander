@@ -284,7 +284,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
 
 @implementation PreferencesWindowThemesTabColoringRulesControl
 {
-    vector<nc::panel::PresentationItemsColoringRule> m_Rules;
+    std::vector<nc::panel::PresentationItemsColoringRule> m_Rules;
 
 }
 
@@ -322,7 +322,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     return m_Rules.size();
 }
 
-- (void) setRules:(vector<nc::panel::PresentationItemsColoringRule>)rules
+- (void) setRules:(std::vector<nc::panel::PresentationItemsColoringRule>)rules
 {
     if( m_Rules != rules ) {
         m_Rules = rules;
@@ -330,7 +330,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     }
 }
 
-- (vector<nc::panel::PresentationItemsColoringRule>)rules
+- (std::vector<nc::panel::PresentationItemsColoringRule>)rules
 {
     return m_Rules;
 }

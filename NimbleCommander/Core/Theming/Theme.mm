@@ -5,7 +5,9 @@
 #include <Utility/HexadecimalColor.h>
 #include <Config/RapidJSON.h>
 
-static atomic_ulong g_LastGeneration{1};
+using namespace std::literals;
+
+static std::atomic_ulong g_LastGeneration{1};
 
 struct Theme::Internals
 {
@@ -13,7 +15,7 @@ struct Theme::Internals
     ThemeAppearance m_ThemeAppearanceType;
     NSAppearance *m_Appearance;
 
-    vector<nc::panel::PresentationItemsColoringRule> m_ColoringRules;
+    std::vector<nc::panel::PresentationItemsColoringRule> m_ColoringRules;
     NSColor *m_FilePanelsGeneralDropBorderColor;
     NSColor *m_FilePanelsGeneralOverlayColor;
     NSColor *m_FilePanelsGeneralSplitterColor;
@@ -89,7 +91,7 @@ struct Theme::Internals
 };
 
 Theme::Theme( const void *_theme_data, const void *_backup_theme_data ):
-    I( make_unique<Internals>() )
+    I( std::make_unique<Internals>() )
 {
     assert( _theme_data && _backup_theme_data );
     const auto &doc     = *(const nc::config::Value*)_theme_data;
@@ -348,7 +350,7 @@ NSColor *Theme::FilePanelsGeneralDropBorderColor() const noexcept
     return I->m_FilePanelsGeneralDropBorderColor;
 }
 
-const vector<Theme::ColoringRule>& Theme::FilePanelsItemsColoringRules() const noexcept
+const std::vector<Theme::ColoringRule>& Theme::FilePanelsItemsColoringRules() const noexcept
 {
     return I->m_ColoringRules;
 }

@@ -29,10 +29,10 @@ NSFont *ThemePersistence::ExtractFont( const Value& _doc, const char *_path)
     return [NSFont fontWithStringDescription:[NSString stringWithUTF8String:cr->value.GetString()]];
 }
 
-vector<nc::panel::PresentationItemsColoringRule> ThemePersistence::
+std::vector<nc::panel::PresentationItemsColoringRule> ThemePersistence::
     ExtractRules( const Value & _doc, const char*_path )
 {
-    vector<nc::panel::PresentationItemsColoringRule> r;
+    std::vector<nc::panel::PresentationItemsColoringRule> r;
     auto cr = &_doc.FindMember(_path)->value;
     if( cr->IsArray() )
         for( auto i = cr->Begin(), e = cr->End(); i != e; ++i ) {
@@ -52,7 +52,7 @@ ThemePersistence::Value ThemePersistence::EncodeFont( NSFont *_font )
 }
 
 ThemePersistence::Value ThemePersistence::EncodeRules
-    (const vector<nc::panel::PresentationItemsColoringRule> &_rules )
+    (const std::vector<nc::panel::PresentationItemsColoringRule> &_rules )
 {
     Value cr(rapidjson::kArrayType);
     cr.Reserve((unsigned)_rules.size(), nc::config::g_CrtAllocator);
@@ -70,6 +70,8 @@ ThemePersistence::Value ThemePersistence::EncodeAppearance( ThemeAppearance _app
 
 ThemeAppearance ThemePersistence::ExtractAppearance( const Value &_doc, const char *_path  )
 {
+    using namespace std::literals;
+    
     auto cr = _doc.FindMember(_path);
     if( cr == _doc.MemberEnd() )
         return ThemeAppearance::Light;

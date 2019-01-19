@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Settings.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontExtras.h>
@@ -10,9 +10,9 @@ Settings::~Settings()
 {
 }
     
-shared_ptr<Settings> DefaultSettings::SharedDefaultSettings()
+std::shared_ptr<Settings> DefaultSettings::SharedDefaultSettings()
 {
-    static const auto settings = make_shared<DefaultSettings>();
+    static const auto settings = std::make_shared<DefaultSettings>();
     return settings;
 }
 
@@ -141,7 +141,7 @@ bool DefaultSettings::HideScrollbar() const
     return false;
 }
 
-int DefaultSettings::StartChangesObserving( function<void()> _callback )
+int DefaultSettings::StartChangesObserving( std::function<void()> _callback )
 {
     return 0;
 }

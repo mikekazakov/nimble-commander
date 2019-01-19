@@ -24,7 +24,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
 
 @implementation NCTermView
 {
-    shared_ptr<FontCache>   m_FontCache;
+    std::shared_ptr<FontCache> m_FontCache;
     Screen                 *m_Screen;
     Parser                 *m_Parser;
     
@@ -37,7 +37,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     
     FPSLimitedDrawer       *m_FPS;
     NSSize                  m_IntrinsicSize;
-    unique_ptr<BlinkingCaret> m_BlinkingCaret;
+    std::unique_ptr<BlinkingCaret> m_BlinkingCaret;
     NSFont                 *m_Font;
     NSColor                *m_ForegroundColor;
     NSColor                *m_BoldForegroundColor;
@@ -45,7 +45,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     NSColor                *m_SelectionColor;
     NSColor                *m_CursorColor;
     NSColor                *m_AnsiColors[16];
-    shared_ptr<Settings>    m_Settings;
+    std::shared_ptr<Settings>m_Settings;
     int                     m_SettingsNotificationTicket;
 }
 
@@ -58,7 +58,7 @@ static inline bool IsBoxDrawingCharacter(uint32_t _ch)
     if (self) {
         m_SettingsNotificationTicket = 0;
         m_CursorType = TermViewCursor::Block;
-        m_BlinkingCaret = make_unique<BlinkingCaret>(self);
+        m_BlinkingCaret = std::make_unique<BlinkingCaret>(self);
         m_LastScreenFullHeight = 0;
         m_HasSelection = false;
         m_ReportsSizeByOccupiedContent = false;
@@ -491,7 +491,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     if( !string )
         return;
     
-    optional<pair<SelPoint, SelPoint>> search_result;
+    std::optional<std::pair<SelPoint, SelPoint>> search_result;
     [string enumerateSubstringsInRange:NSMakeRange(0, string.length)
                                options:NSStringEnumerationByWords | NSStringEnumerationSubstringNotRequired
                             usingBlock:[&](NSString*,
@@ -505,7 +505,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
                                                 layout[wordRange.location + wordRange.length] :
                                                 layout.back();
                                         if( position < end ) {
-                                            search_result = make_pair(begin, end);
+                                            search_result = std::make_pair(begin, end);
                                             *stop = true;
                                         }
                                     }
@@ -542,7 +542,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         SelPoint end   = [self projectPoint:curr_loc];
         
         if(start > end)
-            swap(start, end);
+            std::swap(start, end);
         
         
         if(modifying_existing_selection && m_HasSelection)
@@ -577,7 +577,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
         return;
 
     auto lock = m_Screen->AcquireLock();
-    vector<uint32_t> unichars = m_Screen->Buffer().DumpUnicodeString(m_SelStart, m_SelEnd);
+    std::vector<uint32_t> unichars = m_Screen->Buffer().DumpUnicodeString(m_SelStart, m_SelEnd);
     
     NSString *result = [[NSString alloc] initWithBytes:unichars.data()
                                                 length:unichars.size() * sizeof(uint32_t)
@@ -646,12 +646,12 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     self.cursorMode = m_Settings->CursorMode();
 }
 
-- (shared_ptr<nc::term::Settings>) settings
+- (std::shared_ptr<nc::term::Settings>) settings
 {
     return m_Settings;
 }
 
-- (void)setSettings:(shared_ptr<nc::term::Settings>)settings
+- (void)setSettings:(std::shared_ptr<nc::term::Settings>)settings
 {
     if( m_Settings == settings )
         return;

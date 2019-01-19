@@ -3,7 +3,6 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
-#include "../Bootstrap/AppDelegate.h"
 #include "../Bootstrap/Config.h"
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -25,14 +24,14 @@ using nc::vfs::easy::CopyFileToTempStorage;
 @implementation BigFileView
 {
     nc::vfs::FileWindow *m_File; // may be nullptr
-    unique_ptr<BigFileViewDataBackend> m_Data; // may be nullptr
+    std::unique_ptr<BigFileViewDataBackend> m_Data; // may be nullptr
 
-    optional<string> m_NativeStoredFile;
+    std::optional<std::string> m_NativeStoredFile;
     
     // layout
     bool            m_WrapWords;
     
-    unique_ptr<BigFileViewImpl> m_ViewImpl; // view impl can be nullptr in case of view shut down
+    std::unique_ptr<BigFileViewImpl> m_ViewImpl; // view impl can be nullptr in case of view shut down
     
     NSScroller      *m_VerticalScroller;
     
@@ -69,7 +68,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
     m_SelectionInFile = CFRangeMake(-1, 0);
     m_SelectionInWindow = CFRangeMake(-1, 0);
     m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
-    m_ViewImpl = make_unique<BigFileViewImpl>(); // dummy for initialization process
+    m_ViewImpl = std::make_unique<BigFileViewImpl>(); // dummy for initialization process
     
     [self reloadAppearance];
     
@@ -205,7 +204,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
     assert(_encoding != encodings::ENCODING_INVALID);
     
     m_File = _file;
-    m_Data = make_unique<BigFileViewDataBackend>(*m_File, _encoding);
+    m_Data = std::make_unique<BigFileViewDataBackend>(*m_File, _encoding);
     BigFileView* __weak weak_self = self;
     m_Data->SetOnDecoded(^{
         if(BigFileView *sself = weak_self) {
@@ -437,14 +436,14 @@ using nc::vfs::easy::CopyFileToTempStorage;
     switch (_mode)
     {
         case BigFileViewModes::Text:
-            m_ViewImpl = make_unique<BigFileViewText>(m_Data.get(), self);
+            m_ViewImpl = std::make_unique<BigFileViewText>(m_Data.get(), self);
             break;
         case BigFileViewModes::Hex:
-            m_ViewImpl = make_unique<BigFileViewHex>(m_Data.get(), self);
+            m_ViewImpl = std::make_unique<BigFileViewHex>(m_Data.get(), self);
             break;
         case BigFileViewModes::Preview:
         {
-            string path;
+            std::string path;
             if( m_File->File()->Host()->IsNativeFS() )
                 path = m_File->File()->Path();
             else {
@@ -455,7 +454,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
                 if( m_NativeStoredFile )
                     path = *m_NativeStoredFile;
             }
-            m_ViewImpl = make_unique<InternalViewerViewPreviewMode>(path, self);
+            m_ViewImpl = std::make_unique<InternalViewerViewPreviewMode>(path, self);
             break;
         }
         default:
@@ -506,7 +505,6 @@ using nc::vfs::easy::CopyFileToTempStorage;
     if( !m_ViewImpl )
         return;
     
-//    dispatch_assert_main_queue();
     uint64_t value = uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
     if( value == m_VerticalPositionInBytes )
         return;
@@ -518,17 +516,10 @@ using nc::vfs::easy::CopyFileToTempStorage;
     [self syncVerticalScrollerState];
 }
 
-//- (double) verticalPositionPercentage
-//{
-//    return m_VerticalScroller.doubleValue; // guaranteed to be in sync????
-//}
-
 - (uint64_t) verticalPositionInBytes
 {
     // should always be = uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos()
     return m_VerticalPositionInBytes;
-    
-//    return uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
 }
 
 - (void) setVerticalPositionInBytes:(uint64_t) _pos
@@ -537,7 +528,6 @@ using nc::vfs::easy::CopyFileToTempStorage;
         return;
     
     m_ViewImpl->ScrollToByteOffset(_pos);
-//    m_VerticalPositionInBytes = uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
     [self syncVerticalPositionInBytes];
 }
 
@@ -583,12 +573,12 @@ using nc::vfs::easy::CopyFileToTempStorage;
         return;
     }
     
-    const uint32_t *offset = lower_bound(m_Data->UniCharToByteIndeces(),
+    const uint32_t *offset = std::lower_bound(m_Data->UniCharToByteIndeces(),
                                               m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize(),
                                               start - window_pos);
     assert(offset < m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize());
     
-    const uint32_t *tail = lower_bound(m_Data->UniCharToByteIndeces(),
+    const uint32_t *tail = std::lower_bound(m_Data->UniCharToByteIndeces(),
                                             m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize(),
                                             end - window_pos);
     assert(tail <= m_Data->UniCharToByteIndeces() + m_Data->UniCharsSize());

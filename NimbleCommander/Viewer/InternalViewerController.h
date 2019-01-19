@@ -1,8 +1,9 @@
-// Copyright (C) 2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "BigFileView.h"
 
+// Objects of this class own instances of BigFileView
 @interface InternalViewerController : NSResponder<NSSearchFieldDelegate>
 
 // UI wiring
@@ -19,6 +20,8 @@
 @property (nonatomic, readonly) NSString           *verboseTitle;
 @property (nonatomic, readonly) const std::string&  filePath;
 @property (nonatomic, readonly) const VFSHostPtr&   fileVFS;
+
+- (instancetype) init;
 
 - (void) setFile:(std::string)path at:(VFSHostPtr)vfs;
 - (bool) performBackgroundOpening;

@@ -5,6 +5,10 @@
 #include <Utility/OrthodoxMonospace.h>
 #include <VFS/FileWindow.h>
 
+namespace nc::utility {
+    class TemporaryFileStorage;
+}
+
 enum class BigFileViewModes : int
 { // changing this values may cause stored history corruption
     Text = 0,
@@ -13,6 +17,11 @@ enum class BigFileViewModes : int
 };
 
 @interface BigFileView : NSView
+
+- (instancetype) init NS_UNAVAILABLE;
+- (instancetype) initWithFrame:(NSRect)frame;
+
+- (void) setTempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage;
 
 - (void) SetFile:(nc::vfs::FileWindow*) _file;
 - (void) SetKnownFile:(nc::vfs::FileWindow*) _file

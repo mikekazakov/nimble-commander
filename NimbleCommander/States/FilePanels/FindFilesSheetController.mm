@@ -1,12 +1,11 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "FindFilesSheetController.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/DispatchGroup.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>
 #include <Utility/PathManip.h>
-#include <NimbleCommander/Viewer/BigFileViewSheet.h>
-#include <NimbleCommander/Viewer/InternalViewerWindowController.h>
 #include <NimbleCommander/Core/SearchForFiles.h>
 #include <Utility/ByteCountFormatter.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
@@ -14,18 +13,16 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
 #include <NimbleCommander/Core/VFSInstancePromise.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
-#include "FindFilesSheetController.h"
 #include <Utility/StringExtras.h>
 
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
 static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";
 static const int g_MaximumSearchResults = 262144;
 
-static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
+using namespace nc::panel;
 
 static std::string ensure_tr_slash( std::string _str )
 {
@@ -99,7 +96,7 @@ private:
 };
 
 @interface FindFilesSheetFoundItem : NSObject
-@property (nonatomic, readonly) FindFilesSheetControllerFoundItem *data;
+@property (nonatomic, readonly) const FindFilesSheetControllerFoundItem &data;
 @property (nonatomic, readonly) NSString *location;
 @property (nonatomic, readonly) NSString *filename;
 @property (nonatomic, readonly) uint64_t size;
@@ -135,8 +132,8 @@ private:
     return m_Data.st.mtime.tv_sec;
 }
 
-- (FindFilesSheetControllerFoundItem*) data {
-    return &m_Data;
+- (const FindFilesSheetControllerFoundItem&) data {
+    return m_Data;
 }
 
 @end
@@ -150,7 +147,10 @@ private:
 }
 - (id)transformedValue:(id)value
 {
-    return (value == nil) ? nil : ByteCountFormatter::Instance().ToNSString([value unsignedLongLongValue], ByteCountFormatter::Fixed6);
+    if( value == nil )
+        return nil;
+    const auto &bf = ByteCountFormatter::Instance();
+    return bf.ToNSString([value unsignedLongLongValue], ByteCountFormatter::Fixed6);
 }
 @end
 
@@ -208,6 +208,7 @@ private:
 @property (nonatomic) IBOutlet NSPopUpButton       *searchForPopup;
 @property (nonatomic) NSMutableArray            *FoundItems;
 @property (nonatomic) FindFilesSheetFoundItem   *focusedItem; // may be nullptr
+@property (nonatomic) bool                       focusedItemIsReg;
 
 @end
 
@@ -235,12 +236,14 @@ private:
     
     FindFilesSheetFoundItem    *m_DoubleClickedItem;
     std::function<void(const std::vector<VFSPath> &_filepaths)> m_OnPanelize;
+    std::function<void(const nc::panel::FindFilesSheetViewRequest&)> m_OnView;
 }
 
 @synthesize FoundItems = m_FoundItems;
 @synthesize host = m_Host;
 @synthesize path = m_Path;
 @synthesize onPanelize = m_OnPanelize;
+@synthesize onView = m_OnView;
 
 - (id) init
 {
@@ -254,6 +257,7 @@ private:
         m_TextHistory = std::make_unique<FindFilesSheetComboHistory>(16, g_StateTextHistory);
         
         self.focusedItem = nil;
+        self.focusedItemIsReg = false;
         self.didAnySearchStarted = false;
         self.searchingNow = false;
         m_UIChanged = true;
@@ -302,6 +306,7 @@ private:
         self.PanelButton.enabled = false;
     }
     if( !nc::bootstrap::ActivationManager::Instance().HasInternalViewer() ) {
+        [self.ViewButton unbind:@"enabled2"];
         [self.ViewButton unbind:@"enabled"];
         self.ViewButton.enabled = false;
     }
@@ -589,11 +594,11 @@ private:
     });
 }
 
-- (FindFilesSheetControllerFoundItem*) selectedItem
+- (const FindFilesSheetControllerFoundItem*) selectedItem
 {
     if(m_DoubleClickedItem == nil)
         return nullptr;
-    return m_DoubleClickedItem.data;
+    return &m_DoubleClickedItem.data;
 }
 
 - (IBAction)doubleClick:(id)table
@@ -609,10 +614,20 @@ private:
 - (void)tableViewSelectionDidChange:(NSNotification *)aNotification
 {
     NSInteger row = [self.TableView selectedRow];
-    if(row >= 0)
-        self.focusedItem = (FindFilesSheetFoundItem *)[self.ArrayController.arrangedObjects objectAtIndex:row];
-    else
+    if( row >= 0 ) {
+        id selected_object = [self.ArrayController.arrangedObjects objectAtIndex:row];
+        self.focusedItem = objc_cast<FindFilesSheetFoundItem>(selected_object);
+    }
+    else {
         self.focusedItem = nil;
+    }
+    
+    if( self.focusedItem ) {
+        self.focusedItemIsReg = (self.focusedItem.data.st.mode & S_IFMT) == S_IFREG;
+    }
+    else {
+        self.focusedItemIsReg = false;
+    }
 }
 
 - (IBAction)OnGoToFile:(id)sender
@@ -636,51 +651,29 @@ private:
 - (IBAction)OnFileView:(id)sender
 {
     dispatch_assert_main_queue();
+    if( m_OnView == nullptr )
+        return;
+     
     NSInteger row = self.TableView.selectedRow;
     FindFilesSheetFoundItem *item = [self.ArrayController.arrangedObjects objectAtIndex:row];
-    FindFilesSheetControllerFoundItem *data = item.data;
+    const FindFilesSheetControllerFoundItem &data = item.data;
     
-    std::string p = data->full_filename;
-    VFSHostPtr vfs = data->host;
-    CFRange cont = data->content_pos;
+    std::string p = data.full_filename;
+    VFSHostPtr vfs = data.host;
+    CFRange cont = data.content_pos;
     NSString *search_req = self.TextComboBox.stringValue;
     
-    if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a sheet
-        BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:p at:vfs];
-        dispatch_to_background([=]{
-            const auto success = [sheet open];
-            dispatch_to_main_queue([=]{
-                // make sure that 'sheet' will be destroyed in main queue
-                if( success ) {
-                    [sheet beginSheetForWindow:self.window];
-                    if(cont.location >= 0)
-                        [sheet markInitialSelection:cont searchTerm:search_req.UTF8String];
-                }
-            });
-        });
+    auto request = FindFilesSheetViewRequest{};
+    request.vfs = vfs;
+    request.path = p;
+    request.sender = self;
+    if( cont.location >= 0 ) {
+        request.content_mark.emplace();
+        request.content_mark->bytes_offset = cont.location;
+        request.content_mark->bytes_length = cont.length;
+        request.content_mark->search_term = search_req.UTF8String;
     }
-    else { // as a window
-        if( InternalViewerWindowController *window = [NCAppDelegate.me findInternalViewerWindowForPath:p onVFS:vfs]  ) {
-            // already has this one
-            [window showWindow:self];
-            
-            if(cont.location >= 0)
-                [window markInitialSelection:cont searchTerm:search_req.UTF8String];
-        }
-        else {
-            // need to create a new one
-            window = [[InternalViewerWindowController alloc] initWithFilepath:p at:vfs];
-            dispatch_to_background([=]{
-                if( [window performBackgrounOpening] ) {
-                    dispatch_to_main_queue([=]{
-                        [window showAsFloatingWindow];
-                        if(cont.location >= 0)
-                            [window markInitialSelection:cont searchTerm:search_req.UTF8String];
-                    });
-                }
-            });
-        }
-    }
+    m_OnView( request );
 }
 
 // Workaround about combox' menu forcing Search by selecting item from list with Return key
@@ -713,8 +706,8 @@ private:
     if( m_OnPanelize ) {
         std::vector<VFSPath> results;
         for( FindFilesSheetFoundItem *item in self.ArrayController.arrangedObjects ) {
-            auto d = item.data;
-            results.emplace_back( d->host, d->full_filename );
+            auto &data = item.data;
+            results.emplace_back( data.host, data.full_filename );
         }
 
         if( !results.empty() )

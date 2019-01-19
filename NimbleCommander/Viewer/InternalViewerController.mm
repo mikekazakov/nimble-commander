@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerController.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/GeneralUI/ProcessSheetController.h>
@@ -9,6 +9,9 @@
 #include <Utility/StringExtras.h>
 #include "InternalViewerHistory.h"
 #include <Habanero/SerialQueue.h>
+
+// TEMP dependency to get temp file storage
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 
 using namespace std::literals;
 
@@ -89,7 +92,7 @@ static int InvertBitFlag( int _value, int _flag )
 @synthesize fileVFS = m_VFS;
 @synthesize wordWrappingCheckBox = m_WordWrappingCheckBox;
 
-- (id) init
+- (instancetype) init
 {
     self = [super init];
     if( self ) {
@@ -336,6 +339,7 @@ static int InvertBitFlag( int _value, int _flag )
         return;
     
     m_View = view;
+    [m_View setTempStorage:NCAppDelegate.me.temporaryFileStorage];
 }
 
 - (void) setSearchField:(NSSearchField *)searchField

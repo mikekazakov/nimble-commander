@@ -1,10 +1,18 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSListingInput.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
 #include "../PanelController.h"
 #include "FindFiles.h"
 #include "../PanelView.h"
 #include <Habanero/dispatch_cpp.h>
+
+// TEMP - need to refactor this bullcrap!
+#include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Viewer/BigFileViewSheet.h>
+#include <NimbleCommander/Viewer/InternalViewerWindowController.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
+
+static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
 
 namespace nc::panel::actions {
 
@@ -62,7 +70,9 @@ void FindFiles::Perform( PanelController *_target, id _sender ) const
             [panel commitCancelableLoadingTask:std::move(task)];
         }
     };
-    
+    sheet.onView = [this](const FindFilesSheetViewRequest& _request) {
+        OnView(_request);
+    };
     auto handler = ^(NSModalResponse returnCode) {
         if( auto item = sheet.selectedItem ) {
             auto request = std::make_shared<DirectoryChangeRequest>();
@@ -77,4 +87,61 @@ void FindFiles::Perform( PanelController *_target, id _sender ) const
     [sheet beginSheetForWindow:_target.window completionHandler:handler];
 }
 
+void FindFiles::OnView(const FindFilesSheetViewRequest& _request) const
+{    
+    if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a sheet
+        BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:_request.path
+                                                                          at:_request.vfs];
+        dispatch_to_background([=]{
+            const auto success = [sheet open];
+            dispatch_to_main_queue([=]{
+                // make sure that 'sheet' will be destroyed in main queue
+                if( success ) {
+                    [sheet beginSheetForWindow:_request.sender.window];
+                    if( _request.content_mark ) {
+                        auto range = CFRangeMake(_request.content_mark->bytes_offset,
+                                                 _request.content_mark->bytes_length);
+                        [sheet markInitialSelection:range
+                                         searchTerm:_request.content_mark->search_term];
+                    }
+                }
+            });
+        });
+    }
+    else { // as a window
+        if( InternalViewerWindowController *window =
+            [NCAppDelegate.me findInternalViewerWindowForPath:_request.path onVFS:_request.vfs]  ) {
+            // already has this one
+            [window showWindow:_request.sender];
+            
+            if( _request.content_mark ) {
+                auto range = CFRangeMake(_request.content_mark->bytes_offset,
+                                         _request.content_mark->bytes_length);
+                [window markInitialSelection:range
+                                 searchTerm:_request.content_mark->search_term];
+            }
+
+        }
+        else {
+            // need to create a new one
+            window = [[InternalViewerWindowController alloc] initWithFilepath:_request.path
+                                                                           at:_request.vfs];
+            dispatch_to_background([=]{
+                const auto opening_result = [window performBackgrounOpening];
+                dispatch_to_main_queue([=]{
+                    if( opening_result ) {
+                        [window showAsFloatingWindow];
+                        if( _request.content_mark ) {
+                            auto range = CFRangeMake(_request.content_mark->bytes_offset,
+                                                     _request.content_mark->bytes_length);
+                            [window markInitialSelection:range
+                                              searchTerm:_request.content_mark->search_term];
+                        }
+                    }
+                });
+            });
+        }
+    }
+}
+    
 };

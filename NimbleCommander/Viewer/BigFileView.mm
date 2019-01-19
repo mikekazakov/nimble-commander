@@ -1,24 +1,26 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "BigFileView.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
 #include "../Bootstrap/AppDelegate.h"
 #include "../Bootstrap/Config.h"
-#include <NimbleCommander/Core/TemporaryNativeFileStorage.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include "BigFileView.h"
 #include "BigFileViewText.h"
 #include "BigFileViewHex.h"
 #include "InternalViewerViewPreviewMode.h"
 #include "BigFileViewDataBackend.h"
 #include <Habanero/dispatch_cpp.h>
+#include <Utility/TemporaryFileStorage.h>
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";
 
 const static double g_BorderWidth = 1.0;
+
+using nc::vfs::easy::CopyFileToTempStorage;
 
 @implementation BigFileView
 {
@@ -41,8 +43,8 @@ const static double g_BorderWidth = 1.0;
                                                  // updated when windows moves, regarding current selection in bytes
     CFRange         m_SelectionInWindowUnichars; // in UniChars, whithin current window position,
                                                  // updated when windows moves, regarding current selection in bytes
-//    vector<GenericConfig::ObservationTicket> m_ConfigObservations;
-    ThemesManager::ObservationTicket    m_ThemeObservation;    
+    ThemesManager::ObservationTicket    m_ThemeObservation;
+    nc::utility::TemporaryFileStorage *m_TempFileStorage;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -86,24 +88,6 @@ const static double g_BorderWidth = 1.0;
     [self frameDidChange];
     [self bind:@"verticalPositionPercentage" toObject:m_VerticalScroller withKeyPath:@"doubleValue" options:nil];    
     
-/*    __weak BigFileView* weak_self = self;
-    GlobalConfig().ObserveMany(m_ConfigObservations,
-                               [=]{ [(BigFileView*)weak_self reloadAppearance]; },
-                               initializer_list<const char *>{  g_ConfigClassicFont,
-                                   g_ConfigClassicShouldAntialias,
-                                   g_ConfigClassicShouldSmooth,
-                                   g_ConfigClassicTextColor,
-                                   g_ConfigClassicSelectionColor,
-                                   g_ConfigClassicBackgroundColor,
-                                   g_ConfigModernFont,
-                                   g_ConfigModernShouldAntialias,
-                                   g_ConfigModernShouldSmooth,
-                                   g_ConfigModernTextColor,
-                                   g_ConfigModernSelectionColor,
-                                   g_ConfigModernBackgroundColor   }
-                               );
-                               */
-    
     __weak BigFileView* weak_self = self;
     m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
         ThemesManager::Notifications::Viewer, [weak_self]{
@@ -116,8 +100,11 @@ const static double g_BorderWidth = 1.0;
 {
     [self unbind:@"verticalPositionPercentage"];
     [NSNotificationCenter.defaultCenter removeObserver:self];
-//    CFRelease(m_ForegroundColor);
-//    CFRelease(m_Font);
+}
+
+- (void) setTempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
+{
+    m_TempFileStorage = &_temp_storage;
 }
 
 - (void)layoutVerticalScroll
@@ -136,34 +123,6 @@ const static double g_BorderWidth = 1.0;
 
 - (void)reloadAppearance
 {
-//    auto skin = AppDelegate.me.skin;
-//    if(skin == ApplicationSkin::Modern) {
-//        m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigModernShouldSmooth);
-//        m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigModernShouldAntialias);
-
-//        m_BackgroundFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernBackgroundColor).value_or(""));
-//        m_SelectionBkFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernSelectionColor).value_or(""));
-        // todo: switch to NSColor!
-//        if(m_ForegroundColor) CFRelease(m_ForegroundColor);
-//        m_ForegroundColor = CGColorCreateCopy([NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigModernTextColor).value_or(""))].CGColor);
-        
-        
-//        if(m_Font) CFRelease(m_Font);
-//        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigModernFont).value_or("")]]);
-//    }
-//    else if(skin == ApplicationSkin::Classic) {
-//        m_ShouldSmoothFonts = GlobalConfig().GetBool(g_ConfigClassicShouldSmooth);
-//        m_ShouldAntialias = GlobalConfig().GetBool(g_ConfigClassicShouldAntialias);
-//
-//        m_BackgroundFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicBackgroundColor).value_or(""));
-//        m_SelectionBkFillColor = HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicSelectionColor).value_or(""));
-//        // todo: switch to NSColor!
-//        if(m_ForegroundColor) CFRelease(m_ForegroundColor);
-//        m_ForegroundColor = CGColorCreateCopy([NSColor colorWithRGBA:HexadecimalColorStringToRGBA(GlobalConfig().GetString(g_ConfigClassicTextColor).value_or(""))].CGColor);
-//        
-//        if(m_Font) CFRelease(m_Font);
-//        m_Font = (CTFontRef) CFBridgingRetain([NSFont fontWithStringDescription:[NSString stringWithUTF8StdString:GlobalConfig().GetString(g_ConfigClassicFont).value_or("")]]);
-//    }
     if( m_ViewImpl )
         m_ViewImpl->OnFontSettingsChanged();
     [self setNeedsDisplay];
@@ -490,7 +449,9 @@ const static double g_BorderWidth = 1.0;
                 path = m_File->File()->Path();
             else {
                 if( !m_NativeStoredFile )
-                    m_NativeStoredFile = TemporaryNativeFileStorage::Instance().CopySingleFile(m_File->File()->Path(), *m_File->File()->Host());
+                    m_NativeStoredFile = CopyFileToTempStorage(m_File->File()->Path(),
+                                                               *m_File->File()->Host(),
+                                                               *m_TempFileStorage);
                 if( m_NativeStoredFile )
                     path = *m_NativeStoredFile;
             }

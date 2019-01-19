@@ -654,24 +654,24 @@ private:
     if( m_OnView == nullptr )
         return;
      
-    NSInteger row = self.TableView.selectedRow;
-    FindFilesSheetFoundItem *item = [self.ArrayController.arrangedObjects objectAtIndex:row];
-    const FindFilesSheetControllerFoundItem &data = item.data;
+    const auto row_index = self.TableView.selectedRow;
+    if( row_index < 0 )
+        return;
     
-    std::string p = data.full_filename;
-    VFSHostPtr vfs = data.host;
-    CFRange cont = data.content_pos;
-    NSString *search_req = self.TextComboBox.stringValue;
+    const auto found_item = objc_cast<FindFilesSheetFoundItem>
+        ([self.ArrayController.arrangedObjects objectAtIndex:row_index]);
+    
+    const FindFilesSheetControllerFoundItem &data = found_item.data;
     
     auto request = FindFilesSheetViewRequest{};
-    request.vfs = vfs;
-    request.path = p;
+    request.vfs = data.host;
+    request.path = data.full_filename;
     request.sender = self;
-    if( cont.location >= 0 ) {
+    if( data.content_pos.location >= 0 ) {
         request.content_mark.emplace();
-        request.content_mark->bytes_offset = cont.location;
-        request.content_mark->bytes_length = cont.length;
-        request.content_mark->search_term = search_req.UTF8String;
+        request.content_mark->bytes_offset = data.content_pos.location;
+        request.content_mark->bytes_length = data.content_pos.length;
+        request.content_mark->search_term = self.TextComboBox.stringValue.UTF8String;
     }
     m_OnView( request );
 }

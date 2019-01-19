@@ -69,10 +69,6 @@
 		CF1E3D1C1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */; };
 		CF1E3D1D1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */; };
 		CF1E3D1E1D5AD3C600609ADB /* MainWindowInternalViewerState.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */; };
-		CF1E3D1F1D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */; };
-		CF1E3D201D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */; };
-		CF1E3D211D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */; };
-		CF1E3D221D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */; };
 		CF1E3D2A1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */; };
 		CF1E3D2B1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */; };
 		CF1E3D2C1D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */; };
@@ -1632,7 +1628,6 @@
 		CF1E3D0E1D59A49F00609ADB /* InternalViewerViewPreviewMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerViewPreviewMode.mm; path = NimbleCommander/Viewer/InternalViewerViewPreviewMode.mm; sourceTree = SOURCE_ROOT; };
 		CF1E3D181D5AD3C600609ADB /* MainWindowInternalViewerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowInternalViewerState.h; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.h; sourceTree = SOURCE_ROOT; };
 		CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowInternalViewerState.mm; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.mm; sourceTree = SOURCE_ROOT; };
-		CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = MainWindowInternalViewerState.xib; path = NimbleCommander/States/InternalViewer/MainWindowInternalViewerState.xib; sourceTree = SOURCE_ROOT; };
 		CF1E3D281D5AF7E000609ADB /* InternalViewerToolbarProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerToolbarProtocol.h; path = NimbleCommander/Viewer/InternalViewerToolbarProtocol.h; sourceTree = SOURCE_ROOT; };
 		CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerToolbarProtocol.mm; path = NimbleCommander/Viewer/InternalViewerToolbarProtocol.mm; sourceTree = SOURCE_ROOT; };
 		CF2083EC1FEFAAA00014D6AD /* ListingPromise.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ListingPromise.h; path = NimbleCommander/States/FilePanels/ListingPromise.h; sourceTree = SOURCE_ROOT; };
@@ -2673,7 +2668,6 @@
 				CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */,
 				CF1E3D181D5AD3C600609ADB /* MainWindowInternalViewerState.h */,
 				CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */,
-				CF1E3D1A1D5AD3C600609ADB /* MainWindowInternalViewerState.xib */,
 			);
 			name = Viewer;
 			sourceTree = "<group>";
@@ -3794,7 +3788,6 @@
 				CFCCFBC81A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFDF44A11D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CF8D0CE51D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
-				CF1E3D211D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
 				CFD629641C2CE7040050EC68 /* State.json in Resources */,
 				CFCCFC5F1A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CF4E56AE1D5068E100452912 /* PreferencesWindowGeneralTab.xib in Resources */,
@@ -3853,7 +3846,6 @@
 				CF7C7CC41E5C3EB9002DB0E2 /* PreferencesWindowThemesTab.xib in Resources */,
 				CFA53A591D433E2A00C562A7 /* PreferencesWindowToolsTab.xib in Resources */,
 				CF8D0D051D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */,
-				CF1E3D201D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
 				CFA53A5A1D433E2A00C562A7 /* State.json in Resources */,
 				CF4E56B51D5068EC00452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF4E56AF1D5068E200452912 /* PreferencesWindowGeneralTab.xib in Resources */,
@@ -3911,7 +3903,6 @@
 				CFA3744219A8D9C60012D088 /* SelectionWithMaskPopupViewController.xib in Resources */,
 				CF7C7CC91E5C3ED5002DB0E2 /* PreferencesWindowThemesTabColoringRulesControl.xib in Resources */,
 				CF8D0CE31D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
-				CF1E3D1F1D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
 				CF45CA281D3E3A6F0074F04C /* PreferencesWindowToolsTab.xib in Resources */,
 				CFD6295D1C2CE3AD0050EC68 /* State.json in Resources */,
 				CF754D4D1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
@@ -3975,7 +3966,6 @@
 				CFDF44A21D2B990A0062F7AD /* Media.xcassets in Resources */,
 				CFCCFC601A5FBC9500313845 /* FilePanelsQuickSearch.strings in Resources */,
 				CF8D0CE61D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
-				CF1E3D221D5AD3C600609ADB /* MainWindowInternalViewerState.xib in Resources */,
 				CFCCFBC91A5E29EC00313845 /* ProcessSheetController.xib in Resources */,
 				CFD629631C2CE7030050EC68 /* State.json in Resources */,
 				CF4E56AD1D5068E100452912 /* PreferencesWindowGeneralTab.xib in Resources */,

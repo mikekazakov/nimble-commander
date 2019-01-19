@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/debug.h>
 #include <Config/RapidJSON.h>
 #include <rapidjson/stringbuffer.h>
@@ -330,7 +330,8 @@ static int CountMainWindows()
         if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a state
             if( !m_Viewer )
             dispatch_sync(dispatch_get_main_queue(),[&]{
-                m_Viewer = [[MainWindowInternalViewerState alloc] init];
+                auto rc = NSMakeRect(0, 0, 100, 100);
+                m_Viewer = [[MainWindowInternalViewerState alloc] initWithFrame:rc];
             });
             if( [m_Viewer openFile:_filepath atVFS:_host] ) {
                 dispatch_to_main_queue([=]{

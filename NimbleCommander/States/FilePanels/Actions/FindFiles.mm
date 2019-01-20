@@ -16,6 +16,11 @@ static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
 
 namespace nc::panel::actions {
 
+FindFiles::FindFiles( std::function<BigFileView*(NSRect)> _make_viewer ) :
+    m_MakeViewer{ std::move(_make_viewer) }
+{
+}
+
 bool FindFiles::Predicate( PanelController *_target ) const
 {
     return _target.isUniform || _target.view.item;
@@ -91,7 +96,8 @@ void FindFiles::OnView(const FindFilesSheetViewRequest& _request) const
 {    
     if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a sheet
         BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:_request.path
-                                                                          at:_request.vfs];
+                                                                          at:_request.vfs
+                                                               viewerFactory:m_MakeViewer];
         dispatch_to_background([=]{
             const auto success = [sheet open];
             dispatch_to_main_queue([=]{
@@ -125,7 +131,8 @@ void FindFiles::OnView(const FindFilesSheetViewRequest& _request) const
         else {
             // need to create a new one
             window = [[InternalViewerWindowController alloc] initWithFilepath:_request.path
-                                                                           at:_request.vfs];
+                                                                           at:_request.vfs
+                                                                viewerFactory:m_MakeViewer];
             dispatch_to_background([=]{
                 const auto opening_result = [window performBackgrounOpening];
                 dispatch_to_main_queue([=]{

@@ -33,6 +33,7 @@
 #include "ActivationManager.h"
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/SandboxManager.h>
+#include "AppDelegate+ViewerCreation.h"
 
 static const auto g_ConfigRestoreLastWindowState = "filePanel.general.restoreLastWindowState";
 
@@ -77,7 +78,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     (*self.networkConnectionsManager,
      self.nativeFSManager,
      self.fileOpener,
-     self.panelOpenWithMenuDelegate);
+     self.panelOpenWithMenuDelegate,
+     [self](NSRect rc){ return [self makeViewerWithFrame:rc]; });
     return actions_map;
 }
 

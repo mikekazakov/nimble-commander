@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A320" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="BigFileViewSheet">
@@ -13,25 +15,25 @@
                 <outlet property="searchField" destination="vcM-ZZ-dH2" id="pnN-9r-2Ph"/>
                 <outlet property="searchIndicator" destination="cKE-aL-pDT" id="hCH-e9-jTP"/>
                 <outlet property="settingsPopover" destination="T94-gH-ROL" id="22O-0M-lil"/>
-                <outlet property="view" destination="agn-et-TU9" id="wBQ-Dy-Z7e"/>
+                <outlet property="viewPlaceholder" destination="agn-et-TU9" id="oTF-Bb-dlA"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
                 <outlet property="wordWrap" destination="eTM-MZ-q2F" id="F4P-b6-Cjr"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="BigFileViewSheet" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" frameAutosaveName="BigFileViewSheet" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="739" height="491"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
             <value key="minSize" type="size" width="300" height="491"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="739" height="491"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="zzz-Lf-L0m">
-                        <rect key="frame" x="108" y="444" width="14" height="32"/>
+                        <rect key="frame" x="108" y="453" width="14" height="14"/>
                         <buttonCell key="cell" type="bevel" bezelStyle="rounded" image="NSActionTemplate" imagePosition="only" alignment="center" imageScaling="proportionallyDown" inset="2" id="B3B-Od-Nca">
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="system"/>
@@ -41,7 +43,7 @@
                         </connections>
                     </button>
                     <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4H6-gX-HFm">
-                        <rect key="frame" x="20" y="447" width="80" height="25"/>
+                        <rect key="frame" x="20" y="448" width="80" height="23"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="CPu-EY-q1P"/>
                         </constraints>
@@ -67,7 +69,7 @@ Gw
                             <action selector="OnClose:" target="-2" id="5HP-M4-3SK"/>
                         </connections>
                     </button>
-                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="agn-et-TU9" customClass="BigFileView">
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="agn-et-TU9">
                         <rect key="frame" x="20" y="61" width="699" height="380"/>
                     </customView>
                     <textField horizontalHuggingPriority="750" verticalHuggingPriority="750" horizontalCompressionResistancePriority="1000" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fLm-rQ-wbL">
@@ -156,7 +158,7 @@ Gw
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="c8x-WQ-8jt">
-                    <rect key="frame" x="87" y="35" width="294" height="26"/>
+                    <rect key="frame" x="87" y="36" width="294" height="25"/>
                     <constraints>
                         <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="200" id="dHX-8C-lyL"/>
                     </constraints>

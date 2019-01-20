@@ -1107,6 +1107,10 @@
 		CFD727381E42E3E300603077 /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CFDB1DA2250C00992B84 /* libVFS.dylib */; };
 		CFD727391E42E3EE00603077 /* libRoutedIO.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */; };
 		CFD7273A1E42E41300603077 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
+		CFD799EF21F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
+		CFD799F021F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
+		CFD799F121F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
+		CFD799F221F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
 		CFD8CD3B1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD391E78F22000E4DC53 /* FavoritesWindowController.mm */; };
 		CFD8CD3C1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD391E78F22000E4DC53 /* FavoritesWindowController.mm */; };
 		CFD8CD3D1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD391E78F22000E4DC53 /* FavoritesWindowController.mm */; };
@@ -2078,6 +2082,8 @@
 		CFD6DD151D6C229F006B94C2 /* VFSListWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = VFSListWindowController.mm; path = NimbleCommander/GeneralUI/VFSListWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CFD6DD231D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindowFilePanelsStateToolbarDelegate.h; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.h; sourceTree = SOURCE_ROOT; };
 		CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowFilePanelsStateToolbarDelegate.mm; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.mm; sourceTree = SOURCE_ROOT; };
+		CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "AppDelegate+ViewerCreation.mm"; path = "NimbleCommander/Bootstrap/AppDelegate+ViewerCreation.mm"; sourceTree = "<group>"; };
+		CFD799EE21F48F140043A26D /* AppDelegate+ViewerCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+ViewerCreation.h"; path = "NimbleCommander/Bootstrap/AppDelegate+ViewerCreation.h"; sourceTree = "<group>"; };
 		CFD83AD81A6D62CC002EE49B /* ru */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFD8CD381E78F22000E4DC53 /* FavoritesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavoritesWindowController.h; path = NimbleCommander/States/FilePanels/FavoritesWindowController.h; sourceTree = SOURCE_ROOT; };
 		CFD8CD391E78F22000E4DC53 /* FavoritesWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FavoritesWindowController.mm; path = NimbleCommander/States/FilePanels/FavoritesWindowController.mm; sourceTree = SOURCE_ROOT; };
@@ -2936,6 +2942,8 @@
 				CFA1716220196CB400F507D5 /* AppDelegate+MainWindowCreation.mm */,
 				CFDAC2F11DFD16540039A104 /* AppDelegate+Migration.h */,
 				CFDAC2F21DFD16540039A104 /* AppDelegate+Migration.mm */,
+				CFD799EE21F48F140043A26D /* AppDelegate+ViewerCreation.h */,
+				CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */,
 				CFDAC2391DFBDEBA0039A104 /* AppDelegateCPP.h */,
 				CFDAC23A1DFBDEBA0039A104 /* AppDelegateCPP.mm */,
 				CFDAC2341DFBDE560039A104 /* Application.h */,
@@ -4100,6 +4108,7 @@
 				CFFA951A1F45A3400035E606 /* ConfigWiring.mm in Sources */,
 				CFD726CF1E42E2A900603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */,
+				CFD799F121F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */,
 				CF3B7F79202163D400BF2090 /* QuickSearch.mm in Sources */,
 				CF56BEFA1D5C26AF00A08D2B /* InternalViewerController.mm in Sources */,
 				CFA6C86D20159C7100CD7681 /* PanelControllerPersistency.mm in Sources */,
@@ -4319,6 +4328,7 @@
 				CFD8CD3C1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
 				CFD726511E42E12500603077 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
 				CFD8CDD71E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
+				CFD799EF21F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */,
 				CF818B4B1EA0610C00BC28E6 /* DefaultAction.mm in Sources */,
 				CFD726181E42E09100603077 /* CocoaAppearanceManager.mm in Sources */,
 				CFD726481E42E11300603077 /* SandboxManager.mm in Sources */,
@@ -4552,6 +4562,7 @@
 				CFD8CD5B1E7A80D600E4DC53 /* FavoritesMenuDelegate.mm in Sources */,
 				CF818B741EA0830400BC28E6 /* CopyToPasteboard.mm in Sources */,
 				CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
+				CFD799F021F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */,
 				CFDAC2EE1DFD152C0039A104 /* FilePanelOverlappedTerminal.mm in Sources */,
 				CF56BEFE1D5C3CBB00A08D2B /* InternalViewerHistory.mm in Sources */,
 				CFD3CB1D1DA4C888006DA143 /* PanelBriefView.mm in Sources */,
@@ -4785,6 +4796,7 @@
 				CF818B651EA0610E00BC28E6 /* ToggleSort.mm in Sources */,
 				CFD727171E42E32400603077 /* ToolsMenuDelegate.mm in Sources */,
 				CFA1715E20174CA900F507D5 /* LocationFormatter.mm in Sources */,
+				CFD799F221F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */,
 				CF90C0BF1EC171FD0056E3B8 /* PanelDataFilter.mm in Sources */,
 				CFD726791E42E20200603077 /* PanelController.mm in Sources */,
 				CF46C24620317FEE00A91E2F /* ServicesHandler.mm in Sources */,

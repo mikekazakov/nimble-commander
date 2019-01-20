@@ -31,6 +31,7 @@
 }
 
 - (id)initWithFrame:(NSRect)_frame_rect
+      viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
 {
     dispatch_assert_main_queue();
     if( self = [super initWithFrame:_frame_rect] ) {
@@ -39,11 +40,10 @@
         NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nil];
         [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
 
-        auto viewer = [[BigFileView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
+        auto viewer = _viewer_factory(NSMakeRect(0, 0, 100, 100));
         viewer.translatesAutoresizingMaskIntoConstraints = false;
         [self addSubview:viewer];
         self.embeddedFileView = viewer;
-        
         
         const auto views = NSDictionaryOfVariableBindings(viewer);
         const auto constraints = {

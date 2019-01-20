@@ -15,6 +15,7 @@
 #include "MainWindowController.h"
 #include "MainWindow.h"
 #include "../Bootstrap/AppDelegate.h"
+#include "../Bootstrap/AppDelegate+ViewerCreation.h"
 #include "FilePanels/MainWindowFilePanelState.h"
 #include "FilePanels/PanelController.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
@@ -331,7 +332,11 @@ static int CountMainWindows()
             if( !m_Viewer )
             dispatch_sync(dispatch_get_main_queue(),[&]{
                 auto rc = NSMakeRect(0, 0, 100, 100);
-                m_Viewer = [[MainWindowInternalViewerState alloc] initWithFrame:rc];
+                auto viewer_factory = [](NSRect rc){
+                    return [NCAppDelegate.me makeViewerWithFrame:rc];
+                };
+                m_Viewer = [[MainWindowInternalViewerState alloc] initWithFrame:rc
+                                                                  viewerFactory:viewer_factory];
             });
             if( [m_Viewer openFile:_filepath atVFS:_host] ) {
                 dispatch_to_main_queue([=]{
@@ -350,8 +355,13 @@ static int CountMainWindows()
             else {
                 // need to create a new one
                 dispatch_sync(dispatch_get_main_queue(),[&]{
-                    window = [[InternalViewerWindowController alloc] initWithFilepath:_filepath
-                                                                                   at:_host];
+                    auto viewer_factory = [](NSRect rc){
+                        return [NCAppDelegate.me makeViewerWithFrame:rc];
+                    };
+                    window = [[InternalViewerWindowController alloc]
+                              initWithFilepath:_filepath
+                              at:_host
+                              viewerFactory:viewer_factory];
                 });
                 if( [window performBackgrounOpening] ) {
                     dispatch_to_main_queue([=]{

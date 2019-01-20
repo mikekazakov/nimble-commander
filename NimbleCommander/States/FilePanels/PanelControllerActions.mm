@@ -46,7 +46,8 @@ PanelActionsMap BuildPanelActionsMap
     (NetworkConnectionsManager& _net_mgr,
      utility::NativeFSManager& _native_fs_mgr,
      FileOpener &_file_opener,
-     NCPanelOpenWithMenuDelegate *_open_with_menu_delegate)
+     NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
+     std::function<BigFileView*(NSRect)> _make_viewer)
 {
     PanelActionsMap m;
     auto add = [&](SEL _sel, actions::PanelAction *_action) {
@@ -62,7 +63,7 @@ PanelActionsMap BuildPanelActionsMap
     add(@selector(OnOpen:),
         new Enter{has_archive_support, *m[@selector(OnOpenNatively:)]} );
     add( @selector(onAlwaysOpenFileWith:),           new AlwaysOpenFileWithSubmenu{_open_with_menu_delegate});
-    add( @selector(onMainMenuPerformFindAction:),    new FindFiles);
+    add( @selector(onMainMenuPerformFindAction:),    new FindFiles{_make_viewer});
     add( @selector(OnSpotlightSearch:),              new SpotlightSearch);
     add( @selector(OnDuplicate:),                    new Duplicate);
     add( @selector(OnAddToFavorites:),               new AddToFavorites);

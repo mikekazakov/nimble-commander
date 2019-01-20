@@ -10,9 +10,6 @@
 #include "InternalViewerHistory.h"
 #include <Habanero/SerialQueue.h>
 
-// TEMP dependency to get temp file storage
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
-
 using namespace std::literals;
 
 static const auto g_ConfigRespectComAppleTextEncoding   = "viewer.respectComAppleTextEncoding";
@@ -339,7 +336,6 @@ static int InvertBitFlag( int _value, int _flag )
         return;
     
     m_View = view;
-    [m_View setTempStorage:NCAppDelegate.me.temporaryFileStorage];
 }
 
 - (void) setSearchField:(NSSearchField *)searchField

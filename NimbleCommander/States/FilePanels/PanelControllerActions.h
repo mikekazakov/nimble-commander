@@ -7,6 +7,7 @@
 
 class NetworkConnectionsManager;
 @class NCPanelOpenWithMenuDelegate;
+@class BigFileView;
 namespace nc::panel {
 class FileOpener;
 
@@ -15,6 +16,7 @@ PanelActionsMap BuildPanelActionsMap
     (NetworkConnectionsManager& _net_mgr,
      utility::NativeFSManager& _native_fs_mgr,
      FileOpener &_file_opener,
-     NCPanelOpenWithMenuDelegate *_open_with_menu_delegate);
+     NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
+     std::function<BigFileView*(NSRect)> _make_viewer);
     
 }

@@ -47,8 +47,10 @@ using nc::vfs::easy::CopyFileToTempStorage;
 }
 
 - (id)initWithFrame:(NSRect)frame
+        tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
 {
     if (self = [super initWithFrame:frame]) {
+        m_TempFileStorage = &_temp_storage;
         [self commonInit];
     }
     
@@ -99,11 +101,6 @@ using nc::vfs::easy::CopyFileToTempStorage;
 {
     [self unbind:@"verticalPositionPercentage"];
     [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-
-- (void) setTempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
-{
-    m_TempFileStorage = &_temp_storage;
 }
 
 - (void)layoutVerticalScroll

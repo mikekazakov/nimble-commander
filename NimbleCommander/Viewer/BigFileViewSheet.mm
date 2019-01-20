@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "BigFileViewSheet.h"
@@ -8,8 +8,8 @@
 
 @interface BigFileViewSheet ()
 
-@property (nonatomic) IBOutlet BigFileView *view;
-
+@property (nonatomic) BigFileView *view;
+@property (nonatomic) IBOutlet NSView *viewPlaceholder;
 @property (nonatomic) IBOutlet NSPopUpButton *mode;
 @property (nonatomic) IBOutlet NSTextField *fileSize;
 @property (nonatomic) IBOutlet NSButton *filePos;
@@ -35,6 +35,7 @@
 
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
+          viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
 {
     assert( dispatch_is_main_queue() );
     self = [super init];
@@ -45,6 +46,8 @@
         m_Controller = [[InternalViewerController alloc] init];
         [m_Controller setFile:path at:vfs];
         
+        self.view = _viewer_factory( NSMakeRect(0, 0, 100, 100) );
+        self.view.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }
@@ -65,7 +68,19 @@
 {
     [super windowDidLoad];
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
-
+    
+    [self.viewPlaceholder addSubview:self.view];
+    auto viewer = self.view;
+    const auto views = NSDictionaryOfVariableBindings(viewer);
+    const auto constraints = { @"V:|-(==0)-[viewer]-(==0)-|", @"|-(==0)-[viewer]-(==0)-|" };
+    for( auto constraint: constraints ) {
+        auto constaints = [NSLayoutConstraint constraintsWithVisualFormat:constraint
+                                                                  options:0
+                                                                  metrics:nil
+                                                                    views:views];
+        [self.viewPlaceholder addConstraints:constaints];
+    }
+    
     self.view.hasBorder = true;
     self.view.wantsLayer = true; // to reduce side-effects of overdrawing by scrolling with touchpad
 

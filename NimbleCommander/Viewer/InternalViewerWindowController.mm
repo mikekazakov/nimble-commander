@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../Bootstrap/AppDelegate.h"
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
@@ -21,8 +21,8 @@ using namespace std::literals;
 @end
 
 @interface InternalViewerWindowController ()
-
-@property (nonatomic) IBOutlet BigFileView *viewerView;
+@property (nonatomic) IBOutlet NSView *viewerPlaceholder;
+@property (nonatomic) BigFileView *viewerView;
 @property (nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
 @property (nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
 @property (nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
@@ -44,6 +44,7 @@ using namespace std::literals;
 
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
+          viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if( self ) {
@@ -52,6 +53,9 @@ using namespace std::literals;
         
         NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nil];
         [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
+        
+        self.viewerView = _viewer_factory(NSMakeRect(0, 0, 100, 100));
+        self.viewerView.translatesAutoresizingMaskIntoConstraints = false;
     }
     return self;
 }
@@ -60,6 +64,19 @@ using namespace std::literals;
 {
     [super windowDidLoad];
     CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    
+    [self.viewerPlaceholder addSubview:self.viewerView];
+    auto viewer = self.viewerView;
+    const auto views = NSDictionaryOfVariableBindings(viewer);
+    const auto constraints = { @"V:|-(==0)-[viewer]-(==0)-|", @"|-(==0)-[viewer]-(==0)-|" };
+    for( auto constraint: constraints ) {
+        auto constaints = [NSLayoutConstraint constraintsWithVisualFormat:constraint
+                                                                  options:0
+                                                                  metrics:nil
+                                                                    views:views];
+        [self.viewerPlaceholder addConstraints:constaints];
+    }
+    
     self.window.toolbar = self.internalViewerToolbar;
     self.window.toolbar.visible = true;
     m_Controller.view = self.viewerView;

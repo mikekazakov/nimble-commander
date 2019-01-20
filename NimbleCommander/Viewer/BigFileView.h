@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/Encodings.h>
@@ -19,9 +19,9 @@ enum class BigFileViewModes : int
 @interface BigFileView : NSView
 
 - (instancetype) init NS_UNAVAILABLE;
-- (instancetype) initWithFrame:(NSRect)frame;
-
-- (void) setTempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage;
+- (instancetype) initWithFrame:(NSRect)frame NS_UNAVAILABLE;
+- (instancetype) initWithFrame:(NSRect)frame
+                   tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage;
 
 - (void) SetFile:(nc::vfs::FileWindow*) _file;
 - (void) SetKnownFile:(nc::vfs::FileWindow*) _file

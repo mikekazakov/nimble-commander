@@ -7,7 +7,8 @@
 - (BigFileView*) makeViewerWithFrame:(NSRect)frame
 {
     return [[BigFileView alloc] initWithFrame:frame
-                                  tempStorage:self.temporaryFileStorage];
+                                  tempStorage:self.temporaryFileStorage
+                                       config:self.globalConfig];
 }
 
 @end

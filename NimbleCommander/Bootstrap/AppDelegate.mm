@@ -732,6 +732,18 @@ static NCAppDelegate *g_Me = nil;
     return global_config_bridge;
 }
 
+- (nc::config::Config&) globalConfig
+{
+    assert(g_Config);
+    return *g_Config;
+}
+
+- (nc::config::Config&) stateConfig
+{
+    assert(g_State);
+    return *g_State;
+}
+
 - (ExternalToolsStorage&) externalTools
 {
     static auto i = new ExternalToolsStorage(g_ConfigExternalToolsList);

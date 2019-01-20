@@ -8,6 +8,9 @@
 namespace nc::utility {
     class TemporaryFileStorage;
 }
+namespace nc::config {
+    class Config;
+}
 
 enum class BigFileViewModes : int
 { // changing this values may cause stored history corruption
@@ -21,7 +24,8 @@ enum class BigFileViewModes : int
 - (instancetype) init NS_UNAVAILABLE;
 - (instancetype) initWithFrame:(NSRect)frame NS_UNAVAILABLE;
 - (instancetype) initWithFrame:(NSRect)frame
-                   tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage;
+                   tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
+                        config:(const nc::config::Config&)_config;
 
 - (void) SetFile:(nc::vfs::FileWindow*) _file;
 - (void) SetKnownFile:(nc::vfs::FileWindow*) _file

@@ -15,6 +15,9 @@ class ExternalEditorsStorage;
 class NetworkConnectionsManager;
 
 namespace nc {
+    namespace config {
+        class Config;
+    }
     
     namespace utility {
         class NativeFSManager;
@@ -83,6 +86,12 @@ namespace nc {
 @property (nonatomic, readonly) const std::string& stateDirectory;
 
 @property (nonatomic, readonly) NCConfigObjCBridge *config;
+
+@property (nonatomic, readonly)
+    nc::config::Config& globalConfig;
+
+@property (nonatomic, readonly)
+    nc::config::Config& stateConfig;
 
 @property (nonatomic, readonly) ExternalToolsStorage& externalTools;
 

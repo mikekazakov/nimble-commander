@@ -3,7 +3,7 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
-#include "../Bootstrap/Config.h"
+#include <Config/Config.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
@@ -44,13 +44,16 @@ using nc::vfs::easy::CopyFileToTempStorage;
                                                  // updated when windows moves, regarding current selection in bytes
     ThemesManager::ObservationTicket    m_ThemeObservation;
     nc::utility::TemporaryFileStorage *m_TempFileStorage;
+    const nc::config::Config *m_Config;
 }
 
 - (id)initWithFrame:(NSRect)frame
         tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
+             config:(const nc::config::Config&)_config
 {
     if (self = [super initWithFrame:frame]) {
         m_TempFileStorage = &_temp_storage;
+        m_Config = &_config;
         [self commonInit];
     }
     
@@ -176,13 +179,13 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 - (void) SetFile:(nc::vfs::FileWindow*) _file
 {
-    int encoding = encodings::EncodingFromName(GlobalConfig().GetString(g_ConfigDefaultEncoding).c_str());
+    int encoding = encodings::EncodingFromName(m_Config->GetString(g_ConfigDefaultEncoding).c_str());
     if(encoding == encodings::ENCODING_INVALID)
         encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN; // this should not happen, but just to be sure
 
     StaticDataBlockAnalysis stat;
     DoStaticDataBlockAnalysis(_file->Window(), _file->WindowSize(), &stat);
-    if( GlobalConfig().GetBool(g_ConfigAutoDetectEncoding) ) {
+    if( m_Config->GetBool(g_ConfigAutoDetectEncoding) ) {
         if(stat.likely_utf16_le)        encoding = encodings::ENCODING_UTF16LE;
         else if(stat.likely_utf16_be)   encoding = encodings::ENCODING_UTF16BE;
         else if(stat.can_be_utf8)       encoding = encodings::ENCODING_UTF8;

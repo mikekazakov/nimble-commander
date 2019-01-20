@@ -4,15 +4,14 @@
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
 #include <Config/Config.h>
-#include <NimbleCommander/Bootstrap/AppDelegate.h>
-#include <NimbleCommander/Core/Theming/Theme.h>
-#include <NimbleCommander/Core/Theming/ThemesManager.h>
 #include "BigFileViewText.h"
 #include "BigFileViewHex.h"
 #include "InternalViewerViewPreviewMode.h"
 #include "BigFileViewDataBackend.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/TemporaryFileStorage.h>
+#include <VFS/VFS.h>
+#include "Theme.h"
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";
@@ -42,18 +41,20 @@ using nc::vfs::easy::CopyFileToTempStorage;
                                                  // updated when windows moves, regarding current selection in bytes
     CFRange         m_SelectionInWindowUnichars; // in UniChars, whithin current window position,
                                                  // updated when windows moves, regarding current selection in bytes
-    ThemesManager::ObservationTicket    m_ThemeObservation;
     nc::utility::TemporaryFileStorage *m_TempFileStorage;
     const nc::config::Config *m_Config;
+    std::unique_ptr<nc::viewer::Theme> m_Theme;
 }
 
 - (id)initWithFrame:(NSRect)frame
         tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
              config:(const nc::config::Config&)_config
+              theme:(std::unique_ptr<nc::viewer::Theme>)_theme
 {
     if (self = [super initWithFrame:frame]) {
         m_TempFileStorage = &_temp_storage;
         m_Config = &_config;
+        m_Theme = std::move(_theme);
         [self commonInit];
     }
     
@@ -93,11 +94,10 @@ using nc::vfs::easy::CopyFileToTempStorage;
     [self bind:@"verticalPositionPercentage" toObject:m_VerticalScroller withKeyPath:@"doubleValue" options:nil];    
     
     __weak BigFileView* weak_self = self;
-    m_ThemeObservation = NCAppDelegate.me.themesManager.ObserveChanges(
-        ThemesManager::Notifications::Viewer, [weak_self]{
-            if( auto strong_self = weak_self )
-                [strong_self reloadAppearance];
-        });
+    m_Theme->ObserveChanges([weak_self] {
+        if( auto strong_self = weak_self )
+            [strong_self reloadAppearance];
+    });
 }
 
 - (void) dealloc
@@ -325,19 +325,19 @@ using nc::vfs::easy::CopyFileToTempStorage;
 }
 
 - (CTFontRef) TextFont{
-    return (__bridge CTFontRef)CurrentTheme().ViewerFont();
+    return (__bridge CTFontRef)m_Theme->Font();
 }
 
 - (CGColorRef) TextForegroundColor{
-    return CurrentTheme().ViewerTextColor().CGColor;
+    return m_Theme->TextColor().CGColor;
 }
 
 - (CGColorRef) SelectionBkFillColor{
-  return CurrentTheme().ViewerSelectionColor().CGColor;
+  return m_Theme->ViewerSelectionColor().CGColor;
 }
 
 - (CGColorRef) BackgroundFillColor{
-    return CurrentTheme().ViewerBackgroundColor().CGColor;
+    return m_Theme->ViewerBackgroundColor().CGColor;
 }
 
 - (void) RequestWindowMovementAt: (uint64_t) _pos

@@ -11,6 +11,9 @@ namespace nc::utility {
 namespace nc::config {
     class Config;
 }
+namespace nc::viewer {
+    class Theme;
+}
 
 enum class BigFileViewModes : int
 { // changing this values may cause stored history corruption
@@ -25,7 +28,8 @@ enum class BigFileViewModes : int
 - (instancetype) initWithFrame:(NSRect)frame NS_UNAVAILABLE;
 - (instancetype) initWithFrame:(NSRect)frame
                    tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
-                        config:(const nc::config::Config&)_config;
+                        config:(const nc::config::Config&)_config
+                         theme:(std::unique_ptr<nc::viewer::Theme>)_theme;
 
 - (void) SetFile:(nc::vfs::FileWindow*) _file;
 - (void) SetKnownFile:(nc::vfs::FileWindow*) _file

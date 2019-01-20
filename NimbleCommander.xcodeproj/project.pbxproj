@@ -1111,6 +1111,14 @@
 		CFD799F021F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
 		CFD799F121F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
 		CFD799F221F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */; };
+		CFD799F521F5095A0043A26D /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799F421F5095A0043A26D /* Theme.mm */; };
+		CFD799F621F5095A0043A26D /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799F421F5095A0043A26D /* Theme.mm */; };
+		CFD799F721F5095A0043A26D /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799F421F5095A0043A26D /* Theme.mm */; };
+		CFD799F821F5095A0043A26D /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799F421F5095A0043A26D /* Theme.mm */; };
+		CFD799FB21F50B010043A26D /* ThemeAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799FA21F50B010043A26D /* ThemeAdaptor.mm */; };
+		CFD799FC21F50B010043A26D /* ThemeAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799FA21F50B010043A26D /* ThemeAdaptor.mm */; };
+		CFD799FD21F50B010043A26D /* ThemeAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799FA21F50B010043A26D /* ThemeAdaptor.mm */; };
+		CFD799FE21F50B010043A26D /* ThemeAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD799FA21F50B010043A26D /* ThemeAdaptor.mm */; };
 		CFD8CD3B1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD391E78F22000E4DC53 /* FavoritesWindowController.mm */; };
 		CFD8CD3C1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD391E78F22000E4DC53 /* FavoritesWindowController.mm */; };
 		CFD8CD3D1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD8CD391E78F22000E4DC53 /* FavoritesWindowController.mm */; };
@@ -2084,6 +2092,10 @@
 		CFD6DD241D79181C006B94C2 /* MainWindowFilePanelsStateToolbarDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MainWindowFilePanelsStateToolbarDelegate.mm; path = NimbleCommander/States/FilePanels/MainWindowFilePanelsStateToolbarDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CFD799ED21F48F140043A26D /* AppDelegate+ViewerCreation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "AppDelegate+ViewerCreation.mm"; path = "NimbleCommander/Bootstrap/AppDelegate+ViewerCreation.mm"; sourceTree = "<group>"; };
 		CFD799EE21F48F140043A26D /* AppDelegate+ViewerCreation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "AppDelegate+ViewerCreation.h"; path = "NimbleCommander/Bootstrap/AppDelegate+ViewerCreation.h"; sourceTree = "<group>"; };
+		CFD799F321F5095A0043A26D /* Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Theme.h; path = NimbleCommander/Viewer/Theme.h; sourceTree = "<group>"; };
+		CFD799F421F5095A0043A26D /* Theme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Theme.mm; path = NimbleCommander/Viewer/Theme.mm; sourceTree = "<group>"; };
+		CFD799F921F50B010043A26D /* ThemeAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThemeAdaptor.h; path = NimbleCommander/Viewer/ThemeAdaptor.h; sourceTree = "<group>"; };
+		CFD799FA21F50B010043A26D /* ThemeAdaptor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ThemeAdaptor.mm; path = NimbleCommander/Viewer/ThemeAdaptor.mm; sourceTree = "<group>"; };
 		CFD83AD81A6D62CC002EE49B /* ru */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Preferences.strings; sourceTree = "<group>"; };
 		CFD8CD381E78F22000E4DC53 /* FavoritesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavoritesWindowController.h; path = NimbleCommander/States/FilePanels/FavoritesWindowController.h; sourceTree = SOURCE_ROOT; };
 		CFD8CD391E78F22000E4DC53 /* FavoritesWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FavoritesWindowController.mm; path = NimbleCommander/States/FilePanels/FavoritesWindowController.mm; sourceTree = SOURCE_ROOT; };
@@ -2674,6 +2686,10 @@
 				CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */,
 				CF1E3D181D5AD3C600609ADB /* MainWindowInternalViewerState.h */,
 				CF1E3D191D5AD3C600609ADB /* MainWindowInternalViewerState.mm */,
+				CFD799F321F5095A0043A26D /* Theme.h */,
+				CFD799F421F5095A0043A26D /* Theme.mm */,
+				CFD799F921F50B010043A26D /* ThemeAdaptor.h */,
+				CFD799FA21F50B010043A26D /* ThemeAdaptor.mm */,
 			);
 			name = Viewer;
 			sourceTree = "<group>";
@@ -4068,6 +4084,7 @@
 				CF9F4B071ECC919A00E0AF82 /* OIDRedirectHTTPHandler+FixedPort.mm in Sources */,
 				CFD726B71E42E28200603077 /* PanelViewFooterVolumeInfoFetcher.mm in Sources */,
 				CFD7269E1E42E23A00603077 /* PanelDataStatistics.cpp in Sources */,
+				CFD799F721F5095A0043A26D /* Theme.mm in Sources */,
 				CF20DF481FC670130074ABB8 /* ShowTerminal.mm in Sources */,
 				CF2F43581EAF395900AA031A /* NetworkConnectionsManager.mm in Sources */,
 				CF4E56B11D5068E700452912 /* PreferencesWindowHotkeysTab.mm in Sources */,
@@ -4157,6 +4174,7 @@
 				CF04DDFD1E2F100C0047B1F9 /* PreferencesWindowThemesControls.mm in Sources */,
 				CF818B501EA0610D00BC28E6 /* Select.mm in Sources */,
 				CF876D3E1D51E0B0009C0CCE /* BigFileView.mm in Sources */,
+				CFD799FD21F50B010043A26D /* ThemeAdaptor.mm in Sources */,
 				CF624BF221A6B7E100B3A595 /* TrialWindowController.mm in Sources */,
 				CF818B591EA0610D00BC28E6 /* ShowGoToPopup.mm in Sources */,
 				CFA9DD9E1FD6694F0099DD91 /* Interactions.mm in Sources */,
@@ -4430,8 +4448,10 @@
 				CF818B4E1EA0610C00BC28E6 /* ShowGoToPopup.mm in Sources */,
 				CF6237201EB4443F00152B2B /* PanelDataEntriesComparator.mm in Sources */,
 				CF36DBF11F6C18DB004A018E /* DragSender.mm in Sources */,
+				CFD799FB21F50B010043A26D /* ThemeAdaptor.mm in Sources */,
 				CF818B481EA0610C00BC28E6 /* ToggleLayout.mm in Sources */,
 				CF818B681EA0612F00BC28E6 /* PanelDataSelection.mm in Sources */,
+				CFD799F521F5095A0043A26D /* Theme.mm in Sources */,
 				CFD7269C1E42E23600603077 /* PanelDataSortMode.mm in Sources */,
 				CFD7265D1E42E1B800603077 /* MainWindowController.mm in Sources */,
 				CFBA63B01FC1A4FA00077682 /* CopyFile.mm in Sources */,
@@ -4664,8 +4684,10 @@
 				CF5FE80E1E16461600CD83B4 /* PanelListViewTableHeaderView.mm in Sources */,
 				CF5FE7D51E120A4900CD83B4 /* CopyFilePaths.mm in Sources */,
 				CFDAC2FC1DFD1C120039A104 /* TrialWindowController.mm in Sources */,
+				CFD799FC21F50B010043A26D /* ThemeAdaptor.mm in Sources */,
 				CF04DDE61E2DBE9D0047B1F9 /* PreferencesWindowThemesTab.mm in Sources */,
 				CF4840CA1927C8E10066A235 /* FTPConnectionSheetController.mm in Sources */,
+				CFD799F621F5095A0043A26D /* Theme.mm in Sources */,
 				CFD8CD5E1E7E390500E4DC53 /* AddToFavorites.mm in Sources */,
 				CF04DE061E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CF4E56441D5064FE00452912 /* PreferencesWindowTerminalTab.mm in Sources */,
@@ -4898,8 +4920,10 @@
 				CFD726F61E42E2E400603077 /* PanelListViewTableHeaderView.mm in Sources */,
 				CFD8CDCD1E8CE65600E4DC53 /* OpenXAttr.mm in Sources */,
 				CF876D381D51E0AF009C0CCE /* BigFileView.mm in Sources */,
+				CFD799FE21F50B010043A26D /* ThemeAdaptor.mm in Sources */,
 				CFD726191E42E09300603077 /* Theme.mm in Sources */,
 				CFD726DA1E42E2BD00603077 /* Layout.mm in Sources */,
+				CFD799F821F5095A0043A26D /* Theme.mm in Sources */,
 				CF5E9A541FCBF5BD005608F5 /* ShowQuickLook.mm in Sources */,
 				CF6BF84121944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
 				CF62371E1EB4443E00152B2B /* PanelDataEntriesComparator.mm in Sources */,

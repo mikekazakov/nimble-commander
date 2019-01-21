@@ -1,11 +1,10 @@
 // Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include "Theme.h"
+#include <Viewer/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
 
 namespace nc::viewer {
-    
     
 class ThemeAdaptor : public Theme
 {

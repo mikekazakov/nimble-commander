@@ -1,7 +1,7 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include "BigFileView.h"
+#include <Viewer/BigFileView.h>
 
 // Objects of this class own instances of BigFileView
 @interface InternalViewerController : NSResponder<NSSearchFieldDelegate>

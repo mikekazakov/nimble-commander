@@ -3,7 +3,7 @@
 
 #include <Utility/SheetController.h>
 #include <VFS/VFS.h>
-#include "BigFileView.h"
+#include <Viewer/BigFileView.h>
 
 // make sure to destroy instances of BigFileViewSheet in main queue!
 @interface BigFileViewSheet : SheetController

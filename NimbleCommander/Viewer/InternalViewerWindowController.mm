@@ -2,7 +2,7 @@
 #include "../Bootstrap/AppDelegate.h"
 #include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include "BigFileView.h"
+#include <Viewer/BigFileView.h>
 #include "InternalViewerController.h"
 #include "InternalViewerWindowController.h"
 #include <Habanero/dispatch_cpp.h>

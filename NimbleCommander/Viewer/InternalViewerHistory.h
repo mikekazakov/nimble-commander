@@ -2,7 +2,7 @@
 #pragma once
 
 #include <Config/Config.h>
-#include "BigFileView.h"
+#include <Viewer/BigFileView.h>
 #include <Habanero/spinlock.h>
 #include <deque>
 

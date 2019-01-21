@@ -3,7 +3,7 @@
 
 #include <VFS/VFS.h>
 #include "../MainWindowStateProtocol.h"
-#include "../../Viewer/BigFileView.h"
+#include <Viewer/BigFileView.h>
 #include "../../Viewer/InternalViewerToolbarProtocol.h"
 
 @interface MainWindowInternalViewerState : NSView<NCMainWindowState>

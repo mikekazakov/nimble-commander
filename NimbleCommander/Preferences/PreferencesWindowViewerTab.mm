@@ -1,8 +1,8 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowViewerTab.h"
 #include <Utility/FontExtras.h>
 #include "../Bootstrap/ActivationManager.h"
-#include "../Viewer/InternalViewerHistory.h"
+#include "../Viewer/History.h"
 #include "Utility/Encodings.h"
 #include "../Bootstrap/Config.h"
 #include <Utility/ObjCpp.h>
@@ -118,7 +118,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if([alert runModal] == NSAlertFirstButtonReturn)
-        InternalViewerHistory::Instance().ClearHistory();
+        nc::viewer::History::Instance().ClearHistory();
 }
 
 @end

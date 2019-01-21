@@ -7,7 +7,7 @@
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-#include "InternalViewerHistory.h"
+#include "History.h"
 #include <Habanero/SerialQueue.h>
 
 using namespace std::literals;
@@ -276,8 +276,8 @@ static int InvertBitFlag( int _value, int _flag )
     assert(self.view != nil );
     
     // try to load a saved info if any
-    if( auto info = InternalViewerHistory::Instance().EntryByPath(m_GlobalFilePath) ) {
-        auto options = InternalViewerHistory::Instance().Options();
+    if( auto info = nc::viewer::History::Instance().EntryByPath(m_GlobalFilePath) ) {
+        auto options = nc::viewer::History::Instance().Options();
         if( options.encoding && options.mode ) {
             [m_View SetKnownFile:m_ViewerFileWindow.get() encoding:info->encoding mode:info->view_mode];
         }
@@ -304,21 +304,21 @@ static int InvertBitFlag( int _value, int _flag )
 
 - (void) saveFileState
 {
-    if( !InternalViewerHistory::Instance().Enabled() )
+    if( !nc::viewer::History::Instance().Enabled() )
         return;
     
     if( m_GlobalFilePath.empty() ) // are we actually loaded?
         return;
     
     // do our state persistance stuff
-    InternalViewerHistory::Entry info;
+    nc::viewer::History::Entry info;
     info.path = m_GlobalFilePath;
     info.position = m_View.verticalPositionInBytes;
     info.wrapping = m_View.wordWrap;
     info.view_mode = m_View.mode;
     info.encoding = m_View.encoding;
     info.selection = m_View.selectionInFile;
-    InternalViewerHistory::Instance().AddEntry( std::move(info) );
+    nc::viewer::History::Instance().AddEntry( std::move(info) );
 }
 
 + (unsigned) fileWindowSize

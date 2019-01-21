@@ -316,10 +316,10 @@
 		CF56BEF61D5C26AE00A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
 		CF56BEFA1D5C26AF00A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
 		CF56BEFB1D5C26B000A08D2B /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */; };
-		CF56BEFE1D5C3CBB00A08D2B /* InternalViewerHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */; };
-		CF56BF041D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */; };
-		CF56BF051D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */; };
-		CF56BF061D5C8F2500A08D2B /* InternalViewerHistory.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */; };
+		CF56BEFE1D5C3CBB00A08D2B /* History.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* History.mm */; };
+		CF56BF041D5C8F2400A08D2B /* History.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* History.mm */; };
+		CF56BF051D5C8F2400A08D2B /* History.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* History.mm */; };
+		CF56BF061D5C8F2500A08D2B /* History.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56BEFD1D5C3CBB00A08D2B /* History.mm */; };
 		CF56BF541D68061600A08D2B /* VFSInstanceManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */; };
 		CF56BF551D68129700A08D2B /* VFSInstanceManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */; };
 		CF56BF561D68129800A08D2B /* VFSInstanceManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */; };
@@ -1762,8 +1762,8 @@
 		CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstanceManager.cpp; path = NimbleCommander/Core/VFSInstanceManager.cpp; sourceTree = SOURCE_ROOT; };
 		CF51D11E1FD512A70026CC00 /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
-		CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerHistory.h; path = NimbleCommander/Viewer/InternalViewerHistory.h; sourceTree = SOURCE_ROOT; };
-		CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerHistory.mm; path = NimbleCommander/Viewer/InternalViewerHistory.mm; sourceTree = SOURCE_ROOT; };
+		CF56BEFC1D5C3CBB00A08D2B /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = History.h; path = NimbleCommander/Viewer/History.h; sourceTree = SOURCE_ROOT; };
+		CF56BEFD1D5C3CBB00A08D2B /* History.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = History.mm; path = NimbleCommander/Viewer/History.mm; sourceTree = SOURCE_ROOT; };
 		CF56BF521D68061600A08D2B /* VFSInstanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstanceManager.h; path = NimbleCommander/Core/VFSInstanceManager.h; sourceTree = SOURCE_ROOT; };
 		CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstanceManagerImpl.cpp; path = NimbleCommander/Core/VFSInstanceManagerImpl.cpp; sourceTree = SOURCE_ROOT; };
 		CF56C2B21DC1934C00F0DF0F /* PanelListViewNameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelListViewNameView.h; path = NimbleCommander/States/FilePanels/List/PanelListViewNameView.h; sourceTree = SOURCE_ROOT; };
@@ -2640,8 +2640,8 @@
 				CF876D4A1D530F46009C0CCE /* InternalViewerController.h */,
 				CF876D4B1D530F46009C0CCE /* InternalViewerController.mm */,
 				CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */,
-				CF56BEFC1D5C3CBB00A08D2B /* InternalViewerHistory.h */,
-				CF56BEFD1D5C3CBB00A08D2B /* InternalViewerHistory.mm */,
+				CF56BEFC1D5C3CBB00A08D2B /* History.h */,
+				CF56BEFD1D5C3CBB00A08D2B /* History.mm */,
 				CF8D0CF71D963E1000ADFF14 /* InternalViewerToolbar.xib */,
 				CF1E3D281D5AF7E000609ADB /* InternalViewerToolbarProtocol.h */,
 				CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */,
@@ -4088,7 +4088,7 @@
 				CF4D98A92028500400ECE06D /* PanelControllerActions.mm in Sources */,
 				CFFA95171F45A3180035E606 /* Dock.mm in Sources */,
 				CFD7261A1E42E09400603077 /* Theme.mm in Sources */,
-				CF56BF051D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */,
+				CF56BF051D5C8F2400A08D2B /* History.mm in Sources */,
 				CFBA63AF1FC1A4F900077682 /* CopyFile.mm in Sources */,
 				CFD726621E42E1DC00603077 /* ExternalEditorInfo.mm in Sources */,
 				CFD726081E42E07000603077 /* AppDelegateCPP.mm in Sources */,
@@ -4348,7 +4348,7 @@
 				CFD726E91E42E2D200603077 /* PanelListViewGeometry.mm in Sources */,
 				CF9F4AF71ECC8DAB00E0AF82 /* Compress.mm in Sources */,
 				CFA539991D433E2A00C562A7 /* ExternalToolParameterValueSheetController.mm in Sources */,
-				CF56BF061D5C8F2500A08D2B /* InternalViewerHistory.mm in Sources */,
+				CF56BF061D5C8F2500A08D2B /* History.mm in Sources */,
 				CFD726601E42E1D700603077 /* FilesDraggingSource.mm in Sources */,
 				CFD6DD181D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CF46C23620317FD700A91E2F /* ServicesHandler.mm in Sources */,
@@ -4554,7 +4554,7 @@
 				CFA3744019A8D9C50012D088 /* SelectionWithMaskPopupViewController.mm in Sources */,
 				CFD799F021F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */,
 				CFDAC2EE1DFD152C0039A104 /* FilePanelOverlappedTerminal.mm in Sources */,
-				CF56BEFE1D5C3CBB00A08D2B /* InternalViewerHistory.mm in Sources */,
+				CF56BEFE1D5C3CBB00A08D2B /* History.mm in Sources */,
 				CFD3CB1D1DA4C888006DA143 /* PanelBriefView.mm in Sources */,
 				CF2F43561EAF395900AA031A /* NetworkConnectionsManager.mm in Sources */,
 				CFD8CD3B1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
@@ -4827,7 +4827,7 @@
 				CFD726C81E42E2A100603077 /* PanelBriefView.mm in Sources */,
 				CFD726EA1E42E2D500603077 /* PanelListViewNameView.mm in Sources */,
 				CFD7264C1E42E11F00603077 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
-				CF56BF041D5C8F2400A08D2B /* InternalViewerHistory.mm in Sources */,
+				CF56BF041D5C8F2400A08D2B /* History.mm in Sources */,
 				CF36DBF51F6C195A004A018E /* DragReceiver.mm in Sources */,
 				CFD726ED1E42E2D900603077 /* PanelListViewRowView.mm in Sources */,
 				CFD726F91E42E2E800603077 /* PanelListViewTableView.mm in Sources */,

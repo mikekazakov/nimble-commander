@@ -1,5 +1,5 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "InternalViewerHistory.h"
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "History.h"
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 
@@ -11,7 +11,9 @@ static const auto g_ConfigSaveFilePosition      = "viewer.saveFilePosition";
 static const auto g_ConfigSaveFileWrapping      = "viewer.saveFileWrapping";
 static const auto g_ConfigSaveFileSelection     = "viewer.saveFileSelection";
 
-static nc::config::Value EntryToJSONObject( const InternalViewerHistory::Entry &_entry )
+namespace nc::viewer {
+
+static nc::config::Value EntryToJSONObject( const History::Entry &_entry )
 {
     using namespace nc::config;
     Value o(rapidjson::kObjectType);
@@ -25,7 +27,7 @@ static nc::config::Value EntryToJSONObject( const InternalViewerHistory::Entry &
     return o;
 }
 
-static std::optional<InternalViewerHistory::Entry>
+static std::optional<History::Entry>
     JSONObjectToEntry( const nc::config::Value &_object )
 {
     using namespace rapidjson;    
@@ -33,7 +35,7 @@ static std::optional<InternalViewerHistory::Entry>
     auto has_number = [&](const char *_key){ return _object.HasMember(_key) && _object[_key].IsNumber(); };
     auto has_bool   = [&](const char *_key){ return _object.HasMember(_key) && _object[_key].IsBool(); };
     
-    InternalViewerHistory::Entry e;
+    History::Entry e;
     
     if( _object.GetType() != kObjectType )
         return std::nullopt;
@@ -63,11 +65,15 @@ static std::optional<InternalViewerHistory::Entry>
     return e;
 }
 
-InternalViewerHistory::InternalViewerHistory( nc::config::Config &_state_config, const char *_config_path ):
+History::History(nc::config::Config &_global_config,
+                                             nc::config::Config &_state_config,
+                                             const char *_config_path ):
+    m_GlobalConfig(_global_config),
     m_StateConfig(_state_config),
-    m_StateConfigPath(_config_path),
-    m_Limit( std::max(0, std::min(GlobalConfig().GetInt(g_ConfigMaximumHistoryEntries), 4096)) )
+    m_StateConfigPath(_config_path)
 {
+    m_Limit = std::clamp(m_GlobalConfig.GetInt(g_ConfigMaximumHistoryEntries), 0, 4096);
+    
     // Wire up notification about application shutdown
     [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
                                                     object:nil
@@ -76,7 +82,7 @@ InternalViewerHistory::InternalViewerHistory( nc::config::Config &_state_config,
                                                     SaveToStateConfig();
                                                 }];
     LoadSaveOptions();
-    GlobalConfig().ObserveMany(m_ConfigObservations,
+    m_GlobalConfig.ObserveMany(m_ConfigObservations,
                                [=]{ LoadSaveOptions(); },
                                std::initializer_list<const char *>{
                                    g_ConfigSaveFileEnconding,
@@ -88,13 +94,13 @@ InternalViewerHistory::InternalViewerHistory( nc::config::Config &_state_config,
     LoadFromStateConfig();
 }
 
-InternalViewerHistory& InternalViewerHistory::Instance()
+History& History::Instance()
 {
-    static auto history = new InternalViewerHistory( StateConfig(), g_StatePath );
+    static auto history = new History( GlobalConfig(), StateConfig(), g_StatePath );
     return *history;
 }
 
-void InternalViewerHistory::AddEntry( Entry _entry )
+void History::AddEntry( Entry _entry )
 {
     LOCK_GUARD(m_HistoryLock) {
         auto it = find_if( begin(m_History), end(m_History), [&](auto &_i){
@@ -109,7 +115,7 @@ void InternalViewerHistory::AddEntry( Entry _entry )
     }
 }
 
-std::optional<InternalViewerHistory::Entry> InternalViewerHistory::
+std::optional<History::Entry> History::
     EntryByPath( const std::string &_path ) const
 {
     LOCK_GUARD(m_HistoryLock) {
@@ -122,27 +128,27 @@ std::optional<InternalViewerHistory::Entry> InternalViewerHistory::
     return std::nullopt;
 }
 
-void InternalViewerHistory::LoadSaveOptions()
+void History::LoadSaveOptions()
 {
-    m_Options.encoding    = GlobalConfig().GetBool(g_ConfigSaveFileEnconding);
-    m_Options.mode        = GlobalConfig().GetBool(g_ConfigSaveFileMode);
-    m_Options.position    = GlobalConfig().GetBool(g_ConfigSaveFilePosition);
-    m_Options.wrapping    = GlobalConfig().GetBool(g_ConfigSaveFileWrapping);
-    m_Options.selection   = GlobalConfig().GetBool(g_ConfigSaveFileSelection);
+    m_Options.encoding    = m_GlobalConfig.GetBool(g_ConfigSaveFileEnconding);
+    m_Options.mode        = m_GlobalConfig.GetBool(g_ConfigSaveFileMode);
+    m_Options.position    = m_GlobalConfig.GetBool(g_ConfigSaveFilePosition);
+    m_Options.wrapping    = m_GlobalConfig.GetBool(g_ConfigSaveFileWrapping);
+    m_Options.selection   = m_GlobalConfig.GetBool(g_ConfigSaveFileSelection);
 }
 
-InternalViewerHistory::SaveOptions InternalViewerHistory::Options() const
+History::SaveOptions History::Options() const
 {
     return m_Options;
 }
 
-bool InternalViewerHistory::Enabled() const
+bool History::Enabled() const
 {
     auto options = Options();
     return options.encoding || options.mode || options.position || options.wrapping || options.selection;
 }
 
-void InternalViewerHistory::SaveToStateConfig() const
+void History::SaveToStateConfig() const
 {
     nc::config::Value entries(rapidjson::kArrayType);
     LOCK_GUARD(m_HistoryLock) {
@@ -155,7 +161,7 @@ void InternalViewerHistory::SaveToStateConfig() const
     m_StateConfig.Set(m_StateConfigPath, entries);
 }
 
-void InternalViewerHistory::LoadFromStateConfig()
+void History::LoadFromStateConfig()
 {
     using namespace rapidjson;
     auto entries = m_StateConfig.Get(m_StateConfigPath);
@@ -168,8 +174,10 @@ void InternalViewerHistory::LoadFromStateConfig()
     }
 }
 
-void InternalViewerHistory::ClearHistory()
+void History::ClearHistory()
 {
     LOCK_GUARD(m_HistoryLock)
         m_History.clear();
+}
+
 }

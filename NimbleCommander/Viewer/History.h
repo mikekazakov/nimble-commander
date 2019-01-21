@@ -6,7 +6,9 @@
 #include <Habanero/spinlock.h>
 #include <deque>
 
-class InternalViewerHistory
+namespace nc::viewer {
+
+class History
 {
 public:
     struct SaveOptions
@@ -28,9 +30,11 @@ public:
         CFRange             selection = {-1, 0};
     };
     
-    InternalViewerHistory( nc::config::Config &_state_config, const char *_config_path );
+    History(nc::config::Config &_global_config,
+                          nc::config::Config &_state_config,
+                          const char *_config_path );
     
-    static InternalViewerHistory& Instance();
+    static History& Instance();
 
     /**
      * Thread-safe.
@@ -64,12 +68,15 @@ private:
     void LoadFromStateConfig();
     void SaveToStateConfig() const;
     
-    std::deque<Entry>                           m_History;
-    mutable spinlock                            m_HistoryLock;
+    std::deque<Entry>               m_History;
+    mutable spinlock                m_HistoryLock;
 
-    std::vector<nc::config::Token>              m_ConfigObservations;
-    SaveOptions                                 m_Options;
-    const size_t                                m_Limit;
-    nc::config::Config&                         m_StateConfig;
-    const char *const                           m_StateConfigPath;
+    std::vector<nc::config::Token>  m_ConfigObservations;
+    SaveOptions                     m_Options;
+    size_t                          m_Limit;
+    nc::config::Config&             m_GlobalConfig;
+    nc::config::Config&             m_StateConfig;
+    std::string                     m_StateConfigPath;
 };
+
+}

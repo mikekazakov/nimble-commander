@@ -18,7 +18,9 @@
 
 - (InternalViewerController*) makeViewerController
 {
-    return [[InternalViewerController alloc] initWithHistory:self.internalViewerHistory];
+    return [[InternalViewerController alloc]
+            initWithHistory:self.internalViewerHistory
+            config:self.globalConfig];
 }
 
 @end

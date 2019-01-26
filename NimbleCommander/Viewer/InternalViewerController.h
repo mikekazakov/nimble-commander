@@ -3,6 +3,9 @@
 
 #include <Viewer/BigFileView.h>
 
+namespace nc::config {
+    class Config;
+}
 namespace nc::viewer {
     class History;
 };
@@ -26,7 +29,8 @@ namespace nc::viewer {
 @property (nonatomic, readonly) const VFSHostPtr&   fileVFS;
 
 - (instancetype) init NS_UNAVAILABLE;
-- (instancetype) initWithHistory:(nc::viewer::History&)_history;
+- (instancetype) initWithHistory:(nc::viewer::History&)_history
+                          config:(nc::config::Config&)_config;
 
 - (void) setFile:(std::string)path at:(VFSHostPtr)vfs;
 - (bool) performBackgroundOpening;
@@ -38,7 +42,5 @@ namespace nc::viewer {
 - (void) saveFileState;
 
 - (void)markSelection:(CFRange)_selection forSearchTerm:(std::string)_request;
-
-+ (unsigned) fileWindowSize;
 
 @end

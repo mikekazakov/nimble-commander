@@ -2,7 +2,7 @@
 #include "InternalViewerController.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/GeneralUI/ProcessSheetController.h>
-#include <NimbleCommander/Bootstrap/Config.h>
+#include <Config/Config.h>
 #include <VFS/SearchInFile.h>
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ObjCpp.h>
@@ -65,6 +65,7 @@ static int InvertBitFlag( int _value, int _flag )
     std::unique_ptr<nc::vfs::SearchInFile> m_SearchInFile;
     SerialQueue                     m_SearchInFileQueue;
     nc::viewer::History            *m_History;
+    nc::config::Config             *m_Config;
     
     // UI
     BigFileView                    *m_View;
@@ -91,10 +92,12 @@ static int InvertBitFlag( int _value, int _flag )
 @synthesize wordWrappingCheckBox = m_WordWrappingCheckBox;
 
 - (instancetype) initWithHistory:(nc::viewer::History&)_history
+                          config:(nc::config::Config&)_config
 {
     self = [super init];
     if( self ) {
         m_History = &_history;
+        m_Config = &_config;
         __weak InternalViewerController* weak_self = self;
         m_SearchInFileQueue.SetOnChange([=]{
             [(InternalViewerController*)weak_self onSearchInFileQueueStateChanged];
@@ -181,7 +184,7 @@ static int InvertBitFlag( int _value, int _flag )
     m_GlobalFilePath = work_file->ComposeVerbosePath();
     
     auto window = std::make_unique<nc::vfs::FileWindow>();
-    if( window->Attach(work_file, InternalViewerController.fileWindowSize) != 0 )
+    if( window->Attach(work_file, [self fileWindowSize]) != 0 )
         return false;
     m_ViewerFileWindow = std::move(window);
     
@@ -196,8 +199,8 @@ static int InvertBitFlag( int _value, int _flag )
     const auto search_options = [&]{
         using Options = SearchInFile::Options;
         auto opts = Options::None;
-        if( GlobalConfig().GetBool(g_ConfigSearchCaseSensitive) ) opts |= Options::CaseSensitive;
-        if( GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ) opts |= Options::FindWholePhrase;
+        if( m_Config->GetBool(g_ConfigSearchCaseSensitive) ) opts |= Options::CaseSensitive;
+        if( m_Config->GetBool(g_ConfigSearchForWholePhrase) ) opts |= Options::FindWholePhrase;
         return opts;
     }();
     m_SearchInFile->SetSearchOptions( search_options );
@@ -245,7 +248,7 @@ static int InvertBitFlag( int _value, int _flag )
     m_GlobalFilePath = work_file->ComposeVerbosePath();
     
     auto window = std::make_unique<nc::vfs::FileWindow>();
-    if( window->Attach(work_file, InternalViewerController.fileWindowSize) != 0 )
+    if( window->Attach(work_file, [self fileWindowSize]) != 0 )
         return false;
     m_ViewerFileWindow = move(window);
     
@@ -260,8 +263,8 @@ static int InvertBitFlag( int _value, int _flag )
     const auto search_options = [&]{
         using Options = SearchInFile::Options;
         auto opts = Options::None;
-        if( GlobalConfig().GetBool(g_ConfigSearchCaseSensitive) ) opts |= Options::CaseSensitive;
-        if( GlobalConfig().GetBool(g_ConfigSearchForWholePhrase) ) opts |= Options::FindWholePhrase;
+        if( m_Config->GetBool(g_ConfigSearchCaseSensitive) ) opts |= Options::CaseSensitive;
+        if( m_Config->GetBool(g_ConfigSearchForWholePhrase) ) opts |= Options::FindWholePhrase;
         return opts;
     }();
     m_SearchInFile->SetSearchOptions( search_options );
@@ -296,7 +299,7 @@ static int InvertBitFlag( int _value, int _flag )
     else {
         [m_View SetFile:m_ViewerFileWindow.get()];
         int encoding = 0;
-        if( GlobalConfig().GetBool(g_ConfigRespectComAppleTextEncoding) &&
+        if( m_Config->GetBool(g_ConfigRespectComAppleTextEncoding) &&
            (encoding = EncodingFromXAttr(m_OriginalFile)) != encodings::ENCODING_INVALID )
             m_View.encoding = encoding;
     }
@@ -323,10 +326,10 @@ static int InvertBitFlag( int _value, int _flag )
     m_History->AddEntry( std::move(info) );
 }
 
-+ (unsigned) fileWindowSize
+- (unsigned) fileWindowSize
 {
     unsigned file_window_size = nc::vfs::FileWindow::DefaultWindowSize;
-    unsigned file_window_pow2x = GlobalConfig().GetInt(g_ConfigWindowSize);
+    unsigned file_window_pow2x = m_Config->GetInt(g_ConfigWindowSize);
     if( file_window_pow2x <= 5 )
         file_window_size *= 1 << file_window_pow2x;
     return file_window_size;
@@ -373,14 +376,14 @@ static int InvertBitFlag( int _value, int _flag )
     item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Case-sensitive search", "Menu item option in internal viewer search")
                                       action:@selector(onSearchFieldMenuCaseSensitiveAction:)
                                keyEquivalent:@""];
-    item.state = GlobalConfig().GetBool(g_ConfigSearchCaseSensitive);
+    item.state = m_Config->GetBool(g_ConfigSearchCaseSensitive);
     item.target = self;
     [menu insertItem:item atIndex:0];
     
     item = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Find whole phrase", "Menu item option in internal viewer search")
                                       action:@selector(onSearchFiledMenuWholePhraseSearch:)
                                keyEquivalent:@""];
-    item.state = GlobalConfig().GetBool(g_ConfigSearchForWholePhrase);
+    item.state = m_Config->GetBool(g_ConfigSearchForWholePhrase);
     item.target = self;
     [menu insertItem:item atIndex:1];
     
@@ -494,7 +497,7 @@ static int InvertBitFlag( int _value, int _flag )
     NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
     [menu itemAtIndex:0].state = (options & Options::CaseSensitive) != Options::None;
     ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = menu;
-    GlobalConfig().Set( g_ConfigSearchCaseSensitive, bool(options & Options::CaseSensitive) );
+    m_Config->Set( g_ConfigSearchCaseSensitive, bool(options & Options::CaseSensitive) );
 }
 
 - (void)onSearchFiledMenuWholePhraseSearch:(id)sender
@@ -508,7 +511,7 @@ static int InvertBitFlag( int _value, int _flag )
     NSMenu* menu = ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate;
     [menu itemAtIndex:1].state = (options & Options::FindWholePhrase) != Options::None;
     ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = menu;
-    GlobalConfig().Set( g_ConfigSearchForWholePhrase, bool(options & Options::FindWholePhrase) );
+    m_Config->Set( g_ConfigSearchForWholePhrase, bool(options & Options::FindWholePhrase) );
 }
 
 - (void)setSearchProgressIndicator:(NSProgressIndicator *)searchProgressIndicator

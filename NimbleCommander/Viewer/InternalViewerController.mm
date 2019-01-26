@@ -64,6 +64,7 @@ static int InvertBitFlag( int _value, int _flag )
     std::unique_ptr<nc::vfs::FileWindow> m_SearchFileWindow;
     std::unique_ptr<nc::vfs::SearchInFile> m_SearchInFile;
     SerialQueue                     m_SearchInFileQueue;
+    nc::viewer::History            *m_History;
     
     // UI
     BigFileView                    *m_View;
@@ -89,10 +90,11 @@ static int InvertBitFlag( int _value, int _flag )
 @synthesize fileVFS = m_VFS;
 @synthesize wordWrappingCheckBox = m_WordWrappingCheckBox;
 
-- (instancetype) init
+- (instancetype) initWithHistory:(nc::viewer::History&)_history
 {
     self = [super init];
     if( self ) {
+        m_History = &_history;
         __weak InternalViewerController* weak_self = self;
         m_SearchInFileQueue.SetOnChange([=]{
             [(InternalViewerController*)weak_self onSearchInFileQueueStateChanged];
@@ -276,8 +278,8 @@ static int InvertBitFlag( int _value, int _flag )
     assert(self.view != nil );
     
     // try to load a saved info if any
-    if( auto info = nc::viewer::History::Instance().EntryByPath(m_GlobalFilePath) ) {
-        auto options = nc::viewer::History::Instance().Options();
+    if( auto info = m_History->EntryByPath(m_GlobalFilePath) ) {
+        auto options = m_History->Options();
         if( options.encoding && options.mode ) {
             [m_View SetKnownFile:m_ViewerFileWindow.get() encoding:info->encoding mode:info->view_mode];
         }
@@ -304,7 +306,7 @@ static int InvertBitFlag( int _value, int _flag )
 
 - (void) saveFileState
 {
-    if( !nc::viewer::History::Instance().Enabled() )
+    if( !m_History->Enabled() )
         return;
     
     if( m_GlobalFilePath.empty() ) // are we actually loaded?
@@ -318,7 +320,7 @@ static int InvertBitFlag( int _value, int _flag )
     info.view_mode = m_View.mode;
     info.encoding = m_View.encoding;
     info.selection = m_View.selectionInFile;
-    nc::viewer::History::Instance().AddEntry( std::move(info) );
+    m_History->AddEntry( std::move(info) );
 }
 
 + (unsigned) fileWindowSize

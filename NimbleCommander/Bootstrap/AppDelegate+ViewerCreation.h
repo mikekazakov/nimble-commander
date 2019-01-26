@@ -4,10 +4,11 @@
 #include "AppDelegate.h"
 
 @class BigFileView;
+@class InternalViewerController;
 
 // this category is private to NCAppDelegate
 @interface NCAppDelegate(ViewerCreation)
 
 - (BigFileView*) makeViewerWithFrame:(NSRect)frame;
-
+- (InternalViewerController*) makeViewerController;
 @end

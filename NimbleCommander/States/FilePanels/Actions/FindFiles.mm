@@ -16,8 +16,10 @@ static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
 
 namespace nc::panel::actions {
 
-FindFiles::FindFiles( std::function<BigFileView*(NSRect)> _make_viewer ) :
-    m_MakeViewer{ std::move(_make_viewer) }
+FindFiles::FindFiles(std::function<BigFileView*(NSRect)> _make_viewer,
+                     std::function<InternalViewerController*()> _make_controller) :
+    m_MakeViewer{ std::move(_make_viewer) },
+    m_MakeController{ std::move(_make_controller) }
 {
 }
 
@@ -95,9 +97,11 @@ void FindFiles::Perform( PanelController *_target, id _sender ) const
 void FindFiles::OnView(const FindFilesSheetViewRequest& _request) const
 {    
     if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a sheet
-        BigFileViewSheet *sheet = [[BigFileViewSheet alloc] initWithFilepath:_request.path
-                                                                          at:_request.vfs
-                                                               viewerFactory:m_MakeViewer];
+        const auto sheet = [[BigFileViewSheet alloc]
+                            initWithFilepath:_request.path
+                            at:_request.vfs
+                            viewerFactory:m_MakeViewer
+                            viewerController:m_MakeController()];
         dispatch_to_background([=]{
             const auto success = [sheet open];
             dispatch_to_main_queue([=]{
@@ -130,9 +134,11 @@ void FindFiles::OnView(const FindFilesSheetViewRequest& _request) const
         }
         else {
             // need to create a new one
-            window = [[InternalViewerWindowController alloc] initWithFilepath:_request.path
-                                                                           at:_request.vfs
-                                                                viewerFactory:m_MakeViewer];
+            window = [[InternalViewerWindowController alloc]
+                      initWithFilepath:_request.path
+                      at:_request.vfs
+                      viewerFactory:m_MakeViewer
+                      controller:m_MakeController()];
             dispatch_to_background([=]{
                 const auto opening_result = [window performBackgrounOpening];
                 dispatch_to_main_queue([=]{

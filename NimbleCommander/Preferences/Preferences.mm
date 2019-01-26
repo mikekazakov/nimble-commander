@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "PreferencesWindowGeneralTab.h"
@@ -21,6 +21,7 @@ void ShowPreferencesWindow()
                       [PreferencesWindowThemesTab new],
                       [PreferencesWindowPanelsTab new],
                       [PreferencesWindowViewerTab new],
+                      [[PreferencesWindowViewerTab alloc] initWithHistory:NCAppDelegate.me.internalViewerHistory],
                       [PreferencesWindowExternalEditorsTab new],
                       [PreferencesWindowTerminalTab new],
                       [[PreferencesWindowHotkeysTab alloc] initWithToolsStorage:tools_storage],

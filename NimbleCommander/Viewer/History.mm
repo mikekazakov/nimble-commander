@@ -1,9 +1,7 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "History.h"
 #include <Config/RapidJSON.h>
-#include <NimbleCommander/Bootstrap/Config.h>
 
-static const auto g_StatePath                   = "viewer.history";
 static const auto g_ConfigMaximumHistoryEntries = "viewer.maximumHistoryEntries";
 static const auto g_ConfigSaveFileEnconding     = "viewer.saveFileEncoding";
 static const auto g_ConfigSaveFileMode          = "viewer.saveFileMode";
@@ -66,8 +64,8 @@ static std::optional<History::Entry>
 }
 
 History::History(nc::config::Config &_global_config,
-                                             nc::config::Config &_state_config,
-                                             const char *_config_path ):
+                 nc::config::Config &_state_config,
+                 const char *_config_path ):
     m_GlobalConfig(_global_config),
     m_StateConfig(_state_config),
     m_StateConfigPath(_config_path)
@@ -92,12 +90,6 @@ History::History(nc::config::Config &_global_config,
                                    g_ConfigSaveFileSelection}
                                );    
     LoadFromStateConfig();
-}
-
-History& History::Instance()
-{
-    static auto history = new History( GlobalConfig(), StateConfig(), g_StatePath );
-    return *history;
 }
 
 void History::AddEntry( Entry _entry )

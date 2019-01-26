@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Config/Config.h>
@@ -31,10 +31,8 @@ public:
     };
     
     History(nc::config::Config &_global_config,
-                          nc::config::Config &_state_config,
-                          const char *_config_path );
-    
-    static History& Instance();
+            nc::config::Config &_state_config,
+            const char *_config_path );
 
     /**
      * Thread-safe.

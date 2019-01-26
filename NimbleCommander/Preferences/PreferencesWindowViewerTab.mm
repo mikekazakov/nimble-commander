@@ -44,14 +44,23 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
 @end
 
 @implementation PreferencesWindowViewerTab
+{
+    nc::viewer::History *m_History;
+}
+
+- (instancetype)initWithHistory:(nc::viewer::History&)_history
+{
+    self = [super initWithNibName:NSStringFromClass(self.class) bundle:nil];
+    if (self) {
+        m_History = &_history;
+    }
+    return self;
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
-    self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
-    if (self) {        
-    }
-    
-    return self;
+    assert( 0 );
+    return nil;
 }
 
 - (void)loadView
@@ -118,7 +127,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
     [alert addButtonWithTitle:NSLocalizedString(@"Cancel","")];
     [[alert.buttons objectAtIndex:0] setKeyEquivalent:@""];
     if([alert runModal] == NSAlertFirstButtonReturn)
-        nc::viewer::History::Instance().ClearHistory();
+        m_History->ClearHistory();
 }
 
 @end

@@ -3,6 +3,10 @@
 
 #include <Viewer/BigFileView.h>
 
+namespace nc::viewer {
+    class History;
+};
+
 // Objects of this class own instances of BigFileView
 @interface InternalViewerController : NSResponder<NSSearchFieldDelegate>
 
@@ -21,7 +25,8 @@
 @property (nonatomic, readonly) const std::string&  filePath;
 @property (nonatomic, readonly) const VFSHostPtr&   fileVFS;
 
-- (instancetype) init;
+- (instancetype) init NS_UNAVAILABLE;
+- (instancetype) initWithHistory:(nc::viewer::History&)_history;
 
 - (void) setFile:(std::string)path at:(VFSHostPtr)vfs;
 - (bool) performBackgroundOpening;

@@ -5,12 +5,16 @@
 #include <VFS/VFS.h>
 #include <Viewer/BigFileView.h>
 
+@class InternalViewerController;
+
 // make sure to destroy instances of BigFileViewSheet in main queue!
 @interface BigFileViewSheet : SheetController
 
-- (id) initWithFilepath:(std::string)path
-                     at:(VFSHostPtr)vfs
-          viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory;
+- (instancetype) init NS_UNAVAILABLE;
+- (instancetype) initWithFilepath:(std::string)path
+                               at:(VFSHostPtr)vfs
+                    viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
+                 viewerController:(InternalViewerController*)_viewer_controller;
 
 - (bool) open; // call it from bg thread!
 - (void)markInitialSelection:(CFRange)_selection searchTerm:(std::string)_request;

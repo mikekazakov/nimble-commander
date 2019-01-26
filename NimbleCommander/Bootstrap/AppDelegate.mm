@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Sparkle/Sparkle.h>
 #include <LetsMove/PFMoveApplication.h>
 #include <Habanero/CommonPaths.h>
@@ -53,6 +53,7 @@
 #include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
 #include <NimbleCommander/Core/VFSInstanceManagerImpl.h>
 #include <Utility/ObjCpp.h>
+#include <NimbleCommander/Viewer/History.h>
 
 using namespace std::literals;
 using namespace nc::bootstrap;
@@ -986,6 +987,14 @@ static void DoTemporaryFileStoragePurge()
         return g_TemporaryFileStorage;
     }();
     
+    return *instance;
+}
+
+- (nc::viewer::History&) internalViewerHistory
+{
+    const auto history_state_path = "viewer.history";
+    static const auto instance = new nc::viewer::History
+        (*g_Config, *g_State, history_state_path);
     return *instance;
 }
 

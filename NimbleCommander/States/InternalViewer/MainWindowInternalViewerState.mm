@@ -32,6 +32,7 @@
 
 - (id)initWithFrame:(NSRect)_frame_rect
       viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
+         controller:(InternalViewerController*)_viewer_controller
 {
     dispatch_assert_main_queue();
     if( self = [super initWithFrame:_frame_rect] ) {
@@ -54,9 +55,8 @@
             [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:constraint
                                                                          options:0
                                                                          metrics:nil
-                                                                           views:views]];
-        
-        m_Controller = [[InternalViewerController alloc] init];
+                                                                           views:views]];        
+        m_Controller = _viewer_controller;
         [self hookController];
     }
     return self;

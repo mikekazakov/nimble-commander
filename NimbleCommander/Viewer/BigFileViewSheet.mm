@@ -36,6 +36,7 @@
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
           viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
+       viewerController:(InternalViewerController*)_viewer_controller
 {
     assert( dispatch_is_main_queue() );
     self = [super init];
@@ -43,7 +44,7 @@
         m_VFS = vfs;
         m_Path = path;
         
-        m_Controller = [[InternalViewerController alloc] init];
+        m_Controller = _viewer_controller;
         [m_Controller setFile:path at:vfs];
         
         self.view = _viewer_factory( NSMakeRect(0, 0, 100, 100) );

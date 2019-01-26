@@ -45,10 +45,11 @@ using namespace std::literals;
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
           viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
+             controller:(InternalViewerController*)_controller
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if( self ) {
-        m_Controller = [[InternalViewerController alloc] init];
+        m_Controller = _controller;
         [m_Controller setFile:path at:vfs];
         
         NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nil];

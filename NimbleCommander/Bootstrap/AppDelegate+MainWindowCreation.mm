@@ -79,7 +79,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
      self.nativeFSManager,
      self.fileOpener,
      self.panelOpenWithMenuDelegate,
-     [self](NSRect rc){ return [self makeViewerWithFrame:rc]; });
+     [self](NSRect rc){ return [self makeViewerWithFrame:rc]; },
+     [self]{ return [self makeViewerController]; });
     return actions_map;
 }
 

@@ -335,8 +335,10 @@ static int CountMainWindows()
                 auto viewer_factory = [](NSRect rc){
                     return [NCAppDelegate.me makeViewerWithFrame:rc];
                 };
+                auto ctrl = [NCAppDelegate.me makeViewerController];
                 m_Viewer = [[MainWindowInternalViewerState alloc] initWithFrame:rc
-                                                                  viewerFactory:viewer_factory];
+                                                                  viewerFactory:viewer_factory
+                                                                     controller:ctrl];
             });
             if( [m_Viewer openFile:_filepath atVFS:_host] ) {
                 dispatch_to_main_queue([=]{
@@ -358,10 +360,12 @@ static int CountMainWindows()
                     auto viewer_factory = [](NSRect rc){
                         return [NCAppDelegate.me makeViewerWithFrame:rc];
                     };
+                    auto ctrl = [NCAppDelegate.me makeViewerController];
                     window = [[InternalViewerWindowController alloc]
                               initWithFilepath:_filepath
                               at:_host
-                              viewerFactory:viewer_factory];
+                              viewerFactory:viewer_factory
+                              controller:ctrl];
                 });
                 if( [window performBackgrounOpening] ) {
                     dispatch_to_main_queue([=]{

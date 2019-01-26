@@ -992,9 +992,19 @@ static void DoTemporaryFileStoragePurge()
 
 - (nc::viewer::History&) internalViewerHistory
 {
-    const auto history_state_path = "viewer.history";
-    static const auto instance = new nc::viewer::History
-        (*g_Config, *g_State, history_state_path);
+    static const auto history_state_path = "viewer.history";
+    static const auto instance = []{
+        auto inst = new nc::viewer::History (*g_Config, *g_State, history_state_path);
+        auto center = NSNotificationCenter.defaultCenter;
+        // Save the history upon application shutdown
+        [center addObserverForName:NSApplicationWillTerminateNotification
+                            object:nil
+                             queue:nil
+                        usingBlock:^(NSNotification * _Nonnull note) {
+                            inst->SaveToStateConfig();
+                        }];
+        return inst;
+    }();
     return *instance;
 }
 

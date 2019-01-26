@@ -4,6 +4,7 @@
 #include <Utility/Encodings.h>
 #include <Utility/OrthodoxMonospace.h>
 #include <VFS/FileWindow.h>
+#include "Modes.h"
 
 namespace nc::utility {
     class TemporaryFileStorage;
@@ -14,13 +15,6 @@ namespace nc::config {
 namespace nc::viewer {
     class Theme;
 }
-
-enum class BigFileViewModes : int
-{ // changing this values may cause stored history corruption
-    Text = 0,
-    Hex  = 1,
-    Preview = 2
-};
 
 @interface BigFileView : NSView
 

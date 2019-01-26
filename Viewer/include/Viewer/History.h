@@ -1,10 +1,13 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#include "Modes.h"
+
 #include <Config/Config.h>
-#include <Viewer/BigFileView.h>
 #include <Habanero/spinlock.h>
 #include <deque>
+#include <vector>
+#include <CoreFoundation/CoreFoundation.h>
 
 namespace nc::viewer {
 
@@ -61,10 +64,11 @@ public:
     bool Enabled() const;
     
     
+    void SaveToStateConfig() const;
+    
 private:
     void LoadSaveOptions();
     void LoadFromStateConfig();
-    void SaveToStateConfig() const;
     
     std::deque<Entry>               m_History;
     mutable spinlock                m_HistoryLock;

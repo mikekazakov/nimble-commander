@@ -1,6 +1,7 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "History.h"
 #include <Config/RapidJSON.h>
+#include <Utility/Encodings.h>
 
 static const auto g_ConfigMaximumHistoryEntries = "viewer.maximumHistoryEntries";
 static const auto g_ConfigSaveFileEnconding     = "viewer.saveFileEncoding";
@@ -72,13 +73,6 @@ History::History(nc::config::Config &_global_config,
 {
     m_Limit = std::clamp(m_GlobalConfig.GetInt(g_ConfigMaximumHistoryEntries), 0, 4096);
     
-    // Wire up notification about application shutdown
-    [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
-                                                    object:nil
-                                                     queue:nil
-                                                usingBlock:^(NSNotification * _Nonnull note) {
-                                                    SaveToStateConfig();
-                                                }];
     LoadSaveOptions();
     m_GlobalConfig.ObserveMany(m_ConfigObservations,
                                [=]{ LoadSaveOptions(); },

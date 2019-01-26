@@ -33,7 +33,8 @@
 		CFD79AAE21F65BC20043A26D /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AAD21F65BC20043A26D /* libVFS.dylib */; };
 		CFD79AB021F65BC60043A26D /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AAF21F65BC60043A26D /* libHabanero.dylib */; };
 		CFD79AB421FCA4E50043A26D /* History.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79AB321FCA4E50043A26D /* History.h */; };
-		CFD79AB621FCA4F30043A26D /* History.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79AB521FCA4F30043A26D /* History.mm */; };
+		CFD79AB621FCA4F30043A26D /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79AB521FCA4F30043A26D /* History.cpp */; };
+		CFD79AB821FCA8900043A26D /* Modes.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79AB721FCA8900043A26D /* Modes.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,7 +66,8 @@
 		CFD79AAD21F65BC20043A26D /* libVFS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libVFS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD79AAF21F65BC60043A26D /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD79AB321FCA4E50043A26D /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = History.h; path = include/Viewer/History.h; sourceTree = "<group>"; };
-		CFD79AB521FCA4F30043A26D /* History.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = History.mm; path = source/History.mm; sourceTree = "<group>"; };
+		CFD79AB521FCA4F30043A26D /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = History.cpp; path = source/History.cpp; sourceTree = "<group>"; };
+		CFD79AB721FCA8900043A26D /* Modes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Modes.h; path = include/Viewer/Modes.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 		CFD79A8321F65AA60043A26D /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD79AB721FCA8900043A26D /* Modes.h */,
 				CFD79AB321FCA4E50043A26D /* History.h */,
 				CFD79A9721F65B570043A26D /* BigFileView.h */,
 				CFD79A9421F65B570043A26D /* BigFileViewDataBackend.h */,
@@ -145,7 +148,7 @@
 		CFD79A8421F65AB00043A26D /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79AB521FCA4F30043A26D /* History.mm */,
+				CFD79AB521FCA4F30043A26D /* History.cpp */,
 				CFD79A8921F65B4F0043A26D /* BigFileView.mm */,
 				CFD79A8B21F65B4F0043A26D /* BigFileViewDataBackend.mm */,
 				CFD79A8A21F65B4F0043A26D /* BigFileViewHex.mm */,
@@ -185,6 +188,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFD79AB821FCA8900043A26D /* Modes.h in Headers */,
 				CFD79A9B21F65B570043A26D /* BigFileViewDataBackend.h in Headers */,
 				CFD79AB421FCA4E50043A26D /* History.h in Headers */,
 				CFD79A9D21F65B570043A26D /* BigFileViewText.h in Headers */,
@@ -269,7 +273,7 @@
 			files = (
 				CFD79A8E21F65B4F0043A26D /* Theme.mm in Sources */,
 				CFD79A8D21F65B4F0043A26D /* BigFileViewText.mm in Sources */,
-				CFD79AB621FCA4F30043A26D /* History.mm in Sources */,
+				CFD79AB621FCA4F30043A26D /* History.cpp in Sources */,
 				CFD79A8C21F65B4F0043A26D /* InternalViewerViewPreviewMode.mm in Sources */,
 				CFD79A8F21F65B4F0043A26D /* BigFileView.mm in Sources */,
 				CFD79A9121F65B4F0043A26D /* BigFileViewDataBackend.mm in Sources */,

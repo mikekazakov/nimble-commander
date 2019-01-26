@@ -2,7 +2,7 @@
 #include "PreferencesWindowViewerTab.h"
 #include <Utility/FontExtras.h>
 #include "../Bootstrap/ActivationManager.h"
-#include "../Viewer/History.h"
+#include <Viewer/History.h>
 #include "Utility/Encodings.h"
 #include "../Bootstrap/Config.h"
 #include <Utility/ObjCpp.h>

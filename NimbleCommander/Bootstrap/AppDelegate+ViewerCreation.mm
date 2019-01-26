@@ -3,7 +3,7 @@
 #include <Viewer/BigFileView.h>
 #include <NimbleCommander/Viewer/ThemeAdaptor.h>
 #include <NimbleCommander/Viewer/InternalViewerController.h>
-#include <NimbleCommander/Viewer/History.h>
+#include <Viewer/History.h>
 
 @implementation NCAppDelegate(ViewerCreation)
 

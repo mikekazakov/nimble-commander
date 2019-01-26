@@ -53,7 +53,7 @@
 #include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
 #include <NimbleCommander/Core/VFSInstanceManagerImpl.h>
 #include <Utility/ObjCpp.h>
-#include <NimbleCommander/Viewer/History.h>
+#include <Viewer/History.h>
 
 using namespace std::literals;
 using namespace nc::bootstrap;

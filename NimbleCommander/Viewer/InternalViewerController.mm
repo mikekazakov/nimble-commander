@@ -7,7 +7,7 @@
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
-#include "History.h"
+#include <Viewer/History.h>
 #include <Habanero/SerialQueue.h>
 
 using namespace std::literals;

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Habanero/algo.h>
 #include <Utility/SheetWithHotkeys.h>
@@ -55,7 +55,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     GA().PostScreenView("Favorites");
     
     [self.table registerForDraggedTypes:@[FilesDraggingSource.fileURLsDragUTI,

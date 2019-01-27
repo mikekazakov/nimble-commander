@@ -105,7 +105,7 @@ static void PeformClickIfEnabled( NSSegmentedControl* _control, int _segment )
 {
     [super windowDidLoad];
     
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     GA().PostScreenView("Network Connections Management");
  

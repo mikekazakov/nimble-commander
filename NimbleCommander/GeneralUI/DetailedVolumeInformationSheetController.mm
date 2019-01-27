@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/VolumeInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NativeFSManager.h>
@@ -54,7 +54,7 @@ static NSString* Bool2ToString(const bool b[2])
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     [self PopulateControls];
     

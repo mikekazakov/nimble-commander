@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DropboxAccountSheetController.h"
 #import <AppAuth.h>
 #include "OIDRedirectHTTPHandler+FixedPort.h"
@@ -71,7 +71,7 @@ enum class State
 {
     [super windowDidLoad];
     
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     GA().PostScreenView("Dropbox Connection");
 
     

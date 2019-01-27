@@ -5,6 +5,8 @@
 #include <vector>
 #include <Cocoa/Cocoa.h>
 
+namespace nc::utility {
+
 // This abomination has to be a singleton at the moment,
 // alternatives are much worse than that.
 // As a plan: when 10.14 became the _lowest_ supported version - introduce
@@ -23,3 +25,5 @@ private:
     std::vector<__weak NSWindow*>m_Windows;
     NSAppearance *m_Appearance;
 };
+
+}

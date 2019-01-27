@@ -322,13 +322,13 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79AB921FE1F3B0043A26D /* CocoaAppearanceManager.h */,
 				CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
 				CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */,
 				CF308F32213ACD2500915730 /* BriefOnDiskStorageImpl.h */,
 				CF1E3D091D57562800609ADB /* ButtonWithTextColor.h */,
 				CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */,
+				CFD79AB921FE1F3B0043A26D /* CocoaAppearanceManager.h */,
 				CF34BEEE1E225EB3006A6B72 /* ColoredSeparatorLine.h */,
 				CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */,
 				CFDAC82A2168E1C000DEBA2A /* DiskUtility.h */,
@@ -372,13 +372,13 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79ABB21FE1F480043A26D /* CocoaAppearanceManager.mm */,
 				CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */,
 				CF308F30213ACD1900915730 /* BriefOnDiskStorageImpl.cpp */,
 				CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */,
 				CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */,
+				CFD79ABB21FE1F480043A26D /* CocoaAppearanceManager.mm */,
 				CF34BEF01E225EB9006A6B72 /* ColoredSeparatorLine.mm */,
 				CFDAC2B91DFD0BE30039A104 /* DataBlockAnalysis.mm */,
 				CFDAC82C2168E1CC00DEBA2A /* DiskUtility.mm */,

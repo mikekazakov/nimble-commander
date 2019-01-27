@@ -64,7 +64,7 @@ using namespace std::literals;
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     [self.viewerPlaceholder addSubview:self.viewerView];
     auto viewer = self.viewerView;

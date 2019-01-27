@@ -268,7 +268,7 @@ private:
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     self.TableView.columnAutoresizingStyle = NSTableViewUniformColumnAutoresizingStyle;
     [self.TableView sizeToFit];

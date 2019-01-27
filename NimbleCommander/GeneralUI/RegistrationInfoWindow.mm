@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
 #include "../Bootstrap/ActivationManager.h"
@@ -29,7 +29,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     m_Self = self;
     
     if( nc::bootstrap::ActivationManager::ForAppStore() ) { // MAS version

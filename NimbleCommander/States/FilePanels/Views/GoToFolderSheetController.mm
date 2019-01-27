@@ -69,7 +69,7 @@ static std::vector<unsigned> ListDirsWithPrefix
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     if( StateConfig().Has(g_StateGoToKey) ) {
         auto path = StateConfig().GetString(g_StateGoToKey);

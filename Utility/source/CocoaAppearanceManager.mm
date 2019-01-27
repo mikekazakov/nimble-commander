@@ -2,6 +2,8 @@
 //#include "Theme.h"
 #include "CocoaAppearanceManager.h"
 
+namespace nc::utility {
+
 CocoaAppearanceManager::CocoaAppearanceManager()
 {
     m_Appearance = [NSAppearance currentAppearance];
@@ -9,8 +11,8 @@ CocoaAppearanceManager::CocoaAppearanceManager()
 
 CocoaAppearanceManager& CocoaAppearanceManager::Instance()
 {
-    static const auto i = new CocoaAppearanceManager;
-    return *i;
+    static const auto instance = new CocoaAppearanceManager;
+    return *instance;
 }
 
 void CocoaAppearanceManager::ManageWindowApperance( NSWindow *_window )
@@ -18,7 +20,6 @@ void CocoaAppearanceManager::ManageWindowApperance( NSWindow *_window )
     LOCK_GUARD(m_WindowsLock) {
         m_Windows.emplace_back(_window); // only adding at the moment, shouldn't be a problem
     }
-//    _window.appearance = CurrentTheme().Appearance();
     _window.appearance = m_Appearance;
 }
 
@@ -27,7 +28,6 @@ void CocoaAppearanceManager::UpdateCurrentAppearance()
     LOCK_GUARD(m_WindowsLock) {
         for( NSWindow *window: m_Windows )
             if( window ) {
-//                w.appearance = CurrentTheme().Appearance();
                 window.appearance = m_Appearance;
             }
     }
@@ -39,4 +39,6 @@ void CocoaAppearanceManager::SetCurrentAppearance( NSAppearance *_appearance )
         return;
     m_Appearance = _appearance;
     UpdateCurrentAppearance();
+}
+
 }

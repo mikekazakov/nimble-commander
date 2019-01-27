@@ -48,7 +48,7 @@
         // use this fact to hijack the panel's window and move focus with arrow buttons:
         m_Controller = [[AlertWindowController alloc] initWithWindow:m_Alert.window];
         
-        CocoaAppearanceManager::Instance().ManageWindowApperance( m_Alert.window );
+        nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance( m_Alert.window );
     }
     return self;
 }

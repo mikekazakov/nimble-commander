@@ -482,7 +482,7 @@ static const auto g_ShowToolbarTitle = NSLocalizedString(@"Show Toolbar", "Menu 
 
 - (void)beginSheet:(NSWindow *)sheetWindow completionHandler:(void (^)(NSModalResponse rc))handler
 {
-    CocoaAppearanceManager::Instance().ManageWindowApperance(sheetWindow);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(sheetWindow);
     __block NSWindow *wnd = sheetWindow;
     __block NSWindowController *ctrl = wnd.windowController;
     if( auto name = ctrl.className.UTF8String)

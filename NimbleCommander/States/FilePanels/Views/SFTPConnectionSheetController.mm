@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
@@ -56,7 +56,7 @@ static bool ValidateFileExistence( const std::string &_filepath )
 - (void) windowDidLoad
 {
     [super windowDidLoad];
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
 
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;

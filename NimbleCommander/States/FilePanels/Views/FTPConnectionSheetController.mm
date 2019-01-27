@@ -40,7 +40,7 @@
     if( self.setupMode )
         self.connectButton.title = self.connectButton.alternateTitle;
     
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     GA().PostScreenView("FTP Connection");
     

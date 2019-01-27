@@ -68,7 +68,7 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
-    CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
+    nc::utility::CocoaAppearanceManager::Instance().ManageWindowApperance(self.window);
     
     [self.viewPlaceholder addSubview:self.view];
     auto viewer = self.view;

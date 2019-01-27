@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConnectToServer.h"
 #include "FTPConnectionSheetController.h"
 #include "SFTPConnectionSheetController.h"
@@ -10,7 +10,7 @@
 #include <Utility/StringExtras.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <Carbon/Carbon.h>
 

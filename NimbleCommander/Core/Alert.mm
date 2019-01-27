@@ -1,6 +1,6 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Alert.h"
+#include <Utility/CocoaAppearanceManager.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 

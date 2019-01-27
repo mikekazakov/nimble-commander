@@ -1,6 +1,6 @@
 // Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include "../Bootstrap/ActivationManager.h"
 #include "RegistrationInfoWindow.h"
 #include <Utility/StringExtras.h>

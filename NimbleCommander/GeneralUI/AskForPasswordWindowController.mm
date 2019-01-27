@@ -1,7 +1,7 @@
 // Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AskForPasswordWindowController.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/StringExtras.h>
 

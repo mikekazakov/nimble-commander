@@ -4,7 +4,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include "CalculateChecksumSheetController.h"
 #include <numeric>
 

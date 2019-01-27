@@ -3,7 +3,7 @@
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NativeFSManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include "DetailedVolumeInformationSheetController.h"
 
 @interface DetailedVolumeInformationSheetController ()

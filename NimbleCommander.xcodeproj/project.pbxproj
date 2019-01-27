@@ -766,7 +766,6 @@
 		CFA9DD9D1FD6694E0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
 		CFA9DD9E1FD6694F0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
 		CFA9DD9F1FD6694F0099DD91 /* Interactions.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFA9DD8C1FD668370099DD91 /* Interactions.mm */; };
-		CFACF9AB1E24804D00FD6AB6 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
 		CFACFA3F1E24AB1200FD6AB6 /* libMMTabBarViewLib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CFACF9D11E24AAD800FD6AB6 /* libMMTabBarViewLib.a */; };
 		CFB2AB5C21560CDB0009EB81 /* PanelViewFooterTheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB5B21560CDB0009EB81 /* PanelViewFooterTheme.mm */; };
 		CFB2AB5D21560CDB0009EB81 /* PanelViewFooterTheme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB2AB5B21560CDB0009EB81 /* PanelViewFooterTheme.mm */; };
@@ -889,9 +888,6 @@
 		CFD7260D1E42E07900603077 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
 		CFD7260E1E42E07900603077 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
 		CFD7260F1E42E07A00603077 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2321DFBDE2B0039A104 /* main.cpp */; };
-		CFD726161E42E09000603077 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
-		CFD726171E42E09000603077 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
-		CFD726181E42E09100603077 /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */; };
 		CFD726191E42E09300603077 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
 		CFD7261A1E42E09400603077 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
 		CFD7261B1E42E09500603077 /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8001E14A00C00CD83B4 /* Theme.mm */; };
@@ -1988,8 +1984,6 @@
 		CFA7E02C1EB97B60001FE66C /* Delete.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Delete.mm; path = NimbleCommander/States/FilePanels/Actions/Delete.mm; sourceTree = SOURCE_ROOT; };
 		CFA9DD8B1FD668370099DD91 /* Interactions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Interactions.h; path = NimbleCommander/Bootstrap/Interactions.h; sourceTree = SOURCE_ROOT; };
 		CFA9DD8C1FD668370099DD91 /* Interactions.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Interactions.mm; path = NimbleCommander/Bootstrap/Interactions.mm; sourceTree = SOURCE_ROOT; };
-		CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.h; sourceTree = SOURCE_ROOT; };
-		CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = NimbleCommander/Core/Theming/CocoaAppearanceManager.mm; sourceTree = SOURCE_ROOT; };
 		CFACF9CC1E24AAD800FD6AB6 /* MMTabBarViewLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = MMTabBarViewLib.xcodeproj; path = 3rd_Party/MMTabBarView/MMTabBarViewLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		CFB2AB4721560CDB0009EB81 /* PanelViewFooterTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelViewFooterTheme.h; path = NimbleCommander/States/FilePanels/PanelViewFooterTheme.h; sourceTree = "<group>"; };
 		CFB2AB5B21560CDB0009EB81 /* PanelViewFooterTheme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelViewFooterTheme.mm; path = NimbleCommander/States/FilePanels/PanelViewFooterTheme.mm; sourceTree = "<group>"; };
@@ -2799,8 +2793,6 @@
 		CF5FE7FE1E149FF700CD83B4 /* Theming */ = {
 			isa = PBXGroup;
 			children = (
-				CFACF9A91E24804D00FD6AB6 /* CocoaAppearanceManager.h */,
-				CFACF9AA1E24804D00FD6AB6 /* CocoaAppearanceManager.mm */,
 				CF5FE7FF1E14A00C00CD83B4 /* Theme.h */,
 				CF5FE8001E14A00C00CD83B4 /* Theme.mm */,
 				CF04DE041E3086DE0047B1F9 /* ThemePersistence.h */,
@@ -4182,7 +4174,6 @@
 				CF4E56BE1D50691600452912 /* PreferencesWindowPanelsTabColoringFilterSheet.mm in Sources */,
 				CF3B7F73201F213000BF2090 /* PanelControllerActionsDispatcher.mm in Sources */,
 				CFD8CD3D1E78F22000E4DC53 /* FavoritesWindowController.mm in Sources */,
-				CFD726171E42E09000603077 /* CocoaAppearanceManager.mm in Sources */,
 				CF9F4AFE1ECC8DC200E0AF82 /* Enter.mm in Sources */,
 				CFD726711E42E1F600603077 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF20DF291FC41E9B0074ABB8 /* TabContextMenu.mm in Sources */,
@@ -4314,7 +4305,6 @@
 				CFD8CDD71E8DEDB200E4DC53 /* SpotlightSearch.mm in Sources */,
 				CFD799EF21F48F150043A26D /* AppDelegate+ViewerCreation.mm in Sources */,
 				CF818B4B1EA0610C00BC28E6 /* DefaultAction.mm in Sources */,
-				CFD726181E42E09100603077 /* CocoaAppearanceManager.mm in Sources */,
 				CFD726481E42E11300603077 /* SandboxManager.mm in Sources */,
 				CF4E569F1D5068C700452912 /* PreferencesWindowExternalEditorsTab.mm in Sources */,
 				CFD8CDB31E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
@@ -4521,7 +4511,6 @@
 				CF90C0BC1EC171FD0056E3B8 /* PanelDataFilter.mm in Sources */,
 				CF56C2CF1DC35E8B00F0DF0F /* PanelListViewSizeView.mm in Sources */,
 				CF6ECDB61E9F7353008FA79E /* Select.mm in Sources */,
-				CFACF9AB1E24804D00FD6AB6 /* CocoaAppearanceManager.mm in Sources */,
 				CFD8CDB81E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
 				CFDAC2721DFBF20F0039A104 /* MainWindowFilePanelState+TabsSupport.mm in Sources */,
 				CF4E56D21D506B9200452912 /* FindFilesSheetController.mm in Sources */,
@@ -4912,7 +4901,6 @@
 				CF9F4AF91ECC8DAD00E0AF82 /* Compress.mm in Sources */,
 				CFB66F961D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CF28B2FB21A393A60004D697 /* ActivationManagerBase.cpp in Sources */,
-				CFD726161E42E09000603077 /* CocoaAppearanceManager.mm in Sources */,
 				CFD726461E42E11100603077 /* SandboxManager.mm in Sources */,
 				CF818B5B1EA0610E00BC28E6 /* Select.mm in Sources */,
 				CFD726571E42E1A700603077 /* PreferencesWindowThemesTabModel.mm in Sources */,

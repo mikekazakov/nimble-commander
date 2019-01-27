@@ -20,7 +20,6 @@ void ShowPreferencesWindow()
         auto tabs = @[[PreferencesWindowGeneralTab new],
                       [PreferencesWindowThemesTab new],
                       [PreferencesWindowPanelsTab new],
-                      [PreferencesWindowViewerTab new],
                       [[PreferencesWindowViewerTab alloc] initWithHistory:NCAppDelegate.me.internalViewerHistory],
                       [PreferencesWindowExternalEditorsTab new],
                       [PreferencesWindowTerminalTab new],

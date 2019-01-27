@@ -1,8 +1,8 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "MainWindow.h"
 #include <Utility/SystemInformation.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
-#include "MainWindow.h"
+#include <Utility/CocoaAppearanceManager.h>
 #include "MainWindowController.h"
 #include <Utility/ObjCpp.h>
 

@@ -4,7 +4,7 @@
 #include <Utility/SheetWithHotkeys.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include "FavoritesWindowController.h"

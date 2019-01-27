@@ -1,7 +1,7 @@
 // Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
 #include "BigFileViewSheet.h"
+#include <NimbleCommander/Core/GoogleAnalytics.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include "InternalViewerController.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>

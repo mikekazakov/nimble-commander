@@ -46,6 +46,8 @@
 		CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */; };
 		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
 		CFC546332136DBE300D288A4 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94631F453CB60035E606 /* libUtility.dylib */; };
+		CFD79ABA21FE1F3B0043A26D /* CocoaAppearanceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79AB921FE1F3B0043A26D /* CocoaAppearanceManager.h */; };
+		CFD79ABC21FE1F480043A26D /* CocoaAppearanceManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79ABB21FE1F480043A26D /* CocoaAppearanceManager.mm */; };
 		CFDAC82B2168E1C000DEBA2A /* DiskUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDAC82A2168E1C000DEBA2A /* DiskUtility.h */; };
 		CFDAC82D2168E1CC00DEBA2A /* DiskUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82C2168E1CC00DEBA2A /* DiskUtility.mm */; };
 		CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */; };
@@ -213,6 +215,8 @@
 		CFD62C1B1C9AFF280021EE7F /* SheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SheetController.mm; path = source/SheetController.mm; sourceTree = "<group>"; };
 		CFD62C1D1C9B01320021EE7F /* SheetWithHotkeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SheetWithHotkeys.h; path = include/Utility/SheetWithHotkeys.h; sourceTree = "<group>"; };
 		CFD62C1F1C9B013A0021EE7F /* SheetWithHotkeys.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SheetWithHotkeys.mm; path = source/SheetWithHotkeys.mm; sourceTree = "<group>"; };
+		CFD79AB921FE1F3B0043A26D /* CocoaAppearanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CocoaAppearanceManager.h; path = include/Utility/CocoaAppearanceManager.h; sourceTree = "<group>"; };
+		CFD79ABB21FE1F480043A26D /* CocoaAppearanceManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CocoaAppearanceManager.mm; path = source/CocoaAppearanceManager.mm; sourceTree = "<group>"; };
 		CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlinkingCaret.h; path = include/Utility/BlinkingCaret.h; sourceTree = "<group>"; };
 		CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BlinkingCaret.mm; path = source/BlinkingCaret.mm; sourceTree = "<group>"; };
 		CFDAC2B71DFD0BDC0039A104 /* DataBlockAnalysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DataBlockAnalysis.h; path = include/Utility/DataBlockAnalysis.h; sourceTree = "<group>"; };
@@ -318,6 +322,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CFD79AB921FE1F3B0043A26D /* CocoaAppearanceManager.h */,
 				CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
 				CF308F2C213ABFAA00915730 /* BriefOnDiskStorage.h */,
@@ -367,6 +372,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CFD79ABB21FE1F480043A26D /* CocoaAppearanceManager.mm */,
 				CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
 				CF308F2E213ABFB300915730 /* BriefOnDiskStorage.cpp */,
@@ -445,6 +451,7 @@
 				CF29FC602155D9A20040FF19 /* AdaptiveDateFormatting.h in Headers */,
 				CF26DE2A21D3EFEE003F0E93 /* TemporaryFileStorageImpl.h in Headers */,
 				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
+				CFD79ABA21FE1F3B0043A26D /* CocoaAppearanceManager.h in Headers */,
 				CF308F11213781EE00915730 /* UnitTests_main.h in Headers */,
 				CF308F2D213ABFAA00915730 /* BriefOnDiskStorage.h in Headers */,
 				CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */,
@@ -593,6 +600,7 @@
 				CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */,
 				CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */,
 				CFFA94751F453CC00035E606 /* FunctionKeysPass.mm in Sources */,
+				CFD79ABC21FE1F480043A26D /* CocoaAppearanceManager.mm in Sources */,
 				CFFA947C1F453CC00035E606 /* NSTimer+Tolerance.mm in Sources */,
 				CFFA94671F453CC00035E606 /* SimpleComboBoxPersistentDataSource.mm in Sources */,
 				CFFA946D1F453CC00035E606 /* Encodings.cpp in Sources */,

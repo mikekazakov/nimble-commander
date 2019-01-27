@@ -1,6 +1,6 @@
 // Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ProcessSheetController.h"
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include <Habanero/dispatch_cpp.h>
 
 static const std::chrono::nanoseconds g_ShowDelay = std::chrono::milliseconds{150};

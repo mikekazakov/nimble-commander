@@ -4,7 +4,7 @@
 #include "OIDRedirectHTTPHandler+FixedPort.h"
 #include <VFS/NetDropbox.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include <NimbleCommander/Bootstrap/NCE.h>
 #include <Utility/StringExtras.h>
 #include <Habanero/dispatch_cpp.h>

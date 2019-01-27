@@ -23,7 +23,7 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <Operations/Pool.h>
 #include <Utility/ObjCpp.h>

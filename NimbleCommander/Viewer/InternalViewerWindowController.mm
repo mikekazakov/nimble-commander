@@ -1,6 +1,6 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../Bootstrap/AppDelegate.h"
-#include <NimbleCommander/Core/Theming/CocoaAppearanceManager.h>
+#include <Utility/CocoaAppearanceManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Viewer/BigFileView.h>
 #include "InternalViewerController.h"

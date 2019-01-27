@@ -1,0 +1,288 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		CFD79AE221FE29900043A26D /* release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79ADE21FE298F0043A26D /* release.xcconfig */; };
+		CFD79AE321FE29900043A26D /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79ADF21FE298F0043A26D /* debug.xcconfig */; };
+		CFD79AE421FE29900043A26D /* tests.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79AE021FE298F0043A26D /* tests.xcconfig */; };
+		CFD79AE521FE29900043A26D /* default.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79AE121FE29900043A26D /* default.xcconfig */; };
+		CFD79AEB21FE474B0043A26D /* ProcessSheetController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79AEA21FE474B0043A26D /* ProcessSheetController.h */; };
+		CFD79AED21FE47560043A26D /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79AEC21FE47560043A26D /* ProcessSheetController.mm */; };
+		CFD79AF021FE475F0043A26D /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79AEE21FE475F0043A26D /* ProcessSheetController.xib */; };
+		CFD79AFB21FE482D0043A26D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AFA21FE482D0043A26D /* Cocoa.framework */; };
+		CFD79AFD21FE48310043A26D /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AFC21FE48310043A26D /* AppKit.framework */; };
+		CFD79AFF21FE48350043A26D /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AFE21FE48350043A26D /* libUtility.dylib */; };
+		CFD79B0121FE48390043A26D /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79B0021FE48390043A26D /* libHabanero.dylib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		CFD79AC721FE29130043A26D /* CUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD79ACB21FE29130043A26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = SOURCE_ROOT; };
+		CFD79ADE21FE298F0043A26D /* release.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
+		CFD79ADF21FE298F0043A26D /* debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
+		CFD79AE021FE298F0043A26D /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
+		CFD79AE121FE29900043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
+		CFD79AEA21FE474B0043A26D /* ProcessSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProcessSheetController.h; path = include/CUI/ProcessSheetController.h; sourceTree = "<group>"; };
+		CFD79AEC21FE47560043A26D /* ProcessSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ProcessSheetController.mm; path = source/ProcessSheetController.mm; sourceTree = "<group>"; };
+		CFD79AEF21FE475F0043A26D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/ProcessSheetController.xib; sourceTree = "<group>"; };
+		CFD79AF621FE478E0043A26D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = resources/ru.lproj/ProcessSheetController.strings; sourceTree = "<group>"; };
+		CFD79AFA21FE482D0043A26D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		CFD79AFC21FE48310043A26D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		CFD79AFE21FE48350043A26D /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD79B0021FE48390043A26D /* libHabanero.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libHabanero.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		CFD79AC421FE29130043A26D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD79B0121FE48390043A26D /* libHabanero.dylib in Frameworks */,
+				CFD79AFF21FE48350043A26D /* libUtility.dylib in Frameworks */,
+				CFD79AFD21FE48310043A26D /* AppKit.framework in Frameworks */,
+				CFD79AFB21FE482D0043A26D /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		CFD79ABD21FE29130043A26D = {
+			isa = PBXGroup;
+			children = (
+				CFD79AE621FE29950043A26D /* Config */,
+				CFD79AE821FE45C30043A26D /* Headers */,
+				CFD79AE921FE45CB0043A26D /* Source */,
+				CFD79AE721FE2AB40043A26D /* Resources */,
+				CFD79AC821FE29130043A26D /* Products */,
+				CFD79AF921FE482D0043A26D /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		CFD79AC821FE29130043A26D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				CFD79AC721FE29130043A26D /* CUI.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CFD79AE621FE29950043A26D /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CFD79ADF21FE298F0043A26D /* debug.xcconfig */,
+				CFD79AE121FE29900043A26D /* default.xcconfig */,
+				CFD79ADE21FE298F0043A26D /* release.xcconfig */,
+				CFD79AE021FE298F0043A26D /* tests.xcconfig */,
+			);
+			name = Config;
+			sourceTree = "<group>";
+		};
+		CFD79AE721FE2AB40043A26D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				CFD79AEE21FE475F0043A26D /* ProcessSheetController.xib */,
+				CFD79ACB21FE29130043A26D /* Info.plist */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		CFD79AE821FE45C30043A26D /* Headers */ = {
+			isa = PBXGroup;
+			children = (
+				CFD79AEA21FE474B0043A26D /* ProcessSheetController.h */,
+			);
+			name = Headers;
+			sourceTree = "<group>";
+		};
+		CFD79AE921FE45CB0043A26D /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				CFD79AEC21FE47560043A26D /* ProcessSheetController.mm */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		CFD79AF921FE482D0043A26D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CFD79B0021FE48390043A26D /* libHabanero.dylib */,
+				CFD79AFE21FE48350043A26D /* libUtility.dylib */,
+				CFD79AFC21FE48310043A26D /* AppKit.framework */,
+				CFD79AFA21FE482D0043A26D /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		CFD79AC221FE29130043A26D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD79AEB21FE474B0043A26D /* ProcessSheetController.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		CFD79AC621FE29130043A26D /* CUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFD79ACF21FE29130043A26D /* Build configuration list for PBXNativeTarget "CUI" */;
+			buildPhases = (
+				CFD79AC221FE29130043A26D /* Headers */,
+				CFD79AC321FE29130043A26D /* Sources */,
+				CFD79AC421FE29130043A26D /* Frameworks */,
+				CFD79AC521FE29130043A26D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CUI;
+			productName = CUI;
+			productReference = CFD79AC721FE29130043A26D /* CUI.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		CFD79ABE21FE29130043A26D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1010;
+				ORGANIZATIONNAME = "Michael G. Kazakov";
+				TargetAttributes = {
+					CFD79AC621FE29130043A26D = {
+						CreatedOnToolsVersion = 10.1;
+					};
+				};
+			};
+			buildConfigurationList = CFD79AC121FE29130043A26D /* Build configuration list for PBXProject "CUI" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				ru,
+			);
+			mainGroup = CFD79ABD21FE29130043A26D;
+			productRefGroup = CFD79AC821FE29130043A26D /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CFD79AC621FE29130043A26D /* CUI */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		CFD79AC521FE29130043A26D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD79AE521FE29900043A26D /* default.xcconfig in Resources */,
+				CFD79AE321FE29900043A26D /* debug.xcconfig in Resources */,
+				CFD79AF021FE475F0043A26D /* ProcessSheetController.xib in Resources */,
+				CFD79AE421FE29900043A26D /* tests.xcconfig in Resources */,
+				CFD79AE221FE29900043A26D /* release.xcconfig in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		CFD79AC321FE29130043A26D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD79AED21FE47560043A26D /* ProcessSheetController.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CFD79AEE21FE475F0043A26D /* ProcessSheetController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFD79AEF21FE475F0043A26D /* Base */,
+				CFD79AF621FE478E0043A26D /* ru */,
+			);
+			name = ProcessSheetController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		CFD79ACD21FE29130043A26D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFD79AE121FE29900043A26D /* default.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+			};
+			name = Debug;
+		};
+		CFD79ACE21FE29130043A26D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFD79AE121FE29900043A26D /* default.xcconfig */;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+			};
+			name = Release;
+		};
+		CFD79AD021FE29130043A26D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFD79ADF21FE298F0043A26D /* debug.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = resources/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.nimblecommander.CUI;
+			};
+			name = Debug;
+		};
+		CFD79AD121FE29130043A26D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFD79ADE21FE298F0043A26D /* release.xcconfig */;
+			buildSettings = {
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = resources/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = com.magnumbytes.nimblecommander.CUI;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CFD79AC121FE29130043A26D /* Build configuration list for PBXProject "CUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFD79ACD21FE29130043A26D /* Debug */,
+				CFD79ACE21FE29130043A26D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFD79ACF21FE29130043A26D /* Build configuration list for PBXNativeTarget "CUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFD79AD021FE29130043A26D /* Debug */,
+				CFD79AD121FE29130043A26D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = CFD79ABE21FE29130043A26D /* Project object */;
+}

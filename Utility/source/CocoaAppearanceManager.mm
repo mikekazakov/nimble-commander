@@ -1,5 +1,4 @@
 // Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
-//#include "Theme.h"
 #include "CocoaAppearanceManager.h"
 
 namespace nc::utility {

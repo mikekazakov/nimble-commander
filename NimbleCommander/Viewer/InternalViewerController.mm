@@ -1,7 +1,7 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerController.h"
 #include <VFS/VFS.h>
-#include <NimbleCommander/GeneralUI/ProcessSheetController.h>
+#include <CUI/ProcessSheetController.h>
 #include <Config/Config.h>
 #include <VFS/SearchInFile.h>
 #include <Utility/ByteCountFormatter.h>

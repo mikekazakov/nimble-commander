@@ -5,7 +5,7 @@ ENABLE_TESTABILITY = YES
 COPY_PHASE_STRIP = NO
 MACOSX_DEPLOYMENT_TARGET = 10.11
 ALWAYS_SEARCH_USER_PATHS = NO
-HEADER_SEARCH_PATHS = $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Viewer  $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Config/include $(PROJECT_DIR)/../3rd_Party/boost/include $(PROJECT_DIR)/../3rd_Party/rapidjson/include $(PROJECT_DIR)/CUI/include/
+HEADER_SEARCH_PATHS = $(PROJECT_DIR)/include $(PROJECT_DIR)/include/Viewer  $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Config/include $(PROJECT_DIR)/../3rd_Party/boost/include $(PROJECT_DIR)/../3rd_Party/rapidjson/include $(PROJECT_DIR)/../CUI/include/
 LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/boost/built
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a
 

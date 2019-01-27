@@ -3,7 +3,7 @@
 #include <Utility/CocoaAppearanceManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Viewer/BigFileView.h>
-#include "InternalViewerController.h"
+#include <Viewer/InternalViewerController.h>
 #include "InternalViewerWindowController.h"
 #include <Habanero/dispatch_cpp.h>
 #include <chrono>

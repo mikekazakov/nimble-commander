@@ -2,7 +2,7 @@
 #include "AppDelegate+ViewerCreation.h"
 #include <Viewer/BigFileView.h>
 #include <NimbleCommander/Viewer/ThemeAdaptor.h>
-#include <NimbleCommander/Viewer/InternalViewerController.h>
+#include <Viewer/InternalViewerController.h>
 #include <Viewer/History.h>
 
 @implementation NCAppDelegate(ViewerCreation)

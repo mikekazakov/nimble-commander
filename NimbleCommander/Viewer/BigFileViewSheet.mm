@@ -2,7 +2,7 @@
 #include "BigFileViewSheet.h"
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
-#include "InternalViewerController.h"
+#include <Viewer/InternalViewerController.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 

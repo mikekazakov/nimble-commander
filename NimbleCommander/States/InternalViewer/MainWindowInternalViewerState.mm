@@ -2,7 +2,7 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../MainWindowController.h"
-#include "../../Viewer/InternalViewerController.h"
+#include <Viewer/InternalViewerController.h>
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowInternalViewerState.h"
 #include <Habanero/dispatch_cpp.h>

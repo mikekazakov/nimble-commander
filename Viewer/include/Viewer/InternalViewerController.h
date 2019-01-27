@@ -1,7 +1,7 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include <Viewer/BigFileView.h>
+#include "BigFileView.h"
 
 namespace nc::config {
     class Config;

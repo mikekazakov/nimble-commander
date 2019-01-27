@@ -603,10 +603,6 @@
 		CF8D0CF91D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CFD1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib */; };
 		CF8D0CFA1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CFD1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib */; };
 		CF8D0CFB1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0CFD1D963E1F00ADFF14 /* SpotlightSearchPopupViewController.xib */; };
-		CF8D0CFE1D963E3400ADFF14 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */; };
-		CF8D0CFF1D963E3400ADFF14 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */; };
-		CF8D0D001D963E3400ADFF14 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */; };
-		CF8D0D011D963E3400ADFF14 /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */; };
 		CF8D0D041D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
 		CF8D0D051D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
 		CF8D0D061D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */; };
@@ -1904,9 +1900,7 @@
 		CF8D0CF01D96244900ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/ProFeaturesWindowController.xib; sourceTree = "<group>"; };
 		CF8D0CF61D963E1000ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/InternalViewerToolbar.xib; sourceTree = "<group>"; };
 		CF8D0CFC1D963E1F00ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/SpotlightSearchPopupViewController.xib; sourceTree = "<group>"; };
-		CF8D0D021D963E3400ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/InternalViewerController.xib; sourceTree = "<group>"; };
 		CF8D0D081D963E9A00ADFF14 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/VFSListWindowController.xib; sourceTree = "<group>"; };
-		CF8D0D0A1D964C9700ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/InternalViewerController.strings; sourceTree = "<group>"; };
 		CF8D0D0B1D964C9800ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SpotlightSearchPopupViewController.strings; sourceTree = "<group>"; };
 		CF8D0D0C1D964C9900ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/ProFeaturesWindowController.strings; sourceTree = "<group>"; };
 		CF8D0D0D1D964C9A00ADFF14 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/VFSListWindowController.strings; sourceTree = "<group>"; };
@@ -2619,7 +2613,6 @@
 				CF876D211D51E04A009C0CCE /* BigFileViewSheet.h */,
 				CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */,
 				CF876D351D51E089009C0CCE /* BigFileViewSheet.xib */,
-				CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */,
 				CF8D0CF71D963E1000ADFF14 /* InternalViewerToolbar.xib */,
 				CF1E3D281D5AF7E000609ADB /* InternalViewerToolbarProtocol.h */,
 				CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */,
@@ -3774,7 +3767,6 @@
 				CF754D4E1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF4E56BB1D5068F700452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF36DBE21F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */,
-				CF8D0D001D963E3400ADFF14 /* InternalViewerController.xib in Resources */,
 				CF9F4B3D1ECD814800E0AF82 /* ConnectToServer.xib in Resources */,
 				CFB598C2196E3A1F00D4C108 /* Help.pdf in Resources */,
 				CFCCFBC31A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
@@ -3840,7 +3832,6 @@
 				CF36DBE11F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */,
 				CF9F4B111ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF8D0CE41D96234900ADFF14 /* FeedbackWindow.xib in Resources */,
-				CF8D0CFF1D963E3400ADFF14 /* InternalViewerController.xib in Resources */,
 				CF7C7CC41E5C3EB9002DB0E2 /* PreferencesWindowThemesTab.xib in Resources */,
 				CFA53A591D433E2A00C562A7 /* PreferencesWindowToolsTab.xib in Resources */,
 				CF8D0D051D963E9A00ADFF14 /* VFSListWindowController.xib in Resources */,
@@ -3861,7 +3852,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF04DDD71E27743C0047B1F9 /* AliasBadgeIcon.icns in Resources */,
-				CF8D0CFE1D963E3400ADFF14 /* InternalViewerController.xib in Resources */,
 				CF7D7A751C15AAC200ECEBA0 /* Config.json in Resources */,
 				CFCCFBB81A5D687600313845 /* FTPConnectionSheetController.xib in Resources */,
 				CF9F4B411ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */,
@@ -3947,7 +3937,6 @@
 				CF9F4B441ECD81BC00E0AF82 /* NetworkShareSheetController.xib in Resources */,
 				CF4E56BA1D5068F600452912 /* PreferencesWindowPanelsTab.xib in Resources */,
 				CF45CA2F1D3E3AA70074F04C /* ExternalToolParameterValueSheetController.xib in Resources */,
-				CF8D0D011D963E3400ADFF14 /* InternalViewerController.xib in Resources */,
 				CFCCFBB51A5D4E6100313845 /* CalculateChecksumSheetController.xib in Resources */,
 				CF754D4F1C8FE23C00381260 /* AskForPasswordWindowController.xib in Resources */,
 				CF9F4B3E1ECD814800E0AF82 /* ConnectToServer.xib in Resources */,
@@ -5229,16 +5218,6 @@
 			);
 			name = SpotlightSearchPopupViewController.xib;
 			path = NimbleCommander/States/FilePanels/Views;
-			sourceTree = SOURCE_ROOT;
-		};
-		CF8D0D031D963E3400ADFF14 /* InternalViewerController.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF8D0D021D963E3400ADFF14 /* Base */,
-				CF8D0D0A1D964C9700ADFF14 /* ru */,
-			);
-			name = InternalViewerController.xib;
-			path = NimbleCommander/Viewer;
 			sourceTree = SOURCE_ROOT;
 		};
 		CF8D0D091D963E9A00ADFF14 /* VFSListWindowController.xib */ = {

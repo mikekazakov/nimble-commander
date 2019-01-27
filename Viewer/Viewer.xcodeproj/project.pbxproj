@@ -38,6 +38,7 @@
 		CFD79B0321FE4CC40043A26D /* InternalViewerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B0221FE4CC40043A26D /* InternalViewerController.h */; };
 		CFD79B0521FE4CCC0043A26D /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B0421FE4CCC0043A26D /* InternalViewerController.mm */; };
 		CFD79B0721FE4D400043A26D /* CUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79B0621FE4D400043A26D /* CUI.framework */; };
+		CFD79B0A21FE4F430043A26D /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B0821FE4F430043A26D /* InternalViewerController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -74,6 +75,8 @@
 		CFD79B0221FE4CC40043A26D /* InternalViewerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerController.h; path = include/Viewer/InternalViewerController.h; sourceTree = "<group>"; };
 		CFD79B0421FE4CCC0043A26D /* InternalViewerController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerController.mm; path = source/InternalViewerController.mm; sourceTree = "<group>"; };
 		CFD79B0621FE4D400043A26D /* CUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD79B0921FE4F430043A26D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/InternalViewerController.xib; sourceTree = "<group>"; };
+		CFD79B0E21FE4F560043A26D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = resources/ru.lproj/InternalViewerController.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +123,7 @@
 		CFD79A7921F65A710043A26D /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				CFD79B0821FE4F430043A26D /* InternalViewerController.xib */,
 				CFD79A6621F65A010043A26D /* Info.plist */,
 			);
 			name = Resources;
@@ -252,6 +256,8 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
+				ru,
 			);
 			mainGroup = CFD79A5821F65A000043A26D;
 			productRefGroup = CFD79A6321F65A010043A26D /* Products */;
@@ -269,6 +275,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CFD79A8221F65A980043A26D /* release.xcconfig in Resources */,
+				CFD79B0A21FE4F430043A26D /* InternalViewerController.xib in Resources */,
 				CFD79A8021F65A980043A26D /* tests.xcconfig in Resources */,
 				CFD79A8121F65A980043A26D /* debug.xcconfig in Resources */,
 				CFD79A7F21F65A980043A26D /* default.xcconfig in Resources */,
@@ -294,6 +301,18 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		CFD79B0821FE4F430043A26D /* InternalViewerController.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				CFD79B0921FE4F430043A26D /* Base */,
+				CFD79B0E21FE4F560043A26D /* ru */,
+			);
+			name = InternalViewerController.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		CFD79A6821F65A010043A26D /* Debug */ = {

@@ -103,7 +103,9 @@ static int InvertBitFlag( int _value, int _flag )
             [(InternalViewerController*)weak_self onSearchInFileQueueStateChanged];
         });
         
-        NSNib *mynib = [[NSNib alloc] initWithNibNamed:@"InternalViewerController" bundle:nil];
+        NSNib *mynib = [[NSNib alloc]
+                        initWithNibNamed:@"InternalViewerController"
+                        bundle:[NSBundle bundleForClass:InternalViewerController.class]];
         [mynib instantiateWithOwner:self topLevelObjects:nil];
     }
     return self;

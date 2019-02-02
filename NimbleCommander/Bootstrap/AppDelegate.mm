@@ -50,7 +50,6 @@
 #include <NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h>
 #include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
 #include <NimbleCommander/Preferences/Preferences.h>
-#include <NimbleCommander/Viewer/InternalViewerWindowController.h>
 #include <NimbleCommander/GeneralUI/TrialWindowController.h>
 #include <NimbleCommander/GeneralUI/VFSListWindowController.h>
 
@@ -64,6 +63,7 @@
 
 #include <Viewer/History.h>
 #include <Viewer/InternalViewerController.h>
+#include <Viewer/InternalViewerWindowController.h>
 
 using namespace std::literals;
 using namespace nc::bootstrap;

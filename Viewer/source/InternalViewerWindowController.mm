@@ -50,7 +50,8 @@ using namespace std::literals;
         m_Controller = _controller;
         [m_Controller setFile:path at:vfs];
         
-        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nil];
+        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar"
+                                                      bundle:[NSBundle bundleForClass:self.class]];
         [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
         
         self.viewerView = _viewer_factory(NSMakeRect(0, 0, 100, 100));

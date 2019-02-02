@@ -7,10 +7,10 @@
 #include <Habanero/dispatch_cpp.h>
 #include <Viewer/BigFileViewSheet.h>
 #include <Viewer/InternalViewerController.h>
+#include <Viewer/InternalViewerWindowController.h>
 
 // TEMP - need to refactor this bullcrap!
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Viewer/InternalViewerWindowController.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 
 static const auto g_ConfigModalInternalViewer = "viewer.modalMode";

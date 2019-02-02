@@ -38,7 +38,10 @@
     if( self = [super initWithFrame:_frame_rect] ) {
         self.translatesAutoresizingMaskIntoConstraints = false;
         
-        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar" bundle:nil];
+        const auto toolbar_bundle =
+            [NSBundle bundleWithIdentifier:@"com.magnumbytes.NimbleCommander.Viewer"];
+        NSNib *toolbar_nib = [[NSNib alloc] initWithNibNamed:@"InternalViewerToolbar"
+                                                      bundle:toolbar_bundle];
         [toolbar_nib instantiateWithOwner:self topLevelObjects:nil];
 
         auto viewer = _viewer_factory(NSMakeRect(0, 0, 100, 100));

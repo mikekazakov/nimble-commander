@@ -1,4 +1,5 @@
 // Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "MainWindowController.h"
 #include <Habanero/debug.h>
 #include <Config/RapidJSON.h>
 #include <rapidjson/stringbuffer.h>
@@ -9,10 +10,8 @@
 #include "Terminal/ShellState.h"
 #include "Terminal/ExternalEditorState.h"
 #include "InternalViewer/MainWindowInternalViewerState.h"
-#include "../Viewer/InternalViewerWindowController.h"
 #include "../GeneralUI/RegistrationInfoWindow.h"
 #include <Utility/NativeFSManager.h>
-#include "MainWindowController.h"
 #include "MainWindow.h"
 #include "../Bootstrap/AppDelegate.h"
 #include "../Bootstrap/AppDelegate+ViewerCreation.h"
@@ -28,6 +27,7 @@
 #include <Operations/Pool.h>
 #include <Utility/ObjCpp.h>
 #include <Viewer/InternalViewerController.h>
+#include <Viewer/InternalViewerWindowController.h>
 
 using namespace nc;
 

@@ -5,10 +5,10 @@
 #include "FindFiles.h"
 #include "../PanelView.h"
 #include <Habanero/dispatch_cpp.h>
+#include <Viewer/BigFileViewSheet.h>
 
 // TEMP - need to refactor this bullcrap!
 #include <NimbleCommander/Bootstrap/Config.h>
-#include <NimbleCommander/Viewer/BigFileViewSheet.h>
 #include <NimbleCommander/Viewer/InternalViewerWindowController.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 

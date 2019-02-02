@@ -564,14 +564,6 @@
 		CF859A8F16FC100F0081183E /* DetailedVolumeInformationSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF859A8D16FC100F0081183E /* DetailedVolumeInformationSheetController.mm */; };
 		CF8629251B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
 		CF8629261B956B7A00B33CFD /* SUStandardVersionComparator.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */; };
-		CF876D291D51E04A009C0CCE /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */; };
-		CF876D301D51E089009C0CCE /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF876D351D51E089009C0CCE /* BigFileViewSheet.xib */; };
-		CF876D311D51E089009C0CCE /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF876D351D51E089009C0CCE /* BigFileViewSheet.xib */; };
-		CF876D321D51E089009C0CCE /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF876D351D51E089009C0CCE /* BigFileViewSheet.xib */; };
-		CF876D331D51E089009C0CCE /* BigFileViewSheet.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF876D351D51E089009C0CCE /* BigFileViewSheet.xib */; };
-		CF876D3C1D51E0AF009C0CCE /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */; };
-		CF876D421D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */; };
-		CF876D481D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */; };
 		CF876D501D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4E1D53296C009C0CCE /* InternalViewerWindowController.mm */; };
 		CF876D511D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4E1D53296C009C0CCE /* InternalViewerWindowController.mm */; };
 		CF876D521D53296C009C0CCE /* InternalViewerWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF876D4E1D53296C009C0CCE /* InternalViewerWindowController.mm */; };
@@ -1884,10 +1876,6 @@
 		CF8629221B956B7A00B33CFD /* SUStandardVersionComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUStandardVersionComparator.h; path = ../3rd_Party/SparkleEmbedded/Sparkle/SUStandardVersionComparator.h; sourceTree = "<group>"; };
 		CF8629231B956B7A00B33CFD /* SUStandardVersionComparator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SUStandardVersionComparator.m; path = ../3rd_Party/SparkleEmbedded/Sparkle/SUStandardVersionComparator.m; sourceTree = "<group>"; };
 		CF8629241B956B7A00B33CFD /* SUVersionComparisonProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SUVersionComparisonProtocol.h; path = ../3rd_Party/SparkleEmbedded/Sparkle/SUVersionComparisonProtocol.h; sourceTree = "<group>"; };
-		CF876D211D51E04A009C0CCE /* BigFileViewSheet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileViewSheet.h; path = NimbleCommander/Viewer/BigFileViewSheet.h; sourceTree = SOURCE_ROOT; };
-		CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewSheet.mm; path = NimbleCommander/Viewer/BigFileViewSheet.mm; sourceTree = SOURCE_ROOT; };
-		CF876D341D51E089009C0CCE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/BigFileViewSheet.xib; sourceTree = "<group>"; };
-		CF876D371D51E08D009C0CCE /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/BigFileViewSheet.strings; sourceTree = "<group>"; };
 		CF876D4D1D53296C009C0CCE /* InternalViewerWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerWindowController.h; path = NimbleCommander/Viewer/InternalViewerWindowController.h; sourceTree = SOURCE_ROOT; };
 		CF876D4E1D53296C009C0CCE /* InternalViewerWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerWindowController.mm; path = NimbleCommander/Viewer/InternalViewerWindowController.mm; sourceTree = SOURCE_ROOT; };
 		CF876D4F1D53296C009C0CCE /* InternalViewerWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InternalViewerWindowController.xib; path = NimbleCommander/Viewer/InternalViewerWindowController.xib; sourceTree = SOURCE_ROOT; };
@@ -2610,9 +2598,6 @@
 		CF396AEB173FA89A00A20C42 /* Viewer */ = {
 			isa = PBXGroup;
 			children = (
-				CF876D211D51E04A009C0CCE /* BigFileViewSheet.h */,
-				CF876D221D51E04A009C0CCE /* BigFileViewSheet.mm */,
-				CF876D351D51E089009C0CCE /* BigFileViewSheet.xib */,
 				CF8D0CF71D963E1000ADFF14 /* InternalViewerToolbar.xib */,
 				CF1E3D281D5AF7E000609ADB /* InternalViewerToolbarProtocol.h */,
 				CF1E3D291D5AF8E100609ADB /* InternalViewerToolbarProtocol.mm */,
@@ -3785,7 +3770,6 @@
 				CF9F4B121ECD7FC900E0AF82 /* PanelListViewColumnsMenu.xib in Resources */,
 				CF4E56A81D5068D700452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CF6D9D1719667E390077B146 /* MainMenu.xib in Resources */,
-				CF876D321D51E089009C0CCE /* BigFileViewSheet.xib in Resources */,
 				CFEF4E381A6BB409009A1524 /* Preferences.strings in Resources */,
 				CF6D99A9196676AB0077B146 /* Credits.rtf in Resources */,
 			);
@@ -3816,7 +3800,6 @@
 				CF4E56DB1D506BA100452912 /* FindFilesSheetController.xib in Resources */,
 				CF4E56C21D50691B00452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
 				CF7C7CBE1E5C3D84002DB0E2 /* PanelViewHeaderSortPopup.xib in Resources */,
-				CF876D311D51E089009C0CCE /* BigFileViewSheet.xib in Resources */,
 				CF9F4B301ECD810C00E0AF82 /* FavoritesWindowController.xib in Resources */,
 				CF4E56A91D5068D800452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFA53A4A1D433E2A00C562A7 /* FilePanelsQuickSearch.strings in Resources */,
@@ -3876,7 +3859,6 @@
 				CF4E567B1D50669100452912 /* PreferencesWindowHotkeysTab.xib in Resources */,
 				CF3120C41A510F640062185A /* Localizable.strings in Resources */,
 				CF4E56811D50669900452912 /* PreferencesWindowPanelsTabColoringFilterSheet.xib in Resources */,
-				CF876D301D51E089009C0CCE /* BigFileViewSheet.xib in Resources */,
 				CF306F931CE9E54C002326FA /* main_icon.icns in Resources */,
 				CF36DBE01F6BCDA0004A018E /* WebDAVConnectionSheetController.xib in Resources */,
 				CF4E56841D50669C00452912 /* PreferencesWindowTerminalTab.xib in Resources */,
@@ -3955,7 +3937,6 @@
 				CF4E56AD1D5068E100452912 /* PreferencesWindowGeneralTab.xib in Resources */,
 				CF4E56A71D5068D600452912 /* PreferencesWindowExternalEditorsTabNewEditorSheet.xib in Resources */,
 				CFCCFBB01A5D340000313845 /* SFTPConnectionSheetController.xib in Resources */,
-				CF876D331D51E089009C0CCE /* BigFileViewSheet.xib in Resources */,
 				CFCCFBC41A5D7F0E00313845 /* GoToFolderSheetController.xib in Resources */,
 				CFEF4E391A6BB409009A1524 /* Preferences.strings in Resources */,
 			);
@@ -4214,7 +4195,6 @@
 				CF6D9C55196678010077B146 /* FTPConnectionSheetController.mm in Sources */,
 				CFD726C31E42E29200603077 /* PanelViewFooter.mm in Sources */,
 				CFD726B11E42E26200603077 /* CopyFilePaths.mm in Sources */,
-				CF876D421D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CF44D33C202D632F0083FAF5 /* ExecuteExternalTool.mm in Sources */,
 				CF7D7D5D21576E0100DA1794 /* PanelViewDummyPresentation.mm in Sources */,
 				CF6BF84021944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */,
@@ -4380,7 +4360,6 @@
 				CFD726781E42E1FF00603077 /* PanelAux.mm in Sources */,
 				CF1FBF2D1E8F57EA00D3569C /* AddToFavorites.mm in Sources */,
 				CF28B2F821A393A60004D697 /* ActivationManagerBase.cpp in Sources */,
-				CF876D481D51E0B0009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CFB66FCB1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF56BF571D68129800A08D2B /* VFSInstanceManagerImpl.cpp in Sources */,
 				CFD726061E42E06900603077 /* AppDelegate.mm in Sources */,
@@ -4635,7 +4614,6 @@
 				CFDAC23B1DFBDEBA0039A104 /* AppDelegate.mm in Sources */,
 				CFDB17C419B3075000781976 /* SFTPConnectionSheetController.mm in Sources */,
 				CFDAC2A21DFBFBA10039A104 /* TemporaryNativeFileChangesSentinel.cpp in Sources */,
-				CF876D291D51E04A009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CFDAC2DB1DFD12EF0039A104 /* BriefSystemOverview.mm in Sources */,
 				CFB66FCA1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
 				CF56BF541D68061600A08D2B /* VFSInstanceManagerImpl.cpp in Sources */,
@@ -4871,7 +4849,6 @@
 				CFF6F2E91A13567C00011177 /* SFTPConnectionSheetController.mm in Sources */,
 				CF4D98A82028500300ECE06D /* PanelControllerActions.mm in Sources */,
 				CF9F4AFD1ECC8DC100E0AF82 /* Enter.mm in Sources */,
-				CF876D3C1D51E0AF009C0CCE /* BigFileViewSheet.mm in Sources */,
 				CF7C7CB41E5ACDD4002DB0E2 /* Alert.mm in Sources */,
 				CF44D33B202D632F0083FAF5 /* ExecuteExternalTool.mm in Sources */,
 				CFB66FCD1D88F9D40017D2A0 /* RegistrationInfoWindow.mm in Sources */,
@@ -5158,16 +5135,6 @@
 			);
 			name = TrialWindowController.xib;
 			path = NimbleCommander/GeneralUI;
-			sourceTree = SOURCE_ROOT;
-		};
-		CF876D351D51E089009C0CCE /* BigFileViewSheet.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF876D341D51E089009C0CCE /* Base */,
-				CF876D371D51E08D009C0CCE /* ru */,
-			);
-			name = BigFileViewSheet.xib;
-			path = NimbleCommander/Viewer;
 			sourceTree = SOURCE_ROOT;
 		};
 		CF8D0CE81D96234900ADFF14 /* FeedbackWindow.xib */ = {

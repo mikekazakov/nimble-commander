@@ -1,17 +1,31 @@
 // Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "AppDelegate.h"
+#include "AppDelegate+Migration.h"
+#include "AppDelegate+MainWindowCreation.h"
+#include "AppDelegate+ViewerCreation.h"
+#include "ActivationManager.h"
+#include "ConfigWiring.h"
+#include "VFSInit.h"
+#include "Interactions.h"
+
+#include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
 #include <Sparkle/Sparkle.h>
 #include <LetsMove/PFMoveApplication.h>
+
 #include <Habanero/CommonPaths.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <Habanero/algo.h>
+
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/NativeFSManager.h>
 #include <Utility/TemporaryFileStorageImpl.h>
 #include <Utility/PathManip.h>
 #include <Utility/FunctionKeysPass.h>
 #include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
+
 #include <RoutedIO/RoutedIO.h>
-#include "../../3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"
+
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/SandboxManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
@@ -22,7 +36,9 @@
 #include <NimbleCommander/Core/ConfigBackedNetworkConnectionsManager.h>
 #include <NimbleCommander/Core/ConnectionsMenuDelegate.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
+#include <NimbleCommander/Core/VFSInstanceManagerImpl.h>
 #include <NimbleCommander/States/Terminal/ShellState.h>
+#include <NimbleCommander/States/MainWindow.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include <NimbleCommander/States/FilePanels/ExternalToolsSupport.h>
@@ -31,29 +47,23 @@
 #include <NimbleCommander/States/FilePanels/FavoritesImpl.h>
 #include <NimbleCommander/States/FilePanels/FavoritesWindowController.h>
 #include <NimbleCommander/States/FilePanels/FavoritesMenuDelegate.h>
+#include <NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h>
+#include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
 #include <NimbleCommander/Preferences/Preferences.h>
-#include <Viewer/InternalViewerController.h>
 #include <NimbleCommander/Viewer/InternalViewerWindowController.h>
 #include <NimbleCommander/GeneralUI/TrialWindowController.h>
 #include <NimbleCommander/GeneralUI/VFSListWindowController.h>
+
 #include <Operations/Pool.h>
 #include <Operations/AggregateProgressTracker.h>
-#include "AppDelegate.h"
+
 #include <Config/ConfigImpl.h>
+#include <Config/ObjCBridge.h>
 #include <Config/FileOverwritesStorage.h>
 #include <Config/Executor.h>
-#include "AppDelegate+Migration.h"
-#include "ActivationManager.h"
-#include "ConfigWiring.h"
-#include "VFSInit.h"
-#include "Interactions.h"
-#include <NimbleCommander/States/MainWindow.h>
-#include "AppDelegate+MainWindowCreation.h"
-#include <NimbleCommander/States/FilePanels/Helpers/ClosedPanelsHistoryImpl.h>
-#include <NimbleCommander/States/FilePanels/Helpers/RecentlyClosedMenuDelegate.h>
-#include <NimbleCommander/Core/VFSInstanceManagerImpl.h>
-#include <Utility/ObjCpp.h>
+
 #include <Viewer/History.h>
+#include <Viewer/InternalViewerController.h>
 
 using namespace std::literals;
 using namespace nc::bootstrap;
@@ -151,6 +161,13 @@ static NCAppDelegate *g_Me = nil;
 
 @end
 
+@interface NCViewerWindowDelegateBridge: NSObject<NCViewerWindowDelegate>
+
+- (void)viewerWindowWillShow:(InternalViewerWindowController*)_window;
+- (void)viewerWindowWillClose:(InternalViewerWindowController*)_window;
+
+@end
+
 @implementation NCAppDelegate
 {
     std::vector<NCMainWindowController *>       m_MainWindows;
@@ -165,6 +182,7 @@ static NCAppDelegate *g_Me = nil;
     upward_flag         m_FinishedLaunching;
     std::shared_ptr<nc::panel::FavoriteLocationsStorageImpl> m_Favorites;
     NSMutableArray      *m_FilesToOpen;
+    NCViewerWindowDelegateBridge *m_ViewerWindowDelegateBridge;
 }
 
 @synthesize isRunningTests = m_IsRunningTests;
@@ -181,6 +199,7 @@ static NCAppDelegate *g_Me = nil;
         g_Me = self;
         m_IsRunningTests = NSClassFromString(@"XCTestCase") != nullptr;
         m_FilesToOpen = [[NSMutableArray alloc] init];
+        m_ViewerWindowDelegateBridge = [[NCViewerWindowDelegateBridge alloc] init];
         CheckMASReceipt();
         CheckDefaultsReset();
         m_SupportDirectory =
@@ -819,6 +838,27 @@ static NCAppDelegate *g_Me = nil;
     return nil;
 }
 
+- (InternalViewerWindowController*)
+retrieveInternalViewerWindowForPath:(const std::string&)_path
+onVFS:(const std::shared_ptr<VFSHost>&)_vfs
+{
+    dispatch_assert_main_queue();
+    if( auto window = [self findInternalViewerWindowForPath:_path onVFS:_vfs] )
+        return window;
+    auto viewer_factory = [](NSRect rc){
+        return [NCAppDelegate.me makeViewerWithFrame:rc];
+    };
+    auto ctrl = [self makeViewerController];
+    auto window = [[InternalViewerWindowController alloc]
+                   initWithFilepath:_path
+                   at:_vfs
+                   viewerFactory:viewer_factory
+                   controller:ctrl];
+    window.delegate = m_ViewerWindowDelegateBridge;
+    
+    return window;
+}
+
 - (IBAction)onMainMenuPerformShowVFSListAction:(id)sender
 {
     static __weak VFSListWindowController *existing_window = nil;
@@ -1024,3 +1064,17 @@ static std::optional<std::string> Load(const std::string &_filepath)
     in.close();
     return contents;
 }
+
+@implementation NCViewerWindowDelegateBridge
+
+- (void)viewerWindowWillShow:(InternalViewerWindowController*)_window
+{
+    [NCAppDelegate.me addInternalViewerWindow:_window];
+}
+
+- (void)viewerWindowWillClose:(InternalViewerWindowController*)_window
+{
+    [NCAppDelegate.me removeInternalViewerWindow:_window];
+}
+
+@end

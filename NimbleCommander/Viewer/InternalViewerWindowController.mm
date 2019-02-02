@@ -1,10 +1,8 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "../Bootstrap/AppDelegate.h"
+#include "InternalViewerWindowController.h"
 #include <Utility/CocoaAppearanceManager.h>
-#include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Viewer/BigFileView.h>
 #include <Viewer/InternalViewerController.h>
-#include "InternalViewerWindowController.h"
 #include <Habanero/dispatch_cpp.h>
 #include <chrono>
 #include <Utility/ObjCpp.h>
@@ -93,7 +91,6 @@ using namespace std::literals;
     self.window.nextResponder = m_Controller;
         
     [self.window bind:@"title" toObject:m_Controller withKeyPath:@"verboseTitle" options:nil];
-    GA().PostScreenView("File Viewer Window");    
 }
 
 - (bool) performBackgrounOpening
@@ -107,7 +104,9 @@ using namespace std::literals;
     [self window];
     [m_Controller show];
     self.viewerView.focusRingType = NSFocusRingTypeNone;
-    [NCAppDelegate.me addInternalViewerWindow:self];
+    if ( id<NCViewerWindowDelegate> delegate = self.delegate )
+        if( [delegate respondsToSelector:@selector(viewerWindowWillShow:)] )
+            [delegate viewerWindowWillShow:self];
     
     [self showWindow:self];
 }
@@ -117,7 +116,9 @@ using namespace std::literals;
     [m_Controller saveFileState];
     self.window.delegate = nil;
     dispatch_to_main_queue_after(10ms, [=]{
-        [NCAppDelegate.me removeInternalViewerWindow:self];
+        if ( id<NCViewerWindowDelegate> delegate = self.delegate )
+            if( [delegate respondsToSelector:@selector(viewerWindowWillClose:)] )
+                [delegate viewerWindowWillClose:self];
     });
 }
 

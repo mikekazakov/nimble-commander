@@ -3,9 +3,9 @@
 #pragma once
 
 #include <VFS/VFS_fwd.h>
-#include <Config/ObjCBridge.h>
 #include <Cocoa/Cocoa.h>
 
+@class NCConfigObjCBridge;
 @class NCMainWindowController;
 @class InternalViewerWindowController;
 @class AppStoreHelper;
@@ -46,10 +46,15 @@ namespace nc {
 
 @interface NCAppDelegate : NSObject <NSApplicationDelegate>
 
-- (void) addInternalViewerWindow:(InternalViewerWindowController*) _wnd;
-- (void) removeInternalViewerWindow:(InternalViewerWindowController*) _wnd;
 - (InternalViewerWindowController*) findInternalViewerWindowForPath:(const std::string&)_path
                                                               onVFS:(const std::shared_ptr<VFSHost>&)_vfs;
+/**
+ * Searches for an existing window with corresponding path,
+ * if it is not found - allocates a new non-shown one.
+ */
+- (InternalViewerWindowController*)
+    retrieveInternalViewerWindowForPath:(const std::string&)_path
+    onVFS:(const std::shared_ptr<VFSHost>&)_vfs;
 
 /**
  * Runs a modal dialog window, which asks user if he wants to reset app settings.
@@ -69,26 +74,31 @@ namespace nc {
  * Signals that applications runs in unit testing environment.
  * Thus it should strip it's windows etc.
  */
-@property (nonatomic, readonly) bool isRunningTests;
+@property (nonatomic, readonly)
+    bool isRunningTests;
 
 /**
  * Support dir, ~/Library/Application Support/Nimble Commander/.
  * Is in Containers for Sandboxes versions
  */
-@property (nonatomic, readonly) const std::string& supportDirectory;
+@property (nonatomic, readonly)
+    const std::string& supportDirectory;
 
 /**
  * By default this dir is ~/Library/Application Support/Nimble Commander/Config/.
  * May change in the future.
  */
-@property (nonatomic, readonly) const std::string& configDirectory;
+@property (nonatomic, readonly)
+    const std::string& configDirectory;
 
 /**
  * This dir is ~/Library/Application Support/Nimble Commander/State/.
  */
-@property (nonatomic, readonly) const std::string& stateDirectory;
+@property (nonatomic, readonly)
+    const std::string& stateDirectory;
 
-@property (nonatomic, readonly) NCConfigObjCBridge *config;
+@property (nonatomic, readonly)
+    NCConfigObjCBridge *config;
 
 @property (nonatomic, readonly)
     nc::config::Config& globalConfig;
@@ -96,14 +106,17 @@ namespace nc {
 @property (nonatomic, readonly)
     nc::config::Config& stateConfig;
 
-@property (nonatomic, readonly) ExternalToolsStorage& externalTools;
+@property (nonatomic, readonly)
+    ExternalToolsStorage& externalTools;
 
 @property (nonatomic, readonly)
     const std::shared_ptr<nc::panel::PanelViewLayoutsStorage> &panelLayouts;
 
-@property (nonatomic, readonly) ThemesManager& themesManager;
+@property (nonatomic, readonly)
+    ThemesManager& themesManager;
 
-@property (nonatomic, readonly) ExternalEditorsStorage& externalEditorsStorage;
+@property (nonatomic, readonly)
+    ExternalEditorsStorage& externalEditorsStorage;
 
 @property (nonatomic, readonly)
     const std::shared_ptr<nc::panel::FavoriteLocationsStorage>& favoriteLocationsStorage;
@@ -111,9 +124,11 @@ namespace nc {
 @property (nonatomic, readonly)
     const std::shared_ptr<NetworkConnectionsManager> &networkConnectionsManager;
 
-@property (nonatomic, readonly) AppStoreHelper *appStoreHelper;
+@property (nonatomic, readonly)
+    AppStoreHelper *appStoreHelper;
 
-@property (nonatomic, readonly) nc::ops::AggregateProgressTracker &operationsProgressTracker;
+@property (nonatomic, readonly)
+    nc::ops::AggregateProgressTracker &operationsProgressTracker;
 
 @property (nonatomic, readonly)
     const std::shared_ptr<nc::panel::ClosedPanelsHistory> &closedPanelsHistory;

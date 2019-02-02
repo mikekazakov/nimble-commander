@@ -6,6 +6,7 @@
 #include "../PanelView.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Viewer/BigFileViewSheet.h>
+#include <Viewer/InternalViewerController.h>
 
 // TEMP - need to refactor this bullcrap!
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -119,26 +120,18 @@ void FindFiles::OnView(const FindFilesSheetViewRequest& _request) const
         });
     }
     else { // as a window
-        if( InternalViewerWindowController *window =
-            [NCAppDelegate.me findInternalViewerWindowForPath:_request.path onVFS:_request.vfs]  ) {
-            // already has this one
+        auto window = [NCAppDelegate.me retrieveInternalViewerWindowForPath:_request.path
+                                                                      onVFS:_request.vfs];
+        if( window.internalViewerController.isOpened ) {
             [window showWindow:_request.sender];
-            
             if( _request.content_mark ) {
                 auto range = CFRangeMake(_request.content_mark->bytes_offset,
                                          _request.content_mark->bytes_length);
                 [window markInitialSelection:range
-                                 searchTerm:_request.content_mark->search_term];
+                                  searchTerm:_request.content_mark->search_term];
             }
-
         }
         else {
-            // need to create a new one
-            window = [[InternalViewerWindowController alloc]
-                      initWithFilepath:_request.path
-                      at:_request.vfs
-                      viewerFactory:m_MakeViewer
-                      controller:m_MakeController()];
             dispatch_to_background([=]{
                 const auto opening_result = [window performBackgrounOpening];
                 dispatch_to_main_queue([=]{

@@ -28,6 +28,8 @@ namespace nc::viewer {
 @property (nonatomic, readonly) const std::string&  filePath;
 @property (nonatomic, readonly) const VFSHostPtr&   fileVFS;
 
+@property (nonatomic, readonly) bool isOpened;
+
 - (instancetype) init NS_UNAVAILABLE;
 - (instancetype) initWithHistory:(nc::viewer::History&)_history
                           config:(nc::config::Config&)_config;

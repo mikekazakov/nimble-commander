@@ -27,6 +27,7 @@
 #include <NimbleCommander/Core/UserNotificationsCenter.h>
 #include <Operations/Pool.h>
 #include <Utility/ObjCpp.h>
+#include <Viewer/InternalViewerController.h>
 
 using namespace nc;
 
@@ -347,35 +348,25 @@ static int CountMainWindows()
             }
         }
         else { // as a window
-            if( auto *window = [NCAppDelegate.me findInternalViewerWindowForPath:_filepath
-                                                                         onVFS:_host] ) {
+            if( auto *ex_window = [NCAppDelegate.me findInternalViewerWindowForPath:_filepath
+                                                                              onVFS:_host] ) {
                 // already has this one
                 dispatch_to_main_queue([=]{
-                    [window showWindow:self];
+                    [ex_window showWindow:self];
                 });
             }
             else {
-                // need to create a new one
+                InternalViewerWindowController *window = nil;
                 dispatch_sync(dispatch_get_main_queue(),[&]{
-                    auto viewer_factory = [](NSRect rc){
-                        return [NCAppDelegate.me makeViewerWithFrame:rc];
-                    };
-                    auto ctrl = [NCAppDelegate.me makeViewerController];
-                    window = [[InternalViewerWindowController alloc]
-                              initWithFilepath:_filepath
-                              at:_host
-                              viewerFactory:viewer_factory
-                              controller:ctrl];
+                    window = [NCAppDelegate.me retrieveInternalViewerWindowForPath:_filepath
+                                                                             onVFS:_host];
                 });
-                if( [window performBackgrounOpening] ) {
-                    dispatch_to_main_queue([=]{
+                const auto opening_result = [window performBackgrounOpening];
+                dispatch_to_main_queue([=]{
+                    if( opening_result ) {
                         [window showAsFloatingWindow];
-                    });
-                }
-                else
-                    dispatch_to_main_queue([=] () mutable {
-                        window = nil; // release this object in main thread
-                    });
+                    }
+                });
             }
         }
     });

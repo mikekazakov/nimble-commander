@@ -654,4 +654,9 @@ static int InvertBitFlag( int _value, int _flag )
     [m_WordWrappingCheckBox bind:@"value" toObject:m_View withKeyPath:@"wordWrap" options:nil];
 }
 
+- (bool) isOpened
+{
+    return m_WorkFile != nullptr;
+}
+
 @end

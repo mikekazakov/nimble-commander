@@ -2,11 +2,21 @@
 #pragma once
 
 #include <VFS/VFS.h>
+#include <Cocoa/Cocoa.h>
 
 @class InternalViewerController;
 @class BigFileView;
+@class InternalViewerWindowController;
 
-@interface InternalViewerWindowController : NSWindowController
+@protocol NCViewerWindowDelegate<NSObject>
+
+@optional
+- (void)viewerWindowWillShow:(InternalViewerWindowController*)_window;
+- (void)viewerWindowWillClose:(InternalViewerWindowController*)_window;
+
+@end
+
+@interface InternalViewerWindowController : NSWindowController<NSWindowDelegate>
 
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
@@ -20,5 +30,7 @@
 
 
 @property (nonatomic, readonly) InternalViewerController *internalViewerController;
+
+@property (nonatomic, weak) id<NCViewerWindowDelegate> delegate;
 
 @end

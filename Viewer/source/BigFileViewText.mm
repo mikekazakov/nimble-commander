@@ -2,65 +2,13 @@
 #include "BigFileViewText.h"
 #include "BigFileView.h"
 #include "TextProcessing.h"
+#include "IndexedTextLine.h"
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
 
 #include <cmath>
 
 using namespace nc::viewer;
-
-struct BigFileViewText::TextLine
-{
-    TextLine()
-    {
-    }
-    TextLine(TextLine &&_r)
-    {
-        unichar_no = _r.unichar_no;
-        unichar_len = _r.unichar_len;
-        byte_no = _r.byte_no;
-        bytes_len = _r.bytes_len;
-        line = _r.line;
-        memset(&_r, 0, sizeof(TextLine));
-    }
-    ~TextLine()
-    {
-        if(line != 0)
-        {
-            CFRelease(line);
-            line = 0;
-        }
-    }
-    
-    /**
-     * index of a first unichar of this line whithin a window
-     */
-    uint32_t    unichar_no  = 0;
-    
-    /**
-     * amount of unichars in this line
-     */
-    uint32_t    unichar_len = 0;
-    
-    /**
-     * offset within file window of a current text line (offset of a first unichar of this line)
-     */
-    uint32_t    byte_no     = 0;
-    
-    
-    uint32_t    bytes_len   = 0;
-    CTLineRef   line        = 0;
-  
-    // helper functions
-    inline bool uni_in(uint32_t _uni_ind) const
-    {
-        return _uni_ind >= unichar_no &&
-               _uni_ind < unichar_no + unichar_len;
-    }
-    
-    TextLine(const TextLine&) = delete;
-    void operator=(const TextLine&) = delete;
-};
 
 BigFileViewText::BigFileViewText(BigFileViewDataBackend* _data, BigFileView* _view):
     m_FixupWindow(std::make_unique<UniChar[]>(m_Data->RawSize())), // unichar for every byte in raw window - should be ok in all cases
@@ -116,52 +64,12 @@ void BigFileViewText::BuildLayout()
     CFAttributedStringSetAttribute(m_AttrString, CFRangeMake(0, m_StringBufferSize), kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
     CFAttributedStringSetAttribute(m_AttrString, CFRangeMake(0, m_StringBufferSize), kCTFontAttributeName, [m_View TextFont]);
 
-    
-    // Create a typesetter using the attributed string.
-    CTTypesetterRef typesetter = CTTypesetterCreateWithAttributedString(m_AttrString);
-    
-    const auto raw_chars = (const char16_t*)CFStringGetCharactersPtr(m_StringBuffer);
-    const auto raw_chars_length = (int)CFStringGetLength(m_StringBuffer);
     const auto monospace_width = m_FontInfo.MonospaceWidth();
     
-    int start = 0;
-    while( start < m_StringBufferSize ) {
-        // 1st - manual hack for breaking lines by space characters
-        int count = 0;
-        
-        const int spaces = ScanHeadingSpacesForBreakPosition
-            (raw_chars, raw_chars_length, (int)start, monospace_width, wrapping_width);
-        if( spaces != 0 ) {
-            count = spaces;
-        }
-        else {
-            count = (int)CTTypesetterSuggestLineBreak(typesetter, start, wrapping_width);
-            if( count <= 0 )
-                break;
-            
-            const int tail_spaces_cut = ScanForExtraTrailingSpaces
-                (raw_chars, start, start + count, monospace_width, wrapping_width, typesetter);
-            
-            count -= tail_spaces_cut;
-        }
-        
-        // Use the returned character count (to the break) to create the line.
-        m_Lines.emplace_back();
-        TextLine &l = m_Lines.back();
-        l.unichar_no = (uint32_t)start;
-        l.unichar_len = (uint32_t)count;
-        l.byte_no = m_Data->UniCharToByteIndeces()[start];
-        l.bytes_len = m_Data->UniCharToByteIndeces()[start + count - 1] - l.byte_no;
-        
-        start += count;
-    }
-
-    // build our CTLines in multiple threads since it can be time-consuming
-    dispatch_apply(m_Lines.size(), dispatch_get_global_queue(0, 0), ^(size_t n) {
-        m_Lines[n].line = CTTypesetterCreateLine(typesetter, CFRangeMake(m_Lines[n].unichar_no, m_Lines[n].unichar_len));        
-    });
-    
-    CFRelease(typesetter);
+    m_Lines = SplitIntoLines(m_AttrString,
+                             wrapping_width,
+                             monospace_width,
+                             m_Data->UniCharToByteIndeces());
     
     if(m_VerticalOffset >= m_Lines.size())
         m_VerticalOffset = !m_Lines.empty() ? (unsigned)m_Lines.size()-1 : 0;
@@ -204,11 +112,12 @@ int BigFileViewText::CharIndexFromPoint(CGPoint _point)
     
     const auto &line = m_Lines[line_no];
 
-    int ind = (int)CTLineGetStringIndexForPosition(line.line, CGPointMake(_point.x - TextAnchor().x, 0));
+    int ind = (int)CTLineGetStringIndexForPosition(line.Line(),
+                                                   CGPointMake(_point.x - TextAnchor().x, 0));
     if(ind < 0)
         return -1;
 
-    ind = std::clamp(ind, 0, (int)line.unichar_no + (int)line.unichar_len - 1); // TODO: check if this is right
+    ind = std::clamp(ind, 0, line.UniCharsStart() + line.UniCharsLen() - 1); // TODO: check if this is right
     
     return ind;
 }
@@ -247,24 +156,24 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
          if(selection.location >= 0) // draw a selection background here
          {
              CGFloat x1 = 0, x2 = -1;
-             if(line.unichar_no <= selection.location &&
-                line.unichar_no + line.unichar_len > selection.location)
+             if(line.UniCharsStart() <= selection.location &&
+                line.UniCharsEnd() > selection.location )
              {
-                 x1 = pos.x + CTLineGetOffsetForStringIndex(line.line, selection.location, 0);
-                 x2 = ((selection.location + selection.length <= line.unichar_no + line.unichar_len) ?
-                       pos.x + CTLineGetOffsetForStringIndex(line.line,
-                                                    (selection.location + selection.length <= line.unichar_no + line.unichar_len) ?
-                                                    selection.location + selection.length : line.unichar_no + line.unichar_len,
+                 x1 = pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location, 0);
+                 x2 = ((selection.location + selection.length <= line.UniCharsEnd()) ?
+                       pos.x + CTLineGetOffsetForStringIndex(line.Line(),
+                                                    (selection.location + selection.length <= line.UniCharsEnd()) ?
+                                                    selection.location + selection.length : line.UniCharsEnd(),
                                                0) : view_width);
              }
-             else if(selection.location + selection.length > line.unichar_no &&
-                     selection.location + selection.length <= line.unichar_no + line.unichar_len )
+             else if(selection.location + selection.length > line.UniCharsStart() &&
+                     selection.location + selection.length <= line.UniCharsEnd() )
              {
                  x1 = pos.x;
-                 x2 = pos.x + CTLineGetOffsetForStringIndex(line.line, selection.location + selection.length, 0);
+                 x2 = pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location + selection.length, 0);
              }
-             else if(selection.location < line.unichar_no &&
-                     selection.location + selection.length > line.unichar_no + line.unichar_len)
+             else if(selection.location < line.UniCharsStart() &&
+                     selection.location + selection.length > line.UniCharsEnd() )
              {
                  x1 = pos.x;
                  x2 = view_width;
@@ -282,7 +191,7 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
          }
          
          CGContextSetTextPosition(_context, pos.x, pos.y);
-         CTLineDraw(line.line, _context);
+         CTLineDraw(line.Line(), _context);
      }
 }
 
@@ -295,11 +204,11 @@ void BigFileViewText::CalculateScrollPosition( double &_position, double &_knob_
     {
         if(m_VerticalOffset < m_Lines.size())
         {
-            uint64_t byte_pos = m_Lines[m_VerticalOffset].byte_no + m_Data->FilePos();
+            uint64_t byte_pos = m_Lines[m_VerticalOffset].BytesStart() + m_Data->FilePos();
             uint64_t last_visible_byte_pos =
             ((m_VerticalOffset + m_FrameLines < m_Lines.size()) ?
-             m_Lines[m_VerticalOffset + m_FrameLines].byte_no :
-             m_Lines.back().byte_no )
+             m_Lines[m_VerticalOffset + m_FrameLines].BytesStart() :
+             m_Lines.back().BytesStart() )
             + m_Data->FilePos();;
             uint64_t byte_scroll_size = m_Data->FileSize() - (last_visible_byte_pos - byte_pos);
             double prop = double(last_visible_byte_pos - byte_pos) / double(m_Data->FileSize());
@@ -345,7 +254,7 @@ void BigFileViewText::MoveLinesDelta(int _delta)
             // nope, we need to move file window if it is possible
             if(window_pos > 0)
             { // ok, can move - there's a space
-                uint64_t anchor_glob_offset = m_Lines[m_VerticalOffset].byte_no + window_pos;
+                uint64_t anchor_glob_offset = m_Lines[m_VerticalOffset].BytesStart() + window_pos;
                 int anchor_pos_on_screen = -_delta;
                 
                 // TODO: need something more intelligent here
@@ -375,7 +284,7 @@ void BigFileViewText::MoveLinesDelta(int _delta)
                 size_t anchor_index = MIN(m_VerticalOffset + _delta - 1, m_Lines.size() - 1);
                 int anchor_pos_on_screen = -1;
                 
-                uint64_t anchor_glob_offset = m_Lines[anchor_index].byte_no + window_pos;
+                uint64_t anchor_glob_offset = m_Lines[anchor_index].BytesStart() + window_pos;
 
                 assert(anchor_glob_offset > window_size/4); // internal logic check
                 // TODO: need something more intelligent here
@@ -443,7 +352,7 @@ int BigFileViewText::FindClosestLineInd(uint64_t _glob_offset) const
     const uint64_t window_pos = m_Data->FilePos();
     
     auto lower = lower_bound(begin(m_Lines), end(m_Lines), _glob_offset, [=](auto &l, auto r){
-        return (uint64_t)l.byte_no + window_pos < r;
+        return (uint64_t)l.BytesStart() + window_pos < r;
     });
 
     size_t closest_ind = 0;
@@ -456,11 +365,11 @@ int BigFileViewText::FindClosestLineInd(uint64_t _glob_offset) const
         closest_ind = lower - begin(m_Lines);
         
         // if didn't found exactly requested line
-        uint64_t d1 = (uint64_t)lower->byte_no + window_pos - _glob_offset;
+        uint64_t d1 = (uint64_t)lower->BytesStart() + window_pos - _glob_offset;
         if(d1 != 0)
         { // then compare with prev element
             auto prev = lower - 1;
-            if(_glob_offset - (uint64_t)prev->byte_no - window_pos < d1)
+            if(_glob_offset - (uint64_t)prev->BytesStart() - window_pos < d1)
                 closest_ind = prev - begin(m_Lines);
         }
     }
@@ -476,7 +385,7 @@ int BigFileViewText::FindClosestNotGreaterLineInd(uint64_t _glob_offset) const
     const uint64_t window_pos = m_Data->FilePos();
     
     auto lower = lower_bound(begin(m_Lines), end(m_Lines), _glob_offset, [=](auto &l, auto r){
-        return (uint64_t)l.byte_no + window_pos < r;
+        return (uint64_t)l.BytesStart() + window_pos < r;
     });
     
     size_t closest_ind = 0;
@@ -487,7 +396,7 @@ int BigFileViewText::FindClosestNotGreaterLineInd(uint64_t _glob_offset) const
         closest_ind = 0;
     else {
         closest_ind = lower - begin(m_Lines);
-        if((uint64_t)lower->byte_no + window_pos != _glob_offset)
+        if((uint64_t)lower->BytesStart() + window_pos != _glob_offset)
             --closest_ind;
     }
     
@@ -499,7 +408,7 @@ uint32_t BigFileViewText::GetOffsetWithinWindow()
     if(!m_Lines.empty())
     {
         assert(m_VerticalOffset < m_Lines.size());
-        return m_Lines[m_VerticalOffset].byte_no;
+        return m_Lines[m_VerticalOffset].BytesStart();
     }
     else
     {
@@ -736,8 +645,8 @@ void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
         return;
     
     auto &i = m_Lines[line_no];
-    int sel_start = i.unichar_no;
-    int sel_end = i.unichar_no + i.unichar_len;
+    int sel_start = i.UniCharsStart();
+    int sel_end = i.UniCharsEnd();
     int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
     int sel_end_byte = sel_end < (long)m_StringBufferSize ?
         m_Data->UniCharToByteIndeces()[sel_end] :

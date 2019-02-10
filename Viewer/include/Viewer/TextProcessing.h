@@ -1,9 +1,13 @@
 #pragma once
 
+#include <vector>
+#include <stdint.h>
 #include <CoreText/CoreText.h>
 
 namespace nc::viewer {
 
+class IndexedTextLine;
+    
 /**
  * Scans *heading* spaces starting from _scan_starting_position and up to _characters_length.
  * Counts total width occupied by these heading spaces.
@@ -45,4 +49,9 @@ int ScanForExtraTrailingSpaces(const char16_t* _characters,
                                double _width_threshold,
                                CTTypesetterRef _setter);
 
+std::vector<IndexedTextLine> SplitIntoLines(CFAttributedStringRef _attributed_string,
+                                            double _wrapping_width,
+                                            double _monospace_width,
+                                            const uint32_t *_unichars_to_byte_indices);
+    
 }

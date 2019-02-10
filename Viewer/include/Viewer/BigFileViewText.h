@@ -2,6 +2,10 @@
 #include <Utility/FontExtras.h>
 #include "BigFileViewProtocol.h"
 
+namespace nc::viewer {
+    class IndexedTextLine;
+}
+
 class BigFileViewText : public BigFileViewImpl
 {
 public:
@@ -64,8 +68,6 @@ private:
      * Look at FindClosestLineInd();
      */
     int FindClosestNotGreaterLineInd(uint64_t _glob_offset) const;
-    
-    struct TextLine;
 
     // basic stuff
     __unsafe_unretained BigFileView      *m_View;
@@ -80,7 +82,7 @@ private:
     nc::utility::FontGeometryInfo m_FontInfo;
     double                       m_LeftInset = 5;
     CFMutableAttributedStringRef m_AttrString = nullptr;
-    std::vector<TextLine>        m_Lines;
+    std::vector<nc::viewer::IndexedTextLine> m_Lines;
     unsigned                     m_VerticalOffset = 0; // offset in lines number within text lines
     unsigned                     m_HorizontalOffset = 0; // offset in characters from the left window edge
     

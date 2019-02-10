@@ -1,6 +1,12 @@
 #include "TextProcessing.h"
+#include "IndexedTextLine.h"
+
+#include <Habanero/algo.h>
+#include <Habanero/dispatch_cpp.h>
+
 #include <stdexcept>
 #include <cmath>
+#include <algorithm>
 
 namespace nc::viewer {
     
@@ -139,11 +145,73 @@ int ScanForExtraTrailingSpaces(const char16_t* _characters,
     // 3rd - calc residual space and amount of space characters to fill it
     const auto delta_width = _width_threshold - line_width;
     const auto fit_spaces = (int) std::ceil(delta_width / _mono_font_width);
-    const auto extras = spaces_count - fit_spaces;
-    assert( extras >= 0 );
+    const auto extras = std::max(spaces_count - fit_spaces, 0);
     return extras;
 }
     
+std::vector<IndexedTextLine> SplitIntoLines(CFAttributedStringRef const _attributed_string,
+                                            double const _wrapping_width,
+                                            double const _monospace_width,
+                                            const uint32_t * const _unichars_to_byte_indices)
+{
+    // Create a typesetter using the attributed string.
+    const auto typesetter = CTTypesetterCreateWithAttributedString(_attributed_string);
+    const auto release_typesetter = at_scope_end([&]{ CFRelease(typesetter); });
     
+    const auto cf_string = CFAttributedStringGetString(_attributed_string);
+    
+    const auto raw_chars = (const char16_t*)CFStringGetCharactersPtr(cf_string);
+    if( raw_chars == nullptr )
+        throw std::invalid_argument("SplitIntoLines: can't get raw characters pointer");
+    
+    const auto raw_chars_length = (int)CFStringGetLength(cf_string);
+    
+    std::vector< std::pair<int, int> > starts_and_length;
+    int start = 0;
+    while ( start < raw_chars_length  ) {
+        // 1st - manual hack for breaking lines by space characters
+        int count = 0;
+        
+        const int spaces = ScanHeadingSpacesForBreakPosition
+            (raw_chars, raw_chars_length, (int)start, _monospace_width, _wrapping_width);
+        if( spaces != 0 ) {
+            count = spaces;
+        }
+        else {
+            count = (int)CTTypesetterSuggestLineBreak(typesetter, start, _wrapping_width);
+            if( count <= 0 )
+                break;
+            
+            const int tail_spaces_cut = ScanForExtraTrailingSpaces
+                (raw_chars, start, start + count, _monospace_width, _wrapping_width, typesetter);
+            
+            count -= tail_spaces_cut;
+        }
+        
+        // Use the returned character count (to the break) to create the line.
+        starts_and_length.emplace_back(start, count);
+        start += count;
+    }
+    
+    // build our CTLines in multiple threads since it can be time-consuming
+    std::vector<nc::viewer::IndexedTextLine> lines( starts_and_length.size() );
+    const auto block = [&] (size_t n) {
+        const auto &position = starts_and_length[n];
+        const auto unichar_range = CFRangeMake(position.first, position.second);
+        const auto line = CTTypesetterCreateLine(typesetter, unichar_range);
+        lines[n] = IndexedTextLine{
+            position.first,
+            position.second,
+            (int)_unichars_to_byte_indices[position.first],
+            (int)_unichars_to_byte_indices[position.first + position.second - 1] -
+            (int)_unichars_to_byte_indices[position.first],
+            line
+        };
+    };
+    dispatch_apply( lines.size(), dispatch_get_global_queue(0, 0), block );
+    
+    return lines;
+}
+
 }
 

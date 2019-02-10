@@ -54,6 +54,8 @@
 		CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B5822106E3C0043A26D /* Tests.cpp */; };
 		CFD79B6A22106F080043A26D /* TestProcessingTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TestProcessingTests.cpp */; };
 		CFD79B6B221071180043A26D /* Viewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A6221F65A010043A26D /* Viewer.framework */; };
+		CFD79B6D221097A40043A26D /* IndexedTextLine.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B6C221097A40043A26D /* IndexedTextLine.h */; };
+		CFD79B6F221097B30043A26D /* IndexedTextLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6E221097B30043A26D /* IndexedTextLine.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -121,6 +123,8 @@
 		CFD79B5722106E3B0043A26D /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
 		CFD79B5822106E3C0043A26D /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
 		CFD79B6822106F000043A26D /* TestProcessingTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestProcessingTests.cpp; path = tests/TestProcessingTests.cpp; sourceTree = "<group>"; };
+		CFD79B6C221097A40043A26D /* IndexedTextLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IndexedTextLine.h; path = include/Viewer/IndexedTextLine.h; sourceTree = "<group>"; };
+		CFD79B6E221097B30043A26D /* IndexedTextLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IndexedTextLine.cpp; path = source/IndexedTextLine.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,6 +211,7 @@
 				CFD79B0F2205B82F0043A26D /* BigFileViewSheet.h */,
 				CFD79A9621F65B570043A26D /* BigFileViewText.h */,
 				CFD79AB321FCA4E50043A26D /* History.h */,
+				CFD79B6C221097A40043A26D /* IndexedTextLine.h */,
 				CFD79B0221FE4CC40043A26D /* InternalViewerController.h */,
 				CFD79B172205DE3D0043A26D /* InternalViewerToolbarProtocol.h */,
 				CFD79A9521F65B570043A26D /* InternalViewerViewPreviewMode.h */,
@@ -227,6 +232,7 @@
 				CFD79B112205B8360043A26D /* BigFileViewSheet.mm */,
 				CFD79A8721F65B4E0043A26D /* BigFileViewText.mm */,
 				CFD79AB521FCA4F30043A26D /* History.cpp */,
+				CFD79B6E221097B30043A26D /* IndexedTextLine.cpp */,
 				CFD79B0421FE4CCC0043A26D /* InternalViewerController.mm */,
 				CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */,
 				CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */,
@@ -282,6 +288,7 @@
 				CFD79AB421FCA4E50043A26D /* History.h in Headers */,
 				CFD79B5922106E3C0043A26D /* Tests.h in Headers */,
 				CFD79A9D21F65B570043A26D /* BigFileViewText.h in Headers */,
+				CFD79B6D221097A40043A26D /* IndexedTextLine.h in Headers */,
 				CFD79A9E21F65B570043A26D /* BigFileView.h in Headers */,
 				CFD79B202205DE9D0043A26D /* InternalViewerWindowController.h in Headers */,
 				CFD79B3E221045210043A26D /* TextProcessing.h in Headers */,
@@ -398,6 +405,7 @@
 				CFD79B1A2205DE480043A26D /* InternalViewerToolbarProtocol.mm in Sources */,
 				CFD79AB621FCA4F30043A26D /* History.cpp in Sources */,
 				CFD79A8C21F65B4F0043A26D /* InternalViewerViewPreviewMode.mm in Sources */,
+				CFD79B6F221097B30043A26D /* IndexedTextLine.cpp in Sources */,
 				CFD79B402210452C0043A26D /* TextProcessing.cpp in Sources */,
 				CFD79A8F21F65B4F0043A26D /* BigFileView.mm in Sources */,
 				CFD79A9121F65B4F0043A26D /* BigFileViewDataBackend.mm in Sources */,

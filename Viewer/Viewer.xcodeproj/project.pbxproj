@@ -48,7 +48,25 @@
 		CFD79B202205DE9D0043A26D /* InternalViewerWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B1F2205DE9C0043A26D /* InternalViewerWindowController.h */; };
 		CFD79B222205DEA50043A26D /* InternalViewerWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */; };
 		CFD79B242205DEB30043A26D /* InternalViewerWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */; };
+		CFD79B3E221045210043A26D /* TextProcessing.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B3D221045210043A26D /* TextProcessing.h */; };
+		CFD79B402210452C0043A26D /* TextProcessing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B3F2210452C0043A26D /* TextProcessing.cpp */; };
+		CFD79B5922106E3C0043A26D /* Tests.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B5722106E3B0043A26D /* Tests.h */; };
+		CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B5822106E3C0043A26D /* Tests.cpp */; };
+		CFD79B6A22106F080043A26D /* TestProcessingTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TestProcessingTests.cpp */; };
+		CFD79B6B221071180043A26D /* Viewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A6221F65A010043A26D /* Viewer.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CFD79B4E22106E010043A26D /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		CFD79A6221F65A010043A26D /* Viewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Viewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +115,12 @@
 		CFD79B1F2205DE9C0043A26D /* InternalViewerWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerWindowController.h; path = include/Viewer/InternalViewerWindowController.h; sourceTree = "<group>"; };
 		CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerWindowController.mm; path = source/InternalViewerWindowController.mm; sourceTree = "<group>"; };
 		CFD79B232205DEB30043A26D /* InternalViewerWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = InternalViewerWindowController.xib; path = resources/InternalViewerWindowController.xib; sourceTree = "<group>"; };
+		CFD79B3D221045210043A26D /* TextProcessing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextProcessing.h; path = include/Viewer/TextProcessing.h; sourceTree = "<group>"; };
+		CFD79B3F2210452C0043A26D /* TextProcessing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextProcessing.cpp; path = source/TextProcessing.cpp; sourceTree = "<group>"; };
+		CFD79B5022106E010043A26D /* ViewerUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ViewerUT; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFD79B5722106E3B0043A26D /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
+		CFD79B5822106E3C0043A26D /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
+		CFD79B6822106F000043A26D /* TestProcessingTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestProcessingTests.cpp; path = tests/TestProcessingTests.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,6 +140,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CFD79B4D22106E010043A26D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD79B6B221071180043A26D /* Viewer.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -127,6 +159,7 @@
 				CFD79A8421F65AB00043A26D /* Source */,
 				CFD79A8521F65AB50043A26D /* Tests */,
 				CFD79A7921F65A710043A26D /* Resources */,
+				CFD79B5122106E020043A26D /* ViewerUT */,
 				CFD79A6321F65A010043A26D /* Products */,
 				CFD79AA021F65BA10043A26D /* Frameworks */,
 			);
@@ -136,6 +169,7 @@
 			isa = PBXGroup;
 			children = (
 				CFD79A6221F65A010043A26D /* Viewer.framework */,
+				CFD79B5022106E010043A26D /* ViewerUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -178,6 +212,7 @@
 				CFD79A9521F65B570043A26D /* InternalViewerViewPreviewMode.h */,
 				CFD79B1F2205DE9C0043A26D /* InternalViewerWindowController.h */,
 				CFD79AB721FCA8900043A26D /* Modes.h */,
+				CFD79B3D221045210043A26D /* TextProcessing.h */,
 				CFD79A9321F65B570043A26D /* Theme.h */,
 			);
 			name = Headers;
@@ -196,6 +231,7 @@
 				CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */,
 				CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */,
 				CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */,
+				CFD79B3F2210452C0043A26D /* TextProcessing.cpp */,
 				CFD79A8821F65B4F0043A26D /* Theme.mm */,
 			);
 			name = Source;
@@ -204,6 +240,9 @@
 		CFD79A8521F65AB50043A26D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CFD79B6822106F000043A26D /* TestProcessingTests.cpp */,
+				CFD79B5822106E3C0043A26D /* Tests.cpp */,
+				CFD79B5722106E3B0043A26D /* Tests.h */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -224,6 +263,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		CFD79B5122106E020043A26D /* ViewerUT */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewerUT;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -234,9 +280,11 @@
 				CFD79AB821FCA8900043A26D /* Modes.h in Headers */,
 				CFD79A9B21F65B570043A26D /* BigFileViewDataBackend.h in Headers */,
 				CFD79AB421FCA4E50043A26D /* History.h in Headers */,
+				CFD79B5922106E3C0043A26D /* Tests.h in Headers */,
 				CFD79A9D21F65B570043A26D /* BigFileViewText.h in Headers */,
 				CFD79A9E21F65B570043A26D /* BigFileView.h in Headers */,
 				CFD79B202205DE9D0043A26D /* InternalViewerWindowController.h in Headers */,
+				CFD79B3E221045210043A26D /* TextProcessing.h in Headers */,
 				CFD79B182205DE3E0043A26D /* InternalViewerToolbarProtocol.h in Headers */,
 				CFD79B0321FE4CC40043A26D /* InternalViewerController.h in Headers */,
 				CFD79A9A21F65B570043A26D /* Theme.h in Headers */,
@@ -268,6 +316,23 @@
 			productReference = CFD79A6221F65A010043A26D /* Viewer.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		CFD79B4F22106E010043A26D /* ViewerUT */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CFD79B5422106E020043A26D /* Build configuration list for PBXNativeTarget "ViewerUT" */;
+			buildPhases = (
+				CFD79B4C22106E010043A26D /* Sources */,
+				CFD79B4D22106E010043A26D /* Frameworks */,
+				CFD79B4E22106E010043A26D /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ViewerUT;
+			productName = ViewerUT;
+			productReference = CFD79B5022106E010043A26D /* ViewerUT */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -278,6 +343,9 @@
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CFD79A6121F65A010043A26D = {
+						CreatedOnToolsVersion = 10.1;
+					};
+					CFD79B4F22106E010043A26D = {
 						CreatedOnToolsVersion = 10.1;
 					};
 				};
@@ -297,6 +365,7 @@
 			projectRoot = "";
 			targets = (
 				CFD79A6121F65A010043A26D /* Viewer */,
+				CFD79B4F22106E010043A26D /* ViewerUT */,
 			);
 		};
 /* End PBXProject section */
@@ -329,12 +398,22 @@
 				CFD79B1A2205DE480043A26D /* InternalViewerToolbarProtocol.mm in Sources */,
 				CFD79AB621FCA4F30043A26D /* History.cpp in Sources */,
 				CFD79A8C21F65B4F0043A26D /* InternalViewerViewPreviewMode.mm in Sources */,
+				CFD79B402210452C0043A26D /* TextProcessing.cpp in Sources */,
 				CFD79A8F21F65B4F0043A26D /* BigFileView.mm in Sources */,
 				CFD79A9121F65B4F0043A26D /* BigFileViewDataBackend.mm in Sources */,
 				CFD79B0521FE4CCC0043A26D /* InternalViewerController.mm in Sources */,
 				CFD79B222205DEA50043A26D /* InternalViewerWindowController.mm in Sources */,
 				CFD79A9021F65B4F0043A26D /* BigFileViewHex.mm in Sources */,
 				CFD79B122205B8360043A26D /* BigFileViewSheet.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CFD79B4C22106E010043A26D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CFD79B6A22106F080043A26D /* TestProcessingTests.cpp in Sources */,
+				CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -441,6 +520,121 @@
 			};
 			name = Release;
 		};
+		CFD79B5522106E020043A26D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFD79A7C21F65A980043A26D /* tests.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		CFD79B5622106E020043A26D /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CFD79A7C21F65A980043A26D /* tests.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -458,6 +652,15 @@
 			buildConfigurations = (
 				CFD79A6B21F65A010043A26D /* Debug */,
 				CFD79A6C21F65A010043A26D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CFD79B5422106E020043A26D /* Build configuration list for PBXNativeTarget "ViewerUT" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CFD79B5522106E020043A26D /* Debug */,
+				CFD79B5622106E020043A26D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

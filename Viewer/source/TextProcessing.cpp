@@ -152,21 +152,24 @@ int ScanForExtraTrailingSpaces(const char16_t* _characters,
 std::vector<IndexedTextLine> SplitIntoLines(CFAttributedStringRef const _attributed_string,
                                             double const _wrapping_width,
                                             double const _monospace_width,
-                                            const uint32_t * const _unichars_to_byte_indices)
+                                            const int * const _unichars_to_byte_indices)
 {
+    const auto cf_string = CFAttributedStringGetString(_attributed_string);
+    assert( cf_string != nullptr );
+    
+    const auto raw_chars_length = (int)CFStringGetLength(cf_string);
+    if( raw_chars_length == 0 )
+        return {};
+    
     // Create a typesetter using the attributed string.
     const auto typesetter = CTTypesetterCreateWithAttributedString(_attributed_string);
     const auto release_typesetter = at_scope_end([&]{ CFRelease(typesetter); });
-    
-    const auto cf_string = CFAttributedStringGetString(_attributed_string);
     
     const auto raw_chars = (const char16_t*)CFStringGetCharactersPtr(cf_string);
     if( raw_chars == nullptr )
         throw std::invalid_argument("SplitIntoLines: can't get raw characters pointer");
     
-    const auto raw_chars_length = (int)CFStringGetLength(cf_string);
-    
-    std::vector< std::pair<int, int> > starts_and_length;
+    std::vector< std::pair<int, int> > starts_and_lengths;
     int start = 0;
     while ( start < raw_chars_length  ) {
         // 1st - manual hack for breaking lines by space characters
@@ -189,22 +192,22 @@ std::vector<IndexedTextLine> SplitIntoLines(CFAttributedStringRef const _attribu
         }
         
         // Use the returned character count (to the break) to create the line.
-        starts_and_length.emplace_back(start, count);
+        starts_and_lengths.emplace_back(start, count);
         start += count;
     }
     
     // build our CTLines in multiple threads since it can be time-consuming
-    std::vector<nc::viewer::IndexedTextLine> lines( starts_and_length.size() );
+    std::vector<nc::viewer::IndexedTextLine> lines( starts_and_lengths.size() );
     const auto block = [&] (size_t n) {
-        const auto &position = starts_and_length[n];
+        const auto &position = starts_and_lengths[n];
         const auto unichar_range = CFRangeMake(position.first, position.second);
         const auto line = CTTypesetterCreateLine(typesetter, unichar_range);
         lines[n] = IndexedTextLine{
             position.first,
             position.second,
-            (int)_unichars_to_byte_indices[position.first],
-            (int)_unichars_to_byte_indices[position.first + position.second - 1] -
-            (int)_unichars_to_byte_indices[position.first],
+            _unichars_to_byte_indices[position.first],
+            _unichars_to_byte_indices[position.first + position.second] -
+                _unichars_to_byte_indices[position.first],
             line
         };
     };

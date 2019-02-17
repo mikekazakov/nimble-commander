@@ -52,6 +52,6 @@ int ScanForExtraTrailingSpaces(const char16_t* _characters,
 std::vector<IndexedTextLine> SplitIntoLines(CFAttributedStringRef _attributed_string,
                                             double _wrapping_width,
                                             double _monospace_width,
-                                            const uint32_t *_unichars_to_byte_indices);
+                                            const int *_unichars_to_byte_indices);
     
 }

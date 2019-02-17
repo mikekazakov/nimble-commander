@@ -3,19 +3,33 @@
 #include "BigFileView.h"
 #include "TextProcessing.h"
 #include "IndexedTextLine.h"
+#include "TextModeWorkingSet.h"
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
 
 #include <cmath>
 
-using namespace nc::viewer;
+namespace nc::viewer {
+
+static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet()
+{
+    char16_t chars[1] = {' '};
+    int offsets[1] = {0};
+    TextModeWorkingSet::Source source;
+    source.unprocessed_characters = chars;
+    source.mapping_to_byte_offsets = offsets;
+    source.characters_number = 0;
+    source.bytes_offset = 0;
+    source.bytes_length = 0;
+    return std::make_shared<TextModeWorkingSet>(source);
+}
 
 BigFileViewText::BigFileViewText(BigFileViewDataBackend* _data, BigFileView* _view):
-    m_FixupWindow(std::make_unique<UniChar[]>(m_Data->RawSize())), // unichar for every byte in raw window - should be ok in all cases
     m_View(_view),
     m_Data(_data),
     m_FrameSize(CGSizeMake(0, 0)),
-    m_SmoothScroll(_data->IsFullCoverage())
+    m_SmoothScroll(_data->IsFullCoverage()),
+    m_WorkingSet(MakeEmptyWorkingSet())
 {
     GrabFontGeometry();
     OnFrameChanged();
@@ -26,8 +40,6 @@ BigFileViewText::BigFileViewText(BigFileViewDataBackend* _data, BigFileView* _vi
 BigFileViewText::~BigFileViewText()
 {
     ClearLayout();
-    if(m_StringBuffer)
-        CFRelease(m_StringBuffer);
 }
 
 void BigFileViewText::GrabFontGeometry()
@@ -37,39 +49,46 @@ void BigFileViewText::GrabFontGeometry()
 
 void BigFileViewText::OnBufferDecoded()
 {
-    if(m_StringBuffer)
-        CFRelease(m_StringBuffer);
+    TextModeWorkingSet::Source source;
+    source.unprocessed_characters = (const char16_t*)m_Data->UniChars();
+    source.mapping_to_byte_offsets = (const int*)m_Data->UniCharToByteIndeces();
+    source.characters_number = m_Data->UniCharsSize();
+    source.bytes_offset = (long)m_Data->FilePos();
+    source.bytes_length = (int)m_Data->RawSize();
+    m_WorkingSet = std::make_shared<TextModeWorkingSet>(source);
     
-    memcpy(&m_FixupWindow[0], m_Data->UniChars(), sizeof(UniChar) * m_Data->UniCharsSize());
-    CleanUnicodeControlSymbols( (char16_t*)&m_FixupWindow[0], m_Data->UniCharsSize() );
-
-    m_StringBuffer = CFStringCreateWithCharactersNoCopy(0, &m_FixupWindow[0], m_Data->UniCharsSize(), kCFAllocatorNull);
-    m_StringBufferSize = CFStringGetLength(m_StringBuffer);
-
     BuildLayout();
 }
 
 void BigFileViewText::BuildLayout()
 {
     ClearLayout();
-    if(!m_StringBuffer)
-        return;
+
+    auto working_set = m_WorkingSet;
     
     double wrapping_width = 10000;
-    if(m_View.wordWrap)
+    if( m_View.wordWrap )
         wrapping_width = m_View.contentBounds.width - m_LeftInset;
 
     m_AttrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-    CFAttributedStringReplaceString(m_AttrString, CFRangeMake(0, 0), m_StringBuffer);
-    CFAttributedStringSetAttribute(m_AttrString, CFRangeMake(0, m_StringBufferSize), kCTForegroundColorAttributeName, [m_View TextForegroundColor]);
-    CFAttributedStringSetAttribute(m_AttrString, CFRangeMake(0, m_StringBufferSize), kCTFontAttributeName, [m_View TextFont]);
+    CFAttributedStringReplaceString(m_AttrString,
+                                    CFRangeMake(0, 0),
+                                    working_set->String());
+    CFAttributedStringSetAttribute(m_AttrString,
+                                   CFRangeMake(0, working_set->Length()),
+                                   kCTForegroundColorAttributeName,
+                                   [m_View TextForegroundColor]);
+    CFAttributedStringSetAttribute(m_AttrString,
+                                   CFRangeMake(0, working_set->Length()),
+                                   kCTFontAttributeName,
+                                   [m_View TextFont]);
 
     const auto monospace_width = m_FontInfo.MonospaceWidth();
     
     m_Lines = SplitIntoLines(m_AttrString,
                              wrapping_width,
                              monospace_width,
-                             m_Data->UniCharToByteIndeces());
+                             working_set->CharactersByteOffsets());
     
     if(m_VerticalOffset >= m_Lines.size())
         m_VerticalOffset = !m_Lines.empty() ? (unsigned)m_Lines.size()-1 : 0;
@@ -79,6 +98,7 @@ void BigFileViewText::BuildLayout()
 
 void BigFileViewText::ClearLayout()
 {
+    // remove m_AttrString?
     if(m_AttrString)
     {
         CFRelease(m_AttrString);
@@ -104,11 +124,11 @@ int BigFileViewText::LineIndexFromYPos(double _y)
 
 int BigFileViewText::CharIndexFromPoint(CGPoint _point)
 {
-    int line_no = LineIndexFromYPos(_point.y);
-    if(line_no < 0)
+    const int line_no = LineIndexFromYPos(_point.y);
+    if( line_no < 0 )
         return -1;
-    if(line_no >= (long)m_Lines.size())
-        return (int)m_StringBufferSize + 1;
+    if( line_no >= (long)m_Lines.size() )
+        return m_WorkingSet->Length() + 1;
     
     const auto &line = m_Lines[line_no];
 
@@ -124,15 +144,12 @@ int BigFileViewText::CharIndexFromPoint(CGPoint _point)
 
 void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
 {
-    //[m_View BackgroundFillColor].Set(_context);
     CGContextSetFillColorWithColor(_context, m_View.BackgroundFillColor);
     CGContextFillRect(_context, NSRectToCGRect(_dirty_rect));
     CGContextSetTextMatrix(_context, CGAffineTransformIdentity);
     CGContextSetTextDrawingMode(_context, kCGTextFill);
     CGContextSetShouldSmoothFonts(_context, true);
     CGContextSetShouldAntialias(_context, true);
-    
-    if(!m_StringBuffer) return;
     
     CGPoint pos = TextAnchor();
     
@@ -644,28 +661,27 @@ void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
     if(line_no < 0 || line_no >= (int)m_Lines.size())
         return;
     
-    auto &i = m_Lines[line_no];
-    int sel_start = i.UniCharsStart();
-    int sel_end = i.UniCharsEnd();
-    int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
-    int sel_end_byte = sel_end < (long)m_StringBufferSize ?
-        m_Data->UniCharToByteIndeces()[sel_end] :
-        (int)m_Data->RawSize();
+    const auto &i = m_Lines[line_no];
+    const int sel_start_byte = i.BytesStart();
+    const int sel_end_byte = i.BytesEnd();
+
     m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
 }
 
 void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
 {
     NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    int uc_index = std::clamp(CharIndexFromPoint(pt), 0, (int)m_StringBufferSize);
+    const int uc_index = std::clamp(CharIndexFromPoint(pt),
+                                    0,
+                                    std::max(m_WorkingSet->Length() - 1, 1));
 
     __block int sel_start = 0, sel_end = 0;
     
     // this is not ideal implementation since here we search in whole buffer
     // it has O(n) from hit-test position, which it not good
     // consider background dividing of buffer in chunks regardless of UI events
-    NSString *string = (__bridge NSString *) m_StringBuffer;    
-    [string enumerateSubstringsInRange:NSMakeRange(0, m_StringBufferSize)
+    NSString *string = (__bridge NSString *) m_WorkingSet->String();
+    [string enumerateSubstringsInRange:NSMakeRange(0, m_WorkingSet->Length())
                                options:NSStringEnumerationByWords | NSStringEnumerationSubstringNotRequired
                             usingBlock:^(NSString *word,
                                          NSRange wordRange,
@@ -681,17 +697,14 @@ void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
                                     *stop = YES;
                             }];
     
-    if(sel_start == sel_end) // select single character
-    {
+    if( sel_start == sel_end ) { // selects a single character
         sel_start = uc_index;
         sel_end   = uc_index + 1;        
     }
 
-    int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
-    int sel_end_byte = sel_end < (long)m_StringBufferSize ?
-        m_Data->UniCharToByteIndeces()[sel_end] :
-        (int)m_Data->RawSize();
-    m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
+    const long sel_start_byte = m_WorkingSet->ToGlobalByteOffset(sel_start);
+    const long sel_end_byte = m_WorkingSet->ToGlobalByteOffset(sel_end);
+    m_View.selectionInFile = CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte);
 }
 
 void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
@@ -699,14 +712,14 @@ void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
     bool modifying_existing_selection = (event.modifierFlags & NSShiftKeyMask) ? true : false;
     
     NSPoint first_down = [m_View convertPoint:event.locationInWindow fromView:nil];
-    int first_ind = std::clamp(CharIndexFromPoint(first_down), 0, (int)m_StringBufferSize);
+    int first_ind = std::clamp(CharIndexFromPoint(first_down), 0, m_WorkingSet->Length());
     
     CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
     
     while (event.type != NSLeftMouseUp)
     {
         NSPoint curr_loc = [m_View convertPoint:event.locationInWindow fromView:nil];
-        int curr_ind = std::clamp(CharIndexFromPoint(curr_loc), 0, (int)m_StringBufferSize);
+        const int curr_ind = std::clamp(CharIndexFromPoint(curr_loc), 0, m_WorkingSet->Length());
         
         int base_ind = first_ind;
         if(modifying_existing_selection && orig_sel.length > 0)
@@ -725,16 +738,16 @@ void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
         {
             int sel_start = base_ind > curr_ind ? curr_ind : base_ind;
             int sel_end   = base_ind < curr_ind ? curr_ind : base_ind;
-            int sel_start_byte = m_Data->UniCharToByteIndeces()[sel_start];
-            int sel_end_byte = sel_end < (long)m_StringBufferSize ?
-                m_Data->UniCharToByteIndeces()[sel_end] :
-                (int)m_Data->RawSize();
+            long sel_start_byte = m_WorkingSet->ToLocalByteOffset(sel_start);
+            long sel_end_byte = m_WorkingSet->ToLocalByteOffset(sel_end);
             assert(sel_end_byte >= sel_start_byte);
-            m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
+            m_View.selectionInFile = CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte);
         }
         else
             m_View.selectionInFile = CFRangeMake(-1,0);
         
         event = [m_View.window nextEventMatchingMask:(NSLeftMouseDraggedMask | NSLeftMouseUpMask)];
     }
+}
+
 }

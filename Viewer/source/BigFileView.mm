@@ -404,7 +404,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 - (BigFileViewModes) mode
 {
-    if(dynamic_cast<BigFileViewText*>(m_ViewImpl.get()))
+    if(dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
         return BigFileViewModes::Text;
     else if(dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
         return BigFileViewModes::Hex;
@@ -419,7 +419,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 - (void) setMode: (BigFileViewModes) _mode
 {
-    if( _mode == BigFileViewModes::Text    && dynamic_cast<BigFileViewText*>(m_ViewImpl.get()))
+    if( _mode == BigFileViewModes::Text    && dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
         return;
     if( _mode == BigFileViewModes::Hex     && dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
         return;
@@ -436,7 +436,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
     switch (_mode)
     {
         case BigFileViewModes::Text:
-            m_ViewImpl = std::make_unique<BigFileViewText>(m_Data.get(), self);
+            m_ViewImpl = std::make_unique<nc::viewer::BigFileViewText>(m_Data.get(), self);
             break;
         case BigFileViewModes::Hex:
             m_ViewImpl = std::make_unique<BigFileViewHex>(m_Data.get(), self);

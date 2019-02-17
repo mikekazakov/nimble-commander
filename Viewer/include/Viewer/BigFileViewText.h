@@ -3,8 +3,9 @@
 #include "BigFileViewProtocol.h"
 
 namespace nc::viewer {
-    class IndexedTextLine;
-}
+
+class IndexedTextLine;
+class TextModeWorkingSet;
 
 class BigFileViewText : public BigFileViewImpl
 {
@@ -74,15 +75,16 @@ private:
     BigFileViewDataBackend  *m_Data = nullptr;
     
     // data stuff
-    std::unique_ptr<UniChar[]>  m_FixupWindow;
-    CFStringRef                 m_StringBuffer = nullptr;
-    size_t                      m_StringBufferSize = 0;
+//    std::unique_ptr<UniChar[]>  m_FixupWindow;
+//    CFStringRef                 m_StringBuffer = nullptr;
+//    size_t                      m_StringBufferSize = 0;
+    std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     
     // layout stuff
     nc::utility::FontGeometryInfo m_FontInfo;
     double                       m_LeftInset = 5;
     CFMutableAttributedStringRef m_AttrString = nullptr;
-    std::vector<nc::viewer::IndexedTextLine> m_Lines;
+    std::vector<IndexedTextLine> m_Lines;
     unsigned                     m_VerticalOffset = 0; // offset in lines number within text lines
     unsigned                     m_HorizontalOffset = 0; // offset in characters from the left window edge
     
@@ -92,3 +94,6 @@ private:
     bool                         m_SmoothScroll = true; // turned on when we can view all file in file window without movements
     CGPoint                      m_SmoothOffset = {0, 0};
 };
+
+}
+

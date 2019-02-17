@@ -2,6 +2,7 @@
 #pragma once
 
 #include <VFS/FileWindow.h>
+#include <MacTypes.h>
 
 /**
  * This class encapsulates working with file windows and decoding raw data into UniChars.

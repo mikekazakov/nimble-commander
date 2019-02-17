@@ -1,4 +1,5 @@
 #include "IndexedTextLine.h"
+#include <algorithm>
 
 namespace nc::viewer {
     
@@ -84,4 +85,79 @@ IndexedTextLine& IndexedTextLine::operator=(IndexedTextLine&& _rhs) noexcept
     return *this;
 }
 
+int FindClosestLineIndex(const IndexedTextLine *_first,
+                         const IndexedTextLine *_last,
+                         int _bytes_offset ) noexcept
+{
+    assert( _first != nullptr && _last != nullptr );
+    assert( _last >= _first );
+    
+    if( _first == _last )
+        return -1;
+    
+    const auto predicate = [](const IndexedTextLine &_lhs, int _rhs){
+        return _lhs.BytesStart() < _rhs;
+    };
+    const auto lb = std::lower_bound( _first, _last, _bytes_offset, predicate );
+    const auto index = (int)( lb - _first );
+    if( lb == _first ) {
+        // return the front index
+        return 0;
+    }
+    else if( lb == _last ) {
+        // return the last valid index
+        return index - 1;
+    }
+    else {
+        if( _first[index].BytesStart() == _bytes_offset ) {
+            // if that's an exact hit - return immediately
+            return index;
+        }
+        else {
+            // or check distance with a previous line and choose which is closer
+            auto delta_1 = _first[index].BytesStart() - _bytes_offset;
+            auto delta_2 = _bytes_offset - _first[index - 1].BytesStart();
+            if( delta_1 <= delta_2 )
+                return index;
+            else
+                return index - 1;
+        }
+    }
+}
+    
+int FindFloorClosestLineIndex(const IndexedTextLine *_first,
+                              const IndexedTextLine *_last,
+                              int _bytes_offset ) noexcept
+{
+    assert( _first != nullptr && _last != nullptr );
+    assert( _last >= _first );
+    
+    if( _first == _last )
+        return -1;
+    
+    const auto predicate = [](const IndexedTextLine &_lhs, int _rhs){
+        return _lhs.BytesStart() < _rhs;
+    };
+    const auto lb = std::lower_bound( _first, _last, _bytes_offset, predicate );
+    const auto index = (int)( lb - _first );
+    if( lb == _first ) {
+        // return the front index
+        return 0;
+    }
+    else if( lb == _last ) {
+        // return the last valid index
+        return index - 1;
+    }
+    else {
+        if( _first[index].BytesStart() == _bytes_offset ) {
+            // if that's an exact hit - return immediately
+            return index;
+        }
+        else {
+            // or otherwise return the privous one
+            return index - 1;
+        }
+    }        
+}
+    
 }

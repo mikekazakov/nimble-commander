@@ -339,72 +339,16 @@ void BigFileViewText::MoveFileWindowTo(uint64_t _pos, uint64_t _anchor_byte_no, 
         m_VerticalOffset = 0;
         return;
     }
-        
-    int closest_ind = FindClosestNotGreaterLineInd(_anchor_byte_no);
+    
+    const int local_offset = (int)( _anchor_byte_no - m_WorkingSet->GlobalOffset() );
+    const int closest_ind = FindFloorClosestLineIndex(&m_Lines[0],
+                                                      &m_Lines[0] + m_Lines.size(),
+                                                      local_offset );
     
     m_VerticalOffset = std::max(closest_ind - _anchor_line_no, 0);
     
     assert(m_VerticalOffset < m_Lines.size());
     [m_View setNeedsDisplay];
-}
-
-int BigFileViewText::FindClosestLineInd(uint64_t _glob_offset) const
-{
-    if(m_Lines.empty())
-        return -1;
-
-    const uint64_t window_pos = m_Data->FilePos();
-    
-    auto lower = lower_bound(begin(m_Lines), end(m_Lines), _glob_offset, [=](auto &l, auto r){
-        return (uint64_t)l.BytesStart() + window_pos < r;
-    });
-
-    size_t closest_ind = 0;
-    
-    if(lower == end(m_Lines))
-        closest_ind = m_Lines.size() - 1;
-    else if(lower == begin(m_Lines))
-        closest_ind = 0;
-    else {
-        closest_ind = lower - begin(m_Lines);
-        
-        // if didn't found exactly requested line
-        uint64_t d1 = (uint64_t)lower->BytesStart() + window_pos - _glob_offset;
-        if(d1 != 0)
-        { // then compare with prev element
-            auto prev = lower - 1;
-            if(_glob_offset - (uint64_t)prev->BytesStart() - window_pos < d1)
-                closest_ind = prev - begin(m_Lines);
-        }
-    }
-    
-    return (int)closest_ind;
-}
-
-int BigFileViewText::FindClosestNotGreaterLineInd(uint64_t _glob_offset) const
-{
-    if(m_Lines.empty())
-        return -1;
-    
-    const uint64_t window_pos = m_Data->FilePos();
-    
-    auto lower = lower_bound(begin(m_Lines), end(m_Lines), _glob_offset, [=](auto &l, auto r){
-        return (uint64_t)l.BytesStart() + window_pos < r;
-    });
-    
-    size_t closest_ind = 0;
-    
-    if(lower == end(m_Lines))
-        closest_ind = m_Lines.size() - 1;
-    else if(lower == begin(m_Lines))
-        closest_ind = 0;
-    else {
-        closest_ind = lower - begin(m_Lines);
-        if((uint64_t)lower->BytesStart() + window_pos != _glob_offset)
-            --closest_ind;
-    }
-    
-    return (int)closest_ind;
 }
 
 uint32_t BigFileViewText::GetOffsetWithinWindow()
@@ -423,7 +367,10 @@ uint32_t BigFileViewText::GetOffsetWithinWindow()
 
 void BigFileViewText::MoveOffsetWithinWindow(uint32_t _offset)
 {
-    m_VerticalOffset = std::max(FindClosestLineInd(_offset + m_Data->FilePos()), 0);
+    const auto closest_index = FindClosestLineIndex(&m_Lines[0],
+                                                    &m_Lines[0] + m_Lines.size(),
+                                                    (int)_offset);
+    m_VerticalOffset = std::max(closest_index, 0);
     assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
 }
 
@@ -439,7 +386,10 @@ void BigFileViewText::ScrollToByteOffset(uint64_t _offset)
        (_offset == file_size && window_pos + window_size == file_size) )
     {
         // seems that we can satisfy this request immediately, without I/O
-        int closest = FindClosestNotGreaterLineInd(_offset);
+        const int local_offset = (int)( _offset - m_WorkingSet->GlobalOffset() );
+        const int closest = FindFloorClosestLineIndex (&m_Lines[0],
+                                                       &m_Lines[0] + m_Lines.size(),
+                                                       local_offset);
         if((unsigned)closest + m_FrameLines < m_Lines.size())
         { // check that we will fill whole screen after scrolling
             m_VerticalOffset = (unsigned)closest;

@@ -58,17 +58,6 @@ private:
     void HandleSelectionWithMouseDragging(NSEvent* event);
     void MoveLinesDelta(int _delta);
     
-    /**
-     * will return -1 on empty lines container, valid index otherwise.
-     * O( log2(N) ) complexity.
-     */
-    int FindClosestLineInd(uint64_t _glob_offset) const;
-    
-    /**
-     * Look at FindClosestLineInd();
-     */
-    int FindClosestNotGreaterLineInd(uint64_t _glob_offset) const;
-
     // basic stuff
     __unsafe_unretained BigFileView      *m_View;
     BigFileViewDataBackend  *m_Data = nullptr;

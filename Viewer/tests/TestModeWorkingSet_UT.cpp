@@ -32,6 +32,10 @@ TEST_CASE(PREFIX"Copies and owns UTF16 characters")
         CHECK( ws.Characters() != (const char16_t*)utf16_chars.get() );
         CHECK( ws.CharactersByteOffsets() != (const int*)utf16_chars_offsets.get() );
     }
+    SECTION( "UTF16 characters are sane" ) {
+        auto direct_utf16_chars = u"Привет, мир!";
+        CHECK( memcmp(direct_utf16_chars, ws.Characters(), sizeof(char16_t) * ws.Length() ) == 0 );
+    }
     SECTION( "Keeps proper byte offsets" ) {
         for( int i = 0; i < ws.Length(); ++i ) {
             CHECK( ws.CharactersByteOffsets()[i] == (int)utf16_chars_offsets[i] );

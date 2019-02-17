@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BigFileViewDataBackend.h"
 #include <Utility/Encodings.h>
 
@@ -23,13 +23,13 @@ void BigFileViewDataBackend::DecodeBuffer()
                                   m_DecodeBuffer.get(),
                                   m_DecodeBufferIndx.get(),
                                   &m_DecodedBufferSize);
-    if(m_OnDecoded)
+    if( m_OnDecoded )
         m_OnDecoded();
 }
 
-void BigFileViewDataBackend::SetOnDecoded(void (^_handler)())
+void BigFileViewDataBackend::SetOnDecoded(std::function<void()> _handler)
 {
-    m_OnDecoded = _handler;
+    m_OnDecoded = std::move(_handler);
 }
 
 int BigFileViewDataBackend::Encoding() const

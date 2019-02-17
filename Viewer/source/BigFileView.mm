@@ -206,12 +206,13 @@ using nc::vfs::easy::CopyFileToTempStorage;
     m_File = _file;
     m_Data = std::make_unique<BigFileViewDataBackend>(*m_File, _encoding);
     BigFileView* __weak weak_self = self;
-    m_Data->SetOnDecoded(^{
-        if(BigFileView *sself = weak_self) {
+    auto on_decoded = [weak_self] {
+        if( BigFileView *sself = weak_self ) {
             [sself UpdateSelectionRange];
             sself->m_ViewImpl->OnBufferDecoded();
         }
-    });
+    };
+    m_Data->SetOnDecoded( on_decoded );
     
     self.mode = _mode;
     self.verticalPositionInBytes = 0;

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include "BigFileViewProtocol.h"
 
@@ -34,7 +34,6 @@ public:
     
 private:
     void GrabFontGeometry();
-    void ClearLayout();
     void BuildLayout();
     
     /**
@@ -75,15 +74,11 @@ private:
     BigFileViewDataBackend  *m_Data = nullptr;
     
     // data stuff
-//    std::unique_ptr<UniChar[]>  m_FixupWindow;
-//    CFStringRef                 m_StringBuffer = nullptr;
-//    size_t                      m_StringBufferSize = 0;
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     
     // layout stuff
     nc::utility::FontGeometryInfo m_FontInfo;
     double                       m_LeftInset = 5;
-    CFMutableAttributedStringRef m_AttrString = nullptr;
     std::vector<IndexedTextLine> m_Lines;
     unsigned                     m_VerticalOffset = 0; // offset in lines number within text lines
     unsigned                     m_HorizontalOffset = 0; // offset in characters from the left window edge

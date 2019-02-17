@@ -39,7 +39,6 @@ BigFileViewText::BigFileViewText(BigFileViewDataBackend* _data, BigFileView* _vi
 
 BigFileViewText::~BigFileViewText()
 {
-    ClearLayout();
 }
 
 void BigFileViewText::GrabFontGeometry()
@@ -62,7 +61,7 @@ void BigFileViewText::OnBufferDecoded()
 
 void BigFileViewText::BuildLayout()
 {
-    ClearLayout();
+        m_Lines.clear();
 
     auto working_set = m_WorkingSet;
     
@@ -70,22 +69,22 @@ void BigFileViewText::BuildLayout()
     if( m_View.wordWrap )
         wrapping_width = m_View.contentBounds.width - m_LeftInset;
 
-    m_AttrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-    CFAttributedStringReplaceString(m_AttrString,
+    auto attr_string = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
+    CFAttributedStringReplaceString(attr_string,
                                     CFRangeMake(0, 0),
                                     working_set->String());
-    CFAttributedStringSetAttribute(m_AttrString,
+    CFAttributedStringSetAttribute(attr_string,
                                    CFRangeMake(0, working_set->Length()),
                                    kCTForegroundColorAttributeName,
                                    [m_View TextForegroundColor]);
-    CFAttributedStringSetAttribute(m_AttrString,
+    CFAttributedStringSetAttribute(attr_string,
                                    CFRangeMake(0, working_set->Length()),
                                    kCTFontAttributeName,
                                    [m_View TextFont]);
 
     const auto monospace_width = m_FontInfo.MonospaceWidth();
     
-    m_Lines = SplitIntoLines(m_AttrString,
+    m_Lines = SplitIntoLines(attr_string,
                              wrapping_width,
                              monospace_width,
                              working_set->CharactersByteOffsets());
@@ -94,18 +93,6 @@ void BigFileViewText::BuildLayout()
         m_VerticalOffset = !m_Lines.empty() ? (unsigned)m_Lines.size()-1 : 0;
     
     [m_View setNeedsDisplay];
-}
-
-void BigFileViewText::ClearLayout()
-{
-    // remove m_AttrString?
-    if(m_AttrString)
-    {
-        CFRelease(m_AttrString);
-        m_AttrString = 0;
-    }
-    
-    m_Lines.clear();
 }
 
 CGPoint BigFileViewText::TextAnchor()

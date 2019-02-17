@@ -1,8 +1,9 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/FileWindow.h>
 #include <MacTypes.h>
+#include <functional>
 
 /**
  * This class encapsulates working with file windows and decoding raw data into UniChars.
@@ -54,13 +55,13 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // handlers
-    void SetOnDecoded(void (^_handler)());
+    void SetOnDecoded(std::function<void()> _handler);
 private:
     void DecodeBuffer(); // called by internal update logic
     
     nc::vfs::FileWindow &m_FileWindow;
     int         m_Encoding;
-    void        (^m_OnDecoded)() = nullptr;
+    std::function<void()> m_OnDecoded;
 
     std::unique_ptr<UniChar[]> m_DecodeBuffer;   // decoded buffer with unichars
                                             // useful size of m_DecodedBufferSize

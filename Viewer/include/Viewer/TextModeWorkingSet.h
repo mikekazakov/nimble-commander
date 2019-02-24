@@ -23,6 +23,8 @@ public:
     void operator=(const TextModeWorkingSet&) = delete;
     
     const char16_t* Characters() const noexcept;
+    
+    /** Returns the number of UTF16 characters coverted by this set. */
     int Length() const noexcept;
     CFStringRef String() const noexcept;
     

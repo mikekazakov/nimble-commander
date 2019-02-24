@@ -12,6 +12,7 @@
 namespace nc::viewer {
 
 static const auto g_TabSpaces = 4;
+static const auto g_WrappingWidth = 10000.;
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet()
 {
@@ -65,7 +66,7 @@ void BigFileViewText::BuildLayout()
 {
     const auto wrapping_width = m_View.wordWrap ?
         m_View.contentBounds.width - m_LeftInset :
-        10000.0;
+        g_WrappingWidth;
  
     TextModeFrame::Source source;
     source.wrapping_width = wrapping_width;
@@ -86,39 +87,15 @@ CGPoint BigFileViewText::TextAnchor()
 {
     const double x = std::ceil(( m_LeftInset - m_HorizontalOffset * m_FontInfo.MonospaceWidth()) )
         - m_SmoothOffset.x;
-    const double y = std::floor(m_View.contentBounds.height -
-                                m_FontInfo.LineHeight() +
-                                m_FontInfo.Descent() )
-        + m_SmoothOffset.y;
+    const double y = std::floor(m_View.contentBounds.height + m_SmoothOffset.y);
     return NSMakePoint(x, y);
 }
-
-int BigFileViewText::LineIndexFromYPos(double _y)
+    
+CGPoint BigFileViewText::ToFrameCoords(CGPoint _view_coords)
 {
     CGPoint left_upper = TextAnchor();
-    int y_off = (int)std::ceil((left_upper.y - _y) / m_FontInfo.LineHeight());
-    int line_no = y_off + m_VerticalOffset;
-    return line_no;
-}
-
-int BigFileViewText::CharIndexFromPoint(CGPoint _point)
-{
-    const int line_no = LineIndexFromYPos(_point.y);
-    if( line_no < 0 )
-        return -1;
-    if( line_no >= m_Frame->LinesNumber() )
-        return m_WorkingSet->Length();
-    
-    const auto &line = m_Frame->Line(line_no);
-
-    int ind = (int)CTLineGetStringIndexForPosition(line.Line(),
-                                                   CGPointMake(_point.x - TextAnchor().x, 0));
-    if(ind < 0)
-        return -1;
-
-    ind = std::clamp(ind, 0, line.UniCharsStart() + line.UniCharsLen() - 1); // TODO: check if this is right
-    
-    return ind;
+    return CGPointMake(_view_coords.x - left_upper.x,
+                       left_upper.y - _view_coords.y + m_VerticalOffset * m_FontInfo.LineHeight());
 }
 
 void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
@@ -131,6 +108,7 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
     CGContextSetShouldAntialias(_context, true);
     
     CGPoint pos = TextAnchor();
+    pos.y = pos.y - m_FontInfo.LineHeight() + m_FontInfo.Descent();
     
     double view_width = m_View.contentBounds.width;
     
@@ -185,7 +163,7 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
              }
          }
          
-         CGContextSetTextPosition(_context, pos.x, pos.y);
+         CGContextSetTextPosition( _context, pos.x, pos.y );
          CTLineDraw(line.Line(), _context);
      }
 }
@@ -198,10 +176,6 @@ void BigFileViewText::CalculateScrollPosition( double &_position, double &_knob_
     if( !m_SmoothScroll ) {
         if( m_VerticalOffset < lines_number ) {
             uint64_t byte_pos = m_Frame->Line(m_VerticalOffset).BytesStart() + m_Data->FilePos();
-//            uint64_t last_visible_byte_pos =
-//                ((m_VerticalOffset + m_FrameLines < m_Frame->LinesNumber()) ?
-//                 m_Frame->Line(m_VerticalOffset + m_FrameLines).BytesStart() :
-//                 m_Lines.back().BytesStart() )
             uint64_t last_visible_byte_pos =
                 m_Frame->Line( std::min(m_VerticalOffset + m_FrameLines,
                                         lines_number - 1
@@ -582,7 +556,9 @@ void BigFileViewText::OnMouseDown(NSEvent *event)
 
 void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
 {
-    int line_no = LineIndexFromPos([m_View convertPoint:event.locationInWindow fromView:nil]);
+    const auto view_coords = [m_View convertPoint:event.locationInWindow fromView:nil];
+    const auto frame_coors = ToFrameCoords(view_coords);
+    int line_no = m_Frame->LineIndexForPosition(frame_coors);
     if( line_no < 0 || line_no >= m_Frame->LinesNumber() )
         return;
     
@@ -595,8 +571,9 @@ void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
 
 void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
 {
-    NSPoint pt = [m_View convertPoint:[event locationInWindow] fromView:nil];
-    const int uc_index = std::clamp(CharIndexFromPoint(pt),
+    const auto view_coords = [m_View convertPoint:[event locationInWindow] fromView:nil];
+    const auto frame_coords = ToFrameCoords(view_coords);
+    const int uc_index = std::clamp( m_Frame->CharIndexForPosition(frame_coords),
                                     0,
                                     std::max(m_WorkingSet->Length() - 1, 1));
 
@@ -636,15 +613,16 @@ void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
 {
     bool modifying_existing_selection = (event.modifierFlags & NSShiftKeyMask) ? true : false;
     
-    NSPoint first_down = [m_View convertPoint:event.locationInWindow fromView:nil];
-    int first_ind = std::clamp(CharIndexFromPoint(first_down), 0, m_WorkingSet->Length());
+    const auto first_down_view_coords = [m_View convertPoint:event.locationInWindow fromView:nil];
+    const auto first_down_frame_coords = ToFrameCoords(first_down_view_coords);
+    const auto first_ind = m_Frame->CharIndexForPosition( first_down_frame_coords );
     
     CFRange orig_sel = [m_View SelectionWithinWindowUnichars];
     
-    while (event.type != NSLeftMouseUp)
-    {
+    while ( event.type != NSLeftMouseUp ) {
         NSPoint curr_loc = [m_View convertPoint:event.locationInWindow fromView:nil];
-        const int curr_ind = std::clamp(CharIndexFromPoint(curr_loc), 0, m_WorkingSet->Length());
+        const auto curr_frame_coords = ToFrameCoords(curr_loc);
+        const int curr_ind = m_Frame->CharIndexForPosition(curr_frame_coords);
         
         int base_ind = first_ind;
         if(modifying_existing_selection && orig_sel.length > 0)
@@ -663,8 +641,8 @@ void BigFileViewText::HandleSelectionWithMouseDragging(NSEvent* event)
         {
             int sel_start = base_ind > curr_ind ? curr_ind : base_ind;
             int sel_end   = base_ind < curr_ind ? curr_ind : base_ind;
-            long sel_start_byte = m_WorkingSet->ToLocalByteOffset(sel_start);
-            long sel_end_byte = m_WorkingSet->ToLocalByteOffset(sel_end);
+            long sel_start_byte = m_WorkingSet->ToGlobalByteOffset(sel_start);
+            long sel_end_byte = m_WorkingSet->ToGlobalByteOffset(sel_end);
             assert(sel_end_byte >= sel_start_byte);
             m_View.selectionInFile = CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte);
         }

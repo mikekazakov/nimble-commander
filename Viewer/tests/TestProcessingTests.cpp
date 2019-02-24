@@ -80,3 +80,16 @@ TEST_CASE("SplitStringIntoLines handles tabs")
     }
 }
 
+TEST_CASE("SplitStringIntoLines handles double-sized characters")
+{
+    const auto str = u"百000";
+    const auto len = std::char_traits<char16_t>::length(str);
+    const auto lines = SplitStringIntoLines(str, len, 20., 10., 40.);
+    REQUIRE( lines.size() == 3 );
+    CHECK( lines[0].first == 0 );
+    CHECK( lines[0].second == 1 );
+    CHECK( lines[1].first == 1 );
+    CHECK( lines[1].second == 2 );
+    CHECK( lines[2].first == 3 );
+    CHECK( lines[2].second == 1 );
+}

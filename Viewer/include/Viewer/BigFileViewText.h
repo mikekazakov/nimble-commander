@@ -43,9 +43,7 @@ private:
      */
     CGPoint TextAnchor();
     
-    int LineIndexFromYPos(double _y);
-    inline int LineIndexFromPos(CGPoint _point) { return LineIndexFromYPos(_point.y); };
-    int CharIndexFromPoint(CGPoint _point);
+    CGPoint ToFrameCoords(CGPoint _view_coords);
     
     /**
      * move our file window to '_pos' global offset,
@@ -71,7 +69,6 @@ private:
     double                       m_LeftInset = 5;
     
     std::shared_ptr<const TextModeFrame> m_Frame;
-//    std::vector<IndexedTextLine> m_Lines;
     int                          m_VerticalOffset = 0; // offset in lines number within text lines
     unsigned                     m_HorizontalOffset = 0; // offset in characters from the left window edge
     

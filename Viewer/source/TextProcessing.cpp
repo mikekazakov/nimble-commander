@@ -122,11 +122,15 @@ std::vector< std::pair<int, int> > SplitStringIntoLines(const char16_t* _charact
                 width = probe_width;
             }
             else {
-                if( width + _monospace_width > _wrapping_width + wrapping_epsilon ) {
+                const auto probe_width =
+                    oms::WCWidthMin1( c ) == 1 ?  // TODO: add support for surrogate pairs
+                        width + _monospace_width :
+                        width + 2 * _monospace_width;
+                
+                if( probe_width > _wrapping_width + wrapping_epsilon ) {
                     break;
                 }
-                
-                width += _monospace_width;
+                width = probe_width;
             }
             count++;
         }

@@ -1,10 +1,12 @@
 #include "TextModeFrame.h"
 #include <Habanero/algo.h>
+#include <cmath>
 
 namespace nc::viewer {
 
 TextModeFrame::TextModeFrame( const Source &_source ):
-    m_WorkingSet{ _source.working_set  }
+    m_WorkingSet{ _source.working_set  },
+    m_FontInfo{ _source.font_info }
 {
     assert( m_WorkingSet != nullptr );
     
@@ -49,5 +51,33 @@ TextModeFrame::~TextModeFrame()
 }
     
 TextModeFrame& TextModeFrame::operator=(TextModeFrame&&) noexcept = default;
-    
+
+int TextModeFrame::CharIndexForPosition( CGPoint _position ) const noexcept
+{
+    const auto line_index = (int)std::floor( _position.y / m_FontInfo.LineHeight() );
+    if( line_index < 0 )
+        return 0;
+    if( line_index >= LinesNumber() )
+        return m_WorkingSet->Length();
+ 
+    const auto &line = Line(line_index);
+    const auto char_index = (int)CTLineGetStringIndexForPosition(line.Line(),
+                                                                 CGPointMake(_position.x, 0.));
+    if( char_index < 0 )
+        return 0;
+    assert( char_index <= m_WorkingSet->Length() );
+    return char_index;
 }
+
+int TextModeFrame::LineIndexForPosition( CGPoint _position ) const noexcept
+{
+    const auto line_index = (int)std::floor( _position.y / m_FontInfo.LineHeight() );
+    if( line_index < 0 )
+        return -1;
+    if( line_index >= LinesNumber() )
+        return LinesNumber();
+    return line_index;
+}
+
+}
+

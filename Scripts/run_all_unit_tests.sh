@@ -31,3 +31,6 @@ $BINARY_PATH
 
 build_target VFSUT
 $BINARY_PATH
+
+build_target ViewerUT
+$BINARY_PATH

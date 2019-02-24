@@ -63,47 +63,21 @@ void BigFileViewText::OnBufferDecoded()
 
 void BigFileViewText::BuildLayout()
 {
-        m_Lines.clear();
-
-    auto working_set = m_WorkingSet;
+    const auto wrapping_width = m_View.wordWrap ?
+        m_View.contentBounds.width - m_LeftInset :
+        10000.0;
+ 
+    TextModeFrame::Source source;
+    source.wrapping_width = wrapping_width;
+    source.font = [m_View TextFont];
+    source.font_info = m_FontInfo;
+    source.foreground_color = [m_View TextForegroundColor];
+    source.tab_spaces = g_TabSpaces;
+    source.working_set = m_WorkingSet;
+    m_Frame = std::make_shared<TextModeFrame>(source);
     
-    double wrapping_width = 10000;
-    if( m_View.wordWrap )
-        wrapping_width = m_View.contentBounds.width - m_LeftInset;
-    
-    const auto monospace_width = m_FontInfo.PreciseMonospaceWidth();
-    const auto tab_width = g_TabSpaces * monospace_width;
-
-    auto attr_string = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-    auto release_attr_string = at_scope_end([&]{ CFRelease(attr_string); });
-
-    const auto pstyle = CreateParagraphStyleWithRegularTabs(tab_width);
-    const auto release_pstyle = at_scope_end([&]{ CFRelease(pstyle); });
-    
-    CFAttributedStringReplaceString(attr_string,
-                                    CFRangeMake(0, 0),
-                                    working_set->String());
-    CFAttributedStringSetAttribute(attr_string,
-                                   CFRangeMake(0, working_set->Length()),
-                                   kCTForegroundColorAttributeName,
-                                   [m_View TextForegroundColor]);
-    CFAttributedStringSetAttribute(attr_string,
-                                   CFRangeMake(0, working_set->Length()),
-                                   kCTFontAttributeName,
-                                   [m_View TextFont]);
-    CFAttributedStringSetAttribute(attr_string,
-                                   CFRangeMake(0, working_set->Length()),
-                                   kCTParagraphStyleAttributeName,
-                                   pstyle);
-
-    m_Lines = SplitAttributedStringsIntoLines(attr_string,
-                                              wrapping_width,
-                                              monospace_width,
-                                              tab_width,
-                                              working_set->CharactersByteOffsets());
-    
-    if(m_VerticalOffset >= m_Lines.size())
-        m_VerticalOffset = !m_Lines.empty() ? (int)m_Lines.size()-1 : 0;
+    if( m_VerticalOffset >= m_Frame->LinesNumber() )
+        m_VerticalOffset = std::max( m_Frame->LinesNumber() - 1, 0 );
     
     [m_View setNeedsDisplay];
 }
@@ -132,10 +106,10 @@ int BigFileViewText::CharIndexFromPoint(CGPoint _point)
     const int line_no = LineIndexFromYPos(_point.y);
     if( line_no < 0 )
         return -1;
-    if( line_no >= (long)m_Lines.size() )
-        return m_WorkingSet->Length() + 1;
+    if( line_no >= m_Frame->LinesNumber() )
+        return m_WorkingSet->Length();
     
-    const auto &line = m_Lines[line_no];
+    const auto &line = m_Frame->Line(line_no);
 
     int ind = (int)CTLineGetStringIndexForPosition(line.Line(),
                                                    CGPointMake(_point.x - TextAnchor().x, 0));
@@ -161,19 +135,18 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
     double view_width = m_View.contentBounds.width;
     
     int first_string = m_VerticalOffset;
-    if(m_SmoothOffset.y < 0 && first_string > 0)
-    {
+    if( m_SmoothOffset.y < 0 && first_string > 0 ) {
         --first_string; // to be sure that we can see bottom-clipped lines
         pos.y += m_FontInfo.LineHeight();
     }
     
     CFRange selection = [m_View SelectionWithinWindowUnichars];
     
-     for(size_t i = first_string;
-         i < m_Lines.size() && pos.y >= 0 - m_FontInfo.LineHeight();
+     for(int i = first_string;
+         i < m_Frame->LinesNumber() && pos.y >= 0 - m_FontInfo.LineHeight();
          ++i, pos.y -= m_FontInfo.LineHeight())
      {
-         auto &line = m_Lines[i];
+         auto &line = m_Frame->Line(i);
          
          if(selection.location >= 0) // draw a selection background here
          {
@@ -221,17 +194,19 @@ void BigFileViewText::CalculateScrollPosition( double &_position, double &_knob_
 {
     _position = 0.0;
     _knob_proportion = 1.0;
-    
-    if(!m_SmoothScroll)
-    {
-        if(m_VerticalOffset < m_Lines.size())
-        {
-            uint64_t byte_pos = m_Lines[m_VerticalOffset].BytesStart() + m_Data->FilePos();
+    const auto lines_number = m_Frame->LinesNumber();
+    if( !m_SmoothScroll ) {
+        if( m_VerticalOffset < lines_number ) {
+            uint64_t byte_pos = m_Frame->Line(m_VerticalOffset).BytesStart() + m_Data->FilePos();
+//            uint64_t last_visible_byte_pos =
+//                ((m_VerticalOffset + m_FrameLines < m_Frame->LinesNumber()) ?
+//                 m_Frame->Line(m_VerticalOffset + m_FrameLines).BytesStart() :
+//                 m_Lines.back().BytesStart() )
             uint64_t last_visible_byte_pos =
-            ((m_VerticalOffset + m_FrameLines < m_Lines.size()) ?
-             m_Lines[m_VerticalOffset + m_FrameLines].BytesStart() :
-             m_Lines.back().BytesStart() )
-            + m_Data->FilePos();;
+                m_Frame->Line( std::min(m_VerticalOffset + m_FrameLines,
+                                        lines_number - 1
+                                        )
+                              ).BytesStart() + m_Data->FilePos();
             uint64_t byte_scroll_size = m_Data->FileSize() - (last_visible_byte_pos - byte_pos);
             double prop = double(last_visible_byte_pos - byte_pos) / double(m_Data->FileSize());
             _position = double(byte_pos) / double(byte_scroll_size);
@@ -241,24 +216,23 @@ void BigFileViewText::CalculateScrollPosition( double &_position, double &_knob_
     else
     {
         double pos = 0.;
-        if((int)m_Lines.size() > m_FrameLines)
-            pos = double(m_VerticalOffset) / double(m_Lines.size() - m_FrameLines);
+        if( lines_number > m_FrameLines )
+            pos = double(m_VerticalOffset) / double(lines_number - m_FrameLines);
         double prop = 1.;
-        if((int)m_Lines.size() > m_FrameLines)
-            prop = double(m_FrameLines) / double(m_Lines.size());
+        if( lines_number > m_FrameLines )
+            prop = double(m_FrameLines) / double(lines_number);
         _position = pos;
         _knob_proportion = prop;
     }
 }
 
-
 void BigFileViewText::MoveLinesDelta(int _delta)
 {
-    if(m_Lines.empty())
+    if( m_Frame->Empty() )
         return;
     
-    assert(m_VerticalOffset < (int)m_Lines.size());
-    
+    const int lines_number = m_Frame->LinesNumber();
+    assert( m_VerticalOffset < lines_number );
     const uint64_t window_pos = m_Data->FilePos();
     const uint64_t window_size = m_Data->RawSize();
     const uint64_t file_size = m_Data->FileSize();
@@ -272,7 +246,8 @@ void BigFileViewText::MoveLinesDelta(int _delta)
         else {
             // nope, we need to move file window if it is possible
             if( window_pos > 0 ) { // ok, can move - there's a space
-                uint64_t anchor_glob_offset = m_Lines[m_VerticalOffset].BytesStart() + window_pos;
+                uint64_t anchor_glob_offset =
+                    m_Frame->Line(m_VerticalOffset).BytesStart() + window_pos;
                 int anchor_pos_on_screen = -_delta;
                 
                 // TODO: need something more intelligent here
@@ -290,7 +265,7 @@ void BigFileViewText::MoveLinesDelta(int _delta)
         [m_View setNeedsDisplay];
     }
     else if(_delta > 0) { // we're moving down
-        if( m_VerticalOffset + _delta + m_FrameLines < m_Lines.size() ) {
+        if( m_VerticalOffset + _delta + m_FrameLines < lines_number ) {
             // ok, just scroll within current window
             m_VerticalOffset += _delta;
         }
@@ -298,11 +273,11 @@ void BigFileViewText::MoveLinesDelta(int _delta)
             // nope, we need to move file window if it is possible
             if(window_pos + window_size < file_size)
             { // ok, can move - there's a space
-                size_t anchor_index = std::min(m_VerticalOffset + _delta - 1,
-                                               (int)m_Lines.size() - 1);
+                int anchor_index = std::min(m_VerticalOffset + _delta - 1,
+                                               lines_number - 1);
                 int anchor_pos_on_screen = -1;
                 
-                uint64_t anchor_glob_offset = m_Lines[anchor_index].BytesStart() + window_pos;
+                uint64_t anchor_glob_offset = m_Frame->Line(anchor_index).BytesStart() + window_pos;
 
                 assert(anchor_glob_offset > window_size/4); // internal logic check
                 // TODO: need something more intelligent here
@@ -313,8 +288,8 @@ void BigFileViewText::MoveLinesDelta(int _delta)
             }
             else
             { // just move offset to the end within our window
-                if(m_VerticalOffset + m_FrameLines < (int)m_Lines.size())
-                    m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
+                if(m_VerticalOffset + m_FrameLines < lines_number)
+                    m_VerticalOffset = lines_number - m_FrameLines;
             }
         }
         [m_View setNeedsDisplay];
@@ -348,43 +323,41 @@ void BigFileViewText::MoveFileWindowTo(uint64_t _pos, uint64_t _anchor_byte_no, 
     [m_View RequestWindowMovementAt:_pos];
     
     // now we need to find a line which is at last_top_line_glob_offset position
-    if( m_Lines.empty() ) {
+    if( m_Frame->Empty() ) {
         m_VerticalOffset = 0;
         return;
     }
     
     const int local_offset = (int)( _anchor_byte_no - m_WorkingSet->GlobalOffset() );
-    const int closest_ind = FindFloorClosestLineIndex(&m_Lines[0],
-                                                      &m_Lines[0] + m_Lines.size(),
-                                                      local_offset );
+    const auto first_line = &m_Frame->Lines()[0];
+    const auto last_line = first_line + m_Frame->LinesNumber();
+    const int closest_ind = FindFloorClosestLineIndex( first_line, last_line, local_offset );
     
     m_VerticalOffset = std::max(closest_ind - _anchor_line_no, 0);
     
-    assert(m_VerticalOffset < m_Lines.size());
+    assert( m_VerticalOffset < m_Frame->LinesNumber() );
     [m_View setNeedsDisplay];
 }
 
 uint32_t BigFileViewText::GetOffsetWithinWindow()
 {
-    if(!m_Lines.empty())
-    {
-        assert(m_VerticalOffset < m_Lines.size());
-        return m_Lines[m_VerticalOffset].BytesStart();
+    if( m_Frame->Empty() == false ) {
+        assert( m_VerticalOffset < m_Frame->LinesNumber() );
+        return m_Frame->Line(m_VerticalOffset).BytesStart();
     }
-    else
-    {
-        assert(m_VerticalOffset == 0);
+    else {
+        assert( m_VerticalOffset == 0 );
         return 0;
     }
 }
 
 void BigFileViewText::MoveOffsetWithinWindow(uint32_t _offset)
 {
-    const auto closest_index = FindClosestLineIndex(&m_Lines[0],
-                                                    &m_Lines[0] + m_Lines.size(),
-                                                    (int)_offset);
+    const auto first_line = &m_Frame->Lines()[0];
+    const auto last_line = first_line + m_Frame->LinesNumber();
+    const auto closest_index = FindClosestLineIndex(first_line, last_line, (int)_offset);
     m_VerticalOffset = std::max(closest_index, 0);
-    assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
+    assert( m_Frame->Empty() || m_VerticalOffset < m_Frame->LinesNumber() );
 }
 
 void BigFileViewText::ScrollToByteOffset(uint64_t _offset)
@@ -399,10 +372,10 @@ void BigFileViewText::ScrollToByteOffset(uint64_t _offset)
        (_offset == file_size && window_pos + window_size == file_size) ) {
         // seems that we can satisfy this request immediately, without I/O
         const int local_offset = (int)( _offset - m_WorkingSet->GlobalOffset() );
-        const int closest = FindFloorClosestLineIndex (&m_Lines[0],
-                                                       &m_Lines[0] + m_Lines.size(),
-                                                       local_offset);
-        if( closest + m_FrameLines < (int)m_Lines.size() )
+        const auto first_line = &m_Frame->Lines()[0];
+        const auto last_line = first_line + m_Frame->LinesNumber();
+        const int closest = FindFloorClosestLineIndex(first_line, last_line, local_offset);
+        if( closest + m_FrameLines < m_Frame->LinesNumber() )
         { // check that we will fill whole screen after scrolling
             m_VerticalOffset = closest;
             [m_View setNeedsDisplay];
@@ -410,9 +383,9 @@ void BigFileViewText::ScrollToByteOffset(uint64_t _offset)
         }
         else if(window_pos + window_size == file_size)
         { // trying to scroll below bottom
-            m_VerticalOffset = std::clamp((int)m_Lines.size() - m_FrameLines,
+            m_VerticalOffset = std::clamp(m_Frame->LinesNumber() - m_FrameLines,
                                           0,
-                                          (int)m_Lines.size() - 1);
+                                          m_Frame->LinesNumber() - 1);
             [m_View setNeedsDisplay];
             return;
         }
@@ -426,7 +399,7 @@ void BigFileViewText::ScrollToByteOffset(uint64_t _offset)
     
     MoveFileWindowTo(desired_wnd_pos, _offset, 0);
     
-    assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
+    assert( m_Frame->Empty() || m_VerticalOffset < m_Frame->LinesNumber() );
 }
 
 void BigFileViewText::HandleVerticalScroll(double _pos)
@@ -437,20 +410,20 @@ void BigFileViewText::HandleVerticalScroll(double _pos)
         uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
         ScrollToByteOffset(bytepos);
         
-        if( (int)m_Lines.size() - m_VerticalOffset < m_FrameLines )
-            m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
+        if( m_Frame->LinesNumber() - m_VerticalOffset < m_FrameLines )
+            m_VerticalOffset = m_Frame->LinesNumber() - m_FrameLines;
 
         m_SmoothOffset.y = 0;
     }
     else
     { // we have all file decomposed into strings, so we can do smooth scrolling now
-        double full_document_size = double(m_Lines.size()) * m_FontInfo.LineHeight();
+        double full_document_size = double(m_Frame->LinesNumber()) * m_FontInfo.LineHeight();
         double scroll_y_offset = _pos * (full_document_size - m_FrameSize.height);
         m_VerticalOffset = (int)std::floor(scroll_y_offset / m_FontInfo.LineHeight());
         m_SmoothOffset.y = scroll_y_offset - m_VerticalOffset * m_FontInfo.LineHeight();
         [m_View setNeedsDisplay];
     }
-    assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
+    assert( m_Frame->Empty() || m_VerticalOffset < m_Frame->LinesNumber() );
 }
 
 void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
@@ -469,7 +442,7 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
         if((delta_y > 0 && (m_Data->FilePos() > 0 ||
                             m_VerticalOffset > 0)       ) ||
            (delta_y < 0 && (m_Data->FilePos() + m_Data->RawSize() < m_Data->FileSize() ||
-                            m_VerticalOffset + m_FrameLines < m_Lines.size()) )
+                            m_VerticalOffset + m_FrameLines < m_Frame->LinesNumber()) )
            )
         {
             m_SmoothOffset.y -= delta_y;
@@ -489,7 +462,7 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
     else
     {
         if((delta_y > 0 && m_VerticalOffset > 0) ||
-           (delta_y < 0 && m_VerticalOffset + m_FrameLines < m_Lines.size()) )
+           (delta_y < 0 && m_VerticalOffset + m_FrameLines < m_Frame->LinesNumber()) )
         {
             m_SmoothOffset.y -= delta_y;
             if(m_SmoothOffset.y < -m_FontInfo.LineHeight())
@@ -502,8 +475,10 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
             else if(m_SmoothOffset.y > m_FontInfo.LineHeight())
             {
                 int dl = int(m_SmoothOffset.y / m_FontInfo.LineHeight());
-                if(m_VerticalOffset + m_FrameLines + dl < m_Lines.size()) m_VerticalOffset += dl;
-                else m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
+                if( m_VerticalOffset + m_FrameLines + dl < m_Frame->LinesNumber() )
+                    m_VerticalOffset += dl;
+                else
+                    m_VerticalOffset = m_Frame->LinesNumber() - m_FrameLines;
                 m_SmoothOffset.y -= dl * m_FontInfo.LineHeight();
             }
         }
@@ -537,14 +512,14 @@ void BigFileViewText::OnScrollWheel(NSEvent *theEvent)
        m_SmoothOffset.y < 0)
         m_SmoothOffset.y = 0;
     if(m_Data->FilePos() + m_Data->RawSize() == m_Data->FileSize() &&
-       m_VerticalOffset + m_FrameLines >= m_Lines.size() &&
+       m_VerticalOffset + m_FrameLines >= m_Frame->LinesNumber() &&
        m_SmoothOffset.y > 0 )
         m_SmoothOffset.y = 0;
     if(m_HorizontalOffset == 0 && m_SmoothOffset.x > 0)
         m_SmoothOffset.x = 0;
     
     [m_View setNeedsDisplay];
-    assert(m_Lines.empty() || m_VerticalOffset < m_Lines.size());
+    assert( m_Frame->Empty() || m_VerticalOffset < m_Frame->LinesNumber() );
 }
 
 void BigFileViewText::OnFrameChanged()
@@ -560,10 +535,9 @@ void BigFileViewText::OnFrameChanged()
 void BigFileViewText::OnWordWrappingChanged()
 {
     BuildLayout();
-    if(m_VerticalOffset >= m_Lines.size())
-    {
-        if((int)m_Lines.size() >= m_FrameLines)
-            m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
+    if( m_VerticalOffset >= m_Frame->LinesNumber() ) {
+        if( m_Frame->LinesNumber() >= m_FrameLines )
+            m_VerticalOffset = m_Frame->LinesNumber() - m_FrameLines;
         else
             m_VerticalOffset = 0;
     }
@@ -609,10 +583,10 @@ void BigFileViewText::OnMouseDown(NSEvent *event)
 void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
 {
     int line_no = LineIndexFromPos([m_View convertPoint:event.locationInWindow fromView:nil]);
-    if(line_no < 0 || line_no >= (int)m_Lines.size())
+    if( line_no < 0 || line_no >= m_Frame->LinesNumber() )
         return;
     
-    const auto &i = m_Lines[line_no];
+    const auto &i = m_Frame->Line(line_no);
     const int sel_start_byte = i.BytesStart();
     const int sel_end_byte = i.BytesEnd();
 

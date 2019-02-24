@@ -1,6 +1,7 @@
 // Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include "BigFileViewProtocol.h"
+#include "TextModeFrame.h"
 
 namespace nc::viewer {
 
@@ -68,7 +69,9 @@ private:
     // layout stuff
     nc::utility::FontGeometryInfo m_FontInfo;
     double                       m_LeftInset = 5;
-    std::vector<IndexedTextLine> m_Lines;
+    
+    std::shared_ptr<const TextModeFrame> m_Frame;
+//    std::vector<IndexedTextLine> m_Lines;
     int                          m_VerticalOffset = 0; // offset in lines number within text lines
     unsigned                     m_HorizontalOffset = 0; // offset in characters from the left window edge
     

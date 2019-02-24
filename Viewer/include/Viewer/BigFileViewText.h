@@ -69,7 +69,7 @@ private:
     nc::utility::FontGeometryInfo m_FontInfo;
     double                       m_LeftInset = 5;
     std::vector<IndexedTextLine> m_Lines;
-    unsigned                     m_VerticalOffset = 0; // offset in lines number within text lines
+    int                          m_VerticalOffset = 0; // offset in lines number within text lines
     unsigned                     m_HorizontalOffset = 0; // offset in characters from the left window edge
     
     int                          m_FrameLines = 0; // amount of lines in our frame size ( +1 to fit cutted line also)

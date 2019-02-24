@@ -60,6 +60,7 @@
 		CFD79B812214C46C0043A26D /* TextModeWorkingSet.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B802214C46C0043A26D /* TextModeWorkingSet.h */; };
 		CFD79B8422198DB50043A26D /* TestModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TestModeWorkingSet_UT.cpp */; };
 		CFD79B85221991130043A26D /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA921F65BB70043A26D /* libUtility.dylib */; };
+		CFEA2D6F221CADC0008BE48C /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AAF21F65BC60043A26D /* libHabanero.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -155,6 +156,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFEA2D6F221CADC0008BE48C /* libHabanero.dylib in Frameworks */,
 				CFD79B85221991130043A26D /* libUtility.dylib in Frameworks */,
 				CFD79B6B221071180043A26D /* Viewer.framework in Frameworks */,
 			);
@@ -171,7 +173,6 @@
 				CFD79A8421F65AB00043A26D /* Source */,
 				CFD79A8521F65AB50043A26D /* Tests */,
 				CFD79A7921F65A710043A26D /* Resources */,
-				CFD79B5122106E020043A26D /* ViewerUT */,
 				CFD79A6321F65A010043A26D /* Products */,
 				CFD79AA021F65BA10043A26D /* Frameworks */,
 			);
@@ -278,13 +279,6 @@
 				CFD79AA121F65BA10043A26D /* Cocoa.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		CFD79B5122106E020043A26D /* ViewerUT */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ViewerUT;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

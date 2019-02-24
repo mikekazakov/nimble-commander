@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdexcept>
 #include <Utility/FontExtras.h>
+#include <Habanero/algo.h>
 
 namespace nc::utility {
 
@@ -44,17 +45,22 @@ static double GetLineHeightForFont(CTFontRef iFont, CGFloat *_ascent, CGFloat *_
     return lineHeight;
 }
 
-static double GetMonospaceFontCharWidth(CTFontRef _font)
+static std::pair<double, double> GetMonospaceFontCharWidth(CTFontRef _font)
 {
-    CFStringRef string = CFSTR("A");
-    CFMutableAttributedStringRef attrString = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
-    CFAttributedStringReplaceString(attrString, CFRangeMake(0, 0), string);
-    CFAttributedStringSetAttribute(attrString, CFRangeMake(0, CFStringGetLength(string)), kCTFontAttributeName, _font);
-    CTLineRef line = CTLineCreateWithAttributedString(attrString);
-    double width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
-    CFRelease(line);
-    CFRelease(attrString);
-    return floor(width+0.5);
+    const auto string = CFSTR("A");
+    const auto full_range = CFRangeMake(0, 1);
+    
+    const auto attr_string = CFAttributedStringCreateMutable(nullptr, 0);
+    const auto release_attr_string = at_scope_end([&]{ CFRelease(attr_string); });
+    
+    CFAttributedStringReplaceString(attr_string, CFRangeMake(0, 0), string);
+    CFAttributedStringSetAttribute(attr_string, full_range, kCTFontAttributeName, _font);
+    
+    const auto line = CTLineCreateWithAttributedString(attr_string);
+    const auto release_line = at_scope_end([&]{ CFRelease(line); });
+    
+    const auto width = CTLineGetTypographicBounds(line, NULL, NULL, NULL);
+    return { floor(width + 0.5), width };
 }
 
 FontGeometryInfo::FontGeometryInfo()
@@ -65,6 +71,7 @@ FontGeometryInfo::FontGeometryInfo()
     m_Leading = 0.;
     m_LineHeight = 0.;
     m_MonospaceWidth = 0.;
+    m_PreciseMonospaceWidth = 0.;
 }
 
 FontGeometryInfo::FontGeometryInfo(CTFontRef _font)
@@ -73,7 +80,9 @@ FontGeometryInfo::FontGeometryInfo(CTFontRef _font)
         throw std::invalid_argument("font can't be nullptr");
     
     m_LineHeight = GetLineHeightForFont(_font, &m_Ascent, &m_Descent, &m_Leading);
-    m_MonospaceWidth = GetMonospaceFontCharWidth(_font);
+    const auto widths = GetMonospaceFontCharWidth(_font);
+    m_MonospaceWidth = widths.first;
+    m_PreciseMonospaceWidth = widths.second;
     m_Size = CTFontGetSize(_font);
 }
 

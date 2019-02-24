@@ -25,6 +25,7 @@ public:
     inline double Leading() const noexcept { return m_Leading; }
     inline double LineHeight() const noexcept { return m_LineHeight; }
     inline double MonospaceWidth() const noexcept { return m_MonospaceWidth; }
+    inline double PreciseMonospaceWidth() const noexcept { return m_PreciseMonospaceWidth; }
     
 #ifdef __OBJC__
     static std::vector<short> CalculateStringsWidths( const std::vector<CFStringRef> &_strings, NSFont *_font );
@@ -37,6 +38,7 @@ private:
     double m_Leading;
     double m_LineHeight;
     double m_MonospaceWidth;
+    double m_PreciseMonospaceWidth;
 };
 
 }

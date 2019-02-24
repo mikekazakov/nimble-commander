@@ -11,6 +11,8 @@
 
 namespace nc::viewer {
 
+static const auto g_TabSpaces = 4;
+
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet()
 {
     char16_t chars[1] = {' '};
@@ -68,8 +70,16 @@ void BigFileViewText::BuildLayout()
     double wrapping_width = 10000;
     if( m_View.wordWrap )
         wrapping_width = m_View.contentBounds.width - m_LeftInset;
+    
+    const auto monospace_width = m_FontInfo.PreciseMonospaceWidth();
+    const auto tab_width = g_TabSpaces * monospace_width;
 
     auto attr_string = CFAttributedStringCreateMutable(kCFAllocatorDefault, 0);
+    auto release_attr_string = at_scope_end([&]{ CFRelease(attr_string); });
+
+    const auto pstyle = CreateParagraphStyleWithRegularTabs(tab_width);
+    const auto release_pstyle = at_scope_end([&]{ CFRelease(pstyle); });
+    
     CFAttributedStringReplaceString(attr_string,
                                     CFRangeMake(0, 0),
                                     working_set->String());
@@ -81,24 +91,32 @@ void BigFileViewText::BuildLayout()
                                    CFRangeMake(0, working_set->Length()),
                                    kCTFontAttributeName,
                                    [m_View TextFont]);
+    CFAttributedStringSetAttribute(attr_string,
+                                   CFRangeMake(0, working_set->Length()),
+                                   kCTParagraphStyleAttributeName,
+                                   pstyle);
 
-    const auto monospace_width = m_FontInfo.MonospaceWidth();
-    
-    m_Lines = SplitIntoLines(attr_string,
-                             wrapping_width,
-                             monospace_width,
-                             working_set->CharactersByteOffsets());
+    m_Lines = SplitAttributedStringsIntoLines(attr_string,
+                                              wrapping_width,
+                                              monospace_width,
+                                              tab_width,
+                                              working_set->CharactersByteOffsets());
     
     if(m_VerticalOffset >= m_Lines.size())
-        m_VerticalOffset = !m_Lines.empty() ? (unsigned)m_Lines.size()-1 : 0;
+        m_VerticalOffset = !m_Lines.empty() ? (int)m_Lines.size()-1 : 0;
     
     [m_View setNeedsDisplay];
 }
 
 CGPoint BigFileViewText::TextAnchor()
 {
-    return NSMakePoint(std::ceil((m_LeftInset - m_HorizontalOffset * m_FontInfo.MonospaceWidth())) - m_SmoothOffset.x,
-                       std::floor(m_View.contentBounds.height - m_FontInfo.LineHeight() + m_FontInfo.Descent()) + m_SmoothOffset.y);
+    const double x = std::ceil(( m_LeftInset - m_HorizontalOffset * m_FontInfo.MonospaceWidth()) )
+        - m_SmoothOffset.x;
+    const double y = std::floor(m_View.contentBounds.height -
+                                m_FontInfo.LineHeight() +
+                                m_FontInfo.Descent() )
+        + m_SmoothOffset.y;
+    return NSMakePoint(x, y);
 }
 
 int BigFileViewText::LineIndexFromYPos(double _y)
@@ -142,7 +160,7 @@ void BigFileViewText::DoDraw(CGContextRef _context, NSRect _dirty_rect)
     
     double view_width = m_View.contentBounds.width;
     
-    size_t first_string = m_VerticalOffset;
+    int first_string = m_VerticalOffset;
     if(m_SmoothOffset.y < 0 && first_string > 0)
     {
         --first_string; // to be sure that we can see bottom-clipped lines
@@ -239,25 +257,21 @@ void BigFileViewText::MoveLinesDelta(int _delta)
     if(m_Lines.empty())
         return;
     
-    assert(m_VerticalOffset < m_Lines.size());
+    assert(m_VerticalOffset < (int)m_Lines.size());
     
     const uint64_t window_pos = m_Data->FilePos();
     const uint64_t window_size = m_Data->RawSize();
     const uint64_t file_size = m_Data->FileSize();
     
-    if(_delta < 0)
-    { // we're moving up
+    if( _delta < 0 ) { // we're moving up
         // check if we can satisfy request within our current window position, without moving it
-        if((int)m_VerticalOffset + _delta >= 0)
-        {
+        if( m_VerticalOffset + _delta >= 0 ) {
             // ok, just scroll within current window
             m_VerticalOffset += _delta;
         }
-        else
-        {
+        else {
             // nope, we need to move file window if it is possible
-            if(window_pos > 0)
-            { // ok, can move - there's a space
+            if( window_pos > 0 ) { // ok, can move - there's a space
                 uint64_t anchor_glob_offset = m_Lines[m_VerticalOffset].BytesStart() + window_pos;
                 int anchor_pos_on_screen = -_delta;
                 
@@ -275,17 +289,17 @@ void BigFileViewText::MoveLinesDelta(int _delta)
         }
         [m_View setNeedsDisplay];
     }
-    else if(_delta > 0)
-    { // we're moving down
-        if(m_VerticalOffset + _delta + m_FrameLines < m_Lines.size() )
-        { // ok, just scroll within current window
+    else if(_delta > 0) { // we're moving down
+        if( m_VerticalOffset + _delta + m_FrameLines < m_Lines.size() ) {
+            // ok, just scroll within current window
             m_VerticalOffset += _delta;
         }
-        else
-        { // nope, we need to move file window if it is possible
+        else {
+            // nope, we need to move file window if it is possible
             if(window_pos + window_size < file_size)
             { // ok, can move - there's a space
-                size_t anchor_index = MIN(m_VerticalOffset + _delta - 1, m_Lines.size() - 1);
+                size_t anchor_index = std::min(m_VerticalOffset + _delta - 1,
+                                               (int)m_Lines.size() - 1);
                 int anchor_pos_on_screen = -1;
                 
                 uint64_t anchor_glob_offset = m_Lines[anchor_index].BytesStart() + window_pos;
@@ -299,8 +313,8 @@ void BigFileViewText::MoveLinesDelta(int _delta)
             }
             else
             { // just move offset to the end within our window
-                if(m_VerticalOffset + m_FrameLines < m_Lines.size())
-                    m_VerticalOffset = (unsigned)m_Lines.size() - m_FrameLines;
+                if(m_VerticalOffset + m_FrameLines < (int)m_Lines.size())
+                    m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
             }
         }
         [m_View setNeedsDisplay];
@@ -334,8 +348,7 @@ void BigFileViewText::MoveFileWindowTo(uint64_t _pos, uint64_t _anchor_byte_no, 
     [m_View RequestWindowMovementAt:_pos];
     
     // now we need to find a line which is at last_top_line_glob_offset position
-    if(m_Lines.empty())
-    {
+    if( m_Lines.empty() ) {
         m_VerticalOffset = 0;
         return;
     }
@@ -383,22 +396,23 @@ void BigFileViewText::ScrollToByteOffset(uint64_t _offset)
     m_SmoothOffset.y = 0; // reset vertical smoothing on any scrolling-to-line
     
     if((_offset >= window_pos && _offset < window_pos + window_size) ||
-       (_offset == file_size && window_pos + window_size == file_size) )
-    {
+       (_offset == file_size && window_pos + window_size == file_size) ) {
         // seems that we can satisfy this request immediately, without I/O
         const int local_offset = (int)( _offset - m_WorkingSet->GlobalOffset() );
         const int closest = FindFloorClosestLineIndex (&m_Lines[0],
                                                        &m_Lines[0] + m_Lines.size(),
                                                        local_offset);
-        if((unsigned)closest + m_FrameLines < m_Lines.size())
+        if( closest + m_FrameLines < (int)m_Lines.size() )
         { // check that we will fill whole screen after scrolling
-            m_VerticalOffset = (unsigned)closest;
+            m_VerticalOffset = closest;
             [m_View setNeedsDisplay];
             return;
         }
         else if(window_pos + window_size == file_size)
         { // trying to scroll below bottom
-            m_VerticalOffset = std::clamp((int)m_Lines.size()-m_FrameLines, 0, (int)m_Lines.size()-1);
+            m_VerticalOffset = std::clamp((int)m_Lines.size() - m_FrameLines,
+                                          0,
+                                          (int)m_Lines.size() - 1);
             [m_View setNeedsDisplay];
             return;
         }
@@ -423,7 +437,7 @@ void BigFileViewText::HandleVerticalScroll(double _pos)
         uint64_t bytepos = uint64_t( _pos * double(file_size) ); // need to substract current screen's size in bytes
         ScrollToByteOffset(bytepos);
         
-        if((int)m_Lines.size() - (int)m_VerticalOffset < m_FrameLines )
+        if( (int)m_Lines.size() - m_VerticalOffset < m_FrameLines )
             m_VerticalOffset = (int)m_Lines.size() - m_FrameLines;
 
         m_SmoothOffset.y = 0;
@@ -432,7 +446,7 @@ void BigFileViewText::HandleVerticalScroll(double _pos)
     { // we have all file decomposed into strings, so we can do smooth scrolling now
         double full_document_size = double(m_Lines.size()) * m_FontInfo.LineHeight();
         double scroll_y_offset = _pos * (full_document_size - m_FrameSize.height);
-        m_VerticalOffset = (unsigned)std::floor(scroll_y_offset / m_FontInfo.LineHeight());
+        m_VerticalOffset = (int)std::floor(scroll_y_offset / m_FontInfo.LineHeight());
         m_SmoothOffset.y = scroll_y_offset - m_VerticalOffset * m_FontInfo.LineHeight();
         [m_View setNeedsDisplay];
     }

@@ -52,7 +52,7 @@ TextModeFrame::~TextModeFrame()
     
 TextModeFrame& TextModeFrame::operator=(TextModeFrame&&) noexcept = default;
 
-int TextModeFrame::CharIndexForPosition( CGPoint _position ) const noexcept
+int TextModeFrame::CharIndexForPosition( CGPoint _position ) const
 {
     const auto line_index = (int)std::floor( _position.y / m_FontInfo.LineHeight() );
     if( line_index < 0 )
@@ -66,10 +66,22 @@ int TextModeFrame::CharIndexForPosition( CGPoint _position ) const noexcept
     if( char_index < 0 )
         return 0;
     assert( char_index <= m_WorkingSet->Length() );
+    
+    // if the char index is after the last character in the string and that char is a newline
+    // - move index one char back
+    const auto is_hardbreak = [](char16_t c) -> bool {
+        return c == 0xA || c == 0xD; // + more unicode stuff???
+    };
+    if( char_index == line.UniCharsEnd() &&
+        line.UniCharInside(char_index - 1) &&
+        is_hardbreak( m_WorkingSet->Characters()[char_index-1] ) ) {
+        return char_index - 1;
+    }
+    
     return char_index;
 }
 
-int TextModeFrame::LineIndexForPosition( CGPoint _position ) const noexcept
+int TextModeFrame::LineIndexForPosition( CGPoint _position ) const
 {
     const auto line_index = (int)std::floor( _position.y / m_FontInfo.LineHeight() );
     if( line_index < 0 )
@@ -80,4 +92,3 @@ int TextModeFrame::LineIndexForPosition( CGPoint _position ) const noexcept
 }
 
 }
-

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		CF13255B2222B6D40097F9A1 /* TextModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255A2222B6D40097F9A1 /* TextModeFrame.cpp */; };
 		CF13255D2222B6DD0097F9A1 /* TextModeFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = CF13255C2222B6DD0097F9A1 /* TextModeFrame.h */; };
+		CF1325622225FD630097F9A1 /* TextModeFrame_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */; };
+		CF13256422287F250097F9A1 /* TextModeFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF13256322287F250097F9A1 /* TextModeFrame.mm */; };
 		CFD79A7F21F65A980043A26D /* default.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7B21F65A980043A26D /* default.xcconfig */; };
 		CFD79A8021F65A980043A26D /* tests.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7C21F65A980043A26D /* tests.xcconfig */; };
 		CFD79A8121F65A980043A26D /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7D21F65A980043A26D /* debug.xcconfig */; };
@@ -80,6 +82,8 @@
 /* Begin PBXFileReference section */
 		CF13255A2222B6D40097F9A1 /* TextModeFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeFrame.cpp; path = source/TextModeFrame.cpp; sourceTree = "<group>"; };
 		CF13255C2222B6DD0097F9A1 /* TextModeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeFrame.h; path = include/Viewer/TextModeFrame.h; sourceTree = "<group>"; };
+		CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeFrame_UT.cpp; path = tests/TextModeFrame_UT.cpp; sourceTree = "<group>"; };
+		CF13256322287F250097F9A1 /* TextModeFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextModeFrame.mm; path = source/TextModeFrame.mm; sourceTree = "<group>"; };
 		CFD79A6221F65A010043A26D /* Viewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Viewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD79A6621F65A010043A26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = SOURCE_ROOT; };
 		CFD79A7B21F65A980043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
@@ -253,6 +257,7 @@
 				CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */,
 				CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */,
 				CF13255A2222B6D40097F9A1 /* TextModeFrame.cpp */,
+				CF13256322287F250097F9A1 /* TextModeFrame.mm */,
 				CFD79B702210B6DB0043A26D /* TextModeWorkingSet.cpp */,
 				CFD79B3F2210452C0043A26D /* TextProcessing.cpp */,
 				CFD79A8821F65B4F0043A26D /* Theme.mm */,
@@ -263,6 +268,7 @@
 		CFD79A8521F65AB50043A26D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */,
 				CFD79B8222198DA80043A26D /* TestModeWorkingSet_UT.cpp */,
 				CFD79B6822106F000043A26D /* TestProcessingTests.cpp */,
 				CFD79B5822106E3C0043A26D /* Tests.cpp */,
@@ -426,6 +432,7 @@
 				CFD79A9121F65B4F0043A26D /* BigFileViewDataBackend.cpp in Sources */,
 				CFD79B0521FE4CCC0043A26D /* InternalViewerController.mm in Sources */,
 				CFD79B222205DEA50043A26D /* InternalViewerWindowController.mm in Sources */,
+				CF13256422287F250097F9A1 /* TextModeFrame.mm in Sources */,
 				CFD79A9021F65B4F0043A26D /* BigFileViewHex.mm in Sources */,
 				CFD79B122205B8360043A26D /* BigFileViewSheet.mm in Sources */,
 			);
@@ -437,6 +444,7 @@
 			files = (
 				CFD79B6A22106F080043A26D /* TestProcessingTests.cpp in Sources */,
 				CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */,
+				CF1325622225FD630097F9A1 /* TextModeFrame_UT.cpp in Sources */,
 				CFD79B8422198DB50043A26D /* TestModeWorkingSet_UT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

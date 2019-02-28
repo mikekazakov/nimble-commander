@@ -571,41 +571,11 @@ void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
 
 void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)
 {
-    const auto view_coords = [m_View convertPoint:[event locationInWindow] fromView:nil];
+    const auto view_coords = [m_View convertPoint:event.locationInWindow fromView:nil];
     const auto frame_coords = ToFrameCoords(view_coords);
-    const int uc_index = std::clamp( m_Frame->CharIndexForPosition(frame_coords),
-                                    0,
-                                    std::max(m_WorkingSet->Length() - 1, 1));
-
-    __block int sel_start = 0, sel_end = 0;
-    
-    // this is not ideal implementation since here we search in whole buffer
-    // it has O(n) from hit-test position, which it not good
-    // consider background dividing of buffer in chunks regardless of UI events
-    NSString *string = (__bridge NSString *) m_WorkingSet->String();
-    [string enumerateSubstringsInRange:NSMakeRange(0, m_WorkingSet->Length())
-                               options:NSStringEnumerationByWords | NSStringEnumerationSubstringNotRequired
-                            usingBlock:^(NSString *word,
-                                         NSRange wordRange,
-                                         NSRange enclosingRange,
-                                         BOOL *stop){
-                                if(NSLocationInRange(uc_index, wordRange))
-                                {
-                                    sel_start = (int)wordRange.location;
-                                    sel_end   = (int)wordRange.location + (int)wordRange.length;
-                                    *stop = YES;
-                                }
-                                else if((int)wordRange.location > uc_index)
-                                    *stop = YES;
-                            }];
-    
-    if( sel_start == sel_end ) { // selects a single character
-        sel_start = uc_index;
-        sel_end   = uc_index + 1;        
-    }
-
-    const long sel_start_byte = m_WorkingSet->ToGlobalByteOffset(sel_start);
-    const long sel_end_byte = m_WorkingSet->ToGlobalByteOffset(sel_end);
+    const auto [sel_start, sel_end] = m_Frame->WordRangeForPosition(frame_coords);
+    const auto sel_start_byte = m_WorkingSet->ToGlobalByteOffset(sel_start);
+    const auto sel_end_byte = m_WorkingSet->ToGlobalByteOffset(sel_end);
     m_View.selectionInFile = CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte);
 }
 

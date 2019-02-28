@@ -40,15 +40,25 @@ public:
      * This function assumes top-bottom Y coordidates increase.
      * (0., 0.) is assumed to be at the left-top corner of the first line.
      * This function guarantees to return a value in the range of [0, m_WorkinSet->Length()].
+     * This function performs not a strict hit-testing, but instead it returns an index of caret
+     * position which would correspond to the _position see CTLineGetStringIndexForPosition()
+     * for more details.
      */
-    int CharIndexForPosition( CGPoint _position ) const noexcept;
+    int CharIndexForPosition( CGPoint _position ) const;
     
     /** Returns an index for a line corresponding to _position.
      * If _position is above any exisiting lines - will return -1.
      * If _position is below any exisiting lines - will return LinesNumber().
      * This function guarantees to return a value in the range of [-1, LinesNumber()].
      */
-    int LineIndexForPosition( CGPoint _position ) const noexcept;
+    int LineIndexForPosition( CGPoint _position ) const;
+    
+    /**
+     * Returns a range [characters_begin, characters_end) corresponding a word substring in a
+     * specified position. That's a behaviour of double-click selection.
+     * Will always return a valid range, which can be empty.
+     */
+    std::pair<int, int> WordRangeForPosition( CGPoint _position ) const;
     
 private:
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;

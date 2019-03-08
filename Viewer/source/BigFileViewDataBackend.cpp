@@ -23,14 +23,14 @@ void BigFileViewDataBackend::DecodeBuffer()
                                   m_DecodeBuffer.get(),
                                   m_DecodeBufferIndx.get(),
                                   &m_DecodedBufferSize);
-    if( m_OnDecoded )
-        m_OnDecoded();
+//    if( m_OnDecoded )
+//        m_OnDecoded();
 }
-
-void BigFileViewDataBackend::SetOnDecoded(std::function<void()> _handler)
-{
-    m_OnDecoded = std::move(_handler);
-}
+//
+//void BigFileViewDataBackend::SetOnDecoded(std::function<void()> _handler)
+//{
+//    m_OnDecoded = std::move(_handler);
+//}
 
 int BigFileViewDataBackend::Encoding() const
 {

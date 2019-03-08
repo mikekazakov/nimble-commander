@@ -5,6 +5,7 @@
 #include <Utility/OrthodoxMonospace.h>
 #include <VFS/FileWindow.h>
 #include "Modes.h"
+#include "TextModeViewDelegate.h"
 
 namespace nc::utility {
     class TemporaryFileStorage;
@@ -16,7 +17,7 @@ namespace nc::viewer {
     class Theme;
 }
 
-@interface BigFileView : NSView
+@interface BigFileView : NSView<NCViewerTextModeViewDelegate>
 
 - (instancetype) init NS_UNAVAILABLE;
 - (instancetype) initWithFrame:(NSRect)frame NS_UNAVAILABLE;

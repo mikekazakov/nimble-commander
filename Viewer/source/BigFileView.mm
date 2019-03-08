@@ -12,6 +12,7 @@
 #include <Utility/TemporaryFileStorage.h>
 #include <VFS/VFS.h>
 #include "Theme.h"
+#include "TextModeView.h"
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";
@@ -30,9 +31,11 @@ using nc::vfs::easy::CopyFileToTempStorage;
     // layout
     bool            m_WrapWords;
     
-    std::unique_ptr<BigFileViewImpl> m_ViewImpl; // view impl can be nullptr in case of view shut down
+    NSView<NCViewerImplementationProtocol> *m_View;
     
-    NSScroller      *m_VerticalScroller;
+//    std::unique_ptr<BigFileViewImpl> m_ViewImpl; // view impl can be nullptr in case of view shut down
+    
+//    NSScroller      *m_VerticalScroller;
     
     uint64_t        m_VerticalPositionInBytes;
     
@@ -74,7 +77,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
     m_SelectionInFile = CFRangeMake(-1, 0);
     m_SelectionInWindow = CFRangeMake(-1, 0);
     m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
-    m_ViewImpl = std::make_unique<BigFileViewImpl>(); // dummy for initialization process
+//    m_ViewImpl = std::make_unique<BigFileViewImpl>(); // dummy for initialization process
     
     [self reloadAppearance];
     
@@ -83,15 +86,15 @@ using nc::vfs::easy::CopyFileToTempStorage;
                                                name:NSViewFrameDidChangeNotification
                                              object:self];
     
-    m_VerticalScroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-    m_VerticalScroller.enabled = true;
-    m_VerticalScroller.target = self;
-    m_VerticalScroller.action = @selector(VerticalScroll:);
-    m_VerticalScroller.translatesAutoresizingMaskIntoConstraints = false;
-    [self addSubview:m_VerticalScroller];
-    [self layoutVerticalScroll];
+//    m_VerticalScroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
+//    m_VerticalScroller.enabled = true;
+//    m_VerticalScroller.target = self;
+//    m_VerticalScroller.action = @selector(VerticalScroll:);
+//    m_VerticalScroller.translatesAutoresizingMaskIntoConstraints = false;
+//    [self addSubview:m_VerticalScroller];
+//    [self layoutVerticalScroll];
     [self frameDidChange];
-    [self bind:@"verticalPositionPercentage" toObject:m_VerticalScroller withKeyPath:@"doubleValue" options:nil];    
+//    [self bind:@"verticalPositionPercentage" toObject:m_VerticalScroller withKeyPath:@"doubleValue" options:nil];
     
     __weak BigFileView* weak_self = self;
     m_Theme->ObserveChanges([weak_self] {
@@ -106,24 +109,24 @@ using nc::vfs::easy::CopyFileToTempStorage;
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (void)layoutVerticalScroll
-{
-    for(NSLayoutConstraint *c in self.constraints)
-        if(c.firstItem == m_VerticalScroller || c.secondItem == m_VerticalScroller)
-            [self removeConstraint:c];
-    
-    double off = self.hasBorder ? g_BorderWidth : 0;
-    NSDictionary *views = NSDictionaryOfVariableBindings(m_VerticalScroller);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"[m_VerticalScroller(15)]-(==%f)-|",off]
-                                                                 options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-(==%f)-[m_VerticalScroller]-(==%f)-|",off,off]
-                                                                 options:0 metrics:nil views:views]];
-}
+//- (void)layoutVerticalScroll
+//{
+//    for(NSLayoutConstraint *c in self.constraints)
+//        if(c.firstItem == m_VerticalScroller || c.secondItem == m_VerticalScroller)
+//            [self removeConstraint:c];
+//
+//    double off = self.hasBorder ? g_BorderWidth : 0;
+//    NSDictionary *views = NSDictionaryOfVariableBindings(m_VerticalScroller);
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"[m_VerticalScroller(15)]-(==%f)-|",off]
+//                                                                 options:0 metrics:nil views:views]];
+//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-(==%f)-[m_VerticalScroller]-(==%f)-|",off,off]
+//                                                                 options:0 metrics:nil views:views]];
+//}
 
 - (void)reloadAppearance
 {
-    if( m_ViewImpl )
-        m_ViewImpl->OnFontSettingsChanged();
+//    if( m_ViewImpl )
+//        m_ViewImpl->OnFontSettingsChanged();
     [self setNeedsDisplay];
 }
 
@@ -139,15 +142,15 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 - (void)drawRect:(NSRect)dirtyRect
 {
-    if( !m_ViewImpl )
-        return;
+//    if( !m_ViewImpl )
+//        return;
     
     CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
     CGContextSaveGState(context);
     if(self.hasBorder)
         CGContextTranslateCTM(context, g_BorderWidth, g_BorderWidth);
     
-    m_ViewImpl->DoDraw(context, dirtyRect);
+//    m_ViewImpl->DoDraw(context, dirtyRect);
     
     if(self.hasBorder) {
         CGContextTranslateCTM(context, -g_BorderWidth, -g_BorderWidth);
@@ -205,14 +208,14 @@ using nc::vfs::easy::CopyFileToTempStorage;
     
     m_File = _file;
     m_Data = std::make_unique<BigFileViewDataBackend>(*m_File, _encoding);
-    BigFileView* __weak weak_self = self;
-    auto on_decoded = [weak_self] {
-        if( BigFileView *sself = weak_self ) {
-            [sself UpdateSelectionRange];
-            sself->m_ViewImpl->OnBufferDecoded();
-        }
-    };
-    m_Data->SetOnDecoded( on_decoded );
+//    BigFileView* __weak weak_self = self;
+//    auto on_decoded = [weak_self] {
+//        if( BigFileView *sself = weak_self ) {
+//            [sself UpdateSelectionRange];
+////            sself->m_ViewImpl->OnBufferDecoded();
+//        }
+//    };
+//    m_Data->SetOnDecoded( on_decoded );
     
     self.mode = _mode;
     self.verticalPositionInBytes = 0;
@@ -226,79 +229,79 @@ using nc::vfs::easy::CopyFileToTempStorage;
 {
     dispatch_assert_main_queue();
     
-    m_ViewImpl.reset();
+//    m_ViewImpl.reset();
     m_Data.reset();
     m_File = nullptr;
 }
 
-- (void)keyDown:(NSEvent *)event
-{
-    if( !m_ViewImpl )
-        return;
-    
-    if( event.charactersIgnoringModifiers.length != 1 )
-        return;
-    switch( [event.charactersIgnoringModifiers characterAtIndex:0] ) {
-        case NSHomeFunctionKey: m_ViewImpl->HandleVerticalScroll(0.0); break;
-        case NSEndFunctionKey:  m_ViewImpl->HandleVerticalScroll(1.0); break;
-        default: [super keyDown:event]; return;
-    }
-    [self syncVerticalPositionInBytes];
-}
+//- (void)keyDown:(NSEvent *)event
+//{
+//    if( !m_ViewImpl )
+//        return;
+//
+//    if( event.charactersIgnoringModifiers.length != 1 )
+//        return;
+//    switch( [event.charactersIgnoringModifiers characterAtIndex:0] ) {
+//        case NSHomeFunctionKey: m_ViewImpl->HandleVerticalScroll(0.0); break;
+//        case NSEndFunctionKey:  m_ViewImpl->HandleVerticalScroll(1.0); break;
+//        default: [super keyDown:event]; return;
+//    }
+//    [self syncVerticalPositionInBytes];
+//}
 
-- (void)moveUp:(id)sender
-{
-    if( !m_ViewImpl )
-        return;
-    
-    m_ViewImpl->OnUpArrow();
-    [self syncVerticalPositionInBytes];
-}
+//- (void)moveUp:(id)sender
+//{
+//    if( !m_ViewImpl )
+//        return;
+//
+//    m_ViewImpl->OnUpArrow();
+//    [self syncVerticalPositionInBytes];
+//}
 
-- (void)moveDown:(id)sender
-{
-    if( !m_ViewImpl )
-        return;
-    
-    m_ViewImpl->OnDownArrow();
-    [self syncVerticalPositionInBytes];
-}
+//- (void)moveDown:(id)sender
+//{
+//    if( !m_ViewImpl )
+//        return;
+//
+//    m_ViewImpl->OnDownArrow();
+//    [self syncVerticalPositionInBytes];
+//}
 
-- (void)moveLeft:(id)sender
-{
-    if( !m_ViewImpl )
-        return;
-    
-    m_ViewImpl->OnLeftArrow();
-    [self syncVerticalPositionInBytes];
-}
+//- (void)moveLeft:(id)sender
+//{
+//    if( !m_ViewImpl )
+//        return;
+//
+//    m_ViewImpl->OnLeftArrow();
+//    [self syncVerticalPositionInBytes];
+//}
 
-- (void)moveRight:(id)sender
-{
-    if( !m_ViewImpl )
-        return;
-    
-    m_ViewImpl->OnRightArrow();
-    [self syncVerticalPositionInBytes];
-}
+//- (void)moveRight:(id)sender
+//{
+//    if( !m_ViewImpl )
+//        return;
+//
+//    m_ViewImpl->OnRightArrow();
+//    [self syncVerticalPositionInBytes];
+//}
 
-- (void)pageDown:(id)sender
-{
-    if( !m_ViewImpl )
-        return;
-    
-    m_ViewImpl->OnPageDown();
-    [self syncVerticalPositionInBytes];
-}
-
-- (void) pageUp:(id)sender
-{
-    if( !m_ViewImpl )
-        return;
-
-    m_ViewImpl->OnPageUp();
-    [self syncVerticalPositionInBytes];
-}
+//- (void)pageDown:(id)sender
+//{
+//    if( !m_ViewImpl )
+//        return;
+//
+//    m_ViewImpl->OnPageDown();
+//    [self syncVerticalPositionInBytes];
+//}
+//
+//- (void) pageUp:(id)sender
+//{
+//    if( !m_ViewImpl )
+//        return;
+//
+//    m_ViewImpl->OnPageUp();
+//    [self syncVerticalPositionInBytes];
+//}
 
 - (int) encoding
 {
@@ -318,11 +321,11 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 - (void)frameDidChange
 {
-    if( !m_ViewImpl )
-        return;
-    
-    m_ViewImpl->OnFrameChanged();
-    [self syncVerticalScrollerState];
+//    if( !m_ViewImpl )
+//        return;
+//
+//    m_ViewImpl->OnFrameChanged();
+//    [self syncVerticalScrollerState];
 }
 
 - (CTFontRef) TextFont{
@@ -345,47 +348,47 @@ using nc::vfs::easy::CopyFileToTempStorage;
 {
     m_Data->MoveWindowSync(_pos);
 }
+//
+//- (void)VerticalScroll:(id)sender
+//{
+//    if( !m_ViewImpl )
+//        return;
+//
+//    switch( m_VerticalScroller.hitPart )
+//    {
+//        case NSScrollerIncrementLine:
+//            m_ViewImpl->OnDownArrow();
+//            break;
+//        case NSScrollerIncrementPage:
+//            // Include code here for the case where CTRL + down arrow is pressed, or the space the scroll knob moves in is pressed
+//            m_ViewImpl->OnPageDown();
+//            break;
+//        case NSScrollerDecrementLine:
+//            // Include code here for the case where the up arrow is pressed
+//            m_ViewImpl->OnUpArrow();
+//            break;
+//        case NSScrollerDecrementPage:
+//            // Include code here for the case where CTRL + up arrow is pressed, or the space the scroll knob moves in is pressed
+//            m_ViewImpl->OnPageUp();
+//            break;
+//        case NSScrollerKnob:
+//            // This case is when the knob itself is pressed
+//            m_ViewImpl->HandleVerticalScroll(m_VerticalScroller.doubleValue);
+//            break;
+//        default:
+//            break;
+//    }
+//    [self syncVerticalPositionInBytes];
+//}
 
-- (void)VerticalScroll:(id)sender
-{
-    if( !m_ViewImpl )
-        return;
-    
-    switch( m_VerticalScroller.hitPart )
-    {
-        case NSScrollerIncrementLine:
-            m_ViewImpl->OnDownArrow();
-            break;
-        case NSScrollerIncrementPage:
-            // Include code here for the case where CTRL + down arrow is pressed, or the space the scroll knob moves in is pressed
-            m_ViewImpl->OnPageDown();
-            break;
-        case NSScrollerDecrementLine:
-            // Include code here for the case where the up arrow is pressed
-            m_ViewImpl->OnUpArrow();
-            break;
-        case NSScrollerDecrementPage:
-            // Include code here for the case where CTRL + up arrow is pressed, or the space the scroll knob moves in is pressed
-            m_ViewImpl->OnPageUp();
-            break;
-        case NSScrollerKnob:
-            // This case is when the knob itself is pressed
-            m_ViewImpl->HandleVerticalScroll(m_VerticalScroller.doubleValue);
-            break;
-        default:
-            break;
-    }
-    [self syncVerticalPositionInBytes];
-}
-
-- (void)scrollWheel:(NSEvent *)theEvent
-{
-    if( !m_ViewImpl )
-        return;
-    
-    m_ViewImpl->OnScrollWheel(theEvent);
-    [self syncVerticalPositionInBytes];
-}
+//- (void)scrollWheel:(NSEvent *)theEvent
+//{
+//    if( !m_ViewImpl )
+//        return;
+//
+//    m_ViewImpl->OnScrollWheel(theEvent);
+//    [self syncVerticalPositionInBytes];
+//}
 
 - (bool)wordWrap
 {
@@ -399,122 +402,141 @@ using nc::vfs::easy::CopyFileToTempStorage;
     
     [self willChangeValueForKey:@"wordWrap"];
     m_WrapWords = _wrapping;
-    m_ViewImpl->OnWordWrappingChanged();
+//    m_ViewImpl->OnWordWrappingChanged();
     [self didChangeValueForKey:@"wordWrap"];
 }
 
 - (BigFileViewModes) mode
 {
-    if(dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
-        return BigFileViewModes::Text;
-    else if(dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
-        return BigFileViewModes::Hex;
-    else if(dynamic_cast<InternalViewerViewPreviewMode*>(m_ViewImpl.get()))
-        return BigFileViewModes::Preview;
-    else
-//        assert(0);
-        // in case of doubt - say we're in text mode (uninitialized really)
-        return BigFileViewModes::Text;
-    // TODO: make Text move be default
+    return BigFileViewModes::Text;
+    
+//    if(dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
+//        return BigFileViewModes::Text;
+//    else if(dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
+//        return BigFileViewModes::Hex;
+//    else if(dynamic_cast<InternalViewerViewPreviewMode*>(m_ViewImpl.get()))
+//        return BigFileViewModes::Preview;
+//    else
+////        assert(0);
+//        // in case of doubt - say we're in text mode (uninitialized really)
+//        return BigFileViewModes::Text;
+//    // TODO: make Text move be default
 }
 
 - (void) setMode: (BigFileViewModes) _mode
 {
-    if( _mode == BigFileViewModes::Text    && dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
-        return;
-    if( _mode == BigFileViewModes::Hex     && dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
-        return;
-    if( _mode == BigFileViewModes::Preview && dynamic_cast<InternalViewerViewPreviewMode*>(m_ViewImpl.get()))
+    if( m_View != nullptr )
         return;
     
-//    if( _mode == self.mode )
+    auto view = [[NCViewerTextModeView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
+                                                    backend:*m_Data
+                                                      theme:*m_Theme];
+    view.delegate = self;
+    [self addSubview:view];
+    NSDictionary *views = NSDictionaryOfVariableBindings(view);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                          @"|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                          @"V:|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
+    m_View = view;
+    
+    return;
+//    if( _mode == BigFileViewModes::Text    && dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
 //        return;
-//    
-    [self willChangeValueForKey:@"mode"];
-    
-    uint32_t current_offset = m_ViewImpl ? m_ViewImpl->GetOffsetWithinWindow() : 0;
-    
-    switch (_mode)
-    {
-        case BigFileViewModes::Text:
-            m_ViewImpl = std::make_unique<nc::viewer::BigFileViewText>(m_Data.get(), self);
-            break;
-        case BigFileViewModes::Hex:
-            m_ViewImpl = std::make_unique<BigFileViewHex>(m_Data.get(), self);
-            break;
-        case BigFileViewModes::Preview:
-        {
-            std::string path;
-            if( m_File->File()->Host()->IsNativeFS() )
-                path = m_File->File()->Path();
-            else {
-                if( !m_NativeStoredFile )
-                    m_NativeStoredFile = CopyFileToTempStorage(m_File->File()->Path(),
-                                                               *m_File->File()->Host(),
-                                                               *m_TempFileStorage);
-                if( m_NativeStoredFile )
-                    path = *m_NativeStoredFile;
-            }
-            m_ViewImpl = std::make_unique<InternalViewerViewPreviewMode>(path, self);
-            break;
-        }
-        default:
-            assert(0);
-    }
-    
-    m_ViewImpl->MoveOffsetWithinWindow(current_offset);
-    m_VerticalScroller.hidden = !m_ViewImpl->NeedsVerticalScroller();
-    [self setNeedsDisplay];
-    
-    [self didChangeValueForKey:@"mode"];
-    
-    [self syncVerticalPositionInBytes];
-    [self syncVerticalScrollerState];    
+//    if( _mode == BigFileViewModes::Hex     && dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
+//        return;
+//    if( _mode == BigFileViewModes::Preview && dynamic_cast<InternalViewerViewPreviewMode*>(m_ViewImpl.get()))
+//        return;
+//
+////    if( _mode == self.mode )
+////        return;
+////
+//    [self willChangeValueForKey:@"mode"];
+//
+//    uint32_t current_offset = m_ViewImpl ? m_ViewImpl->GetOffsetWithinWindow() : 0;
+//
+//    switch (_mode)
+//    {
+//        case BigFileViewModes::Text:
+//            m_ViewImpl = std::make_unique<nc::viewer::BigFileViewText>(m_Data.get(), self);
+//            break;
+//        case BigFileViewModes::Hex:
+//            m_ViewImpl = std::make_unique<BigFileViewHex>(m_Data.get(), self);
+//            break;
+//        case BigFileViewModes::Preview:
+//        {
+//            std::string path;
+//            if( m_File->File()->Host()->IsNativeFS() )
+//                path = m_File->File()->Path();
+//            else {
+//                if( !m_NativeStoredFile )
+//                    m_NativeStoredFile = CopyFileToTempStorage(m_File->File()->Path(),
+//                                                               *m_File->File()->Host(),
+//                                                               *m_TempFileStorage);
+//                if( m_NativeStoredFile )
+//                    path = *m_NativeStoredFile;
+//            }
+//            m_ViewImpl = std::make_unique<InternalViewerViewPreviewMode>(path, self);
+//            break;
+//        }
+//        default:
+//            assert(0);
+//    }
+//
+//    m_ViewImpl->MoveOffsetWithinWindow(current_offset);
+//    m_VerticalScroller.hidden = !m_ViewImpl->NeedsVerticalScroller();
+//    [self setNeedsDisplay];
+//
+//    [self didChangeValueForKey:@"mode"];
+//
+//    [self syncVerticalPositionInBytes];
+//    [self syncVerticalScrollerState];
 }
 
 - (double) VerticalScrollPosition
 {
-    return m_VerticalScroller.doubleValue;
+//    return m_VerticalScroller.doubleValue;
+    return 0.;
 }
 
 - (void) ScrollToSelection
 {
-    if( !m_ViewImpl )
-        return;
-    
-    if( m_SelectionInFile.location >= 0 ) {
-        m_ViewImpl->ScrollToByteOffset(m_SelectionInFile.location);
-        [self UpdateSelectionRange];
-        [self syncVerticalScrollerState];
-    }
+//    if( !m_ViewImpl )
+//        return;
+//
+//    if( m_SelectionInFile.location >= 0 ) {
+//        m_ViewImpl->ScrollToByteOffset(m_SelectionInFile.location);
+//        [self UpdateSelectionRange];
+//        [self syncVerticalScrollerState];
+//    }
 }
 
 - (void) syncVerticalScrollerState
 {
-    if( !m_ViewImpl )
-        return;
-    
-    double scroll_pos = 0.0;
-    double scroll_prop = 1.0;
-    m_ViewImpl->CalculateScrollPosition(scroll_pos, scroll_prop);
-    m_VerticalScroller.doubleValue = scroll_pos;
-    m_VerticalScroller.knobProportion = scroll_prop;
+//    if( !m_ViewImpl )
+//        return;
+//
+//    double scroll_pos = 0.0;
+//    double scroll_prop = 1.0;
+//    m_ViewImpl->CalculateScrollPosition(scroll_pos, scroll_prop);
+//    m_VerticalScroller.doubleValue = scroll_pos;
+//    m_VerticalScroller.knobProportion = scroll_prop;
 }
 
 - (void) syncVerticalPositionInBytes
 {
-    if( !m_ViewImpl )
-        return;
-    
-    uint64_t value = uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
-    if( value == m_VerticalPositionInBytes )
-        return;
-    
-    [self willChangeValueForKey:@"verticalPositionInBytes"];
-    m_VerticalPositionInBytes = value;
-    [self didChangeValueForKey:@"verticalPositionInBytes"];
-
-    [self syncVerticalScrollerState];
+//    if( !m_ViewImpl )
+//        return;
+//
+//    uint64_t value = uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
+//    if( value == m_VerticalPositionInBytes )
+//        return;
+//
+//    [self willChangeValueForKey:@"verticalPositionInBytes"];
+//    m_VerticalPositionInBytes = value;
+//    [self didChangeValueForKey:@"verticalPositionInBytes"];
+//
+//    [self syncVerticalScrollerState];
 }
 
 - (uint64_t) verticalPositionInBytes
@@ -525,20 +547,20 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 - (void) setVerticalPositionInBytes:(uint64_t) _pos
 {
-    if( _pos == m_VerticalPositionInBytes )
-        return;
-    
-    m_ViewImpl->ScrollToByteOffset(_pos);
-    [self syncVerticalPositionInBytes];
+//    if( _pos == m_VerticalPositionInBytes )
+//        return;
+//
+//    m_ViewImpl->ScrollToByteOffset(_pos);
+//    [self syncVerticalPositionInBytes];
 }
 
 - (void)scrollToVerticalPosition:(double)_p
 {
-    if( !m_ViewImpl )
-        return;
-    
-    m_ViewImpl->HandleVerticalScroll(_p);
-    [self syncVerticalPositionInBytes];
+//    if( !m_ViewImpl )
+//        return;
+//
+//    m_ViewImpl->HandleVerticalScroll(_p);
+//    [self syncVerticalPositionInBytes];
 }
 
 // searching for selected UniChars in file window if there's any overlapping of
@@ -645,13 +667,13 @@ using nc::vfs::easy::CopyFileToTempStorage;
     [self setNeedsDisplay];
 }
 
-- (void) mouseDown:(NSEvent *)_event
-{
-    if( !m_ViewImpl )
-        return;
-
-    m_ViewImpl->OnMouseDown(_event);
-}
+//- (void) mouseDown:(NSEvent *)_event
+//{
+//    if( !m_ViewImpl )
+//        return;
+//
+//    m_ViewImpl->OnMouseDown(_event);
+//}
 
  - (void)copy:(id)sender
 {
@@ -696,8 +718,25 @@ using nc::vfs::easy::CopyFileToTempStorage;
 {
     if(hasBorder != _hasBorder) {
         _hasBorder = hasBorder;
-        [self layoutVerticalScroll];
+//        [self layoutVerticalScroll];
     }
+}
+
+- (int) textModeView:(NCViewerTextModeView*)_view
+requestsSyncBackendWindowMovementAt:(int64_t)_position
+{
+    return [self moveBackendWindowSyncAt:_position];
+}
+
+- (int)moveBackendWindowSyncAt:(int64_t)_position
+{
+    const auto rc = m_Data->MoveWindowSync(_position);
+    if( rc != VFSError::Ok ) {
+        // ... callout
+        if( [m_View respondsToSelector:@selector(backendContentHasChanged)] )
+            [m_View backendContentHasChanged];
+    }
+    return rc;
 }
 
 @end

@@ -6,7 +6,8 @@ namespace nc::viewer {
 
 TextModeFrame::TextModeFrame( const Source &_source ):
     m_WorkingSet{ _source.working_set  },
-    m_FontInfo{ _source.font_info }
+    m_FontInfo{ _source.font_info },
+    m_WrappingWidth{ _source.wrapping_width }
 {
     assert( m_WorkingSet != nullptr );
     

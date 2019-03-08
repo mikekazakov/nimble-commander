@@ -11,6 +11,9 @@
 		CF13255D2222B6DD0097F9A1 /* TextModeFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = CF13255C2222B6DD0097F9A1 /* TextModeFrame.h */; };
 		CF1325622225FD630097F9A1 /* TextModeFrame_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */; };
 		CF13256422287F250097F9A1 /* TextModeFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF13256322287F250097F9A1 /* TextModeFrame.mm */; };
+		CF132566222AB80B0097F9A1 /* TextModeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CF132565222AB80B0097F9A1 /* TextModeView.h */; };
+		CF132568222AB8170097F9A1 /* TextModeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF132567222AB8170097F9A1 /* TextModeView.mm */; };
+		CF13256A222ACF640097F9A1 /* TextModeViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CF132569222ACF640097F9A1 /* TextModeViewDelegate.h */; };
 		CFD79A7F21F65A980043A26D /* default.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7B21F65A980043A26D /* default.xcconfig */; };
 		CFD79A8021F65A980043A26D /* tests.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7C21F65A980043A26D /* tests.xcconfig */; };
 		CFD79A8121F65A980043A26D /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7D21F65A980043A26D /* debug.xcconfig */; };
@@ -84,6 +87,9 @@
 		CF13255C2222B6DD0097F9A1 /* TextModeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeFrame.h; path = include/Viewer/TextModeFrame.h; sourceTree = "<group>"; };
 		CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeFrame_UT.cpp; path = tests/TextModeFrame_UT.cpp; sourceTree = "<group>"; };
 		CF13256322287F250097F9A1 /* TextModeFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextModeFrame.mm; path = source/TextModeFrame.mm; sourceTree = "<group>"; };
+		CF132565222AB80B0097F9A1 /* TextModeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeView.h; path = include/Viewer/TextModeView.h; sourceTree = "<group>"; };
+		CF132567222AB8170097F9A1 /* TextModeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextModeView.mm; path = source/TextModeView.mm; sourceTree = "<group>"; };
+		CF132569222ACF640097F9A1 /* TextModeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeViewDelegate.h; path = include/Viewer/TextModeViewDelegate.h; sourceTree = "<group>"; };
 		CFD79A6221F65A010043A26D /* Viewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Viewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD79A6621F65A010043A26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = SOURCE_ROOT; };
 		CFD79A7B21F65A980043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
@@ -235,6 +241,8 @@
 				CFD79B1F2205DE9C0043A26D /* InternalViewerWindowController.h */,
 				CFD79AB721FCA8900043A26D /* Modes.h */,
 				CF13255C2222B6DD0097F9A1 /* TextModeFrame.h */,
+				CF132565222AB80B0097F9A1 /* TextModeView.h */,
+				CF132569222ACF640097F9A1 /* TextModeViewDelegate.h */,
 				CFD79B802214C46C0043A26D /* TextModeWorkingSet.h */,
 				CFD79B3D221045210043A26D /* TextProcessing.h */,
 				CFD79A9321F65B570043A26D /* Theme.h */,
@@ -258,6 +266,7 @@
 				CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */,
 				CF13255A2222B6D40097F9A1 /* TextModeFrame.cpp */,
 				CF13256322287F250097F9A1 /* TextModeFrame.mm */,
+				CF132567222AB8170097F9A1 /* TextModeView.mm */,
 				CFD79B702210B6DB0043A26D /* TextModeWorkingSet.cpp */,
 				CFD79B3F2210452C0043A26D /* TextProcessing.cpp */,
 				CFD79A8821F65B4F0043A26D /* Theme.mm */,
@@ -312,11 +321,13 @@
 				CFD79B182205DE3E0043A26D /* InternalViewerToolbarProtocol.h in Headers */,
 				CF13255D2222B6DD0097F9A1 /* TextModeFrame.h in Headers */,
 				CFD79B0321FE4CC40043A26D /* InternalViewerController.h in Headers */,
+				CF13256A222ACF640097F9A1 /* TextModeViewDelegate.h in Headers */,
 				CFD79A9A21F65B570043A26D /* Theme.h in Headers */,
 				CFD79A9C21F65B570043A26D /* InternalViewerViewPreviewMode.h in Headers */,
 				CFD79B102205B82F0043A26D /* BigFileViewSheet.h in Headers */,
 				CFD79A9F21F65B570043A26D /* BigFileViewHex.h in Headers */,
 				CFD79A9921F65B570043A26D /* BigFileViewProtocol.h in Headers */,
+				CF132566222AB80B0097F9A1 /* TextModeView.h in Headers */,
 				CFD79B812214C46C0043A26D /* TextModeWorkingSet.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -423,6 +434,7 @@
 				CFD79A8D21F65B4F0043A26D /* BigFileViewText.mm in Sources */,
 				CFD79B722210B6DB0043A26D /* TextModeWorkingSet.cpp in Sources */,
 				CFD79B1A2205DE480043A26D /* InternalViewerToolbarProtocol.mm in Sources */,
+				CF132568222AB8170097F9A1 /* TextModeView.mm in Sources */,
 				CF13255B2222B6D40097F9A1 /* TextModeFrame.cpp in Sources */,
 				CFD79AB621FCA4F30043A26D /* History.cpp in Sources */,
 				CFD79A8C21F65B4F0043A26D /* InternalViewerViewPreviewMode.mm in Sources */,

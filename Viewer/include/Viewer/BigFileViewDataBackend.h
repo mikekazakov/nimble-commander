@@ -55,13 +55,13 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////
     // handlers
-    void SetOnDecoded(std::function<void()> _handler);
+//    void SetOnDecoded(std::function<void()> _handler);
 private:
     void DecodeBuffer(); // called by internal update logic
     
     nc::vfs::FileWindow &m_FileWindow;
     int         m_Encoding;
-    std::function<void()> m_OnDecoded;
+//    std::function<void()> m_OnDecoded;
 
     std::unique_ptr<UniChar[]> m_DecodeBuffer;   // decoded buffer with unichars
                                             // useful size of m_DecodedBufferSize

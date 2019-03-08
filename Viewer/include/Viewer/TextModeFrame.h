@@ -60,10 +60,21 @@ public:
      */
     std::pair<int, int> WordRangeForPosition( CGPoint _position ) const;
     
+    /**
+     * Returns the wrapping width which used to layout out this frame.
+     */
+    double WrappingWidth() const noexcept;
+    
+    /**
+     * Returns the underlying immutable working set.
+     */
+    const TextModeWorkingSet &WorkingSet() const noexcept;
+    
 private:
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     std::vector<IndexedTextLine> m_Lines;
     nc::utility::FontGeometryInfo m_FontInfo;
+    double m_WrappingWidth = 0.;
 };
 
 inline const std::vector<IndexedTextLine>& TextModeFrame::Lines() const noexcept
@@ -85,6 +96,16 @@ inline const IndexedTextLine& TextModeFrame::Line(int _index) const noexcept
 {
     assert( _index >= 0 && _index < LinesNumber() );
     return m_Lines[_index];
+}
+
+inline double TextModeFrame::WrappingWidth() const noexcept
+{
+    return m_WrappingWidth;
+}
+
+inline const TextModeWorkingSet &TextModeFrame::WorkingSet() const noexcept
+{
+    return *m_WorkingSet;
 }
 
 }

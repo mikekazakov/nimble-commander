@@ -566,7 +566,8 @@ void BigFileViewText::HandleSelectionWithTripleClick(NSEvent* event)
     const int sel_start_byte = i.BytesStart();
     const int sel_end_byte = i.BytesEnd();
 
-    m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(), sel_end_byte - sel_start_byte);
+    m_View.selectionInFile = CFRangeMake(sel_start_byte + m_Data->FilePos(),
+                                         sel_end_byte - sel_start_byte);
 }
 
 void BigFileViewText::HandleSelectionWithDoubleClick(NSEvent* event)

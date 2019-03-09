@@ -107,14 +107,7 @@ static int FindEqualVerticalOffsetForRebuiltFrame
     source.working_set = m_WorkingSet;
     return std::make_shared<TextModeFrame>(source);
 }
-//
-//CGPoint BigFileViewText::TextAnchor()
-//{
-//    const double x = std::ceil(( m_LeftInset - m_HorizontalOffset * m_FontInfo.MonospaceWidth()) )
-//    - m_SmoothOffset.x;
-//    const double y = std::floor(m_View.contentBounds.height + m_SmoothOffset.y);
-//    return NSMakePoint(x, y);
-//}
+
 //
 //CGPoint BigFileViewText::ToFrameCoords(CGPoint _view_coords)
 //{
@@ -165,7 +158,7 @@ static int FindEqualVerticalOffsetForRebuiltFrame
     
 //    CGPoint pos = TextAnchor();
     const auto origin = [self textOrigin];
-    std::cout << origin.y << std::endl;
+//    std::cout << origin.y << std::endl;
 //    auto line_pos = origin;
 //    pos.y = pos.y - m_FontInfo.LineHeight() + m_FontInfo.Descent();
 //    pos.y = pos.y + m_FontInfo.LineHeight() - m_FontInfo.Descent();
@@ -241,11 +234,39 @@ static int FindEqualVerticalOffsetForRebuiltFrame
     }
 }
 
-- (bool)doMoveUp
+- (bool)doMoveUpByOneLine
 {
     if( m_VerticalLineOffset > 0 ) {
-        // TODO: check if we need to move the backend window
         m_VerticalLineOffset--;
+        [self setNeedsDisplay:true];
+        return true;
+    }
+    else if( [self canMoveFileWindowUp] ) {
+        assert( self.delegate );
+        const auto old_frame = m_Frame;
+        const auto old_anchor_line_index  = std::clamp( m_VerticalLineOffset,
+                                                       0,
+                                                       old_frame->LinesNumber() - 1 );
+        const auto old_anchor_glob_offset =
+        (long)old_frame->Line(old_anchor_line_index).BytesStart() +
+        old_frame->WorkingSet().GlobalOffset();
+        const auto desired_window_offset = std::clamp
+        (old_anchor_glob_offset - (int64_t)m_Backend->RawSize() + (int64_t)m_Backend->RawSize() / 4,
+         (int64_t)0,
+         (int64_t)(m_Backend->FileSize() - m_Backend->RawSize()) );
+        
+        const auto rc = [self.delegate textModeView:self
+                requestsSyncBackendWindowMovementAt:desired_window_offset];
+        if( rc != VFSError::Ok )
+            return false;
+        
+        [self backendContentHasChanged];
+        
+        m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*m_Frame,
+                                                                      m_VerticalLineOffset,
+                                                                      *old_frame);
+        if( m_VerticalLineOffset > 0 )
+            m_VerticalLineOffset--;
         [self setNeedsDisplay:true];
         return true;
     }
@@ -254,27 +275,96 @@ static int FindEqualVerticalOffsetForRebuiltFrame
     }
 }
 
-- (bool)doMoveDown
+- (bool)canMoveFileWindowUp
 {
-    // TODO: checks
+    return m_Backend->FilePos() > 0;
+}
+
+- (bool)canMoveFileWindowDown
+{
+    return m_Backend->FilePos() + m_Backend->RawSize() < m_Backend->FileSize();
+}
+
+- (bool)doMoveDownByOneLine
+{
     if( m_VerticalLineOffset + self.numberOfLinesFittingInView < m_Frame->LinesNumber()  ) {
         m_VerticalLineOffset++;
         [self setNeedsDisplay:true];
         return true;
     }
+    else if( [self canMoveFileWindowDown] ) {
+        assert( self.delegate );
+        const auto old_frame = m_Frame;
+        const auto old_anchor_line_index  = std::clamp( m_VerticalLineOffset,
+                                                       0,
+                                                       old_frame->LinesNumber() - 1 );
+        const auto old_anchor_glob_offset =
+            (long)old_frame->Line(old_anchor_line_index).BytesStart() +
+            old_frame->WorkingSet().GlobalOffset();
+        const auto desired_window_offset = std::clamp
+            (old_anchor_glob_offset - (int64_t)m_Backend->RawSize() / 4,
+             (int64_t)0,
+             (int64_t)(m_Backend->FileSize() - m_Backend->RawSize()) );
+        if( desired_window_offset <= (int64_t)m_Backend->FilePos() )
+            return false; // singular situation. don't handle for now.
+        
+        const auto rc = [self.delegate textModeView:self
+                requestsSyncBackendWindowMovementAt:desired_window_offset];
+        if( rc != VFSError::Ok )
+            return false;
+        
+        [self backendContentHasChanged];
+        
+        m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*m_Frame,
+                                                                      m_VerticalLineOffset,
+                                                                      *old_frame);
+        if( m_VerticalLineOffset + self.numberOfLinesFittingInView < m_Frame->LinesNumber() )
+            m_VerticalLineOffset++;
+//        std::cout << m_WorkingSet->GlobalOffset() << std::endl;
+        [self setNeedsDisplay:true];
+        return true;
+    }
     else {
         return false;
     }
 }
+//
+//if( m_VerticalOffset + _delta + m_FrameLines < lines_number ) {
+//    // ok, just scroll within current window
+//    m_VerticalOffset += _delta;
+//}
+//else {
+//    // nope, we need to move file window if it is possible
+//    if(window_pos + window_size < file_size)
+//    { // ok, can move - there's a space
+//        int anchor_index = std::min(m_VerticalOffset + _delta - 1,
+//                                    lines_number - 1);
+//        int anchor_pos_on_screen = -1;
+//
+//        uint64_t anchor_glob_offset = m_Frame->Line(anchor_index).BytesStart() + window_pos;
+//
+//        assert(anchor_glob_offset > window_size/4); // internal logic check
+//        // TODO: need something more intelligent here
+//        uint64_t desired_window_offset = anchor_glob_offset - window_size/4;
+//        desired_window_offset = std::clamp(desired_window_offset, 0ull, file_size - window_size);
+//
+//        MoveFileWindowTo(desired_window_offset, anchor_glob_offset, anchor_pos_on_screen);
+//    }
+//    else
+//    { // just move offset to the end within our window
+//        if(m_VerticalOffset + m_FrameLines < lines_number)
+//            m_VerticalOffset = lines_number - m_FrameLines;
+//    }
+//}
 
 - (void)moveUp:(id)sender
 {
-    [self doMoveUp];
+    [self doMoveUpByOneLine];
 }
 
 - (void)moveDown:(id)sender
 {
-    [self doMoveDown];
+    [self doMoveDownByOneLine];
 }
 
 /**
@@ -308,7 +398,7 @@ static int FindEqualVerticalOffsetForRebuiltFrame
             auto px_offset = m_PxOffset.y - delta_y;
             m_PxOffset.y = 0;
             while( px_offset <= -m_FontInfo.LineHeight() ) {
-                const auto did_move = [self doMoveUp];
+                const auto did_move = [self doMoveUpByOneLine];
                 if( did_move == false )
                     break;
                 px_offset += m_FontInfo.LineHeight();
@@ -326,7 +416,7 @@ static int FindEqualVerticalOffsetForRebuiltFrame
             auto px_offset = m_PxOffset.y - delta_y;
             m_PxOffset.y = 0;
             while( px_offset >= m_FontInfo.LineHeight() ) {
-                const auto did_move = [self doMoveDown];
+                const auto did_move = [self doMoveDownByOneLine];
                 if( did_move == false )
                     break;
                 px_offset -= m_FontInfo.LineHeight();
@@ -393,27 +483,65 @@ static int FindEqualVerticalOffsetForRebuiltFrame
      const int old_vertical_offset,
      const TextModeFrame& new_frame)
 {
-    // TODO: current limitation, should be lifted later
-    assert( &old_frame.WorkingSet() == &new_frame.WorkingSet() );
-    
-    if( old_vertical_offset < 0 ) {
-        // offseting the old frame before the first line => offset remains the same
-        return old_vertical_offset;
-    }
-    else if( old_vertical_offset >= old_frame.LinesNumber() ) {
-        // offseting the old frame after the last line => keep the delta the same
-        const auto delta_offset = old_vertical_offset - old_frame.LinesNumber();
-        return new_frame.LinesNumber() + delta_offset;
-    }
-    else {
-        // some old line was an offset target - find the closest equivalent line in the
-        // new frame.
-        const auto &old_line = old_frame.Line(old_vertical_offset);
-        const auto old_byte_offset = old_line.BytesStart();
-        const auto closest = FindClosestLineIndex
+    if( &old_frame.WorkingSet() == &new_frame.WorkingSet() ) {
+        if( old_vertical_offset < 0 ) {
+            // offseting the old frame before the first line => offset remains the same
+            return old_vertical_offset;
+        }
+        else if( old_vertical_offset >= old_frame.LinesNumber() ) {
+            // offseting the old frame after the last line => keep the delta the same
+            const auto delta_offset = old_vertical_offset - old_frame.LinesNumber();
+            return new_frame.LinesNumber() + delta_offset;
+        }
+        else {
+            // some old line was an offset target - find the closest equivalent line in the
+            // new frame.
+            const auto &old_line = old_frame.Line(old_vertical_offset);
+            const auto old_byte_offset = old_line.BytesStart();
+            const auto closest = FindClosestLineIndex
             (new_frame.Lines().data(),
              new_frame.Lines().data() + new_frame.LinesNumber(),
              old_byte_offset);
-        return closest;
+            return closest;
+        }
+    }
+    else {
+        const auto old_global_offset = old_frame.WorkingSet().GlobalOffset();
+        const auto new_global_offset = new_frame.WorkingSet().GlobalOffset();
+        
+        if( old_vertical_offset < 0 ) {
+            // this situation is rather weird, so let's just clamp the offset
+            return 0;
+        }
+        else if( old_vertical_offset >= old_frame.LinesNumber() ) {
+            // offseting the old frame after the last line => find the equivalent line
+            // and offset that one by the same lines delta
+            const auto delta_offset = old_vertical_offset - old_frame.LinesNumber();
+            if( old_frame.LinesNumber() == 0 )
+                return delta_offset;
+            const auto &last_old_line = old_frame.Line( old_frame.LinesNumber() - 1 );
+            const auto old_byte_offset = last_old_line.BytesStart();
+            const auto new_byte_offset= old_byte_offset + old_global_offset - new_global_offset;
+            if( new_byte_offset < 0 || new_byte_offset > std::numeric_limits<int>::max() )
+                return 0; // can't possibly satisfy
+            const auto closest = FindClosestLineIndex
+            (new_frame.Lines().data(),
+             new_frame.Lines().data() + new_frame.LinesNumber(),
+             (int)new_byte_offset);
+            return closest + delta_offset;
+        }
+        else {
+            // general case - get the line and find the closest in the new frame
+            const auto &old_line = old_frame.Line( old_vertical_offset );
+            const auto old_byte_offset = old_line.BytesStart();
+            const auto new_byte_offset = old_byte_offset + old_global_offset - new_global_offset;
+            if( new_byte_offset < 0 || new_byte_offset > std::numeric_limits<int>::max() )
+                return 0; // can't possibly satisfy
+            const auto closest = FindClosestLineIndex
+            (new_frame.Lines().data(),
+             new_frame.Lines().data() + new_frame.LinesNumber(),
+             (int)new_byte_offset);
+            return closest;
+        }
     }
 }

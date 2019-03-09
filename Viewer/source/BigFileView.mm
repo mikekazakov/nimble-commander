@@ -725,16 +725,20 @@ using nc::vfs::easy::CopyFileToTempStorage;
 - (int) textModeView:(NCViewerTextModeView*)_view
 requestsSyncBackendWindowMovementAt:(int64_t)_position
 {
-    return [self moveBackendWindowSyncAt:_position];
+    return [self moveBackendWindowSyncAt:_position
+                              notifyView:false];
 }
 
 - (int)moveBackendWindowSyncAt:(int64_t)_position
+                    notifyView:(bool)_notify_view
 {
     const auto rc = m_Data->MoveWindowSync(_position);
     if( rc != VFSError::Ok ) {
         // ... callout
-        if( [m_View respondsToSelector:@selector(backendContentHasChanged)] )
-            [m_View backendContentHasChanged];
+        if( _notify_view ) {
+            if( [m_View respondsToSelector:@selector(backendContentHasChanged)] )
+                [m_View backendContentHasChanged];
+        }
     }
     return rc;
 }

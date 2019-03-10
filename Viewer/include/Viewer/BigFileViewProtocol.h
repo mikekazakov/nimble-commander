@@ -57,4 +57,9 @@ public:
 
 - (void)backendContentHasChanged;
 
+/**
+ * Non-binding request to show content located at the '_offset' position within the file.
+ */
+- (bool)scrollToGlobalBytesOffset:(int64_t)_offset;
+
 @end

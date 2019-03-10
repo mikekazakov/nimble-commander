@@ -69,6 +69,11 @@ public:
      * Returns the underlying immutable working set.
      */
     const TextModeWorkingSet &WorkingSet() const noexcept;
+
+    /**
+     * Returns the info on the font used to lay out the frame.
+     */
+    const nc::utility::FontGeometryInfo& FontGeometryInfo() const noexcept;
     
 private:
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
@@ -94,8 +99,7 @@ inline int TextModeFrame::LinesNumber() const noexcept
     
 inline const IndexedTextLine& TextModeFrame::Line(int _index) const noexcept
 {
-    assert( _index >= 0 && _index < LinesNumber() );
-    return m_Lines[_index];
+    return m_Lines.at(_index);
 }
 
 inline double TextModeFrame::WrappingWidth() const noexcept
@@ -106,6 +110,11 @@ inline double TextModeFrame::WrappingWidth() const noexcept
 inline const TextModeWorkingSet &TextModeFrame::WorkingSet() const noexcept
 {
     return *m_WorkingSet;
+}
+    
+inline const nc::utility::FontGeometryInfo& TextModeFrame::FontGeometryInfo() const noexcept
+{
+    return m_FontInfo;
 }
 
 }

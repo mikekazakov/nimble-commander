@@ -88,7 +88,7 @@
 		CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeFrame_UT.cpp; path = tests/TextModeFrame_UT.cpp; sourceTree = "<group>"; };
 		CF13256322287F250097F9A1 /* TextModeFrame.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextModeFrame.mm; path = source/TextModeFrame.mm; sourceTree = "<group>"; };
 		CF132565222AB80B0097F9A1 /* TextModeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeView.h; path = include/Viewer/TextModeView.h; sourceTree = "<group>"; };
-		CF132567222AB8170097F9A1 /* TextModeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextModeView.mm; path = source/TextModeView.mm; sourceTree = "<group>"; };
+		CF132567222AB8170097F9A1 /* TextModeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextModeView.mm; path = source/TextModeView.mm; sourceTree = "<group>"; wrapsLines = 0; };
 		CF132569222ACF640097F9A1 /* TextModeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeViewDelegate.h; path = include/Viewer/TextModeViewDelegate.h; sourceTree = "<group>"; };
 		CFD79A6221F65A010043A26D /* Viewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Viewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD79A6621F65A010043A26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = SOURCE_ROOT; };

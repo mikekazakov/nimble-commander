@@ -24,7 +24,7 @@ public:
     
     const char16_t* Characters() const noexcept;
     
-    /** Returns the number of UTF16 characters coverted by this set. */
+    /** Returns the number of UTF16 characters covered by this set. */
     int Length() const noexcept;
     CFStringRef String() const noexcept;
     
@@ -32,7 +32,11 @@ public:
     long ToGlobalByteOffset( int _character_index ) const; // may be OutOfBounds by 1
     const int *CharactersByteOffsets() const noexcept;
     
+    /** Returns the position of the working set within the file. */
     long GlobalOffset() const noexcept;
+    
+    /** Returns the number of bytes covered by the working set.  */
+    int BytesLength() const noexcept;
     
 private:
     /**
@@ -91,6 +95,11 @@ inline long TextModeWorkingSet::GlobalOffset() const noexcept
 inline const int *TextModeWorkingSet::CharactersByteOffsets() const noexcept
 {
     return m_ToByteIndices.get();
+}
+
+inline int TextModeWorkingSet::BytesLength() const noexcept
+{
+    return m_WorkingSetSize;
 }
     
 }

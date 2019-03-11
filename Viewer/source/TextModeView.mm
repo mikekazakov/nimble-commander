@@ -26,6 +26,7 @@ struct ScrollPosition {
 }
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet();
+
 static std::shared_ptr<const TextModeWorkingSet>
     BuildWorkingSetForBackendState(const BigFileViewDataBackend& _backend);
 
@@ -130,8 +131,15 @@ static double CalculateVerticalPxPositionFromScrollPosition
 
 - (void)backendContentHasChanged
 {
+    [self rebuildWorkingSetAndFrame];
+}
+
+- (void)rebuildWorkingSetAndFrame
+{
     m_WorkingSet = BuildWorkingSetForBackendState(*m_Backend);
     m_Frame = [self buildLayout];
+    [self setNeedsDisplay:true];
+    [self scrollPositionDidChange];
 }
 
 - (NSSize)contentsSize
@@ -316,7 +324,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
         if( rc != VFSError::Ok )
             return false;
         
-        [self backendContentHasChanged];
+        [self rebuildWorkingSetAndFrame];
         
         m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*old_frame,
                                                                       m_VerticalLineOffset,
@@ -369,7 +377,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
         if( rc != VFSError::Ok )
             return false;
         
-        [self backendContentHasChanged];
+        [self rebuildWorkingSetAndFrame];
         
         m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*old_frame,
                                                                       m_VerticalLineOffset,
@@ -388,13 +396,13 @@ static double CalculateVerticalPxPositionFromScrollPosition
 - (void)moveUp:(id)sender
 {
     [self doMoveUpByOneLine];
-    [self syncVerticalScrollerPosition];
+    [self scrollPositionDidChange];
 }
 
 - (void)moveDown:(id)sender
 {
     [self doMoveDownByOneLine];
-    [self syncVerticalScrollerPosition];
+    [self scrollPositionDidChange];
 }
 
 - (void)pageDown:(nullable id)sender
@@ -402,7 +410,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
     int lines_to_scroll = [self numberOfLinesFittingInView];
     while ( lines_to_scroll --> 0 )
         [self doMoveDownByOneLine];
-    [self syncVerticalScrollerPosition];
+    [self scrollPositionDidChange];
 }
 
 - (void)pageUp:(nullable id)sender
@@ -410,7 +418,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
     int lines_to_scroll = [self numberOfLinesFittingInView];
     while ( lines_to_scroll --> 0 )
         [self doMoveUpByOneLine];
-    [self syncVerticalScrollerPosition];
+    [self scrollPositionDidChange];
 }
 
 /**
@@ -476,7 +484,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
     }
     assert( std::abs(m_PxOffset.y) <= m_FontInfo.LineHeight() );
 
-    [self syncVerticalScrollerPosition];
+    [self scrollPositionDidChange];
 }
 
 - (void)syncVerticalScrollerPosition
@@ -489,7 +497,6 @@ static double CalculateVerticalPxPositionFromScrollPosition
     m_VerticalScroller.doubleValue = scroll_pos.position;
     m_VerticalScroller.knobProportion = scroll_pos.proportion;
 }
-
 
 - (void)onVerticalScroll:(id)_sender
 {
@@ -530,7 +537,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
     m_VerticalLineOffset = (int)std::floor(_position / m_FontInfo.LineHeight());
     m_PxOffset.y = std::fmod(_position, m_FontInfo.LineHeight());
     [self setNeedsDisplay:true];
-    [self syncVerticalScrollerPosition];
+    [self scrollPositionDidChange];
     return true;
 }
 
@@ -545,7 +552,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
         m_VerticalLineOffset = *probe_instant;
         m_PxOffset.y = 0.;
         [self setNeedsDisplay:true];
-        [self syncVerticalScrollerPosition];
+        [self scrollPositionDidChange];
         return true;
     }
     else {
@@ -560,7 +567,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
         if( rc != VFSError::Ok )
             return false;
 
-        [self backendContentHasChanged];
+        [self rebuildWorkingSetAndFrame];
         
         auto second_probe = FindVerticalLineToScrollToBytesOffsetWithFrame(*m_Frame,
                                                                            *m_Backend,
@@ -570,7 +577,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
             m_VerticalLineOffset = *second_probe;
             m_PxOffset.y = 0.;
             [self setNeedsDisplay:true];
-            [self syncVerticalScrollerPosition];
+            [self scrollPositionDidChange];
             return true;
         }
         else {
@@ -590,15 +597,32 @@ static double CalculateVerticalPxPositionFromScrollPosition
                                                                   m_VerticalLineOffset,
                                                                   *new_frame);
         m_Frame = new_frame;
+        [self scrollPositionDidChange];
     }
     [self setNeedsDisplay:true];
-    [self syncVerticalScrollerPosition];
 }
 
 - (bool)shouldRebuilFrameForChangedFrame
 {
     const auto current_wrapping_width = [self wrappingWidth];
     return m_Frame->WrappingWidth() != current_wrapping_width;
+}
+
+- (void)scrollPositionDidChange
+{
+    [self syncVerticalScrollerPosition];
+
+    if( self.delegate ) {
+        const auto bytes_position =
+        ((m_VerticalLineOffset >= 0 && m_VerticalLineOffset < m_Frame->LinesNumber()) ?
+         m_Frame->Line(m_VerticalLineOffset).BytesStart() : 0)
+        + m_Frame->WorkingSet().GlobalOffset();
+        const auto scroll_position = m_VerticalScroller.doubleValue;
+        
+        [self.delegate textModeView:self
+      didScrollAtGlobalBytePosition:bytes_position
+               withScrollerPosition:scroll_position];
+    }
 }
 
 @end
@@ -766,10 +790,8 @@ static int64_t CalculateGlobalBytesOffsetFromScrollPosition(const TextModeFrame&
         return (int64_t)( _scroll_knob_position * double( bytes_total - bytes_on_screen ) );
     }
     else {
-//      currently not handling
-        assert(0);
+        return 0; // currently not handling in a reasonable manner.
     }
-    return 0.;
 }
 
 static std::optional<int> FindVerticalLineToScrollToBytesOffsetWithFrame

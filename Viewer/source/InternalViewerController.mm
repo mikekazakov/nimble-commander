@@ -32,16 +32,19 @@ static int InvertBitFlag( int _value, int _flag )
     return (_value & ~_flag) | (~_value & _flag);
 }
 
-@interface InternalViewerControllerVerticalPostionToStringTransformer : NSValueTransformer
+@interface NCViewerVerticalPostionToStringTransformer : NSValueTransformer
 @end
-@implementation InternalViewerControllerVerticalPostionToStringTransformer
+@implementation NCViewerVerticalPostionToStringTransformer
 + (Class)transformedValueClass
 {
     return NSString.class;
 }
 - (id)transformedValue:(id)value
 {
-    return value ? [NSString stringWithFormat:@"%2.0f%%", 100.0 * objc_cast<NSNumber>(value).doubleValue] : @"";
+    if( auto number = objc_cast<NSNumber>(value) )
+        return [NSString stringWithFormat:@"%2.0f%%", 100.0 * number.doubleValue];
+    else
+        return @"";
 }
 @end
 
@@ -587,7 +590,7 @@ static int InvertBitFlag( int _value, int _flag )
     [m_PositionButton bind:@"title"
                   toObject:m_View
                withKeyPath:@"verticalPositionPercentage"
-                   options:@{NSValueTransformerBindingOption:[InternalViewerControllerVerticalPostionToStringTransformer new]}];
+                   options:@{NSValueTransformerBindingOption:[NCViewerVerticalPostionToStringTransformer new]}];
 }
 
 - (void)onPositionButtonClicked:(id)sender

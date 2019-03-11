@@ -38,6 +38,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
 //    NSScroller      *m_VerticalScroller;
     
     uint64_t        m_VerticalPositionInBytes;
+    double          m_VerticalPositionPercentage;
     
     CFRange         m_SelectionInFile;  // in bytes, raw position within whole file
     CFRange         m_SelectionInWindow;         // in bytes, whithin current window positio
@@ -49,12 +50,15 @@ using nc::vfs::easy::CopyFileToTempStorage;
     std::unique_ptr<nc::viewer::Theme> m_Theme;
 }
 
+@synthesize verticalPositionPercentage = m_VerticalPositionPercentage;
+
 - (id)initWithFrame:(NSRect)frame
         tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
              config:(const nc::config::Config&)_config
               theme:(std::unique_ptr<nc::viewer::Theme>)_theme
 {
     if (self = [super initWithFrame:frame]) {
+        
         m_TempFileStorage = &_temp_storage;
         m_Config = &_config;
         m_Theme = std::move(_theme);
@@ -72,6 +76,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
 - (void) commonInit
 {
     self.hasBorder = false;
+    m_VerticalPositionPercentage = 0.;
     m_VerticalPositionInBytes = 0;
     m_WrapWords = true;
     m_SelectionInFile = CFRangeMake(-1, 0);
@@ -105,7 +110,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 - (void) dealloc
 {
-    [self unbind:@"verticalPositionPercentage"];
+//    [self unbind:@"verticalPositionPercentage"];
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
@@ -317,6 +322,9 @@ using nc::vfs::easy::CopyFileToTempStorage;
     [self willChangeValueForKey:@"encoding"];
     m_Data->SetEncoding(_encoding);
     [self didChangeValueForKey:@"encoding"];
+    
+    if( [m_View respondsToSelector:@selector(backendContentHasChanged)] )
+        [m_View backendContentHasChanged];
 }
 
 - (void)frameDidChange
@@ -741,6 +749,23 @@ requestsSyncBackendWindowMovementAt:(int64_t)_position
         }
     }
     return rc;
+}
+
+- (void) textModeView:(NCViewerTextModeView*)_view
+didScrollAtGlobalBytePosition:(int64_t)_position
+withScrollerPosition:(double)_scroller_position
+{
+    if( _position != m_VerticalPositionInBytes ) {
+        [self willChangeValueForKey:@"verticalPositionInBytes"];
+        m_VerticalPositionInBytes = _position;
+        [self didChangeValueForKey:@"verticalPositionInBytes"];
+    }
+    
+    if( _scroller_position != m_VerticalPositionPercentage ) {
+        [self willChangeValueForKey:@"verticalPositionPercentage"];
+        m_VerticalPositionPercentage = _scroller_position;
+        [self didChangeValueForKey:@"verticalPositionPercentage"];
+    }
 }
 
 @end

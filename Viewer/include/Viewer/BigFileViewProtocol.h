@@ -55,6 +55,9 @@ public:
 @protocol NCViewerImplementationProtocol <NSObject>
 @optional
 
+/**
+ * Informs that the backend content was changed, presumably by its momement.
+ */
 - (void)backendContentHasChanged;
 
 /**

@@ -637,6 +637,116 @@ static double CalculateVerticalPxPositionFromScrollPosition
     [self setNeedsDisplay:true];
 }
 
+- (CGPoint)viewCoordsToTextFrameCoords:(CGPoint)_view_coords
+{
+    const auto left_upper = [self textOrigin];
+    return CGPointMake(_view_coords.x - left_upper.x, _view_coords.y - left_upper.y);
+}
+
+- (void) mouseDown:(NSEvent *)_event
+{
+    if( !self.delegate )
+        return;
+    
+    if( _event.clickCount > 2 )
+        [self handleSelectionWithTripleClick:_event];
+    else if (_event.clickCount == 2)
+        [self handleSelectionWithDoubleClick:_event];
+    else
+        [self handleSelectionWithMouseDragging:_event];
+}
+
+static int base_index_with_existing_selection(const CFRange _existing_selection,
+                                              const int _first_mouse_hit_index,
+                                              const int _current_mouse_hit_index) noexcept
+{
+    if( _existing_selection.location < 0 )
+        return _first_mouse_hit_index;
+        
+    if( _first_mouse_hit_index > _existing_selection.location &&
+       _first_mouse_hit_index <= _existing_selection.location + _existing_selection.length) {
+        const auto attach_top = _first_mouse_hit_index - _existing_selection.location >
+            _existing_selection.location + _existing_selection.length - _first_mouse_hit_index;
+        return attach_top ?
+            (int)_existing_selection.location :
+            (int)_existing_selection.location + (int)_existing_selection.length;
+    }
+    else if( _first_mouse_hit_index < _existing_selection.location + _existing_selection.length &&
+            _current_mouse_hit_index < _existing_selection.location + _existing_selection.length ) {
+        return (int)_existing_selection.location + (int)_existing_selection.length;
+    }
+    else if( _first_mouse_hit_index > _existing_selection.location &&
+            _current_mouse_hit_index > _existing_selection.location )
+        return (int)_existing_selection.location;
+    else
+        return _first_mouse_hit_index;
+}
+
+- (void) handleSelectionWithMouseDragging:(NSEvent*)_event;
+{
+    const auto modifying_existing_selection = bool(_event.modifierFlags & NSShiftKeyMask);
+    const auto first_down_view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
+    const auto first_down_frame_coords = [self viewCoordsToTextFrameCoords:first_down_view_coords];
+    const auto first_ind = m_Frame->CharIndexForPosition( first_down_frame_coords );
+    const auto original_selection = [self localSelection];
+    const auto event_mask = NSLeftMouseDraggedMask | NSLeftMouseUpMask;
+    for( auto event = _event; event && event.type != NSLeftMouseUp;
+         event = [self.window nextEventMatchingMask:event_mask] ) {
+    
+        const auto curr_view_coords = [self convertPoint:event.locationInWindow fromView:nil];
+        const auto curr_frame_coords = [self viewCoordsToTextFrameCoords:curr_view_coords];
+        const auto curr_ind = m_Frame->CharIndexForPosition(curr_frame_coords);
+
+        const auto base_ind = modifying_existing_selection ?
+            base_index_with_existing_selection(original_selection, first_ind, curr_ind ) :
+            first_ind;
+        
+        if( base_ind != curr_ind ) {
+            const auto sel_start = std::min(base_ind, curr_ind);
+            const auto sel_end   = std::max(base_ind, curr_ind);
+            const auto sel_start_byte = m_WorkingSet->ToGlobalByteOffset(sel_start);
+            const auto sel_end_byte = m_WorkingSet->ToGlobalByteOffset(sel_end);
+            [self.delegate textModeView:self
+                           setSelection:CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte)];
+        }
+        else
+            [self.delegate textModeView:self setSelection:CFRangeMake(-1,0)];
+    }
+}
+
+- (void) handleSelectionWithDoubleClick:(NSEvent *)_event
+{
+    const auto view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
+    const auto frame_coords = [self viewCoordsToTextFrameCoords:view_coords];
+    const auto [sel_start, sel_end] = m_Frame->WordRangeForPosition(frame_coords);
+    const auto sel_start_byte = m_WorkingSet->ToGlobalByteOffset(sel_start);
+    const auto sel_end_byte = m_WorkingSet->ToGlobalByteOffset(sel_end);
+    if( self.delegate ) {
+        [self.delegate textModeView:self
+                       setSelection:CFRangeMake(sel_start_byte, sel_end_byte - sel_start_byte)];
+    }
+}
+
+- (void) handleSelectionWithTripleClick:(NSEvent *)_event
+{
+    const auto view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
+    const auto frame_coords = [self viewCoordsToTextFrameCoords:view_coords];
+    int line_no = m_Frame->LineIndexForPosition(frame_coords);
+    if( line_no < 0 || line_no >= m_Frame->LinesNumber() )
+        return;
+    
+    const auto &i = m_Frame->Line(line_no);
+    const auto sel_start_byte = i.BytesStart();
+    const auto sel_end_byte = i.BytesEnd();
+    const auto global_selection =
+        CFRangeMake((long)sel_start_byte + m_Frame->WorkingSet().GlobalOffset(),
+                    (long)sel_end_byte - (long)sel_start_byte);
+    
+    if( self.delegate ) {
+        [self.delegate textModeView:self setSelection:global_selection];
+    }
+}
+
 @end
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet()

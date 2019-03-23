@@ -767,4 +767,10 @@ withScrollerPosition:(double)_scroller_position
     return [self selectionInFile];
 }
 
+- (void) textModeView:(NCViewerTextModeView*)_view
+         setSelection:(CFRange)_selection
+{
+    self.selectionInFile = _selection;
+}
+
 @end

@@ -20,4 +20,11 @@
  */
 - (CFRange) textModeViewProvideSelection:(NCViewerTextModeView*)_view;
 
+/**
+ * Called by the view to change the selection.
+ * '_selection' represents the selected bytes range within the entire file.
+ */
+- (void) textModeView:(NCViewerTextModeView*)_view
+         setSelection:(CFRange)_selection;
+
 @end

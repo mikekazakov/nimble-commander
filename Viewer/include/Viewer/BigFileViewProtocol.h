@@ -65,4 +65,9 @@ public:
  */
 - (bool)scrollToGlobalBytesOffset:(int64_t)_offset;
 
+/**
+ * Inform that the selection was changed.
+ */
+- (void) selectionHasChanged;
+
 @end

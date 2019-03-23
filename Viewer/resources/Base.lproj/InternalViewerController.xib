@@ -24,13 +24,13 @@
                 <outlet property="contentViewController" destination="fXi-DC-g1R" id="L7F-oP-7JF"/>
             </connections>
         </popover>
-        <customView misplaced="YES" id="SFq-2y-Zt0">
-            <rect key="frame" x="0.0" y="0.0" width="212" height="70"/>
+        <customView id="SFq-2y-Zt0">
+            <rect key="frame" x="0.0" y="0.0" width="212" height="71"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mth-VG-0hS">
-                    <rect key="frame" x="18" y="50" width="112" height="34"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Go to position (in %):" id="GIm-Ir-imd">
+                    <rect key="frame" x="18" y="50" width="176" height="17"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Go to position (%):" id="GIm-Ir-imd">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -65,11 +65,12 @@ DQ
                 </textField>
             </subviews>
             <constraints>
-                <constraint firstItem="mth-VG-0hS" firstAttribute="top" secondItem="SFq-2y-Zt0" secondAttribute="top" constant="20" symbolic="YES" id="7Oi-KP-9Gq"/>
+                <constraint firstItem="mth-VG-0hS" firstAttribute="top" secondItem="SFq-2y-Zt0" secondAttribute="top" constant="4" id="7Oi-KP-9Gq"/>
                 <constraint firstItem="tiN-In-PlP" firstAttribute="leading" secondItem="SFq-2y-Zt0" secondAttribute="leading" constant="20" symbolic="YES" id="9ee-X8-ufb"/>
                 <constraint firstAttribute="trailing" secondItem="24N-dp-XDN" secondAttribute="trailing" constant="20" symbolic="YES" id="M53-e0-52r"/>
                 <constraint firstItem="24N-dp-XDN" firstAttribute="baseline" secondItem="tiN-In-PlP" secondAttribute="baseline" id="NWC-lj-Eso"/>
                 <constraint firstAttribute="bottom" secondItem="tiN-In-PlP" secondAttribute="bottom" constant="20" symbolic="YES" id="a0s-A1-fJX"/>
+                <constraint firstAttribute="trailing" secondItem="mth-VG-0hS" secondAttribute="trailing" constant="20" symbolic="YES" id="eyw-l6-Voq"/>
                 <constraint firstItem="mth-VG-0hS" firstAttribute="leading" secondItem="SFq-2y-Zt0" secondAttribute="leading" constant="20" symbolic="YES" id="oSe-fp-RuB"/>
                 <constraint firstItem="tiN-In-PlP" firstAttribute="top" secondItem="mth-VG-0hS" secondAttribute="bottom" constant="8" symbolic="YES" id="v54-sp-vL1"/>
                 <constraint firstItem="24N-dp-XDN" firstAttribute="leading" secondItem="tiN-In-PlP" secondAttribute="trailing" constant="8" symbolic="YES" id="vxl-WH-WaZ"/>

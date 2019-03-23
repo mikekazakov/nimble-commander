@@ -51,3 +51,54 @@ TEST_CASE(PREFIX"Copies and owns UTF16 characters")
         CHECK( CFStringGetCharactersPtr(ws.String()) == (const UniChar*)ws.Characters() );
     }
 }
+
+TEST_CASE(PREFIX"properly clips ranges in ToLocalBytesRange")
+{
+    std::string utf8_string = u8"Привет, мир!";
+    auto utf16_chars = std::make_unique<unsigned short[]>( utf8_string.length() );
+    auto utf16_chars_offsets = std::make_unique<unsigned[]>( utf8_string.length() );
+    size_t utf16_length = 0;
+    encodings::InterpretAsUnichar(encodings::ENCODING_UTF8,
+                                  (const unsigned char*)utf8_string.data(),
+                                  utf8_string.length(),
+                                  utf16_chars.get(),
+                                  utf16_chars_offsets.get(),
+                                  &utf16_length);
+    
+    auto source = TextModeWorkingSet::Source{};
+    source.unprocessed_characters = (const char16_t*)utf16_chars.get();
+    source.mapping_to_byte_offsets = (const int*)utf16_chars_offsets.get();
+    source.characters_number = (int)utf16_length;
+    source.bytes_offset = 10;
+    source.bytes_length = (int)utf8_string.length();
+    auto ws = TextModeWorkingSet{source};
+    
+    SECTION("range inside") {
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(12, 5)).location == 2 );
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(12, 5)).length == 5 );
+    }
+    SECTION("left clip") {
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(8, 5)).location == 0 );
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(8, 5)).length == 3 );
+    }
+    SECTION("right clip") {
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(12, 42)).location == 2 );
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(12, 42)).length == source.bytes_length - 2);
+    }
+    SECTION("both sides clip") {
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(8, 42)).location == 0 );
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(8, 42)).length == source.bytes_length);
+    }
+    SECTION("outside left") {
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(0, 5)).location == -1 );
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(0, 5)).length == 0);
+    }
+    SECTION("outside right") {
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(50, 5)).location == -1 );
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(50, 5)).length == 0);
+    }
+    SECTION("invalid") {
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(-1, 0)).location == -1 );
+        CHECK( ws.ToLocalBytesRange(CFRangeMake(-1, 0)).length == 0);
+    }
+}

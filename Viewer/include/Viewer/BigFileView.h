@@ -96,8 +96,7 @@ namespace nc::viewer {
 @property (nonatomic) CFRange selectionInFile;
 
 - (void)        scrollToVerticalPosition:(double)_p; // [0..1]
-- (double)      VerticalScrollPosition; // in percentage: [0..1]
-- (void)        ScrollToSelection;
+- (void)        scrollToSelection;
 - (CFRange)     SelectionWithinWindow;                      // bytes within a decoded window
 - (CFRange)     SelectionWithinWindowUnichars;              // unichars within a decoded window
 

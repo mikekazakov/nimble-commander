@@ -470,7 +470,7 @@ static int InvertBitFlag( int _value, int _flag )
             const auto range = CFRangeMake(result.location->offset, result.location->bytes_len);
             dispatch_to_main_queue( [=]{
                 m_View.selectionInFile = range;
-                [m_View ScrollToSelection];
+                [m_View scrollToSelection];
             });
         }
     });
@@ -636,7 +636,7 @@ static int InvertBitFlag( int _value, int _flag )
     m_SearchInFileQueue.Stop(); // we should stop current search if any
     
     self.view.selectionInFile = _selection;
-    [self.view ScrollToSelection];
+    [self.view scrollToSelection];
     
     NSString *search_request = [NSString stringWithUTF8StdString:_request];
     m_SearchField.stringValue = search_request;

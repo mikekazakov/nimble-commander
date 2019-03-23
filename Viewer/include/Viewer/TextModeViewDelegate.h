@@ -15,4 +15,9 @@
     didScrollAtGlobalBytePosition:(int64_t)_position
     withScrollerPosition:(double)_scroller_position;
 
+/**
+ * Returns a range of selected bytes within the entire file.
+ */
+- (CFRange) textModeViewProvideSelection:(NCViewerTextModeView*)_view;
+
 @end

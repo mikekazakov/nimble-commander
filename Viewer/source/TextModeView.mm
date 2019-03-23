@@ -202,6 +202,25 @@ static double CalculateVerticalPxPositionFromScrollPosition
     return vertical_lines;
 }
 
+- (CFRange)localSelection
+{
+    if( self.delegate == nil )
+        return CFRangeMake(kCFNotFound, 0);
+    
+    const auto global_byte_selection = [self.delegate textModeViewProvideSelection:self];
+    const auto &ws = m_Frame->WorkingSet();
+    const auto local_byte_selection = ws.ToLocalBytesRange(global_byte_selection);
+    const auto head = ws.ToLocalCharIndex(int(local_byte_selection.location));
+    if( head < 0 )
+        return CFRangeMake(kCFNotFound, 0);
+    const auto tail = ws.ToLocalCharIndex(int(local_byte_selection.location +
+                                          local_byte_selection.length));
+    if( tail < 0 )
+        return CFRangeMake(kCFNotFound, 0);
+    
+    return CFRangeMake(head, tail - head);
+}
+
 - (void)drawRect:(NSRect)_dirty_rect
 {
     const auto context = NSGraphicsContext.currentContext.CGContext;
@@ -220,81 +239,69 @@ static double CalculateVerticalPxPositionFromScrollPosition
     CGContextSetShouldSmoothFonts(context, true);
     CGContextSetShouldAntialias(context, true);
     
-//    CGPoint pos = TextAnchor();
+    const auto view_width = self.bounds.size.width;
     const auto origin = [self textOrigin];
-//    std::cout << origin.y << std::endl;
-//    auto line_pos = origin;
-//    pos.y = pos.y - m_FontInfo.LineHeight() + m_FontInfo.Descent();
-//    pos.y = pos.y + m_FontInfo.LineHeight() - m_FontInfo.Descent();
-    
-    // TODO: replace self.bounds with a more precide measurement
-//    double view_width = self.bounds.size.width;
     
     const auto lines_per_screen =
         (int)std::ceil( self.bounds.size.height / m_FontInfo.LineHeight() );
     
     // both lines_start and lines_end are _not_ clamped regarding real Frame data!
     const int lines_start = (int)std::floor( (0. - origin.y) / m_FontInfo.LineHeight() );
-    const int lines_end = lines_start + lines_per_screen;
-//    line_pos.y = line_pos.y + lines_start * m_FontInfo.LineHeight();
+    
+    // +1 to ensure that selection of a following line is also visible
+    const int lines_end = lines_start + lines_per_screen + 1;
+
     auto line_pos = CGPointMake( origin.x, origin.y + lines_start * m_FontInfo.LineHeight() );
     
-//    if( m_SmoothOffset.y < 0 && first_string > 0 ) {
-//        --first_string; // to be sure that we can see bottom-clipped lines
-//        pos.y += m_FontInfo.LineHeight();
-//    }
-    
-//    CFRange selection = [m_View SelectionWithinWindowUnichars];
+    const auto selection = [self localSelection];
     
     for( int line_no = lines_start;
          line_no < lines_end;
          ++line_no, line_pos.y += m_FontInfo.LineHeight() ) {
+        if( line_no < 0 || line_no >= m_Frame->LinesNumber() )
+            continue;
+        auto &line = m_Frame->Line(line_no);
         const auto text_origin = CGPointMake
             ( line_pos.x, line_pos.y + m_FontInfo.LineHeight() - m_FontInfo.Descent() );
-//        auto &line = m_Frame->Line(i);
         
-//        if(selection.location >= 0) // draw a selection background here
-//        {
-//            CGFloat x1 = 0, x2 = -1;
-//            if(line.UniCharsStart() <= selection.location &&
-//               line.UniCharsEnd() > selection.location )
-//            {
-//                x1 = pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location, 0);
-//                x2 = ((selection.location + selection.length <= line.UniCharsEnd()) ?
-//                      pos.x + CTLineGetOffsetForStringIndex(line.Line(),
-//                                                            (selection.location + selection.length <= line.UniCharsEnd()) ?
-//                                                            selection.location + selection.length : line.UniCharsEnd(),
-//                                                            0) : view_width);
-//            }
-//            else if(selection.location + selection.length > line.UniCharsStart() &&
-//                    selection.location + selection.length <= line.UniCharsEnd() )
-//            {
-//                x1 = pos.x;
-//                x2 = pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location + selection.length, 0);
-//            }
-//            else if(selection.location < line.UniCharsStart() &&
-//                    selection.location + selection.length > line.UniCharsEnd() )
-//            {
-//                x1 = pos.x;
-//                x2 = view_width;
-//            }
-//
-//            if(x2 > x1)
-//            {
-//                CGContextSaveGState(_context);
-//                CGContextSetShouldAntialias(_context, false);
-//                //m_View.SelectionBkFillColor.Set(_context);
-//                CGContextSetFillColorWithColor(_context, m_View.SelectionBkFillColor);
-//                CGContextFillRect(_context, CGRectMake(x1, pos.y - m_FontInfo.Descent(), x2 - x1, m_FontInfo.LineHeight()));
-//                CGContextRestoreGState(_context);
-//            }
-//        }
-        
-        if( line_no >= 0 && line_no < m_Frame->LinesNumber() ) {
-            auto &line = m_Frame->Line(line_no);
-            CGContextSetTextPosition( context, text_origin.x, text_origin.y );
-            CTLineDraw(line.Line(), context );
+        // draw the selection background
+        if( selection.location >= 0 ) {
+            double x1 = 0, x2 = -1;
+            if(line.UniCharsStart() <= selection.location &&
+               line.UniCharsEnd() > selection.location ) {
+                x1 = line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location, 0);
+                x2 = ((selection.location + selection.length <= line.UniCharsEnd()) ?
+                      line_pos.x + CTLineGetOffsetForStringIndex(line.Line(),
+                                                            (selection.location + selection.length <= line.UniCharsEnd()) ?
+                                                            selection.location + selection.length : line.UniCharsEnd(),
+                                                            0)
+                      : view_width);
+            }
+            else if(selection.location + selection.length > line.UniCharsStart() &&
+                    selection.location + selection.length <= line.UniCharsEnd() ) {
+                x1 = line_pos.x;
+                x2 = line_pos.x + CTLineGetOffsetForStringIndex
+                (line.Line(), selection.location + selection.length, 0);
+            }
+            else if(selection.location < line.UniCharsStart() &&
+                    selection.location + selection.length > line.UniCharsEnd() ) {
+                x1 = line_pos.x;
+                x2 = view_width;
+            }
+
+            if( x2 > x1 ) {
+                CGContextSaveGState(context);
+                CGContextSetShouldAntialias(context, false);
+                CGContextSetFillColorWithColor(context, m_Theme->ViewerSelectionColor().CGColor );
+                CGContextFillRect(context,
+                                  CGRectMake(x1, line_pos.y, x2 - x1, m_FontInfo.LineHeight()));
+                CGContextRestoreGState(context);
+            }
         }
+
+        // draw the text line itself
+        CGContextSetTextPosition( context, text_origin.x, text_origin.y );
+        CTLineDraw(line.Line(), context );
     }
 }
 
@@ -623,6 +630,11 @@ static double CalculateVerticalPxPositionFromScrollPosition
       didScrollAtGlobalBytePosition:bytes_position
                withScrollerPosition:scroll_position];
     }
+}
+
+- (void) selectionHasChanged
+{
+    [self setNeedsDisplay:true];
 }
 
 @end

@@ -501,22 +501,13 @@ using nc::vfs::easy::CopyFileToTempStorage;
 //    [self syncVerticalScrollerState];
 }
 
-- (double) VerticalScrollPosition
+- (void) scrollToSelection
 {
-//    return m_VerticalScroller.doubleValue;
-    return 0.;
-}
-
-- (void) ScrollToSelection
-{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    if( m_SelectionInFile.location >= 0 ) {
-//        m_ViewImpl->ScrollToByteOffset(m_SelectionInFile.location);
-//        [self UpdateSelectionRange];
-//        [self syncVerticalScrollerState];
-//    }
+    if( m_SelectionInFile.location >= 0 ) {
+        if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] ) {
+            [m_View scrollToGlobalBytesOffset:m_SelectionInFile.location];
+        }
+    }
 }
 
 - (void) syncVerticalScrollerState
@@ -563,12 +554,11 @@ using nc::vfs::easy::CopyFileToTempStorage;
 }
 
 - (void)scrollToVerticalPosition:(double)_p
-{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    m_ViewImpl->HandleVerticalScroll(_p);
-//    [self syncVerticalPositionInBytes];
+{    
+    if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] ) {
+        const auto offset = int64_t(double(m_File->FileSize()) * _p);
+        [m_View scrollToGlobalBytesOffset:offset];
+    }
 }
 
 // searching for selected UniChars in file window if there's any overlapping of
@@ -672,6 +662,10 @@ using nc::vfs::easy::CopyFileToTempStorage;
         m_SelectionInFile = _selection;
         [self UpdateSelectionRange];
     }
+    
+    if( [m_View respondsToSelector:@selector(selectionHasChanged)] )
+        [m_View selectionHasChanged];
+    
     [self setNeedsDisplay];
 }
 
@@ -766,6 +760,11 @@ withScrollerPosition:(double)_scroller_position
         m_VerticalPositionPercentage = _scroller_position;
         [self didChangeValueForKey:@"verticalPositionPercentage"];
     }
+}
+
+- (CFRange) textModeViewProvideSelection:(NCViewerTextModeView*)_view
+{
+    return [self selectionInFile];
 }
 
 @end

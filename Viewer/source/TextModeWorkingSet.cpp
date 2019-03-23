@@ -61,4 +61,40 @@ long TextModeWorkingSet::ToGlobalByteOffset( int _character_index ) const
     return m_ToByteIndices[_character_index] + m_WorkingSetOffset;
 }
 
+CFRange TextModeWorkingSet::ToLocalBytesRange( const CFRange _global_bytes_range ) const noexcept
+{
+    if( _global_bytes_range.location < 0 || _global_bytes_range.length <= 0 )
+        return CFRangeMake(kCFNotFound, 0);
+    if( _global_bytes_range.location <= m_WorkingSetOffset ) {
+        const long location = 0;
+        const long length = _global_bytes_range.length -
+            m_WorkingSetOffset +
+            _global_bytes_range.location;
+        if( length <= 0 )
+            return CFRangeMake(kCFNotFound, 0);
+        return CFRangeMake(location, std::min(length, (long)m_WorkingSetSize));
+    }
+    else if( _global_bytes_range.location < m_WorkingSetOffset + long(m_WorkingSetSize)  ) {
+        const long location = _global_bytes_range.location - m_WorkingSetOffset;
+        const long length = std::min(_global_bytes_range.length,
+                                     (long)m_WorkingSetSize - location);
+        if( length <= 0 )
+            return CFRangeMake(kCFNotFound, 0);
+        return CFRangeMake(location, length);
+    }
+    else
+        return CFRangeMake(kCFNotFound, 0);
+}
+
+int TextModeWorkingSet::ToLocalCharIndex( int _local_byte_offset ) const noexcept
+{
+    if( _local_byte_offset < 0 )
+        return -1;
+    
+    auto it = std::lower_bound(m_ToByteIndices.get(),
+                               m_ToByteIndices.get() + m_CharactersNumber + 1,
+                               _local_byte_offset);
+    return int(it - m_ToByteIndices.get());
+}
+    
 }

@@ -32,6 +32,19 @@ public:
     long ToGlobalByteOffset( int _character_index ) const; // may be OutOfBounds by 1
     const int *CharactersByteOffsets() const noexcept;
     
+    /**
+     * Returns an index of a character that is located at the specified local byte offset.
+     * If _local_byte_offset points before any characters - will return -1
+     * if _local_byte_offset points after any characters - will return Length().
+     */
+    int ToLocalCharIndex( int _local_byte_offset ) const noexcept;
+    
+    /**
+     * Converts global bytes range into local byte indices.
+     * Does trim in the process - output is guaranteed to be either valid or {kCFNotFound, 0}.
+     */
+    CFRange ToLocalBytesRange( CFRange _global_bytes_range ) const noexcept;
+    
     /** Returns the position of the working set within the file. */
     long GlobalOffset() const noexcept;
     

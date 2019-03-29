@@ -172,14 +172,6 @@ static double CalculateVerticalPxPositionFromScrollPosition
     return std::make_shared<TextModeFrame>(source);
 }
 
-//
-//CGPoint BigFileViewText::ToFrameCoords(CGPoint _view_coords)
-//{
-//    CGPoint left_upper = TextAnchor();
-//    return CGPointMake(_view_coords.x - left_upper.x,
-//                       left_upper.y - _view_coords.y + m_VerticalOffset * m_FontInfo.LineHeight());
-//}
-
 /**
  * Returns local view coordinates of the left-top corner of text.
  * Does move on both vertical and horizontal movement.

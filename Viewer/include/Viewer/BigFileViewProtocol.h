@@ -66,8 +66,13 @@ public:
 - (bool)scrollToGlobalBytesOffset:(int64_t)_offset;
 
 /**
- * Inform that the selection was changed.
+ * Informs that the selection was changed.
  */
 - (void) selectionHasChanged;
+
+/**
+ * Informs that the line wrapping setting has changed.
+ */
+- (void) lineWrappingHasChanged;
 
 @end

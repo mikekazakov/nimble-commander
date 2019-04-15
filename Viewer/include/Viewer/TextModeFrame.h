@@ -30,7 +30,9 @@ public:
     bool Empty() const noexcept;
     /** Returns the number of IndexedTextLine lines in the frame. */
     int LinesNumber() const noexcept;
-    const IndexedTextLine& Line(int _index) const noexcept;
+    const IndexedTextLine& Line(int _index) const;
+    double LineWidth(int _index) const;
+    CGSize Bounds() const noexcept;
     
     /**
      * Returns an index of a character which corresponds to the pixel specified by _position.
@@ -78,7 +80,9 @@ public:
 private:
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     std::vector<IndexedTextLine> m_Lines;
+    std::vector<float> m_LinesWidths;
     nc::utility::FontGeometryInfo m_FontInfo;
+    CGSize m_Bounds;
     double m_WrappingWidth = 0.;
 };
 
@@ -97,9 +101,14 @@ inline int TextModeFrame::LinesNumber() const noexcept
     return (int)m_Lines.size();
 }
     
-inline const IndexedTextLine& TextModeFrame::Line(int _index) const noexcept
+inline const IndexedTextLine& TextModeFrame::Line(int _index) const
 {
     return m_Lines.at(_index);
+}
+    
+inline double TextModeFrame::LineWidth(int _index) const
+{
+    return m_LinesWidths.at(_index);
 }
 
 inline double TextModeFrame::WrappingWidth() const noexcept
@@ -117,4 +126,9 @@ inline const nc::utility::FontGeometryInfo& TextModeFrame::FontGeometryInfo() co
     return m_FontInfo;
 }
 
+inline CGSize TextModeFrame::Bounds() const noexcept
+{
+    return m_Bounds;
+}
+    
 }

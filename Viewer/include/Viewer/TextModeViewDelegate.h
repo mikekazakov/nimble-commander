@@ -27,4 +27,9 @@
 - (void) textModeView:(NCViewerTextModeView*)_view
          setSelection:(CFRange)_selection;
 
+/**
+ * Returns the current line wrapping setting.
+ */
+- (bool) textModeViewProvideLineWrapping:(NCViewerTextModeView*)_view;
+
 @end

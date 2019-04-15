@@ -1,9 +1,14 @@
 #include "TextModeFrame.h"
 #include <Habanero/algo.h>
+#include <Habanero/dispatch_cpp.h>
 #include <cmath>
 
 namespace nc::viewer {
 
+static void CalculateLinesWidths(const IndexedTextLine *_lines_begin,
+                                 const IndexedTextLine *_lines_end,
+                                 float *_widths);
+    
 TextModeFrame::TextModeFrame( const Source &_source ):
     m_WorkingSet{ _source.working_set  },
     m_FontInfo{ _source.font_info },
@@ -42,6 +47,14 @@ TextModeFrame::TextModeFrame( const Source &_source ):
                                               monospace_width,
                                               tab_width,
                                               m_WorkingSet->CharactersByteOffsets());
+    
+    m_LinesWidths.resize(m_Lines.size());
+    CalculateLinesWidths( m_Lines.data(), m_Lines.data() + m_Lines.size(), m_LinesWidths.data() );
+    
+    const auto width = m_LinesWidths.empty() ?
+        0. : *std::max_element( m_LinesWidths.begin(), m_LinesWidths.end() );
+    const auto height = m_FontInfo.LineHeight() * m_Lines.size();
+    m_Bounds = CGSizeMake( width, height );
 }
 
 TextModeFrame::TextModeFrame( TextModeFrame&& ) noexcept = default;
@@ -90,6 +103,17 @@ int TextModeFrame::LineIndexForPosition( CGPoint _position ) const
     if( line_index >= LinesNumber() )
         return LinesNumber();
     return line_index;
+}
+
+static void CalculateLinesWidths(const IndexedTextLine *_lines_begin,
+                                 const IndexedTextLine *_lines_end,
+                                 float *_widths)
+{
+    const auto block = [&] (size_t n) {
+        _widths[n] = CTLineGetTypographicBounds(_lines_begin[n].Line(),
+                                                nullptr, nullptr, nullptr );
+    };
+    dispatch_apply( _lines_end - _lines_begin, dispatch_get_global_queue(0, 0), block );
 }
 
 }

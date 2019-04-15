@@ -411,6 +411,9 @@ using nc::vfs::easy::CopyFileToTempStorage;
     [self willChangeValueForKey:@"wordWrap"];
     m_WrapWords = _wrapping;
 //    m_ViewImpl->OnWordWrappingChanged();
+    if( [m_View respondsToSelector:@selector(lineWrappingHasChanged)] ) {
+        [m_View lineWrappingHasChanged];
+    }
     [self didChangeValueForKey:@"wordWrap"];
 }
 
@@ -771,6 +774,11 @@ withScrollerPosition:(double)_scroller_position
          setSelection:(CFRange)_selection
 {
     self.selectionInFile = _selection;
+}
+
+- (bool) textModeViewProvideLineWrapping:(NCViewerTextModeView*)_view
+{
+    return m_WrapWords;
 }
 
 @end

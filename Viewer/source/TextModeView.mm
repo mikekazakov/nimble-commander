@@ -66,10 +66,11 @@ static double CalculateVerticalPxPositionFromScrollPosition
     const Theme *m_Theme;
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     std::shared_ptr<const TextModeFrame> m_Frame;
-    bool m_WordWrap;
+    bool m_LineWrap;
     FontGeometryInfo m_FontInfo;
     
     int m_VerticalLineOffset; // offset in lines number within existing text lines in Frame
+    int m_HorizontalCharsOffset; // horizontal offset/scroll in monowidth chars
     CGPoint m_PxOffset; // smooth offset in pixels
     bool m_TrueScrolling; // true if the scrollbar is based purely on px offset and the entire
                           // file is layed out in a single frame.
@@ -86,9 +87,10 @@ static double CalculateVerticalPxPositionFromScrollPosition
         m_Backend = &_backend;
         m_Theme = &_theme;
         m_WorkingSet = MakeEmptyWorkingSet();
-        m_WordWrap = true;
+        m_LineWrap = true;
         m_FontInfo = FontGeometryInfo{ (__bridge CTFontRef)m_Theme->Font() };
         m_VerticalLineOffset = 0;
+        m_HorizontalCharsOffset = 0;
         m_PxOffset = CGPointMake(0., 0.);
         m_TrueScrolling = _backend.IsFullCoverage();
 
@@ -155,7 +157,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
 
 - (double)wrappingWidth
 {
-    return m_WordWrap ? self.contentsSize.width : g_WrappingWidth;
+    return m_LineWrap ? self.contentsSize.width : g_WrappingWidth;
 }
 
 - (std::shared_ptr<const TextModeFrame>)buildLayout
@@ -179,9 +181,10 @@ static double CalculateVerticalPxPositionFromScrollPosition
 - (CGPoint)textOrigin
 {
     const auto origin = CGPointMake(g_LeftInset, g_TopInset);
-    const auto vertical_shift = -1. * m_VerticalLineOffset * m_FontInfo.LineHeight()
-        - m_PxOffset.y;
-    return CGPointMake(origin.x, origin.y + vertical_shift);
+    const auto vertical_shift = m_VerticalLineOffset * m_FontInfo.LineHeight() + m_PxOffset.y;
+    const auto horizontal_shift = m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth() +
+        m_PxOffset.x;
+    return CGPointMake(origin.x - horizontal_shift, origin.y - vertical_shift);
 }
 
 /**
@@ -258,25 +261,23 @@ static double CalculateVerticalPxPositionFromScrollPosition
         
         // draw the selection background
         if( selection.location >= 0 ) {
+            const auto selection_end = selection.location + selection.length;
             double x1 = 0, x2 = -1;
             if(line.UniCharsStart() <= selection.location &&
                line.UniCharsEnd() > selection.location ) {
                 x1 = line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection.location, 0);
-                x2 = ((selection.location + selection.length <= line.UniCharsEnd()) ?
-                      line_pos.x + CTLineGetOffsetForStringIndex(line.Line(),
-                                                            (selection.location + selection.length <= line.UniCharsEnd()) ?
-                                                            selection.location + selection.length : line.UniCharsEnd(),
-                                                            0)
-                      : view_width);
+                x2 = ((selection_end <= line.UniCharsEnd()) ?
+                      line_pos.x + CTLineGetOffsetForStringIndex(line.Line(), selection_end, 0) :
+                      view_width);
             }
-            else if(selection.location + selection.length > line.UniCharsStart() &&
-                    selection.location + selection.length <= line.UniCharsEnd() ) {
+            else if(selection_end > line.UniCharsStart() &&
+                    selection_end <= line.UniCharsEnd() ) {
                 x1 = line_pos.x;
                 x2 = line_pos.x + CTLineGetOffsetForStringIndex
                 (line.Line(), selection.location + selection.length, 0);
             }
             else if(selection.location < line.UniCharsStart() &&
-                    selection.location + selection.length > line.UniCharsEnd() ) {
+                    selection_end > line.UniCharsEnd() ) {
                 x1 = line_pos.x;
                 x2 = view_width;
             }
@@ -311,12 +312,14 @@ static double CalculateVerticalPxPositionFromScrollPosition
                                                        0,
                                                        old_frame->LinesNumber() - 1 );
         const auto old_anchor_glob_offset =
-        (long)old_frame->Line(old_anchor_line_index).BytesStart() +
-        old_frame->WorkingSet().GlobalOffset();
-        const auto desired_window_offset = std::clamp
-        (old_anchor_glob_offset - (int64_t)m_Backend->RawSize() + (int64_t)m_Backend->RawSize() / 4,
-         (int64_t)0,
-         (int64_t)(m_Backend->FileSize() - m_Backend->RawSize()) );
+            (long)old_frame->Line(old_anchor_line_index).BytesStart() +
+            old_frame->WorkingSet().GlobalOffset();
+        const auto desired_window_offset = std::clamp(old_anchor_glob_offset -
+                                                      (int64_t)m_Backend->RawSize() +
+                                                      (int64_t)m_Backend->RawSize() / 4,
+                                                      (int64_t)0,
+                                                      (int64_t)(m_Backend->FileSize() -
+                                                                m_Backend->RawSize()) );
         
         const auto rc = [self.delegate textModeView:self
                 requestsSyncBackendWindowMovementAt:desired_window_offset];
@@ -436,15 +439,9 @@ static double CalculateVerticalPxPositionFromScrollPosition
         (m_VerticalLineOffset + self.numberOfLinesFittingInView < m_Frame->LinesNumber());
 }
 
-- (void)scrollWheel:(NSEvent *)_event
+- (void)scrollWheelVertical:(double)_delta_y
 {
-    const auto delta_y = _event.hasPreciseScrollingDeltas ?
-        _event.scrollingDeltaY :
-        _event.scrollingDeltaY * m_FontInfo.LineHeight();
-//    const auto delta_x = _event.hasPreciseScrollingDeltas ?
-//        _event.scrollingDeltaX :
-//        _event.scrollingDeltaX * m_FontInfo.MonospaceWidth();
-
+    const auto delta_y = _delta_y;
     if( delta_y > 0 ) { // going up
         if( [self canScrollUp] ) {
             [self setNeedsDisplay:true];
@@ -481,8 +478,62 @@ static double CalculateVerticalPxPositionFromScrollPosition
             [self setNeedsDisplay:true];
         }
     }
-    assert( std::abs(m_PxOffset.y) <= m_FontInfo.LineHeight() );
+}
 
+- (void)scrollWheelHorizontal:(double)_delta_x
+{
+    const auto delta_x = _delta_x;
+    if( delta_x > 0 ) { // going right
+        auto px_offset = m_PxOffset.x - delta_x;
+        m_PxOffset.x = 0;
+        while( px_offset <= -m_FontInfo.PreciseMonospaceWidth() ) {
+            m_HorizontalCharsOffset -= 1;
+            px_offset += m_FontInfo.PreciseMonospaceWidth();
+        }
+        if( m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth() + px_offset < 0. ) {
+            // left-bound clamp
+            m_HorizontalCharsOffset = 0;
+            px_offset = 0.;
+        }
+        m_PxOffset.x = px_offset;
+        
+        [self setNeedsDisplay:true];
+    }
+    if( delta_x < 0 ) { // going left
+        auto px_offset = m_PxOffset.x - delta_x;
+        m_PxOffset.x = 0;
+        while( px_offset >= m_FontInfo.PreciseMonospaceWidth() ) {
+            m_HorizontalCharsOffset += 1;
+            px_offset -= m_FontInfo.PreciseMonospaceWidth();
+        }
+        const auto gap = m_Frame->Bounds().width - self.contentsSize.width;
+        if( gap <= 0 ) {
+            m_HorizontalCharsOffset = 0;
+            px_offset = 0.;
+        }
+        else if( m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth() + px_offset > gap ) {
+            // right-bound clamp
+            m_HorizontalCharsOffset = (int)std::floor(gap / m_FontInfo.PreciseMonospaceWidth());
+            px_offset = std::fmod(gap, m_FontInfo.PreciseMonospaceWidth());
+        }
+        m_PxOffset.x = px_offset;
+        [self setNeedsDisplay:true];
+    }
+}
+
+- (void)scrollWheel:(NSEvent *)_event
+{
+    const auto delta_y = _event.hasPreciseScrollingDeltas ?
+        _event.scrollingDeltaY :
+        _event.scrollingDeltaY * m_FontInfo.LineHeight();
+    [self scrollWheelVertical:delta_y];
+    
+    const auto delta_x = _event.hasPreciseScrollingDeltas ?
+        _event.scrollingDeltaX :
+        _event.scrollingDeltaX * m_FontInfo.MonospaceWidth();
+    [self scrollWheelHorizontal:delta_x];
+   
+    assert( std::abs(m_PxOffset.y) <= m_FontInfo.LineHeight() );
     [self scrollPositionDidChange];
 }
 
@@ -626,6 +677,18 @@ static double CalculateVerticalPxPositionFromScrollPosition
 
 - (void) selectionHasChanged
 {
+    [self setNeedsDisplay:true];
+}
+
+- (void) lineWrappingHasChanged
+{
+    m_LineWrap = [self.delegate textModeViewProvideLineWrapping:self];
+    const auto new_frame = [self buildLayout];
+    m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*m_Frame,
+                                                                  m_VerticalLineOffset,
+                                                                  *new_frame);
+    m_Frame = new_frame;
+    [self scrollPositionDidChange];
     [self setNeedsDisplay:true];
 }
 

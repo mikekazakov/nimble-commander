@@ -52,9 +52,9 @@ TextModeFrame::TextModeFrame( const Source &_source ):
     CalculateLinesWidths( m_Lines.data(), m_Lines.data() + m_Lines.size(), m_LinesWidths.data() );
     
     const auto width = m_LinesWidths.empty() ?
-        0. : *std::max_element( m_LinesWidths.begin(), m_LinesWidths.end() );
+        0.f : *std::max_element( m_LinesWidths.begin(), m_LinesWidths.end() );
     const auto height = m_FontInfo.LineHeight() * m_Lines.size();
-    m_Bounds = CGSizeMake( width, height );
+    m_Bounds = CGSizeMake( std::min(width, (float)m_WrappingWidth), height );
 }
 
 TextModeFrame::TextModeFrame( TextModeFrame&& ) noexcept = default;

@@ -407,6 +407,16 @@ static double CalculateVerticalPxPositionFromScrollPosition
     [self scrollPositionDidChange];
 }
 
+- (void)moveLeft:(id)sender
+{
+    [self scrollWheelHorizontal:m_FontInfo.PreciseMonospaceWidth()];
+}
+
+- (void)moveRight:(id)sender
+{
+    [self scrollWheelHorizontal:-m_FontInfo.PreciseMonospaceWidth()];
+}
+
 - (void)pageDown:(nullable id)sender
 {
     int lines_to_scroll = [self numberOfLinesFittingInView];
@@ -421,6 +431,25 @@ static double CalculateVerticalPxPositionFromScrollPosition
     while ( lines_to_scroll --> 0 )
         [self doMoveUpByOneLine];
     [self scrollPositionDidChange];
+}
+
+- (void)keyDown:(NSEvent *)event
+{
+    if( event.charactersIgnoringModifiers.length != 1 ) {
+        [super keyDown:event];
+        return;
+    }
+    switch( [event.charactersIgnoringModifiers characterAtIndex:0] ) {
+        case NSHomeFunctionKey:
+            [self scrollToGlobalBytesOffset:int64_t(0)];
+            break;
+        case NSEndFunctionKey:
+            [self scrollToGlobalBytesOffset:int64_t(m_Backend->FileSize())];
+            break;
+        default:
+            [super keyDown:event];
+            return;
+    }
 }
 
 /**

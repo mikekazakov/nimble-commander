@@ -2,7 +2,7 @@
 
 #include "TextModeWorkingSet.h"
 #include "TextProcessing.h"
-#include "IndexedTextLine.h"
+#include "TextModeIndexedTextLine.h"
 #include <Utility/FontExtras.h>
 
 namespace nc::viewer {
@@ -26,11 +26,11 @@ public:
     TextModeFrame& operator=(const TextModeFrame&) = delete;
     TextModeFrame& operator=(TextModeFrame&&) noexcept;
     
-    const std::vector<IndexedTextLine>& Lines() const noexcept;
+    const std::vector<TextModeIndexedTextLine>& Lines() const noexcept;
     bool Empty() const noexcept;
     /** Returns the number of IndexedTextLine lines in the frame. */
     int LinesNumber() const noexcept;
-    const IndexedTextLine& Line(int _index) const;
+    const TextModeIndexedTextLine& Line(int _index) const;
     double LineWidth(int _index) const;
     CGSize Bounds() const noexcept;
     
@@ -79,14 +79,14 @@ public:
     
 private:
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
-    std::vector<IndexedTextLine> m_Lines;
+    std::vector<TextModeIndexedTextLine> m_Lines;
     std::vector<float> m_LinesWidths;
     nc::utility::FontGeometryInfo m_FontInfo;
     CGSize m_Bounds;
     double m_WrappingWidth = 0.;
 };
 
-inline const std::vector<IndexedTextLine>& TextModeFrame::Lines() const noexcept
+inline const std::vector<TextModeIndexedTextLine>& TextModeFrame::Lines() const noexcept
 {
     return m_Lines;
 }
@@ -101,7 +101,7 @@ inline int TextModeFrame::LinesNumber() const noexcept
     return (int)m_Lines.size();
 }
     
-inline const IndexedTextLine& TextModeFrame::Line(int _index) const
+inline const TextModeIndexedTextLine& TextModeFrame::Line(int _index) const
 {
     return m_Lines.at(_index);
 }

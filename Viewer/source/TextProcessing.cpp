@@ -1,5 +1,5 @@
 #include "TextProcessing.h"
-#include "IndexedTextLine.h"
+#include "TextModeIndexedTextLine.h"
 
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
@@ -142,7 +142,7 @@ std::vector< std::pair<int, int> > SplitStringIntoLines(const char16_t* _charact
     return starts_and_lengths;
 }
 
-std::vector<IndexedTextLine> SplitAttributedStringsIntoLines
+std::vector<TextModeIndexedTextLine> SplitAttributedStringsIntoLines
     (CFAttributedStringRef const _attributed_string,
      double const _wrapping_width,
      double const _monospace_width,
@@ -175,12 +175,12 @@ std::vector<IndexedTextLine> SplitAttributedStringsIntoLines
                                                         _tab_width);
     
     // build our CTLines in multiple threads since it can be time-consuming
-    std::vector<nc::viewer::IndexedTextLine> lines( starts_and_lengths.size() );
+    std::vector<nc::viewer::TextModeIndexedTextLine> lines( starts_and_lengths.size() );
     const auto block = [&] (size_t n) {
         const auto &position = starts_and_lengths[n];
         const auto unichar_range = CFRangeMake(position.first, position.second);
         const auto line = CTTypesetterCreateLine(typesetter, unichar_range);
-        lines[n] = IndexedTextLine{
+        lines[n] = TextModeIndexedTextLine{
             position.first,
             position.second,
             _unichars_to_byte_indices[position.first],

@@ -6,7 +6,7 @@
 
 namespace nc::viewer {
 
-class IndexedTextLine;
+class TextModeIndexedTextLine;
     
 /**
  * Replaces control symbols with spaces (' ' = 0x20).
@@ -34,7 +34,7 @@ std::vector< std::pair<int, int> > SplitStringIntoLines(const char16_t* _charact
  * obtained via SplitStringIntoLines.
 * _unichars_to_byte_indices should be len+1 long to be able to index the [len] offset.
 */
-std::vector<IndexedTextLine> SplitAttributedStringsIntoLines
+std::vector<TextModeIndexedTextLine> SplitAttributedStringsIntoLines
     (CFAttributedStringRef _attributed_string,
      double _wrapping_width,
      double _monospace_width,

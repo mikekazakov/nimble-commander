@@ -86,10 +86,10 @@ using nc::vfs::easy::CopyFileToTempStorage;
     
     [self reloadAppearance];
     
-    [NSNotificationCenter.defaultCenter addObserver:self
-                                           selector:@selector(frameDidChange)
-                                               name:NSViewFrameDidChangeNotification
-                                             object:self];
+//    [NSNotificationCenter.defaultCenter addObserver:self
+//                                           selector:@selector(frameDidChange)
+//                                               name:NSViewFrameDidChangeNotification
+//                                             object:self];
     
 //    m_VerticalScroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
 //    m_VerticalScroller.enabled = true;
@@ -98,7 +98,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
 //    m_VerticalScroller.translatesAutoresizingMaskIntoConstraints = false;
 //    [self addSubview:m_VerticalScroller];
 //    [self layoutVerticalScroll];
-    [self frameDidChange];
+//    [self frameDidChange];
 //    [self bind:@"verticalPositionPercentage" toObject:m_VerticalScroller withKeyPath:@"doubleValue" options:nil];
     
     __weak BigFileView* weak_self = self;
@@ -111,7 +111,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
 - (void) dealloc
 {
 //    [self unbind:@"verticalPositionPercentage"];
-    [NSNotificationCenter.defaultCenter removeObserver:self];
+//    [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
 //- (void)layoutVerticalScroll
@@ -327,14 +327,14 @@ using nc::vfs::easy::CopyFileToTempStorage;
         [m_View backendContentHasChanged];
 }
 
-- (void)frameDidChange
-{
+//- (void)frameDidChange
+//{
 //    if( !m_ViewImpl )
 //        return;
 //
 //    m_ViewImpl->OnFrameChanged();
 //    [self syncVerticalScrollerState];
-}
+//}
 
 - (CTFontRef) TextFont{
     return (__bridge CTFontRef)m_Theme->Font();

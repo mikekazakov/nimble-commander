@@ -1,6 +1,6 @@
 #include "TextModeView.h"
 #include "TextProcessing.h"
-#include "IndexedTextLine.h"
+#include "TextModeIndexedTextLine.h"
 #include "TextModeWorkingSet.h"
 #include "TextModeFrame.h"
 

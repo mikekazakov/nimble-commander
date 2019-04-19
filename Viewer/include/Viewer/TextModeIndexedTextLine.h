@@ -4,22 +4,22 @@
 
 namespace nc::viewer {
     
-class IndexedTextLine
+class TextModeIndexedTextLine
 {
 public:
-    IndexedTextLine() noexcept;
-    IndexedTextLine(int _unichars_start,
+    TextModeIndexedTextLine() noexcept;
+    TextModeIndexedTextLine(int _unichars_start,
                     int _unichars_len,
                     int _bytes_start,
                     int _bytes_len,
                     CTLineRef _line // 'sinks' _line - no need to call CFRelease afterwards
                     );
-    IndexedTextLine(const IndexedTextLine&) noexcept;
-    IndexedTextLine(IndexedTextLine &&_r) noexcept;
-    ~IndexedTextLine() noexcept;
+    TextModeIndexedTextLine(const TextModeIndexedTextLine&) noexcept;
+    TextModeIndexedTextLine(TextModeIndexedTextLine &&_r) noexcept;
+    ~TextModeIndexedTextLine() noexcept;
     
-    IndexedTextLine& operator=(const IndexedTextLine&) noexcept;
-    IndexedTextLine& operator=(IndexedTextLine&&) noexcept;
+    TextModeIndexedTextLine& operator=(const TextModeIndexedTextLine&) noexcept;
+    TextModeIndexedTextLine& operator=(TextModeIndexedTextLine&&) noexcept;
     
     int UniCharsStart() const noexcept;
     int UniCharsLen() const noexcept;
@@ -60,7 +60,6 @@ private:
     CTLineRef m_Line = nullptr;
 };
     
-//    int BigFileViewText::FindClosestLineInd(uint64_t _glob_offset) const
 /**
  * Returns the index of the line which has the closest start byte index to _bytes_offset.
  * The BytesStart() of that line can be either equal, less or greater than _bytes_offset.
@@ -68,8 +67,8 @@ private:
  * not global.
  * Returns -1 if _first == _last.
  */
-int FindClosestLineIndex(const IndexedTextLine *_first,
-                         const IndexedTextLine *_last,
+int FindClosestLineIndex(const TextModeIndexedTextLine *_first,
+                         const TextModeIndexedTextLine *_last,
                          int _bytes_offset ) noexcept;
 
 /**
@@ -79,52 +78,52 @@ int FindClosestLineIndex(const IndexedTextLine *_first,
  * not global.
  * Returns -1 if _first == _last.
  */
-int FindFloorClosestLineIndex(const IndexedTextLine *_first,
-                              const IndexedTextLine *_last,
+int FindFloorClosestLineIndex(const TextModeIndexedTextLine *_first,
+                              const TextModeIndexedTextLine *_last,
                               int _bytes_offset ) noexcept;
     
-inline int IndexedTextLine::UniCharsStart() const noexcept
+inline int TextModeIndexedTextLine::UniCharsStart() const noexcept
 {
     return m_UniCharsStart;
 }
     
-inline int IndexedTextLine::UniCharsLen() const noexcept
+inline int TextModeIndexedTextLine::UniCharsLen() const noexcept
 {
     return m_UniCharsLen;
 }
     
-inline int IndexedTextLine::UniCharsEnd() const noexcept
+inline int TextModeIndexedTextLine::UniCharsEnd() const noexcept
 {
     return m_UniCharsStart + m_UniCharsLen;
 }
     
-inline int IndexedTextLine::BytesStart() const noexcept
+inline int TextModeIndexedTextLine::BytesStart() const noexcept
 {
     return m_BytesStart;
 }
 
-inline int IndexedTextLine::BytesLen() const noexcept
+inline int TextModeIndexedTextLine::BytesLen() const noexcept
 {
     return m_BytesLen;
 }
 
-inline int IndexedTextLine::BytesEnd() const noexcept
+inline int TextModeIndexedTextLine::BytesEnd() const noexcept
 {
     return m_BytesStart + m_BytesLen;
 }
     
-inline CTLineRef IndexedTextLine::Line() const noexcept
+inline CTLineRef TextModeIndexedTextLine::Line() const noexcept
 {
     return m_Line;
 }
 
-inline bool IndexedTextLine::UniCharInside( int _unichar_index ) const noexcept
+inline bool TextModeIndexedTextLine::UniCharInside( int _unichar_index ) const noexcept
 {
     return _unichar_index >= m_UniCharsStart &&
            _unichar_index < m_UniCharsStart + m_UniCharsLen;
 }
     
-inline bool IndexedTextLine::ByteInside( int _byte_index ) const noexcept
+inline bool TextModeIndexedTextLine::ByteInside( int _byte_index ) const noexcept
 {
     return _byte_index >= m_BytesStart &&
            _byte_index < m_BytesStart + m_BytesLen;

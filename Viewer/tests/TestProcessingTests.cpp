@@ -1,6 +1,6 @@
 #include "Tests.h"
 #include "TextProcessing.h"
-#include "IndexedTextLine.h"
+#include "TextModeIndexedTextLine.h"
 #include <Utility/OrthodoxMonospace.h>
 #include <Utility/StringExtras.h>
 #include <Utility/Encodings.h>

@@ -5,8 +5,8 @@
 
 namespace nc::viewer {
 
-static void CalculateLinesWidths(const IndexedTextLine *_lines_begin,
-                                 const IndexedTextLine *_lines_end,
+static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
+                                 const TextModeIndexedTextLine *_lines_end,
                                  float *_widths);
     
 TextModeFrame::TextModeFrame( const Source &_source ):
@@ -105,8 +105,8 @@ int TextModeFrame::LineIndexForPosition( CGPoint _position ) const
     return line_index;
 }
 
-static void CalculateLinesWidths(const IndexedTextLine *_lines_begin,
-                                 const IndexedTextLine *_lines_end,
+static void CalculateLinesWidths(const TextModeIndexedTextLine *_lines_begin,
+                                 const TextModeIndexedTextLine *_lines_end,
                                  float *_widths)
 {
     const auto block = [&] (size_t n) {

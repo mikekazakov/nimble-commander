@@ -1,12 +1,12 @@
-#include "IndexedTextLine.h"
+#include "TextModeIndexedTextLine.h"
 #include <algorithm>
 
 namespace nc::viewer {
     
 
-IndexedTextLine::IndexedTextLine() noexcept = default;
+TextModeIndexedTextLine::TextModeIndexedTextLine() noexcept = default;
     
-IndexedTextLine::IndexedTextLine(int _unichars_start,
+TextModeIndexedTextLine::TextModeIndexedTextLine(int _unichars_start,
                                  int _unichars_len,
                                  int _bytes_start,
                                  int _bytes_len,
@@ -18,10 +18,10 @@ IndexedTextLine::IndexedTextLine(int _unichars_start,
     m_Line(_line)
 {
     // add some validation here?
-    static_assert( sizeof(IndexedTextLine) == 24 );
+    static_assert( sizeof(TextModeIndexedTextLine) == 24 );
 }
     
-IndexedTextLine::IndexedTextLine(const IndexedTextLine& _rhs) noexcept:
+TextModeIndexedTextLine::TextModeIndexedTextLine(const TextModeIndexedTextLine& _rhs) noexcept:
     m_UniCharsStart(_rhs.m_UniCharsStart),
     m_UniCharsLen(_rhs.m_UniCharsLen),
     m_BytesStart(_rhs.m_BytesStart),
@@ -31,7 +31,7 @@ IndexedTextLine::IndexedTextLine(const IndexedTextLine& _rhs) noexcept:
     CFRetain(m_Line);
 }
     
-IndexedTextLine::IndexedTextLine(IndexedTextLine &&_rhs) noexcept:
+TextModeIndexedTextLine::TextModeIndexedTextLine(TextModeIndexedTextLine &&_rhs) noexcept:
     m_UniCharsStart(_rhs.m_UniCharsStart),
     m_UniCharsLen(_rhs.m_UniCharsLen),
     m_BytesStart(_rhs.m_BytesStart),
@@ -45,13 +45,13 @@ IndexedTextLine::IndexedTextLine(IndexedTextLine &&_rhs) noexcept:
     _rhs.m_Line = nullptr;
 }
     
-IndexedTextLine::~IndexedTextLine() noexcept
+TextModeIndexedTextLine::~TextModeIndexedTextLine() noexcept
 {
     if( m_Line != nullptr )
         CFRelease(m_Line);
 }
     
-IndexedTextLine& IndexedTextLine::operator=(const IndexedTextLine& _rhs) noexcept
+TextModeIndexedTextLine& TextModeIndexedTextLine::operator=(const TextModeIndexedTextLine& _rhs) noexcept
 {
     if( this == &_rhs )
         return *this;
@@ -66,7 +66,7 @@ IndexedTextLine& IndexedTextLine::operator=(const IndexedTextLine& _rhs) noexcep
     return *this;
 }
     
-IndexedTextLine& IndexedTextLine::operator=(IndexedTextLine&& _rhs) noexcept
+TextModeIndexedTextLine& TextModeIndexedTextLine::operator=(TextModeIndexedTextLine&& _rhs) noexcept
 {
     if( this == &_rhs )
         return *this;
@@ -85,8 +85,8 @@ IndexedTextLine& IndexedTextLine::operator=(IndexedTextLine&& _rhs) noexcept
     return *this;
 }
 
-int FindClosestLineIndex(const IndexedTextLine *_first,
-                         const IndexedTextLine *_last,
+int FindClosestLineIndex(const TextModeIndexedTextLine *_first,
+                         const TextModeIndexedTextLine *_last,
                          int _bytes_offset ) noexcept
 {
     assert( _first != nullptr && _last != nullptr );
@@ -95,7 +95,7 @@ int FindClosestLineIndex(const IndexedTextLine *_first,
     if( _first == _last )
         return -1;
     
-    const auto predicate = [](const IndexedTextLine &_lhs, int _rhs){
+    const auto predicate = [](const TextModeIndexedTextLine &_lhs, int _rhs){
         return _lhs.BytesStart() < _rhs;
     };
     const auto lb = std::lower_bound( _first, _last, _bytes_offset, predicate );
@@ -125,8 +125,8 @@ int FindClosestLineIndex(const IndexedTextLine *_first,
     }
 }
     
-int FindFloorClosestLineIndex(const IndexedTextLine *_first,
-                              const IndexedTextLine *_last,
+int FindFloorClosestLineIndex(const TextModeIndexedTextLine *_first,
+                              const TextModeIndexedTextLine *_last,
                               int _bytes_offset ) noexcept
 {
     assert( _first != nullptr && _last != nullptr );
@@ -135,7 +135,7 @@ int FindFloorClosestLineIndex(const IndexedTextLine *_first,
     if( _first == _last )
         return -1;
     
-    const auto predicate = [](const IndexedTextLine &_lhs, int _rhs){
+    const auto predicate = [](const TextModeIndexedTextLine &_lhs, int _rhs){
         return _lhs.BytesStart() < _rhs;
     };
     const auto lb = std::lower_bound( _first, _last, _bytes_offset, predicate );

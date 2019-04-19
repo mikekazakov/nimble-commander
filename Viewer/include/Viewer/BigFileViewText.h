@@ -5,7 +5,7 @@
 
 namespace nc::viewer {
 
-class IndexedTextLine;
+class TextModeIndexedTextLine;
 class TextModeWorkingSet;
 
 class BigFileViewText : public BigFileViewImpl

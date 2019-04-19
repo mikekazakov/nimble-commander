@@ -2,7 +2,7 @@
 #include "BigFileViewText.h"
 #include "BigFileView.h"
 #include "TextProcessing.h"
-#include "IndexedTextLine.h"
+#include "TextModeIndexedTextLine.h"
 #include "TextModeWorkingSet.h"
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>

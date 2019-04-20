@@ -151,8 +151,10 @@ void BigFileViewHex::OnBufferDecoded()
             current.string_bytes_num - bytes_for_current_string :
             0;
         
-        if(current.row_byte_start + bytes_for_current_row < raw_window_size) current.row_bytes_num = bytes_for_current_row;
-        else current.row_bytes_num = (uint32_t)raw_window_size - current.row_byte_start;
+        if(current.row_byte_start + bytes_for_current_row < raw_window_size)
+            current.row_bytes_num = bytes_for_current_row;
+        else
+            current.row_bytes_num = (uint32_t)raw_window_size - current.row_byte_start;
         
         m_Lines.push_back(current);
         

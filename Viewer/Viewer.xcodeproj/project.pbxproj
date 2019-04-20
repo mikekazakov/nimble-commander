@@ -14,6 +14,9 @@
 		CF132566222AB80B0097F9A1 /* TextModeView.h in Headers */ = {isa = PBXBuildFile; fileRef = CF132565222AB80B0097F9A1 /* TextModeView.h */; };
 		CF132568222AB8170097F9A1 /* TextModeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF132567222AB8170097F9A1 /* TextModeView.mm */; };
 		CF13256A222ACF640097F9A1 /* TextModeViewDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = CF132569222ACF640097F9A1 /* TextModeViewDelegate.h */; };
+		CF9BF9002269E4CD00AD36D9 /* HexModeProcessing.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9BF8FF2269E4CD00AD36D9 /* HexModeProcessing.h */; };
+		CF9BF9022269E4D800AD36D9 /* HexModeProcessing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */; };
+		CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */; };
 		CFD79A7F21F65A980043A26D /* default.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7B21F65A980043A26D /* default.xcconfig */; };
 		CFD79A8021F65A980043A26D /* tests.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7C21F65A980043A26D /* tests.xcconfig */; };
 		CFD79A8121F65A980043A26D /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7D21F65A980043A26D /* debug.xcconfig */; };
@@ -59,13 +62,13 @@
 		CFD79B402210452C0043A26D /* TextProcessing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B3F2210452C0043A26D /* TextProcessing.cpp */; };
 		CFD79B5922106E3C0043A26D /* Tests.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B5722106E3B0043A26D /* Tests.h */; };
 		CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B5822106E3C0043A26D /* Tests.cpp */; };
-		CFD79B6A22106F080043A26D /* TestProcessingTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TestProcessingTests.cpp */; };
+		CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */; };
 		CFD79B6B221071180043A26D /* Viewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A6221F65A010043A26D /* Viewer.framework */; };
 		CFD79B6D221097A40043A26D /* TextModeIndexedTextLine.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B6C221097A40043A26D /* TextModeIndexedTextLine.h */; };
 		CFD79B6F221097B30043A26D /* TextModeIndexedTextLine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B6E221097B30043A26D /* TextModeIndexedTextLine.cpp */; };
 		CFD79B722210B6DB0043A26D /* TextModeWorkingSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B702210B6DB0043A26D /* TextModeWorkingSet.cpp */; };
 		CFD79B812214C46C0043A26D /* TextModeWorkingSet.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B802214C46C0043A26D /* TextModeWorkingSet.h */; };
-		CFD79B8422198DB50043A26D /* TestModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TestModeWorkingSet_UT.cpp */; };
+		CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */; };
 		CFD79B85221991130043A26D /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA921F65BB70043A26D /* libUtility.dylib */; };
 		CFEA2D6F221CADC0008BE48C /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AAF21F65BC60043A26D /* libHabanero.dylib */; };
 /* End PBXBuildFile section */
@@ -90,6 +93,9 @@
 		CF132565222AB80B0097F9A1 /* TextModeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeView.h; path = include/Viewer/TextModeView.h; sourceTree = "<group>"; };
 		CF132567222AB8170097F9A1 /* TextModeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TextModeView.mm; path = source/TextModeView.mm; sourceTree = "<group>"; wrapsLines = 0; };
 		CF132569222ACF640097F9A1 /* TextModeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeViewDelegate.h; path = include/Viewer/TextModeViewDelegate.h; sourceTree = "<group>"; };
+		CF9BF8FF2269E4CD00AD36D9 /* HexModeProcessing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeProcessing.h; path = include/Viewer/HexModeProcessing.h; sourceTree = "<group>"; };
+		CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeProcessing.cpp; path = source/HexModeProcessing.cpp; sourceTree = "<group>"; };
+		CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeProcessing_UT.cpp; path = tests/HexModeProcessing_UT.cpp; sourceTree = "<group>"; };
 		CFD79A6221F65A010043A26D /* Viewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Viewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD79A6621F65A010043A26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = SOURCE_ROOT; };
 		CFD79A7B21F65A980043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
@@ -141,12 +147,12 @@
 		CFD79B5022106E010043A26D /* ViewerUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ViewerUT; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD79B5722106E3B0043A26D /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Tests.h; path = tests/Tests.h; sourceTree = "<group>"; };
 		CFD79B5822106E3C0043A26D /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Tests.cpp; path = tests/Tests.cpp; sourceTree = "<group>"; };
-		CFD79B6822106F000043A26D /* TestProcessingTests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestProcessingTests.cpp; path = tests/TestProcessingTests.cpp; sourceTree = "<group>"; };
+		CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextProcessing_UT.cpp; path = tests/TextProcessing_UT.cpp; sourceTree = "<group>"; };
 		CFD79B6C221097A40043A26D /* TextModeIndexedTextLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeIndexedTextLine.h; path = include/Viewer/TextModeIndexedTextLine.h; sourceTree = "<group>"; };
 		CFD79B6E221097B30043A26D /* TextModeIndexedTextLine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeIndexedTextLine.cpp; path = source/TextModeIndexedTextLine.cpp; sourceTree = "<group>"; };
 		CFD79B702210B6DB0043A26D /* TextModeWorkingSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeWorkingSet.cpp; path = source/TextModeWorkingSet.cpp; sourceTree = "<group>"; };
 		CFD79B802214C46C0043A26D /* TextModeWorkingSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextModeWorkingSet.h; path = include/Viewer/TextModeWorkingSet.h; sourceTree = "<group>"; };
-		CFD79B8222198DA80043A26D /* TestModeWorkingSet_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestModeWorkingSet_UT.cpp; path = tests/TestModeWorkingSet_UT.cpp; sourceTree = "<group>"; };
+		CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextModeWorkingSet_UT.cpp; path = tests/TextModeWorkingSet_UT.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,6 +239,7 @@
 				CFD79A9221F65B570043A26D /* BigFileViewProtocol.h */,
 				CFD79B0F2205B82F0043A26D /* BigFileViewSheet.h */,
 				CFD79A9621F65B570043A26D /* BigFileViewText.h */,
+				CF9BF8FF2269E4CD00AD36D9 /* HexModeProcessing.h */,
 				CFD79AB321FCA4E50043A26D /* History.h */,
 				CFD79B0221FE4CC40043A26D /* InternalViewerController.h */,
 				CFD79B172205DE3D0043A26D /* InternalViewerToolbarProtocol.h */,
@@ -258,6 +265,7 @@
 				CFD79A8A21F65B4F0043A26D /* BigFileViewHex.mm */,
 				CFD79B112205B8360043A26D /* BigFileViewSheet.mm */,
 				CFD79A8721F65B4E0043A26D /* BigFileViewText.mm */,
+				CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */,
 				CFD79AB521FCA4F30043A26D /* History.cpp */,
 				CFD79B0421FE4CCC0043A26D /* InternalViewerController.mm */,
 				CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */,
@@ -277,11 +285,12 @@
 		CFD79A8521F65AB50043A26D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */,
-				CFD79B8222198DA80043A26D /* TestModeWorkingSet_UT.cpp */,
-				CFD79B6822106F000043A26D /* TestProcessingTests.cpp */,
+				CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */,
 				CFD79B5822106E3C0043A26D /* Tests.cpp */,
 				CFD79B5722106E3B0043A26D /* Tests.h */,
+				CF13255E2225FB610097F9A1 /* TextModeFrame_UT.cpp */,
+				CFD79B8222198DA80043A26D /* TextModeWorkingSet_UT.cpp */,
+				CFD79B6822106F000043A26D /* TextProcessing_UT.cpp */,
 			);
 			name = Tests;
 			sourceTree = "<group>";
@@ -327,6 +336,7 @@
 				CFD79B102205B82F0043A26D /* BigFileViewSheet.h in Headers */,
 				CFD79A9F21F65B570043A26D /* BigFileViewHex.h in Headers */,
 				CFD79A9921F65B570043A26D /* BigFileViewProtocol.h in Headers */,
+				CF9BF9002269E4CD00AD36D9 /* HexModeProcessing.h in Headers */,
 				CF132566222AB80B0097F9A1 /* TextModeView.h in Headers */,
 				CFD79B812214C46C0043A26D /* TextModeWorkingSet.h in Headers */,
 			);
@@ -435,6 +445,7 @@
 				CFD79B722210B6DB0043A26D /* TextModeWorkingSet.cpp in Sources */,
 				CFD79B1A2205DE480043A26D /* InternalViewerToolbarProtocol.mm in Sources */,
 				CF132568222AB8170097F9A1 /* TextModeView.mm in Sources */,
+				CF9BF9022269E4D800AD36D9 /* HexModeProcessing.cpp in Sources */,
 				CF13255B2222B6D40097F9A1 /* TextModeFrame.cpp in Sources */,
 				CFD79AB621FCA4F30043A26D /* History.cpp in Sources */,
 				CFD79A8C21F65B4F0043A26D /* InternalViewerViewPreviewMode.mm in Sources */,
@@ -454,10 +465,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD79B6A22106F080043A26D /* TestProcessingTests.cpp in Sources */,
+				CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */,
+				CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */,
 				CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */,
 				CF1325622225FD630097F9A1 /* TextModeFrame_UT.cpp in Sources */,
-				CFD79B8422198DB50043A26D /* TestModeWorkingSet_UT.cpp in Sources */,
+				CFD79B8422198DB50043A26D /* TextModeWorkingSet_UT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

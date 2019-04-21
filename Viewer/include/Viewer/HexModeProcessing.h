@@ -2,6 +2,8 @@
 
 #include "TextModeWorkingSet.h"
 
+#include <Habanero/CFPtr.h>
+
 #include <vector>
 
 namespace nc::viewer {
@@ -23,6 +25,18 @@ struct HexModeSplitter
     };
     
     static std::vector<Line> Split( const Source& _source );
+    
+    /**
+     * Does floor rounding to be divisible by _bytes_per_line.
+     */
+    static base::CFPtr<CFStringRef> MakeAddressString(int _row_bytes_start,
+                                                      long _working_set_global_offset,
+                                                      int _bytes_per_line,
+                                                      int _hex_digits_in_address );
+    
+    static base::CFPtr<CFStringRef> MakeBytesHexString(const std::byte *_first,
+                                                       const std::byte *_last,
+                                                       char16_t _gap_symbol = ' ');
 };
 
 }

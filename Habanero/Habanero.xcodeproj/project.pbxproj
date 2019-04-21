@@ -21,6 +21,7 @@
 		CF614AD41F9D8F000005F2DB /* Hash_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614ACD1F9D8EDC0005F2DB /* Hash_Tests.mm */; };
 		CF614AD51F9D8F030005F2DB /* VariableContainer_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614ACE1F9D8EDD0005F2DB /* VariableContainer_Tests.mm */; };
 		CF7D7D602158B2C000DA1794 /* tribool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7D7D5F2158B2C000DA1794 /* tribool.h */; };
+		CF9BF90B226B423B00AD36D9 /* CFPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9BF90A226B423B00AD36D9 /* CFPtr.h */; };
 		CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD22CD32012DDDF00608DFE /* LRUCache.h */; };
 		CFD22CD72012DDFD00608DFE /* LRUCache_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD22CD52012DDF800608DFE /* LRUCache_Tests.mm */; };
 		CFE8F90421A27F3100300019 /* spinlock_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE8F90321A27F3000300019 /* spinlock_Tests.mm */; };
@@ -79,6 +80,7 @@
 		CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = spinlock.cpp; path = ../habanero/source/spinlock.cpp; sourceTree = "<group>"; };
 		CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFDefaultsCPP.h; path = include/Habanero/CFDefaultsCPP.h; sourceTree = "<group>"; };
 		CF9A9F161CACDD490094D6F7 /* CFDefaultsCPP.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CFDefaultsCPP.cpp; path = source/CFDefaultsCPP.cpp; sourceTree = "<group>"; };
+		CF9BF90A226B423B00AD36D9 /* CFPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFPtr.h; path = include/Habanero/CFPtr.h; sourceTree = "<group>"; };
 		CFB690541E0670FF00BBA5BD /* SerialQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SerialQueue.cpp; path = ../habanero/source/SerialQueue.cpp; sourceTree = "<group>"; };
 		CFB690561E06710900BBA5BD /* SerialQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SerialQueue.h; path = ../habanero/include/Habanero/SerialQueue.h; sourceTree = "<group>"; };
 		CFB6905D1E0677D900BBA5BD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../habanero/README.md; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 			children = (
 				CFD62B861C99C2A60021EE7F /* algo.h */,
 				CF9A9F141CACDD3F0094D6F7 /* CFDefaultsCPP.h */,
+				CF9BF90A226B423B00AD36D9 /* CFPtr.h */,
 				CFD930001D2E3ACE00EE77C4 /* CFStackAllocator.h */,
 				CFD62B871C99C2A60021EE7F /* CFString.h */,
 				CFD62BBB1C99C73E0021EE7F /* chained_strings.h */,
@@ -245,6 +248,7 @@
 				CF308F4B213B772900915730 /* PosixFilesystemImpl.h in Headers */,
 				CF308F47213B755700915730 /* PosixFilesystem.h in Headers */,
 				CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */,
+				CF9BF90B226B423B00AD36D9 /* CFPtr.h in Headers */,
 				CF7D7D602158B2C000DA1794 /* tribool.h in Headers */,
 				CF308F4F213B7B3C00915730 /* PosixFilesystemMock.h in Headers */,
 				CF31851B2150BBA30012F5DD /* intrusive_ptr.h in Headers */,

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <CoreText/CoreText.h>
+#include <CoreFoundation/CoreFoundation.h>
 #include <memory>
 #include <assert.h>
 

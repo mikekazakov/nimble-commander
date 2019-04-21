@@ -1,7 +1,13 @@
 #include "HexModeProcessing.h"
 
+#include <string>
+
 namespace nc::viewer {
 
+static constexpr char g_4Bits_To_Char[16] = {
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+};
+    
 std::vector<HexModeSplitter::Line> HexModeSplitter::Split( const Source& _source )
 {
     const int bytes_per_row = _source.bytes_per_row;
@@ -54,6 +60,77 @@ std::vector<HexModeSplitter::Line> HexModeSplitter::Split( const Source& _source
     }
         
     return result_lines;
+}
+ 
+base::CFPtr<CFStringRef> HexModeSplitter::MakeAddressString(const int _row_bytes_start,
+                                                            const long _working_set_global_offset,
+                                                            const int _bytes_per_line,
+                                                            const int _hex_digits_in_address )
+{
+    constexpr int max_hex_length = 64;
+    if( _hex_digits_in_address > max_hex_length )
+        throw std::invalid_argument("HexModeSplitter::MakeAddressString _hex_digits_in_address "
+                                    "is loo big.");
+    if( _hex_digits_in_address < 0 )
+        throw std::invalid_argument("HexModeSplitter::MakeAddressString _hex_digits_in_address "
+                                    "can't be less than 0");
+        
+    const long unrounded_row_offset = long(_row_bytes_start) + _working_set_global_offset;
+    const long row_offset = unrounded_row_offset - unrounded_row_offset % _bytes_per_line;
+
+    char16_t buffer[max_hex_length];
+    
+    long offset = row_offset;
+    for( int char_ind = _hex_digits_in_address - 1; char_ind >= 0; --char_ind ) {
+        buffer[char_ind] = g_4Bits_To_Char[offset & 0xF];
+        offset >>= 4;
+    }
+    
+    const auto str = CFStringCreateWithCharacters(nullptr,
+                                                  (const UniChar *)buffer,
+                                                  _hex_digits_in_address);
+    return base::CFPtr<CFStringRef>::adopt( str );
+}
+
+static void Fill(const std::byte * const _first,
+                 const std::byte * const _last,
+                 char16_t * const _buffer,
+                 const char16_t _gap_symbol)
+{
+    auto target = _buffer;
+    for( auto source = _first; source < _last; source += 1, target += 3 ) {
+        const auto c = (int)(*source);
+        const auto lower_4bits = g_4Bits_To_Char[ c & 0x0F      ];
+        const auto upper_4bits = g_4Bits_To_Char[(c & 0xF0) >> 4];
+        target[0] = upper_4bits;
+        target[1] = lower_4bits;
+        target[2] = _gap_symbol;
+    }
+}
+
+base::CFPtr<CFStringRef>  HexModeSplitter::MakeBytesHexString(const std::byte *_first,
+                                                              const std::byte *_last,
+                                                              char16_t _gap_symbol)
+{
+    const auto size = (int)(_last - _first);
+    const auto chars_per_byte = 3;
+    const auto max_bytes_via_alloca = 1024;
+    if( size * chars_per_byte * sizeof(char16_t) < max_bytes_via_alloca ) {
+        auto buffer = (char16_t*)alloca(size * chars_per_byte * sizeof(char16_t) );
+        Fill(_first, _last, buffer, _gap_symbol);
+        const auto str = CFStringCreateWithCharacters(nullptr,
+                                                      (const UniChar *)buffer,
+                                                      std::max(size * chars_per_byte - 1, 0) );
+        return base::CFPtr<CFStringRef>::adopt( str );
+    }
+    else {
+        std::u16string buffer( size * chars_per_byte, (char16_t)0 );
+        Fill(_first, _last, buffer.data(), _gap_symbol);
+        const auto str = CFStringCreateWithCharacters(nullptr,
+                                                      (const UniChar *)buffer.data(),
+                                                      std::max(size * chars_per_byte - 1, 0) );
+        return base::CFPtr<CFStringRef>::adopt( str );
+    }
 }
     
 }

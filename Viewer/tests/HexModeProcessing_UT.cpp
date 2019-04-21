@@ -13,7 +13,10 @@ static std::shared_ptr<const TextModeWorkingSet> ProduceWorkingSet(const char *_
                                                                    const int _chars_number,
                                                                    long _ws_offset = 0);
 
+static bool Equal(CFStringRef _lhs, CFStringRef _rhs);
+
 #define PREFIX "HexModeSplitter "
+
 TEST_CASE(PREFIX"Verify a layout of a primitive 1-byte encoded string")
 {
     const auto string = std::string{"Hello"};
@@ -95,7 +98,6 @@ TEST_CASE(PREFIX"Verify a layout of a primitive 1-byte encoded string")
     }
 }
 
-#define PREFIX "HexModeSplitter "
 TEST_CASE(PREFIX"Verify a layout of a primitive 1-byte encoded string in a shifted working set")
 {
     const auto string = std::string{"Hello"};
@@ -144,7 +146,6 @@ TEST_CASE(PREFIX"Verify a layout of a primitive 1-byte encoded string in a shift
     }
 }
 
-#define PREFIX "HexModeSplitter "
 TEST_CASE(PREFIX"Verify a layout of a primitive utf8 encoded string")
 {
     const auto string = std::string{u8"Привет"};
@@ -198,7 +199,6 @@ TEST_CASE(PREFIX"Verify a layout of a primitive utf8 encoded string")
     }
 }
 
-#define PREFIX "HexModeSplitter "
 TEST_CASE(PREFIX"Verify a layout of a utf8 encoded string with mixed lengths")
 {
     const auto string = std::string{u8"NцQф"};
@@ -227,6 +227,134 @@ TEST_CASE(PREFIX"Verify a layout of a utf8 encoded string with mixed lengths")
         CHECK( lines[2].row_bytes_num == 2 );
         CHECK( lines[2].string_bytes_start == 4 );
         CHECK( lines[2].string_bytes_num == 2 );
+    }
+}
+
+TEST_CASE(PREFIX"Check address conversion: no offsets")
+{
+    const int row_bytes_start = 0;
+    const long working_set_offset = 0;
+    SECTION("8 digits, 16 bytes per row") {
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                               working_set_offset,
+                                                               16, 8);
+        CHECK( Equal( string.get(), CFSTR("00000000")) );
+    }
+    SECTION("1 digit, 16 bytes per row") {
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                               working_set_offset,
+                                                               16, 1);
+        CHECK( Equal( string.get(), CFSTR("0")) );
+    }
+    SECTION("0 digits, 16 bytes per row") {
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                               working_set_offset,
+                                                               16, 0);
+        CHECK( Equal( string.get(), CFSTR("")) );
+    }
+    SECTION("-1 digits, 16 bytes per row") {
+        CHECK_THROWS( HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                         working_set_offset,
+                                                         16, -1) );
+    }
+}
+
+TEST_CASE(PREFIX"Check address conversion: row_offset=123456")
+{
+    const int row_bytes_start = 123456;
+    const long working_set_offset = 0;
+    SECTION("8 digits, 16 bytes per row") {
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                               working_set_offset,
+                                                               16, 8);
+        CHECK( Equal( string.get(), CFSTR("0001E240")) );
+    }
+    SECTION("3 digits, 16 bytes per row") {
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                               working_set_offset,
+                                                               16, 3);
+        CHECK( Equal( string.get(), CFSTR("240")) );
+    }
+
+    SECTION("1 digit, 16 bytes per row") {
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                               working_set_offset,
+                                                               16, 1);
+        CHECK( Equal( string.get(), CFSTR("0")) );
+    }
+}
+
+TEST_CASE(PREFIX"Check address conversion: row_offset=123450")
+{
+    const int row_bytes_start = 123450;
+    const long working_set_offset = 0;
+    const auto string = HexModeSplitter::MakeAddressString(row_bytes_start, working_set_offset,
+                                                           16, 8);
+    CHECK( Equal( string.get(), CFSTR("0001E230")) );
+}
+
+TEST_CASE(PREFIX"Check address conversion: row_offset=50, ws_offset=50")
+{
+    const int row_bytes_start = 50;
+    const long working_set_offset = 50;
+    SECTION("4 digits, 16 bytes per row") {
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                               working_set_offset,
+                                                               16, 4);
+        CHECK( Equal( string.get(), CFSTR("0060")) );
+    }
+    SECTION("4 digits, 10 bytes per row") {
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                               working_set_offset,
+                                                               10, 4);
+        CHECK( Equal( string.get(), CFSTR("0064")) );
+    }
+    SECTION("4 digits, 8 bytes per row") {
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                               working_set_offset,
+                                                               8, 4);
+        CHECK( Equal( string.get(), CFSTR("0060")) );
+    }
+    SECTION("4 digits, 24 bytes per row") {
+        const auto string = HexModeSplitter::MakeAddressString(row_bytes_start,
+                                                               working_set_offset,
+                                                               24, 4);
+        CHECK( Equal( string.get(), CFSTR("0060")) );
+    }
+}
+
+TEST_CASE(PREFIX"Check hex conversions")
+{
+    SECTION("Hello, World!") {
+        const auto data = std::string("Hello, World!");
+        const auto hex = HexModeSplitter::MakeBytesHexString((const std::byte*)data.data(),
+                                                             (const std::byte*)data.data() +
+                                                             data.size());
+        CHECK( Equal( hex.get(), CFSTR("48 65 6C 6C 6F 2C 20 57 6F 72 6C 64 21")) );
+    }
+    SECTION("Hello, World!, . separator") {
+        const auto data = std::string("Hello, World!");
+        const auto hex = HexModeSplitter::MakeBytesHexString((const std::byte*)data.data(),
+                                                             (const std::byte*)data.data() +
+                                                             data.size(),
+                                                             '.');
+        CHECK( Equal( hex.get(), CFSTR("48.65.6C.6C.6F.2C.20.57.6F.72.6C.64.21")) );
+    }
+    SECTION("Empty data") {
+        const auto data = std::byte{};
+        const auto hex = HexModeSplitter::MakeBytesHexString(&data, &data);
+        CHECK( Equal( hex.get(), CFSTR("")) );
+    }
+    SECTION("Single byte") {
+        const auto data = std::byte{255};
+        const auto hex = HexModeSplitter::MakeBytesHexString(&data, &data + 1);
+        CHECK( Equal( hex.get(), CFSTR("FF")) );
+    }
+    SECTION("Doesn't crash on 16 megabytes") {
+        const auto data = std::string(16'000'000, (char16_t)' ' );
+        const auto hex = HexModeSplitter::MakeBytesHexString((const std::byte*)data.data(),
+                                                             (const std::byte*)data.data() +
+                                                             data.size());
     }
 }
 
@@ -266,4 +394,9 @@ static std::shared_ptr<const TextModeWorkingSet> ProduceWorkingSet(const char *_
     source.bytes_offset = _ws_offset;
     source.bytes_length = (int)_chars_number;
     return std::make_shared<TextModeWorkingSet>(source);
+}
+
+static bool Equal(CFStringRef _lhs, CFStringRef _rhs)
+{
+    return CFStringCompare(_lhs, _rhs, 0) == kCFCompareEqualTo;
 }

@@ -17,6 +17,7 @@
 		CF9BF9002269E4CD00AD36D9 /* HexModeProcessing.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9BF8FF2269E4CD00AD36D9 /* HexModeProcessing.h */; };
 		CF9BF9022269E4D800AD36D9 /* HexModeProcessing.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */; };
 		CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */; };
+		CF9BF909226B2B0C00AD36D9 /* HexModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF908226B2B0C00AD36D9 /* HexModeFrame.cpp */; };
 		CFD79A7F21F65A980043A26D /* default.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7B21F65A980043A26D /* default.xcconfig */; };
 		CFD79A8021F65A980043A26D /* tests.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7C21F65A980043A26D /* tests.xcconfig */; };
 		CFD79A8121F65A980043A26D /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7D21F65A980043A26D /* debug.xcconfig */; };
@@ -96,6 +97,8 @@
 		CF9BF8FF2269E4CD00AD36D9 /* HexModeProcessing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeProcessing.h; path = include/Viewer/HexModeProcessing.h; sourceTree = "<group>"; };
 		CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeProcessing.cpp; path = source/HexModeProcessing.cpp; sourceTree = "<group>"; };
 		CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeProcessing_UT.cpp; path = tests/HexModeProcessing_UT.cpp; sourceTree = "<group>"; };
+		CF9BF907226B2B0400AD36D9 /* HexModeFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeFrame.h; path = include/Viewer/HexModeFrame.h; sourceTree = "<group>"; };
+		CF9BF908226B2B0C00AD36D9 /* HexModeFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeFrame.cpp; path = source/HexModeFrame.cpp; sourceTree = "<group>"; };
 		CFD79A6221F65A010043A26D /* Viewer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Viewer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD79A6621F65A010043A26D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = resources/Info.plist; sourceTree = SOURCE_ROOT; };
 		CFD79A7B21F65A980043A26D /* default.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; wrapsLines = 1; };
@@ -239,6 +242,7 @@
 				CFD79A9221F65B570043A26D /* BigFileViewProtocol.h */,
 				CFD79B0F2205B82F0043A26D /* BigFileViewSheet.h */,
 				CFD79A9621F65B570043A26D /* BigFileViewText.h */,
+				CF9BF907226B2B0400AD36D9 /* HexModeFrame.h */,
 				CF9BF8FF2269E4CD00AD36D9 /* HexModeProcessing.h */,
 				CFD79AB321FCA4E50043A26D /* History.h */,
 				CFD79B0221FE4CC40043A26D /* InternalViewerController.h */,
@@ -265,6 +269,7 @@
 				CFD79A8A21F65B4F0043A26D /* BigFileViewHex.mm */,
 				CFD79B112205B8360043A26D /* BigFileViewSheet.mm */,
 				CFD79A8721F65B4E0043A26D /* BigFileViewText.mm */,
+				CF9BF908226B2B0C00AD36D9 /* HexModeFrame.cpp */,
 				CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */,
 				CFD79AB521FCA4F30043A26D /* History.cpp */,
 				CFD79B0421FE4CCC0043A26D /* InternalViewerController.mm */,
@@ -465,6 +470,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF9BF909226B2B0C00AD36D9 /* HexModeFrame.cpp in Sources */,
 				CF9BF9062269FD7000AD36D9 /* HexModeProcessing_UT.cpp in Sources */,
 				CFD79B6A22106F080043A26D /* TextProcessing_UT.cpp in Sources */,
 				CFD79B5B22106E5F0043A26D /* Tests.cpp in Sources */,

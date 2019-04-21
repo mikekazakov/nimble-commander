@@ -152,7 +152,7 @@ TEST_CASE(PREFIX"Verify a layout of a primitive utf8 encoded string")
     const auto ws = ProduceWorkingSet(string.data(), (int)string.length());
     HexModeSplitter::Source source;
     source.working_set = ws.get();
-    SECTION("16-bytes columns") {
+    SECTION("16-bytes rows") {
         source.bytes_per_row = 16;
         const auto lines = HexModeSplitter::Split(source);
         REQUIRE( lines.size() == 1 );
@@ -163,7 +163,7 @@ TEST_CASE(PREFIX"Verify a layout of a primitive utf8 encoded string")
         CHECK( lines[0].string_bytes_start == 0 );
         CHECK( lines[0].string_bytes_num == 12 );
     }
-    SECTION("6-bytes columns") {
+    SECTION("6-bytes rows") {
         source.bytes_per_row = 6;
         const auto lines = HexModeSplitter::Split(source);
         REQUIRE( lines.size() == 2 );
@@ -180,7 +180,7 @@ TEST_CASE(PREFIX"Verify a layout of a primitive utf8 encoded string")
         CHECK( lines[1].string_bytes_start == 6 );
         CHECK( lines[1].string_bytes_num == 6 );
     }
-    SECTION("7-bytes columns") {
+    SECTION("7-bytes rows") {
         source.bytes_per_row = 7;
         const auto lines = HexModeSplitter::Split(source);
         REQUIRE( lines.size() == 2 );
@@ -205,7 +205,7 @@ TEST_CASE(PREFIX"Verify a layout of a utf8 encoded string with mixed lengths")
     const auto ws = ProduceWorkingSet(string.data(), (int)string.length());
     HexModeSplitter::Source source;
     source.working_set = ws.get();
-    SECTION("2-byte columns") {
+    SECTION("2-byte rows") {
         source.bytes_per_row = 2;
         const auto lines = HexModeSplitter::Split(source);
         REQUIRE( lines.size() == 3 );

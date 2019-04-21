@@ -24,6 +24,7 @@ public:
     };
     
     class Row;
+    class RowsBuilder;
     
     HexModeFrame( const Source &_source );
     HexModeFrame( const HexModeFrame& ) = delete;
@@ -66,6 +67,8 @@ public:
     CTLineRef SnippetLine() const noexcept;
     CTLineRef ColumnLine(int _column) const;
     
+    int ColumnsNumber() const noexcept;
+    
     enum {
         AddressIndex = 0,
         SnippetIndex = 1,
@@ -86,6 +89,27 @@ private:
     int m_StringBytesNum;   // amount of bytes occupied by the string
     int m_RowBytesStart;    // byte index of the row start in the working set
     int m_RowBytesNum;      // amount of bytes occupied by the row
+};
+    
+class HexModeFrame::RowsBuilder
+{
+public:
+    RowsBuilder(const Source& _source,
+                const std::byte *_raw_bytes_begin,
+                const std::byte *_raw_bytes_end,
+                int _digits_in_address);
+    
+    Row Build(std::pair<int, int> _chars_indices,    // start index, number of characters
+              std::pair<int, int> _string_bytes,     // start index, number of bytes
+              std::pair<int, int> _row_bytes) const; // start index, number of bytes
+    
+private:
+    base::CFPtr<CFAttributedStringRef> ToAttributeString(CFStringRef _string) const;
+    const Source& m_Source;
+    const std::byte * const m_RawBytesBegin;
+    const std::byte * const m_RawBytesEnd;
+    int const m_RawBytesNumber;
+    int const m_DigitsInAddress;
 };
 
 inline int HexModeFrame::BytesPerColumn() const noexcept
@@ -132,5 +156,10 @@ inline CTLineRef HexModeFrame::Row::ColumnLine(int _column) const
 {
     return m_Lines.at(ColumnsBaseIndex + _column).get();
 }
-    
+
+inline int HexModeFrame::Row::ColumnsNumber() const noexcept
+{
+    return (int)m_Strings.size() - ColumnsBaseIndex;
+}
+
 }

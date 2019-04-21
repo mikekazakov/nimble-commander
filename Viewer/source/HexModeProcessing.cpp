@@ -95,7 +95,7 @@ base::CFPtr<CFStringRef> HexModeSplitter::MakeAddressString(const int _row_bytes
 static void Fill(const std::byte * const _first,
                  const std::byte * const _last,
                  char16_t * const _buffer,
-                 const char16_t _gap_symbol)
+                 const char16_t _gap_symbol) noexcept
 {
     auto target = _buffer;
     for( auto source = _first; source < _last; source += 1, target += 3 ) {
@@ -108,9 +108,9 @@ static void Fill(const std::byte * const _first,
     }
 }
 
-base::CFPtr<CFStringRef>  HexModeSplitter::MakeBytesHexString(const std::byte *_first,
-                                                              const std::byte *_last,
-                                                              char16_t _gap_symbol)
+base::CFPtr<CFStringRef> HexModeSplitter::MakeBytesHexString(const std::byte * const _first,
+                                                             const std::byte * const _last,
+                                                             const char16_t _gap_symbol)
 {
     const auto size = (int)(_last - _first);
     const auto chars_per_byte = 3;

@@ -103,7 +103,6 @@
 		CF9BF912226DD3C800AD36D9 /* HexModeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeView.h; path = include/Viewer/HexModeView.h; sourceTree = "<group>"; };
 		CF9BF913226DD3D300AD36D9 /* HexModeView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HexModeView.mm; path = source/HexModeView.mm; sourceTree = "<group>"; };
 		CF9BF916226DE05500AD36D9 /* HexModeContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeContentView.h; path = include/Viewer/HexModeContentView.h; sourceTree = "<group>"; };
-		CF9BF917226DE05C00AD36D9 /* HexModeContentView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = HexModeContentView.mm; path = source/HexModeContentView.mm; sourceTree = "<group>"; };
 		CF9BF91B22724A3D00AD36D9 /* HexModeViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeViewDelegate.h; path = include/Viewer/HexModeViewDelegate.h; sourceTree = "<group>"; };
 		CF9BF91C2275FD9500AD36D9 /* HexModeLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HexModeLayout.cpp; path = source/HexModeLayout.cpp; sourceTree = "<group>"; };
 		CF9BF91E2275FD9E00AD36D9 /* HexModeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HexModeLayout.h; path = include/Viewer/HexModeLayout.h; sourceTree = "<group>"; };
@@ -281,7 +280,6 @@
 				CFD79A8A21F65B4F0043A26D /* BigFileViewHex.mm */,
 				CFD79B112205B8360043A26D /* BigFileViewSheet.mm */,
 				CFD79A8721F65B4E0043A26D /* BigFileViewText.mm */,
-				CF9BF917226DE05C00AD36D9 /* HexModeContentView.mm */,
 				CF9BF908226B2B0C00AD36D9 /* HexModeFrame.cpp */,
 				CF9BF91C2275FD9500AD36D9 /* HexModeLayout.cpp */,
 				CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */,

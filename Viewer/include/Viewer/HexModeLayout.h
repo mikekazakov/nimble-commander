@@ -12,6 +12,7 @@ public:
     struct ScrollOffset {
         int row = 0;
         double smooth = 0.;
+        ScrollOffset WithoutSmoothOffset() const noexcept;
     };
     struct Source {
         std::shared_ptr<const HexModeFrame> frame;
@@ -32,7 +33,9 @@ public:
     ScrollOffset GetOffset() const noexcept;
     void SetOffset(ScrollOffset _new_offset);
     
+    /** Number of rows that can theoretically fit in the view without being clipped */
     int RowsInView() const noexcept;
+    /** Number of bytes that can theoretically be presented in the view without being clipped */
     int BytesInView() const noexcept;
     
     void SetFrame( std::shared_ptr<const HexModeFrame> _new_frame );
@@ -55,6 +58,13 @@ private:
 inline HexModeLayout::ScrollOffset HexModeLayout::GetOffset() const noexcept
 {
     return m_ScrollOffset;
+}
+ 
+inline HexModeLayout::ScrollOffset HexModeLayout::ScrollOffset::WithoutSmoothOffset() const noexcept
+{
+    ScrollOffset offset;
+    offset.row = row;
+    return offset;
 }
     
 }

@@ -1,5 +1,4 @@
 #include "HexModeView.h"
-//#include "HexModeContentView.h"
 #include "HexModeFrame.h"
 #include "HexModeLayout.h"
 
@@ -13,9 +12,8 @@ using namespace nc;
 using namespace nc::viewer;
 using nc::utility::FontGeometryInfo;
 
-static const auto g_TopInset = 4.;
+static const auto g_TopInset = 1.;
 static const auto g_LeftInset = 4.;
-static const auto g_RightInset = 4.;
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet();
 static std::shared_ptr<const TextModeWorkingSet>
@@ -125,9 +123,22 @@ static std::shared_ptr<const TextModeWorkingSet>
     return true;
 }
 
+- (BOOL) acceptsFirstResponder
+{
+    return true;
+}
+
+- (void)viewDidMoveToSuperview
+{
+    if( self.superview != nil ) {
+        if( self.delegate == nil ) {
+            throw std::logic_error("HexModeView was inserted without a delegete to work with");
+        }
+    }
+}
+
 - (void)backendContentHasChanged
 {
-//    m_ContentView.fileSize = (long)m_Backend->FileSize();
     [self rebuildWorkingSetAndFrame];
 }
 
@@ -135,13 +146,10 @@ static std::shared_ptr<const TextModeWorkingSet>
 {
     m_WorkingSet = BuildWorkingSetForBackendState(*m_Backend);
     
-    MachTimeBenchmark mtb;
     m_Frame = [self buildFrame];
-    mtb.ResetMilli();
     
     m_Layout->SetFrame(m_Frame);
     [self setNeedsDisplay:true];
-//    [self syncVerticalScrollerPosition];
     [self scrollPositionDidChange];
 }
 
@@ -158,69 +166,6 @@ static std::shared_ptr<const TextModeWorkingSet>
     return std::make_shared<HexModeFrame>(source);
 }
 
-//- (bool)haveContentToDraw
-//{
-//    if( m_Frame == nullptr )
-//        return true;
-//
-//    const auto view_top_y = m_ScrollView.contentView.bounds.origin.y;
-//    const auto view_top_index = long(view_top_y / m_Frame->FontInfo().LineHeight());
-//
-//    const long global_index_of_first_row =
-//    (long(m_Frame->RowAtIndex(0).BytesStart()) + m_Frame->WorkingSet().GlobalOffset()) /
-//    m_Frame->BytesPerRow();
-//    const long global_index_of_last_row = global_index_of_first_row + m_Frame->NumberOfRows();
-//    if( view_top_index >= global_index_of_first_row &&
-//       view_top_index < global_index_of_last_row ) {
-//        return true;
-//    }
-//
-////    const long index_start = global_row_index_start - global_index_of_first_row;
-////    const long index_end = global_row_index_end - global_index_of_first_row;
-//
-//    return false;
-//}
-
-//- (void)contentWasScrolled:(id)sender
-//{
-////    int a = 10;
-////    std::cout << "has content: " << [self haveContentToDraw] << std::endl;
-//    if( [self haveContentToDraw] == false ) {
-//        [self reloadData];
-//    }
-//}
-
-//- (void)reloadData
-//{
-//    const auto view_top_y = m_ScrollView.contentView.bounds.origin.y;
-//    const auto view_top_index = long(view_top_y / m_Frame->FontInfo().LineHeight());
-//    const auto view_top_offset = view_top_index * m_Frame->BytesPerRow();
-//    const auto new_offset = std::clamp(int64_t(view_top_offset -
-//                                               m_Frame->WorkingSet().BytesLength() / 10),
-//                                       (int64_t)0,
-//                                       (int64_t)(m_Backend->FileSize() -
-//                                                 m_Backend->RawSize()) );
-//
-////    const auto new_offset = std::max( view_top_offset, 0l );
-//
-////    const auto desired_window_offset = std::clamp(old_anchor_glob_offset -
-////                                                  (int64_t)m_Backend->RawSize() +
-////                                                  (int64_t)m_Backend->RawSize() / 4,
-////                                                  (int64_t)0,
-////                                                  (int64_t)(m_Backend->FileSize() -
-////                                                            m_Backend->RawSize()) );
-//
-//    const auto rc = [self.delegate hexModeView:self
-//            requestsSyncBackendWindowMovementAt:new_offset];
-//    if( rc != VFSError::Ok ) {
-//        std::cout << "failed to move the backend window: "
-//        << VFSError::ToNSError(rc).description.UTF8String << std::endl;
-//        return;
-//    }
-//
-//    [self rebuildWorkingSetAndFrame];
-//}
-
 - (void)syncVerticalScrollerPosition
 {
     const auto scroll_pos = m_Layout->CalcScrollerPosition();
@@ -228,21 +173,53 @@ static std::shared_ptr<const TextModeWorkingSet>
     m_VerticalScroller.knobProportion = scroll_pos.proportion;
 }
 
+- (void)moveUp:(id)sender
+{
+    m_Layout->SetOffset(m_Layout->GetOffset().WithoutSmoothOffset());
+    [self doMoveUpByOneLine];
+    [self scrollPositionDidChange];
+}
+
+- (void)moveDown:(id)sender
+{
+    m_Layout->SetOffset(m_Layout->GetOffset().WithoutSmoothOffset());
+    [self doMoveDownByOneLine];
+    [self scrollPositionDidChange];
+}
+
+- (void)pageDown:(nullable id)sender
+{
+    m_Layout->SetOffset(m_Layout->GetOffset().WithoutSmoothOffset());
+    int lines_to_scroll = m_Layout->RowsInView();
+    while ( lines_to_scroll --> 0 )
+        [self doMoveDownByOneLine];
+    [self scrollPositionDidChange];
+}
+
+- (void)pageUp:(nullable id)sender
+{
+    m_Layout->SetOffset(m_Layout->GetOffset().WithoutSmoothOffset());
+    int lines_to_scroll = m_Layout->RowsInView();
+    while ( lines_to_scroll --> 0 )
+        [self doMoveUpByOneLine];
+    [self scrollPositionDidChange];
+}
+
 - (void)onVerticalScroll:(id)_sender
 {
     switch( m_VerticalScroller.hitPart ) {
-//        case NSScrollerIncrementLine:
-//            [self moveDown:_sender];
-//            break;
-//        case NSScrollerIncrementPage:
-//            [self pageDown:_sender];
-//            break;
-//        case NSScrollerDecrementLine:
-//            [self moveUp:_sender];
-//            break;
-//        case NSScrollerDecrementPage:
-//            [self pageUp:_sender];
-//            break;
+        case NSScrollerIncrementLine:
+            [self moveDown:_sender];
+            break;
+        case NSScrollerIncrementPage:
+            [self pageDown:_sender];
+            break;
+        case NSScrollerDecrementLine:
+            [self moveUp:_sender];
+            break;
+        case NSScrollerDecrementPage:
+            [self pageUp:_sender];
+            break;
         case NSScrollerKnob: {
             auto scroller_pos = HexModeLayout::ScrollerPosition{m_VerticalScroller.doubleValue,
                 m_VerticalScroller.knobProportion};
@@ -270,7 +247,7 @@ static std::shared_ptr<const TextModeWorkingSet>
 - (void)drawRect:(NSRect)dirtyRect
 {
     const auto context = NSGraphicsContext.currentContext.CGContext;
-    CGContextSetFillColorWithColor(context, CGColorGetConstantColor(kCGColorBlack));
+    CGContextSetFillColorWithColor(context, m_Theme->ViewerBackgroundColor().CGColor );
     CGContextFillRect(context, NSRectToCGRect(dirtyRect));
     
     CGAffineTransform transform;
@@ -284,33 +261,7 @@ static std::shared_ptr<const TextModeWorkingSet>
     CGContextSetTextDrawingMode(context, kCGTextFill);
     CGContextSetShouldSmoothFonts(context, true);
     CGContextSetShouldAntialias(context, true);
-    
-//    if( m_Frame == nullptr || m_Frame->Empty() )
-//        return;
-    
- 
-    // + smooth offset
-//    const long global_row_index_start =
-//        m_Layout->GetOffset().row +
-//        (long)std::floor(dirtyRect.origin.y / m_Frame->FontInfo().LineHeight());
-//    const long global_row_index_end = global_row_index_start +
-//        (long)std::ceil(dirtyRect.size.height / m_Frame->FontInfo().LineHeight());
-//
-//    const long global_index_of_first_row =
-//        (long(m_Frame->RowAtIndex(0).BytesStart()) + m_Frame->WorkingSet().GlobalOffset()) /
-//        m_Frame->BytesPerRow();
 
-//    - (CGPoint)textOrigin
-//    {
-//        const auto origin = CGPointMake(g_LeftInset, g_TopInset);
-//        const auto vertical_shift = m_VerticalLineOffset * m_FontInfo.LineHeight() + m_PxOffset.y;
-//        const auto horizontal_shift = m_HorizontalCharsOffset * m_FontInfo.PreciseMonospaceWidth() +
-//        m_PxOffset.x;
-//        return CGPointMake(origin.x - horizontal_shift, origin.y - vertical_shift);
-//    }
-    
-//    const long index_start = global_row_index_start - global_index_of_first_row;
-//    const long index_end = global_row_index_end - global_index_of_first_row;
 
 //        const auto view_width = self.bounds.size.width;
     const auto origin = [self textOrigin];
@@ -380,19 +331,7 @@ static std::shared_ptr<const TextModeWorkingSet>
 - (void)frameDidChange
 {
     m_Layout->SetViewSize(self.frame.size);
-    
-//    [self syncVerticalScrollerPosition];
     [self scrollPositionDidChange];
-    
-//    if( [self shouldRebuilFrameForChangedFrame] ) {
-//        const auto new_frame = [self buildLayout];
-//        m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*m_Frame,
-//                                                                      m_VerticalLineOffset,
-//                                                                      *new_frame);
-//        m_Frame = new_frame;
-//        [self scrollPositionDidChange];
-//    }
-//    [self setNeedsDisplay:true];
 }
 
 /**
@@ -446,13 +385,9 @@ static std::shared_ptr<const TextModeWorkingSet>
 {
     [self syncVerticalScrollerPosition];
     
-    if( self.delegate ) {
+    if( self.delegate ) { // this can be called from the constructor where we don't have a delegate
         const auto bytes_position = m_Layout->CalcGlobalOffset();
-//        ((m_VerticalLineOffset >= 0 && m_VerticalLineOffset < m_Frame->LinesNumber()) ?
-//         m_Frame->Line(m_VerticalLineOffset).BytesStart() : 0)
-//        + m_Frame->WorkingSet().GlobalOffset();
-        const auto scroll_position = m_VerticalScroller.doubleValue;
-        
+        const auto scroll_position = m_VerticalScroller.doubleValue;        
         [self.delegate hexModeView:self
      didScrollAtGlobalBytePosition:bytes_position
               withScrollerPosition:scroll_position];
@@ -469,12 +404,16 @@ static std::shared_ptr<const TextModeWorkingSet>
     return m_Layout->GetOffset().row  > 0 || m_WorkingSet->GlobalOffset() > 0;
 }
 
-//- (bool) canScrollDown
-//{
-//    return
-//    (m_Backend->FilePos() + m_Backend->RawSize() < m_Backend->FileSize()) ||
-//    (m_VerticalLineOffset + self.numberOfLinesFittingInView < m_Frame->LinesNumber());
-//}
+/**
+ * Returns true if either the backend is not positioned at the bottom of the file or
+ * there's something to show in the backend below current screen position.
+ */
+- (bool) canScrollDown
+{
+    return
+    (m_Backend->FilePos() + m_Backend->RawSize() < m_Backend->FileSize()) ||
+    (m_Layout->GetOffset().row + m_Layout->RowsInView() < m_Frame->NumberOfRows());
+}
 
 - (bool)canMoveFileWindowUp
 {
@@ -496,7 +435,6 @@ static std::shared_ptr<const TextModeWorkingSet>
         return true;
     }
     else if( [self canMoveFileWindowUp] ) {
-        assert( self.delegate );
         const auto old_frame = m_Frame;
         const auto old_anchor_row_index  = std::clamp( scroll_offset.row,
                                                        0,
@@ -534,13 +472,63 @@ static std::shared_ptr<const TextModeWorkingSet>
     }
 }
 
+- (bool)doMoveDownByOneLine
+{
+    auto scroll_offset = m_Layout->GetOffset();    
+    if( scroll_offset.row + m_Layout->RowsInView() < m_Frame->NumberOfRows() ) {
+        scroll_offset.row++;
+        m_Layout->SetOffset(scroll_offset);
+        [self setNeedsDisplay:true];
+        return true;
+    }
+    else if( [self canMoveFileWindowDown] ) {
+        const auto old_frame = m_Frame;
+        const auto old_anchor_row_index  = std::clamp( scroll_offset.row,
+                                                      0,
+                                                      old_frame->NumberOfRows() - 1 );
+        const auto old_anchor_glob_offset =
+        (long)old_frame->RowAtIndex(old_anchor_row_index).BytesStart() +
+        old_frame->WorkingSet().GlobalOffset();
+        const auto desired_window_offset = std::clamp(old_anchor_glob_offset +
+                                                      (int64_t)m_Backend->RawSize() -
+                                                      (int64_t)m_Backend->RawSize() / 4,
+                                                      (int64_t)0,
+                                                      (int64_t)(m_Backend->FileSize() -
+                                                                m_Backend->RawSize()) );
+        
+        if( desired_window_offset <= (int64_t)m_Backend->FilePos() )
+            return false; // singular situation. don't handle for now.
+        
+        const auto rc = [self.delegate hexModeView:self
+               requestsSyncBackendWindowMovementAt:desired_window_offset];
+        if( rc != VFSError::Ok )
+            return false;
+        
+        [self rebuildWorkingSetAndFrame];
+        
+        auto new_offset = HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(*old_frame,
+                                                                                scroll_offset.row,
+                                                                                *m_Frame);
+        if( scroll_offset.row + m_Layout->RowsInView() < m_Frame->NumberOfRows() )
+            new_offset++;
+        
+        m_Layout->SetOffset({new_offset, scroll_offset.smooth});
+        [self setNeedsDisplay:true];
+        
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 - (void)scrollWheelVertical:(double)_delta_y
 {
+    [self setNeedsDisplay:true];
     const auto delta_y = _delta_y;
     if( delta_y > 0 ) { // going up
         double smooth_offset = m_Layout->GetOffset().smooth;
         if( [self canScrollUp] ) {
-            [self setNeedsDisplay:true];
             smooth_offset -= delta_y;
             while( smooth_offset <= -m_FontInfo.LineHeight() ) {
                 const auto did_move = [self doMoveUpByOneLine];
@@ -552,28 +540,26 @@ static std::shared_ptr<const TextModeWorkingSet>
         }
         else {
             smooth_offset = std::max( smooth_offset - delta_y, 0.0 );
-            [self setNeedsDisplay:true];
         }
         m_Layout->SetOffset({m_Layout->GetOffset().row, smooth_offset});
     }
-//    if( delta_y < 0 ) { // going down
-//        if( [self canScrollDown] ) {
-//            [self setNeedsDisplay:true];
-//            auto px_offset = m_PxOffset.y - delta_y;
-//            m_PxOffset.y = 0;
-//            while( px_offset >= m_FontInfo.LineHeight() ) {
-//                const auto did_move = [self doMoveDownByOneLine];
-//                if( did_move == false )
-//                    break;
-//                px_offset -= m_FontInfo.LineHeight();
-//            }
-//            m_PxOffset.y = std::clamp( px_offset, 0., m_FontInfo.LineHeight() );
-//        }
-//        else {
-//            m_PxOffset.y = std::clamp(m_PxOffset.y - delta_y, -m_FontInfo.LineHeight(), 0.);
-//            [self setNeedsDisplay:true];
-//        }
-//    }
+    if( delta_y < 0 ) { // going down
+        double smooth_offset = m_Layout->GetOffset().smooth;
+        if( [self canScrollDown] ) {
+            smooth_offset -= delta_y;
+            while( smooth_offset >= m_FontInfo.LineHeight() ) {
+                const auto did_move = [self doMoveDownByOneLine];
+                if( did_move == false )
+                    break;
+                smooth_offset -= m_FontInfo.LineHeight();
+            }
+            smooth_offset = std::clamp( smooth_offset, 0., m_FontInfo.LineHeight() );
+        }
+        else {
+            smooth_offset = std::clamp(smooth_offset - delta_y, -m_FontInfo.LineHeight(), 0.);
+        }
+        m_Layout->SetOffset({m_Layout->GetOffset().row, smooth_offset});
+    }
 }
 
 - (void)scrollWheel:(NSEvent *)_event
@@ -583,18 +569,29 @@ static std::shared_ptr<const TextModeWorkingSet>
     _event.scrollingDeltaY * m_FontInfo.LineHeight();
     [self scrollWheelVertical:delta_y];
     
-//    const auto delta_x = _event.hasPreciseScrollingDeltas ?
-//    _event.scrollingDeltaX :
-//    _event.scrollingDeltaX * m_FontInfo.MonospaceWidth();
-//    [self scrollWheelHorizontal:delta_x];
-    
-//    assert( std::abs(m_PxOffset.y) <= m_FontInfo.LineHeight() );
     [self scrollPositionDidChange];
 }
 
+- (void)keyDown:(NSEvent *)event
+{
+    if( event.charactersIgnoringModifiers.length != 1 ) {
+        [super keyDown:event];
+        return;
+    }
+    switch( [event.charactersIgnoringModifiers characterAtIndex:0] ) {
+        case NSHomeFunctionKey:
+            [self scrollToGlobalBytesOffset:int64_t(0)];
+            break;
+        case NSEndFunctionKey:
+            [self scrollToGlobalBytesOffset:int64_t(m_Backend->FileSize())];
+            break;
+        default:
+            [super keyDown:event];
+            return;
+    }
+}
 
 @end
-
 
 static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState
     (const BigFileViewDataBackend& _backend)

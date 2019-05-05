@@ -6,6 +6,7 @@
 #include <VFS/FileWindow.h>
 #include "Modes.h"
 #include "TextModeViewDelegate.h"
+#include "HexModeViewDelegate.h"
 
 namespace nc::utility {
     class TemporaryFileStorage;
@@ -17,7 +18,7 @@ namespace nc::viewer {
     class Theme;
 }
 
-@interface BigFileView : NSView<NCViewerTextModeViewDelegate>
+@interface BigFileView : NSView<NCViewerTextModeViewDelegate, NCViewerHexModeViewDelegate>
 
 - (instancetype) init NS_UNAVAILABLE;
 - (instancetype) initWithFrame:(NSRect)frame NS_UNAVAILABLE;
@@ -39,10 +40,10 @@ namespace nc::viewer {
 - (void) RequestWindowMovementAt: (uint64_t) _pos;
 
 // appearance section
-- (CTFontRef)   TextFont;
-- (CGColorRef)  TextForegroundColor;
-- (CGColorRef) SelectionBkFillColor;
-- (CGColorRef) BackgroundFillColor;
+//- (CTFontRef)   TextFont;
+//- (CGColorRef)  TextForegroundColor;
+//- (CGColorRef) SelectionBkFillColor;
+//- (CGColorRef) BackgroundFillColor;
 
 /**
  * Specify if view should draw a border.

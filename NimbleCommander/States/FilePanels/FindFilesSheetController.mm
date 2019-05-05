@@ -17,6 +17,7 @@
 #include <NimbleCommander/Core/VFSInstancePromise.h>
 #include <Utility/CocoaAppearanceManager.h>
 #include <Utility/StringExtras.h>
+#include <Utility/ObjCpp.h>
 
 static const auto g_StateMaskHistory = "filePanel.findFilesSheet.maskHistory";
 static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";

@@ -2,6 +2,8 @@
 #pragma once
 
 #include <Utility/SheetController.h>
+#include <vector>
+#include <string>
 
 @interface ExternalToolParameterValueSheetController : SheetController
 

@@ -13,6 +13,7 @@
 #include <VFS/VFS.h>
 #include "Theme.h"
 #include "TextModeView.h"
+#include "HexModeView.h"
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";
@@ -336,21 +337,21 @@ using nc::vfs::easy::CopyFileToTempStorage;
 //    [self syncVerticalScrollerState];
 //}
 
-- (CTFontRef) TextFont{
-    return (__bridge CTFontRef)m_Theme->Font();
-}
-
-- (CGColorRef) TextForegroundColor{
-    return m_Theme->TextColor().CGColor;
-}
-
-- (CGColorRef) SelectionBkFillColor{
-  return m_Theme->ViewerSelectionColor().CGColor;
-}
-
-- (CGColorRef) BackgroundFillColor{
-    return m_Theme->ViewerBackgroundColor().CGColor;
-}
+//- (CTFontRef) TextFont{
+//    return (__bridge CTFontRef)m_Theme->Font();
+//}
+//
+//- (CGColorRef) TextForegroundColor{
+//    return m_Theme->TextColor().CGColor;
+//}
+//
+//- (CGColorRef) SelectionBkFillColor{
+//  return m_Theme->ViewerSelectionColor().CGColor;
+//}
+//
+//- (CGColorRef) BackgroundFillColor{
+//    return m_Theme->ViewerBackgroundColor().CGColor;
+//}
 
 - (void) RequestWindowMovementAt: (uint64_t) _pos
 {
@@ -436,22 +437,42 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 - (void) setMode: (BigFileViewModes) _mode
 {
-    if( m_View != nullptr )
+    if( _mode == BigFileViewModes::Text && [m_View isKindOfClass:NCViewerTextModeView.class] )
+        return;
+    if( _mode == BigFileViewModes::Hex  && [m_View isKindOfClass:NCViewerHexModeView.class] )
         return;
     
-    auto view = [[NCViewerTextModeView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
-                                                    backend:*m_Data
-                                                      theme:*m_Theme];
-    view.delegate = self;
-    [self addSubview:view];
-    NSDictionary *views = NSDictionaryOfVariableBindings(view);
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                          @"|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
-    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                          @"V:|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
-    m_View = view;
+    if( m_View ) {
+        [m_View removeFromSuperview];
+    }
     
-    return;
+    if( _mode == BigFileViewModes::Text ) {
+        auto view = [[NCViewerTextModeView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
+                                                        backend:*m_Data
+                                                          theme:*m_Theme];
+        view.delegate = self;
+        [self addSubview:view];
+        NSDictionary *views = NSDictionaryOfVariableBindings(view);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                              @"|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                              @"V:|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
+        m_View = view;
+    }
+    if( _mode == BigFileViewModes::Hex ) {
+        auto view = [[NCViewerHexModeView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
+                                                       backend:*m_Data
+                                                         theme:*m_Theme];
+        view.delegate = self;
+        [self addSubview:view];
+        NSDictionary *views = NSDictionaryOfVariableBindings(view);
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                              @"|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                              @"V:|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
+        m_View = view;
+    }
+    
 //    if( _mode == BigFileViewModes::Text    && dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
 //        return;
 //    if( _mode == BigFileViewModes::Hex     && dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
@@ -708,6 +729,24 @@ using nc::vfs::easy::CopyFileToTempStorage;
     self.selectionInFile = CFRangeMake(-1, 0);
 }
 
+- (void)setVerticalPositionPercentage:(double)_percentage
+{
+    if( _percentage != m_VerticalPositionPercentage ) {
+        [self willChangeValueForKey:@"verticalPositionPercentage"];
+        m_VerticalPositionPercentage = _percentage;
+        [self didChangeValueForKey:@"verticalPositionPercentage"];
+    }
+}
+
+-(void)setVerticalPositionInBytesFromImpl:(int64_t)_position
+{
+    if( _position != m_VerticalPositionInBytes ) {
+        [self willChangeValueForKey:@"verticalPositionInBytes"];
+        m_VerticalPositionInBytes = _position;
+        [self didChangeValueForKey:@"verticalPositionInBytes"];
+    }
+}
+
 - (NSSize)contentBounds
 {
     NSSize sz = self.bounds.size;
@@ -734,6 +773,13 @@ requestsSyncBackendWindowMovementAt:(int64_t)_position
                               notifyView:false];
 }
 
+- (int) hexModeView:(NCViewerHexModeView*)_view
+requestsSyncBackendWindowMovementAt:(int64_t)_position
+{
+    return [self moveBackendWindowSyncAt:_position
+                              notifyView:false];
+}
+
 - (int)moveBackendWindowSyncAt:(int64_t)_position
                     notifyView:(bool)_notify_view
 {
@@ -752,17 +798,16 @@ requestsSyncBackendWindowMovementAt:(int64_t)_position
 didScrollAtGlobalBytePosition:(int64_t)_position
 withScrollerPosition:(double)_scroller_position
 {
-    if( _position != m_VerticalPositionInBytes ) {
-        [self willChangeValueForKey:@"verticalPositionInBytes"];
-        m_VerticalPositionInBytes = _position;
-        [self didChangeValueForKey:@"verticalPositionInBytes"];
-    }
-    
-    if( _scroller_position != m_VerticalPositionPercentage ) {
-        [self willChangeValueForKey:@"verticalPositionPercentage"];
-        m_VerticalPositionPercentage = _scroller_position;
-        [self didChangeValueForKey:@"verticalPositionPercentage"];
-    }
+    [self setVerticalPositionInBytesFromImpl:_position];
+    [self setVerticalPositionPercentage:_scroller_position];
+}
+
+- (void) hexModeView:(NCViewerHexModeView*)_view
+didScrollAtGlobalBytePosition:(int64_t)_position
+ withScrollerPosition:(double)_scroller_position
+{
+    [self setVerticalPositionInBytesFromImpl:_position];
+    [self setVerticalPositionPercentage:_scroller_position];
 }
 
 - (CFRange) textModeViewProvideSelection:(NCViewerTextModeView*)_view

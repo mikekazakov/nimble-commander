@@ -25,18 +25,18 @@ TEST_CASE(PREFIX"Verify RowsBuilder against Hello, World!")
     const auto ws = ProduceWorkingSet(string.data(), (int)string.length());
     const auto font = CTFontCreateWithName(CFSTR("Menlo-Regular"), 13., nullptr);
     const auto release_font = at_scope_end([&]{ CFRelease(font); });
-    HexModeFrame::Source frame_source;
-    frame_source.working_set = ws;
-    frame_source.font = font;
-    frame_source.font_info = nc::utility::FontGeometryInfo{font};
-    frame_source.foreground_color = CGColorGetConstantColor(kCGColorBlack);
+    HexModeFrame::Source source;
+    source.working_set = ws;
+    source.raw_bytes_begin = (const std::byte*)string.data();
+    source.raw_bytes_end = (const std::byte*)string.data() + string.size();
+    source.font = font;
+    source.font_info = nc::utility::FontGeometryInfo{font};
+    source.foreground_color = CGColorGetConstantColor(kCGColorBlack);
+    source.digits_in_address = 6;
     SECTION("8 bytes per column, 2 columns") {
-        frame_source.bytes_per_column = 8;
-        frame_source.number_of_columns = 2;
-        HexModeFrame::RowsBuilder builder(frame_source,
-                                          (const std::byte*)string.data(),
-                                          (const std::byte*)string.data() + string.size(),
-                                          6);
+        source.bytes_per_column = 8;
+        source.number_of_columns = 2;
+        HexModeFrame::RowsBuilder builder(source);
         const auto row = builder.Build(std::make_pair(0, 13),
                                        std::make_pair(0, 13),
                                        std::make_pair(0, 13));
@@ -47,12 +47,9 @@ TEST_CASE(PREFIX"Verify RowsBuilder against Hello, World!")
         CHECK( Equal(row.ColumnString(1), CFSTR("6F 72 6C 64 21")) );
     }
     SECTION("4 bytes per column, 4 columns") {
-        frame_source.bytes_per_column = 4;
-        frame_source.number_of_columns = 4;
-        HexModeFrame::RowsBuilder builder(frame_source,
-                                          (const std::byte*)string.data(),
-                                          (const std::byte*)string.data() + string.size(),
-                                          6);
+        source.bytes_per_column = 4;
+        source.number_of_columns = 4;
+        HexModeFrame::RowsBuilder builder(source);
         const auto row = builder.Build(std::make_pair(0, 13),
                                        std::make_pair(0, 13),
                                        std::make_pair(0, 13));
@@ -65,12 +62,9 @@ TEST_CASE(PREFIX"Verify RowsBuilder against Hello, World!")
         CHECK( Equal(row.ColumnString(3), CFSTR("21")) );
     }
     SECTION("4 bytes per column, 2 columns, 1st row") {
-        frame_source.bytes_per_column = 4;
-        frame_source.number_of_columns = 2;
-        HexModeFrame::RowsBuilder builder(frame_source,
-                                          (const std::byte*)string.data(),
-                                          (const std::byte*)string.data() + string.size(),
-                                          6);
+        source.bytes_per_column = 4;
+        source.number_of_columns = 2;
+        HexModeFrame::RowsBuilder builder(source);
         const auto row = builder.Build(std::make_pair(0, 8),
                                        std::make_pair(0, 8),
                                        std::make_pair(0, 8));
@@ -81,12 +75,9 @@ TEST_CASE(PREFIX"Verify RowsBuilder against Hello, World!")
         CHECK( Equal(row.ColumnString(1), CFSTR("6F 2C 20 57")) );
     }
     SECTION("4 bytes per column, 2 columns, 2nd row") {
-        frame_source.bytes_per_column = 4;
-        frame_source.number_of_columns = 2;
-        HexModeFrame::RowsBuilder builder(frame_source,
-                                          (const std::byte*)string.data(),
-                                          (const std::byte*)string.data() + string.size(),
-                                          6);
+        source.bytes_per_column = 4;
+        source.number_of_columns = 2;
+        HexModeFrame::RowsBuilder builder(source);
         const auto row = builder.Build(std::make_pair(8, 5),
                                        std::make_pair(8, 5),
                                        std::make_pair(8, 5));

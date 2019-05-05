@@ -64,7 +64,7 @@ public:
     }
     
     void swap(CFPtr &_rhs) noexcept {
-        std::swap( m_Ptr, &_rhs.m_Ptr );
+        std::swap( m_Ptr, _rhs.m_Ptr );
     }
     
     static CFPtr adopt(PointerType _ptr) noexcept {

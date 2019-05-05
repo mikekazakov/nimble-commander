@@ -4,6 +4,7 @@
 #include <Habanero/algo.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/fcntl.h>
 #include <sys/dirent.h>
 #include <dirent.h>
 #include <exception>

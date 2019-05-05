@@ -2,6 +2,7 @@
 #pragma once
 
 #include "../PanelPreview.h"
+#include <Cocoa/Cocoa.h>
 
 namespace nc::panel {
     class QuickLookVFSBridge;

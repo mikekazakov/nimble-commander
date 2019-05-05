@@ -5,6 +5,7 @@
 #include <string_view>
 #include <optional>
 #include <stdio.h>
+#include <unistd.h>
 
 namespace nc::utility {
 
@@ -81,3 +82,4 @@ inline TemporaryFileStorage::OpenedFile &
 }
 
 }
+

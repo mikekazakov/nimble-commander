@@ -104,6 +104,13 @@ public:
     /** Returns a bytes offset of end of this row inside a working set */
     int BytesEnd() const noexcept;
     
+    /** Returns a unicode chars start index inside a working set */
+    int CharsStart() const noexcept;
+    /** Returns a unicode chars end index inside a working set */
+    int CharsEnd() const noexcept;
+    /** Returns a numbers of unicode chars covered by this row */
+    int CharsNum() const noexcept;
+    
     enum {
         AddressIndex = 0,
         SnippetIndex = 1,
@@ -227,6 +234,21 @@ inline int HexModeFrame::Row::BytesEnd() const noexcept
     return m_RowBytesStart + m_RowBytesNum;
 }
     
+inline int HexModeFrame::Row::CharsStart() const noexcept
+{
+    return m_CharsStart;
+}
+
+inline int HexModeFrame::Row::CharsNum() const noexcept
+{
+    return m_CharsNum;
+}
+    
+inline int HexModeFrame::Row::CharsEnd() const noexcept
+{
+    return m_CharsStart + m_CharsNum;
+}
+
 inline int HexModeFrame::Row::BytesInColum(int _column) const
 {
     const auto chars_per_byte = 3;

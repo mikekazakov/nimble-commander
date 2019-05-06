@@ -6,6 +6,9 @@
 
 namespace nc {
 
+bool operator==(const CFRange &_lhs, const CFRange &_rhs) noexcept;
+bool operator!=(const CFRange &_lhs, const CFRange &_rhs) noexcept;
+    
 inline CFRange CFRangeIntersect(const CFRange &_lhs, const CFRange &_rhs) noexcept
 {
     const auto start = std::max(_lhs.location, _rhs.location);
@@ -26,6 +29,11 @@ inline bool CFRangeEmpty(const CFRange &_range) noexcept
 inline bool CFRangeInside(const CFRange &_range, CFIndex _index) noexcept
 {
     return _index >= _range.location &&  _index < _range.location + _range.length;
+}
+
+inline bool CFRangeInside(const CFRange &_outer, const CFRange &_inner) noexcept
+{
+    return CFRangeIntersect(_outer, _inner) == _inner;
 }
 
 inline CFIndex CFRangeMax(const CFRange &_range) noexcept

@@ -3,6 +3,7 @@
 #include "HexModeLayout.h"
 
 #include <Habanero/algo.h>
+#include <Habanero/CFRange.h>
 #include <Habanero/mach_time.h>
 
 #include <iostream>
@@ -236,6 +237,7 @@ static std::shared_ptr<const TextModeWorkingSet>
     auto line_pos = CGPointMake( origin.x, origin.y + lines_start * m_FontInfo.LineHeight() );
 
     const auto bytes_selection = [self localBytesSelection];
+    const auto chars_selection = [self localCharsSelection];    
     const auto offsets = m_Layout->CalcHorizontalOffsets();
     
     for( int row_index = lines_start; row_index < lines_end;
@@ -271,6 +273,21 @@ static std::shared_ptr<const TextModeWorkingSet>
 
             CGContextSetTextPosition( context, offsets.columns.at(column_index), text_origin.y );
             CTLineDraw(row.ColumnLine(column_index), context );
+        }
+
+        const auto sel_bg = m_Layout->CalcSnippetSelectionBackground(chars_selection,
+                                                                     row_index, 
+                                                                     offsets);
+        if( sel_bg.first < sel_bg.second ) {
+            CGContextSaveGState(context);
+            CGContextSetShouldAntialias(context, false);
+            CGContextSetFillColorWithColor(context, m_Theme->ViewerSelectionColor().CGColor );
+            CGContextFillRect(context,
+                              CGRectMake(sel_bg.first,
+                                         line_pos.y,
+                                         sel_bg.second - sel_bg.first,
+                                         m_FontInfo.LineHeight()));
+            CGContextRestoreGState(context);
         }
         
         CGContextSetTextPosition( context, offsets.snippet, text_origin.y );        
@@ -558,8 +575,8 @@ static std::shared_ptr<const TextModeWorkingSet>
 {
     const auto event_mask = NSLeftMouseDraggedMask | NSLeftMouseUpMask;
     const auto modifying_existing_selection = bool(_event.modifierFlags & NSShiftKeyMask);
-    const auto first_down_view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
-    if (true /*if column */) {
+    const auto first_down_view_coords = [self convertPoint:_event.locationInWindow fromView:nil];    
+    if( m_Layout->HitTest(first_down_view_coords.x) == HexModeLayout::HitPart::Column ) {
         const auto first_ind = m_Layout->ByteOffsetFromColumnHit(first_down_view_coords);
         const auto original_selection = [self localBytesSelection];
         for( auto event = _event; event && event.type != NSLeftMouseUp;
@@ -588,6 +605,17 @@ static std::shared_ptr<const TextModeWorkingSet>
     const auto global_byte_selection = [self.delegate hexModeViewProvideSelection:self];
     const auto &ws = m_Frame->WorkingSet();
     return ws.ToLocalBytesRange(global_byte_selection);
+}
+
+- (CFRange)localCharsSelection
+{
+    const auto bytes = [self localBytesSelection];
+    if( CFRangeEmpty(bytes) )
+        return {-1, 0};
+    
+    const auto first = m_WorkingSet->ToLocalCharIndex( (int)bytes.location );
+    const auto last = m_WorkingSet->ToLocalCharIndex( (int)CFRangeMax(bytes) );
+    return CFRangeMake(first, last-first);
 }
 
 - (void) selectionHasChanged

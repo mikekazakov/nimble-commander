@@ -47,32 +47,63 @@ TEST_CASE(PREFIX"Correctly calculates a selection background range")
     const auto layout = ProduceLayout(frame);
     const auto offsets = layout->CalcHorizontalOffsets();
     const auto fc = offsets.columns.front();
+    const auto fs = offsets.snippet;
     
-    SECTION("1000,1") {
+    {
         const auto sel = layout->CalcColumnSelectionBackground({1000, 1}, 0, 0, offsets);
-        CHECK( sel.first == 0. );
+        CHECK( sel.first  == 0. );
         CHECK( sel.second == 0. );
-    }    
-    SECTION("0,1") {
+    }
+    {
         const auto sel = layout->CalcColumnSelectionBackground({0, 1}, 0, 0, offsets);
-        CHECK( sel.first ==  Approx(fc + 0.) );
+        CHECK( sel.first  ==  Approx(fc + 0.) );
         CHECK( sel.second == Approx(fc + 16.) );
     }
-    SECTION("0,2") {
+    {
         const auto sel = layout->CalcColumnSelectionBackground({0, 2}, 0, 0, offsets);
-        CHECK( sel.first == Approx(fc + 0.) );
+        CHECK( sel.first  == Approx(fc + 0.) );
         CHECK( sel.second == Approx(fc + 40.) );
     }
-    SECTION("7,1") {
+    {
         const auto sel = layout->CalcColumnSelectionBackground({7, 1}, 0, 0, offsets);
-        CHECK( sel.first == Approx(fc + 164.) );
+        CHECK( sel.first  == Approx(fc + 164.) );
         CHECK( sel.second == Approx(fc + 181.) );
     }
-    SECTION("0,8") {
+    {
         const auto sel = layout->CalcColumnSelectionBackground({0, 8}, 0, 0, offsets);
-        CHECK( sel.first == Approx(fc + 0.) );
+        CHECK( sel.first  == Approx(fc + 0.) );
         CHECK( sel.second == Approx(fc + 181.) );
-    }    
+    }
+    {
+        const auto sel = layout->CalcSnippetSelectionBackground({1000, 1}, 0, offsets);
+        CHECK( sel.first  == 0. );
+        CHECK( sel.second == 0. );
+    }
+    {
+        const auto sel = layout->CalcSnippetSelectionBackground({0, 1}, 0, offsets);
+        CHECK( sel.first  == Approx(fs + 0.) );
+        CHECK( sel.second == Approx(fs + 8.) );
+    }
+    {
+        const auto sel = layout->CalcSnippetSelectionBackground({0, 2}, 0, offsets);
+        CHECK( sel.first  == Approx(fs + 0.) );
+        CHECK( sel.second == Approx(fs + 16.) );
+    }
+    {
+        const auto sel = layout->CalcSnippetSelectionBackground({0, 1000}, 0, offsets);
+        CHECK( sel.first  == Approx(fs + 0.) );
+        CHECK( sel.second == Approx(fs + 126.) );
+    }
+    {
+        const auto sel = layout->CalcSnippetSelectionBackground({1, 1000}, 0, offsets);
+        CHECK( sel.first  == Approx(fs + 7.) );
+        CHECK( sel.second == Approx(fs + 126.) );
+    }
+    {
+        const auto sel = layout->CalcSnippetSelectionBackground({1, 3}, 0, offsets);
+        CHECK( sel.first  == Approx(fs + 7.) );
+        CHECK( sel.second == Approx(fs + 32.) );
+    }
 }
 
 static std::shared_ptr<const TextModeWorkingSet> ProduceWorkingSet(const char *_chars,

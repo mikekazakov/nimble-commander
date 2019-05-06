@@ -96,7 +96,8 @@ std::optional<int> HexModeLayout::
     return std::nullopt;
 }
  
-int64_t HexModeLayout::CalcGlobalOffsetForScrollerPosition( ScrollerPosition _scroller_position ) const noexcept
+int64_t HexModeLayout::
+    CalcGlobalOffsetForScrollerPosition( ScrollerPosition _scroller_position ) const noexcept
 {
     const int64_t bytes_total = m_FileSize;
     const int64_t bytes_in_view = BytesInView();
@@ -302,6 +303,41 @@ std::pair<double, double> HexModeLayout::
     return {std::floor(x1), std::ceil(x2)};
 }
     
+std::pair<double, double> HexModeLayout::
+    CalcSnippetSelectionBackground(const CFRange _chars_selection,
+                                   const int _row_index,
+                                   const HorizontalOffsets& _offsets) const
+{
+    const auto &row = m_Frame->RowAtIndex(_row_index);
+    const auto chars_range = CFRangeMake(row.CharsStart(), row.CharsNum());
+    const auto sel_range = CFRangeIntersect(_chars_selection, chars_range);
+    if( sel_range.length <= 0 ) // [      ]
+        return {0., 0.};
+    
+    const auto ctline = row.SnippetLine();
+    if( CFRangeInside(_chars_selection, chars_range) ) { // [******]
+        const auto x1 = 0.;
+        const auto x2 = CTLineGetOffsetForStringIndex(ctline, row.CharsNum(), nullptr);
+        return { std::floor(x1) + _offsets.snippet, std::ceil(x2) + _offsets.snippet };
+    }
+    else if( sel_range.location == chars_range.location ) { // [****  ]
+        const auto x1 = 0.;
+        const auto x2 = CTLineGetOffsetForStringIndex(ctline,
+                                                      CFRangeMax(sel_range) - row.CharsStart(),
+                                                      nullptr);
+        return { std::floor(x1) + _offsets.snippet, std::ceil(x2) + _offsets.snippet };
+    }
+    else { // [ ***  ]
+        const auto x1 = CTLineGetOffsetForStringIndex(ctline,
+                                                      sel_range.location - row.CharsStart(),
+                                                      nullptr);
+        const auto x2 = CTLineGetOffsetForStringIndex(ctline,
+                                                      CFRangeMax(sel_range) - row.CharsStart(),
+                                                      nullptr);
+        return { std::floor(x1) + _offsets.snippet, std::ceil(x2) + _offsets.snippet };        
+    }
+}
+
 std::pair<int, int> HexModeLayout::MergeSelection(const CFRange _existing_selection,
                                                   const bool _modifiying_existing,
                                                   const int _first_mouse_hit_index,

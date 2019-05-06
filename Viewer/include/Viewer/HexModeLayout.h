@@ -76,13 +76,22 @@ public:
     HitPart HitTest(double _x) const;
     
     /**
-     * Returns a range [x1, x2) which should be highlighted to reflect a selected
-     * range(_bytes_selection) inisde a workign set. Returns {0., 0.} if there's no intersection.
+     * Returns a range [x1, x2) which should be highlighted in columns to reflect a selected
+     * range(_bytes_selection) inside a working set. Returns {0., 0.} if there's no intersection.
      */
     std::pair<double, double> CalcColumnSelectionBackground(CFRange _bytes_selection,
                                                             int _row,
                                                             int _colum,
                                                             const HorizontalOffsets& _offsets)const;
+
+    /**
+     * Returns a range [x1, x2) which should be highlighted in a snippet to reflect a selected
+     * range(_chars_selection) inside a working set. Returns {0., 0.} if there's no intersection.
+     */
+    std::pair<double, double>
+    CalcSnippetSelectionBackground(CFRange _chars_selection,
+                                   int _row,
+                                   const HorizontalOffsets& _offsets) const;
     
     /**
      * Returns an index of a row which corresponds to the specified Y coordinate.

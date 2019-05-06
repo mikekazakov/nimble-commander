@@ -1,4 +1,5 @@
 #include "HexModeLayout.h"
+#include <Habanero/CFRange.h>
 #include <cmath>
 
 namespace nc::viewer {
@@ -181,5 +182,161 @@ int HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame
     }
 }
 
+void HexModeLayout::SetGaps( Gaps _gaps )
+{
+    m_Gaps = _gaps;
+}    
+
+HexModeLayout::HorizontalOffsets HexModeLayout::CalcHorizontalOffsets() const noexcept
+{
+    HorizontalOffsets offsets;
+    offsets.address = m_Gaps.left_inset;
     
+    const auto symb_width = m_Frame->FontInfo().PreciseMonospaceWidth();
+    const auto address_width = m_Frame->DigitsInAddress() * symb_width;
+    const auto column_width = m_Frame->BytesPerColumn() * (symb_width * 3) - symb_width; 
+    const auto number_of_columns = m_Frame->NumberOfColumns();
+    
+    double x = offsets.address + address_width +  m_Gaps.address_columns_gap;
+    for( int i = 0; i < number_of_columns; ++i ) {        
+        offsets.columns.push_back( std::floor(x) );
+        x += column_width;
+        if( i != number_of_columns - 1 )
+            x += m_Gaps.between_columns_gap;
+    }
+    
+    x += m_Gaps.columns_snippet_gap;
+    offsets.snippet = std::floor(x);
+    return offsets;
+}
+    
+HexModeLayout::HitPart HexModeLayout::HitTest(double _x) const
+{
+    const auto offsets = CalcHorizontalOffsets();
+    const auto gaps = m_Gaps;
+    if( _x < offsets.columns.front() - gaps.address_columns_gap )
+        return HitPart::Address;
+    if( _x < offsets.columns.front() )
+        return HitPart::Gap;
+    if( _x < offsets.snippet - gaps.columns_snippet_gap )
+        return HitPart::Column;
+    if( _x < offsets.snippet )
+        return HitPart::Gap;
+    return HitPart::Snippet;
+}
+
+int HexModeLayout::RowIndexFromYCoordinate(const double _y) const
+{
+    const auto scrolled = _y + 
+        m_ScrollOffset.row * m_Frame->FontInfo().LineHeight() + m_ScrollOffset.smooth;
+    const auto index = (int)std::floor(scrolled / m_Frame->FontInfo().LineHeight());
+    if( index < 0 )
+        return -1;
+    if( index >= m_Frame->NumberOfRows() )
+        return m_Frame->NumberOfRows();
+    return index;
+}
+
+int HexModeLayout::ByteOffsetFromColumnHit(CGPoint _position) const
+{
+    const auto row_index = RowIndexFromYCoordinate(_position.y);
+    if( row_index < 0 )
+        return 0;
+    if( row_index >= m_Frame->NumberOfRows() )
+        return m_Frame->WorkingSet().BytesLength();
+    
+    const auto x = _position.x;
+    const auto &row = m_Frame->RowAtIndex(row_index);    
+    const auto x_offsets = CalcHorizontalOffsets();
+    if( x < x_offsets.columns.front() )
+        return row.BytesStart();
+    if( x >= x_offsets.snippet - m_Gaps.columns_snippet_gap )
+        return row.BytesEnd();
+    
+    const auto symb_width = m_Frame->FontInfo().PreciseMonospaceWidth();
+    const auto bytes_per_column = m_Frame->BytesPerColumn();
+    const auto column_width = m_Frame->BytesPerColumn() * (symb_width * 3) - symb_width;
+    
+    for( int i = 0; i < row.ColumnsNumber(); ++i ) {
+        if( i != row.ColumnsNumber() - 1 && x >= x_offsets.columns[i+1] )
+            continue;
+        
+        if( x >= x_offsets.columns[i] + column_width ) {
+            // hit into an inter-column-gap after the column
+            return row.BytesStart() + std::min( bytes_per_column * (i+1), row.BytesNum() );
+        }
+        else {
+            // hit into the column itself
+            const auto local_x = x - x_offsets.columns[i];
+            const auto triplet_fract = local_x / (symb_width * 3);
+            const auto round_up = std::floor(triplet_fract) != std::floor(triplet_fract+0.33); 
+            const auto local_byte = (int)std::floor(triplet_fract) + (round_up ? 1 : 0);
+            return row.BytesStart() + std::min( bytes_per_column * i + local_byte, row.BytesNum() );
+        }
+    }
+    return row.BytesEnd();    
+}
+
+std::pair<double, double> HexModeLayout::
+    CalcColumnSelectionBackground(const CFRange _bytes_selection,
+                                  const int _row_index,
+                                  const int _columm_index,
+                                  const HorizontalOffsets& _offsets) const
+{
+    const auto &row = m_Frame->RowAtIndex(_row_index);
+    
+    const auto bytes_range = CFRangeMake(row.BytesStart() + 
+                                         _columm_index * m_Frame->BytesPerColumn(),
+                                         row.BytesInColum(_columm_index)); 
+    const auto sel_range = CFRangeIntersect(_bytes_selection, bytes_range);
+    if( sel_range.length <= 0 )
+        return {0., 0.};
+
+    const auto local_start_byte = int(sel_range.location - 
+                                      row.BytesStart() - 
+                                      _columm_index * m_Frame->BytesPerColumn());  
+    
+    const auto symb_width = m_Frame->FontInfo().PreciseMonospaceWidth();    
+    auto x1 = _offsets.columns.at(_columm_index) + local_start_byte * symb_width * 3;
+    auto x2 = x1 + sel_range.length * symb_width * 3 - symb_width;
+    return {std::floor(x1), std::ceil(x2)};
+}
+    
+std::pair<int, int> HexModeLayout::MergeSelection(const CFRange _existing_selection,
+                                                  const bool _modifiying_existing,
+                                                  const int _first_mouse_hit_index,
+                                                  const int _current_mouse_hit_index) noexcept
+{
+    if( _modifiying_existing == false || 
+       _existing_selection.location < 0 ||  
+       _existing_selection.length <= 0 ) { 
+        return {std::min(_first_mouse_hit_index, _current_mouse_hit_index),
+                std::max(_first_mouse_hit_index, _current_mouse_hit_index)};
+    }
+    
+    if( CFRangeInside(_existing_selection, _first_mouse_hit_index) ) {
+        const auto attach_top = _first_mouse_hit_index - _existing_selection.location >
+        _existing_selection.location + _existing_selection.length - _first_mouse_hit_index;
+        const auto base = attach_top ?
+        (int)_existing_selection.location :
+        (int)_existing_selection.location + (int)_existing_selection.length;
+        return {std::min(base, _current_mouse_hit_index), std::max(base, _current_mouse_hit_index)};
+        
+    }
+    else if( _first_mouse_hit_index < CFRangeMax(_existing_selection) &&
+            _current_mouse_hit_index < CFRangeMax(_existing_selection) ) {
+        const auto base = (int)CFRangeMax(_existing_selection); 
+        return {std::min(base, _current_mouse_hit_index), std::max(base, _current_mouse_hit_index)};
+    }
+    else if( _first_mouse_hit_index > _existing_selection.location &&
+            _current_mouse_hit_index > _existing_selection.location ) {
+        const auto base = (int)_existing_selection.location;
+        return {std::min(base, _current_mouse_hit_index), std::max(base, _current_mouse_hit_index)};
+    }
+    else {
+        return {std::min(_first_mouse_hit_index, _current_mouse_hit_index),
+                std::max(_first_mouse_hit_index, _current_mouse_hit_index)};
+    }
+}
+
 }

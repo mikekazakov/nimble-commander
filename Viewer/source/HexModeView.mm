@@ -2,6 +2,7 @@
 #include "HexModeFrame.h"
 #include "HexModeLayout.h"
 
+#include <Habanero/algo.h>
 #include <Habanero/mach_time.h>
 
 #include <iostream>
@@ -13,7 +14,6 @@ using namespace nc::viewer;
 using nc::utility::FontGeometryInfo;
 
 static const auto g_TopInset = 1.;
-static const auto g_LeftInset = 4.;
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet();
 static std::shared_ptr<const TextModeWorkingSet>
@@ -24,13 +24,10 @@ static std::shared_ptr<const TextModeWorkingSet>
     const BigFileViewDataBackend *m_Backend;
     const Theme *m_Theme;
     NSScrollView *m_ScrollView;
-//    NCViewerHexModeContentView *m_ContentView;
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     std::shared_ptr<const HexModeFrame> m_Frame;
     FontGeometryInfo m_FontInfo;
     std::unique_ptr<HexModeLayout> m_Layout;
-//    long m_RowOffset;
-//    double m_SmoothOffset;
     NSScroller *m_VerticalScroller;
 }
 
@@ -39,15 +36,12 @@ static std::shared_ptr<const TextModeWorkingSet>
                         theme:(const nc::viewer::Theme&)_theme
 {
     if( self = [super initWithFrame:_frame] ) {
+        self.translatesAutoresizingMaskIntoConstraints = false;
         m_Backend = &_backend;
         m_Theme = &_theme;
         m_FontInfo = FontGeometryInfo{ (__bridge CTFontRef)m_Theme->Font() };
         m_WorkingSet = MakeEmptyWorkingSet();
         m_Frame = [self buildFrame];
-        
-//        m_RowOffset = 0;
-//        m_SmoothOffset = 0.;
-        self.translatesAutoresizingMaskIntoConstraints = false;
         
         HexModeLayout::Source layout_source;
         layout_source.file_size = (long)m_Backend->FileSize();
@@ -75,44 +69,7 @@ static std::shared_ptr<const TextModeWorkingSet>
                                                selector:@selector(frameDidChange)
                                                    name:NSViewFrameDidChangeNotification
                                                  object:self];
-
         
-//        m_ScrollView = [[NSScrollView alloc] initWithFrame:_frame];
-//        m_ScrollView.translatesAutoresizingMaskIntoConstraints = false;
-//        m_ScrollView.hasVerticalScroller = true;
-//        m_ScrollView.contentView.postsBoundsChangedNotifications = true;
-//
-//        m_ContentView = [[NCViewerHexModeContentView alloc] initWithFrame:_frame];
-//
-//        m_ScrollView.documentView = m_ContentView;
-        
-//
-//        [self addSubview:m_ScrollView];
-//        auto scroll_view = m_ScrollView;
-//        NSDictionary *views = NSDictionaryOfVariableBindings(scroll_view);
-//        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-//                              @"|-(==0)-[scroll_view]-(==0)-|" options:0 metrics:nil views:views]];
-//        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-//                              @"V:|-(==0)-[scroll_view]-(==0)-|" options:0 metrics:nil views:views]];
-//        [self addConstraint:[NSLayoutConstraint constraintWithItem:m_ContentView
-//                                                         attribute:NSLayoutAttributeWidth
-//                                                         relatedBy:NSLayoutRelationEqual
-//                                                            toItem:m_ScrollView.contentView
-//                                                         attribute:NSLayoutAttributeWidth
-//                                                        multiplier:1.0
-//                                                          constant:0]];
-//
-//        [[NSNotificationCenter defaultCenter] addObserver:self
-//                                                 selector:@selector(contentWasScrolled:)
-//                                                     name:NSViewBoundsDidChangeNotification
-//                                                   object:m_ScrollView.contentView];
-//
-//        customView.height >= clipView.height (prio:1000)
-//        customView.width >= clipView.width (prio:1000)
-        
-//        m_View = view;
-
-//        m_ScrollView
         [self backendContentHasChanged];
     }
     return self;
@@ -162,6 +119,7 @@ static std::shared_ptr<const TextModeWorkingSet>
     source.working_set = m_WorkingSet;
     source.raw_bytes_begin = (const std::byte *)m_Backend->Raw();
     source.raw_bytes_end = (const std::byte *)m_Backend->Raw() + m_Backend->RawSize();
+//    source.number_of_columns = 4;
 
     return std::make_shared<HexModeFrame>(source);
 }
@@ -238,7 +196,7 @@ static std::shared_ptr<const TextModeWorkingSet>
  */
 - (CGPoint)textOrigin
 {
-    const auto origin = CGPointMake(g_LeftInset, g_TopInset);
+    const auto origin = CGPointMake(m_Layout->GetGaps().left_inset, g_TopInset);
     const auto offset = m_Layout->GetOffset();
     const auto vertical_shift = offset.row * m_FontInfo.LineHeight() + offset.smooth;
     return CGPointMake(origin.x, origin.y - vertical_shift);
@@ -276,30 +234,13 @@ static std::shared_ptr<const TextModeWorkingSet>
     const int lines_end = lines_start + lines_per_screen + 1;
 //
     auto line_pos = CGPointMake( origin.x, origin.y + lines_start * m_FontInfo.LineHeight() );
-//
-//        const auto selection = [self localSelection];
-//        
-//        for( int line_no = lines_start;
-//            line_no < lines_end;
-//            ++line_no, line_pos.y += m_FontInfo.LineHeight() ) {
+
+    const auto bytes_selection = [self localBytesSelection];
+    const auto offsets = m_Layout->CalcHorizontalOffsets();
     
-    
-//    const long index_start =
-//        m_Layout->GetOffset().row +
-//        (long)std::floor(dirtyRect.origin.y / m_Frame->FontInfo().LineHeight());
-//
-//
-//    CGPoint line_origin = CGPointMake(0.,
-////                                      global_row_index_start * m_Frame->FontInfo().LineHeight()
-//                                      - m_Layout->GetOffset().smooth
-//                                      );
-    
-    
-//    std::cout << "line origin y: " << line_origin.y << std::endl;
-    for( long index = lines_start;
-        index < lines_end;
-        ++index, line_pos.y += m_Frame->FontInfo().LineHeight() ) {
-        if( index < 0 || index >= m_Frame->NumberOfRows() )
+    for( int row_index = lines_start; row_index < lines_end;
+        ++row_index, line_pos.y += m_Frame->FontInfo().LineHeight() ) {
+        if( row_index < 0 || row_index >= m_Frame->NumberOfRows() )
             continue;
         
         const auto text_origin = CGPointMake(line_pos.x,
@@ -307,25 +248,34 @@ static std::shared_ptr<const TextModeWorkingSet>
                                              m_Frame->FontInfo().LineHeight() -
                                              m_Frame->FontInfo().Descent() );
         
-        auto &row = m_Frame->RowAtIndex(int(index));
-        CGContextSetTextPosition( context, text_origin.x, text_origin.y );
+        auto &row = m_Frame->RowAtIndex(row_index);
+        CGContextSetTextPosition( context, offsets.address, text_origin.y );
         CTLineDraw(row.AddressLine(), context );
         
-        CGContextSetTextPosition( context, text_origin.x + 100, text_origin.y );
-        CTLineDraw(row.ColumnLine(0), context );
+        for( int column_index = 0; column_index < row.ColumnsNumber(); ++column_index ) {
+            const auto sel_bg = m_Layout->CalcColumnSelectionBackground(bytes_selection,
+                                                                        row_index,
+                                                                        column_index,
+                                                                        offsets); 
+            if( sel_bg.first < sel_bg.second ) {
+                CGContextSaveGState(context);
+                CGContextSetShouldAntialias(context, false);
+                CGContextSetFillColorWithColor(context, m_Theme->ViewerSelectionColor().CGColor );
+                CGContextFillRect(context,
+                                  CGRectMake(sel_bg.first,
+                                             line_pos.y,
+                                             sel_bg.second - sel_bg.first,
+                                             m_FontInfo.LineHeight()));
+                CGContextRestoreGState(context);                                     
+            }
 
-        if( row.ColumnsNumber() >= 2 ) {
-            CGContextSetTextPosition( context, text_origin.x + 300, text_origin.y );
-            CTLineDraw(row.ColumnLine(1), context );
+            CGContextSetTextPosition( context, offsets.columns.at(column_index), text_origin.y );
+            CTLineDraw(row.ColumnLine(column_index), context );
         }
-
-        CGContextSetTextPosition( context, text_origin.x + 500, text_origin.y );
-        CTLineDraw(row.SnippetLine(), context );
         
+        CGContextSetTextPosition( context, offsets.snippet, text_origin.y );        
+        CTLineDraw(row.SnippetLine(), context );
     }
-    
-    
-    
 }
 
 - (void)frameDidChange
@@ -589,6 +539,60 @@ static std::shared_ptr<const TextModeWorkingSet>
             [super keyDown:event];
             return;
     }
+}
+
+- (void) mouseDown:(NSEvent *)_event
+{
+//    const auto view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
+//    auto index = m_Layout->ByteOffsetFromColumnHit(view_coords);
+//    std::cout << index << std::endl;
+//    if( _event.clickCount > 2 )
+//        [self handleSelectionWithTripleClick:_event];
+//    else if (_event.clickCount == 2)
+//        [self handleSelectionWithDoubleClick:_event];
+//    else
+        [self handleSelectionWithMouseDragging:_event];
+}
+
+- (void) handleSelectionWithMouseDragging:(NSEvent*)_event;
+{
+    const auto event_mask = NSLeftMouseDraggedMask | NSLeftMouseUpMask;
+    const auto modifying_existing_selection = bool(_event.modifierFlags & NSShiftKeyMask);
+    const auto first_down_view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
+    if (true /*if column */) {
+        const auto first_ind = m_Layout->ByteOffsetFromColumnHit(first_down_view_coords);
+        const auto original_selection = [self localBytesSelection];
+        for( auto event = _event; event && event.type != NSLeftMouseUp;
+            event = [self.window nextEventMatchingMask:event_mask] ) {
+            const auto curr_view_coords = [self convertPoint:event.locationInWindow fromView:nil];
+            const auto curr_ind = m_Layout->ByteOffsetFromColumnHit(curr_view_coords);
+            const auto selection = HexModeLayout::MergeSelection(original_selection, 
+                                                                 modifying_existing_selection, 
+                                                                 first_ind, 
+                                                                 curr_ind);
+            if( selection.first != selection.second ) {
+                const auto global = CFRangeMake(selection.first + m_WorkingSet->GlobalOffset(),
+                                                selection.second - selection.first);
+                [self.delegate hexModeView:self setSelection:global];
+            }
+            else
+                [self.delegate hexModeView:self setSelection:CFRangeMake(-1,0)];
+        }
+    }
+}
+
+- (CFRange)localBytesSelection
+{
+    if( self.delegate == nil )
+        return CFRangeMake(kCFNotFound, 0);    
+    const auto global_byte_selection = [self.delegate hexModeViewProvideSelection:self];
+    const auto &ws = m_Frame->WorkingSet();
+    return ws.ToLocalBytesRange(global_byte_selection);
+}
+
+- (void) selectionHasChanged
+{
+    [self setNeedsDisplay:true];
 }
 
 @end

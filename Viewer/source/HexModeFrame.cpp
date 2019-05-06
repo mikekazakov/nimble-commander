@@ -17,6 +17,7 @@ HexModeFrame::HexModeFrame( const Source &_source )
     m_NumberOfColumns = _source.number_of_columns;
     m_WorkingSet = _source.working_set;
     m_FontInfo = _source.font_info;
+    m_DigitsInAddress = _source.digits_in_address; 
     
     HexModeSplitter::Source splitter_source;
     splitter_source.working_set = _source.working_set.get();

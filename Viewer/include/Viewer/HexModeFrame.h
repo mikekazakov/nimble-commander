@@ -39,6 +39,7 @@ public:
     int BytesPerRow() const noexcept;
     int BytesPerColumn() const noexcept;
     int NumberOfColumns() const noexcept;
+    int DigitsInAddress() const noexcept;
     const TextModeWorkingSet& WorkingSet() const noexcept;
     const nc::utility::FontGeometryInfo &FontInfo() const noexcept;
     
@@ -65,6 +66,7 @@ private:
     nc::utility::FontGeometryInfo m_FontInfo;
     int m_BytesPerColumn;
     int m_NumberOfColumns;
+    int m_DigitsInAddress;
 };
 
 class HexModeFrame::Row
@@ -92,6 +94,8 @@ public:
     CTLineRef ColumnLine(int _column) const;
     
     int ColumnsNumber() const noexcept;
+    /* Returns amount of bytes represented by the specified column */
+    int BytesInColum(int _column) const;
     
     /** Returns a bytes offset of this row inside a working set */
     int BytesStart() const noexcept;
@@ -151,6 +155,11 @@ inline int HexModeFrame::BytesPerColumn() const noexcept
 inline int HexModeFrame::NumberOfColumns() const noexcept
 {
     return m_NumberOfColumns;
+}
+    
+inline int HexModeFrame::DigitsInAddress() const noexcept
+{
+    return m_DigitsInAddress;
 }
 
 inline const TextModeWorkingSet& HexModeFrame::WorkingSet() const noexcept
@@ -216,6 +225,12 @@ inline int HexModeFrame::Row::BytesNum() const noexcept
 inline int HexModeFrame::Row::BytesEnd() const noexcept
 {
     return m_RowBytesStart + m_RowBytesNum;
+}
+    
+inline int HexModeFrame::Row::BytesInColum(int _column) const
+{
+    const auto chars_per_byte = 3;
+    return int((CFStringGetLength(ColumnString(_column)) + 1)  / chars_per_byte); 
 }
 
 }

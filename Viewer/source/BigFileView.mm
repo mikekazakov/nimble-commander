@@ -235,7 +235,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
 {
     dispatch_assert_main_queue();
     
-//    m_ViewImpl.reset();
+    [m_View removeFromSuperview];
     m_Data.reset();
     m_File = nullptr;
 }
@@ -815,7 +815,18 @@ didScrollAtGlobalBytePosition:(int64_t)_position
     return [self selectionInFile];
 }
 
+- (CFRange) hexModeViewProvideSelection:(NCViewerHexModeView*)_view
+{
+    return [self selectionInFile];    
+}
+
 - (void) textModeView:(NCViewerTextModeView*)_view
+         setSelection:(CFRange)_selection
+{
+    self.selectionInFile = _selection;
+}
+
+- (void) hexModeView:(NCViewerHexModeView*)_view
          setSelection:(CFRange)_selection
 {
     self.selectionInFile = _selection;

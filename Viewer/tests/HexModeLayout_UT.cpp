@@ -46,6 +46,7 @@ TEST_CASE(PREFIX"Correctly calculates a selection background range")
     const auto frame = ProduceFrame(ws, string.data(), (int)string.length());
     const auto layout = ProduceLayout(frame);
     const auto offsets = layout->CalcHorizontalOffsets();
+    const auto fc = offsets.columns.front();
     
     SECTION("1000,1") {
         const auto sel = layout->CalcColumnSelectionBackground({1000, 1}, 0, 0, offsets);
@@ -54,23 +55,23 @@ TEST_CASE(PREFIX"Correctly calculates a selection background range")
     }    
     SECTION("0,1") {
         const auto sel = layout->CalcColumnSelectionBackground({0, 1}, 0, 0, offsets);
-        CHECK( sel.first == Approx(114.) );
-        CHECK( sel.second == Approx(130.) );
+        CHECK( sel.first ==  Approx(fc + 0.) );
+        CHECK( sel.second == Approx(fc + 16.) );
     }
     SECTION("0,2") {
         const auto sel = layout->CalcColumnSelectionBackground({0, 2}, 0, 0, offsets);
-        CHECK( sel.first == Approx(114.) );
-        CHECK( sel.second == Approx(154.) );
+        CHECK( sel.first == Approx(fc + 0.) );
+        CHECK( sel.second == Approx(fc + 40.) );
     }
     SECTION("7,1") {
         const auto sel = layout->CalcColumnSelectionBackground({7, 1}, 0, 0, offsets);
-        CHECK( sel.first == Approx(278.) );
-        CHECK( sel.second == Approx(295.) );
+        CHECK( sel.first == Approx(fc + 164.) );
+        CHECK( sel.second == Approx(fc + 181.) );
     }
     SECTION("0,8") {
         const auto sel = layout->CalcColumnSelectionBackground({0, 8}, 0, 0, offsets);
-        CHECK( sel.first == Approx(114.) );
-        CHECK( sel.second == Approx(295.) );
+        CHECK( sel.first == Approx(fc + 0.) );
+        CHECK( sel.second == Approx(fc + 181.) );
     }    
 }
 

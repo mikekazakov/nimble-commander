@@ -305,8 +305,8 @@
 		CFD79A8521F65AB50043A26D /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */,
 				CF9BF90C226CF99000AD36D9 /* HexModeFrame_UT.cpp */,
+				CF24E1D1227F0B2400C166FA /* HexModeLayout_UT.cpp */,
 				CF9BF9052269FD7000AD36D9 /* HexModeProcessing_UT.cpp */,
 				CFD79B5822106E3C0043A26D /* Tests.cpp */,
 				CFD79B5722106E3B0043A26D /* Tests.h */,

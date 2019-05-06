@@ -42,7 +42,7 @@ public:
         std::vector<double> columns;
     };
     enum class HitPart {
-        Address, Column, Snippet, Gap
+        Address, AddressColumsGap, Columns, ColumnsSnippetGap, Snippet
     };
     HexModeLayout(const Source &_source);
     
@@ -102,6 +102,9 @@ public:
     
     /** Returns a byte offset inside a working set which corresponds to the position. */
     int ByteOffsetFromColumnHit(CGPoint _position) const;
+    
+    /** Returns a char offset inside a working set which corresponds to the position. */
+    int CharOffsetFromSnippetHit(CGPoint _position) const;
     
     static int FindEqualVerticalOffsetForRebuiltFrame(const HexModeFrame& old_frame,
                                                       const int old_vertical_offset,

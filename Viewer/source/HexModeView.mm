@@ -571,12 +571,43 @@ static std::shared_ptr<const TextModeWorkingSet>
         [self handleSelectionWithMouseDragging:_event];
 }
 
-- (void) handleSelectionWithMouseDragging:(NSEvent*)_event;
+- (bool) shouldDoDraggingSelectionInColumns:(NSEvent*)_event
+{
+    const auto coords = [self convertPoint:_event.locationInWindow fromView:nil];
+    const auto hit_part = m_Layout->HitTest(coords.x);
+    if( hit_part == HexModeLayout::HitPart::Columns ||
+        hit_part == HexModeLayout::HitPart::AddressColumsGap ) {
+        return true;
+    }
+    if( hit_part == HexModeLayout::HitPart::ColumnsSnippetGap ) {
+        const auto offsets = m_Layout->CalcHorizontalOffsets();
+        if( offsets.snippet - coords.x > m_Layout->GetGaps().columns_snippet_gap / 2. )
+            return true;
+    }
+    return false;
+}
+
+- (bool) shouldDoDraggingSelectionInSnippet:(NSEvent*)_event
+{
+    const auto coords = [self convertPoint:_event.locationInWindow fromView:nil];
+    const auto hit_part = m_Layout->HitTest(coords.x);
+    if( hit_part == HexModeLayout::HitPart::Snippet )
+        return true;
+
+    if( hit_part == HexModeLayout::HitPart::ColumnsSnippetGap ) {
+        const auto offsets = m_Layout->CalcHorizontalOffsets();
+        if( offsets.snippet - coords.x < m_Layout->GetGaps().columns_snippet_gap / 2. )
+            return true;
+    }
+    return false;
+}
+
+- (void) handleSelectionWithMouseDragging:(NSEvent*)_event
 {
     const auto event_mask = NSLeftMouseDraggedMask | NSLeftMouseUpMask;
     const auto modifying_existing_selection = bool(_event.modifierFlags & NSShiftKeyMask);
-    const auto first_down_view_coords = [self convertPoint:_event.locationInWindow fromView:nil];    
-    if( m_Layout->HitTest(first_down_view_coords.x) == HexModeLayout::HitPart::Column ) {
+    const auto first_down_view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
+    if( [self shouldDoDraggingSelectionInColumns:_event] ) {
         const auto first_ind = m_Layout->ByteOffsetFromColumnHit(first_down_view_coords);
         const auto original_selection = [self localBytesSelection];
         for( auto event = _event; event && event.type != NSLeftMouseUp;
@@ -595,6 +626,27 @@ static std::shared_ptr<const TextModeWorkingSet>
             else
                 [self.delegate hexModeView:self setSelection:CFRangeMake(-1,0)];
         }
+    }
+    else if( [self shouldDoDraggingSelectionInSnippet:_event] ) {
+        const auto first_ind = m_Layout->CharOffsetFromSnippetHit(first_down_view_coords);
+        const auto original_selection = [self localCharsSelection];
+        for( auto event = _event; event && event.type != NSLeftMouseUp;
+            event = [self.window nextEventMatchingMask:event_mask] ) {
+            const auto curr_view_coords = [self convertPoint:event.locationInWindow fromView:nil];
+            const auto curr_ind = m_Layout->CharOffsetFromSnippetHit(curr_view_coords);
+            const auto selection = HexModeLayout::MergeSelection(original_selection, 
+                                                                 modifying_existing_selection, 
+                                                                 first_ind, 
+                                                                 curr_ind);
+            if( selection.first != selection.second ) {                
+                const auto global = CFRangeMake(m_WorkingSet->ToGlobalByteOffset(selection.first),
+                                                m_WorkingSet->ToGlobalByteOffset(selection.second) -
+                                                m_WorkingSet->ToGlobalByteOffset(selection.first));
+                [self.delegate hexModeView:self setSelection:global];
+            }
+            else
+                [self.delegate hexModeView:self setSelection:CFRangeMake(-1,0)];
+        }   
     }
 }
 

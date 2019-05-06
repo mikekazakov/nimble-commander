@@ -199,8 +199,9 @@ HexModeLayout::HorizontalOffsets HexModeLayout::CalcHorizontalOffsets() const no
     const auto number_of_columns = m_Frame->NumberOfColumns();
     
     double x = offsets.address + address_width +  m_Gaps.address_columns_gap;
+    offsets.columns.resize(number_of_columns);
     for( int i = 0; i < number_of_columns; ++i ) {        
-        offsets.columns.push_back( std::floor(x) );
+        offsets.columns[i] = std::floor(x);
         x += column_width;
         if( i != number_of_columns - 1 )
             x += m_Gaps.between_columns_gap;
@@ -218,11 +219,11 @@ HexModeLayout::HitPart HexModeLayout::HitTest(double _x) const
     if( _x < offsets.columns.front() - gaps.address_columns_gap )
         return HitPart::Address;
     if( _x < offsets.columns.front() )
-        return HitPart::Gap;
+        return HitPart::AddressColumsGap;
     if( _x < offsets.snippet - gaps.columns_snippet_gap )
-        return HitPart::Column;
+        return HitPart::Columns;
     if( _x < offsets.snippet )
-        return HitPart::Gap;
+        return HitPart::ColumnsSnippetGap;
     return HitPart::Snippet;
 }
 
@@ -276,6 +277,27 @@ int HexModeLayout::ByteOffsetFromColumnHit(CGPoint _position) const
         }
     }
     return row.BytesEnd();    
+}
+    
+int HexModeLayout::CharOffsetFromSnippetHit(CGPoint _position) const
+{
+    const auto row_index = RowIndexFromYCoordinate(_position.y);
+    if( row_index < 0 )
+        return 0;
+    if( row_index >= m_Frame->NumberOfRows() )
+        return m_Frame->WorkingSet().Length();
+    
+    const auto x = _position.x;
+    const auto &row = m_Frame->RowAtIndex(row_index);    
+    const auto x_offsets = CalcHorizontalOffsets();
+    if( x <= x_offsets.snippet )
+        return row.CharsStart();
+    
+     const auto ht = CTLineGetStringIndexForPosition(row.SnippetLine(),
+                                                     CGPointMake(x - x_offsets.snippet, 0.) );
+    if( ht == kCFNotFound )
+        return row.CharsStart();
+    return int(row.CharsStart() + ht);
 }
 
 std::pair<double, double> HexModeLayout::

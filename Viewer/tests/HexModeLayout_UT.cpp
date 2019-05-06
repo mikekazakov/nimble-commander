@@ -26,17 +26,25 @@ TEST_CASE(PREFIX"Correctly performs a hit-test on columns")
     const auto ws = ProduceWorkingSet(string.data(), (int)string.length());
     const auto frame = ProduceFrame(ws, string.data(), (int)string.length());
     const auto layout = ProduceLayout(frame);
+    const auto offsets = layout->CalcHorizontalOffsets();
+    const auto fc = offsets.columns.front();
+    const auto fs = offsets.snippet;
     
-    CHECK( layout->ByteOffsetFromColumnHit({ 50.,8.}) == 0 );
-    CHECK( layout->ByteOffsetFromColumnHit({124.,8.}) == 0 );
-    CHECK( layout->ByteOffsetFromColumnHit({128.,8.}) == 0 );
-    CHECK( layout->ByteOffsetFromColumnHit({134.,8.}) == 1 );
-    CHECK( layout->ByteOffsetFromColumnHit({150.,8.}) == 1 );
-    CHECK( layout->ByteOffsetFromColumnHit({288.,8.}) == 7 );
-    CHECK( layout->ByteOffsetFromColumnHit({488.,8.}) == 15 );
-    CHECK( layout->ByteOffsetFromColumnHit({500.,8.}) == 16 );
-    CHECK( layout->ByteOffsetFromColumnHit({488.,22.}) == 31 );
-    CHECK( layout->ByteOffsetFromColumnHit({500.,22.}) == 32 );
+    CHECK( layout->ByteOffsetFromColumnHit({fc-64.,8.}) == 0 );
+    CHECK( layout->ByteOffsetFromColumnHit({fc+10.,8.}) == 0 );
+    CHECK( layout->ByteOffsetFromColumnHit({fc+14.,8.}) == 0 );
+    CHECK( layout->ByteOffsetFromColumnHit({fc+20.,8.}) == 1 );
+    CHECK( layout->ByteOffsetFromColumnHit({fc+36.,8.}) == 1 );
+    CHECK( layout->ByteOffsetFromColumnHit({fc+174.,8.}) == 7 );
+    CHECK( layout->ByteOffsetFromColumnHit({fc+374.,8.}) == 15 );
+    CHECK( layout->ByteOffsetFromColumnHit({fc+386.,8.}) == 16 );
+    CHECK( layout->ByteOffsetFromColumnHit({fc+374.,22.}) == 31 );
+    CHECK( layout->ByteOffsetFromColumnHit({fc+386.,22.}) == 32 );
+    CHECK( layout->CharOffsetFromSnippetHit({fs-50.,8.}) == 0 );
+    CHECK( layout->CharOffsetFromSnippetHit({fs+3.,8.}) == 0 );
+    CHECK( layout->CharOffsetFromSnippetHit({fs+10.,8.}) == 1 );
+    CHECK( layout->CharOffsetFromSnippetHit({fs+121.,8.}) == 15 );
+    CHECK( layout->CharOffsetFromSnippetHit({fs+178.,8.}) == 16 );    
 }
 
 TEST_CASE(PREFIX"Correctly calculates a selection background range")

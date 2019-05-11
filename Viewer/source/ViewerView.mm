@@ -11,11 +11,10 @@
 #include "Theme.h"
 #include "TextModeView.h"
 #include "HexModeView.h"
+#include "PreviewModeView.h"
 
 static const auto g_ConfigDefaultEncoding       = "viewer.defaultEncoding";
 static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";
-
-const static double g_BorderWidth = 1.0;
 
 using nc::vfs::easy::CopyFileToTempStorage;
 using namespace nc::viewer;
@@ -217,21 +216,9 @@ using namespace nc::viewer;
         return ViewMode::Text;
     if( [m_View isKindOfClass:NCViewerHexModeView.class] )
         return ViewMode::Hex;
-    // + QL
-    
+    if( [m_View isKindOfClass:NCViewerPreviewModeView.class] )
+        return ViewMode::Preview;    
     return ViewMode::Text;
-    
-//    if(dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
-//        return BigFileViewModes::Text;
-//    else if(dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
-//        return BigFileViewModes::Hex;
-//    else if(dynamic_cast<InternalViewerViewPreviewMode*>(m_ViewImpl.get()))
-//        return BigFileViewModes::Preview;
-//    else
-////        assert(0);
-//        // in case of doubt - say we're in text mode (uninitialized really)
-//        return BigFileViewModes::Text;
-//    // TODO: make Text move be default
 }
 
 - (void) setMode: (ViewMode)_mode
@@ -239,6 +226,8 @@ using namespace nc::viewer;
     if( _mode == ViewMode::Text && [m_View isKindOfClass:NCViewerTextModeView.class] )
         return;
     if( _mode == ViewMode::Hex  && [m_View isKindOfClass:NCViewerHexModeView.class] )
+        return;
+    if( _mode == ViewMode::Preview  && [m_View isKindOfClass:NCViewerPreviewModeView.class] )
         return;
     
     const auto is_first_responder = m_View && self.window && self.window.firstResponder == m_View;
@@ -254,12 +243,7 @@ using namespace nc::viewer;
                                                         backend:*m_Data
                                                           theme:*m_Theme];
         view.delegate = self;
-        [self addSubview:view];
-        NSDictionary *views = NSDictionaryOfVariableBindings(view);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                              @"|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                              @"V:|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addFillingSubview:view];
         m_View = view;
     }
     if( _mode == ViewMode::Hex ) {
@@ -267,14 +251,16 @@ using namespace nc::viewer;
                                                        backend:*m_Data
                                                          theme:*m_Theme];
         view.delegate = self;
-        [self addSubview:view];
-        NSDictionary *views = NSDictionaryOfVariableBindings(view);
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                              @"|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
-        [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
-                              @"V:|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
+        [self addFillingSubview:view];
         m_View = view;
     }
+    if( _mode == ViewMode::Preview ) {
+        auto view = [[NCViewerPreviewModeView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
+                                                              path:[self previewPath]
+                                                             theme:*m_Theme];
+        [self addFillingSubview:view];
+        m_View = view;
+    }    
     
     if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] )    
         [m_View scrollToGlobalBytesOffset:(int64_t)m_VerticalPositionInBytes];
@@ -285,57 +271,33 @@ using namespace nc::viewer;
         [self.window makeFirstResponder:m_View];
     
     [m_View setFocusRingType:self.focusRingType];
-    
-//    if( _mode == BigFileViewModes::Text    && dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
-//        return;
-//    if( _mode == BigFileViewModes::Hex     && dynamic_cast<BigFileViewHex*>(m_ViewImpl.get()))
-//        return;
-//    if( _mode == BigFileViewModes::Preview && dynamic_cast<InternalViewerViewPreviewMode*>(m_ViewImpl.get()))
-//        return;
-//
-////    if( _mode == self.mode )
-////        return;
-////
-//    [self willChangeValueForKey:@"mode"];
-//
-//    uint32_t current_offset = m_ViewImpl ? m_ViewImpl->GetOffsetWithinWindow() : 0;
-//
-//    switch (_mode)
-//    {
-//        case BigFileViewModes::Text:
-//            m_ViewImpl = std::make_unique<nc::viewer::BigFileViewText>(m_Data.get(), self);
-//            break;
-//        case BigFileViewModes::Hex:
-//            m_ViewImpl = std::make_unique<BigFileViewHex>(m_Data.get(), self);
-//            break;
-//        case BigFileViewModes::Preview:
-//        {
-//            std::string path;
-//            if( m_File->File()->Host()->IsNativeFS() )
-//                path = m_File->File()->Path();
-//            else {
-//                if( !m_NativeStoredFile )
-//                    m_NativeStoredFile = CopyFileToTempStorage(m_File->File()->Path(),
-//                                                               *m_File->File()->Host(),
-//                                                               *m_TempFileStorage);
-//                if( m_NativeStoredFile )
-//                    path = *m_NativeStoredFile;
-//            }
-//            m_ViewImpl = std::make_unique<InternalViewerViewPreviewMode>(path, self);
-//            break;
-//        }
-//        default:
-//            assert(0);
-//    }
-//
-//    m_ViewImpl->MoveOffsetWithinWindow(current_offset);
-//    m_VerticalScroller.hidden = !m_ViewImpl->NeedsVerticalScroller();
-//    [self setNeedsDisplay];
-//
-//    [self didChangeValueForKey:@"mode"];
-//
-//    [self syncVerticalPositionInBytes];
-//    [self syncVerticalScrollerState];
+}
+
+- (void) addFillingSubview:(NSView*)_view
+{
+    [self addSubview:_view];
+    NSDictionary *views = NSDictionaryOfVariableBindings(_view);
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                          @"|-(==0)-[_view]-(==0)-|" options:0 metrics:nil views:views]];
+    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:
+                          @"V:|-(==0)-[_view]-(==0)-|" options:0 metrics:nil views:views]];
+}
+
+- (std::string) previewPath
+{
+
+    if( m_File->File()->Host()->IsNativeFS() ) {
+        return m_File->File()->Path();
+    }
+    else {
+        if( !m_NativeStoredFile )
+            m_NativeStoredFile = CopyFileToTempStorage(m_File->File()->Path(),
+                                                       *m_File->File()->Host(),
+                                                       *m_TempFileStorage);
+        if( m_NativeStoredFile )
+            return *m_NativeStoredFile;
+        return "";
+    }    
 }
 
 - (void) setFocusRingType:(NSFocusRingType)focusRingType

@@ -293,6 +293,16 @@ static std::shared_ptr<const TextModeWorkingSet>
     CGContextRestoreGState(context);
 }
 
+- (void)drawFocusRingMask
+{
+    NSRectFill(self.focusRingMaskBounds);
+}
+
+- (NSRect)focusRingMaskBounds
+{
+    return self.bounds;
+}
+
 - (void)frameDidChange
 {
     m_Layout->SetViewSize(self.frame.size);

@@ -310,7 +310,9 @@ static int InvertBitFlag( int _value, int _flag )
             m_View.encoding = encoding;
     }
     
-    m_FileSizeLabel.stringValue = ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(), ByteCountFormatter::Fixed6);
+    m_FileSizeLabel.stringValue =
+        ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(),
+                                                  ByteCountFormatter::Fixed6);
 }
 
 - (void) saveFileState
@@ -365,7 +367,9 @@ static int InvertBitFlag( int _value, int _flag )
     ((NSSearchFieldCell*)m_SearchField.cell).searchMenuTemplate = self.searchFieldMenu;
 }
 
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+- (BOOL)control:(NSControl *)control
+       textView:(NSTextView *)textView
+doCommandBySelector:(SEL)commandSelector
 {
     if( control == m_SearchField && commandSelector == @selector(cancelOperation:) ) {
         [m_View.window makeFirstResponder:m_View];

@@ -70,14 +70,12 @@ using namespace nc::viewer;
 
 - (void) commonInit
 {
-    self.hasBorder = false;
     m_VerticalPositionPercentage = 0.;
     m_VerticalPositionInBytes = 0;
     m_WrapWords = true;
     m_SelectionInFile = CFRangeMake(-1, 0);
     m_SelectionInWindow = CFRangeMake(-1, 0);
     m_SelectionInWindowUnichars = CFRangeMake(-1, 0);
-//    m_ViewImpl = std::make_unique<BigFileViewImpl>(); // dummy for initialization process
     
     [self reloadAppearance];
 
@@ -95,40 +93,10 @@ using namespace nc::viewer;
     [self setNeedsDisplay];
 }
 
-- (BOOL)acceptsFirstResponder
-{
-    return YES;
-}
-
 - (BOOL)isOpaque
 {
     return YES;
 }
-
-//- (void)drawRect:(NSRect)dirtyRect
-//{
-////    if( !m_ViewImpl )
-////        return;
-//    
-//    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
-//    CGContextSaveGState(context);
-//    if(self.hasBorder)
-//        CGContextTranslateCTM(context, g_BorderWidth, g_BorderWidth);
-//    
-////    m_ViewImpl->DoDraw(context, dirtyRect);
-//    
-//    if(self.hasBorder) {
-//        CGContextTranslateCTM(context, -g_BorderWidth, -g_BorderWidth);
-//        NSRect rc = NSMakeRect(0, 0, self.bounds.size.width - g_BorderWidth, self.bounds.size.height - g_BorderWidth);
-//        CGContextSetAllowsAntialiasing(context, false);
-//        NSBezierPath *bp = [NSBezierPath bezierPathWithRect:rc];
-//        bp.lineWidth = g_BorderWidth;
-//        [[NSColor colorWithCalibratedWhite:184./255 alpha:1.0] set];
-//        [bp stroke];
-//        CGContextSetAllowsAntialiasing(context, true);
-//    }
-//    CGContextRestoreGState(context);
-//}
 
 - (void)drawFocusRingMask
 {
@@ -273,6 +241,10 @@ using namespace nc::viewer;
     if( _mode == ViewMode::Hex  && [m_View isKindOfClass:NCViewerHexModeView.class] )
         return;
     
+    const auto is_first_responder = m_View && self.window && self.window.firstResponder == m_View;
+    
+    [self willChangeValueForKey:@"mode"];    
+    
     if( m_View ) {
         [m_View removeFromSuperview];
     }
@@ -306,6 +278,13 @@ using namespace nc::viewer;
     
     if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] )    
         [m_View scrollToGlobalBytesOffset:(int64_t)m_VerticalPositionInBytes];
+    
+    [self didChangeValueForKey:@"mode"];    
+    
+    if( is_first_responder )
+        [self.window makeFirstResponder:m_View];
+    
+    [m_View setFocusRingType:self.focusRingType];
     
 //    if( _mode == BigFileViewModes::Text    && dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
 //        return;
@@ -359,6 +338,14 @@ using namespace nc::viewer;
 //    [self syncVerticalScrollerState];
 }
 
+- (void) setFocusRingType:(NSFocusRingType)focusRingType
+{
+    if( self.focusRingType == focusRingType )
+        return;
+    [super setFocusRingType:focusRingType];
+    [m_View setFocusRingType:focusRingType];
+}
+
 - (void) scrollToSelection
 {
     if( m_SelectionInFile.location >= 0 ) {
@@ -367,34 +354,6 @@ using namespace nc::viewer;
         }
     }
 }
-
-//- (void) syncVerticalScrollerState
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    double scroll_pos = 0.0;
-//    double scroll_prop = 1.0;
-//    m_ViewImpl->CalculateScrollPosition(scroll_pos, scroll_prop);
-//    m_VerticalScroller.doubleValue = scroll_pos;
-//    m_VerticalScroller.knobProportion = scroll_prop;
-//}
-
-//- (void) syncVerticalPositionInBytes
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    uint64_t value = uint64_t(m_ViewImpl->GetOffsetWithinWindow()) + m_File->WindowPos();
-//    if( value == m_VerticalPositionInBytes )
-//        return;
-//
-//    [self willChangeValueForKey:@"verticalPositionInBytes"];
-//    m_VerticalPositionInBytes = value;
-//    [self didChangeValueForKey:@"verticalPositionInBytes"];
-//
-//    [self syncVerticalScrollerState];
-//}
 
 - (uint64_t) verticalPositionInBytes
 {
@@ -573,25 +532,6 @@ using namespace nc::viewer;
     }
 }
 
-- (NSSize)contentBounds
-{
-    NSSize sz = self.bounds.size;
-    sz.width -= [NSScroller scrollerWidthForControlSize:NSRegularControlSize scrollerStyle:NSScrollerStyleLegacy];
-    if(self.hasBorder) {
-        sz.width -= g_BorderWidth * 2;
-        sz.height -= g_BorderWidth * 2;
-    }
-    return sz;
-}
-
-- (void) setHasBorder:(bool)hasBorder
-{
-    if(hasBorder != _hasBorder) {
-        _hasBorder = hasBorder;
-//        [self layoutVerticalScroll];
-    }
-}
-
 - (int) textModeView:(NCViewerTextModeView*)_view
 requestsSyncBackendWindowMovementAt:(int64_t)_position
 {
@@ -661,6 +601,11 @@ didScrollAtGlobalBytePosition:(int64_t)_position
 - (bool) textModeViewProvideLineWrapping:(NCViewerTextModeView*)_view
 {
     return m_WrapWords;
+}
+
+- (NSResponder *) keyboardResponder
+{
+    return m_View;
 }
 
 @end

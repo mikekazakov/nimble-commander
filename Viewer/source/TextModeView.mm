@@ -298,6 +298,16 @@ static double CalculateVerticalPxPositionFromScrollPosition
     }
 }
 
+- (void)drawFocusRingMask
+{
+    NSRectFill(self.focusRingMaskBounds);
+}
+
+- (NSRect)focusRingMaskBounds
+{
+    return self.bounds;
+}
+
 - (bool)doMoveUpByOneLine
 {
     if( m_VerticalLineOffset > 0 ) {

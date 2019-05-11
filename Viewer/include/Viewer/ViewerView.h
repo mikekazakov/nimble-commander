@@ -37,17 +37,6 @@ namespace nc::viewer {
  */
 - (void) detachFromFile;
 
-/**
- * Specify if view should draw a border.
- */
-@property (nonatomic) bool hasBorder;
-
-/**
- * Interior size, excluding scroll bar and possibly border
- */
-@property (nonatomic, readonly) NSSize contentBounds;
-
-
 // Frontend section
 
 /**
@@ -92,5 +81,8 @@ namespace nc::viewer {
 - (void)        scrollToSelection;
 - (CFRange)     SelectionWithinWindow;                      // bytes within a decoded window
 - (CFRange)     SelectionWithinWindowUnichars;              // unichars within a decoded window
+
+/** Returns an object to be set as a first responder if the Viewer should have a focus. */
+@property (nonatomic, readonly) NSResponder *keyboardResponder;
 
 @end

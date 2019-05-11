@@ -117,7 +117,7 @@
     
     [m_Controller show];
     self.window.title = m_Controller.verboseTitle;
-    [self.embeddedFileView.window makeFirstResponder:self.embeddedFileView];
+    [self.embeddedFileView.window makeFirstResponder:self.embeddedFileView.keyboardResponder];
     GA().PostScreenView("File Viewer State");
 }
 

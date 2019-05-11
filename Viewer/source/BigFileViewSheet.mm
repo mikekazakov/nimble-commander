@@ -81,7 +81,6 @@
         [self.viewPlaceholder addConstraints:constaints];
     }
     
-    self.view.hasBorder = true;
     self.view.wantsLayer = true; // to reduce side-effects of overdrawing by scrolling with touchpad
 
     m_Controller.view = self.view;
@@ -96,6 +95,9 @@
     [m_Controller show];
     m_Controller.nextResponder = self.window.nextResponder;
     self.window.nextResponder = m_Controller;
+    
+    [self.window recalculateKeyViewLoop];
+    [self.window makeFirstResponder:self.view.keyboardResponder];
 }
 
 - (IBAction)OnClose:(id)sender

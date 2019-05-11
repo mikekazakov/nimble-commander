@@ -17,7 +17,7 @@ static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
 
 namespace nc::panel::actions {
 
-FindFiles::FindFiles(std::function<BigFileView*(NSRect)> _make_viewer,
+FindFiles::FindFiles(std::function<NCViewerView*(NSRect)> _make_viewer,
                      std::function<InternalViewerController*()> _make_controller) :
     m_MakeViewer{ std::move(_make_viewer) },
     m_MakeController{ std::move(_make_controller) }

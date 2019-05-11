@@ -3,7 +3,7 @@
 
 #include <Utility/SheetController.h>
 #include <VFS/VFS.h>
-#include <Viewer/BigFileView.h>
+#include <Viewer/ViewerView.h>
 
 @class InternalViewerController;
 
@@ -13,7 +13,7 @@
 - (instancetype) init NS_UNAVAILABLE;
 - (instancetype) initWithFilepath:(std::string)path
                                at:(VFSHostPtr)vfs
-                    viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
+                    viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
                  viewerController:(InternalViewerController*)_viewer_controller;
 
 - (bool) open; // call it from bg thread!

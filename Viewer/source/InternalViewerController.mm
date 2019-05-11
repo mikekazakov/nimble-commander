@@ -72,7 +72,7 @@ static int InvertBitFlag( int _value, int _flag )
     nc::config::Config             *m_Config;
     
     // UI
-    BigFileView                    *m_View;
+    NCViewerView                    *m_View;
     NSSearchField                  *m_SearchField;
     NSProgressIndicator            *m_SearchProgressIndicator;
     NSPopUpButton                  *m_EncodingsPopUp;
@@ -341,7 +341,7 @@ static int InvertBitFlag( int _value, int _flag )
     return file_window_size;
 }
 
-- (void) setView:(BigFileView *)view
+- (void) setView:(NCViewerView *)view
 {
     if( m_View == view )
         return;

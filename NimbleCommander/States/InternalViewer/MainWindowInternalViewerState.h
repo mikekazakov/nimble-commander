@@ -3,7 +3,7 @@
 
 #include <VFS/VFS.h>
 #include "../MainWindowStateProtocol.h"
-#include <Viewer/BigFileView.h>
+#include <Viewer/ViewerView.h>
 #include <Viewer/InternalViewerToolbarProtocol.h>
 
 @class InternalViewerController;
@@ -13,7 +13,7 @@
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)_frame_rect NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)_frame_rect
-                viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
+                viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
                    controller:(InternalViewerController*)_viewer_controller;
 
 - (bool)openFile:(const std::string&)_path

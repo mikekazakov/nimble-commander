@@ -5,7 +5,7 @@
 #include <Cocoa/Cocoa.h>
 
 @class InternalViewerController;
-@class BigFileView;
+@class NCViewerView;
 @class InternalViewerWindowController;
 
 @protocol NCViewerWindowDelegate<NSObject>
@@ -20,7 +20,7 @@
 
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
-          viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
+          viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
              controller:(InternalViewerController*)_controller;
 
 - (bool) performBackgrounOpening; // call it from bg thread!

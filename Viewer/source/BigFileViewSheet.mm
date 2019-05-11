@@ -7,7 +7,7 @@
 
 @interface BigFileViewSheet ()
 
-@property (nonatomic) BigFileView *view;
+@property (nonatomic) NCViewerView *view;
 @property (nonatomic) IBOutlet NSView *viewPlaceholder;
 @property (nonatomic) IBOutlet NSPopUpButton *mode;
 @property (nonatomic) IBOutlet NSTextField *fileSize;
@@ -34,7 +34,7 @@
 
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
-          viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
+          viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
        viewerController:(InternalViewerController*)_viewer_controller
 {
     assert( dispatch_is_main_queue() );

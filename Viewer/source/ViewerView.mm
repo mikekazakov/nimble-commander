@@ -1,5 +1,5 @@
 // Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "BigFileView.h"
+#include "ViewerView.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
@@ -20,7 +20,7 @@ const static double g_BorderWidth = 1.0;
 using nc::vfs::easy::CopyFileToTempStorage;
 using namespace nc::viewer;
 
-@implementation BigFileView
+@implementation NCViewerView
 {
     nc::vfs::FileWindow *m_File; // may be nullptr
     std::unique_ptr<BigFileViewDataBackend> m_Data; // may be nullptr
@@ -81,7 +81,7 @@ using namespace nc::viewer;
     
     [self reloadAppearance];
 
-    __weak BigFileView* weak_self = self;
+    __weak NCViewerView* weak_self = self;
     m_Theme->ObserveChanges([weak_self] {
         if( auto strong_self = weak_self )
             [strong_self reloadAppearance];

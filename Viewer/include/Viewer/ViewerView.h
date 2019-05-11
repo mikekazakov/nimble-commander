@@ -18,7 +18,7 @@ namespace nc::viewer {
     class Theme;
 }
 
-@interface BigFileView : NSView<NCViewerTextModeViewDelegate, NCViewerHexModeViewDelegate>
+@interface NCViewerView : NSView<NCViewerTextModeViewDelegate, NCViewerHexModeViewDelegate>
 
 - (instancetype) init NS_UNAVAILABLE;
 - (instancetype) initWithFrame:(NSRect)frame NS_UNAVAILABLE;
@@ -36,14 +36,6 @@ namespace nc::viewer {
  * This will reset the current viewer state.
  */
 - (void) detachFromFile;
-
-- (void) RequestWindowMovementAt: (uint64_t) _pos;
-
-// appearance section
-//- (CTFontRef)   TextFont;
-//- (CGColorRef)  TextForegroundColor;
-//- (CGColorRef) SelectionBkFillColor;
-//- (CGColorRef) BackgroundFillColor;
 
 /**
  * Specify if view should draw a border.

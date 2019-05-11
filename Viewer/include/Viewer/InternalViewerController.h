@@ -1,7 +1,7 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include "BigFileView.h"
+#include "ViewerView.h"
 
 namespace nc::config {
     class Config;
@@ -14,7 +14,7 @@ namespace nc::viewer {
 @interface InternalViewerController : NSResponder<NSSearchFieldDelegate>
 
 // UI wiring
-@property (nonatomic) BigFileView           *view;
+@property (nonatomic) NCViewerView          *view;
 @property (nonatomic) NSSearchField         *searchField;
 @property (nonatomic) NSProgressIndicator   *searchProgressIndicator;
 @property (nonatomic) NSPopUpButton         *encodingsPopUp;

@@ -3,12 +3,12 @@
 
 #include "AppDelegate.h"
 
-@class BigFileView;
+@class NCViewerView;
 @class InternalViewerController;
 
 // this category is private to NCAppDelegate
 @interface NCAppDelegate(ViewerCreation)
 
-- (BigFileView*) makeViewerWithFrame:(NSRect)frame;
+- (NCViewerView*) makeViewerWithFrame:(NSRect)frame;
 - (InternalViewerController*) makeViewerController;
 @end

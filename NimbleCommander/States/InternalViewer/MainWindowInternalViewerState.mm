@@ -20,7 +20,7 @@
 @property (nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 @property (nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
 
-@property (nonatomic) IBOutlet BigFileView *embeddedFileView;
+@property (nonatomic) IBOutlet NCViewerView *embeddedFileView;
 
 @end
 
@@ -31,7 +31,7 @@
 }
 
 - (id)initWithFrame:(NSRect)_frame_rect
-      viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
+      viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
          controller:(InternalViewerController*)_viewer_controller
 {
     dispatch_assert_main_queue();

@@ -1,7 +1,7 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerWindowController.h"
 #include <Utility/CocoaAppearanceManager.h>
-#include <Viewer/BigFileView.h>
+#include <Viewer/ViewerView.h>
 #include <Viewer/InternalViewerController.h>
 #include <Habanero/dispatch_cpp.h>
 #include <chrono>
@@ -20,7 +20,7 @@ using namespace std::literals;
 
 @interface InternalViewerWindowController ()
 @property (nonatomic) IBOutlet NSView *viewerPlaceholder;
-@property (nonatomic) BigFileView *viewerView;
+@property (nonatomic) NCViewerView *viewerView;
 @property (nonatomic) IBOutlet NSToolbar *internalViewerToolbar;
 @property (nonatomic) IBOutlet NSSearchField *internalViewerToolbarSearchField;
 @property (nonatomic) IBOutlet NSProgressIndicator *internalViewerToolbarSearchProgressIndicator;
@@ -42,7 +42,7 @@ using namespace std::literals;
 
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
-          viewerFactory:(const std::function<BigFileView*(NSRect)>&)_viewer_factory
+          viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
              controller:(InternalViewerController*)_controller
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];

@@ -27,14 +27,14 @@
 		CFD79A8121F65A980043A26D /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7D21F65A980043A26D /* debug.xcconfig */; };
 		CFD79A8221F65A980043A26D /* release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7E21F65A980043A26D /* release.xcconfig */; };
 		CFD79A8E21F65B4F0043A26D /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8821F65B4F0043A26D /* Theme.mm */; };
-		CFD79A8F21F65B4F0043A26D /* BigFileView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8921F65B4F0043A26D /* BigFileView.mm */; };
+		CFD79A8F21F65B4F0043A26D /* ViewerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8921F65B4F0043A26D /* ViewerView.mm */; };
 		CFD79A9121F65B4F0043A26D /* BigFileViewDataBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8B21F65B4F0043A26D /* BigFileViewDataBackend.cpp */; };
 		CFD79A9921F65B570043A26D /* ViewerImplementationProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9221F65B570043A26D /* ViewerImplementationProtocol.h */; };
 		CFD79A9A21F65B570043A26D /* Theme.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9321F65B570043A26D /* Theme.h */; };
 		CFD79A9B21F65B570043A26D /* BigFileViewDataBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9421F65B570043A26D /* BigFileViewDataBackend.h */; };
 		CFD79A9C21F65B570043A26D /* InternalViewerViewPreviewMode.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9521F65B570043A26D /* InternalViewerViewPreviewMode.h */; };
 		CFD79A9D21F65B570043A26D /* BigFileViewText.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9621F65B570043A26D /* BigFileViewText.h */; };
-		CFD79A9E21F65B570043A26D /* BigFileView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9721F65B570043A26D /* BigFileView.h */; };
+		CFD79A9E21F65B570043A26D /* ViewerView.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9721F65B570043A26D /* ViewerView.h */; };
 		CFD79A9F21F65B570043A26D /* BigFileViewHex.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79A9821F65B570043A26D /* BigFileViewHex.h */; };
 		CFD79AA221F65BA10043A26D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA121F65BA10043A26D /* Cocoa.framework */; };
 		CFD79AA421F65BA60043A26D /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79AA321F65BA60043A26D /* CoreFoundation.framework */; };
@@ -117,7 +117,7 @@
 		CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerViewPreviewMode.mm; path = source/InternalViewerViewPreviewMode.mm; sourceTree = "<group>"; };
 		CFD79A8721F65B4E0043A26D /* BigFileViewText.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewText.mm; path = source/BigFileViewText.mm; sourceTree = "<group>"; };
 		CFD79A8821F65B4F0043A26D /* Theme.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Theme.mm; path = source/Theme.mm; sourceTree = "<group>"; };
-		CFD79A8921F65B4F0043A26D /* BigFileView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileView.mm; path = source/BigFileView.mm; sourceTree = "<group>"; };
+		CFD79A8921F65B4F0043A26D /* ViewerView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerView.mm; path = source/ViewerView.mm; sourceTree = "<group>"; };
 		CFD79A8A21F65B4F0043A26D /* BigFileViewHex.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = BigFileViewHex.mm; path = source/BigFileViewHex.mm; sourceTree = "<group>"; };
 		CFD79A8B21F65B4F0043A26D /* BigFileViewDataBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BigFileViewDataBackend.cpp; path = source/BigFileViewDataBackend.cpp; sourceTree = "<group>"; };
 		CFD79A9221F65B570043A26D /* ViewerImplementationProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewerImplementationProtocol.h; path = include/Viewer/ViewerImplementationProtocol.h; sourceTree = "<group>"; };
@@ -125,7 +125,7 @@
 		CFD79A9421F65B570043A26D /* BigFileViewDataBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileViewDataBackend.h; path = include/Viewer/BigFileViewDataBackend.h; sourceTree = "<group>"; };
 		CFD79A9521F65B570043A26D /* InternalViewerViewPreviewMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerViewPreviewMode.h; path = include/Viewer/InternalViewerViewPreviewMode.h; sourceTree = "<group>"; };
 		CFD79A9621F65B570043A26D /* BigFileViewText.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileViewText.h; path = include/Viewer/BigFileViewText.h; sourceTree = "<group>"; };
-		CFD79A9721F65B570043A26D /* BigFileView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileView.h; path = include/Viewer/BigFileView.h; sourceTree = "<group>"; };
+		CFD79A9721F65B570043A26D /* ViewerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewerView.h; path = include/Viewer/ViewerView.h; sourceTree = "<group>"; };
 		CFD79A9821F65B570043A26D /* BigFileViewHex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BigFileViewHex.h; path = include/Viewer/BigFileViewHex.h; sourceTree = "<group>"; };
 		CFD79AA121F65BA10043A26D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		CFD79AA321F65BA60043A26D /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -245,7 +245,6 @@
 		CFD79A8321F65AA60043A26D /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79A9721F65B570043A26D /* BigFileView.h */,
 				CFD79A9421F65B570043A26D /* BigFileViewDataBackend.h */,
 				CFD79A9821F65B570043A26D /* BigFileViewHex.h */,
 				CFD79B0F2205B82F0043A26D /* BigFileViewSheet.h */,
@@ -270,6 +269,7 @@
 				CFD79B3D221045210043A26D /* TextProcessing.h */,
 				CFD79A9321F65B570043A26D /* Theme.h */,
 				CFD79A9221F65B570043A26D /* ViewerImplementationProtocol.h */,
+				CFD79A9721F65B570043A26D /* ViewerView.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -277,7 +277,6 @@
 		CFD79A8421F65AB00043A26D /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CFD79A8921F65B4F0043A26D /* BigFileView.mm */,
 				CFD79A8B21F65B4F0043A26D /* BigFileViewDataBackend.cpp */,
 				CFD79A8A21F65B4F0043A26D /* BigFileViewHex.mm */,
 				CFD79B112205B8360043A26D /* BigFileViewSheet.mm */,
@@ -298,6 +297,7 @@
 				CFD79B702210B6DB0043A26D /* TextModeWorkingSet.cpp */,
 				CFD79B3F2210452C0043A26D /* TextProcessing.cpp */,
 				CFD79A8821F65B4F0043A26D /* Theme.mm */,
+				CFD79A8921F65B4F0043A26D /* ViewerView.mm */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -346,7 +346,7 @@
 				CFD79B5922106E3C0043A26D /* Tests.h in Headers */,
 				CFD79A9D21F65B570043A26D /* BigFileViewText.h in Headers */,
 				CFD79B6D221097A40043A26D /* TextModeIndexedTextLine.h in Headers */,
-				CFD79A9E21F65B570043A26D /* BigFileView.h in Headers */,
+				CFD79A9E21F65B570043A26D /* ViewerView.h in Headers */,
 				CFD79B202205DE9D0043A26D /* InternalViewerWindowController.h in Headers */,
 				CFD79B3E221045210043A26D /* TextProcessing.h in Headers */,
 				CFD79B182205DE3E0043A26D /* InternalViewerToolbarProtocol.h in Headers */,
@@ -473,7 +473,7 @@
 				CFD79B6F221097B30043A26D /* TextModeIndexedTextLine.cpp in Sources */,
 				CFD79B402210452C0043A26D /* TextProcessing.cpp in Sources */,
 				CF9BF915226DD3D700AD36D9 /* HexModeView.mm in Sources */,
-				CFD79A8F21F65B4F0043A26D /* BigFileView.mm in Sources */,
+				CFD79A8F21F65B4F0043A26D /* ViewerView.mm in Sources */,
 				CFD79A9121F65B4F0043A26D /* BigFileViewDataBackend.cpp in Sources */,
 				CF9BF91A226DE47B00AD36D9 /* HexModeFrame.cpp in Sources */,
 				CFD79B0521FE4CCC0043A26D /* InternalViewerController.mm in Sources */,

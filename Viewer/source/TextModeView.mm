@@ -28,7 +28,7 @@ struct ScrollPosition {
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet();
 
 static std::shared_ptr<const TextModeWorkingSet>
-    BuildWorkingSetForBackendState(const BigFileViewDataBackend& _backend);
+    BuildWorkingSetForBackendState(const DataBackend& _backend);
 
 static int FindEqualVerticalOffsetForRebuiltFrame
     (const TextModeFrame& old_frame,
@@ -37,21 +37,21 @@ static int FindEqualVerticalOffsetForRebuiltFrame
 
 static ScrollPosition CalculateScrollPosition
     (const TextModeFrame& _frame,
-     const BigFileViewDataBackend& _backend,
+     const DataBackend& _backend,
      NSSize _view_size,
      int _vertical_line_offset,
      double _vertical_px_offset);
 
 static int64_t CalculateGlobalBytesOffsetFromScrollPosition
     (const TextModeFrame& _frame,
-     const BigFileViewDataBackend& _backend,
+     const DataBackend& _backend,
      NSSize _view_size,
      int _vertical_line_offset,
      double _scroll_knob_position);
 
 static std::optional<int> FindVerticalLineToScrollToBytesOffsetWithFrame
     (const TextModeFrame& _frame,
-     const BigFileViewDataBackend& _backend,
+     const DataBackend& _backend,
      NSSize _view_size,
      int64_t _global_offset);
 
@@ -62,7 +62,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
 
 @implementation NCViewerTextModeView
 {
-    const BigFileViewDataBackend *m_Backend;
+    const DataBackend *m_Backend;
     const Theme *m_Theme;
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
     std::shared_ptr<const TextModeFrame> m_Frame;
@@ -79,7 +79,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
 }
 
 - (instancetype)initWithFrame:(NSRect)_frame
-                      backend:(const BigFileViewDataBackend&)_backend
+                      backend:(const DataBackend&)_backend
                         theme:(const nc::viewer::Theme&)_theme
 {
     if( self = [super initWithFrame:_frame] ) {
@@ -847,7 +847,7 @@ static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet()
 }
 
 static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState
-    (const BigFileViewDataBackend& _backend)
+    (const DataBackend& _backend)
 {
     TextModeWorkingSet::Source source;
     source.unprocessed_characters = (const char16_t*)_backend.UniChars();
@@ -927,7 +927,7 @@ static int FindEqualVerticalOffsetForRebuiltFrame
 }
 
 static ScrollPosition CalculateScrollPosition(const TextModeFrame& _frame,
-                                              const BigFileViewDataBackend& _backend,
+                                              const DataBackend& _backend,
                                               const NSSize _view_size,
                                               const int _vertical_line_offset,
                                               const double _vertical_px_offset)
@@ -977,7 +977,7 @@ static ScrollPosition CalculateScrollPosition(const TextModeFrame& _frame,
 }
 
 static int64_t CalculateGlobalBytesOffsetFromScrollPosition(const TextModeFrame& _frame,
-                                                            const BigFileViewDataBackend& _backend,
+                                                            const DataBackend& _backend,
                                                             const NSSize _view_size,
                                                             int _vertical_line_offset,
                                                             const double _scroll_knob_position)
@@ -1002,7 +1002,7 @@ static int64_t CalculateGlobalBytesOffsetFromScrollPosition(const TextModeFrame&
 
 static std::optional<int> FindVerticalLineToScrollToBytesOffsetWithFrame
     (const TextModeFrame& _frame,
-     const BigFileViewDataBackend& _backend,
+     const DataBackend& _backend,
      const NSSize _view_size,
      const int64_t _global_offset)
 {

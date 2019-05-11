@@ -18,11 +18,11 @@ static const auto g_TopInset = 1.;
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet();
 static std::shared_ptr<const TextModeWorkingSet>
-    BuildWorkingSetForBackendState(const BigFileViewDataBackend& _backend);
+    BuildWorkingSetForBackendState(const DataBackend& _backend);
 
 @implementation NCViewerHexModeView
 {
-    const BigFileViewDataBackend *m_Backend;
+    const DataBackend *m_Backend;
     const Theme *m_Theme;
     NSScrollView *m_ScrollView;
     std::shared_ptr<const TextModeWorkingSet> m_WorkingSet;
@@ -33,7 +33,7 @@ static std::shared_ptr<const TextModeWorkingSet>
 }
 
 - (instancetype)initWithFrame:(NSRect)_frame
-                      backend:(const BigFileViewDataBackend&)_backend
+                      backend:(const DataBackend&)_backend
                         theme:(const nc::viewer::Theme&)_theme
 {
     if( self = [super initWithFrame:_frame] ) {
@@ -669,7 +669,7 @@ static std::shared_ptr<const TextModeWorkingSet>
 @end
 
 static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState
-    (const BigFileViewDataBackend& _backend)
+    (const DataBackend& _backend)
 {
     TextModeWorkingSet::Source source;
     source.unprocessed_characters = (const char16_t*)_backend.UniChars();

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ViewerImplementationProtocol.h"
-#include "BigFileViewDataBackend.h"
+#include "DataBackend.h"
 #include "TextModeViewDelegate.h"
 #include "Theme.h"
 
@@ -11,7 +11,7 @@
 
 - (instancetype)initWithFrame:(NSRect)_frame NS_UNAVAILABLE;
 - (instancetype)initWithFrame:(NSRect)_frame
-                      backend:(const BigFileViewDataBackend&)_backend
+                      backend:(const nc::viewer::DataBackend&)_backend
                         theme:(const nc::viewer::Theme&)_theme;
 
 @property (nonatomic) id<NCViewerTextModeViewDelegate> delegate;

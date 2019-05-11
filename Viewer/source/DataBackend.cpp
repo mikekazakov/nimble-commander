@@ -1,8 +1,10 @@
 // Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "BigFileViewDataBackend.h"
+#include "DataBackend.h"
 #include <Utility/Encodings.h>
 
-BigFileViewDataBackend::BigFileViewDataBackend(nc::vfs::FileWindow &_fw,
+namespace nc::viewer {
+
+DataBackend::DataBackend(nc::vfs::FileWindow &_fw,
                                                int _encoding):
     m_FileWindow(_fw),
     m_Encoding(_encoding),
@@ -13,7 +15,7 @@ BigFileViewDataBackend::BigFileViewDataBackend(nc::vfs::FileWindow &_fw,
     DecodeBuffer();
 }
 
-void BigFileViewDataBackend::DecodeBuffer()
+void DataBackend::DecodeBuffer()
 {
     assert(encodings::BytesForCodeUnit(m_Encoding) <= 2); // TODO: support for UTF-32 in the future
     bool odd = (encodings::BytesForCodeUnit(m_Encoding) == 2) && ((m_FileWindow.WindowPos() & 1) == 1);
@@ -23,21 +25,14 @@ void BigFileViewDataBackend::DecodeBuffer()
                                   m_DecodeBuffer.get(),
                                   m_DecodeBufferIndx.get(),
                                   &m_DecodedBufferSize);
-//    if( m_OnDecoded )
-//        m_OnDecoded();
 }
-//
-//void BigFileViewDataBackend::SetOnDecoded(std::function<void()> _handler)
-//{
-//    m_OnDecoded = std::move(_handler);
-//}
 
-int BigFileViewDataBackend::Encoding() const
+int DataBackend::Encoding() const
 {
     return m_Encoding;
 }
 
-void BigFileViewDataBackend::SetEncoding(int _encoding)
+void DataBackend::SetEncoding(int _encoding)
 {
     if(_encoding != m_Encoding)
     {
@@ -47,7 +42,7 @@ void BigFileViewDataBackend::SetEncoding(int _encoding)
     }
 }
 
-int BigFileViewDataBackend::MoveWindowSync(uint64_t _pos)
+int DataBackend::MoveWindowSync(uint64_t _pos)
 {
     if(_pos == m_FileWindow.WindowPos())
         return 0; // nothing to do
@@ -58,4 +53,6 @@ int BigFileViewDataBackend::MoveWindowSync(uint64_t _pos)
     
     DecodeBuffer();
     return 0;
+}
+
 }

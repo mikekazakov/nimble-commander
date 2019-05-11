@@ -4,7 +4,7 @@
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
 #include <Config/Config.h>
-#include "BigFileViewDataBackend.h"
+#include "DataBackend.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/TemporaryFileStorage.h>
 #include <VFS/VFS.h>
@@ -23,7 +23,7 @@ using namespace nc::viewer;
 @implementation NCViewerView
 {
     nc::vfs::FileWindow *m_File; // may be nullptr
-    std::unique_ptr<BigFileViewDataBackend> m_Data; // may be nullptr
+    std::unique_ptr<DataBackend> m_Data; // may be nullptr
 
     std::optional<std::string> m_NativeStoredFile;
     
@@ -172,7 +172,7 @@ using namespace nc::viewer;
     assert(_encoding != encodings::ENCODING_INVALID);
     
     m_File = _file;
-    m_Data = std::make_unique<BigFileViewDataBackend>(*m_File, _encoding);
+    m_Data = std::make_unique<DataBackend>(*m_File, _encoding);
 //    BigFileView* __weak weak_self = self;
 //    auto on_decoded = [weak_self] {
 //        if( BigFileView *sself = weak_self ) {

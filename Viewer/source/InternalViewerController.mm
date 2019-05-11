@@ -11,6 +11,7 @@
 #include <Habanero/SerialQueue.h>
 
 using namespace std::literals;
+using namespace nc::viewer;
 
 static const auto g_ConfigRespectComAppleTextEncoding   = "viewer.respectComAppleTextEncoding";
 static const auto g_ConfigSearchCaseSensitive           = "viewer.searchCaseSensitive";
@@ -565,11 +566,11 @@ static int InvertBitFlag( int _value, int _flag )
     m_ModePopUp.action = @selector(onModePopUpChanged:);
     [m_ModePopUp removeAllItems];
     [m_ModePopUp addItemWithTitle:@"Text"];
-    m_ModePopUp.lastItem.tag = (int)BigFileViewModes::Text;
+    m_ModePopUp.lastItem.tag = (int)ViewMode::Text;
     [m_ModePopUp addItemWithTitle:@"Hex"];
-    m_ModePopUp.lastItem.tag = (int)BigFileViewModes::Hex;
+    m_ModePopUp.lastItem.tag = (int)ViewMode::Hex;
     [m_ModePopUp addItemWithTitle:@"Preview"];
-    m_ModePopUp.lastItem.tag = (int)BigFileViewModes::Preview;
+    m_ModePopUp.lastItem.tag = (int)ViewMode::Preview;
     [m_ModePopUp bind:@"selectedTag" toObject:m_View withKeyPath:@"mode" options:nil];
 }
 

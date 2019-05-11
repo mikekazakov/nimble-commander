@@ -2,9 +2,11 @@
 
 #pragma once
 
-#include "BigFileViewDataBackend.h"
+//#include "BigFileViewDataBackend.h"
 
 #include <Cocoa/Cocoa.h>
+
+#if 0
 
 @class BigFileView;
 
@@ -50,6 +52,8 @@ public:
     virtual void OnMouseDown(NSEvent *_event){}
     virtual void OnWordWrappingChanged(){}
 };
+
+#endif
 
 
 @protocol NCViewerImplementationProtocol <NSObject>

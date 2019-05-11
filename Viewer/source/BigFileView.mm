@@ -4,9 +4,6 @@
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
 #include <Config/Config.h>
-#include "BigFileViewText.h"
-#include "BigFileViewHex.h"
-#include "InternalViewerViewPreviewMode.h"
 #include "BigFileViewDataBackend.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/TemporaryFileStorage.h>
@@ -21,6 +18,7 @@ static const auto g_ConfigAutoDetectEncoding    = "viewer.autoDetectEncoding";
 const static double g_BorderWidth = 1.0;
 
 using nc::vfs::easy::CopyFileToTempStorage;
+using namespace nc::viewer;
 
 @implementation BigFileView
 {
@@ -33,11 +31,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
     bool            m_WrapWords;
     
     NSView<NCViewerImplementationProtocol> *m_View;
-    
-//    std::unique_ptr<BigFileViewImpl> m_ViewImpl; // view impl can be nullptr in case of view shut down
-    
-//    NSScroller      *m_VerticalScroller;
-    
+        
     uint64_t        m_VerticalPositionInBytes;
     double          m_VerticalPositionPercentage;
     
@@ -86,48 +80,13 @@ using nc::vfs::easy::CopyFileToTempStorage;
 //    m_ViewImpl = std::make_unique<BigFileViewImpl>(); // dummy for initialization process
     
     [self reloadAppearance];
-    
-//    [NSNotificationCenter.defaultCenter addObserver:self
-//                                           selector:@selector(frameDidChange)
-//                                               name:NSViewFrameDidChangeNotification
-//                                             object:self];
-    
-//    m_VerticalScroller = [[NSScroller alloc] initWithFrame:NSMakeRect(0, 0, 0, 0)];
-//    m_VerticalScroller.enabled = true;
-//    m_VerticalScroller.target = self;
-//    m_VerticalScroller.action = @selector(VerticalScroll:);
-//    m_VerticalScroller.translatesAutoresizingMaskIntoConstraints = false;
-//    [self addSubview:m_VerticalScroller];
-//    [self layoutVerticalScroll];
-//    [self frameDidChange];
-//    [self bind:@"verticalPositionPercentage" toObject:m_VerticalScroller withKeyPath:@"doubleValue" options:nil];
-    
+
     __weak BigFileView* weak_self = self;
     m_Theme->ObserveChanges([weak_self] {
         if( auto strong_self = weak_self )
             [strong_self reloadAppearance];
     });
 }
-
-- (void) dealloc
-{
-//    [self unbind:@"verticalPositionPercentage"];
-//    [NSNotificationCenter.defaultCenter removeObserver:self];
-}
-
-//- (void)layoutVerticalScroll
-//{
-//    for(NSLayoutConstraint *c in self.constraints)
-//        if(c.firstItem == m_VerticalScroller || c.secondItem == m_VerticalScroller)
-//            [self removeConstraint:c];
-//
-//    double off = self.hasBorder ? g_BorderWidth : 0;
-//    NSDictionary *views = NSDictionaryOfVariableBindings(m_VerticalScroller);
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"[m_VerticalScroller(15)]-(==%f)-|",off]
-//                                                                 options:0 metrics:nil views:views]];
-//    [self addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-(==%f)-[m_VerticalScroller]-(==%f)-|",off,off]
-//                                                                 options:0 metrics:nil views:views]];
-//}
 
 - (void)reloadAppearance
 {
@@ -146,30 +105,30 @@ using nc::vfs::easy::CopyFileToTempStorage;
     return YES;
 }
 
-- (void)drawRect:(NSRect)dirtyRect
-{
-//    if( !m_ViewImpl )
-//        return;
-    
-    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
-    CGContextSaveGState(context);
-    if(self.hasBorder)
-        CGContextTranslateCTM(context, g_BorderWidth, g_BorderWidth);
-    
-//    m_ViewImpl->DoDraw(context, dirtyRect);
-    
-    if(self.hasBorder) {
-        CGContextTranslateCTM(context, -g_BorderWidth, -g_BorderWidth);
-        NSRect rc = NSMakeRect(0, 0, self.bounds.size.width - g_BorderWidth, self.bounds.size.height - g_BorderWidth);
-        CGContextSetAllowsAntialiasing(context, false);
-        NSBezierPath *bp = [NSBezierPath bezierPathWithRect:rc];
-        bp.lineWidth = g_BorderWidth;
-        [[NSColor colorWithCalibratedWhite:184./255 alpha:1.0] set];
-        [bp stroke];
-        CGContextSetAllowsAntialiasing(context, true);
-    }
-    CGContextRestoreGState(context);
-}
+//- (void)drawRect:(NSRect)dirtyRect
+//{
+////    if( !m_ViewImpl )
+////        return;
+//    
+//    CGContextRef context = (CGContextRef)NSGraphicsContext.currentContext.graphicsPort;
+//    CGContextSaveGState(context);
+//    if(self.hasBorder)
+//        CGContextTranslateCTM(context, g_BorderWidth, g_BorderWidth);
+//    
+////    m_ViewImpl->DoDraw(context, dirtyRect);
+//    
+//    if(self.hasBorder) {
+//        CGContextTranslateCTM(context, -g_BorderWidth, -g_BorderWidth);
+//        NSRect rc = NSMakeRect(0, 0, self.bounds.size.width - g_BorderWidth, self.bounds.size.height - g_BorderWidth);
+//        CGContextSetAllowsAntialiasing(context, false);
+//        NSBezierPath *bp = [NSBezierPath bezierPathWithRect:rc];
+//        bp.lineWidth = g_BorderWidth;
+//        [[NSColor colorWithCalibratedWhite:184./255 alpha:1.0] set];
+//        [bp stroke];
+//        CGContextSetAllowsAntialiasing(context, true);
+//    }
+//    CGContextRestoreGState(context);
+//}
 
 - (void)drawFocusRingMask
 {
@@ -201,14 +160,14 @@ using nc::vfs::easy::CopyFileToTempStorage;
         else                            encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN;
     }
     
-    BigFileViewModes mode = stat.is_binary ? BigFileViewModes::Hex : BigFileViewModes::Text;
+    ViewMode mode = stat.is_binary ? ViewMode::Hex : ViewMode::Text;
     
     [self SetKnownFile:_file encoding:encoding mode:mode];
 }
 
 - (void) SetKnownFile:(nc::vfs::FileWindow*) _file
              encoding:(int)_encoding
-                 mode:(BigFileViewModes)_mode
+                 mode:(ViewMode)_mode
 {
     assert(_encoding != encodings::ENCODING_INVALID);
     
@@ -236,78 +195,10 @@ using nc::vfs::easy::CopyFileToTempStorage;
     dispatch_assert_main_queue();
     
     [m_View removeFromSuperview];
+    m_View = nil;
     m_Data.reset();
     m_File = nullptr;
 }
-
-//- (void)keyDown:(NSEvent *)event
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    if( event.charactersIgnoringModifiers.length != 1 )
-//        return;
-//    switch( [event.charactersIgnoringModifiers characterAtIndex:0] ) {
-//        case NSHomeFunctionKey: m_ViewImpl->HandleVerticalScroll(0.0); break;
-//        case NSEndFunctionKey:  m_ViewImpl->HandleVerticalScroll(1.0); break;
-//        default: [super keyDown:event]; return;
-//    }
-//    [self syncVerticalPositionInBytes];
-//}
-
-//- (void)moveUp:(id)sender
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    m_ViewImpl->OnUpArrow();
-//    [self syncVerticalPositionInBytes];
-//}
-
-//- (void)moveDown:(id)sender
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    m_ViewImpl->OnDownArrow();
-//    [self syncVerticalPositionInBytes];
-//}
-
-//- (void)moveLeft:(id)sender
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    m_ViewImpl->OnLeftArrow();
-//    [self syncVerticalPositionInBytes];
-//}
-
-//- (void)moveRight:(id)sender
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    m_ViewImpl->OnRightArrow();
-//    [self syncVerticalPositionInBytes];
-//}
-
-//- (void)pageDown:(id)sender
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    m_ViewImpl->OnPageDown();
-//    [self syncVerticalPositionInBytes];
-//}
-//
-//- (void) pageUp:(id)sender
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    m_ViewImpl->OnPageUp();
-//    [self syncVerticalPositionInBytes];
-//}
 
 - (int) encoding
 {
@@ -328,76 +219,10 @@ using nc::vfs::easy::CopyFileToTempStorage;
         [m_View backendContentHasChanged];
 }
 
-//- (void)frameDidChange
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    m_ViewImpl->OnFrameChanged();
-//    [self syncVerticalScrollerState];
-//}
-
-//- (CTFontRef) TextFont{
-//    return (__bridge CTFontRef)m_Theme->Font();
-//}
-//
-//- (CGColorRef) TextForegroundColor{
-//    return m_Theme->TextColor().CGColor;
-//}
-//
-//- (CGColorRef) SelectionBkFillColor{
-//  return m_Theme->ViewerSelectionColor().CGColor;
-//}
-//
-//- (CGColorRef) BackgroundFillColor{
-//    return m_Theme->ViewerBackgroundColor().CGColor;
-//}
-
 - (void) RequestWindowMovementAt: (uint64_t) _pos
 {
     m_Data->MoveWindowSync(_pos);
 }
-//
-//- (void)VerticalScroll:(id)sender
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    switch( m_VerticalScroller.hitPart )
-//    {
-//        case NSScrollerIncrementLine:
-//            m_ViewImpl->OnDownArrow();
-//            break;
-//        case NSScrollerIncrementPage:
-//            // Include code here for the case where CTRL + down arrow is pressed, or the space the scroll knob moves in is pressed
-//            m_ViewImpl->OnPageDown();
-//            break;
-//        case NSScrollerDecrementLine:
-//            // Include code here for the case where the up arrow is pressed
-//            m_ViewImpl->OnUpArrow();
-//            break;
-//        case NSScrollerDecrementPage:
-//            // Include code here for the case where CTRL + up arrow is pressed, or the space the scroll knob moves in is pressed
-//            m_ViewImpl->OnPageUp();
-//            break;
-//        case NSScrollerKnob:
-//            // This case is when the knob itself is pressed
-//            m_ViewImpl->HandleVerticalScroll(m_VerticalScroller.doubleValue);
-//            break;
-//        default:
-//            break;
-//    }
-//    [self syncVerticalPositionInBytes];
-//}
-
-//- (void)scrollWheel:(NSEvent *)theEvent
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    m_ViewImpl->OnScrollWheel(theEvent);
-//    [self syncVerticalPositionInBytes];
-//}
 
 - (bool)wordWrap
 {
@@ -418,9 +243,15 @@ using nc::vfs::easy::CopyFileToTempStorage;
     [self didChangeValueForKey:@"wordWrap"];
 }
 
-- (BigFileViewModes) mode
+- (ViewMode) mode
 {
-    return BigFileViewModes::Text;
+    if( [m_View isKindOfClass:NCViewerTextModeView.class] )
+        return ViewMode::Text;
+    if( [m_View isKindOfClass:NCViewerHexModeView.class] )
+        return ViewMode::Hex;
+    // + QL
+    
+    return ViewMode::Text;
     
 //    if(dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
 //        return BigFileViewModes::Text;
@@ -435,18 +266,18 @@ using nc::vfs::easy::CopyFileToTempStorage;
 //    // TODO: make Text move be default
 }
 
-- (void) setMode: (BigFileViewModes) _mode
+- (void) setMode: (ViewMode)_mode
 {
-    if( _mode == BigFileViewModes::Text && [m_View isKindOfClass:NCViewerTextModeView.class] )
+    if( _mode == ViewMode::Text && [m_View isKindOfClass:NCViewerTextModeView.class] )
         return;
-    if( _mode == BigFileViewModes::Hex  && [m_View isKindOfClass:NCViewerHexModeView.class] )
+    if( _mode == ViewMode::Hex  && [m_View isKindOfClass:NCViewerHexModeView.class] )
         return;
     
     if( m_View ) {
         [m_View removeFromSuperview];
     }
     
-    if( _mode == BigFileViewModes::Text ) {
+    if( _mode == ViewMode::Text ) {
         auto view = [[NCViewerTextModeView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
                                                         backend:*m_Data
                                                           theme:*m_Theme];
@@ -459,7 +290,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
                               @"V:|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
         m_View = view;
     }
-    if( _mode == BigFileViewModes::Hex ) {
+    if( _mode == ViewMode::Hex ) {
         auto view = [[NCViewerHexModeView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)
                                                        backend:*m_Data
                                                          theme:*m_Theme];
@@ -472,6 +303,9 @@ using nc::vfs::easy::CopyFileToTempStorage;
                               @"V:|-(==0)-[view]-(==0)-|" options:0 metrics:nil views:views]];
         m_View = view;
     }
+    
+    if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] )    
+        [m_View scrollToGlobalBytesOffset:(int64_t)m_VerticalPositionInBytes];
     
 //    if( _mode == BigFileViewModes::Text    && dynamic_cast<nc::viewer::BigFileViewText*>(m_ViewImpl.get()))
 //        return;
@@ -534,8 +368,8 @@ using nc::vfs::easy::CopyFileToTempStorage;
     }
 }
 
-- (void) syncVerticalScrollerState
-{
+//- (void) syncVerticalScrollerState
+//{
 //    if( !m_ViewImpl )
 //        return;
 //
@@ -544,10 +378,10 @@ using nc::vfs::easy::CopyFileToTempStorage;
 //    m_ViewImpl->CalculateScrollPosition(scroll_pos, scroll_prop);
 //    m_VerticalScroller.doubleValue = scroll_pos;
 //    m_VerticalScroller.knobProportion = scroll_prop;
-}
+//}
 
-- (void) syncVerticalPositionInBytes
-{
+//- (void) syncVerticalPositionInBytes
+//{
 //    if( !m_ViewImpl )
 //        return;
 //
@@ -560,7 +394,7 @@ using nc::vfs::easy::CopyFileToTempStorage;
 //    [self didChangeValueForKey:@"verticalPositionInBytes"];
 //
 //    [self syncVerticalScrollerState];
-}
+//}
 
 - (uint64_t) verticalPositionInBytes
 {
@@ -570,11 +404,11 @@ using nc::vfs::easy::CopyFileToTempStorage;
 
 - (void) setVerticalPositionInBytes:(uint64_t) _pos
 {
-//    if( _pos == m_VerticalPositionInBytes )
-//        return;
-//
-//    m_ViewImpl->ScrollToByteOffset(_pos);
-//    [self syncVerticalPositionInBytes];
+    if( _pos == m_VerticalPositionInBytes )
+        return;
+    
+    if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] )
+        [m_View scrollToGlobalBytesOffset:(int64_t)m_VerticalPositionInBytes];
 }
 
 - (void)scrollToVerticalPosition:(double)_p
@@ -692,14 +526,6 @@ using nc::vfs::easy::CopyFileToTempStorage;
     
     [self setNeedsDisplay];
 }
-
-//- (void) mouseDown:(NSEvent *)_event
-//{
-//    if( !m_ViewImpl )
-//        return;
-//
-//    m_ViewImpl->OnMouseDown(_event);
-//}
 
  - (void)copy:(id)sender
 {

@@ -28,7 +28,7 @@ public:
         std::string         path; // works as a access key
         uint64_t            position = 0;
         bool                wrapping = false;
-        BigFileViewModes    view_mode = BigFileViewModes::Text;
+        ViewMode            view_mode = ViewMode::Text;
         int                 encoding = 0;
         CFRange             selection = {-1, 0};
     };

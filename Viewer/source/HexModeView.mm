@@ -120,7 +120,8 @@ static std::shared_ptr<const TextModeWorkingSet>
     source.working_set = m_WorkingSet;
     source.raw_bytes_begin = (const std::byte *)m_Backend->Raw();
     source.raw_bytes_end = (const std::byte *)m_Backend->Raw() + m_Backend->RawSize();
-//    source.number_of_columns = 4;
+    source.number_of_columns = 2;
+    source.bytes_per_column = 8;
 
     return std::make_shared<HexModeFrame>(source);
 }
@@ -221,27 +222,23 @@ static std::shared_ptr<const TextModeWorkingSet>
     CGContextSetShouldSmoothFonts(context, true);
     CGContextSetShouldAntialias(context, true);
 
-
-//        const auto view_width = self.bounds.size.width;
     const auto origin = [self textOrigin];
 
     const auto lines_per_screen =
         (int)std::ceil( self.bounds.size.height / m_FontInfo.LineHeight() );
-//
-        // both lines_start and lines_end are _not_ clamped regarding real Frame data!
     const int lines_start = (int)std::floor( (0. - origin.y) / m_FontInfo.LineHeight() );
-//
+
     // +1 to ensure that selection of a following line is also visible
     const int lines_end = lines_start + lines_per_screen + 1;
-//
-    auto line_pos = CGPointMake( origin.x, origin.y + lines_start * m_FontInfo.LineHeight() );
-
+    
     const auto bytes_selection = [self localBytesSelection];
     const auto chars_selection = [self localCharsSelection];    
     const auto offsets = m_Layout->CalcHorizontalOffsets();
+    const auto line_height = m_Frame->FontInfo().LineHeight();
     
+    auto line_pos = CGPointMake( origin.x, origin.y + lines_start * m_FontInfo.LineHeight() );
     for( int row_index = lines_start; row_index < lines_end;
-        ++row_index, line_pos.y += m_Frame->FontInfo().LineHeight() ) {
+        ++row_index, line_pos.y += line_height ) {
         if( row_index < 0 || row_index >= m_Frame->NumberOfRows() )
             continue;
         
@@ -251,48 +248,49 @@ static std::shared_ptr<const TextModeWorkingSet>
                                              m_Frame->FontInfo().Descent() );
         
         auto &row = m_Frame->RowAtIndex(row_index);
+        
+        // address
         CGContextSetTextPosition( context, offsets.address, text_origin.y );
         CTLineDraw(row.AddressLine(), context );
         
+        // columns
         for( int column_index = 0; column_index < row.ColumnsNumber(); ++column_index ) {
             const auto sel_bg = m_Layout->CalcColumnSelectionBackground(bytes_selection,
                                                                         row_index,
                                                                         column_index,
                                                                         offsets); 
-            if( sel_bg.first < sel_bg.second ) {
-                CGContextSaveGState(context);
-                CGContextSetShouldAntialias(context, false);
-                CGContextSetFillColorWithColor(context, m_Theme->ViewerSelectionColor().CGColor );
-                CGContextFillRect(context,
-                                  CGRectMake(sel_bg.first,
-                                             line_pos.y,
-                                             sel_bg.second - sel_bg.first,
-                                             m_FontInfo.LineHeight()));
-                CGContextRestoreGState(context);                                     
-            }
+            if( sel_bg.first < sel_bg.second )
+                [self highlightSelectionWithRect:CGRectMake(sel_bg.first,
+                                                            line_pos.y,
+                                                            sel_bg.second - sel_bg.first,
+                                                            line_height)];
 
             CGContextSetTextPosition( context, offsets.columns.at(column_index), text_origin.y );
             CTLineDraw(row.ColumnLine(column_index), context );
         }
 
+        // snippet
         const auto sel_bg = m_Layout->CalcSnippetSelectionBackground(chars_selection,
                                                                      row_index, 
                                                                      offsets);
-        if( sel_bg.first < sel_bg.second ) {
-            CGContextSaveGState(context);
-            CGContextSetShouldAntialias(context, false);
-            CGContextSetFillColorWithColor(context, m_Theme->ViewerSelectionColor().CGColor );
-            CGContextFillRect(context,
-                              CGRectMake(sel_bg.first,
-                                         line_pos.y,
-                                         sel_bg.second - sel_bg.first,
-                                         m_FontInfo.LineHeight()));
-            CGContextRestoreGState(context);
-        }
-        
+        if( sel_bg.first < sel_bg.second )
+            [self highlightSelectionWithRect:CGRectMake(sel_bg.first,
+                                                        line_pos.y,
+                                                        sel_bg.second - sel_bg.first,
+                                                        line_height)];        
         CGContextSetTextPosition( context, offsets.snippet, text_origin.y );        
         CTLineDraw(row.SnippetLine(), context );
     }
+}
+
+- (void)highlightSelectionWithRect:(CGRect)_rc
+{
+    const auto context = NSGraphicsContext.currentContext.CGContext;
+    CGContextSaveGState(context);
+    CGContextSetShouldAntialias(context, false);
+    CGContextSetFillColorWithColor(context, m_Theme->ViewerSelectionColor().CGColor);
+    CGContextFillRect(context, _rc);
+    CGContextRestoreGState(context);
 }
 
 - (void)frameDidChange
@@ -560,15 +558,8 @@ static std::shared_ptr<const TextModeWorkingSet>
 
 - (void) mouseDown:(NSEvent *)_event
 {
-//    const auto view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
-//    auto index = m_Layout->ByteOffsetFromColumnHit(view_coords);
-//    std::cout << index << std::endl;
-//    if( _event.clickCount > 2 )
-//        [self handleSelectionWithTripleClick:_event];
-//    else if (_event.clickCount == 2)
-//        [self handleSelectionWithDoubleClick:_event];
-//    else
-        [self handleSelectionWithMouseDragging:_event];
+    // TODO: selection with double- and triple- click
+    [self handleSelectionWithMouseDragging:_event];
 }
 
 - (bool) shouldDoDraggingSelectionInColumns:(NSEvent*)_event

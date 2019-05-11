@@ -1,6 +1,7 @@
 #pragma once
 
-#include "BigFileViewProtocol.h"
+#include "ViewerImplementationProtocol.h"
+#include "BigFileViewDataBackend.h"
 #include "HexModeViewDelegate.h"
 #include "Theme.h"
 

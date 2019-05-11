@@ -51,7 +51,7 @@ static std::optional<History::Entry>
         e.wrapping = _object["wrapping"].GetBool();
 
     if( has_number("mode") )
-        e.view_mode = (BigFileViewModes)_object["mode"].GetInt();
+        e.view_mode = (ViewMode)_object["mode"].GetInt();
     
     if( has_string("encoding") )
         e.encoding = encodings::EncodingFromName( _object["encoding"].GetString() );

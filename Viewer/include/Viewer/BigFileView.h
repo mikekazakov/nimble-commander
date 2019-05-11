@@ -30,7 +30,7 @@ namespace nc::viewer {
 - (void) SetFile:(nc::vfs::FileWindow*) _file;
 - (void) SetKnownFile:(nc::vfs::FileWindow*) _file
              encoding:(int)_encoding
-                 mode:(BigFileViewModes)_mode;
+                 mode:(nc::viewer::ViewMode)_mode;
 
 /**
  * This will reset the current viewer state.
@@ -75,7 +75,7 @@ namespace nc::viewer {
  * Visual presentation mode. Currently supports three: Text, Hex and Preview.
  * KVO-compatible.
  */
-@property (nonatomic) BigFileViewModes mode;
+@property (nonatomic) nc::viewer::ViewMode mode;
 
 /**
  * Scroll position within whole file, now in a window

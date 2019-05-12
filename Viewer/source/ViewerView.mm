@@ -87,9 +87,8 @@ using namespace nc::viewer;
 
 - (void)reloadAppearance
 {
-//    if( m_ViewImpl )
-//        m_ViewImpl->OnFontSettingsChanged();
-    [self setNeedsDisplay];
+    if( [m_View respondsToSelector:@selector(themeHasChanged)] )
+        [m_View themeHasChanged];
 }
 
 - (BOOL)isOpaque

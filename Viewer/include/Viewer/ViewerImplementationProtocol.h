@@ -79,4 +79,9 @@ public:
  */
 - (void) lineWrappingHasChanged;
 
+/**
+ * Informs that visual theme provided for the implementation has changed.
+ */
+- (void) themeHasChanged;
+
 @end

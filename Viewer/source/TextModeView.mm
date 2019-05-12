@@ -841,6 +841,18 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
     }
 }
 
+- (void) themeHasChanged
+{
+    m_FontInfo = FontGeometryInfo{ (__bridge CTFontRef)m_Theme->Font() };
+    const auto new_frame = [self buildLayout];
+    m_VerticalLineOffset = FindEqualVerticalOffsetForRebuiltFrame(*m_Frame,
+                                                                  m_VerticalLineOffset,
+                                                                  *new_frame);
+    m_Frame = new_frame;
+    [self scrollPositionDidChange];
+    [self setNeedsDisplay:true];
+}
+
 @end
 
 static std::shared_ptr<const TextModeWorkingSet> MakeEmptyWorkingSet()

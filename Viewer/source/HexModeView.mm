@@ -676,6 +676,21 @@ static std::shared_ptr<const TextModeWorkingSet>
     [self setNeedsDisplay:true];
 }
 
+- (void) themeHasChanged
+{
+    m_FontInfo = FontGeometryInfo{ (__bridge CTFontRef)m_Theme->Font() };
+    const auto scroll_offset = m_Layout->GetOffset();    
+    const auto old_frame = m_Frame;
+    m_Frame = [self buildFrame];
+    m_Layout->SetFrame(m_Frame);
+    auto new_offset = HexModeLayout::FindEqualVerticalOffsetForRebuiltFrame(*old_frame,
+                                                                            scroll_offset.row,
+                                                                            *m_Frame);
+    m_Layout->SetOffset({new_offset, scroll_offset.smooth});
+    [self scrollPositionDidChange];
+    [self setNeedsDisplay:true];
+}
+
 @end
 
 static std::shared_ptr<const TextModeWorkingSet> BuildWorkingSetForBackendState

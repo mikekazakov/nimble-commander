@@ -19,7 +19,7 @@
 **/
 
 #include <Habanero/Observable.h>
-#include "../../Core/ActionShortcut.h"
+#include <Utility/ActionShortcut.h>
 #include "../../Bootstrap/Config.h"
 
 class ExternalToolsParameters
@@ -125,7 +125,7 @@ public:
     std::string     m_Title;
     std::string     m_ExecutablePath; // app by bundle?
     std::string     m_Parameters;
-    ActionShortcut  m_Shorcut;
+    nc::utility::ActionShortcut m_Shorcut;
     StartupMode     m_StartupMode = StartupMode::Automatic;
     
     bool operator==(const ExternalTool &_rhs) const;

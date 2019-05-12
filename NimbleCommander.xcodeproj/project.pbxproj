@@ -855,9 +855,6 @@
 		CFD7261C1E42E0A500603077 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
 		CFD7261D1E42E0A600603077 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
 		CFD7261E1E42E0A700603077 /* ThemesManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5FE8031E14A08500CD83B4 /* ThemesManager.mm */; };
-		CFD7261F1E42E0AB00603077 /* ActionShortcut.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */; };
-		CFD726201E42E0AC00603077 /* ActionShortcut.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */; };
-		CFD726211E42E0AD00603077 /* ActionShortcut.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */; };
 		CFD726221E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
 		CFD726231E42E0B100603077 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
 		CFD726241E42E0B200603077 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
@@ -1105,7 +1102,6 @@
 		CFDAC2361DFBDE560039A104 /* Application.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2351DFBDE560039A104 /* Application.mm */; };
 		CFDAC23B1DFBDEBA0039A104 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */; };
 		CFDAC23C1DFBDEBA0039A104 /* AppDelegateCPP.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23A1DFBDEBA0039A104 /* AppDelegateCPP.mm */; };
-		CFDAC2411DFBE18C0039A104 /* ActionShortcut.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */; };
 		CFDAC2421DFBE18C0039A104 /* ActionsShortcutsManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */; };
 		CFDAC2481DFBEE340039A104 /* MainWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2441DFBEE340039A104 /* MainWindow.mm */; };
 		CFDAC2491DFBEE340039A104 /* MainWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC2461DFBEE340039A104 /* MainWindowController.mm */; };
@@ -1236,6 +1232,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = CF20CBDC215A2526006716F6;
 			remoteInfo = Config;
+		};
+		CF24E1F12288A9EB00C166FA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD79A7321F65A540043A26D /* Viewer.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CFD79B5022106E010043A26D;
+			remoteInfo = ViewerUT;
 		};
 		CF26DE3321D92135003F0E93 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2064,8 +2067,6 @@
 		CFDAC2381DFBDEBA0039A104 /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = NimbleCommander/Bootstrap/AppDelegate.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2391DFBDEBA0039A104 /* AppDelegateCPP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegateCPP.h; path = NimbleCommander/Bootstrap/AppDelegateCPP.h; sourceTree = SOURCE_ROOT; };
 		CFDAC23A1DFBDEBA0039A104 /* AppDelegateCPP.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegateCPP.mm; path = NimbleCommander/Bootstrap/AppDelegateCPP.mm; sourceTree = SOURCE_ROOT; };
-		CFDAC23D1DFBE18C0039A104 /* ActionShortcut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActionShortcut.h; path = NimbleCommander/Core/ActionShortcut.h; sourceTree = SOURCE_ROOT; };
-		CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionShortcut.mm; path = NimbleCommander/Core/ActionShortcut.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC23F1DFBE18C0039A104 /* ActionsShortcutsManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActionsShortcutsManager.h; path = NimbleCommander/Core/ActionsShortcutsManager.h; sourceTree = SOURCE_ROOT; };
 		CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionsShortcutsManager.mm; path = NimbleCommander/Core/ActionsShortcutsManager.mm; sourceTree = SOURCE_ROOT; };
 		CFDAC2431DFBEE340039A104 /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindow.h; path = NimbleCommander/States/MainWindow.h; sourceTree = SOURCE_ROOT; };
@@ -2981,8 +2982,6 @@
 			children = (
 				CF46C23420317FD700A91E2F /* ServicesHandler.h */,
 				CF46C23520317FD700A91E2F /* ServicesHandler.mm */,
-				CFDAC23D1DFBE18C0039A104 /* ActionShortcut.h */,
-				CFDAC23E1DFBE18C0039A104 /* ActionShortcut.mm */,
 				CFDAC23F1DFBE18C0039A104 /* ActionsShortcutsManager.h */,
 				CFDAC2401DFBE18C0039A104 /* ActionsShortcutsManager.mm */,
 				CF2740821E57F5DD000D4365 /* Alert.h */,
@@ -3230,6 +3229,7 @@
 			isa = PBXGroup;
 			children = (
 				CFD79A7821F65A540043A26D /* Viewer.framework */,
+				CF24E1F22288A9EB00C166FA /* ViewerUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3443,6 +3443,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				ru,
@@ -3524,6 +3525,13 @@
 			fileType = "compiled.mach-o.dylib";
 			path = libConfig.dylib;
 			remoteRef = CF20CC05215A258F006716F6 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CF24E1F22288A9EB00C166FA /* ViewerUT */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = ViewerUT;
+			remoteRef = CF24E1F12288A9EB00C166FA /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CF26DE3421D92135003F0E93 /* libVFSUT */ = {
@@ -3998,7 +4006,6 @@
 				CF36DBEB1F6C1807004A018E /* PanelViewFieldEditor.mm in Sources */,
 				CFD726951E42E22A00603077 /* PanelDataItemVolatileData.cpp in Sources */,
 				CFBA63AC1FC1A4EC00077682 /* RevealInOppositePanel.mm in Sources */,
-				CFD726201E42E0AC00603077 /* ActionShortcut.mm in Sources */,
 				CF818B5A1EA0610D00BC28E6 /* ToggleSort.mm in Sources */,
 				CFB9F10B201AEDC400FC65D8 /* ClosedPanelsHistoryImpl.cpp in Sources */,
 				CFD8CDBA1E8CD37D00E4DC53 /* EjectVolume.mm in Sources */,
@@ -4387,7 +4394,6 @@
 				CFD726AC1E42E25100603077 /* PanelViewLayoutSupport.mm in Sources */,
 				CFA1716320196CB400F507D5 /* AppDelegate+MainWindowCreation.mm in Sources */,
 				CF6237231EB4444300152B2B /* PanelDataExternalEntryKey.mm in Sources */,
-				CFD726211E42E0AD00603077 /* ActionShortcut.mm in Sources */,
 				CFDC07CA2159F6730069D364 /* PanelViewPresentationItemsColoringFilterPersistence.mm in Sources */,
 				CFFA95191F45A3400035E606 /* ConfigWiring.mm in Sources */,
 				CFD8CDBF1E8CD6A700E4DC53 /* ShowVolumeInformation.mm in Sources */,
@@ -4616,7 +4622,6 @@
 				CF5FE8011E14A00C00CD83B4 /* Theme.mm in Sources */,
 				CF5FE8041E14A08500CD83B4 /* ThemesManager.mm in Sources */,
 				CF4E56451D5064FE00452912 /* PreferencesWindowViewerTab.mm in Sources */,
-				CFDAC2411DFBE18C0039A104 /* ActionShortcut.mm in Sources */,
 				CF0139B51E99F7C200E44F2D /* FindFiles.mm in Sources */,
 				CF197C461FB834B7009F6C59 /* ShowTabs.mm in Sources */,
 				CFDAC21B1DFBC6CB0039A104 /* PanelHistory.mm in Sources */,
@@ -4861,7 +4866,6 @@
 				CFD727081E42E30400603077 /* FilePanelsTabbedHolder.mm in Sources */,
 				CFD726CB1E42E2A400603077 /* PanelBriefViewCollectionView.mm in Sources */,
 				CF4D98CB202C205F00ECE06D /* StateActions.mm in Sources */,
-				CFD7261F1E42E0AB00603077 /* ActionShortcut.mm in Sources */,
 				CF9F4B001ECC8DCF00E0AF82 /* NCPanelOpenWithMenuDelegate.mm in Sources */,
 				CFD726031E42E06400603077 /* AppDelegate+Migration.mm in Sources */,
 				CF818B5C1EA0610E00BC28E6 /* RenameInPlace.mm in Sources */,

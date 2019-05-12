@@ -359,7 +359,7 @@ static std::optional<ExternalTool> LoadTool( const nc::config::Value& _from )
         et.m_Parameters = _from[g_ParametersKey].GetString();
 
     if( _from.HasMember(g_ShortcutKey) && _from[g_ShortcutKey].IsString() )
-        et.m_Shorcut = ActionShortcut( _from[g_ShortcutKey].GetString() );
+        et.m_Shorcut = nc::utility::ActionShortcut( _from[g_ShortcutKey].GetString() );
     
     if( _from.HasMember(g_StartupKey) && _from[g_StartupKey].IsInt() )
         et.m_StartupMode = (ExternalTool::StartupMode)_from[g_StartupKey].GetInt();

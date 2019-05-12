@@ -1,24 +1,20 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ActionShortcut.h"
 #include <locale>
 #include <vector>
 #include <codecvt>
 #include <Carbon/Carbon.h>
 
+namespace nc::utility {
+
 static_assert( sizeof(ActionShortcut) == 4 );
 
-ActionShortcut::ActionShortcut():
-    unicode(0),
-    modifiers(0)
-{
-}
-
-ActionShortcut::ActionShortcut(const std::string& _from):
+ActionShortcut::ActionShortcut(const std::string& _from) noexcept:
     ActionShortcut(_from.c_str())
 {
 }
 
-ActionShortcut::ActionShortcut(const char* _from): // construct from persistency string
+ActionShortcut::ActionShortcut(const char* _from) noexcept: // construct from persistency string
     ActionShortcut()
 {
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> convert;
@@ -49,7 +45,7 @@ ActionShortcut::ActionShortcut(const char* _from): // construct from persistency
     modifiers = mod_flags;
 }
 
-ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long _modif):
+ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long _modif) noexcept:
     unicode(_unicode),
     modifiers(0)
 {
@@ -61,12 +57,12 @@ ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long _modif):
     modifiers = mod_flags;
 }
 
-ActionShortcut::operator bool() const
+ActionShortcut::operator bool() const noexcept
 {
     return unicode != 0;
 }
 
-std::string ActionShortcut::ToPersString() const
+std::string ActionShortcut::ToPersString() const noexcept
 {
     std::string result;
     if( modifiers & NSShiftKeyMask )
@@ -92,7 +88,7 @@ std::string ActionShortcut::ToPersString() const
     return result;
 }
 
-NSString *ActionShortcut::Key() const
+NSString *ActionShortcut::Key() const noexcept
 {
     if( !*this )
         return @"";
@@ -116,7 +112,7 @@ static NSString *StringForModifierFlags(uint64_t flags)
     return [NSString stringWithCharacters:modChars length:charCount];
 }
 
-NSString *ActionShortcut::PrettyString() const
+NSString *ActionShortcut::PrettyString() const noexcept
 {
     static const std::vector< std::pair<uint16_t, NSString*> > unicode_to_nice_string = {
             {NSLeftArrowFunctionKey,     @"←"},
@@ -200,18 +196,21 @@ bool ActionShortcut::IsKeyDown(uint16_t _unicode, uint64_t _modifiers) const noe
     return false;
 }
 
-bool ActionShortcut::operator==(const ActionShortcut &_rhs) const
+bool ActionShortcut::operator==(const ActionShortcut &_rhs) const noexcept
 {
     return modifiers == _rhs.modifiers &&
            unicode == _rhs.unicode;
 }
 
-bool ActionShortcut::operator!=(const ActionShortcut &_rhs) const
+bool ActionShortcut::operator!=(const ActionShortcut &_rhs) const noexcept
 {
     return !(*this == _rhs);
 }
 
-size_t std::hash<ActionShortcut>::operator()(const ActionShortcut& _ac) const noexcept
+}
+
+size_t std::hash<nc::utility::ActionShortcut>::
+    operator()(const nc::utility::ActionShortcut& _ac) const noexcept
 {
     return ((size_t)_ac.unicode) | (((size_t)_ac.modifiers.flags) << 16);
 }

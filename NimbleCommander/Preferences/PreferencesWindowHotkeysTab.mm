@@ -21,8 +21,8 @@ namespace {
 struct ActionShortcutNode
 {
     std::pair<std::string,int> tag;
-    ActionShortcut  current_shortcut;
-    ActionShortcut  default_shortcut;
+    nc::utility::ActionShortcut current_shortcut;
+    nc::utility::ActionShortcut default_shortcut;
     NSString *label = @"";
     bool is_menu_action = false;
     bool has_submenu = false;
@@ -110,7 +110,7 @@ enum class SourceType
 {
     const auto &sm = ActionsShortcutsManager::Instance();
     m_AllNodes.clear();
-    std::unordered_map<ActionShortcut, int> counts;
+    std::unordered_map<nc::utility::ActionShortcut, int> counts;
     for( auto &v: m_Shortcuts ) {
         const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:v.second];
         ActionShortcutNode shortcut;
@@ -328,7 +328,7 @@ static NSImageView *SpawnCautionSign()
     return nil;
 }
 
-- (ActionShortcut) shortcutFromGTMHotKey:(GTMHotKey *)_key
+- (nc::utility::ActionShortcut) shortcutFromGTMHotKey:(GTMHotKey *)_key
 {
     const auto key = _key.key.length > 0 ? [_key.key characterAtIndex:0] : (uint16_t)0;
     const auto hk = ActionsShortcutsManager::ShortCut(key, _key.modifiers);

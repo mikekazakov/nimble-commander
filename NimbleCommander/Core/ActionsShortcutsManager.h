@@ -8,7 +8,7 @@
 // ⌘ - NSCommandKeyMask
 
 #include <Habanero/Observable.h>
-#include "ActionShortcut.h"
+#include <Utility/ActionShortcut.h>
 #include <unordered_map>
 #include <vector>
 #include <Cocoa/Cocoa.h>
@@ -16,7 +16,7 @@
 class ActionsShortcutsManager : ObservableBase
 {
 public:
-    using ShortCut = ::ActionShortcut;
+    using ShortCut = nc::utility::ActionShortcut;
     struct AutoUpdatingShortCut;
     class ShortCutsUpdater;
     

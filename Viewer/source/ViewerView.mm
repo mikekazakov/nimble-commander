@@ -3,10 +3,11 @@
 #include <Utility/HexadecimalColor.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/DataBlockAnalysis.h>
+#include <Utility/TemporaryFileStorage.h>
+#include <Utility/ActionShortcut.h>
 #include <Config/Config.h>
 #include "DataBackend.h"
 #include <Habanero/dispatch_cpp.h>
-#include <Utility/TemporaryFileStorage.h>
 #include <VFS/VFS.h>
 #include "Theme.h"
 #include "TextModeView.h"
@@ -42,6 +43,7 @@ using namespace nc::viewer;
     nc::utility::TemporaryFileStorage *m_TempFileStorage;
     const nc::config::Config *m_Config;
     std::unique_ptr<nc::viewer::Theme> m_Theme;
+    std::function<nc::utility::ActionShortcut(const std::string &_name)> m_Shortcuts;
 }
 
 @synthesize verticalPositionPercentage = m_VerticalPositionPercentage;
@@ -50,12 +52,14 @@ using namespace nc::viewer;
         tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
              config:(const nc::config::Config&)_config
               theme:(std::unique_ptr<nc::viewer::Theme>)_theme
+  shortcutsProvider:(std::function<nc::utility::ActionShortcut(const std::string &_name)>)_shortcuts
 {
     if (self = [super initWithFrame:frame]) {
         
         m_TempFileStorage = &_temp_storage;
         m_Config = &_config;
         m_Theme = std::move(_theme);
+        m_Shortcuts = _shortcuts;
         [self commonInit];
     }
     
@@ -567,6 +571,31 @@ didScrollAtGlobalBytePosition:(int64_t)_position
 - (NSResponder *) keyboardResponder
 {
     return m_View;
+}
+
+- (BOOL)performKeyEquivalent:(NSEvent *)_event
+{
+    if( const auto chars = [_event charactersIgnoringModifiers]; chars.length == 1 ) {
+        const auto unicode = [chars characterAtIndex:0];
+        const auto modifiers = [_event modifierFlags];
+        const auto is = [&](const std::string &_action_name) {
+            return m_Shortcuts(_action_name).IsKeyDown(unicode, modifiers);
+        };
+        if( is( "viewer.toggle_text" ) ) {
+            [self setMode:ViewMode::Text];
+            return true;
+        }
+        if( is( "viewer.toggle_hex" ) ) {
+            [self setMode:ViewMode::Hex];
+            return true;
+        }        
+        if( is( "viewer.toggle_preview" ) ) {
+            [self setMode:ViewMode::Preview];
+            return true;
+        }        
+    }
+    
+    return [super performKeyEquivalent:_event];
 }
 
 @end

@@ -2,7 +2,6 @@
 #pragma once
 
 #include <Utility/Encodings.h>
-#include <Utility/OrthodoxMonospace.h>
 #include <VFS/FileWindow.h>
 #include "Modes.h"
 #include "TextModeViewDelegate.h"
@@ -10,6 +9,7 @@
 
 namespace nc::utility {
     class TemporaryFileStorage;
+    class ActionShortcut;
 }
 namespace nc::config {
     class Config;
@@ -25,7 +25,8 @@ namespace nc::viewer {
 - (instancetype) initWithFrame:(NSRect)frame
                    tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
                         config:(const nc::config::Config&)_config
-                         theme:(std::unique_ptr<nc::viewer::Theme>)_theme;
+                         theme:(std::unique_ptr<nc::viewer::Theme>)_theme
+             shortcutsProvider:(std::function<nc::utility::ActionShortcut(const std::string &_name)>)_shortcuts;
 
 - (void) SetFile:(nc::vfs::FileWindow*) _file;
 - (void) SetKnownFile:(nc::vfs::FileWindow*) _file

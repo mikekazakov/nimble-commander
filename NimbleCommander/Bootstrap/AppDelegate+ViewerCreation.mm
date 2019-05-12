@@ -2,6 +2,7 @@
 #include "AppDelegate+ViewerCreation.h"
 #include <Viewer/ViewerView.h>
 #include <NimbleCommander/Viewer/ThemeAdaptor.h>
+#include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Viewer/InternalViewerController.h>
 #include <Viewer/History.h>
 
@@ -10,10 +11,14 @@
 - (NCViewerView*) makeViewerWithFrame:(NSRect)frame
 {
     auto theme_adaptor = std::make_unique<nc::viewer::ThemeAdaptor>(self.themesManager);
+    auto shortcuts = []( const std::string &_name ) {
+        return ActionsShortcutsManager::Instance().ShortCutFromAction(_name);
+    };
     return [[NCViewerView alloc] initWithFrame:frame
                                   tempStorage:self.temporaryFileStorage
                                        config:self.globalConfig
-                                        theme:std::move(theme_adaptor)];
+                                        theme:std::move(theme_adaptor)
+                             shortcutsProvider:shortcuts];
 }
 
 - (InternalViewerController*) makeViewerController

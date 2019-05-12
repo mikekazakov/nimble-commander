@@ -1,7 +1,8 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "ActionsShortcutsManager.h"
+#include <assert.h>
 
 // this key should not exist in config defaults
 static const auto g_OverridesConfigPath = "hotkeyOverrides_v1";
@@ -196,8 +197,11 @@ static const std::vector<std::pair<const char*,int>> g_ActionsTags = {
     {"panel.show_tab_no_8",                             100'167},
     {"panel.show_tab_no_9",                             100'168},
     {"panel.show_tab_no_10",                            100'169},
+        
+    {"viewer.toggle_text",                              101'000},
+    {"viewer.toggle_hex",                               101'001},
+    {"viewer.toggle_preview",                           101'002}
 };
-
 
 static const std::vector<std::pair<const char*, const char*>> g_DefaultShortcuts = {
     {"menu.nimble_commander.about",                         u8""        },
@@ -381,7 +385,9 @@ static const std::vector<std::pair<const char*, const char*>> g_DefaultShortcuts
     {"panel.show_tab_no_8",                                 u8""        },
     {"panel.show_tab_no_9",                                 u8""        },
     {"panel.show_tab_no_10",                                u8""        },
-    
+    {"viewer.toggle_text",                                  u8"⌘1"      }, // cmd+1
+    {"viewer.toggle_hex",                                   u8"⌘2"      }, // cmd+2
+    {"viewer.toggle_preview",                               u8"⌘3"      }  // cmd+3        
 };
 
 ActionsShortcutsManager::ShortCutsUpdater::
@@ -409,6 +415,10 @@ void ActionsShortcutsManager::ShortCutsUpdater::CheckAndUpdate() const
 ActionsShortcutsManager::ActionsShortcutsManager()
 {
     for( auto &p: g_ActionsTags) {
+        // safety checks against malformed g_ActionsTags
+        assert( m_TagToAction.count(p.second) == 0 );   
+        assert( m_ActionToTag.count(p.first) == 0 );
+        
         m_TagToAction[p.second] = p.first;
         m_ActionToTag[p.first] = p.second;
     }

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowHotkeysTab.h"
 #include <Utility/NSMenu+Hierarchical.h>
 #include <Utility/FunctionKeysPass.h>
@@ -27,6 +27,7 @@ struct ActionShortcutNode
     bool is_menu_action = false;
     bool has_submenu = false;
     bool is_customized = false;
+    bool participates_in_conflicts = true;
     bool is_conflicted = false;
 };
 
@@ -106,6 +107,16 @@ enum class SourceType
     [self.Table reloadData];
 }
 
+// At this moment Viewer's hotkey mechanism completely bypasses the normal Cocoa menu-driven 
+// hotkeys system and does manual hotkeys processing. This allows having the same hotkeys as 
+// used for many Panel actions, but legally speaking these actions are unaccessible (grayed) and
+// should beep instead.
+static bool ParticipatesInConflicts( const std::string &_action_name )
+{
+    // Only actions starting with "viewer." should not participate in conflicts resolution.
+    return _action_name.find_first_of("viewer.") != 0;
+}
+
 - (void) buildData
 {
     const auto &sm = ActionsShortcutsManager::Instance();
@@ -113,6 +124,7 @@ enum class SourceType
     std::unordered_map<nc::utility::ActionShortcut, int> counts;
     for( auto &v: m_Shortcuts ) {
         const auto menu_item = [NSApp.mainMenu itemWithTagHierarchical:v.second];
+
         ActionShortcutNode shortcut;
         shortcut.tag = v;
         shortcut.label = LabelTitleForAction(v.first, menu_item);
@@ -121,8 +133,11 @@ enum class SourceType
         shortcut.is_menu_action = v.first.find_first_of("menu.") == 0;
         shortcut.is_customized = shortcut.current_shortcut != shortcut.default_shortcut;
         shortcut.has_submenu = menu_item != nil && menu_item.hasSubmenu;
-        m_AllNodes.emplace_back( std::move(shortcut) );
-        counts[shortcut.current_shortcut]++;
+        shortcut.participates_in_conflicts = ParticipatesInConflicts(v.first);
+        if( shortcut.participates_in_conflicts )
+            counts[shortcut.current_shortcut]++;
+
+        m_AllNodes.emplace_back( std::move(shortcut) );        
     }
     for( int i = 0, e = (int)m_Tools.size(); i != e; ++i ) {
         const auto &v = m_Tools[i];
@@ -138,6 +153,9 @@ enum class SourceType
     int conflicts_amount = 0;
     for( auto &v: m_AllNodes ) {
         if( auto node = std::any_cast<ActionShortcutNode>(&v) ) {
+            if( node->participates_in_conflicts == false )
+                continue;
+            
             node->is_conflicted = node->current_shortcut &&
                                     counts[node->current_shortcut] > 1;
             if( node->is_conflicted )

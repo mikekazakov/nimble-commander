@@ -11,6 +11,7 @@
 		CF1ADE321F7E71E1003E9B76 /* OrthodoxMonospace.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1ADE311F7E71E1003E9B76 /* OrthodoxMonospace.mm */; };
 		CF24E1F42288A9FB00C166FA /* ActionShortcut.h in Headers */ = {isa = PBXBuildFile; fileRef = CF24E1F32288A9FB00C166FA /* ActionShortcut.h */; };
 		CF24E1F62288AA0500C166FA /* ActionShortcut.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1F52288AA0500C166FA /* ActionShortcut.mm */; };
+		CF24E1F8228B525000C166FA /* ActionShortcut_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1F7228B525000C166FA /* ActionShortcut_UT.mm */; };
 		CF26DE2A21D3EFEE003F0E93 /* TemporaryFileStorageImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF26DE2821D3EFEE003F0E93 /* TemporaryFileStorageImpl.h */; };
 		CF26DE2B21D3EFEE003F0E93 /* TemporaryFileStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = CF26DE2921D3EFEE003F0E93 /* TemporaryFileStorage.h */; };
 		CF26DE2E21D3F033003F0E93 /* TemporaryFileStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF26DE2C21D3F033003F0E93 /* TemporaryFileStorage.cpp */; };
@@ -133,6 +134,7 @@
 		CF233B13219E94B300693E1A /* PrecompiledHeaders.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PrecompiledHeaders.pch; path = source/PrecompiledHeaders.pch; sourceTree = "<group>"; };
 		CF24E1F32288A9FB00C166FA /* ActionShortcut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActionShortcut.h; path = include/Utility/ActionShortcut.h; sourceTree = "<group>"; };
 		CF24E1F52288AA0500C166FA /* ActionShortcut.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionShortcut.mm; path = source/ActionShortcut.mm; sourceTree = "<group>"; };
+		CF24E1F7228B525000C166FA /* ActionShortcut_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ActionShortcut_UT.mm; path = tests/ActionShortcut_UT.mm; sourceTree = "<group>"; };
 		CF26DE2821D3EFEE003F0E93 /* TemporaryFileStorageImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TemporaryFileStorageImpl.h; path = include/Utility/TemporaryFileStorageImpl.h; sourceTree = "<group>"; };
 		CF26DE2921D3EFEE003F0E93 /* TemporaryFileStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TemporaryFileStorage.h; path = include/Utility/TemporaryFileStorage.h; sourceTree = "<group>"; };
 		CF26DE2C21D3F033003F0E93 /* TemporaryFileStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemporaryFileStorage.cpp; path = source/TemporaryFileStorage.cpp; sourceTree = "<group>"; };
@@ -286,6 +288,7 @@
 		CF614A9E1F9D86CC0005F2DB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF24E1F7228B525000C166FA /* ActionShortcut_UT.mm */,
 				CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */,
 				CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */,
 				CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */,
@@ -590,6 +593,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF24E1F8228B525000C166FA /* ActionShortcut_UT.mm in Sources */,
 				CF6BF87721993B580017CECB /* FontGeometryInfo_PT.mm in Sources */,
 				CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */,
 				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,

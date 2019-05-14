@@ -23,7 +23,7 @@ struct ActionShortcut
     ActionShortcut(const char* _from) noexcept; 
     
     // construct from straight data
-    ActionShortcut(uint16_t  _unicode, unsigned long _modif) noexcept; 
+    ActionShortcut(unsigned short  _unicode, unsigned long long _modif) noexcept; 
     
     bool operator ==(const ActionShortcut &_rhs) const noexcept;
     bool operator !=(const ActionShortcut &_rhs) const noexcept;
@@ -34,9 +34,9 @@ struct ActionShortcut
     NSString   *PrettyString() const noexcept;
 #endif
     std::string ToPersString() const noexcept;
-    bool        IsKeyDown(uint16_t _unicode, uint64_t _modifiers) const noexcept;
+    bool        IsKeyDown(uint16_t _unicode, unsigned long long _modifiers) const noexcept;
     
-    uint16_t                    unicode = 0;
+    unsigned short              unicode = 0;
     NSEventModifierFlagsHolder  modifiers = 0;
 };
 

@@ -45,7 +45,7 @@ ActionShortcut::ActionShortcut(const char* _from) noexcept: // construct from pe
     modifiers = mod_flags;
 }
 
-ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long _modif) noexcept:
+ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long long _modif) noexcept:
     unicode(_unicode),
     modifiers(0)
 {
@@ -170,7 +170,7 @@ NSString *ActionShortcut::PrettyString() const noexcept
             vis_key];
 }
 
-bool ActionShortcut::IsKeyDown(uint16_t _unicode, uint64_t _modifiers) const noexcept
+bool ActionShortcut::IsKeyDown(uint16_t _unicode, unsigned long long _modifiers) const noexcept
 {
     if( !unicode )
         return false;

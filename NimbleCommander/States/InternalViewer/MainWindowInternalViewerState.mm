@@ -19,6 +19,7 @@
 @property (nonatomic) IBOutlet NSTextField *internalViewerToolbarFileSizeLabel;
 @property (nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 @property (nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
+@property (nonatomic) IBOutlet NSButton *internalViewerToolbarSettingsButton;
 
 @property (nonatomic) IBOutlet NCViewerView *embeddedFileView;
 
@@ -77,6 +78,7 @@
     m_Controller.positionButton = self.internalViewerToolbarPositionButton;
     m_Controller.fileSizeLabel = self.internalViewerToolbarFileSizeLabel;
     m_Controller.wordWrappingCheckBox = self.internalViewerToolbarWordWrapCheckBox;
+    m_Controller.settingsButton = self.internalViewerToolbarSettingsButton;
 }
 
 - (NSView*)windowStateContentView

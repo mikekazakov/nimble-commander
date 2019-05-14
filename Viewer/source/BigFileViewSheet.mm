@@ -17,6 +17,7 @@
 @property (nonatomic) IBOutlet NSPopover *settingsPopover;
 @property (nonatomic) IBOutlet NSPopUpButton *encodings;
 @property (nonatomic) IBOutlet NSButton *wordWrap;
+@property (nonatomic) IBOutlet NSButton *settingsButton;
 
 - (IBAction)OnClose:(id)sender;
 
@@ -91,6 +92,7 @@
     m_Controller.searchProgressIndicator = self.searchIndicator;
     m_Controller.encodingsPopUp = self.encodings;
     m_Controller.wordWrappingCheckBox = self.wordWrap;
+    m_Controller.settingsButton = self.settingsButton;
     
     [m_Controller show];
     m_Controller.nextResponder = self.window.nextResponder;

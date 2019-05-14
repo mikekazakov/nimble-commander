@@ -11,21 +11,22 @@
 - (NCViewerView*) makeViewerWithFrame:(NSRect)frame
 {
     auto theme_adaptor = std::make_unique<nc::viewer::ThemeAdaptor>(self.themesManager);
-    auto shortcuts = []( const std::string &_name ) {
-        return ActionsShortcutsManager::Instance().ShortCutFromAction(_name);
-    };
     return [[NCViewerView alloc] initWithFrame:frame
                                   tempStorage:self.temporaryFileStorage
                                        config:self.globalConfig
                                         theme:std::move(theme_adaptor)
-                             shortcutsProvider:shortcuts];
+                             ];
 }
 
 - (InternalViewerController*) makeViewerController
 {
+    auto shortcuts = []( const std::string &_name ) {
+        return ActionsShortcutsManager::Instance().ShortCutFromAction(_name);
+    };    
     return [[InternalViewerController alloc]
             initWithHistory:self.internalViewerHistory
-            config:self.globalConfig];
+            config:self.globalConfig
+            shortcutsProvider:shortcuts];
 }
 
 @end

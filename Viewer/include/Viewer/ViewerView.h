@@ -9,7 +9,6 @@
 
 namespace nc::utility {
     class TemporaryFileStorage;
-    class ActionShortcut;
 }
 namespace nc::config {
     class Config;
@@ -25,8 +24,7 @@ namespace nc::viewer {
 - (instancetype) initWithFrame:(NSRect)frame
                    tempStorage:(nc::utility::TemporaryFileStorage&)_temp_storage
                         config:(const nc::config::Config&)_config
-                         theme:(std::unique_ptr<nc::viewer::Theme>)_theme
-             shortcutsProvider:(std::function<nc::utility::ActionShortcut(const std::string &_name)>)_shortcuts;
+                         theme:(std::unique_ptr<nc::viewer::Theme>)_theme;
 
 - (void) SetFile:(nc::vfs::FileWindow*) _file;
 - (void) SetKnownFile:(nc::vfs::FileWindow*) _file
@@ -85,5 +83,8 @@ namespace nc::viewer {
 
 /** Returns an object to be set as a first responder if the Viewer should have a focus. */
 @property (nonatomic, readonly) NSResponder *keyboardResponder;
+
+/** If set, NCViewerView will try to redirect performKeyEquivalent: to this responder. */
+@property (nonatomic, weak) NSResponder *hotkeyDelegate;
 
 @end

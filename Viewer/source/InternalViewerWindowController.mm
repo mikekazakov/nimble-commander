@@ -30,6 +30,7 @@ using namespace std::literals;
 @property (nonatomic) IBOutlet NSTextField *internalViewerToolbarFileSizeLabel;
 @property (nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 @property (nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
+@property (nonatomic) IBOutlet NSButton *internalViewerToolbarSettingsButton;
 
 @end
 
@@ -87,6 +88,7 @@ using namespace std::literals;
     m_Controller.positionButton = self.internalViewerToolbarPositionButton;
     m_Controller.fileSizeLabel = self.internalViewerToolbarFileSizeLabel;
     m_Controller.wordWrappingCheckBox = self.internalViewerToolbarWordWrapCheckBox;
+    m_Controller.settingsButton = self.internalViewerToolbarSettingsButton;
     
     m_Controller.nextResponder = self.window.nextResponder;
     self.window.nextResponder = m_Controller;

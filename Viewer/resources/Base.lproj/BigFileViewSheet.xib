@@ -14,6 +14,7 @@
                 <outlet property="mode" destination="4H6-gX-HFm" id="6Z6-aM-Mpx"/>
                 <outlet property="searchField" destination="vcM-ZZ-dH2" id="pnN-9r-2Ph"/>
                 <outlet property="searchIndicator" destination="cKE-aL-pDT" id="hCH-e9-jTP"/>
+                <outlet property="settingsButton" destination="zzz-Lf-L0m" id="M5q-Ls-yBc"/>
                 <outlet property="settingsPopover" destination="T94-gH-ROL" id="22O-0M-lil"/>
                 <outlet property="viewPlaceholder" destination="agn-et-TU9" id="oTF-Bb-dlA"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>

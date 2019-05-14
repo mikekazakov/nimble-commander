@@ -3,12 +3,19 @@
 
 #include "ViewerView.h"
 
+#include <functional>
+#include <string>
+
 namespace nc::config {
     class Config;
 }
 namespace nc::viewer {
     class History;
 };
+namespace nc::utility {
+    class ActionShortcut;
+}
+
 
 // Objects of this class own instances of BigFileView
 @interface InternalViewerController : NSResponder<NSSearchFieldDelegate>
@@ -22,6 +29,7 @@ namespace nc::viewer {
 @property (nonatomic) NSButton              *positionButton;
 @property (nonatomic) NSTextField           *fileSizeLabel;
 @property (nonatomic) NSButton              *wordWrappingCheckBox;
+@property (nonatomic) NSButton              *settingsButton;
 
 // Useful information
 @property (nonatomic, readonly) NSString           *verboseTitle;
@@ -32,7 +40,8 @@ namespace nc::viewer {
 
 - (instancetype) init NS_UNAVAILABLE;
 - (instancetype) initWithHistory:(nc::viewer::History&)_history
-                          config:(nc::config::Config&)_config;
+                          config:(nc::config::Config&)_config             
+               shortcutsProvider:(std::function<nc::utility::ActionShortcut(const std::string &_name)>)_shortcuts;
 
 - (void) setFile:(std::string)path at:(VFSHostPtr)vfs;
 - (bool) performBackgroundOpening;

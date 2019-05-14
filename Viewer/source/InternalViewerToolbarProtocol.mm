@@ -50,6 +50,7 @@
 @property (nonatomic) IBOutlet NSTextField *internalViewerToolbarFileSizeLabel;
 @property (nonatomic) IBOutlet NSPopover *internalViewerToolbarPopover;
 @property (nonatomic) IBOutlet NSButton *internalViewerToolbarWordWrapCheckBox;
+@property (nonatomic) IBOutlet NSButton *internalViewerToolbarSettingsButton;
 
 @end
 

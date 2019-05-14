@@ -7,6 +7,7 @@
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <Utility/ActionShortcut.h>
 #include "History.h"
 #include <Habanero/SerialQueue.h>
 
@@ -70,6 +71,7 @@ static int InvertBitFlag( int _value, int _flag )
     SerialQueue                     m_SearchInFileQueue;
     nc::viewer::History            *m_History;
     nc::config::Config             *m_Config;
+    std::function<nc::utility::ActionShortcut(const std::string &_name)> m_Shortcuts;
     
     // UI
     NCViewerView                    *m_View;
@@ -97,11 +99,13 @@ static int InvertBitFlag( int _value, int _flag )
 
 - (instancetype) initWithHistory:(nc::viewer::History&)_history
                           config:(nc::config::Config&)_config
+               shortcutsProvider:(std::function<nc::utility::ActionShortcut(const std::string &_name)>)_shortcuts
 {
     self = [super init];
     if( self ) {
         m_History = &_history;
         m_Config = &_config;
+        m_Shortcuts = _shortcuts;
         __weak InternalViewerController* weak_self = self;
         m_SearchInFileQueue.SetOnChange([=]{
             [(InternalViewerController*)weak_self onSearchInFileQueueStateChanged];
@@ -313,6 +317,8 @@ static int InvertBitFlag( int _value, int _flag )
     m_FileSizeLabel.stringValue =
         ByteCountFormatter::Instance().ToNSString(m_ViewerFileWindow->FileSize(),
                                                   ByteCountFormatter::Fixed6);
+    
+    m_View.hotkeyDelegate = self;
 }
 
 - (void) saveFileState
@@ -665,6 +671,34 @@ doCommandBySelector:(SEL)commandSelector
 - (bool) isOpened
 {
     return m_WorkFile != nullptr;
+}
+
+- (BOOL)performKeyEquivalent:(NSEvent *)_event
+{
+    if( const auto chars = [_event charactersIgnoringModifiers]; chars.length == 1 ) {
+        const auto unicode = [chars characterAtIndex:0];
+        const auto modifiers = [_event modifierFlags];
+        const auto is = [&](const std::string &_action_name) {
+            return m_Shortcuts(_action_name).IsKeyDown(unicode, modifiers);
+        };
+        if( is( "viewer.toggle_text" ) ) {
+            [m_View setMode:ViewMode::Text];
+            return true;
+        }
+        if( is( "viewer.toggle_hex" ) ) {
+            [m_View setMode:ViewMode::Hex];
+            return true;
+        }        
+        if( is( "viewer.toggle_preview" ) ) {
+            [m_View setMode:ViewMode::Preview];
+            return true;
+        }
+        if( is( "viewer.show_settings" ) ) {
+            [self.settingsButton performClick:self];
+            return true;
+        }
+    }
+    return false;
 }
 
 @end

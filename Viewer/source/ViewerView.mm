@@ -328,7 +328,7 @@ using namespace nc::viewer;
         return;
     
     if( [m_View respondsToSelector:@selector(scrollToGlobalBytesOffset:)] )
-        [m_View scrollToGlobalBytesOffset:(int64_t)m_VerticalPositionInBytes];
+        [m_View scrollToGlobalBytesOffset:(int64_t)_pos];
 }
 
 - (void)scrollToVerticalPosition:(double)_p

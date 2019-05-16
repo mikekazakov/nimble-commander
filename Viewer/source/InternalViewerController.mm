@@ -54,6 +54,8 @@ static int InvertBitFlag( int _value, int _flag )
 
 @property (nonatomic) IBOutlet NSPopover *goToPositionPopover;
 @property (nonatomic) IBOutlet NSTextField *goToPositionValueTextField;
+@property (nonatomic) IBOutlet NSString *goToPositionValueTextFieldValue;
+@property (nonatomic) IBOutlet NSPopUpButton *goToPositionKindButton;
 
 @end
 
@@ -611,13 +613,24 @@ doCommandBySelector:(SEL)commandSelector
                                    preferredEdge:NSMaxYEdge];
 }
 
+- (void)popoverWillShow:(NSNotification *)notification
+{
+    [self.goToPositionValueTextField.window setInitialFirstResponder:self.goToPositionValueTextField];
+    [self.goToPositionValueTextField.window makeFirstResponder:self.goToPositionValueTextField];
+}
+
 - (IBAction)onGoToPositionActionClicked:(id)sender
 {
     [self.goToPositionPopover close];
-    
-    double pos = self.goToPositionValueTextField.stringValue.doubleValue / 100.;
-    pos = std::min( std::max(pos, 0.), 1. );
-    [m_View scrollToVerticalPosition:pos];
+    const auto string = self.goToPositionValueTextFieldValue;
+    if( self.goToPositionKindButton.selectedTag == 0 ) {
+        const double pos = string.doubleValue / 100.;
+        [m_View scrollToVerticalPosition:std::clamp(pos, 0., 1.)];
+    }
+    if( self.goToPositionKindButton.selectedTag == 1 ) {
+        const long pos = string.integerValue;
+        m_View.verticalPositionInBytes = std::clamp(pos, 0l, m_WorkFile->Size());         
+    }
 }
 
 - (void)setFileSizeLabel:(NSTextField *)fileSizeLabel
@@ -697,6 +710,10 @@ doCommandBySelector:(SEL)commandSelector
             [self.settingsButton performClick:self];
             return true;
         }
+        if( is( "viewer.show_goto") ) {
+            [self.positionButton performClick:self];
+            return true;
+        }        
     }
     return false;
 }

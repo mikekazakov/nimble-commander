@@ -201,7 +201,8 @@ static const std::vector<std::pair<const char*,int>> g_ActionsTags = {
     {"viewer.toggle_text",                              101'000},
     {"viewer.toggle_hex",                               101'001},
     {"viewer.toggle_preview",                           101'002},
-    {"viewer.show_settings",                            101'003}        
+    {"viewer.show_settings",                            101'003},
+    {"viewer.show_goto",                                101'004}        
 };
 
 static const std::vector<std::pair<const char*, const char*>> g_DefaultShortcuts = {
@@ -389,7 +390,8 @@ static const std::vector<std::pair<const char*, const char*>> g_DefaultShortcuts
     {"viewer.toggle_text",                                  u8"⌘1"      }, // cmd+1
     {"viewer.toggle_hex",                                   u8"⌘2"      }, // cmd+2
     {"viewer.toggle_preview",                               u8"⌘3"      }, // cmd+3
-    {"viewer.show_settings",                                u8"⌘0"      }  // cmd+0
+    {"viewer.show_settings",                                u8"⌘0"      }, // cmd+0
+    {"viewer.show_goto",                                    u8"⌘l"      }  // cmd+l
 };
 
 ActionsShortcutsManager::ShortCutsUpdater::

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="InternalViewerController">
             <connections>
+                <outlet property="goToPositionKindButton" destination="BgD-DH-3zH" id="MCJ-hC-xc4"/>
                 <outlet property="goToPositionPopover" destination="CMw-81-Dsx" id="FdI-rP-JMI"/>
                 <outlet property="goToPositionValueTextField" destination="tiN-In-PlP" id="VFh-lN-iv0"/>
             </connections>
@@ -22,24 +23,64 @@
         <popover behavior="t" id="CMw-81-Dsx">
             <connections>
                 <outlet property="contentViewController" destination="fXi-DC-g1R" id="L7F-oP-7JF"/>
+                <outlet property="delegate" destination="-2" id="5CN-m2-41d"/>
             </connections>
         </popover>
         <customView id="SFq-2y-Zt0">
-            <rect key="frame" x="0.0" y="0.0" width="212" height="71"/>
+            <rect key="frame" x="0.0" y="0.0" width="208" height="87"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mth-VG-0hS">
-                    <rect key="frame" x="18" y="50" width="176" height="17"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Go to position (%):" id="GIm-Ir-imd">
+                    <rect key="frame" x="18" y="50" width="37" height="17"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Go to" id="GIm-Ir-imd">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
-                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="24N-dp-XDN">
-                    <rect key="frame" x="102" y="13" width="96" height="32"/>
+                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tiN-In-PlP">
+                    <rect key="frame" x="35" y="20" width="80" height="22"/>
                     <constraints>
-                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="50" id="O0W-Ht-P2R"/>
+                        <constraint firstAttribute="width" constant="80" id="kia-Bi-4hc"/>
+                    </constraints>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" usesSingleLineMode="YES" id="KNJ-65-HE4">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                    <connections>
+                        <binding destination="-2" name="value" keyPath="self.goToPositionValueTextFieldValue" id="LCf-Bz-HJ6">
+                            <dictionary key="options">
+                                <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                            </dictionary>
+                        </binding>
+                        <outlet property="nextKeyView" destination="24N-dp-XDN" id="Ukf-kh-fsX"/>
+                    </connections>
+                </textField>
+                <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="BgD-DH-3zH">
+                    <rect key="frame" x="59" y="45" width="132" height="25"/>
+                    <popUpButtonCell key="cell" type="push" title="Percentage (%)" bezelStyle="rounded" alignment="left" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="Grf-pi-kWw" id="s42-bY-HGs">
+                        <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="menu"/>
+                        <menu key="menu" id="Gqe-nS-OhZ">
+                            <items>
+                                <menuItem title="Percentage (%)" state="on" keyEquivalent="1" id="Grf-pi-kWw">
+                                    <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                </menuItem>
+                                <menuItem title="Offset (B)" tag="1" keyEquivalent="2" id="VGi-ZX-VHh">
+                                    <modifierMask key="keyEquivalentModifierMask" control="YES"/>
+                                </menuItem>
+                            </items>
+                        </menu>
+                    </popUpButtonCell>
+                    <connections>
+                        <outlet property="nextKeyView" destination="tiN-In-PlP" id="eRL-H1-ddI"/>
+                    </connections>
+                </popUpButton>
+                <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="24N-dp-XDN">
+                    <rect key="frame" x="117" y="13" width="77" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="65" id="O0W-Ht-P2R"/>
                     </constraints>
                     <buttonCell key="cell" type="push" title="Go" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="eXF-b7-bIU">
                         <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -50,32 +91,25 @@ DQ
                     </buttonCell>
                     <connections>
                         <action selector="onGoToPositionActionClicked:" target="-2" id="OOD-jN-U9t"/>
+                        <outlet property="nextKeyView" destination="BgD-DH-3zH" id="AaX-ED-uCM"/>
                     </connections>
                 </button>
-                <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="tiN-In-PlP">
-                    <rect key="frame" x="20" y="20" width="80" height="22"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="80" id="kia-Bi-4hc"/>
-                    </constraints>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="KNJ-65-HE4">
-                        <font key="font" metaFont="system"/>
-                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                    </textFieldCell>
-                </textField>
             </subviews>
             <constraints>
-                <constraint firstItem="mth-VG-0hS" firstAttribute="top" secondItem="SFq-2y-Zt0" secondAttribute="top" constant="4" id="7Oi-KP-9Gq"/>
-                <constraint firstItem="tiN-In-PlP" firstAttribute="leading" secondItem="SFq-2y-Zt0" secondAttribute="leading" constant="20" symbolic="YES" id="9ee-X8-ufb"/>
-                <constraint firstAttribute="trailing" secondItem="24N-dp-XDN" secondAttribute="trailing" constant="20" symbolic="YES" id="M53-e0-52r"/>
-                <constraint firstItem="24N-dp-XDN" firstAttribute="baseline" secondItem="tiN-In-PlP" secondAttribute="baseline" id="NWC-lj-Eso"/>
-                <constraint firstAttribute="bottom" secondItem="tiN-In-PlP" secondAttribute="bottom" constant="20" symbolic="YES" id="a0s-A1-fJX"/>
-                <constraint firstAttribute="trailing" secondItem="mth-VG-0hS" secondAttribute="trailing" constant="20" symbolic="YES" id="eyw-l6-Voq"/>
+                <constraint firstItem="BgD-DH-3zH" firstAttribute="leading" secondItem="mth-VG-0hS" secondAttribute="trailing" constant="8" symbolic="YES" id="2qt-Jy-agw"/>
+                <constraint firstItem="mth-VG-0hS" firstAttribute="top" secondItem="SFq-2y-Zt0" secondAttribute="top" constant="20" symbolic="YES" id="7Oi-KP-9Gq"/>
+                <constraint firstItem="24N-dp-XDN" firstAttribute="leading" secondItem="tiN-In-PlP" secondAttribute="trailing" constant="8" symbolic="YES" id="8cJ-X1-bcS"/>
+                <constraint firstItem="tiN-In-PlP" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="SFq-2y-Zt0" secondAttribute="leading" constant="20" symbolic="YES" id="9ee-X8-ufb"/>
+                <constraint firstItem="BgD-DH-3zH" firstAttribute="firstBaseline" secondItem="mth-VG-0hS" secondAttribute="firstBaseline" id="AHc-bX-lFl"/>
+                <constraint firstAttribute="trailing" secondItem="24N-dp-XDN" secondAttribute="trailing" constant="20" symbolic="YES" id="DEz-tu-jv7"/>
+                <constraint firstItem="24N-dp-XDN" firstAttribute="centerY" secondItem="tiN-In-PlP" secondAttribute="centerY" id="PZM-0Z-gf4"/>
+                <constraint firstAttribute="bottom" secondItem="24N-dp-XDN" secondAttribute="bottom" constant="20" symbolic="YES" id="kjf-4j-n3w"/>
                 <constraint firstItem="mth-VG-0hS" firstAttribute="leading" secondItem="SFq-2y-Zt0" secondAttribute="leading" constant="20" symbolic="YES" id="oSe-fp-RuB"/>
                 <constraint firstItem="tiN-In-PlP" firstAttribute="top" secondItem="mth-VG-0hS" secondAttribute="bottom" constant="8" symbolic="YES" id="v54-sp-vL1"/>
-                <constraint firstItem="24N-dp-XDN" firstAttribute="leading" secondItem="tiN-In-PlP" secondAttribute="trailing" constant="8" symbolic="YES" id="vxl-WH-WaZ"/>
+                <constraint firstAttribute="trailing" secondItem="BgD-DH-3zH" secondAttribute="trailing" constant="20" symbolic="YES" id="yNt-He-tED"/>
             </constraints>
-            <point key="canvasLocation" x="462" y="427"/>
+            <point key="canvasLocation" x="437" y="295.5"/>
         </customView>
+        <userDefaultsController representsSharedInstance="YES" id="DRx-mx-T7F"/>
     </objects>
 </document>

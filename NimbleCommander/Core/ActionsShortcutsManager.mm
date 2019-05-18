@@ -128,6 +128,7 @@ static const std::vector<std::pair<const char*,int>> g_ActionsTags = {
     {"menu.command.open_xattr",                         15'230},
     {"menu.command.copy_file_name",                     15'030},
     {"menu.command.copy_file_path",                     15'040},
+    {"menu.command.copy_file_directory",                15'240},
     {"menu.command.select_with_mask",                   15'050},
     {"menu.command.select_with_extension",              15'051},
     {"menu.command.deselect_with_mask",                 15'060},
@@ -323,6 +324,7 @@ static const std::vector<std::pair<const char*, const char*>> g_DefaultShortcuts
     {"menu.command.file_attributes",                        u8"^a"      }, // ctrl+a
     {"menu.command.copy_file_name",                         u8"⇧⌘c"     }, // shift+cmd+c
     {"menu.command.copy_file_path",                         u8"⌥⌘c"     }, // alt+cmd+c
+    {"menu.command.copy_file_directory",                    u8"⇧⌥⌘c"    }, // shift+alt+cmd+c    
     {"menu.command.select_with_mask",                       u8"⌘="      }, // cmd+=
     {"menu.command.select_with_extension",                  u8"⌥⌘="     }, // alt+cmd+=
     {"menu.command.deselect_with_mask",                     u8"⌘-"      }, // cmd+-

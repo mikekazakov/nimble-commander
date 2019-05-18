@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -12,6 +12,12 @@ struct CopyFileName final : PanelAction
 };
 
 struct CopyFilePath final : PanelAction
+{
+    bool Predicate( PanelController *_source ) const override;
+    void Perform( PanelController *_source, id _sender ) const override;
+};
+
+struct CopyFileDirectory final : PanelAction
 {
     bool Predicate( PanelController *_source ) const override;
     void Perform( PanelController *_source, id _sender ) const override;

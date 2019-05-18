@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14313.18" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14313.18"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -812,15 +812,21 @@ DQ
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" tag="15021" id="896"/>
-                            <menuItem title="Copy File Name" tag="15030" keyEquivalent="C" id="wUh-lo-NqX">
+                            <menuItem title="Copy Item Name" tag="15030" keyEquivalent="C" id="wUh-lo-NqX">
                                 <connections>
                                     <action selector="OnCopyCurrentFileName:" target="-1" id="jPx-9u-Ybz"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Copy File Path" tag="15040" keyEquivalent="c" id="KxB-Cc-TKQ">
+                            <menuItem title="Copy Item Path" tag="15040" keyEquivalent="c" id="KxB-Cc-TKQ">
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="OnCopyCurrentFilePath:" target="-1" id="cyu-Ac-y7x"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Copy Item Directory" tag="15240" id="iLX-OF-n8U">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="OnCopyCurrentFileDirectory:" target="-1" id="tlN-er-EfE"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Select by Mask..." tag="15050" keyEquivalent="=" id="916">

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
@@ -81,6 +81,7 @@ using PanelActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::P
 - (IBAction)OnEjectVolume:(id)sender;
 - (IBAction)OnCopyCurrentFileName:(id)sender;
 - (IBAction)OnCopyCurrentFilePath:(id)sender;
+- (IBAction)OnCopyCurrentFileDirectory:(id)sender;
 - (IBAction)OnCalculateSizes:(id)sender;
 - (IBAction)OnCalculateAllSizes:(id)sender;
 - (IBAction)ToggleViewHiddenFiles:(id)sender;

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActionsDispatcher.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Core/Alert.h>
@@ -259,6 +259,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 - (IBAction)OnEjectVolume:(id)sender { PERFORM; }
 - (IBAction)OnCopyCurrentFileName:(id)sender { PERFORM; }
 - (IBAction)OnCopyCurrentFilePath:(id)sender { PERFORM; }
+- (IBAction)OnCopyCurrentFileDirectory:(id)sender { PERFORM; }
 - (IBAction)OnCalculateSizes:(id)sender { PERFORM; }
 - (IBAction)OnCalculateAllSizes:(id)sender { PERFORM; }
 - (IBAction)ToggleViewHiddenFiles:(id)sender { PERFORM; }

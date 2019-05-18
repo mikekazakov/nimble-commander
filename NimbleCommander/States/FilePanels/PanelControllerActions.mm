@@ -143,6 +143,7 @@ PanelActionsMap BuildPanelActionsMap
     add( @selector(OnEjectVolume:),              new EjectVolume{_native_fs_mgr});
     add( @selector(OnCopyCurrentFileName:),      new CopyFileName);
     add( @selector(OnCopyCurrentFilePath:),      new CopyFilePath);
+    add( @selector(OnCopyCurrentFileDirectory:), new CopyFileDirectory);
     add( @selector(OnCreateDirectoryCommand:),   new MakeNewNamedFolder);
     add( @selector(OnBatchRename:),              new BatchRename);
     add( @selector(OnRenameFileInPlace:),        new RenameInPlace);

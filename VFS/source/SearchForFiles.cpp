@@ -4,6 +4,8 @@
 #include <VFS/FileWindow.h>
 #include <VFS/SearchInFile.h>
 
+namespace nc::vfs {
+
 static int EncodingFromXAttr(const VFSFilePtr &_f)
 {
     char buf[128];
@@ -283,4 +285,6 @@ void SearchForFiles::ProcessValidEntry(const char* _full_path,
 bool SearchForFiles::IsRunning() const noexcept
 {
     return m_Queue.Empty() == false;
+}
+
 }

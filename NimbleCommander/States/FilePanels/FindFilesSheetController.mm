@@ -6,7 +6,7 @@
 #include <Utility/SheetWithHotkeys.h>
 #include <Utility/Encodings.h>
 #include <Utility/PathManip.h>
-#include <NimbleCommander/Core/SearchForFiles.h>
+#include <VFS/SearchForFiles.h>
 #include <Utility/ByteCountFormatter.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/States/FilePanels/PanelAux.h>
@@ -24,6 +24,7 @@ static const auto g_StateTextHistory = "filePanel.findFilesSheet.textHistory";
 static const int g_MaximumSearchResults = 262144;
 
 using namespace nc::panel;
+using nc::vfs::SearchForFiles;
 
 static std::string ensure_tr_slash( std::string _str )
 {

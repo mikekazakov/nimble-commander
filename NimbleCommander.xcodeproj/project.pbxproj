@@ -296,10 +296,6 @@
 		CF4E56DB1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DC1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
 		CF4E56DD1D506BA100452912 /* FindFilesSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4E56DF1D506BA100452912 /* FindFilesSheetController.xib */; };
-		CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
-		CF4E56F11D5072E900452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
-		CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
-		CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4E56E61D506EB100452912 /* SearchForFiles.cpp */; };
 		CF4ED0C4177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */; };
 		CF50925C201C3025004D9CF5 /* VFSInstancePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */; };
 		CF50926C201C30B1004D9CF5 /* VFSInstancePromise.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */; };
@@ -1715,8 +1711,6 @@
 		CF4E56D01D506B9200452912 /* FindFilesSheetController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FindFilesSheetController.mm; path = NimbleCommander/States/FilePanels/FindFilesSheetController.mm; sourceTree = SOURCE_ROOT; };
 		CF4E56DE1D506BA100452912 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/FindFilesSheetController.xib; sourceTree = "<group>"; };
 		CF4E56E11D506BA700452912 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/FindFilesSheetController.strings; sourceTree = "<group>"; };
-		CF4E56E51D506EB100452912 /* SearchForFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchForFiles.h; path = NimbleCommander/Core/SearchForFiles.h; sourceTree = SOURCE_ROOT; };
-		CF4E56E61D506EB100452912 /* SearchForFiles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchForFiles.cpp; path = NimbleCommander/Core/SearchForFiles.cpp; sourceTree = SOURCE_ROOT; };
 		CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSFileManager+DirectoryLocations.h"; path = "3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.h"; sourceTree = SOURCE_ROOT; };
 		CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSFileManager+DirectoryLocations.m"; path = "3rd_Party/NSFileManagerDirectoryLocations/NSFileManager+DirectoryLocations.m"; sourceTree = SOURCE_ROOT; };
 		CF50925A201C3025004D9CF5 /* VFSInstancePromise.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstancePromise.cpp; path = NimbleCommander/Core/VFSInstancePromise.cpp; sourceTree = SOURCE_ROOT; };
@@ -2995,8 +2989,6 @@
 				CFB66F9D1D863E5B0017D2A0 /* Marketing */,
 				CFDAC21C1DFBC9080039A104 /* SandboxManager.h */,
 				CFDAC21D1DFBC9080039A104 /* SandboxManager.mm */,
-				CF4E56E61D506EB100452912 /* SearchForFiles.cpp */,
-				CF4E56E51D506EB100452912 /* SearchForFiles.h */,
 				CFDAC2B01DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.h */,
 				CFDAC2B11DFD0ABC0039A104 /* SimpleComboBoxPersistentDataSource.mm */,
 				CFDAC29E1DFBFBA10039A104 /* TemporaryNativeFileChangesSentinel.cpp */,
@@ -4030,7 +4022,6 @@
 				CFC5D4B219BDD59F005BB24A /* CalculateChecksumSheetController.mm in Sources */,
 				CF62371F1EB4443F00152B2B /* PanelDataEntriesComparator.mm in Sources */,
 				CFB66F971D853B150017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
-				CF4E56F21D5072E900452912 /* SearchForFiles.cpp in Sources */,
 				CFFA951A1F45A3400035E606 /* ConfigWiring.mm in Sources */,
 				CFD726CF1E42E2A900603077 /* PanelBriefViewCollectionViewBackground.mm in Sources */,
 				CF6D9BDB196678000077B146 /* GTMHotKeyTextField.mm in Sources */,
@@ -4352,7 +4343,6 @@
 				CFB66F981D853B160017D2A0 /* AskingForRatingOverlayView.mm in Sources */,
 				CFD7263A1E42E0D900603077 /* LaunchServices.mm in Sources */,
 				CFFA95181F45A3180035E606 /* Dock.mm in Sources */,
-				CF4E56F31D5072EA00452912 /* SearchForFiles.cpp in Sources */,
 				CF7A09D81EC44A2100533B07 /* NetworkConnectionIconProvider.mm in Sources */,
 				CFD726011E42E06300603077 /* AppDelegate+Migration.mm in Sources */,
 				CFA539F11D433E2A00C562A7 /* NSFileManager+DirectoryLocations.m in Sources */,
@@ -4603,7 +4593,6 @@
 				CFFA953D1F4A759E0035E606 /* PanelViewFieldEditor.mm in Sources */,
 				CF3E6DF81E3870AB002B4AAD /* PanelViewPresentationSettings.mm in Sources */,
 				CF56C2BA1DC1934D00F0DF0F /* PanelListViewTableView.mm in Sources */,
-				CF4E56E71D506EB100452912 /* SearchForFiles.cpp in Sources */,
 				CFDAC2AE1DFD096E0039A104 /* ConnectionsMenuDelegate.mm in Sources */,
 				CF818B711EA07A5B00BC28E6 /* Pasteboard.mm in Sources */,
 				CF20DF4E1FC694B80074ABB8 /* SyncPanels.mm in Sources */,
@@ -4831,7 +4820,6 @@
 				CF818B5B1EA0610E00BC28E6 /* Select.mm in Sources */,
 				CFD726571E42E1A700603077 /* PreferencesWindowThemesTabModel.mm in Sources */,
 				CFF6F30E1A13567C00011177 /* NSFileManager+DirectoryLocations.m in Sources */,
-				CF4E56F11D5072E900452912 /* SearchForFiles.cpp in Sources */,
 				CFF6F31E1A13567C00011177 /* RHPreferencesWindowController.m in Sources */,
 				CF818B631EA0610E00BC28E6 /* MakeNew.mm in Sources */,
 				CF5E9A5A1FCBFED8005608F5 /* ShowSystemOverview.mm in Sources */,

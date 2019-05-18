@@ -238,7 +238,7 @@ int XAttrHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const
     if( !is_absolute_path(_path) )
         return VFSError::NotFound;
 
-    memset(&_st, sizeof(_st), 0);
+    memset(&_st, 0, sizeof(_st));
     _st.meaning.size = true;
     _st.meaning.mode = true;
     _st.meaning.atime = true;

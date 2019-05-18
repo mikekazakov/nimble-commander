@@ -19,6 +19,8 @@
 		CF1FDD041F5BBA6F00AF1EBD /* WriteBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF1FDD021F5BBA6F00AF1EBD /* WriteBuffer.cpp */; };
 		CF1FDD071F5D4AEC00AF1EBD /* PathRoutines.h in Headers */ = {isa = PBXBuildFile; fileRef = CF1FDD051F5D4AEC00AF1EBD /* PathRoutines.h */; };
 		CF1FDD081F5D4AEC00AF1EBD /* PathRoutines.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1FDD061F5D4AEC00AF1EBD /* PathRoutines.mm */; };
+		CF24E1FA22901C6800C166FA /* SearchForFiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E1F922901C6800C166FA /* SearchForFiles.cpp */; };
+		CF24E1FC22901C7800C166FA /* SearchForFiles.h in Headers */ = {isa = PBXBuildFile; fileRef = CF24E1FB22901C7800C166FA /* SearchForFiles.h */; };
 		CF26DE0921CFA2AE003F0E93 /* NetWebDAV.h in Headers */ = {isa = PBXBuildFile; fileRef = CF26DE0621CFA2AD003F0E93 /* NetWebDAV.h */; };
 		CF26DE0A21CFA2AE003F0E93 /* VFS_fwd.h in Headers */ = {isa = PBXBuildFile; fileRef = CF26DE0721CFA2AE003F0E93 /* VFS_fwd.h */; };
 		CF26DE0B21CFA2AE003F0E93 /* FileWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = CF26DE0821CFA2AE003F0E93 /* FileWindow.h */; };
@@ -152,6 +154,8 @@
 		CF22A1111E9751A800149C44 /* FileUploadStream.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileUploadStream.mm; path = source/NetDropbox/FileUploadStream.mm; sourceTree = "<group>"; };
 		CF22A1141E97755000149C44 /* FileUploadDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileUploadDelegate.h; path = source/NetDropbox/FileUploadDelegate.h; sourceTree = "<group>"; };
 		CF22A1151E97755000149C44 /* FileUploadDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileUploadDelegate.mm; path = source/NetDropbox/FileUploadDelegate.mm; sourceTree = "<group>"; };
+		CF24E1F922901C6800C166FA /* SearchForFiles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SearchForFiles.cpp; path = source/SearchForFiles.cpp; sourceTree = "<group>"; };
+		CF24E1FB22901C7800C166FA /* SearchForFiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SearchForFiles.h; path = include/VFS/SearchForFiles.h; sourceTree = "<group>"; };
 		CF26DE0621CFA2AD003F0E93 /* NetWebDAV.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetWebDAV.h; path = include/VFS/NetWebDAV.h; sourceTree = "<group>"; };
 		CF26DE0721CFA2AE003F0E93 /* VFS_fwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFS_fwd.h; path = include/VFS/VFS_fwd.h; sourceTree = "<group>"; };
 		CF26DE0821CFA2AE003F0E93 /* FileWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileWindow.h; path = include/VFS/FileWindow.h; sourceTree = "<group>"; };
@@ -445,6 +449,7 @@
 				CF69CFE41DA227E400992B84 /* NetSFTP.h */,
 				CF26DE0621CFA2AD003F0E93 /* NetWebDAV.h */,
 				CF69CFE51DA227E400992B84 /* PS.h */,
+				CF24E1FB22901C7800C166FA /* SearchForFiles.h */,
 				CF26DE1021D266E0003F0E93 /* SearchInFile.h */,
 				CF26DE0721CFA2AE003F0E93 /* VFS_fwd.h */,
 				CF69CFE71DA227E400992B84 /* VFS.h */,
@@ -477,6 +482,7 @@
 				CF69D06E1DA2352000992B84 /* PS */,
 				CF69D02F1DA231DA00992B84 /* XAttr */,
 				CF26DE1121D266EA003F0E93 /* SearchInFile.cpp */,
+				CF24E1F922901C6800C166FA /* SearchForFiles.cpp */,
 				CF26DE0C21CFA2BF003F0E93 /* FileWindow.cpp */,
 				CF69D00A1DA228C800992B84 /* VFS-prefix.pch */,
 				CF69D00C1DA22BE800992B84 /* VFSArchiveProxy.mm */,
@@ -631,6 +637,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF24E1FC22901C7800C166FA /* SearchForFiles.h in Headers */,
 				CF1FDD071F5D4AEC00AF1EBD /* PathRoutines.h in Headers */,
 				CFCE73151F972623009E2FD7 /* Listing.h in Headers */,
 				CF26DE0B21CFA2AE003F0E93 /* FileWindow.h in Headers */,
@@ -724,6 +731,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = CF69CFC61DA224E200992B84;
@@ -796,6 +804,7 @@
 				CFFA94D21F4543ED0035E606 /* VFSEasyOps.mm in Sources */,
 				CFFA94CA1F4543BC0035E606 /* KeyValidator.cpp in Sources */,
 				CFFA94CC1F4543C70035E606 /* AppleDoubleEA.cpp in Sources */,
+				CF24E1FA22901C6800C166FA /* SearchForFiles.cpp in Sources */,
 				CFFA956C1F5A477F0035E606 /* File.cpp in Sources */,
 				CFFA94BA1F4543A30035E606 /* DisplayNamesCache.mm in Sources */,
 				CFFA94DB1F4543ED0035E606 /* VFSSeqToRandomWrapper.cpp in Sources */,

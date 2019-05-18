@@ -11,6 +11,8 @@
 #include <queue>
 #include <stdint.h>
 
+namespace nc::vfs {
+
 class SearchForFiles
 {
 public:
@@ -137,3 +139,5 @@ private:
     int                         m_SearchOptions;
     std::queue<VFSPath>         m_DirsFIFO;
 };
+
+}

@@ -370,7 +370,7 @@ int UnRARHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const
     static VFSStat::meaningT m;
     static std::once_flag once;
     call_once(once, []{
-        memset(&m, sizeof(m), 0);
+        memset(&m, 0, sizeof(m));
         m.size = 1;
         m.mode = 1;
         m.mtime = 1;

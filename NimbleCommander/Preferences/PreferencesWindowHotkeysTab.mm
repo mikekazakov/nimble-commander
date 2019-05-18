@@ -562,7 +562,12 @@ static NSString *ComposeVerboseNonMenuActionTitle(const std::string &_action)
         {"panel.show_tab_no_7",                 NSLocalizedString(@"File Panels ▶ Show Tab №7", "")},
         {"panel.show_tab_no_8",                 NSLocalizedString(@"File Panels ▶ Show Tab №8", "")},
         {"panel.show_tab_no_9",                 NSLocalizedString(@"File Panels ▶ Show Tab №9", "")},
-        {"panel.show_tab_no_10",                NSLocalizedString(@"File Panels ▶ Show Tab №10", "")},
+        {"panel.show_tab_no_10",                NSLocalizedString(@"File Panels ▶ Show Tab №10", "")},        
+        {"viewer.toggle_text",                  NSLocalizedString(@"Viewer ▶ Toggle Text", "")},
+        {"viewer.toggle_hex",                   NSLocalizedString(@"Viewer ▶ Toggle Hex", "")},
+        {"viewer.toggle_preview",               NSLocalizedString(@"Viewer ▶ Toggle Preview", "")},
+        {"viewer.show_settings",                NSLocalizedString(@"Viewer ▶ Show Settings", "")},
+        {"viewer.show_goto",                    NSLocalizedString(@"Viewer ▶ Show GoTo", "")},
     };
     
     for( auto &i: titles )

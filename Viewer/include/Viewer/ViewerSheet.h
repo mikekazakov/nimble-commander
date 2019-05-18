@@ -8,7 +8,7 @@
 @class NCViewerViewController;
 
 // make sure to destroy instances of BigFileViewSheet in main queue!
-@interface BigFileViewSheet : SheetController
+@interface NCViewerSheet : SheetController
 
 - (instancetype) init NS_UNAVAILABLE;
 - (instancetype) initWithFilepath:(std::string)path

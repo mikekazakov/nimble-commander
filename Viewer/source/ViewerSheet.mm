@@ -1,11 +1,11 @@
 // Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "BigFileViewSheet.h"
+#include "ViewerSheet.h"
 #include <Utility/CocoaAppearanceManager.h>
 #include <Viewer/ViewerViewController.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 
-@interface BigFileViewSheet ()
+@interface NCViewerSheet ()
 
 @property (nonatomic) NCViewerView *view;
 @property (nonatomic) IBOutlet NSView *viewPlaceholder;
@@ -24,7 +24,7 @@
 
 @end
 
-@implementation BigFileViewSheet
+@implementation NCViewerSheet
 {
     VFSHostPtr              m_VFS;
     std::string             m_Path;

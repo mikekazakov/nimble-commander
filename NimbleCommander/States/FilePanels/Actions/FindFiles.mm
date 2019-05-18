@@ -5,7 +5,7 @@
 #include "FindFiles.h"
 #include "../PanelView.h"
 #include <Habanero/dispatch_cpp.h>
-#include <Viewer/BigFileViewSheet.h>
+#include <Viewer/ViewerSheet.h>
 #include <Viewer/ViewerViewController.h>
 #include <Viewer/InternalViewerWindowController.h>
 
@@ -98,7 +98,7 @@ void FindFiles::Perform( PanelController *_target, id _sender ) const
 void FindFiles::OnView(const FindFilesSheetViewRequest& _request) const
 {    
     if( GlobalConfig().GetBool(g_ConfigModalInternalViewer) ) { // as a sheet
-        const auto sheet = [[BigFileViewSheet alloc]
+        const auto sheet = [[NCViewerSheet alloc]
                             initWithFilepath:_request.path
                             at:_request.vfs
                             viewerFactory:m_MakeViewer

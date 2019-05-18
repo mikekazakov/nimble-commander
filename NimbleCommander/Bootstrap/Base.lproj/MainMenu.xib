@@ -851,6 +851,7 @@ DQ
                                     <action selector="OnQuickDeselectByExtension:" target="-1" id="yDX-6Z-PPS"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="Rx8-BQ-PzO"/>
                             <menuItem title="Preview" tag="15070" keyEquivalent="" id="894">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
@@ -1075,5 +1076,6 @@ CQ
         </customObject>
         <customObject id="420" customClass="NSFontManager"/>
         <customObject id="7FF-1A-0Ge" customClass="ToolsMenuDelegate"/>
+        <menuItem isSeparatorItem="YES" id="ImJ-Ih-UIc"/>
     </objects>
 </document>

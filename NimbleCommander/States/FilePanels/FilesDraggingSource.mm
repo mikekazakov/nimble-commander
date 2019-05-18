@@ -1,7 +1,11 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilesDraggingSource.h"
 #include <VFS/Native.h>
 #include <Utility/StringExtras.h>
+#include <Operations/Deletion.h>
+#include "PanelController.h"
+#include "MainWindowFilePanelState.h"
+#include "../MainWindowController.h"
 
 static const auto g_PrivateDragUTI = @"com.magnumbytes.nimblecommander.filespanelsdraganddrop";
 
@@ -100,7 +104,7 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(
         case NSDraggingContextOutsideApplication:
             if( m_AreAllHostsNative && m_AreAllHostsWriteable )
                 return NSDragOperationCopy | NSDragOperationLink |
-                       NSDragOperationGeneric | NSDragOperationMove;
+                       NSDragOperationGeneric | NSDragOperationMove | NSDragOperationDelete;
             else
                 return NSDragOperationCopy;
             
@@ -237,11 +241,44 @@ provideDataForType:(NSString *)type
            endedAtPoint:(NSPoint)screenPoint
               operation:(NSDragOperation)operation
 {
+    if( operation == NSDragOperationDelete  ) {
+        [self deleteSoureItems];
+    }
+    
     for( auto &item: m_Items )
         [item reset];
     
     m_Items.clear();
     m_CommonHost = nullptr;
+}
+
+static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
+                                          const std::shared_ptr<nc::ops::Operation> &_operation )
+{
+    if( !_target.receivesUpdateNotifications ) {
+        __weak PanelController *weak_panel = _target;
+        _operation->ObserveUnticketed(nc::ops::Operation::NotifyAboutFinish, [=]{
+            dispatch_to_main_queue( [=]{
+                [(PanelController*)weak_panel refreshPanel];
+            });
+        });
+    }
+}
+
+- (void)deleteSoureItems
+{
+    if( PanelController *target = m_SourceController ) {
+        std::vector<VFSListingItem> items;
+        for( auto &i: m_Items )
+            items.push_back( i.item );
+        
+        const auto operation = std::make_shared<nc::ops::Deletion>
+        (items,
+         nc::ops::DeletionType::Trash);
+                
+        AddPanelRefreshEpilogIfNeeded(target, operation);
+        [target.mainWindowController enqueueOperation:operation];
+    }
 }
 
 @end

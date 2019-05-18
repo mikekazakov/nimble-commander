@@ -139,14 +139,6 @@ using namespace nc::viewer;
     
     m_File = _file;
     m_Data = std::make_unique<DataBackend>(*m_File, _encoding);
-//    BigFileView* __weak weak_self = self;
-//    auto on_decoded = [weak_self] {
-//        if( BigFileView *sself = weak_self ) {
-//            [sself UpdateSelectionRange];
-////            sself->m_ViewImpl->OnBufferDecoded();
-//        }
-//    };
-//    m_Data->SetOnDecoded( on_decoded );
     
     self.mode = _mode;
     self.verticalPositionInBytes = 0;
@@ -202,7 +194,6 @@ using namespace nc::viewer;
     
     [self willChangeValueForKey:@"wordWrap"];
     m_WrapWords = _wrapping;
-//    m_ViewImpl->OnWordWrappingChanged();
     if( [m_View respondsToSelector:@selector(lineWrappingHasChanged)] ) {
         [m_View lineWrappingHasChanged];
     }

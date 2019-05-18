@@ -198,6 +198,7 @@ private:
 @property (nonatomic) IBOutlet NSTableView         *TableView;
 @property (nonatomic) IBOutlet NSButton            *CaseSensitiveButton;
 @property (nonatomic) IBOutlet NSButton            *WholePhraseButton;
+@property (nonatomic) IBOutlet NSButton            *NotContainingButton;
 @property (nonatomic) IBOutlet NSArrayController   *ArrayController;
 @property (nonatomic) IBOutlet NSPopUpButton       *SizeRelationPopUp;
 @property (nonatomic) IBOutlet NSTextField         *SizeTextField;
@@ -466,6 +467,7 @@ private:
         filter_content.encoding = (int)self.EncodingsPopUp.selectedTag;
         filter_content.case_sensitive = self.CaseSensitiveButton.intValue;
         filter_content.whole_phrase = self.WholePhraseButton.intValue;
+        filter_content.not_containing = self.NotContainingButton.intValue;
         m_FileSearch->SetFilterContent(filter_content);
     }
     m_TextHistory->insert_unique( text_query ? text_query.UTF8String : "" );

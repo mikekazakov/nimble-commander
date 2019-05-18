@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/SerialQueue.h>
@@ -32,6 +32,7 @@ public:
         int encoding        = encodings::ENCODING_UTF8;
         bool whole_phrase   = false; // search for a phrase, not a part of something
         bool case_sensitive = false;
+        bool not_containing = false;
     };
     
     struct FilterSize {

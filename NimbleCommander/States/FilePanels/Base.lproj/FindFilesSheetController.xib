@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -15,6 +15,7 @@
                 <outlet property="GoToButton" destination="NVP-CR-YO4" id="UdQ-Iu-eyG"/>
                 <outlet property="LookingIn" destination="VVb-jD-bRB" id="mIW-HH-CUw"/>
                 <outlet property="MaskComboBox" destination="4kJ-ln-DDa" id="tcq-gO-ET7"/>
+                <outlet property="NotContainingButton" destination="a6C-bW-ZiF" id="pMt-yZ-SFY"/>
                 <outlet property="PanelButton" destination="g6m-zK-tE9" id="dzJ-q0-FO6"/>
                 <outlet property="SearchButton" destination="40b-pd-d3f" id="1i2-gY-Yd6"/>
                 <outlet property="SearchInArchivesButton" destination="Mrn-CD-zhD" id="KeH-Li-Z1i"/>
@@ -36,7 +37,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="622" height="696"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1280" height="800"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
             <view key="contentView" id="2">
                 <rect key="frame" x="0.0" y="0.0" width="622" height="696"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -77,13 +78,13 @@ DQ
                         </connections>
                     </button>
                     <scrollView autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="axX-0L-v6g">
-                        <rect key="frame" x="20" y="61" width="582" height="424"/>
+                        <rect key="frame" x="20" y="61" width="582" height="408"/>
                         <clipView key="contentView" id="vBG-YV-mkX">
-                            <rect key="frame" x="1" y="0.0" width="580" height="423"/>
+                            <rect key="frame" x="1" y="0.0" width="580" height="407"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" alternatingRowBackgroundColors="YES" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="Jgw-jU-GMB" id="03U-A8-eOk">
-                                    <rect key="frame" x="0.0" y="0.0" width="580" height="400"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="580" height="384"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <size key="intercellSpacing" width="3" height="2"/>
                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -232,17 +233,17 @@ DQ
                         </buttonCell>
                         <connections>
                             <action selector="OnFileView:" target="-2" id="E4B-3D-vl8"/>
+                            <binding destination="-2" name="enabled" keyPath="self.focusedItem" id="rpL-HM-rCY">
+                                <dictionary key="options">
+                                    <string key="NSValueTransformerName">NSIsNotNil</string>
+                                </dictionary>
+                            </binding>
                             <binding destination="-2" name="enabled2" keyPath="self.focusedItemIsReg" previousBinding="rpL-HM-rCY" id="9te-x5-ae0">
                                 <dictionary key="options">
                                     <integer key="NSMultipleValuesPlaceholder" value="-1"/>
                                     <integer key="NSNoSelectionPlaceholder" value="-1"/>
                                     <integer key="NSNotApplicablePlaceholder" value="-1"/>
                                     <integer key="NSNullPlaceholder" value="-1"/>
-                                </dictionary>
-                            </binding>
-                            <binding destination="-2" name="enabled" keyPath="self.focusedItem" id="rpL-HM-rCY">
-                                <dictionary key="options">
-                                    <string key="NSValueTransformerName">NSIsNotNil</string>
                                 </dictionary>
                             </binding>
                             <outlet property="nextKeyView" destination="NVP-CR-YO4" id="g5I-2t-rGY"/>
@@ -300,13 +301,13 @@ DQ
                         </connections>
                     </button>
                     <box autoresizesSubviews="NO" borderType="none" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="3im-V9-my6">
-                        <rect key="frame" x="-3" y="489" width="628" height="209"/>
+                        <rect key="frame" x="-3" y="473" width="628" height="225"/>
                         <view key="contentView" id="lGh-LY-EvR">
-                            <rect key="frame" x="0.0" y="0.0" width="628" height="209"/>
+                            <rect key="frame" x="0.0" y="0.0" width="628" height="225"/>
                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             <subviews>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="JW2-j0-Voo">
-                                    <rect key="frame" x="256" y="150" width="139" height="18"/>
+                                    <rect key="frame" x="256" y="166" width="139" height="18"/>
                                     <buttonCell key="cell" type="check" title="Look in subdirectories" bezelStyle="regularSquare" imagePosition="left" controlSize="small" state="on" inset="2" id="lJf-WO-EGY">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -328,7 +329,7 @@ DQ
                                     </connections>
                                 </progressIndicator>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="O0G-eo-ej9">
-                                    <rect key="frame" x="147" y="87" width="100" height="17"/>
+                                    <rect key="frame" x="147" y="103" width="100" height="17"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Containing text:" id="sq9-fx-uq3">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -336,7 +337,7 @@ DQ
                                     </textFieldCell>
                                 </textField>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="fhx-Hf-f7j">
-                                    <rect key="frame" x="256" y="46" width="98" height="18"/>
+                                    <rect key="frame" x="256" y="62" width="98" height="18"/>
                                     <buttonCell key="cell" type="check" title="Case sensitive" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="pbB-zt-FTQ">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -352,7 +353,7 @@ DQ
                                     </connections>
                                 </button>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="aZ1-vD-r1s">
-                                    <rect key="frame" x="256" y="30" width="95" height="18"/>
+                                    <rect key="frame" x="256" y="46" width="95" height="18"/>
                                     <buttonCell key="cell" type="check" title="Whole phrase" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="HbZ-P4-Wk5">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -364,7 +365,7 @@ DQ
                                                 <string key="NSValueTransformerName">NSNegateBoolean</string>
                                             </dictionary>
                                         </binding>
-                                        <outlet property="nextKeyView" destination="kfR-KH-AUs" id="7Uf-fW-4dw"/>
+                                        <outlet property="nextKeyView" destination="a6C-bW-ZiF" id="RwQ-Ma-Mrh"/>
                                     </connections>
                                 </button>
                                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="kfR-KH-AUs">
@@ -440,7 +441,7 @@ DQ
                                     </textFieldCell>
                                 </textField>
                                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ddq-vO-Myl">
-                                    <rect key="frame" x="256" y="62" width="170" height="22"/>
+                                    <rect key="frame" x="256" y="78" width="170" height="22"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="164" id="SHk-od-8tK"/>
                                     </constraints>
@@ -460,7 +461,7 @@ DQ
                                     </connections>
                                 </popUpButton>
                                 <comboBox toolTip="^T" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CJi-sh-esy">
-                                    <rect key="frame" x="253" y="83" width="245" height="26"/>
+                                    <rect key="frame" x="253" y="99" width="245" height="26"/>
                                     <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" placeholderString="Enter a text to search" drawsBackground="YES" completes="NO" usesDataSource="YES" numberOfVisibleItems="5" id="17I-3a-9vx">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -510,7 +511,7 @@ DQ
                                     </connections>
                                 </textField>
                                 <button translatesAutoresizingMaskIntoConstraints="NO" id="Mrn-CD-zhD">
-                                    <rect key="frame" x="256" y="134" width="107" height="18"/>
+                                    <rect key="frame" x="256" y="150" width="107" height="18"/>
                                     <buttonCell key="cell" type="check" title="Look in archives" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="7HA-yk-SzZ">
                                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -526,7 +527,7 @@ DQ
                                     </connections>
                                 </button>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="jb7-tj-7W9">
-                                    <rect key="frame" x="68" y="169" width="179" height="17"/>
+                                    <rect key="frame" x="68" y="185" width="179" height="17"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Search for items using mask:" id="R8e-FO-aEj">
                                         <font key="font" metaFont="system"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -534,7 +535,7 @@ DQ
                                     </textFieldCell>
                                 </textField>
                                 <comboBox toolTip="^M" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4kJ-ln-DDa">
-                                    <rect key="frame" x="253" y="165" width="245" height="26"/>
+                                    <rect key="frame" x="253" y="181" width="245" height="26"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="242" id="56T-dj-u8L"/>
                                     </constraints>
@@ -561,7 +562,7 @@ DQ
                                     </connections>
                                 </comboBox>
                                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="w87-Kl-zeY">
-                                    <rect key="frame" x="257" y="117" width="62" height="14"/>
+                                    <rect key="frame" x="257" y="133" width="62" height="14"/>
                                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Search for:" id="HCA-wY-Kq2">
                                         <font key="font" metaFont="smallSystem"/>
                                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -569,7 +570,7 @@ DQ
                                     </textFieldCell>
                                 </textField>
                                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rhf-af-9N3">
-                                    <rect key="frame" x="322" y="112" width="123" height="22"/>
+                                    <rect key="frame" x="322" y="128" width="123" height="22"/>
                                     <popUpButtonCell key="cell" type="push" title="Files and folders" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="9y5-XT-tuj" id="qXn-z1-0pd">
                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                         <font key="font" metaFont="smallSystem"/>
@@ -591,16 +592,35 @@ DQ
                                         <outlet property="nextKeyView" destination="CJi-sh-esy" id="SGu-HO-Tba"/>
                                     </connections>
                                 </popUpButton>
+                                <button translatesAutoresizingMaskIntoConstraints="NO" id="a6C-bW-ZiF">
+                                    <rect key="frame" x="256" y="30" width="99" height="18"/>
+                                    <buttonCell key="cell" type="check" title="Not containing" bezelStyle="regularSquare" imagePosition="left" controlSize="small" inset="2" id="kUk-kM-n8j">
+                                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                        <font key="font" metaFont="smallSystem"/>
+                                    </buttonCell>
+                                    <connections>
+                                        <action selector="onSearchSettingsUIChanged:" target="-2" id="mSv-7r-fP8"/>
+                                        <binding destination="-2" name="enabled" keyPath="self.searchingNow" id="ZT2-cM-mws">
+                                            <dictionary key="options">
+                                                <string key="NSValueTransformerName">NSNegateBoolean</string>
+                                            </dictionary>
+                                        </binding>
+                                        <outlet property="nextKeyView" destination="kfR-KH-AUs" id="EjG-87-TwC"/>
+                                    </connections>
+                                </button>
                             </subviews>
                             <constraints>
                                 <constraint firstItem="CJi-sh-esy" firstAttribute="top" secondItem="rhf-af-9N3" secondAttribute="bottom" constant="8" id="3eb-AJ-E6H"/>
+                                <constraint firstItem="kfR-KH-AUs" firstAttribute="top" secondItem="a6C-bW-ZiF" secondAttribute="bottom" constant="8" id="7Qt-Je-fiZ"/>
                                 <constraint firstItem="rhf-af-9N3" firstAttribute="leading" secondItem="w87-Kl-zeY" secondAttribute="trailing" constant="8" symbolic="YES" id="C0g-E5-FJD"/>
                                 <constraint firstItem="rhf-af-9N3" firstAttribute="top" secondItem="Mrn-CD-zhD" secondAttribute="bottom" constant="4" id="JT8-sd-SQP"/>
+                                <constraint firstItem="a6C-bW-ZiF" firstAttribute="leading" secondItem="aZ1-vD-r1s" secondAttribute="leading" id="Nyo-UP-WGR"/>
                                 <constraint firstItem="Mrn-CD-zhD" firstAttribute="top" secondItem="JW2-j0-Voo" secondAttribute="bottom" constant="4" id="QLe-OZ-5y2"/>
                                 <constraint firstItem="Mrn-CD-zhD" firstAttribute="leading" secondItem="JW2-j0-Voo" secondAttribute="leading" id="QVG-al-1lI"/>
                                 <constraint firstAttribute="bottom" secondItem="kfR-KH-AUs" secondAttribute="bottom" constant="4" id="QdO-es-leH"/>
                                 <constraint firstItem="rhf-af-9N3" firstAttribute="baseline" secondItem="w87-Kl-zeY" secondAttribute="baseline" id="jn3-xn-BXg"/>
                                 <constraint firstItem="w87-Kl-zeY" firstAttribute="leading" secondItem="Mrn-CD-zhD" secondAttribute="leading" id="o8U-ap-SOh"/>
+                                <constraint firstItem="a6C-bW-ZiF" firstAttribute="top" secondItem="aZ1-vD-r1s" secondAttribute="bottom" constant="4" id="q5G-Bf-BqJ"/>
                             </constraints>
                         </view>
                         <constraints>
@@ -623,7 +643,6 @@ DQ
                             <constraint firstItem="CJi-sh-esy" firstAttribute="trailing" secondItem="4kJ-ln-DDa" secondAttribute="trailing" id="U58-CV-eEp"/>
                             <constraint firstItem="jb7-tj-7W9" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="3im-V9-my6" secondAttribute="leading" constant="8" id="UjN-uU-un0"/>
                             <constraint firstItem="NWO-0P-f1V" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="3im-V9-my6" secondAttribute="leading" constant="8" id="Vyc-HB-hfb"/>
-                            <constraint firstItem="kfR-KH-AUs" firstAttribute="top" secondItem="aZ1-vD-r1s" secondAttribute="bottom" constant="8" id="dG7-t9-VEg"/>
                             <constraint firstAttribute="bottom" secondItem="o7G-2J-2qr" secondAttribute="bottom" constant="-3" id="jtv-kQ-q90"/>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="479" id="kSq-00-rqJ"/>
                             <constraint firstItem="CJi-sh-esy" firstAttribute="leading" secondItem="4kJ-ln-DDa" secondAttribute="leading" id="kVC-65-5Ch"/>

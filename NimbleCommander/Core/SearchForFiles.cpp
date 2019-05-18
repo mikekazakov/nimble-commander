@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SearchForFiles.h"
 #include <sys/stat.h>
 #include <VFS/FileWindow.h>
@@ -220,6 +220,8 @@ void SearchForFiles::ProcessDirent(const char* _full_path,
 bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, CFRange &_r)
 {
     assert(m_FilterContent);
+    _r = CFRangeMake(-1, 0);
+    
     VFSFilePtr file;
     if(_in_host.CreateFile(_full_path, file, 0) != 0)
         return false;
@@ -254,8 +256,12 @@ bool SearchForFiles::FilterByContent(const char* _full_path, VFSHost &_in_host, 
     const auto result = sif.Search( [=]{ return m_Queue.IsStopped(); } );
     if( result.response == SearchInFile::Response::Found ) {
         _r = CFRangeMake(result.location->offset, result.location->bytes_len);
-        return true;
+        return m_FilterContent->not_containing == false;
     }
+    if( result.response == SearchInFile::Response::NotFound ) {
+        return m_FilterContent->not_containing == true;
+    }
+    
     return false;
 }
 

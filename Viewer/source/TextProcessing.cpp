@@ -12,13 +12,12 @@
 namespace nc::viewer {
 
 void CleanUnicodeControlSymbols(char16_t* const _characters,
-                                int const _characters_length)
+                                int const _characters_length,
+                                const char16_t _replacement)
 {
     if( _characters == nullptr || _characters_length < 0 )
         throw std::invalid_argument("CleanUnicodeControlSymbols: invalid input");
     
-    const char16_t replacement = u' ';
-
     for ( int  i = 0; i < _characters_length; ++i ) {
         const auto c = _characters[i];
         if( c >= 0x0080 )
@@ -59,13 +58,13 @@ void CleanUnicodeControlSymbols(char16_t* const _characters,
            c == 0x001F || // US
            c == 0x007F    // DEL
            ) {
-            _characters[i] = replacement;
+            _characters[i] = _replacement;
         }
         
         if( c == 0x000D &&
             i + 1 < _characters_length &&
            _characters[i + 1] == 0x000A ) {
-            _characters[i] = replacement; // fix windows-like CR+LF newline to native LF
+            _characters[i] = _replacement; // fix windows-like CR+LF newline to native LF
         }
     }
 }

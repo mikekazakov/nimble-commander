@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <assert.h>
 #include <stdlib.h>
 
@@ -1311,14 +1311,14 @@ void InterpretUTF8BufferAsIndexedUTF16(
             continue;
         }
         else if(sz == 4) {
-            uint32_t out;
-            uint32_t _1 = _input[0] & 0x07;
-            uint32_t _2 = _input[1] & 0x3F;
-            uint32_t _3 = _input[2] & 0x3F;
-            uint32_t _4 = _input[3] & 0x3F;
-            out = (_1 << 18) | (_2 << 12) | (_3 << 6) | _4;
-            if(out < 0x10000) { // possibly malformed UTF8 (?)
-                *(_output_buf++) = uint16_t(out);
+            const uint32_t _1 = _input[0] & 0x07;
+            const uint32_t _2 = _input[1] & 0x3F;
+            const uint32_t _3 = _input[2] & 0x3F;
+            const uint32_t _4 = _input[3] & 0x3F;
+            const uint32_t out = (_1 << 18) | (_2 << 12) | (_3 << 6) | _4;
+            if( out < 0x10000 || // possibly malformed UTF8 (?) 
+               ( out >= 0x30000U && out < 0xE0000U ) ) { 
+                *(_output_buf++) = _bad_symb;
                 *(_indexes_buf++) = (uint32_t)(_input - start);
                 total += 1;
             }
@@ -1371,10 +1371,21 @@ void InterpretUTF16LEBufferAsUniChar(
             if(val >= 0xD800 && val <= 0xDBFF)
             { // leading surrogate
                 if(cur + 1 < end && *(cur+1) >= 0xDC00 && *(cur+1) <= 0xDFFF)
-                { // ok, normal surrogate
-                    *_output_buf++ = *cur++;
-                    *_output_buf++ = *cur++;
-                    total += 2;
+                {
+                    const uint32_t code_point = (((uint32_t)val - 0xD800U) << 10) +
+                        uint32_t(*(cur+1)) - 0xDC00U + 0x0010000U;
+                    if( code_point >= 0x30000U && code_point < 0xE0000U ) {
+                        // unassigned code point - treat as corrupted
+                        *_output_buf++ = _bad_symb;
+                        ++cur;
+                        total++;                        
+                    }
+                    else {                
+                        // ok, normal surrogate
+                        *_output_buf++ = *cur++;
+                        *_output_buf++ = *cur++;
+                        total += 2;
+                    }
                 }
                 else
                 { // corrupted surrogate
@@ -1427,11 +1438,22 @@ void InterpretUTF16BEBufferAsUniChar(
                 {
                     uint16_t next = Endian16_Swap(*(cur+1));
                     if(next >= 0xDC00 && next <= 0xDFFF)
-                    { // ok, normal surrogate
-                        *_output_buf++ = val;
-                        *_output_buf++ = next;
-                        cur += 2;
-                        total += 2;
+                    { 
+                        const uint32_t code_point = (((uint32_t)val - 0xD800U) << 10) +
+                            uint32_t(next) - 0xDC00U + 0x0010000U;
+                        if( code_point >= 0x30000U && code_point < 0xE0000U ) {
+                            // unassigned code point - treat as corrupted
+                            *_output_buf++ = _bad_symb;
+                            ++cur;
+                            total++;
+                        }
+                        else {
+                            // ok, normal surrogate
+                            *_output_buf++ = val;
+                            *_output_buf++ = next;
+                            cur += 2;
+                            total += 2;
+                        }
                     }
                     else
                     { // corrupted surrogate

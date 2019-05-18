@@ -9,10 +9,12 @@ namespace nc::viewer {
 class TextModeIndexedTextLine;
     
 /**
- * Replaces control symbols with spaces (' ' = 0x20).
+ * Replaces control symbols with _replacement or spaces (' ' = 0x20) by default.
  * Replaces 0x0D followed by 0x0A with 0x20 followed by 0x0A.
  */
-void CleanUnicodeControlSymbols(char16_t* _characters, int _characters_length);
+void CleanUnicodeControlSymbols(char16_t* _characters,
+                                int _characters_length,
+                                char16_t _replacement = ' ');
 
 /**
  * Creates an immutable paragraph style with settings to have a regular grid of specified tabs.

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include <NimbleCommander/GeneralUI/FilterPopUpMenu.h>
@@ -22,6 +22,7 @@
 #include "Helpers.h"
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
+#include <Utility/SystemInformation.h>
 #include <Habanero/dispatch_cpp.h>
 
 using namespace nc::panel;
@@ -150,7 +151,8 @@ static const auto g_MaxTextWidth = 600;
 @end
 
 namespace nc::panel::actions {
-
+    
+static void AddFakeHiddenHotkeyItem( SEL _action, NSMenu *_target_menu );
 static NSString *ShrinkMenuItemTitle(NSString *_title);
 
     
@@ -469,8 +471,10 @@ static bool RerouteGoToEventToLeftToolbarButton( MainWindowFilePanelState *_targ
     return true;
 }
 
-ShowLeftGoToPopup::ShowLeftGoToPopup(NetworkConnectionsManager&_net_mgr):
-    GoToPopupsBase(_net_mgr)
+ShowLeftGoToPopup::ShowLeftGoToPopup(NetworkConnectionsManager& _net_mgr,
+                                     SEL _right_popup_action):
+    GoToPopupsBase(_net_mgr),
+    m_RightPopupAction(_right_popup_action)
 {
 }
     
@@ -480,7 +484,8 @@ void ShowLeftGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender )
         return;
 
     const auto menu = BuildGoToMenu(_target, _target.leftPanelController);
-    
+    AddFakeHiddenHotkeyItem(m_RightPopupAction, menu);
+        
     if( auto button = objc_cast<NSButton>(_sender) )
         [menu popUpMenuPositioningItem:nil
                             atLocation:NSMakePoint(0, button.bounds.size.height + 4)
@@ -510,8 +515,10 @@ static bool RerouteGoToEventToRightToolbarButton( MainWindowFilePanelState *_tar
     return true;
 }
 
-ShowRightGoToPopup::ShowRightGoToPopup(NetworkConnectionsManager&_net_mgr):
-    GoToPopupsBase(_net_mgr)
+ShowRightGoToPopup::ShowRightGoToPopup(NetworkConnectionsManager& _net_mgr,
+                                       SEL _left_popup_action):
+    GoToPopupsBase(_net_mgr),
+    m_LeftPopupAction(_left_popup_action)
 {
 }
 
@@ -521,6 +528,7 @@ void ShowRightGoToPopup::Perform( MainWindowFilePanelState *_target, id _sender 
         return;
 
     const auto menu = BuildGoToMenu(_target, _target.rightPanelController);
+    AddFakeHiddenHotkeyItem(m_LeftPopupAction, menu);
     
     if( auto button = objc_cast<NSButton>(_sender) )
         [menu popUpMenuPositioningItem:nil
@@ -545,38 +553,59 @@ static void PopupQuickList( NSMenu *_menu, PanelController *_target )
                              inView:_target.view];
 }
 
-ShowConnectionsQuickList::ShowConnectionsQuickList(NetworkConnectionsManager&_net_mgr):
-    GoToPopupsBase(_net_mgr)
+ShowConnectionsQuickList::ShowConnectionsQuickList
+    (NetworkConnectionsManager&_net_mgr,
+     std::vector<SEL> _other_quick_lists):
+    GoToPopupsBase(_net_mgr),
+    m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
     
 void ShowConnectionsQuickList::Perform( PanelController *_target, id _sender ) const
 {
-    PopupQuickList( BuildConnectionsQuickList(_target), _target );
+    const auto menu = BuildConnectionsQuickList(_target);
+    for( auto action: m_OtherQuickLists )
+        AddFakeHiddenHotkeyItem(action, menu);
+    PopupQuickList(menu, _target );
 }
     
-ShowFavoritesQuickList::ShowFavoritesQuickList(NetworkConnectionsManager&_net_mgr):
-    nc::panel::actions::GoToPopupsBase(_net_mgr)
+ShowFavoritesQuickList::ShowFavoritesQuickList
+    (NetworkConnectionsManager&_net_mgr,
+     std::vector<SEL> _other_quick_lists):
+    nc::panel::actions::GoToPopupsBase(_net_mgr),
+    m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
 
 void ShowFavoritesQuickList::Perform( PanelController *_target, id _sender ) const
 {
-    PopupQuickList( BuildFavoritesQuickList(_target), _target );
+    const auto menu = BuildFavoritesQuickList(_target);
+    for( auto action: m_OtherQuickLists )
+        AddFakeHiddenHotkeyItem(action, menu);    
+    PopupQuickList( menu, _target );
 }
 
-ShowVolumesQuickList::ShowVolumesQuickList(NetworkConnectionsManager&_net_mgr):
-    nc::panel::actions::GoToPopupsBase(_net_mgr)
+ShowVolumesQuickList::ShowVolumesQuickList
+    (NetworkConnectionsManager&_net_mgr,
+     std::vector<SEL> _other_quick_lists):
+    nc::panel::actions::GoToPopupsBase(_net_mgr),
+    m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
     
 void ShowVolumesQuickList::Perform( PanelController *_target, id _sender ) const
 {
-    PopupQuickList( BuildVolumesQuickList(_target), _target );
+    const auto menu = BuildVolumesQuickList(_target);
+    for( auto action: m_OtherQuickLists )
+        AddFakeHiddenHotkeyItem(action, menu);    
+    PopupQuickList( menu, _target );
 }
 
-ShowParentFoldersQuickList::ShowParentFoldersQuickList(NetworkConnectionsManager&_net_mgr):
-    GoToPopupsBase(_net_mgr)
+ShowParentFoldersQuickList::ShowParentFoldersQuickList
+    (NetworkConnectionsManager&_net_mgr,
+     std::vector<SEL> _other_quick_lists):
+    GoToPopupsBase(_net_mgr),
+    m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
 
@@ -587,17 +616,26 @@ bool ShowParentFoldersQuickList::Predicate( PanelController *_target ) const
 
 void ShowParentFoldersQuickList::Perform( PanelController *_target, id _sender ) const
 {
-    PopupQuickList( BuildParentFoldersQuickList(_target), _target );
+    const auto menu = BuildParentFoldersQuickList(_target);
+    for( auto action: m_OtherQuickLists )
+        AddFakeHiddenHotkeyItem(action, menu);    
+    PopupQuickList( menu, _target );
 }
 
-ShowHistoryQuickList::ShowHistoryQuickList(NetworkConnectionsManager&_net_mgr):
-    nc::panel::actions::GoToPopupsBase(_net_mgr)
+ShowHistoryQuickList::ShowHistoryQuickList
+    (NetworkConnectionsManager&_net_mgr,
+     std::vector<SEL> _other_quick_lists):
+    nc::panel::actions::GoToPopupsBase(_net_mgr),
+    m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
     
 void ShowHistoryQuickList::Perform( PanelController *_target, id _sender ) const
 {
-    PopupQuickList( BuildHistoryQuickList(_target), _target );
+    const auto menu = BuildHistoryQuickList(_target);
+    for( auto action: m_OtherQuickLists )
+        AddFakeHiddenHotkeyItem(action, menu);    
+    PopupQuickList( menu, _target );
 };
     
 GoToPopupsBase::GoToPopupsBase(NetworkConnectionsManager&_net_mgr):
@@ -711,4 +749,50 @@ static NSString *ShrinkMenuItemTitle(NSString *_title)
     return StringByTruncatingToWidth(_title, g_MaxTextWidth, kTruncateAtMiddle, g_TextAttributes);
 }
 
+static NSMenuItem *FindMenuItemBySelector( SEL _selector,
+                                          NSMenu *_menu = NSApp.mainMenu )
+{
+    if( _selector == nullptr || _menu == nullptr )
+        return nil;
+    
+    for( NSMenuItem *item in _menu.itemArray )
+        if( item.action == _selector )
+            return item;
+    for( NSMenuItem *item in _menu.itemArray )
+        if( item.hasSubmenu )
+            if( auto found = FindMenuItemBySelector(_selector, item.submenu) )
+                return found;
+    return nil;
+}
+
+static void AddFakeHiddenHotkeyItem( SEL _action, NSMenu *_target_menu )
+{    
+    static const auto is_10_13_or_higher = 
+    nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_13;
+    if( is_10_13_or_higher == false )
+        return;
+    
+    const auto original_item = FindMenuItemBySelector(_action);
+    if( original_item == nil )
+        return;
+    
+    if( original_item.hidden == true ||
+        original_item.enabled == false ||
+        original_item.keyEquivalent.length == 0 )
+        return;
+    
+    const auto item = [[NSMenuItem alloc] init];
+    item.title = @"";
+    item.action = _action;
+    item.target = original_item.target;
+    item.keyEquivalent = original_item.keyEquivalent;
+    item.keyEquivalentModifierMask = original_item.keyEquivalentModifierMask;
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"    
+    item.allowsKeyEquivalentWhenHidden = true;
+#pragma clang diagnostic pop    
+    item.hidden = true;
+    [_target_menu addItem:item];
+}
+    
 }

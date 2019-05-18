@@ -28,8 +28,10 @@ StateActionsMap BuildStateActionsMap
     add(@selector(performClose:), new CloseTab);
     add(@selector(onFileCloseOtherTabs:), new CloseOtherTabs);    
     add(@selector(OnFileCloseWindow:), new CloseWindow);
-    add(@selector(onLeftPanelGoToButtonAction:), new ShowLeftGoToPopup{_net_mgr});
-    add(@selector(onRightPanelGoToButtonAction:), new ShowRightGoToPopup{_net_mgr});
+    add(@selector(onLeftPanelGoToButtonAction:),
+        new ShowLeftGoToPopup{_net_mgr, @selector(onRightPanelGoToButtonAction:)});
+    add(@selector(onRightPanelGoToButtonAction:),
+        new ShowRightGoToPopup{_net_mgr, @selector(onLeftPanelGoToButtonAction:)});
     add(@selector(onSwitchDualSinglePaneMode:), new ToggleSingleOrDualMode);
     add(@selector(OnWindowShowPreviousTab:), new ShowPreviousTab);
     add(@selector(OnWindowShowNextTab:), new ShowNextTab);

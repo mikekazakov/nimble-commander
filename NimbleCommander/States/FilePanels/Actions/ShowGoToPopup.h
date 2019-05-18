@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -32,45 +32,66 @@ protected:
     
 struct ShowLeftGoToPopup final : StateAction, GoToPopupsBase
 {
-    ShowLeftGoToPopup(NetworkConnectionsManager&_net_mgr);
+    ShowLeftGoToPopup(NetworkConnectionsManager& _net_mgr,
+                      SEL _right_popup_action);
     virtual void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
+private:
+    SEL m_RightPopupAction;
 };
 
 struct ShowRightGoToPopup final : StateAction, GoToPopupsBase
 {
-    ShowRightGoToPopup(NetworkConnectionsManager&_net_mgr);
+    ShowRightGoToPopup(NetworkConnectionsManager&_net_mgr,
+                       SEL _left_popup_action);
     void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
+private:
+    SEL m_LeftPopupAction;
 };
 
 struct ShowConnectionsQuickList final : PanelAction, GoToPopupsBase
 {
-    ShowConnectionsQuickList(NetworkConnectionsManager&_net_mgr);
+    ShowConnectionsQuickList(NetworkConnectionsManager&_net_mgr,
+                             std::vector<SEL> _other_quick_lists);
     void Perform( PanelController *_target, id _sender ) const override;
+private:
+    std::vector<SEL> m_OtherQuickLists;    
 };
 
 struct ShowFavoritesQuickList final : PanelAction, GoToPopupsBase
 {
-    ShowFavoritesQuickList(NetworkConnectionsManager&_net_mgr);
+    ShowFavoritesQuickList(NetworkConnectionsManager&_net_mgr,
+                           std::vector<SEL> _other_quick_lists);
     void Perform( PanelController *_target, id _sender ) const override;
+private:
+    std::vector<SEL> m_OtherQuickLists;    
 };
 
 struct ShowVolumesQuickList final : PanelAction, GoToPopupsBase
 {
-    ShowVolumesQuickList(NetworkConnectionsManager&_net_mgr);
+    ShowVolumesQuickList(NetworkConnectionsManager&_net_mgr,
+                         std::vector<SEL> _other_quick_lists);
     void Perform( PanelController *_target, id _sender ) const override;
+private:
+    std::vector<SEL> m_OtherQuickLists;    
 };
 
 struct ShowParentFoldersQuickList final : PanelAction, GoToPopupsBase
 {
-    ShowParentFoldersQuickList(NetworkConnectionsManager&_net_mgr);
+    ShowParentFoldersQuickList(NetworkConnectionsManager&_net_mgr,
+                               std::vector<SEL> _other_quick_lists);
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
+private:
+    std::vector<SEL> m_OtherQuickLists;    
 };
 
 struct ShowHistoryQuickList final : PanelAction, GoToPopupsBase
 {
-    ShowHistoryQuickList(NetworkConnectionsManager&_net_mgr);
+    ShowHistoryQuickList(NetworkConnectionsManager&_net_mgr,
+                         std::vector<SEL> _other_quick_lists);
     void Perform( PanelController *_target, id _sender ) const override;
+private:
+    std::vector<SEL> m_OtherQuickLists;    
 };
 
 }

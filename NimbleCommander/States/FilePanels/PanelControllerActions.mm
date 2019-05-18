@@ -42,6 +42,20 @@ namespace nc::panel {
 
 using namespace actions;
 
+static std::vector<SEL> QuickListsBut(int but)
+{
+    std::vector<SEL> lists{
+        @selector(OnGoToQuickListsParents:),
+        @selector(OnGoToQuickListsHistory:),
+        @selector(OnGoToQuickListsFavorites:),
+        @selector(OnGoToQuickListsVolumes:),
+        @selector(OnGoToQuickListsConnections:)
+    };
+    assert( but >= 0 && but < (int)lists.size() );
+    lists.erase( lists.begin() + but );
+    return lists;
+}
+    
 PanelActionsMap BuildPanelActionsMap
     (NetworkConnectionsManager& _net_mgr,
      utility::NativeFSManager& _native_fs_mgr,
@@ -124,11 +138,16 @@ PanelActionsMap BuildPanelActionsMap
     add( @selector(OnGoToDropboxStorage:),       new OpenNewDropboxStorage{_net_mgr});
     add( @selector(OnConnectToNetworkServer:),   new OpenNetworkConnections{_net_mgr});
     add( @selector(OnGoToSavedConnectionItem:),  new OpenExistingNetworkConnection{_net_mgr});
-    add( @selector(OnGoToQuickListsParents:),    new ShowParentFoldersQuickList{_net_mgr});
-    add( @selector(OnGoToQuickListsHistory:),    new ShowHistoryQuickList{_net_mgr});
-    add( @selector(OnGoToQuickListsFavorites:),  new ShowFavoritesQuickList{_net_mgr});
-    add( @selector(OnGoToQuickListsVolumes:),    new ShowVolumesQuickList{_net_mgr});
-    add( @selector(OnGoToQuickListsConnections:),new ShowConnectionsQuickList{_net_mgr});
+    add( @selector(OnGoToQuickListsParents:),   
+        new ShowParentFoldersQuickList{_net_mgr, QuickListsBut(0)});
+    add( @selector(OnGoToQuickListsHistory:),    
+        new ShowHistoryQuickList{_net_mgr, QuickListsBut(1)});
+    add( @selector(OnGoToQuickListsFavorites:),  
+        new ShowFavoritesQuickList{_net_mgr, QuickListsBut(2)});
+    add( @selector(OnGoToQuickListsVolumes:),    
+        new ShowVolumesQuickList{_net_mgr, QuickListsBut(3)});
+    add( @selector(OnGoToQuickListsConnections:),
+        new ShowConnectionsQuickList{_net_mgr, QuickListsBut(4)});
     add( @selector(OnGoToFavoriteLocation:),     new GoToFavoriteLocation);
     add( @selector(OnFileViewCommand:),          new ShowQuickLook);
     add( @selector(OnBriefSystemOverviewCommand:),new ShowSystemOverview);

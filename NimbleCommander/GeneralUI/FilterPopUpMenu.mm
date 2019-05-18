@@ -1,8 +1,9 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include "FilterPopUpMenu.h"
 #include <vector>
 #include <Utility/ObjCpp.h>
+#include <Utility/SystemInformation.h>
 
 @interface FilterPopUpMenu()
 
@@ -46,11 +47,21 @@
 }
 
 - (void) updateFilter:(NSString*)_filter
-{
+{    
+    static const auto is_10_13_or_higher = 
+        nc::utility::GetOSXVersion() >= nc::utility::OSXVersion::OSX_13;
+    
     m_Filter = _filter;
     auto items = self.itemArray;
     for( int i = 1, e = (int)items.count; i < e; ++i ) {
         auto item = [items objectAtIndex:i];
+        
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunguarded-availability-new"
+        if( is_10_13_or_higher && item.hidden && item.allowsKeyEquivalentWhenHidden )
+            continue;
+#pragma clang diagnostic pop
+
         item.hidden = ![self validateItem:item];
     }
 

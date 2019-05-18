@@ -22,17 +22,17 @@ inline T all_equal_or_default(InputIterator _first,
                       T&& _default)
 {
     if( _first == _last )
-        return _default;
+        return std::move(_default);
 
     T&& val = _pred(*_first);
     _first++;
 
     while( _first != _last ) {
         if ( _pred(*_first) != val )
-            return _default;
+            return std::move(_default);
         ++_first;
     }
-    return val;
+    return std::move(val);
 }
 
 static std::string UTIForExtenstion(const std::string& _extension)

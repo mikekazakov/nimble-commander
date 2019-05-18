@@ -1,7 +1,7 @@
 // Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BigFileViewSheet.h"
 #include <Utility/CocoaAppearanceManager.h>
-#include <Viewer/InternalViewerController.h>
+#include <Viewer/ViewerViewController.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Utility/ObjCpp.h>
 
@@ -30,13 +30,13 @@
     std::string             m_Path;
     std::unique_ptr<nc::vfs::FileWindow> m_FileWindow;
     
-    InternalViewerController *m_Controller;
+    NCViewerViewController *m_Controller;
 }
 
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
           viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
-       viewerController:(InternalViewerController*)_viewer_controller
+       viewerController:(NCViewerViewController*)_viewer_controller
 {
     assert( dispatch_is_main_queue() );
     self = [super init];

@@ -8,7 +8,7 @@
 class NetworkConnectionsManager;
 @class NCPanelOpenWithMenuDelegate;
 @class NCViewerView;
-@class InternalViewerController;
+@class NCViewerViewController;
 namespace nc::panel {
 class FileOpener;
 
@@ -19,6 +19,6 @@ PanelActionsMap BuildPanelActionsMap
      FileOpener &_file_opener,
      NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
      std::function<NCViewerView*(NSRect)> _make_viewer,
-     std::function<InternalViewerController*()> _make_viewer_controller );
+     std::function<NCViewerViewController*()> _make_viewer_controller );
     
 }

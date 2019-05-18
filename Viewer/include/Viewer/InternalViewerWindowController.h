@@ -4,7 +4,7 @@
 #include <VFS/VFS.h>
 #include <Cocoa/Cocoa.h>
 
-@class InternalViewerController;
+@class NCViewerViewController;
 @class NCViewerView;
 @class InternalViewerWindowController;
 
@@ -21,7 +21,7 @@
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
           viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
-             controller:(InternalViewerController*)_controller;
+             controller:(NCViewerViewController*)_controller;
 
 - (bool) performBackgrounOpening; // call it from bg thread!
 
@@ -29,7 +29,7 @@
 - (void)markInitialSelection:(CFRange)_selection searchTerm:(std::string)_request;
 
 
-@property (nonatomic, readonly) InternalViewerController *internalViewerController;
+@property (nonatomic, readonly) NCViewerViewController *internalViewerController;
 
 @property (nonatomic, weak) id<NCViewerWindowDelegate> delegate;
 

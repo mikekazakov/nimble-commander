@@ -18,7 +18,7 @@ namespace nc::utility {
 
 
 // Objects of this class own instances of BigFileView
-@interface InternalViewerController : NSResponder<NSSearchFieldDelegate, NSPopoverDelegate>
+@interface NCViewerViewController : NSResponder<NSSearchFieldDelegate, NSPopoverDelegate>
 
 // UI wiring
 @property (nonatomic) NCViewerView          *view;

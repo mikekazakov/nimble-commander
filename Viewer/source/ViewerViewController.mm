@@ -1,5 +1,5 @@
 // Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
-#include "InternalViewerController.h"
+#include "ViewerViewController.h"
 #include <VFS/VFS.h>
 #include <CUI/ProcessSheetController.h>
 #include <Config/Config.h>
@@ -50,7 +50,7 @@ static int InvertBitFlag( int _value, int _flag )
 }
 @end
 
-@interface InternalViewerController()
+@interface NCViewerViewController()
 
 @property (nonatomic) IBOutlet NSPopover *goToPositionPopover;
 @property (nonatomic) IBOutlet NSTextField *goToPositionValueTextField;
@@ -59,7 +59,7 @@ static int InvertBitFlag( int _value, int _flag )
 
 @end
 
-@implementation InternalViewerController
+@implementation NCViewerViewController
 {
     std::string                     m_Path;
     std::string                     m_GlobalFilePath;
@@ -108,14 +108,14 @@ static int InvertBitFlag( int _value, int _flag )
         m_History = &_history;
         m_Config = &_config;
         m_Shortcuts = _shortcuts;
-        __weak InternalViewerController* weak_self = self;
+        __weak NCViewerViewController* weak_self = self;
         m_SearchInFileQueue.SetOnChange([=]{
-            [(InternalViewerController*)weak_self onSearchInFileQueueStateChanged];
+            [(NCViewerViewController*)weak_self onSearchInFileQueueStateChanged];
         });
         
         NSNib *mynib = [[NSNib alloc]
                         initWithNibNamed:@"InternalViewerController"
-                        bundle:[NSBundle bundleForClass:InternalViewerController.class]];
+                        bundle:[NSBundle bundleForClass:NCViewerViewController.class]];
         [mynib instantiateWithOwner:self topLevelObjects:nil];
     }
     return self;

@@ -62,7 +62,7 @@
 #include <Config/Executor.h>
 
 #include <Viewer/History.h>
-#include <Viewer/InternalViewerController.h>
+#include <Viewer/ViewerViewController.h>
 #include <Viewer/InternalViewerWindowController.h>
 
 using namespace std::literals;

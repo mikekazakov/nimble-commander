@@ -6,7 +6,7 @@
 #include "../PanelView.h"
 #include <Habanero/dispatch_cpp.h>
 #include <Viewer/BigFileViewSheet.h>
-#include <Viewer/InternalViewerController.h>
+#include <Viewer/ViewerViewController.h>
 #include <Viewer/InternalViewerWindowController.h>
 
 // TEMP - need to refactor this bullcrap!
@@ -18,7 +18,7 @@ static const auto g_ConfigModalInternalViewer = "viewer.modalMode";
 namespace nc::panel::actions {
 
 FindFiles::FindFiles(std::function<NCViewerView*(NSRect)> _make_viewer,
-                     std::function<InternalViewerController*()> _make_controller) :
+                     std::function<NCViewerViewController*()> _make_controller) :
     m_MakeViewer{ std::move(_make_viewer) },
     m_MakeController{ std::move(_make_controller) }
 {

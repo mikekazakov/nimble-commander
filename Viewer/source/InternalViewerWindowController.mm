@@ -2,7 +2,7 @@
 #include "InternalViewerWindowController.h"
 #include <Utility/CocoaAppearanceManager.h>
 #include <Viewer/ViewerView.h>
-#include <Viewer/InternalViewerController.h>
+#include <Viewer/ViewerViewController.h>
 #include <Habanero/dispatch_cpp.h>
 #include <chrono>
 #include <Utility/ObjCpp.h>
@@ -36,7 +36,7 @@ using namespace std::literals;
 
 @implementation InternalViewerWindowController
 {
-    InternalViewerController *m_Controller;
+    NCViewerViewController *m_Controller;
 }
 
 @synthesize internalViewerController = m_Controller;
@@ -44,7 +44,7 @@ using namespace std::literals;
 - (id) initWithFilepath:(std::string)path
                      at:(VFSHostPtr)vfs
           viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
-             controller:(InternalViewerController*)_controller
+             controller:(NCViewerViewController*)_controller
 {
     self = [super initWithWindowNibName:NSStringFromClass(self.class)];
     if( self ) {

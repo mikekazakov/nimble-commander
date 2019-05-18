@@ -2,7 +2,7 @@
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../MainWindowController.h"
-#include <Viewer/InternalViewerController.h>
+#include <Viewer/ViewerViewController.h>
 #include "../../Core/ActionsShortcutsManager.h"
 #include "MainWindowInternalViewerState.h"
 #include <Habanero/dispatch_cpp.h>
@@ -27,13 +27,13 @@
 
 @implementation MainWindowInternalViewerState
 {    
-    InternalViewerController *m_Controller;
+    NCViewerViewController *m_Controller;
     NSLayoutConstraint         *m_TopLayoutConstraint;    
 }
 
 - (id)initWithFrame:(NSRect)_frame_rect
       viewerFactory:(const std::function<NCViewerView*(NSRect)>&)_viewer_factory
-         controller:(InternalViewerController*)_viewer_controller
+         controller:(NCViewerViewController*)_viewer_controller
 {
     dispatch_assert_main_queue();
     if( self = [super initWithFrame:_frame_rect] ) {

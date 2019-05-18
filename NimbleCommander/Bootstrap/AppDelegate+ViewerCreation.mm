@@ -3,7 +3,7 @@
 #include <Viewer/ViewerView.h>
 #include <NimbleCommander/Viewer/ThemeAdaptor.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
-#include <Viewer/InternalViewerController.h>
+#include <Viewer/ViewerViewController.h>
 #include <Viewer/History.h>
 
 @implementation NCAppDelegate(ViewerCreation)
@@ -18,12 +18,12 @@
                              ];
 }
 
-- (InternalViewerController*) makeViewerController
+- (NCViewerViewController*) makeViewerController
 {
     auto shortcuts = []( const std::string &_name ) {
         return ActionsShortcutsManager::Instance().ShortCutFromAction(_name);
     };    
-    return [[InternalViewerController alloc]
+    return [[NCViewerViewController alloc]
             initWithHistory:self.internalViewerHistory
             config:self.globalConfig
             shortcutsProvider:shortcuts];

@@ -4,11 +4,11 @@
 #include "AppDelegate.h"
 
 @class NCViewerView;
-@class InternalViewerController;
+@class NCViewerViewController;
 
 // this category is private to NCAppDelegate
 @interface NCAppDelegate(ViewerCreation)
 
 - (NCViewerView*) makeViewerWithFrame:(NSRect)frame;
-- (InternalViewerController*) makeViewerController;
+- (NCViewerViewController*) makeViewerController;
 @end

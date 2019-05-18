@@ -49,8 +49,8 @@
 		CFD79AB421FCA4E50043A26D /* History.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79AB321FCA4E50043A26D /* History.h */; };
 		CFD79AB621FCA4F30043A26D /* History.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79AB521FCA4F30043A26D /* History.cpp */; };
 		CFD79AB821FCA8900043A26D /* Modes.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79AB721FCA8900043A26D /* Modes.h */; };
-		CFD79B0321FE4CC40043A26D /* InternalViewerController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B0221FE4CC40043A26D /* InternalViewerController.h */; };
-		CFD79B0521FE4CCC0043A26D /* InternalViewerController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B0421FE4CCC0043A26D /* InternalViewerController.mm */; };
+		CFD79B0321FE4CC40043A26D /* ViewerViewController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B0221FE4CC40043A26D /* ViewerViewController.h */; };
+		CFD79B0521FE4CCC0043A26D /* ViewerViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79B0421FE4CCC0043A26D /* ViewerViewController.mm */; };
 		CFD79B0721FE4D400043A26D /* CUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79B0621FE4D400043A26D /* CUI.framework */; };
 		CFD79B0A21FE4F430043A26D /* InternalViewerController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79B0821FE4F430043A26D /* InternalViewerController.xib */; };
 		CFD79B102205B82F0043A26D /* BigFileViewSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79B0F2205B82F0043A26D /* BigFileViewSheet.h */; };
@@ -141,8 +141,8 @@
 		CFD79AB321FCA4E50043A26D /* History.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = History.h; path = include/Viewer/History.h; sourceTree = "<group>"; };
 		CFD79AB521FCA4F30043A26D /* History.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = History.cpp; path = source/History.cpp; sourceTree = "<group>"; };
 		CFD79AB721FCA8900043A26D /* Modes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Modes.h; path = include/Viewer/Modes.h; sourceTree = "<group>"; };
-		CFD79B0221FE4CC40043A26D /* InternalViewerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InternalViewerController.h; path = include/Viewer/InternalViewerController.h; sourceTree = "<group>"; };
-		CFD79B0421FE4CCC0043A26D /* InternalViewerController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = InternalViewerController.mm; path = source/InternalViewerController.mm; sourceTree = "<group>"; };
+		CFD79B0221FE4CC40043A26D /* ViewerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewerViewController.h; path = include/Viewer/ViewerViewController.h; sourceTree = "<group>"; };
+		CFD79B0421FE4CCC0043A26D /* ViewerViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ViewerViewController.mm; path = source/ViewerViewController.mm; sourceTree = "<group>"; };
 		CFD79B0621FE4D400043A26D /* CUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = CUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFD79B0921FE4F430043A26D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = resources/Base.lproj/InternalViewerController.xib; sourceTree = "<group>"; };
 		CFD79B0E21FE4F560043A26D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = resources/ru.lproj/InternalViewerController.strings; sourceTree = "<group>"; };
@@ -258,7 +258,6 @@
 				CF9BF912226DD3C800AD36D9 /* HexModeView.h */,
 				CF9BF91B22724A3D00AD36D9 /* HexModeViewDelegate.h */,
 				CFD79AB321FCA4E50043A26D /* History.h */,
-				CFD79B0221FE4CC40043A26D /* InternalViewerController.h */,
 				CFD79B172205DE3D0043A26D /* InternalViewerToolbarProtocol.h */,
 				CFD79A9521F65B570043A26D /* InternalViewerViewPreviewMode.h */,
 				CFD79B1F2205DE9C0043A26D /* InternalViewerWindowController.h */,
@@ -273,6 +272,7 @@
 				CFD79A9321F65B570043A26D /* Theme.h */,
 				CFD79A9221F65B570043A26D /* ViewerImplementationProtocol.h */,
 				CFD79A9721F65B570043A26D /* ViewerView.h */,
+				CFD79B0221FE4CC40043A26D /* ViewerViewController.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";
@@ -289,7 +289,6 @@
 				CF9BF9012269E4D800AD36D9 /* HexModeProcessing.cpp */,
 				CF9BF913226DD3D300AD36D9 /* HexModeView.mm */,
 				CFD79AB521FCA4F30043A26D /* History.cpp */,
-				CFD79B0421FE4CCC0043A26D /* InternalViewerController.mm */,
 				CFD79B192205DE480043A26D /* InternalViewerToolbarProtocol.mm */,
 				CFD79A8621F65B4E0043A26D /* InternalViewerViewPreviewMode.mm */,
 				CFD79B212205DEA40043A26D /* InternalViewerWindowController.mm */,
@@ -302,6 +301,7 @@
 				CFD79B3F2210452C0043A26D /* TextProcessing.cpp */,
 				CFD79A8821F65B4F0043A26D /* Theme.mm */,
 				CFD79A8921F65B4F0043A26D /* ViewerView.mm */,
+				CFD79B0421FE4CCC0043A26D /* ViewerViewController.mm */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -356,7 +356,7 @@
 				CFD79B182205DE3E0043A26D /* InternalViewerToolbarProtocol.h in Headers */,
 				CF13255D2222B6DD0097F9A1 /* TextModeFrame.h in Headers */,
 				CF24E1D92286E24300C166FA /* PreviewModeView.h in Headers */,
-				CFD79B0321FE4CC40043A26D /* InternalViewerController.h in Headers */,
+				CFD79B0321FE4CC40043A26D /* ViewerViewController.h in Headers */,
 				CF13256A222ACF640097F9A1 /* TextModeViewDelegate.h in Headers */,
 				CFD79A9A21F65B570043A26D /* Theme.h in Headers */,
 				CFD79A9C21F65B570043A26D /* InternalViewerViewPreviewMode.h in Headers */,
@@ -482,7 +482,7 @@
 				CFD79A8F21F65B4F0043A26D /* ViewerView.mm in Sources */,
 				CFD79A9121F65B4F0043A26D /* DataBackend.cpp in Sources */,
 				CF9BF91A226DE47B00AD36D9 /* HexModeFrame.cpp in Sources */,
-				CFD79B0521FE4CCC0043A26D /* InternalViewerController.mm in Sources */,
+				CFD79B0521FE4CCC0043A26D /* ViewerViewController.mm in Sources */,
 				CFD79B222205DEA50043A26D /* InternalViewerWindowController.mm in Sources */,
 				CF13256422287F250097F9A1 /* TextModeFrame.mm in Sources */,
 				CFD79B122205B8360043A26D /* BigFileViewSheet.mm in Sources */,

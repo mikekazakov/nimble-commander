@@ -25,7 +25,6 @@
 		CF308F4D213B773400915730 /* PosixFilesystemImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */; };
 		CF308F4F213B7B3C00915730 /* PosixFilesystemMock.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F4E213B7B3C00915730 /* PosixFilesystemMock.h */; };
 		CF31851B2150BBA30012F5DD /* intrusive_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF31851A2150BBA30012F5DD /* intrusive_ptr.h */; };
-		CF614AC31F9D8E6E0005F2DB /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94411F45322E0035E606 /* libHabanero.dylib */; };
 		CF7D7D602158B2C000DA1794 /* tribool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7D7D5F2158B2C000DA1794 /* tribool.h */; };
 		CF9BF90B226B423B00AD36D9 /* CFPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9BF90A226B423B00AD36D9 /* CFPtr.h */; };
 		CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD22CD32012DDDF00608DFE /* LRUCache.h */; };
@@ -49,16 +48,6 @@
 		CFFA945A1F4535750035E606 /* spinlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF90C0C11EC1B35E0056E3B8 /* spinlock.cpp */; };
 		CFFA945B1F4535750035E606 /* tiny_string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD62BAB1C99C2AE0021EE7F /* tiny_string.cpp */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		CF614AC41F9D8E6E0005F2DB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFD62B6A1C99C19A0021EE7F /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = CFFA94401F45322E0035E606;
-			remoteInfo = Habanero;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		CF24E2022291772900C166FA /* CopyFiles */ = {
@@ -94,8 +83,6 @@
 		CF31851A2150BBA30012F5DD /* intrusive_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = intrusive_ptr.h; path = ../habanero/include/Habanero/intrusive_ptr.h; sourceTree = "<group>"; };
 		CF47DF701E063CC500AAAF3C /* DispatchGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DispatchGroup.h; path = ../habanero/include/Habanero/DispatchGroup.h; sourceTree = "<group>"; };
 		CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchGroup.cpp; path = ../habanero/source/DispatchGroup.cpp; sourceTree = "<group>"; };
-		CF614ABE1F9D8E6D0005F2DB /* Habanero Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Habanero Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF614ACA1F9D8E950005F2DB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ../habanero/tests/Info.plist; sourceTree = SOURCE_ROOT; };
 		CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Hash_UT.cpp; path = ../habanero/tests/Hash_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VariableContainer_UT.cpp; path = ../habanero/tests/VariableContainer_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CF614AD11F9D8EF00005F2DB /* chained_strings_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = chained_strings_UT.cpp; path = ../habanero/tests/chained_strings_UT.cpp; sourceTree = SOURCE_ROOT; };
@@ -152,14 +139,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		CF614ABB1F9D8E6D0005F2DB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				CF614AC31F9D8E6E0005F2DB /* libHabanero.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		CFFA943E1F45322E0035E606 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -194,7 +173,6 @@
 				CF24E214229196E100C166FA /* CFPtr_UT.cpp */,
 				CF614AD11F9D8EF00005F2DB /* chained_strings_UT.cpp */,
 				CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */,
-				CF614ACA1F9D8E950005F2DB /* Info.plist */,
 				CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */,
 				CFE8F90321A27F3000300019 /* spinlock_UT.cpp */,
 				CF2084021FEFB2F70014D6AD /* StringsBulk_UT.cpp */,
@@ -222,7 +200,6 @@
 			isa = PBXGroup;
 			children = (
 				CFFA94411F45322E0035E606 /* libHabanero.dylib */,
-				CF614ABE1F9D8E6D0005F2DB /* Habanero Tests.xctest */,
 				CF24E2042291772900C166FA /* HabaneroUT */,
 			);
 			name = Products;
@@ -332,24 +309,6 @@
 			productReference = CF24E2042291772900C166FA /* HabaneroUT */;
 			productType = "com.apple.product-type.tool";
 		};
-		CF614ABD1F9D8E6D0005F2DB /* Habanero Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = CF614AC81F9D8E6E0005F2DB /* Build configuration list for PBXNativeTarget "Habanero Tests" */;
-			buildPhases = (
-				CF614ABA1F9D8E6D0005F2DB /* Sources */,
-				CF614ABB1F9D8E6D0005F2DB /* Frameworks */,
-				CF614ABC1F9D8E6D0005F2DB /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				CF614AC51F9D8E6E0005F2DB /* PBXTargetDependency */,
-			);
-			name = "Habanero Tests";
-			productName = "Habanero Tests";
-			productReference = CF614ABE1F9D8E6D0005F2DB /* Habanero Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		CFFA94401F45322E0035E606 /* Habanero */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = CFFA94421F45322F0035E606 /* Build configuration list for PBXNativeTarget "Habanero" */;
@@ -379,10 +338,6 @@
 					CF24E2032291772900C166FA = {
 						CreatedOnToolsVersion = 10.2.1;
 					};
-					CF614ABD1F9D8E6D0005F2DB = {
-						CreatedOnToolsVersion = 8.3.2;
-						ProvisioningStyle = Automatic;
-					};
 					CFFA94401F45322E0035E606 = {
 						CreatedOnToolsVersion = 8.3.2;
 						ProvisioningStyle = Automatic;
@@ -403,21 +358,10 @@
 			projectRoot = "";
 			targets = (
 				CFFA94401F45322E0035E606 /* Habanero */,
-				CF614ABD1F9D8E6D0005F2DB /* Habanero Tests */,
 				CF24E2032291772900C166FA /* HabaneroUT */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		CF614ABC1F9D8E6D0005F2DB /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CF24E2002291772900C166FA /* Sources */ = {
@@ -432,13 +376,6 @@
 				CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */,
 				CF24E21A2291A61F00C166FA /* Hash_UT.cpp in Sources */,
 				CF24E21B2291ABAD00C166FA /* StringsBulk_UT.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		CF614ABA1F9D8E6D0005F2DB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -473,14 +410,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		CF614AC51F9D8E6E0005F2DB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = CFFA94401F45322E0035E606 /* Habanero */;
-			targetProxy = CF614AC41F9D8E6E0005F2DB /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		CF24E2092291772900C166FA /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -493,42 +422,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF24E210229191B800C166FA /* tests.xcconfig */;
 			buildSettings = {
-			};
-			name = Release;
-		};
-		CF614AC61F9D8E6E0005F2DB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF24E210229191B800C166FA /* tests.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.magnumbytes.Habanero-Tests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		CF614AC71F9D8E6E0005F2DB /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF24E210229191B800C166FA /* tests.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				COMBINE_HIDPI_IMAGES = YES;
-				INFOPLIST_FILE = tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.magnumbytes.Habanero-Tests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -568,15 +461,6 @@
 			buildConfigurations = (
 				CF24E2092291772900C166FA /* Debug */,
 				CF24E20A2291772900C166FA /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		CF614AC81F9D8E6E0005F2DB /* Build configuration list for PBXNativeTarget "Habanero Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				CF614AC61F9D8E6E0005F2DB /* Debug */,
-				CF614AC71F9D8E6E0005F2DB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

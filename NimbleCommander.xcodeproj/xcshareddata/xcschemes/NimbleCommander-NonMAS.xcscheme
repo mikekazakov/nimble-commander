@@ -38,6 +38,16 @@
                ReferencedContainer = "container:VFS/VFS.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "CF614ABD1F9D8E6D0005F2DB"
+               BuildableName = "Habanero Tests.xctest"
+               BlueprintName = "Habanero Tests"
+               ReferencedContainer = "container:Habanero/Habanero.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <MacroExpansion>
          <BuildableReference

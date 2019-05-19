@@ -175,10 +175,10 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
         /////////////////////////////////////////////////////////////////////////////////////////////////
         // Regular files
         /////////////////////////////////////////////////////////////////////////////////////////////////
-        std::optional<Hash> hash; // this optional will be filled with the first call of hash_feedback
+        std::optional<base::Hash> hash; // this optional will be filled with the first call of hash_feedback
         auto hash_feedback = [&](const void *_data, unsigned _sz) {
             if( !hash )
-                hash.emplace(Hash::MD5);
+                hash.emplace(base::Hash::MD5);
             hash->Feed( _data, _sz );
         };
         
@@ -2312,7 +2312,7 @@ CopyingJob::StepResult CopyingJob::VerifyCopiedFile(const ChecksumExpectation& _
             case DestinationFileReadErrorResolution::Stop:     return StepResult::Stop;
         }
     
-    Hash hash(Hash::MD5);
+    base::Hash hash(base::Hash::MD5);
     
     uint64_t sz = file->Size();
     uint64_t szleft = sz;

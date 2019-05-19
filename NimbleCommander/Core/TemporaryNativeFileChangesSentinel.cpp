@@ -20,7 +20,7 @@ static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &
         return std::nullopt;
     
     auto buf = std::make_unique<uint8_t[]>(chunk_sz);
-    Hash h(Hash::MD5);
+    nc::base::Hash h(nc::base::Hash::MD5);
     
     ssize_t rn = 0;
     while( (rn = file->Read(buf.get(), chunk_sz)) > 0 )

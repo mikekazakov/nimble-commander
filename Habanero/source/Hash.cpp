@@ -1,20 +1,10 @@
-/* Copyright (c) 2014 Michael G. Kazakov
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software
- * and associated documentation files (the "Software"), to deal in the Software without restriction,
- * including without limitation the rights to use, copy, modify, merge, publish, distribute,
- * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
- * BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
- * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. */
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include <Habanero/Hash.h>
 #include <CommonCrypto/CommonDigest.h>
 #include <zlib.h>
 #include <assert.h>
-#include <Habanero/Hash.h>
+
+namespace nc::base {
 
 Hash::Hash(Mode _mode):
     m_Mode(_mode)
@@ -37,16 +27,36 @@ Hash::Hash(Mode _mode):
 Hash& Hash::Feed(const void *_data, size_t _size)
 {
     switch (m_Mode) {
-        case SHA1_160:  CC_SHA1_Update( (CC_SHA1_CTX*)m_Stuff, _data, (unsigned)_size ); break;
-        case SHA2_224:  CC_SHA224_Update( (CC_SHA256_CTX*)m_Stuff, _data, (unsigned)_size ); break;
-        case SHA2_256:  CC_SHA256_Update( (CC_SHA256_CTX*)m_Stuff, _data, (unsigned)_size ); break;
-        case SHA2_384:  CC_SHA384_Update( (CC_SHA512_CTX*)m_Stuff, _data, (unsigned)_size ); break;
-        case SHA2_512:  CC_SHA512_Update( (CC_SHA512_CTX*)m_Stuff, _data, (unsigned)_size ); break;
-        case MD2:       CC_MD2_Update( (CC_MD2_CTX*)m_Stuff, _data, (unsigned)_size ); break;
-        case MD4:       CC_MD4_Update( (CC_MD4_CTX*)m_Stuff, _data, (unsigned)_size ); break;
-        case MD5:       CC_MD5_Update( (CC_MD5_CTX*)m_Stuff, _data, (unsigned)_size ); break;
-        case Adler32:   *((uint32_t*)m_Stuff) = (uint32_t)adler32(*((uint32_t*)m_Stuff), (unsigned char*)_data, (unsigned)_size); break;
-        case CRC32:     *((uint32_t*)m_Stuff) = (uint32_t)crc32(*((uint32_t*)m_Stuff), (unsigned char*)_data, (unsigned)_size); break;
+        case SHA1_160: 
+            CC_SHA1_Update( (CC_SHA1_CTX*)m_Stuff, _data, (unsigned)_size );
+            break;
+        case SHA2_224:
+            CC_SHA224_Update( (CC_SHA256_CTX*)m_Stuff, _data, (unsigned)_size );
+            break;
+        case SHA2_256:  
+            CC_SHA256_Update( (CC_SHA256_CTX*)m_Stuff, _data, (unsigned)_size ); 
+            break;
+        case SHA2_384:  
+            CC_SHA384_Update( (CC_SHA512_CTX*)m_Stuff, _data, (unsigned)_size ); 
+            break;
+        case SHA2_512:  
+            CC_SHA512_Update( (CC_SHA512_CTX*)m_Stuff, _data, (unsigned)_size ); 
+            break;
+        case MD2:       
+            CC_MD2_Update( (CC_MD2_CTX*)m_Stuff, _data, (unsigned)_size ); 
+            break;
+        case MD4:       
+            CC_MD4_Update( (CC_MD4_CTX*)m_Stuff, _data, (unsigned)_size ); 
+            break;
+        case MD5:       
+            CC_MD5_Update( (CC_MD5_CTX*)m_Stuff, _data, (unsigned)_size ); 
+            break;
+        case Adler32:   
+            *((uint32_t*)m_Stuff) = (uint32_t)adler32(*((uint32_t*)m_Stuff), (unsigned char*)_data, (unsigned)_size); 
+            break;
+        case CRC32:     
+            *((uint32_t*)m_Stuff) = (uint32_t)crc32(*((uint32_t*)m_Stuff), (unsigned char*)_data, (unsigned)_size); 
+            break;
         default: assert(0);
     }
     return *this;
@@ -113,4 +123,6 @@ std::string Hash::Hex(const std::vector<uint8_t> &_d)
         r += c[i & 0x0F];
     }
     return r;
+}
+
 }

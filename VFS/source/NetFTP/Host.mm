@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "../ListingInput.h"
 #include "Host.h"
@@ -293,6 +293,7 @@ int FTPHost::FetchDirectoryListing(const char *_path,
         return result;
     
     // setup of listing structure
+    using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);

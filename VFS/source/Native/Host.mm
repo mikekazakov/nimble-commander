@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <OpenDirectory/OpenDirectory.h>
 #include <sys/attr.h>
 #include <sys/errno.h>
@@ -101,6 +101,7 @@ int NativeHost::FetchDirectoryListing(const char *_path,
          return count + (need_to_add_dot_dot ? 1 : 0);
     }();
     
+    using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);
@@ -254,6 +255,7 @@ int NativeHost::FetchSingleItemListing(const char *_path,
     
     auto &io = RoutedIO::InterfaceForAccess(_path, R_OK);
 
+    using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = directory;

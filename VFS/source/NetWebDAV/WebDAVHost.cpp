@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WebDAVHost.h"
 #include "Internal.h"
 #include <Utility/PathManip.h>
@@ -127,6 +127,7 @@ int WebDAVHost::FetchDirectoryListing(const char *_path,
     else
         partition( begin(items), end(items), [](const auto &_i){ return _i.filename == ".."; });
 
+    using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] =  path;

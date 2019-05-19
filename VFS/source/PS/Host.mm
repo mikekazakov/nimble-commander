@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libproc.h>
 #include <sys/resource.h>
 #include <sys/proc_info.h>
@@ -476,6 +476,7 @@ int PSHost::FetchDirectoryListing(const char *_path,
     auto data = m_Data;
     
     // set up or listing structure
+    using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = _path;

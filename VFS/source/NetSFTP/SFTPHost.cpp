@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
 #include <libssh2.h>
@@ -399,6 +399,7 @@ int SFTPHost::FetchDirectoryListing(const char *_path,
     AutoConnectionReturn acr(conn, this);
     
     // setup of listing structure
+    using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);

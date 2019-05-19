@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/variable_container.h>
@@ -134,28 +134,28 @@ private:
     static std::shared_ptr<Listing> Alloc(); // fighting against c++...
     void BuildFilenames();    
     
-    unsigned                        m_ItemsCount;
-    time_t                          m_CreationTime;
-    variable_container<VFSHostPtr>  m_Hosts;
-    variable_container<std::string> m_Directories;
-    std::vector<std::string>        m_Filenames;
-    std::vector<CFString>           m_FilenamesCF;
-    std::vector<uint16_t>           m_ExtensionOffsets;
-    std::vector<mode_t>             m_UnixModes;
-    std::vector<uint8_t>            m_UnixTypes;
-    variable_container<uint64_t>    m_Sizes;
-    variable_container<uint64_t>    m_Inodes;
-    variable_container<time_t>      m_ATimes;
-    variable_container<time_t>      m_MTimes;
-    variable_container<time_t>      m_CTimes;
-    variable_container<time_t>      m_BTimes;
-    variable_container<time_t>      m_AddTimes;
-    variable_container<uid_t>       m_UIDS;
-    variable_container<gid_t>       m_GIDS;
-    variable_container<uint32_t>    m_UnixFlags;
-    variable_container<std::string> m_Symlinks;
-    variable_container<std::string> m_DisplayFilenames;
-    variable_container<CFString>    m_DisplayFilenamesCF;
+    unsigned                                m_ItemsCount;
+    time_t                                  m_CreationTime;
+    base::variable_container<VFSHostPtr>    m_Hosts;
+    base::variable_container<std::string>   m_Directories;
+    std::vector<std::string>                m_Filenames;
+    std::vector<CFString>                   m_FilenamesCF;
+    std::vector<uint16_t>                   m_ExtensionOffsets;
+    std::vector<mode_t>                     m_UnixModes;
+    std::vector<uint8_t>                    m_UnixTypes;
+    base::variable_container<uint64_t>      m_Sizes;
+    base::variable_container<uint64_t>      m_Inodes;
+    base::variable_container<time_t>        m_ATimes;
+    base::variable_container<time_t>        m_MTimes;
+    base::variable_container<time_t>        m_CTimes;
+    base::variable_container<time_t>        m_BTimes;
+    base::variable_container<time_t>        m_AddTimes;
+    base::variable_container<uid_t>         m_UIDS;
+    base::variable_container<gid_t>         m_GIDS;
+    base::variable_container<uint32_t>      m_UnixFlags;
+    base::variable_container<std::string>   m_Symlinks;
+    base::variable_container<std::string>   m_DisplayFilenames;
+    base::variable_container<CFString>      m_DisplayFilenamesCF;
     
     // this is a copy of POSIX/BSD constants to reduce headers pollution
     inline constexpr static const mode_t   m_S_IFMT        = 0170000;
@@ -434,12 +434,12 @@ inline bool Listing::IsUniform() const noexcept
 
 inline bool Listing::HasCommonHost() const noexcept
 {
-    return m_Hosts.mode() == variable_container<>::type::common;
+    return m_Hosts.mode() == base::variable_container<>::type::common;
 }
 
 inline bool Listing::HasCommonDirectory() const noexcept
 {
-    return m_Directories.mode() == variable_container<>::type::common;
+    return m_Directories.mode() == base::variable_container<>::type::common;
 }
 
 inline bool Listing::HasSize(unsigned _ind) const

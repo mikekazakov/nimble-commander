@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include "xattr.h"
 #include <VFS/VFSFile.h>
@@ -196,6 +196,8 @@ int XAttrHost::FetchDirectoryListing(const char *_path,
 {
     if( !_path || _path != std::string_view("/") )
         return VFSError::InvalidCall;
+    
+    using nc::base::variable_container;
     
     // set up or listing structure
     ListingInput listing_source;

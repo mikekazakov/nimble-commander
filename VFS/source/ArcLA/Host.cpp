@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <Habanero/CFStackAllocator.h>
 #include <Utility/PathManip.h>
@@ -491,6 +491,7 @@ int ArchiveHost::FetchDirectoryListing(const char *_path,
     
     const auto &directory = i->second;
     
+    using nc::base::variable_container;
     ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = EnsureTrailingSlash(_path);

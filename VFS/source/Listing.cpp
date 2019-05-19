@@ -1,10 +1,12 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Listing.h"
 #include "../include/VFS/Host.h"
 #include "ListingInput.h"
 #include <sys/param.h>
 
 namespace nc::vfs {
+    
+using nc::base::variable_container;
 
 static_assert( std::is_move_constructible<ListingItem>::value, "" );
 static_assert( std::is_move_constructible<Listing::iterator>::value, "" );

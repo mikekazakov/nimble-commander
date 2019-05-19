@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "ListingInput.h"
 #include "../include/VFS/Host.h"
@@ -401,6 +401,7 @@ int Host::FetchSingleItemListing(const char *_path,
     if( ret != 0 )
         return ret;
     
+    using nc::base::variable_container;
     nc::vfs::ListingInput listing_source;
     listing_source.hosts[0] = shared_from_this();
     listing_source.directories[0] = directory;

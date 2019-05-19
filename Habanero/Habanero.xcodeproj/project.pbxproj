@@ -12,6 +12,7 @@
 		CF2084041FEFB2FA0014D6AD /* StringsBulk_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2084021FEFB2F70014D6AD /* StringsBulk_Tests.mm */; };
 		CF24E1D52280274900C166FA /* CFRange.h in Headers */ = {isa = PBXBuildFile; fileRef = CF24E1D42280274900C166FA /* CFRange.h */; };
 		CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E20B2291777D00C166FA /* UnitTests_main.cpp */; };
+		CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF24E214229196E100C166FA /* CFPtr_UT.cpp */; };
 		CF308F47213B755700915730 /* PosixFilesystem.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F46213B755700915730 /* PosixFilesystem.h */; };
 		CF308F49213B755F00915730 /* PosixFilesystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F48213B755F00915730 /* PosixFilesystem.cpp */; };
 		CF308F4B213B772900915730 /* PosixFilesystemImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F4A213B772900915730 /* PosixFilesystemImpl.h */; };
@@ -81,6 +82,7 @@
 		CF24E20F229191B800C166FA /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF24E210229191B800C166FA /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
 		CF24E2132291937F00C166FA /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
+		CF24E214229196E100C166FA /* CFPtr_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CFPtr_UT.cpp; sourceTree = "<group>"; };
 		CF27F9401E373BDA009A3ACF /* GoogleAnalytics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GoogleAnalytics.h; path = ../habanero/include/Habanero/GoogleAnalytics.h; sourceTree = "<group>"; };
 		CF27F9421E373BE4009A3ACF /* GoogleAnalytics.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = GoogleAnalytics.mm; path = ../habanero/source/GoogleAnalytics.mm; sourceTree = "<group>"; };
 		CF308F46213B755700915730 /* PosixFilesystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PosixFilesystem.h; path = ../habanero/include/Habanero/PosixFilesystem.h; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 		CF614ABF1F9D8E6E0005F2DB /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF24E214229196E100C166FA /* CFPtr_UT.cpp */,
 				CF24E20B2291777D00C166FA /* UnitTests_main.cpp */,
 				CFE8F90321A27F3000300019 /* spinlock_Tests.mm */,
 				CFD22CD52012DDF800608DFE /* LRUCache_Tests.mm */,
@@ -411,6 +414,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */,
 				CF24E20C2291777E00C166FA /* UnitTests_main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -17,6 +17,9 @@ build_target()
     $XC build
 }
 
+build_target HabaneroUT
+$BINARY_PATH
+
 build_target ConfigUT
 $BINARY_PATH
 

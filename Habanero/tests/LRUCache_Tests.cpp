@@ -3,14 +3,13 @@
 #include "UnitTests_main.h"
 #include <string>
 
-using namespace nc::hbn;
-using namespace std;
+using nc::base::LRUCache;
 
 #define PREFIX "LRUCache "
 
 TEST_CASE(PREFIX"empty")
 {    
-    LRUCache<string, string, 32> cache;
+    LRUCache<std::string, std::string, 32> cache;
     CHECK( cache.size() == 0 );
     CHECK( cache.max_size() == 32 );
     CHECK( cache.empty() == true );
@@ -18,7 +17,7 @@ TEST_CASE(PREFIX"empty")
 
 TEST_CASE(PREFIX"insertion")
 {
-    LRUCache<string, string, 5> cache;
+    LRUCache<std::string, std::string, 5> cache;
     cache.insert( "a", "A" );
     cache.insert( "b", "B" );
     cache.insert( "c", "C" );
@@ -40,7 +39,7 @@ TEST_CASE(PREFIX"insertion")
 
 TEST_CASE(PREFIX"bracket insertion")
 {
-    LRUCache<string, string, 5> cache;
+    LRUCache<std::string, std::string, 5> cache;
     cache["a"] = "A";
     cache["b"] = "B";
     cache["c"] = "C";
@@ -57,7 +56,7 @@ TEST_CASE(PREFIX"bracket insertion")
 
 TEST_CASE(PREFIX"eviction")
 {
-    LRUCache<string, string, 2> cache;
+    LRUCache<std::string, std::string, 2> cache;
     cache["a"] = "A";
     cache["b"] = "B";
     cache["c"] = "C";
@@ -74,16 +73,16 @@ TEST_CASE(PREFIX"eviction")
 
 TEST_CASE(PREFIX"copy")
 {
-    LRUCache<string, string, 2> cache;
+    LRUCache<std::string, std::string, 2> cache;
     cache["a"] = "A";
     cache["b"] = "B";
 
-    LRUCache<string, string, 2> copy(cache);
+    LRUCache<std::string, std::string, 2> copy(cache);
     CHECK( cache.size() == 2 );
     CHECK( copy["a"] == "A" );
     CHECK( copy["b"] == "B" );
     
-    LRUCache<string, string, 2> copy2(move(cache));
+    LRUCache<std::string, std::string, 2> copy2(move(cache));
     CHECK( cache.empty() == true );
     CHECK( copy2["a"] == "A" );
     CHECK( copy2["b"] == "B" );

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "QLThumbnailsCache.h"
@@ -63,7 +63,7 @@ private:
         std::atomic_flag is_in_work = {false}; // item is currenly updating its image
     };
     
-    using Container = hbn::LRUCache<Key, hbn::intrusive_ptr<Info>, m_CacheSize, KeyHash>;
+    using Container = base::LRUCache<Key, hbn::intrusive_ptr<Info>, m_CacheSize, KeyHash>;
 
     NSImage *Produce(const std::string &_filename,
                      int _px_size,

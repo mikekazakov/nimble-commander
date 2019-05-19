@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "VFSBundleIconsCache.h"
@@ -25,7 +25,7 @@ private:
     // also, it's pretty inefficient in dealing with strings
     
     enum { m_CacheSize = 128 };    
-    using Container = hbn::LRUCache<std::string, NSImage*, m_CacheSize>;    
+    using Container = base::LRUCache<std::string, NSImage*, m_CacheSize>;    
 
     static std::string MakeKey(const std::string &_file_path, VFSHost &_host);
     

@@ -31,7 +31,8 @@ ListingPromise::NonUniformListing ListingPromise::FromNonUniformListing
     assert( !_listing.IsUniform() );
     
     // memory massacre 2017 AD
-    using DirectoriesT = std::unordered_map<std::string_view, hbn::StringsBulk::NonOwningBuilder>;
+    using DirectoriesT = std::unordered_map<std::string_view,
+        nc::base::StringsBulk::NonOwningBuilder>;
     std::unordered_map<VFSHost*, DirectoriesT> entries;
     
     // this will blow up the memory subsystem on listings with 1m+ entries.

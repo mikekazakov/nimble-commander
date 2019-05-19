@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -56,14 +56,14 @@ private:
                   const std::string &_filename,
                   unsigned _vfs_no,
                   unsigned _basepath_no,
-                  const chained_strings::node *_prefix,
+                  const base::chained_strings::node *_prefix,
                   Source &_ctx);
     bool BuildArchive();
     void ProcessItems();
-    void ProcessItem(const chained_strings::node &_node, int _index);
-    void ProcessDirectoryItem(const chained_strings::node &_node, int _index);
-    void ProcessRegularItem(const chained_strings::node &_node, int _index);
-    void ProcessSymlinkItem(const chained_strings::node &_node, int _index);
+    void ProcessItem(const base::chained_strings::node &_node, int _index);
+    void ProcessDirectoryItem(const base::chained_strings::node &_node, int _index);
+    void ProcessRegularItem(const base::chained_strings::node &_node, int _index);
+    void ProcessSymlinkItem(const base::chained_strings::node &_node, int _index);
 
     std::string FindSuitableFilename(const std::string& _proposed_arcname) const;
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionJob.h"
 #include <Utility/PathManip.h>
 #include <Utility/NativeFSManager.h>
@@ -77,7 +77,7 @@ void DeletionJob::DoScan()
 
 void DeletionJob::ScanDirectory(const std::string &_path,
                                 int _listing_item_index,
-                                const chained_strings::node *_prefix)
+                                const base::chained_strings::node *_prefix)
 {
     auto &vfs = *m_SourceItems[_listing_item_index].Host();
 

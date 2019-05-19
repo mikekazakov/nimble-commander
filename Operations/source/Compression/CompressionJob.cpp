@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CompressionJob.h"
 #include <Habanero/algo.h>
 #include <libarchive/archive.h>
@@ -30,7 +30,7 @@ struct CompressionJob::Source
         uint16_t    flags;
     };
 
-    chained_strings             filenames;
+    base::chained_strings       filenames;
     std::vector<ItemMeta>       metas;
     std::vector<VFSHostPtr>     base_hosts;
     std::vector<std::string>    base_paths;
@@ -135,7 +135,7 @@ void CompressionJob::ProcessItems()
     }
 }
 
-void CompressionJob::ProcessItem(const chained_strings::node &_node, int _index)
+void CompressionJob::ProcessItem(const base::chained_strings::node &_node, int _index)
 {
     const auto meta = m_Source->metas[_index];
     if ( meta.flags & (int)Source::ItemFlags::is_dir)
@@ -146,7 +146,7 @@ void CompressionJob::ProcessItem(const chained_strings::node &_node, int _index)
         ProcessRegularItem(_node, _index);
 }
 
-void CompressionJob::ProcessSymlinkItem(const chained_strings::node &_node, int _index)
+void CompressionJob::ProcessSymlinkItem(const base::chained_strings::node &_node, int _index)
 {
     const auto itemname = _node.to_str_with_pref();
     const auto meta = m_Source->metas[_index];
@@ -187,7 +187,7 @@ void CompressionJob::ProcessSymlinkItem(const chained_strings::node &_node, int 
     archive_write_header(m_Archive, entry);
 }
 
-void CompressionJob::ProcessDirectoryItem(const chained_strings::node &_node, int _index)
+void CompressionJob::ProcessDirectoryItem(const base::chained_strings::node &_node, int _index)
 {
     const auto itemname = _node.to_str_with_pref();
     const auto meta = m_Source->metas[_index];
@@ -226,7 +226,7 @@ void CompressionJob::ProcessDirectoryItem(const chained_strings::node &_node, in
     }
 }
 
-void CompressionJob::ProcessRegularItem(const chained_strings::node &_node, int _index)
+void CompressionJob::ProcessRegularItem(const base::chained_strings::node &_node, int _index)
 {
     const auto itemname = _node.to_str_with_pref();
     const auto meta = m_Source->metas[_index];
@@ -405,7 +405,7 @@ bool CompressionJob::ScanItem(const std::string &_full_path,
                               const std::string &_filename,
                               unsigned _vfs_no,
                               unsigned _basepath_no,
-                              const chained_strings::node *_prefix,
+                              const base::chained_strings::node *_prefix,
                               Source &_ctx)
 {
     VFSStat stat_buffer;

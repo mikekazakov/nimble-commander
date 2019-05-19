@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingJob.h"
 #include <Utility/PathManip.h>
 #include <sys/stat.h>
@@ -107,7 +107,7 @@ void AttrsChangingJob::ScanItem(unsigned _origin_item)
 void AttrsChangingJob::ScanItem(const std::string &_full_path,
                                 const std::string &_filename,
                                 unsigned _origin_item,
-                                const chained_strings::node *_prefix)
+                                const base::chained_strings::node *_prefix)
 {
     const auto &item = m_Command.items[_origin_item];
     auto &vfs = *item.Host();

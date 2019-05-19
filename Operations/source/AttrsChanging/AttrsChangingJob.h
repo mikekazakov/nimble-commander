@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -49,7 +49,7 @@ private:
     void ScanItem(const std::string &_full_path,
                   const std::string &_filename,
                   unsigned _origin_item,
-                  const chained_strings::node *_prefix);
+                  const base::chained_strings::node *_prefix);
     void DoChange();
     bool AlterSingleItem( const std::string &_path, VFSHost &_vfs, const VFSStat &_stat );
     bool ChmodSingleItem( const std::string &_path, VFSHost &_vfs, const VFSStat &_stat );
@@ -61,7 +61,7 @@ private:
     const AttrsChangingCommand m_Command;
     std::optional<std::pair<uint16_t,uint16_t>> m_ChmodCommand;
     std::optional<std::pair<uint32_t,uint32_t>> m_ChflagCommand;
-    chained_strings m_Filenames;
+    base::chained_strings m_Filenames;
     std::vector<Meta>    m_Metas;
 };
 

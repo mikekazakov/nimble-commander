@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -44,7 +44,7 @@ private:
     {
         int listing_item_index;
         DeletionType type;
-        const chained_strings::node *filename;
+        const base::chained_strings::node *filename;
     };
 
     virtual void Perform() override;
@@ -55,11 +55,11 @@ private:
     void DoTrash( const std::string &_path, VFSHost &_vfs, SourceItem _src );
     void ScanDirectory(const std::string &_path,
                        int _listing_item_index,
-                       const chained_strings::node *_prefix);
+                       const base::chained_strings::node *_prefix);
     
     std::vector<VFSListingItem>  m_SourceItems;
     DeletionType            m_Type;
-    chained_strings         m_Paths;
+    base::chained_strings         m_Paths;
     std::stack<SourceItem>  m_Script;
 };
 

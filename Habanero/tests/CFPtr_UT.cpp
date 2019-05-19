@@ -5,12 +5,6 @@
 using nc::base::CFPtr;
 
 #define PREFIX "nc::base::CFPtr "
-//TEST_CASE(PREFIX"Default constructor makes both unicode and modifiers zero")
-//{
-//    ActionShortcut as;
-//    CHECK( as.unicode == 0 );
-//    CHECK( as.modifiers.is_empty() );
-//}
 
 TEST_CASE(PREFIX"Is empty by default")
 {

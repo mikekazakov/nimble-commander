@@ -1,49 +1,42 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Habanero/spinlock.h>
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "spinlock.h"
+#include "UnitTests_main.h"
 #include <string>
 #include <thread>
 #include <atomic>
-#import <XCTest/XCTest.h>
 
-@interface spinlock_Tests : XCTestCase
-@end
+#define PREFIX "spinlock "
 
-@implementation spinlock_Tests
-
-
-- (void)testNonContestedPassage
-{
+TEST_CASE(PREFIX"non-contested passage")
+{    
     bool flag = false;
- 
     spinlock lock;
     {
         auto guard = std::lock_guard{lock};
         flag = true;
     }
-    XCTAssert( flag == true );
+    CHECK( flag == true );
 }
 
-- (void)testContestedPassage
-{
+TEST_CASE(PREFIX"contested passage")
+{    
     std::atomic_int value = 0;
     spinlock lock;
     
     auto th1 = std::thread{ [&]{
         auto guard = std::lock_guard{lock};
-        XCTAssert( value == 0 );
+        CHECK( value == 0 );
         std::this_thread::sleep_for( std::chrono::milliseconds{10} );    
         value = 1;
     }};
     std::this_thread::sleep_for( std::chrono::milliseconds{1} );
     auto th2 = std::thread{ [&]{
         auto guard = std::lock_guard{lock};
-        XCTAssert( value == 1 );
+        CHECK( value == 1 );
         value = 2;
     }};
     
     th1.join();
     th2.join();
-    XCTAssert( value == 2 );
+    CHECK( value == 2 );
 }
-
-@end

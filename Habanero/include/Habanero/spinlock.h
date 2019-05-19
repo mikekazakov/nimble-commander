@@ -1,13 +1,13 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <atomic>
 #include <mutex>
-#include <mach/mach.h>
 
 class spinlock
 {
     std::atomic_flag __flag = ATOMIC_FLAG_INIT ;
+    static void yield() noexcept;
 public:
     void lock() noexcept;
     void unlock() noexcept;
@@ -30,7 +30,7 @@ auto call_locked( _Lock &_lock, _Callable _callable )
 inline void spinlock::lock() noexcept
 {
     while( __flag.test_and_set(std::memory_order_acquire) ) {
-        swtch_pri(0); // talking to Mach directly
+        yield();
     }
 }
 

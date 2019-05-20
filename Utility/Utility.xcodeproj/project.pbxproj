@@ -31,7 +31,6 @@
 		CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3B7F6A201F141C00BF2090 /* MIMResponder.h */; };
 		CF3B7F6D201F167200BF2090 /* MIMResponder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6C201F167200BF2090 /* MIMResponder.mm */; };
 		CF614AA21F9D86CC0005F2DB /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94631F453CB60035E606 /* libUtility.dylib */; };
-		CF614AAF1F9D87230005F2DB /* ByteCountFormatter_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */; };
 		CF614AB01F9D87260005F2DB /* Encodings_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */; };
 		CF6BF87721993B580017CECB /* FontGeometryInfo_PT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */; };
 		CF6E64E31F6271BF00BF986E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E21F6271BF00BF986E /* CoreText.framework */; };
@@ -42,7 +41,6 @@
 		CF6E64ED1F62721C00BF986E /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EC1F62721C00BF986E /* Security.framework */; };
 		CFB0F236215A076F0088C18E /* FileMask.h in Headers */ = {isa = PBXBuildFile; fileRef = CFB0F235215A076F0088C18E /* FileMask.h */; };
 		CFB0F238215A07780088C18E /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB0F237215A07770088C18E /* FileMask.cpp */; };
-		CFB0F23A215A07830088C18E /* FileMask_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFB0F239215A07830088C18E /* FileMask_Tests.mm */; };
 		CFB4B68E219944470097E4B4 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA948E1F453DF30035E606 /* libHabanero.dylib */; };
 		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
 		CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */; };
@@ -55,6 +53,8 @@
 		CFDAC82D2168E1CC00DEBA2A /* DiskUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82C2168E1CC00DEBA2A /* DiskUtility.mm */; };
 		CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */; };
 		CFE33EBC2135708800C3902C /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE33EBB2135708800C3902C /* Quartz.framework */; };
+		CFE3F1C422932CCF009D6AB4 /* ByteCountFormatter_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */; };
+		CFE3F1C522932EAA009D6AB4 /* FileMask_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB0F239215A07830088C18E /* FileMask_UT.cpp */; };
 		CFFA94671F453CC00035E606 /* SimpleComboBoxPersistentDataSource.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */; };
 		CFFA94681F453CC00035E606 /* BlinkingCaret.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */; };
 		CFFA94691F453CC00035E606 /* ButtonWithTextColor.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF1E3D0B1D57563100609ADB /* ButtonWithTextColor.mm */; };
@@ -159,7 +159,7 @@
 		CF56C2D01DC3719000F0DF0F /* ByteCountFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ByteCountFormatter.h; path = include/Utility/ByteCountFormatter.h; sourceTree = "<group>"; };
 		CF56C2D21DC3719F00F0DF0F /* ByteCountFormatter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter.mm; path = source/ByteCountFormatter.mm; sourceTree = "<group>"; };
 		CF614A9D1F9D86CC0005F2DB /* Utility Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Utility Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter_Tests.mm; path = tests/ByteCountFormatter_Tests.mm; sourceTree = SOURCE_ROOT; };
+		CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ByteCountFormatter_UT.mm; path = tests/ByteCountFormatter_UT.mm; sourceTree = SOURCE_ROOT; };
 		CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Encodings_Tests.mm; path = tests/Encodings_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF614AAA1F9D871D0005F2DB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = tests/Info.plist; sourceTree = SOURCE_ROOT; };
 		CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FontGeometryInfo_PT.mm; path = tests/FontGeometryInfo_PT.mm; sourceTree = "<group>"; };
@@ -185,7 +185,7 @@
 		CF960E281C992F35001D8B02 /* VolumeInformation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VolumeInformation.cpp; path = source/VolumeInformation.cpp; sourceTree = "<group>"; };
 		CFB0F235215A076F0088C18E /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMask.h; path = include/Utility/FileMask.h; sourceTree = "<group>"; };
 		CFB0F237215A07770088C18E /* FileMask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask.cpp; path = source/FileMask.cpp; sourceTree = "<group>"; };
-		CFB0F239215A07830088C18E /* FileMask_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FileMask_Tests.mm; path = tests/FileMask_Tests.mm; sourceTree = "<group>"; };
+		CFB0F239215A07830088C18E /* FileMask_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask_UT.cpp; path = tests/FileMask_UT.cpp; sourceTree = "<group>"; };
 		CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextControl.h; path = include/Utility/FilenameTextControl.h; sourceTree = "<group>"; };
 		CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextControl.mm; path = source/FilenameTextControl.mm; sourceTree = "<group>"; };
 		CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleComboBoxPersistentDataSource.h; path = include/Utility/SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
@@ -290,10 +290,10 @@
 			children = (
 				CF24E1F7228B525000C166FA /* ActionShortcut_UT.mm */,
 				CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */,
-				CF614AA81F9D871D0005F2DB /* ByteCountFormatter_Tests.mm */,
+				CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */,
 				CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */,
 				CF614AA91F9D871D0005F2DB /* Encodings_Tests.mm */,
-				CFB0F239215A07830088C18E /* FileMask_Tests.mm */,
+				CFB0F239215A07830088C18E /* FileMask_UT.cpp */,
 				CF38472B2010780B00BAB3BE /* FilenameTextNavigation_Tests.mm */,
 				CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */,
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
@@ -583,9 +583,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF614AB01F9D87260005F2DB /* Encodings_Tests.mm in Sources */,
-				CF614AAF1F9D87230005F2DB /* ByteCountFormatter_Tests.mm in Sources */,
 				CF38472D2010780E00BAB3BE /* FilenameTextNavigation_Tests.mm in Sources */,
-				CFB0F23A215A07830088C18E /* FileMask_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -594,11 +592,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF24E1F8228B525000C166FA /* ActionShortcut_UT.mm in Sources */,
+				CFE3F1C422932CCF009D6AB4 /* ByteCountFormatter_UT.mm in Sources */,
 				CF6BF87721993B580017CECB /* FontGeometryInfo_PT.mm in Sources */,
 				CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */,
 				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
 				CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */,
+				CFE3F1C522932EAA009D6AB4 /* FileMask_UT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,7 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilenameTextNavigation.h"
+
+namespace nc::utility {
 
 NSCharacterSet * const FilenameTextNavigation::DefaultStopCharacters  =
     [NSCharacterSet characterSetWithCharactersInString:@" .,-_/\\"];
@@ -73,4 +75,6 @@ unsigned long FilenameTextNavigation::NavigateToPreviousWord(NSString *_string,
         }
     }
     return _location;
+}
+
 }

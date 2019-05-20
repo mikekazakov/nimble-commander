@@ -2,6 +2,8 @@
 #include "UnitTests_main.h"
 #include "FilenameTextNavigation.h"
 
+using nc::utility::FilenameTextNavigation;
+
 #define PREFIX "FilenameTextNavigation " 
 
 TEST_CASE(PREFIX"Forward 1")

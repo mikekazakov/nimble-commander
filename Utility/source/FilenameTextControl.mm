@@ -54,9 +54,9 @@
                         forward:(BOOL)isForward
 {
     if( isForward )
-        return FilenameTextNavigation::NavigateToNextWord(self.string, location);
+        return nc::utility::FilenameTextNavigation::NavigateToNextWord(self.string, location);
     else
-        return FilenameTextNavigation::NavigateToPreviousWord(self.string, location);
+        return nc::utility::FilenameTextNavigation::NavigateToPreviousWord(self.string, location);
 }
 
 @end

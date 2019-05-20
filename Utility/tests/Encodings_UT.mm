@@ -1,22 +1,10 @@
-//
-//  Encodings_Tests.m
-//  Files
-//
-//  Created by Michael G. Kazakov on 23/10/14.
-//  Copyright (c) 2014 Michael G. Kazakov. All rights reserved.
-//
-
-#import <XCTest/XCTest.h>
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "UnitTests_main.h"
 #include "Encodings.h"
 
-@interface Encodings_Tests : XCTestCase
+#define PREFIX "Encodings " 
 
-@end
-
-@implementation Encodings_Tests
-
-
-- (void)testInterpretUnicharsAsUTF8
+TEST_CASE(PREFIX"InterpretUnicharsAsUTF8")
 {
     { // converting $¢€𤭢 into UTF8
         uint16_t input[5] = {0x0024, 0x00A2, 0x20AC, 0xD852, 0xDF62};
@@ -29,11 +17,11 @@
         size_t input_eaten;
         
         InterpretUnicharsAsUTF8(input, 5, output, 32, output_sz, &input_eaten);
-        XCTAssert( input_eaten == 5 );
-        XCTAssert( output_sz == output_should_be_sz );
-        XCTAssert( strlen((char*)output) == output_should_be_sz );
+        CHECK( input_eaten == 5 );
+        CHECK( output_sz == output_should_be_sz );
+        CHECK( strlen((char*)output) == output_should_be_sz );
         for(int i = 0; i < output_sz; ++i)
-            XCTAssert(output[i] == output_should_be[i]);
+            CHECK(output[i] == output_should_be[i]);
     }
     
     { // using nsstring->utf16->utf8 == nsstring->utf comparison
@@ -47,14 +35,14 @@
         size_t input_eaten;
         InterpretUnicharsAsUTF8(input, input_ns.length, output, 128, output_sz, &input_eaten);
         
-        XCTAssert(input_eaten == input_ns.length);
-        XCTAssert(output_sz == strlen(input_ns_utf8));
+        CHECK(input_eaten == input_ns.length);
+        CHECK(output_sz == strlen(input_ns_utf8));
         for(int i = 0; i < output_sz; ++i)
-            XCTAssert(output[i] == (unsigned char)input_ns_utf8[i]);
+            CHECK(output[i] == (unsigned char)input_ns_utf8[i]);
     }
 }
 
-- (void)testInterpretUnicodeAsUTF8
+TEST_CASE(PREFIX"InterpretUnicodeAsUTF8")
 {
     { // using nsstring->utf32->utf8 == nsstring->utf comparison
         NSString *input_ns = @"☕Hello world, Привет мир🌀😁🙀北京市🟔🜽𞸵𝄑𝁺🁰";
@@ -74,11 +62,9 @@
         size_t output_sz;
         size_t input_eaten;
         InterpretUnicodeAsUTF8(input, input_sz, output, 128, output_sz, &input_eaten);
-        XCTAssert(input_eaten == input_sz);
-        XCTAssert(output_sz == strlen(input_ns_utf8));
+        CHECK(input_eaten == input_sz);
+        CHECK(output_sz == strlen(input_ns_utf8));
         for(int i = 0; i < output_sz; ++i)
-            XCTAssert(output[i] == (unsigned char)input_ns_utf8[i]);
+            CHECK(output[i] == (unsigned char)input_ns_utf8[i]);
     }
 }
-
-@end

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Operation.h"
@@ -22,7 +22,8 @@ class Compression final : public Operation
 public:
     Compression(std::vector<VFSListingItem> _src_files,
                 std::string _dst_root,
-                VFSHostPtr _dst_vfs);
+                VFSHostPtr _dst_vfs,
+                std::string _passphrase = "");
     virtual ~Compression();
 
     std::string ArchivePath() const;

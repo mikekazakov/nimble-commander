@@ -52,10 +52,12 @@ static void	archive_entry_copy_stat(struct archive_entry *_ae, const VFSStat &_v
 
 CompressionJob::CompressionJob(std::vector<VFSListingItem> _src_files,
                                std::string _dst_root,
-                               VFSHostPtr _dst_vfs):
+                               VFSHostPtr _dst_vfs,
+                               std::string _password):
     m_InitialListingItems{ std::move(_src_files) },
     m_DstRoot{ std::move(_dst_root) },
-    m_DstVFS{ std::move(_dst_vfs) }
+    m_DstVFS{ std::move(_dst_vfs) },
+    m_Password{ std::move(_password) }
 {
     if( m_DstRoot.empty() || m_DstRoot.back() != '/' )
         m_DstRoot += '/';
@@ -97,6 +99,22 @@ bool CompressionJob::BuildArchive()
     if( open_rc == VFSError::Ok ) {
         m_Archive = archive_write_new();
         archive_write_set_format_zip(m_Archive);
+        archive_write_add_filter_none(m_Archive);
+        if( !m_Password.empty() ) {
+            if( archive_write_set_options(m_Archive, "zip:encryption=aes256") != ARCHIVE_OK) {
+                Stop();
+                return false;                
+            }
+            if( archive_write_set_options(m_Archive, "zip:experimental") != ARCHIVE_OK) {
+                Stop();
+                return false;                
+            }            
+            if( archive_write_set_passphrase(m_Archive, m_Password.c_str()) != ARCHIVE_OK ) {
+                Stop();
+                return false;
+            }
+        }
+        
         archive_write_open(m_Archive, this, 0, WriteCallback, 0);
         archive_write_set_bytes_in_last_block(m_Archive, 1);
 

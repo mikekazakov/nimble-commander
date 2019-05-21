@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <thread>
 #include <boost/filesystem.hpp>
@@ -173,6 +173,45 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
                                               "/Chess.app",
                                               arc_host,
                                               cmp_result);
+        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
+    }
+    catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
+
+- (void)testCompressingKernelIntoEncryptedArchive
+{
+    const auto passwd = "This is a very secret password";
+    
+    Compression operation{FetchItems("/System/Library/Kernels/", {"kernel"}, *m_NativeHost),
+        m_TmpDir.native(),
+        m_NativeHost,
+        passwd};
+    
+    operation.Start();
+    operation.Wait();
+    
+    XCTAssert( operation.State() == OperationState::Completed );
+    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
+    
+    try {
+        // this should fail
+        std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+        XCTAssert( false );
+    }
+    catch (VFSErrorException &e) {
+        XCTAssert( e.code() == VFSError::ArclibPasswordRequired );
+    }
+
+    try {
+        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
+                                                           m_NativeHost,
+                                                           passwd);
+        int cmp_result = 0;
+        const auto cmp_rc =  VFSEasyCompareFiles("/System/Library/Kernels/kernel", m_NativeHost,
+                                                 "/kernel", arc_host,
+                                                 cmp_result);
         XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
     }
     catch (VFSErrorException &e) {

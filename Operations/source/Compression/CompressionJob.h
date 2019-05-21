@@ -41,7 +41,8 @@ class CompressionJob final: public Job, public CompressionJobCallbacks
 public:
     CompressionJob(std::vector<VFSListingItem> _src_files,
                    std::string _dst_root,
-                   VFSHostPtr _dst_vfs);
+                   VFSHostPtr _dst_vfs,
+                   std::string _password);
     ~CompressionJob();
 
     const std::string &TargetArchivePath() const;
@@ -73,15 +74,16 @@ private:
                                  size_t _length);
 
 
-    std::vector<VFSListingItem>  m_InitialListingItems;
-    std::string                  m_DstRoot;
-    VFSHostPtr              m_DstVFS;
-    std::string                  m_TargetArchivePath;
+    std::vector<VFSListingItem>     m_InitialListingItems;
+    std::string                     m_DstRoot;
+    VFSHostPtr                      m_DstVFS;
+    std::string                     m_TargetArchivePath;
+    std::string                     m_Password;
     
-    struct ::archive          *m_Archive = nullptr;
-    std::shared_ptr<VFSFile>     m_TargetFile;
+    struct ::archive               *m_Archive = nullptr;
+    std::shared_ptr<VFSFile>        m_TargetFile;
     
-    std::unique_ptr<const Source>m_Source;
+    std::unique_ptr<const Source>   m_Source;
 };
 
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Compression.h"
 #include "CompressionJob.h"
 #include "../HaltReasonDialog.h"
@@ -15,14 +15,16 @@ using Callbacks = CompressionJobCallbacks;
 
 Compression::Compression(std::vector<VFSListingItem> _src_files,
                          std::string _dst_root,
-                         VFSHostPtr _dst_vfs)
+                         VFSHostPtr _dst_vfs,
+                         std::string _passphrase)
 {
     m_InitialSourceItemsAmount = (int)_src_files.size();
     m_InitialSingleItemFilename = m_InitialSourceItemsAmount == 1 ?
         _src_files.front().DisplayName() : "";
     m_Job.reset( new CompressionJob{move(_src_files),
                                     _dst_root,
-                                    _dst_vfs} );
+                                    _dst_vfs,
+                                    _passphrase} );
     m_Job->m_TargetPathDefined = [this]{
         OnTargetPathDefined();
     };

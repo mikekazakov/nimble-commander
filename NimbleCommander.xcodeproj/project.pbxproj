@@ -1264,20 +1264,6 @@
 			remoteGlobalIDString = CF5099771F948E7C000AFDE7;
 			remoteInfo = "Term Tests";
 		};
-		CF614AD81F9D91F10005F2DB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CF614ABE1F9D8E6D0005F2DB;
-			remoteInfo = "Habanero Tests";
-		};
-		CF614AE51F9D91F10005F2DB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = CF614A9D1F9D86CC0005F2DB;
-			remoteInfo = "Utility Tests";
-		};
 		CF69CF9C1DA2003D00992B84 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */;
@@ -1410,6 +1396,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = CF8BDCF82147D50300F14C3E;
 			remoteInfo = VFSIcon;
+		};
+		CFE3F1DB229A8319009D6AB4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = CF24E2042291772900C166FA;
+			remoteInfo = HabaneroUT;
 		};
 		CFF53B601EDD19A400F567C4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2780,7 +2773,6 @@
 			isa = PBXGroup;
 			children = (
 				CF768DF51C99C0F4002748BC /* libUtility.dylib */,
-				CF614AE61F9D91F10005F2DB /* Utility Tests.xctest */,
 				CF308F43213ADAD800915730 /* UtilityUT */,
 			);
 			name = Products;
@@ -3193,7 +3185,7 @@
 			isa = PBXGroup;
 			children = (
 				CFD62B831C99C1CA0021EE7F /* libHabanero.dylib */,
-				CF614AD91F9D91F10005F2DB /* Habanero Tests.xctest */,
+				CFE3F1DC229A8319009D6AB4 /* HabaneroUT */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -3554,20 +3546,6 @@
 			remoteRef = CF5099831F948EEB000AFDE7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		CF614AD91F9D91F10005F2DB /* Habanero Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Habanero Tests.xctest";
-			remoteRef = CF614AD81F9D91F10005F2DB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		CF614AE61F9D91F10005F2DB /* Utility Tests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = "Utility Tests.xctest";
-			remoteRef = CF614AE51F9D91F10005F2DB /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		CF69CF9D1DA2003D00992B84 /* libRoutedIO.dylib */ = {
 			isa = PBXReferenceProxy;
 			fileType = "compiled.mach-o.dylib";
@@ -3664,6 +3642,13 @@
 			fileType = wrapper.framework;
 			path = CUI.framework;
 			remoteRef = CFD79ADC21FE29430043A26D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		CFE3F1DC229A8319009D6AB4 /* HabaneroUT */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = HabaneroUT;
+			remoteRef = CFE3F1DB229A8319009D6AB4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		CFF53B611EDD19A400F567C4 /* Operations.framework */ = {

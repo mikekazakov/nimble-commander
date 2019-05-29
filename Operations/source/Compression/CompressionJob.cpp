@@ -236,11 +236,14 @@ void CompressionJob::ProcessDirectoryItem(const base::chained_strings::node &_no
         Stop();
     }
     
-    VFSFilePtr src_file;
-    vfs.CreateFile(source_path.c_str(), src_file);
-    if( src_file->Open(VFSFlags::OF_Read) ==  VFSError::Ok ) {
-        std::string name_wo_slash = {std::begin(itemname), std::end(itemname)-1};
-        WriteEAsIfAny(*src_file, m_Archive, name_wo_slash.c_str());
+    if( IsEncrypted() == false ) {
+        // we can't support encrypted EAs due to lack of read support in LA
+        VFSFilePtr src_file;
+        vfs.CreateFile(source_path.c_str(), src_file);
+        if( src_file->Open(VFSFlags::OF_Read) ==  VFSError::Ok ) {
+            std::string name_wo_slash = {std::begin(itemname), std::end(itemname)-1};
+            WriteEAsIfAny(*src_file, m_Archive, name_wo_slash.c_str());
+        }
     }
 }
 
@@ -323,7 +326,10 @@ void CompressionJob::ProcessRegularItem(const base::chained_strings::node &_node
             case SourceReadErrorResolution::Skip: return;
         }
     
-    WriteEAsIfAny(*src_file, m_Archive, itemname.c_str());
+    if( IsEncrypted() == false ) {
+        // we can't support encrypted EAs due to lack of read support in LA 
+        WriteEAsIfAny(*src_file, m_Archive, itemname.c_str());
+    }
 }
 
 std::string CompressionJob::FindSuitableFilename(const std::string& _proposed_arcname) const
@@ -507,6 +513,11 @@ ssize_t	CompressionJob::WriteCallback(struct archive *,
     if( ret >= 0 )
         return ret;
     return ARCHIVE_FATAL;
+}
+    
+bool CompressionJob::IsEncrypted() const noexcept
+{
+    return m_Password.empty() == false; 
 }
 
 static void	archive_entry_copy_stat(struct archive_entry *_ae, const VFSStat &_vfs_stat)

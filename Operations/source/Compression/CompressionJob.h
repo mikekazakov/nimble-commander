@@ -67,6 +67,7 @@ private:
     void ProcessSymlinkItem(const base::chained_strings::node &_node, int _index);
 
     std::string FindSuitableFilename(const std::string& _proposed_arcname) const;
+    bool IsEncrypted() const noexcept;
 
     static ssize_t WriteCallback(struct archive *,
                                  void *_client_data,

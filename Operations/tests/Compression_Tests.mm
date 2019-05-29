@@ -219,6 +219,34 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
     }
 }
 
+- (void)testCompressingBinIntoEncryptedArchive
+{
+    const auto passwd = "This is a very secret password";
+    
+    Compression operation{FetchItems("/", {"bin"}, *m_NativeHost),
+        m_TmpDir.native(),
+        m_NativeHost,
+        passwd};
+    
+    operation.Start();
+    operation.Wait();
+    
+    XCTAssert( operation.State() == OperationState::Completed );
+    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
+    
+    try {
+        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
+                                                           m_NativeHost,
+                                                           passwd);
+        int cmp_result = 0;
+        const auto cmp_rc = VFSCompareEntries("/bin/", m_NativeHost, "/bin/", arc_host, cmp_result);
+        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
+    }
+    catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+}
+
 - (void)testLongCompressionStats
 {
  Compression operation{FetchItems("/Applications/", {"iTunes.app"}, *m_NativeHost),

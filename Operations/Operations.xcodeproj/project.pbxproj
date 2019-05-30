@@ -10,6 +10,10 @@
 		CF197C251FB4381E009F6C59 /* CopyingDialogDisclosedView.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF197C271FB4381E009F6C59 /* CopyingDialogDisclosedView.xib */; };
 		CF238E1021A1948800569809 /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF238E0E21A1948800569809 /* Helpers.cpp */; };
 		CF238E1121A1948800569809 /* Helpers.h in Headers */ = {isa = PBXBuildFile; fileRef = CF238E0F21A1948800569809 /* Helpers.h */; };
+		CF2C1008229F16E400A5359D /* CompressDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2C1005229F16E400A5359D /* CompressDialog.h */; };
+		CF2C1009229F16E400A5359D /* CompressDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C1006229F16E400A5359D /* CompressDialog.mm */; };
+		CF2C100A229F16E400A5359D /* CompressDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF2C1007229F16E400A5359D /* CompressDialog.xib */; };
+		CF2C100C229F1B9C00A5359D /* CompressDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2C100B229F1B9B00A5359D /* CompressDialog.h */; };
 		CF36DBE91F6BF3FB004A018E /* Archive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */; };
 		CF4BCEE91F1D9CAA005F8414 /* CopyingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */; };
 		CF4BCEEA1F1D9CAA005F8414 /* CopyingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */; };
@@ -177,6 +181,10 @@
 		CF197C291FB43825009F6C59 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/CopyingDialogDisclosedView.strings; sourceTree = "<group>"; };
 		CF238E0E21A1948800569809 /* Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Helpers.cpp; path = source/Copying/Helpers.cpp; sourceTree = "<group>"; };
 		CF238E0F21A1948800569809 /* Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Helpers.h; path = source/Copying/Helpers.h; sourceTree = "<group>"; };
+		CF2C1005229F16E400A5359D /* CompressDialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CompressDialog.h; path = source/Compression/CompressDialog.h; sourceTree = "<group>"; };
+		CF2C1006229F16E400A5359D /* CompressDialog.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = CompressDialog.mm; path = source/Compression/CompressDialog.mm; sourceTree = "<group>"; };
+		CF2C1007229F16E400A5359D /* CompressDialog.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = CompressDialog.xib; path = source/Compression/CompressDialog.xib; sourceTree = "<group>"; };
+		CF2C100B229F1B9B00A5359D /* CompressDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompressDialog.h; path = include/Operations/CompressDialog.h; sourceTree = "<group>"; };
 		CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Archive_Tests.mm; path = tests/Archive_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CopyingJob.cpp; path = source/Copying/CopyingJob.cpp; sourceTree = "<group>"; };
 		CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingJob.h; path = source/Copying/CopyingJob.h; sourceTree = "<group>"; };
@@ -625,15 +633,16 @@
 		CFF53B8A1EE24F1B00F567C4 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CF4BCF5E1F30130B005F8414 /* CopyingDialog.h */,
 				CFC4F9C41F11D5A10000B3EE /* AlterSymlinkDialog.h */,
 				CF4BCEF11F1DA5AF005F8414 /* AttrsChanging.h */,
 				CF4BCEF21F1DA5AF005F8414 /* AttrsChangingDialog.h */,
 				CFC4F9901F0F22900000B3EE /* BatchRenaming.h */,
 				CFC4F9911F0F22900000B3EE /* BatchRenamingDialog.h */,
 				CFC4F9921F0F22900000B3EE /* BatchRenamingScheme.h */,
+				CF2C100B229F1B9B00A5359D /* CompressDialog.h */,
 				CF7084DC1EF7CF7E0072F0F6 /* Compression.h */,
 				CF4BCEF31F1DA5AF005F8414 /* Copying.h */,
+				CF4BCF5E1F30130B005F8414 /* CopyingDialog.h */,
 				CF4BCEF41F1DA5AF005F8414 /* CopyingOptions.h */,
 				CFC4F9C51F11D5A10000B3EE /* CreateHardlinkDialog.h */,
 				CFC4F9C61F11D5A10000B3EE /* CreateSymlinkDialog.h */,
@@ -668,6 +677,9 @@
 				CFF53B901EE24FEC00F567C4 /* Compression.mm */,
 				CFF53B921EE2515400F567C4 /* CompressionJob.h */,
 				CFF53B931EE2515400F567C4 /* CompressionJob.cpp */,
+				CF2C1005229F16E400A5359D /* CompressDialog.h */,
+				CF2C1006229F16E400A5359D /* CompressDialog.mm */,
+				CF2C1007229F16E400A5359D /* CompressDialog.xib */,
 			);
 			name = Compression;
 			sourceTree = "<group>";
@@ -695,6 +707,7 @@
 				CFC4F9971F0F22900000B3EE /* DeletionDialog.h in Headers */,
 				CFF53B761EDE53E800F567C4 /* Operation.h in Headers */,
 				CFC4F8D31EFA17070000B3EE /* Internal.h in Headers */,
+				CF2C1008229F16E400A5359D /* CompressDialog.h in Headers */,
 				CFC4F9811F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.h in Headers */,
 				CF4BCEF71F1DA5AF005F8414 /* Copying.h in Headers */,
 				CFC4F98E1F0F22850000B3EE /* LinkageJob.h in Headers */,
@@ -744,6 +757,7 @@
 				CF4BCEEA1F1D9CAA005F8414 /* CopyingJob.h in Headers */,
 				CFC4F9C81F11D5A10000B3EE /* CreateHardlinkDialog.h in Headers */,
 				CFC4F9CF1F14BFFE0000B3EE /* AttrsChanging.h in Headers */,
+				CF2C100C229F1B9C00A5359D /* CompressDialog.h in Headers */,
 				CFC4F9641F0CC66E0000B3EE /* BatchRenamingScheme.h in Headers */,
 				CFC4F8C71EFA05B00000B3EE /* PoolView.h in Headers */,
 				CFC4F90A1F06253D0000B3EE /* DirectoryCreationJob.h in Headers */,
@@ -815,6 +829,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 				ru,
@@ -846,6 +861,7 @@
 				CF62B7C321B3D703009972DE /* debug.xcconfig in Resources */,
 				CF62B7C421B3D703009972DE /* release.xcconfig in Resources */,
 				CFC4F8E01EFCD9A50000B3EE /* Media.xcassets in Resources */,
+				CF2C100A229F16E400A5359D /* CompressDialog.xib in Resources */,
 				CFC4F9C11F108CD60000B3EE /* AlterSymlinkDialog.xib in Resources */,
 				CFC4F97D1F0DEC280000B3EE /* BatchRenamingDialog.xib in Resources */,
 				CFFA95491F4C17CD0035E606 /* Info-FrameworkPlist.strings in Resources */,
@@ -903,6 +919,7 @@
 				CFC4F8DE1EFCC0040000B3EE /* StatisticsFormatter.mm in Sources */,
 				CFC4F8EA1F00E5D30000B3EE /* HaltReasonDialog.mm in Sources */,
 				CFC4F8B41EF7E3860000B3EE /* CompressionJob.cpp in Sources */,
+				CF2C1009229F16E400A5359D /* CompressDialog.mm in Sources */,
 				CFF53B7B1EDEA83900F567C4 /* Job.cpp in Sources */,
 				CFAAF0751FA9D8B8009230B3 /* CopyingTitleBuilder.mm in Sources */,
 				CFC4F91C1F09D9740000B3EE /* Deletion.mm in Sources */,

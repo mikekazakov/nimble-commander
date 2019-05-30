@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14490.70"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="NCOpsCompressDialog">
+            <connections>
+                <outlet property="cancelButton" destination="svN-iq-mOy" id="rP7-hn-4le"/>
+                <outlet property="compressButton" destination="RZR-re-mhm" id="SO4-5v-77p"/>
+                <outlet property="destinationTextField" destination="Xkn-9n-JfE" id="pf3-gg-vrV"/>
+                <outlet property="passwordTextField" destination="qUL-dQ-JyV" id="Q7n-Vg-U6x"/>
+                <outlet property="protectWithPasswordCheckbox" destination="4ep-eG-eMc" id="rMD-dK-kd6"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" visibleAtLaunch="NO" animationBehavior="default" id="F0z-JX-Cv5" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="541" height="180"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="541" height="177"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RZR-re-mhm">
+                        <rect key="frame" x="425" y="13" width="102" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="kzZ-aX-728"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Compress" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="a48-2O-Lyx">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+DQ
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onCompress:" target="-2" id="ETw-Df-ljZ"/>
+                            <binding destination="-2" name="enabled" keyPath="self.validInput" id="0MT-DJ-lZe"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="svN-iq-mOy">
+                        <rect key="frame" x="333" y="13" width="92" height="32"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="80" id="hvQ-Yn-emj"/>
+                        </constraints>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zlZ-6H-Ljz">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" metaFont="system"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onCancel:" target="-2" id="fWn-0Q-SM1"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Xkn-9n-JfE">
+                        <rect key="frame" x="20" y="112" width="501" height="22"/>
+                        <constraints>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="40p-JL-bBN"/>
+                            <constraint firstAttribute="width" relation="lessThanOrEqual" constant="800" id="u91-fT-2Yi"/>
+                        </constraints>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="uRr-7t-1lM">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="-2" name="value" keyPath="self.destinationString" id="kHd-iL-R7k">
+                                <dictionary key="options">
+                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                </dictionary>
+                            </binding>
+                            <outlet property="delegate" destination="-2" id="HvT-20-R7F"/>
+                        </connections>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sfe-25-dPf">
+                        <rect key="frame" x="18" y="140" width="122" height="17"/>
+                        <textFieldCell key="cell" lineBreakMode="clipping" title="Compress items to:" id="4Dh-kj-AYe">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="4ep-eG-eMc">
+                        <rect key="frame" x="18" y="80" width="161" height="18"/>
+                        <buttonCell key="cell" type="check" title="Protect with password:" bezelStyle="regularSquare" imagePosition="left" continuous="YES" inset="2" id="CUD-IL-ZRp">
+                            <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                            <font key="font" metaFont="system"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="onProtectWithPassword:" target="-2" id="paS-k8-3wZ"/>
+                            <binding destination="-2" name="value" keyPath="self.protectWithPassword" id="bf1-nR-i2B"/>
+                        </connections>
+                    </button>
+                    <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="qUL-dQ-JyV" customClass="NSSecureTextField">
+                        <rect key="frame" x="44" y="57" width="200" height="19"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="200" id="3Ne-3X-UZp"/>
+                        </constraints>
+                        <textFieldCell key="cell" controlSize="small" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="Ez4-gk-o1b" customClass="NSSecureTextFieldCell">
+                            <font key="font" metaFont="smallSystem"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                        <connections>
+                            <binding destination="-2" name="enabled" keyPath="self.protectWithPassword" id="vru-EH-Ysc"/>
+                            <binding destination="-2" name="value" keyPath="self.passwordString" id="pRR-Bv-eYv">
+                                <dictionary key="options">
+                                    <bool key="NSContinuouslyUpdatesValue" value="YES"/>
+                                </dictionary>
+                            </binding>
+                            <outlet property="delegate" destination="-2" id="oAF-WF-hVP"/>
+                        </connections>
+                    </textField>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="RZR-re-mhm" secondAttribute="bottom" constant="20" symbolic="YES" id="1bK-IO-QGb"/>
+                    <constraint firstItem="sfe-25-dPf" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="641-jZ-gby"/>
+                    <constraint firstItem="4ep-eG-eMc" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="B5X-VQ-lfu"/>
+                    <constraint firstItem="qUL-dQ-JyV" firstAttribute="leading" secondItem="4ep-eG-eMc" secondAttribute="leading" constant="24" id="C2K-jl-UMq"/>
+                    <constraint firstItem="Xkn-9n-JfE" firstAttribute="top" secondItem="sfe-25-dPf" secondAttribute="bottom" constant="6" id="ID5-bi-Esq"/>
+                    <constraint firstAttribute="trailing" secondItem="Xkn-9n-JfE" secondAttribute="trailing" constant="20" symbolic="YES" id="PO9-QV-DbQ"/>
+                    <constraint firstItem="sfe-25-dPf" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" constant="20" symbolic="YES" id="Qd1-vM-1o8"/>
+                    <constraint firstAttribute="trailing" secondItem="RZR-re-mhm" secondAttribute="trailing" constant="20" symbolic="YES" id="YdN-fx-VkI"/>
+                    <constraint firstItem="qUL-dQ-JyV" firstAttribute="top" secondItem="4ep-eG-eMc" secondAttribute="bottom" constant="6" id="cm7-0B-yBv"/>
+                    <constraint firstItem="svN-iq-mOy" firstAttribute="top" secondItem="qUL-dQ-JyV" secondAttribute="bottom" constant="16" id="f06-lO-jya"/>
+                    <constraint firstItem="Xkn-9n-JfE" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" constant="20" symbolic="YES" id="i22-iI-wQa"/>
+                    <constraint firstItem="RZR-re-mhm" firstAttribute="firstBaseline" secondItem="svN-iq-mOy" secondAttribute="firstBaseline" id="nhK-M4-KAd"/>
+                    <constraint firstItem="RZR-re-mhm" firstAttribute="leading" secondItem="svN-iq-mOy" secondAttribute="trailing" constant="12" symbolic="YES" id="xud-Id-O5E"/>
+                    <constraint firstItem="4ep-eG-eMc" firstAttribute="top" secondItem="Xkn-9n-JfE" secondAttribute="bottom" constant="16" id="zdh-sq-yhI"/>
+                </constraints>
+            </view>
+            <connections>
+                <outlet property="delegate" destination="-2" id="0bl-1N-AYu"/>
+            </connections>
+            <point key="canvasLocation" x="72.5" y="175"/>
+        </window>
+        <userDefaultsController representsSharedInstance="YES" id="ePg-hn-wlF"/>
+    </objects>
+</document>

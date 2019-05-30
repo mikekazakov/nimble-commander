@@ -1,6 +1,5 @@
 // Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
-#import <XCTest/XCTest.h>
-#include <thread>
+#include "Tests.h"
 #include <boost/filesystem.hpp>
 #include <sys/stat.h>
 
@@ -15,8 +14,7 @@ using namespace nc;
 using namespace nc::ops;
 using namespace std::literals;
 
-@interface CompressionTests : XCTestCase
-@end
+#define PREFIX "Operations::Compression "
 
 static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
                              const VFSHostPtr& _file1_host,
@@ -28,271 +26,242 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
                                               const std::vector<std::string> &_filenames,
                                               VFSHost &_host);
 
-@implementation CompressionTests
+TEST_CASE(PREFIX"Empty archive building")
 {
-    boost::filesystem::path m_TmpDir;
-    std::shared_ptr<VFSHost> m_NativeHost;
-}
-
-- (void)setUp
-{
-    [super setUp];
-    m_NativeHost = VFSNativeHost::SharedHost();
-    m_TmpDir = self.makeTmpDir;
-}
-
-- (void)tearDown
-{
-    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
-    [super tearDown];
-}
-
-- (void)testEmptyArchiveBuilding
-{
-    Compression operation{std::vector<VFSListingItem>{}, m_TmpDir.native(), m_NativeHost };
+    TempTestDir tmp_dir;
+    const auto native_host = VFSNativeHost::SharedHost();
+    Compression operation{std::vector<VFSListingItem>{}, tmp_dir.directory, native_host };
     operation.Start();
     operation.Wait();
-
-    XCTAssert( operation.State() == OperationState::Completed );
-    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
     
-    try {
-        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
-        XCTAssert( arc_host->StatTotalFiles() == 0 );
-    }
-    catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-    }
+    REQUIRE( operation.State() == OperationState::Completed );
+    REQUIRE( native_host->Exists(operation.ArchivePath().c_str()) );
+    
+    std::shared_ptr<vfs::ArchiveHost> arc_host;
+    REQUIRE_NOTHROW( arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
+                                                                   native_host) );
+    CHECK( arc_host->StatTotalFiles() == 0 );    
 }
 
-- (void)testCompressingMacKernel
+TEST_CASE(PREFIX"Compressing Mac kernel")
 {
-    Compression operation{FetchItems("/System/Library/Kernels/", {"kernel"}, *m_NativeHost),
-                          m_TmpDir.native(),
-                          m_NativeHost};
+    TempTestDir tmp_dir;
+    const auto native_host = VFSNativeHost::SharedHost();
+    
+    Compression operation{FetchItems("/System/Library/Kernels/", {"kernel"}, *native_host),
+                          tmp_dir.directory,
+                          native_host};
     
     operation.Start();
     operation.Wait();
 
-    XCTAssert( operation.State() == OperationState::Completed );
-    XCTAssert( operation.Statistics().ElapsedTime() > 1ms &&
-               operation.Statistics().ElapsedTime() < 1s );
-    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
-    try {
-        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
-        XCTAssert( arc_host->StatTotalFiles() == 1 );
-        int cmp_result = 0;
-        const auto cmp_rc =  VFSEasyCompareFiles("/System/Library/Kernels/kernel", m_NativeHost,
-                                                 "/kernel", arc_host,
-                                                 cmp_result);
-        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
-    }
-    catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-    }
+    REQUIRE( operation.State() == OperationState::Completed );
+    CHECK( operation.Statistics().ElapsedTime() > 1ms );
+    CHECK( operation.Statistics().ElapsedTime() < 1s );
+    REQUIRE( native_host->Exists(operation.ArchivePath().c_str()) );
+    
+    std::shared_ptr<vfs::ArchiveHost> arc_host;
+    REQUIRE_NOTHROW( arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
+                                                                   native_host) );
+    CHECK( arc_host->StatTotalFiles() == 1 );
+    int cmp_result = 0;
+    const auto cmp_rc =  VFSEasyCompareFiles("/System/Library/Kernels/kernel", native_host,
+                                             "/kernel", arc_host,
+                                             cmp_result);
+    CHECK( cmp_rc == VFSError::Ok );
+    CHECK( cmp_result == 0 );
 }
 
-- (void)testCompressingBinUtilities
+TEST_CASE(PREFIX"Compressing Bin utilities")
 {
-    const std::vector<std::string> filenames = { "[", "bash", "cat", "chmod", "cp", "csh", "date", "dd", "df",
-        "echo", "ed", "expr", "hostname", "kill", "ksh", "launchctl", "link",
+    TempTestDir tmp_dir;
+    const auto native_host = VFSNativeHost::SharedHost();
+    
+    const std::vector<std::string> filenames = { "[", "bash", "cat", "chmod", "cp", "csh", "date",
+        "dd", "df", "echo", "ed", "expr", "hostname", "kill", "ksh", "launchctl", "link",
         "ln", "ls", "mkdir", "mv", "pax", "ps", "pwd", "rm", "rmdir", "sh", "sleep", "stty",
         "sync", "tcsh", "test", "unlink", "wait4path", "zsh" };
 
-    Compression operation{FetchItems("/bin/", filenames, *m_NativeHost),
-        m_TmpDir.native(),
-        m_NativeHost};
+    Compression operation{FetchItems("/bin/", filenames, *native_host),
+        tmp_dir.directory,
+        native_host};
     
     operation.Start();
     operation.Wait();
     
-    XCTAssert( operation.State() == OperationState::Completed );
-    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
+    REQUIRE( operation.State() == OperationState::Completed );
+    REQUIRE( native_host->Exists(operation.ArchivePath().c_str()) );
     
-    try {
-        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
-        XCTAssert( arc_host->StatTotalFiles() == filenames.size() );
-        
-        for( auto &fn: filenames) {
-            int cmp_result = 0;
-            const auto cmp_rc =  VFSEasyCompareFiles(("/bin/"s + fn).c_str(), m_NativeHost,
-                                                     ("/"s + fn).c_str(), arc_host,
-                                                     cmp_result);
-            XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
-        }
-    }
-    catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-    }
-}
-
-- (void)testCompressingBinDirectory
-{
-    Compression operation{FetchItems("/", {"bin"}, *m_NativeHost),
-        m_TmpDir.native(),
-        m_NativeHost};
+    std::shared_ptr<vfs::ArchiveHost> arc_host;
+    REQUIRE_NOTHROW( arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
+                                                                   native_host) );    
+    CHECK( arc_host->StatTotalFiles() == filenames.size() );
     
-    operation.Start();
-    operation.Wait();
-    
-    XCTAssert( operation.State() == OperationState::Completed );
-    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
-    
-    try {
-        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
+    for( auto &fn: filenames) {
         int cmp_result = 0;
-        const auto cmp_rc = VFSCompareEntries("/bin/",
-                                              m_NativeHost,
-                                              "/bin/",
-                                              arc_host,
-                                              cmp_result);
-        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
-    }
-    catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-    }
-}
-
-- (void)testCompressingChessApp
-{
-    Compression operation{FetchItems("/Applications/", {"Chess.app"}, *m_NativeHost),
-        m_TmpDir.native(),
-        m_NativeHost};
-    
-    operation.Start();
-    operation.Wait();
-    
-    XCTAssert( operation.State() == OperationState::Completed );
-    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
-
-    try {
-        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
-        int cmp_result = 0;
-        const auto cmp_rc = VFSCompareEntries("/Applications/Chess.app",
-                                              m_NativeHost,
-                                              "/Chess.app",
-                                              arc_host,
-                                              cmp_result);
-        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
-    }
-    catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-    }
-}
-
-- (void)testCompressingKernelIntoEncryptedArchive
-{
-    const auto passwd = "This is a very secret password";
-    
-    Compression operation{FetchItems("/System/Library/Kernels/", {"kernel"}, *m_NativeHost),
-        m_TmpDir.native(),
-        m_NativeHost,
-        passwd};
-    
-    operation.Start();
-    operation.Wait();
-    
-    XCTAssert( operation.State() == OperationState::Completed );
-    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
-    
-    try {
-        // this should fail
-        std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
-        XCTAssert( false );
-    }
-    catch (VFSErrorException &e) {
-        XCTAssert( e.code() == VFSError::ArclibPasswordRequired );
-    }
-
-    try {
-        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
-                                                           m_NativeHost,
-                                                           passwd);
-        int cmp_result = 0;
-        const auto cmp_rc =  VFSEasyCompareFiles("/System/Library/Kernels/kernel", m_NativeHost,
-                                                 "/kernel", arc_host,
+        const auto cmp_rc =  VFSEasyCompareFiles(("/bin/"s + fn).c_str(), native_host,
+                                                 ("/"s + fn).c_str(), arc_host,
                                                  cmp_result);
-        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
-    }
-    catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
+        CHECK( cmp_rc == VFSError::Ok ); 
+        CHECK( cmp_result == 0 );
     }
 }
 
-- (void)testCompressingBinIntoEncryptedArchive
+TEST_CASE(PREFIX"Compressing Bin directory")
 {
+    TempTestDir tmp_dir;
+    const auto native_host = VFSNativeHost::SharedHost();    
+    
+    Compression operation{FetchItems("/", {"bin"}, *native_host),
+        tmp_dir.directory,
+        native_host};
+    
+    operation.Start();
+    operation.Wait();
+    
+    REQUIRE( operation.State() == OperationState::Completed );
+    REQUIRE( native_host->Exists(operation.ArchivePath().c_str()) );
+    
+    std::shared_ptr<vfs::ArchiveHost> arc_host;
+    REQUIRE_NOTHROW( arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
+                                                                   native_host) );
+    int cmp_result = 0;
+    const auto cmp_rc = VFSCompareEntries("/bin/",
+                                          native_host,
+                                          "/bin/",
+                                          arc_host,
+                                          cmp_result);
+    CHECK( cmp_rc == VFSError::Ok );
+    CHECK( cmp_result == 0 );
+}
+
+TEST_CASE(PREFIX"Compressing Chess.app")
+{
+    TempTestDir tmp_dir;
+    const auto native_host = VFSNativeHost::SharedHost();        
+    
+    Compression operation{FetchItems("/Applications/", {"Chess.app"}, *native_host),
+        tmp_dir.directory,
+        native_host};
+    
+    operation.Start();
+    operation.Wait();
+    
+    REQUIRE( operation.State() == OperationState::Completed );
+    REQUIRE( native_host->Exists(operation.ArchivePath().c_str()) );
+
+    std::shared_ptr<vfs::ArchiveHost> arc_host;
+    REQUIRE_NOTHROW( arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
+                                                                   native_host) );
+    
+    int cmp_result = 0;
+    const auto cmp_rc = VFSCompareEntries("/Applications/Chess.app",
+                                          native_host,
+                                          "/Chess.app",
+                                          arc_host,
+                                          cmp_result);
+    CHECK( cmp_rc == VFSError::Ok );
+    CHECK( cmp_result == 0 );
+}
+
+TEST_CASE(PREFIX"Compressing kernel into encrypted archive")
+{
+    TempTestDir tmp_dir;
+    const auto native_host = VFSNativeHost::SharedHost();            
     const auto passwd = "This is a very secret password";
     
-    Compression operation{FetchItems("/", {"bin"}, *m_NativeHost),
-        m_TmpDir.native(),
-        m_NativeHost,
+    Compression operation{FetchItems("/System/Library/Kernels/", {"kernel"}, *native_host),
+        tmp_dir.directory,
+        native_host,
         passwd};
     
     operation.Start();
     operation.Wait();
     
-    XCTAssert( operation.State() == OperationState::Completed );
-    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
+    REQUIRE( operation.State() == OperationState::Completed );
+    REQUIRE( native_host->Exists(operation.ArchivePath().c_str()) );
     
     try {
-        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
-                                                           m_NativeHost,
-                                                           passwd);
-        int cmp_result = 0;
-        const auto cmp_rc = VFSCompareEntries("/bin/", m_NativeHost, "/bin/", arc_host, cmp_result);
-        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
+        std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), native_host);
+        REQUIRE( false );
     }
     catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
+        REQUIRE( e.code() == VFSError::ArclibPasswordRequired );
     }
+
+    std::shared_ptr<vfs::ArchiveHost> arc_host;
+    REQUIRE_NOTHROW( arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
+                                                                   native_host,
+                                                                   passwd) );
+    int cmp_result = 0;
+    const auto cmp_rc =  VFSEasyCompareFiles("/System/Library/Kernels/kernel", native_host,
+                                             "/kernel", arc_host,
+                                             cmp_result);
+    CHECK( cmp_rc == VFSError::Ok );
+    CHECK( cmp_result == 0 );
 }
 
-- (void)testLongCompressionStats
+TEST_CASE(PREFIX"Compressing /bin into encrypted archive")
 {
- Compression operation{FetchItems("/Applications/", {"iTunes.app"}, *m_NativeHost),
-        m_TmpDir.native(),
-        m_NativeHost};
+    TempTestDir tmp_dir;
+    const auto native_host = VFSNativeHost::SharedHost();
+    const auto passwd = "This is a very secret password";
+    
+    Compression operation{FetchItems("/", {"bin"}, *native_host),
+        tmp_dir.directory,
+        native_host,
+        passwd};
+    
+    operation.Start();
+    operation.Wait();
+    
+    REQUIRE( operation.State() == OperationState::Completed );
+    REQUIRE( native_host->Exists(operation.ArchivePath().c_str()) );
+    
+    std::shared_ptr<vfs::ArchiveHost> arc_host;
+    REQUIRE_NOTHROW( arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
+                                                                   native_host,
+                                                                   passwd) );
+    int cmp_result = 0;
+    const auto cmp_rc = VFSCompareEntries("/bin/", native_host, "/bin/", arc_host, cmp_result);
+    CHECK( cmp_rc == VFSError::Ok );
+    CHECK( cmp_result == 0 );
+}
+
+TEST_CASE(PREFIX"Long compression stats")
+{
+    TempTestDir tmp_dir;
+    const auto native_host = VFSNativeHost::SharedHost();    
+    Compression operation{FetchItems("/Applications/", {"iTunes.app"}, *native_host),
+        tmp_dir.directory,
+        native_host};
     
     operation.Start();
     operation.Wait( 5000ms );
     const auto eta = operation.Statistics().ETA( Statistics::SourceType::Bytes );
-    XCTAssert( double(eta->count()) / 1000000000. > 4.9 );
+    CHECK( double(eta->count()) / 1000000000. > 4.9 );
     
     operation.Pause();
-    XCTAssert( operation.State() == OperationState::Paused );
+    REQUIRE( operation.State() == OperationState::Paused );
     operation.Wait( 5000ms );
-    XCTAssert( operation.State() == OperationState::Paused );
+    REQUIRE( operation.State() == OperationState::Paused );
     operation.Resume();
     operation.Wait();
-    XCTAssert( operation.State() == OperationState::Completed );
-    XCTAssert( m_NativeHost->Exists(operation.ArchivePath().c_str()) );
+    REQUIRE( operation.State() == OperationState::Completed );
+    REQUIRE( native_host->Exists(operation.ArchivePath().c_str()) );
 
-    try {
-        auto arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(), m_NativeHost);
-        int cmp_result = 0;
-        const auto cmp_rc = VFSCompareEntries("/Applications/iTunes.app",
-                                              m_NativeHost,
-                                              "/iTunes.app",
-                                              arc_host,
-                                              cmp_result);
-        XCTAssert( cmp_rc == VFSError::Ok && cmp_result == 0 );
-    }
-    catch (VFSErrorException &e) {
-        XCTAssert( e.code() == 0 );
-    }
+    std::shared_ptr<vfs::ArchiveHost> arc_host;
+    REQUIRE_NOTHROW( arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
+                                                                   native_host) );
+    int cmp_result = 0;
+    const auto cmp_rc = VFSCompareEntries("/Applications/iTunes.app",
+                                          native_host,
+                                          "/iTunes.app",
+                                          arc_host,
+                                          cmp_result);
+    CHECK( cmp_rc == VFSError::Ok );
+    CHECK( cmp_result == 0 );
 }
-
-- (boost::filesystem::path)makeTmpDir
-{
-    char dir[MAXPATHLEN];
-    sprintf(dir, "%s" "info.filesmanager.files" ".tmp.XXXXXX", NSTemporaryDirectory().fileSystemRepresentation);
-    XCTAssert( mkdtemp(dir) != nullptr );
-    return dir;
-}
-
-@end
-
-
 
 static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
                              const VFSHostPtr& _file1_host,

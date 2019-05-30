@@ -66,7 +66,7 @@ Gw
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="40p-JL-bBN"/>
                             <constraint firstAttribute="width" relation="lessThanOrEqual" constant="800" id="u91-fT-2Yi"/>
                         </constraints>
-                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="uRr-7t-1lM">
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="uRr-7t-1lM" customClass="NCFilenameTextCell">
                             <font key="font" metaFont="system"/>
                             <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>

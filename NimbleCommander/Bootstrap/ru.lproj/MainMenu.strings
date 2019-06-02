@@ -290,7 +290,7 @@
 "Bwr-HI-kKX.title" = "Закрыть остальные вкладки";
 
 /* Class = "NSMenuItem"; title = "Compress"; ObjectID = "CEQ-U0-LN9"; */
-"CEQ-U0-LN9.title" = "Сжать";
+"CEQ-U0-LN9.title" = "Сжать...";
 
 /* Class = "NSMenuItem"; title = "Purchase Pro Features"; ObjectID = "chd-VR-dSN"; */
 "chd-VR-dSN.title" = "Купить расширенный функционал";
@@ -299,7 +299,7 @@
 "db8-IO-kEa.title" = "Открыть в программе";
 
 /* Class = "NSMenuItem"; title = "Compress In Opposite Panel"; ObjectID = "dFg-q8-CBh"; */
-"dFg-q8-CBh.title" = "Сжать в противоположной панели";
+"dFg-q8-CBh.title" = "Сжать в...";
 
 /* Class = "NSMenuItem"; title = "6"; ObjectID = "Dga-lH-RSh"; */
 "Dga-lH-RSh.title" = "6";

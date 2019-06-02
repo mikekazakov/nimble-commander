@@ -24,8 +24,8 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="541" height="180"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
-            <view key="contentView" misplaced="YES" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="541" height="180"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="541" height="177"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RZR-re-mhm">
@@ -65,7 +65,7 @@ Gw
                         <rect key="frame" x="20" y="112" width="501" height="22"/>
                         <constraints>
                             <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="300" id="40p-JL-bBN"/>
-                            <constraint firstAttribute="width" relation="lessThanOrEqual" constant="800" id="u91-fT-2Yi"/>
+                            <constraint firstAttribute="width" relation="lessThanOrEqual" constant="1000" id="u91-fT-2Yi"/>
                         </constraints>
                         <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" continuous="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="uRr-7t-1lM" customClass="NCFilenameTextCell">
                             <font key="font" metaFont="system"/>

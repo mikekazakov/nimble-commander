@@ -939,13 +939,13 @@ CA
                                     <action selector="OnDeletePermanentlyCommand:" target="-1" id="k7X-O4-IHR"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Compress" tag="15100" id="CEQ-U0-LN9">
+                            <menuItem title="Compress..." tag="15100" id="CEQ-U0-LN9">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="onCompressItemsHere:" target="-1" id="XmN-AH-peI"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Compress In Opposite Panel" tag="15101" alternate="YES" id="dFg-q8-CBh">
+                            <menuItem title="Compress To..." tag="15101" alternate="YES" id="dFg-q8-CBh">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="onCompressItems:" target="-1" id="4BD-vh-ajh"/>

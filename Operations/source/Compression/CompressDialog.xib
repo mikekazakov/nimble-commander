@@ -23,8 +23,8 @@
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="196" y="240" width="541" height="180"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1080"/>
-            <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="541" height="177"/>
+            <view key="contentView" misplaced="YES" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="541" height="180"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RZR-re-mhm">
@@ -110,12 +110,12 @@ Gw
                             <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                         </textFieldCell>
                         <connections>
-                            <binding destination="-2" name="enabled" keyPath="self.protectWithPassword" id="vru-EH-Ysc"/>
                             <binding destination="-2" name="value" keyPath="self.passwordString" id="pRR-Bv-eYv">
                                 <dictionary key="options">
                                     <bool key="NSContinuouslyUpdatesValue" value="YES"/>
                                 </dictionary>
                             </binding>
+                            <binding destination="-2" name="enabled" keyPath="self.protectWithPassword" id="vru-EH-Ysc"/>
                             <outlet property="delegate" destination="-2" id="oAF-WF-hVP"/>
                         </connections>
                     </textField>

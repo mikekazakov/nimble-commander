@@ -206,20 +206,20 @@
 		CF8BDD162147D75000F14C3E /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF8BDD342147E69F00F14C3E /* IconBuilder.h */,
+				CF8BDD332147E69F00F14C3E /* IconBuilderImpl.h */,
 				CF8BDD3B2147E8AA00F14C3E /* IconRepository.h */,
 				CF8BDD3D2147E8AA00F14C3E /* IconRepositoryImpl.h */,
 				CF8BDD3F2147E8AA00F14C3E /* QLThumbnailsCache.h */,
 				CF8BDD3E2147E8AA00F14C3E /* QLThumbnailsCacheImpl.h */,
+				CF8BDD192147D78A00F14C3E /* QLVFSThumbnailsCache.h */,
+				CF8BDD1A2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h */,
+				CF8BDD2A2147E3E200F14C3E /* VFSBundleIconsCache.h */,
+				CF8BDD292147E3E200F14C3E /* VFSBundleIconsCacheImpl.h */,
 				CF8BDD412147E8AB00F14C3E /* WorkspaceExtensionIconsCache.h */,
 				CF8BDD3C2147E8AA00F14C3E /* WorkspaceExtensionIconsCacheImpl.h */,
 				CF8BDD422147E8AB00F14C3E /* WorkspaceIconsCache.h */,
 				CF8BDD402147E8AB00F14C3E /* WorkspaceIconsCacheImpl.h */,
-				CF8BDD342147E69F00F14C3E /* IconBuilder.h */,
-				CF8BDD332147E69F00F14C3E /* IconBuilderImpl.h */,
-				CF8BDD2A2147E3E200F14C3E /* VFSBundleIconsCache.h */,
-				CF8BDD292147E3E200F14C3E /* VFSBundleIconsCacheImpl.h */,
-				CF8BDD192147D78A00F14C3E /* QLVFSThumbnailsCache.h */,
-				CF8BDD1A2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h */,
 			);
 			name = Headers;
 			sourceTree = "<group>";

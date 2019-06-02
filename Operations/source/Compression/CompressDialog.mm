@@ -2,6 +2,7 @@
 #include "CompressDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include <Operations/FilenameTextControl.h>
 
 @interface NCOpsCompressDialog ()
 @property (weak) IBOutlet NSButton *compressButton;
@@ -23,6 +24,8 @@
     std::string m_InitialDestination;
     std::string m_FinalDestination;
     std::string m_FinalPassword;
+    std::shared_ptr<nc::ops::DirectoryPathAutoCompetion> m_AutoCompletion;
+    NCFilepathAutoCompletionDelegate *m_AutoCompletionDelegate;
 }
 
 @synthesize destination = m_FinalDestination;
@@ -40,6 +43,11 @@
         self.protectWithPassword = false;
         self.destinationString = [NSString stringWithUTF8StdString:m_InitialDestination];
         self.validInput = false;
+        m_AutoCompletion = 
+            std::make_shared<nc::ops::DirectoryPathAutoCompletionImpl>(m_DestinationHost);
+        m_AutoCompletionDelegate = [[NCFilepathAutoCompletionDelegate alloc] init];
+        m_AutoCompletionDelegate.completion = m_AutoCompletion;
+        m_AutoCompletionDelegate.isNativeVFS = m_DestinationHost->IsNativeFS();
         [self validate];
     }
     return self;
@@ -85,6 +93,18 @@
 - (IBAction)onProtectWithPassword:(id)sender
 {
     [self validate];
+}
+
+- (BOOL)control:(NSControl *)_control
+       textView:(NSTextView *)_text_view
+doCommandBySelector:(SEL)_command_selector
+{
+    if( _control == self.destinationTextField && _command_selector == @selector(complete:)) {
+        return [m_AutoCompletionDelegate control:_control
+                                 textView:_text_view
+                      doCommandBySelector:_command_selector];
+    }
+    return false;
 }
 
 @end

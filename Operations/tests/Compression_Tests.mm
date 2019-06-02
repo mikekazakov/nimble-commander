@@ -239,7 +239,7 @@ TEST_CASE(PREFIX"Long compression stats")
     operation.Start();
     operation.Wait( 5000ms );
     const auto eta = operation.Statistics().ETA( Statistics::SourceType::Bytes );
-    CHECK( double(eta->count()) / 1000000000. > 4.9 );
+    CHECK( double(eta->count()) / 1000000000. > 4.0 );
     
     operation.Pause();
     REQUIRE( operation.State() == OperationState::Paused );

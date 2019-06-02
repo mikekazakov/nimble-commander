@@ -1,4 +1,4 @@
-HEADER_SEARCH_PATHS = $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../RoutedIO/include $(PROJECT_DIR)/../3rd_Party/libarchive/include $(PROJECT_DIR)/../3rd_Party/boost/include $(HOME)
+HEADER_SEARCH_PATHS = $(PROJECT_DIR)/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../RoutedIO/include $(PROJECT_DIR)/../3rd_Party/libarchive/include $(PROJECT_DIR)/../3rd_Party/boost/include $(HOME)
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a
 
 LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/libarchive/built $(PROJECT_DIR)/../3rd_Party/boost/built $(PROJECT_DIR)/../3rd_Party/OpenSSL/built

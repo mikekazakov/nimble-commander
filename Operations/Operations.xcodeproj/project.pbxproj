@@ -15,7 +15,11 @@
 		CF2C100A229F16E400A5359D /* CompressDialog.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF2C1007229F16E400A5359D /* CompressDialog.xib */; };
 		CF2C100C229F1B9C00A5359D /* CompressDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2C100B229F1B9B00A5359D /* CompressDialog.h */; };
 		CF2C101A22A0731500A5359D /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF2C101822A0731500A5359D /* Tests.cpp */; };
-		CF2C101C22A0741000A5359D /* Compression_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B951EE252F200F567C4 /* Compression_Tests.mm */; };
+		CF2C102022A2F00F00A5359D /* FilenameTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2C101E22A2F00F00A5359D /* FilenameTextControl.h */; };
+		CF2C102122A2F00F00A5359D /* FilenameTextControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C101F22A2F00F00A5359D /* FilenameTextControl.mm */; };
+		CF2C102322A2F02E00A5359D /* FilenameTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF2C102222A2F02E00A5359D /* FilenameTextControl.h */; };
+		CF2C102622A4116F00A5359D /* DirectoryPathAutoCompetion_IT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */; };
+		CF2C102722A4128500A5359D /* Compression_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B951EE252F200F567C4 /* Compression_Tests.mm */; };
 		CF36DBE91F6BF3FB004A018E /* Archive_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */; };
 		CF4BCEE91F1D9CAA005F8414 /* CopyingJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */; };
 		CF4BCEEA1F1D9CAA005F8414 /* CopyingJob.h in Headers */ = {isa = PBXBuildFile; fileRef = CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */; };
@@ -202,6 +206,10 @@
 		CF2C101822A0731500A5359D /* Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tests.cpp; sourceTree = "<group>"; };
 		CF2C101922A0731500A5359D /* Tests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tests.h; sourceTree = "<group>"; };
 		CF2C101B22A073AF00A5359D /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = tests.xcconfig; path = config/tests.xcconfig; sourceTree = "<group>"; };
+		CF2C101E22A2F00F00A5359D /* FilenameTextControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextControl.h; path = source/FilenameTextControl.h; sourceTree = "<group>"; };
+		CF2C101F22A2F00F00A5359D /* FilenameTextControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextControl.mm; path = source/FilenameTextControl.mm; sourceTree = "<group>"; };
+		CF2C102222A2F02E00A5359D /* FilenameTextControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextControl.h; path = include/Operations/FilenameTextControl.h; sourceTree = "<group>"; };
+		CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DirectoryPathAutoCompetion_IT.mm; sourceTree = "<group>"; };
 		CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Archive_Tests.mm; path = tests/Archive_Tests.mm; sourceTree = SOURCE_ROOT; };
 		CF4BCEE41F1D9CAA005F8414 /* CopyingJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CopyingJob.cpp; path = source/Copying/CopyingJob.cpp; sourceTree = "<group>"; };
 		CF4BCEE51F1D9CAA005F8414 /* CopyingJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CopyingJob.h; path = source/Copying/CopyingJob.h; sourceTree = "<group>"; };
@@ -406,6 +414,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF2C101D22A2EFED00A5359D /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CF2C101E22A2F00F00A5359D /* FilenameTextControl.h */,
+				CF2C101F22A2F00F00A5359D /* FilenameTextControl.mm */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		CF4BCEE21F1D9C9A005F8414 /* Copying */ = {
 			isa = PBXGroup;
 			children = (
@@ -629,8 +646,6 @@
 		CFF53B3C1EDD197300F567C4 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF2C101822A0731500A5359D /* Tests.cpp */,
-				CF2C101922A0731500A5359D /* Tests.h */,
 				CF36DBE71F6BF3C7004A018E /* Archive_Tests.mm */,
 				CFC4F9D51F14F9FE0000B3EE /* AttrsChanging_Tests.mm */,
 				CFF53B831EE13AC700F567C4 /* BasicOperationsSemantics_Tests.mm */,
@@ -639,7 +654,10 @@
 				CFB44F2A1F3839FB00E7555E /* Copying_Tests.mm */,
 				CFC4F9211F09DFD80000B3EE /* Deletion_Tests.mm */,
 				CFC4F90C1F0628CC0000B3EE /* DirectoryCreations_Tests.mm */,
+				CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */,
 				CFC4F9981F0F271E0000B3EE /* Linkage_Tests.mm */,
+				CF2C101822A0731500A5359D /* Tests.cpp */,
+				CF2C101922A0731500A5359D /* Tests.h */,
 			);
 			name = Tests;
 			path = tests;
@@ -661,6 +679,7 @@
 		CFF53B8A1EE24F1B00F567C4 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF2C102222A2F02E00A5359D /* FilenameTextControl.h */,
 				CFC4F9C41F11D5A10000B3EE /* AlterSymlinkDialog.h */,
 				CF4BCEF11F1DA5AF005F8414 /* AttrsChanging.h */,
 				CF4BCEF21F1DA5AF005F8414 /* AttrsChangingDialog.h */,
@@ -694,6 +713,7 @@
 			children = (
 				CFC4F90E1F0745170000B3EE /* Base */,
 				CFC4F9611F0CC6550000B3EE /* Operations */,
+				CF2C101D22A2EFED00A5359D /* Views */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -737,6 +757,7 @@
 				CFC4F8D31EFA17070000B3EE /* Internal.h in Headers */,
 				CF2C1008229F16E400A5359D /* CompressDialog.h in Headers */,
 				CFC4F9811F0DEC280000B3EE /* BatchRenamingRangeSelectionPopover.h in Headers */,
+				CF2C102022A2F00F00A5359D /* FilenameTextControl.h in Headers */,
 				CF4BCEF71F1DA5AF005F8414 /* Copying.h in Headers */,
 				CFC4F98E1F0F22850000B3EE /* LinkageJob.h in Headers */,
 				CFC4F8D01EFA07F00000B3EE /* PoolViewController.h in Headers */,
@@ -754,6 +775,7 @@
 				CFC4F9201F09DCC80000B3EE /* Options.h in Headers */,
 				CFC4F9571F0CB0260000B3EE /* DirectoryCreationDialog.h in Headers */,
 				CFC4F8E91F00E5D30000B3EE /* HaltReasonDialog.h in Headers */,
+				CF2C102322A2F02E00A5359D /* FilenameTextControl.h in Headers */,
 				CFC4F95D1F0CB07A0000B3EE /* DeletionDialog.h in Headers */,
 				CF7084D81EF7CC770072F0F6 /* Pool.h in Headers */,
 				CFC4F9D41F14C4030000B3EE /* AttrsChangingJob.h in Headers */,
@@ -939,8 +961,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF2C101C22A0741000A5359D /* Compression_Tests.mm in Sources */,
 				CF2C101A22A0731500A5359D /* Tests.cpp in Sources */,
+				CF2C102622A4116F00A5359D /* DirectoryPathAutoCompetion_IT.mm in Sources */,
+				CF2C102722A4128500A5359D /* Compression_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -985,6 +1008,7 @@
 				CFC4F98C1F0F22850000B3EE /* Linkage.mm in Sources */,
 				CF4BCEEB1F1D9CAA005F8414 /* SourceItems.cpp in Sources */,
 				CF4BCEE91F1D9CAA005F8414 /* CopyingJob.cpp in Sources */,
+				CF2C102122A2F00F00A5359D /* FilenameTextControl.mm in Sources */,
 				CFC4F91D1F09D9740000B3EE /* DeletionJob.cpp in Sources */,
 				CFC4F8C81EFA05B00000B3EE /* PoolView.mm in Sources */,
 				CFC4F98D1F0F22850000B3EE /* LinkageJob.cpp in Sources */,

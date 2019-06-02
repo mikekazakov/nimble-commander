@@ -37,3 +37,6 @@ $BINARY_PATH
 
 build_target ViewerUT
 $BINARY_PATH
+
+build_target OperationsIT
+$BINARY_PATH

@@ -40,8 +40,6 @@
 		CFB0F238215A07780088C18E /* FileMask.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB0F237215A07770088C18E /* FileMask.cpp */; };
 		CFB4B68E219944470097E4B4 /* libHabanero.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA948E1F453DF30035E606 /* libHabanero.dylib */; };
 		CFB4B68F219944680097E4B4 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64EA1F62721500BF986E /* AppKit.framework */; };
-		CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */; };
-		CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */; };
 		CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */; };
 		CFC546332136DBE300D288A4 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94631F453CB60035E606 /* libUtility.dylib */; };
 		CFD79ABA21FE1F3B0043A26D /* CocoaAppearanceManager.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79AB921FE1F3B0043A26D /* CocoaAppearanceManager.h */; };
@@ -177,8 +175,6 @@
 		CFB0F235215A076F0088C18E /* FileMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FileMask.h; path = include/Utility/FileMask.h; sourceTree = "<group>"; };
 		CFB0F237215A07770088C18E /* FileMask.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask.cpp; path = source/FileMask.cpp; sourceTree = "<group>"; };
 		CFB0F239215A07830088C18E /* FileMask_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileMask_UT.cpp; path = tests/FileMask_UT.cpp; sourceTree = "<group>"; };
-		CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextControl.h; path = include/Utility/FilenameTextControl.h; sourceTree = "<group>"; };
-		CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextControl.mm; path = source/FilenameTextControl.mm; sourceTree = "<group>"; };
 		CFC4F9711F0DEA3D0000B3EE /* SimpleComboBoxPersistentDataSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleComboBoxPersistentDataSource.h; path = include/Utility/SimpleComboBoxPersistentDataSource.h; sourceTree = "<group>"; };
 		CFC4F9731F0DEA4E0000B3EE /* SimpleComboBoxPersistentDataSource.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = SimpleComboBoxPersistentDataSource.mm; path = source/SimpleComboBoxPersistentDataSource.mm; sourceTree = "<group>"; };
 		CFC546272136DAC800D288A4 /* UtilityUT */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UtilityUT; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -325,7 +321,6 @@
 				CF960E171C992F2C001D8B02 /* Encodings.h */,
 				CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */,
 				CFB0F235215A076F0088C18E /* FileMask.h */,
-				CFBE39C11FC27F710027FC0D /* FilenameTextControl.h */,
 				CF3847272010756800BAB3BE /* FilenameTextNavigation.h */,
 				CFD62BD51C9A6B4B0021EE7F /* FontCache.h */,
 				CFD62BD91C9A6BE30021EE7F /* FontExtras.h */,
@@ -377,7 +372,6 @@
 				CF960E241C992F35001D8B02 /* EncodingsAdditions.mm */,
 				CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */,
 				CFB0F237215A07770088C18E /* FileMask.cpp */,
-				CFBE39C31FC27F7B0027FC0D /* FilenameTextControl.mm */,
 				CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */,
 				CFD62BD71C9A6B630021EE7F /* FontCache.cpp */,
 				CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */,
@@ -442,7 +436,6 @@
 				CFB0F236215A076F0088C18E /* FileMask.h in Headers */,
 				CF29FC602155D9A20040FF19 /* AdaptiveDateFormatting.h in Headers */,
 				CF26DE2A21D3EFEE003F0E93 /* TemporaryFileStorageImpl.h in Headers */,
-				CFBE39C21FC27F710027FC0D /* FilenameTextControl.h in Headers */,
 				CFD79ABA21FE1F3B0043A26D /* CocoaAppearanceManager.h in Headers */,
 				CF308F11213781EE00915730 /* UnitTests_main.h in Headers */,
 				CF308F2D213ABFAA00915730 /* BriefOnDiskStorage.h in Headers */,
@@ -553,7 +546,6 @@
 				CFFA94691F453CC00035E606 /* ButtonWithTextColor.mm in Sources */,
 				CF24E1F62288AA0500C166FA /* ActionShortcut.mm in Sources */,
 				CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */,
-				CFBE39C41FC27F7B0027FC0D /* FilenameTextControl.mm in Sources */,
 				CFFA94751F453CC00035E606 /* FunctionKeysPass.mm in Sources */,
 				CFD79ABC21FE1F480043A26D /* CocoaAppearanceManager.mm in Sources */,
 				CFFA947C1F453CC00035E606 /* NSTimer+Tolerance.mm in Sources */,

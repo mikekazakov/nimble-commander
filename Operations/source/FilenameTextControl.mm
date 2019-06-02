@@ -128,7 +128,7 @@ doCommandBySelector:(SEL)_command_selector
         [m_Menu popUpMenuPositioningItem:nil
                               atLocation:NSMakePoint(_control.frame.origin.x,
                                                      _control.frame.origin.y - 10)
-                                  inView:_control.window.contentView];
+                                  inView:_control.superview];
         return true;
     }    
 }

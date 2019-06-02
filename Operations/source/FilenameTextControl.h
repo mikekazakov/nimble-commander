@@ -40,10 +40,9 @@ private:
 @interface NCFilenameTextCell : NSTextFieldCell
 @end
 
-// Either set this object as a delegate or forward @selector(insertTab:) into this delegate
+// Either set this object as a delegate or forward @selector(complete:) into this delegate
 @interface NCFilepathAutoCompletionDelegate : NSObject<NSTextFieldDelegate>
 
-//@property (nonatomic) VFSHostWeakPtr vfs;
 @property (nonatomic) std::shared_ptr<nc::ops::DirectoryPathAutoCompetion> completion;
 @property (nonatomic) bool isNativeVFS;
 

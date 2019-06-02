@@ -11,6 +11,7 @@
                 <outlet property="cancelButton" destination="svN-iq-mOy" id="rP7-hn-4le"/>
                 <outlet property="compressButton" destination="RZR-re-mhm" id="SO4-5v-77p"/>
                 <outlet property="destinationTextField" destination="Xkn-9n-JfE" id="pf3-gg-vrV"/>
+                <outlet property="destinationTitleTextField" destination="sfe-25-dPf" id="OmU-cI-DdW"/>
                 <outlet property="passwordTextField" destination="qUL-dQ-JyV" id="Q7n-Vg-U6x"/>
                 <outlet property="protectWithPasswordCheckbox" destination="4ep-eG-eMc" id="rMD-dK-kd6"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="gIp-Ho-8D9"/>

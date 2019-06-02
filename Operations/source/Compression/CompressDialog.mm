@@ -10,6 +10,7 @@
 @property (weak) IBOutlet NSButton *protectWithPasswordCheckbox;
 @property (weak) IBOutlet NSSecureTextField *passwordTextField;
 @property (weak) IBOutlet NSTextField *destinationTextField;
+@property (weak) IBOutlet NSTextField *destinationTitleTextField;
 @property () bool protectWithPassword;
 @property () bool validInput;
 @property () NSString *destinationString;
@@ -56,6 +57,17 @@
 - (void)windowDidLoad
 {
     [super windowDidLoad];
+    const auto amount = (int)m_SourceItems.size();
+    if( amount > 1 )
+        self.destinationTitleTextField.stringValue =
+        [NSString stringWithFormat:NSLocalizedString(@"Compress %@ items to:",
+                                                     "Compress files sheet prompt, compressing many files"),
+         [NSNumber numberWithInt:amount]];
+    else
+        self.destinationTitleTextField.stringValue =
+        [NSString stringWithFormat:NSLocalizedString(@"Compress \u201c%@\u201d to:",
+                                                     "Compress files sheet prompt, compressing single file"),
+         m_SourceItems.front().FilenameNS()];
 }
 
 - (void)validate

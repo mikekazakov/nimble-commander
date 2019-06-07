@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <stdint.h>
@@ -7,8 +7,8 @@
 #include <memory>
 
 namespace nc::utility {
-    class NativeFSManager;
-}
+
+class NativeFSManager;
 
 class FSEventsDirUpdate
 {
@@ -33,3 +33,5 @@ private:
     struct Impl;
     std::unique_ptr<Impl>   me;
 };
+
+}

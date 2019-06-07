@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileOverwritesStorage.h"
 #include <sys/stat.h>
 #include <unistd.h>
@@ -9,6 +9,7 @@
 
 namespace nc::config {
 
+using utility::FSEventsDirUpdate;
 static std::optional<std::string> Load(const std::string &_filepath);
 static time_t ModificationTime(const std::string &_filepath);
 static bool AtomicallyWriteToFile(const std::string &_file_pathname, std::string_view _data);

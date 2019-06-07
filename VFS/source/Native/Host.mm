@@ -457,13 +457,15 @@ bool NativeHost::IsDirChangeObservingAvailable(const char *_path)
 HostDirObservationTicket NativeHost::DirChangeObserve(const char *_path,
                                                       std::function<void()> _handler)
 {
-    uint64_t t = FSEventsDirUpdate::Instance().AddWatchPath(_path, std::move(_handler));
+    auto &inst = nc::utility::FSEventsDirUpdate::Instance();
+    uint64_t t = inst.AddWatchPath(_path, std::move(_handler));
     return t ? HostDirObservationTicket(t, shared_from_this()) : HostDirObservationTicket();
 }
 
 void NativeHost::StopDirChangeObserving(unsigned long _ticket)
 {
-    FSEventsDirUpdate::Instance().RemoveWatchPathWithTicket(_ticket);
+    auto &inst = nc::utility::FSEventsDirUpdate::Instance();    
+    inst.RemoveWatchPathWithTicket(_ticket);
 }
 
 int NativeHost::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)

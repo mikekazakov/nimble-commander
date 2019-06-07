@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FSEventsDirUpdate.h>
 #include <DiskArbitration/DiskArbitration.h>
 #include <CoreServices/CoreServices.h>
@@ -8,6 +8,8 @@
 #include <Utility/StringExtras.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/spinlock.h>
+
+namespace nc::utility {
 
 using namespace std;
 
@@ -236,7 +238,7 @@ void FSEventsDirUpdate::Impl::RemoveWatchPathWithTicket(uint64_t _ticket)
     
     for( auto i = begin(m_Watches), e = end(m_Watches); i != e; ++i ) {
         auto &watch = *(i->second);
-        for( auto h = begin(watch.handlers), he = begin(watch.handlers); h != he; ++h )
+        for( auto h = begin(watch.handlers), he = end(watch.handlers); h != he; ++h )
             if( h->first == _ticket ) {
                 unordered_erase(watch.handlers, h);
                 if( watch.handlers.empty() ) {
@@ -268,4 +270,6 @@ void FSEventsDirUpdate::Impl::OnVolumeDidUnmount(const string &_on_path)
                 h.second();
         }
     }
+}
+
 }

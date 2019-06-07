@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryNativeFileChangesSentinel.h"
 #include <Habanero/algo.h>
 #include <Habanero/Hash.h>
@@ -49,7 +49,7 @@ bool TemporaryNativeFileChangesSentinel::WatchFile(const std::string& _path,
         return false;
 
     auto current = std::make_shared<Meta>();
-    auto &dir_update = FSEventsDirUpdate::Instance();
+    auto &dir_update = nc::utility::FSEventsDirUpdate::Instance();
     const auto path = boost::filesystem::path(_path).parent_path();
     uint64_t watch_ticket = dir_update.AddWatchPath( path.c_str(), [current]{
         TemporaryNativeFileChangesSentinel::Instance().FSEventCallback(current);
@@ -86,16 +86,14 @@ void TemporaryNativeFileChangesSentinel::ScheduleItemDrop( const std::shared_ptr
 
 bool TemporaryNativeFileChangesSentinel::StopFileWatch( const std::string& _path )
 {
-//    cout << "stopping file watch: " << _path << endl;
-
+    auto &dir_update = nc::utility::FSEventsDirUpdate::Instance();
     LOCK_GUARD(m_WatchesLock) {
         auto it = find_if(begin(m_Watches), end(m_Watches), [&](const auto &_i){ return _i->path == _path; });
         if( it != end(m_Watches) ) {
             auto meta = *it;
-            FSEventsDirUpdate::Instance().RemoveWatchPathWithTicket( meta->fswatch_ticket );
+            dir_update.RemoveWatchPathWithTicket( meta->fswatch_ticket );
             meta->fswatch_ticket = 0;
             m_Watches.erase(it);
-//            cout << "dropped file watch: " << _path << endl;
         }
     }
     
@@ -112,8 +110,6 @@ void TemporaryNativeFileChangesSentinel::FSEventCallback( std::shared_ptr<Meta> 
     _meta->checking_now = true;
     
     dispatch_to_background_after( _meta->check_delay, [=]{ BackgroundItemCheck(_meta); } );
-    
-//    cout << "fsevent on " << _meta->path << endl;
 }
 
 void TemporaryNativeFileChangesSentinel::BackgroundItemCheck( std::shared_ptr<Meta> _meta )

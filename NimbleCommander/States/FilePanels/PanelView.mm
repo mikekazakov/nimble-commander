@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelView.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
@@ -831,6 +831,7 @@ struct StateStorage
   
     m_RenamingEditor = [[NCPanelViewFieldEditor alloc] initWithItem:item];
     __weak PanelView *weak_self = self;
+    __weak NSResponder *current_responder = self.window.firstResponder;
     m_RenamingEditor.onTextEntered = ^(const std::string &_new_filename){
         if( auto sself = weak_self ) {
             if( !sself->m_RenamingEditor )
@@ -842,16 +843,13 @@ struct StateStorage
     };
     m_RenamingEditor.onEditingFinished = ^{
         if( auto sself = weak_self ) {
+            [sself.window makeFirstResponder:current_responder];            
             [sself->m_RenamingEditor removeFromSuperview];
             sself->m_RenamingEditor = nil;
-            
-            if( sself.window.firstResponder == nil || sself.window.firstResponder == sself.window )
-                dispatch_to_main_queue([=]{
-                    [sself.window makeFirstResponder:sself];
-                });
         }
     };
-
+    m_RenamingEditor.editor.nextKeyView = self;
+    
     [m_ItemsView setupFieldEditor:m_RenamingEditor forItemAtIndex:cursor_pos];
     [self.window makeFirstResponder:m_RenamingEditor];
 }
@@ -878,9 +876,12 @@ struct StateStorage
 - (void) dataUpdated
 {
     assert( dispatch_is_main_queue() );
-    if( m_RenamingEditor )
-        if( !self.item || m_RenamingEditor.originalItem.Filename() != self.item.Filename() )
+    if( m_RenamingEditor ) {
+        auto focused = self.item; 
+        if( !focused || m_RenamingEditor.originalItem.Filename() != focused.Filename() ) {
             [self discardFieldEditor];
+        }
+    }
     
     [m_ItemsView dataChanged];
     [m_ItemsView setCursorPosition:m_CursorPos];

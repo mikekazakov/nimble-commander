@@ -958,8 +958,7 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
         return false;
     
     if( machtime() > m_DelayedSelection.request_end ) {
-        m_DelayedSelection.filename.clear();
-        m_DelayedSelection.done = nullptr;
+        [self clearFocusingRequest];
         return false;
     }
     
@@ -980,6 +979,10 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
         if( done )
             done();
     }
+    
+    // focus requests are one-shot
+    [self clearFocusingRequest];  
+    
     return true;
 }
 

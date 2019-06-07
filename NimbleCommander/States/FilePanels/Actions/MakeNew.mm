@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MakeNew.h"
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"
@@ -88,9 +88,8 @@ static void ScheduleRenaming( const std::string& _filename, PanelController *_pa
     req.filename = _filename;
     req.timeout = 2s;
     req.done = [=]{
-        dispatch_to_main_queue([weak_panel]{
-            [((PanelController*)weak_panel).view startFieldEditorRenaming];
-        });
+        [((PanelController*)weak_panel).view discardFieldEditor];
+        [((PanelController*)weak_panel).view startFieldEditorRenaming];
     };
     [_panel scheduleDelayedFocusing:req];
 }

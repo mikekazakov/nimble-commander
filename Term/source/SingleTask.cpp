@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
 
@@ -129,7 +129,7 @@ void SingleTask::Launch(const char *_full_binary_path, const char *_params, int 
         std::vector<std::string> args = SplitArgs(_params);
         char **argvs = (char**) malloc(sizeof(char*) * (args.size() + 2));
         argvs[0] = strdup(img_name);
-        for(int i = 0; i < args.size(); ++i)
+        for(size_t i = 0; i < args.size(); ++i)
             argvs[i+1] = strdup(args[i].c_str());
         argvs[args.size()+1] = NULL;
         

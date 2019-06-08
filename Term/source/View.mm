@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontCache.h>
 #include <Utility/FontExtras.h>
@@ -568,7 +568,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     }
 }
 
-- (void)copy:(id)sender
+- (void)copy:(id)[[maybe_unused]]_sender
 {
     if(!m_HasSelection)
         return;
@@ -588,7 +588,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     [pasteBoard setString:result forType:NSStringPboardType];
 }
 
-- (IBAction)paste:(id)sender
+- (IBAction)paste:(id)[[maybe_unused]]_sender
 {    
     NSPasteboard *paste_board = [NSPasteboard generalPasteboard];
     NSString *best_type = [paste_board availableTypeFromArray:[NSArray arrayWithObject:NSStringPboardType]];
@@ -601,7 +601,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     m_Parser->PushRawTaskInput(text);
 }
 
-- (void)selectAll:(id)sender
+- (void)selectAll:(id)[[maybe_unused]]_sender
 {
     m_HasSelection = true;
     m_SelStart.y = -m_Screen->Buffer().BackScreenLines();
@@ -611,7 +611,7 @@ static const auto g_ClearCGColor = NSColor.clearColor.CGColor;
     [self setNeedsDisplay];
 }
 
-- (void)deselectAll:(id)sender
+- (void)deselectAll:(id)[[maybe_unused]]_sender
 {
     m_HasSelection = false;
     [self setNeedsDisplay];

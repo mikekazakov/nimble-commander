@@ -69,7 +69,6 @@
 		CF1ADE471F7E77AE003E9B76 /* TranslateMaps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TranslateMaps.h; path = source/TranslateMaps.h; sourceTree = SOURCE_ROOT; };
 		CF238E0B21A136E800569809 /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
 		CF238E0C21A136E800569809 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
-		CF238E0D21A1380A00569809 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = warnings.xcconfig; path = config/warnings.xcconfig; sourceTree = "<group>"; };
 		CF41350A1F846CE6007429B6 /* ShellTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShellTask.h; path = include/Term/ShellTask.h; sourceTree = "<group>"; };
 		CF41350B1F846CE6007429B6 /* SingleTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SingleTask.h; path = include/Term/SingleTask.h; sourceTree = "<group>"; };
 		CF41350C1F846CE6007429B6 /* Task.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Task.h; path = include/Term/Task.h; sourceTree = "<group>"; };
@@ -211,7 +210,6 @@
 		CF5FD9291FA1AC1200752E59 /* Config */ = {
 			isa = PBXGroup;
 			children = (
-				CF238E0D21A1380A00569809 /* warnings.xcconfig */,
 				CF238E0B21A136E800569809 /* debug.xcconfig */,
 				CF5FD92A1FA1AC5100752E59 /* default.xcconfig */,
 				CF238E0C21A136E800569809 /* release.xcconfig */,
@@ -286,7 +284,7 @@
 		CF1ADE021F7E6A2A003E9B76 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CF1ADE091F7E6A2A003E9B76 = {
@@ -301,10 +299,11 @@
 			};
 			buildConfigurationList = CF1ADE051F7E6A2A003E9B76 /* Build configuration list for PBXProject "Term" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = CF1ADE011F7E6A2A003E9B76;
 			productRefGroup = CF1ADE0B1F7E6A2A003E9B76 /* Products */;

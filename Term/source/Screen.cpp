@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include <Utility/OrthodoxMonospace.h>
 #include "Screen.h"
@@ -284,41 +284,43 @@ void Screen::ClearLine(int _ind)
     }
 }
 
-void Screen::ScrollDown(unsigned _top, unsigned _bottom, unsigned _lines)
+void Screen::ScrollDown(const unsigned _top, const unsigned _bottom, const unsigned _lines)
 {
-    if(_bottom > Height())
-        _bottom = Height();
-    if(_top >= Height())
+    const auto top = (int)_top;
+    const auto bottom = std::min((int)_bottom, Height());
+    const auto lines = (int)_lines;
+    if(top >= Height())
         return;
-    if(_top >= _bottom)
+    if(top >= bottom)
         return;
-    if(_lines<1)
+    if(lines<1)
         return;
     
-    for( int n_dst = _bottom - 1, n_src = _bottom - 1 - _lines;
-        n_dst > _top && n_src >= _top;
+    for( int n_dst = bottom - 1, n_src = bottom - 1 - lines;
+        n_dst > top && n_src >= top;
         --n_dst, --n_src) {
         CopyLineChars(n_src, n_dst);
         m_Buffer.SetLineWrapped(n_dst, m_Buffer.LineWrapped(n_src));        
     }
     
-    for(int i = _top; i < std::min(_top + _lines, _bottom); ++i)
+    for(int i = _top; i < std::min(top + lines, bottom); ++i)
         ClearLine(i);
 }
 
-void Screen::DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines)
+void Screen::DoScrollUp(const unsigned _top, const unsigned _bottom, const unsigned _lines)
 {
-    if(_bottom > Height())
-        _bottom = Height();
-    if(_top >= Height())
+    const auto top = (int)_top;
+    const auto bottom = std::min((int)_bottom, Height());
+    const auto lines = (int)_lines;        
+    if(top >= Height())
         return;
-    if(_top >= _bottom)
+    if(top >= bottom)
         return;
-    if(_lines<1)
+    if(lines<1)
         return;
 
-    if(_top == 0 && _bottom == Height() && !m_AlternateScreen)
-        for(int i = 0; i < std::min(_lines, (unsigned)Height()); ++i) {
+    if(top == 0 && bottom == Height() && !m_AlternateScreen)
+        for(int i = 0; i < std::min(lines, Height()); ++i) {
             // we're scrolling up the whole screen - let's feed scrollback with leftover
             auto line = m_Buffer.LineFromNo(i);
             assert(line);
@@ -327,8 +329,8 @@ void Screen::DoScrollUp(unsigned _top, unsigned _bottom, unsigned _lines)
                                     m_Buffer.LineWrapped(i));
         }
     
-    for( int n_src = _top + _lines, n_dst = _top;
-        n_src < _bottom && n_dst < _bottom;
+    for( int n_src = top + lines, n_dst = top;
+        n_src < bottom && n_dst < bottom;
         ++n_src, ++n_dst ) {
         CopyLineChars(n_src, n_dst);
         m_Buffer.SetLineWrapped(n_dst, m_Buffer.LineWrapped(n_src));
@@ -348,9 +350,9 @@ void Screen::RestoreScreen()
     m_Buffer.RevertToSnapshot();
 }
 
-void Screen::ResizeScreen(unsigned _new_sx, unsigned _new_sy)
+void Screen::ResizeScreen(const unsigned _new_sx, const unsigned _new_sy)
 {
-    if(Width() == _new_sx && Height() == _new_sy)
+    if(Width() == (int)_new_sx && Height() == (int)_new_sy)
         return;
     if( _new_sx == 0 || _new_sy == 0 )
         throw std::invalid_argument("Screen::ResizeScreen sizes can't be zero");

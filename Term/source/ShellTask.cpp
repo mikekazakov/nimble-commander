@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/select.h>
 #include <sys/ioctl.h>
 #include <sys/sysctl.h>
@@ -340,7 +340,7 @@ void ShellTask::WriteChildInput( std::string_view _data )
 
     LOCK_GUARD(m_MasterWriteLock) {
         ssize_t rc = write( m_MasterFD, _data.data(), _data.size() );
-        if( rc < 0 || rc !=  _data.size() )
+        if( rc < 0 || rc != (ssize_t)_data.size() )
             std::cerr << "write( m_MasterFD, _data.data(), _data.size() ) returned "
                 << rc << std::endl;
     }
@@ -528,7 +528,7 @@ std::vector<std::string> ShellTask::ChildrenList() const
         return {};
 
     std::vector<std::string> result;
-    for( int i = 0; i < proc_cnt; ++i ) {
+    for( size_t i = 0; i < proc_cnt; ++i ) {
         int pid = proc_list[i].kp_proc.p_pid;
         int ppid = proc_list[i].kp_eproc.e_ppid;
         
@@ -538,7 +538,7 @@ again:  if( ppid == m_ShellPID ) {
             result.emplace_back(ret > 0 ? name : proc_list[i].kp_proc.p_comm);
         }
         else if( ppid >= 1024 )
-            for( int j = 0; j < proc_cnt; ++j )
+            for( size_t j = 0; j < proc_cnt; ++j )
                 if( proc_list[j].kp_proc.p_pid == ppid ) {
                     ppid = proc_list[j].kp_eproc.e_ppid;
                     goto again;
@@ -561,7 +561,7 @@ int ShellTask::ShellChildPID() const
     
     int child_pid = -1;
     
-    for(int i = 0; i < proc_cnt; ++i) {
+    for(size_t i = 0; i < proc_cnt; ++i) {
         int pid = proc_list[i].kp_proc.p_pid;
         int ppid = proc_list[i].kp_eproc.e_ppid;
         if( ppid == m_ShellPID ) {

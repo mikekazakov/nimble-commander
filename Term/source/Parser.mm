@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/FontCache.h>
 #include <Utility/OrthodoxMonospace.h>
@@ -124,10 +124,10 @@ void Parser::Flush()
     m_UTF16CharsStockLen = 0;
 }
 
-int Parser::EatBytes(const unsigned char *_bytes, unsigned _sz)
+int Parser::EatBytes(const unsigned char *_bytes, const unsigned _sz)
 {
     int all_flags = 0;
-    for(int i = 0; i < _sz; ++i) {
+    for(int i = 0; i < (int)_sz; ++i) {
         int flags = 0;
         
         EatByte(_bytes[i], flags);
@@ -423,7 +423,7 @@ void Parser::CSI_X()
 
 void Parser::CSI_M()
 {
-    unsigned n = m_Params[0];
+    int n = m_Params[0];
     if(n > m_Scr.Height() - m_Scr.CursorY())
         n = m_Scr.Height() - m_Scr.CursorY();
     else if(n == 0)

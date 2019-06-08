@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Task.h"
 #include <sys/select.h>
 #include <sys/ioctl.h>
@@ -221,7 +221,7 @@ int Task::RunDetachedProcess(const std::string &_process_path,
     if( rc == 0 ) {
         char **argvs = (char**) malloc(sizeof(char*) * (_args.size() + 2));
         argvs[0] = strdup( GetImgNameFromPath(_process_path.c_str()) );
-        for(int i = 0; i < _args.size(); ++i)
+        for(size_t i = 0; i < _args.size(); ++i)
             argvs[i+1] = strdup(_args[i].c_str());
         argvs[_args.size()+1] = NULL;
         

@@ -125,7 +125,7 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     [self mouseMoved:event];
 }
 
-- (void) mouseExited:(NSEvent *)event
+- (void) mouseExited:(NSEvent *)[[maybe_unused]]_event
 {
     if( m_MouseInsideNonOverlappedArea == true ) {
         m_MouseInsideNonOverlappedArea = false;
@@ -133,7 +133,7 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
     }
 }
 
-- (void)cursorUpdate:(NSEvent *)event
+- (void)cursorUpdate:(NSEvent *)[[maybe_unused]]_event
 {
 }
 

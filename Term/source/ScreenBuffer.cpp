@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ScreenBuffer.h"
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -43,14 +43,14 @@ void ScreenBuffer::FixupOnScreenLinesIndeces(std::vector<LineMeta>::iterator _i,
 
 ScreenBuffer::RangePair<const ScreenBuffer::Space> ScreenBuffer::LineFromNo(int _line_number) const
 {
-    if( _line_number >= 0 && _line_number < m_OnScreenLines.size() ) {
+    if( _line_number >= 0 && _line_number < (int)m_OnScreenLines.size() ) {
         auto &l = m_OnScreenLines[_line_number];
         assert( l.start_index + l.line_length <= m_Height*m_Width );
         
         return { &m_OnScreenSpaces[l.start_index],
                  &m_OnScreenSpaces[l.start_index + l.line_length] };
     }
-    else if( _line_number < 0 && -_line_number <= m_BackScreenLines.size() ) {
+    else if( _line_number < 0 && -_line_number <= (int)m_BackScreenLines.size() ) {
         unsigned ind = unsigned((signed)m_BackScreenLines.size() + _line_number);
         auto &l = m_BackScreenLines[ind];
         assert( l.start_index + l.line_length <= m_BackScreenSpaces.size() );
@@ -62,14 +62,14 @@ ScreenBuffer::RangePair<const ScreenBuffer::Space> ScreenBuffer::LineFromNo(int 
 
 ScreenBuffer::RangePair<ScreenBuffer::Space> ScreenBuffer::LineFromNo(int _line_number)
 {
-    if( _line_number >= 0 && _line_number < m_OnScreenLines.size() ) {
+    if( _line_number >= 0 && _line_number < (int)m_OnScreenLines.size() ) {
         auto &l = m_OnScreenLines[_line_number];
         assert( l.start_index + l.line_length <= m_Height*m_Width );
         
         return { &m_OnScreenSpaces[l.start_index],
                  &m_OnScreenSpaces[l.start_index + l.line_length] };
     }
-    else if( _line_number < 0 && -_line_number <= m_BackScreenLines.size() ) {
+    else if( _line_number < 0 && -_line_number <= (int)m_BackScreenLines.size() ) {
         unsigned ind = unsigned((signed)m_BackScreenLines.size() + _line_number);
         auto &l = m_BackScreenLines[ind];
         assert( l.start_index + l.line_length <= m_BackScreenSpaces.size() );
@@ -82,9 +82,9 @@ ScreenBuffer::RangePair<ScreenBuffer::Space> ScreenBuffer::LineFromNo(int _line_
 
 ScreenBuffer::LineMeta *ScreenBuffer::MetaFromLineNo( int _line_number )
 {
-    if( _line_number >= 0 && _line_number < m_OnScreenLines.size() )
+    if( _line_number >= 0 && _line_number < (int)m_OnScreenLines.size() )
         return &m_OnScreenLines[_line_number];
-    else if( _line_number < 0 && -_line_number <= m_BackScreenLines.size() ) {
+    else if( _line_number < 0 && -_line_number <= (int)m_BackScreenLines.size() ) {
         unsigned ind = unsigned((signed)m_BackScreenLines.size() + _line_number);
         return &m_BackScreenLines[ind];
     }
@@ -94,9 +94,9 @@ ScreenBuffer::LineMeta *ScreenBuffer::MetaFromLineNo( int _line_number )
 
 const ScreenBuffer::LineMeta *ScreenBuffer::MetaFromLineNo( int _line_number ) const
 {
-    if( _line_number >= 0 && _line_number < m_OnScreenLines.size() )
+    if( _line_number >= 0 && _line_number < (int)m_OnScreenLines.size() )
         return &m_OnScreenLines[_line_number];
-    else if( _line_number < 0 && -_line_number <= m_BackScreenLines.size() ) {
+    else if( _line_number < 0 && -_line_number <= (int)m_BackScreenLines.size() ) {
         unsigned ind = unsigned((signed)m_BackScreenLines.size() + _line_number);
         return &m_BackScreenLines[ind];
     }
@@ -121,7 +121,7 @@ std::vector<uint32_t> ScreenBuffer::DumpUnicodeString(const ScreenPoint _begin,
         }
 
         bool any_inserted = false;
-        auto chars_len = OccupiedChars(line.first, line.second);
+        const auto chars_len = (int)OccupiedChars(line.first, line.second);
         for( ; curr.x < chars_len && curr < _end; ++curr.x ) {
             auto &sp = line.first[curr.x];
             if( sp.l == MultiCellGlyph )
@@ -171,7 +171,7 @@ std::pair<std::vector<uint16_t>, std::vector<ScreenPoint>>
         }
 
         bool any_inserted = false;
-        auto chars_len = OccupiedChars(line.first, line.second);
+        const auto chars_len = (int)OccupiedChars(line.first, line.second);
         for( ; curr.x < chars_len && curr < _end; ++curr.x ) {
             auto &sp = line.first[curr.x];
             if( sp.l == MultiCellGlyph )

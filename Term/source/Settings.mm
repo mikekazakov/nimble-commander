@@ -141,12 +141,12 @@ bool DefaultSettings::HideScrollbar() const
     return false;
 }
 
-int DefaultSettings::StartChangesObserving( std::function<void()> _callback )
+int DefaultSettings::StartChangesObserving( [[maybe_unused]] std::function<void()> _callback )
 {
     return 0;
 }
 
-void DefaultSettings::StopChangesObserving( int _ticket )
+void DefaultSettings::StopChangesObserving( [[maybe_unused]] int _ticket )
 {
 }
    

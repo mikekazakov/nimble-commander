@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Config.h"
@@ -88,7 +88,7 @@ private:
     void FireObservers(std::string_view _path) const;
     template <typename Iterator>
     void FireObservers(Iterator _first, Iterator _last) const {
-        std::for_each(_first, _last, [this](auto &_v){ FireObservers(_v); });
+        std::for_each(_first, _last, [this](auto &_v){ this->FireObservers(_v); });
     }    
     ObserversPtr FindObservers(std::string_view _path) const;
     void MarkDirty();

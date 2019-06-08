@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ObjCBridge.h"
 #include "RapidJSON.h"
 #include <Utility/ObjCpp.h>
@@ -19,7 +19,7 @@ using nc::config::Config;
     return self;    
 }
 
-- (nullable id)valueForKey:(NSString *)key
+- (nullable id)valueForKey:(NSString *)[[maybe_unused]]key
 {
     return nil;
 }

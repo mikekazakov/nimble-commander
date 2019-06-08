@@ -244,7 +244,7 @@
 		CF20CBD4215A2525006716F6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Magnum Bytes";
 				TargetAttributes = {
 					CF20CBDB215A2526006716F6 = {

@@ -712,7 +712,7 @@
 		CF69CFC71DA224E200992B84 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CF1846FD1E41C86D008B7C9F = {
@@ -731,11 +731,11 @@
 			};
 			buildConfigurationList = CF69CFCA1DA224E200992B84 /* Build configuration list for PBXProject "VFS" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = CF69CFC61DA224E200992B84;
 			productRefGroup = CF69CFD01DA224E200992B84 /* Products */;
@@ -996,6 +996,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF197BFA1FB2CE1D009F6C59 /* debug.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				ONLY_ACTIVE_ARCH = YES;
 			};
 			name = Debug;
 		};
@@ -1003,6 +1005,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF197BFC1FB2CE33009F6C59 /* release.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Release;
 		};

@@ -102,13 +102,13 @@
     [self.window makeFirstResponder:self.view.keyboardResponder];
 }
 
-- (IBAction)OnClose:(id)sender
+- (IBAction)OnClose:(id)[[maybe_unused]]_sender
 {
     [m_Controller saveFileState];
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)OnFileInternalBigViewCommand:(id)sender
+- (IBAction)OnFileInternalBigViewCommand:(id)[[maybe_unused]]_sender
 {
     [self OnClose:self];
 }

@@ -1,3 +1,4 @@
+// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "HexModeView.h"
 #include "HexModeFrame.h"
 #include "HexModeLayout.h"
@@ -133,21 +134,21 @@ static std::shared_ptr<const TextModeWorkingSet>
     m_VerticalScroller.knobProportion = scroll_pos.proportion;
 }
 
-- (void)moveUp:(id)sender
+- (void)moveUp:(id)[[maybe_unused]]_sender
 {
     m_Layout->SetOffset(m_Layout->GetOffset().WithoutSmoothOffset());
     [self doMoveUpByOneLine];
     [self scrollPositionDidChange];
 }
 
-- (void)moveDown:(id)sender
+- (void)moveDown:(id)[[maybe_unused]]_sender
 {
     m_Layout->SetOffset(m_Layout->GetOffset().WithoutSmoothOffset());
     [self doMoveDownByOneLine];
     [self scrollPositionDidChange];
 }
 
-- (void)pageDown:(nullable id)sender
+- (void)pageDown:(nullable id)[[maybe_unused]]_sender
 {
     m_Layout->SetOffset(m_Layout->GetOffset().WithoutSmoothOffset());
     int lines_to_scroll = m_Layout->RowsInView();
@@ -156,7 +157,7 @@ static std::shared_ptr<const TextModeWorkingSet>
     [self scrollPositionDidChange];
 }
 
-- (void)pageUp:(nullable id)sender
+- (void)pageUp:(nullable id)[[maybe_unused]]_sender
 {
     m_Layout->SetOffset(m_Layout->GetOffset().WithoutSmoothOffset());
     int lines_to_scroll = m_Layout->RowsInView();

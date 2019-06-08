@@ -13,7 +13,7 @@ namespace nc::viewer {
     class History;
 };
 namespace nc::utility {
-    class ActionShortcut;
+    struct ActionShortcut;
 }
 
 

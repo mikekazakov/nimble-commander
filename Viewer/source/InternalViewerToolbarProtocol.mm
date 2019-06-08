@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "InternalViewerToolbarProtocol.h"
 #include <Utility/ObjCpp.h>
 
@@ -25,7 +25,10 @@
     [super setView:view];
 }
 
--(void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+-(void)observeValueForKeyPath:(NSString *)[[maybe_unused]]keyPath
+                     ofObject:(id)object
+                       change:(NSDictionary *)[[maybe_unused]]change
+                      context:(void *)[[maybe_unused]]context
 {
     static const auto magic_padding_number = 6;
     if( object == self.view )
@@ -57,6 +60,6 @@
 
 @implementation InternalViewerToolbarDummyOwner
 
-- (IBAction)onInternalViewerToolbarSettings:(id)sender{}
+- (IBAction)onInternalViewerToolbarSettings:(id)[[maybe_unused]]_sender{}
 
 @end

@@ -12,7 +12,7 @@ using namespace std::literals;
 @interface InternalViewerWindow : NSWindow
 @end
 @implementation InternalViewerWindow
-- (void)cancelOperation:(id)sender
+- (void)cancelOperation:(id)[[maybe_unused]]_sender
 {
     [self close];
 }
@@ -114,7 +114,7 @@ using namespace std::literals;
     [self showWindow:self];
 }
 
-- (void)windowWillClose:(NSNotification *)notification
+- (void)windowWillClose:(NSNotification *)[[maybe_unused]]_notification
 {
     [m_Controller saveFileState];
     self.window.delegate = nil;
@@ -137,7 +137,7 @@ using namespace std::literals;
                                             preferredEdge:NSMaxYEdge];
 }
 
-- (IBAction)OnFileInternalBigViewCommand:(id)sender
+- (IBAction)OnFileInternalBigViewCommand:(id)[[maybe_unused]]_sender
 {
     [self close];
 }

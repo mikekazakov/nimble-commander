@@ -438,7 +438,7 @@ using namespace nc::viewer;
     [self setNeedsDisplay];
 }
 
- - (void)copy:(id)sender
+ - (void)copy:(id)[[maybe_unused]]_sender
 {
     if( !m_Data )
         return;
@@ -453,7 +453,7 @@ using namespace nc::viewer;
     }
 }
 
-- (void)selectAll:(id)sender
+- (void)selectAll:(id)[[maybe_unused]]_sender
 {
     if( !m_Data )
         return;
@@ -461,7 +461,7 @@ using namespace nc::viewer;
     self.selectionInFile = CFRangeMake(0, m_File->FileSize());
 }
 
-- (void)deselectAll:(id)sender
+- (void)deselectAll:(id)[[maybe_unused]]_sender
 {
     self.selectionInFile = CFRangeMake(-1, 0);
 }
@@ -477,21 +477,21 @@ using namespace nc::viewer;
 
 -(void)setVerticalPositionInBytesFromImpl:(int64_t)_position
 {
-    if( _position != m_VerticalPositionInBytes ) {
+    if( _position != (int64_t)m_VerticalPositionInBytes ) {
         [self willChangeValueForKey:@"verticalPositionInBytes"];
         m_VerticalPositionInBytes = _position;
         [self didChangeValueForKey:@"verticalPositionInBytes"];
     }
 }
 
-- (int) textModeView:(NCViewerTextModeView*)_view
+- (int) textModeView:(NCViewerTextModeView*)[[maybe_unused]]_view
 requestsSyncBackendWindowMovementAt:(int64_t)_position
 {
     return [self moveBackendWindowSyncAt:_position
                               notifyView:false];
 }
 
-- (int) hexModeView:(NCViewerHexModeView*)_view
+- (int) hexModeView:(NCViewerHexModeView*)[[maybe_unused]]_view
 requestsSyncBackendWindowMovementAt:(int64_t)_position
 {
     return [self moveBackendWindowSyncAt:_position
@@ -512,7 +512,7 @@ requestsSyncBackendWindowMovementAt:(int64_t)_position
     return rc;
 }
 
-- (void) textModeView:(NCViewerTextModeView*)_view
+- (void) textModeView:(NCViewerTextModeView*)[[maybe_unused]]_view
 didScrollAtGlobalBytePosition:(int64_t)_position
 withScrollerPosition:(double)_scroller_position
 {
@@ -520,7 +520,7 @@ withScrollerPosition:(double)_scroller_position
     [self setVerticalPositionPercentage:_scroller_position];
 }
 
-- (void) hexModeView:(NCViewerHexModeView*)_view
+- (void) hexModeView:(NCViewerHexModeView*)[[maybe_unused]]_view
 didScrollAtGlobalBytePosition:(int64_t)_position
  withScrollerPosition:(double)_scroller_position
 {
@@ -528,29 +528,29 @@ didScrollAtGlobalBytePosition:(int64_t)_position
     [self setVerticalPositionPercentage:_scroller_position];
 }
 
-- (CFRange) textModeViewProvideSelection:(NCViewerTextModeView*)_view
+- (CFRange) textModeViewProvideSelection:(NCViewerTextModeView*)[[maybe_unused]]_view
 {
     return [self selectionInFile];
 }
 
-- (CFRange) hexModeViewProvideSelection:(NCViewerHexModeView*)_view
+- (CFRange) hexModeViewProvideSelection:(NCViewerHexModeView*)[[maybe_unused]]_view
 {
     return [self selectionInFile];    
 }
 
-- (void) textModeView:(NCViewerTextModeView*)_view
+- (void) textModeView:(NCViewerTextModeView*)[[maybe_unused]]_view
          setSelection:(CFRange)_selection
 {
     self.selectionInFile = _selection;
 }
 
-- (void) hexModeView:(NCViewerHexModeView*)_view
+- (void) hexModeView:(NCViewerHexModeView*)[[maybe_unused]]_view
          setSelection:(CFRange)_selection
 {
     self.selectionInFile = _selection;
 }
 
-- (bool) textModeViewProvideLineWrapping:(NCViewerTextModeView*)_view
+- (bool) textModeViewProvideLineWrapping:(NCViewerTextModeView*)[[maybe_unused]]_view
 {
     return m_WrapWords;
 }

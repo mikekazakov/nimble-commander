@@ -24,10 +24,6 @@
 		CF9BF915226DD3D700AD36D9 /* HexModeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF913226DD3D300AD36D9 /* HexModeView.mm */; };
 		CF9BF91A226DE47B00AD36D9 /* HexModeFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF908226B2B0C00AD36D9 /* HexModeFrame.cpp */; };
 		CF9BF91F2275FDCB00AD36D9 /* HexModeLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF9BF91C2275FD9500AD36D9 /* HexModeLayout.cpp */; };
-		CFD79A7F21F65A980043A26D /* default.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7B21F65A980043A26D /* default.xcconfig */; };
-		CFD79A8021F65A980043A26D /* tests.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7C21F65A980043A26D /* tests.xcconfig */; };
-		CFD79A8121F65A980043A26D /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7D21F65A980043A26D /* debug.xcconfig */; };
-		CFD79A8221F65A980043A26D /* release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79A7E21F65A980043A26D /* release.xcconfig */; };
 		CFD79A8E21F65B4F0043A26D /* Theme.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8821F65B4F0043A26D /* Theme.mm */; };
 		CFD79A8F21F65B4F0043A26D /* ViewerView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8921F65B4F0043A26D /* ViewerView.mm */; };
 		CFD79A9121F65B4F0043A26D /* DataBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFD79A8B21F65B4F0043A26D /* DataBackend.cpp */; };
@@ -413,7 +409,7 @@
 		CFD79A5921F65A000043A26D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1010;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Michael G. Kazakov";
 				TargetAttributes = {
 					CFD79A6121F65A010043A26D = {
@@ -449,14 +445,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD79A8221F65A980043A26D /* release.xcconfig in Resources */,
 				CFD79B1D2205DE520043A26D /* InternalViewerToolbar.xib in Resources */,
 				CFD79B152205B8450043A26D /* NCViewerSheet.xib in Resources */,
 				CFD79B0A21FE4F430043A26D /* InternalViewerController.xib in Resources */,
-				CFD79A8021F65A980043A26D /* tests.xcconfig in Resources */,
-				CFD79A8121F65A980043A26D /* debug.xcconfig in Resources */,
 				CFD79B242205DEB30043A26D /* InternalViewerWindowController.xib in Resources */,
-				CFD79A7F21F65A980043A26D /* default.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,6 +532,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFD79A7B21F65A980043A26D /* default.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 			};
 			name = Debug;
@@ -548,6 +541,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CFD79A7B21F65A980043A26D /* default.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 			};
 			name = Release;

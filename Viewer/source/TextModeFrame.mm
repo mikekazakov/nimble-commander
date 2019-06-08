@@ -1,5 +1,5 @@
+// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeFrame.h"
-//#include <Habanero/algo.h>
 #include <cmath>
 
 namespace nc::viewer {
@@ -15,9 +15,9 @@ std::pair<int, int> TextModeFrame::WordRangeForPosition( CGPoint _position ) con
     // consider doing this split once during frame preparation and than using that
     // array of indices via binary serach - i.e. can get O(log2N) instead.
     __block int sel_start = 0, sel_end = 0;
-    const auto block = ^(NSString *word,
+    const auto block = ^([[maybe_unused]] NSString *word,
                          NSRange word_range,
-                         NSRange enclosing_range,
+                         [[maybe_unused]] NSRange enclosing_range,
                          BOOL *stop){
         if( NSLocationInRange(base_index, word_range) ) {
             sel_start = (int)word_range.location;

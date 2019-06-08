@@ -1,3 +1,4 @@
+// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TextModeView.h"
 #include "TextProcessing.h"
 #include "TextModeIndexedTextLine.h"
@@ -405,29 +406,29 @@ static double CalculateVerticalPxPositionFromScrollPosition
     }
 }
 
-- (void)moveUp:(id)sender
+- (void)moveUp:(id)[[maybe_unused]]_sender
 {
     [self doMoveUpByOneLine];
     [self scrollPositionDidChange];
 }
 
-- (void)moveDown:(id)sender
+- (void)moveDown:(id)[[maybe_unused]]_sender
 {
     [self doMoveDownByOneLine];
     [self scrollPositionDidChange];
 }
 
-- (void)moveLeft:(id)sender
+- (void)moveLeft:(id)[[maybe_unused]]_sender
 {
     [self scrollWheelHorizontal:m_FontInfo.PreciseMonospaceWidth()];
 }
 
-- (void)moveRight:(id)sender
+- (void)moveRight:(id)[[maybe_unused]]_sender
 {
     [self scrollWheelHorizontal:-m_FontInfo.PreciseMonospaceWidth()];
 }
 
-- (void)pageDown:(nullable id)sender
+- (void)pageDown:(nullable id)[[maybe_unused]]_sender
 {
     int lines_to_scroll = [self numberOfLinesFittingInView];
     while ( lines_to_scroll --> 0 )
@@ -435,7 +436,7 @@ static double CalculateVerticalPxPositionFromScrollPosition
     [self scrollPositionDidChange];
 }
 
-- (void)pageUp:(nullable id)sender
+- (void)pageUp:(nullable id)[[maybe_unused]]_sender
 {
     int lines_to_scroll = [self numberOfLinesFittingInView];
     while ( lines_to_scroll --> 0 )
@@ -776,7 +777,7 @@ static int base_index_with_existing_selection(const CFRange _existing_selection,
         return _first_mouse_hit_index;
 }
 
-- (void) handleSelectionWithMouseDragging:(NSEvent*)_event;
+- (void) handleSelectionWithMouseDragging:(NSEvent*)_event
 {
     const auto modifying_existing_selection = bool(_event.modifierFlags & NSShiftKeyMask);
     const auto first_down_view_coords = [self convertPoint:_event.locationInWindow fromView:nil];
@@ -1036,7 +1037,7 @@ static std::optional<int> FindVerticalLineToScrollToBytesOffsetWithFrame
     const auto lines_per_view = (int)std::floor(_view_size.height / line_height);
     const auto working_set_pos = _frame.WorkingSet().GlobalOffset();
     const auto working_set_len = (int64_t)_frame.WorkingSet().BytesLength();
-    const auto file_size = _backend.FileSize();
+    const auto file_size = (int64_t)_backend.FileSize();
     
     if( _global_offset >= working_set_pos &&
         _global_offset < working_set_pos + working_set_len ) {

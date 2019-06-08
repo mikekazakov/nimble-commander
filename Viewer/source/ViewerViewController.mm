@@ -376,7 +376,7 @@ static int InvertBitFlag( int _value, int _flag )
 }
 
 - (BOOL)control:(NSControl *)control
-       textView:(NSTextView *)textView
+       textView:(NSTextView *)[[maybe_unused]]_text_view
 doCommandBySelector:(SEL)commandSelector
 {
     if( control == m_SearchField && commandSelector == @selector(cancelOperation:) ) {
@@ -430,17 +430,17 @@ doCommandBySelector:(SEL)commandSelector
     return menu;
 }
 
-- (IBAction)onMainMenuPerformFindAction:(id)sender
+- (IBAction)onMainMenuPerformFindAction:(id)[[maybe_unused]]_sender
 {
     [self.view.window makeFirstResponder:m_SearchField];
 }
 
-- (IBAction)onMainMenuPerformFindNextAction:(id)sender
+- (IBAction)onMainMenuPerformFindNextAction:(id)[[maybe_unused]]_sender
 {
     [self onSearchFieldAction:self];
 }
 
-- (void)onSearchFieldAction:(id)sender
+- (void)onSearchFieldAction:(id)[[maybe_unused]]_sender
 {
     NSString *str = m_SearchField.stringValue;
     if( str.length == 0 ) {
@@ -504,7 +504,7 @@ doCommandBySelector:(SEL)commandSelector
 
 
 
-- (void)onSearchFieldMenuCaseSensitiveAction:(id)sender
+- (void)onSearchFieldMenuCaseSensitiveAction:(id)[[maybe_unused]]_sender
 {
     using nc::vfs::SearchInFile;
     using Options = SearchInFile::Options;
@@ -518,7 +518,7 @@ doCommandBySelector:(SEL)commandSelector
     m_Config->Set( g_ConfigSearchCaseSensitive, bool(options & Options::CaseSensitive) );
 }
 
-- (void)onSearchFiledMenuWholePhraseSearch:(id)sender
+- (void)onSearchFiledMenuWholePhraseSearch:(id)[[maybe_unused]]_sender
 {
     using nc::vfs::SearchInFile;
     using Options = SearchInFile::Options;
@@ -561,7 +561,7 @@ doCommandBySelector:(SEL)commandSelector
     [m_EncodingsPopUp bind:@"selectedTag" toObject:m_View withKeyPath:@"encoding" options:nil];
 }
 
-- (void)onEncodingsPopUpChanged:(id)sender
+- (void)onEncodingsPopUpChanged:(id)[[maybe_unused]]_sender
 {
     dispatch_assert_main_queue();
     [self onSearchFieldAction:self];
@@ -586,7 +586,7 @@ doCommandBySelector:(SEL)commandSelector
     [m_ModePopUp bind:@"selectedTag" toObject:m_View withKeyPath:@"mode" options:nil];
 }
 
-- (void)onModePopUpChanged:(id)sender
+- (void)onModePopUpChanged:(id)[[maybe_unused]]_sender
 {
     dispatch_assert_main_queue();
 }
@@ -613,13 +613,13 @@ doCommandBySelector:(SEL)commandSelector
                                    preferredEdge:NSMaxYEdge];
 }
 
-- (void)popoverWillShow:(NSNotification *)notification
+- (void)popoverWillShow:(NSNotification *)[[maybe_unused]]_notification
 {
     [self.goToPositionValueTextField.window setInitialFirstResponder:self.goToPositionValueTextField];
     [self.goToPositionValueTextField.window makeFirstResponder:self.goToPositionValueTextField];
 }
 
-- (IBAction)onGoToPositionActionClicked:(id)sender
+- (IBAction)onGoToPositionActionClicked:(id)[[maybe_unused]]_sender
 {
     [self.goToPositionPopover close];
     const auto string = self.goToPositionValueTextFieldValue;

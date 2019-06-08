@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <FunctionKeysPass.h>
 #include <Carbon/Carbon.h>
 #include <AppKit/AppKit.h>
@@ -18,14 +18,14 @@ FunctionalKeysPass::FunctionalKeysPass():
     [center addObserverForName:NSApplicationDidBecomeActiveNotification
                         object:nil
                          queue:nil
-                    usingBlock:^(NSNotification * _Nonnull note) {
+                    usingBlock:^(NSNotification *) {
                         if( m_Port && m_Enabled )
                             CGEventTapEnable(m_Port, true);
                     }];
     [center addObserverForName:NSApplicationDidResignActiveNotification
                         object:nil
                          queue:nil
-                    usingBlock:^(NSNotification * _Nonnull note) {
+                    usingBlock:^(NSNotification *) {
                         if( m_Port && m_Enabled )
                             CGEventTapEnable(m_Port, false);
                     }];
@@ -56,7 +56,7 @@ static CGEventRef NewFnButtonPress( CGKeyCode _vk, bool _key_down, CGEventFlags 
     return press;
 }
 
-CGEventRef FunctionalKeysPass::Callback(CGEventTapProxy _proxy,
+CGEventRef FunctionalKeysPass::Callback([[maybe_unused]] CGEventTapProxy _proxy,
                                         CGEventType _type,
                                         CGEventRef _event)
 {
@@ -104,7 +104,8 @@ CGEventRef FunctionalKeysPass::HandleRegularKeyEvents(CGEventType _type, CGEvent
     return _event;
 }
 
-CGEventRef FunctionalKeysPass::HandleControlButtons(CGEventType _type, CGEventRef _event)
+CGEventRef FunctionalKeysPass::HandleControlButtons([[maybe_unused]] CGEventType _type,
+                                                    CGEventRef _event)
 {
     // have to create a NSEvent object for every NSSystemDefined event, which is awful    
     const auto ev = [NSEvent eventWithCGEvent:_event];

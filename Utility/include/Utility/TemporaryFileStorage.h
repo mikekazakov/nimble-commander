@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -56,8 +56,8 @@ public :
 };
         
 inline TemporaryFileStorage::OpenedFile::OpenedFile(OpenedFile&& _rhs):
-    file_descriptor{_rhs.file_descriptor},
-    path{std::move(_rhs.path)}
+    path{std::move(_rhs.path)},
+    file_descriptor{_rhs.file_descriptor}    
 {
     _rhs.file_descriptor = -1;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UnitTests_main.h"
 #include "TemporaryFileStorageImpl.h"
 #include "PathManip.h"
@@ -251,9 +251,9 @@ static std::string MakeTempFilesStorage()
 static int RMRF(const std::string& _path)
 {
     auto unlink_cb = [](const char *fpath,
-                        const struct stat *sb,
+                        [[maybe_unused]] const struct stat *sb,
                         int typeflag,
-                        struct FTW *ftwbuf) {
+                        [[maybe_unused]] struct FTW *ftwbuf) {
         if( typeflag == FTW_F)
             unlink(fpath);
         else if( typeflag == FTW_D   ||

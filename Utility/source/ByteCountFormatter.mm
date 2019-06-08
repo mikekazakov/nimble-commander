@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/ByteCountFormatter.h>
 #include <Foundation/Foundation.h>
 #include <Utility/Encodings.h>
@@ -44,7 +44,6 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
             if( language == "ru" ) return @"б";
             return  @"B";
         }();
-       // NSString *b = NSLocalizedString(@"__BYTECOUNTFORMATTER_BYTE_POSTFIX", "One-letter byte postfix, for English is 'B'");
         if(b.length == 1)
             m_B = [b characterAtIndex:0];
 
@@ -52,18 +51,16 @@ ByteCountFormatter::ByteCountFormatter(bool _localized)
             if( language == "ru" ) return @" КМГТП";
             return  @" KMGTP";
         }();
-//        NSString *si = NSLocalizedString(@"__BYTECOUNTFORMATTER_SI_LETTERS_ARRAY", "SI postfixes with first symbol empty, for English is ' KMGTP'");
         if(si.length == m_SI.size())
-            for(int i = 0; i < m_SI.size(); ++i)
+            for(size_t i = 0; i < m_SI.size(); ++i)
                 m_SI[i] = [si characterAtIndex:i];
 
         m_Bytes.clear();
-//        NSString *bytes = NSLocalizedString(@"__BYTECOUNTFORMATTER_BYTES_WORD", "Bytes count postfix, for English is 'bytes'");
         NSString *bytes = [&]{
             if( language == "ru" ) return @"байт";
             return  @"bytes";
         }();
-        for(int i = 0; i < bytes.length; ++i)
+        for(NSUInteger i = 0; i < bytes.length; ++i)
             m_Bytes.emplace_back([bytes characterAtIndex:i]);
     }
 }
@@ -136,7 +133,7 @@ unsigned ByteCountFormatter::Fixed6_UTF16(uint64_t _size,
     unsigned short buf[6];
     int len = Fixed6_Impl(_size, buf);
     int i = 0;
-    for(; i < _buffer_size && i < len; ++i)
+    for(; i < (int)_buffer_size && i < len; ++i)
         _buf[i] = buf[i];
     return i;
 }
@@ -167,7 +164,7 @@ unsigned ByteCountFormatter::SpaceSeparated_UTF16(uint64_t _size,
     unsigned short buf[64];
     int len = SpaceSeparated_Impl(_size, buf);
     int i = 0;
-    for(; i < _buffer_size && i < len; ++i)
+    for(; i < (int)_buffer_size && i < len; ++i)
         _buf[i] = buf[i];
     return i;
 }
@@ -197,7 +194,7 @@ unsigned ByteCountFormatter::Adaptive_UTF16(uint64_t _size,
     unsigned short buf[6];
     int len = Adaptive6_Impl(_size, buf);
     int i = 0;
-    for(; i < _buffer_size && i < len; ++i)
+    for(; i < (int)_buffer_size && i < len; ++i)
         _buf[i] = buf[i];
     return i;
 }
@@ -228,7 +225,7 @@ unsigned ByteCountFormatter::Adaptive8_UTF16(uint64_t _size,
     unsigned short buf[8];
     int len = Adaptive8_Impl(_size, buf);
     int i = 0;
-    for(; i < _buffer_size && i < len; ++i)
+    for(; i < (int)_buffer_size && i < len; ++i)
         _buf[i] = buf[i];
     return i;
 }
@@ -330,7 +327,7 @@ int ByteCountFormatter::SpaceSeparated_Impl(uint64_t _sz, unsigned short _buf[64
     assert(len >= 0 && len < 50);
     for(int i = 0; i < len; ++i)
         _buf[i] = buf[i];
-    for(int i = 0; i < m_Bytes.size(); ++i)
+    for(int i = 0; i < (int)m_Bytes.size(); ++i)
         _buf[i + len] = m_Bytes[i];
     len += m_Bytes.size();
     return len;

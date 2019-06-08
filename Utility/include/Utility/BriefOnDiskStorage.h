@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -19,7 +19,7 @@ class BriefOnDiskStorage
 public:    
     virtual ~BriefOnDiskStorage() = default;
 
-    struct PlacementResult;    
+    class PlacementResult;    
     
     /**
      * Writes _bytes of _data to a temporary file with an unspecified name and path.

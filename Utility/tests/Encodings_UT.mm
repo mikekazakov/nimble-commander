@@ -20,7 +20,7 @@ TEST_CASE(PREFIX"InterpretUnicharsAsUTF8")
         CHECK( input_eaten == 5 );
         CHECK( output_sz == output_should_be_sz );
         CHECK( strlen((char*)output) == output_should_be_sz );
-        for(int i = 0; i < output_sz; ++i)
+        for(size_t i = 0; i < output_sz; ++i)
             CHECK(output[i] == output_should_be[i]);
     }
     
@@ -37,7 +37,7 @@ TEST_CASE(PREFIX"InterpretUnicharsAsUTF8")
         
         CHECK(input_eaten == input_ns.length);
         CHECK(output_sz == strlen(input_ns_utf8));
-        for(int i = 0; i < output_sz; ++i)
+        for(size_t i = 0; i < output_sz; ++i)
             CHECK(output[i] == (unsigned char)input_ns_utf8[i]);
     }
 }
@@ -64,7 +64,7 @@ TEST_CASE(PREFIX"InterpretUnicodeAsUTF8")
         InterpretUnicodeAsUTF8(input, input_sz, output, 128, output_sz, &input_eaten);
         CHECK(input_eaten == input_sz);
         CHECK(output_sz == strlen(input_ns_utf8));
-        for(int i = 0; i < output_sz; ++i)
+        for(size_t i = 0; i < output_sz; ++i)
             CHECK(output[i] == (unsigned char)input_ns_utf8[i]);
     }
 }

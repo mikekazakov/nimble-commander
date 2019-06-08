@@ -212,7 +212,7 @@ FontCache::Pair FontCache::DoGetBMP(uint16_t _c)
             if(r == true) // it should be true always, but for confidence...
             {
                 // check if this font is new one, or we already have this one in dictionary
-                for(int i = 1; i < m_CTFonts.size(); ++i)
+                for(int i = 1; i < (int)m_CTFonts.size(); ++i)
                 {
                     if( m_CTFonts[i] != 0 )
                     {
@@ -329,7 +329,7 @@ FontCache::Pair FontCache::DoGetNonBMP(uint32_t _c)
 
 unsigned char FontCache::InsertFont(CTFontRef _font)
 {
-    for(int i = 1; i < m_CTFonts.size(); ++i)
+    for(int i = 1; i < (int)m_CTFonts.size(); ++i)
         if( m_CTFonts[i] != 0 ) {
             if( CFEqual(m_CTFonts[i], _font) ) { // this is just the exactly one we need
                 CFRelease(_font);

@@ -490,7 +490,7 @@
 		CF960DD21C97F833001D8B02 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "MIchael Kazakov";
 				TargetAttributes = {
 					CFC546262136DAC800D288A4 = {
@@ -505,11 +505,11 @@
 			};
 			buildConfigurationList = CF960DD51C97F833001D8B02 /* Build configuration list for PBXProject "Utility" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = CF960DD11C97F833001D8B02;
 			productRefGroup = CF960DDC1C97F833001D8B02 /* Products */;
@@ -606,6 +606,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF233AF2219E7E9600693E1A /* default.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Debug;
 		};
@@ -613,6 +614,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = CF233AF2219E7E9600693E1A /* default.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Release;
 		};

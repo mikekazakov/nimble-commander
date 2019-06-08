@@ -339,7 +339,7 @@ void NativeFSManager::InsertNewVolume_Unlocked( const shared_ptr<NativeFileSyste
         m_Volumes.emplace_back(_volume);
 }
 
-void NativeFSManager::OnWillUnmount(const string &_on_path)
+void NativeFSManager::OnWillUnmount([[maybe_unused]] const string &_on_path)
 {
 }
 
@@ -545,7 +545,9 @@ void NativeFSManager::PerformUnmounting(const Info &_volume)
     }    
 }
 
-static void GenericDiskUnmountCallback( DADiskRef _disk, DADissenterRef _dissenter, void *_context )
+static void GenericDiskUnmountCallback(DADiskRef _disk,
+                                       DADissenterRef _dissenter,
+                                       [[maybe_unused]] void *_context )
 {
     if( _dissenter != nullptr )
         return;
@@ -589,7 +591,9 @@ struct APFSUnmountingContext
     NativeFSManager::Info unmounted_volume;
 };
 
-static void APFSUnmountCallback( DADiskRef _disk, DADissenterRef _dissenter, void *_context )
+static void APFSUnmountCallback([[maybe_unused]] DADiskRef _disk,
+                                DADissenterRef _dissenter,
+                                void *_context )
 {
     const auto context = std::unique_ptr<APFSUnmountingContext>{(APFSUnmountingContext*)_context};
     

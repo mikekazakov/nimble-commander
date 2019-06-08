@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <Utility/StringExtras.h>
 #include <Habanero/CFStackAllocator.h>
@@ -108,7 +108,7 @@ NSString *StringByTruncatingToWidth(NSString *str, float inWidth, ETruncationTyp
 
 - (NSString*)stringByTrimmingLeadingWhitespace
 {
-    NSInteger i = 0;
+    NSUInteger i = 0;
     static NSCharacterSet *cs = [NSCharacterSet whitespaceCharacterSet];
     
     while( i < self.length && [cs characterIsMember:[self characterAtIndex:i]] )

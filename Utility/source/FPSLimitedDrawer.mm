@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2016 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <atomic>
 #include <Habanero/mach_time.h>
 #include <Habanero/dispatch_cpp.h>
@@ -75,7 +75,7 @@ static const nanoseconds m_MaxTimeBeforeInvalidation = 1s;
         [self.view setNeedsDisplay];
 }
 
-- (void) UpdateByTimer:(NSTimer*)theTimer
+- (void) UpdateByTimer:(NSTimer*)[[maybe_unused]]theTimer
 {
     if(self.view) {
         if(m_Dirty) {

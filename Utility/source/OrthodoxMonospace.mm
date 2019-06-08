@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include "OrthodoxMonospace.h"
 
@@ -161,7 +161,7 @@ void DrawStringWithBackgroundXY(UniChar *_s,
     DrawStringWithBackground(_s, _start, _amount, _x * _cache->Width(), _y * _cache->Height(), _context, _cache, _text_color, _bk_fill_amount, _bk_color);
 }
 
-void SetParamsForUserReadableText(CGContextRef _context, FontCache *_cache)
+void SetParamsForUserReadableText(CGContextRef _context, [[maybe_unused]] FontCache *_cache)
 {
     // font settings
     CGContextSetTextDrawingMode(_context, kCGTextFill);
@@ -179,7 +179,7 @@ void SetParamsForUserReadableText(CGContextRef _context, FontCache *_cache)
     CGContextSetTextMatrix(_context, AFF);
 }
     
-void SetParamsForUserASCIIArt(CGContextRef _context, FontCache *_cache)
+void SetParamsForUserASCIIArt(CGContextRef _context, [[maybe_unused]] FontCache *_cache)
 {
     // font settings
     CGContextSetTextDrawingMode(_context, kCGTextFill);
@@ -219,9 +219,11 @@ int CalculateSymbolsSpaceForString(const uint16_t *_s, size_t _amount)
     
 // calculates maximum amount of unichars that will not exceed _symb_amount when printed
 // returns number of unichars that can be printed starting from 0 pos
-int CalculateUniCharsAmountForSymbolsFromLeft(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount)
+int CalculateUniCharsAmountForSymbolsFromLeft(const uint16_t *_s,
+                                              const size_t _unic_amount,
+                                              const size_t _symb_amount)
 {
-    int cpos = 0, i = 0, posdelta = 1;
+    size_t cpos = 0, i = 0, posdelta = 1;
     for(; i < _unic_amount; ++i, ++_s)
     {
         if(CFStringIsSurrogateHighCharacter(_s[0])) { // surrogate pair start
@@ -253,7 +255,9 @@ int CalculateUniCharsAmountForSymbolsFromLeft(const uint16_t *_s, size_t _unic_a
     
 // calculates maximum amount of unichars that will not exceed _symb_amount when printed
 // returns a pair of (Position,Amount)
-range CalculateUniCharsAmountForSymbolsFromRight(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount)
+range CalculateUniCharsAmountForSymbolsFromRight(const uint16_t *_s,
+                                                 const size_t _unic_amount,
+                                                 const size_t _symb_amount)
 {
     if(_unic_amount == 0 || _symb_amount == 0 )
         return range{0, 0};
@@ -264,22 +268,22 @@ range CalculateUniCharsAmountForSymbolsFromRight(const uint16_t *_s, size_t _uni
             uint32_t c = 0;
             if( i > 0 && CFStringIsSurrogateHighCharacter(_s[-1]) ) {
                 c = CFStringGetLongCharacterForSurrogatePair(_s[-1], _s[0]);
-                if(cpos + WCWidthMin1(c) > _symb_amount)
+                if(cpos + WCWidthMin1(c) > (int)_symb_amount)
                     return range{i+1, int(_unic_amount - i - 1)};
                 --i;
                 --_s;
             }
-            else if(cpos + WCWidthMin1(c) > _symb_amount)
+            else if(cpos + WCWidthMin1(c) > (int)_symb_amount)
                 break;
             cpos += WCWidthMin1(c);
         }
         else if(!IsUnicodeCombiningCharacter(_s[0])) {
-            if(cpos + WCWidthMin1(_s[0]) > _symb_amount)
+            if(cpos + WCWidthMin1(_s[0]) > (int)_symb_amount)
                 break;
             cpos += WCWidthMin1(_s[0]);
         }
     
-        if(cpos == _symb_amount || i == 0) break;
+        if(cpos == (int)_symb_amount || i == 0) break;
     }
 
     return range{i, int(_unic_amount - i)};
@@ -287,14 +291,15 @@ range CalculateUniCharsAmountForSymbolsFromRight(const uint16_t *_s, size_t _uni
     
 // returns a number of actual unichars in _out
 // requires that _symb_amount should be >= 3, otherwise it's meaningless
-int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const uint16_t *_s, size_t _unic_amount, size_t _symb_amount, uint16_t *_out)
+int PackUniCharsIntoFixedLengthVisualWithLeftEllipsis(const uint16_t * const _s,
+                                                      const size_t _unic_amount,
+                                                      const size_t _symb_amount,
+                                                      uint16_t * const _out)
 {
-    unsigned ell_num = 3;
-    if(_symb_amount < ell_num)
-        ell_num = (unsigned)_symb_amount;
+    const int ell_num = std::min(3, (int)_symb_amount);
     int sizenow = oms::CalculateSymbolsSpaceForString(_s, _unic_amount);
         
-    if(sizenow <= _symb_amount)
+    if(sizenow <= (int)_symb_amount)
     {
         // we're fitting pretty well in desired space
         memcpy(_out, _s, sizeof(UniChar)*_unic_amount);

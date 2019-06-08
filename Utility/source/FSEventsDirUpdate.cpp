@@ -98,12 +98,13 @@ static bool ShouldFire(string_view _watched_path,
     return false;
 }
 
-void FSEventsDirUpdate::Impl::FSEventsDirUpdateCallback(ConstFSEventStreamRef _stream_ref,
-                                                        void *_user_data,
-                                                        size_t _num,
-                                                        void *_paths,
-                                                        const FSEventStreamEventFlags _flags[],
-                                                        const FSEventStreamEventId _ids[])
+void FSEventsDirUpdate::Impl::
+    FSEventsDirUpdateCallback([[maybe_unused]] ConstFSEventStreamRef _stream_ref,
+                              void *_user_data,
+                              size_t _num,
+                              void *_paths,
+                              const FSEventStreamEventFlags _flags[],
+                              [[maybe_unused]] const FSEventStreamEventId _ids[])
 {
     const WatchData &watch = *(const WatchData *)_user_data;
     if( ShouldFire(watch.path, _num, (const char**)_paths, _flags) ) {

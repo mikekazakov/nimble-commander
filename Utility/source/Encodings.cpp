@@ -1570,7 +1570,7 @@ void InterpretUnicharsAsUTF8(const uint16_t* _input,
         if( output_sz_left > utf8_sz) {
             cur += input_delta;
             output_sz_left -= utf8_sz;
-            for(int i = 0; i < utf8_sz; ++i)
+            for(unsigned i = 0; i < utf8_sz; ++i)
                 *(output++) = utf8[i];
         }
         else // we're out of output space
@@ -1650,7 +1650,7 @@ void InterpretUnicodeAsUTF8(const uint32_t* _input,
         if( output_sz_left > utf8_sz) {
             cur++;
             output_sz_left -= utf8_sz;
-            for(int i = 0; i < utf8_sz; ++i)
+            for(unsigned i = 0; i < utf8_sz; ++i)
                 *(output++) = utf8[i];
         }
         else // we're out of output space

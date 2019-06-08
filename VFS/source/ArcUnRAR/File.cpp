@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Host.h"
 #include "Internals.h"
@@ -7,9 +7,9 @@ namespace nc::vfs::unrar {
 
 File::File(const char* _relative_path, std::shared_ptr<UnRARHost> _host):
     VFSFile(_relative_path, _host),
-    m_UnpackThread(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)),
     m_UnpackBuffer(new uint8_t[m_UnpackBufferDefaultCapacity]),
-    m_UnpackBufferCapacity(m_UnpackBufferDefaultCapacity)
+    m_UnpackBufferCapacity(m_UnpackBufferDefaultCapacity),
+    m_UnpackThread(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0))
 {
 }
 
@@ -19,7 +19,8 @@ File::~File()
     assert(m_ExtractionRunning == false);
 }
 
-int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(unsigned long _open_flags,
+               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( strlen(Path()) < 2 || Path()[0] != '/' )
         return SetLastError(VFSError::NotFound);
@@ -182,7 +183,10 @@ int File::ProcessRAR(unsigned int _msg, long _user_data, long _p1, long _p2)
 	return 0;
 }
 
-int File::ProcessRARDummy(unsigned int _msg, long _user_data, long _p1, long _p2)
+int File::ProcessRARDummy([[maybe_unused]] unsigned int _msg,
+                          [[maybe_unused]] long _user_data,
+                          [[maybe_unused]] long _p1,
+                          [[maybe_unused]] long _p2)
 {
     return 0;
 }

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -72,7 +72,7 @@ public:
     const std::string &Host() const noexcept;
     const std::string &Path() const noexcept;
     const std::string Username() const noexcept;
-    const int Port() const noexcept;
+    int Port() const noexcept;
     
     const webdav::HostConfiguration &Config() const noexcept;
     class webdav::ConnectionsPool &ConnectionsPool();

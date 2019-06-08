@@ -42,10 +42,10 @@ TestGenericMemReadOnlyFile::TestGenericMemReadOnlyFile(const char* _relative_pat
                                                      const void *_memory,
                                                      uint64_t _mem_size,
                                                      ReadParadigm _behave_as):
-    VFSFile(_relative_path, _host),
+    VFSFile(_relative_path, _host),    
+    m_Behaviour(_behave_as),
     m_Mem(_memory),
-    m_Size(_mem_size),
-    m_Behaviour(_behave_as)
+    m_Size(_mem_size)
 {
 }
 
@@ -61,13 +61,13 @@ ssize_t TestGenericMemReadOnlyFile::Read(void *_buf, size_t _size)
         return 0;
     
     // we can only deal with cache buffer now, need another branch later
-    if(m_Pos == m_Size)
+    if(m_Pos == (ssize_t)m_Size)
         return 0;
     
     size_t to_read = MIN(m_Size - m_Pos, _size);
     memcpy(_buf, (char*)m_Mem + m_Pos, to_read);
     m_Pos += to_read;
-    assert(m_Pos <= m_Size); // just a sanity check
+    assert(m_Pos <= (ssize_t)m_Size); // just a sanity check
     
     return to_read;
 }
@@ -81,7 +81,7 @@ ssize_t TestGenericMemReadOnlyFile::ReadAt(off_t _pos, void *_buf, size_t _size)
         return VFSError::InvalidCall;
     
     // we can only deal with cache buffer now, need another branch later
-    if(_pos < 0 || _pos > m_Size)
+    if(_pos < 0 || _pos > (ssize_t)m_Size)
         return VFSError::InvalidCall;
     
     ssize_t toread = MIN(m_Size - _pos, _size);
@@ -109,7 +109,7 @@ off_t TestGenericMemReadOnlyFile::Seek(off_t _off, int _basis)
     
     if(req_pos < 0)
         return VFSError::InvalidCall;
-    if(req_pos > m_Size)
+    if(req_pos > (ssize_t)m_Size)
         req_pos = m_Size;
     m_Pos = req_pos;
     
@@ -137,10 +137,11 @@ bool TestGenericMemReadOnlyFile::Eof() const
 {
     if(!IsOpened())
         return true;
-    return m_Pos == m_Size;
+    return m_Pos == (ssize_t)m_Size;
 }
 
-int TestGenericMemReadOnlyFile::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
+int TestGenericMemReadOnlyFile::Open([[maybe_unused]] unsigned long _open_flags, 
+                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     m_Opened = true;
     return 0;
@@ -161,7 +162,7 @@ int TestGenericMemReadOnlyFile::Close()
 
 - (void)testRandomAccess
 {
-    const size_t data_size = 1024*1024;
+    const auto data_size = 1024*1024;
     std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for(int i = 0; i < data_size; ++i)
         data[i] = rand() % 256;
@@ -191,7 +192,7 @@ int TestGenericMemReadOnlyFile::Close()
 
 - (void)testSequentialAccess
 {
-    const size_t data_size = 100*1024*1024;
+    const auto data_size = 100*1024*1024;
     std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for(int i = 0; i < data_size; ++i)
         data[i] = rand() % 256;
@@ -225,7 +226,7 @@ int TestGenericMemReadOnlyFile::Close()
 
 - (void)testSeekAccess
 {
-    const size_t data_size = 10*1024*1024;
+    const auto data_size = 10*1024*1024;
     std::unique_ptr<uint8_t[]> data(new uint8_t[data_size]);
     for(int i = 0; i < data_size; ++i)
         data[i] = rand() % 256;

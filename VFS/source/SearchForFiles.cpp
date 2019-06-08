@@ -272,11 +272,11 @@ bool SearchForFiles::FilterByFilename(const char* _filename) const
     return m_FilterNameMask->MatchName(_filename);
 }
 
-void SearchForFiles::ProcessValidEntry(const char* _full_path,
-                       const char* _dir_path,
-                       const VFSDirEnt &_dirent,
-                       VFSHost &_in_host,
-                       CFRange _cont_range)
+void SearchForFiles::ProcessValidEntry([[maybe_unused]] const char* _full_path,
+                                       const char* _dir_path,
+                                       const VFSDirEnt &_dirent,
+                                       VFSHost &_in_host,
+                                       CFRange _cont_range)
 {
     if(m_Callback)
         m_Callback(_dirent.name, _dir_path, _in_host, _cont_range);

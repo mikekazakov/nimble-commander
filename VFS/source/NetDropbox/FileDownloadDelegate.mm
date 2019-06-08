@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileDownloadDelegate.h"
 #include <VFS/VFSError.h>
 #include "Aux.h"
@@ -52,7 +52,8 @@ using namespace nc::vfs::dropbox;
     return m_DataHandler;
 }
 
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)_error
+- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
+didBecomeInvalidWithError:(nullable NSError *)_error
 {
     auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
@@ -60,8 +61,9 @@ using namespace nc::vfs::dropbox;
         m_ErrorHandler(error);
 }
 
-- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task
-                           didCompleteWithError:(nullable NSError *)_error
+- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
+task:(NSURLSessionTask *)[[maybe_unused]]task
+didCompleteWithError:(nullable NSError *)_error
 {
     if( _error ) {
         auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
@@ -71,8 +73,9 @@ using namespace nc::vfs::dropbox;
     }
 }
 
-- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)task
-                                     didReceiveData:(NSData *)data
+- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
+dataTask:(NSURLSessionDataTask *)task
+didReceiveData:(NSData *)data
 {
     if( auto response = objc_cast<NSHTTPURLResponse>(task.response) )
         if( response.statusCode == 200 ) {
@@ -105,8 +108,8 @@ static long ExtractContentLengthFromResponse(NSURLResponse *_response)
     return length >= 0 ? length : -1;
 }
 
-- (void)URLSession:(NSURLSession *)session
-    dataTask:(NSURLSessionDataTask *)task
+- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
+    dataTask:(NSURLSessionDataTask *)[[maybe_unused]]task
     didReceiveResponse:(NSURLResponse *)response
     completionHandler:(void (^)(NSURLSessionResponseDisposition disposition))completionHandler
 {

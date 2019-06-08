@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSError.h>
 #include "FileUploadDelegate.h"
 #include "Aux.h"
@@ -49,14 +49,15 @@ using namespace nc::vfs::dropbox;
     return m_HandleFinished;
 }
 
-- (void)URLSession:(NSURLSession *)_session
-              task:(NSURLSessionTask *)_task
+- (void)URLSession:(NSURLSession *)[[maybe_unused]]_session
+              task:(NSURLSessionTask *)[[maybe_unused]]_task
  needNewBodyStream:(void (^)(NSInputStream * _Nullable bodyStream))_handler
 {
     _handler(m_Stream);
 }
 
-- (void)URLSession:(NSURLSession *)session didBecomeInvalidWithError:(nullable NSError *)_error
+- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
+didBecomeInvalidWithError:(nullable NSError *)_error
 {
     auto error = VFSErrorFromErrorAndReponseAndData(_error, nil, nil);
     std::lock_guard<std::mutex> lock{m_CallbacksLock};
@@ -72,7 +73,7 @@ static bool HasNoError(NSURLResponse *_response)
     return false;
 }
 
-- (void)URLSession:(NSURLSession *)session
+- (void)URLSession:(NSURLSession *)[[maybe_unused]]session
     task:(NSURLSessionTask *)_task
     didCompleteWithError:(nullable NSError *)_error
 {
@@ -89,7 +90,7 @@ static bool HasNoError(NSURLResponse *_response)
     }
 }
 
-- (void)URLSession:(NSURLSession *)_session
+- (void)URLSession:(NSURLSession *)[[maybe_unused]]_session
           dataTask:(NSURLSessionDataTask *)_task
     didReceiveData:(NSData *)_data
 {

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include <libssh2.h>
 #include <libssh2_sftp.h>
@@ -16,7 +16,8 @@ File::~File()
     Close();
 }
 
-int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(unsigned long _open_flags,
+               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if(IsOpened())
         Close();

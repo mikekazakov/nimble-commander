@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../include/VFS/VFSFile.h"
 #include "../include/VFS/VFSError.h"
 #include "../include/VFS/Host.h"
@@ -44,17 +44,21 @@ VFSFile::WriteParadigm VFSFile::GetWriteParadigm() const
     return WriteParadigm::NoWrite;
 }
 
-ssize_t VFSFile::Read(void *_buf, size_t _size)
+ssize_t VFSFile::Read([[maybe_unused]] void *_buf,
+                      [[maybe_unused]] size_t _size)
 {
     return SetLastError(VFSError::NotSupported);
 }
 
-ssize_t VFSFile::Write(const void *_buf, size_t _size)
+ssize_t VFSFile::Write([[maybe_unused]] const void *_buf,
+                       [[maybe_unused]] size_t _size)
 {
     return SetLastError(VFSError::NotSupported);
 }
 
-ssize_t VFSFile::ReadAt(off_t _pos, void *_buf, size_t _size)
+ssize_t VFSFile::ReadAt([[maybe_unused]] off_t _pos,
+                        [[maybe_unused]] void *_buf,
+                        [[maybe_unused]] size_t _size)
 {
     return SetLastError(VFSError::NotSupported);
 }
@@ -96,7 +100,8 @@ unsigned VFSFile::XAttrCount() const
     return 0;
 }
 
-void VFSFile::XAttrIterateNames( const std::function<bool(const char* _xattr_name)> &_handler ) const
+void VFSFile::XAttrIterateNames
+( [[maybe_unused]] const std::function<bool(const char* _xattr_name)> &_handler ) const
 {
 }
 
@@ -146,7 +151,9 @@ int VFSFile::WriteFile(const void *_d, size_t _sz)
     return VFSError::Ok;
 }
 
-ssize_t VFSFile::XAttrGet(const char *_xattr_name, void *_buffer, size_t _buf_size) const
+ssize_t VFSFile::XAttrGet([[maybe_unused]] const char *_xattr_name,
+                          [[maybe_unused]] void *_buffer,
+                          [[maybe_unused]] size_t _buf_size) const
 {
     return SetLastError(VFSError::NotSupported);
 }
@@ -169,7 +176,7 @@ ssize_t VFSFile::Skip(size_t _size)
     return skipped;
 }
 
-int VFSFile::SetUploadSize(size_t _size)
+int VFSFile::SetUploadSize([[maybe_unused]] size_t _size)
 {
     return 0;
 }

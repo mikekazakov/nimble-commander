@@ -659,15 +659,15 @@ inline Listing::iterator Listing::end() const noexcept
 #undef __CHECK_BOUNDS
     
 inline ListingItem::ListingItem() noexcept:
-    I( std::numeric_limits<unsigned>::max() ),
-    L( nullptr )
+    L( nullptr ),
+    I( std::numeric_limits<unsigned>::max() )
 {
 }
 
 inline ListingItem::ListingItem
     (const std::shared_ptr<const class Listing>& _listing, unsigned _ind) noexcept:
-    I(_ind),
-    L(_listing)
+    L(_listing),
+    I(_ind)
 {
 }
 

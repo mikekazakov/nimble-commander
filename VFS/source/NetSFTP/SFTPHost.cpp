@@ -119,7 +119,9 @@ VFSMeta SFTPHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
-    m.SpawnWithConfig = [](const VFSHostPtr &_parent, const VFSConfiguration& _config, VFSCancelChecker _cancel_checker) {
+    m.SpawnWithConfig = []([[maybe_unused]] const VFSHostPtr &_parent,
+                           const VFSConfiguration& _config,
+                           [[maybe_unused]] VFSCancelChecker _cancel_checker) {
         return std::make_shared<SFTPHost>(_config);
     };
     return m;
@@ -251,12 +253,14 @@ const std::string& SFTPHost::HomeDir() const
     return m_HomeDir;
 }
 
-void SFTPHost::SpawnSSH2_KbdCallback(const char *name, int name_len,
-                         const char *instruction, int instruction_len,
-                         int num_prompts,
-                         const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts,
-                         LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
-                         void **abstract)
+void SFTPHost::SpawnSSH2_KbdCallback([[maybe_unused]] const char *name,
+                                     [[maybe_unused]] int name_len,
+                                     [[maybe_unused]] const char *instruction,
+                                     [[maybe_unused]] int instruction_len,
+                                     int num_prompts,
+                                     [[maybe_unused]] const LIBSSH2_USERAUTH_KBDINT_PROMPT *prompts,
+                                     LIBSSH2_USERAUTH_KBDINT_RESPONSE *responses,
+                                     void **abstract)
 {
     SFTPHost *_this = *(SFTPHost **)abstract;
     if (num_prompts == 1) {
@@ -389,7 +393,7 @@ in_addr_t SFTPHost::InetAddr() const
 int SFTPHost::FetchDirectoryListing(const char *_path,
                                     std::shared_ptr<VFSListing> &_target,
                                     unsigned long _flags,
-                                    const VFSCancelChecker &_cancel_checker)
+                                    [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -488,7 +492,7 @@ int SFTPHost::FetchDirectoryListing(const char *_path,
 int SFTPHost::Stat(const char *_path,
                          VFSStat &_st,
                          unsigned long _flags,
-                         const VFSCancelChecker &_cancel_checker)
+                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -584,8 +588,8 @@ int SFTPHost::IterateDirectoryListing(const char *_path,
 }
 
 int SFTPHost::StatFS(const char *_path,
-                           VFSStatFS &_stat,
-                           const VFSCancelChecker &_cancel_checker)
+                     VFSStatFS &_stat,
+                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -623,7 +627,8 @@ bool SFTPHost::IsWritable() const
     return true; // dummy now
 }
 
-int SFTPHost::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::Unlink(const char *_path,
+                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -682,7 +687,8 @@ int SFTPHost::Rename(const char *_old_path, const char *_new_path, const VFSCanc
     return rename_vfs_rc;
 }
 
-int SFTPHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::RemoveDirectory(const char *_path,
+                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -699,7 +705,9 @@ int SFTPHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel
     return 0;
 }
 
-int SFTPHost::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
+int SFTPHost::CreateDirectory(const char* _path,
+                              int _mode,
+                              [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     int rc = GetConnection(conn);
@@ -819,9 +827,9 @@ long SFTPHost::Port() const noexcept
 }
 
 int SFTPHost::ReadSymlink(const char *_symlink_path,
-                                char *_buffer,
-                                size_t _buffer_size,
-                                const VFSCancelChecker &_cancel_checker)
+                          char *_buffer,
+                          size_t _buffer_size,
+                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     if( int rc = GetConnection(conn); rc < 0 )
@@ -845,8 +853,8 @@ int SFTPHost::ReadSymlink(const char *_symlink_path,
 }
 
 int SFTPHost::CreateSymlink(const char *_symlink_path,
-                                  const char *_symlink_value,
-                                  const VFSCancelChecker &_cancel_checker)
+                            const char *_symlink_value,
+                            [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     if( int rc = GetConnection(conn); rc < 0 )
@@ -870,8 +878,8 @@ int SFTPHost::CreateSymlink(const char *_symlink_path,
 }
 
 int SFTPHost::SetPermissions(const char *_path,
-                          uint16_t _mode,
-                          const VFSCancelChecker &_cancel_checker)
+                             uint16_t _mode,
+                             [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     if( int rc = GetConnection(conn); rc < 0 )
@@ -897,9 +905,9 @@ int SFTPHost::SetPermissions(const char *_path,
 }
 
 int SFTPHost::SetOwnership(const char *_path,
-                                 unsigned _uid,
-                                 unsigned _gid,
-                                 const VFSCancelChecker &_cancel_checker)
+                           unsigned _uid,
+                           unsigned _gid,
+                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     std::unique_ptr<Connection> conn;
     if( int rc = GetConnection(conn); rc < 0 )
@@ -930,7 +938,7 @@ int SFTPHost::SetTimes(const char *_path,
                        std::optional<time_t> _mod_time,
                        std::optional<time_t> _chg_time,
                        std::optional<time_t> _acc_time,
-                       const VFSCancelChecker &_cancel_checker)
+                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     _birth_time = std::nullopt;
     _chg_time = std::nullopt;
@@ -983,7 +991,7 @@ int SFTPHost::SetTimes(const char *_path,
 }
 
 int SFTPHost::FetchUsers(std::vector<VFSUser> &_target,
-                         const VFSCancelChecker &_cancel_checker)
+                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( m_OSType == sftp::OSType::Unknown )
         return VFSError::FromErrno(ENODEV);
@@ -999,7 +1007,7 @@ int SFTPHost::FetchUsers(std::vector<VFSUser> &_target,
 }
 
 int SFTPHost::FetchGroups(std::vector<VFSGroup> &_target,
-                          const VFSCancelChecker &_cancel_checker)
+                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( m_OSType == sftp::OSType::Unknown )
         return VFSError::FromErrno(ENODEV);

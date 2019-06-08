@@ -159,7 +159,10 @@ ssize_t File::Write(const void *_buf, size_t _size)
     return has_written;
 }
 
-static size_t NullWrite(void *_buffer, size_t _size, size_t _nmemb, void *_userp)
+static size_t NullWrite([[maybe_unused]] void *_buffer,
+                        size_t _size,
+                        size_t _nmemb,
+                        [[maybe_unused]] void *_userp)
 {
     return _size * _nmemb;
 }

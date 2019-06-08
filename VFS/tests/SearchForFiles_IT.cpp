@@ -34,7 +34,9 @@ TEST_CASE(PREFIX "Test basic searching")
     
     using set = std::set<std::string>; 
     set filenames;
-    auto callback = [&](const char *_filename, const char *_in_path, VFSHost&, CFRange) {
+    auto callback = [&](const char *_filename,
+                        [[maybe_unused]] const char *_in_path,
+                        VFSHost&, CFRange) {
         filenames.emplace(_filename);
     };
     
@@ -99,7 +101,9 @@ TEST_CASE(PREFIX "Test size filter")
     
     using set = std::set<std::string>; 
     set filenames;
-    auto callback = [&](const char *_filename, const char *_in_path, VFSHost&, CFRange) {
+    auto callback = [&](const char *_filename,
+                        [[maybe_unused]] const char *_in_path,
+                        VFSHost&, CFRange) {
         filenames.emplace(_filename);
     };
     
@@ -142,7 +146,9 @@ TEST_CASE(PREFIX "Test content filter")
     
     using set = std::set<std::string>; 
     set filenames;
-    auto callback = [&](const char *_filename, const char *_in_path, VFSHost&, CFRange) {
+    auto callback = [&](const char *_filename,
+                        [[maybe_unused]] const char *_in_path,
+                        VFSHost&, CFRange) {
         filenames.emplace(_filename);
     };
     
@@ -236,9 +242,9 @@ TestDir::~TestDir()
 int TestDir::RMRF(const std::string& _path)
 {
     auto unlink_cb = [](const char *fpath,
-                        const struct stat *sb,
+                        [[maybe_unused]] const struct stat *sb,
                         int typeflag,
-                        struct FTW *ftwbuf) {
+                        [[maybe_unused]] struct FTW *ftwbuf) {
         if( typeflag == FTW_F)
             unlink(fpath);
         else if( typeflag == FTW_D   ||

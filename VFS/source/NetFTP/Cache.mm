@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Cache.h"
 #include <boost/filesystem.hpp>
 
@@ -17,9 +17,9 @@ Entry::Entry(const std::string &_name):
 Entry::Entry(const Entry& _r):
     name(_r.name),
     cfname(CFStringCreateWithUTF8StdStringNoCopy(name)),
-    mode(_r.mode),
     size(_r.size),
     time(_r.time),
+    mode(_r.mode),
     dirty(_r.dirty)
 {
 }

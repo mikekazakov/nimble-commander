@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "File.h"
 #include "Aux.h"
 #include "FileUploadStream.h"
@@ -79,7 +79,8 @@ NSURLRequest *File::BuildDownloadRequest() const
     return request;
 }
 
-int File::Open(unsigned long _open_flags, const VFSCancelChecker &_cancel_checker)
+int File::Open(unsigned long _open_flags,
+               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( m_State != Cold )
         return VFSError::InvalidCall;
@@ -163,7 +164,9 @@ void File::AppendDownloadedDataAsync( NSData *_data )
         return;
 
     std::lock_guard<std::mutex> lock{m_DataLock};
-    [_data enumerateByteRangesUsingBlock:[this](const void *bytes, NSRange byteRange, BOOL *stop) {
+    [_data enumerateByteRangesUsingBlock:[this](const void *bytes,
+                                                NSRange byteRange,
+                                                [[maybe_unused]] BOOL *stop) {
         m_Download->fifo.insert(end(m_Download->fifo),
                                 (const uint8_t*)bytes,
                                 (const uint8_t*)bytes + byteRange.length);
@@ -609,7 +612,7 @@ ssize_t File::Write(const void *_buf, size_t _size)
         }
         
         if( m_Upload->part_no >= 1 && m_Upload->part_no < m_Upload->parts_count - 1 ) {
-            m_Upload->delegate.handleReceivedData = [this](NSData *_data){
+            m_Upload->delegate.handleReceivedData = [this]([[maybe_unused]] NSData *_data){
                 if( m_State != Uploading )
                     return;
                 m_Upload->append_accepted = true;

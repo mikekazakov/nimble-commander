@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileUploadStream.h"
 #include <mutex>
 #include <deque>
@@ -42,12 +42,13 @@
     m_Status = NSStreamStatusClosed;
 }
 
-- (nullable id)propertyForKey:(NSStreamPropertyKey)key
+- (nullable id)propertyForKey:(NSStreamPropertyKey)[[maybe_unused]] _key
 {
     return nil;
 }
 
-- (BOOL)setProperty:(nullable id)property forKey:(NSStreamPropertyKey)key
+- (BOOL)setProperty:(nullable id)[[maybe_unused]] _property
+forKey:(NSStreamPropertyKey)[[maybe_unused]] _key
 {
     return true;
 }
@@ -57,7 +58,8 @@
     m_Delegate = delegate;
 }
 
-- (BOOL)getBuffer:(uint8_t * _Nullable * _Nonnull)buffer length:(NSUInteger *)len
+- (BOOL)getBuffer:(uint8_t * _Nullable * _Nonnull)[[maybe_unused]] _buffer
+length:(NSUInteger *)[[maybe_unused]] _len
 {
     return false;
 }
@@ -95,11 +97,10 @@
                           argument:nil
                              order:0
                              modes:@[m_RunLoopMode]];
-    
-//    int a = 10;
 }
 
-- (void)removeFromRunLoop:(NSRunLoop *)aRunLoop forMode:(NSRunLoopMode)mode {}
+- (void)removeFromRunLoop:(NSRunLoop *)[[maybe_unused]]_loop
+forMode:(NSRunLoopMode)[[maybe_unused]]_mode {}
 
 - (void)enqueueStreamEvent:(NSStreamEvent)_event
 {

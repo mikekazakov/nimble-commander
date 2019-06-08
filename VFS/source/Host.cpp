@@ -131,14 +131,14 @@ bool Host::IsWritable() const
     return false;
 }
 
-bool Host::IsWritableAtPath(const char *_dir) const
+bool Host::IsWritableAtPath([[maybe_unused]] const char *_dir) const
 {
     return IsWritable();
 }
 
-int Host::CreateFile(const char* _path,
-                     std::shared_ptr<VFSFile> &_target,
-                     const VFSCancelChecker &_cancel_checker)
+int Host::CreateFile([[maybe_unused]] const char* _path,
+                     [[maybe_unused]] std::shared_ptr<VFSFile> &_target,
+                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -232,68 +232,85 @@ ssize_t Host::CalculateDirectorySize(const char *_path,
     return total_size;
 }
 
-bool Host::IsDirChangeObservingAvailable(const char *_path)
+bool Host::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
 {
     return false;
 }
 
-HostDirObservationTicket Host::DirChangeObserve(const char *_path, std::function<void()> _handler)
+HostDirObservationTicket Host::DirChangeObserve([[maybe_unused]] const char *_path,
+                                                [[maybe_unused]] std::function<void()> _handler)
 {
     return {};
 }
 
-void Host::StopDirChangeObserving(unsigned long _ticket)
+void Host::StopDirChangeObserving([[maybe_unused]] unsigned long _ticket)
 {
 }
 
-int Host::Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker)
+int Host::Stat([[maybe_unused]] const char *_path,
+               [[maybe_unused]] VFSStat &_st,
+               [[maybe_unused]] unsigned long _flags,
+               [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::IterateDirectoryListing(const char *_path, const std::function<bool(const VFSDirEnt &_dirent)> &_handler)
+int Host::IterateDirectoryListing([[maybe_unused]] const char *_path,
+                                  [[maybe_unused]] const std::function<
+                                    bool(const VFSDirEnt &_dirent)> &_handler)
 {
     // TODO: write a default implementation using listing fetching.
     // it will be less efficient, but for some FS like PS it will be ok
     return VFSError::NotSupported;
 }
 
-int Host::StatFS(const char *_path, VFSStatFS &_stat, const VFSCancelChecker &_cancel_checker)
+int Host::StatFS([[maybe_unused]] const char *_path,
+                 [[maybe_unused]] VFSStatFS &_stat,
+                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::Unlink(const char *_path, const VFSCancelChecker &_cancel_checker)
+int Host::Unlink([[maybe_unused]] const char *_path,
+                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::Trash(const char *_path, const VFSCancelChecker &_cancel_checker)
+int Host::Trash([[maybe_unused]] const char *_path,
+                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::CreateDirectory(const char* _path, int _mode, const VFSCancelChecker &_cancel_checker)
+int Host::CreateDirectory([[maybe_unused]] const char* _path,
+                          [[maybe_unused]] int _mode,
+                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::ReadSymlink(const char *_path, char *_buffer, size_t _buffer_size, const VFSCancelChecker &_cancel_checker)
+int Host::ReadSymlink([[maybe_unused]] const char *_path,
+                      [[maybe_unused]] char *_buffer,
+                      [[maybe_unused]] size_t _buffer_size,
+                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::CreateSymlink(const char *_symlink_path, const char *_symlink_value, const VFSCancelChecker &_cancel_checker)
+int Host::CreateSymlink([[maybe_unused]] const char *_symlink_path,
+                        [[maybe_unused]] const char *_symlink_value,
+                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::SetTimes(const char *_path,
-                   std::optional<time_t> _birth_time,
-                   std::optional<time_t> _mod_time,
-                   std::optional<time_t> _chg_time,
-                   std::optional<time_t> _acc_time,
-                   const VFSCancelChecker &_cancel_checker)
+int Host::SetTimes([[maybe_unused]] const char *_path,
+                   [[maybe_unused]] std::optional<time_t> _birth_time,
+                   [[maybe_unused]] std::optional<time_t> _mod_time,
+                   [[maybe_unused]] std::optional<time_t> _chg_time,
+                   [[maybe_unused]] std::optional<time_t> _acc_time,
+                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
@@ -303,22 +320,29 @@ bool Host::ShouldProduceThumbnails() const
     return false;
 }
 
-int Host::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
+int Host::RemoveDirectory([[maybe_unused]] const char *_path,
+                          [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::Rename(const char *_old_path, const char *_new_path, const VFSCancelChecker &_cancel_checker)
+int Host::Rename([[maybe_unused]] const char *_old_path,
+                 [[maybe_unused]] const char *_new_path,
+                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::SetPermissions(const char *_path, uint16_t _mode, const VFSCancelChecker &_cancel_checker)
+int Host::SetPermissions([[maybe_unused]] const char *_path,
+                         [[maybe_unused]] uint16_t _mode,
+                         [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::GetXAttrs(const char *_path, std::vector< std::pair<std::string, std::vector<uint8_t>>> &_xattrs)
+int Host::GetXAttrs([[maybe_unused]] const char *_path,
+                    [[maybe_unused]] std::vector<
+                        std::pair<std::string, std::vector<uint8_t>>> &_xattrs)
 {
     return VFSError::NotSupported;
 }
@@ -365,17 +389,17 @@ bool Host::ValidateFilename(const char *_filename) const
     return std::find_first_of(i, e, std::begin(invalid_chars), std::end(invalid_chars)) == e;
 }
 
-int Host::FetchDirectoryListing(const char *_path,
-                                std::shared_ptr<Listing> &_target,
-                                unsigned long _flags,
-                                const VFSCancelChecker &_cancel_checker)
+int Host::FetchDirectoryListing([[maybe_unused]] const char *_path,
+                                [[maybe_unused]] std::shared_ptr<Listing> &_target,
+                                [[maybe_unused]] unsigned long _flags,
+                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
 int Host::FetchSingleItemListing(const char *_path,
                                  std::shared_ptr<Listing> &_target,
-                                 unsigned long _flags,
+                                 [[maybe_unused]] unsigned long _flags,
                                  const VFSCancelChecker &_cancel_checker)
 {
     // as we came here - there's no special implementation in derived class,
@@ -484,25 +508,29 @@ void Host::SetDesctructCallback( std::function<void(const VFSHost*)> _callback )
     m_OnDesctruct = _callback;
 }
 
-int Host::SetOwnership(const char *_path,
-                       unsigned _uid,
-                       unsigned _gid,
-                       const VFSCancelChecker &_cancel_checker)
+int Host::SetOwnership([[maybe_unused]] const char *_path,
+                       [[maybe_unused]] unsigned _uid,
+                       [[maybe_unused]] unsigned _gid,
+                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::FetchUsers(std::vector<VFSUser> &_target, const VFSCancelChecker &_cancel_checker)
+int Host::FetchUsers([[maybe_unused]] std::vector<VFSUser> &_target,
+                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::FetchGroups(std::vector<VFSGroup> &_target, const VFSCancelChecker &_cancel_checker)
+int Host::FetchGroups([[maybe_unused]] std::vector<VFSGroup> &_target,
+                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     return VFSError::NotSupported;
 }
 
-int Host::SetFlags(const char *_path, uint32_t _flags, const VFSCancelChecker &_cancel_checker )
+int Host::SetFlags([[maybe_unused]] const char *_path,
+                   [[maybe_unused]] uint32_t _flags,
+                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker )
 {
     return VFSError::NotSupported;
 }
@@ -572,7 +600,7 @@ std::string Host::MakePathVerbose( const char *_path ) const
     return verbose_path;
 }
     
-bool Host::IsCaseSensitiveAtPath(const char *_dir) const
+bool Host::IsCaseSensitiveAtPath([[maybe_unused]] const char *_dir) const
 {
     return true;
 }

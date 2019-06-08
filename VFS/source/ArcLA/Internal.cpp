@@ -1,9 +1,11 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Internal.h"
 
 namespace nc::vfs::arc {
 
-ssize_t Mediator::myread(struct archive *a, void *client_data, const void **buff)
+ssize_t Mediator::myread([[maybe_unused]] struct archive *a,
+                         void *client_data,
+                         const void **buff)
 {
     Mediator *_this = (Mediator *)client_data;
     *buff = &_this->buf[0];
@@ -14,7 +16,10 @@ ssize_t Mediator::myread(struct archive *a, void *client_data, const void **buff
     return result;
 }
     
-off_t Mediator::myseek(struct archive *a, void *client_data, off_t offset, int whence)
+off_t Mediator::myseek([[maybe_unused]] struct archive *a,
+                       void *client_data,
+                       off_t offset,
+                       int whence)
 {
     Mediator *_this = (Mediator *)client_data;
     off_t result = _this->file->Seek(offset, whence);
@@ -55,7 +60,7 @@ void State::Setup()
     archive_read_set_seek_callback(m_Archive, myseek);
 }
 
-ssize_t State::myread(struct archive *a, void *client_data, const void **buff)
+ssize_t State::myread([[maybe_unused]] struct archive *a, void *client_data, const void **buff)
 {
     auto _this = (State *)client_data;
     *buff = &_this->m_Buf;
@@ -66,7 +71,7 @@ ssize_t State::myread(struct archive *a, void *client_data, const void **buff)
     return result;   
 }
 
-off_t State::myseek(struct archive *a, void *client_data, off_t offset, int whence)
+off_t State::myseek([[maybe_unused]] struct archive *a, void *client_data, off_t offset, int whence)
 {
     auto _this = (State *)client_data;
     off_t result = _this->m_File->Seek(offset, whence);

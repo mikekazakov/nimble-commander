@@ -199,7 +199,7 @@ int WebDAVHost::IterateDirectoryListing(const char *_path,
 
 int WebDAVHost::Stat(const char *_path,
                      VFSStat &_st,
-                     unsigned long _flags,
+                     [[maybe_unused]] unsigned long _flags,
                      const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
@@ -247,7 +247,7 @@ int WebDAVHost::Stat(const char *_path,
 }
 
 int WebDAVHost::RefreshListingAtPath(const std::string &_path,
-                                     const VFSCancelChecker &_cancel_checker )
+                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker )
 {
     if( _path.back() != '/' )
         throw std::invalid_argument("RefreshListingAtPath requires a path with a trailing slash");
@@ -262,9 +262,9 @@ int WebDAVHost::RefreshListingAtPath(const std::string &_path,
     return VFSError::Ok;
 }
 
-int WebDAVHost::StatFS(const char *_path,
+int WebDAVHost::StatFS([[maybe_unused]] const char *_path,
                        VFSStatFS &_stat,
-                       const VFSCancelChecker &_cancel_checker)
+                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     const auto ar = I->m_Pool.Get();
     const auto [rc, free, used] = RequestSpaceQuota(Config(), *ar.connection);
@@ -285,8 +285,8 @@ int WebDAVHost::StatFS(const char *_path,
 }
 
 int WebDAVHost::CreateDirectory(const char* _path,
-                                int _mode,
-                                const VFSCancelChecker &_cancel_checker)
+                                [[maybe_unused]] int _mode,
+                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
@@ -302,7 +302,8 @@ int WebDAVHost::CreateDirectory(const char* _path,
     return VFSError::Ok;
 }
 
-int WebDAVHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_cancel_checker)
+int WebDAVHost::RemoveDirectory(const char *_path,
+                                [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
@@ -319,7 +320,7 @@ int WebDAVHost::RemoveDirectory(const char *_path, const VFSCancelChecker &_canc
 }
 
 int WebDAVHost::Unlink(const char *_path,
-                       const VFSCancelChecker &_cancel_checker )
+                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker )
 {
     if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
@@ -336,7 +337,7 @@ int WebDAVHost::Unlink(const char *_path,
 
 int WebDAVHost::CreateFile(const char* _path,
                            std::shared_ptr<VFSFile> &_target,
-                           const VFSCancelChecker &_cancel_checker)
+                           [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
     if( !IsValidInputPath(_path) )
         return VFSError::InvalidCall;
@@ -358,7 +359,7 @@ webdav::Cache &WebDAVHost::Cache()
 
 int WebDAVHost::Rename(const char *_old_path,
                        const char *_new_path,
-                       const VFSCancelChecker &_cancel_checker )
+                       [[maybe_unused]] const VFSCancelChecker &_cancel_checker )
 {
     if( !IsValidInputPath(_old_path) || !IsValidInputPath(_new_path) )
         return VFSError::InvalidCall;
@@ -373,7 +374,7 @@ int WebDAVHost::Rename(const char *_old_path,
     return VFSError::Ok;
 }
 
-bool WebDAVHost::IsDirChangeObservingAvailable(const char *_path)
+bool WebDAVHost::IsDirChangeObservingAvailable([[maybe_unused]] const char *_path)
 {
     return true;
 }
@@ -396,9 +397,9 @@ VFSMeta WebDAVHost::Meta()
 {
     VFSMeta m;
     m.Tag = UniqueTag;
-    m.SpawnWithConfig = [](const VFSHostPtr &_parent,
+    m.SpawnWithConfig = []([[maybe_unused]] const VFSHostPtr &_parent,
                            const VFSConfiguration& _config,
-                           VFSCancelChecker _cancel_checker) {
+                           [[maybe_unused]] VFSCancelChecker _cancel_checker) {
         return std::make_shared<WebDAVHost>(_config);
     };
     return m;
@@ -419,7 +420,7 @@ const std::string WebDAVHost::Username() const noexcept
     return Config().user;
 }
 
-const int WebDAVHost::Port() const noexcept
+int WebDAVHost::Port() const noexcept
 {
     return Config().port;
 }

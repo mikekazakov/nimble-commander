@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -29,10 +29,10 @@ CopyingJob::CopyingJob(std::vector<VFSListingItem> _source_items,
                        const std::string &_dest_path,
                        const VFSHostPtr &_dest_host,
                        CopyingOptions _opts):
-    m_InitialDestinationPath(_dest_path),
     m_VFSListingItems(move(_source_items)),
     m_DestinationHost(_dest_host),
     m_IsDestinationHostNative(_dest_host->IsNativeFS()),
+    m_InitialDestinationPath(_dest_path),
     m_NativeFSManager(utility::NativeFSManager::Instance())
 {
     if( m_InitialDestinationPath.empty() || m_InitialDestinationPath.front() != '/' ) {
@@ -904,7 +904,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile
     uint64_t destination_bytes_written = 0;
     
     // read from source within current thread and write to destination within secondary queue
-    while( src_stat_buffer.st_size != destination_bytes_written ) {
+    while( (uint64_t)src_stat_buffer.st_size != destination_bytes_written ) {
         
         // check user decided to pause operation or discard it
         if( BlockIfPaused(); IsStopped() )
@@ -1110,7 +1110,7 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile
             dst_size_on_stop = 0;
             do_erase_xattrs = true;
             preallocate_delta = src_stat_buffer.size - dst_stat_buffer.st_size; // negative value is ok here
-            need_dst_truncate = src_stat_buffer.size < dst_stat_buffer.st_size;
+            need_dst_truncate = (int64_t)src_stat_buffer.size < dst_stat_buffer.st_size;
         };
         const auto setup_append = [&]{
             dst_open_flags = O_WRONLY;

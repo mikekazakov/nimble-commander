@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Operation.h"
 #include "Job.h"
 #include "AsyncDialogResponse.h"
@@ -195,7 +195,8 @@ void Operation::Show( NSWindow *_dialog, std::shared_ptr<AsyncDialogResponse> _r
             const auto controller = _dialog.windowController;
             const auto dialog_callback = [_response, controller](NSModalResponse _dialog_response){
                 _response->Commit(_dialog_response);
-                dispatch_to_main_queue([controller]{ /* solely to extend the lifetime */ });
+                dispatch_to_main_queue([controller]{ (void)controller;
+                    /* solely to extend the lifetime */ });
             };
             const auto shown = m_DialogCallback(_dialog, dialog_callback);
             if( shown )
@@ -298,7 +299,10 @@ void Operation::AbortUIWaiting() noexcept
             r->Abort();
 }
 
-void Operation::ReportHaltReason( NSString *_message, int _error, const std::string &_path, VFSHost &_vfs )
+void Operation::ReportHaltReason(NSString *_message,
+                                 int _error,
+                                 const std::string &_path,
+                                 [[maybe_unused]] VFSHost &_vfs )
 {
     dispatch_assert_background_queue();
     if( !IsInteractive() )

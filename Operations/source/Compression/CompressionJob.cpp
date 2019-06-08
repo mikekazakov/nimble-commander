@@ -552,7 +552,7 @@ static bool WriteEAs(struct archive *_a, void *_md, size_t _md_s, const char* _p
     ssize_t ret = archive_write_data(_a, _md, _md_s); // we may need cycle here
     archive_entry_free(entry);
     
-    return ret == _md_s;
+    return ret == (ssize_t)_md_s;
 }
 
 static bool WriteEAsIfAny(VFSFile &_src, struct archive *_a, const char *_source_fn)

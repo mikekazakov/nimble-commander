@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PoolViewController.h"
 #include "Pool.h"
 #include "Internal.h"
@@ -152,7 +152,7 @@ static const auto g_ViewAppearTimeout = 100ms;
     }
 }
 
-- (IBAction)onUpButtonClicked:(id)sender
+- (IBAction)onUpButtonClicked:(id)[[maybe_unused]]_sender
 {
     if( m_BriefViews.size() >= 2 && m_IndexToShow > 0) {
         m_IndexToShow--;
@@ -163,9 +163,9 @@ static const auto g_ViewAppearTimeout = 100ms;
     }
 }
 
-- (IBAction)onDownButtonClicked:(id)sender
+- (IBAction)onDownButtonClicked:(id)[[maybe_unused]]_sender
 {
-    if( m_BriefViews.size() >= 2 && m_IndexToShow < m_BriefViews.size() - 1 ) {
+    if( m_BriefViews.size() >= 2 && m_IndexToShow < (int)m_BriefViews.size() - 1 ) {
         m_IndexToShow++;
         const auto v = m_BriefViews[m_IndexToShow];
         m_ShownOperation = v.operation;

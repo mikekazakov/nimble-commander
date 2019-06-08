@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../Job.h"
@@ -10,8 +10,7 @@ struct DirectoryCreationJobCallbacks
 {
     enum class ErrorResolution { Stop, Retry };
     std::function< ErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
-    m_OnError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){ return ErrorResolution::Stop; };
+    m_OnError = [](int, const std::string &, VFSHost &){ return ErrorResolution::Stop; };
 };
 
 class DirectoryCreationJob final : public Job, public DirectoryCreationJobCallbacks

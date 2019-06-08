@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CreateHardlinkDialog.h"
 #include "../Internal.h"
 #include <Utility/StringExtras.h>
@@ -42,7 +42,7 @@ using namespace nc::ops;
     [self.window makeFirstResponder:self.LinkName];
 }
 
-- (IBAction)OnCreate:(id)sender
+- (IBAction)OnCreate:(id)[[maybe_unused]]_sender
 {
     if( self.LinkName.stringValue )
         m_Result = self.LinkName.stringValue.fileSystemRepresentationSafe;
@@ -50,7 +50,7 @@ using namespace nc::ops;
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];    
 }
 
-- (IBAction)OnCancel:(id)sender
+- (IBAction)OnCancel:(id)[[maybe_unused]]_sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }

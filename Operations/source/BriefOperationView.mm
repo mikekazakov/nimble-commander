@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOperationView.h"
 
 @implementation NCOpsBriefOperationView
@@ -43,7 +43,7 @@
     [self addTrackingArea:tracking_area];
 }
 
-- (void)mouseEntered:(NSEvent *)theEvent
+- (void)mouseEntered:(NSEvent *)[[maybe_unused]]_event
 {
     if( m_MouseOver == true )
         return;
@@ -53,7 +53,7 @@
     [self didChangeValueForKey:@"isMouseOver"];
 }
 
-- (void)mouseExited:(NSEvent *)theEvent
+- (void)mouseExited:(NSEvent *)[[maybe_unused]]_event
 {
     if( m_MouseOver == false )
         return;

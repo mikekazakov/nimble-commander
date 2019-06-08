@@ -80,7 +80,7 @@
     self.validInput = valid;
 }
 
-- (IBAction)onCompress:(id)sender
+- (IBAction)onCompress:(id)[[maybe_unused]]_sender
 {
     m_FinalDestination = self.destinationString.decomposedStringWithCanonicalMapping.UTF8String;
     
@@ -90,7 +90,7 @@
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (IBAction)onCancel:(id)sender
+- (IBAction)onCancel:(id)[[maybe_unused]]_sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }
@@ -102,7 +102,7 @@
         [self validate];
 }
 
-- (IBAction)onProtectWithPassword:(id)sender
+- (IBAction)onProtectWithPassword:(id)[[maybe_unused]]_sender
 {
     [self validate];
 }

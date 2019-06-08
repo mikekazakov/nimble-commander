@@ -149,14 +149,14 @@ static std::string MakeCanonicPath(std::string _input)
         self.VerifySetting.enabled = false;
 }
 
-- (IBAction)OnCopy:(id)sender
+- (IBAction)OnCopy:(id)[[maybe_unused]]_sender
 {
     [self validate];
     [self fillOptions];
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (IBAction)OnCancel:(id)sender
+- (IBAction)OnCancel:(id)[[maybe_unused]]_sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }

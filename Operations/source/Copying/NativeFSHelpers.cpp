@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NativeFSHelpers.h"
 #include <sys/stat.h>
 #include <sys/param.h>
@@ -23,7 +23,7 @@ bool ShouldPreallocateSpace(int64_t _bytes_to_write,
 bool TryToPreallocateSpace(int64_t _preallocate_delta, int _file_des) noexcept
 {
     // at first try to request a single contiguous block
-    fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, _preallocate_delta};
+    fstore_t preallocstore = {F_ALLOCATECONTIG, F_PEOFPOSMODE, 0, _preallocate_delta, 0};
     if( fcntl(_file_des, F_PREALLOCATE, &preallocstore) == 0 )
         return true;
     

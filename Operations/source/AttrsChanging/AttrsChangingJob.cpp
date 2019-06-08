@@ -264,7 +264,9 @@ bool AttrsChangingJob::ChflagSingleItem( const std::string &_path, VFSHost &_vfs
     return true;
 }
 
-bool AttrsChangingJob::ChtimesSingleItem( const std::string &_path, VFSHost &_vfs, const VFSStat &_stat )
+bool AttrsChangingJob::ChtimesSingleItem(const std::string &_path,
+                                         VFSHost &_vfs,
+                                         [[maybe_unused]] const VFSStat &_stat )
 {
     while( true ) {
         const auto set_times_rc = _vfs.SetTimes(_path.c_str(),

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "BriefOperationViewController.h"
 #include "Internal.h"
 #include "Operation.h"
@@ -155,7 +155,7 @@ static const auto g_SlowUpdateFreq = 1.0;
         self.ETA.stringValue = StatisticsFormatter{m_Operation->Statistics()}.ProgressCaption();
 }
 
-- (IBAction)onStop:(id)sender
+- (IBAction)onStop:(id)[[maybe_unused]]sender
 {
     m_Operation->Stop();
     self.stopButton.hidden = true;
@@ -163,12 +163,12 @@ static const auto g_SlowUpdateFreq = 1.0;
     self.resumeButton.hidden = true;
 }
 
-- (IBAction)onPause:(id)sender
+- (IBAction)onPause:(id)[[maybe_unused]]sender
 {
     m_Operation->Pause();
 }
 
-- (IBAction)onResume:(id)sender
+- (IBAction)onResume:(id)[[maybe_unused]]sender
 {
     m_Operation->Resume();
 }

@@ -13,27 +13,27 @@ struct AttrsChangingJobCallbacks
     enum class SourceAccessErrorResolution { Stop, Skip, Retry };
     std::function< SourceAccessErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnSourceAccessError =
-    [](int _err, const std::string &_path,VFSHost &_vfs){ return SourceAccessErrorResolution::Stop; };
+    [](int, const std::string &,VFSHost &){ return SourceAccessErrorResolution::Stop; };
 
     enum class ChmodErrorResolution { Stop, Skip, Retry };
     std::function< ChmodErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnChmodError =
-    [](int _err, const std::string &_path,VFSHost &_vfs){ return ChmodErrorResolution::Stop; };
+    [](int, const std::string &,VFSHost &){ return ChmodErrorResolution::Stop; };
 
     enum class ChownErrorResolution { Stop, Skip, Retry };
     std::function< ChownErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnChownError =
-    [](int _err, const std::string &_path,VFSHost &_vfs){ return ChownErrorResolution::Stop; };
+    [](int, const std::string &,VFSHost &){ return ChownErrorResolution::Stop; };
 
     enum class FlagsErrorResolution { Stop, Skip, Retry };
     std::function< FlagsErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnFlagsError =
-    [](int _err, const std::string &_path,VFSHost &_vfs){ return FlagsErrorResolution::Stop; };
+    [](int, const std::string &,VFSHost &){ return FlagsErrorResolution::Stop; };
 
     enum class TimesErrorResolution { Stop, Skip, Retry };
     std::function< TimesErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnTimesError =
-    [](int _err, const std::string &_path,VFSHost &_vfs){ return TimesErrorResolution::Stop; };
+    [](int, const std::string &,VFSHost &){ return TimesErrorResolution::Stop; };
 };
 
 class AttrsChangingJob : public Job, public AttrsChangingJobCallbacks

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Pool.h"
 #include "Operation.h"
 #include <Habanero/dispatch_cpp.h>
@@ -59,11 +59,11 @@ void Pool::Enqueue( std::shared_ptr<Operation> _operation )
     StartPendingOperations();
 }
 
-void Pool::OperationDidStart( const std::shared_ptr<Operation> &_operation )
+void Pool::OperationDidStart( [[maybe_unused]] const std::shared_ptr<Operation> &_operation )
 {
 }
 
-void Pool::OperationDidFinish( const std::shared_ptr<Operation> &_operation )
+void Pool::OperationDidFinish( [[maybe_unused]] const std::shared_ptr<Operation> &_operation )
 {
     LOCK_GUARD(m_Lock) {
         erase_from(m_RunningOperations, _operation);
@@ -81,8 +81,8 @@ void Pool::StartPendingOperations()
     std::vector<std::shared_ptr<Operation>> to_start;
 
     LOCK_GUARD(m_Lock) {
-        const auto running_now = m_RunningOperations.size();
-        while( running_now + to_start.size() < m_ConcurrencyPerPool &&
+        const auto running_now = (int)m_RunningOperations.size();
+        while( running_now + (int)to_start.size() < m_ConcurrencyPerPool &&
                !m_PendingOperations.empty() ) {
             const auto op = m_PendingOperations.front();
             m_PendingOperations.pop_front();

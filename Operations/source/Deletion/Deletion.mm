@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Deletion.h"
 #include "DeletionJob.h"
 #include "../Internal.h"
@@ -66,7 +66,9 @@ int Deletion::OnReadDirError(int _err, const std::string &_path, VFSHost &_vfs)
         return (int)Callbacks::ReadDirErrorResolution::Stop;
 }
 
-void Deletion::OnReadDirErrorUI(int _err, const std::string &_path, std::shared_ptr<VFSHost> _vfs,
+void Deletion::OnReadDirErrorUI(int _err,
+                                const std::string &_path,
+                                [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
                                 std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
@@ -113,7 +115,9 @@ int Deletion::OnUnlinkError(int _err, const std::string &_path, VFSHost &_vfs)
         return (int)Callbacks::UnlinkErrorResolution::Stop;
 }
 
-void Deletion::OnUnlinkErrorUI(int _err, const std::string &_path, std::shared_ptr<VFSHost> _vfs,
+void Deletion::OnUnlinkErrorUI(int _err,
+                               const std::string &_path,
+                               [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
                                std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
@@ -160,8 +164,10 @@ int Deletion::OnRmdirError(int _err, const std::string &_path, VFSHost &_vfs)
         return (int)Callbacks::RmdirErrorResolution::Stop;
 }
 
-void Deletion::OnRmdirErrorUI(int _err, const std::string &_path, std::shared_ptr<VFSHost> _vfs,
-                        std::shared_ptr<AsyncDialogResponse> _ctx)
+void Deletion::OnRmdirErrorUI(int _err,
+                              const std::string &_path,
+                              [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
+                              std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     const auto sheet = [[NCOpsGenericErrorDialog alloc] init];
 
@@ -214,7 +220,9 @@ int Deletion::OnTrashError(int _err, const std::string &_path, VFSHost &_vfs)
         return (int)Callbacks::TrashErrorResolution::Stop;
 }
 
-void Deletion::OnTrashErrorUI(int _err, const std::string &_path, std::shared_ptr<VFSHost> _vfs,
+void Deletion::OnTrashErrorUI(int _err,
+                              const std::string &_path,
+                              [[maybe_unused]] std::shared_ptr<VFSHost> _vfs,
                               std::shared_ptr<AsyncDialogResponse> _ctx)
 {
     const auto sheet = [[NCOpsGenericErrorDialog alloc] initWithContext:_ctx];

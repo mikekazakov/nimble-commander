@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Carbon/Carbon.h>
 #include <Utility/SheetWithHotkeys.h>
 #include "BatchRenamingDialog.h"
@@ -201,7 +201,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     sheet.onCtrlW = [sheet makeFocusHotkey:self.ReplaceWithComboBox];
 }
 
-- (IBAction)OnCancel:(id)sender
+- (IBAction)OnCancel:(id)[[maybe_unused]]_sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
 }
@@ -219,11 +219,11 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
 {
     if( tableView == self.FilenamesTable ) {
         if( [tableColumn.identifier isEqualToString:@"original"] ) {
-            assert( row >= 0 && row < m_LabelsBefore.size() );
+            assert( row >= 0 && row < (int)m_LabelsBefore.size() );
             return m_LabelsBefore[row];
         }
         if( [tableColumn.identifier isEqualToString:@"renamed"] ) {
-            assert( row >= 0 && row < m_LabelsAfter.size() );
+            assert( row >= 0 && row < (int)m_LabelsAfter.size() );
             return m_LabelsAfter[row];
         }
         
@@ -232,7 +232,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     return nil;
 }
 
-- (IBAction)OnFilenameMaskChanged:(id)sender
+- (IBAction)OnFilenameMaskChanged:(id)[[maybe_unused]]_sender
 {
     [self UpdateRename];
 }
@@ -309,12 +309,12 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     }
 }
 
-- (IBAction)OnInsertNamePlaceholder:(id)sender
+- (IBAction)OnInsertNamePlaceholder:(id)[[maybe_unused]]_sender
 {
     [self InsertStringIntoMask:@"[N]"];
 }
 
-- (IBAction)OnInsertNameRangePlaceholder:(id)sender
+- (IBAction)OnInsertNameRangePlaceholder:(id)[[maybe_unused]]_sender
 {
     auto *pc = [NCOpsBatchRenamingRangeSelectionPopover new];
     auto curr_sel = self.currentMaskSelection;
@@ -341,27 +341,27 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
                     preferredEdge:NSMaxXEdge];
 }
 
-- (IBAction)OnInsertCounterPlaceholder:(id)sender
+- (IBAction)OnInsertCounterPlaceholder:(id)[[maybe_unused]]_sender
 {
     [self InsertStringIntoMask:@"[C]"];
 }
 
-- (IBAction)OnInsertExtensionPlaceholder:(id)sender
+- (IBAction)OnInsertExtensionPlaceholder:(id)[[maybe_unused]]_sender
 {
     [self InsertStringIntoMask:@"[E]"];
 }
 
-- (IBAction)OnInsertDatePlaceholder:(id)sender
+- (IBAction)OnInsertDatePlaceholder:(id)[[maybe_unused]]_sender
 {
     [self InsertStringIntoMask:@"[YMD]"];
 }
 
-- (IBAction)OnInsertTimePlaceholder:(id)sender
+- (IBAction)OnInsertTimePlaceholder:(id)[[maybe_unused]]_sender
 {
     [self InsertStringIntoMask:@"[hms]"];
 }
 
-- (IBAction)OnInsertMenu:(id)sender
+- (IBAction)OnInsertMenu:(id)[[maybe_unused]]_sender
 {
     const auto r = self.InsertPlaceholderMenuButton.bounds;
     [self.InsertPlaceholderMenu popUpMenuPositioningItem:nil
@@ -425,27 +425,27 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
         }
 }
 
-- (IBAction)OnSearchForChanged:(id)sender
+- (IBAction)OnSearchForChanged:(id)[[maybe_unused]]_sender
 {
     [self UpdateRename];
 }
 
-- (IBAction)OnReplaceWithChanged:(id)sender
+- (IBAction)OnReplaceWithChanged:(id)[[maybe_unused]]_sender
 {
     [self UpdateRename];
 }
 
-- (IBAction)OnSearchReplaceOptionsChanged:(id)sender
+- (IBAction)OnSearchReplaceOptionsChanged:(id)[[maybe_unused]]_sender
 {
     [self UpdateRename];
 }
 
-- (IBAction)OnCaseProcessingChanged:(id)sender
+- (IBAction)OnCaseProcessingChanged:(id)[[maybe_unused]]_sender
 {
     [self UpdateRename];
 }
 
-- (IBAction)OnCounterSettingsChanged:(id)sender
+- (IBAction)OnCounterSettingsChanged:(id)[[maybe_unused]]_sender
 {
     [self UpdateRename];
 }
@@ -504,22 +504,27 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
         [self UpdateRename];        
 }
 
-- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
+- (NSDragOperation)tableView:(NSTableView *)[[maybe_unused]]aTableView
+                validateDrop:(id < NSDraggingInfo >)[[maybe_unused]]info
+                 proposedRow:(NSInteger)[[maybe_unused]]row
+       proposedDropOperation:(NSTableViewDropOperation)operation
 {
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
+- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
+writeRowsWithIndexes:(NSIndexSet *)rowIndexes
+     toPasteboard:(NSPasteboard *)pboard
 {
     [pboard declareTypes:@[g_MyPrivateTableViewDataType] owner:self];
     [pboard setData:[NSKeyedArchiver archivedDataWithRootObject:rowIndexes] forType:g_MyPrivateTableViewDataType];
     return true;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView
+- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
        acceptDrop:(id<NSDraggingInfo>)info
               row:(NSInteger)drag_to
-    dropOperation:(NSTableViewDropOperation)operation
+    dropOperation:(NSTableViewDropOperation)[[maybe_unused]]operation
 {
     NSData* data = [info.draggingPasteboard dataForType:g_MyPrivateTableViewDataType];
     NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:data];
@@ -531,8 +536,8 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     
     if( drag_from < drag_to )
         drag_to--;
-    if( drag_to >= m_LabelsBefore.size()  ||
-        drag_from >= m_LabelsBefore.size() )
+    if( drag_to >= (int)m_LabelsBefore.size()  ||
+        drag_from >= (int)m_LabelsBefore.size() )
         return false;
     
     // don't forget to swap items in ALL containers!
@@ -557,7 +562,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
         m_ResultDestination.emplace_back(m_FileInfos[i].item.Directory() + m_LabelsAfter[i].stringValue.fileSystemRepresentationSafe);
 }
 
-- (IBAction)OnOK:(id)sender
+- (IBAction)OnOK:(id)[[maybe_unused]]_sender
 {
     [self UpdateRename];
     [self buildResultDestinations];
@@ -615,7 +620,7 @@ static auto g_MyPrivateTableViewDataType = @"BatchRenameSheetControllerPrivateTa
     });
 }
 
-- (IBAction)onContextMenuRemoveItem:(id)sender
+- (IBAction)onContextMenuRemoveItem:(id)[[maybe_unused]]_sender
 {
     auto clicked_row = self.FilenamesTable.clickedRow;
     if( clicked_row < 0 && clicked_row >= self.FilenamesTable.numberOfRows )

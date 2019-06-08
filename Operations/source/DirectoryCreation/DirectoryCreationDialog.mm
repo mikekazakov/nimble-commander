@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DirectoryCreationDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
@@ -40,7 +40,7 @@
     [self validate];
 }
 
-- (IBAction)OnCreate:(id)sender
+- (IBAction)OnCreate:(id)[[maybe_unused]]_sender
 {
     if( !self.TextField.stringValue || !self.TextField.stringValue.length )
         return;
@@ -51,7 +51,7 @@
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (IBAction)OnCancel:(id)sender
+- (IBAction)OnCancel:(id)[[maybe_unused]]_sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }

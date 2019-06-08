@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
@@ -14,7 +14,7 @@ int SourceItems::InsertItem(uint16_t _host_index,
 {
     if( _host_index >= m_SourceItemsHosts.size() ||
        _base_dir_index >= m_SourceItemsBaseDirectories.size() ||
-       (_parent_index >= 0 && _parent_index >= m_Items.size() ) )
+       (_parent_index >= 0 && _parent_index >= (int)m_Items.size() ) )
         throw std::invalid_argument("SourceItems::InsertItem: invalid index");
     
     if( S_ISREG(_stat.mode) )

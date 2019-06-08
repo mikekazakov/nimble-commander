@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Progress.h"
 #include <iostream>
 #include <Habanero/mach_time.h>
@@ -8,8 +8,8 @@ namespace nc::ops {
 Progress::Progress():
     m_Estimated{0},
     m_Processed{0},
-    m_LastCommitTimePoint{0},
-    m_BaseTimePoint{0}
+    m_BaseTimePoint{0},
+    m_LastCommitTimePoint{0}
 {
 }
 

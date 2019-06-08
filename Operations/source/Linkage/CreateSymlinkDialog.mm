@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CreateSymlinkDialog.h"
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
@@ -46,14 +46,14 @@
     [self validate];
 }
 
-- (IBAction)OnCreate:(id)sender
+- (IBAction)OnCreate:(id)[[maybe_unused]]_sender
 {
     m_SrcPath = self.SourcePath.stringValue.fileSystemRepresentationSafe;
     m_LinkPath = self.LinkPath.stringValue.fileSystemRepresentationSafe;
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (IBAction)OnCancel:(id)sender
+- (IBAction)OnCancel:(id)[[maybe_unused]]_sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }

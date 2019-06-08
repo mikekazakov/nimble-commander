@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "HaltReasonDialog.h"
 #include <VFS/VFS.h>
 
@@ -42,7 +42,7 @@
     NSBeep();
 }
 
-- (IBAction)onClose:(id)sender
+- (IBAction)onClose:(id)[[maybe_unused]]_sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }
@@ -63,7 +63,7 @@
 @end
 
 @implementation NCOpsHaltReasonDialogWindow
-- (void)cancelOperation:(id)sender
+- (void)cancelOperation:(id)[[maybe_unused]]_sender
 {
     [self.sheetParent endSheet:self returnCode:NSModalResponseCancel];
 }

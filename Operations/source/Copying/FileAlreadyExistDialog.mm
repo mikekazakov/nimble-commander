@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Carbon/Carbon.h>
 #include "FileAlreadyExistDialog.h"
@@ -96,32 +96,32 @@ static bool IsShiftPressed()
     self.RememberCheck.state = NSOffState;
 }
 
-- (IBAction)OnOverwrite:(id)sender
+- (IBAction)OnOverwrite:(id)[[maybe_unused]]_sender
 {
     [self endDialogWithReturnCode:NSModalResponseOverwrite];
 }
 
-- (IBAction)OnOverwriteOlder:(id)sender
+- (IBAction)OnOverwriteOlder:(id)[[maybe_unused]]_sender
 {
     [self endDialogWithReturnCode:NSModalResponseOverwriteOld];
 }
 
-- (IBAction)OnSkip:(id)sender
+- (IBAction)OnSkip:(id)[[maybe_unused]]_sender
 {
     [self endDialogWithReturnCode:NSModalResponseSkip];
 }
 
-- (IBAction)OnAppend:(id)sender
+- (IBAction)OnAppend:(id)[[maybe_unused]]_sender
 {
     [self endDialogWithReturnCode:NSModalResponseAppend];
 }
 
-- (IBAction)OnCancel:(id)sender
+- (IBAction)OnCancel:(id)[[maybe_unused]]_sender
 {
     [self endDialogWithReturnCode:nc::ops::NSModalResponseStop];
 }
 
-- (IBAction)OnKeepBoth:(id)sender
+- (IBAction)OnKeepBoth:(id)[[maybe_unused]]_sender
 {
     [self endDialogWithReturnCode:NSModalResponseKeepBoth];
 }

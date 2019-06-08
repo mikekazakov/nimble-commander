@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -11,15 +11,15 @@ struct LinkageJobCallbacks
 {
     std::function< void(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnCreateSymlinkError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){};
+    [](int, const std::string &, VFSHost &){};
     
     std::function< void(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnAlterSymlinkError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){};
+    [](int, const std::string &, VFSHost &){};
 
     std::function< void(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnCreateHardlinkError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){};
+    [](int, const std::string &, VFSHost &){};
 };
 
 class LinkageJob final : public Job, public LinkageJobCallbacks

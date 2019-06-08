@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DeletionDialog.h"
 #include "../Internal.h"
 #include <VFS/VFS.h>
@@ -66,25 +66,25 @@ using namespace nc::ops;
     [self buildTitle];
 }
 
-- (IBAction)onPrimaryAction:(id)sender
+- (IBAction)onPrimaryAction:(id)[[maybe_unused]]_sender
 {
     m_ResultType = m_DefaultType;
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (IBAction)onAuxActionTrash:(id)sender
+- (IBAction)onAuxActionTrash:(id)[[maybe_unused]]_sender
 {
     m_ResultType = DeletionType::Trash;
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (IBAction)onAuxActionPermDelete:(id)sender
+- (IBAction)onAuxActionPermDelete:(id)[[maybe_unused]]_sender
 {
     m_ResultType = DeletionType::Permanent;
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (IBAction)OnCancelAction:(id)sender
+- (IBAction)OnCancelAction:(id)[[maybe_unused]]_sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }

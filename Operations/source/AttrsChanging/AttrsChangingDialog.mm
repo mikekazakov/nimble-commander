@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AttrsChangingDialog.h"
 #include <VFS/VFS.h>
 #include <Habanero/algo.h>
@@ -150,7 +150,7 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
     [self populate];
 }
 
-- (IBAction)onOK:(id)sender
+- (IBAction)onOK:(id)[[maybe_unused]]_sender
 {
     m_Command.items = move(m_Items);
     m_Command.apply_to_subdirs = m_ProcessSubfolders;
@@ -162,7 +162,7 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseOK];
 }
 
-- (IBAction)onCancel:(id)sender
+- (IBAction)onCancel:(id)[[maybe_unused]]_sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseCancel];
 }
@@ -286,7 +286,7 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
         dp.tag++;
 }
 
-- (IBAction)onTimesSetATime:(id)sender
+- (IBAction)onTimesSetATime:(id)[[maybe_unused]]_sender
 {
     self.timesATime.dateValue = [NSDate date];
     self.timesATime.tag++;
@@ -295,7 +295,7 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
     [self fillTimes];
 }
 
-- (IBAction)onTimesSetMTime:(id)sender
+- (IBAction)onTimesSetMTime:(id)[[maybe_unused]]_sender
 {
     self.timesMTime.dateValue = [NSDate date];
     self.timesMTime.tag++;
@@ -304,7 +304,7 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
     [self fillTimes];
 }
 
-- (IBAction)onTimesSetCTime:(id)sender
+- (IBAction)onTimesSetCTime:(id)[[maybe_unused]]_sender
 {
     self.timesCTime.dateValue = [NSDate date];
     self.timesCTime.tag++;
@@ -313,7 +313,7 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
     [self fillTimes];
 }
 
-- (IBAction)onTimesSetBTime:(id)sender
+- (IBAction)onTimesSetBTime:(id)[[maybe_unused]]_sender
 {
     self.timesBTime.dateValue = [NSDate date];
     self.timesBTime.tag++;
@@ -630,7 +630,7 @@ static const auto g_MixedOwnageTitle = @"[???]";
     return t;
 }
 
-- (IBAction)onProcessSubfolder:(id)sender
+- (IBAction)onProcessSubfolder:(id)[[maybe_unused]]_sender
 {
     m_ProcessSubfolders = self.processSubfolders.state;
     [self populate];

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/algo.h>
@@ -20,7 +20,7 @@ struct CopyingJobCallbacks
                                                  const std::string &_path,
                                                  VFSHost &_vfs)>
     m_OnCantAccessSourceItem
-    = [](int _vfs_error, const std::string &_path, VFSHost &_vfs)
+    = [](int, const std::string &, VFSHost &)    
     { return CantAccessSourceItemResolution::Stop; };
 
     enum class CopyDestExistsResolution { Stop, Skip, Overwrite, OverwriteOld, Append, KeepBoth };
@@ -28,7 +28,7 @@ struct CopyingJobCallbacks
                                            const struct stat &_dst,
                                            const std::string &_path)>
     m_OnCopyDestinationAlreadyExists
-    = [](const struct stat &_src, const struct stat &_dst, const std::string &_path)
+    = [](const struct stat &, const struct stat &, const std::string &)
     { return CopyDestExistsResolution::Stop; };
     
     enum class RenameDestExistsResolution { Stop, Skip, Overwrite, OverwriteOld, KeepBoth };
@@ -36,7 +36,7 @@ struct CopyingJobCallbacks
                                              const struct stat &_dst,
                                              const std::string &_path)>
     m_OnRenameDestinationAlreadyExists
-    = [](const struct stat &_src_stat, const struct stat &_dst_stat, const std::string &_path)
+    = [](const struct stat &, const struct stat &, const std::string &)
     { return RenameDestExistsResolution::Stop; };
     
     enum class CantOpenDestinationFileResolution { Stop, Skip, Retry };
@@ -44,7 +44,7 @@ struct CopyingJobCallbacks
                                                     const std::string &_path,
                                                     VFSHost &_vfs)>
     m_OnCantOpenDestinationFile
-    = [](int _vfs_error, const std::string &_path, VFSHost &_vfs)
+    = [](int, const std::string &, VFSHost &)
     { return CantOpenDestinationFileResolution::Stop; };
     
     enum class SourceFileReadErrorResolution { Stop, Skip, Retry };
@@ -52,7 +52,7 @@ struct CopyingJobCallbacks
                                                 const std::string &_path,
                                                 VFSHost &_vfs)>
     m_OnSourceFileReadError
-    = [](int _vfs_error, const std::string &_path, VFSHost &_vfs)
+    = [](int, const std::string &, VFSHost &)
     { return SourceFileReadErrorResolution::Stop; };
 
     enum class DestinationFileReadErrorResolution { Stop, Skip };
@@ -60,7 +60,7 @@ struct CopyingJobCallbacks
                                                      const std::string &_path,
                                                      VFSHost &_vfs)>
     m_OnDestinationFileReadError
-    = [](int _vfs_error, const std::string &_path, VFSHost &_vfs)
+    = [](int, const std::string &, VFSHost &)
     { return DestinationFileReadErrorResolution::Stop; };
     
     enum class DestinationFileWriteErrorResolution { Stop, Skip, Retry };
@@ -68,7 +68,7 @@ struct CopyingJobCallbacks
                                                       const std::string &_path,
                                                       VFSHost &_vfs)>
     m_OnDestinationFileWriteError
-    = [](int _vfs_error, const std::string &_path, VFSHost &_vfs)
+    = [](int, const std::string &, VFSHost &)
     { return DestinationFileWriteErrorResolution::Stop; };
 
     enum class CantCreateDestinationRootDirResolution { Stop, Retry };
@@ -76,7 +76,7 @@ struct CopyingJobCallbacks
                                                          const std::string &_path,
                                                          VFSHost &_vfs)>
     m_OnCantCreateDestinationRootDir
-    = [](int _vfs_error, const std::string &_path, VFSHost &_vfs)
+    = [](int, const std::string &, VFSHost &)
     { return CantCreateDestinationRootDirResolution::Stop; };
 
     enum class CantCreateDestinationDirResolution { Stop, Skip, Retry };
@@ -84,7 +84,7 @@ struct CopyingJobCallbacks
                                                      const std::string &_path,
                                                      VFSHost &_vfs)>
     m_OnCantCreateDestinationDir
-    = [](int _vfs_error, const std::string &_path, VFSHost &_vfs)
+    = [](int, const std::string &, VFSHost &)
     { return CantCreateDestinationDirResolution::Stop; };
     
     enum class CantDeleteDestinationFileResolution { Stop, Skip, Retry };
@@ -92,7 +92,7 @@ struct CopyingJobCallbacks
                                                       const std::string &_path,
                                                       VFSHost &_vfs)>
     m_OnCantDeleteDestinationFile
-    = [](int _vfs_error, const std::string &_path, VFSHost &_vfs)
+    = [](int, const std::string &, VFSHost &)
     { return CantDeleteDestinationFileResolution::Stop; };
 
     enum class CantDeleteSourceFileResolution { Stop, Skip, Retry };
@@ -100,19 +100,19 @@ struct CopyingJobCallbacks
                                                  const std::string &_path,
                                                  VFSHost &_vfs)>
     m_OnCantDeleteSourceItem
-    = [](int _vfs_error, const std::string &_path, VFSHost &_vfs)
+    = [](int, const std::string &, VFSHost &)
     { return CantDeleteSourceFileResolution::Stop; };
 
     enum class NotADirectoryResolution { Stop, Skip, Overwrite };
     std::function<NotADirectoryResolution(const std::string &_path,
                                           VFSHost &_vfs)>
     m_OnNotADirectory
-    = [](const std::string &_path, VFSHost &_vfs)
+    = [](const std::string &, VFSHost &)
     { return NotADirectoryResolution::Stop; };
     
     std::function<void(const std::string &_path, VFSHost &_vfs)>
     m_OnFileVerificationFailed
-    = [](const std::string &_path, VFSHost &_vfs)
+    = [](const std::string &, VFSHost &)
     {};
 
     std::function<void()>

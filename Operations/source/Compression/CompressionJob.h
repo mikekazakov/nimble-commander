@@ -19,21 +19,21 @@ struct CompressionJobCallbacks
     enum class SourceScanErrorResolution { Stop, Skip, Retry };
     std::function< SourceScanErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_SourceScanError =
-    [](int _err, const std::string &_path,VFSHost &_vfs){ return SourceScanErrorResolution::Stop; };
+    [](int, const std::string &, VFSHost &){ return SourceScanErrorResolution::Stop; };
     
     enum class SourceAccessErrorResolution { Stop, Skip, Retry };
     std::function< SourceAccessErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_SourceAccessError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){ return SourceAccessErrorResolution::Stop; };
+    [](int, const std::string &, VFSHost &){ return SourceAccessErrorResolution::Stop; };
 
     enum class SourceReadErrorResolution { Stop, Skip };
     std::function< SourceReadErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_SourceReadError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){ return  SourceReadErrorResolution::Stop; };
+    [](int, const std::string &, VFSHost &){ return  SourceReadErrorResolution::Stop; };
 
     std::function< void(int _err, const std::string &_path, VFSHost &_vfs) >
     m_TargetWriteError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){};
+    [](int, const std::string &, VFSHost &){};
 };
 
 class CompressionJob final: public Job, public CompressionJobCallbacks

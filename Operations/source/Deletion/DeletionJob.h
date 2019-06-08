@@ -13,22 +13,22 @@ struct DeletionJobCallbacks
     enum class ReadDirErrorResolution { Stop, Skip, Retry };
     std::function< ReadDirErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnReadDirError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){ return ReadDirErrorResolution::Stop; };
+    [](int, const std::string &, VFSHost &){ return ReadDirErrorResolution::Stop; };
 
     enum class UnlinkErrorResolution { Stop, Skip, Retry };
     std::function< UnlinkErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnUnlinkError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){ return UnlinkErrorResolution::Stop; };
+    [](int, const std::string &, VFSHost &){ return UnlinkErrorResolution::Stop; };
 
     enum class RmdirErrorResolution { Stop, Skip, Retry };
     std::function< RmdirErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnRmdirError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){ return RmdirErrorResolution::Stop; };
+    [](int, const std::string &, VFSHost &){ return RmdirErrorResolution::Stop; };
 
     enum class TrashErrorResolution { Stop, Skip, DeletePermanently, Retry };
     std::function< TrashErrorResolution(int _err, const std::string &_path, VFSHost &_vfs) >
     m_OnTrashError =
-    [](int _err, const std::string &_path, VFSHost &_vfs){ return TrashErrorResolution::Stop; };
+    [](int, const std::string &, VFSHost &){ return TrashErrorResolution::Stop; };
 };
 
 class DeletionJob final : public Job, public DeletionJobCallbacks

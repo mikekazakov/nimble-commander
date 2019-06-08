@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GenericErrorDialog.h"
 #include <VFS/VFS.h>
 #include "Internal.h"
@@ -191,7 +191,7 @@ using namespace nc::ops;
 @end
 
 @implementation NCOpsGenericErrorDialogWindow
-- (void)cancelOperation:(id)sender
+- (void)cancelOperation:(id)[[maybe_unused]]_sender
 {
     const auto response = ((NCOpsGenericErrorDialog*)(self.windowController)).escapeButtonResponse;
     [self.sheetParent endSheet:self returnCode:response];

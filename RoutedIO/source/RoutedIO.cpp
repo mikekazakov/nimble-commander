@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <ServiceManagement/ServiceManagement.h>
 #include <Security/Authorization.h>
 #include <Security/AuthorizationDB.h>
@@ -142,7 +142,10 @@ bool RoutedIO::TurnOn()
             
             message = xpc_dictionary_create(NULL, NULL, 0);
             xpc_dictionary_set_string(message, "operation", "exit");
-            xpc_connection_send_message_with_reply(connection, message, dispatch_get_main_queue(), ^(xpc_object_t event) {});
+            xpc_connection_send_message_with_reply(connection,
+                                                   message,
+                                                   dispatch_get_main_queue(),
+                                                   ^([[maybe_unused]] xpc_object_t _event) {});
             xpc_release(message);
             
             xpc_release(m_Connection);

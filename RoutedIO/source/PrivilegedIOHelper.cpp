@@ -80,7 +80,7 @@ static bool HandleUninstall(xpc_object_t _event) noexcept
     return true;
 }
 
-static bool HandleExit(xpc_object_t _event) noexcept
+static bool HandleExit([[maybe_unused]] xpc_object_t _event) noexcept
 {
     // no response here
     syslog_notice("goodbye, cruel world!");
@@ -606,7 +606,7 @@ static void XPC_Connection_Handler(xpc_connection_t _connection)  {
     xpc_connection_resume(_connection);
 }
 
-int main(int argc, const char *argv[])
+int main([[maybe_unused]] int argc, [[maybe_unused]] const char *argv[])
 {
     if(getuid() != 0)
         return EXIT_FAILURE;

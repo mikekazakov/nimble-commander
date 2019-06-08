@@ -52,7 +52,7 @@ static const std::chrono::nanoseconds g_ShowDelay = std::chrono::milliseconds{15
 }
 
 
-- (IBAction)OnCancel:(id)sender
+- (IBAction)OnCancel:(id)[[maybe_unused]]_sender
 {
     m_UserCancelled = true;
     if(self.OnCancelOperation)

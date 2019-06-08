@@ -261,6 +261,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = CF20CBD3215A2525006716F6;
 			productRefGroup = CF20CBDD215A2526006716F6 /* Products */;

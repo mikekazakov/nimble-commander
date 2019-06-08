@@ -68,7 +68,7 @@ TEST_CASE(PREFIX"Assignment operator")
     p2 = p1;
     CHECK( CFGetRetainCount(array) == 2 );
     CHECK( p2.get() == array );
-    p2 = p2;
+    p2.operator=(p2);
     CHECK( CFGetRetainCount(array) == 2 );
     CHECK( p2.get() == array );
 }
@@ -83,7 +83,7 @@ TEST_CASE(PREFIX"Move assignment operator")
     CHECK( CFGetRetainCount(array) == 1 );
     CHECK( p1.get() == nullptr );
     CHECK( p2.get() == array );
-    p2 = p2;
+    p2.operator=(p2);
     CHECK( CFGetRetainCount(array) == 1 );
     CHECK( p2.get() == array );
 }

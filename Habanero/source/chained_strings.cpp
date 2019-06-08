@@ -46,7 +46,7 @@ void chained_strings::destroy()
     auto curr = m_Begin;
     while(curr != nullptr) {
         auto next = curr->next;
-        for(int i = 0; i < curr->amount; ++i)
+        for( unsigned i = 0; i < curr->amount; ++i )
             if(curr->strings[i].len >= buffer_length)
                 free(curr->strings[i].buf_ptr);
         free(curr);

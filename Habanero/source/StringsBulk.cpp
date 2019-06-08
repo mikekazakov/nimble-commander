@@ -341,7 +341,7 @@ StringsBulk::Iterator &StringsBulk::Iterator::operator+=(long _d) noexcept
     if( _d == 0 )
         return *this;
     
-    assert( m_Ctrl && long(m_Index) + _d >= 0 && long(m_Index) + _d <= m_Ctrl->count );
+    assert( m_Ctrl && long(m_Index) + _d >= 0 && long(m_Index) + _d <= long(m_Ctrl->count) );
     m_Index = m_Index + _d;
     return *this;
 }
@@ -351,7 +351,7 @@ StringsBulk::Iterator &StringsBulk::Iterator::operator-=(long _d) noexcept
     if( _d == 0 )
         return *this;
     
-    assert( m_Ctrl && long(m_Index) + _d >= 0 && long(m_Index) + _d <= m_Ctrl->count );
+    assert( m_Ctrl && long(m_Index) + _d >= 0 && long(m_Index) + _d <= long(m_Ctrl->count) );
     m_Index = m_Index - _d;
     return *this;
 }

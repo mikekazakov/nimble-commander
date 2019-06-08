@@ -94,7 +94,6 @@
 		CF9BF90A226B423B00AD36D9 /* CFPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CFPtr.h; path = include/Habanero/CFPtr.h; sourceTree = "<group>"; };
 		CFB690541E0670FF00BBA5BD /* SerialQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SerialQueue.cpp; path = ../habanero/source/SerialQueue.cpp; sourceTree = "<group>"; };
 		CFB690561E06710900BBA5BD /* SerialQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SerialQueue.h; path = ../habanero/include/Habanero/SerialQueue.h; sourceTree = "<group>"; };
-		CFB6905D1E0677D900BBA5BD /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../habanero/README.md; sourceTree = "<group>"; };
 		CFD22CD32012DDDF00608DFE /* LRUCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LRUCache.h; path = ../habanero/include/Habanero/LRUCache.h; sourceTree = "<group>"; };
 		CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LRUCache_Tests.cpp; path = ../habanero/tests/LRUCache_Tests.cpp; sourceTree = SOURCE_ROOT; };
 		CFD62B861C99C2A60021EE7F /* algo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = algo.h; path = include/Habanero/algo.h; sourceTree = "<group>"; };
@@ -186,7 +185,6 @@
 		CFD62B691C99C19A0021EE7F = {
 			isa = PBXGroup;
 			children = (
-				CFB6905D1E0677D900BBA5BD /* README.md */,
 				CF24E212229191DF00C166FA /* Config */,
 				CFD62B841C99C2510021EE7F /* Headers */,
 				CFD62B851C99C2590021EE7F /* Source */,

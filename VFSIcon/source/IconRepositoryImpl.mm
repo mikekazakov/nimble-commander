@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/IconRepositoryImpl.h>
 
 namespace nc::vfsicon {
@@ -10,11 +10,11 @@ IconRepositoryImpl::IconRepositoryImpl(const std::shared_ptr<IconBuilder> &_icon
                                        const std::shared_ptr<Executor> &_client_executor,
                                        int _max_prod_queue_length,
                                        int _capacity):
-    m_IconBuilder(_icon_builder),
-    m_ProductionQueue(std::move(_production_queue)),
-    m_ClientExecutor(_client_executor),
     m_Capacity(_capacity),
-    m_MaxQueueLength(_max_prod_queue_length)
+    m_MaxQueueLength(_max_prod_queue_length),
+    m_IconBuilder(_icon_builder),
+    m_ClientExecutor(_client_executor),
+    m_ProductionQueue(std::move(_production_queue))
 {
     static_assert( sizeof(Slot) == 40 );
     if( _capacity < 0 || _capacity > std::numeric_limits<SlotKey>::max() ) {
@@ -41,7 +41,7 @@ IconRepositoryImpl::~IconRepositoryImpl()
 bool IconRepositoryImpl::IsValidSlot( SlotKey _key ) const
 {
     return _key != InvalidKey &&
-           ToIndex(_key) < m_Slots.size() &&
+           ToIndex(_key) < (int)m_Slots.size() &&
            IsSlotUsed(m_Slots[ToIndex(_key)]);
 }
     
@@ -192,7 +192,7 @@ int IconRepositoryImpl::AllocateSlot()
         m_FreeSlotsIndices.pop();
         return free_slot_index;
     }
-    else if( m_Slots.size() < m_Capacity ) {
+    else if( (int)m_Slots.size() < m_Capacity ) {
         m_Slots.emplace_back();
         return (int)m_Slots.size() - 1;
     }

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/IconBuilderImpl.h>
 
 namespace nc::vfsicon {
@@ -15,9 +15,9 @@ IconBuilderImpl::IconBuilderImpl
     m_WorkspaceIconsCache(_workspace_icons_cache),
     m_ExtensionIconsCache(_extension_icons_cache),
     m_VFSThumbnailsCache(_vfs_thumbnails_cache),
+    m_VFSBundleIconsCache(_vfs_bundle_icons_cache),
     m_MaxFilesizeForThumbnailsOnNativeFS(_max_filesize_for_thumbnails_on_native_fs),
-    m_MaxFilesizeForThumbnailsOnVFS(_max_filesize_for_thumbnails_on_vfs),
-    m_VFSBundleIconsCache(_vfs_bundle_icons_cache)
+    m_MaxFilesizeForThumbnailsOnVFS(_max_filesize_for_thumbnails_on_vfs)
 {
 }
 

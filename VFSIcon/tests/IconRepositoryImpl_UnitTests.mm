@@ -266,7 +266,7 @@ TEST_CASE("IconRepositoryImpl doesn't call IconBuilder concurrently for a single
     EXPECT_CALL(*queue, Execute)
         .WillRepeatedly(Invoke([](const std::function<void()> &f){ f(); }));    
     EXPECT_CALL(*executor, Execute)
-        .WillRepeatedly(Invoke([](const std::function<void()> &f){ /* no-op */ }));
+        .WillRepeatedly(Invoke([](const std::function<void()> &){ /* no-op */ }));
     EXPECT_CALL(*icon_builder, LookupExistingIcon);
     
     const auto br = CookSomeBuildResult();

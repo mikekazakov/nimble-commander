@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/QLThumbnailsCacheImpl.h>
 #include <Quartz/Quartz.h>
 #include <sys/stat.h>
@@ -6,7 +6,7 @@
 
 namespace nc::vfsicon {
     
-static inline void hash_combine(size_t& seed)
+static inline void hash_combine(size_t&)
 {
 }
 

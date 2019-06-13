@@ -1,11 +1,11 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "BriefSystemOverview.h"
 #include <Utility/SystemInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NSView+Sugar.h>
 #include <Utility/ByteCountFormatter.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
-#include "BriefSystemOverview.h"
 
 static NSTextField *CreateStockTF()
 {
@@ -437,7 +437,7 @@ static NSTextField *CreateStockTF()
     }
 }
 
-- (void) UpdateByTimer:(NSTimer*)theTimer
+- (void) UpdateByTimer:(NSTimer*)[[maybe_unused]]_the_timer
 {
     [self UpdateData];
     [self UpdateControls];

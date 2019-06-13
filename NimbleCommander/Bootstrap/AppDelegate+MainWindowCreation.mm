@@ -311,7 +311,7 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     return true;
 }
 
-bool DirectoryAccessProviderImpl::HasAccess(PanelController *_panel,
+bool DirectoryAccessProviderImpl::HasAccess([[maybe_unused]] PanelController *_panel,
                                             const std::string &_directory_path,
                                             VFSHost &_host)
 {
@@ -325,7 +325,7 @@ bool DirectoryAccessProviderImpl::HasAccess(PanelController *_panel,
         return true;
 }
     
-bool DirectoryAccessProviderImpl::RequestAccessSync(PanelController *_panel,
+bool DirectoryAccessProviderImpl::RequestAccessSync([[maybe_unused]] PanelController *_panel,
                                                     const std::string &_directory_path,
                                                     VFSHost &_host)
 {

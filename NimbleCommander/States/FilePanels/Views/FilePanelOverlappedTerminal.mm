@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Utility/FontCache.h>
 #include <Term/ShellTask.h>
@@ -102,7 +102,7 @@ static const auto g_LongProcessDelay = 100ms;
     });
 }
 
-- (void) onBashPrompt:(const char*)_cwd cwdChanged:(bool)_changed
+- (void) onBashPrompt:(const char*)[[maybe_unused]]_cwd cwdChanged:(bool)_changed
 {
     dispatch_to_main_queue_after(g_BashPromptInputDelay, [=]{
         [self guessWhereCommandLineIs];
@@ -193,7 +193,7 @@ static const auto g_LongProcessDelay = 100ms;
     return m_TermScrollView.view;
 }
 
-- (void) runShell:(const std::string&)_initial_wd;
+- (void) runShell:(const std::string&)_initial_wd
 {
     if( !_initial_wd.empty() )
         m_InitalWD = _initial_wd;

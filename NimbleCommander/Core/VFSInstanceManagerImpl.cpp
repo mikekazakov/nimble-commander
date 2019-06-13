@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include "VFSInstanceManagerImpl.h"
 #include <VFS/VFS.h>
@@ -26,11 +26,11 @@ VFSInstanceManagerImpl::Info::Info(const VFSHostPtr& _host,
                                uint64_t _parent_id,
                                VFSConfiguration _config
                                ):
-    m_WeakHost(_host),
     m_ID(_id),
+    m_PromisesCount(0),
     m_ParentVFSID(_parent_id),
-    m_Configuration(_config),
-    m_PromisesCount(0)
+    m_WeakHost(_host),
+    m_Configuration(_config)
 {
 }
 

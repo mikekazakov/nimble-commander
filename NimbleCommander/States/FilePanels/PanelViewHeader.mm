@@ -1,9 +1,9 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PanelViewHeader.h"
 #include <Utility/Layout.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/ColoredSeparatorLine.h>
 #include <Utility/VerticallyCenteredTextFieldCell.h>
-#include "PanelViewHeader.h"
 
 using namespace nc::panel;
 
@@ -295,7 +295,7 @@ static bool IsDark( NSColor *_color );
     m_SearchMatchesField.intValue = searchMatches;
 }
 
-- (void) onSearchFieldDiscardButton:(id)sender
+- (void) onSearchFieldDiscardButton:(id)[[maybe_unused]]_sender
 {
     self.searchPrompt = nil;
     [self.window makeFirstResponder:self.defaultResponder];
@@ -303,7 +303,7 @@ static bool IsDark( NSColor *_color );
         m_SearchRequestChangeCallback(nil);
 }
 
-- (void)controlTextDidChange:(NSNotification *)obj;
+- (void)controlTextDidChange:(NSNotification *)obj
 {
     if( obj.object == m_SearchTextField ) {
         NSString *v = m_SearchTextField.stringValue;
@@ -316,11 +316,11 @@ static bool IsDark( NSColor *_color );
     }
 }
 
-- (void) onSearchFieldAction:(id)sender
+- (void) onSearchFieldAction:(id)[[maybe_unused]]_sender
 {
 }
 
-- (void) onSortButtonAction:(id)sender
+- (void) onSortButtonAction:(id)[[maybe_unused]]_sender
 {
     if( !self.sortMenuPopup ) {
         NSNib *nib = [[NSNib alloc] initWithNibNamed:@"PanelViewHeaderSortPopup" bundle:nil];

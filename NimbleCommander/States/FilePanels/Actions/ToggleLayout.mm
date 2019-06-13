@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../PanelController.h"
 #include "../PanelViewLayoutSupport.h"
 #include "ToggleLayout.h"
@@ -23,7 +23,7 @@ bool ToggleLayout::ValidateMenuItem( PanelController *_target, NSMenuItem *_item
     return Predicate(_target);
 }
 
-void ToggleLayout::Perform( PanelController *_target, id _sender ) const
+void ToggleLayout::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
 {
     [_target setLayoutIndex:m_Index];
 }

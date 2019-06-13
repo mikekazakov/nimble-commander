@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataEntriesComparator.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataExternalEntryKey.h"
@@ -11,9 +11,9 @@ ListingComparatorBase::ListingComparatorBase(const VFSListing &_items,
     l{ _items },
     vd{ _vd },
     sort_mode{ _sort_mode },
-    plain_compare{ _sort_mode.case_sens ? strcmp : strcasecmp},
     str_comp_flags{ (_sort_mode.case_sens ? 0 : kCFCompareCaseInsensitive) |
-        (_sort_mode.numeric_sort ? kCFCompareNumerically : 0) }
+        (_sort_mode.numeric_sort ? kCFCompareNumerically : 0) },
+    plain_compare{ _sort_mode.case_sens ? strcmp : strcasecmp}        
 {
 }
     

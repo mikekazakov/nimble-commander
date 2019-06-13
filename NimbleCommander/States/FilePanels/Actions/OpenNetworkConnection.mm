@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OpenNetworkConnection.h"
 #include "../PanelController.h"
 #include "../Views/FTPConnectionSheetController.h"
@@ -220,7 +220,7 @@ OpenNewFTPConnection::OpenNewFTPConnection(NetworkConnectionsManager &_net_mgr )
 {
 }
     
-void OpenNewFTPConnection::Perform(PanelController *_target, id _sender) const
+void OpenNewFTPConnection::Perform(PanelController *_target, id ) const
 {
     const auto sheet = [[FTPConnectionSheetController alloc] init];
     const auto window = _target.window;
@@ -246,7 +246,7 @@ OpenNewSFTPConnection::OpenNewSFTPConnection(NetworkConnectionsManager &_net_mgr
 {
 }
     
-void OpenNewSFTPConnection::Perform(PanelController *_target, id _sender) const
+void OpenNewSFTPConnection::Perform(PanelController *_target, id ) const
 {
     const auto sheet = [[SFTPConnectionSheetController alloc] init];
     const auto window = _target.window;
@@ -271,7 +271,7 @@ OpenNewDropboxStorage::OpenNewDropboxStorage(NetworkConnectionsManager &_net_mgr
 {
 }
 
-void OpenNewDropboxStorage::Perform(PanelController *_target, id _sender) const
+void OpenNewDropboxStorage::Perform(PanelController *_target, id ) const
 {
     const auto sheet = [[DropboxAccountSheetController alloc] init];
     const auto window = _target.window;
@@ -296,7 +296,7 @@ OpenNewLANShare::OpenNewLANShare(NetworkConnectionsManager &_net_mgr):
 {
 }
     
-void OpenNewLANShare::Perform(PanelController *_target, id _sender) const
+void OpenNewLANShare::Perform(PanelController *_target, id ) const
 {
     const auto sheet = [[NetworkShareSheetController alloc] init];
     const auto window = _target.window;
@@ -318,7 +318,7 @@ OpenNewWebDAVConnection::OpenNewWebDAVConnection(NetworkConnectionsManager &_net
 {
 }
 
-void OpenNewWebDAVConnection::Perform( PanelController *_target, id _sender ) const
+void OpenNewWebDAVConnection::Perform( PanelController *_target, id ) const
 {
     const auto sheet = [[WebDAVConnectionSheetController alloc] init];
     const auto window = _target.window;
@@ -386,7 +386,7 @@ OpenNetworkConnections::OpenNetworkConnections(NetworkConnectionsManager &_net_m
 {
 }
     
-void OpenNetworkConnections::Perform( PanelController *_target, id _sender ) const
+void OpenNetworkConnections::Perform( PanelController *_target, id ) const
 {
     const auto sheet = [[ConnectToServer alloc] initWithNetworkConnectionsManager:m_NetMgr];
     const auto window = _target.window;

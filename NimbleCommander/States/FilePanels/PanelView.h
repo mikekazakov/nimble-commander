@@ -21,7 +21,7 @@ namespace nc::panel {
     struct PanelViewLayout;
     namespace data {
         struct ItemVolatileData;
-        struct Model;
+        class Model;
     }
 }
 

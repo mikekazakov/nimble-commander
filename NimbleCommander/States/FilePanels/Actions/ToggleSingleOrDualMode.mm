@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ToggleSingleOrDualMode.h"
 #include "../MainWindowFilePanelState.h"
 #include "../Views/FilePanelMainSplitView.h"
@@ -20,7 +20,7 @@ bool ToggleSingleOrDualMode::ValidateMenuItem(MainWindowFilePanelState *_target,
     return Predicate(_target);
 }
 
-void ToggleSingleOrDualMode::Perform( MainWindowFilePanelState *_target, id _sender ) const
+void ToggleSingleOrDualMode::Perform( MainWindowFilePanelState *_target, id ) const
 {
     const auto split_view = _target.splitView;
     if( split_view.anyCollapsed ) {

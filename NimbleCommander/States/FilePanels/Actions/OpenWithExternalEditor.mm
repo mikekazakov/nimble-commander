@@ -19,7 +19,7 @@ bool OpenWithExternalEditor::Predicate( PanelController *_target ) const
     return i && !i.IsDotDot();
 }
 
-void OpenWithExternalEditor::Perform( PanelController *_target, id _sender ) const
+void OpenWithExternalEditor::Perform( PanelController *_target, id ) const
 {
     auto item = _target.view.item;
     if( !item || item.IsDotDot() )

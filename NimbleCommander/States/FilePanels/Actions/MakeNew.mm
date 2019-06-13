@@ -107,7 +107,7 @@ bool MakeNewFile::Predicate( PanelController *_target ) const
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
-void MakeNewFile::Perform( PanelController *_target, id _sender ) const
+void MakeNewFile::Perform( PanelController *_target, id ) const
 {
     const boost::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
@@ -148,7 +148,7 @@ bool MakeNewFolder::Predicate( PanelController *_target ) const
     return _target.isUniform && _target.vfs->IsWritable();
 }
 
-void MakeNewFolder::Perform( PanelController *_target, id _sender ) const
+void MakeNewFolder::Perform( PanelController *_target, id ) const
 {
     const boost::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
@@ -183,7 +183,7 @@ bool MakeNewFolderWithSelection::Predicate( PanelController *_target ) const
             (!item.IsDotDot() || _target.data.Stats().selected_entries_amount > 0);
 }
 
-void MakeNewFolderWithSelection::Perform( PanelController *_target, id _sender ) const
+void MakeNewFolderWithSelection::Perform( PanelController *_target, id ) const
 {
     const boost::filesystem::path dir = _target.currentDirectoryPath;
     const VFSHostPtr vfs = _target.vfs;
@@ -231,7 +231,7 @@ static bool ValidateDirectoryInput(const std::string &_text)
     return _text.find_first_of(invalid_chars) == std::string::npos;
 }
     
-void MakeNewNamedFolder::Perform( PanelController *_target, id _sender ) const
+void MakeNewNamedFolder::Perform( PanelController *_target, id ) const
 {
     const auto cd = [[NCOpsDirectoryCreationDialog alloc] init];
     if( const auto item = _target.view.item )

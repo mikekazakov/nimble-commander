@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SyncPanels.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
@@ -19,7 +19,7 @@ bool SyncPanels::Predicate( MainWindowFilePanelState *_target ) const
     return true;
 }
     
-void SyncPanels::Perform( MainWindowFilePanelState *_target, id _sender ) const
+void SyncPanels::Perform( MainWindowFilePanelState *_target, id ) const
 {
     if( _target.splitView.anyCollapsedOrOverlayed )
         return;
@@ -48,7 +48,7 @@ bool SwapPanels::Predicate( MainWindowFilePanelState *_target ) const
     return _target.isPanelActive && !_target.splitView.anyCollapsedOrOverlayed;
 }
 
-void SwapPanels::Perform( MainWindowFilePanelState *_target, id _sender ) const
+void SwapPanels::Perform( MainWindowFilePanelState *_target, id ) const
 {
     [_target swapPanels];
 }

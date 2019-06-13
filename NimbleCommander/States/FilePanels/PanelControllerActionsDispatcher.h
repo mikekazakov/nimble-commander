@@ -9,7 +9,7 @@
 
 namespace nc::panel {
 namespace actions{
-    class PanelAction;
+    struct PanelAction;
 }
     
 using PanelActionsMap = std::unordered_map<SEL, std::unique_ptr<const actions::PanelAction> >;

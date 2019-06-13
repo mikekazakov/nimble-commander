@@ -89,7 +89,7 @@ bool OpenFilesWithDefaultHandler::Predicate( PanelController *_target ) const
     return (bool)_target.view.item;
 }
 
-void OpenFilesWithDefaultHandler::Perform( PanelController *_target, id _sender ) const
+void OpenFilesWithDefaultHandler::Perform( PanelController *_target, id ) const
 {
     if( !Predicate(_target) ) {
         NSBeep();
@@ -133,7 +133,8 @@ context::OpenFileWithDefaultHandler::
 {
 }
 
-bool context::OpenFileWithDefaultHandler::Predicate( PanelController *_target ) const
+bool context::OpenFileWithDefaultHandler::
+Predicate( [[maybe_unused]] PanelController *_target ) const
 {
     const auto has_reg_files = any_of(begin(m_Items),
                                       end(m_Items),
@@ -147,7 +148,7 @@ bool context::OpenFileWithDefaultHandler::Predicate( PanelController *_target ) 
     return all_are_native;
 }
 
-void context::OpenFileWithDefaultHandler::Perform( PanelController *_target, id _sender ) const
+void context::OpenFileWithDefaultHandler::Perform( PanelController *_target, id ) const
 {
     PerformOpeningFilesWithDefaultHandler(m_Items, _target, m_FileOpener);
 }

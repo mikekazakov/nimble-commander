@@ -94,7 +94,7 @@ static std::string TrimSlashes(std::string _str)
     return _str;
 }
 
-- (IBAction)onConnect:(id)sender
+- (IBAction)onConnect:(id)[[maybe_unused]]_sender
 {
     if( m_Original)
         m_Connection.uuid = m_Original->Uuid();
@@ -116,12 +116,12 @@ static std::string TrimSlashes(std::string _str)
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)onCancel:(id)sender
+- (IBAction)onCancel:(id)[[maybe_unused]]_sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (void)controlTextDidChange:(NSNotification *)obj
+- (void)controlTextDidChange:(NSNotification *)[[maybe_unused]]_obj
 {
     [self validate];
 }

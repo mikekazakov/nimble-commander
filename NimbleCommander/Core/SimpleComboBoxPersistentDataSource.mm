@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
 #include "SimpleComboBoxPersistentDataSource.h"
@@ -63,12 +63,12 @@
     m_Clean = false;
 }
 
-- (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox
+- (NSInteger)numberOfItemsInComboBox:(NSComboBox *)[[maybe_unused]]aComboBox
 {
     return m_Items.size();
 }
 
-- (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)index
+- (id)comboBox:(NSComboBox *)[[maybe_unused]]aComboBox objectValueForItemAtIndex:(NSInteger)index
 {
     if(index >= 0 && index < (long)m_Items.size())
         return m_Items[index];

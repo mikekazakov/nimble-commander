@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RecentlyClosedMenuDelegate.h"
 #include "../ListingPromise.h"
 #include "LocationFormatter.h"
@@ -40,7 +40,7 @@ using namespace nc::panel;
     return self;
 }
 
-- (BOOL)menuHasKeyEquivalent:(NSMenu*)menu
+- (BOOL)menuHasKeyEquivalent:(NSMenu*)[[maybe_unused]]_menu
                     forEvent:(NSEvent*)event
                       target:(__nullable id* __nonnull)target
                       action:(__nullable SEL* __nonnull)action
@@ -113,7 +113,7 @@ static RestoreClosedTabRequest::Side CurrentSide(MainWindowFilePanelState *_stat
     }
 }
 
-- (void)menuDidClose:(NSMenu *)menu
+- (void)menuDidClose:(NSMenu *)[[maybe_unused]]_menu
 {
     [self purgeMenu];
 }

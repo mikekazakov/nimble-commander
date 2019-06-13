@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -7,7 +7,7 @@
 namespace nc::panel::data {
 
 struct ExternalEntryKey;
-class ItemVolatileData;
+struct ItemVolatileData;
 
 class ListingComparatorBase
 {

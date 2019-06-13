@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DragSender.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
@@ -117,8 +117,7 @@ static std::vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos,
     return items;
 }
 
-static NSDraggingImageComponent *BuildIconComponent(PanelDraggingItem* _item,
-                                                    const utility::FontGeometryInfo &_fi )
+static NSDraggingImageComponent *BuildIconComponent(PanelDraggingItem* _item)
 {
     if( _item.icon == nil )
         return nil;
@@ -194,7 +193,7 @@ static NSArray* BuildImageComponentsForItem(PanelDraggingItem* _item)
     const auto label_component = BuildLabelComponent(_item, font, font_info);
     assert(label_component != nil);    
     
-    const auto icon_component = BuildIconComponent(_item, font_info);
+    const auto icon_component = BuildIconComponent(_item);
     if( icon_component != nil )
         return @[icon_component, label_component];
     else 

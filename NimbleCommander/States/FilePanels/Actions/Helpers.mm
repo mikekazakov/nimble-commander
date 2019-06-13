@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Helpers.h"
 #include "../PanelController.h"
 #include <NimbleCommander/Core/VFSInstancePromise.h>
@@ -59,7 +59,7 @@ void AsyncPersistentLocationRestorer::Restore(const nc::panel::PersistentLocatio
                  location = _location,
                  success = std::move(_success_handler),
                  failure = std::move(_failure_handler)]
-            (const std::function<bool()> &_is_cancelled)
+            ([[maybe_unused]] const std::function<bool()> &_is_cancelled)
     {
         VFSHostPtr host;        
         const auto rc = PanelDataPersisency::CreateVFSFromLocation(location, host, manager);

@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewDynamicWidthLayoutEngine.h"
 
 namespace nc::panel::view::brief {
@@ -9,7 +9,7 @@ void DynamicWidthLayoutEngine::Layout( const Params &_params )
     m_RowsNumber = NumberOfRowsForViewHeight(_params.clip_view_bounds.size.height, m_ItemHeight); 
     if( m_RowsNumber == 0 ) {
         m_ColumnsNumber = m_ItemsNumber > 0 ? 1 : 0;
-        PerformSingularLayout(_params);
+        PerformSingularLayout();
     }
     else {
         m_ColumnsNumber = (m_ItemsNumber % m_RowsNumber != 0) ? 
@@ -76,7 +76,7 @@ void DynamicWidthLayoutEngine::PerformNormalLayout( const Params &_params )
     m_ContentSize = NSMakeSize(current_column_position, m_RowsNumber * m_ItemHeight);
 }
 
-void DynamicWidthLayoutEngine::PerformSingularLayout( const Params &_params )
+void DynamicWidthLayoutEngine::PerformSingularLayout()
 {
     assert( m_RowsNumber == 0 );
 

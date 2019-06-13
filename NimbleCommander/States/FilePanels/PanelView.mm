@@ -104,7 +104,7 @@ struct StateStorage
     return self;
 }
 
-- (id)initWithFrame:(NSRect)frame
+- (id)initWithFrame:(NSRect)[[maybe_unused]]_frame
 {
     assert( "don't call [PanelView initWithFrame:(NSRect)frame]" == nullptr );
     return nil;
@@ -408,7 +408,7 @@ struct StateStorage
     [self OnCursorPositionChanged];
 }
 
-- (void) HandleFirstFile;
+- (void) HandleFirstFile
 {
     dispatch_assert_main_queue();
     
@@ -425,7 +425,7 @@ struct StateStorage
     [self OnCursorPositionChanged];
 }
 
-- (void) HandleLastFile;
+- (void) HandleLastFile
 {
     dispatch_assert_main_queue();
     
@@ -614,7 +614,7 @@ struct StateStorage
     [super flagsChanged:event];
 }
 
-- (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)_event
+- (NSMenu *)panelItem:(int)_sorted_index menuForForEvent:(NSEvent*)[[maybe_unused]]_event
 {
     if( _sorted_index >= 0 )
         return [self.delegate panelView:self requestsContextMenuForItemNo:_sorted_index];    
@@ -897,7 +897,8 @@ struct StateStorage
     [m_FooterView updateStatistics:m_Data->Stats()];
 }
 
-- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options;
+- (int) sortedItemPosAtPoint:(NSPoint)_window_point
+hitTestOption:(PanelViewHitTest::Options)_options
 {
     
     assert(dispatch_is_main_queue());
@@ -970,13 +971,13 @@ struct StateStorage
     }
 }
 
-- (void)panelItem:(int)_sorted_index fieldEditor:(NSEvent*)_event
+- (void)panelItem:(int)_sorted_index fieldEditor:(NSEvent*)[[maybe_unused]]_event
 {
     if( _sorted_index >= 0 && _sorted_index == m_CursorPos )
         [self startFieldEditorRenaming];
 }
 
-- (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)_event
+- (void)panelItem:(int)_sorted_index dblClick:(NSEvent*)[[maybe_unused]]_event
 {
     if( _sorted_index >= 0 && _sorted_index == m_CursorPos ) {
         if( auto action_dispatcher = self.actionsDispatcher )

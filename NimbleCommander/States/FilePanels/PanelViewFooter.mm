@@ -149,7 +149,7 @@ static NSString* FormHumanReadableBytesAndFiles(uint64_t _sz,
         [self installConstraints];
         
         __weak NCPanelViewFooter *weak_self = self;
-        m_VolumeInfoFetcher.SetCallback([=](const VFSStatFS &_st) {
+        m_VolumeInfoFetcher.SetCallback([=](const VFSStatFS &) {
             if( NCPanelViewFooter *strong_self = weak_self )
                 [strong_self updateVolumeInfo];
         });

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
 #include <Utility/PathManip.h>
 #include "../PanelController.h"
@@ -85,7 +85,7 @@ bool PasteFromPasteboard::Predicate( PanelController *_target ) const
         [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
 }
 
-void PasteFromPasteboard::Perform( PanelController *_target, id _sender ) const
+void PasteFromPasteboard::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
 {
     PasteOrMove(_target, true);
 }
@@ -97,7 +97,7 @@ bool MoveFromPasteboard::Predicate( PanelController *_target ) const
         [NSPasteboard.generalPasteboard availableTypeFromArray:@[NSFilenamesPboardType]];
 }
 
-void MoveFromPasteboard::Perform( PanelController *_target, id _sender ) const
+void MoveFromPasteboard::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
 {
     PasteOrMove(_target, false);
 }

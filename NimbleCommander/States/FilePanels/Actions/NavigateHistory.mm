@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NavigateHistory.h"
 #include "../PanelController.h"
 #include "../PanelHistory.h"
@@ -12,7 +12,7 @@ bool GoBack::Predicate( PanelController *_target ) const
     return _target.history.CanMoveBack();
 }
     
-void GoBack::Perform( PanelController *_target, id _sender ) const
+void GoBack::Perform( PanelController *_target, id ) const
 {
     auto &history = _target.history;
     if( !history.CanMoveBack() )
@@ -28,7 +28,7 @@ bool GoForward::Predicate( PanelController *_target ) const
     return _target.history.CanMoveForth();
 }
 
-void GoForward::Perform( PanelController *_target, id _sender ) const
+void GoForward::Perform( PanelController *_target, id ) const
 {
     auto &history = _target.history;
     if( !history.CanMoveForth() )

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
@@ -156,7 +156,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     }
 }
 
-- (void)drawRect:(NSRect)dirtyRect
+- (void)drawRect:(NSRect)[[maybe_unused]]_dirty_rect
 {
     const auto bounds = self.bounds;
     const auto context = NSGraphicsContext.currentContext.CGContext;
@@ -205,13 +205,13 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     
 }
 
-- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+- (BOOL) acceptsFirstMouse:(NSEvent *)[[maybe_unused]]_event
 {
     /* really always??? */
     return true;
 }
 
-- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)[[maybe_unused]]_event
 {
     /* really always??? */
     return true;
@@ -310,12 +310,22 @@ static bool HasNoModifiers( NSEvent *_event )
     return [m_Controller.briefView.panelView panelItem:my_index menuForForEvent:_event];    
 }
 
+- (NSImage*) icon
+{
+    return m_Icon;
+}
+
 - (void) setIcon:(NSImage *)icon
 {
     if( m_Icon != icon ) {
         m_Icon = icon;
         [self setNeedsDisplay:true];
     }
+}
+
+- (NSColor*) filenameColor
+{
+    return m_TextColor;
 }
 
 - (void) setFilenameColor:(NSColor *)filenameColor
@@ -462,7 +472,7 @@ static bool HasNoModifiers( NSEvent *_event )
     }
 }
 
-- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)[[maybe_unused]]sender
 {
     // possibly add some checking stage here later
     return YES;

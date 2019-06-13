@@ -62,13 +62,13 @@ static NSString *SizeStringFromEncodedSize( uint64_t _sz )
     return self;
 }
 
-- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+- (BOOL) acceptsFirstMouse:(NSEvent *)[[maybe_unused]]_event
 {
     /* really always??? */
     return true;
 }
 
-- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+- (BOOL)shouldDelayWindowOrderingForEvent:[[maybe_unused]]_event
 {
     /* really always??? */
     return true;
@@ -98,7 +98,7 @@ static NSString *SizeStringFromEncodedSize( uint64_t _sz )
     m_String = @"";
 }
 
-- (void) drawRect:(NSRect)dirtyRect
+- (void) drawRect:(NSRect)[[maybe_unused]]_rect
 {
     if( auto rv = m_RowView ) {
         if( auto lv = rv.listView ) {

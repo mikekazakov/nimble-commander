@@ -49,20 +49,20 @@ static const auto g_ConfigShowLocalizedFilenames
 namespace nc::panel {
 
 ActivityTicket::ActivityTicket():
-    panel(nil),
-    ticket(0)
+    ticket(0),
+    panel(nil)
 {
 }
 
 ActivityTicket::ActivityTicket(PanelController *_panel, uint64_t _ticket):
-    panel(_panel),
-    ticket(_ticket)
+    ticket(_ticket),
+    panel(_panel)
 {
 }
 
 ActivityTicket::ActivityTicket( ActivityTicket&& _rhs):
-    panel(_rhs.panel),
-    ticket(_rhs.ticket)
+    ticket(_rhs.ticket),
+    panel(_rhs.panel)
 {
     _rhs.panel = nil;
     _rhs.ticket = 0;
@@ -189,7 +189,7 @@ static void HeatUpConfigValues()
                      layouts:(std::shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
           vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
      directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider
-         contextMenuProvider:(nc::panel::ContextMenuProvider)_context_menu_provider;
+         contextMenuProvider:(nc::panel::ContextMenuProvider)_context_menu_provider
 {
     assert( _layouts );
     assert( _context_menu_provider );
@@ -432,7 +432,7 @@ static void HeatUpConfigValues()
     [self refreshPanelDiscardingCaches:true];
 }
 
-- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)[[maybe_unused]]_panel_view
 {
     // this is doubtful, actually. need to figure out something clearer:
     [self clearFocusingRequest]; // on any key press we clear entry selection request, if any
@@ -448,7 +448,7 @@ static void HeatUpConfigValues()
     return panel::view::BiddingPriority::Skip;
 }
 
-- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)[[maybe_unused]]_panel_view
 {
     const auto keycode = _event.keyCode;
     if( keycode == 53 ) { // Esc button
@@ -600,7 +600,7 @@ static void HeatUpConfigValues()
     }
 }
 
-- (void) PanelViewCursorChanged:(PanelView*)_view
+- (void) PanelViewCursorChanged:(PanelView*)[[maybe_unused]]_view
 {
     [self onCursorChanged];
 }
@@ -629,7 +629,7 @@ static void HeatUpConfigValues()
     return menu;
 }
 
-- (void) contextMenuDidClose:(NSMenu*)_menu
+- (void) contextMenuDidClose:(NSMenu*)[[maybe_unused]]_menu
 {
     m_Data.CustomFlagsClearHighlights();
     [m_View volatileDataChanged];
@@ -906,7 +906,7 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
         
         while(true)
         {
-            if(vfs->IterateDirectoryListing(path.c_str(), [](const VFSDirEnt &_dirent) {
+            if(vfs->IterateDirectoryListing(path.c_str(), [](const VFSDirEnt &) {
                     return false;
                 }) >= 0) {
                 dispatch_to_main_queue([=]{
@@ -1012,27 +1012,28 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
     return *m_VFSInstanceManager;
 }
 
-- (int) quickSearchNeedsCursorPosition:(NCPanelQuickSearch*)_qs
+- (int) quickSearchNeedsCursorPosition:(NCPanelQuickSearch*)[[maybe_unused]]_qs
 {
     return m_View.curpos;     
 }
 
-- (void) quickSearch:(NCPanelQuickSearch*)_qs wantsToSetCursorPosition:(int)_cursor_position
+- (void) quickSearch:(NCPanelQuickSearch*)[[maybe_unused]]_qs
+wantsToSetCursorPosition:(int)_cursor_position
 {
     m_View.curpos = _cursor_position;    
 }
 
-- (void) quickSearchHasChangedVolatileData:(NCPanelQuickSearch*)_qs
+- (void) quickSearchHasChangedVolatileData:(NCPanelQuickSearch*)[[maybe_unused]]_qs
 {
     [m_View volatileDataChanged];
 }
 
-- (void) quickSearchHasUpdatedData:(NCPanelQuickSearch*)_qs
+- (void) quickSearchHasUpdatedData:(NCPanelQuickSearch*)[[maybe_unused]]_qs
 {
     [m_View dataUpdated];    
 }
 
-- (void) quickSearch:(NCPanelQuickSearch*)_qs
+- (void) quickSearch:(NCPanelQuickSearch*)[[maybe_unused]]_qs
 wantsToSetSearchPrompt:(NSString*)_prompt
     withMatchesCount:(int)_count
 {    

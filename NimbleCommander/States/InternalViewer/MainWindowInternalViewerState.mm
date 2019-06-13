@@ -96,7 +96,7 @@
     return true;
 }
 
-- (bool)openFile:(const std::string&)_path atVFS:(const VFSHostPtr&)_host;
+- (bool)openFile:(const std::string&)_path atVFS:(const VFSHostPtr&)_host
 {
     [m_Controller setFile:_path at:_host];
     return [m_Controller performBackgroundOpening];
@@ -130,7 +130,7 @@
     m_Controller.nextResponder = nil;
 }
 
-- (void)cancelOperation:(id)sender
+- (void)cancelOperation:(id)[[maybe_unused]]_sender
 {
     dispatch_assert_main_queue();
     [m_Controller saveFileState];

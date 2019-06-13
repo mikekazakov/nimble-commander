@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Duplicate.h"
 #include "../PanelController.h"
 #include <VFS/VFS.h>
@@ -77,7 +77,7 @@ static void CommonPerform(PanelController *_target, const std::vector<VFSListing
     }
 }
 
-void Duplicate::Perform( PanelController *_target, id _sender ) const
+void Duplicate::Perform( PanelController *_target, id ) const
 {
     CommonPerform(_target, _target.selectedEntriesOrFocusedEntry);
 }
@@ -95,7 +95,7 @@ bool context::Duplicate::Predicate( PanelController *_target ) const
     return _target.vfs->IsWritable();
 }
 
-void context::Duplicate::Perform( PanelController *_target, id _sender ) const
+void context::Duplicate::Perform( PanelController *_target, id ) const
 {
     CommonPerform(_target, m_Items);
 }

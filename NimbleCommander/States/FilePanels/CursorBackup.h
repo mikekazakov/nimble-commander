@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "PanelDataExternalEntryKey.h"
@@ -16,7 +16,6 @@ public:
 
     int RestoredCursorPosition() const;
 private:
-    int                         m_OldCursorPosition;
     const data::Model          &m_Data;
     std::string                 m_OldCursorName;
     data::ExternalEntryKey      m_OldEntrySortKeys;

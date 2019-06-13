@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CopyToPasteboard.h"
 #include "../PanelController.h"
 #include "../Helpers/Pasteboard.h"
@@ -48,7 +48,7 @@ void CopyToPasteboard::PerformWithItems( const std::vector<VFSListingItem> &_ite
         NSBeep();
 }
 
-void CopyToPasteboard::Perform( PanelController *_target, id _sender ) const
+void CopyToPasteboard::Perform( PanelController *_target, id ) const
 {
     PerformWithItems( _target.selectedEntriesOrFocusedEntryWithDotDot );
 }
@@ -60,7 +60,7 @@ context::CopyToPasteboard::CopyToPasteboard(const std::vector<VFSListingItem> &_
         throw std::invalid_argument("CopyToPasteboard was made with empty items set");
 }
 
-bool context::CopyToPasteboard::Predicate( PanelController *_target ) const
+bool context::CopyToPasteboard::Predicate( [[maybe_unused]] PanelController *_target ) const
 {
 // currently there's a difference with previous predicate form context menu:
 //        if( m_CommonHost && m_CommonHost->IsNativeFS() ) {
@@ -86,7 +86,7 @@ bool context::CopyToPasteboard::ValidateMenuItem(PanelController *_target,
     return Predicate(_target);
 }
 
-void context::CopyToPasteboard::Perform( PanelController *_target, id _sender ) const
+void context::CopyToPasteboard::Perform( [[maybe_unused]] PanelController *_target, id ) const
 {
     PerformWithItems( m_Items );
 }

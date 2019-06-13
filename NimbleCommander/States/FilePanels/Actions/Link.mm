@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Link.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
@@ -40,7 +40,7 @@ bool CreateSymlink::Predicate( PanelController *_target ) const
     return true;
 }
 
-void CreateSymlink::Perform( PanelController *_target, id _sender ) const
+void CreateSymlink::Perform( PanelController *_target, id ) const
 {
     const auto item = _target.view.item;
     if( !item )
@@ -89,7 +89,7 @@ bool AlterSymlink::Predicate( PanelController *_target ) const
     return item && item.IsSymlink() && item.Host()->IsWritable();
 }
     
-void AlterSymlink::Perform( PanelController *_target, id _sender ) const
+void AlterSymlink::Perform( PanelController *_target, id ) const
 {
     const auto item = _target.view.item;
     if( !item || !item.IsSymlink() )
@@ -122,7 +122,7 @@ bool CreateHardlink::Predicate( PanelController *_target ) const
     return item && !item.IsDir() && item.Host()->IsNativeFS();
 }
 
-void CreateHardlink::Perform( PanelController *_target, id _sender ) const
+void CreateHardlink::Perform( PanelController *_target, id ) const
 {
     if( !Predicate(_target) )
         return;

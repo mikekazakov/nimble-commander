@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShowTabs.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 
@@ -18,7 +18,7 @@ bool ShowTabs::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuItem *
     return Predicate(_target);
 }
 
-void ShowTabs::Perform( MainWindowFilePanelState *_target, id _sender ) const
+void ShowTabs::Perform( [[maybe_unused]] MainWindowFilePanelState *_target, id ) const
 {
     const auto shown = GlobalConfig().GetBool(g_ConfigGeneralShowTabs);
     GlobalConfig().Set( g_ConfigGeneralShowTabs, !shown );

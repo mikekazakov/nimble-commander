@@ -89,19 +89,19 @@ enum class State
     [self validate];
 }
 
-- (IBAction)onConnect:(id)sender
+- (IBAction)onConnect:(id)[[maybe_unused]]_sender
 {
     m_Connection.title = self.titleField.stringValue.UTF8String;
 
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)onClose:(id)sender
+- (IBAction)onClose:(id)[[maybe_unused]]_sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (IBAction)onRequestAccess:(id)sender
+- (IBAction)onRequestAccess:(id)[[maybe_unused]]_sender
 {
     m_RedirectHTTPHandler = [[OIDRedirectHTTPHandler alloc] initWithSuccessURL:g_SuccessURL];
     const auto redirectURI = [m_RedirectHTTPHandler startHTTPListenerForPort:g_LoopbackPort

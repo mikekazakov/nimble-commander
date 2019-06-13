@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShowTerminal.h"
 #include "../MainWindowFilePanelState.h"
 #include "../PanelController.h"
@@ -16,7 +16,7 @@ bool ShowTerminal::ValidateMenuItem( MainWindowFilePanelState *_target, NSMenuIt
     return Predicate(_target);
 }
     
-void ShowTerminal::Perform( MainWindowFilePanelState *_target, id _sender ) const
+void ShowTerminal::Perform( MainWindowFilePanelState *_target, [[maybe_unused]] id _sender ) const
 {
     std::string path = "";
     

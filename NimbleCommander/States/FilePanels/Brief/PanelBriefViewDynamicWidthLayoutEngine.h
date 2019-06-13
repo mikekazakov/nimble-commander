@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "PanelBriefViewLayoutEngineBase.h"
@@ -28,7 +28,7 @@ public:
 private:
     void CopyInputData( const Params &_params );
     void PerformNormalLayout( const Params &_params );
-    void PerformSingularLayout( const Params &_params );
+    void PerformSingularLayout( );
     
     // input data:    
     int m_ItemMinWidth = 50;

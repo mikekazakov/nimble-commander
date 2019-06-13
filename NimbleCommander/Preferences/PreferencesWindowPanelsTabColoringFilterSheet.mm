@@ -1,5 +1,5 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
-#import "PreferencesWindowPanelsTabColoringFilterSheet.h"
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PreferencesWindowPanelsTabColoringFilterSheet.h"
 #include <Utility/StringExtras.h>
 
 using nc::hbn::tribool;
@@ -52,12 +52,12 @@ static tribool state_to_tribool(NSCellStateValue _val)
     self.mask.stringValue = [NSString stringWithUTF8StdString:m_Filter.mask.Mask()];
 }
 
-- (void)cancelOperation:(id)sender
+- (void)cancelOperation:(id)[[maybe_unused]]_sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (IBAction)OnOK:(id)sender
+- (IBAction)OnOK:(id)[[maybe_unused]]_sender
 {
     m_Filter.executable = state_to_tribool(self.executable.state);
     m_Filter.hidden = state_to_tribool(self.hidden.state);

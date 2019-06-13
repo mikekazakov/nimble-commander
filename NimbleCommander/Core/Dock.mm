@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Dock.h"
 #include <Utility/VerticallyCenteredTextFieldCell.h>
 #include <cmath>
@@ -15,9 +15,9 @@ static NSView *MakeUnregBadge( NSSize _title_size );
 
 Dock::Dock():
     m_Progress{-1.},
-    m_Tile{NSApplication.sharedApplication.dockTile},
     m_Admin{false},
-    m_Unregistered{false}
+    m_Unregistered{false},    
+    m_Tile{NSApplication.sharedApplication.dockTile}
 {
     m_ContentView = [NSImageView new];
     m_ContentView.image = NSApplication.sharedApplication.applicationIconImage;
@@ -128,7 +128,7 @@ static NSView *MakeUnregBadge( NSSize _title_size )
 
 @implementation NCCoreDockProgressIndicator
 
-- (void)drawRect:(NSRect)dirtyRect
+- (void)drawRect:(NSRect)[[maybe_unused]]_dirty_rect
 {
     static auto back_color  = [NSColor colorWithCalibratedRed:0.82 green:0.82 blue:0.82 alpha:1.0];
     static auto frame_color = [NSColor colorWithCalibratedRed:0.70 green:0.70 blue:0.70 alpha:1.0];

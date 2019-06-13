@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewLayoutSupport.h"
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <Config/RapidJSON.h>
@@ -367,7 +367,7 @@ void PanelViewLayoutsStorage::CommitChanges(bool _fire_observers)
     PanelViewLayoutsStorage::ObservationTicket m_Ticket;
 }
 
-- (id) initWithStorage:(PanelViewLayoutsStorage&)_storage;
+- (id) initWithStorage:(PanelViewLayoutsStorage&)_storage
 {
     self = [super init];
     if( self ) {

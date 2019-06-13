@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ChangeAttributes.h"
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
@@ -20,7 +20,7 @@ bool ChangeAttributes::Predicate( PanelController *_target ) const
          _target.data.Stats().selected_entries_amount > 0 );
 }
 
-void ChangeAttributes::Perform( PanelController *_target, id _sender ) const
+void ChangeAttributes::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
 {
     auto items = _target.selectedEntriesOrFocusedEntry;
     if( ![NCOpsAttrsChangingDialog canEditAnythingInItems:items] )

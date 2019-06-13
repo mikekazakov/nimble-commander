@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFS.h>
 #include "../PanelController.h"
 #include "EjectVolume.h"
@@ -17,7 +17,7 @@ bool EjectVolume::Predicate( PanelController *_target ) const
         m_NativeFSManager.IsVolumeContainingPathEjectable( _target.currentDirectoryPath );
 }
 
-void EjectVolume::Perform( PanelController *_target, id _sender ) const
+void EjectVolume::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
 {
     if( _target.vfs->IsNativeFS() )
         if( m_NativeFSManager.IsVolumeContainingPathEjectable(_target.currentDirectoryPath) )

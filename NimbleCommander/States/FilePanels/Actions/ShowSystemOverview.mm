@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShowSystemOverview.h"
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
@@ -10,7 +10,7 @@ bool ShowSystemOverview::Predicate( PanelController *_target ) const
     return !_target.state.anyPanelCollapsed;
 }
 
-void ShowSystemOverview::Perform( PanelController *_target, id _sender ) const
+void ShowSystemOverview::Perform( PanelController *_target, id ) const
 {
     const auto state = _target.state;
         

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShowQuickLook.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
@@ -21,7 +21,7 @@ bool ShowQuickLook::Predicate( PanelController *_target ) const
     return true;
 }
         
-void ShowQuickLook::Perform( PanelController *_target, id _sender ) const
+void ShowQuickLook::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
 {
     const auto state = _target.state;
     if( [state quickLookForPanel:_target make:false] ) {

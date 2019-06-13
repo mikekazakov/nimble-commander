@@ -40,7 +40,7 @@ bool CopyFileDirectory::Predicate( PanelController *_source ) const
     return _source.view.item;
 }
 
-void CopyFileName::Perform( PanelController *_source, id _sender ) const
+void CopyFileName::Perform( PanelController *_source, id ) const
 {
     const auto entries = _source.selectedEntriesOrFocusedEntry;
     const auto result = std::accumulate(std::begin(entries),
@@ -52,7 +52,7 @@ void CopyFileName::Perform( PanelController *_source, id _sender ) const
     WriteSingleStringToClipboard( result );
 }
 
-void CopyFilePath::Perform( PanelController *_source, id _sender ) const
+void CopyFilePath::Perform( PanelController *_source, id ) const
 {
     const auto entries = _source.selectedEntriesOrFocusedEntry;
     const auto result = std::accumulate(std::begin(entries),
@@ -64,7 +64,7 @@ void CopyFilePath::Perform( PanelController *_source, id _sender ) const
     WriteSingleStringToClipboard( result );
 }
     
-void CopyFileDirectory::Perform( PanelController *_source, id _sender ) const
+void CopyFileDirectory::Perform( PanelController *_source, id ) const
 {
     const auto entries = _source.selectedEntriesOrFocusedEntry;
     const auto result = std::accumulate(std::begin(entries),

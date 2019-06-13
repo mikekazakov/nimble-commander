@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ToggleSort.h"
 #include "../PanelController.h"
 #include "../PanelData.h"
@@ -59,7 +59,7 @@ bool ToggleSortingByName::ValidateMenuItem( PanelController *_target, NSMenuItem
     return Predicate( _target );
 }
 
-void ToggleSortingByName::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingByName::Perform( PanelController *_target, id ) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortByName,
@@ -75,7 +75,7 @@ bool ToggleSortingByExtension::ValidateMenuItem( PanelController *_target, NSMen
     return Predicate( _target );
 }
 
-void ToggleSortingByExtension::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingByExtension::Perform( PanelController *_target, id ) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortByExt,
@@ -91,7 +91,7 @@ bool ToggleSortingBySize::ValidateMenuItem( PanelController *_target, NSMenuItem
     return Predicate( _target );
 }
 
-void ToggleSortingBySize::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingBySize::Perform( PanelController *_target, id ) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortBySize,
@@ -107,7 +107,7 @@ bool ToggleSortingByModifiedTime::ValidateMenuItem(PanelController *_target, NSM
     return Predicate( _target );
 }
 
-void ToggleSortingByModifiedTime::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingByModifiedTime::Perform( PanelController *_target, id ) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortByModTime,
@@ -123,7 +123,7 @@ bool ToggleSortingByCreatedTime::ValidateMenuItem(PanelController *_target, NSMe
     return Predicate( _target );
 }
 
-void ToggleSortingByCreatedTime::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingByCreatedTime::Perform( PanelController *_target, id ) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortByBirthTime,
@@ -139,7 +139,7 @@ bool ToggleSortingByAddedTime::ValidateMenuItem( PanelController *_target, NSMen
     return Predicate( _target );
 }
 
-void ToggleSortingByAddedTime::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingByAddedTime::Perform( PanelController *_target, id ) const
 {
     [_target changeSortingModeTo:EnforceAndSwitch(_target.data.SortMode(),
                                                   data::SortMode::SortByAddTime,
@@ -152,7 +152,7 @@ bool ToggleSortingCaseSensitivity::ValidateMenuItem(PanelController *_target,NSM
     return Predicate( _target );
 }
 
-void ToggleSortingCaseSensitivity::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingCaseSensitivity::Perform( PanelController *_target, id ) const
 {
     auto mode = _target.data.SortMode();
     mode.case_sens = !mode.case_sens;
@@ -166,7 +166,7 @@ bool ToggleSortingFoldersSeparation::ValidateMenuItem(PanelController *_target,
     return Predicate( _target );
 }
 
-void ToggleSortingFoldersSeparation::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingFoldersSeparation::Perform( PanelController *_target, id ) const
 {
     auto mode = _target.data.SortMode();
     mode.sep_dirs = !mode.sep_dirs;
@@ -179,7 +179,7 @@ bool ToggleSortingExtensionlessFolders::ValidateMenuItem( PanelController *_targ
     return Predicate( _target );
 }
 
-void ToggleSortingExtensionlessFolders::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingExtensionlessFolders::Perform( PanelController *_target, id ) const
 {
     auto mode = _target.data.SortMode();
     mode.extensionless_dirs = !mode.extensionless_dirs;
@@ -192,7 +192,7 @@ bool ToggleSortingNumerical::ValidateMenuItem( PanelController *_target, NSMenuI
     return Predicate( _target );
 }
 
-void ToggleSortingNumerical::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingNumerical::Perform( PanelController *_target, id ) const
 {
     auto mode = _target.data.SortMode();
     mode.numeric_sort = !mode.numeric_sort;
@@ -205,7 +205,7 @@ bool ToggleSortingShowHidden::ValidateMenuItem( PanelController *_target, NSMenu
     return Predicate( _target );
 }
 
-void ToggleSortingShowHidden::Perform( PanelController *_target, id _sender ) const
+void ToggleSortingShowHidden::Perform( PanelController *_target, id ) const
 {
     auto filtering = _target.data.HardFiltering();
     filtering.show_hidden = !filtering.show_hidden;

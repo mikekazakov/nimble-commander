@@ -33,7 +33,7 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
     return nil;
 }
 
-- (void)previewVFSItem:(const VFSPath&)_path forPanel:(PanelController*)_panel
+- (void)previewVFSItem:(const VFSPath&)_path forPanel:(PanelController*)[[maybe_unused]]_panel
 {
     dispatch_assert_main_queue();
     
@@ -124,12 +124,13 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
     return *m_VFSBridge;
 }
 
-- (NSInteger)numberOfPreviewItemsInPreviewPanel:(QLPreviewPanel *)panel
+- (NSInteger)numberOfPreviewItemsInPreviewPanel:(QLPreviewPanel *)[[maybe_unused]]_panel
 {
     return m_URL ? 1 : 0;
 }
 
-- (id <QLPreviewItem>)previewPanel:(QLPreviewPanel *)panel previewItemAtIndex:(NSInteger)index
+- (id <QLPreviewItem>)previewPanel:(QLPreviewPanel *)[[maybe_unused]]_panel
+previewItemAtIndex:(NSInteger)index
 {
     return index == 0 ? m_URL : nil;
 }
@@ -143,7 +144,7 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
     [QLPreviewPanel.sharedPreviewPanel reloadData];
 }
 
-- (BOOL)previewPanel:(QLPreviewPanel *)panel handleEvent:(NSEvent *)event
+- (BOOL)previewPanel:(QLPreviewPanel *)[[maybe_unused]]_panel handleEvent:(NSEvent *)event
 {
     if( event.type == NSKeyDown ) {
         auto main_wnd = NSApp.mainWindow;

@@ -60,7 +60,7 @@
     GA().PostScreenView("Registration Info Sheet");
 }
 
-- (IBAction)onOK:(id)sender
+- (IBAction)onOK:(id)[[maybe_unused]]_sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:0];
     m_Self = nil;

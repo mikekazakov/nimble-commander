@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Select.h"
 #include <Utility/FileMask.h>
 #include "../Views/SelectionWithMaskPopupViewController.h"
@@ -11,17 +11,17 @@
 
 namespace nc::panel::actions {
 
-void SelectAll::Perform( PanelController *_target, id _sender ) const
+void SelectAll::Perform( PanelController *_target, id ) const
 {
     [_target setEntriesSelection: std::vector<bool>(_target.data.SortedEntriesCount(), true) ];
 }
 
-void DeselectAll::Perform( PanelController *_target, id _sender ) const
+void DeselectAll::Perform( PanelController *_target, id ) const
 {
     [_target setEntriesSelection: std::vector<bool>(_target.data.SortedEntriesCount(), false) ];
 }
 
-void InvertSelection::Perform( PanelController *_target, id _sender ) const
+void InvertSelection::Perform( PanelController *_target, id ) const
 {
     auto selector = data::SelectionBuilder(_target.data);
     [_target setEntriesSelection:selector.InvertSelection()];
@@ -37,7 +37,7 @@ bool SelectAllByExtension::Predicate( PanelController *_target ) const
     return _target.view.item;
 }
 
-void SelectAllByExtension::Perform( PanelController *_target, id _sender ) const
+void SelectAllByExtension::Perform( PanelController *_target, id ) const
 {
     auto item = _target.view.item;
     if( !item )
@@ -55,7 +55,7 @@ SelectAllByMask::SelectAllByMask( bool _result_selection ):
 {
 }
 
-void SelectAllByMask::Perform( PanelController *_target, id _sender ) const
+void SelectAllByMask::Perform( PanelController *_target, id ) const
 {
     const auto view = [[SelectionWithMaskPopupViewController alloc] initForWindow:_target.window
                                                                        doesSelect:m_ResultSelection];

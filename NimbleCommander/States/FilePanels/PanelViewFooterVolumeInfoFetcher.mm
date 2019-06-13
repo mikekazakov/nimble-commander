@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/SerialQueue.h>
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
@@ -110,7 +110,7 @@ static const VFSStatFS* RegisterWatcher(FooterVolumeInfoFetcher* _w,
     return nullptr;
 }
     
-static const VFSStatFS* Probe(FooterVolumeInfoFetcher* _w,
+static const VFSStatFS* Probe([[maybe_unused]] FooterVolumeInfoFetcher* _w,
                               const VFSHostWeakPtr &_host,
                               const std::string& _path )
 {

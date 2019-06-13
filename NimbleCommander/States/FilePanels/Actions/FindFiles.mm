@@ -52,7 +52,7 @@ static std::shared_ptr<VFSListing>
     return VFSListing::Build( VFSListing::Compose(listings) );
 }
 
-void FindFiles::Perform( PanelController *_target, id _sender ) const
+void FindFiles::Perform( PanelController *_target, id ) const
 {
     FindFilesSheetController *sheet = [FindFilesSheetController new];
     sheet.vfsInstanceManager = &_target.vfsInstanceManager;
@@ -81,7 +81,7 @@ void FindFiles::Perform( PanelController *_target, id _sender ) const
     sheet.onView = [this](const FindFilesSheetViewRequest& _request) {
         OnView(_request);
     };
-    auto handler = ^(NSModalResponse returnCode) {
+    auto handler = ^([[maybe_unused]] NSModalResponse returnCode) {
         if( auto item = sheet.selectedItem ) {
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = item->dir_path;

@@ -1,8 +1,8 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "OpenXAttr.h"
 #include <VFS/XAttr.h>
 #include <NimbleCommander/Core/Alert.h>
 #include "../PanelController.h"
-#include "OpenXAttr.h"
 #include "../PanelView.h"
 
 namespace nc::panel::actions {
@@ -13,7 +13,7 @@ bool OpenXAttr::Predicate( PanelController *_target ) const
     return i && i.Host()->IsNativeFS();
 }
 
-void OpenXAttr::Perform( PanelController *_target, id _sender ) const
+void OpenXAttr::Perform( PanelController *_target, id ) const
 {
     if( !Predicate(_target) )
         return;

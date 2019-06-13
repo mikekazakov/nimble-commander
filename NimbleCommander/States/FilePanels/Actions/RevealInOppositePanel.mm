@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "RevealInOppositePanel.h"
 #include "../MainWindowFilePanelState.h"
 #include "../MainWindowFilePanelState+TabsSupport.h"
@@ -39,7 +39,7 @@ static void RevealItem(const VFSListingItem &_item, PanelController *_panel)
     [_panel GoToDirWithContext:request];
 }
 
-void RevealInOppositePanel::Perform( MainWindowFilePanelState *_target, id _sender ) const
+void RevealInOppositePanel::Perform( MainWindowFilePanelState *_target, id ) const
 {
     const auto current = _target.activePanelController;
     const auto opposite = _target.oppositePanelController;
@@ -82,7 +82,7 @@ static PanelController *SpawnOppositeTab(MainWindowFilePanelState *_target,
     return nil;
 }
 
-void RevealInOppositePanelTab::Perform( MainWindowFilePanelState *_target, id _sender ) const
+void RevealInOppositePanelTab::Perform( MainWindowFilePanelState *_target, id ) const
 {
     const auto current = _target.activePanelController;
     if( !current )

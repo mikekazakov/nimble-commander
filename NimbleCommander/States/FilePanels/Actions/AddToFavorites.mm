@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include "../Favorites.h"
 #include "../FavoriteComposing.h"
@@ -14,7 +14,7 @@ bool AddToFavorites::Predicate( PanelController *_target ) const
     return _target.isUniform || _target.view.item;
 }
 
-void AddToFavorites::Perform( PanelController *_target, id _sender ) const
+void AddToFavorites::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
 {
     auto &favorites = NCAppDelegate.me.favoriteLocationsStorage;
     if( auto item = _target.view.item ) {

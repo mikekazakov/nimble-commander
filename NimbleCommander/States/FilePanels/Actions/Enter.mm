@@ -21,7 +21,7 @@ bool Enter::Predicate( PanelController *_target ) const
     return _target.view.item;
 }
 
-bool Enter::ValidateMenuItem( PanelController *_target, NSMenuItem *_item ) const
+bool Enter::ValidateMenuItem( PanelController *_target, [[maybe_unused]] NSMenuItem *_item ) const
 {
     // TODO: add a proper title like:
     // Enter "Directory"

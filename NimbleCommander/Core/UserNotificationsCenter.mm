@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "UserNotificationsCenter.h"
 #include <Cocoa/Cocoa.h>
 #include <Operations/Statistics.h>
@@ -84,13 +84,13 @@ static void MakeWindowKey( unsigned long _wnd_adress )
 
 @implementation NCCoreUserNotificationCenterDelegate
 
-- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)center 
-     shouldPresentNotification:(NSUserNotification *)notification
+- (BOOL)userNotificationCenter:(NSUserNotificationCenter *)[[maybe_unused]]_center 
+     shouldPresentNotification:(NSUserNotification *)[[maybe_unused]]_notification
 {
     return nc::core::UserNotificationsCenter::Instance().ShowWhenActive();
 }
 
-- (void)userNotificationCenter:(NSUserNotificationCenter *)center
+- (void)userNotificationCenter:(NSUserNotificationCenter *)[[maybe_unused]]_center
        didActivateNotification:(NSUserNotification *)notification
 {
     if( notification.userInfo )

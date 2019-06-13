@@ -46,7 +46,7 @@ static void Perform(SEL _sel, const PanelActionsMap &_map, PanelController *_tar
 }
 
 - (int)bidForHandlingKeyDown:(NSEvent *)_event
-                forPanelView:(PanelView*)_panel_view
+                forPanelView:(PanelView*)[[maybe_unused]]_panel_view
                    andHandle:(bool)_handle
 {
     

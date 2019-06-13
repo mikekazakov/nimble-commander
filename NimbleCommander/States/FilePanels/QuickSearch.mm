@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "QuickSearch.h"
 #include <boost/container/static_vector.hpp>
 #include "PanelDataFilter.h"
@@ -108,7 +108,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     }
 }
 
-- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)[[maybe_unused]]_panel_view
 {
     const auto modif = _event.modifierFlags;
     if( !IsQuickSearchModifier(modif, m_Modifier) )
@@ -142,7 +142,7 @@ static NSString *ModifyStringByKeyDownString(NSString *_str, NSString *_key);
     return view::BiddingPriority::Skip;
 }
 
-- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)[[maybe_unused]]_panel_view
 {
     if( _event.keyCode == 53 ) { // Esc button
         [self setSearchCriteria:nil];

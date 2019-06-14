@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/AnyHolder.h>
 #include "PanelDataPersistency.h"
 #include "PanelControllerActionsDispatcher.h"
@@ -49,7 +49,7 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
 }
 
 - (instancetype) initWithStorage:(FavoriteLocationsStorage&)_storage
-               andManageMenuItem:(NSMenuItem *)_item;
+               andManageMenuItem:(NSMenuItem *)_item
 {
    if( self = [super init] ) {
        assert(_item);
@@ -108,10 +108,10 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
     return self;
 }
 
-- (BOOL)menuHasKeyEquivalent:(NSMenu*)menu
-                    forEvent:(NSEvent*)event
-                      target:(__nullable id* __nonnull)target
-                      action:(__nullable SEL* __nonnull)action
+- (BOOL)menuHasKeyEquivalent:(NSMenu*)[[maybe_unused]]_menu
+                    forEvent:(NSEvent*)[[maybe_unused]]_event
+                      target:(__nullable id* __nonnull)[[maybe_unused]]_target
+                      action:(__nullable SEL* __nonnull)[[maybe_unused]]_action
 {
     return false; // this menu has no hotkeys, so there's no reason to (re)build it upon a keydown.
 }
@@ -128,7 +128,7 @@ static NSMenuItem *BuildMenuItem( const FavoriteLocationsStorage::Location &_loc
     [menu addItem:m_ClearItem];
 }
 
-- (IBAction)OnClearMenu:(id)sender
+- (IBAction)OnClearMenu:(id)[[maybe_unused]]_sender
 {
     m_Storage->ClearVisitedLocations();
 }

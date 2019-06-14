@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
 #include "PanelListViewGeometry.h"
 #include "PanelListViewRowView.h"
@@ -44,13 +44,13 @@ using nc::utility::AdaptiveDateFormatting;
         CFRelease( m_Line );
 }
 
-- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+- (BOOL) acceptsFirstMouse:(NSEvent *)[[maybe_unused]]_event
 {
     /* really always??? */
     return true;
 }
 
-- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)[[maybe_unused]]_event
 {
     /* really always??? */
     return true;
@@ -153,7 +153,7 @@ using nc::utility::AdaptiveDateFormatting;
     return m_Time;
 }
 
-- (void) drawRect:(NSRect)dirtyRect
+- (void) drawRect:(NSRect)[[maybe_unused]]_rect
 {
     if( auto rv = m_RowView ) {
         if( auto lv = rv.listView ) {

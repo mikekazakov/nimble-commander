@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "TrialWindowController.h"
 #include <Habanero/dispatch_cpp.h>
@@ -67,7 +67,7 @@ using namespace std::literals;
     }
 }
 
-- (IBAction)OnClose:(id)sender
+- (IBAction)OnClose:(id)[[maybe_unused]]_sender
 {
     if( self.isExpired ) {
         auto handler = self.onQuit;
@@ -77,14 +77,14 @@ using namespace std::literals;
     [self.window close];
 }
 
-- (IBAction)OnBuy:(id)sender
+- (IBAction)OnBuy:(id)[[maybe_unused]]_sender
 {
     auto handler = self.onBuyLicense;
     if( handler != nullptr )
         handler();
 }
 
-- (IBAction)OnActivate:(id)sender
+- (IBAction)OnActivate:(id)[[maybe_unused]]_sender
 {
     auto handler = self.onActivate;
     if( handler != nullptr ) {
@@ -97,7 +97,7 @@ using namespace std::literals;
     }
 }
 
-- (void)windowWillClose:(NSNotification *)notification
+- (void)windowWillClose:(NSNotification *)[[maybe_unused]]_notification
 {
     self.window.delegate = nil;    
     dispatch_to_main_queue_after(10ms, [=]{

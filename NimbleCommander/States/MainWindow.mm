@@ -123,7 +123,7 @@ static const auto g_CloseWindowTitle =
     return [super validateMenuItem:item];
 }
 
-- (IBAction)OnFileCloseWindow:(id)sender { /* dummy, never called */ }
+- (IBAction)OnFileCloseWindow:(id)[[maybe_unused]]_sender { /* dummy, never called */ }
 
 - (IBAction)toggleToolbarShown:(id)sender
 {

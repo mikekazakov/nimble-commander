@@ -45,7 +45,7 @@ static NSString* Bool2ToString(const bool b[2])
     return [NSString stringWithFormat:@"yes native: %@", b[1] ? @"yes" : @"no"];
 }
 
-- (void) UpdateByTimer:(NSTimer*)theTimer
+- (void) UpdateByTimer:(NSTimer*)[[maybe_unused]]_the_timer
 {
     if(FetchVolumeAttributesInformation(m_Root.c_str(), &m_Capabilities, &m_Attributes) == 0)
         [self PopulateControls];
@@ -302,7 +302,9 @@ static NSString* Bool2ToString(const bool b[2])
     if( FetchVolumeAttributesInformation(m_Root.c_str(), &m_Capabilities, &m_Attributes) != 0 )
         return;
 
-    [self beginSheetForWindow:_window completionHandler:^(NSModalResponse returnCode) {}];
+    [self beginSheetForWindow:_window
+            completionHandler:^([[maybe_unused]] NSModalResponse returnCode){
+            }];
 }
 
 - (void) PopulateControls
@@ -331,7 +333,7 @@ static NSString* Bool2ToString(const bool b[2])
     else                                            [[self AllocationClumpTextField] setStringValue:@"N/A"];
 }
 
-- (IBAction)OnOK:(id)sender
+- (IBAction)OnOK:(id)[[maybe_unused]]sender
 {
     [m_UpdateTimer invalidate];
     [self endSheet:NSModalResponseOK];

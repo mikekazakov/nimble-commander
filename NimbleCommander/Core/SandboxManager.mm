@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
@@ -35,7 +35,7 @@ static const auto g_BookmarksKey = @"GeneralSecurityScopeBookmarks";
     return self;
 }
 
-- (BOOL)panel:(id)sender shouldEnableURL:(NSURL *)_url
+- (BOOL)panel:(id)[[maybe_unused]]_sender shouldEnableURL:(NSURL *)_url
 {
     if(!_url.fileURL)
         return false;
@@ -85,7 +85,7 @@ SandboxManager::SandboxManager()
     [NSNotificationCenter.defaultCenter addObserverForName:NSApplicationWillTerminateNotification
                                                     object:NSApplication.sharedApplication
                                                      queue:NSOperationQueue.mainQueue
-                                                usingBlock:^(NSNotification *note) {
+                                                usingBlock:^([[maybe_unused]]NSNotification *note) {
                                                     SandboxManager::Instance().StopUsingBookmarks();
                                                 }];
 }

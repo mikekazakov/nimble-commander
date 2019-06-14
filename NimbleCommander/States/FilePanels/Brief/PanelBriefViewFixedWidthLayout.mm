@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewFixedWidthLayout.h"
 #include "PanelBriefViewFixedWidthLayoutEngine.h"
 
@@ -41,16 +41,18 @@ using nc::panel::view::brief::FixedWidthLayoutEngine;
     return m_Engine.AttributesForItemsInRect(_rect);
 }
 
-- (nullable NSCollectionViewLayoutAttributes *)
-layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind)elementKind
-atIndexPath:(NSIndexPath *)indexPath
+- (nullable NSCollectionViewLayoutAttributes*)
+    layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind)
+                                                   [[maybe_unused]] _element_kind
+                                   atIndexPath:(NSIndexPath*)[[maybe_unused]] _index_path
 {
     return nil;
 }
 
-- (nullable NSCollectionViewLayoutAttributes *)
-layoutAttributesForDecorationViewOfKind:(NSCollectionViewDecorationElementKind)elementKind
-atIndexPath:(NSIndexPath *)indexPath
+- (nullable NSCollectionViewLayoutAttributes*)
+    layoutAttributesForDecorationViewOfKind:(NSCollectionViewDecorationElementKind)
+                                                [[maybe_unused]] _element_kind
+                                atIndexPath:(NSIndexPath*)[[maybe_unused]] _index_path
 {
     return nil;
 }

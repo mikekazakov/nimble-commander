@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState.h"
 #include "StateActionsDispatcher.h"
 #include "../../Core/ActionsShortcutsManager.h"
@@ -132,9 +132,9 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     _item.toolTip = _et.m_Shorcut.PrettyString();
 }
 
-- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar
+- (NSToolbarItem *)toolbar:(NSToolbar *)[[maybe_unused]]_toolbar
      itemForItemIdentifier:(NSString *)itemIdentifier
- willBeInsertedIntoToolbar:(BOOL)flag
+ willBeInsertedIntoToolbar:(BOOL)[[maybe_unused]]_flag
 {
     if( [itemIdentifier isEqualToString:@"filepanels_left_goto_button"] ) {
         NSToolbarItem *item = [[NSToolbarItem alloc] initWithItemIdentifier:itemIdentifier];
@@ -214,7 +214,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
         }
 }
 
-- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
+- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)[[maybe_unused]]_toolbar
 {
     static NSArray *allowed_items =
     @[ @"filepanels_left_goto_button",
@@ -226,7 +226,7 @@ static NSImage *ImageForTool( const ExternalTool &_et)
     return allowed_items;
 }
 
-- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar
+- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar*)[[maybe_unused]]_toolbar
 {
     return m_AllowedToolbarItemsIdentifiers;
 }

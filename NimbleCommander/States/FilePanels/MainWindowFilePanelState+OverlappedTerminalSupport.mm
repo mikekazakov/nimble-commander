@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
@@ -222,7 +222,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
 }
 
 - (bool) executeInOverlappedTerminalIfPossible:(const std::string&)_filename
-                                            at:(const std::string&)_path
+                                            at:(const std::string&)[[maybe_unused]]_path
 {
     if( self.overlappedTerminalVisible &&
        m_OverlappedTerminal->terminal.state == ShellTask::TaskState::Shell &&
@@ -244,7 +244,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
            s == ShellTask::TaskState::ProgramExternal ;
 }
 
-- (int)bidForHandlingRoutedIntoOTKeyDown:(NSEvent *)_event;
+- (int)bidForHandlingRoutedIntoOTKeyDown:(NSEvent *)_event
 {
     if( !self.overlappedTerminalVisible )
         return nc::panel::view::BiddingPriority::Skip;
@@ -265,7 +265,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
     return nc::panel::view::BiddingPriority::Skip;
 }
 
-- (void)handleRoutedIntoOTKeyDown:(NSEvent *)_event;
+- (void)handleRoutedIntoOTKeyDown:(NSEvent *)_event
 {
     const auto keycode = _event.keyCode;
     if( keycode == 36 ) { // Return button

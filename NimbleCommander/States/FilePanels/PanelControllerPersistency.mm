@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerPersistency.h"
 #include "PanelController.h"
 #include "PanelData.h"
@@ -185,7 +185,7 @@ void ControllerStateJSONDecoder::RecoverSavedContentAsync(PersistentLocation _lo
                                                           PanelController *_panel )
 {
     auto workload = [this, _panel, location=std::move(_location)]
-        (const std::function<bool()> &_cancel_checker)
+        ([[maybe_unused]] const std::function<bool()> &_cancel_checker)
     {        
         VFSHostPtr host;        
         const auto rc = PanelDataPersisency::CreateVFSFromLocation(location,

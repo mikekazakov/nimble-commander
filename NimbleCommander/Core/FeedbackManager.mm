@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FeedbackManager.h"
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <Habanero/CFDefaultsCPP.h>
@@ -79,8 +79,8 @@ static bool HasInternetConnection()
 
 FeedbackManager::FeedbackManager():
     m_ApplicationRunsCount( GetAndUpdateRunsCount() ),
-    m_StartupTime( time(nullptr) ),
     m_TotalHoursUsed( GetTotalHoursUsed() ),
+    m_StartupTime( time(nullptr) ),
     m_FirstRunTime( GetOrSetFirstRunTime() ),
     m_LastRating( CFDefaultsGetOptionalInt(g_LastRatingKey) ),
     m_LastRatingTime( CFDefaultsGetOptionalLong(g_LastRatingKey) )

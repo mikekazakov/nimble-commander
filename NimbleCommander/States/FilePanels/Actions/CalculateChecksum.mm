@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/GeneralUI/CalculateChecksumSheetController.h>
 #include "../PanelController.h"
 #include "CalculateChecksum.h"
@@ -16,7 +16,7 @@ bool CalculateChecksum::Predicate( PanelController *_target ) const
     return i && (!i.IsDir() || _target.data.Stats().selected_entries_amount > 0);
 }
 
-void CalculateChecksum::Perform( PanelController *_target, id _sender ) const
+void CalculateChecksum::Perform( PanelController *_target, id ) const
 {
     std::vector<std::string> filenames;
     std::vector<uint64_t> sizes;
@@ -38,7 +38,7 @@ void CalculateChecksum::Perform( PanelController *_target, id _sender ) const
                           atPath:_target.currentDirectoryPath];
     
     [sheet beginSheetForWindow:_target.window
-             completionHandler:^(NSModalResponse returnCode) {
+             completionHandler:^([[maybe_unused]] NSModalResponse _return_code) {
                  if(sheet.didSaved) {
                      DelayedFocusing req;
                      req.filename = sheet.savedFilename;

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "PanelListViewTableHeaderCell.h"
 
@@ -13,7 +13,7 @@ static void FillRect( NSRect rc, NSColor *c )
         NSRectFillUsingOperation(rc, NSCompositingOperationSourceOver);
 }
 
-- (void) drawBackgroundWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+- (void) drawBackgroundWithFrame:(NSRect)cellFrame inView:(NSView *)[[maybe_unused]]_control_view
 {
     [CurrentTheme().FilePanelsListHeaderBackgroundColor() set];
     NSRectFill(cellFrame);
@@ -31,14 +31,11 @@ static void FillRect( NSRect rc, NSColor *c )
     }
 }
 
-- (void) drawHorizontalSeparatorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+- (void)drawHorizontalSeparatorWithFrame:(NSRect)cellFrame
+                                  inView:(NSView*)[[maybe_unused]] _control_view
 {
-    FillRect(NSMakeRect(cellFrame.origin.x,
-                        NSMaxY(cellFrame)-1,
-                        cellFrame.size.width,
-                        1),
-             CurrentTheme().FilePanelsListHeaderSeparatorColor()
-             );
+    FillRect(NSMakeRect(cellFrame.origin.x, NSMaxY(cellFrame) - 1, cellFrame.size.width, 1),
+             CurrentTheme().FilePanelsListHeaderSeparatorColor());
 }
 
 - (void) drawVerticalSeparatorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView

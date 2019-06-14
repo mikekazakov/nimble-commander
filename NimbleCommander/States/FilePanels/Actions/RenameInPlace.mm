@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../PanelController.h"
 #include "RenameInPlace.h"
 #include "../PanelView.h"
@@ -12,7 +12,7 @@ bool RenameInPlace::Predicate( PanelController *_target ) const
     return item && !item.IsDotDot() && item.Host()->IsWritable();
 }
 
-void RenameInPlace::Perform( PanelController *_target, id _sender ) const
+void RenameInPlace::Perform( PanelController *_target, id ) const
 {
     [_target.view startFieldEditorRenaming];
 }

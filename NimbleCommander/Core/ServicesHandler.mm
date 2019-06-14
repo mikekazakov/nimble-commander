@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ServicesHandler.h"
 #include <VFS/Native.h>
 #include <NimbleCommander/States/MainWindowController.h>
@@ -24,8 +24,8 @@ static NSURL* ExtractFirstURL(NSPasteboard *_pboard)
 }
     
 void ServicesHandler::OpenFolder(NSPasteboard *_pboard,
-                                 NSString *_user_data,
-                                 __strong NSString **_error)
+                                 [[maybe_unused]] NSString *_user_data,
+                                 [[maybe_unused]] __strong NSString **_error)
 {
     auto url = ExtractFirstURL(_pboard);
     if( !url )
@@ -79,8 +79,8 @@ static bool IsASingleDirectoryPath(const std::vector<std::string>&_paths)
 }
     
 void ServicesHandler::RevealItem(NSPasteboard *_pboard,
-                                 NSString *_user_data,
-                                 __strong NSString **_error)
+                                 [[maybe_unused]] NSString *_user_data,
+                                 [[maybe_unused]] __strong NSString **_error)
 {
     std::vector<std::string> paths;
     for( NSPasteboardItem *item in _pboard.pasteboardItems ) {

@@ -55,7 +55,7 @@
     [self validate];
 }
 
-- (IBAction)OnConnect:(id)sender
+- (IBAction)OnConnect:(id)[[maybe_unused]]_sender
 {
     if( m_Original)
         m_Connection.uuid = m_Original->Uuid();
@@ -75,7 +75,7 @@
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)OnClose:(id)sender
+- (IBAction)OnClose:(id)[[maybe_unused]]_sender
 {
     [self endSheet:NSModalResponseCancel];
 }
@@ -116,7 +116,7 @@
     self.isValid = valid_server;
 }
 
-- (void)controlTextDidChange:(NSNotification *)obj
+- (void)controlTextDidChange:(NSNotification *)[[maybe_unused]]_obj
 {
     [self validate];
 }

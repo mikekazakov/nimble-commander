@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExecuteInTerminal.h"
 #include "../PanelController.h"
 #include "../PanelView.h"
@@ -21,7 +21,7 @@ bool ExecuteInTerminal::Predicate( PanelController *_target ) const
     return IsEligbleToTryToExecuteInConsole(item);
 }
 
-void ExecuteInTerminal::Perform( PanelController *_target, id _sender ) const
+void ExecuteInTerminal::Perform( PanelController *_target, id ) const
 {
     if( !Predicate(_target) )
         return;

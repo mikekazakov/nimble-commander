@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
@@ -28,8 +28,8 @@ using namespace nc::panel;
     self.carrier.qsHighlight = {0, 0};
 }
 
-- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil
-                         bundle:(nullable NSBundle *)nibBundleOrNil
+- (instancetype)initWithNibName:(nullable NSString *)[[maybe_unused]]nibNameOrNil
+                         bundle:(nullable NSBundle *)[[maybe_unused]]nibBundleOrNil
 {
     self = [super initWithNibName:nil bundle:nil];
     if( self ) {

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExternalEditorState.h"
 #include <Utility/FontCache.h>
 #include "../../../NimbleCommander/States/MainWindowController.h"
@@ -147,7 +147,7 @@ using namespace nc::term;
     });
 }
 
-- (bool)windowStateShouldClose:(NCMainWindowController*)sender
+- (bool)windowStateShouldClose:(NCMainWindowController*)[[maybe_unused]]_sender
 {
     return false;
 }

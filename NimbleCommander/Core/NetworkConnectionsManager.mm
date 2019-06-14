@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NetworkConnectionsManager.h"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
@@ -120,27 +120,27 @@ NetworkConnectionsManager::ConnectionVisitor::~ConnectionVisitor()
 }
 
 void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::FTP &_ftp )
+    const NetworkConnectionsManager::FTP & )
 {
 }
 
 void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::SFTP &_sftp )
+    const NetworkConnectionsManager::SFTP & )
 {
 }
 
 void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::LANShare &_share )
+    const NetworkConnectionsManager::LANShare & )
 {
 }
 
 void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::Dropbox &_account )
+    const NetworkConnectionsManager::Dropbox & )
 {
 }
 
 void NetworkConnectionsManager::ConnectionVisitor::Visit(
-    const NetworkConnectionsManager::WebDAV &_webdav )
+    const NetworkConnectionsManager::WebDAV & )
 {
 }
 

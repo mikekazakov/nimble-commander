@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SpotlightSearch.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -111,7 +111,7 @@ static std::shared_ptr<VFSListing> FetchSearchResultsAsListing
     return VFSListing::Build( VFSListing::Compose(listings) );
 }
 
-void SpotlightSearch::Perform( PanelController *_target, id _sender ) const
+void SpotlightSearch::Perform( PanelController *_target, id ) const
 {
     const auto view = [[SpotlightSearchPopupViewController alloc] init];
     __weak PanelController *wp = _target;

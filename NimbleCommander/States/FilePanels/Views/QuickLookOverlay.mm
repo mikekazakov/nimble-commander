@@ -157,7 +157,7 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
     return self;
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id) initWithFrame:(NSRect)[[maybe_unused]]_frame_rect
 {
     assert(0);
     return nil;
@@ -168,7 +168,7 @@ static const std::chrono::nanoseconds g_Delay = std::chrono::milliseconds{100};
     [NSNotificationCenter.defaultCenter removeObserver:self];
 }
 
-- (void)previewVFSItem:(const VFSPath&)_path forPanel:(PanelController*)_panel
+- (void)previewVFSItem:(const VFSPath&)_path forPanel:(PanelController*)[[maybe_unused]]_panel
 {
     if( !_path )
         return;

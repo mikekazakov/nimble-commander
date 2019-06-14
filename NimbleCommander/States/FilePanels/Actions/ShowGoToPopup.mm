@@ -561,7 +561,7 @@ ShowConnectionsQuickList::ShowConnectionsQuickList
 {
 }
     
-void ShowConnectionsQuickList::Perform( PanelController *_target, id _sender ) const
+void ShowConnectionsQuickList::Perform( PanelController *_target, id ) const
 {
     const auto menu = BuildConnectionsQuickList(_target);
     for( auto action: m_OtherQuickLists )
@@ -577,7 +577,7 @@ ShowFavoritesQuickList::ShowFavoritesQuickList
 {
 }
 
-void ShowFavoritesQuickList::Perform( PanelController *_target, id _sender ) const
+void ShowFavoritesQuickList::Perform( PanelController *_target, id ) const
 {
     const auto menu = BuildFavoritesQuickList(_target);
     for( auto action: m_OtherQuickLists )
@@ -593,7 +593,7 @@ ShowVolumesQuickList::ShowVolumesQuickList
 {
 }
     
-void ShowVolumesQuickList::Perform( PanelController *_target, id _sender ) const
+void ShowVolumesQuickList::Perform( PanelController *_target, id ) const
 {
     const auto menu = BuildVolumesQuickList(_target);
     for( auto action: m_OtherQuickLists )
@@ -614,7 +614,7 @@ bool ShowParentFoldersQuickList::Predicate( PanelController *_target ) const
    return _target.isUniform;
 }
 
-void ShowParentFoldersQuickList::Perform( PanelController *_target, id _sender ) const
+void ShowParentFoldersQuickList::Perform( PanelController *_target, id ) const
 {
     const auto menu = BuildParentFoldersQuickList(_target);
     for( auto action: m_OtherQuickLists )
@@ -630,7 +630,7 @@ ShowHistoryQuickList::ShowHistoryQuickList
 {
 }
     
-void ShowHistoryQuickList::Perform( PanelController *_target, id _sender ) const
+void ShowHistoryQuickList::Perform( PanelController *_target, id ) const
 {
     const auto menu = BuildHistoryQuickList(_target);
     for( auto action: m_OtherQuickLists )

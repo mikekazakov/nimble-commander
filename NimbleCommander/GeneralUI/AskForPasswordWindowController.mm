@@ -35,7 +35,7 @@
     return self.Password.stringValue ? self.Password.stringValue : @"";
 }
 
-- (IBAction)onOk:(id)sender
+- (IBAction)onOk:(id)[[maybe_unused]]_sender
 {
     if( NSApp.modalWindow == self.window ) {
         [self.window close];
@@ -46,7 +46,7 @@
     }
 }
 
-- (IBAction)onCancel:(id)sender
+- (IBAction)onCancel:(id)[[maybe_unused]]_sender
 {
     if( NSApp.modalWindow == self.window ) {
         [self.window close];

@@ -74,12 +74,12 @@
     [self.window.contentView layoutSubtreeIfNeeded];
 }
 
-- (IBAction)onOK:(id)sender
+- (IBAction)onOK:(id)[[maybe_unused]]_sender
 {
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)onCancel:(id)sender
+- (IBAction)onCancel:(id)[[maybe_unused]]_sender
 {
     [self endSheet:NSModalResponseCancel];
 }

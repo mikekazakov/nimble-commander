@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "PreferencesWindowThemesTabImportSheet.h"
 
 @interface PreferencesWindowThemesTabImportSheet ()
@@ -14,12 +14,12 @@
     self.importAsNewTheme = false;
 }
 
-- (IBAction)onImport:(id)sender
+- (IBAction)onImport:(id)[[maybe_unused]]_sender
 {
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)onCancel:(id)sender
+- (IBAction)onCancel:(id)[[maybe_unused]]_sender
 {
     [self endSheet:NSModalResponseCancel];
 }

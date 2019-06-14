@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
 #include <Utility/FileMask.h>
 #include "../Bootstrap/ActivationManager.h"
@@ -32,12 +32,12 @@
     return nc::bootstrap::ActivationManager::Instance().HasTerminal();
 }
 
-- (IBAction)OnClose:(id)sender
+- (IBAction)OnClose:(id)[[maybe_unused]]_sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (IBAction)OnOK:(id)sender
+- (IBAction)OnOK:(id)[[maybe_unused]]_sender
 {
     if( !nc::utility::FileMask::IsWildCard(self.Info.mask.UTF8String) ) {
         auto ewc = nc::utility::FileMask::ToExtensionWildCard(self.Info.mask.UTF8String);
@@ -48,7 +48,7 @@
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)OnChoosePath:(id)sender
+- (IBAction)OnChoosePath:(id)[[maybe_unused]]_sender
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.resolvesAliases = false;

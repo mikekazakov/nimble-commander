@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelDataSortMode.h"
 
 namespace nc::panel::data {
@@ -8,9 +8,9 @@ static_assert( sizeof(SortMode) == 2 );
 SortMode::SortMode() noexcept:
     sort(SortByRawCName),
     sep_dirs(false),
+    extensionless_dirs(false),
     case_sens(false),
-    numeric_sort(false),
-    extensionless_dirs(false)
+    numeric_sort(false)
 {}
 
 bool SortMode::isdirect() const noexcept

@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -67,7 +67,7 @@
         [pv keyDown:event];
 }
 
-- (BOOL)acceptsFirstMouse:(nullable NSEvent *)event
+- (BOOL)acceptsFirstMouse:(nullable NSEvent *)[[maybe_unused]]_event
 {
     return false;
 }
@@ -77,7 +77,7 @@
     [self.panelView panelItem:-1 mouseDown:event];
 }
 
-- (void)mouseUp:(NSEvent *)event
+- (void)mouseUp:(NSEvent *)[[maybe_unused]]_event
 {
 }
 
@@ -118,12 +118,12 @@
     return [self draggingEntered:sender];
 }
 
-- (void)draggingExited:(id <NSDraggingInfo>)sender
+- (void)draggingExited:(id <NSDraggingInfo>)[[maybe_unused]]_sender
 {
     self.isDropTarget = false;
 }
 
-- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)[[maybe_unused]]_sender
 {
     // possibly add some checking stage here later
     return YES;

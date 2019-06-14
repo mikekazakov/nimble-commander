@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "CalculateSizes.h"
 #include "../PanelController.h"
 #include "../PanelData.h"
@@ -13,7 +13,7 @@ bool CalculateSizes::Predicate( PanelController *_target ) const
     return i && (i.IsDir() || _target.data.Stats().selected_dirs_amount > 0 );
 }
 
-void CalculateSizes::Perform( PanelController *_target, id _sender ) const
+void CalculateSizes::Perform( PanelController *_target, id ) const
 {
     auto selected = _target.selectedEntriesOrFocusedEntryWithDotDot;
     selected.erase(remove_if(begin(selected),
@@ -23,7 +23,7 @@ void CalculateSizes::Perform( PanelController *_target, id _sender ) const
     [_target calculateSizesOfItems:selected];
 }
 
-void CalculateAllSizes::Perform( PanelController *_target, id _sender ) const
+void CalculateAllSizes::Perform( PanelController *_target, id ) const
 {
     std::vector<VFSListingItem> items;
     auto &data = _target.data;

@@ -1,31 +1,59 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelViewDummyPresentation.h"
 
 @implementation NCPanelViewDummyPresentation
 
-- (BOOL) isOpaque
+- (BOOL)isOpaque
 {
     return true;
 }
 
-- (void) drawRect:(NSRect)dirtyRect
+- (void)drawRect:(NSRect) [[maybe_unused]] _rect
 {
 }
 
-- (void) dataChanged{}
-- (void) syncVolatileData{}
-- (void) setData:(nc::panel::data::Model*)_data{}
-- (bool) isItemVisible:(int)_sorted_item_index{ return false; }
+- (void)dataChanged
+{
+}
 
-- (void) setupFieldEditor:(NSScrollView*)_editor forItemAtIndex:(int)_sorted_item_index {}
+- (void)syncVolatileData
+{
+}
 
-- (void) onScrollToBeginning:(NSEvent*)_event {}
-- (void) onScrollToEnd:(NSEvent*)_event {}
-- (void) onPageUp:(NSEvent*)_event {}
-- (void) onPageDown:(NSEvent*)_event {}
+- (void)setData:(nc::panel::data::Model*)[[maybe_unused]] _data
+{
+}
 
-- (int) sortedItemPosAtPoint:(NSPoint)_window_point
-               hitTestOption:(nc::panel::PanelViewHitTest::Options)_options { return -1; }
+- (bool)isItemVisible:(int)[[maybe_unused]] _sorted_item_index
+{
+    return false;
+}
+
+- (void)setupFieldEditor:(NSScrollView*)[[maybe_unused]] _editor
+          forItemAtIndex:(int)[[maybe_unused]] _sorted_item_index
+{
+}
+
+- (void)onScrollToBeginning:(NSEvent*)[[maybe_unused]] _event
+{
+}
+
+- (void)onScrollToEnd:(NSEvent*)[[maybe_unused]] _event
+{
+}
+
+- (void)onPageUp:(NSEvent*)[[maybe_unused]] _event
+{
+}
+
+- (void)onPageDown:(NSEvent*)[[maybe_unused]] _event
+{
+}
+
+- (int)sortedItemPosAtPoint:(NSPoint) [[maybe_unused]] _window_point
+              hitTestOption:(nc::panel::PanelViewHitTest::Options) [[maybe_unused]] _options
+{
+    return -1;
+}
 
 @end
-

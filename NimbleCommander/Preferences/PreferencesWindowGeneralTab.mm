@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include "../Core/SandboxManager.h"
 #include "../Bootstrap/AppDelegate.h"
@@ -17,9 +17,10 @@ using namespace std::literals;
 
 @implementation PreferencesWindowGeneralTab
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithNibName:(NSString*)[[maybe_unused]] _nibNameOrNil
+               bundle:(NSBundle*)_nibBundleOrNil
 {
-    self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
+    self = [super initWithNibName:NSStringFromClass(self.class) bundle:_nibBundleOrNil];
     if (self) {
         // Initialization code here.
     }
@@ -48,12 +49,12 @@ using namespace std::literals;
                                       "General preferences tab title");
 }
 
-- (IBAction)ResetToDefaults:(id)sender
+- (IBAction)ResetToDefaults:(id)[[maybe_unused]]_sender
 {
     [(NCAppDelegate*)[NSApplication sharedApplication].delegate askToResetDefaults];
 }
 
-- (IBAction)OnFSAccessReset:(id)sender
+- (IBAction)OnFSAccessReset:(id)[[maybe_unused]]_sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = NSLocalizedStringFromTable(@"Are you sure you want to reset granted filesystem access?",
@@ -69,7 +70,7 @@ using namespace std::literals;
         SandboxManager::Instance().ResetBookmarks();
 }
 
-- (IBAction)OnSendStatisticsChanged:(id)sender
+- (IBAction)OnSendStatisticsChanged:(id)[[maybe_unused]]_sender
 {
     dispatch_to_main_queue_after(1s, []{
         GA().UpdateEnabledStatus();

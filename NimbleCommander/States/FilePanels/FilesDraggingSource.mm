@@ -67,7 +67,7 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(
 + (NSString*) fileURLsDragUTI           { return g_PasteboardFileURLUTI;        }
 + (NSString*) filenamesPBoardDragUTI    { return g_PasteboardFilenamesUTI;      }
 
-- (FilesDraggingSource*) initWithSourceController:(PanelController*)_controller;
+- (FilesDraggingSource*) initWithSourceController:(PanelController*)_controller
 {
     self = [super init];
     if(self) {
@@ -97,7 +97,7 @@ static const auto g_PasteboardFilenamesUTI = (NSString*)CFBridgingRelease(
     m_Items.emplace_back(_item);
 }
 
-- (NSDragOperation)draggingSession:(NSDraggingSession *)session
+- (NSDragOperation)draggingSession:(NSDraggingSession *)[[maybe_unused]]_session
   sourceOperationMaskForDraggingContext:(NSDraggingContext)context
 {
     switch( context ) {
@@ -237,8 +237,8 @@ provideDataForType:(NSString *)type
 //        [self provideFilenamesURLsPasteboard:sender item:item];
 }
 
-- (void)draggingSession:(NSDraggingSession *)session
-           endedAtPoint:(NSPoint)screenPoint
+- (void)draggingSession:(NSDraggingSession *)[[maybe_unused]]session
+           endedAtPoint:(NSPoint)[[maybe_unused]]screenPoint
               operation:(NSDragOperation)operation
 {
     if( operation == NSDragOperationDelete  ) {

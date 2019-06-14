@@ -86,13 +86,13 @@ static std::vector<unsigned> ListDirsWithPrefix
 {
     m_Handler = _handler;
     [_window beginSheet:self.window
-      completionHandler:^(NSModalResponse returnCode){
+      completionHandler:^([[maybe_unused]]NSModalResponse returnCode){
           m_Handler = nullptr;
       }
      ];
 }
 
-- (IBAction)OnGo:(id)sender
+- (IBAction)OnGo:(id)[[maybe_unused]]sender
 {
     m_RequestedPath = self.Text.stringValue.fileSystemRepresentationSafe;
     m_Handler();
@@ -109,17 +109,19 @@ static std::vector<unsigned> ListDirsWithPrefix
     }
 }
 
-- (IBAction)OnCancel:(id)sender
+- (IBAction)OnCancel:(id)[[maybe_unused]]sender
 {
     [self.window.sheetParent endSheet:self.window returnCode:NSModalResponseStop];
 }
 
-- (void)controlTextDidChange:(NSNotification *)notification
+- (void)controlTextDidChange:(NSNotification *)[[maybe_unused]]notification
 {
     self.GoButton.enabled = self.Text.stringValue.length > 0;
 }
 
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+- (BOOL)control:(NSControl*)[[maybe_unused]] control
+               textView:(NSTextView*)[[maybe_unused]] textView
+    doCommandBySelector:(SEL)commandSelector
 {
     if(commandSelector == @selector(insertTab:)) {
         if( !self.panel.isUniform ) {

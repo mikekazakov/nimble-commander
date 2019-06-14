@@ -285,22 +285,22 @@ using namespace nc::panel;
     return self;
 }
 
-- (void)sharingService:(NSSharingService *)sharingService
-   didFailToShareItems:(NSArray *)items
-                 error:(NSError *)error
+- (void)sharingService:(NSSharingService *)[[maybe_unused]]sharingService
+   didFailToShareItems:(NSArray *)[[maybe_unused]]items
+                 error:(NSError *)[[maybe_unused]]error
 {
     m_Self = nil;
 }
 
-- (void)sharingService:(NSSharingService *)sharingService
-         didShareItems:(NSArray *)items
+- (void)sharingService:(NSSharingService *)[[maybe_unused]]sharingService
+         didShareItems:(NSArray *)[[maybe_unused]]items
 {
     m_Self = nil;
 }
 
-- (nullable NSWindow *)sharingService:(NSSharingService *)sharingService
-            sourceWindowForShareItems:(NSArray *)items
-                  sharingContentScope:(NSSharingContentScope *)sharingContentScope
+- (nullable NSWindow *)sharingService:(NSSharingService *)[[maybe_unused]]sharingService
+            sourceWindowForShareItems:(NSArray *)[[maybe_unused]]items
+                  sharingContentScope:(NSSharingContentScope *)[[maybe_unused]]sharingContentScope
 {
     return self.sourceWindow;
 }

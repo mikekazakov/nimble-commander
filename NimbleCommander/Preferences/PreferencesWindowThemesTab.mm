@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowThemesTab.h"
 #include <Config/RapidJSON.h>
 #include <fstream>
@@ -63,7 +63,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
 }
 
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithNibName:(NSString *)[[maybe_unused]]nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
@@ -127,7 +127,8 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
                                       "General preferences tab title");
 }
 
-- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(nullable id)item
+- (NSInteger)outlineView:(NSOutlineView *)[[maybe_unused]]outlineView
+numberOfChildrenOfItem:(nullable id)item
 {
     if( item == nil )
         return m_Nodes.count;
@@ -136,19 +137,20 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     return 0;
 }
 
-- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(nullable id)item
+- (id)outlineView:(NSOutlineView *)[[maybe_unused]]outlineView
+child:(NSInteger)index ofItem:(nullable id)item
 {
     if( auto n = objc_cast<PreferencesWindowThemesTabGroupNode>(item) )
         return n.children[index];
     return m_Nodes[index];
 }
 
-- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
+- (BOOL)outlineView:(NSOutlineView *)[[maybe_unused]]outlineView isItemExpandable:(id)item
 {
     return objc_cast<PreferencesWindowThemesTabGroupNode>(item) != nil;
 }
 
-- (nullable NSView *)outlineView:(NSOutlineView *)outlineView
+- (nullable NSView *)outlineView:(NSOutlineView *)[[maybe_unused]]outlineView
               viewForTableColumn:(nullable NSTableColumn *)tableColumn
                             item:(id)item
 {
@@ -279,7 +281,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     m_Manager->SetThemeValue( theme_name, _key, _value );
 }
 
-- (CGFloat)outlineView:(NSOutlineView *)outlineView heightOfRowByItem:(id)item
+- (CGFloat)outlineView:(NSOutlineView *)[[maybe_unused]]outlineView heightOfRowByItem:(id)item
 {
     if( auto i = objc_cast<PreferencesWindowThemesTabItemNode>(item) )
         if( i.type == PreferencesWindowThemesTabItemType::ColoringRules )
@@ -288,7 +290,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     return 18;
 }
 
-- (IBAction)onThemesPopupChange:(id)sender
+- (IBAction)onThemesPopupChange:(id)[[maybe_unused]]sender
 {
     int selected_ind = (int)self.themesPopUp.selectedTag;
     if( selected_ind >= 0 && selected_ind < (int)m_ThemeNames.size() )
@@ -310,7 +312,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     self.selectedThemeCanBeReverted = m_Manager->HasDefaultSettings(theme_name);
 }
 
-- (IBAction)onRevertClicked:(id)sender
+- (IBAction)onRevertClicked:(id)[[maybe_unused]]sender
 {
     const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
     if( m_Manager->DiscardThemeChanges(theme_name) ) {
@@ -319,7 +321,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     }
 }
 
-- (IBAction)onExportClicked:(id)sender
+- (IBAction)onExportClicked:(id)[[maybe_unused]]sender
 {
     const auto &theme_name = m_ThemeNames.at(m_SelectedTheme);
     if( auto v = m_Manager->ThemeData(theme_name) ) {
@@ -380,7 +382,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     }
 }
 
-- (IBAction)onImportClicked:(id)sender
+- (IBAction)onImportClicked:(id)[[maybe_unused]]sender
 {
     NSOpenPanel *panel = [NSOpenPanel openPanel];
     panel.allowedFileTypes = @[@"json"];
@@ -393,7 +395,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     }
 }
 
-- (IBAction)onDuplicateClicked:(id)sender
+- (IBAction)onDuplicateClicked:(id)[[maybe_unused]]sender
 {
     const auto theme_name = m_ThemeNames.at(m_SelectedTheme);
     const auto new_name = m_Manager->SuitableNameForNewTheme(theme_name);
@@ -411,7 +413,7 @@ static NSTextField *SpawnEntryTitle( NSString *_title )
     [self.outlineView reloadData];
 }
 
-- (IBAction)onRemoveClicked:(id)sender
+- (IBAction)onRemoveClicked:(id)[[maybe_unused]]sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = NSLocalizedString(@"Are you sure you want to remove this theme?",

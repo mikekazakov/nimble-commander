@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include <Utility/HexadecimalColor.h>
 #include <NimbleCommander/States/FilePanels/PanelViewPresentationItemsColoringFilter.h>
@@ -91,8 +91,8 @@
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
+                        change:(NSDictionary *)[[maybe_unused]]change
+                       context:(void *)[[maybe_unused]]context
 {
     if( [keyPath isEqualToString:@"color"] )
         if( NSColorWell *cw = objc_cast<NSColorWell>(object) ) {
@@ -218,7 +218,7 @@
     }
 }
 
-- (void) onSetCustomFont:(id)sender
+- (void) onSetCustomFont:(id)[[maybe_unused]]sender
 {
     NSFontManager *fontManager = NSFontManager.sharedFontManager;
     fontManager.target = self;
@@ -317,7 +317,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)[[maybe_unused]]tableView
 {
     return m_Rules.size();
 }
@@ -355,7 +355,7 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
             }
 }
 
-- (NSView *)tableView:(NSTableView *)tableView
+- (NSView *)tableView:(NSTableView *)[[maybe_unused]]tableView
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
@@ -400,9 +400,9 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
     return nil;
 }
 
-- (void)tableView:(NSTableView *)tableView
+- (void)tableView:(NSTableView *)[[maybe_unused]]tableView
     didAddRowView:(NSTableRowView *)rowView
-           forRow:(NSInteger)row
+           forRow:(NSInteger)[[maybe_unused]]row
 {
     for( int i = 1; i <= 2; ++i ) {
         NSView *v = [rowView viewAtColumn:i];
@@ -451,15 +451,15 @@ static const auto g_PreferencesWindowThemesTabColoringRulesControlDataType =
         }
 }
 
-- (NSDragOperation)tableView:(NSTableView *)aTableView
-                validateDrop:(id < NSDraggingInfo >)info
-                 proposedRow:(NSInteger)row
+- (NSDragOperation)tableView:(NSTableView *)[[maybe_unused]]aTableView
+                validateDrop:(id < NSDraggingInfo >)[[maybe_unused]]info
+                 proposedRow:(NSInteger)[[maybe_unused]]row
        proposedDropOperation:(NSTableViewDropOperation)operation
 {
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView
+- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
 writeRowsWithIndexes:(NSIndexSet *)rowIndexes
      toPasteboard:(NSPasteboard *)pboard
 {
@@ -470,10 +470,10 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     return true;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView
+- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
        acceptDrop:(id<NSDraggingInfo>)info
               row:(NSInteger)drag_to
-    dropOperation:(NSTableViewDropOperation)operation
+    dropOperation:(NSTableViewDropOperation)[[maybe_unused]]operation
 {
     NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:[info.draggingPasteboard
         dataForType:g_PreferencesWindowThemesTabColoringRulesControlDataType]];
@@ -495,7 +495,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     return true;
 }
 
-- (IBAction)onPlusMinusButton:(id)sender
+- (IBAction)onPlusMinusButton:(id)[[maybe_unused]]sender
 {
     const auto segment = self.plusMinus.selectedSegment;
     if( segment == 0 ) {
@@ -557,7 +557,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     return self;
 }
 
-- (void)onSelectionChanged:(id)sender
+- (void)onSelectionChanged:(id)[[maybe_unused]]sender
 {
     auto new_value = (ThemeAppearance)m_Button.selectedTag;
     if( new_value != m_ThemeAppearance ) {

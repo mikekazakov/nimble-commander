@@ -244,7 +244,7 @@ static bool ParticipatesInConflicts( const std::string &_action_name )
                                       "General preferences tab title");
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)[[maybe_unused]]tableView
 {
     return m_FilteredNodes.size();
 }
@@ -284,7 +284,7 @@ static NSImageView *SpawnCautionSign()
     return iv;
 }
 
-- (NSView *)tableView:(NSTableView *)tableView
+- (NSView *)tableView:(NSTableView *)[[maybe_unused]]tableView
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
@@ -386,7 +386,7 @@ static NSImageView *SpawnCautionSign()
         }
 }
 
-- (IBAction)OnDefaults:(id)sender
+- (IBAction)OnDefaults:(id)[[maybe_unused]]sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = NSLocalizedStringFromTable(@"Are you sure you want to reset hotkeys to defaults?",
@@ -405,7 +405,7 @@ static NSImageView *SpawnCautionSign()
     }
 }
 
-- (IBAction)onForceFnChanged:(id)sender
+- (IBAction)onForceFnChanged:(id)[[maybe_unused]]sender
 {
     if( self.forceFnButton.state == NSOnState )
         nc::utility::FunctionalKeysPass::Instance().Enable();
@@ -413,7 +413,7 @@ static NSImageView *SpawnCautionSign()
         nc::utility::FunctionalKeysPass::Instance().Disable();
 }
 
-- (void)controlTextDidChange:(NSNotification *)obj
+- (void)controlTextDidChange:(NSNotification *)[[maybe_unused]]obj
 {
     [self buildFilteredNodes];
     [self.Table reloadData];    

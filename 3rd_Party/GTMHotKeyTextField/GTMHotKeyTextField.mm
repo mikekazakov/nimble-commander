@@ -210,7 +210,7 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
   return hotKey_;
 }
 
-- (NSTextView *)fieldEditorForView:(NSView *)aControlView
+- (NSTextView *)fieldEditorForView:(NSView *)[[maybe_unused]]aControlView
 {
     if(m_FieldEditor == nil)
         m_FieldEditor = [GTMHotKeyFieldEditor new];
@@ -251,7 +251,7 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
     return nil;
 }
 
-- (void)setAttributedStringValue:(NSAttributedString *)string {
+- (void)setAttributedStringValue:(NSAttributedString *)[[maybe_unused]]string {
   [self logBadValueAccess];
 }
 
@@ -259,7 +259,7 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
     return nil;
 }
 
-- (void)setFormatter:(NSFormatter *)newFormatter {
+- (void)setFormatter:(NSFormatter *)[[maybe_unused]]newFormatter {
 }
 
 // Private method to update the displayed text of the field with the
@@ -498,14 +498,14 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
     return [super becomeFirstResponder];
 }
 
-- (void)OnClearButton:(id)sender
+- (void)OnClearButton:(id)[[maybe_unused]]sender
 {
     [self.cell setObjectValue:GTMHotKey.emptyHotKey];
     [self didChangeText];
     [self.window makeFirstResponder:nil];
 }
 
-- (void)OnRevertButton:(id)sender
+- (void)OnRevertButton:(id)[[maybe_unused]]sender
 {
     if( self.cell.defaultHotKey ) {
         [self.cell setObjectValue:self.cell.defaultHotKey];
@@ -527,7 +527,7 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
 
 // Private method we use to get out of global hotkey capture when the window
 // is no longer front
-- (void)windowResigned:(NSNotification *)notification {
+- (void)windowResigned:(NSNotification *)[[maybe_unused]]notification {
   // Lose our focus
   [self.window makeFirstResponder:self.window];
 }
@@ -538,8 +538,8 @@ static const std::vector<KeycodesHardcode> g_KeycodesHardcoded = {
   return YES;
 }
 
-- (NSRange)selectionRangeForProposedRange:(NSRange)proposedSelRange
-                              granularity:(NSSelectionGranularity)granularity {
+- (NSRange)selectionRangeForProposedRange:(NSRange)[[maybe_unused]]proposedSelRange
+                              granularity:(NSSelectionGranularity)[[maybe_unused]]granularity {
   // Always select everything
   return NSMakeRange(0, self.textStorage.length);
 }

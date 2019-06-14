@@ -74,26 +74,26 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
                                                           m_TextView.selectedRange );
 }
 
-- (BOOL)textShouldEndEditing:(NSText *)textObject
+- (BOOL)textShouldEndEditing:(NSText *)[[maybe_unused]]textObject
 {
     [self finishEditing];
     return true;
 }
 
-- (void)textDidEndEditing:(NSNotification *)notification
+- (void)textDidEndEditing:(NSNotification *)[[maybe_unused]]notification
 {
     [self cancelEditing];
 }
 
-- (NSArray *)textView:(NSTextView *)textView
-          completions:(NSArray *)words
-  forPartialWordRange:(NSRange)charRange
-  indexOfSelectedItem:(NSInteger *)index
+- (NSArray *)textView:(NSTextView *)[[maybe_unused]]textView
+          completions:(NSArray *)[[maybe_unused]]words
+  forPartialWordRange:(NSRange)[[maybe_unused]]charRange
+  indexOfSelectedItem:(NSInteger *)[[maybe_unused]]index
 {
     return @[];
 }
 
-- (BOOL)textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+- (BOOL)textView:(NSTextView *)[[maybe_unused]]textView doCommandBySelector:(SEL)commandSelector
 {
     static const auto cancel = NSSelectorFromString(@"cancelOperation:");
     if( commandSelector == cancel ) {
@@ -131,7 +131,7 @@ static NSRange NextFilenameSelectionRange( NSString *_string, NSRange _current_s
     }
 }
 
-- (nullable NSUndoManager *)undoManagerForTextView:(NSTextView *)view
+- (nullable NSUndoManager *)undoManagerForTextView:(NSTextView *)[[maybe_unused]]view
 {
     return m_UndoManager;
 }

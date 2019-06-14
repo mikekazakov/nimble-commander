@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../../Core/FeedbackManager.h"
 #include "AskingForRatingOverlayView.h"
 #include <cmath>
@@ -22,7 +22,7 @@
     [self addTrackingArea:trackingArea];
 }
 
-- (void)mouseMoved:(NSEvent *)event
+- (void)mouseMoved:(NSEvent *)[[maybe_unused]]event
 {
     NSPoint mouseLocation = self.window.mouseLocationOutsideOfEventStream;
     mouseLocation = [self convertPoint:mouseLocation fromView: nil];
@@ -32,12 +32,12 @@
     self.integerValue = n+1;
 }
 
-- (void)mouseEntered:(NSEvent *)theEvent
+- (void)mouseEntered:(NSEvent *)[[maybe_unused]]theEvent
 {
     self.highlighted = true;
 }
 
-- (void)mouseExited:(NSEvent *)theEvent
+- (void)mouseExited:(NSEvent *)[[maybe_unused]]theEvent
 {
     self.highlighted = false;
     self.integerValue = 5;
@@ -167,13 +167,13 @@
         [m_DiscardButton unbind:@"hidden"];
 }
 
-- (void)ratingClicked:(id)sender
+- (void)ratingClicked:(id)[[maybe_unused]]sender
 {
     m_Rating = (int)m_LevelIndicator.integerValue;
     [self commit];
 }
 
-- (void)discardClicked:(id)sender
+- (void)discardClicked:(id)[[maybe_unused]]sender
 {
     m_Rating = 0;
     [self commit];
@@ -204,12 +204,12 @@
     [self addTrackingArea:trackingArea];
 }
 
-- (void)mouseEntered:(NSEvent *)theEvent
+- (void)mouseEntered:(NSEvent *)[[maybe_unused]]theEvent
 {
     self.mouseHover = true;
 }
 
-- (void)mouseExited:(NSEvent *)theEvent
+- (void)mouseExited:(NSEvent *)[[maybe_unused]]theEvent
 {
     self.mouseHover = false;
 }

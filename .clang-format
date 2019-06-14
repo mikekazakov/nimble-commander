@@ -1,0 +1,13 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+DerivePointerAlignment: false
+PointerAlignment: Left
+ColumnLimit: 100
+AccessModifierOffset: -4
+AllowShortFunctionsOnASingleLine: InlineOnly
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterFunction: true
+MaxEmptyLinesToKeep: 1
+Language: Cpp
+Language: ObjC

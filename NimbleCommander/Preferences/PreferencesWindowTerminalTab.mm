@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PreferencesWindowTerminalTab.h"
 #include <Utility/FontExtras.h>
 #include <Config/ObjCBridge.h>
@@ -16,10 +16,10 @@ class ConfigBinder
 public:
     ConfigBinder( nc::config::Config &_config, const char *_config_path, id _object, NSString *_object_key ):
         m_Config(_config),
-        m_Object(_object),
         m_ConfigPath(_config_path),
-        m_ObjectKey(_object_key),
-        m_Ticket( _config.Observe(_config_path, [=]{ConfigChanged();}) )
+        m_Ticket( _config.Observe(_config_path, [=]{ConfigChanged();}) ),
+        m_Object(_object),
+        m_ObjectKey(_object_key)
     {
         ConfigChanged();
     }
@@ -59,7 +59,7 @@ private:
     std::unique_ptr<ConfigBinder> m_B1;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithNibName:(NSString *)[[maybe_unused]]nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
@@ -109,7 +109,7 @@ private:
     self.fontVisibleName.stringValue = [NSString stringWithFormat:@"%@ %.0f pt.", m_Font.displayName, m_Font.pointSize];
 }
 
-- (IBAction)OnSetFont:(id)sender
+- (IBAction)OnSetFont:(id)[[maybe_unused]]_sender
 {
     NSFontManager * fontManager = [NSFontManager sharedFontManager];
     fontManager.target = self;

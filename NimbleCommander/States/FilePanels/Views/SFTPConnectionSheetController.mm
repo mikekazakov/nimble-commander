@@ -76,7 +76,7 @@ static bool ValidateFileExistence( const std::string &_filepath )
     [self validate];    
 }
 
-- (IBAction)OnConnect:(id)sender
+- (IBAction)OnConnect:(id)[[maybe_unused]]_sender
 {
     if( m_Original)
         m_Connection.uuid = m_Original->Uuid();
@@ -94,12 +94,12 @@ static bool ValidateFileExistence( const std::string &_filepath )
     [self endSheet:NSModalResponseOK];
 }
 
-- (IBAction)OnClose:(id)sender
+- (IBAction)OnClose:(id)[[maybe_unused]]_sender
 {
     [self endSheet:NSModalResponseCancel];
 }
 
-- (IBAction)OnChooseKey:(id)sender
+- (IBAction)OnChooseKey:(id)[[maybe_unused]]_sender
 {
     auto initial_dir = access(g_SSHdir.c_str(), X_OK) == 0 ? g_SSHdir : CommonPaths::Home();
     NSOpenPanel *panel = [NSOpenPanel openPanel];
@@ -200,7 +200,7 @@ static bool ValidateFileExistence( const std::string &_filepath )
     self.isValid = valid_server && valid_username && valid_port && valid_password && valid_keypath;
 }
 
-- (void)controlTextDidChange:(NSNotification *)obj
+- (void)controlTextDidChange:(NSNotification *)[[maybe_unused]]_obj
 {
     [self validate];
 }

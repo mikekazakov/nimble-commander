@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GoToFolder.h"
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
@@ -19,7 +19,7 @@ namespace nc::panel::actions {
 
 using namespace std::literals;
     
-void GoToFolder::Perform( PanelController *_target, id _sender ) const
+void GoToFolder::Perform( PanelController *_target, id ) const
 {
     GoToFolderSheetController *sheet = [GoToFolderSheetController new];
     sheet.panel = _target;
@@ -51,47 +51,47 @@ static void GoToNativeDir( const std::string& _path, PanelController *_target )
     [_target GoToDirWithContext:request];
 }
 
-void GoToHomeFolder::Perform( PanelController *_target, id _sender ) const
+void GoToHomeFolder::Perform( PanelController *_target, id ) const
 {
     GoToNativeDir( CommonPaths::Home(), _target );
 }
 
-void GoToDocumentsFolder::Perform( PanelController *_target, id _sender ) const
+void GoToDocumentsFolder::Perform( PanelController *_target, id ) const
 {
     GoToNativeDir( CommonPaths::Documents(), _target );
 }
 
-void GoToDesktopFolder::Perform( PanelController *_target, id _sender ) const
+void GoToDesktopFolder::Perform( PanelController *_target, id ) const
 {
     GoToNativeDir( CommonPaths::Desktop(), _target );
 }
 
-void GoToDownloadsFolder::Perform( PanelController *_target, id _sender ) const
+void GoToDownloadsFolder::Perform( PanelController *_target, id ) const
 {
     GoToNativeDir( CommonPaths::Downloads(), _target );
 }
 
-void GoToApplicationsFolder::Perform( PanelController *_target, id _sender ) const
+void GoToApplicationsFolder::Perform( PanelController *_target, id ) const
 {
    GoToNativeDir( CommonPaths::Applications(), _target );
 }
 
-void GoToUtilitiesFolder::Perform( PanelController *_target, id _sender ) const
+void GoToUtilitiesFolder::Perform( PanelController *_target, id ) const
 {
    GoToNativeDir( CommonPaths::Utilities(), _target );
 }
 
-void GoToLibraryFolder::Perform( PanelController *_target, id _sender ) const
+void GoToLibraryFolder::Perform( PanelController *_target, id ) const
 {
    GoToNativeDir( CommonPaths::Library(), _target );
 }
 
-void GoToRootFolder::Perform( PanelController *_target, id _sender ) const
+void GoToRootFolder::Perform( PanelController *_target, id ) const
 {
    GoToNativeDir( CommonPaths::Root(), _target );
 }
 
-void GoToProcessesList::Perform( PanelController *_target, id _sender ) const
+void GoToProcessesList::Perform( PanelController *_target, id ) const
 {
     auto request = std::make_shared<DirectoryChangeRequest>();
     request->RequestedDirectory = "/";
@@ -221,7 +221,7 @@ bool GoIntoFolder::Predicate( PanelController *_target ) const
         return IsItemInArchivesWhitelist(item);
 }
 
-void GoIntoFolder::Perform( PanelController *_target, id _sender ) const
+void GoIntoFolder::Perform( PanelController *_target, id ) const
 {
     const auto item = _target.view.item;
     if( !item )

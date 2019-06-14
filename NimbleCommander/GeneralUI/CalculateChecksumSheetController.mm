@@ -71,7 +71,7 @@ const static std::vector<std::pair<NSString*,int>> g_Algos = {
     return self;
 }
 
-- (IBAction)OnCalc:(id)sender
+- (IBAction)OnCalc:(id)[[maybe_unused]]_sender
 {
     if( !m_WorkQue.Empty() )
         return;
@@ -179,7 +179,7 @@ const static std::vector<std::pair<NSString*,int>> g_Algos = {
     GA().PostScreenView("Calculate Checksum");
 }
 
-- (IBAction)OnClose:(id)sender
+- (IBAction)OnClose:(id)[[maybe_unused]]_sender
 {
     m_WorkQue.Stop();
     m_WorkQue.Wait();
@@ -200,12 +200,12 @@ const static std::vector<std::pair<NSString*,int>> g_Algos = {
                           columnIndexes:[NSIndexSet indexSetWithIndex:1]];
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)[[maybe_unused]]_tableView
 {
     return m_Filenames.size();
 }
 
-- (NSView *)tableView:(NSTableView *)tableView
+- (NSView *)tableView:(NSTableView *)[[maybe_unused]]_tableView
    viewForTableColumn:(NSTableColumn *)tableColumn
                   row:(NSInteger)row
 {
@@ -238,7 +238,7 @@ const static std::vector<std::pair<NSString*,int>> g_Algos = {
     return nil;
 }
 
-- (IBAction)OnSave:(id)sender
+- (IBAction)OnSave:(id)[[maybe_unused]]_sender
 {
     // currently doing all stuff on main thread synchronously. may be bad for some vfs like ftp
     std::string str;

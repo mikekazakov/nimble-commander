@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Delete.h"
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
@@ -31,7 +31,7 @@ bool Delete::Predicate( PanelController *_target ) const
     return CommonDeletePredicate(_target);
 }
 
-void Delete::Perform( PanelController *_target, id _sender ) const
+void Delete::Perform( PanelController *_target, id ) const
 {
     auto items = to_shared_ptr(_target.selectedEntriesOrFocusedEntry);
     if( items->empty() )
@@ -101,12 +101,12 @@ context::MoveToTrash::MoveToTrash(const std::vector<VFSListingItem> &_items):
     m_AllAreNative = AllAreNative(m_Items);
 }
 
-bool context::MoveToTrash::Predicate( PanelController *_target ) const
+bool context::MoveToTrash::Predicate( PanelController * ) const
 {
     return m_AllAreNative;
 }
 
-void context::MoveToTrash::Perform( PanelController *_target, id _sender ) const
+void context::MoveToTrash::Perform( PanelController *_target, id ) const
 {
     const auto operation = std::make_shared<nc::ops::Deletion>(m_Items,
                                                           nc::ops::DeletionType::Trash);
@@ -122,12 +122,12 @@ context::DeletePermanently::DeletePermanently(const std::vector<VFSListingItem> 
     });
 }
 
-bool context::DeletePermanently::Predicate( PanelController *_target ) const
+bool context::DeletePermanently::Predicate( PanelController * ) const
 {
     return m_AllWriteable;
 }
 
-void context::DeletePermanently::Perform( PanelController *_target, id _sender ) const
+void context::DeletePermanently::Perform( PanelController *_target, id ) const
 {
     const auto operation = std::make_shared<nc::ops::Deletion>(m_Items,
                                                           nc::ops::DeletionType::Permanent);

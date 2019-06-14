@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "../Bootstrap/ActivationManager.h"
 #include "../Core/FeedbackManager.h"
 #include "FeedbackWindow.h"
@@ -51,38 +51,38 @@ using namespace std::literals;
     }
 }
 
-- (void)windowWillClose:(NSNotification *)notification
+- (void)windowWillClose:(NSNotification *)[[maybe_unused]]_notification
 {
     dispatch_to_main_queue_after(10ms, [=]{
         m_Self = nil;
     });
 }
 
-- (IBAction)onEmailFeedback:(id)sender
+- (IBAction)onEmailFeedback:(id)[[maybe_unused]]_sender
 {
     FeedbackManager::Instance().EmailFeedback();
 }
 
-- (IBAction)onHelp:(id)sender
+- (IBAction)onHelp:(id)[[maybe_unused]]_sender
 {
     FeedbackManager::Instance().EmailSupport();
 }
 
-- (IBAction)onRate:(id)sender
+- (IBAction)onRate:(id)[[maybe_unused]]_sender
 {
     FeedbackManager::Instance().RateOnAppStore();
 }
 
-- (IBAction)onFacebook:(id)sender
+- (IBAction)onFacebook:(id)[[maybe_unused]]_sender
 {
     FeedbackManager::Instance().ShareOnFacebook();
 }
-- (IBAction)onTwitter:(id)sender
+- (IBAction)onTwitter:(id)[[maybe_unused]]_sender
 {
     FeedbackManager::Instance().ShareOnTwitter();
 }
 
-- (IBAction)onLinkedIn:(id)sender
+- (IBAction)onLinkedIn:(id)[[maybe_unused]]_sender
 {
     FeedbackManager::Instance().ShareOnLinkedIn();
 }

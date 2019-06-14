@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewFixedNumberLayout.h"
 #include "PanelBriefViewFixedNumberLayoutEngine.h"
 #include <optional>
@@ -53,16 +53,18 @@ struct ColumnAnchor
     return m_Engine.AttributesForItemsInRect(_rect);
 }
 
-- (nullable NSCollectionViewLayoutAttributes *)
-layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind)elementKind
-atIndexPath:(NSIndexPath *)indexPath
+- (nullable NSCollectionViewLayoutAttributes*)
+    layoutAttributesForSupplementaryViewOfKind:(NSCollectionViewSupplementaryElementKind)
+                                                   [[maybe_unused]] _elementKind
+                                   atIndexPath:(NSIndexPath*)[[maybe_unused]] _indexPath
 {
     return nil;
 }
 
-- (nullable NSCollectionViewLayoutAttributes *)
-layoutAttributesForDecorationViewOfKind:(NSCollectionViewDecorationElementKind)elementKind
-atIndexPath:(NSIndexPath *)indexPath
+- (nullable NSCollectionViewLayoutAttributes*)
+    layoutAttributesForDecorationViewOfKind:(NSCollectionViewDecorationElementKind)
+                                                [[maybe_unused]] _elementKind
+                                atIndexPath:(NSIndexPath*)[[maybe_unused]] _indexPath
 {
     return nil;
 }

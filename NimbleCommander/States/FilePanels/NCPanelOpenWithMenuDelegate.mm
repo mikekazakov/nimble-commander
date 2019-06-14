@@ -115,10 +115,10 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items)
     m_ContextItems = move(_items);
 }
 
-- (BOOL)menuHasKeyEquivalent:(NSMenu*)menu
-                    forEvent:(NSEvent*)event
-                      target:(__nullable id* __nonnull)target
-                      action:(__nullable SEL* __nonnull)action
+- (BOOL)menuHasKeyEquivalent:(NSMenu*)[[maybe_unused]]_menu
+                    forEvent:(NSEvent*)[[maybe_unused]]_event
+                      target:(__nullable id* __nonnull)[[maybe_unused]]_target
+                      action:(__nullable SEL* __nonnull)[[maybe_unused]]_action
 {
     return false;
 }
@@ -362,7 +362,7 @@ static void ShowOpenPanel(NSOpenPanel *_panel,
     }
 }
 
-- (void)OnSearchInMAS:(id)sender
+- (void)OnSearchInMAS:(id)[[maybe_unused]]_sender
 {
     auto format = @"macappstores://search.itunes.apple.com/WebObjects/MZSearch.woa/wa/docTypeLookup?uti=%s";
     NSString *mas_url = [NSString stringWithFormat:format, m_ItemsUTI.c_str()];

@@ -357,14 +357,14 @@ static const std::vector<bool> g_PassthruTable = []{
     m_Query.hidden = m_Query.stringValue.length == 0;
 }
 
-- (void)controlTextDidChange:(NSNotification *)obj;
+- (void)controlTextDidChange:(NSNotification *)[[maybe_unused]]_obj
 {
     [self updateVisibility];
     [self fireNotification];
 }
 
-- (BOOL)control:(NSControl *)control
-       textView:(NSTextView *)textView
+- (BOOL)control:(NSControl *)[[maybe_unused]]_control
+       textView:(NSTextView *)[[maybe_unused]]_textView
 doCommandBySelector:(SEL)commandSelector
 {
     if( commandSelector == @selector(insertTab:) ) {

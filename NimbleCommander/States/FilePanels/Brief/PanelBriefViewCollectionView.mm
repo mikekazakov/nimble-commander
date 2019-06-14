@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelBriefViewCollectionView.h"
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelView.h"
@@ -47,7 +47,7 @@
         [pv keyDown:event];
 }
 
-- (BOOL)acceptsFirstMouse:(nullable NSEvent *)event
+- (BOOL)acceptsFirstMouse:(nullable NSEvent *)[[maybe_unused]]_event
 {
     return false;
 }
@@ -57,7 +57,7 @@
     [self.panelView panelItem:-1 mouseDown:event];
 }
 
-- (void)mouseUp:(NSEvent *)event
+- (void)mouseUp:(NSEvent *)[[maybe_unused]]_event
 {
 }
 
@@ -107,12 +107,12 @@ static NSEvent *SwapScrollAxis( NSEvent *_event )
     return [self draggingEntered:sender];
 }
 
-- (void)draggingExited:(id <NSDraggingInfo>)sender
+- (void)draggingExited:(id <NSDraggingInfo>)[[maybe_unused]]_sender
 {
     self.isDropTarget = false;
 }
 
-- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)[[maybe_unused]]_sender
 {
     // possibly add some checking stage here later
     return YES;
@@ -146,7 +146,7 @@ static NSEvent *SwapScrollAxis( NSEvent *_event )
     }
 }
 
-- (void)prepareContentInRect:(NSRect)rect
+- (void)prepareContentInRect:(NSRect)[[maybe_unused]]_rect
 {
     // Disabling the responsive scrolling/prefetching for now on 10.13+.
     // It destroys the loading time, need to fix it later somehow

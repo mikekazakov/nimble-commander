@@ -57,9 +57,10 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
     return self;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithNibName:(NSString*)[[maybe_unused]] _nibNameOrNil
+               bundle:(NSBundle*)[[maybe_unused]] _nibBundleOrNil
 {
-    assert( 0 );
+    assert(0);
     return nil;
 }
 
@@ -103,9 +104,9 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
                                       "General preferences tab title");
 }
 
-- (void)changeAttributes:(id)sender {} // wtf, is this necessary?
+- (void)changeAttributes:(id)[[maybe_unused]]_sender {} // wtf, is this necessary?
 
-- (IBAction)DefaultEncodingChanged:(id)sender
+- (IBAction)DefaultEncodingChanged:(id)[[maybe_unused]]_sender
 {
     for(const auto &i: encodings::LiteralEncodingsList())
         if([(__bridge NSString*)i.second isEqualToString:[[self.DefaultEncoding selectedItem] title]]) {
@@ -114,7 +115,7 @@ static const auto g_ConfigDefaultEncoding = "viewer.defaultEncoding";
         }    
 }
 
-- (IBAction)ClearHistory:(id)sender
+- (IBAction)ClearHistory:(id)[[maybe_unused]]_sender
 {
     NSAlert *alert = [[NSAlert alloc] init];
     alert.messageText = NSLocalizedStringFromTable(@"Are you sure you want to clear saved file states?",

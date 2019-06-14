@@ -215,7 +215,7 @@ static NCAppDelegate *g_Me = nil;
     return g_Me;
 }
 
-- (void)applicationWillFinishLaunching:(NSNotification *)aNotification
+- (void)applicationWillFinishLaunching:(NSNotification *)[[maybe_unused]]_notification
 {
     RegisterAvailableVFS();
     
@@ -367,7 +367,7 @@ static NCAppDelegate *g_Me = nil;
     enable( "menu.command.open_xattr",          am.HasXAttrFS() );
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotification
+- (void)applicationDidFinishLaunching:(NSNotification *)[[maybe_unused]]_notification
 {
     m_FinishedLaunching.toggle();
     
@@ -410,7 +410,7 @@ static NCAppDelegate *g_Me = nil;
     // initialize stuff related with in-app purchases
     if( ActivationManager::Type() == ActivationManager::Distribution::Free ) {
         m_AppStoreHelper = [AppStoreHelper new];
-        m_AppStoreHelper.onProductPurchased = [=](const std::string &_id){
+        m_AppStoreHelper.onProductPurchased = [=]([[maybe_unused]] const std::string &_id){
             if( ActivationManager::Instance().ReCheckProFeaturesInAppPurchased() ) {
                 [self updateMainMenuFeaturesByVersionAndState];
                 GA().PostEvent("Licensing", "Buy", "Pro features IAP purchased");
@@ -503,13 +503,13 @@ static NCAppDelegate *g_Me = nil;
     });
 }
 
-- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)theApplication
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)[[maybe_unused]]_app
 {
     return NO;
 }
 
 + (void)restoreWindowWithIdentifier:(NSString *)identifier
-                              state:(NSCoder *)state
+                              state:(NSCoder *)[[maybe_unused]]_state
                   completionHandler:(void (^)(NSWindow *, NSError *))completionHandler
 {
     if( NCAppDelegate.me.isRunningTests ) {
@@ -523,7 +523,7 @@ static NCAppDelegate *g_Me = nil;
     completionHandler(window, nil);
 }
 
-- (IBAction)onMainMenuNewWindow:(id)sender
+- (IBAction)onMainMenuNewWindow:(id)[[maybe_unused]]_sender
 {
     auto ctrl = [self allocateMainWindowRestoredManually];
     [ctrl showWindow:self];
@@ -551,7 +551,7 @@ static NCAppDelegate *g_Me = nil;
         }
 }
 
-- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)sender
+- (NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication *)[[maybe_unused]]_sender
 {
     bool has_running_ops = false;
     auto controllers = self.mainWindowControllers;
@@ -582,12 +582,12 @@ static NCAppDelegate *g_Me = nil;
     return NSTerminateNow;
 }
 
-- (IBAction)OnMenuSendFeedback:(id)sender
+- (IBAction)OnMenuSendFeedback:(id)[[maybe_unused]]_sender
 {
     FeedbackManager::Instance().EmailFeedback();
 }
 
-- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)sender
+- (BOOL)applicationShouldOpenUntitledFile:(NSApplication *)[[maybe_unused]]_sender
 {
     return true;
 }
@@ -639,14 +639,14 @@ static NCAppDelegate *g_Me = nil;
     [m_FilesToOpen removeAllObjects];
 }
 
-- (BOOL)application:(NSApplication *)sender openFile:(NSString *)filename
+- (BOOL)application:(NSApplication *)[[maybe_unused]]_sender openFile:(NSString *)filename
 {
     [m_FilesToOpen addObjectsFromArray:@[filename]];
     dispatch_to_main_queue_after(250ms, []{ [g_Me drainFilesToOpen]; });
     return true;
 }
 
-- (void)application:(NSApplication *)sender openFiles:(NSArray<NSString *> *)filenames
+- (void)application:(NSApplication *)[[maybe_unused]]_sender openFiles:(NSArray<NSString *> *)filenames
 {
     [m_FilesToOpen addObjectsFromArray:filenames];
     dispatch_to_main_queue_after(250ms, []{ [g_Me drainFilesToOpen]; });
@@ -664,25 +664,25 @@ static NCAppDelegate *g_Me = nil;
     }
 }
 
-- (IBAction)OnActivateExternalLicense:(id)sender
+- (IBAction)OnActivateExternalLicense:(id)[[maybe_unused]]_sender
 {
     if( auto path = AskUserForLicenseFile() )
         [self processProvidedLicenseFile:*path];
 }
 
-- (IBAction)OnPurchaseExternalLicense:(id)sender
+- (IBAction)OnPurchaseExternalLicense:(id)[[maybe_unused]]_sender
 {
     const auto url = [NSURL URLWithString:@"http://magnumbytes.com/redirectlinks/buy_license"];
     [NSWorkspace.sharedWorkspace openURL:url];
     GA().PostEvent("Licensing", "Buy", "Go to 3rd party registrator");
 }
 
-- (IBAction)OnPurchaseProFeaturesInApp:(id)sender
+- (IBAction)OnPurchaseProFeaturesInApp:(id)[[maybe_unused]]_sender
 {
     [m_AppStoreHelper showProFeaturesWindow];
 }
 
-- (IBAction)OnRestoreInAppPurchases:(id)sender
+- (IBAction)OnRestoreInAppPurchases:(id)[[maybe_unused]]_sender
 {
     [m_AppStoreHelper askUserToRestorePurchases];
 }
@@ -697,26 +697,26 @@ static NCAppDelegate *g_Me = nil;
     self.servicesHandler.RevealItem(pboard, data, error);
 }
 
-- (void)OnPreferencesCommand:(id)sender
+- (void)OnPreferencesCommand:(id)[[maybe_unused]]_sender
 {
     ShowPreferencesWindow();
 }
 
-- (IBAction)OnShowHelp:(id)sender
+- (IBAction)OnShowHelp:(id)[[maybe_unused]]_sender
 {
     const auto url = [NSBundle.mainBundle URLForResource:@"Help" withExtension:@"pdf"];
     [NSWorkspace.sharedWorkspace openURL:url];
     GA().PostEvent("Help", "Click", "Open Help");
 }
 
-- (IBAction)onMainMenuPerformGoToProductForum:(id)sender
+- (IBAction)onMainMenuPerformGoToProductForum:(id)[[maybe_unused]]_sender
 {
     const auto url = [NSURL URLWithString:@"http://magnumbytes.com/forum/"];
     [NSWorkspace.sharedWorkspace openURL:url];
     GA().PostEvent("Help", "Click", "Visit Forum");
 }
 
-- (IBAction)OnMenuToggleAdminMode:(id)sender
+- (IBAction)OnMenuToggleAdminMode:(id)[[maybe_unused]]_sender
 {
     if( RoutedIO::Instance().Enabled() )
         RoutedIO::Instance().TurnOff();
@@ -859,7 +859,7 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
     return window;
 }
 
-- (IBAction)onMainMenuPerformShowVFSListAction:(id)sender
+- (IBAction)onMainMenuPerformShowVFSListAction:(id)[[maybe_unused]]_sender
 {
     static __weak VFSListWindowController *existing_window = nil;
     if( auto w = (VFSListWindowController*)existing_window  )
@@ -871,7 +871,7 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
     }
 }
 
-- (IBAction)onMainMenuPerformShowFavorites:(id)sender
+- (IBAction)onMainMenuPerformShowFavorites:(id)[[maybe_unused]]_sender
 {
     static __weak FavoritesWindowController *existing_window = nil;
     if( auto w = (FavoritesWindowController*)existing_window  ) {
@@ -909,7 +909,7 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
 
 - (nc::ops::AggregateProgressTracker&) operationsProgressTracker
 {
-    static const auto apt = [self]{
+    static const auto apt = []{
         const auto apt = std::make_shared<nc::ops::AggregateProgressTracker>();
         apt->SetProgressCallback([](double _progress){
             g_Me.dock.SetProgress( _progress );
@@ -1040,7 +1040,7 @@ static void DoTemporaryFileStoragePurge()
         [center addObserverForName:NSApplicationWillTerminateNotification
                             object:nil
                              queue:nil
-                        usingBlock:^(NSNotification * _Nonnull note) {
+                        usingBlock:^([[maybe_unused]] NSNotification * _Nonnull note) {
                             inst->SaveToStateConfig();
                         }];
         return inst;

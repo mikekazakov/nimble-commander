@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StateActionsDispatcher.h"
 #include "Actions/DefaultAction.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
@@ -124,17 +124,17 @@ static void Perform(SEL _sel, const StateActionsMap &_map,
     return [super performKeyEquivalent:theEvent];
 }
 
-- (IBAction)OnViewPanelsPositionMoveUp:(id)sender
+- (IBAction)OnViewPanelsPositionMoveUp:(id)[[maybe_unused]]_sender
 {
     [m_FS increaseBottomTerminalGap];
 }
 
-- (IBAction)OnViewPanelsPositionMoveDown:(id)sender
+- (IBAction)OnViewPanelsPositionMoveDown:(id)[[maybe_unused]]_sender
 {
     [m_FS decreaseBottomTerminalGap];
 }
 
-- (IBAction)OnViewPanelsPositionShowHidePanels:(id)sender
+- (IBAction)OnViewPanelsPositionShowHidePanels:(id)[[maybe_unused]]_sender
 {
     if(m_FS.isPanelsSplitViewHidden)
         [m_FS showPanelsSplitView];
@@ -142,17 +142,17 @@ static void Perform(SEL _sel, const StateActionsMap &_map,
         [m_FS hidePanelsSplitView];
 }
 
-- (IBAction)OnViewPanelsPositionFocusOverlappedTerminal:(id)sender
+- (IBAction)OnViewPanelsPositionFocusOverlappedTerminal:(id)[[maybe_unused]]_sender
 {
     [m_FS handleCtrlAltTab];
 }
 
-- (IBAction)OnFileFeedFilenameToTerminal:(id)sender
+- (IBAction)OnFileFeedFilenameToTerminal:(id)[[maybe_unused]]_sender
 {
     [m_FS feedOverlappedTerminalWithCurrentFilename];
 }
 
-- (IBAction)OnFileFeedFilenamesToTerminal:(id)sender
+- (IBAction)OnFileFeedFilenamesToTerminal:(id)[[maybe_unused]]_sender
 {
     [m_FS feedOverlappedTerminalWithFilenamesMenu];
 }

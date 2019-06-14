@@ -846,7 +846,7 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
     }];
 }
 
-- (bool)windowStateShouldClose:(NCMainWindowController*)sender
+- (bool)windowStateShouldClose:(NCMainWindowController*)[[maybe_unused]]_sender
 {
     const auto ops_pool_nonempty = !self.operationsPool.Empty();
     const auto overlapped_term_busy = self.isAnythingRunningInOverlappedTerminal;
@@ -1083,12 +1083,12 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
     [self markRestorableStateAsInvalid];
 }
 
-- (BOOL)acceptsPreviewPanelControl:(QLPreviewPanel *)panel
+- (BOOL)acceptsPreviewPanelControl:(QLPreviewPanel *)[[maybe_unused]]_panel
 {
     return ShowQuickLookAsFloatingPanel();
 }
 
-- (void)beginPreviewPanelControl:(QLPreviewPanel *)panel
+- (void)beginPreviewPanelControl:(QLPreviewPanel *)[[maybe_unused]]_panel
 {
     if( [m_QLPanelAdaptor registerExistingQLPreviewPanelFor:self] ) {
         if( auto pc = self.activePanelController )
@@ -1096,7 +1096,7 @@ static void AskAboutStoppingRunningOperations(NSWindow *_window,
     }
 }
 
-- (void)endPreviewPanelControl:(QLPreviewPanel *)panel
+- (void)endPreviewPanelControl:(QLPreviewPanel *)[[maybe_unused]]_panel
 {
     [m_QLPanelAdaptor unregisterExistingQLPreviewPanelFor:self];
 }
@@ -1116,7 +1116,7 @@ static bool RouteKeyboardInputIntoTerminal()
     return route;
 }
 
-- (int)bidForHandlingKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+- (int)bidForHandlingKeyDown:(NSEvent*)_event forPanelView:(PanelView*)[[maybe_unused]] _panel_view
 {
     const auto character = _event.charactersIgnoringModifiers;
     if ( character.length == 0 )
@@ -1136,7 +1136,7 @@ static bool RouteKeyboardInputIntoTerminal()
     return nc::panel::view::BiddingPriority::Skip;
 }
 
-- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)_panel_view
+- (void)handleKeyDown:(NSEvent *)_event forPanelView:(PanelView*)[[maybe_unused]]_panel_view
 {
     const auto character = _event.charactersIgnoringModifiers;
     if ( character.length == 0 )

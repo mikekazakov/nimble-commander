@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <MMTabBarView/MMAttachedTabBarButton.h>
 #include <Habanero/CommonPaths.h>
 #include "MainWindowFilePanelsStateToolbarDelegate.h"
@@ -34,16 +34,19 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
 
 @implementation MainWindowFilePanelState (TabsSupport)
 
-- (BOOL)tabView:(NSTabView *)tabView shouldSelectTabViewItem:(NSTabViewItem *)tabViewItem
+- (BOOL)tabView:(NSTabView*)[[maybe_unused]] tabView
+    shouldSelectTabViewItem:(NSTabViewItem*)[[maybe_unused]] tabViewItem
 {
     return true;
 }
 
-- (void)tabView:(NSTabView *)tabView willSelectTabViewItem:(NSTabViewItem *)tabViewItem
+- (void)tabView:(NSTabView*)[[maybe_unused]] tabView
+    willSelectTabViewItem:(NSTabViewItem*)[[maybe_unused]] tabViewItem
 {
 }
 
-- (void)tabView:(NSTabView *)tabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem
+- (void)tabView:(NSTabView*)[[maybe_unused]] tabView
+    didSelectTabViewItem:(NSTabViewItem*)tabViewItem
 {    
     if( const auto panel_view = objc_cast<PanelView>(tabViewItem.view) ) {
         [self.window makeFirstResponder:panel_view];
@@ -52,7 +55,7 @@ inline void erase_from(_Cont &__cont_, const _Tp& __value_)
     }
 }
 
-- (void)tabView:(NSTabView *)aTabView
+- (void)tabView:(NSTabView *)[[maybe_unused]]aTabView
 receivedClickOnSelectedTabViewItem:(NSTabViewItem *)tabViewItem
 {
     if( const auto panel_view = objc_cast<PanelView>(tabViewItem.view) ) {
@@ -64,18 +67,18 @@ receivedClickOnSelectedTabViewItem:(NSTabViewItem *)tabViewItem
     }
 }
 
-- (BOOL)tabView:(NSTabView *)aTabView
+- (BOOL)tabView:(NSTabView *)[[maybe_unused]]aTabView
 shouldAllowTabViewItem:(NSTabViewItem *)tabViewItem
-toLeaveTabBarView:(MMTabBarView *)tabBarView
+toLeaveTabBarView:(MMTabBarView *)[[maybe_unused]]tabBarView
 {
     return aTabView.numberOfTabViewItems > 1;
 }
 
-- (NSDragOperation)tabView:(NSTabView *)aTabView
-              validateDrop:(id <NSDraggingInfo>)sender
+- (NSDragOperation)tabView:(NSTabView *)[[maybe_unused]]aTabView
+              validateDrop:(id <NSDraggingInfo>)[[maybe_unused]]sender
               proposedItem:(NSTabViewItem *)tabViewItem
-             proposedIndex:(NSUInteger)proposedIndex
-              inTabBarView:(MMTabBarView *)tabBarView
+             proposedIndex:(NSUInteger)[[maybe_unused]]proposedIndex
+              inTabBarView:(MMTabBarView *)[[maybe_unused]]tabBarView
 {
     const auto dragged_panel_view = objc_cast<PanelView>(tabViewItem.view);
     if( !dragged_panel_view )
@@ -87,7 +90,7 @@ toLeaveTabBarView:(MMTabBarView *)tabBarView
     return NSDragOperationGeneric;
 }
 
-- (void)tabView:(NSTabView*)aTabView
+- (void)tabView:(NSTabView*)[[maybe_unused]]aTabView
 didDropTabViewItem:(NSTabViewItem *)tabViewItem
    inTabBarView:(MMTabBarView *)tabBarView
 {
@@ -291,7 +294,7 @@ static NSString *ShrinkTitleForRecentlyClosedMenu(NSString *_title)
     return pc;
 }
 
-- (void)tabView:(NSTabView *)aTabView
+- (void)tabView:(NSTabView *)[[maybe_unused]]aTabView
 didMoveTabViewItem:(NSTabViewItem *)tabViewItem
         toIndex:(NSUInteger)index
 {
@@ -316,23 +319,24 @@ didMoveTabViewItem:(NSTabViewItem *)tabViewItem
 }
 
 - (BOOL)tabView:(NSTabView *)aTabView
-shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
-   inTabBarView:(MMTabBarView *)tabBarView
+shouldDragTabViewItem:(NSTabViewItem *)[[maybe_unused]]tabViewItem
+   inTabBarView:(MMTabBarView *)[[maybe_unused]]tabBarView
 {
     return aTabView.numberOfTabViewItems > 1;
 }
 
-- (NSArray *)allowedDraggedTypesForTabView:(NSTabView *)aTabView
+- (NSArray *)allowedDraggedTypesForTabView:(NSTabView *)[[maybe_unused]]aTabView
 {
     return @[FilesDraggingSource.privateDragUTI];
 }
 
-- (void)tabViewDidChangeNumberOfTabViewItems:(NSTabView *)tabView
+- (void)tabViewDidChangeNumberOfTabViewItems:(NSTabView *)[[maybe_unused]]tabView
 {
     [self updateTabBarsVisibility];
 }
 
-- (void)tabView:(NSTabView *)aTabView didCloseTabViewItem:(NSTabViewItem *)tabViewItem
+- (void)tabView:(NSTabView*)[[maybe_unused]] aTabView
+    didCloseTabViewItem:(NSTabViewItem*)tabViewItem
 {
     // NB! at this moment a tab was already removed from NSTabView objects
     if( auto pv = objc_cast<PanelView>(tabViewItem.view) )
@@ -461,9 +465,10 @@ shouldDragTabViewItem:(NSTabViewItem *)tabViewItem
 
 - (void) updateTabBarButtons
 {
-    const auto handler = ^(MMAttachedTabBarButton *aButton, NSUInteger idx, BOOL *stop) {
-        [aButton setNeedsDisplay];
-    };
+    const auto handler =
+        ^(MMAttachedTabBarButton* aButton, [[maybe_unused]] NSUInteger idx, BOOL* stop) {
+          [aButton setNeedsDisplay];
+        };
     [m_SplitView.leftTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
     [m_SplitView.rightTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
 }
@@ -496,10 +501,10 @@ static NSImage *ResizeImage( NSImage* _img, NSSize _new_size)
     return small_img;
 }
 
-- (NSImage *)tabView:(NSTabView *)aTabView
+- (NSImage *)tabView:(NSTabView *)[[maybe_unused]]aTabView
  imageForTabViewItem:(NSTabViewItem *)tabViewItem
-              offset:(NSSize *)offset
-           styleMask:(NSUInteger *)styleMask
+              offset:(NSSize *)[[maybe_unused]]offset
+           styleMask:(NSUInteger *)[[maybe_unused]]styleMask
 {
     const auto panel_view = objc_cast<PanelView>(tabViewItem.view);
     if( !panel_view )
@@ -523,7 +528,8 @@ static NSImage *ResizeImage( NSImage* _img, NSSize _new_size)
     return image;
 }
 
-- (NSMenu *)tabView:(NSTabView *)aTabView menuForTabViewItem:(NSTabViewItem *)tabViewItem
+- (NSMenu*)tabView:(NSTabView*)[[maybe_unused]] aTabView
+    menuForTabViewItem:(NSTabViewItem*)tabViewItem
 {
     if( auto pv = objc_cast<PanelView>(tabViewItem.view) )
         if( auto pc = objc_cast<PanelController>(pv.delegate) )

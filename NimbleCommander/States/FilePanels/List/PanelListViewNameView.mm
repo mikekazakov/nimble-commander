@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontExtras.h>
 #include "../PanelView.h"
 #include "../PanelViewPresentationSettings.h"
@@ -63,7 +63,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     return false;
 }
 
-- (id) initWithFrame:(NSRect)frameRect
+- (id) initWithFrame:(NSRect)[[maybe_unused]]_frameRect
 {
     self = [super initWithFrame:NSRect()];
     if( self ) {
@@ -75,13 +75,13 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     return self;
 }
 
-- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+- (BOOL) acceptsFirstMouse:(NSEvent *)[[maybe_unused]]_theEvent
 {
     /* really always??? */
     return true;
 }
 
-- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)[[maybe_unused]]_theEvent
 {
     /* really always??? */
     return true;
@@ -103,7 +103,7 @@ static NSParagraphStyle *ParagraphStyle( PanelViewFilenameTrimming _mode )
     return NSMakeRect(origin, 0, width, bounds.size.height);
 }
 
-- (void) drawRect:(NSRect)dirtyRect
+- (void) drawRect:(NSRect)[[maybe_unused]]_dirtyRect
 {
 //    auto layer = self.layer;
 //    auto bg = layer.backgroundColor;

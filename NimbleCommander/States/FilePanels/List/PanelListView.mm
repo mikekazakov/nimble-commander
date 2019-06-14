@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelListView.h"
 #include <Habanero/algo.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
@@ -245,13 +245,14 @@ void DrawTableVerticalSeparatorForView(NSView *v)
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
+                        change:(NSDictionary *)[[maybe_unused]]change
+                       context:(void *)[[maybe_unused]]context
 {
     if( object == m_PanelView && [keyPath isEqualToString:@"active"] ) {
         const bool active = m_PanelView.active;
-        [m_TableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView *rv, NSInteger row) {
-            if( auto v = objc_cast<PanelListViewRowView>(rv) )
+        [m_TableView enumerateAvailableRowViewsUsingBlock:^(NSTableRowView* rv,
+                                                            [[maybe_unused]] NSInteger row) {
+          if (auto v = objc_cast<PanelListViewRowView>(rv))
                 v.panelActive = active;
         }];
     }
@@ -279,7 +280,7 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     [self notifyLastColumnToRedraw];
 }
 
-- (void)tableViewColumnDidResize:(NSNotification *)notification
+- (void)tableViewColumnDidResize:(NSNotification *)[[maybe_unused]]_notification
 {
     if( m_TableView.headerView.resizedColumn < 0 )
         return;
@@ -287,12 +288,12 @@ void DrawTableVerticalSeparatorForView(NSView *v)
     [self.panelView notifyAboutPresentationLayoutChange];
 }
 
-- (void)tableViewColumnDidMove:(NSNotification *)notification
+- (void)tableViewColumnDidMove:(NSNotification *)[[maybe_unused]]_notification
 {
     [self.panelView notifyAboutPresentationLayoutChange];
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)[[maybe_unused]]_tableView
 {
     return m_Data ? m_Data->SortedEntriesCount() : 0;
 }
@@ -383,7 +384,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return nil;
 }
 
-- (nullable NSTableRowView *)tableView:(NSTableView *)tableView rowViewForRow:(NSInteger)rowIndex
+- (nullable NSTableRowView*)tableView:(NSTableView*)[[maybe_unused]] tableView
+                        rowViewForRow:(NSInteger)rowIndex
 {
     if( !m_Data )
         return nil;
@@ -411,7 +413,9 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return nil;
 }
 
-- (void)tableView:(NSTableView *)tableView didRemoveRowView:(NSTableRowView *)rowView forRow:(NSInteger)row
+- (void)tableView:(NSTableView*)[[maybe_unused]]tableView
+    didRemoveRowView:(NSTableRowView*)[[maybe_unused]] rowView
+              forRow:(NSInteger)row
 {
     if( row < 0 && m_RowsStash.size() < g_MaxStashedRows )
         if( auto r = objc_cast<PanelListViewRowView>(rowView) ) {
@@ -585,16 +589,18 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     }];
 }
 
-- (void) updateDateTimeViewAtColumn:(NSTableColumn*)_column withStyle:(AdaptiveDateFormatting::Style)_style
+- (void)updateDateTimeViewAtColumn:(NSTableColumn*)_column
+                         withStyle:(AdaptiveDateFormatting::Style)_style
 {
-// use this!!!!
-//m_TableView viewAtColumn:<#(NSInteger)#> row:<#(NSInteger)#> makeIfNecessary:<#(BOOL)#>
-    
+    // use this!!!!
+    // m_TableView viewAtColumn:<#(NSInteger)#> row:<#(NSInteger)#> makeIfNecessary:<#(BOOL)#>
+
     const auto col_index = [m_TableView.tableColumns indexOfObject:_column];
-    if( col_index != NSNotFound )
-        [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView *rowView, NSInteger row) {
-            if( auto v = objc_cast<PanelListViewDateTimeView>([rowView viewAtColumn:col_index]) )
-                v.style = _style;
+    if (col_index != NSNotFound)
+        [m_TableView enumerateAvailableRowViewsUsingBlock:^(PanelListViewRowView* rowView,
+                                                            [[maybe_unused]] NSInteger row) {
+          if (auto v = objc_cast<PanelListViewDateTimeView>([rowView viewAtColumn:col_index]))
+              v.style = _style;
         }];
 }
 
@@ -716,7 +722,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
         [m_TableView setIndicatorImage:set.first inTableColumn:set.second];
 }
 
-- (void)tableView:(NSTableView *)tableView didClickTableColumn:(NSTableColumn *)tableColumn
+- (void)tableView:(NSTableView*)[[maybe_unused]] tableView
+    didClickTableColumn:(NSTableColumn*)tableColumn
 {
     auto proposed = m_SortMode;
     auto swp = [&]( data::SortMode::Mode _1st, data::SortMode::Mode _2nd ){
@@ -766,7 +773,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     return m_PanelView;
 }
 
-- (void) onPageUp:(NSEvent*)_event
+- (void) onPageUp:(NSEvent*)[[maybe_unused]]_event
 {
     NSRect rect;
     rect = m_TableView.visibleRect;
@@ -774,7 +781,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     [m_TableView scrollRectToVisible:rect];
 }
 
-- (void) onPageDown:(NSEvent*)_event
+- (void) onPageDown:(NSEvent*)[[maybe_unused]]_event
 {
     NSRect rect;
     rect = m_TableView.visibleRect;
@@ -782,7 +789,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     [m_TableView scrollRectToVisible:rect];
 }
 
-- (void) onScrollToBeginning:(NSEvent*)_event
+- (void) onScrollToBeginning:(NSEvent*)[[maybe_unused]]_event
 {
     NSRect rect;
     rect = m_TableView.visibleRect;
@@ -790,7 +797,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     [m_TableView scrollRectToVisible:rect];
 }
 
-- (void) onScrollToEnd:(NSEvent*)_event
+- (void) onScrollToEnd:(NSEvent*)[[maybe_unused]]_event
 {
     NSRect rect;
     rect = m_TableView.visibleRect;
@@ -800,7 +807,8 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     [m_TableView scrollRectToVisible:rect];
 }
 
-- (int) sortedItemPosAtPoint:(NSPoint)_window_point hitTestOption:(PanelViewHitTest::Options)_options
+- (int)sortedItemPosAtPoint:(NSPoint)_window_point
+              hitTestOption:(PanelViewHitTest::Options) [[maybe_unused]] _options
 {
     const auto local_point = [m_TableView convertPoint:_window_point fromView:nil];
     const auto visible_rect = m_ScrollView.documentVisibleRect;
@@ -822,7 +830,7 @@ static View *RetrieveOrSpawnView(NSTableView *_tv, NSString *_identifier)
     [self notifyLastColumnToRedraw];
 }
 
-- (BOOL)tableView:(NSTableView *)tableView
+- (BOOL)tableView:(NSTableView *)[[maybe_unused]]tableView
 shouldReorderColumn:(NSInteger)columnIndex
          toColumn:(NSInteger)newColumnIndex
 {

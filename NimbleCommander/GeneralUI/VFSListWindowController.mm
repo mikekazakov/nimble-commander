@@ -61,7 +61,7 @@ using namespace std::literals;
     [self.vfsTable reloadData];
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)[[maybe_unused]]tableView
 {
     if( self.listType.selectedSegment == 0 )
         return m_Manager->AliveHosts().size();
@@ -69,7 +69,7 @@ using namespace std::literals;
         return m_Manager->KnownVFSCount();
 }
 
-- (nullable NSView *)tableView:(NSTableView *)tableView
+- (nullable NSView *)tableView:(NSTableView *)[[maybe_unused]]tableView
             viewForTableColumn:(nullable NSTableColumn *)tableColumn
                            row:(NSInteger)row
 {
@@ -125,14 +125,14 @@ using namespace std::literals;
     return nil;
 }
 
-- (void)windowWillClose:(NSNotification *)notification
+- (void)windowWillClose:(NSNotification *)[[maybe_unused]]_notification
 {
     dispatch_to_main_queue_after(10ms, [=]{
         m_Self = nil;
     });
 }
 
-- (IBAction)onTypeChanged:(id)sender
+- (IBAction)onTypeChanged:(id)[[maybe_unused]]_sender
 {
     [self updateData];
 }

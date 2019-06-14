@@ -26,7 +26,7 @@ struct PanelListViewColumnsLayout;
 @property (nonatomic) int cursorPosition;
 @property (nonatomic) nc::panel::data::SortMode sortMode;
 @property (nonatomic) std::function<void(nc::panel::data::SortMode)> sortModeChangeCallback;
-@property (nonatomic) PanelView *panelView;
+@property (nonatomic, readonly) PanelView *panelView;
 
 - (void) dataChanged;
 - (void) syncVolatileData;

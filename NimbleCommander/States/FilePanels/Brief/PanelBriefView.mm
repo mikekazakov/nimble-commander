@@ -1,4 +1,5 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "PanelBriefView.h"
 #include <VFS/VFS.h>
 #include <Habanero/algo.h>
 #include <Utility/FontExtras.h>
@@ -10,7 +11,6 @@
 #include <NimbleCommander/Bootstrap/Config.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include <NimbleCommander/Core/Theming/ThemesManager.h>
-#include "PanelBriefView.h"
 #include "PanelBriefViewCollectionView.h"
 #include "PanelBriefViewCollectionViewItem.h"
 #include "PanelBriefViewCollectionViewBackground.h"
@@ -229,9 +229,9 @@ static const auto g_ScrollingBackground =
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath
-                      ofObject:(id)object
-                        change:(NSDictionary *)change
-                       context:(void *)context
+                      ofObject:(id)[[maybe_unused]]object
+                        change:(NSDictionary *)[[maybe_unused]]change
+                       context:(void *)[[maybe_unused]]context
 {
     if( [keyPath isEqualToString:@"active"] ) {
         const bool active = m_PanelView.active;
@@ -240,8 +240,8 @@ static const auto g_ScrollingBackground =
     }    
 }
 
-- (NSInteger)collectionView:(NSCollectionView *)collectionView
-     numberOfItemsInSection:(NSInteger)section
+- (NSInteger)collectionView:(NSCollectionView *)[[maybe_unused]]collectionView
+     numberOfItemsInSection:(NSInteger)[[maybe_unused]]section
 {
     return m_Data ? m_Data->SortedDirectoryEntries().size() : 0;
 }
@@ -321,7 +321,8 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
     m_IntrinsicItemsWidths = std::move(widths);
 }
 
-- (std::vector<short>&)collectionViewProvideIntrinsicItemsWidths:(NSCollectionView *)collectionView
+- (std::vector<short>&)
+collectionViewProvideIntrinsicItemsWidths:(NSCollectionView *)[[maybe_unused]]_collectionView
 {
     return m_IntrinsicItemsWidths;
 }
@@ -513,8 +514,8 @@ static std::vector<CFStringRef> GatherDisplayFilenames(const data::Model *_data)
         }
 }
 
-- (void)collectionView:(NSCollectionView *)collectionView
-didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
+- (void)collectionView:(NSCollectionView *)[[maybe_unused]]collectionView
+didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)[[maybe_unused]]indexPaths
 {
 }
 
@@ -549,7 +550,7 @@ didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
     return objc_cast<PanelView>(self.superview);
 }
 
-- (void) onPageUp:(NSEvent*)_event
+- (void) onPageUp:(NSEvent*)[[maybe_unused]]_event
 {
     NSRect rect;
     rect =  m_CollectionView.visibleRect;
@@ -557,7 +558,7 @@ didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
     [m_CollectionView scrollRectToVisible:rect];
 }
 
-- (void) onPageDown:(NSEvent*)_event
+- (void) onPageDown:(NSEvent*)[[maybe_unused]]_event
 {
     NSRect rect;
     rect = m_CollectionView.visibleRect;
@@ -565,7 +566,7 @@ didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
     [m_CollectionView scrollRectToVisible:rect];
 }
 
-- (void) onScrollToBeginning:(NSEvent*)_event
+- (void) onScrollToBeginning:(NSEvent*)[[maybe_unused]]_event
 {
     NSRect rect;
     rect =  m_CollectionView.visibleRect;
@@ -573,7 +574,7 @@ didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
     [m_CollectionView scrollRectToVisible:rect];
 }
 
-- (void) onScrollToEnd:(NSEvent*)_event
+- (void) onScrollToEnd:(NSEvent*)[[maybe_unused]]_event
 {
     NSRect rect;
     rect = m_CollectionView.visibleRect;
@@ -581,8 +582,8 @@ didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
     [m_CollectionView scrollRectToVisible:rect];
 }
 
-- (int) sortedItemPosAtPoint:(NSPoint)_window_point
-               hitTestOption:(PanelViewHitTest::Options)_options
+- (int) sortedItemPosAtPoint:(NSPoint)[[maybe_unused]]_window_point
+               hitTestOption:(PanelViewHitTest::Options)[[maybe_unused]]_options
 {
     // TODO:
     return -1;
@@ -627,7 +628,7 @@ didSelectItemsAtIndexPaths:(NSSet<NSIndexPath *> *)indexPaths
         m_ScrollView.backgroundColor = CurrentTheme().FilePanelsBriefRegularEvenRowBackgroundColor();
 }
 
-- (void)collectionViewDidLayoutItems:(NSCollectionView *)collectionView
+- (void)collectionViewDidLayoutItems:(NSCollectionView *)[[maybe_unused]]collectionView
 {    
     static const bool draws_grid =
         [m_CollectionView respondsToSelector:@selector(setBackgroundViewScrollsWithContent:)];

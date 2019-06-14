@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Core/Theming/Theme.h>
 #include "../PanelViewPresentationItemsColoringFilter.h"
 #include "../PanelView.h"
@@ -251,7 +251,7 @@ static NSColor* FindBackgroundColor(bool _is_focused,
     self.layer.backgroundColor = m_RowColor.CGColor;
 }
 
-- (void) drawRect:(NSRect)dirtyRect
+- (void) drawRect:(NSRect)[[maybe_unused]]dirtyRect
 {
 }
 
@@ -264,9 +264,9 @@ static NSColor* FindBackgroundColor(bool _is_focused,
     }    
 }
 
-- (void)addSubview:(NSView *)view
-        positioned:(NSWindowOrderingMode)place
-        relativeTo:(nullable NSView *)otherView
+- (void)addSubview:(NSView *)[[maybe_unused]]view
+        positioned:(NSWindowOrderingMode)[[maybe_unused]]place
+        relativeTo:(nullable NSView *)[[maybe_unused]]otherView
 {
     /* Go away you NSTableView, I'll not accept your fake selection view as my child! */
 }
@@ -274,25 +274,28 @@ static NSColor* FindBackgroundColor(bool _is_focused,
 - (void)display{}
 - (void)displayIfNeeded{}
 - (void)displayIfNeededIgnoringOpacity{}
-- (void)displayRect:(NSRect)rect{}
-- (void)displayIfNeededInRect:(NSRect)rect{}
-- (void)displayRectIgnoringOpacity:(NSRect)rect{}
-- (void)displayIfNeededInRectIgnoringOpacity:(NSRect)rect{}
-- (void)displayRectIgnoringOpacity:(NSRect)rect inContext:(NSGraphicsContext *)context{}
-
-- (void)drawBackgroundInRect:(NSRect)dirtyRect
+- (void)displayRect:(NSRect)[[maybe_unused]]rect{}
+- (void)displayIfNeededInRect:(NSRect)[[maybe_unused]]rect{}
+- (void)displayRectIgnoringOpacity:(NSRect)[[maybe_unused]]rect{}
+- (void)displayIfNeededInRectIgnoringOpacity:(NSRect)[[maybe_unused]]rect{}
+- (void)displayRectIgnoringOpacity:(NSRect) [[maybe_unused]] rect
+                         inContext:(NSGraphicsContext*)[[maybe_unused]] context
 {
 }
 
-- (void)drawSelectionInRect:(NSRect)dirtyRect
+- (void)drawBackgroundInRect:(NSRect)[[maybe_unused]]dirtyRect
 {
 }
 
-- (void)drawSeparatorInRect:(NSRect)dirtyRect
+- (void)drawSelectionInRect:(NSRect)[[maybe_unused]]dirtyRect
 {
 }
 
-- (void)drawDraggingDestinationFeedbackInRect:(NSRect)dirtyRect
+- (void)drawSeparatorInRect:(NSRect)[[maybe_unused]]dirtyRect
+{
+}
+
+- (void)drawDraggingDestinationFeedbackInRect:(NSRect)[[maybe_unused]]dirtyRect
 {
 }
 
@@ -329,13 +332,13 @@ static NSColor* FindBackgroundColor(bool _is_focused,
     return nil;
 }
 
-- (BOOL) acceptsFirstMouse:(NSEvent *)theEvent
+- (BOOL) acceptsFirstMouse:(NSEvent *)[[maybe_unused]]theEvent
 {
     /* really always??? */
     return true;
 }
 
-- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)theEvent
+- (BOOL)shouldDelayWindowOrderingForEvent:(NSEvent *)[[maybe_unused]]theEvent
 {
     /* really always??? */
     return true;
@@ -451,7 +454,7 @@ static NSPoint  g_LastMouseDownPos = {};
     }
 }
 
-- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)[[maybe_unused]]sender
 {
     // possibly add some checking stage here later
     return YES;
@@ -484,7 +487,7 @@ static NSPoint  g_LastMouseDownPos = {};
     }
 }
 
-- (bool) isHighlighted
+- (bool) highlighted
 {
     return m_Highlighted;
 }

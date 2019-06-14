@@ -79,19 +79,19 @@ static const auto g_FavoritesWindowControllerDragDataType =
     m_Self = self;
 }
 
-- (void)windowWillClose:(NSNotification *)notification
+- (void)windowWillClose:(NSNotification *)[[maybe_unused]]notification
 {
     dispatch_to_main_queue_after(10ms, [=]{
         m_Self = nil;
     });
 }
 
-- (NSInteger)numberOfRowsInTableView:(NSTableView *)tableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)[[maybe_unused]]tableView
 {
     return m_Favorites.size();
 }
 
-- (nullable NSView *)tableView:(NSTableView *)tableView
+- (nullable NSView *)tableView:(NSTableView *)[[maybe_unused]]tableView
             viewForTableColumn:(nullable NSTableColumn *)tableColumn
                            row:(NSInteger)row
 {
@@ -167,9 +167,9 @@ static const auto g_FavoritesWindowControllerDragDataType =
         }
 }
 
-- (NSDragOperation)tableView:(NSTableView *)aTableView
+- (NSDragOperation)tableView:(NSTableView *)[[maybe_unused]]aTableView
                 validateDrop:(id < NSDraggingInfo >)info
-                 proposedRow:(NSInteger)row
+                 proposedRow:(NSInteger)[[maybe_unused]]row
        proposedDropOperation:(NSTableViewDropOperation)operation
 {
     if( operation == NSTableViewDropOn )
@@ -181,7 +181,7 @@ static const auto g_FavoritesWindowControllerDragDataType =
     return external_drag ? NSDragOperationCopy : NSDragOperationMove;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView
+- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
 writeRowsWithIndexes:(NSIndexSet *)rowIndexes
      toPasteboard:(NSPasteboard *)pboard
 {
@@ -199,10 +199,10 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     });
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView
+- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
        acceptDrop:(id<NSDraggingInfo>)info
               row:(NSInteger)drag_to
-    dropOperation:(NSTableViewDropOperation)operation
+    dropOperation:(NSTableViewDropOperation)[[maybe_unused]]operation
 {
     auto pasteboard = info.draggingPasteboard;
 
@@ -260,13 +260,13 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     return true;
 }
 
-- (void)tableViewSelectionDidChange:(NSNotification *)notification
+- (void)tableViewSelectionDidChange:(NSNotification *)[[maybe_unused]]notification
 {
     const auto row = self.table.selectedRow;
     [self.buttons setEnabled:row>=0 forSegment:1];
 }
 
-- (void)removeFavorite:(id)sender
+- (void)removeFavorite:(id)[[maybe_unused]]sender
 {
     const auto row = self.table.selectedRow;
     if( row < 0 )
@@ -302,7 +302,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         [self showOptionsMenu:sender];
 }
 
-- (void)showOptionsMenu:(id)sender
+- (void)showOptionsMenu:(id)[[maybe_unused]]sender
 {
     const auto b = self.buttons.bounds;
     const auto origin = NSMakePoint(b.size.width - [self.buttons widthForSegment:2] - 3,
@@ -312,7 +312,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
                                         inView:self.buttons];
 }
 
-- (void)showAvailableLocationsToAdd:(id)sender
+- (void)showAvailableLocationsToAdd:(id)[[maybe_unused]]sender
 {
     if( !m_ProvideCurrentUniformPaths )
         return;
@@ -358,7 +358,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     }
 }
 
-- (IBAction)onResetToFinderFavorites:(id)sender
+- (IBAction)onResetToFinderFavorites:(id)[[maybe_unused]]sender
 {
     auto ff = FavoriteComposing{m_Storage()}.FinderFavorites();
     if( ff.empty() ) {
@@ -366,7 +366,9 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
         alert.messageText = NSLocalizedString(@"Failed to retreive Finder's Favorites",
             "Showing an error when NC isn't able to get Finder Favorites");
         [alert addButtonWithTitle:NSLocalizedString(@"OK", "")];
-        [alert beginSheetModalForWindow:self.window completionHandler:^(NSModalResponse rc) {}];
+        [alert beginSheetModalForWindow:self.window
+                      completionHandler:^([[maybe_unused]] NSModalResponse rc){
+                      }];
         return;
     }
 
@@ -375,7 +377,7 @@ writeRowsWithIndexes:(NSIndexSet *)rowIndexes
     [self commit];
 }
 
-- (IBAction)onResetToDefaultFavorites:(id)sender
+- (IBAction)onResetToDefaultFavorites:(id)[[maybe_unused]]sender
 {
     m_Favorites = FavoriteComposing{m_Storage()}.DefaultFavorites();
     [self loadData];

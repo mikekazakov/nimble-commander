@@ -68,7 +68,7 @@ receivedClickOnSelectedTabViewItem:(NSTabViewItem *)tabViewItem
 }
 
 - (BOOL)tabView:(NSTabView *)[[maybe_unused]]aTabView
-shouldAllowTabViewItem:(NSTabViewItem *)tabViewItem
+shouldAllowTabViewItem:(NSTabViewItem *)[[maybe_unused]]tabViewItem
 toLeaveTabBarView:(MMTabBarView *)[[maybe_unused]]tabBarView
 {
     return aTabView.numberOfTabViewItems > 1;
@@ -465,11 +465,11 @@ shouldDragTabViewItem:(NSTabViewItem *)[[maybe_unused]]tabViewItem
 
 - (void) updateTabBarButtons
 {
-    const auto handler =
-        ^(MMAttachedTabBarButton* aButton, [[maybe_unused]] NSUInteger idx, BOOL* stop) {
-          [aButton setNeedsDisplay];
-        };
-    [m_SplitView.leftTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
+    const auto handler = ^(MMAttachedTabBarButton* aButton, [[maybe_unused]] NSUInteger idx,
+                           [[maybe_unused]] BOOL* stop) {
+      [aButton setNeedsDisplay];
+    };
+    [m_SplitView.leftTabbedHolder.tabBar enumerateAttachedButtonsUsingBlock:handler];
     [m_SplitView.rightTabbedHolder.tabBar  enumerateAttachedButtonsUsingBlock:handler];
 }
 

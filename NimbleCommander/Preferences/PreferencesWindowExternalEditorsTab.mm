@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/States/FilePanels/ExternalEditorInfo.h>
 #include "PreferencesWindowExternalEditorsTabNewEditorSheet.h"
@@ -36,7 +36,7 @@ static bool AskUserToDeleteEditor()
     NSMutableArray *m_Editors;
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+- (id)initWithNibName:(NSString *)[[maybe_unused]]nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:NSStringFromClass(self.class) bundle:nibBundleOrNil];
     if (self) {
@@ -97,7 +97,7 @@ static bool AskUserToDeleteEditor()
     NCAppDelegate.me.externalEditorsStorage.SetExternalEditors( eds );
 }
 
-- (IBAction)OnNewEditor:(id)sender
+- (IBAction)OnNewEditor:(id)[[maybe_unused]]sender
 {
     PreferencesWindowExternalEditorsTabNewEditorSheet *sheet = [PreferencesWindowExternalEditorsTabNewEditorSheet new];
     sheet.Info = [ExternalEditorInfo new];
@@ -108,7 +108,7 @@ static bool AskUserToDeleteEditor()
     }];    
 }
 
-- (void)OnTableDoubleClick:(id)table
+- (void)OnTableDoubleClick:(id)[[maybe_unused]]table
 {
     NSInteger row = [self.TableView clickedRow];
     if(row >= (int)[self.ExtEditorsController.arrangedObjects count])
@@ -126,12 +126,17 @@ static bool AskUserToDeleteEditor()
      ];
 }
 
-- (NSDragOperation)tableView:(NSTableView *)aTableView validateDrop:(id < NSDraggingInfo >)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)operation
+- (NSDragOperation)tableView:(NSTableView *)[[maybe_unused]]aTableView
+validateDrop:(id < NSDraggingInfo >)[[maybe_unused]]info
+proposedRow:(NSInteger)[[maybe_unused]]row
+proposedDropOperation:(NSTableViewDropOperation)operation
 {
     return operation == NSTableViewDropOn ? NSDragOperationNone : NSDragOperationMove;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView writeRowsWithIndexes:(NSIndexSet *)rowIndexes toPasteboard:(NSPasteboard *)pboard
+- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
+writeRowsWithIndexes:(NSIndexSet *)rowIndexes
+toPasteboard:(NSPasteboard *)pboard
 {
     [pboard declareTypes:@[MyPrivateTableViewDataType]
                    owner:self];
@@ -140,10 +145,10 @@ static bool AskUserToDeleteEditor()
     return true;
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView
+- (BOOL)tableView:(NSTableView *)[[maybe_unused]]aTableView
        acceptDrop:(id<NSDraggingInfo>)info
               row:(NSInteger)drag_to
-    dropOperation:(NSTableViewDropOperation)operation
+    dropOperation:(NSTableViewDropOperation)[[maybe_unused]]operation
 {
     NSData* data = [info.draggingPasteboard dataForType:MyPrivateTableViewDataType];
     NSIndexSet* inds = [NSKeyedUnarchiver unarchiveObjectWithData:data];

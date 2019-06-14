@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/States/FilePanels/PanelView.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Core/Theming/Theme.h>
@@ -53,7 +53,9 @@ static const auto g_ResizingGran = 14.;
     return true;
 }
 
-- (CGFloat)splitView:(NSSplitView *)splitView constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)dividerIndex
+- (CGFloat)splitView:(NSSplitView*)[[maybe_unused]] splitView
+    constrainSplitPosition:(CGFloat)proposedPosition
+               ofSubviewAt:(NSInteger) [[maybe_unused]] dividerIndex
 {
     auto mid = std::floor(self.frame.size.width / 2.);
     if( proposedPosition > mid - g_MidGuideGap && proposedPosition < mid + g_MidGuideGap )
@@ -62,12 +64,16 @@ static const auto g_ResizingGran = 14.;
     return proposedPosition;
 }
 
--(CGFloat)splitView:(NSSplitView *)splitView constrainMaxCoordinate:(CGFloat)proposedMaximumPosition ofSubviewAt:(NSInteger)dividerIndex
+-(CGFloat)splitView:(NSSplitView *)splitView
+constrainMaxCoordinate:(CGFloat)[[maybe_unused]]proposedMaximumPosition
+ofSubviewAt:(NSInteger)[[maybe_unused]]dividerIndex
 {
     return splitView.frame.size.width - g_MinPanelWidth;
 }
 
--(CGFloat)splitView:(NSSplitView *)splitView constrainMinCoordinate:(CGFloat)proposedMinimumPosition ofSubviewAt:(NSInteger)dividerIndex
+-(CGFloat)splitView:(NSSplitView *)[[maybe_unused]]splitView
+constrainMinCoordinate:(CGFloat)[[maybe_unused]]proposedMinimumPosition
+ofSubviewAt:(NSInteger)[[maybe_unused]]dividerIndex
 {
     return g_MinPanelWidth;
 }
@@ -85,9 +91,10 @@ static const auto g_ResizingGran = 14.;
         NSDrawWindowBackground(rect);
 }
 
-- (BOOL)splitView:(NSSplitView *)splitView canCollapseSubview:(NSView *)subview
+- (BOOL)splitView:(NSSplitView *)[[maybe_unused]]splitView
+canCollapseSubview:(NSView *)[[maybe_unused]]subview
 {
-    return YES;
+    return true;
 }
 
 - (bool) isLeftCollapsed
@@ -263,7 +270,7 @@ static const auto g_ResizingGran = 14.;
     return [super performKeyEquivalent:theEvent];
 }
 
-- (IBAction)OnViewPanelsPositionMoveLeft:(id)sender
+- (IBAction)OnViewPanelsPositionMoveLeft:(id)[[maybe_unused]]sender
 {
     dispatch_assert_main_queue();
     if( self.anyCollapsed ) {
@@ -302,7 +309,7 @@ static const auto g_ResizingGran = 14.;
     [self setNeedsLayout:true];
 }
 
-- (IBAction)OnViewPanelsPositionMoveRight:(id)sender
+- (IBAction)OnViewPanelsPositionMoveRight:(id)[[maybe_unused]]sender
 {
     dispatch_assert_main_queue();
     if( self.anyCollapsed ) {

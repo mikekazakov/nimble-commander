@@ -63,8 +63,8 @@ class FindFilesSheetComboHistory : public std::vector<std::string>
 {
 public:
     FindFilesSheetComboHistory(int _max, const char *_config_path):
-        m_Path(_config_path),
-        m_Max(_max)
+        m_Max(_max),
+        m_Path(_config_path)
     {
         auto arr = StateConfig().Get(m_Path);
         if( arr.GetType() == rapidjson::kArrayType )
@@ -341,7 +341,7 @@ private:
     return true;
 }
 
-- (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox;
+- (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox
 {
     if(aComboBox == self.MaskComboBox)
         return m_MaskHistory->size();
@@ -350,7 +350,7 @@ private:
     return 0;
 }
 
-- (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)index;
+- (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)index
 {
     if(aComboBox == self.MaskComboBox)
         return [NSString stringWithUTF8StdString:m_MaskHistory->at(index)];
@@ -359,7 +359,7 @@ private:
     return 0;
 }
 
-- (IBAction)OnClose:(id)sender
+- (IBAction)OnClose:(id)[[maybe_unused]]_sender
 {
     if( NSEvent *ev = NSApp.currentEvent )
         if( ev.type == NSKeyDown && m_FileSearch->IsRunning() ) {
@@ -437,7 +437,7 @@ private:
     return filter_size;
 }
 
-- (IBAction)OnSearch:(id)sender
+- (IBAction)OnSearch:(id)[[maybe_unused]]_sender
 {
     if( m_FileSearch->IsRunning() ) {
         m_FileSearch->Stop();
@@ -573,7 +573,7 @@ private:
     return host;
 }
 
-- (void)updateLookingInByTimer:(NSTimer*)theTimer
+- (void)updateLookingInByTimer:(NSTimer*)[[maybe_unused]]theTimer
 {
     NSString *new_title;
     LOCK_GUARD(m_LookingInPathGuard)
@@ -581,7 +581,7 @@ private:
     self.LookingIn.stringValue = new_title;
 }
 
-- (void) UpdateByTimer:(NSTimer*)theTimer
+- (void) UpdateByTimer:(NSTimer*)[[maybe_unused]]theTimer
 {
     m_BatchQueue.Run([=]{
         if( m_FoundItemsBatch.count == 0 )
@@ -605,7 +605,7 @@ private:
     return &m_DoubleClickedItem.data;
 }
 
-- (IBAction)doubleClick:(id)table
+- (IBAction)doubleClick:(id)[[maybe_unused]]table
 {
     NSInteger row = [self.TableView clickedRow];
     if(row < 0 || row >= self.TableView.numberOfRows)
@@ -615,7 +615,7 @@ private:
     [self OnClose:self];
 }
 
-- (void)tableViewSelectionDidChange:(NSNotification *)aNotification
+- (void)tableViewSelectionDidChange:(NSNotification *)[[maybe_unused]]aNotification
 {
     NSInteger row = [self.TableView selectedRow];
     if( row >= 0 ) {
@@ -634,7 +634,7 @@ private:
     }
 }
 
-- (IBAction)OnGoToFile:(id)sender
+- (IBAction)OnGoToFile:(id)[[maybe_unused]]sender
 {
     if( self.focusedItem ) {
         m_DoubleClickedItem = self.focusedItem;
@@ -652,7 +652,7 @@ private:
     [self OnFileView:sender];
 }
 
-- (IBAction)OnFileView:(id)sender
+- (IBAction)OnFileView:(id)[[maybe_unused]]sender
 {
     dispatch_assert_main_queue();
     if( m_OnView == nullptr )
@@ -681,12 +681,12 @@ private:
 }
 
 // Workaround about combox' menu forcing Search by selecting item from list with Return key
-- (void)comboBoxWillPopUp:(NSNotification *)notification
+- (void)comboBoxWillPopUp:(NSNotification *)[[maybe_unused]]notification
 {
     [self clearReturnKey];
 }
 
-- (void)comboBoxWillDismiss:(NSNotification *)notification
+- (void)comboBoxWillDismiss:(NSNotification *)[[maybe_unused]]notification
 {
     using namespace std::literals;
     dispatch_to_main_queue_after(10ms, [=]{
@@ -699,13 +699,13 @@ private:
     [self onSearchSettingsUIChanged:obj.object];
 }
 
-- (IBAction)onSearchSettingsUIChanged:(id)sender
+- (IBAction)onSearchSettingsUIChanged:(id)[[maybe_unused]]sender
 {
     m_UIChanged = true;
     [self setupReturnKey];
 }
 
-- (IBAction)OnPanelize:(id)sender
+- (IBAction)OnPanelize:(id)[[maybe_unused]]sender
 {
     if( m_OnPanelize ) {
         std::vector<VFSPath> results;
@@ -743,9 +743,9 @@ private:
     self.GoToButton.keyEquivalent = @"";
 }
 
-- (BOOL)tableView:(NSTableView *)tableView
+- (BOOL)tableView:(NSTableView *)[[maybe_unused]]tableView
 shouldTypeSelectForEvent:(NSEvent *)event
-withCurrentSearchString:(NSString *)searchString
+withCurrentSearchString:(NSString *)[[maybe_unused]]searchString
 {
     if( event.charactersIgnoringModifiers.length == 1 &&
         [event.charactersIgnoringModifiers characterAtIndex:0] == 0x20 ) {

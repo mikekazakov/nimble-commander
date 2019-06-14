@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <Cocoa/Cocoa.h>
 #import "FilePanelsTabbedHolder.h"
 
@@ -26,7 +26,7 @@
 @property (nonatomic) NSView* leftOverlay;
 @property (nonatomic) NSView* rightOverlay;
 
-@property (nonatomic) FilePanelsTabbedHolder *leftTabbedHolder;
-@property (nonatomic) FilePanelsTabbedHolder *rightTabbedHolder;
+@property (nonatomic, readonly) FilePanelsTabbedHolder *leftTabbedHolder;
+@property (nonatomic, readonly) FilePanelsTabbedHolder *rightTabbedHolder;
 
 @end

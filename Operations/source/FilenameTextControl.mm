@@ -115,7 +115,7 @@ doCommandBySelector:(SEL)_command_selector
     
     if( completions.empty() ) {
         NSBeep();
-        return false;
+        return true;
     }
     if( completions.size() == 1 ) {
         [self updateTextView:_text_view withAutocompetion:completions.front()];

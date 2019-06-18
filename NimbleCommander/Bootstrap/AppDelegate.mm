@@ -23,6 +23,7 @@
 #include <Utility/FunctionKeysPass.h>
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
+#include <Utility/UTIImpl.h>
 
 #include <RoutedIO/RoutedIO.h>
 
@@ -1046,6 +1047,12 @@ static void DoTemporaryFileStoragePurge()
         return inst;
     }();
     return *instance;
+}
+
+- (nc::utility::UTIDB &)utiDB
+{
+    static nc::utility::UTIDBImpl uti_db;
+    return uti_db;
 }
 
 @end

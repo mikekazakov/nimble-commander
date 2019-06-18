@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "LaunchServices.h"
 #include <sys/stat.h>
 #include <VFS/VFS.h>
@@ -33,31 +33,6 @@ inline T all_equal_or_default(InputIterator _first,
         ++_first;
     }
     return std::move(val);
-}
-
-static std::string UTIForExtenstion(const std::string& _extension)
-{
-    static std::mutex guard;
-    static std::unordered_map<std::string, std::string> extension_to_uti_mapping;
-    
-    std::lock_guard<std::mutex> lock(guard);
-    if( auto i = extension_to_uti_mapping.find(_extension); i != end(extension_to_uti_mapping) )
-        return i->second;
-    
-    std::string uti;
-    if( const auto ext = CFStringCreateWithUTF8StdStringNoCopy( _extension ) ) {
-        const auto cf_uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
-                                                                  ext,
-                                                                  nullptr);
-        if( cf_uti ) {
-            uti = ((__bridge NSString*)cf_uti).UTF8String;
-            extension_to_uti_mapping.emplace(_extension, uti);
-            CFRelease(cf_uti);
-        }
-        CFRelease(ext);
-    }
-
-    return uti;
 }
 
 static std::string GetDefaultHandlerPathForNativeItem( const std::string &_path )
@@ -132,16 +107,17 @@ LauchServicesHandlers::LauchServicesHandlers()
 {
 }
 
-LauchServicesHandlers::LauchServicesHandlers( const VFSListingItem &_item )
+LauchServicesHandlers::LauchServicesHandlers( const VFSListingItem &_item,
+    const nc::utility::UTIDB &_uti_db  )
 {
     if( _item.Host()->IsNativeFS() ) {
-        m_UTI = _item.HasExtension() ? UTIForExtenstion(_item.Extension()) : "public.data";
+        m_UTI = _item.HasExtension() ? _uti_db.UTIForExtension(_item.Extension()) : "public.data";
         const auto path = _item.Path();
         m_Paths = GetHandlersPathsForNativeItem(path);
         m_DefaultHandlerPath = GetDefaultHandlerPathForNativeItem(path);
     }
     else if( !_item.IsDir() && _item.HasExtension() ) {
-        m_UTI = UTIForExtenstion(_item.Extension());
+        m_UTI = _uti_db.UTIForExtension(_item.Extension());
         m_Paths = GetHandlersPathsForUTI(m_UTI);
         m_DefaultHandlerPath = GetDefaultHandlerPathForUTI(m_UTI);
     }

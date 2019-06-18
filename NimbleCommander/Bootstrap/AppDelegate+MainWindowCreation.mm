@@ -283,7 +283,8 @@ static PanelController* PanelFactory()
 - (NCPanelOpenWithMenuDelegate*)panelOpenWithMenuDelegate
 {
     static const auto delegate = [[NCPanelOpenWithMenuDelegate alloc]
-                                  initWithFileOpener:self.fileOpener];
+                                  initWithFileOpener:self.fileOpener 
+                                  utiDB:self.utiDB];
     return delegate;
 }
 
@@ -292,7 +293,8 @@ static PanelController* PanelFactory()
     auto provider = [self](std::vector<VFSListingItem> _items, PanelController *_panel) -> NSMenu* {
         return [[NCPanelContextMenu alloc] initWithItems:std::move(_items)
                                                  ofPanel:_panel
-                                          withFileOpener:self.fileOpener];
+                                          withFileOpener:self.fileOpener
+                                               withUTIDB:self.utiDB];
     };
     return nc::panel::ContextMenuProvider{ std::move(provider) };
 }

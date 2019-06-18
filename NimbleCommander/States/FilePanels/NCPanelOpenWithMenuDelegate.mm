@@ -4,6 +4,7 @@
 #include <Sparkle/Sparkle.h>
 #include <Utility/SystemInformation.h>
 #include <Utility/ObjCpp.h>
+#include <Utility/UTI.h>
 #include <VFS/VFS.h>
 #include "PanelAux.h"
 #include "PanelController.h"
@@ -12,6 +13,7 @@
 
 using namespace nc::core;
 using namespace nc::panel;
+using nc::utility::UTIDB;
 
 namespace {
 
@@ -49,11 +51,11 @@ static void SortAndPurgeDuplicateHandlers(std::vector<LaunchServiceHandler> &_ha
     }
 }
 
-static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items)
+static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items, const UTIDB& _db)
 {
     std::vector<LauchServicesHandlers> per_item_handlers;
     for( auto &i: _items )
-        per_item_handlers.emplace_back( LauchServicesHandlers{i} );
+        per_item_handlers.emplace_back( LauchServicesHandlers{i, _db} );
     
     LauchServicesHandlers items_handlers{per_item_handlers};
     
@@ -90,12 +92,15 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items)
     SerialQueue                     m_FetchQueue;
     std::set<NSMenu*>               m_ManagedMenus;
     FileOpener                     *m_FileOpener;
+    const UTIDB                    *m_UTIDB;
 }
 
 - (instancetype)initWithFileOpener:(nc::panel::FileOpener&)_file_opener
+                             utiDB:(const nc::utility::UTIDB&)_uti_db
 {
     if( self = [super init] ) {
         m_FileOpener = &_file_opener;
+        m_UTIDB = &_uti_db;
     }
     return self;
 }
@@ -133,7 +138,7 @@ static FetchResult FetchHandlers(const std::vector<VFSListingItem> &_items)
         std::make_shared<std::vector<VFSListingItem>>(m_ContextItems);
     
     m_FetchQueue.Run([source_items, self]{
-        auto f = std::make_shared<FetchResult>(FetchHandlers(*source_items));
+        auto f = std::make_shared<FetchResult>(FetchHandlers(*source_items, *m_UTIDB));
         dispatch_to_main_queue([f, self]{
             [self acceptFetchResult:f];
         });

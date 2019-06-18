@@ -343,7 +343,7 @@
 		CF8BDCF12147D50300F14C3E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Magnum Bytes";
 				TargetAttributes = {
 					CF38BEC12148AE5D005E336C = {

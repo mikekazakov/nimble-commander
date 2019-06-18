@@ -22,6 +22,7 @@ namespace nc {
     namespace utility {
         class NativeFSManager;
         class TemporaryFileStorage;
+        class UTIDB;
     }
     
     namespace core {
@@ -147,5 +148,8 @@ namespace nc {
 
 @property (nonatomic, readonly)
     nc::viewer::History &internalViewerHistory;
+
+@property (nonatomic, readonly)
+    nc::utility::UTIDB &utiDB;
 
 @end

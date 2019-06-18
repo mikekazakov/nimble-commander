@@ -35,6 +35,7 @@ using namespace nc::panel;
 - (instancetype) initWithItems:(std::vector<VFSListingItem>)_items
                        ofPanel:(PanelController*)_panel
                 withFileOpener:(nc::panel::FileOpener&)_file_opener
+                withUTIDB:(const nc::utility::UTIDB&)_uti_db
 {
     if( _items.empty() )
         throw std::invalid_argument("NCPanelContextMenu.initWithData - there's no items");
@@ -54,7 +55,8 @@ using namespace nc::panel;
         m_CompressToOppositeAction.reset( new actions::context::CompressToOpposite{m_Items} );
         m_OpenFileAction.reset
             ( new actions::context::OpenFileWithDefaultHandler{m_Items, _file_opener} );
-        m_OpenWithDelegate = [[NCPanelOpenWithMenuDelegate alloc] initWithFileOpener:_file_opener];
+        m_OpenWithDelegate = [[NCPanelOpenWithMenuDelegate alloc] initWithFileOpener:_file_opener
+            utiDB:_uti_db];
         [m_OpenWithDelegate setContextSource:m_Items];
         m_OpenWithDelegate.target = m_Panel;
         

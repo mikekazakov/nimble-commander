@@ -1,7 +1,8 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
+#include <Utility/UTI.h>
 
 namespace nc::core {
 
@@ -9,7 +10,7 @@ class LauchServicesHandlers
 {
 public:
     LauchServicesHandlers( );
-    LauchServicesHandlers( const VFSListingItem &_item );
+    LauchServicesHandlers( const VFSListingItem &_item, const nc::utility::UTIDB &_uti_db );
     LauchServicesHandlers( const std::vector<LauchServicesHandlers>& _handlers_to_merge );
 
     const std::vector<std::string> &HandlersPaths() const noexcept;

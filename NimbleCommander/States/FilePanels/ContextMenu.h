@@ -5,6 +5,9 @@
 #include <VFS/VFS.h>
 @class PanelController;
 
+namespace nc::utility {
+    class UTIDB;
+}
 namespace nc::panel {
     class FileOpener;
 }
@@ -13,6 +16,7 @@ namespace nc::panel {
 
 - (instancetype) initWithItems:(std::vector<VFSListingItem>)_items
                        ofPanel:(PanelController*)_panel
-                withFileOpener:(nc::panel::FileOpener&)_file_opener;
+                withFileOpener:(nc::panel::FileOpener&)_file_opener
+                     withUTIDB:(const nc::utility::UTIDB&)_uti_db;
 
 @end

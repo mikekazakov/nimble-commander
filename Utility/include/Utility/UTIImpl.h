@@ -4,6 +4,7 @@
 #include "UTI.h"
 #include <mutex>
 #include <unordered_map>
+#include <unordered_set>
 
 namespace nc::utility {
 
@@ -19,10 +20,14 @@ public:
     
     bool IsDynamicUTI(const std::string &_uti) const override;
 
+    bool ConformsTo(const std::string &_uti, const std::string &_conforms_to ) const override;
+
 private:
     mutable std::unordered_map<std::string, std::string> m_ExtensionToUTI;
     mutable std::mutex m_ExtensionToUTILock;
-
+    
+    mutable std::unordered_map<std::string, std::unordered_set<std::string>> m_ConformsTo;
+    mutable std::mutex m_ConformsToLock;
 };
 
 }

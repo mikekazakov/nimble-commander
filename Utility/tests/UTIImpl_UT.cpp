@@ -45,3 +45,18 @@ TEST_CASE(PREFIX "UTI for non-existing extensions is dynamic")
     CHECK(db.IsDynamicUTI(db.UTIForExtension("iasgduygdiuwbuiwebvciuewtvciue")) == true);
     CHECK(db.IsDynamicUTI(db.UTIForExtension("")) == true);
 }
+
+TEST_CASE(PREFIX "ConformsTo works")
+{
+    UTIDBImpl db;
+    CHECK( db.ConformsTo("public.jpeg", "public.image") == true );
+    CHECK( db.ConformsTo("public.jpeg", "public.content") == true );
+    CHECK( db.ConformsTo("public.jpeg", "public.text") == false );
+    CHECK( db.ConformsTo("", "public.text") == false );
+    CHECK( db.ConformsTo("public.jpeg", "") == false );
+    CHECK( db.ConformsTo("public.volume", "public.folder") == true );
+    CHECK( db.ConformsTo("public.folder", "public.volume") == false );
+    CHECK( db.ConformsTo("public.volume", "public.directory") == true );
+    CHECK( db.ConformsTo("public.volume", "public.item") == true );
+    CHECK( db.ConformsTo("public.folder", "public.directory") == true );
+}

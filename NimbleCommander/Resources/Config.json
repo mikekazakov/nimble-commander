@@ -158,11 +158,17 @@
             "filenamesTrimmingMode": 1,
             
             /**
-             * Switched between two modes of Preview:
+             * Switches between two modes of Preview:
              * false - as a panel overlay
              * true - as a floating window
              */
-            "showQuickLookAsFloatingPanel": false
+            "showQuickLookAsFloatingPanel": false,
+            
+            /**
+             * A whitelist of UTIs used to determine whether an QuickLook icon is required for a
+             * file.
+             */
+            "quickLookIconsWhitelist": "public.image, public.movie, public.audio"
         },
         
         /**

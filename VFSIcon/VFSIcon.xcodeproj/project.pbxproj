@@ -14,6 +14,11 @@
 		CF38BECA2148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */; };
 		CF38BECB2148AF9C005E336C /* Tests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF8BDD662147EC7900F14C3E /* Tests.cpp */; };
 		CF38BECD2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */; };
+		CF52C39E22BE37170043E825 /* ExtensionsWhitelistImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CF52C39C22BE37170043E825 /* ExtensionsWhitelistImpl.h */; };
+		CF52C39F22BE37170043E825 /* ExtensionsWhitelist.h in Headers */ = {isa = PBXBuildFile; fileRef = CF52C39D22BE37170043E825 /* ExtensionsWhitelist.h */; };
+		CF52C3A122BE371F0043E825 /* ExtensionsWhitelistImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A022BE371F0043E825 /* ExtensionsWhitelistImpl.cpp */; };
+		CF52C3A322BE37D50043E825 /* ExtensionsWhitelist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A222BE37D50043E825 /* ExtensionsWhitelist.cpp */; };
+		CF52C3A522BE3F380043E825 /* ExtensionsWhitelistImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C3A422BE3F380043E825 /* ExtensionsWhitelistImpl_UT.cpp */; };
 		CF8BDD132147D6F400F14C3E /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD122147D6F400F14C3E /* libUtility.dylib */; };
 		CF8BDD152147D6F400F14C3E /* libVFS.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF8BDD142147D6F400F14C3E /* libVFS.dylib */; };
 		CF8BDD1B2147D78A00F14C3E /* QLVFSThumbnailsCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CF8BDD192147D78A00F14C3E /* QLVFSThumbnailsCache.h */; };
@@ -83,6 +88,11 @@
 		CF38BEC22148AE5D005E336C /* libVFSIconIntegrationTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = libVFSIconIntegrationTests; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QLThumbnailsCacheImpl_IntegrationTests.mm; path = tests/QLThumbnailsCacheImpl_IntegrationTests.mm; sourceTree = "<group>"; };
 		CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm; path = tests/WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm; sourceTree = "<group>"; };
+		CF52C39C22BE37170043E825 /* ExtensionsWhitelistImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionsWhitelistImpl.h; path = include/VFSIcon/ExtensionsWhitelistImpl.h; sourceTree = "<group>"; };
+		CF52C39D22BE37170043E825 /* ExtensionsWhitelist.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionsWhitelist.h; path = include/VFSIcon/ExtensionsWhitelist.h; sourceTree = "<group>"; };
+		CF52C3A022BE371F0043E825 /* ExtensionsWhitelistImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionsWhitelistImpl.cpp; path = source/ExtensionsWhitelistImpl.cpp; sourceTree = "<group>"; };
+		CF52C3A222BE37D50043E825 /* ExtensionsWhitelist.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionsWhitelist.cpp; path = source/ExtensionsWhitelist.cpp; sourceTree = "<group>"; };
+		CF52C3A422BE3F380043E825 /* ExtensionsWhitelistImpl_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExtensionsWhitelistImpl_UT.cpp; path = tests/ExtensionsWhitelistImpl_UT.cpp; sourceTree = "<group>"; };
 		CF8BDCF92147D50300F14C3E /* libVFSIcon.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libVFSIcon.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF8BDD122147D6F400F14C3E /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF8BDD142147D6F400F14C3E /* libVFS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libVFS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -206,6 +216,8 @@
 		CF8BDD162147D75000F14C3E /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF52C39D22BE37170043E825 /* ExtensionsWhitelist.h */,
+				CF52C39C22BE37170043E825 /* ExtensionsWhitelistImpl.h */,
 				CF8BDD342147E69F00F14C3E /* IconBuilder.h */,
 				CF8BDD332147E69F00F14C3E /* IconBuilderImpl.h */,
 				CF8BDD3B2147E8AA00F14C3E /* IconRepository.h */,
@@ -227,6 +239,8 @@
 		CF8BDD172147D75A00F14C3E /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF52C3A222BE37D50043E825 /* ExtensionsWhitelist.cpp */,
+				CF52C3A022BE371F0043E825 /* ExtensionsWhitelistImpl.cpp */,
 				CF8BDD372147E6A700F14C3E /* IconBuilder.mm */,
 				CF8BDD382147E6A700F14C3E /* IconBuilderImpl.mm */,
 				CF8BDD522147E8B600F14C3E /* IconRepository.mm */,
@@ -249,6 +263,7 @@
 		CF8BDD182147D77B00F14C3E /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				CF52C3A422BE3F380043E825 /* ExtensionsWhitelistImpl_UT.cpp */,
 				CF3736E32149245400C3EBDC /* IconRepositoryImpl_UnitTests.mm */,
 				CF38BECC2148BF95005E336C /* WorkspaceExtensionIconsCacheImpl_IntegrationTests.mm */,
 				CF38BEC92148AF13005E336C /* QLThumbnailsCacheImpl_IntegrationTests.mm */,
@@ -271,8 +286,10 @@
 				CF8BDD492147E8AB00F14C3E /* WorkspaceExtensionIconsCache.h in Headers */,
 				CF8BDD452147E8AB00F14C3E /* IconRepositoryImpl.h in Headers */,
 				CF8BDD4A2147E8AB00F14C3E /* WorkspaceIconsCache.h in Headers */,
+				CF52C39E22BE37170043E825 /* ExtensionsWhitelistImpl.h in Headers */,
 				CF8BDD2B2147E3E300F14C3E /* VFSBundleIconsCacheImpl.h in Headers */,
 				CF8BDD1B2147D78A00F14C3E /* QLVFSThumbnailsCache.h in Headers */,
+				CF52C39F22BE37170043E825 /* ExtensionsWhitelist.h in Headers */,
 				CF8BDD472147E8AB00F14C3E /* QLThumbnailsCache.h in Headers */,
 				CF8BDD432147E8AB00F14C3E /* IconRepository.h in Headers */,
 				CF8BDD1C2147D78A00F14C3E /* QLVFSThumbnailsCacheImpl.h in Headers */,
@@ -401,8 +418,10 @@
 				CF8BDD302147E3EB00F14C3E /* VFSBundleIconsCacheImpl.mm in Sources */,
 				CF8BDD532147E8B600F14C3E /* IconRepositoryImpl.mm in Sources */,
 				CF8BDD582147E8B600F14C3E /* WorkspaceIconsCacheImpl.mm in Sources */,
+				CF52C3A322BE37D50043E825 /* ExtensionsWhitelist.cpp in Sources */,
 				CF8BDD2F2147E3EB00F14C3E /* VFSBundleIconsCache.mm in Sources */,
 				CF8BDD572147E8B600F14C3E /* WorkspaceIconsCache.mm in Sources */,
+				CF52C3A122BE371F0043E825 /* ExtensionsWhitelistImpl.cpp in Sources */,
 				CF8BDD562147E8B600F14C3E /* QLThumbnailsCache.mm in Sources */,
 				CF8BDD592147E8B600F14C3E /* QLThumbnailsCacheImpl.mm in Sources */,
 				CF8BDD5A2147E8B600F14C3E /* IconRepository.mm in Sources */,
@@ -416,6 +435,7 @@
 			files = (
 				CF8BDD6A2147EC7D00F14C3E /* Tests.cpp in Sources */,
 				CF8BDD6E2147ED1400F14C3E /* WorkspaceIconsCacheImpl_UnitTests.mm in Sources */,
+				CF52C3A522BE3F380043E825 /* ExtensionsWhitelistImpl_UT.cpp in Sources */,
 				CF3736E42149245400C3EBDC /* IconRepositoryImpl_UnitTests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

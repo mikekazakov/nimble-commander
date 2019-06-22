@@ -3,6 +3,7 @@
 #include <VFS/Native.h>
 #include <Utility/StringExtras.h>
 #include <Operations/Deletion.h>
+#include <Habanero/dispatch_cpp.h>
 #include "PanelController.h"
 #include "MainWindowFilePanelState.h"
 #include "../MainWindowController.h"

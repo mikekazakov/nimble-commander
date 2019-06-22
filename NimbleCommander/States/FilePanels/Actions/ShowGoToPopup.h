@@ -3,6 +3,8 @@
 
 #include "DefaultAction.h"
 
+#include <vector>
+
 class NetworkConnectionsManager;
 @class GoToPopupListActionMediator;
 

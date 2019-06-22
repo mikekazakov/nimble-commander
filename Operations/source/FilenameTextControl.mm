@@ -4,6 +4,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/FilenameTextNavigation.h>
 #include <Utility/StringExtras.h>
+#include <Utility/PathManip.h>
 #include <boost/filesystem/path.hpp>
 
 @interface NCFilenameTextStorage ()

@@ -160,7 +160,8 @@ bool IconBuilderImpl::ShouldTryProducingQLThumbnailOnVFS(const VFSListingItem &_
     return _item.IsDir() == false &&
         _item.Size() > 0 &&
         long(_item.Size()) < m_MaxFilesizeForThumbnailsOnVFS &&
-        _item.HasExtension();        
+        _item.HasExtension() &&
+        m_ExtensionsWhitelist->AllowExtension(_item.Extension());        
 }
  
 static bool MightBeBundle(const VFSListingItem &_item)

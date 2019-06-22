@@ -1,3 +1,4 @@
+// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/ExtensionsWhitelistImpl.h>
 
 namespace nc::vfsicon {

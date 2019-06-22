@@ -1,17 +1,18 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
 #include <unordered_map>
 #include <Habanero/spinlock.h>
 #include "WorkspaceExtensionIconsCache.h"
+#include <Utility/UTI.h>
 
 namespace nc::vfsicon {
 
 class WorkspaceExtensionIconsCacheImpl : public WorkspaceExtensionIconsCache 
 {
 public:
-    WorkspaceExtensionIconsCacheImpl();
+    WorkspaceExtensionIconsCacheImpl(const nc::utility::UTIDB &_uti_db);
     ~WorkspaceExtensionIconsCacheImpl();
     
     NSImage *CachedIconForExtension( const std::string& _extension ) const override;
@@ -27,6 +28,7 @@ private:
     mutable spinlock                m_Lock;    
     NSImage *m_GenericFileIcon;
     NSImage *m_GenericFolderIcon;
+    const nc::utility::UTIDB &m_UTIDB;
 };
 
 }

@@ -1,8 +1,8 @@
 // Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <Utility/UTIImpl.h>
 #include <CoreServices/CoreServices.h>
 #include <Habanero/CFPtr.h>
 #include <Habanero/CFString.h>
+#include <Utility/UTIImpl.h>
 
 namespace nc::utility {
 
@@ -29,6 +29,21 @@ std::string UTIDBImpl::UTIForExtension(const std::string& _extension) const
         }
     }
     return uti;
+}
+
+bool UTIDBImpl::IsDeclaredUTI(const std::string& _uti) const
+{
+    const auto ext = CFPtr<CFStringRef>::adopt(CFStringCreateWithUTF8StdStringNoCopy(_uti));
+    if (ext) {
+        return UTTypeIsDeclared(ext.get());
+    }
+    return false;
+}
+
+bool UTIDBImpl::IsDynamicUTI(const std::string& _uti) const
+{
+    constexpr std::string_view prefix = "dyn.a";
+    return std::string_view{_uti}.starts_with(prefix);
 }
 
 } // namespace nc::utility

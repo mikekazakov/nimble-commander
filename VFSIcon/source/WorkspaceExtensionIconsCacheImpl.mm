@@ -1,13 +1,13 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/WorkspaceExtensionIconsCacheImpl.h>
 #include <Cocoa/Cocoa.h>
 #include <Utility/StringExtras.h>
 
 namespace nc::vfsicon {
 
-static NSString *NonDynaticUTIForExtension( const std::string &_extension );
-
-WorkspaceExtensionIconsCacheImpl::WorkspaceExtensionIconsCacheImpl()
+WorkspaceExtensionIconsCacheImpl::
+    WorkspaceExtensionIconsCacheImpl(const nc::utility::UTIDB &_uti_db):
+    m_UTIDB(_uti_db)
 {
     m_GenericFolderIcon = [NSImage imageNamed:NSImageNameFolder];
     m_GenericFileIcon = [NSWorkspace.sharedWorkspace iconForFileType:
@@ -53,9 +53,11 @@ NSImage *WorkspaceExtensionIconsCacheImpl::IconForExtension( const std::string& 
         if( auto i = m_Icons.find( _extension );  i != end(m_Icons) )
             return i->second;
     }
-
-    if( const auto uti = NonDynaticUTIForExtension(_extension) ) {
-        const auto image = [NSWorkspace.sharedWorkspace iconForFileType:uti];
+    
+    const auto uti = m_UTIDB.UTIForExtension(_extension);
+    if( not m_UTIDB.IsDynamicUTI(uti) ) {
+        const auto image = [NSWorkspace.sharedWorkspace
+            iconForFileType:[NSString stringWithUTF8StdString:uti]];
         Commit_Locked( _extension, image );
         return image;
     }
@@ -73,26 +75,6 @@ NSImage *WorkspaceExtensionIconsCacheImpl::GenericFileIcon() const
 NSImage *WorkspaceExtensionIconsCacheImpl::GenericFolderIcon() const
 {
     return m_GenericFolderIcon;
-}
-
-static const auto g_DynamicUTIPrefix = @"dyn.a";
-static NSString *NonDynaticUTIForExtension( const std::string &_extension )
-{
-    const auto extension = [NSString stringWithUTF8StdString:_extension];
-    if( !extension )
-        return nil;
-    
-    const auto uti = (NSString *)CFBridgingRelease(
-        UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension,
-                                              (__bridge CFStringRef)extension,
-                                              NULL));
-    if( !uti )
-        return nil;
-    
-    if( [uti hasPrefix:g_DynamicUTIPrefix] )
-        return nil;
-
-    return uti;
 }
 
 }

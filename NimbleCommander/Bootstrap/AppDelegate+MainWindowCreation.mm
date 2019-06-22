@@ -96,7 +96,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 {
     static const auto ql_cache = std::make_shared<nc::vfsicon::QLThumbnailsCacheImpl>();
     static const auto ws_cache = std::make_shared<nc::vfsicon::WorkspaceIconsCacheImpl>();
-    static const auto ext_cache = std::make_shared<nc::vfsicon::WorkspaceExtensionIconsCacheImpl>();
+    static const auto ext_cache = std::make_shared<nc::vfsicon::WorkspaceExtensionIconsCacheImpl>(
+        self.utiDB);
     static const auto brief_storage = std::make_shared<nc::utility::BriefOnDiskStorageImpl>
         (CommonPaths::AppTemporaryDirectory(),
          nc::bootstrap::ActivationManager::BundleID() + ".ico"); 

@@ -15,6 +15,9 @@ public:
 
     std::string UTIForExtension(const std::string &_extension) const override;
 
+    bool IsDeclaredUTI(const std::string &_uti) const override;
+    
+    bool IsDynamicUTI(const std::string &_uti) const override;
 
 private:
     mutable std::unordered_map<std::string, std::string> m_ExtensionToUTI;

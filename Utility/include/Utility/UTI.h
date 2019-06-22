@@ -11,6 +11,10 @@ public:
     virtual ~UTIDB() = 0;    
     
     virtual std::string UTIForExtension(const std::string &_extension) const = 0;
+    
+    virtual bool IsDeclaredUTI(const std::string &_uti) const = 0;
+    
+    virtual bool IsDynamicUTI(const std::string &_uti) const = 0;
 };
 
 }

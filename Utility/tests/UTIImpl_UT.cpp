@@ -21,3 +21,27 @@ TEST_CASE(PREFIX "getting uti by extension is case insensitive")
     CHECK(db.UTIForExtension("Jpg") == "public.jpeg");
     CHECK(db.UTIForExtension("jPG") == "public.jpeg");
 }
+
+TEST_CASE(PREFIX "IsDeclaredUTI works")
+{
+    UTIDBImpl db;
+    CHECK(db.IsDeclaredUTI("public.jpeg") == true);
+    CHECK(db.IsDeclaredUTI("com.apple.icns") == true);
+    CHECK(db.IsDeclaredUTI("com.adobe.pdf") == true);
+    CHECK(db.IsDeclaredUTI("com.adobe.abracadabra") == false);
+}
+
+TEST_CASE(PREFIX "IsDynamicUTI works")
+{
+    UTIDBImpl db;
+    CHECK(db.IsDynamicUTI("dyn.ah62d4r34gq81k3p2su1zuppgsm10esvvhzxhe55c") == true);
+    CHECK(db.IsDynamicUTI("com.apple.icns") == false);
+    CHECK(db.IsDynamicUTI("") == false);
+}
+
+TEST_CASE(PREFIX "UTI for non-existing extensions is dynamic")
+{
+    UTIDBImpl db;
+    CHECK(db.IsDynamicUTI(db.UTIForExtension("iasgduygdiuwbuiwebvciuewtvciue")) == true);
+    CHECK(db.IsDynamicUTI(db.UTIForExtension("")) == true);
+}

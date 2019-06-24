@@ -304,7 +304,7 @@
 		CF509272201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */; };
 		CF509273201C3DB6004D9CF5 /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */; };
 		CF509274201C3DB7004D9CF5 /* VFSInstanceManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */; };
-		CF52C3D022BEA5D00043E825 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF52C3CF22BEA5D00043E825 /* Sparkle.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CF52C3FA22BEBA4F0043E825 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF52C3E122BEBA090043E825 /* Sparkle.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CF56BF541D68061600A08D2B /* VFSInstanceManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */; };
 		CF56BF551D68129700A08D2B /* VFSInstanceManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */; };
 		CF56BF561D68129800A08D2B /* VFSInstanceManagerImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */; };
@@ -1434,7 +1434,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				CF52C3D022BEA5D00043E825 /* Sparkle.framework in CopyFiles */,
+				CF52C3FA22BEBA4F0043E825 /* Sparkle.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1728,7 +1728,7 @@
 		CF509270201C3D9A004D9CF5 /* VFSInstanceManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstanceManager.cpp; path = NimbleCommander/Core/VFSInstanceManager.cpp; sourceTree = SOURCE_ROOT; };
 		CF51D11E1FD512A70026CC00 /* ExternalEditorInfoPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExternalEditorInfoPrivate.h; path = NimbleCommander/States/FilePanels/ExternalEditorInfoPrivate.h; sourceTree = SOURCE_ROOT; };
 		CF52C3CB22BE5B2D0043E825 /* NCNonMAS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = NCNonMAS.entitlements; path = NimbleCommander/Resources/NCNonMAS.entitlements; sourceTree = SOURCE_ROOT; };
-		CF52C3CF22BEA5D00043E825 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_Party/Sparkle/Sparkle.framework; sourceTree = "<group>"; };
+		CF52C3E122BEBA090043E825 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Sparkle.framework; path = 3rd_Party/Sparkle/Sparkle.framework; sourceTree = SOURCE_ROOT; };
 		CF561B1517D6290F009D37A4 /* liblzma.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = liblzma.a; path = Files/3rd_party/built/lib/liblzma.a; sourceTree = "<group>"; };
 		CF56BF521D68061600A08D2B /* VFSInstanceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VFSInstanceManager.h; path = NimbleCommander/Core/VFSInstanceManager.h; sourceTree = SOURCE_ROOT; };
 		CF56BF531D68061600A08D2B /* VFSInstanceManagerImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSInstanceManagerImpl.cpp; path = NimbleCommander/Core/VFSInstanceManagerImpl.cpp; sourceTree = SOURCE_ROOT; };
@@ -3090,7 +3090,6 @@
 		CFC5120816C4BD3D00D247EE = {
 			isa = PBXGroup;
 			children = (
-				CF52C3CF22BEA5D00043E825 /* Sparkle.framework */,
 				CFDA1110177E8A15009E29F7 /* 3rd_party */,
 				CFD62B7E1C99C1C90021EE7F /* Habanero.xcodeproj */,
 				CF960DF91C97F96D001D8B02 /* Utility.xcodeproj */,
@@ -3255,6 +3254,7 @@
 				CF8629201B956B3300B33CFD /* SparkleEmbedded */,
 				CF4ED0C2177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.h */,
 				CF4ED0C3177E8A4E0017C0E2 /* NSFileManager+DirectoryLocations.m */,
+				CF52C3E122BEBA090043E825 /* Sparkle.framework */,
 			);
 			name = 3rd_party;
 			path = 3rd_Party;
@@ -3943,7 +3943,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "codesign --verbose --sign 'Developer ID Application' --deep --timestamp --options runtime \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app\"\ncodesign --verbose --sign 'Developer ID Application' --deep --timestamp --options runtime \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework\"\n";
+			shellScript = "codesign --verbose --sign 'Developer ID Application' --force --deep --timestamp --options runtime \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework/Resources/Autoupdate.app\"\ncodesign --verbose --sign 'Developer ID Application' --force --deep --timestamp --options runtime \"${CODESIGNING_FOLDER_PATH}/Contents/Frameworks/Sparkle.framework\"\n";
 		};
 		CF9EEB3E17256372001443FA /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5452,7 +5452,6 @@
 		CFC5122F16C4BD3D00D247EE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = NimbleCommander/Resources/NCNonMAS.entitlements;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";
@@ -5472,7 +5471,6 @@
 		CFC5123016C4BD3D00D247EE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = NimbleCommander/Resources/NCNonMAS.entitlements;
 				CODE_SIGN_IDENTITY = "Developer ID Application";
 				CODE_SIGN_STYLE = Manual;
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)_NonMAS_Trial";

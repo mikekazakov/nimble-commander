@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CFD79AE221FE29900043A26D /* release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79ADE21FE298F0043A26D /* release.xcconfig */; };
-		CFD79AE321FE29900043A26D /* debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79ADF21FE298F0043A26D /* debug.xcconfig */; };
-		CFD79AE421FE29900043A26D /* tests.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79AE021FE298F0043A26D /* tests.xcconfig */; };
-		CFD79AE521FE29900043A26D /* default.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = CFD79AE121FE29900043A26D /* default.xcconfig */; };
 		CFD79AEB21FE474B0043A26D /* ProcessSheetController.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD79AEA21FE474B0043A26D /* ProcessSheetController.h */; };
 		CFD79AED21FE47560043A26D /* ProcessSheetController.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFD79AEC21FE47560043A26D /* ProcessSheetController.mm */; };
 		CFD79AF021FE475F0043A26D /* ProcessSheetController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CFD79AEE21FE475F0043A26D /* ProcessSheetController.xib */; };
@@ -189,11 +185,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFD79AE521FE29900043A26D /* default.xcconfig in Resources */,
-				CFD79AE321FE29900043A26D /* debug.xcconfig in Resources */,
 				CFD79AF021FE475F0043A26D /* ProcessSheetController.xib in Resources */,
-				CFD79AE421FE29900043A26D /* tests.xcconfig in Resources */,
-				CFD79AE221FE29900043A26D /* release.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

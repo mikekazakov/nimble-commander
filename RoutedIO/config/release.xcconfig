@@ -1,0 +1,4 @@
+#include "default.xcconfig"
+
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
+

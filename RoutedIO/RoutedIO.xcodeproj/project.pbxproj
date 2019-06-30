@@ -32,6 +32,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		CF2343E922C908AC00F516CB /* default.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = default.xcconfig; path = config/default.xcconfig; sourceTree = "<group>"; };
+		CF2343EA22C90A0600F516CB /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = config/debug.xcconfig; sourceTree = "<group>"; };
+		CF2343EB22C90A0600F516CB /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = config/release.xcconfig; sourceTree = "<group>"; };
 		CF69CFA21DA200E300992B84 /* RoutedIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoutedIO.cpp; path = source/RoutedIO.cpp; sourceTree = "<group>"; };
 		CF69CFA31DA200E300992B84 /* RoutedIOInterfaces.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoutedIOInterfaces.cpp; path = source/RoutedIOInterfaces.cpp; sourceTree = "<group>"; };
 		CF69CFA61DA200EC00992B84 /* RoutedIOInterfaces.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoutedIOInterfaces.h; path = source/RoutedIOInterfaces.h; sourceTree = "<group>"; };
@@ -74,6 +77,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CF2343E822C9086B00F516CB /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CF2343EA22C90A0600F516CB /* debug.xcconfig */,
+				CF2343E922C908AC00F516CB /* default.xcconfig */,
+				CF2343EB22C90A0600F516CB /* release.xcconfig */,
+			);
+			name = Config;
+			sourceTree = "<group>";
+		};
 		CF69CF9F1DA2005100992B84 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
@@ -118,6 +131,7 @@
 		CF8D0D4F1D9E4D7400ADFF14 = {
 			isa = PBXGroup;
 			children = (
+				CF2343E822C9086B00F516CB /* Config */,
 				CF69CF9F1DA2005100992B84 /* Headers */,
 				CF69CFA11DA2006200992B84 /* Source */,
 				CF69CFAB1DA2098300992B84 /* Resources */,
@@ -244,7 +258,6 @@
 		CF69CFB91DA209F000992B84 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -262,7 +275,6 @@
 		CF69CFBA1DA209F000992B84 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -279,68 +291,15 @@
 		};
 		CF8D0D5F1D9E4D7400ADFF14 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF2343EA22C90A0600F516CB /* debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../Habanero/include",
-					"$(PROJECT_DIR)/../Utility/include",
-					"$(PROJECT_DIR)/include",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				ONLY_ACTIVE_ARCH = YES;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-std=c++17",
-					"-Wall",
-					"-Wextra",
-					"-Werror",
-				);
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				USE_HEADERMAP = NO;
 			};
 			name = Debug;
 		};
 		CF8D0D601D9E4D7400ADFF14 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CF2343EB22C90A0600F516CB /* release.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CODE_SIGN_IDENTITY = "-";
-				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_NO_COMMON_BLOCKS = YES;
-				HEADER_SEARCH_PATHS = (
-					"$(PROJECT_DIR)/../Habanero/include",
-					"$(PROJECT_DIR)/../Utility/include",
-					"$(PROJECT_DIR)/include",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				OTHER_CPLUSPLUSFLAGS = (
-					"$(OTHER_CFLAGS)",
-					"-std=c++17",
-					"-Wall",
-					"-Wextra",
-					"-Werror",
-				);
-				SDKROOT = macosx;
-				SKIP_INSTALL = YES;
-				USE_HEADERMAP = NO;
 			};
 			name = Release;
 		};

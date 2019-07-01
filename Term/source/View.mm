@@ -1,4 +1,5 @@
 // Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "View.h"
 #include <Utility/HexadecimalColor.h>
 #include <Utility/FontCache.h>
 #include <Utility/FontExtras.h>
@@ -6,7 +7,6 @@
 #include <Utility/BlinkingCaret.h>
 #include <Utility/OrthodoxMonospace.h>
 #include <Habanero/algo.h>
-#include "View.h"
 #include "Screen.h"
 #include "Parser.h"
 #include "Settings.h"

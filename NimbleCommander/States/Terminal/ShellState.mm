@@ -177,6 +177,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
     
     [self.window makeFirstResponder:m_TermScrollView.view];
     [self updateTitle];
+    [m_TermScrollView tile];
+    [m_TermScrollView.view scrollToBottom];
     GA().PostScreenView("Terminal State");
 }
 

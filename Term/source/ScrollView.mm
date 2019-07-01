@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/FontCache.h>
 #include "Parser.h"
 #include "View.h"
@@ -194,6 +194,7 @@ static const NSEdgeInsets g_Insets = { 2., 5., 2., 5. };
         if( auto p = m_View.parser )
             p->Resized();
     }
+    [self tile];
     [m_View adjustSizes:true];
 }
 

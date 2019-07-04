@@ -289,7 +289,7 @@
 /* Class = "NSMenuItem"; title = "Close Other Tabs"; ObjectID = "Bwr-HI-kKX"; */
 "Bwr-HI-kKX.title" = "Закрыть остальные вкладки";
 
-/* Class = "NSMenuItem"; title = "Compress"; ObjectID = "CEQ-U0-LN9"; */
+/* Class = "NSMenuItem"; title = "Compress..."; ObjectID = "CEQ-U0-LN9"; */
 "CEQ-U0-LN9.title" = "Сжать...";
 
 /* Class = "NSMenuItem"; title = "Purchase Pro Features"; ObjectID = "chd-VR-dSN"; */
@@ -298,7 +298,7 @@
 /* Class = "NSMenuItem"; title = "Open With"; ObjectID = "db8-IO-kEa"; */
 "db8-IO-kEa.title" = "Открыть в программе";
 
-/* Class = "NSMenuItem"; title = "Compress In Opposite Panel"; ObjectID = "dFg-q8-CBh"; */
+/* Class = "NSMenuItem"; title = "Compress To..."; ObjectID = "dFg-q8-CBh"; */
 "dFg-q8-CBh.title" = "Сжать в...";
 
 /* Class = "NSMenuItem"; title = "6"; ObjectID = "Dga-lH-RSh"; */
@@ -388,7 +388,7 @@
 /* Class = "NSMenuItem"; title = "Deselect by Extension"; ObjectID = "KwQ-7L-e5N"; */
 "KwQ-7L-e5N.title" = "Снять выделение по расширению";
 
-/* Class = "NSMenuItem"; title = "Copy File Path"; ObjectID = "KxB-Cc-TKQ"; */
+/* Class = "NSMenuItem"; title = "Copy Item Path"; ObjectID = "KxB-Cc-TKQ"; */
 "KxB-Cc-TKQ.title" = "Копировать путь файла";
 
 /* Class = "NSMenuItem"; title = "Enclosing Folder"; ObjectID = "L3e-fZ-Zko"; */
@@ -529,7 +529,7 @@
 /* Class = "NSMenuItem"; title = "Show/Hide Terminal"; ObjectID = "wOP-H6-qux"; */
 "wOP-H6-qux.title" = "Показать/скрыть терминал";
 
-/* Class = "NSMenuItem"; title = "Copy File Name"; ObjectID = "wUh-lo-NqX"; */
+/* Class = "NSMenuItem"; title = "Copy Item Name"; ObjectID = "wUh-lo-NqX"; */
 "wUh-lo-NqX.title" = "Копировать имя файла";
 
 /* Class = "NSMenuItem"; title = "Paste Filename to Terminal"; ObjectID = "XNI-Bn-uVO"; */

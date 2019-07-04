@@ -455,6 +455,21 @@
 /* Brief System Information user label title */
 "User:" = "Пользователь:";
 
+/* No comment provided by engineer. */
+"Viewer ▶ Show GoTo" = "Просмотрщик ▶ Показать Переход";
+
+/* No comment provided by engineer. */
+"Viewer ▶ Show Settings" = "Просмотрщик ▶ Показать Настройки";
+
+/* No comment provided by engineer. */
+"Viewer ▶ Toggle Hex" = "Просмотрщик ▶ Переключить на шестнадцатеричный вид";
+
+/* No comment provided by engineer. */
+"Viewer ▶ Toggle Preview" = "Просмотрщик ▶ Переключить на быстрый просмотр";
+
+/* No comment provided by engineer. */
+"Viewer ▶ Toggle Text" = "Просмотрщик ▶ Переключить на текст";
+
 /* Brief System Information volume name label title */
 "Volume Name:" = "Название тома:";
 

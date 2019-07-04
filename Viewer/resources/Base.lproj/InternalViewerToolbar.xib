@@ -151,8 +151,8 @@
                     </popUpButtonCell>
                 </popUpButton>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="HXj-A5-Zpc">
-                    <rect key="frame" x="18" y="18" width="90" height="18"/>
-                    <buttonCell key="cell" type="check" title="Word Wrap" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="xtS-o9-gcA">
+                    <rect key="frame" x="18" y="18" width="81" height="18"/>
+                    <buttonCell key="cell" type="check" title="Line wrap" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="xtS-o9-gcA">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>

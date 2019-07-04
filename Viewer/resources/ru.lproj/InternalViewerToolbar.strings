@@ -35,5 +35,5 @@
 "WQ7-Gl-Tam.paletteLabel" = "Режим";
 
 /* Class = "NSButtonCell"; title = "Word Wrap"; ObjectID = "xtS-o9-gcA"; */
-"xtS-o9-gcA.title" = "Перенос по словам";
+"xtS-o9-gcA.title" = "Заворачивать строки";
 

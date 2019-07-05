@@ -10,6 +10,7 @@
 #include <Utility/ActionShortcut.h>
 #include "History.h"
 #include <Habanero/SerialQueue.h>
+#include "Internal.h"
 
 using namespace std::literals;
 using namespace nc::viewer;

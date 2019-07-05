@@ -1,0 +1,23 @@
+/* Title for process sheet when opening a vfs file */
+"Opening file..." = "Открытие файла...";
+
+/* Placeholder for search text field in internal viewer */
+"Search in file" = "Искать в файле";
+
+/* Menu item option in internal viewer search */
+"Case-sensitive search" = "Поиск с учетом регистра";
+
+/* Menu item option in internal viewer search */
+"Find whole phrase" = "Искать фразу целиком";
+
+/* Menu item title in internal viewer search */
+"Clear Recents" = "Очистить недавние поиски";
+
+/* Menu item title in internal viewer search */
+"Recent Searches" = "Недавние поиски";
+
+/* Menu item title in internal viewer search */
+"Recents" = "Последние";
+
+/* Window title for internal file viewer */
+"File View - %@" = "Просмотр файла - %@";

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include <Habanero/CommonPaths.h>
 #include <Utility/SystemInformation.h>
@@ -77,7 +77,7 @@ int VFSSeqToRandomROWrapperFile::OpenBackend(unsigned long _flags,
         uint8_t *d = &backend->m_DataBuf[0];
         uint8_t *e = d + backend->m_Size;
         ssize_t res;
-        while( ( res = m_SeqFile->Read(d, std::min(e-d, (long)max_io)) ) > 0) {
+        while( d < e && ( res = m_SeqFile->Read(d, std::min(e-d, (long)max_io)) ) > 0) {
             d += res;
 
             if(_cancel_checker && _cancel_checker())

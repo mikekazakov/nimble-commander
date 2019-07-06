@@ -20,7 +20,8 @@ export MACOSX_DEPLOYMENT_TARGET="10.11"
 --enable-crypt-none \
 --enable-mac-none \
 --with-libssl-prefix=${CUR_DIR}/../OpenSSL/ \
---with-libz
+--with-libz \
+CFLAGS='-g -O3'
 
 make
 

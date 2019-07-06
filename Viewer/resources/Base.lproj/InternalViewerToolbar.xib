@@ -133,7 +133,7 @@
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7ge-wa-wdj">
                     <rect key="frame" x="18" y="42" width="65" height="17"/>
-                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Encoding:" id="Nh3-yd-fW8">
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Encoding:" usesSingleLineMode="YES" id="Nh3-yd-fW8">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>

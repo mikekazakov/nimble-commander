@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <VFS/VFSListingInput.h>
 #include "PanelData.h"
@@ -39,19 +39,19 @@ static NSString *SingleCharStr( unichar _c );
     return self;
 }
 
-- (int) quickSearchNeedsCursorPosition:(NCPanelQuickSearch*)_qs
+- (int) quickSearchNeedsCursorPosition:(NCPanelQuickSearch*)[[maybe_unused]]_qs
 {
     return self.cursorPosition;
 }
-- (void) quickSearch:(NCPanelQuickSearch*)_qs wantsToSetCursorPosition:(int)_cursor_position
+- (void) quickSearch:(NCPanelQuickSearch*)[[maybe_unused]]_qs wantsToSetCursorPosition:(int)_cursor_position
 {
     self.cursorPosition = _cursor_position;
 }
-- (void) quickSearchHasChangedVolatileData:(NCPanelQuickSearch*)_qs {}
-- (void) quickSearchHasUpdatedData:(NCPanelQuickSearch*)_qs {}
-- (void) quickSearch:(NCPanelQuickSearch*)_qs
-wantsToSetSearchPrompt:(NSString*)_prompt
-    withMatchesCount:(int)_count {}
+- (void) quickSearchHasChangedVolatileData:(NCPanelQuickSearch*)[[maybe_unused]]_qs {}
+- (void) quickSearchHasUpdatedData:(NCPanelQuickSearch*)[[maybe_unused]]_qs {}
+- (void) quickSearch:(NCPanelQuickSearch*)[[maybe_unused]]_qs
+wantsToSetSearchPrompt:(NSString*)[[maybe_unused]]_prompt
+    withMatchesCount:(int)[[maybe_unused]]_count {}
 @end
 
 @interface QuickSearch_Tests : XCTestCase
@@ -313,10 +313,10 @@ static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<std::s
 {
     nc::vfs::ListingInput l;
     
-    l.directories.reset( variable_container<>::type::common );
+    l.directories.reset( nc::base::variable_container<>::type::common );
     l.directories[0] = "/";
     
-    l.hosts.reset( variable_container<>::type::common );
+    l.hosts.reset( nc::base::variable_container<>::type::common );
     l.hosts[0] = VFSHost::DummyHost();
     
     for(auto &i: _filenames) {

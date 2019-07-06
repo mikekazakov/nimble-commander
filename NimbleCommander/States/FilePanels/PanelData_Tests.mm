@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <sys/dirent.h>
 #include <VFS/VFS.h>
@@ -9,6 +9,7 @@
 #include <memory>
 
 using namespace nc;
+using namespace nc::base;
 using namespace nc::panel;
 
 static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<std::string> &_filenames )
@@ -84,8 +85,8 @@ static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<NSStri
     data.Load(listing, data::Model::PanelType::Directory);
     
     // testing raw C sorting facility
-    for(int i = 0; i < listing->Count(); ++i)
-        XCTAssert(data.RawIndexForName( listing->Filename(i).c_str() ) == i);
+    for(unsigned i = 0; i < listing->Count(); ++i)
+        XCTAssert(data.RawIndexForName( listing->Filename(i).c_str() ) == (int)i);
     
     // testing basic sorting (direct by filename)
     auto sorting = data.SortMode();

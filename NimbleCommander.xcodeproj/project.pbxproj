@@ -317,6 +317,10 @@
 		CF56C2CB1DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2C71DC358F200F0DF0F /* PanelBriefViewCollectionViewItem.mm */; };
 		CF56C2CF1DC35E8B00F0DF0F /* PanelListViewSizeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2CE1DC35E8B00F0DF0F /* PanelListViewSizeView.mm */; };
 		CF56C2D61DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF56C2D51DC43C7E00F0DF0F /* PanelListViewDateTimeView.mm */; };
+		CF5C8BE222D0F9A200619F45 /* Viewer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD79A7821F65A540043A26D /* Viewer.framework */; };
+		CF5C8BF822D0FB7400619F45 /* Viewer.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CFD79A7821F65A540043A26D /* Viewer.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CF5C8BF922D0FB8E00619F45 /* CUI.framework in Copy Files */ = {isa = PBXBuildFile; fileRef = CFD79ADD21FE29430043A26D /* CUI.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		CF5C8BFA22D0FBDF00619F45 /* TrialWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8400FF21A2A8DE007FEF7B /* TrialWindowController.xib */; };
 		CF5E9A381FCBC521005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
 		CF5E9A481FCBC66A005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
 		CF5E9A491FCBC66B005608F5 /* ViewFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF5E9A371FCBC521005608F5 /* ViewFile.mm */; };
@@ -386,8 +390,8 @@
 		CF6BF83021941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */; };
 		CF6BF83121941DD70017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF82C21941DD60017CECB /* PanelBriefViewFixedWidthLayoutEngine.mm */; };
 		CF6BF833219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF832219443710017CECB /* PanelBriefViewFixedWidthLayoutEngine_Tests.mm */; };
-		CF6BF8342194444B0017CECB /* libVFSIcon.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
-		CF6BF8372194444B0017CECB /* libConfig.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+		CF6BF8342194444B0017CECB /* libVFSIcon.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF8BDD102147D60800F14C3E /* libVFSIcon.dylib */; };
+		CF6BF8372194444B0017CECB /* libConfig.dylib in Copy Files */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
 		CF6BF83A219444A90017CECB /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
 		CF6BF83B219445F00017CECB /* libConfig.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CF20CC06215A258F006716F6 /* libConfig.dylib */; };
 		CF6BF83E21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF83D21944FF10017CECB /* PanelBriefViewDynamicWidthLayoutEngine.mm */; };
@@ -1508,6 +1512,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				CF5C8BF922D0FB8E00619F45 /* CUI.framework in Copy Files */,
+				CF5C8BF822D0FB7400619F45 /* Viewer.framework in Copy Files */,
 				CF614AEF1F9D92EA0005F2DB /* Operations.framework in Copy Files */,
 				CF614AEE1F9D92D70005F2DB /* libTerm.dylib in Copy Files */,
 				CF36DBEE1F6C185D004A018E /* Sparkle.framework in Copy Files */,
@@ -2218,6 +2224,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF5C8BE222D0F9A200619F45 /* Viewer.framework in Frameworks */,
 				CF6BF83A219444A90017CECB /* libConfig.dylib in Frameworks */,
 				CFDC07B72158F6430069D364 /* libVFSIcon.dylib in Frameworks */,
 				CF36DBED1F6C184D004A018E /* Sparkle.framework in Frameworks */,
@@ -3811,6 +3818,7 @@
 				CFA53A5B1D433E2A00C562A7 /* AskForPasswordWindowController.xib in Resources */,
 				CF8D0CEA1D9623E000ADFF14 /* RegistrationInfoWindow.xib in Resources */,
 				CFA53A601D433E2A00C562A7 /* SFTPConnectionSheetController.xib in Resources */,
+				CF5C8BFA22D0FBDF00619F45 /* TrialWindowController.xib in Resources */,
 				CFA53A611D433E2A00C562A7 /* GoToFolderSheetController.xib in Resources */,
 				CFA53A621D433E2A00C562A7 /* Preferences.strings in Resources */,
 				CFA53A641D433E2A00C562A7 /* ExternalToolParameterValueSheetController.xib in Resources */,

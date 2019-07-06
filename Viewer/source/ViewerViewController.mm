@@ -381,7 +381,7 @@ static int InvertBitFlag( int _value, int _flag )
 doCommandBySelector:(SEL)commandSelector
 {
     if( control == m_SearchField && commandSelector == @selector(cancelOperation:) ) {
-        [m_View.window makeFirstResponder:m_View];
+        [m_View.window makeFirstResponder:m_View.keyboardResponder];
         return true;
     }
     return false;

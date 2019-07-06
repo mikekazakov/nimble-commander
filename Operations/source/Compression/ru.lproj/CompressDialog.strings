@@ -1,0 +1,12 @@
+/* Class = "NSTextFieldCell"; title = "Compress items to:"; ObjectID = "4Dh-kj-AYe"; */
+"4Dh-kj-AYe.title" = "Сжать объекты в:";
+
+/* Class = "NSButtonCell"; title = "Compress"; ObjectID = "a48-2O-Lyx"; */
+"a48-2O-Lyx.title" = "Сжать";
+
+/* Class = "NSButtonCell"; title = "Protect with password:"; ObjectID = "CUD-IL-ZRp"; */
+"CUD-IL-ZRp.title" = "Защитить паролем:";
+
+/* Class = "NSButtonCell"; title = "Cancel"; ObjectID = "zlZ-6H-Ljz"; */
+"zlZ-6H-Ljz.title" = "Отмена";
+

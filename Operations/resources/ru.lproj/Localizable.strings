@@ -49,6 +49,12 @@
 /* No comment provided by engineer. */
 "Close" = "Закрыть";
 
+/* Compress files sheet prompt, compressing single file */
+"Compress “%@” to:" = "Сжать “%@” в:";
+
+/* Compress files sheet prompt, compressing many files */
+"Compress %@ items to:" = "Сжать %@ объектов в:";
+
 /* Compressing “%@” */
 "Compressing “%@”" = "Сжатите “%@”";
 

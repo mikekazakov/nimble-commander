@@ -3,6 +3,9 @@
 #include <Utility/StringExtras.h>
 #include <Utility/ObjCpp.h>
 #include <Operations/FilenameTextControl.h>
+#include "../Internal.h"
+
+using namespace nc::ops;
 
 @interface NCOpsCompressDialog ()
 @property (weak) IBOutlet NSButton *compressButton;

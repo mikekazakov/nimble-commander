@@ -609,7 +609,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // hacking:
 - (void)windowStatusDidChange:(NSNotification *)notification;
-
+- (void)updateImages;
 
 @end
 

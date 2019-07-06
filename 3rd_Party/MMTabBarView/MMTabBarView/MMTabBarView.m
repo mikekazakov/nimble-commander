@@ -343,9 +343,6 @@ static NSMutableDictionary *registeredStyleClasses = nil;
 
 - (void)windowStatusDidChange:(NSNotification *)notification {
 
-    // why on earth this call was here??? this is madness!
-   // [self _updateImages];
-
 	[self setNeedsDisplay:YES];
 
     for( NSView *v in self.subviews )
@@ -2831,6 +2828,11 @@ StaticImage(AquaTabNewRollover)
     } else {
         [_addTabButton setHidden:YES];
     }
+}
+
+- (void)updateImages
+{
+    [self _updateImages];
 }
 
 - (void)_updateOverflowPopUpButton {

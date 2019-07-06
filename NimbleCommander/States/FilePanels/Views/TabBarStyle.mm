@@ -177,15 +177,16 @@ static std::chrono::nanoseconds g_LastImagesRebuildTime{0};
                 g_TabCloseHoverImage = MakeTabCloseHoverImage();
                 g_TabClosePressedImage = MakeTabClosePressedImage();
                 g_TabAddFreeImage = MakeTabAddFreeImage();
+                g_TabAddHoverImage = MakeTabAddHoverImage();
                 g_TabAddPressedImage = MakeTabAddPressedImage();
                 g_LastImagesRebuildTime = machtime();
             }
             
             if( MMTabBarView *sv = v ) {
+                [sv updateImages];
                 [sv windowStatusDidChange:[[NSNotification alloc] initWithName:@""
                                                                         object:nil
                                                                       userInfo:nil]];
-            
                 for( NSView *b in sv.subviews )
                     [b setNeedsDisplay:true];
             }

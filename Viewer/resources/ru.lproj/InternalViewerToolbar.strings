@@ -34,6 +34,6 @@
 /* Class = "NSToolbarItem"; paletteLabel = "Mode"; ObjectID = "WQ7-Gl-Tam"; */
 "WQ7-Gl-Tam.paletteLabel" = "Режим";
 
-/* Class = "NSButtonCell"; title = "Word Wrap"; ObjectID = "xtS-o9-gcA"; */
+/* Class = "NSButtonCell"; title = "Line wrap"; ObjectID = "xtS-o9-gcA"; */
 "xtS-o9-gcA.title" = "Заворачивать строки";
 

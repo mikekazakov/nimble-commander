@@ -205,6 +205,25 @@ static const auto g_VBoxUbuntu1404x64KeyPasswd  = NCE(nc::env::test::sftp_vbox_u
         XCTAssert( e.code() == 0 );
     }
 
+    try { // auth with encrypted private key / RSA4096
+        auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
+                                          g_VBoxUbuntu1404x64User,
+                                          g_VBoxUbuntu1404x64KeyPasswd,
+                                          (g_Keys/"id_rsa_ubuntu1404x64_local_r2d2_qwerty_4096").c_str());
+    XCTAssert( host->HomeDir() == "/home/r2d2" );
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
+
+    try { // auth with encrypted private key / ECDSA
+        auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,
+                                          g_VBoxUbuntu1404x64User,
+                                          g_VBoxUbuntu1404x64KeyPasswd,
+                                          (g_Keys/"id_ecdsa_ubuntu1404x64_local_r2d2_qwerty").c_str());
+    XCTAssert( host->HomeDir() == "/home/r2d2" );
+    } catch (VFSErrorException &e) {
+        XCTAssert( e.code() == 0 );
+    }
     
     try { // auth with login-password pair
         auto host = make_shared<SFTPHost>(g_VBoxUbuntu1404x64,

@@ -1,7 +1,7 @@
 HEADER_SEARCH_PATHS = $(PROJECT_DIR)/include $(PROJECT_DIR)/../VFS/include $(PROJECT_DIR)/../Habanero/include $(PROJECT_DIR)/../Utility/include $(PROJECT_DIR)/../RoutedIO/include $(PROJECT_DIR)/../3rd_Party/libarchive/include $(PROJECT_DIR)/../3rd_Party/boost/include $(HOME)
 OTHER_CPLUSPLUSFLAGS = $(OTHER_CFLAGS) -std=c++2a -Wall -Wextra -Werror
 
-LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/libarchive/built $(PROJECT_DIR)/../3rd_Party/boost/built $(PROJECT_DIR)/../3rd_Party/OpenSSL/built
+LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/../3rd_Party/libarchive/built $(PROJECT_DIR)/../3rd_Party/boost/built $(PROJECT_DIR)/../3rd_Party/OpenSSL/lib
 
 VALID_ARCHS = x86_64
 MACOSX_DEPLOYMENT_TARGET = 10.11

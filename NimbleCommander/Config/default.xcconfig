@@ -6,7 +6,7 @@ LD_RUNPATH_SEARCH_PATHS = @executable_path/../Frameworks
 
 FRAMEWORK_SEARCH_PATHS = $(PROJECT_DIR)/3rd_Party/Sparkle/
 
-LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/3rd_Party/libarchive/built $(PROJECT_DIR)/3rd_Party/unrar/built $(PROJECT_DIR)/3rd_Party/AquaticPrime/built $(PROJECT_DIR)/3rd_Party/OpenSSL/built $(PROJECT_DIR)/3rd_Party/libssh2/built $(PROJECT_DIR)/3rd_Party/AppAuth/built $(PROJECT_DIR)/3rd_Party/boost/built $(SDKROOT)/usr/lib/system
+LIBRARY_SEARCH_PATHS = $(PROJECT_DIR)/3rd_Party/libarchive/built $(PROJECT_DIR)/3rd_Party/unrar/built $(PROJECT_DIR)/3rd_Party/AquaticPrime/built $(PROJECT_DIR)/3rd_Party/libssh2/built $(PROJECT_DIR)/3rd_Party/AppAuth/built $(PROJECT_DIR)/3rd_Party/boost/built $(SDKROOT)/usr/lib/system
 
 USE_HEADERMAP = NO
 

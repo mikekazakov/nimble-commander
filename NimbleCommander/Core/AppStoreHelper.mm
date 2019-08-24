@@ -1,17 +1,18 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+#include "AppStoreHelper.h"
 #include <Habanero/CFDefaultsCPP.h>
+#include <Habanero/dispatch_cpp.h>
 #include <NimbleCommander/GeneralUI/ProFeaturesWindowController.h>
 #include <NimbleCommander/Core/FeedbackManager.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
-#include "AppStoreHelper.h"
 
 static const auto g_ProFeaturesInAppID  = @"com.magnumbytes.nimblecommander.paid_features";
 static const auto g_PrefsPriceString    = @"proFeaturesIAPPriceString";
 static const auto g_PrefsPFDontShow     = CFSTR("proFeaturesIAPDontShow");
 static const auto g_PrefsPFNextTime     = CFSTR("proFeaturesIAPNextShowTime");
 
-string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
+std::string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
 {
     if( !_bundle )
         return "";
@@ -31,9 +32,9 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
 {
     SKProductsRequest                  *m_ProductRequest;
     SKProduct                          *m_ProFeaturesProduct;
-    function<void(const string &_id)>   m_PurchaseCallback;
+    std::function<void(const std::string &_id)> m_PurchaseCallback;
     NSString                           *m_PriceString;
-    function<void()>                    m_OnProFeaturesProductFetched;    
+    std::function<void()>              m_OnProFeaturesProductFetched;    
 }
 
 @synthesize onProductPurchased = m_PurchaseCallback;
@@ -60,7 +61,7 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
 }
 
 // background thread
-- (void)productsRequest:(SKProductsRequest *)request
+- (void)productsRequest:(SKProductsRequest *)[[maybe_unused]]request
      didReceiveResponse:(SKProductsResponse *)response
 {
     for( SKProduct* p in response.products ) {
@@ -89,8 +90,8 @@ string CFBundleGetAppStoreReceiptPath( CFBundleRef _bundle )
 }
 
 // background thread
-- (void)request:(SKRequest *)request
-didFailWithError:(NSError *)error
+- (void)request:(SKRequest *)[[maybe_unused]]request
+didFailWithError:(NSError *)[[maybe_unused]]error
 {
 }
 
@@ -102,7 +103,7 @@ didFailWithError:(NSError *)error
         switch( pt.transactionState ) {
             case SKPaymentTransactionStatePurchased:
             case SKPaymentTransactionStateRestored: {
-                string identifier = pt.payment.productIdentifier.UTF8String;
+                std::string identifier = pt.payment.productIdentifier.UTF8String;
                 auto callback = m_PurchaseCallback;
                 if( callback )
                     dispatch_to_main_queue([=]{ callback(identifier); } );                

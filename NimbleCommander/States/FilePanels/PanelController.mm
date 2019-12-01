@@ -29,6 +29,7 @@
 #include "CursorBackup.h"
 #include "QuickSearch.h"
 #include "PanelViewHeader.h"
+#include "Counters.h"
 #include <Config/RapidJSON.h>
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
@@ -424,11 +425,13 @@ static void HeatUpConfigValues()
 
 - (void) refreshPanel
 {
+   nc::panel::Counters::Ctrl::RefreshPanel++;
    [self refreshPanelDiscardingCaches:false];
 }
 
 - (void) forceRefreshPanel
 {
+    nc::panel::Counters::Ctrl::ForceRefreshPanel++;
     [self refreshPanelDiscardingCaches:true];
 }
 
@@ -547,6 +550,8 @@ static void HeatUpConfigValues()
 
 - (void) onPathChanged
 {
+    panel::Counters::Ctrl::OnPathChanged++;
+
     // update directory changes notification ticket
     __weak PanelController *weakself = self;
     m_UpdatesObservationTicket.reset();    
@@ -855,6 +860,8 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
 
 - (int) GoToDirWithContext:(std::shared_ptr<DirectoryChangeRequest>)_request
 {
+    panel::Counters::Ctrl::GoToDirWithContext++;
+
     if( _request == nullptr )
         return VFSError::InvalidCall;
     

@@ -382,6 +382,10 @@
 		CF662AE21D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
 		CF662AE31D8A4E88008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
 		CF662AE41D8A4E89008F9DD5 /* ActivationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */; };
+		CF6659802394075A005BF071 /* Counters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF66596723940759005BF071 /* Counters.cpp */; };
+		CF6659812394075A005BF071 /* Counters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF66596723940759005BF071 /* Counters.cpp */; };
+		CF6659822394075A005BF071 /* Counters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF66596723940759005BF071 /* Counters.cpp */; };
+		CF6659832394075A005BF071 /* Counters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF66596723940759005BF071 /* Counters.cpp */; };
 		CF69CFC51DA20DD600992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 in CopyFiles */ = {isa = PBXBuildFile; fileRef = CF69CFC31DA20DC200992B84 /* info.filesmanager.Files.PrivilegedIOHelperV2 */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		CF6BF821219140360017CECB /* PanelBriefViewFixedWidthLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF80C219140360017CECB /* PanelBriefViewFixedWidthLayout.mm */; };
 		CF6BF822219140360017CECB /* PanelBriefViewFixedWidthLayout.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF80C219140360017CECB /* PanelBriefViewFixedWidthLayout.mm */; };
@@ -1780,6 +1784,8 @@
 		CF65729A1FA6CD8100ABF85F /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = release.xcconfig; path = NimbleCommander/Config/release.xcconfig; sourceTree = SOURCE_ROOT; };
 		CF662ADF1D8A4E83008F9DD5 /* ActivationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActivationManager.cpp; path = NimbleCommander/Bootstrap/ActivationManager.cpp; sourceTree = SOURCE_ROOT; };
 		CF662AE01D8A4E83008F9DD5 /* ActivationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActivationManager.h; path = NimbleCommander/Bootstrap/ActivationManager.h; sourceTree = SOURCE_ROOT; };
+		CF66596723940759005BF071 /* Counters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Counters.cpp; path = NimbleCommander/States/FilePanels/Counters.cpp; sourceTree = "<group>"; };
+		CF66597F2394075A005BF071 /* Counters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Counters.h; path = NimbleCommander/States/FilePanels/Counters.h; sourceTree = "<group>"; };
 		CF69CF961DA2003C00992B84 /* RoutedIO.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RoutedIO.xcodeproj; path = RoutedIO/RoutedIO.xcodeproj; sourceTree = "<group>"; };
 		CF69CFD61DA2250C00992B84 /* VFS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = VFS.xcodeproj; path = VFS/VFS.xcodeproj; sourceTree = "<group>"; };
 		CF6BF80C219140360017CECB /* PanelBriefViewFixedWidthLayout.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PanelBriefViewFixedWidthLayout.mm; path = NimbleCommander/States/FilePanels/Brief/PanelBriefViewFixedWidthLayout.mm; sourceTree = "<group>"; };
@@ -2412,6 +2418,8 @@
 			children = (
 				CFDAC2641DFBF20F0039A104 /* ContextMenu.h */,
 				CFDAC2651DFBF20F0039A104 /* ContextMenu.mm */,
+				CF66596723940759005BF071 /* Counters.cpp */,
+				CF66597F2394075A005BF071 /* Counters.h */,
 				CF3B7F7B2021742800BF2090 /* CursorBackup.h */,
 				CF3B7F7C2021742800BF2090 /* CursorBackup.mm */,
 				CFFA95231F47CA760035E606 /* DragReceiver.h */,
@@ -4154,6 +4162,7 @@
 				CF04DE081E3086E90047B1F9 /* ThemePersistence.mm in Sources */,
 				CFD7260E1E42E07900603077 /* main.cpp in Sources */,
 				CFB66FA31D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
+				CF6659822394075A005BF071 /* Counters.cpp in Sources */,
 				CFFA951D1F45A3580035E606 /* Link.mm in Sources */,
 				CF7C7CB21E5ACDBD002DB0E2 /* TabsManagement.mm in Sources */,
 				CF7A09DB1EC44A4000533B07 /* OpenNetworkConnection.mm in Sources */,
@@ -4322,6 +4331,7 @@
 				CF3E2F7A1F5FC277001BFFCE /* WebDAVConnectionSheetController.mm in Sources */,
 				CFD726661E42E1E400603077 /* MainWindowFilePanelState.mm in Sources */,
 				CFB66FA21D863EDD0017D2A0 /* FeedbackWindow.mm in Sources */,
+				CF6659802394075A005BF071 /* Counters.cpp in Sources */,
 				CFA539BB1D433E2A00C562A7 /* ExternalToolsSupport.mm in Sources */,
 				CFD8CDD11E8CF07F00E4DC53 /* CalculateChecksum.mm in Sources */,
 				CF50925C201C3025004D9CF5 /* VFSInstancePromise.cpp in Sources */,
@@ -4543,6 +4553,7 @@
 				CFDAC2DE1DFD137F0039A104 /* QuickLookOverlay.mm in Sources */,
 				CFDAC2051DF921160039A104 /* PanelDataStatistics.cpp in Sources */,
 				CF94CF941DD4418000EEA420 /* Layout.mm in Sources */,
+				CF6659812394075A005BF071 /* Counters.cpp in Sources */,
 				CFC4F99F1F0F40430000B3EE /* Link.mm in Sources */,
 				CF9F4A921EC9442C00E0AF82 /* Compress.mm in Sources */,
 				CF50926E201C30B2004D9CF5 /* VFSInstancePromise.cpp in Sources */,
@@ -4764,6 +4775,7 @@
 				CFD6DD1A1D6C229F006B94C2 /* VFSListWindowController.mm in Sources */,
 				CFB791861D1CFD8D0018CAC3 /* PreferencesWindowToolsTab.mm in Sources */,
 				CF50926C201C30B1004D9CF5 /* VFSInstancePromise.cpp in Sources */,
+				CF6659832394075A005BF071 /* Counters.cpp in Sources */,
 				CFD8CDB51E8CCD0A00E4DC53 /* GoToFolder.mm in Sources */,
 				CF818B7B1EA4573400BC28E6 /* Pasteboard.mm in Sources */,
 				CFD726F31E42E2E100603077 /* PanelListViewTableHeaderCell.mm in Sources */,

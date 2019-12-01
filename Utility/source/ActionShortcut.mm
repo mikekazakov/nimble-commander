@@ -66,13 +66,13 @@ std::string ActionShortcut::ToPersString() const noexcept
 {
     std::string result;
     if( modifiers & NSShiftKeyMask )
-        result += u8"⇧";
+        result += reinterpret_cast<const char*>(u8"⇧");
     if( modifiers & NSControlKeyMask )
-        result += u8"^";
+        result += reinterpret_cast<const char*>(u8"^");
     if( modifiers & NSAlternateKeyMask )
-        result += u8"⌥";
+        result += reinterpret_cast<const char*>(u8"⌥");
     if( modifiers & NSCommandKeyMask )
-        result += u8"⌘";
+        result += reinterpret_cast<const char*>(u8"⌘");
     
     if( unicode == '\r' )
         result += "\\r";

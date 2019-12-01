@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "VFSDeclarations.h"
@@ -35,7 +35,6 @@ class VFSPathStack
 public:
     struct Part
     {
-        Part() = default;
         Part(VFSHost &_host);
         
         const char* fs_tag; // this tag is redundant since configuration already able to provide it

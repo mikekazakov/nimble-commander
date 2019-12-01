@@ -206,7 +206,7 @@ static const std::vector<std::pair<const char*,int>> g_ActionsTags = {
     {"viewer.show_goto",                                101'004}        
 };
 
-static const std::vector<std::pair<const char*, const char*>> g_DefaultShortcuts = {
+static const std::vector<std::pair<const char*, const char8_t*>> g_DefaultShortcuts = {
     {"menu.nimble_commander.about",                         u8""        },
     {"menu.nimble_commander.preferences",                   u8"⌘,"      }, // cmd+,
     {"menu.nimble_commander.toggle_admin_mode",             u8""        },
@@ -432,7 +432,7 @@ ActionsShortcutsManager::ActionsShortcutsManager()
     for( auto &d: g_DefaultShortcuts) {
         auto i = m_ActionToTag.find( d.first );
         if( i != end(m_ActionToTag) )
-            m_ShortCutsDefaults[i->second] = d.second;
+            m_ShortCutsDefaults[i->second] = reinterpret_cast<const char*>(d.second);
     }
     
     ReadOverrideFromConfig();

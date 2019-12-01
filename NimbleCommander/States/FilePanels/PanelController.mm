@@ -624,7 +624,7 @@ static void HeatUpConfigValues()
     if( clicked_item_vd.is_selected() == false)
         vfs_items.emplace_back(clicked_item); // only clicked item
     else
-        vfs_items = m_Data.SelectedEntries(); // all selected items
+        vfs_items = m_Data.SelectedEntriesUnsorted(); // all selected items
     
     for( auto &i: vfs_items )
         m_Data.VolatileDataAtRawPosition(i.Index()).toggle_highlight(true);

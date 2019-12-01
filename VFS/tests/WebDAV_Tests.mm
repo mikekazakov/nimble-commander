@@ -271,7 +271,7 @@ static const auto g_YandexDiskPassword = NCE(nc::env::test::webdav_yandexdisk_pa
     const auto creat_rc = VFSEasyCreateEmptyFile(p1, host);
     XCTAssert( creat_rc == VFSError::Ok );
     
-    const auto p2 = u8"/new_empty_file_тест_ееёёё";
+    const auto p2 = reinterpret_cast<const char*>(u8"/new_empty_file_тест_ееёёё");
     const auto rename_rc = host->Rename(p1, p2, nullptr);
     XCTAssert( rename_rc == VFSError::Ok );
     

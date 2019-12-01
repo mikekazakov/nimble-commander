@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFSDeclarations.h>
@@ -8,6 +8,10 @@
 @class PanelController;
 
 namespace nc::panel {
+
+namespace data { 
+class Model;
+}
 
 class DragSender
 {
@@ -20,6 +24,11 @@ public:
     void Start(NSView *_from_view,
                NSEvent *_via_event,
                int _dragged_panel_item_sorted_index );
+
+    struct Impl {
+        static std::vector<VFSListingItem> ComposeItemsForDragging( int _sorted_pos,
+            const data::Model &_data );
+    };
 
 private:
     PanelController *m_Panel;

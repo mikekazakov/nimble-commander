@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <sys/stat.h>
 #include <VFS/Native.h>
@@ -483,7 +483,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
         return;
     }
     
-    Copying op(FetchItems(u8"/Чемал-16/", {"IMG_0257.JPG"}, *host_src),
+    Copying op(FetchItems(reinterpret_cast<const char*>(u8"/Чемал-16/"), {"IMG_0257.JPG"}, *host_src),
                "/",
                host_dst,
                {});
@@ -491,7 +491,8 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     op.Wait();
     
     int result = 0;
-    XCTAssert( VFSEasyCompareFiles(u8"/Чемал-16/IMG_0257.JPG", host_src, "/IMG_0257.JPG", host_dst, result) == 0);
+    XCTAssert( VFSEasyCompareFiles(reinterpret_cast<const char*>(u8"/Чемал-16/IMG_0257.JPG"),
+        host_src, "/IMG_0257.JPG", host_dst, result) == 0);
     XCTAssert( result == 0 );
 }
 

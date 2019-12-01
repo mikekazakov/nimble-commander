@@ -553,13 +553,27 @@ std::vector<std::string> Model::SelectedEntriesFilenames() const
     return list;
 }
 
-std::vector<VFSListingItem> Model::SelectedEntries() const
+std::vector<VFSListingItem> Model::SelectedEntriesUnsorted() const
 {
     std::vector<VFSListingItem> list;
     for(int i = 0, e = (int)m_VolatileData.size(); i != e; ++i)
         if( m_VolatileData[i].is_selected() )
             list.emplace_back( m_Listing->Item(i) );
     return list;
+}
+
+std::vector<VFSListingItem> Model::SelectedEntriesSorted() const
+{
+    std::vector<VFSListingItem> list;
+    const auto sorted_count = SortedEntriesCount();
+    for( int i = 0 ; i < sorted_count; ++i ) {
+        assert( i < static_cast<int>(m_EntriesByCustomSort.size()) );
+        const auto raw_index = m_EntriesByCustomSort[i];
+        assert( raw_index < m_VolatileData.size() );
+        if( m_VolatileData[raw_index].is_selected() )
+            list.emplace_back( m_Listing->Item(raw_index) );
+    }
+     return list;
 }
 
 bool Model::SetCalculatedSizeForDirectory(const char *_entry, uint64_t _size)

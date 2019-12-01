@@ -73,7 +73,17 @@ public:
     const ItemVolatileData& VolatileDataAtSortPosition( int _pos ) const; // will throw an exception upon invalid index
     
     std::vector<std::string> SelectedEntriesFilenames() const;
-    std::vector<VFSListingItem> SelectedEntries() const;
+    
+    /**
+     * Returns a list of selected VFS items, without a specific order,
+     * according to the raw structure of a listing.
+     */
+    std::vector<VFSListingItem> SelectedEntriesUnsorted() const;
+
+    /**
+     * Returns a list of selected VFS items, ordered according to the selected sort mode.
+     */
+    std::vector<VFSListingItem> SelectedEntriesSorted() const;
     
     /**
      * Will throw an invalid_argument on invalid _pos.

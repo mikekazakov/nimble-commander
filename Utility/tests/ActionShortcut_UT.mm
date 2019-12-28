@@ -42,12 +42,12 @@ TEST_CASE(PREFIX"Handles serialized special symbols properly")
 
 TEST_CASE(PREFIX"Produces correct persistent strings")
 {
-    CHECK( ActionShortcut{u8"⇧^⌥⌘a"}.ToPersString() == u8"⇧^⌥⌘a" );
-    CHECK( ActionShortcut{u8"⇧^⌥⌘1"}.ToPersString() == u8"⇧^⌥⌘1" );
-    CHECK( ActionShortcut{u8"^⌥⌘1"}.ToPersString() == u8"^⌥⌘1" );
-    CHECK( ActionShortcut{u8"⌥⌘1"}.ToPersString() == u8"⌥⌘1" );
-    CHECK( ActionShortcut{u8"⌘1"}.ToPersString() == u8"⌘1" );
-    CHECK( ActionShortcut{u8"1"}.ToPersString() == u8"1" );    
+    CHECK( ActionShortcut{u8"⇧^⌥⌘a"}.ToPersString() == reinterpret_cast<const char*>(u8"⇧^⌥⌘a") );
+    CHECK( ActionShortcut{u8"⇧^⌥⌘1"}.ToPersString() == reinterpret_cast<const char*>(u8"⇧^⌥⌘1") );
+    CHECK( ActionShortcut{u8"^⌥⌘1"}.ToPersString() == reinterpret_cast<const char*>(u8"^⌥⌘1") );
+    CHECK( ActionShortcut{u8"⌥⌘1"}.ToPersString() == reinterpret_cast<const char*>(u8"⌥⌘1") );
+    CHECK( ActionShortcut{u8"⌘1"}.ToPersString() == reinterpret_cast<const char*>(u8"⌘1") );
+    CHECK( ActionShortcut{u8"1"}.ToPersString() == reinterpret_cast<const char*>(u8"1") );    
 }
 
 TEST_CASE(PREFIX"Does proper comparison")

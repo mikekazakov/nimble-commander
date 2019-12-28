@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #include <regex>
 #include <string>
@@ -11,10 +11,12 @@ class FileMask
 {
 public:
     FileMask(const char* _mask);
+    FileMask(const char8_t *_mask);
     FileMask(const std::string &_mask);
 
     // will return false on empty names regardless of current file mask
     bool MatchName(const char *_name) const;
+    bool MatchName(const char8_t *_name) const;
     bool MatchName(const std::string &_name) const;
 
     /**

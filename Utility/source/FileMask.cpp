@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FileMask.h"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -135,6 +135,11 @@ FileMask::FileMask(const char* _mask):
 {
 }
 
+FileMask::FileMask(const char8_t *_mask):
+    FileMask( reinterpret_cast<const char*>(_mask) )    
+{
+}
+
 FileMask::FileMask(const std::string &_mask):
     m_Mask(_mask)
 {
@@ -177,6 +182,11 @@ static bool CompareAgainstSimpleMask(const std::string& _mask, std::string_view 
 bool FileMask::MatchName(const std::string &_name) const
 {
     return MatchName( _name.c_str() );
+}
+
+bool FileMask::MatchName(const char8_t *_name) const
+{
+    return MatchName(reinterpret_cast<const char*>(_name)); 
 }
 
 bool FileMask::MatchName(const char *_name) const

@@ -20,7 +20,8 @@ struct ActionShortcut
     ActionShortcut(const std::string& _from) noexcept; 
     
     // construct from persistency string
-    ActionShortcut(const char* _from) noexcept; 
+    ActionShortcut(const char* _from) noexcept;
+    ActionShortcut(const char8_t* _from) noexcept;
     
     // construct from straight data
     ActionShortcut(unsigned short  _unicode, unsigned long long _modif) noexcept; 

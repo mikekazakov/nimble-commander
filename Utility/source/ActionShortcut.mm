@@ -45,6 +45,11 @@ ActionShortcut::ActionShortcut(const char* _from) noexcept: // construct from pe
     modifiers = mod_flags;
 }
 
+ActionShortcut::ActionShortcut(const char8_t* _from) noexcept:
+    ActionShortcut(reinterpret_cast<const char*>(_from))    
+{
+}
+
 ActionShortcut::ActionShortcut(uint16_t _unicode, unsigned long long _modif) noexcept:
     unicode(_unicode),
     modifiers(0)

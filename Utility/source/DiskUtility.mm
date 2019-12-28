@@ -1,3 +1,4 @@
+// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DiskUtility.h"
 #include <boost/process.hpp>
 #include <iostream>
@@ -10,6 +11,7 @@ namespace nc::utility {
 
 static NSDictionary *DictionaryFromString(std::string_view _str);
 static std::string Execute(const std::string &_command); 
+static std::string_view RoleToDiskUtilRepr(APFSTree::Role _role) noexcept;
 
 NSDictionary *DiskUtility::ListAPFSObjects()
 {
@@ -124,6 +126,28 @@ bool APFSTree::DoesContainerContainVolume(NSDictionary *_container,
     return false;
 }
 
+std::optional<std::vector<std::string>> APFSTree::FindVolumesInContainerWithRole(
+    std::string_view _bsd_container_name, Role _role )
+{
+    if( _bsd_container_name.empty() )
+        return {};
+    
+    for( const id container in m_Containers ) {
+        const auto dict = objc_cast<NSDictionary>(container);
+        if( dict == nil )
+            continue;
+        
+        const auto reference = objc_cast<NSString>(dict[@"ContainerReference"]);
+        if( reference == nil )
+            continue;
+        
+        if( _bsd_container_name == reference.UTF8String )
+            return VolumesOfContainerWithRole(dict, _role);
+    }
+    
+    return {};        
+}
+
 std::vector<std::string> APFSTree::VolumesOfContainer(NSDictionary *_container)
 {
     if( objc_cast<NSDictionary>(_container) == nil )
@@ -164,6 +188,52 @@ std::vector<std::string> APFSTree::StoresOfContainer(NSDictionary *_container)
     return stores_bsd_names;    
 }
 
+std::vector<std::string> APFSTree::VolumesOfContainerWithRole(NSDictionary *_container,
+                                                              Role _role)
+{
+    if( objc_cast<NSDictionary>(_container) == nil )
+        return {};
+    
+    const auto volumes = objc_cast<NSArray>(_container[@"Volumes"]);
+    if( volumes == nil )
+        return {};
+    
+    std::vector<std::string> volumes_bsd_names;
+    for( const id volume in volumes ) {
+        if( const auto volume_dict = objc_cast<NSDictionary>(volume) ) {
+            const auto identifier = objc_cast<NSString>(volume_dict[@"DeviceIdentifier"]);
+            if( identifier == nil ) {
+                continue;
+            }
+            
+            const std::string bsd_id = identifier.UTF8String;
+            
+            if( const auto roles = objc_cast<NSArray>(volume_dict[@"Roles"]) ) {
+                if( _role == Role::None ) {
+                    if( roles.count == 0 ) {
+                        volumes_bsd_names.emplace_back(bsd_id);
+                    }
+                }
+                else {                    
+                    for( const id role in roles ) {
+                        if( const auto role_str = objc_cast<NSString>(role) ) {
+                            const auto utf8 = role_str.UTF8String;
+                            if( RoleToDiskUtilRepr(_role) == utf8 ) {
+                                volumes_bsd_names.emplace_back(bsd_id);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    std::sort( volumes_bsd_names.begin(), volumes_bsd_names.end() );
+    volumes_bsd_names.erase(std::unique(volumes_bsd_names.begin(), volumes_bsd_names.end()),
+                            volumes_bsd_names.end() );
+    return volumes_bsd_names;
+}
+
 static NSDictionary *DictionaryFromString(std::string_view _str)
 {
     const auto data = [[NSData alloc] initWithBytesNoCopy:(void*)_str.data()
@@ -194,6 +264,31 @@ static std::string Execute(const std::string &_command)
         
     c.wait(); 
     return buffer;
+}
+
+static std::string_view RoleToDiskUtilRepr(APFSTree::Role _role) noexcept
+{
+    static const std::string_view none = "";
+    static const std::string_view system = "System";
+    static const std::string_view user = "User";
+    static const std::string_view recovery = "Recovery";
+    static const std::string_view vm = "VM";
+    static const std::string_view preboot = "Preboot";
+    static const std::string_view installer = "Installer";
+    static const std::string_view data = "Data";
+    static const std::string_view baseband = "Baseband";
+    using _ = APFSTree::Role;
+    switch(_role) {
+        case _::System: return system;
+        case _::User: return user;
+        case _::Recovery: return recovery;
+        case _::VM: return vm;
+        case _::Preboot: return preboot;
+        case _::Installer: return installer;
+        case _::Data: return data;
+        case _::Baseband: return baseband;
+        default: return none;
+    }
 }
     
 }

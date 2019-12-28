@@ -36,6 +36,9 @@
 		CF3B7F6D201F167200BF2090 /* MIMResponder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6C201F167200BF2090 /* MIMResponder.mm */; };
 		CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C39922B974210043E825 /* UTIImpl_UT.cpp */; };
 		CF6BF87721993B580017CECB /* FontGeometryInfo_PT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */; };
+		CF6E493623B79BB60081DCF8 /* FirmlinksMappingParser.h in Headers */ = {isa = PBXBuildFile; fileRef = CF6E493523B79BB50081DCF8 /* FirmlinksMappingParser.h */; };
+		CF6E493823B79BC90081DCF8 /* FirmlinksMappingParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6E493723B79BC90081DCF8 /* FirmlinksMappingParser.cpp */; };
+		CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */; };
 		CF6E64E31F6271BF00BF986E /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E21F6271BF00BF986E /* CoreText.framework */; };
 		CF6E64E51F6271CF00BF986E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E41F6271CF00BF986E /* Foundation.framework */; };
 		CF6E64E71F6271DA00BF986E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF6E64E61F6271DA00BF986E /* CoreGraphics.framework */; };
@@ -164,6 +167,9 @@
 		CF614AA91F9D871D0005F2DB /* Encodings_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = Encodings_UT.mm; path = tests/Encodings_UT.mm; sourceTree = SOURCE_ROOT; };
 		CF614AAA1F9D871D0005F2DB /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = tests/Info.plist; sourceTree = SOURCE_ROOT; };
 		CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FontGeometryInfo_PT.mm; path = tests/FontGeometryInfo_PT.mm; sourceTree = "<group>"; };
+		CF6E493523B79BB50081DCF8 /* FirmlinksMappingParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FirmlinksMappingParser.h; path = include/Utility/FirmlinksMappingParser.h; sourceTree = "<group>"; };
+		CF6E493723B79BC90081DCF8 /* FirmlinksMappingParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FirmlinksMappingParser.cpp; path = source/FirmlinksMappingParser.cpp; sourceTree = "<group>"; };
+		CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FirmlinksMappingParser_UT.cpp; path = tests/FirmlinksMappingParser_UT.cpp; sourceTree = "<group>"; };
 		CF6E64E21F6271BF00BF986E /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
 		CF6E64E41F6271CF00BF986E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CF6E64E61F6271DA00BF986E /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -286,6 +292,7 @@
 				CF614AA91F9D871D0005F2DB /* Encodings_UT.mm */,
 				CFB0F239215A07830088C18E /* FileMask_UT.cpp */,
 				CF38472B2010780B00BAB3BE /* FilenameTextNavigation_UT.mm */,
+				CF6E493923B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp */,
 				CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */,
 				CF2C102822A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp */,
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
@@ -321,6 +328,7 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
+				CF6E493523B79BB50081DCF8 /* FirmlinksMappingParser.h */,
 				CF24E1F32288A9FB00C166FA /* ActionShortcut.h */,
 				CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
@@ -373,6 +381,7 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				CF6E493723B79BC90081DCF8 /* FirmlinksMappingParser.cpp */,
 				CF24E1F52288AA0500C166FA /* ActionShortcut.mm */,
 				CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
@@ -451,6 +460,7 @@
 				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
 				CF24E1F42288A9FB00C166FA /* ActionShortcut.h in Headers */,
 				CF26DE2B21D3EFEE003F0E93 /* TemporaryFileStorage.h in Headers */,
+				CF6E493623B79BB60081DCF8 /* FirmlinksMappingParser.h in Headers */,
 				CFB0F236215A076F0088C18E /* FileMask.h in Headers */,
 				CF29FC602155D9A20040FF19 /* AdaptiveDateFormatting.h in Headers */,
 				CF2B751A22B82FE8009D4160 /* UTIImpl.h in Headers */,
@@ -556,6 +566,7 @@
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
 				CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */,
 				CFE3F1C522932EAA009D6AB4 /* FileMask_UT.cpp in Sources */,
+				CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,6 +617,7 @@
 				CFFA946C1F453CC00035E606 /* DataBlockAnalysis.mm in Sources */,
 				CFFA94721F453CC00035E606 /* FontExtras.mm in Sources */,
 				CF26DE2F21D3F033003F0E93 /* TemporaryFileStorageImpl.cpp in Sources */,
+				CF6E493823B79BC90081DCF8 /* FirmlinksMappingParser.cpp in Sources */,
 				CFFA947E1F453CC00035E606 /* PathManip.cpp in Sources */,
 				CFFA94761F453CC00035E606 /* HexadecimalColor.mm in Sources */,
 			);

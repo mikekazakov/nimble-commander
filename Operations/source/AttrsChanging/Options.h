@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -43,6 +43,8 @@ struct AttrsChangingCommand
         std::optional<bool> s_append;
         std::optional<bool> s_restricted;
         std::optional<bool> s_nounlink;
+        std::optional<bool> s_firmlink;
+        std::optional<bool> s_dataless;
     };
     std::optional<Flags> flags;
 

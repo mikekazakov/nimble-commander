@@ -341,6 +341,8 @@ static std::pair<uint32_t,uint32_t> FlagsValueAndMask(const AttrsChangingCommand
     m( _f.s_append,  SF_APPEND );
     m( _f.s_restricted,  SF_RESTRICTED );
     m( _f.s_nounlink, SF_NOUNLINK );
+    m( _f.s_firmlink, SF_FIRMLINK );
+    m( _f.s_dataless, SF_DATALESS );
     
     return {value, mask};
 }

@@ -49,6 +49,8 @@ using namespace nc::ops;
 @property (strong) IBOutlet NSButton *flagSArchived;
 @property (strong) IBOutlet NSButton *flagSNounlink;
 @property (strong) IBOutlet NSButton *flagSRestricted;
+@property (strong) IBOutlet NSButton *flagSFirmlink;
+@property (strong) IBOutlet NSButton *flagSDataless;
 
 @property (strong) IBOutlet NSDatePicker *timesATime;
 @property (strong) IBOutlet NSButton *timesATimeCheckbox;
@@ -221,6 +223,8 @@ static NSString *Title( const std::vector<VFSListingItem> &_items );
     m( self.flagSArchived,  f.s_archived );
     m( self.flagSNounlink,  f.s_nounlink );
     m( self.flagSRestricted,f.s_restricted );
+    m( self.flagSFirmlink,  f.s_firmlink );
+    m( self.flagSDataless,  f.s_dataless );
     
     [self.window makeFirstResponder:fr];
 }
@@ -549,10 +553,12 @@ static const auto g_MixedOwnageTitle = @"[???]";
     m( self.flagSArchived,  f.s_archived );
     m( self.flagSNounlink,  f.s_nounlink );
     m( self.flagSRestricted,f.s_restricted );
+    m( self.flagSFirmlink,  f.s_firmlink );
+    m( self.flagSDataless,  f.s_dataless );
     
     if( !f.u_append && !f.u_immutable && !f.u_hidden && !f.u_nodump && !f.u_opaque &&
         !f.u_tracked && !f.u_compressed && !f.s_append && !f.s_immutable && !f.s_archived &&
-        !f.s_nounlink && !f.s_restricted && !f.u_datavault )
+        !f.s_nounlink && !f.s_restricted && !f.u_datavault && !f.s_firmlink && !f.s_dataless )
         return std::nullopt;
 
     const auto &common = m_CommonItemsFlags;
@@ -569,7 +575,9 @@ static const auto g_MixedOwnageTitle = @"[???]";
         f.s_immutable   == common.s_immutable &&
         f.s_archived    == common.s_archived &&
         f.s_nounlink    == common.s_nounlink &&
-        f.s_restricted  == common.s_restricted )
+        f.s_restricted  == common.s_restricted &&
+        f.s_firmlink    == common.s_firmlink &&
+        f.s_dataless    == common.s_dataless )
        return std::nullopt;
 
     return f;
@@ -743,6 +751,8 @@ static AttrsChangingCommand::Flags ExtractCommonFlags( const std::vector<VFSList
     f.s_append     = optional_common_value( b, e, [](auto m)->bool{ return m & SF_APPEND; });
     f.s_restricted = optional_common_value( b, e, [](auto m)->bool{ return m & SF_RESTRICTED; });
     f.s_nounlink   = optional_common_value( b, e, [](auto m)->bool{ return m & SF_NOUNLINK; });
+    f.s_firmlink   = optional_common_value( b, e, [](auto m)->bool{ return m & SF_FIRMLINK; });
+    f.s_dataless   = optional_common_value( b, e, [](auto m)->bool{ return m & SF_DATALESS; });
 
     return f;
 }

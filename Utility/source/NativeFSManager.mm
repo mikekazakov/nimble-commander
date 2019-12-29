@@ -101,7 +101,8 @@ struct NativeFSManager::Impl
     std::optional<APFSTree> m_StartupAPFSTree;
     std::vector<FirmlinksMappingParser::Firmlink> m_RootFirmlinks;
     
-    Info VolumeFromMountPoint_Unlocked(const std::string_view _mount_point) const noexcept;    
+    Info VolumeFromMountPoint_Unlocked(const std::string_view _mount_point) const noexcept;
+    Info VolumeFromBSDName_Unlocked(const std::string_view _bsd_name) const noexcept;    
     void InjectRootFirmlinks(const APFSTree& _tree);
 }; 
 
@@ -472,19 +473,7 @@ NativeFSManager::Info NativeFSManager::VolumeFromPathFast(const std::string &_pa
 
 NativeFSManager::Info NativeFSManager::VolumeFromPathFast_Unlocked(const std::string &_path) const
 {
-    if( _path.empty() )
-        return {};
-
-    std::shared_ptr<NativeFileSystemInfo> result;
-    size_t best_fit_sz = 0;
-    for(auto &vol: I->m_Volumes)
-        if( _path.compare(0, vol->mounted_at_path.size(), vol->mounted_at_path) == 0 &&
-            vol->mounted_at_path.size() > best_fit_sz ) {
-            best_fit_sz = vol->mounted_at_path.size();
-            result = vol;
-        }
-    
-    return result;
+    return I->m_VolumeLookup.FindVolumeForLocation(_path);
 }
 
 NativeFSManager::Info NativeFSManager::VolumeFromMountPoint(const std::string &_mount_point) const
@@ -509,6 +498,19 @@ VolumeFromMountPoint_Unlocked(const std::string_view _mount_point) const noexcep
     const auto it = std::find_if(std::begin(m_Volumes),
                             std::end(m_Volumes),
                             [=](auto&_){ return _->mounted_at_path == _mount_point; } );
+    if( it != std::end(m_Volumes) )
+        return *it;
+    return nullptr;
+}
+
+NativeFSManager::Info NativeFSManager::Impl::
+VolumeFromBSDName_Unlocked(const std::string_view _bsd_name) const noexcept
+{
+    // not sure how legit this is...
+    const auto device = "/dev/" + std::string(_bsd_name);        
+    const auto it = std::find_if(std::begin(m_Volumes),
+                                 std::end(m_Volumes),
+                                 [&](auto&_){ return _->mounted_from_name == device; } );
     if( it != std::end(m_Volumes) )
         return *it;
     return nullptr;
@@ -592,8 +594,12 @@ void NativeFSManager::Impl::InjectRootFirmlinks(const APFSTree& _tree)
     if( root == nullptr )
         return;
     
+    const auto root_bsd_name = GetBSDName(*root);
+    if( root_bsd_name == std::nullopt )
+        return;
+    
     // pick the APFS container of the root volume
-    auto container = _tree.FindContainerOfVolume(root->mounted_from_name);
+    auto container = _tree.FindContainerOfVolume( *root_bsd_name );
     if( container == std::nullopt )
         return;
     
@@ -601,7 +607,7 @@ void NativeFSManager::Impl::InjectRootFirmlinks(const APFSTree& _tree)
     const auto system_volumes = _tree.
         FindVolumesInContainerWithRole(*container, APFSTree::Role::System);
     if( system_volumes == std::nullopt ||
-        std::find( system_volumes->begin(), system_volumes->end(), root->mounted_from_name ) == system_volumes->end() )
+        std::find( system_volumes->begin(), system_volumes->end(), *root_bsd_name ) == system_volumes->end() )
         return;
         
     // being extra-cautios here and proceed only if there's exactly one Data volume in the container.
@@ -612,10 +618,10 @@ void NativeFSManager::Impl::InjectRootFirmlinks(const APFSTree& _tree)
     
     // find the volume with the Data role
     const std::string& data_volume_bsd_id = data_volumes->front(); 
-    const auto data_volume_ptr = VolumeFromMountPoint_Unlocked(data_volume_bsd_id);
+    const auto data_volume_ptr = VolumeFromBSDName_Unlocked(data_volume_bsd_id);
     if( data_volume_ptr == nullptr )
         return;
-    
+
     // ... and finaly inject the firmlinks into the lookup table
     for( const auto &firmlink: m_RootFirmlinks )
         m_VolumeLookup.Insert(data_volume_ptr, EnsureTrailingSlash(firmlink.target) );

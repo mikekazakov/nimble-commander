@@ -578,7 +578,7 @@ public:
     /**
      * VolumeFromPathFast() chooses the closest volume to _path, using plain strings comparison.
      * It don't take into consideration invalid paths or symlinks following somewhere in _path,
-     * so should be used very carefully only time-critical paths (this method dont make any syscalls).
+     * so should be used very carefully only time-critical paths (this method doesn't make any syscalls).
      */
     Info VolumeFromPathFast(const std::string &_path) const;
     

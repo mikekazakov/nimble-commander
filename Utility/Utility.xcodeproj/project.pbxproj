@@ -36,6 +36,7 @@
 		CF3ABD7823B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD7723B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp */; };
 		CF3ABD7A23B8A97900D1878B /* NSCppDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ABD7923B8A97900D1878B /* NSCppDeclarations.h */; };
 		CF3ABD7D23B8AC0A00D1878B /* NativeFSManagerVolumeLookup_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */; };
+		CF3ABD7F23B8DBFF00D1878B /* NativeFSManager_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD7E23B8DBFF00D1878B /* NativeFSManager_UT.cpp */; };
 		CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3B7F6A201F141C00BF2090 /* MIMResponder.h */; };
 		CF3B7F6D201F167200BF2090 /* MIMResponder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6C201F167200BF2090 /* MIMResponder.mm */; };
 		CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C39922B974210043E825 /* UTIImpl_UT.cpp */; };
@@ -165,6 +166,7 @@
 		CF3ABD7723B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NativeFSManagerVolumeLookup.cpp; path = source/NativeFSManagerVolumeLookup.cpp; sourceTree = "<group>"; };
 		CF3ABD7923B8A97900D1878B /* NSCppDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSCppDeclarations.h; path = include/Utility/NSCppDeclarations.h; sourceTree = "<group>"; };
 		CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NativeFSManagerVolumeLookup_UT.cpp; path = tests/NativeFSManagerVolumeLookup_UT.cpp; sourceTree = "<group>"; };
+		CF3ABD7E23B8DBFF00D1878B /* NativeFSManager_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NativeFSManager_UT.cpp; path = tests/NativeFSManager_UT.cpp; sourceTree = "<group>"; };
 		CF3B7F6A201F141C00BF2090 /* MIMResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MIMResponder.h; path = include/Utility/MIMResponder.h; sourceTree = "<group>"; };
 		CF3B7F6C201F167200BF2090 /* MIMResponder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MIMResponder.mm; path = source/MIMResponder.mm; sourceTree = "<group>"; };
 		CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSEventModifierFlagsHolder.h; path = include/Utility/NSEventModifierFlagsHolder.h; sourceTree = "<group>"; };
@@ -304,6 +306,7 @@
 				CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */,
 				CF2C102822A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp */,
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
+				CF3ABD7E23B8DBFF00D1878B /* NativeFSManager_UT.cpp */,
 				CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */,
 				CF26DE3021D5685A003F0E93 /* TemporaryFileStorageImpl_UT.mm */,
 				CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */,
@@ -570,6 +573,7 @@
 			files = (
 				CF24E1F8228B525000C166FA /* ActionShortcut_UT.mm in Sources */,
 				CFE3F1C422932CCF009D6AB4 /* ByteCountFormatter_UT.mm in Sources */,
+				CF3ABD7F23B8DBFF00D1878B /* NativeFSManager_UT.cpp in Sources */,
 				CFE3F1C7229332FB009D6AB4 /* Encodings_UT.mm in Sources */,
 				CFE3F1C622933058009D6AB4 /* FilenameTextNavigation_UT.mm in Sources */,
 				CF6BF87721993B580017CECB /* FontGeometryInfo_PT.mm in Sources */,

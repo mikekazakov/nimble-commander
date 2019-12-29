@@ -145,6 +145,20 @@ TEST_CASE("APFSTree can find volumes by role from a container name (10_15)" )
     CHECK( (*disk1_system)[0] == "disk1s5" );
 }
 
+TEST_CASE("The system has volumes for both Data and System roles" )
+{
+    DiskUtility du;
+    APFSTree tree{du.ListAPFSObjects()};
+
+    const auto disk1_data = tree.FindVolumesInContainerWithRole("disk1", APFSTree::Role::Data);
+    REQUIRE( disk1_data );
+    CHECK( disk1_data->size() != 0 );
+    
+    const auto disk1_system = tree.FindVolumesInContainerWithRole("disk1", APFSTree::Role::System);
+    REQUIRE( disk1_system );
+    CHECK( disk1_system->size() != 0 );
+}
+
 static NSDictionary *DictionaryFromPListString(std::string_view _str)
 {
     const auto data = [[NSData alloc] initWithBytesNoCopy:(void*)_str.data()

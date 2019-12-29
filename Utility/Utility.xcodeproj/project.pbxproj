@@ -32,6 +32,10 @@
 		CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F50213B7CC400915730 /* BriefOnDiskStorageImpl_UnitTests.cpp */; };
 		CF3847282010756800BAB3BE /* FilenameTextNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3847272010756800BAB3BE /* FilenameTextNavigation.h */; };
 		CF38472A2010757300BAB3BE /* FilenameTextNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */; };
+		CF3ABD7623B7F66100D1878B /* NativeFSManagerVolumeLookup.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ABD7523B7F66000D1878B /* NativeFSManagerVolumeLookup.h */; };
+		CF3ABD7823B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD7723B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp */; };
+		CF3ABD7A23B8A97900D1878B /* NSCppDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ABD7923B8A97900D1878B /* NSCppDeclarations.h */; };
+		CF3ABD7D23B8AC0A00D1878B /* NativeFSManagerVolumeLookup_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */; };
 		CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3B7F6A201F141C00BF2090 /* MIMResponder.h */; };
 		CF3B7F6D201F167200BF2090 /* MIMResponder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3B7F6C201F167200BF2090 /* MIMResponder.mm */; };
 		CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF52C39922B974210043E825 /* UTIImpl_UT.cpp */; };
@@ -157,6 +161,10 @@
 		CF3847272010756800BAB3BE /* FilenameTextNavigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FilenameTextNavigation.h; path = include/Utility/FilenameTextNavigation.h; sourceTree = "<group>"; };
 		CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextNavigation.mm; path = source/FilenameTextNavigation.mm; sourceTree = "<group>"; };
 		CF38472B2010780B00BAB3BE /* FilenameTextNavigation_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = FilenameTextNavigation_UT.mm; path = tests/FilenameTextNavigation_UT.mm; sourceTree = SOURCE_ROOT; };
+		CF3ABD7523B7F66000D1878B /* NativeFSManagerVolumeLookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeFSManagerVolumeLookup.h; path = include/Utility/NativeFSManagerVolumeLookup.h; sourceTree = "<group>"; };
+		CF3ABD7723B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NativeFSManagerVolumeLookup.cpp; path = source/NativeFSManagerVolumeLookup.cpp; sourceTree = "<group>"; };
+		CF3ABD7923B8A97900D1878B /* NSCppDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSCppDeclarations.h; path = include/Utility/NSCppDeclarations.h; sourceTree = "<group>"; };
+		CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NativeFSManagerVolumeLookup_UT.cpp; path = tests/NativeFSManagerVolumeLookup_UT.cpp; sourceTree = "<group>"; };
 		CF3B7F6A201F141C00BF2090 /* MIMResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MIMResponder.h; path = include/Utility/MIMResponder.h; sourceTree = "<group>"; };
 		CF3B7F6C201F167200BF2090 /* MIMResponder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MIMResponder.mm; path = source/MIMResponder.mm; sourceTree = "<group>"; };
 		CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NSEventModifierFlagsHolder.h; path = include/Utility/NSEventModifierFlagsHolder.h; sourceTree = "<group>"; };
@@ -296,6 +304,7 @@
 				CF6BF87621993B580017CECB /* FontGeometryInfo_PT.mm */,
 				CF2C102822A84DFB00A5359D /* FSEventsDirUpdate_UT.cpp */,
 				CF614AAA1F9D871D0005F2DB /* Info.plist */,
+				CF3ABD7B23B8AB5200D1878B /* NativeFSManagerVolumeLookup_UT.cpp */,
 				CF26DE3021D5685A003F0E93 /* TemporaryFileStorageImpl_UT.mm */,
 				CFC5462E2136DB4100D288A4 /* UnitTests_main.cpp */,
 				CF308F10213781ED00915730 /* UnitTests_main.h */,
@@ -328,7 +337,6 @@
 		CF960E151C992EDC001D8B02 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				CF6E493523B79BB50081DCF8 /* FirmlinksMappingParser.h */,
 				CF24E1F32288A9FB00C166FA /* ActionShortcut.h */,
 				CF29FC5F2155D9A20040FF19 /* AdaptiveDateFormatting.h */,
 				CFDAC2281DFBD8690039A104 /* BlinkingCaret.h */,
@@ -344,6 +352,7 @@
 				CFDAC2BB1DFD0C980039A104 /* ExtensionLowercaseComparison.h */,
 				CFB0F235215A076F0088C18E /* FileMask.h */,
 				CF3847272010756800BAB3BE /* FilenameTextNavigation.h */,
+				CF6E493523B79BB50081DCF8 /* FirmlinksMappingParser.h */,
 				CFD62BD51C9A6B4B0021EE7F /* FontCache.h */,
 				CFD62BD91C9A6BE30021EE7F /* FontExtras.h */,
 				CFD62BE71C9A709C0021EE7F /* FPSLimitedDrawer.h */,
@@ -354,6 +363,8 @@
 				CF84C8E61DB867F200B4E888 /* Layout.h */,
 				CF3B7F6A201F141C00BF2090 /* MIMResponder.h */,
 				CFD62C151C9AEC9D0021EE7F /* NativeFSManager.h */,
+				CF3ABD7523B7F66000D1878B /* NativeFSManagerVolumeLookup.h */,
+				CF3ABD7923B8A97900D1878B /* NSCppDeclarations.h */,
 				CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */,
 				CFD62C021C9A89B50021EE7F /* NSMenu+Hierarchical.h */,
 				CFD62BD11C9A679F0021EE7F /* NSObject+MassObserving.h */,
@@ -381,7 +392,6 @@
 		CF960E161C992EE7001D8B02 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CF6E493723B79BC90081DCF8 /* FirmlinksMappingParser.cpp */,
 				CF24E1F52288AA0500C166FA /* ActionShortcut.mm */,
 				CF29FC612155D9AB0040FF19 /* AdaptiveDateFormatting.mm */,
 				CFDAC22A1DFBD8740039A104 /* BlinkingCaret.mm */,
@@ -398,6 +408,7 @@
 				CFDAC2BD1DFD0CA10039A104 /* ExtensionLowercaseComparison.cpp */,
 				CFB0F237215A07770088C18E /* FileMask.cpp */,
 				CF3847292010757300BAB3BE /* FilenameTextNavigation.mm */,
+				CF6E493723B79BC90081DCF8 /* FirmlinksMappingParser.cpp */,
 				CFD62BD71C9A6B630021EE7F /* FontCache.cpp */,
 				CFD62BDB1C9A6BEB0021EE7F /* FontExtras.cpp */,
 				CFD62C001C9A87170021EE7F /* FontExtras.mm */,
@@ -409,6 +420,7 @@
 				CF84C8E81DB867FC00B4E888 /* Layout.mm */,
 				CF3B7F6C201F167200BF2090 /* MIMResponder.mm */,
 				CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */,
+				CF3ABD7723B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp */,
 				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
 				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.mm */,
 				CFD62BFA1C9A7A8D0021EE7F /* NSTimer+Tolerance.mm */,
@@ -460,10 +472,12 @@
 				CF3B7F6B201F141C00BF2090 /* MIMResponder.h in Headers */,
 				CF24E1F42288A9FB00C166FA /* ActionShortcut.h in Headers */,
 				CF26DE2B21D3EFEE003F0E93 /* TemporaryFileStorage.h in Headers */,
+				CF3ABD7A23B8A97900D1878B /* NSCppDeclarations.h in Headers */,
 				CF6E493623B79BB60081DCF8 /* FirmlinksMappingParser.h in Headers */,
 				CFB0F236215A076F0088C18E /* FileMask.h in Headers */,
 				CF29FC602155D9A20040FF19 /* AdaptiveDateFormatting.h in Headers */,
 				CF2B751A22B82FE8009D4160 /* UTIImpl.h in Headers */,
+				CF3ABD7623B7F66100D1878B /* NativeFSManagerVolumeLookup.h in Headers */,
 				CF26DE2A21D3EFEE003F0E93 /* TemporaryFileStorageImpl.h in Headers */,
 				CFD79ABA21FE1F3B0043A26D /* CocoaAppearanceManager.h in Headers */,
 				CF308F11213781EE00915730 /* UnitTests_main.h in Headers */,
@@ -564,6 +578,7 @@
 				CF52C39B22B974280043E825 /* UTIImpl_UT.cpp in Sources */,
 				CF308F52213B7CC700915730 /* BriefOnDiskStorageImpl_UnitTests.cpp in Sources */,
 				CFC546302136DB4500D288A4 /* UnitTests_main.cpp in Sources */,
+				CF3ABD7D23B8AC0A00D1878B /* NativeFSManagerVolumeLookup_UT.cpp in Sources */,
 				CF26DE3121D5685B003F0E93 /* TemporaryFileStorageImpl_UT.mm in Sources */,
 				CFE3F1C522932EAA009D6AB4 /* FileMask_UT.cpp in Sources */,
 				CF6E493A23B79F690081DCF8 /* FirmlinksMappingParser_UT.cpp in Sources */,
@@ -613,6 +628,7 @@
 				CFFA946E1F453CC00035E606 /* EncodingsAdditions.mm in Sources */,
 				CF308F2F213ABFB300915730 /* BriefOnDiskStorage.cpp in Sources */,
 				CFFA94731F453CC00035E606 /* FPSLimitedDrawer.mm in Sources */,
+				CF3ABD7823B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp in Sources */,
 				CFFA947F1F453CC00035E606 /* SheetController.mm in Sources */,
 				CFFA946C1F453CC00035E606 /* DataBlockAnalysis.mm in Sources */,
 				CFFA94721F453CC00035E606 /* FontExtras.mm in Sources */,

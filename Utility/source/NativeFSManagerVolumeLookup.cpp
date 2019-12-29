@@ -7,14 +7,14 @@ namespace nc::utility {
 std::atomic_int64_t NativeFSManager::VolumeLookup::LookupCount{0};
 
 void NativeFSManager::VolumeLookup::
-Insert( const std::shared_ptr<NativeFileSystemInfo> &_volume, std::string_view _at )
+Insert( const std::shared_ptr<const NativeFileSystemInfo> &_volume, std::string_view _at )
 {	
     if( _volume == nullptr )
         throw std::invalid_argument("VolumeLookup::Insert(): _volume can't be nullptr");
     if( _at.empty() || _at.front() != '/' )
         throw std::invalid_argument("VolumeLookup::Insert(): _at must be an absolute path");
     if( _at.back() != '/' )
-        throw std::invalid_argument("VolumeLookup::Insert(): _at must ends with /");
+        throw std::invalid_argument("VolumeLookup::Insert(): _at must end with /");
     
     const auto it = std::find(m_Targets.begin(), m_Targets.end(), _at);
     if( it == m_Targets.end() ) {
@@ -30,6 +30,11 @@ Insert( const std::shared_ptr<NativeFileSystemInfo> &_volume, std::string_view _
 
 void NativeFSManager::VolumeLookup::Remove( std::string_view _from )
 {
+    if( _from.empty() || _from.front() != '/' )
+        throw std::invalid_argument("VolumeLookup::Remove(): _from must be an absolute path");
+    if( _from.back() != '/' )
+        throw std::invalid_argument("VolumeLookup::Remove(): _from must end with /");
+
     const auto it = std::find(m_Targets.begin(), m_Targets.end(), _from);
     if( it != m_Targets.end() ) {
         const auto dist = std::distance(m_Targets.begin(), it);        
@@ -38,7 +43,7 @@ void NativeFSManager::VolumeLookup::Remove( std::string_view _from )
     }
 }
 
-std::shared_ptr<NativeFileSystemInfo> NativeFSManager::VolumeLookup::
+std::shared_ptr<const NativeFileSystemInfo> NativeFSManager::VolumeLookup::
 FindVolumeForLocation( std::string_view _location ) const noexcept
 {
     ++LookupCount;

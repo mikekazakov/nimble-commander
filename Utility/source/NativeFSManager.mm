@@ -9,16 +9,22 @@
 #include <Utility/SystemInformation.h>
 #include <Utility/FSEventsDirUpdate.h>
 #include <Utility/StringExtras.h>
+#include <Utility/DiskUtility.h>
+#include <Utility/NativeFSManagerVolumeLookup.h>
+#include <Utility/PathManip.h>
+#include <Utility/FirmlinksMappingParser.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/algo.h>
 #include <iostream>
-#include "DiskUtility.h"
+#include <string_view>
+#include <future>
+#include <fstream>
 
-using namespace std;
 
 namespace nc::utility {
 
 static NativeFSManager *g_SharedFSManager;
+static const auto g_FirmlinksMappingPath = "/usr/share/firmlinks";
 
 static void GetAllInfos(NativeFileSystemInfo &_volume);
 static bool GetBasicInfo(NativeFileSystemInfo &_volume);
@@ -28,21 +34,27 @@ static bool GetVerboseInfo(NativeFileSystemInfo &_volume);
 static bool UpdateSpaceInfo(const NativeFileSystemInfo &_volume);
 static bool VolumeHasTrash(const std::string &_volume_path);
 static std::optional<std::string> GetBSDName(const NativeFileSystemInfo &_volume);
-static vector<string> GetFullFSList();
+static std::vector<std::string> GetFullFSList();
 static DASessionRef DASessionForMainThread();
+static std::optional<APFSTree> FetchAPFSTree() noexcept;
+static std::vector<FirmlinksMappingParser::Firmlink> FetchFirmlinks() noexcept;
+
+/* this is here to ensure a proper interaction with ObjC members when called from a pure C++ code */
+NativeFileSystemInfo::NativeFileSystemInfo() = default;
+NativeFileSystemInfo::~NativeFileSystemInfo() = default;
 
 struct NativeFSManagerProxy2 // this proxy is needed only for private methods access
 {
-    static void OnDidMount(const string &_on_path) {
+    static void OnDidMount(const std::string &_on_path) {
         g_SharedFSManager->OnDidMount(_on_path);
     }
-    static void OnWillUnmount(const string &_on_path) {
+    static void OnWillUnmount(const std::string &_on_path) {
         g_SharedFSManager->OnWillUnmount(_on_path);
     }
-    static void OnDidUnmount(const string &_on_path) {
+    static void OnDidUnmount(const std::string &_on_path) {
         g_SharedFSManager->OnDidUnmount(_on_path);
     }
-    static void OnDidRename(const string &_old_path, const string &_new_path) {
+    static void OnDidRename(const std::string &_old_path, const std::string &_new_path) {
         g_SharedFSManager->OnDidRename(_old_path, _new_path);
     }
 };
@@ -81,16 +93,36 @@ struct NativeFSManagerProxy2 // this proxy is needed only for private methods ac
 
 namespace nc::utility {
 
-NativeFSManager::NativeFSManager()
+struct NativeFSManager::Impl
 {
+    mutable std::mutex m_Lock;
+    std::vector<std::shared_ptr<NativeFileSystemInfo>> m_Volumes;
+    VolumeLookup m_VolumeLookup;
+    std::optional<APFSTree> m_StartupAPFSTree;
+    std::vector<FirmlinksMappingParser::Firmlink> m_RootFirmlinks;
+    
+    Info VolumeFromMountPoint_Unlocked(const std::string_view _mount_point) const noexcept;    
+    void InjectRootFirmlinks(const APFSTree& _tree);
+}; 
+
+NativeFSManager::NativeFSManager():
+    I{std::make_unique<Impl>()}
+{
+    // it takes ~150ms, so this delay can be shaved off by running it async
+    auto apfstree_promise = std::async(std::launch::async, []{ return FetchAPFSTree(); });
+
     for( const auto &mount_path: GetFullFSList() ) {
-        m_Volumes.emplace_back(make_shared<NativeFileSystemInfo>());
-        
-        auto volume = m_Volumes.back();
+        const auto volume = std::make_shared<NativeFileSystemInfo>();
         volume->mounted_at_path = mount_path;
-        
+        I->m_Volumes.emplace_back(volume);        
         GetAllInfos(*volume.get());
+        
+        I->m_VolumeLookup.Insert(volume, EnsureTrailingSlash(mount_path) );
     }
+    I->m_StartupAPFSTree = apfstree_promise.get();
+    I->m_RootFirmlinks = FetchFirmlinks();
+    if( I->m_StartupAPFSTree )
+        I->InjectRootFirmlinks( *(I->m_StartupAPFSTree) );
     
 	const auto center = NSWorkspace.sharedWorkspace.notificationCenter;
     const auto observer = NativeFSManagerProxy.class;
@@ -106,7 +138,7 @@ NativeFSManager::NativeFSManager()
 
 NativeFSManager &NativeFSManager::Instance()
 {
-    static once_flag once;
+    static std::once_flag once;
     call_once(once, []{
         g_SharedFSManager = new NativeFSManager();
     });
@@ -116,15 +148,15 @@ NativeFSManager &NativeFSManager::Instance()
 static void GetAllInfos(NativeFileSystemInfo &_volume)
 {
     if( !GetBasicInfo(_volume) )
-        cerr << "failed to GetBasicInfo() on the volume: " << _volume.mounted_at_path << endl;
+        std::cerr << "failed to GetBasicInfo() on the volume: " << _volume.mounted_at_path << std::endl;
     if( !GetFormatInfo(_volume) )
-        cerr << "failed to GetFormatInfo() on the volume: " << _volume.mounted_at_path << endl;
+        std::cerr << "failed to GetFormatInfo() on the volume: " << _volume.mounted_at_path << std::endl;
     if( !GetInterfacesInfo(_volume) )
-        cerr << "failed to GetInterfacesInfo() on the volume: " << _volume.mounted_at_path << endl;
+        std::cerr << "failed to GetInterfacesInfo() on the volume: " << _volume.mounted_at_path << std::endl;
     if( !GetVerboseInfo(_volume) )
-        cerr << "failed to GetVerboseInfo() on the volume: " << _volume.mounted_at_path << endl;
+        std::cerr << "failed to GetVerboseInfo() on the volume: " << _volume.mounted_at_path << std::endl;
     if( !UpdateSpaceInfo(_volume) )
-        cerr << "failed to UpdateSpaceInfo() on the volume: " << _volume.mounted_at_path << endl;
+        std::cerr << "failed to UpdateSpaceInfo() on the volume: " << _volume.mounted_at_path << std::endl;
 }
 
 static bool GetBasicInfo(NativeFileSystemInfo &_volume)
@@ -170,7 +202,7 @@ static bool GetBasicInfo(NativeFileSystemInfo &_volume)
     
     struct stat entry_stat;
     if( ::stat(_volume.mounted_at_path.c_str(), &entry_stat) != 0 ) {
-        cerr << "failed to stat() a volume: " << _volume.mounted_at_path << endl;
+        std::cerr << "failed to stat() a volume: " << _volume.mounted_at_path << std::endl;
         return false;
     }
 
@@ -313,84 +345,88 @@ static bool GetVerboseInfo(NativeFileSystemInfo &_volume)
     return true;
 }
 
-void NativeFSManager::OnDidMount(const string &_on_path)
+void NativeFSManager::OnDidMount(const std::string &_on_path)
 {
     // presumably called from main thread, so go async to keep UI smooth
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), [=]{
-        auto volume = make_shared<NativeFileSystemInfo>();
+        auto volume = std::make_shared<NativeFileSystemInfo>();
         volume->mounted_at_path = _on_path;
         GetAllInfos(*volume.get());
         
-        lock_guard<mutex> lock(m_Lock);
+        std::lock_guard<std::mutex> lock(I->m_Lock);
         InsertNewVolume_Unlocked(volume);
     });
 }
 
-void NativeFSManager::InsertNewVolume_Unlocked( const shared_ptr<NativeFileSystemInfo> &_volume )
+void NativeFSManager::InsertNewVolume_Unlocked( const std::shared_ptr<NativeFileSystemInfo> &_volume )
 {
-    const auto it = find_if(begin(m_Volumes),
-                            end(m_Volumes),
-                            [=] (shared_ptr<NativeFileSystemInfo>& _v) {
-                                return _v->mounted_at_path == _volume->mounted_at_path;
-                            });
-    if( it != end(m_Volumes) )
+    const auto pred = [=] (const std::shared_ptr<NativeFileSystemInfo>& _v) {
+        return _v->mounted_at_path == _volume->mounted_at_path;
+    };
+    const auto it = std::find_if(std::begin(I->m_Volumes),
+                                 std::end(I->m_Volumes),
+                                 pred);
+    if( it != std::end(I->m_Volumes) )
         *it = _volume;
     else
-        m_Volumes.emplace_back(_volume);
+        I->m_Volumes.emplace_back(_volume);
+        
+    I->m_VolumeLookup.Insert( _volume, EnsureTrailingSlash(_volume->mounted_at_path) );
 }
 
-void NativeFSManager::OnWillUnmount([[maybe_unused]] const string &_on_path)
+void NativeFSManager::OnWillUnmount([[maybe_unused]] const std::string &_on_path)
 {
 }
 
-void NativeFSManager::OnDidUnmount(const string &_on_path)
+void NativeFSManager::OnDidUnmount(const std::string &_on_path)
 {
-    m_Lock.lock();
-    
-    auto it = find_if(begin(m_Volumes),
-                      end(m_Volumes),
-                      [&] (shared_ptr<NativeFileSystemInfo>& _v) {
-                          return _v->mounted_at_path == _on_path;
-                        }
-                      );
-    if(it != end(m_Volumes))
-        m_Volumes.erase(it);
-    
-    m_Lock.unlock();
+    {  
+        std::lock_guard lock{I->m_Lock};
+        const auto pred = [=] (std::shared_ptr<NativeFileSystemInfo>& _v) {
+            return _v->mounted_at_path == _on_path;
+        };
+        const auto it = std::find_if(std::begin(I->m_Volumes),
+                                     std::end(I->m_Volumes),
+                                     pred);
+        if(it != std::end(I->m_Volumes))
+            I->m_Volumes.erase(it);
+        
+        I->m_VolumeLookup.Remove( EnsureTrailingSlash(_on_path) );
+    }
     
     FSEventsDirUpdate::Instance().OnVolumeDidUnmount(_on_path);
 }
 
-void NativeFSManager::OnDidRename(const string &_old_path, const string &_new_path)
+void NativeFSManager::OnDidRename(const std::string &_old_path, const std::string &_new_path)
 {
-    m_Lock.lock();
-    
-    auto it = find_if(begin(m_Volumes),
-                      end(m_Volumes),
-                      [&] (shared_ptr<NativeFileSystemInfo>& _v) {
-                          return _v->mounted_at_path == _old_path;
-                        }
-                      );
-    if(it != end(m_Volumes))
-    {
-        auto volume = *it;
-        volume->mounted_at_path = _new_path;
-        GetVerboseInfo(*volume.get());
+    {  
+        std::lock_guard lock{I->m_Lock};
+        
+        const auto pred = [=] (std::shared_ptr<NativeFileSystemInfo>& _v) {
+            return _v->mounted_at_path == _old_path;
+        };
+        auto it = std::find_if(std::begin(I->m_Volumes),
+                               std::end(I->m_Volumes),
+                               pred);
+        if(it != std::end(I->m_Volumes)) {
+            auto volume = *it;
+            volume->mounted_at_path = _new_path;
+            GetVerboseInfo(*volume.get());
+            I->m_VolumeLookup.Remove( EnsureTrailingSlash(_old_path) );
+            I->m_VolumeLookup.Insert( volume, EnsureTrailingSlash(_new_path) );
+        }
+        else {
+            OnDidMount(_new_path);
+        }
     }
-    else
-    {
-        OnDidMount(_new_path);
-    }
-
-    m_Lock.unlock();
 
     FSEventsDirUpdate::Instance().OnVolumeDidUnmount(_old_path);
 }
 
-vector<NativeFSManager::Info> NativeFSManager::Volumes() const
+std::vector<NativeFSManager::Info> NativeFSManager::Volumes() const
 {
-    lock_guard<mutex> lock(m_Lock);
-    vector<NativeFSManager::Info> volumes( begin(m_Volumes), end(m_Volumes) );
+    std::lock_guard<std::mutex> lock(I->m_Lock);
+    std::vector<NativeFSManager::Info> volumes( std::begin(I->m_Volumes), std::end(I->m_Volumes) );
     return volumes;
 }
 
@@ -428,20 +464,20 @@ NativeFSManager::Info NativeFSManager::VolumeFromFD(int _fd) const
     return VolumeFromDevID( st.st_dev );
 }
 
-NativeFSManager::Info NativeFSManager::VolumeFromPathFast(const string &_path) const
+NativeFSManager::Info NativeFSManager::VolumeFromPathFast(const std::string &_path) const
 {
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(I->m_Lock);
     return VolumeFromPathFast_Unlocked(_path);
 }
 
-NativeFSManager::Info NativeFSManager::VolumeFromPathFast_Unlocked(const string &_path) const
+NativeFSManager::Info NativeFSManager::VolumeFromPathFast_Unlocked(const std::string &_path) const
 {
     if( _path.empty() )
         return {};
 
-    shared_ptr<NativeFileSystemInfo> result;
+    std::shared_ptr<NativeFileSystemInfo> result;
     size_t best_fit_sz = 0;
-    for(auto &vol: m_Volumes)
+    for(auto &vol: I->m_Volumes)
         if( _path.compare(0, vol->mounted_at_path.size(), vol->mounted_at_path) == 0 &&
             vol->mounted_at_path.size() > best_fit_sz ) {
             best_fit_sz = vol->mounted_at_path.size();
@@ -451,46 +487,50 @@ NativeFSManager::Info NativeFSManager::VolumeFromPathFast_Unlocked(const string 
     return result;
 }
 
-NativeFSManager::Info NativeFSManager::VolumeFromMountPoint(const string &_mount_point) const
+NativeFSManager::Info NativeFSManager::VolumeFromMountPoint(const std::string &_mount_point) const
 {
     return VolumeFromMountPoint( _mount_point.c_str() );
 }
 
 NativeFSManager::Info NativeFSManager::VolumeFromMountPoint(const char *_mount_point) const
 {
-    lock_guard<mutex> lock(m_Lock);
-    return VolumeFromMountPoint_Unlocked(_mount_point);
+    if( _mount_point == nullptr )
+        return nullptr;
+
+    std::lock_guard<std::mutex> lock(I->m_Lock);
+    return I->VolumeFromMountPoint_Unlocked(_mount_point);
 }
 
-NativeFSManager::Info NativeFSManager::VolumeFromMountPoint_Unlocked(const char *_mount_point) const
+NativeFSManager::Info NativeFSManager::Impl::
+VolumeFromMountPoint_Unlocked(const std::string_view _mount_point) const noexcept
 {
-    if( !_mount_point )
+    if( _mount_point.empty() )
         return nullptr;
-    const auto it = find_if(begin(m_Volumes),
-                            end(m_Volumes),
+    const auto it = std::find_if(std::begin(m_Volumes),
+                            std::end(m_Volumes),
                             [=](auto&_){ return _->mounted_at_path == _mount_point; } );
-    if( it != end(m_Volumes) )
+    if( it != std::end(m_Volumes) )
         return *it;
     return nullptr;
 }
 
 NativeFSManager::Info NativeFSManager::VolumeFromDevID(dev_t _dev_id) const
 {
-    lock_guard<mutex> lock(m_Lock);
+    std::lock_guard<std::mutex> lock(I->m_Lock);
     return VolumeFromDevID_Unlocked(_dev_id);
 }
 
 NativeFSManager::Info NativeFSManager::VolumeFromDevID_Unlocked(dev_t _dev_id) const
 {
-    const auto it = find_if(begin(m_Volumes),
-                            end(m_Volumes),
+    const auto it = std::find_if(std::begin(I->m_Volumes),
+                            std::end(I->m_Volumes),
                             [=](auto&_){ return _->basic.dev_id == _dev_id; } );
-    if( it != end(m_Volumes) )
+    if( it != std::end(I->m_Volumes) )
         return *it;
     return nullptr;
 }
 
-NativeFSManager::Info NativeFSManager::VolumeFromPath(const string &_path) const
+NativeFSManager::Info NativeFSManager::VolumeFromPath(const std::string &_path) const
 {
     return VolumeFromPath( _path.c_str() );
 }
@@ -506,15 +546,16 @@ NativeFSManager::Info NativeFSManager::VolumeFromPath(const char* _path) const
     return VolumeFromMountPoint((const char*)info.f_mntonname);
 }
 
-bool NativeFSManager::IsVolumeContainingPathEjectable(const string &_path)
+bool NativeFSManager::IsVolumeContainingPathEjectable(const std::string &_path)
 {
     auto volume = VolumeFromPath(_path);
     
     if(!volume)
         return false;
     
-    using namespace std::string_literals;
-    static const auto excl_list = {"/net"sv, "/dev"sv, "/home"sv};
+    using namespace std::string_view_literals;
+    static const auto excl_list = std::initializer_list<std::string_view>{
+        "/net"sv, "/dev"sv, "/home"sv};
 
     if( std::find(excl_list.begin(), excl_list.end(), volume->mounted_at_path) != excl_list.end() )
         return false;
@@ -525,7 +566,7 @@ bool NativeFSManager::IsVolumeContainingPathEjectable(const string &_path)
             volume->mount_flags.local       == false ;
 }
 
-void NativeFSManager::EjectVolumeContainingPath(const string &_path)
+void NativeFSManager::EjectVolumeContainingPath(const std::string &_path)
 {
     dispatch_to_main_queue([=]{
         if( const auto volume = VolumeFromPath(_path) )
@@ -543,6 +584,41 @@ void NativeFSManager::PerformUnmounting(const Info &_volume)
     else {
         PerformGenericUnmounting(_volume);
     }    
+}
+
+void NativeFSManager::Impl::InjectRootFirmlinks(const APFSTree& _tree)
+{ 
+    const auto root = VolumeFromMountPoint_Unlocked("/");
+    if( root == nullptr )
+        return;
+    
+    // pick the APFS container of the root volume
+    auto container = _tree.FindContainerOfVolume(root->mounted_from_name);
+    if( container == std::nullopt )
+        return;
+    
+    // ensure that "/" has the "System" APFS role, otherwise bail out
+    const auto system_volumes = _tree.
+        FindVolumesInContainerWithRole(*container, APFSTree::Role::System);
+    if( system_volumes == std::nullopt ||
+        std::find( system_volumes->begin(), system_volumes->end(), root->mounted_from_name ) == system_volumes->end() )
+        return;
+        
+    // being extra-cautios here and proceed only if there's exactly one Data volume in the container.
+    // otherwise there's an ambiguity
+    const auto data_volumes = _tree.FindVolumesInContainerWithRole(*container, APFSTree::Role::Data);
+    if( data_volumes == std::nullopt || data_volumes->size() != 1 )
+        return;
+    
+    // find the volume with the Data role
+    const std::string& data_volume_bsd_id = data_volumes->front(); 
+    const auto data_volume_ptr = VolumeFromMountPoint_Unlocked(data_volume_bsd_id);
+    if( data_volume_ptr == nullptr )
+        return;
+    
+    // ... and finaly inject the firmlinks into the lookup table
+    for( const auto &firmlink: m_RootFirmlinks )
+        m_VolumeLookup.Insert(data_volume_ptr, EnsureTrailingSlash(firmlink.target) );
 }
 
 static void GenericDiskUnmountCallback(DADiskRef _disk,
@@ -656,7 +732,7 @@ void NativeFSManager::PerformAPFSUnmounting(const Info &_volume)
     }    
 }
 
-static bool VolumeHasTrash(const string &_volume_path)
+static bool VolumeHasTrash(const std::string &_volume_path)
 {
     const auto url = CFURLCreateFromFileSystemRepresentation(0,
                                                              (const UInt8*)_volume_path.c_str(),
@@ -673,13 +749,13 @@ static bool VolumeHasTrash(const string &_volume_path)
     return trash != nil;
 }
 
-static vector<string> GetFullFSList()
+static std::vector<std::string> GetFullFSList()
 {
     struct statfs* mounts;
     struct stat st;
     int num_mounts = getmntinfo(&mounts, MNT_WAIT);
     
-    vector<string> result;
+    std::vector<std::string> result;
     for (int i = 0; i < num_mounts; i++)
         if(lstat(mounts[i].f_mntonname, &st) == 0)
             result.emplace_back(mounts[i].f_mntonname);
@@ -706,6 +782,41 @@ static std::optional<std::string> GetBSDName(const NativeFileSystemInfo &_volume
         return {};
     
     return source.substr( prefix.length() );
+}
+
+static std::optional<APFSTree> FetchAPFSTree() noexcept
+{
+    try {
+        DiskUtility du;
+        auto dictionary = du.ListAPFSObjects();
+        if( dictionary == nil )
+            return std::nullopt;
+        return APFSTree{dictionary};
+    }
+    catch(...) {
+        return std::nullopt;
+    }
+}
+
+static std::vector<FirmlinksMappingParser::Firmlink> FetchFirmlinks() noexcept
+{
+    try {
+        std::ifstream in( g_FirmlinksMappingPath, std::ios::in | std::ios::binary );
+        if( !in )
+            return {};
+        std::string mapping;
+        in.seekg( 0, std::ios::end );
+        mapping.resize( in.tellg() );
+        in.seekg( 0, std::ios::beg );
+        in.read( &mapping[0], mapping.size() );
+        in.close();
+        
+        FirmlinksMappingParser parser;     
+        return parser.Parse(mapping);
+    }
+    catch(...) {
+        return {};
+    } 
 }
 
 }

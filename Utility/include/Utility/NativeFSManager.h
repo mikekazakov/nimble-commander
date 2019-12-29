@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -9,9 +9,7 @@
 #include <mach/mach.h>
 
 #ifndef __OBJC__
-typedef void *NSString;
-typedef void *NSURL;
-typedef void *NSImage;
+#include "NSCppDeclarations.h"
 #else
 #include <Foundation/Foundation.h>
 #endif
@@ -20,6 +18,11 @@ namespace nc::utility {
 
 struct NativeFileSystemInfo
 {
+    NativeFileSystemInfo();
+    NativeFileSystemInfo(const NativeFileSystemInfo&) = delete;
+    ~NativeFileSystemInfo();
+    NativeFileSystemInfo &operator =(const NativeFileSystemInfo &) = delete;
+
     /**
      * UNIX path to directory at which filesystem is mounted.
      */
@@ -546,8 +549,10 @@ struct NativeFileSystemInfo
 class NativeFSManager
 {
 public:
+    NativeFSManager();
     static NativeFSManager &Instance();
     
+    class VolumeLookup;
     using Info = std::shared_ptr<const NativeFileSystemInfo>;
     
     /**
@@ -605,7 +610,6 @@ public:
     bool IsVolumeContainingPathEjectable(const std::string &_path);
     
 private:
-    NativeFSManager();
     NativeFSManager(const NativeFSManager&) = delete;
     void operator=(const NativeFSManager&) = delete;
         
@@ -613,16 +617,15 @@ private:
     void OnWillUnmount(const std::string &_on_path);
     void OnDidUnmount(const std::string &_on_path);
     void OnDidRename(const std::string &_old_path, const std::string &_new_path);
-    Info VolumeFromDevID_Unlocked(dev_t _dev_id) const;
-    Info VolumeFromMountPoint_Unlocked(const char *_mount_point) const;
+    Info VolumeFromDevID_Unlocked(dev_t _dev_id) const;    
     Info VolumeFromPathFast_Unlocked(const std::string &_path) const;
     void InsertNewVolume_Unlocked( const std::shared_ptr<NativeFileSystemInfo> &_volume );
     void PerformUnmounting(const Info &_volume);
     void PerformGenericUnmounting(const Info &_volume);    
     void PerformAPFSUnmounting(const Info &_volume);
-    
-    mutable std::mutex m_Lock;
-    std::vector<std::shared_ptr<NativeFileSystemInfo>> m_Volumes;
+
+    struct Impl;
+    std::unique_ptr<Impl> I;
     
     friend struct NativeFSManagerProxy2;
 };

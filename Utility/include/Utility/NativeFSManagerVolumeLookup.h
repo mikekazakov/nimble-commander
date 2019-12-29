@@ -13,9 +13,11 @@ struct NativeFileSystemInfo;
 class NativeFSManager::VolumeLookup
 {
 public:
-    void Insert( const std::shared_ptr<NativeFileSystemInfo> &_volume, std::string_view _at );
+    // expects absolute paths ending with a trailing slash
+    void Insert( const std::shared_ptr<const NativeFileSystemInfo> &_volume, std::string_view _at );
+    
     void Remove( std::string_view _from );
-    std::shared_ptr<NativeFileSystemInfo>
+    std::shared_ptr<const NativeFileSystemInfo>
         FindVolumeForLocation( std::string_view _location ) const noexcept;
     static std::atomic_int64_t LookupCount;
 private:
@@ -23,7 +25,7 @@ private:
     // something more efficient can be written instead.
     // However, with N low enough this might be absolutely ok.
     std::vector<std::string> m_Targets;
-    std::vector<std::shared_ptr<NativeFileSystemInfo>> m_Sources;
+    std::vector<std::shared_ptr<const NativeFileSystemInfo>> m_Sources;
 };
 
 }

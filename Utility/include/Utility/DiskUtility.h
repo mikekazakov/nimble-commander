@@ -35,7 +35,7 @@ public:
     /**
      * Returns BSD name if was found.
      */
-    std::optional<std::string> FindContainerOfVolume( std::string_view _bsd_volume_name );
+    std::optional<std::string> FindContainerOfVolume( std::string_view _bsd_volume_name ) const;
     
     /**
      * Returns BSD names if were found.
@@ -43,19 +43,19 @@ public:
      * applied.
      */    
     std::optional<std::vector<std::string>>
-        FindVolumesOfContainer( std::string_view _bsd_container_name );
+        FindVolumesOfContainer( std::string_view _bsd_container_name ) const;
 
     /**
      * Returns BSD names if were found.
      */    
     std::optional<std::vector<std::string>>
-        FindPhysicalStoresOfContainer( std::string_view _bsd_container_name );
+        FindPhysicalStoresOfContainer( std::string_view _bsd_container_name ) const;
     
     /**
      * Returns BSD names if were found.
      */         
     std::optional<std::vector<std::string>> FindVolumesInContainerWithRole(
-        std::string_view _bsd_container_name, Role _role );
+        std::string_view _bsd_container_name, Role _role ) const;
         
 private:
     static bool DoesContainerContainVolume(NSDictionary *_container,

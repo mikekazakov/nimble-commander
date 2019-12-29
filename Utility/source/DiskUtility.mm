@@ -36,7 +36,7 @@ APFSTree::APFSTree( NSDictionary *_objects_list_from_disk_utility ) :
         throw std::invalid_argument("APFSTree: invalid objects dictionary");
 }
 
-std::optional<std::string> APFSTree::FindContainerOfVolume( std::string_view _bsd_volume_name )
+std::optional<std::string> APFSTree::FindContainerOfVolume( std::string_view _bsd_volume_name ) const
 {
     if( _bsd_volume_name.empty() )
         return {};
@@ -61,7 +61,7 @@ std::optional<std::string> APFSTree::FindContainerOfVolume( std::string_view _bs
 }
     
 std::optional<std::vector<std::string>>
-    APFSTree::FindVolumesOfContainer( std::string_view _bsd_container_name )
+    APFSTree::FindVolumesOfContainer( std::string_view _bsd_container_name ) const
 {
     if( _bsd_container_name.empty() )
         return {};
@@ -83,7 +83,7 @@ std::optional<std::vector<std::string>>
 }
     
 std::optional<std::vector<std::string>>
-    APFSTree::FindPhysicalStoresOfContainer( std::string_view _bsd_container_name )
+    APFSTree::FindPhysicalStoresOfContainer( std::string_view _bsd_container_name ) const
 {
     if( _bsd_container_name.empty() )
         return {};
@@ -127,7 +127,7 @@ bool APFSTree::DoesContainerContainVolume(NSDictionary *_container,
 }
 
 std::optional<std::vector<std::string>> APFSTree::FindVolumesInContainerWithRole(
-    std::string_view _bsd_container_name, Role _role )
+    std::string_view _bsd_container_name, Role _role ) const
 {
     if( _bsd_container_name.empty() )
         return {};

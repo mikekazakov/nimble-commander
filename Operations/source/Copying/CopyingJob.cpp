@@ -352,8 +352,8 @@ CopyingJob::StepResult CopyingJob::ProcessSymlinkItem(VFSHost& _source_host,
                                              _new_dst_callback);
         }
         else {
-            const auto item_dev = m_SourceItems.ItemDev(m_CurrentlyProcessingSourceItemIndex);
-            const auto item_fs_info = m_NativeFSManager.VolumeFromDevID( item_dev );
+            const auto item_fs_info = m_NativeFSManager.VolumeFromPath(
+                boost::filesystem::path{_source_path}.parent_path().generic_string() );
             const auto is_same_native_volume = item_fs_info == m_DestinationNativeFSInfo;
             if( is_same_native_volume ) {
                 return RenameNativeFile(_source_path, _destination_path, _new_dst_callback);

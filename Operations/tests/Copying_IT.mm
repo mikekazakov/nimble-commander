@@ -91,3 +91,35 @@ TEST_CASE(PREFIX"Can rename a directory across firmlink injection points")
     CHECK( renamed_stat.st_dev == orig_stat.st_dev );
     CHECK( renamed_stat.st_ino == orig_stat.st_ino );
 }
+
+TEST_CASE(PREFIX"Can rename a symlink across firmlink injection points")
+{
+    const std::string filename = "__nc_rename_test__";
+    const std::string target_dir = "/Applications/";
+    auto rm_result = [&]{ unlink((target_dir + filename).c_str()); };
+    rm_result();
+    auto clean_afterward = at_scope_end([&]{ rm_result(); });        
+    
+    TempTestDir test_dir;
+    REQUIRE( NativeFSManager::Instance().VolumeFromPath(test_dir.directory) == 
+        NativeFSManager::Instance().VolumeFromPath(target_dir) );
+    
+    REQUIRE( symlink("/", (test_dir.directory + filename).c_str()) == 0 );
+
+    struct stat orig_stat;
+    REQUIRE( lstat( (test_dir.directory + filename).c_str(), &orig_stat) == 0 );
+
+    CopyingOptions opts;
+    opts.docopy = false;
+    
+    auto host = VFSNativeHost::SharedHost();
+    Copying op(FetchItems(test_dir.directory, {filename}, *host), target_dir, host, opts);
+    RunOperationAndCheckSuccess(op);
+    
+    struct stat renamed_stat;
+    REQUIRE( lstat( (target_dir + filename).c_str(), &renamed_stat) == 0 );
+    
+    // Verify that the directory was renamed instead of copied+deleted
+    CHECK( renamed_stat.st_dev == orig_stat.st_dev );
+    CHECK( renamed_stat.st_ino == orig_stat.st_ino );
+}

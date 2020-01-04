@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
@@ -121,7 +121,7 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
 
 - (void)testComplexDeletion
 {
-    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",
+    XCTAssert( VFSEasyCopyNode("/System/Applications/Mail.app",
                                m_NativeHost,
                                (boost::filesystem::path(m_TmpDir) / "Mail.app").c_str(),
                                m_NativeHost) == 0);

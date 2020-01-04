@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <sys/stat.h>
 #include <VFS/Native.h>
@@ -225,7 +225,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
       [self EnsureClean:"/Public/!FilesTesting/"s + i at:host];
     
     CopyingOptions opts;
-    Copying op(FetchItems("/Applications/Mail.app/Contents", {begin(files), end(files)}, *VFSNativeHost::SharedHost()),
+    Copying op(FetchItems("/System/Applications/Mail.app/Contents", {begin(files), end(files)}, *VFSNativeHost::SharedHost()),
                "/Public/!FilesTesting/",
                host,
                opts);
@@ -235,7 +235,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     
     for(auto &i: files) {
         int compare;
-        XCTAssert( VFSEasyCompareFiles(("/Applications/Mail.app/Contents/"s + i).c_str(),
+        XCTAssert( VFSEasyCompareFiles(("/System/Applications/Mail.app/Contents/"s + i).c_str(),
                                        VFSNativeHost::SharedHost(),
                                        ("/Public/!FilesTesting/"s + i).c_str(),
                                        host,
@@ -280,7 +280,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 - (void)testCopyGenericToGeneric_Modes_CopyToPrefix
 {
     CopyingOptions opts;
-    Copying op(FetchItems("/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost()),
+    Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost()),
                m_TmpDir.native(),
                m_NativeHost,
                opts);
@@ -289,7 +289,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     op.Wait();
 
     int result = 0;
-    XCTAssert( VFSCompareEntries(boost::filesystem::path("/Applications") / "Mail.app",
+    XCTAssert( VFSCompareEntries(boost::filesystem::path("/System/Applications") / "Mail.app",
                                  VFSNativeHost::SharedHost(),
                                  m_TmpDir / "Mail.app",
                                  VFSNativeHost::SharedHost(),
@@ -303,7 +303,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     boost::filesystem::path dst_dir = m_TmpDir / "Some" / "Absent" / "Dir" / "Is" / "Here/";
     
     CopyingOptions opts;
-    Copying op(FetchItems("/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost()),
+    Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost()),
                dst_dir.native(),
                m_NativeHost,
                opts);
@@ -312,7 +312,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     op.Wait();
     
     int result = 0;
-    XCTAssert( VFSCompareEntries(boost::filesystem::path("/Applications") / "Mail.app",
+    XCTAssert( VFSCompareEntries(boost::filesystem::path("/System/Applications") / "Mail.app",
                                  VFSNativeHost::SharedHost(),
                                  dst_dir / "Mail.app",
                                  VFSNativeHost::SharedHost(),
@@ -326,7 +326,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     // works on single host - In and Out same as where source files are
     auto host = VFSNativeHost::SharedHost();
     
-    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",
+    XCTAssert( VFSEasyCopyNode("/System/Applications/Mail.app",
                                host,
                                (m_TmpDir / "Mail.app").c_str(),
                                host) == 0);
@@ -341,7 +341,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     op.Wait();
     
     int result = 0;
-    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, m_TmpDir / "SomeDirectoryName" / "Mail.app", host, result) == 0);
+    XCTAssert( VFSCompareEntries("/System/Applications/Mail.app", host, m_TmpDir / "SomeDirectoryName" / "Mail.app", host, result) == 0);
     XCTAssert( result == 0 );
 }
 
@@ -352,7 +352,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     // Copies "Mail.app" to "Mail2.app" in the same dir
     auto host = VFSNativeHost::SharedHost();
     
-    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app",
+    XCTAssert( VFSEasyCopyNode("/System/Applications/Mail.app",
                                host,
                                (boost::filesystem::path(m_TmpDir) / "Mail.app").c_str(),
                                host) == 0);
@@ -366,7 +366,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     op.Wait();
     
     int result = 0;
-    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, m_TmpDir / "Mail2.app", host, result) == 0);
+    XCTAssert( VFSCompareEntries("/System/Applications/Mail.app", host, m_TmpDir / "Mail2.app", host, result) == 0);
     XCTAssert( result == 0 );
 }
 
@@ -424,7 +424,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     auto dir2 = m_TmpDir / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
     auto host = VFSNativeHost::SharedHost();
     
-    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app", host, (m_TmpDir / "Mail.app").c_str(), host) == 0);
+    XCTAssert( VFSEasyCopyNode("/System/Applications/Mail.app", host, (m_TmpDir / "Mail.app").c_str(), host) == 0);
     
     CopyingOptions opts;
     opts.docopy = false;
@@ -436,7 +436,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     op.Wait();
     
     int result = 0;
-    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, dir2 / "Mail.app", host, result) == 0);
+    XCTAssert( VFSCompareEntries("/System/Applications/Mail.app", host, dir2 / "Mail.app", host, result) == 0);
     XCTAssert( result == 0 );
 }
 
@@ -446,7 +446,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     // Copies "Mail.app" to "Mail2.app" in the same dir
     auto host = VFSNativeHost::SharedHost();
     
-    XCTAssert( VFSEasyCopyNode("/Applications/Mail.app", host, (m_TmpDir / "Mail.app").c_str(), host) == 0);
+    XCTAssert( VFSEasyCopyNode("/System/Applications/Mail.app", host, (m_TmpDir / "Mail.app").c_str(), host) == 0);
     
     CopyingOptions opts;
     opts.docopy = false;
@@ -458,7 +458,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     op.Wait();
 
     int result = 0;
-    XCTAssert( VFSCompareEntries("/Applications/Mail.app", host, m_TmpDir / "Mail2.app", host, result) == 0);
+    XCTAssert( VFSCompareEntries("/System/Applications/Mail.app", host, m_TmpDir / "Mail2.app", host, result) == 0);
     XCTAssert( result == 0 );
 }
 
@@ -661,7 +661,7 @@ static uint32_t FileFlags(const char *path)
     CopyingOptions opts;
     opts.docopy = true;
     auto host = VFSNativeHost::SharedHost();
-    Copying op(FetchItems("/Applications", {"Mail.app"}, *host),
+    Copying op(FetchItems("/System/Applications", {"Mail.app"}, *host),
                m_TmpDir.c_str(),
                host,
                opts);

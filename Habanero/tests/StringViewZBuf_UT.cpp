@@ -12,6 +12,7 @@ TEST_CASE(PREFIX"Empty")
     std::string_view v{""};
     StringViewZBuf<1> zb{v};
     CHECK( v == zb.c_str() );
+    CHECK( zb.empty() == true );
 }
 
 TEST_CASE(PREFIX"Short")
@@ -19,6 +20,7 @@ TEST_CASE(PREFIX"Short")
     std::string_view v{"abcd"};
     StringViewZBuf<5> zb{v};
     CHECK( v == zb.c_str() );
+    CHECK( zb.empty() == false );
 }
 
 TEST_CASE(PREFIX"Long")
@@ -26,4 +28,5 @@ TEST_CASE(PREFIX"Long")
     std::string_view v{"abcde"};
     StringViewZBuf<5> zb{v};
     CHECK( v == zb.c_str() );
+    CHECK( zb.empty() == false );
 }

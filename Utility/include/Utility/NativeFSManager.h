@@ -567,13 +567,7 @@ public:
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */
-    Info VolumeFromPath(const std::string &_path) const;
-    
-    /**
-     * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
-     * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
-     */
-    Info VolumeFromPath(const char* _path) const;
+    Info VolumeFromPath(std::string_view _path) const;
     
     /**
      * VolumeFromPathFast() chooses the closest volume to _path, using plain strings comparison.

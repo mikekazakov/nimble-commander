@@ -15,6 +15,7 @@
 #include <Utility/FirmlinksMappingParser.h>
 #include <Habanero/dispatch_cpp.h>
 #include <Habanero/algo.h>
+#include <Habanero/StringViewZBuf.h>
 #include <iostream>
 #include <string_view>
 #include <future>
@@ -459,10 +460,11 @@ void NativeFSManager::UpdateSpaceInformation(const Info &_volume)
 
 NativeFSManager::Info NativeFSManager::VolumeFromFD(int _fd) const
 {
-    struct stat st;
-    if( fstat(_fd, &st) < 0 )
+    struct statfs info;
+    if( fstatfs(_fd, &info) < 0 )
         return nullptr;
-    return VolumeFromDevID( st.st_dev );
+
+    return VolumeFromMountPoint((const char*)info.f_mntonname);
 }
 
 NativeFSManager::Info NativeFSManager::VolumeFromPathFast(const std::string &_path) const
@@ -532,17 +534,14 @@ NativeFSManager::Info NativeFSManager::VolumeFromDevID_Unlocked(dev_t _dev_id) c
     return nullptr;
 }
 
-NativeFSManager::Info NativeFSManager::VolumeFromPath(const std::string &_path) const
+NativeFSManager::Info NativeFSManager::VolumeFromPath(std::string_view _path) const
 {
-    return VolumeFromPath( _path.c_str() );
-}
+    if( _path.empty() )
+        return nullptr;
 
-NativeFSManager::Info NativeFSManager::VolumeFromPath(const char* _path) const
-{
-    // TODO: compare performance with stat() and searching for fs with dev_id    
+    base::StringViewZBuf<512> path{_path};
     struct statfs info;
-    if(_path == nullptr ||
-       statfs(_path, &info) < 0)
+    if( statfs(path.c_str(), &info) < 0 )
         return nullptr;
     
     return VolumeFromMountPoint((const char*)info.f_mntonname);

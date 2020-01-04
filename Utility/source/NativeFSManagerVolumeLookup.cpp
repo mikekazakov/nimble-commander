@@ -4,8 +4,6 @@
 
 namespace nc::utility {
 
-std::atomic_int64_t NativeFSManager::VolumeLookup::LookupCount{0};
-
 void NativeFSManager::VolumeLookup::
 Insert( const std::shared_ptr<const NativeFileSystemInfo> &_volume, std::string_view _at )
 {	
@@ -46,8 +44,6 @@ void NativeFSManager::VolumeLookup::Remove( std::string_view _from )
 std::shared_ptr<const NativeFileSystemInfo> NativeFSManager::VolumeLookup::
 FindVolumeForLocation( std::string_view _location ) const noexcept
 {
-    ++LookupCount;
-    
     const size_t size = m_Targets.size();
     assert( m_Sources.size() == size );
     

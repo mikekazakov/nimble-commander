@@ -15,7 +15,7 @@ public:
     StringViewZBuf(std::string_view string);
     ~StringViewZBuf();
     const char *c_str() const noexcept;
-    
+    bool empty() const noexcept;
 private:
     StringViewZBuf(const StringViewZBuf&) = delete;
     StringViewZBuf& operator=(const StringViewZBuf&) = delete;
@@ -62,6 +62,12 @@ const char *StringViewZBuf<Size>::c_str() const noexcept
     else {
         return &m_FixedBuffer[0];
     }
+}
+
+template <size_t Size>
+bool StringViewZBuf<Size>::empty() const noexcept
+{ 
+    return c_str()[0] == 0;
 }
 
 }

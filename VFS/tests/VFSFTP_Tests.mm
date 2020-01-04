@@ -224,11 +224,13 @@ static string UUID()
 
 - (void)testBigFilesReadingCancellation
 {
-    path path = "/debian/dists/wheezy/main/installer-amd64/20130430/images/hd-media/boot.img.gz";
+    const auto host_name = "ftp.utexas.edu";
+    const auto host_dir = "/pub/debian-cd/10.2.0/i386/iso-cd/";
+    const auto host_path = "/pub/debian-cd/10.2.0/i386/iso-cd/debian-10.2.0-i386-netinst.iso";
     
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>("ftp.debian.org", "", "", path.parent_path().native());
+        host = make_shared<FTPHost>(host_name, "", "", host_dir);
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;        
@@ -238,7 +240,7 @@ static string UUID()
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         VFSFilePtr file;
         char buf[256];
-        XCTAssert( host->CreateFile(path.c_str(), file, 0) == 0 );
+        XCTAssert( host->CreateFile(host_path, file, 0) == 0 );
         XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
         XCTAssert( file->Read(buf, sizeof(buf)) == sizeof(buf) );
         XCTAssert( file->Close() == 0 ); // at this moment we have read only a small part of file

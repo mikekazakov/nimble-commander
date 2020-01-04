@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <sys/dirent.h>
 #include <VFS/VFS.h>
@@ -12,7 +12,7 @@ using namespace nc;
 using namespace nc::base;
 using namespace nc::panel;
 
-static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<std::string> &_filenames )
+static VFSListingPtr ProduceDummyListing( const std::vector<std::string> &_filenames )
 {
     vfs::ListingInput l;
     
@@ -32,7 +32,7 @@ static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<std::s
 }
 
 // filename, is_directory
-static std::shared_ptr<VFSListing> ProduceDummyListing
+static VFSListingPtr ProduceDummyListing
     (const std::vector<std::tuple<std::string,bool>> &_entries )
 {
     vfs::ListingInput l;
@@ -56,7 +56,7 @@ static std::shared_ptr<VFSListing> ProduceDummyListing
 }
 
 
-static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<NSString*> &_filenames )
+static VFSListingPtr ProduceDummyListing( const std::vector<NSString*> &_filenames )
 {
     std::vector<std::string> t;
     for( auto &i: _filenames )
@@ -113,7 +113,7 @@ static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<NSStri
     sorting.sort = data::SortMode::SortByName;
     sorting.case_sens = false;
     data.SetSortMode(sorting);
-    data.Load(move(listing), data::Model::PanelType::Directory);
+    data.Load(std::move(listing), data::Model::PanelType::Directory);
     
     XCTAssert(data.SortedIndexForName(listing->Item(0).FilenameC()) == 0);
     XCTAssert(data.SortedIndexForName(listing->Item(2).FilenameC()) == 1);

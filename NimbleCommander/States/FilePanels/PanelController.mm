@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelController.h"
 #include <Habanero/algo.h>
 #include <Utility/NSView+Sugar.h>
@@ -379,7 +379,7 @@ static void HeatUpConfigValues()
 {
     if(m_View == nil)
         return; // guard agains calls from init process
-    if( m_Data.Listing().shared_from_this() == VFSListing::EmptyListing() )
+    if( &m_Data.Listing() == VFSListing::EmptyListing().get() )
         return; // guard agains calls from init process
     
     if( !m_DirectoryLoadingQ.Empty() )
@@ -824,7 +824,7 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
         auto directory = _request->RequestedDirectory;
         auto &vfs = *_request->VFS;        
         const auto canceller = VFSCancelChecker( [&]{ return m_DirectoryLoadingQ.IsStopped(); } );
-        std::shared_ptr<VFSListing> listing;
+        VFSListingPtr listing;
         const auto fetch_result = vfs.FetchDirectoryListing(directory.c_str(),
                                                             listing,
                                                             m_VFSFetchingFlags,
@@ -887,7 +887,7 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
     }
 }
 
-- (void) loadListing:(const std::shared_ptr<VFSListing>&)_listing
+- (void) loadListing:(const VFSListingPtr&)_listing
 {
     [self CancelBackgroundOperations]; // clean running operations if any
     dispatch_or_run_in_main_queue([=]{

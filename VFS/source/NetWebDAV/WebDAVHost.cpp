@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "WebDAVHost.h"
 #include "Internal.h"
 #include <Utility/PathManip.h>
@@ -93,7 +93,7 @@ bool WebDAVHost::IsWritable() const
 }
 
 int WebDAVHost::FetchDirectoryListing(const char *_path,
-                                      std::shared_ptr<VFSListing> &_target,
+                                      VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker)
 {

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GoToFolderSheetController.h"
 #include <VFS/VFS.h>
 #include <NimbleCommander/Bootstrap/Config.h>
@@ -53,7 +53,7 @@ static std::vector<unsigned> ListDirsWithPrefix
 @implementation GoToFolderSheetController
 {
     std::function<void()>       m_Handler; // return VFS error code
-    std::shared_ptr<VFSListing> m_LastListing;
+    VFSListingPtr               m_LastListing;
     std::string                 m_RequestedPath;
 }
 @synthesize requestedPath = m_RequestedPath;
@@ -259,7 +259,7 @@ static std::vector<unsigned> ListDirsWithPrefix
         return nullptr;
     auto vfs = self.panel.vfs;
     
-    std::shared_ptr<VFSListing> listing;
+    VFSListingPtr listing;
     int ret = vfs->FetchDirectoryListing(path.c_str(),
                                          listing,
                                          VFSFlags::F_NoDotDot,

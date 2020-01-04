@@ -3,6 +3,7 @@
 
 #include <Habanero/variable_container.h>
 #include <Habanero/CFString.h>
+#include <Habanero/intrusive_ptr.h>
 #include <VFS/VFSDeclarations.h>
 
 /**
@@ -21,26 +22,28 @@ namespace nc::vfs {
 
 struct ListingInput;
 class ListingItem;
-class WeakListingItem;
 
-class Listing : public std::enable_shared_from_this<Listing>
+class Listing : public nc::base::intrusive_ref_counter<Listing>
 {
 public:
-    static const VFSListingPtr &EmptyListing() noexcept;
-    static VFSListingPtr    Build(ListingInput &&_input);
+    ~Listing();
+
+    static const base::intrusive_ptr<Listing> &EmptyListing() noexcept;
+    static base::intrusive_ptr<Listing> Build(ListingInput &&_input);
     
     /**
      * compose many listings into a new ListingInput.
      * it will contain only sparse-based variable containers.
      * will throw on errors
      */
-    static ListingInput Compose(const std::vector<std::shared_ptr<Listing>> &_listings);
-    static ListingInput Compose(const std::vector<std::shared_ptr<Listing>> &_listings,
+    static ListingInput Compose(const std::vector<base::intrusive_ptr<Listing>> &_listings);
+    static ListingInput Compose(const std::vector<base::intrusive_ptr<Listing>> &_listings,
                                 const std::vector< std::vector<unsigned> > &_items_indeces);
     
     
-    static VFSListingPtr ProduceUpdatedTemporaryPanelListing(const Listing& _original,
-                                                             VFSCancelChecker _cancel_checker );
+    static base::intrusive_ptr<Listing>
+        ProduceUpdatedTemporaryPanelListing(const Listing& _original,
+                                            VFSCancelChecker _cancel_checker );
     
     /**
      * Returns items amount in this listing. 
@@ -129,9 +132,7 @@ public:
     iterator            end                 () const noexcept;
     
 private:
-    Listing() = default;
-    ~Listing() = default;
-    static std::shared_ptr<Listing> Alloc(); // fighting against c++...
+    Listing();
     void BuildFilenames();    
     
     unsigned                                m_ItemsCount;
@@ -200,10 +201,10 @@ class ListingItem
 {
 public:
     ListingItem() noexcept;
-    ListingItem(const std::shared_ptr<const Listing>& _listing, unsigned _ind) noexcept;
-    operator                                bool()              const noexcept;
-    const std::shared_ptr<const Listing>&   Listing()           const noexcept;
-    unsigned                                Index()             const noexcept;
+    ListingItem(const base::intrusive_ptr<const Listing>& _listing, unsigned _ind) noexcept;
+    operator                                    bool()              const noexcept;
+    const base::intrusive_ptr<const Listing>&   Listing()           const noexcept;
+    unsigned                                    Index()             const noexcept;
     
     std::string         Path()          const;
     const VFSHostPtr&   Host()          const;
@@ -277,10 +278,9 @@ public:
     bool operator !=(const ListingItem&_) const noexcept;
     
 private:
-    std::shared_ptr<const class Listing> L;
+    nc::base::intrusive_ptr<const class Listing> L;
     unsigned                        I;
     friend Listing::iterator;
-    friend WeakListingItem;
 };
 
 class Listing::iterator
@@ -612,20 +612,20 @@ inline bool Listing::IsHidden(unsigned _ind) const
 inline ListingItem Listing::Item(unsigned _ind) const
 {
     __CHECK_BOUNDS(_ind);
-    return ListingItem(shared_from_this(), _ind);
+    return ListingItem( base::intrusive_ptr{this} , _ind);
 }
 
 inline Listing::iterator Listing::begin() const noexcept
 {
     iterator it;
-    it.i = ListingItem(shared_from_this(), 0);
+    it.i = ListingItem(base::intrusive_ptr{this}, 0);
     return it;
 }
 
 inline Listing::iterator Listing::end() const noexcept
 {
     iterator it;
-    it.i = ListingItem(shared_from_this(), m_ItemsCount);
+    it.i = ListingItem(base::intrusive_ptr{this}, m_ItemsCount);
     return it;
 }
 
@@ -638,7 +638,7 @@ inline ListingItem::ListingItem() noexcept:
 }
 
 inline ListingItem::ListingItem
-    (const std::shared_ptr<const class Listing>& _listing, unsigned _ind) noexcept:
+    (const base::intrusive_ptr<const class Listing>& _listing, unsigned _ind) noexcept:
     L(_listing),
     I(_ind)
 {
@@ -649,7 +649,7 @@ inline ListingItem::operator bool() const noexcept
     return (bool)L;
 }
 
-inline const std::shared_ptr<const Listing>& ListingItem::Listing() const noexcept
+inline const base::intrusive_ptr<const Listing>& ListingItem::Listing() const noexcept
 {
     return L;
 }

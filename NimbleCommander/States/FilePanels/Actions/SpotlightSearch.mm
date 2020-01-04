@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "SpotlightSearch.h"
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -93,7 +93,7 @@ static std::vector<std::string> FetchSpotlightResults(const std::string& _query)
     return result;
 }
 
-static std::shared_ptr<VFSListing> FetchSearchResultsAsListing
+static VFSListingPtr FetchSearchResultsAsListing
     (const std::vector<std::string> &_file_paths,
      VFSHost &_vfs,
      unsigned long _fetch_flags,

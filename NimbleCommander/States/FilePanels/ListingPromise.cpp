@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ListingPromise.h"
 #include <VFS/VFSListingInput.h>
 
@@ -132,7 +132,7 @@ VFSListingPtr ListingPromise::RestoreNonUniform(unsigned long _fetch_flags,
                                                              _fetch_flags,
                                                              _cancel_checker);
                 if( rc == VFSError::Ok && listing != nullptr )
-                    listings.emplace_back( move(listing) );
+                    listings.emplace_back( std::move(listing) );
             }
         }
     }

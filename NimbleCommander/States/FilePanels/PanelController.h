@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/MIMResponder.h>
@@ -193,7 +193,7 @@ using ContextMenuProvider =
 /**
  * Loads existing listing into the panel. Save to call from any thread.
  */
-- (void) loadListing:(const std::shared_ptr<VFSListing>&)_listing;
+- (void) loadListing:(const VFSListingPtr&)_listing;
 
 /** 
  * Delayed entry selection change - panel controller will memorize such request.

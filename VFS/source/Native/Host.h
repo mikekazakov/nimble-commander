@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/Host.h>
@@ -22,12 +22,12 @@ public:
     virtual int Stat(const char *_path, VFSStat &_st, unsigned long _flags, const VFSCancelChecker &_cancel_checker) override;
     
     virtual int FetchDirectoryListing(const char *_path,
-                                      std::shared_ptr<VFSListing> &_target,
+                                      VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker) override;
     
     virtual int FetchSingleItemListing(const char *_path_to_item,
-                                       std::shared_ptr<VFSListing> &_target,
+                                       VFSListingPtr &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker) override;
     

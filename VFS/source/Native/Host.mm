@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <OpenDirectory/OpenDirectory.h>
 #include <sys/attr.h>
 #include <sys/errno.h>
@@ -78,7 +78,7 @@ bool NativeHost::ShouldProduceThumbnails() const
 }
 
 int NativeHost::FetchDirectoryListing(const char *_path,
-                                      std::shared_ptr<VFSListing> &_target,
+                                      VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker)
 {
@@ -237,7 +237,7 @@ int NativeHost::FetchDirectoryListing(const char *_path,
 }
 
 int NativeHost::FetchSingleItemListing(const char *_path,
-                                       std::shared_ptr<VFSListing> &_target,
+                                       VFSListingPtr &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker)
 {

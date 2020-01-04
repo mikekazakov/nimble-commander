@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include <VFS/VFSListingInput.h>
 #include "PanelData.h"
@@ -22,9 +22,9 @@ static const auto g_ConfigJSON =
     \"keyOption\": 3\
 }}}";
 
-static std::shared_ptr<VFSListing> ProduceDummyListing
+static VFSListingPtr ProduceDummyListing
     ( const std::vector<std::string> &_filenames );
-static std::shared_ptr<VFSListing> AppsListing();
+static VFSListingPtr AppsListing();
 static NSEvent *KeyDown(NSString *_key, NSEventModifierFlags _flags);
 static NSString *SingleCharStr( unichar _c );
 
@@ -309,7 +309,7 @@ static NSString *SingleCharStr( unichar _c )
     return [NSString stringWithCharacters:&_c length:1];
 }
 
-static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<std::string> &_filenames )
+static VFSListingPtr ProduceDummyListing( const std::vector<std::string> &_filenames )
 {
     nc::vfs::ListingInput l;
     
@@ -328,7 +328,7 @@ static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<std::s
     return VFSListing::Build(std::move(l));
 }
 
-static std::shared_ptr<VFSListing> AppsListing()
+static VFSListingPtr AppsListing()
 {
     return ProduceDummyListing({
     "App Store.app",

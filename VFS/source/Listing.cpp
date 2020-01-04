@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Listing.h"
 #include "../include/VFS/Host.h"
 #include "ListingInput.h"
@@ -95,12 +95,16 @@ static void Compress( ListingInput &_input )
     
 }
 
-std::shared_ptr<Listing> Listing::Build(ListingInput &&_input)
+Listing::Listing() = default;
+
+Listing::~Listing() = default;
+
+base::intrusive_ptr<Listing> Listing::Build(ListingInput &&_input)
 {
     Validate( _input ); // will throw an exception on error
     Compress( _input );
     
-    auto l = Alloc();
+    auto l = base::intrusive_ptr<Listing>{new Listing};
     l->m_Hosts = std::move(_input.hosts);
     l->m_Directories = std::move(_input.directories);
     l->m_Filenames = std::move(_input.filenames);
@@ -125,7 +129,7 @@ std::shared_ptr<Listing> Listing::Build(ListingInput &&_input)
     return l;
 }
 
-ListingInput Listing::Compose(const std::vector<std::shared_ptr<Listing>> &_listings)
+ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<Listing>> &_listings)
 {
     ListingInput result;
     result.hosts.reset( variable_container<>::type::dense );
@@ -184,7 +188,7 @@ ListingInput Listing::Compose(const std::vector<std::shared_ptr<Listing>> &_list
     return result;
 }
 
-ListingInput Listing::Compose(const std::vector<std::shared_ptr<Listing>> &_listings,
+ListingInput Listing::Compose(const std::vector<base::intrusive_ptr<Listing>> &_listings,
                               const std::vector<std::vector<unsigned> > &_items_indeces)
 {
     if( _listings.size() != _items_indeces.size() )
@@ -311,22 +315,16 @@ VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing( const Listing& _orig
     return Build( std::move(result) );
 }
 
-const std::shared_ptr<Listing> &Listing::EmptyListing() noexcept
+const base::intrusive_ptr<Listing> &Listing::EmptyListing() noexcept
 {
     static const auto empty = []{
-        auto l = Alloc();
+        auto l = base::intrusive_ptr{new Listing};
         l->m_ItemsCount = 0;
         l->m_Hosts.insert(0, Host::DummyHost());
         l->m_Directories.insert(0, "/");
         return l;
     }();
     return empty;
-}
-
-std::shared_ptr<Listing> Listing::Alloc()
-{
-    struct make_shared_enabler: public Listing {};
-    return std::make_shared<make_shared_enabler>();
 }
 
 static CFString UTF8WithFallback(const std::string &_s)

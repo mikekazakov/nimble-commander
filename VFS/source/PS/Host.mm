@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <libproc.h>
 #include <sys/resource.h>
 #include <sys/proc_info.h>
@@ -466,7 +466,7 @@ std::string PSHost::ProcInfoIntoFile(const ProcInfo& _info, std::shared_ptr<Snap
 }
 
 int PSHost::FetchDirectoryListing(const char *_path,
-                                  std::shared_ptr<VFSListing> &_target,
+                                  VFSListingPtr &_target,
                                   [[maybe_unused]] unsigned long _flags,
                                   [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

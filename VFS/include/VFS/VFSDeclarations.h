@@ -3,6 +3,7 @@
 
 #include <string>
 #include <functional>
+#include <Habanero/intrusive_ptr.h>
 
 struct stat;
 
@@ -166,13 +167,12 @@ struct Flags
 
 class Listing;
 class ListingItem;
-class WeakListingItem;
 class Host;
 
 }
 
 using VFSListing            = nc::vfs::Listing;
-using VFSListingPtr         = std::shared_ptr<nc::vfs::Listing>;
+using VFSListingPtr         = nc::base::intrusive_ptr<nc::vfs::Listing>;
 using VFSListingItem        = nc::vfs::ListingItem;
 using VFSHost               = nc::vfs::Host;
 using VFSHostPtr            = std::shared_ptr<nc::vfs::Host>;

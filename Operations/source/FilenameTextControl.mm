@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilenameTextControl.h"
 #include <AppKit/AppKit.h>
 #include <Utility/ObjCpp.h>
@@ -277,7 +277,7 @@ VFSListingPtr DirectoryPathAutoCompletionImpl::ListingForDir(const std::string& 
     if( m_LastListing && m_LastListing->Directory() == path )
         return m_LastListing;
         
-    std::shared_ptr<VFSListing> listing;
+    VFSListingPtr listing;
     const int rc = m_VFS->FetchDirectoryListing(path.c_str(), listing, VFSFlags::F_NoDotDot);
     if( rc == VFSError::Ok ) {
         m_LastListing = listing;

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "../ListingInput.h"
 #include "Host.h"
@@ -282,7 +282,7 @@ int FTPHost::Stat(const char *_path,
 }
 
 int FTPHost::FetchDirectoryListing(const char *_path,
-                                   std::shared_ptr<VFSListing> &_target,
+                                   VFSListingPtr &_target,
                                    unsigned long _flags,
                                    const VFSCancelChecker &_cancel_checker)
 {

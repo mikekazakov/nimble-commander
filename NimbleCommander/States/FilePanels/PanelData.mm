@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelData.h"
 #include "PanelDataItemVolatileData.h"
 #include "PanelDataEntriesComparator.h"
@@ -95,7 +95,7 @@ static void InitVolatileDataWithListing(std::vector<ItemVolatileData> &_vd,
     }
 }
 
-void Model::Load(const std::shared_ptr<VFSListing> &_listing, PanelType _type)
+void Model::Load(const VFSListingPtr &_listing, PanelType _type)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
@@ -131,7 +131,7 @@ static void UpdateWithExisingVD( ItemVolatileData &_new_vd, const ItemVolatileDa
     }
 }
 
-void Model::ReLoad(const std::shared_ptr<VFSListing> &_listing)
+void Model::ReLoad(const VFSListingPtr &_listing)
 {
     assert(dispatch_is_main_queue()); // STA api design
     
@@ -196,9 +196,9 @@ void Model::ReLoad(const std::shared_ptr<VFSListing> &_listing)
         throw std::invalid_argument("PanelData::ReLoad: incompatible listing type!");
     
     // put a new data in a place
-    m_Listing = move(_listing);
-    m_VolatileData = move(new_vd);
-    m_EntriesByRawName = move(dirbyrawcname);
+    m_Listing = std::move(_listing);
+    m_VolatileData = std::move(new_vd);
+    m_EntriesByRawName = std::move(dirbyrawcname);
     
     // now sort our new data with custom sortings
     DoSortWithHardFiltering();

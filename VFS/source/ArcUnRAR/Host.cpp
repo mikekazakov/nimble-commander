@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "../Native/Host.h"
 #include "../ListingInput.h"
@@ -285,7 +285,7 @@ Directory *UnRARHost::FindOrBuildDirectory(const std::string& _path_with_tr_sl)
 }
 
 int UnRARHost::FetchDirectoryListing(const char *_path,
-                                     std::shared_ptr<VFSListing> &_target,
+                                     VFSListingPtr &_target,
                                      unsigned long _flags,
                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

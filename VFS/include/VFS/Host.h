@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <optional>
@@ -222,7 +222,7 @@ public:
      * Produce a regular directory listing.
      */
     virtual int FetchDirectoryListing(const char *_path,
-                                      std::shared_ptr<VFSListing> &_target,
+                                      VFSListingPtr &_target,
                                       unsigned long _flags,
                                       const VFSCancelChecker &_cancel_checker = nullptr);
     
@@ -232,7 +232,7 @@ public:
      * this listing with Stat().
      */
     virtual int FetchSingleItemListing(const char *_path_to_item,
-                                       std::shared_ptr<VFSListing> &_target,
+                                       VFSListingPtr &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker = nullptr);
 

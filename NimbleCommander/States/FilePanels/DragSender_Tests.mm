@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include "DragSender.h"
 #include <VFS/VFS.h>
@@ -14,7 +14,7 @@ using namespace nc::panel;
 
 @end
 
-static std::shared_ptr<VFSListing> ProduceDummyListing( const std::vector<std::string> &_filenames )
+static VFSListingPtr ProduceDummyListing( const std::vector<std::string> &_filenames )
 {
     vfs::ListingInput l;
     

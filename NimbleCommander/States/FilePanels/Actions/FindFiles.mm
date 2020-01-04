@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/VFSListingInput.h>
 #include <NimbleCommander/States/FilePanels/FindFilesSheetController.h>
 #include "../PanelController.h"
@@ -29,7 +29,7 @@ bool FindFiles::Predicate( PanelController *_target ) const
     return _target.isUniform || _target.view.item;
 }
 
-static std::shared_ptr<VFSListing>
+static VFSListingPtr
     FetchSearchResultsAsListing(const std::vector<VFSPath> &_filepaths,
                                 unsigned long _fetch_flags,
                                 const VFSCancelChecker &_cancel_checker)

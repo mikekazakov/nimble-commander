@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "ListingInput.h"
 #include "../include/VFS/Host.h"
@@ -390,7 +390,7 @@ bool Host::ValidateFilename(const char *_filename) const
 }
 
 int Host::FetchDirectoryListing([[maybe_unused]] const char *_path,
-                                [[maybe_unused]] std::shared_ptr<Listing> &_target,
+                                [[maybe_unused]] VFSListingPtr &_target,
                                 [[maybe_unused]] unsigned long _flags,
                                 [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {
@@ -398,7 +398,7 @@ int Host::FetchDirectoryListing([[maybe_unused]] const char *_path,
 }
 
 int Host::FetchSingleItemListing(const char *_path,
-                                 std::shared_ptr<Listing> &_target,
+                                 VFSListingPtr &_target,
                                  [[maybe_unused]] unsigned long _flags,
                                  const VFSCancelChecker &_cancel_checker)
 {
@@ -486,7 +486,7 @@ int Host::FetchFlexibleListingItems(const std::string& _directory_path,
                                     std::vector<VFSListingItem> &_result,
                                     const VFSCancelChecker &_cancel_checker)
 {
-    std::shared_ptr<VFSListing> listing;
+    VFSListingPtr listing;
     int ret = FetchDirectoryListing(_directory_path.c_str(), listing, _flags, _cancel_checker);
     if( ret != 0 )
         return ret;

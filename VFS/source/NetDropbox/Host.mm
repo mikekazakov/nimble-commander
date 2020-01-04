@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/PathManip.h>
 #include "../ListingInput.h"
 #include "Aux.h"
@@ -310,7 +310,7 @@ int DropboxHost::IterateDirectoryListing(const char *_path,
 }
 
 int DropboxHost::FetchDirectoryListing(const char *_path,
-                                       std::shared_ptr<VFSListing> &_target,
+                                       VFSListingPtr &_target,
                                        unsigned long _flags,
                                        const VFSCancelChecker &_cancel_checker)
 { // TODO: process ListFolderResult.has_more

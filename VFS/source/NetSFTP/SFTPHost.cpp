@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
 #include <libssh2.h>
@@ -391,7 +391,7 @@ in_addr_t SFTPHost::InetAddr() const
 }
 
 int SFTPHost::FetchDirectoryListing(const char *_path,
-                                    std::shared_ptr<VFSListing> &_target,
+                                    VFSListingPtr &_target,
                                     unsigned long _flags,
                                     [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

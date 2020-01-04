@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include "xattr.h"
 #include <VFS/VFSFile.h>
@@ -192,7 +192,7 @@ int XAttrHost::Fetch()
 }
 
 int XAttrHost::FetchDirectoryListing(const char *_path,
-                                     std::shared_ptr<VFSListing> &_target,
+                                     VFSListingPtr &_target,
                                      unsigned long _flags,
                                      [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "tests_common.h"
 #include <VFS/VFS.h>
 #include <VFS/ArcLA.h>
@@ -362,7 +362,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
         return;
     }
     
-    shared_ptr<VFSListing> listing;
+    VFSListingPtr listing;
     XCTAssert( host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok );
 }
 
@@ -376,7 +376,7 @@ static int VFSCompareEntries(const path& _file1_full_path,
         return;
     }
     
-    shared_ptr<VFSListing> listing;
+    VFSListingPtr listing;
     XCTAssert( host->FetchDirectoryListing("/", listing, 0, nullptr) == VFSError::Ok );
 }
 

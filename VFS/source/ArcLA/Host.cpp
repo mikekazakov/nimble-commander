@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/dirent.h>
 #include <Habanero/CFStackAllocator.h>
 #include <Utility/PathManip.h>
@@ -473,7 +473,7 @@ int ArchiveHost::CreateFile(const char* _path,
 }
 
 int ArchiveHost::FetchDirectoryListing(const char *_path,
-                                       std::shared_ptr<VFSListing> &_target,
+                                       VFSListingPtr &_target,
                                        unsigned long _flags,
                                        [[maybe_unused]] const VFSCancelChecker &_cancel_checker)
 {

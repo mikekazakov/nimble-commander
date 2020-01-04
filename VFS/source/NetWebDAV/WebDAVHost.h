@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "../../include/VFS/Host.h"
@@ -32,7 +32,7 @@ public:
     bool IsWritable() const override;
     
     int FetchDirectoryListing(const char *_path,
-                              std::shared_ptr<VFSListing> &_target,
+                              VFSListingPtr &_target,
                               unsigned long _flags,
                               const VFSCancelChecker &_cancel_checker) override;
     

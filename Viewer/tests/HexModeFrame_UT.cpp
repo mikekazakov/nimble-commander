@@ -1,3 +1,4 @@
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextModeWorkingSet.h"
 #include "HexModeProcessing.h"
@@ -21,7 +22,7 @@ static bool Equal(CFStringRef _lhs, CFStringRef _rhs);
 
 TEST_CASE(PREFIX"Verify RowsBuilder against Hello, World!")
 {
-    const auto string = std::string{u8"Hello, World!"};
+    const auto string = std::string{reinterpret_cast<const char*>(u8"Hello, World!")};
     const auto ws = ProduceWorkingSet(string.data(), (int)string.length());
     const auto font = CTFontCreateWithName(CFSTR("Menlo-Regular"), 13., nullptr);
     const auto release_font = at_scope_end([&]{ CFRelease(font); });

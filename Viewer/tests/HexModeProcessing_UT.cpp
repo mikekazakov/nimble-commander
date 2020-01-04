@@ -1,3 +1,4 @@
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextModeWorkingSet.h"
 #include "HexModeProcessing.h"
@@ -148,7 +149,7 @@ TEST_CASE(PREFIX"Verify a layout of a primitive 1-byte encoded string in a shift
 
 TEST_CASE(PREFIX"Verify a layout of a primitive utf8 encoded string")
 {
-    const auto string = std::string{u8"Привет"};
+    const auto string = std::string{reinterpret_cast<const char*>(u8"Привет")};
     const auto ws = ProduceWorkingSet(string.data(), (int)string.length());
     HexModeSplitter::Source source;
     source.working_set = ws.get();
@@ -201,7 +202,7 @@ TEST_CASE(PREFIX"Verify a layout of a primitive utf8 encoded string")
 
 TEST_CASE(PREFIX"Verify a layout of a utf8 encoded string with mixed lengths")
 {
-    const auto string = std::string{u8"NцQф"};
+    const auto string = std::string{ reinterpret_cast<const char*>(u8"NцQф") };
     const auto ws = ProduceWorkingSet(string.data(), (int)string.length());
     HexModeSplitter::Source source;
     source.working_set = ws.get();

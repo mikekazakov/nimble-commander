@@ -1,3 +1,4 @@
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "SearchInFile.h"
 #include "VFSGenericMemReadOnlyFile.h"
@@ -105,9 +106,9 @@ TEST_CASE(PREFIX "Does search for text which is outside of file window size")
 TEST_CASE(PREFIX "Can search for non-ANSI characters")
 {
     SECTION("Aligned (even) position") {
-        auto fw = MakeFileWindow(u8"0123456789привет");
+        auto fw = MakeFileWindow(reinterpret_cast<const char*>(u8"0123456789привет"));
         auto search = SearchInFile{fw};
-        const auto cf_string = CFString(u8"привет");
+        const auto cf_string = CFString(reinterpret_cast<const char*>(u8"привет"));
         search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
         const auto result = search.Search();
         REQUIRE( result.response == SearchInFile::Response::Found );
@@ -115,9 +116,9 @@ TEST_CASE(PREFIX "Can search for non-ANSI characters")
         CHECK( result.location->bytes_len == 12 );
     }
     SECTION("Random (non-even) position") {
-        auto fw = MakeFileWindow(u8"01234567890привет");
+        auto fw = MakeFileWindow(reinterpret_cast<const char*>(u8"01234567890привет"));
         auto search = SearchInFile{fw};
-        const auto cf_string = CFString(u8"привет");
+        const auto cf_string = CFString(reinterpret_cast<const char*>(u8"привет"));
         search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
         const auto result = search.Search();
         REQUIRE( result.response == SearchInFile::Response::Found );
@@ -143,30 +144,30 @@ TEST_CASE(PREFIX "Can search for text located beyond 32bit boundary")
 
 TEST_CASE(PREFIX "Handles case the sensitivity flag")
 {
-    auto fw = MakeFileWindow(u8"0123456789привет");
+    auto fw = MakeFileWindow(reinterpret_cast<const char*>(u8"0123456789привет"));
     auto search = SearchInFile{fw};
 
     SECTION("case insensitive - match") { // default option
-        const auto cf_string = CFString(u8"привет");
+        const auto cf_string = CFString(reinterpret_cast<const char*>(u8"привет"));
         search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
         const auto result = search.Search();
         REQUIRE( result.response == SearchInFile::Response::Found );
     }
     SECTION("case insensitive - match") { // default option
-        const auto cf_string = CFString(u8"ПРИВЕТ");
+        const auto cf_string = CFString(reinterpret_cast<const char*>(u8"ПРИВЕТ"));
         search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
         const auto result = search.Search();
         REQUIRE( result.response == SearchInFile::Response::Found );
     }
     SECTION("case sensitive - match") {
-        const auto cf_string = CFString(u8"привет");
+        const auto cf_string = CFString(reinterpret_cast<const char*>(u8"привет"));
         search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
         search.SetSearchOptions(SearchInFile::Options::CaseSensitive);
         const auto result = search.Search();
         REQUIRE( result.response == SearchInFile::Response::Found );
     }
     SECTION("case sensitive - no match") {
-        const auto cf_string = CFString(u8"ПРИВЕТ");
+        const auto cf_string = CFString(reinterpret_cast<const char*>(u8"ПРИВЕТ"));
         search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
         search.SetSearchOptions(SearchInFile::Options::CaseSensitive);
         const auto result = search.Search();
@@ -176,10 +177,10 @@ TEST_CASE(PREFIX "Handles case the sensitivity flag")
 
 TEST_CASE(PREFIX "Handles case the whole phrase flag")
 {
-    auto fw = MakeFileWindow(u8"0123456789hello, hello");
+    auto fw = MakeFileWindow(reinterpret_cast<const char*>(u8"0123456789hello, hello"));
     auto search = SearchInFile{fw};
     SECTION("regardless") { // default option
-        const auto cf_string = CFString(u8"hello");
+        const auto cf_string = CFString(reinterpret_cast<const char*>(u8"hello"));
         search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
         const auto result = search.Search();
         REQUIRE( result.response == SearchInFile::Response::Found );
@@ -187,7 +188,7 @@ TEST_CASE(PREFIX "Handles case the whole phrase flag")
         CHECK( result.location->bytes_len == 5 );
     }
     SECTION("whole phrase") {
-        const auto cf_string = CFString(u8"hello");
+        const auto cf_string = CFString(reinterpret_cast<const char*>(u8"hello"));
         search.ToggleTextSearch(*cf_string, encodings::ENCODING_UTF8);
         search.SetSearchOptions(SearchInFile::Options::FindWholePhrase);
         const auto result = search.Search();

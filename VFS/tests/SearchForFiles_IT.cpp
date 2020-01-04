@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "SearchForFiles.h"
 #include <Utility/PathManip.h>
@@ -194,14 +194,14 @@ TEST_CASE(PREFIX "Test content filter")
     }
     SECTION("мир, UTF8") {
         auto filter = SearchForFiles::FilterContent{};
-        filter.text = u8"мир"; 
+        filter.text = reinterpret_cast<const char*>(u8"мир"); 
         search.SetFilterContent(filter);
         do_search( Options::GoIntoSubDirs | Options::SearchForFiles | Options::SearchForDirs );
         CHECK( filenames == set{"filename2.txt"} );
     }
     SECTION("мир, MACOS_ROMAN_WESTERN") {
         auto filter = SearchForFiles::FilterContent{};
-        filter.text = u8"мир";
+        filter.text = reinterpret_cast<const char*>(u8"мир");
         filter.encoding = encodings::ENCODING_MACOS_ROMAN_WESTERN;
         search.SetFilterContent(filter);
         do_search( Options::GoIntoSubDirs | Options::SearchForFiles | Options::SearchForDirs );
@@ -212,7 +212,7 @@ TEST_CASE(PREFIX "Test content filter")
 static void BuildTestData(const std::string &_root_path)
 {
     Save( _root_path + "filename1.txt", "Hello, world!");
-    Save( _root_path + "filename2.txt", u8"Привет, мир!");
+    Save( _root_path + "filename2.txt", reinterpret_cast<const char*>(u8"Привет, мир!"));
     MkDir( _root_path + "Dir" );
     Save( _root_path + "Dir/filename3.txt", "Almost edge of the world!");
 }

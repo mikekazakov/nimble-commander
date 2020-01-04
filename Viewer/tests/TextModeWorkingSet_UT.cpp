@@ -1,3 +1,4 @@
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include "TextModeWorkingSet.h"
 #include <Utility/Encodings.h>
@@ -9,7 +10,7 @@ using nc::viewer::TextModeWorkingSet;
 #define PREFIX "TextModeWorkingSet "
 TEST_CASE(PREFIX"Copies and owns UTF16 characters")
 {
-    std::string utf8_string = u8"Привет, мир!";
+    std::string utf8_string = reinterpret_cast<const char*>(u8"Привет, мир!");
     auto utf16_chars = std::make_unique<unsigned short[]>( utf8_string.length() );
     auto utf16_chars_offsets = std::make_unique<unsigned[]>( utf8_string.length() );
     size_t utf16_length = 0;
@@ -54,7 +55,7 @@ TEST_CASE(PREFIX"Copies and owns UTF16 characters")
 
 TEST_CASE(PREFIX"properly clips ranges in ToLocalBytesRange")
 {
-    std::string utf8_string = u8"Привет, мир!";
+    std::string utf8_string = reinterpret_cast<const char*>(u8"Привет, мир!");
     auto utf16_chars = std::make_unique<unsigned short[]>( utf8_string.length() );
     auto utf16_chars_offsets = std::make_unique<unsigned[]>( utf8_string.length() );
     size_t utf16_length = 0;

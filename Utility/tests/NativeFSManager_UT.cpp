@@ -22,11 +22,14 @@ TEST_CASE(PREFIX"Fast lookup considers firmlinks")
 
 TEST_CASE(PREFIX"VolumeFromFD")
 {
-    const int fd1 = open("/bin", O_RDONLY);
+    const auto p1 = "/bin";
+    const auto p2 = "/Users";
+
+    const int fd1 = open(p1, O_RDONLY);
     REQUIRE( fd1 >= 0 );
     auto close_fd1 = at_scope_end([=]{ close(fd1); });
 
-    const int fd2 = open("/Users", O_RDONLY);
+    const int fd2 = open(p2, O_RDONLY);
     REQUIRE( fd2 >= 0 );
     auto close_fd2 = at_scope_end([=]{ close(fd2); });
 
@@ -38,4 +41,10 @@ TEST_CASE(PREFIX"VolumeFromFD")
     const auto info2 = fsm.VolumeFromFD(fd2);
     REQUIRE( info2 != nullptr );
     CHECK( info2->mounted_at_path == "/System/Volumes/Data" ); // this can be flaky (?)
+    
+    const auto info1_p = fsm.VolumeFromPath(p1);
+    CHECK( info1_p == info1 );
+    
+    const auto info2_p = fsm.VolumeFromPath(p2);
+    CHECK( info2_p == info2 );
 }

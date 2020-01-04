@@ -1061,7 +1061,7 @@ CQ
                                     <action selector="onMainMenuPerformGoToProductForum:" target="-1" id="wNL-dn-2ck"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Debug" id="3aO-vj-hIL">
+                            <menuItem title="Debug" tag="17020" id="3aO-vj-hIL">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Debug" id="J1h-Qq-hWI">
                                     <items>

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate.h"
 #include "AppDelegate+Migration.h"
 #include "AppDelegate+MainWindowCreation.h"
@@ -235,6 +235,7 @@ static NCAppDelegate *g_Me = nil;
     [self themesManager];
     [self favoriteLocationsStorage];
     
+    [self enableDebugMenuIfAsked];
     [self updateMainMenuFeaturesByVersionAndState];
     
     // update menu with current shortcuts layout
@@ -376,6 +377,16 @@ static NCAppDelegate *g_Me = nil;
     enable( "menu.command.link_create_hard",    am.HasLinksManipulation() );
     enable( "menu.command.link_edit",           am.HasLinksManipulation());
     enable( "menu.command.open_xattr",          am.HasXAttrFS() );
+}
+
+- (void)enableDebugMenuIfAsked
+{
+    const auto show_mask = NSAlternateKeyMask;
+    const auto debug_submenu_tag = 17'020;
+    if( (NSEvent.modifierFlags & show_mask) != show_mask ) {
+        auto debug_submenu = [NSApp.mainMenu itemWithTagHierarchical:debug_submenu_tag];
+        debug_submenu.hidden = true;    
+    }
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)[[maybe_unused]]_notification
@@ -928,7 +939,6 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
     
     m_CTrailMonitor = std::make_unique<ctrail::OneShotMonitor>( std::move(params) );
 }
-
 
 - (const std::shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager
 {

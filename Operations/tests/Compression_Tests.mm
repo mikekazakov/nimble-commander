@@ -140,7 +140,7 @@ TEST_CASE(PREFIX"Compressing Chess.app")
     TempTestDir tmp_dir;
     const auto native_host = VFSNativeHost::SharedHost();        
     
-    Compression operation{FetchItems("/Applications/", {"Chess.app"}, *native_host),
+    Compression operation{FetchItems("/System/Applications/", {"Chess.app"}, *native_host),
         tmp_dir.directory,
         native_host};
     
@@ -155,7 +155,7 @@ TEST_CASE(PREFIX"Compressing Chess.app")
                                                                    native_host) );
     
     int cmp_result = 0;
-    const auto cmp_rc = VFSCompareEntries("/Applications/Chess.app",
+    const auto cmp_rc = VFSCompareEntries("/System/Applications/Chess.app",
                                           native_host,
                                           "/Chess.app",
                                           arc_host,
@@ -228,18 +228,19 @@ TEST_CASE(PREFIX"Compressing /bin into encrypted archive")
     CHECK( cmp_result == 0 );
 }
 
-TEST_CASE(PREFIX"Long compression stats")
+TEST_CASE(PREFIX"Long compression stats (compressing Music.app)")
 {
     TempTestDir tmp_dir;
     const auto native_host = VFSNativeHost::SharedHost();    
-    Compression operation{FetchItems("/Applications/", {"iTunes.app"}, *native_host),
+    Compression operation{FetchItems("/System/Applications/", {"Music.app"}, *native_host),
         tmp_dir.directory,
         native_host};
     
     operation.Start();
-    operation.Wait( 5000ms );
+    operation.Wait( 1000ms );
     const auto eta = operation.Statistics().ETA( Statistics::SourceType::Bytes );
-    CHECK( double(eta->count()) / 1000000000. > 4.0 );
+    REQUIRE( eta );
+    CHECK( *eta > std::chrono::milliseconds(1000) );
     
     operation.Pause();
     REQUIRE( operation.State() == OperationState::Paused );
@@ -254,9 +255,9 @@ TEST_CASE(PREFIX"Long compression stats")
     REQUIRE_NOTHROW( arc_host = std::make_shared<vfs::ArchiveHost>(operation.ArchivePath().c_str(),
                                                                    native_host) );
     int cmp_result = 0;
-    const auto cmp_rc = VFSCompareEntries("/Applications/iTunes.app",
+    const auto cmp_rc = VFSCompareEntries("/System/Applications/Music.app",
                                           native_host,
-                                          "/iTunes.app",
+                                          "/Music.app",
                                           arc_host,
                                           cmp_result);
     CHECK( cmp_rc == VFSError::Ok );

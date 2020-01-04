@@ -164,9 +164,11 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
         if( new_path.empty() == false )
             destination_path = std::move(new_path);
     });
-    const auto is_same_native_volume = [this](int _index) {
-        const auto dev_id = m_SourceItems.ItemDev(_index);
-        return m_NativeFSManager.VolumeFromDevID( dev_id ) == m_DestinationNativeFSInfo;
+    const auto is_same_native_volume = [&]() {
+        auto src_fsinfo = m_NativeFSManager.VolumeFromPath(source_path);
+        if( src_fsinfo == nullptr  )
+            return false;
+        return src_fsinfo == m_DestinationNativeFSInfo;
     };    
     
     StepResult step_result = StepResult::Stop;
@@ -197,7 +199,7 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
                                                          nonexistent_dst_req_handler);
             }
             else {
-                if( is_same_native_volume(_item_number) ) { // rename
+                if( is_same_native_volume() ) { // rename
                     step_result = RenameNativeFile(source_path,
                                                    destination_path,
                                                    nonexistent_dst_req_handler);
@@ -281,8 +283,7 @@ CopyingJob::StepResult CopyingJob::ProcessDirectoryItem(VFSHost& _source_host,
             result = CopyNativeDirectoryToNativeDirectory(_source_path, _destination_path);
         }
         else { // move
-            const auto src_dev_id = m_SourceItems.ItemDev(_source_index);
-            const auto src_fs_info = m_NativeFSManager.VolumeFromDevID( src_dev_id );
+            const auto src_fs_info = m_NativeFSManager.VolumeFromPath(_source_path);
             const auto same_volume = src_fs_info == m_DestinationNativeFSInfo;
             if( same_volume ) { // rename
                 const auto rename_result = RenameNativeDirectory(_source_path, _destination_path);

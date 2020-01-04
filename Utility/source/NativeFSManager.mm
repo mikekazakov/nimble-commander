@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NativeFSManager.h"
 #include <AppKit/AppKit.h>
 #include <DiskArbitration/DiskArbitration.h>
@@ -102,8 +102,8 @@ struct NativeFSManager::Impl
     std::optional<APFSTree> m_StartupAPFSTree;
     std::vector<FirmlinksMappingParser::Firmlink> m_RootFirmlinks;
     
-    Info VolumeFromMountPoint_Unlocked(const std::string_view _mount_point) const noexcept;
-    Info VolumeFromBSDName_Unlocked(const std::string_view _bsd_name) const noexcept;    
+    Info VolumeFromMountPoint_Unlocked(std::string_view _mount_point) const noexcept;
+    Info VolumeFromBSDName_Unlocked(std::string_view _bsd_name) const noexcept;    
     void InjectRootFirmlinks(const APFSTree& _tree);
 }; 
 
@@ -458,7 +458,7 @@ void NativeFSManager::UpdateSpaceInformation(const Info &_volume)
     UpdateSpaceInfo( *_volume.get() );
 }
 
-NativeFSManager::Info NativeFSManager::VolumeFromFD(int _fd) const
+NativeFSManager::Info NativeFSManager::VolumeFromFD(int _fd) const noexcept
 {
     struct statfs info;
     if( fstatfs(_fd, &info) < 0 )
@@ -467,25 +467,16 @@ NativeFSManager::Info NativeFSManager::VolumeFromFD(int _fd) const
     return VolumeFromMountPoint((const char*)info.f_mntonname);
 }
 
-NativeFSManager::Info NativeFSManager::VolumeFromPathFast(const std::string &_path) const
+NativeFSManager::Info NativeFSManager::VolumeFromPathFast(std::string_view _path) const noexcept
 {
     std::lock_guard<std::mutex> lock(I->m_Lock);
-    return VolumeFromPathFast_Unlocked(_path);
-}
-
-NativeFSManager::Info NativeFSManager::VolumeFromPathFast_Unlocked(const std::string &_path) const
-{
     return I->m_VolumeLookup.FindVolumeForLocation(_path);
 }
 
-NativeFSManager::Info NativeFSManager::VolumeFromMountPoint(const std::string &_mount_point) const
+NativeFSManager::Info NativeFSManager::
+    VolumeFromMountPoint(std::string_view _mount_point) const noexcept
 {
-    return VolumeFromMountPoint( _mount_point.c_str() );
-}
-
-NativeFSManager::Info NativeFSManager::VolumeFromMountPoint(const char *_mount_point) const
-{
-    if( _mount_point == nullptr )
+    if( _mount_point.empty() )
         return nullptr;
 
     std::lock_guard<std::mutex> lock(I->m_Lock);
@@ -493,7 +484,7 @@ NativeFSManager::Info NativeFSManager::VolumeFromMountPoint(const char *_mount_p
 }
 
 NativeFSManager::Info NativeFSManager::Impl::
-VolumeFromMountPoint_Unlocked(const std::string_view _mount_point) const noexcept
+VolumeFromMountPoint_Unlocked(std::string_view _mount_point) const noexcept
 {
     if( _mount_point.empty() )
         return nullptr;
@@ -506,7 +497,7 @@ VolumeFromMountPoint_Unlocked(const std::string_view _mount_point) const noexcep
 }
 
 NativeFSManager::Info NativeFSManager::Impl::
-VolumeFromBSDName_Unlocked(const std::string_view _bsd_name) const noexcept
+VolumeFromBSDName_Unlocked(std::string_view _bsd_name) const noexcept
 {
     // not sure how legit this is...
     const auto device = "/dev/" + std::string(_bsd_name);        
@@ -518,23 +509,7 @@ VolumeFromBSDName_Unlocked(const std::string_view _bsd_name) const noexcept
     return nullptr;
 }
 
-NativeFSManager::Info NativeFSManager::VolumeFromDevID(dev_t _dev_id) const
-{
-    std::lock_guard<std::mutex> lock(I->m_Lock);
-    return VolumeFromDevID_Unlocked(_dev_id);
-}
-
-NativeFSManager::Info NativeFSManager::VolumeFromDevID_Unlocked(dev_t _dev_id) const
-{
-    const auto it = std::find_if(std::begin(I->m_Volumes),
-                            std::end(I->m_Volumes),
-                            [=](auto&_){ return _->basic.dev_id == _dev_id; } );
-    if( it != std::end(I->m_Volumes) )
-        return *it;
-    return nullptr;
-}
-
-NativeFSManager::Info NativeFSManager::VolumeFromPath(std::string_view _path) const
+NativeFSManager::Info NativeFSManager::VolumeFromPath(std::string_view _path) const noexcept
 {
     if( _path.empty() )
         return nullptr;

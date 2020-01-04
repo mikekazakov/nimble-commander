@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/stat.h>
 #include <Habanero/algo.h>
 #include <Utility/PathManip.h>
@@ -26,7 +26,6 @@ int SourceItems::InsertItem(uint16_t _host_index,
     it.base_dir_index = _base_dir_index;
     it.host_index = _host_index;
     it.mode = _stat.mode;
-    it.dev_num = _stat.dev;
     it.item_size = _stat.size;
     
     m_Items.emplace_back( std::move(it) );
@@ -88,11 +87,6 @@ uint64_t SourceItems::ItemSize( int _item_no ) const
 const std::string& SourceItems::ItemName( int _item_no ) const
 {
     return m_Items.at(_item_no).item_name;
-}
-
-dev_t SourceItems::ItemDev( int _item_no ) const
-{
-    return m_Items.at(_item_no).dev_num;
 }
 
 VFSHost &SourceItems::ItemHost( int _item_no ) const

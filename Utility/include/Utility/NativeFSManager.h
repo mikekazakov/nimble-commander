@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -46,7 +46,8 @@ struct NativeFileSystemInfo
         fsid_t fs_id = {{0, 0}};
         
         /**
-         * ID of device, used in stat() syscall
+         * ID of device, used in stat() syscall.
+         * As of 10.15, dev_it can *NOT* be used to derive 1:1 correspondense between stat and a fs. 
          */
         dev_t dev_id = 0;
         
@@ -559,35 +560,32 @@ public:
      * Returns a list of volumes in a system.
      */
     std::vector<Info> Volumes() const;
-    
-    Info VolumeFromFD(int _fd) const;
-    Info VolumeFromDevID(dev_t _dev_id) const;
+
+    /**
+     * VolumeFromFD() uses POSIX fstatfs() to get mount point for specified path,
+     * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
+     */    
+    Info VolumeFromFD(int _fd) const noexcept;
     
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */
-    Info VolumeFromPath(std::string_view _path) const;
+    Info VolumeFromPath(std::string_view _path) const noexcept;
     
     /**
      * VolumeFromPathFast() chooses the closest volume to _path, using plain strings comparison.
      * It don't take into consideration invalid paths or symlinks following somewhere in _path,
      * so should be used very carefully only time-critical paths (this method doesn't make any syscalls).
      */
-    Info VolumeFromPathFast(const std::string &_path) const;
+    Info VolumeFromPathFast(std::string_view _path) const noexcept;
     
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
      * Is fast, since dont make any syscalls.
      */
-    Info VolumeFromMountPoint(const std::string &_mount_point) const;
+    Info VolumeFromMountPoint(std::string_view _mount_point) const noexcept;
 
-    /**
-     * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
-     * Is fast, since dont make any syscalls.
-     */
-    Info VolumeFromMountPoint(const char *_mount_point) const;
-    
     /**
      * UpdateSpaceInformation() forces to fetch and recalculate space information contained in _volume.
      */
@@ -610,9 +608,7 @@ private:
     void OnDidMount(const std::string &_on_path);
     void OnWillUnmount(const std::string &_on_path);
     void OnDidUnmount(const std::string &_on_path);
-    void OnDidRename(const std::string &_old_path, const std::string &_new_path);
-    Info VolumeFromDevID_Unlocked(dev_t _dev_id) const;    
-    Info VolumeFromPathFast_Unlocked(const std::string &_path) const;
+    void OnDidRename(const std::string &_old_path, const std::string &_new_path);    
     void InsertNewVolume_Unlocked( const std::shared_ptr<NativeFileSystemInfo> &_volume );
     void PerformUnmounting(const Info &_volume);
     void PerformGenericUnmounting(const Info &_volume);    

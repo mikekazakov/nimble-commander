@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
@@ -22,7 +22,6 @@ public:
     const std::string& ItemName( int _item_no ) const;
     mode_t          ItemMode( int _item_no ) const;
     uint64_t        ItemSize( int _item_no ) const;
-    dev_t           ItemDev( int _item_no ) const; // meaningful only for native vfs (yet?)
     VFSHost        &ItemHost( int _item_no ) const;
     
     VFSHost &Host( uint16_t _host_ind ) const;
@@ -45,7 +44,6 @@ private:
         unsigned    base_dir_index;
         uint16_t    host_index;
         uint16_t    mode;
-        dev_t       dev_num;
     };
     
     std::vector<SourceItem>                 m_Items;

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <string>
@@ -174,7 +174,6 @@ class Host;
 using VFSListing            = nc::vfs::Listing;
 using VFSListingPtr         = std::shared_ptr<nc::vfs::Listing>;
 using VFSListingItem        = nc::vfs::ListingItem;
-using VFSWeakListingItem    = nc::vfs::WeakListingItem;
 using VFSHost               = nc::vfs::Host;
 using VFSHostPtr            = std::shared_ptr<nc::vfs::Host>;
 using VFSHostWeakPtr        = std::weak_ptr<nc::vfs::Host>;

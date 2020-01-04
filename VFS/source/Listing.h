@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/variable_container.h>
@@ -282,33 +282,6 @@ private:
     friend Listing::iterator;
     friend WeakListingItem;
 };
-
-class WeakListingItem
-{
-public:
-    WeakListingItem() noexcept;
-    WeakListingItem(const ListingItem &_item) noexcept;
-    WeakListingItem(const WeakListingItem &_item) noexcept;
-    WeakListingItem(WeakListingItem &&_item) noexcept;
-    
-    const WeakListingItem& operator=( const ListingItem &_item ) noexcept;
-    const WeakListingItem& operator=( const WeakListingItem &_item ) noexcept;
-    const WeakListingItem& operator=( WeakListingItem &&_item ) noexcept;
-    
-    ListingItem Lock() const noexcept;
-    
-    bool operator ==(const WeakListingItem&) const noexcept;
-    bool operator !=(const WeakListingItem&) const noexcept;
-    bool operator ==(const ListingItem&) const noexcept;
-    bool operator !=(const ListingItem&) const noexcept;
-    
-private:
-    std::weak_ptr<const Listing>  L;
-    unsigned                    I;
-};
-
-bool operator==(const ListingItem&_l, const WeakListingItem&_r) noexcept;
-bool operator!=(const ListingItem&_l, const WeakListingItem&_r) noexcept;
 
 class Listing::iterator
 {
@@ -914,84 +887,6 @@ inline bool ListingItem::operator ==(const ListingItem&_) const noexcept
 inline bool ListingItem::operator !=(const ListingItem&_) const noexcept
 {
     return I != _.I || L != _.L;
-}
-
-inline WeakListingItem::WeakListingItem() noexcept
-{
-}
-
-inline WeakListingItem::WeakListingItem(const ListingItem &_item) noexcept:
-    L(_item.L),
-    I(_item.I)
-{
-}
-
-inline WeakListingItem::WeakListingItem(const WeakListingItem &_item) noexcept:
-    L(_item.L),
-    I(_item.I)
-{
-}
-
-inline WeakListingItem::WeakListingItem(WeakListingItem &&_item) noexcept:
-    L( move(_item.L) ),
-    I( _item.I )
-{
-}
-
-inline const WeakListingItem& WeakListingItem::operator=( const ListingItem &_item ) noexcept
-{
-    L = _item.L;
-    I = _item.I;
-    return *this;
-}
-
-inline const WeakListingItem& WeakListingItem::operator=( const WeakListingItem &_item ) noexcept
-{
-    L = _item.L;
-    I = _item.I;
-    return *this;
-}
-
-inline const WeakListingItem& WeakListingItem::operator=( WeakListingItem &&_item ) noexcept
-{
-    L = move(_item.L);
-    I = _item.I;
-    return *this;
-}
-
-inline ListingItem WeakListingItem::Lock() const noexcept
-{
-    return { L.lock(), I };
-}
-
-inline bool WeakListingItem::operator ==(const WeakListingItem&_) const noexcept
-{
-    return I == _.I && !L.owner_before(_.L) && !_.L.owner_before(L);
-}
-
-inline bool WeakListingItem::operator !=(const WeakListingItem&_) const noexcept
-{
-    return !(*this == _);
-}
-
-inline bool WeakListingItem::operator ==(const ListingItem&_) const noexcept
-{
-    return I == _.I && !L.owner_before(_.L) && !_.L.owner_before(L);
-}
-
-inline bool WeakListingItem::operator !=(const ListingItem&_) const noexcept
-{
-    return !(*this == _);
-}
-
-inline bool operator==(const ListingItem&_l, const WeakListingItem&_r) noexcept
-{
-    return _r == _l;
-}
-
-inline bool operator!=(const ListingItem&_l, const WeakListingItem&_r) noexcept
-{
-    return !(_r == _l);
 }
 
 inline Listing::iterator &Listing::iterator::operator--() noexcept // prefix decrement

@@ -176,20 +176,26 @@ static string UUID()
     XCTAssert(should_be == in_fact);
 }
 
-- (void)testSeekRead_Debian_Org
+- (void)testSeekRead_utexas_edu
 {
     try {
-        auto host = make_shared<FTPHost>("ftp.debian.org", "", "", "/debian/dists/wheezy/main/installer-amd64/20130430/images/hd-media/");
+        const auto host_name = "ftp.utexas.edu";
+        const auto host_dir = "/pub/debian-cd/10.2.0/i386/iso-cd/";
+        const auto host_path = "/pub/debian-cd/10.2.0/i386/iso-cd/debian-10.2.0-i386-netinst.iso";
+        const auto offset = 0x1D79AC0;
+        const auto length = 16; 
+        const auto expected = "\x1b\x5a\x65\x00\x55\x57\xae\xcc\x1a\xeb\xa9\xe3\x92\xb0\x98\x9c";
+        
+        const auto host = make_shared<FTPHost>(host_name, "", "", host_dir);
         
         // check seeking at big distance and reading an arbitrary selected known data block
         VFSFilePtr file;
         char buf[4096];
-        XCTAssert( host->CreateFile("/debian/dists/wheezy/main/installer-amd64/20130430/images/hd-media/boot.img.gz", file, 0) == 0 );
-        
+        XCTAssert( host->CreateFile(host_path, file, 0) == 0 );        
         XCTAssert( file->Open(VFSFlags::OF_Read) == 0 );
-        XCTAssert( file->Seek(0x1D79AC0, VFSFile::Seek_Set) == 0x1D79AC0);
-        XCTAssert( file->Read(buf, 16) == 16 );
-        XCTAssert( memcmp(buf, "\xf7\x7f\x03\x37\x5b\xe9\x5f\x3e\xab\xa2\x5d\x46\x0b\x13\x5a\xe2", 16) == 0 );
+        XCTAssert( file->Seek(offset, VFSFile::Seek_Set) == offset);
+        XCTAssert( file->Read(buf, length) == length );        
+        XCTAssert( memcmp(buf, expected, length) == 0 );
         
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );

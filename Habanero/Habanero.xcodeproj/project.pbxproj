@@ -25,6 +25,8 @@
 		CF308F4D213B773400915730 /* PosixFilesystemImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */; };
 		CF308F4F213B7B3C00915730 /* PosixFilesystemMock.h in Headers */ = {isa = PBXBuildFile; fileRef = CF308F4E213B7B3C00915730 /* PosixFilesystemMock.h */; };
 		CF31851B2150BBA30012F5DD /* intrusive_ptr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF31851A2150BBA30012F5DD /* intrusive_ptr.h */; };
+		CF3ABD8523C093BE00D1878B /* StringViewZBuf.h in Headers */ = {isa = PBXBuildFile; fileRef = CF3ABD8423C093BE00D1878B /* StringViewZBuf.h */; };
+		CF3ABD8723C094A700D1878B /* StringViewZBuf_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */; };
 		CF7D7D602158B2C000DA1794 /* tribool.h in Headers */ = {isa = PBXBuildFile; fileRef = CF7D7D5F2158B2C000DA1794 /* tribool.h */; };
 		CF9BF90B226B423B00AD36D9 /* CFPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = CF9BF90A226B423B00AD36D9 /* CFPtr.h */; };
 		CFD22CD42012DDDF00608DFE /* LRUCache.h in Headers */ = {isa = PBXBuildFile; fileRef = CFD22CD32012DDDF00608DFE /* LRUCache.h */; };
@@ -81,6 +83,8 @@
 		CF308F4C213B773400915730 /* PosixFilesystemImpl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PosixFilesystemImpl.cpp; path = ../habanero/source/PosixFilesystemImpl.cpp; sourceTree = "<group>"; };
 		CF308F4E213B7B3C00915730 /* PosixFilesystemMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PosixFilesystemMock.h; path = ../habanero/include/Habanero/PosixFilesystemMock.h; sourceTree = "<group>"; };
 		CF31851A2150BBA30012F5DD /* intrusive_ptr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = intrusive_ptr.h; path = ../habanero/include/Habanero/intrusive_ptr.h; sourceTree = "<group>"; };
+		CF3ABD8423C093BE00D1878B /* StringViewZBuf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringViewZBuf.h; path = include/Habanero/StringViewZBuf.h; sourceTree = "<group>"; };
+		CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringViewZBuf_UT.cpp; sourceTree = "<group>"; };
 		CF47DF701E063CC500AAAF3C /* DispatchGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DispatchGroup.h; path = ../habanero/include/Habanero/DispatchGroup.h; sourceTree = "<group>"; };
 		CF47DF721E063CCF00AAAF3C /* DispatchGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DispatchGroup.cpp; path = ../habanero/source/DispatchGroup.cpp; sourceTree = "<group>"; };
 		CF614ACD1F9D8EDC0005F2DB /* Hash_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Hash_UT.cpp; path = ../habanero/tests/Hash_UT.cpp; sourceTree = SOURCE_ROOT; };
@@ -175,6 +179,7 @@
 				CFD22CD52012DDF800608DFE /* LRUCache_Tests.cpp */,
 				CFE8F90321A27F3000300019 /* spinlock_UT.cpp */,
 				CF2084021FEFB2F70014D6AD /* StringsBulk_UT.cpp */,
+				CF3ABD8623C094A700D1878B /* StringViewZBuf_UT.cpp */,
 				CF24E20B2291777D00C166FA /* UnitTests_main.cpp */,
 				CF614ACE1F9D8EDD0005F2DB /* VariableContainer_UT.cpp */,
 			);
@@ -232,6 +237,7 @@
 				CFB690561E06710900BBA5BD /* SerialQueue.h */,
 				CFD62B901C99C2A60021EE7F /* spinlock.h */,
 				CF2083FE1FEFACF30014D6AD /* StringsBulk.h */,
+				CF3ABD8423C093BE00D1878B /* StringViewZBuf.h */,
 				CFD62B911C99C2A60021EE7F /* tiny_string.h */,
 				CF7D7D5F2158B2C000DA1794 /* tribool.h */,
 				CFD62B921C99C2A60021EE7F /* variable_container.h */,
@@ -282,6 +288,7 @@
 				CF9BF90B226B423B00AD36D9 /* CFPtr.h in Headers */,
 				CF24E1D52280274900C166FA /* CFRange.h in Headers */,
 				CF7D7D602158B2C000DA1794 /* tribool.h in Headers */,
+				CF3ABD8523C093BE00D1878B /* StringViewZBuf.h in Headers */,
 				CF308F4F213B7B3C00915730 /* PosixFilesystemMock.h in Headers */,
 				CF31851B2150BBA30012F5DD /* intrusive_ptr.h in Headers */,
 			);
@@ -366,6 +373,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF3ABD8723C094A700D1878B /* StringViewZBuf_UT.cpp in Sources */,
 				CF24E2192291A0D500C166FA /* LRUCache_Tests.cpp in Sources */,
 				CF24E215229196E100C166FA /* CFPtr_UT.cpp in Sources */,
 				CF24E21D2291B63E00C166FA /* VariableContainer_UT.cpp in Sources */,

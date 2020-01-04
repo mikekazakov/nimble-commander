@@ -156,17 +156,17 @@ static string UUID()
     XCTAssert( host->RemoveDirectory((g_LocalTestPath + "DirectoryName2").c_str(), 0) == 0);
 }
 
-- (void)testListing_Debian_Org
+- (void)testListing_utexas_edu
 {
-    auto path = "/debian/pool";
+    auto path = "/pub/debian-cd";
     VFSHostPtr host;
     try {
-        host = make_shared<FTPHost>("ftp.debian.org", "", "", path);
+        host = make_shared<FTPHost>("ftp.utexas.edu", "", "", path);
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
     }
-    set<string> should_be = {"contrib", "main", "non-free"};
+    set<string> should_be = {"10.2.0", "10.2.0-live", "current", "current-live", "ls-lR.gz", "project"};
     set<string> in_fact;
     
     XCTAssert( host->IterateDirectoryListing(path, [&](const VFSDirEnt &_dirent) {

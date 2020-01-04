@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <utility>
@@ -8,7 +8,7 @@
 // this is an almost straight copy of boost::intrusive_ptr, mainly because I don't want
 // to have all that legacy support and preprocessor spaghetti.
 
-namespace nc::hbn {
+namespace nc::base {
     
 template <typename T>
 class intrusive_ptr
@@ -240,15 +240,15 @@ inline void intrusive_ptr_dec_refcount(const intrusive_ref_counter<T> *p) noexce
 namespace std {
 
 template <typename T>
-inline void swap( nc::hbn::intrusive_ptr<T> &lhs, nc::hbn::intrusive_ptr<T> &rhs ) noexcept
+inline void swap( nc::base::intrusive_ptr<T> &lhs, nc::base::intrusive_ptr<T> &rhs ) noexcept
 {
     lhs.swap(rhs);
 }
 
 template <typename T>
-struct hash< nc::hbn::intrusive_ptr<T> >
+struct hash< nc::base::intrusive_ptr<T> >
 {
-    using argument_type = nc::hbn::intrusive_ptr<T>; 
+    using argument_type = nc::base::intrusive_ptr<T>; 
     using result_type = size_t; 
     result_type operator()(const argument_type& _p) const
     {

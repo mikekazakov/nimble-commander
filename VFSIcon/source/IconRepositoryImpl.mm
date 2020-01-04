@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/IconRepositoryImpl.h>
 
 namespace nc::vfsicon {
@@ -116,7 +116,7 @@ void IconRepositoryImpl::ScheduleIconProduction(SlotKey _key, const VFSListingIt
     if( m_ProductionQueue->QueueLength() >= m_MaxQueueLength )
         return; // sorry, too busy atm 
     
-    auto context = hbn::intrusive_ptr{new WorkerContext};
+    auto context = base::intrusive_ptr{new WorkerContext};
     context->item = _item;
     
     slot.production = context;

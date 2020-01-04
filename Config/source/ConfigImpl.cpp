@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigImpl.h"
 #include <rapidjson/error/en.h>
 #include <rapidjson/memorystream.h>
@@ -260,7 +260,7 @@ Token ConfigImpl::Observe(std::string_view _path, std::function<void()> _on_chan
         return CreateToken(0);
     
     const auto token = m_ObservationToken++;
-    auto observer = hbn::intrusive_ptr{ new Observer{token, std::move(_on_change)} }; 
+    auto observer = base::intrusive_ptr{ new Observer{token, std::move(_on_change)} }; 
     
     InsertObserver(_path, std::move(observer));
     
@@ -272,19 +272,19 @@ void ConfigImpl::ObserveForever(std::string_view _path, std::function<void()> _o
     if( !_on_change || _path.empty() )
         return;
     
-    auto observer = hbn::intrusive_ptr{ new Observer{0, std::move(_on_change)} }; 
+    auto observer = base::intrusive_ptr{ new Observer{0, std::move(_on_change)} }; 
     InsertObserver(_path, std::move(observer));
 }
     
 void ConfigImpl::InsertObserver(std::string_view _path,
-                                hbn::intrusive_ptr<const Observer> _observer)
+                                base::intrusive_ptr<const Observer> _observer)
 {
     const auto path = std::string{_path};
     const auto lock = std::lock_guard{m_ObserversLock};
     if( auto current_observers_it = m_Observers.find(path);
         current_observers_it != std::end(m_Observers)  ) {
         // somebody is already watching this path        
-        auto new_observers = hbn::intrusive_ptr{ new Observers };
+        auto new_observers = base::intrusive_ptr{ new Observers };
         new_observers->observers.reserve( current_observers_it->second->observers.size() + 1 );
         new_observers->observers = current_observers_it->second->observers;
         new_observers->observers.emplace_back( std::move(_observer) );
@@ -292,7 +292,7 @@ void ConfigImpl::InsertObserver(std::string_view _path,
     }
     else {
         // it's the first request to observe this path
-        auto new_observers = hbn::intrusive_ptr{ new Observers };
+        auto new_observers = base::intrusive_ptr{ new Observers };
         new_observers->observers.emplace_back( std::move(_observer) );
         m_Observers.emplace( std::move(path), std::move(new_observers) );
     }        
@@ -329,7 +329,7 @@ void ConfigImpl::DropToken(unsigned long _number)
             observer->was_removed = true;
             
             if( observers.size() > 1 ) {
-                auto new_observers = hbn::intrusive_ptr{ new Observers };
+                auto new_observers = base::intrusive_ptr{ new Observers };
                 new_observers->observers.reserve( observers.size() - 1 );
                 std::copy(observers.begin(),
                           to_drop_it,
@@ -360,7 +360,7 @@ void ConfigImpl::FireObservers(std::string_view _path) const
     }
 }
 
-hbn::intrusive_ptr<const ConfigImpl::Observers>
+base::intrusive_ptr<const ConfigImpl::Observers>
     ConfigImpl::FindObservers(std::string_view _path) const
 {
     const auto path = std::string{_path};

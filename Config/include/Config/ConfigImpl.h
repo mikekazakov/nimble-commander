@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "Config.h"
@@ -61,7 +61,7 @@ public:
     void Commit();
     
 private:
-    struct Observer : hbn::intrusive_ref_counter<Observer>
+    struct Observer : base::intrusive_ref_counter<Observer>
     {
         Observer(unsigned long _token, std::function<void()> _callback) noexcept;
         mutable bool was_removed = false;        
@@ -70,14 +70,14 @@ private:
         mutable std::recursive_mutex lock;
     };
     static_assert( sizeof(Observer) == 128 );    
-    using ObserverPtr = hbn::intrusive_ptr<const Observer>; 
+    using ObserverPtr = base::intrusive_ptr<const Observer>; 
     
-    struct Observers : hbn::intrusive_ref_counter<Observers>
+    struct Observers : base::intrusive_ref_counter<Observers>
     {
         std::vector<ObserverPtr> observers;
     };
     static_assert( sizeof(Observers) == 32 );
-    using ObserversPtr = hbn::intrusive_ptr<const Observers>;
+    using ObserversPtr = base::intrusive_ptr<const Observers>;
     
     void DropToken(unsigned long _number) override;
     const rapidjson::Value *FindInDocument_Unlocked(std::string_view _path) const;

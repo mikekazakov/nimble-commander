@@ -1,4 +1,4 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "IconRepository.h"
@@ -9,8 +9,6 @@
 #include <stack>
 #include <Habanero/spinlock.h>
 #include <Habanero/intrusive_ptr.h>
-//#include <boost/smart_ptr/intrusive_ptr.hpp>
-//#include <boost/smart_ptr/intrusive_ref_counter.hpp>
 
 namespace nc::vfsicon {
 
@@ -79,7 +77,7 @@ public:
     
 private:
     
-    struct WorkerContext : hbn::intrusive_ref_counter<WorkerContext> {
+    struct WorkerContext : base::intrusive_ref_counter<WorkerContext> {
         VFSListingItem item;
         std::atomic_bool must_stop{false};
         NSImage *result_filetype = nil;
@@ -99,7 +97,7 @@ private:
         uint64_t file_size = 0;
         time_t file_mtime = 0;
         NSImage *icon = nil;
-        hbn::intrusive_ptr<WorkerContext> production;
+        base::intrusive_ptr<WorkerContext> production;
     };
     
     int NumberOfUsedSlots() const;

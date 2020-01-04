@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/WorkspaceIconsCacheImpl.h>
 #include <sys/stat.h>
 #include <Utility/StringExtras.h>
@@ -41,7 +41,7 @@ NSImage *WorkspaceIconsCacheImpl::ProduceIcon(const std::string &_file_path)
     else {
         // insert dummy info into the structure, so no one else can try producing it
         // concurrently - prohibit wasting of resources                
-        auto info = hbn::intrusive_ptr{new Info};
+        auto info = base::intrusive_ptr{new Info};
         info->is_in_work.test_and_set();
         m_Items.insert( _file_path, info ); // O(1)
         lock.unlock();

@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFSIcon/QLThumbnailsCacheImpl.h>
 #include <Quartz/Quartz.h>
 #include <sys/stat.h>
@@ -168,7 +168,7 @@ NSImage *QLThumbnailsCacheImpl::Produce(const std::string &_filename,
         // insert dummy info into the structure, so no one else can try producing it
         // concurrently - prohibit wasting of resources        
         auto key = Key{_filename, _px_size};        
-        auto info = hbn::intrusive_ptr{new Info};
+        auto info = base::intrusive_ptr{new Info};
         info->is_in_work.test_and_set();
         m_Items.insert( std::move(key), info ); // O(1)
         lock.unlock();

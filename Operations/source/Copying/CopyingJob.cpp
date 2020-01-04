@@ -559,7 +559,7 @@ std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
                                                                                           const std::string &_item_name
                                                                                           ) -> StepResult {
             // compose a full path for current entry
-            std::string path = db.BaseDir(base_dir_indx) + _full_relative_path;
+            const std::string path = db.BaseDir(base_dir_indx) + _full_relative_path;
             
             // gather stat() information regarding current entry
             VFSStat st;
@@ -603,7 +603,7 @@ std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
                 if( !should_go_inside ) {
                     // check if we're on the same native volume
                     if( m_IsDestinationHostNative &&
-                        m_DestinationNativeFSInfo != m_NativeFSManager.VolumeFromDevID(st.dev) )
+                        m_DestinationNativeFSInfo != m_NativeFSManager.VolumeFromPath(path) )
                         should_go_inside = true;
                 }
                 if( !should_go_inside ) {

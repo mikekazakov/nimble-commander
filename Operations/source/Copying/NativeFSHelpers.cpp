@@ -108,9 +108,12 @@ bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
     auto cstring = _item_name.c_str();
     if( cstring[0] != '.' || cstring[1] != '_' || cstring[2] == 0 )
         return false;
+        
+    if( !_st.mode_bits.reg )
+        return false;
     
     // check if current filesystem uses external eas
-    auto fs_info = utility::NativeFSManager::Instance().VolumeFromDevID( _st.dev );
+    auto fs_info = utility::NativeFSManager::Instance().VolumeFromPath( _path );
     if( !fs_info || fs_info->interfaces.extended_attr == true )
         return false;
     

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NimbleCommander/GeneralUI/DetailedVolumeInformationSheetController.h>
 #include "../PanelController.h"
 #include "ShowVolumeInformation.h"
@@ -6,6 +6,11 @@
 #include <VFS/VFS.h>
 
 namespace nc::panel::actions {
+
+ShowVolumeInformation::ShowVolumeInformation(nc::utility::NativeFSManager& _nfsm):
+    m_NativeFSManager{_nfsm}
+{
+}
 
 bool ShowVolumeInformation::Predicate( PanelController *_target ) const
 {
@@ -31,7 +36,8 @@ void ShowVolumeInformation::Perform( PanelController *_target, id ) const
     else
         return;
     
-    auto sheet = [DetailedVolumeInformationSheetController new];
+    auto sheet = [[DetailedVolumeInformationSheetController alloc]
+        initWithFSManager:m_NativeFSManager];
     [sheet showSheetForWindow:_target.window withPath:path];
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerActions.h"
 #include "PanelControllerActionsDispatcher.h"
 #include "Actions/CopyFilePaths.h"
@@ -156,7 +156,7 @@ PanelActionsMap BuildPanelActionsMap
     add( @selector(OnQuickSelectByExtension:),   new SelectAllByExtension{true});
     add( @selector(OnDeselectByMask:),           new SelectAllByMask{false});
     add( @selector(OnQuickDeselectByExtension:), new SelectAllByExtension{false});
-    add( @selector(OnDetailedVolumeInformation:),new ShowVolumeInformation);
+    add( @selector(OnDetailedVolumeInformation:),new ShowVolumeInformation{_native_fs_mgr});
     add( @selector(OnFileAttributes:),           new ChangeAttributes);
     add( @selector(OnOpenWithExternalEditor:),   new OpenWithExternalEditor{_file_opener});
     add( @selector(OnEjectVolume:),              new EjectVolume{_native_fs_mgr});

@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/VolumeInformation.h>
 #include <Utility/NSTimer+Tolerance.h>
 #include <Utility/NativeFSManager.h>
@@ -35,6 +35,7 @@
     VolumeCapabilitiesInformation m_Capabilities;
     VolumeAttributesInformation   m_Attributes;
     NSTimer                      *m_UpdateTimer;
+    nc::utility::NativeFSManager *m_NativeFSManager;
 }
 
 static NSString* Bool2ToString(const bool b[2])
@@ -43,6 +44,14 @@ static NSString* Bool2ToString(const bool b[2])
     if(b[0] == false)
         return @"no";
     return [NSString stringWithFormat:@"yes native: %@", b[1] ? @"yes" : @"no"];
+}
+
+- (instancetype)initWithFSManager:(nc::utility::NativeFSManager&)_native_fs_manager
+{
+    if( self = [super init] ) {
+        m_NativeFSManager = &_native_fs_manager;
+    }
+    return self;
 }
 
 - (void) UpdateByTimer:(NSTimer*)[[maybe_unused]]_the_timer
@@ -294,7 +303,7 @@ static NSString* Bool2ToString(const bool b[2])
 
 - (void)showSheetForWindow:(NSWindow *)_window withPath: (const std::string&)_path
 {
-    if( auto volume = nc::utility::NativeFSManager::Instance().VolumeFromPath(_path) )
+    if( auto volume = m_NativeFSManager->VolumeFromPath(_path) )
         m_Root = volume->mounted_at_path;
     
     if( FetchVolumeCapabilitiesInformation(m_Root.c_str(), &m_Capabilities) != 0 )

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/xattr.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -576,7 +576,7 @@ std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
             
             if( S_ISREG(st.mode) ) {
                 // check if file is an external EA
-                if( IsAnExternalExtenedAttributesStorage(host, path, _item_name, st) )
+                if( IsAnExternalExtenedAttributesStorage(host, path, _item_name, st, m_NativeFSManager) )
                     // we're skipping "._xxx" files as they are processed by OS itself
                     // when we copy xattrs
                     return StepResult::Ok;

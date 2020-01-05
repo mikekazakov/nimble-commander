@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "NativeFSHelpers.h"
 #include <sys/stat.h>
 #include <sys/param.h>
@@ -98,7 +98,8 @@ void AdjustFileTimesForNativeFD(int _target_fd, const VFSStat &_with_times)
 bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
                                           const std::string &_path,
                                           const std::string &_item_name,
-                                          const VFSStat &_st )
+                                          const VFSStat &_st,
+                                          nc::utility::NativeFSManager& _native_fs_man)
 {
     // currently we think that ExtEAs can be only on native VFS
     if( !_host.IsNativeFS() )
@@ -113,7 +114,7 @@ bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
         return false;
     
     // check if current filesystem uses external eas
-    auto fs_info = utility::NativeFSManager::Instance().VolumeFromPath( _path );
+    auto fs_info = _native_fs_man.VolumeFromPath( _path );
     if( !fs_info || fs_info->interfaces.extended_attr == true )
         return false;
     

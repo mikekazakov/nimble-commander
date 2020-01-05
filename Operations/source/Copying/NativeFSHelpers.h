@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Utility/NativeFSManager.h>
@@ -20,6 +20,7 @@ void AdjustFileTimesForNativeFD(int _target_fd, const VFSStat &_with_times);
 bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
                                           const std::string &_path,
                                           const std::string &_item_name,
-                                          const VFSStat &_st );
+                                          const VFSStat &_st,
+                                          nc::utility::NativeFSManager& _native_fs_man);
 
 };

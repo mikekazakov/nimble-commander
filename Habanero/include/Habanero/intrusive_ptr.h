@@ -84,7 +84,7 @@ public:
     void reset() noexcept
     {
         intrusive_ptr().swap( *this );
-    }    
+    }
 
     template <typename U>
     std::enable_if_t<std::is_convertible_v<U*, T*>, void> reset(U* _p) noexcept
@@ -231,10 +231,12 @@ inline void intrusive_ptr_add_refcount(const intrusive_ref_counter<T> *p) noexce
 template <typename T>
 inline void intrusive_ptr_dec_refcount(const intrusive_ref_counter<T> *p) noexcept
 {
-    if( p->c.fetch_sub(1, std::memory_order_acq_rel) == 1 )
-        delete static_cast<const T*>( p );        
+    if (p->c.fetch_sub(1, std::memory_order_release) == 1) {
+        std::atomic_thread_fence(std::memory_order_acquire);
+        delete static_cast<const T*>( p );
+    }
 }
-    
+
 }
 
 namespace std {

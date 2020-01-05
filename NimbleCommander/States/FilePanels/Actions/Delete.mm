@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Delete.h"
 #include "../PanelController.h"
 #include "../MainWindowFilePanelState.h"
@@ -17,11 +17,12 @@ namespace nc::panel::actions {
 static bool CommonDeletePredicate( PanelController *_target );
 static bool AllAreNative(const std::vector<VFSListingItem>& _c);
 static std::unordered_set<std::string> ExtractDirectories(const std::vector<VFSListingItem>& _c);
-static bool AllHaveTrash(const std::vector<VFSListingItem>& _c);
+static bool AllHaveTrash(const std::vector<VFSListingItem>& _c, utility::NativeFSManager& _fsman);
 static void AddPanelRefreshEpilogIfNeeded(PanelController *_target,
                                           const std::shared_ptr<nc::ops::Operation> &_operation );
 
-Delete::Delete( bool _permanently ):
+Delete::Delete(nc::utility::NativeFSManager& _nat_fsman, bool _permanently ):
+    m_NativeFSManager{_nat_fsman},
     m_Permanently(_permanently)
 {
 }
@@ -39,7 +40,7 @@ void Delete::Perform( PanelController *_target, id ) const
     
     const auto sheet = [[NCOpsDeletionDialog alloc] initWithItems:items];
     if( AllAreNative(*items) ) {
-        const auto all_have_trash = AllHaveTrash(*items);
+        const auto all_have_trash = AllHaveTrash(*items, m_NativeFSManager);
         sheet.allowMoveToTrash = all_have_trash;
         sheet.defaultType = m_Permanently ?
             nc::ops::DeletionType::Permanent :
@@ -65,6 +66,11 @@ void Delete::Perform( PanelController *_target, id ) const
     [_target.mainWindowController beginSheet:sheet.window completionHandler:sheet_handler];
 }
 
+MoveToTrash::MoveToTrash(nc::utility::NativeFSManager& _nat_fsman):
+    m_NativeFSManager{_nat_fsman}
+{
+}
+
 bool MoveToTrash::Predicate( PanelController *_target ) const
 {
     return CommonDeletePredicate(_target);
@@ -78,14 +84,14 @@ void MoveToTrash::Perform( PanelController *_target, id _sender ) const
         // instead of trying to silently reap files on VFS like FTP
         // (that means we'll erase it, not move to trash),
         // forward the request as a regular F8 delete
-        Delete{}.Perform(_target, _sender);
+        Delete{m_NativeFSManager, false}.Perform(_target, _sender);
         return;
     }
     
-    if( !AllHaveTrash(items) ) {
+    if( !AllHaveTrash(items, m_NativeFSManager) ) {
         // if user called MoveToTrash by cmd+backspace but there's no trash on this volume:
         // show a dialog and ask him to delete a file permanently
-        Delete{true}.Perform(_target, _sender);
+        Delete{m_NativeFSManager, true}.Perform(_target, _sender);
         return;
     }
 
@@ -158,11 +164,11 @@ static std::unordered_set<std::string> ExtractDirectories(const std::vector<VFSL
     return directories;
 }
 
-static bool AllHaveTrash(const std::vector<VFSListingItem>& _c)
+static bool AllHaveTrash(const std::vector<VFSListingItem>& _c, utility::NativeFSManager& _fsman)
 {
     const auto directories = ExtractDirectories(_c);
-    return all_of(begin(directories), end(directories), [](auto &i){
-        if( auto vol = utility::NativeFSManager::Instance().VolumeFromPath(i) )
+    return std::all_of(std::begin(directories), std::end(directories), [&](auto &i){
+        if( auto vol = _fsman.VolumeFromPath(i) )
             if( vol->interfaces.has_trash )
                 return true;
         return false;

@@ -167,9 +167,9 @@ PanelActionsMap BuildPanelActionsMap
     add( @selector(OnBatchRename:),              new BatchRename);
     add( @selector(OnRenameFileInPlace:),        new RenameInPlace);
     add( @selector(OnOpenExtendedAttributes:),   new OpenXAttr);
-    add( @selector(OnMoveToTrash:),              new MoveToTrash);
-    add( @selector(OnDeleteCommand:),            new Delete);
-    add( @selector(OnDeletePermanentlyCommand:), new Delete{true});
+    add( @selector(OnMoveToTrash:),              new MoveToTrash{_native_fs_mgr});
+    add( @selector(OnDeleteCommand:),            new Delete{_native_fs_mgr});
+    add( @selector(OnDeletePermanentlyCommand:), new Delete{_native_fs_mgr, true});
     add( @selector(onCompressItemsHere:),        new CompressHere);
     add( @selector(onCompressItems:),            new CompressToOpposite);
     add( @selector(OnCreateSymbolicLinkCommand:),new CreateSymlink);

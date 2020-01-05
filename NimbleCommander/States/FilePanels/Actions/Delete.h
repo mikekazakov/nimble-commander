@@ -1,26 +1,32 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <VFS/VFS.h>
 #include "DefaultAction.h"
 
-namespace nc::panel::actions {
+namespace nc::utility {
+    class NativeFSManager;
+}
 
-// dependency: NativeFSManager::Instance()
+namespace nc::panel::actions {
 
 struct Delete final : PanelAction
 {
-    Delete( bool _permanently = false );
+    Delete(nc::utility::NativeFSManager& _nat_fsman, bool _permanently = false );
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
 private:
+    nc::utility::NativeFSManager& m_NativeFSManager;
     bool m_Permanently;
 };
 
 struct MoveToTrash final : PanelAction
 {
+    MoveToTrash(nc::utility::NativeFSManager& _nat_fsman);
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
+private:
+    nc::utility::NativeFSManager& m_NativeFSManager;
 };
 
 namespace context {

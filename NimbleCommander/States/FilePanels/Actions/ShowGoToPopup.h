@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -8,16 +8,20 @@
 class NetworkConnectionsManager;
 @class GoToPopupListActionMediator;
 
+namespace nc::utility {
+    class NativeFSManager;
+}
+
 namespace nc::panel::actions {
 
 // external dependencies:   AppDelegate.me.favoriteLocationsStorage
 //                          AppDelegate.me.mainWindowControllers
-//                          NativeFSManager::Instance()
 //                          GlobalConfig
 
 struct GoToPopupsBase
 {
-    GoToPopupsBase(NetworkConnectionsManager&_net_mgr);
+    GoToPopupsBase(NetworkConnectionsManager&_net_mgr,
+                   nc::utility::NativeFSManager &_native_fs_mgr);
 protected:
     std::tuple<NSMenu*, GoToPopupListActionMediator*> BuidInitialMenu(MainWindowFilePanelState *_state,
                                                                  PanelController *_panel,
@@ -30,11 +34,13 @@ protected:
     NSMenu *BuildGoToMenu(MainWindowFilePanelState *_state, PanelController *_panel) const;
     
     NetworkConnectionsManager& m_NetMgr;
+    nc::utility::NativeFSManager &m_NativeFSMgr;
 };
     
 struct ShowLeftGoToPopup final : StateAction, GoToPopupsBase
 {
     ShowLeftGoToPopup(NetworkConnectionsManager& _net_mgr,
+                      nc::utility::NativeFSManager &_native_fs_mgr,
                       SEL _right_popup_action);
     virtual void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
 private:
@@ -44,6 +50,7 @@ private:
 struct ShowRightGoToPopup final : StateAction, GoToPopupsBase
 {
     ShowRightGoToPopup(NetworkConnectionsManager&_net_mgr,
+                       nc::utility::NativeFSManager &_native_fs_mgr,
                        SEL _left_popup_action);
     void Perform( MainWindowFilePanelState *_target, id _sender ) const override;
 private:
@@ -53,6 +60,7 @@ private:
 struct ShowConnectionsQuickList final : PanelAction, GoToPopupsBase
 {
     ShowConnectionsQuickList(NetworkConnectionsManager&_net_mgr,
+                             nc::utility::NativeFSManager &_native_fs_mgr,
                              std::vector<SEL> _other_quick_lists);
     void Perform( PanelController *_target, id _sender ) const override;
 private:
@@ -62,6 +70,7 @@ private:
 struct ShowFavoritesQuickList final : PanelAction, GoToPopupsBase
 {
     ShowFavoritesQuickList(NetworkConnectionsManager&_net_mgr,
+                           nc::utility::NativeFSManager &_native_fs_mgr,
                            std::vector<SEL> _other_quick_lists);
     void Perform( PanelController *_target, id _sender ) const override;
 private:
@@ -71,6 +80,7 @@ private:
 struct ShowVolumesQuickList final : PanelAction, GoToPopupsBase
 {
     ShowVolumesQuickList(NetworkConnectionsManager&_net_mgr,
+                         nc::utility::NativeFSManager &_native_fs_mgr,
                          std::vector<SEL> _other_quick_lists);
     void Perform( PanelController *_target, id _sender ) const override;
 private:
@@ -80,6 +90,7 @@ private:
 struct ShowParentFoldersQuickList final : PanelAction, GoToPopupsBase
 {
     ShowParentFoldersQuickList(NetworkConnectionsManager&_net_mgr,
+                               nc::utility::NativeFSManager &_native_fs_mgr,
                                std::vector<SEL> _other_quick_lists);
     bool Predicate( PanelController *_target ) const override;
     void Perform( PanelController *_target, id _sender ) const override;
@@ -90,6 +101,7 @@ private:
 struct ShowHistoryQuickList final : PanelAction, GoToPopupsBase
 {
     ShowHistoryQuickList(NetworkConnectionsManager&_net_mgr,
+                         nc::utility::NativeFSManager &_native_fs_mgr,
                          std::vector<SEL> _other_quick_lists);
     void Perform( PanelController *_target, id _sender ) const override;
 private:

@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
 #include <NimbleCommander/GeneralUI/FilterPopUpMenu.h>
@@ -156,10 +156,11 @@ static void AddFakeHiddenHotkeyItem( SEL _action, NSMenu *_target_menu );
 static NSString *ShrinkMenuItemTitle(NSString *_title);
 
     
-static std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>> VolumesToShow()
+static std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>> 
+    VolumesToShow(utility::NativeFSManager &_native_fs_manager)
 {
     std::vector<std::shared_ptr<const utility::NativeFileSystemInfo>> volumes;
-    for( auto &i: utility::NativeFSManager::Instance().Volumes() )
+    for( auto &i: _native_fs_manager.Volumes() )
         if( i->mount_flags.dont_browse == false )
             volumes.emplace_back(i);
     return volumes;
@@ -336,7 +337,7 @@ NSMenu *GoToPopupsBase::BuildGoToMenu(MainWindowFilePanelState *_state,
 
     [menu addItem:NSMenuItem.separatorItem];
     
-    for( auto &i: VolumesToShow() )
+    for( auto &i: VolumesToShow(m_NativeFSMgr) )
         [menu addItem:builder.MenuItemForVolume(*i)];
 
     if( GlobalConfig().GetBool(g_ConfigShowNetworkConnections) )
@@ -409,7 +410,7 @@ NSMenu *GoToPopupsBase::BuildVolumesQuickList(PanelController *_panel) const
     
     MenuItemBuilder builder{m_NetMgr, action_target};
     
-    for( auto &i: VolumesToShow() )
+    for( auto &i: VolumesToShow(m_NativeFSMgr) )
         [menu addItem:builder.MenuItemForVolume(*i)];
 
     SetupHotkeys(menu);
@@ -472,8 +473,9 @@ static bool RerouteGoToEventToLeftToolbarButton( MainWindowFilePanelState *_targ
 }
 
 ShowLeftGoToPopup::ShowLeftGoToPopup(NetworkConnectionsManager& _net_mgr,
+                                     nc::utility::NativeFSManager &_native_fs_mgr,
                                      SEL _right_popup_action):
-    GoToPopupsBase(_net_mgr),
+    GoToPopupsBase(_net_mgr, _native_fs_mgr),
     m_RightPopupAction(_right_popup_action)
 {
 }
@@ -516,8 +518,9 @@ static bool RerouteGoToEventToRightToolbarButton( MainWindowFilePanelState *_tar
 }
 
 ShowRightGoToPopup::ShowRightGoToPopup(NetworkConnectionsManager& _net_mgr,
+                                       nc::utility::NativeFSManager &_native_fs_mgr,
                                        SEL _left_popup_action):
-    GoToPopupsBase(_net_mgr),
+    GoToPopupsBase(_net_mgr, _native_fs_mgr),
     m_LeftPopupAction(_left_popup_action)
 {
 }
@@ -555,8 +558,9 @@ static void PopupQuickList( NSMenu *_menu, PanelController *_target )
 
 ShowConnectionsQuickList::ShowConnectionsQuickList
     (NetworkConnectionsManager&_net_mgr,
+    nc::utility::NativeFSManager &_native_fs_mgr,
      std::vector<SEL> _other_quick_lists):
-    GoToPopupsBase(_net_mgr),
+    GoToPopupsBase(_net_mgr, _native_fs_mgr),
     m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
@@ -571,8 +575,9 @@ void ShowConnectionsQuickList::Perform( PanelController *_target, id ) const
     
 ShowFavoritesQuickList::ShowFavoritesQuickList
     (NetworkConnectionsManager&_net_mgr,
+    nc::utility::NativeFSManager &_native_fs_mgr,
      std::vector<SEL> _other_quick_lists):
-    nc::panel::actions::GoToPopupsBase(_net_mgr),
+    nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr),
     m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
@@ -587,8 +592,9 @@ void ShowFavoritesQuickList::Perform( PanelController *_target, id ) const
 
 ShowVolumesQuickList::ShowVolumesQuickList
     (NetworkConnectionsManager&_net_mgr,
+    nc::utility::NativeFSManager &_native_fs_mgr,
      std::vector<SEL> _other_quick_lists):
-    nc::panel::actions::GoToPopupsBase(_net_mgr),
+    nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr),
     m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
@@ -603,8 +609,9 @@ void ShowVolumesQuickList::Perform( PanelController *_target, id ) const
 
 ShowParentFoldersQuickList::ShowParentFoldersQuickList
     (NetworkConnectionsManager&_net_mgr,
+    nc::utility::NativeFSManager &_native_fs_mgr,
      std::vector<SEL> _other_quick_lists):
-    GoToPopupsBase(_net_mgr),
+    GoToPopupsBase(_net_mgr, _native_fs_mgr),
     m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
@@ -624,8 +631,9 @@ void ShowParentFoldersQuickList::Perform( PanelController *_target, id ) const
 
 ShowHistoryQuickList::ShowHistoryQuickList
     (NetworkConnectionsManager&_net_mgr,
+    nc::utility::NativeFSManager &_native_fs_mgr,
      std::vector<SEL> _other_quick_lists):
-    nc::panel::actions::GoToPopupsBase(_net_mgr),
+    nc::panel::actions::GoToPopupsBase(_net_mgr, _native_fs_mgr),
     m_OtherQuickLists(std::move(_other_quick_lists))
 {
 }
@@ -638,8 +646,10 @@ void ShowHistoryQuickList::Perform( PanelController *_target, id ) const
     PopupQuickList( menu, _target );
 };
     
-GoToPopupsBase::GoToPopupsBase(NetworkConnectionsManager&_net_mgr):
-    m_NetMgr(_net_mgr)
+GoToPopupsBase::GoToPopupsBase(NetworkConnectionsManager&_net_mgr,
+                               nc::utility::NativeFSManager &_native_fs_mgr):
+    m_NetMgr(_net_mgr),
+    m_NativeFSMgr(_native_fs_mgr)
 {
 }
 

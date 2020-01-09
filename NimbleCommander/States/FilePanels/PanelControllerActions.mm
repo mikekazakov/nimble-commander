@@ -139,15 +139,15 @@ PanelActionsMap BuildPanelActionsMap
     add( @selector(OnConnectToNetworkServer:),   new OpenNetworkConnections{_net_mgr});
     add( @selector(OnGoToSavedConnectionItem:),  new OpenExistingNetworkConnection{_net_mgr});
     add( @selector(OnGoToQuickListsParents:),   
-        new ShowParentFoldersQuickList{_net_mgr, QuickListsBut(0)});
+        new ShowParentFoldersQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(0)});
     add( @selector(OnGoToQuickListsHistory:),    
-        new ShowHistoryQuickList{_net_mgr, QuickListsBut(1)});
+        new ShowHistoryQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(1)});
     add( @selector(OnGoToQuickListsFavorites:),  
-        new ShowFavoritesQuickList{_net_mgr, QuickListsBut(2)});
+        new ShowFavoritesQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(2)});
     add( @selector(OnGoToQuickListsVolumes:),    
-        new ShowVolumesQuickList{_net_mgr, QuickListsBut(3)});
+        new ShowVolumesQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(3)});
     add( @selector(OnGoToQuickListsConnections:),
-        new ShowConnectionsQuickList{_net_mgr, QuickListsBut(4)});
+        new ShowConnectionsQuickList{_net_mgr, _native_fs_mgr, QuickListsBut(4)});
     add( @selector(OnGoToFavoriteLocation:),     new GoToFavoriteLocation);
     add( @selector(OnFileViewCommand:),          new ShowQuickLook);
     add( @selector(OnBriefSystemOverviewCommand:),new ShowSystemOverview);

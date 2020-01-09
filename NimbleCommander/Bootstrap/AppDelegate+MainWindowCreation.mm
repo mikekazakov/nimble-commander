@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "AppDelegate+MainWindowCreation.h"
 #include "AppDelegate.Private.h"
 #include <VFSIcon/IconRepositoryImpl.h>
@@ -90,7 +90,8 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
 {
     static auto actions_map = nc::panel::BuildStateActionsMap
     (*self.networkConnectionsManager,
-     self.temporaryFileStorage);
+     self.temporaryFileStorage,
+     self.nativeFSManager);
     return actions_map;
 }
 

@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "StateActions.h"
 #include "Actions/TabsManagement.h"
 #include "Actions/ShowGoToPopup.h"
@@ -17,7 +17,8 @@ using namespace actions;
     
 StateActionsMap BuildStateActionsMap
     (NetworkConnectionsManager &_net_mgr,
-     nc::utility::TemporaryFileStorage &_temp_file_storage)
+     nc::utility::TemporaryFileStorage &_temp_file_storage,
+     nc::utility::NativeFSManager &_native_fs_manager)
 {
     StateActionsMap m;
     auto add = [&](SEL _sel, actions::StateAction *_action) {
@@ -29,9 +30,11 @@ StateActionsMap BuildStateActionsMap
     add(@selector(onFileCloseOtherTabs:), new CloseOtherTabs);    
     add(@selector(OnFileCloseWindow:), new CloseWindow);
     add(@selector(onLeftPanelGoToButtonAction:),
-        new ShowLeftGoToPopup{_net_mgr, @selector(onRightPanelGoToButtonAction:)});
+        new ShowLeftGoToPopup{_net_mgr, _native_fs_manager,
+        @selector(onRightPanelGoToButtonAction:)});
     add(@selector(onRightPanelGoToButtonAction:),
-        new ShowRightGoToPopup{_net_mgr, @selector(onLeftPanelGoToButtonAction:)});
+        new ShowRightGoToPopup{_net_mgr, _native_fs_manager,
+        @selector(onLeftPanelGoToButtonAction:)});
     add(@selector(onSwitchDualSinglePaneMode:), new ToggleSingleOrDualMode);
     add(@selector(OnWindowShowPreviousTab:), new ShowPreviousTab);
     add(@selector(OnWindowShowNextTab:), new ShowNextTab);

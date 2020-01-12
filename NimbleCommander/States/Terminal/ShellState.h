@@ -1,9 +1,13 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <NimbleCommander/States/MainWindowStateProtocol.h>
 
 #include <string>
+
+namespace nc::utility {
+    class NativeFSManager;
+}
 
 namespace nc::term {
     class ShellTask;
@@ -12,6 +16,10 @@ namespace nc::term {
 @interface NCTermShellState : NSView<NCMainWindowState>
 
 @property (nonatomic, readonly) bool isAnythingRunning;
+
+- (instancetype)initWithFrame:(NSRect)frameRect NS_UNAVAILABLE;
+- (instancetype)initWithFrame:(NSRect)frameRect
+              nativeFSManager:(nc::utility::NativeFSManager&)_native_fs_man;
 
 - (std::string)initialWD;
 - (void) setInitialWD:(const std::string&)_wd;

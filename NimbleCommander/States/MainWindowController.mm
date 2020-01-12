@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowController.h"
 #include <Habanero/debug.h>
 #include <Config/RapidJSON.h>
@@ -375,7 +375,8 @@ static int CountMainWindows()
 - (void)requestTerminal:(const std::string&)_cwd
 {
     if( m_Terminal == nil ) {
-        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame];
+        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
+                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager];
         state.initialWD = _cwd;
         [self pushState:state];
         m_Terminal = state;
@@ -396,7 +397,8 @@ static int CountMainWindows()
                   withParameters:(const char*)_params
 {
     if( m_Terminal == nil ) {
-        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame];
+        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
+                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager];
         state.initialWD = std::string(_cwd);
         [self pushState:state];
         m_Terminal = state;
@@ -413,7 +415,8 @@ static int CountMainWindows()
     dispatch_assert_main_queue();
     
     if( m_Terminal == nil ) {
-        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame];
+        const auto state = [[NCTermShellState alloc] initWithFrame:self.window.contentView.frame
+                                                   nativeFSManager:NCAppDelegate.me.nativeFSManager];
         if( PanelController *pc = m_PanelState.activePanelController )
             if( pc.isUniform && pc.vfs->IsNativeFS() )
                 state.initialWD = pc.currentDirectoryPath;

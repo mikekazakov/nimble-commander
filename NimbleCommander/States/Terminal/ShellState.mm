@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ShellState.h"
 #include <Habanero/CommonPaths.h>
 #include <Utility/NativeFSManager.h>
@@ -31,13 +31,16 @@ static const auto g_CustomPath = "terminal.customShellPath";
     std::unique_ptr<Parser>     m_Parser;
     std::string                 m_InitalWD;
     NSLayoutConstraint         *m_TopLayoutConstraint;
+    nc::utility::NativeFSManager *m_NativeFSManager;
 }
 
 - (id)initWithFrame:(NSRect)frameRect
+    nativeFSManager:(nc::utility::NativeFSManager&)_native_fs_man
 {
     self = [super initWithFrame:frameRect];
     if(self)
     {
+        m_NativeFSManager = &_native_fs_man;
         m_InitalWD = CommonPaths::Home();
         
         m_TermScrollView = [[NCTermScrollView alloc] initWithFrame:self.bounds
@@ -297,8 +300,8 @@ static const auto g_CustomPath = "terminal.customShellPath";
     if( NSString *path = notification.userInfo[@"NSDevicePath"] ) {
         auto state = self.task.State();
         if( state == ShellTask::TaskState::Shell ) {
-            auto cwd_volume = nc::utility::NativeFSManager::Instance().VolumeFromPath( self.cwd );
-            auto unmounting_volume = nc::utility::NativeFSManager::Instance().VolumeFromPath(
+            auto cwd_volume = m_NativeFSManager->VolumeFromPath( self.cwd );
+            auto unmounting_volume = m_NativeFSManager->VolumeFromPath(
                 path.fileSystemRepresentationSafe );
             if( cwd_volume == unmounting_volume )
                 [self chDir:"/Volumes/"]; // TODO: need to do something more elegant

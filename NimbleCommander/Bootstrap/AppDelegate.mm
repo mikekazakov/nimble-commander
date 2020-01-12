@@ -943,7 +943,7 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
 - (const std::shared_ptr<NetworkConnectionsManager> &)networkConnectionsManager
 {
     static const auto mgr = std::make_shared<ConfigBackedNetworkConnectionsManager>
-        (*g_NetworkConnectionsConfig);
+        (*g_NetworkConnectionsConfig, self.nativeFSManager);
     static const std::shared_ptr<NetworkConnectionsManager> int_ptr = mgr;
     return int_ptr;
 }

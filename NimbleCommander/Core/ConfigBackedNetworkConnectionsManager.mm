@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ConfigBackedNetworkConnectionsManager.h"
 #include <dirent.h>
 #include <NetFS/NetFS.h>
@@ -259,8 +259,10 @@ static std::string KeychainAccountFromConnection( const NetworkConnectionsManage
 }
 
 ConfigBackedNetworkConnectionsManager::
-ConfigBackedNetworkConnectionsManager(nc::config::Config &_config):
+ConfigBackedNetworkConnectionsManager(nc::config::Config &_config,
+                                      nc::utility::NativeFSManager &_native_fs_man):
     m_Config(_config),
+    m_NativeFSManager(_native_fs_man),
     m_IsWritingConfig(false)
 {
     // Load current configuration
@@ -645,12 +647,12 @@ static bool TearDownNFSMountName
 }
 
 static std::vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>>
-    GetMountedRemoteFilesystems()
+    GetMountedRemoteFilesystems(nc::utility::NativeFSManager &_native_fs_man)
 {
     static const auto smb = "smbfs"s, afp = "afpfs"s, nfs = "nfs"s;
     std::vector<std::shared_ptr<const nc::utility::NativeFileSystemInfo>> remotes;
     
-    for( const auto &v: nc::utility::NativeFSManager::Instance().Volumes() ) {
+    for( const auto &v: _native_fs_man.Volumes() ) {
         const auto &volume = *v;
 
         // basic discarding check on volume
@@ -697,9 +699,10 @@ static bool MatchVolumeWithShare(const nc::utility::NativeFileSystemInfo& _volum
 }
 
 static std::shared_ptr<const nc::utility::NativeFileSystemInfo> FindExistingMountedShare
-    (const NetworkConnectionsManager::LANShare &_share)
+    (const NetworkConnectionsManager::LANShare &_share,
+     nc::utility::NativeFSManager &_native_fs_man)
 {
-    for( auto &v: GetMountedRemoteFilesystems() )
+    for( auto &v: GetMountedRemoteFilesystems(_native_fs_man) )
         if( MatchVolumeWithShare(*v, _share) )
             return v;
     return nullptr;
@@ -716,7 +719,7 @@ bool ConfigBackedNetworkConnectionsManager::MountShareAsync(
     const auto conn = _conn;
     const auto &share = conn.Get<LANShare>();
     
-    if( const auto v = FindExistingMountedShare(share) ) {
+    if( const auto v = FindExistingMountedShare(share, m_NativeFSManager) ) {
         // we already have this share mounted - just return it.
         // mount path may be different although
         dispatch_to_main_queue([v, _callback]{

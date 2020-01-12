@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "NetworkConnectionsManager.h"
@@ -7,10 +7,15 @@
 #include <VFS/VFS.h>
 #include <Config/Config.h>
 
+namespace nc::utility {
+    class NativeFSManager;
+}
+
 class ConfigBackedNetworkConnectionsManager : public NetworkConnectionsManager
 {
 public:
-    ConfigBackedNetworkConnectionsManager(nc::config::Config &_config);
+    ConfigBackedNetworkConnectionsManager(nc::config::Config &_config,
+                                          nc::utility::NativeFSManager &_native_fs_man);
     ~ConfigBackedNetworkConnectionsManager();
 
     std::optional<Connection> ConnectionByUUID(const boost::uuids::uuid& _uuid) const override;
@@ -55,6 +60,7 @@ private:
     std::vector<boost::uuids::uuid>                 m_MRU;
     mutable std::mutex                              m_Lock;
     nc::config::Config                             &m_Config;
+    nc::utility::NativeFSManager                   &m_NativeFSManager;
     std::vector<nc::config::Token>                  m_ConfigObservations;
     bool                                            m_IsWritingConfig;
     

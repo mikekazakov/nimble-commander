@@ -3,12 +3,16 @@
 
 #include <VFS/Host.h>
 
+namespace nc::utility {
+    class NativeFSManager;
+}
+
 namespace nc::vfs {
 
 class NativeHost final : public Host
 {
 public:
-    NativeHost();
+    NativeHost(nc::utility::NativeFSManager &_native_fs_man);
     
     static const char *UniqueTag;
     virtual VFSConfiguration Configuration() const override;
@@ -89,8 +93,10 @@ public:
     std::shared_ptr<NativeHost> SharedPtr() {return std::static_pointer_cast<NativeHost>(Host::SharedPtr());}
     static const std::shared_ptr<NativeHost> &SharedHost() noexcept;
     virtual bool IsNativeFS() const noexcept override;
-private:
     
+    nc::utility::NativeFSManager &NativeFSManager() const noexcept;
+private:
+    nc::utility::NativeFSManager &m_NativeFSManager;    
 };
 
 }

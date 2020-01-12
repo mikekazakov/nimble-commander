@@ -61,8 +61,9 @@ VFSMeta NativeHost::Meta()
     return m;
 }
 
-NativeHost::NativeHost():
-    Host("", 0, UniqueTag)
+NativeHost::NativeHost(nc::utility::NativeFSManager &_native_fs_man):
+    Host("", 0, UniqueTag),
+    m_NativeFSManager(_native_fs_man)
 {
     AddFeatures(HostFeatures::FetchUsers |
                 HostFeatures::FetchGroups |
@@ -350,7 +351,7 @@ int NativeHost::CreateFile(const char* _path,
 
 const std::shared_ptr<NativeHost> &NativeHost::SharedHost() noexcept
 {
-    static auto host = std::make_shared<NativeHost>();
+    static auto host = std::make_shared<NativeHost>( nc::utility::NativeFSManager::Instance() );
     return host;
 }
 
@@ -528,11 +529,11 @@ int NativeHost::StatFS(const char *_path,
     if(statfs(_path, &info) < 0)
         return VFSError::FromErrno();
 
-    auto volume = utility::NativeFSManager::Instance().VolumeFromMountPoint(info.f_mntonname);
+    auto volume = m_NativeFSManager.VolumeFromMountPoint(info.f_mntonname);
     if(!volume)
         return VFSError::GenericError;
     
-    utility::NativeFSManager::Instance().UpdateSpaceInformation(volume);
+    m_NativeFSManager.UpdateSpaceInformation(volume);
     
     _stat.volume_name   = volume->verbose.name.UTF8String;
     _stat.total_bytes   = volume->basic.total_bytes;
@@ -845,16 +846,21 @@ bool NativeHost::IsCaseSensitiveAtPath(const char *_dir) const
 {
     if( !_dir || _dir[0] != '/' )
         return true;
-    if( const auto fs_info = utility::NativeFSManager::Instance().VolumeFromMountPoint( _dir ) )
+    if( const auto fs_info = m_NativeFSManager.VolumeFromMountPoint( _dir ) )
         return fs_info->format.case_sensitive;
     return true;
 }
-    
+
+nc::utility::NativeFSManager &NativeHost::NativeFSManager() const noexcept
+{
+    return m_NativeFSManager;
+}
+
 static uint32_t MergeUnixFlags( uint32_t _symlink_flags, uint32_t _target_flags ) noexcept
 {
     const uint32_t hidden_flag = _symlink_flags & UF_HIDDEN;
     return _target_flags | hidden_flag;
 }
-    
+
 }
 

@@ -30,6 +30,10 @@
 Чтобы продолжить использование этого продукта после окончания пробного периода в 30 дней, Вам нужно купить лицензию или установить платную версию из Mac App Store.
 Это окно появляется только в пробной версии.";
 
+"__PANELVIEW_TEMPORARY_PANEL_WITHOUT_TITLE" = "Временная панель";
+
+"__PANELVIEW_TEMPORARY_PANEL_WITH_TITLE" = "Временная панель: %@";
+
 /* Panels bottom volume bar, showing amount of bytes available */
 "%@ available" = "%@ доступно";
 

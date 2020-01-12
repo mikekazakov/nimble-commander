@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelView.h"
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <Utility/NSEventModifierFlagsHolder.h>
@@ -931,8 +931,16 @@ hitTestOption:(PanelViewHitTest::Options)_options
         switch( m_Data->Type() ) {
             case data::Model::PanelType::Directory:
                 return [NSString stringWithUTF8StdString:m_Data->VerboseDirectoryFullPath()];
-            case data::Model::PanelType::Temporary:
-                return @"Temporary Panel"; // TODO: localize
+            case data::Model::PanelType::Temporary: {
+                auto &listing = m_Data->Listing();
+                if( listing.Title().empty() )
+                    return NSLocalizedString(@"__PANELVIEW_TEMPORARY_PANEL_WITHOUT_TITLE", "");
+                else {
+                    auto fmt = NSLocalizedString(@"__PANELVIEW_TEMPORARY_PANEL_WITH_TITLE", "");  
+                    return [NSString localizedStringWithFormat:fmt,
+                            [NSString stringWithUTF8StdString:listing.Title()]];
+                }
+            }
             default:
                 return @"";
         }}();

@@ -54,6 +54,7 @@
 		CFE08AE423CA546B007E99B8 /* SpecialDirectories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE223CA546A007E99B8 /* SpecialDirectories.cpp */; };
 		CFE08AE523CA546B007E99B8 /* SpecialDirectories.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08AE323CA546B007E99B8 /* SpecialDirectories.h */; };
 		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
+		CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */; };
 		CFFA94B31F4543920035E606 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0511DA2336500992B84 /* File.cpp */; };
 		CFFA94B41F4543920035E606 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0541DA2336500992B84 /* Host.cpp */; };
 		CFFA94B51F4543920035E606 /* Internal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0561DA2336500992B84 /* Internal.cpp */; };
@@ -279,6 +280,7 @@
 		CFE08AE223CA546A007E99B8 /* SpecialDirectories.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpecialDirectories.cpp; path = source/Native/SpecialDirectories.cpp; sourceTree = "<group>"; };
 		CFE08AE323CA546B007E99B8 /* SpecialDirectories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpecialDirectories.h; path = source/Native/SpecialDirectories.h; sourceTree = "<group>"; };
 		CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNative_UT.cpp; path = tests/VFSNative_UT.cpp; sourceTree = SOURCE_ROOT; };
+		CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ListingInput_UT.cpp; path = tests/ListingInput_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CFFA94AF1F4543840035E606 /* libVFS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libVFS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFFA94E31F4544F60035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libRoutedIO.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.dylib"; sourceTree = "<group>"; };
 		CFFA94E51F4544F90035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
@@ -375,6 +377,7 @@
 				CF26DE3521E297AE003F0E93 /* EasyOps_UT.mm */,
 				CF26DE0E21CFA2CC003F0E93 /* FileWindow_Tests.mm */,
 				CF1847021E41C86D008B7C9F /* Info.plist */,
+				CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */,
 				CF2343ED22CD31F300F516CB /* NetSFTP */,
 				CF24E1FD2290200400C166FA /* SearchForFiles_IT.cpp */,
 				CF26DE2321D28754003F0E93 /* SearchInFile_UT.cpp */,
@@ -806,6 +809,7 @@
 				CF26DE3621E297AE003F0E93 /* EasyOps_UT.mm in Sources */,
 				CF2343EF22CD321300F516CB /* KeyValidator_UT.cpp in Sources */,
 				CF26DE2421D28754003F0E93 /* SearchInFile_UT.cpp in Sources */,
+				CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */,
 				CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */,
 				CF24E1FF2290200800C166FA /* SearchForFiles_IT.cpp in Sources */,
 				CF26DE2121D2864D003F0E93 /* Tests.cpp in Sources */,

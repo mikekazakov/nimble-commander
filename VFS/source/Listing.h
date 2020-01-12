@@ -53,6 +53,11 @@ public:
     bool                IsUniform           () const noexcept;
     bool                HasCommonHost       () const noexcept;
     bool                HasCommonDirectory  () const noexcept;
+    
+    /**
+     * Returns an optional title for this listing object.
+     */
+    const std::string&  Title               () const noexcept;
 
     ListingItem         Item                (unsigned _ind) const;
 
@@ -137,6 +142,7 @@ private:
     
     unsigned                                m_ItemsCount;
     time_t                                  m_CreationTime;
+    std::string                             m_Title;
     base::variable_container<VFSHostPtr>    m_Hosts;
     base::variable_container<std::string>   m_Directories;
     std::vector<std::string>                m_Filenames;
@@ -403,6 +409,11 @@ inline bool Listing::Empty() const noexcept
 inline bool Listing::IsUniform() const noexcept
 {
     return HasCommonHost() && HasCommonDirectory();
+}
+
+inline const std::string& Listing::Title() const noexcept
+{
+    return m_Title;
 }
 
 inline bool Listing::HasCommonHost() const noexcept

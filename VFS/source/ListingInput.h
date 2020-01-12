@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/variable_container.h>
@@ -9,6 +9,11 @@ namespace nc::vfs {
 
 struct ListingInput
 {
+    /**
+     * Optional title for the listing. Useful for temporary listings, where semantic meaning
+     * couldn't be easily derived from the contents.     
+     */
+    std::string title;
     
     /**
      * host for file.
@@ -30,7 +35,7 @@ struct ListingInput
     std::vector<std::string>        filenames;
     
     /**
-     * used for HFS+, can be localized.
+     * used for HFS+/APFS, can be localized.
      * can be dense or sparse. on common size will throw an exception.
      */
     base::variable_container<std::string> display_filenames{base::variable_container<>::type::sparse};

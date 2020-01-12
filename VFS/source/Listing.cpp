@@ -105,6 +105,7 @@ base::intrusive_ptr<Listing> Listing::Build(ListingInput &&_input)
     Compress( _input );
     
     auto l = base::intrusive_ptr<Listing>{new Listing};
+    l->m_Title = std::move(_input.title);
     l->m_Hosts = std::move(_input.hosts);
     l->m_Directories = std::move(_input.directories);
     l->m_Filenames = std::move(_input.filenames);
@@ -259,6 +260,7 @@ VFSListingPtr Listing::ProduceUpdatedTemporaryPanelListing( const Listing& _orig
 {
     ListingInput result;
     unsigned count = 0;
+    result.title = _original.Title();
     result.hosts.reset( variable_container<>::type::dense );
     result.directories.reset( variable_container<>::type::dense );
     result.display_filenames.reset( variable_container<>::type::sparse );

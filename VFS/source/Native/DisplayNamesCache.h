@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <sys/stat.h>
@@ -18,6 +18,7 @@ public:
     static DisplayNamesCache& Instance();
 
     // nullptr string means that there's no dispay string for this
+    const char* DisplayName( const std::string &_path );
     const char* DisplayName( const struct stat &_st, const std::string &_path );
     const char* DisplayName( ino_t _ino, dev_t _dev, const std::string &_path );
     

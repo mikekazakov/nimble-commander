@@ -1,6 +1,6 @@
 // Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
-
 #include "SpecialDirectories.h"
+#include "DisplayNamesCache.h"
 #include <VFS/VFSListingInput.h>
 #include <Utility/SystemInformation.h>
 #include <sys/errno.h>
@@ -13,6 +13,13 @@ static const auto g_UserApplications = "/Applications";
 static const auto g_SystemUtilities = "/System/Applications/Utilities";
 static const auto g_UserUtilities = "/Applications/Utilities"; 
 
+static const char *MakeNonLocalizedTitle(const char *_from)
+{
+    if( _from == nullptr )
+        return nullptr;
+    auto p = strrchr(_from, '/');
+    return p ? p + 1 : nullptr;
+}
 
 int FetchUnifiedListing(NativeHost& _host,
                         const char *_system_path,
@@ -40,8 +47,25 @@ int FetchUnifiedListing(NativeHost& _host,
                                                                    _flags,
                                                                    _cancel_checker);
             if( fetch_user_rc != VFSError::Ok )
-                return fetch_user_rc;             
-            _target = Listing::Build(Listing::Compose({system_listing, user_listing}));    
+                return fetch_user_rc;
+            
+            auto input = Listing::Compose({system_listing, user_listing});
+            
+            if( (_flags & VFSFlags::F_LoadDisplayNames) != 0 ) {
+                auto &cache = DisplayNamesCache::Instance();
+                if( auto name = cache.DisplayName(_user_path) )
+                    input.title = name;
+                else if( auto name = cache.DisplayName(_system_path) )
+                    input.title = name;
+                else if( auto name = MakeNonLocalizedTitle(_user_path) )
+                    input.title = name;
+            }
+            else {
+                if( auto name = MakeNonLocalizedTitle(_user_path) )
+                    input.title = name;
+            }
+                
+            _target = Listing::Build(std::move(input));    
         }
         else {
             _target = system_listing;

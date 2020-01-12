@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DisplayNamesCache.h"
 #include <Foundation/Foundation.h>
 #include <Utility/StringExtras.h>
@@ -56,6 +56,14 @@ void DisplayNamesCache::Commit_Locked(ino_t _ino,
 const char* DisplayNamesCache::DisplayName( const struct stat &_st, const std::string &_path )
 {
     return DisplayName( _st.st_ino, _st.st_dev, _path );
+}
+
+const char* DisplayNamesCache::DisplayName( const std::string &_path )
+{
+    struct stat st;
+    if( stat(_path.c_str(), &st) != 0)
+        return nullptr;
+    return DisplayName(st, _path);
 }
 
 static NSFileManager *filemanager = NSFileManager.defaultManager;

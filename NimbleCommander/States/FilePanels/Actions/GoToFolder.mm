@@ -1,7 +1,8 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "GoToFolder.h"
 #include <Habanero/CommonPaths.h>
 #include <VFS/Native.h>
+#include <VFS/NativeSpecialDirectories.h>
 #include <VFS/PS.h>
 #include "../Views/GoToFolderSheetController.h"
 #include "../PanelController.h"
@@ -14,6 +15,7 @@
 #include <NimbleCommander/GeneralUI/AskForPasswordWindowController.h>
 #include "Helpers.h"
 #include <Utility/ObjCpp.h>
+#include <Utility/SystemInformation.h>
 
 namespace nc::panel::actions {
 
@@ -73,12 +75,46 @@ void GoToDownloadsFolder::Perform( PanelController *_target, id ) const
 
 void GoToApplicationsFolder::Perform( PanelController *_target, id ) const
 {
-   GoToNativeDir( CommonPaths::Applications(), _target );
+    if( utility::GetOSXVersion() < utility::OSXVersion::OSX_15 ) { 
+        GoToNativeDir( CommonPaths::Applications(), _target );
+    }    
+    else {
+        auto task = [_target]( const std::function<bool()> &_cancelled ) {
+            VFSListingPtr listing;
+            int rc = vfs::native::FetchUnifiedApplicationsListing(*VFSNativeHost::SharedHost(),
+                                                                  listing,
+                                                                  _target.vfsFetchingFlags,
+                                                                  _cancelled);
+            if( rc == VFSError::Ok ) {
+                dispatch_to_main_queue([listing, _target]{
+                    [_target loadListing:listing];
+                });
+            }
+        };
+        [_target commitCancelableLoadingTask:std::move(task)];
+    }
 }
 
 void GoToUtilitiesFolder::Perform( PanelController *_target, id ) const
 {
-   GoToNativeDir( CommonPaths::Utilities(), _target );
+    if( utility::GetOSXVersion() < utility::OSXVersion::OSX_15 ) {
+        GoToNativeDir( CommonPaths::Utilities(), _target );
+    }
+    else {
+        auto task = [_target]( const std::function<bool()> &_cancelled ) {
+            VFSListingPtr listing;
+            int rc = vfs::native::FetchUnifiedUtilitiesListing(*VFSNativeHost::SharedHost(),
+                                                               listing,
+                                                               _target.vfsFetchingFlags,
+                                                               _cancelled);
+            if( rc == VFSError::Ok ) {
+                dispatch_to_main_queue([listing, _target]{
+                    [_target loadListing:listing];
+                });
+            }
+        };
+        [_target commitCancelableLoadingTask:std::move(task)];
+    }    
 }
 
 void GoToLibraryFolder::Perform( PanelController *_target, id ) const

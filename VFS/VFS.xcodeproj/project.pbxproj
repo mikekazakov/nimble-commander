@@ -50,6 +50,10 @@
 		CFD7273E1E42EC8E00603077 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273D1E42EC8E00603077 /* Carbon.framework */; };
 		CFD727401E42EC9A00603077 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD7273F1E42EC9A00603077 /* Foundation.framework */; };
 		CFD727421E42EC9D00603077 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFD727411E42EC9D00603077 /* AppKit.framework */; };
+		CFE08AE123CA5448007E99B8 /* NativeSpecialDirectories.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08AE023CA5447007E99B8 /* NativeSpecialDirectories.h */; };
+		CFE08AE423CA546B007E99B8 /* SpecialDirectories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE223CA546A007E99B8 /* SpecialDirectories.cpp */; };
+		CFE08AE523CA546B007E99B8 /* SpecialDirectories.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08AE323CA546B007E99B8 /* SpecialDirectories.h */; };
+		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
 		CFFA94B31F4543920035E606 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0511DA2336500992B84 /* File.cpp */; };
 		CFFA94B41F4543920035E606 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0541DA2336500992B84 /* Host.cpp */; };
 		CFFA94B51F4543920035E606 /* Internal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0561DA2336500992B84 /* Internal.cpp */; };
@@ -271,6 +275,10 @@
 		CFD7273F1E42EC9A00603077 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		CFD727411E42EC9D00603077 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		CFDE716C21526799005449C8 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		CFE08AE023CA5447007E99B8 /* NativeSpecialDirectories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeSpecialDirectories.h; path = include/VFS/NativeSpecialDirectories.h; sourceTree = "<group>"; };
+		CFE08AE223CA546A007E99B8 /* SpecialDirectories.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpecialDirectories.cpp; path = source/Native/SpecialDirectories.cpp; sourceTree = "<group>"; };
+		CFE08AE323CA546B007E99B8 /* SpecialDirectories.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpecialDirectories.h; path = source/Native/SpecialDirectories.h; sourceTree = "<group>"; };
+		CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNative_UT.cpp; path = tests/VFSNative_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CFFA94AF1F4543840035E606 /* libVFS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libVFS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFFA94E31F4544F60035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libRoutedIO.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.dylib"; sourceTree = "<group>"; };
 		CFFA94E51F4544F90035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
@@ -364,10 +372,10 @@
 		CF1846FF1E41C86D008B7C9F /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				CF2343ED22CD31F300F516CB /* NetSFTP */,
 				CF26DE3521E297AE003F0E93 /* EasyOps_UT.mm */,
 				CF26DE0E21CFA2CC003F0E93 /* FileWindow_Tests.mm */,
 				CF1847021E41C86D008B7C9F /* Info.plist */,
+				CF2343ED22CD31F300F516CB /* NetSFTP */,
 				CF24E1FD2290200400C166FA /* SearchForFiles_IT.cpp */,
 				CF26DE2321D28754003F0E93 /* SearchInFile_UT.cpp */,
 				CF1847091E41C8A5008B7C9F /* tests_common.h */,
@@ -376,6 +384,7 @@
 				CF18470A1E41C8A5008B7C9F /* VFSArchive_Tests.mm */,
 				CF1168851E91FE6D00CC515A /* VFSDropbox_Tests.mm */,
 				CF18470B1E41C8A5008B7C9F /* VFSFTP_Tests.mm */,
+				CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */,
 				CF18470C1E41C8A5008B7C9F /* VFSPS_Tests.mm */,
 				CF18470D1E41C8A5008B7C9F /* VFSSFTP_Tests.mm */,
 				CFFA95571F4E65A60035E606 /* WebDAV_Tests.mm */,
@@ -458,6 +467,7 @@
 				CF26DE0821CFA2AE003F0E93 /* FileWindow.h */,
 				CF69CFF01DA227E400992B84 /* Host.h */,
 				CF69CFE21DA227E400992B84 /* Native.h */,
+				CFE08AE023CA5447007E99B8 /* NativeSpecialDirectories.h */,
 				CF11687A1E91FA9200CC515A /* NetDropbox.h */,
 				CF69CFE31DA227E400992B84 /* NetFTP.h */,
 				CF69CFE41DA227E400992B84 /* NetSFTP.h */,
@@ -521,14 +531,16 @@
 		CF69D0221DA2304B00992B84 /* Native */ = {
 			isa = PBXGroup;
 			children = (
-				CF1FBF381E909AC400D3569C /* Fetching.cpp */,
-				CF1FBF391E909AC400D3569C /* Fetching.h */,
 				CF69D0231DA2305A00992B84 /* DisplayNamesCache.h */,
 				CF69D0241DA2305A00992B84 /* DisplayNamesCache.mm */,
+				CF1FBF381E909AC400D3569C /* Fetching.cpp */,
+				CF1FBF391E909AC400D3569C /* Fetching.h */,
 				CF69D0251DA2305A00992B84 /* File.cpp */,
 				CF69D0261DA2305A00992B84 /* File.h */,
 				CF69D0271DA2305A00992B84 /* Host.h */,
 				CF69D0281DA2305A00992B84 /* Host.mm */,
+				CFE08AE223CA546A007E99B8 /* SpecialDirectories.cpp */,
+				CFE08AE323CA546B007E99B8 /* SpecialDirectories.h */,
 			);
 			name = Native;
 			sourceTree = "<group>";
@@ -652,10 +664,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF24E1FC22901C7800C166FA /* SearchForFiles.h in Headers */,
+				CFE08AE523CA546B007E99B8 /* SpecialDirectories.h in Headers */,
 				CF1FDD071F5D4AEC00AF1EBD /* PathRoutines.h in Headers */,
 				CFCE73151F972623009E2FD7 /* Listing.h in Headers */,
 				CF26DE0B21CFA2AE003F0E93 /* FileWindow.h in Headers */,
 				CF3E2F871F60DF08001BFFCE /* Requests.h in Headers */,
+				CFE08AE123CA5448007E99B8 /* NativeSpecialDirectories.h in Headers */,
 				CF26DE0921CFA2AE003F0E93 /* NetWebDAV.h in Headers */,
 				CF26DE0A21CFA2AE003F0E93 /* VFS_fwd.h in Headers */,
 				CF1FDD031F5BBA6F00AF1EBD /* WriteBuffer.h in Headers */,
@@ -792,6 +806,7 @@
 				CF26DE3621E297AE003F0E93 /* EasyOps_UT.mm in Sources */,
 				CF2343EF22CD321300F516CB /* KeyValidator_UT.cpp in Sources */,
 				CF26DE2421D28754003F0E93 /* SearchInFile_UT.cpp in Sources */,
+				CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */,
 				CF24E1FF2290200800C166FA /* SearchForFiles_IT.cpp in Sources */,
 				CF26DE2121D2864D003F0E93 /* Tests.cpp in Sources */,
 			);
@@ -830,6 +845,7 @@
 				CFFA94C11F4543AB0035E606 /* FileUploadStream.mm in Sources */,
 				CFFA94D31F4543ED0035E606 /* VFSError.mm in Sources */,
 				CFFA94B31F4543920035E606 /* File.cpp in Sources */,
+				CFE08AE423CA546B007E99B8 /* SpecialDirectories.cpp in Sources */,
 				CFFA94C91F4543BC0035E606 /* SFTPHost.cpp in Sources */,
 				CFFA94B91F4543A30035E606 /* Fetching.cpp in Sources */,
 				CFFA94C31F4543B30035E606 /* Cache.mm in Sources */,

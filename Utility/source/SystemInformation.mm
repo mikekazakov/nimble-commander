@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Cocoa/Cocoa.h>
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <IOKit/IOKitLib.h>
@@ -208,6 +208,7 @@ OSXVersion GetOSXVersion() noexcept
         const auto sys_ver = NSProcessInfo.processInfo.operatingSystemVersion;
         if( sys_ver.majorVersion == 10 )
             switch( sys_ver.minorVersion ) {
+                case 15:    return OSXVersion::OSX_15;
                 case 14:    return OSXVersion::OSX_14;
                 case 13:    return OSXVersion::OSX_13;
                 case 12:    return OSXVersion::OSX_12;

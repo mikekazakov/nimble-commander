@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "DragReceiver.h"
 #include "FilesDraggingSource.h"
 #include "PanelController.h"
@@ -39,10 +39,12 @@ static void AddPanelRefreshIfNecessary(PanelController *_target,
 
 DragReceiver::DragReceiver(PanelController *_target,
                            id <NSDraggingInfo> _dragging,
-                           int _dragging_over_index):
+                           int _dragging_over_index,
+                           nc::utility::NativeFSManager &_native_fs_man):
     m_Target(_target),
     m_Dragging(_dragging),
-    m_DraggingOverIndex(_dragging_over_index)
+    m_DraggingOverIndex(_dragging_over_index),
+    m_NativeFSManager(_native_fs_man)
 {
     if( !m_Target || !m_Dragging )
         throw std::invalid_argument("DragReceiver can't accept nil arguments");
@@ -214,9 +216,8 @@ NSDragOperation DragReceiver::BuildOperationForLocal(FilesDraggingSource *_sourc
             return NSDragOperationMove;
         
         if( m_DraggingOperationsMask & NSDragOperationGeneric ) {
-            const auto &fs_man = utility::NativeFSManager::Instance();
-            const auto v1 = fs_man.VolumeFromPathFast( _destination.Path() );
-            const auto v2 = fs_man.VolumeFromPathFast( _source.items.front().item.Directory() );
+            const auto v1 = m_NativeFSManager.VolumeFromPathFast( _destination.Path() );
+            const auto v2 = m_NativeFSManager.VolumeFromPathFast( _source.items.front().item.Directory() );
             const auto same_native_fs = (v1 != nullptr && v1 == v2);
             return same_native_fs ? NSDragOperationMove : NSDragOperationCopy;
         }
@@ -254,9 +255,8 @@ NSDragOperation DragReceiver::BuildOperationForURLs(NSArray<NSURL*> *_source,
             return NSDragOperationLink;
         
         if( m_DraggingOperationsMask & NSDragOperationGeneric ) {
-            const auto &fs_man = utility::NativeFSManager::Instance();
-            const auto v1 = fs_man.VolumeFromPathFast( _destination.Path() );
-            const auto v2 = fs_man.VolumeFromPathFast(_source.firstObject.fileSystemRepresentation);
+            const auto v1 = m_NativeFSManager.VolumeFromPathFast( _destination.Path() );
+            const auto v2 = m_NativeFSManager.VolumeFromPathFast(_source.firstObject.fileSystemRepresentation);
             const auto same_native_fs = (v1 != nullptr && v1 == v2);
             return same_native_fs ? NSDragOperationMove : NSDragOperationCopy;
         }

@@ -19,6 +19,7 @@
 #include <Habanero/SerialQueue.h>
 #include "PanelData.h"
 #include "PanelView.h"
+#include "DragReceiver.h"
 #include "PanelDataExternalEntryKey.h"
 #include "PanelDataPersistency.h"
 #include <NimbleCommander/Core/VFSInstanceManager.h>
@@ -178,6 +179,7 @@ static void HeatUpConfigValues()
     std::shared_ptr<const PanelViewLayout>   m_AssignedViewLayout;
     PanelViewLayoutsStorage::ObservationTicket m_LayoutsObservation;
     ContextMenuProvider m_ContextMenuProvider;
+    nc::utility::NativeFSManager *m_NativeFSManager;
 }
 
 @synthesize view = m_View;
@@ -191,6 +193,7 @@ static void HeatUpConfigValues()
           vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
      directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider
          contextMenuProvider:(nc::panel::ContextMenuProvider)_context_menu_provider
+             nativeFSManager:(nc::utility::NativeFSManager&)_native_fs_mgr
 {
     assert( _layouts );
     assert( _context_menu_provider );
@@ -202,6 +205,7 @@ static void HeatUpConfigValues()
     if(self) {
         m_Layouts = move(_layouts);
         m_VFSInstanceManager = &_vfs_mgr;
+        m_NativeFSManager = &_native_fs_mgr;
         m_DirectoryAccessProvider = &_directory_access_provider;
         m_ContextMenuProvider = std::move(_context_menu_provider);
         m_History.SetVFSInstanceManager(_vfs_mgr);
@@ -605,7 +609,7 @@ static void HeatUpConfigValues()
     }
 }
 
-- (void) PanelViewCursorChanged:(PanelView*)[[maybe_unused]]_view
+- (void) panelViewCursorChanged:(PanelView*)[[maybe_unused]]_view
 {
     [self onCursorChanged];
 }
@@ -1051,6 +1055,16 @@ wantsToSetSearchPrompt:(NSString*)_prompt
 - (bool) isDoingBackgroundLoading
 {
     return m_DirectoryLoadingQ.Empty() == false;
+}
+
+- (std::unique_ptr<nc::panel::DragReceiver>) panelView:(PanelView*)[[maybe_unused]]_view
+requestsDragReceiverForDragging:(id<NSDraggingInfo>)_dragging
+onItem:(int)_on_sorted_index
+{
+    return std::make_unique<nc::panel::DragReceiver>(self,
+                                                     _dragging,
+                                                     _on_sorted_index,
+                                                     *m_NativeFSManager); 
 }
 
 @end

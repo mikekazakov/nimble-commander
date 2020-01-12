@@ -1,10 +1,14 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 #include <VFS/VFS.h>
 #include <Cocoa/Cocoa.h>
 
 @class PanelController;
 @class FilesDraggingSource;
+
+namespace nc::utility {
+    class NativeFSManager;
+}
 
 namespace nc::panel {
 
@@ -14,7 +18,8 @@ class DragReceiver
 public:
     DragReceiver(PanelController *_target,
                  id <NSDraggingInfo> _dragging,
-                 int _dragging_over_index); // -1 index means "whole" panel
+                 int _dragging_over_index, // -1 index means "whole" panel
+                 nc::utility::NativeFSManager &_native_fs_man ); 
     ~DragReceiver();
 
     NSDragOperation Validate();
@@ -44,6 +49,7 @@ private:
     int                  m_DraggingOverIndex;
     VFSListingItem       m_ItemUnderDrag; // may be nullptr for whole panel
     bool                 m_DraggingOverDirectory;
+    nc::utility::NativeFSManager &m_NativeFSManager;
 };
 
 }

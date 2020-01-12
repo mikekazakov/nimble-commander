@@ -1,13 +1,21 @@
-// Copyright (C) 2013-2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 @class PanelView;
 
+namespace nc::panel {
+    class DragReceiver;
+}
+
 @protocol PanelViewDelegate<NSObject>
-@optional
-- (void) PanelViewCursorChanged:(PanelView*)_view;
+@required
+- (void) panelViewCursorChanged:(PanelView*)_view;
+
 - (NSMenu*) panelView:(PanelView*)_view requestsContextMenuForItemNo:(int)_sort_pos;
-- (BOOL) PanelViewPerformDragOperation:(PanelView*)_view sender:(id <NSDraggingInfo>)sender;
-//- (bool) PanelViewProcessKeyDown:(PanelView*)_view event:(NSEvent *)_event;
+
+- (std::unique_ptr<nc::panel::DragReceiver>)
+panelView:(PanelView*)_view
+requestsDragReceiverForDragging:(id<NSDraggingInfo>)_dragging
+onItem:(int)_on_sorted_index;
 
 @end

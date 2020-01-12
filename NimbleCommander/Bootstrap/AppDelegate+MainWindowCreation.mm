@@ -175,7 +175,8 @@ static std::vector<std::string> CommaSeparatedStrings(const nc::config::Config &
                                                layouts:self.panelLayouts 
                                     vfsInstanceManager:self.vfsInstanceManager
                                directoryAccessProvider:self.directoryAccessProvider
-                                   contextMenuProvider:[self makePanelContextMenuProvider]];
+                                   contextMenuProvider:[self makePanelContextMenuProvider]
+                                       nativeFSManager:self.nativeFSManager];
     auto actions_dispatcher = [[NCPanelControllerActionsDispatcher alloc]
                                initWithController:panel
                                andActionsMap:self.panelActionsMap];

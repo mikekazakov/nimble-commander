@@ -21,6 +21,10 @@ namespace core {
     class VFSInstanceManager;
 }
 
+namespace utility {
+    class NativeFSManager;
+}
+
 namespace panel {
 
 namespace data {
@@ -144,7 +148,8 @@ using ContextMenuProvider =
                      layouts:(std::shared_ptr<nc::panel::PanelViewLayoutsStorage>)_layouts
           vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
      directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider
-         contextMenuProvider:(nc::panel::ContextMenuProvider)_context_menu_provider;
+         contextMenuProvider:(nc::panel::ContextMenuProvider)_context_menu_provider
+             nativeFSManager:(nc::utility::NativeFSManager&)_native_fs_mgr;
 
 - (void) refreshPanel; // reload panel contents
 - (void) forceRefreshPanel; // user pressed cmd+r by default

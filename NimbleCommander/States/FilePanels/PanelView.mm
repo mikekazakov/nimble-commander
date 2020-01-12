@@ -500,8 +500,8 @@ struct StateStorage
     [m_FooterView updateFocusedItem:self.item VD:self.item_vd];
     
     if(id<PanelViewDelegate> del = self.delegate)
-        if([del respondsToSelector:@selector(PanelViewCursorChanged:)])
-            [del PanelViewCursorChanged:self];
+        if([del respondsToSelector:@selector(panelViewCursorChanged:)])
+            [del panelViewCursorChanged:self];
     
     [self commitFieldEditor];
 }
@@ -1031,12 +1031,18 @@ hitTestOption:(PanelViewHitTest::Options)_options
 
 - (NSDragOperation)panelItem:(int)_sorted_index operationForDragging:(id <NSDraggingInfo>)_dragging
 {
-    return DragReceiver{self.controller, _dragging, _sorted_index}.Validate();
+    auto receiver = [self.delegate panelView:self
+             requestsDragReceiverForDragging:_dragging
+                                      onItem:_sorted_index];
+    return receiver->Validate();
 }
 
 - (bool)panelItem:(int)_sorted_index performDragOperation:(id<NSDraggingInfo>)_dragging
 {
-    return DragReceiver{self.controller, _dragging, _sorted_index}.Receive();
+    auto receiver = [self.delegate panelView:self
+    requestsDragReceiverForDragging:_dragging
+                             onItem:_sorted_index];
+    return receiver->Receive();
 }
 
 - (NSPopover*)showPopoverUnderPathBarWithView:(NSViewController*)_view

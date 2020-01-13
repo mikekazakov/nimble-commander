@@ -138,6 +138,10 @@ NativeFSManager::NativeFSManager():
                    name:NSWorkspaceWillUnmountNotification object:nil];
 }
 
+NativeFSManager::~NativeFSManager()
+{
+}
+
 NativeFSManager &NativeFSManager::Instance()
 {
     static std::once_flag once;

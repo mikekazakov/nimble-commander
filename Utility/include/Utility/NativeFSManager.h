@@ -551,6 +551,7 @@ class NativeFSManager
 {
 public:
     NativeFSManager();
+    ~NativeFSManager();
     static NativeFSManager &Instance();
     
     class VolumeLookup;

@@ -1,11 +1,17 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NativeFSManager.h>
 #include <Habanero/algo.h>
+#include <Habanero/dispatch_cpp.h>
+#include <boost/process.hpp>
 #include "UnitTests_main.h"
 
 using nc::utility::NativeFSManager;
 using nc::utility::NativeFileSystemInfo;
 #define PREFIX "nc::utility::NativeFSManager "
+
+static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,
+                                                 std::function<bool()> _expection);
+static int Execute(const std::string &_command);
 
 TEST_CASE(PREFIX"Fast lookup considers firmlinks")
 {
@@ -47,4 +53,74 @@ TEST_CASE(PREFIX"VolumeFromFD")
     
     const auto info2_p = fsm.VolumeFromPath(p2);
     CHECK( info2_p == info2 );
+}
+
+TEST_CASE(PREFIX"Can detect filesystem mounts and unmounts")
+{
+    using namespace std::chrono_literals;
+    TempTestDir tmp_dir;
+    const auto dmg_path = tmp_dir.directory + "tmp_image.dmg";
+    
+    auto &fsm = NativeFSManager::Instance();
+    auto create_cmd = "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path;
+    auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path;
+    auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes12345";
+    auto volumes_path = "/Volumes/SomethingWickedThisWayComes12345";
+
+    {
+        REQUIRE( Execute( create_cmd ) == 0 );
+        REQUIRE( Execute( mount_cmd ) == 0 );
+        auto unmount = at_scope_end([&]{ Execute( unmount_cmd ); } );
+    
+        auto predicate = [&]() -> bool {
+            auto volumes = fsm.Volumes();
+            return std::any_of(volumes.begin(), volumes.end(), [&](const auto &volume){
+                return volume->mounted_at_path == volumes_path;
+            });
+        };
+        REQUIRE( runMainLoopUntilExpectationOrTimeout(10s, predicate) );
+        
+        auto volume = fsm.VolumeFromMountPoint(volumes_path);
+        REQUIRE( volume );
+        CHECK( volume->mounted_at_path == volumes_path );
+        CHECK( volume->fs_type_name == "hfs" );
+        CHECK( volume->basic.total_bytes == 1007616 );
+    }
+    
+    auto predicate = [&]() -> bool {
+        auto volumes = fsm.Volumes();
+        return std::none_of(volumes.begin(), volumes.end(), [&](const auto &volume){
+            return volume->mounted_at_path == volumes_path;
+        });
+    };
+    REQUIRE( runMainLoopUntilExpectationOrTimeout(10s, predicate) );
+}
+
+static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,
+                                                 std::function<bool()> _expectation )
+{
+    dispatch_assert_main_queue();
+    assert( _timeout.count() > 0 );
+    assert( _expectation ); 
+    const auto start_tp = std::chrono::steady_clock::now();
+    const auto time_slice = 1. / 100.; // 10 ms;
+    while( true ) {
+        CFRunLoopRunInMode(kCFRunLoopDefaultMode, time_slice, false);
+        if( std::chrono::steady_clock::now() - start_tp > _timeout )
+            return false;
+        if( _expectation() )
+            return true;
+    }
+}
+
+static int Execute(const std::string &_command)
+{
+    using namespace boost::process;
+    ipstream pipe_stream;
+    child c(_command, std_out > pipe_stream);
+    std::string line;
+    while( c.running() && pipe_stream && std::getline(pipe_stream, line) && !line.empty() )
+        ;
+    c.wait(); 
+    return c.exit_code();
 }

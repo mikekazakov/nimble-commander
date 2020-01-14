@@ -21,10 +21,19 @@
 #include <future>
 #include <fstream>
 
+@interface NCUtilityNativeFSManagerNotificationsReceiver : NSObject
+@property (readwrite, nonatomic) std::function<void(NSNotification *)> onVolumeDidMount;
+@property (readwrite, nonatomic) std::function<void(NSNotification *)> onVolumeDidRename;
+@property (readwrite, nonatomic) std::function<void(NSNotification *)> onVolumeWillUnmount;
+@property (readwrite, nonatomic) std::function<void(NSNotification *)> onVolumeDidUnmount;
+- (void) volumeDidMount:(NSNotification *)_notification; 
+- (void) volumeDidRename:(NSNotification *)_notification;
+- (void) volumeWillUnmount:(NSNotification *)_notification;
+- (void) volumeDidUnmount:(NSNotification *)_notification;
+@end
 
 namespace nc::utility {
 
-static NativeFSManager *g_SharedFSManager;
 static const auto g_FirmlinksMappingPath = "/usr/share/firmlinks";
 
 static void GetAllInfos(NativeFileSystemInfo &_volume);
@@ -44,56 +53,6 @@ static std::vector<FirmlinksMappingParser::Firmlink> FetchFirmlinks() noexcept;
 NativeFileSystemInfo::NativeFileSystemInfo() = default;
 NativeFileSystemInfo::~NativeFileSystemInfo() = default;
 
-struct NativeFSManagerProxy2 // this proxy is needed only for private methods access
-{
-    static void OnDidMount(const std::string &_on_path) {
-        g_SharedFSManager->OnDidMount(_on_path);
-    }
-    static void OnWillUnmount(const std::string &_on_path) {
-        g_SharedFSManager->OnWillUnmount(_on_path);
-    }
-    static void OnDidUnmount(const std::string &_on_path) {
-        g_SharedFSManager->OnDidUnmount(_on_path);
-    }
-    static void OnDidRename(const std::string &_old_path, const std::string &_new_path) {
-        g_SharedFSManager->OnDidRename(_old_path, _new_path);
-    }
-};
-    
-}
-
-@interface NativeFSManagerProxy : NSObject
-@end
-@implementation NativeFSManagerProxy
-+ (void) volumeDidMount:(NSNotification *)aNotification
-{
-    if( NSString *path = aNotification.userInfo[@"NSDevicePath"] )
-        nc::utility::NativeFSManagerProxy2::OnDidMount(path.fileSystemRepresentationSafe);
-}
-
-+ (void) volumeDidRename:(NSNotification *)aNotification
-{
-    if( NSURL *new_path = aNotification.userInfo[NSWorkspaceVolumeURLKey] )
-        if( NSURL *old_path = aNotification.userInfo[NSWorkspaceVolumeOldURLKey] )
-            nc::utility::NativeFSManagerProxy2::OnDidRename(old_path.path.fileSystemRepresentationSafe,
-                                               new_path.path.fileSystemRepresentationSafe);
-}
-
-+ (void) volumeWillUnmount:(NSNotification *)aNotification
-{
-    if( NSString *path = aNotification.userInfo[@"NSDevicePath"] )
-        nc::utility::NativeFSManagerProxy2::OnWillUnmount(path.fileSystemRepresentationSafe);
-}
-
-+ (void) volumeDidUnmount:(NSNotification *)aNotification
-{
-    if( NSString *path = aNotification.userInfo[@"NSDevicePath"] )
-        nc::utility::NativeFSManagerProxy2::OnDidUnmount(path.fileSystemRepresentationSafe);
-}
-@end
-
-namespace nc::utility {
-
 struct NativeFSManager::Impl
 {
     mutable std::mutex m_Lock;
@@ -101,6 +60,7 @@ struct NativeFSManager::Impl
     VolumeLookup m_VolumeLookup;
     std::optional<APFSTree> m_StartupAPFSTree;
     std::vector<FirmlinksMappingParser::Firmlink> m_RootFirmlinks;
+    NCUtilityNativeFSManagerNotificationsReceiver *m_NotificationsReceiver;
     
     Info VolumeFromMountPoint_Unlocked(std::string_view _mount_point) const noexcept;
     Info VolumeFromBSDName_Unlocked(std::string_view _bsd_name) const noexcept;    
@@ -125,30 +85,68 @@ NativeFSManager::NativeFSManager():
     I->m_RootFirmlinks = FetchFirmlinks();
     if( I->m_StartupAPFSTree )
         I->InjectRootFirmlinks( *(I->m_StartupAPFSTree) );
+    I->m_NotificationsReceiver = [[NCUtilityNativeFSManagerNotificationsReceiver alloc] init];
     
-	const auto center = NSWorkspace.sharedWorkspace.notificationCenter;
-    const auto observer = NativeFSManagerProxy.class;
-	[center addObserver:observer selector:@selector(volumeDidMount:)
-                   name:NSWorkspaceDidMountNotification object:nil];
-	[center addObserver:observer selector:@selector(volumeDidRename:)
-                   name:NSWorkspaceDidRenameVolumeNotification object:nil];
-	[center addObserver:observer selector:@selector(volumeDidUnmount:)
-                   name:NSWorkspaceDidUnmountNotification object:nil];
-	[center addObserver:observer selector:@selector(volumeWillUnmount:)
-                   name:NSWorkspaceWillUnmountNotification object:nil];
+    SubscribeToWorkspaceNotifications();
 }
 
 NativeFSManager::~NativeFSManager()
 {
+    UnsubscribeFromWorkspaceNotifications();
+}
+
+void NativeFSManager::SubscribeToWorkspaceNotifications()
+{
+    const auto receiver = I->m_NotificationsReceiver;
+    assert( receiver );
+    
+    receiver.onVolumeDidMount = [this](NSNotification *_notification) {
+        if( NSString *const path = _notification.userInfo[@"NSDevicePath"] )
+            OnDidMount(path.fileSystemRepresentationSafe);    
+    };
+    receiver.onVolumeDidRename = [this](NSNotification *_notification) {
+        NSURL * const new_path = _notification.userInfo[NSWorkspaceVolumeURLKey];
+        NSURL * const old_path = _notification.userInfo[NSWorkspaceVolumeOldURLKey];
+        if(new_path && old_path)
+            OnDidRename(old_path.path.fileSystemRepresentationSafe,
+                        new_path.path.fileSystemRepresentationSafe);            
+    };
+    receiver.onVolumeWillUnmount = [this](NSNotification *_notification) {
+        if( NSString * const path = _notification.userInfo[@"NSDevicePath"] )
+            OnWillUnmount(path.fileSystemRepresentationSafe);    
+    }; 
+    receiver.onVolumeDidUnmount = [this](NSNotification *_notification) {
+        if( NSString * const path = _notification.userInfo[@"NSDevicePath"] )
+            OnDidUnmount(path.fileSystemRepresentationSafe);
+    };
+
+    const auto center = NSWorkspace.sharedWorkspace.notificationCenter;
+    [center addObserver:receiver selector:@selector(volumeDidMount:)
+                   name:NSWorkspaceDidMountNotification object:nil];
+    [center addObserver:receiver selector:@selector(volumeDidRename:)
+                   name:NSWorkspaceDidRenameVolumeNotification object:nil];
+    [center addObserver:receiver selector:@selector(volumeWillUnmount:)
+                name:NSWorkspaceWillUnmountNotification object:nil];
+    [center addObserver:receiver selector:@selector(volumeDidUnmount:)
+                   name:NSWorkspaceDidUnmountNotification object:nil];
+}
+
+void NativeFSManager::UnsubscribeFromWorkspaceNotifications()
+{
+    const auto receiver = I->m_NotificationsReceiver;
+    assert( receiver );
+    
+    const auto center = NSWorkspace.sharedWorkspace.notificationCenter;
+    [center removeObserver:receiver name:NSWorkspaceDidMountNotification object:nil];
+    [center removeObserver:receiver name:NSWorkspaceDidRenameVolumeNotification object:nil];
+    [center removeObserver:receiver name:NSWorkspaceWillUnmountNotification object:nil];
+    [center removeObserver:receiver name:NSWorkspaceDidUnmountNotification object:nil];
 }
 
 NativeFSManager &NativeFSManager::Instance()
 {
-    static std::once_flag once;
-    call_once(once, []{
-        g_SharedFSManager = new NativeFSManager();
-    });
-    return *g_SharedFSManager;
+    static const auto instance = new NativeFSManager();
+    return *instance;
 }
 
 static void GetAllInfos(NativeFileSystemInfo &_volume)
@@ -804,3 +802,31 @@ static std::vector<FirmlinksMappingParser::Firmlink> FetchFirmlinks() noexcept
 }
 
 }
+
+@implementation NCUtilityNativeFSManagerNotificationsReceiver
+
+- (void) volumeDidMount:(NSNotification *)_notification
+{
+    if( self.onVolumeDidMount )
+        self.onVolumeDidMount(_notification);
+}
+ 
+- (void) volumeDidRename:(NSNotification *)_notification
+{
+    if( self.onVolumeDidRename )
+        self.onVolumeDidRename(_notification);
+}
+
+- (void) volumeWillUnmount:(NSNotification *)_notification
+{
+    if( self.onVolumeWillUnmount )
+        self.onVolumeWillUnmount(_notification);
+}
+
+- (void) volumeDidUnmount:(NSNotification *)_notification
+{
+    if( self.onVolumeDidUnmount )
+        self.onVolumeDidUnmount(_notification);
+}
+
+@end

@@ -614,11 +614,11 @@ private:
     void PerformUnmounting(const Info &_volume);
     void PerformGenericUnmounting(const Info &_volume);    
     void PerformAPFSUnmounting(const Info &_volume);
+    void SubscribeToWorkspaceNotifications();
+    void UnsubscribeFromWorkspaceNotifications();
 
     struct Impl;
     std::unique_ptr<Impl> I;
-    
-    friend struct NativeFSManagerProxy2;
 };
 
 }

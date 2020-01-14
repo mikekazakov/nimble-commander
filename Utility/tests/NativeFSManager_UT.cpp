@@ -65,7 +65,7 @@ TEST_CASE(PREFIX"Can detect filesystem mounts and unmounts")
     auto create_cmd = "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path;
     auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path;
     auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes12345";
-    auto volumes_path = "/Volumes/SomethingWickedThisWayComes12345";
+    auto volume_path = "/Volumes/SomethingWickedThisWayComes12345";
 
     {
         REQUIRE( Execute( create_cmd ) == 0 );
@@ -75,14 +75,14 @@ TEST_CASE(PREFIX"Can detect filesystem mounts and unmounts")
         auto predicate = [&]() -> bool {
             auto volumes = fsm.Volumes();
             return std::any_of(volumes.begin(), volumes.end(), [&](const auto &volume){
-                return volume->mounted_at_path == volumes_path;
+                return volume->mounted_at_path == volume_path;
             });
         };
         REQUIRE( runMainLoopUntilExpectationOrTimeout(10s, predicate) );
         
-        auto volume = fsm.VolumeFromMountPoint(volumes_path);
+        auto volume = fsm.VolumeFromMountPoint(volume_path);
         REQUIRE( volume );
-        CHECK( volume->mounted_at_path == volumes_path );
+        CHECK( volume->mounted_at_path == volume_path );
         CHECK( volume->fs_type_name == "hfs" );
         CHECK( volume->basic.total_bytes == 1007616 );
     }
@@ -90,10 +90,54 @@ TEST_CASE(PREFIX"Can detect filesystem mounts and unmounts")
     auto predicate = [&]() -> bool {
         auto volumes = fsm.Volumes();
         return std::none_of(volumes.begin(), volumes.end(), [&](const auto &volume){
-            return volume->mounted_at_path == volumes_path;
+            return volume->mounted_at_path == volume_path;
         });
     };
     REQUIRE( runMainLoopUntilExpectationOrTimeout(10s, predicate) );
+}
+
+TEST_CASE(PREFIX"Can detect filesystem renames")
+{
+    using namespace std::chrono_literals;
+    TempTestDir tmp_dir;
+    const auto dmg_path = tmp_dir.directory + "tmp_image.dmg";
+      
+    
+    auto create_cmd = "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path;
+    auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path;
+    auto rename_cmd = "/usr/sbin/diskutil rename /Volumes/SomethingWickedThisWayComes12345 SomethingWickedThisWayComes123456";
+    auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes123456";
+    auto volume_path_old = "/Volumes/SomethingWickedThisWayComes12345";
+    auto volume_path_new = "/Volumes/SomethingWickedThisWayComes123456";
+    
+    REQUIRE( Execute( create_cmd ) == 0 );
+    
+    auto &fsm = NativeFSManager::Instance();
+    auto predicate_old = [&]() -> bool {
+        auto volumes = fsm.Volumes();
+        return std::any_of(volumes.begin(), volumes.end(), [&](const auto &volume){
+            return volume->mounted_at_path == volume_path_old;
+        });
+    };
+    auto predicate_new = [&]() -> bool {
+        auto volumes = fsm.Volumes();
+        return std::any_of(volumes.begin(), volumes.end(), [&](const auto &volume){
+            return volume->mounted_at_path == volume_path_new;
+        });
+    };
+    REQUIRE( predicate_old() == false );
+    REQUIRE( predicate_new() == false );
+    
+    REQUIRE( Execute( mount_cmd ) == 0 );
+    auto unmount = at_scope_end([&]{ Execute( unmount_cmd ); } );
+        
+    REQUIRE( runMainLoopUntilExpectationOrTimeout(10s, predicate_old) );
+    REQUIRE( predicate_new() == false );
+    
+    REQUIRE( Execute( rename_cmd ) == 0 );
+
+    REQUIRE( runMainLoopUntilExpectationOrTimeout(10s, predicate_new) );
+    REQUIRE( predicate_old() == false );
 }
 
 static bool runMainLoopUntilExpectationOrTimeout(std::chrono::nanoseconds _timeout,

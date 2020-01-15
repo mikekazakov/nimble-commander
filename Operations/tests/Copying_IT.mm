@@ -1,4 +1,4 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
 #include <Operations/Copying.h>
 #include <Utility/NativeFSManager.h>
@@ -32,8 +32,8 @@ TEST_CASE(PREFIX"Verify that /Applications/ and temp dir are on the same fs")
 {
     const std::string target_dir = "/Applications/";
     TempTestDir test_dir;
-    REQUIRE( NativeFSManager::Instance().VolumeFromPath(test_dir.directory) == 
-        NativeFSManager::Instance().VolumeFromPath(target_dir) );
+    NativeFSManager fsm;
+    REQUIRE( fsm.VolumeFromPath(test_dir.directory) == fsm.VolumeFromPath(target_dir) );
 }
 
 TEST_CASE(PREFIX"Can rename a regular file across firmlink injection points")

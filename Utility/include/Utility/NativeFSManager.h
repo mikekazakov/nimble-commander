@@ -551,7 +551,10 @@ class NativeFSManager
 {
 public:
     NativeFSManager();
+    NativeFSManager(const NativeFSManager&) = delete;
     ~NativeFSManager();
+    NativeFSManager& operator=(const NativeFSManager&) = delete;
+    
     static NativeFSManager &Instance();
     
     class VolumeLookup;
@@ -603,9 +606,6 @@ public:
     bool IsVolumeContainingPathEjectable(const std::string &_path);
     
 private:
-    NativeFSManager(const NativeFSManager&) = delete;
-    void operator=(const NativeFSManager&) = delete;
-        
     void OnDidMount(const std::string &_on_path);
     void OnWillUnmount(const std::string &_on_path);
     void OnDidUnmount(const std::string &_on_path);

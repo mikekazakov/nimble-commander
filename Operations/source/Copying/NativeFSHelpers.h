@@ -21,6 +21,6 @@ bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
                                           const std::string &_path,
                                           const std::string &_item_name,
                                           const VFSStat &_st,
-                                          nc::utility::NativeFSManager& _native_fs_man);
+                                          nc::utility::NativeFSManager* _native_fs_man);
 
 };

@@ -33,7 +33,9 @@ CopyingJob::CopyingJob(std::vector<VFSListingItem> _source_items,
     m_DestinationHost(_dest_host),
     m_IsDestinationHostNative(_dest_host->IsNativeFS()),
     m_InitialDestinationPath(_dest_path),
-    m_NativeFSManager(utility::NativeFSManager::Instance())
+    m_NativeFSManager( _dest_host->IsNativeFS() ?
+        &dynamic_cast<VFSNativeHost*>(_dest_host.get())->NativeFSManager() :
+        nullptr)
 {
     if( m_InitialDestinationPath.empty() || m_InitialDestinationPath.front() != '/' ) {
         const auto msg = "CopyingJob::CopyingJob(): destination path should be an absolute path";
@@ -82,9 +84,9 @@ void CopyingJob::Perform()
     m_PathCompositionType = composition_type;
  
     if( m_IsDestinationHostNative ) {
-        if( !(m_DestinationNativeFSInfo = m_NativeFSManager.VolumeFromPath(m_DestinationPath)) ) {
+        if( !(m_DestinationNativeFSInfo = m_NativeFSManager->VolumeFromPath(m_DestinationPath)) ) {
             // this may be wrong in case of symlinks
-            m_DestinationNativeFSInfo = m_NativeFSManager.VolumeFromPathFast(m_DestinationPath);
+            m_DestinationNativeFSInfo = m_NativeFSManager->VolumeFromPathFast(m_DestinationPath);
             if( !m_DestinationNativeFSInfo ) {
                 Stop(); // we're totally broken. can't go on
                 return;
@@ -165,7 +167,8 @@ CopyingJob::StepResult CopyingJob::ProcessItemNo(int _item_number)
             destination_path = std::move(new_path);
     });
     const auto is_same_native_volume = [&]() {
-        auto src_fsinfo = m_NativeFSManager.VolumeFromPath(source_path);
+        assert(m_NativeFSManager);
+        auto src_fsinfo = m_NativeFSManager->VolumeFromPath(source_path);
         if( src_fsinfo == nullptr  )
             return false;
         return src_fsinfo == m_DestinationNativeFSInfo;
@@ -283,7 +286,7 @@ CopyingJob::StepResult CopyingJob::ProcessDirectoryItem(VFSHost& _source_host,
             result = CopyNativeDirectoryToNativeDirectory(_source_path, _destination_path);
         }
         else { // move
-            const auto src_fs_info = m_NativeFSManager.VolumeFromPath(_source_path);
+            const auto src_fs_info = m_NativeFSManager->VolumeFromPath(_source_path);
             const auto same_volume = src_fs_info == m_DestinationNativeFSInfo;
             if( same_volume ) { // rename
                 const auto rename_result = RenameNativeDirectory(_source_path, _destination_path);
@@ -352,7 +355,7 @@ CopyingJob::StepResult CopyingJob::ProcessSymlinkItem(VFSHost& _source_host,
                                              _new_dst_callback);
         }
         else {
-            const auto item_fs_info = m_NativeFSManager.VolumeFromPath(
+            const auto item_fs_info = m_NativeFSManager->VolumeFromPath(
                 boost::filesystem::path{_source_path}.parent_path().generic_string() );
             const auto is_same_native_volume = item_fs_info == m_DestinationNativeFSInfo;
             if( is_same_native_volume ) {
@@ -603,7 +606,7 @@ std::tuple<CopyingJob::StepResult, SourceItems> CopyingJob::ScanSourceItems()
                 if( !should_go_inside ) {
                     // check if we're on the same native volume
                     if( m_IsDestinationHostNative &&
-                        m_DestinationNativeFSInfo != m_NativeFSManager.VolumeFromPath(path) )
+                        m_DestinationNativeFSInfo != m_NativeFSManager->VolumeFromPath(path) )
                         should_go_inside = true;
                 }
                 if( !should_go_inside ) {
@@ -730,7 +733,8 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile
     }
   
     // find fs info for source file.
-    auto src_fs_info_holder = m_NativeFSManager.VolumeFromFD(source_fd);
+    assert(m_NativeFSManager);
+    auto src_fs_info_holder = m_NativeFSManager->VolumeFromFD(source_fd);
     if( !src_fs_info_holder ) {
         std::cerr << "Failed to find fs_info for dev_id: " << src_stat_buffer.st_dev << std::endl;
         return StepResult::Stop; // something VERY BAD has happened, can't go on
@@ -853,7 +857,7 @@ CopyingJob::StepResult CopyingJob::CopyNativeFileToNativeFile
     fcntl( destination_fd, F_NOCACHE, 1 );
     
     // find fs info for destination file.
-    auto dst_fs_info_holder = m_NativeFSManager.VolumeFromFD( destination_fd );
+    auto dst_fs_info_holder = m_NativeFSManager->VolumeFromFD( destination_fd );
     if( !dst_fs_info_holder )
         return StepResult::Stop; // something VERY BAD has happened, can't go on
     auto &dst_fs_info = *dst_fs_info_holder;
@@ -1197,7 +1201,8 @@ CopyingJob::StepResult CopyingJob::CopyVFSFileToNativeFile
     fcntl( destination_fd, F_NOCACHE, 1 );
     
     // find fs info for destination file.
-    auto dst_fs_info_holder = m_NativeFSManager.VolumeFromFD( destination_fd );
+    assert(m_NativeFSManager);
+    auto dst_fs_info_holder = m_NativeFSManager->VolumeFromFD( destination_fd );
     if( !dst_fs_info_holder )
         return StepResult::Stop; // something VERY BAD has happened, can't go on
     auto &dst_fs_info = *dst_fs_info_holder;

@@ -99,7 +99,7 @@ bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
                                           const std::string &_path,
                                           const std::string &_item_name,
                                           const VFSStat &_st,
-                                          nc::utility::NativeFSManager& _native_fs_man)
+                                          nc::utility::NativeFSManager* _native_fs_man)
 {
     // currently we think that ExtEAs can be only on native VFS
     if( !_host.IsNativeFS() )
@@ -114,7 +114,8 @@ bool IsAnExternalExtenedAttributesStorage(VFSHost &_host,
         return false;
     
     // check if current filesystem uses external eas
-    auto fs_info = _native_fs_man.VolumeFromPath( _path );
+    assert(_native_fs_man);
+    auto fs_info = _native_fs_man->VolumeFromPath( _path );
     if( !fs_info || fs_info->interfaces.extended_attr == true )
         return false;
     

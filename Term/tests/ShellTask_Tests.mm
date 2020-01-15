@@ -1,4 +1,4 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Habanero/dispatch_cpp.h>
 #import <XCTest/XCTest.h>
@@ -136,17 +136,19 @@ static string ToRealPath(const string &_from)
     testSleep( 1s );
     {
         auto l = screen->AcquireLock();
-        XCTAssert( screen->Buffer().DumpScreenAsANSI() ==
-                  "                                        "
-                  "~                                       "
-                  "~                                       "
-                  "~                                       "
-                  "~                                       "
-                  "~                                       "
-                  "~                                       "
-                  "~                                       "
-                  "~                                       "
-                  "\"vim_test\" [New File]                   " );
+        const auto dump = screen->Buffer().DumpScreenAsANSI();
+        const auto expected_dump = 
+        "                                        "
+        "~                                       "
+        "~                                       "
+        "~                                       "
+        "~                                       "
+        "~                                       "
+        "~                                       "
+        "~                                       "
+        "~                                       "
+        "\"vim_test\" [New File]                   "; 
+        XCTAssert( dump == expected_dump );
     }
     
     shell->WriteChildInput("i1\r2\r3\r4\r5\r");

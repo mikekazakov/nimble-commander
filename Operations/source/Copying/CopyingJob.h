@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include <Habanero/algo.h>
@@ -274,7 +274,7 @@ private:
     const std::string                           m_InitialDestinationPath; // must be an absolute path, used solely in AnalizeDestination()
     std::string                                 m_DestinationPath;
     PathCompositionType                         m_PathCompositionType;
-    class nc::utility::NativeFSManager         &m_NativeFSManager;
+    nc::utility::NativeFSManager * const        m_NativeFSManager;
     
     // buffers are allocated once in job init and are used to manupulate files' bytes.
     // thus no parallel routines should run using these buffers

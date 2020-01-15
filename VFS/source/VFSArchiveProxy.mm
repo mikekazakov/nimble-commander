@@ -26,7 +26,7 @@ VFSHostPtr VFSArchiveProxy::OpenFileAsArchive(const std::string &_path,
        nc::vfs::UnRARHost::IsRarArchive(_path.c_str()) )
     {
         try {
-            auto host = std::make_shared<nc::vfs::UnRARHost>(_path);
+            auto host = std::make_shared<nc::vfs::UnRARHost>(_path, _parent);
             return host;
         } catch (VFSErrorException &e) {
         }

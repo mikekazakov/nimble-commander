@@ -64,8 +64,8 @@ static VFSConfiguration ComposeConfiguration( const std::string &_path )
     return VFSConfiguration( std::move(config) );
 }
 
-UnRARHost::UnRARHost(const std::string &_path):
-    Host(_path.c_str(), VFSNativeHost::SharedHost(), UniqueTag),
+UnRARHost::UnRARHost(const std::string &_path, const VFSHostPtr& _parent):
+    Host(_path.c_str(), _parent, UniqueTag),
     m_SeekCacheControl(dispatch_queue_create(NULL, NULL)),
     m_Configuration( ComposeConfiguration(_path) )
 {

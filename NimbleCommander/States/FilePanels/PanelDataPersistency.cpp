@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshadow"
 #include <boost/uuid/uuid_io.hpp>
@@ -598,7 +598,7 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
                 if( vfs.size() < 1 || !vfs.back()->IsNativeFS() )
                     return VFSError::GenericError; // invalid data
                 
-                auto host = std::make_shared<vfs::UnRARHost>( rar->junction.c_str() );
+                auto host = std::make_shared<vfs::UnRARHost>( rar->junction.c_str(), vfs.back() );
                 vfs.emplace_back( host );
             }
         }

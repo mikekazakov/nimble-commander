@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <Habanero/SerialQueue.h>
 #include "../../include/VFS/Host.h"
+#include "../../include/VFS/Native.h"
 #include "../../include/VFS/VFSFile.h"
 #include <map>
 #include <list>
@@ -20,7 +21,7 @@ class UnRARHost final : public Host
 {
 public:
     static const char *UniqueTag;
-    UnRARHost(const std::string &_path);
+    UnRARHost(const std::string &_path, const VFSHostPtr & _parent);
     UnRARHost(const VFSHostPtr &_parent, const VFSConfiguration &_config);
     ~UnRARHost();
     

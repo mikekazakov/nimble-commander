@@ -466,7 +466,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 {
     VFSHostPtr host_src;
     try {
-        host_src = std::make_shared<UnRARHost>(g_PhotosRAR.c_str());
+        host_src = std::make_shared<UnRARHost>(g_PhotosRAR.c_str(), VFSNativeHost::SharedHost() );
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;

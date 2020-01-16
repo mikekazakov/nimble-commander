@@ -1,5 +1,6 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "tests_common.h"
+#include "TestEnv.h"
 #include "../source/NetWebDAV/WebDAVHost.h"
 #include <VFS/VFSEasyOps.h>
 #include <VFS/Native.h>
@@ -246,14 +247,14 @@ static const auto g_YandexDiskPassword = NCE(nc::env::test::webdav_yandexdisk_pa
     const auto host = [self spawnBoxComHost];
     VFSEasyDelete("/Test2", host);    
     const auto copy_rc = VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs",
-                                              VFSNativeHost::SharedHost(),
+                                              TestEnv().vfs_native,
                                               "/Test2",
                                               host);
     XCTAssert( copy_rc == VFSError::Ok );
 
     int res = 0;
     int cmp_rc = VFSCompareNodes("/System/Library/Filesystems/msdos.fs",
-                                  VFSNativeHost::SharedHost(),
+                                  TestEnv().vfs_native,
                                   "/Test2",
                                   host,
                                   res);
@@ -341,14 +342,14 @@ static const auto g_YandexDiskPassword = NCE(nc::env::test::webdav_yandexdisk_pa
     const auto host = [self spawnYandexDiskHost];
     VFSEasyDelete("/Test2", host);    
     const auto copy_rc = VFSEasyCopyDirectory("/System/Library/Filesystems/msdos.fs",
-                                              VFSNativeHost::SharedHost(),
+                                              TestEnv().vfs_native,
                                               "/Test2",
                                               host);
     XCTAssert( copy_rc == VFSError::Ok );
 
     int res = 0;
     int cmp_rc = VFSCompareNodes("/System/Library/Filesystems/msdos.fs",
-                                  VFSNativeHost::SharedHost(),
+                                  TestEnv().vfs_native,
                                   "/Test2",
                                   host,
                                   res);

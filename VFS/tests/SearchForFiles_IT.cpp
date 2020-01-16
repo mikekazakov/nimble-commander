@@ -1,5 +1,6 @@
 // Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
+#include "TestEnv.h"
 #include "SearchForFiles.h"
 #include <Utility/PathManip.h>
 #include <Native.h>
@@ -18,7 +19,7 @@ TEST_CASE(PREFIX "Test basic searching")
     using Options = SearchForFiles::Options;
     TestDir test_dir;
     BuildTestData(test_dir.directory);
-    auto &host = nc::vfs::NativeHost::SharedHost();
+    auto &host = TestEnv().vfs_native;
     
     using set = std::set<std::string>; 
     set filenames;
@@ -85,7 +86,7 @@ TEST_CASE(PREFIX "Test size filter")
     using Options = SearchForFiles::Options;
     TestDir test_dir;
     BuildTestData(test_dir.directory);
-    auto &host = nc::vfs::NativeHost::SharedHost();
+    auto &host = TestEnv().vfs_native;
     
     using set = std::set<std::string>; 
     set filenames;
@@ -130,7 +131,7 @@ TEST_CASE(PREFIX "Test content filter")
     using Options = SearchForFiles::Options;
     TestDir test_dir;
     BuildTestData(test_dir.directory);
-    auto &host = nc::vfs::NativeHost::SharedHost();
+    auto &host = TestEnv().vfs_native;
     
     using set = std::set<std::string>; 
     set filenames;

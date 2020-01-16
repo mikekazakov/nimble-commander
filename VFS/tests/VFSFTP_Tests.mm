@@ -1,5 +1,6 @@
-// Copyright (C) 2014-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import "tests_common.h"
+#include "TestEnv.h"
 #include <VFS/VFS.h>
 #include <VFS/NetFTP.h>
 #include <VFS/Native.h>
@@ -40,11 +41,11 @@ static string UUID()
         XCTAssert( host->Unlink(fn2, 0) == 0);
     
     // copy file to remote server
-    XCTAssert( VFSEasyCopyFile(fn1, VFSNativeHost::SharedHost(), fn2, host) == 0);
+    XCTAssert( VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
     int compare;
 
     // compare it with origin
-    XCTAssert( VFSEasyCompareFiles(fn1, VFSNativeHost::SharedHost(), fn2, host, compare) == 0);
+    XCTAssert( VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
     XCTAssert( compare == 0);
     
     // check that it appeared in stat cache
@@ -137,7 +138,7 @@ static string UUID()
     if( host->Stat(fn2.c_str(), stat, 0, 0) == 0)
         XCTAssert( host->Unlink(fn2.c_str(), 0) == 0);
     
-    XCTAssert( VFSEasyCopyFile(fn1.c_str(), VFSNativeHost::SharedHost(), fn2.c_str(), host) == 0);
+    XCTAssert( VFSEasyCopyFile(fn1.c_str(), TestEnv().vfs_native, fn2.c_str(), host) == 0);
     XCTAssert( host->Rename(fn2.c_str(), fn3.c_str(), 0) == 0);
     XCTAssert( host->Stat(fn3.c_str(), stat, 0, 0) == 0);
     XCTAssert( host->Unlink(fn3.c_str(), 0) == 0);

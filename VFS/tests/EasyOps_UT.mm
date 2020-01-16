@@ -1,4 +1,6 @@
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
+#include "TestEnv.h"
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
 #include <Habanero/algo.h>
@@ -21,7 +23,7 @@ TEST_CASE(PREFIX "CopyFileToTempStorage works")
     auto storage = nc::utility::TemporaryFileStorageImpl{base_dir, "some_prefix"};
     const auto content = "Hello, world!";
     Save(base_dir + "aaa.txt", content);
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     
     const auto copied_path = CopyFileToTempStorage(base_dir + "aaa.txt", *host, storage);
     REQUIRE( copied_path != std::nullopt );
@@ -49,7 +51,7 @@ TEST_CASE(PREFIX "CopyDirectoryToTempStorage works")
     const auto content2 = "Goodbye, world!";
     Save(base_dir + "A/B/aaa.txt", content1);
     Save(base_dir + "A/C/bbb.txt", content2);
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     
     const auto copied_path = CopyDirectoryToTempStorage(base_dir + "A",
                                                         *host,

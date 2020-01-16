@@ -1,5 +1,6 @@
 // Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
+#include "TestEnv.h"
 #include <NativeSpecialDirectories.h>
 #include <Habanero/algo.h>
 
@@ -9,7 +10,7 @@ using namespace nc::vfs::native;
 
 static VFSNativeHost& host()
 {
-    return *VFSNativeHost::SharedHost();
+    return *TestEnv().vfs_native;
 }
 
 static bool ListingHas(const Listing& listing, const std::string& _filename){

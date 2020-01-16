@@ -1,5 +1,6 @@
 // Copyright (C) 2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
+#include "TestEnv.h"
 #include <VFSListingInput.h>
 #include <Native.h>
 #include <VFSDeclarations.h>
@@ -11,7 +12,7 @@ TEST_CASE(PREFIX"Title is preserved after building")
 {
     ListingInput input;
     input.title = "Test";
-    input.hosts.insert(0, VFSNativeHost::SharedHost());
+    input.hosts.insert(0, TestEnv().vfs_native);
     input.directories.insert(0, "/");
     auto listing = Listing::Build(std::move(input));
     REQUIRE(listing);
@@ -22,7 +23,7 @@ TEST_CASE(PREFIX"Title is preserved after updating")
 {
     ListingInput input;
     input.title = "Test";
-    input.hosts.insert(0, VFSNativeHost::SharedHost());
+    input.hosts.insert(0, TestEnv().vfs_native);
     input.directories.insert(0, "/");
     auto orig_listing = Listing::Build(std::move(input));
     REQUIRE(orig_listing);

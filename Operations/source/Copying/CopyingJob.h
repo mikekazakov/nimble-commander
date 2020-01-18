@@ -6,6 +6,7 @@
 #include <Habanero/DispatchGroup.h>
 #include <Utility/NativeFSManager.h>
 #include <VFS/VFS.h>
+#include <VFS/Native.h>
 #include "Options.h"
 #include "../Job.h"
 #include "SourceItems.h"
@@ -200,12 +201,14 @@ private:
     // will be used for checksum calculation when copying verifiyng is enabled
     using SourceDataFeedback = std::function<void(const void *_data, unsigned _sz)>;
      
-    StepResult CopyNativeFileToNativeFile(const std::string& _src_path,
+    StepResult CopyNativeFileToNativeFile(vfs::NativeHost &_native_host,
+                                          const std::string& _src_path,
                                           const std::string& _dst_path,
                                           const SourceDataFeedback &_source_data_feedback,
                                           const RequestNonexistentDst &_new_dst_callback);
     StepResult CopyVFSFileToNativeFile(VFSHost &_src_vfs,
                                        const std::string& _src_path,
+                                       vfs::NativeHost &_dst_host,
                                        const std::string& _dst_path,
                                        const SourceDataFeedback &_source_data_feedback,
                                        const RequestNonexistentDst &_new_dst_callback);
@@ -215,19 +218,23 @@ private:
                                     const SourceDataFeedback &_source_data_feedback,
                                     const RequestNonexistentDst &_new_dst_callback);
 
-    StepResult CopyNativeDirectoryToNativeDirectory(const std::string& _src_path,
+    StepResult CopyNativeDirectoryToNativeDirectory(vfs::NativeHost &_native_host,
+                                                    const std::string& _src_path,
                                                     const std::string& _dst_path) const;
     StepResult CopyVFSDirectoryToNativeDirectory(VFSHost &_src_vfs,
                                                  const std::string& _src_path,
+                                                 vfs::NativeHost &_dst_host,
                                                  const std::string& _dst_path) const;
     StepResult CopyVFSDirectoryToVFSDirectory(VFSHost &_src_vfs,
                                               const std::string& _src_path,
                                               const std::string& _dst_path) const;
-    StepResult CopyNativeSymlinkToNative(const std::string& _src_path,
+    StepResult CopyNativeSymlinkToNative(vfs::NativeHost &_native_host,
+                                         const std::string& _src_path,
                                          const std::string& _dst_path,
                                          const RequestNonexistentDst &_new_dst_callback) const;
     StepResult CopyVFSSymlinkToNative(VFSHost &_src_vfs,
                                       const std::string& _src_path,
+                                      vfs::NativeHost &_dst_host,
                                       const std::string& _dst_path,
                                       const RequestNonexistentDst &_new_dst_callback) const;
     StepResult CopyVFSSymlinkToVFS(VFSHost &_src_vfs,
@@ -235,12 +242,14 @@ private:
                                    const std::string& _dst_path,
                                    const RequestNonexistentDst &_new_dst_callback) const;
     
-    StepResult RenameNativeFile(const std::string& _src_path,
+    StepResult RenameNativeFile(vfs::NativeHost &_native_host,
+                                const std::string& _src_path,
                                 const std::string& _dst_path,
                                 const RequestNonexistentDst &_new_dst_callback) const;
 
     std::pair<StepResult, SourceItemAftermath>
-    RenameNativeDirectory(const std::string& _src_path,
+    RenameNativeDirectory(vfs::NativeHost &_native_host,
+                          const std::string& _src_path,
                           const std::string& _dst_path) const;
 
     std::pair<StepResult, SourceItemAftermath>

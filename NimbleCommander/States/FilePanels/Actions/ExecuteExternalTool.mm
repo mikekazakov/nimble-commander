@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ExecuteExternalTool.h"
 #include "../ExternalToolsSupport.h"
 #include <boost/algorithm/string/replace.hpp>
@@ -16,6 +16,7 @@
 #include <Utility/ObjCpp.h>
 #include <Utility/StringExtras.h>
 #include <Habanero/dispatch_cpp.h>
+#include <sys/stat.h>
 
 namespace nc::panel::actions {
     
@@ -228,11 +229,11 @@ static std::vector<std::string> FindEnterValueParameters(const ExternalToolsPara
 
 static bool IsRunnableExecutable( const std::string &_path )
 {
-    VFSStat st;
-    return VFSNativeHost::SharedHost()->Stat(_path.c_str(), st, 0, nullptr) == VFSError::Ok &&
-        st.mode_bits.reg  &&
-        st.mode_bits.rusr &&
-        st.mode_bits.xusr ;
+    struct stat st;
+    return stat(_path.c_str(), &st) == 0 &&
+    (st.st_mode & S_IFREG) != 0 &&
+    (st.st_mode & S_IRUSR) != 0 &&
+    (st.st_mode & S_IXUSR) != 0;
 }
 
 static void RunExtTool(const ExternalTool &_tool,

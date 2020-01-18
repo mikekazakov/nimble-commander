@@ -155,6 +155,9 @@
 		CFC4F9E91F15BA800000B3EE /* AttrsChangingDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = CFC4F9E61F15BA800000B3EE /* AttrsChangingDialog.h */; };
 		CFC4F9EA1F15BA800000B3EE /* AttrsChangingDialog.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFC4F9E71F15BA800000B3EE /* AttrsChangingDialog.mm */; };
 		CFDE7170215269AE005449C8 /* libiconv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CFDE716E215267BB005449C8 /* libiconv.tbd */; };
+		CFE08AFD23D3719B007E99B8 /* TestEnv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.cpp */; };
+		CFE08AFE23D3719B007E99B8 /* TestEnv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AFC23D3719B007E99B8 /* TestEnv.cpp */; };
+		CFE08AFF23D374B5007E99B8 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFBEF9081F67E56A00C63816 /* libUtility.dylib */; };
 		CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFF53B2F1EDD197300F567C4 /* Operations.framework */; };
 		CFF53B761EDE53E800F567C4 /* Operation.h in Headers */ = {isa = PBXBuildFile; fileRef = CFF53B741EDE53E800F567C4 /* Operation.h */; };
 		CFF53B771EDE53E800F567C4 /* Operation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFF53B751EDE53E800F567C4 /* Operation.mm */; };
@@ -356,6 +359,8 @@
 		CFC4F9E61F15BA800000B3EE /* AttrsChangingDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AttrsChangingDialog.h; path = source/AttrsChanging/AttrsChangingDialog.h; sourceTree = "<group>"; };
 		CFC4F9E71F15BA800000B3EE /* AttrsChangingDialog.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AttrsChangingDialog.mm; path = source/AttrsChanging/AttrsChangingDialog.mm; sourceTree = "<group>"; };
 		CFDE716E215267BB005449C8 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		CFE08AFB23D3719B007E99B8 /* TestEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestEnv.h; sourceTree = "<group>"; };
+		CFE08AFC23D3719B007E99B8 /* TestEnv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestEnv.cpp; sourceTree = "<group>"; };
 		CFF53B2F1EDD197300F567C4 /* Operations.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Operations.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFF53B331EDD197300F567C4 /* Info-Framework.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Framework.plist"; path = "resources/Info-Framework.plist"; sourceTree = "<group>"; };
 		CFF53B381EDD197300F567C4 /* OperationsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OperationsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -411,6 +416,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFE08AFF23D374B5007E99B8 /* libUtility.dylib in Frameworks */,
 				CFF53B391EDD197300F567C4 /* Operations.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -662,6 +668,8 @@
 				CF2C102422A4116B00A5359D /* DirectoryPathAutoCompetion_IT.mm */,
 				CF3ABD8223BA1B2800D1878B /* Environment.h */,
 				CFC4F9981F0F271E0000B3EE /* Linkage_Tests.mm */,
+				CFE08AFC23D3719B007E99B8 /* TestEnv.cpp */,
+				CFE08AFB23D3719B007E99B8 /* TestEnv.h */,
 				CF2C101822A0731500A5359D /* Tests.cpp */,
 				CF2C101922A0731500A5359D /* Tests.h */,
 			);
@@ -967,6 +975,7 @@
 				CF2C101A22A0731500A5359D /* Tests.cpp in Sources */,
 				CF2C102622A4116F00A5359D /* DirectoryPathAutoCompetion_IT.mm in Sources */,
 				CF3ABD8123BA1B1A00D1878B /* Copying_IT.mm in Sources */,
+				CFE08AFE23D3719B007E99B8 /* TestEnv.cpp in Sources */,
 				CF2C102722A4128500A5359D /* Compression_Tests.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1036,6 +1045,7 @@
 				CFB44F2C1F383A3D00E7555E /* Copying_Tests.mm in Sources */,
 				CFC4F99A1F0F27230000B3EE /* Linkage_Tests.mm in Sources */,
 				CFC4F9D71F14FA100000B3EE /* AttrsChanging_Tests.mm in Sources */,
+				CFE08AFD23D3719B007E99B8 /* TestEnv.cpp in Sources */,
 				CFC4F90D1F0628CC0000B3EE /* DirectoryCreations_Tests.mm in Sources */,
 				CFC4F9231F09DFF60000B3EE /* Deletion_Tests.mm in Sources */,
 			);

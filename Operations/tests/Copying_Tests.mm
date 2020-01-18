@@ -1,5 +1,6 @@
 // Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
+#include "TestEnv.h"
 #include <sys/stat.h>
 #include <VFS/Native.h>
 #include <VFS/NetFTP.h>
@@ -44,13 +45,13 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 - (void)setUp
 {
     [super setUp];
-    m_NativeHost = VFSNativeHost::SharedHost();
+    m_NativeHost = TestEnv().vfs_native;
     m_TmpDir = self.makeTmpDir;
 }
 
 - (void)tearDown
 {
-    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    VFSEasyDelete(m_TmpDir.c_str(), TestEnv().vfs_native);
     [super tearDown];
 }
 
@@ -59,7 +60,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     // ensures no-return of a bug introduced 30/01/15
     auto dir = self.makeTmpDir;
     auto dst = dir / "dest.zzz";
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     int result;
     
     {
@@ -100,7 +101,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     // reversion of testOverwriteBugRegression
     auto dir = self.makeTmpDir;
     auto dst = dir / "dest.zzz";
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     int result;
     
     {
@@ -138,7 +139,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 - (void)testCaseRenaming
 {
     auto dir = self.makeTmpDir;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     
     {
         auto src = dir / "directory";
@@ -194,7 +195,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     [self EnsureClean:fn2 at:host];
     
     CopyingOptions opts;
-    Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *VFSNativeHost::SharedHost()),
+    Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
                "/Public/!FilesTesting/",
                host,
                opts);
@@ -203,7 +204,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     op.Wait();
         
     int compare;
-    XCTAssert( VFSEasyCompareFiles(fn1, VFSNativeHost::SharedHost(), fn2, host, compare) == 0);
+    XCTAssert( VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
     XCTAssert( compare == 0);
     
     XCTAssert( host->Unlink(fn2, 0) == 0);
@@ -225,7 +226,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
       [self EnsureClean:"/Public/!FilesTesting/"s + i at:host];
     
     CopyingOptions opts;
-    Copying op(FetchItems("/System/Applications/Mail.app/Contents", {begin(files), end(files)}, *VFSNativeHost::SharedHost()),
+    Copying op(FetchItems("/System/Applications/Mail.app/Contents", {begin(files), end(files)}, *TestEnv().vfs_native),
                "/Public/!FilesTesting/",
                host,
                opts);
@@ -236,7 +237,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     for(auto &i: files) {
         int compare;
         XCTAssert( VFSEasyCompareFiles(("/System/Applications/Mail.app/Contents/"s + i).c_str(),
-                                       VFSNativeHost::SharedHost(),
+                                       TestEnv().vfs_native,
                                        ("/Public/!FilesTesting/"s + i).c_str(),
                                        host,
                                        compare) == 0);
@@ -258,7 +259,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     [self EnsureClean:"/Public/!FilesTesting/bin" at:host];
     
     CopyingOptions opts;
-    Copying op(FetchItems("/", {"bin"}, *VFSNativeHost::SharedHost()),
+    Copying op(FetchItems("/", {"bin"}, *TestEnv().vfs_native),
                "/Public/!FilesTesting/",
                host,
                opts);
@@ -268,7 +269,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     
     int result = 0;
     XCTAssert( VFSCompareEntries("/bin",
-                                 VFSNativeHost::SharedHost(),
+                                 TestEnv().vfs_native,
                                  "/Public/!FilesTesting/bin",
                                  host,
                                  result) == 0);
@@ -280,7 +281,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 - (void)testCopyGenericToGeneric_Modes_CopyToPrefix
 {
     CopyingOptions opts;
-    Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost()),
+    Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *TestEnv().vfs_native),
                m_TmpDir.native(),
                m_NativeHost,
                opts);
@@ -290,9 +291,9 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 
     int result = 0;
     XCTAssert( VFSCompareEntries(boost::filesystem::path("/System/Applications") / "Mail.app",
-                                 VFSNativeHost::SharedHost(),
+                                 TestEnv().vfs_native,
                                  m_TmpDir / "Mail.app",
-                                 VFSNativeHost::SharedHost(),
+                                 TestEnv().vfs_native,
                                  result) == 0);
     XCTAssert( result == 0 );
 }
@@ -303,7 +304,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     boost::filesystem::path dst_dir = m_TmpDir / "Some" / "Absent" / "Dir" / "Is" / "Here/";
     
     CopyingOptions opts;
-    Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *VFSNativeHost::SharedHost()),
+    Copying op(FetchItems("/System/Applications/", {"Mail.app"}, *TestEnv().vfs_native),
                dst_dir.native(),
                m_NativeHost,
                opts);
@@ -313,9 +314,9 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     
     int result = 0;
     XCTAssert( VFSCompareEntries(boost::filesystem::path("/System/Applications") / "Mail.app",
-                                 VFSNativeHost::SharedHost(),
+                                 TestEnv().vfs_native,
                                  dst_dir / "Mail.app",
-                                 VFSNativeHost::SharedHost(),
+                                 TestEnv().vfs_native,
                                  result) == 0);
     XCTAssert( result == 0 );
 }
@@ -324,7 +325,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 - (void)testCopyGenericToGeneric_Modes_CopyToPrefix_WithLocalDir
 {
     // works on single host - In and Out same as where source files are
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     
     XCTAssert( VFSEasyCopyNode("/System/Applications/Mail.app",
                                host,
@@ -332,7 +333,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
                                host) == 0);
     
     CopyingOptions opts;
-    Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *VFSNativeHost::SharedHost()),
+    Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *TestEnv().vfs_native),
                (m_TmpDir / "SomeDirectoryName/").native(),
                m_NativeHost,
                opts);
@@ -350,14 +351,14 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 {
     // works on single host - In and Out same as where source files are
     // Copies "Mail.app" to "Mail2.app" in the same dir
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     
     XCTAssert( VFSEasyCopyNode("/System/Applications/Mail.app",
                                host,
                                (boost::filesystem::path(m_TmpDir) / "Mail.app").c_str(),
                                host) == 0);
     
-    Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *VFSNativeHost::SharedHost()),
+    Copying op(FetchItems(m_TmpDir.native(), {"Mail.app"}, *TestEnv().vfs_native),
                (m_TmpDir / "Mail2.app").native(),
                m_NativeHost,
                {});
@@ -388,7 +389,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     [self EnsureClean:fn3 at:host];
     
     {
-        Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *VFSNativeHost::SharedHost()),
+        Copying op(FetchItems("/System/Library/Kernels/", {"kernel"}, *TestEnv().vfs_native),
                    "/Public/!FilesTesting/",
                    host,
                    {});
@@ -397,7 +398,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     }
     
     int compare;
-    XCTAssert( VFSEasyCompareFiles(fn1, VFSNativeHost::SharedHost(), fn2, host, compare) == 0);
+    XCTAssert( VFSEasyCompareFiles(fn1, TestEnv().vfs_native, fn2, host, compare) == 0);
     XCTAssert( compare == 0);
     
     
@@ -422,7 +423,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     // works on single host - In and Out same as where source files are
     // Copies "Mail.app" to "Mail2.app" in the same dir
     auto dir2 = m_TmpDir / "Some" / "Dir" / "Where" / "Files" / "Should" / "Be" / "Renamed/";
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     
     XCTAssert( VFSEasyCopyNode("/System/Applications/Mail.app", host, (m_TmpDir / "Mail.app").c_str(), host) == 0);
     
@@ -444,7 +445,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 {
     // works on single host - In and Out same as where source files are
     // Copies "Mail.app" to "Mail2.app" in the same dir
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     
     XCTAssert( VFSEasyCopyNode("/System/Applications/Mail.app", host, (m_TmpDir / "Mail.app").c_str(), host) == 0);
     
@@ -466,7 +467,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 {
     VFSHostPtr host_src;
     try {
-        host_src = std::make_shared<UnRARHost>(g_PhotosRAR.c_str(), VFSNativeHost::SharedHost() );
+        host_src = std::make_shared<UnRARHost>(g_PhotosRAR.c_str(), TestEnv().vfs_native );
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -477,7 +478,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     
     VFSHostPtr host_dst;
     try {
-        host_dst = std::make_shared<XAttrHost>(file.c_str(), VFSNativeHost::SharedHost());
+        host_dst = std::make_shared<XAttrHost>(file.c_str(), TestEnv().vfs_native);
     } catch( VFSErrorException &e ) {
         XCTAssert( e.code() == 0 );
         return;
@@ -504,7 +505,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     CopyingOptions opts;
     opts.docopy = true;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems(m_TmpDir.c_str(), {"file2"}, *host),
                (m_TmpDir/"file1").c_str(),
                host,
@@ -527,7 +528,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     CopyingOptions opts;
     opts.docopy = true;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems((m_TmpDir/"D2").c_str(), {"D1"}, *host),
                m_TmpDir.c_str(),
                host,
@@ -546,7 +547,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     
     CopyingOptions opts;
     opts.docopy = false;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems(m_TmpDir.c_str(), {"file1"}, *host),
                (m_TmpDir/"file2").c_str(),
                host,
@@ -584,7 +585,7 @@ static uint32_t FileFlags(const char *path)
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteOld;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"TestDir"}, *host),
                (m_TmpDir/"DirA").c_str(),
                host,
@@ -612,7 +613,7 @@ static uint32_t FileFlags(const char *path)
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
                (m_TmpDir/"DirA").c_str(),
                host,
@@ -642,7 +643,7 @@ static uint32_t FileFlags(const char *path)
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::OverwriteAll;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
                (m_TmpDir/"DirA").c_str(),
                host,
@@ -660,7 +661,7 @@ static uint32_t FileFlags(const char *path)
 {
     CopyingOptions opts;
     opts.docopy = true;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems("/System/Applications", {"Mail.app"}, *host),
                m_TmpDir.c_str(),
                host,
@@ -745,7 +746,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     CopyingOptions opts;
     opts.docopy = true;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
                (m_TmpDir/"DirA").c_str(),
                host,
@@ -770,7 +771,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
                (m_TmpDir/"DirA").c_str(),
                host,
@@ -796,7 +797,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     CopyingOptions opts;
     opts.docopy = true;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
                (m_TmpDir/"DirA").c_str(),
                host,
@@ -821,7 +822,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
     CopyingOptions opts;
     opts.docopy = false;
     opts.exist_behavior = CopyingOptions::ExistBehavior::KeepBoth;
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems((m_TmpDir / "DirB").c_str(), {"item"}, *host),
                (m_TmpDir/"DirA").c_str(),
                host,
@@ -849,7 +850,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 - (void)setUp
 {
     [super setUp];
-    m_NativeHost = VFSNativeHost::SharedHost();
+    m_NativeHost = TestEnv().vfs_native;
     char dir[MAXPATHLEN];
     sprintf(dir,
             "%s" "info.filesmanager.files" ".tmp.XXXXXX",
@@ -860,7 +861,7 @@ static int VFSCompareEntries(const boost::filesystem::path& _file1_full_path,
 
 - (void)tearDown
 {
-    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    VFSEasyDelete(m_TmpDir.c_str(), m_NativeHost);
     [super tearDown];
 }
 

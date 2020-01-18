@@ -1,5 +1,6 @@
 // Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
+#include "TestEnv.h"
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
 #include <VFS/NetFTP.h>
@@ -29,13 +30,13 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
 - (void)setUp
 {
     [super setUp];
-    m_NativeHost = VFSNativeHost::SharedHost();
+    m_NativeHost = TestEnv().vfs_native;
     m_TmpDir = self.makeTmpDir;
 }
 
 - (void)tearDown
 {
-    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    VFSEasyDelete(m_TmpDir.c_str(), m_NativeHost);
     [super tearDown];
 }
 
@@ -149,7 +150,7 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
         if( host->Stat(fn2, stat, 0, 0) == 0)
             XCTAssert( host->Unlink(fn2, 0) == 0);
         
-        XCTAssert( VFSEasyCopyFile(fn1, VFSNativeHost::SharedHost(), fn2, host) == 0);
+        XCTAssert( VFSEasyCopyFile(fn1, TestEnv().vfs_native, fn2, host) == 0);
         
         Deletion operation{ FetchItems("/Public/!FilesTesting", {"mach_kernel"}, *host),
             DeletionType::Permanent };
@@ -174,7 +175,7 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
         if( host->Stat(fn2, stat, 0, 0) == 0)
             XCTAssert(VFSEasyDelete(fn2, host) == 0);
         
-        XCTAssert( VFSEasyCopyNode(fn1, VFSNativeHost::SharedHost(), fn2, host) == 0);
+        XCTAssert( VFSEasyCopyNode(fn1, TestEnv().vfs_native, fn2, host) == 0);
         
         
         Deletion operation{ FetchItems("/Public/!FilesTesting", {"bin"}, *host),

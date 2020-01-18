@@ -1,5 +1,6 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
+#include "TestEnv.h"
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
 #include <VFS/NetFTP.h>
@@ -26,13 +27,13 @@ using namespace nc::vfs;
 - (void)setUp
 {
     [super setUp];
-    m_NativeHost = VFSNativeHost::SharedHost();
+    m_NativeHost = TestEnv().vfs_native;
     m_TmpDir = self.makeTmpDir;
 }
 
 - (void)tearDown
 {
-    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    VFSEasyDelete(m_TmpDir.c_str(), m_NativeHost);
     [super tearDown];
 }
 

@@ -1,5 +1,6 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
+#include "TestEnv.h"
 #include <Operations/FilenameTextControl.h>
 #include <VFS/Native.h>
 
@@ -19,7 +20,7 @@ TEST_CASE(PREFIX"Tests")
 {
     TempTestDir tmp_dir;
     const auto dir = tmp_dir.directory;
-    const auto native_host = VFSNativeHost::SharedHost();        
+    const auto native_host = TestEnv().vfs_native;        
 
     MkDir( dir + "Directory1" );
     MkDir( dir + "directory2" );

@@ -1,5 +1,6 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
+#include "TestEnv.h"
 #include <VFS/Native.h>
 #include <VFS/ArcLA.h>
 #include "../source/Copying/Copying.h"
@@ -48,13 +49,13 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
 - (void)setUp
 {
     [super setUp];
-    m_NativeHost = VFSNativeHost::SharedHost();
+    m_NativeHost = TestEnv().vfs_native;
     m_TmpDir = self.makeTmpDir;
 }
 
 - (void)tearDown
 {
-    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    VFSEasyDelete(m_TmpDir.c_str(), TestEnv().vfs_native);
     [super tearDown];
 }
 
@@ -62,7 +63,7 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
 {
     std::shared_ptr<vfs::ArchiveHost> host;
     try {
-        host = std::make_shared<vfs::ArchiveHost>(g_Adium.c_str(), VFSNativeHost::SharedHost());
+        host = std::make_shared<vfs::ArchiveHost>(g_Adium.c_str(), TestEnv().vfs_native);
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -77,7 +78,7 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
     op.Wait();
     
     int result = 0;
-    XCTAssert( VFSCompareEntries("/Adium.app", host, m_TmpDir / "Adium.app", VFSNativeHost::SharedHost(), result) == 0);
+    XCTAssert( VFSCompareEntries("/Adium.app", host, m_TmpDir / "Adium.app", TestEnv().vfs_native, result) == 0);
     XCTAssert( result == 0 );
 }
 
@@ -85,7 +86,7 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
 {
     std::shared_ptr<vfs::ArchiveHost> host;
     try {
-        host = std::make_shared<vfs::ArchiveHost>(g_Files.c_str(), VFSNativeHost::SharedHost());
+        host = std::make_shared<vfs::ArchiveHost>(g_Files.c_str(), TestEnv().vfs_native);
     } catch (VFSErrorException &e) {
         XCTAssert( e.code() == 0 );
         return;
@@ -121,7 +122,7 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
     
     int result = 0;
     XCTAssert( VFSCompareEntries( "/" + g_FileWithXAttr, host,
-                                 g_Preffix + g_FileWithXAttr, VFSNativeHost::SharedHost(),
+                                 g_Preffix + g_FileWithXAttr, TestEnv().vfs_native,
                                  result)
               == 0);
     XCTAssert( result == 0 );

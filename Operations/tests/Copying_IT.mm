@@ -1,5 +1,6 @@
 // Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
+#include "TestEnv.h"
 #include <Operations/Copying.h>
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
@@ -54,7 +55,7 @@ TEST_CASE(PREFIX"Can rename a regular file across firmlink injection points")
     CopyingOptions opts;
     opts.docopy = false;
     
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems(test_dir.directory, {filename}, *host), target_dir, host, opts);
     RunOperationAndCheckSuccess(op);
     
@@ -84,7 +85,7 @@ TEST_CASE(PREFIX"Can rename a directory across firmlink injection points")
     CopyingOptions opts;
     opts.docopy = false;
     
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems(test_dir.directory, {filename}, *host), target_dir, host, opts);
     RunOperationAndCheckSuccess(op);
     
@@ -119,7 +120,7 @@ TEST_CASE(PREFIX"Can rename a non-empty directory across firmlink injection poin
     CopyingOptions opts;
     opts.docopy = false;
     
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems(test_dir.directory, {filename}, *host), target_dir, host, opts);
     RunOperationAndCheckSuccess(op);
     
@@ -149,7 +150,7 @@ TEST_CASE(PREFIX"Can rename a symlink across firmlink injection points")
     CopyingOptions opts;
     opts.docopy = false;
     
-    auto host = VFSNativeHost::SharedHost();
+    auto host = TestEnv().vfs_native;
     Copying op(FetchItems(test_dir.directory, {filename}, *host), target_dir, host, opts);
     RunOperationAndCheckSuccess(op);
     

@@ -1,5 +1,6 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "Tests.h"
+#include "TestEnv.h"
 #include <boost/filesystem.hpp>
 #include <sys/stat.h>
 
@@ -29,7 +30,7 @@ static std::vector<VFSListingItem> FetchItems(const std::string& _directory_path
 TEST_CASE(PREFIX"Empty archive building")
 {
     TempTestDir tmp_dir;
-    const auto native_host = VFSNativeHost::SharedHost();
+    const auto native_host = TestEnv().vfs_native;
     Compression operation{std::vector<VFSListingItem>{}, tmp_dir.directory, native_host };
     operation.Start();
     operation.Wait();
@@ -46,7 +47,7 @@ TEST_CASE(PREFIX"Empty archive building")
 TEST_CASE(PREFIX"Compressing Mac kernel")
 {
     TempTestDir tmp_dir;
-    const auto native_host = VFSNativeHost::SharedHost();
+    const auto native_host = TestEnv().vfs_native;
     
     Compression operation{FetchItems("/System/Library/Kernels/", {"kernel"}, *native_host),
                           tmp_dir.directory,
@@ -75,7 +76,7 @@ TEST_CASE(PREFIX"Compressing Mac kernel")
 TEST_CASE(PREFIX"Compressing Bin utilities")
 {
     TempTestDir tmp_dir;
-    const auto native_host = VFSNativeHost::SharedHost();
+    const auto native_host = TestEnv().vfs_native;
     
     const std::vector<std::string> filenames = { "[", "bash", "cat", "chmod", "cp", "csh", "date",
         "dd", "df", "echo", "ed", "expr", "hostname", "kill", "ksh", "launchctl", "link",
@@ -110,7 +111,7 @@ TEST_CASE(PREFIX"Compressing Bin utilities")
 TEST_CASE(PREFIX"Compressing Bin directory")
 {
     TempTestDir tmp_dir;
-    const auto native_host = VFSNativeHost::SharedHost();    
+    const auto native_host = TestEnv().vfs_native;    
     
     Compression operation{FetchItems("/", {"bin"}, *native_host),
         tmp_dir.directory,
@@ -138,7 +139,7 @@ TEST_CASE(PREFIX"Compressing Bin directory")
 TEST_CASE(PREFIX"Compressing Chess.app")
 {
     TempTestDir tmp_dir;
-    const auto native_host = VFSNativeHost::SharedHost();        
+    const auto native_host = TestEnv().vfs_native;        
     
     Compression operation{FetchItems("/System/Applications/", {"Chess.app"}, *native_host),
         tmp_dir.directory,
@@ -167,7 +168,7 @@ TEST_CASE(PREFIX"Compressing Chess.app")
 TEST_CASE(PREFIX"Compressing kernel into encrypted archive")
 {
     TempTestDir tmp_dir;
-    const auto native_host = VFSNativeHost::SharedHost();            
+    const auto native_host = TestEnv().vfs_native;            
     const auto passwd = "This is a very secret password";
     
     Compression operation{FetchItems("/System/Library/Kernels/", {"kernel"}, *native_host),
@@ -204,7 +205,7 @@ TEST_CASE(PREFIX"Compressing kernel into encrypted archive")
 TEST_CASE(PREFIX"Compressing /bin into encrypted archive")
 {
     TempTestDir tmp_dir;
-    const auto native_host = VFSNativeHost::SharedHost();
+    const auto native_host = TestEnv().vfs_native;
     const auto passwd = "This is a very secret password";
     
     Compression operation{FetchItems("/", {"bin"}, *native_host),
@@ -231,7 +232,7 @@ TEST_CASE(PREFIX"Compressing /bin into encrypted archive")
 TEST_CASE(PREFIX"Long compression stats (compressing Music.app)")
 {
     TempTestDir tmp_dir;
-    const auto native_host = VFSNativeHost::SharedHost();    
+    const auto native_host = TestEnv().vfs_native;    
     Compression operation{FetchItems("/System/Applications/", {"Music.app"}, *native_host),
         tmp_dir.directory,
         native_host};

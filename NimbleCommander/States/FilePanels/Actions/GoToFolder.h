@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
 #include "DefaultAction.h"
@@ -7,7 +7,9 @@
 
 namespace nc::panel::actions {
 
-// external dependency - SanboxManager
+// external dependencies:
+// - SanboxManager
+// - VFSNativeHost::SharedHost()
 
 struct GoToFolder final : PanelAction
 {

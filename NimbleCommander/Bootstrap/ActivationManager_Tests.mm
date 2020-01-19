@@ -1,9 +1,10 @@
-// Copyright (C) 2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #import <XCTest/XCTest.h>
 #include "ActivationManager.h"
 #include <VFS/Native.h>
 #include <Habanero/CFDefaultsCPP.h>
 #include <Habanero/GoogleAnalytics.h>
+#include <ftw.h>
 
 // TODO: move this from XCTest to Catch2
 
@@ -103,6 +104,7 @@ static const auto g_DefaultsTrialExpireDate = CFSTR("__Test____TrialExpirationDa
 static std::optional<std::string> Load(const std::string &_filepath);
 static bool Save(const std::string &_filepath, const std::string &_content);
 static std::string MakeTmpDir();
+static int RMRF(const std::string& _path);
 
 @interface ActivationManager_ExternalLicenseSupport_Tests : XCTestCase
 @end
@@ -124,7 +126,7 @@ static std::string MakeTmpDir();
 
 - (void)tearDown
 {
-    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    RMRF(m_TmpDir);
     [super tearDown];
 }
 
@@ -379,7 +381,7 @@ static double Y2018()
 
 - (void)tearDown
 {
-    VFSEasyDelete(m_TmpDir.c_str(), VFSNativeHost::SharedHost());
+    RMRF(m_TmpDir);
     CFDefaultsRemoveValue( g_DefaultsTrialExpireDate );
     [super tearDown];
 }
@@ -660,4 +662,21 @@ static std::string MakeTmpDir()
     const auto res = mkdtemp(dir); 
     assert( res != nullptr );
     return std::string{dir} + "/";
+}
+
+static int RMRF(const std::string& _path)
+{
+    auto unlink_cb = [](const char *fpath,
+                        [[maybe_unused]] const struct stat *sb,
+                        int typeflag,
+                        [[maybe_unused]] struct FTW *ftwbuf) {
+        if( typeflag == FTW_F)
+            unlink(fpath);
+        else if( typeflag == FTW_D   ||
+                typeflag == FTW_DNR ||
+                typeflag == FTW_DP   )
+            rmdir(fpath);
+        return 0;
+    };
+    return nftw(_path.c_str(), unlink_cb, 64, FTW_DEPTH | FTW_PHYS | FTW_MOUNT);
 }

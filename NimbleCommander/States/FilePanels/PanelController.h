@@ -25,6 +25,10 @@ namespace utility {
     class NativeFSManager;
 }
 
+namespace vfs {
+    class NativeHost;
+}
+
 namespace panel {
 
 namespace data {
@@ -149,7 +153,8 @@ using ContextMenuProvider =
           vfsInstanceManager:(nc::core::VFSInstanceManager&)_vfs_mgr
      directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider
          contextMenuProvider:(nc::panel::ContextMenuProvider)_context_menu_provider
-             nativeFSManager:(nc::utility::NativeFSManager&)_native_fs_mgr;
+             nativeFSManager:(nc::utility::NativeFSManager&)_native_fs_mgr
+                  nativeHost:(nc::vfs::NativeHost&)_native_host;
 
 - (void) refreshPanel; // reload panel contents
 - (void) forceRefreshPanel; // user pressed cmd+r by default

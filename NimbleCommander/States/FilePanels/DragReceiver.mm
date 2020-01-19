@@ -40,11 +40,13 @@ static void AddPanelRefreshIfNecessary(PanelController *_target,
 DragReceiver::DragReceiver(PanelController *_target,
                            id <NSDraggingInfo> _dragging,
                            int _dragging_over_index,
-                           nc::utility::NativeFSManager &_native_fs_man):
+                           nc::utility::NativeFSManager &_native_fs_man,
+                           nc::vfs::NativeHost &_native_host):
     m_Target(_target),
     m_Dragging(_dragging),
     m_DraggingOverIndex(_dragging_over_index),
-    m_NativeFSManager(_native_fs_man)
+    m_NativeFSManager(_native_fs_man),
+    m_NativeHost(_native_host)
 {
     if( !m_Target || !m_Dragging )
         throw std::invalid_argument("DragReceiver can't accept nil arguments");
@@ -326,7 +328,7 @@ bool DragReceiver::PerformWithURLsSource(NSArray<NSURL*> *_source,
     
     // currently fetching listings synchronously in main thread, which is BAAAD
     auto source_items = FetchDirectoriesItems(LayoutURLsByDirectories(_source),
-                                              *VFSNativeHost::SharedHost());
+                                              m_NativeHost);
     
     if( source_items.empty() )
         return false;

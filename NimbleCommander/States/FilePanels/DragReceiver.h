@@ -6,6 +6,10 @@
 @class PanelController;
 @class FilesDraggingSource;
 
+namespace nc::vfs {
+    class NativeHost;
+}
+
 namespace nc::utility {
     class NativeFSManager;
 }
@@ -19,7 +23,8 @@ public:
     DragReceiver(PanelController *_target,
                  id <NSDraggingInfo> _dragging,
                  int _dragging_over_index, // -1 index means "whole" panel
-                 nc::utility::NativeFSManager &_native_fs_man ); 
+                 nc::utility::NativeFSManager &_native_fs_man,
+                 nc::vfs::NativeHost &_native_host ); 
     ~DragReceiver();
 
     NSDragOperation Validate();
@@ -50,6 +55,7 @@ private:
     VFSListingItem       m_ItemUnderDrag; // may be nullptr for whole panel
     bool                 m_DraggingOverDirectory;
     nc::utility::NativeFSManager &m_NativeFSManager;
+    nc::vfs::NativeHost &m_NativeHost;
 };
 
 }

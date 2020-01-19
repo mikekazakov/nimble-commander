@@ -180,6 +180,7 @@ static void HeatUpConfigValues()
     PanelViewLayoutsStorage::ObservationTicket m_LayoutsObservation;
     ContextMenuProvider m_ContextMenuProvider;
     nc::utility::NativeFSManager *m_NativeFSManager;
+    nc::vfs::NativeHost *m_NativeHost;
 }
 
 @synthesize view = m_View;
@@ -194,6 +195,7 @@ static void HeatUpConfigValues()
      directoryAccessProvider:(nc::panel::DirectoryAccessProvider&)_directory_access_provider
          contextMenuProvider:(nc::panel::ContextMenuProvider)_context_menu_provider
              nativeFSManager:(nc::utility::NativeFSManager&)_native_fs_mgr
+                  nativeHost:(nc::vfs::NativeHost&)_native_host
 {
     assert( _layouts );
     assert( _context_menu_provider );
@@ -206,6 +208,7 @@ static void HeatUpConfigValues()
         m_Layouts = move(_layouts);
         m_VFSInstanceManager = &_vfs_mgr;
         m_NativeFSManager = &_native_fs_mgr;
+        m_NativeHost = &_native_host;
         m_DirectoryAccessProvider = &_directory_access_provider;
         m_ContextMenuProvider = std::move(_context_menu_provider);
         m_History.SetVFSInstanceManager(_vfs_mgr);
@@ -940,7 +943,7 @@ static void ShowAlertAboutInvalidFilename( const std::string &_filename )
         // we can't work on this vfs. currently for simplicity - just go home
         auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = CommonPaths::Home();
-        request->VFS = VFSNativeHost::SharedHost();
+        request->VFS = m_NativeHost->SharedPtr();
         request->PerformAsynchronous = true;
         [self GoToDirWithContext:request];
     });
@@ -1064,7 +1067,8 @@ onItem:(int)_on_sorted_index
     return std::make_unique<nc::panel::DragReceiver>(self,
                                                      _dragging,
                                                      _on_sorted_index,
-                                                     *m_NativeFSManager); 
+                                                     *m_NativeFSManager,
+                                                     *m_NativeHost); 
 }
 
 @end

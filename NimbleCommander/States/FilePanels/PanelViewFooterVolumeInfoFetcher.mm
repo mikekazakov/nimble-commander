@@ -1,7 +1,6 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/SerialQueue.h>
 #include <Habanero/CommonPaths.h>
-#include <VFS/Native.h>
 #include "PanelViewFooterVolumeInfoFetcher.h"
 
 namespace nc::panel {
@@ -177,15 +176,10 @@ void FooterVolumeInfoFetcher::SetTarget( const VFSListingPtr &_listing )
     else {
         // we're in temporary directory so there may be not common path and common host.
         // as current solution - display information about first item's directory
-        if( !_listing->Empty() ) {
-            current_host = _listing->Host(0);
-            current_path = _listing->Directory(0);
-        }
-        else {
-            // there's no first item (no items at all) - display information about home directory
-            current_host = VFSNativeHost::SharedHost();
-            current_path = CommonPaths::Home();
-        }
+        if( _listing->Empty() )
+            return; // there's no first item (no items at all) - this cannot be        
+        current_host = _listing->Host(0);        
+        current_path = _listing->Directory(0);
     }
     
     if( equals(m_Host, current_host) && m_Path == current_path )

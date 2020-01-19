@@ -1,6 +1,5 @@
-// Copyright (C) 2016-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/SystemInformation.h>
-#include <VFS/Native.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <NimbleCommander/Core/Marketing/MASAppInstalledChecker.h>
 #include <NimbleCommander/Core/AppStoreHelper.h>
@@ -32,22 +31,14 @@ static bool UserHasPaidVersionInstalled()
 
 static bool AppStoreReceiptContainsProFeaturesInApp()
 {
-    std::string receipt_path = CFBundleGetAppStoreReceiptPath( CFBundleGetMainBundle() );
-    
-    VFSFilePtr source;
-    if( VFSNativeHost::SharedHost()->CreateFile(receipt_path.c_str(), source, nullptr) != VFSError::Ok )
+    const auto receipt_path = CFBundleGetAppStoreReceiptPath( CFBundleGetMainBundle() );
+    const auto receipt_contents = Load(receipt_path);
+    if( !receipt_contents )
         return false;
-    
-    if( source->Open(VFSFlags::OF_Read | VFSFlags::OF_ShLock) != VFSError::Ok )
-        return false;
-    
-    auto data = source->ReadFile();
-    if( !data )
-        return false;
-    
-    source->Close();
-    
-    return memmem( data->data(), data->size(), g_ProFeaturesInAppID.data(), g_ProFeaturesInAppID.length() ) != 0;
+    return memmem(receipt_contents->data(),
+                  receipt_contents->size(),
+                  g_ProFeaturesInAppID.data(),
+                  g_ProFeaturesInAppID.length() ) != nullptr;
 }
 
 static std::string InstalledAquaticLicensePath()

@@ -1,6 +1,5 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "ServicesHandler.h"
-#include <VFS/Native.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/States/FilePanels/MainWindowFilePanelState.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
@@ -8,10 +7,13 @@
 
 namespace nc::core {
 
-ServicesHandler::ServicesHandler( std::function<NCMainWindowController*()> _window_provider ):
-    m_WindowProvider( move(_window_provider) )
+ServicesHandler::ServicesHandler( std::function<NCMainWindowController*()> _window_provider,
+                                 VFSHostPtr _native_host ):
+    m_WindowProvider( std::move(_window_provider) ),
+    m_NativeHost( std::move(_native_host) )
 {
     assert( m_WindowProvider );
+    assert( m_NativeHost && m_NativeHost->IsNativeFS() );
 }
 
 static NSURL* ExtractFirstURL(NSPasteboard *_pboard)
@@ -35,17 +37,16 @@ void ServicesHandler::OpenFolder(NSPasteboard *_pboard,
     if( !fs_representation )
         return;
     
-    if( VFSNativeHost::SharedHost()->IsDirectory(fs_representation, 0) )
+    if( m_NativeHost->IsDirectory(fs_representation, 0) )
         GoToFolder(fs_representation);
 }
     
 void ServicesHandler::GoToFolder(const std::string &_path)
 {
-    auto host = VFSNativeHost::SharedHost();
     if( auto wnd = m_WindowProvider() ) {
         auto ctx = std::make_shared<panel::DirectoryChangeRequest>();
         ctx->RequestedDirectory = _path;
-        ctx->VFS = host;
+        ctx->VFS = m_NativeHost;
         ctx->InitiatedByUser = true;
         [wnd.filePanelsState.activePanelController GoToDirWithContext:ctx];
     }
@@ -73,9 +74,9 @@ static std::pair<std::string, std::vector<std::string>>
     return make_pair(move(directory), move(filenames));
 }
 
-static bool IsASingleDirectoryPath(const std::vector<std::string>&_paths)
+static bool IsASingleDirectoryPath(const std::vector<std::string>&_paths, VFSHost& _native_host)
 {
-    return _paths.size() == 1 && VFSNativeHost::SharedHost()->IsDirectory(_paths[0].c_str(), 0);
+    return _paths.size() == 1 && _native_host.IsDirectory(_paths[0].c_str(), 0);
 }
     
 void ServicesHandler::RevealItem(NSPasteboard *_pboard,
@@ -108,7 +109,7 @@ void ServicesHandler::OpenFiles(NSArray<NSString *> *_paths)
             paths.emplace_back( fs );
     }
     
-    if( IsASingleDirectoryPath(paths) )
+    if( IsASingleDirectoryPath(paths, *m_NativeHost) )
         GoToFolder(paths[0]);
     else
         RevealItems(paths);
@@ -123,7 +124,7 @@ void ServicesHandler::RevealItems(const std::vector<std::string> &_paths)
     if( auto wnd = m_WindowProvider() ) {
         auto ctx = std::make_shared<panel::DirectoryChangeRequest>();
         ctx->RequestedDirectory = directory;
-        ctx->VFS = VFSNativeHost::SharedHost();
+        ctx->VFS = m_NativeHost;
         ctx->RequestFocusedEntry = filenames.front();
         if( filenames.size() > 1 )
             ctx->RequestSelectedEntries = filenames;

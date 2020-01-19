@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 
 #pragma once
 
@@ -42,6 +42,10 @@ namespace nc {
     
     namespace viewer {
         class History;
+    }
+    
+    namespace vfs {
+        class NativeHost;
     }
 }
 
@@ -151,5 +155,11 @@ namespace nc {
 
 @property (nonatomic, readonly)
     nc::utility::UTIDB &utiDB;
+
+@property (nonatomic, readonly)
+    nc::vfs::NativeHost &nativeHost;
+    
+@property (nonatomic, readonly)
+    const std::shared_ptr<nc::vfs::NativeHost> &nativeHostPtr;
 
 @end

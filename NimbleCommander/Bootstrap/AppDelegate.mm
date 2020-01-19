@@ -1003,7 +1003,7 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
     auto window_locator = []{
         return [g_Me windowForExternalRevealRequest];
     };
-    static nc::core::ServicesHandler handler(window_locator);
+    static nc::core::ServicesHandler handler(window_locator, self.nativeHostPtr);
     return handler;
 }
 
@@ -1093,6 +1093,17 @@ static void DoTemporaryFileStoragePurge()
 {
     static nc::utility::UTIDBImpl uti_db;
     return uti_db;
+}
+
+
+- (nc::vfs::NativeHost &) nativeHost
+{
+    return *nc::vfs::NativeHost::SharedHost();
+}
+
+- (const std::shared_ptr<nc::vfs::NativeHost> &)nativeHostPtr
+{
+    return nc::vfs::NativeHost::SharedHost();
 }
 
 @end

@@ -79,6 +79,7 @@ static bool RestoreFilePanelStateFromLastOpenedWindow(MainWindowFilePanelState *
     static auto actions_map = nc::panel::BuildPanelActionsMap
     (*self.networkConnectionsManager,
      self.nativeFSManager,
+     self.nativeHost,
      self.fileOpener,
      self.panelOpenWithMenuDelegate,
      [self](NSRect rc){ return [self makeViewerWithFrame:rc]; },

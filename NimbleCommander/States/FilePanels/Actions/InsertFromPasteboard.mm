@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
 #include <Utility/PathManip.h>
 #include "../PanelController.h"
@@ -15,17 +15,17 @@ namespace nc::panel::actions {
 // perhaps it would be good to add support of URLS at least.
 // or even with custom NC's structures used in drag&drop system
 
-static std::vector<VFSListingItem> FetchVFSListingsItemsFromPaths( NSArray *_input )
+static std::vector<VFSListingItem> FetchVFSListingsItemsFromPaths( NSArray *_input,
+                                                                  vfs::NativeHost &_native_host )
 {
     std::vector<VFSListingItem> result;
-    auto &host = VFSNativeHost::SharedHost();
     for( NSString *ns_filepath in _input ) {
         if( !objc_cast<NSString>(ns_filepath) )
             continue; // guard against malformed input
         
         if( const char *filepath = ns_filepath.fileSystemRepresentation ) {
             VFSListingPtr listing;
-            int rc = host->FetchSingleItemListing( filepath, listing, 0, nullptr );
+            int rc = _native_host.FetchSingleItemListing( filepath, listing, 0, nullptr );
             if( rc == 0 )
                 result.emplace_back( listing->Item(0) );
         }
@@ -33,7 +33,7 @@ static std::vector<VFSListingItem> FetchVFSListingsItemsFromPaths( NSArray *_inp
     return result;
 }
 
-static std::vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
+static std::vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard(vfs::NativeHost &_native_host)
 {
     // check what's inside pasteboard
     NSPasteboard *pasteboard = NSPasteboard.generalPasteboard;
@@ -43,19 +43,19 @@ static std::vector<VFSListingItem> FetchVFSListingsItemsFromPasteboard()
     
         // currently fetching listings synchronously, which is BAAAD
         // (but we're on native vfs, at least for now)
-        return FetchVFSListingsItemsFromPaths(filepaths);
+        return FetchVFSListingsItemsFromPaths(filepaths, _native_host);
     }
     // TODO: reading from URL pasteboard?
     return {};
 }
 
-static void PasteOrMove( PanelController *_target, bool _paste)
+static void PasteOrMove( PanelController *_target, bool _paste, vfs::NativeHost &_native_host)
 {
     // check if we're on uniform panel with a writeable VFS
     if( !_target.isUniform || !_target.vfs->IsWritable() )
         return;
     
-    auto source_items = FetchVFSListingsItemsFromPasteboard();
+    auto source_items = FetchVFSListingsItemsFromPasteboard(_native_host);
     
     if( source_items.empty() )
         return; // errors on fetching listings?
@@ -78,6 +78,11 @@ static void PasteOrMove( PanelController *_target, bool _paste)
 
 }
 
+PasteFromPasteboard::PasteFromPasteboard(nc::vfs::NativeHost &_native_host):
+    m_NativeHost(_native_host)
+{
+}
+
 bool PasteFromPasteboard::Predicate( PanelController *_target ) const
 {
     return _target.isUniform &&
@@ -87,7 +92,12 @@ bool PasteFromPasteboard::Predicate( PanelController *_target ) const
 
 void PasteFromPasteboard::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
 {
-    PasteOrMove(_target, true);
+    PasteOrMove(_target, true, m_NativeHost);
+}
+
+MoveFromPasteboard::MoveFromPasteboard(nc::vfs::NativeHost &_native_host):
+    m_NativeHost(_native_host)
+{
 }
 
 bool MoveFromPasteboard::Predicate( PanelController *_target ) const
@@ -99,7 +109,7 @@ bool MoveFromPasteboard::Predicate( PanelController *_target ) const
 
 void MoveFromPasteboard::Perform( PanelController *_target, [[maybe_unused]] id _sender ) const
 {
-    PasteOrMove(_target, false);
+    PasteOrMove(_target, false, m_NativeHost);
 }
 
 };

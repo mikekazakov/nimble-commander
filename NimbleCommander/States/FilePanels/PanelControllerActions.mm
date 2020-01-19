@@ -59,6 +59,7 @@ static std::vector<SEL> QuickListsBut(int but)
 PanelActionsMap BuildPanelActionsMap
     (NetworkConnectionsManager& _net_mgr,
      utility::NativeFSManager& _native_fs_mgr,
+     nc::vfs::NativeHost &_native_host,
      FileOpener &_file_opener,
      NCPanelOpenWithMenuDelegate *_open_with_menu_delegate,
      std::function<NCViewerView*(NSRect)> _make_viewer,
@@ -90,8 +91,8 @@ PanelActionsMap BuildPanelActionsMap
     add( @selector(OnQuickNewFolder:),               new MakeNewFolder);
     add( @selector(OnQuickNewFolderWithSelection:),  new MakeNewFolderWithSelection);
     add( @selector(copy:),                   new CopyToPasteboard);
-    add( @selector(paste:),                  new PasteFromPasteboard);
-    add( @selector(moveItemHere:),           new MoveFromPasteboard);
+    add( @selector(paste:),                  new PasteFromPasteboard{_native_host});
+    add( @selector(moveItemHere:),           new MoveFromPasteboard{_native_host});
     add( @selector(selectAll:),              new SelectAll);
     add( @selector(deselectAll:),            new DeselectAll);
     add( @selector(OnMenuInvertSelection:),  new InvertSelection);

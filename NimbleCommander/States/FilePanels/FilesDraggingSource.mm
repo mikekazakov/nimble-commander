@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "FilesDraggingSource.h"
 #include <VFS/Native.h>
 #include <Utility/StringExtras.h>
@@ -7,6 +7,7 @@
 #include "PanelController.h"
 #include "MainWindowFilePanelState.h"
 #include "../MainWindowController.h"
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 
 static const auto g_PrivateDragUTI = @"com.magnumbytes.nimblecommander.filespanelsdraganddrop";
 
@@ -167,8 +168,10 @@ static NSURL *ExtractPromiseDropLocation(NSPasteboard *_pasteboard)
             / item.item.Filename();
 
         // retrieve item itself
-        const auto  ret = VFSEasyCopyNode(item.item.Path().c_str(), item.item.Host(),
-                                          dest.c_str(), VFSNativeHost::SharedHost());
+        const auto  ret = VFSEasyCopyNode(item.item.Path().c_str(),
+                                          item.item.Host(),
+                                          dest.c_str(),
+                                          nc::bootstrap::NativeVFSHostInstance().SharedPtr() );
         
         if( ret == 0 ) {
             // write result url into pasteboard

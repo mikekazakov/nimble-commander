@@ -1,4 +1,4 @@
-// Copyright (C) 2016-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2016-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "TemporaryNativeFileChangesSentinel.h"
 #include <Habanero/algo.h>
 #include <Habanero/Hash.h>
@@ -6,12 +6,13 @@
 #include <VFS/Native.h>
 #include <Habanero/mach_time.h>
 #include <Habanero/dispatch_cpp.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 
 static std::optional<std::vector<uint8_t>> CalculateFileHash(const std::string &_path)
 {
     const int chunk_sz = 1*1024*1024;
     VFSFilePtr file;
-    int rc = VFSNativeHost::SharedHost()->CreateFile(_path.c_str(), file, nullptr );
+    int rc = nc::bootstrap::NativeVFSHostInstance().CreateFile(_path.c_str(), file, nullptr );
     if( rc != 0 )
         return std::nullopt;
     

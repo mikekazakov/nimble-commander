@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -7,6 +7,7 @@
 #include <Utility/TemporaryFileStorage.h>
 #include <NimbleCommander/Core/TemporaryNativeFileChangesSentinel.h>
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <NimbleCommander/States/FilePanels/PanelController.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include "PanelAux.h"
@@ -85,7 +86,7 @@ static void RegisterRemoteFileUploading(const std::string& _original_path,
             return;
         
         std::vector<VFSListingItem> listing_items;
-        auto &storage_host = *VFSNativeHost::SharedHost();
+        auto &storage_host = nc::bootstrap::NativeVFSHostInstance();
         const auto changed_item_directory = boost::filesystem::path(_native_path).parent_path().native();
         const auto changed_item_filename = boost::filesystem::path(_native_path).filename().native();
         const auto ret = storage_host.FetchFlexibleListingItems(changed_item_directory,

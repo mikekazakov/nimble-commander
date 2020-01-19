@@ -1,4 +1,4 @@
-// Copyright (C) 2013-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2013-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Habanero/CommonPaths.h>
 #include <Utility/PathManip.h>
 #include <Utility/NSView+Sugar.h>
@@ -6,6 +6,7 @@
 #include <VFS/Native.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <Config/RapidJSON.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
@@ -334,7 +335,7 @@ static NSString *TitleForData( const data::Model* _data );
         for( auto &p: _paths_to_try ) {
             auto request = std::make_shared<DirectoryChangeRequest>();
             request->RequestedDirectory = p;
-            request->VFS = VFSNativeHost::SharedHost();
+            request->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
             request->PerformAsynchronous = false;
             const auto result = [_panel GoToDirWithContext:request];
             if( result == VFSError::Ok )

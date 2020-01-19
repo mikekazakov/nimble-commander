@@ -9,7 +9,7 @@ namespace nc::panel::actions {
 
 // external dependencies:
 // - SanboxManager
-// - VFSNativeHost::SharedHost()
+// - nc::bootstrap::NativeVFSHostInstance()
 
 struct GoToFolder final : PanelAction
 {

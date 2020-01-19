@@ -1,4 +1,4 @@
-// Copyright (C) 2018-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2018-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "PanelControllerPersistency.h"
 #include "PanelController.h"
 #include "PanelData.h"
@@ -8,6 +8,7 @@
 #include <Habanero/CommonPaths.h>
 #include <Config/RapidJSON.h>
 #include <Habanero/dispatch_cpp.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 
 namespace nc::panel {
 
@@ -60,7 +61,7 @@ ControllerStateJSONDecoder::ControllerStateJSONDecoder
 static void LoadHomeDirectory(PanelController *_panel)
 {
     auto context = std::make_shared<DirectoryChangeRequest>();
-    context->VFS = VFSNativeHost::SharedHost();
+    context->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
     context->PerformAsynchronous = true;
     context->RequestedDirectory = CommonPaths::Home();
     [_panel GoToDirWithContext:context];

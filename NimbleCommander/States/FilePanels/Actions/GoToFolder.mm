@@ -9,6 +9,7 @@
 #include "../PanelData.h"
 #include <NimbleCommander/States/FilePanels/PanelDataPersistency.h>
 #include <NimbleCommander/Core/AnyHolder.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include "NavigateHistory.h"
 #include "../PanelView.h"
 #include "../PanelAux.h"
@@ -31,7 +32,7 @@ void GoToFolder::Perform( PanelController *_target, id ) const
         c->RequestedDirectory = [_target expandPath:sheet.requestedPath];
         c->VFS = _target.isUniform ?
             _target.vfs :
-            VFSNativeHost::SharedHost();
+            nc::bootstrap::NativeVFSHostInstance().SharedPtr();
         c->PerformAsynchronous = true;
         c->InitiatedByUser = true;
         c->LoadingResultCallback = [=](int _code) {
@@ -47,7 +48,7 @@ static void GoToNativeDir( const std::string& _path, PanelController *_target )
 {
     auto request = std::make_shared<DirectoryChangeRequest>();
     request->RequestedDirectory = _path;
-    request->VFS = VFSNativeHost::SharedHost();
+    request->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
     request->PerformAsynchronous = true;
     request->InitiatedByUser = true;
     [_target GoToDirWithContext:request];
@@ -81,7 +82,7 @@ void GoToApplicationsFolder::Perform( PanelController *_target, id ) const
     else {
         auto task = [_target]( const std::function<bool()> &_cancelled ) {
             VFSListingPtr listing;
-            int rc = vfs::native::FetchUnifiedApplicationsListing(*VFSNativeHost::SharedHost(),
+            int rc = vfs::native::FetchUnifiedApplicationsListing(nc::bootstrap::NativeVFSHostInstance(),
                                                                   listing,
                                                                   _target.vfsFetchingFlags,
                                                                   _cancelled);
@@ -103,7 +104,7 @@ void GoToUtilitiesFolder::Perform( PanelController *_target, id ) const
     else {
         auto task = [_target]( const std::function<bool()> &_cancelled ) {
             VFSListingPtr listing;
-            int rc = vfs::native::FetchUnifiedUtilitiesListing(*VFSNativeHost::SharedHost(),
+            int rc = vfs::native::FetchUnifiedUtilitiesListing(nc::bootstrap::NativeVFSHostInstance(),
                                                                listing,
                                                                _target.vfsFetchingFlags,
                                                                _cancelled);

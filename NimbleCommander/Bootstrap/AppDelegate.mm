@@ -1136,3 +1136,13 @@ static std::optional<std::string> Load(const std::string &_filepath)
 }
 
 @end
+
+namespace nc::bootstrap {
+
+nc::vfs::NativeHost& NativeVFSHostInstance() noexcept
+{
+    assert( g_Me != nil );
+    return NCAppDelegate.me.nativeHost;
+}
+
+}

@@ -21,6 +21,7 @@
 
 // THIS IS TEMPORARY!!!
 #include <NimbleCommander/Bootstrap/AppDelegateCPP.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 static NetworkConnectionsManager &ConnectionsManager()
 {
     return *nc::AppDelegate::NetworkConnectionsManager();
@@ -546,7 +547,7 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
 {
     if( _state.hosts.empty() ) {
         // short path for most common case - native vfs
-        _host = VFSNativeHost::SharedHost();
+        _host = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
         return 0;
     }
 
@@ -563,7 +564,7 @@ int PanelDataPersisency::CreateVFSFromLocation(const PersistentLocation &_state,
             // no luck - have to build this layer from scratch
             
             if( auto native = std::any_cast<Native>(&h) ) {
-                vfs.emplace_back( VFSNativeHost::SharedHost() );
+                vfs.emplace_back( nc::bootstrap::NativeVFSHostInstance().SharedPtr() );
             }
             else if( auto psfs = std::any_cast<PSFS>(&h) ) {
                 vfs.emplace_back( vfs::PSHost::GetSharedOrNew() );

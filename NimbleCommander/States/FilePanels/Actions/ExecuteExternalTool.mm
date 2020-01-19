@@ -9,6 +9,7 @@
 #include "../MainWindowFilePanelState.h"
 #include <Utility/TemporaryFileStorage.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <NimbleCommander/States/MainWindowController.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <Term/Task.h>
@@ -285,7 +286,7 @@ static void RunExtTool(const ExternalTool &_tool,
             for( auto &s: pars) {
                 if( !s.empty() &&
                    s.front() == '/' &&
-                   VFSNativeHost::SharedHost()->Exists(s.c_str()) )
+                   nc::bootstrap::NativeVFSHostInstance().Exists(s.c_str()) )
                     [params_url addObject:[NSURL fileURLWithPath:[NSString stringWithUTF8StdString:s]]];
                 else
                     [params_text addObject:[NSString stringWithUTF8StdString:s]];

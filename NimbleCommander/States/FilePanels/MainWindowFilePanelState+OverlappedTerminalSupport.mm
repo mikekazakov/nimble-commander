@@ -1,4 +1,4 @@
-// Copyright (C) 2015-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2015-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "MainWindowFilePanelState+OverlappedTerminalSupport.h"
 #include <Utility/NativeFSManager.h>
 #include <VFS/Native.h>
@@ -10,6 +10,7 @@
 #include "PanelAux.h"
 #include "PanelHistory.h"
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 
 using namespace nc::panel;
 using namespace nc::term;
@@ -108,7 +109,7 @@ static const auto g_ConfigGapPath =  "filePanel.general.bottomGapForOverlappedTe
         if( cwd != pc.currentDirectoryPath || !pc.vfs->IsNativeFS() ) {
             auto r = std::make_shared<nc::panel::DirectoryChangeRequest>();
             r->RequestedDirectory = cwd;
-            r->VFS = VFSNativeHost::SharedHost();
+            r->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
             [pc GoToDirWithContext:r];
         }
     }

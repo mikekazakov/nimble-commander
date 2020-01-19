@@ -20,6 +20,7 @@
 #include <NimbleCommander/Core/ActionsShortcutsManager.h>
 #include <NimbleCommander/Bootstrap/ActivationManager.h>
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <Habanero/SerialQueue.h>
 #include <NimbleCommander/Core/GoogleAnalytics.h>
 #include <Utility/CocoaAppearanceManager.h>
@@ -292,7 +293,7 @@ static int CountMainWindows()
             auto cwd = m_Terminal.cwd;
             if( pc.isUniform && (!pc.vfs->IsNativeFS() || pc.currentDirectoryPath != cwd) ) {
                 auto cnt = std::make_shared<nc::panel::DirectoryChangeRequest>();
-                cnt->VFS = VFSNativeHost::SharedHost();
+                cnt->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
                 cnt->RequestedDirectory = cwd;
                 [pc GoToDirWithContext:cnt];
             }

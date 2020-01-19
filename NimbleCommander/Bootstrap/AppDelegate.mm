@@ -191,7 +191,8 @@ static NCAppDelegate *g_Me = nil;
     std::shared_ptr<nc::panel::FavoriteLocationsStorageImpl> m_Favorites;
     NSMutableArray      *m_FilesToOpen;
     NCViewerWindowDelegateBridge *m_ViewerWindowDelegateBridge;
-    
+    std::unique_ptr<nc::utility::NativeFSManager> m_NativeFSManager;
+    std::shared_ptr<nc::vfs::NativeHost> m_NativeHost;
     std::optional<ctrail::DashboardImpl> m_CTrailDashboard;    
     std::unique_ptr<ctrail::OneShotMonitor> m_CTrailMonitor;
 }
@@ -211,6 +212,8 @@ static NCAppDelegate *g_Me = nil;
         m_IsRunningTests = NSClassFromString(@"XCTestCase") != nullptr;
         m_FilesToOpen = [[NSMutableArray alloc] init];
         m_ViewerWindowDelegateBridge = [[NCViewerWindowDelegateBridge alloc] init];
+        m_NativeFSManager = std::make_unique<nc::utility::NativeFSManager>();
+        m_NativeHost = std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager);
         CheckMASReceipt();
         CheckDefaultsReset();
         m_SupportDirectory =
@@ -230,7 +233,6 @@ static NCAppDelegate *g_Me = nil;
 {
     RegisterAvailableVFS();
     
-    nc::utility::NativeFSManager::Instance();
     FeedbackManager::Instance();
     [self themesManager];
     [self favoriteLocationsStorage];
@@ -1009,8 +1011,7 @@ onVFS:(const std::shared_ptr<VFSHost>&)_vfs
 
 - (nc::utility::NativeFSManager &)nativeFSManager
 {
-    // temporary solution:
-    return nc::utility::NativeFSManager::Instance();
+    return *m_NativeFSManager;
 }
 
 - (void) showTrialWindow
@@ -1098,12 +1099,12 @@ static void DoTemporaryFileStoragePurge()
 
 - (nc::vfs::NativeHost &) nativeHost
 {
-    return *nc::vfs::NativeHost::SharedHost();
+    return *m_NativeHost;
 }
 
 - (const std::shared_ptr<nc::vfs::NativeHost> &)nativeHostPtr
 {
-    return nc::vfs::NativeHost::SharedHost();
+    return m_NativeHost;
 }
 
 @end

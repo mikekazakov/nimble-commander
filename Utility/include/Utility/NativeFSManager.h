@@ -555,8 +555,6 @@ public:
     ~NativeFSManager();
     NativeFSManager& operator=(const NativeFSManager&) = delete;
     
-    static NativeFSManager &Instance();
-    
     class VolumeLookup;
     using Info = std::shared_ptr<const NativeFileSystemInfo>;
     

@@ -1,4 +1,4 @@
-// Copyright (C) 2017 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "VFSInit.h"
 #include <VFS/Native.h>
 #include <VFS/ArcLA.h>
@@ -9,12 +9,18 @@
 #include <VFS/NetSFTP.h>
 #include <VFS/NetDropbox.h>
 #include <VFS/NetWebDAV.h>
+#include <NimbleCommander/Bootstrap/AppDelegate.h>
 
 namespace nc::bootstrap {
 
 void RegisterAvailableVFS()
 {
-    VFSFactory::Instance().RegisterVFS(       VFSNativeHost::Meta() );
+    auto native_meta = VFSNativeHost::Meta();
+    native_meta.SpawnWithConfig = [](const VFSHostPtr &, const VFSConfiguration&, VFSCancelChecker) {
+         return NCAppDelegate.me.nativeHostPtr;
+     };
+
+    VFSFactory::Instance().RegisterVFS(     std::move(native_meta)  );
     VFSFactory::Instance().RegisterVFS(         vfs::PSHost::Meta() );
     VFSFactory::Instance().RegisterVFS(       vfs::SFTPHost::Meta() );
     VFSFactory::Instance().RegisterVFS(        vfs::FTPHost::Meta() );

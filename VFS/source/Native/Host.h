@@ -91,7 +91,7 @@ public:
     
     std::shared_ptr<const NativeHost> SharedPtr() const {return std::static_pointer_cast<const NativeHost>(Host::SharedPtr());}
     std::shared_ptr<NativeHost> SharedPtr() {return std::static_pointer_cast<NativeHost>(Host::SharedPtr());}
-    static const std::shared_ptr<NativeHost> &SharedHost() noexcept;
+
     virtual bool IsNativeFS() const noexcept override;
     
     nc::utility::NativeFSManager &NativeFSManager() const noexcept;

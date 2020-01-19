@@ -4,6 +4,7 @@
 #include <NimbleCommander/GeneralUI/FilterPopUpMenu.h>
 #include <NimbleCommander/Bootstrap/AppDelegate.h>
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <NimbleCommander/Core/NetworkConnectionsManager.h>
 #include <NimbleCommander/Core/VFSInstanceManager.h>
@@ -90,7 +91,7 @@ static const auto g_MaxTextWidth = 600;
     else if( auto plain_path = std::any_cast<std::string>(&_context) ) {
         auto request = std::make_shared<DirectoryChangeRequest>();
         request->RequestedDirectory = *plain_path;
-        request->VFS = VFSNativeHost::SharedHost();
+        request->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
         request->PerformAsynchronous = true;
         request->InitiatedByUser = true;
         [m_Panel GoToDirWithContext:request];

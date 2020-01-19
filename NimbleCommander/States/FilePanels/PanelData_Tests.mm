@@ -4,6 +4,7 @@
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
 #include <VFS/VFSListingInput.h>
+#include <Utility/NativeFSManager.h>
 #include <NimbleCommander/States/FilePanels/PanelData.h>
 #include <NimbleCommander/States/FilePanels/PanelDataSelection.h>
 #include <memory>
@@ -63,6 +64,13 @@ static VFSListingPtr ProduceDummyListing( const std::vector<NSString*> &_filenam
         t.emplace_back( i.fileSystemRepresentation );
     
     return ProduceDummyListing(t);
+}
+
+static VFSHostPtr NativeHost()
+{
+    static const auto native_fs_man = std::make_shared<nc::utility::NativeFSManager>();  
+    static const auto vfs_native = std::make_shared<nc::vfs::NativeHost>( *native_fs_man );
+    return vfs_native;
 }
 
 @interface PanelData_Tests : XCTestCase
@@ -256,7 +264,7 @@ static VFSListingPtr ProduceDummyListing( const std::vector<NSString*> &_filenam
 
 - (void)testSelectionWithExtension
 {
-    VFSHostPtr host = VFSNativeHost::SharedHost();
+    VFSHostPtr host = NativeHost();
     VFSListingPtr listing;
     data::Model data;
     data::SelectionBuilder selector{data, true};

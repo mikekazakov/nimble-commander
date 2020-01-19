@@ -56,7 +56,8 @@ VFSMeta NativeHost::Meta()
     m.SpawnWithConfig = []([[maybe_unused]] const VFSHostPtr &_parent,
                            [[maybe_unused]] const VFSConfiguration& _config,
                            [[maybe_unused]] VFSCancelChecker _cancel_checker) {
-        return SharedHost();
+        assert(0); // unimplementable without external knoweledge
+        return nullptr;
     };
     return m;
 }
@@ -347,12 +348,6 @@ int NativeHost::CreateFile(const char* _path,
         return VFSError::Cancelled;
     _target = file;
     return VFSError::Ok;
-}
-
-const std::shared_ptr<NativeHost> &NativeHost::SharedHost() noexcept
-{
-    static auto host = std::make_shared<NativeHost>( nc::utility::NativeFSManager::Instance() );
-    return host;
 }
 
 // return false on error or cancellation

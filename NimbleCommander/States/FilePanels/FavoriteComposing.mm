@@ -1,9 +1,10 @@
-// Copyright (C) 2017-2018 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <VFS/Native.h>
 #include <Habanero/CommonPaths.h>
 #include <Habanero/algo.h>
 #include "FavoriteComposing.h"
 #include "PanelDataPersistency.h"
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 
 namespace nc::panel {
 
@@ -28,7 +29,7 @@ std::optional< FavoriteLocationsStorage::Favorite > FavoriteComposing::
     if( !path )
         return std::nullopt;
 
-    auto f = m_Storage.ComposeFavoriteLocation(*VFSNativeHost::SharedHost(), path);
+    auto f = m_Storage.ComposeFavoriteLocation(nc::bootstrap::NativeVFSHostInstance(), path);
     if( !f )
         return std::nullopt;
     
@@ -76,7 +77,7 @@ std::vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::FinderFavorit
     auto ff = GetFindersFavorites();
 
     std::vector<FavoriteLocationsStorage::Favorite> favorites;
-    auto &host = *VFSNativeHost::SharedHost();
+    auto &host = nc::bootstrap::NativeVFSHostInstance();
     for( auto &f: ff) {
         auto fl = m_Storage.ComposeFavoriteLocation(
             host,
@@ -94,7 +95,7 @@ std::vector<FavoriteLocationsStorage::Favorite> FavoriteComposing::DefaultFavori
     auto df = GetDefaultFavorites();
 
     std::vector<FavoriteLocationsStorage::Favorite> favorites;
-    auto &host = *VFSNativeHost::SharedHost();
+    auto &host = nc::bootstrap::NativeVFSHostInstance();
     for( auto &f: df) {
         auto fl = m_Storage.ComposeFavoriteLocation(
             host,
@@ -180,7 +181,7 @@ static std::vector<std::pair<std::string, std::string>> GetFindersFavorites() //
                         !has_suffix(path, ".cannedSearch") &&
                         !has_suffix(path, ".cannedSearch/") &&
                         !has_suffix(path, ".savedSearch") &&
-                        VFSNativeHost::SharedHost()->IsDirectory(path.c_str(), 0) )
+                        nc::bootstrap::NativeVFSHostInstance().IsDirectory(path.c_str(), 0) )
                         paths.emplace_back( make_pair(
                             TitleForURL(url),
                             ensure_tr_slash(move(path)))

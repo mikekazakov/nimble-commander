@@ -143,12 +143,6 @@ void NativeFSManager::UnsubscribeFromWorkspaceNotifications()
     [center removeObserver:receiver name:NSWorkspaceDidUnmountNotification object:nil];
 }
 
-NativeFSManager &NativeFSManager::Instance()
-{
-    static const auto instance = new NativeFSManager();
-    return *instance;
-}
-
 static void GetAllInfos(NativeFileSystemInfo &_volume)
 {
     if( !GetBasicInfo(_volume) )

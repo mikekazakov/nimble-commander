@@ -1,4 +1,4 @@
-// Copyright (C) 2017-2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2017-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include "OpenNetworkConnection.h"
 #include "../PanelController.h"
 #include "../Views/FTPConnectionSheetController.h"
@@ -12,6 +12,7 @@
 #include <VFS/NetSFTP.h>
 #include <VFS/NetDropbox.h>
 #include <VFS/NetWebDAV.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include <NimbleCommander/Core/Alert.h>
 #include <NimbleCommander/Core/AnyHolder.h>
 #include <Habanero/dispatch_cpp.h>
@@ -188,7 +189,7 @@ static void GoToLANShare(PanelController *_target,
             if( !_path.empty() ) {
                 auto request = std::make_shared<DirectoryChangeRequest>();
                 request->RequestedDirectory = _path;
-                request->VFS = VFSNativeHost::SharedHost();
+                request->VFS = nc::bootstrap::NativeVFSHostInstance().SharedPtr();
                 request->PerformAsynchronous = true;
                 request->InitiatedByUser = true;
                 [panel GoToDirWithContext:request];

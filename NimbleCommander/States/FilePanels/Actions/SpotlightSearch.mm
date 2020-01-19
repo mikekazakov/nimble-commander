@@ -8,6 +8,7 @@
 #include "../PanelController.h"
 #include "../Views/SpotlightSearchPopupViewController.h"
 #include <NimbleCommander/Bootstrap/Config.h>
+#include <NimbleCommander/Bootstrap/NativeVFSHostInstance.h>
 #include "../PanelView.h"
 #include <Utility/StringExtras.h>
 #include <Habanero/dispatch_cpp.h>
@@ -119,7 +120,7 @@ void SpotlightSearch::Perform( PanelController *_target, id ) const
         if( PanelController *panel = wp ) {
             auto task = [=]( const std::function<bool()> &_cancelled ) {
                 if( auto l = FetchSearchResultsAsListing(FetchSpotlightResults(_query),
-                                                         *VFSNativeHost::SharedHost(),
+                                                         nc::bootstrap::NativeVFSHostInstance(),
                                                          panel.vfsFetchingFlags,
                                                          _cancelled
                                                          ) )

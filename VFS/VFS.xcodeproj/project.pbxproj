@@ -55,8 +55,8 @@
 		CFE08AE523CA546B007E99B8 /* SpecialDirectories.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08AE323CA546B007E99B8 /* SpecialDirectories.h */; };
 		CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */; };
 		CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */; };
-		CFE08AEC23CFAFD8007E99B8 /* TestEnv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.cpp */; };
-		CFE08AED23CFAFD8007E99B8 /* TestEnv.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.cpp */; };
+		CFE08AEC23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
+		CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */; };
 		CFE08AFA23CFB5A4007E99B8 /* libUtility.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = CFFA94E51F4544F90035E606 /* libUtility.dylib */; };
 		CFFA94B31F4543920035E606 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0511DA2336500992B84 /* File.cpp */; };
 		CFFA94B41F4543920035E606 /* Host.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CF69D0541DA2336500992B84 /* Host.cpp */; };
@@ -285,7 +285,7 @@
 		CFE08AE623CA5787007E99B8 /* VFSNative_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VFSNative_UT.cpp; path = tests/VFSNative_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CFE08AE823CB2D83007E99B8 /* ListingInput_UT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ListingInput_UT.cpp; path = tests/ListingInput_UT.cpp; sourceTree = SOURCE_ROOT; };
 		CFE08AEA23CFAFD8007E99B8 /* TestEnv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestEnv.h; path = tests/TestEnv.h; sourceTree = SOURCE_ROOT; };
-		CFE08AEB23CFAFD8007E99B8 /* TestEnv.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TestEnv.cpp; path = tests/TestEnv.cpp; sourceTree = SOURCE_ROOT; };
+		CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = TestEnv.mm; path = tests/TestEnv.mm; sourceTree = SOURCE_ROOT; };
 		CFFA94AF1F4543840035E606 /* libVFS.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libVFS.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFFA94E31F4544F60035E606 /* libRoutedIO.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libRoutedIO.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libRoutedIO.dylib"; sourceTree = "<group>"; };
 		CFFA94E51F4544F90035E606 /* libUtility.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libUtility.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libUtility.dylib"; sourceTree = "<group>"; };
@@ -387,7 +387,7 @@
 				CF2343ED22CD31F300F516CB /* NetSFTP */,
 				CF24E1FD2290200400C166FA /* SearchForFiles_IT.cpp */,
 				CF26DE2321D28754003F0E93 /* SearchInFile_UT.cpp */,
-				CFE08AEB23CFAFD8007E99B8 /* TestEnv.cpp */,
+				CFE08AEB23CFAFD8007E99B8 /* TestEnv.mm */,
 				CFE08AEA23CFAFD8007E99B8 /* TestEnv.h */,
 				CF1847091E41C8A5008B7C9F /* tests_common.h */,
 				CF26DE2021D2864D003F0E93 /* Tests.cpp */,
@@ -805,7 +805,7 @@
 				CF1168871E91FE9300CC515A /* VFSDropbox_Tests.mm in Sources */,
 				CFFA95581F4E65A60035E606 /* WebDAV_Tests.mm in Sources */,
 				CF1847251E41CBDF008B7C9F /* VFSSFTP_Tests.mm in Sources */,
-				CFE08AEC23CFAFD8007E99B8 /* TestEnv.cpp in Sources */,
+				CFE08AEC23CFAFD8007E99B8 /* TestEnv.mm in Sources */,
 				CF18472E1E41CF6B008B7C9F /* VFSArchive_Tests.mm in Sources */,
 				CFD725FB1E42DD2300603077 /* VFSFTP_Tests.mm in Sources */,
 			);
@@ -820,7 +820,7 @@
 				CF26DE2421D28754003F0E93 /* SearchInFile_UT.cpp in Sources */,
 				CFE08AE923CB2D83007E99B8 /* ListingInput_UT.cpp in Sources */,
 				CFE08AE723CA5787007E99B8 /* VFSNative_UT.cpp in Sources */,
-				CFE08AED23CFAFD8007E99B8 /* TestEnv.cpp in Sources */,
+				CFE08AED23CFAFD8007E99B8 /* TestEnv.mm in Sources */,
 				CF24E1FF2290200800C166FA /* SearchForFiles_IT.cpp in Sources */,
 				CF26DE2121D2864D003F0E93 /* Tests.cpp in Sources */,
 			);

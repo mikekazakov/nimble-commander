@@ -4,7 +4,7 @@
 
 namespace nc::utility {
 
-void NativeFSManagerImpl::VolumeLookup::
+void NativeFSManagerVolumeLookup::
 Insert( const std::shared_ptr<const NativeFileSystemInfo> &_volume, std::string_view _at )
 {	
     if( _volume == nullptr )
@@ -26,7 +26,7 @@ Insert( const std::shared_ptr<const NativeFileSystemInfo> &_volume, std::string_
     }
 }
 
-void NativeFSManagerImpl::VolumeLookup::Remove( std::string_view _from )
+void NativeFSManagerVolumeLookup::Remove( std::string_view _from )
 {
     if( _from.empty() || _from.front() != '/' )
         throw std::invalid_argument("VolumeLookup::Remove(): _from must be an absolute path");
@@ -41,7 +41,7 @@ void NativeFSManagerImpl::VolumeLookup::Remove( std::string_view _from )
     }
 }
 
-std::shared_ptr<const NativeFileSystemInfo> NativeFSManagerImpl::VolumeLookup::
+std::shared_ptr<const NativeFileSystemInfo> NativeFSManagerVolumeLookup::
 FindVolumeForLocation( std::string_view _location ) const noexcept
 {
     const size_t size = m_Targets.size();

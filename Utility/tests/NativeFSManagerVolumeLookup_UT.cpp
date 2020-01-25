@@ -2,7 +2,7 @@
 #include <NativeFSManagerVolumeLookup.h>
 #include "UnitTests_main.h"
 
-using VolumeLookup = nc::utility::NativeFSManagerImpl::VolumeLookup;
+using VolumeLookup = nc::utility::NativeFSManagerVolumeLookup;
 using nc::utility::NativeFileSystemInfo;
 #define PREFIX "nc::utility::NativeFSManager::VolumeLookup "
 

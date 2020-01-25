@@ -1,7 +1,16 @@
 // Copyright (C) 2014-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
+#ifndef __OBJC__
+#error this file must be compiled as ObjC++
+#endif
+
 #include "NativeFSManager.h"
+#include "NativeFSManagerVolumeLookup.h"
+#include "DiskUtility.h"
+#include "FirmlinksMappingParser.h"
+
+@class NCUtilityNativeFSManagerNotificationsReceiver;
 
 namespace nc::utility {
 
@@ -13,7 +22,6 @@ public:
     ~NativeFSManagerImpl();
     NativeFSManagerImpl& operator=(const NativeFSManagerImpl&) = delete;
     
-    class VolumeLookup;
     using NativeFSManager::Info;
     
     std::vector<Info> Volumes() const override;
@@ -38,15 +46,21 @@ private:
     void OnDidUnmount(const std::string &_on_path);
     void OnDidRename(const std::string &_old_path, const std::string &_new_path);    
     void InsertNewVolume_Unlocked( const std::shared_ptr<NativeFileSystemInfo> &_volume );
+    Info VolumeFromMountPoint_Unlocked(std::string_view _mount_point) const noexcept;
+    Info VolumeFromBSDName_Unlocked(std::string_view _bsd_name) const noexcept;
     void PerformUnmounting(const Info &_volume);
     void PerformGenericUnmounting(const Info &_volume);    
     void PerformAPFSUnmounting(const Info &_volume);
     void SubscribeToWorkspaceNotifications();
     void UnsubscribeFromWorkspaceNotifications();
+    void InjectRootFirmlinks(const APFSTree& _tree);
 
-    struct Impl;
-    std::unique_ptr<Impl> I;
+    mutable std::mutex m_Lock;
+    std::vector<std::shared_ptr<NativeFileSystemInfo>> m_Volumes;
+    NativeFSManagerVolumeLookup m_VolumeLookup;
+    std::optional<APFSTree> m_StartupAPFSTree;
+    std::vector<FirmlinksMappingParser::Firmlink> m_RootFirmlinks;
+    NCUtilityNativeFSManagerNotificationsReceiver *m_NotificationsReceiver;
 };
-
 
 }

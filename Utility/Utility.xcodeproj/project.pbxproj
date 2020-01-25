@@ -61,6 +61,8 @@
 		CFDAC82B2168E1C000DEBA2A /* DiskUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = CFDAC82A2168E1C000DEBA2A /* DiskUtility.h */; };
 		CFDAC82D2168E1CC00DEBA2A /* DiskUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82C2168E1CC00DEBA2A /* DiskUtility.mm */; };
 		CFDAC82F2168E43600DEBA2A /* DiskUtility_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */; };
+		CFE08B2523DBA7AD007E99B8 /* NativeFSManagerImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = CFE08B2423DBA7AD007E99B8 /* NativeFSManagerImpl.h */; };
+		CFE08B2723DBA7BC007E99B8 /* NativeFSManagerImpl.mm in Sources */ = {isa = PBXBuildFile; fileRef = CFE08B2623DBA7BC007E99B8 /* NativeFSManagerImpl.mm */; };
 		CFE33EBC2135708800C3902C /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE33EBB2135708800C3902C /* Quartz.framework */; };
 		CFE3F1C422932CCF009D6AB4 /* ByteCountFormatter_UT.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF614AA81F9D871D0005F2DB /* ByteCountFormatter_UT.mm */; };
 		CFE3F1C522932EAA009D6AB4 /* FileMask_UT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CFB0F239215A07830088C18E /* FileMask_UT.cpp */; };
@@ -247,6 +249,8 @@
 		CFDAC82A2168E1C000DEBA2A /* DiskUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DiskUtility.h; path = include/Utility/DiskUtility.h; sourceTree = "<group>"; };
 		CFDAC82C2168E1CC00DEBA2A /* DiskUtility.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DiskUtility.mm; path = source/DiskUtility.mm; sourceTree = "<group>"; };
 		CFDAC82E2168E43600DEBA2A /* DiskUtility_UT.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = DiskUtility_UT.mm; path = tests/DiskUtility_UT.mm; sourceTree = "<group>"; };
+		CFE08B2423DBA7AD007E99B8 /* NativeFSManagerImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NativeFSManagerImpl.h; path = include/Utility/NativeFSManagerImpl.h; sourceTree = "<group>"; };
+		CFE08B2623DBA7BC007E99B8 /* NativeFSManagerImpl.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = NativeFSManagerImpl.mm; path = source/NativeFSManagerImpl.mm; sourceTree = "<group>"; };
 		CFE33EBB2135708800C3902C /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		CFFA94631F453CB60035E606 /* libUtility.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libUtility.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		CFFA948E1F453DF30035E606 /* libHabanero.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libHabanero.dylib; path = "../../../../Library/Developer/Xcode/DerivedData/NimbleCommander-gmplwpfcimcucreprhpqaoectnmi/Build/Products/Debug/libHabanero.dylib"; sourceTree = "<group>"; };
@@ -366,6 +370,7 @@
 				CF84C8E61DB867F200B4E888 /* Layout.h */,
 				CF3B7F6A201F141C00BF2090 /* MIMResponder.h */,
 				CFD62C151C9AEC9D0021EE7F /* NativeFSManager.h */,
+				CFE08B2423DBA7AD007E99B8 /* NativeFSManagerImpl.h */,
 				CF3ABD7523B7F66000D1878B /* NativeFSManagerVolumeLookup.h */,
 				CF3ABD7923B8A97900D1878B /* NSCppDeclarations.h */,
 				CF3E6DF41E386F52002B4AAD /* NSEventModifierFlagsHolder.h */,
@@ -423,6 +428,7 @@
 				CF84C8E81DB867FC00B4E888 /* Layout.mm */,
 				CF3B7F6C201F167200BF2090 /* MIMResponder.mm */,
 				CFD62C171C9AECA50021EE7F /* NativeFSManager.mm */,
+				CFE08B2623DBA7BC007E99B8 /* NativeFSManagerImpl.mm */,
 				CF3ABD7723B8A76B00D1878B /* NativeFSManagerVolumeLookup.cpp */,
 				CFD62C041C9A89BD0021EE7F /* NSMenu+Hierarchical.mm */,
 				CFD62BD31C9A67A60021EE7F /* NSObject+MassObserving.mm */,
@@ -486,6 +492,7 @@
 				CF308F11213781EE00915730 /* UnitTests_main.h in Headers */,
 				CF308F2D213ABFAA00915730 /* BriefOnDiskStorage.h in Headers */,
 				CF1ADE301F7E71D3003E9B76 /* OrthodoxMonospace.h in Headers */,
+				CFE08B2523DBA7AD007E99B8 /* NativeFSManagerImpl.h in Headers */,
 				CF2B751622B82EF8009D4160 /* UTI.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -620,6 +627,7 @@
 				CFFA947A1F453CC00035E606 /* NSMenu+Hierarchical.mm in Sources */,
 				CFFA94781F453CC00035E606 /* Layout.mm in Sources */,
 				CFFA94841F453CC00035E606 /* VerticallyCenteredTextFieldCell.mm in Sources */,
+				CFE08B2723DBA7BC007E99B8 /* NativeFSManagerImpl.mm in Sources */,
 				CFFA946B1F453CC00035E606 /* ColoredSeparatorLine.mm in Sources */,
 				CFFA947D1F453CC00035E606 /* NSView+Sugar.mm in Sources */,
 				CF26DE2E21D3F033003F0E93 /* TemporaryFileStorage.cpp in Sources */,

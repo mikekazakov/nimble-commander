@@ -33,8 +33,8 @@ TEST_CASE(PREFIX"Verify that /Applications/ and temp dir are on the same fs")
 {
     const std::string target_dir = "/Applications/";
     TempTestDir test_dir;
-    NativeFSManager fsm;
-    REQUIRE( fsm.VolumeFromPath(test_dir.directory) == fsm.VolumeFromPath(target_dir) );
+    REQUIRE( TestEnv().native_fs_man->VolumeFromPath(test_dir.directory) ==
+     TestEnv().native_fs_man->VolumeFromPath(target_dir) );
 }
 
 TEST_CASE(PREFIX"Can rename a regular file across firmlink injection points")

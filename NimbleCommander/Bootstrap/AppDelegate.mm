@@ -23,7 +23,7 @@
 #include <ctrail/ChromeTraceExporter.h>
 
 #include <Utility/NSMenu+Hierarchical.h>
-#include <Utility/NativeFSManager.h>
+#include <Utility/NativeFSManagerImpl.h>
 #include <Utility/TemporaryFileStorageImpl.h>
 #include <Utility/PathManip.h>
 #include <Utility/FunctionKeysPass.h>
@@ -212,7 +212,7 @@ static NCAppDelegate *g_Me = nil;
         m_IsRunningTests = NSClassFromString(@"XCTestCase") != nullptr;
         m_FilesToOpen = [[NSMutableArray alloc] init];
         m_ViewerWindowDelegateBridge = [[NCViewerWindowDelegateBridge alloc] init];
-        m_NativeFSManager = std::make_unique<nc::utility::NativeFSManager>();
+        m_NativeFSManager = std::make_unique<nc::utility::NativeFSManagerImpl>();
         m_NativeHost = std::make_shared<nc::vfs::NativeHost>(*m_NativeFSManager);
         CheckMASReceipt();
         CheckDefaultsReset();

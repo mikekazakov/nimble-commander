@@ -4,9 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <mutex>
 #include <atomic>
-#include <mach/mach.h>
 
 #ifndef __OBJC__
 #include "NSCppDeclarations.h"
@@ -69,17 +67,17 @@ struct NativeFileSystemInfo
         /**
          * Total data blocks in file system.
          */
-        mutable std::atomic_ulong total_blocks{0};
+        std::atomic_ulong total_blocks{0};
     
         /**
          * Free blocks in filesystem.
          */
-        mutable std::atomic_ulong free_blocks{0};
+        std::atomic_ulong free_blocks{0};
     
         /**
          * Free blocks in filesystem available to non-superuser.
          */
-        mutable std::atomic_ulong available_blocks{0};
+        std::atomic_ulong available_blocks{0};
     
         /**
          * Total file nodes in file system.
@@ -550,73 +548,54 @@ struct NativeFileSystemInfo
 class NativeFSManager
 {
 public:
-    NativeFSManager();
-    NativeFSManager(const NativeFSManager&) = delete;
-    ~NativeFSManager();
-    NativeFSManager& operator=(const NativeFSManager&) = delete;
-    
-    class VolumeLookup;
     using Info = std::shared_ptr<const NativeFileSystemInfo>;
+    
+    virtual ~NativeFSManager() = default;
     
     /**
      * Returns a list of volumes in a system.
      */
-    std::vector<Info> Volumes() const;
+    virtual std::vector<Info> Volumes() const = 0;
 
     /**
      * VolumeFromFD() uses POSIX fstatfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */    
-    Info VolumeFromFD(int _fd) const noexcept;
+    virtual Info VolumeFromFD(int _fd) const noexcept = 0;
     
     /**
      * VolumeFromPath() uses POSIX statfs() to get mount point for specified path,
      * and then calls VolumeFromMountPoint() method. Will return nullptr if _path points to invalid file/dir.
      */
-    Info VolumeFromPath(std::string_view _path) const noexcept;
+    virtual Info VolumeFromPath(std::string_view _path) const noexcept = 0;
     
     /**
      * VolumeFromPathFast() chooses the closest volume to _path, using plain strings comparison.
      * It don't take into consideration invalid paths or symlinks following somewhere in _path,
      * so should be used very carefully only time-critical paths (this method doesn't make any syscalls).
      */
-    Info VolumeFromPathFast(std::string_view _path) const noexcept;
+    virtual Info VolumeFromPathFast(std::string_view _path) const noexcept = 0;
     
     /**
      * VolumeFromMountPoint() searches to a volume mounted at _mount_point using plain strings comparison.
      * Is fast, since dont make any syscalls.
      */
-    Info VolumeFromMountPoint(std::string_view _mount_point) const noexcept;
+    virtual Info VolumeFromMountPoint(std::string_view _mount_point) const noexcept = 0;
 
     /**
      * UpdateSpaceInformation() forces to fetch and recalculate space information contained in _volume.
      */
-    void UpdateSpaceInformation(const Info &_volume);
+    virtual void UpdateSpaceInformation(const Info &_volume) = 0;
     
     /**
      * A very simple function with no error feedback.
      */
-    void EjectVolumeContainingPath(const std::string &_path);
+    virtual void EjectVolumeContainingPath(const std::string &_path) = 0;
     
     /**
      * Return true is volume can be programmatically ejected. Will return false on any errors.
      */
-    bool IsVolumeContainingPathEjectable(const std::string &_path);
-    
-private:
-    void OnDidMount(const std::string &_on_path);
-    void OnWillUnmount(const std::string &_on_path);
-    void OnDidUnmount(const std::string &_on_path);
-    void OnDidRename(const std::string &_old_path, const std::string &_new_path);    
-    void InsertNewVolume_Unlocked( const std::shared_ptr<NativeFileSystemInfo> &_volume );
-    void PerformUnmounting(const Info &_volume);
-    void PerformGenericUnmounting(const Info &_volume);    
-    void PerformAPFSUnmounting(const Info &_volume);
-    void SubscribeToWorkspaceNotifications();
-    void UnsubscribeFromWorkspaceNotifications();
-
-    struct Impl;
-    std::unique_ptr<Impl> I;
+    virtual bool IsVolumeContainingPathEjectable(const std::string &_path) = 0;
 };
 
 }

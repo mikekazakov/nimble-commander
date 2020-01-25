@@ -1,8 +1,8 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <NativeFSManagerVolumeLookup.h>
 #include "UnitTests_main.h"
 
-using VolumeLookup = nc::utility::NativeFSManager::VolumeLookup;
+using VolumeLookup = nc::utility::NativeFSManagerImpl::VolumeLookup;
 using nc::utility::NativeFileSystemInfo;
 #define PREFIX "nc::utility::NativeFSManager::VolumeLookup "
 

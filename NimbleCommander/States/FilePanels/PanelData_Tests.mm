@@ -4,7 +4,7 @@
 #include <VFS/VFS.h>
 #include <VFS/Native.h>
 #include <VFS/VFSListingInput.h>
-#include <Utility/NativeFSManager.h>
+#include <Utility/NativeFSManagerImpl.h>
 #include <NimbleCommander/States/FilePanels/PanelData.h>
 #include <NimbleCommander/States/FilePanels/PanelDataSelection.h>
 #include <memory>
@@ -68,7 +68,7 @@ static VFSListingPtr ProduceDummyListing( const std::vector<NSString*> &_filenam
 
 static VFSHostPtr NativeHost()
 {
-    static const auto native_fs_man = std::make_shared<nc::utility::NativeFSManager>();  
+    static const auto native_fs_man = std::make_shared<nc::utility::NativeFSManagerImpl>();  
     static const auto vfs_native = std::make_shared<nc::vfs::NativeHost>( *native_fs_man );
     return vfs_native;
 }

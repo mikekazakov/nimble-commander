@@ -1,11 +1,11 @@
 // Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
-#include <NativeFSManager.h>
+#include <NativeFSManagerImpl.h>
 #include <Habanero/algo.h>
 #include <Habanero/dispatch_cpp.h>
 #include <boost/process.hpp>
 #include "UnitTests_main.h"
 
-using nc::utility::NativeFSManager;
+using nc::utility::NativeFSManagerImpl;
 using nc::utility::NativeFileSystemInfo;
 #define PREFIX "nc::utility::NativeFSManager "
 
@@ -15,7 +15,7 @@ static int Execute(const std::string &_command);
 
 TEST_CASE(PREFIX"Fast lookup considers firmlinks")
 {
-    NativeFSManager fsm;
+    NativeFSManagerImpl fsm;
     
     auto root_volume = fsm.VolumeFromPathFast("/");
     REQUIRE( root_volume != nullptr );
@@ -39,7 +39,7 @@ TEST_CASE(PREFIX"VolumeFromFD")
     REQUIRE( fd2 >= 0 );
     auto close_fd2 = at_scope_end([=]{ close(fd2); });
 
-    NativeFSManager fsm;
+    NativeFSManagerImpl fsm;
     const auto info1 = fsm.VolumeFromFD(fd1);
     REQUIRE( info1 != nullptr );
     CHECK( info1->mounted_at_path == "/" );
@@ -61,7 +61,7 @@ TEST_CASE(PREFIX"Can detect filesystem mounts and unmounts")
     TempTestDir tmp_dir;
     const auto dmg_path = tmp_dir.directory + "tmp_image.dmg";
     
-    NativeFSManager fsm;
+    NativeFSManagerImpl fsm;
     auto create_cmd = "/usr/bin/hdiutil create -size 1m -fs HFS+ -volname SomethingWickedThisWayComes12345 " + dmg_path;
     auto mount_cmd = "/usr/bin/hdiutil attach " + dmg_path;
     auto unmount_cmd = "/usr/bin/hdiutil detach /Volumes/SomethingWickedThisWayComes12345";
@@ -112,7 +112,7 @@ TEST_CASE(PREFIX"Can detect filesystem renames")
     
     REQUIRE( Execute( create_cmd ) == 0 );
     
-    NativeFSManager fsm;
+    NativeFSManagerImpl fsm;
     auto predicate_old = [&]() -> bool {
         auto volumes = fsm.Volumes();
         return std::any_of(volumes.begin(), volumes.end(), [&](const auto &volume){

@@ -1,7 +1,7 @@
 // Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #pragma once
 
-#include "NativeFSManager.h"
+#include "NativeFSManagerImpl.h"
 #include <memory>
 #include <string_view>
 
@@ -9,7 +9,7 @@ namespace nc::utility {
 
 struct NativeFileSystemInfo;
 
-class NativeFSManager::VolumeLookup
+class NativeFSManagerImpl::VolumeLookup
 {
 public:
     // expects absolute paths ending with a trailing slash

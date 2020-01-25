@@ -1,10 +1,10 @@
-// Copyright (C) 2019 Michael Kazakov. Subject to GNU General Public License version 3.
+// Copyright (C) 2019-2020 Michael Kazakov. Subject to GNU General Public License version 3.
 #include <Utility/NativeFSManagerVolumeLookup.h>
 #include <cassert>
 
 namespace nc::utility {
 
-void NativeFSManager::VolumeLookup::
+void NativeFSManagerImpl::VolumeLookup::
 Insert( const std::shared_ptr<const NativeFileSystemInfo> &_volume, std::string_view _at )
 {	
     if( _volume == nullptr )
@@ -26,7 +26,7 @@ Insert( const std::shared_ptr<const NativeFileSystemInfo> &_volume, std::string_
     }
 }
 
-void NativeFSManager::VolumeLookup::Remove( std::string_view _from )
+void NativeFSManagerImpl::VolumeLookup::Remove( std::string_view _from )
 {
     if( _from.empty() || _from.front() != '/' )
         throw std::invalid_argument("VolumeLookup::Remove(): _from must be an absolute path");
@@ -41,7 +41,7 @@ void NativeFSManager::VolumeLookup::Remove( std::string_view _from )
     }
 }
 
-std::shared_ptr<const NativeFileSystemInfo> NativeFSManager::VolumeLookup::
+std::shared_ptr<const NativeFileSystemInfo> NativeFSManagerImpl::VolumeLookup::
 FindVolumeForLocation( std::string_view _location ) const noexcept
 {
     const size_t size = m_Targets.size();

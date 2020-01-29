@@ -6,6 +6,7 @@
 #include <NimbleCommander/Bootstrap/NCE.h>
 #include "AppDelegateCPP.h"
 #include "ActivationManager.h"
+#include <fstream>
 
 namespace nc::bootstrap {
 

@@ -64,6 +64,9 @@
 /* Class = "NSTextFieldCell"; title = "Text Cell"; ObjectID = "jtt-0L-3Vf"; */
 "jtt-0L-3Vf.title" = "";
 
+/* Class = "NSButtonCell"; title = "Not containing"; ObjectID = "kUk-kM-n8j"; */
+"kUk-kM-n8j.title" = "Не содержит";
+
 /* Class = "NSTableColumn"; headerCell.title = "Size"; ObjectID = "kY9-vv-6NZ"; */
 "kY9-vv-6NZ.headerCell.title" = "Размер";
 

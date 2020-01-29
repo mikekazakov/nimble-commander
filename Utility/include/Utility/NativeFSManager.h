@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <atomic>
+#include <mach/mach.h>
 
 #ifndef __OBJC__
 #include "NSCppDeclarations.h"

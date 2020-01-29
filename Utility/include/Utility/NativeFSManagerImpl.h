@@ -10,6 +10,8 @@
 #include "DiskUtility.h"
 #include "FirmlinksMappingParser.h"
 
+#include <mutex>
+
 @class NCUtilityNativeFSManagerNotificationsReceiver;
 
 namespace nc::utility {

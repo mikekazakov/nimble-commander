@@ -367,6 +367,9 @@
 /* Class = "NSMenuItem"; title = "Dropbox Storage..."; ObjectID = "IiL-lV-Phd"; */
 "IiL-lV-Phd.title" = "Хранилищу Dropbox...";
 
+/* Class = "NSMenuItem"; title = "Copy Item Directory"; ObjectID = "iLX-OF-n8U"; */
+"iLX-OF-n8U.title" = "Копировать директорию файла";
+
 /* Class = "NSMenuItem"; title = "Frequenty Visited"; ObjectID = "IqU-xO-cHh"; */
 "IqU-xO-cHh.title" = "Часто посещаемые";
 

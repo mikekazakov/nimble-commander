@@ -94,11 +94,13 @@ static std::string MakeCanonicPath(std::string _input)
         m_InitialDestination = _initial_destination;
         m_DestinationHost = _destination_host;
         m_Options = _options;
-        m_AutoCompletion = 
-            std::make_shared<nc::ops::DirectoryPathAutoCompletionImpl>(m_DestinationHost);
-        m_AutoCompletionDelegate = [[NCFilepathAutoCompletionDelegate alloc] init];
-        m_AutoCompletionDelegate.completion = m_AutoCompletion;
-        m_AutoCompletionDelegate.isNativeVFS = m_DestinationHost->IsNativeFS();
+        if( m_DestinationHost ) {
+            m_AutoCompletion = 
+                std::make_shared<nc::ops::DirectoryPathAutoCompletionImpl>(m_DestinationHost);
+            m_AutoCompletionDelegate = [[NCFilepathAutoCompletionDelegate alloc] init];
+            m_AutoCompletionDelegate.completion = m_AutoCompletion;
+            m_AutoCompletionDelegate.isNativeVFS = m_DestinationHost->IsNativeFS();
+        }
         
         self.isValidInput = [self validateInput:_initial_destination];
     }
@@ -232,7 +234,8 @@ static std::string MakeCanonicPath(std::string _input)
        textView:(NSTextView *)_text_view
 doCommandBySelector:(SEL)_command_selector
 {
-    if( _control == self.TextField && _command_selector == @selector(complete:)) {
+    if( _control == self.TextField && _command_selector == @selector(complete:) && 
+        m_AutoCompletionDelegate) {
         return [m_AutoCompletionDelegate control:_control
                                         textView:_text_view
                              doCommandBySelector:_command_selector];
